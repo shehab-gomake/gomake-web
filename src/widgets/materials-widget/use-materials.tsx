@@ -163,7 +163,7 @@ const useMaterials = (isAdmin: boolean) => {
         );
         setMaterialHeaders(updatedArray);
         setMaterialActions(res.data?.actions);
-        setMaterialName(res.data?.materialTypeName)
+        setMaterialName(res.data?.materialTypeName);
       }
     };
     await getMaterialTableHeadersApi(callApi, callBack, materialType);
@@ -263,9 +263,6 @@ const useMaterials = (isAdmin: boolean) => {
           setSelectedTableRow={setSelectedTableRow}
           onClickOpenDeleteTableRowModal={onClickOpenDeleteTableRowModal}
         />,
-        // <IconButton onClick={() => onDeleteCategoryRow(dataRow.id)}>
-        //   <WastebasketNew width={"30px"} height={"30px"} />
-        // </IconButton>,
       ];
     });
   }, [materialHeaders, materialCategoryData, activeFilter, materialFilter]);
@@ -290,9 +287,6 @@ const useMaterials = (isAdmin: boolean) => {
           setSelectedTableRow={setSelectedTableRow}
           onClickOpenDeleteTableRowModal={onClickOpenDeleteTableRowModal}
         />,
-        // <IconButton onClick={() => onDeleteCategoryRow(dataRow.id)}>
-        //   <WastebasketNew width={"30px"} height={"30px"} />
-        // </IconButton>,
       ];
     });
   }, [materialHeaders, materialCategoryData, activeFilter, materialFilter]);
@@ -367,7 +361,7 @@ const useMaterials = (isAdmin: boolean) => {
     onClickCloseDeleteTableRowModal,
     onDeleteCategoryRow,
     selectedTableRow,
-    materialName
+    materialName,
   };
 };
 

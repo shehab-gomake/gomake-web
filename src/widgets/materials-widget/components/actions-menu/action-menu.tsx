@@ -1,44 +1,22 @@
 import { Checkbox, Divider, IconButton, Menu, MenuItem } from "@mui/material";
 import { SettingsIcon } from "@/icons/settings";
-import React, { useState } from "react";
+import React from "react";
 import { useTranslation } from "react-i18next";
 import { EMaterialsActions } from "@/widgets/materials-widget/enums";
 import { useMaterialsActions } from "@/widgets/materials-widget/components/actions-menu/use-materials-actions";
 import { GoMakeAutoComplate, GoMakeModal, GomakeTextInput } from "@/components";
 import Stack from "@mui/material/Stack";
 import { SecondaryButton } from "@/components/button/secondary-button";
-import { useRecoilValue } from "recoil";
-import {
-  currenciesState,
-  materialActionState,
-  materialHeadersState,
-  materialsMachinesState,
-} from "@/widgets/materials-widget/state";
+import { useStyle } from "./style";
+import { AddPlusIcon, CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
+import { DeleteMenuIcon } from "@/pages/admin/products/parameters/widget/more-circle/icons/delete-menu";
 import { rowInputs } from "../add-row/inputs";
 import { FormInput } from "@/components/form-inputs/form-input";
 import { IInput } from "@/components/form-inputs/interfaces";
-import { useStyle } from "./style";
-import { EMaterialsTabsIcon } from "@/enums";
-import {
-  ActiveMaterial,
-  AddNewMaterial,
-  CheckboxCheckedIcon,
-  CheckboxIcon,
-  CurrencyMaterial,
-  DeActiveMaterial,
-  DeleteMaterial,
-  DownloadExcelSheet,
-  DuplicateMaterial,
-  PercentageMaterial,
-  UnitsPriceMaterial,
-  UploadExcelSheet,
-
-} from "@/icons";
 interface IActionMenuProps {
   isAdmin: boolean;
 }
 const ActionMenu = (props: IActionMenuProps) => {
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const { clasess } = useStyle();
   const { t } = useTranslation();
   const {
@@ -46,74 +24,26 @@ const ActionMenu = (props: IActionMenuProps) => {
     action,
     updatedValue,
     onTextInputChange,
-    onInputChange,
     onUpdate,
     checkedPrice,
     setCheckedPrice,
     setRate,
     rate,
     uploadExcelFile,
-    elementRef
+    elementRef,
+    handleMoreOptionIconClick,
+    anchorEl,
+    handleCloseMenu,
+    materialActions,
+    _renderIcons,
+    handleCloseModal,
+    currencies,
+    properties,
+    materialHeaders,
+    handleChange,
+    deleteProperty,
+    addProperty,
   } = useMaterialsActions(props.isAdmin);
-  const currencies = useRecoilValue(currenciesState);
-  const materialActions = useRecoilValue(materialActionState);
-  const materialHeaders =
-    useRecoilValue<
-      { key: string; value: string; inputType: number; values: any[] }[]
-    >(materialHeadersState);
-  const machinesCategories = useRecoilValue<any>(materialsMachinesState);
-  const [property, setProperty] = useState<any[]>();
-  const [flag, setFlag] = useState<boolean>(false);
-
-  const handleMoreOptionIconClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleCloseMenu = () => {
-    setAnchorEl(null);
-  };
-
-  const handleCloseModal = () => {
-    onChooseAction(null);
-    setProperty(null);
-  };
-  const _renderIcons = (iconName: string) => {
-    if (iconName === EMaterialsTabsIcon.UPDATE_PRICE_PER_TON) {
-      return <UnitsPriceMaterial />;
-    }
-    if (iconName === EMaterialsTabsIcon.UPDATE_UNIT_PRICE) {
-      return <UnitsPriceMaterial />;
-    }
-    if (iconName === EMaterialsTabsIcon.ADD_PERCENT_TO_UNIT_PRICE) {
-      return <PercentageMaterial />;
-    }
-    if (iconName === EMaterialsTabsIcon.ADD_PERCENT_TO_PRICE_PER_TON) {
-      return <PercentageMaterial />;
-    }
-    if (iconName === EMaterialsTabsIcon.UPDATE_CURRENCY) {
-      return <CurrencyMaterial />;
-    }
-    if (iconName === EMaterialsTabsIcon.CHANGE_TO_ACTIVE) {
-      return <ActiveMaterial />;
-    }
-    if (iconName === EMaterialsTabsIcon.CHANGE_TO_INACTIVE) {
-      return <DeActiveMaterial />;
-    }
-    if (iconName === EMaterialsTabsIcon.ADD_NEW) {
-      return <AddNewMaterial />;
-    }
-    if (iconName === EMaterialsTabsIcon.DUPLICATE) {
-      return <DuplicateMaterial />;
-    }
-    if (iconName === EMaterialsTabsIcon.DELETE) {
-      return <DeleteMaterial />;
-    }
-    if (iconName === EMaterialsTabsIcon.DOWNLOAD_EXCEL) {
-      return <DownloadExcelSheet />;
-    }
-    if (iconName === EMaterialsTabsIcon.UPLOAD_EXCEL) {
-      return <UploadExcelSheet />;
-    }
-  };
 
   return (
     <>
@@ -121,11 +51,11 @@ const ActionMenu = (props: IActionMenuProps) => {
         <SettingsIcon stroke={"#000000"} />
       </IconButton>
       <input
-          ref={elementRef}
-          onChange={uploadExcelFile}
-          type="file"
-          accept=".xlsx"
-          hidden={true}
+        ref={elementRef}
+        onChange={uploadExcelFile}
+        type="file"
+        accept=".xlsx"
+        hidden={true}
       />
       <Menu
         open={Boolean(anchorEl)}
@@ -155,7 +85,7 @@ const ActionMenu = (props: IActionMenuProps) => {
       </Menu>
       <GoMakeModal
         onClose={handleCloseModal}
-        insideStyle={{ width: "fit-content", height: "fit-content" }}
+        insideStyle={{ width: 500, height: "fit-content" }}
         openModal={action !== null}
         modalTitle={t("materialsActions." + action?.key)}
       >
@@ -211,36 +141,73 @@ const ActionMenu = (props: IActionMenuProps) => {
               style={{
                 display: "flex",
                 flexDirection: "column",
+                justifyContent: "flex-start",
+                alignItems: "flex-start",
                 width: "100%",
-                gap: "10px",
+                gap: 10,
               }}
             >
-              <GoMakeAutoComplate
-                placeholder={"select property"}
-                getOptionLabel={(option: any) => option.key}
-                options={materialHeaders}
-                onChange={(event, value) => {
-                  setFlag(!!value), setProperty([value]);
-                }}
-              />
-              {flag &&
-                property &&
-                rowInputs(
-                  updatedValue,
-                  materialHeaders,
-                  currencies,
-                  machinesCategories,
-                  property
-                ).map((item) => (
-                  <Stack width={"180px"}>
-                    <FormInput
-                      input={item as IInput}
-                      changeState={onInputChange}
-                      error={false}
-                      readonly={false}
-                    />
-                  </Stack>
-                ))}
+              {properties?.map((item, index) => {
+                return (
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "row",
+                      justifyContent: "flex-start",
+                      alignItems: "center",
+                      gap: 10,
+                      width: "100%",
+                    }}
+                  >
+                    <div style={{ width: "50%" }}>
+                      <GoMakeAutoComplate
+                        placeholder={"select property"}
+                        getOptionLabel={(option: any) => option.key}
+                        options={materialHeaders}
+                        onChange={(event, value) => {
+                          handleChange(index, "key", value);
+                        }}
+                      />
+                    </div>
+                    <div style={{ width: "50%", marginTop: -24 }}>
+                      {properties[index].key &&
+                        rowInputs(
+                          properties[index].key,
+                          materialHeaders,
+                          currencies,
+                          [],
+                          [item?.key]
+                        ).map((item) => (
+                          <FormInput
+                            input={item as IInput}
+                            changeState={(e, v) =>
+                              handleChange(index, "value", v)
+                            }
+                            error={false}
+                            readonly={false}
+                          />
+                        ))}
+                    </div>
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        cursor: "pointer",
+                        marginTop: "2%",
+                      }}
+                      onClick={() => deleteProperty(index)}
+                    >
+                      <DeleteMenuIcon />
+                    </div>
+                  </div>
+                );
+              })}
+              <div style={clasess.AddNewRuleDiv}>
+                <AddPlusIcon />
+                <span onClick={addProperty} style={clasess.spanAddNewRule}>
+                  {t("properties.addNewRule")}
+                </span>
+              </div>
             </div>
           ) : (
             <GomakeTextInput
@@ -252,7 +219,8 @@ const ActionMenu = (props: IActionMenuProps) => {
             onClick={onUpdate}
             sx={{ width: "100%" }}
             variant={"contained"}
-          >{t("profileSettings.update")}
+          >
+            {t("profileSettings.update")}
           </SecondaryButton>
         </Stack>
       </GoMakeModal>
