@@ -24,7 +24,6 @@ const ActionMenu = (props: IActionMenuProps) => {
     action,
     updatedValue,
     onTextInputChange,
-    onInputChange,
     onUpdate,
     checkedPrice,
     setCheckedPrice,

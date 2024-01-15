@@ -18,24 +18,28 @@ const MaterialMenuWidget = ({
   isAdmin,
   setSelectedTableRow,
   onClickOpenDeleteTableRowModal,
-   onClickDelete
+  onClickDelete,
 }) => {
   setSelectedTableRow(dataRow);
   const { clasess } = useStyle();
   const { open, anchorEl, handleClose, handleClick } = useMoreCircle();
   const { t } = useTranslation();
   const { updateCellData } = useTableCellData(isAdmin);
-  const {getMaterialCategoryData} =useMaterialsCategories(isAdmin);
+  const { getMaterialCategoryData } = useMaterialsCategories(isAdmin);
   const { query } = useRouter();
   const { materialType, materialCategory } = query;
-  const supplierId = useRecoilValue(selectedSupplierIdState)
+  const supplierId = useRecoilValue(selectedSupplierIdState);
   const materialFilter = useRecoilValue(filterState);
 
   const toggleIsActive = async (id, parameterKey, value) => {
     await updateCellData(id, parameterKey, !value);
-    getMaterialCategoryData(materialType?.toString(), materialCategory?.toString(),materialFilter, supplierId).then();
+    getMaterialCategoryData(
+      materialType?.toString(),
+      materialCategory?.toString(),
+      materialFilter,
+      supplierId
+    ).then();
   };
-
 
   return (
     <>
@@ -60,7 +64,7 @@ const MaterialMenuWidget = ({
         </MenuItem>
         <Divider />
         <MenuItem style={clasess.menuItemContainer}>
-          <DuplicateIcon height={20} width={20} color={clasess.iconColor} />{" "}
+          <DuplicateIcon height={20} width={20} color={clasess.iconColor} />
           <div style={clasess.rowTextStyle}>
             {t("navigationButtons.duplicate")}
           </div>
@@ -74,7 +78,10 @@ const MaterialMenuWidget = ({
           }}
         >
           <DeleteIcon />
-          <div style={clasess.rowTextStyle}  onClick={() => onClickDelete(dataRow.id)}>
+          <div
+            style={clasess.rowTextStyle}
+            onClick={() => onClickDelete(dataRow.id)}
+          >
             {t("navigationButtons.delete")}
           </div>
         </MenuItem>

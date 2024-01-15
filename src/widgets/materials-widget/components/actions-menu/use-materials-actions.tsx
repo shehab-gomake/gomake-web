@@ -40,14 +40,11 @@ import {
 } from "@/services/api-service/materials/materials-endpoints";
 import { useExchangeRate } from "@/hooks/use-exchange-rate";
 import { useMaterialsCategories } from "../../use-materials-categories";
-import { useStyle } from "./style";
 import { EMaterialsTabsIcon } from "@/enums";
 import { EHttpMethod } from "@/services/api-service/enums";
-import { setPriority } from "os";
 
 const useMaterialsActions = (isAdmin: boolean) => {
   const { callApi } = useGomakeAxios();
-  const { clasess } = useStyle();
   const { query } = useRouter();
   const { materialType, materialCategory } = query;
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -124,7 +121,6 @@ const useMaterialsActions = (isAdmin: boolean) => {
   };
 
   const onInputChange = (key: string, v: any) => {
-    // handleChange(index, "key", value);
     setUpdatedValue(v);
   };
 
