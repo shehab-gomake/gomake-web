@@ -7,5 +7,6 @@ export enum EDataTypeEnum {
     CURRENCY,
     LIST,
     IMAGE,
-    MACHINES_LIST
+    MACHINES_LIST,
+    CLIENTS_LIST
 }

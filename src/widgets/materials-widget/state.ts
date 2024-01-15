@@ -100,15 +100,22 @@ export const materialsMachinesState = atom<[]>({
   default: [],
 });
 
+export const materialsClientsState = atom<[]>({
+  key: "materialsClientsState",
+  default: [],
+});
+
 export const materialsTablePageState = atom<number>({
   key: "materialsTablePageState",
   default: 1,
 });
+
 export const isAllMaterialsCheckedState = atom<boolean>({
-    key: "isAllMaterialsCheckedState",
-    default: false,
+  key: "isAllMaterialsCheckedState",
+  default: false,
 });
+
 export const materialsUnCheckedState = atom<string[]>({
-    key: "materialsUnCheckedState",
-    default: [],
+  key: "materialsUnCheckedState",
+  default: [],
 });

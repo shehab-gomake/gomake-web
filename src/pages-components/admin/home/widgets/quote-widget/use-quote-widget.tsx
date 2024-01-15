@@ -83,6 +83,10 @@ const useQuoteWidget = () => {
     if (e.target.value) {
       getAllCustomersCreateQuote(e.target.value);
     }
+    else {
+      getAllCustomersCreateQuote()
+    }
+
   };
   const renderOptions = () => {
     return customersListCreateQuote;

@@ -80,7 +80,7 @@ const QuoteWidget = ({ isAdmin = true }) => {
           <GoMakeAutoComplate
             options={renderOptions() ? renderOptions() : []}
             placeholder={t("home.admin.selectCustomer")}
-            style={classes.selectCustomerContainer}
+            style={classes.selectCustomerContainer} 
             getOptionLabel={(option: any) =>
               option && option.name ? `${option.name}-${option.code}` : ""
             }

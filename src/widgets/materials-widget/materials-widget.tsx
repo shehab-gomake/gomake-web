@@ -56,6 +56,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
     tableHeadersNew,
     tableRowsNew,
     getMachinesMaterials,
+    getAllCustomersCreateQuote,
     materialFilter,
     openDeleteRowModal,
     onClickCloseDeleteRowModal,
@@ -118,6 +119,10 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
     getCurrenciesApi().then();
     getMachinesMaterials();
   }, [pageNumber]);
+
+  useEffect(() => {
+     getAllCustomersCreateQuote()
+  }, []);
 
   useEffect(() => {
     getMaterialCategories(materialType).then();

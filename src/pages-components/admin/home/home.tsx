@@ -7,7 +7,7 @@ import { useEffect } from "react";
 const HomePageComponentForAdmin = ({ isAdmin }) => {
   const { classes } = useStyle();
   const { Title, setIsDisplay, isDisplay, flag, selectedClient, t } = useHome();
-  console.log("selectedClient", selectedClient);
+  
   useEffect(() => {
     setIsDisplay(flag);
   }, [selectedClient]);

@@ -1,6 +1,4 @@
 import React from "react";
-import { useRecoilValue } from "recoil";
-import { materialsMachinesState } from "@/widgets/materials-widget/state";
 import { useTableCellData } from "@/widgets/materials-widget/components/table-cell-data/use-table-cell-data";
 import { GoMakeAutoComplate } from "@/components";
 import { Stack } from "@mui/material";
@@ -10,33 +8,30 @@ import { useStyle } from "./style";
 
 interface IProps {
   parameterKey: string;
-  values: string[];
+  placeholder?: string;
+  values?: string[];
   id: string;
   isAdmin: boolean;
+  options?: Array<{ value: string; label: string }>;
+  checkWhatRenderArray?:any;
 }
 
-const MultiSelectInput = ({ values, parameterKey, id, isAdmin }: IProps) => {
+const MultiSelectInput = ({ values=[], parameterKey, id, isAdmin , options=[] , placeholder , checkWhatRenderArray}: IProps) => {
   const { classes } = useStyle();
   const { updateCellData } = useTableCellData(isAdmin);
-  const machinesCategories = useRecoilValue<any>(materialsMachinesState);
 
-  const options = machinesCategories.map((machine) => ({
-    value: machine.id,
-    label: `${machine.manufacturer} - ${machine.model}`,
-  }));
+  // const reorderedOptions = options?.sort((a, b) => {
+  //   const isSelectedA = values.includes(a.value);
+  //   const isSelectedB = values.includes(b.value);
 
-  const reorderedOptions = options.sort((a, b) => {
-    const isSelectedA = values.includes(a.value);
-    const isSelectedB = values.includes(b.value);
-
-    if (isSelectedA && !isSelectedB) {
-      return -1;
-    } else if (!isSelectedA && isSelectedB) {
-      return 1;
-    } else {
-      return 0;
-    }
-  });
+  //   if (isSelectedA && !isSelectedB) {
+  //     return -1;
+  //   } else if (!isSelectedA && isSelectedB) {
+  //     return 1;
+  //   } else {
+  //     return 0;
+  //   }
+  // });
 
   const selectedLabels = values
     .map((selectedId) => options.find((opt) => opt.value === selectedId)?.label)
@@ -62,12 +57,13 @@ const MultiSelectInput = ({ values, parameterKey, id, isAdmin }: IProps) => {
   return (
     <div style={{ width: "100%", minWidth: 300 }}>
       <GoMakeAutoComplate
+        onChangeTextField={checkWhatRenderArray}
         multiple
         style={classes.multiSelectStyle2}
         value={selectedLabels}
         disableClearable={true}
-        placeholder={"Select machines"}
-        options={reorderedOptions}
+        placeholder={placeholder}
+        options={options}
         onChange={() => console.log("Not Work")}
         renderOption={(props: any, option: any) => {
           return (

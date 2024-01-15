@@ -26,6 +26,7 @@ import {
   materialCategoryDataState,
   materialCategorySuppliersState,
   materialHeadersState,
+  materialsClientsState,
   materialsMachinesState,
   materialsUnCheckedState,
   openAddRowModalState,
@@ -36,7 +37,7 @@ import { useTranslation } from "react-i18next";
 import { useAddCategoryRow } from "./components/add-row/use-add-row";
 import { WastebasketNew } from "@/icons/wastebasket-new";
 
-import { getAndSetMachincesNew } from "@/services/hooks";
+import { getAndSetAllCustomers, getAndSetMachincesNew } from "@/services/hooks";
 import { MaterialMenuWidget } from "./components/more-circle";
 import cloneDeep from "lodash.clonedeep";
 import { SideLeftMenuWidget } from "./components/side-list-menu";
@@ -144,12 +145,12 @@ const useMaterials = (isAdmin: boolean) => {
       value: category.categoryKey,
       icon: category.isAddedByPrintHouse
         ? () => (
-            <SideLeftMenuWidget
-              onClickOpenDeleteRowModal={onClickOpenDeleteRowModal}
-              setSelectedCategory={setSelectedCategory}
-              category={category}
-            />
-          )
+          <SideLeftMenuWidget
+            onClickOpenDeleteRowModal={onClickOpenDeleteRowModal}
+            setSelectedCategory={setSelectedCategory}
+            category={category}
+          />
+        )
         : null,
     }));
   }, [materialCategories]);
@@ -182,9 +183,9 @@ const useMaterials = (isAdmin: boolean) => {
         materialCategoryData.map((row) =>
           materialsIds.includes(row.id)
             ? {
-                ...row,
-                checked: !checked,
-              }
+              ...row,
+              checked: !checked,
+            }
             : { ...row, checked: false }
         )
       );
@@ -343,6 +344,15 @@ const useMaterials = (isAdmin: boolean) => {
     await getAndSetMachincesNew(callApi, setMachinesState);
   }, []);
 
+  const setCustomersListCreateQuote = useSetRecoilState<[]>(materialsClientsState);
+  const getAllCustomersCreateQuote = useCallback(async (SearchTerm?) => {
+    await getAndSetAllCustomers(callApi, setCustomersListCreateQuote, {
+      ClientType: "C",
+      onlyCreateOrderClients: false,
+      searchTerm: SearchTerm,
+    });
+  }, []);
+
   return {
     materialCategory,
     materialType,
@@ -369,7 +379,8 @@ const useMaterials = (isAdmin: boolean) => {
     onClickCloseDeleteTableRowModal,
     onDeleteCategoryRow,
     selectedTableRow,
-    materialName
+    materialName,
+    getAllCustomersCreateQuote,
   };
 };
 
