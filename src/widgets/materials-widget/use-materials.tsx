@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import {
   deleteMaterialCategoryApi,
@@ -21,13 +21,15 @@ import {
   activeFilterState,
   currenciesState,
   filterState,
-  flagState, isAllMaterialsCheckedState,
+  flagState,
+  isAllMaterialsCheckedState,
   materialActionState,
   materialCategoriesState,
   materialCategoryDataState,
   materialCategorySuppliersState,
   materialHeadersState,
-  materialsMachinesState, materialsUnCheckedState,
+  materialsMachinesState,
+  materialsUnCheckedState,
   openAddRowModalState,
   selectedSupplierIdState,
 } from "@/widgets/materials-widget/state";
@@ -43,6 +45,7 @@ import { getAndSetMachincesNew } from "@/services/hooks";
 import { MaterialMenuWidget } from "./components/more-circle";
 import { useTableCellData } from "./components/table-cell-data/use-table-cell-data";
 import cloneDeep from "lodash.clonedeep";
+import { SideLeftMenuWidget } from "./components/side-list-menu";
 
 const useMaterials = (isAdmin: boolean) => {
   const { query, push, replace } = useRouter();
@@ -62,9 +65,26 @@ const useMaterials = (isAdmin: boolean) => {
   const [materialCategoryData, setMaterialCategoryData] = useRecoilState<
     IMaterialCategoryRow[]
   >(materialCategoryDataState);
-  const [isAllMaterialsChecked, setIsAllMaterialsChecked] = useRecoilState<boolean>(isAllMaterialsCheckedState);
-  const [materialsUnChecked, setMaterialsUnChecked] = useRecoilState<string[]>(materialsUnCheckedState);
-
+  const [isAllMaterialsChecked, setIsAllMaterialsChecked] =
+    useRecoilState<boolean>(isAllMaterialsCheckedState);
+  const [materialsUnChecked, setMaterialsUnChecked] = useRecoilState<string[]>(
+    materialsUnCheckedState
+  );
+  const [openDeleteRowModal, setOpenDeleteRowModal] = useState<boolean>(false);
+  const onClickCloseDeleteRowModal = () => {
+    setOpenDeleteRowModal(false);
+  };
+  const onClickOpenDeleteRowModal = () => {
+    setOpenDeleteRowModal(true);
+  };
+  const [openDeleteTableRowModal, setOpenDeleteTableRowModal] =
+    useState<boolean>(false);
+  const onClickCloseDeleteTableRowModal = () => {
+    setOpenDeleteTableRowModal(false);
+  };
+  const onClickOpenDeleteTableRowModal = () => {
+    setOpenDeleteTableRowModal(true);
+  };
   const setMaterialCategorySuppliers = useSetRecoilState(
     materialCategorySuppliersState
   );
@@ -88,8 +108,7 @@ const useMaterials = (isAdmin: boolean) => {
     push(path + `/${materialType}?materialCategory=${category}`);
     setFlagState(false);
   };
-
-  // delete category which is added by PrintHouse
+  const [selectedTableRow, setSelectedTableRow] = useState<any>();
   const onDeleteCategory = async (categoryKey) => {
     const callBack = (res) => {
       if (res.success) {
@@ -126,16 +145,18 @@ const useMaterials = (isAdmin: boolean) => {
       await getPrintHouseMaterialCategoriesApi(callApi, callBack, material);
     }
   };
-
+  const [selectedCategory, setSelectedCategory] = useState<any>();
   const materialsCategoriesList = useCallback(() => {
     return materialCategories.map((category) => ({
       text: category.categoryName,
       value: category.categoryKey,
       icon: category.isAddedByPrintHouse
         ? () => (
-            <IconButton onClick={() => onDeleteCategory(category?.categoryKey)}>
-              <WastebasketNew width={"30px"} height={"30px"} />
-            </IconButton>
+            <SideLeftMenuWidget
+              onClickOpenDeleteRowModal={onClickOpenDeleteRowModal}
+              setSelectedCategory={setSelectedCategory}
+              category={category}
+            />
           )
         : null,
     }));
@@ -159,30 +180,35 @@ const useMaterials = (isAdmin: boolean) => {
     return materialCategoryData.every((row) => row.checked);
   }, [materialCategoryData]);
 
-  const onChangeHeaderCheckBox = useCallback((isAllChecked:boolean) => {
-    setIsAllMaterialsChecked(isAllChecked)
-    const checked = isAllSelected();
-    const materialsIds = materialCategoryData.map((material) => material.id);
-    setMaterialCategoryData(
-      materialCategoryData.map((row) =>
-        materialsIds.includes(row.id)
-          ? {
-              ...row,
-              checked: !checked,
-            }
-          : { ...row, checked: false }
-      )
-    );
-  }, [materialCategoryData, materialCategoryData, isAllSelected()]);
+  const onChangeHeaderCheckBox = useCallback(
+    (isAllChecked: boolean) => {
+      setIsAllMaterialsChecked(isAllChecked);
+      const checked = isAllSelected();
+      const materialsIds = materialCategoryData.map((material) => material.id);
+      setMaterialCategoryData(
+        materialCategoryData.map((row) =>
+          materialsIds.includes(row.id)
+            ? {
+                ...row,
+                checked: !checked,
+              }
+            : { ...row, checked: false }
+        )
+      );
+    },
+    [materialCategoryData, materialCategoryData, isAllSelected()]
+  );
 
-  const onChangeRowCheckBox = (id: string,checked:boolean) => {
-    if(isAllMaterialsChecked && !checked){
+  const onChangeRowCheckBox = (id: string, checked: boolean) => {
+    if (isAllMaterialsChecked && !checked) {
       const temp = cloneDeep(materialsUnChecked);
       temp.push(id);
-      setMaterialsUnChecked(temp)
+      setMaterialsUnChecked(temp);
     }
-    if(isAllMaterialsChecked && checked){
-      setMaterialsUnChecked(materialsUnChecked.filter(materialId => materialId != id))
+    if (isAllMaterialsChecked && checked) {
+      setMaterialsUnChecked(
+        materialsUnChecked.filter((materialId) => materialId != id)
+      );
     }
     setMaterialCategoryData(
       materialCategoryData.map((row) =>
@@ -193,14 +219,20 @@ const useMaterials = (isAdmin: boolean) => {
 
   const tableHeaders = useCallback(() => {
     return [
-      <Checkbox onChange={(event, checked)=>onChangeHeaderCheckBox(checked)} checked={isAllSelected()} />,
+      <Checkbox
+        onChange={(event, checked) => onChangeHeaderCheckBox(checked)}
+        checked={isAllSelected()}
+      />,
       ...materialHeaders.map((header) => header.value),
     ];
   }, [materialHeaders, materialCategoryData]);
 
   const tableHeadersNew = useCallback(() => {
     return [
-      <Checkbox onChange={(event, checked)=>onChangeHeaderCheckBox(checked)} checked={isAllSelected()} />,
+      <Checkbox
+        onChange={(event, checked) => onChangeHeaderCheckBox(checked)}
+        checked={isAllSelected()}
+      />,
       ...materialHeaders.map((header) =>
         header.unit ? (
           <div>
@@ -221,7 +253,7 @@ const useMaterials = (isAdmin: boolean) => {
     return materialCategoryData.map((dataRow) => {
       return [
         <Checkbox
-          onChange={(e,checked) => onChangeRowCheckBox(dataRow.id,checked)}
+          onChange={(e, checked) => onChangeRowCheckBox(dataRow.id, checked)}
           checked={dataRow.checked}
         />,
         ...materialHeaders.map((header) => (
@@ -232,7 +264,15 @@ const useMaterials = (isAdmin: boolean) => {
             isAdmin={isAdmin}
           />
         )),
-        <MaterialMenuWidget dataRow={dataRow} isAdmin={isAdmin} />,
+        <MaterialMenuWidget
+          dataRow={dataRow}
+          isAdmin={isAdmin}
+          setSelectedTableRow={setSelectedTableRow}
+          onClickOpenDeleteTableRowModal={onClickOpenDeleteTableRowModal}
+        />,
+        // <IconButton onClick={() => onDeleteCategoryRow(dataRow.id)}>
+        //   <WastebasketNew width={"30px"} height={"30px"} />
+        // </IconButton>,
       ];
     });
   }, [materialHeaders, materialCategoryData, activeFilter, materialFilter]);
@@ -241,7 +281,7 @@ const useMaterials = (isAdmin: boolean) => {
     return materialCategoryData.map((dataRow) => {
       return [
         <Checkbox
-          onChange={(e,checked) => onChangeRowCheckBox(dataRow.id,checked)}
+          onChange={(e, checked) => onChangeRowCheckBox(dataRow.id, checked)}
           checked={dataRow.checked}
         />,
         ...materialHeaders.map((header) => (
@@ -251,7 +291,15 @@ const useMaterials = (isAdmin: boolean) => {
             parameterKey={header.key}
           />
         )),
-        <MaterialMenuWidget dataRow={dataRow} isAdmin={isAdmin} />
+        <MaterialMenuWidget
+          dataRow={dataRow}
+          isAdmin={isAdmin}
+          setSelectedTableRow={setSelectedTableRow}
+          onClickOpenDeleteTableRowModal={onClickOpenDeleteTableRowModal}
+        />,
+        // <IconButton onClick={() => onDeleteCategoryRow(dataRow.id)}>
+        //   <WastebasketNew width={"30px"} height={"30px"} />
+        // </IconButton>,
       ];
     });
   }, [materialHeaders, materialCategoryData, activeFilter, materialFilter]);
@@ -295,8 +343,6 @@ const useMaterials = (isAdmin: boolean) => {
     });
   };
 
- 
-
   const setMachinesState = useSetRecoilState<[]>(materialsMachinesState);
   const getMachinesMaterials = useCallback(async () => {
     await getAndSetMachincesNew(callApi, setMachinesState);
@@ -320,6 +366,14 @@ const useMaterials = (isAdmin: boolean) => {
     tableRowsNew,
     getMachinesMaterials,
     materialFilter,
+    openDeleteRowModal,
+    onClickCloseDeleteRowModal,
+    onDeleteCategory,
+    selectedCategory,
+    openDeleteTableRowModal,
+    onClickCloseDeleteTableRowModal,
+    onDeleteCategoryRow,
+    selectedTableRow,
   };
 };
 

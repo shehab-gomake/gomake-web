@@ -1,46 +1,46 @@
 const DeleteMaterial = (props: any) => {
   return (
     <svg
-      width="16"
-      height="16"
+      width="24"
+      height="24"
       viewBox="0 0 16 16"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
       <path
-        d="M5.66602 9.50005C5.66602 10.78 6.71935 11.8334 7.99935 11.8334C9.27935 11.8334 10.3327 10.78 10.3327 9.50005"
+        d="M14 3.98665C11.78 3.76665 9.54667 3.65332 7.32 3.65332C6 3.65332 4.68 3.71999 3.36 3.85332L2 3.98665"
         stroke="#8283BE"
         stroke-width="1.5"
-        stroke-miterlimit="10"
         stroke-linecap="round"
         stroke-linejoin="round"
       />
       <path
-        d="M5.87427 1.33338L3.46094 3.75338"
+        d="M5.66602 3.3135L5.81268 2.44016C5.91935 1.80683 5.99935 1.3335 7.12602 1.3335H8.87268C9.99935 1.3335 10.086 1.8335 10.186 2.44683L10.3327 3.3135"
         stroke="#8283BE"
         stroke-width="1.5"
-        stroke-miterlimit="10"
         stroke-linecap="round"
         stroke-linejoin="round"
       />
       <path
-        d="M10.127 1.33338L12.5403 3.75338"
+        d="M12.5669 6.09326L12.1336 12.8066C12.0603 13.8533 12.0003 14.6666 10.1403 14.6666H5.86026C4.00026 14.6666 3.94026 13.8533 3.86693 12.8066L3.43359 6.09326"
         stroke="#8283BE"
         stroke-width="1.5"
-        stroke-miterlimit="10"
         stroke-linecap="round"
         stroke-linejoin="round"
       />
       <path
-        d="M1.33398 5.23338C1.33398 4.00005 1.99398 3.90005 2.81398 3.90005H13.1873C14.0073 3.90005 14.6673 4.00005 14.6673 5.23338C14.6673 6.66671 14.0073 6.56671 13.1873 6.56671H2.81398C1.99398 6.56671 1.33398 6.66671 1.33398 5.23338Z"
-        stroke="#8283BE"
-        stroke-width="1.5"
-      />
-      <path
-        d="M2.33398 6.66671L3.27398 12.4267C3.48732 13.72 4.00065 14.6667 5.90732 14.6667H9.92732C12.0007 14.6667 12.3073 13.76 12.5473 12.5067L13.6673 6.66671"
+        d="M6.88672 11H9.10672"
         stroke="#8283BE"
         stroke-width="1.5"
         stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+      <path
+        d="M6.33398 8.3335H9.66732"
+        stroke="#8283BE"
+        stroke-width="1.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
       />
     </svg>
   );

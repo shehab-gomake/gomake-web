@@ -5,12 +5,17 @@ import { useMoreCircle } from "./use-more-circle";
 import { useStyle } from "./style";
 import { useTranslation } from "react-i18next";
 import { ConvertIcon } from "@/pages-components/quotes/more-circle/icons/convert";
-import { EditingIcon } from "@/widgets/customer-card-modal/more-circle/icons/editing";
 import { DeleteIcon } from "@/widgets/settings-mailing/messageTemplates/components/more-circle/icons/delete";
 import { useTableCellData } from "../table-cell-data/use-table-cell-data";
 import { DuplicateIcon } from "@/components/icons/duplicate-icon";
 
-const MaterialMenuWidget = ({ dataRow, isAdmin }) => {
+const MaterialMenuWidget = ({
+  dataRow,
+  isAdmin,
+  setSelectedTableRow,
+  onClickOpenDeleteTableRowModal,
+}) => {
+  setSelectedTableRow(dataRow);
   const { clasess } = useStyle();
   const { open, anchorEl, handleClose, handleClick } = useMoreCircle();
   const { t } = useTranslation();
@@ -48,7 +53,13 @@ const MaterialMenuWidget = ({ dataRow, isAdmin }) => {
           </div>
         </MenuItem>
         <Divider />
-        <MenuItem style={clasess.menuItemContainer}>
+        <MenuItem
+          style={clasess.menuItemContainer}
+          onClick={() => {
+            onClickOpenDeleteTableRowModal();
+            handleClose();
+          }}
+        >
           <DeleteIcon />
           <div style={clasess.rowTextStyle}>
             {t("navigationButtons.delete")}
