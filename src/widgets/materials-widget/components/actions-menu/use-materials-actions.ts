@@ -39,15 +39,15 @@ const useMaterialsActions = (isAdmin:boolean) => {
     const getSelectedMaterialsIds = () => materialCategoryData.filter(row => row.checked).map(row => row.id);
     const onChooseAction = async (action: { action: EMaterialsActions, key: string } | null) => {
         
-        if(action.action === EMaterialsActions.AddNew){
+        if(action?.action === EMaterialsActions.AddNew){
             setOpenAddRowModal(true);
             return;
-        }
-        if(action.action === EMaterialsActions.DownLoadExcel){
+        } 
+        if(action?.action === EMaterialsActions.DownLoadExcel){
             downloadExcelFile().then();
             return;
         }
-        if(action.action === EMaterialsActions.UploadExcel){
+        if(action?.action === EMaterialsActions.UploadExcel){
             elementRef.current.click()
             return;
         }

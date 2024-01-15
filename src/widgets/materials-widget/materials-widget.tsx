@@ -239,7 +239,6 @@ const MaterialsWidget = (props:IMaterialsWidgetProps) => {
           </Stack>
         )}
       </SideBarContainer>
-
       <AddSupplierModal />
       <AddCategoryModal isAdmin={props.isAdmin} />
       <AddRowModal isAdmin={props.isAdmin} />
