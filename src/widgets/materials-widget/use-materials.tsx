@@ -262,7 +262,6 @@ const useMaterials = (isAdmin: boolean) => {
           isAdmin={isAdmin}
           setSelectedTableRow={setSelectedTableRow}
           onClickOpenDeleteTableRowModal={onClickOpenDeleteTableRowModal}
-          onClickDelete={onDeleteCategoryRow}
         />,
         // <IconButton onClick={() => onDeleteCategoryRow(dataRow.id)}>
         //   <WastebasketNew width={"30px"} height={"30px"} />
@@ -290,7 +289,6 @@ const useMaterials = (isAdmin: boolean) => {
           isAdmin={isAdmin}
           setSelectedTableRow={setSelectedTableRow}
           onClickOpenDeleteTableRowModal={onClickOpenDeleteTableRowModal}
-          onClickDelete={onDeleteCategoryRow}
         />,
         // <IconButton onClick={() => onDeleteCategoryRow(dataRow.id)}>
         //   <WastebasketNew width={"30px"} height={"30px"} />
