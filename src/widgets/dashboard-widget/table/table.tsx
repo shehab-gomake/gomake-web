@@ -98,7 +98,7 @@ const BoardMissionsTable = ({boardsMissions, usedMachines}: IBoardMissionsTable)
                                 <div style={{width: '5%'}}></div>
                                 <div style={{width: '35%'}}>{t('dashboard-widget.client')}</div>
                                 <div style={{width: '25%'}}>{t('dashboard-widget.task')}</div>
-                                <div style={isOrderByCreationDate ? {...classes.tableHead, ...classes.selectedMachine,width:'30%'} : {...classes.tableHead,width:'30%'}}  onClick={()=>sortByCreationDate()}>
+                                <div style={isOrderByCreationDate ? {...classes.tableHead, ...classes.selectedMachine,width:'30%',paddingTop:'29px'} : {...classes.tableHead,width:'30%',paddingTop:'29px'}}  onClick={()=>sortByCreationDate()}>
                                     {t('dashboard-widget.creationDate')}
                                 </div>
                                 <div style={{width: '20%'}}>{t('dashboard-widget.product')}</div>
