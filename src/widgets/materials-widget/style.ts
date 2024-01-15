@@ -1,17 +1,34 @@
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { useMemo } from "react";
 import { FONT_FAMILY } from "@/utils/font-family";
+import { adaptPaddingLeft, adaptPaddingRight } from "@/utils/adapter";
+import { useTranslation } from "react-i18next";
 
 const useStyle = () => {
   const { theme, primaryColor, secondColor, neutralColor } = useGomakeTheme();
+  const {t} = useTranslation()
+  const direction = t('direction');
   const classes = useMemo(() => {
     return {
-      mainContainer: {
-        paddingLeft: 20,
-      },
       header: {
         ...FONT_FAMILY.Lexend(700, 20),
         color: "#000",
+      },
+      headerStyle:{
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        width: "100%",
+        paddingRight: 12,
+        ...adaptPaddingRight(direction, 20),
+      },
+      backButtonStyle:{
+        height: 30,
+        marginRight: 5,
+        background: "#CBCBE5",
+        width: 90,
+        borderRadius: 8,
       },
       subHeader: {
         ...FONT_FAMILY.Lexend(600, 20),
