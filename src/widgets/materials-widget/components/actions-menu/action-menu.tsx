@@ -32,6 +32,7 @@ import {
   PercentageMaterial,
   UnitsPriceMaterial,
   UploadExcelSheet,
+
 } from "@/icons";
 interface IActionMenuProps {
   isAdmin: boolean;
@@ -51,6 +52,8 @@ const ActionMenu = (props: IActionMenuProps) => {
     setCheckedPrice,
     setRate,
     rate,
+    uploadExcelFile,
+    elementRef
   } = useMaterialsActions(props.isAdmin);
   const currencies = useRecoilValue(currenciesState);
   const materialActions = useRecoilValue(materialActionState);
@@ -117,6 +120,13 @@ const ActionMenu = (props: IActionMenuProps) => {
       <IconButton onClick={handleMoreOptionIconClick}>
         <SettingsIcon stroke={"#000000"} />
       </IconButton>
+      <input
+          ref={elementRef}
+          onChange={uploadExcelFile}
+          type="file"
+          accept=".xlsx"
+          hidden={true}
+      />
       <Menu
         open={Boolean(anchorEl)}
         anchorEl={anchorEl}
