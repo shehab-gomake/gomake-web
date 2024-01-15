@@ -244,6 +244,18 @@ const useAuthLayoutHook = (permissionEnumValue?: Permissions) => {
       },
       {
         isLine: false,
+        key: "machinesAdmin",
+        title: "tabs.machinesAdmin",
+        path: "/machines-admin",
+        Permission: Permissions.SHOW_MACHINES,
+        isList: false,
+        icon: () => {
+          return <LocalPrintshopOutlinedIcon style={{ color: "#FFFFFF" }} />;
+        },
+        isProduction: true,
+      },
+      {
+        isLine: false,
         key: "actions",
         title: "tabs.actions",
         path: "/actions",

@@ -1,7 +1,7 @@
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { useMemo } from "react";
 import { FONT_FAMILY } from "@/utils/font-family";
-import { adaptPaddingLeft, convertHeightToVH } from "@/utils/adapter";
+import { adaptPaddingLeft, adaptPaddingRight, convertHeightToVH } from "@/utils/adapter";
 import { HEADER_HEIGHT, SCREEN_HEIGHT } from "@/utils/layout-config";
 import { useTranslation } from "react-i18next";
 
@@ -16,6 +16,7 @@ const useStyle = () => {
         maxHeight: convertHeightToVH(SCREEN_HEIGHT - HEADER_HEIGHT),
         // height: convertHeightToVH(SCREEN_HEIGHT - HEADER_HEIGHT),
         ...adaptPaddingLeft(direction, 20),
+        ...adaptPaddingRight(direction, 20),
       },
       container: {
         display: "flex",

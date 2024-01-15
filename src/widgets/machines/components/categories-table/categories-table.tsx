@@ -42,7 +42,7 @@ const CategoriesTable = ({ isAdmin }: ICategoriesTableProps) => {
       startIcon={<EditIcon color={primaryColor(500)} width={20} height={20} />}
       href={
         isAdmin
-          ? `/admin/machine/category/${category.id}`
+          ? `/machines-admin/category/${category.id}`
           : `/machines/category/${category.id}`
       }
       variant={"text"}
@@ -59,7 +59,7 @@ const CategoriesTable = ({ isAdmin }: ICategoriesTableProps) => {
         <SecondaryButton
           style={classes.addMachineBtn}
           variant={"contained"}
-          href={`/admin/machine/add-machine`}
+          href={`/machines-admin/add-machine`}
           startIcon={<AddIcon />}
         >
           Add Machine

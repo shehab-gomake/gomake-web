@@ -64,6 +64,25 @@ const useStyle = () => {
         justifyContent: "center",
         alignItems: "center",
       },
+      AddNewRuleDiv: {
+        marginTop: "2%",
+        marginBottom: "2%",
+        cursor: "pointer",
+        display: "flex",
+        alignItems: "center",
+      },
+      spanAddNewRule: {
+        ...FONT_FAMILY.Lexend(500, 12),
+        color: primaryColor(500),
+        fontSize: 15,
+        marginLeft: 10,
+      },
+      textInputStyle: {
+        border: "0px",
+        background: "#fff",
+        borderRadius: 4,
+        height: 40,
+      },
     };
   }, []);
   return {

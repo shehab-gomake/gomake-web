@@ -164,16 +164,9 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
   ]);
 
   return (
-    <div style={classes.mainContainer}>
+    <div>
       <div
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          justifyContent: "space-between",
-          alignItems: "center",
-          width: "100%",
-          paddingRight: 12,
-        }}
+        style={classes.headerStyle}
       >
         <div
           style={{
@@ -188,13 +181,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
             variant={"text"}
             href={props.isAdmin ? "/materials-admin" : "/materials"}
             startIcon={dir === "ltr" ? <ArrowBackIcon /> : <ArrowForwardIcon />}
-            style={{
-              height: 30,
-              marginRight: 5,
-              background: "#CBCBE5",
-              width: 90,
-              borderRadius: 8,
-            }}
+            style={classes.backButtonStyle}
           >
             {t("materials.buttons.back")}
           </PrimaryButton>
