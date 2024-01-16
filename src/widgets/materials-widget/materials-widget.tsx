@@ -56,6 +56,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
     tableHeadersNew,
     tableRowsNew,
     getMachinesMaterials,
+    getClientsMaterials,
     materialFilter,
     openDeleteRowModal,
     onClickCloseDeleteRowModal,
@@ -117,6 +118,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
   useEffect(() => {
     getCurrenciesApi().then();
     getMachinesMaterials();
+    getClientsMaterials();
   }, [pageNumber]);
 
   useEffect(() => {

@@ -13,17 +13,13 @@ interface IProps {
   values: string[];
   id: string;
   isAdmin: boolean;
+  options: {label: string; value: string;}[];
+  placeHolder?: string;
 }
 
-const MultiSelectInput = ({ values, parameterKey, id, isAdmin }: IProps) => {
+const MultiSelectInput = ({ values, parameterKey, id, isAdmin , options , placeHolder}: IProps) => {
   const { classes } = useStyle();
   const { updateCellData } = useTableCellData(isAdmin);
-  const machinesCategories = useRecoilValue<any>(materialsMachinesState);
-
-  const options = machinesCategories.map((machine) => ({
-    value: machine.id,
-    label: `${machine.manufacturer} - ${machine.model}`,
-  }));
 
   const reorderedOptions = options.sort((a, b) => {
     const isSelectedA = values.includes(a.value);
@@ -60,13 +56,13 @@ const MultiSelectInput = ({ values, parameterKey, id, isAdmin }: IProps) => {
   };
 
   return (
-    <div style={{ width: "100%", minWidth: 300 }}>
-      <GoMakeAutoComplate
+    <div style={{display:"flex" ,justifyContent:"center"}}>
+    <GoMakeAutoComplate
         multiple
         style={classes.multiSelectStyle2}
         value={selectedLabels}
         disableClearable={true}
-        placeholder={"Select machines"}
+        placeholder={placeHolder}
         options={reorderedOptions}
         onChange={() => console.log("Not Work")}
         renderOption={(props: any, option: any) => {

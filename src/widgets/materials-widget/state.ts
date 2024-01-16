@@ -100,6 +100,12 @@ export const materialsMachinesState = atom<[]>({
   default: [],
 });
 
+export const materialsClientsState = atom<[]>({
+  key: "materialsClientsState",
+  default: [],
+});
+
+
 export const materialsTablePageState = atom<number>({
   key: "materialsTablePageState",
   default: 1,
