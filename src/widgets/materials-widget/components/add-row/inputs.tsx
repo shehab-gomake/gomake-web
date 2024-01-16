@@ -99,7 +99,7 @@ const rowInputs = (
     })
     .filter((input) => input !== null);
 
-  const imageCase = materialHeaders.find(
+  const imageCase = newHeaders.find(
     (header) => header.inputType === EDataTypeEnum.IMAGE
   );
   if (imageCase) {
