@@ -9,8 +9,8 @@ import { ImageInput } from "./image-input";
 import { MultiSelectInput } from "./multi-select-input";
 import { SelectInput } from "./select-input";
 
-const TableCellData = ({ value, type, isEditable, parameterKey, id, values,isAdmin }: IRowData) => {
-    const { updateCellData } = useTableCellData(isAdmin);
+const TableCellData = ({ value, type, isEditable, parameterKey, id, values,isAdmin , }: IRowData) => {
+    const { updateCellData , machinesOptions , clientsOptions} = useTableCellData(isAdmin);
 
     const toggleIsActive = async () => {
         await updateCellData(id, parameterKey, !value)
@@ -28,7 +28,9 @@ const TableCellData = ({ value, type, isEditable, parameterKey, id, values,isAdm
         case EDataTypeEnum.LIST:
             return <SelectInput values={values} parameterKey={parameterKey} id={id} value={value as string} isAdmin={isAdmin} />
         case EDataTypeEnum.MACHINES_LIST:
-            return <MultiSelectInput values={value as string[]} parameterKey={parameterKey} id={id} isAdmin={isAdmin}/>
+            return <MultiSelectInput values={value as string[]} parameterKey={parameterKey} id={id} isAdmin={isAdmin} options={machinesOptions} placeHolder="Select machine"/>
+            case EDataTypeEnum.CLIENTS_LIST:
+                return <MultiSelectInput values={value as string[]} parameterKey={parameterKey} id={id} isAdmin={isAdmin} options={clientsOptions} placeHolder="Select client"/>
         default:
             return <NumberStringInput type={type} isEditable={isEditable} parameterKey={parameterKey} id={id} value={value} isAdmin={isAdmin}/>
     }

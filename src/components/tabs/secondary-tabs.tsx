@@ -50,7 +50,7 @@ const SecondaryTab = styled(Tab)((props: TabProps) => {
     }
 });
 
-const SecondaryTabsComponent = ({tabs, children, navigationButtons, onSelectTab}: ITabsProps) => {
+const SecondaryTabsComponent = ({tabs, children, navigationButtons, onSelectTab , withBackGround = true}: ITabsProps) => {
     const [value, setValue] = useState(0);
     const handleChange = (event, newValue) => {
         setValue(newValue);
@@ -62,7 +62,7 @@ const SecondaryTabsComponent = ({tabs, children, navigationButtons, onSelectTab}
         <>
             <Stack direction={'row'} flexWrap={"wrap"} justifyContent={'space-between'} alignItems={'center'}
                    position={'sticky'} top={0}
-                   bgcolor={'#FFF'} zIndex={1}>
+                   bgcolor={ withBackGround && '#FFF'} zIndex={1}>
                 <SecondaryTabs
                     value={value}
                     onChange={handleChange}>

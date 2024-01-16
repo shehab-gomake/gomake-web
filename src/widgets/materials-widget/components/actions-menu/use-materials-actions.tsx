@@ -32,9 +32,11 @@ import {
   PercentageMaterial,
   UnitsPriceMaterial,
   UploadExcelSheet,
+  UploadMaterialsPictures,
 } from "@/icons";
 import {
   getMaterialExcelFileApi,
+  updateMaterialsImagesApi,
   updateMaterialsPropApi,
   uploadMaterialExcelFileApi,
 } from "@/services/api-service/materials/materials-endpoints";
@@ -68,6 +70,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
   const activeFilter = useRecoilValue(activeFilterState);
   const materialFilter = useRecoilValue(filterState);
   const elementRef = useRef(null);
+  const uploadImgRef = useRef(null);
   const { getMaterialCategoryData } = useMaterialsCategories(isAdmin);
   useEffect(() => {
     if (checkedPrice) getExchangeRate(currentCurrency, updatedValue);
@@ -90,6 +93,10 @@ const useMaterialsActions = (isAdmin: boolean) => {
     }
     if (action?.action === EMaterialsActions.UploadExcel) {
       elementRef.current.click();
+      return;
+    }
+    if (action?.action === EMaterialsActions.UploadMaterialsPictures) {
+      uploadImgRef.current.click();
       return;
     }
     if (getSelectedMaterialsIds().length > 0) {
@@ -303,6 +310,28 @@ const useMaterialsActions = (isAdmin: boolean) => {
     }
   };
 
+  const updateMaterialsImages = async (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const arrayBuffer = event.target.result;
+        const data = new Uint8Array(arrayBuffer as ArrayBuffer);
+        // Convert data to a Base64 string
+        var base64String = btoa(
+          new Uint8Array(data).reduce(function (data, byte) {
+            return data + String.fromCharCode(byte);
+          }, "")
+        );
+        updateMaterialsImagesApi(callApi, () => {}, {
+          materialTypeKey: materialType.toString(),
+          base64ZipFile: base64String,
+        });
+      };
+      reader.readAsArrayBuffer(file);
+    }
+  };
+
   const currencies = useRecoilValue(currenciesState);
   const materialActions = useRecoilValue(materialActionState);
 
@@ -355,6 +384,9 @@ const useMaterialsActions = (isAdmin: boolean) => {
     }
     if (iconName === EMaterialsTabsIcon.UPLOAD_EXCEL) {
       return <UploadExcelSheet />;
+    }
+    if (iconName === EMaterialsTabsIcon.Upload_Materials_Pictures) {
+      return <UploadMaterialsPictures />;
     }
   };
   const initialProperties = {
@@ -422,12 +454,14 @@ const useMaterialsActions = (isAdmin: boolean) => {
     onTextInputChange,
     onInputChange,
     uploadExcelFile,
+    updateMaterialsImages,
     onUpdate,
     checkedPrice,
     setCheckedPrice,
     setRate,
     rate,
     elementRef,
+    uploadImgRef,
     handleMoreOptionIconClick,
     anchorEl,
     handleCloseMenu,

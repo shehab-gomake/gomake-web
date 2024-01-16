@@ -8,9 +8,13 @@ import {
     updatePermissionApi, updateRoleNameApi
 } from "@/services/api-service/users/permissions";
 import {TableHeader} from "@/widgets/settings-users/Permissions/components/table-header";
+import {useUserPermission} from "@/hooks/use-permission";
+import {Permissions} from "@/components/CheckPermission/enum";
+import {useTranslation} from "react-i18next";
 
 const usePermissions = () => {
     const {callApi} = useGomakeAxios();
+    const { t } = useTranslation();
     const [groups, setgroups] = useState<IPermissionsGroup[]>([]);
     const [roles, setRoles] = useState<IRole[]>([]);
     const [permissions, setPermissions] = useState<IPermission[]>([]);
@@ -21,6 +25,7 @@ const usePermissions = () => {
     const [modalState, setModalState] = useState<boolean>(false);
     const [modalInputValue, setModalInputValue] = useState<string>('');
     const [updateRoleId, setUpdateRoleId] = useState<string>('');
+    const {CheckPermission} = useUserPermission();
     const getAndSetPermissionRolesRelationsByGroupId = async (id) => {
         const callBack = (res) => {
             if (res.success) {
@@ -69,7 +74,7 @@ const usePermissions = () => {
             }
         }
         const data = {permissionId, roleId};
-        await updatePermissionApi(callApi, callBackFunction, data)
+        await updatePermissionApi(callApi, callBackFunction, data , false)
     }
 
     useEffect(() => {
@@ -78,7 +83,7 @@ const usePermissions = () => {
                 const relation = permission.rolesPermissionsRelationships.find(relation => relation.roleId === role.id)
                 return <SecondSwitch checked={!!relation} onChange={() => UpdatePermission(role.id, permission.id)}/>
             });
-            return [permission.description, ...tableRow]
+            return [t("permissions."+permission.description), ...tableRow]
         })
         setTable(permissionsTable);
     }, [roles, permissions])
@@ -86,8 +91,14 @@ const usePermissions = () => {
     const getPermissionRolesRelations = async () => {
         const callBack = (res) => {
             if (res?.success) {
-                setRoles([{id: "", name: "Permission", key: 'permissionsSettings.permissions'}, ...res?.data.roles]);
-                setgroups(res?.data.groups)
+                let rolesResult = res?.data.roles;
+                let groupsResult = res?.data.groups;
+                if(!CheckPermission(Permissions.SHOW_ADMINISTRATION_PERMISSIONS)){
+                    rolesResult = rolesResult.filter(x=>!x.isAdminRole);
+                    groupsResult = groupsResult.filter(x=>!x.isAdminGroup);
+                }
+                setRoles([{id: "", name: "Permission", key: 'permissionsSettings.permissions'}, ...rolesResult]);
+                setgroups(groupsResult);
                 setPermissions(res?.data.permissions);
             }
         }
@@ -116,7 +127,7 @@ const usePermissions = () => {
     }, [table, PermissionName])
 
     const tabs = useCallback(() => {
-        return groups?.map(group => ({title: group.name}))
+        return groups?.map(group => ({title: t("permissionsTabs."+group.name)}))
     }, [groups])
 
     const updateRoleName = async () => {

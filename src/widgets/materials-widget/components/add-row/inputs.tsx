@@ -5,14 +5,13 @@ const rowInputs = (
   materialHeaders?,
   currencies?,
   machinesCategories?,
+  clientsCategories?,
   newMaterialHeaders?
 ) => {
-  console.log("state", state);
   const newHeaders = newMaterialHeaders ? newMaterialHeaders : materialHeaders;
   const inputArray = newHeaders
     ?.filter((header) => header.key !== "Active")
     .map((header) => {
-      console.log("header", header);
       switch (EDataTypeEnum[header?.inputType]) {
         case "CURRENCY":
           return {
@@ -75,6 +74,24 @@ const rowInputs = (
             isValid: true,
             multiple: true,
           };
+
+          case "CLIENTS_LIST":
+            return {
+              name: header?.key,
+              label: newMaterialHeaders ? null : header?.value,
+              type: "select",
+              placeholder: header?.key,
+              required: false,
+              parameterKey: header?.key,
+              options: clientsCategories.map((client) => ({
+                value: client.id,
+                text: `${client.name} - ${client.code}`,
+              })),
+              value: state?.parameterKey,
+              values: state?.clients ? state?.clients : [],
+              isValid: true,
+              multiple: true,
+            };
         default:
           if (EDataTypeEnum[header?.inputType] === "IMAGE") return null;
           else
@@ -99,7 +116,7 @@ const rowInputs = (
     })
     .filter((input) => input !== null);
 
-  const imageCase = materialHeaders.find(
+  const imageCase = newHeaders.find(
     (header) => header.inputType === EDataTypeEnum.IMAGE
   );
   if (imageCase) {

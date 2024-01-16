@@ -1,12 +1,17 @@
 import { ICallAndSetData } from "@/services/api-service/interface";
 import { getSetApiData } from "@/services/api-service/get-set-api-data";
 import { EHttpMethod } from "@/services/api-service/enums";
-import { IDynamicRowData, IMaterialTableFilteringValue } from "@/widgets/materials-widget/interface";
+import {
+  IDynamicRowData,
+  IMaterialTableFilteringValue,
+} from "@/widgets/materials-widget/interface";
 
 const GET_MATERIALS_TYPES_URL = "/v1/materials/getMaterialsTypes";
-const GET_MATERIAL_TABLE_HEADERS_URL = "/v1/materials/GetMaterialTypeTableHeader";
+const GET_MATERIAL_TABLE_HEADERS_URL =
+  "/v1/materials/GetMaterialTypeTableHeader";
 const DOWNLOAD_MATERIAL_EXCEL_FILE = "/v1/materials/download-material-excel";
 const UPLOAD_MATERIAL_EXCEL_FILE = "/v1/materials/upload-material-excel-file";
+const UPDATE_MATERIALS_IMAGES = "/v1/materials/update-materials-images";
 const GET_MATERIAL_CATEGORIES_URL = "/v1/materials/GetMaterialCategories";
 const GET_MATERIAL_CATEGORY_DATA_URL = "/v1/materials/GetMaterialCategoryData";
 const UPDATE_MATERIAL_PROPS_URL = "/v1/materials/updateMaterial";
@@ -14,9 +19,13 @@ const UPDATE_MATERIALS_PROPS_URL = "/v1/materials/updateMaterials";
 const ADD_MATERIAL_CATEGORY_URL = "/v1/materials/add-material-category";
 const ADD_MATERIAL_CATEGORY_ROW_URL = "/v1/materials/add-material-category-row";
 const DELETE_MATERIAL_CATEGORY_URL = "/v1/materials/delete-material-category";
-const DELETE_MATERIAL_CATEGORY_Row_URL = "/v1/materials/delete-material-category-row";
+const DELETE_MATERIAL_CATEGORY_Row_URL =
+  "/v1/materials/delete-material-category-row";
 
-const getMaterialTableHeadersApi: ICallAndSetData = async (callApi, setState, material: string
+const getMaterialTableHeadersApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  material: string
 ) => {
   return await getSetApiData(
     callApi,
@@ -35,7 +44,10 @@ const getMaterialsTypesApi: ICallAndSetData = async (callApi, setState) => {
   );
 };
 
-const getMaterialExcelFileApi: ICallAndSetData = async (callApi, setState, material: string
+const getMaterialExcelFileApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  material: string
 ) => {
   return await getSetApiData(
     callApi,
@@ -45,7 +57,11 @@ const getMaterialExcelFileApi: ICallAndSetData = async (callApi, setState, mater
   );
 };
 
-const uploadMaterialExcelFileApi: ICallAndSetData = async (callApi, callBack, data: { key: string; base64: string }) => {
+const uploadMaterialExcelFileApi: ICallAndSetData = async (
+  callApi,
+  callBack,
+  data: { key: string; base64: string }
+) => {
   return await getSetApiData(
     callApi,
     EHttpMethod.POST,
@@ -54,8 +70,25 @@ const uploadMaterialExcelFileApi: ICallAndSetData = async (callApi, callBack, da
     data
   );
 };
+const updateMaterialsImagesApi: ICallAndSetData = async (
+  callApi,
+  callBack,
+  data: { base64ZipFile: string; materialTypeKey: string }
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.PUT,
+    UPDATE_MATERIALS_IMAGES,
+    callBack,
+    data
+  );
+};
 
-const getMaterialCategoriesApi: ICallAndSetData = async (callApi, setState, material: string) => {
+const getMaterialCategoriesApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  material: string
+) => {
   return await getSetApiData(
     callApi,
     EHttpMethod.GET,
@@ -72,7 +105,7 @@ const getMaterialCategoryDataApi: ICallAndSetData = async (
     categoryKey: string;
     pageNumber: number;
     pageSize: number;
-    customFiltersKeyValueList: IMaterialTableFilteringValue[]
+    customFiltersKeyValueList: IMaterialTableFilteringValue[];
   }
 ) => {
   return await getSetApiData(
@@ -179,6 +212,7 @@ export {
   getMaterialTableHeadersApi,
   getMaterialExcelFileApi,
   uploadMaterialExcelFileApi,
+  updateMaterialsImagesApi,
   getMaterialCategoriesApi,
   getMaterialCategoryDataApi,
   updateMaterialPropApi,
@@ -186,5 +220,5 @@ export {
   addMaterialCategoryApi,
   addMaterialCategoryRowApi,
   deleteMaterialCategoryApi,
-  deleteMaterialCategoryRowApi
+  deleteMaterialCategoryRowApi,
 };

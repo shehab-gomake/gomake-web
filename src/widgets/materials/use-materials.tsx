@@ -3,7 +3,7 @@ import { Permissions } from "@/components/CheckPermission/enum";
 import { PrimaryButton } from "@/components/button/primary-button";
 import { useGomakeRouter } from "@/hooks";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
-import { usePermission } from "@/hooks/use-permission";
+import { useUserPermission } from "@/hooks/use-permission";
 import { EditIcon } from "@/icons";
 import { permissionsState } from "@/store/permissions";
 import { matchSorter } from "match-sorter";
@@ -16,7 +16,7 @@ const useMaterials = ({ admin }: any) => {
   const { navigate } = useGomakeRouter();
   const { primaryColor } = useGomakeTheme();
   const [term, setTerm] = useState("");
-  const { CheckPermission } = usePermission();
+  const { CheckPermission } = useUserPermission();
   const [materilasSearched, setMaterilasSearched] = useState([]);
   const categoriesList = useMemo(() => {
     return [

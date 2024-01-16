@@ -1,24 +1,14 @@
-import { useGomakeAuth, useGomakeAxios, useGomakeRouter } from "@/hooks";
-import {
-  CustomersIcon,
-  HomeIcon,
-  PartnersIcon,
-  ProductFloorIcon,
-  ProductsIcon,
-  ReportsIcon,
-  SalesIcon,
-  SettingNavBar,
-  ShopingIcon,
-} from "@/icons";
-import { useEffect, useMemo, useState } from "react";
-import { CubeIcon } from "@/components/icons/cube-icon";
-import { useRecoilState, useRecoilValue } from "recoil";
-import { ICompanyProfile, companyProfileState } from "@/store/company-profile";
-import { Permissions } from "@/components/CheckPermission/enum";
+import {useGomakeAuth, useGomakeAxios, useGomakeRouter} from "@/hooks";
+import {CustomersIcon, HomeIcon, ProductFloorIcon, SalesIcon, SettingNavBar, ShopingIcon,} from "@/icons";
+import {useEffect, useMemo, useState} from "react";
+import {CubeIcon} from "@/components/icons/cube-icon";
+import {useRecoilValue} from "recoil";
+import {companyProfileState, ICompanyProfile} from "@/store/company-profile";
+import {Permissions} from "@/components/CheckPermission/enum";
 
 import LocalPrintshopOutlinedIcon from "@mui/icons-material/LocalPrintshopOutlined";
 import PendingActionsOutlinedIcon from "@mui/icons-material/PendingActionsOutlined";
-import GTranslateIcon from "@mui/icons-material/GTranslate";
+
 const useAuthLayoutHook = (permissionEnumValue?: Permissions) => {
   const { isAuth } = useGomakeAuth(permissionEnumValue);
   const { navigate } = useGomakeRouter();
@@ -73,11 +63,11 @@ const useAuthLayoutHook = (permissionEnumValue?: Permissions) => {
         title: "tabs.sales",
         path: "/",
         isList: true,
-        Permission: Permissions.SHOW_SALES,
         list: [
           {
             key: "boardMissions",
             title: "home.tabs.boardMissions",
+            Permission: Permissions.SHOW_PRODUCTION_FLOOR,
             path: "/board-missions",
           },
           {
@@ -133,7 +123,6 @@ const useAuthLayoutHook = (permissionEnumValue?: Permissions) => {
         title: "tabs.purchase",
         path: "/",
         isList: true,
-        Permission: Permissions.SHOW_SHOPPING,
         list: [
           {
             key: "purchaseOrders",
@@ -161,10 +150,9 @@ const useAuthLayoutHook = (permissionEnumValue?: Permissions) => {
       },
       {
         isLine: false,
-        key: "customers",
-        title: "tabs.customers",
+        key: "contacts",
+        title: "tabs.contacts",
         path: "/",
-        Permission: Permissions.SHOW_CUSTOMERS,
         isList: true,
         list: [
           {

@@ -7,6 +7,7 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import { selectedTabState } from "@/store";
 import { navStatusState } from "@/store/nav-status";
 import { useTranslation } from "react-i18next";
+import {useUserPermission} from "@/hooks/use-permission";
 interface IProps {
   tab: {
     isLine?: boolean;
@@ -27,6 +28,8 @@ const Tab = ({ tab, customGap }: IProps) => {
   const [isHover, setIsHover] = useState(false);
   const navStatus = useRecoilValue(navStatusState);
   const { t } = useTranslation();
+  const { CheckPermission } = useUserPermission();
+
   const { clasess } = useStyle({ isHover, navStatus, customGap });
   const handleMouseEnter = useCallback(() => {
     setIsHover(true);
@@ -86,7 +89,7 @@ const Tab = ({ tab, customGap }: IProps) => {
       </div>
       <Collapse in={isListOpen}>
         {!navStatus.isClosed &&
-          tab.list?.map((list: any) => {
+          tab.list?.filter(x=>!x.Permission || CheckPermission(x.Permission)).map((list: any) => {
             return (
               <div style={clasess.tabList} key={list?.key}>
                 <div

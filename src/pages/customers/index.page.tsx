@@ -91,7 +91,7 @@ export default function Home() {
   ]);
 
   return (
-    <CustomerAuthLayout permissionEnumValue={Permissions.SHOW_CUSTOMERS}>
+    <CustomerAuthLayout permissionEnumValue={Permissions.SHOW_CLIENT}>
       <Stack
         direction="column"
         justifyContent="space-between"
