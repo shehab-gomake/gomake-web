@@ -13,6 +13,7 @@ import { SettingsProfileWidget } from "@/widgets/settings-profile-widget/setting
 import { SettingsMailingWidget } from "../settings-mailing/settings-mailing-widget";
 import { SettingsDocumentingWidget } from "../settings-documenting/settings-documenting-widget";
 import { TranslationsWidget } from "../translation-widget/translation-widget";
+import {Permissions} from "@/components/CheckPermission/enum";
 
 export const list: IListItem[] = [
   {
@@ -63,6 +64,7 @@ export const list: IListItem[] = [
     component: TranslationsWidget,
     text: "settings.translations",
     value: "8",
+    permission: Permissions.TRANSLATION_ADMIN,
     icon: DocumentIcon,
     path: "translations",
   },
