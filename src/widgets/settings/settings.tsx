@@ -8,12 +8,15 @@ import { IListItem } from "@/components/containers/interface";
 import { SecondaryButton } from "@/components/button/secondary-button";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import {useUserPermission} from "@/hooks/use-permission";
 
 const SettingsWidget = () => {
   const { t } = useTranslation();
   const { push, query } = useRouter();
   const { settingsRoute, id, productId } = query;
   const [selected, setSelected] = useState<IListItem>();
+  const { CheckPermission } = useUserPermission();
+
   const onSelectItem = (value: string) => {
     const selectedItem = list.find((item) => item.value === value);
     push("/settings/" + selectedItem.path).then();
@@ -42,7 +45,7 @@ const SettingsWidget = () => {
           </SecondaryButton>
         )}
         <SideList
-          list={list.map((item) => ({ ...item, text: t(item.text) }))}
+          list={ list.filter(x=>!x.permission || CheckPermission(x.permission)).map((item) => ({ ...item, text: t(item.text) }))}
           selectedItem={selected?.value}
           onSelect={onSelectItem}
           title={t("settings.settings")}
