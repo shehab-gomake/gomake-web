@@ -8,6 +8,7 @@ import Button from "@mui/material/Button";
 import { Paper } from "@mui/material";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import {
+  materialsClientsState,
   materialsMachinesState,
   openAddSupplierModalState,
 } from "@/widgets/materials-widget/state";
@@ -49,20 +50,36 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
     value: machine.id,
     label: `${machine.manufacturer} - ${machine.model}`,
   }));
+
+  const clientsCategories = useRecoilValue<any>(materialsClientsState);
+  const clientsOptions = clientsCategories.map((client) => ({
+    ...client,
+    value: client.id,
+    label: `${client.name} - ${client.code}`,
+  }));
   return (
     <Stack direction={"row"} gap={2} alignItems={"center"}>
       {materialTableFilters &&
         materialTableFilters.map(({ key, values }) => {
+          if (key === "clients") {
+            return (
+              <GoMakeAutoComplate
+                key={key}
+                onChange={(e, v) =>
+                  setFilterValue(
+                    key,
+                    v.map((item) => item.id)
+                  )
+                }
+                style={{ width: "300px", height: 40, overflow: "scroll" }}
+                options={clientsOptions}
+                placeholder={key}
+                multiple
+              />
+            );
+          }
           if (key === "machines") {
             return (
-              // <GoMakeAutoComplate
-              //   key={key}
-              //   onChange={(e, v) => setFilterValue(key, v?.id)}
-              //   style={{ width: "300px", height: 40, overflow: "scroll" }}
-              //   options={options}
-              //   placeholder={key}
-              //   multiple
-              // />
               <GoMakeAutoComplate
                 key={key}
                 onChange={(e, v) =>

@@ -89,7 +89,9 @@ const useMaterialFilters = () => {
             ...filters.filter((x) => x.key !== key),
             {
               key: key,
-              ...(key === "machines" ? { values: value } : { value: value }),
+              ...(key === "machines" || key === "clients"
+                ? { values: value }
+                : { value: value }),
             },
           ]
         : filters.filter((x) => x.key !== key);
