@@ -30,7 +30,9 @@ const ActionMenu = (props: IActionMenuProps) => {
     setRate,
     rate,
     uploadExcelFile,
+    updateMaterialsImages,
     elementRef,
+    uploadImgRef,
     handleMoreOptionIconClick,
     anchorEl,
     handleCloseMenu,
@@ -55,6 +57,13 @@ const ActionMenu = (props: IActionMenuProps) => {
         onChange={uploadExcelFile}
         type="file"
         accept=".xlsx"
+        hidden={true}
+      />
+      <input
+        ref={uploadImgRef}
+        onChange={updateMaterialsImages}
+        type="file"
+        accept=".zip,.rar,.7zip"
         hidden={true}
       />
       <Menu
