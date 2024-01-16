@@ -69,7 +69,7 @@ const usePermissions = () => {
             }
         }
         const data = {permissionId, roleId};
-        await updatePermissionApi(callApi, callBackFunction, data)
+        await updatePermissionApi(callApi, callBackFunction, data , false)
     }
 
     useEffect(() => {
