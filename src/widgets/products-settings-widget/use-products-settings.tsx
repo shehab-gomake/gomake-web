@@ -15,14 +15,12 @@ const useProductsSettings = () => {
     setValue(newValue);
   };
   const tabs = [
-    CheckPermission(Permissions.SHOW_PRODUCT_MANAGMENT) &&  {
+    {
       name: t("settings.productManagement"),
     },
-    CheckPermission(Permissions.SHOW_SHIPMENT) &&
     {
       name: t("settings.shipmentsSetting"),
     },
-    CheckPermission(Permissions.SHOW_PRICING) &&
     {
       name: t("settings.pricingSetting"),
     },

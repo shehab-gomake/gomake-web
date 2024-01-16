@@ -27,6 +27,25 @@ const LeftSideLayout = (customGap) => {
       setNavStatus({ isClosed: false });
     }
   }, []);
+  const checkTabPermissions = (tab) => {
+    
+    if(tab.isList && tab.list){
+        debugger
+        for(let i = 0;i<tab.list.length;i++){
+            if(!tab.list[i].Permission){
+                return true;
+            }
+            if(CheckPermission(tab.list[i].Permission)){
+                return true;
+            }
+        }
+        return false;
+    }
+    else if(tab.Permission && !CheckPermission(tab.Permission)){
+      return false;
+    }
+    return true;
+  }
   return (
     <div
       style={clasess.leftContainer}
@@ -82,7 +101,7 @@ const LeftSideLayout = (customGap) => {
                 <div key={tab.key} style={clasess.line} />
               </div>
             );
-          } else {
+          } else if(checkTabPermissions(tab)) {
             return <Tab key={tab.key} tab={tab} customGap={customGap} />;
           }
         })}
@@ -107,10 +126,7 @@ const LeftSideLayout = (customGap) => {
                   <div style={clasess.line} />
                 </div>
               );
-            } else if (
-              tab.Permission !== null &&
-              CheckPermission(tab.Permission) === true
-            ) {
+            } else if(checkTabPermissions(tab)) {
               return <Tab key={tab.key} tab={tab} />;
             }
           })

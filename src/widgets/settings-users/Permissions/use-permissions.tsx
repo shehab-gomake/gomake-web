@@ -10,9 +10,11 @@ import {
 import {TableHeader} from "@/widgets/settings-users/Permissions/components/table-header";
 import {useUserPermission} from "@/hooks/use-permission";
 import {Permissions} from "@/components/CheckPermission/enum";
+import {useTranslation} from "react-i18next";
 
 const usePermissions = () => {
     const {callApi} = useGomakeAxios();
+    const { t } = useTranslation();
     const [groups, setgroups] = useState<IPermissionsGroup[]>([]);
     const [roles, setRoles] = useState<IRole[]>([]);
     const [permissions, setPermissions] = useState<IPermission[]>([]);
@@ -81,7 +83,7 @@ const usePermissions = () => {
                 const relation = permission.rolesPermissionsRelationships.find(relation => relation.roleId === role.id)
                 return <SecondSwitch checked={!!relation} onChange={() => UpdatePermission(role.id, permission.id)}/>
             });
-            return [permission.description, ...tableRow]
+            return [t("permissions."+permission.description), ...tableRow]
         })
         setTable(permissionsTable);
     }, [roles, permissions])
@@ -125,12 +127,7 @@ const usePermissions = () => {
     }, [table, PermissionName])
 
     const tabs = useCallback(() => {
-        if(CheckPermission(Permissions.SHOW_ADMINISTRATION_PERMISSIONS)){
-            return groups?.map(group => ({title: group.name}))
-        }else{
-            return groups?.filter(x=>!x.isAdminGroup).map(group => ({title: group.name}))
-        }
-        
+        return groups?.map(group => ({title: t("permissionsTabs."+group.name)}))
     }, [groups])
 
     const updateRoleName = async () => {

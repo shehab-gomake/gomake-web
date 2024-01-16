@@ -22,7 +22,7 @@ const ProductsSettingsWidget = () => {
   return (
     <div style={clasess.mainContainer}>
       <div style={clasess.mainHeadecontainer}>
-        <PermissionCheck userPermission={Permissions.SHOW_PRODUCTS_SETTINGS}>
+        <PermissionCheck userPermission={Permissions.SHOW_PRODUCTS}>
           <UsersSettingsTabs
             value={value}
             onChange={handleChange}
@@ -62,7 +62,7 @@ const ProductsSettingsWidget = () => {
         value={value}
         index={EWidgetProductSettingsTabs.PRODUCT_MANAGMENT}
       >
-        <PermissionCheck userPermission={Permissions.SHOW_PRODUCT_MANAGMENT}>
+        <PermissionCheck userPermission={Permissions.SHOW_PRODUCTS}>
           <ProductManagementWidget />
         </PermissionCheck>
       </CustomTabPanel>

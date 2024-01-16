@@ -21,10 +21,8 @@ const MoreMenuWidget = ({ quote, documentType, onClickOpenModal, onClickPdf, onC
     <OptionsButton>
       <MenuItem onClick={onClickLoggers}>
         <div style={classes.menuRowStyle}>
-          <PermissionCheck userPermission={Permissions.SHOW_LOGGERS_QUOTE}>
             <EditingIcon />
             <div style={classes.rowTextStyle}>{t("sales.quote.loggers")}</div>
-          </PermissionCheck>
         </div>
       </MenuItem>
 

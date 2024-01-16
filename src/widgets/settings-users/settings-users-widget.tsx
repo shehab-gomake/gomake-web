@@ -30,8 +30,8 @@ const SettingsUsersWidget = () => {
     } = useEmployee();
     const {addNewRole, setOpenAddRoleModal, openAddRoleModal, inputValue, setInputValue} = useAddRole();
     const tabs: ITab[] = [
-        CheckPermission(Permissions.SHOW_USERS) &&  {title:  t("usersSettings.users"), component: <UsersSettings/> },
-        CheckPermission(Permissions.SHOW_PERMISSION_MANAGMENT) &&  {title:  t("usersSettings.permission"), component:  <PermissionsWidget/>}
+        CheckPermission(Permissions.SHOW_EMPLOYEES) &&  {title:  t("usersSettings.users"), component: <UsersSettings/> },
+        CheckPermission(Permissions.SHOW_PERMISSIONS) &&  {title:  t("usersSettings.permission"), component:  <PermissionsWidget/>}
         
     ];
     return (

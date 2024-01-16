@@ -9,7 +9,6 @@ const useUserPermission = ()=>{
    
     const CheckPermission =  (permission : string) => {
         const res = permissions.includes(permission);
-        //return true;
         return !!(permissions && res);
     }
     return {

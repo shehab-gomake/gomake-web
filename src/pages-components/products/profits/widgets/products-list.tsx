@@ -80,14 +80,14 @@ const ProductList = () => {
               })}
             </>
           </div>
-          <PermissionCheck userPermission={Permissions.ADD_NEW_CASE}>
+          <PermissionCheck userPermission={Permissions.EDIT_PROFITS}>
               <div
                 style={clasess.addNewProductContainer2}
                 onClick={() => profitsStateValue.setOpenAddTestProductModal(true)}
               >
                 <AddIcon />
                 <div style={clasess.addProductStyle}>
-                  { CheckPermission(Permissions.ADD_NEW_CASE) ? t("products.profits.addNewProduct") : null}
+                  { CheckPermission(Permissions.EDIT_PROFITS) ? t("products.profits.addNewProduct") : null}
                 </div>
               </div>
           </PermissionCheck>
@@ -95,7 +95,7 @@ const ProductList = () => {
         </div>
       ) : (
        
-           <PermissionCheck userPermission={Permissions.ADD_NEW_CASE}>
+           <PermissionCheck userPermission={Permissions.EDIT_PROFITS}>
                 <div style={clasess.noDataContainer}></div>
                   <div
                     style={clasess.addNewProductContainer}
@@ -103,7 +103,7 @@ const ProductList = () => {
                   >
                     <AddIcon />
                     <div style={clasess.addProductStyle}>
-                    {CheckPermission(Permissions.ADD_NEW_CASE) ? t("products.profits.addNewProduct") : null}
+                    {CheckPermission(Permissions.EDIT_PROFITS) ? t("products.profits.addNewProduct") : null}
                     </div>
                   </div>
            </PermissionCheck>
