@@ -5,6 +5,7 @@ const rowInputs = (
   materialHeaders?,
   currencies?,
   machinesCategories?,
+  clientsCategories?,
   newMaterialHeaders?
 ) => {
   const newHeaders = newMaterialHeaders ? newMaterialHeaders : materialHeaders;
@@ -73,6 +74,24 @@ const rowInputs = (
             isValid: true,
             multiple: true,
           };
+
+          case "CLIENTS_LIST":
+            return {
+              name: header?.key,
+              label: newMaterialHeaders ? null : header?.value,
+              type: "select",
+              placeholder: header?.key,
+              required: false,
+              parameterKey: header?.key,
+              options: clientsCategories.map((client) => ({
+                value: client.id,
+                text: `${client.name} - ${client.code}`,
+              })),
+              value: state?.parameterKey,
+              values: state?.clients ? state?.clients : [],
+              isValid: true,
+              multiple: true,
+            };
         default:
           if (EDataTypeEnum[header?.inputType] === "IMAGE") return null;
           else

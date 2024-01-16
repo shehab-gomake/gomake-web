@@ -176,6 +176,7 @@ const ActionMenu = (props: IActionMenuProps) => {
                           materialHeaders,
                           currencies,
                           [],
+                          [],
                           [item?.key]
                         ).map((item) => (
                           <FormInput
