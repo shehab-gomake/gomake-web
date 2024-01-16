@@ -11,4 +11,5 @@ export enum EMaterialsTabsIcon {
   DELETE = "delete",
   DOWNLOAD_EXCEL = "excel",
   UPLOAD_EXCEL = "uploadFile",
+  Upload_Materials_Pictures = "UploadMaterialsPictures",
 }
