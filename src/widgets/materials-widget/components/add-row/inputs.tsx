@@ -7,12 +7,10 @@ const rowInputs = (
   machinesCategories?,
   newMaterialHeaders?
 ) => {
-  console.log("state", state);
   const newHeaders = newMaterialHeaders ? newMaterialHeaders : materialHeaders;
   const inputArray = newHeaders
     ?.filter((header) => header.key !== "Active")
     .map((header) => {
-      console.log("header", header);
       switch (EDataTypeEnum[header?.inputType]) {
         case "CURRENCY":
           return {
