@@ -94,7 +94,7 @@ const ActionMenu = (props: IActionMenuProps) => {
       </Menu>
       <GoMakeModal
         onClose={handleCloseModal}
-        insideStyle={{ width: 500, height: "fit-content" }}
+        insideStyle={{ width: 500, height: "auto" }}
         openModal={action !== null}
         modalTitle={t("materialsActions." + action?.key)}
       >
@@ -166,9 +166,10 @@ const ActionMenu = (props: IActionMenuProps) => {
                       alignItems: "center",
                       gap: 10,
                       width: "100%",
+                      height: item?.key?.key === "image" ? 155 : "100%",
                     }}
                   >
-                    <div style={{ width: "50%" }}>
+                    <div style={{ width: "50%", height: "100%" }}>
                       <GoMakeAutoComplate
                         placeholder={"select property"}
                         getOptionLabel={(option: any) => option.key}
@@ -178,7 +179,9 @@ const ActionMenu = (props: IActionMenuProps) => {
                         }}
                       />
                     </div>
-                    <div style={{ width: "50%", marginTop: -24 }}>
+                    <div
+                      style={{ width: "50%", marginTop: -24, height: "100%" }}
+                    >
                       {properties[index].key &&
                         rowInputs(
                           properties[index].key,
