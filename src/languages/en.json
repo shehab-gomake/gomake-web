@@ -91,10 +91,12 @@
     "purchase": "Purchase",
     "purchaseOrders": "Orders",
     "purchaseInvoices": "invoices",
-    "supplierPayments": "payments"
+    "supplierPayments": "payments",
+    "translations": "Translations"
   },
   "properties": {
     "parameter": "Parameter",
+    "unit":"Unit",
     "rule": "Rule",
     "type": "Type",
     "more": "More",
@@ -1520,7 +1522,13 @@
         "enterCode": "Enter Code",
         "addNewProduct": "Add new product",
         "addGoToList": "Add and go to the list of parameters",
-        "updateNewProduct": "Update product"
+        "updateNewProduct": "Update product",
+        "clients":"Clients",
+        "allCustomers":"all customers",
+        "byClient":"by client",
+        "byClientType":"by client type",
+        "uploadImg":"Upload image"
+
       }
     },
     "parameters": {
@@ -1563,7 +1571,13 @@
         "stationName": "Station name",
         "actionType": "Action type",
         "machine": "Machine",
-        "loadingOptimalWorkflows": "loading optimal workflows..."
+        "loadingOptimalWorkflows": "loading optimal workflows...",
+        "includeVAT": "Include VAT",
+        "graphicDesign":"Graphic design",
+        "productionComment":"Production comment",
+        "graphicDesignComment":"Graphic design comment",
+        "Pricing":"Pricing"
+
       }
     },
     "productManagement": {
@@ -1708,6 +1722,9 @@
       "createdBy": "Created by {{name}}",
       "customer": "Customer",
       "orderList": "Order List",
+      "receiptList": "Receipt List",
+      "deliveryNoteList": "Delivery Note List",
+      "invoiceList": "Invoice List",
       "deleteItem": "Delete Item",
       "areYouSureDeleteItem": "Are you sure to delete this item?",
       "amount": "Amount",
@@ -1742,7 +1759,16 @@
       "actionDescription":"Action Description",
       "selectEmployee":"select employee",
       "selectDate":"select date",
-      "quoteLogs":"Logs for quote"
+      "quoteLogs":"Logs for quote",
+      "quote": "Quote",
+      "order": "Order",
+      "invoice":"Invoice",
+      "receipt": "Receipt",
+      "deliveryNote" : "Delivery Note",
+      "invoiceNumber": "Invoice Number",
+      "receiptNumber": "Receipt Number",
+      "deliveryNoteNumber": "Delivery Note Number"
+
     }
   },
   "usersSettings": {
@@ -1832,7 +1858,8 @@
     "finances": "Finances",
     "productManagement": "Product management",
     "shipmentsSetting": "Shipments setting",
-    "pricingSetting": "Pricing setting"
+    "pricingSetting": "Pricing setting",
+    "translations" : "Translations"
   },
   "customers": {
     "buttons": {
@@ -2127,7 +2154,9 @@
     "AddItemtoQuote": "Add item to quote",
     "convertToInactive": "Convert to inactive",
     "convertToActive": "Convert to active",
-    "editing": "Editing"
+    "editing": "Editing",
+    "createSubProduct": "Create sub product",
+    "goToSubProducts": "Go to sub products"
   },
   "materialsTrans": {
     "additions": "Additions",
@@ -2530,5 +2559,29 @@
     "add": "Add",
     "price": "Price",
     "chooseWorkFlow": "Choose work flow"
+  },
+  "translations" : {
+"title" : "Translations",
+"addNew" : "add new",
+"edit" : "Edit" ,
+"add" : "Add" ,
+"addNewBlock" :"Add new block" ,
+"editTranslation" : "Edit Translation",
+"addTranslation" : "Add Translation",
+"arabic": "Arabic",
+"english": "English",
+"hebrew": "Hebrew",
+"deutsche":"Deutsche",
+"key":"Key",
+"path":"Path",
+"download" : "Download",
+"upload":"Upload"
+  },
+  "quantityTypes": {
+    "quantity": "Quantity",
+    "typeAmount": "Type amount",
+    "equalQuantity": "Equal quantity",
+    "duplicateName": "Duplicate name",
+    "typeName": "Type name"
   }
 }

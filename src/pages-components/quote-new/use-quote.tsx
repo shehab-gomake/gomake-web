@@ -8,23 +8,23 @@ import {
   getAndSetAllCustomers,
   getAndSetAllEmployees,
   getAndSetClientContacts,
-  getAndSetQuotesByUserId,
 } from "@/services/hooks";
+
 import {
-  addressSelectState,
   IContactData,
   agentListsState,
   businessListsState,
-  clientAddressState,
   clientContactsState,
   quoteItemState,
 } from "@/store";
 import { QuoteStatuses } from "@/widgets/quote/total-price-and-vat/enums";
 import { addressModalState } from "@/widgets/quote-new/business-widget/address-widget/state";
 import { useQuoteGetData } from "./use-quote-get-data";
-import { addQuoteAddressApi, deleteQuoteAddressApi, updateQuoteAddressApi } from "@/services/api-service/quote/quote-addresses-api";
+import { addDeliveryApi, addDocumentAddressApi, addDocumentContactApi, calculateDocumentApi, calculateDocumentItemApi, cancelDocumentApi, changeDocumentClientApi, deleteDocumentAddressApi, deleteDocumentContactApi, deleteDocumentItemApi, duplicateWithAnotherQuantityApi, getDocumentApi, refreshExchangeRateApi, saveDocumentApi, sendDocumentToClientApi, updateAgentApi, updateDocumentAddressApi, updateDocumentContactApi, updateDocumentCurrencyApi, updateDueDateApi, updateExchangeRateApi, updatePurchaseNumberApi } from "@/services/api-service/generic-doc/documents-api";
+import { DOCUMENT_TYPE } from "../quotes/enums";
+import { useRouter } from "next/router";
 
-const useQuoteNew = () => {
+const useQuoteNew = (docType : DOCUMENT_TYPE ) => {
   const {
     alertSuccessUpdate,
     alertFaultUpdate,
@@ -37,18 +37,16 @@ const useQuoteNew = () => {
   const { navigate } = useGomakeRouter();
   const { t } = useTranslation();
   const { getAllClientAddress } = useQuoteGetData();
-  const [quoteItemValue, setQuoteItemValue] =
-    useRecoilState<any>(quoteItemState);
+  const [quoteItemValue, setQuoteItemValue] = useRecoilState<any>(quoteItemState);
   const [selectDate, setSelectDate] = useState(quoteItemValue?.dueDate);
   const [customersListValue, setCustomersListValue] =
     useRecoilState<any>(businessListsState);
   const [selectBusiness, setSelectBusiness] = useState<any>({});
-  const [isUpdateBusinessName, setIsUpdateBusinessName] = useState<
-    number | null
-  >(null);
-  const [isUpdatePurchaseNumber, setIsUpdatePurchaseNumber] = useState<
-    number | null
-  >(null);
+  const [isUpdateBusinessName, setIsUpdateBusinessName] = useState<number | null>(null);
+  const [isUpdatePurchaseNumber, setIsUpdatePurchaseNumber] = useState<number | null>(null);
+  const [isUpdateExchangeRate, setIsUpdateExchangeRate] = useState<number | null>(null);
+  const [isUpdateCurrency, setIsUpdateCurrency] = useState<string>(null);
+
 
   const [, setIsUpdateBusinessCode] = useState<number | null>(null);
   const [isUpdateAddress, setIsUpdateAddress] = useState<number | null>(null);
@@ -68,23 +66,20 @@ const useQuoteNew = () => {
   const [selectedContact, setSelectedContact] = useState();
   const [openDeleteModalContact, setOpenDeleteModalContact] = useState(false);
   const [openAddNewItemModal, setOpenAddNewItemModal] = useState(false);
-  const [qouteItemId, setQuateItemId] = useState();
+  const [quoteItemId, setQuateItemId] = useState();
   const [
     openDuplicateWithDifferentQTYModal,
     setOpenDuplicateWithDifferentQTYModal,
   ] = useState(false);
   const [selectedContactById, setSelectedContactById] = useState<any>();
-  const [amountVlue, setAmountValue] = useState();
+  const [amountValue, setAmountValue] = useState();
   const [openDeleteItemModal, setOpenDeleteItemModal] = useState(false);
-  const [priceListItems, setPriceListItems] = useState<any>([]);
+  const [documentItems, setPriceListItems] = useState<any>([]);
   const [quoteItems, setquoteItems] = useState<any>([]);
-  const [anchorElCancelBtn, setAnchorElCancelBtn] =
-    useState<null | HTMLElement>(null);
-  const [anchorElSendBtn, setAnchorElSendBtn] = useState<null | HTMLElement>(
-    null
-  );
-  const [anchorElSettingMenu, setAnchorElSettingMenu] =
-    useState<null | HTMLElement>(null);
+  const [anchorElCancelBtn, setAnchorElCancelBtn] = useState<null | HTMLElement>(null);
+  const [anchorElSendBtn, setAnchorElSendBtn] = useState<null | HTMLElement>(null);
+  const [anchorElSettingMenu, setAnchorElSettingMenu] = useState<null | HTMLElement>(null);
+  const [displayedItems, setDisplayedItems] = useState<number>(2);
   const openSendBtn = Boolean(anchorElSendBtn);
   const openCancelBtn = Boolean(anchorElCancelBtn);
   const openSettingMenu = Boolean(anchorElSettingMenu);
@@ -106,6 +101,16 @@ const useQuoteNew = () => {
   const handleSendBtnClose = () => {
     setAnchorElSendBtn(null);
   };
+
+  const [openAddDeliveryModal, setOpenAddDeliveryModal] = useState(false);
+
+  const onOpenDeliveryModal = () => {
+    setOpenAddDeliveryModal(true);
+  };
+  const onCloseDeliveryModal = () => {
+    setOpenAddDeliveryModal(false);
+  };
+
   const tableHeaders = [
     "#",
     t("sales.quote.itemCode"),
@@ -120,29 +125,78 @@ const useQuoteNew = () => {
   const columnWidths = ["5%", "8%", "12%", "33%", "8%", "8%", "8%", "8%"];
   const headerHeight = "44px";
 
-  const getQuote = useCallback(async () => {
-    await getAndSetQuotesByUserId(callApi, setQuoteItemValue);
-  }, []);
+  const router = useRouter();
 
-  const updateDueDate = useCallback(async () => {
-    const res = await callApi(
-      EHttpMethod.PUT,
-      `/v1/erp-service/quote/update-due-date`,
-      {
-        quoteId: quoteItemValue?.id,
+  const getQuote = async () => {
+    const callBack = (res) => {
+      if (res?.success) {
+        let indexs = 0;
+        const _data = res?.data;
+        const mapData = _data?.documentItems?.map((item: any, index: number) => {
+          indexs++;
+          const parentIndex = indexs;
+          const _childsDocumentItemsMapping = item?.childsDocumentItems?.map(
+            (child: any, index2: number) => {
+              indexs++;
+              return {
+                id: indexs,
+                amount: child?.quantity,
+                unitPrice: child?.price,
+                discount: child?.discount,
+                finalPrice: child?.finalPrice,
+                quoteItemId: child?.id,
+              };
+            }
+          );
+          return {
+            id: parentIndex,
+            itemName: item?.productName,
+            details: (
+              <div
+                style={
+                  _childsDocumentItemsMapping != null
+                    ? { height: "100%", overflowY: "scroll", paddingRight: 5 }
+                    : { height: 36, overflowY: "scroll", paddingRight: 5 }
+                }
+              >
+                {item?.content}
+              </div>
+            ),
+            amount: item?.quantity,
+            unitPrice: item?.price,
+            discount: item?.discount,
+            finalPrice: item?.finalPrice,
+            quoteItemId: item?.id,
+            childsDocumentItems: _childsDocumentItemsMapping,
+          };
+        });
+
+        _data.documentItemsMapping = mapData;
+        setQuoteItemValue(_data);
+      } else {
+        alertFaultAdded();
+      }
+    }
+    //await getDocumentApi(callApi, callBack, { documentType: docType})
+    await getDocumentApi(callApi, callBack, { documentType: docType , Id: router?.query?.Id })
+  }
+
+  const updateDueDate = async () => {
+    const callBack = (res) => {
+      if (res?.success) {
+        alertSuccessAdded();
+        getQuote();
+      } else {
+        alertFaultAdded();
+      }
+    }
+    await updateDueDateApi(callApi, callBack, {
+      DocumentType: docType, Date: {
+        documentId: quoteItemValue?.id,
         dueDate: selectDate,
       }
-    );
-    if (res?.success) {
-      alertSuccessAdded();
-      getQuote();
-    } else {
-      alertFaultAdded();
-    }
-  }, [quoteItemValue, selectDate]);
-  useEffect(() => {
-    getQuote();
-  }, []);
+    })
+  }
 
   const getAllCustomers = useCallback(async () => {
     await getAndSetAllCustomers(callApi, setCustomersListValue, {
@@ -151,18 +205,7 @@ const useQuoteNew = () => {
     });
   }, []);
 
-  useEffect(() => {
-    const foundItem = customersListValue.find(
-      (item: any) => item.id === quoteItemValue?.customerID
-    );
-    setSelectBusiness(foundItem);
-  }, [quoteItemValue, customersListValue]);
-
-  useEffect(() => {
-    getAllCustomers();
-  }, []);
-
-  const onBlurPurchaseNumber = async (value = 5) => {
+  const onBlurPurchaseNumber = async (value) => {
     updatePurchaseNumber(value);
     setIsUpdatePurchaseNumber(null);
   };
@@ -183,35 +226,23 @@ const useQuoteNew = () => {
     setIsUpdateBusinessName(null);
   };
 
+  const onBlurExchangeRate = async (value:number) => {
+    updateExchangeRate(value);
+    setIsUpdateExchangeRate(null);
+  };
+
+  const onBlurCurrency = async () => {
+    setIsUpdateCurrency(null);
+  };
+
   const getAllEmployees = useCallback(async () => {
     await getAndSetAllEmployees(callApi, setAgentListValue, {
       isAgent: true,
     });
   }, []);
 
-  useEffect(() => {
-    if (agentListValue?.length > 0) {
-      const selectedAgent1 = agentListValue.find(
-        (agent) => agent.value === quoteItemValue?.agentId
-      );
-      setSelectedAgent(selectedAgent1);
-    }
-  }, [agentListValue, quoteItemValue]);
-
-  useEffect(() => {
-    getAllEmployees();
-  }, []);
-
-  const updateAgent = useCallback(
-    async (item: any) => {
-      const res = await callApi(
-        EHttpMethod.PUT,
-        `/v1/erp-service/quote/update-agent`,
-        {
-          quoteId: quoteItemValue?.id,
-          agentId: item?.value,
-        }
-      );
+  const updateAgent = async (item: any) => {
+    const callBack = (res) => {
       if (res?.success) {
         alertSuccessUpdate();
         setIsUpdateAgent(null);
@@ -219,22 +250,75 @@ const useQuoteNew = () => {
       } else {
         alertFaultUpdate();
       }
-    },
-    [quoteItemValue]
-  );
+    }
+    await updateAgentApi(callApi, callBack, {
+      documentType: docType , document: {
+        documentId: quoteItemValue?.id,
+        agentId: item?.value,
+      }
+
+    })
+  }
+
+  const updateExchangeRate = async (value: number) => {
+    const callBack = (res) => {
+      if (res?.success) {
+        alertSuccessUpdate();
+        setIsUpdateExchangeRate(null);
+        getQuote();
+      } else {
+        alertFaultUpdate();
+      }
+    }
+    await updateExchangeRateApi(callApi, callBack, {
+      documentType: docType , document: {
+        documentId: quoteItemValue?.id,
+        exchangeRate: value,
+      }
+
+    })
+  }
+
+  const refreshExchangeRate = async () => {
+    const callBack = (res) => {
+      if (res?.success) {
+        getQuote();
+      } else {
+        alertFaultUpdate();
+      }
+    }
+    await refreshExchangeRateApi(callApi, callBack, {
+      documentType: docType , document: {
+        documentId: quoteItemValue?.id,
+      }
+    })
+  }
+
+  const updateCurrency = async (currency: string) => {
+    const callBack = (res) => {
+      if (res?.success) {
+        alertSuccessUpdate();
+        setIsUpdateCurrency(null);
+        getQuote();
+      } else {
+        alertFaultUpdate();
+      }
+    }
+    await updateDocumentCurrencyApi(callApi, callBack, {
+      documentType: docType , document: {
+        documentId: quoteItemValue?.id,
+        currency: currency,
+      }
+
+    })
+  }
+
+  
+    ///////////////////////////////// currency & exchange rate /////////////////////////////////
 
 
-
-  const updatePurchaseNumber = useCallback(
-    async (value: any) => {
-      const res = await callApi(
-        EHttpMethod.PUT,
-        `/v1/erp-service/quote/update-purchase-number`,
-        {
-          quoteId: quoteItemValue?.id,
-          purchaseNumber: value,
-        }
-      );
+  const updatePurchaseNumber = async (value: string) => {
+    const callBack = (res) => {
       if (res?.success) {
         alertSuccessUpdate();
         setIsUpdatePurchaseNumber(null);
@@ -242,22 +326,18 @@ const useQuoteNew = () => {
       } else {
         alertFaultUpdate();
       }
-    },
-    [quoteItemValue]
-  );
+    }
+    await updatePurchaseNumberApi(callApi, callBack, {
+      documentType: docType, document: {
+        documentId: quoteItemValue?.id,
+        purchaseNumber: value,
+      }
 
-  // update business name (client)
-  const onChangeSelectBusiness = useCallback(
-    async (item: any) => {
-      const res = await callApi(
-        EHttpMethod.PUT,
-        `/v1/erp-service/quote/change-client`,
-        {
-          quoteID: quoteItemValue?.id,
-          clientId: item?.id,
-          userId: quoteItemValue?.userID,
-        }
-      );
+    })
+  }
+
+  const onChangeSelectBusiness = async (item: any) => {
+    const callBack = (res) => {
       if (res?.success) {
         alertSuccessUpdate();
         setIsUpdateBusinessName(null);
@@ -265,14 +345,19 @@ const useQuoteNew = () => {
       } else {
         alertFaultUpdate();
       }
-    },
-    [selectBusiness, quoteItemValue]
-  );
- 
+    }
+    await changeDocumentClientApi(callApi, callBack, {
+      documentType: docType, client: {
+        documentID: quoteItemValue?.id,
+        clientId: item?.id,
+      }
+    })
+  }
+
   const onBlurContactName = async () => {
     setIsUpdateContactName(null);
-  //  setIsDisplayWidget(false);
-  }; 
+    //  setIsDisplayWidget(false);
+  };
 
   const onBlurContactEmail = async () => {
     setIsUpdateContactEmail(null);
@@ -291,34 +376,6 @@ const useQuoteNew = () => {
     setItems(temp);
   };
 
-  useEffect(() => {
-    setItems(quoteItemValue?.quoteContacts);
-  }, [quoteItemValue]);
-
-  const updateClientContact = useCallback(async (item: any) => {
-    const res = await callApi(
-      "PUT",
-      `/v1/erp-service/quote/update-quote-contact`,
-      {
-        id: item?.id,
-        contactID: item?.contactID,
-        contactName: item?.contactName,
-        contactMail: item?.contactMail,
-        contactPhone: item?.contactPhone,
-        quoteID: item?.quoteID,
-      }
-    );
-    if (res?.success) {
-      alertSuccessUpdate();
-      setIsUpdateContactEmail(null);
-      setIsUpdateContactName(null);
-      setIsUpdateContactMobile(null);
-      getQuote();
-    } else {
-      alertFaultUpdate();
-    }
-  }, []);
-
   const getAllClientContacts = useCallback(async () => {
     if (quoteItemValue?.customerID) {
       await getAndSetClientContacts(callApi, setClientContactsValue, {
@@ -327,11 +384,72 @@ const useQuoteNew = () => {
     }
   }, [quoteItemValue]);
 
-  useEffect(() => {
-    getAllClientContacts();
-  }, [quoteItemValue]);
+  const onClickAddNewContact = async () => {
+    const callBack = (res) => {
+      if (res?.success) {
+        alertSuccessAdded();
+        setIsDisplayWidget(false);
+        getQuote();
+      } else {
+        alertFaultAdded();
+      }
+    }
+    await addDocumentContactApi(callApi, callBack, {
+      documentType: docType,
+      contact:
+      {
+        contactID: selectedContactById?.id,
+        contactName: selectedContactById?.name,
+        contactMail: selectedContactById?.mail,
+        contactPhone: selectedContactById?.phone,
+        documentID: quoteItemValue?.id,
+      }
+    })
+  }
 
-  const [displayedItems, setDisplayedItems] = useState<number>(2);
+  const updateClientContact = async (item: any) => {
+    const callBack = (res) => {
+      if (res?.success) {
+        alertSuccessUpdate();
+        setIsUpdateContactEmail(null);
+        setIsUpdateContactName(null);
+        setIsUpdateContactMobile(null);
+        getQuote();
+      } else {
+        alertFaultUpdate();
+      }
+    }
+    await updateDocumentContactApi(callApi, callBack, {
+      documentType: docType,
+      contact:
+      {
+        id: item?.id,
+        contactID: item?.contactID,
+        contactName: item?.contactName,
+        contactMail: item?.contactMail,
+        contactPhone: item?.contactPhone,
+        documentID: quoteItemValue?.id,
+      }
+    })
+  }
+
+  const onClickDeleteContact = async (item: any) => {
+    const callBack = (res) => {
+      if (res?.success) {
+        alertSuccessDelete();
+        onCloseDeleteModalContact();
+        getQuote();
+      } else {
+        alertFaultDelete();
+      }
+    }
+    await deleteDocumentContactApi(callApi, callBack,
+      {
+        documentType: docType,
+        documentContactId: item?.id
+      })
+  }
+
   const handleShowMore = () => {
     setDisplayedItems(items.length);
   };
@@ -351,6 +469,7 @@ const useQuoteNew = () => {
     },
     [selectedContactById]
   );
+
   const onInputChangeMail = (v: any) => {
     onChangeUpdateClientContact("mail", v);
   };
@@ -358,28 +477,6 @@ const useQuoteNew = () => {
   const onInputChangePhone = (v: any) => {
     onChangeUpdateClientContact("phone", v);
   };
- 
-  const onClickAddNewContact = useCallback(async () => {
-    const res = await callApi(
-      EHttpMethod.POST,
-      `/v1/erp-service/quote/add-quote-contact`,
-      {
-        contactID: selectedContactById?.id,
-        contactName: selectedContactById?.name,
-        contactMail: selectedContactById?.mail,
-        contactPhone: selectedContactById?.phone,
-        quoteID: quoteItemValue?.id,
-      }
-    );
-    if (res?.success) {
-      alertSuccessAdded();
-      setIsDisplayWidget(false);
-      getQuote();
-    } else {
-      alertFaultAdded();
-    }
-  }, [selectedContactById, quoteItemValue]);
- 
 
   const onOpenDeleteModalContact = (item) => {
     setSelectedContact(item);
@@ -389,20 +486,6 @@ const useQuoteNew = () => {
     setOpenDeleteModalContact(false);
   };
 
-  const onClickDeleteContact = useCallback(async (item: any) => {
-    const res = await callApi(
-      EHttpMethod.DELETE,
-      `/v1/erp-service/quote/delete-quote-contact?quoteContactId=${item?.id}`
-    );
-    if (res?.success) {
-      alertSuccessDelete();
-      onCloseDeleteModalContact();
-      getQuote();
-    } else {
-      alertFaultDelete();
-    }
-  }, []);
-
   const onOpenNewItem = () => {
     setOpenAddNewItemModal(true);
   };
@@ -410,26 +493,23 @@ const useQuoteNew = () => {
     setOpenAddNewItemModal(false);
   };
 
-  const getCalculateQuoteItem = useCallback(
-    async (quoteItemId: string, calculationType: number, data: number) => {
-      const res = await callApi(
-        EHttpMethod.GET,
-        `/v1/erp-service/quote/get-calculate-quote-item`,
-        {
-          QuoteItemId: quoteItemId,
-          data,
-          calculationType,
-        }
-      );
+  const getCalculateQuoteItem = async (quoteItemId: string, calculationType: number, data: number) => {
+    const callBack = (res) => {
       if (res?.success) {
         alertSuccessUpdate();
         getQuote();
       } else {
         alertFaultUpdate();
       }
-    },
-    [quoteItemValue]
-  );
+    }
+    await calculateDocumentItemApi(callApi, callBack,
+      {
+        documentType: docType,
+        ItemId: quoteItemId,
+        data,
+        calculationType,
+      })
+  }
 
   const onCloseDuplicateWithDifferentQTY = () => {
     setOpenDuplicateWithDifferentQTYModal(false);
@@ -442,23 +522,18 @@ const useQuoteNew = () => {
     setQuateItemId(quoteItem?.id);
   };
 
-  const duplicateQuoteItemWithAnotherQuantity = useCallback(async () => {
-    const res = await callApi(
-      EHttpMethod.POST,
-      `/v1/erp-service/quote/duplicate-quote-with-another-quantity`,
-      {
-        quoteItemId: qouteItemId,
-        amount: parseInt(amountVlue),
+  const duplicateQuoteItemWithAnotherQuantity = async () => {
+    const callBack = (res) => {
+      if (res?.success) {
+        alertSuccessAdded();
+        onCloseDuplicateWithDifferentQTY();
+        getQuote();
+      } else {
+        alertFaultAdded();
       }
-    );
-    if (res?.success) {
-      alertSuccessAdded();
-      onCloseDuplicateWithDifferentQTY();
-      getQuote();
-    } else {
-      alertFaultAdded();
     }
-  }, [qouteItemId, amountVlue]);
+    await duplicateWithAnotherQuantityApi(callApi, callBack, { ItemId: quoteItemId, amount: parseInt(amountValue), documentType: docType })
+  }
 
   const onCloseDeleteItemModal = () => {
     setOpenDeleteItemModal(false);
@@ -468,57 +543,60 @@ const useQuoteNew = () => {
     setOpenDeleteItemModal(true);
   };
 
-  const deleteQuoteItem = useCallback(async () => {
-    const res = await callApi(
-      EHttpMethod.DELETE,
-      `/v1/erp-service/quote/delete-quote-item?QuoteItemId=${qouteItemId}`
-    );
-    if (res?.success) {
-      alertSuccessDelete();
-      onCloseDeleteItemModal();
-      getQuote();
-    } else {
-      alertFaultDelete();
+  const deleteQuoteItem = async () => {
+    const callBack = (res) => {
+      if (res?.success) {
+        alertSuccessDelete();
+        onCloseDeleteItemModal();
+        quoteItemValue?.documentItems?.length === 1  ? navigate("/home") : getQuote();
+      } else {
+        alertFaultDelete();
+      }
     }
-  }, [qouteItemId]);
+    await deleteDocumentItemApi(callApi, callBack, { ItemId: quoteItemId, documentType: docType })
+  }
+
+  const onAddDelivery = async (shipmentType: string) => {
+    const callBack = (res) => {
+      if (res?.success) {
+        alertSuccessAdded();
+        onCloseDeliveryModal();
+        getQuote();
+      } else {
+        alertFaultAdded();
+      }
+    }
+    await addDeliveryApi(callApi, callBack, { delivery: { documentId: quoteItemValue?.id, shipmentTypeId: shipmentType }, documentType: docType })
+  }
 
   const onClickDeleteQouteItem = (quoteItem) => {
     onOpenDeleteItemModal();
     setQuateItemId(quoteItem?.id);
   };
 
-  const getCalculateQuote = useCallback(
-    async (calculationType: number, data: number) => {
-      const res = await callApi(
-        EHttpMethod.GET,
-        `/v1/erp-service/quote/get-calculate-quote`,
-        {
-          QuoteId: quoteItemValue?.id,
-          data,
-          calculationType,
-        }
-      );
+  const getCalculateQuote = async (calculationType: number, data: number) => {
+    const callBack = (res) => {
       if (res?.success) {
         alertSuccessUpdate();
-
         getQuote();
       } else {
         alertFaultUpdate();
       }
-    },
-    [quoteItemValue]
-  );
+    }
+    await calculateDocumentApi(callApi, callBack, {
+      documentType: docType,
+      documentId: quoteItemValue?.id,
+      data,
+      calculationType,
+    })
+  }
 
-  useEffect(() => {
-    setPriceListItems(quoteItemValue?.priceListItems);
-  }, [quoteItemValue]);
-
-  const changepriceListItems = (
+  const changedocumentItems = (
     index: number,
     filedName: string,
     value: any
   ) => {
-    let temp = [...priceListItems];
+    let temp = [...documentItems];
     temp[index] = {
       ...temp[index],
       [filedName]: value,
@@ -526,15 +604,15 @@ const useQuoteNew = () => {
     setPriceListItems(temp);
   };
 
-  const changepriceListItemsChild = (
+  const changedocumentItemsChild = (
     parentIndex: number,
     childInex: number,
     filedName: string,
     value: any
   ) => {
-    let temp = lodashClonedeep(priceListItems);
-    temp[parentIndex].childsQuoteItems[childInex] = {
-      ...temp[parentIndex].childsQuoteItems[childInex],
+    let temp = lodashClonedeep(documentItems);
+    temp[parentIndex].childsDocumentItems[childInex] = {
+      ...temp[parentIndex].childsDocumentItems[childInex],
       [filedName]: value,
     };
     setPriceListItems(temp);
@@ -552,35 +630,13 @@ const useQuoteNew = () => {
     [quoteItems]
   );
 
-  useEffect(() => {
-    setquoteItems(quoteItemValue);
-  }, [quoteItemValue]);
-
   const dateRef = useRef(null);
   const [activeClickAway, setActiveClickAway] = useState(false);
 
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dateRef.current && !dateRef.current.contains(event.target)) {
-        if (activeClickAway) {
-          updateDueDate();
-          setActiveClickAway(false);
-        }
-      }
-    };
-    document.addEventListener("click", handleClickOutside);
-    return () => {
-      document.removeEventListener("click", handleClickOutside);
-    };
-  }, [dateRef, activeClickAway, quoteItemValue, selectDate]);
 
   const handleClickSelectDate = () => {
     dateRef?.current?.showPicker();
   };
-
-  useEffect(() => {
-    setSelectDate(quoteItemValue?.dueDate);
-  }, [quoteItemValue]);
 
   const [openOtherReasonModal, setOpenOtherReasonModal] = useState(false);
   const [openIrreleventCancelModal, setOpenIrreleventCancelModal] = useState(false);
@@ -613,63 +669,76 @@ const useQuoteNew = () => {
   const onClcikCloseModal = () => {
     setOpenOtherReasonModal(false);
   };
-  const onClickCancelOffer = useCallback(async () => {
-    const res = await callApi(
-      EHttpMethod.PUT,
-      `/v1/erp-service/quote/cancel-quote-state`,
-      {
-        quoteId: quoteItemValue?.id,
-        quoteStatus: QuoteStatuses.CANCELED_OTHER,
-        cancelText: reasonText,
-      }
-    );
-    if (res?.success) {
-      alertSuccessUpdate();
-      navigate("/home");
-    } else {
-      alertFaultUpdate();
-    }
-  }, [quoteItemValue, reasonText]);
 
-  const updateCancelQuote = useCallback(
-    async (quoteStatus: number) => {
-      const res = await callApi(
-        EHttpMethod.PUT,
-        `/v1/erp-service/quote/cancel-quote-state`,
-        {
-          quoteId: quoteItemValue?.id,
-          quoteStatus: quoteStatus,
-        }
-      );
+  const onClickCancelOffer = async () => {
+    const callBack = (res) => {
       if (res?.success) {
         alertSuccessUpdate();
         navigate("/home");
       } else {
         alertFaultUpdate();
       }
-    },
+    }
+    await cancelDocumentApi(callApi, callBack, {
+      DocumentType: docType,
+      Document: {
+        documentId: quoteItemValue?.id,
+        quoteStatus: QuoteStatuses.CANCELED_OTHER,
+        cancelText: reasonText,
+      }
+    })
+  }
 
-    [quoteItemValue]
-  );
+  const updateCancelQuote = async (quoteStatus: number) => {
+    const callBack = (res) => {
+      if (res?.success) {
+        alertSuccessUpdate();
+        navigate("/home");
+      } else {
+        alertFaultUpdate();
+      }
+    }
+    await cancelDocumentApi(callApi, callBack, {
+      DocumentType: docType,
+      Document: {
+        documentId: quoteItemValue?.id,
+        quoteStatus: quoteStatus,
+      }
+    })
+  }
 
-  const onClickSendQuoteToClient = useCallback(
-    async (messageType: number) => {
-      const res = await callApi(
-        EHttpMethod.POST,
-        `/v1/erp-service/quote/send-quote-to-clinet`,
-        {
-          quoteId: quoteItemValue?.id,
-          messageType,
-        }
-      );
+  const onClickSendQuoteToClient = async (messageType: number) => {
+    const callBack = (res) => {
       if (res?.success) {
         alertSuccessAdded();
       } else {
         alertFaultAdded();
       }
-    },
-    [quoteItemValue]
-  );
+    }
+    await sendDocumentToClientApi(callApi, callBack, {
+      documentType: docType,
+      document: {
+        documentId: quoteItemValue?.id,
+        messageType,
+      }
+    })
+  }
+
+  const handleSaveBtnClick = async () => {
+    const callBack = (res) => {
+      if (res?.success) {
+        navigate("/home");
+      } else {
+        alertFaultUpdate();
+      }
+    }
+    await saveDocumentApi(callApi, callBack, {
+      documentType: docType,
+      document: {
+        documentId: quoteItemValue?.id,
+      }
+    })
+  }
 
   const setOpenModal = useSetRecoilState<boolean>(addressModalState);
 
@@ -706,17 +775,19 @@ const useQuoteNew = () => {
         alertFaultAdded();
       }
     }
-    await updateQuoteAddressApi(callApi, callBack,
-      {
-        id: quoteItemValue?.quoteAddresses[0]?.id,
-        addressID: quoteItemValue?.quoteAddresses[0]?.addressID,
+    await updateDocumentAddressApi(callApi, callBack, {
+      documentType: docType,
+      address: {
+        id: quoteItemValue?.documentAddresses[0]?.id,
+        addressID: quoteItemValue?.documentAddresses[0]?.addressID,
         street: item?.street,
         city: item?.city,
         entry: item?.entry,
         apartment: item?.apartment,
         notes: item?.notes || "",
-        quoteID: quoteItemValue?.id,
-      })
+        documentID: quoteItemValue?.id,
+      }
+    })
   }
 
   const onClickAddAddress = async (item: any) => {
@@ -730,16 +801,19 @@ const useQuoteNew = () => {
         alertFaultAdded();
       }
     }
-    await addQuoteAddressApi(callApi, callBack,
-      {
-        quoteID: quoteItemValue?.id,
+    await addDocumentAddressApi(callApi, callBack, {
+      documentType: docType,
+      address: {
         addressID: item?.id,
         street: item?.street,
         city: item?.city,
         entry: item?.entry,
         apartment: item?.apartment,
         notes: item?.notes || "",
-      })
+        documentID: quoteItemValue?.id,
+
+      }
+    })
   }
 
   const onClickDeleteAddress = async (item: any) => {
@@ -751,8 +825,79 @@ const useQuoteNew = () => {
         alertFaultDelete();
       }
     }
-    await deleteQuoteAddressApi(callApi, callBack, { quoteAddressId: item?.id })
+    await deleteDocumentAddressApi(callApi, callBack, { documentAddressId: item?.id, documentType: docType })
   }
+ 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dateRef.current && !dateRef.current.contains(event.target)) {
+        if (activeClickAway) {
+          updateDueDate();
+          setActiveClickAway(false);
+        }
+      }
+    };
+    document.addEventListener("click", handleClickOutside);
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, [dateRef, activeClickAway, quoteItemValue, selectDate]);
+
+  useEffect(() => {
+    if (agentListValue?.length > 0) {
+      const selectedAgent1 = agentListValue.find(
+        (agent) => agent.value === quoteItemValue?.agentId
+      );
+      setSelectedAgent(selectedAgent1);
+    }
+  }, [agentListValue, quoteItemValue]);
+
+  useEffect(() => {
+    const foundItem = customersListValue.find(
+      (item: any) => item.id === quoteItemValue?.customerID
+    );
+    setSelectBusiness(foundItem);
+  }, [quoteItemValue, customersListValue]);
+
+  useEffect(() => {
+    setPriceListItems(quoteItemValue?.documentItems);
+    setquoteItems(quoteItemValue);
+    getAllClientContacts();
+    setItems(quoteItemValue?.documentContacts);
+    setSelectDate(quoteItemValue?.dueDate);
+  }, [quoteItemValue]);
+
+  useEffect(() => {
+    getQuote();
+    getAllEmployees();
+    getAllCustomers();
+  }, []);
+
+
+  const documentsTitles = [
+    {
+      label: t("sales.quote.quote"),
+      value: DOCUMENT_TYPE.quote,
+    },
+    {
+      label: t("sales.quote.order"),
+      value: DOCUMENT_TYPE.order,
+    },
+    {
+      label: t("sales.quote.invoice"),
+      value: DOCUMENT_TYPE.invoice,
+    },
+    {
+      label: t("sales.quote.deliveryNote"),
+      value: DOCUMENT_TYPE.deliveryNote,
+    },
+    {
+      label: t("sales.quote.receipt"),
+      value: DOCUMENT_TYPE.receipt,
+    }
+  ];
+
+  const documentTitle = documentsTitles.find(item => item.value === docType).label;
 
   return {
     dateRef,
@@ -783,7 +928,7 @@ const useQuoteNew = () => {
     openDeleteItemModal,
     columnWidths,
     headerHeight,
-    priceListItems,
+    documentItems,
     quoteItems,
     tableHeaders,
     anchorElCancelBtn,
@@ -814,8 +959,8 @@ const useQuoteNew = () => {
     handleClickSelectDate,
     setActiveClickAway,
     changeQuoteItems,
-    changepriceListItemsChild,
-    changepriceListItems,
+    changedocumentItemsChild,
+    changedocumentItems,
     getCalculateQuote,
     onCloseDeleteItemModal,
     deleteQuoteItem,
@@ -871,7 +1016,22 @@ const useQuoteNew = () => {
     updateClientAddress,
     onClickAddAddress,
     onClickDeleteAddress,
-    onClickAddNewAddress
+    onClickAddNewAddress,
+    openAddDeliveryModal,
+    onOpenDeliveryModal,
+    onCloseDeliveryModal,
+    onAddDelivery,
+    handleSaveBtnClick,
+    documentTitle,
+    onBlurExchangeRate,
+    onBlurCurrency,
+    setIsUpdateExchangeRate,
+    setIsUpdateCurrency,
+    isUpdateExchangeRate,
+    isUpdateCurrency,
+    updateExchangeRate,
+    updateCurrency,
+    refreshExchangeRate
   };
 };
 

@@ -6,6 +6,10 @@ const useStyle = () => {
   const { theme, primaryColor } = useGomakeTheme();
   const classes = useMemo(() => {
     return {
+      mainContainer: {
+        paddingLeft: 20,
+        paddingRight: 20,
+      },
       headerContainer: {
         display: "flex",
         justifyContent: "space-between" as "space-between",
@@ -27,7 +31,8 @@ const useStyle = () => {
         display: "flex",
         justifyContent: "flex-start",
         flexDirection: "column" as "column",
-        alignItems: "flex-start",
+        alignItems: "center",
+        textAlign: "flex-start",
         ...FONT_FAMILY.Lexend(400, 14),
         color: primaryColor(900),
         maxHeight: 45,
@@ -39,6 +44,10 @@ const useStyle = () => {
         color: primaryColor(900),
         maxHeight: 45,
         textAlign: "start" as "start",
+      },
+      defaultUnitStyle: {
+        ...FONT_FAMILY.Lexend(700, 10),
+        color: "#000000",
       },
     };
   }, [theme]);

@@ -5,7 +5,7 @@ export default function MaterialPage() {
 
     return (
         <CustomerAuthLayout>
-            <MaterialsWidget/>
+            <MaterialsWidget isAdmin={false}/>
         </CustomerAuthLayout>
     )
 }

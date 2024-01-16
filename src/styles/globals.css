@@ -9,8 +9,7 @@ html,
 body {
   max-width: 100vw;
   overflow-x: hidden;
-
-  /* background-color: white; */
+  background-color: #F6F6F6;
 }
 
 html * {
@@ -65,11 +64,13 @@ html * {
 .MuiOutlinedInput-root fieldset {
   border: none !important;
 }
-.MuiTextField-root input{
-  border:none !important;
+
+.MuiTextField-root input {
+  border: none !important;
 }
-.Mui-expanded{
-margin: 0px !important;
+
+.Mui-expanded {
+  margin: 0px !important;
 }
 
 .MuiAccordion-root {
@@ -151,12 +152,13 @@ input::placeholder {
 .rdrCalendarWrapper {
   direction: ltr;
 }
-.rdrStaticRangeLabel{
-  text-align: unset!important;
+
+.rdrStaticRangeLabel {
+  text-align: unset !important;
 }
 
 
-.dots-loader > div {
+.dots-loader>div {
   animation: dots-loader 0.6s infinite alternate;
 }
 
@@ -166,6 +168,7 @@ input::placeholder {
     transform: translateY(2px);
   }
 }
+
 /* Editor styling */
 
 .ql-toolbar.ql-snow {
@@ -208,43 +211,80 @@ input::placeholder {
 }
 
 /* new editor*/
-.ql-container.ql-snow{
+.ql-container.ql-snow {
   border-radius: 0px 0px 12px 12px;
 }
-.badgeVariable{
+
+.badgeVariable {
   background-color: rgb(235, 236, 255);
 }
-.editorDiv[dir=rtl] .ql-toolbar.ql-snow .ql-picker-label{
+
+.editorDiv[dir=rtl] .ql-toolbar.ql-snow .ql-picker-label {
   display: flex;
   flex-direction: row-reverse;
 }
-.react-horizontal-scrolling-menu--inner-wrapper{
+
+.react-horizontal-scrolling-menu--inner-wrapper {
   display: flex;
   align-items: center;
 }
+
 .customInput:hover {
-  background-color:#E9ECEF;
+  background-color: #E9ECEF;
   width: fit-content
 }
+
 .MuiOutlinedInput-root {
   padding: 0 !important;
   padding-left: 2px !important;
   padding-top: 1px !important;
 }
-.MuiAutocomplete-input{
+
+.MuiAutocomplete-input {
   padding: 0 !important;
   padding-left: 3px !important;
   padding-top: 1px !important;
 }
-.table-sorting:hover{
-  background-color:#EBECFF ;
+
+.table-sorting:hover {
+  background-color: #EBECFF;
 }
 
-.MuiTabs-flexContainer{
-  gap:25px !important
+.MuiTabs-flexContainer {
+  gap: 25px !important
 }
-.MuiTabs-scrollButtons{
+
+.MuiTabs-scrollButtons {
   display: flex !important;
   align-items: flex-start !important;
   margin-top: 3px !important;
+}
+
+.react-international-phone-flag-emoji {
+  display: none;
+}
+.react-international-phone-country-selector-button__dropdown-arrow {
+  margin-left: 4px;
+}
+.react-international-phone-input-container .react-international-phone-input {
+  height: 40px !important;
+  border: 0px !important;
+  width: 100%;
+  box-shadow: 0px 1px 10px rgba(0, 0, 0, 0.08) !important;
+}
+.react-international-phone-input-container .react-international-phone-country-selector-button {
+  height: 40px !important;
+  border: 0px !important;
+  box-shadow: 0px 1px 10px rgba(0, 0, 0, 0.08) !important;
+}
+.react-international-phone-country-selector-dropdown{
+  min-width: 180px !important;
+  width:  180px !important;
+  position: fixed  !important;
+  top: var(--react-international-phone-dropdown-left, 40px) !important;
+  left: unset !important;
+  z-index: 10 !important;
+}
+:root{
+  --react-international-phone-dropdown-left:20;
 }

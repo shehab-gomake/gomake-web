@@ -52,6 +52,7 @@ export type PricingListProps = {
   selectedTransition: SelectedTransition;
   selectedPricingBy: SelectedPricingByType;
   updatePricingByForAction: (value: any) => void;
+  updateTransitionForAction: (value: any) => void;
   changeactionProfitRowsItems: (
     index: number,
     filedName: string,
@@ -137,6 +138,7 @@ export type ProfitRightSideProps = {
   selectedPricingTableItems?: any;
   setSelectedPricingTableItems?: (value: any) => void;
   dataForExceptions?: ProfitsPricingTables[];
+  dataForDefault?: ProfitsPricingTables[];
   dataForPricing?: ProfitsPricingTables[];
   onDragEnd?: (res) => void;
   deleteExceptionProfit?: (id: string) => void;
@@ -147,6 +149,7 @@ export type ProfitRightSideProps = {
   setTypeExceptionSelected?: (value: any) => void;
   selectedAdditionalProfitRow?: ProfitsPricingTables;
   setSelectedActionProfitRow?: (value: any) => void;
+  ProfitCurrency?: string;
 };
 
 export type ProfitLeftSideProps = {
@@ -159,6 +162,7 @@ export type ProfitLeftSideProps = {
   selectedTransition: SelectedTransition;
   selectedPricingBy: SelectedPricingByType;
   updatePricingByForAction: (value: any) => void;
+  updateTransitionForAction: (value: any) => void;
   changeactionProfitRowsItems: (
     index: number,
     filedName: string,

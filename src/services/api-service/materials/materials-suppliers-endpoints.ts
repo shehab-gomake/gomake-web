@@ -2,9 +2,9 @@ import {ICallAndSetData} from "@/services/api-service/interface";
 import {getSetApiData} from "@/services/api-service/get-set-api-data";
 import {EHttpMethod} from "@/services/api-service/enums";
 
-const ADD_NEW_MATERIAL_SUPPLIER = '/v1/materials/addSupplier';
-const GET_MATERIAL_SUPPLIERS = '/v1/materials/GetPrintHouseMaterialCategorySuppliers';
-const SET_DEFAULT_SUPPLIER_URL = '/v1/materials/update-print-house-materials-category-default-supplier';
+const ADD_NEW_MATERIAL_SUPPLIER = '/v1/printhouse-materials/addSupplier';
+const GET_MATERIAL_SUPPLIERS = '/v1/printhouse-materials/GetPrintHouseMaterialCategorySuppliers';
+const SET_DEFAULT_SUPPLIER_URL = '/v1/printhouse-materials/update-print-house-materials-category-default-supplier';
 
 interface IAddSupplierData {
     materialTypeKey: string

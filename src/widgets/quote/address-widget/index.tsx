@@ -147,7 +147,7 @@ const AddressWidget = ({
                   <div style={clasess.fieldContainer}>
                     <div style={clasess.labelStyle} />
                     <div style={clasess.addDeleteContainer}>
-                      {index === quoteItemValue?.quoteAddresses?.length - 1 ? (
+                      {index === quoteItemValue?.documentAddresses?.length - 1 ? (
                         <div>
                           {!quoteStateValue.isAddNewAddressWidget && (
                             <div

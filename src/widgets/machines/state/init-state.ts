@@ -476,8 +476,8 @@ const initState: Record<string, Record<string, any>> = {
         price: {price: 0, currency: 0},
         attributes: {}
     },
-    [ECategoryId.ROLL_LASER_CUT_MACHINE]: {
-        category: ECategoryId.ROLL_LASER_CUT_MACHINE,
+    [ECategoryId.ROLL_FINISH_MACHINE]: {
+        category: ECategoryId.ROLL_FINISH_MACHINE,
         price: {price: 0, currency: 0},
         attributes: {}
     },
@@ -513,6 +513,21 @@ const initState: Record<string, Record<string, any>> = {
     },
     [ECategoryId.ROLL_DIGITAL_ENHANCEMENT_MACHINE]: {
         category: ECategoryId.ROLL_DIGITAL_ENHANCEMENT_MACHINE,
+        price: {price: 0, currency: 0},
+        attributes: {}
+    },
+    [ECategoryId.CREATING_DIES_MACHINE]: {
+        category: ECategoryId.CREATING_DIES_MACHINE,
+        price: {price: 0, currency: 0},
+        attributes: {}
+    },
+    [ECategoryId.MESH_PROCESSORS]: {
+        category: ECategoryId.MESH_PROCESSORS,
+        price: {price: 0, currency: 0},
+        attributes: {}
+    },
+    [ECategoryId.SILK_PRINTER]: {
+        category: ECategoryId.SILK_PRINTER,
         price: {price: 0, currency: 0},
         attributes: {}
     },

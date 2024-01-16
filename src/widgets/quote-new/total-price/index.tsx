@@ -3,6 +3,7 @@ import { useStyle } from "./style";
 import { useTranslation } from "react-i18next";
 import { InputUpdatedValues } from "../input-updated-values";
 import { FONT_FAMILY } from "@/utils/font-family";
+import { useQuoteGetData } from "@/pages-components/quote-new/use-quote-get-data";
 
 const TotalPriceComp = ({
   getCalculateQuote,
@@ -12,6 +13,8 @@ const TotalPriceComp = ({
   const { clasess } = useStyle();
   const { t } = useTranslation();
   const [isUpdateTotalPayment, setIsUpdateTotalPayment] = useState(null);
+  const { getCurrencyUnitText } = useQuoteGetData();
+
   const onBlurTotalPayment = async () => {
     getCalculateQuote(2, quoteItems?.totalPayment);
     setIsUpdateTotalPayment(null);
@@ -27,6 +30,8 @@ const TotalPriceComp = ({
   const onInputDiscount = (e) => {
     changeQuoteItems("discount", e);
   };
+
+
   return (
     <div style={clasess.tableFooterContainer}>
       <div style={clasess.firstRowForFooterContainer}>
@@ -40,7 +45,7 @@ const TotalPriceComp = ({
             paddingLeft: 36,
           }}
         >
-          {quoteItems?.totalPrice}
+          {quoteItems?.totalPrice +" "+ getCurrencyUnitText(quoteItems?.currency)}
         </div>
         <div style={{ ...clasess.evenRowContainer, width: "13%" }}>
           {t("sales.quote.discount")}
@@ -54,13 +59,14 @@ const TotalPriceComp = ({
               setIsUpdate={setIsUpdateDiscount}
               onInputChange={(e) => onInputDiscount(e)}
             />
+            {quoteItems?.discount && getCurrencyUnitText(quoteItems?.currency)}
           </div>
         </div>
         <div style={{ ...clasess.evenRowContainer, width: "13%" }}>
           VAT (17%)
         </div>
         <div style={{ ...clasess.oddRowContainer, width: "23%" }}>
-          {Math.ceil(quoteItems?.totalVAT)} ILS
+          {Math.ceil(quoteItems?.totalVAT) + " " + getCurrencyUnitText(quoteItems?.currency)}
         </div>
       </div>
       <div style={clasess.firstRowForFooterContainer}>
@@ -82,7 +88,7 @@ const TotalPriceComp = ({
         >
           <div style={clasess.cellTextInputStyle}>
             <InputUpdatedValues
-              value={quoteItems?.totalPayment}
+              value={quoteItems?.totalPayment }
               onBlur={onBlurTotalPayment}
               isUpdate={isUpdateTotalPayment}
               setIsUpdate={setIsUpdateTotalPayment}
@@ -92,6 +98,7 @@ const TotalPriceComp = ({
                 ...FONT_FAMILY.Inter(700, 18),
               }}
             />
+            {getCurrencyUnitText(quoteItems?.currency)}
           </div>
         </div>
       </div>

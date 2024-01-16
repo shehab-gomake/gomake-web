@@ -4,21 +4,21 @@ import { FONT_FAMILY } from "@/utils/font-family";
 
 const useStyle = () => {
   const { errorColor } = useGomakeTheme();
-  const clasess = useMemo(() => {
+  const classes = useMemo(() => {
     return {
       mainContainer: {
         display: "flex",
         flexDirection: "column" as "column",
         justifyContent: "flex-start",
         alignItems: "flex-start",
-        width: "50%",
-        height: "auto",
+        width: "100%",
+        height: "100%",
         paddingTop: 40,
         paddingBottom: 40,
         paddingLeft: 20,
         paddingRight: 20,
         backgroundColor: "#FFFFFF",
-        margin: '0 4px',
+        margin: "0 4px",
         borderRadius: 8,
         // boxShadow: "0px 4px 15px 0px rgba(0, 0, 0, 0.08)",
         boxShadow:
@@ -63,7 +63,7 @@ const useStyle = () => {
     };
   }, []);
   return {
-    clasess,
+    classes,
   };
 };
 export { useStyle };

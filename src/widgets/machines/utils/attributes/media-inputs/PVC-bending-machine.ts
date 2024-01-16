@@ -1,3 +1,5 @@
+import {EMeasurementUnits} from "@/widgets/machines/enums/measurement-units";
+
 const PVCBendingMachine = (state: Record<string, any>) => {
     return [
         {
@@ -17,7 +19,8 @@ const PVCBendingMachine = (state: Record<string, any>) => {
                     required: true,
                     parameterKey: "maxWidth",
                     options: [],
-                    value: state.attributes?.pvc?.maxWidth ? state.attributes?.pvc?.maxWidth : ''
+                    value: state.attributes?.pvc?.maxWidth ? state.attributes?.pvc?.maxWidth : '',
+                    unit: EMeasurementUnits.CM
                 },
                 {
                     name: "",
@@ -27,8 +30,8 @@ const PVCBendingMachine = (state: Record<string, any>) => {
                     required: true,
                     parameterKey: "maxLength",
                     options: [],
-                    value: state.attributes?.pvc?.maxLength ? state.attributes?.pvc?.maxLength : ''
-
+                    value: state.attributes?.pvc?.maxLength ? state.attributes?.pvc?.maxLength : '',
+                    unit: EMeasurementUnits.CM
                 },
                 {
                     name: "",
@@ -38,8 +41,8 @@ const PVCBendingMachine = (state: Record<string, any>) => {
                     required: true,
                     parameterKey: "maxThickness",
                     options: [],
-                    value: state.attributes?.pvc?.maxThickness ? state.attributes?.pvc?.maxThickness : ''
-
+                    value: state.attributes?.pvc?.maxThickness ? state.attributes?.pvc?.maxThickness : '',
+                    unit: EMeasurementUnits.MM
                 },
             ]
         },

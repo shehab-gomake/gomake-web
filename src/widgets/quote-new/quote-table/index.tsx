@@ -15,18 +15,19 @@ import { RowMappingWidget } from "./row-mapping";
 import { RowMappingChildWidget } from "../quote-child-table/row-mapping";
 import { TotalPriceComp } from "../total-price";
 const QuoteForPriceTable = ({
-  priceListItems,
+  documentItems,
   columnWidths,
   tableHeaders,
   headerHeight,
-  changepriceListItems,
+  changedocumentItems,
   getCalculateQuoteItem,
   onClickDuplicateWithDifferentQTY,
   onClickDeleteQouteItem,
   quoteItems,
   changeQuoteItems,
   getCalculateQuote,
-  changepriceListItemsChild,
+  changedocumentItemsChild,
+  documentType,
 }) => {
   const { clasess } = useStyle({ headerHeight });
   const PrimaryTableCell = styled(TableCell)(() => {
@@ -44,10 +45,11 @@ const QuoteForPriceTable = ({
   return (
     <div>
       <TableContainer
-        component={Paper}
+        // component={Paper}
         style={{
           maxHeight: 420,
           overflow: "scroll",
+          border: "1px solid #EAECF0",
         }}
       >
         <Table stickyHeader={true}>
@@ -67,7 +69,7 @@ const QuoteForPriceTable = ({
             </TableRow>
           </TableHead>
           <TableBody style={{ border: "1px solid #EAECF0" }}>
-            {priceListItems?.map((item: any, index: number) => {
+            {documentItems?.map((item: any, index: number) => {
               indexs++;
               const parentIndex = indexs;
               return (
@@ -79,15 +81,16 @@ const QuoteForPriceTable = ({
                     parentIndex={parentIndex}
                     columnWidths={columnWidths}
                     headerHeight={headerHeight}
-                    changepriceListItems={changepriceListItems}
+                    changedocumentItems={changedocumentItems}
                     getCalculateQuoteItem={getCalculateQuoteItem}
                     onClickDuplicateWithDifferentQTY={
                       onClickDuplicateWithDifferentQTY
                     }
                     onClickDeleteQouteItem={onClickDeleteQouteItem}
+                    documentType={documentType}
                   />
-                  {item?.childsQuoteItems &&
-                    item?.childsQuoteItems?.map(
+                  {item?.childsDocumentItems &&
+                    item?.childsDocumentItems?.map(
                       (childItem: any, childIndex: number) => {
                         indexs++;
                         return (
@@ -99,12 +102,10 @@ const QuoteForPriceTable = ({
                             headerHeight={headerHeight}
                             parentIndex={index}
                             childInex={childIndex}
-                            changepriceListItemsChild={
-                              changepriceListItemsChild
-                            }
+                            changedocumentItemsChild={changedocumentItemsChild}
                             onClickDeleteQouteItem={onClickDeleteQouteItem}
                             getCalculateQuoteItem={getCalculateQuoteItem}
-                            childList={item?.childsQuoteItems}
+                            childList={item?.childsDocumentItems}
                           />
                         );
                       }

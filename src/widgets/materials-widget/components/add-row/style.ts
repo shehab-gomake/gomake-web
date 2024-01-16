@@ -7,7 +7,6 @@ const useStyle = () => {
         width: "25%",
         height: "60%",
         padding: 20,
-        position: "relative" as "relative",
       },
       inputsDivStyle: {
         display: "flex",
@@ -22,7 +21,7 @@ const useStyle = () => {
         alignSelf: 'flex-end',
         position: "fixed" as "fixed",
         bottom: "10px",
-      },
+      }
     };
   }, []);
   return {

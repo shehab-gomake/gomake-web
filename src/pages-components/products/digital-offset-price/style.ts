@@ -5,9 +5,10 @@ import { useTranslation } from "react-i18next";
 
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { FONT_FAMILY } from "@/utils/font-family";
-import { adaptPaddingLeft } from "@/utils/adapter";
+import { adaptPaddingLeft, adaptPaddingRight } from "@/utils/adapter";
 const useStyle = () => {
   const { t } = useTranslation();
+  const direction = t("direction");
   const { primaryColor, secondColor, errorColor, neutralColor } =
     useGomakeTheme();
 
@@ -19,6 +20,8 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "flex-start",
         width: "100%",
+        ...adaptPaddingRight(direction, 20),
+        // paddingLeft: 20,
       },
       mainRowContainer: {
         display: "flex",
@@ -44,10 +47,11 @@ const useStyle = () => {
         width: 330,
         minWidth: 330,
         maxWidth: 330,
+        height: "85.5vh",
         backgroundColor: "white",
+        boxShadow: "0px 0px 3px 0px rgba(129, 129, 129, 0.12)",
         padding: 15,
         marginTop: -77,
-        boxShadow: "0px 4px 40px 0px rgba(129, 129, 129, 0.12)",
         borderRadius: 5,
       },
       rightSideContainer: {
@@ -188,7 +192,6 @@ const useStyle = () => {
         width: "100%",
         borderRadius: 4,
         height: 40,
-        backgroundColor: "#FFF",
         border: "0px",
         ...FONT_FAMILY.Lexend(500, 14),
         color: "#000",
@@ -197,7 +200,6 @@ const useStyle = () => {
         width: "100%",
         borderRadius: 4,
         height: 40,
-        backgroundColor: "#FFF",
         border: "0px",
         ...FONT_FAMILY.Lexend(500, 14),
       },
@@ -205,7 +207,6 @@ const useStyle = () => {
         display: "flex",
         width: "100%",
         maxWidth: "180px",
-        backgroundColor: "#FFF",
         borderRadius: 4,
       },
 
@@ -266,6 +267,7 @@ const useStyle = () => {
         height: 170,
         borderRadius: 16,
         overflow: "hidden",
+        marginBottom: 15,
       },
       secondText: {
         color: primaryColor(200),
@@ -318,17 +320,41 @@ const useStyle = () => {
         alignItems: "center",
         width: "100%",
         marginBottom: 8,
+        height: 35,
+        maxHeight: 35,
+        gap: 5,
       },
       totalStyle: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        width: "100%",
+      },
+      totalStyleText: {
         color: primaryColor(500),
         ...FONT_FAMILY.Lexend(700, 24),
+        width: "fit-content",
+        minWidth: "fit-content",
+        display: "flex",
+        alignItems: "center",
+        height: 35,
+      },
+      totalCurrancyStyle: {
+        color: primaryColor(500),
+        ...FONT_FAMILY.Lexend(700, 14),
+        width: "fit-content",
+        minWidth: "fit-content",
+        display: "flex",
+        alignItems: "center",
+        height: 35,
       },
       inputPriceStyle: {
         color: primaryColor(500),
         ...FONT_FAMILY.Lexend(700, 24),
-        height: 28,
-        width: "130px",
+        height: "100%",
+        width: "100%",
+        maxHeight: 35,
         boxShadow: "none",
+        textAlign: "center" as "center",
       },
       priceRecoveryContainer: {
         display: "flex",
@@ -336,7 +362,7 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "center",
         marginLeft: -8,
-        marginBottom: 16,
+        marginBottom: 0,
       },
       switchAdditionsContainer: {
         display: "flex",
@@ -404,7 +430,6 @@ const useStyle = () => {
         flexDirection: "row" as "row",
         justifyContent: "flex-end",
         alignItems: "center",
-        // marginTop: 30,
         width: "100%",
         gap: 16,
       },
@@ -441,10 +466,13 @@ const useStyle = () => {
       },
       multiLineTextInputStyle: {
         width: "100%",
-        backgroundColor: "#EBECFF",
         borderRadius: 12,
         height: 110,
         overflow: "scroll",
+        padding: 5,
+        border: "1px solid #ccc",
+        color: "#000000",
+        ...FONT_FAMILY.Lexend(500, 14),
       },
       pricingSectionContainer: {
         display: "flex",
@@ -524,7 +552,6 @@ const useStyle = () => {
         width: "100%",
         flexWrap: "wrap" as "wrap",
         textAlign: "center" as "center",
-        backgroundColor: "#FFF",
       },
       cellContainerMod: {
         paddingRight: 22,
@@ -587,7 +614,7 @@ const useStyle = () => {
         cursor: "pointer",
       },
     };
-  }, [i18next.language, t]);
+  }, [i18next.language, t, direction]);
   return {
     clasess,
   };

@@ -1,4 +1,3 @@
-import { Permissions } from "@/components/CheckPermission/enum";
 import { CustomerAuthLayout } from "@/layouts";
 import { HomePageComponentForAdmin } from "@/pages-components/admin/home/home";
 

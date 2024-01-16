@@ -9,7 +9,7 @@ import {SpeedComponent} from "@/widgets/machines/components/forms/speed";
 const rollFedCuttingMachineSteps: IStep[] = [
     {label: 'basic',  component: BasicInputsComponent},
     {label: 'machineDimensions',  component: MachineDimensionsComponent},
-    {label: 'generalCuttingSettings',  component: MediaSettingComponent},
+    {label: 'media',  component: MediaSettingComponent},
     {label: 'speed',  component: SpeedComponent},
 ];
 

@@ -22,7 +22,9 @@ const RuleMappingWidget = ({ rule, deletePropertyRule }) => {
       </div>
 
       <div style={clasess.lineStyle}>
-        {rule.expression}
+        <div>
+          {rule.expression} <span>value= {rule.successEvent}</span>
+        </div>
         <div
           onClick={() => {
             deletePropertyRule(rule.id);

@@ -88,8 +88,8 @@ const ofssetPrinting = (state: Record<string, any>) => {
                     required: true,
                     parameterKey: "length",
                     options: [],
-                    value: state.attributes?.coatingBlanket?.length ? state.attributes?.coatingBlanket?.length : ''
-
+                    value: state.attributes?.coatingBlanket?.length ? state.attributes?.coatingBlanket?.length : '',
+                    unit: EMeasurementUnits.CM
                 },
                 {
                     name: "",
@@ -99,7 +99,8 @@ const ofssetPrinting = (state: Record<string, any>) => {
                     required: true,
                     parameterKey: "width",
                     options: [],
-                    value: state.attributes?.coatingBlanket?.width ? state.attributes?.coatingBlanket?.width : ''
+                    value: state.attributes?.coatingBlanket?.width ? state.attributes?.coatingBlanket?.width : '',
+                    unit: EMeasurementUnits.CM
 
                 },
             ]
@@ -121,8 +122,8 @@ const ofssetPrinting = (state: Record<string, any>) => {
                     required: true,
                     parameterKey: "length",
                     options: [],
-                    value: state.attributes?.coatingPlate?.length ? state.attributes?.coatingPlate?.length : ''
-
+                    value: state.attributes?.coatingPlate?.length ? state.attributes?.coatingPlate?.length : '',
+                    unit: EMeasurementUnits.CM
                 },
                 {
                     name: "",
@@ -132,7 +133,8 @@ const ofssetPrinting = (state: Record<string, any>) => {
                     required: true,
                     parameterKey: "width",
                     options: [],
-                    value: state.attributes?.coatingPlate?.width ? state.attributes?.coatingPlate?.width : ''
+                    value: state.attributes?.coatingPlate?.width ? state.attributes?.coatingPlate?.width : '',
+                    unit: EMeasurementUnits.CM
 
                 },
             ]
@@ -154,8 +156,8 @@ const ofssetPrinting = (state: Record<string, any>) => {
                     required: true,
                     parameterKey: "length",
                     options: [],
-                    value: state.attributes?.maxCoatingArea?.length ? state.attributes?.maxCoatingArea?.length : ''
-
+                    value: state.attributes?.maxCoatingArea?.length ? state.attributes?.maxCoatingArea?.length : '',
+                    unit: EMeasurementUnits.CM
                 },
                 {
                     name: "",
@@ -165,8 +167,8 @@ const ofssetPrinting = (state: Record<string, any>) => {
                     required: true,
                     parameterKey: "width",
                     options: [],
-                    value: state.attributes?.maxCoatingArea?.width ? state.attributes?.maxCoatingArea?.width : ''
-
+                    value: state.attributes?.maxCoatingArea?.width ? state.attributes?.maxCoatingArea?.width : '',
+                    unit: EMeasurementUnits.CM
                 },
             ]
         },

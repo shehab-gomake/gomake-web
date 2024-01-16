@@ -16,7 +16,7 @@ const RowMappingChildWidget = ({
   onClickDeleteQouteItem,
   parentIndex,
   childInex,
-  changepriceListItemsChild,
+  changedocumentItemsChild,
   childList,
 }: any) => {
   const { clasess } = useStyle({ headerHeight });
@@ -39,7 +39,7 @@ const RowMappingChildWidget = ({
     onInputChangeAmount,
   } = useQuoteTable({
     getCalculateQuoteItem,
-    changepriceListItemsChild,
+    changedocumentItemsChild,
     item,
     index,
     parentIndex,

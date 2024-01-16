@@ -1,19 +1,20 @@
+import {digitalPrinting} from "@/widgets/machines/utils/attributes/colors-inputs/digital-printing";
 
 const rollWidePrinting = (state: Record<string, any>) => {
     return [
-
         {
-            name: "maxLayers",
-            label: "machineAttributes.maxLayers",
-            type: "text",
-            placeholder: "machineAttributes.maxLayers",
+            name: "colorType",
+            label: "machineAttributes.colorType",
+            type: "select",
+            placeholder: "machineAttributes.colorType",
             required: true,
-            parameterKey: "maxLayers",
-            options: [],
+            parameterKey: "colorType",
+            value: state?.attributes?.colorType,
+            options: [{value: '1', text: 'UV'}, {value: '2', text: 'Eco solvent'}, {value: '3', text: 'latex'}],
             machineInputType: 'input',
-            value: state?.attributes?.maxLayers ? state?.attributes?.maxLayers : '',
-            isValid: !!state?.attributes?.maxLayers
+            isValid: true,
         },
+        ...digitalPrinting(state)
     ]
 };
 

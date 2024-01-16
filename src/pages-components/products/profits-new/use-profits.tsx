@@ -21,9 +21,12 @@ import {
   SelectedPricingByType,
   SelectedTransition,
 } from "./interface";
-import { getAndSetProfitsPricingTables } from "./services/get-action-profit-by-action-id copy";
+import { getAndSetProfitsPricingTables } from "./services/get-profits-pricing-tables";
 import { getAndSetCalculateCaseProfits } from "./services/get-calculate-case-profits";
-
+import { getAndSetProductProfitByProductId } from "./services/get-product-profit-by-product-id";
+import { useRecoilValue } from "recoil";
+import { systemCurrencyState } from "@/store";
+import { currencyUnitState } from "@/store/currency-units";
 const useNewProfits = () => {
   const {
     alertFaultUpdate,
@@ -72,6 +75,21 @@ const useNewProfits = () => {
       value: EPricingBy.CUBIC_METER,
     },
   ];
+  const systemCurrency = useRecoilValue<any>(systemCurrencyState);
+  const currenciesUnits = useRecoilValue<any>(currencyUnitState);
+  const [ProfitCurrency, setProfitCurrency] = useState("");
+  const getCurrencyUnitText = (currency) => {
+    const foundCurrency = currenciesUnits.find((c) => c.value === currency);
+    if (foundCurrency) {
+      return foundCurrency.text;
+    } else {
+      return "";
+    }
+  };
+  useEffect(() => {
+    const data = getCurrencyUnitText(systemCurrency);
+    setProfitCurrency(data);
+  }, [systemCurrency]);
   const [selectedPricingTableItems, setSelectedPricingTableItems] =
     useState<ProfitsPricingTables>();
   const [typeExceptionSelected, setTypeExceptionSelected] = useState<number>();
@@ -88,6 +106,8 @@ const useNewProfits = () => {
       label: "",
       value: 0,
     });
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
   const [allActionProfitRowsByActionId, setAllActionProfitRowsByActionId] =
     useState([]);
   const [actionProfitByActionId, setActionProfitByActionId] =
@@ -105,45 +125,99 @@ const useNewProfits = () => {
     t("products.profits.pricingListWidget.totalPrice"),
     t("products.profits.pricingListWidget.more"),
   ]);
-
   const getAllActionProfitRowsByActionId = useCallback(async () => {
+    setIsLoading(true);
+    if (actionProfitByActionId?.id) {
+      const requestBody: any = {
+        actionIdOrProductId: router.query.actionId
+          ? router.query.actionId
+          : router.query.productId,
+        isOutSource: router.query.isOutSource ? true : false,
+      };
+
+      if (selectedPricingTableItems?.exceptionType != ETypeException.DEFAULT) {
+        if (router.query.draftId) {
+          requestBody.exceptionId = selectedPricingTableItems?.id;
+        } else {
+          requestBody.exceptionId = selectedPricingTableItems?.id;
+        }
+      }
+
+      const res = await getAndSetAllActionProfitRowsByActionId(
+        callApi,
+        setAllActionProfitRowsByActionId,
+        requestBody
+      );
+      if (res) {
+        getActionProfitRowChartData();
+        setIsLoading(false);
+      }
+    }
+  }, [
+    router,
+    selectedPricingTableItems,
+    actionProfitByActionId,
+    ETypeException,
+  ]);
+
+  useEffect(() => {
+    if (router.query.draftId) {
+      getCalculateCaseProfits();
+    } else {
+      getAllActionProfitRowsByActionId();
+    }
+  }, [selectedPricingTableItems, router]);
+  const getActionProfitByActionId = useCallback(async () => {
+    if (router.query.productId) {
+      await getAndSetProductProfitByProductId(
+        callApi,
+        setActionProfitByActionId,
+        {
+          productId: router.query.productId,
+        }
+      );
+    } else {
+      await getAndSetActionProfitByActionId(
+        callApi,
+        setActionProfitByActionId,
+        {
+          actionId: router.query.actionId,
+          isOutSource: router.query.isOutSource ? true : false,
+        }
+      );
+    }
+  }, [router]);
+  const getCalculateCaseProfits = useCallback(async () => {
+    setIsLoading(true);
     const requestBody: any = {
       actionId: router.query.actionId,
+      productItemValueId: router.query.draftId,
+      isOutSource: router.query.isOutSource ? true : false,
     };
-
     if (selectedPricingTableItems?.exceptionType != ETypeException.DEFAULT) {
       requestBody.exceptionId = selectedPricingTableItems?.id;
     }
-
-    await getAndSetAllActionProfitRowsByActionId(
+    const res = await getAndSetCalculateCaseProfits(
       callApi,
-      setAllActionProfitRowsByActionId,
-      requestBody
+      setSalculateCaseValue,
+      requestBody,
+      setIsLoading
     );
+    if (res) {
+      getActionProfitRowChartData();
+      setIsLoading(false);
+    }
   }, [router, selectedPricingTableItems]);
-
-  useEffect(() => {
-    getAllActionProfitRowsByActionId();
-    getActionProfitRowChartData();
-  }, [selectedPricingTableItems]);
-  const getActionProfitByActionId = useCallback(async () => {
-    await getAndSetActionProfitByActionId(callApi, setActionProfitByActionId, {
-      actionId: router.query.actionId,
-    });
-  }, [router]);
-
-  const getCalculateCaseProfits = useCallback(async () => {
-    await getAndSetCalculateCaseProfits(callApi, setSalculateCaseValue, {
-      actionId: router.query.actionId,
-      productItemValueId: router.query.draftId,
-    });
-  }, [router]);
-
   const getProfitsPricingTables = useCallback(async () => {
-    await getAndSetProfitsPricingTables(callApi, setProfitsPricingTables, {
-      actionId: router.query.actionId,
-    });
-  }, [router]);
+    if (actionProfitByActionId?.id) {
+      await getAndSetProfitsPricingTables(callApi, setProfitsPricingTables, {
+        actionIdOrProductId: router.query.actionId
+          ? router.query.actionId
+          : router.query.productId,
+        isOutSource: router.query.isOutSource ? true : false,
+      });
+    }
+  }, [router, actionProfitByActionId]);
 
   const getActionProfitRowChartData = useCallback(async () => {
     if (actionProfitByActionId?.id) {
@@ -163,49 +237,118 @@ const useNewProfits = () => {
   }, [actionProfitByActionId, selectedPricingTableItems]);
 
   useEffect(() => {
-    getAllActionProfitRowsByActionId();
+    // if (router.query.draftId) {
+    //   getCalculateCaseProfits();
+    // } else {
+    //   getAllActionProfitRowsByActionId();
+    // }
     getActionProfitByActionId();
-    getProfitsPricingTables();
-    getCalculateCaseProfits();
-  }, []);
+  }, [router]);
   useEffect(() => {
-    getActionProfitRowChartData();
+    if (actionProfitByActionId?.id) {
+      getProfitsPricingTables();
+    }
   }, [actionProfitByActionId]);
   useEffect(() => {
-    if (selectedPricingBy?.value === EPricingBy.COST) {
+    if (router.query.draftId) {
       setTableHeaders([
-        selectedPricingBy?.label,
+        t("products.profits.pricingListWidget.quantity"),
+        `${selectedPricingBy?.label}` +
+          (selectedPricingBy?.value === EPricingBy.COST
+            ? ` ${ProfitCurrency}`
+            : ""),
         t("products.profits.pricingListWidget.profit"),
-        t("products.profits.pricingListWidget.totalPrice"),
+        t("products.profits.pricingListWidget.unitPrice"),
+        `${t(
+          "products.profits.pricingListWidget.totalPrice"
+        )} ${ProfitCurrency}`,
+        t("products.profits.pricingListWidget.more"),
+      ]);
+      if (selectedPricingBy?.value != EPricingBy.COST) {
+        setTableHeaders([
+          `${selectedPricingBy?.label}` +
+            (selectedPricingBy?.value === EPricingBy.COST
+              ? ` ${ProfitCurrency}`
+              : ""),
+          t("products.profits.pricingListWidget.cost"),
+          t("products.profits.pricingListWidget.profit"),
+          t("products.profits.pricingListWidget.unitPrice"),
+          `${t(
+            "products.profits.pricingListWidget.totalPrice"
+          )} ${ProfitCurrency}`,
+          t("products.profits.pricingListWidget.more"),
+        ]);
+      }
+      if (selectedAdditionalProfitRow?.id) {
+        setTableHeaders([
+          t("products.profits.pricingListWidget.quantity"),
+          `${selectedPricingBy?.label}` +
+            (selectedPricingBy?.value === EPricingBy.COST
+              ? ` ${ProfitCurrency}`
+              : ""),
+          t("products.profits.pricingListWidget.profit"),
+          `Profit value ${ProfitCurrency}`,
+          t("products.profits.pricingListWidget.unitPrice"),
+          `${t(
+            "products.profits.pricingListWidget.totalPrice"
+          )} ${ProfitCurrency}`,
+          t("products.profits.pricingListWidget.more"),
+        ]);
+      }
+    } else if (selectedPricingBy?.value === EPricingBy.COST) {
+      setTableHeaders([
+        `${selectedPricingBy?.label}` +
+          (selectedPricingBy?.value === EPricingBy.COST
+            ? ` ${ProfitCurrency}`
+            : ""),
+        t("products.profits.pricingListWidget.profit"),
+        `${t(
+          "products.profits.pricingListWidget.totalPrice"
+        )} ${ProfitCurrency}`,
         t("products.profits.pricingListWidget.more"),
       ]);
       if (selectedAdditionalProfitRow?.id) {
         setTableHeaders([
-          selectedPricingBy?.label,
+          `${selectedPricingBy?.label}` +
+            (selectedPricingBy?.value === EPricingBy.COST
+              ? ` ${ProfitCurrency}`
+              : ""),
           t("products.profits.pricingListWidget.profit"),
-          "Profit value",
-          t("products.profits.pricingListWidget.totalPrice"),
+          `Profit value ${ProfitCurrency}`,
+          `${t(
+            "products.profits.pricingListWidget.totalPrice"
+          )} ${ProfitCurrency}`,
           t("products.profits.pricingListWidget.more"),
         ]);
       }
     } else {
       setTableHeaders([
-        selectedPricingBy?.label,
+        `${selectedPricingBy?.label}` +
+          (selectedPricingBy?.value === EPricingBy.COST
+            ? ` ${ProfitCurrency}`
+            : ""),
         t("products.profits.pricingListWidget.unitPrice"),
-        t("products.profits.pricingListWidget.totalPrice"),
+        `${t(
+          "products.profits.pricingListWidget.totalPrice"
+        )} ${ProfitCurrency}`,
         t("products.profits.pricingListWidget.more"),
       ]);
       if (selectedAdditionalProfitRow?.id) {
         setTableHeaders([
-          selectedPricingBy?.label,
+          `${selectedPricingBy?.label}` +
+            (selectedPricingBy?.value === EPricingBy.COST
+              ? ` ${ProfitCurrency}`
+              : ""),
           t("products.profits.pricingListWidget.unitPrice"),
-          "Profit value",
-          t("products.profits.pricingListWidget.totalPrice"),
+          `Profit value ${ProfitCurrency}`,
+          `${t(
+            "products.profits.pricingListWidget.totalPrice"
+          )} ${ProfitCurrency}`,
           t("products.profits.pricingListWidget.more"),
         ]);
       }
     }
-  }, [selectedPricingBy, selectedAdditionalProfitRow]);
+  }, [selectedPricingBy, selectedAdditionalProfitRow, router]);
 
   const onCloseAddStepModal = () => {
     setOpenAddStepModal(false);
@@ -226,35 +369,93 @@ const useNewProfits = () => {
 
   const updatePricingByForAction = useCallback(
     async (data: SelectedPricingByType) => {
+      const requestBody: any = {
+        recordID: actionProfitByActionId?.recordID,
+        id: actionProfitByActionId?.id,
+        printingActionId: actionProfitByActionId?.printingActionId,
+        pricingBy: data?.value,
+        transitionType: selectedTransition?.value,
+        minPrice: actionProfitByActionId?.minPrice,
+        actionProfitRows: [],
+        actionExpections: [],
+        productId: router.query.productId,
+        isOutSource: router.query.isOutSource ? true : false,
+      };
+      if (router.query.productId) {
+        requestBody.productId = router.query.productId;
+      }
       const res = await callApi(
         EHttpMethod.PUT,
         `/v1/printhouse-config/profits/update-action-profit`,
-        {
-          recordID: actionProfitByActionId?.recordID,
-          id: actionProfitByActionId?.id,
-          printingActionId: actionProfitByActionId?.printingActionId,
-          pricingBy: data?.value,
-          transitionType: actionProfitByActionId?.transitionType,
-          minPrice: actionProfitByActionId?.minPrice,
-          actionProfitRows: [],
-          actionExpections: [],
-        }
+        requestBody
       );
       if (res?.success) {
         alertSuccessUpdate();
         setSelectedPricingBy(data);
-        getAllActionProfitRowsByActionId();
-        getActionProfitRowChartData();
+        if (router.query.draftId) {
+          getCalculateCaseProfits();
+        } else {
+          getAllActionProfitRowsByActionId();
+        }
       } else {
         alertFaultUpdate();
       }
     },
-    [actionProfitByActionId]
+    [actionProfitByActionId, router, selectedPricingTableItems]
   );
 
+  const updateTransitionForAction = useCallback(
+    async (data: SelectedPricingByType) => {
+      const requestBody: any = {
+        recordID: actionProfitByActionId?.recordID,
+        id: actionProfitByActionId?.id,
+        printingActionId: actionProfitByActionId?.printingActionId,
+        pricingBy: selectedPricingBy?.value,
+        transitionType: data?.value,
+        minPrice: actionProfitByActionId?.minPrice,
+        actionProfitRows: [],
+        actionExpections: [],
+        isOutSource: router.query.isOutSource ? true : false,
+      };
+      if (router.query.productId) {
+        requestBody.productId = router.query.productId;
+      }
+      const res = await callApi(
+        EHttpMethod.PUT,
+        `/v1/printhouse-config/profits/update-action-profit`,
+        requestBody
+      );
+      if (res?.success) {
+        alertSuccessUpdate();
+        setSelectedTransition(data);
+        if (router.query.draftId) {
+          getCalculateCaseProfits();
+        } else {
+          getAllActionProfitRowsByActionId();
+        }
+      } else {
+        alertFaultUpdate();
+      }
+    },
+    [
+      actionProfitByActionId,
+      router,
+      selectedPricingTableItems,
+      selectedPricingBy,
+    ]
+  );
   useEffect(() => {
-    setActionProfitRowsList(allActionProfitRowsByActionId);
-  }, [allActionProfitRowsByActionId, selectedPricingTableItems]);
+    if (router.query.draftId) {
+      setActionProfitRowsList(calculateCaseValue?.caseProfitRows);
+    } else {
+      setActionProfitRowsList(allActionProfitRowsByActionId);
+    }
+  }, [
+    allActionProfitRowsByActionId,
+    selectedPricingTableItems,
+    router,
+    calculateCaseValue,
+  ]);
   const changeactionProfitRowsItems = (
     index: number,
     filedName: string,
@@ -289,61 +490,95 @@ const useNewProfits = () => {
 
       if (res?.success) {
         alertSuccessAdded();
-        getAllActionProfitRowsByActionId();
-        getActionProfitRowChartData();
+        if (router.query.draftId) {
+          getCalculateCaseProfits();
+        } else {
+          getAllActionProfitRowsByActionId();
+        }
       } else {
         alertFaultAdded();
       }
     },
-    [actionProfitByActionId, selectedPricingBy, selectedPricingTableItems]
+    [
+      actionProfitByActionId,
+      selectedPricingBy,
+      selectedPricingTableItems,
+      router,
+    ]
   );
 
-  const updateActionProfitRow = useCallback(async (data: any) => {
-    const res = await callApi(
-      EHttpMethod.PUT,
-      `/v1/printhouse-config/action-profit-rows/update-action-profit-row`,
-      {
+  const updateActionProfitRow = useCallback(
+    async (data: any) => {
+      const requestBody: any = {
         id: data?.id,
         actionProfitId: data?.actionProfitId,
         value: data?.value,
         pricingBy: data?.pricingBy,
         totalPrice: data?.totalPrice,
-      }
-    );
-    if (res?.success) {
-      alertSuccessUpdate();
-      getAllActionProfitRowsByActionId();
-      getActionProfitRowChartData();
-    } else {
-      alertFaultUpdate();
-    }
-  }, []);
+      };
 
-  const updateMinPriceForAction = useCallback(
-    async (data: number) => {
+      if (selectedPricingTableItems?.exceptionType !== ETypeException.DEFAULT) {
+        requestBody.actionExceptionId = selectedPricingTableItems?.id;
+      }
       const res = await callApi(
         EHttpMethod.PUT,
-        `/v1/printhouse-config/profits/update-action-profit`,
-        {
-          recordID: actionProfitByActionId?.recordID,
-          id: actionProfitByActionId?.id,
-          printingActionId: actionProfitByActionId?.printingActionId,
-          pricingBy: actionProfitByActionId?.pricingBy,
-          transitionType: actionProfitByActionId?.transitionType,
-          minPrice: data,
-          actionProfitRows: [],
-          actionExpections: [],
-        }
+        `/v1/printhouse-config/action-profit-rows/update-action-profit-row`,
+        requestBody
       );
       if (res?.success) {
         alertSuccessUpdate();
-        getAllActionProfitRowsByActionId();
+        if (router.query.draftId) {
+          getCalculateCaseProfits();
+        } else {
+          getAllActionProfitRowsByActionId();
+        }
+      } else {
+        alertFaultUpdate();
+      }
+    },
+    [selectedPricingTableItems, router]
+  );
+
+  const updateMinPriceForAction = useCallback(
+    async (data: number) => {
+      const requestBody: any = {
+        recordID: actionProfitByActionId?.recordID,
+        id: actionProfitByActionId?.id,
+        printingActionId: actionProfitByActionId?.printingActionId,
+        pricingBy: selectedPricingBy?.value,
+        transitionType: selectedTransition?.value,
+        minPrice: data,
+        actionProfitRows: [],
+        actionExpections: [],
+        isOutSource: router.query.isOutSource ? true : false,
+      };
+      if (router.query.productId) {
+        requestBody.productId = router.query.productId;
+      }
+      const res = await callApi(
+        EHttpMethod.PUT,
+        `/v1/printhouse-config/profits/update-action-profit`,
+        requestBody
+      );
+      if (res?.success) {
+        alertSuccessUpdate();
+        if (router.query.draftId) {
+          getCalculateCaseProfits();
+        } else {
+          getAllActionProfitRowsByActionId();
+        }
         getActionProfitByActionId();
       } else {
         alertFaultUpdate();
       }
     },
-    [actionProfitByActionId]
+    [
+      actionProfitByActionId,
+      router,
+      selectedPricingTableItems,
+      selectedPricingBy,
+      selectedTransition,
+    ]
   );
   const [minimumValue, setMinimumValue] = useState(0);
   useEffect(() => {
@@ -412,18 +647,23 @@ const useNewProfits = () => {
   }, [selectedPricingTableItems]);
   const [dataForPricing, setDataForPricing] =
     useState<ProfitsPricingTables[]>();
+  const [dataForDefault, setDataForDefault] =
+    useState<ProfitsPricingTables[]>();
   const [dataForExceptions, setDataForExceptions] =
     useState<ProfitsPricingTables[]>();
 
   const reOrderPricingTables = useCallback(async (data: any) => {
     const res = await callApi(
       EHttpMethod.PUT,
-      `/v1/printhouse-config/profits/update-re-order-pricing-tables?actionId=${router.query.actionId}`,
+      `/v1/printhouse-config/profits/update-re-order-pricing-tables?actionIdOrProductId=${
+        router.query.actionId
+      }?isOutSourc=${router.query.isOutSource ? true : false}`,
       {
         data,
       }
     );
   }, []);
+
   useEffect(() => {
     const filteredArray = profitsPricingTables?.reduce(
       (result, item) => {
@@ -440,21 +680,33 @@ const useNewProfits = () => {
       },
       [[], []]
     );
+
     if (filteredArray) {
+      // Filter items for setDataForPricing (item.exceptionType !== ETypeException.DEFAULT)
+      const filteredPricing = filteredArray[1].filter(
+        (item) => item.exceptionType !== ETypeException.DEFAULT
+      );
+      // Filter items for setDataForDefaultPricing (item.exceptionType === ETypeException.DEFAULT)
+      const filteredDefaultPricing = filteredArray[1].filter(
+        (item) => item.exceptionType === ETypeException.DEFAULT
+      );
+      setDataForPricing(filteredPricing);
+      setDataForDefault(filteredDefaultPricing);
       setDataForExceptions(filteredArray[0]);
-      setDataForPricing(filteredArray[1]);
     }
   }, [profitsPricingTables]);
   const onDragEnd = (result) => {
     if (!result.destination) {
       return;
     }
+
     const newData = Array.from(dataForPricing);
     const [removed] = newData.splice(result.source.index, 1);
     newData.splice(result.destination.index, 0, removed);
-    const transformedArray = newData
-      .filter((item) => item.exceptionType !== ETypeException.DEFAULT)
-      .map((item, index) => ({ id: item?.id, index: index + 1 }));
+    const transformedArray = newData.map((item, index) => ({
+      id: item?.id,
+      index: index + 1,
+    }));
     setDataForPricing(newData);
     reOrderPricingTables(transformedArray);
   };
@@ -478,27 +730,35 @@ const useNewProfits = () => {
       );
       if (res?.success) {
         alertSuccessDelete();
-        getAllActionProfitRowsByActionId();
-        getActionProfitRowChartData();
+        if (router.query.draftId) {
+          getCalculateCaseProfits();
+        } else {
+          getAllActionProfitRowsByActionId();
+        }
       } else {
         alertFaultDelete();
       }
     },
-    [profitRowType]
+    [profitRowType, router, selectedPricingTableItems]
   );
 
-  const deleteExceptionProfit = useCallback(async (id: string) => {
-    const res = await callApi(
-      "DELETE",
-      `/v1/printhouse-config/profits/delete-exception-profit?actionExceptionId=${id}`
-    );
-    if (res?.success) {
-      alertSuccessDelete();
-      getProfitsPricingTables();
-    } else {
-      alertFaultDelete();
-    }
-  }, []);
+  const deleteExceptionProfit = useCallback(
+    async (id: string) => {
+      const res = await callApi(
+        "DELETE",
+        `/v1/printhouse-config/profits/delete-exception-profit?actionExceptionId=${id}`
+      );
+      if (res?.success) {
+        alertSuccessDelete();
+        getProfitsPricingTables();
+        setSelectedActionProfitRow(null);
+      } else {
+        alertFaultDelete();
+      }
+    },
+    [selectedPricingTableItems]
+  );
+
   return {
     allActionProfitRowsByActionId,
     actionProfitRowChartData,
@@ -520,6 +780,7 @@ const useNewProfits = () => {
     anchorElPricingTablesMapping,
     openPricingTablesMapping,
     dataForExceptions,
+    dataForDefault,
     dataForPricing,
     anchorElMorePriceTable,
     openMorePriceTable,
@@ -529,6 +790,8 @@ const useNewProfits = () => {
     anchorElAdditionalProfitMenu,
     openAdditionalProfitMenu,
     calculateCaseValue,
+    isLoading,
+    ProfitCurrency,
     handleCloseAdditionalProfitMenu,
     handleClickAdditionalProfitMenu,
     setSelectedActionProfitRow,
@@ -549,8 +812,8 @@ const useNewProfits = () => {
     onCloseAddStepModal,
     onOpenAddStepModal,
     updatePricingByForAction,
+    updateTransitionForAction,
     setSelectedTransition,
-    setSelectedPricingBy,
     changeactionProfitRowsItems,
     addNewStepForActionProfitRow,
     updateActionProfitRow,

@@ -7,6 +7,7 @@ import { PricingListTableRowProps } from "../../interface";
 import { ChangeEvent } from "react";
 import { EPricingBy } from "../../enums/profites-enum";
 import { MoreCircleIcon } from "@/icons";
+import { useRouter } from "next/router";
 
 const RowMappingWidget = ({
   item,
@@ -19,6 +20,7 @@ const RowMappingWidget = ({
   selectedAdditionalProfitRow,
 }: PricingListTableRowProps) => {
   const { clasess } = useStyle();
+  const router = useRouter();
   const {
     isUpdateCost,
     isUpdatTotalPrice,
@@ -26,6 +28,12 @@ const RowMappingWidget = ({
     profit,
     unitPrice,
     isUpdateUnitPrice,
+    isUpdateCaseCost,
+    onBlurCaseCost,
+    onInputChangeCaseCost,
+    setIsUpdateCaseCost,
+    setIsUpdatecaseQuantity,
+    setIsUpdateProfitValue,
     setIsUpdateUnitPrice,
     onBlurProfit,
     onInputChangeProfit,
@@ -38,6 +46,8 @@ const RowMappingWidget = ({
     setIsUpdateProfit,
     onBlurUnitPrice,
     onInputChangeUnitPrice,
+    onBlurCaseQuantity,
+    onInputChangeCaseQuantity,
   } = usePriceList({
     changeactionProfitRowsItems,
     index,
@@ -47,6 +57,23 @@ const RowMappingWidget = ({
   });
   return (
     <TableRow key={item.id}>
+      {router?.query?.draftId &&
+        selectedPricingBy?.value === EPricingBy.COST && (
+          <PrimaryTableCell style={clasess.cellContainerStyle}>
+            <div style={clasess.cellTextInputStyle}>
+              <InputUpdatedValues
+                value={item?.caseQuantity}
+                onBlur={() => onBlurCaseQuantity(item)}
+                isUpdate={null}
+                setIsUpdate={setIsUpdatecaseQuantity}
+                onInputChange={(e: ChangeEvent<HTMLInputElement>) =>
+                  onInputChangeCaseQuantity(e)
+                }
+              />
+            </div>
+          </PrimaryTableCell>
+        )}
+
       <PrimaryTableCell style={clasess.cellContainerStyle}>
         <div style={clasess.cellTextInputStyle}>
           <InputUpdatedValues
@@ -60,9 +87,55 @@ const RowMappingWidget = ({
           />
         </div>
       </PrimaryTableCell>
-      <PrimaryTableCell style={clasess.cellContainerStyle}>
-        <div style={clasess.cellTextInputStyle}>
-          {selectedPricingBy?.value === EPricingBy.COST ? (
+      {router?.query?.draftId &&
+        selectedPricingBy?.value != EPricingBy.COST && (
+          <PrimaryTableCell style={clasess.cellContainerStyle}>
+            <div style={clasess.cellTextInputStyle}>
+              <InputUpdatedValues
+                value={item?.caseCost}
+                onBlur={() => onBlurCaseCost(item)}
+                isUpdate={null}
+                setIsUpdate={setIsUpdateCaseCost}
+                onInputChange={(e: ChangeEvent<HTMLInputElement>) =>
+                  onInputChangeCaseCost(e)
+                }
+              />
+            </div>
+          </PrimaryTableCell>
+        )}
+      {!router.query.draftId && (
+        <PrimaryTableCell style={clasess.cellContainerStyle}>
+          <div style={clasess.cellTextInputStyle}>
+            {selectedPricingBy?.value === EPricingBy.COST ? (
+              <InputUpdatedValues
+                value={profit}
+                sign={"%"}
+                isTwoDigit={true}
+                onBlur={() => onBlurProfit(item)}
+                isUpdate={isUpdateProfit}
+                setIsUpdate={setIsUpdateProfit}
+                onInputChange={(e: ChangeEvent<HTMLInputElement>) =>
+                  onInputChangeProfit(e)
+                }
+              />
+            ) : (
+              <InputUpdatedValues
+                value={unitPrice}
+                isTwoDigit={true}
+                onBlur={() => onBlurUnitPrice(item)}
+                isUpdate={isUpdateUnitPrice}
+                setIsUpdate={setIsUpdateUnitPrice}
+                onInputChange={(e: ChangeEvent<HTMLInputElement>) =>
+                  onInputChangeUnitPrice(e)
+                }
+              />
+            )}
+          </div>
+        </PrimaryTableCell>
+      )}
+      {router.query.draftId && (
+        <PrimaryTableCell style={clasess.cellContainerStyle}>
+          <div style={clasess.cellTextInputStyle}>
             <InputUpdatedValues
               value={profit}
               sign={"%"}
@@ -74,30 +147,36 @@ const RowMappingWidget = ({
                 onInputChangeProfit(e)
               }
             />
-          ) : (
-            <InputUpdatedValues
-              value={unitPrice}
-              onBlur={() => onBlurUnitPrice(item)}
-              isUpdate={isUpdateUnitPrice}
-              setIsUpdate={setIsUpdateUnitPrice}
-              onInputChange={(e: ChangeEvent<HTMLInputElement>) =>
-                onInputChangeUnitPrice(e)
-              }
-            />
-          )}
-        </div>
-      </PrimaryTableCell>
+          </div>
+        </PrimaryTableCell>
+      )}
+
       {selectedAdditionalProfitRow?.id && (
         <PrimaryTableCell style={clasess.cellContainerStyle}>
           <div style={clasess.cellTextInputStyle}>
             <InputUpdatedValues
               value={selectedAdditionalProfitRow.profitValue}
-              onBlur={() => onBlurTotalPrice(item)}
-              isUpdate={isUpdatTotalPrice}
-              setIsUpdate={setIsUpdateTotalPrice}
-              sign="%"
+              onBlur={() => setIsUpdateProfitValue(0)}
+              isUpdate={false}
+              setIsUpdate={setIsUpdateProfitValue}
               onInputChange={(e: ChangeEvent<HTMLInputElement>) =>
                 onInputChangeTotalPrice(e)
+              }
+            />
+          </div>
+        </PrimaryTableCell>
+      )}
+      {router?.query?.draftId && (
+        <PrimaryTableCell style={clasess.cellContainerStyle}>
+          <div style={clasess.cellTextInputStyle}>
+            <InputUpdatedValues
+              value={unitPrice}
+              isTwoDigit={true}
+              onBlur={() => onBlurUnitPrice(item)}
+              isUpdate={isUpdateUnitPrice}
+              setIsUpdate={setIsUpdateUnitPrice}
+              onInputChange={(e: ChangeEvent<HTMLInputElement>) =>
+                onInputChangeUnitPrice(e)
               }
             />
           </div>

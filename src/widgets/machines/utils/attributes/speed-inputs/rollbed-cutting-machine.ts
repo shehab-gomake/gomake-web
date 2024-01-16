@@ -1,7 +1,10 @@
 import {cuttingLevel} from "@/widgets/machines/utils/const/cutting-level";
+import {EMeasurementUnits} from "@/widgets/machines/enums/measurement-units";
+import {setupTimeInput} from "@/widgets/machines/utils/attributes/speed-inputs/setup-time-input";
 
 const rollbedCuttingMachine = (state: Record<string, any>) => {
     return [
+        ...setupTimeInput(state),
         {
             name: "speed",
             label: "machineAttributes.speed",
@@ -13,9 +16,10 @@ const rollbedCuttingMachine = (state: Record<string, any>) => {
             value: state.attributes?.speed ? state.attributes?.speed : '',
             machineInputType: 'input',
             isValid: !!state?.attributes?.speed,
+            unit: EMeasurementUnits.MM_P_SECOND
         },
         {
-            name: '',
+            name: 'machineAttributes.speedByComplexity',
             parameterKey: 'speedByCuttingLevel',
             value: state.attributes?.speedByCuttingLevel || [],
             isValid: state.attributes?.speedByCuttingLevel?.length > 0,
@@ -37,7 +41,8 @@ const rollbedCuttingMachine = (state: Record<string, any>) => {
                     placeholder: "machineAttributes.speedPercentage",
                     required: true,
                     parameterKey: "speedPercentage",
-                    options: []
+                    options: [],
+                    unit: EMeasurementUnits.PERCENTAGE
                 },
 
             ]

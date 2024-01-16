@@ -3,10 +3,10 @@ import { Table, TableBody, TableContainer, Paper } from "@mui/material";
 import { useStyle } from "./style";
 import { RowMappingChildWidget } from "./row-mapping";
 const QuoteForPriceChildTable = ({
-  priceListItems,
+  documentItems,
   columnWidths,
   headerHeight,
-  changepriceListItems,
+  changedocumentItems,
   getCalculateQuoteItem,
   onClickDuplicateWithDifferentQTY,
   onClickDeleteQouteItem,
@@ -17,14 +17,14 @@ const QuoteForPriceChildTable = ({
     <TableContainer component={Paper}>
       <Table>
         <TableBody style={{ border: "1px solid #EAECF0" }}>
-          {priceListItems?.map((item, index) => (
+          {documentItems?.map((item, index) => (
             <RowMappingChildWidget
               key={item.id}
               item={item}
               index={index}
               columnWidths={columnWidths}
               headerHeight={headerHeight}
-              changepriceListItems={changepriceListItems}
+              changedocumentItems={changedocumentItems}
               getCalculateQuoteItem={getCalculateQuoteItem}
               onClickDuplicateWithDifferentQTY={
                 onClickDuplicateWithDifferentQTY

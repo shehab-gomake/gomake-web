@@ -95,6 +95,7 @@
   },
   "properties": {
     "parameter": "المعلمة",
+    "unit": "وحدة",
     "rule": "القاعدة",
     "type": "النوع",
     "more": "المزيد",
@@ -280,7 +281,6 @@
       "back": "رجوع",
       "addNew": "إضافة جديدة",
       "add": "إضافة",
-      "addNew": "إضافة فئة جديدة",
       "addRow": "إضافة صف",
       "addNewRow": "إضافة صف جديد",
       "openImage": "فتح الصورة",
@@ -1467,7 +1467,13 @@
         "enterCode": "أدخل الرمز",
         "addNewProduct": "إضافة منتج جديد",
         "addGoToList": "إضافة والانتقال إلى قائمة المعلمات",
-        "updateNewProduct": "تحديث المنتج"
+        "updateNewProduct": "تحديث المنتج",
+        "clients": "العملاء",
+        "allCustomers": "كل العملاء",
+        "byClient": "حسب العميل",
+        "byClientType": "حسب نوع العميل",
+        "uploadImg": "تحميل صورة"
+        
       }
     },
     "parameters": {
@@ -1510,7 +1516,12 @@
         "stationName": "اسم المحطة",
         "actionType": "نوع الإجراء",
         "machine": "الجهاز",
-        "loadingOptimalWorkflows": "جارٍ تحميل سير العمل الأمثل..."
+        "loadingOptimalWorkflows": "جارٍ تحميل سير العمل الأمثل...",
+        "includeVAT": "تضمين ضريبة القيمة المضافة",
+        "graphicDesign": "تصميم جرافيك",
+        "productionComment": "تعليق الإنتاج",
+        "graphicDesignComment": "تعليق تصميم جرافيك",
+        "Pricing": "السعر"
       }
     },
     "productManagement": {
@@ -1656,6 +1667,9 @@
       "createdBy": "تم الإنشاء بواسطة {{name}}",
       "customer": "العميل",
       "orderList": "قائمة الطلبات",
+      "receiptList": "قائمة الإيصالات",
+      "deliveryNoteList": "قائمة ملاحظات التسليم",
+      "invoiceList": "قائمة الفواتير",
       "deleteItem": "حذف العنصر",
       "areYouSureDeleteItem": "هل أنت متأكد من حذف هذا العنصر؟",
       "amount": "المبلغ",
@@ -2053,7 +2067,9 @@
     "newQuote": "عرض جديد",
     "convertToInactive": "تحويل إلى غير نشط",
     "convertToActive": "تحويل إلى نشط",
-    "editing": "تحرير"
+    "editing": "تحرير",
+    "createSubProduct": "إنشاء منتج فرعي",
+    "goToSubProducts": "الانتقال إلى المنتجات الفرعية"
   },
   "materialsTrans": {
     "additions": "إضافات",

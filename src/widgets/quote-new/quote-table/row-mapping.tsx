@@ -13,11 +13,12 @@ const RowMappingWidget = ({
   index,
   columnWidths,
   headerHeight,
-  changepriceListItems,
+  changedocumentItems,
   getCalculateQuoteItem,
   onClickDuplicateWithDifferentQTY,
   onClickDeleteQouteItem,
   parentIndex,
+  documentType
 }) => {
   const { clasess } = useStyle({ headerHeight });
   const {
@@ -39,7 +40,7 @@ const RowMappingWidget = ({
     onInputChangeAmount,
   } = useQuoteTable({
     getCalculateQuoteItem,
-    changepriceListItems,
+    changedocumentItems,
     item,
     index,
   });
@@ -54,7 +55,7 @@ const RowMappingWidget = ({
         style={{
           width: columnWidths[0],
           ...clasess.cellContainerStyle,
-          borderBottom: item?.childsQuoteItems && "none",
+          borderBottom: item?.childsDocumentItems && "none",
         }}
       >
         <div
@@ -77,7 +78,7 @@ const RowMappingWidget = ({
           width: columnWidths[1],
           ...clasess.cellContainerStyle,
           color: "#000000",
-          borderBottom: item?.childsQuoteItems && "none",
+          borderBottom: item?.childsDocumentItems && "none",
         }}
       >
         225
@@ -88,7 +89,7 @@ const RowMappingWidget = ({
           ...FONT_FAMILY.Inter(600, 14),
           color: "#5859A8",
           ...clasess.cellContainerStyle,
-          borderBottom: item?.childsQuoteItems && "none",
+          borderBottom: item?.childsDocumentItems && "none",
         }}
       >
         {item.productName}
@@ -97,7 +98,7 @@ const RowMappingWidget = ({
         style={{
           width: columnWidths[3],
           textAlign: "start",
-          borderBottom: item?.childsQuoteItems && "none",
+          borderBottom: item?.childsDocumentItems && "none",
         }}
       >
         <CharacterDetails details={item.details} />
@@ -106,7 +107,7 @@ const RowMappingWidget = ({
         style={{
           width: columnWidths[4],
           ...clasess.cellContainerStyle,
-          borderBottom: item?.childsQuoteItems && "none",
+          borderBottom: item?.childsDocumentItems && "none",
         }}
       >
         <div style={clasess.cellTextInputStyle}>
@@ -123,7 +124,7 @@ const RowMappingWidget = ({
         style={{
           width: columnWidths[5],
           ...clasess.cellContainerStyle,
-          borderBottom: item?.childsQuoteItems && "none",
+          borderBottom: item?.childsDocumentItems && "none",
         }}
       >
         <div style={clasess.cellTextInputStyle}>
@@ -140,7 +141,7 @@ const RowMappingWidget = ({
         style={{
           width: columnWidths[6],
           ...clasess.cellContainerStyle,
-          borderBottom: item?.childsQuoteItems && "none",
+          borderBottom: item?.childsDocumentItems && "none",
         }}
       >
         <div style={clasess.cellTextInputStyle}>
@@ -157,7 +158,7 @@ const RowMappingWidget = ({
         style={{
           width: columnWidths[7],
           ...clasess.cellContainerStyle,
-          borderBottom: item?.childsQuoteItems && "none",
+          borderBottom: item?.childsDocumentItems && "none",
         }}
       >
         <div style={clasess.cellTextInputStyle}>
@@ -174,13 +175,14 @@ const RowMappingWidget = ({
         style={{
           width: columnWidths[7],
           ...clasess.cellContainerStyle,
-          borderBottom: item?.childsQuoteItems && "none",
+          borderBottom: item?.childsDocumentItems && "none",
         }}
       >
         <MoreMenuWidget
           quoteItem={item}
           onClickDuplicateWithDifferentQTY={onClickDuplicateWithDifferentQTY}
           onClickDeleteQouteItem={onClickDeleteQouteItem}
+          documentType={documentType}
         />
       </PrimaryTableCell>
     </TableRow>

@@ -32,6 +32,7 @@ const ProfitRightSideWidget = ({
   selectedPricingTableItems,
   setSelectedPricingTableItems,
   dataForExceptions,
+  dataForDefault,
   dataForPricing,
   onDragEnd,
   deleteExceptionProfit,
@@ -46,6 +47,7 @@ const ProfitRightSideWidget = ({
   openAdditionalProfitMenu,
   handleCloseAdditionalProfitMenu,
   handleClickAdditionalProfitMenu,
+  ProfitCurrency,
 }: ProfitRightSideProps) => {
   const { clasess } = useStyle();
   const [openDeleteRowModal, setOpenDeleteRowModal] = useState<boolean>(false);
@@ -71,6 +73,7 @@ const ProfitRightSideWidget = ({
   const onClickCloseAddNewRuleModal = () => {
     setOpenAddNewRuleModal(false);
   };
+  console.log("dataForPricing", dataForPricing);
   return (
     <div style={clasess.mainHeaderContainer}>
       <AccordionTable
@@ -136,6 +139,20 @@ const ProfitRightSideWidget = ({
             </Droppable>
           </DragDropContext>
         </div>
+        {dataForDefault?.map((item) => {
+          return (
+            <div key={item.id} style={{ width: "100%" }}>
+              <PricingTableMapping
+                item={item}
+                handleClickPricingTablesMapping={
+                  handleClickPricingTablesMapping
+                }
+                setSelectedPricingTableItems={setSelectedPricingTableItems}
+                selectedPricingTableItems={selectedPricingTableItems}
+              />
+            </div>
+          );
+        })}
       </AccordionTable>
       <AccordionTable
         title="Additions and Exceptions"
@@ -154,6 +171,7 @@ const ProfitRightSideWidget = ({
                 }
                 selectedAdditionalProfitRow={selectedAdditionalProfitRow}
                 setSelectedActionProfitRow={setSelectedActionProfitRow}
+                ProfitCurrency={ProfitCurrency}
               />
             </div>
           );

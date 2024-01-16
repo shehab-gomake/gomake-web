@@ -25,17 +25,10 @@ const MultiParameterModal = ({
       <GoMakeModal
         openModal={openModal}
         modalTitle={modalTitle}
+        onClose={closeModal}
         insideStyle={clasess.insideStyle}
-        withClose={false}
       >
         <div style={clasess.mainContainer}>
-          <div style={clasess.closeIcon} onClick={closeModal}>
-            <Tooltip title={t("modal.close")}>
-              <IconButton>
-                <CloseIcon />
-              </IconButton>
-            </Tooltip>
-          </div>
           <div style={clasess.multiSelectMainContainer}>
             {_renderParameterType(
               settingParameters?.parameter,

@@ -1,11 +1,13 @@
-import React, { useEffect } from "react";
+import React from "react";
 
+import { MuiColorInput } from "mui-color-input";
 import { useTranslation } from "react-i18next";
-import { SketchPicker } from "react-color";
 
 import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
 
 import { AddProductSkuModal } from "./modals/add-contact-modal";
+import { UploadImgProduct } from "./upload-widget";
+import { EProductClient } from "./settings-data";
 import { useSettings } from "./use-settings";
 import { useStyle } from "./style";
 
@@ -22,19 +24,20 @@ const SettingsWidget = ({
     allTemplate,
     allGroups,
     isProductSKU,
-    showColorPicker,
-    showColorPickerForNoteColor,
     errorName,
     errorCode,
+    productClientsList,
+    SelectproductClient,
+    customersList,
+    clientTypesList,
     onClickCloseProductSKU,
     onClickOpenProductSKU,
     onChangeStateProductSKU,
     createNewProductSKU,
-    toggleColorPicker,
-    toggleColorPickerForNoteColor,
     createNewProduct,
     createNewProductAndGoToParameterList,
     updatedProduct,
+    UploadProductImage,
   } = useSettings({ onClickParametersTab, productState, onChangeStateProduct });
   const defultProductSKU = allProductSKU?.find(
     (item) => item.id === productState?.productSKUId
@@ -42,17 +45,106 @@ const SettingsWidget = ({
   const defultTemplate = allTemplate?.find(
     (item) => item.id === productState?.templateId
   );
-
+  const _renderProductClientSelector = () => {
+    if (customersList?.length > 0 && clientTypesList?.length) {
+      if (productState?.pricingType === EProductClient.BY_CLIENT) {
+        return (
+          <div style={clasess.itemGropupsContainer}>
+            <div style={clasess.labelTitleStyle}>
+              {t("products.addProduct.admin.byClient")}
+            </div>
+            <div style={{ width: "100%" }}>
+              <GoMakeAutoComplate
+                options={customersList?.map((item) => {
+                  return {
+                    ...item,
+                    label: item?.name,
+                    id: item.id,
+                  };
+                })}
+                placeholder={t("products.addProduct.admin.byClient")}
+                style={clasess.multiSelectStyle}
+                multiple
+                onChange={(e: any, value: any) => {
+                  onChangeStateProduct(
+                    "clients",
+                    value?.map((item: any) => item?.id)
+                  );
+                }}
+                value={productState?.clients?.map((item: any) => {
+                  const customer = customersList?.find(
+                    (customer: any) => customer?.id === item
+                  );
+                  return {
+                    label: customer?.name,
+                    id: customer?.id,
+                  };
+                })}
+              />
+            </div>
+          </div>
+        );
+      } else if (productState?.pricingType === EProductClient.BY_CLIENT_TYPE) {
+        return (
+          <div style={clasess.itemGropupsContainer}>
+            <div style={clasess.labelTitleStyle}>
+              {t("products.addProduct.admin.byClientType")}
+            </div>
+            <div style={{ width: "100%" }}>
+              <GoMakeAutoComplate
+                key={SelectproductClient?.id}
+                options={clientTypesList.map((item) => {
+                  return {
+                    ...item,
+                    label: item?.name,
+                    id: item.id,
+                  };
+                })}
+                placeholder={t("products.addProduct.admin.byClientType")}
+                style={clasess.multiSelectStyle}
+                multiple
+                onChange={(e: any, value: any) => {
+                  onChangeStateProduct(
+                    "clientsTypes",
+                    value?.map((item: any) => item?.id)
+                  );
+                }}
+                value={productState?.clientsTypes?.map((item: any) => {
+                  const clientType = clientTypesList?.find(
+                    (clientType: any) => clientType?.id === item
+                  );
+                  return {
+                    label: clientType?.name,
+                    id: clientType?.id,
+                  };
+                })}
+              />
+            </div>
+          </div>
+        );
+      } else {
+        return null;
+      }
+    }
+  };
   return (
     <div style={clasess.mainContainer}>
       <div style={clasess.categoryNameStyle}>
         {t("products.addProduct.admin.productCategory")}
       </div>
+
       <div style={clasess.firstContainer}>
+        {isUpdate && (
+          <UploadImgProduct
+            productState={productState}
+            onChangeStateProduct={onChangeStateProduct}
+            UploadProductImage={UploadProductImage}
+          />
+        )}
         <div style={clasess.itemOnFirstContainer}>
           <div style={clasess.labelTitleStyle}>
             {t("products.addProduct.admin.productName")}
-            <span style={clasess.requierdInput}> *</span>
+            <span style={clasess.requierdInput}>*</span>
           </div>
           <div>
             <GomakeTextInput
@@ -82,7 +174,7 @@ const SettingsWidget = ({
         </div>
         <div style={clasess.itemOnFirstContainer}>
           <div style={clasess.labelTitleStyle}>
-            {t("products.addProduct.admin.productSKU")}{" "}
+            {t("products.addProduct.admin.productSKU")}
             <span onClick={onClickOpenProductSKU} style={clasess.plusInput}>
               +
             </span>
@@ -100,7 +192,6 @@ const SettingsWidget = ({
                     ? defultProductSKU
                     : productState.productSKU
                 }
-                // defaultValue={defultProductSKU}
                 onChange={(e: any, value: any) => {
                   onChangeStateProduct("productSKUId", value);
                 }}
@@ -147,6 +238,7 @@ const SettingsWidget = ({
             />
           </div>
         </div>
+
         <div style={clasess.itemGropupsContainer}>
           <div style={clasess.labelTitleStyle}>
             {t("products.addProduct.admin.groups")}
@@ -178,6 +270,34 @@ const SettingsWidget = ({
           </div>
         </div>
       </div>
+
+      <div style={clasess.categoryNameStyle}>
+        {t("products.addProduct.admin.clients")}
+      </div>
+      <div style={clasess.firstContainer}>
+        <div style={clasess.itemOnFirstContainer}>
+          <div style={clasess.labelTitleStyle}>
+            {t("products.addProduct.admin.pricingType")}
+          </div>
+          <div style={{ width: "100%" }}>
+            <GoMakeAutoComplate
+              key={SelectproductClient?.id}
+              options={productClientsList}
+              placeholder={t("products.addProduct.admin.pricingType")}
+              style={clasess.dropDownListStyle}
+              onChange={(e: any, value: any) => {
+                onChangeStateProduct("pricingType", value?.id);
+                onChangeStateProduct("clientsTypes", []);
+                onChangeStateProduct("clients", []);
+              }}
+              value={productClientsList.find(
+                (item) => item.id === productState?.pricingType
+              )}
+            />
+          </div>
+        </div>
+        {_renderProductClientSelector()}
+      </div>
       <div style={clasess.categoryNameStyle}>
         {t("products.addProduct.admin.style")}
       </div>
@@ -186,67 +306,38 @@ const SettingsWidget = ({
           <div style={clasess.labelTitleStyle}>
             {t("products.addProduct.admin.noteColor")}
           </div>
-          <div onClick={toggleColorPickerForNoteColor}>
-            <GomakeTextInput
-              style={clasess.textInputStyle}
-              placeholder={t("products.addProduct.admin.textColor")}
-              disabled={true}
-              value={productState?.noteColor}
+          <div style={clasess.fileInputStyle}>
+            <MuiColorInput
+              value={
+                productState?.noteColor ??
+                t("products.addProduct.admin.noteColor")
+              }
+              onChange={(value: any) => {
+                onChangeStateProduct("noteColor", value);
+              }}
+              format="hex"
             />
           </div>
-          <div
-            onClick={toggleColorPickerForNoteColor}
-            style={{
-              width: 20,
-              height: 20,
-              backgroundColor: productState?.noteColor,
-              position: "absolute",
-              right: 15,
-              bottom: 11,
-            }}
-          />
         </div>
         <div style={clasess.itemOnFirstContainer}>
           <div style={clasess.labelTitleStyle}>
             {t("products.addProduct.admin.textColor")}
           </div>
-          <div onClick={toggleColorPicker}>
-            <GomakeTextInput
-              style={clasess.textInputStyle}
-              placeholder={t("products.addProduct.admin.textColor")}
-              disabled={true}
-              value={productState?.textColor}
+          <div style={clasess.fileInputStyle}>
+            <MuiColorInput
+              value={
+                productState?.textColor ??
+                t("products.addProduct.admin.textColor")
+              }
+              onChange={(value: any) => {
+                onChangeStateProduct("textColor", value);
+              }}
+              format="hex"
             />
           </div>
-          <div
-            onClick={toggleColorPicker}
-            style={{
-              width: 20,
-              height: 20,
-              backgroundColor: productState?.textColor,
-              position: "absolute",
-              right: 15,
-              bottom: 11,
-            }}
-          />
         </div>
       </div>
-      {showColorPicker && (
-        <SketchPicker
-          color={productState?.textColor}
-          onChangeComplete={(value: any) => {
-            onChangeStateProduct("textColor", value?.hex);
-          }}
-        />
-      )}
-      {showColorPickerForNoteColor && (
-        <SketchPicker
-          color={productState?.noteColor}
-          onChangeComplete={(value: any) => {
-            onChangeStateProduct("noteColor", value?.hex);
-          }}
-        />
-      )}
+
       <div style={clasess.categoryNameStyle}>
         {t("products.addProduct.admin.graphicsRequired")}
       </div>
@@ -301,7 +392,6 @@ const SettingsWidget = ({
           </div>
         </div>
       )}
-
       <AddProductSkuModal
         openModal={isProductSKU}
         modalTitle={t("products.addProduct.admin.modalProductSKU")}

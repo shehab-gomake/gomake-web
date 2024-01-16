@@ -3,30 +3,18 @@ import {EMeasurementUnits} from "@/widgets/machines/enums/measurement-units";
 
 const foldingMachine = (state: Record<string, any>) => {
     return [
-        ...maxSpeedInput(state, EMeasurementUnits.METER),
+        ...maxSpeedInput(state, EMeasurementUnits.SPH),
         {
             name: "unitDelay",
-            label: "machineAttributes.unitDelay",
+            label: "machineAttributes.foldingUnitDelay",
             type: "text",
-            placeholder: "machineAttributes.unitDelay",
+            placeholder: "machineAttributes.foldingUnitDelay",
             required: true,
             parameterKey: "unitDelay",
             options: [],
             value: state?.attributes?.unitDelay ? state?.attributes?.unitDelay : '',
             machineInputType: 'input',
             isValid: !!state?.attributes?.unitDelay,
-        },
-        {
-            name: "foldingDelay",
-            label: "machineAttributes.foldingDelay",
-            type: "text",
-            placeholder: "machineAttributes.foldingDelay",
-            required: true,
-            parameterKey: "foldingDelay",
-            options: [],
-            value: state?.attributes?.foldingDelay ? state?.attributes?.foldingDelay : '',
-            machineInputType: 'input',
-            isValid: !!state?.attributes?.foldingDelay,
         },
         {
             name: 'machineAttributes.speedByMediaWeight',
@@ -42,15 +30,6 @@ const foldingMachine = (state: Record<string, any>) => {
                     placeholder: "machineAttributes.weight",
                     required: true,
                     parameterKey: "weight",
-                    options: []
-                },
-                {
-                    name: "targetWeight",
-                    label: "machineAttributes.targetWeight",
-                    type: "text",
-                    placeholder: "machineAttributes.targetWeight",
-                    required: true,
-                    parameterKey: "targetWeight",
                     options: []
                 },
                 {

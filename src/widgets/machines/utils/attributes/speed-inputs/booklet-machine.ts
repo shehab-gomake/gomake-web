@@ -13,7 +13,7 @@ const bookletMachine = (state: Record<string, any>) => {
             value: state?.attributes?.speed ? state?.attributes?.speed : '',
             machineInputType: 'input',
             isValid: !!state?.attributes?.speed,
-            unit: EMeasurementUnits.MINUTE
+            unit: EMeasurementUnits.BOOKLETS_P_MIN
         },
         {
             name: "manualInsert",

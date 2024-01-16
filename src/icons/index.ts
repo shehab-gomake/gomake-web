@@ -40,3 +40,4 @@ export * from "./setting-new";
 export * from "./partners";
 export * from "./arrow-down-with-square";
 export * from "./sort-icon";
+export * from "./material-tabs";

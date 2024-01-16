@@ -95,6 +95,7 @@
   },
   "properties": {
     "parameter": "פרמטר",
+    "unit": "יחידה",
     "rule": "חוק",
     "type": "סוג",
     "more": "עוד",
@@ -1467,7 +1468,12 @@
         "enterCode": "הזן קוד",
         "addNewProduct": "הוסף מוצר חדש",
         "addGoToList": "הוסף ועבור לרשימת הפרמטרים",
-        "updateNewProduct": "עדכן מוצר"
+        "updateNewProduct": "עדכן מוצר",
+        "clients": "לקוחות",
+        "allCustomers": "כל הלקוחות",
+        "byClient": "לפי לקוח",
+        "byClientType": "לפי סוג לקוח",
+        "uploadImg": "העלאת תמונה"
       }
     },
     "parameters": {
@@ -1510,7 +1516,12 @@
         "stationName": "שם התחנה",
         "actionType": "סוג הפעולה",
         "machine": "מכונה",
-        "loadingOptimalWorkflows": "טוען תהליכי עבודה אופטימליים..."
+        "loadingOptimalWorkflows": "טוען תהליכי עבודה אופטימליים...",
+        "includeVAT": "כולל מע",
+        "graphicDesign": "עיצוב גרפי",
+        "productionComment": "הערה על הייצור",
+        "graphicDesignComment": "הערה על עיצוב גרפי",
+        "Pricing": "מחירים"
       }
     },
     "productManagement": {
@@ -1656,6 +1667,9 @@
       "createdBy": "נוצר על ידי {{name}}",
       "customer": "לקוח",
       "orderList": "רשימת הזמנות",
+      "receiptList": "רשימת קבלות",
+      "deliveryNoteList": "רשימת דוחות משלוח",
+      "invoiceList": "רשימת חשבוניות",
       "deleteItem": "מחיקת פריט",
       "areYouSureDeleteItem": "האם אתה בטוח שברצונך למחוק פריט זה?",
       "amount": "סכום",
@@ -2054,7 +2068,9 @@
     "newQuote": "ציטוט חדש",
     "convertToInactive": "המר לבלתי פעיל",
     "convertToActive": "המר לפעיל",
-    "editing": "עֲרִיכָה"
+    "editing": "עֲרִיכָה",
+    "createSubProduct": "יצירת מוצר משנה",
+    "goToSubProducts": "עבור למוצרים משניים"
   },
   "materialsTrans": {
     "additions": "תוספות",

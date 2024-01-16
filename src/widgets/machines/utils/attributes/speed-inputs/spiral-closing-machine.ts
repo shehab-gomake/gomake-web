@@ -39,6 +39,7 @@ const spiralClosingMachine = (state: Record<string, any>) => {
             value: state.attributes?.closeSpeed ? state.attributes?.closeSpeed : '',
             machineInputType: 'input',
             isValid: !!state?.attributes?.closeSpeed,
+            unit: EMeasurementUnits.SETS_HOUR
         },
         {
             name: 'machineAttributes.speedByThickness',

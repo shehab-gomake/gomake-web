@@ -317,7 +317,7 @@ const QuotePageWidget = () => {
                 tableHeaders={tableHeaders}
                 headerWidth={tableRowPercent}
                 tableRowPercent={tableRowPercent}
-                data={quoteItemValue?.priceListItemsMapping}
+                data={quoteItemValue?.documentItemsMapping}
               />
             </div>
           </div>
@@ -325,7 +325,7 @@ const QuotePageWidget = () => {
             <div style={clasess.btnContainer}>
               <AddPlusIcon />
               <div style={clasess.btnTitle} onClick={() => onOpenNewItem()}>
-                {t("sales.quote.addNewItems")}
+                {t("sales.quote.addNewdItems")}
               </div>
             </div>
             <div style={clasess.btnContainer}>

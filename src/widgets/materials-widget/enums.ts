@@ -6,6 +6,14 @@ export enum EMaterialsActions {
     UpdatePricePerUnit,
     UpdatePricePerTonPercents,
     UpdatePricePerUnitPercents,
+    ActionTest1,
+    ActionTest2,
+    AddNew,
+    Duplicate,
+    Delete,
+    DownLoadExcel,
+    UploadExcel
+
 }
 
 export enum EMaterialActiveFilter {

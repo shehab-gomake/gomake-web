@@ -3,6 +3,7 @@ import { ProfitLeftSideWidget } from "./widgets/profit-left-side/profit-left-sid
 import { ProfitHeaderWidget } from "./widgets/profit-header/profit-header";
 import { useNewProfits } from "./use-profits";
 import { useStyle } from "./style";
+import { Skeleton } from "@mui/material";
 
 const ProfitsNewPageWidget = () => {
   const { classes } = useStyle();
@@ -25,6 +26,7 @@ const ProfitsNewPageWidget = () => {
     openPricingTablesMapping,
     selectedPricingTableItems,
     dataForExceptions,
+    dataForDefault,
     dataForPricing,
     anchorElMorePriceTable,
     openMorePriceTable,
@@ -35,6 +37,8 @@ const ProfitsNewPageWidget = () => {
     anchorElAdditionalProfitMenu,
     openAdditionalProfitMenu,
     calculateCaseValue,
+    isLoading,
+    ProfitCurrency,
     handleCloseAdditionalProfitMenu,
     handleClickAdditionalProfitMenu,
     setSelectedActionProfitRow,
@@ -54,6 +58,7 @@ const ProfitsNewPageWidget = () => {
     onCloseAddStepModal,
     onOpenAddStepModal,
     updatePricingByForAction,
+    updateTransitionForAction,
     setSelectedTransition,
     changeactionProfitRowsItems,
     addNewStepForActionProfitRow,
@@ -62,39 +67,67 @@ const ProfitsNewPageWidget = () => {
     deleteExceptionProfit,
     getProfitsPricingTables,
   } = useNewProfits();
+
   return (
     <div style={classes.mainGridContainer}>
       {router.query.draftId && (
         <header>
-          <ProfitHeaderWidget calculateCaseValue={calculateCaseValue} />
+          {!isLoading ? (
+            <ProfitHeaderWidget calculateCaseValue={calculateCaseValue} />
+          ) : (
+            <div style={classes.skeletonCpntainer}>
+              <Skeleton
+                variant="rectangular"
+                width={"100%"}
+                height={68}
+                style={{ borderRadius: 17 }}
+              />
+              <Skeleton
+                variant="rectangular"
+                width={"100%"}
+                height={68}
+                style={{ borderRadius: 17 }}
+              />
+            </div>
+          )}
         </header>
       )}
       <div style={classes.bodyGridContainer}>
-        <ProfitLeftSideWidget
-          actionProfitRowChartData={actionProfitRowChartData}
-          actionProfitRowsList={actionProfitRowsList}
-          selectedTransition={selectedTransition}
-          selectedPricingBy={selectedPricingBy}
-          tableHeaders={tableHeaders}
-          Transition={Transition}
-          PricingBy={PricingBy}
-          openAddStepModal={openAddStepModal}
-          onCloseAddStepModal={onCloseAddStepModal}
-          onOpenAddStepModal={onOpenAddStepModal}
-          updatePricingByForAction={updatePricingByForAction}
-          setSelectedTransition={setSelectedTransition}
-          changeactionProfitRowsItems={changeactionProfitRowsItems}
-          addNewStepForActionProfitRow={addNewStepForActionProfitRow}
-          updateActionProfitRow={updateActionProfitRow}
-          anchorElMorePriceTable={anchorElMorePriceTable}
-          openMorePriceTable={openMorePriceTable}
-          handleClickMorePriceTable={handleClickMorePriceTable}
-          handleCloseMorePriceTable={handleCloseMorePriceTable}
-          selectedActionProfitRow={selectedActionProfitRow}
-          setSelectedActionProfit={setSelectedActionProfit}
-          deleteActionProfitRow={deleteActionProfitRow}
-          selectedAdditionalProfitRow={selectedAdditionalProfitRow}
-        />
+        {!isLoading ? (
+          <ProfitLeftSideWidget
+            actionProfitRowChartData={actionProfitRowChartData}
+            actionProfitRowsList={actionProfitRowsList}
+            selectedTransition={selectedTransition}
+            selectedPricingBy={selectedPricingBy}
+            tableHeaders={tableHeaders}
+            Transition={Transition}
+            PricingBy={PricingBy}
+            openAddStepModal={openAddStepModal}
+            onCloseAddStepModal={onCloseAddStepModal}
+            onOpenAddStepModal={onOpenAddStepModal}
+            updatePricingByForAction={updatePricingByForAction}
+            updateTransitionForAction={updateTransitionForAction}
+            setSelectedTransition={setSelectedTransition}
+            changeactionProfitRowsItems={changeactionProfitRowsItems}
+            addNewStepForActionProfitRow={addNewStepForActionProfitRow}
+            updateActionProfitRow={updateActionProfitRow}
+            anchorElMorePriceTable={anchorElMorePriceTable}
+            openMorePriceTable={openMorePriceTable}
+            handleClickMorePriceTable={handleClickMorePriceTable}
+            handleCloseMorePriceTable={handleCloseMorePriceTable}
+            selectedActionProfitRow={selectedActionProfitRow}
+            setSelectedActionProfit={setSelectedActionProfit}
+            deleteActionProfitRow={deleteActionProfitRow}
+            selectedAdditionalProfitRow={selectedAdditionalProfitRow}
+          />
+        ) : (
+          <Skeleton
+            variant="rectangular"
+            width={"100%"}
+            height={"100vh"}
+            style={{ borderRadius: 17 }}
+          />
+        )}
         <ProfitRightSideWidget
           minimumValue={minimumValue}
           isUpdateMinimumValue={isUpdateMinimumValue}
@@ -113,6 +146,7 @@ const ProfitsNewPageWidget = () => {
           selectedPricingTableItems={selectedPricingTableItems}
           setSelectedPricingTableItems={setSelectedPricingTableItems}
           dataForExceptions={dataForExceptions}
+          dataForDefault={dataForDefault}
           dataForPricing={dataForPricing}
           onDragEnd={onDragEnd}
           deleteExceptionProfit={deleteExceptionProfit}
@@ -127,6 +161,7 @@ const ProfitsNewPageWidget = () => {
           openAdditionalProfitMenu={openAdditionalProfitMenu}
           handleCloseAdditionalProfitMenu={handleCloseAdditionalProfitMenu}
           handleClickAdditionalProfitMenu={handleClickAdditionalProfitMenu}
+          ProfitCurrency={ProfitCurrency}
         />
       </div>
     </div>

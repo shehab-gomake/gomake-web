@@ -15,6 +15,7 @@ const ProfitLeftSideWidget = ({
   onCloseAddStepModal,
   onOpenAddStepModal,
   updatePricingByForAction,
+  updateTransitionForAction,
   setSelectedTransition,
   changeactionProfitRowsItems,
   addNewStepForActionProfitRow,
@@ -40,6 +41,7 @@ const ProfitLeftSideWidget = ({
         selectedTransition={selectedTransition}
         selectedPricingBy={selectedPricingBy}
         updatePricingByForAction={updatePricingByForAction}
+        updateTransitionForAction={updateTransitionForAction}
         changeactionProfitRowsItems={changeactionProfitRowsItems}
         setSelectedTransition={setSelectedTransition}
         onOpenAddStepModal={onOpenAddStepModal}

@@ -4,9 +4,10 @@ import { returnResult } from "@/utils/helpers";
 const getAndSetCalculateCaseProfits = async (
   callApi: ICallApi,
   setState?: ISetState,
-  data?: any
+  data?: any,
+  setLoading?: any
 ) => {
-  console.log("data", data);
+  setLoading(true);
   const result: any = await callApi(
     "GET",
     `/v1/printhouse-config/profits/get-calculate-case-profits/${data?.actionId}/${data?.productItemValueId}`,

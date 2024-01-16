@@ -10,12 +10,13 @@ export interface IPrps {
     parameterKey: string;
     id?: string;
     value: string;
+    isAdmin:boolean;
 }
 
-const ImageInput = ({ parameterKey, id, value }: IPrps) => {
+const ImageInput = ({ parameterKey, id, value ,isAdmin}: IPrps) => {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const { classes } = useStyle();
-    const { updateCellData } = useTableCellData();
+    const { updateCellData } = useTableCellData(isAdmin);
     const [state, setState] = useState<boolean>(false);
     const [modalHeader, setModalHeader] = useState<string>('');
     const [openImageModal, setOpenImageModal] = useState<boolean>(false);

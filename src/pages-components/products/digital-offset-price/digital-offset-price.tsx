@@ -1,9 +1,6 @@
 import { useStyle } from "./style";
 import { HeaderTitle } from "@/widgets";
 import { useDigitalOffsetPrice } from "@/hooks";
-import { useRecoilValue } from "recoil";
-import { useState } from "react";
-import { machineCategoriesState } from "@/store/machine-categories";
 import { GomakePrimaryButton } from "@/components";
 import { TabsMappingWidget } from "./widgets/tabs-mapping";
 import { AccordionMappingWidget } from "./widgets/accordion-mapping";
@@ -17,6 +14,7 @@ import {
 import { EWidgetProductType } from "./enums";
 import { PricingWidget } from "@/widgets/product-pricing-widget/pricing-widget";
 import { Tabs } from "@mui/material";
+import { adaptPaddingLeft } from "@/utils/adapter";
 
 const PriceListPageWidget = ({ widgetType }) => {
   const { clasess } = useStyle();
@@ -28,7 +26,6 @@ const PriceListPageWidget = ({ widgetType }) => {
     onOpeneMakeShape,
     onCloseGalleryModal,
     onCloseMakeShape,
-    setDefaultPrice,
     handleChange,
     _renderParameterType,
     _getParameter,
@@ -51,7 +48,6 @@ const PriceListPageWidget = ({ widgetType }) => {
     graphicNotes,
     printingNotes,
     urgentOrder,
-    defaultPrice,
     makeShapeOpen,
     GalleryModalOpen,
     activeIndex,
@@ -65,13 +61,21 @@ const PriceListPageWidget = ({ widgetType }) => {
     clientTypesValue,
     pricingDefaultValue,
     errorMsg,
-    workFlowSelected,
     relatedParameters,
     jobActions,
     workFlows,
+    billingMethod,
+    setBillingMethod,
+    samlleType,
+    graphicDesigner,
+    setGraphicDesigner,
+    setSamlleType,
     getOutSourcingSuppliers,
     onChangeSubProductsForPrice,
+    includeVAT,
+    setIncludeVAT,
   } = useDigitalOffsetPrice({ clasess, widgetType });
+  const direction = t("direction");
   return (
     <div style={{ height: "85vh" }}>
       {productTemplate?.sections?.length > 0 && (
@@ -112,7 +116,10 @@ const PriceListPageWidget = ({ widgetType }) => {
                   {[...productTemplate?.sections, PricingTab]?.map(
                     (section: any, index: number) => {
                       if (index === activeIndex) {
-                        if (section.name === "Pricing") {
+                        if (
+                          section.name ===
+                          t("products.offsetPrice.admin.Pricing")
+                        ) {
                           return (
                             // <PricingSectionMappingWidget
                             //   clasess={clasess}
@@ -129,8 +136,9 @@ const PriceListPageWidget = ({ widgetType }) => {
                             />
                           );
                         } else {
-                          return section?.subSections?.filter(x=>!x.isHidden).map(
-                            (subSection: any, index: number) => {
+                          return section?.subSections
+                            ?.filter((x) => !x.isHidden)
+                            .map((subSection: any, index: number) => {
                               if (subSection?.isAccordion) {
                                 return (
                                   <AccordionMappingWidget
@@ -167,8 +175,7 @@ const PriceListPageWidget = ({ widgetType }) => {
                                   />
                                 );
                               }
-                            }
-                          );
+                            });
                         }
                       }
                     }
@@ -184,8 +191,6 @@ const PriceListPageWidget = ({ widgetType }) => {
               clientTypeDefaultValue={clientTypeDefaultValue}
               clientTypesValue={clientTypesValue}
               template={productTemplate}
-              setDefaultPrice={setDefaultPrice}
-              defaultPrice={defaultPrice}
               tabs={tabs}
               activeTab={activeTab}
               onOpeneMakeShape={onOpeneMakeShape}
@@ -196,10 +201,17 @@ const PriceListPageWidget = ({ widgetType }) => {
               setGraphicNotes={setGraphicNotes}
               graphicNotes={graphicNotes}
               printingNotes={printingNotes}
-              workFlowSelected={workFlowSelected}
               widgetType={widgetType}
               setPriceRecovery={setPriceRecovery}
               priceRecovery={priceRecovery}
+              setSamlleType={setSamlleType}
+              includeVAT={includeVAT}
+              setIncludeVAT={setIncludeVAT}
+              setBillingMethod={setBillingMethod}
+              billingMethod={billingMethod}
+              samlleType={samlleType}
+              graphicDesigner={graphicDesigner}
+              setGraphicDesigner={setGraphicDesigner}
             />
           </div>
 
@@ -209,14 +221,17 @@ const PriceListPageWidget = ({ widgetType }) => {
               display: "flex",
               flexDirection: "row",
               justifyContent: "flex-end",
-              alignItems: "flex-start",
+              alignItems: "center",
               position: "fixed",
-              paddingTop: "8px",
+              paddingRight: "15px",
+              ...adaptPaddingLeft(direction, 15),
               gap: 20,
               bottom: 0,
-              right: 20,
-              boxShadow: "0px 1px 20px rgba(0, 0, 0, 0.08)",
-              background: "#FFF",
+              right: 0,
+              boxShadow: "0px 0px 5px rgba(0, 0, 0, 0.08)",
+              height: 65,
+              zIndex: 5,
+              backgroundColor: "#FFF",
             }}
           >
             <div style={{ width: "68%" }}>
@@ -240,7 +255,7 @@ const PriceListPageWidget = ({ widgetType }) => {
                 ) : null}
               </div>
             </div>
-            <div style={{ width: 330 }}>
+            <div style={{ width: 315, height: 40 }}>
               {widgetType === EWidgetProductType.EDIT ? (
                 <GomakePrimaryButton
                   style={clasess.addOrderBtn}
@@ -258,9 +273,6 @@ const PriceListPageWidget = ({ widgetType }) => {
               )}
 
               <div style={clasess.errorMsgStyle}>{errorMsg}</div>
-              <div style={clasess.noVatStyle}>
-                {t("products.offsetPrice.admin.dontVAT")}
-              </div>
             </div>
           </div>
         </div>

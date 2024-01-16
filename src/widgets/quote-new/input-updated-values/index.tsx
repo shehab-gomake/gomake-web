@@ -42,7 +42,6 @@ const InputUpdatedValues = ({
             onCancel={() => setIsUpdate(null)}
             onUpdate={() => onBlur().then()}
             value={updateValue}
-            
           />
         ) : (
           <div
@@ -50,7 +49,12 @@ const InputUpdatedValues = ({
             className="customInput"
             onClick={handleClick}
           >
-            {isTwoDigit ? value.toFixed(2) : value} {sign}
+            {isTwoDigit
+              ? typeof value === "number"
+                ? value.toFixed(2)
+                : value
+              : value}{" "}
+            {sign}
           </div>
         )}
       </div>

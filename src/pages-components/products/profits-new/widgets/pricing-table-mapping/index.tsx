@@ -39,6 +39,7 @@ const PricingTableMapping = ({
         </div>
         <div
           onClick={(e) => {
+            e.stopPropagation();
             handleClickPricingTablesMapping(e);
             setSelectedPricingTableItems(item);
           }}

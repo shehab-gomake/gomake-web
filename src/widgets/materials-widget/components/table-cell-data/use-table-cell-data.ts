@@ -1,9 +1,10 @@
 import {useGomakeAxios} from "@/hooks";
-import {updateMaterialPropApi} from "@/services/api-service/materials/materials-endpoints";
 import {useRecoilState} from "recoil";
 import {materialCategoryDataState} from "@/widgets/materials-widget/state";
+import {updatePrintHouseMaterialPropApi} from "@/services/api-service/materials/printhouse-materials-endpoints";
+import {updateMaterialPropApi} from "@/services/api-service/materials/materials-endpoints";
 
-const useTableCellData = () => {
+const useTableCellData = (isAdmin:boolean) => {
     const {callApi} = useGomakeAxios();
     const [data, setData] = useRecoilState(materialCategoryDataState);
 
@@ -13,12 +14,22 @@ const useTableCellData = () => {
                 setData(data.map(row => row.id === id ? {...row, ...res.data} : row));
             }
         }
-        await updateMaterialPropApi(callApi, callBack, {
-            key: key,
-            id,
-            updatedValue: value,
-            priceIndex: index,
-        })
+        if(isAdmin){
+            await updateMaterialPropApi(callApi, callBack, {
+                key: key,
+                id,
+                updatedValue: value,
+                priceIndex: index,
+            })
+        }else{
+            await updatePrintHouseMaterialPropApi(callApi, callBack, {
+                key: key,
+                id,
+                updatedValue: value,
+                priceIndex: index,
+            })
+        }
+        
     }
 
     return {

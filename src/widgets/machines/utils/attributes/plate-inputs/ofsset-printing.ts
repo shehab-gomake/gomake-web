@@ -1,3 +1,5 @@
+import {EMeasurementUnits} from "@/widgets/machines/enums/measurement-units";
+
 const ofssetPrinting = (state: Record<string, any>) => {
     return [
         {
@@ -16,7 +18,8 @@ const ofssetPrinting = (state: Record<string, any>) => {
                     required: true,
                     parameterKey: "underCut",
                     options: [],
-                    value: state.attributes?.plateCylinder?.underCut ? state.attributes?.plateCylinder?.underCut : ''
+                    value: state.attributes?.plateCylinder?.underCut ? state.attributes?.plateCylinder?.underCut : '',
+                    unit: EMeasurementUnits.MM
                 },
                 {
                     name: "",
@@ -26,7 +29,8 @@ const ofssetPrinting = (state: Record<string, any>) => {
                     required: true,
                     parameterKey: "distance",
                     options: [],
-                    value: state.attributes?.plateCylinder?.distance ? state.attributes?.plateCylinder?.distance : ''
+                    value: state.attributes?.plateCylinder?.distance ? state.attributes?.plateCylinder?.distance : '',
+                    unit: EMeasurementUnits.CM
 
                 },
             ]
@@ -48,7 +52,8 @@ const ofssetPrinting = (state: Record<string, any>) => {
                     required: true,
                     parameterKey: "length",
                     options: [],
-                    value: state.attributes?.plateSize?.length ? state.attributes?.plateSize?.length : ''
+                    value: state.attributes?.plateSize?.length ? state.attributes?.plateSize?.length : '',
+                    unit: EMeasurementUnits.CM
                 },
                 {
                     name: "",
@@ -58,7 +63,8 @@ const ofssetPrinting = (state: Record<string, any>) => {
                     required: true,
                     parameterKey: "width",
                     options: [],
-                    value: state.attributes?.plateSize?.width ? state.attributes?.plateSize?.width : ''
+                    value: state.attributes?.plateSize?.width ? state.attributes?.plateSize?.width : '',
+                    unit: EMeasurementUnits.CM
 
                 },
                 {
@@ -70,6 +76,8 @@ const ofssetPrinting = (state: Record<string, any>) => {
                     parameterKey: "thickness",
                     options: [],
                     value: state.attributes?.plateSize?.thickness ? state.attributes?.plateSize?.thickness : '',
+                    unit: EMeasurementUnits.MM
+
                 },
             ]
         },

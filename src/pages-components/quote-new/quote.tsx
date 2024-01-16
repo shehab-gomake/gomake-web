@@ -1,5 +1,4 @@
 import { useRecoilValue } from "recoil";
-
 import { DuplicateItemModal } from "@/widgets/quote/modals-widgets/duplicate-item-modal";
 import { AddNewItemModal } from "@/widgets/quote/modals-widgets/add-new-item-modal";
 import { ButtonsContainer } from "@/widgets/quote-new/buttons-container";
@@ -22,9 +21,15 @@ import { QuoteStatuses } from "@/widgets/quote/total-price-and-vat/enums";
 import { _renderQuoteStatus } from "@/utils/constants";
 import { IconButton } from "@mui/material";
 import { SettingQuoteMenu } from "@/widgets/quote-new/setting-quote-menu";
+import { AddDeliveryModal } from "@/widgets/quote-new/modals-widgets/add-delivery-modal/add-delivery-modal";
+import { DOCUMENT_TYPE } from "../quotes/enums";
 
-const QuoteNewPageWidget = () => {
+interface IProps {
+  documentType: DOCUMENT_TYPE;
+}
+const QuoteNewPageWidget = ({ documentType }: IProps) => {
   const { clasess } = useStyle();
+  const quoteItemValue = useRecoilValue<any>(quoteItemState);
   const {
     selectDate,
     selectBusiness,
@@ -46,7 +51,7 @@ const QuoteNewPageWidget = () => {
     openAddNewItemModal,
     openDuplicateWithDifferentQTYModal,
     openDeleteItemModal,
-    priceListItems,
+    documentItems,
     tableHeaders,
     columnWidths,
     headerHeight,
@@ -76,9 +81,9 @@ const QuoteNewPageWidget = () => {
     handleCancelBtnClose,
     handleSendBtnClick,
     handleSendBtnClose,
-    changepriceListItems,
+    changedocumentItems,
     changeQuoteItems,
-    changepriceListItemsChild,
+    changedocumentItemsChild,
     getCalculateQuote,
     onCloseDeleteItemModal,
     deleteQuoteItem,
@@ -131,21 +136,33 @@ const QuoteNewPageWidget = () => {
     onChangeSelectBusiness,
     updatePurchaseNumber,
     updateClientAddress,
-    onClickDeleteAddress
-  } = useQuoteNew();
-  
-  const quoteItemValue = useRecoilValue<any>(quoteItemState);
+    onClickDeleteAddress,
+    onOpenDeliveryModal,
+    openAddDeliveryModal,
+    onCloseDeliveryModal,
+    onAddDelivery,
+    handleSaveBtnClick,
+    documentTitle,
+    onBlurExchangeRate,
+    setIsUpdateExchangeRate,
+    isUpdateExchangeRate,
+    onBlurCurrency,
+    setIsUpdateCurrency,
+    isUpdateCurrency,
+    updateCurrency,
+    refreshExchangeRate
+  } = useQuoteNew(documentType);
 
   return (
     <>
       {quoteItemValue?.id && (
         <div style={clasess.mainContainer}>
           <div style={clasess.secondContainer}>
-            <div>
+            <div style={{ paddingLeft: 20, paddingRight: 12 }}>
               <div style={clasess.titleSettingContainer}>
                 <div style={clasess.titleQuateContainer}>
                   <HeaderTitle
-                    title={t("sales.quote.title")}
+                    title={documentTitle}
                     marginBottom={1}
                     marginTop={1}
                     color="rgba(241, 53, 163, 1)"
@@ -157,7 +174,7 @@ const QuoteNewPageWidget = () => {
                 <div style={clasess.settingsStatusContainer}>
                   <div style={clasess.quoteStatusContainer}>
                     {_renderQuoteStatus(
-                      quoteItemValue?.statusID,
+                      quoteItemValue?.documentStatus,
                       quoteItemValue,
                       t
                     )}
@@ -193,7 +210,7 @@ const QuoteNewPageWidget = () => {
                 {/* <div style={clasess.lineDateStyle} /> Don't Delete */}
               </div>
               <div style={clasess.bordersecondContainer}>
-                <BusinessNewWidget 
+                <BusinessNewWidget
                   values={quoteItemValue}
                   selectBusiness={selectBusiness}
                   onBlurBusinessName={onBlurBusinessName}
@@ -217,6 +234,7 @@ const QuoteNewPageWidget = () => {
                   updatePurchaseNumber={updatePurchaseNumber}
                   updateClientAddress={updateClientAddress}
                   onClickDeleteAddress={onClickDeleteAddress}
+                  documentType={documentType}
                 />
                 <ContactNewWidget
                   handleShowLess={handleShowLess}
@@ -249,13 +267,20 @@ const QuoteNewPageWidget = () => {
                 />
               </div>
             </div>
-            <div style={{ flex: 0.9, overflow: "auto" }}>
+            <div
+              style={{
+                flex: 0.9,
+                overflow: "auto",
+                paddingLeft: 20,
+                paddingRight: 12,
+              }}
+            >
               <QuoteForPriceTable
-                priceListItems={priceListItems}
+                documentItems={documentItems}
                 tableHeaders={tableHeaders}
                 columnWidths={columnWidths}
                 headerHeight={headerHeight}
-                changepriceListItems={changepriceListItems}
+                changedocumentItems={changedocumentItems}
                 getCalculateQuoteItem={getCalculateQuoteItem}
                 onClickDuplicateWithDifferentQTY={
                   onClickDuplicateWithDifferentQTY
@@ -264,24 +289,33 @@ const QuoteNewPageWidget = () => {
                 quoteItems={quoteItems}
                 changeQuoteItems={changeQuoteItems}
                 getCalculateQuote={getCalculateQuote}
-                changepriceListItemsChild={changepriceListItemsChild}
+                changedocumentItemsChild={changedocumentItemsChild}
+                documentType={documentType}
               />
             </div>
             <div style={{ width: "100%", flex: 0.1 }}>
               <WriteCommentComp />
               <ButtonsContainer
                 onOpenNewItem={onOpenNewItem}
+                onOpenDeliveryModal={onOpenDeliveryModal}
                 handleCancelBtnClick={handleCancelBtnClick}
+                handleSaveBtnClick={handleSaveBtnClick}
                 handleSendBtnClick={handleSendBtnClick}
+                documentType={documentType}
               />
             </div>
           </div>
         </div>
       )}
-
       <AddNewItemModal
         openModal={openAddNewItemModal}
         onClose={onCloseNewItem}
+        documentType={documentType}
+      />
+      <AddDeliveryModal
+        openModal={openAddDeliveryModal}
+        onClose={onCloseDeliveryModal}
+        onClickAdd={onAddDelivery}
       />
       <DuplicateItemModal
         openModal={openDuplicateWithDifferentQTYModal}
@@ -309,6 +343,14 @@ const QuoteNewPageWidget = () => {
         handleClose={handleSettingMenuClose}
         open={openSettingMenu}
         anchorEl={anchorElSettingMenu}
+        onBlurExchangeRate={onBlurExchangeRate}
+        setIsUpdateExchangeRate={setIsUpdateExchangeRate}
+        isUpdateExchangeRate={isUpdateExchangeRate}
+        onBlurCurrency={onBlurCurrency}
+        setIsUpdateCurrency={setIsUpdateCurrency}
+        isUpdateCurrency={isUpdateCurrency}
+        updateCurrency={updateCurrency}
+        onClickRefresh={refreshExchangeRate}
       />
       <CancelBtnMenu
         handleClose={handleCancelBtnClose}

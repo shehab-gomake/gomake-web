@@ -4,7 +4,6 @@ import {ECategoryId} from "@/widgets/machines/enums/category-id";
 const scoringMachine = (state: Record<string, any>) => {
     return [
         ...connectionToMachine(state, 'connectToFolding', ECategoryId.FOLDING_MACHINE, 'connectToFolding'),
-        ...connectionToMachine(state, 'connectToPerforation', ECategoryId.PERFORATION_MACHINE, 'connectToPerforation'),
     ];
 }
 

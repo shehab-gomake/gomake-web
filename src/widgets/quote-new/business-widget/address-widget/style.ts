@@ -11,7 +11,6 @@ const useStyle = () => {
         width: "371px",
         padding: "20px",
         borderRadius: "24px",
-        position: "relative" as "relative",
         height: "auto",
       },
       stackStyle: {
@@ -19,7 +18,7 @@ const useStyle = () => {
         width:"330px",
         gap:"13px"
       },
-      saveBtn: {
+      saveBtn: { 
         width: "331px",
         height: "40px",
         borderRadius: "8px",

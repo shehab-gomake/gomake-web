@@ -1,3 +1,4 @@
+import {EMeasurementUnits} from "@/widgets/machines/enums/measurement-units";
 
 const bookBinderMachine = (state: Record<string, any>) => {
     return [
@@ -12,6 +13,7 @@ const bookBinderMachine = (state: Record<string, any>) => {
             value: state?.attributes?.maxSpeed ? state?.attributes?.maxSpeed : '',
             machineInputType: 'input',
             isValid: !!state?.attributes?.maxSpeed,
+            unit: EMeasurementUnits.BOOKS_P_MIN
         },
         {
             name: 'machineAttributes.speedByThickness',
@@ -27,7 +29,8 @@ const bookBinderMachine = (state: Record<string, any>) => {
                     placeholder: "machineAttributes.thickness",
                     required: true,
                     parameterKey: "thickness",
-                    options: []
+                    options: [],
+                    unit: EMeasurementUnits.MM
                 },
                 {
                     name: "speedPercentage",
@@ -36,7 +39,8 @@ const bookBinderMachine = (state: Record<string, any>) => {
                     placeholder: "machineAttributes.speedPercentage",
                     required: true,
                     parameterKey: "speedPercentage",
-                    options: []
+                    options: [],
+                    unit: EMeasurementUnits.PERCENTAGE
                 },
 
             ]
