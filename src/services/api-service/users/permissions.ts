@@ -13,14 +13,16 @@ const ADD_NEW_ROLE_URL = "/v1/crm-service/roles/add-roles";
 const updatePermissionApi: ICallAndSetData = async (
   callApi,
   callBack,
-  data
+  data,
+  lock
 ) => {
   return await getSetApiData(
     callApi,
     EHttpMethod.PUT,
     UPDATE_PERMISSION_URL,
     callBack,
-    data
+    data,
+    lock
   );
 };
 const getPermissionRolesRelationsByGroupIdApi = async (
