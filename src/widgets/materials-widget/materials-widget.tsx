@@ -7,7 +7,7 @@ import Stack from "@mui/material/Stack";
 import { useTranslation } from "react-i18next";
 import { useStyle } from "@/widgets/materials-widget/style";
 import { FiltersActionsBar } from "@/widgets/materials-widget/components/filters/filters-actions-bar";
-import {useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import {
   activeFilterState,
   flagState,
@@ -65,11 +65,12 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
     onClickCloseDeleteTableRowModal,
     onDeleteCategoryRow,
     selectedTableRow,
-    materialName
+    materialName,
   } = useMaterials(props.isAdmin);
 
   const subCategory = materialCategories.find(
-    (category) => category.categoryKey === materialCategory?.toString())?.categoryName;
+    (category) => category.categoryKey === materialCategory?.toString()
+  )?.categoryName;
 
   const tableRowData = materialCategories.find(
     (category) => category.categoryKey === materialCategory
@@ -165,9 +166,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
 
   return (
     <div>
-      <div
-        style={classes.headerStyle}
-      >
+      <div style={classes.headerStyle}>
         <div
           style={{
             display: "flex",
