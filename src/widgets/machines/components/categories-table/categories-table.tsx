@@ -13,14 +13,14 @@ import { HeaderTitleWithSearch } from "@/widgets/header-title-with-search";
 import {useTranslation} from "react-i18next";
 import { PermissionCheck } from "@/components/CheckPermission/check-permission";
 import {Permissions} from "@/components/CheckPermission/enum";
-import { usePermission } from "@/hooks/use-permission";
+import { useUserPermission } from "@/hooks/use-permission";
 
 const CategoriesTable = ({ isAdmin }: ICategoriesTableProps) => {
   const [filter, setFilter] = useState<string>("");
   const {t} = useTranslation();
   const { primaryColor } = useGomakeTheme();
   const categoriesList = useRecoilValue(machineCategoriesState); 
-  const { CheckPermission } = usePermission();
+  const { CheckPermission } = useUserPermission();
   const { classes } = useStyle();
   const categories = useCallback(() => {
     if (!!filter) {

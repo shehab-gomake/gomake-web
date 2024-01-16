@@ -35,6 +35,7 @@ export  enum Permissions {
     SHOW_SALES="ShowSales",
     EDIT_PRICE_QUOTE="EditPriceQuote",
     SHOW_LOGGERS_QUOTE="ShowLoggersQuote",
-    SHOW_LOGGERS_ORDER="ShowLoggersOrders"
+    SHOW_LOGGERS_ORDER="ShowLoggersOrders",
+    SHOW_ADMINISTRATION_PERMISSIONS = "ShowAdministrationPermissions"
 }
 

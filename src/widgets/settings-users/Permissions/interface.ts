@@ -2,6 +2,7 @@ export interface IPermissionsGroup {
     id: string;
     key: null | string;
     name: string
+    isAdminGroup?:boolean;
 }
 
 export interface IPermission {
@@ -15,6 +16,7 @@ export interface IRole {
     id: string;
     name: string;
     key: string;
+    isAdminRole?: boolean;
     recordID: string;
 }
 

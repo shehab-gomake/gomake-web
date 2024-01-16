@@ -24,7 +24,7 @@ import { DEFAULT_VALUES } from "./enums";
 import { useSnackBar } from "@/hooks";
 import { permissionsState } from "@/store/permissions";
 import { Permissions } from "@/components/CheckPermission/enum";
-import { usePermission } from "@/hooks/use-permission";
+import { useUserPermission } from "@/hooks/use-permission";
 import { EHttpMethod } from "@/services/api-service/enums";
 import { useDebounce } from "@/utils/use-debounce";
 export interface IStatus {
@@ -43,7 +43,7 @@ const useCustomers = (
   const [pagesCount, setPagesCount] = useState(0);
   const pageSize = DEFAULT_VALUES.PageSize;
   const { alertFaultUpdate, alertSuccessUpdate } = useSnackBar();
-  const { CheckPermission } = usePermission();
+  const { CheckPermission } = useUserPermission();
 
   const tableHeaders = [
     clientType == "C"

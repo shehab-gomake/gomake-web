@@ -9,7 +9,7 @@ import { BackNavIcon } from "@/icons/back-nav";
 import { adaptRight } from "@/utils/adapter";
 import { hoverStatusState, permissionsState } from "@/store";
 import LockIcon from "@mui/icons-material/Lock";
-import { usePermission } from "@/hooks/use-permission";
+import { useUserPermission } from "@/hooks/use-permission";
 import { useEffect } from "react";
 const LeftSideLayout = (customGap) => {
   const { t } = useTranslation();
@@ -18,7 +18,7 @@ const LeftSideLayout = (customGap) => {
 
   const [navStatus, setNavStatus] = useRecoilState(navStatusState);
   const [isHover, setIsHover] = useRecoilState(hoverStatusState);
-  const { CheckPermission } = usePermission();
+  const { CheckPermission } = useUserPermission();
   const { clasess } = useStyle({ navStatus, customGap });
   useEffect(() => {
     const isHover = localStorage.getItem("isHover");

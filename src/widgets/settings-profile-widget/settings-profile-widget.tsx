@@ -5,11 +5,11 @@ import { CompanyProfileComponent } from "@/widgets/settings-profile-widget/compo
 import { ITab } from "@/components/tabs/interface";
 import { PrimaryTabsComponent } from "@/components/tabs/primary-tabs";
 import { Permissions } from "@/components/CheckPermission/enum";
-import { usePermission } from "@/hooks/use-permission";
+import { useUserPermission } from "@/hooks/use-permission";
 
 const SettingsProfileWidget = () => {
   const { t } = useTranslation();
-  const { CheckPermission } = usePermission();
+  const { CheckPermission } = useUserPermission();
   const { openModal, setOpenModal } = useEmployee();
 
   const tabs: ITab[] = [

@@ -12,14 +12,14 @@ import { useStyle } from "../style";
 import { permissionsState } from "@/store/permissions";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { PermissionCheck } from "@/components/CheckPermission";
-import { usePermission } from "@/hooks/use-permission";
+import { useUserPermission } from "@/hooks/use-permission";
 
 const ProductList = () => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
   const profitsStateValue = useRecoilValue<any>(profitsState);
   const productTest = useRecoilValue<any>(productTestState);
-  const { CheckPermission } = usePermission();
+  const { CheckPermission } = useUserPermission();
 
   useEffect(() => {
     if (!productTest && profitsStateValue?.testProductsState?.length > 0) {

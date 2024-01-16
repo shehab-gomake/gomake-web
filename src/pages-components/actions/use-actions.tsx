@@ -3,7 +3,7 @@ import { Permissions } from "@/components/CheckPermission/enum";
 import { PrimaryButton } from "@/components/button/primary-button";
 import { useGomakeAxios, useGomakeRouter } from "@/hooks";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
-import { usePermission } from "@/hooks/use-permission";
+import { useUserPermission } from "@/hooks/use-permission";
 import { EditIcon } from "@/icons";
 import { getAllPrintHouseActions } from "@/services/hooks";
 import { FONT_FAMILY } from "@/utils/font-family";
@@ -18,7 +18,7 @@ const useActions = () => {
   const [term, setTerm] = useState("");
   const [materilasSearched, setMaterilasSearched] = useState([]);
   const { t } = useTranslation();
-  const { CheckPermission } = usePermission();
+  const { CheckPermission } = useUserPermission();
   const [allActions, setAllActions] = useState<any>();
   const getActions = useCallback(async () => {
     const data = await getAllPrintHouseActions(callApi, setAllActions);

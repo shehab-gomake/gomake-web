@@ -8,6 +8,8 @@ import {
     updatePermissionApi, updateRoleNameApi
 } from "@/services/api-service/users/permissions";
 import {TableHeader} from "@/widgets/settings-users/Permissions/components/table-header";
+import {useUserPermission} from "@/hooks/use-permission";
+import {Permissions} from "@/components/CheckPermission/enum";
 
 const usePermissions = () => {
     const {callApi} = useGomakeAxios();
@@ -21,6 +23,7 @@ const usePermissions = () => {
     const [modalState, setModalState] = useState<boolean>(false);
     const [modalInputValue, setModalInputValue] = useState<string>('');
     const [updateRoleId, setUpdateRoleId] = useState<string>('');
+    const {CheckPermission} = useUserPermission();
     const getAndSetPermissionRolesRelationsByGroupId = async (id) => {
         const callBack = (res) => {
             if (res.success) {
@@ -86,8 +89,14 @@ const usePermissions = () => {
     const getPermissionRolesRelations = async () => {
         const callBack = (res) => {
             if (res?.success) {
-                setRoles([{id: "", name: "Permission", key: 'permissionsSettings.permissions'}, ...res?.data.roles]);
-                setgroups(res?.data.groups)
+                let rolesResult = res?.data.roles;
+                let groupsResult = res?.data.groups;
+                if(!CheckPermission(Permissions.SHOW_ADMINISTRATION_PERMISSIONS)){
+                    rolesResult = rolesResult.filter(x=>!x.isAdminRole);
+                    groupsResult = groupsResult.filter(x=>!x.isAdminGroup);
+                }
+                setRoles([{id: "", name: "Permission", key: 'permissionsSettings.permissions'}, ...rolesResult]);
+                setgroups(groupsResult);
                 setPermissions(res?.data.permissions);
             }
         }
@@ -116,7 +125,12 @@ const usePermissions = () => {
     }, [table, PermissionName])
 
     const tabs = useCallback(() => {
-        return groups?.map(group => ({title: group.name}))
+        if(CheckPermission(Permissions.SHOW_ADMINISTRATION_PERMISSIONS)){
+            return groups?.map(group => ({title: group.name}))
+        }else{
+            return groups?.filter(x=>!x.isAdminGroup).map(group => ({title: group.name}))
+        }
+        
     }, [groups])
 
     const updateRoleName = async () => {
