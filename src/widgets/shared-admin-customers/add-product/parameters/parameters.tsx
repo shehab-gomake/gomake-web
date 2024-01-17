@@ -33,6 +33,7 @@ const ParameterWidget = () => {
     openModal,
     expanded,
     handleChange,
+    relatedParameters,
   } = useAddProduct({ clasess });
 
   return (
@@ -85,6 +86,7 @@ const ParameterWidget = () => {
                                 updatedProductParameteRequierd
                               }
                               _renderParameterType={_renderParameterType}
+                              relatedParameters={relatedParameters}
                             />
                           );
                         } else {
@@ -102,6 +104,7 @@ const ParameterWidget = () => {
                                 updatedProductParameteRequierd
                               }
                               _renderParameterType={_renderParameterType}
+                              relatedParameters={relatedParameters}
                             />
                           );
                         }
@@ -121,13 +124,14 @@ const ParameterWidget = () => {
                 {t("products.offsetPrice.admin.previousBtn")}
               </GomakePrimaryButton>
             ) : null}
-
-            <GomakePrimaryButton
-              style={clasess.nextBtnStyle}
-              onClick={handleNextClick}
-            >
-              {t("products.offsetPrice.admin.nextBtn")}
-            </GomakePrimaryButton>
+            {[...template?.sections].length - 1 != activeIndex ? (
+              <GomakePrimaryButton
+                style={clasess.nextBtnStyle}
+                onClick={handleNextClick}
+              >
+                {t("products.offsetPrice.admin.nextBtn")}
+              </GomakePrimaryButton>
+            ) : null}
           </div>
           <ChildParameterModal
             openModal={openModal}

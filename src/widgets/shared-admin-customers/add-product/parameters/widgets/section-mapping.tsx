@@ -16,12 +16,18 @@ const SectionMappingWidget = ({
   updatedProductParameterHidden,
   updatedProductParameteRequierd,
   _renderParameterType,
+  relatedParameters,
 }) => {
+  console.log("relatedParameters", relatedParameters);
   return (
     <div key={index} style={clasess.subSectionContainer}>
       <div style={clasess.subSectionTitleStyle}>{subSection.name}</div>
       <div style={clasess.parametersContainer}>
         {subSection?.parameters?.map((parameter, index) => {
+          const isHiddenIcon = relatedParameters?.some(
+            (relatedParam) => relatedParam.parameterId === parameter.id
+          );
+          console.log("isHiddenIcon", isHiddenIcon);
           return (
             <div key={index}>
               <div style={clasess.parameterContainer}>
@@ -38,33 +44,38 @@ const SectionMappingWidget = ({
                       <SettingIcon width={20} height={20} />
                     </div>
                   )}
-                  {parameter?.isHidden ? (
-                    <div
-                      style={{ cursor: "pointer" }}
-                      onClick={() =>
-                        updatedProductParameterHidden(
-                          section?.id,
-                          subSection?.id,
-                          parameter
-                        )
-                      }
-                    >
-                      <HiddenIcon />
-                    </div>
-                  ) : (
-                    <div
-                      style={{ cursor: "pointer" }}
-                      onClick={() =>
-                        updatedProductParameterHidden(
-                          section?.id,
-                          subSection?.id,
-                          parameter
-                        )
-                      }
-                    >
-                      <NotHiddenIcon />
-                    </div>
+                  {!isHiddenIcon && (
+                    <>
+                      {parameter?.isHidden ? (
+                        <div
+                          style={{ cursor: "pointer" }}
+                          onClick={() =>
+                            updatedProductParameterHidden(
+                              section?.id,
+                              subSection?.id,
+                              parameter
+                            )
+                          }
+                        >
+                          <HiddenIcon />
+                        </div>
+                      ) : (
+                        <div
+                          style={{ cursor: "pointer" }}
+                          onClick={() =>
+                            updatedProductParameterHidden(
+                              section?.id,
+                              subSection?.id,
+                              parameter
+                            )
+                          }
+                        >
+                          <NotHiddenIcon />
+                        </div>
+                      )}
+                    </>
                   )}
+
                   {parameter?.parameterType !== EParameterTypes.SWITCH ? (
                     parameter?.isRequired ? (
                       <div
