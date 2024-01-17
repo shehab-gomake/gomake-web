@@ -8,9 +8,11 @@ import { GraphicIcon, PrameterIcon, SettingIcon } from "@/widgets";
 const useAddProduct = () => {
   const { callApi } = useGomakeAxios();
   const router = useRouter();
+
   const { t } = useTranslation();
   const [activeIndex, setActiveIndex] = useState(0);
   const [productState, setProductState] = useState<any>([]);
+  const dir: "rtl" | "ltr" = t("direction");
   const onChangeStateProduct = useCallback(
     (filedName: string, value: any) => {
       setProductState((prev) => {
@@ -28,7 +30,7 @@ const useAddProduct = () => {
     }
   };
 
-  const [activeTab, setActiveTab] = useState("Parameters");
+  const [activeTab, setActiveTab] = useState("Settings");
   const onClickSettingsTab = () => {
     setActiveTab("Settings");
   };
@@ -69,6 +71,10 @@ const useAddProduct = () => {
   useEffect(() => {
     getProductById();
   }, [router, setProductState, activeIndex]);
+
+  const handleGoBack = () => {
+    router.back();
+  };
   return {
     t,
     handleTabClick,
@@ -78,6 +84,9 @@ const useAddProduct = () => {
     activeIndex,
     activeTab,
     tabs,
+    router,
+    dir,
+    handleGoBack,
   };
 };
 

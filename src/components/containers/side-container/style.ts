@@ -1,7 +1,11 @@
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { useMemo } from "react";
 import { FONT_FAMILY } from "@/utils/font-family";
-import { adaptPaddingLeft, adaptPaddingRight, convertHeightToVH } from "@/utils/adapter";
+import {
+  adaptPaddingLeft,
+  adaptPaddingRight,
+  convertHeightToVH,
+} from "@/utils/adapter";
 import { HEADER_HEIGHT, SCREEN_HEIGHT } from "@/utils/layout-config";
 import { useTranslation } from "react-i18next";
 
@@ -23,7 +27,7 @@ const useStyle = () => {
         gap: 26,
         paddingTop: 20,
         minHeight: "100%",
-        maxHeight: 750,
+        maxHeight: 820,
         position: "relative" as "relative",
       },
       sideList: {
