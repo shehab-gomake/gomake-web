@@ -45,6 +45,11 @@ const useStyle = () => {
                 width: "100%",
                 gap: "5px",
                 alignItems: "center",
+            },
+            verticalLine:{
+                borderLeft: "1px solid #000",
+                height: "20px",
+                margin: "0 5px"
             }
         };
     }, [theme]);

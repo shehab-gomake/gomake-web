@@ -13,6 +13,7 @@ import { useDateFormat } from "@/hooks/use-date-format";
 import { _renderQuoteStatus } from "@/utils/constants";
 import { employeesListsState, selectedClientState } from "./states";
 import {
+  createNewDocumentApi,
   duplicateDocumentApi,
   getAllDocumentsApi,
   getDocumentPdfApi,
@@ -51,8 +52,8 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
   const [modalLogsTitle, setModalLogsTitle] = useState<string>();
   const setEmployeeListValue = useSetRecoilState<string[]>(employeesListsState);
   const [selectedQuote, setSelectedQuote] = useState<any>();
-
   const [allDocuments, setAllDocuments] = useState([]);
+  const [allStatistics, setAllStatistics] = useState([]);
   const selectedClient = useRecoilValue<any>(selectedClientState);
 
   const onClickCloseModal = () => {
@@ -130,6 +131,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
         const mapData = data?.map((quote: any) => [
           GetDateFormat(quote?.createdDate),
           quote?.customerName,
+          quote?.agentName,
           quote?.number,
           quote?.worksNames,
           quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
@@ -146,6 +148,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
         ]);
         setAllQuotes(mapData);
         setPagesCount(Math.ceil(totalItems / pageSize));
+        setAllStatistics(res?.data?.documentStatisticsList)
       }
     };
     await getAllDocumentsApi(callApi, callBack, {
@@ -172,6 +175,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
         const mapData = data?.map((quote: any) => [
           GetDateFormat(quote?.createdDate),
           quote?.customerName,
+          quote?.agentName,
           quote?.number,
           quote?.worksNames,
           quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
@@ -188,6 +192,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
         ]);
         setAllQuotes(mapData);
         setPagesCount(Math.ceil(totalItems / pageSize));
+        setAllStatistics(res?.data?.documentStatisticsList)
       }
     };
     await getAllDocumentsApi(callApi, callBack, {
@@ -217,6 +222,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
   const tableHeaders = [
     t("sales.quote.createdDate"),
     t("sales.quote.client"),
+    t("sales.quote.agent"),
     docType === DOCUMENT_TYPE.quote
       ? t("sales.quote.quoteNumber")
       : docType === DOCUMENT_TYPE.order
@@ -376,6 +382,23 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     });
   };
 
+  const onclickCreateNew = async () => {
+    const callBack = (res) => {
+      if (res?.success) {
+        const isAnotherQuoteInCreate = res?.data?.isAnotherQuoteInCreate;
+        const documentId = res?.data?.documentId;
+        if (!isAnotherQuoteInCreate) {
+          navigate("/quote");
+        } else {
+          onClickOpenModal({ id: documentId });
+        }
+        } else {
+        alertFaultUpdate();
+      }
+    };
+    await createNewDocumentApi(callApi, callBack, {documentType: docType});
+  };
+
   useEffect(() => {
     getAllCustomersCreateQuote();
     getAllCustomersCreateOrder();
@@ -486,6 +509,8 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     pagesCount,
     page,
     setPage,
+    allStatistics,
+    onclickCreateNew
   };
 };
 
