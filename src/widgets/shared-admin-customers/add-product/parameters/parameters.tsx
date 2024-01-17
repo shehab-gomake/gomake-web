@@ -1,17 +1,13 @@
 import { TabsMappingWidget } from "@/pages-components/products/digital-offset-price/widgets/tabs-mapping";
-import { GomakePrimaryButton, GomakeTextInput } from "@/components";
+import { GomakePrimaryButton } from "@/components";
 import { useAddProduct } from "@/hooks";
 
 import { ChildParameterModal } from "../child-parameter-modal";
-import { NotRequierdIcon } from "../icons/not-requierd-icon";
-import { NotHiddenIcon } from "../icons/not-hidden-icon";
-import { RequierdIcon } from "../icons/requierd-icon";
-import { HiddenIcon } from "../icons/hidden-icon";
-import { SettingIcon } from "../icons";
 
 import { useStyle } from "./style";
-import { EParameterTypes } from "@/enums";
 import { Tabs } from "@mui/material";
+import { AccordionMappingWidget } from "./widgets/accordion-mapping";
+import { SectionMappingWidget } from "./widgets/section-mapping";
 
 const ParameterWidget = () => {
   const { clasess } = useStyle();
@@ -26,8 +22,6 @@ const ParameterWidget = () => {
     handlePreviousClick,
     updatedProductParameterHidden,
     updatedProductParameteRequierd,
-    updatedProductParameteName,
-    setChangeName,
     updatedValuesConfigsForParameters,
     setTemplate,
     getProductById,
@@ -37,6 +31,8 @@ const ParameterWidget = () => {
     selectedSectonId,
     selectedParameter,
     openModal,
+    expanded,
+    handleChange,
   } = useAddProduct({ clasess });
 
   return (
@@ -65,145 +61,50 @@ const ParameterWidget = () => {
                   })}
                 </Tabs>
               </div>
-              <div style={{ height: "50vh", overflow: "scroll" }}>
+              <div
+                style={{ height: "50vh", overflow: "scroll", width: "100%" }}
+              >
                 <div style={clasess.sectionsContainer}>
                   {template?.sections?.map((section, index) => {
                     if (index === activeIndex) {
                       return section?.subSections?.map((subSection, index) => {
-                        return (
-                          <div key={index} style={clasess.subSectionContainer}>
-                            <div style={clasess.subSectionTitleStyle}>
-                              {subSection.name}
-                            </div>
-                            <div style={clasess.parametersContainer}>
-                              {subSection?.parameters?.map(
-                                (parameter, index) => {
-                                  return (
-                                    <div key={index}>
-                                      <div style={clasess.parameterContainer}>
-                                        <div
-                                          style={clasess.parameterLabelStyle}
-                                        >
-                                          <div style={clasess.paramNameStyle}>
-                                            {parameter?.name}
-                                          </div>
-                                          {/* <div>
-                                            <GomakeTextInput
-                                              style={
-                                                clasess.textInputWithoutStyle
-                                              }
-                                              defaultValue={parameter?.name}
-                                              placeholder={parameter?.name}
-                                              onChange={(e: any) =>
-                                                setChangeName(e.target.value)
-                                              }
-                                              onBlur={() =>
-                                                updatedProductParameteName(
-                                                  section?.id,
-                                                  subSection?.id,
-                                                  parameter
-                                                )
-                                              }
-                                            />
-                                          </div> */}
-                                          {parameter?.parameterType ===
-                                            EParameterTypes.SELECT_CHILDS_PARAMETERS && (
-                                            <div
-                                              style={clasess.plusIconStyle}
-                                              onClick={() =>
-                                                onOpenModal(
-                                                  parameter,
-                                                  section?.id,
-                                                  subSection?.id
-                                                )
-                                              }
-                                            >
-                                              <SettingIcon
-                                                width={20}
-                                                height={20}
-                                              />
-                                            </div>
-                                          )}
-                                          {parameter?.isHidden ? (
-                                            <div
-                                              style={{ cursor: "pointer" }}
-                                              onClick={() =>
-                                                updatedProductParameterHidden(
-                                                  section?.id,
-                                                  subSection?.id,
-                                                  parameter
-                                                )
-                                              }
-                                            >
-                                              <HiddenIcon />
-                                            </div>
-                                          ) : (
-                                            <div
-                                              style={{ cursor: "pointer" }}
-                                              onClick={() =>
-                                                updatedProductParameterHidden(
-                                                  section?.id,
-                                                  subSection?.id,
-                                                  parameter
-                                                )
-                                              }
-                                            >
-                                              <NotHiddenIcon />
-                                            </div>
-                                          )}
-                                          {parameter?.parameterType !==
-                                          EParameterTypes.SWITCH ? (
-                                            parameter?.isRequired ? (
-                                              <div
-                                                style={{ cursor: "pointer" }}
-                                                onClick={() =>
-                                                  updatedProductParameteRequierd(
-                                                    section?.id,
-                                                    subSection?.id,
-                                                    parameter
-                                                  )
-                                                }
-                                              >
-                                                <RequierdIcon />
-                                              </div>
-                                            ) : (
-                                              <div
-                                                style={{ cursor: "pointer" }}
-                                                onClick={() =>
-                                                  updatedProductParameteRequierd(
-                                                    section?.id,
-                                                    subSection?.id,
-                                                    parameter
-                                                  )
-                                                }
-                                              >
-                                                <NotRequierdIcon />
-                                              </div>
-                                            )
-                                          ) : (
-                                            <></>
-                                          )}
-                                        </div>
-                                        <div
-                                          style={
-                                            clasess.renderParameterTypeContainer
-                                          }
-                                        >
-                                          {_renderParameterType(
-                                            section?.id,
-                                            subSection?.id,
-                                            parameter,
-                                            subSection?.parameters
-                                          )}
-                                        </div>
-                                      </div>
-                                    </div>
-                                  );
-                                }
-                              )}
-                            </div>
-                          </div>
-                        );
+                        if (subSection?.isAccordion) {
+                          return (
+                            <AccordionMappingWidget
+                              index={index}
+                              expanded={expanded}
+                              clasess={clasess}
+                              handleChange={handleChange}
+                              subSection={subSection}
+                              onOpenModal={onOpenModal}
+                              section={section}
+                              updatedProductParameterHidden={
+                                updatedProductParameterHidden
+                              }
+                              updatedProductParameteRequierd={
+                                updatedProductParameteRequierd
+                              }
+                              _renderParameterType={_renderParameterType}
+                            />
+                          );
+                        } else {
+                          return (
+                            <SectionMappingWidget
+                              index={index}
+                              clasess={clasess}
+                              subSection={subSection}
+                              onOpenModal={onOpenModal}
+                              section={section}
+                              updatedProductParameterHidden={
+                                updatedProductParameterHidden
+                              }
+                              updatedProductParameteRequierd={
+                                updatedProductParameteRequierd
+                              }
+                              _renderParameterType={_renderParameterType}
+                            />
+                          );
+                        }
                       });
                     }
                   })}

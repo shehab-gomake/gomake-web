@@ -27,13 +27,17 @@ import { EParameterTypes } from "@/enums";
 const useAddProduct = ({ clasess }) => {
   const { callApi } = useGomakeAxios();
   const { setSnackbarStateValue } = useSnackBar();
-
+  const [expanded, setExpanded] = useState<string | false>("");
+  const handleChange =
+    (panel: string) => (event: React.SyntheticEvent, newExpanded: boolean) => {
+      setExpanded(newExpanded ? panel : false);
+    };
   const router = useRouter();
   const { t } = useTranslation();
   const [productState, setProductState] = useState<any>([]);
   const [changeName, setChangeName] = useState("");
   const [changeDefaultValue, setChangeDefaultValue] = useState("");
-  const { allMaterials,getAllMaterial } = useMaterials();
+  const { allMaterials, getAllMaterial } = useMaterials();
   const onChangeStateProduct = useCallback(
     (filedName: string, value: any) => {
       setProductState((prev) => {
@@ -103,10 +107,9 @@ const useAddProduct = ({ clasess }) => {
   }, [router, template]);
 
   useEffect(() => {
-    getAllMaterial().then(()=>{
+    getAllMaterial().then(() => {
       getProductById();
-    })
-    
+    });
   }, [router]);
   const updateProductParameterEndPoint = async (
     sectionId: string,
@@ -179,9 +182,7 @@ const useAddProduct = ({ clasess }) => {
   );
   const updatedProductParameteDefaultValue = useCallback(
     async (sectionId: string, subSectionId: string, parameter: any) => {
-      if (
-        changeDefaultValue !== parameter?.defaultValue 
-      ) {
+      if (changeDefaultValue !== parameter?.defaultValue) {
         await updateProductParameterEndPoint(sectionId, subSectionId, {
           parameter: {
             ...parameter,
@@ -478,7 +479,7 @@ const useAddProduct = ({ clasess }) => {
       setOpenModal(true);
     }, 100);
   };
-  
+
   const [digitalPriceData, setDigidatPriceData] =
     useRecoilState<any>(digitslPriceState);
   const _renderParameterType = (
@@ -863,6 +864,8 @@ const useAddProduct = ({ clasess }) => {
     selectedSectonId,
     selectedParameter,
     openModal,
+    expanded,
+    handleChange,
   };
 };
 

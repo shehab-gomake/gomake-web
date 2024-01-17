@@ -40,6 +40,9 @@ const useAddProduct = () => {
   const onClickGraphicTab = () => {
     setActiveTab("Graphic");
   };
+  useEffect(() => {
+    if (router.query.isParameter) setActiveTab("Parameters");
+  }, [router]);
   const tabs = [
     {
       name: "Settings",
