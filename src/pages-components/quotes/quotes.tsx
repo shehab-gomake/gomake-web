@@ -13,6 +13,7 @@ import { HeaderTitle } from "@/widgets";
 import { QuoteLogsWidget } from "./quote-widgets/logs-widget";
 import { DOCUMENT_TYPE } from "./enums";
 import { Pagination } from "@mui/material";
+import { CardsSection } from "./tickets-section/ticket-sections";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -59,7 +60,10 @@ const QuotesListPageWidget = ({
     <>
       {!isFromHomePage && (
         <div style={classes.mainContainer}>
+          <div style={classes.headerStyle}>
           <HeaderTitle title={documentLabel} marginTop={1} marginBottom={1} />
+          <CardsSection/>
+          </div>
           <div style={classes.filtersContainer}>
             <div style={classes.selectedFilterContainer}>
               <div style={classes.statusFilterContainer}>
