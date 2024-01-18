@@ -21,6 +21,8 @@ const useStyle = () => {
       },
       headerStyle: {
         display: "flex",
+        flexWrap: "wrap" as "wrap",
+        gap: 10,
         justifyContent: "space-between",
         width:"100%"
       },

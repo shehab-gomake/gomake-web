@@ -1,4 +1,4 @@
-import { Card, CardActions, CardContent, Typography } from "@mui/material";
+import { Card,CardContent, Typography } from "@mui/material";
 import { useStyle } from "./style";
 
 interface ICardProps {

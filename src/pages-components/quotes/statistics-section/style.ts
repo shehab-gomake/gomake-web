@@ -1,24 +1,23 @@
 import { useMemo } from "react";
-import i18next from "i18next";
-
-import { useTranslation } from "react-i18next";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { FONT_FAMILY } from "@/utils/font-family";
 
 const useStyle = () => {
-    const { theme} = useGomakeTheme();
+    const { theme } = useGomakeTheme();
     const classes = useMemo(() => {
         return {
-            createNew:{
+            createNew: {
                 width: "160px",
                 height: "40px",
                 borderRadius: "4px",
                 background: "#DCDCEC",
-                color:"#101020",
+                color: "#101020",
                 ...FONT_FAMILY.Lexend(500, 16),
                 lineHeight: "20px",
                 textTransform: "none" as "none",
-                boxShadow:"0px 2px 1px -1px rgba(0,0,0,0.2), 0px 1px 1px 0px rgba(0,0,0,0.14), 0px 1px 3px 0px rgba(0,0,0,0.12)"
+                // justifyContent: "flex-start",
+                gap: "10px",
+                boxShadow: "0px 2px 1px -1px rgba(0,0,0,0.2), 0px 1px 1px 0px rgba(0,0,0,0.14), 0px 1px 3px 0px rgba(0,0,0,0.12)"
             },
             ticketStyle: {
                 display: "flex",
@@ -46,7 +45,7 @@ const useStyle = () => {
                 gap: "5px",
                 alignItems: "center",
             },
-            verticalLine:{
+            verticalLine: {
                 borderLeft: "1px solid #000",
                 height: "20px",
                 margin: "0 5px"
