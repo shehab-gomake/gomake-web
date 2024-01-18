@@ -196,17 +196,22 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
           <Stack gap={2}>
             <div style={{ minHeight: "70vh" }}>
               {materialCategoryData.length > 0 ? (
-                <div style={{ paddingBottom: "1%" }}>
+                <Stack display={"grid"}>
                   <PrimaryTable
                     rows={tableRowData}
                     headers={tableHeadersNew()}
                   />
-                </div>
+                </Stack>
               ) : flag &&
                 materialCategories.find(
                   (category) => category.categoryKey === materialCategory
                 )?.isAddedByPrintHouse ? (
-                <PrimaryTable rows={tableRowsNew} headers={tableHeadersNew()} />
+                <Stack display={"grid"}>
+                  <PrimaryTable
+                    rows={tableRowsNew}
+                    headers={tableHeadersNew()}
+                  />
+                </Stack>
               ) : (
                 <div style={classes.noData}>
                   {t("materials.sheetPaper.supplierAddedSheetYet")}

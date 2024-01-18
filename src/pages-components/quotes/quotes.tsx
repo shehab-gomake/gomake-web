@@ -139,12 +139,14 @@ const QuotesListPageWidget = ({
             </div>
             <SearchInputComponent onChange={(e) => setPatternSearch(e)} />
           </div>
-          <PrimaryTable
-            stickyFirstCol={false}
-            stickyHeader={false}
-            rows={allQuotes}
-            headers={tableHeaders}
-          />
+          <div style={{ minHeight: "65vh", width: "100%" }}>
+            <PrimaryTable
+              stickyFirstCol={false}
+              stickyHeader={false}
+              rows={allQuotes}
+              headers={tableHeaders}
+            />
+          </div>
           <div style={classes.paginationStyle}>
             <Pagination
               count={pagesCount}
