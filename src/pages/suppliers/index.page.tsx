@@ -56,6 +56,7 @@ export default function Home() {
     getAllCustomers,
     onClickExportClient,
     onClickImportClient,
+    getClientTypesCategories
   } = useCustomers(CLIENT_TYPE.SUPPLIER, pageNumber, setPageNumber);
   const activeText = t("usersSettings.active");
   const inActiveText = t("usersSettings.active");
@@ -83,6 +84,10 @@ export default function Home() {
     isActive,
   ]);
 
+  useEffect(() => {
+    //getClientTypesCategories(CLIENT_TYPE.SUPPLIER);
+  }, []);
+  
   return (
     <CustomerAuthLayout>
       <Stack

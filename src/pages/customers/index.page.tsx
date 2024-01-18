@@ -75,6 +75,7 @@ export default function Home() {
   useEffect(() => {
     getAgentCategories();
     getClientTypesCategories();
+    //getClientTypesCategories(CLIENT_TYPE.CUSTOMER);
   }, []);
 
   useEffect(() => {

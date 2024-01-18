@@ -28,6 +28,7 @@ import { useUserProfile } from "@/hooks/use-user-profile";
 import { resetPassModalState } from "./state";
 import { ChangePasswordComponent } from "@/components/change-password/change-password-component";
 import { clientTypesCategoriesState } from "@/pages/customers/customer-states";
+import { AddClientTypeModal } from "./components/add-client-type-modal/add-client-type-modal";
 
 interface IProps {
   isValidCustomer?: (
@@ -111,6 +112,9 @@ const CustomerCardWidget = ({
     customer && customer.users ? customer.users : []
   );
   const clientTypesCategories = useRecoilValue(clientTypesCategoriesState);
+  const clientTypeLabel = typeClient === "C"
+    ? t("customers.modal.clientType")
+    : t("suppliers.supplierType");
 
   useEffect(() => {
     addInitContact();
@@ -350,9 +354,14 @@ const CustomerCardWidget = ({
     t("customers.modal.addresses"),
   ];
 
-
-  useEffect(() => { console.log(clientTypesCategories) }, [])
-
+  const [isClientType, setClientType] = useState(false);
+  const onClickCloseClientType = () => {
+    setClientType(false);
+  };
+  const onClickOpenClientType = () => {
+    setClientType(true);
+  };
+  
   return (
     <GoMakeModal
       openModal={open}
@@ -392,19 +401,10 @@ const CustomerCardWidget = ({
               />
             </div>
           ))}
-
-
-
-
-
-
-
           <div style={classes.itemOnFirstContainer}>
             <div style={classes.labelTitleStyle}>
-              {typeClient === "C"
-                ? t("customers.modal.clientType")
-                : t("suppliers.supplierType")}
-              <span onClick={() => alert("+")} style={classes.plusInput}>
+              {clientTypeLabel}
+              <span onClick={onClickOpenClientType} style={classes.plusInput}>
                 +
               </span>
             </div>
@@ -421,11 +421,6 @@ const CustomerCardWidget = ({
           </div>
 
         </div>
-
-
-
-
-
         <ThemeProvider theme={theme}>
           <Tabs
             value={selectedTab}
@@ -695,6 +690,11 @@ const CustomerCardWidget = ({
       >
         <ChangePasswordComponent onChangePassword={onUpdatePass} />
       </GoMakeModal>
+      <AddClientTypeModal
+        openModal={isClientType}
+        modalTitle={clientTypeLabel}
+        onClose={onClickCloseClientType}
+      />
     </GoMakeModal>
   );
 };
