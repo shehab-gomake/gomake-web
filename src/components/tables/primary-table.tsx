@@ -1,5 +1,6 @@
 import { styled } from "@mui/material/styles";
 import {
+  Paper,
   Table,
   TableBody,
   TableCell,
@@ -88,36 +89,38 @@ const PrimaryTable = ({
   const TableRow =
     variant === "ClassicTable" ? ClassicTableRow : PrimaryTableRow;
   return (
-    <TableContainer style={classes.tableContainer}>
-      <Table stickyHeader={stickyHeader}>
-        <TableHead>
-          <TableRow>
-            {headers?.map((header, index) => {
-              if (index === 0 && stickyHeader) {
-                return (
-                  <TableCell style={classes.stickyHeader}>{header}</TableCell>
-                );
-              } else {
-                return <TableCell align={"center"}>{header}</TableCell>;
-              }
-            })}
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {rows?.map((row, index) => (
-            <TableRow key={`row_${index}`}>
-              {row.map((cell, index) => {
-                if (index === 0 && stickyFirstCol) {
-                  return <TableCell style={classes.sticky}>{cell}</TableCell>;
+    <Paper sx={{ width: "100%", overflow: "hidden" }}>
+      <TableContainer style={classes.tableContainer}>
+        <Table stickyHeader={stickyHeader}>
+          <TableHead>
+            <TableRow>
+              {headers?.map((header, index) => {
+                if (index === 0 && stickyHeader) {
+                  return (
+                    <TableCell style={classes.stickyHeader}>{header}</TableCell>
+                  );
                 } else {
-                  return <TableCell align={"center"}>{cell}</TableCell>;
+                  return <TableCell align={"center"}>{header}</TableCell>;
                 }
               })}
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
+          </TableHead>
+          <TableBody>
+            {rows?.map((row, index) => (
+              <TableRow key={`row_${index}`}>
+                {row.map((cell, index) => {
+                  if (index === 0 && stickyFirstCol) {
+                    return <TableCell style={classes.sticky}>{cell}</TableCell>;
+                  } else {
+                    return <TableCell align={"center"}>{cell}</TableCell>;
+                  }
+                })}
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </Paper>
   );
 };
 

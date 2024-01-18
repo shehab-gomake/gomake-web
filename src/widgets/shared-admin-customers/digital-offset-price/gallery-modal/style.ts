@@ -7,7 +7,7 @@ const useStyle = () => {
   const clasess = useMemo(() => {
     return {
       insideStyle: {
-        width: 1150,
+        width: "60%",
         borderRadius: 5,
         height: "auto",
         maxHeight: 900,

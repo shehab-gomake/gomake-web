@@ -631,7 +631,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               }
               if (parameter.materialPath && parameter.materialPath.length > 0) {
                 if (parameter.name == "Spiral type") {
-                  debugger;
                 }
                 if (parameter.materialPath.length == 1) {
                   const materialData = materials?.find((x) =>
@@ -1179,10 +1178,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               const index = param.materialPath.findIndex((x) =>
                 compareStrings(x, materialPath)
               );
-              debugger;
-              let allMaterialsCopy = cloneDeep(allMaterials);
-              let paramMaterialValues = [];
-              if (index > 0) {
+
+              let allMaterialsCopy = cloneDeep(allMaterials)
+              let paramMaterialValues =[];
+              if(index > 0){
                 allMaterialsCopy = allMaterialsCopy?.find((x) =>
                   compareStrings(x.pathName, param.materialPath[0])
                 )?.data;

@@ -8,7 +8,7 @@ import { IListItem } from "@/components/containers/interface";
 import { SecondaryButton } from "@/components/button/secondary-button";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import {useUserPermission} from "@/hooks/use-permission";
+import { useUserPermission } from "@/hooks/use-permission";
 
 const SettingsWidget = () => {
   const { t } = useTranslation();
@@ -34,18 +34,10 @@ const SettingsWidget = () => {
   const Side = () => {
     return (
       <>
-        {productId && (
-          <SecondaryButton
-            variant={"text"}
-            href={"/settings/products"}
-            startIcon={dir === "ltr" ? <ArrowBackIcon /> : <ArrowForwardIcon />}
-            style={{ gap: 5, marginBottom: 15 }}
-          >
-            {t("materials.buttons.back")}
-          </SecondaryButton>
-        )}
         <SideList
-          list={ list.filter(x=>!x.permission || CheckPermission(x.permission)).map((item) => ({ ...item, text: t(item.text) }))}
+          list={list
+            .filter((x) => !x.permission || CheckPermission(x.permission))
+            .map((item) => ({ ...item, text: t(item.text) }))}
           selectedItem={selected?.value}
           onSelect={onSelectItem}
           title={t("settings.settings")}

@@ -13,11 +13,18 @@ interface IProps {
   values: string[];
   id: string;
   isAdmin: boolean;
-  options: {label: string; value: string;}[];
+  options: { label: string; value: string }[];
   placeHolder?: string;
 }
 
-const MultiSelectInput = ({ values, parameterKey, id, isAdmin , options , placeHolder}: IProps) => {
+const MultiSelectInput = ({
+  values,
+  parameterKey,
+  id,
+  isAdmin,
+  options,
+  placeHolder,
+}: IProps) => {
   const { classes } = useStyle();
   const { updateCellData } = useTableCellData(isAdmin);
 
@@ -56,10 +63,13 @@ const MultiSelectInput = ({ values, parameterKey, id, isAdmin , options , placeH
   };
 
   return (
-    <div style={{display:"flex" ,justifyContent:"center"}}>
-    <GoMakeAutoComplate
+    <div style={{ display: "flex", justifyContent: "center" }}>
+      <GoMakeAutoComplate
         multiple
-        style={classes.multiSelectStyle2}
+        style={{
+          ...classes.multiSelectStyle2,
+          "& .MuiChip-deleteIcon": { display: "none" },
+        }}
         value={selectedLabels}
         disableClearable={true}
         placeholder={placeHolder}
