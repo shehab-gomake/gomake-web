@@ -1,7 +1,7 @@
 import { GoMakeAutoComplate, SecondSwitch } from "@/components";
 import { ActionMenu } from "@/widgets/materials-widget/components/actions-menu/action-menu";
 import Stack from "@mui/material/Stack";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useMaterialFilters } from "@/widgets/materials-widget/components/filters/use-material-filters";
 import Button from "@mui/material/Button";
@@ -14,6 +14,8 @@ import {
 } from "@/widgets/materials-widget/state";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { getAllProductsForDropDownList } from "@/services/hooks";
+import { useGomakeAxios } from "@/hooks";
 interface FiltersActionsBarProps {
   isAdmin: boolean;
 }
@@ -33,6 +35,7 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
     materialTableFilters,
     setFilterValue,
   } = useMaterialFilters();
+  const { callApi } = useGomakeAxios();
   const [supplierName, setSupplierName] = useState<{
     value: string;
     label: string;
@@ -57,10 +60,35 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
     value: client.id,
     label: `${client.name} - ${client.code}`,
   }));
+
+  const [productValue, setProductValues] = useState([]);
+  const getAllProducts = useCallback(async () => {
+    await getAllProductsForDropDownList(callApi, setProductValues);
+  }, []);
+  useEffect(() => {
+    getAllProducts();
+  }, []);
+
+  const productsOptions = productValue?.map((product) => ({
+    ...product,
+    value: product.id,
+    label: product.name,
+  }));
   return (
     <Stack direction={"row"} gap={2} alignItems={"center"}>
       {materialTableFilters &&
         materialTableFilters.map(({ key, values }) => {
+          if (key === "productId") {
+            return (
+              <GoMakeAutoComplate
+                key={key}
+                onChange={(e, v) => setFilterValue(key, v?.id)}
+                style={{ width: "300px", height: 40, overflow: "scroll" }}
+                options={productsOptions}
+                placeholder={key}
+              />
+            );
+          }
           if (key === "clients") {
             return (
               <GoMakeAutoComplate
