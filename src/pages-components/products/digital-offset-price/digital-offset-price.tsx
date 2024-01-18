@@ -212,6 +212,7 @@ const PriceListPageWidget = ({ widgetType }) => {
               samlleType={samlleType}
               graphicDesigner={graphicDesigner}
               setGraphicDesigner={setGraphicDesigner}
+              errorMsg={errorMsg}
             />
           </div>
 
@@ -272,7 +273,7 @@ const PriceListPageWidget = ({ widgetType }) => {
                 </GomakePrimaryButton>
               )}
 
-              <div style={clasess.errorMsgStyle}>{errorMsg}</div>
+              {/* <div style={clasess.errorMsgStyle}>{errorMsg}</div> */}
             </div>
           </div>
         </div>
