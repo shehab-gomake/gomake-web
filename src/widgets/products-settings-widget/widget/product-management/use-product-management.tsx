@@ -171,6 +171,9 @@ const useProductManagement = () => {
       setProductSearched(temp);
     }
   }, [term, allProducts]);
+  const handleGoBack = () => {
+    router.back();
+  };
   return {
     tableHeaders,
     allProducts,
@@ -179,6 +182,7 @@ const useProductManagement = () => {
     allProductSKU,
     router,
     setTerm,
+    handleGoBack,
   };
 };
 
