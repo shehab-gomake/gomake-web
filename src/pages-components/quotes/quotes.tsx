@@ -13,6 +13,7 @@ import { HeaderTitle } from "@/widgets";
 import { QuoteLogsWidget } from "./quote-widgets/logs-widget";
 import { DOCUMENT_TYPE } from "./enums";
 import { Pagination } from "@mui/material";
+import { CardsSection } from "./statistics-section/statistics-sections";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -52,6 +53,9 @@ const QuotesListPageWidget = ({
     pagesCount,
     page,
     setPage,
+    allStatistics,
+    onclickCreateNew,
+    setStatisticKey,
     t,
   } = useQuotes(documentType);
 
@@ -59,7 +63,10 @@ const QuotesListPageWidget = ({
     <>
       {!isFromHomePage && (
         <div style={classes.mainContainer}>
-          <HeaderTitle title={documentLabel} marginTop={1} marginBottom={1} />
+          <div style={classes.headerStyle}>
+            <HeaderTitle title={documentLabel} marginTop={1} marginBottom={1} />
+            {documentType === DOCUMENT_TYPE.quote && <CardsSection statistics={allStatistics} onClick={onclickCreateNew} setState={setStatisticKey}/>}
+          </div>
           <div style={classes.filtersContainer}>
             <div style={classes.selectedFilterContainer}>
               <div style={classes.statusFilterContainer}>

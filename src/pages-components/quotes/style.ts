@@ -19,6 +19,13 @@ const useStyle = () => {
         paddingLeft: 20,
         paddingRight: 20,
       },
+      headerStyle: {
+        display: "flex",
+        flexWrap: "wrap" as "wrap",
+        gap: 10,
+        justifyContent: "space-between",
+        width:"100%"
+      },
       filtersContainer: {
         display: "flex",
         flexDirection: "row" as "row",
