@@ -8,8 +8,7 @@ import HourglassTopIcon from '@mui/icons-material/HourglassTop';
 import DoneAllIcon from '@mui/icons-material/DoneAll';
 import DoDisturbAltIcon from '@mui/icons-material/DoDisturbAlt';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-import { GomakeCurrency } from "@/icons/material-tabs/goMake-currency";
-import AddBoxOutlinedIcon from '@mui/icons-material/AddBoxOutlined';
+import { GoMakeCurrency } from "@/icons/go-make-currency";
 
 interface ICard {
     key: string;
@@ -19,6 +18,7 @@ interface ICard {
 interface ICardsSection {
     statistics: ICard[];
     onClick: () => void;
+    setState?: any; 
 }
 
 const getValueByKey = (statistics: ICard[], key: string) => {
@@ -26,19 +26,21 @@ const getValueByKey = (statistics: ICard[], key: string) => {
     return card ? card.value : "";
 };
 
-const CardsSection = ({ statistics, onClick }: ICardsSection) => {
-    const { classes } = useStyle();
+const CardsSection = ({ statistics, onClick , setState}: ICardsSection) => {
     const { t } = useTranslation();
+    const { classes } = useStyle();
     const { primaryColor, secondColor, warningColor, successColor, errorColor } = useGomakeTheme();
 
+
+    
     return (
         <Stack direction={"row"} gap={"5px"} alignItems={"center"} flexWrap={"wrap-reverse"}>
-            <CardComponent text={t("sales.quote.successRate")} number={getValueByKey(statistics, "successRate") + "%"} textColor="#FFFFFF" backGroundColor={primaryColor(300)} icon={<TrendingUpIcon/>} />
-            <CardComponent text={t("sales.quote.waiting")} number={getValueByKey(statistics, "waitingCount")} textColor="#FFFFFF" backGroundColor={warningColor(300)} icon={<HourglassTopIcon />} />
+            <CardComponent text={t("sales.quote.successRate")} number={getValueByKey(statistics, "successRate") + "%"} textColor="#FFFFFF" backGroundColor={primaryColor(300)} icon={<TrendingUpIcon/>} onClick={()=>console.log("search")}  onSecondClick={()=>console.log("clear")}/>
+            <CardComponent text={t("sales.quote.waiting")} number={getValueByKey(statistics, "waitingCount")} textColor="#FFFFFF" backGroundColor={warningColor(300)} icon={<HourglassTopIcon />} onClick={()=>console.log("search 1")}  onSecondClick={()=>console.log("clear 1")} />
             <CardComponent text={t("sales.quote.approved")} number={getValueByKey(statistics, "approvedCount")} textColor="#FFFFFF" backGroundColor={successColor(300)} icon={<DoneAllIcon/>} />
             <CardComponent text={t("sales.quote.canceled")} number={getValueByKey(statistics, "canceledCount")} textColor="#FFFFFF" backGroundColor={errorColor(300)} icon={<DoDisturbAltIcon />} />
             <div style={classes.verticalLine}></div>
-            <CardComponent text={t("sales.quote.totalPrice")} number={getValueByKey(statistics, "totalPrice")} textColor="#101020" backGroundColor={secondColor(100)} icon={<GomakeCurrency width={24} height={24}/>} />
+            <CardComponent text={t("sales.quote.totalPrice")} number={getValueByKey(statistics, "totalPrice")} textColor="#101020" backGroundColor={secondColor(100)} icon={<GoMakeCurrency/>} />
             <Button style={classes.createNew} onClick={onClick} startIcon={<AddCircleOutlineIcon style={{ color: 'black'  , fontSize:"24px"}}/>}>{t("sales.quote.createNew")}</Button>
         </Stack>
     );

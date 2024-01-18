@@ -40,6 +40,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
   const pageSize = DEFAULT_VALUES.PageSize;
   const { GetDateFormat } = useDateFormat();
   const [statusId, setStatusId] = useState<any>();
+  const [statisticKey, setStatisticKey] = useState<string>();
   const [customerId, setCustomerId] = useState<any>();
   const [dateRange, setDateRange] = useState<any>();
   const [agentId, setAgentId] = useState<any>();
@@ -159,6 +160,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
           pageSize: pageSize,
         },
         statusId: statusId?.value,
+        // key: statisticKey, 
         patternSearch: finalPatternSearch,
         customerId: customerId?.id,
         dateRange,
@@ -213,6 +215,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
 
   const onClickClearFilter = () => {
     setStatusId(null);
+    // setStatisticKey(null);
     setAgentId(null);
     setCustomerId(null);
     getAllQuotesInitial();
@@ -510,7 +513,8 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     page,
     setPage,
     allStatistics,
-    onclickCreateNew
+    onclickCreateNew,
+    setStatisticKey
   };
 };
 
