@@ -1,7 +1,7 @@
 import { Tab, Tabs, ThemeProvider, createMuiTheme } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useStyle } from "./style";
-import { GoMakeModal } from "@/components";
+import { GoMakeAutoComplate, GoMakeModal } from "@/components";
 import { TextareaAutosize } from "@mui/base";
 import { ContactForm } from "./components/contacts-tab";
 import { AddressForm } from "./components/address-tab";
@@ -350,6 +350,9 @@ const CustomerCardWidget = ({
     t("customers.modal.addresses"),
   ];
 
+
+  useEffect(() => { console.log(clientTypesCategories) }, [])
+
   return (
     <GoMakeModal
       openModal={open}
@@ -389,7 +392,40 @@ const CustomerCardWidget = ({
               />
             </div>
           ))}
+
+
+
+
+
+
+
+          <div style={classes.itemOnFirstContainer}>
+            <div style={classes.labelTitleStyle}>
+              {typeClient === "C"
+                ? t("customers.modal.clientType")
+                : t("suppliers.supplierType")}
+              <span onClick={() => alert("+")} style={classes.plusInput}>
+                +
+              </span>
+            </div>
+            <div style={{ width: "180px" }}>
+              <GoMakeAutoComplate
+                options={clientTypesCategories}
+                placeholder={typeClient === "C" ? t("customers.modal.clientType") : t("suppliers.supplierType")}
+                style={classes.dropDownListStyle}
+                getOptionLabel={(option: any) => option.label}
+                value={clientTypesCategories?.find((option: any) => option?.id === customer?.clientTypeId)}
+                onChange={(e: any, value: any) => onChangeInputs("clientTypeId", value?.id)}
+              />
+            </div>
+          </div>
+
         </div>
+
+
+
+
+
         <ThemeProvider theme={theme}>
           <Tabs
             value={selectedTab}

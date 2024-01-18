@@ -1,8 +1,10 @@
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { convertHeightToVH, convertWidthToVW } from "@/utils/adapter";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 
 const useStyle = () => {
+  const {theme, primaryColor , secondColor} = useGomakeTheme();
   const classes = useMemo(() => {
     return {
       buttonStyle: {
@@ -169,8 +171,36 @@ const useStyle = () => {
         flexWrap: "wrap" as "wrap",
         gap: 10,
       },
+      labelTitleStyle: {
+        ...FONT_FAMILY.Lexend(500, 14),
+        color: primaryColor(900),
+      },
+      dropDownListStyle: {
+        width: "100%",
+        borderRadius: 4,
+        height: 40,
+        backgroundColor: "#FFF",
+        border: "0px",
+        // boxShadow: "0px 1px 2px 0px rgba(0, 0, 0, 0.08)",
+      },
+      plusInput: {
+        ...FONT_FAMILY.Lexend(500, 14),
+        color: secondColor(500),
+        cursor: "pointer",
+        paddingLeft: 5,
+      },
+      itemOnFirstContainer: {
+        display: "flex",
+        flexDirection: "column" as "column",
+        justifyContent: "flex-start",
+        alignItems: "flex-start",
+        gap: 10,
+        // width: "180px",
+        minWidth: 180,
+        position: "relative" as "relative",
+      },
     };
-  }, []);
+  }, [theme]);
   return {
     classes,
   };
