@@ -36,7 +36,7 @@ const useMachinesColors = () => {
 
     }
     // 64cabbb5af8e85619868a453
-    const colorsInputs = materialCategoriesInput(machineState, colors?.map(color => ({text: color.colorName, value: color.colorName})), colorManufacturers?.map((m) => ({text: m, value: m})));
+    const colorsInputs = materialCategoriesInput(machineState, colors?.map(color => ({text: color.colorName, value: color.colorName})), colorManufacturers?.map((m) => ({text: m, value: m})),"","","","","","");
 
     const onSelectColors = (key, value) => {
         if (key === 'color') {
