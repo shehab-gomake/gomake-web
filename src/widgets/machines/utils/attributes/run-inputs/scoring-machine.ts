@@ -2,7 +2,7 @@
 const scoringMachine = (state: Record<string, any>) => {
     return [
         {
-            name: 'machineAttributes.scoring',
+            name: '',
             parameterKey: 'scoring',
             machineInputType: 'multiInput',
             value: state.attributes?.scoring ? state.attributes?.scoring : {},
@@ -45,7 +45,7 @@ const scoringMachine = (state: Record<string, any>) => {
             ]
         },
         {
-            name: 'machineAttributes.perforation',
+            name: '',
             parameterKey: 'perforation',
             machineInputType: 'multiInput',
             value: state.attributes?.perforation ? state.attributes?.perforation : {},
