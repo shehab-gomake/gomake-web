@@ -3,11 +3,11 @@ import {IStepFormProps} from "@/widgets/machines/components/forms/interface";
 import {InputContainer} from "@/widgets/machines/components/inputs/input-container";
 import {useMachineAttributes} from "@/widgets/machines/hooks/use-machine-attributes";
 import {useEffect, useMemo, useState} from "react";
-import {getPrintHouseMachineColors} from "@/services/api-service/machines/print-house-machines-colors";
+import {getPrintHouseMachineMaterialCategories} from "@/services/api-service/machines/print-house-machines-colors";
 import {useGomakeAxios} from "@/hooks";
 import {useRecoilValue} from "recoil";
 import {machineState as STATE} from "@/widgets/machines/state/machine-state";
-import {additionalColorsInput} from "@/widgets/machines/utils/attributes/colors-inputs/additional-colors-input";
+import {materialCategoriesInput} from "@/widgets/machines/utils/attributes/colors-inputs/material-categories-input";
 
 interface IMachineColor  {
     colorName: string;
@@ -32,11 +32,11 @@ const useMachinesColors = () => {
                 setColors(res?.data)
             }
         }
-        await getPrintHouseMachineColors(callApi,callBack, machineState?.id ).then();
+        await getPrintHouseMachineMaterialCategories(callApi,callBack, machineState?.id ).then();
 
     }
     // 64cabbb5af8e85619868a453
-    const colorsInputs = additionalColorsInput(machineState, colors?.map(color => ({text: color.colorName, value: color.colorName})), colorManufacturers?.map((m) => ({text: m, value: m})));
+    const colorsInputs = materialCategoriesInput(machineState, colors?.map(color => ({text: color.colorName, value: color.colorName})), colorManufacturers?.map((m) => ({text: m, value: m})));
 
     const onSelectColors = (key, value) => {
         if (key === 'color') {

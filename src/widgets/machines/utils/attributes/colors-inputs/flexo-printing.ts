@@ -1,4 +1,3 @@
-import {COLORS} from "@/widgets/machines/utils/const";
 import {basicColorsInput} from "@/widgets/machines/utils/attributes/colors-inputs/basic-colors-input";
 
 const flexoPrinting = (state: Record<string, any>) => {
@@ -43,33 +42,31 @@ const flexoPrinting = (state: Record<string, any>) => {
 
         },
         {
-            name: 'varnish',
-            parameterKey: 'varnish',
-            value: state?.attributes?.varnish ? state?.attributes?.varnish : [],
-            machineInputType: 'multiArrayInput',
+            name: "machineAttributes.colors",
+            label: "machineAttributes.color",
+            type: "text",
+            placeholder: "machineAttributes.color",
+            required: true,
+            parameterKey: "colors",
+            options: [],
+            machineInputType: 'materialInput',
+            value: state?.attributes?.colors,
             isValid: true,
-            inputs: [
-                {
-                    name: "color",
-                    label: "machineAttributes.color",
-                    type: "select",
-                    placeholder: "machineAttributes.color",
-                    required: true,
-                    parameterKey: "color",
-                    value: COLORS[0].value,
-                    options:  COLORS
-                },
-                {
-                    name: "cost",
-                    label: "machineAttributes.cost",
-                    type: "text",
-                    placeholder: "machineAttributes.cost",
-                    required: true,
-                    parameterKey: "cost",
-                    options: []
-                },
-
-            ]
+            materialType: 'colors'
+        },
+        {
+            name: "machineAttributes.varnish",
+            label: "machineAttributes.varnish",
+            type: "text",
+            placeholder: "machineAttributes.varnish",
+            required: true,
+            parameterKey: "varnish",
+            options: [],
+            disabled: !state?.attributes?.varnish,
+            machineInputType: 'materialInput',
+            value: state?.attributes?.varnish,
+            isValid: true,
+            materialType: 'varnish'
         },
         {
             name: "pantoon",

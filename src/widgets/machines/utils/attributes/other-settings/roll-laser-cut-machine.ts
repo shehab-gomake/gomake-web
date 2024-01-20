@@ -1,17 +1,25 @@
+import {EMeasurementUnits} from "@/widgets/machines/enums/measurement-units";
 
 const rollLaserCutMachine = (state: Record<string, any>) => {
     return [
         {
-            name: "axisDiameter",
-            label: "machineAttributes.axisDiameter",
-            type: "text",
-            placeholder: "machineAttributes.axisDiameter",
-            required: true,
-            parameterKey: "axisDiameter",
-            options: [],
-            value: state.attributes?.axisDiameter ? state.attributes?.axisDiameter : '',
-            machineInputType: 'input',
-            isValid: !!state?.attributes?.axisDiameter,
+            name: '',
+            parameterKey: 'axisDiameter',
+            value: state.attributes?.axisDiameter || [],
+            machineInputType: 'multiArrayInput',
+            isValid: true,
+            inputs: [
+                {
+                    name: "axisDiameter",
+                    label: "machineAttributes.axisDiameter",
+                    type: "text",
+                    placeholder: "machineAttributes.axisDiameter",
+                    required: true,
+                    parameterKey: "axisDiameter",
+                    options: [],
+                    unit: EMeasurementUnits.INCH
+                },
+            ]
         },
         {
             name: "coreMaxWidth",
@@ -25,6 +33,7 @@ const rollLaserCutMachine = (state: Record<string, any>) => {
             machineInputType: 'input',
             isValid: !!state?.attributes?.coreMaxWidth,
         },
+
     ];
 }
 
