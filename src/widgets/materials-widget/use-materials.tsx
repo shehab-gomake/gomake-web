@@ -54,7 +54,7 @@ const useMaterials = (isAdmin: boolean) => {
     {
       categoryKey: string;
       categoryName: string;
-      isAddedByPrintHouse: boolean;
+      isDeletable: boolean;
     }[]
   >(materialCategoriesState);
   const [materialCategoryData, setMaterialCategoryData] = useRecoilState<
@@ -143,7 +143,7 @@ const useMaterials = (isAdmin: boolean) => {
     return materialCategories.map((category) => ({
       text: category.categoryName,
       value: category.categoryKey,
-      icon: category.isAddedByPrintHouse
+      icon: category.isDeletable
         ? () => (
             <SideLeftMenuWidget
               onClickOpenDeleteRowModal={onClickOpenDeleteRowModal}

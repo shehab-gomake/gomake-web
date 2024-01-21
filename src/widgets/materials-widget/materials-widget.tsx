@@ -73,11 +73,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
     (category) => category.categoryKey === materialCategory?.toString()
   )?.categoryName;
 
-  const tableRowData = materialCategories.find(
-    (category) => category.categoryKey === materialCategory
-  )?.isAddedByPrintHouse
-    ? tableRowsNew
-    : tableRows;
+  const tableRowData = tableRowsNew;
 
   const Side = () => (
     <Stack direction={"column"} gap={"10px"}>
@@ -205,7 +201,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
               ) : flag &&
                 materialCategories.find(
                   (category) => category.categoryKey === materialCategory
-                )?.isAddedByPrintHouse ? (
+                ) ? (
                 <Stack display={"grid"}>
                   <PrimaryTable
                     rows={tableRowsNew}
