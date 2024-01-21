@@ -178,7 +178,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
             tableFilters: {
               materialKey: materialType,
               categoryKey: materialCategory,
-              supplierId,
+              supplierId:null,
               pageNumber: null,
               pageSize: null,
               isActive:
