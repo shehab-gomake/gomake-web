@@ -28,8 +28,8 @@ import { useUserProfile } from "@/hooks/use-user-profile";
 import { resetPassModalState } from "./state";
 import { ChangePasswordComponent } from "@/components/change-password/change-password-component";
 import { clientTypesCategoriesState } from "@/pages/customers/customer-states";
-import { AddClientTypeModal } from "./components/add-client-type-modal/add-client-type-modal";
-import { ClientTypeModal } from "./components/add-client-type-modal/add-client-type-modal-new";
+import { ClientTypeModal } from "./components/add-client-type-modal/add-client-type-modal";
+import { SettingIcon } from "../shared-admin-customers/add-product/icons/setting";
 
 interface IProps {
   isValidCustomer?: (
@@ -410,7 +410,10 @@ const CustomerCardWidget = ({
             <div style={classes.labelTitleStyle}>
               {clientTypeLabel}
               <span onClick={onClickOpenClientType} style={classes.plusInput}>
-                +
+                <SettingIcon
+                  width={20}
+                  height={20}
+                />
               </span>
             </div>
             <div style={{ width: "180px" }}>
@@ -695,26 +698,14 @@ const CustomerCardWidget = ({
       >
         <ChangePasswordComponent onChangePassword={onUpdatePass} />
       </GoMakeModal>
-      {/* <AddClientTypeModal
-        clientTypeId = {clientTypeId}
-        openModal={isClientType}
-        modalTitle={clientTypeLabel}
-        onClose={onClickCloseClientType}
-      /> */}
       <ClientTypeModal
         openModal={isClientType}
         onClose={onClickCloseClientType}
-        selectedParameter={customer}
-        modalTitle={clientTypeLabel}
+        modalTitle={typeClient === "C"
+        ? t("customers.customerTypes")
+        : t("suppliers.supplierTypes")}
         clientTypeId={clientTypeId}
-      // selectedSectonId={selectedSectonId}
-      // selectedSubSection={selectedSubSection}
-      // setSelectedParameter={setSelectedParameter}
-      // updatedValuesConfigsForParameters={
-      //   updatedValuesConfigsForParameters
-      // }
       />
-
     </GoMakeModal>
   );
 };

@@ -174,6 +174,9 @@ const useStyle = () => {
       labelTitleStyle: {
         ...FONT_FAMILY.Lexend(500, 14),
         color: primaryColor(900),
+        justifyContent: "space-between",
+        display: "flex",
+        width: "100%"
       },
       dropDownListStyle: {
         width: "100%",
@@ -181,7 +184,6 @@ const useStyle = () => {
         height: 40,
         backgroundColor: "#FFF",
         border: "0px",
-        // boxShadow: "0px 1px 2px 0px rgba(0, 0, 0, 0.08)",
       },
       plusInput: {
         ...FONT_FAMILY.Lexend(500, 14),
@@ -195,7 +197,6 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "flex-start",
         gap: 10,
-        // width: "180px",
         minWidth: 180,
         position: "relative" as "relative",
       },

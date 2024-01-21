@@ -5,25 +5,19 @@ import {
     GomakeTextInput,
 } from "@/components";
 import { useStyle } from "./style";
+import { RemoveIcon } from "@/icons";
 import { useClientType } from "./use-client-type";
-import { CLIENT_TYPE_Id } from "@/pages/customers/enums";
+import { IconButton } from "@mui/material";
 
-interface IProps {
-    openModal: boolean,
-    modalTitle?: string,
-    onClose: () => void,
-    clientTypeId: CLIENT_TYPE_Id
-}
-
-const AddClientTypeModal = ({
+const ClientTypeModal = ({
     openModal,
-    modalTitle,
     onClose,
-    clientTypeId
-}: IProps) => {
+    modalTitle,
+    clientTypeId,
+}: any) => {
+    const { clientTypeName, setClientTypeName, addClientType, deleteClientType, clientTypesCategories } = useClientType(clientTypeId);
     const { t } = useTranslation();
     const { classes } = useStyle();
-    const { clientTypeName, setClientTypeName, addClientType } = useClientType(clientTypeId);
 
     return (
         <>
@@ -33,27 +27,52 @@ const AddClientTypeModal = ({
                 onClose={onClose}
                 insideStyle={classes.insideStyle}
             >
-                <div style={{ marginTop: 20, height: "80%" }}>
-                    <div style={classes.containerButtons}>
-                        <GomakeTextInput
-                            style={classes.textInputStyle}
-                            placeholder={t("Enter name")}
-                            onChange={(e: any) => {
-                                setClientTypeName(e.target.value);
-                            }}
-                        />
-                        <div style={classes.btnContainer}>
-                            <GomakePrimaryButton
-                                style={classes.addBtnStyle}
-                                onClick={() => addClientType(clientTypeName)}
-                            >
-                                {t("add new client type")}
-                            </GomakePrimaryButton>
+                <div >
+                    <div style={{ width: "100%" }} >
+                        {clientTypesCategories?.map((item, index) => (
+                            <div style={classes.optionStyle} >
+                                <div style={classes.textInputContainer} >
+                                    <GomakeTextInput
+                                        style={classes.textInputStyle}
+                                        placeholder="Enter Name"
+                                        defaultValue={item?.label}
+                                        disabled={true}
+                                    />
+                                </div>
+                                <IconButton
+                                    onClick={() => {deleteClientType(item?.id); onClose();}}
+                                    size={"small"}
+                                ><RemoveIcon />
+                                </IconButton>
+                            </div>
+                        ))}
+                        <div style={classes.textInputContainer}>
+                            <GomakeTextInput
+                                style={classes.textInputStyle}
+                                placeholder="Enter Name"
+                                onChange={(e) => setClientTypeName(e.target.value)}
+                            />
                         </div>
                     </div>
+                    <div
+                        style={{
+                            marginTop: "10px",
+                            display: "flex",
+                            justifyContent: "center",
+                            width: "100%",
+                        }} >
+                        <GomakePrimaryButton
+                            style={{ width: "50%", height: 40 }}
+                            onClick={() => {
+                                addClientType(clientTypeName);
+                                onClose();
+                            }}
+                        >{t("customers.buttons.addClientType")}</GomakePrimaryButton>
+                    </div>
+
                 </div>
             </GoMakeModal>
         </>
     );
 };
-export { AddClientTypeModal };
+export { ClientTypeModal };

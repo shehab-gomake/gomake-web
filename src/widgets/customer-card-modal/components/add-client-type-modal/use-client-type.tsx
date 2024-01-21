@@ -1,55 +1,57 @@
 import { useGomakeAxios } from "@/hooks/use-gomake-axios";
 import { clientTypesCategoriesState } from "@/pages/customers/customer-states";
 import { CLIENT_TYPE_Id } from "@/pages/customers/enums";
-import { addClientTypeApi, deleteClientTypeApi } from "@/services/api-service/customers/clientTypes-api";
+import { addClientTypeApi, deleteClientTypeApi, getAndSetClientTypes } from "@/services/api-service/customers/clientTypes-api";
 import { useState } from "react";
-import { useRecoilValue } from "recoil";
+import { useRecoilState } from "recoil";
 
-const useClientType = (clientTypeId : CLIENT_TYPE_Id) => {
+const useClientType = (clientTypeId: CLIENT_TYPE_Id) => {
     const { callApi } = useGomakeAxios();
-    const [clientTypeName , setClientTypeName] = useState();
-    const clientTypesCategories = useRecoilValue(clientTypesCategoriesState);
+    const [clientTypeName, setClientTypeName] = useState();
+    const [clientTypesCategories, setClientTypesCategories] = useRecoilState(clientTypesCategoriesState);
 
-
-
-    const addClientType = async ( name : string) => {
+    const getClientTypesCategories = async (cardType: CLIENT_TYPE_Id) => {
         const callBack = (res) => {
             if (res.success) {
+                const clientTypes = res.data.map((types) => ({
+                    label: types.name,
+                    id: types.id,
+                }));
+                setClientTypesCategories(clientTypes);
+            }
+        };
+        await getAndSetClientTypes(callApi, callBack, { cardType: cardType });
+    };
 
-                console.log("the result is " , res)
-                // getallClientsTypes
+    const addClientType = async (name: string) => {
+        const callBack = (res) => {
+            if (res.success) {
+                getClientTypesCategories(clientTypeId);
 
             }
         }
-        await addClientTypeApi(callApi, callBack , {
+        await addClientTypeApi(callApi, callBack, {
             name: name,
-            cardType : clientTypeId
-          } )
+            cardType: clientTypeId
+        })
     }
 
-
-
-    
-    const deleteClientType = async ( id:string) => {
+    const deleteClientType = async (id: string) => {
         const callBack = (res) => {
             if (res.success) {
-
-                console.log("the result is " , res)
-                // getallClientsTypes
-
+                getClientTypesCategories(clientTypeId);
             }
         }
-        await deleteClientTypeApi(callApi, callBack , {id} )
+        await deleteClientTypeApi(callApi, callBack, { id })
     }
 
-
-  return {
-    clientTypeName,
-    setClientTypeName,
-    addClientType,
-    deleteClientType,
-    clientTypesCategories
-};
+    return {
+        clientTypeName,
+        setClientTypeName,
+        addClientType,
+        deleteClientType,
+        clientTypesCategories
+    };
 };
 
 export { useClientType };
