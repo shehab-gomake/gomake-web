@@ -281,6 +281,7 @@ const useMaterials = (isAdmin: boolean) => {
           <TableCellData
             {...dataRow.rowData[header.key]}
             id={dataRow.id}
+            isAdmin={isAdmin}
             parameterKey={header.key}
             onChangeRowCheckBox={onChangeRowCheckBox}
           />

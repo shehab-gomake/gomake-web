@@ -75,7 +75,7 @@ const CurrencyInput = ({
       ) : (
         <PrimaryButton
           sx={classes.clickableData}
-          onClick={() => setIsUpdate(true)}
+          onClick={() => onClickActionModal()}
           variant={"text"}
         >
           {currencyName()}
