@@ -209,17 +209,17 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
                   />
                 </Stack>
               ) : (
-                <div style={classes.noData}>
+                !props.isAdmin ? ( <div style={classes.noData}>
                   {t("materials.sheetPaper.supplierAddedSheetYet")}
                   <span
-                    style={classes.noDataSpan}
-                    onClick={() => {
-                      setOpenAddSupplierModal(true);
-                    }}
+                      style={classes.noDataSpan}
+                      onClick={() => {
+                        setOpenAddSupplierModal(true);
+                      }}
                   >
                     {t("materials.sheetPaper.pleaseAddNow")}
                   </span>
-                </div>
+                </div>) : <></>
               )}
             </div>
             <div style={{ marginBottom: "5px" }}>

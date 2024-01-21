@@ -83,17 +83,6 @@ const useMaterialsActions = (isAdmin: boolean) => {
   const onChangeHeaderCheckBox = useCallback(
     (isAllChecked: boolean) => {
       setIsAllMaterialsChecked(isAllChecked);
-      const materialsIds = materialCategoryData.map((material) => material.id);
-      setMaterialCategoryData(
-        materialCategoryData.map((row) =>
-          materialsIds.includes(row.id)
-            ? {
-                ...row,
-                checked: false,
-              }
-            : { ...row, checked: false }
-        )
-      );
     },
     [materialCategoryData, materialCategoryData]
   );
@@ -172,6 +161,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
             categoryKey: materialCategory.toString(),
             ids: selectedMaterialsIds,
             action: action.action,
+            updatedValue,
             priceIndex: 0,
             isAllMaterialsChecked: isAllMaterialsChecked,
             uncheckedMaterials: uncheckedMaterials,
@@ -233,10 +223,11 @@ const useMaterialsActions = (isAdmin: boolean) => {
             ? {
                 ...material,
                 ...res.data?.find((row) => row.id === material.id),
+                checked:false,
               }
             : material
         )
-      );
+      )
       setAction(null);
       onChangeHeaderCheckBox(true);
     }
@@ -253,15 +244,13 @@ const useMaterialsActions = (isAdmin: boolean) => {
         tableFilters: {
           materialKey: materialType,
           categoryKey: materialCategory,
-          supplierId,
-          pageNumber: null,
-          pageSize: null,
+          supplierId:null,
           isActive:
-            activeFilter === EMaterialActiveFilter.ACTIVE
-              ? true
-              : activeFilter === EMaterialActiveFilter.INACTIVE
-              ? false
-              : null,
+              activeFilter === EMaterialActiveFilter.ACTIVE
+                  ? true
+                  : activeFilter === EMaterialActiveFilter.INACTIVE
+                      ? false
+                      : null,
           customFiltersKeyValueList: materialFilter,
         },
         priceIndex: 0,
