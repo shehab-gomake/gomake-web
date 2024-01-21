@@ -55,7 +55,6 @@ const useMaterialsActions = (isAdmin: boolean) => {
   const [materialCategoryData, setMaterialCategoryData] = useRecoilState<
     IMaterialCategoryRow[]
   >(materialCategoryDataState);
-  console.log("materialCategoryData", materialCategoryData);
   const [action, setAction] = useRecoilState<{
     action: EMaterialsActions;
     key: string;
@@ -64,9 +63,8 @@ const useMaterialsActions = (isAdmin: boolean) => {
   const [currentCurrency, setCurrentCurrency] = useState<any>("");
   const [checkedPrice, setCheckedPrice] = useState(false);
   const { rate, setRate, getExchangeRate } = useExchangeRate();
-  const isAllMaterialsChecked = useRecoilValue<boolean>(
-    isAllMaterialsCheckedState
-  );
+  const [isAllMaterialsChecked, setIsAllMaterialsChecked] =
+    useRecoilState<boolean>(isAllMaterialsCheckedState);
   const uncheckedMaterials = useRecoilValue<string[]>(materialsUnCheckedState);
   const supplierId = useRecoilValue(selectedSupplierIdState);
   const activeFilter = useRecoilValue(activeFilterState);
@@ -75,17 +73,30 @@ const useMaterialsActions = (isAdmin: boolean) => {
   const uploadImgRef = useRef(null);
   const { getMaterialCategoryData } = useMaterialsCategories(isAdmin);
   useEffect(() => {
-    console.log("checkedPrice", {
-      checkedPrice,
-      currentCurrency,
-      updatedValue,
-    });
     if (checkedPrice) getExchangeRate(currentCurrency, updatedValue);
   }, [checkedPrice, updatedValue, currentCurrency]);
   const { setSnackbarStateValue } = useSnackBar();
   const { t } = useTranslation();
   const setOpenAddRowModal = useSetRecoilState<boolean>(openAddRowModalState);
   const [selectedMaterialsIds, setSelectedMaterialsIds] = useState([]);
+
+  const onChangeHeaderCheckBox = useCallback(
+    (isAllChecked: boolean) => {
+      setIsAllMaterialsChecked(isAllChecked);
+      const materialsIds = materialCategoryData.map((material) => material.id);
+      setMaterialCategoryData(
+        materialCategoryData.map((row) =>
+          materialsIds.includes(row.id)
+            ? {
+                ...row,
+                checked: false,
+              }
+            : { ...row, checked: false }
+        )
+      );
+    },
+    [materialCategoryData, materialCategoryData]
+  );
   useEffect(() => {
     const getSelectedMaterialsIds = () =>
       materialCategoryData.filter((row) => row.checked).map((row) => row.id);
@@ -99,6 +110,12 @@ const useMaterialsActions = (isAdmin: boolean) => {
       setCurrentCurrency(selectedRow?.rowData?.currency?.value);
     }
   }, [selectedMaterialsIds, materialCategoryData]);
+
+  // useEffect(() => {
+  //   if (action === null) {
+  //     onChangeHeaderCheckBox(true);
+  //   }
+  // }, [action]);
   const onChooseAction = async (
     action: { action: EMaterialsActions; key: string } | null
   ) => {
@@ -118,7 +135,6 @@ const useMaterialsActions = (isAdmin: boolean) => {
       uploadImgRef.current.click();
       return;
     }
-
     if (selectedMaterialsIds.length === 0) {
       setSnackbarStateValue({
         state: true,
@@ -218,6 +234,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
         )
       );
       setAction(null);
+      onChangeHeaderCheckBox(true);
     }
   };
   const updateStatus = async (eAction: EMaterialsActions) => {
