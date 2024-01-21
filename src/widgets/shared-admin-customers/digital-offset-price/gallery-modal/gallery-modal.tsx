@@ -3,6 +3,9 @@ import { GoMakeModal, GomakePrimaryButton } from "@/components";
 import { useGalleryModal } from "./use-gallery-modal";
 import { useStyle } from "./style";
 import { useTranslation } from "react-i18next";
+import { SearchInputComponent } from "@/components/form-inputs/search-input-component";
+import { RechooseIcon } from "@/icons";
+import { GalleryModalMapping } from "./gallery-modal-mapping";
 
 const GalleryModal = ({ openModal, onClose, onChangeSubProductsForPrice }) => {
   const { clasess } = useStyle();
@@ -10,8 +13,13 @@ const GalleryModal = ({ openModal, onClose, onChangeSubProductsForPrice }) => {
   const {
     materialData,
     selectedShape,
+    fixedCartData,
     createParameterForCalculation,
     onClickChoosParameter,
+    getProductQuoteItemById,
+    onChangeSearch,
+    searchResult,
+    materialDataFilter,
   } = useGalleryModal({ onClose, onChangeSubProductsForPrice });
   return (
     <>
@@ -22,49 +30,72 @@ const GalleryModal = ({ openModal, onClose, onChangeSubProductsForPrice }) => {
         })}
         onClose={onClose}
         insideStyle={clasess.insideStyle}
+        withClose={false}
       >
-        <div style={clasess.mainContainer}>
-          {materialData?.data?.map((item, index) => {
-            return (
-              <div
-                key={index}
-                style={
-                  item.id != selectedShape?.id
-                    ? clasess.shapeContainer
-                    : clasess.shapeSelectedContainer
-                }
-                onClick={() => createParameterForCalculation(item)}
-              >
-                <div style={{ width: "100%" }}>
-                  <img
-                    src={item?.rowData?.image?.value}
-                    alt="shape"
-                    style={{ width: 250, height: 210, padding: 5 }}
-                  />
-                </div>
-                <div style={clasess.shapeNameStyle}>
-                  {item?.rowData?.name?.value}
-                </div>
-                <div style={clasess.shapeWidthHeightStyle}>
-                  {item?.rowData?.width?.value}
-                </div>
-                <div style={clasess.shapeWidthHeightStyle}>
-                  {item?.rowData?.length?.value}
-                </div>
-              </div>
-            );
-          })}
-          <div style={clasess.btnsContainer}>
-            <GomakePrimaryButton style={clasess.customizeBtnStyle}>
-              Customize
-            </GomakePrimaryButton>
-            <GomakePrimaryButton
-              style={clasess.chooseBtnStyle}
-              onClick={onClickChoosParameter}
+        <div style={clasess.firstContainer}>
+          <div style={clasess.headerContainer}>
+            <SearchInputComponent onChange={onChangeSearch} />
+            <div
+              style={{ cursor: "pointer" }}
+              onClick={getProductQuoteItemById}
             >
-              Choose
-            </GomakePrimaryButton>
+              <RechooseIcon />
+            </div>
           </div>
+        </div>
+        <div style={clasess.bodyContainer}>
+          <div style={clasess.mainContainer}>
+            {fixedCartData?.map((card, index) => {
+              return (
+                <div
+                  style={{
+                    ...clasess.fixdCard,
+                    background: card.backgroundColor,
+                  }}
+                  onClick={card.onclick}
+                >
+                  <div style={clasess.cardItemStyle}>
+                    <div style={clasess.cardIconStyle}>{card.icon}</div>
+                    <div style={clasess.cardNameStyle}>{card.name}</div>
+                  </div>
+                </div>
+              );
+            })}
+
+            {materialDataFilter
+              ? searchResult?.map((item, index) => {
+                  return (
+                    <GalleryModalMapping
+                      index={index}
+                      item={item}
+                      selectedShape={selectedShape}
+                      createParameterForCalculation={
+                        createParameterForCalculation
+                      }
+                    />
+                  );
+                })
+              : materialData?.data?.map((item, index) => {
+                  return (
+                    <GalleryModalMapping
+                      index={index}
+                      item={item}
+                      selectedShape={selectedShape}
+                      createParameterForCalculation={
+                        createParameterForCalculation
+                      }
+                    />
+                  );
+                })}
+          </div>
+        </div>
+        <div style={clasess.footerContainer}>
+          <GomakePrimaryButton
+            style={clasess.chooseBtnStyle}
+            onClick={onClickChoosParameter}
+          >
+            {t("sales.quote.save")}
+          </GomakePrimaryButton>
         </div>
       </GoMakeModal>
     </>
