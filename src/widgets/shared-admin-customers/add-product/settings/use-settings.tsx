@@ -12,6 +12,7 @@ import { useTranslation } from "react-i18next";
 import { v4 as uuidv4 } from "uuid";
 import { EProductClient, ProductClient } from "./settings-data";
 import { EHttpMethod } from "@/services/api-service/enums";
+import { CLIENT_TYPE_Id } from "@/pages/customers/enums";
 
 const useSettings = ({
   onClickParametersTab,
@@ -285,7 +286,7 @@ const useSettings = ({
     });
   }, []);
   const getAllClientTypes = useCallback(async () => {
-    await getAndSetClientTypes(callApi, setClientTypesList);
+    await getAndSetClientTypes(callApi, setClientTypesList , {cardType : CLIENT_TYPE_Id.CUSTOMER });
   }, []);
   useEffect(() => {
     getAllClients();

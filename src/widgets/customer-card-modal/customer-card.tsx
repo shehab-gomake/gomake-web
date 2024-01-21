@@ -29,6 +29,7 @@ import { resetPassModalState } from "./state";
 import { ChangePasswordComponent } from "@/components/change-password/change-password-component";
 import { clientTypesCategoriesState } from "@/pages/customers/customer-states";
 import { AddClientTypeModal } from "./components/add-client-type-modal/add-client-type-modal";
+import { ClientTypeModal } from "./components/add-client-type-modal/add-client-type-modal-new";
 
 interface IProps {
   isValidCustomer?: (
@@ -115,6 +116,10 @@ const CustomerCardWidget = ({
   const clientTypeLabel = typeClient === "C"
     ? t("customers.modal.clientType")
     : t("suppliers.supplierType");
+
+    const clientTypeId = typeClient === "C"
+    ? CLIENT_TYPE_Id.CUSTOMER
+    : CLIENT_TYPE_Id.SUPPLIER;
 
   useEffect(() => {
     addInitContact();
@@ -361,7 +366,7 @@ const CustomerCardWidget = ({
   const onClickOpenClientType = () => {
     setClientType(true);
   };
-  
+
   return (
     <GoMakeModal
       openModal={open}
@@ -690,11 +695,25 @@ const CustomerCardWidget = ({
       >
         <ChangePasswordComponent onChangePassword={onUpdatePass} />
       </GoMakeModal>
-      <AddClientTypeModal
+      {/* <AddClientTypeModal
+        clientTypeId = {clientTypeId}
         openModal={isClientType}
         modalTitle={clientTypeLabel}
         onClose={onClickCloseClientType}
+      /> */}
+      <ClientTypeModal
+        openModal={isClientType}
+        onClose={onClickCloseClientType}
+        selectedParameter={customer}
+        modalTitle={clientTypeLabel}
+      // selectedSectonId={selectedSectonId}
+      // selectedSubSection={selectedSubSection}
+      // setSelectedParameter={setSelectedParameter}
+      // updatedValuesConfigsForParameters={
+      //   updatedValuesConfigsForParameters
+      // }
       />
+
     </GoMakeModal>
   );
 };

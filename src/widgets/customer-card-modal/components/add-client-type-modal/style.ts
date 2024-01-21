@@ -3,7 +3,7 @@ import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 
 const useStyle = () => {
-  const { errorColor } = useGomakeTheme();
+  const { errorColor , primaryColor , theme } = useGomakeTheme();
   const classes = useMemo(() => {
     return {
       insideStyle: {
@@ -18,6 +18,17 @@ const useStyle = () => {
         height: "40px",
         borderRadius: 4,
       },
+
+            addBtnStyle: {
+        width: "50%",
+        height: 40,
+      },
+      errorlabelStyle: {
+        ...FONT_FAMILY.Lexend(500, 12),
+        color: errorColor(500),
+        marginTop: 5,
+      },
+
       mainInputsContainer: {
         display: "flex",
         flexDirection: "row" as "row",
@@ -34,17 +45,80 @@ const useStyle = () => {
         alignSelf: "center",
         width: "100%",
       },
-      addBtnStyle: {
-        width: "50%",
-        height: 40,
+      containerButtons:{
+        display: "flex",
+        flexDirection: "column" as "column",
+        justifyContent: "space-between",
+        alignItems: "flex-start",
+        height: "100%",
       },
-      errorlabelStyle: {
-        ...FONT_FAMILY.Lexend(500, 12),
+
+
+
+
+      // insideStyle: {
+      //   width: "50%",
+      //   borderRadius: 5,
+      //   height: "auto",
+      //   maxHeight: 500,
+      //   backgroundColor: "#f7f7f7",
+      // },
+      // addBtnStyle: {
+      //   display: "flex",
+      //   flexDirection: "row" as "row",
+      //   alignItems: "center",
+      //   justifyContent: "flex-start",
+      //   gap: 10,
+      //   marginBottom: 15,
+      // },
+
+      // textInputStyle: {
+      //   width: "100%",
+      //   borderRadius: 4,
+      //   height: 40,
+      //   // backgroundColor: "#FFF",
+      //   border: `1px solid ${primaryColor(400)}`,
+      //   // boxShadow: "0px 1px 2px 0px rgba(0, 0, 0, 0.08)",
+      // },
+      addNewValueContainer: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "flex-start",
+        alignItems: "center",
+        width: "100%",
+        gap: 15,
+        flexWrap: "wrap" as "wrap",
+        marginBottom: 25,
+      },
+      textInputContainer: {
+        width: "25%",
+      },
+      parameterContainer: {
+        display: "flex",
+        flexDirection: "column" as "column",
+        justifyContent: "flex-start",
+        alignItems: "flex-start",
+        gap: 20,
+        width: "fit-content",
+        minWidth: 180,
+      },
+      parameterLabelStyle: {
+        ...FONT_FAMILY.Lexend(600, 16),
+        color: "#090A1D",
+      },
+      spanRequierd: {
         color: errorColor(500),
-        marginTop: 5,
       },
+      renderParameterTypeContainer: {
+        display: "flex",
+        width: "95%",
+        backgroundColor: "#FFF",
+        borderRadius: 4,
+      },
+
+
     };
-  }, []);
+  }, [theme]);
   return {
     classes,
   };

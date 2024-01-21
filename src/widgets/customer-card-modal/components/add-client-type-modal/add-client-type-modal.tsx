@@ -5,23 +5,26 @@ import {
     GomakeTextInput,
 } from "@/components";
 import { useStyle } from "./style";
+import { useClientType } from "./use-client-type";
+import { CLIENT_TYPE_Id } from "@/pages/customers/enums";
 
 interface IProps {
     openModal: boolean,
     modalTitle?: string,
-    onClose: ()=>void,
-    onChangeStateClientType?: (key:string,value:string)=>void,
-    createNewClientType?: ()=>void,
+    onClose: () => void,
+    clientTypeId: CLIENT_TYPE_Id
 }
+
 const AddClientTypeModal = ({
     openModal,
     modalTitle,
     onClose,
-    onChangeStateClientType,
-    createNewClientType,
+    clientTypeId
 }: IProps) => {
     const { t } = useTranslation();
     const { classes } = useStyle();
+    const { clientTypeName, setClientTypeName, addClientType } = useClientType(clientTypeId);
+
     return (
         <>
             <GoMakeModal
@@ -31,39 +34,18 @@ const AddClientTypeModal = ({
                 insideStyle={classes.insideStyle}
             >
                 <div style={{ marginTop: 20, height: "80%" }}>
-                    <div
-                        style={{
-                            display: "flex",
-                            flexDirection: "column",
-                            justifyContent: "space-between",
-                            alignItems: "flex-start",
-                            height: "100%",
-                        }}
-                    >
-                        <div style={classes.mainInputsContainer}>
-                            <div style={{ width: "100%" }}>
-                                <GomakeTextInput
-                                    style={classes.textInputStyle}
-                                    placeholder={t("Enter name")}
-                                    onChange={(e: any) => {
-                                        onChangeStateClientType("name", e.target.value);
-                                    }}
-                                />
-                            </div>
-                            <div style={{ width: "100%" }}>
-                                <GomakeTextInput
-                                    style={classes.textInputStyle}
-                                    placeholder={t("Enter code")}
-                                    onChange={(e: any) => {
-                                        onChangeStateClientType("code", e.target.value);
-                                    }}
-                                />
-                            </div>
-                        </div>
+                    <div style={classes.containerButtons}>
+                        <GomakeTextInput
+                            style={classes.textInputStyle}
+                            placeholder={t("Enter name")}
+                            onChange={(e: any) => {
+                                setClientTypeName(e.target.value);
+                            }}
+                        />
                         <div style={classes.btnContainer}>
                             <GomakePrimaryButton
                                 style={classes.addBtnStyle}
-                                onClick={() => createNewClientType()}
+                                onClick={() => addClientType(clientTypeName)}
                             >
                                 {t("add new client type")}
                             </GomakePrimaryButton>
