@@ -4,10 +4,13 @@ import { GoMakeAutoComplate } from "@/components";
 import { useProductManagement } from "./use-product-management";
 import { SearchInputComponent } from "@/components/form-inputs/search-input-component";
 import { PrimaryTable } from "@/components/tables/primary-table";
-import { HeaderTitle } from "@/widgets/header-title";
+import { PrimaryButton } from "@/components/button/primary-button";
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 const ProductManagementWidget = () => {
   const { t } = useTranslation();
+  const dir: "rtl" | "ltr" = t("direction");
   const { clasess } = useStyle();
   const {
     tableHeaders,
@@ -17,6 +20,7 @@ const ProductManagementWidget = () => {
     setTerm,
     allProductSKU,
     router,
+    handleGoBack,
   } = useProductManagement();
 
   return (
@@ -41,12 +45,36 @@ const ProductManagementWidget = () => {
               </div>
             </div>
           ) : (
-            <div>
-              <HeaderTitle
-                title={router.query.productName}
-                marginTop={1}
-                marginBottom={1}
-              />
+            // <div>
+            //   <HeaderTitle
+            //     title={router.query.productName}
+            //     marginTop={1}
+            //     marginBottom={1}
+            //   />
+            // </div>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "flex-start",
+                alignItems: "center",
+                gap: 5,
+              }}
+            >
+              <PrimaryButton
+                variant={"text"}
+                onClick={handleGoBack}
+                startIcon={
+                  dir === "ltr" ? <ArrowBackIcon /> : <ArrowForwardIcon />
+                }
+                style={clasess.backButtonStyle}
+              >
+                {t("materials.buttons.back")}
+              </PrimaryButton>
+              <h1 style={clasess.header}>
+                {t("products.addProduct.admin.subProducts")}
+              </h1>
+              <h4 style={clasess.subHeader}>/ {router?.query?.productName}</h4>
             </div>
           )}
         </div>

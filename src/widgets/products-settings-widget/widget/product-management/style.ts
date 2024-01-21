@@ -177,6 +177,21 @@ const useStyle = () => {
         ...FONT_FAMILY.Lexend(400, 12),
         color: primaryColor(900),
       },
+      backButtonStyle: {
+        height: 30,
+        marginRight: 5,
+        background: "#CBCBE5",
+        width: 90,
+        borderRadius: 8,
+      },
+      header: {
+        ...FONT_FAMILY.Lexend(700, 20),
+        color: "#000",
+      },
+      subHeader: {
+        ...FONT_FAMILY.Lexend(600, 20),
+        color: "#5759A8",
+      },
     };
   }, []);
   return {

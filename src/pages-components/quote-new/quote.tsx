@@ -23,6 +23,7 @@ import { IconButton } from "@mui/material";
 import { SettingQuoteMenu } from "@/widgets/quote-new/setting-quote-menu";
 import { AddDeliveryModal } from "@/widgets/quote-new/modals-widgets/add-delivery-modal/add-delivery-modal";
 import { DOCUMENT_TYPE } from "../quotes/enums";
+import { useEffect } from "react";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;

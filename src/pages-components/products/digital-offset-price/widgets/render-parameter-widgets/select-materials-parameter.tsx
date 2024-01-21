@@ -117,7 +117,6 @@ const SelectMaterialsParameterWidget = ({
         (item) => item?.isDefault
       );
       if(parameter.name == "Spiral color"){
-        debugger;
       }
       let valueIdIsDefault = defaultParameter?.materialValueIds && defaultParameter?.materialValueIds.length > 0 ? defaultParameter?.materialValueIds[0]?.valueId : null;
       options = digitalPriceData?.selectedMaterialLvl1;

@@ -1,7 +1,7 @@
 import { Tab, Tabs, ThemeProvider, createMuiTheme } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useStyle } from "./style";
-import { GoMakeModal } from "@/components";
+import { GoMakeAutoComplate, GoMakeModal } from "@/components";
 import { TextareaAutosize } from "@mui/base";
 import { ContactForm } from "./components/contacts-tab";
 import { AddressForm } from "./components/address-tab";
@@ -28,6 +28,8 @@ import { useUserProfile } from "@/hooks/use-user-profile";
 import { resetPassModalState } from "./state";
 import { ChangePasswordComponent } from "@/components/change-password/change-password-component";
 import { clientTypesCategoriesState } from "@/pages/customers/customer-states";
+import { ClientTypeModal } from "./components/add-client-type-modal/add-client-type-modal";
+import { SettingIcon } from "../shared-admin-customers/add-product/icons/setting";
 
 interface IProps {
   isValidCustomer?: (
@@ -111,6 +113,13 @@ const CustomerCardWidget = ({
     customer && customer.users ? customer.users : []
   );
   const clientTypesCategories = useRecoilValue(clientTypesCategoriesState);
+  const clientTypeLabel = typeClient === "C"
+    ? t("customers.modal.clientType")
+    : t("suppliers.supplierType");
+
+    const clientTypeId = typeClient === "C"
+    ? CLIENT_TYPE_Id.CUSTOMER
+    : CLIENT_TYPE_Id.SUPPLIER;
 
   useEffect(() => {
     addInitContact();
@@ -350,6 +359,14 @@ const CustomerCardWidget = ({
     t("customers.modal.addresses"),
   ];
 
+  const [isClientType, setClientType] = useState(false);
+  const onClickCloseClientType = () => {
+    setClientType(false);
+  };
+  const onClickOpenClientType = () => {
+    setClientType(true);
+  };
+
   return (
     <GoMakeModal
       openModal={open}
@@ -389,6 +406,28 @@ const CustomerCardWidget = ({
               />
             </div>
           ))}
+          <div style={classes.itemOnFirstContainer}>
+            <div style={classes.labelTitleStyle}>
+              {clientTypeLabel}
+              <span onClick={onClickOpenClientType} style={classes.plusInput}>
+                <SettingIcon
+                  width={20}
+                  height={20}
+                />
+              </span>
+            </div>
+            <div style={{ width: "180px" }}>
+              <GoMakeAutoComplate
+                options={clientTypesCategories}
+                placeholder={typeClient === "C" ? t("customers.modal.clientType") : t("suppliers.supplierType")}
+                style={classes.dropDownListStyle}
+                getOptionLabel={(option: any) => option.label}
+                value={clientTypesCategories?.find((option: any) => option?.id === customer?.clientTypeId)}
+                onChange={(e: any, value: any) => onChangeInputs("clientTypeId", value?.id)}
+              />
+            </div>
+          </div>
+
         </div>
         <ThemeProvider theme={theme}>
           <Tabs
@@ -659,6 +698,14 @@ const CustomerCardWidget = ({
       >
         <ChangePasswordComponent onChangePassword={onUpdatePass} />
       </GoMakeModal>
+      <ClientTypeModal
+        openModal={isClientType}
+        onClose={onClickCloseClientType}
+        modalTitle={typeClient === "C"
+        ? t("customers.customerTypes")
+        : t("suppliers.supplierTypes")}
+        clientTypeId={clientTypeId}
+      />
     </GoMakeModal>
   );
 };

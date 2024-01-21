@@ -34,6 +34,7 @@ const RightSideWidget = ({
   samlleType,
   graphicDesigner,
   setGraphicDesigner,
+  errorMsg,
 }: any) => {
   const {
     currentProductItemValueTotalPrice,
@@ -47,6 +48,21 @@ const RightSideWidget = ({
     setCurrentProductItemValueTotalPrice,
     t,
   } = useRightSideWidget({ includeVAT });
+
+  const data = [
+    {
+      value: "Action name:",
+      text: "Get Jira notifications on yourrrrrrr phone! Download the Jira Cloud app for Android or iOS.",
+    },
+    {
+      value: "Action name:",
+      text: "Message Get Jira notifications on your phone! Download the Jira Cloud app for Android or iOS.",
+    },
+    {
+      value: "",
+      text: "Price calculated!",
+    },
+  ];
 
   return (
     <div style={clasess.rightSideMainContainer}>
@@ -261,7 +277,9 @@ const RightSideWidget = ({
                   onClick={tab.onclick()}
                   style={
                     activeTab === tab.name
-                      ? clasess.activeTabStyle
+                      ? tab.name === t("products.offsetPrice.admin.logs")
+                        ? clasess.activeLogsTabStyle
+                        : clasess.activeTabStyle
                       : clasess.unActiveTabStyle
                   }
                 >
@@ -300,7 +318,7 @@ const RightSideWidget = ({
                 />
               </div>
             </div>
-          ) : (
+          ) : activeTab === t("products.offsetPrice.admin.graphicDesign") ? (
             <div style={clasess.productionStatus}>
               <div style={clasess.sampleTypeStyle}>Billing method</div>
               <div style={clasess.autoCompleteContainer}>
@@ -349,6 +367,44 @@ const RightSideWidget = ({
                   )}
                 />
               </div>
+            </div>
+          ) : (
+            <div style={clasess.logsContainer}>
+              {errorMsg && (
+                <div style={clasess.generalMsgTextStyle}>
+                  {t("products.offsetPrice.admin.general")} {errorMsg}
+                </div>
+              )}
+
+              {data?.map((item) => {
+                return (
+                  <>
+                    {item.value ? (
+                      <div
+                        style={{
+                          display: "flex",
+                          flexDirection: "row",
+                          justifyContent: "flex-start",
+                          alignItems: "flex-start",
+                          width: "100%",
+                          gap: 5,
+                        }}
+                      >
+                        <div style={clasess.titleLogsTextStyle}>
+                          <div>{item.value}</div>
+                        </div>
+                        <div style={clasess.textLogstyle}>
+                          <span style={{ color: "black" }}>{item.text}</span>
+                        </div>
+                      </div>
+                    ) : (
+                      <div style={clasess.generalMsgTextStyle}>
+                        {t("products.offsetPrice.admin.general")} {item.text}
+                      </div>
+                    )}
+                  </>
+                );
+              })}
             </div>
           )}
         </div>

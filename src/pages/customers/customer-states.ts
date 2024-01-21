@@ -1,6 +1,6 @@
 import { atom } from 'recoil';
 
-export const clientTypesCategoriesState = atom<[]>({
+export const clientTypesCategoriesState = atom<any>({
     key: 'clientTypesCategoriesState',
     default: [],
 });

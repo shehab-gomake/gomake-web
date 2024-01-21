@@ -157,19 +157,16 @@ const useStyle = () => {
         width: "100%",
         borderRadius: 4,
         height: 40,
-        backgroundColor: "#FFF",
       },
       renderParameterTypeContainer: {
         display: "flex",
         width: "100%",
-        backgroundColor: "#FFF",
         borderRadius: 4,
       },
       dropDownListStyle: {
         width: "100%",
         borderRadius: 4,
         height: 40,
-        backgroundColor: "#FFF",
         border: "0px",
       },
       dynamicBtn: {
@@ -250,10 +247,15 @@ const useStyle = () => {
         border: `1px solid ${secondColor(500)}`,
         color: secondColor(500),
       },
+      // activeTabContainer: {
+      //   backgroundColor: "#EBECFF",
+      //   minHeight: 48,
+      //   marginTop: 20,
+      // },
       activeTabContainer: {
         backgroundColor: "#EBECFF",
         minHeight: 48,
-        marginTop: 20,
+        borderBottom: "none",
       },
       headerAccordionContainer: {
         display: "flex",

@@ -22,6 +22,7 @@ import { _renderQuoteStatus } from "@/utils/constants";
 import { selectedClientState } from "@/pages-components/quotes/states";
 import { QuotesListPageWidget } from "@/pages-components/quotes/quotes";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
+import { CLIENT_TYPE_Id } from "@/pages/customers/enums";
 
 const useQuoteWidget = () => {
   const { t } = useTranslation();
@@ -205,7 +206,7 @@ const useQuoteWidget = () => {
   // what is userQuote?.result !!!
   const getAllClientTypes = useCallback(async () => {
     try {
-      await getAndSetClientTypes(callApi, setClientTypesValues);
+      await getAndSetClientTypes(callApi, setClientTypesValues , {cardType :CLIENT_TYPE_Id.CUSTOMER});
       if (userQuote?.result) {
         getAllCustomersCreateQuote(userQuote?.result?.clientName);
       } else {

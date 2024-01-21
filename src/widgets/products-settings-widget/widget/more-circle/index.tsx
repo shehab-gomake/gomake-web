@@ -40,7 +40,11 @@ const MoreMenuWidget = ({ item, updatedProduct }: any) => {
         </IconButton>
         <GoMakeMenu handleClose={handleClose} open={open} anchorEl={anchorEl}>
           <MenuItem
-            onClick={() => navigate(`/settings/products/edit/${item?.id}`)}
+            onClick={() =>
+              navigate(
+                `/settings/products/edit/${item?.id}?productName=${item?.name}`
+              )
+            }
           >
             <div style={clasess.menuRowStyle}>
               <EditingIcon />

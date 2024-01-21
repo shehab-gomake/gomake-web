@@ -40,7 +40,7 @@ export const materialActionState = atom<
   default: [],
 });
 export const materialCategoriesState = atom<
-  { categoryKey: string; categoryName: string; isAddedByPrintHouse: boolean }[]
+  { categoryKey: string; categoryName: string; isDeletable: boolean }[]
 >({
   key: "materialCategoriesState",
   default: [],

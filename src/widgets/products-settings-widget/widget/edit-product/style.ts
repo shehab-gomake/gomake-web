@@ -205,6 +205,21 @@ const useStyle = () => {
         border: `1px solid ${secondColor(500)}`,
         color: secondColor(500),
       },
+      backButtonStyle: {
+        height: 30,
+        marginRight: 5,
+        background: "#CBCBE5",
+        width: 90,
+        borderRadius: 8,
+      },
+      header: {
+        ...FONT_FAMILY.Lexend(700, 20),
+        color: "#000",
+      },
+      subHeader: {
+        ...FONT_FAMILY.Lexend(600, 20),
+        color: "#5759A8",
+      },
     };
   }, [i18next.language, t]);
   return {

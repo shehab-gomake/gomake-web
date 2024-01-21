@@ -30,7 +30,6 @@ const LeftSideLayout = (customGap) => {
   const checkTabPermissions = (tab) => {
     
     if(tab.isList && tab.list){
-        debugger
         for(let i = 0;i<tab.list.length;i++){
             if(!tab.list[i].Permission){
                 return true;
