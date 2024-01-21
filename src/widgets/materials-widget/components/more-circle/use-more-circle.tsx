@@ -1,7 +1,6 @@
 import { useState } from "react";
 
 const useMoreCircle = ({ onChangeRowCheckBox, dataRow }) => {
-  console.log("dataRow", dataRow);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {

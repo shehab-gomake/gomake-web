@@ -194,7 +194,6 @@ const useMaterials = (isAdmin: boolean) => {
   );
 
   const onChangeRowCheckBox = (id: string, checked: boolean) => {
-    console.log("sssss", { id, checked, isAllMaterialsChecked });
     if (isAllMaterialsChecked && !checked) {
       const temp = cloneDeep(materialsUnChecked);
       temp.push(id);
@@ -257,6 +256,7 @@ const useMaterials = (isAdmin: boolean) => {
             id={dataRow.id}
             parameterKey={header.key}
             isAdmin={isAdmin}
+            onChangeRowCheckBox={onChangeRowCheckBox}
           />
         )),
         <MaterialMenuWidget
@@ -282,6 +282,7 @@ const useMaterials = (isAdmin: boolean) => {
             {...dataRow.rowData[header.key]}
             id={dataRow.id}
             parameterKey={header.key}
+            onChangeRowCheckBox={onChangeRowCheckBox}
           />
         )),
         <MaterialMenuWidget

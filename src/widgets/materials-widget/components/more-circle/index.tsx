@@ -49,7 +49,7 @@ const MaterialMenuWidget = ({
     action: EMaterialsActions;
     key: string;
   } | null>(actionMenuState);
-  const onClickOpenAddRowModal = () => {
+  const onClickActionModal = () => {
     setAction({
       key: "Duplicate",
       action: 10,
@@ -80,7 +80,7 @@ const MaterialMenuWidget = ({
         <MenuItem
           style={clasess.menuItemContainer}
           onClick={() => {
-            onClickOpenAddRowModal();
+            onClickActionModal();
           }}
         >
           <DuplicateIcon height={20} width={20} color={clasess.iconColor} />
