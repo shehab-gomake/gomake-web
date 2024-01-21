@@ -706,6 +706,7 @@ const CustomerCardWidget = ({
         onClose={onClickCloseClientType}
         selectedParameter={customer}
         modalTitle={clientTypeLabel}
+        clientTypeId={clientTypeId}
       // selectedSectonId={selectedSectonId}
       // selectedSubSection={selectedSubSection}
       // setSelectedParameter={setSelectedParameter}

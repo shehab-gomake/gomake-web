@@ -53,6 +53,23 @@ const useStyle = () => {
         height: "100%",
       },
 
+      optionStyle:{
+        padding: 5 * 2,
+        margin: `0 0 ${5}px 0`,
+        userSelect: "none",
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "flex-start",
+        alignItems: "center",
+        width: "100%",
+        gap: 15,
+        flexWrap: "wrap" as "wrap",
+        marginBottom: 25,
+        top: 0,
+        left: 0,
+        position: "relative" as "relative",
+      },
+
 
 
 

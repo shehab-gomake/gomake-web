@@ -17,8 +17,8 @@ const addClientTypeApi: ICallAndSetData = async (callApi, setState , clientType 
   return await getSetApiData(callApi, EHttpMethod.POST, ADD_CLIENT_TYPE_URL, setState , clientType); 
 }
 
-const deleteClientType: ICallAndSetData = async (callApi, setState , id: string) => {
+const deleteClientTypeApi: ICallAndSetData = async (callApi, setState , id: string) => {
   return await getSetApiData(callApi, EHttpMethod.POST, DELETE_CLIENT_TYPE_URL, setState , id); 
 }
 
-export {getAndSetClientTypes ,addClientTypeApi, deleteClientType}; 
+export {getAndSetClientTypes ,addClientTypeApi, deleteClientTypeApi}; 
