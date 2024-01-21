@@ -44,6 +44,7 @@ import { useExchangeRate } from "@/hooks/use-exchange-rate";
 import { useMaterialsCategories } from "../../use-materials-categories";
 import { EMaterialsTabsIcon } from "@/enums";
 import { EHttpMethod } from "@/services/api-service/enums";
+import { actionMenuState } from "@/store";
 
 const useMaterialsActions = (isAdmin: boolean) => {
   const { callApi } = useGomakeAxios();
@@ -54,10 +55,10 @@ const useMaterialsActions = (isAdmin: boolean) => {
   const [materialCategoryData, setMaterialCategoryData] = useRecoilState<
     IMaterialCategoryRow[]
   >(materialCategoryDataState);
-  const [action, setAction] = useState<{
+  const [action, setAction] = useRecoilState<{
     action: EMaterialsActions;
     key: string;
-  } | null>(null);
+  } | null>(actionMenuState);
   const [updatedValue, setUpdatedValue] = useState<string>("");
   const [currentCurrency, setCurrentCurrency] = useState<any>("");
   const [checkedPrice, setCheckedPrice] = useState(false);
