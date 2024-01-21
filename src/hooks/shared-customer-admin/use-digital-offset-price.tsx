@@ -1178,7 +1178,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               const index = param.materialPath.findIndex((x) =>
                 compareStrings(x, materialPath)
               );
-
               let allMaterialsCopy = cloneDeep(allMaterials)
               let paramMaterialValues =[];
               if(index > 0){

@@ -12,7 +12,7 @@ import { AddCustomerButton } from "../customers/add-customer";
 import { useCustomers } from "../customers/use-customers";
 import { customerMapFunction } from "@/services/api-service/customers/customers-api";
 import { useEffect } from "react";
-import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
+import { CLIENT_TYPE, CLIENT_TYPE_Id, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 import { PermissionCheck } from "@/components/CheckPermission/check-permission";
 import { Permissions } from "../../components/CheckPermission/enum";
 import { ExcelButtons } from "../customers/export-import-buttons";
@@ -56,6 +56,7 @@ export default function Home() {
     getAllCustomers,
     onClickExportClient,
     onClickImportClient,
+    getClientTypesCategories
   } = useCustomers(CLIENT_TYPE.SUPPLIER, pageNumber, setPageNumber);
   const activeText = t("usersSettings.active");
   const inActiveText = t("usersSettings.active");
@@ -83,6 +84,10 @@ export default function Home() {
     isActive,
   ]);
 
+  useEffect(() => {
+    getClientTypesCategories(CLIENT_TYPE_Id.SUPPLIER);
+  }, []);
+  
   return (
     <CustomerAuthLayout>
       <Stack

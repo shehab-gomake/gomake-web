@@ -40,26 +40,26 @@ const customerInputs = (typeClient, codeFlag, state, clientTypesCategories) => {
       value: state?.buisnessNumber,
       isValid: true,
     },
-    {
-      name: "clientTypeId",
-      label:
-        typeClient === "C"
-          ? "customers.modal.clientType"
-          : "suppliers.supplierType",
-      type: "select",
-      placeholder:
-        typeClient === "C"
-          ? "customers.modal.clientType"
-          : "suppliers.supplierType",
-      required: true,
-      parameterKey: "clientTypeId",
-      options: clientTypesCategories.map((type) => ({
-        value: type?.id,
-        text: type?.label,
-      })),
-      value: state?.clientTypeId,
-      isValid: true,
-    },
+    // {
+    //   name: "clientTypeId",
+    //   label:
+    //     typeClient === "C"
+    //       ? "customers.modal.clientType"
+    //       : "suppliers.supplierType",
+    //   type: "select",
+    //   placeholder:
+    //     typeClient === "C"
+    //       ? "customers.modal.clientType"
+    //       : "suppliers.supplierType",
+    //   required: true,
+    //   parameterKey: "clientTypeId",
+    //   options: clientTypesCategories.map((type) => ({
+    //     value: type?.id,
+    //     text: type?.label,
+    //   })),
+    //   value: state?.clientTypeId,
+    //   isValid: true,
+    // },
     {
       name: "Currency",
       label: "customers.modal.currency",

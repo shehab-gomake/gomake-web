@@ -12,7 +12,7 @@ import { CustomerCardWidget } from "@/widgets/customer-card-modal";
 import { PrimaryTable } from "@/components/tables/primary-table";
 import { useEffect } from "react";
 import { customerMapFunction } from "@/services/api-service/customers/customers-api";
-import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
+import { CLIENT_TYPE, CLIENT_TYPE_Id, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 import { PermissionCheck } from "@/components/CheckPermission/check-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { ExcelButtons } from "./export-import-buttons";
@@ -74,7 +74,7 @@ export default function Home() {
 
   useEffect(() => {
     getAgentCategories();
-    getClientTypesCategories();
+    getClientTypesCategories(CLIENT_TYPE_Id.CUSTOMER);
   }, []);
 
   useEffect(() => {

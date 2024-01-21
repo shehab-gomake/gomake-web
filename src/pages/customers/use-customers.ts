@@ -17,12 +17,9 @@ import { getAndSetEmployees2 } from "@/services/api-service/customers/employees-
 import {
   getAndSetCustomerById,
   getAndSetCustomersPagination,
-  exportClientApi,
   importClientApi,
 } from "@/services/api-service/customers/customers-api";
-import { DEFAULT_VALUES } from "./enums";
-import { useSnackBar } from "@/hooks";
-import { permissionsState } from "@/store/permissions";
+import { CLIENT_TYPE_Id, DEFAULT_VALUES } from "./enums";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { useUserPermission } from "@/hooks/use-permission";
 import { EHttpMethod } from "@/services/api-service/enums";
@@ -42,7 +39,6 @@ const useCustomers = (
   const [showCustomerModal, setShowCustomerModal] = useState(false);
   const [pagesCount, setPagesCount] = useState(0);
   const pageSize = DEFAULT_VALUES.PageSize;
-  const { alertFaultUpdate, alertSuccessUpdate } = useSnackBar();
   const { CheckPermission } = useUserPermission();
 
   const tableHeaders = [
@@ -128,7 +124,7 @@ const useCustomers = (
   const [clientTypesCategories, setClientTypesCategories] = useRecoilState(
     clientTypesCategoriesState
   );
-  const getClientTypesCategories = async () => {
+  const getClientTypesCategories = async ( cardType : CLIENT_TYPE_Id) => {
     const callBack = (res) => {
       if (res.success) {
         const clientTypes = res.data.map((types) => ({
@@ -138,7 +134,7 @@ const useCustomers = (
         setClientTypesCategories(clientTypes);
       }
     };
-    await getAndSetClientTypes(callApi, callBack);
+    await getAndSetClientTypes(callApi, callBack , {cardType : cardType} );
   };
 
   ///////////////////////// select agent //////////////////////////////

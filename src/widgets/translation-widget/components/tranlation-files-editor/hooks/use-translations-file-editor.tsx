@@ -10,9 +10,7 @@ const useTranslationsFilesEditor = () => {
   const [uploadPercent,setUploadPercent]= useState<number>(0)
   useEffect(()=>{
     if(selectedLang){
-      debugger;
       fetchS3JsonTranslation(`${selectedLang}.json`).then(x=>{
-        debugger;
         setLangJsonFile(JSON.stringify(x));
       });
     }

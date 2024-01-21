@@ -16,6 +16,7 @@ import { ETypeException } from "../../enums/profites-enum";
 import { ICallAndSetData } from "@/services/api-service/interface";
 import { getSetApiData } from "@/services/api-service/get-set-api-data";
 import { usePrintHouseMachines } from "@/widgets/properties/hooks/use-print-house-machines";
+import { CLIENT_TYPE_Id } from "@/pages/customers/enums";
 
 const useAddRuleModal = ({
   typeExceptionSelected,
@@ -149,7 +150,7 @@ const useAddRuleModal = ({
     await getAllProductsForDropDownList(callApi, setProductsState);
   }, []);
   const getClientTypes = useCallback(async () => {
-    await getAndSetClientTypes(callApi, setClientTypesState);
+    await getAndSetClientTypes(callApi, setClientTypesState , {cardType : CLIENT_TYPE_Id.CUSTOMER});
   }, []);
   const getParameters = useCallback(async () => {
     return await getAndSetAllParameters(callApi, setParametersState);
