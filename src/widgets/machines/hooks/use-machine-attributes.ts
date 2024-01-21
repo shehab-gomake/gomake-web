@@ -96,7 +96,8 @@ const useMachineAttributes = () => {
         changeMachineAttributes,
         changeMachineGeneralAttributes,
         errors,
-        isValidStep
+        isValidStep,
+        machineState
     };
 }
 

@@ -192,7 +192,7 @@ const useSettings = ({
           message: t("modal.addedSusuccessfully"),
           type: "sucess",
         });
-        navigate(`/settings/products/edit/${RandomId}`);
+        navigate(`/settings/products/edit/${RandomId}?isParameter=${true}`);
         onClickParametersTab();
       } else {
         setSnackbarStateValue({

@@ -73,11 +73,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
     (category) => category.categoryKey === materialCategory?.toString()
   )?.categoryName;
 
-  const tableRowData = materialCategories.find(
-    (category) => category.categoryKey === materialCategory
-  )?.isAddedByPrintHouse
-    ? tableRowsNew
-    : tableRows;
+  const tableRowData = tableRowsNew;
 
   const Side = () => (
     <Stack direction={"column"} gap={"10px"}>
@@ -196,17 +192,22 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
           <Stack gap={2}>
             <div style={{ minHeight: "70vh" }}>
               {materialCategoryData.length > 0 ? (
-                <div style={{ paddingBottom: "1%" }}>
+                <Stack display={"grid"}>
                   <PrimaryTable
-                    rows={tableRowData}
+                    rows={tableRowsNew}
                     headers={tableHeadersNew()}
                   />
-                </div>
+                </Stack>
               ) : flag &&
                 materialCategories.find(
                   (category) => category.categoryKey === materialCategory
-                )?.isAddedByPrintHouse ? (
-                <PrimaryTable rows={tableRowsNew} headers={tableHeadersNew()} />
+                ).isDeletable ? (
+                <Stack display={"grid"}>
+                  <PrimaryTable
+                    rows={tableRowsNew}
+                    headers={tableHeadersNew()}
+                  />
+                </Stack>
               ) : (
                 <div style={classes.noData}>
                   {t("materials.sheetPaper.supplierAddedSheetYet")}

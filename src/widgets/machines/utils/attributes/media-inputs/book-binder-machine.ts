@@ -15,6 +15,17 @@ const bookBinderMachine = (state: Record<string, any>) => {
             machineInputType: 'input',
             isValid: true,
         },
+        {
+            name: "mediaCoatingType",
+            label: "machineAttributes.mediaCoatingType",
+            type: "select",
+            placeholder: "machineAttributes.mediaCoatingType",
+            required: true,
+            parameterKey: "mediaCoatingType",
+            options: [{text: 'coated', value: 'coated'}, {text: 'uncoated', value: 'uncoated'}],
+            values: state?.attributes?.mediaCoatingType,
+            multiple: true
+        },
         ...mediaThicknessSettings(state),
         {
             name: 'machineAttributes.width',

@@ -27,13 +27,17 @@ import { EParameterTypes } from "@/enums";
 const useAddProduct = ({ clasess }) => {
   const { callApi } = useGomakeAxios();
   const { setSnackbarStateValue } = useSnackBar();
-
+  const [expanded, setExpanded] = useState<string | false>("");
+  const handleChange =
+    (panel: string) => (event: React.SyntheticEvent, newExpanded: boolean) => {
+      setExpanded(newExpanded ? panel : false);
+    };
   const router = useRouter();
   const { t } = useTranslation();
   const [productState, setProductState] = useState<any>([]);
   const [changeName, setChangeName] = useState("");
   const [changeDefaultValue, setChangeDefaultValue] = useState("");
-  const { allMaterials,getAllMaterial } = useMaterials();
+  const { allMaterials, getAllMaterial } = useMaterials();
   const onChangeStateProduct = useCallback(
     (filedName: string, value: any) => {
       setProductState((prev) => {
@@ -98,15 +102,48 @@ const useAddProduct = ({ clasess }) => {
       const data = await getAndSetProductById(callApi, setTemplate, {
         Id: router?.query?.id,
       });
+      console.log("data", data?.sections);
       setProductState(data);
     }
   }, [router, template]);
+  const [relatedParameters, setaRelatedParameters] = useState([]);
+  useEffect(() => {
+    const collectRelatedParameters = (template, result = []) => {
+      if (template) {
+        if (template?.relatedParameters) {
+          result.push(...template.relatedParameters);
+        }
+
+        if (template?.sections) {
+          for (const section of template?.sections) {
+            collectRelatedParameters(section, result);
+          }
+        }
+
+        if (template.subSections) {
+          for (const subSection of template.subSections) {
+            collectRelatedParameters(subSection, result);
+          }
+        }
+
+        if (template.parameters) {
+          for (const parameter of template.parameters) {
+            collectRelatedParameters(parameter, result);
+          }
+        }
+
+        return result;
+      }
+    };
+    const allRelatedParameters = collectRelatedParameters(template);
+    setaRelatedParameters(allRelatedParameters);
+    console.log("allRelatedParameters", allRelatedParameters);
+  }, [template]);
 
   useEffect(() => {
-    getAllMaterial().then(()=>{
+    getAllMaterial().then(() => {
       getProductById();
-    })
-    
+    });
   }, [router]);
   const updateProductParameterEndPoint = async (
     sectionId: string,
@@ -179,9 +216,7 @@ const useAddProduct = ({ clasess }) => {
   );
   const updatedProductParameteDefaultValue = useCallback(
     async (sectionId: string, subSectionId: string, parameter: any) => {
-      if (
-        changeDefaultValue !== parameter?.defaultValue 
-      ) {
+      if (changeDefaultValue !== parameter?.defaultValue) {
         await updateProductParameterEndPoint(sectionId, subSectionId, {
           parameter: {
             ...parameter,
@@ -476,7 +511,7 @@ const useAddProduct = ({ clasess }) => {
       setOpenModal(true);
     }, 100);
   };
-  
+
   const [digitalPriceData, setDigidatPriceData] =
     useRecoilState<any>(digitslPriceState);
   const _renderParameterType = (
@@ -500,6 +535,7 @@ const useAddProduct = ({ clasess }) => {
             )
           }
           type="number"
+          disabled={parameter?.isHidden}
         />
       );
     } else if (parameter?.parameterType === EParameterTypes.INPUT_TEXT) {
@@ -517,6 +553,7 @@ const useAddProduct = ({ clasess }) => {
               parameter
             )
           }
+          disabled={parameter?.isHidden}
         />
       );
     } else if (parameter?.parameterType === EParameterTypes.DROP_DOWN_LIST) {
@@ -526,6 +563,7 @@ const useAddProduct = ({ clasess }) => {
       return (
         <GoMakeAutoComplate
           options={parameter?.valuesConfigs}
+          disabled={parameter?.isHidden}
           placeholder={parameter.name}
           style={clasess.dropDownListStyle}
           getOptionLabel={(option: any) => option.updateName}
@@ -583,6 +621,7 @@ const useAddProduct = ({ clasess }) => {
     } else if (parameter?.parameterType === EParameterTypes.SWITCH) {
       return (
         <SecondSwitch
+          disabled={parameter?.isHidden}
           checked={parameter?.defaultValue === "true"}
           onChange={(a: any, value: any) => {
             updatedProductParameteDefaultValueForSwitch(
@@ -603,6 +642,7 @@ const useAddProduct = ({ clasess }) => {
       return (
         <GoMakeAutoComplate
           options={parameter?.valuesConfigs}
+          disabled={parameter?.isHidden}
           placeholder={parameter.name}
           style={clasess.dropDownListStyle}
           getOptionLabel={(option: any) => option.updateName}
@@ -717,6 +757,7 @@ const useAddProduct = ({ clasess }) => {
         return (
           <GoMakeAutoComplate
             options={options?.length > 0 ? options : []}
+            disabled={parameter?.isHidden}
             placeholder={parameter.name}
             style={clasess.dropDownListStyle}
             defaultValue={defailtObjectValue}
@@ -861,6 +902,9 @@ const useAddProduct = ({ clasess }) => {
     selectedSectonId,
     selectedParameter,
     openModal,
+    expanded,
+    handleChange,
+    relatedParameters,
   };
 };
 

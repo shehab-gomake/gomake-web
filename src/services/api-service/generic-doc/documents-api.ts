@@ -34,6 +34,8 @@ const GET_PRODUCT_ITEM_BY_ID_URL = '/v1/erp-service/documents/get-product-docume
 const UPDATE_DOCUMENT_CURRENCY_URL = '/v1/erp-service/documents/update-document-currency';
 const UPDATE_EXCHANGE_RATE_URL = '/v1/erp-service/documents/update-document-exchange-rate';
 const REFRESH_EXCHANGE_RATE_URL = '/v1/erp-service/documents/refresh-exchange-rate';
+const CREATE_NEW_DOCUMENT_URL = '/v1/erp-service/documents/create-new-document';
+
 
 const getDocumentApi: ICallAndSetData = async (callApi, setState, data) => {
     return await getSetApiData(callApi, EHttpMethod.GET, GET_DOCUMENT_URL, setState, data);
@@ -165,6 +167,11 @@ const refreshExchangeRateApi: ICallAndSetData = async (callApi, setState, data) 
     return await getSetApiData(callApi, EHttpMethod.PUT, REFRESH_EXCHANGE_RATE_URL, setState, data);
 }
 
+
+const createNewDocumentApi: ICallAndSetData = async (callApi, setState, documentType: DOCUMENT_TYPE ) => {
+    return await getSetApiData(callApi, EHttpMethod.POST, CREATE_NEW_DOCUMENT_URL, setState, documentType);
+}
+
 export {
     getDocumentApi,
     getAllDocumentsApi,
@@ -196,5 +203,6 @@ export {
     getProductByItemIdApi,
     updateDocumentCurrencyApi,
     updateExchangeRateApi,
-    refreshExchangeRateApi
+    refreshExchangeRateApi,
+    createNewDocumentApi
 };

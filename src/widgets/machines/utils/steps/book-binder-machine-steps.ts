@@ -9,6 +9,7 @@ import {ConnectionComponent} from "@/widgets/machines/components/forms/connectio
 import {CuttingOptions} from "@/widgets/machines/components/forms/cutting-options";
 import {OtherSettingsInputsComponent} from "@/widgets/machines/components/forms/other-setting-inputs";
 import {MachineRunComponent} from "@/widgets/machines/components/forms/run";
+import {UnwiderRewinderComponent} from "@/widgets/machines/components/forms/unwider-rewinder";
 
 const bookBinderMachineSteps = (isAdmin: boolean): IStep[] => {
  return isAdmin ?
@@ -31,6 +32,7 @@ const bookBinderMachineSteps = (isAdmin: boolean): IStep[] => {
          {label: 'glueSettings',  component: CuttingOptions},
          {label: 'addons',  component: OtherSettingsInputsComponent},
          {label: 'collectionInsideUnit', component: MachineRunComponent},
+         {label: 'cuttingUnit', component: UnwiderRewinderComponent},
 
      ]
 }

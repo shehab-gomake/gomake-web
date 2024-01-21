@@ -134,7 +134,7 @@ export default function Home() {
             stickyHeader={false}
             rows={getCustomersRows()}
             headers={tableHeaders}
-          ></PrimaryTable>
+          />
           <CustomerCardWidget
             isValidCustomer={isValidCustomer}
             customerAction={CUSTOMER_ACTIONS.Edit}

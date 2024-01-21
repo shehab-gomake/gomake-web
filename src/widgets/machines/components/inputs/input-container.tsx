@@ -2,6 +2,7 @@ import {IInput, IMachineInputContainer} from "@/widgets/machines/utils/interface
 import {MachineMultiInput} from "@/widgets/machines/components/inputs/machine-multi-input";
 import {FormArrayInput} from "@/components/form-inputs/form-array-input";
 import {FormInput} from "@/components/form-inputs/form-input";
+import {MachineMaterialInput} from "@/widgets/machines/components/inputs/machines-material-input";
 
 const InputContainer = ({attribute, updateState, error, newValue, disableUpdateValues}: IMachineInputContainer) => {
     {
@@ -16,6 +17,8 @@ const InputContainer = ({attribute, updateState, error, newValue, disableUpdateV
                                           value={attribute.value}
                                           disabled={attribute.disabled}
                                           inputs={attribute.inputs} isValid/>
+            case 'materialInput':
+                return <MachineMaterialInput {...attribute}/>
             default:
                 return <FormInput
                     key={attribute.parameterKey}

@@ -18,6 +18,7 @@ export interface IInput {
   unit?: EMeasurementUnits;
   direction?: string;
   multiple?: boolean;
+  materialType?: string;
 }
 export interface IFormInput {
   input: IInput;
