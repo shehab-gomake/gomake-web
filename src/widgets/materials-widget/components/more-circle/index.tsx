@@ -10,18 +10,24 @@ import { useTableCellData } from "../table-cell-data/use-table-cell-data";
 import { DuplicateIcon } from "@/components/icons/duplicate-icon";
 import { useMaterialsCategories } from "../../use-materials-categories";
 import { useRouter } from "next/router";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { filterState, selectedSupplierIdState } from "../../state";
+import { EMaterialsActions } from "../../enums";
+import { actionMenuState } from "@/store";
 
 const MaterialMenuWidget = ({
   dataRow,
   isAdmin,
   setSelectedTableRow,
   onClickOpenDeleteTableRowModal,
+  onChangeRowCheckBox,
 }) => {
   setSelectedTableRow(dataRow);
   const { clasess } = useStyle();
-  const { open, anchorEl, handleClose, handleClick } = useMoreCircle();
+  const { open, anchorEl, handleClose, handleClick } = useMoreCircle({
+    onChangeRowCheckBox,
+    dataRow,
+  });
   const { t } = useTranslation();
   const { updateCellData } = useTableCellData(isAdmin);
   const { getMaterialCategoryData } = useMaterialsCategories(isAdmin);
@@ -39,7 +45,16 @@ const MaterialMenuWidget = ({
       supplierId
     ).then();
   };
-
+  const [action, setAction] = useRecoilState<{
+    action: EMaterialsActions;
+    key: string;
+  } | null>(actionMenuState);
+  const onClickActionModal = () => {
+    setAction({
+      key: "Duplicate",
+      action: 10,
+    });
+  };
   return (
     <>
       <IconButton onClick={handleClick}>
@@ -62,7 +77,12 @@ const MaterialMenuWidget = ({
           </div>
         </MenuItem>
         <Divider />
-        <MenuItem style={clasess.menuItemContainer}>
+        <MenuItem
+          style={clasess.menuItemContainer}
+          onClick={() => {
+            onClickActionModal();
+          }}
+        >
           <DuplicateIcon height={20} width={20} color={clasess.iconColor} />
           <div style={clasess.rowTextStyle}>
             {t("navigationButtons.duplicate")}

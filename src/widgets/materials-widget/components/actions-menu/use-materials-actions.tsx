@@ -44,6 +44,7 @@ import { useExchangeRate } from "@/hooks/use-exchange-rate";
 import { useMaterialsCategories } from "../../use-materials-categories";
 import { EMaterialsTabsIcon } from "@/enums";
 import { EHttpMethod } from "@/services/api-service/enums";
+import { actionMenuState } from "@/store";
 
 const useMaterialsActions = (isAdmin: boolean) => {
   const { callApi } = useGomakeAxios();
@@ -54,17 +55,16 @@ const useMaterialsActions = (isAdmin: boolean) => {
   const [materialCategoryData, setMaterialCategoryData] = useRecoilState<
     IMaterialCategoryRow[]
   >(materialCategoryDataState);
-  const [action, setAction] = useState<{
+  const [action, setAction] = useRecoilState<{
     action: EMaterialsActions;
     key: string;
-  } | null>(null);
+  } | null>(actionMenuState);
   const [updatedValue, setUpdatedValue] = useState<string>("");
   const [currentCurrency, setCurrentCurrency] = useState<any>("");
   const [checkedPrice, setCheckedPrice] = useState(false);
   const { rate, setRate, getExchangeRate } = useExchangeRate();
-  const isAllMaterialsChecked = useRecoilValue<boolean>(
-    isAllMaterialsCheckedState
-  );
+  const [isAllMaterialsChecked, setIsAllMaterialsChecked] =
+    useRecoilState<boolean>(isAllMaterialsCheckedState);
   const uncheckedMaterials = useRecoilValue<string[]>(materialsUnCheckedState);
   const supplierId = useRecoilValue(selectedSupplierIdState);
   const activeFilter = useRecoilValue(activeFilterState);
@@ -78,8 +78,44 @@ const useMaterialsActions = (isAdmin: boolean) => {
   const { setSnackbarStateValue } = useSnackBar();
   const { t } = useTranslation();
   const setOpenAddRowModal = useSetRecoilState<boolean>(openAddRowModalState);
-  const getSelectedMaterialsIds = () =>
-    materialCategoryData.filter((row) => row.checked).map((row) => row.id);
+  const [selectedMaterialsIds, setSelectedMaterialsIds] = useState([]);
+
+  const onChangeHeaderCheckBox = useCallback(
+    (isAllChecked: boolean) => {
+      setIsAllMaterialsChecked(isAllChecked);
+      const materialsIds = materialCategoryData.map((material) => material.id);
+      setMaterialCategoryData(
+        materialCategoryData.map((row) =>
+          materialsIds.includes(row.id)
+            ? {
+                ...row,
+                checked: false,
+              }
+            : { ...row, checked: false }
+        )
+      );
+    },
+    [materialCategoryData, materialCategoryData]
+  );
+  useEffect(() => {
+    const getSelectedMaterialsIds = () =>
+      materialCategoryData.filter((row) => row.checked).map((row) => row.id);
+
+    setSelectedMaterialsIds(getSelectedMaterialsIds());
+  }, [materialCategoryData]);
+  useEffect(() => {
+    if (selectedMaterialsIds.length > 0) {
+      const myId = selectedMaterialsIds[0];
+      const selectedRow = materialCategoryData.find((row) => row.id === myId);
+      setCurrentCurrency(selectedRow?.rowData?.currency?.value);
+    }
+  }, [selectedMaterialsIds, materialCategoryData]);
+
+  // useEffect(() => {
+  //   if (action === null) {
+  //     onChangeHeaderCheckBox(true);
+  //   }
+  // }, [action]);
   const onChooseAction = async (
     action: { action: EMaterialsActions; key: string } | null
   ) => {
@@ -99,13 +135,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
       uploadImgRef.current.click();
       return;
     }
-    if (getSelectedMaterialsIds().length > 0) {
-      const myId = getSelectedMaterialsIds()[0];
-      const selectedRow = materialCategoryData.find((row) => row.id === myId);
-      setCurrentCurrency(selectedRow?.rowData?.currency?.value);
-    }
-
-    if (getSelectedMaterialsIds().length === 0) {
+    if (selectedMaterialsIds.length === 0) {
       setSnackbarStateValue({
         state: true,
         message: t("modal.noMaterialsSelected"),
@@ -137,7 +167,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
         await updateMaterialsPropApi(callApi, onUpdateCallBack, {
           materialTypeKey: materialType.toString(),
           categoryKey: materialCategory.toString(),
-          ids: getSelectedMaterialsIds(),
+          ids: selectedMaterialsIds,
           action: action.action,
           priceIndex: 0,
           isAllMaterialsChecked: isAllMaterialsChecked,
@@ -165,7 +195,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
           await updatePrintHouseMaterialsPropApi(callApi, onUpdateCallBack, {
             materialTypeKey: materialType.toString(),
             categoryKey: materialCategory.toString(),
-            ids: getSelectedMaterialsIds(),
+            ids: selectedMaterialsIds,
             action: action.action,
             priceIndex: 0,
             updatedValue,
@@ -191,7 +221,6 @@ const useMaterialsActions = (isAdmin: boolean) => {
       }
     }
   };
-
   const onUpdateCallBack = (res) => {
     if (res.success) {
       setMaterialCategoryData(
@@ -204,6 +233,8 @@ const useMaterialsActions = (isAdmin: boolean) => {
             : material
         )
       );
+      setAction(null);
+      onChangeHeaderCheckBox(true);
     }
   };
   const updateStatus = async (eAction: EMaterialsActions) => {
@@ -211,7 +242,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
       const result = await updateMaterialsPropApi(callApi, onUpdateCallBack, {
         materialTypeKey: materialType.toString(),
         categoryKey: materialCategory.toString(),
-        ids: getSelectedMaterialsIds(),
+        ids: selectedMaterialsIds,
         action: eAction,
         isAllMaterialsChecked: isAllMaterialsChecked,
         uncheckedMaterials: uncheckedMaterials,
@@ -246,7 +277,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
         {
           materialTypeKey: materialType.toString(),
           categoryKey: materialCategory.toString(),
-          ids: getSelectedMaterialsIds(),
+          ids: selectedMaterialsIds,
           action: eAction,
           isAllMaterialsChecked: isAllMaterialsChecked,
           uncheckedMaterials: uncheckedMaterials,
@@ -420,7 +451,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
 
     const requestBody: any = {
       props: transformedArray,
-      ids: getSelectedMaterialsIds(),
+      ids: selectedMaterialsIds,
     };
     const res = await callApi(
       EHttpMethod.POST,
@@ -447,7 +478,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
     setProperties([initialProperties]);
   };
   return {
-    getSelectedMaterialsIds,
+    selectedMaterialsIds,
     onChooseAction,
     action,
     updatedValue,

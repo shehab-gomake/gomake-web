@@ -77,7 +77,7 @@ const useMaterials = (isAdmin: boolean) => {
   const onClickCloseDeleteTableRowModal = () => {
     setOpenDeleteTableRowModal(false);
   };
-  const onClickOpenDeleteTableRowModal = () => {
+  const onClickOpenDeleteTableRowModal = (dataRow) => {
     setOpenDeleteTableRowModal(true);
   };
   const setMaterialCategorySuppliers = useSetRecoilState(
@@ -206,7 +206,7 @@ const useMaterials = (isAdmin: boolean) => {
     }
     setMaterialCategoryData(
       materialCategoryData.map((row) =>
-        id === row.id ? { ...row, checked: !row.checked } : row
+        id === row.id ? { ...row, checked: checked } : row
       )
     );
   };
@@ -256,6 +256,7 @@ const useMaterials = (isAdmin: boolean) => {
             id={dataRow.id}
             parameterKey={header.key}
             isAdmin={isAdmin}
+            onChangeRowCheckBox={onChangeRowCheckBox}
           />
         )),
         <MaterialMenuWidget
@@ -263,6 +264,7 @@ const useMaterials = (isAdmin: boolean) => {
           isAdmin={isAdmin}
           setSelectedTableRow={setSelectedTableRow}
           onClickOpenDeleteTableRowModal={onClickOpenDeleteTableRowModal}
+          onChangeRowCheckBox={onChangeRowCheckBox}
         />,
       ];
     });
@@ -280,6 +282,7 @@ const useMaterials = (isAdmin: boolean) => {
             {...dataRow.rowData[header.key]}
             id={dataRow.id}
             parameterKey={header.key}
+            onChangeRowCheckBox={onChangeRowCheckBox}
           />
         )),
         <MaterialMenuWidget
@@ -287,6 +290,7 @@ const useMaterials = (isAdmin: boolean) => {
           isAdmin={isAdmin}
           setSelectedTableRow={setSelectedTableRow}
           onClickOpenDeleteTableRowModal={onClickOpenDeleteTableRowModal}
+          onChangeRowCheckBox={onChangeRowCheckBox}
         />,
       ];
     });
@@ -336,7 +340,6 @@ const useMaterials = (isAdmin: boolean) => {
     await getAndSetMachincesNew(callApi, setMachinesState);
   }, []);
 
-
   const setClientsState = useSetRecoilState<[]>(materialsClientsState);
   const getClientsMaterials = useCallback(async () => {
     await getAndSetAllCustomers(callApi, setClientsState, {
@@ -344,7 +347,6 @@ const useMaterials = (isAdmin: boolean) => {
       onlyCreateOrderClients: true,
     });
   }, []);
-
 
   return {
     materialCategory,
@@ -373,7 +375,7 @@ const useMaterials = (isAdmin: boolean) => {
     onDeleteCategoryRow,
     selectedTableRow,
     materialName,
-    getClientsMaterials
+    getClientsMaterials,
   };
 };
 

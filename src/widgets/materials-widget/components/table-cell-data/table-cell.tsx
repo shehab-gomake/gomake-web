@@ -17,6 +17,7 @@ const TableCellData = ({
   id,
   values,
   isAdmin,
+  onChangeRowCheckBox,
 }: IRowData) => {
   const { updateCellData, machinesOptions, clientsOptions } =
     useTableCellData(isAdmin);
@@ -35,6 +36,7 @@ const TableCellData = ({
           id={id}
           key={parameterKey}
           isAdmin={isAdmin}
+          onChangeRowCheckBox={onChangeRowCheckBox}
         />
       );
     case EDataTypeEnum.ARRAY_INPUT:
