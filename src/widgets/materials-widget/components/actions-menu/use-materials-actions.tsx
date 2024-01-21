@@ -164,30 +164,34 @@ const useMaterialsActions = (isAdmin: boolean) => {
   const onUpdate = async () => {
     if (action !== null) {
       if (isAdmin) {
-        await updateMaterialsPropApi(callApi, onUpdateCallBack, {
-          materialTypeKey: materialType.toString(),
-          categoryKey: materialCategory.toString(),
-          ids: selectedMaterialsIds,
-          action: action.action,
-          priceIndex: 0,
-          isAllMaterialsChecked: isAllMaterialsChecked,
-          uncheckedMaterials: uncheckedMaterials,
-          tableFilters: {
-            materialKey: materialType,
-            categoryKey: materialCategory,
-            supplierId,
-            pageNumber: null,
-            pageSize: null,
-            isActive:
-              activeFilter === EMaterialActiveFilter.ACTIVE
-                ? true
-                : activeFilter === EMaterialActiveFilter.INACTIVE
-                ? false
-                : null,
-            customFiltersKeyValueList: materialFilter,
-          },
-          exchangeRate: rate,
-        });
+        if (action.key === "Duplicate") {
+          duplicateMaterials();
+        }else{
+          await updateMaterialsPropApi(callApi, onUpdateCallBack, {
+            materialTypeKey: materialType.toString(),
+            categoryKey: materialCategory.toString(),
+            ids: selectedMaterialsIds,
+            action: action.action,
+            priceIndex: 0,
+            isAllMaterialsChecked: isAllMaterialsChecked,
+            uncheckedMaterials: uncheckedMaterials,
+            tableFilters: {
+              materialKey: materialType,
+              categoryKey: materialCategory,
+              supplierId,
+              pageNumber: null,
+              pageSize: null,
+              isActive:
+                  activeFilter === EMaterialActiveFilter.ACTIVE
+                      ? true
+                      : activeFilter === EMaterialActiveFilter.INACTIVE
+                          ? false
+                          : null,
+              customFiltersKeyValueList: materialFilter,
+            },
+            exchangeRate: rate,
+          });
+        }
       } else {
         if (action.key === "Duplicate") {
           duplicatePrintHouseMaterials();
@@ -466,6 +470,41 @@ const useMaterialsActions = (isAdmin: boolean) => {
         materialCategory?.toString(),
         [],
         supplierId
+      ).then();
+      handleCloseModal();
+    } else {
+      alertFaultAdded();
+    }
+  }, [properties]);
+
+  const duplicateMaterials = useCallback(async () => {
+    const transformedArray = properties.map((item) => {
+      const key = item.key.key.toLowerCase();
+      const value = item.value;
+
+      return {
+        key,
+        value,
+      };
+    });
+
+    const requestBody: any = {
+      props: transformedArray,
+      ids: selectedMaterialsIds,
+    };
+    const res = await callApi(
+        EHttpMethod.POST,
+        `/v1/materials/duplicate-materials`,
+        requestBody
+    );
+
+    if (res?.success) {
+      alertSuccessAdded();
+      getMaterialCategoryData(
+          materialType?.toString(),
+          materialCategory?.toString(),
+          [],
+          supplierId
       ).then();
       handleCloseModal();
     } else {
