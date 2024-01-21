@@ -194,14 +194,14 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
               {materialCategoryData.length > 0 ? (
                 <Stack display={"grid"}>
                   <PrimaryTable
-                    rows={tableRowData}
+                    rows={tableRowsNew}
                     headers={tableHeadersNew()}
                   />
                 </Stack>
               ) : flag &&
                 materialCategories.find(
                   (category) => category.categoryKey === materialCategory
-                ) ? (
+                ).isDeletable ? (
                 <Stack display={"grid"}>
                   <PrimaryTable
                     rows={tableRowsNew}
