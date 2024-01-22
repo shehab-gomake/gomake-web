@@ -46,6 +46,8 @@ const useMaterials = (isAdmin: boolean) => {
   const { query, push, replace } = useRouter();
 
   const { materialType, materialCategory } = query;
+  const [selectedTableRow, setSelectedTableRow] = useState<IMaterialCategoryRow>();
+
   const [materialHeaders, setMaterialHeaders] =
     useRecoilState<{ key: string; value: string; unit?: string }[]>(
       materialHeadersState
@@ -77,7 +79,9 @@ const useMaterials = (isAdmin: boolean) => {
   const onClickCloseDeleteTableRowModal = () => {
     setOpenDeleteTableRowModal(false);
   };
+  
   const onClickOpenDeleteTableRowModal = (dataRow) => {
+    setSelectedTableRow(dataRow)
     setOpenDeleteTableRowModal(true);
   };
   const setMaterialCategorySuppliers = useSetRecoilState(
@@ -101,7 +105,6 @@ const useMaterials = (isAdmin: boolean) => {
     push(path + `/${materialType}?materialCategory=${category}`);
     setFlagState(false);
   };
-  const [selectedTableRow, setSelectedTableRow] = useState<any>();
   const onDeleteCategory = async (categoryKey) => {
     const callBack = (res) => {
       if (res.success) {
@@ -262,7 +265,6 @@ const useMaterials = (isAdmin: boolean) => {
         <MaterialMenuWidget
           dataRow={dataRow}
           isAdmin={isAdmin}
-          setSelectedTableRow={setSelectedTableRow}
           onClickOpenDeleteTableRowModal={onClickOpenDeleteTableRowModal}
           onChangeRowCheckBox={onChangeRowCheckBox}
         />,
@@ -289,7 +291,6 @@ const useMaterials = (isAdmin: boolean) => {
         <MaterialMenuWidget
           dataRow={dataRow}
           isAdmin={isAdmin}
-          setSelectedTableRow={setSelectedTableRow}
           onClickOpenDeleteTableRowModal={onClickOpenDeleteTableRowModal}
           onChangeRowCheckBox={onChangeRowCheckBox}
         />,
