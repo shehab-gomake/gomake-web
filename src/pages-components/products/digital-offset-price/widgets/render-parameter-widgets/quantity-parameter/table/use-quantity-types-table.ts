@@ -23,18 +23,21 @@ const useQuantityTypesTable = (save: boolean) => {
   );
   const setOpenModal = useSetRecoilState(openQuantityComponentModalState);
   const subProducts = useRecoilValue<any>(subProductsParametersState);
-  function getParameterByParameterName(subProductArray, paramName) {
+  function getParameterByParameterName(subProductArray, paramId) {
     for (let i = 0; i < subProductArray.length; i++) {
       const parameters = subProductArray[i].parameters;
       for (let j = 0; j < parameters.length; j++) {
-        if (parameters[j].parameterName === paramName) {
+        if (parameters[j].parameterId === paramId) {
           return parameters[j];
         }
       }
     }
     return null; // Return null if not found
   }
-  const resultParameter = getParameterByParameterName(subProducts, "Job Name");
+  const resultParameter = getParameterByParameterName(
+    subProducts,
+    "a330193f-492c-40a8-86f3-8edf5c8f0d5e"
+  );
   useEffect(() => {
     if (quantityTypes.length === productTypesNumber) {
       setValuesState(quantityTypes);

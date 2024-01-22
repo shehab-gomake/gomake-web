@@ -5,7 +5,7 @@ import {
 } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/quantity-parameter/quantity-types/state";
 import { IInput } from "@/components/form-inputs/interfaces";
 import { useEffect, useMemo, useState } from "react";
-import { productTypesNumberState, subProductsParametersState } from "@/store";
+import { subProductsParametersState } from "@/store";
 
 interface QuantityTypesInputs extends IInput {
   onChange: (key, value: string) => void;
@@ -13,7 +13,6 @@ interface QuantityTypesInputs extends IInput {
 }
 const useQuantityTypes = () => {
   const [state] = useRecoilState(productQuantityTypesState);
-  const productTypesNumber = useRecoilValue<number>(productTypesNumberState);
   const [save, setSave] = useState<boolean>(false);
   const [quantityState, setQuantityState] = useRecoilState(
     productQuantityTypesState
@@ -27,7 +26,7 @@ const useQuantityTypes = () => {
     const updatedSubProducts = JSON.parse(JSON.stringify(subProducts));
 
     const typesParameter = updatedSubProducts[0]?.parameters.find(
-      (param) => param.parameterName === "Types"
+      (param) => param.parameterId === "de2bb7d5-01b1-4b2b-b0fa-81cd0445841b"
     );
 
     if (typesParameter) {
@@ -41,20 +40,25 @@ const useQuantityTypes = () => {
     updateTypesValues(value);
   };
   const initialTypesValues = subProducts[0]?.parameters
-    .find((param) => param.parameterName === "Types")
+    .find(
+      (param) => param.parameterId === "de2bb7d5-01b1-4b2b-b0fa-81cd0445841b"
+    )
     ?.values.join(", ");
-  function getParameterByParameterName(subProductArray, paramName) {
+  function getParameterByParameterName(subProductArray, paramId) {
     for (let i = 0; i < subProductArray.length; i++) {
       const parameters = subProductArray[i].parameters;
       for (let j = 0; j < parameters.length; j++) {
-        if (parameters[j].parameterName === paramName) {
+        if (parameters[j].parameterId === paramId) {
           return parameters[j];
         }
       }
     }
     return null;
   }
-  const resultParameter = getParameterByParameterName(subProducts, "Quantity");
+  const resultParameter = getParameterByParameterName(
+    subProducts,
+    "4991945c-5e07-4773-8f11-2e3483b70b53"
+  );
   useEffect(() => {
     if (resultParameter) {
       setQuantityState((state) => ({
