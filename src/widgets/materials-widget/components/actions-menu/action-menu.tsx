@@ -173,7 +173,7 @@ const ActionMenu = (props: IActionMenuProps) => {
                       <GoMakeAutoComplate
                         placeholder={"select property"}
                         getOptionLabel={(option: any) => option.key}
-                        options={materialHeaders}
+                        options={materialHeaders.filter(x=>!x.isHideInDuplicate)}
                         onChange={(event, value) => {
                           handleChange(index, "key", value);
                         }}
