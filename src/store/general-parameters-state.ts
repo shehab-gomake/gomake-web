@@ -64,6 +64,60 @@ export const productTypesNumberState = selector<number>({
     return typesParameterValue;
   },
 });
+export const productSetsParamState = selector<string>({
+  key: "productSetsParamState",
+  get: ({ get }) => {
+    const generalParameters = get(subProductsCopyParametersState);
+    const section = generalParameters[0];
+    let setsParameterValue;
+    if (!!section) {
+      const setsParameter = section?.parameters?.find(
+        (item) => item?.parameterId === "e7ea235e-b5e2-4f0d-aecf-0f435c24afbb"
+      );
+      setsParameterValue =
+        !!setsParameter && setsParameter?.values?.length > 0
+          ? setsParameter?.values[0]
+          : false;
+    }
+    return setsParameterValue;
+  },
+});
+export const productSetQuantityState = selector<number>({
+  key: "productSetQuantityState",
+  get: ({ get }) => {
+    const generalParameters = get(subProductsCopyParametersState);
+    const section = generalParameters[0];
+    let setsParameterValue;
+    if (!!section) {
+      const setsParameter = section?.parameters?.find(
+        (item) => item?.parameterId === "0fdbca1a-f250-447b-93e3-5b91909da59c"
+      );
+      setsParameterValue =
+        !!setsParameter && setsParameter?.values?.length > 0
+          ? setsParameter?.values[0]
+          : 0;
+    }
+    return setsParameterValue;
+  },
+});
+export const productSetsUnitsState = selector<number>({
+  key: "productSetsUnitsState",
+  get: ({ get }) => {
+    const generalParameters = get(subProductsCopyParametersState);
+    const section = generalParameters[0];
+    let setsParameterValue;
+    if (!!section) {
+      const setsParameter = section?.parameters?.find(
+        (item) => item?.parameterId === "91d3fe77-b852-4974-beb6-2da7d7616c78"
+      );
+      setsParameterValue =
+        !!setsParameter && setsParameter?.values?.length > 0
+          ? setsParameter?.values[0]
+          : 0;
+    }
+    return setsParameterValue;
+  },
+});
 export const currentCalculationConnectionId = atom({
   key: "currentCalculationConnectionIdState",
   default: "",

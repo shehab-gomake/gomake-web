@@ -5,7 +5,7 @@ import {
 } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/quantity-parameter/quantity-types/state";
 import { IInput } from "@/components/form-inputs/interfaces";
 import { useEffect, useMemo, useState } from "react";
-import { subProductsParametersState } from "@/store";
+import { productSetsParamState, subProductsParametersState } from "@/store";
 
 interface QuantityTypesInputs extends IInput {
   onChange: (key, value: string) => void;
