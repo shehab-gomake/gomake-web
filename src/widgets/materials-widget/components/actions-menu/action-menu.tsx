@@ -4,7 +4,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { EMaterialsActions } from "@/widgets/materials-widget/enums";
 import { useMaterialsActions } from "@/widgets/materials-widget/components/actions-menu/use-materials-actions";
-import { GoMakeAutoComplate, GoMakeModal, GomakeTextInput } from "@/components";
+import { GoMakeAutoComplate, GoMakeDeleteModal, GoMakeModal, GomakeTextInput } from "@/components";
 import Stack from "@mui/material/Stack";
 import { SecondaryButton } from "@/components/button/secondary-button";
 import { useStyle } from "./style";
@@ -92,151 +92,160 @@ const ActionMenu = (props: IActionMenuProps) => {
           </>
         ))}
       </Menu>
-      <GoMakeModal
-        onClose={handleCloseModal}
-        insideStyle={{ width: 500, height: "auto" }}
-        openModal={action !== null}
-        modalTitle={t("materialsActions." + action?.key)}
-      >
-        <Stack
-          gap={3}
-          alignItems={"center"}
-          justifyContent={"center"}
-          minWidth={"350px"}
+      {action?.action === EMaterialsActions.Delete ?
+        <GoMakeDeleteModal
+          openModal={action !== null}
+          onClose={handleCloseModal}
+          onClickDelete={onUpdate}
+        />
+        :
+        <GoMakeModal
+          onClose={handleCloseModal}
+          insideStyle={{ width: 500, height: "auto" }}
+          openModal={action !== null}
+          modalTitle={t("materialsActions." + action?.key)}
         >
-          {action?.action === EMaterialsActions.UpdateCurrency ? (
-            <div style={clasess.UpdateCurrencyView}>
-              <GoMakeAutoComplate
-                style={{ width: "100%" }}
-                value={updatedValue}
-                options={currencies}
-                onChange={(e, value) => {
-                  setCheckedPrice(true);
-                  onTextInputChange(value?.value);
-                }}
-                disableClearable
-              />
-              <div style={clasess.priceCheckedContainer}>
-                <Checkbox
-                  icon={<CheckboxIcon />}
-                  checkedIcon={<CheckboxCheckedIcon />}
-                  onChange={() => {
-                    setCheckedPrice(!checkedPrice);
-                    if (!checkedPrice) {
-                      setRate(null);
-                    }
+          <Stack
+            gap={3}
+            alignItems={"center"}
+            justifyContent={"center"}
+            minWidth={"350px"}
+          >
+            {action?.action === EMaterialsActions.UpdateCurrency ? (
+              <div style={clasess.UpdateCurrencyView}>
+                <GoMakeAutoComplate
+                  style={{ width: "100%" }}
+                  value={updatedValue}
+                  options={currencies}
+                  onChange={(e, value) => {
+                    setCheckedPrice(true);
+                    onTextInputChange(value?.value);
                   }}
-                  checked={checkedPrice}
+                  disableClearable
                 />
-                <div style={clasess.secondText}>update prices</div>
-              </div>
-              {rate && (
-                <GomakeTextInput
-                  style={{
-                    border: "0px",
-                    background: "#fff",
-                    borderRadius: 4,
-                    height: 40,
-                  }}
-                  onChange={(e: any) => {
-                    setRate(e.target.value);
-                  }}
-                  value={rate}
-                />
-              )}
-            </div>
-          ) : action?.action === EMaterialsActions.Duplicate ? (
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "flex-start",
-                alignItems: "flex-start",
-                width: "100%",
-                gap: 10,
-              }}
-            >
-              {properties?.map((item, index) => {
-                return (
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "row",
-                      justifyContent: "flex-start",
-                      alignItems: "center",
-                      gap: 10,
-                      width: "100%",
-                      height: item?.key?.key === "image" ? 155 : "100%",
+                <div style={clasess.priceCheckedContainer}>
+                  <Checkbox
+                    icon={<CheckboxIcon />}
+                    checkedIcon={<CheckboxCheckedIcon />}
+                    onChange={() => {
+                      setCheckedPrice(!checkedPrice);
+                      if (!checkedPrice) {
+                        setRate(null);
+                      }
                     }}
-                  >
-                    <div style={{ width: "50%", height: "100%" }}>
-                      <GoMakeAutoComplate
-                        placeholder={"select property"}
-                        getOptionLabel={(option: any) => option.key}
-                        options={materialHeaders}
-                        onChange={(event, value) => {
-                          handleChange(index, "key", value);
-                        }}
-                      />
-                    </div>
-                    <div
-                      style={{ width: "50%", marginTop: -24, height: "100%" }}
-                    >
-                      {properties[index].key &&
-                        rowInputs(
-                          properties[index].key,
-                          materialHeaders,
-                          currencies,
-                          [],
-                          [],
-                          [item?.key]
-                        ).map((item) => (
-                          <FormInput
-                            input={item as IInput}
-                            changeState={(e, v) =>
-                              handleChange(index, "value", v)
-                            }
-                            error={false}
-                            readonly={false}
-                          />
-                        ))}
-                    </div>
+                    checked={checkedPrice}
+                  />
+                  <div style={clasess.secondText}>update prices</div>
+                </div>
+                {rate && (
+                  <GomakeTextInput
+                    style={{
+                      border: "0px",
+                      background: "#fff",
+                      borderRadius: 4,
+                      height: 40,
+                    }}
+                    onChange={(e: any) => {
+                      setRate(e.target.value);
+                    }}
+                    value={rate}
+                  />
+                )}
+              </div>
+            ) : action?.action === EMaterialsActions.Duplicate ? (
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "flex-start",
+                  alignItems: "flex-start",
+                  width: "100%",
+                  gap: 10,
+                }}
+              >
+                {properties?.map((item, index) => {
+                  return (
                     <div
                       style={{
                         display: "flex",
+                        flexDirection: "row",
+                        justifyContent: "flex-start",
                         alignItems: "center",
-                        cursor: "pointer",
-                        marginTop: "2%",
+                        gap: 10,
+                        width: "100%",
+                        height: item?.key?.key === "image" ? 155 : "100%",
                       }}
-                      onClick={() => deleteProperty(index)}
                     >
-                      <DeleteMenuIcon />
+                      <div style={{ width: "50%", height: "100%" }}>
+                        <GoMakeAutoComplate
+                          placeholder={"select property"}
+                          getOptionLabel={(option: any) => option.key}
+                          options={materialHeaders}
+                          onChange={(event, value) => {
+                            handleChange(index, "key", value);
+                          }}
+                        />
+                      </div>
+                      <div
+                        style={{ width: "50%", marginTop: -24, height: "100%" }}
+                      >
+                        {properties[index].key &&
+                          rowInputs(
+                            properties[index].key,
+                            materialHeaders,
+                            currencies,
+                            [],
+                            [],
+                            [item?.key]
+                          ).map((item) => (
+                            <FormInput
+                              input={item as IInput}
+                              changeState={(e, v) =>
+                                handleChange(index, "value", v)
+                              }
+                              error={false}
+                              readonly={false}
+                            />
+                          ))}
+                      </div>
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          cursor: "pointer",
+                          marginTop: "2%",
+                        }}
+                        onClick={() => deleteProperty(index)}
+                      >
+                        <DeleteMenuIcon />
+                      </div>
                     </div>
-                  </div>
-                );
-              })}
-              <div style={clasess.AddNewRuleDiv}>
-                <AddPlusIcon />
-                <span onClick={addProperty} style={clasess.spanAddNewRule}>
-                  {t("properties.addNewRule")}
-                </span>
+                  );
+                })}
+                <div style={clasess.AddNewRuleDiv}>
+                  <AddPlusIcon />
+                  <span onClick={addProperty} style={clasess.spanAddNewRule}>
+                    {t("properties.addNewRule")}
+                  </span>
+                </div>
               </div>
-            </div>
-          ) : (
-            <GomakeTextInput
-              onChange={(e) => onTextInputChange(e.target.value)}
-              value={updatedValue}
-            />
-          )}
-          <SecondaryButton
-            onClick={onUpdate}
-            sx={{ width: "100%" }}
-            variant={"contained"}
-          >
-            {t("profileSettings.update")}
-          </SecondaryButton>
-        </Stack>
-      </GoMakeModal>
+            ) : (
+              <GomakeTextInput
+                onChange={(e) => onTextInputChange(e.target.value)}
+                value={updatedValue}
+              />
+            )}
+            <SecondaryButton
+              onClick={onUpdate}
+              sx={{ width: "100%" }}
+              variant={"contained"}
+            >
+              {t("profileSettings.update")}
+            </SecondaryButton>
+          </Stack>
+        </GoMakeModal>
+      }
+
     </>
   );
 };
