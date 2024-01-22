@@ -72,9 +72,6 @@ const useMaterialsActions = (isAdmin: boolean) => {
   const elementRef = useRef(null);
   const uploadImgRef = useRef(null);
   const { getMaterialCategoryData } = useMaterialsCategories(isAdmin);
-  useEffect(() => {
-    if (checkedPrice) getExchangeRate(currentCurrency, updatedValue);
-  }, [checkedPrice, updatedValue, currentCurrency]);
   const { setSnackbarStateValue } = useSnackBar();
   const { t } = useTranslation();
   const setOpenAddRowModal = useSetRecoilState<boolean>(openAddRowModalState);
