@@ -108,6 +108,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
     action: { action: EMaterialsActions; key: string } | null
   ) => {
     setSelectedMaterialIdForUpdate("");
+    setUpdatedValue("")
     if (action?.action === EMaterialsActions.AddNew) {
       setOpenAddRowModal(true);
       return;
