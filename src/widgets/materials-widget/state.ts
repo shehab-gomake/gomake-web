@@ -23,6 +23,7 @@ export const materialHeadersState = atom<
     isFilter: boolean;
     inputType: number;
     values: [];
+    isHideInDuplicate?: boolean;
   }[]
 >({
   key: "materialHeadersState",
