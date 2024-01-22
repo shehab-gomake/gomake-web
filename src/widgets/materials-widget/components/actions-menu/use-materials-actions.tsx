@@ -9,7 +9,7 @@ import {
   materialCategoryDataState,
   materialHeadersState,
   materialsUnCheckedState,
-  openAddRowModalState,
+  openAddRowModalState, selectedMaterialIdForUpdateState,
   selectedSupplierIdState,
 } from "@/widgets/materials-widget/state";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -68,6 +68,8 @@ const useMaterialsActions = (isAdmin: boolean) => {
   const uncheckedMaterials = useRecoilValue<string[]>(materialsUnCheckedState);
   const supplierId = useRecoilValue(selectedSupplierIdState);
   const activeFilter = useRecoilValue(activeFilterState);
+  const [selectedMaterialIdForUpdate,setSelectedMaterialIdForUpdate] = useRecoilState(selectedMaterialIdForUpdateState);
+
   const materialFilter = useRecoilValue(filterState);
   const elementRef = useRef(null);
   const uploadImgRef = useRef(null);
@@ -84,11 +86,16 @@ const useMaterialsActions = (isAdmin: boolean) => {
     [materialCategoryData, materialCategoryData]
   );
   useEffect(() => {
-    const getSelectedMaterialsIds = () =>
-      materialCategoryData.filter((row) => row.checked).map((row) => row.id);
+    if(selectedMaterialIdForUpdate){
+      setSelectedMaterialsIds([selectedMaterialIdForUpdate])
+    }else{
+      const getSelectedMaterialsIds = () =>
+          materialCategoryData.filter((row) => row.checked).map((row) => row.id);
 
-    setSelectedMaterialsIds(getSelectedMaterialsIds());
-  }, [materialCategoryData]);
+      setSelectedMaterialsIds(getSelectedMaterialsIds());
+    }
+   
+  }, [materialCategoryData,selectedMaterialIdForUpdate]);
   useEffect(() => {
     if (selectedMaterialsIds.length > 0) {
       const myId = selectedMaterialsIds[0];
@@ -100,6 +107,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
   const onChooseAction = async (
     action: { action: EMaterialsActions; key: string } | null
   ) => {
+    setSelectedMaterialIdForUpdate("");
     if (action?.action === EMaterialsActions.AddNew) {
       setOpenAddRowModal(true);
       return;
@@ -151,7 +159,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
           await updateMaterialsPropApi(callApi, onUpdateCallBack, {
             materialTypeKey: materialType.toString(),
             categoryKey: materialCategory.toString(),
-            ids: selectedMaterialsIds,
+            ids: selectedMaterialsIds ,
             action: action.action,
             updatedValue,
             priceIndex: 0,
@@ -181,7 +189,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
           await updatePrintHouseMaterialsPropApi(callApi, onUpdateCallBack, {
             materialTypeKey: materialType.toString(),
             categoryKey: materialCategory.toString(),
-            ids: selectedMaterialsIds,
+            ids: selectedMaterialsIds ,
             action: action.action,
             priceIndex: 0,
             updatedValue,
@@ -218,7 +226,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
       else {
       setMaterialCategoryData(
         materialCategoryData.map((material) =>
-          material.checked
+          material.checked || material.id === selectedMaterialIdForUpdate
             ? {
                 ...material,
                 ...res.data?.find((row) => row.id === material.id),
@@ -237,7 +245,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
       const result = await updateMaterialsPropApi(callApi, onUpdateCallBack, {
         materialTypeKey: materialType.toString(),
         categoryKey: materialCategory.toString(),
-        ids: selectedMaterialsIds,
+        ids: selectedMaterialsIds ,
         action: eAction,
         isAllMaterialsChecked: isAllMaterialsChecked,
         uncheckedMaterials: uncheckedMaterials,
@@ -270,7 +278,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
         {
           materialTypeKey: materialType.toString(),
           categoryKey: materialCategory.toString(),
-          ids: selectedMaterialsIds,
+          ids: selectedMaterialsIds ,
           action: eAction,
           isAllMaterialsChecked: isAllMaterialsChecked,
           uncheckedMaterials: uncheckedMaterials,
@@ -444,7 +452,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
 
     const requestBody: any = {
       props: transformedArray,
-      ids: selectedMaterialsIds,
+      ids: selectedMaterialsIds ,
     };
     const res = await callApi(
       EHttpMethod.POST,
@@ -479,7 +487,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
 
     const requestBody: any = {
       props: transformedArray,
-      ids: selectedMaterialsIds,
+      ids: selectedMaterialsIds ,
     };
     const res = await callApi(
         EHttpMethod.POST,
