@@ -32,10 +32,6 @@ const QuantityParameter = ({
     productSetQuantityState
   );
   const productSetUnitsParam = useRecoilValue<number>(productSetsUnitsState);
-  console.log("productSetQuantityParam", {
-    productSetUnitsParam,
-    productSetQuantityParam,
-  });
   const quantityTypes = useRecoilValue(productQuantityTypesValuesState);
   useEffect(() => {
     if (productSetsParam) {

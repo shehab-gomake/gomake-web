@@ -49,7 +49,6 @@ export const productTypesNumberState = selector<number>({
   key: "productTypesNumberState",
   get: ({ get }) => {
     const generalParameters = get(subProductsCopyParametersState);
-    console.log("generalParameters", generalParameters);
     const section = generalParameters[0];
     let typesParameterValue = 0;
     if (!!section) {

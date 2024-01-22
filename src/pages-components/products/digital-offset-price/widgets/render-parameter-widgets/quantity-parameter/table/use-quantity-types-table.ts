@@ -73,15 +73,6 @@ const useQuantityTypesTable = (save: boolean) => {
   };
 
   useEffect(() => {
-    console.log("valuesState", {
-      valuesState,
-      productTypesNumber,
-      quantityTypes,
-      subProducts,
-      resultParameter,
-    });
-  }, [valuesState, quantityTypes, resultParameter]);
-  useEffect(() => {
     if (!!equalQuantity) {
       setValuesState((prevState) =>
         prevState.map((value) => ({ ...value, quantity: equalQuantity }))

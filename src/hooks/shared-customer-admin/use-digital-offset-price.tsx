@@ -141,7 +141,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   useEffect(() => {
     if (calculationResult && calculationResult.productItemValue) {
       if (calculationResult.productItemValueDraftId === calculationSessionId) {
-        console.log("calculationResult", calculationResult);
         setLoading(false);
         setCurrentProductItemValueDraftId(
           calculationResult.productItemValueDraftId
