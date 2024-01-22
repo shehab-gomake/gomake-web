@@ -361,7 +361,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
 
   const materialHeaders =
     useRecoilValue<
-      { key: string; value: string; inputType: number; values: any[] }[]
+      { key: string; value: string; inputType: number; values: any[],isHideInDuplicate?:boolean }[]
     >(materialHeadersState);
   const [property, setProperty] = useState<any[]>();
 

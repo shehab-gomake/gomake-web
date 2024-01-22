@@ -18,11 +18,9 @@ import { actionMenuState } from "@/store";
 const MaterialMenuWidget = ({
   dataRow,
   isAdmin,
-  setSelectedTableRow,
   onClickOpenDeleteTableRowModal,
   onChangeRowCheckBox,
 }) => {
-  setSelectedTableRow(dataRow);
   const { clasess } = useStyle();
   const { open, anchorEl, handleClose, handleClick } = useMoreCircle({
     onChangeRowCheckBox,
@@ -92,7 +90,7 @@ const MaterialMenuWidget = ({
         <MenuItem
           style={clasess.menuItemContainer}
           onClick={() => {
-            onClickOpenDeleteTableRowModal();
+            onClickOpenDeleteTableRowModal(dataRow);
             handleClose();
           }}
         >
