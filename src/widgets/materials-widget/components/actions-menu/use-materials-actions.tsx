@@ -503,6 +503,12 @@ const useMaterialsActions = (isAdmin: boolean) => {
       alertFaultAdded();
     }
   }, [properties]);
+  
+  const updateModalCurrency = (newCurrency) => {
+    getExchangeRate(currentCurrency,newCurrency).then()
+    setCheckedPrice(true);
+    onTextInputChange(newCurrency);
+  }
   const handleCloseModal = () => {
     onChooseAction(null);
     setProperty(null);
@@ -536,6 +542,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
     handleChange,
     deleteProperty,
     addProperty,
+    updateModalCurrency,
   };
 };
 

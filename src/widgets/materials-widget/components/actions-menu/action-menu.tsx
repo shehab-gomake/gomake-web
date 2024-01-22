@@ -45,6 +45,7 @@ const ActionMenu = (props: IActionMenuProps) => {
     handleChange,
     deleteProperty,
     addProperty,
+      updateModalCurrency
   } = useMaterialsActions(props.isAdmin);
   const getMaterialActions = ()=>{
       if(props.isAdmin){
@@ -125,8 +126,7 @@ const ActionMenu = (props: IActionMenuProps) => {
                   value={updatedValue}
                   options={currencies}
                   onChange={(e, value) => {
-                    setCheckedPrice(true);
-                    onTextInputChange(value?.value);
+                      updateModalCurrency(value?.value)
                   }}
                   disableClearable
                 />
