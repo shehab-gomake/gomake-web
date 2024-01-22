@@ -509,6 +509,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
   const handleCloseModal = () => {
     onChooseAction(null);
     setProperty(null);
+    setUpdatedValue(null);
     setProperties([initialProperties]);
   };
   return {
