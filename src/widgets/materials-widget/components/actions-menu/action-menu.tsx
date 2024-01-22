@@ -46,7 +46,14 @@ const ActionMenu = (props: IActionMenuProps) => {
     deleteProperty,
     addProperty,
   } = useMaterialsActions(props.isAdmin);
-
+  const getMaterialActions = ()=>{
+      if(props.isAdmin){
+          return materialActions;
+      }else{
+          return materialActions.filter(x=>x.action !== EMaterialsActions.DownLoadExcel &&  x.action !== EMaterialsActions.UploadExcel);
+      }
+     
+  }
   return (
     <>
       <IconButton onClick={handleMoreOptionIconClick}>
@@ -74,7 +81,7 @@ const ActionMenu = (props: IActionMenuProps) => {
         anchorOrigin={{ horizontal: "center", vertical: "bottom" }}
         onClick={handleCloseMenu}
       >
-        {materialActions?.map((action) => (
+        {getMaterialActions()?.map((action) => (
           <>
             <MenuItem
               style={clasess.menuItemContainer}

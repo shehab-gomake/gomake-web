@@ -71,7 +71,8 @@ const useMaterials = (isAdmin: boolean) => {
   const onClickCloseDeleteRowModal = () => {
     setOpenDeleteRowModal(false);
   };
-  const onClickOpenDeleteRowModal = () => {
+  const onClickOpenDeleteRowModal = (category) => {
+    setSelectedCategory(category);
     setOpenDeleteRowModal(true);
   };
   const [openDeleteTableRowModal, setOpenDeleteTableRowModal] =
@@ -114,6 +115,7 @@ const useMaterials = (isAdmin: boolean) => {
         alertFaultDelete();
       }
     };
+    debugger;
     if (isAdmin) {
       await deleteMaterialCategoryApi(callApi, callBack, {
         materialTypeKey: materialType.toString(),
@@ -150,7 +152,6 @@ const useMaterials = (isAdmin: boolean) => {
         ? () => (
             <SideLeftMenuWidget
               onClickOpenDeleteRowModal={onClickOpenDeleteRowModal}
-              setSelectedCategory={setSelectedCategory}
               category={category}
             />
           )
