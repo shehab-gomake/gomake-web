@@ -28,8 +28,9 @@ const QuoteForPriceTable = ({
   getCalculateQuote,
   changedocumentItemsChild,
   documentType,
+  isQuoteConfirmation = false,
 }) => {
-  const { clasess } = useStyle({ headerHeight });
+  const { classes } = useStyle({ headerHeight });
   const PrimaryTableCell = styled(TableCell)(() => {
     return {
       [`&.${tableCellClasses.head}`]: {
@@ -54,17 +55,19 @@ const QuoteForPriceTable = ({
       >
         <Table stickyHeader={true}>
           <TableHead>
-            <TableRow style={clasess.tableRowStyle}>
+            <TableRow style={classes.tableRowStyle}>
               {tableHeaders.map((header, index) => (
-                <PrimaryTableCell
-                  key={index}
-                  style={{
-                    width: columnWidths[index],
-                    ...clasess.tableHeaderStyle,
-                  }}
-                >
-                  {header}
-                </PrimaryTableCell>
+                !(isQuoteConfirmation && index === tableHeaders.length - 1) && (
+                  <PrimaryTableCell
+                    key={index}
+                    style={{
+                      width: columnWidths[index],
+                      ...classes.tableHeaderStyle,
+                    }}
+                  >
+                    {header}
+                  </PrimaryTableCell>
+                )
               ))}
             </TableRow>
           </TableHead>
@@ -88,6 +91,8 @@ const QuoteForPriceTable = ({
                     }
                     onClickDeleteQouteItem={onClickDeleteQouteItem}
                     documentType={documentType}
+                    isQuoteConfirmation={isQuoteConfirmation}
+
                   />
                   {item?.childsDocumentItems &&
                     item?.childsDocumentItems?.map(
@@ -106,6 +111,7 @@ const QuoteForPriceTable = ({
                             onClickDeleteQouteItem={onClickDeleteQouteItem}
                             getCalculateQuoteItem={getCalculateQuoteItem}
                             childList={item?.childsDocumentItems}
+                            isQuoteConfirmation={isQuoteConfirmation}
                           />
                         );
                       }
@@ -120,6 +126,7 @@ const QuoteForPriceTable = ({
         getCalculateQuote={getCalculateQuote}
         quoteItems={quoteItems}
         changeQuoteItems={changeQuoteItems}
+        isQuoteConfirmation={isQuoteConfirmation}
       />
     </div>
   );

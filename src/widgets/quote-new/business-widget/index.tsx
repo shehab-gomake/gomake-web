@@ -36,16 +36,16 @@ const BusinessNewWidget = ({
   updatePurchaseNumber,
   updateClientAddress,
   onClickDeleteAddress,
-  documentType
+  documentType,
+  isQuoteConfirmation = false,
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
+  const [isConfirmation, setIsConfirmation] = useState();
   const quoteStateValue = useRecoilValue<any>(quoteItemState);
   const { renderOptions, checkWhatRenderArray } = useQuoteWidget();
   const [openModal, setOpenModal] = useRecoilState<boolean>(addressModalState);
-  
   const [purchaseNumber, setPurchaseNumber] = useState(values?.purchaseNumber || t("sales.quote.noPurchaseNumber"));
-
 
   useEffect(() => {
     setPurchaseNumber(values?.purchaseNumber || t("sales.quote.noPurchaseNumber"));
@@ -56,35 +56,33 @@ const BusinessNewWidget = ({
     id: customer?.id
   }));
 
-
   return (
     <>
       <div style={classes.businessContainerStyle}>
-
         <AutoCompleteUpdatedValue
           label={t("sales.quote.businessName")}
           value={quoteStateValue?.client?.name}
           options={mappedCustomers}
           onBlur={onBlurBusinessName}
           isUpdate={isUpdateBusinessName}
-          setIsUpdate={setIsUpdateBusinessName}
+          setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdateBusinessName}
           getOptionLabel={(item) => item.text}
           onChange={(e, value) => onChangeSelectBusiness(value)}
           onChangeTextField={checkWhatRenderArray}
         />
         <InputUpdatedValues
-           value={purchaseNumber}
+          value={purchaseNumber}
           label={t("sales.quote.purchaseNumber")}
           onBlur={() => onBlurPurchaseNumber(purchaseNumber)}
           isUpdate={isUpdatePurchaseNumber}
-          setIsUpdate={setIsUpdatePurchaseNumber}
+          setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdatePurchaseNumber}
           onInputChange={(v) => setPurchaseNumber(v)}
         />
         <InputUpdatedValues
           value={`${selectBusiness?.code}`}
           label={t("sales.quote.businessCode")}
           onBlur={onBlurBusinessCode}
-          setIsUpdate={setIsUpdateBusinessCode}
+          setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdateBusinessCode}
         />
         <AutoCompleteUpdatedValue
           label={t("sales.quote.agent")}
@@ -92,7 +90,7 @@ const BusinessNewWidget = ({
           options={agentListValue}
           onBlur={onBlurAgent}
           isUpdate={isUpdateAgent}
-          setIsUpdate={setIsUpdateAgent}
+          setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdateAgent}
           getOptionLabel={(item) => item.text}
           onChange={(e, value) => updateAgent(value)}
         />
@@ -113,17 +111,14 @@ const BusinessNewWidget = ({
           >
             <MinusIcon />
             <div style={classes.addNewAddressTextStyle} onClick={() => onClickDeleteAddress(values?.documentAddresses[0])}>{t("sales.quote.removeAddress")}</div>
-          </div> : (
-            <div
-              style={classes.addNewAddressStyle}
-            >
+          </div>
+          :
+          (!isQuoteConfirmation &&
+            <div style={classes.addNewAddressStyle} >
               <PlusNewIcon />
               <div style={classes.addNewAddressTextStyle} onClick={() => setOpenModal(true)} >{t("sales.quote.addAddress")}</div>
             </div>
           )}
-
-
-
         {/* <GoMakeAlertModal 
         title={t("Change client")}
         openModal={openAlertModal}

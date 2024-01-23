@@ -238,6 +238,7 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
                   updateClientAddress={updateClientAddress}
                   onClickDeleteAddress={onClickDeleteAddress}
                   documentType={documentType}
+                  isQuoteConfirmation={isQuoteConfirmation}
                 />
                 <ContactNewWidget
                   handleShowLess={handleShowLess}
@@ -267,6 +268,7 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
                   onCloseDeleteModalContact={onCloseDeleteModalContact}
                   onClickDeleteContact={onClickDeleteContact}
                   selectedContact={selectedContact}
+                  isQuoteConfirmation={isQuoteConfirmation}
                 />
               </div>
             </div>
@@ -294,6 +296,7 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
                 getCalculateQuote={getCalculateQuote}
                 changedocumentItemsChild={changedocumentItemsChild}
                 documentType={documentType}
+                isQuoteConfirmation={isQuoteConfirmation}
               />
             </div>
             <div style={{ width: "100%", flex: 0.1 }}>

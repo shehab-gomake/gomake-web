@@ -4,6 +4,7 @@ import { ContactMapping } from "./contact-mapping";
 import { AddContactNewWidget } from "./add-contact-widget";
 import { GoMakeDeleteModal } from "@/components";
 import { useTranslation } from "react-i18next";
+import { useState } from "react";
 
 const ContactNewWidget = ({
   handleShowLess,
@@ -33,12 +34,14 @@ const ContactNewWidget = ({
   onCloseDeleteModalContact,
   onClickDeleteContact,
   selectedContact,
+  isQuoteConfirmation = false,
 }) => {
-  const { clasess } = useStyle();
+  const { classes } = useStyle();
   const { t } = useTranslation();
+  const [isConfirmation, setIsConfirmation] = useState();
   return (
     <>
-      <div style={clasess.mainContainer}>
+      <div style={classes.mainContainer}>
         {items?.length > 0 ? (
           <>
             <div>
@@ -53,28 +56,30 @@ const ContactNewWidget = ({
                   items={items}
                   changeItems={changeItems}
                   updateClientContact={updateClientContact}
+                  isQuoteConfirmation={isQuoteConfirmation }
                 />
               ))}
             </div>
           </>
         ) : (
+          !isQuoteConfirmation && 
           <div
-            style={clasess.addNewContactNameStyle}
+            style={classes.addNewContactNameStyle}
             onClick={() => setIsDisplayWidget(true)}
           >
             <PlusNewIcon />
-            <div style={clasess.addNewContactNameTextStyle}>
+            <div style={classes.addNewContactNameTextStyle}>
               {t("sales.quote.addContact")}
             </div>
           </div>
         )}
         {items?.length > 2 && displayedItems === 2 && (
-          <div style={clasess.showLessContainer} onClick={handleShowMore}>
+          <div style={classes.showLessContainer} onClick={handleShowMore}>
             {t("sales.quote.showMore")}
           </div>
         )}
         {items?.length > 2 && displayedItems > 2 && (
-          <div style={clasess.showLessContainer} onClick={handleShowLess}>
+          <div style={classes.showLessContainer} onClick={handleShowLess}>
             {t("sales.quote.showLess")}
           </div>
         )}
