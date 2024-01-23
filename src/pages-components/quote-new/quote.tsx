@@ -31,7 +31,7 @@ interface IProps {
   isQuoteConfirmation?: boolean;
 }
 const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProps) => {
-  const { clasess } = useStyle();
+  const { classes } = useStyle(isQuoteConfirmation);
   const quoteItemValue = useRecoilValue<any>(quoteItemState);
   const {
     selectDate,
@@ -159,23 +159,23 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
   return (
     <>
       {quoteItemValue?.id && (
-        <div style={clasess.mainContainer}>
-          <div style={clasess.secondContainer}>
+        <div style={classes.mainContainer}>
+          <div style={classes.secondContainer}>
             <div style={{ paddingLeft: 20, paddingRight: 12 }}>
-              <div style={clasess.titleSettingContainer}>
-                <div style={clasess.titleQuateContainer}>
+              <div style={classes.titleSettingContainer}>
+                <div style={classes.titleQuateContainer}>
                   <HeaderTitle
                     title={documentTitle}
                     marginBottom={1}
                     marginTop={1}
                     color="rgba(241, 53, 163, 1)"
                   />
-                  <div style={clasess.quoteNumberStyle}>
+                  <div style={classes.quoteNumberStyle}>
                     {" - "} {quoteItemValue?.number}
                   </div>
                 </div>
-                <div style={clasess.settingsStatusContainer}>
-                  <div style={clasess.quoteStatusContainer}>
+                {!isQuoteConfirmation && <div style={classes.settingsStatusContainer}>
+                  <div style={classes.quoteStatusContainer}>
                     {_renderQuoteStatus(
                       quoteItemValue?.documentStatus,
                       quoteItemValue,
@@ -188,18 +188,18 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
                   >
                     <SettingNewIcon />
                   </IconButton>
-                </div>
+                </div>}
               </div>
-              <div style={clasess.datesContainer}>
+              <div style={classes.datesContainer}>
                 <div
-                  style={clasess.deleverdDate}
+                  style={classes.deleverdDate}
                   onClick={handleClickSelectDate}
                 >
                   {t("sales.quote.dateOfReference")}{" "}
                   {selectDate
                     ? DateFormatterDDMMYYYY(selectDate)
                     : "select date"}
-                  <div style={clasess.datePickerContainer}>
+                  <div style={classes.datePickerContainer}>
                     <input
                       type="datetime-local"
                       onChange={(e) => {
@@ -210,9 +210,9 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
                     />
                   </div>
                 </div>
-                {/* <div style={clasess.lineDateStyle} /> Don't Delete */}
+                {/* <div style={classes.lineDateStyle} /> Don't Delete */}
               </div>
-              <div style={clasess.bordersecondContainer}>
+              <div style={classes.bordersecondContainer}>
                 <BusinessNewWidget
                   values={quoteItemValue}
                   selectBusiness={selectBusiness}
@@ -299,21 +299,19 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
                 isQuoteConfirmation={isQuoteConfirmation}
               />
             </div>
-            <div style={{ width: "100%", flex: 0.1 }}>
-              <WriteCommentComp isQuoteConfirmation={isQuoteConfirmation}/>
-              {isQuoteConfirmation ?
-                <ButtonsConfirmContainer
-                />
-                : <ButtonsContainer
-                  onOpenNewItem={onOpenNewItem}
-                  onOpenDeliveryModal={onOpenDeliveryModal}
-                  handleCancelBtnClick={handleCancelBtnClick}
-                  handleSaveBtnClick={handleSaveBtnClick}
-                  handleSendBtnClick={handleSendBtnClick}
-                  documentType={documentType}
-                />}
-            </div>
+            <WriteCommentComp isQuoteConfirmation={isQuoteConfirmation} />
           </div>
+          {isQuoteConfirmation ?
+            <ButtonsConfirmContainer
+            />
+            : <ButtonsContainer
+              onOpenNewItem={onOpenNewItem}
+              onOpenDeliveryModal={onOpenDeliveryModal}
+              handleCancelBtnClick={handleCancelBtnClick}
+              handleSaveBtnClick={handleSaveBtnClick}
+              handleSendBtnClick={handleSendBtnClick}
+              documentType={documentType}
+            />}
         </div>
       )}
       <AddNewItemModal
