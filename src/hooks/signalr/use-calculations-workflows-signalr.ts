@@ -25,7 +25,7 @@ const useCalculationsWorkFlowsSignalr = () => {
                 setSignalrRWorkFlows(newData);
             });
             connection.on("startCalculationSession", (newData) => {
-                setConnectionSessionId(newData);
+                setConnectionSessionId(newData.productItemValueDraftId);
             });
             connection.on("updateSelectedWorkFlow", (newData) => {
                 setUpdatedSelectedWorkFlow(newData);

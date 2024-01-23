@@ -45,25 +45,10 @@ const RightSideWidget = ({
     listEmployees,
     isLoading,
     quantity,
+    selectedWorkFlow,
     setCurrentProductItemValueTotalPrice,
     t,
   } = useRightSideWidget({ includeVAT });
-
-  const data = [
-    {
-      value: "Action name:",
-      text: "Get Jira notifications on yourrrrrrr phone! Download the Jira Cloud app for Android or iOS.",
-    },
-    {
-      value: "Action name:",
-      text: "Message Get Jira notifications on your phone! Download the Jira Cloud app for Android or iOS.",
-    },
-    {
-      value: "",
-      text: "Price calculated!",
-    },
-  ];
-
   return (
     <div style={clasess.rightSideMainContainer}>
       <div style={clasess.rightSideContainer}>
@@ -188,7 +173,7 @@ const RightSideWidget = ({
         {currentProductItemValueTotalPrice && (
           <div style={clasess.orderContainer}>
             {t("products.offsetPrice.admin.orderToral", {
-              pieceNum: quantity?.values[0],
+              prieceNum: quantity?.values[0],
               price: isNaN(
                 currentProductItemValueTotalPrice / quantity?.values[0]
               )
@@ -375,36 +360,40 @@ const RightSideWidget = ({
                   {t("products.offsetPrice.admin.general")} {errorMsg}
                 </div>
               )}
-
-              {data?.map((item) => {
-                return (
-                  <>
-                    {item.value ? (
-                      <div
-                        style={{
-                          display: "flex",
-                          flexDirection: "row",
-                          justifyContent: "flex-start",
-                          alignItems: "flex-start",
-                          width: "100%",
-                          gap: 5,
-                        }}
-                      >
-                        <div style={clasess.titleLogsTextStyle}>
-                          <div>{item.value}</div>
+              {!selectedWorkFlow?.isCalculated &&
+                selectedWorkFlow?.exceptions?.map((item) => {
+                  return (
+                    <>
+                      {item.ActionName ? (
+                        <div
+                          style={{
+                            display: "flex",
+                            flexDirection: "row",
+                            justifyContent: "flex-start",
+                            alignItems: "flex-start",
+                            width: "100%",
+                            gap: 5,
+                          }}
+                        >
+                          <div style={clasess.titleLogsTextStyle}>
+                            <div>{item.ActionName}</div>
+                          </div>
+                          <div style={clasess.textLogstyle}>
+                            <span style={{ color: "black" }}>
+                              {item.Exception?.ExceptionMessage}
+                            </span>
+                          </div>
                         </div>
-                        <div style={clasess.textLogstyle}>
-                          <span style={{ color: "black" }}>{item.text}</span>
+                      ) : (
+                        <div style={clasess.generalMsgTextStyle}>
+                          {t("products.offsetPrice.admin.general")}{" "}
+                          {item.Exception?.ExceptionMessage}
                         </div>
-                      </div>
-                    ) : (
-                      <div style={clasess.generalMsgTextStyle}>
-                        {t("products.offsetPrice.admin.general")} {item.text}
-                      </div>
-                    )}
-                  </>
-                );
-              })}
+                      )}
+                    </>
+                  );
+                })}
+              {}
             </div>
           )}
         </div>
