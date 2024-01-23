@@ -31,6 +31,7 @@ import { SWITCHParameterWidget } from "@/pages-components/products/digital-offse
 import { ButtonParameterWidget } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/button-parameter";
 
 import {
+  calculationExceptionsLogsState,
   calculationProgressState,
   currentProductItemValueDraftId,
   currentProductItemValuePriceState,
@@ -103,6 +104,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   );
   const [pricingDefaultValue, setPricingDefaultValue] = useState<any>();
   const [workFlows, setWorkFlows] = useRecoilState(workFlowsState);
+  const setCalculationExceptionsLogs = useSetRecoilState(calculationExceptionsLogsState);
   const selectedWorkFlow = useRecoilValue(selectedWorkFlowState);
   const productQuantityTypes = useRecoilValue(productQuantityTypesValuesState);
   const setCalculationProgress = useSetRecoilState(calculationProgressState);
@@ -124,6 +126,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     calculationSessionId,
     connectionId,
     updatedSelectedWorkFlow,
+    calculationExceptionsLogs,
   } = useCalculationsWorkFlowsSignalr();
   const [calculationSessionConnectionId, setCalculationSessionConnectionId] =
     useRecoilState(currentCalculationConnectionId);
@@ -210,6 +213,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     });
     setCalculationSessionConnectionId(connectionId);
   }, [calculationSessionId]);
+  
+  useEffect(()=>{
+    setCalculationExceptionsLogs(calculationExceptionsLogs);
+  },[calculationExceptionsLogs])
   useEffect(() => {
     setWorkFlows(
       workFlows.map((flow) =>

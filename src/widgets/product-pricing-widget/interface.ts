@@ -127,3 +127,8 @@ export interface IRecommendationRang {
   pricePercent: number;
   profitPercent: number;
 }
+
+export interface IExceptionsLog{
+    text:string;
+    title?:string;
+}

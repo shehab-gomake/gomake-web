@@ -6,7 +6,7 @@ import {useEffect, useState} from "react";
 import {
     ICalculationSignalRResult
 } from "@/pages-components/products/digital-offset-price/interfaces/calculation-signalr-result";
-import {ICalculatedWorkFlow} from "@/widgets/product-pricing-widget/interface";
+import {ICalculatedWorkFlow, IExceptionsLog} from "@/widgets/product-pricing-widget/interface";
 import {useRecoilState} from "recoil";
 import {currentCalculationConnectionId} from "@/store";
 
@@ -19,6 +19,8 @@ const useCalculationsWorkFlowsSignalr = () => {
     const [calculationSessionId,setConnectionSessionId] = useState<string>();
     const [signalrRWorkFlows,setSignalrRWorkFlows] = useState<ICalculationSignalRResult>();
     const [updatedSelectedWorkFlow,setUpdatedSelectedWorkFlow] = useState<ICalculatedWorkFlow>();
+    const [calculationExceptionsLogs, setCalculationExceptionsLogs] = useState<IExceptionsLog[]>();
+
     useEffect(()=>{
         if(connection){
             connection.on("updateWorkFlows", (newData:ICalculationSignalRResult) => {
@@ -26,6 +28,8 @@ const useCalculationsWorkFlowsSignalr = () => {
             });
             connection.on("startCalculationSession", (newData) => {
                 setConnectionSessionId(newData.productItemValueDraftId);
+                setCalculationExceptionsLogs(newData.calculationExceptions);
+                console.log("startCalculationSession",newData)
             });
             connection.on("updateSelectedWorkFlow", (newData) => {
                 setUpdatedSelectedWorkFlow(newData);
@@ -33,7 +37,7 @@ const useCalculationsWorkFlowsSignalr = () => {
         }
     },[connection])
     return {
-        calculationResult:signalrRWorkFlows,calculationSessionId,connectionId,updatedSelectedWorkFlow
+        calculationResult:signalrRWorkFlows,calculationSessionId,connectionId,updatedSelectedWorkFlow,calculationExceptionsLogs
     }
 };
 export {useCalculationsWorkFlowsSignalr}

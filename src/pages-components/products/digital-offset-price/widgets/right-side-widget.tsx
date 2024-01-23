@@ -5,6 +5,8 @@ import { EWidgetProductType } from "../enums";
 import { DotsLoader } from "@/components/dots-loader/dots-Loader";
 import { ProgressBar } from "@/components/progress-bar/progress-bar";
 import { useRightSideWidget } from "./use-right-side-widget";
+import {useRecoilValue, useSetRecoilState} from "recoil";
+import {calculationExceptionsLogsState} from "@/widgets/product-pricing-widget/state";
 
 const RightSideWidget = ({
   clasess,
@@ -49,6 +51,7 @@ const RightSideWidget = ({
     setCurrentProductItemValueTotalPrice,
     t,
   } = useRightSideWidget({ includeVAT });
+  const calculationExceptionsLogs = useRecoilValue(calculationExceptionsLogsState);
   return (
     <div style={clasess.rightSideMainContainer}>
       <div style={clasess.rightSideContainer}>
@@ -360,40 +363,36 @@ const RightSideWidget = ({
                   {t("products.offsetPrice.admin.general")} {errorMsg}
                 </div>
               )}
-              {!selectedWorkFlow?.isCalculated &&
-                selectedWorkFlow?.exceptions?.map((item) => {
-                  return (
-                    <>
-                      {item.ActionName ? (
-                        <div
-                          style={{
-                            display: "flex",
-                            flexDirection: "row",
-                            justifyContent: "flex-start",
-                            alignItems: "flex-start",
-                            width: "100%",
-                            gap: 5,
-                          }}
-                        >
-                          <div style={clasess.titleLogsTextStyle}>
-                            <div>{item.ActionName}</div>
-                          </div>
-                          <div style={clasess.textLogstyle}>
-                            <span style={{ color: "black" }}>
-                              {item.Exception?.ExceptionMessage}
-                            </span>
-                          </div>
+
+              {calculationExceptionsLogs?.map((item) => {
+                return (
+                  <>
+                    {item.title ? (
+                      <div
+                        style={{
+                          display: "flex",
+                          flexDirection: "row",
+                          justifyContent: "flex-start",
+                          alignItems: "flex-start",
+                          width: "100%",
+                          gap: 5,
+                        }}
+                      >
+                        <div style={clasess.titleLogsTextStyle}>
+                          <div>{item.title}</div>
                         </div>
-                      ) : (
-                        <div style={clasess.generalMsgTextStyle}>
-                          {t("products.offsetPrice.admin.general")}{" "}
-                          {item.Exception?.ExceptionMessage}
+                        <div style={clasess.textLogstyle}>
+                          <span style={{ color: "black" }}>{item.text}</span>
                         </div>
-                      )}
-                    </>
-                  );
-                })}
-              {}
+                      </div>
+                    ) : (
+                      <div style={clasess.generalMsgTextStyle}>
+                        {t("products.offsetPrice.admin.general")} {item.text}
+                      </div>
+                    )}
+                  </>
+                );
+              })}
             </div>
           )}
         </div>
