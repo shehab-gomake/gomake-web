@@ -49,9 +49,9 @@ const ActionMenu = (props: IActionMenuProps) => {
   } = useMaterialsActions(props.isAdmin);
   const getMaterialActions = ()=>{
       if(props.isAdmin){
-          return materialActions;
+          return materialActions.filter(x=>x.action !== EMaterialsActions.UpdateIsActive && x.action !== EMaterialsActions.UpdateIsInActive);
       }else{
-          return materialActions.filter(x=>x.action !== EMaterialsActions.DownLoadExcel &&  x.action !== EMaterialsActions.UploadExcel);
+          return materialActions.filter(x=>x.action !== EMaterialsActions.DownLoadExcel &&  x.action !== EMaterialsActions.UploadExcel );
       }
      
   }

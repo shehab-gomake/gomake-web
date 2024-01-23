@@ -61,22 +61,26 @@ const MaterialMenuWidget = ({
         <MoreCircleIcon />
       </IconButton>
       <GoMakeMenu handleClose={handleClose} open={open} anchorEl={anchorEl}>
-        <MenuItem style={clasess.menuItemContainer}>
-          <div style={clasess.menuRowStyle}>
-            <ConvertIcon />
-            <div
-              style={clasess.rowTextStyle}
-              onClick={() => {
-                toggleIsActive(dataRow?.id, "Active", dataRow?.isActive);
-              }}
-            >
-              {dataRow?.isActive
-                ? t("remainWords.convertToInactive")
-                : t("remainWords.convertToActive")}
-            </div>
-          </div>
-        </MenuItem>
-        <Divider />
+        {
+          !isAdmin ? <div>
+            <MenuItem style={clasess.menuItemContainer}>
+              <div style={clasess.menuRowStyle}>
+                <ConvertIcon />
+                <div
+                    style={clasess.rowTextStyle}
+                    onClick={() => {
+                      toggleIsActive(dataRow?.id, "Active", dataRow?.isActive);
+                    }}
+                >
+                  {dataRow?.isActive
+                      ? t("remainWords.convertToInactive")
+                      : t("remainWords.convertToActive")}
+                </div>
+              </div>
+            </MenuItem>
+            <Divider />
+          </div> : <></>
+        }
         <MenuItem
           style={clasess.menuItemContainer}
           onClick={() => {

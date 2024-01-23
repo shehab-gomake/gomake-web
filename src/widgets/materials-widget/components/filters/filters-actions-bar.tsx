@@ -145,13 +145,15 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
             />
           );
         })} */}
-      <GoMakeAutoComplate
-        style={{ width: "150px" }}
-        options={activeFilterOptions}
-        value={activeFilterLabel()}
-        onChange={(e: any, value: any) => onActiveFilterChange(value?.value)}
-        disableClearable={true}
-      />
+      {
+        !props.isAdmin ? <GoMakeAutoComplate
+            style={{ width: "150px" }}
+            options={activeFilterOptions}
+            value={activeFilterLabel()}
+            onChange={(e: any, value: any) => onActiveFilterChange(value?.value)}
+            disableClearable={true}
+        /> : <></>
+      }
       <Stack direction={"row"} gap={"5px"} alignItems={"center"}>
         {props.isAdmin === false ? (
           <GoMakeAutoComplate
