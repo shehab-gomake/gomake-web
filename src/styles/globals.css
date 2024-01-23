@@ -288,3 +288,11 @@ input::placeholder {
 :root{
   --react-international-phone-dropdown-left:20;
 }
+
+.MuiTooltip-tooltip{
+  background: #EBECFF;
+  color:#1C1D58;
+  font-size:14px;
+  font-weight: 400;
+  max-width: 150px;
+}
