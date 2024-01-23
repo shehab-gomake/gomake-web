@@ -12,6 +12,7 @@ import { currenciesState } from "@/widgets/materials-widget/state";
 import {
   calculationProgressState,
   currentProductItemValuePriceState,
+  selectedWorkFlowState,
 } from "@/widgets/product-pricing-widget/state";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -21,7 +22,7 @@ const useRightSideWidget = ({ includeVAT }) => {
   const isLoading = useRecoilValue(isLoadgingState);
   const subProducts = useRecoilValue<any>(subProductsParametersState);
   const systemVAT = useRecoilValue<number>(systemVATState);
-
+  const selectedWorkFlow = useRecoilValue(selectedWorkFlowState);
   const [systemCurrency, setSystemCurrency] =
     useRecoilState<any>(systemCurrencyState);
   const currencies = useRecoilValue(currenciesState);
@@ -53,7 +54,6 @@ const useRightSideWidget = ({ includeVAT }) => {
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
   const [listEmployees, setListEmployees] = useState([]);
-  console.log("listEmployees", listEmployees);
   const getAllUsers = () => {
     const callBackFunction = (data) => {
       if (data.success) {
@@ -88,6 +88,7 @@ const useRightSideWidget = ({ includeVAT }) => {
     listEmployees,
     isLoading,
     quantity,
+    selectedWorkFlow,
     setCurrentProductItemValueTotalPrice,
     t,
   };
