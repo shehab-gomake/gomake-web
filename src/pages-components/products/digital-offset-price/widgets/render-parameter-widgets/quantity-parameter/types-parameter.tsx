@@ -14,7 +14,7 @@ import {
   productSetsUnitsState,
 } from "@/store";
 
-const QuantityParameter = ({
+const TypesParameter = ({
   classes,
   parameter,
   index,
@@ -28,52 +28,8 @@ const QuantityParameter = ({
   const { openModal, setOpenModal, productTypesNumber } =
     useQuantityParameter();
   const productSetsParam = useRecoilValue<string>(productSetsParamState);
-  const productSetQuantityParam = useRecoilValue<number>(
-    productSetQuantityState
-  );
-  const productSetUnitsParam = useRecoilValue<number>(productSetsUnitsState);
-  const quantityTypes = useRecoilValue(productQuantityTypesValuesState);
-  useEffect(() => {
-    if (productSetsParam) {
-      onChangeSubProductsForPrice(
-        parameter?.id,
-        subSection?.id,
-        section?.id,
-        parameter?.parameterType,
-        parameter?.name,
-        parameter?.actionId,
-        {
-          values: productSetUnitsParam * productSetQuantityParam,
-        },
-        subSection?.type,
-        index,
-        parameter?.actionIndex
-      );
-    } else if (quantityTypes.length > 1) {
-      onChangeSubProductsForPrice(
-        parameter?.id,
-        subSection?.id,
-        section?.id,
-        parameter?.parameterType,
-        parameter?.name,
-        parameter?.actionId,
-        {
-          values: quantityTypes
-            .reduce((acc, val) => acc + val.quantity, 0)
-            .toString(),
-        },
-        subSection?.type,
-        index,
-        parameter?.actionIndex
-      );
-    }
-  }, [
-    quantityTypes,
-    productSetsParam,
-    productSetUnitsParam,
-    productSetQuantityParam,
-  ]);
-  const isInputDisabled = productTypesNumber > 1 || productSetsParam === "true";
+
+  const isInputDisabled = productSetsParam === "true";
   return (
     <Stack direction={"row"}>
       <GomakeTextInput
@@ -98,28 +54,8 @@ const QuantityParameter = ({
         }}
         type={type}
       />
-      {productTypesNumber > 1 && (
-        <IconButton onClick={() => setOpenModal(true)}>
-          <SettingsIcon
-            stroke={"rgba(237, 2, 140, 1)"}
-            width={24}
-            height={24}
-          />
-        </IconButton>
-      )}
-      <GoMakeModal
-        insideStyle={{
-          width: 420,
-          height: 680,
-        }}
-        modalTitle={t("quantityTypes.title")}
-        openModal={openModal}
-        onClose={() => setOpenModal(false)}
-      >
-        <QuantityTypesComponent />
-      </GoMakeModal>
     </Stack>
   );
 };
 
-export { QuantityParameter };
+export { TypesParameter };

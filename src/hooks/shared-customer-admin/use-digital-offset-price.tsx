@@ -51,6 +51,7 @@ import {
   updateDocumentItemApi,
 } from "@/services/api-service/generic-doc/documents-api";
 import { productQuantityTypesValuesState } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/quantity-parameter/quantity-types/state";
+import { TypesParameter } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/quantity-parameter/types-parameter";
 
 const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const { navigate } = useGomakeRouter();
@@ -140,7 +141,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   useEffect(() => {
     if (calculationResult && calculationResult.productItemValue) {
       if (calculationResult.productItemValueDraftId === calculationSessionId) {
-        console.log("calculationResult", calculationResult);
         setLoading(false);
         setCurrentProductItemValueDraftId(
           calculationResult.productItemValueDraftId
@@ -884,6 +884,22 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           type="number"
         />
       );
+    } else if (
+      parameter?.parameterType === EParameterTypes.INPUT_NUMBER &&
+      parameter?.id === typesParam?.parameterId
+    ) {
+      Comp = (
+        <TypesParameter
+          classes={clasess}
+          parameter={parameter}
+          index={index}
+          temp={temp}
+          onChangeSubProductsForPrice={onChangeSubProductsForPrice}
+          subSection={subSection}
+          section={section}
+          type="number"
+        />
+      );
     } else if (parameter?.parameterType === EParameterTypes.INPUT_NUMBER) {
       Comp = (
         <InputNumberParameterWidget
@@ -1178,9 +1194,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               const index = param.materialPath.findIndex((x) =>
                 compareStrings(x, materialPath)
               );
-              let allMaterialsCopy = cloneDeep(allMaterials)
-              let paramMaterialValues =[];
-              if(index > 0){
+              let allMaterialsCopy = cloneDeep(allMaterials);
+              let paramMaterialValues = [];
+              if (index > 0) {
                 allMaterialsCopy = allMaterialsCopy?.find((x) =>
                   compareStrings(x.pathName, param.materialPath[0])
                 )?.data;
@@ -1607,6 +1623,14 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       const generalParameters = subProducts.find((x) => !x.type)?.parameters;
       return generalParameters?.find(
         (item) => item?.parameterId === "4991945c-5e07-4773-8f11-2e3483b70b53"
+      );
+    }
+  }, [subProducts]);
+  const typesParam = useMemo(() => {
+    if (subProducts) {
+      const generalParameters = subProducts.find((x) => !x.type)?.parameters;
+      return generalParameters?.find(
+        (item) => item?.parameterId === "de2bb7d5-01b1-4b2b-b0fa-81cd0445841b"
       );
     }
   }, [subProducts]);
