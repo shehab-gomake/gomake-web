@@ -60,7 +60,6 @@ const useMaterialsCategories = (isAdmin:boolean) => {
         pageSize,
         customFiltersKeyValueList
       });
-      setPagesCount(Math.ceil(data?.data?.totalItems / pageSize));
     }else{
        await getPrintHouseMaterialCategoryDataApi(callApi, callBack, {
         materialKey: materialType,
