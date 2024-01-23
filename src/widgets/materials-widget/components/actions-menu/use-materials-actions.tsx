@@ -45,11 +45,13 @@ import { useMaterialsCategories } from "../../use-materials-categories";
 import { EMaterialsTabsIcon } from "@/enums";
 import { EHttpMethod } from "@/services/api-service/enums";
 import { actionMenuState } from "@/store";
+import {useMaterials} from "@/widgets/materials-widget/use-materials";
 
 const useMaterialsActions = (isAdmin: boolean) => {
   const { callApi } = useGomakeAxios();
   const { query } = useRouter();
   const { materialType, materialCategory } = query;
+  const { getMaterialCategories } = useMaterials(isAdmin);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const { alertSuccessAdded, alertFaultAdded } = useSnackBar();
   const [materialCategoryData, setMaterialCategoryData] = useRecoilState<
@@ -334,7 +336,18 @@ const useMaterialsActions = (isAdmin: boolean) => {
             return data + String.fromCharCode(byte);
           }, "")
         );
-        uploadMaterialExcelFileApi(callApi, () => {}, {
+        let callBack = () => {
+          getMaterialCategories(materialType).then(x=>{
+            getMaterialCategoryData(
+                materialType?.toString(),
+                materialCategory?.toString(),
+                [],
+                supplierId
+            ).then();
+          });
+          
+        }
+        uploadMaterialExcelFileApi(callApi, callBack, {
           key: materialType.toString(),
           base64: base64String,
         });

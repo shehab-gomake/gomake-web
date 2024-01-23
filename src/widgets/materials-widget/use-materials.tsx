@@ -110,6 +110,7 @@ const useMaterials = (isAdmin: boolean) => {
     const callBack = (res) => {
       if (res.success) {
         alertSuccessDelete();
+        setMaterialCategoryData([])
         getMaterialCategories(materialType).then();
       } else {
         alertFaultDelete();
@@ -117,6 +118,7 @@ const useMaterials = (isAdmin: boolean) => {
     };
     debugger;
     if (isAdmin) {
+      
       await deleteMaterialCategoryApi(callApi, callBack, {
         materialTypeKey: materialType.toString(),
         categoryKey: categoryKey,
