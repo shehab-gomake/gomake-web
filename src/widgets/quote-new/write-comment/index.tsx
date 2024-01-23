@@ -3,14 +3,17 @@ import { useStyle } from "./style";
 import { GomakeTextInput } from "@/components";
 import { useTranslation } from "react-i18next";
 
-const WriteCommentComp = () => {
-  const { clasess } = useStyle();
+interface IProps {
+  isQuoteConfirmation?: boolean;
+}
+const WriteCommentComp = ({isQuoteConfirmation} : IProps) => {
+  const { classes } = useStyle(isQuoteConfirmation);
   const [data, setData] = useState("");
   const { t } = useTranslation();
   return (
-    <div style={clasess.writeCommentcontainer}>
+    <div style={classes.writeCommentContainer}>
       <GomakeTextInput
-        style={clasess.textInputStyle}
+        style={classes.textInputStyle}
         placeholder={t("sales.quote.writeCommentHere")}
         onChange={(e: any) => {
           setData(e.target.value);

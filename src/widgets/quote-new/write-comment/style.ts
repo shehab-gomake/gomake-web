@@ -1,15 +1,15 @@
 import { useMemo } from "react";
-const useStyle = () => {
-  const clasess = useMemo(() => {
+const useStyle = (isQuoteConfirmation) => {
+  const classes = useMemo(() => {
     return {
-      writeCommentcontainer: {
+      writeCommentContainer: {
         display: "flex",
         justifyContent: "flex-start",
         alignItems: "flex-start",
         width: "100%",
         padding: "14px 29px",
         background: "#F4F1F6",
-        borderBottom: "1px solid #67707F",
+        borderBottom: isQuoteConfirmation ? "none" : "1px solid #67707F",
         borderTopRightRadius: 8,
         borderTopLeftRadius: 8,
       },
@@ -19,9 +19,9 @@ const useStyle = () => {
         boxShadow: "none",
       },
     };
-  }, []);
+  }, [isQuoteConfirmation]);
   return {
-    clasess,
+    classes,
   };
 };
 export { useStyle };

@@ -24,11 +24,13 @@ import { SettingQuoteMenu } from "@/widgets/quote-new/setting-quote-menu";
 import { AddDeliveryModal } from "@/widgets/quote-new/modals-widgets/add-delivery-modal/add-delivery-modal";
 import { DOCUMENT_TYPE } from "../quotes/enums";
 import { useEffect } from "react";
+import { ButtonsConfirmContainer } from "@/widgets/quote-new/buttons-cofirm-container";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
+  isQuoteConfirmation?: boolean;
 }
-const QuoteNewPageWidget = ({ documentType }: IProps) => {
+const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProps) => {
   const { clasess } = useStyle();
   const quoteItemValue = useRecoilValue<any>(quoteItemState);
   const {
@@ -295,15 +297,18 @@ const QuoteNewPageWidget = ({ documentType }: IProps) => {
               />
             </div>
             <div style={{ width: "100%", flex: 0.1 }}>
-              <WriteCommentComp />
-              <ButtonsContainer
-                onOpenNewItem={onOpenNewItem}
-                onOpenDeliveryModal={onOpenDeliveryModal}
-                handleCancelBtnClick={handleCancelBtnClick}
-                handleSaveBtnClick={handleSaveBtnClick}
-                handleSendBtnClick={handleSendBtnClick}
-                documentType={documentType}
-              />
+              <WriteCommentComp isQuoteConfirmation={isQuoteConfirmation}/>
+              {isQuoteConfirmation ?
+                <ButtonsConfirmContainer
+                />
+                : <ButtonsContainer
+                  onOpenNewItem={onOpenNewItem}
+                  onOpenDeliveryModal={onOpenDeliveryModal}
+                  handleCancelBtnClick={handleCancelBtnClick}
+                  handleSaveBtnClick={handleSaveBtnClick}
+                  handleSendBtnClick={handleSendBtnClick}
+                  documentType={documentType}
+                />}
             </div>
           </div>
         </div>
