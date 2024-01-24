@@ -5,9 +5,6 @@ import { EWidgetProductType } from "../enums";
 import { DotsLoader } from "@/components/dots-loader/dots-Loader";
 import { ProgressBar } from "@/components/progress-bar/progress-bar";
 import { useRightSideWidget } from "./use-right-side-widget";
-import {useRecoilValue, useSetRecoilState} from "recoil";
-import {calculationExceptionsLogsState} from "@/widgets/product-pricing-widget/state";
-
 const RightSideWidget = ({
   clasess,
   clientDefaultValue,
@@ -47,11 +44,12 @@ const RightSideWidget = ({
     listEmployees,
     isLoading,
     quantity,
-    selectedWorkFlow,
+    calculationExceptionsLogs,
     setCurrentProductItemValueTotalPrice,
     t,
+    _renderIconLogs,
   } = useRightSideWidget({ includeVAT });
-  const calculationExceptionsLogs = useRecoilValue(calculationExceptionsLogsState);
+
   return (
     <div style={clasess.rightSideMainContainer}>
       <div style={clasess.rightSideContainer}>
@@ -140,7 +138,11 @@ const RightSideWidget = ({
               <DotsLoader />
             ) : (
               <GomakeTextInput
-                value={currentProductItemValueTotalPrice ?? "---------"}
+                value={
+                  calculationExceptionsLogs?.length > 0
+                    ? "---------"
+                    : currentProductItemValueTotalPrice ?? "---------"
+                }
                 onChange={(e: any) => {
                   setCurrentProductItemValueTotalPrice(e.target.value);
                 }}
@@ -373,13 +375,21 @@ const RightSideWidget = ({
                           display: "flex",
                           flexDirection: "row",
                           justifyContent: "flex-start",
-                          alignItems: "flex-start",
+                          alignItems: "center",
                           width: "100%",
                           gap: 5,
                         }}
                       >
-                        <div style={clasess.titleLogsTextStyle}>
-                          <div>{item.title}</div>
+                        <div style={clasess.iconLogsTextStyle}>
+                          <div>{_renderIconLogs(item.type)}</div>
+                        </div>
+                        <div
+                          style={{
+                            ...clasess.titleLogsTextStyle,
+                            // color: item.type ? "" : "",
+                          }}
+                        >
+                          <div>{item.title}:</div>
                         </div>
                         <div style={clasess.textLogstyle}>
                           <span style={{ color: "black" }}>{item.text}</span>
@@ -397,9 +407,6 @@ const RightSideWidget = ({
           )}
         </div>
       </div>
-      {/* <div style={clasess.noVatStyle}>
-        {t("products.offsetPrice.admin.dontVAT")}
-      </div> */}
     </div>
   );
 };

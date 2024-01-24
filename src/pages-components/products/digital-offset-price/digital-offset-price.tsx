@@ -121,14 +121,6 @@ const PriceListPageWidget = ({ widgetType }) => {
                           t("products.offsetPrice.admin.Pricing")
                         ) {
                           return (
-                            // <PricingSectionMappingWidget
-                            //   clasess={clasess}
-                            //   machineCategories={machineCategories}
-                            //   onChangeCategoryData={onChangeCategoryData}
-                            //   section={section}
-                            //   pricingDefaultValue={pricingDefaultValue}
-                            //   workFlowSelected={workFlowSelected}
-                            // />
                             <PricingWidget
                               getOutSourcingSuppliers={getOutSourcingSuppliers}
                               actions={jobActions}

@@ -105,7 +105,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   );
   const [pricingDefaultValue, setPricingDefaultValue] = useState<any>();
   const [workFlows, setWorkFlows] = useRecoilState(workFlowsState);
-  const setCalculationExceptionsLogs = useSetRecoilState(calculationExceptionsLogsState);
+  const setCalculationExceptionsLogs = useSetRecoilState(
+    calculationExceptionsLogsState
+  );
   const selectedWorkFlow = useRecoilValue(selectedWorkFlowState);
   const productQuantityTypes = useRecoilValue(productQuantityTypesValuesState);
   const setCalculationProgress = useSetRecoilState(calculationProgressState);
@@ -166,8 +168,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               (x) => x.id === m.workFlowId
             );
             if (workFlow) {
-              workFlow.monials = m.monials;
-              workFlow.recommendationRang = m.recommendationRang;
+              workFlow.monials = m?.monials;
+              workFlow.recommendationRang = m?.recommendationRang;
             }
           });
         }
@@ -214,10 +216,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     });
     setCalculationSessionConnectionId(connectionId);
   }, [calculationSessionId]);
-  
-  useEffect(()=>{
+
+  useEffect(() => {
     setCalculationExceptionsLogs(calculationExceptionsLogs);
-  },[calculationExceptionsLogs])
+  }, [calculationExceptionsLogs]);
   useEffect(() => {
     setWorkFlows(
       workFlows.map((flow) =>
@@ -1596,7 +1598,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
   const PricingTab = {
     id: "c66465de-95d6-4ea3-bd3f-7efe60f4cb0555",
-    name: "Pricing",
+    name: t("products.offsetPrice.admin.Pricing"),
     icon: "pricing",
     jobDetails: pricingDefaultValue?.jobDetails,
     actions: pricingDefaultValue?.actions,

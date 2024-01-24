@@ -9,7 +9,7 @@ import { adaptPaddingLeft, adaptPaddingRight } from "@/utils/adapter";
 const useStyle = () => {
   const { t } = useTranslation();
   const direction = t("direction");
-  const { primaryColor, secondColor, errorColor, neutralColor } =
+  const { primaryColor, secondColor, errorColor, neutralColor, successColor } =
     useGomakeTheme();
 
   const clasess = useMemo(() => {
@@ -47,7 +47,8 @@ const useStyle = () => {
         width: 330,
         minWidth: 330,
         maxWidth: 330,
-        height: "85.5vh",
+        height: "100%",
+        // height: "85.5vh",
         backgroundColor: "white",
         boxShadow: "0px 0px 3px 0px rgba(129, 129, 129, 0.12)",
         padding: 15,
@@ -645,6 +646,11 @@ const useStyle = () => {
         ...FONT_FAMILY.Lexend(400, 14),
         color: secondColor(500),
         width: "33%",
+      },
+      iconLogsTextStyle: {
+        ...FONT_FAMILY.Lexend(400, 14),
+        color: successColor(500),
+        width: "10%",
       },
       textLogstyle: {
         ...FONT_FAMILY.Lexend(400, 14),
