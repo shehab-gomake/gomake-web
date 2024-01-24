@@ -10,12 +10,22 @@ const useStyle = () => {
                 flexDirection: "column" as "column",
                 background: "#FFFFFF"
             },
-            secondContainer: {
+            iconStyle: {
                 width: "100%",
                 height: "7%",
                 display: "flex",
                 background: "#F4F1F6",
-                padding: "10px"
+                padding: "22px 80px",
+                alignItems: "center"
+            },
+            iconMobileStyle: {
+                width: "100%",
+                height: "7%",
+                display: "flex",
+                background: "#F4F1F6",
+                alignItems: "center",
+                padding: "22px 0px",
+                justifyContent: "center",
             }
         };
     }, []);

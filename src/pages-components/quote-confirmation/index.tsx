@@ -4,6 +4,7 @@ import { DOCUMENT_TYPE } from "../quotes/enums";
 import { useEffect, useState } from "react";
 import { GoMakeIcon } from "@/components/icons/go-make-icon";
 import { QuoteNewPageWidget } from "../quote-new/quote";
+import { QuoteConfirmationMobileWidget } from "@/widgets/quote-confirmation-mobile";
 
 const QuoteConfirmationPageWidget = () => {
   const { classes } = useStyle();
@@ -23,10 +24,10 @@ const QuoteConfirmationPageWidget = () => {
 
   return (
     <div style={classes.firstContainer}>
-      <div style={classes.secondContainer}>
+      <div style={isMobile ? classes.iconMobileStyle : classes.iconStyle}>
         <GoMakeIcon />
       </div>
-      {isMobile ? <div>This is for mobile </div> : <QuoteNewPageWidget documentType={DOCUMENT_TYPE.quote} isQuoteConfirmation={true}/> }
+      {isMobile ? <QuoteConfirmationMobileWidget/> : <QuoteNewPageWidget documentType={DOCUMENT_TYPE.quote} isQuoteConfirmation={true}/> }
     </div>
   );
 };

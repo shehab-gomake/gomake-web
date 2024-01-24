@@ -39,15 +39,12 @@ const useQuoteNew = (docType : DOCUMENT_TYPE ) => {
   const { getAllClientAddress } = useQuoteGetData();
   const [quoteItemValue, setQuoteItemValue] = useRecoilState<any>(quoteItemState);
   const [selectDate, setSelectDate] = useState(quoteItemValue?.dueDate);
-  const [customersListValue, setCustomersListValue] =
-    useRecoilState<any>(businessListsState);
+  const [customersListValue, setCustomersListValue] =useRecoilState<any>(businessListsState);
   const [selectBusiness, setSelectBusiness] = useState<any>({});
   const [isUpdateBusinessName, setIsUpdateBusinessName] = useState<number | null>(null);
   const [isUpdatePurchaseNumber, setIsUpdatePurchaseNumber] = useState<number | null>(null);
   const [isUpdateExchangeRate, setIsUpdateExchangeRate] = useState<number | null>(null);
   const [isUpdateCurrency, setIsUpdateCurrency] = useState<string>(null);
-
-
   const [, setIsUpdateBusinessCode] = useState<number | null>(null);
   const [isUpdateAddress, setIsUpdateAddress] = useState<number | null>(null);
   const [isUpdateAgent, setIsUpdateAgent] = useState<number | null>(null);
@@ -67,10 +64,7 @@ const useQuoteNew = (docType : DOCUMENT_TYPE ) => {
   const [openDeleteModalContact, setOpenDeleteModalContact] = useState(false);
   const [openAddNewItemModal, setOpenAddNewItemModal] = useState(false);
   const [quoteItemId, setQuateItemId] = useState();
-  const [
-    openDuplicateWithDifferentQTYModal,
-    setOpenDuplicateWithDifferentQTYModal,
-  ] = useState(false);
+  const [openDuplicateWithDifferentQTYModal,setOpenDuplicateWithDifferentQTYModal] = useState(false);
   const [selectedContactById, setSelectedContactById] = useState<any>();
   const [amountValue, setAmountValue] = useState();
   const [openDeleteItemModal, setOpenDeleteItemModal] = useState(false);
