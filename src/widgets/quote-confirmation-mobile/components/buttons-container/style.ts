@@ -11,6 +11,7 @@ const useStyle = () => {
         flexDirection: "column" as "column",
         alignItems: "center",
         justifyContent: "center",
+        marginBottom:"10px"
       },
       firstContainer: {
         display: "flex",

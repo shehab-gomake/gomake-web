@@ -8,7 +8,8 @@ const useStyle = () => {
                 height: "100vh",
                 display: "flex",
                 flexDirection: "column" as "column",
-                background: "#FFFFFF"
+                background: "#FFFFFF",
+                overflow:"scroll"
             },
             iconStyle: {
                 width: "100%",

@@ -10,36 +10,37 @@ const useStyle = () => {
         alignItems: "center",
         justifyContent: "center",
       },
-      secondContainer:{
+      secondContainer: {
         display: "flex",
-         flexDirection: "column" as "column", 
-        width: "280px", 
+        flexDirection: "column" as "column",
+        width: "280px",
         marginTop: "10px",
-         borderRadius: "8px"
+        borderRadius: "8px"
       },
-      tableHeader:{
+      tableHeader: {
         width: "50%",
-        background: "#F2F4F7"
+        background: "#F2F4F7",
+        display: "flex",
+       // justifyContent: "center",
+        alignItems: "center",
       },
-      tableCell:{
+      tableCell: {
         width: "50%"
       },
-      inputStyle:{
-        width: "100%", 
+      inputStyle: {
+        width: "100%",
         boxShadow: "none",
         ...FONT_FAMILY.Inter(400, 14),
-        lineHeight:"20px"
+        lineHeight: "20px"
       },
 
-      inputPriceStyle:{
-        width: "100%", 
+      inputPriceStyle: {
+        width: "100%",
         boxShadow: "none",
         ...FONT_FAMILY.Inter(600, 14),
-        lineHeight:"20px",
-        color:"#F135A3"
-
+        lineHeight: "20px",
+        color: "#F135A3"
       },
-
       firstDiv: {
         display: "flex",
         flexDirection: "row" as "row",
@@ -58,7 +59,7 @@ const useStyle = () => {
       thirdDiv: {
         display: "flex",
         flexDirection: "row" as "row",
-        width: "100%", 
+        width: "100%",
         borderLeft: "2px solid #EAECF0",
         borderRight: "2px solid #EAECF0"
       },
@@ -73,7 +74,7 @@ const useStyle = () => {
         ...FONT_FAMILY.Inter(500, 14),
         lineHeight: "20px",
         color: "#344054",
-        padding: "0px 10px",
+        padding: "0px 15px",
       },
     };
   }, []);
