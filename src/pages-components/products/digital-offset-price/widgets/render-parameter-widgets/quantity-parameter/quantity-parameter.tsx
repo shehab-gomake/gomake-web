@@ -4,8 +4,11 @@ import { IconButton } from "@mui/material";
 import { SettingsIcon } from "@/icons/settings";
 import { useQuantityParameter } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/quantity-parameter/use-quantity-parameter";
 import { QuantityTypesComponent } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/quantity-parameter/quantity-types/quantity-types-component";
-import { useRecoilValue } from "recoil";
-import { productQuantityTypesValuesState } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/quantity-parameter/quantity-types/state";
+import { useRecoilState, useRecoilValue } from "recoil";
+import {
+  productQuantityTypesValuesState,
+  tempProductQuantityTypesValuesState,
+} from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/quantity-parameter/quantity-types/state";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -27,14 +30,18 @@ const QuantityParameter = ({
   const { t } = useTranslation();
   const { openModal, setOpenModal, productTypesNumber } =
     useQuantityParameter();
+
   const productSetsParam = useRecoilValue<string>(productSetsParamState);
   const productSetQuantityParam = useRecoilValue<number>(
     productSetQuantityState
   );
   const productSetUnitsParam = useRecoilValue<number>(productSetsUnitsState);
-  const quantityTypes = useRecoilValue(productQuantityTypesValuesState);
+  const [quantityTypes, setQuantityTypes] = useRecoilState(
+    productQuantityTypesValuesState
+  );
+  const valuesState = useRecoilValue(tempProductQuantityTypesValuesState);
   useEffect(() => {
-    if (productSetsParam) {
+    if (productSetsParam === "true") {
       onChangeSubProductsForPrice(
         parameter?.id,
         subSection?.id,
@@ -43,13 +50,13 @@ const QuantityParameter = ({
         parameter?.name,
         parameter?.actionId,
         {
-          values: productSetUnitsParam * productSetQuantityParam,
+          values: (productSetUnitsParam * productSetQuantityParam).toString(),
         },
         subSection?.type,
         index,
         parameter?.actionIndex
       );
-    } else if (quantityTypes.length > 1) {
+    } else if (productSetsParam != "true") {
       onChangeSubProductsForPrice(
         parameter?.id,
         subSection?.id,
@@ -58,9 +65,7 @@ const QuantityParameter = ({
         parameter?.name,
         parameter?.actionId,
         {
-          values: quantityTypes
-            .reduce((acc, val) => acc + val.quantity, 0)
-            .toString(),
+          values: parameter.defaultValue,
         },
         subSection?.type,
         index,
@@ -80,7 +85,15 @@ const QuantityParameter = ({
         style={classes.textInputStyle}
         defaultValue={parameter.defaultValue}
         placeholder={parameter.name}
-        value={index !== -1 ? temp[index].values : ""}
+        value={
+          quantityTypes.length > 1 && productSetsParam !== "true"
+            ? quantityTypes
+                .reduce((acc, val) => acc + val.quantity, 0)
+                .toString()
+            : index !== -1
+            ? temp[index].values
+            : ""
+        }
         disabled={isInputDisabled}
         onChange={(e: any) => {
           onChangeSubProductsForPrice(
@@ -98,8 +111,13 @@ const QuantityParameter = ({
         }}
         type={type}
       />
-      {productTypesNumber > 1 && (
-        <IconButton onClick={() => setOpenModal(true)}>
+      {productTypesNumber > 1 && productSetsParam != "true" && (
+        <IconButton
+          onClick={() => {
+            setOpenModal(true);
+            setQuantityTypes(valuesState);
+          }}
+        >
           <SettingsIcon
             stroke={"rgba(237, 2, 140, 1)"}
             width={24}
