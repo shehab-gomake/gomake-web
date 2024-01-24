@@ -12,7 +12,7 @@ const useStyle = () => {
         borderRadius: 5,
         height: "auto",
         maxHeight: 500,
-        backgroundColor: "#f7f7f7",
+        backgroundColor: "#F6F6F6",
       },
       addBtnStyle: {
         display: "flex",
@@ -62,7 +62,7 @@ const useStyle = () => {
         borderRadius: 4,
         height: 40,
         // backgroundColor: "#FFF",
-        border: `1px solid ${primaryColor(400)}`,
+        // border: `1px solid ${primaryColor(400)}`,
         // boxShadow: "0px 1px 2px 0px rgba(0, 0, 0, 0.08)",
       },
     };
