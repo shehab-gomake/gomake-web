@@ -24,6 +24,8 @@ const useCalculationsWorkFlowsSignalr = () => {
     useEffect(()=>{
         if(connection){
             connection.on("updateWorkFlows", (newData:ICalculationSignalRResult) => {
+                console.log("startCalculationSession",newData.exceptions)
+                setCalculationExceptionsLogs(newData.exceptions);
                 setSignalrRWorkFlows(newData);
             });
             connection.on("startCalculationSession", (newData) => {

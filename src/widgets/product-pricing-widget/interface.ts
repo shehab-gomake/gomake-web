@@ -1,4 +1,5 @@
 import {
+  ECalculationLogType,
   EOutsourceSupplierStatus,
   EWorkSource,
   HtmlElementType,
@@ -131,4 +132,5 @@ export interface IRecommendationRang {
 export interface IExceptionsLog{
     text:string;
     title?:string;
+    type?:ECalculationLogType
 }
