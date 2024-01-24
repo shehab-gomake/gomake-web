@@ -1,4 +1,4 @@
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import {
   productQuantityTypesState,
   tempProductQuantityTypesValuesState,
@@ -6,6 +6,7 @@ import {
 import { IInput } from "@/components/form-inputs/interfaces";
 import { useEffect, useMemo, useState } from "react";
 import { productSetsParamState, subProductsParametersState } from "@/store";
+import { getParameterByParameterId } from "@/utils/constants";
 
 interface QuantityTypesInputs extends IInput {
   onChange: (key, value: string) => void;
@@ -44,18 +45,8 @@ const useQuantityTypes = () => {
       (param) => param.parameterId === "de2bb7d5-01b1-4b2b-b0fa-81cd0445841b"
     )
     ?.values.join(", ");
-  function getParameterByParameterName(subProductArray, paramId) {
-    for (let i = 0; i < subProductArray.length; i++) {
-      const parameters = subProductArray[i].parameters;
-      for (let j = 0; j < parameters.length; j++) {
-        if (parameters[j].parameterId === paramId) {
-          return parameters[j];
-        }
-      }
-    }
-    return null;
-  }
-  const resultParameter = getParameterByParameterName(
+
+  const resultParameter = getParameterByParameterId(
     subProducts,
     "4991945c-5e07-4773-8f11-2e3483b70b53"
   );
@@ -71,7 +62,7 @@ const useQuantityTypes = () => {
   const quantityTypesValues = useRecoilValue(
     tempProductQuantityTypesValuesState
   );
-
+  const setValuesState = useSetRecoilState(tempProductQuantityTypesValuesState);
   const quantity = useMemo(() => {
     return quantityTypesValues
       .reduce((acc, val) => acc + val.quantity, 0)
@@ -88,6 +79,9 @@ const useQuantityTypes = () => {
       ...state,
       equalQuantity: +newValue,
     }));
+    setValuesState((prevState) =>
+      prevState.map((value) => ({ ...value, quantity: +newValue }))
+    );
   };
   const inputs: QuantityTypesInputs[] = useMemo(() => {
     return [
