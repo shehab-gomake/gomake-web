@@ -101,17 +101,17 @@ const BusinessNewWidget = ({
           onBlur={onBlurAddress}
           isUpdate={false}
           setIsUpdate={setIsUpdateAddress}
-          flag={true}
+          flag={!isQuoteConfirmation}
           onClickFlag={() => setOpenModal(true)}
         />}
         {values?.documentAddresses?.length > 0 ?
-          <div
+        ( !isQuoteConfirmation && <div
             style={classes.addNewAddressStyle}
             onClick={() => null}
           >
             <MinusIcon />
             <div style={classes.addNewAddressTextStyle} onClick={() => onClickDeleteAddress(values?.documentAddresses[0])}>{t("sales.quote.removeAddress")}</div>
-          </div>
+          </div>)
           :
           (!isQuoteConfirmation &&
             <div style={classes.addNewAddressStyle} >

@@ -10,7 +10,7 @@ const QuoteConfirmationMobileWidget = () => {
   const { classes } = useStyle()
   return (
     <div style={classes.mainContainer}>
-      <InfoContainer />
+      <InfoContainer/>
       <QuoteItems/>
       <TotalPriceAndVatContainer />
       <TextAreasContainer />

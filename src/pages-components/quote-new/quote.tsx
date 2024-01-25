@@ -301,19 +301,20 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
             </div>
             <WriteCommentComp isQuoteConfirmation={isQuoteConfirmation} />
           </div>
-          {isQuoteConfirmation ?
-            <ButtonsConfirmContainer
-            />
-            : <ButtonsContainer
-              onOpenNewItem={onOpenNewItem}
-              onOpenDeliveryModal={onOpenDeliveryModal}
-              handleCancelBtnClick={handleCancelBtnClick}
-              handleSaveBtnClick={handleSaveBtnClick}
-              handleSendBtnClick={handleSendBtnClick}
-              documentType={documentType}
-            />}
+          {!isQuoteConfirmation &&
+            <ButtonsContainer
+          onOpenNewItem={onOpenNewItem}
+          onOpenDeliveryModal={onOpenDeliveryModal}
+          handleCancelBtnClick={handleCancelBtnClick}
+          handleSaveBtnClick={handleSaveBtnClick}
+          handleSendBtnClick={handleSendBtnClick}
+          documentType={documentType}
+        />
+            }
         </div>
+
       )}
+      {isQuoteConfirmation && <ButtonsConfirmContainer/>}
       <AddNewItemModal
         openModal={openAddNewItemModal}
         onClose={onCloseNewItem}

@@ -27,6 +27,8 @@ const BusinessWidget = () => {
         setSelectBusiness(foundItem);
     }, [quoteStateValue, customersListValue]);
 
+
+
     return (
         <>
             <div style={classes.businessContainerStyle}>
@@ -35,21 +37,35 @@ const BusinessWidget = () => {
                     label={t("sales.quote.purchaseNumber")}
                     setIsUpdate={setIsConfirmation}
                     inputMainContainerStyle={classes.inputMainContainer}
-                    speicalStyle={{padding:"0px"}}
+                    speicalStyle={{ padding: "0px" , cursor:"none" }}
                 />
                 <InputUpdatedValues
                     value={quoteStateValue?.client?.name}
                     label={t("sales.quote.businessName")}
                     setIsUpdate={setIsConfirmation}
                     inputMainContainerStyle={classes.inputMainContainer}
-                    speicalStyle={{padding:"0px"}}
+                    speicalStyle={{ padding: "0px" }}
                 />
                 <InputUpdatedValues
                     value={`${selectBusiness?.code}`}
                     label={t("sales.quote.businessCode")}
                     setIsUpdate={setIsConfirmation}
                     inputMainContainerStyle={classes.inputMainContainer}
-                    speicalStyle={{padding:"0px"}}
+                    speicalStyle={{ padding: "0px" }}
+                />
+                <InputUpdatedValues
+                    value={`${selectBusiness?.code}`}
+                    label={t("sales.quote.businessCode")}
+                    setIsUpdate={setIsConfirmation}
+                    inputMainContainerStyle={classes.inputMainContainer}
+                    speicalStyle={{ padding: "0px" }}
+                />
+                <InputUpdatedValues
+                    value={quoteStateValue?.documentAddresses?.length > 0 ? `${quoteStateValue?.documentAddresses[0]?.street} ${quoteStateValue?.documentAddresses[0]?.apartment}, ${quoteStateValue?.documentAddresses[0]?.city}` : "no address found"}
+                    label={t("customers.modal.address")}
+                    setIsUpdate={setIsConfirmation}
+                    inputMainContainerStyle={classes.inputMainContainer}
+                    speicalStyle={{ padding: "0px" }}
                 />
             </div>
         </>

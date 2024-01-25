@@ -8,7 +8,6 @@ import { BusinessWidget } from "./business";
 import { ContactsWidget } from "./contacts";
 import { DateFormatterDDMMYYYY } from "@/utils/adapter";
 
-
 const InfoContainer = () => {
     const { classes } = useStyle();
     const { t } = useTranslation();
@@ -31,7 +30,7 @@ const InfoContainer = () => {
                 {t("sales.quote.dateOfReference") + " " + DateFormatterDDMMYYYY(quoteItemValue?.dueDate)}
             </div>
             <div style={classes.referenceDate} >
-                G. supply: 11 working days
+                G. supply: 11 working days 
             </div>
             <div style={classes.borderContainer} />
             <BusinessWidget />
