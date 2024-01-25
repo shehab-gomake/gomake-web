@@ -648,9 +648,8 @@ const useStyle = () => {
         width: "33%",
       },
       iconLogsTextStyle: {
-        // ...FONT_FAMILY.Lexend(400, 14),
         color: successColor(500),
-        // width: "10%",
+        marginTop: 2,
       },
       textLogstyle: {
         ...FONT_FAMILY.Lexend(400, 14),
