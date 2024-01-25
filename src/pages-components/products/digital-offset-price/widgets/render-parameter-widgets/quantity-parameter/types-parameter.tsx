@@ -98,7 +98,6 @@ const TypesParameter = ({
         }
         disabled={isInputDisabled}
         onChange={(e: any) => {
-          debugger;
           onChangeSubProductsForPrice(
             parameter?.id,
             subSection?.id,
