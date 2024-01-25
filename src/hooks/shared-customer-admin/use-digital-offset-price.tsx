@@ -383,11 +383,13 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           });
         });
       });
+      setCanCalculation(false)
       setIsRequiredParameters(temp);
     }
   }, [productTemplate]);
   const [relatedParameters, setRelatedParameters] = useState([]);
   useEffect(() => {
+    debugger
     if (!isSetTemplete) {
       if (productTemplate && productTemplate?.sections?.length > 0) {
         let sectionData: any = cloneDeep(productTemplate?.sections);
@@ -596,6 +598,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         setSubProducts(subProductsArray);
         //setRelatedParameters(relatedParametersArray);
         setIsSetTemplete(true);
+        setCanCalculation(false)
       }
     }
   }, [materialsEnumsValues, allMaterials, productTemplate]);
@@ -1129,6 +1132,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     index: number,
     actionIndex: number
   ) => {
+    debugger;
     setCanCalculation(true);
     const targetSubProduct = subProducts.find(
       (item) => item.type === subSectionType
