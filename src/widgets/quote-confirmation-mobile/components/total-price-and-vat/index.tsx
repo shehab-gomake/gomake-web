@@ -17,19 +17,19 @@ const TotalPriceAndVatContainer = () => {
         <div style={classes.mainContainer}>
             <div style={classes.secondContainer}>
                 <div style={classes.firstDiv}>
-                    <div style={classes.tableHeader} ><h3 style={classes.headerStyle}>{t("Total Before VAT")}</h3></div>
+                    <div style={classes.tableHeader} ><h3 style={classes.headerStyle}>{t("sales.quote.totalBeforeVAT")}</h3></div>
                     <div style={classes.tableCell}><GomakeTextInput style={classes.inputStyle} value={quoteItemValue?.totalPrice +" "+ getCurrencyUnitText(quoteItemValue?.currency)} disabled={true} /></div>
                 </div>
                 <div style={classes.secondDiv}>
-                    <div style={classes.tableHeader} ><h3 style={classes.headerStyle}>{t("Discount")}</h3></div>
-                    <div style={classes.tableCell}><GomakeTextInput style={classes.inputStyle} value={quoteItemValue?.discount + " " + quoteItemValue?.discount && getCurrencyUnitText(quoteItemValue?.currency)} disabled={true} /></div>
+                    <div style={classes.tableHeader} ><h3 style={classes.headerStyle}>{t("sales.quote.discount")}</h3></div>
+                    <div style={classes.tableCell}><GomakeTextInput style={classes.inputStyle} value={quoteItemValue?.discount ? quoteItemValue?.discount + "%" : "0%"} disabled={true} /></div>
                 </div>
                 <div style={classes.thirdDiv}>
-                    <div style={classes.tableHeader} ><h3 style={classes.headerStyle}>{t("VAT (17%)")}</h3></div>
+                    <div style={classes.tableHeader} ><h3 style={classes.headerStyle}>{t("sales.quote.vat") + " (17%)"}</h3></div>
                     <div style={classes.tableCell}><GomakeTextInput style={classes.inputStyle} value={Math.ceil(quoteItemValue?.totalVAT) + " " + getCurrencyUnitText(quoteItemValue?.currency)} disabled={true}/></div>
                 </div>
                 <div style={classes.fourthDiv}>
-                    <div style={classes.tableHeader} ><h3 style={classes.headerStyle}>{t("Total Price")}</h3></div>
+                    <div style={classes.tableHeader} ><h3 style={classes.headerStyle}>{t("sales.quote.totalPrice")}</h3></div>
                     <div style={classes.tableCell}><GomakeTextInput style={classes.inputPriceStyle} value={quoteItemValue?.totalPayment + " " + getCurrencyUnitText(quoteItemValue?.currency)} /></div>
                 </div>
             </div>

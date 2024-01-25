@@ -31,8 +31,8 @@ const useStyle = () => {
       rejectBtn: {
         ...FONT_FAMILY.Inter(600, 14),
         height: 40,
-        width: "272px",
-        // width: "80%",
+        maxWidth: "272px",
+        width: "70%",
         padding: "8px 14px",
         borderRadius: 8,
         lineHeight: "20px",
@@ -42,8 +42,8 @@ const useStyle = () => {
       btnStyle: {
         ...FONT_FAMILY.Inter(600, 14),
         height: 40,
-        width: "272px",
-        //width: "80%",
+        maxWidth: "272px",
+        width: "70%",
         padding: "8px 14px",
         borderRadius: 8,
         lineHeight: "20px",

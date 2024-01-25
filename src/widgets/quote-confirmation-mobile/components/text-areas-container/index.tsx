@@ -12,14 +12,14 @@ const TextAreasContainer = () => {
   return (
     <div style={classes.mainContainer}>
       <div style={{ display: "flex", flexDirection: "column", gap: "8px" , width:"70%"}}>
-        <h3 style={classes.headerStyle}>{t("Remarks")}</h3>
+        <h3 style={classes.headerStyle}>{t("customers.modal.remarks")}</h3>
         <Textarea
           color="neutral"
           disabled={false}
           minRows={4}
-          placeholder="Test here"
+          placeholder={t("sales.quote.textHere")}
           variant="outlined"
-          sx={{ width: "70%", background: "#FFFFFF", borderRadius: "8px", boxShadow: "none" }}
+          sx={{ width: "100%", background: "#FFFFFF", borderRadius: "8px", boxShadow: "none" }}
         />
       </div>
       <div style={{ display: "flex", flexDirection: "column", gap: "8px" , width:"70%" }}>

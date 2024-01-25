@@ -2,8 +2,6 @@ import React from "react";
 import { useStyle } from "./style";
 import { useTranslation } from "react-i18next";
 import { SecondaryButton } from "@/components/button/secondary-button";
-import { AttachIcon } from "@/components/icons/attach-icon";
-
 
 const ButtonsConfirmContainer = () => {
   const { classes } = useStyle();
@@ -13,25 +11,25 @@ const ButtonsConfirmContainer = () => {
     <div style={classes.mainContainer}>
       <SecondaryButton
           variant="contained"
-          style={classes.btnStyle}>{t("Approve Offer")}
+          style={classes.btnStyle}>{t("sales.quote.approveOffer")}
         </SecondaryButton>
         <SecondaryButton
           variant="outlined"
-          style={classes.btnStyle}>{t("Partially Approved")}
+          style={classes.btnStyle}>{t("sales.quote.partiallyApproved")}
         </SecondaryButton>
         <SecondaryButton
           variant="outlined"
-          style={classes.btnStyle}>{t("Print")}
+          style={classes.btnStyle}>{t("sales.quote.print")}
         </SecondaryButton>
         <SecondaryButton
           variant="outlined"
           style={classes.btnStyle}>
-          {t("Attach File")}
+          {t("sales.quote.attachFiles")}
         </SecondaryButton>
         <SecondaryButton
           variant="outlined"
           style={classes.rejectBtn}>
-          {t("Reject Offer")}
+          {t("sales.quote.rejectOffer")}
         </SecondaryButton>
     </div>
   );

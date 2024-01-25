@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { HeaderTitle } from "@/widgets/header-title";
 import { useRecoilValue } from "recoil";
 import { quoteItemState } from "@/store";
-import { BusinessWidget } from "./bussniess";
+import { BusinessWidget } from "./business";
 import { ContactsWidget } from "./contacts";
 import { DateFormatterDDMMYYYY } from "@/utils/adapter";
 
@@ -18,7 +18,7 @@ const InfoContainer = () => {
         <div style={{ ...classes.mainContainer, marginTop: "16px" }}>
             <div style={classes.titleQuoteContainer}>
                 <HeaderTitle
-                    title={"Quote"}
+                    title={t("sales.quote.quote")}
                     marginBottom={1}
                     marginTop={1}
                     color="rgba(241, 53, 163, 1)"
@@ -28,7 +28,7 @@ const InfoContainer = () => {
                 </div>
             </div>
             <div style={classes.referenceDate} >
-                {t("sales.quote.dateOfReference") + " : " + DateFormatterDDMMYYYY(quoteItemValue?.dueDate)}
+                {t("sales.quote.dateOfReference") + " " + DateFormatterDDMMYYYY(quoteItemValue?.dueDate)}
             </div>
             <div style={classes.referenceDate} >
                 G. supply: 11 working days

@@ -4,7 +4,6 @@ import { useMemo } from "react";
 
 const useStyle = () => {
     const { secondColor, grayColor, theme } = useGomakeTheme();
-
     const classes = useMemo(() => {
         return {
             cardContainer: {
@@ -16,13 +15,21 @@ const useStyle = () => {
                 boxShadow: "none",
                 borderRadius: "12px",
                 padding: "12px",
-                gap: "16px"
+                gap: "16px",
+                textTransform: 'capitalize'
             },
             rowStyle: {
                 display: "flex",
                 flexDirection: "row",
                 justifyContent: "space-between",
                 width: "100%"
+            },
+            firstHeader: {
+                display: "flex",
+                flexDirection: "row",
+                gap: "8px",
+                justifyContent: "flex-start",
+                alignItems: "center"
             },
             headerStyle: {
                 ...FONT_FAMILY.Lexend(400, 14),

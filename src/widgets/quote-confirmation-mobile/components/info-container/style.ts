@@ -18,6 +18,7 @@ const useStyle = () => {
             },
             titleQuoteContainer: {
                 display: "flex",
+                flexWrap: "wrap" as "wrap",
                 flexDirection: "row" as "row",
                 justifyContent: "flex-start",
                 alignItems: "center",
@@ -38,8 +39,6 @@ const useStyle = () => {
               borderContainer: {
                 width: "100%",
                 borderBottom: `1px solid ${grayColor(200)}`,
-                marginBottom: 12,
-                marginTop: 12,
                 maxHeight: 140,
                 overflow: "scroll",
               },

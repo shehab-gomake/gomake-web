@@ -57,24 +57,24 @@ const ButtonsConfirmContainer = ({
         <SecondaryButton
           variant="outlined"
           style={classes.rejectBtn}>
-          {t("Reject Offer")}
+          {t("sales.quote.rejectOffer")}
         </SecondaryButton>
         <SecondaryButton
           variant="outlined"
-          style={classes.btnStyle}>{t("Print")}
+          style={classes.btnStyle}>{t("sales.quote.print")}
         </SecondaryButton>
         <SecondaryButton
           variant="outlined"
           startIcon={<AttachIcon />}
-          style={classes.btnStyle}>{t("Attach Files")}
+          style={classes.btnStyle}>{t("sales.quote.attachFiles")}
         </SecondaryButton>
         <SecondaryButton
           variant="outlined"
-          style={classes.btnStyle}>{t("Partially Approved")}
+          style={classes.btnStyle}>{t("sales.quote.partiallyApproved")}
         </SecondaryButton>
         <SecondaryButton
           variant="contained"
-          style={classes.btnStyle}>{t("Approve Offer")}
+          style={classes.btnStyle}>{t("sales.quote.approveOffer")}
         </SecondaryButton>
       </div>
     </div>
