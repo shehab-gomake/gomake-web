@@ -15,7 +15,7 @@ const InfoContainer = () => {
     const quoteItemValue = useRecoilValue<any>(quoteItemState);
 
     return (
-        <div style={{...classes.mainContainer , marginTop: "16px"}}>
+        <div style={{ ...classes.mainContainer, marginTop: "16px" }}>
             <div style={classes.titleQuoteContainer}>
                 <HeaderTitle
                     title={"Quote"}
@@ -34,9 +34,10 @@ const InfoContainer = () => {
                 G. supply: 11 working days
             </div>
             <div style={classes.borderContainer} />
-            <BusinessWidget/>
+            <BusinessWidget />
             <div style={classes.borderContainer} />
-            <ContactsWidget/>
+            <ContactsWidget />
+            <div style={classes.borderContainer} />
         </div>
     );
 };

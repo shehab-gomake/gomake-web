@@ -13,7 +13,7 @@ const useStyle = () => {
       secondContainer: {
         display: "flex",
         flexDirection: "column" as "column",
-        width: "280px",
+        width: "70%",
         marginTop: "10px",
         borderRadius: "8px"
       },

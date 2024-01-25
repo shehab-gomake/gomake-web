@@ -1,8 +1,14 @@
 import { FONT_FAMILY } from "@/utils/font-family";
-import React, { useState } from "react";
+import React, { CSSProperties, useState } from "react";
 import { useTranslation } from "react-i18next";
 
-const CharacterDetails = ({ details }) => {
+interface IProps {
+  details: any;
+  detailsStyle?:CSSProperties;
+  showAllStyle?:CSSProperties;
+}
+
+const CharacterDetails = ({ details , showAllStyle , detailsStyle} : IProps) => {
   const [showAll, setShowAll] = useState(false);
   const { t } = useTranslation();
   const truncatedDetails = showAll ? details : details?.slice(0, 90);
@@ -14,7 +20,6 @@ const CharacterDetails = ({ details }) => {
   const handleShowLess = () => {
     setShowAll(false);
   };
-
   return (
     <div
       style={{
@@ -24,6 +29,7 @@ const CharacterDetails = ({ details }) => {
         padding: "16px 24px",
         color: "#000000",
         ...FONT_FAMILY.Inter(400, 14),
+        ...detailsStyle
       }}
     >
       {truncatedDetails}
@@ -31,7 +37,7 @@ const CharacterDetails = ({ details }) => {
       {details?.length > 90 && (
         <span
           onClick={showAll ? handleShowLess : handleShowMore}
-          style={{
+          style={showAllStyle || {
             ...FONT_FAMILY.Inter(500, 14),
             color: "#5859A8",
             textDecoration: "underLine",
