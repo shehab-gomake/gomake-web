@@ -5,7 +5,7 @@ import {
 } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/quantity-parameter/quantity-types/state";
 import { IInput } from "@/components/form-inputs/interfaces";
 import { useEffect, useMemo, useState } from "react";
-import { productSetsParamState, subProductsParametersState } from "@/store";
+import { subProductsParametersState } from "@/store";
 import { getParameterByParameterId } from "@/utils/constants";
 
 interface QuantityTypesInputs extends IInput {
@@ -18,11 +18,25 @@ const useQuantityTypes = () => {
   const [quantityState, setQuantityState] = useRecoilState(
     productQuantityTypesState
   );
-  const [newTypesValue, setNewTypesValue] = useState("");
+
   const [subProducts, setSubProducts] = useRecoilState<any>(
     subProductsParametersState
   );
+  const initialTypesValues = subProducts[0]?.parameters
+    .find(
+      (param) => param.parameterId === "de2bb7d5-01b1-4b2b-b0fa-81cd0445841b"
+    )
+    ?.values.join(", ");
+  const [newTypesValue, setNewTypesValue] = useState(initialTypesValues);
 
+  const JobNameParameter = getParameterByParameterId(
+    subProducts,
+    "a330193f-492c-40a8-86f3-8edf5c8f0d5e"
+  );
+  const quantityParameter = getParameterByParameterId(
+    subProducts,
+    "4991945c-5e07-4773-8f11-2e3483b70b53"
+  );
   const updateTypesValues = (newValues) => {
     const updatedSubProducts = JSON.parse(JSON.stringify(subProducts));
 
@@ -38,13 +52,26 @@ const useQuantityTypes = () => {
   const handleInputChange = (event, myvalue) => {
     const value = myvalue;
     setNewTypesValue(value);
-    updateTypesValues(value);
+    if (quantityTypesValues.length === Number(myvalue)) {
+      setValuesState(quantityTypesValues);
+    } else if (quantityTypesValues.length < Number(myvalue)) {
+      const array = [];
+      for (let i = quantityTypesValues.length + 1; i <= Number(myvalue); i++) {
+        array.push({
+          name: JobNameParameter?.values[0] + " " + i,
+          quantity: +quantityParameter?.values[0],
+        });
+        setValuesState([...quantityTypesValues, ...array]);
+      }
+    } else if (quantityTypesValues.length > Number(myvalue)) {
+      setValuesState(quantityTypesValues.slice(0, Number(myvalue)));
+    }
   };
-  const initialTypesValues = subProducts[0]?.parameters
-    .find(
-      (param) => param.parameterId === "de2bb7d5-01b1-4b2b-b0fa-81cd0445841b"
-    )
-    ?.values.join(", ");
+  useEffect(() => {
+    if (save) {
+      updateTypesValues(newTypesValue);
+    }
+  }, [save, newTypesValue]);
 
   const resultParameter = getParameterByParameterId(
     subProducts,
@@ -83,6 +110,7 @@ const useQuantityTypes = () => {
       prevState.map((value) => ({ ...value, quantity: +newValue }))
     );
   };
+
   const inputs: QuantityTypesInputs[] = useMemo(() => {
     return [
       {
@@ -104,11 +132,9 @@ const useQuantityTypes = () => {
         placeholder: "quantityTypes.typeAmount",
         required: false,
         parameterKey: "typeAmount",
-        // value: productTypesNumber.toString(),
-        value: initialTypesValues,
+        value: newTypesValue,
         options: [],
         isValid: true,
-        // readonly: true,
         onChange: handleInputChange,
       },
       {
@@ -124,7 +150,7 @@ const useQuantityTypes = () => {
         onChange: equalQuantityChange,
       },
     ];
-  }, [quantityTypesValues, quantityState, quantity]);
+  }, [quantityTypesValues, quantityState, quantity, newTypesValue]);
 
   return {
     inputs,
