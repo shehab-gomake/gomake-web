@@ -40,7 +40,6 @@ const SelectInput = ({ values, parameterKey, id, value, isAdmin }: IProps) => {
   const onSelectChange = async (event: SyntheticEvent, value) => {
     await updateCellData(id, parameterKey, value?.id);
   };
-  const data = value ? options.find((x) => x.id == value)?.label : undefined;
   return (
     <div
       style={{
@@ -52,10 +51,12 @@ const SelectInput = ({ values, parameterKey, id, value, isAdmin }: IProps) => {
       }}
     >
       <GoMakeAutoComplate
-        key={data}
+        key={options.find((x) => x.id == value)?.label}
         onChange={onSelectChange}
-        placeholder={value ? data : "select a value"}
-        value={value ? data : undefined}
+        placeholder={
+          value ? options.find((x) => x.id == value)?.label : "select a value"
+        }
+        value={value ? options.find((x) => x.id == value)?.label : undefined}
         style={{
           border: 0,
           width:
