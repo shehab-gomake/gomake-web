@@ -13,7 +13,6 @@ interface IProps {
 }
 
 const SelectInput = ({ values, parameterKey, id, value, isAdmin }: IProps) => {
-  console.log("parameterKey", parameterKey);
   const { callApi } = useGomakeAxios();
   const [productValue, setProductValues] = useState([]);
   const getAllProducts = useCallback(async () => {
@@ -41,7 +40,7 @@ const SelectInput = ({ values, parameterKey, id, value, isAdmin }: IProps) => {
   const onSelectChange = async (event: SyntheticEvent, value) => {
     await updateCellData(id, parameterKey, value?.id);
   };
-
+  const data = value ? options.find((x) => x.id == value)?.label : undefined;
   return (
     <div
       style={{
@@ -53,8 +52,10 @@ const SelectInput = ({ values, parameterKey, id, value, isAdmin }: IProps) => {
       }}
     >
       <GoMakeAutoComplate
+        key={data}
         onChange={onSelectChange}
-        value={value ? options.find((x) => x.id == value)?.label : undefined}
+        placeholder={value ? data : "select a value"}
+        value={value ? data : undefined}
         style={{
           border: 0,
           width:
