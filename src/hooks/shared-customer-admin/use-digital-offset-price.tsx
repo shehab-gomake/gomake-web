@@ -1142,11 +1142,23 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           item.actionIndex === actionIndex
       );
       if (findIndex !== -1) {
-        temp[findIndex] = {
-          ...temp[findIndex],
-          values: [data.values],
-          valueIds: [data.valueIds],
-        };
+        const valuesArray = [data.values].filter(Boolean);
+        // temp[findIndex] = {
+        //   ...temp[findIndex],
+        //   values: [data.values],
+        //   valueIds: [data.valueIds],
+        // };
+        // Check if valuesArray contains only the string value "false"
+        if (valuesArray.length > 0 && valuesArray[0] !== "false") {
+          temp[findIndex] = {
+            ...temp[findIndex],
+            values: valuesArray,
+            valueIds: [data.valueIds].filter(Boolean), // Remove null and undefined
+          };
+        } else {
+          // Remove the entire object from the array if valuesArray is empty or contains "false"
+          temp.splice(findIndex, 1);
+        }
       } else {
         temp.push({
           parameterId: parameterId,

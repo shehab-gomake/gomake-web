@@ -88,13 +88,13 @@ const useRightSideWidget = ({ includeVAT }) => {
   // i need change to the icons when add new types
   const _renderIconLogs = (type) => {
     if (type === ECalculationLogType.ERROR) {
-      return <WarningIcon />;
+      return <WarningIcon width="15" height="15" />;
     } else if (type === ECalculationLogType.MESSAGE) {
-      return <WarningIcon />;
+      return <WarningIcon width="15" height="15" />;
     } else if (type === ECalculationLogType.SUCCESS) {
-      return <CheckCircleOutlineIcon />;
+      return <CheckCircleOutlineIcon sx={{ width: 15, height: 15 }} />;
     } else if (type === ECalculationLogType.WARN) {
-      return <WarningIcon />;
+      return <WarningIcon width="15" height="15" />;
     }
   };
   return {
