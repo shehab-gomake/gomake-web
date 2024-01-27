@@ -1182,23 +1182,24 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       const subSectionParameter = subSection.parameters.find(
         (param) => param.id === parameterId
       );
-
       if (subSectionParameter) {
-        if (
-          subSectionParameter.settingParameters &&
-          subSectionParameter.settingParameters.length > 0
-        ) {
+        if(subSectionParameter.id == "0fdbca1a-f250-447b-93e3-5b91909da59c")//setQuantity
+        {
+          const setUnits = setUnitsParameter ? setUnitsParameter.values[0] : 0;
+          temp = temp.map(x=>x.parameterId === quantity?.parameterId ? {...x,values:[(setUnits * data.values).toString()]} : x);
+        }
+        if(subSectionParameter.id == "91d3fe77-b852-4974-beb6-2da7d7616c78")// SetUnits
+        {
+          const setQuantity = setQuantityParameter ? setQuantityParameter.values[0] : 0;
+          temp = temp.map(x=>x.parameterId === quantity?.parameterId ? {...x,values:[(data.values * setQuantity).toString()]} : x);
+        }
+        if (subSectionParameter.settingParameters && subSectionParameter.settingParameters.length > 0) {
           subSectionParameter.settingParameters.forEach((settingParam) => {
             temp = temp.filter((x) => x.parameterId != settingParam.id);
           });
         }
-        const parameterValue = subSectionParameter.valuesConfigs.find(
-          (x) => x.id === data.valueIds
-        );
-        if (
-          subSectionParameter.materialPath &&
-          subSectionParameter.materialPath.length > 0
-        ) {
+        const parameterValue = subSectionParameter.valuesConfigs.find((x) => x.id === data.valueIds);
+        if (subSectionParameter.materialPath && subSectionParameter.materialPath.length > 0) {
           const materialPath =
             subSectionParameter.materialPath[
               subSectionParameter.materialPath.length - 1
@@ -1279,11 +1280,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           });
         }
         setProductTemplate(productTemplateCopy);
-        if (
-          parameterValue &&
-          parameterValue.selectedParameterValues &&
-          parameterValue.selectedParameterValues.length > 0
-        ) {
+        if (parameterValue && parameterValue.selectedParameterValues && parameterValue.selectedParameterValues.length > 0) {
           parameterValue.selectedParameterValues.forEach((selectedParam) => {
             if (selectedParam.valueIds && selectedParam.valueIds.length > 0) {
               const param = subSectionParameter.settingParameters.find(
@@ -1644,6 +1641,22 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       const generalParameters = subProducts.find((x) => !x.type)?.parameters;
       return generalParameters?.find(
         (item) => item?.parameterId === "4991945c-5e07-4773-8f11-2e3483b70b53"
+      );
+    }
+  }, [subProducts]);
+  const setQuantityParameter = useMemo(() => {
+    if (subProducts) {
+      const generalParameters = subProducts.find((x) => !x.type)?.parameters;
+      return generalParameters?.find(
+          (item) => item?.parameterId === "0fdbca1a-f250-447b-93e3-5b91909da59c"
+      );
+    }
+  }, [subProducts]);
+  const setUnitsParameter = useMemo(() => {
+    if (subProducts) {
+      const generalParameters = subProducts.find((x) => !x.type)?.parameters;
+      return generalParameters?.find(
+          (item) => item?.parameterId === "91d3fe77-b852-4974-beb6-2da7d7616c78"
       );
     }
   }, [subProducts]);

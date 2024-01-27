@@ -12,9 +12,7 @@ import {
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import {
-  productSetQuantityState,
   productSetsParamState,
-  productSetsUnitsState,
 } from "@/store";
 
 const QuantityParameter = ({
@@ -32,52 +30,11 @@ const QuantityParameter = ({
     useQuantityParameter();
 
   const productSetsParam = useRecoilValue<string>(productSetsParamState);
-  const productSetQuantityParam = useRecoilValue<number>(
-    productSetQuantityState
-  );
-  const productSetUnitsParam = useRecoilValue<number>(productSetsUnitsState);
   const [quantityTypes, setQuantityTypes] = useRecoilState(
     productQuantityTypesValuesState
   );
   const valuesState = useRecoilValue(tempProductQuantityTypesValuesState);
-  useEffect(() => {
-    if (productSetsParam === "true") {
-      onChangeSubProductsForPrice(
-        parameter?.id,
-        subSection?.id,
-        section?.id,
-        parameter?.parameterType,
-        parameter?.name,
-        parameter?.actionId,
-        {
-          values: (productSetUnitsParam * productSetQuantityParam).toString(),
-        },
-        subSection?.type,
-        index,
-        parameter?.actionIndex
-      );
-    } else if (productSetsParam != "true") {
-      onChangeSubProductsForPrice(
-        parameter?.id,
-        subSection?.id,
-        section?.id,
-        parameter?.parameterType,
-        parameter?.name,
-        parameter?.actionId,
-        {
-          values: parameter.defaultValue,
-        },
-        subSection?.type,
-        index,
-        parameter?.actionIndex
-      );
-    }
-  }, [
-    quantityTypes,
-    productSetsParam,
-    productSetUnitsParam,
-    productSetQuantityParam,
-  ]);
+
   const isInputDisabled = productTypesNumber > 1 || productSetsParam === "true";
   return (
     <Stack direction={"row"}>
