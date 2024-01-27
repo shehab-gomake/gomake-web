@@ -410,7 +410,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             }
             let temp = [];
             subSection.parameters
-              .filter((parameter) => !parameter.isHidden)
+              .filter((parameter) => !parameter.isHidden || (parameter.isHidden && parameter.defaultValue))
               .forEach((parameter) => {
                 parameter.relatedParameters.forEach((x) => {
                   x.sectionId = section.id;
