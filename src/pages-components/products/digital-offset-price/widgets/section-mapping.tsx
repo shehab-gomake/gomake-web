@@ -19,6 +19,7 @@ const SectionMappingWidget = ({
   duplicateParameters,
   template,
   setTemplate,
+  underParameterIds,
 }: any) => {
   const { t } = useTranslation();
   const [subProducts, setSubProducts] = useRecoilState<any>(
@@ -29,6 +30,7 @@ const SectionMappingWidget = ({
   useEffect(() => {
     const groupedParameters = subSection?.parameters
       ?.filter((param: any) => !param.isHidden)
+      ?.filter((param: any) => !param.isUnderParameterId)
       ?.filter((param: any) => {
         return !relatedParameters.some(
           (relatedParam) => relatedParam.parameterId === param.id
@@ -201,26 +203,60 @@ const SectionMappingWidget = ({
         <div style={clasess.parametersContainer}>
           {subSection?.parameters
             ?.filter((param: any) => !param.isHidden)
+            ?.filter((param: any) => !param.isUnderParameterId)
             ?.filter((param: any) => {
               return !relatedParameters.some(
                 (relatedParam) => relatedParam.parameterId === param.id
               );
             })
             ?.map((parameter: any, index: number) => {
-              const value = _getParameter(parameter, subSection, section);
-              return (
-                <div key={parameter?.id} style={{ display: "flex" }}>
-                  {_renderParameterType(
-                    parameter,
-                    subSection,
-                    section,
-                    subSection?.parameters,
-                    value,
-                    subSection?.parameters,
-                    true
-                  )}
-                </div>
+              const isUnderParameterId = underParameterIds.some(
+                (item) => item.underParameterId === parameter.id
               );
+              if (isUnderParameterId) {
+                const myParameter = underParameterIds.find(
+                  (item) => item.underParameterId === parameter.id
+                )?.myParameter;
+                return (
+                  <div key={parameter?.id}>
+                    {_renderParameterType(
+                      parameter,
+                      subSection,
+                      section,
+                      subSection?.parameters,
+                      _getParameter(parameter, subSection, section),
+                      subSection?.parameters,
+                      true
+                    )}
+                    <div style={{ marginTop: 10 }}>
+                      {_renderParameterType(
+                        myParameter,
+                        subSection,
+                        section,
+                        subSection?.parameters,
+                        _getParameter(parameter, subSection, section),
+                        subSection?.parameters,
+                        true
+                      )}
+                    </div>
+                  </div>
+                );
+              } else {
+                const value = _getParameter(parameter, subSection, section);
+                return (
+                  <div key={parameter?.id} style={{ display: "flex" }}>
+                    {_renderParameterType(
+                      parameter,
+                      subSection,
+                      section,
+                      subSection?.parameters,
+                      value,
+                      subSection?.parameters,
+                      true
+                    )}
+                  </div>
+                );
+              }
             })}
         </div>
       )}

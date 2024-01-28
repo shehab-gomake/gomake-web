@@ -386,12 +386,14 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     }
   }, [productTemplate]);
   const [relatedParameters, setRelatedParameters] = useState([]);
+  const [underParameterIds, setUnderParameterIds] = useState([]);
   useEffect(() => {
     if (!isSetTemplete) {
       if (productTemplate && productTemplate?.sections?.length > 0) {
         let sectionData: any = cloneDeep(productTemplate?.sections);
         const typeMap = {};
         let relatedParametersArray = [];
+        let underParameterIdsArray = [];
         const subProductsArray = cloneDeep(subProducts);
 
         sectionData.forEach((section) => {
@@ -422,6 +424,12 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   x.actionIndex = parameter?.actionIndex;
                 });
                 relatedParametersArray.push(...parameter.relatedParameters);
+                if (parameter.isUnderParameterId !== null) {
+                  underParameterIdsArray.push({
+                    underParameterId: parameter.isUnderParameterId,
+                    myParameter: parameter,
+                  });
+                }
                 const isParameterExits = subProduct.parameters.find(
                   (param) =>
                     param.parameterId === parameter?.id &&
@@ -598,6 +606,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
         setSubProducts(subProductsArray);
         //setRelatedParameters(relatedParametersArray);
+        setUnderParameterIds(underParameterIdsArray);
         setIsSetTemplete(true);
       }
     }
@@ -609,6 +618,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     if (product && product?.sections?.length > 0) {
       let sectionData: any = product.sections;
       let relatedParametersArray = [];
+      let underParameterIdsArray = [];
       sectionData.forEach((section) => {
         section.subSections.forEach((subSection) => {
           subSection.parameters
@@ -757,6 +767,12 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 x.actionIndex = parameter?.actionIndex;
               });
               relatedParametersArray.push(...parameter.relatedParameters);
+              if (parameter.isUnderParameterId !== null) {
+                underParameterIdsArray.push({
+                  underParameterId: parameter.isUnderParameterId,
+                  myParameter: parameter,
+                });
+              }
               if (parameter.relatedParameter) {
                 parameter.relatedParameter.forEach((relatedParameter) => {
                   relatedParameter.actionIndex = parameter.actionIndex;
@@ -768,6 +784,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       setIsSetTemplete(false);
       setProductTemplate(product);
       setRelatedParameters(relatedParametersArray);
+      setUnderParameterIds(underParameterIdsArray);
     }
   };
   useEffect(() => {
@@ -1774,12 +1791,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     subProducts,
     "e3f211c6-c9d2-4ba1-83b6-87d2cf3402b4"
   );
-  console.log("subProducts", {
-    subProducts,
-    sizeParam,
-    SSS: sizeParam?.valueIds[0] !== "f26c854d-d59b-4108-b7e4-4534db7faa2b",
-  });
-
   const addItemForQuotes = async () => {
     const docType = router?.query?.documentType ?? "0";
     const callBack = (res) => {
@@ -1932,6 +1943,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     setIncludeVAT,
     getOutSourcingSuppliers,
     onChangeSubProductsForPrice,
+    underParameterIds,
   };
 };
 export { useDigitalOffsetPrice };
