@@ -387,7 +387,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   }, [productTemplate]);
   const [relatedParameters, setRelatedParameters] = useState([]);
   const [underParameterIds, setUnderParameterIds] = useState([]);
-  console.log("underParameterIds", underParameterIds);
   useEffect(() => {
     if (!isSetTemplete) {
       if (productTemplate && productTemplate?.sections?.length > 0) {
@@ -1792,12 +1791,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     subProducts,
     "e3f211c6-c9d2-4ba1-83b6-87d2cf3402b4"
   );
-  console.log("subProducts", {
-    subProducts,
-    sizeParam,
-    SSS: sizeParam?.valueIds[0] !== "f26c854d-d59b-4108-b7e4-4534db7faa2b",
-  });
-
   const addItemForQuotes = async () => {
     const docType = router?.query?.documentType ?? "0";
     const callBack = (res) => {
