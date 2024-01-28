@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { FONT_FAMILY } from "@/utils/font-family";
-import { adaptPaddingLeft, adaptPaddingRight } from "@/utils/adapter";
+import { adaptLeft, adaptPaddingLeft, adaptPaddingRight, adaptRight } from "@/utils/adapter";
 const useStyle = () => {
   const { t } = useTranslation();
   const direction = t("direction");
@@ -53,7 +53,7 @@ const useStyle = () => {
         marginTop: -53,
         borderRadius: 5,
         position: "fixed" as "fixed",
-        right: 0,
+        ...adaptLeft(t("direction"), 0),
         overflow: "scroll",
         paddingBottom: 150,
       },
