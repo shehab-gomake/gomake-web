@@ -41,6 +41,7 @@ import { getAndSetAllCustomers, getAndSetMachincesNew } from "@/services/hooks";
 import { MaterialMenuWidget } from "./components/more-circle";
 import cloneDeep from "lodash.clonedeep";
 import { SideLeftMenuWidget } from "./components/side-list-menu";
+import {EMaterialActiveFilter} from "@/widgets/materials-widget/enums";
 
 const useMaterials = (isAdmin: boolean) => {
   const { query, push, replace } = useRouter();
@@ -91,8 +92,8 @@ const useMaterials = (isAdmin: boolean) => {
   const [materialName, setMaterialName] = useState<string>();
   const setMaterialActions = useSetRecoilState(materialActionState);
   const setDefaultSupplier = useSetRecoilState(selectedSupplierIdState);
-  const activeFilter = useRecoilValue(activeFilterState);
-  const materialFilter = useRecoilValue(filterState);
+  const [activeFilter,setActiveFilter] = useRecoilState(activeFilterState);
+  const [materialFilter,setMaterialFilter] = useRecoilState(filterState);
   const { callApi } = useGomakeAxios();
   const { alertSuccessDelete, alertFaultDelete } = useSnackBar();
   const setCurrencies = useSetRecoilState(currenciesState);
@@ -105,6 +106,9 @@ const useMaterials = (isAdmin: boolean) => {
     const path = isAdmin ? "/materials-admin" : "/materials";
     push(path + `/${materialType}?materialCategory=${category}`);
     setFlagState(false);
+    setActiveFilter(EMaterialActiveFilter.ACTIVE);
+    setIsAllMaterialsChecked(false)
+    setMaterialFilter([])
   };
   const onDeleteCategory = async (categoryKey) => {
     const callBack = (res) => {

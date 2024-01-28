@@ -34,6 +34,8 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
     onSetDefaultSupplier,
     materialTableFilters,
     setFilterValue,
+    getFilterValue,
+    materialCategory
   } = useMaterialFilters();
   const { callApi } = useGomakeAxios();
   const [supplierName, setSupplierName] = useState<{
@@ -81,7 +83,7 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
           if (key === "productId") {
             return (
               <GoMakeAutoComplate
-                key={key}
+                key={materialCategory + "-" +key}
                 onChange={(e, v) => setFilterValue(key, v?.id)}
                 style={{ width: "300px", height: 40, overflow: "scroll" }}
                 options={productsOptions}
@@ -91,8 +93,8 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
           }
           if (key === "clients") {
             return (
-              <GoMakeAutoComplate
-                key={key}
+              <GoMakeAutoComplate 
+                key={materialCategory + "-" +key}
                 onChange={(e, v) =>
                   setFilterValue(
                     key,
@@ -109,7 +111,7 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
           if (key === "machines") {
             return (
               <GoMakeAutoComplate
-                key={key}
+                key={materialCategory + "-" +key}
                 onChange={(e, v) =>
                   setFilterValue(
                     key,
@@ -125,9 +127,10 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
           } else {
             return (
               <GoMakeAutoComplate
-                key={key}
+                key={materialCategory + "-" +key}
                 onChange={(e, v) => setFilterValue(key, v)}
                 style={{ width: "200px" }}
+                value={getFilterValue(key)}
                 options={values}
                 placeholder={key}
               />

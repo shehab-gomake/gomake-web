@@ -36,7 +36,6 @@ const useMaterialFilters = () => {
   const [filters, setFilters] = useRecoilState<any>(filterState);
   console.log("filters", filters);
   const [pageNumber, setPageNumber] = useRecoilState(materialsTablePageState);
-
   const activeFilterOptions = [
     { value: EMaterialActiveFilter.ALL, label: t("materialsStatus.all") },
     { value: EMaterialActiveFilter.ACTIVE, label: t("materialsStatus.active") },
@@ -99,6 +98,14 @@ const useMaterialFilters = () => {
     setFilters(updatedFilters);
     setPageNumber(1);
   };
+  
+  /*const getFilterValue = useCallback((key:string)=>{
+    debugger;
+    return filters?.find(x=>x.key === key);
+  },[filters])*/
+  const getFilterValue = (key:string) =>{
+    return filters?.find(x=>x.key === key);
+  }
   return {
     onActiveFilterChange,
     activeFilter,
@@ -110,6 +117,8 @@ const useMaterialFilters = () => {
     onSetDefaultSupplier,
     materialTableFilters,
     setFilterValue,
+    getFilterValue,
+    materialCategory
   };
 };
 
