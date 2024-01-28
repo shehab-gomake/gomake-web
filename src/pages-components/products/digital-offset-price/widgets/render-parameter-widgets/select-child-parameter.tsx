@@ -22,6 +22,7 @@ const SelectChildParameterWidget = ({
     (item) => item.type === subSection?.type
   )?.parameters;
   const [value, setValue] = useState<any>();
+  console.log("value", value, parameter);
   useEffect(() => {
     if (subProductsParams) {
       let temp = [...subProductsParams];
@@ -48,6 +49,7 @@ const SelectChildParameterWidget = ({
               subSectionId: subSection?.id,
               ParameterType: parameter?.parameterType,
               values: [value?.values[parameterId]],
+              actionIndex: parameter?.actionIndex,
             });
           }
         }
@@ -66,7 +68,7 @@ const SelectChildParameterWidget = ({
   }, [value]);
   return (
     <>
-      {subProductsParams?.length > 0 && (
+      {parameter?.valuesConfigs?.length > 0 && (
         <GoMakeAutoComplate
           options={parameter?.valuesConfigs?.filter((value) => !value.isHidden)}
           placeholder={parameter.name}

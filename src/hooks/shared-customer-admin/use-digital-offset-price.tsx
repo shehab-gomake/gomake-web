@@ -21,7 +21,7 @@ import { digitslPriceState } from "./store";
 import cloneDeep from "lodash/cloneDeep";
 import lodashClonedeep from "lodash.clonedeep";
 import { EWidgetProductType } from "@/pages-components/products/digital-offset-price/enums";
-import { compareStrings } from "@/utils/constants";
+import { compareStrings, getParameterByParameterId } from "@/utils/constants";
 import { EButtonTypes, EParameterTypes } from "@/enums";
 import { QuantityParameter } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/quantity-parameter/quantity-parameter";
 import { InputNumberParameterWidget } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/input-number-parameter";
@@ -410,7 +410,11 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             }
             let temp = [];
             subSection.parameters
-              .filter((parameter) => !parameter.isHidden || (parameter.isHidden && parameter.defaultValue))
+              .filter(
+                (parameter) =>
+                  !parameter.isHidden ||
+                  (parameter.isHidden && parameter.defaultValue)
+              )
               .forEach((parameter) => {
                 parameter.relatedParameters.forEach((x) => {
                   x.sectionId = section.id;
@@ -909,6 +913,44 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           type="number"
         />
       );
+    } else if (
+      parameter?.parameterType === EParameterTypes.INPUT_NUMBER &&
+      parameter?.id === widthParam?.parameterId
+    ) {
+      Comp = (
+        <InputNumberParameterWidget
+          clasess={clasess}
+          parameter={parameter}
+          index={index}
+          temp={temp}
+          onChangeSubProductsForPrice={onChangeSubProductsForPrice}
+          subSection={subSection}
+          section={section}
+          type="number"
+          disabled={
+            sizeParam?.valueIds[0] !== "f26c854d-d59b-4108-b7e4-4534db7faa2b"
+          }
+        />
+      );
+    } else if (
+      parameter?.parameterType === EParameterTypes.INPUT_NUMBER &&
+      parameter?.id === heightParam?.parameterId
+    ) {
+      Comp = (
+        <InputNumberParameterWidget
+          clasess={clasess}
+          parameter={parameter}
+          index={index}
+          temp={temp}
+          onChangeSubProductsForPrice={onChangeSubProductsForPrice}
+          subSection={subSection}
+          section={section}
+          type="number"
+          disabled={
+            sizeParam?.valueIds[0] !== "f26c854d-d59b-4108-b7e4-4534db7faa2b"
+          }
+        />
+      );
     } else if (parameter?.parameterType === EParameterTypes.INPUT_NUMBER) {
       Comp = (
         <InputNumberParameterWidget
@@ -1143,12 +1185,11 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       );
       if (findIndex !== -1) {
         const valuesArray = [data.values].filter(Boolean);
-        // temp[findIndex] = {
-        //   ...temp[findIndex],
-        //   values: [data.values],
-        //   valueIds: [data.valueIds],
-        // };
-        // Check if valuesArray contains only the string value "false"
+        temp[findIndex] = {
+          ...temp[findIndex],
+          values: [data.values],
+          valueIds: [data.valueIds],
+        };
         if (valuesArray.length > 0 && valuesArray[0] !== "false") {
           temp[findIndex] = {
             ...temp[findIndex],
@@ -1156,7 +1197,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             valueIds: [data.valueIds].filter(Boolean), // Remove null and undefined
           };
         } else {
-          // Remove the entire object from the array if valuesArray is empty or contains "false"
           temp.splice(findIndex, 1);
         }
       } else {
@@ -1172,6 +1212,37 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           actionIndex,
         });
       }
+      // const targetSubProduct = subProducts.find(
+      //   (item) => item.type === subSectionType
+      // );
+      // if (targetSubProduct) {
+      //   let temp = [...targetSubProduct.parameters];
+      //   const findIndex = temp.findIndex(
+      //     (item) =>
+      //       item.parameterId === parameterId &&
+      //       item.sectionId === sectionId &&
+      //       item.subSectionId === subSectionId &&
+      //       item.actionIndex === actionIndex
+      //   );
+      //   if (findIndex !== -1) {
+      //     temp[findIndex] = {
+      //       ...temp[findIndex],
+      //       values: [data.values],
+      //       valueIds: [data.valueIds],
+      //     };
+      //   } else {
+      //     temp.push({
+      //       parameterId: parameterId,
+      //       sectionId: sectionId,
+      //       subSectionId: subSectionId,
+      //       ParameterType: ParameterType,
+      //       parameterName: parameterName,
+      //       actionId: actionId,
+      //       values: [data.values],
+      //       valueIds: [data.valueIds],
+      //       actionIndex,
+      //     });
+      //   }
       const productTemplateCopy = cloneDeep(productTemplate);
       const section = productTemplateCopy.sections.find(
         (section) => section.id === sectionId
@@ -1183,23 +1254,41 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         (param) => param.id === parameterId
       );
       if (subSectionParameter) {
-        if(subSectionParameter.id == "0fdbca1a-f250-447b-93e3-5b91909da59c")//setQuantity
-        {
+        if (subSectionParameter.id == "0fdbca1a-f250-447b-93e3-5b91909da59c") {
+          //setQuantity
           const setUnits = setUnitsParameter ? setUnitsParameter.values[0] : 0;
-          temp = temp.map(x=>x.parameterId === quantity?.parameterId ? {...x,values:[(setUnits * data.values).toString()]} : x);
+          temp = temp.map((x) =>
+            x.parameterId === quantity?.parameterId
+              ? { ...x, values: [(setUnits * data.values).toString()] }
+              : x
+          );
         }
-        if(subSectionParameter.id == "91d3fe77-b852-4974-beb6-2da7d7616c78")// SetUnits
-        {
-          const setQuantity = setQuantityParameter ? setQuantityParameter.values[0] : 0;
-          temp = temp.map(x=>x.parameterId === quantity?.parameterId ? {...x,values:[(data.values * setQuantity).toString()]} : x);
+        if (subSectionParameter.id == "91d3fe77-b852-4974-beb6-2da7d7616c78") {
+          // SetUnits
+          const setQuantity = setQuantityParameter
+            ? setQuantityParameter.values[0]
+            : 0;
+          temp = temp.map((x) =>
+            x.parameterId === quantity?.parameterId
+              ? { ...x, values: [(data.values * setQuantity).toString()] }
+              : x
+          );
         }
-        if (subSectionParameter.settingParameters && subSectionParameter.settingParameters.length > 0) {
+        if (
+          subSectionParameter.settingParameters &&
+          subSectionParameter.settingParameters.length > 0
+        ) {
           subSectionParameter.settingParameters.forEach((settingParam) => {
             temp = temp.filter((x) => x.parameterId != settingParam.id);
           });
         }
-        const parameterValue = subSectionParameter.valuesConfigs.find((x) => x.id === data.valueIds);
-        if (subSectionParameter.materialPath && subSectionParameter.materialPath.length > 0) {
+        const parameterValue = subSectionParameter.valuesConfigs.find(
+          (x) => x.id === data.valueIds
+        );
+        if (
+          subSectionParameter.materialPath &&
+          subSectionParameter.materialPath.length > 0
+        ) {
           const materialPath =
             subSectionParameter.materialPath[
               subSectionParameter.materialPath.length - 1
@@ -1280,7 +1369,11 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           });
         }
         setProductTemplate(productTemplateCopy);
-        if (parameterValue && parameterValue.selectedParameterValues && parameterValue.selectedParameterValues.length > 0) {
+        if (
+          parameterValue &&
+          parameterValue.selectedParameterValues &&
+          parameterValue.selectedParameterValues.length > 0
+        ) {
           parameterValue.selectedParameterValues.forEach((selectedParam) => {
             if (selectedParam.valueIds && selectedParam.valueIds.length > 0) {
               const param = subSectionParameter.settingParameters.find(
@@ -1648,7 +1741,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     if (subProducts) {
       const generalParameters = subProducts.find((x) => !x.type)?.parameters;
       return generalParameters?.find(
-          (item) => item?.parameterId === "0fdbca1a-f250-447b-93e3-5b91909da59c"
+        (item) => item?.parameterId === "0fdbca1a-f250-447b-93e3-5b91909da59c"
       );
     }
   }, [subProducts]);
@@ -1656,7 +1749,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     if (subProducts) {
       const generalParameters = subProducts.find((x) => !x.type)?.parameters;
       return generalParameters?.find(
-          (item) => item?.parameterId === "91d3fe77-b852-4974-beb6-2da7d7616c78"
+        (item) => item?.parameterId === "91d3fe77-b852-4974-beb6-2da7d7616c78"
       );
     }
   }, [subProducts]);
@@ -1668,6 +1761,24 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       );
     }
   }, [subProducts]);
+
+  const widthParam = getParameterByParameterId(
+    subProducts,
+    "4ba9a275-4fbc-4313-b284-e9b1cf8b452e"
+  );
+  const heightParam = getParameterByParameterId(
+    subProducts,
+    "d2c965d3-6b08-4380-9d4b-17c361d7e484"
+  );
+  const sizeParam = getParameterByParameterId(
+    subProducts,
+    "e3f211c6-c9d2-4ba1-83b6-87d2cf3402b4"
+  );
+  console.log("subProducts", {
+    subProducts,
+    sizeParam,
+    SSS: sizeParam?.valueIds[0] !== "f26c854d-d59b-4108-b7e4-4534db7faa2b",
+  });
 
   const addItemForQuotes = async () => {
     const docType = router?.query?.documentType ?? "0";

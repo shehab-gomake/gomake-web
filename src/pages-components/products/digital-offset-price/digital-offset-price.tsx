@@ -77,14 +77,16 @@ const PriceListPageWidget = ({ widgetType }) => {
   } = useDigitalOffsetPrice({ clasess, widgetType });
   const direction = t("direction");
   return (
-    <div style={{ height: "85vh" }}>
+    <div>
       {productTemplate?.sections?.length > 0 && (
         <div style={clasess.mainContainer}>
-          <HeaderTitle
-            title={productTemplate?.name}
-            marginTop={24}
-            marginBottom={24}
-          />
+          <div>
+            <HeaderTitle
+              title={productTemplate?.name}
+              marginTop={1}
+              marginBottom={24}
+            />
+          </div>
           <div style={clasess.mainRowContainer}>
             <div style={clasess.leftSideContainer}>
               <div style={clasess.tabsContainer}>
@@ -111,7 +113,7 @@ const PriceListPageWidget = ({ widgetType }) => {
                 </Tabs>
               </div>
 
-              <div style={{ height: 666, overflow: "scroll", width: "100%" }}>
+              <div style={{ height: 666, overflow: "scroll", width: "72%" }}>
                 <div style={clasess.sectionsContainer}>
                   {[...productTemplate?.sections, PricingTab]?.map(
                     (section: any, index: number) => {
