@@ -22,7 +22,6 @@ const SelectChildParameterWidget = ({
     (item) => item.type === subSection?.type
   )?.parameters;
   const [value, setValue] = useState<any>();
-  console.log("value", value, parameter);
   useEffect(() => {
     if (subProductsParams) {
       let temp = [...subProductsParams];
