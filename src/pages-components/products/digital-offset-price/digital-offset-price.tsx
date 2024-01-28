@@ -65,6 +65,7 @@ const PriceListPageWidget = ({ widgetType }) => {
     jobActions,
     workFlows,
     billingMethod,
+    underParameterIds,
     setBillingMethod,
     samlleType,
     graphicDesigner,
@@ -149,6 +150,7 @@ const PriceListPageWidget = ({ widgetType }) => {
                                     duplicateParameters={duplicateParameters}
                                     template={productTemplate}
                                     setTemplate={setProductTemplate}
+                                    underParameterIds={underParameterIds}
                                   />
                                 );
                               } else {
@@ -166,6 +168,7 @@ const PriceListPageWidget = ({ widgetType }) => {
                                     duplicateParameters={duplicateParameters}
                                     template={productTemplate}
                                     setTemplate={setProductTemplate}
+                                    underParameterIds={underParameterIds}
                                   />
                                 );
                               }

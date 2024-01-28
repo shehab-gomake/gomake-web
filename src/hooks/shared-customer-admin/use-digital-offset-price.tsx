@@ -386,12 +386,15 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     }
   }, [productTemplate]);
   const [relatedParameters, setRelatedParameters] = useState([]);
+  const [underParameterIds, setUnderParameterIds] = useState([]);
+  console.log("underParameterIds", underParameterIds);
   useEffect(() => {
     if (!isSetTemplete) {
       if (productTemplate && productTemplate?.sections?.length > 0) {
         let sectionData: any = cloneDeep(productTemplate?.sections);
         const typeMap = {};
         let relatedParametersArray = [];
+        let underParameterIdsArray = [];
         const subProductsArray = cloneDeep(subProducts);
 
         sectionData.forEach((section) => {
@@ -422,6 +425,12 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   x.actionIndex = parameter?.actionIndex;
                 });
                 relatedParametersArray.push(...parameter.relatedParameters);
+                if (parameter.isUnderParameterId !== null) {
+                  underParameterIdsArray.push({
+                    underParameterId: parameter.isUnderParameterId,
+                    myParameter: parameter,
+                  });
+                }
                 const isParameterExits = subProduct.parameters.find(
                   (param) =>
                     param.parameterId === parameter?.id &&
@@ -598,6 +607,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
         setSubProducts(subProductsArray);
         //setRelatedParameters(relatedParametersArray);
+        setUnderParameterIds(underParameterIdsArray);
         setIsSetTemplete(true);
       }
     }
@@ -609,6 +619,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     if (product && product?.sections?.length > 0) {
       let sectionData: any = product.sections;
       let relatedParametersArray = [];
+      let underParameterIdsArray = [];
       sectionData.forEach((section) => {
         section.subSections.forEach((subSection) => {
           subSection.parameters
@@ -757,6 +768,12 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 x.actionIndex = parameter?.actionIndex;
               });
               relatedParametersArray.push(...parameter.relatedParameters);
+              if (parameter.isUnderParameterId !== null) {
+                underParameterIdsArray.push({
+                  underParameterId: parameter.isUnderParameterId,
+                  myParameter: parameter,
+                });
+              }
               if (parameter.relatedParameter) {
                 parameter.relatedParameter.forEach((relatedParameter) => {
                   relatedParameter.actionIndex = parameter.actionIndex;
@@ -768,6 +785,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       setIsSetTemplete(false);
       setProductTemplate(product);
       setRelatedParameters(relatedParametersArray);
+      setUnderParameterIds(underParameterIdsArray);
     }
   };
   useEffect(() => {
@@ -1932,6 +1950,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     setIncludeVAT,
     getOutSourcingSuppliers,
     onChangeSubProductsForPrice,
+    underParameterIds,
   };
 };
 export { useDigitalOffsetPrice };
