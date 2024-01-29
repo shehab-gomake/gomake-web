@@ -160,7 +160,8 @@ const SectionMappingWidget = ({
                               subSection?.parameters,
                               value,
                               subSection?.parameters,
-                              true
+                              true,
+                              false
                             )}
                           </div>
                         );
@@ -226,16 +227,18 @@ const SectionMappingWidget = ({
                       subSection?.parameters,
                       _getParameter(parameter, subSection, section),
                       subSection?.parameters,
-                      true
+                      true,
+                      false
                     )}
-                    <div style={{ marginTop: 10 }}>
+                    <div style={{ marginTop: 5 }}>
                       {_renderParameterType(
                         myParameter,
                         subSection,
                         section,
                         subSection?.parameters,
-                        _getParameter(parameter, subSection, section),
+                        _getParameter(myParameter, subSection, section),
                         subSection?.parameters,
+                        true,
                         true
                       )}
                     </div>
@@ -252,7 +255,8 @@ const SectionMappingWidget = ({
                       subSection?.parameters,
                       value,
                       subSection?.parameters,
-                      true
+                      true,
+                      false
                     )}
                   </div>
                 );
