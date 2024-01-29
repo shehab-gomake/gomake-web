@@ -27,6 +27,8 @@ const useStyle = () => {
         height: "50px",
         flexDirection: "row" as "row",
         justifyContent: "space-between",
+        alignItems: "center",
+        marginTop:"0px"
       },
     };
   }, [i18next.language, t]);

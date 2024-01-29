@@ -44,9 +44,7 @@ const useStyle = () => {
         flexDirection: "column" as "column",
         paddingLeft: 20,
         paddingRight: 20,
-        height: "100%",
-        overflowY: "auto" as "auto",
-        marginBottom: "20px",
+        height: "100%", 
       },
       sameRow: {
         display: "flex",
@@ -92,6 +90,8 @@ const useStyle = () => {
         height: "50px",
         flexDirection: "row" as "row",
         justifyContent: "space-between",
+        alignItems: "center",
+        marginTop:"0px"
       },
     };
   }, [i18next.language, t]);

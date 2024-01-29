@@ -16,6 +16,7 @@ import { CLIENT_TYPE, CLIENT_TYPE_Id, CUSTOMER_ACTIONS } from "@/pages/customers
 import { PermissionCheck } from "@/components/CheckPermission/check-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { ExcelButtons } from "./export-import-buttons";
+import { convertHeightToVH } from "@/utils/adapter";
 
 export default function Home() {
   const { t } = useTranslation();
@@ -131,7 +132,8 @@ export default function Home() {
           />
           <PrimaryTable
             stickyFirstCol={false}
-            stickyHeader={false}
+            stickyHeader={true}
+            maxHeight={650}
             rows={getCustomersRows()}
             headers={tableHeaders}
           />

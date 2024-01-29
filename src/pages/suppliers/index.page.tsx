@@ -130,7 +130,8 @@ export default function Home() {
           <Stack spacing={3}>
             <PrimaryTable
               stickyFirstCol={false}
-              stickyHeader={false}
+              stickyHeader={true}
+              maxHeight={650} 
               rows={getCustomersRows()}
               headers={tableHeaders}
             ></PrimaryTable>

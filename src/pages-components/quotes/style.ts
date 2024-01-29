@@ -13,11 +13,13 @@ const useStyle = () => {
       mainContainer: {
         display: "flex",
         flexDirection: "column" as "column",
-        alignItems: "flex-start",
-        justifyContent: "flex-start",
-        gap: 20,
         paddingLeft: 20,
         paddingRight: 20,
+        height: "100%", 
+        overflowY: "hidden" as "hidden",
+        marginBottom: "20px",
+        gap: 20,
+
       },
       headerStyle: {
         display: "flex",
@@ -72,6 +74,7 @@ const useStyle = () => {
       paginationStyle: {
         display: "flex",
         height: "50px",
+        width: "100%",
         flexDirection: "row" as "row",
         justifyContent: "space-between",
       },
@@ -110,6 +113,8 @@ const useStyle = () => {
         background: errorColor(200),
         ...FONT_FAMILY.Lexend(500, 14),
       },
+
+      
     };
   }, [i18next.language, t, theme]);
   return {
