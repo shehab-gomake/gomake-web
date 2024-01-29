@@ -50,7 +50,7 @@ const useMaterials = (isAdmin: boolean) => {
   const [selectedTableRow, setSelectedTableRow] = useState<IMaterialCategoryRow>();
 
   const [materialHeaders, setMaterialHeaders] =
-    useRecoilState<{ key: string; value: string; unit?: string }[]>(
+    useRecoilState<{ key: string; value: string; unit?: string , isForAdmin?:boolean}[]>(
       materialHeadersState
     );
   const [materialCategories, setMaterialCategories] = useRecoilState<
@@ -237,21 +237,21 @@ const useMaterials = (isAdmin: boolean) => {
         onChange={(event, checked) => onChangeHeaderCheckBox(checked)}
         checked={isAllSelected()}
       />,
-      ...(isAdmin ? materialHeaders.filter(x=>x.key !== "stock") : materialHeaders).map((header) =>
+      ...(isAdmin ? materialHeaders.filter(x=>x.key !== "stock") : materialHeaders.filter((header) => !header.isForAdmin)
+      ).map((header) =>
         header.unit ? (
           <div>
             {" "}
             <span>{header.value}</span> <small>{header.unit}</small>
           </div>
         ) : (
-          header.value
+         header.value
         )
       ),
       t("properties.more"),
     ];
   }, [materialHeaders, materialCategoryData]);
 
-  ///////////////////////////////////////////////////////////
 
   const tableRows = useMemo(() => {
     return materialCategoryData.map((dataRow) => {
@@ -281,12 +281,16 @@ const useMaterials = (isAdmin: boolean) => {
 
   const tableRowsNew = useMemo(() => {
     return materialCategoryData.map((dataRow) => {
+      const filteredHeaders = isAdmin
+        ? materialHeaders.filter((x) => x.key !== "stock" )
+        : materialHeaders.filter((header) => !header.isForAdmin);
+  
       return [
         <Checkbox
           onChange={(e, checked) => onChangeRowCheckBox(dataRow.id, checked)}
           checked={dataRow.checked}
         />,
-        ...(isAdmin ? materialHeaders.filter(x=>x.key !== "stock") : materialHeaders).map((header) => (
+        ...filteredHeaders.map((header) => (
           <TableCellData
             {...dataRow.rowData[header.key]}
             id={dataRow.id}
@@ -303,9 +307,8 @@ const useMaterials = (isAdmin: boolean) => {
         />,
       ];
     });
-  }, [materialHeaders, materialCategoryData, activeFilter, materialFilter]);
-
-  ///////////////////////////////////////////////////////////
+  }, [materialHeaders, materialCategoryData, isAdmin, activeFilter, materialFilter]);
+  
 
   const getCurrenciesApi = async () => {
     const callBack = (res) => {
