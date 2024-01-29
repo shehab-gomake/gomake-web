@@ -944,9 +944,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           subSection={subSection}
           section={section}
           type="number"
-          disabled={
-            sizeParam?.valueIds[0] !== "f26c854d-d59b-4108-b7e4-4534db7faa2b"
-          }
         />
       );
     } else if (
@@ -963,9 +960,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           subSection={subSection}
           section={section}
           type="number"
-          disabled={
-            sizeParam?.valueIds[0] !== "f26c854d-d59b-4108-b7e4-4534db7faa2b"
-          }
         />
       );
     } else if (parameter?.parameterType === EParameterTypes.INPUT_NUMBER) {
