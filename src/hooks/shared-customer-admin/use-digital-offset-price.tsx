@@ -1654,6 +1654,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       setRequestAbortController(newRequestAbortController);
       const generalParameters = subProducts.find((x) => !x.type).parameters;
       const calculationSubProducts = subProducts.filter((x) => x.type);
+      let workTypes = [];
+      if(productQuantityTypes && productQuantityTypes.length > 0 && productQuantityTypes[0].quantity > 0){
+        workTypes = productQuantityTypes;
+      }
       const res = await callApi(
         "POST",
         `/v1/calculation-service/calculations/calculate-product`,
@@ -1665,7 +1669,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           generalParameters: generalParameters,
           subProducts: calculationSubProducts,
           itemParmetersValues: itemParmetersValues,
-          workTypes: productQuantityTypes,
+          workTypes: workTypes,
         },
         false,
         newRequestAbortController
