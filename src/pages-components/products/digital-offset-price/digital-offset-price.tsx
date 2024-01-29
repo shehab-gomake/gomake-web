@@ -114,7 +114,7 @@ const PriceListPageWidget = ({ widgetType }) => {
                 </Tabs>
               </div>
 
-              <div style={{ height: 666, overflow: "scroll", width: "72%" }}>
+              <div style={{ height: 666, overflow: "scroll", width: "calc(100% - 330px)" }}>
                 <div style={clasess.sectionsContainer}>
                   {[...productTemplate?.sections, PricingTab]?.map(
                     (section: any, index: number) => {
@@ -221,9 +221,8 @@ const PriceListPageWidget = ({ widgetType }) => {
               justifyContent: "flex-end",
               alignItems: "center",
               position: "fixed",
-              paddingRight: "15px",
-              ...adaptPaddingLeft(direction, 15),
-              gap: 20,
+              // paddingRight: "15px",
+              // ...adaptPaddingLeft(direction, 15),
               bottom: 0,
               right: 0,
               boxShadow: "0px 0px 5px rgba(0, 0, 0, 0.08)",
@@ -253,7 +252,7 @@ const PriceListPageWidget = ({ widgetType }) => {
                 ) : null}
               </div>
             </div>
-            <div style={{ width: 315, height: 40 }}>
+            <div style={{ width: 220, height: 40,marginLeft:55,marginRight:55 }}>
               {widgetType === EWidgetProductType.EDIT ? (
                 <GomakePrimaryButton
                   style={clasess.addOrderBtn}
