@@ -33,7 +33,6 @@ const PricingWidget = ({
   const { t } = useTranslation();
   const { classes } = useStyle();
   const selectedWorkFlow = useRecoilValue(selectedWorkFlowState);
-  console.log("selectedWorkFlow", selectedWorkFlow);
   const [currentProductItemValue, setCurrentProductItemValue] =
     useRecoilState<any>(currentProductItemValueState);
   const productItemValueDraftId = useRecoilValue<string>(
