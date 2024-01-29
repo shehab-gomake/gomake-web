@@ -41,6 +41,7 @@ const useCustomer = (permissionEnumValue?:Permissions) => {
             setUserProfile(validate?.data?.data?.customer);
             setSystemCurrency(user.systemCurrency)
             setSystemVAT(user.systemVat);
+            localStorage.setItem('systemLogo', validate?.data?.data?.customer?.printHouseProfile?.logo)
             if (validate?.data?.data?.customer?.systemLang) {
                 localStorage.setItem('systemLanguage', validate?.data?.data?.customer?.systemLang)
                 i18n.changeLanguage(validate?.data?.data?.customer?.systemLang).then();
