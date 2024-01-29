@@ -423,7 +423,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   x.subSectionId = subSection.id;
                   x.actionIndex = parameter?.actionIndex;
                 });
-                relatedParametersArray.push(...parameter.relatedParameters);
+                // relatedParametersArray.push(...parameter.relatedParameters);
                 if (parameter.isUnderParameterId !== null) {
                   underParameterIdsArray.push({
                     underParameterId: parameter.isUnderParameterId,
@@ -624,6 +624,16 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           subSection.parameters
             .filter((parameter) => !parameter.isHidden)
             .forEach((parameter) => {
+              parameter.relatedParameters.forEach((relatedParameter) => {
+                // Check if the relatedParameter's parameterId exists in parameters
+                const isParameterIdExisting = subSection.parameters.some(
+                  (p) => p.id === relatedParameter.parameterId
+                );
+
+                if (isParameterIdExisting) {
+                  relatedParametersArray.push(relatedParameter);
+                }
+              });
               const relatedToParameter = subSection.parameters.find(
                 (subProductsParameter) =>
                   subProductsParameter?.relatedParameters?.find(
@@ -766,7 +776,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 x.subSectionId = subSection.id;
                 x.actionIndex = parameter?.actionIndex;
               });
-              relatedParametersArray.push(...parameter.relatedParameters);
+              // relatedParametersArray.push(...parameter.relatedParameters);
               if (parameter.isUnderParameterId !== null) {
                 underParameterIdsArray.push({
                   underParameterId: parameter.isUnderParameterId,
@@ -1089,7 +1099,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         <>
           {parameter?.relatedParameters?.length > 0 && inModal && (
             <>
-              {parameter.relatedParameters.map((relatedParameter) => {
+              {parameter.relatedParameters.filter((relatedParameter) =>
+                subSection.parameters.some((p) => p.id === relatedParameter.parameterId)
+              ).map((relatedParameter) => {
                 const subProduct = subProducts.find(
                   (x) => x.type === subSection?.type
                 );
@@ -1655,7 +1667,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       const generalParameters = subProducts.find((x) => !x.type).parameters;
       const calculationSubProducts = subProducts.filter((x) => x.type);
       let workTypes = [];
-      if(productQuantityTypes && productQuantityTypes.length > 0 && productQuantityTypes[0].quantity > 0){
+      if (productQuantityTypes && productQuantityTypes.length > 0 && productQuantityTypes[0].quantity > 0) {
         workTypes = productQuantityTypes;
       }
       const res = await callApi(
