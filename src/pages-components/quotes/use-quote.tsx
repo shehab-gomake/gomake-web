@@ -54,6 +54,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
   const [allDocuments, setAllDocuments] = useState([]);
   const [allStatistics, setAllStatistics] = useState([]);
   const selectedClient = useRecoilValue<any>(selectedClientState);
+  
   const [page, setPage] = useState(1);
   const [pagesCount, setPagesCount] = useState(0);
   const [pageSize, setPageSize] = useState(DEFAULT_VALUES.PageSize);

@@ -1,12 +1,13 @@
 import i18next from "i18next";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { convertHeightToVH, convertWidthToVW } from "@/utils/adapter";
+import { convertHeightToVH, convertWidthToVW , adaptPaddingLeft, adaptPaddingRight } from "@/utils/adapter";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 const useStyle = () => {
   const { t } = useTranslation();
+  const direction = t('direction');
   const { secondColor } = useGomakeTheme();
   const classes = useMemo(() => {
     return {
@@ -83,15 +84,11 @@ const useStyle = () => {
         backgroundColor: "#FFFFFF",
         border: `1px solid ${secondColor(500)}`,
       },
-      paginationStyle: {
+      footerStyle: {
         display: "flex",
-        paddingLeft: 20,
-        paddingRight: 20,
-        height: "50px",
         flexDirection: "row" as "row",
-        justifyContent: "space-between",
         alignItems: "center",
-        marginTop:"0px"
+        ...adaptPaddingLeft(direction, 20),
       },
     };
   }, [i18next.language, t]);

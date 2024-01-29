@@ -7,13 +7,12 @@ interface IProps {
     onChangePageNumber: (event: ChangeEvent<unknown>, page: number) => void;
     onChangePageSize: (event: SelectChangeEvent<number>, child: ReactNode) => void;
     style?: React.CSSProperties;
-    label?: string;
     page: number;
-    pagesCount: number;
     pageSize: number;
+    pagesCount: number;
 }
 
-const GoMakePagination = ({ onChangePageSize, onChangePageNumber, page, pageSize, pagesCount, label }: IProps) => {
+const GoMakePagination = ({ onChangePageSize, onChangePageNumber, page, pageSize, pagesCount }: IProps) => {
     const { classes } = useStyle();
 
     return (
@@ -27,17 +26,17 @@ const GoMakePagination = ({ onChangePageSize, onChangePageNumber, page, pageSize
             />
             <div>
                 <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
-                    <InputLabel id="demo-simple-select-standard-label">{label}</InputLabel>
+                    <InputLabel id="demo-simple-select-standard-label">Page size</InputLabel>
                     <Select
                         labelId="demo-simple-select-standard-label"
                         id="demo-simple-select-standard"
                         value={pageSize}
                         onChange={onChangePageSize}
-                        label={label} >
-                        <MenuItem value={10}>Ten</MenuItem>
-                        <MenuItem value={15}>Fifty</MenuItem>
-                        <MenuItem value={20}>Twenty</MenuItem>
-                        <MenuItem value={30}>Thirty</MenuItem>
+                        label="Page size" >
+                        <MenuItem value={10}>10</MenuItem>
+                        <MenuItem value={15}>15</MenuItem>
+                        <MenuItem value={20}>20</MenuItem>
+                        <MenuItem value={30}>30</MenuItem>
                     </Select>
                 </FormControl>
             </div>

@@ -14,7 +14,7 @@ const ExcelButtons = ({ onClickExport, onClickImport}: IProps) => {
   const elementRef = useRef(null);
 
   return (
-    <Stack gap={'10px'} direction={'row'} justifyContent={'space-between'} >
+    <Stack gap={'10px'} direction={'row'} >
       <SecondaryButton onClick={onClickExport} variant={'contained'}>{t("customers.buttons.export")}</SecondaryButton>
       <input ref={elementRef} onChange={onClickImport} type="file" accept=".xlsx" hidden={true} />
       <SecondaryButton onClick={() => elementRef && elementRef.current.click()} variant={'outlined'}>{t("customers.buttons.import")}</SecondaryButton>

@@ -16,6 +16,7 @@ import { CLIENT_TYPE, CLIENT_TYPE_Id, CUSTOMER_ACTIONS } from "@/pages/customers
 import { PermissionCheck } from "@/components/CheckPermission/check-permission";
 import { Permissions } from "../../components/CheckPermission/enum";
 import { ExcelButtons } from "../customers/export-import-buttons";
+import { GoMakePagination } from "@/components/pagination/gomake-pagination";
 
 export default function Home() {
   const { t } = useTranslation();
@@ -56,7 +57,8 @@ export default function Home() {
     getAllCustomers,
     onClickExportClient,
     onClickImportClient,
-    getClientTypesCategories
+    getClientTypesCategories,
+    handlePageSizeChange
   } = useCustomers(CLIENT_TYPE.SUPPLIER, pageNumber, setPageNumber);
   const activeText = t("usersSettings.active");
   const inActiveText = t("usersSettings.active");
@@ -149,13 +151,13 @@ export default function Home() {
             />
           </Stack>
         </div>
-        <div style={classes.paginationStyle}>
-          <Pagination
-            count={pagesCount}
-            variant="outlined"
-            color="primary"
+        <div style={classes.footerStyle}>
+           <GoMakePagination
+            onChangePageNumber={(event, value) => setPageNumber(value)}
+            onChangePageSize={handlePageSizeChange}
             page={pageNumber}
-            onChange={(event, value) => setPageNumber(value)}
+            pagesCount={pagesCount}
+            pageSize={pageSize}
           />
           <ExcelButtons
             onClickExport={onClickExportClient}

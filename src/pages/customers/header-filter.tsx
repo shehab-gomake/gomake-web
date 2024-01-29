@@ -6,6 +6,7 @@ import * as React from "react";
 import { SearchInputComponent } from "@/components/form-inputs/search-input-component";
 import { SecondaryButton } from "@/components/button/secondary-button";
 import { IStatus } from "./use-customers";
+import { ExcelMenu } from "./export-import-buttons/excel-menu";
 
 interface IProps {
   typeClient?: string;
@@ -120,8 +121,11 @@ const HeaderFilter = ({
         <SecondaryButton style={classes.cleanBtnStyle} onClick={handleClean}>
           {t("customers.buttons.clean")}
         </SecondaryButton>
+
       </div>
       <div>
+      <ExcelMenu/>
+
         <SearchInputComponent
           onChange={onChangeCustomer}
           value={customerName}

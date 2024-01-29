@@ -164,7 +164,6 @@ const QuotesListPageWidget = ({
             page={page}
             pagesCount={pagesCount}
             pageSize={pageSize}
-            label={t("Page size")}
           />
         </Stack>
       )}
