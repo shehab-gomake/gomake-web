@@ -152,6 +152,7 @@ const useStyle = () => {
       parameterLabelStyle: {
         ...FONT_FAMILY.Lexend(500, 14),
         color: primaryColor(900),
+        width: "fit-content",
       },
       parameterType3ActiveLabelStyle: {
         ...FONT_FAMILY.Lexend(500, 14),
@@ -170,6 +171,14 @@ const useStyle = () => {
         width: "100%",
         minWidth: 180,
         maxWidth: 180,
+      },
+      parameterRowContainer: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "flex-start",
+        alignItems: "center",
+        gap: 10,
+        width: "100%",
       },
       WastebasketNewStyle: {
         display: "flex",

@@ -14,7 +14,6 @@ import {
 import { EWidgetProductType } from "./enums";
 import { PricingWidget } from "@/widgets/product-pricing-widget/pricing-widget";
 import { Tabs } from "@mui/material";
-import { adaptPaddingLeft } from "@/utils/adapter";
 
 const PriceListPageWidget = ({ widgetType }) => {
   const { clasess } = useStyle();
@@ -242,7 +241,7 @@ const PriceListPageWidget = ({ widgetType }) => {
                   </GomakePrimaryButton>
                 ) : null}
                 {[...productTemplate?.sections, PricingTab].length - 1 !=
-                activeIndex ? (
+                  activeIndex ? (
                   <GomakePrimaryButton
                     style={clasess.nextBtnStyle}
                     onClick={handleNextClick}
@@ -252,7 +251,7 @@ const PriceListPageWidget = ({ widgetType }) => {
                 ) : null}
               </div>
             </div>
-            <div style={{ width: 220, height: 40,marginLeft:55,marginRight:55 }}>
+            <div style={{ width: 220, height: 40, marginLeft: 55, marginRight: 55 }}>
               {widgetType === EWidgetProductType.EDIT ? (
                 <GomakePrimaryButton
                   style={clasess.addOrderBtn}

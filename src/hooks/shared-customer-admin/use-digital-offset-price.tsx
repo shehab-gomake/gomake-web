@@ -225,9 +225,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         flow.id === updatedSelectedWorkFlow?.id
           ? updatedSelectedWorkFlow
           : {
-              ...flow,
-              selected: false,
-            }
+            ...flow,
+            selected: false,
+          }
       )
     );
     if (
@@ -644,7 +644,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   (parameter?.parameterType ===
                     EParameterTypes.DROP_DOWN_LIST ||
                     parameter?.parameterType ===
-                      EParameterTypes.SELECT_MATERIALS) &&
+                    EParameterTypes.SELECT_MATERIALS) &&
                   (!parameter?.valuesConfigs ||
                     parameter?.valuesConfigs.length === 0)
                 ) {
@@ -886,7 +886,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     subSectionParameters,
     value,
     list,
-    inModal: any
+    inModal: any,
+    inRow: boolean
   ) => {
     let Comp;
     const parametersArray = subProducts.flatMap((item) => item.parameters);
@@ -1061,7 +1062,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         />
       );
     }
-
     return (
       <div
         style={{
@@ -1071,7 +1071,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           gap: 10,
         }}
       >
-        <div style={clasess.parameterContainer}>
+        <div style={inRow ? clasess.parameterRowContainer : clasess.parameterContainer}>
           <div
             style={
               value?.values[0] === "true"
@@ -1084,7 +1084,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               <span style={clasess.spanRequierd}> *</span>
             ) : null}
           </div>
-          <div style={clasess.renderParameterTypeContainer}>{Comp}</div>
+          <div style={inRow ? { width: "5%" } : clasess.renderParameterTypeContainer}>{Comp}</div>
         </div>
         <>
           {parameter?.relatedParameters?.length > 0 && inModal && (
@@ -1113,7 +1113,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         subSection?.parameters,
                         myParameter?.value,
                         list,
-                        true
+                        true,
+                        false
                       )}
                     </div>
                   );
@@ -1135,7 +1136,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                             subSection?.parameters,
                             myParameter?.value,
                             list,
-                            true
+                            true,
+                            false
                           )}
                         </div>
                       );
@@ -1155,7 +1157,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                             subSection?.parameters,
                             myParameter?.value,
                             list,
-                            true
+                            true,
+                            false
                           )}
                         </div>
                       );
@@ -1302,7 +1305,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         ) {
           const materialPath =
             subSectionParameter.materialPath[
-              subSectionParameter.materialPath.length - 1
+            subSectionParameter.materialPath.length - 1
             ];
           const materialRelatedParameters = subSection.parameters.filter(
             (x) =>
