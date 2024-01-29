@@ -8,6 +8,8 @@ import { useTableCellData } from "@/widgets/materials-widget/components/table-ce
 import { ImageInput } from "./image-input";
 import { MultiSelectInput } from "./multi-select-input";
 import { SelectInput } from "./select-input";
+import { useRecoilValue } from "recoil";
+import { machineCategoriesState } from "@/store/machine-categories";
 
 const TableCellData = ({
   value,
@@ -19,8 +21,8 @@ const TableCellData = ({
   isAdmin,
   onChangeRowCheckBox,
 }: IRowData) => {
-  const { updateCellData, machinesOptions, clientsOptions } =
-    useTableCellData(isAdmin);
+  const { updateCellData, machinesOptions, clientsOptions } = useTableCellData(isAdmin);
+  const machinesCategories = useRecoilValue(machineCategoriesState);
 
   const toggleIsActive = async () => {
     await updateCellData(id, parameterKey, !value);
@@ -95,6 +97,16 @@ const TableCellData = ({
       return (
         <SelectInput
           values={values}
+          parameterKey={parameterKey}
+          id={id}
+          value={value as string}
+          isAdmin={isAdmin}
+        />
+      );
+    case EDataTypeEnum.MACHINES_CATEGORY_LIST:
+      return (
+        <SelectInput
+          values={machinesCategories}
           parameterKey={parameterKey}
           id={id}
           value={value as string}

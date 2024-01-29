@@ -3,6 +3,7 @@ import { useTableCellData } from "@/widgets/materials-widget/components/table-ce
 import { GoMakeAutoComplate } from "@/components";
 import { getAllProductsForDropDownList } from "@/services/hooks";
 import { useGomakeAxios } from "@/hooks";
+import { useTranslation } from "react-i18next";
 
 interface IProps {
   parameterKey: string;
@@ -14,6 +15,7 @@ interface IProps {
 
 const SelectInput = ({ values, parameterKey, id, value, isAdmin }: IProps) => {
   const { callApi } = useGomakeAxios();
+  const { t } = useTranslation();
   const [productValue, setProductValues] = useState([]);
   const getAllProducts = useCallback(async () => {
     if (parameterKey === "productId" || parameterKey === "printed product")
@@ -27,11 +29,17 @@ const SelectInput = ({ values, parameterKey, id, value, isAdmin }: IProps) => {
   const options = values
     ? parameterKey === "productId" || parameterKey === "printed product"
       ? productValue?.map((inputValue) => ({
-          ...inputValue,
-          id: inputValue.id,
-          label: inputValue.name,
-        }))
-      : values.map((inputValue) => ({
+        ...inputValue,
+        id: inputValue.id,
+        label: inputValue.name,
+      }))
+      :
+      parameterKey === "machineCategory" ? values.map((inputValue) => ({
+        id: inputValue.id,
+        label: t(inputValue.name),
+      }))
+        :
+        values.map((inputValue) => ({
           id: inputValue.key,
           label: inputValue.value,
         }))
@@ -40,6 +48,7 @@ const SelectInput = ({ values, parameterKey, id, value, isAdmin }: IProps) => {
   const onSelectChange = async (event: SyntheticEvent, value) => {
     await updateCellData(id, parameterKey, value?.id);
   };
+
   return (
     <div
       style={{
