@@ -287,10 +287,9 @@ const ActionContainerComponent = ({
               <span>
                 {source === EWorkSource.OUT
                   ? `(${
-                      +totalPrice.outSourceValues[0] -
-                      +totalCost.outSourceValues[0]
+                        ( +totalPrice.outSourceValues[0] - +totalCost.outSourceValues[0]).toFixed(2)
                     } ${totalPrice.defaultUnit})`
-                  : `(${+totalPrice.values[0] - +totalCost.values[0]} ${
+                  : `(${(+totalPrice.values[0] - +totalCost.values[0]).toFixed(2)} ${
                       totalPrice.defaultUnit
                     })`}
               </span>
