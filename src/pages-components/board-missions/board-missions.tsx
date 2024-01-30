@@ -8,7 +8,8 @@ import { SearchInputComponent } from "@/components/form-inputs/search-input-comp
 import { useEffect } from "react";
 import { GoMakeMultiSelect } from "@/components/auto-complete/multi-select";
 import { GoMakeDatepicker } from "@/components/date-picker/date-picker-component";
-import { Pagination, Stack } from "@mui/material";
+import { Stack } from "@mui/material";
+import { GoMakePagination } from "@/components/pagination/gomake-pagination";
 
 const BoardMissionsListWidget = () => {
   const { classes } = useStyle();
@@ -39,15 +40,18 @@ const BoardMissionsListWidget = () => {
     handlePageChange,
     pagesCount,
     pageNumber,
+    setPageNumber,
     onSelectDeliveryTimeDates,
-    resetDatePicker
+    resetDatePicker,
+    handlePageSizeChange,
+    pageSize
   } = useBoardMissions();
 
   useEffect(() => {
     getAllCustomersCreateQuote();
     getAgentCategories(true);
     getAllProducts();
-  },[]);
+  }, []);
 
   return (
     <>
@@ -125,13 +129,13 @@ const BoardMissionsListWidget = () => {
             headers={tableHeader}
           />
         </div>
-        <Pagination
-          count={pagesCount}
-          variant="outlined"
-          color="primary"
+        <GoMakePagination
+          onChangePageNumber={handlePageChange}
+          onChangePageSize={handlePageSizeChange}
           page={pageNumber}
-          style={classes.paginationStyle}
-          onChange={handlePageChange}
+          setPage={setPageNumber}
+          pagesCount={pagesCount}
+          pageSize={pageSize}
         />
       </Stack>
     </>

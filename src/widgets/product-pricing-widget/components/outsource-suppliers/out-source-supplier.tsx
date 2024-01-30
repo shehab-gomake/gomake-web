@@ -11,6 +11,8 @@ import {IOutSourceSupplier} from "@/widgets/product-pricing-widget/interface";
 import {PrimaryButton} from "@/components/button/primary-button";
 import {useOutsourceSupplier} from "@/widgets/product-pricing-widget/components/outsource-suppliers/use-outsource-supplier";
 import {useTranslation} from "react-i18next";
+import { useRecoilValue } from "recoil";
+import { systemCurrencyState } from "@/store";
 
 interface IProps {
     value: number;
@@ -47,6 +49,7 @@ const OutSourceSupplierComponent = ({
     const handleUpdatePrice = (price: number) => {
         updatePrice(supplierId, price);
     }
+    const systemCurrency = useRecoilValue<any>(systemCurrencyState);
 
     return (
         <Fade in={true} timeout={700}>
@@ -58,13 +61,13 @@ const OutSourceSupplierComponent = ({
                     <EditableValue unit={'W.H'} isEditable={status === EOutsourceSupplierStatus.Manually}
                                    label={t('pricingWidget.endTime')} value={workHours} onUpdate={handleDeliveryTimeUpdate}/>
                     <Divider orientation={'vertical'} flexItem/>
-                    <EditableValue unit={'$'} isEditable={status === EOutsourceSupplierStatus.Manually} label={t('pricingWidget.cost')}
+                    <EditableValue unit={systemCurrency} isEditable={status === EOutsourceSupplierStatus.Manually} label={t('pricingWidget.cost')}
                                    value={cost} onUpdate={handleCostUpdate}/>
                     <Divider orientation={'vertical'} flexItem/>
                     <EditableValue unit={'%'} isEditable={status === EOutsourceSupplierStatus.Manually} label={t('pricingWidget.profit')}
                                    value={profit} onUpdate={handleProfitUpdate}/>
                     <Divider orientation={'vertical'} flexItem/>
-                    <EditableValue unit={'$'} isEditable={status === EOutsourceSupplierStatus.Manually}
+                    <EditableValue unit={systemCurrency} isEditable={status === EOutsourceSupplierStatus.Manually}
                                    valueColor={secondColor(500)} label={t('pricingWidget.finalPrice')} value={finalPrice}
                                    onUpdate={handleUpdatePrice}/>
                 </Stack>

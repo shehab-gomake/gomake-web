@@ -12,10 +12,10 @@ import { AddCustomerButton } from "../customers/add-customer";
 import { useCustomers } from "../customers/use-customers";
 import { customerMapFunction } from "@/services/api-service/customers/customers-api";
 import { useEffect } from "react";
-import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
+import { CLIENT_TYPE, CLIENT_TYPE_Id, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 import { PermissionCheck } from "@/components/CheckPermission/check-permission";
 import { Permissions } from "../../components/CheckPermission/enum";
-import { ExcelButtons } from "../customers/export-import-buttons";
+import { GoMakePagination } from "@/components/pagination/gomake-pagination";
 
 export default function Home() {
   const { t } = useTranslation();
@@ -56,6 +56,8 @@ export default function Home() {
     getAllCustomers,
     onClickExportClient,
     onClickImportClient,
+    getClientTypesCategories,
+    handlePageSizeChange
   } = useCustomers(CLIENT_TYPE.SUPPLIER, pageNumber, setPageNumber);
   const activeText = t("usersSettings.active");
   const inActiveText = t("usersSettings.active");
@@ -83,6 +85,10 @@ export default function Home() {
     isActive,
   ]);
 
+  useEffect(() => {
+    getClientTypesCategories(CLIENT_TYPE_Id.SUPPLIER);
+  }, []);
+  
   return (
     <CustomerAuthLayout>
       <Stack
@@ -121,11 +127,14 @@ export default function Home() {
             agentName={agentName}
             valClientType={valClientType}
             valStatus={valStatus}
+            onClickExport={onClickExportClient}
+            onClickImport={onClickImportClient}
           />
           <Stack spacing={3}>
             <PrimaryTable
               stickyFirstCol={false}
-              stickyHeader={false}
+              stickyHeader={true}
+              maxHeight={650} 
               rows={getCustomersRows()}
               headers={tableHeaders}
             ></PrimaryTable>
@@ -143,19 +152,14 @@ export default function Home() {
             />
           </Stack>
         </div>
-        <div style={classes.paginationStyle}>
-          <Pagination
-            count={pagesCount}
-            variant="outlined"
-            color="primary"
+           <GoMakePagination
+            onChangePageNumber={(event, value) => setPageNumber(value)}
+            onChangePageSize={handlePageSizeChange}
             page={pageNumber}
-            onChange={(event, value) => setPageNumber(value)}
+            setPage={setPageNumber}
+            pagesCount={pagesCount}
+            pageSize={pageSize}
           />
-          <ExcelButtons
-            onClickExport={onClickExportClient}
-            onClickImport={onClickImportClient}
-          />
-        </div>
       </Stack>
     </CustomerAuthLayout>
   );

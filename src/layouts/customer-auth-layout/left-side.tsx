@@ -5,21 +5,24 @@ import { Tab } from "./tab";
 import { useAuthLayoutHook } from "./use-auth-layout-hook";
 import { useRecoilState } from "recoil";
 import { navStatusState } from "@/store/nav-status";
-import { BackNavIcon } from "@/icons/back-nav";
 import { adaptRight } from "@/utils/adapter";
-import { hoverStatusState, permissionsState } from "@/store";
+import { hoverStatusState } from "@/store";
 import LockIcon from "@mui/icons-material/Lock";
 import { useUserPermission } from "@/hooks/use-permission";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 const LeftSideLayout = (customGap) => {
   const { t } = useTranslation();
 
-  const { tabs1, tabs2, tabs3, profile } = useAuthLayoutHook();
+  const { tabs1, tabs2, tabs3 } = useAuthLayoutHook();
 
   const [navStatus, setNavStatus] = useRecoilState(navStatusState);
   const [isHover, setIsHover] = useRecoilState(hoverStatusState);
   const { CheckPermission } = useUserPermission();
   const { clasess } = useStyle({ navStatus, customGap });
+  const [myProfileLogo, setMyProfileLogo] = useState("")
+  useEffect(() => {
+    setMyProfileLogo(localStorage.getItem("systemLogo"))
+  }, [])
   useEffect(() => {
     const isHover = localStorage.getItem("isHover");
     if (isHover && isHover == "true") {
@@ -28,19 +31,19 @@ const LeftSideLayout = (customGap) => {
     }
   }, []);
   const checkTabPermissions = (tab) => {
-    
-    if(tab.isList && tab.list){
-        for(let i = 0;i<tab.list.length;i++){
-            if(!tab.list[i].Permission){
-                return true;
-            }
-            if(CheckPermission(tab.list[i].Permission)){
-                return true;
-            }
+
+    if (tab.isList && tab.list) {
+      for (let i = 0; i < tab.list.length; i++) {
+        if (!tab.list[i].Permission) {
+          return true;
         }
-        return false;
+        if (CheckPermission(tab.list[i].Permission)) {
+          return true;
+        }
+      }
+      return false;
     }
-    else if(tab.Permission && !CheckPermission(tab.Permission)){
+    else if (tab.Permission && !CheckPermission(tab.Permission)) {
       return false;
     }
     return true;
@@ -77,20 +80,28 @@ const LeftSideLayout = (customGap) => {
           <LockIcon style={{ color: "#FFF", width: 20, height: 20 }} />
         </div>
       )}
-
       <div style={clasess.logoContainer}>
+        {myProfileLogo &&
+          <Image
+            src={myProfileLogo}
+            alt="logo"
+            width={80}
+            height={80}
+          />
+        }
+      </div>
+      {/* <div style={clasess.logoContainer}>
         <Image
-          // src={"https://i.ibb.co/wzpwSq6/Group-1239.png"}
           src={
-            profile.logo
-              ? profile.logo
+            myProfileLogo
+              ? myProfileLogo
               : "https://i.ibb.co/wzpwSq6/Group-1239.png"
           }
           alt="logo"
           width={80}
           height={80}
         />
-      </div>
+      </div> */}
 
       <div style={clasess.tabsContainer}>
         {tabs1.map((tab) => {
@@ -100,7 +111,7 @@ const LeftSideLayout = (customGap) => {
                 <div key={tab.key} style={clasess.line} />
               </div>
             );
-          } else if(checkTabPermissions(tab)) {
+          } else if (checkTabPermissions(tab)) {
             return <Tab key={tab.key} tab={tab} customGap={customGap} />;
           }
         })}
@@ -125,7 +136,7 @@ const LeftSideLayout = (customGap) => {
                   <div style={clasess.line} />
                 </div>
               );
-            } else if(checkTabPermissions(tab)) {
+            } else if (checkTabPermissions(tab)) {
               return <Tab key={tab.key} tab={tab} />;
             }
           })

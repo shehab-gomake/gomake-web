@@ -41,3 +41,5 @@ export * from "./partners";
 export * from "./arrow-down-with-square";
 export * from "./sort-icon";
 export * from "./material-tabs";
+export * from "./warning";
+export * from "./enter-arrow";

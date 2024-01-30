@@ -10,18 +10,22 @@ import { useTableCellData } from "../table-cell-data/use-table-cell-data";
 import { DuplicateIcon } from "@/components/icons/duplicate-icon";
 import { useMaterialsCategories } from "../../use-materials-categories";
 import { useRouter } from "next/router";
-import { useRecoilValue } from "recoil";
-import { filterState, selectedSupplierIdState } from "../../state";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import {filterState, selectedMaterialIdForUpdateState, selectedSupplierIdState} from "../../state";
+import { EMaterialsActions } from "../../enums";
+import { actionMenuState } from "@/store";
 
 const MaterialMenuWidget = ({
   dataRow,
   isAdmin,
-  setSelectedTableRow,
   onClickOpenDeleteTableRowModal,
+  onChangeRowCheckBox,
 }) => {
-  setSelectedTableRow(dataRow);
   const { clasess } = useStyle();
-  const { open, anchorEl, handleClose, handleClick } = useMoreCircle();
+  const { open, anchorEl, handleClose, handleClick } = useMoreCircle({
+    onChangeRowCheckBox,
+    dataRow,
+  });
   const { t } = useTranslation();
   const { updateCellData } = useTableCellData(isAdmin);
   const { getMaterialCategoryData } = useMaterialsCategories(isAdmin);
@@ -29,6 +33,7 @@ const MaterialMenuWidget = ({
   const { materialType, materialCategory } = query;
   const supplierId = useRecoilValue(selectedSupplierIdState);
   const materialFilter = useRecoilValue(filterState);
+  const setSelectedMaterialIdForUpdate = useSetRecoilState(selectedMaterialIdForUpdateState);
 
   const toggleIsActive = async (id, parameterKey, value) => {
     await updateCellData(id, parameterKey, !value);
@@ -39,30 +44,49 @@ const MaterialMenuWidget = ({
       supplierId
     ).then();
   };
-
+  const [action, setAction] = useRecoilState<{
+    action: EMaterialsActions;
+    key: string;
+  } | null>(actionMenuState);
+  const onClickActionModal = () => {
+    setSelectedMaterialIdForUpdate(dataRow.id);
+    setAction({
+      key: "Duplicate",
+      action: 10,
+    });
+  };
   return (
     <>
       <IconButton onClick={handleClick}>
         <MoreCircleIcon />
       </IconButton>
       <GoMakeMenu handleClose={handleClose} open={open} anchorEl={anchorEl}>
-        <MenuItem style={clasess.menuItemContainer}>
-          <div style={clasess.menuRowStyle}>
-            <ConvertIcon />
-            <div
-              style={clasess.rowTextStyle}
-              onClick={() => {
-                toggleIsActive(dataRow?.id, "Active", dataRow?.isActive);
-              }}
-            >
-              {dataRow?.isActive
-                ? t("remainWords.convertToInactive")
-                : t("remainWords.convertToActive")}
-            </div>
-          </div>
-        </MenuItem>
-        <Divider />
-        <MenuItem style={clasess.menuItemContainer}>
+        {
+          !isAdmin ? <div>
+            <MenuItem style={clasess.menuItemContainer}>
+              <div style={clasess.menuRowStyle}>
+                <ConvertIcon />
+                <div
+                    style={clasess.rowTextStyle}
+                    onClick={() => {
+                      toggleIsActive(dataRow?.id, "Active", dataRow?.isActive);
+                    }}
+                >
+                  {dataRow?.isActive
+                      ? t("remainWords.convertToInactive")
+                      : t("remainWords.convertToActive")}
+                </div>
+              </div>
+            </MenuItem>
+            <Divider />
+          </div> : <></>
+        }
+        <MenuItem
+          style={clasess.menuItemContainer}
+          onClick={() => {
+            onClickActionModal();
+          }}
+        >
           <DuplicateIcon height={20} width={20} color={clasess.iconColor} />
           <div style={clasess.rowTextStyle}>
             {t("navigationButtons.duplicate")}
@@ -72,7 +96,7 @@ const MaterialMenuWidget = ({
         <MenuItem
           style={clasess.menuItemContainer}
           onClick={() => {
-            onClickOpenDeleteTableRowModal();
+            onClickOpenDeleteTableRowModal(dataRow);
             handleClose();
           }}
         >

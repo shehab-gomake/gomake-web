@@ -8,13 +8,11 @@ import { DeleteIcon } from "@/widgets/settings-mailing/messageTemplates/componen
 
 const SideLeftMenuWidget = ({
   onClickOpenDeleteRowModal,
-  setSelectedCategory,
   category,
 }) => {
   const { clasess } = useStyle();
   const { open, anchorEl, handleClose, handleClick } = useMoreCircle();
   const { t } = useTranslation();
-  setSelectedCategory(category);
   return (
     <>
       <IconButton onClick={handleClick}>
@@ -24,7 +22,7 @@ const SideLeftMenuWidget = ({
         <MenuItem
           style={clasess.menuItemContainer}
           onClick={() => {
-            onClickOpenDeleteRowModal();
+            onClickOpenDeleteRowModal(category);
             handleClose();
           }}
         >

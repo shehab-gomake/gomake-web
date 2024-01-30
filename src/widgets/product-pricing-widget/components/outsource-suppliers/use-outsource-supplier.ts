@@ -1,5 +1,6 @@
 import {useRecoilState, useRecoilValue} from "recoil";
 import {
+    currentProductItemValueState,
     itemParametersValuesState,
     outsourceSuppliersState,
     productUrgentWorkState
@@ -10,6 +11,7 @@ import {addItemToQuoteApi} from "@/services/api-service/quotes/qoutes-endpoints"
 import {userProfileState} from "@/store/user-profile";
 import {quantityParameterState} from "@/store";
 import {EWorkSource} from "@/widgets/product-pricing-widget/enums";
+import {addItemApi} from "@/services/api-service/generic-doc/documents-api";
 
 const useOutsourceSupplier = () => {
     const [suppliers, setSuppliers] = useRecoilState(outsourceSuppliersState);
@@ -17,6 +19,8 @@ const useOutsourceSupplier = () => {
     const userProfile = useRecoilValue(userProfileState);
     const isUrgent = useRecoilValue(productUrgentWorkState);
     const quantity = useRecoilValue(quantityParameterState);
+    const currentProductItemValue =
+        useRecoilValue<any>(currentProductItemValueState);
     const {navigate} = useGomakeRouter();
     const {callApi} = useGomakeAxios();
     const router = useRouter();
@@ -76,45 +80,18 @@ const useOutsourceSupplier = () => {
     const addItem = async (supplierId) => {
         const supplier = suppliers.find(s => s.supplierId === supplierId);
         if (supplier) {
-            await addItemToQuoteApi(callApi, addItemCallBack, {
-                sourceType: EWorkSource.OUT,
-                productId: router?.query?.productId,
-                outSoucreCost: supplier.cost,
-                outSoucreProfit: supplier.profit,
-                outSourceFinalPrice: supplier.finalPrice,
-                supplierId: supplierId,
-                userID: userProfile?.id,
-                customerID: router?.query?.customerId,
-                clientTypeId: router?.query?.clientTypeId,
-                unitPrice: supplier.finalPrice / quantity,
-                amount: quantity,
-                isNeedGraphics: false,
-                isUrgentWork: isUrgent,
-                isNeedExample: false,
-                jobDetails: '',
-                itemParmetersValues: parameters,
-                actions: [],
-                workFlow: [
-                    {
-                        generalInformation: [],
-                        selected: true,
-                        actions: [],
-                        printActionTypeDTOs: [],
-                        totalCost: {
-                            values: [`${supplier.cost}`]
-                        },
-                        profit: {
-                            values: [`${supplier.profit}`]
-                        },
-                        totalPrice: {
-                            values: [`${supplier.finalPrice}`]
-                        },
-                        totalRealProductionTime: {
-                            values: [`${supplier.workHours}`]
-                        },
-                    }
-                ],
-            })
+            await addItemApi(callApi, addItemCallBack, {
+                item: {
+                    ...currentProductItemValue,
+                    sourceType: EWorkSource.OUT,
+                    outSoucreCost: supplier.cost,
+                    outSoucreProfit: supplier.profit,
+                    outSourceFinalPrice: supplier.finalPrice,
+                    supplierId: supplierId,
+                    unitPrice:supplier.finalPrice/parseFloat(currentProductItemValue.amount)
+                },
+                documentType: 0,
+            });
         }
         }
         const addItemCallBack = (res) => {

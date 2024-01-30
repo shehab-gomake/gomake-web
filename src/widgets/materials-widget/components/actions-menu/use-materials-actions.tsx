@@ -9,7 +9,7 @@ import {
   materialCategoryDataState,
   materialHeadersState,
   materialsUnCheckedState,
-  openAddRowModalState,
+  openAddRowModalState, selectedMaterialIdForUpdateState,
   selectedSupplierIdState,
 } from "@/widgets/materials-widget/state";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -44,45 +44,73 @@ import { useExchangeRate } from "@/hooks/use-exchange-rate";
 import { useMaterialsCategories } from "../../use-materials-categories";
 import { EMaterialsTabsIcon } from "@/enums";
 import { EHttpMethod } from "@/services/api-service/enums";
+import { actionMenuState } from "@/store";
+import {useMaterials} from "@/widgets/materials-widget/use-materials";
 
 const useMaterialsActions = (isAdmin: boolean) => {
   const { callApi } = useGomakeAxios();
   const { query } = useRouter();
   const { materialType, materialCategory } = query;
+  const { getMaterialCategories } = useMaterials(isAdmin);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const { alertSuccessAdded, alertFaultAdded } = useSnackBar();
   const [materialCategoryData, setMaterialCategoryData] = useRecoilState<
     IMaterialCategoryRow[]
   >(materialCategoryDataState);
-  const [action, setAction] = useState<{
+  const [action, setAction] = useRecoilState<{
     action: EMaterialsActions;
     key: string;
-  } | null>(null);
+  } | null>(actionMenuState);
   const [updatedValue, setUpdatedValue] = useState<string>("");
   const [currentCurrency, setCurrentCurrency] = useState<any>("");
   const [checkedPrice, setCheckedPrice] = useState(false);
   const { rate, setRate, getExchangeRate } = useExchangeRate();
-  const isAllMaterialsChecked = useRecoilValue<boolean>(
-    isAllMaterialsCheckedState
-  );
+  const [isAllMaterialsChecked, setIsAllMaterialsChecked] =
+    useRecoilState<boolean>(isAllMaterialsCheckedState);
   const uncheckedMaterials = useRecoilValue<string[]>(materialsUnCheckedState);
   const supplierId = useRecoilValue(selectedSupplierIdState);
   const activeFilter = useRecoilValue(activeFilterState);
+  const [selectedMaterialIdForUpdate,setSelectedMaterialIdForUpdate] = useRecoilState(selectedMaterialIdForUpdateState);
+
   const materialFilter = useRecoilValue(filterState);
   const elementRef = useRef(null);
   const uploadImgRef = useRef(null);
   const { getMaterialCategoryData } = useMaterialsCategories(isAdmin);
-  useEffect(() => {
-    if (checkedPrice) getExchangeRate(currentCurrency, updatedValue);
-  }, [checkedPrice, updatedValue, currentCurrency]);
   const { setSnackbarStateValue } = useSnackBar();
   const { t } = useTranslation();
   const setOpenAddRowModal = useSetRecoilState<boolean>(openAddRowModalState);
-  const getSelectedMaterialsIds = () =>
-    materialCategoryData.filter((row) => row.checked).map((row) => row.id);
+  const [selectedMaterialsIds, setSelectedMaterialsIds] = useState([]);
+ 
+  const onChangeHeaderCheckBox = useCallback(
+    (isAllChecked: boolean) => {
+      setIsAllMaterialsChecked(isAllChecked);
+    },
+    [materialCategoryData, materialCategoryData]
+  );
+  useEffect(() => {
+    if(selectedMaterialIdForUpdate){
+      setSelectedMaterialsIds([selectedMaterialIdForUpdate])
+    }else{
+      const getSelectedMaterialsIds = () =>
+          materialCategoryData.filter((row) => row.checked).map((row) => row.id);
+
+      setSelectedMaterialsIds(getSelectedMaterialsIds());
+    }
+   
+  }, [materialCategoryData,selectedMaterialIdForUpdate]);
+  useEffect(() => {
+    if (selectedMaterialsIds.length > 0) {
+      const myId = selectedMaterialsIds[0];
+      const selectedRow = materialCategoryData.find((row) => row.id === myId);
+      setCurrentCurrency(selectedRow?.rowData?.currency?.value);
+    }
+  }, [selectedMaterialsIds, materialCategoryData]);
+
   const onChooseAction = async (
     action: { action: EMaterialsActions; key: string } | null
   ) => {
+    setSelectedMaterialIdForUpdate("");
+    setUpdatedValue("")
     if (action?.action === EMaterialsActions.AddNew) {
       setOpenAddRowModal(true);
       return;
@@ -99,13 +127,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
       uploadImgRef.current.click();
       return;
     }
-    if (getSelectedMaterialsIds().length > 0) {
-      const myId = getSelectedMaterialsIds()[0];
-      const selectedRow = materialCategoryData.find((row) => row.id === myId);
-      setCurrentCurrency(selectedRow?.rowData?.currency?.value);
-    }
-
-    if (getSelectedMaterialsIds().length === 0) {
+    if (selectedMaterialsIds.length === 0) {
       setSnackbarStateValue({
         state: true,
         message: t("modal.noMaterialsSelected"),
@@ -134,30 +156,35 @@ const useMaterialsActions = (isAdmin: boolean) => {
   const onUpdate = async () => {
     if (action !== null) {
       if (isAdmin) {
-        await updateMaterialsPropApi(callApi, onUpdateCallBack, {
-          materialTypeKey: materialType.toString(),
-          categoryKey: materialCategory.toString(),
-          ids: getSelectedMaterialsIds(),
-          action: action.action,
-          priceIndex: 0,
-          isAllMaterialsChecked: isAllMaterialsChecked,
-          uncheckedMaterials: uncheckedMaterials,
-          tableFilters: {
-            materialKey: materialType,
-            categoryKey: materialCategory,
-            supplierId,
-            pageNumber: null,
-            pageSize: null,
-            isActive:
-              activeFilter === EMaterialActiveFilter.ACTIVE
-                ? true
-                : activeFilter === EMaterialActiveFilter.INACTIVE
-                ? false
-                : null,
-            customFiltersKeyValueList: materialFilter,
-          },
-          exchangeRate: rate,
-        });
+        if (action.key === "Duplicate") {
+          duplicateMaterials();
+        }else{
+          await updateMaterialsPropApi(callApi, onUpdateCallBack, {
+            materialTypeKey: materialType.toString(),
+            categoryKey: materialCategory.toString(),
+            ids: selectedMaterialsIds ,
+            action: action.action,
+            updatedValue,
+            priceIndex: 0,
+            isAllMaterialsChecked: isAllMaterialsChecked,
+            uncheckedMaterials: uncheckedMaterials,
+            tableFilters: {
+              materialKey: materialType,
+              categoryKey: materialCategory,
+              supplierId:null,
+              pageNumber: null,
+              pageSize: null,
+              isActive:
+                  activeFilter === EMaterialActiveFilter.ACTIVE
+                      ? true
+                      : activeFilter === EMaterialActiveFilter.INACTIVE
+                          ? false
+                          : null,
+              customFiltersKeyValueList: materialFilter,
+            },
+            exchangeRate: rate,
+          });
+        }
       } else {
         if (action.key === "Duplicate") {
           duplicatePrintHouseMaterials();
@@ -165,7 +192,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
           await updatePrintHouseMaterialsPropApi(callApi, onUpdateCallBack, {
             materialTypeKey: materialType.toString(),
             categoryKey: materialCategory.toString(),
-            ids: getSelectedMaterialsIds(),
+            ids: selectedMaterialsIds ,
             action: action.action,
             priceIndex: 0,
             updatedValue,
@@ -194,39 +221,47 @@ const useMaterialsActions = (isAdmin: boolean) => {
 
   const onUpdateCallBack = (res) => {
     if (res.success) {
+      if (action?.action === EMaterialsActions.Delete) {
+        setMaterialCategoryData(
+          materialCategoryData.filter((material) => !material.checked)
+        )
+      }
+      else {
       setMaterialCategoryData(
         materialCategoryData.map((material) =>
-          material.checked
+          material.checked || material.id === selectedMaterialIdForUpdate
             ? {
                 ...material,
                 ...res.data?.find((row) => row.id === material.id),
+                checked:false,
               }
             : material
         )
-      );
+      )}
+      setAction(null);
+      onChangeHeaderCheckBox(true);
     }
   };
+
   const updateStatus = async (eAction: EMaterialsActions) => {
     if (isAdmin) {
       const result = await updateMaterialsPropApi(callApi, onUpdateCallBack, {
         materialTypeKey: materialType.toString(),
         categoryKey: materialCategory.toString(),
-        ids: getSelectedMaterialsIds(),
+        ids: selectedMaterialsIds ,
         action: eAction,
         isAllMaterialsChecked: isAllMaterialsChecked,
         uncheckedMaterials: uncheckedMaterials,
         tableFilters: {
           materialKey: materialType,
           categoryKey: materialCategory,
-          supplierId,
-          pageNumber: null,
-          pageSize: null,
+          supplierId:null,
           isActive:
-            activeFilter === EMaterialActiveFilter.ACTIVE
-              ? true
-              : activeFilter === EMaterialActiveFilter.INACTIVE
-              ? false
-              : null,
+              activeFilter === EMaterialActiveFilter.ACTIVE
+                  ? true
+                  : activeFilter === EMaterialActiveFilter.INACTIVE
+                      ? false
+                      : null,
           customFiltersKeyValueList: materialFilter,
         },
         priceIndex: 0,
@@ -246,7 +281,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
         {
           materialTypeKey: materialType.toString(),
           categoryKey: materialCategory.toString(),
-          ids: getSelectedMaterialsIds(),
+          ids: selectedMaterialsIds ,
           action: eAction,
           isAllMaterialsChecked: isAllMaterialsChecked,
           uncheckedMaterials: uncheckedMaterials,
@@ -301,7 +336,18 @@ const useMaterialsActions = (isAdmin: boolean) => {
             return data + String.fromCharCode(byte);
           }, "")
         );
-        uploadMaterialExcelFileApi(callApi, () => {}, {
+        let callBack = () => {
+          getMaterialCategories(materialType).then(x=>{
+            getMaterialCategoryData(
+                materialType?.toString(),
+                materialCategory?.toString(),
+                [],
+                supplierId
+            ).then();
+          });
+          
+        }
+        uploadMaterialExcelFileApi(callApi, callBack, {
           key: materialType.toString(),
           base64: base64String,
         });
@@ -337,7 +383,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
 
   const materialHeaders =
     useRecoilValue<
-      { key: string; value: string; inputType: number; values: any[] }[]
+      { key: string; value: string; inputType: number; values: any[],isHideInDuplicate?:boolean }[]
     >(materialHeadersState);
   const [property, setProperty] = useState<any[]>();
 
@@ -420,7 +466,23 @@ const useMaterialsActions = (isAdmin: boolean) => {
 
     const requestBody: any = {
       props: transformedArray,
-      ids: getSelectedMaterialsIds(),
+      ids: selectedMaterialsIds ,
+      isAllMaterialsChecked: isAllMaterialsChecked,
+      uncheckedMaterials: uncheckedMaterials,
+      tableFilters: {
+        materialKey: materialType,
+        categoryKey: materialCategory,
+        supplierId:null,
+        pageNumber: null,
+        pageSize: null,
+        isActive:
+            activeFilter === EMaterialActiveFilter.ACTIVE
+                ? true
+                : activeFilter === EMaterialActiveFilter.INACTIVE
+                    ? false
+                    : null,
+        customFiltersKeyValueList: materialFilter,
+      },
     };
     const res = await callApi(
       EHttpMethod.POST,
@@ -441,13 +503,71 @@ const useMaterialsActions = (isAdmin: boolean) => {
       alertFaultAdded();
     }
   }, [properties]);
+
+  const duplicateMaterials = useCallback(async () => {
+    const transformedArray = properties.map((item) => {
+      const key = item.key.key.toLowerCase();
+      const value = item.value;
+
+      return {
+        key,
+        value,
+      };
+    });
+
+    const requestBody: any = {
+      props: transformedArray,
+      ids: selectedMaterialsIds ,
+      isAllMaterialsChecked: isAllMaterialsChecked,
+      uncheckedMaterials: uncheckedMaterials,
+      tableFilters: {
+        materialKey: materialType,
+        categoryKey: materialCategory,
+        supplierId:null,
+        pageNumber: null,
+        pageSize: null,
+        isActive:
+            activeFilter === EMaterialActiveFilter.ACTIVE
+                ? true
+                : activeFilter === EMaterialActiveFilter.INACTIVE
+                    ? false
+                    : null,
+        customFiltersKeyValueList: materialFilter,
+      },
+    };
+    const res = await callApi(
+        EHttpMethod.POST,
+        `/v1/materials/duplicate-materials`,
+        requestBody
+    );
+
+    if (res?.success) {
+      alertSuccessAdded();
+      getMaterialCategoryData(
+          materialType?.toString(),
+          materialCategory?.toString(),
+          [],
+          supplierId
+      ).then();
+      handleCloseModal();
+    } else {
+      alertFaultAdded();
+    }
+  }, [properties]);
+  
+  const updateModalCurrency = (newCurrency) => {
+    getExchangeRate(currentCurrency,newCurrency).then()
+    setCheckedPrice(true);
+    onTextInputChange(newCurrency);
+  }
   const handleCloseModal = () => {
     onChooseAction(null);
     setProperty(null);
+    setUpdatedValue(null);
     setProperties([initialProperties]);
   };
   return {
-    getSelectedMaterialsIds,
+    selectedMaterialsIds,
     onChooseAction,
     action,
     updatedValue,
@@ -474,6 +594,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
     handleChange,
     deleteProperty,
     addProperty,
+    updateModalCurrency,
   };
 };
 

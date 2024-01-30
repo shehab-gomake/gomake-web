@@ -3,6 +3,7 @@ import { AddNewIcon } from "@/icons";
 import { WastebasketNew } from "@/icons/wastebasket-new";
 import { subProductsParametersState } from "@/store";
 import cloneDeep from "lodash.clonedeep";
+import React from "react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRecoilState } from "recoil";
@@ -19,6 +20,7 @@ const SectionMappingWidget = ({
   duplicateParameters,
   template,
   setTemplate,
+  underParameterIds,
 }: any) => {
   const { t } = useTranslation();
   const [subProducts, setSubProducts] = useRecoilState<any>(
@@ -29,6 +31,7 @@ const SectionMappingWidget = ({
   useEffect(() => {
     const groupedParameters = subSection?.parameters
       ?.filter((param: any) => !param.isHidden)
+      ?.filter((param: any) => !param.isUnderParameterId)
       ?.filter((param: any) => {
         return !relatedParameters.some(
           (relatedParam) => relatedParam.parameterId === param.id
@@ -145,22 +148,26 @@ const SectionMappingWidget = ({
                           section
                         );
                         return (
-                          <div
-                            key={parameter?.id}
-                            style={{
-                              display: "flex",
-                            }}
-                          >
-                            {_renderParameterType(
-                              parameter,
-                              subSection,
-                              section,
-                              subSection?.parameters,
-                              value,
-                              subSection?.parameters,
-                              true
-                            )}
-                          </div>
+                          <React.Fragment>
+                            {parameter.isStartNewLine ? <div style={{flexBasis:'100%',height:0}}></div> : <></>}
+                            <div
+                                key={parameter?.id}
+                                style={{
+                                  display: "flex",
+                                }}
+                            >
+                              {_renderParameterType(
+                                  parameter,
+                                  subSection,
+                                  section,
+                                  subSection?.parameters,
+                                  value,
+                                  subSection?.parameters,
+                                  true,
+                                  false
+                              )}
+                            </div>
+                          </React.Fragment>
                         );
                       })}
                     </div>
@@ -199,28 +206,72 @@ const SectionMappingWidget = ({
         </>
       ) : (
         <div style={clasess.parametersContainer}>
+          
           {subSection?.parameters
             ?.filter((param: any) => !param.isHidden)
+            ?.filter((param: any) => !param.isUnderParameterId)
             ?.filter((param: any) => {
               return !relatedParameters.some(
                 (relatedParam) => relatedParam.parameterId === param.id
               );
             })
             ?.map((parameter: any, index: number) => {
-              const value = _getParameter(parameter, subSection, section);
-              return (
-                <div key={parameter?.id} style={{ display: "flex" }}>
-                  {_renderParameterType(
-                    parameter,
-                    subSection,
-                    section,
-                    subSection?.parameters,
-                    value,
-                    subSection?.parameters,
-                    true
-                  )}
-                </div>
+              const isUnderParameterId = underParameterIds.some(
+                (item) => item.underParameterId === parameter.id
               );
+              if (isUnderParameterId) {
+                const myParameter = underParameterIds.find(
+                  (item) => item.underParameterId === parameter.id
+                )?.myParameter;
+                return (
+                  <React.Fragment>
+                    {parameter.isStartNewLine ? <div style={{flexBasis:'100%',height:0}}></div> : <></>}
+                    <div  key={parameter?.id}>
+                      {_renderParameterType(
+                          parameter,
+                          subSection,
+                          section,
+                          subSection?.parameters,
+                          _getParameter(parameter, subSection, section),
+                          subSection?.parameters,
+                          true,
+                          false
+                      )}
+                      <div style={{ marginTop: 5 }}>
+                        {_renderParameterType(
+                            myParameter,
+                            subSection,
+                            section,
+                            subSection?.parameters,
+                            _getParameter(myParameter, subSection, section),
+                            subSection?.parameters,
+                            true,
+                            true
+                        )}
+                      </div>
+                    </div>
+                  </React.Fragment>
+                );
+              } else {
+                const value = _getParameter(parameter, subSection, section);
+                return (
+                    <React.Fragment>
+                      {parameter.isStartNewLine ? <div style={{flexBasis:'100%',height:0}}></div> : <></>}
+                      <div key={parameter?.id} style={{ display: "flex",pageBreakBefore:parameter.isStartNewLine ? 'always' : 'unset' }}>
+                        {_renderParameterType(
+                            parameter,
+                            subSection,
+                            section,
+                            subSection?.parameters,
+                            value,
+                            subSection?.parameters,
+                            true,
+                            false
+                        )}
+                      </div>
+                    </React.Fragment>
+                );
+              }
             })}
         </div>
       )}

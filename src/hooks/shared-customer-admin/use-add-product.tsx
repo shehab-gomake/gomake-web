@@ -281,7 +281,6 @@ const useAddProduct = ({ clasess }) => {
       parameter: any,
       option: any
     ) => {
-      debugger;
       let temp = [...parameter?.valuesConfigs];
 
       let objectIdToUpdate = option?.id;
@@ -311,7 +310,6 @@ const useAddProduct = ({ clasess }) => {
       subSectionParameters,
       level: number
     ) => {
-      debugger;
       let temp = [...parameter?.valuesConfigs];
       if (temp?.length <= 0) {
         temp.push({

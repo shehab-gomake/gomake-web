@@ -41,20 +41,23 @@ import { getAndSetAllCustomers, getAndSetMachincesNew } from "@/services/hooks";
 import { MaterialMenuWidget } from "./components/more-circle";
 import cloneDeep from "lodash.clonedeep";
 import { SideLeftMenuWidget } from "./components/side-list-menu";
+import {EMaterialActiveFilter} from "@/widgets/materials-widget/enums";
 
 const useMaterials = (isAdmin: boolean) => {
   const { query, push, replace } = useRouter();
 
   const { materialType, materialCategory } = query;
+  const [selectedTableRow, setSelectedTableRow] = useState<IMaterialCategoryRow>();
+
   const [materialHeaders, setMaterialHeaders] =
-    useRecoilState<{ key: string; value: string; unit?: string }[]>(
+    useRecoilState<{ key: string; value: string; unit?: string , isForAdmin?:boolean}[]>(
       materialHeadersState
     );
   const [materialCategories, setMaterialCategories] = useRecoilState<
     {
       categoryKey: string;
       categoryName: string;
-      isAddedByPrintHouse: boolean;
+      isDeletable: boolean;
     }[]
   >(materialCategoriesState);
   const [materialCategoryData, setMaterialCategoryData] = useRecoilState<
@@ -69,7 +72,8 @@ const useMaterials = (isAdmin: boolean) => {
   const onClickCloseDeleteRowModal = () => {
     setOpenDeleteRowModal(false);
   };
-  const onClickOpenDeleteRowModal = () => {
+  const onClickOpenDeleteRowModal = (category) => {
+    setSelectedCategory(category);
     setOpenDeleteRowModal(true);
   };
   const [openDeleteTableRowModal, setOpenDeleteTableRowModal] =
@@ -77,7 +81,9 @@ const useMaterials = (isAdmin: boolean) => {
   const onClickCloseDeleteTableRowModal = () => {
     setOpenDeleteTableRowModal(false);
   };
-  const onClickOpenDeleteTableRowModal = () => {
+  
+  const onClickOpenDeleteTableRowModal = (dataRow) => {
+    setSelectedTableRow(dataRow)
     setOpenDeleteTableRowModal(true);
   };
   const setMaterialCategorySuppliers = useSetRecoilState(
@@ -86,8 +92,8 @@ const useMaterials = (isAdmin: boolean) => {
   const [materialName, setMaterialName] = useState<string>();
   const setMaterialActions = useSetRecoilState(materialActionState);
   const setDefaultSupplier = useSetRecoilState(selectedSupplierIdState);
-  const activeFilter = useRecoilValue(activeFilterState);
-  const materialFilter = useRecoilValue(filterState);
+  const [activeFilter,setActiveFilter] = useRecoilState(activeFilterState);
+  const [materialFilter,setMaterialFilter] = useRecoilState(filterState);
   const { callApi } = useGomakeAxios();
   const { alertSuccessDelete, alertFaultDelete } = useSnackBar();
   const setCurrencies = useSetRecoilState(currenciesState);
@@ -100,18 +106,23 @@ const useMaterials = (isAdmin: boolean) => {
     const path = isAdmin ? "/materials-admin" : "/materials";
     push(path + `/${materialType}?materialCategory=${category}`);
     setFlagState(false);
+    setActiveFilter(EMaterialActiveFilter.ACTIVE);
+    setIsAllMaterialsChecked(false)
+    setMaterialFilter([])
   };
-  const [selectedTableRow, setSelectedTableRow] = useState<any>();
   const onDeleteCategory = async (categoryKey) => {
     const callBack = (res) => {
       if (res.success) {
         alertSuccessDelete();
+        setMaterialCategoryData([])
         getMaterialCategories(materialType).then();
       } else {
         alertFaultDelete();
       }
     };
+    debugger;
     if (isAdmin) {
+      
       await deleteMaterialCategoryApi(callApi, callBack, {
         materialTypeKey: materialType.toString(),
         categoryKey: categoryKey,
@@ -143,11 +154,10 @@ const useMaterials = (isAdmin: boolean) => {
     return materialCategories.map((category) => ({
       text: category.categoryName,
       value: category.categoryKey,
-      icon: category.isAddedByPrintHouse
+      icon: category.isDeletable
         ? () => (
             <SideLeftMenuWidget
               onClickOpenDeleteRowModal={onClickOpenDeleteRowModal}
-              setSelectedCategory={setSelectedCategory}
               category={category}
             />
           )
@@ -206,7 +216,7 @@ const useMaterials = (isAdmin: boolean) => {
     }
     setMaterialCategoryData(
       materialCategoryData.map((row) =>
-        id === row.id ? { ...row, checked: !row.checked } : row
+        id === row.id ? { ...row, checked: checked } : row
       )
     );
   };
@@ -227,21 +237,21 @@ const useMaterials = (isAdmin: boolean) => {
         onChange={(event, checked) => onChangeHeaderCheckBox(checked)}
         checked={isAllSelected()}
       />,
-      ...materialHeaders.map((header) =>
+      ...(isAdmin ? materialHeaders.filter(x=>x.key !== "stock") : materialHeaders.filter((header) => !header.isForAdmin)
+      ).map((header) =>
         header.unit ? (
           <div>
             {" "}
             <span>{header.value}</span> <small>{header.unit}</small>
           </div>
         ) : (
-          header.value
+         header.value
         )
       ),
       t("properties.more"),
     ];
   }, [materialHeaders, materialCategoryData]);
 
-  ///////////////////////////////////////////////////////////
 
   const tableRows = useMemo(() => {
     return materialCategoryData.map((dataRow) => {
@@ -256,13 +266,14 @@ const useMaterials = (isAdmin: boolean) => {
             id={dataRow.id}
             parameterKey={header.key}
             isAdmin={isAdmin}
+            onChangeRowCheckBox={onChangeRowCheckBox}
           />
         )),
         <MaterialMenuWidget
           dataRow={dataRow}
           isAdmin={isAdmin}
-          setSelectedTableRow={setSelectedTableRow}
           onClickOpenDeleteTableRowModal={onClickOpenDeleteTableRowModal}
+          onChangeRowCheckBox={onChangeRowCheckBox}
         />,
       ];
     });
@@ -270,29 +281,34 @@ const useMaterials = (isAdmin: boolean) => {
 
   const tableRowsNew = useMemo(() => {
     return materialCategoryData.map((dataRow) => {
+      const filteredHeaders = isAdmin
+        ? materialHeaders.filter((x) => x.key !== "stock" )
+        : materialHeaders.filter((header) => !header.isForAdmin);
+  
       return [
         <Checkbox
           onChange={(e, checked) => onChangeRowCheckBox(dataRow.id, checked)}
           checked={dataRow.checked}
         />,
-        ...materialHeaders.map((header) => (
+        ...filteredHeaders.map((header) => (
           <TableCellData
             {...dataRow.rowData[header.key]}
             id={dataRow.id}
+            isAdmin={isAdmin}
             parameterKey={header.key}
+            onChangeRowCheckBox={onChangeRowCheckBox}
           />
         )),
         <MaterialMenuWidget
           dataRow={dataRow}
           isAdmin={isAdmin}
-          setSelectedTableRow={setSelectedTableRow}
           onClickOpenDeleteTableRowModal={onClickOpenDeleteTableRowModal}
+          onChangeRowCheckBox={onChangeRowCheckBox}
         />,
       ];
     });
-  }, [materialHeaders, materialCategoryData, activeFilter, materialFilter]);
-
-  ///////////////////////////////////////////////////////////
+  }, [materialHeaders, materialCategoryData, isAdmin, activeFilter, materialFilter]);
+  
 
   const getCurrenciesApi = async () => {
     const callBack = (res) => {
@@ -336,7 +352,6 @@ const useMaterials = (isAdmin: boolean) => {
     await getAndSetMachincesNew(callApi, setMachinesState);
   }, []);
 
-
   const setClientsState = useSetRecoilState<[]>(materialsClientsState);
   const getClientsMaterials = useCallback(async () => {
     await getAndSetAllCustomers(callApi, setClientsState, {
@@ -344,7 +359,6 @@ const useMaterials = (isAdmin: boolean) => {
       onlyCreateOrderClients: true,
     });
   }, []);
-
 
   return {
     materialCategory,
@@ -373,7 +387,7 @@ const useMaterials = (isAdmin: boolean) => {
     onDeleteCategoryRow,
     selectedTableRow,
     materialName,
-    getClientsMaterials
+    getClientsMaterials,
   };
 };
 

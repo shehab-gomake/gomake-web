@@ -27,25 +27,25 @@ const PrintImageComponent = ({materialLength, materialWidth, rectangles, name}: 
             <PrimaryButton variant={'contained'} style={{fontSize: '15px', padding: '5px 15px'}} onClick={() => setOpen(true)}>{name}</PrimaryButton>
             <GoMakeModal openModal={open} onClose={() => setOpen(false)}
                          modalTitle={name}
-                         insideStyle={{width: `${materialWidth + 100}px`, height: 'fit-content'}}>
+                         insideStyle={{width: `${(materialWidth/1000) + 100}px`, height: 'fit-content'}}>
                 <Stack>
                     <IconButton style={{alignSelf: 'end'}} onClick={handleDownloadClick}>
                         <DownloadRoundedIcon/>
                     </IconButton>
                     <Stack  justifyContent={'center'} alignItems={'center'}>
                         <div ref={imageElement} style={{
-                            width: `${materialWidth}px`,
-                            height: `${materialLength}px`,
+                            width: `${materialWidth/1000}px`,
+                            height: `${materialLength/1000}px`,
                             border: '1px solid black',
                             position: 'relative'
                         }}>
                             {
                                 rectangles?.map(({x, y, width, length}: IRectangle) => <div style={{
                                     position: 'absolute',
-                                    left: x,
-                                    top: y,
-                                    width: width,
-                                    height: length,
+                                    left: x/1000,
+                                    top: y/1000,
+                                    width: width/1000,
+                                    height: length/1000,
                                     backgroundColor: 'black',
                                 }}/>)
                             }

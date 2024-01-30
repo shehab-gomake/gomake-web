@@ -9,19 +9,26 @@ import {
 import { billingMethodState } from "@/store/billing-method";
 import { exampleTypeState } from "@/store/example-type";
 import { currenciesState } from "@/widgets/materials-widget/state";
+import { ECalculationLogType } from "@/widgets/product-pricing-widget/enums";
 import {
+  calculationExceptionsLogsState,
   calculationProgressState,
   currentProductItemValuePriceState,
+  selectedWorkFlowState,
 } from "@/widgets/product-pricing-widget/state";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRecoilState, useRecoilValue } from "recoil";
-
+import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
+import { WarningIcon } from "@/icons";
 const useRightSideWidget = ({ includeVAT }) => {
   const isLoading = useRecoilValue(isLoadgingState);
+  const calculationExceptionsLogs = useRecoilValue(
+    calculationExceptionsLogsState
+  );
   const subProducts = useRecoilValue<any>(subProductsParametersState);
   const systemVAT = useRecoilValue<number>(systemVATState);
-
+  const selectedWorkFlow = useRecoilValue(selectedWorkFlowState);
   const [systemCurrency, setSystemCurrency] =
     useRecoilState<any>(systemCurrencyState);
   const currencies = useRecoilValue(currenciesState);
@@ -53,7 +60,6 @@ const useRightSideWidget = ({ includeVAT }) => {
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
   const [listEmployees, setListEmployees] = useState([]);
-  console.log("listEmployees", listEmployees);
   const getAllUsers = () => {
     const callBackFunction = (data) => {
       if (data.success) {
@@ -79,6 +85,18 @@ const useRightSideWidget = ({ includeVAT }) => {
       }
     }
   }, [includeVAT]);
+  // i need change to the icons when add new types
+  const _renderIconLogs = (type) => {
+    if (type === ECalculationLogType.ERROR) {
+      return <WarningIcon width="15" height="15" />;
+    } else if (type === ECalculationLogType.MESSAGE) {
+      return <WarningIcon width="15" height="15" />;
+    } else if (type === ECalculationLogType.SUCCESS) {
+      return <CheckCircleOutlineIcon sx={{ width: 15, height: 15 }} />;
+    } else if (type === ECalculationLogType.WARN) {
+      return <WarningIcon width="15" height="15" />;
+    }
+  };
   return {
     currentProductItemValueTotalPrice,
     calculationProgress,
@@ -88,7 +106,10 @@ const useRightSideWidget = ({ includeVAT }) => {
     listEmployees,
     isLoading,
     quantity,
+    selectedWorkFlow,
+    calculationExceptionsLogs,
     setCurrentProductItemValueTotalPrice,
+    _renderIconLogs,
     t,
   };
 };

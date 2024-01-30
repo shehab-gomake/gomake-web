@@ -23,6 +23,7 @@ export const materialHeadersState = atom<
     isFilter: boolean;
     inputType: number;
     values: [];
+    isHideInDuplicate?: boolean;
   }[]
 >({
   key: "materialHeadersState",
@@ -40,7 +41,7 @@ export const materialActionState = atom<
   default: [],
 });
 export const materialCategoriesState = atom<
-  { categoryKey: string; categoryName: string; isAddedByPrintHouse: boolean }[]
+  { categoryKey: string; categoryName: string; isDeletable: boolean }[]
 >({
   key: "materialCategoriesState",
   default: [],
@@ -117,4 +118,9 @@ export const isAllMaterialsCheckedState = atom<boolean>({
 export const materialsUnCheckedState = atom<string[]>({
     key: "materialsUnCheckedState",
     default: [],
+});
+
+export const selectedMaterialIdForUpdateState = atom<string>({
+    key: "selectedMaterialIdForUpdateState",
+    default: "",
 });

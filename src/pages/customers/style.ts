@@ -1,12 +1,13 @@
 import i18next from "i18next";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { convertHeightToVH, convertWidthToVW } from "@/utils/adapter";
+import { convertHeightToVH, convertWidthToVW , adaptPaddingLeft, adaptPaddingRight } from "@/utils/adapter";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 const useStyle = () => {
   const { t } = useTranslation();
+  const direction = t('direction');
   const { secondColor } = useGomakeTheme();
   const classes = useMemo(() => {
     return {
@@ -44,9 +45,7 @@ const useStyle = () => {
         flexDirection: "column" as "column",
         paddingLeft: 20,
         paddingRight: 20,
-        height: "100%",
-        overflowY: "auto" as "auto",
-        marginBottom: "20px",
+        height: "100%", 
       },
       sameRow: {
         display: "flex",
@@ -59,6 +58,10 @@ const useStyle = () => {
         backgroundColor: "#F8F8F8",
         borderRadius: 10,
         height: 30,
+      },
+      searchContainer: {
+        display:"flex",
+        gap:"5px"
       },
       subHeaderRightSide: {
         display: "flex",
@@ -85,13 +88,11 @@ const useStyle = () => {
         backgroundColor: "#FFFFFF",
         border: `1px solid ${secondColor(500)}`,
       },
-      paginationStyle: {
+      footerStyle: {
         display: "flex",
-        paddingLeft: 20,
-        paddingRight: 20,
-        height: "50px",
         flexDirection: "row" as "row",
-        justifyContent: "space-between",
+        alignItems: "center",
+        ...adaptPaddingLeft(direction, 20),
       },
     };
   }, [i18next.language, t]);

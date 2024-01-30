@@ -5,17 +5,16 @@ import { useStyle } from "./style";
 import { HeaderFilter } from "./header-filter";
 import { useCustomers } from "./use-customers";
 import { AddCustomerButton } from "./add-customer";
-import Pagination from "@mui/material/Pagination";
 import { useState } from "react";
 import Stack from "@mui/material/Stack";
 import { CustomerCardWidget } from "@/widgets/customer-card-modal";
 import { PrimaryTable } from "@/components/tables/primary-table";
 import { useEffect } from "react";
 import { customerMapFunction } from "@/services/api-service/customers/customers-api";
-import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
+import { CLIENT_TYPE, CLIENT_TYPE_Id, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 import { PermissionCheck } from "@/components/CheckPermission/check-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
-import { ExcelButtons } from "./export-import-buttons";
+import { GoMakePagination } from "@/components/pagination/gomake-pagination";
 
 export default function Home() {
   const { t } = useTranslation();
@@ -58,6 +57,7 @@ export default function Home() {
     getAllCustomers,
     onClickExportClient,
     onClickImportClient,
+    handlePageSizeChange
   } = useCustomers(CLIENT_TYPE.CUSTOMER, pageNumber, setPageNumber);
   const activeText = t("usersSettings.active");
   const inActiveText = t("usersSettings.active");
@@ -74,7 +74,7 @@ export default function Home() {
 
   useEffect(() => {
     getAgentCategories();
-    getClientTypesCategories();
+    getClientTypesCategories(CLIENT_TYPE_Id.CUSTOMER);
   }, []);
 
   useEffect(() => {
@@ -128,10 +128,13 @@ export default function Home() {
             agentName={agentName}
             valClientType={valClientType}
             valStatus={valStatus}
+            onClickExport={onClickExportClient}
+            onClickImport={onClickImportClient}
           />
           <PrimaryTable
             stickyFirstCol={false}
-            stickyHeader={false}
+            stickyHeader={true}
+            maxHeight={650}
             rows={getCustomersRows()}
             headers={tableHeaders}
           />
@@ -149,19 +152,14 @@ export default function Home() {
             showUpdateButton={true}
           />
         </div>
-        <div style={classes.paginationStyle}>
-          <Pagination
-            count={pagesCount}
-            variant="outlined"
-            color="primary"
-            page={pageNumber}
-            onChange={(event, value) => setPageNumber(value)}
-          />
-          <ExcelButtons
-            onClickExport={onClickExportClient}
-            onClickImport={onClickImportClient}
-          />
-        </div>
+        <GoMakePagination
+          onChangePageNumber={(event, value) => setPageNumber(value)}
+          onChangePageSize={handlePageSizeChange}
+          page={pageNumber}
+          setPage={setPageNumber}
+          pagesCount={pagesCount}
+          pageSize={pageSize}
+        />
       </Stack>
     </CustomerAuthLayout>
   );
