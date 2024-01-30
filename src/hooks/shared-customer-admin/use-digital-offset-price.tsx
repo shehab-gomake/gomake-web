@@ -51,9 +51,12 @@ import {
   getProductByItemIdApi,
   updateDocumentItemApi,
 } from "@/services/api-service/generic-doc/documents-api";
-import { productQuantityTypesValuesState } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/quantity-parameter/quantity-types/state";
-import { TypesParameter } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/quantity-parameter/types-parameter";
+import {
+  productQuantityTypesValuesState,
+  tempProductQuantityTypesValuesState
+} from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/quantity-parameter/quantity-types/state";
 import { findParameterById } from "@/utils/helpers";
+import React from "react";
 
 const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const { navigate } = useGomakeRouter();
@@ -240,6 +243,22 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       );
     }
   }, [updatedSelectedWorkFlow]);
+  
+  useEffect(()=>{
+    const total = productQuantityTypes.reduce((acc, val) => acc + val.quantity, 0)
+    debugger;
+    let subProductCopy = cloneDeep(subProducts);
+    subProductCopy.forEach(subProduct=>{
+      if(!subProduct.type){
+        subProduct.parameters.forEach(parameter=>{
+          if(parameter.parameterId === "4991945c-5e07-4773-8f11-2e3483b70b53"){
+            parameter.values = [total+""];
+          }
+        })
+      }
+    })
+    setSubProducts(subProductCopy)
+  },[productQuantityTypes])
   const selectBtnTypeToAction = (
     parameter,
     sectionId,
@@ -588,6 +607,18 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     }
                   }
                 }
+                if (!isParameterExits && parameter.code === "quantity")  {
+                  subProduct.parameters.push({
+                    parameterId: parameter?.id,
+                    parameterName: parameter?.name,
+                    actionId: parameter?.actionId,
+                    parameterType: parameter?.parameterType,
+                    values: [""],
+                    sectionId: section?.id,
+                    subSectionId: subSection?.id,
+                    actionIndex: parameter?.actionIndex,
+                  });
+                }
               });
 
             if (temp.length > 0) {
@@ -914,33 +945,53 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       parameter?.parameterType === EParameterTypes.INPUT_NUMBER &&
       parameter?.id === quantity?.parameterId
     ) {
+      const typesNum = typesParam && typesParam.values ? typesParam.values[0] : 0;
+      const isSets = isSetsParameter && isSetsParameter.values ? isSetsParameter.values[0] : "";
+      const isInputDisabled = typesNum > 1 || isSets === "true";
       Comp = (
-        <QuantityParameter
-          classes={clasess}
-          parameter={parameter}
-          index={index}
-          temp={temp}
-          onChangeSubProductsForPrice={onChangeSubProductsForPrice}
-          subSection={subSection}
-          section={section}
-          type="number"
-        />
+          <React.Fragment>
+            <InputNumberParameterWidget
+                clasess={clasess}
+                parameter={parameter}
+                index={index}
+                temp={temp}
+                onChangeSubProductsForPrice={onChangeSubProductsForPrice}
+                subSection={subSection}
+                section={section}
+                type="number"
+                disabled={isInputDisabled}
+            />
+            <QuantityParameter
+                classes={clasess}
+                parameter={parameter}
+                index={index}
+                temp={temp}
+                onChangeSubProductsForPrice={onChangeSubProductsForPrice}
+                subSection={subSection}
+                section={section}
+                type="number"
+            />
+          </React.Fragment>
+        
       );
     } else if (
       parameter?.parameterType === EParameterTypes.INPUT_NUMBER &&
       parameter?.id === typesParam?.parameterId
     ) {
+      const isSets = isSetsParameter && isSetsParameter.values ? isSetsParameter.values[0] : "";
+      const isInputDisabled = isSets === "true";
       Comp = (
-        <TypesParameter
-          classes={clasess}
-          parameter={parameter}
-          index={index}
-          temp={temp}
-          onChangeSubProductsForPrice={onChangeSubProductsForPrice}
-          subSection={subSection}
-          section={section}
-          type="number"
-        />
+          <InputNumberParameterWidget
+              clasess={clasess}
+              parameter={parameter}
+              index={index}
+              temp={temp}
+              onChangeSubProductsForPrice={onChangeSubProductsForPrice}
+              subSection={subSection}
+              section={section}
+              type="number"
+              disabled={isInputDisabled}
+          />
       );
     } else if (
       parameter?.parameterType === EParameterTypes.INPUT_NUMBER &&
@@ -1186,6 +1237,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       </div>
     );
   };
+  const [quantityTypes, setQuantityTypes] = useRecoilState(productQuantityTypesValuesState);
+  const [valuesState, setValuesState] = useRecoilState(tempProductQuantityTypesValuesState);
   const onChangeSubProductsForPrice = (
     parameterId: any,
     subSectionId: any,
@@ -1282,6 +1335,30 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         (param) => param.id === parameterId
       );
       if (subSectionParameter) {
+        //types parameter
+        if(subSectionParameter.id == "de2bb7d5-01b1-4b2b-b0fa-81cd0445841b"){
+          const typesNum = Number(data.values);
+          const quantityValue = quantity && quantity.values ? quantity?.values[0] : 0;
+          const workName = jobNameParameter && jobNameParameter.values ? jobNameParameter.values[0] : "";
+          if (quantityTypes.length === Number(typesNum)) {
+            setValuesState(quantityTypes);
+            setQuantityTypes(quantityTypes);
+          } else if (quantityTypes.length < typesNum) {
+            const array = [];
+            for (let i = quantityTypes.length + 1; i <= typesNum; i++) {
+              array.push({
+                name: workName + " " + i,
+                quantity: Number(quantityValue),
+              });
+              
+              setValuesState([...quantityTypes, ...array]);
+              setQuantityTypes([...quantityTypes, ...array]);
+            }
+          } else if (quantityTypes.length > typesNum) {
+            setValuesState(quantityTypes.slice(0, typesNum));
+            setQuantityTypes(quantityTypes.slice(0, typesNum));
+          }
+        }
         if (subSectionParameter.id == "0fdbca1a-f250-447b-93e3-5b91909da59c") {
           //setQuantity
           const setUnits = setUnitsParameter ? setUnitsParameter.values[0] : 0;
@@ -1805,6 +1882,14 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const sizeParam = getParameterByParameterId(
     subProducts,
     "e3f211c6-c9d2-4ba1-83b6-87d2cf3402b4"
+  );
+  const jobNameParameter = getParameterByParameterId(
+      subProducts,
+      "a330193f-492c-40a8-86f3-8edf5c8f0d5e"
+  );
+  const isSetsParameter = getParameterByParameterId(
+      subProducts,
+      "e7ea235e-b5e2-4f0d-aecf-0f435c24afbb"
   );
   const addItemForQuotes = async () => {
     const docType = router?.query?.documentType ?? "0";

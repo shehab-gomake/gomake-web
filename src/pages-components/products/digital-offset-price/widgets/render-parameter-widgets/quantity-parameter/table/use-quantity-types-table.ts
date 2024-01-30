@@ -9,6 +9,7 @@ import {
 } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/quantity-parameter/quantity-types/state";
 import { useEffect } from "react";
 import { getParameterByParameterId } from "@/utils/constants";
+import cloneDeep from "lodash.clonedeep";
 
 const useQuantityTypesTable = (save: boolean) => {
   const [, setQuantityTypes] = useRecoilState(productQuantityTypesValuesState);
@@ -20,7 +21,7 @@ const useQuantityTypesTable = (save: boolean) => {
     productQuantityTypesDuplicatedNameState
   );
   const setOpenModal = useSetRecoilState(openQuantityComponentModalState);
-  const subProducts = useRecoilValue<any>(subProductsParametersState);
+  const [subProducts,setSubProducts] = useRecoilState<any>(subProductsParametersState);
 
   const resultParameter = getParameterByParameterId(
     subProducts,

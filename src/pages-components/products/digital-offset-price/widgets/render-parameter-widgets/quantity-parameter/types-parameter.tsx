@@ -25,12 +25,8 @@ const TypesParameter = ({
   );
   const { productTypesNumber } = useQuantityParameter();
   const productSetsParam = useRecoilValue<string>(productSetsParamState);
-  const [quantityTypes, setQuantityTypes] = useRecoilState(
-    productQuantityTypesValuesState
-  );
-  const [valuesState, setValuesState] = useRecoilState(
-    tempProductQuantityTypesValuesState
-  );
+  const [quantityTypes, setQuantityTypes] = useRecoilState(productQuantityTypesValuesState);
+  const [valuesState, setValuesState] = useRecoilState(tempProductQuantityTypesValuesState);
   const resultParameter = getParameterByParameterId(
     subProducts,
     "a330193f-492c-40a8-86f3-8edf5c8f0d5e"
@@ -49,6 +45,7 @@ const TypesParameter = ({
     );
   }, [resultParameter]);
   useEffect(() => {
+    const quantityValue = quantity && quantity.values ? quantity?.values[0] : 0;
     if (quantityTypes.length === Number(productTypesNumber)) {
       setValuesState(quantityTypes);
       setQuantityTypes(quantityTypes);
@@ -57,7 +54,7 @@ const TypesParameter = ({
       for (let i = quantityTypes.length + 1; i <= productTypesNumber; i++) {
         array.push({
           name: resultParameter?.values[0] + " " + i,
-          quantity: Number(quantity?.values[0]),
+          quantity: Number(quantityValue),
         });
         setValuesState([...quantityTypes, ...array]);
         setQuantityTypes([...quantityTypes, ...array]);

@@ -13,7 +13,7 @@ const InputNumberParameterWidget = ({
 }) => {
   return (
     <GomakeTextInput
-      key={disabled + "parameter" + index}
+      //key={disabled + "parameter" + index}
       style={clasess.textInputStyle}
       disabled={disabled}
       defaultValue={parameter.defaultValue}

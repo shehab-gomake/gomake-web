@@ -38,36 +38,6 @@ const QuantityParameter = ({
   const isInputDisabled = productTypesNumber > 1 || productSetsParam === "true";
   return (
     <Stack direction={"row"}>
-      <GomakeTextInput
-        style={classes.textInputStyle}
-        defaultValue={parameter.defaultValue}
-        placeholder={parameter.name}
-        value={
-          quantityTypes.length > 1 && productSetsParam !== "true"
-            ? quantityTypes
-                .reduce((acc, val) => acc + val.quantity, 0)
-                .toString()
-            : index !== -1
-            ? temp[index].values
-            : ""
-        }
-        disabled={isInputDisabled}
-        onChange={(e: any) => {
-          onChangeSubProductsForPrice(
-            parameter?.id,
-            subSection?.id,
-            section?.id,
-            parameter?.parameterType,
-            parameter?.name,
-            parameter?.actionId,
-            { values: e.target.value },
-            subSection?.type,
-            index,
-            parameter?.actionIndex
-          );
-        }}
-        type={type}
-      />
       {productTypesNumber > 1 && productSetsParam != "true" && (
         <IconButton
           onClick={() => {
