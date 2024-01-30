@@ -53,6 +53,7 @@ import {
 } from "@/services/api-service/generic-doc/documents-api";
 import { productQuantityTypesValuesState } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/quantity-parameter/quantity-types/state";
 import { TypesParameter } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/quantity-parameter/types-parameter";
+import { findParameterById } from "@/utils/helpers";
 
 const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const { navigate } = useGomakeRouter();
@@ -60,7 +61,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const { t } = useTranslation();
   const router = useRouter();
   const { alertFaultAdded, alertFaultUpdate } = useSnackBar();
-
+  const [isChargeForNewDie, setIsChargeForNewDie] = useState(false)
   const { clientTypesValue, renderOptions, checkWhatRenderArray } =
     useQuoteWidget();
   const { allMaterials, getAllMaterial } = useMaterials();
@@ -1051,6 +1052,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           subSection={subSection}
           section={section}
           index={index}
+          straightKnife={straightKnife}
         />
       );
     } else if (parameter?.parameterType === EParameterTypes.SELECT_MATERIALS) {
@@ -1874,7 +1876,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       DocumentType: router?.query?.documentType,
     });
   };
-
+  const straightKnife = findParameterById(productTemplate, "IsStraightKnife");
   const navigateForRouter = () => {
     let checkParameter = validateParameters(isRequiredParameters);
     if (!!checkParameter) {
@@ -1952,11 +1954,14 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     billingMethod,
     samlleType,
     graphicDesigner,
+    isChargeForNewDie,
+    setIsChargeForNewDie,
     setGraphicDesigner,
     setIncludeVAT,
     getOutSourcingSuppliers,
     onChangeSubProductsForPrice,
     underParameterIds,
+    straightKnife
   };
 };
 export { useDigitalOffsetPrice };
