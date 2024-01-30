@@ -162,6 +162,7 @@ const QuotesListPageWidget = ({
             onChangePageNumber={(event, value) => setPage(value)}
             onChangePageSize={handlePageSizeChange}
             page={page}
+            setPage={setPage}
             pagesCount={pagesCount}
             pageSize={pageSize}
           />

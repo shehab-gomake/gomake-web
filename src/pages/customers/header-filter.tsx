@@ -6,7 +6,7 @@ import * as React from "react";
 import { SearchInputComponent } from "@/components/form-inputs/search-input-component";
 import { SecondaryButton } from "@/components/button/secondary-button";
 import { IStatus } from "./use-customers";
-import { ExcelMenu } from "./export-import-buttons/excel-menu";
+import { ExcelMenu } from "./export-import-buttons";
 
 interface IProps {
   typeClient?: string;
@@ -22,6 +22,8 @@ interface IProps {
   customerName?: string;
   valClientType?: string[];
   valStatus?: IStatus;
+  onClickExport: () => void;
+  onClickImport: (value: any) => void;
 }
 
 const HeaderFilter = ({
@@ -38,6 +40,8 @@ const HeaderFilter = ({
   agentName,
   valClientType,
   valStatus,
+  onClickExport,
+  onClickImport
 }: IProps) => {
   const { t } = useTranslation();
   const { classes } = useStyle();
@@ -121,15 +125,16 @@ const HeaderFilter = ({
         <SecondaryButton style={classes.cleanBtnStyle} onClick={handleClean}>
           {t("customers.buttons.clean")}
         </SecondaryButton>
-
       </div>
-      <div>
-      <ExcelMenu/>
-
+      <div style={classes.searchContainer}>
         <SearchInputComponent
           onChange={onChangeCustomer}
           value={customerName}
-        ></SearchInputComponent>
+        />
+        <ExcelMenu
+          onClickImport={onClickImport}
+          onClickExport={onClickExport}
+        />
       </div>
     </div>
   );

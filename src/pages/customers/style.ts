@@ -59,6 +59,10 @@ const useStyle = () => {
         borderRadius: 10,
         height: 30,
       },
+      searchContainer: {
+        display:"flex",
+        gap:"5px"
+      },
       subHeaderRightSide: {
         display: "flex",
         alignSelf: "flex-end",

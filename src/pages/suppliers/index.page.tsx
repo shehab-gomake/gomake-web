@@ -15,7 +15,6 @@ import { useEffect } from "react";
 import { CLIENT_TYPE, CLIENT_TYPE_Id, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 import { PermissionCheck } from "@/components/CheckPermission/check-permission";
 import { Permissions } from "../../components/CheckPermission/enum";
-import { ExcelButtons } from "../customers/export-import-buttons";
 import { GoMakePagination } from "@/components/pagination/gomake-pagination";
 
 export default function Home() {
@@ -128,6 +127,8 @@ export default function Home() {
             agentName={agentName}
             valClientType={valClientType}
             valStatus={valStatus}
+            onClickExport={onClickExportClient}
+            onClickImport={onClickImportClient}
           />
           <Stack spacing={3}>
             <PrimaryTable
@@ -151,19 +152,14 @@ export default function Home() {
             />
           </Stack>
         </div>
-        <div style={classes.footerStyle}>
            <GoMakePagination
             onChangePageNumber={(event, value) => setPageNumber(value)}
             onChangePageSize={handlePageSizeChange}
             page={pageNumber}
+            setPage={setPageNumber}
             pagesCount={pagesCount}
             pageSize={pageSize}
           />
-          <ExcelButtons
-            onClickExport={onClickExportClient}
-            onClickImport={onClickImportClient}
-          />
-        </div>
       </Stack>
     </CustomerAuthLayout>
   );

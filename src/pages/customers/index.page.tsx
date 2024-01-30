@@ -5,7 +5,6 @@ import { useStyle } from "./style";
 import { HeaderFilter } from "./header-filter";
 import { useCustomers } from "./use-customers";
 import { AddCustomerButton } from "./add-customer";
-import Pagination from "@mui/material/Pagination";
 import { useState } from "react";
 import Stack from "@mui/material/Stack";
 import { CustomerCardWidget } from "@/widgets/customer-card-modal";
@@ -15,10 +14,7 @@ import { customerMapFunction } from "@/services/api-service/customers/customers-
 import { CLIENT_TYPE, CLIENT_TYPE_Id, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 import { PermissionCheck } from "@/components/CheckPermission/check-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
-import { ExcelButtons } from "./export-import-buttons";
-import { convertHeightToVH } from "@/utils/adapter";
 import { GoMakePagination } from "@/components/pagination/gomake-pagination";
-import { ExcelMenu } from "./export-import-buttons/excel-menu";
 
 export default function Home() {
   const { t } = useTranslation();
@@ -132,6 +128,8 @@ export default function Home() {
             agentName={agentName}
             valClientType={valClientType}
             valStatus={valStatus}
+            onClickExport={onClickExportClient}
+            onClickImport={onClickImportClient}
           />
           <PrimaryTable
             stickyFirstCol={false}
@@ -154,19 +152,14 @@ export default function Home() {
             showUpdateButton={true}
           />
         </div>
-        <div style={classes.footerStyle}>
-           <GoMakePagination
-            onChangePageNumber={(event, value) => setPageNumber(value)}
-            onChangePageSize={handlePageSizeChange}
-            page={pageNumber}
-            pagesCount={pagesCount}
-            pageSize={pageSize}
-          />
-          <ExcelButtons
-            onClickExport={onClickExportClient}
-            onClickImport={onClickImportClient}
-          />
-        </div>
+        <GoMakePagination
+          onChangePageNumber={(event, value) => setPageNumber(value)}
+          onChangePageSize={handlePageSizeChange}
+          page={pageNumber}
+          setPage={setPageNumber}
+          pagesCount={pagesCount}
+          pageSize={pageSize}
+        />
       </Stack>
     </CustomerAuthLayout>
   );

@@ -1,25 +1,72 @@
-import { useRef, useState } from "react";
+import { IconButton, Menu, MenuItem } from "@mui/material";
+import { SettingsIcon } from "@/icons/settings";
+import React, { useRef, useState } from "react";
+import { useStyle } from "./style";
+import { DownloadExcelSheet } from "@/icons/material-tabs/download-excel-sheet";
+import { UploadExcelSheet } from "@/icons/material-tabs/upload-excel-sheet";
 import { useTranslation } from "react-i18next";
-import { CLIENT_TYPE } from "../enums";
-import { Stack } from "@mui/material";
-import { SecondaryButton } from "@/components/button/secondary-button";
 
-interface IProps {
-  onClickExport: () => void;
-  onClickImport: (file) => void;
+interface IActionMenuProps {
+    onClickImport: (file) => void;
+    onClickExport: () => void;
 }
 
-const ExcelButtons = ({ onClickExport, onClickImport}: IProps) => {
-  const { t } = useTranslation();
-  const elementRef = useRef(null);
+const ExcelMenu = (props: IActionMenuProps) => {
+    const { classes } = useStyle();
+    const {t} = useTranslation();
+    const elementRef = useRef(null);
+    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
-  return (
-    <Stack gap={'10px'} direction={'row'} >
-      <SecondaryButton onClick={onClickExport} variant={'contained'}>{t("customers.buttons.export")}</SecondaryButton>
-      <input ref={elementRef} onChange={onClickImport} type="file" accept=".xlsx" hidden={true} />
-      <SecondaryButton onClick={() => elementRef && elementRef.current.click()} variant={'outlined'}>{t("customers.buttons.import")}</SecondaryButton>
-    </Stack>
+    const handleMoreOptionIconClick = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
 
-  );
+    const handleCloseMenu = () => {
+        setAnchorEl(null);
+    };
+
+    return (
+        <>
+            <IconButton onClick={handleMoreOptionIconClick} size="small" >
+                <SettingsIcon stroke={"#7E7E7E"} width={25} height={25} />
+            </IconButton>
+            <input
+                ref={elementRef}
+                onChange={props.onClickImport}
+                type="file"
+                accept=".xlsx"
+                hidden={true} />
+            <Menu
+                open={Boolean(anchorEl)}
+                anchorEl={anchorEl}
+                onClose={handleCloseMenu}
+                transformOrigin={{ horizontal: "right", vertical: "top" }}
+                anchorOrigin={{ horizontal: "center", vertical: "bottom" }}
+                onClick={handleCloseMenu}
+            >
+                <MenuItem
+                    style={classes.menuItemContainer}
+                    onClick={props.onClickExport}>
+                    <div style={classes.actionIconStyle}>
+                        <DownloadExcelSheet />
+                    </div>
+                    <div style={classes.rowTextStyle}>
+                        {t("materialsActions.DownLoadExcel")}
+                    </div>
+                </MenuItem> 
+                <MenuItem
+                    style={classes.menuItemContainer}
+                    onClick={() => elementRef && elementRef.current.click()}                >
+                    <div style={classes.actionIconStyle}>
+                        <UploadExcelSheet />
+                    </div>
+                    <div style={classes.rowTextStyle}>
+                    {t("materialsActions.UploadExcel")}
+                    </div>
+                </MenuItem>
+            </Menu>
+        </>
+    );
 };
-export { ExcelButtons };
+
+export { ExcelMenu };
