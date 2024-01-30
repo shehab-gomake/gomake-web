@@ -7,17 +7,20 @@ import { materialsCategoriesState } from "@/store/material-categories";
 import { compareStrings } from "@/utils/constants";
 import { useGomakeAxios } from "@/hooks";
 import { selectedShapeState } from "./gallery-modal-store";
+import { StaightKnifeIcon, OrderNowIcon } from "./icons";
+import { useTranslation } from "react-i18next";
 
-const useGalleryModal = ({ onClose, onChangeSubProductsForPrice }) => {
+const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForNewDie, straightKnife }) => {
   const { callApi } = useGomakeAxios();
+  const { t } = useTranslation();
   const selectParameterButton = useRecoilValue<any>(selectParameterButtonState);
   const materialsEnumsValues = useRecoilValue(materialsCategoriesState);
   const [selectedShape, setSelectedShape] =
     useRecoilState<any>(selectedShapeState);
   const [materialData, setMaterialData] =
     useRecoilState<any>(materialBtnDataState);
+  const [materialDataFilter, setMaterialDataFilter] = useState("");
   const [materialType, setMaterialType] = useState<any>({});
-
   useEffect(() => {
     if (selectParameterButton?.parameter?.materialPath?.length > 0) {
       getProductQuoteItemById();
@@ -40,7 +43,17 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice }) => {
   const createParameterForCalculation = (parameter) => {
     setSelectedShape(parameter);
   };
-
+  function searchByName(items, searchText) {
+    searchText = searchText.toLowerCase();
+    const result = items?.filter((item) =>
+      item.rowData.name.value.toLowerCase().includes(searchText)
+    );
+    return result;
+  }
+  const searchResult = searchByName(materialData?.data, materialDataFilter);
+  const onChangeSearch = (value: string) => {
+    setMaterialDataFilter(value);
+  };
   const onClickChoosParameter = () => {
     onChangeSubProductsForPrice(
       selectParameterButton?.parameter?.id,
@@ -61,11 +74,61 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice }) => {
 
     onClose();
   };
+  const onClickNewOrder = () => {
+    setIsChargeForNewDie(true);
+    window.open(`/materials/${selectParameterButton?.parameter?.materialPath[0]}`, "_blank");
+  };
+  const onClickStraight = () => {
+    onChangeSubProductsForPrice(
+      straightKnife?.id,
+      selectParameterButton?.subSectionId,
+      selectParameterButton?.sectionId,
+      straightKnife?.parameterType,
+      straightKnife?.name,
+      straightKnife?.actionId,
+      { values: "true" },
+      selectParameterButton?.paameterType,
+      selectParameterButton?.index,
+      straightKnife?.actionIndex
+    );
+    onClose();
+  };
+  const fixedCartData = [
+    {
+      name: t("products.offsetPrice.admin.orderNewDie"),
+      icon: <OrderNowIcon />,
+      onclick: onClickNewOrder,
+      backgroundColor: "#504FA1",
+    },
+    // {
+    //   name: t("products.offsetPrice.admin.AddExistingDie"),
+    //   icon: <AddNewIcon />,
+    //   onclick: onClickAddExisting,
+    //   backgroundColor: "#8283BE",
+    // },
+    {
+      name: t("products.offsetPrice.admin.straightKnife"),
+      icon: <StaightKnifeIcon />,
+      onclick: onClickStraight,
+      backgroundColor: "#F467BA",
+    },
+  ];
+  const [renderData, setRenderData] = useState([]);
+  useEffect(() => {
+    const renderData = materialDataFilter ? searchResult : materialData;
+    setRenderData(renderData);
+  }, [materialDataFilter]);
   return {
     materialData,
     selectedShape,
     createParameterForCalculation,
     onClickChoosParameter,
+    fixedCartData,
+    getProductQuoteItemById,
+    onChangeSearch,
+    searchResult,
+    materialDataFilter,
+    renderData,
   };
 };
 
