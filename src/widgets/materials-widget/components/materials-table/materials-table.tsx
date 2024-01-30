@@ -11,7 +11,7 @@ const MaterialsTableComponent = (props:IMaterialsTableComponentProps) => {
   const { getAllMaterials, getTableRows, onFilterChange } = useMaterialsTypes(props.isAdmin);
   const { t } = useTranslation();
   const { classes } = useStyle();
-  const tableHeaders = [t("Materials Type"), t("Edit")];
+  const tableHeaders = [t("materials.materialsType"), t("materials.edit")];
 
   useEffect(() => {
     getAllMaterials().then();

@@ -77,11 +77,11 @@ const useProductManagement = () => {
   const productProfitesList: ProductClient[] = useMemo(
     () => [
       {
-        label: "action",
+        label: t("partners.options.action"),
         id: EProductProfites.BY_ACTION,
       },
       {
-        label: "Product",
+        label: t("products.addProduct.admin.product"),
         id: EProductProfites.BY_PRODUCT,
       },
     ],
