@@ -36,9 +36,19 @@ const useStyle = () => {
       },
       footerContainer: {
         display: "flex",
+        flexDirection: "row" as "row",
         width: "100%",
-        justifyContent: "center",
+        justifyContent: "space-between",
         alignItems: "center",
+      },
+      switchContainer:{ display: "flex", flexDirection: "row" as "row", justifyContent: "flex-start", alignItems: "center" },
+      switchlabel:{
+        ...FONT_FAMILY.Lexend(400,12),
+        color:"#000"
+      },
+      switchlabelSelected:{
+        ...FONT_FAMILY.Lexend(400,12),
+        color:secondColor(500)
       },
       mainContainer: {
         display: "flex",

@@ -74,6 +74,9 @@ const PriceListPageWidget = ({ widgetType }) => {
     onChangeSubProductsForPrice,
     includeVAT,
     setIncludeVAT,
+    isChargeForNewDie,
+    setIsChargeForNewDie,
+    straightKnife
   } = useDigitalOffsetPrice({ clasess, widgetType });
   const direction = t("direction");
   return (
@@ -246,7 +249,7 @@ const PriceListPageWidget = ({ widgetType }) => {
                   </GomakePrimaryButton>
                 ) : null}
                 {[...productTemplate?.sections, PricingTab].length - 1 !=
-                activeIndex ? (
+                  activeIndex ? (
                   <GomakePrimaryButton
                     style={clasess.nextBtnStyle}
                     onClick={handleNextClick}
@@ -288,6 +291,9 @@ const PriceListPageWidget = ({ widgetType }) => {
         openModal={GalleryModalOpen}
         onClose={onCloseGalleryModal}
         onChangeSubProductsForPrice={onChangeSubProductsForPrice}
+        isChargeForNewDie={isChargeForNewDie}
+        setIsChargeForNewDie={setIsChargeForNewDie}
+        straightKnife={straightKnife}
       />
       <MultiParameterModal
         openModal={multiParameterModal}

@@ -17,3 +17,29 @@ const returnResult = (
 };
 
 export { returnResult };
+
+export const findParameterById = (template, targetCode) => {
+  // Function to recursively search for a parameter by id
+  const findParameter = (sections) => {
+    for (const section of sections) {
+      if (section.subSections && section.subSections.length > 0) {
+        // If subSections exist, recursively search within them
+        const nestedParameter = findParameter(section.subSections);
+        if (nestedParameter) {
+          return nestedParameter;
+        }
+      }
+
+      for (const subSection of section.subSections || []) {
+        const parameter = subSection.parameters.find(param => param.code === targetCode);
+        if (parameter) {
+          return parameter;
+        }
+      }
+    }
+    return null;
+  };
+
+  // Call the findParameter function with the top-level sections
+  return findParameter(template.sections || []);
+};

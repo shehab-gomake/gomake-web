@@ -5,12 +5,12 @@ import { materialBtnDataState, selectParameterButtonState } from "@/store";
 import { getPrintHouseMaterialsByMaterialKey } from "@/services/hooks";
 import { materialsCategoriesState } from "@/store/material-categories";
 import { compareStrings } from "@/utils/constants";
-import { useGomakeAxios, useGomakeRouter } from "@/hooks";
+import { useGomakeAxios } from "@/hooks";
 import { selectedShapeState } from "./gallery-modal-store";
-import { StaightKnifeIcon, AddNewIcon, OrderNowIcon } from "./icons";
+import { StaightKnifeIcon, OrderNowIcon } from "./icons";
 import { useTranslation } from "react-i18next";
 
-const useGalleryModal = ({ onClose, onChangeSubProductsForPrice }) => {
+const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForNewDie, straightKnife }) => {
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
   const selectParameterButton = useRecoilValue<any>(selectParameterButtonState);
@@ -51,7 +51,6 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice }) => {
     return result;
   }
   const searchResult = searchByName(materialData?.data, materialDataFilter);
-  const { navigate } = useGomakeRouter();
   const onChangeSearch = (value: string) => {
     setMaterialDataFilter(value);
   };
@@ -76,13 +75,23 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice }) => {
     onClose();
   };
   const onClickNewOrder = () => {
-    navigate(`/materials/${selectParameterButton?.parameter?.materialPath[0]}`);
-  };
-  const onClickAddExisting = () => {
-    navigate(`/materials/${selectParameterButton?.parameter?.materialPath[0]}`);
+    setIsChargeForNewDie(true);
+    window.open(`/materials/${selectParameterButton?.parameter?.materialPath[0]}`, "_blank");
   };
   const onClickStraight = () => {
-    console.log("Straight knife");
+    onChangeSubProductsForPrice(
+      straightKnife?.id,
+      selectParameterButton?.subSectionId,
+      selectParameterButton?.sectionId,
+      straightKnife?.parameterType,
+      straightKnife?.name,
+      straightKnife?.actionId,
+      { values: "true" },
+      selectParameterButton?.paameterType,
+      selectParameterButton?.index,
+      straightKnife?.actionIndex
+    );
+    onClose();
   };
   const fixedCartData = [
     {
@@ -91,12 +100,12 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice }) => {
       onclick: onClickNewOrder,
       backgroundColor: "#504FA1",
     },
-    {
-      name: t("products.offsetPrice.admin.AddExistingDie"),
-      icon: <AddNewIcon />,
-      onclick: onClickAddExisting,
-      backgroundColor: "#8283BE",
-    },
+    // {
+    //   name: t("products.offsetPrice.admin.AddExistingDie"),
+    //   icon: <AddNewIcon />,
+    //   onclick: onClickAddExisting,
+    //   backgroundColor: "#8283BE",
+    // },
     {
       name: t("products.offsetPrice.admin.straightKnife"),
       icon: <StaightKnifeIcon />,

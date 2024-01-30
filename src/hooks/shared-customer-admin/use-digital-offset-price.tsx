@@ -51,6 +51,7 @@ import {
   updateDocumentItemApi,
 } from "@/services/api-service/generic-doc/documents-api";
 import { productQuantityTypesValuesState } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/quantity-parameter/quantity-types/state";
+import { findParameterById } from "@/utils/helpers";
 
 const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const { navigate } = useGomakeRouter();
@@ -58,7 +59,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const { t } = useTranslation();
   const router = useRouter();
   const { alertFaultAdded, alertFaultUpdate } = useSnackBar();
-
+  const [isChargeForNewDie, setIsChargeForNewDie] = useState(false)
   const { clientTypesValue, renderOptions, checkWhatRenderArray } =
     useQuoteWidget();
   const { allMaterials, getAllMaterial } = useMaterials();
@@ -216,9 +217,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         flow.id === updatedSelectedWorkFlow?.id
           ? updatedSelectedWorkFlow
           : {
-              ...flow,
-              selected: false,
-            }
+            ...flow,
+            selected: false,
+          }
       )
     );
     if (
@@ -621,7 +622,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   (parameter?.parameterType ===
                     EParameterTypes.DROP_DOWN_LIST ||
                     parameter?.parameterType ===
-                      EParameterTypes.SELECT_MATERIALS) &&
+                    EParameterTypes.SELECT_MATERIALS) &&
                   (!parameter?.valuesConfigs ||
                     parameter?.valuesConfigs.length === 0)
                 ) {
@@ -962,6 +963,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           subSection={subSection}
           section={section}
           index={index}
+          straightKnife={straightKnife}
         />
       );
     } else if (parameter?.parameterType === EParameterTypes.SELECT_MATERIALS) {
@@ -1164,7 +1166,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         ) {
           const materialPath =
             subSectionParameter.materialPath[
-              subSectionParameter.materialPath.length - 1
+            subSectionParameter.materialPath.length - 1
             ];
           const materialRelatedParameters = subSection.parameters.filter(
             (x) =>
@@ -1180,8 +1182,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               );
 
               let allMaterialsCopy = cloneDeep(allMaterials)
-              let paramMaterialValues =[];
-              if(index > 0){
+              let paramMaterialValues = [];
+              if (index > 0) {
                 allMaterialsCopy = allMaterialsCopy?.find((x) =>
                   compareStrings(x.pathName, param.materialPath[0])
                 )?.data;
@@ -1682,7 +1684,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       DocumentType: router?.query?.documentType,
     });
   };
-
+  const straightKnife = findParameterById(productTemplate, "IsStraightKnife");
   const navigateForRouter = () => {
     let checkParameter = validateParameters(isRequiredParameters);
     if (!!checkParameter) {
@@ -1760,10 +1762,13 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     billingMethod,
     samlleType,
     graphicDesigner,
+    isChargeForNewDie,
+    setIsChargeForNewDie,
     setGraphicDesigner,
     setIncludeVAT,
     getOutSourcingSuppliers,
     onChangeSubProductsForPrice,
+    straightKnife
   };
 };
 export { useDigitalOffsetPrice };

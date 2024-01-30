@@ -1,4 +1,4 @@
-import { GoMakeModal, GomakePrimaryButton } from "@/components";
+import { GoMakeModal, GomakePrimaryButton, SecondSwitch } from "@/components";
 
 import { useGalleryModal } from "./use-gallery-modal";
 import { useStyle } from "./style";
@@ -7,7 +7,7 @@ import { SearchInputComponent } from "@/components/form-inputs/search-input-comp
 import { RechooseIcon } from "@/icons";
 import { GalleryModalMapping } from "./gallery-modal-mapping";
 
-const GalleryModal = ({ openModal, onClose, onChangeSubProductsForPrice }) => {
+const GalleryModal = ({ openModal, onClose, onChangeSubProductsForPrice, isChargeForNewDie, setIsChargeForNewDie, straightKnife }) => {
   const { clasess } = useStyle();
   const { t } = useTranslation();
   const {
@@ -20,7 +20,7 @@ const GalleryModal = ({ openModal, onClose, onChangeSubProductsForPrice }) => {
     onChangeSearch,
     searchResult,
     materialDataFilter,
-  } = useGalleryModal({ onClose, onChangeSubProductsForPrice });
+  } = useGalleryModal({ onClose, onChangeSubProductsForPrice, setIsChargeForNewDie, straightKnife });
   return (
     <>
       <GoMakeModal
@@ -64,38 +64,51 @@ const GalleryModal = ({ openModal, onClose, onChangeSubProductsForPrice }) => {
 
             {materialDataFilter
               ? searchResult?.map((item, index) => {
-                  return (
-                    <GalleryModalMapping
-                      index={index}
-                      item={item}
-                      selectedShape={selectedShape}
-                      createParameterForCalculation={
-                        createParameterForCalculation
-                      }
-                    />
-                  );
-                })
+                return (
+                  <GalleryModalMapping
+                    index={index}
+                    item={item}
+                    selectedShape={selectedShape}
+                    createParameterForCalculation={
+                      createParameterForCalculation
+                    }
+                  />
+                );
+              })
               : materialData?.data?.map((item, index) => {
-                  return (
-                    <GalleryModalMapping
-                      index={index}
-                      item={item}
-                      selectedShape={selectedShape}
-                      createParameterForCalculation={
-                        createParameterForCalculation
-                      }
-                    />
-                  );
-                })}
+                return (
+                  <GalleryModalMapping
+                    index={index}
+                    item={item}
+                    selectedShape={selectedShape}
+                    createParameterForCalculation={
+                      createParameterForCalculation
+                    }
+                  />
+                );
+              })}
           </div>
         </div>
         <div style={clasess.footerContainer}>
+          <div style={clasess.switchContainer}>
+            <SecondSwitch
+
+              checked={isChargeForNewDie}
+              onChange={() => {
+                setIsChargeForNewDie(
+                  !isChargeForNewDie
+                );
+              }}
+            />
+            <div style={isChargeForNewDie ? clasess.switchlabelSelected : clasess.switchlabel}>Add a charge for new Die</div>
+          </div>
           <GomakePrimaryButton
             style={clasess.chooseBtnStyle}
             onClick={onClickChoosParameter}
           >
             {t("sales.quote.save")}
           </GomakePrimaryButton>
+          <div />
         </div>
       </GoMakeModal>
     </>

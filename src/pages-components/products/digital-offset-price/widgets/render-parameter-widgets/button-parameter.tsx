@@ -12,6 +12,7 @@ const ButtonParameterWidget = ({
   subSection,
   section,
   index,
+  straightKnife
 }) => {
   let Comp;
   const materialData = useRecoilValue<any>(materialBtnDataState);
@@ -23,6 +24,37 @@ const ButtonParameterWidget = ({
   )?.parameters;
   const [isSelectedShape, setIsSelectedShape] = useState<any>();
   const [selectedShape, setSelectedShape] = useState<any>();
+  const [isStraightKnife, setIsStraightKnife] = useState(false);
+  const isStraightKnifeInSubProducts = subProducts.some(
+    (subProduct) =>
+      subProduct.parameters.some(
+        (parameter) => parameter.parameterId === straightKnife.id
+      )
+  );
+  useEffect(() => {
+    if (isStraightKnifeInSubProducts) {
+      setIsStraightKnife(true);
+      removeParameterFromSubProducts()
+    } else {
+      setIsStraightKnife(false);
+    }
+
+  }, [isStraightKnifeInSubProducts])
+  const deleteStraightKnifeParameter = () => {
+    const updatedSubProducts = subProducts.map((subProduct) => {
+      const updatedParameters = subProduct.parameters.filter(
+        (parameter) => parameter.parameterId !== straightKnife.id
+      );
+
+      return {
+        ...subProduct,
+        parameters: updatedParameters,
+      };
+    });
+
+    setProducts(updatedSubProducts);
+    setIsStraightKnife(false)
+  };
   const removeParameterFromSubProducts = () => {
     if (isSelectedShape) {
       setProducts((prevSubProducts) => {
@@ -62,7 +94,41 @@ const ButtonParameterWidget = ({
   }, [materialData, isSelectedShape]);
 
   if (parameter?.buttonAction === EButtonTypes.GALLERY_MODAL) {
-    if (isSelectedShape && selectedShape) {
+    if (isStraightKnife) {
+      Comp = (
+        <div style={clasess.btnSelectedStyle}>
+          <div style={clasess.btnSelectedTextStyle}>
+            {straightKnife?.name}
+          </div>
+          <div
+            style={clasess.btnSelectedIconReChoose}
+            onClick={() => {
+              selectBtnTypeToAction(
+                parameter,
+                section?.id,
+                subSection?.id,
+                index,
+                subSection?.type
+              )
+              deleteStraightKnifeParameter()
+              setIsStraightKnife(false)
+            }
+
+
+            }
+          >
+            <RechooseIcon />
+          </div>
+          <div
+            style={clasess.btnSelectedIconReChoose}
+            onClick={deleteStraightKnifeParameter}
+          >
+            <DeleteIcon />
+          </div>
+        </div>
+      );
+    }
+    else if (isSelectedShape && selectedShape) {
       Comp = (
         <div style={clasess.btnSelectedStyle}>
           <img
