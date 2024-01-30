@@ -40,7 +40,7 @@ const UploadImgProduct = ({
           />
           <label style={clasess.labelStyle}>
             {productState?.img
-              ? "image  uploaded"
+              ? t("products.addProduct.admin.imageUploaded")
               : t("mailingSettings.noAttachment")}
           </label>
         </Stack>
