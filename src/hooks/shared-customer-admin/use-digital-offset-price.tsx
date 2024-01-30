@@ -890,16 +890,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     return temp[index];
   };
 
-  const _renderParameterType = (
-    parameter: any,
-    subSection: any,
-    section: any,
-    subSectionParameters,
-    value,
-    list,
-    inModal: any,
-    inRow: boolean
+  const _renderParameterType = ({ parameter, subSection, section, subSectionParameters, value, list, inModal, inRow}
   ) => {
+    return <div/>
     let Comp;
     const parametersArray = subProducts.flatMap((item) => item.parameters);
     const temp = [...parametersArray];
@@ -1120,16 +1113,16 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 if (relatedParameter.activateByAllValues && parm?.values) {
                   return (
                     <div>
-                      {_renderParameterType(
-                        myParameter,
-                        subSection,
-                        section,
-                        subSection?.parameters,
-                        myParameter?.value,
-                        list,
-                        true,
-                        false
-                      )}
+                      <_renderParameterType
+                        parameter={myParameter}
+                        subSection={subSection}
+                        section={section}
+                        subSectionParameters={subSection?.parameters}
+                        value={myParameter?.value}
+                        list={list}
+                        inModal={true}
+                        inRow={false}
+                      />
                     </div>
                   );
                 } else {
@@ -1143,16 +1136,16 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     if (valueInArray) {
                       return (
                         <div>
-                          {_renderParameterType(
-                            myParameter,
-                            subSection,
-                            section,
-                            subSection?.parameters,
-                            myParameter?.value,
-                            list,
-                            true,
-                            false
-                          )}
+                          <_renderParameterType
+                              parameter={myParameter}
+                              subSection={subSection}
+                              section={section}
+                              subSectionParameters={subSection?.parameters}
+                              value={myParameter?.value}
+                              list={list}
+                              inModal={true}
+                              inRow={false}
+                          />
                         </div>
                       );
                     }
@@ -1164,16 +1157,16 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     if (valueInArray && myParameter) {
                       return (
                         <div>
-                          {_renderParameterType(
-                            myParameter,
-                            subSection,
-                            section,
-                            subSection?.parameters,
-                            myParameter?.value,
-                            list,
-                            true,
-                            false
-                          )}
+                          <_renderParameterType
+                              parameter={myParameter}
+                              subSection={subSection}
+                              section={section}
+                              subSectionParameters={subSection?.parameters}
+                              value={myParameter?.value}
+                              list={list}
+                              inModal={true}
+                              inRow={false}
+                          />
                         </div>
                       );
                     }

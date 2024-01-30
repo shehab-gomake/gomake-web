@@ -6,6 +6,7 @@ import { useStyle } from "./style";
 import { useMultiParameterModal } from "./use-multi-parameter-modal";
 import { IconButton, Tooltip } from "@mui/material";
 import { CloseIcon } from "@/components/modal/icon/close";
+import React from "react";
 
 const MultiParameterModal = ({
   openModal,
@@ -30,16 +31,16 @@ const MultiParameterModal = ({
       >
         <div style={clasess.mainContainer}>
           <div style={clasess.multiSelectMainContainer}>
-            {_renderParameterType(
-              settingParameters?.parameter,
-              settingParameters?.subSection,
-              settingParameters?.section,
-              settingParameters?.parameter,
-              settingParameters?.value,
-              settingParameters?.list,
-              false,
-              false
-            )}
+            <_renderParameterType
+                parameter={settingParameters?.parameter}
+                subSection={settingParameters?.subSection}
+                section={settingParameters?.section}
+                subSectionParameters={settingParameters?.parameter}
+                value={settingParameters?.value}
+                list={settingParameters?.list}
+                inModal={false}
+                inRow={false}
+            />
           </div>
           <div style={clasess.tableContainer}>
             <div style={clasess.headerTableContainer}>

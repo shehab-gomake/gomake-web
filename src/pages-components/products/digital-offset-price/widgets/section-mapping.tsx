@@ -156,16 +156,16 @@ const SectionMappingWidget = ({
                                   display: "flex",
                                 }}
                             >
-                              {_renderParameterType(
-                                  parameter,
-                                  subSection,
-                                  section,
-                                  subSection?.parameters,
-                                  value,
-                                  subSection?.parameters,
-                                  true,
-                                  false
-                              )}
+                              <_renderParameterType
+                                  parameter={parameter}
+                                  subSection={subSection}
+                                  section={section}
+                                  subSectionParameters={subSection?.parameters}
+                                  value={value}
+                                  list={subSection?.parameters}
+                                  inModal={true}
+                                  inRow={false}
+                              />
                             </div>
                           </React.Fragment>
                         );
@@ -227,27 +227,28 @@ const SectionMappingWidget = ({
                   <React.Fragment>
                     {parameter.isStartNewLine ? <div style={{flexBasis:'100%',height:0}}></div> : <></>}
                     <div  key={parameter?.id}>
-                      {_renderParameterType(
-                          parameter,
-                          subSection,
-                          section,
-                          subSection?.parameters,
-                          _getParameter(parameter, subSection, section),
-                          subSection?.parameters,
-                          true,
-                          false
-                      )}
+                      <_renderParameterType
+                          parameter={parameter}
+                          subSection={subSection}
+                          section={section}
+                          subSectionParameters={subSection?.parameters}
+                          value={_getParameter(parameter, subSection, section)}
+                          list={subSection?.parameters}
+                          inModal={true}
+                          inRow={false}
+                      />
                       <div style={{ marginTop: 5 }}>
-                        {_renderParameterType(
-                            myParameter,
-                            subSection,
-                            section,
-                            subSection?.parameters,
-                            _getParameter(myParameter, subSection, section),
-                            subSection?.parameters,
-                            true,
-                            true
-                        )}
+                        <_renderParameterType
+                            parameter={parameter}
+                            subSection={subSection}
+                            section={section}
+                            subSectionParameters={subSection?.parameters}
+                            value={_getParameter(parameter, subSection, section)}
+                            list={subSection?.parameters}
+                            inModal={true}
+                            inRow={true}
+                        />
+                        
                       </div>
                     </div>
                   </React.Fragment>
@@ -258,16 +259,16 @@ const SectionMappingWidget = ({
                     <React.Fragment>
                       {parameter.isStartNewLine ? <div style={{flexBasis:'100%',height:0}}></div> : <></>}
                       <div key={parameter?.id} style={{ display: "flex",pageBreakBefore:parameter.isStartNewLine ? 'always' : 'unset' }}>
-                        {_renderParameterType(
-                            parameter,
-                            subSection,
-                            section,
-                            subSection?.parameters,
-                            value,
-                            subSection?.parameters,
-                            true,
-                            false
-                        )}
+                        <_renderParameterType
+                            parameter={parameter}
+                            subSection={subSection}
+                            section={section}
+                            subSectionParameters={subSection?.parameters}
+                            value={value}
+                            list={subSection?.parameters}
+                            inModal={true}
+                            inRow={false}
+                        />
                       </div>
                     </React.Fragment>
                 );
