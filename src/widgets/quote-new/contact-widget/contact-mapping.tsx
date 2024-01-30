@@ -37,7 +37,7 @@ const ContactMapping = ({
     <div style={clasess.businessContainerStyle}>
       <InputUpdatedValues
         value={
-          item?.contactName !== null ? item?.contactName : "No contact name"
+          item?.contactName !== null ? item?.contactName : t("sales.quote.noName")
         }
         label={t("sales.quote.contactName")}
         onBlur={() => onBlurContactName(item)}
@@ -49,7 +49,7 @@ const ContactMapping = ({
       />
       <PhoneInputUpdatedValues
         value={
-          item?.contactPhone !== null ? item?.contactPhone : "No mobile contact"
+          item?.contactPhone !== null ? item?.contactPhone : t("sales.quote.noMobile")
         }
         label={t("sales.quote.mobileContact")}
         onBlur={() => onBlurContactMobile(item)}
@@ -60,7 +60,7 @@ const ContactMapping = ({
         }} />
       <InputUpdatedValues
         value={
-          item?.contactMail !== null ? item?.contactMail : "No contact mail"
+          item?.contactMail !== null ? item?.contactMail : t("sales.quote.noMail")
         }
         label={t("sales.quote.contactEmail")}
         onBlur={() => onBlurContactEmail(item)}
@@ -83,7 +83,7 @@ const ContactMapping = ({
             onClick={() => setIsDisplayWidget(true)}
           >
             <PlusNewIcon />
-            <div style={clasess.addNewContactNameTextStyle}>Add Contact</div>
+            <div style={clasess.addNewContactNameTextStyle}>{t("sales.quote.addContact")}</div>
           </div>
         )}
         {index === displayedItems - 1 && (
@@ -92,7 +92,7 @@ const ContactMapping = ({
             onClick={() => setIsDisplayWidget(true)}
           >
             <PlusNewIcon />
-            <div style={clasess.addNewContactNameTextStyle}>Add Contact</div>
+            <div style={clasess.addNewContactNameTextStyle}>{t("sales.quote.addContact")}</div>
           </div>
         )}
       </div>

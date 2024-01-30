@@ -70,6 +70,7 @@ const useStyle = () => {
         backgroundColor: secondColor(500),
         height: 28,
         width: 60,
+        minWidth:"fit-content"
       },
     };
   }, []);

@@ -43,31 +43,31 @@ const useAddProduct = () => {
       setActiveIndex(activeIndex - 1);
     }
   };
-  const [activeTab, setActiveTab] = useState("Settings");
+  const [activeTab, setActiveTab] = useState(t("products.addProduct.admin.settings"));
   const onClickSettingsTab = () => {
-    setActiveTab("Settings");
+    setActiveTab(t("products.addProduct.admin.settings"));
   };
   const onClickParametersTab = () => {
-    setActiveTab("Parameters");
+    setActiveTab(t("products.addProduct.admin.parameters"));
   };
   const onClickGraphicTab = () => {
-    setActiveTab("Graphic");
+    setActiveTab(t("products.addProduct.admin.graphic"));
   };
   const tabs = [
     {
-      name: "Settings",
+      name: t("products.addProduct.admin.settings"),
       icon: <SettingIcon stroke="#1C1D58" />,
       activeIcon: <SettingIcon />,
       onclick: () => onClickSettingsTab,
     },
     {
-      name: "Parameters",
+      name: t("products.addProduct.admin.parameters"),
       icon: <PrameterIcon />,
       activeIcon: <PrameterIcon stroke="#ED028C" />,
       onclick: () => onClickParametersTab,
     },
     {
-      name: "Graphic",
+      name: t("products.addProduct.admin.graphic"),
       icon: <GraphicIcon />,
       activeIcon: <GraphicIcon stroke="#ED028C" />,
       onclick: () => onClickGraphicTab,

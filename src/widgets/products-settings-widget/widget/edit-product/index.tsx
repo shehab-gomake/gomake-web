@@ -73,14 +73,14 @@ const EditProductWidget = () => {
             );
           })}
         </div>
-        {activeTab === "Settings" ? (
+        {activeTab === t("products.addProduct.admin.settings") ? (
           <SettingsWidget
             onClickParametersTab={onClickParametersTab}
             onChangeStateProduct={onChangeStateProduct}
             productState={productState}
             isUpdate={true}
           />
-        ) : activeTab === "Parameters" ? (
+        ) : activeTab === t("products.addProduct.admin.parameters") ? (
           <ParameterWidget />
         ) : (
           <GraphicWidget />

@@ -97,17 +97,17 @@ const BoardMissionsListWidget = () => {
                 />
               </div>
               <div style={classes.statusFilterContainer}>
-                <h3 style={classes.filterLabelStyle}>{t("Products")}</h3>
+                <h3 style={classes.filterLabelStyle}>{t("boardMissions.products")}</h3>
                 <GoMakeMultiSelect
                   onChange={handleMultiSelectChange}
                   style={classes.textInputStyle}
                   options={productsList}
                   values={productIds}
-                  placeholder="Select products" />
+                  placeholder={t("boardMissions.selectProducts")} />
               </div>
               <div style={classes.statusFilterContainer}>
                 <h3 style={classes.filterLabelStyle}>{t("boardMissions.dateRange")}</h3>
-                <GoMakeDatepicker onChange={onSelectDeliveryTimeDates} placeholder="Choose a date" reset={resetDatePicker} />
+                <GoMakeDatepicker onChange={onSelectDeliveryTimeDates} placeholder={t("boardMissions.chooseDate")} reset={resetDatePicker} />
               </div>
               <GomakePrimaryButton
                 style={classes.searchBtnStyle}

@@ -8,7 +8,7 @@ const useStyle = () => {
             display: "flex",
             flexDirection: "column" as "column",
             gap: 10,
-            width:"330px"
+            width:"330px",
           },
           fileInputStyle:{
             boxSizing: 'border-box' as 'border-box',
