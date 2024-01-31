@@ -27,7 +27,6 @@ const SectionMappingWidget = ({
   const [subProducts, setSubProducts] = useRecoilState<any>(
     subProductsParametersState
   );
-  console.log("underParameterIds", { underParameterIds, relatedParameters })
   const [groupedParameters, setGroupedParameters] = useState<any>();
   const [groupedParametersArray, setGroupedParametersArray] = useState<any>();
   useEffect(() => {
@@ -225,9 +224,6 @@ const SectionMappingWidget = ({
               );
               if (isUnderParameterId2) {
                 let list = subSection?.parameters
-                const myParameter = underParameterIds.find(
-                  (item) => item.underParameterId === parameter.id
-                )?.myParameter;
                 return (
                   <React.Fragment>
                     {parameter.isStartNewLine ? <div style={{ flexBasis: '100%', height: 0 }}></div> : <></>}
