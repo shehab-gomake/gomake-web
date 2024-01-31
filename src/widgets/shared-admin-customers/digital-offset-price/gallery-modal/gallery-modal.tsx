@@ -45,7 +45,7 @@ const GalleryModal = ({ openModal, onClose, onChangeSubProductsForPrice, isCharg
         </div>
         <div style={clasess.bodyContainer}>
           <div style={clasess.mainContainer}>
-            {fixedCartData?.map((card, index) => {
+            {fixedCartData?.filter((card) => card.isShow)?.map((card, index) => {
               return (
                 <div
                   style={{
