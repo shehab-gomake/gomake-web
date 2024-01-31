@@ -51,6 +51,7 @@ const AddRuleModal = ({
     createProperties,
     setPropertieValue,
     materialsTypes,
+    machines
   } = useAddRuleModal({
     typeExceptionSelected,
     selectedPricingBy,
@@ -93,19 +94,19 @@ const AddRuleModal = ({
                 options={
                   router.query.actionId
                     ? machincesList?.machines?.map((value) => {
-                        return {
-                          ...value,
-                          label: value?.machineName,
-                          id: value.machineId,
-                        };
-                      })
+                      return {
+                        ...value,
+                        label: value?.machineName,
+                        id: value.machineId,
+                      };
+                    })
                     : allMachincesList?.map((value) => {
-                        return {
-                          ...value,
-                          label: value?.name,
-                          id: value.id,
-                        };
-                      })
+                      return {
+                        ...value,
+                        label: value?.name,
+                        id: value.id,
+                      };
+                    })
                 }
                 style={clasess.dropDownListContainer}
                 placeholder={"Select Machine"}
@@ -312,9 +313,9 @@ const AddRuleModal = ({
         modalTitle={
           isPropertiesWidge
             ? t("products.profits.exceptions.addNewRule") +
-              " (" +
-              selectedProperties?.propertyName +
-              ")"
+            " (" +
+            selectedProperties?.propertyName +
+            ")"
             : t("products.profits.exceptions.addNewRule")
         }
         onClose={() => {
@@ -439,20 +440,20 @@ const AddRuleModal = ({
                       <GoMakeAutoComplate
                         options={
                           router.query.actionId
-                            ? machincesList?.machines?.map((value) => {
-                                return {
-                                  ...value,
-                                  label: value?.machineName,
-                                  id: value.machineId,
-                                };
-                              })
+                            ? machines?.map((value) => {
+                              return {
+                                ...value,
+                                label: value?.name,
+                                id: value.id,
+                              };
+                            })
                             : allMachincesList?.map((value) => {
-                                return {
-                                  ...value,
-                                  label: value?.name,
-                                  id: value.id,
-                                };
-                              })
+                              return {
+                                ...value,
+                                label: value?.name,
+                                id: value.id,
+                              };
+                            })
                         }
                         style={clasess.dropDownListContainer}
                         placeholder={t("properties.statment")}
@@ -494,20 +495,20 @@ const AddRuleModal = ({
                         <GoMakeAutoComplate
                           options={
                             router.query.actionId
-                              ? machincesList?.machines?.map((value) => {
-                                  return {
-                                    ...value,
-                                    label: value?.machineName,
-                                    id: value.machineId,
-                                  };
-                                })
+                              ? machines?.map((value) => {
+                                return {
+                                  ...value,
+                                  label: value?.name,
+                                  id: value.id,
+                                };
+                              })
                               : allMachincesList?.map((value) => {
-                                  return {
-                                    ...value,
-                                    label: value?.name,
-                                    id: value.id,
-                                  };
-                                })
+                                return {
+                                  ...value,
+                                  label: value?.name,
+                                  id: value.id,
+                                };
+                              })
                           }
                           style={clasess.dropDownListContainer}
                           placeholder={t("properties.statment")}
