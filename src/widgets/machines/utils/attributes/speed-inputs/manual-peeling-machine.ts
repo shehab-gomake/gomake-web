@@ -1,4 +1,3 @@
-import {cuttingLevel} from "@/widgets/machines/utils/const/cutting-level";
 import {setupTimeInput} from "@/widgets/machines/utils/attributes/speed-inputs/setup-time-input";
 import {EMeasurementUnits} from "@/widgets/machines/enums/measurement-units";
 import {maxSpeedInput} from "@/widgets/machines/utils/attributes/speed-inputs/max-speed-input";

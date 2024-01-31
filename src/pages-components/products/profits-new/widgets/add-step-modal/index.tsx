@@ -78,9 +78,7 @@ const AddStepModal = ({
                   );
                 }
               }}
-            >
-              Add
-            </GomakePrimaryButton>
+            >{t("materials.buttons.add")}</GomakePrimaryButton>
           </div>
         </div>
       </GoMakeModal>

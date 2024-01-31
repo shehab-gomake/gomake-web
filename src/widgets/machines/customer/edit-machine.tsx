@@ -58,7 +58,7 @@ const CustomerEditMachines = () => {
     const Side = () => {
         return <MachinesSideList list={getPrintHouseMachinesList()} selectedItem={selectedMachine?.id}
                                  onSelect={onSelectMachine}
-                                 title={'Machines'} quickActions={true}>
+                                 title={t("machineAttributes.machines")} quickActions={true}>
         </MachinesSideList>
     }
     return (

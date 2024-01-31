@@ -184,7 +184,7 @@ const ChildParameterModal = ({
                                 <div style={clasess.textInputContainer}>
                                   <GomakeTextInput
                                     style={clasess.textInputStyle}
-                                    placeholder="Enter Value"
+                                    placeholder={t("products.profits.exceptions.enterValue")}
                                     onChange={(e) =>
                                       changeItems(
                                         index,
