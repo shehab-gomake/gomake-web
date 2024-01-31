@@ -21,7 +21,7 @@ import { digitslPriceState } from "./store";
 import cloneDeep from "lodash/cloneDeep";
 import lodashClonedeep from "lodash.clonedeep";
 import { EWidgetProductType } from "@/pages-components/products/digital-offset-price/enums";
-import { compareStrings, getParameterByParameterId } from "@/utils/constants";
+import { compareStrings, getParameterByParameterCode } from "@/utils/constants";
 import { EButtonTypes, EParameterTypes } from "@/enums";
 import { QuantityParameter } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/quantity-parameter/quantity-parameter";
 import { InputNumberParameterWidget } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/input-number-parameter";
@@ -1824,7 +1824,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       // subProducts: subProducts,
     }).then();
   };
-
   const PricingTab = {
     id: "c66465de-95d6-4ea3-bd3f-7efe60f4cb0555",
     name: t("products.offsetPrice.admin.Pricing"),
@@ -1890,25 +1889,21 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     }
   }, [subProducts]);
 
-  const widthParam = getParameterByParameterId(
+  const widthParam = getParameterByParameterCode(
     subProducts,
-    "4ba9a275-4fbc-4313-b284-e9b1cf8b452e"
+    "Width"
   );
-  const heightParam = getParameterByParameterId(
+  const heightParam = getParameterByParameterCode(
     subProducts,
-    "d2c965d3-6b08-4380-9d4b-17c361d7e484"
+    "Height"
   );
-  const sizeParam = getParameterByParameterId(
+  const jobNameParameter = getParameterByParameterCode(
     subProducts,
-    "e3f211c6-c9d2-4ba1-83b6-87d2cf3402b4"
+    "JobName"
   );
-  const jobNameParameter = getParameterByParameterId(
+  const isSetsParameter = getParameterByParameterCode(
     subProducts,
-    "a330193f-492c-40a8-86f3-8edf5c8f0d5e"
-  );
-  const isSetsParameter = getParameterByParameterId(
-    subProducts,
-    "e7ea235e-b5e2-4f0d-aecf-0f435c24afbb"
+    "Sets"
   );
   const addItemForQuotes = async () => {
     const docType = router?.query?.documentType ?? "0";

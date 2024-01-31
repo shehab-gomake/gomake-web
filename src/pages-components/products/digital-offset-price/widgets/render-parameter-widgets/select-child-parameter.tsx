@@ -49,6 +49,8 @@ const SelectChildParameterWidget = ({
               ParameterType: parameter?.parameterType,
               values: [value?.values[parameterId]],
               actionIndex: parameter?.actionIndex,
+              parameterName: parameter?.name,
+              parameterCode: parameter?.code,
             });
           }
         }
