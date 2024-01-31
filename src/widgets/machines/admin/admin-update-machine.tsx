@@ -52,7 +52,7 @@ const AdminUpdateMachine = () => {
                                  title={t("machineAttributes.machines")} quickActions={true} isAdmin={true}/>
     return (
         <SideBarContainer side={Side()} header={categoryName} subHeader={ selectedMachine.manufacturer ? selectedMachine?.manufacturer + ' - ' + selectedMachine?.model : ''}>
-            <Button variant={'contained'} onClick={updateMachine}>{t("machines.updateMachine")}</Button>
+            <Button style={{marginBottom:"10px"}} variant={'contained'} onClick={updateMachine}>{t("machines.updateMachine")}</Button>
             {!!selectedMachine.id && <MachineStepper steps={machineSteps} activeStep={activeStep} previousStep={navigateBack}
                                                      nextStep={navigateNext} actionButtonClicked={updateMachine}
                                                      moveToStep={moveToStepByIndex}

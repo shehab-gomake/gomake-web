@@ -1,10 +1,17 @@
 import {cuttingLevel} from "@/widgets/machines/utils/const/cutting-level";
 import {setupTimeInput} from "@/widgets/machines/utils/attributes/speed-inputs/setup-time-input";
 import {EMeasurementUnits} from "@/widgets/machines/enums/measurement-units";
+import { useTranslation } from "react-i18next";
 
 const flatbedCuttingMachine = (state: Record<string, any>) => {
+    const { t } = useTranslation(); 
+    const translatedCuttingLevel = cuttingLevel.map(({ value, text }) => ({
+        value,
+        text: t(text)
+    }));
+
     return [
-        ...setupTimeInput(state),
+        ...setupTimeInput(state), 
         {
             name: "speed",
             label: "machineAttributes.speed",
@@ -43,7 +50,7 @@ const flatbedCuttingMachine = (state: Record<string, any>) => {
                     placeholder: "machineAttributes.cuttingLevel",
                     required: true,
                     parameterKey: "cuttingLevel",
-                    options: cuttingLevel,
+                    options: translatedCuttingLevel,
                 },
                 {
                     name: "speedPercentage",

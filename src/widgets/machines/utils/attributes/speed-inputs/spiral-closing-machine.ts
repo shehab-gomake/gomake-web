@@ -1,7 +1,14 @@
 import {feedOptions} from "@/widgets/machines/utils/const/feed-options";
 import {EMeasurementUnits} from "@/widgets/machines/enums/measurement-units";
+import { useTranslation } from "react-i18next";
 
 const spiralClosingMachine = (state: Record<string, any>) => {
+    const { t } = useTranslation(); 
+    const translatedFeedOptions = feedOptions.map(({ value, text }) => ({
+        value,
+        text: t(text)
+    }));
+
     return [
         {
             name: "setupTime",
@@ -24,7 +31,7 @@ const spiralClosingMachine = (state: Record<string, any>) => {
             required: true,
             parameterKey: "actionType",
             value: state.attributes?.actionType,
-            options: feedOptions,
+            options: translatedFeedOptions, 
             machineInputType: 'input',
             isValid: true,
         },
