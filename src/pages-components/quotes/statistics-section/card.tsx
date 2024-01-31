@@ -3,7 +3,6 @@ import { useStyle } from "./style";
 import { useState } from "react";
 
 interface ICardProps {
-    backGroundColor?: string;
     textColor?: string;
     text?: string;
     number?: string;
@@ -12,15 +11,16 @@ interface ICardProps {
     onSecondClick?: () => void;
 }
 
-const CardComponent = ({ backGroundColor, text, textColor, number, icon, onClick, onSecondClick }: ICardProps) => {
+const CardComponent = ({ text, textColor, number, icon, onClick, onSecondClick }: ICardProps) => {
     const { classes } = useStyle();
     const [isFiltered, setIsFiltered] = useState(false);
 
     const mergedStyles = {
         ...classes.ticketStyle,
-        backgroundColor: backGroundColor || classes.ticketStyle.background,
         cursor: onClick ? "pointer" : "auto",
-        border: isFiltered ? "3px solid green" : "2px solid transparent", // Example border style for indication
+       border: isFiltered ? "none" : `2px solid ${textColor}`,
+       backgroundColor: isFiltered ? textColor : classes.ticketStyle.background ,
+
     };
 
     const handleClick = () => {
@@ -35,8 +35,8 @@ const CardComponent = ({ backGroundColor, text, textColor, number, icon, onClick
     return (
         <Card sx={mergedStyles} onClick={onClick && handleClick}>
             <CardContent style={classes.ticketContentStyle}>
-                <Typography sx={classes.textStyle} color={textColor || "text.secondary"} >{icon}{text}</Typography>
-                <Typography sx={classes.numberStyle} color={textColor || "text.secondary"}>{number}</Typography>
+                <Typography sx={classes.textStyle} color={isFiltered ?"#FFFFFF" :textColor } >{icon}{text}</Typography>
+                <Typography sx={classes.numberStyle} color={isFiltered ? "#FFFFFF":textColor }>{number}</Typography>
             </CardContent>
         </Card>
     );
