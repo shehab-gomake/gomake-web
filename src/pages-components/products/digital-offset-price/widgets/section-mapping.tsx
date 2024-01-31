@@ -27,6 +27,7 @@ const SectionMappingWidget = ({
   const [subProducts, setSubProducts] = useRecoilState<any>(
     subProductsParametersState
   );
+  console.log("underParameterIds", { underParameterIds, relatedParameters })
   const [groupedParameters, setGroupedParameters] = useState<any>();
   const [groupedParametersArray, setGroupedParametersArray] = useState<any>();
   useEffect(() => {
@@ -217,9 +218,12 @@ const SectionMappingWidget = ({
             })
             ?.map((parameter: any, index: number) => {
               const isUnderParameterId = underParameterIds.some(
-                (item) => item.underParameterId === parameter.id
+                (item) => item.underParameterId === parameter.id && !relatedParameters.some((relatedItem) => relatedItem?.parameterId === item.myParameter?.id)
               );
-              if (isUnderParameterId) {
+              const isUnderParameterId2 = underParameterIds.some(
+                (item) => item.underParameterId === parameter.id && relatedParameters.some((relatedItem) => relatedItem?.parameterId === item.myParameter?.id)
+              );
+              if (isUnderParameterId2) {
                 let list = subSection?.parameters
                 const myParameter = underParameterIds.find(
                   (item) => item.underParameterId === parameter.id
@@ -239,16 +243,6 @@ const SectionMappingWidget = ({
                         false
                       )}
                       <div style={{ marginTop: 5 }}>
-                        {/* {_renderParameterType(
-                          myParameter,
-                          subSection,
-                          section,
-                          subSection?.parameters,
-                          _getParameter(myParameter, subSection, section),
-                          subSection?.parameters,
-                          true,
-                          true
-                        )} */}
                         {
                           parameter.relatedParameters
                             .map((relatedParameter) => {
@@ -334,6 +328,40 @@ const SectionMappingWidget = ({
                               });
                             })
                         }
+                      </div>
+                    </div>
+                  </React.Fragment>
+                );
+              }
+              if (isUnderParameterId) {
+                const myParameter = underParameterIds.find(
+                  (item) => item.underParameterId === parameter.id
+                )?.myParameter;
+                return (
+                  <React.Fragment>
+                    {parameter.isStartNewLine ? <div style={{ flexBasis: '100%', height: 0 }}></div> : <></>}
+                    <div key={parameter?.id}>
+                      {_renderParameterType(
+                        parameter,
+                        subSection,
+                        section,
+                        subSection?.parameters,
+                        _getParameter(parameter, subSection, section),
+                        subSection?.parameters,
+                        true,
+                        false
+                      )}
+                      <div style={{ marginTop: 5 }}>
+                        {_renderParameterType(
+                          myParameter,
+                          subSection,
+                          section,
+                          subSection?.parameters,
+                          _getParameter(myParameter, subSection, section),
+                          subSection?.parameters,
+                          true,
+                          true
+                        )}
                       </div>
                     </div>
                   </React.Fragment>
