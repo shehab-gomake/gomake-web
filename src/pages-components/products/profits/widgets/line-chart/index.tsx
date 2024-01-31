@@ -11,6 +11,7 @@ import {
 } from "chart.js";
 import { Line } from "react-chartjs-2";
 import { LineChartProps } from "@/pages-components/products/profits-new/interface";
+import { useTranslation } from "react-i18next";
 
 ChartJS.register(
   CategoryScale,
@@ -36,11 +37,12 @@ export const options = {
 };
 
 export function LineChart({ actionProfitRowChartData }: LineChartProps) {
+  const { t } = useTranslation(); 
   const data = {
     labels: actionProfitRowChartData?.profitAxis,
     datasets: [
       {
-        label: "Cost",
+        label: t("products.profits.pricingListWidget.cost"),
         data: actionProfitRowChartData?.costAxis,
         borderColor: "#FF4DCA",
         backgroundColor: "#FF4DCA",
