@@ -406,6 +406,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     }
   }, [productTemplate]);
   const [relatedParameters, setRelatedParameters] = useState([]);
+  console.log("relatedParameters", relatedParameters)
   const [underParameterIds, setUnderParameterIds] = useState([]);
   useEffect(() => {
     if (!isSetTemplete) {
@@ -1152,46 +1153,32 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         <>
           {parameter?.relatedParameters?.length > 0 && inModal && (
             <>
-              {parameter.relatedParameters.filter((relatedParameter) =>
-                subSection.parameters.some((p) => p.id === relatedParameter.parameterId)
-              ).map((relatedParameter) => {
-                const subProduct = subProducts.find(
-                  (x) => x.type === subSection?.type
-                );
-                const parm = subProduct?.parameters?.find(
-                  (param) =>
-                    param.parameterId === parameter.id &&
-                    param.actionIndex === relatedParameter.actionIndex
-                );
-                const myParameter = list.find(
-                  (p) =>
-                    p.id === relatedParameter.parameterId &&
-                    p.actionIndex === relatedParameter.actionIndex
-                );
-                if (relatedParameter.activateByAllValues && parm?.values) {
-                  return (
-                    <div>
-                      {_renderParameterType(
-                        myParameter,
-                        subSection,
-                        section,
-                        subSection?.parameters,
-                        myParameter?.value,
-                        list,
-                        true,
-                        false
-                      )}
-                    </div>
-                  );
-                } else {
-                  if (
-                    parameter?.parameterType === EParameterTypes.DROP_DOWN_LIST
-                  ) {
-                    const valueInArray = relatedParameter.selectedValueIds.find(
-                      (c) => c == parm?.valueIds
+              {
+                parameter.relatedParameters
+                  .filter((relatedParameter) =>
+                    subSection.parameters.some((p) => p.id === relatedParameter.parameterId)
+                  )
+                  .filter((relatedParameter) =>
+                    !underParameterIds.some(
+                      (underParam) =>
+                        underParam.myParameter?.id === relatedParameter.parameterId
+                    )
+                  )
+                  .map((relatedParameter) => {
+                    const subProduct = subProducts.find(
+                      (x) => x.type === subSection?.type
                     );
-
-                    if (valueInArray) {
+                    const parm = subProduct?.parameters?.find(
+                      (param) =>
+                        param.parameterId === parameter.id &&
+                        param.actionIndex === relatedParameter.actionIndex
+                    );
+                    const myParameter = list.find(
+                      (p) =>
+                        p.id === relatedParameter.parameterId &&
+                        p.actionIndex === relatedParameter.actionIndex
+                    );
+                    if (relatedParameter.activateByAllValues && parm?.values) {
                       return (
                         <div>
                           {_renderParameterType(
@@ -1206,31 +1193,53 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                           )}
                         </div>
                       );
-                    }
-                  } else {
-                    const valueInArray = relatedParameter.selectedValueIds.find(
-                      (c) => c == parm?.values
-                    );
+                    } else {
+                      if (parameter?.parameterType === EParameterTypes.DROP_DOWN_LIST) {
+                        const valueInArray = relatedParameter.selectedValueIds.find(
+                          (c) => c == parm?.valueIds
+                        );
 
-                    if (valueInArray && myParameter) {
-                      return (
-                        <div>
-                          {_renderParameterType(
-                            myParameter,
-                            subSection,
-                            section,
-                            subSection?.parameters,
-                            myParameter?.value,
-                            list,
-                            true,
-                            false
-                          )}
-                        </div>
-                      );
+                        if (valueInArray) {
+                          return (
+                            <div>
+                              {_renderParameterType(
+                                myParameter,
+                                subSection,
+                                section,
+                                subSection?.parameters,
+                                myParameter?.value,
+                                list,
+                                true,
+                                false
+                              )}
+                            </div>
+                          );
+                        }
+                      } else {
+                        const valueInArray = relatedParameter.selectedValueIds.find(
+                          (c) => c == parm?.values
+                        );
+
+                        if (valueInArray && myParameter) {
+                          return (
+                            <div>
+                              {_renderParameterType(
+                                myParameter,
+                                subSection,
+                                section,
+                                subSection?.parameters,
+                                myParameter?.value,
+                                list,
+                                true,
+                                false
+                              )}
+                            </div>
+                          );
+                        }
+                      }
                     }
-                  }
-                }
-              })}
+                  })
+              }
             </>
           )}
         </>
