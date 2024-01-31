@@ -1,4 +1,5 @@
 import { GomakePrimaryButton } from "@/components";
+import { EParameterTypes } from "@/enums";
 import { AddNewIcon } from "@/icons";
 import { WastebasketNew } from "@/icons/wastebasket-new";
 import { subProductsParametersState } from "@/store";
@@ -149,22 +150,22 @@ const SectionMappingWidget = ({
                         );
                         return (
                           <React.Fragment>
-                            {parameter.isStartNewLine ? <div style={{flexBasis:'100%',height:0}}></div> : <></>}
+                            {parameter.isStartNewLine ? <div style={{ flexBasis: '100%', height: 0 }}></div> : <></>}
                             <div
-                                key={parameter?.id}
-                                style={{
-                                  display: "flex",
-                                }}
+                              key={parameter?.id}
+                              style={{
+                                display: "flex",
+                              }}
                             >
                               {_renderParameterType(
-                                  parameter,
-                                  subSection,
-                                  section,
-                                  subSection?.parameters,
-                                  value,
-                                  subSection?.parameters,
-                                  true,
-                                  false
+                                parameter,
+                                subSection,
+                                section,
+                                subSection?.parameters,
+                                value,
+                                subSection?.parameters,
+                                true,
+                                false
                               )}
                             </div>
                           </React.Fragment>
@@ -206,7 +207,6 @@ const SectionMappingWidget = ({
         </>
       ) : (
         <div style={clasess.parametersContainer}>
-          
           {subSection?.parameters
             ?.filter((param: any) => !param.isHidden)
             ?.filter((param: any) => !param.isUnderParameterId)
@@ -220,34 +220,120 @@ const SectionMappingWidget = ({
                 (item) => item.underParameterId === parameter.id
               );
               if (isUnderParameterId) {
+                let list = subSection?.parameters
                 const myParameter = underParameterIds.find(
                   (item) => item.underParameterId === parameter.id
                 )?.myParameter;
                 return (
                   <React.Fragment>
-                    {parameter.isStartNewLine ? <div style={{flexBasis:'100%',height:0}}></div> : <></>}
-                    <div  key={parameter?.id}>
+                    {parameter.isStartNewLine ? <div style={{ flexBasis: '100%', height: 0 }}></div> : <></>}
+                    <div key={parameter?.id}>
                       {_renderParameterType(
-                          parameter,
+                        parameter,
+                        subSection,
+                        section,
+                        subSection?.parameters,
+                        _getParameter(parameter, subSection, section),
+                        subSection?.parameters,
+                        true,
+                        false
+                      )}
+                      <div style={{ marginTop: 5 }}>
+                        {/* {_renderParameterType(
+                          myParameter,
                           subSection,
                           section,
                           subSection?.parameters,
-                          _getParameter(parameter, subSection, section),
+                          _getParameter(myParameter, subSection, section),
                           subSection?.parameters,
                           true,
-                          false
-                      )}
-                      <div style={{ marginTop: 5 }}>
-                        {_renderParameterType(
-                            myParameter,
-                            subSection,
-                            section,
-                            subSection?.parameters,
-                            _getParameter(myParameter, subSection, section),
-                            subSection?.parameters,
-                            true,
-                            true
-                        )}
+                          true
+                        )} */}
+                        {
+                          parameter.relatedParameters
+                            .map((relatedParameter) => {
+                              const filteredUnderParameterIds = underParameterIds.filter(
+                                (underParam) =>
+                                  underParam.myParameter?.id === relatedParameter.parameterId
+                              );
+
+                              return filteredUnderParameterIds.map((underParam) => {
+                                const subProduct = subProducts.find(
+                                  (x) => x.type === subSection?.type
+                                );
+                                const parm = subProduct?.parameters?.find(
+                                  (param) =>
+                                    param.parameterId === parameter.id &&
+                                    param.actionIndex === relatedParameter.actionIndex
+                                );
+                                const myParameter = list.find(
+                                  (p) =>
+                                    p.id === relatedParameter.parameterId &&
+                                    p.actionIndex === relatedParameter.actionIndex
+                                );
+                                if (relatedParameter.activateByAllValues && parm?.values) {
+                                  return (
+                                    <div>
+                                      {_renderParameterType(
+                                        myParameter,
+                                        subSection,
+                                        section,
+                                        subSection?.parameters,
+                                        _getParameter(myParameter, subSection, section),
+                                        subSection?.parameters,
+                                        true,
+                                        true
+                                      )}
+                                    </div>
+                                  );
+                                } else {
+                                  if (parameter?.parameterType === EParameterTypes.DROP_DOWN_LIST) {
+                                    const valueInArray = relatedParameter.selectedValueIds.find(
+                                      (c) => c == parm?.valueIds
+                                    );
+
+                                    if (valueInArray) {
+                                      return (
+                                        <div>
+                                          {_renderParameterType(
+                                            myParameter,
+                                            subSection,
+                                            section,
+                                            subSection?.parameters,
+                                            _getParameter(myParameter, subSection, section),
+                                            subSection?.parameters,
+                                            true,
+                                            true
+                                          )}
+                                        </div>
+                                      );
+                                    }
+                                  } else {
+                                    const valueInArray = relatedParameter.selectedValueIds.find(
+                                      (c) => c == parm?.values
+                                    );
+
+                                    if (valueInArray && myParameter) {
+                                      return (
+                                        <div>
+                                          {_renderParameterType(
+                                            myParameter,
+                                            subSection,
+                                            section,
+                                            subSection?.parameters,
+                                            _getParameter(myParameter, subSection, section),
+                                            subSection?.parameters,
+                                            true,
+                                            true
+                                          )}
+                                        </div>
+                                      );
+                                    }
+                                  }
+                                }
+                              });
+                            })
+                        }
                       </div>
                     </div>
                   </React.Fragment>
@@ -255,21 +341,21 @@ const SectionMappingWidget = ({
               } else {
                 const value = _getParameter(parameter, subSection, section);
                 return (
-                    <React.Fragment>
-                      {parameter.isStartNewLine ? <div style={{flexBasis:'100%',height:0}}></div> : <></>}
-                      <div key={parameter?.id} style={{ display: "flex",pageBreakBefore:parameter.isStartNewLine ? 'always' : 'unset' }}>
-                        {_renderParameterType(
-                            parameter,
-                            subSection,
-                            section,
-                            subSection?.parameters,
-                            value,
-                            subSection?.parameters,
-                            true,
-                            false
-                        )}
-                      </div>
-                    </React.Fragment>
+                  <React.Fragment>
+                    {parameter.isStartNewLine ? <div style={{ flexBasis: '100%', height: 0 }}></div> : <></>}
+                    <div key={parameter?.id} style={{ display: "flex", pageBreakBefore: parameter.isStartNewLine ? 'always' : 'unset' }}>
+                      {_renderParameterType(
+                        parameter,
+                        subSection,
+                        section,
+                        subSection?.parameters,
+                        value,
+                        subSection?.parameters,
+                        true,
+                        false
+                      )}
+                    </div>
+                  </React.Fragment>
                 );
               }
             })}
