@@ -81,6 +81,7 @@ const AddNewRuleModal = ({ openModal, onClose }) => {
   const [isOpen, setIsOpen] = useState<boolean>(openModal);
   const [value, setValue] = useState<string>("");
   const { machines } = usePrintHouseMachines();
+  console.log("addNewRule", machines)
   const { clientTypes } = usePrintHouseClientTypes();
   const { clients } = usePrintHouseClients();
   const { materials, materialsDropdown } = useMaterials();
@@ -334,7 +335,7 @@ const AddNewRuleModal = ({ openModal, onClose }) => {
       obj.errorType = "LambdaExpression";
       try {
         // await addRule(actionId, propertyId, ruleType, obj);
-      } catch (error) {}
+      } catch (error) { }
       setExpression(val);
     } else {
       let val = "";

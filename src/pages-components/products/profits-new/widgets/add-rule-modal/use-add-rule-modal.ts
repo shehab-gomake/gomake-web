@@ -61,6 +61,7 @@ const useAddRuleModal = ({
   const [materialsTypes, setMaterialsTypes] = useState<
     { materialTypeKey: string; materialTypeName: string }[]
   >([]);
+  console.log("machines",machines)
   const getMaterialsTypesApi: ICallAndSetData = async (callApi, setState) => {
     return await getSetApiData(
       callApi,
@@ -332,6 +333,7 @@ const useAddRuleModal = ({
     propertieValue,
     setPropertieValue,
     materialsTypes,
+    machines
   };
 };
 
