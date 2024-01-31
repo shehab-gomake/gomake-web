@@ -6,7 +6,7 @@ import {
 import { IInput } from "@/components/form-inputs/interfaces";
 import { useEffect, useMemo, useState } from "react";
 import { subProductsParametersState } from "@/store";
-import { getParameterByParameterId } from "@/utils/constants";
+import { getParameterByParameterCode } from "@/utils/constants";
 
 interface QuantityTypesInputs extends IInput {
   onChange: (key, value: string) => void;
@@ -29,19 +29,12 @@ const useQuantityTypes = () => {
     ?.values.join(", ");
   const [newTypesValue, setNewTypesValue] = useState(initialTypesValues);
 
-  const JobNameParameter = getParameterByParameterId(
-    subProducts,
-    "a330193f-492c-40a8-86f3-8edf5c8f0d5e"
-  );
-  const quantityParameter = getParameterByParameterId(
-    subProducts,
-    "4991945c-5e07-4773-8f11-2e3483b70b53"
-  );
+  const JobNameParameter = getParameterByParameterCode(subProducts,"JobName");
+  const quantityParameter = getParameterByParameterCode(subProducts,"quantity");
   const updateTypesValues = (newValues) => {
     const updatedSubProducts = JSON.parse(JSON.stringify(subProducts));
-
     const typesParameter = updatedSubProducts[0]?.parameters.find(
-      (param) => param.parameterId === "de2bb7d5-01b1-4b2b-b0fa-81cd0445841b"
+      (param) => param.parameterCode === "types"
     );
 
     if (typesParameter) {
@@ -73,9 +66,9 @@ const useQuantityTypes = () => {
     }
   }, [save, newTypesValue]);
 
-  const resultParameter = getParameterByParameterId(
+  const resultParameter = getParameterByParameterCode(
     subProducts,
-    "4991945c-5e07-4773-8f11-2e3483b70b53"
+    "quantity"
   );
   useEffect(() => {
     if (resultParameter) {

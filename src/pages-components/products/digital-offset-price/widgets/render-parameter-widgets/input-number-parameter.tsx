@@ -30,7 +30,8 @@ const InputNumberParameterWidget = ({
           { values: e.target.value },
           subSection?.type,
           index,
-          parameter?.actionIndex
+          parameter?.actionIndex,
+          parameter?.code
         );
       }}
       type={type}

@@ -49,6 +49,8 @@ const SelectChildParameterWidget = ({
               ParameterType: parameter?.parameterType,
               values: [value?.values[parameterId]],
               actionIndex: parameter?.actionIndex,
+              parameterName: parameter?.name,
+              parameterCode: parameter?.code,
             });
           }
         }
@@ -89,7 +91,8 @@ const SelectChildParameterWidget = ({
               { valueIds: value?.id, values: value?.updateName },
               subSection?.type,
               index,
-              parameter?.actionIndex
+              parameter?.actionIndex,
+              parameter?.code
             );
           }}
         />

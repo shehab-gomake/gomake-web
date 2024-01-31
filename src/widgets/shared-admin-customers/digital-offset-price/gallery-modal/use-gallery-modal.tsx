@@ -1,19 +1,22 @@
 import { useCallback, useEffect, useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 
-import { materialBtnDataState, selectParameterButtonState } from "@/store";
+import { materialBtnDataState, selectParameterButtonState, subProductsParametersState } from "@/store";
 import { getPrintHouseMaterialsByMaterialKey } from "@/services/hooks";
 import { materialsCategoriesState } from "@/store/material-categories";
-import { compareStrings } from "@/utils/constants";
+import { compareStrings, getParameterByParameterCode } from "@/utils/constants";
 import { useGomakeAxios } from "@/hooks";
 import { selectedShapeState } from "./gallery-modal-store";
 import { StaightKnifeIcon, OrderNowIcon } from "./icons";
 import { useTranslation } from "react-i18next";
+import { EHttpMethod } from "@/services/api-service/enums";
 
 const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForNewDie, straightKnife }) => {
+
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
   const selectParameterButton = useRecoilValue<any>(selectParameterButtonState);
+  const subProducts = useRecoilValue<any>(subProductsParametersState);
   const materialsEnumsValues = useRecoilValue(materialsCategoriesState);
   const [selectedShape, setSelectedShape] =
     useRecoilState<any>(selectedShapeState);
@@ -21,9 +24,21 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
     useRecoilState<any>(materialBtnDataState);
   const [materialDataFilter, setMaterialDataFilter] = useState("");
   const [materialType, setMaterialType] = useState<any>({});
+  const [isShowStraightKnife, setIsShowStraightKnife] = useState(false)
+  const widthParameter = getParameterByParameterCode(
+    subProducts,
+    "Width"
+  );
+  const heightParameter = getParameterByParameterCode(
+    subProducts,
+    "Height"
+  );
+  const shapeParameter = getParameterByParameterCode(subProducts, "Shape")
+
   useEffect(() => {
     if (selectParameterButton?.parameter?.materialPath?.length > 0) {
       getProductQuoteItemById();
+      CheckOptionToStraightKnife()
       const data = materialsEnumsValues.find((item) => {
         return compareStrings(
           item.name,
@@ -69,7 +84,9 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
       },
       selectParameterButton?.paameterType,
       selectParameterButton?.index,
-      selectParameterButton?.parameter?.actionIndex
+      selectParameterButton?.parameter?.actionIndex,
+      selectParameterButton?.parameter?.code,
+
     );
 
     onClose();
@@ -89,7 +106,8 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
       { values: "true" },
       selectParameterButton?.paameterType,
       selectParameterButton?.index,
-      straightKnife?.actionIndex
+      straightKnife?.actionIndex,
+      straightKnife?.code
     );
     onClose();
   };
@@ -99,6 +117,7 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
       icon: <OrderNowIcon />,
       onclick: onClickNewOrder,
       backgroundColor: "#504FA1",
+      isShow: true,
     },
     // {
     //   name: t("products.offsetPrice.admin.AddExistingDie"),
@@ -111,6 +130,7 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
       icon: <StaightKnifeIcon />,
       onclick: onClickStraight,
       backgroundColor: "#F467BA",
+      isShow: isShowStraightKnife
     },
   ];
   const [renderData, setRenderData] = useState([]);
@@ -118,6 +138,20 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
     const renderData = materialDataFilter ? searchResult : materialData;
     setRenderData(renderData);
   }, [materialDataFilter]);
+
+  const CheckOptionToStraightKnife = useCallback(async () => {
+    const res = await callApi(
+      EHttpMethod.POST,
+      `/v1/calculation-service/calculations/check-option-to-straight-knife?width=${+widthParameter?.values[0]}&length=${+heightParameter?.values[0]}&shapeId=${shapeParameter?.parameterId}`,
+
+    );
+    if (res?.success) {
+      setIsShowStraightKnife(res.data?.data?.data)
+    } else {
+      // alertFaultAdded();
+    }
+  }, [widthParameter, heightParameter, shapeParameter]);
+
   return {
     materialData,
     selectedShape,

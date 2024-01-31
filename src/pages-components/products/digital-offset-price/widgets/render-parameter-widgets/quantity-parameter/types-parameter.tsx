@@ -8,7 +8,7 @@ import {
 } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/quantity-parameter/quantity-types/state";
 import { useEffect } from "react";
 import { productSetsParamState, subProductsParametersState } from "@/store";
-import { getParameterByParameterId } from "@/utils/constants";
+import { getParameterByParameterCode } from "@/utils/constants";
 
 const TypesParameter = ({
   classes,
@@ -27,14 +27,8 @@ const TypesParameter = ({
   const productSetsParam = useRecoilValue<string>(productSetsParamState);
   const [quantityTypes, setQuantityTypes] = useRecoilState(productQuantityTypesValuesState);
   const [valuesState, setValuesState] = useRecoilState(tempProductQuantityTypesValuesState);
-  const resultParameter = getParameterByParameterId(
-    subProducts,
-    "a330193f-492c-40a8-86f3-8edf5c8f0d5e"
-  );
-  const quantity = getParameterByParameterId(
-    subProducts,
-    "4991945c-5e07-4773-8f11-2e3483b70b53"
-  );
+  const resultParameter = getParameterByParameterCode(subProducts, "JobName");
+  const quantity = getParameterByParameterCode(subProducts, "quantity");
   const isInputDisabled = productSetsParam === "true";
   useEffect(() => {
     setValuesState((prevState) =>
@@ -90,8 +84,8 @@ const TypesParameter = ({
           productSetsParam === "true"
             ? 1
             : index !== -1
-            ? temp[index].values
-            : ""
+              ? temp[index].values
+              : ""
         }
         disabled={isInputDisabled}
         onChange={(e: any) => {
@@ -105,7 +99,8 @@ const TypesParameter = ({
             { values: e.target.value },
             subSection?.type,
             index,
-            parameter?.actionIndex
+            parameter?.actionIndex,
+            parameter?.code
           );
           setQuantityTypes(valuesState);
         }}
