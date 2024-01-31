@@ -19,7 +19,7 @@ const TranslationTable = (props:ITranslationTableProps) =>{
         setCurrentPage,
         setSearchFilter,
         searchFilter
-    } = useTranslationsTable();
+    } = useTranslationsTable(props.translationSource);
     useEffect(()=>{
         getTranslationsTable()
     },[currentPage,searchFilter])

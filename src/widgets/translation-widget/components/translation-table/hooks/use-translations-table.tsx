@@ -7,8 +7,9 @@ import {
 } from "@/widgets/translation-widget/components/translation-table/interfaces";
 import { TextareaAutosize } from "@mui/base/TextareaAutosize";
 import { updateWebTranslationsTable } from "@/services/api-service/aws-s3/update-web-translations-table";
+import {ETranslationSource} from "@/widgets/translation-widget/enums";
 
-const useTranslationsTable = () => {
+const useTranslationsTable = (translationSource:ETranslationSource) => {
   const { callApi } = useGomakeAxios();
   const [translationsTableHeaders, setTranslationsTableHeaders] =
     useState<string[]>();
