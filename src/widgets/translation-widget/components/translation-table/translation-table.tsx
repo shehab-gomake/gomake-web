@@ -5,9 +5,12 @@ import {useEffect} from "react";
 import {PrimaryTable} from "@/components/tables/primary-table";
 import Pagination from "@mui/material/Pagination";
 import {SearchInputComponent} from "@/components/form-inputs/search-input-component";
+import {ETranslationSource} from "@/widgets/translation-widget/enums";
 
-
-const TranslationTable = () =>{
+interface ITranslationTableProps{
+    translationSource:ETranslationSource;
+}
+const TranslationTable = (props:ITranslationTableProps) =>{
     const {
         getTranslationsTable,
         translationsTableHeaders,

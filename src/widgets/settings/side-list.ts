@@ -12,8 +12,9 @@ import { EditProductWidget } from "../products-settings-widget/widget/edit-produ
 import { SettingsProfileWidget } from "@/widgets/settings-profile-widget/settings-profile-widget";
 import { SettingsMailingWidget } from "../settings-mailing/settings-mailing-widget";
 import { SettingsDocumentingWidget } from "../settings-documenting/settings-documenting-widget";
-import { TranslationsWidget } from "../translation-widget/translation-widget";
 import {Permissions} from "@/components/CheckPermission/enum";
+import {TranslationsAdminWidget} from "@/widgets/translation-widget/translation-admin-widget";
+import {TranslationsWidget} from "@/widgets/translation-widget/translation-widget";
 
 export const list: IListItem[] = [
   {
@@ -61,10 +62,17 @@ export const list: IListItem[] = [
     path: "finances",
   },
   {
-    component: TranslationsWidget,
+    component: TranslationsAdminWidget,
     text: "settings.translations",
     value: "8",
     permission: Permissions.TRANSLATION_ADMIN,
+    icon: DocumentIcon,
+    path: "translationsAdmin",
+  },
+  {
+    component: TranslationsWidget,
+    text: "settings.translations",
+    value: "9",
     icon: DocumentIcon,
     path: "translations",
   },
