@@ -7,3 +7,4 @@ export * from "./use-admin";
 export * from "./use-supplier";
 export * from "./use-snack-bar";
 export * from "./shared-customer-admin";
+export * from "./use-const-parameters"

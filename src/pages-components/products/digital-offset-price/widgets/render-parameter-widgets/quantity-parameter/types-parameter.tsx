@@ -90,8 +90,8 @@ const TypesParameter = ({
           productSetsParam === "true"
             ? 1
             : index !== -1
-            ? temp[index].values
-            : ""
+              ? temp[index].values
+              : ""
         }
         disabled={isInputDisabled}
         onChange={(e: any) => {
@@ -105,7 +105,8 @@ const TypesParameter = ({
             { values: e.target.value },
             subSection?.type,
             index,
-            parameter?.actionIndex
+            parameter?.actionIndex,
+            parameter?.code
           );
           setQuantityTypes(valuesState);
         }}

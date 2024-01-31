@@ -25,7 +25,8 @@ const SWITCHParameterWidget = ({
           { values: value?.toString() },
           subSection?.type,
           index,
-          parameter?.actionIndex
+          parameter?.actionIndex,
+          parameter?.code
         );
       }}
     />

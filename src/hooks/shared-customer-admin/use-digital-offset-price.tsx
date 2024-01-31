@@ -55,7 +55,7 @@ import {
   productQuantityTypesValuesState,
   tempProductQuantityTypesValuesState
 } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/quantity-parameter/quantity-types/state";
-import { findParameterById } from "@/utils/helpers";
+import { findParameterByCode } from "@/utils/helpers";
 import React from "react";
 
 const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
@@ -85,6 +85,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [subProducts, setSubProducts] = useRecoilState<any>(
     subProductsParametersState
   );
+  console.log("subProducts", subProducts)
   const [isSetTemplete, setIsSetTemplete] = useState<boolean>(false);
   const setSubProductsCopy = useSetRecoilState<any>(
     subProductsCopyParametersState
@@ -243,22 +244,22 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       );
     }
   }, [updatedSelectedWorkFlow]);
-  
-  useEffect(()=>{
+
+  useEffect(() => {
     const total = productQuantityTypes.reduce((acc, val) => acc + val.quantity, 0)
     debugger;
     let subProductCopy = cloneDeep(subProducts);
-    subProductCopy.forEach(subProduct=>{
-      if(!subProduct.type){
-        subProduct.parameters.forEach(parameter=>{
-          if(parameter.parameterId === "4991945c-5e07-4773-8f11-2e3483b70b53"){
-            parameter.values = [total+""];
+    subProductCopy.forEach(subProduct => {
+      if (!subProduct.type) {
+        subProduct.parameters.forEach(parameter => {
+          if (parameter.parameterId === "4991945c-5e07-4773-8f11-2e3483b70b53") {
+            parameter.values = [total + ""];
           }
         })
       }
     })
     setSubProducts(subProductCopy)
-  },[productQuantityTypes])
+  }, [productQuantityTypes])
   const selectBtnTypeToAction = (
     parameter,
     sectionId,
@@ -406,7 +407,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     }
   }, [productTemplate]);
   const [relatedParameters, setRelatedParameters] = useState([]);
-  console.log("relatedParameters", relatedParameters)
   const [underParameterIds, setUnderParameterIds] = useState([]);
   useEffect(() => {
     if (!isSetTemplete) {
@@ -483,6 +483,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         sectionId: section?.id,
                         subSectionId: subSection?.id,
                         actionIndex: parameter?.actionIndex,
+                        parameterCode: parameter?.code
                       });
                     }
                   } else if (
@@ -515,6 +516,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         sectionId: section?.id,
                         subSectionId: subSection?.id,
                         actionIndex: parameter?.actionIndex,
+                        parameterCode: parameter?.code
                       });
                     }
                   } else if (
@@ -554,6 +556,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                           sectionId: section?.id,
                           subSectionId: subSection?.id,
                           actionIndex: parameter?.actionIndex,
+                          parameterCode: parameter?.code
                         });
                       }
                     }
@@ -587,6 +590,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         sectionId: section?.id,
                         subSectionId: subSection?.id,
                         actionIndex: parameter?.actionIndex,
+                        parameterCode: parameter?.code
                       });
                       parameter?.childsParameters?.map((item) => {
                         const childParam = subSection.parameters.find(
@@ -603,12 +607,13 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                           sectionId: section?.id,
                           subSectionId: subSection?.id,
                           actionIndex: parameter?.actionIndex,
+                          parameterCode: parameter?.code
                         });
                       });
                     }
                   }
                 }
-                if (!isParameterExits && parameter.code === "quantity")  {
+                if (!isParameterExits && parameter.code === "quantity") {
                   subProduct.parameters.push({
                     parameterId: parameter?.id,
                     parameterName: parameter?.name,
@@ -618,6 +623,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     sectionId: section?.id,
                     subSectionId: subSection?.id,
                     actionIndex: parameter?.actionIndex,
+                    parameterCode: parameter?.code
                   });
                 }
               });
@@ -950,30 +956,30 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       const isSets = isSetsParameter && isSetsParameter.values ? isSetsParameter.values[0] : "";
       const isInputDisabled = typesNum > 1 || isSets === "true";
       Comp = (
-          <React.Fragment>
-            <InputNumberParameterWidget
-                clasess={clasess}
-                parameter={parameter}
-                index={index}
-                temp={temp}
-                onChangeSubProductsForPrice={onChangeSubProductsForPrice}
-                subSection={subSection}
-                section={section}
-                type="number"
-                disabled={isInputDisabled}
-            />
-            <QuantityParameter
-                classes={clasess}
-                parameter={parameter}
-                index={index}
-                temp={temp}
-                onChangeSubProductsForPrice={onChangeSubProductsForPrice}
-                subSection={subSection}
-                section={section}
-                type="number"
-            />
-          </React.Fragment>
-        
+        <React.Fragment>
+          <InputNumberParameterWidget
+            clasess={clasess}
+            parameter={parameter}
+            index={index}
+            temp={temp}
+            onChangeSubProductsForPrice={onChangeSubProductsForPrice}
+            subSection={subSection}
+            section={section}
+            type="number"
+            disabled={isInputDisabled}
+          />
+          <QuantityParameter
+            classes={clasess}
+            parameter={parameter}
+            index={index}
+            temp={temp}
+            onChangeSubProductsForPrice={onChangeSubProductsForPrice}
+            subSection={subSection}
+            section={section}
+            type="number"
+          />
+        </React.Fragment>
+
       );
     } else if (
       parameter?.parameterType === EParameterTypes.INPUT_NUMBER &&
@@ -982,17 +988,17 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       const isSets = isSetsParameter && isSetsParameter.values ? isSetsParameter.values[0] : "";
       const isInputDisabled = isSets === "true";
       Comp = (
-          <InputNumberParameterWidget
-              clasess={clasess}
-              parameter={parameter}
-              index={index}
-              temp={temp}
-              onChangeSubProductsForPrice={onChangeSubProductsForPrice}
-              subSection={subSection}
-              section={section}
-              type="number"
-              disabled={isInputDisabled}
-          />
+        <InputNumberParameterWidget
+          clasess={clasess}
+          parameter={parameter}
+          index={index}
+          temp={temp}
+          onChangeSubProductsForPrice={onChangeSubProductsForPrice}
+          subSection={subSection}
+          section={section}
+          type="number"
+          disabled={isInputDisabled}
+        />
       );
     } else if (
       parameter?.parameterType === EParameterTypes.INPUT_NUMBER &&
@@ -1258,7 +1264,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     data: any,
     subSectionType: any,
     index: number,
-    actionIndex: number
+    actionIndex: number,
+    parameterCode: string,
   ) => {
     setCanCalculation(true);
     const targetSubProduct = subProducts.find(
@@ -1300,6 +1307,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           values: [data.values],
           valueIds: [data.valueIds],
           actionIndex,
+          parameterCode
         });
       }
       // const targetSubProduct = subProducts.find(
@@ -1345,7 +1353,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       );
       if (subSectionParameter) {
         //types parameter
-        if(subSectionParameter.id == "de2bb7d5-01b1-4b2b-b0fa-81cd0445841b"){
+        if (subSectionParameter.id == "de2bb7d5-01b1-4b2b-b0fa-81cd0445841b") {
           const typesNum = Number(data.values);
           const quantityValue = quantity && quantity.values ? quantity?.values[0] : 0;
           const workName = jobNameParameter && jobNameParameter.values ? jobNameParameter.values[0] : "";
@@ -1359,7 +1367,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 name: workName + " " + i,
                 quantity: Number(quantityValue),
               });
-              
+
               setValuesState([...quantityTypes, ...array]);
               setQuantityTypes([...quantityTypes, ...array]);
             }
@@ -1503,6 +1511,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 values: selectedParam.valueIds,
                 valueIds: selectedParam.valueIds,
                 actionIndex,
+                parameterCode
               });
             }
           });
@@ -1686,6 +1695,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             sectionId: itemParmetersValue?.sectionId,
             subSectionId: itemParmetersValue?.subSectionId,
             actionIndex: itemParmetersValue?.actionIndex,
+            parameterCode: itemParmetersValue?.code
           };
           if (exitsSubProduct) {
             exitsSubProduct.parameters.push(newSubProductParameter);
@@ -1893,12 +1903,12 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     "e3f211c6-c9d2-4ba1-83b6-87d2cf3402b4"
   );
   const jobNameParameter = getParameterByParameterId(
-      subProducts,
-      "a330193f-492c-40a8-86f3-8edf5c8f0d5e"
+    subProducts,
+    "a330193f-492c-40a8-86f3-8edf5c8f0d5e"
   );
   const isSetsParameter = getParameterByParameterId(
-      subProducts,
-      "e7ea235e-b5e2-4f0d-aecf-0f435c24afbb"
+    subProducts,
+    "e7ea235e-b5e2-4f0d-aecf-0f435c24afbb"
   );
   const addItemForQuotes = async () => {
     const docType = router?.query?.documentType ?? "0";
@@ -1970,7 +1980,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       DocumentType: router?.query?.documentType,
     });
   };
-  const straightKnife = findParameterById(productTemplate, "IsStraightKnife");
+  const straightKnife = findParameterByCode(productTemplate, "IsStraightKnife");
   const navigateForRouter = () => {
     let checkParameter = validateParameters(isRequiredParameters);
     if (!!checkParameter) {
