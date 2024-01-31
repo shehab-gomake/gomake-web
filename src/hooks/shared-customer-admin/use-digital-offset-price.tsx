@@ -687,6 +687,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 }
                 return;
               }
+              if (relatedToParameter && !relatedToParameter.defaultValue){
+                parameter.isHidden = true;
+              }
               if (!relatedToParameter) {
                 if (
                   (parameter?.parameterType ===
@@ -829,9 +832,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             });
         });
       });
+      debugger;
       setIsSetTemplete(false);
       setProductTemplate(product);
-      setRelatedParameters(relatedParametersArray);
+     // setRelatedParameters(relatedParametersArray);
       setUnderParameterIds(underParameterIdsArray);
     }
   };
@@ -1184,7 +1188,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         p.actionIndex === relatedParameter.actionIndex
                     );
                     if (relatedParameter.activateByAllValues && parm?.values) {
-                      return (
+                      /*return (
                         <div>
                           {_renderParameterType(
                             myParameter,
@@ -1197,50 +1201,62 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                             false
                           )}
                         </div>
-                      );
-                    } else {
-                      if (parameter?.parameterType === EParameterTypes.DROP_DOWN_LIST) {
-                        const valueInArray = relatedParameter.selectedValueIds.find(
+                      );*/
+                      debugger;
+                      let productCopy = cloneDeep(productTemplate);
+                      const section = productCopy.sections.find(x=>x.id === section.id);
+                      const subSection = section.subSections.find(x=>x.id === subSection.id);
+                      const param = subSection.parameters.find(x=>x.id === relatedParameter.parameterId);
+                      param.isHidden = false;
+                      setProductTemplate(productCopy)
+                    }
+                    else if (parameter?.parameterType === EParameterTypes.DROP_DOWN_LIST) {
+                      const valueInArray = relatedParameter.selectedValueIds.find(
                           (c) => c == parm?.valueIds
-                        );
+                      );
 
-                        if (valueInArray) {
-                          return (
+                      if (valueInArray) {
+                        return (
                             <div>
                               {_renderParameterType(
-                                myParameter,
-                                subSection,
-                                section,
-                                subSection?.parameters,
-                                myParameter?.value,
-                                list,
-                                true,
-                                false
+                                  myParameter,
+                                  subSection,
+                                  section,
+                                  subSection?.parameters,
+                                  myParameter?.value,
+                                  list,
+                                  true,
+                                  false
                               )}
                             </div>
-                          );
-                        }
-                      } else {
-                        const valueInArray = relatedParameter.selectedValueIds.find(
+                        );
+                      }
+                    }
+                    else {
+                      const valueInArray = relatedParameter.selectedValueIds.find(
                           (c) => c == parm?.values
-                        );
+                      );
 
-                        if (valueInArray && myParameter) {
-                          return (
-                            <div>
-                              {_renderParameterType(
-                                myParameter,
-                                subSection,
-                                section,
-                                subSection?.parameters,
-                                myParameter?.value,
-                                list,
-                                true,
-                                false
-                              )}
-                            </div>
-                          );
+                      if (valueInArray && myParameter) {
+                        let productCopy = cloneDeep(productTemplate);
+                        const sectionCopy = productCopy.sections.find(x=>x.id === section.id);
+                        const subSectionCopy = sectionCopy.subSections.find(x=>x.id === subSection.id);
+                        const param = subSectionCopy.parameters.find(x=>x.id === relatedParameter.parameterId);
+                        if(param.isHidden == false){
+                          return;
                         }
+                        param.isHidden = false;
+                        setProductTemplate(productCopy)
+                      }else{
+                        let productCopy = cloneDeep(productTemplate);
+                        const sectionCopy = productCopy.sections.find(x=>x.id === section.id);
+                        const subSectionCopy = sectionCopy.subSections.find(x=>x.id === subSection.id);
+                        const param = subSectionCopy.parameters.find(x=>x.id === relatedParameter.parameterId);
+                        if(param.isHidden == true){
+                          return;
+                        }
+                        param.isHidden = true;
+                        setProductTemplate(productCopy)
                       }
                     }
                   })
