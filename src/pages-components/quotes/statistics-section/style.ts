@@ -23,7 +23,6 @@ const useStyle = () => {
                 display: "flex",
                 width: "192px",
                 height: "40px",
-                background: "#FFFFFF",
                 alignItems: "center",
                 boxShadow:"none"
             },
