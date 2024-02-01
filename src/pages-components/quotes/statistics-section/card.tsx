@@ -8,12 +8,11 @@ interface ICardProps {
     number?: string;
     icon?: JSX.Element;
     onClick?: () => void;
-    onSecondClick?: () => void;
+    onSecondClick?:any;
     isActive?:any,
-    onActivate?:any;
 }
 
-const CardComponent = ({ text, textColor, number, icon, onClick, onSecondClick , isActive, onActivate }: ICardProps) => {
+const CardComponent = ({ text, textColor, number, icon, onClick, onSecondClick , isActive }: ICardProps) => {
     const { classes } = useStyle();
     const [isFiltered, setIsFiltered] = useState(isActive || false);
 
@@ -27,19 +26,12 @@ const CardComponent = ({ text, textColor, number, icon, onClick, onSecondClick ,
 
     const handleClick = () => {
         setIsFiltered((prev) => !prev); 
-        if (onActivate) {
-            onActivate();
-            console.log(text )
-        }
         if (isFiltered && onSecondClick) {
-            console.log(text )
             onSecondClick();
         } else if (!isFiltered && onClick) {
-            console.log( text  )
             onClick();
         }
     };
-
 
     useEffect(() => {
         setIsFiltered(isActive || false);
