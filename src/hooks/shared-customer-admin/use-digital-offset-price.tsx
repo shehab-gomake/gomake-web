@@ -1188,21 +1188,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         p.actionIndex === relatedParameter.actionIndex
                     );
                     if (relatedParameter.activateByAllValues && parm?.values) {
-                      /*return (
-                        <div>
-                          {_renderParameterType(
-                            myParameter,
-                            subSection,
-                            section,
-                            subSection?.parameters,
-                            myParameter?.value,
-                            list,
-                            true,
-                            false
-                          )}
-                        </div>
-                      );*/
-
                       let productCopy = cloneDeep(productTemplate);
                       const sectionCopy = productCopy.sections.find(x => x.id === section.id);
                       const subSectionCopy = sectionCopy.subSections.find(x => x.id === subSection.id);
