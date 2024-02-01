@@ -39,6 +39,7 @@ const SettingsWidget = ({
     updatedProduct,
     UploadProductImage,
   } = useSettings({ onClickParametersTab, productState, onChangeStateProduct });
+  console.log("allProductSKU", allProductSKU)
   const defultProductSKU = allProductSKU?.find(
     (item) => item.id === productState?.productSKUId
   );
@@ -175,18 +176,21 @@ const SettingsWidget = ({
         <div style={clasess.itemOnFirstContainer}>
           <div style={clasess.labelTitleStyle}>
             {t("products.addProduct.admin.productSKU")}
-            <span onClick={onClickOpenProductSKU} style={clasess.plusInput}>
-              +
-            </span>
+            {
+              !isUpdate && <span onClick={onClickOpenProductSKU} style={clasess.plusInput}>
+                +
+              </span>
+            }
+
           </div>
-          <div style={{ width: "100%" }}>
+          <div style={{ width: 250 }}>
             {allProductSKU && (
               <GoMakeAutoComplate
                 key={defultProductSKU}
                 options={allProductSKU}
                 placeholder={t("products.addProduct.admin.productSKU")}
                 style={clasess.dropDownListStyle}
-                getOptionLabel={(option: any) => option.name}
+                getOptionLabel={(option: any) => `${option.name} - ${option.code}`}
                 value={
                   typeof productState?.productSKUId === "string"
                     ? defultProductSKU

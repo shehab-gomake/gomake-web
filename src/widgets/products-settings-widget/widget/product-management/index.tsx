@@ -32,12 +32,12 @@ const ProductManagementWidget = () => {
               <div style={clasess.selectProductTextStyle}>
                 {t("products.productManagement.admin.selectProductSKU")}
               </div>
-              <div style={{ width: "100%" }}>
+              <div style={{ width: 250 }}>
                 <GoMakeAutoComplate
                   options={allProductSKU}
                   placeholder={t("products.addProduct.admin.modalProductSKU")}
                   style={clasess.dropDownListStyle}
-                  getOptionLabel={(option: any) => option.name}
+                  getOptionLabel={(option: any) => `${option.name} - ${option.code}`}
                   onChange={(e: any, value: any) => {
                     setTerm(value?.code);
                   }}
