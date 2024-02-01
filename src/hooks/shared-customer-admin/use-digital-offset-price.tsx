@@ -1152,6 +1152,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             }
           >
             {parameter?.name}
+            <small>&nbsp;{parameter?.defaultUnit}</small>
             {parameter?.isRequired ? (
               <span style={clasess.spanRequierd}> *</span>
             ) : null}
