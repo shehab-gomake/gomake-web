@@ -34,6 +34,7 @@ const useAddRuleModal = ({
   const {t} = useTranslation();
   const { clients } = usePrintHouseClients();
   const [propertieValue, setPropertieValue] = useState<any>();
+  console.log("propertieValue",propertieValue)
   const isDefaultException =
     selectedPricingTableItems?.exceptionType === ETypeException.DEFAULT;
   const categories = useMemo(() => {
