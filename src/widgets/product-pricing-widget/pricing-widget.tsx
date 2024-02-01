@@ -22,6 +22,9 @@ import {
 } from "@/widgets/product-pricing-widget/state";
 import cloneDeep from "lodash.clonedeep";
 import { SubWorkFlowsComponent } from "@/widgets/product-pricing-widget/components/work-flow/sub-work-flow-component";
+import { updateProductItemValueOutsource } from "@/services/api-service/product-item-value-draft/product-item-draft-endpoints";
+import { useGomakeAxios } from "@/hooks";
+import { currentCalculationConnectionId } from "@/store";
 
 const PricingWidget = ({
   workFlows,
@@ -30,6 +33,7 @@ const PricingWidget = ({
   const [view, setView] = useState<EPricingViews>(
     EPricingViews.SELECTED_WORKFLOW
   );
+  const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
   const { classes } = useStyle();
   const selectedWorkFlow = useRecoilValue(selectedWorkFlowState);
@@ -38,6 +42,14 @@ const PricingWidget = ({
   const productItemValueDraftId = useRecoilValue<string>(
     currentProductItemValueDraftId
   );
+  const connectionId = useRecoilValue(currentCalculationConnectionId);
+  const updateProductItemValue = async (sourceType: number) => {
+    await updateProductItemValueOutsource(callApi, () => { }, {
+      productItemValueId: productItemValueDraftId,
+      signalRConnectionId: connectionId,
+      sourceType
+    })
+  }
 
   useEffect(() => {
     getOutSourcingSuppliers();
@@ -78,20 +90,23 @@ const PricingWidget = ({
                   ? "contained"
                   : "outlined"
               }
-            >{`${t("pricingWidget.others")} (${
-              workFlows?.length
-            })`}</PrimaryButton>
+            >{`${t("pricingWidget.others")} (${workFlows?.length
+              })`}</PrimaryButton>
           </ButtonGroup>
         ) : (
           <div />
         )}
         <InOutSourceSelect
-          onChange={(v: EWorkSource) =>
+          onChange={(v: EWorkSource) => {
             setView(
               v === EWorkSource.OUT
                 ? EPricingViews.OUTSOURCE_WORKFLOW
                 : EPricingViews.SELECTED_WORKFLOW
             )
+            updateProductItemValue(v)
+
+          }
+
           }
           disabled={!selectedWorkFlow}
           withPartially={selectedWorkFlow?.actions?.some(

@@ -1,30 +1,39 @@
 import {useRecoilState, useRecoilValue} from "recoil";
 import {
+    currentProductItemValueDraftId,
     currentProductItemValueState,
-    itemParametersValuesState,
     outsourceSuppliersState,
-    productUrgentWorkState
 } from "@/widgets/product-pricing-widget/state";
 import {useGomakeAxios, useGomakeRouter} from "@/hooks";
-import {useRouter} from "next/router";
-import {addItemToQuoteApi} from "@/services/api-service/quotes/qoutes-endpoints";
-import {userProfileState} from "@/store/user-profile";
-import {quantityParameterState} from "@/store";
+import {currentCalculationConnectionId, } from "@/store";
 import {EWorkSource} from "@/widgets/product-pricing-widget/enums";
 import {addItemApi} from "@/services/api-service/generic-doc/documents-api";
+import { updateProductItemValueOutsourceSupplierCost } from "@/services/api-service/product-item-value-draft/product-item-draft-endpoints";
+import { EOutSoucrceUpdateKey } from "@/enums";
 
 const useOutsourceSupplier = () => {
     const [suppliers, setSuppliers] = useRecoilState(outsourceSuppliersState);
-    const parameters = useRecoilValue(itemParametersValuesState);
-    const userProfile = useRecoilValue(userProfileState);
-    const isUrgent = useRecoilValue(productUrgentWorkState);
-    const quantity = useRecoilValue(quantityParameterState);
     const currentProductItemValue =
         useRecoilValue<any>(currentProductItemValueState);
+
+        const productItemValueDraftId = useRecoilValue<string>(
+            currentProductItemValueDraftId
+          );
+          const connectionId = useRecoilValue(currentCalculationConnectionId);
     const {navigate} = useGomakeRouter();
     const {callApi} = useGomakeAxios();
-    const router = useRouter();
+
+    const updateProductItemValueOutsourceWithKey = async (supplierId:string, key: number, value:number) => {
+        await updateProductItemValueOutsourceSupplierCost(callApi, () => { }, {
+        productItemValueId: productItemValueDraftId,
+        signalRConnectionId: connectionId,
+        supplierId,
+        key,
+        value
+        })
+      }
     const updateCost = (supplerId: string, cost: number) => {
+        console.log("cost",cost)
         setSuppliers(suppliers?.map(suppler => {
             if (suppler.supplierId === supplerId) {
                 return {
@@ -35,8 +44,10 @@ const useOutsourceSupplier = () => {
             }
             return suppler
         }));
+        updateProductItemValueOutsourceWithKey(supplerId, EOutSoucrceUpdateKey.TotalCost, cost)
     }
     const updateWorHours = (supplerId: string, workHours: number) => {
+        console.log("supplerId",{supplerId,workHours})
         setSuppliers(suppliers?.map(suppler => {
             if (suppler.supplierId === supplerId) {
                 return {
@@ -47,6 +58,7 @@ const useOutsourceSupplier = () => {
                 return suppler
             }
         }));
+        updateProductItemValueOutsourceWithKey(supplerId, EOutSoucrceUpdateKey.TotalRealProductionTime, workHours)
     }
 
     const updateProfit = (supplerId: string, profit: number) => {
@@ -61,6 +73,7 @@ const useOutsourceSupplier = () => {
                 return suppler
             }
         }));
+        updateProductItemValueOutsourceWithKey(supplerId, EOutSoucrceUpdateKey.Profit, profit)
     }
 
     const updatePrice = (supplerId: string, price: number) => {
@@ -75,6 +88,7 @@ const useOutsourceSupplier = () => {
                 return suppler
             }
         }));
+        updateProductItemValueOutsourceWithKey(supplerId, EOutSoucrceUpdateKey.TotalPrice, price)
     }
 
     const addItem = async (supplierId) => {
