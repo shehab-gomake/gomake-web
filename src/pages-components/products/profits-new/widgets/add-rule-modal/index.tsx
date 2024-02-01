@@ -85,9 +85,9 @@ const AddRuleModal = ({
           return (
             <div style={{ width: "20%" }}>
               <div style={clasess.selectTypeStyle}>
-                Select Machine
+                {t("products.profits.exceptions.selectMachine")}
                 <span style={clasess.spanUnitStyle}>
-                  ({selectedOutputs?.defaultUnit})
+                  {selectedOutputs?.defaultUnit}
                 </span>
               </div>
               <GoMakeAutoComplate
@@ -109,9 +109,11 @@ const AddRuleModal = ({
                     })
                 }
                 style={clasess.dropDownListContainer}
-                placeholder={"Select Machine"}
-                onChange={(e, value) =>
-                  setPropertieValue(`${value?.manufacturer} ${value?.model}`)
+                placeholder={t("products.profits.exceptions.selectMachine")}
+                onChange={(e, value) => {
+                  setPropertieValue(value?.label)
+
+                }
                 }
               />
             </div>
