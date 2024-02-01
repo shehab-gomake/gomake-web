@@ -59,12 +59,7 @@ const PropertiesTable = () => {
           headers={tableHeaders}
         />
       )}
-      {/* <PrimaryTable
-        stickyFirstCol={false}
-        stickyHeader={false}
-        rows={propertiesData}
-        headers={tableHeaders}
-      /> */}
+
       <AddRuleModal
         openModal={openAddRule}
         onCloseModal={onCloseAddRuleModal}
