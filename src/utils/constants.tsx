@@ -78,11 +78,11 @@ export const _renderQuoteStatus = (status: number, quote: any, t: any) => {
   }
 };
 
-export function getParameterByParameterId(subProductArray, paramId) {
+export function getParameterByParameterCode(subProductArray, code) {
   for (let i = 0; i < subProductArray.length; i++) {
     const parameters = subProductArray[i].parameters;
     for (let j = 0; j < parameters.length; j++) {
-      if (parameters[j].parameterId === paramId) {
+      if (parameters[j].parameterCode === code) {
         return parameters[j];
       }
     }

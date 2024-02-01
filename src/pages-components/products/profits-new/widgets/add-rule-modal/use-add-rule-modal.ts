@@ -17,6 +17,7 @@ import { ICallAndSetData } from "@/services/api-service/interface";
 import { getSetApiData } from "@/services/api-service/get-set-api-data";
 import { usePrintHouseMachines } from "@/widgets/properties/hooks/use-print-house-machines";
 import { CLIENT_TYPE_Id } from "@/pages/customers/enums";
+import { useTranslation } from "react-i18next";
 
 const useAddRuleModal = ({
   typeExceptionSelected,
@@ -30,6 +31,7 @@ const useAddRuleModal = ({
 }) => {
   const GET_MATERIALS_TYPES_URL = "/v1/materials/getMaterialsTypes";
   const { callApi } = useGomakeAxios();
+  const {t} = useTranslation();
   const { clients } = usePrintHouseClients();
   const [propertieValue, setPropertieValue] = useState<any>();
   const isDefaultException =
@@ -174,7 +176,7 @@ const useAddRuleModal = ({
 
   function displayText(conditions) {
     if (conditions.length === 0 || isRuleEmpty(conditions[0])) {
-      return "No rule found";
+      return t("products.profits.pricingListWidget.noRuleFount");
     }
     const textArray = conditions.map((condition) => {
       const categoryLabel = condition?.category
@@ -332,6 +334,7 @@ const useAddRuleModal = ({
     propertieValue,
     setPropertieValue,
     materialsTypes,
+    machines
   };
 };
 

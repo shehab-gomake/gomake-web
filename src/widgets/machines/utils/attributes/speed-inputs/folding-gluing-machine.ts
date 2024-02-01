@@ -1,6 +1,9 @@
 import {setupTimeInput} from "@/widgets/machines/utils/attributes/speed-inputs/setup-time-input";
+import { useTranslation } from "react-i18next";
 
 const foldingGluingMachine = (state: Record<string, any>) => {
+    const { t } = useTranslation(); 
+
     return [
         ...setupTimeInput(state),
         {
@@ -11,7 +14,7 @@ const foldingGluingMachine = (state: Record<string, any>) => {
             required: true,
             parameterKey: "speedUnit",
             value: state.attributes?.speedUnit,
-            options: [{value: '1', text: 'Automatic'}, {value: "2", text: 'Manual'}],
+            options: [{value: '1', text: t('speedMethods.auto')}, {value: "2", text: t('speedMethods.manual')}], 
             machineInputType: 'input',
             isValid: true,
         },

@@ -1,9 +1,7 @@
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import { useState } from "react";
-
 import { AccordionTable } from "@/components/tables/accordion-table";
 import { GoMakeDeleteModal } from "@/components";
-
 import { AdditionsAndExceptionsMapping } from "../additions-and-exceptions-mapping";
 import { PricingTableMappingMenu } from "../pricing-table-mapping-menu";
 import { PricingTableMapping } from "../pricing-table-mapping";
@@ -14,6 +12,7 @@ import { MinimumWidget } from "../minimum-widget";
 import { AddRuleModal } from "../add-rule-modal";
 import { useStyle } from "./style";
 import { AdditinalProfitMenu } from "../additinal-profit-menu";
+import { useTranslation } from "react-i18next";
 
 const ProfitRightSideWidget = ({
   minimumValue,
@@ -50,6 +49,7 @@ const ProfitRightSideWidget = ({
   ProfitCurrency,
 }: ProfitRightSideProps) => {
   const { clasess } = useStyle();
+  const { t } = useTranslation();
   const [openDeleteRowModal, setOpenDeleteRowModal] = useState<boolean>(false);
   const [openDeleteAdditionalRowModal, setOpenDeleteAdditionalRowModal] =
     useState<boolean>(false);
@@ -73,11 +73,11 @@ const ProfitRightSideWidget = ({
   const onClickCloseAddNewRuleModal = () => {
     setOpenAddNewRuleModal(false);
   };
-  console.log("dataForPricing", dataForPricing);
+
   return (
     <div style={clasess.mainHeaderContainer}>
       <AccordionTable
-        title="Pricing Tables"
+        title={t("products.profits.pricingListWidget.pricingTables")}
         isDefault={true}
         onclickOpenMenu={(e) => {
           handleClickPricingTables(e),
@@ -155,7 +155,7 @@ const ProfitRightSideWidget = ({
         })}
       </AccordionTable>
       <AccordionTable
-        title="Additions and Exceptions"
+        title={t("products.profits.pricingListWidget.additionsAndExceptions")}
         onclickOpenMenu={(e) => {
           handleClickPricingTables(e),
             setTypeExceptionSelected(ETypeException.ADDITIONAL);

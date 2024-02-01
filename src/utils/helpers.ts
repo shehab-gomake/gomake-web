@@ -18,7 +18,7 @@ const returnResult = (
 
 export { returnResult };
 
-export const findParameterById = (template, targetCode) => {
+export const findParameterByCode = (template, targetCode) => {
   // Function to recursively search for a parameter by id
   const findParameter = (sections) => {
     for (const section of sections) {
