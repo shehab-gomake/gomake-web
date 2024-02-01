@@ -141,7 +141,7 @@ const RightSideWidget = ({
                 value={
                   calculationExceptionsLogs?.length > 0
                     ? "---------"
-                    : currentProductItemValueTotalPrice.toFixed(2) ?? "---------"
+                    : (currentProductItemValueTotalPrice ? currentProductItemValueTotalPrice.toFixed(2) : currentProductItemValueTotalPrice) ?? "---------"
                 }
                 onChange={(e: any) => {
                   setCurrentProductItemValueTotalPrice(e.target.value);
