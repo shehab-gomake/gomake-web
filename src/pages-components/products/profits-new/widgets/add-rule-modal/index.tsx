@@ -111,8 +111,7 @@ const AddRuleModal = ({
                 style={clasess.dropDownListContainer}
                 placeholder={t("products.profits.exceptions.selectMachine")}
                 onChange={(e, value) => {
-                  console.log("value", value)
-                  setPropertieValue(value?.machineName)
+                  setPropertieValue(value?.label)
 
                 }
                 }
