@@ -1187,6 +1187,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         p.id === relatedParameter.parameterId &&
                         p.actionIndex === relatedParameter.actionIndex
                     );
+                    if(parameter.name == "identical printing sides "){
+                      debugger;
+                    }
                     if (relatedParameter.activateByAllValues && parm?.values) {
                       /*return (
                         <div>
@@ -1202,7 +1205,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                           )}
                         </div>
                       );*/
-
                       let productCopy = cloneDeep(productTemplate);
                       const sectionCopy = productCopy.sections.find(x => x.id === section.id);
                       const subSectionCopy = sectionCopy.subSections.find(x => x.id === subSection.id);
@@ -1217,7 +1219,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                       const valueInArray = relatedParameter.selectedValueIds.find(
                         (c) => c == parm?.valueIds
                       );
-
                       if (valueInArray) {
                         return (
                           <div>
@@ -1240,7 +1241,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         (c) => c == parm?.values
                       );
 
-                      if (valueInArray && myParameter) {
+                      if (valueInArray && myParameter || (!parm && relatedParameter && relatedParameter.selectedValueIds && relatedParameter.selectedValueIds.length > 0 && relatedParameter.selectedValueIds[0] === "false" )) {
                         let productCopy = cloneDeep(productTemplate);
                         const sectionCopy = productCopy.sections.find(x => x.id === section.id);
                         const subSectionCopy = sectionCopy.subSections.find(x => x.id === subSection.id);
@@ -1298,6 +1299,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           item.subSectionId === subSectionId &&
           item.actionIndex === actionIndex
       );
+      debugger;
       if (findIndex !== -1) {
         const valuesArray = [data.values].filter(Boolean);
         temp[findIndex] = {
