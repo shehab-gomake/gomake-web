@@ -26,7 +26,8 @@ const CompanyProfileComponent = () => {
     changeCompanyLoginImage,
     daysOfWork,
     getCurrenciesApi,
-    currencies
+    currencies,
+    countriesWithCodes
   } = useCompanyProfile();
 
   useEffect(() => {
@@ -52,7 +53,7 @@ const CompanyProfileComponent = () => {
       title: "profileSettings.contacts",
     },
     {
-      inputs: companyLocationInputs(profile),
+      inputs: companyLocationInputs(profile , countriesWithCodes),
       title: "profileSettings.location",
     },
     {
@@ -60,6 +61,7 @@ const CompanyProfileComponent = () => {
       title: "profileSettings.financial",
     },
   ];
+
 
   return (
     <div style={{ paddingBottom: 2, paddingTop: "40px", position: "relative" }}>

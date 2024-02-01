@@ -20,6 +20,15 @@ const
         const [profile, setProfile] = useRecoilState<ICompanyProfile>(companyProfileState);
         const setChangeProfileImage = useSetRecoilState<boolean>(changeProfileImageState);
         const [currencies , setCurrencies ] = useRecoilState<{label: string, value: string}[]>(currenciesState);
+        
+        const countryList = require('country-list');
+        const allCountries = countryList.getNames();
+        const allCountryCodes = countryList.getCodes();
+        const countriesWithCodes = allCountries.map((country, index) => ({
+          text: country,
+          value: allCountryCodes[index],
+        }));
+
 
         const { alertFaultUpdate, alertSuccessUpdate } = useSnackBar();
         const getProfile = async () => {
@@ -115,7 +124,8 @@ const
             getCompanyLogo,
             daysOfWork,
             getCurrenciesApi,
-            currencies
+            currencies,
+            countriesWithCodes
         }
     };
 
