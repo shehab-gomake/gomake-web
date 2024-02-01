@@ -6,7 +6,7 @@ import { CheckboxIcon } from "./icons/checkbox-icon";
 import { MinusIcon } from "./icons/minus";
 import { PlusIcon } from "./icons/plus";
 import { useSubChildMapping } from "./use-sub-children-mapping-modal";
-import {useEffect} from "react";
+import { useEffect } from "react";
 
 const SubChildrenMapping = ({
   parameters,
@@ -59,11 +59,11 @@ const SubChildrenMapping = ({
       )}
 
       <div style={clasess.childLabelStyle}>
-        
+
         {item?.parameterType != 1 ? (
           value?.value
         ) : (
-          <div ref={ref}>
+          <div ref={ref as React.RefObject<HTMLDivElement>}>
             <GomakeTextInput
               style={{
                 ...clasess.textInputStyle,
