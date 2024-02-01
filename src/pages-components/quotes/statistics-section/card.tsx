@@ -1,6 +1,6 @@
 import { Card, CardContent, Typography } from "@mui/material";
 import { useStyle } from "./style";
-import { useState } from "react";
+import { CSSProperties, useState } from "react";
 
 interface ICardProps {
     backGroundColor?: string;
@@ -10,14 +10,16 @@ interface ICardProps {
     icon?: JSX.Element;
     onClick?: () => void;
     onSecondClick?: () => void;
+    style?: CSSProperties;
 }
 
-const CardComponent = ({ backGroundColor, text, textColor, number, icon, onClick, onSecondClick }: ICardProps) => {
+const CardComponent = ({ backGroundColor, text, textColor, number, icon, onClick, onSecondClick , style}: ICardProps) => {
     const { classes } = useStyle();
     const [isFiltered, setIsFiltered] = useState(false);
 
     const mergedStyles = {
         ...classes.ticketStyle,
+        ...style,
         backgroundColor: backGroundColor || classes.ticketStyle.background,
         cursor: onClick ? "pointer" : "auto",
         border: isFiltered ? "3px solid green" : "2px solid transparent", // Example border style for indication

@@ -4,6 +4,7 @@ import { HomeTableWidget } from "./widgets/home-table-widget/home-table-widget";
 import { useHome } from "./use-home";
 import { useEffect } from "react";
 import { ChartWidget } from "./widgets/chart-widget/chart-widget";
+import { CardsWidget } from "./widgets/cards-widget/cards-widget";
 
 const HomePageComponentForAdmin = ({ isAdmin }) => {
   const { classes } = useStyle();
@@ -22,7 +23,7 @@ const HomePageComponentForAdmin = ({ isAdmin }) => {
             <QuoteWidget isAdmin={isAdmin} />
           </div>
           <div style={classes.widgetStyle}>
-            {/* <ChartWidget />*/}
+            <CardsWidget/>
           </div>
         </div>
       </div>

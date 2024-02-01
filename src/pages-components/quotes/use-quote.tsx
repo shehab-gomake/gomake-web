@@ -23,7 +23,6 @@ import { DOCUMENT_TYPE } from "./enums";
 import { useQuoteGetData } from "../quote-new/use-quote-get-data";
 import { useStyle } from "./style";
 import { DEFAULT_VALUES } from "@/pages/customers/enums";
-import { ContactlessOutlined } from "@mui/icons-material";
 
 const useQuotes = (docType: DOCUMENT_TYPE) => {
   const { t } = useTranslation();
