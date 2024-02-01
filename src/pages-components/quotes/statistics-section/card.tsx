@@ -1,30 +1,31 @@
 import { Card, CardContent, Typography } from "@mui/material";
 import { useStyle } from "./style";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface ICardProps {
-    backGroundColor?: string;
     textColor?: string;
     text?: string;
     number?: string;
     icon?: JSX.Element;
     onClick?: () => void;
-    onSecondClick?: () => void;
+    onSecondClick?:any;
+    isActive?:any,
 }
 
-const CardComponent = ({ backGroundColor, text, textColor, number, icon, onClick, onSecondClick }: ICardProps) => {
+const CardComponent = ({ text, textColor, number, icon, onClick, onSecondClick , isActive }: ICardProps) => {
     const { classes } = useStyle();
-    const [isFiltered, setIsFiltered] = useState(false);
+    const [isFiltered, setIsFiltered] = useState(isActive || false);
 
     const mergedStyles = {
         ...classes.ticketStyle,
-        backgroundColor: backGroundColor || classes.ticketStyle.background,
-        cursor: onClick ? "pointer" : "auto",
-        border: isFiltered ? "3px solid green" : "2px solid transparent", // Example border style for indication
+       cursor: onClick ? "pointer" : "auto",
+       border: isFiltered ? "none" : `2px solid ${textColor}`,
+       backgroundColor: isFiltered ? textColor : classes.ticketStyle.background ,
+
     };
 
     const handleClick = () => {
-        setIsFiltered((prev) => !prev);
+        setIsFiltered((prev) => !prev); 
         if (isFiltered && onSecondClick) {
             onSecondClick();
         } else if (!isFiltered && onClick) {
@@ -32,11 +33,15 @@ const CardComponent = ({ backGroundColor, text, textColor, number, icon, onClick
         }
     };
 
+    useEffect(() => {
+        setIsFiltered(isActive || false);
+    }, [isActive]);
+
     return (
-        <Card sx={mergedStyles} onClick={onClick && handleClick}>
+        <Card sx={mergedStyles} onClick={ onClick && handleClick}>
             <CardContent style={classes.ticketContentStyle}>
-                <Typography sx={classes.textStyle} color={textColor || "text.secondary"} >{icon}{text}</Typography>
-                <Typography sx={classes.numberStyle} color={textColor || "text.secondary"}>{number}</Typography>
+                <Typography sx={classes.textStyle} color={isFiltered ?"#FFFFFF" :textColor } >{icon}{text}</Typography>
+                <Typography sx={classes.numberStyle} color={isFiltered ? "#FFFFFF":textColor }>{number}</Typography>
             </CardContent>
         </Card>
     );
