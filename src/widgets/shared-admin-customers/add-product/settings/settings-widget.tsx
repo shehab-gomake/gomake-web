@@ -30,6 +30,9 @@ const SettingsWidget = ({
     SelectproductClient,
     customersList,
     clientTypesList,
+    openDeleteRowModal,
+    onClickOpenDeleteRowModal,
+    onClickCloseDeleteRowModal,
     onClickCloseProductSKU,
     onClickOpenProductSKU,
     onChangeStateProductSKU,
@@ -38,8 +41,8 @@ const SettingsWidget = ({
     createNewProductAndGoToParameterList,
     updatedProduct,
     UploadProductImage,
+    deleteProductSKURow
   } = useSettings({ onClickParametersTab, productState, onChangeStateProduct });
-  console.log("allProductSKU", allProductSKU)
   const defultProductSKU = allProductSKU?.find(
     (item) => item.id === productState?.productSKUId
   );
@@ -404,6 +407,11 @@ const SettingsWidget = ({
         createNewProductSKU={createNewProductSKU}
         errorName={errorName}
         errorCode={errorCode}
+        allProductSKU={allProductSKU}
+        openDeleteRowModal={openDeleteRowModal}
+        onClickOpenDeleteRowModal={onClickOpenDeleteRowModal}
+        onClickCloseDeleteRowModal={onClickCloseDeleteRowModal}
+        deleteProductSKURow={deleteProductSKURow}
       />
     </div>
   );
