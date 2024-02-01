@@ -26,20 +26,22 @@ const TranslationTable = (props:ITranslationTableProps) =>{
     return(
         <div>
             <SearchInputComponent onChange={(e) => setSearchFilter(e)} />
-            <PrimaryTable
-                stickyFirstCol={false}
-                stickyHeader={false}
-                rows={translationsTableRows}
-                headers={translationsTableHeaders}
-            ></PrimaryTable>
-            <div style={{ marginBottom: "5px" }}>
-                <Pagination
-                    count={totalPages}
-                    variant="outlined"
-                    color="primary"
-                    page={currentPage}
-                    onChange={(event, value) => setCurrentPage(value)}
-                />
+            <div style={{marginTop:15}}>
+                <PrimaryTable
+                    stickyFirstCol={false}
+                    stickyHeader={false}
+                    rows={translationsTableRows}
+                    headers={translationsTableHeaders}
+                ></PrimaryTable>
+                <div style={{ marginBottom: "5px" }}>
+                    <Pagination
+                        count={totalPages}
+                        variant="outlined"
+                        color="primary"
+                        page={currentPage}
+                        onChange={(event, value) => setCurrentPage(value)}
+                    />
+                </div>
             </div>
         </div>
     )

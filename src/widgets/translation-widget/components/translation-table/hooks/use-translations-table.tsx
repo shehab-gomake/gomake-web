@@ -1,12 +1,12 @@
-import { useGomakeAxios } from "@/hooks";
-import { useEffect, useState } from "react";
-import { getWebTranslationsTable } from "@/services/api-service/aws-s3/get-web-translations-table";
+import {useGomakeAxios} from "@/hooks";
+import {useEffect, useState} from "react";
+import {getWebTranslationsTable} from "@/services/api-service/aws-s3/get-web-translations-table";
 import {
   IGetWebTranslationsTableResult,
   ITranslationResult,
 } from "@/widgets/translation-widget/components/translation-table/interfaces";
-import { TextareaAutosize } from "@mui/base/TextareaAutosize";
-import { updateWebTranslationsTable } from "@/services/api-service/aws-s3/update-web-translations-table";
+import {TextareaAutosize} from "@mui/base/TextareaAutosize";
+import {updateWebTranslationsTable} from "@/services/api-service/aws-s3/update-web-translations-table";
 import {ETranslationSource} from "@/widgets/translation-widget/enums";
 
 const useTranslationsTable = (translationSource:ETranslationSource) => {
@@ -91,16 +91,23 @@ const useTranslationsTable = (translationSource:ETranslationSource) => {
   };
   useEffect(() => {
     if (translationsTableData && translationsTableData.length > 0) {
-      const headers = ["path", "key"];
+      let headers = ["path", "key"];
+      if(translationSource !== ETranslationSource.WEB){
+        headers = [ "key"];
+      }
+      
       translationsTableData[0].translations.forEach((x) => {
         headers.push(x.lang);
       });
       setTranslationsTableHeaders(headers);
 
       const rows = translationsTableData.map((dataRow) => {
+        let baseColumns  = [dataRow.path && dataRow.path.length > 0 ? dataRow.path.join(".") : "", dataRow.key]
+        if(translationSource !== ETranslationSource.WEB){
+          baseColumns = [  dataRow.key];
+        }
         return [
-          dataRow.path && dataRow.path.length > 0 ? dataRow.path.join(".") : "",
-          dataRow.key,
+            ...baseColumns,
           ...dataRow.translations.map((header) => (
             <TextareaAutosize
               value={header.translation}
