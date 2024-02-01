@@ -3,6 +3,7 @@ import { useStyle } from "./style";
 import { HomeTableWidget } from "./widgets/home-table-widget/home-table-widget";
 import { useHome } from "./use-home";
 import { useEffect } from "react";
+import { ChartWidget } from "./widgets/chart-widget/chart-widget";
 
 const HomePageComponentForAdmin = ({ isAdmin }) => {
   const { classes } = useStyle();
@@ -20,9 +21,9 @@ const HomePageComponentForAdmin = ({ isAdmin }) => {
           <div style={classes.widgetStyle}>
             <QuoteWidget isAdmin={isAdmin} />
           </div>
-          {/* <div style={classes.widgetStyle}>
+          <div style={classes.widgetStyle}>
             <ChartWidget />
-          </div> */}
+          </div>
         </div>
       </div>
 

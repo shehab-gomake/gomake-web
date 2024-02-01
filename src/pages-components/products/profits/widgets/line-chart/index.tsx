@@ -42,7 +42,7 @@ export function LineChart({ actionProfitRowChartData }: LineChartProps) {
     labels: actionProfitRowChartData?.profitAxis,
     datasets: [
       {
-        label: t("products.profits.pricingListWidget.cost"),
+        label: actionProfitRowChartData?.label  || t("products.profits.pricingListWidget.cost"),
         data: actionProfitRowChartData?.costAxis,
         borderColor: "#FF4DCA",
         backgroundColor: "#FF4DCA",
