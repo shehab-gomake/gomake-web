@@ -22,7 +22,7 @@ const HomePageComponentForAdmin = ({ isAdmin }) => {
             <QuoteWidget isAdmin={isAdmin} />
           </div>
           <div style={classes.widgetStyle}>
-            <ChartWidget />
+            {/* <ChartWidget />*/}
           </div>
         </div>
       </div>
