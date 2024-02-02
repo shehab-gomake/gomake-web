@@ -28,6 +28,7 @@ const apiRequest = async (
         ...(getUserToken() && { Authorization: "Bearer " + getUserToken() }),
         ...(data.customAuth && { "auth-token": data.customAuth }),
         lang: language ? language : "en",
+        domain: '',
       },
     };
     if (method === "GET") {
