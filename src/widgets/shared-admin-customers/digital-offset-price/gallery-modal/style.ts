@@ -1,9 +1,12 @@
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { adaptLeft } from "@/utils/adapter";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
+import { useTranslation } from "react-i18next";
 
 const useStyle = () => {
   const { primaryColor, secondColor } = useGomakeTheme();
+  const { t } = useTranslation();
   const clasess = useMemo(() => {
     return {
       insideStyle: {
@@ -16,7 +19,7 @@ const useStyle = () => {
       },
       firstContainer: {
         position: "absolute" as "absolute",
-        right: 47,
+        ...adaptLeft(t("direction"), 47),
         top: 45,
       },
       headerContainer: {
@@ -67,7 +70,7 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "flex-start",
         width: 250,
-        height: 333,
+        height: 375,
         backgroundColor: "white",
         gap: 12,
         cursor: "pointer",
@@ -79,7 +82,7 @@ const useStyle = () => {
         justifyContent: "center",
         alignItems: "center",
         width: 250,
-        height: 333,
+        height: 375,
         backgroundColor: "white",
         gap: 12,
         cursor: "pointer",
@@ -111,7 +114,7 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "flex-start",
         width: 250,
-        height: 333,
+        height: 375,
         backgroundColor: "white",
         gap: 12,
         border: `1px solid ${secondColor(500)}`,
@@ -146,7 +149,7 @@ const useStyle = () => {
         backgroundColor: secondColor(500),
       },
     };
-  }, []);
+  }, [t]);
   return {
     clasess,
   };
