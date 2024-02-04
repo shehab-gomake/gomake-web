@@ -10,6 +10,7 @@ import { selectedShapeState } from "./gallery-modal-store";
 import { StaightKnifeIcon, OrderNowIcon } from "./icons";
 import { useTranslation } from "react-i18next";
 import { EHttpMethod } from "@/services/api-service/enums";
+import { filterState } from "@/widgets/materials-widget/state";
 
 const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForNewDie, straightKnife }) => {
 
@@ -23,8 +24,10 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
   const [materialData, setMaterialData] =
     useRecoilState<any>(materialBtnDataState);
   const [materialDataFilter, setMaterialDataFilter] = useState("");
+
   const [materialType, setMaterialType] = useState<any>({});
   const [isShowStraightKnife, setIsShowStraightKnife] = useState(false)
+  const [materialTableFilters, setMaterialTableFilters] = useState([])
   const widthParameter = getParameterByParameterCode(
     subProducts,
     "Width"
@@ -50,22 +53,48 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
   }, [selectParameterButton, materialsEnumsValues]);
 
   const getProductQuoteItemById = useCallback(async () => {
-    await getPrintHouseMaterialsByMaterialKey(callApi, setMaterialData, {
+    const res = await getPrintHouseMaterialsByMaterialKey(callApi, setMaterialData, {
       key: selectParameterButton?.parameter?.materialPath[0],
+      width: widthParameter,
+      length: heightParameter
     });
-  }, [selectParameterButton]);
+    if (res?.filters?.length > 0) {
+      setMaterialTableFilters(res?.filters)
+    }
+  }, [selectParameterButton, widthParameter, heightParameter]);
+  const [filters, setFilters] = useRecoilState<any>(filterState);
 
+  const setFilterValue = (key: string, value: string | string[]) => {
+    const updatedFilters =
+      value && !(Array.isArray(value) && value.length === 0)
+        ? [
+          ...filters.filter((x) => x.key !== key),
+          {
+            key: key,
+            value: value
+          },
+        ]
+        : filters.filter((x) => x.key !== key);
+
+    setFilters(updatedFilters);
+  };
   const createParameterForCalculation = (parameter) => {
     setSelectedShape(parameter);
   };
-  function searchByName(items, searchText) {
-    searchText = searchText.toLowerCase();
+  function searchByNameOrType(items, searchText) {
+    searchText = searchText?.toLowerCase();
+
     const result = items?.filter((item) =>
-      item.rowData.name.value.toLowerCase().includes(searchText)
+      item.rowData.name.value.toLowerCase().includes(searchText) ||
+      (item.rowData.type.value && item.rowData.type.value.some(type => type.toLowerCase().includes(searchText))
+        ||
+        item.category.toLowerCase().includes(searchText))
     );
+
     return result;
   }
-  const searchResult = searchByName(materialData?.data, materialDataFilter);
+
+  const searchResult = searchByNameOrType(materialData?.data, materialDataFilter);
   const onChangeSearch = (value: string) => {
     setMaterialDataFilter(value);
   };
@@ -142,15 +171,13 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
   const CheckOptionToStraightKnife = useCallback(async () => {
     const res = await callApi(
       EHttpMethod.POST,
-      `/v1/calculation-service/calculations/check-option-to-straight-knife?width=${+widthParameter?.values[0]}&length=${+heightParameter?.values[0]}&shapeId=${shapeParameter?.parameterId}`,
+      `/v1/calculation-service/calculations/check-option-to-straight-knife?width=${+widthParameter?.values[0]}&length=${+heightParameter?.values[0]}&shapeId=${shapeParameter?.parameterId}&materialTypeKey=${selectParameterButton?.parameter?.materialPath[0]}`,
 
     );
     if (res?.success) {
       setIsShowStraightKnife(res.data?.data?.data)
-    } else {
-      // alertFaultAdded();
     }
-  }, [widthParameter, heightParameter, shapeParameter]);
+  }, [widthParameter, heightParameter, shapeParameter, selectParameterButton]);
 
   return {
     materialData,
@@ -163,6 +190,9 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
     searchResult,
     materialDataFilter,
     renderData,
+    materialTableFilters,
+    setMaterialDataFilter,
+    setFilterValue
   };
 };
 

@@ -34,7 +34,6 @@ const useMaterialFilters = () => {
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
   const [filters, setFilters] = useRecoilState<any>(filterState);
-  console.log("filters", filters);
   const [pageNumber, setPageNumber] = useRecoilState(materialsTablePageState);
   const activeFilterOptions = [
     { value: EMaterialActiveFilter.ALL, label: t("materialsStatus.all") },

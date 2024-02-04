@@ -32,6 +32,9 @@ const GalleryModalMapping = ({
       <div style={clasess.shapeWidthHeightStyle}>
         {item?.rowData?.length?.value}
       </div>
+      <div style={clasess.shapeWidthHeightStyle}>
+        {item?.rowData.type.value.join(', ')}
+      </div>
     </div>
   );
 };

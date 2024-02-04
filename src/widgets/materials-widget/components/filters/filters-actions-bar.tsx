@@ -83,7 +83,7 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
           if (key === "productId") {
             return (
               <GoMakeAutoComplate
-                key={materialCategory + "-" +key}
+                key={materialCategory + "-" + key}
                 onChange={(e, v) => setFilterValue(key, v?.id)}
                 style={{ width: "300px", height: 40, overflow: "scroll" }}
                 options={productsOptions}
@@ -93,8 +93,8 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
           }
           if (key === "clients") {
             return (
-              <GoMakeAutoComplate 
-                key={materialCategory + "-" +key}
+              <GoMakeAutoComplate
+                key={materialCategory + "-" + key}
                 onChange={(e, v) =>
                   setFilterValue(
                     key,
@@ -111,7 +111,7 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
           if (key === "machines") {
             return (
               <GoMakeAutoComplate
-                key={materialCategory + "-" +key}
+                key={materialCategory + "-" + key}
                 onChange={(e, v) =>
                   setFilterValue(
                     key,
@@ -127,7 +127,7 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
           } else {
             return (
               <GoMakeAutoComplate
-                key={materialCategory + "-" +key}
+                key={materialCategory + "-" + key}
                 onChange={(e, v) => setFilterValue(key, v)}
                 style={{ width: "200px" }}
                 value={getFilterValue(key)}
@@ -137,24 +137,13 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
             );
           }
         })}
-      {/* {materialTableFilters &&
-        materialTableFilters.map(({ key, values }) => {
-          return (
-            <GoMakeAutoComplate
-              onChange={(e, v) => setFilterValue(key, v)}
-              style={{ width: "200px" }}
-              options={values}
-              placeholder={key}
-            />
-          );
-        })} */}
       {
         !props.isAdmin ? <GoMakeAutoComplate
-            style={{ width: "150px" }}
-            options={activeFilterOptions}
-            value={activeFilterLabel()}
-            onChange={(e: any, value: any) => onActiveFilterChange(value?.value)}
-            disableClearable={true}
+          style={{ width: "150px" }}
+          options={activeFilterOptions}
+          value={activeFilterLabel()}
+          onChange={(e: any, value: any) => onActiveFilterChange(value?.value)}
+          disableClearable={true}
         /> : <></>
       }
       <Stack direction={"row"} gap={"5px"} alignItems={"center"}>

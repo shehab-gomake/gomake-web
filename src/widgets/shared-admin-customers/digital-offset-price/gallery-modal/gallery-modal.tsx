@@ -1,4 +1,4 @@
-import { GoMakeModal, GomakePrimaryButton, SecondSwitch } from "@/components";
+import { GoMakeAutoComplate, GoMakeModal, GomakePrimaryButton, SecondSwitch } from "@/components";
 
 import { useGalleryModal } from "./use-gallery-modal";
 import { useStyle } from "./style";
@@ -6,6 +6,8 @@ import { useTranslation } from "react-i18next";
 import { SearchInputComponent } from "@/components/form-inputs/search-input-component";
 import { RechooseIcon } from "@/icons";
 import { GalleryModalMapping } from "./gallery-modal-mapping";
+import { useRecoilState } from "recoil";
+import { filterState } from "@/widgets/materials-widget/state";
 
 const GalleryModal = ({ openModal, onClose, onChangeSubProductsForPrice, isChargeForNewDie, setIsChargeForNewDie, straightKnife }) => {
   const { clasess } = useStyle();
@@ -18,9 +20,14 @@ const GalleryModal = ({ openModal, onClose, onChangeSubProductsForPrice, isCharg
     onClickChoosParameter,
     getProductQuoteItemById,
     onChangeSearch,
+    setMaterialDataFilter,
     searchResult,
     materialDataFilter,
+    materialTableFilters,
+    setFilterValue
   } = useGalleryModal({ onClose, onChangeSubProductsForPrice, setIsChargeForNewDie, straightKnife });
+
+
   return (
     <>
       <GoMakeModal
@@ -33,7 +40,20 @@ const GalleryModal = ({ openModal, onClose, onChangeSubProductsForPrice, isCharg
         withClose={false}
       >
         <div style={clasess.firstContainer}>
+
           <div style={clasess.headerContainer}>
+            {materialTableFilters &&
+              materialTableFilters.map(({ key, values }) => {
+                return (
+                  <GoMakeAutoComplate
+                    key={key}
+                    onChange={(e, v) => setMaterialDataFilter(v)}
+                    style={{ width: "200px" }}
+                    options={values}
+                    placeholder={key}
+                  />
+                );
+              })}
             <SearchInputComponent onChange={onChangeSearch} />
             <div
               style={{ cursor: "pointer" }}
@@ -41,7 +61,9 @@ const GalleryModal = ({ openModal, onClose, onChangeSubProductsForPrice, isCharg
             >
               <RechooseIcon />
             </div>
+
           </div>
+
         </div>
         <div style={clasess.bodyContainer}>
           <div style={clasess.mainContainer}>
