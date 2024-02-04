@@ -11,33 +11,6 @@ import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 const useCardWidget = () => {
     const { primaryColor, secondColor, warningColor, successColor, errorColor, neutralColor } = useGomakeTheme();
 
-    const documentStatisticsList = [
-        {
-            key: "successRate",
-            value: "10"
-        },
-        {
-            key: "monthlyPerformance",
-            value: "20"
-        },
-        {
-            key: "approved",
-            value: "30"
-        },
-        {
-            key: "waiting",
-            value: "40"
-        },
-        {
-            key: "orders",
-            value: "50"
-        },
-        {
-            key: "canceled",
-            value: "60"
-        }
-    ]
-
 
     const getCardIcon = (cardKey: string) => {
         if (cardKey === EStatisticsLabels.SUCCESS_RATE) {
@@ -49,7 +22,7 @@ const useCardWidget = () => {
         if (cardKey === EStatisticsLabels.APPROVED) {
             return <DoneAllIcon />;
         }
-        if (cardKey === EStatisticsLabels.WAITING) {
+        if (cardKey === EStatisticsLabels.PENDING) {
             return <HourglassTopIcon />;
         }
         if (cardKey === EStatisticsLabels.ORDERS) {
@@ -70,7 +43,7 @@ const useCardWidget = () => {
         if (cardKey === EStatisticsLabels.APPROVED) {
             return successColor(300);
         }
-        if (cardKey === EStatisticsLabels.WAITING) {
+        if (cardKey === EStatisticsLabels.PENDING) {
             return errorColor(300);
         }
         if (cardKey === EStatisticsLabels.ORDERS) {
@@ -91,8 +64,8 @@ const useCardWidget = () => {
         if (cardKey === EStatisticsLabels.APPROVED) {
             return "sales.quote.approved";
         }
-        if (cardKey === EStatisticsLabels.WAITING) {
-            return "sales.quote.waiting";
+        if (cardKey === EStatisticsLabels.PENDING) {
+            return "sales.quote.pending";
         }
         if (cardKey === EStatisticsLabels.ORDERS) {
             return "tabs.orders";
@@ -105,8 +78,7 @@ const useCardWidget = () => {
     return {
         getCardIcon,
         getCardColor,
-        getCardLabel,
-        documentStatisticsList
+        getCardLabel
     };
 };
 

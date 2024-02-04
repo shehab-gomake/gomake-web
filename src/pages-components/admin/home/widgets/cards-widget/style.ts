@@ -32,12 +32,18 @@ const useStyle = () => {
                 gap: "10px"
             },
             firstCard: {
+                display:"flex",
                 width: "100%",
-                height: "50%"
+                height: "50%",
+                alignItems: "center",
+              //  boxShadow: "none",
             },
             secondCard: {
+                display:"flex",
                 width: "100%",
-                height: "25%" 
+                height: "25%" ,
+                alignItems: "center",
+               // boxShadow: "none",
             }
         };
     }, []);

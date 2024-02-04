@@ -11,21 +11,17 @@ interface ICardProps {
     onSecondClick?:any;
     isActive?:any;
     style?:CSSProperties;
-    backGroundColor?:string;
-
 }
 
-const CardComponent = ({ text, textColor, number, icon, onClick, onSecondClick , isActive , style ,backGroundColor}: ICardProps) => {
+const CardComponent = ({ text, textColor, number, icon, onClick, onSecondClick , isActive , style }: ICardProps) => {
     const { classes } = useStyle();
     const [isFiltered, setIsFiltered] = useState(isActive || false);
 
     const mergedStyles = {
         ...classes.ticketStyle,
-        ...style,
        cursor: onClick ? "pointer" : "auto",
        border: isFiltered ? "none" : `2px solid ${textColor}`,
-       backgroundColor: isFiltered ? textColor : backGroundColor ,
-
+       backgroundColor: isFiltered ? textColor : "#FFFFFF" ,
     };
 
     const handleClick = () => {
@@ -42,7 +38,7 @@ const CardComponent = ({ text, textColor, number, icon, onClick, onSecondClick ,
     }, [isActive]);
 
     return (
-        <Card sx={mergedStyles} onClick={ onClick && handleClick}>
+        <Card sx={style || mergedStyles} onClick={ onClick && handleClick}>
             <CardContent style={classes.ticketContentStyle}>
                 <Typography sx={classes.textStyle} color={isFiltered ?"#FFFFFF" :textColor } >{icon}{text}</Typography>
                 <Typography sx={classes.numberStyle} color={isFiltered ? "#FFFFFF":textColor }>{number}</Typography>

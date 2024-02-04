@@ -62,7 +62,8 @@ const CardsSection = (props: ICardsSection) => {
                 number={getValueByKey(props.statistics, "canceledCount")}
                 textColor={errorColor(300)}
                 icon={<DoDisturbAltIcon />}
-                onSecondClick={props.onSecondClickCard} />
+                onSecondClick={props.onSecondClickCard} 
+                />
             <div style={classes.verticalLine} />
             <CardComponent text={t("sales.quote.successRate")} number={getValueByKey(props.statistics, "successRate") + "%"} textColor={primaryColor(300)} icon={<TrendingUpIcon />} />
             <CardComponent text={t("sales.quote.totalPrice")} number={getValueByKey(props.statistics, "totalPrice")} textColor={secondColor(100)} icon={<GoMakeCurrency color={secondColor(100)} />} />

@@ -2,38 +2,41 @@ import { CardComponent } from "@/pages-components/quotes/statistics-section/card
 import { useStyle } from "./style";
 import { useTranslation } from "react-i18next";
 import { useCardWidget } from "./use-cards-widget";
+import { useRecoilValue } from "recoil";
+import { homeReportsState } from "@/pages-components/quote/store/quote";
 
 const CardsWidget = () => {
     const { classes } = useStyle();
     const { t } = useTranslation();
+    const allReports = useRecoilValue<any>(homeReportsState);
+
     const {
         getCardIcon,
         getCardColor,
         getCardLabel,
-        documentStatisticsList
     } = useCardWidget();
 
     return (
         <div style={classes.mainContainer}>
             <div style={classes.firstDiv}>
-                {documentStatisticsList.slice(0, 2)?.map((card) => (
+                {allReports?.slice(0, 2)?.map((card) => (
                     <CardComponent
-                        style={classes.firstCard}
+                        key={card?.key}
+                        style={{...classes.firstCard , background: getCardColor(card?.key)}}
                         text={t(getCardLabel(card?.key))}
                         number={card?.value}
                         textColor="#FFFFFF"
-                        backGroundColor={getCardColor(card?.key)}
                         icon={getCardIcon(card?.key)} />
                 ))}
             </div>
             <div style={classes.secondDiv}>
-                {documentStatisticsList.slice(2)?.map((card) => (
+                {allReports?.slice(2)?.map((card) => (
                     <CardComponent
-                        style={classes.secondCard}
+                        key={card?.key}
+                        style={{...classes.secondCard , background: getCardColor(card?.key)}}
                         text={t(getCardLabel(card?.key))}
                         number={card?.value}
                         textColor="#FFFFFF"
-                        backGroundColor={getCardColor(card?.key)}
                         icon={getCardIcon(card?.key)} />
                 ))}
             </div>
