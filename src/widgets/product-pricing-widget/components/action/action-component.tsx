@@ -380,7 +380,7 @@ const ActionContainerComponent = ({
                   parameters={outputsParameters}
                 />
                 {imageOutputs.map((parameter) => (
-                  <PrintImageComponent {...parameter} />
+                  <PrintImageComponent {...parameter}  />
                 ))}
               </Stack>
             </>
