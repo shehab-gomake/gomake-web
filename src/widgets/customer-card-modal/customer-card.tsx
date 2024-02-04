@@ -274,7 +274,7 @@ const CustomerCardWidget = ({
       contacts: filteredContacts,
       addresses: filteredAddresses,
       users: filteredUsers,
-      CardTypeId: cardTypeId,
+      cardTypeId: cardTypeId,
     };
     setCustomer(updatedCustomer);
     if (

@@ -37,6 +37,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
   const debounce = useDebounce(patternSearch, 500);
   const { GetDateFormat } = useDateFormat();
   const [statusId, setStatusId] = useState<any>();
+  const [quoteStatusId, setQuoteStatusId] = useState<any>();
   const [customerId, setCustomerId] = useState<any>();
   const [dateRange, setDateRange] = useState<any>();
   const [agentId, setAgentId] = useState<any>();
@@ -164,7 +165,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
           pageNumber: page,
           pageSize: pageSize,
         },
-        statusId:statusId?.value,
+        statusId: quoteStatusId?.value || statusId?.value,
         patternSearch: finalPatternSearch,
         customerId: customerId?.id,
         dateRange,
@@ -214,13 +215,20 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
 
   const onClickSearchFilter = () => {
     setPage(1);
+    if (statusId!==null)
+    {
+      handleSecondCardClick();
+    }
+  
     getAllQuotes();
+   
   };
 
   const onClickClearFilter = () => {
-    handleSecondCardClick();
+     handleSecondCardClick();
     setAgentId(null);
     setCustomerId(null);
+    setStatusId(null);
     getAllQuotesInitial();
     setPage(1);
   };
@@ -414,7 +422,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
 
   useEffect(() => {
     getAllQuotes();
-  }, [page,statusId, pageSize,finalPatternSearch]);
+  }, [page,quoteStatusId, pageSize,finalPatternSearch]);
 
   const getAllDocuments = async (docType) => {
     const callBack = (res) => {
@@ -463,17 +471,18 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
       }));
   };
 
+
   const handleCardClick = (cardKey, statusValue) => {
       setPage(1);
       setActiveCard(cardKey);
-      setStatusId({ label: t(`sales.quote.${cardKey}`), value: statusValue });
+      setStatusId(null);
+     setQuoteStatusId({ label: t(`sales.quote.${cardKey}`), value: statusValue });
   };
 
   const handleSecondCardClick = () => {
-    setStatusId(null);
+    setQuoteStatusId(null)
     setActiveCard(null);
   };
-
 
   useEffect(() => {
     getAllDocuments(docType);
