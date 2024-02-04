@@ -51,12 +51,12 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
   const [selectedQuote, setSelectedQuote] = useState<any>();
   const [allDocuments, setAllDocuments] = useState([]);
   const [allStatistics, setAllStatistics] = useState([]);
-  const selectedClient = useRecoilValue<any>(selectedClientState);
-  
+  const [activeCard, setActiveCard] = useState(null);
   const [page, setPage] = useState(1);
   const [pagesCount, setPagesCount] = useState(0);
   const [pageSize, setPageSize] = useState(DEFAULT_VALUES.PageSize);
-  
+  const selectedClient = useRecoilValue<any>(selectedClientState);
+
   const handlePageSizeChange = (event) => {
     setPage(1);
     setPageSize(event.target.value);
@@ -218,7 +218,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
   };
 
   const onClickClearFilter = () => {
-    setStatusId(null);
+    handleSecondCardClick();
     setAgentId(null);
     setCustomerId(null);
     getAllQuotesInitial();
@@ -463,6 +463,18 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
       }));
   };
 
+  const handleCardClick = (cardKey, statusValue) => {
+      setPage(1);
+      setActiveCard(cardKey);
+      setStatusId({ label: t(`sales.quote.${cardKey}`), value: statusValue });
+  };
+
+  const handleSecondCardClick = () => {
+    setStatusId(null);
+    setActiveCard(null);
+  };
+
+
   useEffect(() => {
     getAllDocuments(docType);
   }, [selectedClient]);
@@ -518,7 +530,10 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     allStatistics,
     onclickCreateNew,
     pageSize,
-    handlePageSizeChange
+    handlePageSizeChange,
+    activeCard,
+    handleCardClick,
+    handleSecondCardClick
   };
 };
 
