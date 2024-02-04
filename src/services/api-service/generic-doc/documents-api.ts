@@ -28,7 +28,7 @@ const GET_IF_Exist_CART = "/v1/erp-service/documents/get-exist-document";
 const GET_DOCUMENT_PDF_URL = "/v1/erp-service/documents/get-document-pdf";
 const UPDATE_PURCHASE_NUMBER_URL =
   "/v1/erp-service/documents/update-purchase-number";
-const ADD_DELIVERY_URL = "/v1/erp-service/documents/add-delivery";
+const ADD_DELIVERY_URL = "/v1/erp-service/documents/add-delivery"; 
 const CANCEL_DOCUMENT_URL = "/v1/erp-service/documents/cancel-document";
 const SEND_DOCUMENT_TO_CLIENT_URL =
   "/v1/erp-service/documents/send-document-to-client";
@@ -54,6 +54,7 @@ const UPDATE_EXCHANGE_RATE_URL =
 const REFRESH_EXCHANGE_RATE_URL =
   "/v1/erp-service/documents/refresh-exchange-rate";
 const CREATE_NEW_DOCUMENT_URL = "/v1/erp-service/documents/create-new-document";
+const GET_ALL_REPORTS_URL = "/v1/erp-service/quote/get-all-reports"
 
 const getDocumentApi: ICallAndSetData = async (callApi, setState, data) => {
   return await getSetApiData(
@@ -212,7 +213,7 @@ const duplicateWithAnotherQuantityApi: ICallAndSetData = async (
     DUPLICATE_DOCUMENT_ITEM_URL,
     setState,
     data
-  );
+  ); 
 };
 
 const getIfCartExistApi: ICallAndSetData = async (callApi, setState, data) => {
@@ -296,7 +297,7 @@ const saveDocumentApi: ICallAndSetData = async (callApi, setState, data) => {
     setState,
     data
   );
-};
+}; 
 
 const createOrderApi: ICallAndSetData = async (callApi, setState, data) => {
   return await getSetApiData(
@@ -465,6 +466,20 @@ const createNewDocumentApi: ICallAndSetData = async (
   );
 };
 
+const getAllReportsApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data: { customerId: string , productId:string }
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    GET_ALL_REPORTS_URL,
+    setState,
+    data
+  );
+};
+
 export {
   getDocumentApi,
   getAllDocumentsApi,
@@ -498,4 +513,5 @@ export {
   updateExchangeRateApi,
   refreshExchangeRateApi,
   createNewDocumentApi,
+  getAllReportsApi
 };

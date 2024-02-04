@@ -57,10 +57,12 @@ const QuotesListPageWidget = ({
     setPage,
     allStatistics,
     onclickCreateNew,
-    setStatisticKey,
     t,
-    handlePageSizeChange,
-    pageSize
+    handlePageSizeChange, 
+    pageSize,
+    activeCard,
+    handleCardClick,
+    handleSecondCardClick
   } = useQuotes(documentType);
 
   return (
@@ -76,7 +78,7 @@ const QuotesListPageWidget = ({
           <div style={classes.mainContainer}>
             <div style={classes.headerStyle}>
               <HeaderTitle title={documentLabel} marginTop={1} marginBottom={1} />
-              {documentType === DOCUMENT_TYPE.quote && <CardsSection statistics={allStatistics} onClick={onclickCreateNew} setState={setStatisticKey} />}
+              {documentType === DOCUMENT_TYPE.quote && <CardsSection statistics={allStatistics} activeCard={activeCard} onClick={onclickCreateNew} onClickCard={handleCardClick} onSecondClickCard={handleSecondCardClick} />}
             </div>
             <div style={classes.filtersContainer}>
               <div style={classes.selectedFilterContainer}>
@@ -91,6 +93,7 @@ const QuotesListPageWidget = ({
                     getOptionLabel={(option: any) => option.label}
                     placeholder={t("sales.quote.chooseStatus")}
                     onChange={(e: any, value: any) => {
+                      setPage(1);
                       setStatusId(value);
                     }}
                     value={statusId}
