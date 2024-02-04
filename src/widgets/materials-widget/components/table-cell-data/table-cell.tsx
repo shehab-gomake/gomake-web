@@ -10,6 +10,7 @@ import { MultiSelectInput } from "./multi-select-input";
 import { SelectInput } from "./select-input";
 import { useRecoilValue } from "recoil";
 import { machineCategoriesState } from "@/store/machine-categories";
+import { MultiSelectList } from "./multi-select-list";
 
 const TableCellData = ({
   value,
@@ -111,6 +112,20 @@ const TableCellData = ({
           id={id}
           value={value as string}
           isAdmin={isAdmin}
+        />
+      );
+    case EDataTypeEnum.MULTI_SELECATION_LIST:
+      return (
+        <MultiSelectList
+          values={value as string[]}
+          parameterKey={parameterKey}
+          id={id}
+          isAdmin={isAdmin}
+          options={values.map((item) => ({
+            value: item.value,
+            label: item.key,
+          }))}
+          placeHolder="Select value"
         />
       );
     default:
