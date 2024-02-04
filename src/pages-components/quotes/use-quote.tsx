@@ -37,7 +37,6 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
   const debounce = useDebounce(patternSearch, 500);
   const { GetDateFormat } = useDateFormat();
   const [statusId, setStatusId] = useState<any>();
-  const [statisticKey, setStatisticKey] = useState<string>();
   const [customerId, setCustomerId] = useState<any>();
   const [dateRange, setDateRange] = useState<any>();
   const [agentId, setAgentId] = useState<any>();
@@ -165,8 +164,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
           pageNumber: page,
           pageSize: pageSize,
         },
-        statusId: statusId?.value,
-        // key: statisticKey, 
+        statusId:statusId?.value,
         patternSearch: finalPatternSearch,
         customerId: customerId?.id,
         dateRange,
@@ -215,13 +213,12 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
   };
 
   const onClickSearchFilter = () => {
-    getAllQuotes();
     setPage(1);
+    getAllQuotes();
   };
 
   const onClickClearFilter = () => {
     setStatusId(null);
-    // setStatisticKey(null);
     setAgentId(null);
     setCustomerId(null);
     getAllQuotesInitial();
@@ -417,7 +414,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
 
   useEffect(() => {
     getAllQuotes();
-  }, [page, pageSize,finalPatternSearch]);
+  }, [page,statusId, pageSize,finalPatternSearch]);
 
   const getAllDocuments = async (docType) => {
     const callBack = (res) => {
@@ -520,7 +517,6 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     setPage,
     allStatistics,
     onclickCreateNew,
-    setStatisticKey,
     pageSize,
     handlePageSizeChange
   };

@@ -2,6 +2,9 @@ import { EStatisticsLabels } from "@/pages-components/quotes/enums";
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import HourglassTopIcon from '@mui/icons-material/HourglassTop';
 import DoDisturbAltIcon from '@mui/icons-material/DoDisturbAlt';
+import DoneAllIcon from '@mui/icons-material/DoneAll';
+import { PerformanceIcon } from "@/icons/performance";
+import { OrderBoxIcon } from "@/icons/order-box";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 
@@ -14,11 +17,11 @@ const useCardWidget = () => {
             value: "10"
         },
         {
-            key: "waiting",
+            key: "monthlyPerformance",
             value: "20"
         },
         {
-            key: "successRate",
+            key: "approved",
             value: "30"
         },
         {
@@ -26,7 +29,7 @@ const useCardWidget = () => {
             value: "40"
         },
         {
-            key: "approved",
+            key: "orders",
             value: "50"
         },
         {
@@ -41,16 +44,16 @@ const useCardWidget = () => {
             return <TrendingUpIcon />;
         }
         if (cardKey === EStatisticsLabels.MONTHLY_PERFORMANCE) {
-            return <HourglassTopIcon />;
+            return <PerformanceIcon color={"#FFFFFF"} />;
         }
         if (cardKey === EStatisticsLabels.APPROVED) {
-            return <HourglassTopIcon />;
+            return <DoneAllIcon />;
         }
         if (cardKey === EStatisticsLabels.WAITING) {
             return <HourglassTopIcon />;
         }
         if (cardKey === EStatisticsLabels.ORDERS) {
-            return <HourglassTopIcon />;
+            return <OrderBoxIcon color={"#FFFFFF"} />;
         }
         if (cardKey === EStatisticsLabels.CANCELED) {
             return <DoDisturbAltIcon />;

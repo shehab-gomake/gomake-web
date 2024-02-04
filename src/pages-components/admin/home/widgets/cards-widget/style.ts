@@ -30,6 +30,14 @@ const useStyle = () => {
                 height: "100%",
                 width: "50%",
                 gap: "10px"
+            },
+            firstCard: {
+                width: "100%",
+                height: "50%"
+            },
+            secondCard: {
+                width: "100%",
+                height: "25%" 
             }
         };
     }, []);

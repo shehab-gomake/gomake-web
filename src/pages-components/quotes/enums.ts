@@ -26,11 +26,11 @@ export enum QUOTE_STATUSES{
 
 export enum EStatisticsLabels {
     SUCCESS_RATE="successRate",
-    MONTHLY_PERFORMANCE="Monthly Performance",
+    MONTHLY_PERFORMANCE="monthlyPerformance",
     APPROVED= "approved",
     WAITING= "waiting",
-    PENDING="Pending",
-    ORDERS="Orders",
+    PENDING="pending",
+    ORDERS="orders",
     CANCELED= "canceled"
   }
   

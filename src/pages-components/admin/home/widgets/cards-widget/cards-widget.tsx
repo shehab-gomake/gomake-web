@@ -18,7 +18,7 @@ const CardsWidget = () => {
             <div style={classes.firstDiv}>
                 {documentStatisticsList.slice(0, 2)?.map((card) => (
                     <CardComponent
-                        style={{ width: "100%", height: "50%" }}
+                        style={classes.firstCard}
                         text={t(getCardLabel(card?.key))}
                         number={card?.value}
                         textColor="#FFFFFF"
@@ -29,7 +29,7 @@ const CardsWidget = () => {
             <div style={classes.secondDiv}>
                 {documentStatisticsList.slice(2)?.map((card) => (
                     <CardComponent
-                        style={{ width: "100%", height: "25%" }}
+                        style={classes.secondCard}
                         text={t(getCardLabel(card?.key))}
                         number={card?.value}
                         textColor="#FFFFFF"
