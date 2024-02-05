@@ -5,7 +5,7 @@ import {
     selectedMaterialsListState
 } from "@/widgets/quick-setup-widgets/materials/state";
 import {useEffect, useMemo} from "react";
-import {quickSetupGetMaterials} from "@/services/api-service/materials/quick-setup-materials-endpoints";
+import {quickSetupGetMaterials, quickSetupSaveMaterialCategories} from "@/services/api-service/materials/quick-setup-materials-endpoints";
 import {useGomakeAxios} from "@/hooks";
 
 const useQuickSetupMaterials = () => {
@@ -27,14 +27,23 @@ const useQuickSetupMaterials = () => {
         }
         await quickSetupGetMaterials(callApi, callBack);
     }
-
+    const saveSelectedMaterials = async () => {
+        debugger;
+        const callBack = (res) => {
+            if (res.success) {
+                
+            }
+        }
+        await quickSetupSaveMaterialCategories(callApi,callBack,selectedMaterials)
+    }
     useEffect(() => {
         getAllMaterials().then();
     }, []);
 
     return {
         selectedMaterials,
-        onRemoveMaterial
+        onRemoveMaterial,
+        saveSelectedMaterials
     }
 }
 export {useQuickSetupMaterials}

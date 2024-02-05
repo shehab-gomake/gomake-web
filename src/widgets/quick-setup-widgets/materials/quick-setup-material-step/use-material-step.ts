@@ -21,10 +21,10 @@ const useMaterialStep = () => {
         })
     }
     useEffect(() => {
-        const steps = ['1', '2', '3'];
+        const steps = ['pricing'];
         if (steps.includes(materialStep?.toString())) {
-            const currentStep = quickSetupMaterialSteps(materialStep?.toString());
-            setStep(currentStep);
+            //const currentStep = quickSetupMaterialSteps();
+            //setStep(currentStep);
             setState({});
         } else {
 

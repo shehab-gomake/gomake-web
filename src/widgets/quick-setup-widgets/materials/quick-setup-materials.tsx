@@ -10,7 +10,7 @@ import {useTranslation} from "react-i18next";
 const QuickSetupMaterials = () => {
     const {classes} = useStyle();
     const {t} = useTranslation();
-    const {onRemoveMaterial, selectedMaterials} = useQuickSetupMaterials();
+    const {onRemoveMaterial, selectedMaterials,saveSelectedMaterials} = useQuickSetupMaterials();
     return (
         <Stack gap={'30px'} alignItems={'center'}>
             <h3 style={classes.header}>Approve and add you materials!</h3>
@@ -28,7 +28,7 @@ const QuickSetupMaterials = () => {
                                                                              onRemove={onRemoveMaterial}/>)
                 }
             </Stack>
-            <PrimaryButton style={classes.nextButton} variant={'contained'}>{t('signup.next')}</PrimaryButton>
+            <PrimaryButton style={classes.nextButton} onClick={saveSelectedMaterials} variant={'contained'}>{t('signup.next')}</PrimaryButton>
         </Stack>
     )
 }
