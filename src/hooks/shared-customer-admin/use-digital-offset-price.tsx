@@ -771,7 +771,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         const materialData = materials.find((x) =>
                           compareStrings(x.pathName, materialPath)
                         )?.data;
-                        const paramMaterialValues = materialData.find((x) =>
+                        const paramMaterialValues = materialData?.find((x) =>
                           defaultValue.values?.find((y) => y === x.valueId)
                         )?.data;
                         if (!parameter.valuesConfigs) {
@@ -781,7 +781,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                           (x) => x.values && x.values.length > 0
                         );
                         paramMaterialValues?.forEach((val) => {
-                          const existsValue = param.valuesConfigs.find(
+                          const existsValue = param.valuesConfigs?.find(
                             (x) =>
                               x.values &&
                               x.values.length > 0 &&
@@ -841,14 +841,14 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   useEffect(() => {
     if (router?.query?.clientTypeId) {
       setClientTypeDefaultValue(
-        clientTypesValue.find(
+        clientTypesValue?.find(
           (item: any) => item?.id === router?.query?.clientTypeId
         )
       );
     }
     if (router?.query?.customerId) {
       setClientDefaultValue(
-        renderOptions().find(
+        renderOptions()?.find(
           (item: any) => item?.id === router?.query?.customerId
         )
       );
@@ -920,7 +920,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const _getParameter = (parameter: any, subSection: any, section: any) => {
     const allParameters = subProducts.flatMap((item) => item.parameters);
     let temp = [...allParameters];
-    const index = temp.findIndex(
+    const index = temp?.findIndex(
       (item) =>
         item?.parameterId === parameter?.id &&
         item?.sectionId === section?.id &&
@@ -943,7 +943,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     let Comp;
     const parametersArray = subProducts.flatMap((item) => item.parameters);
     const temp = [...parametersArray];
-    const index = temp.findIndex(
+    const index = temp?.findIndex(
       (item) =>
         item.parameterId === parameter?.id &&
         item.sectionId === section?.id &&
@@ -1174,7 +1174,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     )
                   )
                   .map((relatedParameter) => {
-                    const subProduct = subProducts.find(
+                    const subProduct = subProducts?.find(
                       (x) => x.type === subSection?.type
                     );
                     const parm = subProduct?.parameters?.find(
@@ -1182,7 +1182,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         param.parameterId === parameter.id &&
                         param.actionIndex === relatedParameter.actionIndex
                     );
-                    const myParameter = list.find(
+                    const myParameter = list?.find(
                       (p) =>
                         p.id === relatedParameter.parameterId &&
                         p.actionIndex === relatedParameter.actionIndex
@@ -1192,9 +1192,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     }
                     if (relatedParameter.activateByAllValues && parm?.values) {
                       let productCopy = cloneDeep(productTemplate);
-                      const sectionCopy = productCopy.sections.find(x => x.id === section.id);
-                      const subSectionCopy = sectionCopy.subSections.find(x => x.id === subSection.id);
-                      const param = subSectionCopy.parameters.find(x => x.id === relatedParameter.parameterId);
+                      const sectionCopy = productCopy.sections?.find(x => x.id === section.id);
+                      const subSectionCopy = sectionCopy.subSections?.find(x => x.id === subSection.id);
+                      const param = subSectionCopy.parameters?.find(x => x.id === relatedParameter.parameterId);
                       if (param.isHidden == false) {
                         return;
                       }
@@ -1202,7 +1202,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                       setProductTemplate(productCopy)
                     }
                     else if (parameter?.parameterType === EParameterTypes.DROP_DOWN_LIST) {
-                      const valueInArray = relatedParameter.selectedValueIds.find(
+                      const valueInArray = relatedParameter.selectedValueIds?.find(
                         (c) => c == parm?.valueIds
                       );
                       if (valueInArray) {
@@ -1223,15 +1223,15 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                       }
                     }
                     else {
-                      const valueInArray = relatedParameter.selectedValueIds.find(
+                      const valueInArray = relatedParameter.selectedValueIds?.find(
                         (c) => c == parm?.values
                       );
 
                       if (valueInArray && myParameter || (!parm && relatedParameter && relatedParameter.selectedValueIds && relatedParameter.selectedValueIds.length > 0 && relatedParameter.selectedValueIds[0] === "false" )) {
                         let productCopy = cloneDeep(productTemplate);
-                        const sectionCopy = productCopy.sections.find(x => x.id === section.id);
-                        const subSectionCopy = sectionCopy.subSections.find(x => x.id === subSection.id);
-                        const param = subSectionCopy.parameters.find(x => x.id === relatedParameter.parameterId);
+                        const sectionCopy = productCopy.sections?.find(x => x.id === section.id);
+                        const subSectionCopy = sectionCopy.subSections?.find(x => x.id === subSection.id);
+                        const param = subSectionCopy.parameters?.find(x => x.id === relatedParameter.parameterId);
                         if (param.isHidden == false) {
                           return;
                         }
