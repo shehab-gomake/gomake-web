@@ -111,7 +111,8 @@ const AddRuleModal = ({
                 style={clasess.dropDownListContainer}
                 placeholder={t("products.profits.exceptions.selectMachine")}
                 onChange={(e, value) => {
-                  setPropertieValue(value?.label)
+                  console.log("value", value)
+                  setPropertieValue(value?.id)
 
                 }
                 }
@@ -124,7 +125,7 @@ const AddRuleModal = ({
               <div style={clasess.selectTypeStyle}>
                 Select Material
                 <span style={clasess.spanUnitStyle}>
-                  ({selectedOutputs?.defaultUnit})
+                  {selectedOutputs?.defaultUnit}
                 </span>
               </div>
               <GoMakeAutoComplate
@@ -172,7 +173,7 @@ const AddRuleModal = ({
               <div style={clasess.selectTypeStyle}>
                 {t("products.profits.exceptions.enterValue")}
                 <span style={clasess.spanUnitStyle}>
-                  ({selectedOutputs?.defaultUnit})
+                  {selectedOutputs?.defaultUnit}
                 </span>
               </div>
               <GomakeTextInput
@@ -195,7 +196,7 @@ const AddRuleModal = ({
               <div style={clasess.selectTypeStyle}>
                 {t("products.profits.exceptions.selectValue")}
                 <span style={clasess.spanUnitStyle}>
-                  ({selectedOutputs?.defaultUnit})
+                  {selectedOutputs?.defaultUnit}
                 </span>
               </div>
               <GoMakeAutoComplate
@@ -206,6 +207,7 @@ const AddRuleModal = ({
                 placeholder={t("products.profits.exceptions.selectValue")}
                 style={clasess.autoComplateStyle}
                 onChange={(e: any, value: any) => {
+                  console.log("value", value)
                   setPropertieValue(value?.value as string);
                 }}
               />
@@ -220,7 +222,7 @@ const AddRuleModal = ({
               <div style={clasess.selectTypeStyle}>
                 {t("products.profits.exceptions.selectValue")}
                 <span style={clasess.spanUnitStyle}>
-                  ({selectedOutputs?.defaultUnit})
+                  {selectedOutputs?.defaultUnit}
                 </span>
               </div>
               <GoMakeAutoComplate
@@ -233,7 +235,7 @@ const AddRuleModal = ({
                 })}
                 style={clasess.dropDownListContainer}
                 placeholder={t("products.profits.exceptions.selectValue")}
-                onChange={(e, value) => setPropertieValue(value.name)}
+                onChange={(e, value) => setPropertieValue(value?.id)}
               />
             </div>
           );
@@ -243,7 +245,7 @@ const AddRuleModal = ({
               <div style={clasess.selectTypeStyle}>
                 {t("products.profits.exceptions.enterValue")}
                 <span style={clasess.spanUnitStyle}>
-                  ({selectedOutputs?.defaultUnit})
+                  {selectedOutputs?.defaultUnit}
                 </span>
               </div>
               <GomakeTextInput
@@ -266,7 +268,7 @@ const AddRuleModal = ({
               <div style={clasess.selectTypeStyle}>
                 {t("products.profits.exceptions.enterValue")}
                 <span style={clasess.spanUnitStyle}>
-                  ({selectedOutputs?.defaultUnit})
+                  {selectedOutputs?.defaultUnit}
                 </span>
               </div>
               <GomakeTextInput
@@ -289,7 +291,7 @@ const AddRuleModal = ({
               <div style={clasess.selectTypeStyle}>
                 {t("products.profits.exceptions.selectValue")}
                 <span style={clasess.spanUnitStyle}>
-                  ({selectedOutputs?.defaultUnit})
+                  {selectedOutputs?.defaultUnit}
                 </span>
               </div>
               <GoMakeAutoComplate
