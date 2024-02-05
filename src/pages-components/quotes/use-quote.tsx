@@ -424,6 +424,8 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     getAllQuotes();
   }, [page,quoteStatusId, pageSize,finalPatternSearch]);
 
+
+  // table in home page
   const getAllDocuments = async (docType) => {
     const callBack = (res) => {
       if (res?.success) {
@@ -434,7 +436,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
           document?.worksNames,
           GetDateFormat(document?.createdDate),
           document?.totalPrice + " " + getCurrencyUnitText(document?.currency),
-          <div style={{ display: "flex", justifyContent: "center" }}>
+          <div style={{ display: "flex", justifyContent: "center"  }}>
             <h2
               style={
                 document?.documentStatus == 2

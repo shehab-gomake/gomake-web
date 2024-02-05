@@ -34,6 +34,7 @@ const useStyle = () => {
             numberStyle: {
                 ...FONT_FAMILY.Lexend(500, 24),
                 lineHeight: "30px",
+              //  width:"min-content"                
             },
             textStyle: {
                 ...FONT_FAMILY.Lexend(400, 14),

@@ -80,6 +80,7 @@ const PrimaryTable = ({
   stickyFirstCol,
   maxHeight,
   variant,
+  withoutShadow
 }: ITableProps) => {
   const { t } = useTranslation();
   const dir: "rtl" | "ltr" = t("direction");
@@ -89,7 +90,7 @@ const PrimaryTable = ({
   const TableRow =
     variant === "ClassicTable" ? ClassicTableRow : PrimaryTableRow;
   return (
-    <Paper sx={{ width: "100%", overflow: "hidden" }}>
+    <Paper sx={{ width: "100%", overflow: "hidden" , boxShadow: withoutShadow && "none" }}>
       <TableContainer style={classes.tableContainer}>
         <Table stickyHeader={stickyHeader}>
           <TableHead>
@@ -107,7 +108,7 @@ const PrimaryTable = ({
           </TableHead>
           <TableBody  >
             {rows?.map((row, index) => (
-              <TableRow key={`row_${index}`} >
+              <TableRow key={`row_${index}`}  >
                 {row.map((cell, index) => {
                   if (index === 0 && stickyFirstCol) {
                     return <TableCell style={classes.sticky}>{cell}</TableCell>;

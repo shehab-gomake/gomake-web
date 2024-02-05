@@ -58,7 +58,7 @@ const QuotesListPageWidget = ({
     allStatistics,
     onclickCreateNew,
     t,
-    handlePageSizeChange, 
+    handlePageSizeChange,
     pageSize,
     activeCard,
     handleCardClick,
@@ -153,13 +153,13 @@ const QuotesListPageWidget = ({
               </div>
               <SearchInputComponent onChange={(e) => setPatternSearch(e)} />
             </div>
-              <PrimaryTable
-                stickyFirstCol={false}
-                stickyHeader={true}
-                maxHeight={650}
-                rows={allQuotes}
-                headers={tableHeaders}
-              />
+            <PrimaryTable
+              stickyFirstCol={false}
+              stickyHeader={true}
+              maxHeight={650}
+              rows={allQuotes}
+              headers={tableHeaders}
+            />
           </div>
           <GoMakePagination
             onChangePageNumber={(event, value) => setPage(value)}
@@ -173,9 +173,12 @@ const QuotesListPageWidget = ({
       )}
       {isFromHomePage && (
         <PrimaryTable
+          stickyHeader={true}
+          maxHeight={400}
           rows={allDocuments}
           headers={tableHomeHeader}
           variant="ClassicTable"
+          withoutShadow={true}
         />
       )}
       <GoMakeDeleteModal
