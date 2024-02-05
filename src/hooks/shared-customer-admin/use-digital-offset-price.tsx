@@ -637,10 +637,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                             : [childParam?.defaultValue],
                           sectionId: section?.id,
                           subSectionId: subSection?.id,
-                          actionIndex: parameter?.actionIndex,
-                          parameterCode: parameter?.code,
-                          unitKey: parameter?.unitKey,
-                          unitType: parameter?.unitType,
+                          actionIndex: childParam?.actionIndex,
+                          parameterCode: childParam?.code,
+                          unitKey: childParam?.unitKey,
+                          unitType: childParam?.unitType,
                         });
                       });
                     }
@@ -1323,13 +1323,13 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       );
       const productTemplateCopy = cloneDeep(productTemplate);
       const section = productTemplateCopy.sections.find(
-          (section) => section.id === sectionId
+        (section) => section.id === sectionId
       );
       const subSection = section.subSections.find(
-          (sub) => sub.id === subSectionId
+        (sub) => sub.id === subSectionId
       );
       const subSectionParameter = subSection.parameters.find(
-          (param) => param.id === parameterId
+        (param) => param.id === parameterId
       );
       if (findIndex !== -1) {
         const valuesArray = [data.values].filter(Boolean);
@@ -1363,16 +1363,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           unitType: subSectionParameter?.unitType,
         });
       }
-      const productTemplateCopy = cloneDeep(productTemplate);
-      const section = productTemplateCopy.sections.find(
-        (section) => section.id === sectionId
-      );
-      const subSection = section.subSections.find(
-        (sub) => sub.id === subSectionId
-      );
-      const subSectionParameter = subSection.parameters.find(
-        (param) => param.id === parameterId
-      );
       if (subSectionParameter) {
         //types parameter
         if (subSectionParameter.id == "de2bb7d5-01b1-4b2b-b0fa-81cd0445841b") {
