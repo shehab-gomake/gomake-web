@@ -21,8 +21,8 @@ const MoreMenuWidget = ({ quote, documentType, onClickOpenModal, onClickPdf, onC
     <OptionsButton>
       <MenuItem onClick={onClickLoggers}>
         <div style={classes.menuRowStyle}>
-            <EditingIcon />
-            <div style={classes.rowTextStyle}>{t("sales.quote.loggers")}</div>
+          <EditingIcon />
+          <div style={classes.rowTextStyle}>{t("sales.quote.loggers")}</div>
         </div>
       </MenuItem>
 
@@ -67,6 +67,18 @@ const MoreMenuWidget = ({ quote, documentType, onClickOpenModal, onClickPdf, onC
           <div style={classes.menuRowStyle}>
             <EditingIcon />
             <div style={classes.rowTextStyle}>{t("sales.quote.edit")}</div>
+          </div>
+        </MenuItem>
+      ) : null}
+
+      {documentType === DOCUMENT_TYPE.quote ? (
+        <MenuItem
+          onClick={() => navigate(`/quote-confirmation?Id=${quote?.id}`)
+          }
+        >
+          <div style={classes.menuRowStyle}>
+            <EditingIcon />
+            <div style={classes.rowTextStyle}>{t("confirm")}</div>
           </div>
         </MenuItem>
       ) : null}
