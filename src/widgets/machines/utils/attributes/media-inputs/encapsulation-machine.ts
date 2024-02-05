@@ -20,7 +20,7 @@ const encapsulationMachine = (state: Record<string, any>) => {
         },
         ...mediaDimensionsSettings(state),
         ...mediaWeightSettings(state),
-        ...mediaThicknessSettings(state)
+        ...mediaThicknessSettings(state,EMeasurementUnits.UM)
     ]
 }
 

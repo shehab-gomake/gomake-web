@@ -1,3 +1,4 @@
+
 export enum DOCUMENT_TYPE{
     quote = 0,
     order = 1,
@@ -22,3 +23,14 @@ export enum QUOTE_STATUSES{
     PartialClosed=13,
     WaitForPrintHouseConfirm=14,
 }
+
+export enum EStatisticsLabels {
+    SUCCESS_RATE="successRate",
+    MONTHLY_PERFORMANCE="monthlyPerformance",
+    APPROVED= "approved",
+    WAITING= "waiting",
+    PENDING="pending",
+    ORDERS="orders",
+    CANCELED= "canceled"
+  }
+  

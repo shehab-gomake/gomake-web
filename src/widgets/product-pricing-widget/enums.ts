@@ -34,3 +34,9 @@ export enum EPricingViews {
     OTHERS_WORKFLOWS,
     OUTSOURCE_WORKFLOW
 }
+export enum ECalculationLogType{
+    ERROR = 0,
+    WARN = 1,
+    SUCCESS ,
+    MESSAGE
+}

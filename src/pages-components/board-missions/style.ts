@@ -64,6 +64,7 @@ const useStyle = () => {
         border: `1px solid ${secondColor(500)}`,
         color: secondColor(500),
         width: "12.5%",
+        minWidth:"fit-content"
       },
       paginationStyle: {
         paddingLeft: 20,

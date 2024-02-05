@@ -20,7 +20,7 @@ const useStyle = () => {
       },
       sectionTitle: {
         color: primaryColor(900),
-        ...FONT_FAMILY.Lexend(500, 18),
+        ...FONT_FAMILY.Lexend(500, 14),
       },
       actionContainer: {
         backgroundColor: "#FFF",

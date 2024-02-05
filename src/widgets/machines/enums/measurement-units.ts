@@ -1,6 +1,7 @@
 export enum EMeasurementUnits {
     CM = 'cm',
     MM = 'mm',
+    UM = 'um',
     GRAM = 'gram',
     METER = 'meter',
     KG = 'kg',

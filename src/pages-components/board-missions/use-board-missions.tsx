@@ -17,8 +17,6 @@ const useBoardMissions = () => {
   const { callApi } = useGomakeAxios();
   const { data, connectionId } = useBoardMissionsSignalr();
   const [customersListCreateQuote, setCustomersListCreateQuote] = useState([]);
-  const [pageNumber, setPageNumber] = useState(1);
-  const [pagesCount, setPagesCount] = useState(0);
   const [customer, setCustomer] = useState<{
     label: string;
     id: string;
@@ -37,9 +35,19 @@ const useBoardMissions = () => {
   const [allBoardMissions, setAllBoardMissions] = useState([]);
   const [resetDatePicker, setResetDatePicker] = useState<boolean>(false);
   const { GetDateFormat } = useDateFormat();
-  const pageSize = DEFAULT_VALUES.PageSize;
   const [finalPatternSearch, setFinalPatternSearch] = useState("");
   const debounce = useDebounce(patternSearch, 500);
+  const [pageNumber, setPageNumber] = useState(1);
+  const [pagesCount, setPagesCount] = useState(0);
+  const [pageSize, setPageSize] = useState(DEFAULT_VALUES.PageSize);
+  
+  const handlePageSizeChange = (event) => {
+    setPageNumber(1);
+    setPageSize(event.target.value);
+  };
+
+
+
   const onSelectDeliveryTimeDates = (fromDate: Date, toDate: Date) => {
     setResetDatePicker(false);
     setFromDate(fromDate);
@@ -215,7 +223,7 @@ const useBoardMissions = () => {
 
   useEffect(() => {
     getAllBoardMissions();
-  }, [connectionId, pageNumber, finalPatternSearch]);
+  }, [connectionId, pageNumber,pageSize, finalPatternSearch]);
 
   const handlePageChange = (event, value) => {
     setPageNumber(value);
@@ -247,11 +255,15 @@ const useBoardMissions = () => {
     getAllCustomersCreateOrder,
     pagesCount,
     pageNumber,
+    setPageNumber,
     handlePageChange,
     onSelectDeliveryTimeDates,
     fromDate,
     toDate,
     resetDatePicker,
+    handlePageSizeChange,
+    setPageSize,
+    pageSize
   };
 };
 

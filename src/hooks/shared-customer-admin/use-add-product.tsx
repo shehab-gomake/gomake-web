@@ -719,7 +719,11 @@ const useAddProduct = ({ clasess }) => {
           let defaultParameter = defsultParameters?.valuesConfigs?.find(
             (item) => item?.isDefault
           );
-          let valueIdIsDefault = defaultParameter?.materialValueIds[0]?.valueId;
+          let valueIdIsDefault = "";
+          if(defaultParameter &&  defaultParameter?.materialValueIds &&  defaultParameter?.materialValueIds.length > 0){
+            valueIdIsDefault = defaultParameter?.materialValueIds[0]?.valueId;
+          }
+          
 
           options = digitalPriceData?.selectedMaterialLvl1;
 

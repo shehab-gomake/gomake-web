@@ -1,8 +1,10 @@
 import { GomakePrimaryButton } from "@/components";
+import { EParameterTypes } from "@/enums";
 import { AddNewIcon } from "@/icons";
 import { WastebasketNew } from "@/icons/wastebasket-new";
 import { subProductsParametersState } from "@/store";
 import cloneDeep from "lodash.clonedeep";
+import React from "react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRecoilState } from "recoil";
@@ -19,6 +21,7 @@ const SectionMappingWidget = ({
   duplicateParameters,
   template,
   setTemplate,
+  underParameterIds,
 }: any) => {
   const { t } = useTranslation();
   const [subProducts, setSubProducts] = useRecoilState<any>(
@@ -29,6 +32,7 @@ const SectionMappingWidget = ({
   useEffect(() => {
     const groupedParameters = subSection?.parameters
       ?.filter((param: any) => !param.isHidden)
+      ?.filter((param: any) => !param.isUnderParameterId)
       ?.filter((param: any) => {
         return !relatedParameters.some(
           (relatedParam) => relatedParam.parameterId === param.id
@@ -145,22 +149,26 @@ const SectionMappingWidget = ({
                           section
                         );
                         return (
-                          <div
-                            key={parameter?.id}
-                            style={{
-                              display: "flex",
-                            }}
-                          >
-                            {_renderParameterType(
-                              parameter,
-                              subSection,
-                              section,
-                              subSection?.parameters,
-                              value,
-                              subSection?.parameters,
-                              true
-                            )}
-                          </div>
+                          <React.Fragment>
+                            {parameter.isStartNewLine ? <div style={{ flexBasis: '100%', height: 0 }}></div> : <></>}
+                            <div
+                              key={parameter?.id}
+                              style={{
+                                display: "flex",
+                              }}
+                            >
+                              {_renderParameterType(
+                                parameter,
+                                subSection,
+                                section,
+                                subSection?.parameters,
+                                value,
+                                subSection?.parameters,
+                                true,
+                                false
+                              )}
+                            </div>
+                          </React.Fragment>
                         );
                       })}
                     </div>
@@ -201,26 +209,174 @@ const SectionMappingWidget = ({
         <div style={clasess.parametersContainer}>
           {subSection?.parameters
             ?.filter((param: any) => !param.isHidden)
-            ?.filter((param: any) => {
-              return !relatedParameters.some(
-                (relatedParam) => relatedParam.parameterId === param.id
-              );
-            })
+            ?.filter((param: any) => !param.isUnderParameterId)
             ?.map((parameter: any, index: number) => {
-              const value = _getParameter(parameter, subSection, section);
-              return (
-                <div key={parameter?.id} style={{ display: "flex" }}>
-                  {_renderParameterType(
-                    parameter,
-                    subSection,
-                    section,
-                    subSection?.parameters,
-                    value,
-                    subSection?.parameters,
-                    true
-                  )}
-                </div>
+              const isUnderParameterId = underParameterIds.some(
+                (item) => item.underParameterId === parameter.id && !relatedParameters.some((relatedItem) => relatedItem?.parameterId === item.myParameter?.id)
               );
+              const isUnderParameterId2 = underParameterIds.some(
+                (item) => item.underParameterId === parameter.id && relatedParameters.some((relatedItem) => relatedItem?.parameterId === item.myParameter?.id)
+              );
+              if (isUnderParameterId2) {
+                let list = subSection?.parameters
+                return (
+                  <React.Fragment>
+                    {parameter.isStartNewLine ? <div style={{ flexBasis: '100%', height: 0 }}></div> : <></>}
+                    <div key={parameter?.id}>
+                      {_renderParameterType(
+                        parameter,
+                        subSection,
+                        section,
+                        subSection?.parameters,
+                        _getParameter(parameter, subSection, section),
+                        subSection?.parameters,
+                        true,
+                        false
+                      )}
+                      <div style={{ marginTop: 5 }}>
+                        {
+                          parameter.relatedParameters
+                            .map((relatedParameter) => {
+                              const filteredUnderParameterIds = underParameterIds.filter(
+                                (underParam) =>
+                                  underParam.myParameter?.id === relatedParameter.parameterId
+                              );
+
+                              return filteredUnderParameterIds.map((underParam) => {
+                                const subProduct = subProducts.find(
+                                  (x) => x.type === subSection?.type
+                                );
+                                const parm = subProduct?.parameters?.find(
+                                  (param) =>
+                                    param.parameterId === parameter.id &&
+                                    param.actionIndex === relatedParameter.actionIndex
+                                );
+                                const myParameter = list.find(
+                                  (p) =>
+                                    p.id === relatedParameter.parameterId &&
+                                    p.actionIndex === relatedParameter.actionIndex
+                                );
+                                if (relatedParameter.activateByAllValues && parm?.values) {
+                                  return (
+                                    <div>
+                                      {_renderParameterType(
+                                        myParameter,
+                                        subSection,
+                                        section,
+                                        subSection?.parameters,
+                                        _getParameter(myParameter, subSection, section),
+                                        subSection?.parameters,
+                                        true,
+                                        true
+                                      )}
+                                    </div>
+                                  );
+                                } else {
+                                  if (parameter?.parameterType === EParameterTypes.DROP_DOWN_LIST) {
+                                    const valueInArray = relatedParameter.selectedValueIds.find(
+                                      (c) => c == parm?.valueIds
+                                    );
+
+                                    if (valueInArray) {
+                                      return (
+                                        <div>
+                                          {_renderParameterType(
+                                            myParameter,
+                                            subSection,
+                                            section,
+                                            subSection?.parameters,
+                                            _getParameter(myParameter, subSection, section),
+                                            subSection?.parameters,
+                                            true,
+                                            true
+                                          )}
+                                        </div>
+                                      );
+                                    }
+                                  } else {
+                                    const valueInArray = relatedParameter.selectedValueIds.find(
+                                      (c) => c == parm?.values
+                                    );
+
+                                    if (valueInArray && myParameter) {
+                                      return (
+                                        <div>
+                                          {_renderParameterType(
+                                            myParameter,
+                                            subSection,
+                                            section,
+                                            subSection?.parameters,
+                                            _getParameter(myParameter, subSection, section),
+                                            subSection?.parameters,
+                                            true,
+                                            true
+                                          )}
+                                        </div>
+                                      );
+                                    }
+                                  }
+                                }
+                              });
+                            })
+                        }
+                      </div>
+                    </div>
+                  </React.Fragment>
+                );
+              }
+              if (isUnderParameterId) {
+                const myParameter = underParameterIds.find(
+                  (item) => item.underParameterId === parameter.id
+                )?.myParameter;
+                return (
+                  <React.Fragment>
+                    {parameter.isStartNewLine ? <div style={{ flexBasis: '100%', height: 0 }}></div> : <></>}
+                    <div key={parameter?.id}>
+                      {_renderParameterType(
+                        parameter,
+                        subSection,
+                        section,
+                        subSection?.parameters,
+                        _getParameter(parameter, subSection, section),
+                        subSection?.parameters,
+                        true,
+                        false
+                      )}
+                      <div style={{ marginTop: 5 }}>
+                        {_renderParameterType(
+                          myParameter,
+                          subSection,
+                          section,
+                          subSection?.parameters,
+                          _getParameter(myParameter, subSection, section),
+                          subSection?.parameters,
+                          true,
+                          true
+                        )}
+                      </div>
+                    </div>
+                  </React.Fragment>
+                );
+              } else {
+                const value = _getParameter(parameter, subSection, section);
+                return (
+                  <React.Fragment>
+                    {parameter.isStartNewLine ? <div style={{ flexBasis: '100%', height: 0 }}></div> : <></>}
+                    <div key={parameter?.id} style={{ display: "flex", pageBreakBefore: parameter.isStartNewLine ? 'always' : 'unset' }}>
+                      {_renderParameterType(
+                        parameter,
+                        subSection,
+                        section,
+                        subSection?.parameters,
+                        value,
+                        subSection?.parameters,
+                        true,
+                        false
+                      )}
+                    </div>
+                  </React.Fragment>
+                );
+              }
             })}
         </div>
       )}

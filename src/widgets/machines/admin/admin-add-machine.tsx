@@ -7,8 +7,10 @@ import {useAdminAddMachine} from "@/widgets/machines/hooks/use-admin-add-machine
 import {SideBarContainer} from "@/components/containers/side-container/side-bar-container";
 import {MachinesSideList} from "@/components/containers/machines-container/side-list/machines-side-list";
 import Button from "@mui/material/Button";
+import { useTranslation } from "react-i18next";
 
 const AdminAddMachine = () => {
+    const {t} = useTranslation();
     const {categoryList, categoryName} = useMachinesCategories();
     const [selectedCategory, setSelectedCategory] = useState<string>();
     const [activeStep, setActiveStep] = useState<number>(-1);
@@ -32,10 +34,10 @@ const AdminAddMachine = () => {
         setActiveStep(stepIndex)
     }
     const Side = () => <MachinesSideList list={categoryList} selectedItem={selectedCategory} onSelect={onSelectCategory}
-                                         title={'Categories'}/>
+                                         title={t('customers.modal.categories')}/>
   return (
-      <SideBarContainer side={Side()} header={categoryName(selectedCategory)} subHeader={'Add Machine'}>
-          <Button variant={'contained'} onClick={adminAddMachine}>add machine</Button>
+      <SideBarContainer side={Side()} header={categoryName(selectedCategory)} subHeader={t("tabs.addMachine")}>
+          <Button variant={'contained'} onClick={adminAddMachine}>{t("tabs.addMachine")}</Button>
           <MachineStepper steps={getCategorySteps()} activeStep={activeStep} previousStep={navigateBack}
                           nextStep={navigateNext} actionButtonClicked={adminAddMachine} moveToStep={moveToStepByIndex}
                           isAddForm={true}/>

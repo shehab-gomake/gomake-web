@@ -20,7 +20,7 @@ const SelectMaterialsParameterWidget = ({
 }) => {
   const materialsEnumsValues = useRecoilValue(materialsCategoriesState);
   let Comp;
-  
+
   if (allMaterials?.length > 0) {
     const data = materialsEnumsValues.find((item) => {
       return compareStrings(item.name, parameter?.materialPath[0]);
@@ -30,23 +30,24 @@ const SelectMaterialsParameterWidget = ({
     let isDefaultObj = parameter?.valuesConfigs?.find(
       (item) => item.isDefault === true
     );
-    const onChange = (value: any)=>{
+    const onChange = (value: any) => {
       if (parameter?.materialPath?.length == 3) {
         onChangeSubProductsForPrice(
-            parameter?.id,
-            subSection?.id,
-            section?.id,
-            parameter?.parameterType,
-            parameter?.name,
-            parameter?.actionId,
-            {
-              valueIds: value?.valueId,
-              values: value?.value,
-              ...(data?.id > 0 && { material: data?.id }),
-            },
-            subSection?.type,
-            index,
-            parameter?.actionIndex
+          parameter?.id,
+          subSection?.id,
+          section?.id,
+          parameter?.parameterType,
+          parameter?.name,
+          parameter?.actionId,
+          {
+            valueIds: value?.valueId,
+            values: value?.value,
+            ...(data?.id > 0 && { material: data?.id }),
+          },
+          subSection?.type,
+          index,
+          parameter?.actionIndex,
+          parameter?.code
         );
         setDigidatPriceData({
           ...digitalPriceData,
@@ -56,20 +57,21 @@ const SelectMaterialsParameterWidget = ({
       }
       if (parameter?.materialPath?.length == 2) {
         onChangeSubProductsForPrice(
-            parameter?.id,
-            subSection?.id,
-            section?.id,
-            parameter?.parameterType,
-            parameter?.name,
-            parameter?.actionId,
-            {
-              valueIds: value?.valueId,
-              values: value?.value,
-              ...(data?.id > 0 && { material: data?.id }),
-            },
-            subSection?.type,
-            index,
-            parameter?.actionIndex
+          parameter?.id,
+          subSection?.id,
+          section?.id,
+          parameter?.parameterType,
+          parameter?.name,
+          parameter?.actionId,
+          {
+            valueIds: value?.valueId,
+            values: value?.value,
+            ...(data?.id > 0 && { material: data?.id }),
+          },
+          subSection?.type,
+          index,
+          parameter?.actionIndex,
+          parameter?.code
         );
         setDigidatPriceData({
           ...digitalPriceData,
@@ -80,20 +82,21 @@ const SelectMaterialsParameterWidget = ({
       }
       if (parameter?.materialPath?.length == 1) {
         onChangeSubProductsForPrice(
-            parameter?.id,
-            subSection?.id,
-            section?.id,
-            parameter?.parameterType,
-            parameter?.name,
-            parameter?.actionId,
-            {
-              valueIds: value?.valueId,
-              values: value?.value,
-              ...(data?.id > 0 && { material: data?.id }),
-            },
-            subSection?.type,
-            index,
-            parameter?.actionIndex
+          parameter?.id,
+          subSection?.id,
+          section?.id,
+          parameter?.parameterType,
+          parameter?.name,
+          parameter?.actionId,
+          {
+            valueIds: value?.valueId,
+            values: value?.value,
+            ...(data?.id > 0 && { material: data?.id }),
+          },
+          subSection?.type,
+          index,
+          parameter?.actionIndex,
+          parameter?.code
         );
         setDigidatPriceData({
           ...digitalPriceData,
@@ -116,7 +119,7 @@ const SelectMaterialsParameterWidget = ({
       let defaultParameter = defsultParameters?.valuesConfigs?.find(
         (item) => item?.isDefault
       );
-      if(parameter.name == "Spiral color"){
+      if (parameter.name == "Spiral color") {
       }
       let valueIdIsDefault = defaultParameter?.materialValueIds && defaultParameter?.materialValueIds.length > 0 ? defaultParameter?.materialValueIds[0]?.valueId : null;
       options = digitalPriceData?.selectedMaterialLvl1;
@@ -178,7 +181,7 @@ const SelectMaterialsParameterWidget = ({
       }
       //onChange(defailtObjectValue)
     }
-    
+
     Comp = (
       <>
         {options?.length > 0 && (
@@ -193,7 +196,7 @@ const SelectMaterialsParameterWidget = ({
                   : defailtObjectValue
               }
               getOptionLabel={(option: any) => option.value}
-              onChange={(e,value)=>onChange(value)}
+              onChange={(e, value) => onChange(value)}
             />
             {parameter?.setSettingIcon && inModal && (
               <div style={{ cursor: "pointer" }}>

@@ -9,10 +9,13 @@ const InputNumberParameterWidget = ({
   subSection,
   section,
   type,
+  disabled = false,
 }) => {
   return (
     <GomakeTextInput
+      //key={disabled + "parameter" + index}
       style={clasess.textInputStyle}
+      disabled={disabled}
       defaultValue={parameter.defaultValue}
       placeholder={parameter.name}
       value={index !== -1 ? temp[index].values : ""}
@@ -27,7 +30,8 @@ const InputNumberParameterWidget = ({
           { values: e.target.value },
           subSection?.type,
           index,
-          parameter?.actionIndex
+          parameter?.actionIndex,
+          parameter?.code
         );
       }}
       type={type}

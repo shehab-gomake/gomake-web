@@ -23,7 +23,7 @@ const DropDownListParameterWidget = ({
   return (
     <div style={clasess.dropDownListWithSettingIcon}>
       <GoMakeAutoComplate
-        options={parameter?.valuesConfigs?.filter((value) =>  !value.isHidden)}
+        options={parameter?.valuesConfigs?.filter((value) => !value.isHidden)}
         key={parameter.id + "-" + parameter.actionIndex}
         placeholder={parameter.name}
         style={clasess.dropDownListStyle}
@@ -42,7 +42,8 @@ const DropDownListParameterWidget = ({
             { valueIds: value?.id, values: value?.updateName },
             subSection?.type,
             index,
-            parameter?.actionIndex
+            parameter?.actionIndex,
+            parameter?.code
           );
         }}
       />

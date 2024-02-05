@@ -41,6 +41,7 @@ import { getAndSetAllCustomers, getAndSetMachincesNew } from "@/services/hooks";
 import { MaterialMenuWidget } from "./components/more-circle";
 import cloneDeep from "lodash.clonedeep";
 import { SideLeftMenuWidget } from "./components/side-list-menu";
+import {EMaterialActiveFilter} from "@/widgets/materials-widget/enums";
 
 const useMaterials = (isAdmin: boolean) => {
   const { query, push, replace } = useRouter();
@@ -49,7 +50,7 @@ const useMaterials = (isAdmin: boolean) => {
   const [selectedTableRow, setSelectedTableRow] = useState<IMaterialCategoryRow>();
 
   const [materialHeaders, setMaterialHeaders] =
-    useRecoilState<{ key: string; value: string; unit?: string }[]>(
+    useRecoilState<{ key: string; value: string; unit?: string , isForAdmin?:boolean}[]>(
       materialHeadersState
     );
   const [materialCategories, setMaterialCategories] = useRecoilState<
@@ -91,8 +92,8 @@ const useMaterials = (isAdmin: boolean) => {
   const [materialName, setMaterialName] = useState<string>();
   const setMaterialActions = useSetRecoilState(materialActionState);
   const setDefaultSupplier = useSetRecoilState(selectedSupplierIdState);
-  const activeFilter = useRecoilValue(activeFilterState);
-  const materialFilter = useRecoilValue(filterState);
+  const [activeFilter,setActiveFilter] = useRecoilState(activeFilterState);
+  const [materialFilter,setMaterialFilter] = useRecoilState(filterState);
   const { callApi } = useGomakeAxios();
   const { alertSuccessDelete, alertFaultDelete } = useSnackBar();
   const setCurrencies = useSetRecoilState(currenciesState);
@@ -105,6 +106,9 @@ const useMaterials = (isAdmin: boolean) => {
     const path = isAdmin ? "/materials-admin" : "/materials";
     push(path + `/${materialType}?materialCategory=${category}`);
     setFlagState(false);
+    setActiveFilter(EMaterialActiveFilter.ACTIVE);
+    setIsAllMaterialsChecked(false)
+    setMaterialFilter([])
   };
   const onDeleteCategory = async (categoryKey) => {
     const callBack = (res) => {
@@ -233,21 +237,21 @@ const useMaterials = (isAdmin: boolean) => {
         onChange={(event, checked) => onChangeHeaderCheckBox(checked)}
         checked={isAllSelected()}
       />,
-      ...(isAdmin ? materialHeaders.filter(x=>x.key !== "stock") : materialHeaders).map((header) =>
+      ...(isAdmin ? materialHeaders.filter(x=>x.key !== "stock") : materialHeaders.filter((header) => !header.isForAdmin)
+      ).map((header) =>
         header.unit ? (
           <div>
             {" "}
             <span>{header.value}</span> <small>{header.unit}</small>
           </div>
         ) : (
-          header.value
+         header.value
         )
       ),
       t("properties.more"),
     ];
   }, [materialHeaders, materialCategoryData]);
 
-  ///////////////////////////////////////////////////////////
 
   const tableRows = useMemo(() => {
     return materialCategoryData.map((dataRow) => {
@@ -277,12 +281,16 @@ const useMaterials = (isAdmin: boolean) => {
 
   const tableRowsNew = useMemo(() => {
     return materialCategoryData.map((dataRow) => {
+      const filteredHeaders = isAdmin
+        ? materialHeaders.filter((x) => x.key !== "stock" )
+        : materialHeaders.filter((header) => !header.isForAdmin);
+  
       return [
         <Checkbox
           onChange={(e, checked) => onChangeRowCheckBox(dataRow.id, checked)}
           checked={dataRow.checked}
         />,
-        ...(isAdmin ? materialHeaders.filter(x=>x.key !== "stock") : materialHeaders).map((header) => (
+        ...filteredHeaders.map((header) => (
           <TableCellData
             {...dataRow.rowData[header.key]}
             id={dataRow.id}
@@ -299,9 +307,8 @@ const useMaterials = (isAdmin: boolean) => {
         />,
       ];
     });
-  }, [materialHeaders, materialCategoryData, activeFilter, materialFilter]);
-
-  ///////////////////////////////////////////////////////////
+  }, [materialHeaders, materialCategoryData, isAdmin, activeFilter, materialFilter]);
+  
 
   const getCurrenciesApi = async () => {
     const callBack = (res) => {

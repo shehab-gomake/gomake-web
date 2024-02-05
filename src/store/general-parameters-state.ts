@@ -38,11 +38,19 @@ export const productTemplateState = atom({
 export const quantityParameterState = selector({
   key: "quantityParameterState",
   get: ({ get }) => {
-    const generalParameters = get(generalParametersState);
-    const quantity = generalParameters?.find(
-      (item) => item?.parameterId === "4991945c-5e07-4773-8f11-2e3483b70b53"
-    );
-    return !!quantity ? +quantity?.values[0] : 0;
+    const generalParameters = get(subProductsCopyParametersState);
+    const section = generalParameters[0];
+    let quantityParameterValue;
+    if (!!section) {
+      const quantityParameter = section?.parameters?.find(
+        (item) => item?.parameterId === "4991945c-5e07-4773-8f11-2e3483b70b53"
+      );
+      quantityParameterValue =
+        !!quantityParameter && quantityParameter?.values?.length > 0
+          ? +quantityParameter?.values[0]
+          : 0;
+    }
+    return quantityParameterValue;
   },
 });
 export const productTypesNumberState = selector<number>({
@@ -81,42 +89,7 @@ export const productSetsParamState = selector<string>({
     return setsParameterValue;
   },
 });
-export const productSetQuantityState = selector<number>({
-  key: "productSetQuantityState",
-  get: ({ get }) => {
-    const generalParameters = get(subProductsCopyParametersState);
-    const section = generalParameters[0];
-    let setsParameterValue;
-    if (!!section) {
-      const setsParameter = section?.parameters?.find(
-        (item) => item?.parameterId === "0fdbca1a-f250-447b-93e3-5b91909da59c"
-      );
-      setsParameterValue =
-        !!setsParameter && setsParameter?.values?.length > 0
-          ? setsParameter?.values[0]
-          : 0;
-    }
-    return setsParameterValue;
-  },
-});
-export const productSetsUnitsState = selector<number>({
-  key: "productSetsUnitsState",
-  get: ({ get }) => {
-    const generalParameters = get(subProductsCopyParametersState);
-    const section = generalParameters[0];
-    let setsParameterValue;
-    if (!!section) {
-      const setsParameter = section?.parameters?.find(
-        (item) => item?.parameterId === "91d3fe77-b852-4974-beb6-2da7d7616c78"
-      );
-      setsParameterValue =
-        !!setsParameter && setsParameter?.values?.length > 0
-          ? setsParameter?.values[0]
-          : 0;
-    }
-    return setsParameterValue;
-  },
-});
+
 export const currentCalculationConnectionId = atom({
   key: "currentCalculationConnectionIdState",
   default: "",

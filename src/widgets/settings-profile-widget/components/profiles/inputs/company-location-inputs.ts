@@ -1,17 +1,17 @@
 import {ICompanyProfile} from "@/store/company-profile";
 
 
-const companyLocationInputs = (state: ICompanyProfile)  => {
+const companyLocationInputs = (state: ICompanyProfile , countriesWithCodes)  => {
     return [
         {
             name: "country",
             label: "profileSettings.country",
-            type: "text",
+            type: "select",
             placeholder: "profileSettings.country",
             required: true,
             parameterKey: "country",
-            options: [],
-            value: state.country,
+            options: countriesWithCodes,
+            value: state?.country,
             machineInputType: 'input',
             isValid: !!state.country,
         },

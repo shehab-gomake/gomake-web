@@ -26,11 +26,12 @@ const CompanyProfileComponent = () => {
     changeCompanyLoginImage,
     daysOfWork,
     getCurrenciesApi,
-    currencies
+    currencies,
+    countriesWithCodes
   } = useCompanyProfile();
 
   useEffect(() => {
-    getCurrenciesApi().then(()=>{
+    getCurrenciesApi().then(() => {
       getProfile();
     });
   }, []);
@@ -43,15 +44,16 @@ const CompanyProfileComponent = () => {
   };
 
   const formSections: { inputs: any[]; title: string }[] = [
-    { 
-      inputs: companyProfileInputs(profile , currencies), 
-      title: "profileSettings.company" },
+    {
+      inputs: companyProfileInputs(profile, currencies),
+      title: "profileSettings.company"
+    },
     {
       inputs: companyContactsInputs(profile),
       title: "profileSettings.contacts",
     },
     {
-      inputs: companyLocationInputs(profile),
+      inputs: companyLocationInputs(profile , countriesWithCodes),
       title: "profileSettings.location",
     },
     {
@@ -59,6 +61,7 @@ const CompanyProfileComponent = () => {
       title: "profileSettings.financial",
     },
   ];
+
 
   return (
     <div style={{ paddingBottom: 2, paddingTop: "40px", position: "relative" }}>
@@ -90,7 +93,7 @@ const CompanyProfileComponent = () => {
                   error={false}
                 />
               ))}
-              {section.title === 'profileSettings.company' && <DaysOfWork options={daysOfWork} label={t("profileSettings.dayOfWork")} setState={profileChange} state={profile}/>}
+              {section.title === 'profileSettings.company' && <DaysOfWork options={daysOfWork} label={t("profileSettings.dayOfWork")} setState={profileChange} state={profile} />}
             </FormInputsSectionComponent>
           );
         })}
