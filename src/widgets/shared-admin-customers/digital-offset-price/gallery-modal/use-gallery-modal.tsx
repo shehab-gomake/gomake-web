@@ -37,7 +37,7 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
     "Height"
   );
   const shapeParameter = getParameterByParameterCode(subProducts, "Shape")
-
+  const LabelShapeParameter = getParameterByParameterCode(subProducts, "LabelsShape")
   useEffect(() => {
     if (selectParameterButton?.parameter?.materialPath?.length > 0) {
       getProductQuoteItemById();
@@ -171,13 +171,13 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
   const CheckOptionToStraightKnife = useCallback(async () => {
     const res = await callApi(
       EHttpMethod.POST,
-      `/v1/calculation-service/calculations/check-option-to-straight-knife?width=${+widthParameter?.values[0]}&length=${+heightParameter?.values[0]}&shapeId=${shapeParameter?.parameterId}&materialTypeKey=${selectParameterButton?.parameter?.materialPath[0]}`,
+      `/v1/calculation-service/calculations/check-option-to-straight-knife?width=${+widthParameter?.values[0]}&length=${+heightParameter?.values[0]}&shapeId=${shapeParameter ? shapeParameter?.parameterId : LabelShapeParameter?.parameterId}&materialTypeKey=${selectParameterButton?.parameter?.materialPath[0]}`,
 
     );
     if (res?.success) {
       setIsShowStraightKnife(res.data?.data?.data)
     }
-  }, [widthParameter, heightParameter, shapeParameter, selectParameterButton]);
+  }, [widthParameter, heightParameter, shapeParameter, LabelShapeParameter, selectParameterButton]);
 
   return {
     materialData,

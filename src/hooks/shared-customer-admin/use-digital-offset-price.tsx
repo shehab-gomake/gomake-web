@@ -613,10 +613,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                             : [childParam?.defaultValue],
                           sectionId: section?.id,
                           subSectionId: subSection?.id,
-                          actionIndex: parameter?.actionIndex,
-                          parameterCode: parameter?.code,
-                          unitKey: parameter?.unitKey,
-                          unitType: parameter?.unitType,
+                          actionIndex: childParam?.actionIndex,
+                          parameterCode: childParam?.code,
+                          unitKey: childParam?.unitKey,
+                          unitType: childParam?.unitType,
                         });
                       });
                     }
@@ -1199,7 +1199,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         p.id === relatedParameter.parameterId &&
                         p.actionIndex === relatedParameter.actionIndex
                     );
-                    if(parameter.name == "identical printing sides "){
+                    if (parameter.name == "identical printing sides ") {
                       debugger;
                     }
                     if (relatedParameter.activateByAllValues && parm?.values) {
@@ -1239,7 +1239,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         (c) => c == parm?.values
                       );
 
-                      if (valueInArray && myParameter || (!parm && relatedParameter && relatedParameter.selectedValueIds && relatedParameter.selectedValueIds.length > 0 && relatedParameter.selectedValueIds[0] === "false" )) {
+                      if (valueInArray && myParameter || (!parm && relatedParameter && relatedParameter.selectedValueIds && relatedParameter.selectedValueIds.length > 0 && relatedParameter.selectedValueIds[0] === "false")) {
                         let productCopy = cloneDeep(productTemplate);
                         const sectionCopy = productCopy.sections?.find(x => x.id === section.id);
                         const subSectionCopy = sectionCopy.subSections?.find(x => x.id === subSection.id);
@@ -1299,13 +1299,13 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       );
       const productTemplateCopy = cloneDeep(productTemplate);
       const section = productTemplateCopy.sections.find(
-          (section) => section.id === sectionId
+        (section) => section.id === sectionId
       );
       const subSection = section.subSections.find(
-          (sub) => sub.id === subSectionId
+        (sub) => sub.id === subSectionId
       );
       const subSectionParameter = subSection.parameters.find(
-          (param) => param.id === parameterId
+        (param) => param.id === parameterId
       );
       if (findIndex !== -1) {
         const valuesArray = [data.values].filter(Boolean);
@@ -1370,7 +1370,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       //       actionIndex,
       //     });
       //   }
-      
+
       if (subSectionParameter) {
         //types parameter
         if (subSectionParameter.id == "de2bb7d5-01b1-4b2b-b0fa-81cd0445841b") {
