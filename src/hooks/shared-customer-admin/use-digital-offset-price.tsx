@@ -506,7 +506,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         sectionId: section?.id,
                         subSectionId: subSection?.id,
                         actionIndex: parameter?.actionIndex,
-                        parameterCode: parameter?.code
+                        parameterCode: parameter?.code,
+                        unitKey: parameter?.unitKey,
+                        unitType: parameter?.unitType,
                       });
                     }
                   } else if (
@@ -539,7 +541,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         sectionId: section?.id,
                         subSectionId: subSection?.id,
                         actionIndex: parameter?.actionIndex,
-                        parameterCode: parameter?.code
+                        parameterCode: parameter?.code,
+                        unitKey: parameter?.unitKey,
+                        unitType: parameter?.unitType,
                       });
                     }
                   } else if (
@@ -579,7 +583,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                           sectionId: section?.id,
                           subSectionId: subSection?.id,
                           actionIndex: parameter?.actionIndex,
-                          parameterCode: parameter?.code
+                          parameterCode: parameter?.code,
+                          unitKey: parameter?.unitKey,
+                          unitType: parameter?.unitType,
                         });
                       }
                     }
@@ -613,7 +619,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         sectionId: section?.id,
                         subSectionId: subSection?.id,
                         actionIndex: parameter?.actionIndex,
-                        parameterCode: parameter?.code
+                        parameterCode: parameter?.code,
+                        unitKey: parameter?.unitKey,
+                        unitType: parameter?.unitType,
                       });
                       parameter?.childsParameters?.map((item) => {
                         const childParam = subSection.parameters.find(
@@ -630,7 +638,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                           sectionId: section?.id,
                           subSectionId: subSection?.id,
                           actionIndex: parameter?.actionIndex,
-                          parameterCode: parameter?.code
+                          parameterCode: parameter?.code,
+                          unitKey: parameter?.unitKey,
+                          unitType: parameter?.unitType,
                         });
                       });
                     }
@@ -646,7 +656,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     sectionId: section?.id,
                     subSectionId: subSection?.id,
                     actionIndex: parameter?.actionIndex,
-                    parameterCode: parameter?.code
+                    parameterCode: parameter?.code,
+                    unitKey: parameter?.unitKey,
+                    unitType: parameter?.unitType,
                   });
                 }
               });
@@ -1309,6 +1321,16 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           item.subSectionId === subSectionId &&
           item.actionIndex === actionIndex
       );
+      const productTemplateCopy = cloneDeep(productTemplate);
+      const section = productTemplateCopy.sections.find(
+          (section) => section.id === sectionId
+      );
+      const subSection = section.subSections.find(
+          (sub) => sub.id === subSectionId
+      );
+      const subSectionParameter = subSection.parameters.find(
+          (param) => param.id === parameterId
+      );
       if (findIndex !== -1) {
         const valuesArray = [data.values].filter(Boolean);
         temp[findIndex] = {
@@ -1336,7 +1358,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           values: [data.values],
           valueIds: [data.valueIds],
           actionIndex,
-          parameterCode
+          parameterCode,
+          unitKey: subSectionParameter?.unitKey,
+          unitType: subSectionParameter?.unitType,
         });
       }
       const productTemplateCopy = cloneDeep(productTemplate);
@@ -1509,6 +1533,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 actionId: param.actionId,
                 values: selectedParam.valueIds,
                 valueIds: selectedParam.valueIds,
+                unitKey: selectedParam?.unitKey,
+                unitType: selectedParam?.unitType,
                 actionIndex,
                 parameterCode
               });
@@ -1694,6 +1720,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             sectionId: itemParmetersValue?.sectionId,
             subSectionId: itemParmetersValue?.subSectionId,
             actionIndex: itemParmetersValue?.actionIndex,
+            unitKey: itemParmetersValue?.unitKey,
+            unitType: itemParmetersValue?.unitType,
             parameterCode: itemParmetersValue?.code
           };
           if (exitsSubProduct) {

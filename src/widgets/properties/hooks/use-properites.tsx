@@ -9,6 +9,7 @@ import { useParameters } from "./use-parameters";
 import { IconButton } from "@mui/material";
 import { MoreCircleIcon } from "@/icons";
 import { useTranslation } from "react-i18next";
+import { getAndSetMachincesByActionId } from "@/services/hooks";
 
 const useProperites = ({ classes }) => {
   const { t } = useTranslation();
@@ -45,6 +46,18 @@ const useProperites = ({ classes }) => {
   const getProperitesService = useCallback(async () => {
     await getAndSetProperites(callApi, setAllProperites, router);
   }, []);
+
+  const [allMachincesList, setAllMachincesList] = useState<any>();
+  const getMachincesByActionId = useCallback(async () => {
+    if (router.query.actionId) {
+      await getAndSetMachincesByActionId(callApi, setAllMachincesList, {
+        actionId: router.query.actionId,
+      });
+    }
+  }, [router]);
+  useEffect(() => {
+    getMachincesByActionId()
+  }, [])
   useEffect(() => {
     const updatedProperties = updateProperties(
       allProperties,
@@ -58,12 +71,26 @@ const useProperites = ({ classes }) => {
         {property.actionRules
           ?.sort((a, b) => a.priority - b.priority)
           ?.map((rule, index) => {
+            const successEvent =
+              property?.propertyId === "9e8115f2-1ae9-4350-986e-a089af9183be"
+                ? allMachincesList?.machines?.find(
+                  (item) => item?.machineId === rule.successEvent
+                )?.machineName
+                : property?.ruleType === 1
+                  ? (() => {
+                    const params = parameters.find(
+                      (param) => param?.id === property?.propertyId
+                    )?.values;
+                    const value = params?.find((value) => value?.id === rule.successEvent)?.name
+                    return value;
+                  })()
+                  : rule.successEvent;
             return (
               <div style={classes.item}>
-                {rule.successEvent ? (
+                {successEvent ? (
                   <>
                     {index + 1}- {rule.expression} value=
-                    {rule.successEvent}
+                    {successEvent}
                   </>
                 ) : (
                   <>
@@ -74,7 +101,7 @@ const useProperites = ({ classes }) => {
             );
           })}
       </div>,
-      property.ruleType == 0 ? "Output" : "Input",
+      property.ruleType == 0 ? t("properties.output") : t("properties.input"),
       <IconButton
         onClick={(e) => {
           handleClick(e);
@@ -85,7 +112,7 @@ const useProperites = ({ classes }) => {
       </IconButton>,
     ]);
     setProperitesData(mapData);
-  }, [parameters, Outputs, allProperties]);
+  }, [parameters, Outputs, allProperties, allMachincesList]);
 
   const [openAddRule, setOpenAddRule] = useState<boolean>(false);
   const [openEditRule, setOpenEditRule] = useState<boolean>(false);

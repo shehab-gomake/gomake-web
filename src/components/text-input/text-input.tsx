@@ -1,9 +1,11 @@
 import * as React from "react";
 import TextField from "@mui/material/TextField";
-import { styled } from "@mui/material/styles";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { ThemeProvider, createTheme, styled } from "@mui/material";
+import { detectLanguage } from "@/utils/helpers";
 
 const StyledTextField = styled(TextField, {
+
   shouldForwardProp: (propName: any) =>
     propName !== "secondColor" &&
     propName !== "primaryColor" &&
@@ -28,6 +30,7 @@ const StyledTextField = styled(TextField, {
     borderBottom: props.error
       ? `2px solid ${props.errorColor(300)}`
       : `0px solid #FFFFFF`,
+    direction: props.direction,
     ...props.style,
   },
 
@@ -98,31 +101,58 @@ const GomakeTextInput = ({
   onFocus?: any;
   id?: any;
 }) => {
+  const systemLanguage = localStorage.getItem("systemLanguage");
+  const lang = systemLanguage === "ar" ? "ar" : "en";
+  const inputDir = lang === "ar" ? "rtl" : "ltr";
+  const themeRTL = createTheme({
+    direction: lang === "ar" ? "rtl" : "ltr",
+  });
   const { primaryColor, secondColor, errorColor } = useGomakeTheme();
+  const [direction, setDirection] = React.useState(inputDir)
+  const language = detectLanguage(value);
+  React.useEffect(() => {
+    if (language === "English") {
+      setDirection("ltr")
+    }
+    else if (language === "Arabic") {
+      setDirection("rtl")
+    }
+    else {
+      setDirection(inputDir)
+    }
+
+  }, [value])
   return (
-    <StyledTextField
-      autoFocus={autoFocus}
-      value={value}
-      onChange={onChange}
-      style={style}
-      error={error}
-      type={type}
-      disabled={disabled}
-      placeholder={placeholder}
-      onKeyDown={onKeyDown}
-      multiline={multiline}
-      InputProps={InputProps}
-      // @ts-ignore
-      secondColor={secondColor}
-      primaryColor={primaryColor}
-      errorColor={errorColor}
-      onMouseLeave={onMouseLeave}
-      defaultValue={defaultValue}
-      onBlur={onBlur}
-      onClick={onClick}
-      onFocus={onFocus}
-      id={id}
-    />
+    <ThemeProvider theme={themeRTL} >
+      <StyledTextField
+        autoFocus={autoFocus}
+        value={value}
+        dir={direction}
+        // @ts-ignore
+        direction={direction}
+        onChange={onChange}
+        style={style}
+        error={error}
+        type={type}
+        disabled={disabled}
+        placeholder={placeholder}
+        onKeyDown={onKeyDown}
+        multiline={multiline}
+        InputProps={InputProps}
+        // @ts-ignore
+        secondColor={secondColor}
+        primaryColor={primaryColor}
+        errorColor={errorColor}
+        onMouseLeave={onMouseLeave}
+        defaultValue={defaultValue}
+        onBlur={onBlur}
+        onClick={onClick}
+        onFocus={onFocus}
+        id={id}
+      />
+
+    </ThemeProvider>
+
   );
 };
 

@@ -104,7 +104,7 @@ const useAddRuleModal = ({
       { label: "No", id: false },
     ];
   }, []);
-  const { alertSuccessAdded, alertFaultAdded } = useSnackBar();
+  const { alertSuccessAdded, alertFaultAdded,setSnackbarStateValue } = useSnackBar();
   const router = useRouter();
 
   const initialRule = {
@@ -272,8 +272,36 @@ const useAddRuleModal = ({
     rules,
     isDefaultException,
   ]);
-
   const createProperties = useCallback(async () => {
+    if (!propertieValue) {
+      alertFaultAdded();
+      // setSnackbarStateValue({
+      //   state: true,
+      //   message: "Please fill out all fields",
+      //   type: "error",
+      // });
+      return;
+    }
+  const isValidRules = rules.every((rule) => {
+    const hasCategory = rule.category && rule.category.id;
+    const hasCondition = rule.condition && rule.condition.id;
+    const hasStatement2 = rule.statement2 && rule.statement2.id;
+
+    if (!hasCategory || !hasCondition || !hasStatement2) {
+      setSnackbarStateValue({
+        state: true,
+        message: "Please fill out all fields",
+        type: "error",
+      });
+      return false;
+    }
+
+    return true;
+  });
+
+  if (!isValidRules) {
+    return; 
+  }
     const res = await callApi(
       EHttpMethod.POST,
       `/v1/printhouse-config/print-house-action/add-rule/${router?.query?.actionId}/${selectedProperties?.propertyId}/${selectedProperties?.ruleType}`,
@@ -286,8 +314,8 @@ const useAddRuleModal = ({
               typeof item?.statement === "object"
                 ? item?.statement?.id
                 : item.statement,
-            statementValue: item.statement2.id,
-            operator: item.condition.id,
+            statementValue: item?.statement2?.id,
+            operator: item?.condition?.id,
             conditionBetweenStatements: item.linkCondition
               ? item.linkCondition.id
               : "",
@@ -304,7 +332,11 @@ const useAddRuleModal = ({
       getProperitesService();
       onCloseModal();
     } else {
-      alertFaultAdded();
+      setSnackbarStateValue({
+        state: true,
+        message: "this rule is already added",
+        type: "error",
+      });
     }
   }, [router, expression, selectedProperties, propertieValue, rules]);
 
