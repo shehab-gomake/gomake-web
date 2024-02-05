@@ -59,6 +59,8 @@ const useMaterialsCategories = (isAdmin:boolean) => {
         pageNumber,
         pageSize,
         customFiltersKeyValueList
+      }).catch(e=>{
+        
       });
     }else{
        await getPrintHouseMaterialCategoryDataApi(callApi, callBack, {
@@ -69,7 +71,11 @@ const useMaterialsCategories = (isAdmin:boolean) => {
         pageSize,
         isActive, 
          customFiltersKeyValueList
-      });
+      }).catch(e=>{
+         setMaterialCategoryData([])
+         setPagesCount(0);
+         setMaterialTableFilters([])
+       });
      
     }
     

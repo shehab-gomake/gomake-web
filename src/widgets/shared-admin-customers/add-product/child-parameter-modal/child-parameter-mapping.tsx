@@ -3,6 +3,7 @@ import { Draggable } from "react-beautiful-dnd";
 
 import { useStyle } from "./style";
 import { ReOrderIcon, RemoveIcon } from "@/icons";
+import { useTranslation } from "react-i18next";
 
 const ChildParameteMapping = ({
   item,
@@ -12,6 +13,7 @@ const ChildParameteMapping = ({
   deleteRow,
 }: any) => {
   const { clasess } = useStyle();
+  const { t } = useTranslation();
 
   return (
     <Draggable draggableId={item.id} index={index}>
@@ -34,7 +36,7 @@ const ChildParameteMapping = ({
           <div style={clasess.textInputContainer}>
             <GomakeTextInput
               style={clasess.textInputStyle}
-              placeholder="Enter Value"
+              placeholder={t("products.profits.exceptions.enterValue")}
               onChange={(e) => changeItems(index, "updateName", e.target.value)}
               defaultValue={item?.updateName}
             />

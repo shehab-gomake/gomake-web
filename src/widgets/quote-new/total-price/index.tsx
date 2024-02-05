@@ -33,7 +33,6 @@ const TotalPriceComp = ({
     changeQuoteItems("discount", e);
   };
 
-
   return (
     <div style={classes.tableFooterContainer}>
       <div style={classes.firstRowForFooterContainer}>
@@ -47,7 +46,9 @@ const TotalPriceComp = ({
             paddingLeft: 36,
           }}
         >
-          {quoteItems?.totalPrice +" "+ getCurrencyUnitText(quoteItems?.currency)}
+          {quoteItems?.totalPrice +
+            " " +
+            getCurrencyUnitText(quoteItems?.currency)}
         </div>
         <div style={{ ...classes.evenRowContainer, width: "13%" }}>
           {t("sales.quote.discount")}
@@ -55,13 +56,13 @@ const TotalPriceComp = ({
         <div style={{ ...classes.oddRowContainer, width: "19%" }}>
           <div style={classes.cellTextInputStyle}>
             <InputUpdatedValues
-              value={quoteItems?.discount}
+              value={quoteItems?.discount ? quoteItems?.discount : 0}
               onBlur={onBlurDiscount}
               isUpdate={isUpdateDiscount}
               setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdateDiscount}
               onInputChange={(e) => onInputDiscount(e)}
             />
-            {quoteItems?.discount && getCurrencyUnitText(quoteItems?.currency)}
+            {getCurrencyUnitText(quoteItems?.currency)}
           </div>
         </div>
         <div style={{ ...classes.evenRowContainer, width: "13%" }}>
@@ -90,7 +91,7 @@ const TotalPriceComp = ({
         >
           <div style={classes.cellTextInputStyle}>
             <InputUpdatedValues
-              value={quoteItems?.totalPayment }
+              value={quoteItems?.totalPayment}
               onBlur={onBlurTotalPayment}
               isUpdate={isUpdateTotalPayment}
               setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdateTotalPayment}

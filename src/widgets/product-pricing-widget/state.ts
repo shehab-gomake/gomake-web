@@ -2,6 +2,7 @@ import { atom, selector } from "recoil";
 import {
   ICalculatedWorkFlow,
   ICalculationProgress,
+  IExceptionsLog,
   IOutSourceSupplier,
   IPricingAction,
 } from "@/widgets/product-pricing-widget/interface";
@@ -62,4 +63,8 @@ export const currentProductItemValuePriceState = atom<number>({
 export const currentProductItemValueDraftId = atom<string>({
   key: "currentProductItemValueDraftId",
   default: null,
+});
+export const calculationExceptionsLogsState = atom<IExceptionsLog[]>({
+  key: "calculationExceptionsLogsState",
+  default: [],
 });

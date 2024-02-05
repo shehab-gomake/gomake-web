@@ -5,11 +5,11 @@ import { useTranslation } from "react-i18next";
 
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { FONT_FAMILY } from "@/utils/font-family";
-import { adaptPaddingLeft, adaptPaddingRight } from "@/utils/adapter";
+import { adaptLeft, adaptPaddingLeft, adaptPaddingRight, adaptRight } from "@/utils/adapter";
 const useStyle = () => {
   const { t } = useTranslation();
   const direction = t("direction");
-  const { primaryColor, secondColor, errorColor, neutralColor } =
+  const { primaryColor, secondColor, errorColor, neutralColor, successColor } =
     useGomakeTheme();
 
   const clasess = useMemo(() => {
@@ -21,7 +21,6 @@ const useStyle = () => {
         alignItems: "flex-start",
         width: "100%",
         ...adaptPaddingRight(direction, 20),
-        // paddingLeft: 20,
       },
       mainRowContainer: {
         display: "flex",
@@ -47,12 +46,16 @@ const useStyle = () => {
         width: 330,
         minWidth: 330,
         maxWidth: 330,
-        height: "85.5vh",
+        height: "100%",
         backgroundColor: "white",
         boxShadow: "0px 0px 3px 0px rgba(129, 129, 129, 0.12)",
         padding: 15,
-        marginTop: -77,
+        marginTop: -53,
         borderRadius: 5,
+        position: "fixed" as "fixed",
+        ...adaptLeft(t("direction"), 0),
+        overflow: "scroll",
+        paddingBottom: 150,
       },
       rightSideContainer: {
         width: "100%",
@@ -149,6 +152,7 @@ const useStyle = () => {
       parameterLabelStyle: {
         ...FONT_FAMILY.Lexend(500, 14),
         color: primaryColor(900),
+        width: "fit-content",
       },
       parameterType3ActiveLabelStyle: {
         ...FONT_FAMILY.Lexend(500, 14),
@@ -167,6 +171,14 @@ const useStyle = () => {
         width: "100%",
         minWidth: 180,
         maxWidth: 180,
+      },
+      parameterRowContainer: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "flex-start",
+        alignItems: "center",
+        gap: 10,
+        width: "100%",
       },
       WastebasketNewStyle: {
         display: "flex",
@@ -645,6 +657,10 @@ const useStyle = () => {
         ...FONT_FAMILY.Lexend(400, 14),
         color: secondColor(500),
         width: "33%",
+      },
+      iconLogsTextStyle: {
+        color: successColor(500),
+        marginTop: 2,
       },
       textLogstyle: {
         ...FONT_FAMILY.Lexend(400, 14),

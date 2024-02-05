@@ -467,6 +467,22 @@ const useMaterialsActions = (isAdmin: boolean) => {
     const requestBody: any = {
       props: transformedArray,
       ids: selectedMaterialsIds ,
+      isAllMaterialsChecked: isAllMaterialsChecked,
+      uncheckedMaterials: uncheckedMaterials,
+      tableFilters: {
+        materialKey: materialType,
+        categoryKey: materialCategory,
+        supplierId:null,
+        pageNumber: null,
+        pageSize: null,
+        isActive:
+            activeFilter === EMaterialActiveFilter.ACTIVE
+                ? true
+                : activeFilter === EMaterialActiveFilter.INACTIVE
+                    ? false
+                    : null,
+        customFiltersKeyValueList: materialFilter,
+      },
     };
     const res = await callApi(
       EHttpMethod.POST,
@@ -502,6 +518,22 @@ const useMaterialsActions = (isAdmin: boolean) => {
     const requestBody: any = {
       props: transformedArray,
       ids: selectedMaterialsIds ,
+      isAllMaterialsChecked: isAllMaterialsChecked,
+      uncheckedMaterials: uncheckedMaterials,
+      tableFilters: {
+        materialKey: materialType,
+        categoryKey: materialCategory,
+        supplierId:null,
+        pageNumber: null,
+        pageSize: null,
+        isActive:
+            activeFilter === EMaterialActiveFilter.ACTIVE
+                ? true
+                : activeFilter === EMaterialActiveFilter.INACTIVE
+                    ? false
+                    : null,
+        customFiltersKeyValueList: materialFilter,
+      },
     };
     const res = await callApi(
         EHttpMethod.POST,

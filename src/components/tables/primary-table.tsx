@@ -93,11 +93,11 @@ const PrimaryTable = ({
       <TableContainer style={classes.tableContainer}>
         <Table stickyHeader={stickyHeader}>
           <TableHead>
-            <TableRow>
+            <TableRow >
               {headers?.map((header, index) => {
                 if (index === 0 && stickyHeader) {
                   return (
-                    <TableCell style={classes.stickyHeader}>{header}</TableCell>
+                    <TableCell align={"center"} >{header}</TableCell>
                   );
                 } else {
                   return <TableCell align={"center"}>{header}</TableCell>;
@@ -105,14 +105,14 @@ const PrimaryTable = ({
               })}
             </TableRow>
           </TableHead>
-          <TableBody>
+          <TableBody  >
             {rows?.map((row, index) => (
-              <TableRow key={`row_${index}`}>
+              <TableRow key={`row_${index}`} >
                 {row.map((cell, index) => {
                   if (index === 0 && stickyFirstCol) {
                     return <TableCell style={classes.sticky}>{cell}</TableCell>;
                   } else {
-                    return <TableCell align={"center"}>{cell}</TableCell>;
+                    return <TableCell  align={"center"}>{cell}</TableCell>;
                   }
                 })}
               </TableRow>
@@ -120,7 +120,7 @@ const PrimaryTable = ({
           </TableBody>
         </Table>
       </TableContainer>
-    </Paper>
+      </Paper>
   );
 };
 

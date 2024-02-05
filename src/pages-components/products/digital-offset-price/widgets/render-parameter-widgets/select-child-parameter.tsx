@@ -48,6 +48,9 @@ const SelectChildParameterWidget = ({
               subSectionId: subSection?.id,
               ParameterType: parameter?.parameterType,
               values: [value?.values[parameterId]],
+              actionIndex: parameter?.actionIndex,
+              parameterName: parameter?.name,
+              parameterCode: parameter?.code,
             });
           }
         }
@@ -66,7 +69,7 @@ const SelectChildParameterWidget = ({
   }, [value]);
   return (
     <>
-      {subProductsParams?.length > 0 && (
+      {parameter?.valuesConfigs?.length > 0 && (
         <GoMakeAutoComplate
           options={parameter?.valuesConfigs?.filter((value) => !value.isHidden)}
           placeholder={parameter.name}
@@ -88,7 +91,8 @@ const SelectChildParameterWidget = ({
               { valueIds: value?.id, values: value?.updateName },
               subSection?.type,
               index,
-              parameter?.actionIndex
+              parameter?.actionIndex,
+              parameter?.code
             );
           }}
         />

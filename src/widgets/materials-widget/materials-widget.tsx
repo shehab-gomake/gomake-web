@@ -81,7 +81,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
         list={materialsCategoriesList()}
         selectedItem={materialCategory?.toString()}
         onSelect={onSelectCategory}
-        title={"choose category"}
+        title={t("materials.chooseCategory")}
         isHaveDeleteIcon={true}
       >
         <Stack style={classes.buttonsContainerStyle}>

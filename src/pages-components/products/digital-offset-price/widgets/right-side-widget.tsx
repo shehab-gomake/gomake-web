@@ -5,7 +5,6 @@ import { EWidgetProductType } from "../enums";
 import { DotsLoader } from "@/components/dots-loader/dots-Loader";
 import { ProgressBar } from "@/components/progress-bar/progress-bar";
 import { useRightSideWidget } from "./use-right-side-widget";
-
 const RightSideWidget = ({
   clasess,
   clientDefaultValue,
@@ -45,10 +44,12 @@ const RightSideWidget = ({
     listEmployees,
     isLoading,
     quantity,
-    selectedWorkFlow,
+    calculationExceptionsLogs,
     setCurrentProductItemValueTotalPrice,
     t,
+    _renderIconLogs,
   } = useRightSideWidget({ includeVAT });
+
   return (
     <div style={clasess.rightSideMainContainer}>
       <div style={clasess.rightSideContainer}>
@@ -137,7 +138,11 @@ const RightSideWidget = ({
               <DotsLoader />
             ) : (
               <GomakeTextInput
-                value={currentProductItemValueTotalPrice ?? "---------"}
+                value={
+                  calculationExceptionsLogs?.length > 0
+                    ? "---------"
+                    : (currentProductItemValueTotalPrice ? currentProductItemValueTotalPrice.toFixed(2) : currentProductItemValueTotalPrice) ?? "---------"
+                }
                 onChange={(e: any) => {
                   setCurrentProductItemValueTotalPrice(e.target.value);
                 }}
@@ -360,47 +365,48 @@ const RightSideWidget = ({
                   {t("products.offsetPrice.admin.general")} {errorMsg}
                 </div>
               )}
-              {!selectedWorkFlow?.isCalculated &&
-                selectedWorkFlow?.exceptions?.map((item) => {
-                  return (
-                    <>
-                      {item.ActionName ? (
+
+              {calculationExceptionsLogs?.map((item) => {
+                return (
+                  <>
+                    {item.title ? (
+                      <div
+                        style={{
+                          display: "flex",
+                          flexDirection: "row",
+                          justifyContent: "flex-start",
+                          alignItems: "center",
+                          width: "100%",
+                          gap: 5,
+                        }}
+                      >
+                        <div style={clasess.iconLogsTextStyle}>
+                          <div>{_renderIconLogs(item.type)}</div>
+                        </div>
                         <div
                           style={{
-                            display: "flex",
-                            flexDirection: "row",
-                            justifyContent: "flex-start",
-                            alignItems: "flex-start",
-                            width: "100%",
-                            gap: 5,
+                            ...clasess.titleLogsTextStyle,
+                            // color: item.type ? "" : "",
                           }}
                         >
-                          <div style={clasess.titleLogsTextStyle}>
-                            <div>{item.ActionName}</div>
-                          </div>
-                          <div style={clasess.textLogstyle}>
-                            <span style={{ color: "black" }}>
-                              {item.Exception?.ExceptionMessage}
-                            </span>
-                          </div>
+                          <div>{item.title}:</div>
                         </div>
-                      ) : (
-                        <div style={clasess.generalMsgTextStyle}>
-                          {t("products.offsetPrice.admin.general")}{" "}
-                          {item.Exception?.ExceptionMessage}
+                        <div style={clasess.textLogstyle}>
+                          <span style={{ color: "black" }}>{item.text}</span>
                         </div>
-                      )}
-                    </>
-                  );
-                })}
-              {}
+                      </div>
+                    ) : (
+                      <div style={clasess.generalMsgTextStyle}>
+                        {t("products.offsetPrice.admin.general")} {item.text}
+                      </div>
+                    )}
+                  </>
+                );
+              })}
             </div>
           )}
         </div>
       </div>
-      {/* <div style={clasess.noVatStyle}>
-        {t("products.offsetPrice.admin.dontVAT")}
-      </div> */}
     </div>
   );
 };

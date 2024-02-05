@@ -1,18 +1,33 @@
-import { GoMakeModal, GomakePrimaryButton } from "@/components";
+import { GoMakeAutoComplate, GoMakeModal, GomakePrimaryButton, SecondSwitch } from "@/components";
 
 import { useGalleryModal } from "./use-gallery-modal";
 import { useStyle } from "./style";
 import { useTranslation } from "react-i18next";
+import { SearchInputComponent } from "@/components/form-inputs/search-input-component";
+import { RechooseIcon } from "@/icons";
+import { GalleryModalMapping } from "./gallery-modal-mapping";
+import { useRecoilState } from "recoil";
+import { filterState } from "@/widgets/materials-widget/state";
 
-const GalleryModal = ({ openModal, onClose, onChangeSubProductsForPrice }) => {
+const GalleryModal = ({ openModal, onClose, onChangeSubProductsForPrice, isChargeForNewDie, setIsChargeForNewDie, straightKnife }) => {
   const { clasess } = useStyle();
   const { t } = useTranslation();
   const {
     materialData,
     selectedShape,
+    fixedCartData,
     createParameterForCalculation,
     onClickChoosParameter,
-  } = useGalleryModal({ onClose, onChangeSubProductsForPrice });
+    getProductQuoteItemById,
+    onChangeSearch,
+    setMaterialDataFilter,
+    searchResult,
+    materialDataFilter,
+    materialTableFilters,
+    setFilterValue
+  } = useGalleryModal({ onClose, onChangeSubProductsForPrice, setIsChargeForNewDie, straightKnife });
+
+
   return (
     <>
       <GoMakeModal
@@ -22,49 +37,100 @@ const GalleryModal = ({ openModal, onClose, onChangeSubProductsForPrice }) => {
         })}
         onClose={onClose}
         insideStyle={clasess.insideStyle}
+        withClose={false}
       >
-        <div style={clasess.mainContainer}>
-          {materialData?.data?.map((item, index) => {
-            return (
-              <div
-                key={index}
-                style={
-                  item.id != selectedShape?.id
-                    ? clasess.shapeContainer
-                    : clasess.shapeSelectedContainer
-                }
-                onClick={() => createParameterForCalculation(item)}
-              >
-                <div style={{ width: "100%" }}>
-                  <img
-                    src={item?.rowData?.image?.value}
-                    alt="shape"
-                    style={{ width: 250, height: 210, padding: 5 }}
+        <div style={clasess.firstContainer}>
+
+          <div style={clasess.headerContainer}>
+            {materialTableFilters &&
+              materialTableFilters.map(({ key, values }) => {
+                return (
+                  <GoMakeAutoComplate
+                    key={key}
+                    onChange={(e, v) => setMaterialDataFilter(v)}
+                    style={{ width: "200px" }}
+                    options={values}
+                    placeholder={key}
                   />
-                </div>
-                <div style={clasess.shapeNameStyle}>
-                  {item?.rowData?.name?.value}
-                </div>
-                <div style={clasess.shapeWidthHeightStyle}>
-                  {item?.rowData?.width?.value}
-                </div>
-                <div style={clasess.shapeWidthHeightStyle}>
-                  {item?.rowData?.length?.value}
-                </div>
-              </div>
-            );
-          })}
-          <div style={clasess.btnsContainer}>
-            <GomakePrimaryButton style={clasess.customizeBtnStyle}>
-              Customize
-            </GomakePrimaryButton>
-            <GomakePrimaryButton
-              style={clasess.chooseBtnStyle}
-              onClick={onClickChoosParameter}
+                );
+              })}
+            <SearchInputComponent onChange={onChangeSearch} />
+            <div
+              style={{ cursor: "pointer" }}
+              onClick={getProductQuoteItemById}
             >
-              Choose
-            </GomakePrimaryButton>
+              <RechooseIcon />
+            </div>
+
           </div>
+
+        </div>
+        <div style={clasess.bodyContainer}>
+          <div style={clasess.mainContainer}>
+            {fixedCartData?.filter((card) => card.isShow)?.map((card, index) => {
+              return (
+                <div
+                  style={{
+                    ...clasess.fixdCard,
+                    background: card.backgroundColor,
+                  }}
+                  onClick={card.onclick}
+                >
+                  <div style={clasess.cardItemStyle}>
+                    <div style={clasess.cardIconStyle}>{card.icon}</div>
+                    <div style={clasess.cardNameStyle}>{card.name}</div>
+                  </div>
+                </div>
+              );
+            })}
+
+            {materialDataFilter
+              ? searchResult?.map((item, index) => {
+                return (
+                  <GalleryModalMapping
+                    index={index}
+                    item={item}
+                    selectedShape={selectedShape}
+                    createParameterForCalculation={
+                      createParameterForCalculation
+                    }
+                  />
+                );
+              })
+              : materialData?.data?.map((item, index) => {
+                return (
+                  <GalleryModalMapping
+                    index={index}
+                    item={item}
+                    selectedShape={selectedShape}
+                    createParameterForCalculation={
+                      createParameterForCalculation
+                    }
+                  />
+                );
+              })}
+          </div>
+        </div>
+        <div style={clasess.footerContainer}>
+          <div style={clasess.switchContainer}>
+            <SecondSwitch
+
+              checked={isChargeForNewDie}
+              onChange={() => {
+                setIsChargeForNewDie(
+                  !isChargeForNewDie
+                );
+              }}
+            />
+            <div style={isChargeForNewDie ? clasess.switchlabelSelected : clasess.switchlabel}>Add a charge for new Die</div>
+          </div>
+          <GomakePrimaryButton
+            style={clasess.chooseBtnStyle}
+            onClick={onClickChoosParameter}
+          >
+            {t("sales.quote.save")}
+          </GomakePrimaryButton>
+          <div />
         </div>
       </GoMakeModal>
     </>

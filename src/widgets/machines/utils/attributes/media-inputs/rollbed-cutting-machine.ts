@@ -67,7 +67,7 @@ const rollbedCuttingMachine = (state: Record<string, any>) => {
                     parameterKey: "thickness",
                     options: [],
                     value: state.attributes?.media?.thickness ? state.attributes?.media?.thickness : '',
-                    unit: EMeasurementUnits.CM
+                    unit: EMeasurementUnits.UM
                 },
             ]
         },

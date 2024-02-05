@@ -1,11 +1,12 @@
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import {
   productQuantityTypesState,
   tempProductQuantityTypesValuesState,
 } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/quantity-parameter/quantity-types/state";
 import { IInput } from "@/components/form-inputs/interfaces";
 import { useEffect, useMemo, useState } from "react";
-import { productSetsParamState, subProductsParametersState } from "@/store";
+import { subProductsParametersState } from "@/store";
+import { getParameterByParameterCode } from "@/utils/constants";
 
 interface QuantityTypesInputs extends IInput {
   onChange: (key, value: string) => void;
@@ -17,16 +18,23 @@ const useQuantityTypes = () => {
   const [quantityState, setQuantityState] = useRecoilState(
     productQuantityTypesState
   );
-  const [newTypesValue, setNewTypesValue] = useState("");
+
   const [subProducts, setSubProducts] = useRecoilState<any>(
     subProductsParametersState
   );
+  const initialTypesValues = subProducts[0]?.parameters
+    .find(
+      (param) => param.parameterId === "de2bb7d5-01b1-4b2b-b0fa-81cd0445841b"
+    )
+    ?.values.join(", ");
+  const [newTypesValue, setNewTypesValue] = useState(initialTypesValues);
 
+  const JobNameParameter = getParameterByParameterCode(subProducts,"JobName");
+  const quantityParameter = getParameterByParameterCode(subProducts,"quantity");
   const updateTypesValues = (newValues) => {
     const updatedSubProducts = JSON.parse(JSON.stringify(subProducts));
-
     const typesParameter = updatedSubProducts[0]?.parameters.find(
-      (param) => param.parameterId === "de2bb7d5-01b1-4b2b-b0fa-81cd0445841b"
+      (param) => param.parameterCode === "types"
     );
 
     if (typesParameter) {
@@ -37,27 +45,30 @@ const useQuantityTypes = () => {
   const handleInputChange = (event, myvalue) => {
     const value = myvalue;
     setNewTypesValue(value);
-    updateTypesValues(value);
-  };
-  const initialTypesValues = subProducts[0]?.parameters
-    .find(
-      (param) => param.parameterId === "de2bb7d5-01b1-4b2b-b0fa-81cd0445841b"
-    )
-    ?.values.join(", ");
-  function getParameterByParameterName(subProductArray, paramId) {
-    for (let i = 0; i < subProductArray.length; i++) {
-      const parameters = subProductArray[i].parameters;
-      for (let j = 0; j < parameters.length; j++) {
-        if (parameters[j].parameterId === paramId) {
-          return parameters[j];
-        }
+    if (quantityTypesValues.length === Number(myvalue)) {
+      setValuesState(quantityTypesValues);
+    } else if (quantityTypesValues.length < Number(myvalue)) {
+      const array = [];
+      for (let i = quantityTypesValues.length + 1; i <= Number(myvalue); i++) {
+        array.push({
+          name: JobNameParameter?.values[0] + " " + i,
+          quantity: +quantityParameter?.values[0],
+        });
+        setValuesState([...quantityTypesValues, ...array]);
       }
+    } else if (quantityTypesValues.length > Number(myvalue)) {
+      setValuesState(quantityTypesValues.slice(0, Number(myvalue)));
     }
-    return null;
-  }
-  const resultParameter = getParameterByParameterName(
+  };
+  useEffect(() => {
+    if (save) {
+      updateTypesValues(newTypesValue);
+    }
+  }, [save, newTypesValue]);
+
+  const resultParameter = getParameterByParameterCode(
     subProducts,
-    "4991945c-5e07-4773-8f11-2e3483b70b53"
+    "quantity"
   );
   useEffect(() => {
     if (resultParameter) {
@@ -71,7 +82,7 @@ const useQuantityTypes = () => {
   const quantityTypesValues = useRecoilValue(
     tempProductQuantityTypesValuesState
   );
-
+  const setValuesState = useSetRecoilState(tempProductQuantityTypesValuesState);
   const quantity = useMemo(() => {
     return quantityTypesValues
       .reduce((acc, val) => acc + val.quantity, 0)
@@ -88,7 +99,11 @@ const useQuantityTypes = () => {
       ...state,
       equalQuantity: +newValue,
     }));
+    setValuesState((prevState) =>
+      prevState.map((value) => ({ ...value, quantity: +newValue }))
+    );
   };
+
   const inputs: QuantityTypesInputs[] = useMemo(() => {
     return [
       {
@@ -110,11 +125,9 @@ const useQuantityTypes = () => {
         placeholder: "quantityTypes.typeAmount",
         required: false,
         parameterKey: "typeAmount",
-        // value: productTypesNumber.toString(),
-        value: initialTypesValues,
+        value: newTypesValue,
         options: [],
         isValid: true,
-        // readonly: true,
         onChange: handleInputChange,
       },
       {
@@ -130,7 +143,7 @@ const useQuantityTypes = () => {
         onChange: equalQuantityChange,
       },
     ];
-  }, [quantityTypesValues, quantityState, quantity]);
+  }, [quantityTypesValues, quantityState, quantity, newTypesValue]);
 
   return {
     inputs,

@@ -9,6 +9,7 @@ import {userTypeState} from "@/store/user-type";
 import {userProfileState} from "@/store/user-profile";
 import {useTranslation} from "react-i18next";
 import {Permissions} from "@/components/CheckPermission/enum";
+import { printHouseProfile } from "@/store/print-house-profile";
 
 
 const useCustomer = (permissionEnumValue?:Permissions) => {
@@ -18,6 +19,7 @@ const useCustomer = (permissionEnumValue?:Permissions) => {
     const [systemCurrency, setSystemCurrency] = useRecoilState<any>(systemCurrencyState);
     const [systemVAT, setSystemVAT] = useRecoilState<number>(systemVATState);
     const setUserProfile = useSetRecoilState(userProfileState);
+    const setPrintHouseProfile = useSetRecoilState(printHouseProfile);
     const [userType, setUserType] = useRecoilState<any>(userTypeState);
     const [adminsAutoComplate, setAdminsAutoComplate] = useState([]);
     const [permissions, setPermissions] = useRecoilState<any>(permissionsState);
@@ -35,12 +37,14 @@ const useCustomer = (permissionEnumValue?:Permissions) => {
         if (validate?.success) {
             const user = validate?.data?.data?.customer;
             const userPermissions = [...user.permissions];
-            user.permissions = null;
+            user.permissions = null; 
             setUser({...user, type: "user"});
             setUserType({type: "user"});
             setUserProfile(validate?.data?.data?.customer);
+            setPrintHouseProfile(user.printHouseProfile);
             setSystemCurrency(user.systemCurrency)
             setSystemVAT(user.systemVat);
+            localStorage.setItem('systemLogo', validate?.data?.data?.customer?.printHouseProfile?.logo)
             if (validate?.data?.data?.customer?.systemLang) {
                 localStorage.setItem('systemLanguage', validate?.data?.data?.customer?.systemLang)
                 i18n.changeLanguage(validate?.data?.data?.customer?.systemLang).then();

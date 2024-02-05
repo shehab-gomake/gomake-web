@@ -7,14 +7,14 @@ const useStyle = () => {
   const classes = useMemo(() => {
     return {
       mainContainer: {
-        paddingLeft: 20,
-        paddingRight: 20,
+        padding: 20,
+        paddingTop:0,
       },
       headerContainer: {
         display: "flex",
         justifyContent: "space-between" as "space-between",
         alignItems: "center" as "center",
-        margin: "30px 0 25px 0",
+        marginBottom:20,
       },
       header: {
         ...FONT_FAMILY.Lexend(700, 20),

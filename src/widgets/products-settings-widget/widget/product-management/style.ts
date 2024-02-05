@@ -192,6 +192,13 @@ const useStyle = () => {
         ...FONT_FAMILY.Lexend(600, 20),
         color: "#5759A8",
       },
+      subPrductContainer: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "center",
+        alignItems: "center",
+        cursor: "pointer",
+      },
     };
   }, []);
   return {

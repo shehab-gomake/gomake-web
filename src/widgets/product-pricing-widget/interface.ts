@@ -1,4 +1,5 @@
 import {
+  ECalculationLogType,
   EOutsourceSupplierStatus,
   EWorkSource,
   HtmlElementType,
@@ -126,4 +127,10 @@ export interface IRecommendationRang {
   deliveryTimePercent: number;
   pricePercent: number;
   profitPercent: number;
+}
+
+export interface IExceptionsLog{
+    text:string;
+    title?:string;
+    type?:ECalculationLogType
 }

@@ -30,28 +30,17 @@ const DaysOfWork = ({ label, state, setState, options }: IProps) => {
   const theme = useTheme();
   const { classes } = useStyle();
   const { t } = useTranslation();
-  const dir: 'rtl' | 'ltr' = t('direction');
 
   const initialSelectedValues = state?.businessDays
     ? state.businessDays.split(',').map((value) =>
       options.find((option) => option.value === value)?.label || ''
     ) : [];
-
   const [selectedValues, setSelectedValues] = useState<string[]>(initialSelectedValues);
   useEffect(() => {
-    setSelectedValues(initialSelectedValues),
-      []
-  });
+    setSelectedValues(initialSelectedValues)
+  }, [state]);
 
   const MenuProps = {
-    // anchorOrigin: {
-    //   vertical: 'bottom',
-    //   horizontal: 'left',
-    // },
-    // transformOrigin: {
-    //   vertical: 'top',
-    //   horizontal: 'left',
-    // },
     PaperProps: {
       sx: classes.paperStyle,
     },
@@ -74,35 +63,35 @@ const DaysOfWork = ({ label, state, setState, options }: IProps) => {
   };
 
   return (
-      <FormControl sx={classes.formControlStyle} >
-        <InputLabel id="demo-multiple-chip-label" style={classes.inputLbl}>{label}</InputLabel>
-        <Select
-          labelId="demo-multiple-chip-label"
-          id="demo-multiple-chip"
-          multiple
-          value={selectedValues}
-          onChange={handleChange}
-          input={<OutlinedInput id="select-multiple-chip" label="Chip" />}
-          renderValue={(selected) => (
-            <Box sx={classes.chipStyle}>
-              {selected.map((value) => (
-                <Chip key={value} label={value} />
-              ))}
-            </Box>
-          )}
-          MenuProps={MenuProps}
-        >
-          {options.map((day) => (
-            <MenuItem
-              key={day.value}
-              value={day.label}
-              style={getStyles(day.value, selectedValues, theme)}
-            >
-              {day.label}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
+    <FormControl sx={classes.formControlStyle} >
+      <InputLabel id="demo-multiple-chip-label" style={classes.inputLbl}>{label}</InputLabel>
+      <Select
+        labelId="demo-multiple-chip-label"
+        id="demo-multiple-chip"
+        multiple
+        value={selectedValues}
+        onChange={handleChange}
+        input={<OutlinedInput id="select-multiple-chip" label="Chip" />}
+        renderValue={(selected) => (
+          <Box sx={classes.chipStyle}>
+            {selected.map((value) => (
+              <Chip key={value} label={value} />
+            ))}
+          </Box>
+        )}
+        MenuProps={MenuProps}
+      >
+        {options.map((day) => (
+          <MenuItem
+            key={day.value}
+            value={day.label}
+            style={getStyles(day.value, selectedValues, theme)}
+          >
+            {day.label}
+          </MenuItem>
+        ))}
+      </Select>
+    </FormControl>
   );
 };
 

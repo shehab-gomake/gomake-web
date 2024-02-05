@@ -33,8 +33,8 @@ const ChildrenValuesMapping = ({
     isDisabled,
     setIsFocused,
     isChecked,
-      
-  } = useChildValuesMapping({ value, index, parameters, settingParameters,item });
+
+  } = useChildValuesMapping({ value, index, parameters, settingParameters, item });
   return (
     <>
       {value?.valueId?.length != 0 && (
@@ -57,7 +57,7 @@ const ChildrenValuesMapping = ({
             {item?.parameterType != 1 ? (
               value?.value
             ) : (
-              <div ref={ref}>
+              <div ref={ref as React.RefObject<HTMLDivElement>}>
                 <GomakeTextInput
                   id={`p${index}_${index2}`}
                   placeholder={value?.value}

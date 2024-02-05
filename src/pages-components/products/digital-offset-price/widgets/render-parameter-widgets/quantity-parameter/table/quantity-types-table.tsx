@@ -20,8 +20,7 @@ interface IQuantityTypesTableProps {
 }
 
 const QuantityTypesTable = ({ save }: IQuantityTypesTableProps) => {
-  const { values, onQuantityTypeChange, canUpdateQuantity, canUpdateName } =
-    useQuantityTypesTable(save);
+  const { values, onQuantityTypeChange } = useQuantityTypesTable(save);
   const { t } = useTranslation();
   return (
     <TableContainer
@@ -49,7 +48,7 @@ const QuantityTypesTable = ({ save }: IQuantityTypesTableProps) => {
             <TableRow>
               <TableCell>
                 <GomakeTextInput
-                  disabled={!canUpdateName}
+                  // disabled={!canUpdateName}
                   onChange={(event: ChangeEvent<HTMLInputElement>) =>
                     onQuantityTypeChange(index, "name", event.target.value)
                   }
@@ -59,7 +58,7 @@ const QuantityTypesTable = ({ save }: IQuantityTypesTableProps) => {
               </TableCell>
               <TableCell style={{ textAlign: "center" }}>
                 <GomakeTextInput
-                  disabled={!canUpdateQuantity}
+                  // disabled={!canUpdateQuantity}
                   onChange={(event: ChangeEvent<HTMLInputElement>) =>
                     onQuantityTypeChange(index, "quantity", +event.target.value)
                   }

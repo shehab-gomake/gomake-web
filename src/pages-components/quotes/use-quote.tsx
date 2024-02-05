@@ -35,12 +35,9 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
   const [patternSearch, setPatternSearch] = useState("");
   const [finalPatternSearch, setFinalPatternSearch] = useState("");
   const debounce = useDebounce(patternSearch, 500);
-  const [page, setPage] = useState(1);
-  const [pagesCount, setPagesCount] = useState(0);
-  const pageSize = DEFAULT_VALUES.PageSize;
   const { GetDateFormat } = useDateFormat();
   const [statusId, setStatusId] = useState<any>();
-  const [statisticKey, setStatisticKey] = useState<string>();
+  const [quoteStatusId, setQuoteStatusId] = useState<any>();
   const [customerId, setCustomerId] = useState<any>();
   const [dateRange, setDateRange] = useState<any>();
   const [agentId, setAgentId] = useState<any>();
@@ -55,7 +52,16 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
   const [selectedQuote, setSelectedQuote] = useState<any>();
   const [allDocuments, setAllDocuments] = useState([]);
   const [allStatistics, setAllStatistics] = useState([]);
+  const [activeCard, setActiveCard] = useState(null);
+  const [page, setPage] = useState(1);
+  const [pagesCount, setPagesCount] = useState(0);
+  const [pageSize, setPageSize] = useState(DEFAULT_VALUES.PageSize);
   const selectedClient = useRecoilValue<any>(selectedClientState);
+
+  const handlePageSizeChange = (event) => {
+    setPage(1);
+    setPageSize(event.target.value);
+  };
 
   const onClickCloseModal = () => {
     setOpenModal(false);
@@ -148,7 +154,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
           />,
         ]);
         setAllQuotes(mapData);
-        setPagesCount(Math.ceil(totalItems / pageSize));
+        setPagesCount(Math.ceil(totalItems / (pageSize)));
         setAllStatistics(res?.data?.documentStatisticsList)
       }
     };
@@ -159,8 +165,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
           pageNumber: page,
           pageSize: pageSize,
         },
-        statusId: statusId?.value,
-        // key: statisticKey, 
+        statusId: quoteStatusId?.value || statusId?.value,
         patternSearch: finalPatternSearch,
         customerId: customerId?.id,
         dateRange,
@@ -209,15 +214,21 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
   };
 
   const onClickSearchFilter = () => {
-    getAllQuotes();
     setPage(1);
+    if (statusId!==null)
+    {
+      handleSecondCardClick();
+    }
+  
+    getAllQuotes();
+   
   };
 
   const onClickClearFilter = () => {
-    setStatusId(null);
-    // setStatisticKey(null);
+     handleSecondCardClick();
     setAgentId(null);
     setCustomerId(null);
+    setStatusId(null);
     getAllQuotesInitial();
     setPage(1);
   };
@@ -411,7 +422,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
 
   useEffect(() => {
     getAllQuotes();
-  }, [page, finalPatternSearch]);
+  }, [page,quoteStatusId, pageSize,finalPatternSearch]);
 
   const getAllDocuments = async (docType) => {
     const callBack = (res) => {
@@ -458,6 +469,19 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
           customerId: selectedClient?.id,
         },
       }));
+  };
+
+
+  const handleCardClick = (cardKey, statusValue) => {
+      setPage(1);
+      setActiveCard(cardKey);
+      setStatusId(null);
+     setQuoteStatusId({ label: t(`sales.quote.${cardKey}`), value: statusValue });
+  };
+
+  const handleSecondCardClick = () => {
+    setQuoteStatusId(null)
+    setActiveCard(null);
   };
 
   useEffect(() => {
@@ -514,7 +538,11 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     setPage,
     allStatistics,
     onclickCreateNew,
-    setStatisticKey
+    pageSize,
+    handlePageSizeChange,
+    activeCard,
+    handleCardClick,
+    handleSecondCardClick
   };
 };
 

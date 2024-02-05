@@ -1,14 +1,17 @@
-import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Button } from '@mui/material';
 import { useStyle } from './style';
 import { GarlleryIcon } from '../icons/gallery-icon';
+import { useTranslation } from 'react-i18next';
 
 export const GoMakeFileFiled = ({ selectedNameFile }) => {
+  const {t} = useTranslation();
   const [selectedFileNameinGomakeFiled, setselectedFileNameinGomakeFiled] = useState(
     selectedNameFile || ''
   );
   const [imagePreview, setImagePreview] = useState('');
   const fileInputRef = useRef(null);
+
 
   const handleButtonClick = () => {
     if (fileInputRef.current) {
@@ -55,21 +58,18 @@ export const GoMakeFileFiled = ({ selectedNameFile }) => {
                 textOverflow: 'ellipsis',
               }}
             >
-              {selectedFileNameinGomakeFiled ? "" : 'Upload here'}
+              {selectedFileNameinGomakeFiled ? "" : t("general.uploadHere")}
             </label></>
         )}
-
         <input
           ref={fileInputRef}
-          placeholder={'upload'}
+          placeholder={t("general.upload")}
           onChange={handleInputChange}
           accept=".pdf, .jpg, .png"
           type="file"
           style={{ display: 'none' }}
         />
-        <Button variant="contained" onClick={handleButtonClick} style={{ backgroundColor: '#ED028C' }}>
-          Upload Logo
-        </Button>
+        <Button variant="contained" onClick={handleButtonClick} style={{ backgroundColor: '#ED028C' }}>{t("general.uploadLogo")}</Button>
       </div>
     </div>
   );
