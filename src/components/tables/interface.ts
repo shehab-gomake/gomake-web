@@ -8,6 +8,7 @@ export interface ITableProps {
   stickyFirstCol?: boolean;
   maxHeight?: number;
   variant?: TABLE_TYPE;
+  withoutShadow?: boolean;
 }
 
 export interface ISecondaryTableProps {

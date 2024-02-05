@@ -31,7 +31,7 @@ const HomePageComponentForAdmin = ({ isAdmin }) => {
                 <CardsWidget />
               ) :
                 (
-                  <Skeleton variant="rectangular" sx={{ width: "100%", height: "100%", borderRadius: "8px" }} />
+                  <Skeleton variant="rectangular" sx={classes.skeltonStyle} />
                 )
             }
           </div>

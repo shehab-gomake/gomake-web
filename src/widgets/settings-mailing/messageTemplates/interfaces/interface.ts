@@ -21,6 +21,7 @@ export interface ISMSTemplate {
     sendMailCopy: boolean,
     sendMailCopyToAgent: boolean,
     bccMail: string,
-    fileBase64: string | ArrayBuffer
+    fileBase64: string | ArrayBuffer,
+    isMailToPrintHouse?: boolean,
 }
 
