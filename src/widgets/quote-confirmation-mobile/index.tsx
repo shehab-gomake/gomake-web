@@ -8,6 +8,7 @@ import { QuoteItems } from './components/quote-items';
 
 const QuoteConfirmationMobileWidget = () => {
   const { classes } = useStyle()
+  
   return (
     <div style={classes.mainContainer}>
       <InfoContainer/>

@@ -1,15 +1,17 @@
-import { quoteItemState } from "@/store";
+import { quoteConfirmationState, quoteItemState } from "@/store";
 import React from "react";
 import { useRecoilValue } from "recoil";
 import { QuoteCard } from "./quote-card";
 
 const QuoteItems = () => {
-  const quoteStateValue = useRecoilValue<any>(quoteItemState);
+  // const quoteConfirm = useRecoilValue<any>(quoteItemState);
   let indexs = 0;
+
+  const quoteConfirm = useRecoilValue<any>(quoteConfirmationState);
 
   return (
     <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-      {quoteStateValue?.documentItems?.map((item: any, index: number) => {
+      {quoteConfirm?.documentItems?.map((item: any, index: number) => {
         indexs++;
         const parentIndex = indexs;
         return (

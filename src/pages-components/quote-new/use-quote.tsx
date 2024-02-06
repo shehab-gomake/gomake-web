@@ -963,6 +963,8 @@ const updateTotalPrice = (itemId, itemPrice) => {
     const checkedItemIds = Object.keys(checkedItems).filter(
       (itemId) => checkedItems[itemId]
     );
+
+    console.log("checkedItemIds :  " , checkedItemIds )
   };
 
   return {

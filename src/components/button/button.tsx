@@ -37,7 +37,7 @@ const GomakePrimaryButton = ({ ...props }) => {
       primaryColor={primaryColor}
     >
       <div
-        style={props.leftIcon &&{
+        style={(props.leftIcon || props.rightIcon) &&{
           display: "flex",
           flexDirection: "row",
           width: "100%",

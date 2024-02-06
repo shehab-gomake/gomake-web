@@ -1,6 +1,5 @@
-import { quoteItemState } from "@/store";
+import { quoteConfirmationState, quoteItemState } from "@/store";
 import { useState } from "react";
-import { useTranslation } from "react-i18next";
 import { useRecoilValue } from "recoil";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { cancelDocumentApi, getDocumentPdfApi } from "@/services/api-service/generic-doc/documents-api";
@@ -8,7 +7,8 @@ import { QuoteStatuses } from "@/widgets/quote/total-price-and-vat/enums";
 
 const useButtonsConfirmContainer = () => {
     const { callApi } = useGomakeAxios();
-    const quoteItemValue: any = useRecoilValue(quoteItemState);
+    const quoteConfirm = useRecoilValue<any>(quoteConfirmationState);
+    
     const { alertFaultUpdate, alertSuccessUpdate } = useSnackBar();
     const [reasonText, setReasonText] = useState("");
     const [anchorElRejectBtn, setAnchorElRejectBtn] = useState<null | HTMLElement>(null);
@@ -16,7 +16,6 @@ const useButtonsConfirmContainer = () => {
     const [openOtherReasonModal, setOpenOtherReasonModal] = useState(false);
     const [openRejectModal, setOpenRejectModal] = useState(false);
     const [rejectStatus, setRejectStatus] = useState<QuoteStatuses>();
-
     const [isButtonClicked, setIsButtonClicked] = useState(false);
 
     const handleRejectBtnClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -54,15 +53,14 @@ const useButtonsConfirmContainer = () => {
             }
         }
         await cancelDocumentApi(callApi, callBack, {
-            DocumentType: 10,
+            DocumentType: 0,
             Document: {
-                documentId: quoteItemValue?.id,
+                documentId: quoteConfirm?.id,
                 quoteStatus: QuoteStatuses.CANCELED_OTHER,
                 cancelText: reasonText,
             }
         })
     }
-
 
     const updateCancelQuote = async () => {
         const callBack = (res) => {
@@ -73,9 +71,9 @@ const useButtonsConfirmContainer = () => {
             }
         }
         await cancelDocumentApi(callApi, callBack, {
-            DocumentType: 30,
+            DocumentType: 0,
             Document: {
-                documentId: quoteItemValue?.id,
+                documentId: quoteConfirm?.id,
                 quoteStatus: rejectStatus,
             }
         })
@@ -90,7 +88,7 @@ const useButtonsConfirmContainer = () => {
                 alertFaultUpdate();
             }
         };
-        await getDocumentPdfApi(callApi, callBack, { documentId: quoteItemValue?.id, documentType: 0 });
+        await getDocumentPdfApi(callApi, callBack, { documentId: quoteConfirm?.id, documentType: 0 });
     };
 
     return {
