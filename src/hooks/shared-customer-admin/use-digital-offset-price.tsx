@@ -507,6 +507,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         subSectionId: subSection?.id,
                         actionIndex: parameter?.actionIndex,
                         parameterCode: parameter?.code,
+                        valuesConfigs: parameter?.valuesConfigs,
                         unitKey: parameter?.unitKey,
                         unitType: parameter?.unitType,
                       });
@@ -542,6 +543,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         subSectionId: subSection?.id,
                         actionIndex: parameter?.actionIndex,
                         parameterCode: parameter?.code,
+                        valuesConfigs: parameter?.valuesConfigs,
                         unitKey: parameter?.unitKey,
                         unitType: parameter?.unitType,
                       });
@@ -584,6 +586,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                           subSectionId: subSection?.id,
                           actionIndex: parameter?.actionIndex,
                           parameterCode: parameter?.code,
+                          valuesConfigs: parameter?.valuesConfigs,
                           unitKey: parameter?.unitKey,
                           unitType: parameter?.unitType,
                         });
@@ -620,6 +623,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         subSectionId: subSection?.id,
                         actionIndex: parameter?.actionIndex,
                         parameterCode: parameter?.code,
+                        valuesConfigs: parameter?.valuesConfigs,
                         unitKey: parameter?.unitKey,
                         unitType: parameter?.unitType,
                       });
@@ -639,6 +643,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                           subSectionId: subSection?.id,
                           actionIndex: childParam?.actionIndex,
                           parameterCode: childParam?.code,
+                          valuesConfigs: childParam?.valuesConfigs,
                           unitKey: childParam?.unitKey,
                           unitType: childParam?.unitType,
                         });
@@ -657,6 +662,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     subSectionId: subSection?.id,
                     actionIndex: parameter?.actionIndex,
                     parameterCode: parameter?.code,
+                    valuesConfigs: parameter?.valuesConfigs,
                     unitKey: parameter?.unitKey,
                     unitType: parameter?.unitType,
                   });
@@ -1381,6 +1387,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           valueIds: [data.valueIds],
           actionIndex,
           parameterCode,
+          valuesConfigs: subSectionParameter?.valuesConfigs,
           unitKey: subSectionParameter?.unitKey,
           unitType: subSectionParameter?.unitType,
         });
@@ -1545,6 +1552,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 actionId: param.actionId,
                 values: selectedParam.valueIds,
                 valueIds: selectedParam.valueIds,
+                valuesConfigs: selectedParam?.valuesConfigs,
                 unitKey: selectedParam?.unitKey,
                 unitType: selectedParam?.unitType,
                 actionIndex,
@@ -1732,6 +1740,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             sectionId: itemParmetersValue?.sectionId,
             subSectionId: itemParmetersValue?.subSectionId,
             actionIndex: itemParmetersValue?.actionIndex,
+            valuesConfigs: itemParmetersValue?.valuesConfigs,
             unitKey: itemParmetersValue?.unitKey,
             unitType: itemParmetersValue?.unitType,
             parameterCode: itemParmetersValue?.code
