@@ -1239,7 +1239,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     const parm = subProduct?.parameters?.find(
                       (param) =>
                         param.parameterId === parameter.id &&
-                        param.actionIndex === relatedParameter.actionIndex
+                        param.actionIndex === parameter.actionIndex
                     );
                     const myParameter = list?.find(
                       (p) =>
@@ -1261,9 +1261,11 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                       setProductTemplate(productCopy)
                     }
                     else if (parameter?.parameterType === EParameterTypes.DROP_DOWN_LIST) {
+
                       const valueInArray = relatedParameter.selectedValueIds?.find(
                         (c) => c == parm?.valueIds
                       );
+
                       if (valueInArray) {
                         return (
                           <div>
@@ -1279,6 +1281,28 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                             )}
                           </div>
                         );
+                      }
+                      if (relatedParameter.activateByAllValues && parm?.values) {
+                        let productCopy = cloneDeep(productTemplate);
+                        const sectionCopy = productCopy.sections?.find(x => x.id === section.id);
+                        const subSectionCopy = sectionCopy.subSections?.find(x => x.id === subSection.id);
+                        const param = subSectionCopy.parameters?.find(x => x.id === relatedParameter.parameterId);
+                        if (param.isHidden == false) {
+                          return;
+                        }
+                        param.isHidden = false;
+                        setProductTemplate(productCopy)
+                      }
+                      else {
+                        let productCopy = cloneDeep(productTemplate);
+                        const sectionCopy = productCopy.sections.find(x => x.id === section.id);
+                        const subSectionCopy = sectionCopy.subSections.find(x => x.id === subSection.id);
+                        const param = subSectionCopy.parameters.find(x => x.id === relatedParameter.parameterId);
+                        if (param.isHidden == true) {
+                          return;
+                        }
+                        param.isHidden = true;
+                        setProductTemplate(productCopy)
                       }
                     }
                     else {
