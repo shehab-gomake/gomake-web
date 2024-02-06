@@ -749,16 +749,28 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   if (!parameter.valuesConfigs) {
                     parameter.valuesConfigs = [];
                   }
+                  debugger;
+                  parameter.valuesConfigs.forEach(val => {
+                    if(val.materialValueIds && val.materialValueIds.length > 0){
+                      val.valueIds = [];
+                      val.values = [];
+                      val.materialValueIds.forEach(materialValue => {
+                        val.valueIds.push(materialValue.valueId)
+                        val.values.push(materialValue.valueId)
+                      })
+                    }
+                  })
+                 
                   parameter.valuesConfigs = parameter.valuesConfigs.filter(
-                    (x) => x.values && x.values.length > 0
+                    (x) => x.valueIds && x.valueIds.length > 0
                   );
                   if (materialData) {
                     materialData.forEach((val) => {
                       const existsValue = parameter.valuesConfigs.find(
                         (x) =>
-                          x.values &&
-                          x.values.length > 0 &&
-                          x.values[0] === val.valueId
+                          x.valueIds &&
+                          x.valueIds.length > 0 &&
+                          x.valueIds[0] === val.valueId
                       );
                       if (!existsValue) {
                         parameter.valuesConfigs.push({
@@ -813,15 +825,25 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         if (!parameter.valuesConfigs) {
                           parameter.valuesConfigs = [];
                         }
+                        param.valuesConfigs.forEach(val => {
+                          if(val.materialValueIds && val.materialValueIds.length > 0){
+                            val.valueIds = [];
+                            val.values = [];
+                            val.materialValueIds.forEach(materialValue => {
+                              val.valueIds.push(materialValue.valueId)
+                              val.values.push(materialValue.valueId)
+                            })
+                          }
+                        })
                         param.valuesConfigs = param.valuesConfigs.filter(
                           (x) => x.values && x.values.length > 0
                         );
                         paramMaterialValues?.forEach((val) => {
                           const existsValue = param.valuesConfigs?.find(
                             (x) =>
-                              x.values &&
-                              x.values.length > 0 &&
-                              x.values[0] === val.valueId
+                              x.valueIds &&
+                              x.valueIds.length > 0 &&
+                              x.valueIds[0] === val.valueId
                           );
                           if (!existsValue) {
                             param.valuesConfigs.push({
