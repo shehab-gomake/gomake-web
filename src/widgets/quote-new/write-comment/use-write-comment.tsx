@@ -12,54 +12,54 @@ interface IProps {
 }
 
 const useWriteComment = ({ documentType }: IProps) => {
-  const { t } = useTranslation();
-  const { callApi } = useGomakeAxios();
-  const { alertSuccessUpdate, alertFaultUpdate } = useSnackBar();
+  // const { t } = useTranslation();
+  // const { callApi } = useGomakeAxios();
+  // const { alertSuccessUpdate, alertFaultUpdate } = useSnackBar();
 
-  const quoteItemValue: any = useRecoilValue(quoteItemState);
+  // const quoteItemValue: any = useRecoilValue(quoteItemState);
 
-  const [documentComments, setDocumentComments] = useState(quoteItemValue?.notes);
-  const [finalDocumentComments, setFinalDocumentComments] = useState("");
+  // const [documentComments, setDocumentComments] = useState(quoteItemValue?.notes);
+  // const [finalDocumentComments, setFinalDocumentComments] = useState("");
 
-  const debounce = useDebounce(documentComments, 500);
+  // const debounce = useDebounce(documentComments, 500);
 
-  // useEffect(() => {
-  //   setFinalDocumentComments(debounce);
-  // }, [debounce]);
+  // // useEffect(() => {
+  // //   setFinalDocumentComments(debounce);
+  // // }, [debounce]);
 
-  // useEffect(() => {
-  //   const timerId = setTimeout(() => {
-  //     onUpdateDocumentComments();
-  //   }, 5000);
+  // // useEffect(() => {
+  // //   const timerId = setTimeout(() => {
+  // //     onUpdateDocumentComments();
+  // //   }, 5000);
    
-  //   return () => clearTimeout(timerId);
-  // }, [documentComments]); 
+  // //   return () => clearTimeout(timerId);
+  // // }, [documentComments]); 
 
-  const onUpdateDocumentComments = async () => {
-    const callBack = (res) => {
-      if (res?.success) {
-        alertSuccessUpdate();
-      } else {
-        alertFaultUpdate();
-      }
-    };
-    await updateDocumentCommentsApi(callApi, callBack, {
-      documentType: documentType,
-      comments: {
-        documentId: quoteItemValue?.id,
-        comments: finalDocumentComments,
-      },
-    });
-  };
+  // const onUpdateDocumentComments = async () => {
+  //   const callBack = (res) => {
+  //     if (res?.success) {
+  //       alertSuccessUpdate();
+  //     } else {
+  //       alertFaultUpdate();
+  //     }
+  //   };
+  //   await updateDocumentCommentsApi(callApi, callBack, {
+  //     documentType: documentType,
+  //     comments: {
+  //       documentId: quoteItemValue?.id,
+  //       comments: finalDocumentComments,
+  //     },
+  //   });
+  // };
 
-  const onChangeComments = (e: any) => {
-    setDocumentComments(e.target.value);
-  };
+  // const onChangeComments = (e: any) => {
+  //   setDocumentComments(e.target.value);
+  // };
 
   return {
-    onChangeComments,
-    documentComments,
-    t,
+    // onChangeComments,
+    // documentComments,
+    // t,
   };
 };
 

@@ -85,7 +85,7 @@ const useQuoteNew = (docType: DOCUMENT_TYPE) => {
   };
   const handleCancelBtnClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElCancelBtn(event.currentTarget);
-  };
+  }; 
   const handleCancelBtnClose = () => {
     setAnchorElCancelBtn(null);
   };
@@ -632,34 +632,34 @@ const useQuoteNew = (docType: DOCUMENT_TYPE) => {
   };
 
   const [openOtherReasonModal, setOpenOtherReasonModal] = useState(false);
-  const [openIrreleventCancelModal, setOpenIrreleventCancelModal] = useState(false);
+  const [openIrrelevantCancelModal, setOpenIrrelevantCancelModal] = useState(false);
   const [openPriceCancelModal, setOpenPriceCancelModal] = useState(false);
   const [openDeliveryTimeCancelModal, setOpenDeliveryTimeCancelModal] = useState(false);
 
-  const onClcikOpenIrreleventModal = () => {
-    setOpenIrreleventCancelModal(true);
+  const onClickOpenIrrelevantModal = () => {
+    setOpenIrrelevantCancelModal(true);
   };
-  const onClcikCloseIrreleventModal = () => {
-    setOpenIrreleventCancelModal(false);
+  const onClickCloseIrrelevantModal = () => {
+    setOpenIrrelevantCancelModal(false);
   };
 
-  const onClcikOpenPriceModal = () => {
+  const onClickOpenPriceModal = () => {
     setOpenPriceCancelModal(true);
   };
-  const onClcikClosePriceModal = () => {
+  const onClickClosePriceModal = () => {
     setOpenPriceCancelModal(false);
   };
 
-  const onClcikOpenDeliveryTimeModal = () => {
+  const onClickOpenDeliveryTimeModal = () => {
     setOpenDeliveryTimeCancelModal(true);
   };
-  const onClcikCloseDeliveryTimeModal = () => {
+  const onClickCloseDeliveryTimeModal = () => {
     setOpenDeliveryTimeCancelModal(false);
   };
-  const onClcikOpenModal = () => {
+  const onClickOpenModal = () => {
     setOpenOtherReasonModal(true);
   };
-  const onClcikCloseModal = () => {
+  const onClickCloseModal = () => {
     setOpenOtherReasonModal(false);
   };
 
@@ -1002,7 +1002,7 @@ const updateTotalPrice = (itemId, itemPrice) => {
     openSendBtn,
     openCancelBtn,
     openOtherReasonModal,
-    openIrreleventCancelModal,
+    openIrrelevantCancelModal,
     openPriceCancelModal,
     openDeliveryTimeCancelModal,
     anchorElSettingMenu,
@@ -1010,14 +1010,14 @@ const updateTotalPrice = (itemId, itemPrice) => {
     onClickSendQuoteToClient,
     handleSettingMenuClick,
     handleSettingMenuClose,
-    onClcikOpenPriceModal,
-    onClcikOpenModal,
-    onClcikClosePriceModal,
-    onClcikOpenDeliveryTimeModal,
-    onClcikCloseDeliveryTimeModal,
-    onClcikCloseModal,
-    onClcikOpenIrreleventModal,
-    onClcikCloseIrreleventModal,
+    onClickOpenPriceModal,
+    onClickOpenModal,
+    onClickClosePriceModal,
+    onClickOpenDeliveryTimeModal,
+    onClickCloseDeliveryTimeModal,
+    onClickCloseModal,
+    onClickOpenIrrelevantModal,
+    onClickCloseIrrelevantModal,
     handleCancelBtnClick,
     handleCancelBtnClose,
     handleSendBtnClick,

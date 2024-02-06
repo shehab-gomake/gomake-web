@@ -31,7 +31,7 @@ const GoMakeDeleteModal = ({
         outline: "none",
       }}
     >
-      <div style={clasess.container}>
+      <div style={{...clasess.container , ...props.style}}>
         <div style={clasess.content}>
           {!hideIcon && (
             <div style={clasess.icon}>{props.icon || <Wastebasket />}</div>

@@ -66,21 +66,21 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
     openSendBtn,
     openCancelBtn,
     openOtherReasonModal,
-    openIrreleventCancelModal,
+    openIrrelevantCancelModal,
     openPriceCancelModal,
     openDeliveryTimeCancelModal,
     anchorElSettingMenu,
     openSettingMenu,
     handleSettingMenuClick,
     handleSettingMenuClose,
-    onClcikClosePriceModal,
-    onClcikOpenDeliveryTimeModal,
-    onClcikOpenPriceModal,
-    onClcikOpenIrreleventModal,
-    onClcikCloseModal,
-    onClcikOpenModal,
-    onClcikCloseDeliveryTimeModal,
-    onClcikCloseIrreleventModal,
+    onClickClosePriceModal,
+    onClickOpenDeliveryTimeModal,
+    onClickOpenPriceModal,
+    onClickOpenIrrelevantModal,
+    onClickCloseModal,
+    onClickOpenModal,
+    onClickCloseDeliveryTimeModal,
+    onClickCloseIrrelevantModal,
     handleCancelBtnClick,
     handleCancelBtnClose,
     handleSendBtnClick,
@@ -378,14 +378,14 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
         handleClose={handleCancelBtnClose}
         open={openCancelBtn}
         anchorEl={anchorElCancelBtn}
-        onClcikOpenDeliveryTimeModal={onClcikOpenDeliveryTimeModal}
-        onClcikOpenPriceModal={onClcikOpenPriceModal}
-        onClcikOpenIrreleventModal={onClcikOpenIrreleventModal}
-        onClcikOpenModal={onClcikOpenModal}
+        onClickOpenDeliveryTimeModal={onClickOpenDeliveryTimeModal}
+        onClickOpenPriceModal={onClickOpenPriceModal}
+        onClickOpenIrrelevantModal={onClickOpenIrrelevantModal}
+        onClickOpenModal={onClickOpenModal}
       />
       <OtherReasonModal
         openModal={openOtherReasonModal}
-        onClose={onClcikCloseModal}
+        onClose={onClickCloseModal}
         setReasonText={setReasonText}
         onClickCancelOffer={onClickCancelOffer}
       />
@@ -395,8 +395,8 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
         }
         title={t("sales.quote.titleCancelModal")}
         yesBtn={t("sales.quote.yesBtn")}
-        openModal={openIrreleventCancelModal}
-        onClose={onClcikCloseIrreleventModal}
+        openModal={openIrrelevantCancelModal}
+        onClose={onClickCloseIrrelevantModal}
         subTitle={t("sales.quote.subTitleCancelModal")}
         cancelBtn={t("sales.quote.cancelBtn")}
         onClickDelete={() =>
@@ -410,7 +410,7 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
         title={t("sales.quote.titleCancelModal")}
         yesBtn={t("sales.quote.yesBtn")}
         openModal={openPriceCancelModal}
-        onClose={onClcikClosePriceModal}
+        onClose={onClickClosePriceModal}
         subTitle={t("sales.quote.subTitleCancelModal")}
         cancelBtn={t("sales.quote.cancelBtn")}
         onClickDelete={() => updateCancelQuote(QuoteStatuses.CANCELED_PRICE)}
@@ -422,7 +422,7 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
         title={t("sales.quote.titleCancelModal")}
         yesBtn={t("sales.quote.yesBtn")}
         openModal={openDeliveryTimeCancelModal}
-        onClose={onClcikCloseDeliveryTimeModal}
+        onClose={onClickCloseDeliveryTimeModal}
         subTitle={t("sales.quote.subTitleCancelModal")}
         cancelBtn={t("sales.quote.cancelBtn")}
         onClickDelete={() =>

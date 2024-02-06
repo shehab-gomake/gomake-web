@@ -1,7 +1,10 @@
 import { useMemo } from "react";
 import { FONT_FAMILY } from "@/utils/font-family";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 const useStyle = () => {
+  const { errorColor } = useGomakeTheme();
+
   const classes = useMemo(() => {
     return {
       writeCommentContainer: {
@@ -40,6 +43,19 @@ const useStyle = () => {
         color: "#C5372C",
         borderColor: "#C5372C"
       },
+      rejectBtnClicked: {
+        ...FONT_FAMILY.Inter(600, 14),
+        height: 40,
+        width: "fit-content",
+        // width: "114px",
+        padding: "8px 14px",
+        borderRadius: 8,
+        lineHeight: "14px",
+        color: "#C5372C",
+        borderColor: "#C5372C",
+        background: errorColor(100)
+      },
+
       btnStyle: {
         ...FONT_FAMILY.Inter(600, 14),
         height: 40,

@@ -21,7 +21,7 @@ const TotalPriceAndVatWidit = () => {
     quoteStateValue,
     checked,
     openOtherReasonModal,
-    openIrreleventCancelModal,
+    openIrrelevantCancelModal,
     openPriceCancelModal,
     openDeliveryTimeCancelModal,
     openOrderNowModal,
@@ -29,15 +29,15 @@ const TotalPriceAndVatWidit = () => {
     onClickConfirmWithNotification,
     onClickOpenOrderNowModal,
     onClickCloseOrderNowModal,
-    onClcikOpenIrreleventModal,
-    onClcikCloseIrreleventModal,
-    onClcikOpenPriceModal,
-    onClcikClosePriceModal,
-    onClcikOpenDeliveryTimeModal,
-    onClcikCloseDeliveryTimeModal,
+    onClickOpenIrrelevantModal,
+    onClickCloseIrrelevantModal,
+    onClickOpenPriceModal,
+    onClickClosePriceModal,
+    onClickOpenDeliveryTimeModal,
+    onClickCloseDeliveryTimeModal,
     changeItems,
-    onClcikOpenModal,
-    onClcikCloseModal,
+    onClickOpenModal,
+    onClickCloseModal,
     updateCancelQuote,
     setReasonText,
     onClickCancelOffer,
@@ -74,25 +74,25 @@ const TotalPriceAndVatWidit = () => {
                     <Box sx={{ display: "flex", flexDirection: "column" }}>
                       <GomakePrimaryButton
                         style={clasess.btnStyle2}
-                        onClick={onClcikOpenIrreleventModal}
+                        onClick={onClickOpenIrrelevantModal}
                       >
                         {t("sales.quote.irrelevant")}
                       </GomakePrimaryButton>
                       <GomakePrimaryButton
                         style={clasess.btnStyle2}
-                        onClick={onClcikOpenPriceModal}
+                        onClick={onClickOpenPriceModal}
                       >
                         {t("sales.quote.price")}
                       </GomakePrimaryButton>
                       <GomakePrimaryButton
                         style={clasess.btnStyle2}
-                        onClick={onClcikOpenDeliveryTimeModal}
+                        onClick={onClickOpenDeliveryTimeModal}
                       >
                         {t("sales.quote.deliveryTime")}
                       </GomakePrimaryButton>
                       <GomakePrimaryButton
                         style={clasess.btnStyle2}
-                        onClick={onClcikOpenModal}
+                        onClick={onClickOpenModal}
                       >
                         {t("sales.quote.other")}
                       </GomakePrimaryButton>
@@ -199,7 +199,7 @@ const TotalPriceAndVatWidit = () => {
       </div>
       <OtherReasonModal
         openModal={openOtherReasonModal}
-        onClose={onClcikCloseModal}
+        onClose={onClickCloseModal}
         setReasonText={setReasonText}
         onClickCancelOffer={onClickCancelOffer}
       />
@@ -209,8 +209,8 @@ const TotalPriceAndVatWidit = () => {
         }
         title={t("sales.quote.titleCancelModal")}
         yesBtn={t("sales.quote.yesBtn")}
-        openModal={openIrreleventCancelModal}
-        onClose={onClcikCloseIrreleventModal}
+        openModal={openIrrelevantCancelModal}
+        onClose={onClickCloseIrrelevantModal}
         subTitle={t("sales.quote.subTitleCancelModal")}
         cancelBtn={t("sales.quote.cancelBtn")}
         onClickDelete={() =>
@@ -224,7 +224,7 @@ const TotalPriceAndVatWidit = () => {
         title={t("sales.quote.titleCancelModal")}
         yesBtn={t("sales.quote.yesBtn")}
         openModal={openPriceCancelModal}
-        onClose={onClcikClosePriceModal}
+        onClose={onClickClosePriceModal}
         subTitle={t("sales.quote.subTitleCancelModal")}
         cancelBtn={t("sales.quote.cancelBtn")}
         onClickDelete={() => updateCancelQuote(QuoteStatuses.CANCELED_PRICE)}
@@ -236,7 +236,7 @@ const TotalPriceAndVatWidit = () => {
         title={t("sales.quote.titleCancelModal")}
         yesBtn={t("sales.quote.yesBtn")}
         openModal={openDeliveryTimeCancelModal}
-        onClose={onClcikCloseDeliveryTimeModal}
+        onClose={onClickCloseDeliveryTimeModal}
         subTitle={t("sales.quote.subTitleCancelModal")}
         cancelBtn={t("sales.quote.cancelBtn")}
         onClickDelete={() =>

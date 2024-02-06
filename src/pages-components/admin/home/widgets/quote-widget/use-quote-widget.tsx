@@ -45,12 +45,12 @@ const useQuoteWidget = () => {
   const [selectedProduct, setSelectedProduct] = useState<any>({});
   const [isDisabled, setIsDisabled] = useState(true);
 
-  const onClcikOpenModal = (quoteId: any) => {
+  const onClickOpenModal = (quoteId: any) => {
     setOpenModal(true);
   };
   //PopOver Btns
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
-  const onClcikCloseModal = async () => {
+  const onClickCloseModal = async () => {
     setOpenModal(false);
   };
 
@@ -273,10 +273,10 @@ const useQuoteWidget = () => {
     selectedClientType,
     handleClick,
     updateQuoteExist,
-    onClcikOpenModal,
+    onClickOpenModal,
     selectedProduct,
     handleClose,
-    onClcikCloseModal,
+    onClickCloseModal,
     setSelectedClientType,
     setSelectedClient,
     selectedClient,

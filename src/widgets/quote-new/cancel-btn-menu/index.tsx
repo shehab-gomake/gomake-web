@@ -3,16 +3,32 @@ import { GoMakeMenu } from "@/components";
 import { Box, MenuItem } from "@mui/material";
 import { useTranslation } from "react-i18next";
 
+
+
+interface CancelBtnMenuProps {
+  handleClose: () => void;
+  open: boolean;
+  anchorEl: null | HTMLElement;
+  onClickOpenDeliveryTimeModal?:any | null;
+  onClickOpenPriceModal?: any | null;
+  onClickOpenIrrelevantModal?:any | null;
+  onClickOpenModal?: (() => void) | null;
+  menuWidth?: "default" | "small" | "large"; 
+}
+
 const CancelBtnMenu = ({
   handleClose,
   open,
   anchorEl,
-  onClcikOpenDeliveryTimeModal,
-  onClcikOpenPriceModal,
-  onClcikOpenIrreleventModal,
-  onClcikOpenModal,
-}) => {
+  onClickOpenDeliveryTimeModal,
+  onClickOpenPriceModal,
+  onClickOpenIrrelevantModal,
+  onClickOpenModal,
+} : CancelBtnMenuProps) => {
   const { t } = useTranslation();
+
+
+  
   return (
     <GoMakeMenu
       handleClose={handleClose}
@@ -22,7 +38,7 @@ const CancelBtnMenu = ({
     >
       <MenuItem
         onClick={() => {
-          onClcikOpenIrreleventModal();
+          onClickOpenIrrelevantModal();
           handleClose();
         }}
       >
@@ -30,7 +46,7 @@ const CancelBtnMenu = ({
       </MenuItem>
       <MenuItem
         onClick={() => {
-          onClcikOpenPriceModal();
+          onClickOpenPriceModal();
           handleClose();
         }}
       >
@@ -38,7 +54,7 @@ const CancelBtnMenu = ({
       </MenuItem>
       <MenuItem
         onClick={() => {
-          onClcikOpenDeliveryTimeModal();
+          onClickOpenDeliveryTimeModal();
           handleClose();
         }}
       >
@@ -46,7 +62,7 @@ const CancelBtnMenu = ({
       </MenuItem>
       <MenuItem
         onClick={() => {
-          onClcikOpenModal();
+          onClickOpenModal();
           handleClose();
         }}
       >

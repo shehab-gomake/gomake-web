@@ -1,69 +1,54 @@
 import React from "react";
 import { useStyle } from "./style";
-import {
-  ArrowDownNewIcon,
-  PlusIcon,
-  UploadNewIcon,
-} from "@/icons";
 import { useTranslation } from "react-i18next";
-import { GomakePrimaryButton } from "@/components";
-import { OrderNowModal } from "@/widgets/quote/total-price-and-vat/order-now-modal";
+import { GoMakeDeleteModal } from "@/components";
 import { useButtonsConfirmContainer } from "./use-buttons-container";
-import { useRecoilValue } from "recoil";
-import { quoteItemState } from "@/store";
-import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { SecondaryButton } from "@/components/button/secondary-button";
 import { AttachIcon } from "@/components/icons/attach-icon";
-import { InputUpdatedValues } from "../input-updated-values";
+import { CancelBtnMenu } from "../cancel-btn-menu";
+import { OtherReasonModal } from "@/widgets/quote/total-price-and-vat/other-reason-modal";
+import { QuoteStatuses } from "@/widgets/quote/total-price-and-vat/enums";
+import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 
 interface IProps {
-  onOpenNewItem?: any,
-  handleCancelBtnClick?: any,
-  handleSaveBtnClick?: any,
-  handleSendBtnClick?: any,
-  onOpenDeliveryModal?: any,
-  onClickApprove?:()=>void;
-
+  onClickApprove?: () => void;
 }
 const ButtonsConfirmContainer = ({
-  onOpenNewItem,
-  handleCancelBtnClick,
-  handleSaveBtnClick,
-  handleSendBtnClick,
-  onOpenDeliveryModal,
   onClickApprove
 }: IProps) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
-  const { openOrderNowModal, onClickCloseOrderNowModal, onClickOpenOrderNowModal, onClickConfirmWithoutNotification, onClickConfirmWithNotification, onClickPrint } = useButtonsConfirmContainer();
+  const { onClickCloseRejectModal,
+    onClickOpenRejectModal,
+    openRejectModal,
+    handleRejectBtnClick,
+    handleRejectBtnClose,
+    openRejectBtn,
+    anchorElRejectBtn,
+    onClickOpenOtherModal,
+    onClickCloseOtherModal,
+    openOtherReasonModal,
+    setReasonText,
+    updateCancelQuote,
+    onClickCancelOffer,
+    onClickPrint,
+    isButtonClicked 
+  } = useButtonsConfirmContainer();
 
   return (
     <div style={classes.writeCommentContainer}>
-      {/* <div style={classes.firstContainer}>
-        <InputUpdatedValues
-          value={"lama"}
-          label={t("Your Name")}
-          isUpdate={false}
-          flag={true}
-          onClickFlag={() => null}
-        />
-        <InputUpdatedValues
-          value={"10,Oct 2023"}
-          label={t("Date of signature:")}
-          isUpdate={false}
-          flag={true}
-          onClickFlag={() => null}
-        />
-      </div> */}
       <div style={classes.btnsContainer}>
         <SecondaryButton
+          onClick={handleRejectBtnClick}
           variant="outlined"
-          style={classes.rejectBtn}>
+          style={ isButtonClicked ? classes.rejectBtnClicked:  classes.rejectBtn}>
           {t("sales.quote.rejectOffer")}
         </SecondaryButton>
         <SecondaryButton
           variant="outlined"
-          style={classes.btnStyle}>{t("sales.quote.print")}
+          style={classes.btnStyle}
+          onClick={onClickPrint}
+        >{t("sales.quote.print")}
         </SecondaryButton>
         <SecondaryButton
           variant="outlined"
@@ -73,11 +58,35 @@ const ButtonsConfirmContainer = ({
         <SecondaryButton
           variant="contained"
           style={classes.btnStyle}
-          onClick={onClickApprove}
-          >
+          onClick={onClickApprove}>
           {t("sales.quote.approveOffer")}
         </SecondaryButton>
       </div>
+      <CancelBtnMenu
+        handleClose={handleRejectBtnClose}
+        open={openRejectBtn}
+        anchorEl={anchorElRejectBtn}
+        onClickOpenModal={onClickOpenOtherModal}
+        onClickOpenDeliveryTimeModal={() => onClickOpenRejectModal(QuoteStatuses.CANCELED_DELIVERY_TIME)}
+        onClickOpenPriceModal={() => onClickOpenRejectModal(QuoteStatuses.CANCELED_PRICE)}
+        onClickOpenIrrelevantModal={() => onClickOpenRejectModal(QuoteStatuses.CANCELED_IRRELEVANT)}
+      />
+      <OtherReasonModal
+        openModal={openOtherReasonModal}
+        onClose={onClickCloseOtherModal}
+        setReasonText={setReasonText}
+        onClickCancelOffer={onClickCancelOffer}
+      />
+      <GoMakeDeleteModal
+        icon={<WarningAmberIcon style={{ width: 60, height: 60, color: "red" }} />}
+        title={t("sales.quote.titleCancelModal")}
+        yesBtn={t("sales.quote.yesBtn")}
+        openModal={openRejectModal}
+        onClose={onClickCloseRejectModal}
+        subTitle={t("sales.quote.subTitleCancelModal")}
+        cancelBtn={t("sales.quote.cancelBtn")}
+        onClickDelete={() => updateCancelQuote()}
+      />
     </div>
   );
 };

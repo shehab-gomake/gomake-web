@@ -12,7 +12,6 @@ interface IProps {
 const WriteCommentComp = ({isQuoteConfirmation , documentType} : IProps) => {
   const { t } = useTranslation();
   const { classes } = useStyle(isQuoteConfirmation);
-  const {onChangeComments , documentComments} = useWriteComment({documentType});
   const quoteItemValue: any = useRecoilValue(quoteItemState);
 
 
@@ -21,8 +20,7 @@ const WriteCommentComp = ({isQuoteConfirmation , documentType} : IProps) => {
       <GomakeTextInput
         style={classes.textInputStyle}
         placeholder={t("sales.quote.writeCommentHere")}
-        onChange={onChangeComments}
-        value={isQuoteConfirmation ? documentComments : quoteItemValue?.notes}
+        value={ quoteItemValue?.notes}
       />
     </div>
   );
