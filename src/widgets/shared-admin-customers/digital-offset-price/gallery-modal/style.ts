@@ -1,5 +1,5 @@
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
-import { adaptLeft } from "@/utils/adapter";
+import { adaptLeft, adaptPaddingRight } from "@/utils/adapter";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
@@ -7,6 +7,7 @@ import { useTranslation } from "react-i18next";
 const useStyle = () => {
   const { primaryColor, secondColor } = useGomakeTheme();
   const { t } = useTranslation();
+  const direction = t('direction');
   const clasess = useMemo(() => {
     return {
       insideStyle: {
@@ -123,12 +124,12 @@ const useStyle = () => {
       shapeNameStyle: {
         ...FONT_FAMILY.Lexend(500, 20),
         color: primaryColor(500),
-        paddingLeft: 16,
+        ...adaptPaddingRight(direction, 16),
       },
       shapeWidthHeightStyle: {
         ...FONT_FAMILY.Lexend(400, 16),
         color: primaryColor(900),
-        paddingLeft: 16,
+        ...adaptPaddingRight(direction, 16),
       },
       btnsContainer: {
         display: "flex",
@@ -149,7 +150,7 @@ const useStyle = () => {
         backgroundColor: secondColor(500),
       },
     };
-  }, [t]);
+  }, [t,direction]);
   return {
     clasess,
   };
