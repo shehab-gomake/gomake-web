@@ -755,7 +755,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   if (!parameter.valuesConfigs) {
                     parameter.valuesConfigs = [];
                   }
-                  debugger;
                   parameter.valuesConfigs.forEach(val => {
                     if(val.materialValueIds && val.materialValueIds.length > 0){
                       val.valueIds = [];
@@ -1810,8 +1809,11 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       setLoading(true);
       const newRequestAbortController = new AbortController();
       setRequestAbortController(newRequestAbortController);
-      const generalParameters = subProducts.find((x) => !x.type).parameters;
-      const calculationSubProducts = subProducts.filter((x) => x.type);
+      let subProductsCopy = cloneDeep(subProducts);
+      let generalParameters = subProductsCopy.find((x) => !x.type).parameters;
+      let calculationSubProducts = subProductsCopy.filter((x) => x.type);
+      generalParameters.forEach(x=>x.valuesConfigs = null);
+      calculationSubProducts.forEach(x=>x.parameters.forEach(y=>y.valuesConfigs = null))
       let workTypes = [];
       if (productQuantityTypes && productQuantityTypes.length > 0 && productQuantityTypes[0].quantity > 0) {
         workTypes = productQuantityTypes;
