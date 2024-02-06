@@ -3,6 +3,7 @@ import TextField from "@mui/material/TextField";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { ThemeProvider, createTheme, styled } from "@mui/material";
 import { detectLanguage } from "@/utils/helpers";
+import {useTranslation} from "react-i18next";
 
 const StyledTextField = styled(TextField, {
 
@@ -101,7 +102,8 @@ const GomakeTextInput = ({
   onFocus?: any;
   id?: any;
 }) => {
-  const systemLanguage = localStorage.getItem("systemLanguage");
+  const {t}=useTranslation()
+  const systemLanguage = t('language')
   const lang = systemLanguage === "ar" ? "ar" : "en";
   const inputDir = lang === "ar" ? "rtl" : "ltr";
   const themeRTL = createTheme({
