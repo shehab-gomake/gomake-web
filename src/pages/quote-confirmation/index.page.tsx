@@ -6,6 +6,6 @@ export default function QuoteConfirmation() {
   return (
     <CustomerAuthLayout>
       <QuoteConfirmationPageWidget />
-    </CustomerAuthLayout>
+     </CustomerAuthLayout>
   );
 }

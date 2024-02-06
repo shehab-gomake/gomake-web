@@ -39,7 +39,7 @@ const ButtonsConfirmContainer = ({
 
   return (
     <div style={classes.writeCommentContainer}>
-      <div style={classes.firstContainer}>
+      {/* <div style={classes.firstContainer}>
         <InputUpdatedValues
           value={"lama"}
           label={t("Your Name")}
@@ -54,7 +54,7 @@ const ButtonsConfirmContainer = ({
           flag={true}
           onClickFlag={() => null}
         />
-      </div>
+      </div> */}
       <div style={classes.btnsContainer}>
         <SecondaryButton
           variant="outlined"

@@ -22,7 +22,7 @@ const TextAreasContainer = () => {
           sx={{ width: "100%", background: "#FFFFFF", borderRadius: "8px", boxShadow: "none" }}
         />
       </div>
-      <div style={{ display: "flex", flexDirection: "column", gap: "8px" , width:"70%" }}>
+      {/* <div style={{ display: "flex", flexDirection: "column", gap: "8px" , width:"70%" }}>
         <h3 style={classes.headerStyle}>{t("Seal name :")}</h3>
         <GomakeTextInput
           style={classes.inputStyle}
@@ -34,7 +34,7 @@ const TextAreasContainer = () => {
         <GomakeTextInput
           style={classes.inputStyle}
           value={"24, Oct 2023"} />
-      </div>
+      </div> */}
     </div>
   );
 };
