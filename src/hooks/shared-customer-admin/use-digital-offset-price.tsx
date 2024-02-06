@@ -85,6 +85,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [subProducts, setSubProducts] = useRecoilState<any>(
     subProductsParametersState
   );
+
   const [isSetTemplete, setIsSetTemplete] = useState<boolean>(false);
   const setSubProductsCopy = useSetRecoilState<any>(
     subProductsCopyParametersState
@@ -756,7 +757,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     parameter.valuesConfigs = [];
                   }
                   parameter.valuesConfigs.forEach(val => {
-                    if(val.materialValueIds && val.materialValueIds.length > 0){
+                    if (val.materialValueIds && val.materialValueIds.length > 0) {
                       val.valueIds = [];
                       val.values = [];
                       val.materialValueIds.forEach(materialValue => {
@@ -765,7 +766,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                       })
                     }
                   })
-                 
+
                   parameter.valuesConfigs = parameter.valuesConfigs.filter(
                     (x) => x.valueIds && x.valueIds.length > 0
                   );
@@ -831,7 +832,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                           parameter.valuesConfigs = [];
                         }
                         param.valuesConfigs.forEach(val => {
-                          if(val.materialValueIds && val.materialValueIds.length > 0){
+                          if (val.materialValueIds && val.materialValueIds.length > 0) {
                             val.valueIds = [];
                             val.values = [];
                             val.materialValueIds.forEach(materialValue => {
@@ -1243,7 +1244,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     const parm = subProduct?.parameters?.find(
                       (param) =>
                         param.parameterId === parameter.id &&
-                        param.actionIndex === relatedParameter.actionIndex
+                        param.actionIndex === parameter.actionIndex
                     );
                     const myParameter = list?.find(
                       (p) =>
@@ -1265,9 +1266,11 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                       setProductTemplate(productCopy)
                     }
                     else if (parameter?.parameterType === EParameterTypes.DROP_DOWN_LIST) {
+
                       const valueInArray = relatedParameter.selectedValueIds?.find(
                         (c) => c == parm?.valueIds
                       );
+
                       if (valueInArray) {
                         return (
                           <div>
@@ -1283,6 +1286,28 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                             )}
                           </div>
                         );
+                      }
+                      if (relatedParameter.activateByAllValues && parm?.values) {
+                        let productCopy = cloneDeep(productTemplate);
+                        const sectionCopy = productCopy.sections?.find(x => x.id === section.id);
+                        const subSectionCopy = sectionCopy.subSections?.find(x => x.id === subSection.id);
+                        const param = subSectionCopy.parameters?.find(x => x.id === relatedParameter.parameterId);
+                        if (param.isHidden == false) {
+                          return;
+                        }
+                        param.isHidden = false;
+                        setProductTemplate(productCopy)
+                      }
+                      else {
+                        let productCopy = cloneDeep(productTemplate);
+                        const sectionCopy = productCopy.sections.find(x => x.id === section.id);
+                        const subSectionCopy = sectionCopy.subSections.find(x => x.id === subSection.id);
+                        const param = subSectionCopy.parameters.find(x => x.id === relatedParameter.parameterId);
+                        if (param.isHidden == true) {
+                          return;
+                        }
+                        param.isHidden = true;
+                        setProductTemplate(productCopy)
                       }
                     }
                     else {
@@ -1462,7 +1487,12 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               x.actionIndex === actionIndex &&
               x.materialPath?.find((y) => compareStrings(y, materialPath))
           );
+          if (materialRelatedParameters?.length > 0) {
+            temp = temp.filter(subProduct => {
+              return !materialRelatedParameters.some(materialParameter => materialParameter.id === subProduct.parameterId);
+            });
 
+          }
           materialRelatedParameters?.forEach((param) => {
             if (param.materialPath && param.materialPath.length > 0) {
               const index = param.materialPath.findIndex((x) =>
