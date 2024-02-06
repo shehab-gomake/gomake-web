@@ -24,7 +24,7 @@ import { addDeliveryApi, addDocumentAddressApi, addDocumentContactApi, calculate
 import { DOCUMENT_TYPE } from "../quotes/enums";
 import { useRouter } from "next/router";
 
-const useQuoteNew = (docType : DOCUMENT_TYPE ) => {
+const useQuoteNew = (docType: DOCUMENT_TYPE) => {
   const {
     alertSuccessUpdate,
     alertFaultUpdate,
@@ -131,7 +131,7 @@ const useQuoteNew = (docType : DOCUMENT_TYPE ) => {
     const callBack = (res) => {
       if (res?.success) {
         let indexs = 0;
-       // const _data = res?.data;
+        // const _data = res?.data;
         const _data = res?.data || {};
         const mapData = _data?.documentItems?.map((item: any, index: number) => {
           indexs++;
@@ -177,7 +177,7 @@ const useQuoteNew = (docType : DOCUMENT_TYPE ) => {
         alertFaultAdded();
       }
     }
-    await getDocumentApi(callApi, callBack, { documentType: docType , Id: router?.query?.Id })
+    await getDocumentApi(callApi, callBack, { documentType: docType, Id: router?.query?.Id })
   }
 
   const updateDueDate = async () => {
@@ -225,7 +225,7 @@ const useQuoteNew = (docType : DOCUMENT_TYPE ) => {
     setIsUpdateBusinessName(null);
   };
 
-  const onBlurExchangeRate = async (value:number) => {
+  const onBlurExchangeRate = async (value: number) => {
     updateExchangeRate(value);
     setIsUpdateExchangeRate(null);
   };
@@ -251,7 +251,7 @@ const useQuoteNew = (docType : DOCUMENT_TYPE ) => {
       }
     }
     await updateAgentApi(callApi, callBack, {
-      documentType: docType , document: {
+      documentType: docType, document: {
         documentId: quoteItemValue?.id,
         agentId: item?.value,
       }
@@ -270,7 +270,7 @@ const useQuoteNew = (docType : DOCUMENT_TYPE ) => {
       }
     }
     await updateExchangeRateApi(callApi, callBack, {
-      documentType: docType , document: {
+      documentType: docType, document: {
         documentId: quoteItemValue?.id,
         exchangeRate: value,
       }
@@ -287,7 +287,7 @@ const useQuoteNew = (docType : DOCUMENT_TYPE ) => {
       }
     }
     await refreshExchangeRateApi(callApi, callBack, {
-      documentType: docType , document: {
+      documentType: docType, document: {
         documentId: quoteItemValue?.id,
       }
     })
@@ -304,7 +304,7 @@ const useQuoteNew = (docType : DOCUMENT_TYPE ) => {
       }
     }
     await updateDocumentCurrencyApi(callApi, callBack, {
-      documentType: docType , document: {
+      documentType: docType, document: {
         documentId: quoteItemValue?.id,
         currency: currency,
       }
@@ -312,8 +312,8 @@ const useQuoteNew = (docType : DOCUMENT_TYPE ) => {
     })
   }
 
-  
-    ///////////////////////////////// currency & exchange rate /////////////////////////////////
+
+  ///////////////////////////////// currency & exchange rate /////////////////////////////////
 
 
   const updatePurchaseNumber = async (value: string) => {
@@ -547,7 +547,7 @@ const useQuoteNew = (docType : DOCUMENT_TYPE ) => {
       if (res?.success) {
         alertSuccessDelete();
         onCloseDeleteItemModal();
-        quoteItemValue?.documentItems?.length === 1  ? navigate("/home") : getQuote();
+        quoteItemValue?.documentItems?.length === 1 ? navigate("/home") : getQuote();
       } else {
         alertFaultDelete();
       }
@@ -826,7 +826,7 @@ const useQuoteNew = (docType : DOCUMENT_TYPE ) => {
     }
     await deleteDocumentAddressApi(callApi, callBack, { documentAddressId: item?.id, documentType: docType })
   }
- 
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dateRef.current && !dateRef.current.contains(event.target)) {
@@ -1030,7 +1030,8 @@ const useQuoteNew = (docType : DOCUMENT_TYPE ) => {
     isUpdateCurrency,
     updateExchangeRate,
     updateCurrency,
-    refreshExchangeRate
+    refreshExchangeRate,
+    getQuote
   };
 };
 

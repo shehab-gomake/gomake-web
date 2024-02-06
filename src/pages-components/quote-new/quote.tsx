@@ -23,7 +23,6 @@ import { IconButton } from "@mui/material";
 import { SettingQuoteMenu } from "@/widgets/quote-new/setting-quote-menu";
 import { AddDeliveryModal } from "@/widgets/quote-new/modals-widgets/add-delivery-modal/add-delivery-modal";
 import { DOCUMENT_TYPE } from "../quotes/enums";
-import { useEffect } from "react";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -151,7 +150,8 @@ const QuoteNewPageWidget = ({ documentType }: IProps) => {
     setIsUpdateCurrency,
     isUpdateCurrency,
     updateCurrency,
-    refreshExchangeRate
+    refreshExchangeRate,
+    getQuote
   } = useQuoteNew(documentType);
 
   return (
@@ -292,10 +292,11 @@ const QuoteNewPageWidget = ({ documentType }: IProps) => {
                 getCalculateQuote={getCalculateQuote}
                 changedocumentItemsChild={changedocumentItemsChild}
                 documentType={documentType}
+                getQuote={getQuote}
               />
             </div>
             <div style={{ width: "100%", flex: 0.1 }}>
-              <WriteCommentComp />
+              <WriteCommentComp getQuote={getQuote} />
               <ButtonsContainer
                 onOpenNewItem={onOpenNewItem}
                 onOpenDeliveryModal={onOpenDeliveryModal}

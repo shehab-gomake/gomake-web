@@ -58,6 +58,8 @@ const CREATE_NEW_DOCUMENT_URL = "/v1/erp-service/documents/create-new-document";
 const GET_ALL_REPORTS_URL = "/v1/erp-service/quote/get-all-reports"
 const UPDATE_DOCUMENT_ITEM_CONTENT_URL =
   "/v1/erp-service/document/update-document-item-content";
+  const UPDATE_DOCUMENT_COMMENTS_URL =
+  "/v1/erp-service/document/update-document-comments";
 const getDocumentApi: ICallAndSetData = async (callApi, setState, data) => {
   return await getSetApiData(
     callApi,
@@ -495,6 +497,19 @@ const updateDocumentItemContentApi: ICallAndSetData = async (
     data
   );
 };
+const updateDocumentCommentsApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.PUT,
+    UPDATE_DOCUMENT_COMMENTS_URL,
+    setState,
+    data
+  );
+};
 
 export {
   getDocumentApi,
@@ -530,5 +545,6 @@ export {
   refreshExchangeRateApi,
   createNewDocumentApi,
   getAllReportsApi,
-  updateDocumentItemContentApi
+  updateDocumentItemContentApi,
+  updateDocumentCommentsApi
 };

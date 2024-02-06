@@ -28,6 +28,7 @@ const QuoteForPriceTable = ({
   getCalculateQuote,
   changedocumentItemsChild,
   documentType,
+  getQuote
 }) => {
   const { clasess } = useStyle({ headerHeight });
   const PrimaryTableCell = styled(TableCell)(() => {
@@ -88,6 +89,7 @@ const QuoteForPriceTable = ({
                     }
                     onClickDeleteQouteItem={onClickDeleteQouteItem}
                     documentType={documentType}
+                    getQuote={getQuote}
                   />
                   {item?.childsDocumentItems &&
                     item?.childsDocumentItems?.map(

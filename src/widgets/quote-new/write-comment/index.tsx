@@ -1,20 +1,18 @@
-import React, { useState, useTransition } from "react";
+import React from "react";
 import { useStyle } from "./style";
 import { GomakeTextInput } from "@/components";
-import { useTranslation } from "react-i18next";
+import { useWriteCommentComp } from "./use-character-details";
 
-const WriteCommentComp = () => {
+const WriteCommentComp = ({ getQuote }) => {
   const { clasess } = useStyle();
-  const [data, setData] = useState("");
-  const { t } = useTranslation();
+  const { handleChange, handleBlur, t, data } = useWriteCommentComp({ getQuote })
   return (
     <div style={clasess.writeCommentcontainer}>
       <GomakeTextInput
         style={clasess.textInputStyle}
         placeholder={t("sales.quote.writeCommentHere")}
-        onChange={(e: any) => {
-          setData(e.target.value);
-        }}
+        onChange={handleChange}
+        onBlur={handleBlur}
         value={data}
       />
     </div>
