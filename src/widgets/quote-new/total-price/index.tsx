@@ -9,7 +9,10 @@ const TotalPriceComp = ({
   getCalculateQuote,
   quoteItems,
   changeQuoteItems,
-  isQuoteConfirmation = false ,
+  isQuoteConfirmation = false,
+  totalBeforeVat,
+  vat,
+  totalPrice
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -46,7 +49,7 @@ const TotalPriceComp = ({
             paddingLeft: 36,
           }}
         >
-          {quoteItems?.totalPrice +
+          {(isQuoteConfirmation ? totalBeforeVat : quoteItems?.totalPrice) +
             " " +
             getCurrencyUnitText(quoteItems?.currency)}
         </div>
@@ -69,7 +72,7 @@ const TotalPriceComp = ({
           VAT (17%)
         </div>
         <div style={{ ...classes.oddRowContainer, width: "23%" }}>
-          {Math.ceil(quoteItems?.totalVAT) + " " + getCurrencyUnitText(quoteItems?.currency)}
+          {Math.ceil(isQuoteConfirmation ? vat :quoteItems?.totalVAT) + " " + getCurrencyUnitText(quoteItems?.currency)}
         </div>
       </div>
       <div style={classes.firstRowForFooterContainer}>
@@ -91,7 +94,7 @@ const TotalPriceComp = ({
         >
           <div style={classes.cellTextInputStyle}>
             <InputUpdatedValues
-              value={quoteItems?.totalPayment}
+              value={isQuoteConfirmation ? totalPrice : quoteItems?.totalPayment}
               onBlur={onBlurTotalPayment}
               isUpdate={isUpdateTotalPayment}
               setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdateTotalPayment}

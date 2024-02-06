@@ -21,9 +21,12 @@ const RowMappingWidget = ({
   parentIndex,
   documentType,
   isQuoteConfirmation = false,
-
+  setCheckedItems,
+  checkedItems,
+  updateTotalPrice
 }) => {
   const { classes } = useStyle({ headerHeight });
+  const [isConfirmation, setIsConfirmation] = useState(null);
   const {
     isUpdateAmount,
     isUpdateDiscount,
@@ -48,7 +51,14 @@ const RowMappingWidget = ({
     index,
   });
 
-  const [isConfirmation, setIsConfirmation] = useState(null);
+  const handleItemCheck = (itemId, itemPrice) => {
+    setCheckedItems((prevCheckedItems) => ({
+      ...prevCheckedItems,
+      [itemId]: !prevCheckedItems[itemId],
+    }));
+
+    updateTotalPrice(itemId, itemPrice);
+  };
 
   return (
     <TableRow
@@ -75,6 +85,8 @@ const RowMappingWidget = ({
           <Checkbox
             icon={<CheckboxIcon />}
             checkedIcon={<CheckboxCheckedIcon />}
+            checked={isQuoteConfirmation ? checkedItems[item.id] : item?.isSelected }
+            onChange={isQuoteConfirmation ? () => handleItemCheck(item.id, item.finalPrice) : ()=>null}
           />
           {parentIndex}
         </div>
@@ -177,7 +189,7 @@ const RowMappingWidget = ({
           />
         </div>
       </PrimaryTableCell>
-     {!isQuoteConfirmation && <PrimaryTableCell
+      {!isQuoteConfirmation && <PrimaryTableCell
         style={{
           width: columnWidths[7],
           ...classes.cellContainerStyle,

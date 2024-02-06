@@ -1,24 +1,28 @@
-import React, { useState, useTransition } from "react";
 import { useStyle } from "./style";
 import { GomakeTextInput } from "@/components";
 import { useTranslation } from "react-i18next";
+import { useWriteComment } from "./use-write-comment";
+import { useRecoilValue } from "recoil";
+import { quoteItemState } from "@/store/quote-item";
 
 interface IProps {
+  documentType:any;
   isQuoteConfirmation?: boolean;
 }
-const WriteCommentComp = ({isQuoteConfirmation} : IProps) => {
-  const { classes } = useStyle(isQuoteConfirmation);
-  const [data, setData] = useState("");
+const WriteCommentComp = ({isQuoteConfirmation , documentType} : IProps) => {
   const { t } = useTranslation();
+  const { classes } = useStyle(isQuoteConfirmation);
+  const {onChangeComments , documentComments} = useWriteComment({documentType});
+  const quoteItemValue: any = useRecoilValue(quoteItemState);
+
+
   return (
     <div style={classes.writeCommentContainer}>
       <GomakeTextInput
         style={classes.textInputStyle}
         placeholder={t("sales.quote.writeCommentHere")}
-        onChange={(e: any) => {
-          setData(e.target.value);
-        }}
-        value={data}
+        onChange={onChangeComments}
+        value={isQuoteConfirmation ? documentComments : quoteItemValue?.notes}
       />
     </div>
   );

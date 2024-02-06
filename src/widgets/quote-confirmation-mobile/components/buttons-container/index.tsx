@@ -11,15 +11,13 @@ const ButtonsConfirmContainer = () => {
     <div style={classes.mainContainer}>
       <SecondaryButton
           variant="contained"
-          style={classes.btnStyle}>{t("sales.quote.approveOffer")}
+          style={classes.btnStyle}
+          >{t("sales.quote.approveOffer")}
         </SecondaryButton>
         <SecondaryButton
           variant="outlined"
-          style={classes.btnStyle}>{t("sales.quote.partiallyApproved")}
-        </SecondaryButton>
-        <SecondaryButton
-          variant="outlined"
-          style={classes.btnStyle}>{t("sales.quote.print")}
+          style={classes.btnStyle}
+          >{t("sales.quote.print")}
         </SecondaryButton>
         <SecondaryButton
           variant="outlined"

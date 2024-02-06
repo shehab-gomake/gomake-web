@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Table,
   TableBody,
@@ -29,8 +29,15 @@ const QuoteForPriceTable = ({
   changedocumentItemsChild,
   documentType,
   isQuoteConfirmation = false,
+  setCheckedItems,
+  checkedItems,
+  updateTotalPrice,
+  totalBeforeVat,
+  vat,
+  totalPrice
 }) => {
   const { classes } = useStyle({ headerHeight });
+
   const PrimaryTableCell = styled(TableCell)(() => {
     return {
       [`&.${tableCellClasses.head}`]: {
@@ -43,10 +50,10 @@ const QuoteForPriceTable = ({
   });
 
   let indexs = 0;
+
   return (
     <div>
       <TableContainer
-        // component={Paper}
         style={{
           maxHeight: 420,
           overflow: "scroll",
@@ -92,7 +99,9 @@ const QuoteForPriceTable = ({
                     onClickDeleteQouteItem={onClickDeleteQouteItem}
                     documentType={documentType}
                     isQuoteConfirmation={isQuoteConfirmation}
-
+                    setCheckedItems={setCheckedItems}
+                    checkedItems={checkedItems}
+                    updateTotalPrice={updateTotalPrice}
                   />
                   {item?.childsDocumentItems &&
                     item?.childsDocumentItems?.map(
@@ -127,6 +136,9 @@ const QuoteForPriceTable = ({
         quoteItems={quoteItems}
         changeQuoteItems={changeQuoteItems}
         isQuoteConfirmation={isQuoteConfirmation}
+        totalBeforeVat={totalBeforeVat}
+        vat={vat}
+        totalPrice={totalPrice}
       />
     </div>
   );

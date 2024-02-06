@@ -23,7 +23,7 @@ import { IconButton } from "@mui/material";
 import { SettingQuoteMenu } from "@/widgets/quote-new/setting-quote-menu";
 import { AddDeliveryModal } from "@/widgets/quote-new/modals-widgets/add-delivery-modal/add-delivery-modal";
 import { DOCUMENT_TYPE } from "../quotes/enums";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { ButtonsConfirmContainer } from "@/widgets/quote-new/buttons-cofirm-container";
 
 interface IProps {
@@ -33,6 +33,7 @@ interface IProps {
 const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProps) => {
   const { classes } = useStyle(isQuoteConfirmation);
   const quoteItemValue = useRecoilValue<any>(quoteItemState);
+
   const {
     selectDate,
     selectBusiness,
@@ -153,7 +154,14 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
     setIsUpdateCurrency,
     isUpdateCurrency,
     updateCurrency,
-    refreshExchangeRate
+    refreshExchangeRate,
+    checkedItems,
+    setCheckedItems,
+    handleApproveButtonClick,
+    totalBeforeVat,
+    vat,
+    totalPrice,
+    updateTotalPrice
   } = useQuoteNew(documentType);
 
   return (
@@ -297,24 +305,30 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
                 changedocumentItemsChild={changedocumentItemsChild}
                 documentType={documentType}
                 isQuoteConfirmation={isQuoteConfirmation}
+                checkedItems={checkedItems}
+                setCheckedItems={setCheckedItems}
+                updateTotalPrice={updateTotalPrice}
+                totalBeforeVat={totalBeforeVat}
+                vat={vat}
+                totalPrice={totalPrice}
               />
             </div>
-            <WriteCommentComp isQuoteConfirmation={isQuoteConfirmation} />
+            <WriteCommentComp isQuoteConfirmation={isQuoteConfirmation} documentType={documentType} />
           </div>
           {!isQuoteConfirmation &&
             <ButtonsContainer
-          onOpenNewItem={onOpenNewItem}
-          onOpenDeliveryModal={onOpenDeliveryModal}
-          handleCancelBtnClick={handleCancelBtnClick}
-          handleSaveBtnClick={handleSaveBtnClick}
-          handleSendBtnClick={handleSendBtnClick}
-          documentType={documentType}
-        />
-            }
+              onOpenNewItem={onOpenNewItem}
+              onOpenDeliveryModal={onOpenDeliveryModal}
+              handleCancelBtnClick={handleCancelBtnClick}
+              handleSaveBtnClick={handleSaveBtnClick}
+              handleSendBtnClick={handleSendBtnClick}
+              documentType={documentType}
+            />
+          }
         </div>
 
       )}
-      {isQuoteConfirmation && <ButtonsConfirmContainer/>}
+      {isQuoteConfirmation && <ButtonsConfirmContainer onClickApprove={handleApproveButtonClick} />}
       <AddNewItemModal
         openModal={openAddNewItemModal}
         onClose={onCloseNewItem}

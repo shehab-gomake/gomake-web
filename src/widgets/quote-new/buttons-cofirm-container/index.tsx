@@ -22,6 +22,7 @@ interface IProps {
   handleSaveBtnClick?: any,
   handleSendBtnClick?: any,
   onOpenDeliveryModal?: any,
+  onClickApprove?:()=>void;
 
 }
 const ButtonsConfirmContainer = ({
@@ -30,6 +31,7 @@ const ButtonsConfirmContainer = ({
   handleSaveBtnClick,
   handleSendBtnClick,
   onOpenDeliveryModal,
+  onClickApprove
 }: IProps) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -69,12 +71,11 @@ const ButtonsConfirmContainer = ({
           style={classes.btnStyle}>{t("sales.quote.attachFiles")}
         </SecondaryButton>
         <SecondaryButton
-          variant="outlined"
-          style={classes.btnStyle}>{t("sales.quote.partiallyApproved")}
-        </SecondaryButton>
-        <SecondaryButton
           variant="contained"
-          style={classes.btnStyle}>{t("sales.quote.approveOffer")}
+          style={classes.btnStyle}
+          onClick={onClickApprove}
+          >
+          {t("sales.quote.approveOffer")}
         </SecondaryButton>
       </div>
     </div>
