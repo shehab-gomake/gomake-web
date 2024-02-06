@@ -1,47 +1,43 @@
-import { FONT_FAMILY } from "@/utils/font-family";
-import React, { useState } from "react";
-import { useTranslation } from "react-i18next";
+import { GomakeTextInput } from "@/components";
+import { EditIcon } from "@/icons";
+import { IconButton } from "@mui/material";
+import React from "react";
+import { useCharacterDetails } from "./use-character-details";
+import { useStyleCharacterDetails } from "./style-character-details";
 
 const CharacterDetails = ({ details }) => {
-  const [showAll, setShowAll] = useState(false);
-  const { t } = useTranslation();
-  const truncatedDetails = showAll ? details : details?.slice(0, 90);
-
-  const handleShowMore = () => {
-    setShowAll(true);
-  };
-
-  const handleShowLess = () => {
-    setShowAll(false);
-  };
-
+  const { isEdit, showAll, truncatedDetails, data, handleShowLess, handleShowMore, t, setIsEdit, handleChange, handleBlur } = useCharacterDetails({ details })
+  const { clasess } = useStyleCharacterDetails({ showAll });
   return (
-    <div
-      style={{
-        height: showAll ? 100 : 74,
-        overflowY: "scroll",
-        borderRight: showAll ? "1px solid  #F135A3" : "none",
-        padding: "16px 24px",
-        color: "#000000",
-        ...FONT_FAMILY.Inter(400, 14),
-      }}
-    >
-      {truncatedDetails}
-      {!showAll && ".. "}
-      {details?.length > 90 && (
-        <span
-          onClick={showAll ? handleShowLess : handleShowMore}
-          style={{
-            ...FONT_FAMILY.Inter(500, 14),
-            color: "#5859A8",
-            textDecoration: "underLine",
-            cursor: "pointer",
-          }}
-        >
-          {showAll ? t("sales.quote.showLess") : t("sales.quote.showMore")}
-        </span>
-      )}
-    </div>
+    <>
+      {!isEdit ? <div
+        style={clasess.mainContainer}
+      >
+        {truncatedDetails}
+        {!showAll && ".. "}
+        {details?.length > 90 && (
+          <span
+            onClick={showAll ? handleShowLess : handleShowMore}
+            style={clasess.showAllContaner}
+          >
+            {showAll ? t("sales.quote.showLess") : t("sales.quote.showMore")}
+
+          </span>
+        )}
+        <IconButton onClick={() => setIsEdit(true)} >
+          <EditIcon />
+        </IconButton>
+      </div> : <div>
+        <GomakeTextInput
+          multiline={6}
+          style={clasess.textInputEditing}
+          onChange={handleChange}
+          value={data}
+          onBlur={handleBlur}
+        />
+      </div>}
+    </>
+
   );
 };
 export { CharacterDetails };
