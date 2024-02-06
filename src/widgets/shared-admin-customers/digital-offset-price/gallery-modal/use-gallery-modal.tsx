@@ -55,8 +55,8 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
   const getProductQuoteItemById = useCallback(async () => {
     const res = await getPrintHouseMaterialsByMaterialKey(callApi, setMaterialData, {
       key: selectParameterButton?.parameter?.materialPath[0],
-      width: widthParameter,
-      length: heightParameter
+      width: widthParameter && widthParameter.values && widthParameter.values.length > 0 ?  widthParameter.values[0] : 0,
+      length: heightParameter && heightParameter.values && heightParameter.values.length > 0 ?  heightParameter.values[0] : 0,
     });
     if (res?.filters?.length > 0) {
       setMaterialTableFilters(res?.filters)
@@ -169,9 +169,12 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
   }, [materialDataFilter]);
 
   const CheckOptionToStraightKnife = useCallback(async () => {
+    const width = widthParameter && widthParameter.values && widthParameter.values.length > 0 ? +widthParameter?.values[0]  : 0;
+    const height = heightParameter && heightParameter.values && heightParameter.values.length > 0 ? +heightParameter?.values[0]  : 0;
+
     const res = await callApi(
       EHttpMethod.POST,
-      `/v1/calculation-service/calculations/check-option-to-straight-knife?width=${+widthParameter?.values[0]}&length=${+heightParameter?.values[0]}&shapeId=${shapeParameter ? shapeParameter?.parameterId : LabelShapeParameter?.parameterId}&materialTypeKey=${selectParameterButton?.parameter?.materialPath[0]}`,
+      `/v1/calculation-service/calculations/check-option-to-straight-knife?width=${width}&length=${height}&shapeId=${shapeParameter ? shapeParameter?.parameterId : LabelShapeParameter?.parameterId}&materialTypeKey=${selectParameterButton?.parameter?.materialPath[0]}`,
 
     );
     if (res?.success) {
