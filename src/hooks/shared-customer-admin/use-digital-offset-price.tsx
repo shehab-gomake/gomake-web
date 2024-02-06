@@ -85,6 +85,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [subProducts, setSubProducts] = useRecoilState<any>(
     subProductsParametersState
   );
+
   const [isSetTemplete, setIsSetTemplete] = useState<boolean>(false);
   const setSubProductsCopy = useSetRecoilState<any>(
     subProductsCopyParametersState
@@ -751,7 +752,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   }
                   debugger;
                   parameter.valuesConfigs.forEach(val => {
-                    if(val.materialValueIds && val.materialValueIds.length > 0){
+                    if (val.materialValueIds && val.materialValueIds.length > 0) {
                       val.valueIds = [];
                       val.values = [];
                       val.materialValueIds.forEach(materialValue => {
@@ -760,7 +761,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                       })
                     }
                   })
-                 
+
                   parameter.valuesConfigs = parameter.valuesConfigs.filter(
                     (x) => x.valueIds && x.valueIds.length > 0
                   );
@@ -826,7 +827,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                           parameter.valuesConfigs = [];
                         }
                         param.valuesConfigs.forEach(val => {
-                          if(val.materialValueIds && val.materialValueIds.length > 0){
+                          if (val.materialValueIds && val.materialValueIds.length > 0) {
                             val.valueIds = [];
                             val.values = [];
                             val.materialValueIds.forEach(materialValue => {
@@ -1456,7 +1457,12 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               x.actionIndex === actionIndex &&
               x.materialPath?.find((y) => compareStrings(y, materialPath))
           );
+          if (materialRelatedParameters?.length > 0) {
+            temp = temp.filter(subProduct => {
+              return !materialRelatedParameters.some(materialParameter => materialParameter.id === subProduct.parameterId);
+            });
 
+          }
           materialRelatedParameters?.forEach((param) => {
             if (param.materialPath && param.materialPath.length > 0) {
               const index = param.materialPath.findIndex((x) =>

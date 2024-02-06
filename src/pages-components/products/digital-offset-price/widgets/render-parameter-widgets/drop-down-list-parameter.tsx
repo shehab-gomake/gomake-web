@@ -19,12 +19,11 @@ const DropDownListParameterWidget = ({
   const defaultObject = parameter.valuesConfigs.find(
     (item) => item.isDefault === true
   );
-
   return (
     <div style={clasess.dropDownListWithSettingIcon}>
       <GoMakeAutoComplate
         options={parameter?.valuesConfigs?.filter((value) => !value.isHidden)}
-        key={parameter.id + "-" + parameter.actionIndex}
+        key={parameter?.valuesConfigs + temp[index]?.values}
         placeholder={parameter.name}
         style={clasess.dropDownListStyle}
         getOptionLabel={(option: any) => option.updateName}
