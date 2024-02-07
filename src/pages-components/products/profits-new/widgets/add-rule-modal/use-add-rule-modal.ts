@@ -52,12 +52,13 @@ const useAddRuleModal = ({
   }, [isQuoteWidge]);
   const EStatementCategory = {
     Machine: 1,
-    "Machine Category": 2,
-    "Client Type": 3,
-    Client: 4,
-    "Property input": 5,
-    "Property output": 6,
-    Products: 7,
+    "Client Type": 2,
+    Client: 3,
+    "Property input": 4,
+    "Property output": 5,
+    Products: 6,
+    Agent:7
+   
   };
   const { Outputs } = useOutputs();
   const { machines } = usePrintHouseMachines();
