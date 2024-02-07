@@ -23,17 +23,19 @@ const ButtonsConfirmContainer = () => {
     onClickCloseOtherModal,
     openOtherReasonModal,
     setReasonText,
-    updateCancelQuote,
-    onClickCancelOffer,
+    onClickReject,
     onClickPrint,
-    isButtonClicked
-  } = useButtonsConfirmContainer();
+    isButtonClicked,
+    onClickApprove,
+    quoteConfirm
+  } = useButtonsConfirmContainer(); 
 
   return (
-    <div style={classes.mainContainer}>
+    !quoteConfirm?.isConfirmed && <div style={classes.mainContainer}>
       <SecondaryButton
         variant="contained"
         style={classes.btnStyle}
+        onClick={onClickApprove}
       >{t("sales.quote.approveOffer")}
       </SecondaryButton>
       <SecondaryButton
@@ -57,7 +59,7 @@ const ButtonsConfirmContainer = () => {
         handleClose={handleRejectBtnClose}
         open={openRejectBtn}
         anchorEl={anchorElRejectBtn}
-        onClickOpenModal={onClickOpenOtherModal}
+        onClickOpenModal={()=>onClickOpenOtherModal(QuoteStatuses.CANCELED_OTHER)}
         onClickOpenDeliveryTimeModal={() => onClickOpenRejectModal(QuoteStatuses.CANCELED_DELIVERY_TIME)}
         onClickOpenPriceModal={() => onClickOpenRejectModal(QuoteStatuses.CANCELED_PRICE)}
         onClickOpenIrrelevantModal={() => onClickOpenRejectModal(QuoteStatuses.CANCELED_IRRELEVANT)}
@@ -66,7 +68,7 @@ const ButtonsConfirmContainer = () => {
         openModal={openOtherReasonModal}
         onClose={onClickCloseOtherModal}
         setReasonText={setReasonText}
-        onClickCancelOffer={onClickCancelOffer}
+        onClickCancelOffer={onClickReject}
         style={{width:"80%" , height:"60%"}}
       />
       <GoMakeDeleteModal
@@ -77,7 +79,7 @@ const ButtonsConfirmContainer = () => {
         onClose={onClickCloseRejectModal}
         subTitle={t("sales.quote.subTitleCancelModal")}
         cancelBtn={t("sales.quote.cancelBtn")}
-        onClickDelete={() => updateCancelQuote()}
+        onClickDelete={onClickReject}
         style={{width:"unset"}}
       />
     </div>

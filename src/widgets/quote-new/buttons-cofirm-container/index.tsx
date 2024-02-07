@@ -29,10 +29,9 @@ const ButtonsConfirmContainer = ({
     onClickCloseOtherModal,
     openOtherReasonModal,
     setReasonText,
-    updateCancelQuote,
-    onClickCancelOffer,
     onClickPrint,
-    isButtonClicked 
+    isButtonClicked ,
+    onClickReject
   } = useButtonsConfirmContainer();
 
   return (
@@ -66,7 +65,7 @@ const ButtonsConfirmContainer = ({
         handleClose={handleRejectBtnClose}
         open={openRejectBtn}
         anchorEl={anchorElRejectBtn}
-        onClickOpenModal={onClickOpenOtherModal}
+        onClickOpenModal={()=>onClickOpenOtherModal(QuoteStatuses.CANCELED_OTHER)}
         onClickOpenDeliveryTimeModal={() => onClickOpenRejectModal(QuoteStatuses.CANCELED_DELIVERY_TIME)}
         onClickOpenPriceModal={() => onClickOpenRejectModal(QuoteStatuses.CANCELED_PRICE)}
         onClickOpenIrrelevantModal={() => onClickOpenRejectModal(QuoteStatuses.CANCELED_IRRELEVANT)}
@@ -75,7 +74,7 @@ const ButtonsConfirmContainer = ({
         openModal={openOtherReasonModal}
         onClose={onClickCloseOtherModal}
         setReasonText={setReasonText}
-        onClickCancelOffer={onClickCancelOffer}
+        onClickCancelOffer={onClickReject}
       />
       <GoMakeDeleteModal
         icon={<WarningAmberIcon style={{ width: 60, height: 60, color: "red" }} />}
@@ -85,7 +84,7 @@ const ButtonsConfirmContainer = ({
         onClose={onClickCloseRejectModal}
         subTitle={t("sales.quote.subTitleCancelModal")}
         cancelBtn={t("sales.quote.cancelBtn")}
-        onClickDelete={() => updateCancelQuote()}
+        onClickDelete={onClickReject}
       />
     </div>
   );

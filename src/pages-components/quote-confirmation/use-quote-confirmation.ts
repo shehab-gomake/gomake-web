@@ -1,10 +1,9 @@
 import { useGomakeAxios, useSnackBar } from "@/hooks";
-import { approveDocumentItemsApi, calculateSelectedItemsApi, getDocumentByIdApi, rejectDocumentApi, updateDocumentCommentsConfirmationApi } from "@/services/api-service/generic-doc/quote-confirmation-api";
+import { calculateSelectedItemsApi, getDocumentByIdApi, updateDocumentCommentsConfirmationApi } from "@/services/api-service/generic-doc/quote-confirmation-api";
 import { quoteConfirmationState } from "@/store/quote-item";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { useRecoilState } from "recoil";
-import { DOCUMENT_TYPE } from "../quotes/enums";
 import cloneDeep from "lodash.clonedeep";
 
 const useQuoteConfirmation = () => {
@@ -29,29 +28,6 @@ const useQuoteConfirmation = () => {
             }
         }
         await getDocumentByIdApi(callApi, callBack, { id: router?.query?.Id })
-    }
-
-    const approveDocumentItems = async (checkedItems) => {
-        const callBack = (res) => {
-            if (res?.success) {
-                console.log("the result ", res?.data)
-                // getQuoteConfirmation or getDoment id  THE CHEKCED IF isConfirmed IN DISPLAING BUTTONS CONTAINER
-            } else {
-                alertFaultUpdate();
-            }
-        }
-        await approveDocumentItemsApi(callApi, callBack, { documentType: DOCUMENT_TYPE.quote })
-    }
-
-    const rejectDocument = async () => {
-        const callBack = (res) => {
-            if (res?.success) {
-                alertSuccessUpdate();
-            } else {
-                alertFaultUpdate();
-            }
-        }
-        await rejectDocumentApi(callApi, callBack, { documentId: quoteConfirm?.id, quoteStatus: 0, cancelText: "test" })
     }
 
     const updateDocumentComments = async () => {
@@ -84,7 +60,6 @@ const useQuoteConfirmation = () => {
         await calculateSelectedItemsApi(callApi, callBack, { quoteId: quote?.id, documentItemIds: documentItemIds })
     }
 
-
     const handleItemCheck = (e,itemId) => {
         let quoteCopy = cloneDeep(quoteConfirm);
         if(quoteCopy?.documentItems){
@@ -96,9 +71,7 @@ const useQuoteConfirmation = () => {
     } 
     return {
         getQuoteConfirmation,
-        approveDocumentItems,
         updateDocumentComments,
-        rejectDocument,
         checkedItems,
         setCheckedItems,
         calculateSelectedItems,

@@ -8,12 +8,11 @@ import { useStyle } from './style';
 import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
 import { Checkbox } from "@mui/material";
 import { useQuoteGetData } from '@/pages-components/quote-new/use-quote-get-data';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import {  quoteConfirmationState } from '@/store';
+import { useRecoilValue } from 'recoil';
+import { quoteConfirmationState } from '@/store';
 import { useTranslation } from "react-i18next";
 import { useQuoteConfirmation } from '@/pages-components/quote-confirmation/use-quote-confirmation';
-import { useEffect, useState } from 'react';
-import cloneDeep from 'lodash.clonedeep';
+
 
 interface IProps {
     key: string;

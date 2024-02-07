@@ -4,6 +4,7 @@ import { useRecoilValue } from "recoil";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { cancelDocumentApi, getDocumentPdfApi } from "@/services/api-service/generic-doc/documents-api";
 import { QuoteStatuses } from "@/widgets/quote/total-price-and-vat/enums";
+import { approveDocumentItemsApi, rejectDocumentApi } from "@/services/api-service/generic-doc/quote-confirmation-api";
 
 const useButtonsConfirmContainer = () => {
     const { callApi } = useGomakeAxios();
@@ -35,7 +36,8 @@ const useButtonsConfirmContainer = () => {
         setOpenRejectModal(false);
     };
 
-    const onClickOpenOtherModal = () => {
+    const onClickOpenOtherModal = (rejectStatus: QuoteStatuses) => {
+        setRejectStatus(rejectStatus);
         setOpenOtherReasonModal(true);
     };
     const onClickCloseOtherModal = () => {
@@ -43,40 +45,6 @@ const useButtonsConfirmContainer = () => {
     };
 
 
-    const onClickCancelOffer = async () => {
-        const callBack = (res) => {
-            if (res?.success) {
-                alertSuccessUpdate();
-            } else {
-                alertFaultUpdate();
-            }
-        }
-        await cancelDocumentApi(callApi, callBack, {
-            DocumentType: 0,
-            Document: {
-                documentId: quoteConfirm?.id,
-                quoteStatus: QuoteStatuses.CANCELED_OTHER,
-                cancelText: reasonText,
-            }
-        })
-    }
-
-    const updateCancelQuote = async () => {
-        const callBack = (res) => {
-            if (res?.success) {
-                alertSuccessUpdate();
-            } else {
-                alertFaultUpdate();
-            }
-        }
-        await cancelDocumentApi(callApi, callBack, {
-            DocumentType: 0,
-            Document: {
-                documentId: quoteConfirm?.id,
-                quoteStatus: rejectStatus,
-            }
-        })
-    }
 
     const onClickPrint = async () => {
         const callBack = (res) => {
@@ -90,9 +58,36 @@ const useButtonsConfirmContainer = () => {
         await getDocumentPdfApi(callApi, callBack, { documentId: quoteConfirm?.id, documentType: 0 });
     };
 
+
+    
+    const onClickApprove = async () => {
+        const selectedItemIds = quoteConfirm?.documentItems?.filter(x=>x.isChecked)?.map(x=>x.id);
+        const callBack = (res) => {
+            if (res?.success) {
+                // getQuoteConfirmation or getDoment id  THE CHEKCED IF isConfirmed IN DISPLAING BUTTONS CONTAINER
+            } else {
+                alertFaultUpdate();
+            }
+        }
+        await approveDocumentItemsApi(callApi, callBack, { docuementItemsIds : selectedItemIds  })
+    }
+
+    const onClickReject = async () => {
+        const callBack = (res) => {
+            if (res?.success) {
+                onClickCloseOtherModal();
+                alertSuccessUpdate();
+            } else {
+                alertFaultUpdate();
+            }
+        }
+        await rejectDocumentApi(callApi, callBack, { documentId: quoteConfirm?.id, quoteStatus: rejectStatus, cancelText: reasonText })
+    }
+
     return {
         onClickPrint,
-        anchorElRejectBtn, setAnchorElRejectBtn,
+        anchorElRejectBtn, 
+        setAnchorElRejectBtn,
         openOtherReasonModal,
         onClickOpenOtherModal,
         onClickCloseOtherModal,
@@ -104,9 +99,10 @@ const useButtonsConfirmContainer = () => {
         openRejectModal,
         onClickCloseRejectModal,
         onClickOpenRejectModal,
-        updateCancelQuote,
-        onClickCancelOffer,
-        isButtonClicked 
+        isButtonClicked ,
+        onClickApprove,
+        onClickReject,
+        quoteConfirm
     };
 
 };

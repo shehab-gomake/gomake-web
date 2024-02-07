@@ -28,7 +28,6 @@ const BusinessWidget = () => {
     }, [quoteConfirm, customersListValue]);
 
 
-
     return (
         <>
             <div style={classes.businessContainerStyle}>
