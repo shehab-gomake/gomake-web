@@ -27,6 +27,7 @@ const AddRuleModal = ({
   isPropertiesWidge,
   selectedProperties,
   getProperitesService,
+  isQuoteWidge = false
 }: any) => {
   const { clasess } = useStyle();
   const { t } = useTranslation();
@@ -45,6 +46,7 @@ const AddRuleModal = ({
     mainconditions,
     categories,
     conditions,
+    GroupByOptions,
     create,
     createProperties,
     setPropertieValue,
@@ -313,6 +315,21 @@ const AddRuleModal = ({
       }
     }
   };
+  const _renderInptsForQuotes = () => {
+    return (
+      <div style={{ width: "20%" }}>
+        <div style={clasess.selectTypeStyle}>{t("products.profits.exceptions.groupBy")}</div>
+        <GoMakeAutoComplate
+          options={GroupByOptions}
+          style={clasess.dropDownListContainer}
+          placeholder={t("products.profits.exceptions.selectGroupBy")}
+          onChange={(e, value) => {
+            setPropertieValue(value?.id)
+          }}
+        />
+      </div>
+    );
+  }
   return (
     <>
       <GoMakeModal
@@ -703,6 +720,8 @@ const AddRuleModal = ({
           )}
 
           {isPropertiesWidge && _renderInptsForProperties()}
+          {isQuoteWidge && _renderInptsForQuotes()}
+
 
           <div style={clasess.btnContainer}>
             <GomakePrimaryButton

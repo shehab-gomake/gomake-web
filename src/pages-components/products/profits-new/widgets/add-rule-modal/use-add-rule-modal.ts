@@ -18,6 +18,7 @@ import { getSetApiData } from "@/services/api-service/get-set-api-data";
 import { usePrintHouseMachines } from "@/widgets/properties/hooks/use-print-house-machines";
 import { CLIENT_TYPE_Id } from "@/pages/customers/enums";
 import { useTranslation } from "react-i18next";
+import { EGroupByEnum } from "@/enums";
 
 const useAddRuleModal = ({
   typeExceptionSelected,
@@ -102,6 +103,15 @@ const useAddRuleModal = ({
     return [
       { label: "Yes", id: true },
       { label: "No", id: false },
+    ];
+  }, []);
+  const GroupByOptions = useMemo(() => {
+    return [
+      { label: "Client", id: EGroupByEnum.CLIENT },
+      { label: "Agent", id: EGroupByEnum.AGENT },
+      { label: "Product", id: EGroupByEnum.PRODUCT },
+      { label: "ProductSku", id: EGroupByEnum.PRODUCT_SKU },
+      { label: "ClientType", id: EGroupByEnum.CLIENT_TYPE },
     ];
   }, []);
   const { alertSuccessAdded, alertFaultAdded,setSnackbarStateValue } = useSnackBar();
@@ -363,7 +373,8 @@ const useAddRuleModal = ({
     propertieValue,
     setPropertieValue,
     materialsTypes,
-    machines
+    machines,
+    GroupByOptions
   };
 };
 
