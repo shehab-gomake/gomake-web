@@ -39,12 +39,12 @@ const useAddRuleModal = ({
   const categories = useMemo(() => {
     return [
       { label: "Machine", id: "Machine" },
-      // { label: "Machine category", id: "Machine Category" },
       { label: "Products", id: "Products" },
       { label: "Client type", id: "Client Type" },
       { label: "Client", id: "Client" },
       { label: "Property output", id: "Property output" },
       { label: "Property input", id: "Property input" },
+      // { label: "Machine category", id: "Machine Category" },
       // { label: "Material", id: "Material" },
       // { label: "Material Category", id: "Material Category" },
     ];
@@ -180,38 +180,35 @@ const useAddRuleModal = ({
     }
     const textArray = conditions.map((condition) => {
       const categoryLabel = condition?.category
-        ? condition?.category?.label
+        ? (condition.category.id !== "Property output" && condition.category.id !== "Property input" ? condition.category.label : "")
         : "";
-      const conditionLabel = condition?.condition
-        ? condition?.condition?.label
-        : "";
-      const statement2Label = condition.statement2
-        ? condition.statement2.label
-        : "";
-
+      const conditionLabel = condition?.condition?.label ?? "";
+      const statement2Label = condition.statement2?.label ?? "";
+  
       let text = "";
-
+  
       if (condition.linkCondition) {
         text += ` ${condition?.linkCondition.id} `;
       }
-
+      
       if (typeof condition?.statement === "object") {
-        const statementLabel = condition?.statement?.label;
+        const statementLabel = condition?.statement?.label ?? "";
         text += `${categoryLabel} ${statement2Label} ${conditionLabel} ${statementLabel}`;
       } else {
-        const statementLabel = condition?.statement;
-        if (statementLabel?.length > 0) {
+        const statementLabel = condition?.statement ?? "";
+        if (statementLabel.length > 0) {
           text += `${categoryLabel} ${statement2Label} ${conditionLabel} ${statementLabel}`;
         } else {
           text += `${categoryLabel} ${conditionLabel} ${statement2Label}`;
         }
       }
-
+  
       return text.trim();
     });
-    const joinedText = textArray;
+    const joinedText = textArray.join(" "); // Join textArray with " && "
     return `if (${joinedText})`;
   }
+
   useEffect(() => {
     const textInput = displayText(rules);
     setExpression(textInput);
