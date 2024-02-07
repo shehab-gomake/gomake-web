@@ -18,7 +18,7 @@ const useQuoteConfirmation = () => {
         const callBack = (res) => {
             if (res?.success) {
                 const quote = res?.data;
-                quote.documentItems =  quote.documentItems.map(item => {
+                quote.documentItems = quote.documentItems.map(item => {
                     item.isChecked = true
                     return item;
                 })
@@ -43,11 +43,11 @@ const useQuoteConfirmation = () => {
 
 
     const calculateSelectedItems = async (quote) => {
-        const documentItemIds = quote?.documentItems?.filter(x=>x.isChecked)?.map(x=>x.id);
+        const documentItemIds = quote?.documentItems?.filter(x => x.isChecked)?.map(x => x.id);
         const callBack = (res) => {
             if (res?.success) {
                 const newQuote = res?.data;
-                newQuote.documentItems =  newQuote.documentItems.map(item => {
+                newQuote.documentItems = newQuote.documentItems.map(item => {
                     item.isChecked = documentItemIds.includes(item.id);
                     return item;
                 })
@@ -60,15 +60,15 @@ const useQuoteConfirmation = () => {
         await calculateSelectedItemsApi(callApi, callBack, { quoteId: quote?.id, documentItemIds: documentItemIds })
     }
 
-    const handleItemCheck = (e,itemId) => {
+    const handleItemCheck = (e, itemId) => {
         let quoteCopy = cloneDeep(quoteConfirm);
-        if(quoteCopy?.documentItems){
-            const documentItems = quoteConfirm?.documentItems.map(x=>x.id === itemId ? {...x,isChecked:e.target.checked} : x)
-            quoteCopy = {...quoteCopy,documentItems:documentItems}
+        if (quoteCopy?.documentItems) {
+            const documentItems = quoteConfirm?.documentItems.map(x => x.id === itemId ? { ...x, isChecked: e.target.checked } : x)
+            quoteCopy = { ...quoteCopy, documentItems: documentItems }
         }
         setQuoteConfirm(quoteCopy)
         calculateSelectedItems(quoteCopy);
-    } 
+    }
     return {
         getQuoteConfirmation,
         updateDocumentComments,

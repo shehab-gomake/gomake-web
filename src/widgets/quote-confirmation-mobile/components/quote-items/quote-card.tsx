@@ -26,7 +26,7 @@ const QuoteCard = ({ key, item, index }: IProps) => {
     const { t } = useTranslation();
     const { getCurrencyUnitText } = useQuoteGetData();
     const quoteConfirm = useRecoilValue<any>(quoteConfirmationState);
-    const {handleItemCheck} = useQuoteConfirmation();
+    const { handleItemCheck } = useQuoteConfirmation();
 
     return (
         <Card sx={classes.cardContainer} key={key}>
@@ -38,7 +38,7 @@ const QuoteCard = ({ key, item, index }: IProps) => {
                             checkedIcon={<CheckboxCheckedIcon />}
                             style={{ padding: "0px" }}
                             checked={item?.isChecked}
-                            onChange={(checked) => handleItemCheck(checked,item.id)}
+                            onChange={(checked) => handleItemCheck(checked, item.id)}
                         />
                         <Typography sx={classes.headerStyle} >{t("sales.quote.item") + " #" + (index + 1)}</Typography>
                     </Stack>

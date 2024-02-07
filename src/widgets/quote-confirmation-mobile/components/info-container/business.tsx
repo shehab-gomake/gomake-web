@@ -53,13 +53,6 @@ const BusinessWidget = () => {
                     speicalStyle={{ padding: "0px" }}
                 />
                 <InputUpdatedValues
-                    value={`${selectBusiness?.code}`}
-                    label={t("sales.quote.businessCode")}
-                    setIsUpdate={setIsConfirmation}
-                    inputMainContainerStyle={classes.inputMainContainer}
-                    speicalStyle={{ padding: "0px" }}
-                />
-                <InputUpdatedValues
                     value={quoteConfirm?.documentAddresses?.length > 0 ? `${quoteConfirm?.documentAddresses[0]?.street} ${quoteConfirm?.documentAddresses[0]?.apartment}, ${quoteConfirm?.documentAddresses[0]?.city}` : "no address found"}
                     label={t("customers.modal.address")}
                     setIsUpdate={setIsConfirmation}
