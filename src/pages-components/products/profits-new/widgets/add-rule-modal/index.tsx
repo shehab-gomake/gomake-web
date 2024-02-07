@@ -357,7 +357,7 @@ const AddRuleModal = ({
                   </div>
                 )}
                 <div key={index} style={clasess.inputsContainer}>
-                  <div style={{ marginTop: "2%", fontSize: 16 }}> if</div>
+                  <div style={{ marginTop: "2%", fontSize: 16, height: "100%" }}> if</div>
                   <div>
                     <label style={clasess.inputLable}>
                       {t("properties.category")}

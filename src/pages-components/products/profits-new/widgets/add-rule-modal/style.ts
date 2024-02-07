@@ -38,6 +38,8 @@ const useStyle = () => {
       },
       inputsContainer: {
         display: "flex",
+        flexDirection: "row" as "row",
+        flexWrap:"wrap" as "wrap",
         justifyContent: "flex-start",
         alignItems: "center",
         marginTop: 10,
