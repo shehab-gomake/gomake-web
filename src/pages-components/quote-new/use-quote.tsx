@@ -15,6 +15,7 @@ import {
   agentListsState,
   businessListsState,
   clientContactsState,
+  quoteConfirmationState,
   quoteItemState,
 } from "@/store";
 import { QuoteStatuses } from "@/widgets/quote/total-price-and-vat/enums";
@@ -38,9 +39,13 @@ const useQuoteNew = (docType: DOCUMENT_TYPE) => {
   const { t } = useTranslation();
   const { getAllClientAddress } = useQuoteGetData();
   const [quoteItemValue, setQuoteItemValue] = useRecoilState<any>(quoteItemState);
+  const [quoteConfirm, setQuoteConfirm] = useRecoilState<any>(quoteConfirmationState);
+
   const [selectDate, setSelectDate] = useState(quoteItemValue?.dueDate);
   const [customersListValue, setCustomersListValue] = useRecoilState<any>(businessListsState);
   const [selectBusiness, setSelectBusiness] = useState<any>({});
+  const [selectConfirmBusiness, setSelectConfirmBusiness] = useState<any>({});
+
   const [isUpdateBusinessName, setIsUpdateBusinessName] = useState<number | null>(null);
   const [isUpdatePurchaseNumber, setIsUpdatePurchaseNumber] = useState<number | null>(null);
   const [isUpdateExchangeRate, setIsUpdateExchangeRate] = useState<number | null>(null);
@@ -845,12 +850,21 @@ const useQuoteNew = (docType: DOCUMENT_TYPE) => {
     }
   }, [agentListValue, quoteItemValue]);
 
+
+
   useEffect(() => {
     const foundItem = customersListValue.find(
       (item: any) => item.id === quoteItemValue?.customerID
     );
+    const foundConfirmItem = customersListValue.find(
+      (item: any) => item.id === quoteConfirm?.customerID
+    );
     setSelectBusiness(foundItem);
+    // for quote confirmation
+    setSelectConfirmBusiness(foundConfirmItem)
+
   }, [quoteItemValue, customersListValue]);
+
 
   useEffect(() => {
     setPriceListItems(quoteItemValue?.documentItems);
@@ -893,79 +907,6 @@ const useQuoteNew = (docType: DOCUMENT_TYPE) => {
   const documentTitle = documentsTitles.find(item => item.value === docType).label;
 
 
-////////////////////////////////// quote confirmation //////////////////////////////////////////
-
-const [checkedItems, setCheckedItems] = useState({});
-const [totalBeforeVat, setTotalBeforeVat] = useState(0);
-// const [discount, setDiscount] = useState(0);
-const [vat, setVat] = useState(0);
-const [totalPrice, setTotalPrice] = useState(0);
-
-
-const updateTotalPrice = (itemId, itemPrice) => {
-  const isChecked = !checkedItems[itemId]; 
-  const currentTotalPrice = totalBeforeVat;
-  // const currentDiscount = discount;
-  if (isChecked) {
-    setTotalBeforeVat(currentTotalPrice + itemPrice);
-  } else {
-    setTotalBeforeVat(currentTotalPrice - itemPrice);
-  }
-  // const itemDiscount = isChecked ? 10 : 0; 
-  // setDiscount(currentDiscount + itemDiscount);
-};
-
-  useEffect(() => {
-    if (quoteItemValue?.documentItems) {
-      const initialCheckedItems = quoteItemValue?.documentItems.reduce((acc, item) => {
-        acc[item.id] = true;
-        return acc;
-      }, {});
-      setCheckedItems(initialCheckedItems);
-  
-      const initialTotalPrice = quoteItemValue?.documentItems.reduce((acc, item) => {
-        if (initialCheckedItems[item.id]) {
-          acc += item.finalPrice;
-        }
-        return acc; 
-      }, 0);
-
-      setTotalBeforeVat(initialTotalPrice);
-  
-      // const initialDiscount = quoteItemValue?.documentItems.reduce((acc, item) => {
-      //   if (initialCheckedItems[item.id]) {
-      //     acc += 10; // Adjust this based on your logic
-      //   }
-      //   return acc;
-      // }, 0);
-      // setDiscount(initialDiscount);
-    }
-  }, [quoteItemValue]);
-
-
-
-  useEffect(() => {
-    const calculatedVat = totalBeforeVat * 0.17;
-    const calculatedFinalPrice = totalBeforeVat + calculatedVat;
-  
-    // const roundedVat = Math.round(calculatedVat * 100) / 100;
-    // const roundedVat = Math.round((calculatedVat);
-
-    const roundedFinalPrice = Math.round(calculatedFinalPrice * 100) / 100;
-  
-    setVat(calculatedVat);
-    setTotalPrice(roundedFinalPrice);
-  }, [totalBeforeVat]);
-
-
-
-  const handleApproveButtonClick = () => {
-    const checkedItemIds = Object.keys(checkedItems).filter(
-      (itemId) => checkedItems[itemId]
-    );
-
-    console.log("checkedItemIds :  " , checkedItemIds )
-  };
 
   return {
     dateRef,
@@ -1100,13 +1041,8 @@ const updateTotalPrice = (itemId, itemPrice) => {
     updateExchangeRate,
     updateCurrency,
     refreshExchangeRate,
-    checkedItems,
-    setCheckedItems,
-    handleApproveButtonClick,
-    totalBeforeVat, 
-    totalPrice,
-    vat,
-    updateTotalPrice
+    selectConfirmBusiness
+
   };
 };
 

@@ -10,12 +10,7 @@ import { OtherReasonModal } from "@/widgets/quote/total-price-and-vat/other-reas
 import { QuoteStatuses } from "@/widgets/quote/total-price-and-vat/enums";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 
-interface IProps {
-  onClickApprove?: () => void;
-}
-const ButtonsConfirmContainer = ({
-  onClickApprove
-}: IProps) => {
+const ButtonsConfirmContainer = () => {
   const { classes } = useStyle();
   const { t } = useTranslation();
   const { onClickCloseRejectModal,
@@ -31,7 +26,8 @@ const ButtonsConfirmContainer = ({
     setReasonText,
     onClickPrint,
     isButtonClicked ,
-    onClickReject
+    onClickReject,
+    onClickApprove
   } = useButtonsConfirmContainer();
 
   return (

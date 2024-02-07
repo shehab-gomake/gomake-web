@@ -33,8 +33,8 @@ const QuoteConfirmationPageWidget = () => {
       <div style={isMobile ? classes.iconMobileStyle : classes.iconStyle}>
         <GoMakeIcon />
       </div>
-      <QuoteConfirmationMobileWidget /> 
-      {/* {isMobile ? <QuoteConfirmationMobileWidget /> : <QuoteNewPageWidget documentType={DOCUMENT_TYPE.quote} isQuoteConfirmation={true} />} */}
+      {/* <QuoteConfirmationMobileWidget />  */}
+      {isMobile ? <QuoteConfirmationMobileWidget /> : <QuoteNewPageWidget documentType={DOCUMENT_TYPE.quote} isQuoteConfirmation={true} />}
     </div>
   );
 };

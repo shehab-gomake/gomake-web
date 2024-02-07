@@ -33,7 +33,8 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
   const { classes } = useStyle(isQuoteConfirmation);
   const quoteItemValue = useRecoilValue<any>(quoteItemState);
   const quoteConfirm = useRecoilValue<any>(quoteConfirmationState);
-
+  const quoteState = isQuoteConfirmation ? quoteConfirm : quoteItemValue;
+  
   const {
     selectDate,
     selectBusiness,
@@ -155,18 +156,12 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
     isUpdateCurrency,
     updateCurrency,
     refreshExchangeRate,
-    checkedItems,
-    setCheckedItems,
-    handleApproveButtonClick,
-    totalBeforeVat,
-    vat,
-    totalPrice,
-    updateTotalPrice
+    selectConfirmBusiness
   } = useQuoteNew(documentType);
 
   return (
     <>
-      {quoteItemValue?.id && (
+      {quoteState?.id && (
         <div style={classes.mainContainer}>
           <div style={classes.secondContainer}>
             <div style={{ paddingLeft: 20, paddingRight: 12 }}>
@@ -179,14 +174,14 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
                     color="rgba(241, 53, 163, 1)"
                   />
                   <div style={classes.quoteNumberStyle}>
-                    {" - "} {quoteItemValue?.number}
+                    {" - "} {quoteState?.number}
                   </div>
                 </div>
                 {!isQuoteConfirmation && <div style={classes.settingsStatusContainer}>
                   <div style={classes.quoteStatusContainer}>
                     {_renderQuoteStatus(
-                      quoteItemValue?.documentStatus,
-                      quoteItemValue,
+                      quoteState?.documentStatus,
+                      quoteState,
                       t
                     )}
                   </div>
@@ -222,8 +217,9 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
               </div>
               <div style={classes.bordersecondContainer}>
                 <BusinessNewWidget
-                  values={quoteItemValue}
+                  values={quoteState}
                   selectBusiness={selectBusiness}
+                  selectConfirmBusiness={selectConfirmBusiness}
                   onBlurBusinessName={onBlurBusinessName}
                   isUpdateBusinessName={isUpdateBusinessName}
                   setIsUpdateBusinessName={setIsUpdateBusinessName}
@@ -289,7 +285,7 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
               }}
             >
               <QuoteForPriceTable
-                documentItems={documentItems}
+                documentItems={isQuoteConfirmation ? quoteConfirm?.documentItems : documentItems}
                 tableHeaders={tableHeaders}
                 columnWidths={columnWidths}
                 headerHeight={headerHeight}
@@ -299,21 +295,15 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
                   onClickDuplicateWithDifferentQTY
                 }
                 onClickDeleteQouteItem={onClickDeleteQouteItem}
-                quoteItems={quoteItems}
+                quoteItems={isQuoteConfirmation ? quoteConfirm : quoteItems}
                 changeQuoteItems={changeQuoteItems}
                 getCalculateQuote={getCalculateQuote}
                 changedocumentItemsChild={changedocumentItemsChild}
                 documentType={documentType}
                 isQuoteConfirmation={isQuoteConfirmation}
-                checkedItems={checkedItems}
-                setCheckedItems={setCheckedItems}
-                updateTotalPrice={updateTotalPrice}
-                totalBeforeVat={totalBeforeVat}
-                vat={vat}
-                totalPrice={totalPrice}
               />
             </div>
-            <WriteCommentComp isQuoteConfirmation={isQuoteConfirmation} documentType={documentType} />
+            <WriteCommentComp isQuoteConfirmation={isQuoteConfirmation} />
           </div>
           {!isQuoteConfirmation &&
             <ButtonsContainer
@@ -326,9 +316,8 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
             />
           }
         </div>
-
       )}
-      {(isQuoteConfirmation && !quoteConfirm?.isConfirmed )  && <ButtonsConfirmContainer onClickApprove={handleApproveButtonClick} />}
+      {(isQuoteConfirmation && !quoteConfirm?.isConfirmed )  && <ButtonsConfirmContainer />}
       <AddNewItemModal
         openModal={openAddNewItemModal}
         onClose={onCloseNewItem}

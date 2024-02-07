@@ -10,9 +10,6 @@ const TotalPriceComp = ({
   quoteItems,
   changeQuoteItems,
   isQuoteConfirmation = false,
-  totalBeforeVat,
-  vat,
-  totalPrice
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -49,7 +46,7 @@ const TotalPriceComp = ({
             paddingLeft: 36,
           }}
         >
-          {(isQuoteConfirmation ? totalBeforeVat : quoteItems?.totalPrice) +
+          {(quoteItems?.totalPrice) +
             " " +
             getCurrencyUnitText(quoteItems?.currency)}
         </div>
@@ -59,7 +56,7 @@ const TotalPriceComp = ({
         <div style={{ ...classes.oddRowContainer, width: "19%" }}>
           <div style={classes.cellTextInputStyle}>
             <InputUpdatedValues
-              value={quoteItems?.discount ? quoteItems?.discount : 0}
+              value={ (quoteItems?.discount ? quoteItems?.discount : 0)}
               onBlur={onBlurDiscount}
               isUpdate={isUpdateDiscount}
               setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdateDiscount}
@@ -72,7 +69,7 @@ const TotalPriceComp = ({
           VAT (17%)
         </div>
         <div style={{ ...classes.oddRowContainer, width: "23%" }}>
-          {Math.ceil(isQuoteConfirmation ? vat :quoteItems?.totalVAT) + " " + getCurrencyUnitText(quoteItems?.currency)}
+          {Math.ceil(quoteItems?.totalVAT) + " " + getCurrencyUnitText(quoteItems?.currency)}
         </div>
       </div>
       <div style={classes.firstRowForFooterContainer}>
@@ -94,7 +91,7 @@ const TotalPriceComp = ({
         >
           <div style={classes.cellTextInputStyle}>
             <InputUpdatedValues
-              value={isQuoteConfirmation ? totalPrice : quoteItems?.totalPayment}
+              value={quoteItems?.totalPayment}
               onBlur={onBlurTotalPayment}
               isUpdate={isUpdateTotalPayment}
               setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdateTotalPayment}

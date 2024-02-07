@@ -29,12 +29,6 @@ const QuoteForPriceTable = ({
   changedocumentItemsChild,
   documentType,
   isQuoteConfirmation = false,
-  setCheckedItems,
-  checkedItems,
-  updateTotalPrice,
-  totalBeforeVat,
-  vat,
-  totalPrice
 }) => {
   const { classes } = useStyle({ headerHeight });
 
@@ -99,9 +93,6 @@ const QuoteForPriceTable = ({
                     onClickDeleteQouteItem={onClickDeleteQouteItem}
                     documentType={documentType}
                     isQuoteConfirmation={isQuoteConfirmation}
-                    setCheckedItems={setCheckedItems}
-                    checkedItems={checkedItems}
-                    updateTotalPrice={updateTotalPrice}
                   />
                   {item?.childsDocumentItems &&
                     item?.childsDocumentItems?.map(
@@ -136,9 +127,6 @@ const QuoteForPriceTable = ({
         quoteItems={quoteItems}
         changeQuoteItems={changeQuoteItems}
         isQuoteConfirmation={isQuoteConfirmation}
-        totalBeforeVat={totalBeforeVat}
-        vat={vat}
-        totalPrice={totalPrice}
       />
     </div>
   );

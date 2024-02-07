@@ -8,6 +8,9 @@ import { MoreMenuWidget } from "@/widgets/quote/more-circle";
 import { InputUpdatedValues } from "../input-updated-values";
 import { useQuoteTable } from "./use-quote-table";
 import { useState } from "react";
+import { useRecoilValue } from "recoil";
+import { quoteConfirmationState } from "@/store";
+import { useQuoteConfirmation } from "@/pages-components/quote-confirmation/use-quote-confirmation";
 
 const RowMappingWidget = ({
   item,
@@ -21,9 +24,6 @@ const RowMappingWidget = ({
   parentIndex,
   documentType,
   isQuoteConfirmation = false,
-  setCheckedItems,
-  checkedItems,
-  updateTotalPrice
 }) => {
   const { classes } = useStyle({ headerHeight });
   const [isConfirmation, setIsConfirmation] = useState(null);
@@ -51,16 +51,12 @@ const RowMappingWidget = ({
     index,
   });
 
-  const handleItemCheck = (itemId, itemPrice) => {
-    setCheckedItems((prevCheckedItems) => ({
-      ...prevCheckedItems,
-      [itemId]: !prevCheckedItems[itemId],
-    }));
-
-    updateTotalPrice(itemId, itemPrice);
-  };
+  // in quote confirmation case
+  const quoteConfirm = useRecoilValue<any>(quoteConfirmationState);
+  const { handleItemCheck } = useQuoteConfirmation();
 
   return (
+
     <TableRow
       key={item.id}
       style={{
@@ -85,8 +81,8 @@ const RowMappingWidget = ({
           <Checkbox
             icon={<CheckboxIcon />}
             checkedIcon={<CheckboxCheckedIcon />}
-            checked={isQuoteConfirmation ? checkedItems[item.id] : item?.isSelected }
-            onChange={isQuoteConfirmation ? () => handleItemCheck(item.id, item.finalPrice) : ()=>null}
+            checked={isQuoteConfirmation && item?.isChecked}
+            onChange={isQuoteConfirmation && ((checked) => handleItemCheck(checked, item.id))}
           />
           {parentIndex}
         </div>

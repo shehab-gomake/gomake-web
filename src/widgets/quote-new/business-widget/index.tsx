@@ -15,6 +15,7 @@ import { quoteItemState } from "@/store";
 const BusinessNewWidget = ({
   values,
   selectBusiness,
+  selectConfirmBusiness,
   onBlurPurchaseNumber,
   isUpdatePurchaseNumber,
   setIsUpdatePurchaseNumber,
@@ -42,10 +43,12 @@ const BusinessNewWidget = ({
   const { classes } = useStyle();
   const { t } = useTranslation();
   const [isConfirmation, setIsConfirmation] = useState();
-  const quoteStateValue = useRecoilValue<any>(quoteItemState);
   const { renderOptions, checkWhatRenderArray } = useQuoteWidget();
   const [openModal, setOpenModal] = useRecoilState<boolean>(addressModalState);
   const [purchaseNumber, setPurchaseNumber] = useState(values?.purchaseNumber || t("sales.quote.noPurchaseNumber"));
+  const quoteStateValue = useRecoilValue<any>(quoteItemState);
+
+
 
   useEffect(() => {
     setPurchaseNumber(values?.purchaseNumber || t("sales.quote.noPurchaseNumber"));
@@ -79,12 +82,12 @@ const BusinessNewWidget = ({
           onInputChange={(v) => setPurchaseNumber(v)}
         />
         <InputUpdatedValues
-          value={`${selectBusiness?.code}`}
+          value={isQuoteConfirmation ? `${selectConfirmBusiness?.code}` : `${selectBusiness?.code}`}
           label={t("sales.quote.businessCode")}
           onBlur={onBlurBusinessCode}
           setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdateBusinessCode}
         />
-        <AutoCompleteUpdatedValue
+        {!isQuoteConfirmation && <AutoCompleteUpdatedValue
           label={t("sales.quote.agent")}
           value={selectedAgent?.text}
           options={agentListValue}
@@ -93,7 +96,7 @@ const BusinessNewWidget = ({
           setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdateAgent}
           getOptionLabel={(item) => item.text}
           onChange={(e, value) => updateAgent(value)}
-        />
+        />}
         {values?.documentAddresses?.length > 0 && <InputUpdatedValues
           value={values?.documentAddresses?.length > 0 ? `${values?.documentAddresses[0]?.street} ${values?.documentAddresses[0]?.apartment}, ${values?.documentAddresses[0]?.city}` : "no address found"}
           label={t("customers.modal.address")}
@@ -127,7 +130,7 @@ const BusinessNewWidget = ({
         onClickConfirm={()=>{onChangeSelectBusiness(client).then(setOpenAlertModal(false)); }}
         >
         </GoMakeAlertModal> */}
-        <AddressModal isUpdate={values?.documentAddresses?.length > 0} documentType={documentType} />
+        {!isQuoteConfirmation && <AddressModal isUpdate={values?.documentAddresses?.length > 0} documentType={documentType} />}
       </div>
     </>
   );
