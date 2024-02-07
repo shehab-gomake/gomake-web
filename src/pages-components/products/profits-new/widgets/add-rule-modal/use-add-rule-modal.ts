@@ -205,7 +205,7 @@ const useAddRuleModal = ({
   
       return text.trim();
     });
-    const joinedText = textArray.join(" && "); // Join textArray with " && "
+    const joinedText = textArray.join(" "); // Join textArray with " && "
     return `if (${joinedText})`;
   }
 
