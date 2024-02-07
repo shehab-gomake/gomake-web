@@ -1,4 +1,4 @@
-import { atom } from "recoil";
+import { atom, selector } from "recoil";
 
 export const quoteItemState = atom({
   key: "quoteItemState",
@@ -6,7 +6,7 @@ export const quoteItemState = atom({
 });
 
 
-export const quoteConfirmationState = atom({
+export const quoteConfirmationState = atom<any>({
   key: "quoteConfirmationState",
-  default: [],
+  default: undefined,
 });

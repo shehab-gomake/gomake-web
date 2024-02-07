@@ -6,7 +6,7 @@ const GET_DOCUMENT_BY_ID_URL = "/v1/erp-service/quote-confirmation/get-document-
 const PUT_DOCUMENT_ITEMS_URL = "/v1/erp-service/quote-confirmation/approve-document-items";
 const UPDATE_DOCUMENT_COMMENTS_URL = "/v1/erp-service/quote-confirmation/update-document-comments-confirmation";
 const REJECT_DOCUMENT_URL = "/v1/erp-service/quote-confirmation/reject-document";
-
+const CALCULATE_SELECTED_ITEMS_URL= "/v1/erp-service/quote-confirmation/calculate-document-items";
 
 const getDocumentByIdApi: ICallAndSetData = async (callApi, setState, data) => {
   return await getSetApiData(
@@ -50,9 +50,21 @@ const updateDocumentCommentsConfirmationApi: ICallAndSetData = async (callApi, s
   );
 };
 
+
+const calculateSelectedItemsApi: ICallAndSetData = async (callApi, setState, data) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    CALCULATE_SELECTED_ITEMS_URL,
+    setState,
+    data
+  );
+};
+
 export {
     getDocumentByIdApi,
     approveDocumentItemsApi,
     rejectDocumentApi,
-    updateDocumentCommentsConfirmationApi
+    updateDocumentCommentsConfirmationApi,
+    calculateSelectedItemsApi
 };

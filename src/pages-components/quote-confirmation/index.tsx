@@ -10,6 +10,7 @@ import { useQuoteConfirmation } from "./use-quote-confirmation";
 const QuoteConfirmationPageWidget = () => {
   const { classes } = useStyle();
   const [isMobile, setIsMobile] = useState(false);
+  const { getQuoteConfirmation } = useQuoteConfirmation();
 
   useEffect(() => {
     updateScreenWidth();
@@ -23,8 +24,9 @@ const QuoteConfirmationPageWidget = () => {
     setIsMobile(window.innerWidth <= 768);
   };
 
-  const { getQuoteConfirmation } = useQuoteConfirmation();
-
+  useEffect(() => {
+    getQuoteConfirmation();
+}, [])
  
   return (
     <div style={classes.firstContainer}>

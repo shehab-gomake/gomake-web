@@ -1,22 +1,28 @@
 import { useGomakeAxios, useSnackBar } from "@/hooks";
-import { approveDocumentItemsApi, getDocumentByIdApi, rejectDocumentApi, updateDocumentCommentsConfirmationApi } from "@/services/api-service/generic-doc/quote-confirmation-api";
+import { approveDocumentItemsApi, calculateSelectedItemsApi, getDocumentByIdApi, rejectDocumentApi, updateDocumentCommentsConfirmationApi } from "@/services/api-service/generic-doc/quote-confirmation-api";
 import { quoteConfirmationState } from "@/store/quote-item";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useState } from "react";
+import { useRecoilState } from "recoil";
 import { DOCUMENT_TYPE } from "../quotes/enums";
+import cloneDeep from "lodash.clonedeep";
 
 const useQuoteConfirmation = () => {
     const router = useRouter();
     const { callApi } = useGomakeAxios();
     const { alertSuccessUpdate, alertFaultUpdate } = useSnackBar();
     const [quoteConfirm, setQuoteConfirm] = useRecoilState<any>(quoteConfirmationState);
-     const [checkedItems, setCheckedItems] = useState({});
+    const [checkedItems, setCheckedItems] = useState({});
 
 
     const getQuoteConfirmation = async () => {
         const callBack = (res) => {
             if (res?.success) {
+                const quote = res?.data;
+                quote.documentItems =  quote.documentItems.map(item => {
+                    item.isChecked = true
+                    return item;
+                })
                 setQuoteConfirm(res?.data);
             } else {
                 alertFaultUpdate();
@@ -24,18 +30,6 @@ const useQuoteConfirmation = () => {
         }
         await getDocumentByIdApi(callApi, callBack, { id: router?.query?.Id })
     }
-
-    // const updateQuoteConfirmation = async (checkedItemsIds?) => {
-    //     const callBack = (res) => {
-    //         if (res?.success) {
-    //             setQuoteConfirm(res?.data);
-    //         } else {
-    //             alertFaultUpdate();
-    //         }
-    //     }
-    //     await updateQuoteConfirmationApi(callApi, callBack, { id: router?.query?.Id, documentItemIds: checkedItemsIds })
-    // }
-
 
     const approveDocumentItems = async (checkedItems) => {
         const callBack = (res) => {
@@ -49,7 +43,6 @@ const useQuoteConfirmation = () => {
         await approveDocumentItemsApi(callApi, callBack, { documentType: DOCUMENT_TYPE.quote })
     }
 
-
     const rejectDocument = async () => {
         const callBack = (res) => {
             if (res?.success) {
@@ -60,8 +53,6 @@ const useQuoteConfirmation = () => {
         }
         await rejectDocumentApi(callApi, callBack, { documentId: quoteConfirm?.id, quoteStatus: 0, cancelText: "test" })
     }
-
-
 
     const updateDocumentComments = async () => {
         const callBack = (res) => {
@@ -75,60 +66,43 @@ const useQuoteConfirmation = () => {
     }
 
 
-    // const handleItemCheck = (itemId) => {
-    //     setCheckedItems((prevCheckedItems) => {
-    //         const updatedCheckedItems = {
-    //             ...prevCheckedItems,
-    //             [itemId]: !prevCheckedItems[itemId],
-    //         };
-
-    //         const selectedIds = Object.keys(updatedCheckedItems).filter(
-    //             (id) => updatedCheckedItems[id]
-    //         );
-
-    //         console.log(updatedCheckedItems);
-    //         // updateQuoteConfirmation(selectedIds);
-    //         return updatedCheckedItems;
-    //     });
-    // };
-
-    // useEffect(() => {
-    //     if (quoteConfirm?.documentItems) {
-    //         const initialCheckedItems = quoteConfirm?.documentItems.reduce((acc, item) => {
-    //             acc[item.id] = true;
-    //             return acc;
-    //         }, {});
-    //         setCheckedItems(initialCheckedItems);
-    //     }
-    // }, []);
-
-
-
-
-
-    useEffect(() => {
-        getQuoteConfirmation();
-    }, [])
-
-    useEffect(() => {
-        if (quoteConfirm?.documentItems) {
-            const initialCheckedItems = quoteConfirm?.documentItems.reduce((acc, item) => {
-                acc[item.id] = true;
-                return acc;
-            }, {});
-            console.log("initialCheckedItems", initialCheckedItems)
-            setCheckedItems(initialCheckedItems);
+    const calculateSelectedItems = async (quote) => {
+        const documentItemIds = quote?.documentItems?.filter(x=>x.isChecked)?.map(x=>x.id);
+        const callBack = (res) => {
+            if (res?.success) {
+                const newQuote = res?.data;
+                newQuote.documentItems =  newQuote.documentItems.map(item => {
+                    item.isChecked = documentItemIds.includes(item.id);
+                    return item;
+                })
+                setQuoteConfirm(newQuote);
+                alertSuccessUpdate();
+            } else {
+                alertFaultUpdate();
+            }
         }
-    }, [quoteConfirm]);
+        await calculateSelectedItemsApi(callApi, callBack, { quoteId: quote?.id, documentItemIds: documentItemIds })
+    }
 
 
+    const handleItemCheck = (e,itemId) => {
+        let quoteCopy = cloneDeep(quoteConfirm);
+        if(quoteCopy?.documentItems){
+            const documentItems = quoteConfirm?.documentItems.map(x=>x.id === itemId ? {...x,isChecked:e.target.checked} : x)
+            quoteCopy = {...quoteCopy,documentItems:documentItems}
+        }
+        setQuoteConfirm(quoteCopy)
+        calculateSelectedItems(quoteCopy);
+    } 
     return {
         getQuoteConfirmation,
         approveDocumentItems,
         updateDocumentComments,
         rejectDocument,
         checkedItems,
-        setCheckedItems
+        setCheckedItems,
+        calculateSelectedItems,
+        handleItemCheck
     };
 };
 
