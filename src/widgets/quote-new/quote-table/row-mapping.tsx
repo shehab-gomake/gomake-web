@@ -18,7 +18,8 @@ const RowMappingWidget = ({
   onClickDuplicateWithDifferentQTY,
   onClickDeleteQouteItem,
   parentIndex,
-  documentType
+  documentType,
+  getQuote
 }) => {
   const { clasess } = useStyle({ headerHeight });
   const {
@@ -44,6 +45,7 @@ const RowMappingWidget = ({
     item,
     index,
   });
+  console.log("item", item)
   return (
     <TableRow
       key={item.id}
@@ -101,7 +103,7 @@ const RowMappingWidget = ({
           borderBottom: item?.childsDocumentItems && "none",
         }}
       >
-        <CharacterDetails details={item.details} />
+        <CharacterDetails details={item.details} getQuote={getQuote} documentItemId={item?.id} />
       </PrimaryTableCell>
       <PrimaryTableCell
         style={{
