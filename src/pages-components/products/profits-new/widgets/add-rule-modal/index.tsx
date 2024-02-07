@@ -47,6 +47,7 @@ const AddRuleModal = ({
     categories,
     conditions,
     GroupByOptions,
+    agentsCategories,
     create,
     createProperties,
     setPropertieValue,
@@ -63,7 +64,7 @@ const AddRuleModal = ({
     selectedPricingTableItems,
     selectedProperties,
     getProperitesService,
-    isQuoteWidge
+    isQuoteWidge,
   });
   const [selectedCategories, setSelectedCategories] = useState<any>("")
   const [selectedStatment2, setSelectedStatment2] = useState<any>("")
@@ -597,6 +598,25 @@ const AddRuleModal = ({
                               id: value.id,
                             };
                           })}
+                        style={clasess.dropDownListContainer}
+                        placeholder={t("properties.statment")}
+                        value={rule.statement2}
+                        onChange={(e, value) => {
+                          handleChange(index, "statement2", value)
+                          handleChange(index, "statement", null);
+                        }
+                        }
+                      />
+                    </div>
+                  )}
+                  {rule.category?.id === "Agent" && (
+                    <div>
+                      <label style={clasess.inputLable}>
+                        {t("properties.statment")}
+                      </label>
+
+                      <GoMakeAutoComplate
+                        options={agentsCategories}
                         style={clasess.dropDownListContainer}
                         placeholder={t("properties.statment")}
                         value={rule.statement2}

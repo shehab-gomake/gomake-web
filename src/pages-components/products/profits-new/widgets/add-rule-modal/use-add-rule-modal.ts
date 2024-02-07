@@ -19,6 +19,8 @@ import { usePrintHouseMachines } from "@/widgets/properties/hooks/use-print-hous
 import { CLIENT_TYPE_Id } from "@/pages/customers/enums";
 import { useTranslation } from "react-i18next";
 import { EGroupByEnum } from "@/enums";
+import { agentsCategoriesState } from "@/pages/customers/customer-states";
+import { getAndSetEmployees2 } from "@/services/api-service/customers/employees-api";
 
 const useAddRuleModal = ({
   typeExceptionSelected,
@@ -65,6 +67,24 @@ const useAddRuleModal = ({
   const [materialsTypes, setMaterialsTypes] = useState<
     { materialTypeKey: string; materialTypeName: string }[]
   >([]);
+  const [agentsCategories, setAgentsCategories] = useRecoilState(
+    agentsCategoriesState
+  );
+  const getAgentCategories = async () => {
+    const callBack = (res) => {
+      if (res.success) {
+        const agentNames = res.data.map((agent) => ({
+          label: agent.text,
+          id: agent.value,
+        }));
+        setAgentsCategories(agentNames);
+      }
+    };
+    await getAndSetEmployees2(callApi, callBack, { isAgent: true });
+  };
+  useEffect(()=>{
+    getAgentCategories()
+  },[])
   const getMaterialsTypesApi: ICallAndSetData = async (callApi, setState) => {
     return await getSetApiData(
       callApi,
@@ -375,7 +395,8 @@ const useAddRuleModal = ({
     setPropertieValue,
     materialsTypes,
     machines,
-    GroupByOptions
+    GroupByOptions,
+    agentsCategories
   };
 };
 
