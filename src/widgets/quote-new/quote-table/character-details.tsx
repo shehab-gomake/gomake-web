@@ -5,8 +5,8 @@ import React from "react";
 import { useCharacterDetails } from "./use-character-details";
 import { useStyleCharacterDetails } from "./style-character-details";
 
-const CharacterDetails = ({ details, getQuote }) => {
-  const { isEdit, showAll, truncatedDetails, data, handleShowLess, handleShowMore, t, setIsEdit, handleChange, handleBlur } = useCharacterDetails({ details, getQuote })
+const CharacterDetails = ({ details, getQuote, documentItemId }) => {
+  const { isEdit, showAll, truncatedDetails, data, handleShowLess, handleShowMore, t, setIsEdit, handleChange, handleBlur } = useCharacterDetails({ details, getQuote, documentItemId })
   const { clasess } = useStyleCharacterDetails({ showAll });
   return (
     <>

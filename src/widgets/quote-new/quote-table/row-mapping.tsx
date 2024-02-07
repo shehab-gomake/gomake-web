@@ -45,6 +45,7 @@ const RowMappingWidget = ({
     item,
     index,
   });
+  console.log("item", item)
   return (
     <TableRow
       key={item.id}
@@ -102,7 +103,7 @@ const RowMappingWidget = ({
           borderBottom: item?.childsDocumentItems && "none",
         }}
       >
-        <CharacterDetails details={item.details} getQuote={getQuote} />
+        <CharacterDetails details={item.details} getQuote={getQuote} documentItemId={item?.id} />
       </PrimaryTableCell>
       <PrimaryTableCell
         style={{

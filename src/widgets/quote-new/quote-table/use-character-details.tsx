@@ -6,7 +6,7 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRecoilValue } from "recoil";
 
-const useCharacterDetails = ({ details, getQuote }) => {
+const useCharacterDetails = ({ details, getQuote, documentItemId }) => {
   const [showAll, setShowAll] = useState(false);
   const [originalValue,] = useState(details);
   const [isValueChanged, setIsValueChanged] = useState(false);
@@ -41,7 +41,7 @@ const useCharacterDetails = ({ details, getQuote }) => {
       documentType: DOCUMENT_TYPE.quote,
       contact:
       {
-        documentItemId: quoteItemValue?.id,
+        documentItemId: documentItemId,
         content: data
       }
     })
