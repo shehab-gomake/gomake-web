@@ -449,7 +449,7 @@ const AddRuleModal = ({
                       options={conditions}
                       style={clasess.dropDownListContainer}
                       placeholder={t("properties.condtion")}
-                      value={rule.condition}
+                      // value={rule.condition}
                       onChange={(event, value) => {
                         handleChange(index, "condition", value);
                       }}
@@ -483,9 +483,7 @@ const AddRuleModal = ({
                         value={rule.statement2}
                         onChange={(e, value) => {
                           handleChange(index, "statement2", value)
-                          handleChange(index, "condition", null);
                           handleChange(index, "statement", null);
-                          setSelectedStatment2(value)
                         }
                         }
                       />
@@ -509,9 +507,7 @@ const AddRuleModal = ({
                         value={rule.statement2}
                         onChange={(e, value) => {
                           handleChange(index, "statement2", value)
-                          handleChange(index, "condition", null);
                           handleChange(index, "statement", null);
-                          setSelectedStatment2(value)
                         }
                         }
                       />
@@ -589,9 +585,7 @@ const AddRuleModal = ({
                         value={rule.statement2}
                         onChange={(e, value) => {
                           handleChange(index, "statement2", value)
-                          handleChange(index, "condition", null);
                           handleChange(index, "statement", null);
-                          setSelectedStatment2(value)
                         }
                         }
                       />
@@ -615,9 +609,7 @@ const AddRuleModal = ({
                         value={rule.statement2}
                         onChange={(e, value) => {
                           handleChange(index, "statement2", value)
-                          handleChange(index, "condition", null);
                           handleChange(index, "statement", null);
-                          setSelectedStatment2(value)
                         }
                         }
                       />

@@ -193,7 +193,7 @@ const useAddRuleModal = ({
       
       if (typeof condition?.statement === "object") {
         const statementLabel = condition?.statement?.label ?? "";
-        text += `${categoryLabel} ${statement2Label} ${conditionLabel} ${statementLabel}`;
+        text += `${categoryLabel} ${conditionLabel} ${statement2Label} ${statementLabel}`;
       } else {
         const statementLabel = condition?.statement ?? "";
         if (statementLabel.length > 0) {
