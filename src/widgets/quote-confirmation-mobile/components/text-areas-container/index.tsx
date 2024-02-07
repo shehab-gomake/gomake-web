@@ -1,7 +1,6 @@
 import React from "react";
 import { useStyle } from "./style";
 import { useTranslation } from "react-i18next";
-import { GomakeTextInput } from "@/components";
 import Textarea from '@mui/joy/Textarea';
 
 

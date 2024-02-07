@@ -2,14 +2,15 @@ import { useStyle } from "./style";
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useRecoilValue } from "recoil";
-import { quoteItemState } from "@/store";
+import { quoteConfirmationState} from "@/store";
 import { ContactMapping } from "./contacts-mapping";
 
 const ContactsWidget = () => {
     const { classes } = useStyle();
     const { t } = useTranslation();
-    const quoteStateValue = useRecoilValue<any>(quoteItemState);
-    const items = quoteStateValue?.documentContacts;
+    const quoteConfirm = useRecoilValue<any>(quoteConfirmationState);
+
+    const items = quoteConfirm?.documentContacts;
     const [displayedItems, setDisplayedItems] = useState<number>(1);
 
     const handleShowMore = () => {

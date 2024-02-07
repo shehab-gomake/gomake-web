@@ -29,9 +29,9 @@ const InfoContainer = () => {
             <div style={classes.referenceDate} >
                 {t("sales.quote.dateOfReference") + " " + DateFormatterDDMMYYYY(quoteConfirm?.dueDate)}
             </div>
-            <div style={classes.referenceDate} >
+            {/* <div style={classes.referenceDate} >
                 G. supply: 11 working days 
-            </div>
+            </div> */}
             <div style={classes.borderContainer} />
             <BusinessWidget />
             <div style={classes.borderContainer} />

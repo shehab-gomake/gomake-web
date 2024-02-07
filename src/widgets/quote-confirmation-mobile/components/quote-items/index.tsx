@@ -4,9 +4,7 @@ import { useRecoilValue } from "recoil";
 import { QuoteCard } from "./quote-card";
 
 const QuoteItems = () => {
-  // const quoteConfirm = useRecoilValue<any>(quoteItemState);
   let indexs = 0;
-
   const quoteConfirm = useRecoilValue<any>(quoteConfirmationState);
 
   return (

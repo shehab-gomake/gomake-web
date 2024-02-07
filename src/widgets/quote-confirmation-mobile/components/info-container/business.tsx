@@ -3,13 +3,13 @@ import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import { useQuoteWidget } from "@/pages-components/admin/home/widgets/quote-widget/use-quote-widget";
 import { useRecoilValue } from "recoil";
-import { businessListsState, quoteItemState } from "@/store";
+import { businessListsState, quoteConfirmationState} from "@/store";
 import { InputUpdatedValues } from "@/widgets/quote-new/input-updated-values";
 
 const BusinessWidget = () => {
     const { classes } = useStyle();
     const { t } = useTranslation();
-    const quoteStateValue = useRecoilValue<any>(quoteItemState);
+    const quoteConfirm = useRecoilValue<any>(quoteConfirmationState);
     const [selectBusiness, setSelectBusiness] = useState<any>({});
     const customersListValue = useRecoilValue<any>(businessListsState);
     const [isConfirmation, setIsConfirmation] = useState();
@@ -22,10 +22,10 @@ const BusinessWidget = () => {
 
     useEffect(() => {
         const foundItem = customersListValue.find(
-            (item: any) => item.id === quoteStateValue?.customerID
+            (item: any) => item.id === quoteConfirm?.customerID
         );
         setSelectBusiness(foundItem);
-    }, [quoteStateValue, customersListValue]);
+    }, [quoteConfirm, customersListValue]);
 
 
 
@@ -33,14 +33,14 @@ const BusinessWidget = () => {
         <>
             <div style={classes.businessContainerStyle}>
                 <InputUpdatedValues
-                    value={quoteStateValue?.purchaseNumber || t("sales.quote.noPurchaseNumber")}
+                    value={quoteConfirm?.purchaseNumber || t("sales.quote.noPurchaseNumber")}
                     label={t("sales.quote.purchaseNumber")}
                     setIsUpdate={setIsConfirmation}
                     inputMainContainerStyle={classes.inputMainContainer}
                     speicalStyle={{ padding: "0px" , cursor:"none" }}
                 />
                 <InputUpdatedValues
-                    value={quoteStateValue?.client?.name}
+                    value={quoteConfirm?.client?.name}
                     label={t("sales.quote.businessName")}
                     setIsUpdate={setIsConfirmation}
                     inputMainContainerStyle={classes.inputMainContainer}
@@ -61,7 +61,7 @@ const BusinessWidget = () => {
                     speicalStyle={{ padding: "0px" }}
                 />
                 <InputUpdatedValues
-                    value={quoteStateValue?.documentAddresses?.length > 0 ? `${quoteStateValue?.documentAddresses[0]?.street} ${quoteStateValue?.documentAddresses[0]?.apartment}, ${quoteStateValue?.documentAddresses[0]?.city}` : "no address found"}
+                    value={quoteConfirm?.documentAddresses?.length > 0 ? `${quoteConfirm?.documentAddresses[0]?.street} ${quoteConfirm?.documentAddresses[0]?.apartment}, ${quoteConfirm?.documentAddresses[0]?.city}` : "no address found"}
                     label={t("customers.modal.address")}
                     setIsUpdate={setIsConfirmation}
                     inputMainContainerStyle={classes.inputMainContainer}

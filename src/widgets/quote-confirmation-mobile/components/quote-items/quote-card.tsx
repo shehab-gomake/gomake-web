@@ -9,8 +9,10 @@ import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
 import { Checkbox } from "@mui/material";
 import { useQuoteGetData } from '@/pages-components/quote-new/use-quote-get-data';
 import { useRecoilValue } from 'recoil';
-import { quoteItemState } from '@/store';
+import { quoteConfirmationState } from '@/store';
 import { useTranslation } from "react-i18next";
+import { useQuoteConfirmation } from '@/pages-components/quote-confirmation/use-quote-confirmation';
+import { useEffect } from 'react';
 
 interface IProps {
     key: string;
@@ -19,12 +21,30 @@ interface IProps {
     parentIndex?: number;
 
 }
-const QuoteCard = ({ key, item, index, parentIndex }: IProps) => {
+const QuoteCard = ({ key, item, index }: IProps) => {
     const { classes } = useStyle();
     const { t } = useTranslation();
     const { getCurrencyUnitText } = useQuoteGetData();
-    const quoteStateValue = useRecoilValue<any>(quoteItemState);
+    const quoteConfirm = useRecoilValue<any>(quoteConfirmationState);
+    const { checkedItems, setCheckedItems } = useQuoteConfirmation();
 
+
+    const handleItemCheck = (itemId) => {
+        setCheckedItems((prevCheckedItems) => {
+            const updatedCheckedItems = {
+                ...prevCheckedItems,
+                [itemId]: !prevCheckedItems[itemId],
+            };
+
+            const selectedIds = Object.keys(updatedCheckedItems).filter(
+                (id) => updatedCheckedItems[id]
+            );
+
+            console.log("please", updatedCheckedItems);
+            // updateQuoteConfirmation(selectedIds);
+            return updatedCheckedItems;
+        });
+    } 
     return (
         <Card sx={classes.cardContainer} key={key}>
             <Stack direction={'column'} alignItems={"flex-start"} gap={"16px"} >
@@ -34,10 +54,12 @@ const QuoteCard = ({ key, item, index, parentIndex }: IProps) => {
                             icon={<CheckboxIcon />}
                             checkedIcon={<CheckboxCheckedIcon />}
                             style={{ padding: "0px" }}
+                            checked={checkedItems[item.id]}
+                            onChange={() => handleItemCheck(item.id)}
                         />
-                        <Typography sx={classes.headerStyle} >{t("sales.quote.item")+" #" + (index + 1)}</Typography>
+                        <Typography sx={classes.headerStyle} >{t("sales.quote.item") + " #" + (index + 1)}</Typography>
                     </Stack>
-                    <Typography sx={classes.detailsStyle}>{ "011" + " • " + item?.productName}</Typography>
+                    <Typography sx={classes.detailsStyle}>{"011" + " • " + item?.productName}</Typography>
                 </Stack>
                 <Stack sx={classes.rowStyle}>
                     <Stack sx={{ padding: "0px" }} direction="column" spacing={0}>
@@ -50,12 +72,12 @@ const QuoteCard = ({ key, item, index, parentIndex }: IProps) => {
                     </Stack>
                     <Stack sx={{ padding: "0px" }} direction="column" spacing={0}>
                         <Typography sx={classes.headerStyle} >{t("products.profits.pricingListWidget.unitPrice")}</Typography>
-                        <Typography sx={classes.detailsStyle}>{item?.price +" "+ getCurrencyUnitText(quoteStateValue?.currency)}</Typography>
+                        <Typography sx={classes.detailsStyle}>{item?.price + " " + getCurrencyUnitText(quoteConfirm?.currency)}</Typography>
                     </Stack>
                 </Stack>
                 <Stack sx={{ padding: "0px" }}>
                     <Typography sx={classes.headerStyle} >{t("products.offsetPrice.admin.finalPrice")}</Typography>
-                    <Typography sx={classes.detailsStyle}>{item?.finalPrice +" "+ getCurrencyUnitText(quoteStateValue?.currency)}</Typography>
+                    <Typography sx={classes.detailsStyle}>{item?.finalPrice + " " + getCurrencyUnitText(quoteConfirm?.currency)}</Typography>
                 </Stack>
             </Stack>
             <CardContent sx={{ padding: "0px" }}>

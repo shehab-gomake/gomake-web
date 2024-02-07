@@ -8,7 +8,6 @@ import { QuoteStatuses } from "@/widgets/quote/total-price-and-vat/enums";
 const useButtonsConfirmContainer = () => {
     const { callApi } = useGomakeAxios();
     const quoteConfirm = useRecoilValue<any>(quoteConfirmationState);
-    
     const { alertFaultUpdate, alertSuccessUpdate } = useSnackBar();
     const [reasonText, setReasonText] = useState("");
     const [anchorElRejectBtn, setAnchorElRejectBtn] = useState<null | HTMLElement>(null);

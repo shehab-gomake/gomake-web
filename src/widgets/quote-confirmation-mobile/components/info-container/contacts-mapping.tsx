@@ -4,7 +4,7 @@ import { useState } from "react";
 import { PhoneInputUpdatedValues } from "@/widgets/quote-new/phone-input-updated-values";
 import { InputUpdatedValues } from "@/widgets/quote-new/input-updated-values";
 
-const ContactMapping = ({item , items} : any) => {
+const ContactMapping = ({item} : any) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
   const [isConfirmation, setIsConfirmation] = useState(null);

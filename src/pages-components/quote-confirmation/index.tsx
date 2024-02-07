@@ -23,9 +23,9 @@ const QuoteConfirmationPageWidget = () => {
     setIsMobile(window.innerWidth <= 768);
   };
 
-const {getQuoteConfirmation}=useQuoteConfirmation();
+  const { getQuoteConfirmation } = useQuoteConfirmation();
 
-
+ 
   return (
     <div style={classes.firstContainer}>
       <div style={isMobile ? classes.iconMobileStyle : classes.iconStyle}>
