@@ -63,10 +63,10 @@ const AddRuleModal = ({
     selectedPricingTableItems,
     selectedProperties,
     getProperitesService,
+    isQuoteWidge
   });
   const [selectedCategories, setSelectedCategories] = useState<any>("")
   const [selectedStatment2, setSelectedStatment2] = useState<any>("")
-  console.log("selectedCategories", selectedCategories)
   const router = useRouter();
   const [selectedOutputs, setSelectedOutputs] =
     useState<selectedOutputsProps>();

@@ -29,6 +29,7 @@ const useAddRuleModal = ({
   selectedPricingTableItems,
   selectedProperties,
   getProperitesService,
+  isQuoteWidge
 }) => {
   const GET_MATERIALS_TYPES_URL = "/v1/materials/getMaterialsTypes";
   const { callApi } = useGomakeAxios();
@@ -38,18 +39,17 @@ const useAddRuleModal = ({
   const isDefaultException =
     selectedPricingTableItems?.exceptionType === ETypeException.DEFAULT;
   const categories = useMemo(() => {
-    return [
+    const filteredCategories = [
       { label: "Machine", id: "Machine" },
       { label: "Products", id: "Products" },
       { label: "Client type", id: "Client Type" },
       { label: "Client", id: "Client" },
       { label: "Property output", id: "Property output" },
       { label: "Property input", id: "Property input" },
-      // { label: "Machine category", id: "Machine Category" },
-      // { label: "Material", id: "Material" },
-      // { label: "Material Category", id: "Material Category" },
+      { label: "Agent", id: "Agent" },
     ];
-  }, []);
+    return isQuoteWidge ? filteredCategories : filteredCategories.filter(category => category.id !== "Agent");
+  }, [isQuoteWidge]);
   const EStatementCategory = {
     Machine: 1,
     "Machine Category": 2,
