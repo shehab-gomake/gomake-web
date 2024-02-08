@@ -49,7 +49,6 @@ const RightSideWidget = ({
     t,
     _renderIconLogs,
   } = useRightSideWidget({ includeVAT });
-
   return (
     <div style={clasess.rightSideMainContainer}>
       <div style={clasess.rightSideContainer}>
@@ -156,7 +155,7 @@ const RightSideWidget = ({
         {calculationProgress &&
           calculationProgress.currentWorkFlowsCount > 0 &&
           calculationProgress.currentWorkFlowsCount !==
-            calculationProgress.totalWorkFlowsCount && (
+          calculationProgress.totalWorkFlowsCount && (
             <div style={{ marginBottom: "15px" }}>
               <ProgressBar
                 bottomLeftText={t(
@@ -184,8 +183,8 @@ const RightSideWidget = ({
               )
                 ? 0
                 : (
-                    currentProductItemValueTotalPrice / quantity?.values[0]
-                  ).toFixed(2),
+                  currentProductItemValueTotalPrice / quantity?.values[0]
+                ).toFixed(2),
               unitPrice: systemCurrency,
             })}
           </div>
