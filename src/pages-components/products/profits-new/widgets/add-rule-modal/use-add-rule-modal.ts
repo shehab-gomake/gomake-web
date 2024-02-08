@@ -382,11 +382,20 @@ const useAddRuleModal = ({
               statementCategory: EStatementCategory[item.category.id],
           };
         }),
-      }
+      },
+      true,
+      null,
+      "blob"
     );
+    const downloadLink = document.createElement('a');
+    const link = URL.createObjectURL(res.data);
+    downloadLink.href = link
+    downloadLink.download = 'translations.xlsx';
+    downloadLink.click();
     if (res?.success) {
       alertSuccessAdded();
       onCloseModal();
+     
     } else {
       alertFaultAdded();
     }

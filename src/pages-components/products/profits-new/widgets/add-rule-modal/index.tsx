@@ -15,6 +15,7 @@ import { useEffect, useState } from "react";
 import { selectedOutputsProps, selectedParametersProps } from "../../interface";
 import { EParameterTypes } from "@/enums";
 import { useRouter } from "next/router";
+import { GoMakeDatepicker } from "@/components/date-picker/date-picker-component";
 
 const AddRuleModal = ({
   openModal,
@@ -317,18 +318,34 @@ const AddRuleModal = ({
       }
     }
   };
+  const [fromDate, setFromDate] = useState<Date>();
+  const [toDate, setToDate] = useState<Date>();
+  const [resetDatePicker, setResetDatePicker] = useState<boolean>(false);
+  const onSelectDeliveryTimeDates = (fromDate: Date, toDate: Date) => {
+    setResetDatePicker(false);
+    setFromDate(fromDate);
+    setToDate(toDate);
+  };
   const _renderInptsForQuotes = () => {
     return (
-      <div style={{ width: "20%" }}>
-        <div style={clasess.selectTypeStyle}>{t("products.profits.exceptions.groupBy")}</div>
-        <GoMakeAutoComplate
-          options={GroupByOptions}
-          style={clasess.dropDownListContainer}
-          placeholder={t("products.profits.exceptions.selectGroupBy")}
-          onChange={(e, value) => {
-            setPropertieValue(value?.id)
-          }}
-        />
+      <div style={clasess.inputsForQuotesContainer}>
+        <div>
+          <div style={clasess.selectTypeStyle}>{t("products.profits.exceptions.groupBy")}</div>
+          <GoMakeAutoComplate
+            options={GroupByOptions}
+            style={clasess.dropDownListContainer}
+            placeholder={t("products.profits.exceptions.selectGroupBy")}
+            onChange={(e, value) => {
+              setPropertieValue(value?.id)
+            }}
+          />
+        </div>
+        <div style={clasess.statusFilterContainer}>
+          <h3 style={clasess.filterLabelStyle}>{t("boardMissions.dateRange")}</h3>
+          <div style={{ width: "100%" }}>
+            <GoMakeDatepicker onChange={onSelectDeliveryTimeDates} placeholder={t("boardMissions.chooseDate")} reset={resetDatePicker} />
+          </div>
+        </div>
       </div>
     );
   }
