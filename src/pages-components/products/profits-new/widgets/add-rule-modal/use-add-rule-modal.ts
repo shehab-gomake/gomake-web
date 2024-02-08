@@ -362,12 +362,22 @@ const useAddRuleModal = ({
       });
     }
   }, [router, expression, selectedProperties, propertieValue, rules]);
+  const [fromDate, setFromDate] = useState<Date>();
+  const [toDate, setToDate] = useState<Date>();
+  const [resetDatePicker, setResetDatePicker] = useState<boolean>(false);
+  const onSelectDeliveryTimeDates = (fromDate: Date, toDate: Date) => {
+    setResetDatePicker(false);
+    setFromDate(fromDate);
+    setToDate(toDate);
+  };
   const createForQuoteWidget = useCallback(async () => {
     const res = await callApi(
       EHttpMethod.POST,
       `/v1/erp-service/documents/generate-document-report`,
       {
         groupBy: propertieValue,
+        fromDate,
+        toDate,
         exceptionConditionProperties: rules.map((item) => {
           return {
             statementValue:
@@ -388,23 +398,23 @@ const useAddRuleModal = ({
       "blob"
     );
     const downloadLink = document.createElement('a');
-    const link = URL.createObjectURL(res.data);
+    const link = URL?.createObjectURL(res.data);
     downloadLink.href = link
     downloadLink.download = 'translations.xlsx';
     downloadLink.click();
     if (res?.success) {
-      alertSuccessAdded();
       onCloseModal();
-     
     } else {
       alertFaultAdded();
     }
-  }, [propertieValue, EStatementCategory, rules]);
+  }, [propertieValue, EStatementCategory, rules, fromDate, toDate]);
   return {
     rules,
     deleteRule,
     handleChange,
     addRule,
+    resetDatePicker,
+    onSelectDeliveryTimeDates,
     machincesList,
     allMachincesList,
     productsStateValue,

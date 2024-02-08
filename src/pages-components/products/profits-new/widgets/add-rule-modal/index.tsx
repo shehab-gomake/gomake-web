@@ -49,6 +49,8 @@ const AddRuleModal = ({
     conditions,
     GroupByOptions,
     agentsCategories,
+    resetDatePicker,
+    onSelectDeliveryTimeDates,
     create,
     createProperties,
     setPropertieValue,
@@ -318,14 +320,7 @@ const AddRuleModal = ({
       }
     }
   };
-  const [fromDate, setFromDate] = useState<Date>();
-  const [toDate, setToDate] = useState<Date>();
-  const [resetDatePicker, setResetDatePicker] = useState<boolean>(false);
-  const onSelectDeliveryTimeDates = (fromDate: Date, toDate: Date) => {
-    setResetDatePicker(false);
-    setFromDate(fromDate);
-    setToDate(toDate);
-  };
+
   const _renderInptsForQuotes = () => {
     return (
       <div style={clasess.inputsForQuotesContainer}>
