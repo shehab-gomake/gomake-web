@@ -11,3 +11,12 @@ export enum EParameterTypes {
 export enum EButtonTypes {
   GALLERY_MODAL = "GalleryModel",
 }
+
+export enum EGroupByEnum
+{
+  CLIENT = 1,
+  AGENT,
+  PRODUCT,
+  PRODUCT_SKU,
+  CLIENT_TYPE
+}

@@ -18,6 +18,9 @@ import { getSetApiData } from "@/services/api-service/get-set-api-data";
 import { usePrintHouseMachines } from "@/widgets/properties/hooks/use-print-house-machines";
 import { CLIENT_TYPE_Id } from "@/pages/customers/enums";
 import { useTranslation } from "react-i18next";
+import { EGroupByEnum } from "@/enums";
+import { agentsCategoriesState } from "@/pages/customers/customer-states";
+import { getAndSetEmployees2 } from "@/services/api-service/customers/employees-api";
 
 const useAddRuleModal = ({
   typeExceptionSelected,
@@ -28,6 +31,7 @@ const useAddRuleModal = ({
   selectedPricingTableItems,
   selectedProperties,
   getProperitesService,
+  isQuoteWidge
 }) => {
   const GET_MATERIALS_TYPES_URL = "/v1/materials/getMaterialsTypes";
   const { callApi } = useGomakeAxios();
@@ -37,32 +41,50 @@ const useAddRuleModal = ({
   const isDefaultException =
     selectedPricingTableItems?.exceptionType === ETypeException.DEFAULT;
   const categories = useMemo(() => {
-    return [
+    const filteredCategories = [
       { label: "Machine", id: "Machine" },
       { label: "Products", id: "Products" },
       { label: "Client type", id: "Client Type" },
       { label: "Client", id: "Client" },
       { label: "Property output", id: "Property output" },
       { label: "Property input", id: "Property input" },
-      // { label: "Machine category", id: "Machine Category" },
-      // { label: "Material", id: "Material" },
-      // { label: "Material Category", id: "Material Category" },
+      { label: "Agent", id: "Agent" },
     ];
-  }, []);
+    return isQuoteWidge ? filteredCategories : filteredCategories.filter(category => category.id !== "Agent");
+  }, [isQuoteWidge]);
   const EStatementCategory = {
     Machine: 1,
-    "Machine Category": 2,
-    "Client Type": 3,
-    Client: 4,
-    "Property input": 5,
-    "Property output": 6,
-    Products: 7,
+    "Client Type": 2,
+    Client: 3,
+    "Property input": 4,
+    "Property output": 5,
+    Products: 6,
+    Agent:7
+   
   };
   const { Outputs } = useOutputs();
   const { machines } = usePrintHouseMachines();
   const [materialsTypes, setMaterialsTypes] = useState<
     { materialTypeKey: string; materialTypeName: string }[]
   >([]);
+  const [agentsCategories, setAgentsCategories] = useRecoilState(
+    agentsCategoriesState
+  );
+  const getAgentCategories = async () => {
+    const callBack = (res) => {
+      if (res.success) {
+        const agentNames = res.data.map((agent) => ({
+          label: agent.text,
+          id: agent.value,
+        }));
+        setAgentsCategories(agentNames);
+      }
+    };
+    await getAndSetEmployees2(callApi, callBack, { isAgent: true });
+  };
+  useEffect(()=>{
+    getAgentCategories()
+  },[])
   const getMaterialsTypesApi: ICallAndSetData = async (callApi, setState) => {
     return await getSetApiData(
       callApi,
@@ -102,6 +124,15 @@ const useAddRuleModal = ({
     return [
       { label: "Yes", id: true },
       { label: "No", id: false },
+    ];
+  }, []);
+  const GroupByOptions = useMemo(() => {
+    return [
+      { label: "Client", id: EGroupByEnum.CLIENT },
+      { label: "Agent", id: EGroupByEnum.AGENT },
+      { label: "Product", id: EGroupByEnum.PRODUCT },
+      { label: "ProductSku", id: EGroupByEnum.PRODUCT_SKU },
+      { label: "ClientType", id: EGroupByEnum.CLIENT_TYPE },
     ];
   }, []);
   const { alertSuccessAdded, alertFaultAdded,setSnackbarStateValue } = useSnackBar();
@@ -193,7 +224,7 @@ const useAddRuleModal = ({
       
       if (typeof condition?.statement === "object") {
         const statementLabel = condition?.statement?.label ?? "";
-        text += `${categoryLabel} ${statement2Label} ${conditionLabel} ${statementLabel}`;
+        text += `${categoryLabel} ${conditionLabel} ${statement2Label} ${statementLabel}`;
       } else {
         const statementLabel = condition?.statement ?? "";
         if (statementLabel.length > 0) {
@@ -272,11 +303,6 @@ const useAddRuleModal = ({
   const createProperties = useCallback(async () => {
     if (!propertieValue) {
       alertFaultAdded();
-      // setSnackbarStateValue({
-      //   state: true,
-      //   message: "Please fill out all fields",
-      //   type: "error",
-      // });
       return;
     }
   const isValidRules = rules.every((rule) => {
@@ -287,7 +313,7 @@ const useAddRuleModal = ({
     if (!hasCategory || !hasCondition || !hasStatement2) {
       setSnackbarStateValue({
         state: true,
-        message: "Please fill out all fields",
+        message:t("properties.fillAllFields"),
         type: "error",
       });
       return false;
@@ -331,17 +357,72 @@ const useAddRuleModal = ({
     } else {
       setSnackbarStateValue({
         state: true,
-        message: "this rule is already added",
+        message: t("properties.ruleAlreadyAdded"),
         type: "error",
       });
     }
   }, [router, expression, selectedProperties, propertieValue, rules]);
-
+  const [fromDate, setFromDate] = useState<Date>();
+  const [toDate, setToDate] = useState<Date>();
+  const [resetDatePicker, setResetDatePicker] = useState<boolean>(false);
+  const onSelectDeliveryTimeDates = (fromDate: Date, toDate: Date) => {
+    setResetDatePicker(false);
+    setFromDate(fromDate);
+    setToDate(toDate);
+  };
+  const createForQuoteWidget = useCallback(async () => {
+    if (!fromDate || !toDate) {
+      setSnackbarStateValue({
+        state: true,
+        message: t("properties.fieldsMissing"),
+        type: "error",
+      });
+      return;
+    }
+    const res = await callApi(
+      EHttpMethod.POST,
+      `/v1/erp-service/documents/generate-document-report`,
+      {
+        groupBy: propertieValue,
+        fromDate,
+        toDate,
+        exceptionConditionProperties: rules.map((item) => {
+          return {
+            statementValue:
+              typeof item?.statement === "object"
+                ? item?.statement?.id
+                : item.statement,
+                statementId: item.statement2.id,
+                operator: item.condition.id,
+                conditionBetweenStatements: item.linkCondition
+              ? item.linkCondition.id
+              : "",
+              statementCategory: EStatementCategory[item.category.id],
+          };
+        }),
+      },
+      true,
+      null,
+      "blob"
+    );
+    const downloadLink = document.createElement('a');
+    const link = URL?.createObjectURL(res.data);
+    downloadLink.href = link
+    downloadLink.download = 'Reports Rule engine.xlsx';
+    downloadLink.click();
+    if (res?.success) {
+      onCloseModal();
+    } else {
+      alertFaultAdded();
+    }
+  }, [propertieValue, EStatementCategory, rules, fromDate, toDate]);
   return {
     rules,
     deleteRule,
     handleChange,
     addRule,
+    resetDatePicker,
+    onSelectDeliveryTimeDates,
     machincesList,
     allMachincesList,
     productsStateValue,
@@ -363,7 +444,10 @@ const useAddRuleModal = ({
     propertieValue,
     setPropertieValue,
     materialsTypes,
-    machines
+    machines,
+    GroupByOptions,
+    agentsCategories,
+    createForQuoteWidget
   };
 };
 
