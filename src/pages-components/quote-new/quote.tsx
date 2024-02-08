@@ -23,6 +23,7 @@ import { IconButton } from "@mui/material";
 import { SettingQuoteMenu } from "@/widgets/quote-new/setting-quote-menu";
 import { AddDeliveryModal } from "@/widgets/quote-new/modals-widgets/add-delivery-modal/add-delivery-modal";
 import { DOCUMENT_TYPE } from "../quotes/enums";
+import { CopyFromOrderModal } from "@/widgets/quote-new/modals-widgets/copy-from-order-modal/copy-from-order-modal";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -94,6 +95,9 @@ const QuoteNewPageWidget = ({ documentType }: IProps) => {
     setSelectDate,
     setIsUpdateBusinessName,
     setSelectBusiness,
+    openCopyFromOrderModal,
+    onCloseCopyFromOrder,
+    onOpenCopyFromOrder,
     setIsUpdateAddress,
     setIsUpdatePurchaseNumber,
     setIsUpdateBusinessCode,
@@ -304,6 +308,7 @@ const QuoteNewPageWidget = ({ documentType }: IProps) => {
                 handleSaveBtnClick={handleSaveBtnClick}
                 handleSendBtnClick={handleSendBtnClick}
                 documentType={documentType}
+                onOpenCopyFromOrder={onOpenCopyFromOrder}
               />
             </div>
           </div>
@@ -318,6 +323,10 @@ const QuoteNewPageWidget = ({ documentType }: IProps) => {
         openModal={openAddDeliveryModal}
         onClose={onCloseDeliveryModal}
         onClickAdd={onAddDelivery}
+      />
+      <CopyFromOrderModal
+        openModal={openCopyFromOrderModal}
+        onClose={onCloseCopyFromOrder}
       />
       <DuplicateItemModal
         openModal={openDuplicateWithDifferentQTYModal}

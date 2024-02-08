@@ -1,16 +1,10 @@
 import React from "react";
 import { useStyle } from "./style";
-import {
-  ArrowDownNewIcon,
-  PlusIcon,
-  UploadNewIcon,
-} from "@/icons";
+import { ArrowDownNewIcon, PlusIcon } from "@/icons";
 import { useTranslation } from "react-i18next";
 import { GomakePrimaryButton } from "@/components";
 import { OrderNowModal } from "@/widgets/quote/total-price-and-vat/order-now-modal";
 import { useButtonsContainer } from "./use-buttons-container";
-import { useRecoilValue } from "recoil";
-import { quoteItemState } from "@/store";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 
 const ButtonsContainer = ({
@@ -20,6 +14,7 @@ const ButtonsContainer = ({
   handleSendBtnClick,
   onOpenDeliveryModal,
   documentType,
+  onOpenCopyFromOrder
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -44,9 +39,16 @@ const ButtonsContainer = ({
         <GomakePrimaryButton
           leftIcon={<PlusIcon stroke={"#344054"} />}
           style={classes.btnContainer}
-          onClick={() =>onOpenDeliveryModal()}
+          onClick={() => onOpenDeliveryModal()}
         >
           {t("sales.quote.addDelivery")}
+        </GomakePrimaryButton>
+        <GomakePrimaryButton
+          leftIcon={<PlusIcon stroke={"#344054"} />}
+          style={classes.btnContainer}
+          onClick={onOpenCopyFromOrder}
+        >
+          Copy from order
         </GomakePrimaryButton>
       </div>
       <div style={classes.btnsContainer}>

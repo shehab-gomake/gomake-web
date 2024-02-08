@@ -66,6 +66,7 @@ const useQuoteNew = (docType: DOCUMENT_TYPE) => {
   const [selectedContact, setSelectedContact] = useState();
   const [openDeleteModalContact, setOpenDeleteModalContact] = useState(false);
   const [openAddNewItemModal, setOpenAddNewItemModal] = useState(false);
+  const [openCopyFromOrderModal, setOpenCopyFromOrderModal] = useState(false);
   const [quoteItemId, setQuateItemId] = useState();
   const [
     openDuplicateWithDifferentQTYModal,
@@ -487,6 +488,13 @@ const useQuoteNew = (docType: DOCUMENT_TYPE) => {
 
   const onOpenNewItem = () => {
     setOpenAddNewItemModal(true);
+  };
+  const onCloseCopyFromOrder = () => {
+    setOpenCopyFromOrderModal(false);
+  };
+
+  const onOpenCopyFromOrder = () => {
+    setOpenCopyFromOrderModal(true);
   };
   const onCloseNewItem = () => {
     setOpenAddNewItemModal(false);
@@ -1031,7 +1039,10 @@ const useQuoteNew = (docType: DOCUMENT_TYPE) => {
     updateExchangeRate,
     updateCurrency,
     refreshExchangeRate,
-    getQuote
+    getQuote,
+    openCopyFromOrderModal,
+    onCloseCopyFromOrder,
+    onOpenCopyFromOrder
   };
 };
 
