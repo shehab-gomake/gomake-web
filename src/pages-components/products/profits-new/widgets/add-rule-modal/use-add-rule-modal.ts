@@ -313,7 +313,7 @@ const useAddRuleModal = ({
     if (!hasCategory || !hasCondition || !hasStatement2) {
       setSnackbarStateValue({
         state: true,
-        message: "Please fill out all fields",
+        message:t("properties.fillAllFields"),
         type: "error",
       });
       return false;
@@ -357,7 +357,7 @@ const useAddRuleModal = ({
     } else {
       setSnackbarStateValue({
         state: true,
-        message: "this rule is already added",
+        message: t("properties.ruleAlreadyAdded"),
         type: "error",
       });
     }
@@ -371,6 +371,14 @@ const useAddRuleModal = ({
     setToDate(toDate);
   };
   const createForQuoteWidget = useCallback(async () => {
+    if (!fromDate || !toDate) {
+      setSnackbarStateValue({
+        state: true,
+        message: t("properties.fieldsMissing"),
+        type: "error",
+      });
+      return;
+    }
     const res = await callApi(
       EHttpMethod.POST,
       `/v1/erp-service/documents/generate-document-report`,
