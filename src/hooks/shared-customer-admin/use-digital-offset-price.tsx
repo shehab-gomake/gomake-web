@@ -57,6 +57,8 @@ import {
 } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/quantity-parameter/quantity-types/state";
 import { findParameterByCode } from "@/utils/helpers";
 import React from "react";
+import { getCurrencies } from "@/services/api-service/general/enums";
+import { currenciesState } from "@/widgets/materials-widget/state";
 
 const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const { navigate } = useGomakeRouter();
@@ -146,7 +148,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     let copy = lodashClonedeep(subProducts);
     setSubProductsCopy(copy);
   }, [subProducts]);
-  
+
   useEffect(() => {
     if (calculationResult && calculationResult.productItemValue) {
       if (calculationResult.productItemValueDraftId === currentCalculationSessionId) {
@@ -2056,6 +2058,20 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       jobDetails,
     });
   }, [workFlows, jobActions, jobDetails]);
+  const setCurrencies = useSetRecoilState(currenciesState);
+  const getCurrenciesApi = async () => {
+    const callBack = (res) => {
+      if (res.success) {
+        setCurrencies(
+          res.data.map(({ value, text }) => ({ label: text, value }))
+        );
+      }
+    };
+    await getCurrencies(callApi, callBack);
+  };
+  useEffect(() => {
+    getCurrenciesApi()
+  }, [])
   return {
     t,
     handleTabClick,
