@@ -303,11 +303,6 @@ const useAddRuleModal = ({
   const createProperties = useCallback(async () => {
     if (!propertieValue) {
       alertFaultAdded();
-      // setSnackbarStateValue({
-      //   state: true,
-      //   message: "Please fill out all fields",
-      //   type: "error",
-      // });
       return;
     }
   const isValidRules = rules.every((rule) => {
@@ -367,7 +362,35 @@ const useAddRuleModal = ({
       });
     }
   }, [router, expression, selectedProperties, propertieValue, rules]);
-
+  const createForQuoteWidget = useCallback(async () => {
+    const res = await callApi(
+      EHttpMethod.POST,
+      `/v1/erp-service/documents/generate-document-report`,
+      {
+        groupBy: propertieValue,
+        exceptionConditionProperties: rules.map((item) => {
+          return {
+            statementValue:
+              typeof item?.statement === "object"
+                ? item?.statement?.id
+                : item.statement,
+                statementId: item.statement2.id,
+                operator: item.condition.id,
+                conditionBetweenStatements: item.linkCondition
+              ? item.linkCondition.id
+              : "",
+              statementCategory: EStatementCategory[item.category.id],
+          };
+        }),
+      }
+    );
+    if (res?.success) {
+      alertSuccessAdded();
+      onCloseModal();
+    } else {
+      alertFaultAdded();
+    }
+  }, [propertieValue, EStatementCategory, rules]);
   return {
     rules,
     deleteRule,
@@ -396,7 +419,8 @@ const useAddRuleModal = ({
     materialsTypes,
     machines,
     GroupByOptions,
-    agentsCategories
+    agentsCategories,
+    createForQuoteWidget
   };
 };
 

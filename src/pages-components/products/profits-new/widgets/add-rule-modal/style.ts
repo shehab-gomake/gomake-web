@@ -26,8 +26,7 @@ const useStyle = () => {
         marginTop: 50,
       },
       sendBtn: {
-        width: "10%",
-        marginLeft: "5%",
+        width: "20%",
         backgroundColor: secondColor(500),
         height: 20,
         padding: 20,

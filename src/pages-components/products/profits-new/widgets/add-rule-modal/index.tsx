@@ -55,6 +55,7 @@ const AddRuleModal = ({
     deleteRule,
     handleChange,
     addRule,
+    createForQuoteWidget,
   } = useAddRuleModal({
     typeExceptionSelected,
     selectedPricingBy,
@@ -747,7 +748,13 @@ const AddRuleModal = ({
             <GomakePrimaryButton
               style={clasess.sendBtn}
               onClick={() => {
-                isPropertiesWidge ? createProperties() : create();
+                if (isPropertiesWidge) {
+                  createProperties();
+                } else if (isQuoteWidge) {
+                  createForQuoteWidget();
+                } else {
+                  create();
+                }
               }}
             >
               {t("properties.create")}
@@ -758,7 +765,6 @@ const AddRuleModal = ({
               <label
                 style={{
                   ...FONT_FAMILY.Lexend(500, 12),
-                  // color: primaryColor(500),
                   fontSize: 16,
                   marginBottom: 10,
                 }}
