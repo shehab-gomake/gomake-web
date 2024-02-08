@@ -85,7 +85,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [subProducts, setSubProducts] = useRecoilState<any>(
     subProductsParametersState
   );
-
+  console.log("subProducts", subProducts)
   const [isSetTemplete, setIsSetTemplete] = useState<boolean>(false);
   const setSubProductsCopy = useSetRecoilState<any>(
     subProductsCopyParametersState
@@ -135,9 +135,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     updatedSelectedWorkFlow,
     calculationExceptionsLogs,
   } = useCalculationsWorkFlowsSignalr();
-  const [calculationSessionConnectionId, setCalculationSessionConnectionId] =
-    useRecoilState(currentCalculationConnectionId);
-
+  const [currentSignalRConnectionId,setCurrentSignalRConnectionId] = useRecoilState(currentCalculationConnectionId);
+  const [currentCalculationSessionId,setCurrentCalculationSessionId] = useState<string>("");
   const [requestAbortController, setRequestAbortController] =
     useState<AbortController>(null);
   const [billingMethod, setBillingMethod] = useState<any>();
@@ -147,14 +146,12 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     let copy = lodashClonedeep(subProducts);
     setSubProductsCopy(copy);
   }, [subProducts]);
-
+  
   useEffect(() => {
     if (calculationResult && calculationResult.productItemValue) {
-      if (calculationResult.productItemValueDraftId === calculationSessionId) {
+      if (calculationResult.productItemValueDraftId === currentCalculationSessionId) {
         setLoading(false);
-        setCurrentProductItemValueDraftId(
-          calculationResult.productItemValueDraftId
-        );
+        setCurrentProductItemValueDraftId(calculationResult.productItemValueDraftId);
         const currentWorkFlows = cloneDeep(workFlows);
         const newWorkFlows = calculationResult?.productItemValue.workFlows;
         newWorkFlows.forEach((flow) => {
@@ -218,9 +215,12 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       totalWorkFlowsCount: 0,
       currentWorkFlowsCount: 0,
     });
-    setCalculationSessionConnectionId(connectionId);
+    setCurrentCalculationSessionId(calculationSessionId);
   }, [calculationSessionId]);
 
+  useEffect(()=>{
+    setCurrentSignalRConnectionId(connectionId)
+  },[connectionId])
   useEffect(() => {
     setCalculationExceptionsLogs(calculationExceptionsLogs);
   }, [calculationExceptionsLogs]);
@@ -460,8 +460,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                           actionId: param.actionId,
                           values: selectedParam.valueIds,
                           valueIds: selectedParam.valueIds,
-                          actionIndex: parameter?.actionIndex,
-                          parameterCode: parameter?.code
+                          actionIndex: param?.actionIndex,
+                          parameterCode: param?.code
                         });
                       }
                     });
@@ -1582,10 +1582,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 values: selectedParam.valueIds,
                 valueIds: selectedParam.valueIds,
                 valuesConfigs: selectedParam?.valuesConfigs,
-                unitKey: selectedParam?.unitKey,
-                unitType: selectedParam?.unitType,
+                unitKey: param?.unitKey,
+                unitType: param?.unitType,
                 actionIndex,
-                parameterCode
+                parameterCode: param?.code
               });
             }
           });
@@ -1833,7 +1833,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       totalWorkFlowsCount: 0,
       currentWorkFlowsCount: 0,
     });
-
+    setCurrentCalculationSessionId("");
     let checkParameter = validateParameters(isRequiredParameters);
     if (!!checkParameter) {
       setLoading(true);
@@ -1842,8 +1842,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       let subProductsCopy = cloneDeep(subProducts);
       let generalParameters = subProductsCopy.find((x) => !x.type).parameters;
       let calculationSubProducts = subProductsCopy.filter((x) => x.type);
-      generalParameters.forEach(x=>x.valuesConfigs = null);
-      calculationSubProducts.forEach(x=>x.parameters.forEach(y=>y.valuesConfigs = null))
+      generalParameters.forEach(x => x.valuesConfigs = null);
+      calculationSubProducts.forEach(x => x.parameters.forEach(y => y.valuesConfigs = null))
       let workTypes = [];
       if (productQuantityTypes && productQuantityTypes.length > 0 && productQuantityTypes[0].quantity > 0) {
         workTypes = productQuantityTypes;
@@ -1864,28 +1864,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         false,
         newRequestAbortController
       );
-      /*setIsCalculationFinished(true)
-            if (res?.success) {
-                setPricingDefaultValue(res?.data?.data?.data);
-                const workFlows = res?.data?.data?.data?.workFlows;
-                if (workFlows && workFlows.length > 0) {
-                    const workFlow = res?.data?.data?.data?.workFlows.find(x => x.selected);
-                    const currentWorkFlows = cloneDeep(workFlows);
-                    const isExits = currentWorkFlows.find(x => x.id === workFlow.id);
-                    if (!isExits) {
-                        currentWorkFlows.push(workFlow)
-                    }
-                    if (isExits && !isExits.selected) {
-                        currentWorkFlows.forEach(x => x.selected = false);
-                        isExits.selected = true;
-                    }
-                    setCurrentProductItemValueTotalPrice(parseFloat(workFlow?.totalPrice?.values[0]))
-                    currentWorkFlows.sort((a, b) => b.monials - a.monials);
-                    setCalculationProgress({totalWorkFlowsCount: 0, currentWorkFlowsCount: 0});
-                    // setWorkFlows(currentWorkFlows);
-                }
-                setJobActions(res?.data?.data?.data?.actions);
-            }*/
+
       setLoading(false);
     }
   }, [subProducts, router, isRequiredParameters, validateParameters]);

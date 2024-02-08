@@ -56,6 +56,7 @@ export interface IPrintActionType {
 }
 
 export interface IWorkFlowAction {
+  id:string;
   actionId: string;
   actionName: string;
   mongoDBMachineId: string;

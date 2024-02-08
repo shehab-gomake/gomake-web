@@ -65,6 +65,7 @@ const Actions = ({
 };
 
 const ActionContainerComponent = ({
+  id,
   actionId,
   actionName,
   outputs,
@@ -130,22 +131,22 @@ const ActionContainerComponent = ({
   };
 
   const handleCostUpdate = (newCost: string) => {
-    updateActionData(actionId, +newCost, "totalCost", productType).then();
+    updateActionData(id, +newCost, "totalCost", productType).then();
   };
 
   const handleProfitUpdate = (profit: string) => {
-    updateActionData(actionId, +profit, "profit", productType).then();
+    updateActionData(id, +profit, "profit", productType).then();
   };
 
   const handleUpdatePrice = (price: string) => {
-    updateActionData(actionId, +price, "totalPrice", productType).then();
+    updateActionData(id, +price, "totalPrice", productType).then();
   };
 
   const handleSourceChange = (source: EWorkSource) => {
-    updateActionData(actionId, source, "source", productType).then();
+    updateActionData(id, source, "source", productType).then();
   };
   const handleSupplierChange = (e, value) => {
-    updateActionData(actionId, value?.value, "supplierId", productType).then();
+    updateActionData(id, value?.value, "supplierId", productType).then();
   };
   const getSupplierId = useCallback(() => {
     if (supplierId) {
