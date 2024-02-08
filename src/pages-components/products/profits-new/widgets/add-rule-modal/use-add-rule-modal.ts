@@ -400,7 +400,7 @@ const useAddRuleModal = ({
     const downloadLink = document.createElement('a');
     const link = URL?.createObjectURL(res.data);
     downloadLink.href = link
-    downloadLink.download = 'translations.xlsx';
+    downloadLink.download = 'Reports Rule engine.xlsx';
     downloadLink.click();
     if (res?.success) {
       onCloseModal();
