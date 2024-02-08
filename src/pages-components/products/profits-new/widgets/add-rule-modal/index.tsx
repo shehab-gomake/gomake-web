@@ -15,6 +15,7 @@ import { useEffect, useState } from "react";
 import { selectedOutputsProps, selectedParametersProps } from "../../interface";
 import { EParameterTypes } from "@/enums";
 import { useRouter } from "next/router";
+import { GoMakeDatepicker } from "@/components/date-picker/date-picker-component";
 
 const AddRuleModal = ({
   openModal,
@@ -27,6 +28,7 @@ const AddRuleModal = ({
   isPropertiesWidge,
   selectedProperties,
   getProperitesService,
+  isQuoteWidge = false
 }: any) => {
   const { clasess } = useStyle();
   const { t } = useTranslation();
@@ -45,6 +47,10 @@ const AddRuleModal = ({
     mainconditions,
     categories,
     conditions,
+    GroupByOptions,
+    agentsCategories,
+    resetDatePicker,
+    onSelectDeliveryTimeDates,
     create,
     createProperties,
     setPropertieValue,
@@ -52,6 +58,7 @@ const AddRuleModal = ({
     deleteRule,
     handleChange,
     addRule,
+    createForQuoteWidget,
   } = useAddRuleModal({
     typeExceptionSelected,
     selectedPricingBy,
@@ -61,10 +68,10 @@ const AddRuleModal = ({
     selectedPricingTableItems,
     selectedProperties,
     getProperitesService,
+    isQuoteWidge,
   });
   const [selectedCategories, setSelectedCategories] = useState<any>("")
   const [selectedStatment2, setSelectedStatment2] = useState<any>("")
-  console.log("selectedCategories", selectedCategories)
   const router = useRouter();
   const [selectedOutputs, setSelectedOutputs] =
     useState<selectedOutputsProps>();
@@ -313,6 +320,30 @@ const AddRuleModal = ({
       }
     }
   };
+
+  const _renderInptsForQuotes = () => {
+    return (
+      <div style={clasess.inputsForQuotesContainer}>
+        <div>
+          <div style={clasess.selectTypeStyle}>{t("products.profits.exceptions.groupBy")}</div>
+          <GoMakeAutoComplate
+            options={GroupByOptions}
+            style={clasess.dropDownListContainer}
+            placeholder={t("products.profits.exceptions.selectGroupBy")}
+            onChange={(e, value) => {
+              setPropertieValue(value?.id)
+            }}
+          />
+        </div>
+        <div style={clasess.statusFilterContainer}>
+          <h3 style={clasess.filterLabelStyle}>{t("boardMissions.dateRange")}</h3>
+          <div style={{ width: "100%" }}>
+            <GoMakeDatepicker onChange={onSelectDeliveryTimeDates} placeholder={t("boardMissions.chooseDate")} reset={resetDatePicker} />
+          </div>
+        </div>
+      </div>
+    );
+  }
   return (
     <>
       <GoMakeModal
@@ -449,7 +480,7 @@ const AddRuleModal = ({
                       options={conditions}
                       style={clasess.dropDownListContainer}
                       placeholder={t("properties.condtion")}
-                      value={rule.condition}
+                      // value={rule.condition}
                       onChange={(event, value) => {
                         handleChange(index, "condition", value);
                       }}
@@ -483,9 +514,7 @@ const AddRuleModal = ({
                         value={rule.statement2}
                         onChange={(e, value) => {
                           handleChange(index, "statement2", value)
-                          handleChange(index, "condition", null);
                           handleChange(index, "statement", null);
-                          setSelectedStatment2(value)
                         }
                         }
                       />
@@ -509,9 +538,7 @@ const AddRuleModal = ({
                         value={rule.statement2}
                         onChange={(e, value) => {
                           handleChange(index, "statement2", value)
-                          handleChange(index, "condition", null);
                           handleChange(index, "statement", null);
-                          setSelectedStatment2(value)
                         }
                         }
                       />
@@ -589,9 +616,26 @@ const AddRuleModal = ({
                         value={rule.statement2}
                         onChange={(e, value) => {
                           handleChange(index, "statement2", value)
-                          handleChange(index, "condition", null);
                           handleChange(index, "statement", null);
-                          setSelectedStatment2(value)
+                        }
+                        }
+                      />
+                    </div>
+                  )}
+                  {rule.category?.id === "Agent" && (
+                    <div>
+                      <label style={clasess.inputLable}>
+                        {t("properties.statment")}
+                      </label>
+
+                      <GoMakeAutoComplate
+                        options={agentsCategories}
+                        style={clasess.dropDownListContainer}
+                        placeholder={t("properties.statment")}
+                        value={rule.statement2}
+                        onChange={(e, value) => {
+                          handleChange(index, "statement2", value)
+                          handleChange(index, "statement", null);
                         }
                         }
                       />
@@ -615,9 +659,7 @@ const AddRuleModal = ({
                         value={rule.statement2}
                         onChange={(e, value) => {
                           handleChange(index, "statement2", value)
-                          handleChange(index, "condition", null);
                           handleChange(index, "statement", null);
-                          setSelectedStatment2(value)
                         }
                         }
                       />
@@ -711,12 +753,20 @@ const AddRuleModal = ({
           )}
 
           {isPropertiesWidge && _renderInptsForProperties()}
+          {isQuoteWidge && _renderInptsForQuotes()}
+
 
           <div style={clasess.btnContainer}>
             <GomakePrimaryButton
               style={clasess.sendBtn}
               onClick={() => {
-                isPropertiesWidge ? createProperties() : create();
+                if (isPropertiesWidge) {
+                  createProperties();
+                } else if (isQuoteWidge) {
+                  createForQuoteWidget();
+                } else {
+                  create();
+                }
               }}
             >
               {t("properties.create")}
@@ -727,7 +777,6 @@ const AddRuleModal = ({
               <label
                 style={{
                   ...FONT_FAMILY.Lexend(500, 12),
-                  // color: primaryColor(500),
                   fontSize: 16,
                   marginBottom: 10,
                 }}

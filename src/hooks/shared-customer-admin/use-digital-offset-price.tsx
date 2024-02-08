@@ -137,7 +137,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     updatedSelectedWorkFlow,
     calculationExceptionsLogs,
   } = useCalculationsWorkFlowsSignalr();
-  const [currentCalculationSessionId, setCurrentCalculationSessionId] = useState<string>("");
+  const [currentSignalRConnectionId,setCurrentSignalRConnectionId] = useRecoilState(currentCalculationConnectionId);
+  const [currentCalculationSessionId,setCurrentCalculationSessionId] = useState<string>("");
   const [requestAbortController, setRequestAbortController] =
     useState<AbortController>(null);
   const [billingMethod, setBillingMethod] = useState<any>();
@@ -219,6 +220,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     setCurrentCalculationSessionId(calculationSessionId);
   }, [calculationSessionId]);
 
+  useEffect(()=>{
+    setCurrentSignalRConnectionId(connectionId)
+  },[connectionId])
   useEffect(() => {
     setCalculationExceptionsLogs(calculationExceptionsLogs);
   }, [calculationExceptionsLogs]);
