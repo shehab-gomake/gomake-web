@@ -5,7 +5,7 @@ import React from "react";
 import { useCharacterDetails } from "./use-character-details";
 import { useStyleCharacterDetails } from "./style-character-details";
 
-const CharacterDetails = ({ details, getQuote, documentItemId }) => {
+const CharacterDetails = ({ details, getQuote, documentItemId, canUpdate = true }: any) => {
   const { isEdit, showAll, truncatedDetails, data, handleShowLess, handleShowMore, t, setIsEdit, handleChange, handleBlur } = useCharacterDetails({ details, getQuote, documentItemId })
   const { clasess } = useStyleCharacterDetails({ showAll });
   return (
@@ -24,9 +24,12 @@ const CharacterDetails = ({ details, getQuote, documentItemId }) => {
 
           </span>
         )}
-        <IconButton onClick={() => setIsEdit(true)} >
-          <EditIcon />
-        </IconButton>
+        {
+          canUpdate && <IconButton onClick={() => setIsEdit(true)} >
+            <EditIcon />
+          </IconButton>
+        }
+
       </div> : <div>
         <GomakeTextInput
           multiline={6}

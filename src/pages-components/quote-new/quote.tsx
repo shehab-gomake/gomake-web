@@ -157,7 +157,6 @@ const QuoteNewPageWidget = ({ documentType }: IProps) => {
     refreshExchangeRate,
     getQuote
   } = useQuoteNew(documentType);
-
   return (
     <>
       {quoteItemValue?.id && (

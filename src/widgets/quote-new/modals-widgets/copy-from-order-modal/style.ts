@@ -70,6 +70,16 @@ const useStyle = () => {
       height: 50, 
       width: "100%",
       },
+      bodyContainer: { width: "100%", height: "auto", maxHeight: 410, overflow: "scroll" },
+      selectAllContainer:{
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent:"flex-end",
+        alignItems:"center",
+      },
+      selectAllStyle:{
+        ...FONT_FAMILY.Lexend(400,12),
+      },
       totalStyle:{
         ...FONT_FAMILY.Lexend(400,12),
         color:secondColor(500)
@@ -81,6 +91,39 @@ const useStyle = () => {
         ...FONT_FAMILY.Lexend(500,16),
         height:40,
         width:"fit-content"
+      },
+      tableRowStyle: {
+        height:"44px",
+        background: "#8283BE",
+        color: "white",
+      },
+      tableHeaderStyle: {
+        borderRight: "1px solid #EAECF0",
+        color: "#FFF",
+        textAlign: "center" as "center",
+        backgroundColor: "inherit",
+        ...FONT_FAMILY.Inter(400, 12),
+      },
+      cellContainerStyle: {
+        textAlign: "center" as "center",
+        padding: "0px 24px",
+      },
+      cellTextInputStyle: {
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      },
+      dateStyle:{
+        ...FONT_FAMILY.Lexend(500,14),
+        color:primaryColor(500)
+      },
+      dateSelectAllContainer:{
+        display:"flex",
+        flexDirection: "row" as "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        width: "100%",
+        marginBottom:5
       }
     };
   }, [t]);
