@@ -1,7 +1,10 @@
 import { useMemo } from "react";
 import { FONT_FAMILY } from "@/utils/font-family";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 const useStyle = () => {
+  const {theme, warningColor, secondColor, successColor, errorColor} = useGomakeTheme();
+
   const classes = useMemo(() => {
     return {
       writeCommentcontainer: {
@@ -65,8 +68,25 @@ const useStyle = () => {
         padding: "10px",
         borderRadius: 8,
       },
+      statusLabel: {
+        color: "#344054",
+        ...FONT_FAMILY.Lexend(500, 14),
+        width: '100%',
+        textTransform: 'capitalize',
+        justifyContent: 'center',
+        boxSizing: 'border-box',
+        display: 'flex',
+        backgroundColor: "FFFFFF",
+        '&:hover' : {
+            color: '#FFF',
+            backgroundColor: "#344054"
+        }
+    },
+ 
+  borderRadius: {
+      borderRadius: '4px',            }
     };
-  }, []);
+  }, [theme]);
   return {
     classes,
   };

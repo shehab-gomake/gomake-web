@@ -9,14 +9,16 @@ import {
 } from "@/components";
 import { SearchInputComponent } from "@/components/form-inputs/search-input-component";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import { HeaderTitle } from "@/widgets";
 import { QuoteLogsWidget } from "./quote-widgets/logs-widget";
 import { DOCUMENT_TYPE } from "./enums";
-import { IconButton, Stack } from "@mui/material";
+import { Button, IconButton, Stack } from "@mui/material";
 import { CardsSection } from "./statistics-section/statistics-sections";
 import { GoMakePagination } from "@/components/pagination/gomake-pagination";
 import { SettingNewIcon } from "@/icons";
 import { AddRuleModal } from "../products/profits-new/widgets/add-rule-modal";
+import { useGomakeRouter } from "@/hooks";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -27,6 +29,7 @@ const QuotesListPageWidget = ({
   isFromHomePage = false,
 }: IProps) => {
   const { classes } = useStyle();
+  const { navigate } = useGomakeRouter();
   const {
     tableHeaders,
     allQuotes,
@@ -66,7 +69,8 @@ const QuotesListPageWidget = ({
     handleSecondCardClick,
     onCloseAddRuleModal,
     onOpenAddRuleModal,
-    openAddRule
+    openAddRule,
+    documentPath
   } = useQuotes(documentType);
 
   return (
@@ -82,7 +86,8 @@ const QuotesListPageWidget = ({
           <div style={classes.mainContainer}>
             <div style={classes.headerStyle}>
               <HeaderTitle title={documentLabel} marginTop={1} marginBottom={1} />
-              {documentType === DOCUMENT_TYPE.quote && <CardsSection statistics={allStatistics} activeCard={activeCard} onClick={onclickCreateNew} onClickCard={handleCardClick} onSecondClickCard={handleSecondCardClick} />}
+              {documentType === DOCUMENT_TYPE.quote ? <CardsSection statistics={allStatistics} activeCard={activeCard} onClick={onclickCreateNew} onClickCard={handleCardClick} onSecondClickCard={handleSecondCardClick} /> :
+                <Button style={classes.createNew} onClick={() => navigate(`/${documentPath}`)} startIcon={<AddCircleOutlineIcon style={{ color: 'black', fontSize: "24px" }} />}>{t("sales.quote.createNew")}</Button>}
             </div>
             <div style={classes.filtersContainer}>
               <div style={classes.selectedFilterContainer}>

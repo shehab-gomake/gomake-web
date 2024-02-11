@@ -11,14 +11,22 @@ const useButtonsContainer = (docType : DOCUMENT_TYPE) => {
     const { t } = useTranslation();
     const { callApi } = useGomakeAxios();
     const quoteItemValue: any = useRecoilValue(quoteItemState);
-    const [openOrderNowModal, setOpenOrderNowModal] = useState(false);
     const { alertSuccessUpdate, alertFaultUpdate } = useSnackBar();
 
+    const [openOrderNowModal, setOpenOrderNowModal] = useState(false);
     const onClickOpenOrderNowModal = () => {
         setOpenOrderNowModal(true);
     };
     const onClickCloseOrderNowModal = () => {
         setOpenOrderNowModal(false);
+    };
+
+    const [openPaymentModal, setOpenPaymentModal] = useState(false);
+    const onClickOpenPaymentModal = () => {
+        setOpenPaymentModal(true);
+    };
+    const onClickClosePaymentModal = () => {
+        setOpenPaymentModal(false);
     };
 
     const onClickConfirmWithoutNotification = async () => {
