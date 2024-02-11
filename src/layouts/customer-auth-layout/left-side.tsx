@@ -85,6 +85,7 @@ const LeftSideLayout = (customGap) => {
           <Image
             src={myProfileLogo}
             alt="logo"
+            style={{objectFit:'contain'}}
             width={80}
             height={80}
           />
