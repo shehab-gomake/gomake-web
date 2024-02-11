@@ -12,12 +12,12 @@ import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import { HeaderTitle } from "@/widgets";
 import { QuoteLogsWidget } from "./quote-widgets/logs-widget";
 import { DOCUMENT_TYPE } from "./enums";
-import { IconButton, Stack } from "@mui/material";
+import { IconButton, Stack, Button } from "@mui/material";
 import { CardsSection } from "./statistics-section/statistics-sections";
 import { GoMakePagination } from "@/components/pagination/gomake-pagination";
 import { SettingNewIcon } from "@/icons";
 import { AddRuleModal } from "../products/profits-new/widgets/add-rule-modal";
-
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 interface IProps {
   documentType: DOCUMENT_TYPE;
   isFromHomePage?: boolean;
@@ -66,9 +66,9 @@ const QuotesListPageWidget = ({
     handleSecondCardClick,
     onCloseAddRuleModal,
     onOpenAddRuleModal,
-    openAddRule
+    openAddRule,
+    navigate
   } = useQuotes(documentType);
-
   return (
     <>
       {!isFromHomePage && (
@@ -83,6 +83,15 @@ const QuotesListPageWidget = ({
             <div style={classes.headerStyle}>
               <HeaderTitle title={documentLabel} marginTop={1} marginBottom={1} />
               {documentType === DOCUMENT_TYPE.quote && <CardsSection statistics={allStatistics} activeCard={activeCard} onClick={onclickCreateNew} onClickCard={handleCardClick} onSecondClickCard={handleSecondCardClick} />}
+              {documentType === DOCUMENT_TYPE.deliveryNote &&
+                <Button
+                  style={classes.createNew}
+                  startIcon={<AddCircleOutlineIcon />}
+                  onClick={() => { navigate(`/deliveryNote?isNewCreation=${true}`) }}
+                >
+                  {t("sales.quote.createNew")}
+                </Button>
+              }
             </div>
             <div style={classes.filtersContainer}>
               <div style={classes.selectedFilterContainer}>
