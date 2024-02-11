@@ -82,6 +82,15 @@ const useSnackBar = () => {
       type: "error",
     });
   };
+
+  const alertFault = (errorMessage : string) => {
+    setSnackbarStateValue({
+      state: true,
+      message: t(errorMessage),
+      type: "error",
+    });
+  };
+
   return {
     snackbarStateValue,
     setSnackbarStateValue,
@@ -94,7 +103,8 @@ const useSnackBar = () => {
     alertSuccessDelete,
     alertFaultDelete,
     alertRequiredFields,
-    alertFaultDuplicate
+    alertFaultDuplicate,
+    alertFault
   };
 };
 

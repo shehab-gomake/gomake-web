@@ -9,7 +9,7 @@ import { approveDocumentItemsApi, rejectDocumentApi, updateDocumentCommentsConfi
 const useButtonsConfirmContainer = () => {
     const { callApi } = useGomakeAxios();
     const quoteConfirm = useRecoilValue<any>(quoteConfirmationState);
-    const { alertFaultUpdate, alertSuccessUpdate } = useSnackBar();
+    const { alertFaultUpdate, alertSuccessUpdate , alertFault} = useSnackBar();
     const [reasonText, setReasonText] = useState("");
     const [anchorElRejectBtn, setAnchorElRejectBtn] = useState<null | HTMLElement>(null);
     const openRejectBtn = Boolean(anchorElRejectBtn);
@@ -60,6 +60,12 @@ const useButtonsConfirmContainer = () => {
 
     const onClickApprove = async () => {
         const selectedItemIds = quoteConfirm?.documentItems?.filter(x => x.isChecked)?.map(x => x.id);
+
+        if (!selectedItemIds || selectedItemIds.length === 0) {
+            alertFault("sales.quote.alertApprove");
+            return;
+        }
+
         const callBack = (res) => {
             if (res?.success) {
                 // getQuoteConfirmation or getDoment id  THE CHEKCED IF isConfirmed IN DISPLAING BUTTONS CONTAINER

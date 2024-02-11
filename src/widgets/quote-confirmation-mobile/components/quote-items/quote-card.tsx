@@ -65,7 +65,7 @@ const QuoteCard = ({ key, item, index }: IProps) => {
             </Stack>
             <CardContent sx={{ padding: "0px" }}>
                 <Typography sx={classes.headerStyle}>{t("products.addProduct.admin.details")}</Typography>
-                <CharacterDetails details={item?.details} showAllStyle={classes.showAll} detailsStyle={classes.detailsStyle} />
+                <CharacterDetails details={item?.details} showAllStyle={classes.showAll} detailsStyle={classes.detailsStyle} isQuoteConfirmation={true} />
             </CardContent>
         </Card>
     )
