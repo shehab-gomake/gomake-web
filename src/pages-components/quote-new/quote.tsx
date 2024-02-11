@@ -34,7 +34,6 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
   const quoteItemValue = useRecoilValue<any>(quoteItemState);
   const quoteConfirm = useRecoilValue<any>(quoteConfirmationState);
   const quoteState = isQuoteConfirmation ? quoteConfirm : quoteItemValue;
-  
   const {
     selectDate,
     selectBusiness,

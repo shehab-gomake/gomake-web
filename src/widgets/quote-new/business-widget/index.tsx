@@ -4,7 +4,7 @@ import { AutoCompleteUpdatedValue } from "../auto-complete-updated";
 import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import { useQuoteWidget } from "@/pages-components/admin/home/widgets/quote-widget/use-quote-widget";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import { addressModalState } from "./address-widget/state";
 import { PlusNewIcon } from "@/icons";
 import { MinusIcon } from "@/icons/minus-icon";
@@ -42,9 +42,11 @@ const BusinessNewWidget = ({
   const { t } = useTranslation();
   const [isConfirmation, setIsConfirmation] = useState();
   const { renderOptions, checkWhatRenderArray } = useQuoteWidget();
-  const [openModal, setOpenModal] = useRecoilState<boolean>(addressModalState);
+  const setOpenModal = useSetRecoilState<boolean>(addressModalState);
   const [purchaseNumber, setPurchaseNumber] = useState(values?.purchaseNumber || t("sales.quote.noPurchaseNumber"));
   const quoteStateValue = useRecoilValue<any>(quoteItemState);
+  const quoteConfirm = useRecoilValue<any>(quoteConfirmationState);
+
  
   useEffect(() => {
     setPurchaseNumber(values?.purchaseNumber || t("sales.quote.noPurchaseNumber"));
@@ -60,7 +62,7 @@ const BusinessNewWidget = ({
       <div style={classes.businessContainerStyle}>
         <AutoCompleteUpdatedValue
           label={t("sales.quote.businessName")}
-          value={quoteStateValue?.client?.name}
+          value={isQuoteConfirmation ? quoteConfirm?.client?.name :quoteStateValue?.client?.name}
           options={mappedCustomers}
           onBlur={onBlurBusinessName}
           isUpdate={isUpdateBusinessName}

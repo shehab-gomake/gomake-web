@@ -27,9 +27,9 @@ import { useRouter } from "next/router";
 
 interface IQuoteProps {
   docType: DOCUMENT_TYPE;
-  isQuoteConfirmation?:boolean;
+  isQuoteConfirmation?: boolean;
 }
-const useQuoteNew = ({docType, isQuoteConfirmation=false}: IQuoteProps) => {
+const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
   const {
     alertSuccessUpdate,
     alertFaultUpdate,
@@ -42,10 +42,10 @@ const useQuoteNew = ({docType, isQuoteConfirmation=false}: IQuoteProps) => {
   const { navigate } = useGomakeRouter();
   const { t } = useTranslation();
   const { getAllClientAddress } = useQuoteGetData();
- // new state i don't know if this is a correct solution
   const [quoteItemValue, setQuoteItemValue] = useRecoilState<any>(quoteItemState);
   const quoteConfirm = useRecoilValue<any>(quoteConfirmationState);
-  const [selectDate, setSelectDate] = useState(quoteItemValue?.dueDate);
+
+  const [selectDate, setSelectDate] = useState(isQuoteConfirmation ? quoteConfirm?.dueDate : quoteItemValue?.dueDate);
   const [customersListValue, setCustomersListValue] = useRecoilState<any>(businessListsState);
   const [selectBusiness, setSelectBusiness] = useState<any>({});
   const [selectConfirmBusiness, setSelectConfirmBusiness] = useState<any>({});
@@ -93,7 +93,7 @@ const useQuoteNew = ({docType, isQuoteConfirmation=false}: IQuoteProps) => {
   };
   const handleCancelBtnClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElCancelBtn(event.currentTarget);
-  }; 
+  };
   const handleCancelBtnClose = () => {
     setAnchorElCancelBtn(null);
   };
@@ -869,21 +869,22 @@ const useQuoteNew = ({docType, isQuoteConfirmation=false}: IQuoteProps) => {
   }, [quoteItemValue, customersListValue]);
 
 
-  // quoteItemValue=> change to quoteState
   useEffect(() => {
     setPriceListItems(quoteItemValue?.documentItems);
     setquoteItems(quoteItemValue);
     getAllClientContacts();
-    setItems(quoteItemValue?.documentContacts);
-    setSelectDate(quoteItemValue?.dueDate);
-  }, [quoteItemValue]);
+    setItems(isQuoteConfirmation ? quoteConfirm?.documentContacts : quoteItemValue?.documentContacts);
+    setSelectDate(isQuoteConfirmation ? quoteConfirm?.dueDate : quoteItemValue?.dueDate);
+  }, [quoteItemValue, quoteConfirm]);
+
 
   useEffect(() => {
-    getQuote();
-    getAllEmployees();
     getAllCustomers();
-  }, []);
-
+    if (!isQuoteConfirmation) {
+      getQuote();
+      getAllEmployees();
+    }
+  }, [isQuoteConfirmation]);
 
   const documentsTitles = [
     {
