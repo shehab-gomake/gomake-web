@@ -19,12 +19,13 @@ const CardsWidget = () => {
     return (
         <div style={classes.mainContainer}>
             <div style={classes.firstDiv}>
-                {allReports?.slice(0, 2)?.map((card) => (
+                {allReports?.slice(0, 2)?.map((card, index) => (
                     <CardComponent
                         key={card?.key}
-                        style={{...classes.firstCard , background: getCardColor(card?.key)}}
+                        style={{ ...classes.firstCard, background: getCardColor(card?.key) }}
                         text={t(getCardLabel(card?.key))}
-                        number={card?.value}
+                        // number={index === 0 ? (!isNaN(card.value) ? `${card.value}%` : "0%") :"+/- " + (!isNaN(card.value) ? `${card.value}%`: "0%")}
+                        number={!isNaN(card.value) ? `${card.value}%` : "0%"}
                         textColor="#FFFFFF"
                         icon={getCardIcon(card?.key)} />
                 ))}
@@ -33,7 +34,7 @@ const CardsWidget = () => {
                 {allReports?.slice(2)?.map((card) => (
                     <CardComponent
                         key={card?.key}
-                        style={{...classes.secondCard , background: getCardColor(card?.key)}}
+                        style={{ ...classes.secondCard, background: getCardColor(card?.key) }}
                         text={t(getCardLabel(card?.key))}
                         number={card?.value}
                         textColor="#FFFFFF"

@@ -54,6 +54,11 @@ const useStyle = () => {
         height: "100%",
         width: "100%",
       },
+      skeltonStyle: {
+        width: "100%",
+        height: "100%",
+        borderRadius: "8px"
+      }
     };
   }, [i18next.language, t]);
   return {

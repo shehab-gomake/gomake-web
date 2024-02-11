@@ -28,6 +28,7 @@ const QuoteForPriceTable = ({
   getCalculateQuote,
   changedocumentItemsChild,
   documentType,
+  getQuote,
   isQuoteConfirmation = false,
 }) => {
   const { classes } = useStyle({ headerHeight });
@@ -92,6 +93,7 @@ const QuoteForPriceTable = ({
                     }
                     onClickDeleteQouteItem={onClickDeleteQouteItem}
                     documentType={documentType}
+                    getQuote={getQuote}
                     isQuoteConfirmation={isQuoteConfirmation}
                   />
                   {item?.childsDocumentItems &&

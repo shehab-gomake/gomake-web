@@ -57,7 +57,14 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
   const [pagesCount, setPagesCount] = useState(0);
   const [pageSize, setPageSize] = useState(DEFAULT_VALUES.PageSize);
   const selectedClient = useRecoilValue<any>(selectedClientState);
+  const [openAddRule, setOpenAddRule] = useState<boolean>(false);
 
+  const onCloseAddRuleModal = () => {
+    setOpenAddRule(false);
+  };
+  const onOpenAddRuleModal = () => {
+    setOpenAddRule(true);
+  };
   const handlePageSizeChange = (event) => {
     setPage(1);
     setPageSize(event.target.value);
@@ -215,17 +222,16 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
 
   const onClickSearchFilter = () => {
     setPage(1);
-    if (statusId!==null)
-    {
+    if (statusId !== null) {
       handleSecondCardClick();
     }
-  
+
     getAllQuotes();
-   
+
   };
 
   const onClickClearFilter = () => {
-     handleSecondCardClick();
+    handleSecondCardClick();
     setAgentId(null);
     setCustomerId(null);
     setStatusId(null);
@@ -240,12 +246,12 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     docType === DOCUMENT_TYPE.quote
       ? t("sales.quote.quoteNumber")
       : docType === DOCUMENT_TYPE.order
-      ? t("sales.quote.orderNumber")
-      : docType === DOCUMENT_TYPE.deliveryNote
-      ? t("sales.quote.deliveryNoteNumber")
-      : docType === DOCUMENT_TYPE.invoice
-      ? t("sales.quote.invoiceNumber")
-      : t("sales.quote.receiptNumber"),
+        ? t("sales.quote.orderNumber")
+        : docType === DOCUMENT_TYPE.deliveryNote
+          ? t("sales.quote.deliveryNoteNumber")
+          : docType === DOCUMENT_TYPE.invoice
+            ? t("sales.quote.invoiceNumber")
+            : t("sales.quote.receiptNumber"),
     t("sales.quote.worksName"),
     t("sales.quote.totalPrice"),
     t("sales.quote.notes"),
@@ -406,11 +412,11 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
         } else {
           onClickOpenModal({ id: documentId });
         }
-        } else {
+      } else {
         alertFaultUpdate();
       }
     };
-    await createNewDocumentApi(callApi, callBack, {documentType: docType});
+    await createNewDocumentApi(callApi, callBack, { documentType: docType });
   };
 
   useEffect(() => {
@@ -422,8 +428,10 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
 
   useEffect(() => {
     getAllQuotes();
-  }, [page,quoteStatusId, pageSize,finalPatternSearch]);
+  }, [page, quoteStatusId, pageSize, finalPatternSearch]);
 
+
+  // table in home page
   const getAllDocuments = async (docType) => {
     const callBack = (res) => {
       if (res?.success) {
@@ -473,10 +481,10 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
 
 
   const handleCardClick = (cardKey, statusValue) => {
-      setPage(1);
-      setActiveCard(cardKey);
-      setStatusId(null);
-     setQuoteStatusId({ label: t(`sales.quote.${cardKey}`), value: statusValue });
+    setPage(1);
+    setActiveCard(cardKey);
+    setStatusId(null);
+    setQuoteStatusId({ label: t(`sales.quote.${cardKey}`), value: statusValue });
   };
 
   const handleSecondCardClick = () => {
@@ -542,7 +550,10 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     handlePageSizeChange,
     activeCard,
     handleCardClick,
-    handleSecondCardClick
+    handleSecondCardClick,
+    onCloseAddRuleModal,
+    onOpenAddRuleModal,
+    openAddRule
   };
 };
 

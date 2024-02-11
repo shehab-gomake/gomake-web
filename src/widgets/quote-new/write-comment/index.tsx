@@ -1,27 +1,28 @@
+import React, { useState, useTransition } from "react";
 import { useStyle } from "./style";
 import { GomakeTextInput } from "@/components";
+import { useWriteCommentComp } from "./use-character-details";
 import { useTranslation } from "react-i18next";
 import { useRecoilValue } from "recoil";
 import { quoteItemState } from "@/store/quote-item";
 import { useButtonsConfirmContainer } from "../buttons-cofirm-container/use-buttons-container";
-
 interface IProps {
-  isQuoteConfirmation?: boolean;
+    isQuoteConfirmation?: boolean;
+    getQuote?:any;
 }
-const WriteCommentComp = ({ isQuoteConfirmation }: IProps) => {
-  const { t } = useTranslation();
-  const { classes } = useStyle(isQuoteConfirmation);
-  const quoteItemValue: any = useRecoilValue(quoteItemState);
-  const { onUpdateComments, quoteComments, setQuoteComments } = useButtonsConfirmContainer();
+const WriteCommentComp = ({ isQuoteConfirmation,getQuote }: IProps) => {
+    const { classes } = useStyle(isQuoteConfirmation);
+    const { onUpdateComments, quoteComments, setQuoteComments } = useButtonsConfirmContainer();
+    const { handleChange, handleBlur, t, data } = useWriteCommentComp({ getQuote })
 
-  return (
+    return (
     <div style={classes.writeCommentContainer}>
       <GomakeTextInput
         style={classes.textInputStyle}
         placeholder={t("sales.quote.writeCommentHere")}
-        value={isQuoteConfirmation ? quoteComments : quoteItemValue?.notes}
-        onChange={isQuoteConfirmation ? (e) => setQuoteComments(e.target.value) : () => null}
-        onBlur={isQuoteConfirmation && onUpdateComments}
+        value={isQuoteConfirmation ? quoteComments : data}
+        onChange={isQuoteConfirmation ? (e) => setQuoteComments(e.target.value) : handleChange}
+        onBlur={isQuoteConfirmation ? onUpdateComments : handleBlur}
       />
     </div>
   );

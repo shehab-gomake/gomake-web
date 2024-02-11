@@ -23,6 +23,7 @@ const RowMappingWidget = ({
   onClickDeleteQouteItem,
   parentIndex,
   documentType,
+  getQuote,
   isQuoteConfirmation = false,
 }) => {
   const { classes } = useStyle({ headerHeight });
@@ -118,7 +119,7 @@ const RowMappingWidget = ({
           borderBottom: item?.childsDocumentItems && "none",
         }}
       >
-        <CharacterDetails details={item.details} />
+        <CharacterDetails details={item.details} getQuote={getQuote} documentItemId={item?.id} />
       </PrimaryTableCell>
       <PrimaryTableCell
         style={{

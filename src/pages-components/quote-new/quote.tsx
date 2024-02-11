@@ -156,6 +156,7 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
     isUpdateCurrency,
     updateCurrency,
     refreshExchangeRate,
+    getQuote,
     selectConfirmBusiness
   } = useQuoteNew({docType :documentType  , isQuoteConfirmation : isQuoteConfirmation });
 
@@ -298,10 +299,11 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
                 getCalculateQuote={getCalculateQuote}
                 changedocumentItemsChild={changedocumentItemsChild}
                 documentType={documentType}
+                getQuote={getQuote}
                 isQuoteConfirmation={isQuoteConfirmation}
               />
             </div>
-            <WriteCommentComp isQuoteConfirmation={isQuoteConfirmation} />
+            <WriteCommentComp getQuote={getQuote} isQuoteConfirmation={isQuoteConfirmation} />
           </div>
           {!isQuoteConfirmation &&
             <ButtonsContainer

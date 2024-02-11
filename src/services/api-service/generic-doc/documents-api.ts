@@ -9,6 +9,7 @@ const DELETE_DOCUMENT_ITEM_URL =
   "/v1/erp-service/documents/delete-document-item";
 const ADD_DOCUMENT_CONTACT_URL =
   "/v1/erp-service/document/add-document-contact";
+
 const UPDATE_DOCUMENT_CONTACT_URL =
   "/v1/erp-service/document/update-document-contact";
 const DELETE_DOCUMENT_CONTACT_URL =
@@ -55,9 +56,10 @@ const REFRESH_EXCHANGE_RATE_URL =
   "/v1/erp-service/documents/refresh-exchange-rate";
 const CREATE_NEW_DOCUMENT_URL = "/v1/erp-service/documents/create-new-document";
 const GET_ALL_REPORTS_URL = "/v1/erp-service/quote/get-all-reports"
-
+const UPDATE_DOCUMENT_ITEM_CONTENT_URL =
+  "/v1/erp-service/document/update-document-item-content";
 const UPDATE_DOCUMENT_COMMENTS_URL = "/v1/erp-service/document/update-document-comments";
-
+  
 const getDocumentApi: ICallAndSetData = async (callApi, setState, data) => {
   return await getSetApiData(
     callApi,
@@ -176,19 +178,6 @@ const updateDocumentAddressApi: ICallAndSetData = async (
   );
 };
 
-const updateDocumentCommentsApi: ICallAndSetData = async (
-  callApi,
-  setState,
-  data
-) => {
-  return await getSetApiData(
-    callApi,
-    EHttpMethod.PUT,
-    UPDATE_DOCUMENT_COMMENTS_URL,
-    setState,
-    data
-  );
-};
 
 const deleteDocumentAddressApi: ICallAndSetData = async (
   callApi,
@@ -496,6 +485,33 @@ const getAllReportsApi: ICallAndSetData = async (
   );
 };
 
+const updateDocumentItemContentApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.PUT,
+    UPDATE_DOCUMENT_ITEM_CONTENT_URL,
+    setState,
+    data
+  );
+};
+const updateDocumentCommentsApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.PUT,
+    UPDATE_DOCUMENT_COMMENTS_URL,
+    setState,
+    data
+  );
+};
+
 export {
   getDocumentApi,
   getAllDocumentsApi,
@@ -530,5 +546,6 @@ export {
   refreshExchangeRateApi,
   createNewDocumentApi,
   getAllReportsApi,
+  updateDocumentItemContentApi,
   updateDocumentCommentsApi
 };

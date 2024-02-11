@@ -39,6 +39,9 @@ const useGoMakeSignalr = <T>({
           connection.on(methodName, (newData) => {
             setData(newData);
           });
+          connection.onreconnected( (newConnectionId) => {
+            setConnectionId(newConnectionId);
+          });
         })
         .catch((error) => console.log(error));
     }

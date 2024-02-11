@@ -12,10 +12,11 @@ import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import { HeaderTitle } from "@/widgets";
 import { QuoteLogsWidget } from "./quote-widgets/logs-widget";
 import { DOCUMENT_TYPE } from "./enums";
-import { FormControl, InputLabel, MenuItem, Pagination, Select, Stack } from "@mui/material";
+import { IconButton, Stack } from "@mui/material";
 import { CardsSection } from "./statistics-section/statistics-sections";
-import { useState } from "react";
 import { GoMakePagination } from "@/components/pagination/gomake-pagination";
+import { SettingNewIcon } from "@/icons";
+import { AddRuleModal } from "../products/profits-new/widgets/add-rule-modal";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -58,11 +59,14 @@ const QuotesListPageWidget = ({
     allStatistics,
     onclickCreateNew,
     t,
-    handlePageSizeChange, 
+    handlePageSizeChange,
     pageSize,
     activeCard,
     handleCardClick,
-    handleSecondCardClick
+    handleSecondCardClick,
+    onCloseAddRuleModal,
+    onOpenAddRuleModal,
+    openAddRule
   } = useQuotes(documentType);
 
   return (
@@ -151,15 +155,20 @@ const QuotesListPageWidget = ({
                   </GomakePrimaryButton>
                 </div>
               </div>
-              <SearchInputComponent onChange={(e) => setPatternSearch(e)} />
+              <div>
+                <SearchInputComponent onChange={(e) => setPatternSearch(e)} />
+                <IconButton onClick={onOpenAddRuleModal}>
+                  <SettingNewIcon />
+                </IconButton>
+              </div>
             </div>
-              <PrimaryTable
-                stickyFirstCol={false}
-                stickyHeader={true}
-                maxHeight={650}
-                rows={allQuotes}
-                headers={tableHeaders}
-              />
+            <PrimaryTable
+              stickyFirstCol={false}
+              stickyHeader={true}
+              maxHeight={650}
+              rows={allQuotes}
+              headers={tableHeaders}
+            />
           </div>
           <GoMakePagination
             onChangePageNumber={(event, value) => setPage(value)}
@@ -173,9 +182,12 @@ const QuotesListPageWidget = ({
       )}
       {isFromHomePage && (
         <PrimaryTable
+          stickyHeader={true}
+          maxHeight={400}
           rows={allDocuments}
           headers={tableHomeHeader}
           variant="ClassicTable"
+          withoutShadow={true}
         />
       )}
       <GoMakeDeleteModal
@@ -195,6 +207,11 @@ const QuotesListPageWidget = ({
       >
         <QuoteLogsWidget logsTableHeaders={logsTableHeaders} />
       </GoMakeModal>
+      <AddRuleModal
+        openModal={openAddRule}
+        onCloseModal={onCloseAddRuleModal}
+        isQuoteWidge={true}
+      />
     </>
   );
 };

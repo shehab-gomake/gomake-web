@@ -43,3 +43,14 @@ export const findParameterByCode = (template, targetCode) => {
   // Call the findParameter function with the top-level sections
   return findParameter(template.sections || []);
 };
+
+export function detectLanguage(text) {
+  const englishRegex = /^[a-zA-Z\s]+$/;
+  const arabicRegex = /^[\u0600-\u06FF\s]+$/;
+
+  if (englishRegex.test(text)) {
+    return 'English';
+  } else if (arabicRegex.test(text)) {
+    return 'Arabic';
+  }
+}

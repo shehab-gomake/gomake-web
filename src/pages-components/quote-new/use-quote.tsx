@@ -1045,6 +1045,7 @@ const useQuoteNew = ({docType, isQuoteConfirmation=false}: IQuoteProps) => {
     updateExchangeRate,
     updateCurrency,
     refreshExchangeRate,
+    getQuote,
     selectConfirmBusiness
 
   };

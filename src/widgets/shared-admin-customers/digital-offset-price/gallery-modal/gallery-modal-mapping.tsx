@@ -33,7 +33,7 @@ const GalleryModalMapping = ({
         {item?.rowData?.length?.value}
       </div>
       <div style={clasess.shapeWidthHeightStyle}>
-        {item?.rowData.type.value.join(', ')}
+        {item?.rowData?.type?.value?.join(', ')}
       </div>
     </div>
   );

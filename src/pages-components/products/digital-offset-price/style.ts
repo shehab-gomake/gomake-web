@@ -234,6 +234,7 @@ const useStyle = () => {
         color: "rgba(52, 64, 84, 1)",
         borderRadius: 8,
         padding: "8px 14px",
+        ...FONT_FAMILY.Lexend(500, 14),
       },
       headerRightSide: {
         display: "flex",

@@ -15,18 +15,17 @@ const useStyle = () => {
         flexDirection: "column" as "column",
         paddingLeft: 20,
         paddingRight: 20,
-        height: "100%", 
+        height: "100%",
         overflowY: "hidden" as "hidden",
         marginBottom: "20px",
         gap: 20,
-
       },
       headerStyle: {
         display: "flex",
         flexWrap: "wrap" as "wrap",
         gap: 10,
         justifyContent: "space-between",
-        width:"100%"
+        width: "100%"
       },
       filtersContainer: {
         display: "flex",
@@ -91,30 +90,28 @@ const useStyle = () => {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        width: "98.47px",
+        // width: "98.47px",
         height: "26px",
         padding: "4px, 12px, 4px, 12px",
         borderRadius: "4px",
         gap: "10px",
-        color: successColor(700),
-        background: successColor(200),
-        ...FONT_FAMILY.Lexend(500, 14),
+        color: successColor(300),
+        //  background: successColor(300),
+        ...FONT_FAMILY.Lexend(600, 14),
       },
       closeBtnStyle: {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        width: "98.47px",
+        // width: "98.47px",
         height: "fit-content",
         padding: "4px, 12px, 4px, 12px",
         borderRadius: "4px",
         gap: "10px",
-        color: errorColor(600),
-        background: errorColor(200),
-        ...FONT_FAMILY.Lexend(500, 14),
+        color: errorColor(300),
+        //  background: errorColor(300),
+        ...FONT_FAMILY.Lexend(600, 14),
       },
-
-      
     };
   }, [i18next.language, t, theme]);
   return {

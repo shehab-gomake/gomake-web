@@ -1,7 +1,12 @@
 import { useCallback, useEffect, useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 
-import { materialBtnDataState, selectParameterButtonState, subProductsParametersState } from "@/store";
+import {
+  materialBtnDataState,
+  productTemplateState,
+  selectParameterButtonState,
+  subProductsParametersState
+} from "@/store";
 import { getPrintHouseMaterialsByMaterialKey } from "@/services/hooks";
 import { materialsCategoriesState } from "@/store/material-categories";
 import { compareStrings, getParameterByParameterCode } from "@/utils/constants";
@@ -24,7 +29,6 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
   const [materialData, setMaterialData] =
     useRecoilState<any>(materialBtnDataState);
   const [materialDataFilter, setMaterialDataFilter] = useState("");
-
   const [materialType, setMaterialType] = useState<any>({});
   const [isShowStraightKnife, setIsShowStraightKnife] = useState(false)
   const [materialTableFilters, setMaterialTableFilters] = useState([])
@@ -37,7 +41,7 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
     "Height"
   );
   const shapeParameter = getParameterByParameterCode(subProducts, "Shape")
-
+  const LabelShapeParameter = getParameterByParameterCode(subProducts, "LabelsShape")
   useEffect(() => {
     if (selectParameterButton?.parameter?.materialPath?.length > 0) {
       getProductQuoteItemById();
@@ -53,10 +57,18 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
   }, [selectParameterButton, materialsEnumsValues]);
 
   const getProductQuoteItemById = useCallback(async () => {
+    debugger;
+    const shapeId = shapeParameter && shapeParameter.valueIds && shapeParameter.valueIds.length ? shapeParameter.valueIds[0] : "";
+    let shapeCode = "";
+    if(shapeId){
+       const value =  shapeParameter?.valuesConfigs.find(x=>x.id === shapeId)
+      shapeCode = value?.code;
+    }
     const res = await getPrintHouseMaterialsByMaterialKey(callApi, setMaterialData, {
       key: selectParameterButton?.parameter?.materialPath[0],
-      width: widthParameter,
-      length: heightParameter
+      width: widthParameter && widthParameter.values && widthParameter.values.length > 0 ?  widthParameter.values[0] : 0,
+      length: heightParameter && heightParameter.values && heightParameter.values.length > 0 ?  heightParameter.values[0] : 0,
+      shape:shapeCode
     });
     if (res?.filters?.length > 0) {
       setMaterialTableFilters(res?.filters)
@@ -169,15 +181,18 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
   }, [materialDataFilter]);
 
   const CheckOptionToStraightKnife = useCallback(async () => {
+    const width = widthParameter && widthParameter.values && widthParameter.values.length > 0 ? +widthParameter?.values[0]  : 0;
+    const height = heightParameter && heightParameter.values && heightParameter.values.length > 0 ? +heightParameter?.values[0]  : 0;
+
     const res = await callApi(
       EHttpMethod.POST,
-      `/v1/calculation-service/calculations/check-option-to-straight-knife?width=${+widthParameter?.values[0]}&length=${+heightParameter?.values[0]}&shapeId=${shapeParameter?.parameterId}&materialTypeKey=${selectParameterButton?.parameter?.materialPath[0]}`,
+      `/v1/calculation-service/calculations/check-option-to-straight-knife?width=${width}&length=${height}&shapeId=${shapeParameter ? shapeParameter?.parameterId : LabelShapeParameter?.parameterId}&materialTypeKey=${selectParameterButton?.parameter?.materialPath[0]}`,
 
     );
     if (res?.success) {
       setIsShowStraightKnife(res.data?.data?.data)
     }
-  }, [widthParameter, heightParameter, shapeParameter, selectParameterButton]);
+  }, [widthParameter, heightParameter, shapeParameter, LabelShapeParameter, selectParameterButton]);
 
   return {
     materialData,
