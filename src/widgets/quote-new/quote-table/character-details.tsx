@@ -4,29 +4,28 @@ import { IconButton } from "@mui/material";
 import React, { CSSProperties, useState } from "react";
 import { useCharacterDetails } from "./use-character-details";
 import { useStyleCharacterDetails } from "./style-character-details";
-import { FONT_FAMILY } from "@/utils/font-family";
 
 interface IProps {
     details: any;
-    getQuote:any;
-    documentItemId:any;
+    getQuote?:any;
+    documentItemId?:any;
     detailsStyle?:CSSProperties;
     showAllStyle?:CSSProperties;
 }
 const CharacterDetails = ({ details, getQuote, documentItemId , showAllStyle , detailsStyle}:IProps) => {
   const { isEdit, showAll, truncatedDetails, data, handleShowLess, handleShowMore, t, setIsEdit, handleChange, handleBlur } = useCharacterDetails({ details, getQuote, documentItemId })
-  const { clasess } = useStyleCharacterDetails({ showAll });
+  const { classes } = useStyleCharacterDetails({ showAll });
   return (
     <>
       {!isEdit ? <div
-        style={{...clasess.mainContainer,...detailsStyle}}
+        style={{...classes.mainContainer,...detailsStyle}}
       >
         {truncatedDetails}
         {!showAll && ".. "}
         {details?.length > 90 && (
           <span
             onClick={showAll ? handleShowLess : handleShowMore}
-            style={showAllStyle || {...clasess.showAllContaner}}
+            style={showAllStyle || {...classes.showAllContaner}}
           >
             {showAll ? t("sales.quote.showLess") : t("sales.quote.showMore")}
 
@@ -38,7 +37,7 @@ const CharacterDetails = ({ details, getQuote, documentItemId , showAllStyle , d
       </div> : <div>
         <GomakeTextInput
           multiline={6}
-          style={clasess.textInputEditing}
+          style={classes.textInputEditing}
           onChange={handleChange}
           value={data}
           onBlur={handleBlur}

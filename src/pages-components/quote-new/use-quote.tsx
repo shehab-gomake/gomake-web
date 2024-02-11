@@ -43,7 +43,7 @@ const useQuoteNew = ({docType, isQuoteConfirmation=false}: IQuoteProps) => {
   const { t } = useTranslation();
   const { getAllClientAddress } = useQuoteGetData();
  // new state i don't know if this is a correct solution
-  const [quoteItemValue, setQuoteItemValue] = useRecoilState<any>(isQuoteConfirmation ? quoteConfirmationState:quoteItemState);
+  const [quoteItemValue, setQuoteItemValue] = useRecoilState<any>(quoteItemState);
   const quoteConfirm = useRecoilValue<any>(quoteConfirmationState);
   const [selectDate, setSelectDate] = useState(quoteItemValue?.dueDate);
   const [customersListValue, setCustomersListValue] = useRecoilState<any>(businessListsState);

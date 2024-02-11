@@ -13,16 +13,15 @@ const useQuoteConfirmation = () => {
     const [quoteConfirm, setQuoteConfirm] = useRecoilState<any>(quoteConfirmationState);
     const [checkedItems, setCheckedItems] = useState({});
 
-
     const getQuoteConfirmation = async () => {
         const callBack = (res) => {
             if (res?.success) {
                 const quote = res?.data;
                 quote.documentItems = quote.documentItems.map(item => {
                     item.isChecked = true
-                    return item;
-                })
-                setQuoteConfirm(res?.data);
+                    return item; 
+                }) 
+                setQuoteConfirm(quote);
             } else {
                 alertFaultUpdate();
             }
@@ -36,7 +35,7 @@ const useQuoteConfirmation = () => {
                 alertSuccessUpdate();
             } else {
                 alertFaultUpdate();
-            }
+            } 
         }
         await updateDocumentCommentsConfirmationApi(callApi, callBack, { documentId: quoteConfirm?.id, comments: "test comments" })
     }
@@ -51,7 +50,7 @@ const useQuoteConfirmation = () => {
                     item.isChecked = documentItemIds.includes(item.id);
                     return item;
                 })
-                setQuoteConfirm(newQuote);
+               setQuoteConfirm(newQuote);
                 alertSuccessUpdate();
             } else {
                 alertFaultUpdate();
@@ -74,7 +73,6 @@ const useQuoteConfirmation = () => {
         updateDocumentComments,
         checkedItems,
         setCheckedItems,
-        calculateSelectedItems,
         handleItemCheck
     };
 };

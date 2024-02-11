@@ -8,8 +8,6 @@ import { MoreMenuWidget } from "@/widgets/quote/more-circle";
 import { InputUpdatedValues } from "../input-updated-values";
 import { useQuoteTable } from "./use-quote-table";
 import { useState } from "react";
-import { useRecoilValue } from "recoil";
-import { quoteConfirmationState } from "@/store";
 import { useQuoteConfirmation } from "@/pages-components/quote-confirmation/use-quote-confirmation";
 
 const RowMappingWidget = ({
@@ -53,7 +51,6 @@ const RowMappingWidget = ({
   });
 
   // in quote confirmation case
-  const quoteConfirm = useRecoilValue<any>(quoteConfirmationState);
   const { handleItemCheck } = useQuoteConfirmation();
 
   return (
@@ -79,12 +76,14 @@ const RowMappingWidget = ({
             alignItems: "center",
           }}
         >
-          {isQuoteConfirmation ? <Checkbox
+          {isQuoteConfirmation ? 
+          <Checkbox
             icon={<CheckboxIcon />}
             checkedIcon={<CheckboxCheckedIcon />}
-            checked={isQuoteConfirmation ? item?.isChecked : false}
-            onChange={isQuoteConfirmation && ((checked) => handleItemCheck(checked, item.id))}
-          /> : <Checkbox
+            checked={item?.isChecked}
+            onChange={(checked) => handleItemCheck(checked, item.id)}
+          /> : 
+          <Checkbox
             icon={<CheckboxIcon />}
             checkedIcon={<CheckboxCheckedIcon />}
           />}

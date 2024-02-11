@@ -44,9 +44,8 @@ const BusinessNewWidget = ({
   const { renderOptions, checkWhatRenderArray } = useQuoteWidget();
   const [openModal, setOpenModal] = useRecoilState<boolean>(addressModalState);
   const [purchaseNumber, setPurchaseNumber] = useState(values?.purchaseNumber || t("sales.quote.noPurchaseNumber"));
- // const quoteStateValue = useRecoilValue<any>(quoteItemState);
-  const quoteStateValue = useRecoilValue<any>(isQuoteConfirmation ? quoteConfirmationState : quoteItemState);
-
+  const quoteStateValue = useRecoilValue<any>(quoteItemState);
+ 
   useEffect(() => {
     setPurchaseNumber(values?.purchaseNumber || t("sales.quote.noPurchaseNumber"));
   }, [values?.purchaseNumber]);
