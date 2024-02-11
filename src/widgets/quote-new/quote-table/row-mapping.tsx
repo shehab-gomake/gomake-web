@@ -78,12 +78,15 @@ const RowMappingWidget = ({
             alignItems: "center",
           }}
         >
-          <Checkbox
+          {isQuoteConfirmation ? <Checkbox
             icon={<CheckboxIcon />}
             checkedIcon={<CheckboxCheckedIcon />}
-            checked={isQuoteConfirmation && item?.isChecked}
+            checked={isQuoteConfirmation ? item?.isChecked : false}
             onChange={isQuoteConfirmation && ((checked) => handleItemCheck(checked, item.id))}
-          />
+          /> : <Checkbox
+            icon={<CheckboxIcon />}
+            checkedIcon={<CheckboxCheckedIcon />}
+          />}
           {parentIndex}
         </div>
       </PrimaryTableCell>

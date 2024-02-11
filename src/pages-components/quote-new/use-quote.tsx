@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import lodashClonedeep from "lodash.clonedeep";
 import { useTranslation } from "react-i18next";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { EHttpMethod } from "@/services/api-service/enums";
 import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
 import {
@@ -25,7 +25,11 @@ import { addDeliveryApi, addDocumentAddressApi, addDocumentContactApi, calculate
 import { DOCUMENT_TYPE } from "../quotes/enums";
 import { useRouter } from "next/router";
 
-const useQuoteNew = (docType: DOCUMENT_TYPE) => {
+interface IQuoteProps {
+  docType: DOCUMENT_TYPE;
+  isQuoteConfirmation?:boolean;
+}
+const useQuoteNew = ({docType, isQuoteConfirmation=false}: IQuoteProps) => {
   const {
     alertSuccessUpdate,
     alertFaultUpdate,
@@ -38,14 +42,13 @@ const useQuoteNew = (docType: DOCUMENT_TYPE) => {
   const { navigate } = useGomakeRouter();
   const { t } = useTranslation();
   const { getAllClientAddress } = useQuoteGetData();
-  const [quoteItemValue, setQuoteItemValue] = useRecoilState<any>(quoteItemState);
-  const [quoteConfirm, setQuoteConfirm] = useRecoilState<any>(quoteConfirmationState);
-
+ // new state i don't know if this is a correct solution
+  const [quoteItemValue, setQuoteItemValue] = useRecoilState<any>(isQuoteConfirmation ? quoteConfirmationState:quoteItemState);
+  const quoteConfirm = useRecoilValue<any>(quoteConfirmationState);
   const [selectDate, setSelectDate] = useState(quoteItemValue?.dueDate);
   const [customersListValue, setCustomersListValue] = useRecoilState<any>(businessListsState);
   const [selectBusiness, setSelectBusiness] = useState<any>({});
   const [selectConfirmBusiness, setSelectConfirmBusiness] = useState<any>({});
-
   const [isUpdateBusinessName, setIsUpdateBusinessName] = useState<number | null>(null);
   const [isUpdatePurchaseNumber, setIsUpdatePurchaseNumber] = useState<number | null>(null);
   const [isUpdateExchangeRate, setIsUpdateExchangeRate] = useState<number | null>(null);
@@ -866,6 +869,7 @@ const useQuoteNew = (docType: DOCUMENT_TYPE) => {
   }, [quoteItemValue, customersListValue]);
 
 
+  // quoteItemValue=> change to quoteState
   useEffect(() => {
     setPriceListItems(quoteItemValue?.documentItems);
     setquoteItems(quoteItemValue);

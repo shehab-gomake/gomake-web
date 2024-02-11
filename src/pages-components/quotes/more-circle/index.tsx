@@ -70,21 +70,6 @@ const MoreMenuWidget = ({ quote, documentType, onClickOpenModal, onClickPdf, onC
           </div>
         </MenuItem>
       ) : null}
-
-
-      {documentType === DOCUMENT_TYPE.quote ? (
-        <MenuItem
-          onClick={() => navigate(`/quote-confirmation?Id=${quote?.id}`)
-          }
-        >
-          <div style={classes.menuRowStyle}>
-            <EditingIcon />
-            <div style={classes.rowTextStyle}>{t("confirm")}</div>
-          </div>
-        </MenuItem>
-      ) : null}
-
-
     </OptionsButton>
   );
 };

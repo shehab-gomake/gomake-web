@@ -5,8 +5,6 @@ import { QuoteConfirmationPageWidget } from "@/pages-components/quote-confirmati
 export default function QuoteConfirmation() {
   
   return (
-    <CustomerAuthLayout>
       <QuoteConfirmationPageWidget />
-     </CustomerAuthLayout>
   );
 }

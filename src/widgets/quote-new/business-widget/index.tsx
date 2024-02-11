@@ -10,7 +10,7 @@ import { PlusNewIcon } from "@/icons";
 import { MinusIcon } from "@/icons/minus-icon";
 import { AddressModal } from "./address-widget/address-modal";
 import { useRecoilValue } from "recoil";
-import { quoteItemState } from "@/store";
+import { quoteConfirmationState, quoteItemState } from "@/store";
 
 const BusinessNewWidget = ({
   values,
@@ -34,8 +34,6 @@ const BusinessNewWidget = ({
   onBlurBusinessName,
   isUpdateBusinessName,
   setIsUpdateBusinessName,
-  updatePurchaseNumber,
-  updateClientAddress,
   onClickDeleteAddress,
   documentType,
   isQuoteConfirmation = false,
@@ -46,9 +44,8 @@ const BusinessNewWidget = ({
   const { renderOptions, checkWhatRenderArray } = useQuoteWidget();
   const [openModal, setOpenModal] = useRecoilState<boolean>(addressModalState);
   const [purchaseNumber, setPurchaseNumber] = useState(values?.purchaseNumber || t("sales.quote.noPurchaseNumber"));
-  const quoteStateValue = useRecoilValue<any>(quoteItemState);
-
-
+ // const quoteStateValue = useRecoilValue<any>(quoteItemState);
+  const quoteStateValue = useRecoilValue<any>(isQuoteConfirmation ? quoteConfirmationState : quoteItemState);
 
   useEffect(() => {
     setPurchaseNumber(values?.purchaseNumber || t("sales.quote.noPurchaseNumber"));

@@ -10,10 +10,9 @@ import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 const useAddressWidget = (docType : DOCUMENT_TYPE) => {
     const { t } = useTranslation();
     
-    const { updateClientAddress, onClickAddAddress, onClickAddNewAddress } = useQuoteNew(docType);
+    const { updateClientAddress, onClickAddAddress, onClickAddNewAddress } = useQuoteNew({docType});
     const { getAllClientAddress, clientAddressValue, addressSelect } = useQuoteGetData();
     const quoteStateValue = useRecoilValue<any>(quoteItemState);
-
     const quoteConfirm = useRecoilValue<any>(quoteConfirmationState);
 
 

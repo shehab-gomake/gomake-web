@@ -157,7 +157,7 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
     updateCurrency,
     refreshExchangeRate,
     selectConfirmBusiness
-  } = useQuoteNew(documentType);
+  } = useQuoteNew({docType :documentType  , isQuoteConfirmation : isQuoteConfirmation });
 
   return (
     <>
@@ -238,8 +238,6 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
                   setIsUpdateAgent={setIsUpdateAgent}
                   updateAgent={updateAgent}
                   onChangeSelectBusiness={onChangeSelectBusiness}
-                  updatePurchaseNumber={updatePurchaseNumber}
-                  updateClientAddress={updateClientAddress}
                   onClickDeleteAddress={onClickDeleteAddress}
                   documentType={documentType}
                   isQuoteConfirmation={isQuoteConfirmation}

@@ -265,22 +265,7 @@ const useAuthLayoutHook = (permissionEnumValue?: Permissions) => {
           return <SettingNavBar />;
         },
         isProduction: true,
-      },
-
-      // {
-      //   isLine: false,
-      //   key: "quote-confirmation",
-      //   title: "Quote Confirmation",
-      //   path: "/quote-confirmation",
-      //   Permission: Permissions.SHOW_SETTINGS,
-      //   isList: false,
-      //   icon: () => {
-      //     return <SettingNavBar />;
-      //   },
-      //   isProduction: true,
-      // },
-
-      
+      },      
     ];
   }, []);
 
