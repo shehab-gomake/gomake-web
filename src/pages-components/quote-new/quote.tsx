@@ -12,7 +12,7 @@ import { HeaderTitle } from "@/widgets";
 import { SettingNewIcon } from "@/icons";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import { useQuoteNew } from "./use-quote";
-import { quoteItemState } from "@/store";
+import { quoteConfirmationState, quoteItemState } from "@/store";
 import { useStyle } from "./style";
 import { CancelBtnMenu } from "@/widgets/quote-new/cancel-btn-menu";
 import { SendBtnMenu } from "@/widgets/quote-new/send-btn-menu";
@@ -23,13 +23,17 @@ import { IconButton } from "@mui/material";
 import { SettingQuoteMenu } from "@/widgets/quote-new/setting-quote-menu";
 import { AddDeliveryModal } from "@/widgets/quote-new/modals-widgets/add-delivery-modal/add-delivery-modal";
 import { DOCUMENT_TYPE } from "../quotes/enums";
+import { ButtonsConfirmContainer } from "@/widgets/quote-new/buttons-cofirm-container";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
+  isQuoteConfirmation?: boolean;
 }
-const QuoteNewPageWidget = ({ documentType }: IProps) => {
-  const { clasess } = useStyle();
+const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProps) => {
+  const { classes } = useStyle(isQuoteConfirmation);
   const quoteItemValue = useRecoilValue<any>(quoteItemState);
+  const quoteConfirm = useRecoilValue<any>(quoteConfirmationState);
+  const quoteState = isQuoteConfirmation ? quoteConfirm : quoteItemValue;
   const {
     selectDate,
     selectBusiness,
@@ -62,21 +66,21 @@ const QuoteNewPageWidget = ({ documentType }: IProps) => {
     openSendBtn,
     openCancelBtn,
     openOtherReasonModal,
-    openIrreleventCancelModal,
+    openIrrelevantCancelModal,
     openPriceCancelModal,
     openDeliveryTimeCancelModal,
     anchorElSettingMenu,
     openSettingMenu,
     handleSettingMenuClick,
     handleSettingMenuClose,
-    onClcikClosePriceModal,
-    onClcikOpenDeliveryTimeModal,
-    onClcikOpenPriceModal,
-    onClcikOpenIrreleventModal,
-    onClcikCloseModal,
-    onClcikOpenModal,
-    onClcikCloseDeliveryTimeModal,
-    onClcikCloseIrreleventModal,
+    onClickClosePriceModal,
+    onClickOpenDeliveryTimeModal,
+    onClickOpenPriceModal,
+    onClickOpenIrrelevantModal,
+    onClickCloseModal,
+    onClickOpenModal,
+    onClickCloseDeliveryTimeModal,
+    onClickCloseIrrelevantModal,
     handleCancelBtnClick,
     handleCancelBtnClose,
     handleSendBtnClick,
@@ -151,32 +155,33 @@ const QuoteNewPageWidget = ({ documentType }: IProps) => {
     isUpdateCurrency,
     updateCurrency,
     refreshExchangeRate,
-    getQuote
-  } = useQuoteNew(documentType);
+    getQuote,
+    selectConfirmBusiness
+  } = useQuoteNew({docType :documentType  , isQuoteConfirmation : isQuoteConfirmation });
 
   return (
     <>
-      {quoteItemValue?.id && (
-        <div style={clasess.mainContainer}>
-          <div style={clasess.secondContainer}>
+      {quoteState?.id && (
+        <div style={classes.mainContainer}>
+          <div style={classes.secondContainer}>
             <div style={{ paddingLeft: 20, paddingRight: 12 }}>
-              <div style={clasess.titleSettingContainer}>
-                <div style={clasess.titleQuateContainer}>
+              <div style={classes.titleSettingContainer}>
+                <div style={classes.titleQuateContainer}>
                   <HeaderTitle
                     title={documentTitle}
                     marginBottom={1}
                     marginTop={1}
                     color="rgba(241, 53, 163, 1)"
                   />
-                  <div style={clasess.quoteNumberStyle}>
-                    {" - "} {quoteItemValue?.number}
+                  <div style={classes.quoteNumberStyle}>
+                    {" - "} {quoteState?.number}
                   </div>
                 </div>
-                <div style={clasess.settingsStatusContainer}>
-                  <div style={clasess.quoteStatusContainer}>
+                {!isQuoteConfirmation && <div style={classes.settingsStatusContainer}>
+                  <div style={classes.quoteStatusContainer}>
                     {_renderQuoteStatus(
-                      quoteItemValue?.documentStatus,
-                      quoteItemValue,
+                      quoteState?.documentStatus,
+                      quoteState,
                       t
                     )}
                   </div>
@@ -186,18 +191,18 @@ const QuoteNewPageWidget = ({ documentType }: IProps) => {
                   >
                     <SettingNewIcon />
                   </IconButton>
-                </div>
+                </div>}
               </div>
-              <div style={clasess.datesContainer}>
+              <div style={classes.datesContainer}>
                 <div
-                  style={clasess.deleverdDate}
+                  style={classes.deleverdDate}
                   onClick={handleClickSelectDate}
                 >
                   {t("sales.quote.dateOfReference")}{" "}
                   {selectDate
                     ? DateFormatterDDMMYYYY(selectDate)
                     : "select date"}
-                  <div style={clasess.datePickerContainer}>
+                  <div style={classes.datePickerContainer}>
                     <input
                       type="datetime-local"
                       onChange={(e) => {
@@ -208,12 +213,13 @@ const QuoteNewPageWidget = ({ documentType }: IProps) => {
                     />
                   </div>
                 </div>
-                {/* <div style={clasess.lineDateStyle} /> Don't Delete */}
+                {/* <div style={classes.lineDateStyle} /> Don't Delete */}
               </div>
-              <div style={clasess.bordersecondContainer}>
+              <div style={classes.bordersecondContainer}>
                 <BusinessNewWidget
-                  values={quoteItemValue}
+                  values={quoteState}
                   selectBusiness={selectBusiness}
+                  selectConfirmBusiness={selectConfirmBusiness}
                   onBlurBusinessName={onBlurBusinessName}
                   isUpdateBusinessName={isUpdateBusinessName}
                   setIsUpdateBusinessName={setIsUpdateBusinessName}
@@ -232,10 +238,9 @@ const QuoteNewPageWidget = ({ documentType }: IProps) => {
                   setIsUpdateAgent={setIsUpdateAgent}
                   updateAgent={updateAgent}
                   onChangeSelectBusiness={onChangeSelectBusiness}
-                  updatePurchaseNumber={updatePurchaseNumber}
-                  updateClientAddress={updateClientAddress}
                   onClickDeleteAddress={onClickDeleteAddress}
                   documentType={documentType}
+                  isQuoteConfirmation={isQuoteConfirmation}
                 />
                 <ContactNewWidget
                   handleShowLess={handleShowLess}
@@ -265,6 +270,7 @@ const QuoteNewPageWidget = ({ documentType }: IProps) => {
                   onCloseDeleteModalContact={onCloseDeleteModalContact}
                   onClickDeleteContact={onClickDeleteContact}
                   selectedContact={selectedContact}
+                  isQuoteConfirmation={isQuoteConfirmation}
                 />
               </div>
             </div>
@@ -277,7 +283,7 @@ const QuoteNewPageWidget = ({ documentType }: IProps) => {
               }}
             >
               <QuoteForPriceTable
-                documentItems={documentItems}
+                documentItems={isQuoteConfirmation ? quoteConfirm?.documentItems : documentItems}
                 tableHeaders={tableHeaders}
                 columnWidths={columnWidths}
                 headerHeight={headerHeight}
@@ -287,28 +293,30 @@ const QuoteNewPageWidget = ({ documentType }: IProps) => {
                   onClickDuplicateWithDifferentQTY
                 }
                 onClickDeleteQouteItem={onClickDeleteQouteItem}
-                quoteItems={quoteItems}
+                quoteItems={isQuoteConfirmation ? quoteConfirm : quoteItems}
                 changeQuoteItems={changeQuoteItems}
                 getCalculateQuote={getCalculateQuote}
                 changedocumentItemsChild={changedocumentItemsChild}
                 documentType={documentType}
                 getQuote={getQuote}
+                isQuoteConfirmation={isQuoteConfirmation}
               />
             </div>
-            <div style={{ width: "100%", flex: 0.1 }}>
-              <WriteCommentComp getQuote={getQuote} />
-              <ButtonsContainer
-                onOpenNewItem={onOpenNewItem}
-                onOpenDeliveryModal={onOpenDeliveryModal}
-                handleCancelBtnClick={handleCancelBtnClick}
-                handleSaveBtnClick={handleSaveBtnClick}
-                handleSendBtnClick={handleSendBtnClick}
-                documentType={documentType}
-              />
-            </div>
+            <WriteCommentComp getQuote={getQuote} isQuoteConfirmation={isQuoteConfirmation} />
           </div>
+          {!isQuoteConfirmation &&
+            <ButtonsContainer
+              onOpenNewItem={onOpenNewItem}
+              onOpenDeliveryModal={onOpenDeliveryModal}
+              handleCancelBtnClick={handleCancelBtnClick}
+              handleSaveBtnClick={handleSaveBtnClick}
+              handleSendBtnClick={handleSendBtnClick}
+              documentType={documentType}
+            />
+          }
         </div>
       )}
+      {(isQuoteConfirmation && !quoteConfirm?.isConfirmed )  && <ButtonsConfirmContainer />}
       <AddNewItemModal
         openModal={openAddNewItemModal}
         onClose={onCloseNewItem}
@@ -358,14 +366,14 @@ const QuoteNewPageWidget = ({ documentType }: IProps) => {
         handleClose={handleCancelBtnClose}
         open={openCancelBtn}
         anchorEl={anchorElCancelBtn}
-        onClcikOpenDeliveryTimeModal={onClcikOpenDeliveryTimeModal}
-        onClcikOpenPriceModal={onClcikOpenPriceModal}
-        onClcikOpenIrreleventModal={onClcikOpenIrreleventModal}
-        onClcikOpenModal={onClcikOpenModal}
+        onClickOpenDeliveryTimeModal={onClickOpenDeliveryTimeModal}
+        onClickOpenPriceModal={onClickOpenPriceModal}
+        onClickOpenIrrelevantModal={onClickOpenIrrelevantModal}
+        onClickOpenModal={onClickOpenModal}
       />
       <OtherReasonModal
         openModal={openOtherReasonModal}
-        onClose={onClcikCloseModal}
+        onClose={onClickCloseModal}
         setReasonText={setReasonText}
         onClickCancelOffer={onClickCancelOffer}
       />
@@ -375,8 +383,8 @@ const QuoteNewPageWidget = ({ documentType }: IProps) => {
         }
         title={t("sales.quote.titleCancelModal")}
         yesBtn={t("sales.quote.yesBtn")}
-        openModal={openIrreleventCancelModal}
-        onClose={onClcikCloseIrreleventModal}
+        openModal={openIrrelevantCancelModal}
+        onClose={onClickCloseIrrelevantModal}
         subTitle={t("sales.quote.subTitleCancelModal")}
         cancelBtn={t("sales.quote.cancelBtn")}
         onClickDelete={() =>
@@ -390,7 +398,7 @@ const QuoteNewPageWidget = ({ documentType }: IProps) => {
         title={t("sales.quote.titleCancelModal")}
         yesBtn={t("sales.quote.yesBtn")}
         openModal={openPriceCancelModal}
-        onClose={onClcikClosePriceModal}
+        onClose={onClickClosePriceModal}
         subTitle={t("sales.quote.subTitleCancelModal")}
         cancelBtn={t("sales.quote.cancelBtn")}
         onClickDelete={() => updateCancelQuote(QuoteStatuses.CANCELED_PRICE)}
@@ -402,7 +410,7 @@ const QuoteNewPageWidget = ({ documentType }: IProps) => {
         title={t("sales.quote.titleCancelModal")}
         yesBtn={t("sales.quote.yesBtn")}
         openModal={openDeliveryTimeCancelModal}
-        onClose={onClcikCloseDeliveryTimeModal}
+        onClose={onClickCloseDeliveryTimeModal}
         subTitle={t("sales.quote.subTitleCancelModal")}
         cancelBtn={t("sales.quote.cancelBtn")}
         onClickDelete={() =>

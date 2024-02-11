@@ -44,7 +44,7 @@ const QuoteWidget = ({ isAdmin = true }) => {
     errorColor,
     selectedClientType,
     selectedClient,
-    onClcikCloseModal,
+    onClickCloseModal,
     _renderErrorMessage,
     handleClose,
     setSelectedClientType,
@@ -196,11 +196,11 @@ const QuoteWidget = ({ isAdmin = true }) => {
         yesBtn={t("sales.quote.Confirm")}
         openModal={openModal}
         onClose={() => {
-          onClcikCloseModal().then();
+          onClickCloseModal().then();
         }}
         subTitle={t("sales.quote.MessageForClient")}
         onClickDelete={() => {
-          onClickSaveQuote(QuoteId).then(() => onClcikCloseModal());
+          onClickSaveQuote(QuoteId).then(() => onClickCloseModal());
         }}
       />
     </div>

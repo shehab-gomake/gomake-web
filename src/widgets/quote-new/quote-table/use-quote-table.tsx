@@ -39,6 +39,8 @@ const useQuoteTable = ({
   const onInputChangeFinalPrice = (e) => {
     changedocumentItems(index, "finalPrice", e);
   };
+
+
   return {
     isUpdateAmount,
     isUpdateDiscount,

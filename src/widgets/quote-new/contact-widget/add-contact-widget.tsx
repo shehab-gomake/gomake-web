@@ -24,12 +24,12 @@ const AddContactNewWidget = ({
   onClickAddNewContact,
   setIsDisplayWidget,
 }) => {
-  const { clasess } = useStyle();
+  const { classes } = useStyle();
   const { t } = useTranslation();
 
   return (
     <>
-      <div style={clasess.businessContainerStyle}>
+      <div style={classes.businessContainerStyle}>
         <AutoCompleteUpdatedValue
           label={t("sales.quote.contactName")}
           options={clientContactsValue}
@@ -66,7 +66,7 @@ const AddContactNewWidget = ({
           onInputChange={onInputChangeMail}
         />
         <GomakePrimaryButton
-          style={clasess.saveBtnStyle}
+          style={classes.saveBtnStyle}
           onClick={onClickAddNewContact}
         >
           {t("materials.buttons.save")}

@@ -4,17 +4,18 @@ import { AutoCompleteUpdatedValue } from "../auto-complete-updated";
 import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import { useQuoteWidget } from "@/pages-components/admin/home/widgets/quote-widget/use-quote-widget";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import { addressModalState } from "./address-widget/state";
 import { PlusNewIcon } from "@/icons";
 import { MinusIcon } from "@/icons/minus-icon";
 import { AddressModal } from "./address-widget/address-modal";
 import { useRecoilValue } from "recoil";
-import { quoteItemState } from "@/store";
+import { quoteConfirmationState, quoteItemState } from "@/store";
 
 const BusinessNewWidget = ({
   values,
   selectBusiness,
+  selectConfirmBusiness,
   onBlurPurchaseNumber,
   isUpdatePurchaseNumber,
   setIsUpdatePurchaseNumber,
@@ -33,20 +34,20 @@ const BusinessNewWidget = ({
   onBlurBusinessName,
   isUpdateBusinessName,
   setIsUpdateBusinessName,
-  updatePurchaseNumber,
-  updateClientAddress,
   onClickDeleteAddress,
-  documentType
+  documentType,
+  isQuoteConfirmation = false,
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
-  const quoteStateValue = useRecoilValue<any>(quoteItemState);
+  const [isConfirmation, setIsConfirmation] = useState();
   const { renderOptions, checkWhatRenderArray } = useQuoteWidget();
-  const [openModal, setOpenModal] = useRecoilState<boolean>(addressModalState);
-  
+  const setOpenModal = useSetRecoilState<boolean>(addressModalState);
   const [purchaseNumber, setPurchaseNumber] = useState(values?.purchaseNumber || t("sales.quote.noPurchaseNumber"));
+  const quoteStateValue = useRecoilValue<any>(quoteItemState);
+  const quoteConfirm = useRecoilValue<any>(quoteConfirmationState);
 
-
+ 
   useEffect(() => {
     setPurchaseNumber(values?.purchaseNumber || t("sales.quote.noPurchaseNumber"));
   }, [values?.purchaseNumber]);
@@ -56,46 +57,44 @@ const BusinessNewWidget = ({
     id: customer?.id
   }));
 
-
   return (
     <>
       <div style={classes.businessContainerStyle}>
-
         <AutoCompleteUpdatedValue
           label={t("sales.quote.businessName")}
-          value={quoteStateValue?.client?.name}
+          value={isQuoteConfirmation ? quoteConfirm?.client?.name :quoteStateValue?.client?.name}
           options={mappedCustomers}
           onBlur={onBlurBusinessName}
           isUpdate={isUpdateBusinessName}
-          setIsUpdate={setIsUpdateBusinessName}
+          setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdateBusinessName}
           getOptionLabel={(item) => item.text}
           onChange={(e, value) => onChangeSelectBusiness(value)}
           onChangeTextField={checkWhatRenderArray}
         />
         <InputUpdatedValues
-           value={purchaseNumber}
+          value={purchaseNumber}
           label={t("sales.quote.purchaseNumber")}
           onBlur={() => onBlurPurchaseNumber(purchaseNumber)}
           isUpdate={isUpdatePurchaseNumber}
-          setIsUpdate={setIsUpdatePurchaseNumber}
+          setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdatePurchaseNumber}
           onInputChange={(v) => setPurchaseNumber(v)}
         />
         <InputUpdatedValues
-          value={`${selectBusiness?.code}`}
+          value={isQuoteConfirmation ? `${selectConfirmBusiness?.code}` : `${selectBusiness?.code}`}
           label={t("sales.quote.businessCode")}
           onBlur={onBlurBusinessCode}
-          setIsUpdate={setIsUpdateBusinessCode}
+          setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdateBusinessCode}
         />
-        <AutoCompleteUpdatedValue
+        {!isQuoteConfirmation && <AutoCompleteUpdatedValue
           label={t("sales.quote.agent")}
           value={selectedAgent?.text}
           options={agentListValue}
           onBlur={onBlurAgent}
           isUpdate={isUpdateAgent}
-          setIsUpdate={setIsUpdateAgent}
+          setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdateAgent}
           getOptionLabel={(item) => item.text}
           onChange={(e, value) => updateAgent(value)}
-        />
+        />}
         {values?.documentAddresses?.length > 0 && <InputUpdatedValues
           value={values?.documentAddresses?.length > 0 ? `${values?.documentAddresses[0]?.street} ${values?.documentAddresses[0]?.apartment}, ${values?.documentAddresses[0]?.city}` : "no address found"}
           label={t("customers.modal.address")}
@@ -103,27 +102,24 @@ const BusinessNewWidget = ({
           onBlur={onBlurAddress}
           isUpdate={false}
           setIsUpdate={setIsUpdateAddress}
-          flag={true}
+          flag={!isQuoteConfirmation}
           onClickFlag={() => setOpenModal(true)}
         />}
         {values?.documentAddresses?.length > 0 ?
-          <div
+        ( !isQuoteConfirmation && <div
             style={classes.addNewAddressStyle}
             onClick={() => null}
           >
             <MinusIcon />
             <div style={classes.addNewAddressTextStyle} onClick={() => onClickDeleteAddress(values?.documentAddresses[0])}>{t("sales.quote.removeAddress")}</div>
-          </div> : (
-            <div
-              style={classes.addNewAddressStyle}
-            >
+          </div>)
+          :
+          (!isQuoteConfirmation &&
+            <div style={classes.addNewAddressStyle} >
               <PlusNewIcon />
               <div style={classes.addNewAddressTextStyle} onClick={() => setOpenModal(true)} >{t("sales.quote.addAddress")}</div>
             </div>
           )}
-
-
-
         {/* <GoMakeAlertModal 
         title={t("Change client")}
         openModal={openAlertModal}
@@ -132,7 +128,7 @@ const BusinessNewWidget = ({
         onClickConfirm={()=>{onChangeSelectBusiness(client).then(setOpenAlertModal(false)); }}
         >
         </GoMakeAlertModal> */}
-        <AddressModal isUpdate={values?.documentAddresses?.length > 0} documentType={documentType} />
+        {!isQuoteConfirmation && <AddressModal isUpdate={values?.documentAddresses?.length > 0} documentType={documentType} />}
       </div>
     </>
   );

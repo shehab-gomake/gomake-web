@@ -185,7 +185,7 @@ const useStyle = () => {
         backgroundColor:"#FFF"
       },
       textInputWithoutStyle: {
-        width: "100%",
+        width: "100%", 
         height: 20,
         backgroundColor: "transparent",
         ...FONT_FAMILY.Lexend(400, 16),

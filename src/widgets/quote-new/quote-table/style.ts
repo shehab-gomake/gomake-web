@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { FONT_FAMILY } from "@/utils/font-family";
 
 const useStyle = ({ headerHeight }) => {
-  const clasess = useMemo(() => {
+  const classes = useMemo(() => {
     return {
       tableRowStyle: {
         height: headerHeight,
@@ -63,7 +63,7 @@ const useStyle = ({ headerHeight }) => {
     };
   }, []);
   return {
-    clasess,
+    classes,
   };
 };
 export { useStyle };

@@ -1,19 +1,25 @@
-import React from "react";
+import React, { useState, useTransition } from "react";
 import { useStyle } from "./style";
 import { GomakeTextInput } from "@/components";
 import { useWriteCommentComp } from "./use-character-details";
+import { useButtonsConfirmContainer } from "../buttons-cofirm-container/use-buttons-container";
+interface IProps {
+    isQuoteConfirmation?: boolean;
+    getQuote?:any;
+}
+const WriteCommentComp = ({ isQuoteConfirmation,getQuote }: IProps) => {
+    const { classes } = useStyle(isQuoteConfirmation);
+    const { onUpdateComments, quoteComments, setQuoteComments } = useButtonsConfirmContainer();
+    const { handleChange, handleBlur, t, data } = useWriteCommentComp({ getQuote })
 
-const WriteCommentComp = ({ getQuote }) => {
-  const { clasess } = useStyle();
-  const { handleChange, handleBlur, t, data } = useWriteCommentComp({ getQuote })
-  return (
-    <div style={clasess.writeCommentcontainer}>
+    return (
+    <div style={classes.writeCommentContainer}>
       <GomakeTextInput
-        style={clasess.textInputStyle}
+        style={classes.textInputStyle}
         placeholder={t("sales.quote.writeCommentHere")}
-        onChange={handleChange}
-        onBlur={handleBlur}
-        value={data}
+        value={isQuoteConfirmation ? quoteComments : data}
+        onChange={isQuoteConfirmation ? (e) => setQuoteComments(e.target.value) : handleChange}
+        onBlur={isQuoteConfirmation ? onUpdateComments : handleBlur}
       />
     </div>
   );

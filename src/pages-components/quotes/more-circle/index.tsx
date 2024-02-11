@@ -7,8 +7,6 @@ import { useTranslation } from "react-i18next";
 import { QUOTE_STATUSES } from "../enums";
 import { PDFIcon } from "./icons/pdf";
 import { OptionsButton } from "@/components/options-button/options-button";
-import { PermissionCheck } from "@/components/CheckPermission";
-import { Permissions } from "@/components/CheckPermission/enum";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 
 const MoreMenuWidget = ({ quote, documentType, onClickOpenModal, onClickPdf, onClickDuplicate, onClickLoggers }: any) => {
@@ -21,8 +19,8 @@ const MoreMenuWidget = ({ quote, documentType, onClickOpenModal, onClickPdf, onC
     <OptionsButton>
       <MenuItem onClick={onClickLoggers}>
         <div style={classes.menuRowStyle}>
-            <EditingIcon />
-            <div style={classes.rowTextStyle}>{t("sales.quote.loggers")}</div>
+          <EditingIcon />
+          <div style={classes.rowTextStyle}>{t("sales.quote.loggers")}</div>
         </div>
       </MenuItem>
 
@@ -70,7 +68,6 @@ const MoreMenuWidget = ({ quote, documentType, onClickOpenModal, onClickPdf, onC
           </div>
         </MenuItem>
       ) : null}
-
     </OptionsButton>
   );
 };
