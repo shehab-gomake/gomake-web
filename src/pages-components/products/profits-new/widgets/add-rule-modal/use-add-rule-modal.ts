@@ -131,8 +131,11 @@ const useAddRuleModal = ({
       { label: "Client", id: EGroupByEnum.CLIENT },
       { label: "Agent", id: EGroupByEnum.AGENT },
       { label: "Product", id: EGroupByEnum.PRODUCT },
-      { label: "ProductSku", id: EGroupByEnum.PRODUCT_SKU },
-      { label: "ClientType", id: EGroupByEnum.CLIENT_TYPE },
+      { label: "Product Sku", id: EGroupByEnum.PRODUCT_SKU },
+      { label: "Client Type", id: EGroupByEnum.CLIENT_TYPE },
+      { label: "Action", id: EGroupByEnum.Action },
+      { label: "Material", id: EGroupByEnum.Material },
+      { label: "Machine", id: EGroupByEnum.Machine },
     ];
   }, []);
   const { alertSuccessAdded, alertFaultAdded,setSnackbarStateValue } = useSnackBar();
