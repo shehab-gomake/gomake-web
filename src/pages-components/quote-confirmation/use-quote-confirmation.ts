@@ -29,17 +29,7 @@ const useQuoteConfirmation = () => {
         await getDocumentByIdApi(callApi, callBack, { id: router?.query?.Id })
     }
 
-    const updateDocumentComments = async () => {
-        const callBack = (res) => {
-            if (res?.success) {
-                alertSuccessUpdate();
-            } else {
-                alertFaultUpdate();
-            } 
-        }
-        await updateDocumentCommentsConfirmationApi(callApi, callBack, { documentId: quoteConfirm?.id, comments: "test comments" })
-    }
-
+ 
 
     const calculateSelectedItems = async (quote) => {
         const documentItemIds = quote?.documentItems?.filter(x => x.isChecked)?.map(x => x.id);
@@ -70,7 +60,6 @@ const useQuoteConfirmation = () => {
     }
     return {
         getQuoteConfirmation,
-        updateDocumentComments,
         checkedItems,
         setCheckedItems,
         handleItemCheck

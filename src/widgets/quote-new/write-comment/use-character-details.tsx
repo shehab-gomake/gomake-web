@@ -21,7 +21,7 @@ const useWriteCommentComp = ({ getQuote }) => {
     const callBack = (res) => {
       if (res?.success) {
         alertSuccessUpdate();
-        getQuote()
+        getQuote();
       } else {
         alertFaultUpdate();
       }

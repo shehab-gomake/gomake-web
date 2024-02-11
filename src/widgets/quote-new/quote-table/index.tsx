@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   Table,
   TableBody,
@@ -32,7 +32,6 @@ const QuoteForPriceTable = ({
   isQuoteConfirmation = false,
 }) => {
   const { classes } = useStyle({ headerHeight });
-
   const PrimaryTableCell = styled(TableCell)(() => {
     return {
       [`&.${tableCellClasses.head}`]: {

@@ -2,9 +2,6 @@ import React, { useState, useTransition } from "react";
 import { useStyle } from "./style";
 import { GomakeTextInput } from "@/components";
 import { useWriteCommentComp } from "./use-character-details";
-import { useTranslation } from "react-i18next";
-import { useRecoilValue } from "recoil";
-import { quoteItemState } from "@/store/quote-item";
 import { useButtonsConfirmContainer } from "../buttons-cofirm-container/use-buttons-container";
 interface IProps {
     isQuoteConfirmation?: boolean;
