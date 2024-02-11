@@ -46,7 +46,6 @@ const QuoteForPriceTable = ({
   return (
     <div>
       <TableContainer
-        // component={Paper}
         style={{
           maxHeight: 420,
           overflow: "scroll",

@@ -69,6 +69,7 @@ const useStyle = () => {
       alignItems:"center",
       height: 50, 
       width: "100%",
+      marginTop:10
       },
       bodyContainer: { width: "100%", height: "auto", maxHeight: 410, overflow: "scroll" },
       selectAllContainer:{

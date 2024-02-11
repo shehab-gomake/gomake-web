@@ -1,14 +1,26 @@
-import { useTranslation } from "react-i18next";
-import { GoMakeModal, GomakePrimaryButton, SecondSwitch } from "@/components";
-import { useStyle } from "./style";
 import { SearchInputComponent } from "@/components/form-inputs/search-input-component";
-import { useState } from "react";
+import { GoMakeModal, GomakePrimaryButton } from "@/components";
+import { useCopyFromOrderModal } from "./use-copy-from-order-modal";
 import { OrderTableWidget } from "./order-table";
+import { useStyle } from "./style";
 
 const CopyFromOrderModal = ({ openModal, onClose }) => {
-  const { t } = useTranslation();
   const { classes } = useStyle();
-  const [term, setTerm] = useState("")
+
+  const {
+    setTerm,
+    PrimaryTableCell,
+    columnWidths,
+    tableHeaders,
+    documentItems,
+    handleItemSelect,
+    handleSelectAll,
+    areAllItemsSelected,
+    selectedItems,
+    totalPrice,
+    filterItems
+  } = useCopyFromOrderModal()
+
 
   return (
     <>
@@ -25,23 +37,23 @@ const CopyFromOrderModal = ({ openModal, onClose }) => {
                 <div style={classes.searchLabelStyle}> Search By </div>
                 <SearchInputComponent onChange={setTerm} />
               </div>
-              <div style={classes.switchiesContainer}>
-                <div style={classes.switchLabelContainer}>
-                  <SecondSwitch />
-                  <div style={classes.labelSwitchStyle}>Read tasks only</div>
-                </div>
-                <div style={classes.switchLabelContainer}>
-                  <SecondSwitch />
-                  <div style={classes.labelSwitchStyle}>Read orders only</div>
-                </div>
-              </div>
             </div>
           </div>
           <div style={classes.bodyContainer}>
-            <OrderTableWidget />
+            <OrderTableWidget
+              PrimaryTableCell={PrimaryTableCell}
+              columnWidths={columnWidths}
+              tableHeaders={tableHeaders}
+              documentItems={documentItems}
+              handleItemSelect={handleItemSelect}
+              handleSelectAll={handleSelectAll}
+              areAllItemsSelected={areAllItemsSelected}
+              selectedItems={selectedItems}
+              filterItems={filterItems}
+            />
           </div>
           <div style={classes.footerModalContainer}>
-            <div style={classes.totalStyle}>Total: NIS 555 not including VA</div>
+            <div style={classes.totalStyle}>Total: NIS {totalPrice.toFixed(2)} not including VAT</div>
             <GomakePrimaryButton style={classes.btnContainer}>Add to delivery note</GomakePrimaryButton>
           </div>
         </div>

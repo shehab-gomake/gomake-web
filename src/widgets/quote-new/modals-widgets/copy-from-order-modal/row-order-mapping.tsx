@@ -10,7 +10,12 @@ const RowMappingWidget = ({
   index,
   columnWidths,
   parentIndex,
+  handleItemSelect,
+  isSelected
 }) => {
+  const handleCheckboxChange = () => {
+    handleItemSelect(item);
+  };
   const { classes } = useStyle();
   return (
     <TableRow
@@ -35,6 +40,8 @@ const RowMappingWidget = ({
           }}
         >
           <Checkbox
+            checked={isSelected}
+            onChange={handleCheckboxChange}
             icon={<CheckboxIcon />}
             checkedIcon={<CheckboxCheckedIcon />}
           />
