@@ -174,43 +174,43 @@ const useQuoteNew = (docType: DOCUMENT_TYPE) => {
         _data.documentItemsMapping = mapData;
         setQuoteItemValue(_data);
       } else {
-        // alertFaultAdded();
-        setQuoteItemValue(
-          {
-            "id": "c12bfa79-c7c5-487a-a352-3c8c2de68211",
-            "userID": "29562d9d-1518-42c1-8a5b-4e3db19eaac1",
-            "customerID": "919f5ae6-158f-4432-b6cb-2b1bd16f86f1",
-            "creationDate": "0001-01-01T00:00:00",
-            "totalPrice": null,
-            "discount": null,
-            "vat": null,
-            "number": "IM50001188",
-            "purchaseNumber": "No purchase number",
-            "currency": "ILS",
-            "exchangeRate": 1,
-            "notes": "",
-            "dueDate": "2024-03-08T14:52:26.7228261Z",
-            "dueDateUpdatedByUser": null,
-            "isForeignCurrency": false,
-            "client": null,
-            "agentId": null,
-            "printHouseId": "4be15613-2e58-4c25-8f6c-fbb32a9d7797",
-            "totalPriceAfterDiscount": null,
-            "discountAmount": null,
-            "totalPayment": null,
-            "totalVAT": null,
-            "isConfirmed": null,
-            "quoteOpendFirstTimeDate": null,
-            "documentStatus": 1,
-            "vatStatus": null,
-            "sortType": null,
-            "statusID": 1,
-            "agent": null,
-            "documentContacts": [],
-            "documentAddresses": [],
-            "documentItems": []
-          }
-        )
+        alertFaultAdded();
+        // setQuoteItemValue(
+        //   {
+        //     "id": "c12bfa79-c7c5-487a-a352-3c8c2de68211",
+        //     "userID": "29562d9d-1518-42c1-8a5b-4e3db19eaac1",
+        //     "customerID": "919f5ae6-158f-4432-b6cb-2b1bd16f86f1",
+        //     "creationDate": "0001-01-01T00:00:00",
+        //     "totalPrice": null,
+        //     "discount": null,
+        //     "vat": null,
+        //     "number": "IM50001188",
+        //     "purchaseNumber": "No purchase number",
+        //     "currency": "ILS",
+        //     "exchangeRate": 1,
+        //     "notes": "",
+        //     "dueDate": "2024-03-08T14:52:26.7228261Z",
+        //     "dueDateUpdatedByUser": null,
+        //     "isForeignCurrency": false,
+        //     "client": null,
+        //     "agentId": null,
+        //     "printHouseId": "4be15613-2e58-4c25-8f6c-fbb32a9d7797",
+        //     "totalPriceAfterDiscount": null,
+        //     "discountAmount": null,
+        //     "totalPayment": null,
+        //     "totalVAT": null,
+        //     "isConfirmed": null,
+        //     "quoteOpendFirstTimeDate": null,
+        //     "documentStatus": 1,
+        //     "vatStatus": null,
+        //     "sortType": null,
+        //     "statusID": 1,
+        //     "agent": null,
+        //     "documentContacts": [],
+        //     "documentAddresses": [],
+        //     "documentItems": []
+        //   }
+        // )
       }
     }
     await getDocumentApi(callApi, callBack, { documentType: docType, Id: router?.query?.Id })
