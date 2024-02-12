@@ -10,6 +10,7 @@ export interface ITabsProps {
     selectedColor?: SELECT_COLOR;
     variant?: TAB_TYPE;
     withBackGround?:boolean;
+    selectedTabIndex?:number;
 }
 
 export interface ITab {

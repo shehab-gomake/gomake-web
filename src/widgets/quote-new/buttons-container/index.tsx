@@ -10,7 +10,8 @@ import { OrderNowModal } from "@/widgets/quote/total-price-and-vat/order-now-mod
 import { useButtonsContainer } from "./use-buttons-container";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { CreditCardIcon } from "@/icons/credit-card-icon";
-import { StatusBtn } from "./payment-button";
+import { PaymentBtn } from "./payment/payment-button";
+import { PaymentModal } from "./payment/payment-modal";
 
 const ButtonsContainer = ({
   onOpenNewItem,
@@ -22,7 +23,7 @@ const ButtonsContainer = ({
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
-  const { openOrderNowModal, onClickCloseOrderNowModal, onClickOpenOrderNowModal, onClickConfirmWithoutNotification, onClickConfirmWithNotification, onClickPrint } = useButtonsContainer(documentType);
+  const { openOrderNowModal, onClickCloseOrderNowModal, onClickOpenOrderNowModal, onClickConfirmWithoutNotification, onClickConfirmWithNotification, onClickPrint ,onClickClosePaymentModal, onClickOpenPaymentModal, openPaymentModal, selectedTabIndex } = useButtonsContainer(documentType);
 
   return (
     <div style={classes.writeCommentcontainer}>
@@ -34,7 +35,7 @@ const ButtonsContainer = ({
         > 
         {t("Payment")}
         </GomakePrimaryButton>}
-        <StatusBtn/>
+        <PaymentBtn handleOpenModal={onClickOpenPaymentModal}/>
         {(documentType === DOCUMENT_TYPE.quote || documentType === DOCUMENT_TYPE.order) &&
           <GomakePrimaryButton
             leftIcon={<PlusIcon stroke={"#344054"} />}
@@ -104,7 +105,7 @@ const ButtonsContainer = ({
           confirmWithoutNotification={onClickConfirmWithoutNotification}
           confirmWithNotification={onClickConfirmWithNotification}
         />
-        
+        <PaymentModal onClose={onClickClosePaymentModal} openModal={openPaymentModal} selectedTab={selectedTabIndex}/>
       </div>
     </div>
   );

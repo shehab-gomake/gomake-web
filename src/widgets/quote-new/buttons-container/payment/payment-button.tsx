@@ -1,22 +1,26 @@
 import Button from "@mui/material/Button";
-//import { useStyle } from "@/widgets/production-floor-widget/components/style";
 import { useState } from "react";
-import { Menu, MenuItem } from "@mui/material";
+import { Menu } from "@mui/material";
 import { GomakePrimaryButton } from "@/components";
 import { CreditCardIcon } from "@/icons/credit-card-icon";
-import { FONT_FAMILY } from "@/utils/font-family";
-import { useStyle } from "./style";
+import { useStyle } from "../style";
+import { useTranslation } from "react-i18next";
 
 export enum EStatus {
-    NOT_YET = '1',
-    IN_PROCESS = '2',
-    DONE = '3',
-    STUCK = '4',
-    WAITING = '5'
+    CREDIT_CARD = 0,
+    CASH = 1,
+    TRANSFERENCE = 2,
+    CHECK = 3,
+    BIT = 4
 }
 
+interface IPaymentBtn {
+    handleOpenModal: (selectedTabIndex: number) => void;
+}
 
-const StatusBtn = () => {
+const PaymentBtn = ({ handleOpenModal }: IPaymentBtn) => {
+    const { t } = useTranslation();
+    const { classes } = useStyle();
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>();
     const open = Boolean(anchorEl);
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -26,44 +30,39 @@ const StatusBtn = () => {
         setAnchorEl(null);
     };
 
-    const onSelectPaymentMethod = (paymentMethod: string) => {
-        console.log(paymentMethod);
+    const onSelectPaymentMethod = (paymentMethod: number) => {
+        handleOpenModal(paymentMethod);
         handleClose();
     }
-    const { classes } = useStyle();
+
     return (
         <>
             <GomakePrimaryButton
-
                 leftIcon={<CreditCardIcon color={"#344054"} />}
                 onClick={handleClick}
-                // variant={!!anchorEl ? 'outlined' : 'contained'}
                 style={classes.btnContainer}
-            >
-                Payment
+            >{t("payment.payment")}
             </GomakePrimaryButton>
             <Menu
                 closeAfterTransition={false}
                 anchorEl={anchorEl}
                 open={open}
                 onClose={handleClose}
-                MenuListProps={{
-                    sx: { width: anchorEl?.offsetWidth, padding: 0 }
-                }}
+                MenuListProps={{sx: { width: anchorEl?.offsetWidth, padding: 0 }}}
             >
                 <Button sx={{ ...classes.statusLabel, borderRadius: 0 }}
-                    onClick={() => onSelectPaymentMethod("Credit Card")}>Credit Card</Button>
+                    onClick={() => onSelectPaymentMethod(EStatus.CREDIT_CARD)}>{t("payment.creditCard")}</Button>
                 <Button sx={{ ...classes.statusLabel, borderRadius: 0 }}
-                    onClick={() => alert(EStatus.IN_PROCESS)}>Cash</Button>
+                    onClick={() => onSelectPaymentMethod(EStatus.CASH)}>{t("payment.cash")}</Button>
                 <Button sx={{ ...classes.statusLabel, borderRadius: 0 }}
-                    onClick={() => alert(EStatus.DONE)}>transference</Button>
+                    onClick={() => onSelectPaymentMethod(EStatus.TRANSFERENCE)}>{t("payment.transfer")}</Button>
                 <Button sx={{ ...classes.statusLabel, borderRadius: 0 }}
-                    onClick={() => alert(EStatus.STUCK)}>check</Button>
+                    onClick={() => onSelectPaymentMethod(EStatus.CHECK)}>{t("payment.check")}</Button>
                 <Button sx={{ ...classes.statusLabel, borderRadius: 0 }}
-                    onClick={() => alert(EStatus.STUCK)}>bit</Button>
+                    onClick={() => onSelectPaymentMethod(EStatus.BIT)}>{t("payment.bit")}</Button>
             </Menu>
         </>
     );
 }
 
-export { StatusBtn }
+export { PaymentBtn }

@@ -21,8 +21,10 @@ const useButtonsContainer = (docType : DOCUMENT_TYPE) => {
         setOpenOrderNowModal(false);
     };
 
+    const [selectedTabIndex, setSelectedTabIndex] = useState<number>(0); 
     const [openPaymentModal, setOpenPaymentModal] = useState(false);
-    const onClickOpenPaymentModal = () => {
+    const onClickOpenPaymentModal = (selectedTabIndex) => {
+        setSelectedTabIndex(selectedTabIndex);
         setOpenPaymentModal(true);
     };
     const onClickClosePaymentModal = () => {
@@ -83,6 +85,10 @@ const useButtonsContainer = (docType : DOCUMENT_TYPE) => {
         onClickCloseOrderNowModal,
         onClickPrint,
         t,
+        onClickClosePaymentModal,
+        onClickOpenPaymentModal,
+        openPaymentModal,
+        selectedTabIndex
     };
 
 };

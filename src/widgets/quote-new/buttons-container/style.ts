@@ -68,6 +68,10 @@ const useStyle = () => {
         padding: "10px",
         borderRadius: 8,
       },
+      insideStyle:{
+        width: "fit-content",
+        height: 680
+      },
       statusLabel: {
         color: "#344054",
         ...FONT_FAMILY.Lexend(500, 14),
@@ -84,7 +88,8 @@ const useStyle = () => {
     },
  
   borderRadius: {
-      borderRadius: '4px',            }
+      borderRadius: '4px'
+    }
     };
   }, [theme]);
   return {
