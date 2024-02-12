@@ -10,7 +10,6 @@ const CashTab = () => {
     const options = [{ label: t("Cash"), value: "true" }];
 
     return (
-        <Stack display={"flex"} direction={"column"} justifyContent={"space-between"} padding={"0 5px"} height={500} >
             <Stack direction={"column"} gap={"20px"} padding={"0 5px"} >
                 <Stack direction={"column"} gap={"7px"} padding={"0 5px"} >
                     <span>{t("payment.accountCode")}</span>
@@ -31,10 +30,7 @@ const CashTab = () => {
                     />
                 </Stack>
             </Stack>
-            <SecondaryButton variant={'contained'} style={{ display: "flex", alignSelf: "center", width: "80%" }}>
-                {t('payment.save')}
-            </SecondaryButton>
-        </Stack>
+
 
     );
 }

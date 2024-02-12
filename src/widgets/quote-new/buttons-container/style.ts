@@ -3,7 +3,7 @@ import { FONT_FAMILY } from "@/utils/font-family";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 const useStyle = () => {
-  const {theme, warningColor, secondColor, successColor, errorColor} = useGomakeTheme();
+  const { theme, warningColor, secondColor, successColor, errorColor } = useGomakeTheme();
 
   const classes = useMemo(() => {
     return {
@@ -68,9 +68,10 @@ const useStyle = () => {
         padding: "10px",
         borderRadius: 8,
       },
-      insideStyle:{
+      insideStyle: {
         width: "800px",
-        height: 680
+        height: 680,
+
       },
       statusLabel: {
         color: "#344054",
@@ -81,15 +82,31 @@ const useStyle = () => {
         boxSizing: 'border-box',
         display: 'flex',
         backgroundColor: "FFFFFF",
-        '&:hover' : {
-            color: '#FFF',
-            backgroundColor: "#344054"
+        '&:hover': {
+          color: '#FFF',
+          backgroundColor: "#344054"
         }
-    },
- 
-  borderRadius: {
-      borderRadius: '4px'
-    }
+      },
+
+      testStyle: {
+        display: "flex",
+        flexDirection: "column" as "column",
+        justifyContent: "space-between",
+      },
+      borderRadius: {
+        borderRadius: '4px'
+      },
+      boxStyle: {
+        display: "flex",
+        flexDirection: "column" as "column",
+        justifyContent: "space-between",
+        height: "100%"
+      },
+      saveBtn: {
+        display: "flex",
+        alignSelf: "flex-start",
+        width: "80%"
+      }
     };
   }, [theme]);
   return {
