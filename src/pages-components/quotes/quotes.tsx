@@ -87,7 +87,7 @@ const QuotesListPageWidget = ({
                 <Button
                   style={classes.createNew}
                   startIcon={<AddCircleOutlineIcon />}
-                  onClick={() => { navigate(`/deliveryNote?isNewCreation=${true}`) }}
+                  onClick={() => { navigate(`/deliveryNote?isNewCreation=true`) }}
                 >
                   {t("sales.quote.createNew")}
                 </Button>
