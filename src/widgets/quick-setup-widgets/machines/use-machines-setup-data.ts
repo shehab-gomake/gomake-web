@@ -1,6 +1,6 @@
 import {useGomakeAxios, useSnackBar} from "@/hooks";
-import {useRecoilState, useRecoilValue, useSetRecoilState} from "recoil";
-import {machinesSetup, selectedMachinesSetup} from "@/widgets/quick-setup-widgets/machines/state";
+import {useRecoilState, useRecoilValue} from "recoil";
+import {IMachineItem, machinesSetup, selectedMachinesSetup} from "@/widgets/quick-setup-widgets/machines/state";
 import {ECategoryId} from "@/widgets/machines/enums/category-id";
 import {getAdminMachinesByCategories} from "@/services/api-service/machines/admin-machines";
 import {useRouter} from "next/router";
@@ -8,16 +8,22 @@ import {useEffect, useMemo, useState} from "react";
 import {MachinesTypes, machinesTypeCategories} from "@/widgets/quick-setup-widgets/machines/const";
 import {machineCategoriesState} from "@/store/machine-categories";
 import {quickSetupAddMachines} from "@/services/api-service/machines/print-house-machines";
+import {useTranslation} from "react-i18next";
 
 const useMachinesSetupData = () => {
-    const setMachineState = useSetRecoilState(machinesSetup);
+    const [categoryMachines, setCategoryMachines] = useRecoilState(machinesSetup);
+    const [printHouseMachines, setPrintHouseMachines] = useRecoilState(selectedMachinesSetup);
     const router = useRouter();
     const {machinesType} = router.query
     const {callApi} = useGomakeAxios();
     const machinesCategoriesState = useRecoilValue(machineCategoriesState);
     const [selectedMachinesState, setSelectedMachinesState] = useRecoilState(selectedMachinesSetup);
     const {alertFaultAdded} = useSnackBar();
-    const [loading, setLoading] = useState<boolean>(false)
+    const [loading, setLoading] = useState<boolean>(false);
+    const [machinesLoading, setMachinesLoading] = useState<boolean>(false);
+
+    const {t} = useTranslation();
+    const [selectedCategory, setSelectedCategory] = useState('');
     const getMachineNameKey = (categoryId: ECategoryId) => {
         return machinesCategoriesState?.find(category => category.id === categoryId)?.name;
     }
@@ -29,25 +35,27 @@ const useMachinesSetupData = () => {
     }, [machinesType]);
 
     const getMachines = async (categories: ECategoryId[]) => {
+        setMachinesLoading(true)
         const callBack = (res) => {
+            setMachinesLoading(false)
             if (res.success) {
-                setMachineState(res?.data?.map(m => ({...m, checked: false})))
+                setCategoryMachines(res?.data?.map(m => ({value: m.id, label: m.name, category: m.category})))
             }
         }
         await getAdminMachinesByCategories(callApi, callBack, categories);
     }
-
     useEffect(() => {
-        if (step.categories.length > 0) {
-            getMachines(step.categories).then()
+        if (selectedCategory) {
+            getMachines([selectedCategory as ECategoryId]).then()
+        } else {
+            setCategoryMachines([]);
         }
-    }, [machinesType, step]);
-
+    }, [selectedCategory])
     const onClickNext = async () => {
         const callBack = (res) => {
             if (res?.success) {
                 setSelectedMachinesState([]);
-                setMachineState([]);
+                setCategoryMachines([]);
                 router.push(step.next);
             } else {
                 alertFaultAdded();
@@ -62,18 +70,38 @@ const useMachinesSetupData = () => {
         }
     }
 
-    const onClickSkip = () => {
-        setSelectedMachinesState([]);
-        setMachineState([])
-        router.push(step.next).then();
+    const machinesCategoriesList = machinesCategoriesState?.map(category => ({
+        label: t(category.name),
+        value: category.id
+    }));
+
+    const onSelectCategory = (category) => {
+        setSelectedCategory(category);
     }
+
+    const onSelectMachine = (machine: IMachineItem) => {
+        if (!!machine?.value) {
+            setPrintHouseMachines([...printHouseMachines, machine])
+        }
+    }
+    const onRemovePrintHouseMachine = (machineId: string) => {
+        setPrintHouseMachines(printHouseMachines.filter(machine => machine?.value !== machineId))
+    }
+
     return {
         step,
         getMachineNameKey,
         getMachineColor,
         onClickNext,
-        onClickSkip,
-        loading
+        loading,
+        machinesCategoriesList,
+        selectedCategory,
+        onSelectCategory,
+        categoryMachines,
+        machinesLoading,
+        onSelectMachine,
+        printHouseMachines,
+        onRemovePrintHouseMachine
     }
 }
 export {useMachinesSetupData}

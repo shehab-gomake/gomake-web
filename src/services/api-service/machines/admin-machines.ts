@@ -18,7 +18,7 @@ const adminGetAllMachineByCategory: ICallAndSetData = async (callApi, setState, 
     return  await getSetApiData(callApi, EHttpMethod.GET, ADMIN_GET_ALL_MACHINES_URL + category, setState);
 }
 const getAdminMachinesByCategories: ICallAndSetData = async (callApi, setState, categories) => {
-    return  await getSetApiData(callApi, EHttpMethod.POST, ADMIN_GET_CATEGORIES_MACHINES_URL , setState, {categories: categories});
+    return  await getSetApiData(callApi, EHttpMethod.POST, ADMIN_GET_CATEGORIES_MACHINES_URL , setState, {categories: categories}, false);
 }
 
 export {adminAddNewMachine, adminUpdateMachine, adminGetAllMachineByCategory, getAdminMachinesByCategories};
