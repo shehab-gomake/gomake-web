@@ -69,7 +69,7 @@ const useStyle = () => {
         borderRadius: 8,
       },
       insideStyle:{
-        width: "fit-content",
+        width: "800px",
         height: 680
       },
       statusLabel: {
