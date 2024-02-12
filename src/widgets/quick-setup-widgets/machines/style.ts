@@ -1,11 +1,10 @@
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { convertHeightToVH, convertWidthToVW } from "@/utils/adapter";
 import { FONT_FAMILY } from "@/utils/font-family";
-import { LAYOUT_DEFAULT_GAP, SIDE_MENU_Layout } from "@/utils/layout-config";
 import { useMemo } from "react";
 
 const useStyle = () => {
-  const {theme, primaryColor } = useGomakeTheme();
+  const {theme, primaryColor, neutralColor } = useGomakeTheme();
   const classes = useMemo(() => {
     return {
       header: {
@@ -15,7 +14,7 @@ const useStyle = () => {
         padding: 0
       },
       nextButton: {
-        width: '100%'
+        width: '50%'
       },
       inputsContainer: {
         display: 'flex',
@@ -30,6 +29,15 @@ const useStyle = () => {
         '& .MuiListItemIcon-root': {
           minWidth: 0
         }
+      },
+      selectedMachinesContainer: {
+          width: convertWidthToVW(900),
+          height: convertHeightToVH(400),
+          border: '1px solid' + neutralColor(200),
+          borderRadius: 4
+      },
+      autoComplete: {
+        minWidth: convertWidthToVW(400),
       }
     }
   }, [theme]);

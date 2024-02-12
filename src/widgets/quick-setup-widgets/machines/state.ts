@@ -1,10 +1,9 @@
 import {atom} from "recoil";
 import {ECategoryId} from "@/widgets/machines/enums/category-id";
 
-interface IMachineItem {
-    id: string;
-    name: string;
-    checked: boolean;
+export interface IMachineItem {
+    value: string;
+    label: string;
     category: ECategoryId;
 }
 export const machinesSetup = atom<IMachineItem[]>({
