@@ -265,7 +265,7 @@ const useAuthLayoutHook = (permissionEnumValue?: Permissions) => {
           return <SettingNavBar />;
         },
         isProduction: true,
-      },
+      },      
     ];
   }, []);
 

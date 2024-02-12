@@ -20,6 +20,7 @@ const LoginLeftSide = () => {
           <Image
             src={userProfile?.loginLogo}
             alt="logo"
+            style={{objectFit:'contain'}}
             width={200}
             height={200}
           />

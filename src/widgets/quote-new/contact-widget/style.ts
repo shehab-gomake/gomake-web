@@ -4,7 +4,7 @@ import { useMemo } from "react";
 
 const useStyle = () => {
   const { secondColor, primaryColor } = useGomakeTheme();
-  const clasess = useMemo(() => {
+  const classes = useMemo(() => {
     return {
       businessContainerStyle: {
         display: "flex",
@@ -15,7 +15,6 @@ const useStyle = () => {
         marginBottom: 14,
         gap: 24,
       },
-
       addNewContactNameStyle: {
         display: "flex",
         flexDirection: "row" as "row",
@@ -75,7 +74,7 @@ const useStyle = () => {
     };
   }, []);
   return {
-    clasess,
+    classes,
   };
 };
 export { useStyle };

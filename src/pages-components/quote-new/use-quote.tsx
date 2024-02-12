@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import lodashClonedeep from "lodash.clonedeep";
 import { useTranslation } from "react-i18next";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { EHttpMethod } from "@/services/api-service/enums";
 import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
 import {
@@ -15,6 +15,7 @@ import {
   agentListsState,
   businessListsState,
   clientContactsState,
+  quoteConfirmationState,
   quoteItemState,
 } from "@/store";
 import { QuoteStatuses } from "@/widgets/quote/total-price-and-vat/enums";
@@ -24,7 +25,11 @@ import { addDeliveryApi, addDocumentAddressApi, addDocumentContactApi, calculate
 import { DOCUMENT_TYPE } from "../quotes/enums";
 import { useRouter } from "next/router";
 
-const useQuoteNew = (docType: DOCUMENT_TYPE) => {
+interface IQuoteProps {
+  docType: DOCUMENT_TYPE;
+  isQuoteConfirmation?: boolean;
+}
+const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
   const {
     alertSuccessUpdate,
     alertFaultUpdate,
@@ -38,16 +43,16 @@ const useQuoteNew = (docType: DOCUMENT_TYPE) => {
   const { t } = useTranslation();
   const { getAllClientAddress } = useQuoteGetData();
   const [quoteItemValue, setQuoteItemValue] = useRecoilState<any>(quoteItemState);
-  const [selectDate, setSelectDate] = useState(quoteItemValue?.dueDate);
-  const [customersListValue, setCustomersListValue] =
-    useRecoilState<any>(businessListsState);
+  const quoteConfirm = useRecoilValue<any>(quoteConfirmationState);
+
+  const [selectDate, setSelectDate] = useState(isQuoteConfirmation ? quoteConfirm?.dueDate : quoteItemValue?.dueDate);
+  const [customersListValue, setCustomersListValue] = useRecoilState<any>(businessListsState);
   const [selectBusiness, setSelectBusiness] = useState<any>({});
+  const [selectConfirmBusiness, setSelectConfirmBusiness] = useState<any>({});
   const [isUpdateBusinessName, setIsUpdateBusinessName] = useState<number | null>(null);
   const [isUpdatePurchaseNumber, setIsUpdatePurchaseNumber] = useState<number | null>(null);
   const [isUpdateExchangeRate, setIsUpdateExchangeRate] = useState<number | null>(null);
   const [isUpdateCurrency, setIsUpdateCurrency] = useState<string>(null);
-
-
   const [, setIsUpdateBusinessCode] = useState<number | null>(null);
   const [isUpdateAddress, setIsUpdateAddress] = useState<number | null>(null);
   const [isUpdateAgent, setIsUpdateAgent] = useState<number | null>(null);
@@ -68,10 +73,7 @@ const useQuoteNew = (docType: DOCUMENT_TYPE) => {
   const [openAddNewItemModal, setOpenAddNewItemModal] = useState(false);
   const [openCopyFromOrderModal, setOpenCopyFromOrderModal] = useState(false);
   const [quoteItemId, setQuateItemId] = useState();
-  const [
-    openDuplicateWithDifferentQTYModal,
-    setOpenDuplicateWithDifferentQTYModal,
-  ] = useState(false);
+  const [openDuplicateWithDifferentQTYModal, setOpenDuplicateWithDifferentQTYModal] = useState(false);
   const [selectedContactById, setSelectedContactById] = useState<any>();
   const [amountValue, setAmountValue] = useState();
   const [openDeleteItemModal, setOpenDeleteItemModal] = useState(false);
@@ -681,34 +683,34 @@ const useQuoteNew = (docType: DOCUMENT_TYPE) => {
   };
 
   const [openOtherReasonModal, setOpenOtherReasonModal] = useState(false);
-  const [openIrreleventCancelModal, setOpenIrreleventCancelModal] = useState(false);
+  const [openIrrelevantCancelModal, setOpenIrrelevantCancelModal] = useState(false);
   const [openPriceCancelModal, setOpenPriceCancelModal] = useState(false);
   const [openDeliveryTimeCancelModal, setOpenDeliveryTimeCancelModal] = useState(false);
 
-  const onClcikOpenIrreleventModal = () => {
-    setOpenIrreleventCancelModal(true);
+  const onClickOpenIrrelevantModal = () => {
+    setOpenIrrelevantCancelModal(true);
   };
-  const onClcikCloseIrreleventModal = () => {
-    setOpenIrreleventCancelModal(false);
+  const onClickCloseIrrelevantModal = () => {
+    setOpenIrrelevantCancelModal(false);
   };
 
-  const onClcikOpenPriceModal = () => {
+  const onClickOpenPriceModal = () => {
     setOpenPriceCancelModal(true);
   };
-  const onClcikClosePriceModal = () => {
+  const onClickClosePriceModal = () => {
     setOpenPriceCancelModal(false);
   };
 
-  const onClcikOpenDeliveryTimeModal = () => {
+  const onClickOpenDeliveryTimeModal = () => {
     setOpenDeliveryTimeCancelModal(true);
   };
-  const onClcikCloseDeliveryTimeModal = () => {
+  const onClickCloseDeliveryTimeModal = () => {
     setOpenDeliveryTimeCancelModal(false);
   };
-  const onClcikOpenModal = () => {
+  const onClickOpenModal = () => {
     setOpenOtherReasonModal(true);
   };
-  const onClcikCloseModal = () => {
+  const onClickCloseModal = () => {
     setOpenOtherReasonModal(false);
   };
 
@@ -894,27 +896,38 @@ const useQuoteNew = (docType: DOCUMENT_TYPE) => {
     }
   }, [agentListValue, quoteItemValue]);
 
+
+
   useEffect(() => {
     const foundItem = customersListValue.find(
       (item: any) => item.id === quoteItemValue?.customerID
     );
+    const foundConfirmItem = customersListValue.find(
+      (item: any) => item.id === quoteConfirm?.customerID
+    );
     setSelectBusiness(foundItem);
+    // for quote confirmation
+    setSelectConfirmBusiness(foundConfirmItem)
+
   }, [quoteItemValue, customersListValue]);
+
 
   useEffect(() => {
     setPriceListItems(quoteItemValue?.documentItems);
     setquoteItems(quoteItemValue);
     getAllClientContacts();
-    setItems(quoteItemValue?.documentContacts);
-    setSelectDate(quoteItemValue?.dueDate);
-  }, [quoteItemValue]);
+    setItems(isQuoteConfirmation ? quoteConfirm?.documentContacts : quoteItemValue?.documentContacts);
+    setSelectDate(isQuoteConfirmation ? quoteConfirm?.dueDate : quoteItemValue?.dueDate);
+  }, [quoteItemValue, quoteConfirm]);
+
 
   useEffect(() => {
-    getQuote();
-    getAllEmployees();
     getAllCustomers();
-  }, []);
-
+    if (!isQuoteConfirmation) {
+      getQuote();
+      getAllEmployees();
+    }
+  }, [isQuoteConfirmation]);
 
   const documentsTitles = [
     {
@@ -940,6 +953,8 @@ const useQuoteNew = (docType: DOCUMENT_TYPE) => {
   ];
 
   const documentTitle = documentsTitles.find(item => item.value === docType).label;
+
+
 
   return {
     dateRef,
@@ -978,7 +993,7 @@ const useQuoteNew = (docType: DOCUMENT_TYPE) => {
     openSendBtn,
     openCancelBtn,
     openOtherReasonModal,
-    openIrreleventCancelModal,
+    openIrrelevantCancelModal,
     openPriceCancelModal,
     openDeliveryTimeCancelModal,
     anchorElSettingMenu,
@@ -986,14 +1001,14 @@ const useQuoteNew = (docType: DOCUMENT_TYPE) => {
     onClickSendQuoteToClient,
     handleSettingMenuClick,
     handleSettingMenuClose,
-    onClcikOpenPriceModal,
-    onClcikOpenModal,
-    onClcikClosePriceModal,
-    onClcikOpenDeliveryTimeModal,
-    onClcikCloseDeliveryTimeModal,
-    onClcikCloseModal,
-    onClcikOpenIrreleventModal,
-    onClcikCloseIrreleventModal,
+    onClickOpenPriceModal,
+    onClickOpenModal,
+    onClickClosePriceModal,
+    onClickOpenDeliveryTimeModal,
+    onClickCloseDeliveryTimeModal,
+    onClickCloseModal,
+    onClickOpenIrrelevantModal,
+    onClickCloseIrrelevantModal,
     handleCancelBtnClick,
     handleCancelBtnClose,
     handleSendBtnClick,
@@ -1075,9 +1090,11 @@ const useQuoteNew = (docType: DOCUMENT_TYPE) => {
     updateCurrency,
     refreshExchangeRate,
     getQuote,
+    selectConfirmBusiness,
     openCopyFromOrderModal,
     onCloseCopyFromOrder,
     onOpenCopyFromOrder
+
   };
 };
 

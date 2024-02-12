@@ -152,6 +152,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   useEffect(() => {
     if (calculationResult && calculationResult.productItemValue) {
       if (calculationResult.productItemValueDraftId === currentCalculationSessionId) {
+        console.log("calculationResult",calculationResult)
         setLoading(false);
         setCurrentProductItemValueDraftId(calculationResult.productItemValueDraftId);
         const currentWorkFlows = cloneDeep(workFlows);
@@ -1835,10 +1836,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       totalWorkFlowsCount: 0,
       currentWorkFlowsCount: 0,
     });
-    setCurrentCalculationSessionId("");
     let checkParameter = validateParameters(isRequiredParameters);
     if (!!checkParameter) {
       setLoading(true);
+      setCurrentCalculationSessionId(null);
       const newRequestAbortController = new AbortController();
       setRequestAbortController(newRequestAbortController);
       let subProductsCopy = cloneDeep(subProducts);

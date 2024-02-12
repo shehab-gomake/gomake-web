@@ -18,5 +18,8 @@ export enum EGroupByEnum
   AGENT,
   PRODUCT,
   PRODUCT_SKU,
-  CLIENT_TYPE
+  CLIENT_TYPE,
+  Action,
+  Material,
+  Machine
 }

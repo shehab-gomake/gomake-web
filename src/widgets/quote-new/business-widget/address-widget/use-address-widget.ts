@@ -3,16 +3,19 @@ import { useEffect, useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { addressModalState, isNewAddress } from "./state";
 import { useQuoteNew } from "@/pages-components/quote-new/use-quote";
-import { quoteItemState } from "@/store";
+import { quoteConfirmationState, quoteItemState } from "@/store";
 import { useQuoteGetData } from "@/pages-components/quote-new/use-quote-get-data";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 
 const useAddressWidget = (docType : DOCUMENT_TYPE) => {
     const { t } = useTranslation();
     
-    const { updateClientAddress, onClickAddAddress, onClickAddNewAddress } = useQuoteNew(docType);
+    const { updateClientAddress, onClickAddAddress, onClickAddNewAddress } = useQuoteNew({docType});
     const { getAllClientAddress, clientAddressValue, addressSelect } = useQuoteGetData();
     const quoteStateValue = useRecoilValue<any>(quoteItemState);
+    const quoteConfirm = useRecoilValue<any>(quoteConfirmationState);
+
+
     const [openModal, setOpenModal] = useRecoilState<boolean>(addressModalState);
     const [addressState, setAddressState] = useState<any>(quoteStateValue?.documentAddresses[0]);
     const [selectedAddress, setSelectedAddress] = useState<any>(null);

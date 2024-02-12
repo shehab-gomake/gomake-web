@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { FONT_FAMILY } from "@/utils/font-family";
 
 const useStyleCharacterDetails = ({showAll}) => {
-  const clasess = useMemo(() => {
+  const classes = useMemo(() => {
     return {
       mainContainer:{
         height: showAll ? 100 : 74,
@@ -31,7 +31,7 @@ const useStyleCharacterDetails = ({showAll}) => {
     };
   }, []);
   return {
-    clasess,
+    classes,
   };
 };
 export { useStyleCharacterDetails };
