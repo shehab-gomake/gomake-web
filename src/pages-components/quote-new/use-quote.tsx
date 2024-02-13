@@ -647,23 +647,79 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
   const onCloseNewItem = () => {
     setOpenAddNewItemModal(false);
   };
+  const calculateDocument = useCallback(async () => {
 
-  const getCalculateQuoteItem = async (quoteItemId: string, calculationType: number, data: number) => {
-    const callBack = (res) => {
+  }, [quoteItemValue, docType]);
+
+  const getCalculateQuoteItem = async (quoteItem: any, calculationType: number, data: number) => {
+    console.log("quoteItesssm", quoteItem)
+    if (router.query.isNewCreation) {
+      const res = await callApi(
+        EHttpMethod.POST,
+        `/v1/erp-service/documents/calculate-item`,
+        {
+          documentType: docType,
+          document: {
+            exchangeRate: quoteItemValue?.exchangeRate,
+            price: quoteItem?.price,
+            discount: quoteItem?.discount,
+            finalPrice: quoteItem?.finalPrice,
+            quantity: quoteItem?.quantity,
+            document: {
+              totalPrice: quoteItemValue?.totalPrice,
+              totalPriceAfterDiscount: quoteItemValue?.totalPriceAfterDiscount,
+              discount: +quoteItemValue?.discount,
+              discountAmount: quoteItemValue?.discountAmount,
+              totalPayment: quoteItemValue?.totalPayment,
+              vat: quoteItemValue?.vat,
+              totalVAT: quoteItemValue?.totalVAT
+            },
+            data: data,
+            calculationType: calculationType
+          }
+        }
+      );
       if (res?.success) {
-        alertSuccessUpdate();
-        getQuote();
+        const _data = res?.data?.data?.data
+        console.log("_data", _data)
+        const updatedQuoteItemValue = {
+          ...quoteItemValue,
+          documentItems: quoteItemValue.documentItems.map(documentItem => {
+            if (documentItem.id === quoteItem.id) {
+              return {
+                ...documentItem,
+                finalPrice: _data.finalPrice,
+                price: _data.price,
+                quantity: _data.quantity,
+                discount: _data.discount
+              };
+            } else {
+              return documentItem;
+            }
+          })
+        };
+        setQuoteItemValue(updatedQuoteItemValue);
       } else {
-        alertFaultUpdate();
       }
     }
-    await calculateDocumentItemApi(callApi, callBack,
-      {
-        documentType: docType,
-        ItemId: quoteItemId,
-        data,
-        calculationType,
-      })
+    else {
+      const callBack = (res) => {
+        if (res?.success) {
+          alertSuccessUpdate();
+          getQuote();
+        } else {
+          alertFaultUpdate();
+        }
+      }
+      await calculateDocumentItemApi(callApi, callBack,
+        {
+          documentType: docType,
+          ItemId: quoteItem?.id,
+          data,
+          calculationType,
+        })
+    }
+
   }
 
   const onCloseDuplicateWithDifferentQTY = () => {

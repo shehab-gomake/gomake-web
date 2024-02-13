@@ -161,7 +161,7 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
     refreshExchangeRate,
     getQuote,
     selectConfirmBusiness
-  } = useQuoteNew({docType :documentType  , isQuoteConfirmation : isQuoteConfirmation });
+  } = useQuoteNew({ docType: documentType, isQuoteConfirmation: isQuoteConfirmation });
 
   return (
     <>
@@ -321,7 +321,7 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
           }
         </div>
       )}
-      {(isQuoteConfirmation && !quoteConfirm?.isConfirmed )  && <ButtonsConfirmContainer />}
+      {(isQuoteConfirmation && !quoteConfirm?.isConfirmed) && <ButtonsConfirmContainer />}
       <AddNewItemModal
         openModal={openAddNewItemModal}
         onClose={onCloseNewItem}
@@ -335,6 +335,7 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
       <CopyFromOrderModal
         openModal={openCopyFromOrderModal}
         onClose={onCloseCopyFromOrder}
+        documentType={documentType}
       />
       <DuplicateItemModal
         openModal={openDuplicateWithDifferentQTYModal}

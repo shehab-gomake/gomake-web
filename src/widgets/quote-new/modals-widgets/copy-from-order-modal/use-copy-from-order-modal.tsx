@@ -1,12 +1,13 @@
 import { useGomakeAxios } from "@/hooks";
+import { EHttpMethod } from "@/services/api-service/enums";
 import { getClientOrderItemsApi } from "@/services/api-service/generic-doc/documents-api";
 import { quoteItemState } from "@/store";
 import { TableCell, styled, tableCellClasses } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRecoilState } from "recoil";
 
-const useCopyFromOrderModal = () => {
+const useCopyFromOrderModal = ({ onClose, documentType }) => {
   const { t } = useTranslation();
   const [term, setTerm] = useState("")
   const filterItems = (items) => {
@@ -27,6 +28,11 @@ const useCopyFromOrderModal = () => {
       },
     };
   });
+  const addOrdersToDeliveryNote = () => {
+    calculateDocument()
+    onClose();
+
+  };
   const columnWidths = ["5%", "8%", "20%", "33%", "8%", "8%", "8%"];
   const tableHeaders = [
     "#",
@@ -39,6 +45,7 @@ const useCopyFromOrderModal = () => {
     t("products.offsetPrice.admin.finalPrice"),
   ];
   const [quoteItemValue, setQuoteItemValue] = useRecoilState<any>(quoteItemState);
+
   const [documentItems, setDocumentItems] = useState([])
   const { callApi } = useGomakeAxios();
   const getClientOrderItems = async () => {
@@ -56,110 +63,6 @@ const useCopyFromOrderModal = () => {
   useEffect(() => {
     getClientOrderItems()
   }, [quoteItemValue])
-  // const documentItems =
-  //   [
-  //     {
-  //       date: "5/6/2023",
-  //       id: "aa1",
-  //       items: [
-  //         {
-  //           "id": "7e92ebdc-24ef-4c21-9d15-484cbf4bc0f7",
-  //           "code": null,
-  //           "documentID": "602f6336-74e2-4478-839e-baa89da6a494",
-  //           "details": "details 1111",
-  //           "price": 3.34,
-  //           "workName": "Job Name : test2",
-  //           "discount": 5,
-  //           "finalPrice": 317.3,
-  //           "quantity": 100,
-  //           "minQuantity": null,
-  //           "statusString": null,
-  //           "productName": "Paper Product",
-  //           "isSelected": true,
-  //           "productType": 0,
-  //           "productID": "406c0d25-3ab5-44bb-b652-621b0245d752",
-  //           "clientTypeId": "89f00e94-8b22-4997-88bb-99af57cd2db0",
-  //           "duplicatedFromDocumentItemId": null,
-  //           "isDuplicatedWithAnotherQuantity": false,
-  //           "childsDocumentItems": null,
-  //           "graphicsTypes": null
-  //         },
-  //         {
-  //           "id": "7e92ebdc-24ef-4c21-9d15-484cbf4bc0f8",
-  //           "code": null,
-  //           "documentID": "602f6336-74e2-4478-839e-baa89da6a494",
-  //           "details": "AAAAAA ",
-  //           "price": 3.34,
-  //           "workName": "Job Name : test2",
-  //           "discount": 5,
-  //           "finalPrice": 317.3,
-  //           "quantity": 100,
-  //           "minQuantity": null,
-  //           "statusString": null,
-  //           "productName": "sssssss",
-  //           "isSelected": true,
-  //           "productType": 0,
-  //           "productID": "406c0d25-3ab5-44bb-b652-621b0245d752",
-  //           "clientTypeId": "89f00e94-8b22-4997-88bb-99af57cd2db0",
-  //           "duplicatedFromDocumentItemId": null,
-  //           "isDuplicatedWithAnotherQuantity": false,
-  //           "childsDocumentItems": null,
-  //           "graphicsTypes": null
-  //         },
-  //       ]
-  //     },
-  //     {
-  //       date: "7/6/2023",
-  //       id: "aa2",
-  //       items: [
-  //         {
-  //           "id": "7e92ebdc-24ef-4c21-9d15-484cbf4bc0f3",
-  //           "code": null,
-  //           "documentID": "602f6336-74e2-4478-839e-baa89da6a494",
-  //           "details": "BBBBBBB ",
-  //           "price": 3.34,
-  //           "workName": "Job Name : test2",
-  //           "discount": 5,
-  //           "finalPrice": 317.3,
-  //           "quantity": 100,
-  //           "minQuantity": null,
-  //           "statusString": null,
-  //           "productName": "QQQQQ",
-  //           "isSelected": true,
-  //           "productType": 0,
-  //           "productID": "406c0d25-3ab5-44bb-b652-621b0245d752",
-  //           "clientTypeId": "89f00e94-8b22-4997-88bb-99af57cd2db0",
-  //           "duplicatedFromDocumentItemId": null,
-  //           "isDuplicatedWithAnotherQuantity": false,
-  //           "childsDocumentItems": null,
-  //           "graphicsTypes": null
-  //         },
-  //         {
-  //           "id": "7e92ebdc-24ef-4c21-9d15-484cbf4bc0f2",
-  //           "code": null,
-  //           "documentID": "602f6336-74e2-4478-839e-baa89da6a494",
-  //           "details": "tttttt",
-  //           "price": 3.34,
-  //           "workName": "Job Name : test2",
-  //           "discount": 5,
-  //           "finalPrice": 317.3,
-  //           "quantity": 100,
-  //           "minQuantity": null,
-  //           "statusString": null,
-  //           "productName": "iiiuuh",
-  //           "isSelected": true,
-  //           "productType": 0,
-  //           "productID": "406c0d25-3ab5-44bb-b652-621b0245d752",
-  //           "clientTypeId": "89f00e94-8b22-4997-88bb-99af57cd2db0",
-  //           "duplicatedFromDocumentItemId": null,
-  //           "isDuplicatedWithAnotherQuantity": false,
-  //           "childsDocumentItems": null,
-  //           "graphicsTypes": null
-  //         },
-
-  //       ]
-  //     }
-  //   ]
   const [selectedItems, setSelectedItems] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
   const calculateTotalPrice = () => {
@@ -200,6 +103,52 @@ const useCopyFromOrderModal = () => {
     const selectedIds = documentItems.find(item => item.id === documentItemId)?.items?.map(item => item.id) || [];
     return documentItems.find(item => item.id === documentItemId)?.items?.every(item => selectedItems.some(selectedItem => selectedItem.id === item.id)) || false;
   };
+
+  const calculateDocument = useCallback(async () => {
+    const res = await callApi(
+      EHttpMethod.POST,
+      `/v1/erp-service/documents/calculate-document-new`,
+      {
+        documentType: documentType,
+        document: {
+          exchangeRate: documentItems[0]?.exchangeRate,
+          totalPrice: quoteItemValue?.totalPrice,
+          data: 0,
+          calculationType: 0,
+          totalPriceAfterDiscount: quoteItemValue?.totalPriceAfterDiscount,
+          discount: quoteItemValue?.discount,
+          discountAmount: quoteItemValue?.discountAmount,
+          totalPayment: quoteItemValue?.totalPayment,
+          vat: documentItems[0]?.vat,
+          totalVAT: quoteItemValue?.totalVAT,
+          documentItems: selectedItems.map(item => ({
+            finalPrice: item.finalPrice
+          }))
+        }
+      }
+    );
+    if (res?.success) {
+      const _data = res?.data?.data?.data
+      const updatedQuoteItemValue = { ...quoteItemValue };
+      updatedQuoteItemValue.discount = _data.discount;
+      updatedQuoteItemValue.discountAmount = _data.discountAmount;
+      updatedQuoteItemValue.totalPayment = _data.totalPayment;
+      updatedQuoteItemValue.totalPrice = _data.totalPrice;
+      updatedQuoteItemValue.totalPriceAfterDiscount = _data.totalPriceAfterDiscount;
+      updatedQuoteItemValue.totalVAT = _data.totalVAT;
+      updatedQuoteItemValue.vat = _data.vat;
+      updatedQuoteItemValue.exchangeRate = documentItems[0]?.exchangeRate;
+      const filteredSelectedItems = selectedItems.filter(selectedItem => {
+        return !updatedQuoteItemValue.documentItems.some(documentItem => documentItem.id === selectedItem.id);
+      });
+      updatedQuoteItemValue.documentItems = [
+        ...updatedQuoteItemValue.documentItems,
+        ...filteredSelectedItems
+      ];
+      setQuoteItemValue(updatedQuoteItemValue);
+    } else {
+    }
+  }, [quoteItemValue, selectedItems, documentType, documentItems]);
   return {
     t,
     term,
@@ -213,7 +162,8 @@ const useCopyFromOrderModal = () => {
     areAllItemsSelected,
     selectedItems,
     totalPrice,
-    filterItems
+    filterItems,
+    addOrdersToDeliveryNote
   };
 };
 
