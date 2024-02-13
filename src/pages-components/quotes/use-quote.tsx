@@ -556,6 +556,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     onCloseAddRuleModal,
     onOpenAddRuleModal,
     openAddRule,
+    navigate,
     documentPath
   };
 };

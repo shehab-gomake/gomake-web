@@ -19,7 +19,7 @@ import { GoMakePagination } from "@/components/pagination/gomake-pagination";
 import { SettingNewIcon } from "@/icons";
 import { AddRuleModal } from "../products/profits-new/widgets/add-rule-modal";
 import { useGomakeRouter } from "@/hooks";
-
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 interface IProps {
   documentType: DOCUMENT_TYPE;
   isFromHomePage?: boolean;
@@ -70,9 +70,9 @@ const QuotesListPageWidget = ({
     onCloseAddRuleModal,
     onOpenAddRuleModal,
     openAddRule,
+    navigate,
     documentPath
   } = useQuotes(documentType);
-
   return (
     <>
       {!isFromHomePage && (
@@ -86,8 +86,19 @@ const QuotesListPageWidget = ({
           <div style={classes.mainContainer}>
             <div style={classes.headerStyle}>
               <HeaderTitle title={documentLabel} marginTop={1} marginBottom={1} />
-              {documentType === DOCUMENT_TYPE.quote ? <CardsSection statistics={allStatistics} activeCard={activeCard} onClick={onclickCreateNew} onClickCard={handleCardClick} onSecondClickCard={handleSecondCardClick} /> :
-                <Button style={classes.createNew} onClick={() => navigate(`/${documentPath}`)} startIcon={<AddCircleOutlineIcon style={{ color: 'black', fontSize: "24px" }} />}>{t("sales.quote.createNew")}</Button>}
+              {documentType === DOCUMENT_TYPE.quote && <CardsSection statistics={allStatistics} activeCard={activeCard} onClick={onclickCreateNew} onClickCard={handleCardClick} onSecondClickCard={handleSecondCardClick} />}
+              {documentType === DOCUMENT_TYPE.deliveryNote &&
+                <Button
+                  style={classes.createNew}
+                  startIcon={<AddCircleOutlineIcon />}
+                  onClick={() => { navigate(`/deliveryNote?isNewCreation=true`) }}
+                >
+                  {t("sales.quote.createNew")}
+                </Button>
+              }
+              {documentType === DOCUMENT_TYPE.receipt &&
+                  <Button style={classes.createNew} onClick={() => navigate(`/${documentPath}`)} startIcon={<AddCircleOutlineIcon style={{ color: 'black', fontSize: "24px" }} />}>{t("sales.quote.createNew")}</Button>
+              }
             </div>
             <div style={classes.filtersContainer}>
               <div style={classes.selectedFilterContainer}>
