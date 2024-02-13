@@ -23,19 +23,12 @@ const ButtonsContainer = ({
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
-  const { openOrderNowModal, onClickCloseOrderNowModal, onClickOpenOrderNowModal, onClickConfirmWithoutNotification, onClickConfirmWithNotification, onClickPrint ,onClickClosePaymentModal, onClickOpenPaymentModal, openPaymentModal, selectedTabIndex } = useButtonsContainer(documentType);
+  const { openOrderNowModal, onClickCloseOrderNowModal, onClickOpenOrderNowModal, onClickConfirmWithoutNotification, onClickConfirmWithNotification, onClickPrint, onClickClosePaymentModal, onClickOpenPaymentModal, openPaymentModal, selectedTabIndex } = useButtonsContainer(documentType);
 
   return (
     <div style={classes.writeCommentcontainer}>
       <div style={classes.btnsContainer}>
-        {documentType === DOCUMENT_TYPE.receipt && <GomakePrimaryButton
-          leftIcon={<CreditCardIcon color={"#344054"} />}
-          style={classes.btnContainer}
-          onClick={() => null}
-        > 
-        {t("Payment")}
-        </GomakePrimaryButton>}
-        <PaymentBtn handleOpenModal={onClickOpenPaymentModal}/>
+        {documentType === DOCUMENT_TYPE.receipt && <PaymentBtn handleOpenModal={onClickOpenPaymentModal} />}
         {(documentType === DOCUMENT_TYPE.quote || documentType === DOCUMENT_TYPE.order) &&
           <GomakePrimaryButton
             leftIcon={<PlusIcon stroke={"#344054"} />}
@@ -105,7 +98,7 @@ const ButtonsContainer = ({
           confirmWithoutNotification={onClickConfirmWithoutNotification}
           confirmWithNotification={onClickConfirmWithNotification}
         />
-        <PaymentModal onClose={onClickClosePaymentModal} openModal={openPaymentModal} selectedTab={selectedTabIndex}/>
+        <PaymentModal onClose={onClickClosePaymentModal} openModal={openPaymentModal} selectedTab={selectedTabIndex} />
       </div>
     </div>
   );
