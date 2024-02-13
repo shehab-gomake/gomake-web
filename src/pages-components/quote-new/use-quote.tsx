@@ -44,7 +44,6 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
   const { getAllClientAddress } = useQuoteGetData();
   const [quoteItemValue, setQuoteItemValue] = useRecoilState<any>(quoteItemState);
   const quoteConfirm = useRecoilValue<any>(quoteConfirmationState);
-  console.log("quoteItemValue", quoteItemValue)
   const [selectDate, setSelectDate] = useState(isQuoteConfirmation ? quoteConfirm?.dueDate : quoteItemValue?.dueDate);
   const [customersListValue, setCustomersListValue] = useRecoilState<any>(businessListsState);
   const [selectBusiness, setSelectBusiness] = useState<any>({});
@@ -647,13 +646,11 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
   const onCloseNewItem = () => {
     setOpenAddNewItemModal(false);
   };
-  const calculateDocument = useCallback(async () => {
 
-  }, [quoteItemValue, docType]);
 
   const getCalculateQuoteItem = async (quoteItem: any, calculationType: number, data: number) => {
-    console.log("quoteItesssm", quoteItem)
     if (router.query.isNewCreation) {
+      const quoteItemEdit = quoteItemValue.documentItems.find(item => item.id === quoteItem.id)
       const res = await callApi(
         EHttpMethod.POST,
         `/v1/erp-service/documents/calculate-item`,
@@ -663,7 +660,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
             exchangeRate: quoteItemValue?.exchangeRate,
             price: quoteItem?.price,
             discount: quoteItem?.discount,
-            finalPrice: quoteItem?.finalPrice,
+            finalPrice: quoteItemEdit?.finalPrice,
             quantity: quoteItem?.quantity,
             document: {
               totalPrice: quoteItemValue?.totalPrice,
@@ -681,9 +678,15 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
       );
       if (res?.success) {
         const _data = res?.data?.data?.data
-        console.log("_data", _data)
         const updatedQuoteItemValue = {
           ...quoteItemValue,
+          discount: _data?.document?.discount,
+          discountAmount: _data?.document?.discountAmount,
+          totalPayment: _data?.document?.totalPayment,
+          totalPrice: _data?.document?.totalPrice,
+          totalPriceAfterDiscount: _data?.document?.totalPriceAfterDiscount,
+          totalVAT: _data?.document?.totalVAT,
+          vat: _data?.document?.vat,
           documentItems: quoteItemValue.documentItems.map(documentItem => {
             if (documentItem.id === quoteItem.id) {
               return {
