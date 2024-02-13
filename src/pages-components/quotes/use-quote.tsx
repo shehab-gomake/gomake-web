@@ -58,7 +58,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
   const [pageSize, setPageSize] = useState(DEFAULT_VALUES.PageSize);
   const selectedClient = useRecoilValue<any>(selectedClientState);
   const [openAddRule, setOpenAddRule] = useState<boolean>(false);
-  const documentPath = DOCUMENT_TYPE[docType].toLowerCase();
+  const documentPath = DOCUMENT_TYPE[docType];
 
 
   const onCloseAddRuleModal = () => {

@@ -25,6 +25,7 @@ import { AddDeliveryModal } from "@/widgets/quote-new/modals-widgets/add-deliver
 import { DOCUMENT_TYPE } from "../quotes/enums";
 import { ButtonsConfirmContainer } from "@/widgets/quote-new/buttons-cofirm-container";
 import { CopyFromOrderModal } from "@/widgets/quote-new/modals-widgets/copy-from-order-modal/copy-from-order-modal";
+import { ReceiptsTable } from "@/widgets/quote-new/payments-table";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -286,7 +287,7 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
                 paddingRight: 12,
               }}
             >
-              <QuoteForPriceTable
+            {documentType !== DOCUMENT_TYPE.receipt && <QuoteForPriceTable
                 documentItems={isQuoteConfirmation ? quoteConfirm?.documentItems : documentItems}
                 tableHeaders={tableHeaders}
                 columnWidths={columnWidths}
@@ -305,18 +306,25 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
                 getQuote={getQuote}
                 isQuoteConfirmation={isQuoteConfirmation}
               />
+              }
+
+
+              {
+                documentType === DOCUMENT_TYPE.receipt && 
+                <ReceiptsTable/>
+              }
             </div>
             <WriteCommentComp getQuote={getQuote} isQuoteConfirmation={isQuoteConfirmation} />
           </div>
           {!isQuoteConfirmation &&
-            <ButtonsContainer
+            <ButtonsContainer 
               onOpenNewItem={onOpenNewItem}
               onOpenDeliveryModal={onOpenDeliveryModal}
               handleCancelBtnClick={handleCancelBtnClick}
               handleSaveBtnClick={handleSaveBtnClick}
               handleSendBtnClick={handleSendBtnClick}
               documentType={documentType}
-              onOpenCopyFromOrder={onOpenCopyFromOrder}
+        //      onOpenCopyFromOrder={onOpenCopyFromOrder}
             />
           }
         </div>

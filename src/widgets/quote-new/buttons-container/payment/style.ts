@@ -43,7 +43,7 @@ const useStyle = () => {
             },
             containerStyle: {
                 width: "50%",
-                border: "2px solid rgba(224, 224, 224, 1)",
+                border: "2px solid rgba(0, 0, 0, 0.04)",
                 boxShadow: "0px 1px 10px rgba(0, 0, 0, 0.08)",
                 borderRadius: "4px"
             },

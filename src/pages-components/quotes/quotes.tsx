@@ -9,7 +9,6 @@ import {
 } from "@/components";
 import { SearchInputComponent } from "@/components/form-inputs/search-input-component";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
-import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import { HeaderTitle } from "@/widgets";
 import { QuoteLogsWidget } from "./quote-widgets/logs-widget";
 import { DOCUMENT_TYPE } from "./enums";
@@ -29,7 +28,6 @@ const QuotesListPageWidget = ({
   isFromHomePage = false,
 }: IProps) => {
   const { classes } = useStyle();
-  const { navigate } = useGomakeRouter();
   const {
     tableHeaders,
     allQuotes,
@@ -92,12 +90,17 @@ const QuotesListPageWidget = ({
                   style={classes.createNew}
                   startIcon={<AddCircleOutlineIcon />}
                   onClick={() => { navigate(`/deliveryNote?isNewCreation=true`) }}
-                >
-                  {t("sales.quote.createNew")}
+                >{t("sales.quote.createNew")}
                 </Button>
               }
+
               {documentType === DOCUMENT_TYPE.receipt &&
-                  <Button style={classes.createNew} onClick={() => navigate(`/${documentPath}`)} startIcon={<AddCircleOutlineIcon style={{ color: 'black', fontSize: "24px" }} />}>{t("sales.quote.createNew")}</Button>
+                <Button
+                  style={classes.createNew}
+                  onClick={() => navigate(`/${documentPath}`)}
+                  startIcon={<AddCircleOutlineIcon style={{ color: 'black', fontSize: "24px" }} />}>
+                  {t("sales.quote.createNew")}
+                </Button>
               }
             </div>
             <div style={classes.filtersContainer}>
