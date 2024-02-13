@@ -1,4 +1,8 @@
 const TransferInputs = (state , accountCodes) => {
+  const formattedOptions = accountCodes.map((code) => ({
+    value: code.value,
+    text: code.label,
+  }))
     return [
         {
             name: "accountCode",
@@ -7,12 +11,8 @@ const TransferInputs = (state , accountCodes) => {
             required: false,
             placeholder: "payment.accountCode",
             parameterKey: "accountCode",
-            options: accountCodes.map((code) => ({
-                value: code.value,
-                text: code.label,
-              })),   
-              
-            value: state?.accountCode,
+            options: formattedOptions,
+            value:formattedOptions[2],
             isValid: true,
         },
         {

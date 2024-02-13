@@ -8,6 +8,7 @@ const useStyle = () => {
     const classes = useMemo(() => {
         return {
             divStyle: {
+                height:"30%",
                 display: "flex",
                 flexDirection: "column" as "column",
                 alignItems: "flex-start",
@@ -56,6 +57,12 @@ const useStyle = () => {
                 ...FONT_FAMILY.Lexend(600, 14),
                 display: "flex",
                 alignItems: "flex-end",
+              },
+              selectLbl: {
+                color: primaryColor(900),
+                ...FONT_FAMILY.Lexend(600, 14),
+                display: "flex",
+                 alignItems: "center",
               },
         };
     }, [theme]);

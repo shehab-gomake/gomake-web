@@ -4,10 +4,10 @@ import { Stack } from "@mui/material";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { TransferInputs } from "./transfer-inputs";
+import { usePaymentMethodsTabs } from "./use-payment-methods-tabs";
 
 const TransferTab = () => {
-    const { t } = useTranslation();
-    const options = [{ label: t("Cash"), value: "true" }];
+    const { options } = usePaymentMethodsTabs();
     const [state, setState] = useState({});
     const onChangeInputs = (key, value) => {
         setState({ ...state, [key]: value })

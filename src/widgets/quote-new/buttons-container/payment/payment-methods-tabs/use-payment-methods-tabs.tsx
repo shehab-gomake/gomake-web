@@ -59,6 +59,11 @@ const usePaymentMethodsTabs = () => {
         </IconButton>,
     ];
 
+    const options = [
+        { label: t("payment.cash"), value: "1" },
+        { label: t("payment.check"), value: "2" },
+        { label: t("payment.transfer"), value: "3" }];
+
 
     const getTableRow = (row, index) => (
         [
@@ -98,7 +103,7 @@ const usePaymentMethodsTabs = () => {
             />,
             <input
                 style={{ width: "100px" }}
-                type="number" 
+                type="number"
                 value={row.sum}
                 placeholder={t("payment.sum")}
                 onChange={(e) => handleInputChange(index, "sum", e.target.value)}
@@ -113,6 +118,7 @@ const usePaymentMethodsTabs = () => {
     return {
         t,
         data,
+        options,
         tableHeaders,
         getTableRow,
     };

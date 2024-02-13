@@ -36,7 +36,7 @@ const PaymentModal = ({ openModal, onClose, selectedTab }: IPaymentModalProps) =
             onClose={onClose}
             >
            <div style={classes.boxStyle}>
-           <div><PrimaryTabsComponent tabs={tabs} selectedTabIndex={selectedTab}/></div>
+           <div style={{maxHeight:"70%" , height:"65%" , overflow:"hidden"}}><PrimaryTabsComponent tabs={tabs} selectedTabIndex={selectedTab}/></div>
            <FooterSection/>
            </div>
         </GoMakeModal>
