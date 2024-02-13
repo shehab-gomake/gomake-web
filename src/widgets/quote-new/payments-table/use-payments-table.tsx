@@ -1,10 +1,12 @@
 import { useTranslation } from "react-i18next";
-import {TableCell,styled,tableCellClasses} from "@mui/material";
+import { TableCell, styled, tableCellClasses } from "@mui/material";
 import { useState } from "react";
+import { useRecoilState } from "recoil";
+import { totalDocumentsState } from "../buttons-container/states";
 
 const usePaymentsTable = () => {
     const { t } = useTranslation();
-    const [totalSum, setTotalSum] = useState(0);
+    const [totalSum, setTotalSum] = useRecoilState<number>(totalDocumentsState);
     const [checkedItems, setCheckedItems] = useState({});
     const columnWidths = ["5%", "19%", "19%", "19%", "19%", "19%"];
 
@@ -54,40 +56,33 @@ const usePaymentsTable = () => {
         };
     });
 
-
-
-
-    
-
-      const handleCheckboxChange = (index) => {
+    const handleCheckboxChange = (index) => {
         setCheckedItems((prevCheckedItems) => {
-          const updatedCheckedItems = {
-            ...prevCheckedItems,
-            [index]: !prevCheckedItems[index],
-          };
-      
-          let sum = 0;
-          tableRows.forEach((item, index) => {
-            if (updatedCheckedItems[index]) {
-              sum += item.sum;
-            }
-          });
-      
-          setTotalSum(sum);
-          return updatedCheckedItems;
-        });
-      };
+            const updatedCheckedItems = {
+                ...prevCheckedItems,
+                [index]: !prevCheckedItems[index],
+            };
 
-    
-    
+            let sum = 0;
+            tableRows.forEach((item, index) => {
+                if (updatedCheckedItems[index]) {
+                    sum += item.sum;
+                }
+            });
+
+            setTotalSum(sum);
+            return updatedCheckedItems;
+        });
+    };
+
+
     return {
-        
         columnWidths,
         tableHeaders,
         tableRows,
         PrimaryTableCell,
         totalSum,
-        checkedItems, 
+        checkedItems,
         handleCheckboxChange,
     };
 };

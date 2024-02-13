@@ -2,10 +2,12 @@ import { Stack } from "@mui/material";
 import { usePaymentMethodsTabs } from "./use-payment-methods-tabs";
 import { SecondaryButton } from "@/components/button/secondary-button";
 import { useStyle } from "../style";
+import { usePaymentsTable } from "@/widgets/quote-new/payments-table/use-payments-table";
 
 const FooterSection = () => {
     const { t } = usePaymentMethodsTabs();
     const { classes } = useStyle();
+    const { totalSum } = usePaymentsTable();
 
     return (
         <div style={classes.divStyle}>
@@ -16,7 +18,7 @@ const FooterSection = () => {
             <Stack sx={classes.containerStyle}>
                 <Stack style={{ ...classes.rowStyle, borderBottom: "2px solid rgba(0, 0, 0, 0.04)" }}>
                     <span style={classes.textStyle}>{t("payment.totalDocuments")}</span>
-                    <input readOnly style={classes.inputStyle} value={"5$"} />
+                    <input readOnly style={classes.inputStyle} value={totalSum} />
                 </Stack>
                 <Stack style={{ ...classes.rowStyle, borderBottom: "2px solid rgba(0, 0, 0, 0.04)" }}>
                     <span style={classes.textStyle} >{t("payment.excessPayment")}</span>
