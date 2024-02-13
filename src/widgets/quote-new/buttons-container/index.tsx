@@ -12,6 +12,8 @@ import { useButtonsContainer } from "./use-buttons-container";
 import { useRecoilValue } from "recoil";
 import { quoteItemState } from "@/store";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
+import { PaymentModal } from "./payment/payment-modal";
+import { PaymentBtn } from "./payment/payment-button";
 
 const ButtonsContainer = ({
   onOpenNewItem,
@@ -23,31 +25,29 @@ const ButtonsContainer = ({
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
-  const { openOrderNowModal, onClickCloseOrderNowModal, onClickOpenOrderNowModal, onClickConfirmWithoutNotification, onClickConfirmWithNotification, onClickPrint } = useButtonsContainer(documentType);
+  const { openOrderNowModal, onClickCloseOrderNowModal, onClickOpenOrderNowModal, onClickConfirmWithoutNotification, onClickConfirmWithNotification, onClickPrint, onClickClosePaymentModal, onClickOpenPaymentModal, openPaymentModal, selectedTabIndex } = useButtonsContainer(documentType);
 
   return (
     <div style={classes.writeCommentcontainer}>
       <div style={classes.btnsContainer}>
-        <GomakePrimaryButton
-          leftIcon={<PlusIcon stroke={"#344054"} />}
-          style={classes.btnContainer}
-          onClick={() => onOpenNewItem()}
-        >
-          {t("sales.quote.addNewItems")}
-        </GomakePrimaryButton>
-        {/* <GomakePrimaryButton
-          leftIcon={<PlusIcon stroke={"#344054"} />}
-          style={classes.btnContainer}
-        >
-          {t("sales.quote.addExistItem")}
-        </GomakePrimaryButton> */}
-        <GomakePrimaryButton
-          leftIcon={<PlusIcon stroke={"#344054"} />}
-          style={classes.btnContainer}
-          onClick={() =>onOpenDeliveryModal()}
-        >
-          {t("sales.quote.addDelivery")}
-        </GomakePrimaryButton>
+        {documentType === DOCUMENT_TYPE.receipt && <PaymentBtn handleOpenModal={onClickOpenPaymentModal} />}
+        {(documentType === DOCUMENT_TYPE.quote || documentType === DOCUMENT_TYPE.order) &&
+          <GomakePrimaryButton
+            leftIcon={<PlusIcon stroke={"#344054"} />}
+            style={classes.btnContainer}
+            onClick={() => onOpenNewItem()}
+          >
+            {t("sales.quote.addNewItems")}
+          </GomakePrimaryButton>}
+        {(documentType === DOCUMENT_TYPE.quote || documentType === DOCUMENT_TYPE.order) &&
+          <GomakePrimaryButton
+            leftIcon={<PlusIcon stroke={"#344054"} />}
+            style={classes.btnContainer}
+            onClick={() => onOpenDeliveryModal()}
+          >
+            {t("sales.quote.addDelivery")}
+          </GomakePrimaryButton>}
+
       </div>
       <div style={classes.btnsContainer}>
         {/* <GomakePrimaryButton
@@ -100,6 +100,7 @@ const ButtonsContainer = ({
           confirmWithoutNotification={onClickConfirmWithoutNotification}
           confirmWithNotification={onClickConfirmWithNotification}
         />
+        <PaymentModal onClose={onClickClosePaymentModal} openModal={openPaymentModal} selectedTab={selectedTabIndex} />
       </div>
     </div>
   );
