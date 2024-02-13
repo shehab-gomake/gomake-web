@@ -2,17 +2,19 @@ import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
 import { SecondaryButton } from "@/components/button/secondary-button";
 import { Stack } from "@mui/material";
 import { useTranslation } from "react-i18next";
+import { useStyle } from "../style";
 
 
 
 const CashTab = () => {
     const { t } = useTranslation();
+    const { classes } = useStyle();
     const options = [{ label: t("Cash"), value: "true" }];
 
     return (
             <Stack direction={"column"} gap={"20px"} padding={"0 5px"} >
                 <Stack direction={"column"} gap={"7px"} padding={"0 5px"} >
-                    <span>{t("payment.accountCode")}</span>
+                    <span style={classes.inputLbl} >{t("payment.accountCode")}</span>
                     <GoMakeAutoComplate
                         style={{ height: "40px", maxWidth: 180, border: 0 }}
                         onChange={() => alert("hey")}
@@ -21,7 +23,7 @@ const CashTab = () => {
                     />
                 </Stack>
                 <Stack direction={"column"} gap={"7px"} padding={"0 5px"} >
-                    <span>{t("payment.totalCash")}</span>
+                    <span style={classes.inputLbl} >{t("payment.totalCash")}</span>
                     <GomakeTextInput
                         style={{ height: "40px", maxWidth: 180 }}
                         type={"number"}

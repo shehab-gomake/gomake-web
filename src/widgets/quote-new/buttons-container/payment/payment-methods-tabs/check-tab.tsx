@@ -8,7 +8,8 @@ const CheckTab = () => {
     return (
         <Stack display={"flex"} direction={"column"} justifyContent={"space-between"} padding={"0 5px"} >
             <PrimaryTable
-                maxHeight={650}
+            // stickyHeader={true}
+            //     maxHeight={500}
                 rows={data.map((row, index) => getTableRow(row, index))}
                 headers={tableHeaders}
             />

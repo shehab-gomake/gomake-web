@@ -105,7 +105,7 @@ const useStyle = () => {
       saveBtn: {
         display: "flex",
         alignSelf: "flex-start",
-        width: "80%"
+        width: "100%"
       }
     };
   }, [theme]);
