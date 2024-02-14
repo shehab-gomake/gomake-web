@@ -984,51 +984,94 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
   const setOpenModal = useSetRecoilState<boolean>(addressModalState);
 
   const onClickAddNewAddress = useCallback(async (item: any, isUpdate: boolean) => {
-    const res = await callApi(
-      EHttpMethod.POST,
-      `/v1/crm-service/customer/create-address`,
-      {
-        address1: item?.addressId,
+    if (router.query.isNewCreation) {
+      const updatedQuoteItemValue = { ...quoteItemValue };
+      if (!Array.isArray(updatedQuoteItemValue.documentAddresses)) {
+        updatedQuoteItemValue.documentAddresses = [];
+      }
+      const newAddress = {
+        id: uuidv4(),
+        addressID: item?.addressId,
         street: item?.street,
         city: item?.city,
         entry: item?.entry,
         apartment: item?.apartment,
-        clientId: quoteItemValue?.customerID,
-      }
-    );
-    if (res?.success) {
-      alertSuccessAdded();
-      const result = await getAllClientAddress();
-      isUpdate ? updateClientAddress(result.find(item => item.id === res.data.data.result)) :
-        onClickAddAddress(result.find(item => item.id === res.data.data.result))
-    } else {
-      alertFaultAdded();
+        notes: "",
+        documentID: updatedQuoteItemValue?.id,
+      };
+      updatedQuoteItemValue.documentAddresses = [...updatedQuoteItemValue.documentAddresses, newAddress];
+      setQuoteItemValue(updatedQuoteItemValue);
+      setOpenModal(false);
     }
-  }, [quoteItemValue]);
-
-  const updateClientAddress = async (item: any) => {
-    const callBack = (res) => {
+    else {
+      const res = await callApi(
+        EHttpMethod.POST,
+        `/v1/crm-service/customer/create-address`,
+        {
+          address1: item?.addressId,
+          street: item?.street,
+          city: item?.city,
+          entry: item?.entry,
+          apartment: item?.apartment,
+          clientId: quoteItemValue?.customerID,
+        }
+      );
       if (res?.success) {
-        alertSuccessUpdate();
-        getQuote();
-        setOpenModal(false);
+        alertSuccessAdded();
+        const result = await getAllClientAddress();
+        isUpdate ? updateClientAddress(result.find(item => item.id === res.data.data.result)) :
+          onClickAddAddress(result.find(item => item.id === res.data.data.result))
       } else {
         alertFaultAdded();
       }
     }
-    await updateDocumentAddressApi(callApi, callBack, {
-      documentType: docType,
-      address: {
-        id: quoteItemValue?.documentAddresses[0]?.id,
-        addressID: quoteItemValue?.documentAddresses[0]?.addressID,
-        street: item?.street,
-        city: item?.city,
-        entry: item?.entry,
-        apartment: item?.apartment,
-        notes: item?.notes || "",
-        documentID: quoteItemValue?.id,
+
+  }, [quoteItemValue, router]);
+  const updateClientAddress = async (item: any) => {
+    if (router.query.isNewCreation) {
+      const updatedQuoteItemValue = { ...quoteItemValue };
+      const updatedAddresses = updatedQuoteItemValue.documentAddresses.map((address) => {
+        if (address.id === item.id) {
+          return {
+            ...address,
+            street: item.street,
+            city: item.city,
+            entry: item.entry,
+            apartment: item.apartment,
+            notes: item.notes || "",
+          };
+        }
+        return address;
+      });
+      updatedQuoteItemValue.documentAddresses = updatedAddresses;
+      setQuoteItemValue(updatedQuoteItemValue);
+      setOpenModal(false);
+    }
+    else {
+      const callBack = (res) => {
+        if (res?.success) {
+          alertSuccessUpdate();
+          getQuote();
+          setOpenModal(false);
+        } else {
+          alertFaultAdded();
+        }
       }
-    })
+      await updateDocumentAddressApi(callApi, callBack, {
+        documentType: docType,
+        address: {
+          id: quoteItemValue?.documentAddresses[0]?.id,
+          addressID: quoteItemValue?.documentAddresses[0]?.addressID,
+          street: item?.street,
+          city: item?.city,
+          entry: item?.entry,
+          apartment: item?.apartment,
+          notes: item?.notes || "",
+          documentID: quoteItemValue?.id,
+        }
+      })
+    }
+
   }
 
   const onClickAddAddress = async (item: any) => {
@@ -1058,15 +1101,23 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
   }
 
   const onClickDeleteAddress = async (item: any) => {
-    const callBack = (res) => {
-      if (res?.success) {
-        alertSuccessDelete();
-        getQuote();
-      } else {
-        alertFaultDelete();
-      }
+    if (router.query.isNewCreation) {
+      const updatedQuoteItemValue = { ...quoteItemValue };
+      updatedQuoteItemValue.documentAddresses = [];
+      setQuoteItemValue(updatedQuoteItemValue);
     }
-    await deleteDocumentAddressApi(callApi, callBack, { documentAddressId: item?.id, documentType: docType })
+    else {
+      const callBack = (res) => {
+        if (res?.success) {
+          alertSuccessDelete();
+          getQuote();
+        } else {
+          alertFaultDelete();
+        }
+      }
+      await deleteDocumentAddressApi(callApi, callBack, { documentAddressId: item?.id, documentType: docType })
+    }
+
   }
 
   useEffect(() => {
