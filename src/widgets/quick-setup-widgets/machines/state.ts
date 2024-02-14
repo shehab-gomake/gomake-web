@@ -4,7 +4,8 @@ import {ECategoryId} from "@/widgets/machines/enums/category-id";
 export interface IMachineItem {
     value: string;
     label: string;
-    category: ECategoryId;
+    category: ECategoryId | '';
+    isAdminMachine?: boolean;
 }
 export const machinesSetup = atom<IMachineItem[]>({
     default: [],

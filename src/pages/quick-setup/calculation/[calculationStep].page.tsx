@@ -1,9 +1,6 @@
 import {QuickSetupLayout} from "@/layouts/quick-setup-layout/quick-setup-layout";
 import {CustomerAuthLayout} from "@/layouts";
 import {
-    QuickSetupMaterialStepComponent
-} from "@/widgets/quick-setup-widgets/materials/quick-setup-material-step/quick-setup -material-step-component";
-import {
     QuickSetupCalculationComponent
 } from "@/widgets/quick-setup-widgets/calculation/quick-setup-calculation-component";
 

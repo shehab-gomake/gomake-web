@@ -11,8 +11,15 @@ import {quickSetupAddMachines} from "@/services/api-service/machines/print-house
 import {useTranslation} from "react-i18next";
 
 const useMachinesSetupData = () => {
+    const [selectedCategory, setSelectedCategory] = useState<ECategoryId | ''>('');
     const [categoryMachines, setCategoryMachines] = useRecoilState(machinesSetup);
     const [printHouseMachines, setPrintHouseMachines] = useRecoilState(selectedMachinesSetup);
+    const [newMachine, setNewMachine] = useState<IMachineItem>({
+        label: '',
+        value: '',
+        category: '',
+        isAdminMachine: false
+    })
     const router = useRouter();
     const {machinesType} = router.query
     const {callApi} = useGomakeAxios();
@@ -23,7 +30,6 @@ const useMachinesSetupData = () => {
     const [machinesLoading, setMachinesLoading] = useState<boolean>(false);
 
     const {t} = useTranslation();
-    const [selectedCategory, setSelectedCategory] = useState('');
     const getMachineNameKey = (categoryId: ECategoryId) => {
         return machinesCategoriesState?.find(category => category.id === categoryId)?.name;
     }
@@ -39,7 +45,12 @@ const useMachinesSetupData = () => {
         const callBack = (res) => {
             setMachinesLoading(false)
             if (res.success) {
-                setCategoryMachines(res?.data?.map(m => ({value: m.id, label: m.name, category: m.category})))
+                setCategoryMachines(res?.data?.map(m => ({
+                    value: m.id,
+                    label: m.name,
+                    category: m.category,
+                    isAdminMachine: true
+                })))
             }
         }
         await getAdminMachinesByCategories(callApi, callBack, categories);
@@ -56,7 +67,7 @@ const useMachinesSetupData = () => {
             if (res?.success) {
                 setSelectedMachinesState([]);
                 setCategoryMachines([]);
-                router.push(step.next);
+                // router.push(step.next);
             } else {
                 alertFaultAdded();
             }
@@ -66,7 +77,14 @@ const useMachinesSetupData = () => {
             alertFaultAdded();
         } else {
             setLoading(true);
-            await quickSetupAddMachines(callApi, callBack, {machines: selectedMachinesState})
+            await quickSetupAddMachines(callApi, callBack, {
+                machines: selectedMachinesState?.map(machine => ({
+                    id: machine?.value,
+                    name: machine?.label,
+                    isAdminMachine: machine?.isAdminMachine,
+                    category: machine?.category
+                }))
+            })
         }
     }
 
@@ -76,6 +94,7 @@ const useMachinesSetupData = () => {
     }));
 
     const onSelectCategory = (category) => {
+        setNewMachine({value: '', category: '', label: ''});
         setSelectedCategory(category);
     }
 
@@ -84,8 +103,12 @@ const useMachinesSetupData = () => {
             setPrintHouseMachines([...printHouseMachines, machine])
         }
     }
-    const onRemovePrintHouseMachine = (machineId: string) => {
-        setPrintHouseMachines(printHouseMachines.filter(machine => machine?.value !== machineId))
+    const onRemovePrintHouseMachine = (machineIndex: number) => {
+        setPrintHouseMachines(printHouseMachines.filter((machine, index) => index !== machineIndex))
+    }
+
+    const onSearchMachine = (newMachineName: string) => {
+        setNewMachine({label: newMachineName, category: selectedCategory, value: newMachineName, isAdminMachine: false})
     }
 
     return {
@@ -101,7 +124,9 @@ const useMachinesSetupData = () => {
         machinesLoading,
         onSelectMachine,
         printHouseMachines,
-        onRemovePrintHouseMachine
+        onRemovePrintHouseMachine,
+        onSearchMachine,
+        newMachine
     }
 }
 export {useMachinesSetupData}

@@ -1,33 +1,33 @@
 import {Stack, Table, TableBody, TableCell, TableRow} from "@mui/material";
-import {useMaterialStep} from "@/widgets/quick-setup-widgets/materials/quick-setup-material-step/use-material-step";
+import {useMaterialsPricing} from "@/widgets/quick-setup-widgets/materials/quick-setup-materials-pricing/use-materials-pricing";
 import {SecondaryButton} from "@/components/button/secondary-button";
 import {convertWidthToVW} from "@/utils/adapter";
 import {FONT_FAMILY} from "@/utils/font-family";
 import TextField from "@mui/material/TextField";
 import {PrimaryButton} from "@/components/button/primary-button";
-import {useStyle} from "@/widgets/quick-setup-widgets/materials/quick-setup-material-step/style";
+import {useStyle} from "@/widgets/quick-setup-widgets/materials/quick-setup-materials-pricing/style";
 import {useTranslation} from "react-i18next";
 
-const QuickSetupMaterialStepComponent = () => {
-    const {step, onChange, state} = useMaterialStep();
+const QuickSetupMaterialsPricingWidget = () => {
+    const { onChange, parameters} = useMaterialsPricing();
     const {t} = useTranslation();
     const {classes} = useStyle();
     return (
         <Stack gap={'50px'} minWidth={convertWidthToVW(700)} alignItems={'center'}>
-            <h3 style={{textAlign: 'center'}}>{step.stepTitle}</h3>
+            <h3 style={{textAlign: 'center'}}>{}</h3>
             <Table width={'100%'}>
                 <TableBody>
                     {
-                        step.parameters.map(parameter => <TableRow style={{border: 0}}>
+                        parameters.map(parameter => <TableRow style={{border: 0}}>
                             <TableCell align={'left'}>
-                                <span style={{width: '30%', justifySelf: 'start'}}>{parameter.label}</span>
+                                <span style={{width: '30%', justifySelf: 'start'}}>{parameter.name}</span>
                             </TableCell>
                             <TableCell align={'right'}>
                                 <TextField placeholder={'Price'} size={'small'} variant={'outlined'}
                                            style={{width: '100px', padding: 0, border: '1px solid black'}}
                                            type={'number'}
-                                           value={state[parameter?.parameterKey]}
-                                           onChange={(e) => onChange(parameter.parameterKey, e?.target?.value)}/>
+                                           value={parameter.value}
+                                           onChange={(e) => onChange(parameter.id, e?.target?.value)}/>
                             </TableCell>
                             <TableCell align={'right'}>
                                 <SecondaryButton sx={{
@@ -51,4 +51,4 @@ const QuickSetupMaterialStepComponent = () => {
     )
 }
 
-export {QuickSetupMaterialStepComponent}
+export {QuickSetupMaterialsPricingWidget}

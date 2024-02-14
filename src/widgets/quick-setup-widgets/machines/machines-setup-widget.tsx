@@ -23,7 +23,9 @@ const MachinesSetupWidget = () => {
         machinesLoading,
         onSelectMachine,
         printHouseMachines,
-        onRemovePrintHouseMachine
+        onRemovePrintHouseMachine,
+        onSearchMachine,
+        newMachine
     } = useMachinesSetupData();
     return (
         <Stack gap={'10px'} alignItems={'center'}>
@@ -31,17 +33,23 @@ const MachinesSetupWidget = () => {
             <GoMakeAutoComplate style={classes.autoComplete} value={selectedCategory}
                                 onChange={(e, v) => onSelectCategory(v?.value as ECategoryId)}
                                 options={machinesCategoriesList}
+                                disableClearable={true}
                                 placeholder={'Choose machine Category'}/>
-            <GoMakeAutoComplate value={''} onChange={(e, machine) => onSelectMachine(machine)} loading={machinesLoading}
-                                style={classes.autoComplete} options={categoryMachines} placeholder={'machine name'}/>
+            <GoMakeAutoComplate
+                                disabled={machinesLoading}
+                                onChange={(e, machine) => onSelectMachine(machine)}
+                                loading={machinesLoading}
+                                disableClearable={true}
+                                onChangeTextField={(e) => {onSearchMachine(e?.target?.value)}}
+                                style={classes.autoComplete} options={[newMachine, ...categoryMachines]?.filter(machine => machine?.value !== '')} placeholder={'machine name'}/>
             <Stack flexWrap={'wrap'} direction={'row'} columnGap={'10px'} rowGap={'2px'} padding={'15px'}
                    overflow={'auto'}
                    position={'relative'}
                    style={classes.selectedMachinesContainer}>
                 {
-                    printHouseMachines.map(machine => <MaterialViewComponent id={machine?.value} label={machine?.label}
-                                                                             bgColor={getMachineColor(machine?.category)}
-                                                                             onRemove={() => onRemovePrintHouseMachine(machine?.value)}/>)
+                    printHouseMachines.map((machine, index) => <MaterialViewComponent id={machine?.value} label={machine?.label}
+                                                                             bgColor={getMachineColor(machine?.category as ECategoryId)}
+                                                                             onRemove={() => onRemovePrintHouseMachine(index)}/>)
                 }
             </Stack>
             <PrimaryButton endIcon={loading && <CircularProgress style={{width: '20px', height: '20px'}}/>}

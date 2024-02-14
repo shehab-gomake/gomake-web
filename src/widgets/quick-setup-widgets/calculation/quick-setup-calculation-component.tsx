@@ -1,15 +1,15 @@
 import {Stack, Table, TableBody, TableCell, TableRow} from "@mui/material";
-import {useMaterialStep} from "@/widgets/quick-setup-widgets/materials/quick-setup-material-step/use-material-step";
+import {useMaterialsPricing} from "@/widgets/quick-setup-widgets/materials/quick-setup-materials-pricing/use-materials-pricing";
 import {SecondaryButton} from "@/components/button/secondary-button";
 import {convertWidthToVW} from "@/utils/adapter";
 import {FONT_FAMILY} from "@/utils/font-family";
 import TextField from "@mui/material/TextField";
 import {PrimaryButton} from "@/components/button/primary-button";
-import {useStyle} from "@/widgets/quick-setup-widgets/materials/quick-setup-material-step/style";
+import {useStyle} from "@/widgets/quick-setup-widgets/materials/quick-setup-materials-pricing/style";
 import {useTranslation} from "react-i18next";
 
 const QuickSetupCalculationComponent = () => {
-    const {step, onChange, state} = useMaterialStep();
+    const {step, onChange, state} = useMaterialsPricing();
     const {t} = useTranslation();
     const {classes} = useStyle();
     return (
