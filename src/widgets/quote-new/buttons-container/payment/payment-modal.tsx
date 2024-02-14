@@ -9,6 +9,9 @@ import { CheckTab } from "./payment-methods-tabs/check-tab";
 import { TransferTab } from "./payment-methods-tabs/transfer-tab";
 import { FooterSection } from "./payment-methods-tabs/footer-section";
 import { usePaymentsTable } from "../../payments-table/use-payments-table";
+import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
+import { useButtonsContainer } from "../use-buttons-container";
+import { useEffect } from "react";
 
 interface IPaymentModalProps {
     openModal: boolean;
@@ -38,6 +41,11 @@ const PaymentModal = ({ openModal, onClose, selectedTab }: IPaymentModalProps) =
     onClose();
   };
 
+  const { getERPAccounts} = useButtonsContainer(DOCUMENT_TYPE.receipt);
+
+  useEffect(()=>{
+      getERPAccounts();
+  },[])
     return (
         <GoMakeModal
             modalTitle={t('payment.choosePaymentMethod')}

@@ -29,31 +29,53 @@ const usePaymentsTable = () => {
 
     ];
 
-    const tableRows =
-        [
-            {
-                "documentDate": "01/02/2024",
-                "documentNumber": "1",
-                "documentType": 50,
-                "detail": 364.96,
-                "sum": 100
-            },
-            {
-                "documentDate": "02/02/2024",
-                "documentNumber": "2",
-                "documentType": 50,
-                "detail": 364.96,
-                "sum": 200,
 
-            },
-            {
-                "documentDate": "03/02/2024",
-                "documentNumber": "3",
-                "documentType": 50,
-                "detail": 364.96,
-                "sum": 300,
-            }
-        ]
+
+    const tableRows = [
+        {
+            "finalPrice": -0.001,
+            "isRefund": false,
+            "docTypeText": "תנועת יומן",
+            "docNumber": "855",
+            "docLine": 3,
+            "content": "Hello",
+            "docDate": "3/30/2023 12:00:00 AM",
+            "docEntry": 4413,
+            "documentNumber": null,
+            "occasionalClientName": "",
+            "occasionalBusinessNumber": "",
+            "documentType": 7
+        },
+        {
+            "finalPrice": 585,
+            "isRefund": false,
+            "docTypeText": "חשבונית",
+            "docNumber": "1844",
+            "docLine": 0,
+            "content": "World",
+            "docDate": "4/5/2023 12:00:00 AM",
+            "docEntry": 1848,
+            "documentNumber": null,
+            "occasionalClientName": "",
+            "occasionalBusinessNumber": "",
+            "documentType": 2
+        },
+        {
+            "finalPrice": 235,
+            "isRefund": false,
+            "docTypeText": "חשבונית",
+            "docNumber": "1854",
+            "docLine": 0,
+            "content": "!!",
+            "docDate": "4/6/2023 12:00:00 AM",
+            "docEntry": 1858,
+            "documentNumber": null,
+            "occasionalClientName": "",
+            "occasionalBusinessNumber": "",
+            "documentType": 2
+        },
+        
+    ]
 
     const PrimaryTableCell = styled(TableCell)(() => {
         return {
@@ -76,7 +98,7 @@ const usePaymentsTable = () => {
             let sum = 0;
             tableRows.forEach((item, index) => {
                 if (updatedCheckedItems[index]) {
-                    sum += item.sum;
+                    sum += item.finalPrice;
                 }
             });
 

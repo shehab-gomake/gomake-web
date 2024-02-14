@@ -33,7 +33,6 @@ const usePaymentMethodsTabs = () => {
         setData((prevData) => [...prevData, newRow]);
     };
 
-
     const deleteRow = (index) => {
         setData((prevData) => {
             const newData = prevData.filter((_, i) => i !== index);

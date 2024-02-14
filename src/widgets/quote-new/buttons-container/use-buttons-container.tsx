@@ -5,6 +5,7 @@ import { useRecoilValue } from "recoil";
 import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
 import { createOrderApi, getDocumentPdfApi } from "@/services/api-service/generic-doc/documents-api";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
+import { getERPAccountsApi } from "@/services/api-service/generic-doc/receipts-api";
 
 const useButtonsContainer = (docType : DOCUMENT_TYPE) => {
     const { navigate } = useGomakeRouter();
@@ -12,8 +13,11 @@ const useButtonsContainer = (docType : DOCUMENT_TYPE) => {
     const { callApi } = useGomakeAxios();
     const quoteItemValue: any = useRecoilValue(quoteItemState);
     const { alertSuccessUpdate, alertFaultUpdate } = useSnackBar();
-
+    const [selectedTabIndex, setSelectedTabIndex] = useState<number>(0); 
+    const [openPaymentModal, setOpenPaymentModal] = useState(false);
     const [openOrderNowModal, setOpenOrderNowModal] = useState(false);
+    const [ERPAccounts, setERPAccounts] = useState();
+
     const onClickOpenOrderNowModal = () => {
         setOpenOrderNowModal(true);
     };
@@ -21,8 +25,6 @@ const useButtonsContainer = (docType : DOCUMENT_TYPE) => {
         setOpenOrderNowModal(false);
     };
 
-    const [selectedTabIndex, setSelectedTabIndex] = useState<number>(0); 
-    const [openPaymentModal, setOpenPaymentModal] = useState(false);
     const onClickOpenPaymentModal = (selectedTabIndex) => {
         setSelectedTabIndex(selectedTabIndex);
         setOpenPaymentModal(true);
@@ -77,6 +79,18 @@ const useButtonsContainer = (docType : DOCUMENT_TYPE) => {
           await getDocumentPdfApi(callApi, callBack, { documentId: quoteItemValue?.id , documentType : docType  });
         };
 
+
+        const  getERPAccounts = async () => {
+            const callBack = (res) => {
+                if (res?.success) {
+                    setERPAccounts(res?.data)
+                } else {
+                    alertFaultUpdate();
+                }
+            }
+            await getERPAccountsApi(callApi, callBack)
+        }
+
     return {
         openOrderNowModal,
         onClickConfirmWithoutNotification,
@@ -88,7 +102,8 @@ const useButtonsContainer = (docType : DOCUMENT_TYPE) => {
         onClickClosePaymentModal,
         onClickOpenPaymentModal,
         openPaymentModal,
-        selectedTabIndex
+        selectedTabIndex,
+        getERPAccounts
     };
 
 };

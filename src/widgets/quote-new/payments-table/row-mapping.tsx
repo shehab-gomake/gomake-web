@@ -43,10 +43,9 @@ const RowMappingWidget = ({
                     width: columnWidths[1],
                     ...classes.cellContainerStyle,
                     color: "#000000",
-                    borderBottom: item?.childsDocumentItems && "none",
                 }}
             >
-                {item?.documentDate}
+                {item?.docDate}
             </PrimaryTableCell>
             <PrimaryTableCell
                 style={{
@@ -56,7 +55,7 @@ const RowMappingWidget = ({
                     ...classes.cellContainerStyle,
                 }}
             >
-                {item.documentNumber}
+                {item.docNumber}
             </PrimaryTableCell>
 
             <PrimaryTableCell
@@ -71,7 +70,7 @@ const RowMappingWidget = ({
                     width: columnWidths[4],
                     ...classes.cellContainerStyle,
                 }}
-            >{item?.detail}
+            >{item?.content}
             </PrimaryTableCell>
 
             <PrimaryTableCell
@@ -79,7 +78,7 @@ const RowMappingWidget = ({
                     width: columnWidths[5],
                     ...classes.cellContainerStyle,
                 }}
-            >{item?.sum}
+            >{item?.finalPrice}
             </PrimaryTableCell>
         </TableRow>
     );
