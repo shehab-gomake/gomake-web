@@ -6,6 +6,7 @@ import { GomakePrimaryButton } from "@/components";
 import { OrderNowModal } from "@/widgets/quote/total-price-and-vat/order-now-modal";
 import { useButtonsContainer } from "./use-buttons-container";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
+import { useRouter } from "next/router";
 
 const ButtonsContainer = ({
   onOpenNewItem,
@@ -20,7 +21,7 @@ const ButtonsContainer = ({
   const { classes } = useStyle();
   const { t } = useTranslation();
   const { openOrderNowModal, onClickCloseOrderNowModal, onClickOpenOrderNowModal, onClickConfirmWithoutNotification, onClickConfirmWithNotification, onClickPrint } = useButtonsContainer(documentType);
-
+  const router = useRouter()
   return (
     <div style={classes.writeCommentcontainer}>
       <div style={classes.btnsContainer}>
@@ -37,20 +38,25 @@ const ButtonsContainer = ({
         >
           {t("sales.quote.addExistItem")}
         </GomakePrimaryButton> */}
-        <GomakePrimaryButton
-          leftIcon={<PlusIcon stroke={"#344054"} />}
-          style={classes.btnContainer}
-          onClick={() => onOpenDeliveryModal()}
-        >
-          {t("sales.quote.addDelivery")}
-        </GomakePrimaryButton>
-        <GomakePrimaryButton
-          leftIcon={<PlusIcon stroke={"#344054"} />}
-          style={classes.btnContainer}
-          onClick={onOpenCopyFromOrder}
-        >
-          Copy from order
-        </GomakePrimaryButton>
+        {
+          !router.query.isNewCreation && <GomakePrimaryButton
+            leftIcon={<PlusIcon stroke={"#344054"} />}
+            style={classes.btnContainer}
+            onClick={() => onOpenDeliveryModal()}
+          >
+            {t("sales.quote.addDelivery")}
+          </GomakePrimaryButton>
+        }
+        {
+          router.query.isNewCreation && <GomakePrimaryButton
+            leftIcon={<PlusIcon stroke={"#344054"} />}
+            style={classes.btnContainer}
+            onClick={onOpenCopyFromOrder}
+          >
+            Copy from order
+          </GomakePrimaryButton>
+        }
+
       </div>
       <div style={classes.btnsContainer}>
         {/* <GomakePrimaryButton
@@ -65,13 +71,16 @@ const ButtonsContainer = ({
         >
           {t("sales.quote.copyTo")}
         </GomakePrimaryButton> */}
-        <GomakePrimaryButton
-          rightIcon={<ArrowDownNewIcon />}
-          style={classes.btnSecondContainer}
-          onClick={handleSendBtnClick}
-        >
-          {t("login.send")}
-        </GomakePrimaryButton>
+        {
+          !router.query.isNewCreation &&
+          <GomakePrimaryButton
+            rightIcon={<ArrowDownNewIcon />}
+            style={classes.btnSecondContainer}
+            onClick={handleSendBtnClick}
+          >
+            {t("login.send")}
+          </GomakePrimaryButton>
+        }
         <GomakePrimaryButton
           style={classes.btnSecondContainer}
           onClick={() => onClickPrint()}

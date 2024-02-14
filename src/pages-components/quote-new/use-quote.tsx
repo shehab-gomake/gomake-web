@@ -722,16 +722,60 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
   };
 
   const deleteQuoteItem = async () => {
-    const callBack = (res) => {
+    if (router.query.isNewCreation) {
+      const updatedDocumentItems = quoteItemValue.documentItems.filter(item => item.id !== quoteItemId);
+      const updatedQuoteItemValue = {
+        ...quoteItemValue,
+        documentItems: updatedDocumentItems
+      };
+      const res = await callApi(
+        EHttpMethod.POST,
+        `/v1/erp-service/documents/calculate-document-new`,
+        {
+          documentType: docType,
+          document: {
+            exchangeRate: updatedQuoteItemValue?.exchangeRate || 1,
+            totalPrice: updatedQuoteItemValue?.totalPrice,
+            data: 0,
+            calculationType: 0,
+            totalPriceAfterDiscount: updatedQuoteItemValue?.totalPriceAfterDiscount,
+            discount: updatedQuoteItemValue?.discount,
+            discountAmount: updatedQuoteItemValue?.discountAmount,
+            totalPayment: updatedQuoteItemValue?.totalPayment,
+            vat: updatedQuoteItemValue?.vat,
+            totalVAT: updatedQuoteItemValue?.totalVAT,
+            documentItems: updatedQuoteItemValue?.documentItems.map(item => ({
+              finalPrice: item.finalPrice
+            }))
+          }
+        }
+      );
       if (res?.success) {
-        alertSuccessDelete();
-        onCloseDeleteItemModal();
-        quoteItemValue?.documentItems?.length === 1 ? navigate("/home") : getQuote();
-      } else {
-        alertFaultDelete();
+        const _data = res?.data?.data?.data;
+        updatedQuoteItemValue.discount = _data.discount;
+        updatedQuoteItemValue.discountAmount = _data.discountAmount;
+        updatedQuoteItemValue.totalPayment = _data.totalPayment;
+        updatedQuoteItemValue.totalPrice = _data.totalPrice;
+        updatedQuoteItemValue.totalPriceAfterDiscount = _data.totalPriceAfterDiscount;
+        updatedQuoteItemValue.totalVAT = _data.totalVAT;
+        updatedQuoteItemValue.vat = _data.vat;
+        updatedQuoteItemValue.exchangeRate = documentItems[0]?.exchangeRate;
+        setQuoteItemValue(updatedQuoteItemValue);
       }
     }
-    await deleteDocumentItemApi(callApi, callBack, { ItemId: quoteItemId, documentType: docType })
+    else {
+      const callBack = (res) => {
+        if (res?.success) {
+          alertSuccessDelete();
+          onCloseDeleteItemModal();
+          quoteItemValue?.documentItems?.length === 1 ? navigate("/home") : getQuote();
+        } else {
+          alertFaultDelete();
+        }
+      }
+      await deleteDocumentItemApi(callApi, callBack, { ItemId: quoteItemId, documentType: docType })
+    }
+
   }
 
   const onAddDelivery = async (shipmentType: string) => {

@@ -151,7 +151,6 @@ const useCopyFromOrderModal = ({ onClose, documentType }) => {
         ...filteredSelectedItems
       ];
       setQuoteItemValue(updatedQuoteItemValue);
-    } else {
     }
   }, [quoteItemValue, selectedItems, documentType, documentItems]);
   return {
