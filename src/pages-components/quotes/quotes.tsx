@@ -85,19 +85,18 @@ const QuotesListPageWidget = ({
             <div style={classes.headerStyle}>
               <HeaderTitle title={documentLabel} marginTop={1} marginBottom={1} />
               {documentType === DOCUMENT_TYPE.quote && <CardsSection statistics={allStatistics} activeCard={activeCard} onClick={onclickCreateNew} onClickCard={handleCardClick} onSecondClickCard={handleSecondCardClick} />}
-              {documentType === DOCUMENT_TYPE.deliveryNote &&
+              {/* {documentType === DOCUMENT_TYPE.deliveryNote &&
                 <Button
                   style={classes.createNew}
                   startIcon={<AddCircleOutlineIcon />}
                   onClick={() => { navigate(`/deliveryNote?isNewCreation=true`) }}
                 >{t("sales.quote.createNew")}
                 </Button>
-              }
-
-              {documentType === DOCUMENT_TYPE.receipt &&
+              } */}
+              {(documentType !== DOCUMENT_TYPE.quote && documentType !== DOCUMENT_TYPE.order) &&
                 <Button
                   style={classes.createNew}
-                  onClick={() => navigate(`/${documentPath}`)}
+                  onClick={() => navigate(`/${documentPath}?isNewCreation=true`)}
                   startIcon={<AddCircleOutlineIcon style={{ color: 'black', fontSize: "24px" }} />}>
                   {t("sales.quote.createNew")}
                 </Button>

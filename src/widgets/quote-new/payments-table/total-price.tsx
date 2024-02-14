@@ -3,7 +3,8 @@ import { useQuoteGetData } from "@/pages-components/quote-new/use-quote-get-data
 import { useStyle } from "./style";
 
 const TotalPriceReceipts = ({
-sum
+sum,
+totalPayment
 }) => {
   const headerHeight = "44px";
   const { classes } = useStyle({headerHeight});
@@ -23,8 +24,6 @@ sum
       </div>
       
 
-
-
       
       <div style={classes.firstRowForFooterContainer}>
         <div
@@ -38,7 +37,7 @@ sum
           {t("payment.totalPayment")}
         </div>
         <div style={{ ...classes.oddRowContainer, width: "87%",}}>
-          <div style={classes.cellTextInputStyle}>{ "200" + getCurrencyUnitText("ILS")}
+          <div style={classes.cellTextInputStyle}>{ totalPayment + getCurrencyUnitText("ILS")}
           </div>
         </div>
       </div>

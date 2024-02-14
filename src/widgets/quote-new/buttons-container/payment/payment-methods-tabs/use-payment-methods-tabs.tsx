@@ -3,10 +3,13 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import { MoreMenuWidget } from "../more-circle";
+import { useRecoilState } from "recoil";
+import { totalBitState, totalCashState, totalPaymentState } from "../../states";
 
 
 const usePaymentMethodsTabs = () => {
     const { t } = useTranslation();
+    const [totalPayment, setTotalPayment] = useRecoilState<number>(totalPaymentState);
     const [data, setData] = useState([
         {
             dueDate: new Date().toISOString().split('T')[0],
@@ -115,12 +118,34 @@ const usePaymentMethodsTabs = () => {
         ]
     );
 
+
+
+    // Cash tab ///
+    const [totalCash, setTotalCash] = useRecoilState<number>(totalCashState);
+    const handleTotalCashChange = (value) => {
+        setTotalCash(value);
+        setTotalPayment(Number(value) + Number(totalBit));
+    };
+
+    // Bit tab //
+    const [totalBit, setTotalBit] = useRecoilState<number>(totalBitState);
+    const handleTotalBitChange = (value) => {
+        setTotalBit(value);
+        setTotalPayment(Number(value) + Number(totalCash))
+    };
+
+
+
     return {
         t,
         data,
         options,
         tableHeaders,
         getTableRow,
+        handleTotalCashChange,
+        totalCash,
+        handleTotalBitChange,
+        totalBit
     };
 
 };

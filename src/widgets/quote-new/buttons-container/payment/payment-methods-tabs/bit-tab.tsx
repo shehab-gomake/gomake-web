@@ -1,13 +1,12 @@
 import { GomakeTextInput } from "@/components";
 import { Stack } from "@mui/material";
-import { useTranslation } from "react-i18next";
 import { useStyle } from "../style";
-
-
+import { usePaymentMethodsTabs } from "./use-payment-methods-tabs";
 
 const BitTab = () => {
-    const { t } = useTranslation();
     const { classes } = useStyle();
+    const { t, totalBit, handleTotalBitChange } = usePaymentMethodsTabs();
+
     return (
         <Stack direction={"column"} gap={"7px"} padding={"0 5px"} >
             <span style={classes.inputLbl} >{t("payment.totalBit")}</span>
@@ -15,7 +14,8 @@ const BitTab = () => {
                 style={{ height: "40px", maxWidth: 180 }}
                 type={"number"}
                 placeholder={t("payment.sum")}
-                value={null}
+                onChange={(e) => handleTotalBitChange(e.target.value)}
+                value={totalBit}
             />
         </Stack>
     );

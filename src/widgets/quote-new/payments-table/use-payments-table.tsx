@@ -1,13 +1,19 @@
 import { useTranslation } from "react-i18next";
 import { TableCell, styled, tableCellClasses } from "@mui/material";
 import { useState } from "react";
-import { useRecoilState } from "recoil";
-import { totalDocumentsState } from "../buttons-container/states";
+import { useRecoilState, useResetRecoilState } from "recoil";
+import { totalDocumentsState, totalPaymentState, finalTotalPaymentState, totalCashState, totalBitState } from "../buttons-container/states";
 
 const usePaymentsTable = () => {
     const { t } = useTranslation();
-    const [totalSum, setTotalSum] = useRecoilState<number>(totalDocumentsState);
     const [checkedItems, setCheckedItems] = useState({});
+    const [totalSum, setTotalSum] = useRecoilState<number>(totalDocumentsState);
+    const [totalPayment, setTotalPayment] = useRecoilState<number>(totalPaymentState);
+    const [finalTotalPayment, setFinalTotalPayment] = useRecoilState<number>(finalTotalPaymentState);
+    const resetTotalPayment = useResetRecoilState(totalPaymentState);
+    const resetTotalBit = useResetRecoilState(totalBitState);
+    const resetTotalCash = useResetRecoilState(totalCashState);
+
     const columnWidths = ["5%", "19%", "19%", "19%", "19%", "19%"];
 
     const tableHeaders = [
@@ -45,6 +51,7 @@ const usePaymentsTable = () => {
                 "sum": 300,
             }
         ]
+
     const PrimaryTableCell = styled(TableCell)(() => {
         return {
             [`&.${tableCellClasses.head}`]: {
@@ -76,7 +83,12 @@ const usePaymentsTable = () => {
     };
 
 
+    const handleSave = () => {
+        setFinalTotalPayment(totalPayment);
+    };
+
     return {
+        t,
         columnWidths,
         tableHeaders,
         tableRows,
@@ -84,6 +96,13 @@ const usePaymentsTable = () => {
         totalSum,
         checkedItems,
         handleCheckboxChange,
+        totalPayment,
+        setTotalPayment,
+        resetTotalPayment,
+        handleSave,
+        finalTotalPayment,
+        resetTotalCash,
+        resetTotalBit
     };
 };
 

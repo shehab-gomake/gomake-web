@@ -1,5 +1,4 @@
 import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
-import { SecondaryButton } from "@/components/button/secondary-button";
 import { Stack } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { useStyle } from "../style";
@@ -10,7 +9,7 @@ import { usePaymentMethodsTabs } from "./use-payment-methods-tabs";
 const CashTab = () => {
     const { t } = useTranslation();
     const { classes } = useStyle();
-    const {options} =usePaymentMethodsTabs();
+    const {options , totalCash , handleTotalCashChange} =usePaymentMethodsTabs();
 
     return (
             <Stack direction={"column"} gap={"20px"} padding={"0 5px"} >
@@ -29,7 +28,8 @@ const CashTab = () => {
                         style={{ height: "40px", maxWidth: 180 }}
                         type={"number"}
                         placeholder={t("payment.sum")}
-                        value={null}
+                        value={totalCash}
+                       onChange={(e) => handleTotalCashChange(e.target.value)}
                     />
                 </Stack>
             </Stack>
