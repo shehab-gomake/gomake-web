@@ -28,30 +28,16 @@ const AddNewItemModal = ({ openModal, onClose, documentType }) => {
   const item = {
     id: uuidv4(),
     code: null,
-    // "documentID": "c12bfa79-c7c5-487a-a352-3c8c2de68214",
     details: "",
     price: 0,
     workName: "",
     discount: 0,
     finalPrice: 0,
     quantity: 0,
-    minQuantity: null,
-    maxQuantity: null,
-    statusString: null,
     productName: selectedProduct?.name,
     isSelected: false,
     productType: 0,
     productID: selectedProduct?.id,
-    // clientTypeId:"89f00e94-8b22-4997-88bb-99af57cd2db0",
-    sourceOrderItemID: null,
-    sourceOrderId: null,
-    sourceDocumentNumber: null,
-    sourceDocumentType: null,
-    sourceDocumentItemId: null,
-    duplicatedFromDocumentItemId: null,
-    isDuplicatedWithAnotherQuantity: false,
-    childsDocumentItems: null,
-    graphicsTypes: null
   }
   useEffect(() => {
     getAllProducts();

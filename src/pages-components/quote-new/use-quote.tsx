@@ -917,6 +917,25 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
       }
     })
   }
+  const handleSaveBtnClickForDeleveryNote = async () => {
+    const res = await callApi(
+      EHttpMethod.POST,
+      `/v1/erp-service/documents/create-document`,
+      {
+        documentType: docType,
+        document: {
+          ...quoteItemValue
+        }
+      }
+    );
+    if (res?.success) {
+      alertSuccessAdded();
+      navigate("/deliveryNotes");
+    } else {
+      alertFaultAdded();
+    }
+  }
+
 
   const setOpenModal = useSetRecoilState<boolean>(addressModalState);
 
@@ -1213,6 +1232,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     onCloseDeliveryModal,
     onAddDelivery,
     handleSaveBtnClick,
+    handleSaveBtnClickForDeleveryNote,
     documentTitle,
     onBlurExchangeRate,
     onBlurCurrency,
