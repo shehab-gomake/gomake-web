@@ -5,8 +5,8 @@ import { QuoteConfirmationPageWidget } from "@/pages-components/quote-confirmati
 export default function QuoteConfirmation() {
   
   return (
-      <div>
-        {/*<QuoteConfirmationPageWidget />*/}
-      </div>
+      <CustomerAuthLayout allowAnonymous={true} >
+          <QuoteConfirmationPageWidget />
+      </CustomerAuthLayout>
   );
 }
