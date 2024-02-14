@@ -1,6 +1,7 @@
 import { useGomakeAxios } from "@/hooks";
+import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { EHttpMethod } from "@/services/api-service/enums";
-import { getClientOrderItemsApi } from "@/services/api-service/generic-doc/documents-api";
+import { getClientDocumentsApi } from "@/services/api-service/generic-doc/documents-api";
 import { quoteItemState } from "@/store";
 import { TableCell, styled, tableCellClasses } from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
@@ -49,16 +50,20 @@ const useCopyFromOrderModal = ({ onClose, documentType }) => {
   const [documentItems, setDocumentItems] = useState([])
   const { callApi } = useGomakeAxios();
   const getClientOrderItems = async () => {
-    const callBack = (res) => {
-      if (res?.success) {
-        setDocumentItems(res?.data);
-      } else {
-        setDocumentItems(null);
-      }
-    };
-    await getClientOrderItemsApi(callApi, callBack, {
-      clientId: quoteItemValue?.customerID
-    });
+    if (quoteItemValue?.customerID) {
+      const callBack = (res) => {
+        if (res?.success) {
+          setDocumentItems(res?.data);
+        } else {
+          setDocumentItems(null);
+        }
+      };
+      await getClientDocumentsApi(callApi, callBack, {
+        documentType: DOCUMENT_TYPE.order,
+        clientId: quoteItemValue?.customerID
+      });
+    }
+
   };
   useEffect(() => {
     getClientOrderItems()
