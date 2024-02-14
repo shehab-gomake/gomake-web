@@ -2,7 +2,7 @@ import { useTranslation } from "react-i18next";
 import { TableCell, styled, tableCellClasses } from "@mui/material";
 import { useState } from "react";
 import { useRecoilState, useResetRecoilState } from "recoil";
-import { totalDocumentsState, totalPaymentState, finalTotalPaymentState, totalCashState, totalBitState } from "../buttons-container/states";
+import { totalDocumentsState, totalPaymentState, finalTotalPaymentState, totalCashState, totalBitState, totalTransferState, totalChecksState, checksRowState } from "../buttons-container/states";
 
 const usePaymentsTable = () => {
     const { t } = useTranslation();
@@ -13,6 +13,9 @@ const usePaymentsTable = () => {
     const resetTotalPayment = useResetRecoilState(totalPaymentState);
     const resetTotalBit = useResetRecoilState(totalBitState);
     const resetTotalCash = useResetRecoilState(totalCashState);
+    const resetTotalTransfer = useResetRecoilState(totalTransferState);
+    const resetTotalChecks = useResetRecoilState(totalChecksState);
+    const resetChecksTable = useResetRecoilState(checksRowState);
 
     const columnWidths = ["5%", "19%", "19%", "19%", "19%", "19%"];
 
@@ -87,6 +90,7 @@ const usePaymentsTable = () => {
         setFinalTotalPayment(totalPayment);
     };
 
+
     return {
         t,
         columnWidths,
@@ -102,7 +106,10 @@ const usePaymentsTable = () => {
         handleSave,
         finalTotalPayment,
         resetTotalCash,
-        resetTotalBit
+        resetTotalBit,
+        resetTotalTransfer,
+        resetTotalChecks,
+        resetChecksTable
     };
 };
 

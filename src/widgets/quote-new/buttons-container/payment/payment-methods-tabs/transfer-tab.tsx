@@ -7,11 +7,16 @@ import { TransferInputs } from "./transfer-inputs";
 import { usePaymentMethodsTabs } from "./use-payment-methods-tabs";
 
 const TransferTab = () => {
-    const { options } = usePaymentMethodsTabs();
-    const [state, setState] = useState({});
+    const { options  , handleTotalTransferChange,
+        totalTransfer} = usePaymentMethodsTabs();
+    const [state, setState] = useState({ totalTransfer: totalTransfer});
     const onChangeInputs = (key, value) => {
+        if(key==="totalTransfer") 
+        {
+            console.log(value)
+            handleTotalTransferChange(value);
+        }
         setState({ ...state, [key]: value })
-        console.log(state)
     }
     return (
         <Stack direction="row">

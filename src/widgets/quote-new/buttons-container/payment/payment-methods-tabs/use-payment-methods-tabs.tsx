@@ -1,25 +1,25 @@
 import { IconButton } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import { MoreMenuWidget } from "../more-circle";
-import { useRecoilState } from "recoil";
-import { totalBitState, totalCashState, totalPaymentState } from "../../states";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import { checksRowState, totalBitState, totalCashState, totalChecksState, totalPaymentState, totalTransferState } from "../../states";
 
+interface CheckData {
+    dueDate: string;
+    checkNumber: string;
+    bankName: string;
+    branch: string;
+    account: string;
+    sum: number;
+}
 
 const usePaymentMethodsTabs = () => {
     const { t } = useTranslation();
-    const [totalPayment, setTotalPayment] = useRecoilState<number>(totalPaymentState);
-    const [data, setData] = useState([
-        {
-            dueDate: new Date().toISOString().split('T')[0],
-            checkNumber: "",
-            bankName: "",
-            branch: "",
-            account: "",
-            sum: "",
-        },
-    ]);
+    const setTotalPayment = useSetRecoilState<number>(totalPaymentState);
+    const [totalChecks, setTotalChecks] = useRecoilState<number>(totalChecksState);
+    const [data , setData] = useRecoilState<CheckData[]>(checksRowState);
 
     const addRow = () => {
         const newRow = {
@@ -28,28 +28,39 @@ const usePaymentMethodsTabs = () => {
             bankName: "",
             branch: "",
             account: "",
-            sum: "",
+            sum: 0,
         };
         setData((prevData) => [...prevData, newRow]);
     };
 
-    const duplicateRow = (index) => {
-        const rowToDuplicate = data[index];
-        setData((prevData) => [...prevData, { ...rowToDuplicate }]);
-    };
 
     const deleteRow = (index) => {
-        setData((prevData) => prevData.filter((_, i) => i !== index));
+        setData((prevData) => {
+            const newData = prevData.filter((_, i) => i !== index);
+            return newData;
+        });
+    };
+    
+    const duplicateRow = (index) => {
+        const rowToDuplicate = data[index];
+        setData((prevData) => {
+            const newData = [...prevData, { ...rowToDuplicate }];
+            return newData;
+        });
     };
 
     const handleInputChange = (index, fieldName, value) => {
         setData((prevData) => {
             const newData = [...prevData];
-            newData[index][fieldName] = value;
+            newData[index] = {
+                ...newData[index],
+                [fieldName]: value,
+            };
             return newData;
         });
     };
-
+    
+    
     const tableHeaders = [
         t("payment.dueDate"),
         t("payment.checkNumber"),
@@ -118,23 +129,35 @@ const usePaymentMethodsTabs = () => {
         ]
     );
 
-
-
     // Cash tab ///
     const [totalCash, setTotalCash] = useRecoilState<number>(totalCashState);
     const handleTotalCashChange = (value) => {
         setTotalCash(value);
-        setTotalPayment(Number(value) + Number(totalBit));
+        setTotalPayment(Number(value) + Number(totalBit) + Number(totalTransfer) + Number(totalChecks)
+        );
     };
 
     // Bit tab //
     const [totalBit, setTotalBit] = useRecoilState<number>(totalBitState);
     const handleTotalBitChange = (value) => {
         setTotalBit(value);
-        setTotalPayment(Number(value) + Number(totalCash))
+        setTotalPayment(Number(value) + Number(totalCash) + Number(totalTransfer) + Number(totalChecks))
+    };
+
+    // transfer tab //
+    const [totalTransfer, setTotalTransfer] = useRecoilState<number>(totalTransferState);
+    const handleTotalTransferChange = (value) => {
+        setTotalTransfer(value);
+        setTotalPayment(Number(value) + Number(totalCash) + Number(totalBit) + Number(totalChecks))
     };
 
 
+
+    useEffect(() => {
+        const newTotalChecks = data.reduce((total, row) => total + Number(row.sum), 0);
+        setTotalChecks(newTotalChecks);
+        setTotalPayment(Number(newTotalChecks) + Number(totalCash) + Number(totalBit) + Number(totalTransfer));
+    }, [data, totalCash, totalBit, totalTransfer]);
 
     return {
         t,
@@ -145,7 +168,9 @@ const usePaymentMethodsTabs = () => {
         handleTotalCashChange,
         totalCash,
         handleTotalBitChange,
-        totalBit
+        totalBit,
+        handleTotalTransferChange,
+        totalTransfer
     };
 
 };

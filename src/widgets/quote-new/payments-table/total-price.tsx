@@ -22,9 +22,22 @@ totalPayment
           {sum +  " " + getCurrencyUnitText("ILS")}
         </div>
       </div>
-      
-
-      
+      {((sum - totalPayment) > 0 && totalPayment!==0 )&& <div style={classes.firstRowForFooterContainer}>
+        <div style={{ ...classes.evenRowContainer, width: "13%" ,  borderBottom: "1px solid #EAECF0"}}>
+          {t("payment.balance")}
+        </div>
+        <div style={{ ...classes.oddRowContainer,width: "19%",paddingLeft: 36 ,  borderBottom: "1px solid #EAECF0",}}>
+          {sum - totalPayment +  " " + getCurrencyUnitText("ILS")}
+        </div>
+      </div>}
+      {(sum - totalPayment) < 0 && <div style={classes.firstRowForFooterContainer}>
+        <div style={{ ...classes.evenRowContainer, width: "13%" ,  borderBottom: "1px solid #EAECF0"}}>
+        {t("payment.excessPayment")}
+        </div>
+        <div style={{ ...classes.oddRowContainer,width: "19%",paddingLeft: 36 ,  borderBottom: "1px solid #EAECF0",}}>
+          {Math.abs(sum - totalPayment) +  " " + getCurrencyUnitText("ILS")}
+        </div>
+      </div>}
       <div style={classes.firstRowForFooterContainer}>
         <div
           style={{
@@ -41,8 +54,6 @@ totalPayment
           </div>
         </div>
       </div>
-
-
     </div>
   );
 };

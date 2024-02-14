@@ -1,5 +1,28 @@
 import { atom } from "recoil";
 
+interface CheckData {
+  dueDate: string;
+  checkNumber: string;
+  bankName: string;
+  branch: string;
+  account: string;
+  sum: number;
+}
+
+export const checksRowState = atom<CheckData[]>({
+  key: "checksRowState",
+  default: [
+    {
+      dueDate: new Date().toISOString().split('T')[0],
+      checkNumber: "",
+      bankName: "",
+      branch: "",
+      account: "",
+      sum: 0,
+    },
+  ],
+});
+
 export const totalDocumentsState = atom<number>({
     key: "totalDocumentsState",
     default: 0,

@@ -18,7 +18,7 @@ interface IPaymentModalProps {
 
 const PaymentModal = ({ openModal, onClose, selectedTab }: IPaymentModalProps) => {
     const { classes } = useStyle();
-    const { t, resetTotalPayment , resetTotalBit, resetTotalCash } = usePaymentsTable();
+    const { t, resetTotalPayment , resetTotalBit, resetTotalCash , resetTotalTransfer , resetTotalChecks,resetChecksTable} = usePaymentsTable();
 
     const tabs: ITab[] = [
         { title: t("payment.creditCard"), component: <CreditCardTab /> },
@@ -32,6 +32,9 @@ const PaymentModal = ({ openModal, onClose, selectedTab }: IPaymentModalProps) =
     resetTotalPayment();
     resetTotalBit();
     resetTotalCash();
+    resetTotalTransfer();
+    resetTotalChecks();
+    resetChecksTable();
     onClose();
   };
 
