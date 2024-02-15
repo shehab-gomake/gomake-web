@@ -1,8 +1,7 @@
 import { useState } from "react";
-import { usePaymentInputs } from 'react-payment-inputs';
 
 const CreditCardTab = () => {
-    const { meta, getCardNumberProps, getExpiryDateProps, getCVCProps } = usePaymentInputs();
+    //const { meta, getCardNumberProps, getExpiryDateProps, getCVCProps } = usePaymentInputs();
     const [cardNumber, setCardNumber] = useState();
     const [expiryDate, setExpiryDate] = useState();
     const [cvv, setCVV] = useState();
@@ -38,10 +37,11 @@ const CreditCardTab = () => {
     };
     return (
         <div>
-            <input {...getCardNumberProps({ onChange: ()=>console.log("s")})} value={cardNumber} />
+            {/*
+             <input {...getCardNumberProps({ onChange: ()=>console.log("s")})} value={cardNumber} />
             <input {...getExpiryDateProps({ onChange:handleExpiryDateChange})} value={expiryDate} />
             <input {...getCVCProps({ onChange: handleCVVChange })} value={cvv} />
-            {meta.isTouched && meta.error && <span>Error: {meta.error}</span>}
+            {meta.isTouched && meta.error && <span>Error: {meta.error}</span>}*/}
         </div>
     );
 }
