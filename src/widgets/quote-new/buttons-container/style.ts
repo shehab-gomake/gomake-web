@@ -1,9 +1,7 @@
 import { useMemo } from "react";
 import { FONT_FAMILY } from "@/utils/font-family";
-import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 const useStyle = () => {
-  const { theme, warningColor, secondColor, successColor, errorColor } = useGomakeTheme();
 
   const classes = useMemo(() => {
     return {
@@ -87,7 +85,6 @@ const useStyle = () => {
           backgroundColor: "#344054"
         }
       },
-
       testStyle: {
         display: "flex",
         flexDirection: "column" as "column",
@@ -106,11 +103,18 @@ const useStyle = () => {
         display: "flex",
         alignSelf: "flex-start",
         width: "100%"
-      }
+      },
+      firstSection: {
+        maxHeight: "70%",
+        height: "65%",
+        overflow: "hidden" as "hidden"
+      },
     };
-  }, [theme]);
+  }, []);
+
   return {
     classes,
   };
 };
+
 export { useStyle };

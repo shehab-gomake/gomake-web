@@ -3,23 +3,15 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import { MoreMenuWidget } from "../more-circle";
-import { useRecoilState, useSetRecoilState } from "recoil";
-import { checksRowState, totalBitState, totalCashState, totalChecksState, totalPaymentState, totalTransferState } from "../../states";
-
-interface CheckData {
-    dueDate: string;
-    checkNumber: string;
-    bankName: string;
-    branch: string;
-    account: string;
-    sum: number;
-}
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { CheckData, ERPAccountsData, ERPAccountsState, checksRowState, totalBitState, totalCashState, totalChecksState, totalPaymentState, totalTransferState } from "../../states";
 
 const usePaymentMethodsTabs = () => {
     const { t } = useTranslation();
     const setTotalPayment = useSetRecoilState<number>(totalPaymentState);
     const [totalChecks, setTotalChecks] = useRecoilState<number>(totalChecksState);
     const [data , setData] = useRecoilState<CheckData[]>(checksRowState);
+    const ERPAccounts= useRecoilValue<ERPAccountsData[]>(ERPAccountsState);
 
     const addRow = () => {
         const newRow = {
@@ -71,12 +63,6 @@ const usePaymentMethodsTabs = () => {
             <AddCircleOutlineIcon />
         </IconButton>,
     ];
-
-    const options = [
-        { label: t("payment.cash"), value: "1" },
-        { label: t("payment.check"), value: "2" },
-        { label: t("payment.transfer"), value: "3" }];
-
 
     const getTableRow = (row, index) => (
         [
@@ -158,10 +144,17 @@ const usePaymentMethodsTabs = () => {
         setTotalPayment(Number(newTotalChecks) + Number(totalCash) + Number(totalBit) + Number(totalTransfer));
     }, [data, totalCash, totalBit, totalTransfer]);
 
+
+
+    const mapERPAccountsOptions = ERPAccounts.map((account) => ({
+        label: `${account.name} - ${account.code}`,
+        value: account.code,
+      }));
+
+
     return {
         t,
         data,
-        options,
         tableHeaders,
         getTableRow,
         handleTotalCashChange,
@@ -169,7 +162,8 @@ const usePaymentMethodsTabs = () => {
         handleTotalBitChange,
         totalBit,
         handleTotalTransferChange,
-        totalTransfer
+        totalTransfer,
+        mapERPAccountsOptions,
     };
 
 };

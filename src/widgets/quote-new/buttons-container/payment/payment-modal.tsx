@@ -9,53 +9,53 @@ import { CheckTab } from "./payment-methods-tabs/check-tab";
 import { TransferTab } from "./payment-methods-tabs/transfer-tab";
 import { FooterSection } from "./payment-methods-tabs/footer-section";
 import { usePaymentsTable } from "../../payments-table/use-payments-table";
-import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
-import { useButtonsContainer } from "../use-buttons-container";
-import { useEffect } from "react";
+import { ErpAccountType } from "../states";
 
 interface IPaymentModalProps {
     openModal: boolean;
     onClose: () => void;
-    selectedTab: number
+    selectedTab: number;
+    getERPAccounts: (selectedTabIndex: ErpAccountType) => void;
 }
 
-const PaymentModal = ({ openModal, onClose, selectedTab }: IPaymentModalProps) => {
+const PaymentModal = ({ openModal, onClose, selectedTab, getERPAccounts }: IPaymentModalProps) => {
     const { classes } = useStyle();
-    const { t, resetTotalPayment , resetTotalBit, resetTotalCash , resetTotalTransfer , resetTotalChecks,resetChecksTable} = usePaymentsTable();
+    const { t, resetTotalPayment, resetTotalBit, resetTotalCash, resetTotalTransfer, resetTotalChecks, resetChecksTable } = usePaymentsTable();
 
     const tabs: ITab[] = [
-        { title: t("payment.creditCard"), component: <CreditCardTab /> },
-        { title: t("payment.cash"), component: <CashTab /> },
         { title: t("payment.transfer"), component: <TransferTab /> },
         { title: t("payment.check"), component: <CheckTab /> },
+        { title: t("payment.cash"), component: <CashTab /> },
+        { title: t("payment.creditCard"), component: <CreditCardTab /> },
         { title: t("payment.bit"), component: <BitTab /> }
     ];
 
-  const handleModalClose = () => {
-    resetTotalPayment();
-    resetTotalBit();
-    resetTotalCash();
-    resetTotalTransfer();
-    resetTotalChecks();
-    resetChecksTable();
-    onClose();
-  };
+    const handleModalClose = () => {
+        resetTotalPayment();
+        resetTotalBit();
+        resetTotalCash();
+        resetTotalTransfer();
+        resetTotalChecks();
+        resetChecksTable();
+        onClose();
+    };
 
-  const { getERPAccounts} = useButtonsContainer(DOCUMENT_TYPE.receipt);
 
-  useEffect(()=>{
-      getERPAccounts();
-  },[])
+    const handleTabChange = async (newTabIndex) => {
+        await getERPAccounts(newTabIndex)
+    };
+
     return (
         <GoMakeModal
             modalTitle={t('payment.choosePaymentMethod')}
             insideStyle={classes.insideStyle}
             openModal={openModal}
-            onClose={handleModalClose}
-        >
+            onClose={handleModalClose} 
+            >
             <div style={classes.boxStyle}>
-                <div style={{ maxHeight: "70%", height: "65%", overflow: "hidden" }}><PrimaryTabsComponent tabs={tabs} selectedTabIndex={selectedTab} /></div>
-                <FooterSection onCloseModal={onClose}/>
+                <div style={classes.firstSection}><PrimaryTabsComponent tabs={tabs} selectedTabIndex={selectedTab} onSelectTab={handleTabChange}
+                /></div>
+                <FooterSection onCloseModal={onClose} />
             </div>
         </GoMakeModal>
     );

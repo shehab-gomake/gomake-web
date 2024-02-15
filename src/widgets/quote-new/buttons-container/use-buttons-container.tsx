@@ -1,11 +1,12 @@
 import { quoteItemState } from "@/store";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useRecoilValue } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
 import { createOrderApi, getDocumentPdfApi } from "@/services/api-service/generic-doc/documents-api";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { getERPAccountsApi } from "@/services/api-service/generic-doc/receipts-api";
+import { ERPAccountsData, ERPAccountsState, ErpAccountType } from "./states";
 
 const useButtonsContainer = (docType : DOCUMENT_TYPE) => {
     const { navigate } = useGomakeRouter();
@@ -16,7 +17,7 @@ const useButtonsContainer = (docType : DOCUMENT_TYPE) => {
     const [selectedTabIndex, setSelectedTabIndex] = useState<number>(0); 
     const [openPaymentModal, setOpenPaymentModal] = useState(false);
     const [openOrderNowModal, setOpenOrderNowModal] = useState(false);
-    const [ERPAccounts, setERPAccounts] = useState();
+    const setERPAccounts= useSetRecoilState<ERPAccountsData[]>(ERPAccountsState);
 
     const onClickOpenOrderNowModal = () => {
         setOpenOrderNowModal(true);
@@ -80,7 +81,7 @@ const useButtonsContainer = (docType : DOCUMENT_TYPE) => {
         };
 
 
-        const  getERPAccounts = async () => {
+        const  getERPAccounts = async (accountType : ErpAccountType) => {
             const callBack = (res) => {
                 if (res?.success) {
                     setERPAccounts(res?.data)
@@ -88,7 +89,7 @@ const useButtonsContainer = (docType : DOCUMENT_TYPE) => {
                     alertFaultUpdate();
                 }
             }
-            await getERPAccountsApi(callApi, callBack)
+            await getERPAccountsApi(callApi, callBack , {accountType : accountType})
         }
 
     return {

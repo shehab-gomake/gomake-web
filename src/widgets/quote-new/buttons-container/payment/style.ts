@@ -8,7 +8,7 @@ const useStyle = () => {
     const classes = useMemo(() => {
         return {
             divStyle: {
-                height:"30%",
+                height: "30%",
                 display: "flex",
                 flexDirection: "column" as "column",
                 alignItems: "flex-start",
@@ -23,10 +23,10 @@ const useStyle = () => {
                 color: primaryColor(500),
                 ...FONT_FAMILY.Lexend(600, 15),
             },
-            taxInputStyle:{
+            taxInputStyle: {
                 border: "none",
                 outline: "none",
-                borderBottom: `1.5px solid ${primaryColor(300)}` 
+                borderBottom: `1.5px solid ${primaryColor(300)}`
             },
             inputStyle: {
                 border: "none",
@@ -39,7 +39,7 @@ const useStyle = () => {
                 width: "100%",
                 flexDirection: "row" as "row",
                 justifyContent: "space-between",
-                padding:"5px"
+                padding: "5px"
             },
             containerStyle: {
                 width: "50%",
@@ -57,13 +57,13 @@ const useStyle = () => {
                 ...FONT_FAMILY.Lexend(600, 14),
                 display: "flex",
                 alignItems: "flex-end",
-              },
-              selectLbl: {
+            },
+            selectLbl: {
                 color: primaryColor(900),
                 ...FONT_FAMILY.Lexend(600, 14),
                 display: "flex",
-                 alignItems: "center",
-              },
+                alignItems: "center",
+            },
         };
     }, [theme]);
     return {

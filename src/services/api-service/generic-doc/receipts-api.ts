@@ -15,12 +15,13 @@ const getClientPaymentItemsApi: ICallAndSetData = async (callApi, setState, data
   );
 };
 
-const getERPAccountsApi: ICallAndSetData = async (callApi, setState) => {
+const getERPAccountsApi: ICallAndSetData = async (callApi, setState ,data) => {
   return await getSetApiData(
     callApi,
     EHttpMethod.GET,
     GET_ERP_ACCOUNTS_URL,
     setState,
+    data
   );
 };
 

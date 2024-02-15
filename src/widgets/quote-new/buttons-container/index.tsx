@@ -25,12 +25,12 @@ const ButtonsContainer = ({
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
-  const { openOrderNowModal, onClickCloseOrderNowModal, onClickOpenOrderNowModal, onClickConfirmWithoutNotification, onClickConfirmWithNotification, onClickPrint, onClickClosePaymentModal, onClickOpenPaymentModal, openPaymentModal, selectedTabIndex } = useButtonsContainer(documentType);
+  const { openOrderNowModal, onClickCloseOrderNowModal, onClickOpenOrderNowModal, onClickConfirmWithoutNotification, onClickConfirmWithNotification, onClickPrint, onClickClosePaymentModal, onClickOpenPaymentModal, openPaymentModal, selectedTabIndex , getERPAccounts} = useButtonsContainer(documentType);
 
   return (
     <div style={classes.writeCommentcontainer}>
       <div style={classes.btnsContainer}>
-        {documentType === DOCUMENT_TYPE.receipt && <PaymentBtn handleOpenModal={onClickOpenPaymentModal} />}
+        {documentType === DOCUMENT_TYPE.receipt && <PaymentBtn handleOpenModal={onClickOpenPaymentModal} getERPAccounts={getERPAccounts}/>}
         {(documentType === DOCUMENT_TYPE.quote || documentType === DOCUMENT_TYPE.order) &&
           <GomakePrimaryButton
             leftIcon={<PlusIcon stroke={"#344054"} />}
@@ -100,7 +100,7 @@ const ButtonsContainer = ({
           confirmWithoutNotification={onClickConfirmWithoutNotification}
           confirmWithNotification={onClickConfirmWithNotification}
         />
-        <PaymentModal onClose={onClickClosePaymentModal} openModal={openPaymentModal} selectedTab={selectedTabIndex} />
+        <PaymentModal onClose={onClickClosePaymentModal} openModal={openPaymentModal} selectedTab={selectedTabIndex} getERPAccounts={getERPAccounts} />
       </div>
     </div>
   );

@@ -5,7 +5,7 @@ import { GoMakeAutoComplate } from "@/components";
 import { useStyle } from "../style";
 
 const CheckTab = () => {
-    const { t, data, options, tableHeaders, getTableRow } = usePaymentMethodsTabs();
+    const { t, data, tableHeaders, getTableRow , mapERPAccountsOptions} = usePaymentMethodsTabs();
     const { classes } = useStyle();
 
     return (
@@ -14,9 +14,9 @@ const CheckTab = () => {
                 <span style={classes.selectLbl} >{t("payment.accountCode")}</span>
                 <GoMakeAutoComplate
                     style={{ height: "30px", width: 180, border: 0 }}
-                    onChange={() => console.log("hey")}
-                    value={options[1]}
-                    options={options}
+                    value={mapERPAccountsOptions[1]}
+                    options={mapERPAccountsOptions}
+                    disabled={true}
                 />
             </Stack>
             <PrimaryTable

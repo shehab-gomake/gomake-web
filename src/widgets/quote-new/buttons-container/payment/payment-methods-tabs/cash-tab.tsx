@@ -4,22 +4,21 @@ import { useTranslation } from "react-i18next";
 import { useStyle } from "../style";
 import { usePaymentMethodsTabs } from "./use-payment-methods-tabs";
 
-
-
 const CashTab = () => {
     const { t } = useTranslation();
     const { classes } = useStyle();
-    const {options , totalCash , handleTotalCashChange} =usePaymentMethodsTabs();
-
+    const {totalCash , handleTotalCashChange , mapERPAccountsOptions} =usePaymentMethodsTabs();
+   
+   
     return (
             <Stack direction={"column"} gap={"20px"} padding={"0 5px"} >
                 <Stack direction={"column"} gap={"7px"} padding={"0 5px"} >
                     <span style={classes.inputLbl} >{t("payment.accountCode")}</span>
                     <GoMakeAutoComplate
                         style={{ height: "40px", maxWidth: 180, border: 0 }}
-                        onChange={() => alert("hey")}
-                        value={options[0]}
-                        options={options}
+                        value={mapERPAccountsOptions[0]}
+                        options={mapERPAccountsOptions}
+                        disabled={true}
                     />
                 </Stack>
                 <Stack direction={"column"} gap={"7px"} padding={"0 5px"} >

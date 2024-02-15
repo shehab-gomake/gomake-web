@@ -5,24 +5,19 @@ import { GomakePrimaryButton } from "@/components";
 import { CreditCardIcon } from "@/icons/credit-card-icon";
 import { useStyle } from "../style";
 import { useTranslation } from "react-i18next";
-
-export enum EStatus {
-    CREDIT_CARD = 0,
-    CASH = 1,
-    TRANSFERENCE = 2,
-    CHECK = 3,
-    BIT = 4
-}
+import { ErpAccountType } from "../states";
 
 interface IPaymentBtn {
     handleOpenModal: (selectedTabIndex: number) => void;
+    getERPAccounts: (selectedTabIndex: ErpAccountType)=>void;
 }
 
-const PaymentBtn = ({ handleOpenModal }: IPaymentBtn) => {
+const PaymentBtn = ({ handleOpenModal , getERPAccounts }: IPaymentBtn) => {
     const { t } = useTranslation();
     const { classes } = useStyle();
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>();
     const open = Boolean(anchorEl);
+    
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(event.currentTarget);
     };
@@ -30,7 +25,8 @@ const PaymentBtn = ({ handleOpenModal }: IPaymentBtn) => {
         setAnchorEl(null);
     };
 
-    const onSelectPaymentMethod = (paymentMethod: number) => {
+    const onSelectPaymentMethod = async (paymentMethod: number) => {
+        await getERPAccounts(paymentMethod);
         handleOpenModal(paymentMethod);
         handleClose();
     }
@@ -51,15 +47,15 @@ const PaymentBtn = ({ handleOpenModal }: IPaymentBtn) => {
                 MenuListProps={{sx: { width: anchorEl?.offsetWidth, padding: 0 }}}
             >
                 <Button sx={{ ...classes.statusLabel, borderRadius: 0 }}
-                    onClick={() => onSelectPaymentMethod(EStatus.CREDIT_CARD)}>{t("payment.creditCard")}</Button>
+                    onClick={() => onSelectPaymentMethod(ErpAccountType.CreditCardPayment)}>{t("payment.creditCard")}</Button>
                 <Button sx={{ ...classes.statusLabel, borderRadius: 0 }}
-                    onClick={() => onSelectPaymentMethod(EStatus.CASH)}>{t("payment.cash")}</Button>
+                    onClick={() => onSelectPaymentMethod(ErpAccountType.CashPayment)}>{t("payment.cash")}</Button>
                 <Button sx={{ ...classes.statusLabel, borderRadius: 0 }}
-                    onClick={() => onSelectPaymentMethod(EStatus.TRANSFERENCE)}>{t("payment.transfer")}</Button>
+                    onClick={() => onSelectPaymentMethod(ErpAccountType.TransferPayment)}>{t("payment.transfer")}</Button>
                 <Button sx={{ ...classes.statusLabel, borderRadius: 0 }}
-                    onClick={() => onSelectPaymentMethod(EStatus.CHECK)}>{t("payment.check")}</Button>
+                    onClick={() => onSelectPaymentMethod(ErpAccountType.ChecksPayment)}>{t("payment.check")}</Button>
                 <Button sx={{ ...classes.statusLabel, borderRadius: 0 }}
-                    onClick={() => onSelectPaymentMethod(EStatus.BIT)}>{t("payment.bit")}</Button>
+                    onClick={() => onSelectPaymentMethod(ErpAccountType.CreditCardPayment + 1)}>{t("payment.bit")}</Button>
             </Menu>
         </>
     );
