@@ -3,14 +3,11 @@ import { useStyle } from "./style";
 import {
   ArrowDownNewIcon,
   PlusIcon,
-  UploadNewIcon,
 } from "@/icons";
 import { useTranslation } from "react-i18next";
 import { GomakePrimaryButton } from "@/components";
 import { OrderNowModal } from "@/widgets/quote/total-price-and-vat/order-now-modal";
 import { useButtonsContainer } from "./use-buttons-container";
-import { useRecoilValue } from "recoil";
-import { quoteItemState } from "@/store";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { useRouter } from "next/router";
 import { PaymentModal } from "./payment/payment-modal";
@@ -28,18 +25,21 @@ const ButtonsContainer = ({
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
-  const { openOrderNowModal, onClickCloseOrderNowModal, onClickOpenOrderNowModal, onClickConfirmWithoutNotification, onClickConfirmWithNotification, onClickPrint, onClickClosePaymentModal, onClickOpenPaymentModal, openPaymentModal, selectedTabIndex , getERPAccounts } = useButtonsContainer(documentType);
+  const { openOrderNowModal, onClickCloseOrderNowModal, onClickOpenOrderNowModal, onClickConfirmWithoutNotification, onClickConfirmWithNotification, onClickPrint, onClickClosePaymentModal, onClickOpenPaymentModal, openPaymentModal, selectedTabIndex, getERPAccounts } = useButtonsContainer(documentType);
   const router = useRouter()
   return (
     <div style={classes.writeCommentcontainer}>
       <div style={classes.btnsContainer}>
-        <GomakePrimaryButton
+        {documentType === DOCUMENT_TYPE.receipt &&
+          <PaymentBtn handleOpenModal={onClickOpenPaymentModal} getERPAccounts={getERPAccounts} />
+        }
+        {documentType !== DOCUMENT_TYPE.receipt && <GomakePrimaryButton
           leftIcon={<PlusIcon stroke={"#344054"} />}
           style={classes.btnContainer}
           onClick={() => onOpenNewItem()}
         >
           {t("sales.quote.addNewItems")}
-        </GomakePrimaryButton>
+        </GomakePrimaryButton>}
         {
           (documentType === DOCUMENT_TYPE.quote || documentType === DOCUMENT_TYPE.order) && <GomakePrimaryButton
             leftIcon={<PlusIcon stroke={"#344054"} />}
@@ -50,15 +50,14 @@ const ButtonsContainer = ({
           </GomakePrimaryButton>
         }
         {
-          router.query.isNewCreation && <GomakePrimaryButton
+          (router.query.isNewCreation && documentType !== DOCUMENT_TYPE.receipt) &&
+          <GomakePrimaryButton
             leftIcon={<PlusIcon stroke={"#344054"} />}
             style={classes.btnContainer}
             onClick={onOpenCopyFromOrder}
-          >
-            Copy from order
+          >{t("sales.quote.copyFromOrder")}
           </GomakePrimaryButton>
         }
-
       </div>
       <div style={classes.btnsContainer}>
         {

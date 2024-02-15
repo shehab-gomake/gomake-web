@@ -137,13 +137,11 @@ const usePaymentMethodsTabs = () => {
     };
 
 
-
     useEffect(() => {
         const newTotalChecks = data.reduce((total, row) => total + Number(row.sum), 0);
         setTotalChecks(newTotalChecks);
         setTotalPayment(Number(newTotalChecks) + Number(totalCash) + Number(totalBit) + Number(totalTransfer));
     }, [data, totalCash, totalBit, totalTransfer]);
-
 
 
     const mapERPAccountsOptions = ERPAccounts.map((account) => ({

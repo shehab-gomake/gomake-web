@@ -24,6 +24,7 @@ import { useQuoteGetData } from "./use-quote-get-data";
 import { addDeliveryApi, addDocumentAddressApi, addDocumentContactApi, calculateDocumentApi, calculateDocumentItemApi, cancelDocumentApi, changeDocumentClientApi, deleteDocumentAddressApi, deleteDocumentContactApi, deleteDocumentItemApi, duplicateWithAnotherQuantityApi, getDocumentApi, getNewDocumentDataApi, refreshExchangeRateApi, saveDocumentApi, sendDocumentToClientApi, updateAgentApi, updateDocumentAddressApi, updateDocumentContactApi, updateDocumentCurrencyApi, updateDueDateApi, updateExchangeRateApi, updatePurchaseNumberApi } from "@/services/api-service/generic-doc/documents-api";
 import { DOCUMENT_TYPE } from "../quotes/enums";
 import { useRouter } from "next/router";
+import { getClientPaymentItemsApi } from "@/services/api-service/generic-doc/receipts-api";
 
 interface IQuoteProps {
   docType: DOCUMENT_TYPE;
@@ -129,7 +130,19 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
 
   const router = useRouter();
   const getQuote = async () => {
-    if (router?.query?.isNewCreation) {
+    if (router?.query?.isNewCreation && docType === DOCUMENT_TYPE.receipt) {
+      const callBack = (res) => {
+        if (res?.success) {
+          const _data = res?.data || {};
+          setQuoteItemValue(_data);
+        } else {
+          alertFaultAdded();
+        }
+      }
+      await getClientPaymentItemsApi(callApi, callBack)
+    }
+
+    else if (router?.query?.isNewCreation) {
       const res = await callApi(
         EHttpMethod.POST,
         `/v1/erp-service/documents/get-new-document-data`,
@@ -139,6 +152,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
       );
       if (res?.success) {
         const _data = res?.data?.data?.result || {};
+
         setQuoteItemValue(_data);
       } else {
         alertFaultAdded();
@@ -384,7 +398,20 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
   }
 
   const onChangeSelectBusiness = async (item: any) => {
-    if (router?.query?.isNewCreation) {
+    if (router?.query?.isNewCreation && docType === DOCUMENT_TYPE.receipt) {
+
+      const callBack = (res) => {
+        if (res?.success) {
+          const _data = res?.data || {};
+          setQuoteItemValue(_data);
+          setIsUpdateBusinessName(null);
+        } else {
+          alertFaultAdded();
+        }
+      }
+      await getClientPaymentItemsApi(callApi, callBack, { clientId: item?.id, })
+    }
+    else if (router?.query?.isNewCreation) {
       const res = await callApi(
         EHttpMethod.POST,
         `/v1/erp-service/documents/get-new-document-data`,
@@ -418,7 +445,6 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
         }
       })
     }
-
   }
 
   const onBlurContactName = async () => {

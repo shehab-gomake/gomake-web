@@ -9,7 +9,6 @@ const useGomakeAuth = (permissionEnumValue,allowAnonymous?:boolean) => {
   const [, setCanAccessvalue] = useRecoilState(canAccessState);
   const [isAuth, setIsAuth] = useState<boolean | null>(null);
   const check = useCallback(async () => {
-    debugger
     if(allowAnonymous){
       setCanAccessvalue(true);
       setIsAuth(true);

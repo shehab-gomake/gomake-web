@@ -1,6 +1,5 @@
 import { atom } from "recoil";
 
-
 export enum ErpAccountType {
   TransferPayment = 0,
   ChecksPayment,

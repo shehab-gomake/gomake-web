@@ -308,8 +308,6 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
                 isQuoteConfirmation={isQuoteConfirmation}
               />
               }
-
-
               {
                 documentType === DOCUMENT_TYPE.receipt && 
                 <ReceiptsTable/>

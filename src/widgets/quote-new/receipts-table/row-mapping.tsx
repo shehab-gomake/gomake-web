@@ -3,6 +3,7 @@ import { Checkbox, TableRow } from "@mui/material";
 import { useStyle } from "./style";
 import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
 import { FONT_FAMILY } from "@/utils/font-family";
+import { useTranslation } from "react-i18next";
 
 const RowMappingWidget = ({
     item,
@@ -13,7 +14,7 @@ const RowMappingWidget = ({
     isChecked
 }) => {
     const { classes } = useStyle({ headerHeight });
-
+    const { t } = useTranslation();
     return (
 
         <TableRow
@@ -55,7 +56,7 @@ const RowMappingWidget = ({
                     ...classes.cellContainerStyle,
                 }}
             >
-                {item.docNumber}
+                {item.docNum}
             </PrimaryTableCell>
 
             <PrimaryTableCell
@@ -70,15 +71,14 @@ const RowMappingWidget = ({
                     width: columnWidths[4],
                     ...classes.cellContainerStyle,
                 }}
-            >{item?.content}
+            >{t(item?.documentTypeText)}
             </PrimaryTableCell>
-
             <PrimaryTableCell
                 style={{
                     width: columnWidths[5],
                     ...classes.cellContainerStyle,
                 }}
-            >{item?.finalPrice}
+            >{item?.sumApplied}
             </PrimaryTableCell>
         </TableRow>
     );
