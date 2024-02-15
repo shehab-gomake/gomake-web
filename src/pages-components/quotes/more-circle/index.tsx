@@ -38,7 +38,7 @@ const MoreMenuWidget = ({ quote, documentType, onClickOpenModal, onClickPdf, onC
     }
     else if (documentType !== DOCUMENT_TYPE.quote) {
       return (
-        <MenuItem onClick={() => navigate(`/${documentPath}?documentId=${quote?.id}`)}>
+        <MenuItem onClick={() => navigate(`/${documentPath}?Id=${quote?.id}`)}>
           <div style={classes.menuRowStyle}>
             <EditingIcon />
             <div style={classes.rowTextStyle}>{t("sales.quote.edit")}</div>
