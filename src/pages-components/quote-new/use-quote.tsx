@@ -30,6 +30,8 @@ interface IQuoteProps {
   isQuoteConfirmation?: boolean;
 }
 const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
+  const documentPath = DOCUMENT_TYPE[docType];
+
   const {
     alertSuccessUpdate,
     alertFaultUpdate,
@@ -974,7 +976,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     );
     if (res?.success) {
       alertSuccessAdded();
-      navigate("/deliveryNotes");
+      navigate(`${documentPath}s`);
     } else {
       alertFaultAdded();
     }
@@ -991,7 +993,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
       }
       const newAddress = {
         id: uuidv4(),
-        addressID: item?.addressId,
+        addressID: uuidv4(),
         street: item?.street,
         city: item?.city,
         entry: item?.entry,
