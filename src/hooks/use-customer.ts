@@ -12,7 +12,7 @@ import {Permissions} from "@/components/CheckPermission/enum";
 import { printHouseProfile } from "@/store/print-house-profile";
 
 
-const useCustomer = (permissionEnumValue?:Permissions) => {
+const useCustomer = (permissionEnumValue?:Permissions,allowAnonymous?:boolean) => {
 
     const {callApi} = useGomakeAxios();
     const [user, setUser] = useRecoilState<any>(userState);
@@ -33,6 +33,10 @@ const useCustomer = (permissionEnumValue?:Permissions) => {
     }, []);
 
     const validate = useCallback(async () => {
+        debugger
+        if(allowAnonymous){
+            return true;
+        }
         const validate: any = await callApi("GET", "/v1/auth/validate");
         if (validate?.success) {
             const user = validate?.data?.data?.customer;

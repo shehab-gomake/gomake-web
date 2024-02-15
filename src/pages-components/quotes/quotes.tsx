@@ -15,7 +15,7 @@ import { DOCUMENT_TYPE } from "./enums";
 import { Button, IconButton, Stack } from "@mui/material";
 import { CardsSection } from "./statistics-section/statistics-sections";
 import { GoMakePagination } from "@/components/pagination/gomake-pagination";
-import { SettingNewIcon } from "@/icons";
+import { ExcelSheetIcon, SettingNewIcon } from "@/icons";
 import { AddRuleModal } from "../products/profits-new/widgets/add-rule-modal";
 import { useGomakeRouter } from "@/hooks";
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
@@ -173,11 +173,11 @@ const QuotesListPageWidget = ({
                   </GomakePrimaryButton>
                 </div>
               </div>
-              <div>
+              <div style={{ display: "flex", flexDirection: "row", gap: 8 }}>
                 <SearchInputComponent onChange={(e) => setPatternSearch(e)} />
-                <IconButton onClick={onOpenAddRuleModal}>
-                  <SettingNewIcon />
-                </IconButton>
+                <div style={{ cursor: "pointer" }} onClick={onOpenAddRuleModal}>
+                  <ExcelSheetIcon />
+                </div>
               </div>
             </div>
             <PrimaryTable

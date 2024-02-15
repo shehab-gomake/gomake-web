@@ -4,4 +4,5 @@ export interface IAuthLayout {
   children: any;
   permissionEnumValue?: Permissions;
   customGap?: number;
+  allowAnonymous?:boolean;
 }

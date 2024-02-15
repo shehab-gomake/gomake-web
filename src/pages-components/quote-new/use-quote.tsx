@@ -129,43 +129,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
 
   const router = useRouter();
   const getQuote = async () => {
-    if (router?.query?.isNewCreation === "true") {
-      // setQuoteItemValue(
-      //   {
-      //     "id": "c12bfa79-c7c5-487a-a352-3c8c2de68211",
-      //     "userID": "29562d9d-1518-42c1-8a5b-4e3db19eaac1",
-      //     "customerID": "919f5ae6-158f-4432-b6cb-2b1bd16f86f1",
-      //     "creationDate": "0001-01-01T00:00:00",
-      //     "totalPrice": null,
-      //     "discount": null,
-      //     "vat": null,
-      //     "number": "IM50001188",
-      //     "purchaseNumber": "No purchase number",
-      //     "currency": "ILS",
-      //     "exchangeRate": 1,
-      //     "notes": "",
-      //     "dueDate": "2024-03-08T14:52:26.7228261Z",
-      //     "dueDateUpdatedByUser": null,
-      //     "isForeignCurrency": false,
-      //     "client": null,
-      //     "agentId": null,
-      //     "printHouseId": "4be15613-2e58-4c25-8f6c-fbb32a9d7797",
-      //     "totalPriceAfterDiscount": null,
-      //     "discountAmount": null,
-      //     "totalPayment": null,
-      //     "totalVAT": null,
-      //     "isConfirmed": null,
-      //     "quoteOpendFirstTimeDate": null,
-      //     "documentStatus": 1,
-      //     "vatStatus": null,
-      //     "sortType": null,
-      //     "statusID": 1,
-      //     "agent": null,
-      //     "documentContacts": [],
-      //     "documentAddresses": [],
-      //     "documentItems": []
-      //   }
-      // )
+    if (router?.query?.isNewCreation) {
       const res = await callApi(
         EHttpMethod.POST,
         `/v1/erp-service/documents/get-new-document-data`,
@@ -420,7 +384,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
   }
 
   const onChangeSelectBusiness = async (item: any) => {
-    if (router?.query?.isNewCreation === "true") {
+    if (router?.query?.isNewCreation) {
       const res = await callApi(
         EHttpMethod.POST,
         `/v1/erp-service/documents/get-new-document-data`,
@@ -647,22 +611,82 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     setOpenAddNewItemModal(false);
   };
 
-  const getCalculateQuoteItem = async (quoteItemId: string, calculationType: number, data: number) => {
-    const callBack = (res) => {
+
+  const getCalculateQuoteItem = async (quoteItem: any, calculationType: number, data: number) => {
+    if (router.query.isNewCreation) {
+      const quoteItemEdit = quoteItemValue.documentItems.find(item => item.id === quoteItem.id)
+      const res = await callApi(
+        EHttpMethod.POST,
+        `/v1/erp-service/documents/calculate-item`,
+        {
+          documentType: docType,
+          document: {
+            exchangeRate: quoteItemValue?.exchangeRate,
+            price: quoteItem?.price,
+            discount: quoteItem?.discount,
+            finalPrice: quoteItemEdit?.finalPrice,
+            quantity: quoteItem?.quantity,
+            document: {
+              totalPrice: quoteItemValue?.totalPrice,
+              totalPriceAfterDiscount: quoteItemValue?.totalPriceAfterDiscount,
+              discount: +quoteItemValue?.discount,
+              discountAmount: quoteItemValue?.discountAmount,
+              totalPayment: quoteItemValue?.totalPayment,
+              vat: quoteItemValue?.vat,
+              totalVAT: quoteItemValue?.totalVAT
+            },
+            data: data,
+            calculationType: calculationType
+          }
+        }
+      );
       if (res?.success) {
-        alertSuccessUpdate();
-        getQuote();
+        const _data = res?.data?.data?.data
+        const updatedQuoteItemValue = {
+          ...quoteItemValue,
+          discount: _data?.document?.discount,
+          discountAmount: _data?.document?.discountAmount,
+          totalPayment: _data?.document?.totalPayment,
+          totalPrice: _data?.document?.totalPrice,
+          totalPriceAfterDiscount: _data?.document?.totalPriceAfterDiscount,
+          totalVAT: _data?.document?.totalVAT,
+          vat: _data?.document?.vat,
+          documentItems: quoteItemValue.documentItems.map(documentItem => {
+            if (documentItem.id === quoteItem.id) {
+              return {
+                ...documentItem,
+                finalPrice: _data.finalPrice,
+                price: _data.price,
+                quantity: _data.quantity,
+                discount: _data.discount
+              };
+            } else {
+              return documentItem;
+            }
+          })
+        };
+        setQuoteItemValue(updatedQuoteItemValue);
       } else {
-        alertFaultUpdate();
       }
     }
-    await calculateDocumentItemApi(callApi, callBack,
-      {
-        documentType: docType,
-        ItemId: quoteItemId,
-        data,
-        calculationType,
-      })
+    else {
+      const callBack = (res) => {
+        if (res?.success) {
+          alertSuccessUpdate();
+          getQuote();
+        } else {
+          alertFaultUpdate();
+        }
+      }
+      await calculateDocumentItemApi(callApi, callBack,
+        {
+          documentType: docType,
+          ItemId: quoteItem?.id,
+          data,
+          calculationType,
+        })
+    }
+
   }
 
   const onCloseDuplicateWithDifferentQTY = () => {
@@ -698,16 +722,60 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
   };
 
   const deleteQuoteItem = async () => {
-    const callBack = (res) => {
+    if (router.query.isNewCreation) {
+      const updatedDocumentItems = quoteItemValue.documentItems.filter(item => item.id !== quoteItemId);
+      const updatedQuoteItemValue = {
+        ...quoteItemValue,
+        documentItems: updatedDocumentItems
+      };
+      const res = await callApi(
+        EHttpMethod.POST,
+        `/v1/erp-service/documents/calculate-document-new`,
+        {
+          documentType: docType,
+          document: {
+            exchangeRate: updatedQuoteItemValue?.exchangeRate || 1,
+            totalPrice: updatedQuoteItemValue?.totalPrice,
+            data: 0,
+            calculationType: 0,
+            totalPriceAfterDiscount: updatedQuoteItemValue?.totalPriceAfterDiscount,
+            discount: updatedQuoteItemValue?.discount,
+            discountAmount: updatedQuoteItemValue?.discountAmount,
+            totalPayment: updatedQuoteItemValue?.totalPayment,
+            vat: updatedQuoteItemValue?.vat,
+            totalVAT: updatedQuoteItemValue?.totalVAT,
+            documentItems: updatedQuoteItemValue?.documentItems.map(item => ({
+              finalPrice: item.finalPrice
+            }))
+          }
+        }
+      );
       if (res?.success) {
-        alertSuccessDelete();
-        onCloseDeleteItemModal();
-        quoteItemValue?.documentItems?.length === 1 ? navigate("/home") : getQuote();
-      } else {
-        alertFaultDelete();
+        const _data = res?.data?.data?.data;
+        updatedQuoteItemValue.discount = _data.discount;
+        updatedQuoteItemValue.discountAmount = _data.discountAmount;
+        updatedQuoteItemValue.totalPayment = _data.totalPayment;
+        updatedQuoteItemValue.totalPrice = _data.totalPrice;
+        updatedQuoteItemValue.totalPriceAfterDiscount = _data.totalPriceAfterDiscount;
+        updatedQuoteItemValue.totalVAT = _data.totalVAT;
+        updatedQuoteItemValue.vat = _data.vat;
+        updatedQuoteItemValue.exchangeRate = documentItems[0]?.exchangeRate;
+        setQuoteItemValue(updatedQuoteItemValue);
       }
     }
-    await deleteDocumentItemApi(callApi, callBack, { ItemId: quoteItemId, documentType: docType })
+    else {
+      const callBack = (res) => {
+        if (res?.success) {
+          alertSuccessDelete();
+          onCloseDeleteItemModal();
+          quoteItemValue?.documentItems?.length === 1 ? navigate("/home") : getQuote();
+        } else {
+          alertFaultDelete();
+        }
+      }
+      await deleteDocumentItemApi(callApi, callBack, { ItemId: quoteItemId, documentType: docType })
+    }
+
   }
 
   const onAddDelivery = async (shipmentType: string) => {
@@ -893,55 +961,117 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
       }
     })
   }
-
-  const setOpenModal = useSetRecoilState<boolean>(addressModalState);
-
-  const onClickAddNewAddress = useCallback(async (item: any, isUpdate: boolean) => {
+  const handleSaveBtnClickForDeleveryNote = async () => {
     const res = await callApi(
       EHttpMethod.POST,
-      `/v1/crm-service/customer/create-address`,
+      `/v1/erp-service/documents/create-document`,
       {
-        address1: item?.addressId,
-        street: item?.street,
-        city: item?.city,
-        entry: item?.entry,
-        apartment: item?.apartment,
-        clientId: quoteItemValue?.customerID,
+        documentType: docType,
+        document: {
+          ...quoteItemValue
+        }
       }
     );
     if (res?.success) {
       alertSuccessAdded();
-      const result = await getAllClientAddress();
-      isUpdate ? updateClientAddress(result.find(item => item.id === res.data.data.result)) :
-        onClickAddAddress(result.find(item => item.id === res.data.data.result))
+      navigate("/deliveryNotes");
     } else {
       alertFaultAdded();
     }
-  }, [quoteItemValue]);
+  }
 
-  const updateClientAddress = async (item: any) => {
-    const callBack = (res) => {
-      if (res?.success) {
-        alertSuccessUpdate();
-        getQuote();
-        setOpenModal(false);
-      } else {
-        alertFaultAdded();
+
+  const setOpenModal = useSetRecoilState<boolean>(addressModalState);
+
+  const onClickAddNewAddress = useCallback(async (item: any, isUpdate: boolean) => {
+    if (router.query.isNewCreation) {
+      const updatedQuoteItemValue = { ...quoteItemValue };
+      if (!Array.isArray(updatedQuoteItemValue.documentAddresses)) {
+        updatedQuoteItemValue.documentAddresses = [];
       }
-    }
-    await updateDocumentAddressApi(callApi, callBack, {
-      documentType: docType,
-      address: {
-        id: quoteItemValue?.documentAddresses[0]?.id,
-        addressID: quoteItemValue?.documentAddresses[0]?.addressID,
+      const newAddress = {
+        id: uuidv4(),
+        addressID: item?.addressId,
         street: item?.street,
         city: item?.city,
         entry: item?.entry,
         apartment: item?.apartment,
-        notes: item?.notes || "",
-        documentID: quoteItemValue?.id,
+        notes: "",
+        documentID: updatedQuoteItemValue?.id,
+      };
+      updatedQuoteItemValue.documentAddresses = [...updatedQuoteItemValue.documentAddresses, newAddress];
+      setQuoteItemValue(updatedQuoteItemValue);
+      setOpenModal(false);
+    }
+    else {
+      const res = await callApi(
+        EHttpMethod.POST,
+        `/v1/crm-service/customer/create-address`,
+        {
+          address1: item?.addressId,
+          street: item?.street,
+          city: item?.city,
+          entry: item?.entry,
+          apartment: item?.apartment,
+          clientId: quoteItemValue?.customerID,
+        }
+      );
+      if (res?.success) {
+        alertSuccessAdded();
+        const result = await getAllClientAddress();
+        isUpdate ? updateClientAddress(result.find(item => item.id === res.data.data.result)) :
+          onClickAddAddress(result.find(item => item.id === res.data.data.result))
+      } else {
+        alertFaultAdded();
       }
-    })
+    }
+
+  }, [quoteItemValue, router]);
+  const updateClientAddress = async (item: any) => {
+    if (router.query.isNewCreation) {
+      const updatedQuoteItemValue = { ...quoteItemValue };
+      const updatedAddresses = updatedQuoteItemValue.documentAddresses.map((address) => {
+        if (address.id === item.id) {
+          return {
+            ...address,
+            street: item.street,
+            city: item.city,
+            entry: item.entry,
+            apartment: item.apartment,
+            notes: item.notes || "",
+          };
+        }
+        return address;
+      });
+      updatedQuoteItemValue.documentAddresses = updatedAddresses;
+      setQuoteItemValue(updatedQuoteItemValue);
+      setOpenModal(false);
+    }
+    else {
+      const callBack = (res) => {
+        if (res?.success) {
+          alertSuccessUpdate();
+          getQuote();
+          setOpenModal(false);
+        } else {
+          alertFaultAdded();
+        }
+      }
+      await updateDocumentAddressApi(callApi, callBack, {
+        documentType: docType,
+        address: {
+          id: quoteItemValue?.documentAddresses[0]?.id,
+          addressID: quoteItemValue?.documentAddresses[0]?.addressID,
+          street: item?.street,
+          city: item?.city,
+          entry: item?.entry,
+          apartment: item?.apartment,
+          notes: item?.notes || "",
+          documentID: quoteItemValue?.id,
+        }
+      })
+    }
+
   }
 
   const onClickAddAddress = async (item: any) => {
@@ -971,15 +1101,23 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
   }
 
   const onClickDeleteAddress = async (item: any) => {
-    const callBack = (res) => {
-      if (res?.success) {
-        alertSuccessDelete();
-        getQuote();
-      } else {
-        alertFaultDelete();
-      }
+    if (router.query.isNewCreation) {
+      const updatedQuoteItemValue = { ...quoteItemValue };
+      updatedQuoteItemValue.documentAddresses = [];
+      setQuoteItemValue(updatedQuoteItemValue);
     }
-    await deleteDocumentAddressApi(callApi, callBack, { documentAddressId: item?.id, documentType: docType })
+    else {
+      const callBack = (res) => {
+        if (res?.success) {
+          alertSuccessDelete();
+          getQuote();
+        } else {
+          alertFaultDelete();
+        }
+      }
+      await deleteDocumentAddressApi(callApi, callBack, { documentAddressId: item?.id, documentType: docType })
+    }
+
   }
 
   useEffect(() => {
@@ -1189,6 +1327,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     onCloseDeliveryModal,
     onAddDelivery,
     handleSaveBtnClick,
+    handleSaveBtnClickForDeleveryNote,
     documentTitle,
     onBlurExchangeRate,
     onBlurCurrency,
