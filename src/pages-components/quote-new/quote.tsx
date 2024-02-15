@@ -24,6 +24,7 @@ import { SettingQuoteMenu } from "@/widgets/quote-new/setting-quote-menu";
 import { AddDeliveryModal } from "@/widgets/quote-new/modals-widgets/add-delivery-modal/add-delivery-modal";
 import { DOCUMENT_TYPE } from "../quotes/enums";
 import { ButtonsConfirmContainer } from "@/widgets/quote-new/buttons-cofirm-container";
+import { CopyFromOrderModal } from "@/widgets/quote-new/modals-widgets/copy-from-order-modal/copy-from-order-modal";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -98,6 +99,9 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
     setSelectDate,
     setIsUpdateBusinessName,
     setSelectBusiness,
+    openCopyFromOrderModal,
+    onCloseCopyFromOrder,
+    onOpenCopyFromOrder,
     setIsUpdateAddress,
     setIsUpdatePurchaseNumber,
     setIsUpdateBusinessCode,
@@ -156,8 +160,9 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
     updateCurrency,
     refreshExchangeRate,
     getQuote,
-    selectConfirmBusiness
-  } = useQuoteNew({docType :documentType  , isQuoteConfirmation : isQuoteConfirmation });
+    selectConfirmBusiness,
+    handleSaveBtnClickForDeleveryNote
+  } = useQuoteNew({ docType: documentType, isQuoteConfirmation: isQuoteConfirmation });
 
   return (
     <>
@@ -312,11 +317,13 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
               handleSaveBtnClick={handleSaveBtnClick}
               handleSendBtnClick={handleSendBtnClick}
               documentType={documentType}
+              onOpenCopyFromOrder={onOpenCopyFromOrder}
+              handleSaveBtnClickForDeleveryNote={handleSaveBtnClickForDeleveryNote}
             />
           }
         </div>
       )}
-      {(isQuoteConfirmation && !quoteConfirm?.isConfirmed )  && <ButtonsConfirmContainer />}
+      {(isQuoteConfirmation && !quoteConfirm?.isConfirmed) && <ButtonsConfirmContainer />}
       <AddNewItemModal
         openModal={openAddNewItemModal}
         onClose={onCloseNewItem}
@@ -326,6 +333,11 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
         openModal={openAddDeliveryModal}
         onClose={onCloseDeliveryModal}
         onClickAdd={onAddDelivery}
+      />
+      <CopyFromOrderModal
+        openModal={openCopyFromOrderModal}
+        onClose={onCloseCopyFromOrder}
+        documentType={documentType}
       />
       <DuplicateItemModal
         openModal={openDuplicateWithDifferentQTYModal}

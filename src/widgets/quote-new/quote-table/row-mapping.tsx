@@ -76,17 +76,17 @@ const RowMappingWidget = ({
             alignItems: "center",
           }}
         >
-          {isQuoteConfirmation ? 
-          <Checkbox
-            icon={<CheckboxIcon />}
-            checkedIcon={<CheckboxCheckedIcon />}
-            checked={item?.isChecked}
-            onChange={(checked) => handleItemCheck(checked, item.id)}
-          /> : 
-          <Checkbox
-            icon={<CheckboxIcon />}
-            checkedIcon={<CheckboxCheckedIcon />}
-          />}
+          {isQuoteConfirmation ?
+            <Checkbox
+              icon={<CheckboxIcon />}
+              checkedIcon={<CheckboxCheckedIcon />}
+              checked={item?.isChecked}
+              onChange={(checked) => handleItemCheck(checked, item.id)}
+            /> :
+            <Checkbox
+              icon={<CheckboxIcon />}
+              checkedIcon={<CheckboxCheckedIcon />}
+            />}
           {parentIndex}
         </div>
       </PrimaryTableCell>
@@ -118,7 +118,7 @@ const RowMappingWidget = ({
           borderBottom: item?.childsDocumentItems && "none",
         }}
       >
-        <CharacterDetails details={item.details} getQuote={getQuote} documentItemId={item?.id} isQuoteConfirmation={isQuoteConfirmation} />
+        <CharacterDetails details={item.details} getQuote={getQuote} documentItemId={item?.id} canUpdate={!isQuoteConfirmation} />
       </PrimaryTableCell>
       <PrimaryTableCell
         style={{

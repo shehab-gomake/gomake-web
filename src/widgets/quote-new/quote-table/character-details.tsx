@@ -11,9 +11,9 @@ interface IProps {
   documentItemId?: any;
   detailsStyle?: CSSProperties;
   showAllStyle?: CSSProperties;
-  isQuoteConfirmation?: boolean;
+  canUpdate?:boolean;
 }
-const CharacterDetails = ({ details, getQuote, documentItemId, showAllStyle, detailsStyle, isQuoteConfirmation = false }: IProps) => {
+const CharacterDetails = ({ details, getQuote, documentItemId, showAllStyle, detailsStyle,canUpdate = true}: IProps) => {
   const { isEdit, showAll, truncatedDetails, data, handleShowLess, handleShowMore, t, setIsEdit, handleChange, handleBlur } = useCharacterDetails({ details, getQuote, documentItemId })
   const { classes } = useStyleCharacterDetails({ showAll });
   return (
@@ -30,7 +30,7 @@ const CharacterDetails = ({ details, getQuote, documentItemId, showAllStyle, det
               {showAll ? t("sales.quote.showLess") : t("sales.quote.showMore")}
             </span>
           )}
-          {!isQuoteConfirmation && <IconButton onClick={() => setIsEdit(true)} >
+          {canUpdate && <IconButton onClick={() => setIsEdit(true)} >
             <EditIcon />
           </IconButton>}
         </div> :

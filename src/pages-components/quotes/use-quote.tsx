@@ -553,7 +553,8 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     handleSecondCardClick,
     onCloseAddRuleModal,
     onOpenAddRuleModal,
-    openAddRule
+    openAddRule,
+    navigate
   };
 };
 

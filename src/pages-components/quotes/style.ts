@@ -112,6 +112,17 @@ const useStyle = () => {
         //  background: errorColor(300),
         ...FONT_FAMILY.Lexend(600, 14),
       },
+      createNew: {
+        width: "160px",
+        height: "40px",
+        borderRadius: "4px",
+        background: "#DCDCEC",
+        color: "#101020",
+        ...FONT_FAMILY.Lexend(500, 16),
+        lineHeight: "20px",
+        textTransform: "none" as "none",
+        gap: "10px",
+    },
     };
   }, [i18next.language, t, theme]);
   return {
