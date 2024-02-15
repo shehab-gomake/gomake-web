@@ -90,8 +90,8 @@ const useProductManagement = () => {
   const getActions = useCallback(async () => {
     const data = router.query.productId
       ? await getAllSubProducts(callApi, setAllProducts, {
-          productId: router.query.productId,
-        })
+        productId: router.query.productId,
+      })
       : await getAllProductsMongoDB(callApi, setAllProducts);
 
     const mapData = data?.map((item) => [
@@ -157,7 +157,7 @@ const useProductManagement = () => {
           <div style={clasess.activeTabStyle}>{t("usersSettings.active")}</div>
         )}
       </div>,
-      <MoreMenuWidget item={item} updatedProduct={updatedProduct} />,
+      <MoreMenuWidget item={item} updatedProduct={updatedProduct} getActions={getActions} />,
     ]);
     setAllProducts(mapData);
   }, []);

@@ -1,10 +1,11 @@
 import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
+import { EHttpMethod } from "@/services/api-service/enums";
 import { getAllSubProducts } from "@/services/hooks/admin-side/products/get-all-sub-products";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
-const useMoreCircle = ({ updatedProduct, item }) => {
+const useMoreCircle = ({ updatedProduct, item, getActions }) => {
   const [anchorElPopover, setAnchorElPopover] =
     useState<HTMLButtonElement | null>(null);
   const openPopover = Boolean(anchorElPopover);
@@ -19,7 +20,7 @@ const useMoreCircle = ({ updatedProduct, item }) => {
   const { callApi } = useGomakeAxios();
   const router = useRouter();
   const { t } = useTranslation();
-  const { setSnackbarStateValue, alertFaultAdded, alertSuccessAdded } =
+  const { setSnackbarStateValue, alertFaultAdded, alertSuccessAdded, alertSuccessDelete, alertFaultDelete } =
     useSnackBar();
   const [selectProduct, setSelectProduct] = useState<any>();
   const [setAllProducts, setSetAllProducts] = useState<any>([]);
@@ -34,6 +35,13 @@ const useMoreCircle = ({ updatedProduct, item }) => {
   const handleClose = () => {
     setAnchorEl(null);
     setSelectProduct(null);
+  };
+  const [openDeleteRowModal, setOpenDeleteRowModal] = useState<boolean>(false);
+  const onClickCloseDeleteRowModal = () => {
+    setOpenDeleteRowModal(false);
+  };
+  const onClickOpenDeleteRowModal = () => {
+    setOpenDeleteRowModal(true);
   };
 
   const updatedProductInside = useCallback(async (product: any) => {
@@ -81,6 +89,25 @@ const useMoreCircle = ({ updatedProduct, item }) => {
   useEffect(() => {
     getSubProducts();
   }, [selectProduct]);
+
+  const deleteSection = useCallback(
+    async () => {
+      const res = await callApi(
+        EHttpMethod.DELETE,
+        `/v1/printhouse-config/products/delete-product-by-id?Id=${item?.id}`
+      );
+      if (res?.success) {
+        alertSuccessDelete();
+        onClickCloseDeleteRowModal()
+        getActions()
+      } else {
+        alertFaultDelete();
+      }
+    },
+    [item]
+  );
+
+
   return {
     open,
     anchorEl,
@@ -99,6 +126,10 @@ const useMoreCircle = ({ updatedProduct, item }) => {
     idPopover,
     handleClosePopover,
     handleClickPopover,
+    openDeleteRowModal,
+    onClickCloseDeleteRowModal,
+    onClickOpenDeleteRowModal,
+    deleteSection
   };
 };
 

@@ -1,6 +1,6 @@
 import { IconButton, MenuItem, Popover } from "@mui/material";
 import { MoreCircleIcon, PlusIcon } from "@/icons";
-import { GoMakeMenu } from "@/components";
+import { GoMakeDeleteModal, GoMakeMenu } from "@/components";
 import { useMoreCircle } from "./use-more-circle";
 import { useStyle } from "./style";
 import { ConvertIcon } from "./icons/convert";
@@ -9,8 +9,9 @@ import { useTranslation } from "react-i18next";
 import { PermissionCheck } from "@/components/CheckPermission";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { DocumentIcon } from "./icons/document";
+import { DeleteMenuIcon } from "@/widgets/quote/more-circle/icons/delete-menu";
 
-const MoreMenuWidget = ({ item, updatedProduct }: any) => {
+const MoreMenuWidget = ({ item, updatedProduct, getActions }: any) => {
   const { clasess } = useStyle();
   const { t } = useTranslation();
   const {
@@ -28,9 +29,14 @@ const MoreMenuWidget = ({ item, updatedProduct }: any) => {
     anchorElPopover,
     handleClosePopover,
     handleClickPopover,
+    openDeleteRowModal,
+    onClickCloseDeleteRowModal,
+    onClickOpenDeleteRowModal,
+    deleteSection
   } = useMoreCircle({
     updatedProduct,
     item,
+    getActions
   });
   return (
     <>
@@ -77,8 +83,8 @@ const MoreMenuWidget = ({ item, updatedProduct }: any) => {
                   onClick={(e: any) =>
                     setAllProducts?.length > 0
                       ? navigate(
-                          `/settings/products/sub-product/${item?.id}?productName=${item?.name}`
-                        )
+                        `/settings/products/sub-product/${item?.id}?productName=${item?.name}`
+                      )
                       : handleClickPopover(e)
                   }
                 >
@@ -88,8 +94,20 @@ const MoreMenuWidget = ({ item, updatedProduct }: any) => {
                   </div>
                 </div>
               </MenuItem>
+
             </>
           )}
+          <MenuItem>
+            <div
+              style={clasess.menuRowStyle}
+              onClick={onClickOpenDeleteRowModal}
+            >
+              <DeleteMenuIcon />
+              <div style={clasess.rowTextStyle}>
+                {t("navigationButtons.delete")}
+              </div>
+            </div>
+          </MenuItem>
         </GoMakeMenu>
       </PermissionCheck>
       <Popover
@@ -104,6 +122,11 @@ const MoreMenuWidget = ({ item, updatedProduct }: any) => {
       >
         <div style={clasess.errorMsgStyle}>no sub products founded</div>
       </Popover>
+      <GoMakeDeleteModal
+        openModal={openDeleteRowModal}
+        onClose={onClickCloseDeleteRowModal}
+        onClickDelete={deleteSection}
+      />
     </>
   );
 };
