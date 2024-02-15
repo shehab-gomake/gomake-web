@@ -8,7 +8,7 @@ import { CashTab } from "./payment-methods-tabs/cash-tab";
 import { CheckTab } from "./payment-methods-tabs/check-tab";
 import { TransferTab } from "./payment-methods-tabs/transfer-tab";
 import { FooterSection } from "./payment-methods-tabs/footer-section";
-import { usePaymentsTable } from "../../payments-table/use-payments-table";
+import { usePaymentsTable } from "../../receipts-table/use-payments-table";
 import { ErpAccountType } from "../states";
 
 interface IPaymentModalProps {

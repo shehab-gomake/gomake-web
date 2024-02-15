@@ -25,7 +25,7 @@ import { AddDeliveryModal } from "@/widgets/quote-new/modals-widgets/add-deliver
 import { DOCUMENT_TYPE } from "../quotes/enums";
 import { ButtonsConfirmContainer } from "@/widgets/quote-new/buttons-cofirm-container";
 import { CopyFromOrderModal } from "@/widgets/quote-new/modals-widgets/copy-from-order-modal/copy-from-order-modal";
-import { ReceiptsTable } from "@/widgets/quote-new/payments-table";
+import { ReceiptsTable } from "@/widgets/quote-new/receipts-table";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;

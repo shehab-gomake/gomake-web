@@ -1,7 +1,7 @@
 import { Stack } from "@mui/material";
 import { SecondaryButton } from "@/components/button/secondary-button";
 import { useStyle } from "../style";
-import { usePaymentsTable } from "@/widgets/quote-new/payments-table/use-payments-table";
+import { usePaymentsTable } from "@/widgets/quote-new/receipts-table/use-payments-table";
 
 const FooterSection = ( {onCloseModal} : any ) => {
     const { classes } = useStyle();

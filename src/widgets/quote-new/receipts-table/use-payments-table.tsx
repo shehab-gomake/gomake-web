@@ -113,6 +113,36 @@ const usePaymentsTable = () => {
     };
 
 
+
+
+
+
+
+    //////////////////////////////////////////////////
+
+    const [selectAllChecked, setSelectAllChecked] = useState(false);
+
+    
+    const handleSelectAllCheckboxChange = () => {
+        setSelectAllChecked((prev) => !prev);
+      
+        // Update the checkedItems state for all rows based on the state of "Select All"
+        setCheckedItems((prevCheckedItems) => {
+          const updatedCheckedItems = {};
+          tableRows.forEach((_, index) => {
+            updatedCheckedItems[index] = !prevCheckedItems[index];
+          });
+      
+          // Calculate the total sum for all checked items
+          const sum = tableRows.reduce(
+            (acc, item, index) => (updatedCheckedItems[index] ? acc + item.finalPrice : acc),
+            0
+          );
+      
+          setTotalSum(sum);
+          return updatedCheckedItems;
+        });
+      };
     return {
         t,
         columnWidths,
