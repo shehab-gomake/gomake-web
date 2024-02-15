@@ -24,11 +24,11 @@ const ButtonsContainer = ({
   onOpenDeliveryModal,
   documentType,
   onOpenCopyFromOrder,
-  handleSaveBtnClickForDeleveryNote
+  handleSaveBtnClickForDocument
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
-  const { openOrderNowModal, onClickCloseOrderNowModal, onClickOpenOrderNowModal, onClickConfirmWithoutNotification, onClickConfirmWithNotification, onClickPrint, onClickClosePaymentModal, onClickOpenPaymentModal, openPaymentModal, selectedTabIndex , getERPAccounts } = useButtonsContainer(documentType);
+  const { openOrderNowModal, onClickCloseOrderNowModal, onClickOpenOrderNowModal, onClickConfirmWithoutNotification, onClickConfirmWithNotification, onClickPrint, onClickClosePaymentModal, onClickOpenPaymentModal, openPaymentModal, selectedTabIndex, getERPAccounts } = useButtonsContainer(documentType);
   const router = useRouter()
   return (
     <div style={classes.writeCommentcontainer}>
@@ -86,7 +86,7 @@ const ButtonsContainer = ({
         </GomakePrimaryButton>}
         <GomakePrimaryButton
           style={classes.btnThirdContainer}
-          onClick={documentType === DOCUMENT_TYPE.deliveryNote ? handleSaveBtnClickForDeleveryNote : handleSaveBtnClick}
+          onClick={documentType != DOCUMENT_TYPE.quote ? handleSaveBtnClickForDocument : handleSaveBtnClick}
         >
           {t("materials.buttons.save")}
         </GomakePrimaryButton>

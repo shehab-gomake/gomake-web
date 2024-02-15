@@ -163,7 +163,7 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
     refreshExchangeRate,
     getQuote,
     selectConfirmBusiness,
-    handleSaveBtnClickForDeleveryNote
+    handleSaveBtnClickForDocument
   } = useQuoteNew({ docType: documentType, isQuoteConfirmation: isQuoteConfirmation });
   const router = useRouter()
   return (
@@ -328,7 +328,7 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
               handleSendBtnClick={handleSendBtnClick}
               documentType={documentType}
               onOpenCopyFromOrder={onOpenCopyFromOrder}
-              handleSaveBtnClickForDeleveryNote={handleSaveBtnClickForDeleveryNote}
+              handleSaveBtnClickForDocument={handleSaveBtnClickForDocument}
             />
           }
         </div>

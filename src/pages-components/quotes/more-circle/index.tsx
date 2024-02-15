@@ -14,7 +14,6 @@ const MoreMenuWidget = ({ quote, documentType, onClickOpenModal, onClickPdf, onC
   const { t } = useTranslation();
   const { user, navigate } = useMoreCircle();
   const documentPath = DOCUMENT_TYPE[documentType];
-  console.log("${documentPath}", quote)
   const renderMenuItem = () => {
     if (documentType === DOCUMENT_TYPE.quote) {
       const isCreateStatus = quote?.documentStatus === QUOTE_STATUSES.Create;

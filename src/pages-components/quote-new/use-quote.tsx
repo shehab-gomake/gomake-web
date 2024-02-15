@@ -961,7 +961,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
       }
     })
   }
-  const handleSaveBtnClickForDeleveryNote = async () => {
+  const handleSaveBtnClickForDocument = async () => {
     const res = await callApi(
       EHttpMethod.POST,
       `/v1/erp-service/documents/create-document`,
@@ -1349,7 +1349,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     onCloseDeliveryModal,
     onAddDelivery,
     handleSaveBtnClick,
-    handleSaveBtnClickForDeleveryNote,
+    handleSaveBtnClickForDocument,
     documentTitle,
     onBlurExchangeRate,
     onBlurCurrency,
