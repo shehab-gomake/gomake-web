@@ -47,7 +47,7 @@ const BusinessNewWidget = ({
   const quoteStateValue = useRecoilValue<any>(quoteItemState);
   const quoteConfirm = useRecoilValue<any>(quoteConfirmationState);
 
- 
+
   useEffect(() => {
     setPurchaseNumber(values?.purchaseNumber || t("sales.quote.noPurchaseNumber"));
   }, [values?.purchaseNumber]);
@@ -62,7 +62,7 @@ const BusinessNewWidget = ({
       <div style={classes.businessContainerStyle}>
         <AutoCompleteUpdatedValue
           label={t("sales.quote.businessName")}
-          value={isQuoteConfirmation ? quoteConfirm?.client?.name :quoteStateValue?.client?.name}
+          value={isQuoteConfirmation ? quoteConfirm?.client?.name : quoteStateValue?.client?.name ? quoteStateValue?.client?.name : t("sales.quote.selectBusinessName")}
           options={mappedCustomers}
           onBlur={onBlurBusinessName}
           isUpdate={isUpdateBusinessName}
@@ -87,7 +87,7 @@ const BusinessNewWidget = ({
         />
         {!isQuoteConfirmation && <AutoCompleteUpdatedValue
           label={t("sales.quote.agent")}
-          value={selectedAgent?.text}
+          value={selectedAgent?.text ? selectedAgent.text : t("sales.quote.selectAgent")}
           options={agentListValue}
           onBlur={onBlurAgent}
           isUpdate={isUpdateAgent}
@@ -106,7 +106,7 @@ const BusinessNewWidget = ({
           onClickFlag={() => setOpenModal(true)}
         />}
         {values?.documentAddresses?.length > 0 ?
-        ( !isQuoteConfirmation && <div
+          (!isQuoteConfirmation && <div
             style={classes.addNewAddressStyle}
             onClick={() => null}
           >
