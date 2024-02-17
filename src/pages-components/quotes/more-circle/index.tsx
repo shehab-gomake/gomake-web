@@ -13,7 +13,44 @@ const MoreMenuWidget = ({ quote, documentType, onClickOpenModal, onClickPdf, onC
   const { classes } = useStyle();
   const { t } = useTranslation();
   const { user, navigate } = useMoreCircle();
-  const documentPath = DOCUMENT_TYPE[documentType].toLowerCase();
+  const documentPath = DOCUMENT_TYPE[documentType];
+  const renderMenuItem = () => {
+    if (documentType === DOCUMENT_TYPE.quote) {
+      const isCreateStatus = quote?.documentStatus === QUOTE_STATUSES.Create;
+      const isOpenStatus = quote?.documentStatus === QUOTE_STATUSES.Open;
+      const isCurrentUser = quote?.userID === user?.id;
+
+      if ((isCreateStatus && isCurrentUser) || isOpenStatus) {
+        return (
+          <MenuItem
+            onClick={() =>
+              isCreateStatus ? navigate(`/quote`) : onClickOpenModal(quote)
+            }
+          >
+            <div style={classes.menuRowStyle}>
+              <EditingIcon />
+              <div style={classes.rowTextStyle}>{t("sales.quote.edit")}</div>
+            </div>
+          </MenuItem>
+        );
+      }
+    }
+    else if (documentType !== DOCUMENT_TYPE.quote) {
+      return (
+        <MenuItem onClick={() => navigate(`/${documentPath}?Id=${quote?.id}`)}>
+          <div style={classes.menuRowStyle}>
+            <EditingIcon />
+            <div style={classes.rowTextStyle}>{t("sales.quote.edit")}</div>
+          </div>
+        </MenuItem>
+      );
+    }
+    else {
+      return <></>;
+
+    }
+  };
+
 
   return (
     <OptionsButton>
@@ -38,36 +75,7 @@ const MoreMenuWidget = ({ quote, documentType, onClickOpenModal, onClickPdf, onC
           <div style={classes.rowTextStyle}>{t("sales.quote.duplicate")}</div>
         </div>
       </MenuItem>
-
-      {(quote?.documentStatus === QUOTE_STATUSES.Create &&
-        quote?.userID === user?.id) ||
-        quote?.documentStatus === QUOTE_STATUSES.Open ? (
-        <MenuItem
-          onClick={() =>
-            quote?.documentStatus === QUOTE_STATUSES.Create
-              ? navigate(`/quote`)
-              : onClickOpenModal(quote)
-          }
-        >
-          <div style={classes.menuRowStyle}>
-            <EditingIcon />
-            <div style={classes.rowTextStyle}>{t("sales.quote.edit")}</div>
-          </div>
-        </MenuItem>
-      ) : null}
-
-
-      {documentType != DOCUMENT_TYPE.quote ? (
-        <MenuItem
-          onClick={() => navigate(`/${documentPath}?Id=${quote?.id}`)
-          }
-        >
-          <div style={classes.menuRowStyle}>
-            <EditingIcon />
-            <div style={classes.rowTextStyle}>{t("sales.quote.edit")}</div>
-          </div>
-        </MenuItem>
-      ) : null}
+      {renderMenuItem()}
     </OptionsButton>
   );
 };
