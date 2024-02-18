@@ -21,7 +21,7 @@ import {
 import { QuoteStatuses } from "@/widgets/quote/total-price-and-vat/enums";
 import { addressModalState } from "@/widgets/quote-new/business-widget/address-widget/state";
 import { useQuoteGetData } from "./use-quote-get-data";
-import { addDeliveryApi, addDocumentAddressApi, addDocumentContactApi, calculateDocumentApi, calculateDocumentItemApi, cancelDocumentApi, changeDocumentClientApi, deleteDocumentAddressApi, deleteDocumentContactApi, deleteDocumentItemApi, duplicateWithAnotherQuantityApi, getDocumentApi, getNewDocumentDataApi, refreshExchangeRateApi, saveDocumentApi, sendDocumentToClientApi, updateAgentApi, updateDocumentAddressApi, updateDocumentContactApi, updateDocumentCurrencyApi, updateDueDateApi, updateExchangeRateApi, updatePurchaseNumberApi } from "@/services/api-service/generic-doc/documents-api";
+import { addDeliveryApi, addDocumentAddressApi, addDocumentContactApi, calculateDocumentApi, calculateDocumentItemApi, cancelDocumentApi, changeDocumentClientApi, deleteDocumentAddressApi, deleteDocumentContactApi, deleteDocumentItemApi, duplicateWithAnotherQuantityApi, getDocumentApi, refreshExchangeRateApi, saveDocumentApi, sendDocumentToClientApi, updateAgentApi, updateDocumentAddressApi, updateDocumentContactApi, updateDocumentCurrencyApi, updateDueDateApi, updateExchangeRateApi, updatePurchaseNumberApi } from "@/services/api-service/generic-doc/documents-api";
 import { DOCUMENT_TYPE } from "../quotes/enums";
 import { useRouter } from "next/router";
 import { getClientPaymentItemsApi } from "@/services/api-service/generic-doc/receipts-api";
@@ -31,6 +31,8 @@ interface IQuoteProps {
   isQuoteConfirmation?: boolean;
 }
 const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
+  const documentPath = DOCUMENT_TYPE[docType];
+
   const {
     alertSuccessUpdate,
     alertFaultUpdate,
@@ -142,21 +144,29 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
       await getClientPaymentItemsApi(callApi, callBack)
     }
 
-    else if (router?.query?.isNewCreation) {
-      const res = await callApi(
-        EHttpMethod.POST,
-        `/v1/erp-service/documents/get-new-document-data`,
-        {
-          documentType: docType,
-        }
-      );
-      if (res?.success) {
-        const _data = res?.data?.data?.result || {};
+    else   if (router?.query?.isNewCreation) {
+        const requestBody: any = {
+            documentType: docType
+        };
 
-        setQuoteItemValue(_data);
-      } else {
-        alertFaultAdded();
-      }
+        if (router?.query.orderId) {
+            requestBody.orderId = router.query.orderId;
+        }
+
+        if (router?.query.deliveryNoteId) {
+            requestBody.deliveryNoteID = router.query.deliveryNoteId;
+        }
+        const res = await callApi(
+            EHttpMethod.POST,
+            `/v1/erp-service/documents/get-new-document-data`,
+            requestBody
+        );
+        if (res?.success) {
+            const _data = res?.data?.data?.result || {};
+            setQuoteItemValue(_data);
+        } else {
+            alertFaultAdded();
+        }
     }
     else {
       const callBack = (res) => {
@@ -823,20 +833,60 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
   };
 
   const getCalculateQuote = async (calculationType: number, data: number) => {
-    const callBack = (res) => {
+    if (router.query.isNewCreation) {
+      const res = await callApi(
+        EHttpMethod.POST,
+        `/v1/erp-service/documents/calculate-document-new`,
+        {
+          documentType: docType,
+          document: {
+            exchangeRate: quoteItemValue?.exchangeRate,
+            totalPrice: quoteItemValue?.totalPrice,
+            data,
+            calculationType,
+            totalPriceAfterDiscount: quoteItemValue?.totalPriceAfterDiscount,
+            discount: data,
+            discountAmount: quoteItemValue?.discountAmount,
+            totalPayment: quoteItemValue?.totalPayment,
+            vat: quoteItemValue?.vat,
+            totalVAT: quoteItemValue?.totalVAT,
+            documentItems: quoteItemValue.documentItems?.map(item => ({
+              finalPrice: item.finalPrice
+            }))
+          }
+        }
+      );
       if (res?.success) {
-        alertSuccessUpdate();
-        getQuote();
-      } else {
-        alertFaultUpdate();
+        const _data = res?.data?.data?.data
+        const updatedQuoteItemValue = { ...quoteItemValue };
+        updatedQuoteItemValue.discount = _data.discount;
+        updatedQuoteItemValue.discountAmount = _data.discountAmount;
+        updatedQuoteItemValue.totalPayment = _data.totalPayment;
+        updatedQuoteItemValue.totalPrice = _data.totalPrice;
+        updatedQuoteItemValue.totalPriceAfterDiscount = _data.totalPriceAfterDiscount;
+        updatedQuoteItemValue.totalVAT = _data.totalVAT;
+        updatedQuoteItemValue.vat = _data.vat;
+
+        setQuoteItemValue(updatedQuoteItemValue);
       }
     }
-    await calculateDocumentApi(callApi, callBack, {
-      documentType: docType,
-      documentId: quoteItemValue?.id,
-      data,
-      calculationType,
-    })
+    else {
+      const callBack = (res) => {
+        if (res?.success) {
+          alertSuccessUpdate();
+          getQuote();
+        } else {
+          alertFaultUpdate();
+        }
+      }
+      await calculateDocumentApi(callApi, callBack, {
+        documentType: docType,
+        documentId: quoteItemValue?.id,
+        data,
+        calculationType,
+      })
+    }
+
   }
 
   const changedocumentItems = (
@@ -987,7 +1037,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
       }
     })
   }
-  const handleSaveBtnClickForDeleveryNote = async () => {
+  const handleSaveBtnClickForDocument = async () => {
     const res = await callApi(
       EHttpMethod.POST,
       `/v1/erp-service/documents/create-document`,
@@ -1000,7 +1050,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     );
     if (res?.success) {
       alertSuccessAdded();
-      navigate("/deliveryNotes");
+      navigate(`${documentPath}s`);
     } else {
       alertFaultAdded();
     }
@@ -1017,7 +1067,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
       }
       const newAddress = {
         id: uuidv4(),
-        addressID: item?.addressId,
+        addressID: uuidv4(),
         street: item?.street,
         city: item?.city,
         entry: item?.entry,
@@ -1101,29 +1151,51 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
   }
 
   const onClickAddAddress = async (item: any) => {
-    const callBack = (res) => {
-      if (res.success) {
-        alertSuccessAdded();
-        getQuote();
-        setOpenModal(false);
+    if (router.query.isNewCreation) {
+      const updatedQuoteItemValue = { ...quoteItemValue };
+      if (!Array.isArray(updatedQuoteItemValue.documentAddresses)) {
+        updatedQuoteItemValue.documentAddresses = [];
       }
-      else {
-        alertFaultAdded();
-      }
-    }
-    await addDocumentAddressApi(callApi, callBack, {
-      documentType: docType,
-      address: {
-        addressID: item?.id,
+      const newAddress = {
+        id: uuidv4(),
+        addressID: item?.addressId,
         street: item?.street,
         city: item?.city,
         entry: item?.entry,
         apartment: item?.apartment,
-        notes: item?.notes || "",
-        documentID: quoteItemValue?.id,
-
+        notes: "",
+        documentID: updatedQuoteItemValue?.id,
+      };
+      updatedQuoteItemValue.documentAddresses = [...updatedQuoteItemValue.documentAddresses, newAddress];
+      setQuoteItemValue(updatedQuoteItemValue);
+      setOpenModal(false);
+    }
+    else {
+      const callBack = (res) => {
+        if (res.success) {
+          alertSuccessAdded();
+          getQuote();
+          setOpenModal(false);
+        }
+        else {
+          alertFaultAdded();
+        }
       }
-    })
+      await addDocumentAddressApi(callApi, callBack, {
+        documentType: docType,
+        address: {
+          addressID: item?.id,
+          street: item?.street,
+          city: item?.city,
+          entry: item?.entry,
+          apartment: item?.apartment,
+          notes: item?.notes || "",
+          documentID: quoteItemValue?.id,
+
+        }
+      })
+    }
+
   }
 
   const onClickDeleteAddress = async (item: any) => {
@@ -1353,7 +1425,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     onCloseDeliveryModal,
     onAddDelivery,
     handleSaveBtnClick,
-    handleSaveBtnClickForDeleveryNote,
+    handleSaveBtnClickForDocument,
     documentTitle,
     onBlurExchangeRate,
     onBlurCurrency,

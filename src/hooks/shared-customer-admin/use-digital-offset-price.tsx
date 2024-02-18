@@ -1853,7 +1853,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       }
       const res = await callApi(
         "POST",
-        `/v1/calculation-service/calculations/calculate-product`,
+        `/v1/calculation-service/calculations/calculate-productV2`,
         {
           signalRConnectionId: connectionId,
           clientId: router?.query?.customerId,

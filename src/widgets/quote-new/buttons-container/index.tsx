@@ -21,7 +21,7 @@ const ButtonsContainer = ({
   onOpenDeliveryModal,
   documentType,
   onOpenCopyFromOrder,
-  handleSaveBtnClickForDeleveryNote
+  handleSaveBtnClickForDocument
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -94,7 +94,7 @@ const ButtonsContainer = ({
         }
         <GomakePrimaryButton
           style={classes.btnThirdContainer}
-          onClick={documentType === DOCUMENT_TYPE.deliveryNote ? handleSaveBtnClickForDeleveryNote : handleSaveBtnClick}
+          onClick={documentType != DOCUMENT_TYPE.quote ? handleSaveBtnClickForDocument : handleSaveBtnClick}
         >
           {t("materials.buttons.save")}
         </GomakePrimaryButton>
