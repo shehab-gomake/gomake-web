@@ -1,48 +1,51 @@
-import { useState } from "react";
+import { useStyle } from "../style";
+import { usePaymentInputs } from 'react-payment-inputs';
+import { usePaymentMethodsTabs } from "./use-payment-methods-tabs";
+import CreditCardIcon from '@mui/icons-material/CreditCard';
+import { Stack } from "@mui/material";
+import { GomakeTextInput } from "@/components";
+
 
 const CreditCardTab = () => {
-    //const { meta, getCardNumberProps, getExpiryDateProps, getCVCProps } = usePaymentInputs();
-    const [cardNumber, setCardNumber] = useState();
-    const [expiryDate, setExpiryDate] = useState();
-    const [cvv, setCVV] = useState();
+    const { classes } = useStyle();
+    const { getCardNumberProps, getExpiryDateProps, getCVCProps } = usePaymentInputs();
+    const {
+        handleCardNumberChange,
+        handleExpiryDateChange,
+        handleCVVChange } = usePaymentMethodsTabs();
 
-    const handleCardNumberChange = (e) => {
-        const formattedInput = e.target.value.replace(/\D/g, '');
-
-        if (formattedInput.length <= 16) {
-            setCardNumber(formattedInput);
-        }
-
-        console.log(formattedInput);
-    };
-
-    const handleExpiryDateChange = (e) => {
-        // Remove non-numeric characters
-        const formattedInput = e.target.value.replace(/\D/g, '');
-
-        if (formattedInput.length <= 4) {
-            setExpiryDate(formattedInput);
-        }
-        console.log(formattedInput);
-
-    };
-
-    const handleCVVChange = (e) => {
-        const formattedInput = e.target.value.replace(/\D/g, '');
-        if (formattedInput.length <= 3) {
-            setCVV(formattedInput);
-        }
-        console.log(formattedInput);
-
-    };
     return (
-        <div>
-            {/*
-             <input {...getCardNumberProps({ onChange: ()=>console.log("s")})} value={cardNumber} />
-            <input {...getExpiryDateProps({ onChange:handleExpiryDateChange})} value={expiryDate} />
-            <input {...getCVCProps({ onChange: handleCVVChange })} value={cvv} />
-            {meta.isTouched && meta.error && <span>Error: {meta.error}</span>}*/}
-        </div>
+        <div style={{padding:"0 10px"}}>
+            <div style={classes.creditCardInputsContainer}>
+                <CreditCardIcon sx={{ color: "#2e3092" }} />
+                <input
+                    {...getCardNumberProps({ onChange: handleCardNumberChange })}
+                    style={{ ...classes.creditCardInputs, width: "55%", paddingLeft: "5px" }}
+                    placeholder="Card number">
+                </input>
+                <input
+                    {...getExpiryDateProps({ onChange: handleExpiryDateChange })}
+
+                    style={{ ...classes.creditCardInputs, width: "20%" }}
+                    placeholder="MM/YY">
+                </input>
+                <input
+                    {...getCVCProps({ onChange: handleCVVChange })}
+
+                    style={{ ...classes.creditCardInputs, width: "20%" }}
+                    placeholder="CVV">
+                </input>
+            </div>
+{/* 
+            <Stack direction={"column"} gap={"7px"} padding={"0 5px"} >
+                    <span style={classes.inputLbl} >Total payment in credit card</span>
+                    <GomakeTextInput
+                        style={{ height: "40px", maxWidth: 180 }}
+                        type={"number"}
+                        placeholder={"sum"}
+                    />
+                </Stack> */}
+            </div>
     );
 }
 export { CreditCardTab }

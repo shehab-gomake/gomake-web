@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import {
     Table,
     TableBody,
@@ -13,8 +12,7 @@ import { usePaymentsTable } from "./use-payments-table";
 import { TotalPriceReceipts } from "./total-price";
 import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
 
-const ReceiptsTable = ({
-}) => {
+const ReceiptsTable = () => {
     let indexs = 0;
     const headerHeight = "44px";
     const { classes } = useStyle({ headerHeight });
@@ -57,7 +55,7 @@ const ReceiptsTable = ({
                                         headerHeight={headerHeight}
                                         isChecked={checkedItems[index]}
                                         onCheckboxChange={() => {
-                                            handleCheckboxChange(index);
+                                            handleCheckboxChange(index , item?.id);
                                         }}
 
                                     //     onCheckboxChange={handleCheckboxChange.bind(null, index)}

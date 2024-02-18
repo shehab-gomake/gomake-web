@@ -13,7 +13,7 @@ const useStyle = () => {
                 flexDirection: "column" as "column",
                 alignItems: "flex-start",
                 gap: "10px",
-                padding: "0 5px"
+                padding : "0 10px"
             },
             textStyle: {
                 color: primaryColor(900),
@@ -64,6 +64,19 @@ const useStyle = () => {
                 display: "flex",
                 alignItems: "center",
             },
+            creditCardInputsContainer:{
+                display:"flex",
+                width:"75%",
+                padding:"4px",
+                border: `1.5px solid ${primaryColor(300)}`,
+                borderRadius:"4px"
+            },
+            creditCardInputs:{
+                border: "none",
+                outline: "none",
+                ...FONT_FAMILY.Lexend(500, 14),
+
+            }
         };
     }, [theme]);
     return {

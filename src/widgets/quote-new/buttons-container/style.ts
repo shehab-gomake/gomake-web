@@ -97,7 +97,7 @@ const useStyle = () => {
         display: "flex",
         flexDirection: "column" as "column",
         justifyContent: "space-between",
-        height: "100%"
+        height: "100%",
       },
       saveBtn: {
         display: "flex",

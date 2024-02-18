@@ -35,7 +35,7 @@ const useStyle = ({ headerHeight }) => {
         flexDirection: "column" as "column",
         justifyContent: "flex-start",
         alignItems: "flex-start",
-        width: "100%",
+        width: "43%",
         boxShadow: " 0px 1px 3px 0px #1018281A",
         borderBottomLeftRadius: 6,
         borderBottomRightRadius: 6,

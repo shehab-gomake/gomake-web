@@ -10,8 +10,8 @@ const usePaymentMethodsTabs = () => {
     const { t } = useTranslation();
     const setTotalPayment = useSetRecoilState<number>(totalPaymentState);
     const [totalChecks, setTotalChecks] = useRecoilState<number>(totalChecksState);
-    const [data , setData] = useRecoilState<CheckData[]>(checksRowState);
-    const ERPAccounts= useRecoilValue<ERPAccountsData[]>(ERPAccountsState);
+    const [data, setData] = useRecoilState<CheckData[]>(checksRowState);
+    const ERPAccounts = useRecoilValue<ERPAccountsData[]>(ERPAccountsState);
 
     const addRow = () => {
         const newRow = {
@@ -31,7 +31,7 @@ const usePaymentMethodsTabs = () => {
             return newData;
         });
     };
-    
+
     const duplicateRow = (index) => {
         const rowToDuplicate = data[index];
         setData((prevData) => {
@@ -50,8 +50,8 @@ const usePaymentMethodsTabs = () => {
             return newData;
         });
     };
-    
-    
+
+
     const tableHeaders = [
         t("payment.dueDate"),
         t("payment.checkNumber"),
@@ -147,8 +147,49 @@ const usePaymentMethodsTabs = () => {
     const mapERPAccountsOptions = ERPAccounts.map((account) => ({
         label: `${account.name} - ${account.code}`,
         value: account.code,
-      }));
+    }));
 
+
+
+    ////////////////////////////////////// CREDIT CARD /////////////////////////////////////////
+    const [creditCard, setCreditCard] = useState({
+        cardNumber: "",
+        expiryDate: "",
+        cvv: ""
+    });
+
+    const handleExpiryDateChange = (e) => {
+        const formattedInput = e.target.value.replace(/\D/g, '');
+        if (formattedInput.length <= 4) {
+            setCreditCard({
+                ...creditCard,
+                expiryDate: formattedInput
+            });
+        }
+
+    };
+
+    const handleCVVChange = (e) => {
+        const formattedInput = e.target.value.replace(/\D/g, '');
+        if (formattedInput.length <= 3) {
+            setCreditCard({
+                ...creditCard,
+                cvv: formattedInput
+            });
+        }
+
+    };
+
+    const handleCardNumberChange = (e) => {
+        const formattedInput = e.target.value.replace(/\D/g, '');
+
+        if (formattedInput.length <= 16) {
+            setCreditCard({
+                ...creditCard,
+                cardNumber: formattedInput
+            });
+        }
+    };
 
     return {
         t,
@@ -162,6 +203,9 @@ const usePaymentMethodsTabs = () => {
         handleTotalTransferChange,
         totalTransfer,
         mapERPAccountsOptions,
+        handleCardNumberChange,
+        handleExpiryDateChange,
+        handleCVVChange
     };
 
 };
