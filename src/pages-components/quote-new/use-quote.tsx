@@ -799,20 +799,60 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
   };
 
   const getCalculateQuote = async (calculationType: number, data: number) => {
-    const callBack = (res) => {
+    if (router.query.isNewCreation) {
+      const res = await callApi(
+        EHttpMethod.POST,
+        `/v1/erp-service/documents/calculate-document-new`,
+        {
+          documentType: docType,
+          document: {
+            exchangeRate: quoteItemValue?.exchangeRate,
+            totalPrice: quoteItemValue?.totalPrice,
+            data,
+            calculationType,
+            totalPriceAfterDiscount: quoteItemValue?.totalPriceAfterDiscount,
+            discount: data,
+            discountAmount: quoteItemValue?.discountAmount,
+            totalPayment: quoteItemValue?.totalPayment,
+            vat: quoteItemValue?.vat,
+            totalVAT: quoteItemValue?.totalVAT,
+            documentItems: quoteItemValue.documentItems?.map(item => ({
+              finalPrice: item.finalPrice
+            }))
+          }
+        }
+      );
       if (res?.success) {
-        alertSuccessUpdate();
-        getQuote();
-      } else {
-        alertFaultUpdate();
+        const _data = res?.data?.data?.data
+        const updatedQuoteItemValue = { ...quoteItemValue };
+        updatedQuoteItemValue.discount = _data.discount;
+        updatedQuoteItemValue.discountAmount = _data.discountAmount;
+        updatedQuoteItemValue.totalPayment = _data.totalPayment;
+        updatedQuoteItemValue.totalPrice = _data.totalPrice;
+        updatedQuoteItemValue.totalPriceAfterDiscount = _data.totalPriceAfterDiscount;
+        updatedQuoteItemValue.totalVAT = _data.totalVAT;
+        updatedQuoteItemValue.vat = _data.vat;
+
+        setQuoteItemValue(updatedQuoteItemValue);
       }
     }
-    await calculateDocumentApi(callApi, callBack, {
-      documentType: docType,
-      documentId: quoteItemValue?.id,
-      data,
-      calculationType,
-    })
+    else {
+      const callBack = (res) => {
+        if (res?.success) {
+          alertSuccessUpdate();
+          getQuote();
+        } else {
+          alertFaultUpdate();
+        }
+      }
+      await calculateDocumentApi(callApi, callBack, {
+        documentType: docType,
+        documentId: quoteItemValue?.id,
+        data,
+        calculationType,
+      })
+    }
+
   }
 
   const changedocumentItems = (
