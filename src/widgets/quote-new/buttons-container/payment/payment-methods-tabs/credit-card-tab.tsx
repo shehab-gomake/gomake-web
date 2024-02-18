@@ -13,7 +13,7 @@ const CreditCardTab = () => {
 
     return (
         <div style={{padding:"0 10px"}}>
-            <div style={classes.creditCardInputsContainer}>
+            <div dir="ltr" style={classes.creditCardInputsContainer}>
                 <CreditCardIcon sx={{ color: "#2e3092" }} />
                 <input
                     {...getCardNumberProps({ onChange: handleCardNumberChange })}

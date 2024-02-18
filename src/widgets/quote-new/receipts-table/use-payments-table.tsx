@@ -1,13 +1,13 @@
 import { useTranslation } from "react-i18next";
 import { TableCell, styled, tableCellClasses } from "@mui/material";
-import { useEffect,useState } from "react";
+import { useEffect, useState } from "react";
 import { useRecoilState, useRecoilValue, useResetRecoilState } from "recoil";
 import { totalDocumentsState, totalPaymentState, finalTotalPaymentState, totalCashState, totalBitState, totalTransferState, totalChecksState, checksRowState, CheckData } from "../buttons-container/states";
 import { quoteItemState } from "@/store";
 
 const usePaymentsTable = () => {
     const { t } = useTranslation();
-    const [quoteItemValue , setQuoteItemValue] = useRecoilState<any>(quoteItemState);
+    const [quoteItemValue, setQuoteItemValue] = useRecoilState<any>(quoteItemState);
     const [checkedItems, setCheckedItems] = useState({});
     const [checkedItemsIds, setCheckedItemsIds] = useState({});
     const [totalSum, setTotalSum] = useRecoilState<number>(totalDocumentsState);
@@ -23,7 +23,7 @@ const usePaymentsTable = () => {
     const checksReceipt = useRecoilState<CheckData[]>(checksRowState);
     const resetChecksTable = useResetRecoilState(checksRowState);
     const resetFinalTotalPayment = useResetRecoilState(finalTotalPaymentState);
-    const tableRows =  quoteItemValue?.receiptItems;
+    const tableRows = quoteItemValue?.receiptItems;
     const columnWidths = ["5%", "19%", "19%", "19%", "19%", "19%"];
 
     const tableHeaders = [
@@ -78,18 +78,27 @@ const usePaymentsTable = () => {
             return updatedCheckedItems;
         });
     };
-    
+
     const handleSave = () => {
         const receiptItemCopy = {
             ...quoteItemValue,
             bitTotal: totalBit,
             cashTotal: totalCash,
             receiptChecks: checksReceipt,
-            checkedItemsIds :checkedItemsIds
+            checkedItemsIds: checkedItemsIds
 
         };
         setQuoteItemValue(receiptItemCopy);
         setFinalTotalPayment(totalPayment);
+    };
+
+    const [taxDeduction, setTaxDeduction] = useState("");
+    const handleTaxDeductionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setTaxDeduction(event.target.value);
+        setQuoteItemValue((prev: any) => ({
+            ...prev,
+            wtTaxableAmount: event.target.value,
+        }));
     };
 
     useEffect(() => {
@@ -99,6 +108,8 @@ const usePaymentsTable = () => {
 
     return {
         t,
+        quoteItemValue,
+        setQuoteItemValue,
         columnWidths,
         tableHeaders,
         tableRows,
@@ -115,7 +126,9 @@ const usePaymentsTable = () => {
         resetTotalBit,
         resetTotalTransfer,
         resetTotalChecks,
-        resetChecksTable
+        resetChecksTable,
+        handleTaxDeductionChange,
+        taxDeduction
     };
 };
 

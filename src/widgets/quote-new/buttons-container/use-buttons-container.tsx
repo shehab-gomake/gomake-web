@@ -121,6 +121,12 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
         setAnchorEl(null);
     };
 
+
+    const getFormattedDocumentPath = (docType: DOCUMENT_TYPE): string => {
+        const documentPath = DOCUMENT_TYPE[docType];
+        return documentPath.charAt(0).toUpperCase() + documentPath.slice(1);
+    };
+    
     return {
         openOrderNowModal,
         onClickConfirmWithoutNotification,
@@ -140,7 +146,8 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
         setAnchorEl,
         open,
         handleClose,
-        handleClick
+        handleClick,
+        getFormattedDocumentPath
     };
 
 };

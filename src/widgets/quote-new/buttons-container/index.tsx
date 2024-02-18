@@ -1,4 +1,3 @@
-import React from "react";
 import { useStyle } from "./style";
 import {
   ArrowDownNewIcon,
@@ -25,8 +24,10 @@ const ButtonsContainer = ({
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
-  const { openOrderNowModal, onClickCloseOrderNowModal, onClickOpenOrderNowModal, onClickConfirmWithoutNotification, onClickConfirmWithNotification, onClickPrint, onClickClosePaymentModal, onClickOpenPaymentModal, openPaymentModal, selectedTabIndex, getERPAccounts } = useButtonsContainer(documentType);
+  const { openOrderNowModal, onClickCloseOrderNowModal, onClickOpenOrderNowModal, onClickConfirmWithoutNotification, onClickConfirmWithNotification, onClickPrint, onClickClosePaymentModal, onClickOpenPaymentModal, openPaymentModal, selectedTabIndex, getERPAccounts, getFormattedDocumentPath } = useButtonsContainer(documentType);
   const router = useRouter()
+
+
   return (
     <div style={classes.writeCommentContainer}>
       <div style={classes.btnsContainer}>
@@ -70,37 +71,48 @@ const ButtonsContainer = ({
             {t("login.send")}
           </GomakePrimaryButton>
         }
-        <GomakePrimaryButton
-          style={classes.btnSecondContainer}
-          onClick={() => onClickPrint()}
-        >
-          {t("sales.quote.print")}
-        </GomakePrimaryButton>
-
-        {documentType === DOCUMENT_TYPE.quote && <GomakePrimaryButton
-          style={classes.btnSecondContainer}
-          onClick={handleCancelBtnClick}
-        >
-          {t("materials.buttons.cancel")}
-        </GomakePrimaryButton>}
         {
-          (router.query.isNewCreation && documentType === DOCUMENT_TYPE.receipt) &&
+          !router.query.isNewCreation &&
           <GomakePrimaryButton
-            style={classes.btnThirdContainer}
-            onClick={()=>alert("create receipt")}
+            style={classes.btnSecondContainer}
+            onClick={() => onClickPrint()}
           >
-            {t("payment.createReceipt")}
+            {t("sales.quote.print")}
+          </GomakePrimaryButton>}
+        {
+          documentType === DOCUMENT_TYPE.quote && <GomakePrimaryButton
+            style={classes.btnSecondContainer}
+            onClick={handleCancelBtnClick}
+          >
+            {t("materials.buttons.cancel")}
           </GomakePrimaryButton>
         }
-        <GomakePrimaryButton
-          style={classes.btnThirdContainer}
-          onClick={documentType != DOCUMENT_TYPE.quote ? handleSaveBtnClickForDocument : handleSaveBtnClick}
-        >
-          {t("materials.buttons.save")}
-        </GomakePrimaryButton>
-        {documentType === DOCUMENT_TYPE.quote && <GomakePrimaryButton style={classes.btnOrderNowContainer} onClick={onClickOpenOrderNowModal}>
-          {t("sales.quote.orderNowTitle")}
-        </GomakePrimaryButton>}
+        {
+          (router.query.isNewCreation) &&
+          <GomakePrimaryButton
+            style={classes.btnThirdContainer}
+            onClick={documentType === DOCUMENT_TYPE.receipt ? () => alert("waiting") : handleSaveBtnClickForDocument}
+          >
+            {t(`sales.quote.create${getFormattedDocumentPath(documentType)}`)}
+          </GomakePrimaryButton>
+        }
+        {
+          !router.query.isNewCreation &&
+          <GomakePrimaryButton
+            style={classes.btnThirdContainer}
+            onClick={handleSaveBtnClick}
+          >
+            {t("materials.buttons.save")}
+          </GomakePrimaryButton>
+        }
+        {
+          documentType === DOCUMENT_TYPE.quote &&
+          <GomakePrimaryButton
+            style={classes.btnOrderNowContainer}
+            onClick={onClickOpenOrderNowModal}>
+            {t("sales.quote.orderNowTitle")}
+          </GomakePrimaryButton>
+        }
         <OrderNowModal
           openModal={openOrderNowModal}
           onClose={onClickCloseOrderNowModal}

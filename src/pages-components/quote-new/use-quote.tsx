@@ -143,30 +143,28 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
       }
       await getClientPaymentItemsApi(callApi, callBack)
     }
+    else if (router?.query?.isNewCreation) {
+      const requestBody: any = {
+        documentType: docType
+      };
+      if (router?.query.orderId) {
+        requestBody.orderId = router.query.orderId;
+      }
+      if (router?.query.deliveryNoteId) {
+        requestBody.deliveryNoteID = router.query.deliveryNoteId;
+      }
+      const res = await callApi(
+        EHttpMethod.POST,
+        `/v1/erp-service/documents/get-new-document-data`,
+        requestBody
+      );
 
-    else   if (router?.query?.isNewCreation) {
-        const requestBody: any = {
-            documentType: docType
-        };
-
-        if (router?.query.orderId) {
-            requestBody.orderId = router.query.orderId;
-        }
-
-        if (router?.query.deliveryNoteId) {
-            requestBody.deliveryNoteID = router.query.deliveryNoteId;
-        }
-        const res = await callApi(
-            EHttpMethod.POST,
-            `/v1/erp-service/documents/get-new-document-data`,
-            requestBody
-        );
-        if (res?.success) {
-            const _data = res?.data?.data?.result || {};
-            setQuoteItemValue(_data);
-        } else {
-            alertFaultAdded();
-        }
+      if (res?.success) {
+        const _data = res?.data?.data?.result || {};
+        setQuoteItemValue(_data);
+      } else {
+        alertFaultAdded();
+      }
     }
     else {
       const callBack = (res) => {
@@ -220,9 +218,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
         }
       }
       await getDocumentApi(callApi, callBack, { documentType: docType, Id: router?.query?.Id })
-    }
-
-  }
+    } }
 
   const updateDueDate = async () => {
     if (router.query.isNewCreation) {

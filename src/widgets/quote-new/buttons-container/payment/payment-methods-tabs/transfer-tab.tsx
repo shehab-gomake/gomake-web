@@ -4,15 +4,24 @@ import { Stack } from "@mui/material";
 import { useState } from "react";
 import { TransferInputs } from "./transfer-inputs";
 import { usePaymentMethodsTabs } from "./use-payment-methods-tabs";
+import { useRecoilState } from "recoil";
+import { quoteItemState } from "@/store";
 
 const TransferTab = () => {
     const { mapERPAccountsOptions , handleTotalTransferChange, totalTransfer} = usePaymentMethodsTabs();
-    const [state, setState] = useState({ totalTransfer: totalTransfer});
+    const [quoteItemValue , setQuoteItemValue] = useRecoilState<any>(quoteItemState);
+    const [state, setState] = useState({...quoteItemValue , transferTotal: totalTransfer});
 
     const onChangeTransferInputs = (key, value) => {
-        if(key==="totalTransfer") 
+        if(key==="transferTotal") 
         {
             handleTotalTransferChange(value);
+        }
+        else {
+            setQuoteItemValue((prev: any) => ({
+                ...prev,
+                [key]:value
+            }));
         }
         setState({ ...state, [key]: value })
     }
