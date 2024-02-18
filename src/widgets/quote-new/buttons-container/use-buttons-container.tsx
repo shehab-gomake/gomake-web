@@ -1,23 +1,26 @@
 import { quoteItemState } from "@/store";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilValue, useResetRecoilState, useSetRecoilState } from "recoil";
 import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
 import { createOrderApi, getDocumentPdfApi } from "@/services/api-service/generic-doc/documents-api";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { getERPAccountsApi } from "@/services/api-service/generic-doc/receipts-api";
-import { ERPAccountsData, ERPAccountsState, ErpAccountType } from "./states";
+import { ERPAccountsData, ERPAccountsState, ErpAccountType, checksRowState, totalBitState, totalCashState, totalChecksState, totalPaymentState, totalTransferState } from "./states";
 
-const useButtonsContainer = (docType : DOCUMENT_TYPE) => {
+const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     const { navigate } = useGomakeRouter();
     const { t } = useTranslation();
     const { callApi } = useGomakeAxios();
     const quoteItemValue: any = useRecoilValue(quoteItemState);
-    const { alertSuccessUpdate, alertFaultUpdate } = useSnackBar();
-    const [selectedTabIndex, setSelectedTabIndex] = useState<number>(0); 
+    const { alertFault, alertSuccessUpdate, alertFaultUpdate } = useSnackBar();
+    const [selectedTabIndex, setSelectedTabIndex] = useState<number>(0);
     const [openPaymentModal, setOpenPaymentModal] = useState(false);
     const [openOrderNowModal, setOpenOrderNowModal] = useState(false);
-    const setERPAccounts= useSetRecoilState<ERPAccountsData[]>(ERPAccountsState);
+    const setERPAccounts = useSetRecoilState<ERPAccountsData[]>(ERPAccountsState);
+    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>();
+    const open = Boolean(anchorEl);
+
 
     const onClickOpenOrderNowModal = () => {
         setOpenOrderNowModal(true);
@@ -26,10 +29,26 @@ const useButtonsContainer = (docType : DOCUMENT_TYPE) => {
         setOpenOrderNowModal(false);
     };
 
+    // not sure
+    const resetTotalPayment = useResetRecoilState(totalPaymentState);
+    const resetTotalBit = useResetRecoilState(totalBitState);
+    const resetTotalCash = useResetRecoilState(totalCashState);
+    const resetTotalTransfer = useResetRecoilState(totalTransferState);
+    const resetTotalChecks = useResetRecoilState(totalChecksState);
+    const resetChecksTable = useResetRecoilState(checksRowState);
+
     const onClickOpenPaymentModal = (selectedTabIndex) => {
+        resetTotalPayment();
+        resetTotalBit();
+        resetTotalCash();
+        resetTotalTransfer();
+        resetTotalChecks();
+        resetChecksTable();
         setSelectedTabIndex(selectedTabIndex);
         setOpenPaymentModal(true);
     };
+
+
     const onClickClosePaymentModal = () => {
         setOpenPaymentModal(false);
     };
@@ -67,30 +86,40 @@ const useButtonsContainer = (docType : DOCUMENT_TYPE) => {
                 sendMessage: true
             })
     }
-    
+
     const onClickPrint = async () => {
         const callBack = (res) => {
             if (res?.success) {
-              const pdfLink = res.data;
-              window.open(pdfLink, "_blank");
+                const pdfLink = res.data;
+                window.open(pdfLink, "_blank");
             } else {
-              alertFaultUpdate();
+                alertFaultUpdate();
             }
-          };
-          await getDocumentPdfApi(callApi, callBack, { documentId: quoteItemValue?.id , documentType : docType  });
         };
+        await getDocumentPdfApi(callApi, callBack, { documentId: quoteItemValue?.id, documentType: docType });
+    };
 
 
-        const  getERPAccounts = async (accountType : ErpAccountType) => {
-            const callBack = (res) => {
-                if (res?.success) {
-                    setERPAccounts(res?.data)
-                } else {
-                    alertFaultUpdate();
-                }
+    const getERPAccounts = async (accountType: ErpAccountType) => {
+        const callBack = (res) => {
+            if (res?.success) {
+                setERPAccounts(res?.data)
+            } else {
+                alertFaultUpdate();
             }
-            await getERPAccountsApi(callApi, callBack , {accountType : accountType})
         }
+        await getERPAccountsApi(callApi, callBack, { accountType: accountType })
+    }
+
+
+
+    const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
 
     return {
         openOrderNowModal,
@@ -104,7 +133,14 @@ const useButtonsContainer = (docType : DOCUMENT_TYPE) => {
         onClickOpenPaymentModal,
         openPaymentModal,
         selectedTabIndex,
-        getERPAccounts
+        getERPAccounts,
+        quoteItemValue,
+        alertFault,
+        anchorEl,
+        setAnchorEl,
+        open,
+        handleClose,
+        handleClick
     };
 
 };

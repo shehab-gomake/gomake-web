@@ -5,7 +5,7 @@ const useStyle = () => {
 
   const classes = useMemo(() => {
     return {
-      writeCommentcontainer: {
+      writeCommentContainer: {
         display: "flex",
         flexDirection: "row" as "row",
         justifyContent: "space-between",

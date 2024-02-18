@@ -28,9 +28,9 @@ const ButtonsContainer = ({
   const { openOrderNowModal, onClickCloseOrderNowModal, onClickOpenOrderNowModal, onClickConfirmWithoutNotification, onClickConfirmWithNotification, onClickPrint, onClickClosePaymentModal, onClickOpenPaymentModal, openPaymentModal, selectedTabIndex, getERPAccounts } = useButtonsContainer(documentType);
   const router = useRouter()
   return (
-    <div style={classes.writeCommentcontainer}>
+    <div style={classes.writeCommentContainer}>
       <div style={classes.btnsContainer}>
-        {documentType === DOCUMENT_TYPE.receipt &&
+        {(router.query.isNewCreation && documentType === DOCUMENT_TYPE.receipt) &&
           <PaymentBtn handleOpenModal={onClickOpenPaymentModal} getERPAccounts={getERPAccounts} />
         }
         {documentType !== DOCUMENT_TYPE.receipt && <GomakePrimaryButton
@@ -83,6 +83,15 @@ const ButtonsContainer = ({
         >
           {t("materials.buttons.cancel")}
         </GomakePrimaryButton>}
+        {
+          (router.query.isNewCreation && documentType === DOCUMENT_TYPE.receipt) &&
+          <GomakePrimaryButton
+            style={classes.btnThirdContainer}
+            onClick={()=>alert("create receipt")}
+          >
+            {t("payment.createReceipt")}
+          </GomakePrimaryButton>
+        }
         <GomakePrimaryButton
           style={classes.btnThirdContainer}
           onClick={documentType === DOCUMENT_TYPE.deliveryNote ? handleSaveBtnClickForDeleveryNote : handleSaveBtnClick}
@@ -98,7 +107,11 @@ const ButtonsContainer = ({
           confirmWithoutNotification={onClickConfirmWithoutNotification}
           confirmWithNotification={onClickConfirmWithNotification}
         />
-        <PaymentModal onClose={onClickClosePaymentModal} openModal={openPaymentModal} selectedTab={selectedTabIndex} getERPAccounts={getERPAccounts} />
+        <PaymentModal
+          onClose={onClickClosePaymentModal}
+          openModal={openPaymentModal}
+          selectedTab={selectedTabIndex}
+          getERPAccounts={getERPAccounts} />
       </div>
     </div>
   );

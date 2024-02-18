@@ -2,9 +2,6 @@ import { useStyle } from "../style";
 import { usePaymentInputs } from 'react-payment-inputs';
 import { usePaymentMethodsTabs } from "./use-payment-methods-tabs";
 import CreditCardIcon from '@mui/icons-material/CreditCard';
-import { Stack } from "@mui/material";
-import { GomakeTextInput } from "@/components";
-
 
 const CreditCardTab = () => {
     const { classes } = useStyle();
@@ -36,15 +33,6 @@ const CreditCardTab = () => {
                     placeholder="CVV">
                 </input>
             </div>
-{/* 
-            <Stack direction={"column"} gap={"7px"} padding={"0 5px"} >
-                    <span style={classes.inputLbl} >Total payment in credit card</span>
-                    <GomakeTextInput
-                        style={{ height: "40px", maxWidth: 180 }}
-                        type={"number"}
-                        placeholder={"sum"}
-                    />
-                </Stack> */}
             </div>
     );
 }
