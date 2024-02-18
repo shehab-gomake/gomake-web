@@ -119,3 +119,8 @@ export const materialsUnCheckedState = atom<string[]>({
     key: "materialsUnCheckedState",
     default: [],
 });
+
+export const selectedMaterialIdForUpdateState = atom<string>({
+    key: "selectedMaterialIdForUpdateState",
+    default: "",
+});

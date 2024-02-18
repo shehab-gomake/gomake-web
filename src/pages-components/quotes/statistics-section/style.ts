@@ -15,16 +15,14 @@ const useStyle = () => {
                 ...FONT_FAMILY.Lexend(500, 16),
                 lineHeight: "20px",
                 textTransform: "none" as "none",
-                // justifyContent: "flex-start",
                 gap: "10px",
-                boxShadow: "0px 2px 1px -1px rgba(0,0,0,0.2), 0px 1px 1px 0px rgba(0,0,0,0.14), 0px 1px 3px 0px rgba(0,0,0,0.12)"
             },
             ticketStyle: {
                 display: "flex",
                 width: "192px",
                 height: "40px",
-                background: "#FFFFFF",
                 alignItems: "center",
+                boxShadow: "none",
             },
             ticketContentStyle: {
                 display: "flex",
@@ -36,6 +34,7 @@ const useStyle = () => {
             numberStyle: {
                 ...FONT_FAMILY.Lexend(500, 24),
                 lineHeight: "30px",
+              //  width:"min-content"                
             },
             textStyle: {
                 ...FONT_FAMILY.Lexend(400, 14),

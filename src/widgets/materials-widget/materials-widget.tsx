@@ -81,7 +81,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
         list={materialsCategoriesList()}
         selectedItem={materialCategory?.toString()}
         onSelect={onSelectCategory}
-        title={"choose category"}
+        title={t("materials.chooseCategory")}
         isHaveDeleteIcon={true}
       >
         <Stack style={classes.buttonsContainerStyle}>
@@ -209,13 +209,13 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
                   />
                 </Stack>
               ) : (
-                !props.isAdmin ? ( <div style={classes.noData}>
+                !props.isAdmin ? (<div style={classes.noData}>
                   {t("materials.sheetPaper.supplierAddedSheetYet")}
                   <span
-                      style={classes.noDataSpan}
-                      onClick={() => {
-                        setOpenAddSupplierModal(true);
-                      }}
+                    style={classes.noDataSpan}
+                    onClick={() => {
+                      setOpenAddSupplierModal(true);
+                    }}
                   >
                     {t("materials.sheetPaper.pleaseAddNow")}
                   </span>

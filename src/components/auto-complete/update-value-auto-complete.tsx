@@ -4,7 +4,7 @@ import { FONT_FAMILY } from "@/utils/font-family";
 import { ClickOutside } from "@/components/click-out-side/click-out-side";
 import { RouteChangeConfirmation } from "@/components/handle-navigation/handle-navigation";
 import { ArrowUpIcon } from "@/icons";
-import {useRef} from "react";
+import { useRef } from "react";
 
 interface IUpdateValueAutoCompleteProps {
   value?: any;
@@ -59,14 +59,14 @@ const UpdateValueAutoComplete = ({
               onChange(e, value);
             })}
             popupIcon={
-              <div style={{position: "absolute", top: "50%", transform: "translateY(-50%)" }}>
-              <ArrowUpIcon />
+              <div style={{ position: "absolute", top: "50%", transform: "translateY(-50%)" }}>
+                <ArrowUpIcon />
               </div>
             }
             style={{ height: 26 }}
             clearIcon={false}
             PaperComponent={(props) => <Paper ref={optionsListEl} {...props}>
-                {props?.children}
+              {props?.children}
             </Paper>}
           />
         </Paper>

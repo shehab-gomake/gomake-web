@@ -37,6 +37,7 @@ const useStyle = () => {
       },
       sendBtn: {
         width: "30%",
+        lineHeight:"17px",
         backgroundColor: secondColor(500),
       },
     };

@@ -12,8 +12,9 @@ const CustomerAuthLayout = ({
   children,
   permissionEnumValue,
   customGap = LAYOUT_DEFAULT_GAP,
+  allowAnonymous
 }: IAuthLayout) => {
-  const { canAccess } = useAuthLayoutHook(permissionEnumValue);
+  const { canAccess } = useAuthLayoutHook(permissionEnumValue,allowAnonymous);
   const { clasess } = useStyle({
     isHover: false,
     navStatus: null,
@@ -24,7 +25,9 @@ const CustomerAuthLayout = ({
   const isHover = useRecoilValue(hoverStatusState);
   return (
     <div style={clasess.container}>
-      <LeftSideLayout customGap={customGap} />
+        {
+            !allowAnonymous &&  <LeftSideLayout customGap={customGap} />
+        }
       <div
         style={clasess.rightContainer}
         onMouseEnter={() => {
@@ -33,7 +36,7 @@ const CustomerAuthLayout = ({
           }
         }}
       >
-        <HeaderWidget />
+          {  !allowAnonymous && <HeaderWidget /> } 
         {canAccess && <div style={clasess.bodyContainer}>{children}</div>}
       </div>
       <div></div>

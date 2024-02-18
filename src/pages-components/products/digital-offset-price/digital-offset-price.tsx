@@ -14,7 +14,6 @@ import {
 import { EWidgetProductType } from "./enums";
 import { PricingWidget } from "@/widgets/product-pricing-widget/pricing-widget";
 import { Tabs } from "@mui/material";
-import { adaptPaddingLeft } from "@/utils/adapter";
 
 const PriceListPageWidget = ({ widgetType }) => {
   const { clasess } = useStyle();
@@ -65,6 +64,7 @@ const PriceListPageWidget = ({ widgetType }) => {
     jobActions,
     workFlows,
     billingMethod,
+    underParameterIds,
     setBillingMethod,
     samlleType,
     graphicDesigner,
@@ -74,17 +74,22 @@ const PriceListPageWidget = ({ widgetType }) => {
     onChangeSubProductsForPrice,
     includeVAT,
     setIncludeVAT,
+    isChargeForNewDie,
+    setIsChargeForNewDie,
+    straightKnife
   } = useDigitalOffsetPrice({ clasess, widgetType });
   const direction = t("direction");
   return (
-    <div style={{ height: "85vh" }}>
+    <div>
       {productTemplate?.sections?.length > 0 && (
         <div style={clasess.mainContainer}>
-          <HeaderTitle
-            title={productTemplate?.name}
-            marginTop={24}
-            marginBottom={24}
-          />
+          <div>
+            <HeaderTitle
+              title={productTemplate?.name}
+              marginTop={1}
+              marginBottom={24}
+            />
+          </div>
           <div style={clasess.mainRowContainer}>
             <div style={clasess.leftSideContainer}>
               <div style={clasess.tabsContainer}>
@@ -111,7 +116,7 @@ const PriceListPageWidget = ({ widgetType }) => {
                 </Tabs>
               </div>
 
-              <div style={{ height: 666, overflow: "scroll", width: "100%" }}>
+              <div style={{ height: 666, overflow: "scroll", width: "calc(100% - 330px)" }}>
                 <div style={clasess.sectionsContainer}>
                   {[...productTemplate?.sections, PricingTab]?.map(
                     (section: any, index: number) => {
@@ -121,14 +126,6 @@ const PriceListPageWidget = ({ widgetType }) => {
                           t("products.offsetPrice.admin.Pricing")
                         ) {
                           return (
-                            // <PricingSectionMappingWidget
-                            //   clasess={clasess}
-                            //   machineCategories={machineCategories}
-                            //   onChangeCategoryData={onChangeCategoryData}
-                            //   section={section}
-                            //   pricingDefaultValue={pricingDefaultValue}
-                            //   workFlowSelected={workFlowSelected}
-                            // />
                             <PricingWidget
                               getOutSourcingSuppliers={getOutSourcingSuppliers}
                               actions={jobActions}
@@ -155,6 +152,7 @@ const PriceListPageWidget = ({ widgetType }) => {
                                     duplicateParameters={duplicateParameters}
                                     template={productTemplate}
                                     setTemplate={setProductTemplate}
+                                    underParameterIds={underParameterIds}
                                   />
                                 );
                               } else {
@@ -172,6 +170,7 @@ const PriceListPageWidget = ({ widgetType }) => {
                                     duplicateParameters={duplicateParameters}
                                     template={productTemplate}
                                     setTemplate={setProductTemplate}
+                                    underParameterIds={underParameterIds}
                                   />
                                 );
                               }
@@ -224,9 +223,8 @@ const PriceListPageWidget = ({ widgetType }) => {
               justifyContent: "flex-end",
               alignItems: "center",
               position: "fixed",
-              paddingRight: "15px",
-              ...adaptPaddingLeft(direction, 15),
-              gap: 20,
+              // paddingRight: "15px",
+              // ...adaptPaddingLeft(direction, 15),
               bottom: 0,
               right: 0,
               boxShadow: "0px 0px 5px rgba(0, 0, 0, 0.08)",
@@ -246,7 +244,7 @@ const PriceListPageWidget = ({ widgetType }) => {
                   </GomakePrimaryButton>
                 ) : null}
                 {[...productTemplate?.sections, PricingTab].length - 1 !=
-                activeIndex ? (
+                  activeIndex ? (
                   <GomakePrimaryButton
                     style={clasess.nextBtnStyle}
                     onClick={handleNextClick}
@@ -256,7 +254,7 @@ const PriceListPageWidget = ({ widgetType }) => {
                 ) : null}
               </div>
             </div>
-            <div style={{ width: 315, height: 40 }}>
+            <div style={{ width: 220, height: 40, marginLeft: 55, marginRight: 55 }}>
               {widgetType === EWidgetProductType.EDIT ? (
                 <GomakePrimaryButton
                   style={clasess.addOrderBtn}
@@ -288,6 +286,9 @@ const PriceListPageWidget = ({ widgetType }) => {
         openModal={GalleryModalOpen}
         onClose={onCloseGalleryModal}
         onChangeSubProductsForPrice={onChangeSubProductsForPrice}
+        isChargeForNewDie={isChargeForNewDie}
+        setIsChargeForNewDie={setIsChargeForNewDie}
+        straightKnife={straightKnife}
       />
       <MultiParameterModal
         openModal={multiParameterModal}

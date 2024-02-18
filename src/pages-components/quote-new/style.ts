@@ -2,9 +2,9 @@ import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 
-const useStyle = () => {
+const useStyle = (isQuoteConfirmation) => {
   const { secondColor, grayColor } = useGomakeTheme();
-  const clasess = useMemo(() => {
+  const classes = useMemo(() => {
     return {
       mainContainer: {
         display: "flex",
@@ -102,11 +102,12 @@ const useStyle = () => {
         overflow: "hidden",
         display: "flex",
         flexDirection: "column" as "column",
+        padding : isQuoteConfirmation ? "20px 100px 0px 100px" : "none"
       },
     };
-  }, []);
+  }, [isQuoteConfirmation]);
   return {
-    clasess,
+    classes,
   };
 };
 export { useStyle };

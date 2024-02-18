@@ -11,7 +11,7 @@ import { DuplicateIcon } from "@/components/icons/duplicate-icon";
 import { useMaterialsCategories } from "../../use-materials-categories";
 import { useRouter } from "next/router";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
-import { filterState, selectedSupplierIdState } from "../../state";
+import {filterState, selectedMaterialIdForUpdateState, selectedSupplierIdState} from "../../state";
 import { EMaterialsActions } from "../../enums";
 import { actionMenuState } from "@/store";
 
@@ -33,6 +33,7 @@ const MaterialMenuWidget = ({
   const { materialType, materialCategory } = query;
   const supplierId = useRecoilValue(selectedSupplierIdState);
   const materialFilter = useRecoilValue(filterState);
+  const setSelectedMaterialIdForUpdate = useSetRecoilState(selectedMaterialIdForUpdateState);
 
   const toggleIsActive = async (id, parameterKey, value) => {
     await updateCellData(id, parameterKey, !value);
@@ -48,6 +49,7 @@ const MaterialMenuWidget = ({
     key: string;
   } | null>(actionMenuState);
   const onClickActionModal = () => {
+    setSelectedMaterialIdForUpdate(dataRow.id);
     setAction({
       key: "Duplicate",
       action: 10,
@@ -59,22 +61,26 @@ const MaterialMenuWidget = ({
         <MoreCircleIcon />
       </IconButton>
       <GoMakeMenu handleClose={handleClose} open={open} anchorEl={anchorEl}>
-        <MenuItem style={clasess.menuItemContainer}>
-          <div style={clasess.menuRowStyle}>
-            <ConvertIcon />
-            <div
-              style={clasess.rowTextStyle}
-              onClick={() => {
-                toggleIsActive(dataRow?.id, "Active", dataRow?.isActive);
-              }}
-            >
-              {dataRow?.isActive
-                ? t("remainWords.convertToInactive")
-                : t("remainWords.convertToActive")}
-            </div>
-          </div>
-        </MenuItem>
-        <Divider />
+        {
+          !isAdmin ? <div>
+            <MenuItem style={clasess.menuItemContainer}>
+              <div style={clasess.menuRowStyle}>
+                <ConvertIcon />
+                <div
+                    style={clasess.rowTextStyle}
+                    onClick={() => {
+                      toggleIsActive(dataRow?.id, "Active", dataRow?.isActive);
+                    }}
+                >
+                  {dataRow?.isActive
+                      ? t("remainWords.convertToInactive")
+                      : t("remainWords.convertToActive")}
+                </div>
+              </div>
+            </MenuItem>
+            <Divider />
+          </div> : <></>
+        }
         <MenuItem
           style={clasess.menuItemContainer}
           onClick={() => {

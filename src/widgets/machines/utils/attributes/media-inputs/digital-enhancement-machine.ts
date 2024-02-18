@@ -54,7 +54,7 @@ const digitalEnhancementMachine = (state: Record<string, any>) => {
             ]
         },
         ...mediaWeightSettings(state),
-        ...mediaThicknessSettings(state),
+        ...mediaThicknessSettings(state,EMeasurementUnits.UM),
     ]
 }
 

@@ -1,7 +1,7 @@
 import React, { SyntheticEvent, useCallback, useRef, useState } from "react";
 import { GoMakeAutoComplate } from "@/components";
-import { useRecoilState, useRecoilValue } from "recoil";
-import { currenciesState } from "@/widgets/materials-widget/state";
+import {useRecoilState, useRecoilValue, useSetRecoilState} from "recoil";
+import {currenciesState, selectedMaterialIdForUpdateState} from "@/widgets/materials-widget/state";
 import { useTableCellData } from "@/widgets/materials-widget/components/table-cell-data/use-table-cell-data";
 import { ClickOutside } from "@/components/click-out-side/click-out-side";
 import { Paper } from "@mui/material";
@@ -27,6 +27,8 @@ const CurrencyInput = ({
   const [isUpdate, setIsUpdate] = useState<boolean>(false);
   const currencies = useRecoilValue(currenciesState);
   const { updateCellData } = useTableCellData(isAdmin);
+  const setSelectedMaterialIdForUpdate = useSetRecoilState(selectedMaterialIdForUpdateState);
+
   const popUpRef = useRef(null);
   const onSelectLanguage = async (event: SyntheticEvent, value) => {
     await updateCellData(id, "currency", value?.value);
@@ -43,7 +45,8 @@ const CurrencyInput = ({
     key: string;
   } | null>(actionMenuState);
   const onClickActionModal = () => {
-    onChangeRowCheckBox(id, true);
+    //onChangeRowCheckBox(id, true);
+    setSelectedMaterialIdForUpdate(id)
     setAction({
       key: "UpdateCurrency",
       action: 0,

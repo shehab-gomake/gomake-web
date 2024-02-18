@@ -11,7 +11,7 @@ const QuoteForPriceChildTable = ({
   onClickDuplicateWithDifferentQTY,
   onClickDeleteQouteItem,
 }: any) => {
-  const { clasess } = useStyle({ headerHeight });
+  const { classes } = useStyle({ headerHeight });
 
   return (
     <TableContainer component={Paper}>

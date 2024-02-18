@@ -1,10 +1,17 @@
 import {cuttingLevel} from "@/widgets/machines/utils/const/cutting-level";
 import {setupTimeInput} from "@/widgets/machines/utils/attributes/speed-inputs/setup-time-input";
 import {EMeasurementUnits} from "@/widgets/machines/enums/measurement-units";
+import { useTranslation } from "react-i18next";
 
 const flatbedCuttingMachine = (state: Record<string, any>) => {
+    const { t } = useTranslation(); 
+    const translatedCuttingLevel = cuttingLevel.map(({ value, text }) => ({
+        value,
+        text: t(text)
+    }));
+
     return [
-        ...setupTimeInput(state),
+        ...setupTimeInput(state), 
         {
             name: "speed",
             label: "machineAttributes.speed",
@@ -31,24 +38,25 @@ const flatbedCuttingMachine = (state: Record<string, any>) => {
         },
         {
             name: 'machineAttributes.speedByComplexity',
-            parameterKey: 'speedByMediaWeight',
-            value: state.attributes?.speedByMediaWeight || [],
-            isValid: state.attributes?.speedByMediaWeight?.length > 0,
+            parameterKey: 'speedByShapeComplexity',
+            value: state.attributes?.speedByShapeComplexity || [],
+            isValid: state.attributes?.speedByShapeComplexity?.length > 0,
             machineInputType: 'multiArrayInput',
             inputs: [
                 {
-                    name: "cuttingLevel",
-                    label: "machineAttributes.cuttingLevel",
+                    name: "shape",
+                    label: "machineAttributes.shape",
                     type: "select",
-                    placeholder: "machineAttributes.cuttingLevel",
+                    placeholder: "machineAttributes.shape",
                     required: true,
-                    parameterKey: "cuttingLevel",
-                    options: cuttingLevel,
+                    parameterKey: "shape",
+                    options: [],
+                    optionsUrl: '/v1/print-house-config/parameters/shape-complexity'
                 },
                 {
                     name: "speedPercentage",
                     label: "machineAttributes.speedPercentage",
-                    type: "text",
+                    type: "number",
                     placeholder: "machineAttributes.speedPercentage",
                     required: true,
                     parameterKey: "speedPercentage",

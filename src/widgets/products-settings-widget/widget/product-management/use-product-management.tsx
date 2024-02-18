@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { matchSorter } from "match-sorter";
 
 import { getAllProductsMongoDB, getAlltProductSKU } from "@/services/hooks";
-import { useGomakeAxios } from "@/hooks";
+import { useGomakeAxios, useGomakeRouter } from "@/hooks";
 
 import { useStyle } from "./style";
 import { MoreMenuWidget } from "../more-circle";
@@ -17,6 +17,7 @@ import { SettingIcon } from "@/widgets/shared-admin-customers";
 import { EHttpMethod } from "@/services/api-service/enums";
 import { useRouter } from "next/router";
 import { getAllSubProducts } from "@/services/hooks/admin-side/products/get-all-sub-products";
+import { EnterArrow } from "@/icons";
 
 const useProductManagement = () => {
   const router = useRouter();
@@ -27,7 +28,7 @@ const useProductManagement = () => {
   const [term, setTerm] = useState<any>("");
   const [productSearched, setProductSearched] = useState([]);
   const [selectProfitsModal, setSelectProfitsModal] = useState<ProductClient>();
-
+  const { navigate } = useGomakeRouter();
   const [allProductSKU, setAllProductSKU] = useState<any>();
   const getAllProductsSKU = useCallback(async () => {
     await getAlltProductSKU(callApi, setAllProductSKU);
@@ -76,11 +77,11 @@ const useProductManagement = () => {
   const productProfitesList: ProductClient[] = useMemo(
     () => [
       {
-        label: "action",
+        label: t("partners.options.action"),
         id: EProductProfites.BY_ACTION,
       },
       {
-        label: "Product",
+        label: t("products.addProduct.admin.product"),
         id: EProductProfites.BY_PRODUCT,
       },
     ],
@@ -89,8 +90,8 @@ const useProductManagement = () => {
   const getActions = useCallback(async () => {
     const data = router.query.productId
       ? await getAllSubProducts(callApi, setAllProducts, {
-          productId: router.query.productId,
-        })
+        productId: router.query.productId,
+      })
       : await getAllProductsMongoDB(callApi, setAllProducts);
 
     const mapData = data?.map((item) => [
@@ -134,6 +135,18 @@ const useProductManagement = () => {
           </div>
         )}
       </div>,
+      <div
+        style={clasess.subPrductContainer}
+        onClick={(e: any) =>
+          item.subProductsCount > 0 &&
+          navigate(
+            `/settings/products/sub-product/${item?.id}?productName=${item?.name}`
+          )
+        }
+      >
+        <div style={{ width: 35 }}>{item?.subProductsCount}</div>
+        <EnterArrow />
+      </div>,
 
       <div style={{ display: "inline-flex" }}>
         {item?.status === false ? (
@@ -144,7 +157,7 @@ const useProductManagement = () => {
           <div style={clasess.activeTabStyle}>{t("usersSettings.active")}</div>
         )}
       </div>,
-      <MoreMenuWidget item={item} updatedProduct={updatedProduct} />,
+      <MoreMenuWidget item={item} updatedProduct={updatedProduct} getActions={getActions} />,
     ]);
     setAllProducts(mapData);
   }, []);
@@ -157,6 +170,7 @@ const useProductManagement = () => {
     t("products.productManagement.admin.prouctName"),
     t("products.addProduct.admin.pricingType"),
     t("tabs.profits"),
+    t("products.addProduct.admin.subProducts"),
     t("products.productManagement.admin.status"),
     t("products.productManagement.admin.more"),
   ];

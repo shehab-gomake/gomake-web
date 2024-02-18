@@ -1,3 +1,32 @@
+
+const mailInputs = (state) => {
+    return [
+        {
+            name: "sendEmailTo",
+            label: "mailingSettings.sendEmailTo",
+            type: "text",
+            required: false,
+            placeholder: "mailingSettings.sendEmailTo",
+            parameterKey: "sendTo",
+            options: [],
+            value: state?.sendTo,
+            isValid: true,
+        },
+        {
+            name: "send to agent",
+            label: "mailingSettings.sendToAgent",
+            type: "primeSwitch",
+            placeholder: "mailingSettings.sendToAgent",
+            required: false,
+            parameterKey: "isToAgent",
+            options: [],
+            value: state?.isToAgent,
+            isValid: true,
+            direction: "row",
+        },
+    ]
+}
+
 const mailInputs1 = (state) => {
     return [
         {
@@ -5,7 +34,7 @@ const mailInputs1 = (state) => {
             label: "mailingSettings.sendFrom",
             type: "text",
             required: false,
-            placeholder: "Enter email address",
+            placeholder: "mailingSettings.enterEmail",
             parameterKey: "sendFrom",
             options: [],
             value: state?.sendFrom,
@@ -42,6 +71,7 @@ const mailInputs2 = (state) => {
         },
     ]
 }
+
 const mailInputs3 = (state) => {
     return [
         {
@@ -49,7 +79,7 @@ const mailInputs3 = (state) => {
             type: "text",
             required: false,
             parameterKey: "bccMail",
-            placeholder: "Enter email address",
+            placeholder: "mailingSettings.enterEmail",
             options: [],
             value: state?.bccMail,
             isValid: true,
@@ -72,4 +102,6 @@ const mailInputs3 = (state) => {
     ]
 }
 
-export { mailInputs1, mailInputs2, mailInputs3 };
+
+
+export { mailInputs, mailInputs1, mailInputs2, mailInputs3 };

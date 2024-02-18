@@ -5,7 +5,6 @@ import { EWidgetProductType } from "../enums";
 import { DotsLoader } from "@/components/dots-loader/dots-Loader";
 import { ProgressBar } from "@/components/progress-bar/progress-bar";
 import { useRightSideWidget } from "./use-right-side-widget";
-
 const RightSideWidget = ({
   clasess,
   clientDefaultValue,
@@ -45,25 +44,11 @@ const RightSideWidget = ({
     listEmployees,
     isLoading,
     quantity,
+    calculationExceptionsLogs,
     setCurrentProductItemValueTotalPrice,
     t,
+    _renderIconLogs,
   } = useRightSideWidget({ includeVAT });
-
-  const data = [
-    {
-      value: "Action name:",
-      text: "Get Jira notifications on yourrrrrrr phone! Download the Jira Cloud app for Android or iOS.",
-    },
-    {
-      value: "Action name:",
-      text: "Message Get Jira notifications on your phone! Download the Jira Cloud app for Android or iOS.",
-    },
-    {
-      value: "",
-      text: "Price calculated!",
-    },
-  ];
-
   return (
     <div style={clasess.rightSideMainContainer}>
       <div style={clasess.rightSideContainer}>
@@ -152,7 +137,11 @@ const RightSideWidget = ({
               <DotsLoader />
             ) : (
               <GomakeTextInput
-                value={currentProductItemValueTotalPrice ?? "---------"}
+                value={
+                  calculationExceptionsLogs?.length > 0
+                    ? "---------"
+                    : (currentProductItemValueTotalPrice ? currentProductItemValueTotalPrice.toFixed(2) : currentProductItemValueTotalPrice) ?? "---------"
+                }
                 onChange={(e: any) => {
                   setCurrentProductItemValueTotalPrice(e.target.value);
                 }}
@@ -166,7 +155,7 @@ const RightSideWidget = ({
         {calculationProgress &&
           calculationProgress.currentWorkFlowsCount > 0 &&
           calculationProgress.currentWorkFlowsCount !==
-            calculationProgress.totalWorkFlowsCount && (
+          calculationProgress.totalWorkFlowsCount && (
             <div style={{ marginBottom: "15px" }}>
               <ProgressBar
                 bottomLeftText={t(
@@ -188,14 +177,14 @@ const RightSideWidget = ({
         {currentProductItemValueTotalPrice && (
           <div style={clasess.orderContainer}>
             {t("products.offsetPrice.admin.orderToral", {
-              pieceNum: quantity?.values[0],
+              prieceNum: quantity?.values[0],
               price: isNaN(
                 currentProductItemValueTotalPrice / quantity?.values[0]
               )
                 ? 0
                 : (
-                    currentProductItemValueTotalPrice / quantity?.values[0]
-                  ).toFixed(2),
+                  currentProductItemValueTotalPrice / quantity?.values[0]
+                ).toFixed(2),
               unitPrice: systemCurrency,
             })}
           </div>
@@ -376,22 +365,30 @@ const RightSideWidget = ({
                 </div>
               )}
 
-              {data?.map((item) => {
+              {calculationExceptionsLogs?.map((item) => {
                 return (
                   <>
-                    {item.value ? (
+                    {item.title ? (
                       <div
                         style={{
                           display: "flex",
                           flexDirection: "row",
                           justifyContent: "flex-start",
-                          alignItems: "flex-start",
+                          alignItems: "center",
                           width: "100%",
                           gap: 5,
                         }}
                       >
-                        <div style={clasess.titleLogsTextStyle}>
-                          <div>{item.value}</div>
+                        <div style={clasess.iconLogsTextStyle}>
+                          <div>{_renderIconLogs(item.type)}</div>
+                        </div>
+                        <div
+                          style={{
+                            ...clasess.titleLogsTextStyle,
+                            // color: item.type ? "" : "",
+                          }}
+                        >
+                          <div>{item.title}:</div>
                         </div>
                         <div style={clasess.textLogstyle}>
                           <span style={{ color: "black" }}>{item.text}</span>
@@ -409,9 +406,6 @@ const RightSideWidget = ({
           )}
         </div>
       </div>
-      {/* <div style={clasess.noVatStyle}>
-        {t("products.offsetPrice.admin.dontVAT")}
-      </div> */}
     </div>
   );
 };

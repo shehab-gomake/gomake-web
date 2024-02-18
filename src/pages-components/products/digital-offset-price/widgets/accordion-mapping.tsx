@@ -15,6 +15,7 @@ const AccordionMappingWidget = ({
   duplicateParameters,
   template,
   setTemplate,
+  underParameterIds,
 }: any) => {
   return (
     <Accordion
@@ -59,6 +60,7 @@ const AccordionMappingWidget = ({
           duplicateParameters={duplicateParameters}
           template={template}
           setTemplate={setTemplate}
+          underParameterIds={underParameterIds}
         />
       </AccordionDetails>
     </Accordion>

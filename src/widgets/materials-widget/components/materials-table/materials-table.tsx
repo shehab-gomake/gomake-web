@@ -11,7 +11,7 @@ const MaterialsTableComponent = (props:IMaterialsTableComponentProps) => {
   const { getAllMaterials, getTableRows, onFilterChange } = useMaterialsTypes(props.isAdmin);
   const { t } = useTranslation();
   const { classes } = useStyle();
-  const tableHeaders = [t("Materials Type"), t("Edit")];
+  const tableHeaders = [t("materials.materialsType"), t("materials.edit")];
 
   useEffect(() => {
     getAllMaterials().then();
@@ -19,7 +19,7 @@ const MaterialsTableComponent = (props:IMaterialsTableComponentProps) => {
 
   return (
     <div style={classes.mainContainer}>
-      <HeaderTitleWithSearch title={"Materials"} onChange={onFilterChange} />
+      <HeaderTitleWithSearch title={props.isAdmin ? t("tabs.materialsAdmin") : t("tabs.materials")} onChange={onFilterChange} />
       <PrimaryTable
         stickyFirstCol={false}
         stickyHeader={false}

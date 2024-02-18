@@ -61,9 +61,7 @@ const CategoriesTable = ({ isAdmin }: ICategoriesTableProps) => {
           variant={"contained"}
           href={`/machines-admin/add-machine`}
           startIcon={<AddIcon />}
-        >
-          Add Machine
-        </SecondaryButton>
+        >{t("tabs.addMachine")}</SecondaryButton>
       )}
       <PrimaryTable stickyFirstCol={false} stickyHeader={false} rows={tableRows} headers={tableHeaders} />
     </div>

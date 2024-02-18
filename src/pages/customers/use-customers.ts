@@ -37,8 +37,18 @@ const useCustomers = (
   const { t } = useTranslation();
   const [allCustomers, setAllCustomers] = useState([]);
   const [showCustomerModal, setShowCustomerModal] = useState(false);
+
+
+
   const [pagesCount, setPagesCount] = useState(0);
-  const pageSize = DEFAULT_VALUES.PageSize;
+  const [pageSize, setPageSize] = useState(DEFAULT_VALUES.PageSize);
+  
+  const handlePageSizeChange = (event) => {
+    setPageNumber(1);
+    setPageSize(event.target.value);
+  };
+
+
   const { CheckPermission } = useUserPermission();
 
   const tableHeaders = [
@@ -228,7 +238,7 @@ const useCustomers = (
     );
     setPagesCount(Math.ceil(data / pageSize));
     return data;
-  }, [pageNumber, finalPatternSearch, ClientTypeId, agentId, isActive]);
+  }, [pageNumber, pageSize ,finalPatternSearch, ClientTypeId, agentId, isActive]);
 
   const handleClean = useCallback(async () => {
     setCustomerName("");
@@ -367,6 +377,9 @@ const useCustomers = (
     isValidCustomer,
     onClickExportClient,
     onClickImportClient,
+    setPagesCount,
+    setPageSize,
+    handlePageSizeChange
   };
 };
 export { useCustomers };

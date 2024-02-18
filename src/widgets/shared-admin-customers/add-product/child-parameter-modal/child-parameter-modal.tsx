@@ -10,7 +10,7 @@ import { useStyle } from "./style";
 import { PlusIcon, ReOrderIcon, RemoveIcon } from "@/icons";
 import { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
-import { ChildParameteMapping } from "./child-parameter-mapping";
+import { useSnackBar } from "@/hooks";
 
 const ChildParameterModal = ({
   openModal,
@@ -23,12 +23,19 @@ const ChildParameterModal = ({
 }: any) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-
+  const { setSnackbarStateValue } = useSnackBar();
   const [state, setState] = useState({
     valuesConfigs: selectedParameter.valuesConfigs,
     childsParameters: selectedParameter.childsParameters,
   });
-
+  const isUpdateNameRepeated = (updateName, currentIndex) => {
+    const formattedUpdateName = updateName.replace(/\s/g, ""); // Remove spaces from the new updateName
+    return state.valuesConfigs.some(
+      (item, index) =>
+        item.updateName.replace(/\s/g, "") === formattedUpdateName &&
+        index !== currentIndex
+    );
+  };
   useEffect(() => {
     if (selectedParameter?.valuesConfigs) {
       setState({
@@ -177,7 +184,7 @@ const ChildParameterModal = ({
                                 <div style={clasess.textInputContainer}>
                                   <GomakeTextInput
                                     style={clasess.textInputStyle}
-                                    placeholder="Enter Value"
+                                    placeholder={t("products.profits.exceptions.enterValue")}
                                     onChange={(e) =>
                                       changeItems(
                                         index,
@@ -186,6 +193,23 @@ const ChildParameterModal = ({
                                       )
                                     }
                                     defaultValue={item?.updateName}
+                                    onBlur={() => {
+                                      if (
+                                        isUpdateNameRepeated(
+                                          item?.updateName,
+                                          index
+                                        )
+                                      ) {
+                                        setSnackbarStateValue({
+                                          state: true,
+                                          message: t(
+                                            "products.offsetPrice.admin.valueErrorMsg",
+                                            { value: item.updateName }
+                                          ),
+                                          type: "error",
+                                        });
+                                      }
+                                    }}
                                   />
                                 </div>
 
@@ -225,13 +249,6 @@ const ChildParameterModal = ({
                               </div>
                             )}
                           </Draggable>
-                          // <ChildParameteMapping
-                          //   item={item}
-                          //   index={index}
-                          //   changeItems={changeItems}
-                          //   state={state}
-                          //   deleteRow={deleteRow}
-                          // />
                         ))}
                         {provided.placeholder}
                       </div>
@@ -252,15 +269,27 @@ const ChildParameterModal = ({
             <GomakePrimaryButton
               style={{ width: "50%", height: 40 }}
               onClick={() => {
-                updatedValuesConfigsForParameters(
-                  selectedSectonId,
-                  selectedSubSection,
-                  { ...selectedParameter, ...state }
+                const hasRepeatedNames = state.valuesConfigs.some(
+                  (item, index) => isUpdateNameRepeated(item?.updateName, index)
                 );
-                onClose();
+
+                if (!hasRepeatedNames) {
+                  updatedValuesConfigsForParameters(
+                    selectedSectonId,
+                    selectedSubSection,
+                    { ...selectedParameter, ...state }
+                  );
+                  onClose();
+                } else {
+                  setSnackbarStateValue({
+                    state: true,
+                    message: t("products.offsetPrice.admin.valuesErrorMsg"),
+                    type: "error",
+                  });
+                }
               }}
             >
-              Add Values
+              {t("products.offsetPrice.admin.addValues")}
             </GomakePrimaryButton>
           </div>
         </div>

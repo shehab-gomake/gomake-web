@@ -25,29 +25,34 @@ const SelectChildParameterWidget = ({
   useEffect(() => {
     if (subProductsParams) {
       let temp = [...subProductsParams];
-      parameter?.childsParameters.forEach((parameter) => {
-        const parameterId = parameter.id;
+      parameter?.childsParameters.forEach((myparameter) => {
+        const parameterId = myparameter.id;
         if (value?.values.hasOwnProperty(parameterId)) {
           const myindex = temp.findIndex((item) => {
             return (
-              item?.parameterId === parameter?.id &&
+              item?.parameterId === myparameter?.id &&
               item?.sectionId === section?.id &&
               item?.subSectionId === subSection?.id &&
-              item?.actionIndex === parameter?.actionIndex
+              item?.actionIndex === myparameter?.actionIndex
             );
           });
+
           if (myindex !== -1) {
             temp[myindex] = {
               ...temp[myindex],
+              parameterCode: myparameter?.code,
               values: [value?.values[parameterId]],
             };
           } else {
             temp.push({
-              parameterId: parameter?.id,
+              parameterId: myparameter?.id,
               sectionId: section?.id,
               subSectionId: subSection?.id,
-              ParameterType: parameter?.parameterType,
+              ParameterType: myparameter?.parameterType,
               values: [value?.values[parameterId]],
+              actionIndex: myparameter?.actionIndex,
+              parameterName: myparameter?.name,
+              parameterCode: myparameter?.code,
             });
           }
         }
@@ -59,6 +64,7 @@ const SelectChildParameterWidget = ({
             parameters: temp,
           };
         }
+
         return item;
       });
       setSubProducts(updatedSubProducts);
@@ -66,7 +72,7 @@ const SelectChildParameterWidget = ({
   }, [value]);
   return (
     <>
-      {subProductsParams?.length > 0 && (
+      {parameter?.valuesConfigs?.length > 0 && (
         <GoMakeAutoComplate
           options={parameter?.valuesConfigs?.filter((value) => !value.isHidden)}
           placeholder={parameter.name}
@@ -88,7 +94,8 @@ const SelectChildParameterWidget = ({
               { valueIds: value?.id, values: value?.updateName },
               subSection?.type,
               index,
-              parameter?.actionIndex
+              parameter?.actionIndex,
+              parameter?.code
             );
           }}
         />

@@ -7,9 +7,11 @@ const useStyle = () => {
   const clasess = useMemo(() => {
     return {
       insideStyle: {
-        width: "500px",
+        width: "auto",
         borderRadius: 8,
-        height: "300px",
+        height: "auto",
+        maxHeight: 500,
+        minHeight:200,
         backgroundColor: "#F6F6F6",
       },
       textInputStyle: {
@@ -43,6 +45,22 @@ const useStyle = () => {
         color: errorColor(500),
         marginTop: 5,
       },
+      modalMainContainer:{
+        display: "flex",
+        flexDirection: "column" as "column",
+        justifyContent:"flex-start",
+        alignItems:"flex-start",
+        gap:10,
+        padding:10
+      },
+      productMappingContainer:{
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "flex-start",
+        alignItems: "center",
+        width:"100%",
+        gap:15
+      }
     };
   }, []);
   return {

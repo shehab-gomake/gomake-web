@@ -1,9 +1,11 @@
+import { adaptPaddingLeft } from "@/utils/adapter";
 import i18next from "i18next";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
 const useStyle = () => {
   const { t } = useTranslation();
+  const direction = t('direction');
   const classes = useMemo(() => {
     return {
       mainContainer: {
@@ -20,13 +22,11 @@ const useStyle = () => {
         alignItems: "center",
         marginBottom: 20,
       },
-      paginationStyle: {
+      footerStyle: {
         display: "flex",
-        paddingLeft: 20,
-        paddingRight: 20,
-        height: "50px",
         flexDirection: "row" as "row",
-        justifyContent: "space-between",
+        alignItems: "center",
+        ...adaptPaddingLeft(direction, 20),
       },
     };
   }, [i18next.language, t]);

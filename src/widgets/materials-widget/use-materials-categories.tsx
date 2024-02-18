@@ -59,8 +59,9 @@ const useMaterialsCategories = (isAdmin:boolean) => {
         pageNumber,
         pageSize,
         customFiltersKeyValueList
+      }).catch(e=>{
+        
       });
-      setPagesCount(Math.ceil(data?.data?.totalItems / pageSize));
     }else{
        await getPrintHouseMaterialCategoryDataApi(callApi, callBack, {
         materialKey: materialType,
@@ -70,7 +71,11 @@ const useMaterialsCategories = (isAdmin:boolean) => {
         pageSize,
         isActive, 
          customFiltersKeyValueList
-      });
+      }).catch(e=>{
+         setMaterialCategoryData([])
+         setPagesCount(0);
+         setMaterialTableFilters([])
+       });
      
     }
     

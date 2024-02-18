@@ -15,6 +15,7 @@ import { useEffect, useState } from "react";
 import { selectedOutputsProps, selectedParametersProps } from "../../interface";
 import { EParameterTypes } from "@/enums";
 import { useRouter } from "next/router";
+import { GoMakeDatepicker } from "@/components/date-picker/date-picker-component";
 
 const AddRuleModal = ({
   openModal,
@@ -27,30 +28,37 @@ const AddRuleModal = ({
   isPropertiesWidge,
   selectedProperties,
   getProperitesService,
+  isQuoteWidge = false
 }: any) => {
   const { clasess } = useStyle();
   const { t } = useTranslation();
   const {
     rules,
-    deleteRule,
-    handleChange,
-    addRule,
     machincesList,
     allMachincesList,
     productsStateValue,
     clientTypesStateValue,
     parametersStateValue,
     Outputs,
-    setAdditionalProfit,
+    materialsTypes,
+    machines,
     clients,
     expression,
     mainconditions,
     categories,
     conditions,
+    GroupByOptions,
+    agentsCategories,
+    resetDatePicker,
+    onSelectDeliveryTimeDates,
     create,
     createProperties,
     setPropertieValue,
-    materialsTypes,
+    setAdditionalProfit,
+    deleteRule,
+    handleChange,
+    addRule,
+    createForQuoteWidget,
   } = useAddRuleModal({
     typeExceptionSelected,
     selectedPricingBy,
@@ -60,7 +68,10 @@ const AddRuleModal = ({
     selectedPricingTableItems,
     selectedProperties,
     getProperitesService,
+    isQuoteWidge,
   });
+  const [selectedCategories, setSelectedCategories] = useState<any>("")
+  const [selectedStatment2, setSelectedStatment2] = useState<any>("")
   const router = useRouter();
   const [selectedOutputs, setSelectedOutputs] =
     useState<selectedOutputsProps>();
@@ -84,33 +95,36 @@ const AddRuleModal = ({
           return (
             <div style={{ width: "20%" }}>
               <div style={clasess.selectTypeStyle}>
-                Select Machine
+                {t("products.profits.exceptions.selectMachine")}
                 <span style={clasess.spanUnitStyle}>
-                  ({selectedOutputs?.defaultUnit})
+                  {selectedOutputs?.defaultUnit}
                 </span>
               </div>
               <GoMakeAutoComplate
                 options={
                   router.query.actionId
                     ? machincesList?.machines?.map((value) => {
-                        return {
-                          ...value,
-                          label: value?.machineName,
-                          id: value.machineId,
-                        };
-                      })
+                      return {
+                        ...value,
+                        label: value?.machineName,
+                        id: value.machineId,
+                      };
+                    })
                     : allMachincesList?.map((value) => {
-                        return {
-                          ...value,
-                          label: value?.name,
-                          id: value.id,
-                        };
-                      })
+                      return {
+                        ...value,
+                        label: value?.name,
+                        id: value.id,
+                      };
+                    })
                 }
                 style={clasess.dropDownListContainer}
-                placeholder={"Select Machine"}
-                onChange={(e, value) =>
-                  setPropertieValue(`${value?.manufacturer} ${value?.model}`)
+                placeholder={t("products.profits.exceptions.selectMachine")}
+                onChange={(e, value) => {
+                  console.log("value", value)
+                  setPropertieValue(value?.id)
+
+                }
                 }
               />
             </div>
@@ -121,7 +135,7 @@ const AddRuleModal = ({
               <div style={clasess.selectTypeStyle}>
                 Select Material
                 <span style={clasess.spanUnitStyle}>
-                  ({selectedOutputs?.defaultUnit})
+                  {selectedOutputs?.defaultUnit}
                 </span>
               </div>
               <GoMakeAutoComplate
@@ -144,13 +158,13 @@ const AddRuleModal = ({
           return (
             <div style={{ width: "20%" }}>
               <div style={clasess.selectTypeStyle}>
-                Enter Value
+                {t("products.profits.exceptions.enterValue")}
                 <span style={clasess.spanUnitStyle}>
                   {selectedOutputs?.defaultUnit}
                 </span>
               </div>
               <GomakeTextInput
-                placeholder="Enter Value"
+                placeholder={t("products.profits.exceptions.enterValue")}
                 onChange={(e: any) => {
                   setPropertieValue(e.target.value);
                 }}
@@ -167,13 +181,13 @@ const AddRuleModal = ({
           return (
             <div style={{ width: "20%" }}>
               <div style={clasess.selectTypeStyle}>
-                Enter Value
+                {t("products.profits.exceptions.enterValue")}
                 <span style={clasess.spanUnitStyle}>
-                  ({selectedOutputs?.defaultUnit})
+                  {selectedOutputs?.defaultUnit}
                 </span>
               </div>
               <GomakeTextInput
-                placeholder="Enter Value"
+                placeholder={t("products.profits.exceptions.enterValue")}
                 onChange={(e: any) => {
                   setPropertieValue(e.target.value);
                 }}
@@ -190,9 +204,9 @@ const AddRuleModal = ({
           return (
             <div style={{ width: "20%" }}>
               <div style={clasess.selectTypeStyle}>
-                Select Value
+                {t("products.profits.exceptions.selectValue")}
                 <span style={clasess.spanUnitStyle}>
-                  ({selectedOutputs?.defaultUnit})
+                  {selectedOutputs?.defaultUnit}
                 </span>
               </div>
               <GoMakeAutoComplate
@@ -200,9 +214,10 @@ const AddRuleModal = ({
                   { label: "Yes", value: "true" },
                   { label: "No", value: "false" },
                 ]}
-                placeholder={"Select Value"}
+                placeholder={t("products.profits.exceptions.selectValue")}
                 style={clasess.autoComplateStyle}
                 onChange={(e: any, value: any) => {
+                  console.log("value", value)
                   setPropertieValue(value?.value as string);
                 }}
               />
@@ -215,9 +230,9 @@ const AddRuleModal = ({
           return (
             <div style={{ width: "20%" }}>
               <div style={clasess.selectTypeStyle}>
-                Select Value
+                {t("products.profits.exceptions.selectValue")}
                 <span style={clasess.spanUnitStyle}>
-                  ({selectedOutputs?.defaultUnit})
+                  {selectedOutputs?.defaultUnit}
                 </span>
               </div>
               <GoMakeAutoComplate
@@ -229,8 +244,8 @@ const AddRuleModal = ({
                   };
                 })}
                 style={clasess.dropDownListContainer}
-                placeholder={"Select Value"}
-                onChange={(e, value) => setPropertieValue(value.name)}
+                placeholder={t("products.profits.exceptions.selectValue")}
+                onChange={(e, value) => setPropertieValue(value?.id)}
               />
             </div>
           );
@@ -238,13 +253,13 @@ const AddRuleModal = ({
           return (
             <div style={{ width: "20%" }}>
               <div style={clasess.selectTypeStyle}>
-                Enter Value
+                {t("products.profits.exceptions.enterValue")}
                 <span style={clasess.spanUnitStyle}>
-                  ({selectedOutputs?.defaultUnit})
+                  {selectedOutputs?.defaultUnit}
                 </span>
               </div>
               <GomakeTextInput
-                placeholder="Enter Value"
+                placeholder={t("products.profits.exceptions.enterValue")}
                 onChange={(e: any) => {
                   setPropertieValue(e.target.value);
                 }}
@@ -261,13 +276,13 @@ const AddRuleModal = ({
           return (
             <div style={{ width: "20%" }}>
               <div style={clasess.selectTypeStyle}>
-                Enter Value
+                {t("products.profits.exceptions.enterValue")}
                 <span style={clasess.spanUnitStyle}>
-                  ({selectedOutputs?.defaultUnit})
+                  {selectedOutputs?.defaultUnit}
                 </span>
               </div>
               <GomakeTextInput
-                placeholder="Enter Value"
+                placeholder={t("products.profits.exceptions.enterValue")}
                 onChange={(e: any) => {
                   setPropertieValue(e.target.value);
                 }}
@@ -284,9 +299,9 @@ const AddRuleModal = ({
           return (
             <div style={{ width: "20%" }}>
               <div style={clasess.selectTypeStyle}>
-                Select Value
+                {t("products.profits.exceptions.selectValue")}
                 <span style={clasess.spanUnitStyle}>
-                  ({selectedOutputs?.defaultUnit})
+                  {selectedOutputs?.defaultUnit}
                 </span>
               </div>
               <GoMakeAutoComplate
@@ -294,7 +309,7 @@ const AddRuleModal = ({
                   { label: "Yes", value: "true" },
                   { label: "No", value: "false" },
                 ]}
-                placeholder={"Select Value"}
+                placeholder={t("products.profits.exceptions.selectValue")}
                 style={clasess.autoComplateStyle}
                 onChange={(e: any, value: any) => {
                   setPropertieValue(value?.value as string);
@@ -305,6 +320,30 @@ const AddRuleModal = ({
       }
     }
   };
+
+  const _renderInptsForQuotes = () => {
+    return (
+      <div style={clasess.inputsForQuotesContainer}>
+        <div>
+          <div style={clasess.selectTypeStyle}>{t("products.profits.exceptions.groupBy")}</div>
+          <GoMakeAutoComplate
+            options={GroupByOptions}
+            style={clasess.dropDownListContainer}
+            placeholder={t("products.profits.exceptions.selectGroupBy")}
+            onChange={(e, value) => {
+              setPropertieValue(value?.id)
+            }}
+          />
+        </div>
+        <div style={clasess.statusFilterContainer}>
+          <h3 style={clasess.filterLabelStyle}>{t("boardMissions.dateRange")}</h3>
+          <div style={{ width: "100%" }}>
+            <GoMakeDatepicker onChange={onSelectDeliveryTimeDates} placeholder={t("boardMissions.chooseDate")} reset={resetDatePicker} />
+          </div>
+        </div>
+      </div>
+    );
+  }
   return (
     <>
       <GoMakeModal
@@ -312,9 +351,9 @@ const AddRuleModal = ({
         modalTitle={
           isPropertiesWidge
             ? t("products.profits.exceptions.addNewRule") +
-              " (" +
-              selectedProperties?.propertyName +
-              ")"
+            " (" +
+            selectedProperties?.propertyName +
+            ")"
             : t("products.profits.exceptions.addNewRule")
         }
         onClose={() => {
@@ -349,7 +388,7 @@ const AddRuleModal = ({
                   </div>
                 )}
                 <div key={index} style={clasess.inputsContainer}>
-                  <div style={{ marginTop: "2%", fontSize: 16 }}> if</div>
+                  <div style={{ marginTop: "2%", fontSize: 16, height: "100%" }}> if</div>
                   <div>
                     <label style={clasess.inputLable}>
                       {t("properties.category")}
@@ -361,6 +400,12 @@ const AddRuleModal = ({
                       value={rule.category}
                       onChange={(e, value) => {
                         handleChange(index, "category", value);
+                        handleChange(index, "statement2", null);
+                        handleChange(index, "condition", null);
+                        handleChange(index, "statement", null);
+                        setSelectedCategories(value)
+
+
                       }}
                     />
                   </div>
@@ -385,8 +430,13 @@ const AddRuleModal = ({
                               placeholder={t("properties.statment")}
                               // getOptionLabel={(value: any) => value?.name}
                               value={rule.statement2}
-                              onChange={(e, value) =>
-                                handleChange(index, "statement2", value)
+                              onChange={(e, value) => {
+                                handleChange(index, "statement2", value);
+                                handleChange(index, "condition", null);
+                                handleChange(index, "statement", null);
+                                setSelectedStatment2(value)
+                              }
+
                               }
                             />
                           </div>
@@ -408,8 +458,12 @@ const AddRuleModal = ({
                               placeholder={t("properties.statment")}
                               // getOptionLabel={(value: any) => value?.name}
                               value={rule.statement2}
-                              onChange={(e, value) =>
+                              onChange={(e, value) => {
                                 handleChange(index, "statement2", value)
+                                handleChange(index, "condition", null);
+                                handleChange(index, "statement", null);
+                                setSelectedStatment2(value)
+                              }
                               }
                             />
                           </div>
@@ -422,10 +476,11 @@ const AddRuleModal = ({
                       {t("properties.condtion")}
                     </label>
                     <GoMakeAutoComplate
+                      key={selectedCategories?.id + index + selectedStatment2?.id}
                       options={conditions}
                       style={clasess.dropDownListContainer}
                       placeholder={t("properties.condtion")}
-                      value={rule.condition}
+                      // value={rule.condition}
                       onChange={(event, value) => {
                         handleChange(index, "condition", value);
                       }}
@@ -439,26 +494,28 @@ const AddRuleModal = ({
                       <GoMakeAutoComplate
                         options={
                           router.query.actionId
-                            ? machincesList?.machines?.map((value) => {
-                                return {
-                                  ...value,
-                                  label: value?.machineName,
-                                  id: value.machineId,
-                                };
-                              })
+                            ? machines?.map((value) => {
+                              return {
+                                ...value,
+                                label: value?.name,
+                                id: value.id,
+                              };
+                            })
                             : allMachincesList?.map((value) => {
-                                return {
-                                  ...value,
-                                  label: value?.name,
-                                  id: value.id,
-                                };
-                              })
+                              return {
+                                ...value,
+                                label: value?.name,
+                                id: value.id,
+                              };
+                            })
                         }
                         style={clasess.dropDownListContainer}
                         placeholder={t("properties.statment")}
                         value={rule.statement2}
-                        onChange={(e, value) =>
+                        onChange={(e, value) => {
                           handleChange(index, "statement2", value)
+                          handleChange(index, "statement", null);
+                        }
                         }
                       />
                     </div>
@@ -479,8 +536,10 @@ const AddRuleModal = ({
                         style={clasess.dropDownListContainer}
                         placeholder={t("properties.statment")}
                         value={rule.statement2}
-                        onChange={(e, value) =>
+                        onChange={(e, value) => {
                           handleChange(index, "statement2", value)
+                          handleChange(index, "statement", null);
+                        }
                         }
                       />
                     </div>
@@ -492,22 +551,23 @@ const AddRuleModal = ({
                           {t("properties.statment")}
                         </label>
                         <GoMakeAutoComplate
+                          key={selectedCategories?.id + index + selectedStatment2?.id}
                           options={
                             router.query.actionId
-                              ? machincesList?.machines?.map((value) => {
-                                  return {
-                                    ...value,
-                                    label: value?.machineName,
-                                    id: value.machineId,
-                                  };
-                                })
+                              ? machines?.map((value) => {
+                                return {
+                                  ...value,
+                                  label: value?.name,
+                                  id: value.id,
+                                };
+                              })
                               : allMachincesList?.map((value) => {
-                                  return {
-                                    ...value,
-                                    label: value?.name,
-                                    id: value.id,
-                                  };
-                                })
+                                return {
+                                  ...value,
+                                  label: value?.name,
+                                  id: value.id,
+                                };
+                              })
                           }
                           style={clasess.dropDownListContainer}
                           placeholder={t("properties.statment")}
@@ -525,6 +585,7 @@ const AddRuleModal = ({
                           {t("properties.statment")}
                         </label>
                         <GomakeTextInput
+                          key={selectedCategories?.id + index + selectedStatment2?.id}
                           style={clasess.textInputContainer}
                           placeholder={t("properties.statment")}
                           value={rule.statement}
@@ -553,8 +614,29 @@ const AddRuleModal = ({
                         style={clasess.dropDownListContainer}
                         placeholder={t("properties.statment")}
                         value={rule.statement2}
-                        onChange={(e, value) =>
+                        onChange={(e, value) => {
                           handleChange(index, "statement2", value)
+                          handleChange(index, "statement", null);
+                        }
+                        }
+                      />
+                    </div>
+                  )}
+                  {rule.category?.id === "Agent" && (
+                    <div>
+                      <label style={clasess.inputLable}>
+                        {t("properties.statment")}
+                      </label>
+
+                      <GoMakeAutoComplate
+                        options={agentsCategories}
+                        style={clasess.dropDownListContainer}
+                        placeholder={t("properties.statment")}
+                        value={rule.statement2}
+                        onChange={(e, value) => {
+                          handleChange(index, "statement2", value)
+                          handleChange(index, "statement", null);
+                        }
                         }
                       />
                     </div>
@@ -575,8 +657,10 @@ const AddRuleModal = ({
                         style={clasess.dropDownListContainer}
                         placeholder={t("properties.statment")}
                         value={rule.statement2}
-                        onChange={(e, value) =>
+                        onChange={(e, value) => {
                           handleChange(index, "statement2", value)
+                          handleChange(index, "statement", null);
+                        }
                         }
                       />
                     </div>
@@ -589,6 +673,7 @@ const AddRuleModal = ({
                             {t("properties.statment")}
                           </label>
                           <GoMakeAutoComplate
+                            key={selectedCategories?.id + index + selectedStatment2?.id}
                             options={rules[index]?.statement2?.values?.map(
                               (value) => {
                                 return {
@@ -612,6 +697,7 @@ const AddRuleModal = ({
                             {t("properties.statment")}
                           </label>
                           <GomakeTextInput
+                            key={selectedCategories?.id + index + selectedStatment2?.id}
                             style={clasess.textInputContainer}
                             placeholder={t("properties.statment")}
                             onChange={(e) =>
@@ -667,12 +753,20 @@ const AddRuleModal = ({
           )}
 
           {isPropertiesWidge && _renderInptsForProperties()}
+          {isQuoteWidge && _renderInptsForQuotes()}
+
 
           <div style={clasess.btnContainer}>
             <GomakePrimaryButton
               style={clasess.sendBtn}
               onClick={() => {
-                isPropertiesWidge ? createProperties() : create();
+                if (isPropertiesWidge) {
+                  createProperties();
+                } else if (isQuoteWidge) {
+                  createForQuoteWidget();
+                } else {
+                  create();
+                }
               }}
             >
               {t("properties.create")}
@@ -683,17 +777,14 @@ const AddRuleModal = ({
               <label
                 style={{
                   ...FONT_FAMILY.Lexend(500, 12),
-                  // color: primaryColor(500),
                   fontSize: 16,
                   marginBottom: 10,
                 }}
-              >
-                Terminal
-              </label>
+              >{t("products.profits.exceptions.terminal")}</label>
               <textarea
                 disabled={true}
                 style={clasess.textarea}
-                placeholder="Your rules will viewed here . . ."
+                placeholder={t("products.profits.exceptions.willViewed")}
                 value={expression}
               />
             </div>

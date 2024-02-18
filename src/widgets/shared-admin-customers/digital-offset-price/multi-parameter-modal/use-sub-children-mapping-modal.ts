@@ -49,7 +49,7 @@ const useSubChildMapping = ({
   const isChecked = useMemo(() => {
     const colorParameterValue  = getSelectedColorParameterValue();
     if(colorParameterValue){
-      const colorValue = colorParameterValue.values.find(val => val === value.value);
+      const colorValue = colorParameterValue.values.find(val => val === value.valueId);
       if(colorValue)
         return true
     }

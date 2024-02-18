@@ -106,7 +106,7 @@ const bookBinderMachine = (state: Record<string, any>) => {
                     parameterKey: "min",
                     options: [],
                     value: state.attributes?.paperThickness?.min ? state.attributes?.paperThickness?.min : '',
-                    unit: EMeasurementUnits.MM
+                    unit: EMeasurementUnits.UM
                 },
                 {
                     name: "",
@@ -117,7 +117,7 @@ const bookBinderMachine = (state: Record<string, any>) => {
                     parameterKey: "max",
                     options: [],
                     value: state.attributes?.paperThickness?.max ? state.attributes?.paperThickness?.max : '',
-                    unit: EMeasurementUnits.MM
+                    unit: EMeasurementUnits.UM
                 },
             ]
         },

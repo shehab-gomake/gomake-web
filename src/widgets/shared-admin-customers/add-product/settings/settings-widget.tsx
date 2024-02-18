@@ -30,6 +30,9 @@ const SettingsWidget = ({
     SelectproductClient,
     customersList,
     clientTypesList,
+    openDeleteRowModal,
+    onClickOpenDeleteRowModal,
+    onClickCloseDeleteRowModal,
     onClickCloseProductSKU,
     onClickOpenProductSKU,
     onChangeStateProductSKU,
@@ -38,6 +41,7 @@ const SettingsWidget = ({
     createNewProductAndGoToParameterList,
     updatedProduct,
     UploadProductImage,
+    deleteProductSKURow
   } = useSettings({ onClickParametersTab, productState, onChangeStateProduct });
   const defultProductSKU = allProductSKU?.find(
     (item) => item.id === productState?.productSKUId
@@ -175,18 +179,21 @@ const SettingsWidget = ({
         <div style={clasess.itemOnFirstContainer}>
           <div style={clasess.labelTitleStyle}>
             {t("products.addProduct.admin.productSKU")}
-            <span onClick={onClickOpenProductSKU} style={clasess.plusInput}>
-              +
-            </span>
+            {
+              !isUpdate && <span onClick={onClickOpenProductSKU} style={clasess.plusInput}>
+                +
+              </span>
+            }
+
           </div>
-          <div style={{ width: "100%" }}>
+          <div style={{ width: 250 }}>
             {allProductSKU && (
               <GoMakeAutoComplate
                 key={defultProductSKU}
                 options={allProductSKU}
                 placeholder={t("products.addProduct.admin.productSKU")}
                 style={clasess.dropDownListStyle}
-                getOptionLabel={(option: any) => option.name}
+                getOptionLabel={(option: any) => `${option.name} - ${option.code}`}
                 value={
                   typeof productState?.productSKUId === "string"
                     ? defultProductSKU
@@ -400,6 +407,11 @@ const SettingsWidget = ({
         createNewProductSKU={createNewProductSKU}
         errorName={errorName}
         errorCode={errorCode}
+        allProductSKU={allProductSKU}
+        openDeleteRowModal={openDeleteRowModal}
+        onClickOpenDeleteRowModal={onClickOpenDeleteRowModal}
+        onClickCloseDeleteRowModal={onClickCloseDeleteRowModal}
+        deleteProductSKURow={deleteProductSKURow}
       />
     </div>
   );

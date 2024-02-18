@@ -9,8 +9,8 @@ import {Permissions} from "@/components/CheckPermission/enum";
 import LocalPrintshopOutlinedIcon from "@mui/icons-material/LocalPrintshopOutlined";
 import PendingActionsOutlinedIcon from "@mui/icons-material/PendingActionsOutlined";
 
-const useAuthLayoutHook = (permissionEnumValue?: Permissions) => {
-  const { isAuth } = useGomakeAuth(permissionEnumValue);
+const useAuthLayoutHook = (permissionEnumValue?: Permissions,allowAnonymous?:boolean) => {
+  const { isAuth } = useGomakeAuth(permissionEnumValue,allowAnonymous);
   const { navigate } = useGomakeRouter();
   const [canAccess, setCanAccess] = useState<boolean | null>(null);
   const tabs1: any = useMemo(() => {
@@ -265,7 +265,7 @@ const useAuthLayoutHook = (permissionEnumValue?: Permissions) => {
           return <SettingNavBar />;
         },
         isProduction: true,
-      },
+      },      
     ];
   }, []);
 

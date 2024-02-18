@@ -27,7 +27,6 @@ const useStyle = () => {
         flexDirection: "column" as "column",
         justifyContent: "flex-start",
         width: "100%",
-        // height: "50%",
         gap: 20,
         backgroundColor: "#F6F6F6",
         marginBottom: 15,
@@ -48,13 +47,18 @@ const useStyle = () => {
       },
       containerStyle: {
         display: "grid",
-        gridTemplateColumns: "50% 50%",
-        gap: "16px",
+        gridTemplateColumns: "49.5% 49.5%",
+        gridColumnGap: "1%"
       },
       widgetStyle: {
         height: "100%",
         width: "100%",
       },
+      skeltonStyle: {
+        width: "100%",
+        height: "100%",
+        borderRadius: "8px"
+      }
     };
   }, [i18next.language, t]);
   return {

@@ -39,7 +39,7 @@ const DocumentDesign = () => {
     const DocumentDesignSection1: { inputs: any[], title: string }[] = [
         { inputs: creationDocumentInputs(documentDesign), title: 'documentingDesign.documnetCreation.documentinCreation' },
         { inputs: TitleDefinitionInputs(documentDesign), title: 'documentingDesign.TitleDefinition.TitleDefinition' },
-        { inputs: TitleDefinitionCustomLogoInputs(documentDesign), title: '' },
+        { inputs: TitleDefinitionCustomLogoInputs(documentDesign), title: 'Logo' },
         { inputs: TableSettingInputs(documentDesign), title: 'documentingDesign.TableSetting.TableSetting' },
         { inputs: TableSettingInputs2(documentDesign), title: '' },
     ];

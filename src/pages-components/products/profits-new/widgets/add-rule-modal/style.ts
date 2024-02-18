@@ -8,7 +8,7 @@ const useStyle = () => {
   const clasess = useMemo(() => {
     return {
       insideStyle: {
-        width: 1150,
+        width: "50%",
         borderRadius: 5,
         height: "auto",
         maxHeight: 750,
@@ -26,8 +26,7 @@ const useStyle = () => {
         marginTop: 50,
       },
       sendBtn: {
-        width: "10%",
-        marginLeft: "5%",
+        width: "20%",
         backgroundColor: secondColor(500),
         height: 20,
         padding: 20,
@@ -38,6 +37,8 @@ const useStyle = () => {
       },
       inputsContainer: {
         display: "flex",
+        flexDirection: "row" as "row",
+        flexWrap:"wrap" as "wrap",
         justifyContent: "flex-start",
         alignItems: "center",
         marginTop: 10,
@@ -108,6 +109,24 @@ const useStyle = () => {
         marginLeft: 6,
         marginTop: 4,
       },
+      statusFilterContainer: {
+        display: "flex",
+        flexDirection: "column" as "column",
+        justifyContent: "flex-start",
+        alignItems: "flex-start",
+        gap: 10,
+        width: "40%",
+      },
+      filterLabelStyle: {
+        ...FONT_FAMILY.Lexend(500, 14),
+      },
+      inputsForQuotesContainer:{
+        display: "flex",
+        flexDirection: "row" as "row", 
+        justifyContent: "flex-start", 
+        alignItems: "center", 
+        gap: 20
+      }
     };
   }, []);
   return {

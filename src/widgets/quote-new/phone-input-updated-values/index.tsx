@@ -16,6 +16,7 @@ const PhoneInputUpdatedValues = ({
   onClickFlag,
   flag,
   sign,
+  inputMainContainerStyle,
   isTwoDigit = false,
 }: IBusinessWidget) => {
   const { clasess } = useStyle({ isUnderLine });
@@ -35,7 +36,7 @@ const PhoneInputUpdatedValues = ({
 
   return (
     <>
-      <div style={clasess.inputMainContainer}>
+      <div style={inputMainContainerStyle || clasess.inputMainContainer}>
         <div style={clasess.labelStyle}>{label}</div>
         {isUpdate ? (
           <UpdateValuePhoneInput

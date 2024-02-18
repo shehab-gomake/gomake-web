@@ -37,6 +37,7 @@ const MultiParameterModal = ({
               settingParameters?.parameter,
               settingParameters?.value,
               settingParameters?.list,
+              false,
               false
             )}
           </div>

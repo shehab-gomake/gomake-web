@@ -24,9 +24,13 @@ const useSettings = ({
   const { query } = useRouter();
   const { id } = query;
   const { t } = useTranslation();
-  const { setSnackbarStateValue, alertFaultAdded, alertSuccessAdded } =
+  const { setSnackbarStateValue, alertFaultAdded, alertSuccessAdded, alertSuccessDelete,
+    alertFaultDelete, } =
     useSnackBar();
   const [RandomId, setRandomId] = useState();
+  const [selectedProductId, setSelectedProductId] = useState<string>("")
+  const [openDeleteRowModal, setOpenDeleteRowModal] = useState<boolean>(false);
+
   useEffect(() => {
     setRandomId(uuidv4());
   }, []);
@@ -54,6 +58,8 @@ const useSettings = ({
   const [isProductSKU, setIsProductSKU] = useState(false);
   const onClickCloseProductSKU = () => {
     setIsProductSKU(false);
+    setErrorName(false)
+    setErrorCode(false)
   };
   const onClickOpenProductSKU = () => {
     setIsProductSKU(true);
@@ -90,7 +96,9 @@ const useSettings = ({
           type: "sucess",
         });
         getAllProductsSKU();
-        onClickCloseProductSKU();
+        // onClickCloseProductSKU();
+        onChangeStateProductSKU("name", "");
+        onChangeStateProductSKU("code", "");
       } else {
         setSnackbarStateValue({
           state: true,
@@ -111,6 +119,8 @@ const useSettings = ({
       }
     }
   }, [productSKU, errorName, errorCode]);
+
+
 
   const createNewProduct = useCallback(async () => {
     if (!productState.name || !productState.productSKUId) {
@@ -286,7 +296,7 @@ const useSettings = ({
     });
   }, []);
   const getAllClientTypes = useCallback(async () => {
-    await getAndSetClientTypes(callApi, setClientTypesList , {cardType : CLIENT_TYPE_Id.CUSTOMER });
+    await getAndSetClientTypes(callApi, setClientTypesList, { cardType: CLIENT_TYPE_Id.CUSTOMER });
   }, []);
   useEffect(() => {
     getAllClients();
@@ -310,6 +320,31 @@ const useSettings = ({
     }
   }, []);
 
+  const onClickOpenDeleteRowModal = (id: string) => {
+    setSelectedProductId(id)
+    setOpenDeleteRowModal(true);
+  };
+  const onClickCloseDeleteRowModal = () => {
+    setOpenDeleteRowModal(false);
+  };
+  const deleteProductSKURow = useCallback(async () => {
+    const res = await callApi(
+      EHttpMethod.DELETE,
+      `/v1/printhouse-config/productsSKU/delete-product-sku-by-id`,
+      {
+        Id: selectedProductId
+
+      }
+    );
+    if (res?.success) {
+      alertSuccessDelete()
+      getAllProductsSKU();
+      onClickCloseDeleteRowModal()
+    } else {
+      alertFaultDelete()
+    }
+  }, [selectedProductId]);
+
   return {
     t,
     productClientsList,
@@ -324,6 +359,9 @@ const useSettings = ({
     SelectproductClient,
     customersList,
     clientTypesList,
+    openDeleteRowModal,
+    onClickOpenDeleteRowModal,
+    onClickCloseDeleteRowModal,
     UploadProductImage,
     setSelectProductClient,
     onClickCloseProductSKU,
@@ -333,6 +371,7 @@ const useSettings = ({
     createNewProduct,
     createNewProductAndGoToParameterList,
     updatedProduct,
+    deleteProductSKURow
   };
 };
 

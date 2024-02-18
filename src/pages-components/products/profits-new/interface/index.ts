@@ -37,6 +37,7 @@ export type ProfitsPricingTables = {
 };
 
 export type ActionProfitRowChartData = {
+  label?:string;
   costAxis: number[];
   quantityAxis: number[];
   profitAxis: number[];

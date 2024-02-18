@@ -45,7 +45,7 @@ const rowInputs = (
             name: header?.key,
             label: newMaterialHeaders ? null : header?.value,
             type: "select",
-            placeholder: header?.key,
+            placeholder: header?.value,
             required: false,
             parameterKey: header?.key,
             options: header.values
@@ -62,7 +62,7 @@ const rowInputs = (
             name: header?.key,
             label: newMaterialHeaders ? null : header?.value,
             type: "select",
-            placeholder: header?.key,
+            placeholder: header?.value,
             required: false,
             parameterKey: header?.key,
             options: machinesCategories.map((machine) => ({
@@ -80,7 +80,7 @@ const rowInputs = (
               name: header?.key,
               label: newMaterialHeaders ? null : header?.value,
               type: "select",
-              placeholder: header?.key,
+              placeholder: header?.value,
               required: false,
               parameterKey: header?.key,
               options: clientsCategories.map((client) => ({
@@ -102,7 +102,7 @@ const rowInputs = (
                 EDataTypeEnum[header?.inputType] == "BOOLEAN"
                   ? "switch"
                   : EDataTypeEnum[header?.inputType]?.toLowerCase(),
-              placeholder: header?.key,
+              placeholder: header?.value,
               required: false,
               parameterKey: header?.key,
               options: [],
@@ -124,7 +124,6 @@ const rowInputs = (
       name: imageCase.key,
       label: newMaterialHeaders ? null : imageCase.value,
       type: "image",
-      placeholder: imageCase.key,
       required: false,
       parameterKey: imageCase.key,
       options: [],

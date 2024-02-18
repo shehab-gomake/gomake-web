@@ -12,9 +12,13 @@ import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import { HeaderTitle } from "@/widgets";
 import { QuoteLogsWidget } from "./quote-widgets/logs-widget";
 import { DOCUMENT_TYPE } from "./enums";
-import { Pagination } from "@mui/material";
+import { Button, IconButton, Stack } from "@mui/material";
 import { CardsSection } from "./statistics-section/statistics-sections";
-
+import { GoMakePagination } from "@/components/pagination/gomake-pagination";
+import { ExcelSheetIcon, SettingNewIcon } from "@/icons";
+import { AddRuleModal } from "../products/profits-new/widgets/add-rule-modal";
+import { useGomakeRouter } from "@/hooks";
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 interface IProps {
   documentType: DOCUMENT_TYPE;
   isFromHomePage?: boolean;
@@ -55,114 +59,153 @@ const QuotesListPageWidget = ({
     setPage,
     allStatistics,
     onclickCreateNew,
-    setStatisticKey,
     t,
+    handlePageSizeChange,
+    pageSize,
+    activeCard,
+    handleCardClick,
+    handleSecondCardClick,
+    onCloseAddRuleModal,
+    onOpenAddRuleModal,
+    openAddRule,
+    navigate,
+    documentPath
   } = useQuotes(documentType);
-
   return (
     <>
       {!isFromHomePage && (
-        <div style={classes.mainContainer}>
-          <div style={classes.headerStyle}>
-            <HeaderTitle title={documentLabel} marginTop={1} marginBottom={1} />
-            {documentType === DOCUMENT_TYPE.quote && <CardsSection statistics={allStatistics} onClick={onclickCreateNew} setState={setStatisticKey}/>}
-          </div>
-          <div style={classes.filtersContainer}>
-            <div style={classes.selectedFilterContainer}>
-              <div style={classes.statusFilterContainer}>
-                <div style={classes.filterLabelStyle}>
-                  {t("sales.quote.status")}
+        <Stack
+          direction="column"
+          justifyContent="space-between"
+          display="flex"
+          spacing={2}
+          height="100%"
+        >
+          <div style={classes.mainContainer}>
+            <div style={classes.headerStyle}>
+              <HeaderTitle title={documentLabel} marginTop={1} marginBottom={1} />
+              {documentType === DOCUMENT_TYPE.quote && <CardsSection statistics={allStatistics} activeCard={activeCard} onClick={onclickCreateNew} onClickCard={handleCardClick} onSecondClickCard={handleSecondCardClick} />}
+              {/* {documentType === DOCUMENT_TYPE.deliveryNote &&
+                <Button
+                  style={classes.createNew}
+                  startIcon={<AddCircleOutlineIcon />}
+                  onClick={() => { navigate(`/deliveryNote?isNewCreation=true`) }}
+                >{t("sales.quote.createNew")}
+                </Button>
+              } */}
+              {(documentType !== DOCUMENT_TYPE.quote && documentType !== DOCUMENT_TYPE.order) &&
+                <Button
+                  style={classes.createNew}
+                  onClick={() => navigate(`/${documentPath}?isNewCreation=true`)}
+                  startIcon={<AddCircleOutlineIcon style={{ color: 'black', fontSize: "24px" }} />}>
+                  {t("sales.quote.createNew")}
+                </Button>
+              }
+            </div>
+            <div style={classes.filtersContainer}>
+              <div style={classes.selectedFilterContainer}>
+                <div style={classes.statusFilterContainer}>
+                  <div style={classes.filterLabelStyle}>
+                    {t("sales.quote.status")}
+                  </div>
+                  <GoMakeAutoComplate
+                    key={statusId?.value}
+                    options={quoteStatuses}
+                    style={classes.textInputStyle}
+                    getOptionLabel={(option: any) => option.label}
+                    placeholder={t("sales.quote.chooseStatus")}
+                    onChange={(e: any, value: any) => {
+                      setPage(1);
+                      setStatusId(value);
+                    }}
+                    value={statusId}
+                  />
                 </div>
-                <GoMakeAutoComplate
-                  key={statusId?.value}
-                  options={quoteStatuses}
-                  style={classes.textInputStyle}
-                  getOptionLabel={(option: any) => option.label}
-                  placeholder={t("sales.quote.chooseStatus")}
-                  onChange={(e: any, value: any) => {
-                    setStatusId(value);
-                  }}
-                  value={statusId}
-                />
-              </div>
-              <div style={classes.statusFilterContainer}>
-                <div style={classes.filterLabelStyle}>
-                  {t("sales.quote.customer")}
+                <div style={classes.statusFilterContainer}>
+                  <div style={classes.filterLabelStyle}>
+                    {t("sales.quote.customer")}
+                  </div>
+                  <GoMakeAutoComplate
+                    key={customerId?.id}
+                    options={renderOptions()}
+                    getOptionLabel={(option: any) => `${option.name}`}
+                    onChangeTextField={checkWhatRenderArray}
+                    style={classes.textInputStyle}
+                    placeholder={t("sales.quote.chooseCustomer")}
+                    onChange={(e: any, value: any) => {
+                      setCustomerId(value);
+                    }}
+                    value={customerId}
+                  />
                 </div>
-                <GoMakeAutoComplate
-                  key={customerId?.id}
-                  options={renderOptions()}
-                  getOptionLabel={(option: any) => `${option.name}`}
-                  onChangeTextField={checkWhatRenderArray}
-                  style={classes.textInputStyle}
-                  placeholder={t("sales.quote.chooseCustomer")}
-                  onChange={(e: any, value: any) => {
-                    setCustomerId(value);
-                  }}
-                  value={customerId}
-                />
-              </div>
-              <div style={classes.statusFilterContainer}>
-                <div style={classes.filterLabelStyle}>
-                  {t("sales.quote.agent")}
+                <div style={classes.statusFilterContainer}>
+                  <div style={classes.filterLabelStyle}>
+                    {t("sales.quote.agent")}
+                  </div>
+                  <GoMakeAutoComplate
+                    key={agentId?.id}
+                    options={agentsCategories}
+                    style={classes.textInputStyle}
+                    getOptionLabel={(option: any) => option.label}
+                    placeholder={t("sales.quote.ChooseAgent")}
+                    onChange={(e: any, value: any) => {
+                      setAgentId(value);
+                    }}
+                    value={agentId}
+                  />
                 </div>
-                <GoMakeAutoComplate
-                  key={agentId?.id}
-                  options={agentsCategories}
-                  style={classes.textInputStyle}
-                  getOptionLabel={(option: any) => option.label}
-                  placeholder={t("sales.quote.ChooseAgent")}
-                  onChange={(e: any, value: any) => {
-                    setAgentId(value);
-                  }}
-                  value={agentId}
-                />
+                <div style={classes.statusFilterContainer}>
+                  <div style={classes.filterLabelStyle} />
+                  <GomakePrimaryButton
+                    style={classes.searchBtnStyle}
+                    onClick={onClickSearchFilter}
+                  >
+                    {t("sales.quote.search")}
+                  </GomakePrimaryButton>
+                </div>
+                <div style={classes.statusFilterContainer}>
+                  <div style={classes.filterLabelStyle} />
+                  <GomakePrimaryButton
+                    style={classes.clearBtnStyle}
+                    onClick={onClickClearFilter}
+                  >
+                    {t("sales.quote.clear")}
+                  </GomakePrimaryButton>
+                </div>
               </div>
-              <div style={classes.statusFilterContainer}>
-                <div style={classes.filterLabelStyle} />
-                <GomakePrimaryButton
-                  style={classes.searchBtnStyle}
-                  onClick={onClickSearchFilter}
-                >
-                  {t("sales.quote.search")}
-                </GomakePrimaryButton>
-              </div>
-              <div style={classes.statusFilterContainer}>
-                <div style={classes.filterLabelStyle} />
-                <GomakePrimaryButton
-                  style={classes.clearBtnStyle}
-                  onClick={onClickClearFilter}
-                >
-                  {t("sales.quote.clear")}
-                </GomakePrimaryButton>
+              <div style={{ display: "flex", flexDirection: "row", gap: 8 }}>
+                <SearchInputComponent onChange={(e) => setPatternSearch(e)} />
+                <div style={{ cursor: "pointer" }} onClick={onOpenAddRuleModal}>
+                  <ExcelSheetIcon />
+                </div>
               </div>
             </div>
-            <SearchInputComponent onChange={(e) => setPatternSearch(e)} />
-          </div>
-          <div style={{ minHeight: "65vh", width: "100%" }}>
             <PrimaryTable
               stickyFirstCol={false}
-              stickyHeader={false}
+              stickyHeader={true}
+              maxHeight={650}
               rows={allQuotes}
               headers={tableHeaders}
             />
           </div>
-          <div style={classes.paginationStyle}>
-            <Pagination
-              count={pagesCount}
-              variant="outlined"
-              color="primary"
-              page={page}
-              onChange={(event, value) => setPage(value)}
-            />
-          </div>
-        </div>
+          <GoMakePagination
+            onChangePageNumber={(event, value) => setPage(value)}
+            onChangePageSize={handlePageSizeChange}
+            page={page}
+            setPage={setPage}
+            pagesCount={pagesCount}
+            pageSize={pageSize}
+          />
+        </Stack>
       )}
       {isFromHomePage && (
         <PrimaryTable
+          stickyHeader={true}
+          maxHeight={400}
           rows={allDocuments}
           headers={tableHomeHeader}
           variant="ClassicTable"
+          withoutShadow={true}
         />
       )}
       <GoMakeDeleteModal
@@ -182,6 +225,11 @@ const QuotesListPageWidget = ({
       >
         <QuoteLogsWidget logsTableHeaders={logsTableHeaders} />
       </GoMakeModal>
+      <AddRuleModal
+        openModal={openAddRule}
+        onCloseModal={onCloseAddRuleModal}
+        isQuoteWidge={true}
+      />
     </>
   );
 };

@@ -19,15 +19,15 @@ const useTotalPriceAndVat = () => {
   const [reasonText, setReasonText] = useState("");
   const [openOtherReasonModal, setOpenOtherReasonModal] = useState(false);
   const [openOrderNowModal, setOpenOrderNowModal] = useState(false);
-  const [openIrreleventCancelModal, setOpenIrreleventCancelModal] =
+  const [openIrrelevantCancelModal, setOpenIrrelevantCancelModal] =
     useState(false);
   const [openPriceCancelModal, setOpenPriceCancelModal] = useState(false);
   const [openDeliveryTimeCancelModal, setOpenDeliveryTimeCancelModal] =
     useState(false);
-  const onClcikOpenModal = () => {
+  const onClickOpenModal = () => {
     setOpenOtherReasonModal(true);
   };
-  const onClcikCloseModal = () => {
+  const onClickCloseModal = () => {
     setOpenOtherReasonModal(false);
   };
 
@@ -38,24 +38,24 @@ const useTotalPriceAndVat = () => {
     setOpenOrderNowModal(false);
   };
 
-  const onClcikOpenIrreleventModal = () => {
-    setOpenIrreleventCancelModal(true);
+  const onClickOpenIrrelevantModal = () => {
+    setOpenIrrelevantCancelModal(true);
   };
-  const onClcikCloseIrreleventModal = () => {
-    setOpenIrreleventCancelModal(false);
+  const onClickCloseIrrelevantModal = () => {
+    setOpenIrrelevantCancelModal(false);
   };
 
-  const onClcikOpenPriceModal = () => {
+  const onClickOpenPriceModal = () => {
     setOpenPriceCancelModal(true);
   };
-  const onClcikClosePriceModal = () => {
+  const onClickClosePriceModal = () => {
     setOpenPriceCancelModal(false);
   };
 
-  const onClcikOpenDeliveryTimeModal = () => {
+  const onClickOpenDeliveryTimeModal = () => {
     setOpenDeliveryTimeCancelModal(true);
   };
-  const onClcikCloseDeliveryTimeModal = () => {
+  const onClickCloseDeliveryTimeModal = () => {
     setOpenDeliveryTimeCancelModal(false);
   };
 
@@ -229,7 +229,7 @@ const useTotalPriceAndVat = () => {
     checked,
     openOtherReasonModal,
     reasonText,
-    openIrreleventCancelModal,
+    openIrrelevantCancelModal,
     openPriceCancelModal,
     openDeliveryTimeCancelModal,
     openOrderNowModal,
@@ -237,15 +237,15 @@ const useTotalPriceAndVat = () => {
     onClickConfirmWithNotification,
     onClickOpenOrderNowModal,
     onClickCloseOrderNowModal,
-    onClcikOpenIrreleventModal,
-    onClcikCloseIrreleventModal,
-    onClcikOpenPriceModal,
-    onClcikClosePriceModal,
-    onClcikOpenDeliveryTimeModal,
-    onClcikCloseDeliveryTimeModal,
+    onClickOpenIrrelevantModal,
+    onClickCloseIrrelevantModal,
+    onClickOpenPriceModal,
+    onClickClosePriceModal,
+    onClickOpenDeliveryTimeModal,
+    onClickCloseDeliveryTimeModal,
     changeItems,
-    onClcikOpenModal,
-    onClcikCloseModal,
+    onClickOpenModal,
+    onClickCloseModal,
     updateCancelQuote,
     setReasonText,
     onClickCancelOffer,

@@ -15,14 +15,18 @@ const LoginLeftSide = () => {
     useGomakeLogin();
   return (
     <div style={clasess.leftContainer}>
-      <div style={clasess.logoContainer}>
-        <Image
-          src={userProfile?.loginLogo}
-          alt="logo"
-          width={100}
-          height={100}
-        />
-      </div>
+      {
+        userProfile?.loginLogo && <div style={clasess.logoContainer}>
+          <Image
+            src={userProfile?.loginLogo}
+            alt="logo"
+            style={{objectFit:'contain'}}
+            width={200}
+            height={200}
+          />
+        </div>
+      }
+
       <div style={clasess.loginContainer}>
         <div style={clasess.loginLbl}>{t("login.login")}</div>
         {inputs.map((input: IInput) => (

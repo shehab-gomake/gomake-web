@@ -77,3 +77,15 @@ export const _renderQuoteStatus = (status: number, quote: any, t: any) => {
     return t("sales.quote.waitForPrintHouseConfirm");
   }
 };
+
+export function getParameterByParameterCode(subProductArray, code) {
+  for (let i = 0; i < subProductArray.length; i++) {
+    const parameters = subProductArray[i].parameters;
+    for (let j = 0; j < parameters.length; j++) {
+      if (parameters[j].parameterCode === code) {
+        return parameters[j];
+      }
+    }
+  }
+  return null;
+}
