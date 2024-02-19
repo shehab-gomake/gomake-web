@@ -1248,9 +1248,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
       (item: any) => item.id === quoteConfirm?.customerID
     );
     setSelectBusiness(foundItem);
-    // for quote confirmation
-    setSelectConfirmBusiness(foundConfirmItem)
-
+    setSelectConfirmBusiness(foundConfirmItem) // for quote confirmation
   }, [quoteItemValue, customersListValue]);
 
 

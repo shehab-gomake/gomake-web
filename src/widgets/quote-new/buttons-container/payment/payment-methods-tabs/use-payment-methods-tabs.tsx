@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import { MoreMenuWidget } from "../more-circle";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
-import { CheckData, ERPAccountsData, ERPAccountsState, checksRowState, totalBitState, totalCashState, totalChecksState, totalPaymentState, totalTransferState } from "../../states";
+import { CheckData, ERPAccountsData, ERPAccountsState, checksRowState, creditCardState, totalBitState, totalCashState, totalChecksState, totalPaymentState, totalTransferState } from "../../states";
 
 const usePaymentMethodsTabs = () => {
     const { t } = useTranslation();
@@ -136,6 +136,14 @@ const usePaymentMethodsTabs = () => {
         setTotalPayment(Number(value) + Number(totalCash) + Number(totalBit) + Number(totalChecks))
     };
 
+    // credit card tab //
+    const [totalCreditCard, setTotalTotalCreditCard] = useRecoilState<number>(creditCardState);
+    const handleTotalCreditCardChange = (value) => {
+        setTotalTotalCreditCard(value);
+        setTotalPayment(Number(value) + Number(totalCash) + Number(totalBit) + Number(totalChecks) + Number(totalTransfer))
+    };
+
+
 
     useEffect(() => {
         const newTotalChecks = data.reduce((total, row) => total + Number(row.sum), 0);
@@ -155,7 +163,8 @@ const usePaymentMethodsTabs = () => {
     const [creditCard, setCreditCard] = useState({
         cardNumber: "",
         expiryDate: "",
-        cvv: ""
+        cvv: "",
+        id: ""
     });
 
     const handleExpiryDateChange = (e) => {
@@ -166,7 +175,6 @@ const usePaymentMethodsTabs = () => {
                 expiryDate: formattedInput
             });
         }
-
     };
 
     const handleCVVChange = (e) => {
@@ -177,12 +185,10 @@ const usePaymentMethodsTabs = () => {
                 cvv: formattedInput
             });
         }
-
     };
 
     const handleCardNumberChange = (e) => {
         const formattedInput = e.target.value.replace(/\D/g, '');
-
         if (formattedInput.length <= 16) {
             setCreditCard({
                 ...creditCard,
@@ -191,6 +197,15 @@ const usePaymentMethodsTabs = () => {
         }
     };
 
+    const handleCardIdChange = (e) => {
+        if (e.target.value.length <= 9) {
+            setCreditCard({
+                ...creditCard,
+                id: e.target.value
+            });
+        }
+    };
+    
     return {
         t,
         data,
@@ -205,7 +220,8 @@ const usePaymentMethodsTabs = () => {
         mapERPAccountsOptions,
         handleCardNumberChange,
         handleExpiryDateChange,
-        handleCVVChange
+        handleCVVChange,
+        handleCardIdChange
     };
 
 };

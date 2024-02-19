@@ -7,13 +7,19 @@ const useStyle = () => {
 
     const classes = useMemo(() => {
         return {
+            mainContainer: {
+                display: "flex",
+                flexDirection: "column" as "column",
+                padding: "0px 10px",
+                gap: "10px",
+            },
             divStyle: {
                 height: "30%",
                 display: "flex",
                 flexDirection: "column" as "column",
                 alignItems: "flex-start",
                 gap: "10px",
-                padding : "0 10px"
+                padding: "0 10px"
             },
             textStyle: {
                 color: primaryColor(900),
@@ -64,18 +70,30 @@ const useStyle = () => {
                 display: "flex",
                 alignItems: "center",
             },
-            creditCardInputsContainer:{
-                display:"flex",
-                width:"75%",
-                padding:"4px",
+            creditCardInputsContainer: {
+                display: "flex",
+                width: "75%",
+                padding: "4px",
                 border: `1.5px solid ${primaryColor(300)}`,
-                borderRadius:"4px"
+                borderRadius: "4px"
             },
-            creditCardInputs:{
+            creditCardSecondInputsContainer: {
+                display: "flex",
+                width: "75%",
+                gap: "10%"
+            },
+            creditCardInputs: {
                 border: "none",
                 outline: "none",
                 ...FONT_FAMILY.Lexend(500, 14),
-
+            },
+            creditSecondCardInputs: {
+                outline: "none",
+                ...FONT_FAMILY.Lexend(500, 14),
+                border: `1.5px solid ${primaryColor(300)}`,
+                borderRadius: "4px",
+                width: "45%",
+                padding: "4px"
             }
         };
     }, [theme]);

@@ -24,7 +24,7 @@ const ButtonsContainer = ({
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
-  const { openOrderNowModal, onClickCloseOrderNowModal, onClickOpenOrderNowModal, onClickConfirmWithoutNotification, onClickConfirmWithNotification, onClickPrint, onClickClosePaymentModal, onClickOpenPaymentModal, openPaymentModal, selectedTabIndex, getERPAccounts, getFormattedDocumentPath } = useButtonsContainer(documentType);
+  const { openOrderNowModal, onClickCloseOrderNowModal, onClickOpenOrderNowModal, onClickConfirmWithoutNotification, onClickConfirmWithNotification, onClickPrint, onClickClosePaymentModal, onClickOpenPaymentModal, openPaymentModal, selectedTabIndex, getERPAccounts, getFormattedDocumentPath ,onClickCreateNewReceipt } = useButtonsContainer(documentType);
   const router = useRouter()
 
 
@@ -91,13 +91,13 @@ const ButtonsContainer = ({
           (router.query.isNewCreation) &&
           <GomakePrimaryButton
             style={classes.btnThirdContainer}
-            onClick={documentType === DOCUMENT_TYPE.receipt ? () => alert("waiting") : handleSaveBtnClickForDocument}
+            onClick={documentType === DOCUMENT_TYPE.receipt ? onClickCreateNewReceipt: handleSaveBtnClickForDocument}
           >
             {t(`sales.quote.create${getFormattedDocumentPath(documentType)}`)}
           </GomakePrimaryButton>
         }
         {
-          !router.query.isNewCreation &&
+          (documentType === DOCUMENT_TYPE.quote || documentType === DOCUMENT_TYPE.order) &&
           <GomakePrimaryButton
             style={classes.btnThirdContainer}
             onClick={handleSaveBtnClick}

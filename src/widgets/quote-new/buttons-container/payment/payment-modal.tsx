@@ -20,7 +20,7 @@ interface IPaymentModalProps {
 
 const PaymentModal = ({ openModal, onClose, selectedTab, getERPAccounts }: IPaymentModalProps) => {
     const { classes } = useStyle();
-    const { t, resetTotalPayment, resetTotalBit, resetTotalCash, resetTotalTransfer, resetTotalChecks, resetChecksTable } = usePaymentsTable();
+    const { t, resetTotalPayment, resetTotalBit, resetTotalCash, resetTotalTransfer, resetTotalChecks, resetChecksTable , isSavePayment} = usePaymentsTable();
 
     const tabs: ITab[] = [
         { title: t("payment.transfer"), component: <TransferTab /> },
@@ -31,12 +31,14 @@ const PaymentModal = ({ openModal, onClose, selectedTab, getERPAccounts }: IPaym
     ];
 
     const handleModalClose = () => {
+        if(!isSavePayment){
         resetTotalPayment();
         resetTotalBit();
         resetTotalCash();
         resetTotalTransfer();
         resetTotalChecks();
         resetChecksTable();
+        }
         onClose();
     };
 

@@ -5,19 +5,21 @@ import { useRecoilValue, useResetRecoilState, useSetRecoilState } from "recoil";
 import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
 import { createOrderApi, getDocumentPdfApi } from "@/services/api-service/generic-doc/documents-api";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
-import { getERPAccountsApi } from "@/services/api-service/generic-doc/receipts-api";
-import { ERPAccountsData, ERPAccountsState, ErpAccountType, checksRowState, totalBitState, totalCashState, totalChecksState, totalPaymentState, totalTransferState } from "./states";
+import { createReceiptApi, getERPAccountsApi } from "@/services/api-service/generic-doc/receipts-api";
+import { ERPAccountsData, ERPAccountsState, ErpAccountType, checkedItemsIdsState, finalTotalPaymentState, isSavedPaymentState } from "./states";
 
 const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     const { navigate } = useGomakeRouter();
     const { t } = useTranslation();
     const { callApi } = useGomakeAxios();
     const quoteItemValue: any = useRecoilValue(quoteItemState);
-    const { alertFault, alertSuccessUpdate, alertFaultUpdate } = useSnackBar();
+    const { alertFault, alertSuccessUpdate, alertFaultUpdate , alertFaultAdded , alertSuccessAdded} = useSnackBar();
     const [selectedTabIndex, setSelectedTabIndex] = useState<number>(0);
     const [openPaymentModal, setOpenPaymentModal] = useState(false);
     const [openOrderNowModal, setOpenOrderNowModal] = useState(false);
     const setERPAccounts = useSetRecoilState<ERPAccountsData[]>(ERPAccountsState);
+    const setIsSavePayment = useSetRecoilState<boolean>(isSavedPaymentState);
+    const finalTotalPayment = useRecoilValue<number>(finalTotalPaymentState);
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>();
     const open = Boolean(anchorEl);
 
@@ -29,27 +31,13 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
         setOpenOrderNowModal(false);
     };
 
-    // not sure
-    const resetTotalPayment = useResetRecoilState(totalPaymentState);
-    const resetTotalBit = useResetRecoilState(totalBitState);
-    const resetTotalCash = useResetRecoilState(totalCashState);
-    const resetTotalTransfer = useResetRecoilState(totalTransferState);
-    const resetTotalChecks = useResetRecoilState(totalChecksState);
-    const resetChecksTable = useResetRecoilState(checksRowState);
-
     const onClickOpenPaymentModal = (selectedTabIndex) => {
-        resetTotalPayment();
-        resetTotalBit();
-        resetTotalCash();
-        resetTotalTransfer();
-        resetTotalChecks();
-        resetChecksTable();
         setSelectedTabIndex(selectedTabIndex);
         setOpenPaymentModal(true);
     };
 
-
     const onClickClosePaymentModal = () => {
+        setIsSavePayment(true);
         setOpenPaymentModal(false);
     };
 
@@ -99,7 +87,6 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
         await getDocumentPdfApi(callApi, callBack, { documentId: quoteItemValue?.id, documentType: docType });
     };
 
-
     const getERPAccounts = async (accountType: ErpAccountType) => {
         const callBack = (res) => {
             if (res?.success) {
@@ -111,8 +98,6 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
         await getERPAccountsApi(callApi, callBack, { accountType: accountType })
     }
 
-
-
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(event.currentTarget);
     };
@@ -121,12 +106,33 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
         setAnchorEl(null);
     };
 
-
     const getFormattedDocumentPath = (docType: DOCUMENT_TYPE): string => {
         const documentPath = DOCUMENT_TYPE[docType];
         return documentPath.charAt(0).toUpperCase() + documentPath.slice(1);
     };
     
+
+
+    const checkedItemsIds = useRecoilValue(checkedItemsIdsState);
+
+    const onClickCreateNewReceipt = async () => {
+        const newReceiptItem = { ... quoteItemValue , checkedItemsIds:checkedItemsIds }
+        if (finalTotalPayment === 0) {
+            alertFaultAdded();    
+            return; 
+        }
+        const callBack = (res) => {
+            if (res?.success) {
+                alertSuccessAdded();
+                navigate("/receipts");
+            } else {
+                alertFaultAdded();
+            }
+        };
+        await createReceiptApi(callApi, callBack, { receiptItem: newReceiptItem });
+    };
+
+
     return {
         openOrderNowModal,
         onClickConfirmWithoutNotification,
@@ -147,7 +153,8 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
         open,
         handleClose,
         handleClick,
-        getFormattedDocumentPath
+        getFormattedDocumentPath,
+        onClickCreateNewReceipt
     };
 
 };

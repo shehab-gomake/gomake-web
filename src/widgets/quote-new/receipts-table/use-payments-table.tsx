@@ -1,15 +1,16 @@
 import { useTranslation } from "react-i18next";
 import { TableCell, styled, tableCellClasses } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRecoilState, useRecoilValue, useResetRecoilState } from "recoil";
-import { totalDocumentsState, totalPaymentState, finalTotalPaymentState, totalCashState, totalBitState, totalTransferState, totalChecksState, checksRowState, CheckData } from "../buttons-container/states";
+import { totalDocumentsState, totalPaymentState, finalTotalPaymentState, totalCashState, totalBitState, totalTransferState, totalChecksState, checksRowState, CheckData, isSavedPaymentState, checkedItemsIdsState } from "../buttons-container/states";
 import { quoteItemState } from "@/store";
 
 const usePaymentsTable = () => {
     const { t } = useTranslation();
     const [quoteItemValue, setQuoteItemValue] = useRecoilState<any>(quoteItemState);
+    const isSavePayment = useRecoilValue<boolean>(isSavedPaymentState);
     const [checkedItems, setCheckedItems] = useState({});
-    const [checkedItemsIds, setCheckedItemsIds] = useState({});
+    const [checkedItemsIds, setCheckedItemsIds] = useRecoilState(checkedItemsIdsState);
     const [totalSum, setTotalSum] = useRecoilState<number>(totalDocumentsState);
     const [totalPayment, setTotalPayment] = useRecoilState<number>(totalPaymentState);
     const [finalTotalPayment, setFinalTotalPayment] = useRecoilState<number>(finalTotalPaymentState);
@@ -19,6 +20,8 @@ const usePaymentsTable = () => {
     const resetTotalCash = useResetRecoilState(totalCashState);
     const totalCash = useRecoilValue<number>(totalCashState);
     const resetTotalTransfer = useResetRecoilState(totalTransferState);
+    const totalTransfer = useRecoilValue<number>(totalTransferState);
+
     const resetTotalChecks = useResetRecoilState(totalChecksState);
     const checksReceipt = useRecoilState<CheckData[]>(checksRowState);
     const resetChecksTable = useResetRecoilState(checksRowState);
@@ -33,7 +36,6 @@ const usePaymentsTable = () => {
         t("payment.documentType"),
         t("payment.detail"),
         t("payment.sum"),
-
     ];
 
     const PrimaryTableCell = styled(TableCell)(() => {
@@ -85,8 +87,7 @@ const usePaymentsTable = () => {
             bitTotal: totalBit,
             cashTotal: totalCash,
             receiptChecks: checksReceipt,
-            checkedItemsIds: checkedItemsIds
-
+            transferTotal:totalTransfer
         };
         setQuoteItemValue(receiptItemCopy);
         setFinalTotalPayment(totalPayment);
@@ -100,11 +101,6 @@ const usePaymentsTable = () => {
             wtTaxableAmount: event.target.value,
         }));
     };
-
-    useEffect(() => {
-        if (totalSum === 0)
-            resetFinalTotalPayment();
-    }, [totalSum])
 
     return {
         t,
@@ -128,7 +124,8 @@ const usePaymentsTable = () => {
         resetTotalChecks,
         resetChecksTable,
         handleTaxDeductionChange,
-        taxDeduction
+        taxDeduction,
+        isSavePayment
     };
 };
 

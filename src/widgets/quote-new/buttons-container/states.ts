@@ -27,6 +27,12 @@ export interface ERPAccountsData {
   name: string;
 }
 
+
+export const receiptItemState = atom({
+  key: "receiptItemState",
+  default: [],
+});
+
 export const checksRowState = atom<CheckData[]>({
   key: "checksRowState",
   default: [
@@ -62,16 +68,6 @@ export const finalTotalPaymentState = atom<number>({
   default: 0,
 });
 
-export const totalCashState = atom<number>({
-  key: "totalCashState",
-  default: 0,
-});
-
-export const totalBitState = atom<number>({
-  key: "totalBitState",
-  default: 0,
-});
-
 export const totalTransferState = atom<number>({
   key: "totalTransferState",
   default: 0,
@@ -80,4 +76,29 @@ export const totalTransferState = atom<number>({
 export const totalChecksState = atom<number>({
   key: "totalChecksState",
   default: 0,
+});
+
+export const totalCashState = atom<number>({
+  key: "totalCashState",
+  default: 0,
+});
+
+export const creditCardState = atom<number>({
+  key: "creditCardState",
+  default: 0,
+});
+
+export const totalBitState = atom<number>({
+  key: "totalBitState",
+  default: 0,
+});
+
+export const isSavedPaymentState = atom<boolean>({
+  key: "isSavedPaymentState",
+  default:false,
+});
+
+export const checkedItemsIdsState = atom<string[]>({
+  key: "checkedItemsIdsState",
+  default: [],
 });

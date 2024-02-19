@@ -14,7 +14,7 @@ const CheckTab = () => {
                 <span style={classes.selectLbl} >{t("payment.accountCode")}</span>
                 <GoMakeAutoComplate
                     style={{ height: "30px", width: 180, border: 0 }}
-                    value={mapERPAccountsOptions[1]}
+                    value={mapERPAccountsOptions[0]}
                     options={mapERPAccountsOptions}
                     disabled={true}
                 />

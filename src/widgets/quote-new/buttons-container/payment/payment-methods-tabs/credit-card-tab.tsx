@@ -9,31 +9,38 @@ const CreditCardTab = () => {
     const {
         handleCardNumberChange,
         handleExpiryDateChange,
-        handleCVVChange } = usePaymentMethodsTabs();
+        handleCVVChange,
+        handleCardIdChange } = usePaymentMethodsTabs();
 
     return (
-        <div style={{padding:"0 10px"}}>
-            <div dir="ltr" style={classes.creditCardInputsContainer}>
+        <div dir="ltr" style={classes.mainContainer}>
+            <div style={classes.creditCardInputsContainer}>
                 <CreditCardIcon sx={{ color: "#2e3092" }} />
                 <input
                     {...getCardNumberProps({ onChange: handleCardNumberChange })}
                     style={{ ...classes.creditCardInputs, width: "55%", paddingLeft: "5px" }}
-                    placeholder="Card number">
-                </input>
+                    placeholder="Card number" />
                 <input
                     {...getExpiryDateProps({ onChange: handleExpiryDateChange })}
-
                     style={{ ...classes.creditCardInputs, width: "20%" }}
-                    placeholder="MM/YY">
-                </input>
+                    placeholder="MM/YY" />
                 <input
                     {...getCVCProps({ onChange: handleCVVChange })}
-
                     style={{ ...classes.creditCardInputs, width: "20%" }}
-                    placeholder="CVV">
-                </input>
+                    placeholder="CVV" />
             </div>
+            <div style={classes.creditCardSecondInputsContainer}>
+                <input
+                    onChange={handleCardIdChange}
+                    style={classes.creditSecondCardInputs}
+                    placeholder="Id"
+                    maxLength={9} />
+                <input
+                    style={classes.creditSecondCardInputs}
+                    placeholder="Total"
+                />
             </div>
+        </div>
     );
 }
 export { CreditCardTab }
