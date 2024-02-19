@@ -1,16 +1,16 @@
-import {useGomakeAuth, useGomakeAxios, useGomakeRouter} from "@/hooks";
-import {CustomersIcon, HomeIcon, ProductFloorIcon, SalesIcon, SettingNavBar, ShopingIcon,} from "@/icons";
-import {useEffect, useMemo, useState} from "react";
-import {CubeIcon} from "@/components/icons/cube-icon";
-import {useRecoilValue} from "recoil";
-import {companyProfileState, ICompanyProfile} from "@/store/company-profile";
-import {Permissions} from "@/components/CheckPermission/enum";
+import { useGomakeAuth, useGomakeAxios, useGomakeRouter } from "@/hooks";
+import { CustomersIcon, HomeIcon, ProductFloorIcon, SalesIcon, SettingNavBar, ShopingIcon, } from "@/icons";
+import { useEffect, useMemo, useState } from "react";
+import { CubeIcon } from "@/components/icons/cube-icon";
+import { useRecoilValue } from "recoil";
+import { companyProfileState, ICompanyProfile } from "@/store/company-profile";
+import { Permissions } from "@/components/CheckPermission/enum";
 
 import LocalPrintshopOutlinedIcon from "@mui/icons-material/LocalPrintshopOutlined";
 import PendingActionsOutlinedIcon from "@mui/icons-material/PendingActionsOutlined";
 
-const useAuthLayoutHook = (permissionEnumValue?: Permissions,allowAnonymous?:boolean) => {
-  const { isAuth } = useGomakeAuth(permissionEnumValue,allowAnonymous);
+const useAuthLayoutHook = (permissionEnumValue?: Permissions, allowAnonymous?: boolean) => {
+  const { isAuth } = useGomakeAuth(permissionEnumValue, allowAnonymous);
   const { navigate } = useGomakeRouter();
   const [canAccess, setCanAccess] = useState<boolean | null>(null);
   const tabs1: any = useMemo(() => {
@@ -89,9 +89,21 @@ const useAuthLayoutHook = (permissionEnumValue?: Permissions,allowAnonymous?:boo
             Permission: Permissions.SHOW_ORDERS,
           },
           {
+            key: "delivery note refund",
+            title: "tabs.deliveryNoteRefund",
+            path: "/deliveryNotesRefund",
+            Permission: Permissions.SHOW_ORDERS,
+          },
+          {
             key: "invoices",
             title: "tabs.invoices",
             path: "/invoices",
+            Permission: Permissions.SHOW_ORDERS,
+          },
+          {
+            key: "invoice refund",
+            title: "tabs.invoiceRefund",
+            path: "/invoiceRefund",
             Permission: Permissions.SHOW_ORDERS,
           },
           {
@@ -265,7 +277,7 @@ const useAuthLayoutHook = (permissionEnumValue?: Permissions,allowAnonymous?:boo
           return <SettingNavBar />;
         },
         isProduction: true,
-      },      
+      },
     ];
   }, []);
 
