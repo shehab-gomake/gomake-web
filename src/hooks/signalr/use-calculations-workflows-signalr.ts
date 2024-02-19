@@ -14,7 +14,7 @@ import { currentCalculationConnectionId } from "@/store";
 const useCalculationsWorkFlowsSignalr = () => {
   const { data, connection, connectionId } =
     useGoMakeSignalr<ICalculationSignalRResult>({
-      url: config.erp_server + "/hubs/workFlows",
+      url:  "https://erp-service.gomake-dev.net/hubs/workFlows",
       accessToken: getUserToken(),
       methodName: "updateWorkFlows",
     });
