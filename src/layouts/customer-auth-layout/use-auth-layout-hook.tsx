@@ -103,7 +103,7 @@ const useAuthLayoutHook = (permissionEnumValue?: Permissions, allowAnonymous?: b
           {
             key: "invoice refund",
             title: "tabs.invoiceRefund",
-            path: "/invoiceRefund",
+            path: "/invoicesRefund",
             Permission: Permissions.SHOW_ORDERS,
           },
           {

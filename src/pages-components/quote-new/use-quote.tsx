@@ -1278,7 +1278,15 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     {
       label: t("sales.quote.receipt"),
       value: DOCUMENT_TYPE.receipt,
-    }
+    },
+    {
+      label: t("tabs.deliveryNoteRefund"),
+      value: DOCUMENT_TYPE.deliveryNoteRefund,
+    },
+    {
+      label: t("tabs.invoiceRefund"),
+      value: DOCUMENT_TYPE.invoiceRefund,
+    },
   ];
 
   const documentTitle = documentsTitles.find(item => item.value === docType).label;
