@@ -26,7 +26,7 @@ const OrderTableWidget = ({
     <>
       {
         documentItems?.map((documentItem, index) => {
-          const filteredItems = filterItems(documentItem.items);
+          const filteredItems = filterItems(documentItem.orderItems);
           if (filteredItems?.length === 0) {
             // If no items, don't render the header and return null
             return null;
@@ -34,7 +34,7 @@ const OrderTableWidget = ({
           return (
             <div >
               <div style={classes.dateSelectAllContainer}>
-                <div style={classes.dateStyle}>{documentItem?.date?.split("T")[0]}</div>
+                <div style={classes.dateStyle}>{documentItem?.number} - {documentItem?.date?.split("T")[0]}</div>
                 <div style={classes.selectAllContainer}>
                   <Checkbox
                     checked={areAllItemsSelected(documentItem.id)}

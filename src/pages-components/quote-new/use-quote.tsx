@@ -73,6 +73,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
   const [openDeleteModalContact, setOpenDeleteModalContact] = useState(false);
   const [openAddNewItemModal, setOpenAddNewItemModal] = useState(false);
   const [openCopyFromOrderModal, setOpenCopyFromOrderModal] = useState(false);
+  const [openCopyFromDeliveryNoteModal, setOpenCopyFromDeliveryNoteModal] = useState(false);
   const [quoteItemId, setQuateItemId] = useState();
   const [openDuplicateWithDifferentQTYModal, setOpenDuplicateWithDifferentQTYModal] = useState(false);
   const [selectedContactById, setSelectedContactById] = useState<any>();
@@ -617,6 +618,13 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
 
   const onOpenCopyFromOrder = () => {
     setOpenCopyFromOrderModal(true);
+  };
+  const onCloseCopyFromDeliveryNote = () => {
+    setOpenCopyFromDeliveryNoteModal(false);
+  };
+
+  const onOpenCopyFromDeliveryNote = () => {
+    setOpenCopyFromDeliveryNoteModal(true);
   };
   const onCloseNewItem = () => {
     setOpenAddNewItemModal(false);
@@ -1415,7 +1423,10 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     selectConfirmBusiness,
     openCopyFromOrderModal,
     onCloseCopyFromOrder,
-    onOpenCopyFromOrder
+    onOpenCopyFromOrder,
+    onCloseCopyFromDeliveryNote,
+    onOpenCopyFromDeliveryNote,
+    openCopyFromDeliveryNoteModal
 
   };
 };

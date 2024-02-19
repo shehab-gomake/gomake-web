@@ -163,7 +163,10 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
     refreshExchangeRate,
     getQuote,
     selectConfirmBusiness,
-    handleSaveBtnClickForDocument
+    handleSaveBtnClickForDocument,
+    onCloseCopyFromDeliveryNote,
+    onOpenCopyFromDeliveryNote,
+    openCopyFromDeliveryNoteModal
   } = useQuoteNew({ docType: documentType, isQuoteConfirmation: isQuoteConfirmation });
   const router = useRouter()
   return (
@@ -329,6 +332,7 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
               documentType={documentType}
               onOpenCopyFromOrder={onOpenCopyFromOrder}
               handleSaveBtnClickForDocument={handleSaveBtnClickForDocument}
+              onOpenCopyFromDeliveryNote={onOpenCopyFromDeliveryNote}
             />
           }
         </div>
@@ -348,6 +352,14 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
         openModal={openCopyFromOrderModal}
         onClose={onCloseCopyFromOrder}
         documentType={documentType}
+        cliendDocumentType={1}
+
+      />
+      <CopyFromOrderModal
+        openModal={openCopyFromDeliveryNoteModal}
+        onClose={onCloseCopyFromDeliveryNote}
+        documentType={documentType}
+        cliendDocumentType={2}
       />
       <DuplicateItemModal
         openModal={openDuplicateWithDifferentQTYModal}
