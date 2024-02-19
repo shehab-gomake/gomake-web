@@ -40,7 +40,6 @@ const FooterSection = ({ onCloseModal }: any) => {
                     <span style={classes.textStyle} >{t("payment.excessPayment")}</span>
                     <input style={classes.inputStyle} value={Math.abs(totalSum - totalPayment)} />
                 </Stack>}
-
             </Stack>
             <SecondaryButton variant={'contained'} style={classes.saveBtn} onClick={onClickSave}>
                 {t('payment.save')}

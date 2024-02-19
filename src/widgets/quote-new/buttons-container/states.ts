@@ -13,10 +13,10 @@ export enum ErpAccountType {
 export interface CheckData {
   dueDate: string;
   checkNumber: string;
-  bankName: string;
+  bankCode: string;
   branch: string;
-  account: string;
-  sum: number;
+  accountNum: string;
+  checkSum: number;
 }
 
 export interface ERPAccountsData {
@@ -27,22 +27,16 @@ export interface ERPAccountsData {
   name: string;
 }
 
-
-export const receiptItemState = atom({
-  key: "receiptItemState",
-  default: [],
-});
-
 export const checksRowState = atom<CheckData[]>({
   key: "checksRowState",
   default: [
     {
       dueDate: new Date().toISOString().split('T')[0],
       checkNumber: "",
-      bankName: "",
+      bankCode: "",
       branch: "",
-      account: "",
-      sum: 0,
+      accountNum: "",
+      checkSum: 0,
     },
   ],
 });
@@ -101,4 +95,10 @@ export const isSavedPaymentState = atom<boolean>({
 export const checkedItemsIdsState = atom<string[]>({
   key: "checkedItemsIdsState",
   default: [],
+});
+
+
+export const transferTabState = atom<any>({
+  key: "transferTabState",
+  default: {},
 });

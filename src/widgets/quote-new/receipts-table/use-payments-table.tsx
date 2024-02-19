@@ -1,34 +1,48 @@
 import { useTranslation } from "react-i18next";
 import { TableCell, styled, tableCellClasses } from "@mui/material";
 import { useState } from "react";
-import { useRecoilState, useRecoilValue, useResetRecoilState } from "recoil";
-import { totalDocumentsState, totalPaymentState, finalTotalPaymentState, totalCashState, totalBitState, totalTransferState, totalChecksState, checksRowState, CheckData, isSavedPaymentState, checkedItemsIdsState } from "../buttons-container/states";
+import { useRecoilState, useRecoilValue, useResetRecoilState, useSetRecoilState } from "recoil";
+import { totalDocumentsState, totalPaymentState, finalTotalPaymentState, totalCashState, totalBitState, totalTransferState, totalChecksState, checksRowState, CheckData, isSavedPaymentState, checkedItemsIdsState, transferTabState } from "../buttons-container/states";
 import { quoteItemState } from "@/store";
 
 const usePaymentsTable = () => {
     const { t } = useTranslation();
-    const [quoteItemValue, setQuoteItemValue] = useRecoilState<any>(quoteItemState);
-    const isSavePayment = useRecoilValue<boolean>(isSavedPaymentState);
     const [checkedItems, setCheckedItems] = useState({});
+    const [quoteItemValue, setQuoteItemValue] = useRecoilState<any>(quoteItemState);
+    const tableRows = quoteItemValue?.receiptItems;
+
+    const isSavePayment = useRecoilValue<boolean>(isSavedPaymentState);
     const [checkedItemsIds, setCheckedItemsIds] = useRecoilState(checkedItemsIdsState);
     const [totalSum, setTotalSum] = useRecoilState<number>(totalDocumentsState);
-    const [totalPayment, setTotalPayment] = useRecoilState<number>(totalPaymentState);
     const [finalTotalPayment, setFinalTotalPayment] = useRecoilState<number>(finalTotalPaymentState);
+
+    // total payment
     const resetTotalPayment = useResetRecoilState(totalPaymentState);
+    const [totalPayment, setTotalPayment] = useRecoilState<number>(totalPaymentState);
+    //bit
     const resetTotalBit = useResetRecoilState(totalBitState);
     const totalBit = useRecoilValue<number>(totalBitState);
+    //cash
     const resetTotalCash = useResetRecoilState(totalCashState);
     const totalCash = useRecoilValue<number>(totalCashState);
+    // transfer
     const resetTotalTransfer = useResetRecoilState(totalTransferState);
+    const resetTransferTabState = useResetRecoilState(transferTabState);
     const totalTransfer = useRecoilValue<number>(totalTransferState);
-
+    //checks
     const resetTotalChecks = useResetRecoilState(totalChecksState);
+    const totalChecks = useRecoilValue<number>(totalChecksState);
     const checksReceipt = useRecoilState<CheckData[]>(checksRowState);
     const resetChecksTable = useResetRecoilState(checksRowState);
-    const resetFinalTotalPayment = useResetRecoilState(finalTotalPaymentState);
-    const tableRows = quoteItemValue?.receiptItems;
-    const columnWidths = ["5%", "19%", "19%", "19%", "19%", "19%"];
 
+    const columnWidths = [
+        "5%",
+        "19%",
+        "19%",
+        "19%",
+        "19%",
+        "19%"
+    ];
     const tableHeaders = [
         "#",
         t("payment.documentDate"),
@@ -55,7 +69,6 @@ const usePaymentsTable = () => {
                 ...prevCheckedItems,
                 [index]: !prevCheckedItems[index],
             };
-
             setCheckedItemsIds((prevCheckedItemsIds) => {
                 const updatedCheckedItemsIds = {
                     ...prevCheckedItemsIds,
@@ -69,7 +82,6 @@ const usePaymentsTable = () => {
 
                 return updatedCheckedItemsIds;
             });
-
             let sum = 0;
             tableRows.forEach((item, index) => {
                 if (updatedCheckedItems[index]) {
@@ -81,18 +93,28 @@ const usePaymentsTable = () => {
         });
     };
 
+
+    const transferState = useRecoilValue<any>(transferTabState);
+
     const handleSave = () => {
         const receiptItemCopy = {
             ...quoteItemValue,
-            bitTotal: totalBit,
-            cashTotal: totalCash,
-            receiptChecks: checksReceipt,
-            transferTotal:totalTransfer
+            bitSum: totalBit,
+            cashSum: totalCash,
+            checksTotal: totalChecks,
+            receiptChecks: checksReceipt[0], 
+            // transfer dto
+            transferAccount: transferState?.transferAccount,
+            transferDate: transferState?.transferDate,
+            transferReference:transferState?.transferReference,
+            transferSum: totalTransfer,
         };
         setQuoteItemValue(receiptItemCopy);
         setFinalTotalPayment(totalPayment);
     };
 
+
+    // ??????????????? how it affect
     const [taxDeduction, setTaxDeduction] = useState("");
     const handleTaxDeductionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setTaxDeduction(event.target.value);
@@ -125,7 +147,8 @@ const usePaymentsTable = () => {
         resetChecksTable,
         handleTaxDeductionChange,
         taxDeduction,
-        isSavePayment
+        isSavePayment,
+        resetTransferTabState
     };
 };
 

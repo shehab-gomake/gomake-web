@@ -17,10 +17,10 @@ const usePaymentMethodsTabs = () => {
         const newRow = {
             dueDate: new Date().toISOString().split('T')[0],
             checkNumber: "",
-            bankName: "",
+            bankCode: "",
             branch: "",
-            account: "",
-            sum: 0,
+            accountNum: "",
+            checkSum: 0,
         };
         setData((prevData) => [...prevData, newRow]);
     };
@@ -82,9 +82,9 @@ const usePaymentMethodsTabs = () => {
             <input
                 style={{ width: "100px" }}
                 type="text"
-                value={row.bankName}
+                value={row.bankCode}
                 placeholder={t("payment.bankName")}
-                onChange={(e) => handleInputChange(index, "bankName", e.target.value)}
+                onChange={(e) => handleInputChange(index, "bankCode", e.target.value)}
             />,
             <input
                 style={{ width: "100px" }}
@@ -96,16 +96,16 @@ const usePaymentMethodsTabs = () => {
             <input
                 style={{ width: "100px" }}
                 type="text"
-                value={row.account}
+                value={row.accountNum}
                 placeholder={t("payment.account")}
-                onChange={(e) => handleInputChange(index, "account", e.target.value)}
+                onChange={(e) => handleInputChange(index, "accountNum", e.target.value)}
             />,
             <input
                 style={{ width: "100px" }}
                 type="number"
-                value={row.sum}
+                value={row.checkSum}
                 placeholder={t("payment.sum")}
-                onChange={(e) => handleInputChange(index, "sum", e.target.value)}
+                onChange={(e) => handleInputChange(index, "checkSum", e.target.value)}
             />,
             <MoreMenuWidget
                 onClickDuplicate={() => duplicateRow(index)}
@@ -146,7 +146,7 @@ const usePaymentMethodsTabs = () => {
 
 
     useEffect(() => {
-        const newTotalChecks = data.reduce((total, row) => total + Number(row.sum), 0);
+        const newTotalChecks = data.reduce((total, row) => total + Number(row.checkSum), 0);
         setTotalChecks(newTotalChecks);
         setTotalPayment(Number(newTotalChecks) + Number(totalCash) + Number(totalBit) + Number(totalTransfer));
     }, [data, totalCash, totalBit, totalTransfer]);
@@ -158,6 +158,10 @@ const usePaymentMethodsTabs = () => {
     }));
 
 
+    const formattedOptions = mapERPAccountsOptions.map((code) => ({
+        text: code.label,
+        value: code.value,
+      }))
 
     ////////////////////////////////////// CREDIT CARD /////////////////////////////////////////
     const [creditCard, setCreditCard] = useState({
@@ -221,7 +225,8 @@ const usePaymentMethodsTabs = () => {
         handleCardNumberChange,
         handleExpiryDateChange,
         handleCVVChange,
-        handleCardIdChange
+        handleCardIdChange,
+        formattedOptions
     };
 
 };

@@ -1,7 +1,7 @@
 import { quoteItemState } from "@/store";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useRecoilValue, useResetRecoilState, useSetRecoilState } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
 import { createOrderApi, getDocumentPdfApi } from "@/services/api-service/generic-doc/documents-api";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
@@ -13,7 +13,7 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     const { t } = useTranslation();
     const { callApi } = useGomakeAxios();
     const quoteItemValue: any = useRecoilValue(quoteItemState);
-    const { alertFault, alertSuccessUpdate, alertFaultUpdate , alertFaultAdded , alertSuccessAdded} = useSnackBar();
+    const { alertFault, alertSuccessUpdate, alertFaultUpdate, alertFaultAdded, alertSuccessAdded } = useSnackBar();
     const [selectedTabIndex, setSelectedTabIndex] = useState<number>(0);
     const [openPaymentModal, setOpenPaymentModal] = useState(false);
     const [openOrderNowModal, setOpenOrderNowModal] = useState(false);
@@ -110,16 +110,16 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
         const documentPath = DOCUMENT_TYPE[docType];
         return documentPath.charAt(0).toUpperCase() + documentPath.slice(1);
     };
-    
-
 
     const checkedItemsIds = useRecoilValue(checkedItemsIdsState);
-
     const onClickCreateNewReceipt = async () => {
-        const newReceiptItem = { ... quoteItemValue , checkedItemsIds:checkedItemsIds }
+        const filteredReceiptItems = Object.values(checkedItemsIds).map(id =>
+            quoteItemValue.receiptItems.find(item => item.id === id)
+        ).filter(Boolean);
+        const newReceiptItem = { ...quoteItemValue, receiptItems: filteredReceiptItems }
         if (finalTotalPayment === 0) {
-            alertFaultAdded();    
-            return; 
+            alertFaultAdded();
+            return;
         }
         const callBack = (res) => {
             if (res?.success) {
