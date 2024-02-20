@@ -37,7 +37,6 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     };
 
     const onClickClosePaymentModal = () => {
-        setIsSavePayment(true);
         setOpenPaymentModal(false);
     };
 
@@ -129,7 +128,7 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
                 alertFaultAdded();
             }
         };
-        await createReceiptApi(callApi, callBack, { receiptItem: newReceiptItem });
+        await createReceiptApi(callApi, callBack, { newReceiptItem });
     };
 
 

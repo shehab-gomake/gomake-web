@@ -10,8 +10,7 @@ const usePaymentsTable = () => {
     const [checkedItems, setCheckedItems] = useState({});
     const [quoteItemValue, setQuoteItemValue] = useRecoilState<any>(quoteItemState);
     const tableRows = quoteItemValue?.receiptItems;
-
-    const isSavePayment = useRecoilValue<boolean>(isSavedPaymentState);
+    const [isSavePayment,setIsSavePayment] = useRecoilState<boolean>(isSavedPaymentState);
     const [checkedItemsIds, setCheckedItemsIds] = useRecoilState(checkedItemsIdsState);
     const [totalSum, setTotalSum] = useRecoilState<number>(totalDocumentsState);
     const [finalTotalPayment, setFinalTotalPayment] = useRecoilState<number>(finalTotalPaymentState);
@@ -99,15 +98,14 @@ const usePaymentsTable = () => {
     const handleSave = () => {
         const receiptItemCopy = {
             ...quoteItemValue,
-            bitSum: totalBit,
-            cashSum: totalCash,
-            checksTotal: totalChecks,
+            bitSum: Number(totalBit),
+            cashSum: Number(totalCash),
+            checksTotal: Number(totalChecks),
             receiptChecks: checksReceipt[0], 
-            // transfer dto
             transferAccount: transferState?.transferAccount,
             transferDate: transferState?.transferDate,
             transferReference:transferState?.transferReference,
-            transferSum: totalTransfer,
+            transferSum: Number(totalTransfer),
         };
         setQuoteItemValue(receiptItemCopy);
         setFinalTotalPayment(totalPayment);
@@ -148,7 +146,8 @@ const usePaymentsTable = () => {
         handleTaxDeductionChange,
         taxDeduction,
         isSavePayment,
-        resetTransferTabState
+        resetTransferTabState,
+        setIsSavePayment
     };
 };
 

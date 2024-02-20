@@ -5,10 +5,11 @@ import { usePaymentsTable } from "@/widgets/quote-new/receipts-table/use-payment
 
 const FooterSection = ({ onCloseModal }: any) => {
     const { classes } = useStyle();
-    const { t, totalSum, totalPayment, handleSave,handleTaxDeductionChange, taxDeduction } = usePaymentsTable();
+    const { t, totalSum, totalPayment, handleSave,handleTaxDeductionChange, taxDeduction , setIsSavePayment } = usePaymentsTable();
 
     const onClickSave = () => {
         handleSave();
+        setIsSavePayment(true)
         onCloseModal();
     };
 

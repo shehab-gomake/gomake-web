@@ -31,7 +31,7 @@ const PaymentModal = ({ openModal, onClose, selectedTab, getERPAccounts }: IPaym
     ];
 
     const handleModalClose = () => {
-        if(!isSavePayment){
+        if(isSavePayment === false){
         resetTotalPayment();
         resetTotalBit();
         resetTotalCash();
