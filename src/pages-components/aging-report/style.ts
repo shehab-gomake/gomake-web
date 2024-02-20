@@ -13,9 +13,10 @@ const useStyle = () => {
         flexDirection: "column" as "column",
         justifyContent: "flex-start",
         alignItems: "flex-start",
+        height: "100%",
+        width: "100%",
         gap: 20,
-        paddingLeft: 20,
-        paddingRight: 20,
+        padding:20
       },
     };
   }, [i18next.language, t]);

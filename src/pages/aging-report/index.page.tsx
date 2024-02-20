@@ -1,10 +1,10 @@
 import { CustomerAuthLayout } from "@/layouts";
-import { ActionPageWidget } from "@/pages-components/actions/actions";
+import { AgingReportWidget } from "@/pages-components/aging-report/aging-report";
 
 export default function AgingReportPage() {
   return (
     <CustomerAuthLayout>
-      dddd
+      <AgingReportWidget />
     </CustomerAuthLayout>
   );
 }
