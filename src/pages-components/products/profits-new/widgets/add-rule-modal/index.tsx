@@ -59,6 +59,8 @@ const AddRuleModal = ({
     handleChange,
     addRule,
     createForQuoteWidget,
+    setRules,
+    initialRule
   } = useAddRuleModal({
     typeExceptionSelected,
     selectedPricingBy,
@@ -357,12 +359,13 @@ const AddRuleModal = ({
             : t("products.profits.exceptions.addNewRule")
         }
         onClose={() => {
+          setRules([initialRule])
           onCloseModal();
         }}
         insideStyle={clasess.insideStyle}
       >
         <div>
-          {rules.map((rule, index) => {
+          {rules?.map((rule, index) => {
             return (
               <>
                 {index != 0 && (
@@ -388,7 +391,7 @@ const AddRuleModal = ({
                   </div>
                 )}
                 <div key={index} style={clasess.inputsContainer}>
-                  <div style={{ marginTop: "2%", fontSize: 16, height: "100%" }}> if</div>
+                  <div style={{ marginTop: "2%", fontSize: 16, height: "100%" }}>{t("properties.if")}</div>
                   <div>
                     <label style={clasess.inputLable}>
                       {t("properties.category")}
@@ -780,7 +783,9 @@ const AddRuleModal = ({
                   fontSize: 16,
                   marginBottom: 10,
                 }}
-              >{t("products.profits.exceptions.terminal")}</label>
+              >
+                {t("products.profits.exceptions.terminal")}
+              </label>
               <textarea
                 disabled={true}
                 style={clasess.textarea}

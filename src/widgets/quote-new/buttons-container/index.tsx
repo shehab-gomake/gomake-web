@@ -1,20 +1,13 @@
 import React from "react";
 import { useStyle } from "./style";
-import {
-  ArrowDownNewIcon,
-  PlusIcon,
-  UploadNewIcon,
-} from "@/icons";
+import { ArrowDownNewIcon, PlusIcon } from "@/icons";
 import { useTranslation } from "react-i18next";
 import { GomakePrimaryButton } from "@/components";
 import { OrderNowModal } from "@/widgets/quote/total-price-and-vat/order-now-modal";
 import { useButtonsContainer } from "./use-buttons-container";
-import { useRecoilValue } from "recoil";
-import { quoteItemState } from "@/store";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { useRouter } from "next/router";
 import { PaymentModal } from "./payment/payment-modal";
-import { PaymentBtn } from "./payment/payment-button";
 
 const ButtonsContainer = ({
   onOpenNewItem,
@@ -24,7 +17,8 @@ const ButtonsContainer = ({
   onOpenDeliveryModal,
   documentType,
   onOpenCopyFromOrder,
-  handleSaveBtnClickForDocument
+  handleSaveBtnClickForDocument,
+  onOpenCopyFromDeliveryNote
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -33,13 +27,15 @@ const ButtonsContainer = ({
   return (
     <div style={classes.writeCommentcontainer}>
       <div style={classes.btnsContainer}>
-        <GomakePrimaryButton
-          leftIcon={<PlusIcon stroke={"#344054"} />}
-          style={classes.btnContainer}
-          onClick={() => onOpenNewItem()}
-        >
-          {t("sales.quote.addNewItems")}
-        </GomakePrimaryButton>
+        {
+          !router.query.Id && <GomakePrimaryButton
+            leftIcon={<PlusIcon stroke={"#344054"} />}
+            style={classes.btnContainer}
+            onClick={() => onOpenNewItem()}
+          >
+            {t("sales.quote.addNewItems")}
+          </GomakePrimaryButton>
+        }
         {
           (documentType === DOCUMENT_TYPE.quote || documentType === DOCUMENT_TYPE.order) && <GomakePrimaryButton
             leftIcon={<PlusIcon stroke={"#344054"} />}
@@ -56,6 +52,15 @@ const ButtonsContainer = ({
             onClick={onOpenCopyFromOrder}
           >
             Copy from order
+          </GomakePrimaryButton>
+        }
+        {
+          router.query.isNewCreation && documentType === DOCUMENT_TYPE.invoice && <GomakePrimaryButton
+            leftIcon={<PlusIcon stroke={"#344054"} />}
+            style={classes.btnContainer}
+            onClick={onOpenCopyFromDeliveryNote}
+          >
+            Copy from delivery note
           </GomakePrimaryButton>
         }
 

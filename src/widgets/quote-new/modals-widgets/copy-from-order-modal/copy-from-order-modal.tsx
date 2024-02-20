@@ -4,7 +4,7 @@ import { useCopyFromOrderModal } from "./use-copy-from-order-modal";
 import { OrderTableWidget } from "./order-table";
 import { useStyle } from "./style";
 
-const CopyFromOrderModal = ({ openModal, onClose, documentType }) => {
+const CopyFromOrderModal = ({ openModal, onClose, documentType, cliendDocumentType }) => {
   const { classes } = useStyle();
 
   const {
@@ -20,7 +20,7 @@ const CopyFromOrderModal = ({ openModal, onClose, documentType }) => {
     totalPrice,
     filterItems,
     addOrdersToDeliveryNote
-  } = useCopyFromOrderModal({ onClose, documentType })
+  } = useCopyFromOrderModal({ onClose, documentType, openModal, cliendDocumentType })
 
 
   return (

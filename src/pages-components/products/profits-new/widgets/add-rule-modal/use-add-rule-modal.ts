@@ -240,7 +240,7 @@ const useAddRuleModal = ({
       return text.trim();
     });
     const joinedText = textArray.join(" "); // Join textArray with " && "
-    return `if (${joinedText})`;
+    return `${t("properties.if")} (${joinedText})`;
   }
 
   useEffect(() => {
@@ -287,6 +287,7 @@ const useAddRuleModal = ({
     if (res?.success) {
       alertSuccessAdded();
       onCloseModal();
+      setRules([initialRule])
       getProfitsPricingTables();
     } else {
       alertFaultAdded();
@@ -357,6 +358,7 @@ const useAddRuleModal = ({
       alertSuccessAdded();
       getProperitesService();
       onCloseModal();
+      setRules([initialRule])
     } else {
       setSnackbarStateValue({
         state: true,
@@ -415,6 +417,7 @@ const useAddRuleModal = ({
     downloadLink.click();
     if (res?.success) {
       onCloseModal();
+      setRules([initialRule])
     } else {
       alertFaultAdded();
     }
@@ -450,7 +453,9 @@ const useAddRuleModal = ({
     machines,
     GroupByOptions,
     agentsCategories,
-    createForQuoteWidget
+    createForQuoteWidget,
+    setRules,
+    initialRule
   };
 };
 
