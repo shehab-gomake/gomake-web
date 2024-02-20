@@ -2,7 +2,7 @@ import { useTranslation } from "react-i18next";
 import { TableCell, styled, tableCellClasses } from "@mui/material";
 import { useState } from "react";
 import { useRecoilState, useRecoilValue, useResetRecoilState, useSetRecoilState } from "recoil";
-import { totalDocumentsState, totalPaymentState, finalTotalPaymentState, totalCashState, totalBitState, totalTransferState, totalChecksState, checksRowState, CheckData, isSavedPaymentState, checkedItemsIdsState, transferTabState, prevStateState, prevStateStateData } from "../buttons-container/states";
+import { totalDocumentsState, totalPaymentState, finalTotalPaymentState, totalCashState, totalBitState, totalTransferState, totalChecksState, checksRowState, CheckData, checkedItemsIdsState, transferTabState, prevStateState, prevStateStateData, taxDeductionState } from "../buttons-container/states";
 import { quoteItemState } from "@/store";
 
 const usePaymentsTable = () => {
@@ -10,29 +10,22 @@ const usePaymentsTable = () => {
     const [checkedItems, setCheckedItems] = useState({});
     const [quoteItemValue, setQuoteItemValue] = useRecoilState<any>(quoteItemState);
     const tableRows = quoteItemValue?.receiptItems;
-    const [isSavePayment,setIsSavePayment] = useRecoilState<boolean>(isSavedPaymentState);
     const [checkedItemsIds, setCheckedItemsIds] = useRecoilState(checkedItemsIdsState);
     const [totalSum, setTotalSum] = useRecoilState<number>(totalDocumentsState);
     const [finalTotalPayment, setFinalTotalPayment] = useRecoilState<number>(finalTotalPaymentState);
 
     // total payment
-    const resetTotalPayment = useResetRecoilState(totalPaymentState);
     const [totalPayment, setTotalPayment] = useRecoilState<number>(totalPaymentState);
     //bit
-    const resetTotalBit = useResetRecoilState(totalBitState);
     const [totalBit, setTotalBit] = useRecoilState<number>(totalBitState);
     //cash
-    const resetTotalCash = useResetRecoilState(totalCashState);
     const [totalCash,setTotalCash] = useRecoilState<number>(totalCashState);
     // transfer
-    const resetTotalTransfer = useResetRecoilState(totalTransferState);
-    const resetTransferTabState = useResetRecoilState(transferTabState);
     const [totalTransfer, setTotalTransfer] = useRecoilState<number>(totalTransferState);
+    const [transferState, setTransferState] = useRecoilState<any>(transferTabState);
     //checks
-    const resetTotalChecks = useResetRecoilState(totalChecksState);
     const [totalChecks,setTotalChecks] = useRecoilState<number>(totalChecksState);
     const [checksReceipt, setChecksReceipt] = useRecoilState<CheckData[]>(checksRowState);
-    const resetChecksTable = useResetRecoilState(checksRowState);
 
     const columnWidths = [
         "5%",
@@ -93,8 +86,6 @@ const usePaymentsTable = () => {
     };
 
 
-    const [transferState, setTransferState] = useRecoilState<any>(transferTabState);
-
     const handleSave = () => {
         const receiptItemCopy = {
             ...quoteItemValue,
@@ -106,16 +97,17 @@ const usePaymentsTable = () => {
             transferDate: transferState?.transferDate,
             transferReference:transferState?.transferReference,
             transferSum: Number(totalTransfer),
+            wtTaxableAmount:Number(taxDeduction),
         };
         setQuoteItemValue(receiptItemCopy);
         setFinalTotalPayment(totalPayment);
-
-        // save previous state
-        savePreviousState();
+        savePreviousState(); // save previous state
     };
 
-
-
+    const [taxDeduction, setTaxDeduction] = useRecoilState<number>(taxDeductionState);
+    const handleTaxDeductionChange = (event) => {
+        setTaxDeduction(event.target.value);
+    };
 
 ////////////////////////////////////////////////////////////////
 
@@ -127,7 +119,8 @@ const savePreviousState = () => {
         totalChecks:totalChecks,
         totalTransfer: totalTransfer,
         transferState :transferState,
-        checksReceipt :checksReceipt
+        checksReceipt :checksReceipt,
+        taxDeduction:taxDeduction
     });
 };
 
@@ -138,20 +131,13 @@ const revertToPreviousState = () => {
      setTransferState(previousState.transferState);
      setTotalChecks(previousState.totalChecks);
      setChecksReceipt(previousState.checksReceipt);
+     setTaxDeduction(previousState.taxDeduction);
 
 };
 
 ///////////////////////////////////////////////////////////////
 
-    // ??????????????? how it affect
-    const [taxDeduction, setTaxDeduction] = useState("");
-    const handleTaxDeductionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setTaxDeduction(event.target.value);
-        setQuoteItemValue((prev: any) => ({
-            ...prev,
-            wtTaxableAmount: event.target.value,
-        }));
-    };
+
 
     return {
         t,
@@ -166,19 +152,10 @@ const revertToPreviousState = () => {
         handleCheckboxChange,
         totalPayment,
         setTotalPayment,
-        resetTotalPayment,
         handleSave,
         finalTotalPayment,
-        resetTotalCash,
-        resetTotalBit,
-        resetTotalTransfer,
-        resetTotalChecks,
-        resetChecksTable,
         handleTaxDeductionChange,
         taxDeduction,
-        isSavePayment,
-        resetTransferTabState,
-        setIsSavePayment,
         savePreviousState,
         revertToPreviousState,
         setTotalTransfer,

@@ -4,6 +4,7 @@ import { useStyle } from "./style";
 
 const TotalPriceReceipts = ({
 sum,
+taxDeduction,
 totalPayment
 }) => {
   const headerHeight = "44px";
@@ -21,8 +22,14 @@ totalPayment
           {sum +  " " + getCurrencyUnitText(quoteItemValue?.currency)}
         </div>
       </div>
-
-      
+      { taxDeduction!==0 && <div style={classes.firstRowForFooterContainer}>
+        <div style={{ ...classes.evenRowContainer, width: "55.8%" ,  borderBottom: "1px solid #EAECF0"}}>
+          {t("payment.taxDeduction")}
+        </div>
+        <div style={{ ...classes.oddRowContainer,width: "44.2%",paddingLeft: 36 ,  borderBottom: "1px solid #EAECF0",}}>
+          {taxDeduction +  " " + getCurrencyUnitText(quoteItemValue?.currency)}
+        </div>
+      </div>}
       {((sum - totalPayment) > 0 && totalPayment!==0 )&& <div style={classes.firstRowForFooterContainer}>
         <div style={{ ...classes.evenRowContainer, width: "55.8%" ,  borderBottom: "1px solid #EAECF0"}}>
           {t("payment.balance")}
@@ -31,8 +38,6 @@ totalPayment
           {sum - totalPayment +  " " + getCurrencyUnitText(quoteItemValue?.currency)}
         </div>
       </div>}
-
-
       {((sum - totalPayment) < 0 && totalPayment!==0 )&& <div style={classes.firstRowForFooterContainer}>
         <div style={{ ...classes.evenRowContainer, width: "55.8%" ,  borderBottom: "1px solid #EAECF0"}}>
         {t("payment.excessPayment")}
@@ -41,7 +46,6 @@ totalPayment
           {Math.abs(sum - totalPayment) +  " " + getCurrencyUnitText(quoteItemValue?.currency)}
         </div>
       </div>}
-      
       <div style={classes.firstRowForFooterContainer}>
         <div
           style={{
@@ -54,8 +58,7 @@ totalPayment
           {t("payment.totalPayment")}
         </div>
         <div style={{ ...classes.oddRowContainer, width: "44.2%",paddingLeft: 36 }}>
-          <div>{ totalPayment +  " " + getCurrencyUnitText(quoteItemValue?.currency)}
-          </div>
+          <div>{ Number(totalPayment)+Number(taxDeduction)+  " " + getCurrencyUnitText(quoteItemValue?.currency)}</div>
         </div>
       </div>
     </div>

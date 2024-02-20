@@ -16,7 +16,7 @@ const ReceiptsTable = () => {
     let indexs = 0;
     const headerHeight = "44px";
     const { classes } = useStyle({ headerHeight });
-    const { tableHeaders, tableRows, columnWidths, PrimaryTableCell, checkedItems, handleCheckboxChange, totalSum, finalTotalPayment } = usePaymentsTable();
+    const { tableHeaders, tableRows, columnWidths, PrimaryTableCell, checkedItems, handleCheckboxChange, totalSum, finalTotalPayment ,taxDeduction} = usePaymentsTable();
 
     return (
         <div>
@@ -67,7 +67,7 @@ const ReceiptsTable = () => {
                     </TableBody>
                 </Table>
             </TableContainer>
-            <TotalPriceReceipts sum={totalSum} totalPayment={finalTotalPayment} />
+            <TotalPriceReceipts sum={totalSum} totalPayment={finalTotalPayment} taxDeduction={taxDeduction} />
         </div>
     );
 };

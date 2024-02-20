@@ -87,9 +87,9 @@ export const totalBitState = atom<number>({
   default: 0,
 });
 
-export const isSavedPaymentState = atom<boolean>({
-  key: "isSavedPaymentState",
-  default:false,
+export const taxDeductionState = atom<number>({
+  key: "taxDeductionState",
+  default: 0,
 });
 
 export const checkedItemsIdsState = atom<string[]>({
@@ -112,6 +112,7 @@ export interface prevStateStateData {
   totalBit: number;
   totalChecks: number;
   checksReceipt:CheckData[];
+  taxDeduction:number;
 
 }
 
@@ -132,6 +133,7 @@ export const prevStateState = atom<prevStateStateData>({
         accountNum: "",
         checkSum: 0,
       },
-    ]
+    ],
+    taxDeduction:0,
   },
 });
