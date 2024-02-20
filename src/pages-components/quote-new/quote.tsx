@@ -189,13 +189,15 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
 
                 </div>
                 {!isQuoteConfirmation && <div style={classes.settingsStatusContainer}>
-                  <div style={classes.quoteStatusContainer}>
-                    {_renderQuoteStatus(
-                      quoteState?.documentStatus,
-                      quoteState,
-                      t
-                    )}
-                  </div>
+                  {!router?.query?.isNewCreation &&
+                    <div style={classes.quoteStatusContainer}>
+                      {_renderQuoteStatus(
+                        quoteState?.documentStatus,
+                        quoteState,
+                        t
+                      )}
+                    </div>
+                  }
                   <IconButton
                     style={{ marginRight: 4 }}
                     onClick={handleSettingMenuClick}
