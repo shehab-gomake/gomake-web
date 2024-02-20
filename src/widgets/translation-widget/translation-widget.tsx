@@ -9,9 +9,9 @@ import { AddBlockModal } from './components/translation-modals/add-block-modal';
 import { useTranslation } from 'react-i18next';
 import { useTranslations } from './use-translations';
 import { ExcelButtons } from './components/excel-translations-buttons';
-import {PrimaryTable} from "@/components/tables/primary-table";
-import {TranslationTable} from "@/widgets/translation-widget/components/translation-table/translation-table";
-import {PrimaryTabsComponent} from "@/components/tabs/primary-tabs";
+import { PrimaryTable } from "@/components/tables/primary-table";
+import { TranslationTable } from "@/widgets/translation-widget/components/translation-table/translation-table";
+import { PrimaryTabsComponent } from "@/components/tabs/primary-tabs";
 import {
   TranslationsFileEditor
 } from "@/widgets/translation-widget/components/tranlation-files-editor/tranlation-files-editor";
@@ -75,9 +75,7 @@ const TranslationsWidget = () => {
     longArray,
     string_number: '1234',
   };
-  const onChangeText = (value) => {
-    console.log("onChangeText", value);
-  };
+
   return (
     <div style={classes.mainContainer}>
       <div style={classes.headersStyle}>
@@ -85,17 +83,17 @@ const TranslationsWidget = () => {
         <AddButton onClick={onClickOpenBlockModal} label={t("translations.addNew")}></AddButton>
       </div>
       <ExcelButtons />
-      <div style={{width:'100%'}}>
-        <PrimaryTabsComponent 
-            tabs={[{title:'table view',component:<TranslationTable/>},{title:'json view',component:<TranslationsFileEditor/>}]}
-        
+      <div style={{ width: '100%' }}>
+        <PrimaryTabsComponent
+          tabs={[{ title: 'table view', component: <TranslationTable /> }, { title: 'json view', component: <TranslationsFileEditor /> }]}
+
         />
-        
+
       </div>
       {/* <NestedAccordion data={data} openModal={openModal} setOpenModal={setOpenModal} state={state} setState={setState} />*/}
       <TranslationModal state={state} setState={setState} translationFiles={translationFiles} />
       <AddBlockModal translationFiles={translationFiles} />
-     
+
     </div>
   );
 };
