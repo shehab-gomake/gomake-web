@@ -479,6 +479,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
       };
       updatedQuoteItemValue.documentContacts = [...updatedQuoteItemValue.documentContacts, newContact];
       setQuoteItemValue(updatedQuoteItemValue);
+      setIsDisplayWidget(false);
     }
     else {
       const callBack = (res) => {
