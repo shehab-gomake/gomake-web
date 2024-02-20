@@ -1,26 +1,99 @@
+import { Checkbox } from "@mui/material";
+
 import { GoMakeDatepicker } from "@/components/date-picker/date-picker-component";
-import { useStyle } from "./style";
-import { useTranslation } from "react-i18next";
-import { useState } from "react";
+import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
+import { GoMakeAutoComplate } from "@/components"
+import { DateFormatter } from "@/utils/adapter";
 
+import { AgingReportHeaderWidgetProps, useAgingReportHeader } from "./use-header-widget";
 
-const AgingReportHeaderWidget = () => {
-  const { clasess } = useStyle();
-  const { t } = useTranslation()
-  const [resetDatePicker, setResetDatePicker] = useState<boolean>(false);
-  const [fromDate, setFromDate] = useState<Date>();
-  const [toDate, setToDate] = useState<Date>();
-  const onSelectDeliveryTimeDates = (fromDate: Date, toDate: Date) => {
-    setResetDatePicker(false);
-    setFromDate(fromDate);
-    setToDate(toDate);
-  };
+const AgingReportHeaderWidget = ({
+  getAllCustomersCreateQuote,
+  getAgentCategories,
+  onSelectDeliveryTimeDates,
+  resetDatePicker,
+  handleClickSelectDate,
+  selectDate,
+  setSelectDate,
+  dateRef,
+  agent,
+  agentsCategories,
+  handleAgentChange,
+  customer,
+  renderOptions,
+  checkWhatRenderArray,
+  handleCustomerChange,
+}: AgingReportHeaderWidgetProps) => {
+
+  const { clasess, t } = useAgingReportHeader({ getAllCustomersCreateQuote, getAgentCategories })
+
   return (
     <div style={clasess.mainContainer}>
-      <div style={clasess.statusFilterContainer}>
+      <div style={clasess.date1FilterContainer}>
         <h3 style={clasess.filterLabelStyle}>{t("boardMissions.dateRange")}</h3>
         <div style={{ width: "100%" }}>
           <GoMakeDatepicker onChange={onSelectDeliveryTimeDates} placeholder={t("boardMissions.chooseDate")} reset={resetDatePicker} />
+        </div>
+      </div>
+      <div style={clasess.date2FilterContainer}>
+        <h3 style={clasess.filterLabelStyle}>attribution date</h3>
+        <div style={clasess.datePickerinvidualContainer} onClick={handleClickSelectDate}>
+          <div
+            style={clasess.dateStyle}
+
+          >
+            {selectDate ? DateFormatter(selectDate) : t("sales.quote.selectDate")}
+            <div style={clasess.datePickerContainer}>
+              <input
+                type="date"
+                onChange={(e) => {
+                  setSelectDate(e.target.value);
+                }}
+                ref={dateRef}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style={clasess.date2FilterContainer}>
+        <h3 style={clasess.filterLabelStyle}>{t("sales.quote.agent")}</h3>
+        <GoMakeAutoComplate
+          key={agent?.id}
+          options={agentsCategories}
+          style={clasess.textInputStyle}
+          getOptionLabel={(option: any) => option.label}
+          placeholder={t("sales.quote.ChooseAgent")}
+          onChange={handleAgentChange}
+          value={agent}
+        />
+      </div>
+      <div style={clasess.date2FilterContainer}>
+        <h3 style={clasess.filterLabelStyle}>{t("sales.quote.customer")}</h3>
+        <GoMakeAutoComplate
+          key={customer?.id}
+          options={renderOptions()}
+          onChangeTextField={checkWhatRenderArray}
+          getOptionLabel={(option: any) => `${option.name}`}
+          style={clasess.textInputStyle}
+          placeholder={t("sales.quote.chooseCustomer")}
+          onChange={handleCustomerChange}
+          value={customer}
+        />
+      </div>
+      <div style={clasess.date1FilterContainer}>
+        <div style={clasess.checkboxStyle}>
+          <Checkbox
+            icon={<CheckboxIcon />}
+            checkedIcon={<CheckboxCheckedIcon />}
+          />
+          <div style={clasess.labelSwichStyle}>Detailed Report</div>
+        </div>
+        <div style={clasess.checkboxStyle}>
+          <Checkbox
+            icon={<CheckboxIcon />}
+            checkedIcon={<CheckboxCheckedIcon />}
+          />
+          <div style={clasess.labelSwichStyle}>By Reference Date</div>
         </div>
       </div>
     </div>
