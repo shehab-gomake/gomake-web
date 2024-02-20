@@ -91,7 +91,7 @@ const useAuthLayoutHook = (permissionEnumValue?: Permissions, allowAnonymous?: b
           {
             key: "delivery note refund",
             title: "tabs.deliveryNoteRefund",
-            path: "/deliveryNotesRefund",
+            path: "/deliveryNoteRefunds",
             Permission: Permissions.SHOW_ORDERS,
           },
           {
@@ -103,7 +103,7 @@ const useAuthLayoutHook = (permissionEnumValue?: Permissions, allowAnonymous?: b
           {
             key: "invoice refund",
             title: "tabs.invoiceRefund",
-            path: "/invoicesRefund",
+            path: "/invoiceRefunds",
             Permission: Permissions.SHOW_ORDERS,
           },
           {

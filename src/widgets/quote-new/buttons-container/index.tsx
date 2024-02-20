@@ -46,12 +46,12 @@ const ButtonsContainer = ({
           </GomakePrimaryButton>
         }
         {
-          router.query.isNewCreation && <GomakePrimaryButton
+          router.query.isNewCreation && documentType !== DOCUMENT_TYPE.deliveryNoteRefund && documentType !== DOCUMENT_TYPE.invoiceRefund && <GomakePrimaryButton
             leftIcon={<PlusIcon stroke={"#344054"} />}
             style={classes.btnContainer}
             onClick={onOpenCopyFromOrder}
           >
-            Copy from order
+            {t("sales.quote.copyFromOrder")}
           </GomakePrimaryButton>
         }
         {
@@ -60,7 +60,7 @@ const ButtonsContainer = ({
             style={classes.btnContainer}
             onClick={onOpenCopyFromDeliveryNote}
           >
-            Copy from delivery note
+            {t("sales.quote.copyFromDeliveryNote")}
           </GomakePrimaryButton>
         }
 
