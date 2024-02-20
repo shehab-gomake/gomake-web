@@ -102,3 +102,36 @@ export const transferTabState = atom<any>({
   key: "transferTabState",
   default: {},
 });
+
+
+
+export interface prevStateStateData {
+  totalTransfer: number;
+  transferState: any;
+  totalCash: number;
+  totalBit: number;
+  totalChecks: number;
+  checksReceipt:CheckData[];
+
+}
+
+export const prevStateState = atom<prevStateStateData>({
+  key: "prevStateState",
+  default: {
+    totalTransfer: 0,
+    transferState: {}, 
+    totalCash: 0,
+    totalBit: 0,
+    totalChecks: 0,
+    checksReceipt : [
+      {
+        dueDate: new Date().toISOString().split('T')[0],
+        checkNumber: "",
+        bankCode: "",
+        branch: "",
+        accountNum: "",
+        checkSum: 0,
+      },
+    ]
+  },
+});

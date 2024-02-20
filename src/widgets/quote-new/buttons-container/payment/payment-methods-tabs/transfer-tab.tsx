@@ -4,21 +4,7 @@ import { Stack } from "@mui/material";
 import { TransferInputs } from "./transfer-inputs";
 import { usePaymentMethodsTabs } from "./use-payment-methods-tabs";
 import { useRecoilState } from "recoil";
-
 import { transferTabState } from "../../states";
-
-// export const transferTabState = atom<any>({
-//   key: 'transferTabState',
-//   default: ({ totalTransfer, formattedOptions }) => {
-//     const quoteItemValue = useRecoilValue(quoteItemState);
-//     return {
-//       quoteItemValue,
-//       totalTransfer,
-//       transferAccount: formattedOptions[0]?.value,
-//     };
-//   },
-// });
-
 
 
 const TransferTab = () => {
