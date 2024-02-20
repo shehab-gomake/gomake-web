@@ -67,7 +67,7 @@ const useMachinesSetupData = () => {
             if (res?.success) {
                 setSelectedMachinesState([]);
                 setCategoryMachines([]);
-                // router.push(step.next);
+                router.push('/quick-setup/materials');
             } else {
                 alertFaultAdded();
             }

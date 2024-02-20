@@ -35,7 +35,7 @@ const SignupCompanyForm = () => {
                            style={classes.nextButton}
                            disabled={loading}
                            variant={'contained'}>
-                {loading ? `Creating ${state.domain}` : t('signup.next')}
+                {loading ? `${t('signup.creating')} ${state.domain}` : t('signup.next')}
             </PrimaryButton>
         </Stack>
     )

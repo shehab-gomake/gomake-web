@@ -1,7 +1,6 @@
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { convertHeightToVH, convertWidthToVW } from "@/utils/adapter";
 import { FONT_FAMILY } from "@/utils/font-family";
-import { LAYOUT_DEFAULT_GAP, SIDE_MENU_Layout } from "@/utils/layout-config";
 import { useMemo } from "react";
 
 const useStyle = () => {
@@ -9,10 +8,9 @@ const useStyle = () => {
   const classes = useMemo(() => {
     return {
       header: {
-        color: primaryColor(600),
+        color: '#504FA1',
         ...FONT_FAMILY.Outfit(600, 24),
-        margin: 0,
-        padding: 0
+        textAlign: 'center'
       },
       nextButton: {
         width: '50%',
@@ -42,7 +40,14 @@ const useStyle = () => {
         width: convertWidthToVW(375)
       },
       parameterInput: {
-
+      },
+      detailsKey: {
+        ...FONT_FAMILY.Outfit(600, 18),
+        color: primaryColor(300)
+      },
+      detailsValue: {
+        ...FONT_FAMILY.Outfit(600, 24),
+        color: primaryColor(800)
       }
     }
   }, [theme]);

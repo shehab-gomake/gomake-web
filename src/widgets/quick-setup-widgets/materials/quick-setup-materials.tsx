@@ -18,11 +18,6 @@ const QuickSetupMaterials = () => {
                    overflow={'auto'}
                    position={'relative'}
                    style={classes.materialsContainer}>
-                {/*<Stack justifyContent={'flex-end'} position={'absolute'} right={0} top={0}>*/}
-                {/*    <IconButton>*/}
-                {/*        <RefreshIcon width={20} height={20} style={{width: 20, height: 20}}/>*/}
-                {/*    </IconButton>*/}
-                {/*</Stack>*/}
                 {
                     selectedMaterials.map(material => <MaterialViewComponent id={material.id} label={material.label}
                                                                              onRemove={onRemoveMaterial}/>)

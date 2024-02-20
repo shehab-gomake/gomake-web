@@ -34,14 +34,14 @@ const MachinesSetupWidget = () => {
                                 onChange={(e, v) => onSelectCategory(v?.value as ECategoryId)}
                                 options={machinesCategoriesList}
                                 disableClearable={true}
-                                placeholder={'Choose machine Category'}/>
+                                placeholder={t('signup.chooseMachineCategory')}/>
             <GoMakeAutoComplate
                                 disabled={machinesLoading}
                                 onChange={(e, machine) => onSelectMachine(machine)}
                                 loading={machinesLoading}
                                 disableClearable={true}
                                 onChangeTextField={(e) => {onSearchMachine(e?.target?.value)}}
-                                style={classes.autoComplete} options={[newMachine, ...categoryMachines]?.filter(machine => machine?.value !== '')} placeholder={'machine name'}/>
+                                style={classes.autoComplete} options={[newMachine, ...categoryMachines]?.filter(machine => machine?.value !== '')} placeholder={t('signup.machineName')}/>
             <Stack flexWrap={'wrap'} direction={'row'} columnGap={'10px'} rowGap={'2px'} padding={'15px'}
                    overflow={'auto'}
                    position={'relative'}
@@ -57,7 +57,7 @@ const MachinesSetupWidget = () => {
                            style={classes.nextButton}
                            disabled={loading}
                            variant={'contained'}>
-                {loading ? `Adding machines` : t('signup.next')}
+                {loading ? `signup.addingMachines` : t('signup.next')}
             </PrimaryButton>
         </Stack>
     )
