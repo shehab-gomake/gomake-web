@@ -27,6 +27,25 @@ export interface ERPAccountsData {
   name: string;
 }
 
+export interface TransferTabData {
+  transferAccount: any;
+  transferSum: number;
+  transferReference: string;
+  transferDate: string;
+}
+
+export interface prevStateStateData {
+  totalTransfer: number;
+  transferState: any;
+  totalCash: number;
+  totalBit: number;
+  totalChecks: number;
+  checksReceipt: CheckData[];
+  taxDeduction: number;
+  checkAccountCode:any;
+  cashAccountCode:any;
+}
+
 export const checksRowState = atom<CheckData[]>({
   key: "checksRowState",
   default: [
@@ -41,10 +60,20 @@ export const checksRowState = atom<CheckData[]>({
   ],
 });
 
-
 export const ERPAccountsState = atom<ERPAccountsData[]>({
   key: "ERPAccountsState",
   default: [],
+});
+
+export const transferTabState = atom<TransferTabData>({
+  key: "transferTabState",
+  default:
+  {
+    transferAccount: null,
+    transferSum: 0,
+    transferReference: "",
+    transferDate: null,
+  },
 });
 
 export const totalDocumentsState = atom<number>({
@@ -97,34 +126,17 @@ export const checkedItemsIdsState = atom<string[]>({
   default: [],
 });
 
-
-export const transferTabState = atom<any>({
-  key: "transferTabState",
-  default: {},
-});
-
-
-
-export interface prevStateStateData {
-  totalTransfer: number;
-  transferState: any;
-  totalCash: number;
-  totalBit: number;
-  totalChecks: number;
-  checksReceipt:CheckData[];
-  taxDeduction:number;
-
-}
-
 export const prevStateState = atom<prevStateStateData>({
   key: "prevStateState",
   default: {
     totalTransfer: 0,
-    transferState: {}, 
+    transferState: {},
+    checkAccountCode:{},
+    cashAccountCode:{},
     totalCash: 0,
     totalBit: 0,
     totalChecks: 0,
-    checksReceipt : [
+    checksReceipt: [
       {
         dueDate: new Date().toISOString().split('T')[0],
         checkNumber: "",
@@ -134,6 +146,17 @@ export const prevStateState = atom<prevStateStateData>({
         checkSum: 0,
       },
     ],
-    taxDeduction:0,
+    taxDeduction: 0,
   },
+});
+
+
+export const checksAccountCodeState = atom<any>({
+  key: "checksAccountCodeState",
+  default: {},
+});
+
+export const cashAccountCodeState = atom<any>({
+  key: "cashAccountCodeState",
+  default: {},
 });

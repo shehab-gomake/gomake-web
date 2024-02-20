@@ -3,10 +3,17 @@ import { Stack } from "@mui/material";
 import { usePaymentMethodsTabs } from "./use-payment-methods-tabs";
 import { GoMakeAutoComplate } from "@/components";
 import { useStyle } from "../style";
+import { useRecoilState } from "recoil";
+import { checksAccountCodeState } from "../../states";
 
 const CheckTab = () => {
     const { t, data, tableHeaders, getTableRow , mapERPAccountsOptions} = usePaymentMethodsTabs();
     const { classes } = useStyle();
+    const [checkAccountCode, setCheckAccountCode] = useRecoilState<any>(checksAccountCodeState);
+
+    const handleAccountCodeChange = (selectedOption) => {
+       setCheckAccountCode(selectedOption?.value);
+    };
 
     return (
         <Stack display={"flex"} direction={"column"} justifyContent={"space-between"} padding={"0 5px"} gap={"10px"} >
@@ -14,9 +21,10 @@ const CheckTab = () => {
                 <span style={classes.selectLbl} >{t("payment.accountCode")}</span>
                 <GoMakeAutoComplate
                     style={{ height: "30px", width: 180, border: 0 }}
-                    value={mapERPAccountsOptions[0]}
+                    value={mapERPAccountsOptions.find((option) => option.value === checkAccountCode)}
+                    defaultValue={mapERPAccountsOptions[0]}
                     options={mapERPAccountsOptions}
-                    disabled={true}
+                    onChange={(e: any, value: any) => handleAccountCodeChange(value)}
                 />
             </Stack>
             <PrimaryTable

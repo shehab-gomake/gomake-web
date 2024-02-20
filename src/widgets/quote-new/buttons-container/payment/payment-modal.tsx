@@ -31,10 +31,8 @@ const PaymentModal = ({ openModal, onClose, selectedTab, getERPAccounts }: IPaym
     ];
 
     const handleModalClose = () => {
-        // if we don't save 
-        revertToPreviousState();
-        // close modal
-        onClose();
+        revertToPreviousState(); // if we don't save
+        onClose(); // close modal
     };
 
     const handleTabChange = async (newTabIndex) => {
