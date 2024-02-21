@@ -10,6 +10,7 @@ totalPayment
   const headerHeight = "44px";
   const { classes } = useStyle({headerHeight});
   const { t } = useTranslation();
+  const dir = t('direction');
   const { getCurrencyUnitText , quoteItemValue } = useQuoteGetData();
 
   return (
@@ -52,8 +53,8 @@ totalPayment
           style={{
             ...classes.evenRowContainer,
             width:  "55.8%",
-            borderBottomLeftRadius: 6,
-            borderBottomRightRadius: 6,
+            borderBottomRightRadius: dir === "rtl" ? 6 : 0,
+            borderBottomLeftRadius: dir === "rtl" ? 0 : 6,
           }}
         >
           {t("payment.totalPayment")}

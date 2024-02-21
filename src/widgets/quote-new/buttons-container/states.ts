@@ -69,7 +69,7 @@ export const transferTabState = atom<TransferTabData>({
   key: "transferTabState",
   default:
   {
-    transferAccount: null,
+    transferAccount: "",
     transferSum: 0,
     transferReference: "",
     transferDate: null,
@@ -153,10 +153,10 @@ export const prevStateState = atom<prevStateStateData>({
 
 export const checksAccountCodeState = atom<any>({
   key: "checksAccountCodeState",
-  default: {},
+  default: "",
 });
 
 export const cashAccountCodeState = atom<any>({
   key: "cashAccountCodeState",
-  default: {},
+  default: "",
 });

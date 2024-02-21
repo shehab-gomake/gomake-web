@@ -1,7 +1,10 @@
 import { useMemo } from "react";
 import { FONT_FAMILY } from "@/utils/font-family";
+import { useTranslation } from "react-i18next";
 
 const useStyle = ({ headerHeight }) => {
+  const { t } = useTranslation();
+  const dir = t('direction');
   const classes = useMemo(() => {
     return {
       tableRowStyle: {
@@ -40,6 +43,16 @@ const useStyle = ({ headerHeight }) => {
         borderBottomLeftRadius: 6,
         borderBottomRightRadius: 6,
       },
+      priceReceiptFooterContainer: {
+        display: "flex",
+        flexDirection: "column" as "column",
+        justifyContent: "flex-start",
+        alignItems: "flex-start",
+        width: "40%",
+        boxShadow: " 0px 1px 3px 0px #1018281A",
+        borderBottomLeftRadius: 6,
+        borderBottomRightRadius: 6,
+      },
       firstRowForFooterContainer: {
         display: "flex",
         flexDirection: "row" as "row",
@@ -56,7 +69,6 @@ const useStyle = ({ headerHeight }) => {
         ...FONT_FAMILY.Inter(500, 12),
         height: 44,
       },
-
       lastRowContainer: {
         display: "flex",
         textAlign: "center" as "center",
@@ -65,11 +77,10 @@ const useStyle = ({ headerHeight }) => {
         background: "#8283BE",
         ...FONT_FAMILY.Inter(500, 12),
         height: 44,
-        width:  "55.8%",
-        borderBottomLeftRadius: 6,
-        borderBottomRightRadius: 6,
+        width: "50%",
+        borderBottomRightRadius: dir === "rtl" ? 6 : 0,
+        borderBottomLeftRadius: dir === "rtl" ? 0 : 6,
       },
-
       oddRowContainer: {
         display: "flex",
         padding: "12px 24px",

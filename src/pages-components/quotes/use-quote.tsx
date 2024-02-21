@@ -59,8 +59,11 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
   const [pageSize, setPageSize] = useState(DEFAULT_VALUES.PageSize);
   const selectedClient = useRecoilValue<any>(selectedClientState);
   const [openAddRule, setOpenAddRule] = useState<boolean>(false);
-  const documentPath = DOCUMENT_TYPE[docType];
+  const [resetDatePicker, setResetDatePicker] = useState<boolean>(false);
+  const [fromDate, setFromDate] = useState<Date>();
+  const [toDate, setToDate] = useState<Date>();
 
+  const documentPath = DOCUMENT_TYPE[docType];
   const isReceipt = docType === DOCUMENT_TYPE.receipt;
 
   const onCloseAddRuleModal = () => {
@@ -183,23 +186,25 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
             onClickLoggers={() => onClickOpenLogsModal(quote?.number)}
           />,
         ]);
-        setAllQuotes( isReceipt ? mapReceiptData : mapData);
+        setAllQuotes(isReceipt ? mapReceiptData : mapData);
         setPagesCount(Math.ceil(totalItems / (pageSize)));
         setAllStatistics(res?.data?.documentStatisticsList);
       }
     };
     if (isReceipt) {
       await getAllReceiptsApi(callApi, callBack, {
-          clientId: customerId?.id,
-          agentId: agentId?.id,
-          patternSearch: finalPatternSearch,
-          dateRange,
-          status: quoteStatusId?.value || statusId?.value,
-          model: {
-            pageNumber: page,
-            pageSize: pageSize,
-          }
+        clientId: customerId?.id,
+        agentId: agentId?.id,
+        patternSearch: finalPatternSearch,
+        fromDate: fromDate && GetDateFormat(fromDate),
+        toDate: toDate && GetDateFormat(toDate),
+
+        status: quoteStatusId?.value || statusId?.value,
+        model: {
+          pageNumber: page,
+          pageSize: pageSize,
         }
+      }
       );
     } else {
       await getAllDocumentsApi(callApi, callBack, {
@@ -260,17 +265,17 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
             onClickLoggers={() => onClickOpenLogsModal(quote?.number)}
           />,
         ]);
-        setAllQuotes( isReceipt ? mapReceiptData : mapData);
+        setAllQuotes(isReceipt ? mapReceiptData : mapData);
         setPagesCount(Math.ceil(totalItems / pageSize));
         setAllStatistics(res?.data?.documentStatisticsList);
       }
     };
     if (docType === DOCUMENT_TYPE.receipt) {
       await getAllReceiptsApi(callApi, callBack, {
-          model: {
-            pageNumber: page,
-            pageSize: pageSize,
-          },
+        model: {
+          pageNumber: page,
+          pageSize: pageSize,
+        },
       });
     } else {
       await getAllDocumentsApi(callApi, callBack, {
@@ -298,6 +303,9 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     setAgentId(null);
     setCustomerId(null);
     setStatusId(null);
+    setFromDate(null);
+    setToDate(null);
+    setResetDatePicker(true);
     getAllQuotesInitial();
     setPage(1);
   };
@@ -387,7 +395,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     },
   ];
 
-  const deliveryNoteStatuses= [
+  const deliveryNoteStatuses = [
     {
       label: t("sales.quote.open"),
       value: DELIVERY_NOTE_STATUSES.Open,
@@ -598,6 +606,12 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     setActiveCard(null);
   };
 
+  const onSelectDeliveryTimeDates = (fromDate: Date, toDate: Date) => {
+    setResetDatePicker(false);
+    setFromDate(fromDate);
+    setToDate(toDate);
+  };
+
   useEffect(() => {
     getAllDocuments(docType);
   }, [selectedClient]);
@@ -612,6 +626,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     t("home.headers.remark"),
     t("home.headers.more"),
   ];
+
 
   return {
     patternSearch,
@@ -662,7 +677,9 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     openAddRule,
     navigate,
     documentPath,
-    deliveryNoteStatuses
+    deliveryNoteStatuses,
+    resetDatePicker,
+    onSelectDeliveryTimeDates
   };
 };
 
