@@ -2,7 +2,7 @@ import { useTranslation } from "react-i18next";
 import { useQuoteGetData } from "@/pages-components/quote-new/use-quote-get-data";
 import { useStyle } from "./style";
 
-const TotalPriceReceipts = ({
+const TotalPricesNewReceipts = ({
 sum,
 taxDeduction,
 totalPayment
@@ -46,6 +46,7 @@ totalPayment
           {Math.abs(sum - totalPayment) +  " " + getCurrencyUnitText(quoteItemValue?.currency)}
         </div>
       </div>}
+
       <div style={classes.firstRowForFooterContainer}>
         <div
           style={{
@@ -61,8 +62,9 @@ totalPayment
           <div>{ Number(totalPayment)+Number(taxDeduction)+  " " + getCurrencyUnitText(quoteItemValue?.currency)}</div>
         </div>
       </div>
+      
     </div>
   );
 };
 
-export { TotalPriceReceipts };
+export { TotalPricesNewReceipts };

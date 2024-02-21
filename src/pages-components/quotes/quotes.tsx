@@ -32,6 +32,7 @@ const QuotesListPageWidget = ({
     tableHeaders,
     allQuotes,
     quoteStatuses,
+    deliveryNoteStatuses,
     agentsCategories,
     openModal,
     statusId,
@@ -71,6 +72,8 @@ const QuotesListPageWidget = ({
     navigate,
     documentPath
   } = useQuotes(documentType);
+
+
   return (
     <>
       {!isFromHomePage && (
@@ -102,7 +105,7 @@ const QuotesListPageWidget = ({
                   </div>
                   <GoMakeAutoComplate
                     key={statusId?.value}
-                    options={quoteStatuses}
+                    options={documentType === DOCUMENT_TYPE.receipt  ? deliveryNoteStatuses : quoteStatuses}
                     style={classes.textInputStyle}
                     getOptionLabel={(option: any) => option.label}
                     placeholder={t("sales.quote.chooseStatus")}

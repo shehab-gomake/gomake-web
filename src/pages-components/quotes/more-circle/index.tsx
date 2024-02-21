@@ -70,12 +70,14 @@ const MoreMenuWidget = ({ quote, documentType, onClickOpenModal, onClickPdf, onC
       </MenuItem>
 
 
-      <MenuItem onClick={() => onClickDuplicate(quote?.id)}>
+      {
+      documentType !== DOCUMENT_TYPE.receipt && <MenuItem onClick={() => onClickDuplicate(quote?.id)}>
         <div style={classes.menuRowStyle}>
           <ConvertIcon />
           <div style={classes.rowTextStyle}>{t("sales.quote.duplicate")}</div>
         </div>
       </MenuItem>
+      }
       {renderMenuItem()}
       {
         documentType === DOCUMENT_TYPE.order && <MenuItem onClick={() => navigate(`/deliveryNote?isNewCreation=true&orderId=${quote?.id}`)}>

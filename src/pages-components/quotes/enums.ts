@@ -24,6 +24,19 @@ export enum QUOTE_STATUSES{
     WaitForPrintHouseConfirm=14,
 }
 
+export enum DELIVERY_NOTE_STATUSES{
+    Open = 0,
+    Canceled,
+    Created,
+    Refunded,
+    Confirmed,
+    Rejected,
+    PartialRefunded,
+    ClosedAsInvoice,
+    ClosedByMultiDocuments,
+    ManualClose,
+}
+
 export enum EStatisticsLabels {
     SUCCESS_RATE="successRate",
     MONTHLY_PERFORMANCE="monthlyPerformance",

@@ -4,16 +4,17 @@ import { useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { totalDocumentsState, totalPaymentState, finalTotalPaymentState, totalCashState, totalBitState, totalTransferState, totalChecksState, checksRowState, CheckData, checkedItemsIdsState, transferTabState, prevStateState, prevStateStateData, taxDeductionState, checksAccountCodeState, cashAccountCodeState } from "../buttons-container/states";
 import { quoteItemState } from "@/store";
+import { useRouter } from "next/router";
 
 const usePaymentsTable = () => {
     const { t } = useTranslation();
+    const router = useRouter();
     const [checkedItems, setCheckedItems] = useState({});
-    const [quoteItemValue, setQuoteItemValue] = useRecoilState<any>(quoteItemState);
-    const tableRows = quoteItemValue?.receiptItems;
+    const [documentItemValue, setDocumentItemValue] = useRecoilState<any>(quoteItemState);
+    const tableRows = documentItemValue?.receiptItems;
     const setCheckedItemsIds = useSetRecoilState(checkedItemsIdsState);
     const [totalSum, setTotalSum] = useRecoilState<number>(totalDocumentsState);
     const [finalTotalPayment, setFinalTotalPayment] = useRecoilState<number>(finalTotalPaymentState);
-
     // total payment
     const [totalPayment, setTotalPayment] = useRecoilState<number>(totalPaymentState);
     //bit
@@ -26,30 +27,39 @@ const usePaymentsTable = () => {
     //checks
     const [totalChecks, setTotalChecks] = useRecoilState<number>(totalChecksState);
     const [checksReceipt, setChecksReceipt] = useRecoilState<CheckData[]>(checksRowState);
-
     // withholding tax
     const [taxDeduction, setTaxDeduction] = useRecoilState<number>(taxDeductionState);
-
     // accounts code
     const [checkAccountCode, setCheckAccountCode] = useRecoilState<any>(checksAccountCodeState);
     const [cashAccountCode, setCashAccountCode] = useRecoilState<any>(cashAccountCodeState);
 
-    const columnWidths = [
+    const isNewReceipt = router?.query?.isNewCreation;
+    const columnWidths =
+    isNewReceipt ? 
+     [
         "5%",
         "19%",
         "19%",
         "19%",
         "19%",
         "19%"
+    ] : [
+        "20%",
+        "20%",
+        "20%",
+        "20%",
+        "20%",
+        "20%"
     ];
+    
     const tableHeaders = [
-        "#",
+        isNewReceipt && "#",
         t("payment.documentDate"),
         t("payment.documentNumber"),
         t("payment.documentType"),
         t("payment.detail"),
         t("payment.sum"),
-    ];
+    ].filter(Boolean);
 
     const PrimaryTableCell = styled(TableCell)(() => {
         return {
@@ -94,7 +104,7 @@ const usePaymentsTable = () => {
 
     const handleSave = () => {
         const receiptItemCopy = {
-            ...quoteItemValue,
+            ...documentItemValue,
             bitSum: Number(totalBit),
             cashSum: Number(totalCash),
             checksTotal: Number(totalChecks),
@@ -108,7 +118,7 @@ const usePaymentsTable = () => {
             cashAccount: cashAccountCode,
 
         };
-        setQuoteItemValue(receiptItemCopy);
+        setDocumentItemValue(receiptItemCopy);
         setFinalTotalPayment(totalPayment);
         savePreviousState(); // save previous state
     };
@@ -116,7 +126,6 @@ const usePaymentsTable = () => {
     const handleTaxDeductionChange = (event) => {
         setTaxDeduction(event.target.value);
     };
-
 
     // Previous State // 
     const [previousState, setPreviousState] = useRecoilState<prevStateStateData>(prevStateState);
@@ -145,10 +154,10 @@ const usePaymentsTable = () => {
         setCheckAccountCode(previousState.checkAccountCode);
         setCashAccountCode(previousState.cashAccountCode);
     };
+
     return {
         t,
-        quoteItemValue,
-        setQuoteItemValue,
+        documentItemValue,
         columnWidths,
         tableHeaders,
         tableRows,
@@ -167,7 +176,8 @@ const usePaymentsTable = () => {
         setTotalTransfer,
         setTotalCash,
         setTotalBit,
-        previousState
+        previousState,
+        isNewReceipt
     };
 };
 

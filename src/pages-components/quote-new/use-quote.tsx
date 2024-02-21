@@ -24,7 +24,7 @@ import { useQuoteGetData } from "./use-quote-get-data";
 import { addDeliveryApi, addDocumentAddressApi, addDocumentContactApi, calculateDocumentApi, calculateDocumentItemApi, cancelDocumentApi, changeDocumentClientApi, deleteDocumentAddressApi, deleteDocumentContactApi, deleteDocumentItemApi, duplicateWithAnotherQuantityApi, getDocumentApi, refreshExchangeRateApi, saveDocumentApi, sendDocumentToClientApi, updateAgentApi, updateDocumentAddressApi, updateDocumentContactApi, updateDocumentCurrencyApi, updateDueDateApi, updateExchangeRateApi, updatePurchaseNumberApi } from "@/services/api-service/generic-doc/documents-api";
 import { DOCUMENT_TYPE } from "../quotes/enums";
 import { useRouter } from "next/router";
-import { getClientPaymentItemsApi } from "@/services/api-service/generic-doc/receipts-api";
+import { getClientPaymentItemsApi, getReceiptByIdApi } from "@/services/api-service/generic-doc/receipts-api";
 
 interface IQuoteProps {
   docType: DOCUMENT_TYPE;
@@ -165,6 +165,17 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
       } else {
         alertFaultAdded();
       }
+    }
+    else if (docType === DOCUMENT_TYPE.receipt){
+      const callBack = (res) => {
+        if (res?.success) {
+          const _data = res?.data || {};
+          setQuoteItemValue(_data);
+        } else {
+          alertFaultAdded();
+        }
+      }
+      await getReceiptByIdApi(callApi, callBack, {receiptId:router?.query?.Id})
     }
     else {
       const callBack = (res) => {

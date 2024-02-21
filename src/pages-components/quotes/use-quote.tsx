@@ -1,7 +1,7 @@
 import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { QUOTE_STATUSES } from "./enums";
+import { DELIVERY_NOTE_STATUSES, QUOTE_STATUSES } from "./enums";
 import { MoreMenuWidget } from "./more-circle";
 import { getAndSetAllCustomers } from "@/services/hooks";
 import { useRecoilState, useSetRecoilState, useRecoilValue } from "recoil";
@@ -23,6 +23,7 @@ import { DOCUMENT_TYPE } from "./enums";
 import { useQuoteGetData } from "../quote-new/use-quote-get-data";
 import { useStyle } from "./style";
 import { DEFAULT_VALUES } from "@/pages/customers/enums";
+import { getAllReceiptsApi } from "@/services/api-service/generic-doc/receipts-api";
 
 const useQuotes = (docType: DOCUMENT_TYPE) => {
   const { t } = useTranslation();
@@ -60,6 +61,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
   const [openAddRule, setOpenAddRule] = useState<boolean>(false);
   const documentPath = DOCUMENT_TYPE[docType];
 
+  const isReceipt = docType === DOCUMENT_TYPE.receipt;
 
   const onCloseAddRuleModal = () => {
     setOpenAddRule(false);
@@ -139,6 +141,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     }
   };
 
+
   const getAllQuotes = async () => {
     const callBack = (res) => {
       if (res?.success) {
@@ -162,25 +165,58 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
             onClickLoggers={() => onClickOpenLogsModal(quote?.number)}
           />,
         ]);
-        setAllQuotes(mapData);
+        const mapReceiptData = data?.map((quote: any) => [
+          GetDateFormat(quote?.creationDate),
+          quote?.customerName,
+          quote?.agentName,
+          quote?.number,
+          quote?.paymentType,
+          quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
+          quote?.notes,
+          quote?.statusStr,
+          <MoreMenuWidget
+            quote={quote}
+            documentType={docType}
+            onClickOpenModal={onClickOpenModal}
+            onClickPdf={onClickQuotePdf}
+            onClickDuplicate={onClickQuoteDuplicate}
+            onClickLoggers={() => onClickOpenLogsModal(quote?.number)}
+          />,
+        ]);
+        setAllQuotes( isReceipt ? mapReceiptData : mapData);
         setPagesCount(Math.ceil(totalItems / (pageSize)));
-        setAllStatistics(res?.data?.documentStatisticsList)
+        setAllStatistics(res?.data?.documentStatisticsList);
       }
     };
-    await getAllDocumentsApi(callApi, callBack, {
-      documentType: docType,
-      data: {
-        model: {
-          pageNumber: page,
-          pageSize: pageSize,
+    if (isReceipt) {
+      await getAllReceiptsApi(callApi, callBack, {
+          clientId: customerId?.id,
+          agentId: agentId?.id,
+          patternSearch: finalPatternSearch,
+          dateRange,
+          status: quoteStatusId?.value || statusId?.value,
+          model: {
+            pageNumber: page,
+            pageSize: pageSize,
+          }
+        }
+      );
+    } else {
+      await getAllDocumentsApi(callApi, callBack, {
+        documentType: docType,
+        data: {
+          model: {
+            pageNumber: page,
+            pageSize: pageSize,
+          },
+          statusId: quoteStatusId?.value || statusId?.value,
+          patternSearch: finalPatternSearch,
+          customerId: customerId?.id,
+          dateRange,
+          agentId: agentId?.id,
         },
-        statusId: quoteStatusId?.value || statusId?.value,
-        patternSearch: finalPatternSearch,
-        customerId: customerId?.id,
-        dateRange,
-        agentId: agentId?.id,
-      },
-    });
+      });
+    }
   };
 
   const getAllQuotesInitial = async () => {
@@ -206,20 +242,47 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
             onClickLoggers={() => onClickOpenLogsModal(quote?.number)}
           />,
         ]);
-        setAllQuotes(mapData);
+        const mapReceiptData = data?.map((quote: any) => [
+          GetDateFormat(quote?.creationDate),
+          quote?.customerName,
+          quote?.agentName,
+          quote?.number,
+          quote?.paymentType,
+          quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
+          quote?.notes,
+          quote?.statusStr,
+          <MoreMenuWidget
+            quote={quote}
+            documentType={docType}
+            onClickOpenModal={onClickOpenModal}
+            onClickPdf={onClickQuotePdf}
+            onClickDuplicate={onClickQuoteDuplicate}
+            onClickLoggers={() => onClickOpenLogsModal(quote?.number)}
+          />,
+        ]);
+        setAllQuotes( isReceipt ? mapReceiptData : mapData);
         setPagesCount(Math.ceil(totalItems / pageSize));
-        setAllStatistics(res?.data?.documentStatisticsList)
+        setAllStatistics(res?.data?.documentStatisticsList);
       }
     };
-    await getAllDocumentsApi(callApi, callBack, {
-      documentType: docType,
-      data: {
-        model: {
-          pageNumber: page,
-          pageSize: pageSize,
+    if (docType === DOCUMENT_TYPE.receipt) {
+      await getAllReceiptsApi(callApi, callBack, {
+          model: {
+            pageNumber: page,
+            pageSize: pageSize,
+          },
+      });
+    } else {
+      await getAllDocumentsApi(callApi, callBack, {
+        documentType: docType,
+        data: {
+          model: {
+            pageNumber: page,
+            pageSize: pageSize,
+          },
         },
-      },
-    });
+      });
+    }
   };
 
   const onClickSearchFilter = () => {
@@ -227,9 +290,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     if (statusId !== null) {
       handleSecondCardClick();
     }
-
     getAllQuotes();
-
   };
 
   const onClickClearFilter = () => {
@@ -254,7 +315,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
           : docType === DOCUMENT_TYPE.invoice
             ? t("sales.quote.invoiceNumber")
             : t("sales.quote.receiptNumber"),
-    t("sales.quote.worksName"),
+    docType === DOCUMENT_TYPE.receipt ? t("sales.quote.paymentMethod") : t("sales.quote.worksName"),
     t("sales.quote.totalPrice"),
     t("sales.quote.notes"),
     t("sales.quote.status"),
@@ -323,6 +384,49 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     {
       label: t("sales.quote.waitForPrintHouseConfirm"),
       value: QUOTE_STATUSES.WaitForPrintHouseConfirm,
+    },
+  ];
+
+  const deliveryNoteStatuses= [
+    {
+      label: t("sales.quote.open"),
+      value: DELIVERY_NOTE_STATUSES.Open,
+    },
+    {
+      label: t("sales.quote.canceled"),
+      value: DELIVERY_NOTE_STATUSES.Canceled,
+    },
+    {
+      label: t("sales.quote.created"),
+      value: DELIVERY_NOTE_STATUSES.Created,
+    },
+    {
+      label: t("sales.quote.refunded"),
+      value: DELIVERY_NOTE_STATUSES.Refunded,
+    },
+    {
+      label: t("sales.quote.confirmed"),
+      value: DELIVERY_NOTE_STATUSES.Confirmed,
+    },
+    {
+      label: t("sales.quote.rejected"),
+      value: DELIVERY_NOTE_STATUSES.Rejected,
+    },
+    {
+      label: t("sales.quote.partialRefunded"),
+      value: DELIVERY_NOTE_STATUSES.PartialRefunded,
+    },
+    {
+      label: t("sales.quote.closedAsInvoice"),
+      value: DELIVERY_NOTE_STATUSES.ClosedAsInvoice,
+    },
+    {
+      label: t("sales.quote.closedByMultiDocuments"),
+      value: DELIVERY_NOTE_STATUSES.ClosedByMultiDocuments,
+    },
+    {
+      label: t("sales.quote.manualClose"),
+      value: DELIVERY_NOTE_STATUSES.ManualClose,
     },
   ];
 
@@ -557,7 +661,8 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     onOpenAddRuleModal,
     openAddRule,
     navigate,
-    documentPath
+    documentPath,
+    deliveryNoteStatuses
   };
 };
 

@@ -56,6 +56,20 @@ const useStyle = ({ headerHeight }) => {
         ...FONT_FAMILY.Inter(500, 12),
         height: 44,
       },
+
+      lastRowContainer: {
+        display: "flex",
+        textAlign: "center" as "center",
+        padding: "12px 24px",
+        color: "#FFFF",
+        background: "#8283BE",
+        ...FONT_FAMILY.Inter(500, 12),
+        height: 44,
+        width:  "55.8%",
+        borderBottomLeftRadius: 6,
+        borderBottomRightRadius: 6,
+      },
+
       oddRowContainer: {
         display: "flex",
         padding: "12px 24px",

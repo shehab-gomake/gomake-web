@@ -9,14 +9,15 @@ import {
 import { useStyle } from "./style";
 import { RowMappingWidget } from "./row-mapping";
 import { usePaymentsTable } from "./use-payments-table";
-import { TotalPriceReceipts } from "./total-price";
+import { TotalPricesNewReceipts } from "./total-prices-new-receipt";
 import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
+import { TotalPricesReceipts } from "./total-prices-receipt";
 
 const ReceiptsTable = () => {
     let indexs = 0;
     const headerHeight = "44px";
     const { classes } = useStyle({ headerHeight });
-    const { tableHeaders, tableRows, columnWidths, PrimaryTableCell, checkedItems, handleCheckboxChange, totalSum, finalTotalPayment ,taxDeduction} = usePaymentsTable();
+    const { isNewReceipt, documentItemValue, tableHeaders, tableRows, columnWidths, PrimaryTableCell, checkedItems, handleCheckboxChange, totalSum, finalTotalPayment, taxDeduction } = usePaymentsTable();
 
     return (
         <div>
@@ -55,7 +56,7 @@ const ReceiptsTable = () => {
                                         headerHeight={headerHeight}
                                         isChecked={checkedItems[index]}
                                         onCheckboxChange={() => {
-                                            handleCheckboxChange(index , item?.id);
+                                            handleCheckboxChange(index, item?.id);
                                         }}
 
                                     //     onCheckboxChange={handleCheckboxChange.bind(null, index)}
@@ -67,7 +68,9 @@ const ReceiptsTable = () => {
                     </TableBody>
                 </Table>
             </TableContainer>
-            <TotalPriceReceipts sum={totalSum} totalPayment={finalTotalPayment} taxDeduction={taxDeduction} />
+            {isNewReceipt ?  
+                <TotalPricesNewReceipts sum={totalSum} totalPayment={finalTotalPayment} taxDeduction={taxDeduction} /> :
+                <TotalPricesReceipts receiptItemValue={documentItemValue} />}
         </div>
     );
 };
