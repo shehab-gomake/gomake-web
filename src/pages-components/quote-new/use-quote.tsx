@@ -479,6 +479,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
       };
       updatedQuoteItemValue.documentContacts = [...updatedQuoteItemValue.documentContacts, newContact];
       setQuoteItemValue(updatedQuoteItemValue);
+      setIsDisplayWidget(false);
     }
     else {
       const callBack = (res) => {
@@ -1278,7 +1279,15 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     {
       label: t("sales.quote.receipt"),
       value: DOCUMENT_TYPE.receipt,
-    }
+    },
+    {
+      label: t("tabs.deliveryNoteRefund"),
+      value: DOCUMENT_TYPE.deliveryNoteRefund,
+    },
+    {
+      label: t("tabs.invoiceRefund"),
+      value: DOCUMENT_TYPE.invoiceRefund,
+    },
   ];
 
   const documentTitle = documentsTitles.find(item => item.value === docType).label;
