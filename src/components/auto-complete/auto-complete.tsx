@@ -76,6 +76,7 @@ const GoMakeAutoComplate = ({
   arrowColor,
   onChangeTextField,
   PaperComponent,
+    className
 }: {
   value?: any;
   onChange?: any;
@@ -93,6 +94,7 @@ const GoMakeAutoComplate = ({
   arrowColor?: any;
   onChangeTextField?: any;
   PaperComponent?: any;
+  className?: string
 }) => {
   const [selectedOption, setSelectedOption] = useState<any>();
   const { t } = useTranslation();
@@ -113,6 +115,7 @@ const GoMakeAutoComplate = ({
         onChange(e, value);
         setSelectedOption(value);
       }}
+      className={className}
       style={style}
       options={options}
       disabled={disabled}

@@ -71,9 +71,10 @@ const SelectChildParameterWidget = ({
     }
   }, [value]);
   return (
-    <>
+    <div data-tour={parameter?.id} style={{width: '100%'}}>
       {parameter?.valuesConfigs?.length > 0 && (
         <GoMakeAutoComplate
+            data-tour={parameter?.id}
           options={parameter?.valuesConfigs?.filter((value) => !value.isHidden)}
           placeholder={parameter.name}
           key={parameter.id + "-" + parameter.actionIndex}
@@ -100,7 +101,7 @@ const SelectChildParameterWidget = ({
           }}
         />
       )}
-    </>
+    </div>
   );
 };
 

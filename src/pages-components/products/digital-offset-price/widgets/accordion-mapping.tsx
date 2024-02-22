@@ -24,12 +24,13 @@ const AccordionMappingWidget = ({
       key={index}
     >
       <AccordionSummary
+          data-tour={subSection?.id}
         expandIcon={<ExpandMoreIcon />}
         style={
           expanded === `panel_${index}` ? clasess.activeTabContainer : null
         }
       >
-        <div style={clasess.headerAccordionContainer}>
+        <div  style={clasess.headerAccordionContainer}>
           {expanded === `panel_${index}` ? (
             <EditIcon stroke={"rgba(18, 19, 58, 1)"} />
           ) : (

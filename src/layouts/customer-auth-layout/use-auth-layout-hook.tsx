@@ -25,6 +25,7 @@ const useAuthLayoutHook = (permissionEnumValue?: Permissions,allowAnonymous?:boo
           return <HomeIcon />;
         },
         isProduction: true,
+        tourData: 'menu-home'
       },
       {
         isLine: false,
@@ -205,6 +206,7 @@ const useAuthLayoutHook = (permissionEnumValue?: Permissions,allowAnonymous?:boo
           return <CubeIcon width={24} height={24} color={"white"} />;
         },
         isProduction: true,
+        tourData: 'menu-materials'
       },
       {
         isLine: false,
@@ -229,6 +231,8 @@ const useAuthLayoutHook = (permissionEnumValue?: Permissions,allowAnonymous?:boo
           return <LocalPrintshopOutlinedIcon style={{ color: "#FFFFFF" }} />;
         },
         isProduction: true,
+        tourData: 'menu-machines'
+
       },
       {
         isLine: false,
@@ -265,6 +269,7 @@ const useAuthLayoutHook = (permissionEnumValue?: Permissions,allowAnonymous?:boo
           return <SettingNavBar />;
         },
         isProduction: true,
+        tourData: 'menu-settings'
       },      
     ];
   }, []);

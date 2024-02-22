@@ -7,6 +7,8 @@ import { HeaderWidget } from "@/widgets/header";
 import { navStatusState } from "@/store/nav-status";
 import { hoverStatusState } from "@/store";
 import { LAYOUT_DEFAULT_GAP } from "@/utils/layout-config";
+import {useTour} from "@reactour/tour";
+import {useEffect} from "react";
 
 const CustomerAuthLayout = ({
   children,
@@ -23,6 +25,7 @@ const CustomerAuthLayout = ({
 
   const setNavStatus = useSetRecoilState(navStatusState);
   const isHover = useRecoilValue(hoverStatusState);
+
   return (
     <div style={clasess.container}>
         {
