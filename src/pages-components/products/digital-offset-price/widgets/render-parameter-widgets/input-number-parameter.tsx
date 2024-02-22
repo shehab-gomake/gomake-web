@@ -12,6 +12,7 @@ const InputNumberParameterWidget = ({
   disabled = false,
 }) => {
   return (
+      <div data-tour={parameter?.id?.toString()}>
     <GomakeTextInput
       //key={disabled + "parameter" + index}
       style={clasess.textInputStyle}
@@ -36,6 +37,7 @@ const InputNumberParameterWidget = ({
       }}
       type={type}
     />
+      </div>
   );
 };
 

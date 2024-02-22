@@ -255,6 +255,8 @@ const useAuthLayoutHook = (permissionEnumValue?: Permissions, allowAnonymous?: b
           return <LocalPrintshopOutlinedIcon style={{ color: "#FFFFFF" }} />;
         },
         isProduction: true,
+        tourData: 'menu-machines'
+
       },
       {
         isLine: false,
@@ -291,7 +293,8 @@ const useAuthLayoutHook = (permissionEnumValue?: Permissions, allowAnonymous?: b
           return <SettingNavBar />;
         },
         isProduction: true,
-      },
+        tourData: 'menu-settings'
+      },      
     ];
   }, []);
 
