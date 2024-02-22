@@ -9,6 +9,7 @@ import { SecondaryButton } from "@/components/button/secondary-button";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import { useUserPermission } from "@/hooks/use-permission";
+import {useTour} from "@reactour/tour";
 
 const SettingsWidget = () => {
   const { t } = useTranslation();
@@ -31,6 +32,25 @@ const SettingsWidget = () => {
       setSelected(!!item ? item : list[0]);
     }
   }, [settingsRoute, id]);
+  const {setIsOpen, setSteps} = useTour();
+  useEffect(() => {
+    setSteps(settingsSteps);
+    setIsOpen(true);
+  }, []);
+  const settingsSteps = [
+    {
+      selector: '[data-tour="first-step"]',
+      content: 'settings first Step',
+    },
+    {
+      selector: '[data-tour="settingsProducts"]',
+      content: 'settings products step'
+    },
+    {
+      selector: '[data-tour="settingsProfile"]',
+      content: 'settings profile button step'
+    },
+  ]
   const Side = () => {
     return (
       <>

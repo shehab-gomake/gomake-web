@@ -17,6 +17,7 @@ interface IProps {
     isList?: boolean;
     icon?: any;
     list?: any[];
+    tourData?: string;
   };
   customGap?: number;
 }

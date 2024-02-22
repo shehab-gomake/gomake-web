@@ -2197,7 +2197,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     getOutSourcingSuppliers,
     onChangeSubProductsForPrice,
     underParameterIds,
-    straightKnife
+    straightKnife,
   };
 };
 export { useDigitalOffsetPrice };

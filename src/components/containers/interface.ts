@@ -27,4 +27,5 @@ export interface IListItem {
   permission?: string;
   editComponent?: () => JSX.Element;
   subProductComponent?: () => JSX.Element;
+  dataTour?: string;
 }
