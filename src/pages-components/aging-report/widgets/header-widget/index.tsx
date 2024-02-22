@@ -23,6 +23,8 @@ const AgingReportHeaderWidget = ({
   renderOptions,
   checkWhatRenderArray,
   handleCustomerChange,
+  detailedReport,
+  setDetailedReport
 }: AgingReportHeaderWidgetProps) => {
 
   const { clasess, t } = useAgingReportHeader({ getAllCustomersCreateQuote, getAgentCategories })
@@ -85,6 +87,10 @@ const AgingReportHeaderWidget = ({
           <Checkbox
             icon={<CheckboxIcon />}
             checkedIcon={<CheckboxCheckedIcon />}
+            onChange={() => {
+              setDetailedReport(!detailedReport)
+            }}
+            checked={detailedReport}
           />
           <div style={clasess.labelSwichStyle}>Detailed Report</div>
         </div>

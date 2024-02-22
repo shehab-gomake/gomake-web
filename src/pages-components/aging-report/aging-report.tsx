@@ -4,6 +4,7 @@ import { AgingReportHeaderWidget } from "./widgets/header-widget";
 import { AgingReportButtonWidget } from "./widgets/button-widget";
 import { useAgingReport } from "./use-aging-report";
 import { useStyle } from "./style";
+import { PrimaryTable } from "@/components/tables/primary-table";
 
 const AgingReportWidget = () => {
   const { clasess } = useStyle();
@@ -25,7 +26,12 @@ const AgingReportWidget = () => {
     handleCustomerChange,
     onClickBtn1,
     onClickBtn2,
-    onClickBtn3
+    onClickBtn3,
+    showTable,
+    detailedReport,
+    setDetailedReport,
+    tableUnDetailedHeaders,
+    tabledetailedHeaders
   } = useAgingReport()
   return (
     <div style={clasess.mainContainer}>
@@ -45,6 +51,9 @@ const AgingReportWidget = () => {
         renderOptions={renderOptions}
         checkWhatRenderArray={checkWhatRenderArray}
         handleCustomerChange={handleCustomerChange}
+        detailedReport={detailedReport}
+        setDetailedReport={setDetailedReport}
+
       />
       <Divider />
       <AgingReportButtonWidget
@@ -52,6 +61,20 @@ const AgingReportWidget = () => {
         onClickBtn2={onClickBtn2}
         onClickBtn3={onClickBtn3}
       />
+      {
+        showTable && !detailedReport &&
+        <PrimaryTable
+          rows={[]}
+          headers={tableUnDetailedHeaders}
+        />
+      }
+      {
+        showTable && detailedReport &&
+        <PrimaryTable
+          rows={[]}
+          headers={tabledetailedHeaders}
+        />
+      }
     </div>
   );
 };

@@ -23,6 +23,34 @@ const useAgingReport = () => {
   };
   const [agentsCategories, setAgentsCategories] = useState<[]>();
   const [agent, setAgent] = useState<{ label: string; id: string } | null>();
+  const [showTable, setShowTable] = useState<boolean>(false);
+  const [detailedReport, setDetailedReport] = useState<boolean>(false);
+  console.log("detailedReport", detailedReport)
+  const tableUnDetailedHeaders = [
+    "customer code",
+    "customer name",
+    "customer phone",
+    "Terms of Payment",
+    "1/2024",
+    "2/2024",
+    "Total"
+  ]
+  const tabledetailedHeaders = [
+    "customer code",
+    "customer name",
+    "Terms of Payment",
+    "Sales Person",
+    "S. Document",
+    "M. Document",
+    "Date of refernce",
+    "Value Date",
+    "Balance Due",
+    "0-30",
+    "31-60",
+    "61-90",
+    "91-120",
+    "+120"
+  ]
   const handleAgentChange = (e: any, value: any) => {
     setAgent(value);
   };
@@ -73,7 +101,7 @@ const useAgingReport = () => {
     setCustomer(value);
   };
   const onClickBtn1 = () => {
-    console.log("AAAA")
+    setShowTable(!showTable);
   }
   const onClickBtn2 = () => {
     console.log("BBBB")
@@ -100,7 +128,13 @@ const useAgingReport = () => {
     handleCustomerChange,
     onClickBtn1,
     onClickBtn2,
-    onClickBtn3
+    onClickBtn3,
+    showTable,
+    detailedReport,
+    setShowTable,
+    setDetailedReport,
+    tableUnDetailedHeaders,
+    tabledetailedHeaders
   };
 };
 
