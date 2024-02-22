@@ -9,7 +9,7 @@ import {GoMakeSnackBar} from "@/components";
 import {DndProvider} from "react-dnd";
 import {HTML5Backend} from "react-dnd-html5-backend";
 import Backend from 'i18next-http-backend';
-import {TourProvider} from "@reactour/tour";
+import {TourProvider, useTour} from "@reactour/tour";
 import {FONT_FAMILY} from "@/utils/font-family";
 
 i18n
@@ -47,7 +47,7 @@ export default function App({Component, pageProps}: AppProps) {
                                       ...FONT_FAMILY.Outfit(600, 18)
                                   }),
                                   maskArea: (base) => ({ ...base, rx: 10, padding: '10px' }),
-                                  maskWrapper: (base) => ({ ...base}),
+                                  maskWrapper: (base) => ({ ...base }),
                                   badge: (base) => ({ ...base, left: 'auto', right: '-0.8125em', backgroundColor: '#2E3092' }),
                                   controls: (base) => ({ ...base, marginTop: 100 }),
                                   close: (base) => ({ ...base, right: 'auto', left: 8, top: 10 }),
