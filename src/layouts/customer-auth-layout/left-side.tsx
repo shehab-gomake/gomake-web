@@ -105,7 +105,7 @@ const LeftSideLayout = (customGap) => {
       </div> */}
 
       <div style={clasess.tabsContainer}>
-        {tabs1.map((tab) => {
+        {tabs1.map((tab, i) => {
           if (tab.isLine) {
             return (
               <div style={clasess.lineContainer}>
@@ -113,7 +113,7 @@ const LeftSideLayout = (customGap) => {
               </div>
             );
           } else if (checkTabPermissions(tab)) {
-            return <Tab key={tab.key} tab={tab} customGap={customGap} />;
+            return <div data-tour={`${tab?.tourData}`}><Tab key={tab.key} tab={tab} customGap={customGap} /></div>;
           }
         })}
       </div>
@@ -138,7 +138,7 @@ const LeftSideLayout = (customGap) => {
                 </div>
               );
             } else if (checkTabPermissions(tab)) {
-              return <Tab key={tab.key} tab={tab} />;
+              return <div data-tour={`${tab?.tourData}`}><Tab key={tab.key} tab={tab} /></div>;
             }
           })
         )}
