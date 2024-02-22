@@ -164,6 +164,7 @@ const usePaymentMethodsTabs = () => {
       }))
 
     ////////////////////////////////////// CREDIT CARD /////////////////////////////////////////
+
     const [creditCard, setCreditCard] = useState({
         cardNumber: "",
         expiryDate: "",
@@ -209,7 +210,7 @@ const usePaymentMethodsTabs = () => {
             });
         }
     };
-    
+        
     return {
         t,
         data,
@@ -226,7 +227,7 @@ const usePaymentMethodsTabs = () => {
         handleExpiryDateChange,
         handleCVVChange,
         handleCardIdChange,
-        formattedOptions
+        formattedOptions,
     };
 
 };

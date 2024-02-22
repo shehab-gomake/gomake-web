@@ -20,13 +20,31 @@ interface IPaymentModalProps {
 
 const PaymentModal = ({ openModal, onClose, selectedTab, getERPAccounts }: IPaymentModalProps) => {
     const { classes } = useStyle();
-    const { t, revertToPreviousState} = usePaymentsTable();
+    const { t, revertToPreviousState,
+        firstWidget,
+        secondWidget,
+        thirdWidget,
+        handleFirstButtonClick,
+        handleSecondButtonClick,
+        handleThirdButtonClick
+    } = usePaymentsTable();
 
     const tabs: ITab[] = [
         { title: t("payment.transfer"), component: <TransferTab /> },
         { title: t("payment.check"), component: <CheckTab /> },
         { title: t("payment.cash"), component: <CashTab /> },
-        { title: t("payment.creditCard"), component: <CreditCardTab /> },
+        {
+            title: t("payment.creditCard"),
+            component:
+                <CreditCardTab
+                    firstWidget={firstWidget}
+                    secondWidget={secondWidget}
+                    thirdWidget={thirdWidget}
+                    handleFirstButtonClick={handleFirstButtonClick}
+                    handleSecondButtonClick={handleSecondButtonClick}
+                    handleThirdButtonClick={handleThirdButtonClick}
+                />
+        },
         { title: t("payment.bit"), component: <BitTab /> }
     ];
 
@@ -44,8 +62,8 @@ const PaymentModal = ({ openModal, onClose, selectedTab, getERPAccounts }: IPaym
             modalTitle={t('payment.choosePaymentMethod')}
             insideStyle={classes.insideStyle}
             openModal={openModal}
-            onClose={handleModalClose} 
-            >
+            onClose={handleModalClose}
+        >
             <div style={classes.boxStyle}>
                 <div style={classes.firstSection}><PrimaryTabsComponent tabs={tabs} selectedTabIndex={selectedTab} onSelectTab={handleTabChange}
                 /></div>

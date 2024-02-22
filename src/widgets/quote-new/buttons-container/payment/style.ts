@@ -12,6 +12,12 @@ const useStyle = () => {
                 flexDirection: "column" as "column",
                 padding: "0px 10px",
                 gap: "10px",
+                
+            },
+            firstWidgetStyle: {
+                display: "flex",
+                flexDirection: "column" as "column",
+                gap: "10px",
             },
             divStyle: {
                 height: "30%",
@@ -94,6 +100,12 @@ const useStyle = () => {
                 borderRadius: "4px",
                 width: "45%",
                 padding: "4px"
+            },
+            creditButtons:{
+                width: "fit-content", 
+                height: "fit-content",
+                 padding: "10px 10px",
+                  textDecoration: "underline"
             }
         };
     }, [theme]);

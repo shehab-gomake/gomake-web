@@ -155,6 +155,31 @@ const usePaymentsTable = () => {
         setCashAccountCode(previousState.cashAccountCode);
     };
 
+
+    const [firstWidget, setFirstWidget] = useState(true);
+    const [secondWidget, setSecondWidget] = useState(false);
+    const [thirdWidget, setThirdWidget] = useState(false);
+
+    
+
+    const handleFirstButtonClick = () => {
+        setFirstWidget(true);
+        setSecondWidget(false);
+        setThirdWidget(false);
+    };
+
+    const handleSecondButtonClick = () => {
+        setFirstWidget(false);
+        setSecondWidget(true);
+        setThirdWidget(false);
+    };
+
+    const handleThirdButtonClick = () => {
+        setFirstWidget(false);
+        setSecondWidget(false);
+        setThirdWidget(true);
+    };
+    
     return {
         t,
         documentItemValue,
@@ -177,7 +202,13 @@ const usePaymentsTable = () => {
         setTotalCash,
         setTotalBit,
         previousState,
-        isNewReceipt
+        isNewReceipt,
+        firstWidget,
+        secondWidget,
+        thirdWidget,
+        handleFirstButtonClick,
+        handleSecondButtonClick,
+        handleThirdButtonClick
     };
 };
 
