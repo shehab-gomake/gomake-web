@@ -4,7 +4,6 @@ import { usePaymentMethodsTabs } from "./use-payment-methods-tabs";
 import CreditCardIcon from '@mui/icons-material/CreditCard';
 import { SecondaryButton } from "@/components/button/secondary-button";
 import { PrimaryButton } from "@/components/button/primary-button";
-import { GomakePrimaryButton } from "@/components";
 
 const CreditCardTab = ({
     firstWidget,
@@ -81,7 +80,7 @@ const CreditCardTab = ({
             }
             {
                 secondWidget &&
-                <div style={classes.mainContainer}>
+                <div style={classes.firstWidgetStyle}>
                     <div style={classes.creditCardSecondInputsContainer}>
                         <input
                             {...getCardNumberProps({ onChange: handleCardNumberChange })}
@@ -108,7 +107,7 @@ const CreditCardTab = ({
             }
             {
                 thirdWidget && <div>
-                    <div style={classes.mainContainer}>
+                    <div style={classes.firstWidgetStyle}>
                         <div style={classes.creditCardSecondInputsContainer}>
                             <input
                                 style={classes.creditSecondCardInputs}
