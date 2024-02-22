@@ -7,6 +7,7 @@ const GET_ERP_ACCOUNTS_URL = "/v1/erp-service/receipts/get-ERP-accounts";
 const CREATE_RECEIPT_URL = "/v1/erp-service/receipts/create-receipt";
 const GET_ALL_RECEIPTS_URL = "/v1/erp-service/receipts/get-all-receipts";
 const GET_RECEIPT_BY_ID_URL = "/v1/erp-service/receipts/get-receipt-by-id";
+const CANCEL_RECEIPT_URL = "/v1/erp-service/receipts/cancel-receipt";
 
 const getClientPaymentItemsApi: ICallAndSetData = async (callApi, setState, data) => {
   return await getSetApiData(
@@ -59,10 +60,21 @@ const createReceiptApi: ICallAndSetData = async (callApi, setState, data) => {
   );
 };
 
+const cancelReceiptApi: ICallAndSetData = async (callApi, setState, data) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.PUT,
+    CANCEL_RECEIPT_URL,
+    setState,
+    data
+  );
+};
+
 export {
   getClientPaymentItemsApi,
   getERPAccountsApi,
   getAllReceiptsApi,
   getReceiptByIdApi,
-  createReceiptApi
+  createReceiptApi,
+  cancelReceiptApi
 };

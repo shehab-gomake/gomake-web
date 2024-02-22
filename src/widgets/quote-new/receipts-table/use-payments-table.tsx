@@ -108,7 +108,7 @@ const usePaymentsTable = () => {
             bitSum: Number(totalBit),
             cashSum: Number(totalCash),
             checksTotal: Number(totalChecks),
-            receiptChecks: checksReceipt,
+            receiptChecks: Number(totalChecks) === 0 ? [] : checksReceipt,
             transferAccount: transferState?.transferAccount,
             transferDate: transferState?.transferDate,
             transferReference: transferState?.transferReference,

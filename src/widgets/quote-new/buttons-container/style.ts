@@ -109,6 +109,11 @@ const useStyle = () => {
         height: "65%",
         overflow: "hidden" as "hidden"
       },
+      iconStyle: {
+        width: 62,
+        height: 62,
+        color: "#a1a2cd"
+      }
     };
   }, []);
 
