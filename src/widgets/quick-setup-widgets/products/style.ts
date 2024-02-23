@@ -10,7 +10,7 @@ const useStyle = () => {
       header: {
         color: '#504FA1',
         ...FONT_FAMILY.Outfit(600, 24),
-        textAlign: 'center'
+        textAlign: 'center' as 'center',
       },
       nextButton: {
         width: '50%',
