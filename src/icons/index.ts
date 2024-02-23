@@ -43,3 +43,5 @@ export * from "./sort-icon";
 export * from "./material-tabs";
 export * from "./warning";
 export * from "./enter-arrow";
+export * from "./excel-sheet"
+export * from "./tick-icon"

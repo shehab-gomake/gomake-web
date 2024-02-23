@@ -9,6 +9,7 @@ import { InputUpdatedValues } from "../input-updated-values";
 import { useQuoteTable } from "./use-quote-table";
 import { useState } from "react";
 import { useQuoteConfirmation } from "@/pages-components/quote-confirmation/use-quote-confirmation";
+import { useRouter } from "next/router";
 
 const RowMappingWidget = ({
   item,
@@ -24,6 +25,7 @@ const RowMappingWidget = ({
   getQuote,
   isQuoteConfirmation = false,
 }) => {
+  const router = useRouter()
   const { classes } = useStyle({ headerHeight });
   const [isConfirmation, setIsConfirmation] = useState(null);
   const {
@@ -76,17 +78,17 @@ const RowMappingWidget = ({
             alignItems: "center",
           }}
         >
-          {isQuoteConfirmation ? 
-          <Checkbox
-            icon={<CheckboxIcon />}
-            checkedIcon={<CheckboxCheckedIcon />}
-            checked={item?.isChecked}
-            onChange={(checked) => handleItemCheck(checked, item.id)}
-          /> : 
-          <Checkbox
-            icon={<CheckboxIcon />}
-            checkedIcon={<CheckboxCheckedIcon />}
-          />}
+          {isQuoteConfirmation ?
+            <Checkbox
+              icon={<CheckboxIcon />}
+              checkedIcon={<CheckboxCheckedIcon />}
+              checked={item?.isChecked}
+              onChange={(checked) => handleItemCheck(checked, item.id)}
+            /> :
+            <Checkbox
+              icon={<CheckboxIcon />}
+              checkedIcon={<CheckboxCheckedIcon />}
+            />}
           {parentIndex}
         </div>
       </PrimaryTableCell>
@@ -118,7 +120,7 @@ const RowMappingWidget = ({
           borderBottom: item?.childsDocumentItems && "none",
         }}
       >
-        <CharacterDetails details={item.details} getQuote={getQuote} documentItemId={item?.id} isQuoteConfirmation={isQuoteConfirmation} />
+        <CharacterDetails details={item.details} getQuote={getQuote} documentItemId={item?.id} canUpdate={router.query.Id ? false : !isQuoteConfirmation} />
       </PrimaryTableCell>
       <PrimaryTableCell
         style={{
@@ -131,7 +133,7 @@ const RowMappingWidget = ({
           <InputUpdatedValues
             value={item.quantity}
             onBlur={onBlurAmount}
-            isUpdate={isUpdateAmount}
+            isUpdate={router.query.Id ? false : isUpdateAmount}
             setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdateAmount}
             onInputChange={(e) => onInputChangeAmount(e)}
           />
@@ -148,7 +150,7 @@ const RowMappingWidget = ({
           <InputUpdatedValues
             value={item.discount ? item.discount : "0"}
             onBlur={onBlurDiscount}
-            isUpdate={isUpdateDiscount}
+            isUpdate={router.query.Id ? false : isUpdateDiscount}
             setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdateDiscount}
             onInputChange={(e) => onInputChangeDiscount(e)}
           />
@@ -165,7 +167,7 @@ const RowMappingWidget = ({
           <InputUpdatedValues
             value={item.price}
             onBlur={onBlurPrice}
-            isUpdate={isUpdatePrice}
+            isUpdate={router.query.Id ? false : isUpdatePrice}
             setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdatePrice}
             onInputChange={(e) => onInputChangePrice(e)}
           />
@@ -182,7 +184,7 @@ const RowMappingWidget = ({
           <InputUpdatedValues
             value={item.finalPrice}
             onBlur={onBlurFinalPrice}
-            isUpdate={isUpdateFinalPrice}
+            isUpdate={router.query.Id ? false : isUpdateFinalPrice}
             setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdateFinalPrice}
             onInputChange={(e) => onInputChangeFinalPrice(e)}
           />

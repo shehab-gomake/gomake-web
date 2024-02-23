@@ -14,11 +14,13 @@ import { currentCalculationConnectionId } from "@/store";
 const useCalculationsWorkFlowsSignalr = () => {
   const { data, connection, connectionId } =
     useGoMakeSignalr<ICalculationSignalRResult>({
-      url: config.erp_server + "/hubs/workFlows",
+      url:  "https://erp-service.gomake-dev.net/hubs/workFlows",
       accessToken: getUserToken(),
       methodName: "updateWorkFlows",
     });
   const [calculationSessionId, setConnectionSessionId] = useState<string>();
+  const [signalRPricingResult, setSignalRPricingResult] = useState<any>();
+
   const [signalrRWorkFlows, setSignalrRWorkFlows] =
     useState<ICalculationSignalRResult>();
   const [updatedSelectedWorkFlow, setUpdatedSelectedWorkFlow] =
@@ -41,6 +43,10 @@ const useCalculationsWorkFlowsSignalr = () => {
       connection.on("updateSelectedWorkFlow", (newData) => {
         setUpdatedSelectedWorkFlow(newData);
       });
+      connection.on("UpdatePricing", (newData) => {
+        console.log("UpdatePricing", newData);
+        setSignalRPricingResult(newData);
+      });
     }
   }, [connection]);
   return {
@@ -49,6 +55,7 @@ const useCalculationsWorkFlowsSignalr = () => {
     connectionId,
     updatedSelectedWorkFlow,
     calculationExceptionsLogs,
+    signalRPricingResult
   };
 };
 export { useCalculationsWorkFlowsSignalr };

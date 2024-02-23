@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import { FONT_FAMILY } from "@/utils/font-family";
 
 const useStyle = () => {
+
   const classes = useMemo(() => {
     return {
       writeCommentcontainer: {
@@ -65,10 +66,55 @@ const useStyle = () => {
         padding: "10px",
         borderRadius: 8,
       },
+      insideStyle: {
+        width: "800px",
+        height: 680,
+
+      },
+      statusLabel: {
+        color: "#344054",
+        ...FONT_FAMILY.Lexend(500, 14),
+        width: '100%',
+        textTransform: 'capitalize',
+        justifyContent: 'center',
+        boxSizing: 'border-box',
+        display: 'flex',
+        backgroundColor: "FFFFFF",
+        '&:hover': {
+          color: '#FFF',
+          backgroundColor: "#344054"
+        }
+      },
+      testStyle: {
+        display: "flex",
+        flexDirection: "column" as "column",
+        justifyContent: "space-between",
+      },
+      borderRadius: {
+        borderRadius: '4px'
+      },
+      boxStyle: {
+        display: "flex",
+        flexDirection: "column" as "column",
+        justifyContent: "space-between",
+        height: "100%"
+      },
+      saveBtn: {
+        display: "flex",
+        alignSelf: "flex-start",
+        width: "100%"
+      },
+      firstSection: {
+        maxHeight: "70%",
+        height: "65%",
+        overflow: "hidden" as "hidden"
+      },
     };
   }, []);
+
   return {
     classes,
   };
 };
+
 export { useStyle };

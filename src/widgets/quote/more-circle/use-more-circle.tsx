@@ -30,42 +30,43 @@ const useMoreCircle = ({
   };
 
 
-  const onClickEditQuoteItem = (quoteItem , documentType) => {
+  const onClickEditQuoteItem = (quoteItem, documentType) => {
     navigate(
       `/products/edit?clientTypeId=${quoteItem?.clientTypeId}&customerId=${quoteItemValue?.customerID}&productId=${quoteItem?.productID}&documentItemId=${quoteItem?.id}&documentType=${documentType}${router?.query?.Id ? `&documentId=${router?.query?.Id}` : ""}`
     );
   };
-  const onClickDuplicateQuoteItem = (quoteItem , documentType) => {
+  const onClickDuplicateQuoteItem = (quoteItem, documentType) => {
     navigate(
       `/products/duplicate?clientTypeId=${quoteItem?.clientTypeId}&customerId=${quoteItemValue?.customerID}&productId=${quoteItem?.productID}&documentItemId=${quoteItem?.id}&documentType=${documentType}${router?.query?.Id ? `&documentId=${router?.query?.Id}` : ""}`
     );
   };
   const menuList = [
-    quoteItem.productType === 0 &&{
+    quoteItem.productType === 0 && !router.query.isNewCreation && !router.query.Id && {
       name: "Edits",
       icon: <EditMenuIcon />,
-      onclick: () => onClickEditQuoteItem(quoteItem , documentType),
+      onclick: () => onClickEditQuoteItem(quoteItem, documentType),
     },
-    quoteItem.productType === 0 &&{
-      name: "Duplicate", 
+    quoteItem.productType === 0 && !router.query.isNewCreation && {
+      name: "Duplicate",
       icon: <DuplicateMenuIcon />,
-      onclick: () => onClickDuplicateQuoteItem(quoteItem , documentType),
+      onclick: () => onClickDuplicateQuoteItem(quoteItem, documentType),
     },
-    quoteItem.productType === 0 && documentType===DOCUMENT_TYPE.quote && {
+    quoteItem.productType === 0 && documentType === DOCUMENT_TYPE.quote && !router.query.isNewCreation && {
       name: "Duplicate with different QTY",
       icon: <DuplicateWithDifferentMenuIcon />,
       onclick: () => onClickDuplicateWithDifferentQTY(quoteItem),
     },
-    {
+    !router.query.isNewCreation && {
       name: "Negotiate request",
       icon: <NegotiateRequestIcon />,
       // onclick: () => onOpenNegotiateRequest(),
     },
-    quoteItem.productType === 0 && {
+    !router.query.isNewCreation && quoteItem.productType === 0 && {
       name: "Analysis",
       icon: <AnalysisIcon />,
       onclick: () => null,
     },
+    !router.query.Id &&
     {
       name: "Delete",
       icon: <DeleteMenuIcon />,

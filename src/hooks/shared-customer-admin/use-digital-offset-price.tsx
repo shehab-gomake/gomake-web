@@ -136,6 +136,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     connectionId,
     updatedSelectedWorkFlow,
     calculationExceptionsLogs,
+    signalRPricingResult
   } = useCalculationsWorkFlowsSignalr();
   const [currentSignalRConnectionId,setCurrentSignalRConnectionId] = useRecoilState(currentCalculationConnectionId);
   const [currentCalculationSessionId,setCurrentCalculationSessionId] = useState<string>("");
@@ -208,7 +209,18 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       }
     }
   }, [calculationResult]);
-
+  useEffect(()=>{
+    if(signalRPricingResult && signalRPricingResult.productItemValueDraftId === currentCalculationSessionId){
+      setLoading(false);
+      setCurrentProductItemValueTotalPrice(
+          parseFloat(signalRPricingResult.totalPrice)
+      );
+      setCalculationProgress({
+        totalWorkFlowsCount: signalRPricingResult.totalWorkFlows,
+        currentWorkFlowsCount: signalRPricingResult.currentWorkFlowIndex,
+      });
+    }
+  },[signalRPricingResult])
   useEffect(() => {
     setWorkFlows([]);
     setCurrentProductItemValueTotalPrice(null);
@@ -1853,7 +1865,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       }
       const res = await callApi(
         "POST",
-        `/v1/calculation-service/calculations/calculate-product`,
+        `/v1/calculation-service/calculations/calculate-productV2`,
         {
           signalRConnectionId: connectionId,
           clientId: router?.query?.customerId,

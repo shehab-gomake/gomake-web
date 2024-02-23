@@ -12,9 +12,10 @@ const CustomerAuthLayout = ({
                                 children,
                                 permissionEnumValue,
                                 customGap = LAYOUT_DEFAULT_GAP,
+                                allowAnonymous,
                                 disableHeaderSideMenu
                             }: IAuthLayout) => {
-    const {canAccess} = useAuthLayoutHook(permissionEnumValue);
+    const {canAccess} = useAuthLayoutHook(permissionEnumValue,allowAnonymous);
     const {clasess} = useStyle({
         isHover: false,
         navStatus: null,

@@ -11,21 +11,21 @@ const useQuoteTable = ({
   const [isUpdatePrice, setIsUpdatePrice] = useState(null);
   const [isUpdateFinalPrice, setIsUpdateFinalPrice] = useState(null);
   const onBlurAmount = async () => {
-    getCalculateQuoteItem(item?.id, 0, item.quantity);
+    getCalculateQuoteItem(item, 0, item.quantity);
     setIsUpdateAmount(null);
   };
   const onInputChangeAmount = (e) => {
     changedocumentItems(index, "quantity", e);
   };
   const onBlurDiscount = async () => {
-    getCalculateQuoteItem(item?.id, 2, item.discount);
+    getCalculateQuoteItem(item, 2, item.discount);
     setIsUpdateDiscount(null);
   };
   const onInputChangeDiscount = (e) => {
     changedocumentItems(index, "discount", e);
   };
   const onBlurPrice = async () => {
-    getCalculateQuoteItem(item?.id, 1, item.price);
+    getCalculateQuoteItem(item, 1, item.price);
     setIsUpdatePrice(null);
   };
   const onInputChangePrice = (e) => {
@@ -33,7 +33,7 @@ const useQuoteTable = ({
   };
 
   const onBlurFinalPrice = async () => {
-    getCalculateQuoteItem(item?.id, 3, item.finalPrice);
+    getCalculateQuoteItem(item, 3, item.finalPrice);
     setIsUpdateFinalPrice(null);
   };
   const onInputChangeFinalPrice = (e) => {

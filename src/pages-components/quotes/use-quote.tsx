@@ -58,6 +58,8 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
   const [pageSize, setPageSize] = useState(DEFAULT_VALUES.PageSize);
   const selectedClient = useRecoilValue<any>(selectedClientState);
   const [openAddRule, setOpenAddRule] = useState<boolean>(false);
+  const documentPath = DOCUMENT_TYPE[docType];
+
 
   const onCloseAddRuleModal = () => {
     setOpenAddRule(false);
@@ -345,6 +347,14 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
       label: t("sales.quote.receiptList"),
       value: DOCUMENT_TYPE.receipt,
     },
+    {
+      label: t("sales.quote.deliveryNoteRefundList"),
+      value: DOCUMENT_TYPE.deliveryNoteRefund,
+    },
+    {
+      label: t("sales.quote.invoiceRefundList"),
+      value: DOCUMENT_TYPE.invoiceRefund,
+    },
   ];
 
   const documentLabel = documentsLabels.find(
@@ -553,7 +563,9 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     handleSecondCardClick,
     onCloseAddRuleModal,
     onOpenAddRuleModal,
-    openAddRule
+    openAddRule,
+    navigate,
+    documentPath
   };
 };
 

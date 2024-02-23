@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import { useQuoteWidget } from "@/pages-components/admin/home/widgets/quote-widget/use-quote-widget";
 import { useRecoilValue } from "recoil";
-import { businessListsState, quoteConfirmationState} from "@/store";
+import { businessListsState, quoteConfirmationState } from "@/store";
 import { InputUpdatedValues } from "@/widgets/quote-new/input-updated-values";
 
 const BusinessWidget = () => {
@@ -36,7 +36,7 @@ const BusinessWidget = () => {
                     label={t("sales.quote.purchaseNumber")}
                     setIsUpdate={setIsConfirmation}
                     inputMainContainerStyle={classes.inputMainContainer}
-                    speicalStyle={{ padding: "0px" , cursor:"none" }}
+                    speicalStyle={{ padding: "0px", cursor: "none" }}
                 />
                 <InputUpdatedValues
                     value={quoteConfirm?.client?.name}

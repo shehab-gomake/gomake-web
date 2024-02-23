@@ -1,17 +1,13 @@
 import React from "react";
 import { useStyle } from "./style";
-import {
-  ArrowDownNewIcon,
-  PlusIcon,
-  UploadNewIcon,
-} from "@/icons";
+import { ArrowDownNewIcon, PlusIcon } from "@/icons";
 import { useTranslation } from "react-i18next";
 import { GomakePrimaryButton } from "@/components";
 import { OrderNowModal } from "@/widgets/quote/total-price-and-vat/order-now-modal";
 import { useButtonsContainer } from "./use-buttons-container";
-import { useRecoilValue } from "recoil";
-import { quoteItemState } from "@/store";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
+import { useRouter } from "next/router";
+import { PaymentModal } from "./payment/payment-modal";
 
 const ButtonsContainer = ({
   onOpenNewItem,
@@ -20,55 +16,66 @@ const ButtonsContainer = ({
   handleSendBtnClick,
   onOpenDeliveryModal,
   documentType,
+  onOpenCopyFromOrder,
+  handleSaveBtnClickForDocument,
+  onOpenCopyFromDeliveryNote
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
-  const { openOrderNowModal, onClickCloseOrderNowModal, onClickOpenOrderNowModal, onClickConfirmWithoutNotification, onClickConfirmWithNotification, onClickPrint } = useButtonsContainer(documentType);
-
+  const { openOrderNowModal, onClickCloseOrderNowModal, onClickOpenOrderNowModal, onClickConfirmWithoutNotification, onClickConfirmWithNotification, onClickPrint, onClickClosePaymentModal, onClickOpenPaymentModal, openPaymentModal, selectedTabIndex, getERPAccounts } = useButtonsContainer(documentType);
+  const router = useRouter()
   return (
     <div style={classes.writeCommentcontainer}>
       <div style={classes.btnsContainer}>
-        <GomakePrimaryButton
-          leftIcon={<PlusIcon stroke={"#344054"} />}
-          style={classes.btnContainer}
-          onClick={() => onOpenNewItem()}
-        >
-          {t("sales.quote.addNewItems")}
-        </GomakePrimaryButton>
-        {/* <GomakePrimaryButton
-          leftIcon={<PlusIcon stroke={"#344054"} />}
-          style={classes.btnContainer}
-        >
-          {t("sales.quote.addExistItem")}
-        </GomakePrimaryButton> */}
-        <GomakePrimaryButton
-          leftIcon={<PlusIcon stroke={"#344054"} />}
-          style={classes.btnContainer}
-          onClick={() =>onOpenDeliveryModal()}
-        >
-          {t("sales.quote.addDelivery")}
-        </GomakePrimaryButton>
+        {
+          !router.query.Id && <GomakePrimaryButton
+            leftIcon={<PlusIcon stroke={"#344054"} />}
+            style={classes.btnContainer}
+            onClick={() => onOpenNewItem()}
+          >
+            {t("sales.quote.addNewItems")}
+          </GomakePrimaryButton>
+        }
+        {
+          (documentType === DOCUMENT_TYPE.quote || documentType === DOCUMENT_TYPE.order) && <GomakePrimaryButton
+            leftIcon={<PlusIcon stroke={"#344054"} />}
+            style={classes.btnContainer}
+            onClick={() => onOpenDeliveryModal()}
+          >
+            {t("sales.quote.addDelivery")}
+          </GomakePrimaryButton>
+        }
+        {
+          router.query.isNewCreation && documentType !== DOCUMENT_TYPE.deliveryNoteRefund && documentType !== DOCUMENT_TYPE.invoiceRefund && <GomakePrimaryButton
+            leftIcon={<PlusIcon stroke={"#344054"} />}
+            style={classes.btnContainer}
+            onClick={onOpenCopyFromOrder}
+          >
+            {t("sales.quote.copyFromOrder")}
+          </GomakePrimaryButton>
+        }
+        {
+          router.query.isNewCreation && documentType === DOCUMENT_TYPE.invoice && <GomakePrimaryButton
+            leftIcon={<PlusIcon stroke={"#344054"} />}
+            style={classes.btnContainer}
+            onClick={onOpenCopyFromDeliveryNote}
+          >
+            {t("sales.quote.copyFromDeliveryNote")}
+          </GomakePrimaryButton>
+        }
+
       </div>
       <div style={classes.btnsContainer}>
-        {/* <GomakePrimaryButton
-          leftIcon={<UploadNewIcon />}
-          style={classes.btnSecondContainer}
-        >
-          {t("sales.quote.attachFiles")}
-        </GomakePrimaryButton> */}
-        {/* <GomakePrimaryButton
-          rightIcon={<ArrowDownNewIcon />}
-          style={classes.btnSecondContainer}
-        >
-          {t("sales.quote.copyTo")}
-        </GomakePrimaryButton> */}
-        <GomakePrimaryButton
-          rightIcon={<ArrowDownNewIcon />}
-          style={classes.btnSecondContainer}
-          onClick={handleSendBtnClick}
-        >
-          {t("login.send")}
-        </GomakePrimaryButton>
+        {
+          !router.query.isNewCreation &&
+          <GomakePrimaryButton
+            rightIcon={<ArrowDownNewIcon />}
+            style={classes.btnSecondContainer}
+            onClick={handleSendBtnClick}
+          >
+            {t("login.send")}
+          </GomakePrimaryButton>
+        }
         <GomakePrimaryButton
           style={classes.btnSecondContainer}
           onClick={() => onClickPrint()}
@@ -84,13 +91,10 @@ const ButtonsContainer = ({
         </GomakePrimaryButton>}
         <GomakePrimaryButton
           style={classes.btnThirdContainer}
-          onClick={handleSaveBtnClick}
+          onClick={documentType != DOCUMENT_TYPE.quote ? handleSaveBtnClickForDocument : handleSaveBtnClick}
         >
           {t("materials.buttons.save")}
         </GomakePrimaryButton>
-        {/* <GomakePrimaryButton style={classes.btnThirdContainer}>
-          {t("sales.quote.managerApproval")}
-        </GomakePrimaryButton> */}
         {documentType === DOCUMENT_TYPE.quote && <GomakePrimaryButton style={classes.btnOrderNowContainer} onClick={onClickOpenOrderNowModal}>
           {t("sales.quote.orderNowTitle")}
         </GomakePrimaryButton>}
@@ -100,6 +104,7 @@ const ButtonsContainer = ({
           confirmWithoutNotification={onClickConfirmWithoutNotification}
           confirmWithNotification={onClickConfirmWithNotification}
         />
+        <PaymentModal onClose={onClickClosePaymentModal} openModal={openPaymentModal} selectedTab={selectedTabIndex} getERPAccounts={getERPAccounts} />
       </div>
     </div>
   );

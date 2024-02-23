@@ -17,7 +17,9 @@ const useAddressWidget = (docType : DOCUMENT_TYPE) => {
 
 
     const [openModal, setOpenModal] = useRecoilState<boolean>(addressModalState);
-    const [addressState, setAddressState] = useState<any>(quoteStateValue?.documentAddresses[0]);
+    
+    // const [addressState, setAddressState] = useState<any>(quoteStateValue?.documentAddresses[0]);
+    const [addressState, setAddressState] = useState<any>(quoteStateValue?.documentAddresses?.[0]);
     const [selectedAddress, setSelectedAddress] = useState<any>(null);
     const [isNewAddressState, setIsNewAddressState] = useRecoilState<boolean>(isNewAddress);
     const [flag, setFlag] = useState<boolean>(false);
@@ -28,7 +30,7 @@ const useAddressWidget = (docType : DOCUMENT_TYPE) => {
 
     useEffect(() => {
         getAllClientAddress();
-        if (quoteStateValue?.documentAddresses.length > 0) {
+        if (quoteStateValue?.documentAddresses?.length > 0) {
             const addressId = quoteStateValue?.documentAddresses[0]?.addressID;
             const city = quoteStateValue?.documentAddresses[0]?.city;
             setFlag(true);

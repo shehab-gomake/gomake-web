@@ -24,6 +24,9 @@ import { SettingQuoteMenu } from "@/widgets/quote-new/setting-quote-menu";
 import { AddDeliveryModal } from "@/widgets/quote-new/modals-widgets/add-delivery-modal/add-delivery-modal";
 import { DOCUMENT_TYPE } from "../quotes/enums";
 import { ButtonsConfirmContainer } from "@/widgets/quote-new/buttons-cofirm-container";
+import { CopyFromOrderModal } from "@/widgets/quote-new/modals-widgets/copy-from-order-modal/copy-from-order-modal";
+import { ReceiptsTable } from "@/widgets/quote-new/receipts-table";
+import { useRouter } from "next/router";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -98,6 +101,9 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
     setSelectDate,
     setIsUpdateBusinessName,
     setSelectBusiness,
+    openCopyFromOrderModal,
+    onCloseCopyFromOrder,
+    onOpenCopyFromOrder,
     setIsUpdateAddress,
     setIsUpdatePurchaseNumber,
     setIsUpdateBusinessCode,
@@ -156,9 +162,13 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
     updateCurrency,
     refreshExchangeRate,
     getQuote,
-    selectConfirmBusiness
-  } = useQuoteNew({docType :documentType  , isQuoteConfirmation : isQuoteConfirmation });
-
+    selectConfirmBusiness,
+    handleSaveBtnClickForDocument,
+    onCloseCopyFromDeliveryNote,
+    onOpenCopyFromDeliveryNote,
+    openCopyFromDeliveryNoteModal
+  } = useQuoteNew({ docType: documentType, isQuoteConfirmation: isQuoteConfirmation });
+  const router = useRouter()
   return (
     <>
       {quoteState?.id && (
@@ -168,23 +178,26 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
               <div style={classes.titleSettingContainer}>
                 <div style={classes.titleQuateContainer}>
                   <HeaderTitle
-                    title={documentTitle}
+                    title={router?.query?.isNewCreation ? `${t("sales.quote.createNew")} ${documentTitle}` : documentTitle}
                     marginBottom={1}
                     marginTop={1}
                     color="rgba(241, 53, 163, 1)"
                   />
-                  <div style={classes.quoteNumberStyle}>
+                  {!router?.query?.isNewCreation && <div style={classes.quoteNumberStyle}>
                     {" - "} {quoteState?.number}
-                  </div>
+                  </div>}
+
                 </div>
                 {!isQuoteConfirmation && <div style={classes.settingsStatusContainer}>
-                  <div style={classes.quoteStatusContainer}>
-                    {_renderQuoteStatus(
-                      quoteState?.documentStatus,
-                      quoteState,
-                      t
-                    )}
-                  </div>
+                  {!router?.query?.isNewCreation &&
+                    <div style={classes.quoteStatusContainer}>
+                      {_renderQuoteStatus(
+                        quoteState?.documentStatus,
+                        quoteState,
+                        t
+                      )}
+                    </div>
+                  }
                   <IconButton
                     style={{ marginRight: 4 }}
                     onClick={handleSettingMenuClick}
@@ -282,7 +295,7 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
                 paddingRight: 12,
               }}
             >
-              <QuoteForPriceTable
+              {documentType !== DOCUMENT_TYPE.receipt && <QuoteForPriceTable
                 documentItems={isQuoteConfirmation ? quoteConfirm?.documentItems : documentItems}
                 tableHeaders={tableHeaders}
                 columnWidths={columnWidths}
@@ -301,6 +314,13 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
                 getQuote={getQuote}
                 isQuoteConfirmation={isQuoteConfirmation}
               />
+              }
+
+
+              {
+                documentType === DOCUMENT_TYPE.receipt &&
+                <ReceiptsTable />
+              }
             </div>
             <WriteCommentComp getQuote={getQuote} isQuoteConfirmation={isQuoteConfirmation} />
           </div>
@@ -312,11 +332,14 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
               handleSaveBtnClick={handleSaveBtnClick}
               handleSendBtnClick={handleSendBtnClick}
               documentType={documentType}
+              onOpenCopyFromOrder={onOpenCopyFromOrder}
+              handleSaveBtnClickForDocument={handleSaveBtnClickForDocument}
+              onOpenCopyFromDeliveryNote={onOpenCopyFromDeliveryNote}
             />
           }
         </div>
       )}
-      {(isQuoteConfirmation && !quoteConfirm?.isConfirmed )  && <ButtonsConfirmContainer />}
+      {(isQuoteConfirmation && !quoteConfirm?.isConfirmed) && <ButtonsConfirmContainer />}
       <AddNewItemModal
         openModal={openAddNewItemModal}
         onClose={onCloseNewItem}
@@ -326,6 +349,19 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
         openModal={openAddDeliveryModal}
         onClose={onCloseDeliveryModal}
         onClickAdd={onAddDelivery}
+      />
+      <CopyFromOrderModal
+        openModal={openCopyFromOrderModal}
+        onClose={onCloseCopyFromOrder}
+        documentType={documentType}
+        cliendDocumentType={1}
+
+      />
+      <CopyFromOrderModal
+        openModal={openCopyFromDeliveryNoteModal}
+        onClose={onCloseCopyFromDeliveryNote}
+        documentType={documentType}
+        cliendDocumentType={2}
       />
       <DuplicateItemModal
         openModal={openDuplicateWithDifferentQTYModal}
