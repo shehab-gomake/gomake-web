@@ -6,6 +6,7 @@ import {useTranslation} from "react-i18next";
 import {PrimaryButton} from "@/components/button/primary-button";
 import {PhoneInputComponent} from "@/components/form-inputs/phone-input";
 import React from "react";
+import {emailRegex} from "@/utils/regex";
 
 const SignupPersonalForm = () => {
     const {state, onChange, loading, onclickNext} = usePersonalForm();
@@ -28,6 +29,7 @@ const SignupPersonalForm = () => {
                 <GomakeTextInput onChange={(e) => onChange('email', e.target.value)}
                                  style={classes.input}
                                  placeholder={t('signup.email')}
+                                 error={state.email ? !emailRegex.test(state.email) : false}
                                  value={state.email}/>
                 <PhoneInputComponent
                     onChange={(e) => onChange('phone', e)}
@@ -36,6 +38,7 @@ const SignupPersonalForm = () => {
                 <GomakeTextInput onChange={(e) => onChange('password', e.target.value)}
                                  style={classes.input}
                                  placeholder={t('signup.password')}
+                                 error={state.password?.length < 8}
                                  type={'password'}
                                  value={state.password}/>
                 <GomakeTextInput onChange={(e) => onChange('rePassword', e.target.value)}

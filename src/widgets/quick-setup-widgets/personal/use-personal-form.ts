@@ -4,6 +4,7 @@ import {useState} from "react";
 import {useGomakeAxios, useSnackBar} from "@/hooks";
 import {useRouter} from "next/router";
 import {createNewCompanyUserApi} from "@/services/api-service/quick-setup/personal/personal-endpoints";
+import {updateTokenStorage} from "@/services/storage-data";
 
 const usePersonalForm = () => {
     const [state, setState] = useRecoilState(signupPersonalState);
@@ -23,6 +24,10 @@ const usePersonalForm = () => {
         setLoading(true);
         const callBack = (res) => {
             if (res.success) {
+                updateTokenStorage(res?.data?.token?.token);
+                console.log(res?.data?.token?.token);
+                 // push('/quick-setup/machines');
+                window.location.replace(`https://${res?.data?.domain}/quick-setup/machines`);
             } else {
                 alertFaultAdded();
             }
