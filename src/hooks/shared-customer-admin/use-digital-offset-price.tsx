@@ -186,7 +186,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           currentWorkFlows[0].selected = true;
         }
         selectedWorkFlow = currentWorkFlows?.find((x) => x.selected);
-        /*if (
+        if (
           selectedWorkFlow &&
           selectedWorkFlow.totalPrice &&
           selectedWorkFlow.totalPrice.values
@@ -194,7 +194,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           setCurrentProductItemValueTotalPrice(
             parseFloat(selectedWorkFlow.totalPrice.values[0])
           );
-        }*/
+        }
        // const currentWorkFlowsCount = currentWorkFlows.length;
        // const totalWorkFlowsCount =
          // calculationResult?.productItemValue.totalWorkFlows;
