@@ -4,14 +4,14 @@ import { useTranslation } from "react-i18next";
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import { MoreMenuWidget } from "../more-circle";
 import { useRecoilState, useRecoilValue, useResetRecoilState, useSetRecoilState } from "recoil";
-import { CheckData, ERPAccountsData, ERPAccountsState, checksRowState, totalBitState, totalCashState, totalChecksState, totalCreditCardState, totalPaymentState, totalTransferState } from "../../states";
+import { CheckData, CreditCardData, ERPAccountsData, ERPAccountsState, checksRowState, creditCardState, totalBitState, totalCashState, totalChecksState, totalCreditCardState, totalPaymentState, totalTransferState } from "../../states";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { createCreditTransactionApi } from "@/services/api-service/generic-doc/receipts-api";
 
 const usePaymentMethodsTabs = () => {
     const { t } = useTranslation();
     const { callApi } = useGomakeAxios();
-    const { alertSuccessUpdate ,  alertFaultUpdate } = useSnackBar();
+    const { alertSuccessUpdate, alertFaultUpdate } = useSnackBar();
     const setTotalPayment = useSetRecoilState<number>(totalPaymentState);
     const [totalChecks, setTotalChecks] = useRecoilState<number>(totalChecksState);
     const [data, setData] = useRecoilState<CheckData[]>(checksRowState);
@@ -122,14 +122,14 @@ const usePaymentMethodsTabs = () => {
     const [totalCash, setTotalCash] = useRecoilState<number>(totalCashState);
     const handleTotalCashChange = (value) => {
         setTotalCash(value);
-        setTotalPayment(Number(value) + Number(totalBit) + Number(totalTransfer) + Number(totalChecks)+ Number(totalCreditCard));
+        setTotalPayment(Number(value) + Number(totalBit) + Number(totalTransfer) + Number(totalChecks) + Number(totalCreditCard));
     };
 
     // Bit tab //
     const [totalBit, setTotalBit] = useRecoilState<number>(totalBitState);
     const handleTotalBitChange = (value) => {
         setTotalBit(value);
-        setTotalPayment(Number(value) + Number(totalCash) + Number(totalTransfer) + Number(totalChecks)+ Number(totalCreditCard))
+        setTotalPayment(Number(value) + Number(totalCash) + Number(totalTransfer) + Number(totalChecks) + Number(totalCreditCard))
     };
 
     // transfer tab //
@@ -142,15 +142,15 @@ const usePaymentMethodsTabs = () => {
     // credit card tab //
     const [totalCreditCard, setTotalTotalCreditCard] = useRecoilState<number>(totalCreditCardState);
     const handleTotalCreditCardChange = (value) => {
+        handleChangeInputs("transactionSum", value)
         setTotalTotalCreditCard(value);
         setTotalPayment(Number(value) + Number(totalCash) + Number(totalBit) + Number(totalChecks) + Number(totalTransfer))
     };
 
-
     useEffect(() => {
         const newTotalChecks = data.reduce((total, row) => total + Number(row.checkSum), 0);
         setTotalChecks(newTotalChecks);
-        setTotalPayment(Number(newTotalChecks) + Number(totalCash) + Number(totalBit) + Number(totalTransfer)+ Number(totalCreditCard));
+        setTotalPayment(Number(newTotalChecks) + Number(totalCash) + Number(totalBit) + Number(totalTransfer) + Number(totalCreditCard));
     }, [data, totalCash, totalBit, totalTransfer]);
 
 
@@ -159,48 +159,21 @@ const usePaymentMethodsTabs = () => {
         value: account.code,
     }));
 
-
     const formattedOptions = mapERPAccountsOptions.map((code) => ({
         text: code.label,
         value: code.value,
-      }))
+    }))
 
     ////////////////////////////////////// CREDIT CARD /////////////////////////////////////////
 
-    const [creditCard, setCreditCard] = useState({
-        cardNumber: "",
-        expiryDate: "",
-        cvv: "",
-        id: "",
-
-    });
-
-    const [receiptCreditCards, setReceiptCreditCards] = useState({
-        cardNumber: "",
-        expiryDate: "",
-        cvv: "",
-        id: "",
-        /*
-                cardNumber: "",
-                transactionType:"",
-        numberOfPayments: "",
-        expDate_MMYY:"",  "cardNumber": "string",
-          "cvv": "string",
-          "expDate_MMYY": "string",
-          "transactionSum": 0,
-                cvv: "",
-                holderID:"",
-
-        */
-    });
-
+    const [creditCard, setCreditCard] = useRecoilState<CreditCardData>(creditCardState);
 
     const handleExpiryDateChange = (e) => {
         const formattedInput = e.target.value.replace(/\D/g, '');
         if (formattedInput.length <= 4) {
             setCreditCard({
                 ...creditCard,
-                expiryDate: formattedInput
+                expDate_MMYY: formattedInput
             });
         }
     };
@@ -225,27 +198,24 @@ const usePaymentMethodsTabs = () => {
         }
     };
 
-    const handleCardIdChange = (e) => {
-        if (e.target.value.length <= 9) {
-            setCreditCard({
-                ...creditCard,
-                id: e.target.value
-            });
-        }
-    };
-        
+    const handleChangeInputs = (key, value) => {
+        setCreditCard((prev) => ({
+            ...prev,
+            [key]: value,
+        }));
+    }
+
     /////////////////////////////////////////////////////////////////////////////
     const transactionTypes = [
-        {
-            label: t("payment.regular"),
-            value: 1
-        }, { label: t("payment.installments"), value: 2 }
+        { label: t("payment.regular"), value: 1 },
+        { label: t("payment.installments"), value: 2 }
     ];
+
     const numberOfPayments = Array.from({ length: 13 }, (_, index) => ({
         label: index + 1,
         value: index + 1,
     }));
- 
+
 
 
     const onClickMakePayment = async (transactionState) => {
@@ -256,7 +226,7 @@ const usePaymentMethodsTabs = () => {
                 alertFaultUpdate();
             }
         };
-        await createCreditTransactionApi(callApi, callBack  , creditCard);
+        await createCreditTransactionApi(callApi, callBack, creditCard);
     };
 
     return {
@@ -274,14 +244,14 @@ const usePaymentMethodsTabs = () => {
         handleCardNumberChange,
         handleExpiryDateChange,
         handleCVVChange,
-        handleCardIdChange,
         formattedOptions,
         onClickMakePayment,
-        receiptCreditCards,
         numberOfPayments,
         transactionTypes,
         totalCreditCard,
-        handleTotalCreditCardChange
+        handleTotalCreditCardChange,
+        handleChangeInputs,
+        creditCard
     };
 
 };

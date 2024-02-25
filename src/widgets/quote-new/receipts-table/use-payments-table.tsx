@@ -2,7 +2,7 @@ import { useTranslation } from "react-i18next";
 import { TableCell, styled, tableCellClasses } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useRecoilState, useResetRecoilState, useSetRecoilState } from "recoil";
-import { totalDocumentsState, totalPaymentState, finalTotalPaymentState, totalCashState, totalBitState, totalTransferState, totalChecksState, checksRowState, CheckData, checkedItemsIdsState, transferTabState, prevStateState, prevStateStateData, taxDeductionState, checksAccountCodeState,  totalCreditCardState } from "../buttons-container/states";
+import { totalDocumentsState, totalPaymentState, finalTotalPaymentState, totalCashState, totalBitState, totalTransferState, totalChecksState, checksRowState, CheckData, checkedItemsIdsState, transferTabState, prevStateState, prevStateStateData, taxDeductionState, checksAccountCodeState,  totalCreditCardState, CreditCardData, creditCardState } from "../buttons-container/states";
 import { quoteItemState } from "@/store";
 import { useRouter } from "next/router";
 
@@ -48,8 +48,10 @@ const usePaymentsTable = () => {
     const [cashAccountCode, setCashAccountCode] = useRecoilState<any>(checksAccountCodeState);
     const resetCashAccountCode = useResetRecoilState(checksAccountCodeState);
     // creditCard 
-    const resetTotalCreditCard= useResetRecoilState(totalCreditCardState);
     const [totalCreditCard, setTotalCreditCard] = useRecoilState<number>(totalCreditCardState);
+    const resetTotalCreditCard= useResetRecoilState(totalCreditCardState);
+    const [creditCardSate , setCreditCardState] = useRecoilState<CreditCardData>(creditCardState);
+    const resetCreditCardState= useResetRecoilState(creditCardState);
 
     const isNewReceipt = router?.query?.isNewCreation;
     const columnWidths =
@@ -159,7 +161,8 @@ const usePaymentsTable = () => {
             taxDeduction: taxDeduction,
             checkAccountCode: checkAccountCode,
             cashAccountCode: cashAccountCode,
-            totalCreditCard: totalCreditCard
+            totalCreditCard: totalCreditCard,
+            creditCardState:creditCardSate
         });
     };
 
@@ -174,10 +177,11 @@ const usePaymentsTable = () => {
         setCheckAccountCode(previousState.checkAccountCode);
         setCashAccountCode(previousState.cashAccountCode);
         setTotalCreditCard(previousState.totalCreditCard);
+        setCreditCardState(previousState.creditCardState);
     };
 
     const resetReceiptState = () => {
-        setCheckedItems({});
+        setCheckedItems(null);
         resetCheckedItemsIds();
         resetTotalPayment();
         resetFinalTotalPayment();
@@ -194,6 +198,7 @@ const usePaymentsTable = () => {
         resetCheckAccountCode();
         resetCashAccountCode();
         resetTotalCreditCard();
+        resetCreditCardState();
     };
 
     const [firstWidget, setFirstWidget] = useState(true);
@@ -202,8 +207,9 @@ const usePaymentsTable = () => {
 
 
     const handleFirstButtonClick = () => {
-        setTotalPayment( totalPayment - totalCreditCard);
+        setTotalPayment(totalPayment - totalCreditCard);
         resetTotalCreditCard();
+        resetCreditCardState();
 
         setFirstWidget(true);
         setSecondWidget(false);
@@ -213,6 +219,7 @@ const usePaymentsTable = () => {
     const handleSecondButtonClick = () => {
         setTotalPayment(totalPayment - totalCreditCard);
         resetTotalCreditCard();
+        resetCreditCardState();
 
         setFirstWidget(false);
         setSecondWidget(true);
@@ -222,6 +229,7 @@ const usePaymentsTable = () => {
     const handleThirdButtonClick = () => {
         setTotalPayment(totalPayment - totalCreditCard);
         resetTotalCreditCard();
+        resetCreditCardState();
 
         setFirstWidget(false);
         setSecondWidget(false);

@@ -5,7 +5,6 @@ import CreditCardIcon from '@mui/icons-material/CreditCard';
 import { SecondaryButton } from "@/components/button/secondary-button";
 import { PrimaryButton } from "@/components/button/primary-button";
 import { GoMakeAutoComplate } from "@/components";
-import { useState } from "react";
 
 const CreditCardTab = ({
     firstWidget,
@@ -17,20 +16,21 @@ const CreditCardTab = ({
 }) => {
     const { classes } = useStyle();
     const { getCardNumberProps, getExpiryDateProps, getCVCProps } = usePaymentInputs();
+    
     const {
         t,
         handleCardNumberChange,
         handleExpiryDateChange,
         handleCVVChange,
-        handleCardIdChange,
         onClickMakePayment,
         numberOfPayments,
         transactionTypes,
         totalCreditCard,
-        handleTotalCreditCardChange
+        handleTotalCreditCardChange,
+        creditCard,
+        handleChangeInputs
     } = usePaymentMethodsTabs();
 
-    const [selectedTransactionType, setSelectedTransactionType] = useState(null);
 
     return (
         <div dir="ltr" style={classes.mainContainer}>
@@ -42,70 +42,82 @@ const CreditCardTab = ({
                         <input
                             {...getCardNumberProps({ onChange: handleCardNumberChange })}
                             style={{ ...classes.creditCardInputs, width: "55%", paddingLeft: "5px" }}
-                            placeholder="Card number" />
+                            placeholder="Card number" 
+                            value={creditCard?.cardNumber}
+                            />
                         <input
                             {...getExpiryDateProps({ onChange: handleExpiryDateChange })}
                             style={{ ...classes.creditCardInputs, width: "20%" }}
-                            placeholder="MM/YY" />
+                            placeholder="MM/YY" 
+                            value={creditCard?.expDate_MMYY}/>
                         <input
                             {...getCVCProps({ onChange: handleCVVChange })}
                             style={{ ...classes.creditCardInputs, width: "20%" }}
-                            placeholder="CVV" />
+                            placeholder="CVV" 
+                            value={creditCard?.cvv}/>
                     </div>
                     <div style={classes.creditCardSecondInputsContainer}>
                         <input
-                            onChange={handleCardIdChange}
                             style={classes.creditSecondCardInputs}
                             placeholder="Id"
-                            maxLength={9} />
+                            maxLength={9}
+                            value={creditCard?.holderID}
+                            onChange={(e) => handleChangeInputs("holderID", e.target.value)}
+                        />
                         <input
                             style={classes.creditSecondCardInputs}
                             placeholder="Total"
                             value={totalCreditCard}
                             onChange={(e) => handleTotalCreditCardChange(e.target.value)}
-                            />
+                        />
                     </div>
                     <div style={classes.creditCardSecondInputsContainer}>
                         <input
-                            onChange={handleCardIdChange}
                             style={classes.creditSecondCardInputs}
                             placeholder="First name"
+                            value={creditCard?.customerName}
+                            onChange={(e) => handleChangeInputs("customerName", e.target.value)}
                         />
                         <input
                             style={classes.creditSecondCardInputs}
                             placeholder="Last name"
+                            value={creditCard?.lastName}
+                            onChange={(e) => handleChangeInputs("lastName", e.target.value)}
                         />
                     </div>
                     <div style={classes.creditCardSecondInputsContainer}>
                         <input
-                            onChange={handleCardIdChange}
                             style={classes.creditSecondCardInputs}
                             placeholder="Phone"
+                            value={creditCard?.phoneNumber}
+                            onChange={(e) => handleChangeInputs("phoneNumber", e.target.value)}
                         />
                         <input
                             style={classes.creditSecondCardInputs}
                             placeholder="Email"
+                            value={creditCard?.customerEmail}
+                            onChange={(e) => handleChangeInputs("customerEmail", e.target.value)}
                         />
                     </div>
                     <div style={classes.creditCardSecondInputsContainer}>
                         <div style={{ width: "45%" }}>
                             <GoMakeAutoComplate
-                                value={selectedTransactionType}
+                                value={creditCard?.transactionType}
                                 style={classes.selectInputs}
                                 options={transactionTypes}
                                 placeholder={t("payment.transactionType")}
-                                onChange={(e, value) => {
-                                    setSelectedTransactionType(value);
-                                }}
+                                onChange={(e, value) => handleChangeInputs("transactionType", value?.value)}
                             />
                         </div>
-                        {selectedTransactionType && selectedTransactionType.value === 2 && (
+                        {creditCard?.transactionType && creditCard?.transactionType === 2 && (
                             <div style={{ width: "45%" }}>
                                 <GoMakeAutoComplate
+                                    value={creditCard?.numberOfPayments}
+
                                     style={classes.selectInputs}
                                     options={numberOfPayments}
                                     placeholder={t("payment.numberOfPayments")}
-                                    onChange={() => alert("ge")}
+                                    onChange={(e, value) => handleChangeInputs("numberOfPayments", value?.value)}
                                 />
                             </div>
                         )}
@@ -157,22 +169,22 @@ const CreditCardTab = ({
                     <div style={classes.creditCardSecondInputsContainer}>
                         <div style={{ width: "45%" }}>
                             <GoMakeAutoComplate
-                                value={selectedTransactionType}
+                                value={creditCard?.transactionType}
                                 style={classes.selectInputs}
                                 options={transactionTypes}
                                 placeholder={t("payment.transactionType")}
-                                onChange={(e, value) => {
-                                    setSelectedTransactionType(value);
-                                }}
+                                onChange={(e, value) => handleChangeInputs("transactionType", value?.value)}
                             />
                         </div>
-                        {selectedTransactionType && selectedTransactionType.value === 2 && (
+                        {creditCard?.transactionType && creditCard?.transactionType === 2 && (
                             <div style={{ width: "45%" }}>
                                 <GoMakeAutoComplate
+                                    value={creditCard?.numberOfPayments}
+
                                     style={classes.selectInputs}
                                     options={numberOfPayments}
                                     placeholder={t("payment.numberOfPayments")}
-                                    onChange={() => alert("ge")}
+                                    onChange={(e, value) => handleChangeInputs("numberOfPayments", value?.value)}
                                 />
                             </div>
                         )}
