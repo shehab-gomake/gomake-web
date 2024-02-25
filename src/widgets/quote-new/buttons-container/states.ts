@@ -131,8 +131,8 @@ export const prevStateState = atom<prevStateStateData>({
   default: {
     totalTransfer: 0,
     transferState: {},
-    checkAccountCode:{},
-    cashAccountCode:{},
+    checkAccountCode:"",
+    cashAccountCode:"",
     totalCash: 0,
     totalBit: 0,
     totalChecks: 0,

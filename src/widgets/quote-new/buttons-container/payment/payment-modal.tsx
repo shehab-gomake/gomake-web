@@ -20,7 +20,9 @@ interface IPaymentModalProps {
 
 const PaymentModal = ({ openModal, onClose, selectedTab, getERPAccounts }: IPaymentModalProps) => {
     const { classes } = useStyle();
-    const { t, revertToPreviousState,
+    const { 
+        t,
+        revertToPreviousState,
         firstWidget,
         secondWidget,
         thirdWidget,

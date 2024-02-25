@@ -10,14 +10,16 @@ const useStyle = () => {
             mainContainer: {
                 display: "flex",
                 flexDirection: "column" as "column",
-                padding: "0px 10px",
                 gap: "10px",
-                
+                alignItems: "center",
             },
             firstWidgetStyle: {
                 display: "flex",
                 flexDirection: "column" as "column",
                 gap: "10px",
+                width: "100%",
+                alignItems: "center",
+
             },
             divStyle: {
                 height: "30%",
@@ -101,11 +103,19 @@ const useStyle = () => {
                 width: "45%",
                 padding: "4px"
             },
-            creditButtons:{
-                width: "fit-content", 
+            selectInputs: {
+               ...FONT_FAMILY.Lexend(500, 14),
+               border: 0,
+                //border: `1.5px solid ${primaryColor(300)}`,
+                width: "100%",
+                height: "33px", 
+            },
+            creditButtons: {
+                ...FONT_FAMILY.Lexend(500, 14),
+                width: "fit-content",
                 height: "fit-content",
-                 padding: "10px 10px",
-                  textDecoration: "underline"
+                padding: "10px 10px",
+                textDecoration: "underline"
             }
         };
     }, [theme]);

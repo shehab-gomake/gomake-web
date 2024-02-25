@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { TableCell, styled, tableCellClasses } from "@mui/material";
-import { useState } from "react";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useEffect, useState } from "react";
+import { useRecoilState, useResetRecoilState, useSetRecoilState } from "recoil";
 import { totalDocumentsState, totalPaymentState, finalTotalPaymentState, totalCashState, totalBitState, totalTransferState, totalChecksState, checksRowState, CheckData, checkedItemsIdsState, transferTabState, prevStateState, prevStateStateData, taxDeductionState, checksAccountCodeState, cashAccountCodeState } from "../buttons-container/states";
 import { quoteItemState } from "@/store";
 import { useRouter } from "next/router";
@@ -14,24 +14,36 @@ const usePaymentsTable = () => {
     const tableRows = documentItemValue?.receiptItems;
     const setCheckedItemsIds = useSetRecoilState(checkedItemsIdsState);
     const [totalSum, setTotalSum] = useRecoilState<number>(totalDocumentsState);
+    const resetTotalSum = useResetRecoilState(totalDocumentsState);
     const [finalTotalPayment, setFinalTotalPayment] = useRecoilState<number>(finalTotalPaymentState);
+    const resetFinalTotalPayment = useResetRecoilState(finalTotalPaymentState);
     // total payment
     const [totalPayment, setTotalPayment] = useRecoilState<number>(totalPaymentState);
+    const resetTotalPayment = useResetRecoilState(totalPaymentState);
     //bit
     const [totalBit, setTotalBit] = useRecoilState<number>(totalBitState);
+    const resetTotalBit = useResetRecoilState(totalBitState);
     //cash
     const [totalCash, setTotalCash] = useRecoilState<number>(totalCashState);
+    const resetTotalCash = useResetRecoilState(totalCashState);
     // transfer
     const [totalTransfer, setTotalTransfer] = useRecoilState<number>(totalTransferState);
     const [transferState, setTransferState] = useRecoilState<any>(transferTabState);
+    const resetTotalTransfer= useResetRecoilState(totalTransferState);
+    const resetTransferTabState = useResetRecoilState(transferTabState);
     //checks
     const [totalChecks, setTotalChecks] = useRecoilState<number>(totalChecksState);
     const [checksReceipt, setChecksReceipt] = useRecoilState<CheckData[]>(checksRowState);
+    const resetTotalChecks = useResetRecoilState(totalChecksState);
+    const resetChecksReceipt = useResetRecoilState(checksRowState);
     // withholding tax
     const [taxDeduction, setTaxDeduction] = useRecoilState<number>(taxDeductionState);
+    const resetTaxDeduction = useResetRecoilState(taxDeductionState);
     // accounts code
     const [checkAccountCode, setCheckAccountCode] = useRecoilState<any>(checksAccountCodeState);
-    const [cashAccountCode, setCashAccountCode] = useRecoilState<any>(cashAccountCodeState);
+    const resetCheckAccountCode = useResetRecoilState(checksAccountCodeState);
+    const [cashAccountCode, setCashAccountCode] = useRecoilState<any>(checksAccountCodeState);
+    const resetCashAccountCode = useResetRecoilState(checksAccountCodeState);
 
     const isNewReceipt = router?.query?.isNewCreation;
     const columnWidths =
@@ -155,12 +167,26 @@ const usePaymentsTable = () => {
         setCashAccountCode(previousState.cashAccountCode);
     };
 
+    const resetReceiptState = () => {
+        resetTotalPayment();
+        resetFinalTotalPayment();
+        resetTotalSum();
+        resetTotalBit();
+        resetTotalCash();
+        resetTotalTransfer();
+        resetTransferTabState();
+        resetTotalChecks();
+        resetChecksReceipt();
+        resetTaxDeduction();
+        setCheckAccountCode(previousState.checkAccountCode);
+        setCashAccountCode(previousState.cashAccountCode);
+        resetCheckAccountCode();
+        resetCashAccountCode();
+    };
 
     const [firstWidget, setFirstWidget] = useState(true);
     const [secondWidget, setSecondWidget] = useState(false);
     const [thirdWidget, setThirdWidget] = useState(false);
-
-    
 
     const handleFirstButtonClick = () => {
         setFirstWidget(true);
@@ -179,6 +205,8 @@ const usePaymentsTable = () => {
         setSecondWidget(false);
         setThirdWidget(true);
     };
+
+
     
     return {
         t,
@@ -208,7 +236,8 @@ const usePaymentsTable = () => {
         thirdWidget,
         handleFirstButtonClick,
         handleSecondButtonClick,
-        handleThirdButtonClick
+        handleThirdButtonClick,
+        resetReceiptState
     };
 };
 

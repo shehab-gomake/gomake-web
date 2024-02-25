@@ -154,7 +154,7 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
             if (res?.success) {
                 alertSuccessDelete();
             } else {
-            //   /  navigate("/receipts");
+            navigate("/receipts");
             }
         };
         await cancelReceiptApi(callApi, callBack, { id: quoteItemValue?.id, refundCredit });

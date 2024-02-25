@@ -27,6 +27,8 @@ import { ButtonsConfirmContainer } from "@/widgets/quote-new/buttons-cofirm-cont
 import { CopyFromOrderModal } from "@/widgets/quote-new/modals-widgets/copy-from-order-modal/copy-from-order-modal";
 import { ReceiptsTable } from "@/widgets/quote-new/receipts-table";
 import { useRouter } from "next/router";
+import { usePaymentsTable } from "@/widgets/quote-new/receipts-table/use-payments-table";
+import { useEffect } from "react";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -165,7 +167,14 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
     selectConfirmBusiness,
     handleSaveBtnClickForDocument
   } = useQuoteNew({ docType: documentType, isQuoteConfirmation: isQuoteConfirmation });
-  const router = useRouter()
+  const { resetReceiptState } = usePaymentsTable();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (documentType === DOCUMENT_TYPE.receipt)
+      resetReceiptState();
+  }, [])
+
   return (
     <>
       {quoteState?.id && (
