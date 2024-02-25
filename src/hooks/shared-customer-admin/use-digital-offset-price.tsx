@@ -138,8 +138,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     calculationExceptionsLogs,
     signalRPricingResult
   } = useCalculationsWorkFlowsSignalr();
-  const [currentSignalRConnectionId,setCurrentSignalRConnectionId] = useRecoilState(currentCalculationConnectionId);
-  const [currentCalculationSessionId,setCurrentCalculationSessionId] = useState<string>("");
+  const [currentSignalRConnectionId, setCurrentSignalRConnectionId] = useRecoilState(currentCalculationConnectionId);
+  const [currentCalculationSessionId, setCurrentCalculationSessionId] = useState<string>("");
   const [requestAbortController, setRequestAbortController] =
     useState<AbortController>(null);
   const [billingMethod, setBillingMethod] = useState<any>();
@@ -153,7 +153,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   useEffect(() => {
     if (calculationResult && calculationResult.productItemValue) {
       if (calculationResult.productItemValueDraftId === currentCalculationSessionId) {
-        console.log("calculationResult",calculationResult)
+        console.log("calculationResult", calculationResult)
         setLoading(false);
         setCurrentProductItemValueDraftId(calculationResult.productItemValueDraftId);
         const currentWorkFlows = cloneDeep(workFlows);
@@ -209,18 +209,18 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       }
     }
   }, [calculationResult]);
-  useEffect(()=>{
-    if(signalRPricingResult && signalRPricingResult.productItemValueDraftId === currentCalculationSessionId){
+  useEffect(() => {
+    if (signalRPricingResult && signalRPricingResult.productItemValueDraftId === currentCalculationSessionId) {
       setLoading(false);
       setCurrentProductItemValueTotalPrice(
-          parseFloat(signalRPricingResult.totalPrice)
+        parseFloat(signalRPricingResult.totalPrice)
       );
       setCalculationProgress({
         totalWorkFlowsCount: signalRPricingResult.totalWorkFlows,
         currentWorkFlowsCount: signalRPricingResult.currentWorkFlowIndex,
       });
     }
-  },[signalRPricingResult])
+  }, [signalRPricingResult])
   useEffect(() => {
     setWorkFlows([]);
     setCurrentProductItemValueTotalPrice(null);
@@ -233,9 +233,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     setCurrentCalculationSessionId(calculationSessionId);
   }, [calculationSessionId]);
 
-  useEffect(()=>{
+  useEffect(() => {
     setCurrentSignalRConnectionId(connectionId)
-  },[connectionId])
+  }, [connectionId])
   useEffect(() => {
     setCalculationExceptionsLogs(calculationExceptionsLogs);
   }, [calculationExceptionsLogs]);
@@ -1239,7 +1239,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           <div style={inRow ? { width: "5%" } : clasess.renderParameterTypeContainer}>{Comp}</div>
         </div>
         <>
-          {parameter?.relatedParameters?.length > 0 && inModal && (
+          {/* {parameter?.relatedParameters?.length > 0 && inModal && (
             <>
               {
                 parameter.relatedParameters
@@ -1353,6 +1353,144 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                       }
                     }
                   })
+              }
+            </>
+          )} */}
+          {parameter?.relatedParameters?.length > 0 && inModal && (
+            <>
+              {parameter.relatedParameters
+                .filter((relatedParameter) =>
+                  subSection.parameters.some((p) => p.id === relatedParameter.parameterId)
+                )
+                .filter((relatedParameter) =>
+                  !underParameterIds.some(
+                    (underParam) =>
+                      underParam.myParameter?.id === relatedParameter.parameterId
+                  )
+                )
+                .map((relatedParameter) => {
+                  if (relatedParameter.activateByAllValues) {
+                    const { parameterId, actionIndex } = relatedParameter;
+                    const myParameter = list?.find(
+                      (p) =>
+                        p.id === parameterId &&
+                        p.actionIndex === actionIndex
+                    );
+                    return (
+                      <div key={parameterId}>
+                        {_renderParameterType(
+                          myParameter,
+                          subSection,
+                          section,
+                          subSection?.parameters,
+                          myParameter?.value,
+                          list,
+                          true,
+                          false
+                        )}
+                      </div>
+                    );
+                  } else {
+                    const subProduct = subProducts?.find(
+                      (x) => x.type === subSection?.type
+                    );
+                    const parm = subProduct?.parameters?.find(
+                      (param) =>
+                        param.parameterId === parameter.id &&
+                        param.actionIndex === parameter.actionIndex
+                    );
+                    const myParameter = list?.find(
+                      (p) =>
+                        p.id === relatedParameter.parameterId &&
+                        p.actionIndex === relatedParameter.actionIndex
+                    );
+
+                    if (parameter.name == "identical printing sides ") {
+                      debugger;
+                    }
+
+                    if (relatedParameter.activateByAllValues && parm?.values) {
+                      let productCopy = cloneDeep(productTemplate);
+                      const sectionCopy = productCopy.sections?.find(x => x.id === section.id);
+                      const subSectionCopy = sectionCopy.subSections?.find(x => x.id === subSection.id);
+                      const param = subSectionCopy.parameters?.find(x => x.id === relatedParameter.parameterId);
+                      if (param.isHidden == false) {
+                        return;
+                      }
+                      param.isHidden = false;
+                      setProductTemplate(productCopy);
+                    } else if (parameter?.parameterType === EParameterTypes.DROP_DOWN_LIST) {
+                      const valueInArray = relatedParameter.selectedValueIds?.find(
+                        (c) => c == parm?.valueIds
+                      );
+
+                      if (valueInArray) {
+                        return (
+                          <div>
+                            {_renderParameterType(
+                              myParameter,
+                              subSection,
+                              section,
+                              subSection?.parameters,
+                              myParameter?.value,
+                              list,
+                              true,
+                              false
+                            )}
+                          </div>
+                        );
+                      }
+
+                      if (relatedParameter.activateByAllValues && parm?.values) {
+                        let productCopy = cloneDeep(productTemplate);
+                        const sectionCopy = productCopy.sections?.find(x => x.id === section.id);
+                        const subSectionCopy = sectionCopy.subSections?.find(x => x.id === subSection.id);
+                        const param = subSectionCopy.parameters?.find(x => x.id === relatedParameter.parameterId);
+                        if (param.isHidden == false) {
+                          return;
+                        }
+                        param.isHidden = false;
+                        setProductTemplate(productCopy);
+                      } else {
+                        let productCopy = cloneDeep(productTemplate);
+                        const sectionCopy = productCopy.sections.find(x => x.id === section.id);
+                        const subSectionCopy = sectionCopy.subSections.find(x => x.id === subSection.id);
+                        const param = subSectionCopy.parameters.find(x => x.id === relatedParameter.parameterId);
+                        if (param.isHidden == true) {
+                          return;
+                        }
+                        param.isHidden = true;
+                        setProductTemplate(productCopy);
+                      }
+                    } else {
+                      const valueInArray = relatedParameter.selectedValueIds?.find(
+                        (c) => c == parm?.values
+                      );
+
+                      if (valueInArray && myParameter || (!parm && relatedParameter && relatedParameter.selectedValueIds && relatedParameter.selectedValueIds.length > 0 && relatedParameter.selectedValueIds[0] === "false")) {
+                        let productCopy = cloneDeep(productTemplate);
+                        const sectionCopy = productCopy.sections?.find(x => x.id === section.id);
+                        const subSectionCopy = sectionCopy.subSections?.find(x => x.id === subSection.id);
+                        const param = subSectionCopy.parameters?.find(x => x.id === relatedParameter.parameterId);
+                        if (param.isHidden == false) {
+                          return;
+                        }
+                        param.isHidden = false;
+                        setProductTemplate(productCopy);
+                      } else {
+                        let productCopy = cloneDeep(productTemplate);
+                        const sectionCopy = productCopy.sections.find(x => x.id === section.id);
+                        const subSectionCopy = sectionCopy.subSections.find(x => x.id === subSection.id);
+                        const param = subSectionCopy.parameters.find(x => x.id === relatedParameter.parameterId);
+                        if (param.isHidden == true) {
+                          return;
+                        }
+                        param.isHidden = true;
+                        setProductTemplate(productCopy);
+                      }
+                    }
+                  }
+                })
               }
             </>
           )}
