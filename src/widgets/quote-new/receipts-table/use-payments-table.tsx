@@ -2,7 +2,7 @@ import { useTranslation } from "react-i18next";
 import { TableCell, styled, tableCellClasses } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useRecoilState, useResetRecoilState, useSetRecoilState } from "recoil";
-import { totalDocumentsState, totalPaymentState, finalTotalPaymentState, totalCashState, totalBitState, totalTransferState, totalChecksState, checksRowState, CheckData, checkedItemsIdsState, transferTabState, prevStateState, prevStateStateData, taxDeductionState, checksAccountCodeState, cashAccountCodeState } from "../buttons-container/states";
+import { totalDocumentsState, totalPaymentState, finalTotalPaymentState, totalCashState, totalBitState, totalTransferState, totalChecksState, checksRowState, CheckData, checkedItemsIdsState, transferTabState, prevStateState, prevStateStateData, taxDeductionState, checksAccountCodeState,  totalCreditCardState } from "../buttons-container/states";
 import { quoteItemState } from "@/store";
 import { useRouter } from "next/router";
 
@@ -13,8 +13,11 @@ const usePaymentsTable = () => {
     const [documentItemValue, setDocumentItemValue] = useRecoilState<any>(quoteItemState);
     const tableRows = documentItemValue?.receiptItems;
     const setCheckedItemsIds = useSetRecoilState(checkedItemsIdsState);
+    const resetCheckedItemsIds = useResetRecoilState(checkedItemsIdsState);
+    // total documents
     const [totalSum, setTotalSum] = useRecoilState<number>(totalDocumentsState);
     const resetTotalSum = useResetRecoilState(totalDocumentsState);
+    // final total payment
     const [finalTotalPayment, setFinalTotalPayment] = useRecoilState<number>(finalTotalPaymentState);
     const resetFinalTotalPayment = useResetRecoilState(finalTotalPaymentState);
     // total payment
@@ -44,6 +47,9 @@ const usePaymentsTable = () => {
     const resetCheckAccountCode = useResetRecoilState(checksAccountCodeState);
     const [cashAccountCode, setCashAccountCode] = useRecoilState<any>(checksAccountCodeState);
     const resetCashAccountCode = useResetRecoilState(checksAccountCodeState);
+    // creditCard 
+    const resetTotalCreditCard= useResetRecoilState(totalCreditCardState);
+    const [totalCreditCard, setTotalCreditCard] = useRecoilState<number>(totalCreditCardState);
 
     const isNewReceipt = router?.query?.isNewCreation;
     const columnWidths =
@@ -128,6 +134,7 @@ const usePaymentsTable = () => {
             wtTaxableAmount: Number(taxDeduction),
             checksAccount: checkAccountCode,
             cashAccount: cashAccountCode,
+            creditCardTotal: totalCreditCard,
 
         };
         setDocumentItemValue(receiptItemCopy);
@@ -151,7 +158,8 @@ const usePaymentsTable = () => {
             checksReceipt: checksReceipt,
             taxDeduction: taxDeduction,
             checkAccountCode: checkAccountCode,
-            cashAccountCode: cashAccountCode
+            cashAccountCode: cashAccountCode,
+            totalCreditCard: totalCreditCard
         });
     };
 
@@ -165,9 +173,12 @@ const usePaymentsTable = () => {
         setTaxDeduction(previousState.taxDeduction);
         setCheckAccountCode(previousState.checkAccountCode);
         setCashAccountCode(previousState.cashAccountCode);
+        setTotalCreditCard(previousState.totalCreditCard);
     };
 
     const resetReceiptState = () => {
+        setCheckedItems({});
+        resetCheckedItemsIds();
         resetTotalPayment();
         resetFinalTotalPayment();
         resetTotalSum();
@@ -182,32 +193,41 @@ const usePaymentsTable = () => {
         setCashAccountCode(previousState.cashAccountCode);
         resetCheckAccountCode();
         resetCashAccountCode();
+        resetTotalCreditCard();
     };
 
     const [firstWidget, setFirstWidget] = useState(true);
     const [secondWidget, setSecondWidget] = useState(false);
     const [thirdWidget, setThirdWidget] = useState(false);
 
+
     const handleFirstButtonClick = () => {
+        setTotalPayment( totalPayment - totalCreditCard);
+        resetTotalCreditCard();
+
         setFirstWidget(true);
         setSecondWidget(false);
         setThirdWidget(false);
     };
 
     const handleSecondButtonClick = () => {
+        setTotalPayment(totalPayment - totalCreditCard);
+        resetTotalCreditCard();
+
         setFirstWidget(false);
         setSecondWidget(true);
         setThirdWidget(false);
     };
 
     const handleThirdButtonClick = () => {
+        setTotalPayment(totalPayment - totalCreditCard);
+        resetTotalCreditCard();
+
         setFirstWidget(false);
         setSecondWidget(false);
         setThirdWidget(true);
     };
 
-
-    
     return {
         t,
         documentItemValue,

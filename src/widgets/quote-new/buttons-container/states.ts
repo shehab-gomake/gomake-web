@@ -40,6 +40,7 @@ export interface prevStateStateData {
   totalCash: number;
   totalBit: number;
   totalChecks: number;
+  totalCreditCard:number;
   checksReceipt: CheckData[];
   taxDeduction: number;
   checkAccountCode:any;
@@ -106,8 +107,8 @@ export const totalCashState = atom<number>({
   default: 0,
 });
 
-export const creditCardState = atom<number>({
-  key: "creditCardState",
+export const totalCreditCardState = atom<number>({
+  key: "totalCreditCardState",
   default: 0,
 });
 
@@ -136,6 +137,7 @@ export const prevStateState = atom<prevStateStateData>({
     totalCash: 0,
     totalBit: 0,
     totalChecks: 0,
+    totalCreditCard:0,
     checksReceipt: [
       {
         dueDate: new Date().toISOString().split('T')[0],

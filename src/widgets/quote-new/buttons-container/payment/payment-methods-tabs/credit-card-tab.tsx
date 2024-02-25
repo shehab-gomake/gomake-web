@@ -23,14 +23,12 @@ const CreditCardTab = ({
         handleExpiryDateChange,
         handleCVVChange,
         handleCardIdChange,
+        onClickMakePayment,
+        numberOfPayments,
+        transactionTypes,
+        totalCreditCard,
+        handleTotalCreditCardChange
     } = usePaymentMethodsTabs();
-
-    const values = [{ label: t("payment.regular"), value: 1 }, { label: t("payment.installments"), value: 2 }];
-    const numberOfPayments = Array.from({ length: 13 }, (_, index) => ({
-        label: index + 1,
-        value: index + 1,
-    }));
-
 
     const [selectedTransactionType, setSelectedTransactionType] = useState(null);
 
@@ -63,7 +61,9 @@ const CreditCardTab = ({
                         <input
                             style={classes.creditSecondCardInputs}
                             placeholder="Total"
-                        />
+                            value={totalCreditCard}
+                            onChange={(e) => handleTotalCreditCardChange(e.target.value)}
+                            />
                     </div>
                     <div style={classes.creditCardSecondInputsContainer}>
                         <input
@@ -92,7 +92,7 @@ const CreditCardTab = ({
                             <GoMakeAutoComplate
                                 value={selectedTransactionType}
                                 style={classes.selectInputs}
-                                options={values}
+                                options={transactionTypes}
                                 placeholder={t("payment.transactionType")}
                                 onChange={(e, value) => {
                                     setSelectedTransactionType(value);
@@ -132,6 +132,8 @@ const CreditCardTab = ({
                         <input
                             style={classes.creditSecondCardInputs}
                             placeholder="Total"
+                            value={totalCreditCard}
+                            onChange={(e) => handleTotalCreditCardChange(e.target.value)}
                         />
                         <input
                             style={classes.creditSecondCardInputs}
@@ -147,6 +149,8 @@ const CreditCardTab = ({
                         <input
                             style={classes.creditSecondCardInputs}
                             placeholder="Total"
+                            value={totalCreditCard}
+                            onChange={(e) => handleTotalCreditCardChange(e.target.value)}
                         />
 
                     </div>
@@ -155,7 +159,7 @@ const CreditCardTab = ({
                             <GoMakeAutoComplate
                                 value={selectedTransactionType}
                                 style={classes.selectInputs}
-                                options={values}
+                                options={transactionTypes}
                                 placeholder={t("payment.transactionType")}
                                 onChange={(e, value) => {
                                     setSelectedTransactionType(value);
@@ -175,8 +179,7 @@ const CreditCardTab = ({
                     </div>
                 </div>
             }
-
-            <PrimaryButton variant="contained" style={{ width: "75%", padding: "4px" }} >{t('payment.makePayment')}</PrimaryButton>
+            {!secondWidget && <PrimaryButton variant="contained" style={{ width: "75%", padding: "4px" }} onClick={onClickMakePayment} >{t('payment.makePayment')}</PrimaryButton>}
             <div style={{ display: "flex", flexDirection: "column", width: "75%" }}>
                 {!firstWidget && <SecondaryButton style={classes.creditButtons} onClick={handleFirstButtonClick}>{t('payment.manualCreditCard')}</SecondaryButton>}
                 {!secondWidget && <SecondaryButton style={classes.creditButtons} onClick={handleSecondButtonClick}>{t('payment.creditDetailsWithoutSwipe')}</SecondaryButton>}
