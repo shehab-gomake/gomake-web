@@ -30,8 +30,9 @@ const AgingReportWidget = () => {
     showTable,
     detailedReport,
     setDetailedReport,
-    tableUnDetailedHeaders,
-    tabledetailedHeaders
+    getTableDataRows,
+    onChangeDetailedReport,
+    transformedHeaders
   } = useAgingReport()
   return (
     <div style={clasess.mainContainer}>
@@ -53,6 +54,7 @@ const AgingReportWidget = () => {
         handleCustomerChange={handleCustomerChange}
         detailedReport={detailedReport}
         setDetailedReport={setDetailedReport}
+        onChangeDetailedReport={onChangeDetailedReport}
 
       />
       <Divider />
@@ -62,19 +64,14 @@ const AgingReportWidget = () => {
         onClickBtn3={onClickBtn3}
       />
       {
-        showTable && !detailedReport &&
+        showTable &&
         <PrimaryTable
-          rows={[]}
-          headers={tableUnDetailedHeaders}
+          rows={getTableDataRows()}
+          headers={transformedHeaders}
+          maxHeight={650}
         />
       }
-      {
-        showTable && detailedReport &&
-        <PrimaryTable
-          rows={[]}
-          headers={tabledetailedHeaders}
-        />
-      }
+
     </div>
   );
 };

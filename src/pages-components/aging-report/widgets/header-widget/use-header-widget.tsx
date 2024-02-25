@@ -21,6 +21,7 @@ export interface AgingReportHeaderWidgetProps {
   handleCustomerChange: any;
   detailedReport: boolean,
   setDetailedReport: any
+  onChangeDetailedReport: any;
 }
 const useAgingReportHeader = ({ getAllCustomersCreateQuote, getAgentCategories }) => {
   const { clasess } = useStyle();

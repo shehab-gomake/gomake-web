@@ -13,10 +13,10 @@ const useStyle = () => {
         flexDirection: "column" as "column",
         justifyContent: "flex-start",
         alignItems: "flex-start",
-        height: "100%",
         width: "100%",
         gap: 20,
-        padding:20
+        padding:20,
+        overflowY: "scroll" as "scroll",
       },
     };
   }, [i18next.language, t]);

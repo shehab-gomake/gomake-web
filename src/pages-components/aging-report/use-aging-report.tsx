@@ -1,14 +1,18 @@
-import { useGomakeAxios } from "@/hooks";
+import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { getAndSetEmployees2 } from "@/services/api-service/customers/employees-api";
+import { EHttpMethod } from "@/services/api-service/enums";
 import { getAndSetAllCustomers } from "@/services/hooks";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 const useAgingReport = () => {
   const { callApi } = useGomakeAxios();
   const dateRef = useRef(null);
   const { t } = useTranslation()
-
+  const {
+    alertFaultGetData,
+    alertSuccessGetData
+  } = useSnackBar();
   const [resetDatePicker, setResetDatePicker] = useState<boolean>(false);
   const [fromDate, setFromDate] = useState<Date>();
   const [toDate, setToDate] = useState<Date>();
@@ -17,7 +21,7 @@ const useAgingReport = () => {
     setFromDate(fromDate);
     setToDate(toDate);
   };
-  const [selectDate, setSelectDate] = useState<string>();
+  const [selectDate, setSelectDate] = useState<string>(new Date().toISOString().split('T')[0]);
   const handleClickSelectDate = () => {
     dateRef?.current?.showPicker();
   };
@@ -25,32 +29,22 @@ const useAgingReport = () => {
   const [agent, setAgent] = useState<{ label: string; id: string } | null>();
   const [showTable, setShowTable] = useState<boolean>(false);
   const [detailedReport, setDetailedReport] = useState<boolean>(false);
-  console.log("detailedReport", detailedReport)
-  const tableUnDetailedHeaders = [
-    "customer code",
-    "customer name",
-    "customer phone",
-    "Terms of Payment",
-    "1/2024",
-    "2/2024",
-    "Total"
-  ]
-  const tabledetailedHeaders = [
-    "customer code",
-    "customer name",
-    "Terms of Payment",
-    "Sales Person",
-    "S. Document",
-    "M. Document",
-    "Date of refernce",
-    "Value Date",
-    "Balance Due",
-    "0-30",
-    "31-60",
-    "61-90",
-    "91-120",
-    "+120"
-  ]
+  const [tableData, setTableData] = useState<any>([])
+  const [tableHeader, setTableHeader] = useState<any>([])
+
+  const onChangeDetailedReport = () => {
+    setDetailedReport(!detailedReport)
+  }
+  const transformedHeaders = tableHeader?.map(header => header.name);
+  const getTableDataRows = useCallback(() => {
+    return tableData.map(data => {
+      const rowData = [];
+      tableHeader.forEach(header => {
+        rowData.push(data[header.key]);
+      });
+      return rowData;
+    });
+  }, [tableData, tableHeader]);
   const handleAgentChange = (e: any, value: any) => {
     setAgent(value);
   };
@@ -101,7 +95,8 @@ const useAgingReport = () => {
     setCustomer(value);
   };
   const onClickBtn1 = () => {
-    setShowTable(!showTable);
+    setShowTable(false);
+    getAgingReportFilter()
   }
   const onClickBtn2 = () => {
     console.log("BBBB")
@@ -109,6 +104,35 @@ const useAgingReport = () => {
   const onClickBtn3 = () => {
     console.log("CCCC")
   }
+  const getAgingReportFilter = useCallback(
+    async () => {
+      const res = await callApi(
+        EHttpMethod.POST,
+        `/v1/erp-service/reports/get-aging-report`,
+        {
+          startDate: fromDate,
+          endDate: toDate,
+          clientId: customer?.id,
+          referDate: selectDate ? selectDate : new Date(),
+          agentId: agent?.id,
+          byCreationDate: true,
+          expendedReport: detailedReport
+        }
+      );
+      if (res?.success) {
+        console.log("res?.data?.data?.data", res?.data?.data?.data)
+        setTableData(res?.data?.data?.data?.data)
+        setTableHeader(res?.data?.data?.data?.headers)
+
+        alertSuccessGetData();
+        setShowTable(true)
+      } else {
+        alertFaultGetData();
+        setShowTable(false)
+      }
+    },
+    [fromDate, toDate, detailedReport, agent, customer, selectDate]
+  );
 
   return {
     getAllCustomersCreateQuote,
@@ -133,8 +157,9 @@ const useAgingReport = () => {
     detailedReport,
     setShowTable,
     setDetailedReport,
-    tableUnDetailedHeaders,
-    tabledetailedHeaders
+    getTableDataRows,
+    onChangeDetailedReport,
+    transformedHeaders
   };
 };
 
