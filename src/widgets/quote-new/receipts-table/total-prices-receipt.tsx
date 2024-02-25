@@ -34,6 +34,7 @@ const TotalPricesReceipts = ({ receiptItemValue }) => {
                 { label: t("payment.totalDocuments"), value: receiptItemValue?.totalDocuments },
                 { label: t("payment.paymentByCash"), value: receiptItemValue?.cashSum },
                 { label: t("payment.paymentByTransfer"), value: receiptItemValue?.transferSum },
+                { label: t("payment.paymentByBit"), value: receiptItemValue?.bitSum },
                 { label: t("payment.paymentByCheck"), value: receiptItemValue?.checksTotal },
                 { label: t("payment.paymentByCredit"), value: receiptItemValue?.creditCardTotal },
                 { label: t("payment.balance"), value: receiptItemValue?.balance },
