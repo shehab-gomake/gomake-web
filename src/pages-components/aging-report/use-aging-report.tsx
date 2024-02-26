@@ -31,7 +31,6 @@ const useAgingReport = () => {
   const [showTable, setShowTable] = useState<boolean>(false);
   const [detailedReport, setDetailedReport] = useState<boolean>(false);
   const [byReferenceDate, setByReferenceDate] = useState<boolean>(false);
-  console.log("byReferenceDate", byReferenceDate)
   const [tableData, setTableData] = useState<any>([])
   const [tableHeader, setTableHeader] = useState<any>([])
 
@@ -169,7 +168,6 @@ const useAgingReport = () => {
       } else {
         fileExtension = 'xlsx';
       }
-      console.log("res", res);
       const downloadLink = document.createElement('a');
       const link = URL?.createObjectURL(res.data);
       downloadLink.href = link
