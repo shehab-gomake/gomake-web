@@ -3,24 +3,33 @@ import { useStyle } from "./style";
 
 
 export interface AgingReportButtonWidgetProps {
-  onClickBtn1: () => void;
-  onClickBtn2: () => void;
-  onClickBtn3: () => void;
+  onClickCreateNewTransaction: () => void;
+  onClickPrintCard: () => void;
+  onClickShowCard: () => void;
+  onClickSendingTicketByEmail: () => void;
 }
-const AgingReportButtonWidget = ({ onClickBtn1, onClickBtn2, onClickBtn3 }: AgingReportButtonWidgetProps) => {
+const AgingReportButtonWidget = ({
+  onClickCreateNewTransaction,
+  onClickPrintCard,
+  onClickShowCard,
+  onClickSendingTicketByEmail }: AgingReportButtonWidgetProps) => {
   const { clasess } = useStyle()
   const tabs = [
     {
-      name: "Show Delinquency",
-      onclick: onClickBtn1
+      name: "Create new transaction",
+      onclick: onClickCreateNewTransaction
     },
     {
-      name: "Print Debt Settlement",
-      onclick: onClickBtn2
+      name: "Sending ticket by email",
+      onclick: onClickSendingTicketByEmail
     },
     {
-      name: "Debt Settlement Excel",
-      onclick: onClickBtn3
+      name: "Print card",
+      onclick: onClickPrintCard
+    },
+    {
+      name: "Show card",
+      onclick: onClickShowCard
     }
   ]
   return (

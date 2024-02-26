@@ -1,81 +1,85 @@
-import { useCallback, useRef, useState } from "react";
-
-import { useAgentsList, useCustomerDropDownList, useGomakeAxios, useSnackBar } from "@/hooks";
+import { useCallback, useState } from "react";
+import { useCustomerDropDownList, useGomakeAxios, useSnackBar } from "@/hooks";
 import { EHttpMethod } from "@/services/api-service/enums";
-import { EExportType } from "@/enums";
+import { useTranslation } from "react-i18next";
 
-const useAgingReport = () => {
+const useLedgerReport = () => {
   const { callApi } = useGomakeAxios();
+  const { t } = useTranslation()
   const { alertFaultGetData, alertSuccessGetData } = useSnackBar();
   const { customer, renderOptions, checkWhatRenderArray, handleCustomerChange } = useCustomerDropDownList()
-  const { agent, agentsCategories, handleAgentChange } = useAgentsList()
 
-  const [selectDate, setSelectDate] = useState<string>(new Date().toISOString().split('T')[0]);
-  const [byReferenceDate, setByReferenceDate] = useState<boolean>(false);
   const [resetDatePicker, setResetDatePicker] = useState<boolean>(false);
-  const [detailedReport, setDetailedReport] = useState<boolean>(false);
+  const [isExtended, setIsExtended] = useState<boolean>(false);
   const [showTable, setShowTable] = useState<boolean>(false);
-  const [tableHeader, setTableHeader] = useState<any>([])
-  const [tableData, setTableData] = useState<any>([])
   const [fromDate, setFromDate] = useState<Date>();
   const [toDate, setToDate] = useState<Date>();
-  const transformedHeaders = tableHeader?.map(header => header.name);
-  const dateRef = useRef(null);
+  const [dataTable, setDataTable] = useState<any>([]);
+  const getTableDataRows = useCallback(() => {
+    return dataTable?.map((data) => [
+      data?.docDate?.split("T")[0],
+      data?.dueDate?.split("T")[0],
+      data?.accountName,
+      data?.docNumber,
+      data?.accountCode,
+      data?.remarks,
+      data?.transNumber,
+      data?.credit.toFixed(2),
+      data?.debit.toFixed(2),
+      data?.balance.toFixed(2),
+    ]);
+  }, [dataTable]);
 
+  const tableHeaders = [
+    t("reports.documentDate"),
+    t("reports.dueDate"),
+    t("reports.accountName"),
+    t("reports.documentNumber"),
+    t("reports.AccountCode"),
+    t("reports.details"),
+    t("reports.TransNumber"),
+    t("reports.credit"),
+    t("reports.debit"),
+    t("reports.balance"),
+  ];
   const onSelectDeliveryTimeDates = (fromDate: Date, toDate: Date) => {
     setResetDatePicker(false);
     setFromDate(fromDate);
     setToDate(toDate);
   };
-  const handleClickSelectDate = () => {
-    dateRef?.current?.showPicker();
-  };
-
-  const onChangeDetailedReport = () => {
-    setDetailedReport(!detailedReport)
+  const onChangeIsExtended = () => {
+    setIsExtended(!isExtended)
   }
-  const onChangeByReferenceDate = () => {
-    setByReferenceDate(!byReferenceDate)
-  }
-  const getTableDataRows = useCallback(() => {
-    return tableData.map(data => {
-      const rowData = [];
-      tableHeader.forEach(header => {
-        rowData.push(data[header.key]);
-      });
-      return rowData;
-    });
-  }, [tableData, tableHeader]);
 
-  const onClickBtn1 = () => {
+
+  const onClickCreateNewTransaction = () => {
+    console.log("Transaction")
+  }
+  const onClickSendingTicketByEmail = () => {
+    console.log(" Ticket By Email")
+  }
+  const onClickPrintCard = () => {
+    console.log("Print Card")
+  }
+  const onClickShowCard = () => {
     setShowTable(false);
     getAgingReportFilter()
   }
-  const onClickBtn2 = () => {
-    ExportAgingReport(EExportType.PDF)
-  }
-  const onClickBtn3 = () => {
-    ExportAgingReport(EExportType.EXCEL)
-  }
+
   const getAgingReportFilter = useCallback(
     async () => {
       const res = await callApi(
         EHttpMethod.POST,
-        `/v1/erp-service/reports/get-aging-report`,
+        `/v1/erp-service/reports/get-customer-ledger-report`,
         {
           startDate: fromDate,
           endDate: toDate,
           clientId: customer?.id,
-          referDate: selectDate ? selectDate : new Date(),
-          agentId: agent?.id,
-          byCreationDate: byReferenceDate,
-          expendedReport: detailedReport
+          isExtended: isExtended
         }
       );
       if (res?.success) {
-        setTableData(res?.data?.data?.data?.data)
-        setTableHeader(res?.data?.data?.data?.headers)
-
+        setDataTable(res.data?.data?.data)
         alertSuccessGetData();
         setShowTable(true)
       } else {
@@ -83,74 +87,26 @@ const useAgingReport = () => {
         setShowTable(false)
       }
     },
-    [fromDate, toDate, detailedReport, agent, customer, selectDate, byReferenceDate]
-  );
-
-  const ExportAgingReport = useCallback(
-    async (exportType: number) => {
-      const res = await callApi(
-        EHttpMethod.POST,
-        `/v1/erp-service/reports/export-aging-report`,
-        {
-          exportType: exportType,
-          myBody: {
-            startDate: fromDate,
-            endDate: toDate,
-            clientId: customer?.id,
-            referDate: selectDate ? selectDate : new Date(),
-            agentId: agent?.id,
-            byCreationDate: byReferenceDate,
-            expendedReport: detailedReport
-          }
-        },
-        true,
-        null,
-        "blob"
-      );
-
-      let fileExtension = '';
-      if (exportType === EExportType.EXCEL) {
-        fileExtension = 'xlsx';
-      } else if (exportType === EExportType.PDF) {
-        fileExtension = 'pdf';
-      } else {
-        fileExtension = 'xlsx';
-      }
-      const downloadLink = document.createElement('a');
-      const link = URL?.createObjectURL(res.data);
-      downloadLink.href = link
-      downloadLink.download = `aging report.${fileExtension}`;
-      downloadLink.click();
-    },
-    [fromDate, toDate, detailedReport, agent, customer, selectDate, byReferenceDate]
+    [fromDate, toDate, isExtended, customer]
   );
 
   return {
     onSelectDeliveryTimeDates,
-    resetDatePicker,
-    handleClickSelectDate,
-    selectDate,
-    setSelectDate,
-    dateRef,
-    agent,
-    agentsCategories,
-    handleAgentChange,
-    customer,
     renderOptions,
     checkWhatRenderArray,
     handleCustomerChange,
-    onClickBtn1,
-    onClickBtn2,
-    onClickBtn3,
-    showTable,
-    detailedReport,
-    setShowTable,
-    setDetailedReport,
+    onClickCreateNewTransaction,
+    onClickSendingTicketByEmail,
+    onClickPrintCard,
+    onClickShowCard,
+    onChangeIsExtended,
     getTableDataRows,
-    onChangeDetailedReport,
-    onChangeByReferenceDate,
-    transformedHeaders
+    showTable,
+    isExtended,
+    resetDatePicker,
+    customer,
+    tableHeaders,
   };
 };
 
-export { useAgingReport };
+export { useLedgerReport };

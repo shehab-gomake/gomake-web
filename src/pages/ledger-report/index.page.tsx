@@ -1,10 +1,10 @@
 import { CustomerAuthLayout } from "@/layouts";
-import { AgingReportWidget } from "@/pages-components/aging-report/aging-report";
+import { LedgerReportWidget } from "@/pages-components/ledger-report/ledger-report";
 
 export default function LedgerReportPage() {
   return (
     <CustomerAuthLayout>
-      <AgingReportWidget />
+      <LedgerReportWidget />
     </CustomerAuthLayout>
   );
 }
