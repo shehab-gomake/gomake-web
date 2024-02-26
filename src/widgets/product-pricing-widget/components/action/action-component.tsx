@@ -286,7 +286,7 @@ const ActionContainerComponent = ({
                 source={source}
               />
               <span>
-                {source === EWorkSource.OUT
+                {source === EWorkSource.OUT && totalPrice && totalCost && totalPrice.outSourceValues && totalCost.outSourceValues
                   ? `(${
                         ( +totalPrice.outSourceValues[0] - +totalCost.outSourceValues[0]).toFixed(2)
                     } ${totalPrice.defaultUnit})`
