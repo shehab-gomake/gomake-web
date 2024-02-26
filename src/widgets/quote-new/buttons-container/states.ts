@@ -38,6 +38,7 @@ export interface prevStateStateData {
   totalTransfer: number;
   transferState: any;
   creditCardState:any;
+  secondCreditCard:any;
   totalCash: number;
   totalBit: number;
   totalChecks: number;
@@ -54,13 +55,29 @@ export interface CreditCardData {
   expDate_MMYY: string;
   cvv: string;
   transactionSum: number;
-  holderID:string;
-  customerName:string;
-  lastName:string;
-  phoneNumber:string;
-  customerEmail:string;
-  transactionType:any;
-  numberOfPayments:number;
+  holderID?:string;
+  customerName?:string;
+  lastName?:string;
+  phoneNumber?:string;
+  customerEmail?:string;
+  transactionType?:any;
+  numberOfPayments?:number;
+}
+
+export interface ReceiptCreditCardData { 
+  id?: string;
+  receiptId?: string;
+  creditCardSum?: number;
+  creditCardToken?: string;
+  creditCardNum?: string;
+  creditCardExpDate?: string;
+  creditCardVoucherNumber?: string;
+  creditCardTransactionID?: string;
+  installments?: number;
+  firstPaymentSum?: number;
+  additionalPaymentSum?: number;
+  isManual?: boolean;
+  depositId?: string;
 }
 
 export const creditCardState = atom<CreditCardData>({
@@ -78,6 +95,26 @@ export const creditCardState = atom<CreditCardData>({
     customerEmail:"",
     transactionType:null,
     numberOfPayments:0,
+  },
+});
+
+export const receiptCreditCardState = atom<ReceiptCreditCardData>({
+  key: "receiptCreditCardState",
+  default:
+  {
+    id: "",
+    receiptId: "",
+    creditCardSum: 0,
+    creditCardToken: "",
+    creditCardNum: "",
+    creditCardExpDate: "",
+    creditCardVoucherNumber: "",
+    creditCardTransactionID: "",
+    installments: 0,
+    firstPaymentSum: 0,
+    additionalPaymentSum: 0,
+    isManual: false,
+    depositId: "",
   },
 });
 
@@ -167,6 +204,7 @@ export const prevStateState = atom<prevStateStateData>({
     totalTransfer: 0,
     transferState: {},
     creditCardState:{},
+    secondCreditCard:{},
     checkAccountCode:"",
     cashAccountCode:"",
     totalCash: 0,
@@ -198,3 +236,5 @@ export const cashAccountCodeState = atom<any>({
   key: "cashAccountCodeState",
   default: "",
 });
+
+

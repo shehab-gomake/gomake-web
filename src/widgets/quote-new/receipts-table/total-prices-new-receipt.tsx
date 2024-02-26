@@ -23,7 +23,7 @@ totalPayment
           {sum +  " " + getCurrencyUnitText(quoteItemValue?.currency)}
         </div>
       </div>
-      { taxDeduction!==0 && <div style={classes.firstRowForFooterContainer}>
+      { taxDeduction !== 0 && <div style={classes.firstRowForFooterContainer}>
         <div style={{ ...classes.evenRowContainer, width: "55.8%" ,  borderBottom: "1px solid #EAECF0"}}>
           {t("payment.taxDeduction")}
         </div>

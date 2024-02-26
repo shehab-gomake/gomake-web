@@ -3,8 +3,8 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import { MoreMenuWidget } from "../more-circle";
-import { useRecoilState, useRecoilValue, useResetRecoilState, useSetRecoilState } from "recoil";
-import { CheckData, CreditCardData, ERPAccountsData, ERPAccountsState, checksRowState, creditCardState, totalBitState, totalCashState, totalChecksState, totalCreditCardState, totalPaymentState, totalTransferState } from "../../states";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { CheckData, CreditCardData, ERPAccountsData, ERPAccountsState, ReceiptCreditCardData, checksRowState, creditCardState, receiptCreditCardState, totalBitState, totalCashState, totalChecksState, totalCreditCardState, totalPaymentState, totalTransferState } from "../../states";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { createCreditTransactionApi } from "@/services/api-service/generic-doc/receipts-api";
 import { isTransactedState } from "@/widgets/quote-new/receipts-table/states";
@@ -143,7 +143,6 @@ const usePaymentMethodsTabs = () => {
     // credit card tab //
     const [totalCreditCard, setTotalTotalCreditCard] = useRecoilState<number>(totalCreditCardState);
     const handleTotalCreditCardChange = (value) => {
-        handleChangeInputs("transactionSum", value)
         setTotalTotalCreditCard(value);
         setTotalPayment(Number(value) + Number(totalCash) + Number(totalBit) + Number(totalChecks) + Number(totalTransfer))
     };
@@ -168,6 +167,8 @@ const usePaymentMethodsTabs = () => {
     ////////////////////////////////////// CREDIT CARD /////////////////////////////////////////
 
     const [creditCard, setCreditCard] = useRecoilState<CreditCardData>(creditCardState);
+    const [secondCreditCard, setSecondCreditCard] = useRecoilState<ReceiptCreditCardData>(receiptCreditCardState);
+    const [isTransacted, setIsTransacted] = useRecoilState<boolean>(isTransactedState);
 
     const handleExpiryDateChange = (e) => {
         const formattedInput = e.target.value.replace(/\D/g, '');
@@ -206,8 +207,12 @@ const usePaymentMethodsTabs = () => {
         }));
     }
 
-    /////////////////////////////////////////////////////////////////////////////
-    const [isTransacted , setIsTransacted] = useRecoilState<boolean>(isTransactedState);
+    const handleChangeCreditCardInputs = (key, value) => {
+        setSecondCreditCard((prev) => ({
+            ...prev,
+            [key]: value,
+        }));
+    }
 
     const transactionTypes = [
         { label: t("payment.regular"), value: 1 },
@@ -219,7 +224,7 @@ const usePaymentMethodsTabs = () => {
         value: index + 1,
     }));
 
-    
+
     const onClickMakePayment = async () => {
         const callBack = (res) => {
             if (res?.success) {
@@ -255,7 +260,9 @@ const usePaymentMethodsTabs = () => {
         handleTotalCreditCardChange,
         handleChangeInputs,
         creditCard,
-        isTransacted
+        isTransacted,
+        handleChangeCreditCardInputs,
+        secondCreditCard
     };
 
 };

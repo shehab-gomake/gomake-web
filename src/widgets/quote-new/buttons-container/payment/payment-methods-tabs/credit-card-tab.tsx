@@ -29,7 +29,9 @@ const CreditCardTab = ({
         handleTotalCreditCardChange,
         creditCard,
         handleChangeInputs,
-        isTransacted
+        isTransacted,
+        secondCreditCard,
+        handleChangeCreditCardInputs
     } = usePaymentMethodsTabs();
 
 
@@ -69,7 +71,7 @@ const CreditCardTab = ({
                             style={classes.creditSecondCardInputs}
                             placeholder="Total"
                             value={totalCreditCard}
-                            onChange={(e) => handleTotalCreditCardChange(e.target.value)}
+                            onChange={(e) => {handleTotalCreditCardChange(e.target.value); handleChangeInputs("transactionSum", e.target.value)}}
                         />
                     </div>
                     <div style={classes.creditCardSecondInputsContainer}>
@@ -130,14 +132,17 @@ const CreditCardTab = ({
                 <div style={classes.firstWidgetStyle}>
                     <div style={classes.creditCardSecondInputsContainer}>
                         <input
-                            {...getCardNumberProps({ onChange: handleCardNumberChange })}
                             style={classes.creditSecondCardInputs}
-                            placeholder="Card number" />
-
+                            placeholder="Card number"
+                            value={secondCreditCard?.creditCardNum}
+                            onChange={(e) => handleChangeCreditCardInputs("creditCardNum", e.target.value)}
+                        />
                         <input
-                            {...getExpiryDateProps({ onChange: handleExpiryDateChange })}
                             style={classes.creditSecondCardInputs}
-                            placeholder="MM/YY" />
+                            placeholder="MM/YY"
+                            value={secondCreditCard?.creditCardExpDate}
+                            onChange={(e) => handleChangeCreditCardInputs("creditCardExpDate", e.target.value)}
+                        />
                     </div>
 
                     <div style={classes.creditCardSecondInputsContainer}>
@@ -145,11 +150,13 @@ const CreditCardTab = ({
                             style={classes.creditSecondCardInputs}
                             placeholder="Total"
                             value={totalCreditCard}
-                            onChange={(e) => handleTotalCreditCardChange(e.target.value)}
+                            onChange={(e) => { handleTotalCreditCardChange(e.target.value); handleChangeCreditCardInputs("creditCardSum", e.target.value); }}
                         />
                         <input
                             style={classes.creditSecondCardInputs}
                             placeholder="Voucher number"
+                            value={secondCreditCard?.creditCardVoucherNumber}
+                            onChange={(e) => handleChangeCreditCardInputs("creditCardVoucherNumber", e.target.value)}
                         />
                     </div>
                 </div>

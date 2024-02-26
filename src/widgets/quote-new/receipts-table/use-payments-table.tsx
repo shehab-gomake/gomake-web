@@ -2,7 +2,7 @@ import { useTranslation } from "react-i18next";
 import { TableCell, styled, tableCellClasses } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useRecoilState, useResetRecoilState, useSetRecoilState } from "recoil";
-import { totalDocumentsState, totalPaymentState, finalTotalPaymentState, totalCashState, totalBitState, totalTransferState, totalChecksState, checksRowState, CheckData, checkedItemsIdsState, transferTabState, prevStateState, prevStateStateData, taxDeductionState, checksAccountCodeState, totalCreditCardState, CreditCardData, creditCardState } from "../buttons-container/states";
+import { totalDocumentsState, totalPaymentState, finalTotalPaymentState, totalCashState, totalBitState, totalTransferState, totalChecksState, checksRowState, CheckData, checkedItemsIdsState, transferTabState, prevStateState, prevStateStateData, taxDeductionState, checksAccountCodeState, totalCreditCardState, CreditCardData, creditCardState, ReceiptCreditCardData, receiptCreditCardState } from "../buttons-container/states";
 import { quoteItemState } from "@/store";
 import { useRouter } from "next/router";
 import { firstWidgetState, isTransactedState, secondWidgetState, thirdWidgetState } from "./states";
@@ -53,6 +53,10 @@ const usePaymentsTable = () => {
     const resetTotalCreditCard = useResetRecoilState(totalCreditCardState);
     const [creditCardSate, setCreditCardState] = useRecoilState<CreditCardData>(creditCardState);
     const resetCreditCardState = useResetRecoilState(creditCardState);
+
+    const [secondCreditCard, setSecondCreditCard] = useRecoilState<ReceiptCreditCardData>(receiptCreditCardState);
+    const resetSecondCreditCardState = useResetRecoilState(receiptCreditCardState);
+
 
     // flag isTransacted 
     const resetIsTransactedState = useResetRecoilState(isTransactedState);
@@ -141,7 +145,7 @@ const usePaymentsTable = () => {
             checksAccount: checkAccountCode,
             cashAccount: cashAccountCode,
             creditCardTotal: totalCreditCard,
-
+            receiptCreditCards:secondCreditCard
         };
         setDocumentItemValue(receiptItemCopy);
         setFinalTotalPayment(totalPayment);
@@ -176,6 +180,7 @@ const usePaymentsTable = () => {
             cashAccountCode: cashAccountCode,
             totalCreditCard: totalCreditCard,
             creditCardState: creditCardSate,
+            secondCreditCard:secondCreditCard,
             cardWidget: cardWidgetValue
         });
     };
@@ -192,6 +197,9 @@ const usePaymentsTable = () => {
         setCashAccountCode(previousState.cashAccountCode);
         setTotalCreditCard(previousState.totalCreditCard);
         setCreditCardState(previousState.creditCardState);
+        setSecondCreditCard(previousState.secondCreditCard);
+
+
 
         setFirstWidget(previousState.cardWidget === 1);
         setSecondWidget(previousState.cardWidget === 2);
@@ -217,6 +225,7 @@ const usePaymentsTable = () => {
         resetCashAccountCode();
         resetTotalCreditCard();
         resetCreditCardState();
+        resetSecondCreditCardState();
         resetIsTransactedState();
     };
 
@@ -232,7 +241,7 @@ const usePaymentsTable = () => {
         setTotalPayment(totalPayment - totalCreditCard);
         resetTotalCreditCard();
         resetCreditCardState();
-
+        resetSecondCreditCardState();
         setFirstWidget(true);
         setSecondWidget(false);
         setThirdWidget(false);
@@ -252,7 +261,7 @@ const usePaymentsTable = () => {
         setTotalPayment(totalPayment - totalCreditCard);
         resetTotalCreditCard();
         resetCreditCardState();
-
+        resetSecondCreditCardState();
         setFirstWidget(false);
         setSecondWidget(false);
         setThirdWidget(true);
