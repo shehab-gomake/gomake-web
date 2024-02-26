@@ -5,7 +5,7 @@ import { useRecoilValue, useSetRecoilState } from "recoil";
 import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
 import { createOrderApi, getDocumentPdfApi } from "@/services/api-service/generic-doc/documents-api";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
-import { cancelReceiptApi, createReceiptApi, getERPAccountsApi } from "@/services/api-service/generic-doc/receipts-api";
+import { cancelReceiptApi, createReceiptApi, getERPAccountsApi, getReceiptPdfApi } from "@/services/api-service/generic-doc/receipts-api";
 import { ERPAccountsData, ERPAccountsState, ErpAccountType, checkedItemsIdsState, finalTotalPaymentState } from "./states";
 
 const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
@@ -13,7 +13,7 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     const { t } = useTranslation();
     const { callApi } = useGomakeAxios();
     const quoteItemValue: any = useRecoilValue(quoteItemState);
-    const { alertFault,alertSuccessDelete , alertSuccessUpdate, alertFaultUpdate, alertFaultAdded, alertSuccessAdded } = useSnackBar();
+    const { alertFault, alertSuccessDelete, alertFaultDelete, alertSuccessUpdate, alertFaultUpdate, alertFaultAdded, alertSuccessAdded } = useSnackBar();
     const [selectedTabIndex, setSelectedTabIndex] = useState<number>(0);
     const [openPaymentModal, setOpenPaymentModal] = useState(false);
     const [openOrderNowModal, setOpenOrderNowModal] = useState(false);
@@ -36,7 +36,6 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
         setSelectedTabIndex(selectedTabIndex);
         setOpenPaymentModal(true);
     };
-
     const onClickClosePaymentModal = () => {
         setOpenPaymentModal(false);
     };
@@ -98,10 +97,13 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
                 alertFaultUpdate();
             }
         };
-        await getDocumentPdfApi(callApi, callBack, { documentId: quoteItemValue?.id, documentType: docType });
+        if (docType === DOCUMENT_TYPE.receipt) {
+            await getReceiptPdfApi(callApi, callBack, { receiptId: quoteItemValue?.id });
+        }
+        else {
+            await getDocumentPdfApi(callApi, callBack, { documentId: quoteItemValue?.id, documentType: docType });
+        }
     };
-
-
 
     const getERPAccounts = async (accountType: ErpAccountType) => {
         const callBack = (res) => {
@@ -148,13 +150,14 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
         await createReceiptApi(callApi, callBack, { newReceiptItem });
     };
 
-
-    const onClickCancelReceipt = async (refundCredit : boolean) => {
+    const onClickCancelReceipt = async (refundCredit: boolean) => {
         const callBack = (res) => {
             if (res?.success) {
                 alertSuccessDelete();
+                navigate("/receipts");
+
             } else {
-            navigate("/receipts");
+                alertFaultDelete();
             }
         };
         await cancelReceiptApi(callApi, callBack, { id: quoteItemValue?.id, refundCredit });

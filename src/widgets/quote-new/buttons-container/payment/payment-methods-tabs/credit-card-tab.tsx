@@ -16,7 +16,7 @@ const CreditCardTab = ({
 }) => {
     const { classes } = useStyle();
     const { getCardNumberProps, getExpiryDateProps, getCVCProps } = usePaymentInputs();
-    
+
     const {
         t,
         handleCardNumberChange,
@@ -28,7 +28,8 @@ const CreditCardTab = ({
         totalCreditCard,
         handleTotalCreditCardChange,
         creditCard,
-        handleChangeInputs
+        handleChangeInputs,
+        isTransacted
     } = usePaymentMethodsTabs();
 
 
@@ -42,19 +43,19 @@ const CreditCardTab = ({
                         <input
                             {...getCardNumberProps({ onChange: handleCardNumberChange })}
                             style={{ ...classes.creditCardInputs, width: "55%", paddingLeft: "5px" }}
-                            placeholder="Card number" 
+                            placeholder="Card number"
                             value={creditCard?.cardNumber}
-                            />
+                        />
                         <input
                             {...getExpiryDateProps({ onChange: handleExpiryDateChange })}
                             style={{ ...classes.creditCardInputs, width: "20%" }}
-                            placeholder="MM/YY" 
-                            value={creditCard?.expDate_MMYY}/>
+                            placeholder="MM/YY"
+                            value={creditCard?.expDate_MMYY} />
                         <input
                             {...getCVCProps({ onChange: handleCVVChange })}
                             style={{ ...classes.creditCardInputs, width: "20%" }}
-                            placeholder="CVV" 
-                            value={creditCard?.cvv}/>
+                            placeholder="CVV"
+                            value={creditCard?.cvv} />
                     </div>
                     <div style={classes.creditCardSecondInputsContainer}>
                         <input
@@ -123,7 +124,6 @@ const CreditCardTab = ({
                         )}
                     </div>
                 </div>
-
             }
             {
                 secondWidget &&
@@ -180,7 +180,6 @@ const CreditCardTab = ({
                             <div style={{ width: "45%" }}>
                                 <GoMakeAutoComplate
                                     value={creditCard?.numberOfPayments}
-
                                     style={classes.selectInputs}
                                     options={numberOfPayments}
                                     placeholder={t("payment.numberOfPayments")}
@@ -191,12 +190,12 @@ const CreditCardTab = ({
                     </div>
                 </div>
             }
-            {!secondWidget && <PrimaryButton variant="contained" style={{ width: "75%", padding: "4px" }} onClick={onClickMakePayment} >{t('payment.makePayment')}</PrimaryButton>}
-            <div style={{ display: "flex", flexDirection: "column", width: "75%" }}>
+            {(!secondWidget && !isTransacted) && <PrimaryButton variant="contained" style={{ width: "75%", padding: "4px" }} onClick={onClickMakePayment} >{t('payment.makePayment')}</PrimaryButton>}
+            {!isTransacted && <div style={{ display: "flex", flexDirection: "column", width: "75%" }}>
                 {!firstWidget && <SecondaryButton style={classes.creditButtons} onClick={handleFirstButtonClick}>{t('payment.manualCreditCard')}</SecondaryButton>}
                 {!secondWidget && <SecondaryButton style={classes.creditButtons} onClick={handleSecondButtonClick}>{t('payment.creditDetailsWithoutSwipe')}</SecondaryButton>}
                 {!thirdWidget && <SecondaryButton style={classes.creditButtons} onClick={handleThirdButtonClick}>{t('payment.processingViaPinPad')}</SecondaryButton>}
-            </div>
+            </div>}
         </div>
     );
 }

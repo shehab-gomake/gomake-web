@@ -7,6 +7,7 @@ import { useRecoilState, useRecoilValue, useResetRecoilState, useSetRecoilState 
 import { CheckData, CreditCardData, ERPAccountsData, ERPAccountsState, checksRowState, creditCardState, totalBitState, totalCashState, totalChecksState, totalCreditCardState, totalPaymentState, totalTransferState } from "../../states";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { createCreditTransactionApi } from "@/services/api-service/generic-doc/receipts-api";
+import { isTransactedState } from "@/widgets/quote-new/receipts-table/states";
 
 const usePaymentMethodsTabs = () => {
     const { t } = useTranslation();
@@ -206,6 +207,8 @@ const usePaymentMethodsTabs = () => {
     }
 
     /////////////////////////////////////////////////////////////////////////////
+    const [isTransacted , setIsTransacted] = useRecoilState<boolean>(isTransactedState);
+
     const transactionTypes = [
         { label: t("payment.regular"), value: 1 },
         { label: t("payment.installments"), value: 2 }
@@ -216,11 +219,11 @@ const usePaymentMethodsTabs = () => {
         value: index + 1,
     }));
 
-
-
-    const onClickMakePayment = async (transactionState) => {
+    
+    const onClickMakePayment = async () => {
         const callBack = (res) => {
             if (res?.success) {
+                setIsTransacted(true);
                 alertSuccessUpdate();
             } else {
                 alertFaultUpdate();
@@ -251,7 +254,8 @@ const usePaymentMethodsTabs = () => {
         totalCreditCard,
         handleTotalCreditCardChange,
         handleChangeInputs,
-        creditCard
+        creditCard,
+        isTransacted
     };
 
 };

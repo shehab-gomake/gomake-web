@@ -23,7 +23,7 @@ import { DOCUMENT_TYPE } from "./enums";
 import { useQuoteGetData } from "../quote-new/use-quote-get-data";
 import { useStyle } from "./style";
 import { DEFAULT_VALUES } from "@/pages/customers/enums";
-import { getAllReceiptsApi } from "@/services/api-service/generic-doc/receipts-api";
+import { getAllReceiptsApi, getReceiptPdfApi } from "@/services/api-service/generic-doc/receipts-api";
 
 const useQuotes = (docType: DOCUMENT_TYPE) => {
   const { t } = useTranslation();
@@ -481,6 +481,8 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     });
   };
 
+
+
   const onClickQuotePdf = async (id: string) => {
     const callBack = (res) => {
       if (res?.success) {
@@ -490,10 +492,17 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
         alertFaultUpdate();
       }
     };
-    await getDocumentPdfApi(callApi, callBack, {
-      documentId: id,
-      documentType: docType,
-    });
+    if (isReceipt) {
+      await getReceiptPdfApi(callApi, callBack, {
+        receiptId: id,
+      });
+    }
+    else {
+      await getDocumentPdfApi(callApi, callBack, {
+        documentId: id,
+        documentType: docType,
+      });
+    }
   };
 
   const onClickQuoteDuplicate = async (id: string) => {

@@ -46,8 +46,8 @@ export interface prevStateStateData {
   taxDeduction: number;
   checkAccountCode:any;
   cashAccountCode:any;
+  cardWidget:number;
 }
-
 
 export interface CreditCardData {
   cardNumber: string;
@@ -184,6 +184,7 @@ export const prevStateState = atom<prevStateStateData>({
       },
     ],
     taxDeduction: 0,
+    cardWidget:1
   },
 });
 
