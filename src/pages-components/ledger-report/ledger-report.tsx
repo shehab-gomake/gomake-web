@@ -1,10 +1,10 @@
 import { Divider } from "@mui/joy";
 
-import { AgingReportHeaderWidget } from "./widgets/header-widget";
-import { AgingReportButtonWidget } from "./widgets/button-widget";
 import { useLedgerReport } from "./use-ledger-report";
 import { useStyle } from "./style";
 import { PrimaryTable } from "@/components/tables/primary-table";
+import { LedgerReportHeaderWidget } from "./widgets/header-widget";
+import { LedgerReportButtonWidget } from "./widgets/button-widget";
 
 const LedgerReportWidget = () => {
   const { clasess } = useStyle();
@@ -27,7 +27,7 @@ const LedgerReportWidget = () => {
   } = useLedgerReport()
   return (
     <div style={clasess.mainContainer}>
-      <AgingReportHeaderWidget
+      <LedgerReportHeaderWidget
         onSelectDeliveryTimeDates={onSelectDeliveryTimeDates}
         resetDatePicker={resetDatePicker}
         customer={customer}
@@ -38,7 +38,7 @@ const LedgerReportWidget = () => {
         onChangeIsExtended={onChangeIsExtended}
       />
       <Divider />
-      <AgingReportButtonWidget
+      <LedgerReportButtonWidget
         onClickCreateNewTransaction={onClickCreateNewTransaction}
         onClickSendingTicketByEmail={onClickSendingTicketByEmail}
         onClickPrintCard={onClickPrintCard}

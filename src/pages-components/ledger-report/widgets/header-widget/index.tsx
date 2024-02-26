@@ -6,7 +6,7 @@ import { GoMakeAutoComplate } from "@/components"
 
 import { AgingReportHeaderWidgetProps, useAgingReportHeader } from "./use-header-widget";
 
-const AgingReportHeaderWidget = ({
+const LedgerReportHeaderWidget = ({
   onSelectDeliveryTimeDates,
   resetDatePicker,
   customer,
@@ -56,4 +56,4 @@ const AgingReportHeaderWidget = ({
     </div>
   );
 };
-export { AgingReportHeaderWidget };
+export { LedgerReportHeaderWidget };

@@ -1,37 +1,17 @@
 import { GomakePrimaryButton } from "@/components";
+
+import { LedgerReportButtonWidgetProps, useLedgerReportHeader } from "./use-button-widget";
 import { useStyle } from "./style";
 
 
-export interface AgingReportButtonWidgetProps {
-  onClickCreateNewTransaction: () => void;
-  onClickPrintCard: () => void;
-  onClickShowCard: () => void;
-  onClickSendingTicketByEmail: () => void;
-}
-const AgingReportButtonWidget = ({
+const LedgerReportButtonWidget = ({
   onClickCreateNewTransaction,
   onClickPrintCard,
   onClickShowCard,
-  onClickSendingTicketByEmail }: AgingReportButtonWidgetProps) => {
+  onClickSendingTicketByEmail
+}: LedgerReportButtonWidgetProps) => {
   const { clasess } = useStyle()
-  const tabs = [
-    {
-      name: "Create new transaction",
-      onclick: onClickCreateNewTransaction
-    },
-    {
-      name: "Sending ticket by email",
-      onclick: onClickSendingTicketByEmail
-    },
-    {
-      name: "Print card",
-      onclick: onClickPrintCard
-    },
-    {
-      name: "Show card",
-      onclick: onClickShowCard
-    }
-  ]
+  const { tabs } = useLedgerReportHeader({ onClickCreateNewTransaction, onClickPrintCard, onClickShowCard, onClickSendingTicketByEmail })
   return (
     <div style={clasess.mainContainer}>
       {tabs.map((tab, index) => {
@@ -42,4 +22,4 @@ const AgingReportButtonWidget = ({
     </div>
   );
 };
-export { AgingReportButtonWidget };
+export { LedgerReportButtonWidget };
