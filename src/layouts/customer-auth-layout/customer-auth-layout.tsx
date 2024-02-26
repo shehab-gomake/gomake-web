@@ -9,6 +9,7 @@ import {hoverStatusState} from "@/store";
 import {LAYOUT_DEFAULT_GAP} from "@/utils/layout-config";
 
 const CustomerAuthLayout = ({
+
                                 children,
                                 permissionEnumValue,
                                 customGap = LAYOUT_DEFAULT_GAP,

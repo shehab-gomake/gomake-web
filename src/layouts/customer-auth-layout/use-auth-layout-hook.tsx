@@ -1,5 +1,6 @@
 import { useGomakeAuth, useGomakeAxios, useGomakeRouter } from "@/hooks";
-import { CustomersIcon, HomeIcon, ProductFloorIcon, SalesIcon, SettingNavBar, ShopingIcon, } from "@/icons";
+import { CustomersIcon, HomeIcon, ProductFloorIcon, ReportsIcon, SalesIcon, SettingNavBar, ShopingIcon, } from "@/icons";
+
 import { useEffect, useMemo, useState } from "react";
 import { CubeIcon } from "@/components/icons/cube-icon";
 import { useRecoilValue } from "recoil";
@@ -185,18 +186,25 @@ const useAuthLayoutHook = (permissionEnumValue?: Permissions, allowAnonymous?: b
         },
         isProduction: true,
       },
-      // {
-      //   isLine: false,
-      //   key: "reports",
-      //   title: "tabs.reports",
-      //   path: "/reports",
-      //   Permission: Permissions.SHOW_REPORTS,
-      //   isList: false,
-      //   icon: () => {
-      //     return <ReportsIcon />;
-      //   },
-      //   isProduction: true,
-      // },
+      {
+        isLine: false,
+        key: "reports",
+        title: "tabs.reports",
+        Permission: Permissions.SHOW_CLIENT,
+        isList: true,
+        list: [
+          {
+            key: "agingReport",
+            title: "tabs.agingReport",
+            path: "/aging-report",
+            Permission: Permissions.SHOW_CLIENT,
+          },
+        ],
+        icon: () => {
+          return <ReportsIcon />;
+        },
+        isProduction: true,
+      },
     ];
   }, []);
   const tabs3: any = useMemo(() => {

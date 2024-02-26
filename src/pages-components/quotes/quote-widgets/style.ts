@@ -3,7 +3,7 @@ import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { FONT_FAMILY } from "@/utils/font-family";
 
 const useStyle = () => {
-  const {theme , secondColor}=useGomakeTheme()
+  const {theme ,secondColor }=useGomakeTheme()
   const classes = useMemo(() => {
     return {
         dropDownListStyle: {
