@@ -54,6 +54,7 @@ export interface prevStateStateData {
   checkAccountCode:any;
   cashAccountCode:any;
   cardWidget:number;
+  selectedCreditTransaction:transactionOptionsData;
 }
 
 export interface CreditCardData {
@@ -213,7 +214,8 @@ export const prevStateState = atom<prevStateStateData>({
       },
     ],
     taxDeduction: 0,
-    cardWidget:1
+    cardWidget:1,
+    selectedCreditTransaction:null
   },
 });
 
@@ -231,4 +233,8 @@ export const cashAccountCodeState = atom<any>({
 export const creditTransactionsState = atom<transactionOptionsData[]>({
   key: "creditTransactionsState",
   default: [],
+});
+export const selectedCreditTransactionState = atom<transactionOptionsData>({
+  key: "selectedCreditTransactionState",
+  default: null,
 });

@@ -22,7 +22,6 @@ const useCharacterDetails = ({ details, getQuote, documentItemId }) => {
   const { t } = useTranslation();
   const truncatedDetails = showAll ? details : details?.slice(0, 90);
   const [quoteItemValue, setQuoteItemValue] = useRecoilState<any>(quoteItemState);
-  console.log("quoteItemValue", quoteItemValue)
   const handleShowMore = () => {
     setShowAll(true);
   };

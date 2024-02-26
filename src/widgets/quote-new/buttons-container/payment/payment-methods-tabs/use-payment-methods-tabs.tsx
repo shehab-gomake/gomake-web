@@ -3,8 +3,8 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import { MoreMenuWidget } from "../more-circle";
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
-import { CheckData, CreditCardData, ERPAccountsData, ERPAccountsState, ReceiptCreditCardData, checksRowState, creditCardState, creditTransactionsState, receiptCreditCardState, totalBitState, totalCashState, totalChecksState, totalCreditCardState, totalPaymentState, totalTransferState, transactionOptionsData } from "../../states";
+import { useRecoilState, useRecoilValue, useResetRecoilState, useSetRecoilState } from "recoil";
+import { CheckData, CreditCardData, ERPAccountsData, ERPAccountsState, ReceiptCreditCardData, checksRowState, creditCardState, creditTransactionsState, receiptCreditCardState, selectedCreditTransactionState, totalBitState, totalCashState, totalChecksState, totalCreditCardState, totalPaymentState, totalTransferState, transactionOptionsData } from "../../states";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { createCreditTransactionApi } from "@/services/api-service/generic-doc/receipts-api";
 import { isTransactedState } from "@/widgets/quote-new/receipts-table/states";
@@ -170,6 +170,7 @@ const usePaymentMethodsTabs = () => {
 
     const [creditCard, setCreditCard] = useRecoilState<CreditCardData>(creditCardState);
     const [secondCreditCard, setSecondCreditCard] = useRecoilState<ReceiptCreditCardData>(receiptCreditCardState);
+    const resetSecondCreditCardState = useResetRecoilState(receiptCreditCardState);
     const [isTransacted, setIsTransacted] = useRecoilState<boolean>(isTransactedState);
 
     const handleExpiryDateChange = (e) => {
@@ -241,19 +242,19 @@ const usePaymentMethodsTabs = () => {
 
 
     const cardTransactionsOptions = useRecoilValue<transactionOptionsData[]>(creditTransactionsState);
-    const [transactionSelected, setTransactionSelected] = useState();
+    const [transactionSelected, setTransactionSelected] = useRecoilState<transactionOptionsData>(selectedCreditTransactionState);
+
 
     const handleChooseExistingCard = (value) => {
         if (value) {
-
             handleTotalCreditCardChange(value?.transactionSum);
-            setSecondCreditCard( {
-                
+            setSecondCreditCard({
                 creditCardTransactionID: value?.value,
-                creditCardSum:value?.transactionSum
-        });
+                creditCardSum: value?.transactionSum
+            });
         }
-        else{
+        else {
+            resetSecondCreditCardState();
             handleTotalCreditCardChange(0);
         }
         setTransactionSelected(value);

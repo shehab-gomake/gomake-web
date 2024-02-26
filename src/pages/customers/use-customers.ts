@@ -81,7 +81,7 @@ const useCustomers = (
 
   const [name, setCustomerName] = useState("");
   const [finalPatternSearch, setFinalPatternSearch] = useState("");
-  console.log("finalPatternSearch", finalPatternSearch);
+  
   const debounce = useDebounce(name, 500);
   useEffect(() => {
     console.log("debounce", debounce);

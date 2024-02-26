@@ -105,8 +105,8 @@ const useStyle = () => {
         width: "100%"
       },
       firstSection: {
-        maxHeight: "70%",
-        height: "65%",
+        minHeight: "65%",
+       // height: "65%",
         overflow: "hidden" as "hidden"
       },
       iconStyle: {
