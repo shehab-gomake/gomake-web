@@ -1,4 +1,4 @@
-import {clearStorage} from "@/services/storage-data";
+import {clearStorage, updateTokenStorage} from "@/services/storage-data";
 import {systemCurrencyState, systemVATState, userState} from "@/store";
 import {permissionsState} from "@/store/permissions";
 import {useCallback, useState} from "react";
@@ -40,7 +40,7 @@ const useCustomer = (permissionEnumValue?:Permissions,allowAnonymous?:boolean) =
         const validate: any = await callApi("GET", "/v1/auth/validate");
         if (validate?.success) {
             const user = validate?.data?.data?.customer;
-            // user.redirectTo = '/quick-setup/machines';
+            updateTokenStorage(user?.token);
             const userPermissions = [...user.permissions];
             user.permissions = null;
             setUser({...user, type: "user"});
