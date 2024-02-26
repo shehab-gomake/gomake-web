@@ -396,13 +396,13 @@ const useAddRuleModal = ({
             statementValue:
               typeof item?.statement === "object"
                 ? item?.statement?.id
-                : item.statement,
-                statementId: item.statement2.id,
-                operator: item.condition.id,
-                conditionBetweenStatements: item.linkCondition
-              ? item.linkCondition.id
+                : item?.statement,
+                statementId: item?.statement2?.id,
+                operator: item?.condition?.id,
+                conditionBetweenStatements: item?.linkCondition
+              ? item?.linkCondition?.id
               : "",
-              statementCategory: EStatementCategory[item.category.id],
+              statementCategory: EStatementCategory[item?.category?.id],
           };
         }),
       },

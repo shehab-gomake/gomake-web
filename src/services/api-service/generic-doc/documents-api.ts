@@ -4,7 +4,6 @@ import { ICallAndSetData } from "@/services/api-service/interface";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 
 const GET_DOCUMENT_URL = "/v1/erp-service/documents/get-document";
-const GET_NEW_DOCUMENT_DATA_URL = "/v1/erp-service/documents/get-new-document-data";
 const GET_ALL_DOCUMENTS_URL = "/v1/erp-service/documents/get-all-documents";
 const DELETE_DOCUMENT_ITEM_URL =
   "/v1/erp-service/documents/delete-document-item";
@@ -64,15 +63,7 @@ const GET_CLIENT_DOCUMENTS = "/v1/erp-service/documents/get-client-documents";
 
 
 
-const getNewDocumentDataApi: ICallAndSetData = async (callApi, setState, data) => {
-  return await getSetApiData(
-    callApi,
-    EHttpMethod.POST,
-    GET_NEW_DOCUMENT_DATA_URL,
-    setState,
-    data
-  );
-};
+
 const getDocumentApi: ICallAndSetData = async (callApi, setState, data) => {
   return await getSetApiData(
     callApi,
@@ -575,6 +566,5 @@ export {
   getAllReportsApi,
   updateDocumentItemContentApi,
   updateDocumentCommentsApi,
-  getNewDocumentDataApi,
   getClientDocumentsApi
 };

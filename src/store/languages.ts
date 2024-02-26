@@ -30,4 +30,12 @@ export const languagesState = atom({
             text: "Deutsch"
         }
     ]
+});
+
+export const languageOptionsState = selector({
+    key: 'languageOptionsState',
+    get: ({get}) => {
+        const state = get(languagesState);
+        return state?.map(language => ({...language, label: language.text}))
+    }
 })

@@ -1,5 +1,6 @@
 import { useGomakeAuth, useGomakeAxios, useGomakeRouter } from "@/hooks";
 import { CustomersIcon, HomeIcon, ProductFloorIcon, ReportsIcon, SalesIcon, SettingNavBar, ShopingIcon, } from "@/icons";
+
 import { useEffect, useMemo, useState } from "react";
 import { CubeIcon } from "@/components/icons/cube-icon";
 import { useRecoilValue } from "recoil";
@@ -89,9 +90,21 @@ const useAuthLayoutHook = (permissionEnumValue?: Permissions, allowAnonymous?: b
             Permission: Permissions.SHOW_ORDERS,
           },
           {
+            key: "delivery note refund",
+            title: "tabs.deliveryNoteRefund",
+            path: "/deliveryNoteRefunds",
+            Permission: Permissions.SHOW_ORDERS,
+          },
+          {
             key: "invoices",
             title: "tabs.invoices",
             path: "/invoices",
+            Permission: Permissions.SHOW_ORDERS,
+          },
+          {
+            key: "invoice refund",
+            title: "tabs.invoiceRefund",
+            path: "/invoiceRefunds",
             Permission: Permissions.SHOW_ORDERS,
           },
           {

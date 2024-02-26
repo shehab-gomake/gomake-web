@@ -41,7 +41,7 @@ const useMoreCircle = ({
     );
   };
   const menuList = [
-    quoteItem.productType === 0 && !router.query.isNewCreation && {
+    quoteItem.productType === 0 && !router.query.isNewCreation && !router.query.Id && {
       name: "Edits",
       icon: <EditMenuIcon />,
       onclick: () => onClickEditQuoteItem(quoteItem, documentType),
@@ -66,6 +66,7 @@ const useMoreCircle = ({
       icon: <AnalysisIcon />,
       onclick: () => null,
     },
+    !router.query.Id &&
     {
       name: "Delete",
       icon: <DeleteMenuIcon />,
