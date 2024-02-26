@@ -202,6 +202,13 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           totalWorkFlowsCount: totalWorkFlowsCount,
           currentWorkFlowsCount: currentWorkFlowsCount,
         });*/
+        if(calculationResult.isCalculationFinished){
+          setCalculationProgress({
+            totalWorkFlowsCount: 0,
+            currentWorkFlowsCount: 0,
+          });
+          setLoading(false);
+        }
         setWorkFlows(currentWorkFlows);
         setJobActions(calculationResult?.productItemValue.actions);
       }
