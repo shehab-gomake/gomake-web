@@ -2,7 +2,7 @@ import { Divider } from "@mui/joy";
 
 import { AgingReportHeaderWidget } from "./widgets/header-widget";
 import { AgingReportButtonWidget } from "./widgets/button-widget";
-import { useAgingReport } from "./use-aging-report";
+import { useAgingReport } from "./use-ledger-report";
 import { useStyle } from "./style";
 import { PrimaryTable } from "@/components/tables/primary-table";
 
