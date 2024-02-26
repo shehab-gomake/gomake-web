@@ -1,9 +1,9 @@
-import React, { useState, useTransition } from "react";
 import { useStyle } from "./style";
 import { GomakeTextInput } from "@/components";
 import { useWriteCommentComp } from "./use-character-details";
 import { useButtonsConfirmContainer } from "../buttons-cofirm-container/use-buttons-container";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
+
 interface IProps {
     isQuoteConfirmation?: boolean;
     getQuote?:any;

@@ -24,7 +24,8 @@ import { useQuoteGetData } from "./use-quote-get-data";
 import { addDeliveryApi, addDocumentAddressApi, addDocumentContactApi, calculateDocumentApi, calculateDocumentItemApi, cancelDocumentApi, changeDocumentClientApi, deleteDocumentAddressApi, deleteDocumentContactApi, deleteDocumentItemApi, duplicateWithAnotherQuantityApi, getDocumentApi, refreshExchangeRateApi, saveDocumentApi, sendDocumentToClientApi, updateAgentApi, updateDocumentAddressApi, updateDocumentContactApi, updateDocumentCurrencyApi, updateDueDateApi, updateExchangeRateApi, updatePurchaseNumberApi } from "@/services/api-service/generic-doc/documents-api";
 import { DOCUMENT_TYPE } from "../quotes/enums";
 import { useRouter } from "next/router";
-import { getClientPaymentItemsApi, getReceiptByIdApi } from "@/services/api-service/generic-doc/receipts-api";
+import { getAllCreditTransactionsApi, getClientPaymentItemsApi, getReceiptByIdApi } from "@/services/api-service/generic-doc/receipts-api";
+import { creditTransactionsState, transactionOptionsData } from "@/widgets/quote-new/buttons-container/states";
 
 interface IQuoteProps {
   docType: DOCUMENT_TYPE;
@@ -416,7 +417,6 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
 
   const onChangeSelectBusiness = async (item: any) => {
     if (router?.query?.isNewCreation && docType === DOCUMENT_TYPE.receipt) {
-
       const callBack = (res) => {
         if (res?.success) {
           const _data = res?.data || {};
@@ -425,6 +425,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
         } else {
           alertFaultAdded();
         }
+        getAllCreditCardTransactions(item?.id);
       }
       await getClientPaymentItemsApi(callApi, callBack, { clientId: item?.id, })
     }
@@ -1222,9 +1223,23 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
       }
       await deleteDocumentAddressApi(callApi, callBack, { documentAddressId: item?.id, documentType: docType })
     }
-
   }
 
+  const setCardTransactions = useSetRecoilState<transactionOptionsData[]>(creditTransactionsState);
+  const getAllCreditCardTransactions = async (id: string) => {
+    const callBack = (res) => {
+      if (res?.success) {
+        const formattedData = res?.data.map(transaction => ({
+          value: transaction.id,
+          label: transaction.text,
+          transactionSum: transaction.transactionSum
+        }));
+        setCardTransactions(formattedData)
+      }
+    }
+    await getAllCreditTransactionsApi(callApi, callBack, { clientId: id })
+  }
+  
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dateRef.current && !dateRef.current.contains(event.target)) {
@@ -1249,8 +1264,6 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     }
   }, [agentListValue, quoteItemValue]);
 
-
-
   useEffect(() => {
     const foundItem = customersListValue.find(
       (item: any) => item.id === quoteItemValue?.customerID
@@ -1262,7 +1275,6 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     setSelectConfirmBusiness(foundConfirmItem) // for quote confirmation
   }, [quoteItemValue, customersListValue]);
 
-
   useEffect(() => {
     setPriceListItems(quoteItemValue?.documentItems);
     setquoteItems(quoteItemValue);
@@ -1270,7 +1282,6 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     setItems(isQuoteConfirmation ? quoteConfirm?.documentContacts : quoteItemValue?.documentContacts);
     setSelectDate(isQuoteConfirmation ? quoteConfirm?.dueDate : quoteItemValue?.dueDate);
   }, [quoteItemValue, quoteConfirm]);
-
 
   useEffect(() => {
     getAllCustomers();
@@ -1304,7 +1315,6 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
   ];
 
   const documentTitle = documentsTitles.find(item => item.value === docType).label;
-
 
 
   return {

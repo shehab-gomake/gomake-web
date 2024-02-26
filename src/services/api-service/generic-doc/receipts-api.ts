@@ -9,7 +9,8 @@ const GET_ALL_RECEIPTS_URL = "/v1/erp-service/receipts/get-all-receipts";
 const GET_RECEIPT_BY_ID_URL = "/v1/erp-service/receipts/get-receipt-by-id";
 const CANCEL_RECEIPT_URL = "/v1/erp-service/receipts/cancel-receipt";
 const CREATE_CREDIT_TRANSACTION_URL = "/v1/erp-service/receipts/create-credit-transaction";
-const GET_RECEIPT_PDF_IRL="/v1/erp-service/receipts/get-receipt-pdf";
+const GET_RECEIPT_PDF_URL="/v1/erp-service/receipts/get-receipt-pdf";
+const GET_ALL_CREDIT_TRANSACTIONS_URL="/v1/erp-service/receipts/get-all-transaction";
 
 const getClientPaymentItemsApi: ICallAndSetData = async (callApi, setState, data) => {
   return await getSetApiData(
@@ -88,7 +89,18 @@ const getReceiptPdfApi: ICallAndSetData = async (callApi, setState, data) => {
   return await getSetApiData(
     callApi,
     EHttpMethod.GET,
-    GET_RECEIPT_PDF_IRL,
+    GET_RECEIPT_PDF_URL,
+    setState,
+    data
+  );
+};
+
+
+const getAllCreditTransactionsApi: ICallAndSetData = async (callApi, setState, data) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    GET_ALL_CREDIT_TRANSACTIONS_URL,
     setState,
     data
   );
@@ -102,5 +114,6 @@ export {
   createReceiptApi,
   cancelReceiptApi,
   createCreditTransactionApi,
-  getReceiptPdfApi
+  getReceiptPdfApi,
+  getAllCreditTransactionsApi
 };

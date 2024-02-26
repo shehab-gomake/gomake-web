@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import { MoreMenuWidget } from "../more-circle";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
-import { CheckData, CreditCardData, ERPAccountsData, ERPAccountsState, ReceiptCreditCardData, checksRowState, creditCardState, receiptCreditCardState, totalBitState, totalCashState, totalChecksState, totalCreditCardState, totalPaymentState, totalTransferState } from "../../states";
+import { CheckData, CreditCardData, ERPAccountsData, ERPAccountsState, ReceiptCreditCardData, checksRowState, creditCardState, creditTransactionsState, receiptCreditCardState, totalBitState, totalCashState, totalChecksState, totalCreditCardState, totalPaymentState, totalTransferState, transactionOptionsData } from "../../states";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { createCreditTransactionApi } from "@/services/api-service/generic-doc/receipts-api";
 import { isTransactedState } from "@/widgets/quote-new/receipts-table/states";
@@ -236,9 +236,28 @@ const usePaymentMethodsTabs = () => {
                 alertFaultUpdate();
             }
         };
-        await createCreditTransactionApi(callApi, callBack, {ClientID : quoteItemValue?.client?.id , creditCard});
+        await createCreditTransactionApi(callApi, callBack, { ClientID: quoteItemValue?.client?.id, creditCard });
     };
 
+
+    const cardTransactionsOptions = useRecoilValue<transactionOptionsData[]>(creditTransactionsState);
+    const [transactionSelected, setTransactionSelected] = useState();
+
+    const handleChooseExistingCard = (value) => {
+        if (value) {
+
+            handleTotalCreditCardChange(value?.transactionSum);
+            setSecondCreditCard( {
+                
+                creditCardTransactionID: value?.value,
+                creditCardSum:value?.transactionSum
+        });
+        }
+        else{
+            handleTotalCreditCardChange(0);
+        }
+        setTransactionSelected(value);
+    };
     return {
         t,
         data,
@@ -264,7 +283,10 @@ const usePaymentMethodsTabs = () => {
         creditCard,
         isTransacted,
         handleChangeCreditCardInputs,
-        secondCreditCard
+        secondCreditCard,
+        transactionSelected,
+        cardTransactionsOptions,
+        handleChooseExistingCard
     };
 
 };

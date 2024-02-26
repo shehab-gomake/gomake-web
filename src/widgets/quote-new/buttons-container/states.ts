@@ -27,6 +27,12 @@ export interface ERPAccountsData {
   name: string;
 }
 
+export interface transactionOptionsData {
+  id: string;
+  text: string;
+  transactionSum: number;
+}
+
 export interface TransferTabData {
   transferAccount: any;
   transferSum: number;
@@ -222,4 +228,7 @@ export const cashAccountCodeState = atom<any>({
   default: "",
 });
 
-
+export const creditTransactionsState = atom<transactionOptionsData[]>({
+  key: "creditTransactionsState",
+  default: [],
+});
