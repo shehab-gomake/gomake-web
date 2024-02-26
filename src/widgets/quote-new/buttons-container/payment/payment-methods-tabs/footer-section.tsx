@@ -10,7 +10,7 @@ const FooterSection = ({ onCloseModal }: any) => {
     const onClickSave = () => {
         handleSave();
         onCloseModal();
-    };
+    }; 
 
     return (
         <div style={classes.divStyle}>

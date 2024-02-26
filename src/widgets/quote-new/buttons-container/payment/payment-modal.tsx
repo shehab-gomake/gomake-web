@@ -28,8 +28,14 @@ const PaymentModal = ({ openModal, onClose, selectedTab, getERPAccounts }: IPaym
         thirdWidget,
         handleFirstButtonClick,
         handleSecondButtonClick,
-        handleThirdButtonClick
+        handleThirdButtonClick,
+         handleSave
     } = usePaymentsTable();
+
+    const handleSaveAndClose =()=>{
+        handleSave();
+        onClose();
+    }
 
     const tabs: ITab[] = [
         { title: t("payment.transfer"), component: <TransferTab /> },
@@ -45,6 +51,7 @@ const PaymentModal = ({ openModal, onClose, selectedTab, getERPAccounts }: IPaym
                     handleFirstButtonClick={handleFirstButtonClick}
                     handleSecondButtonClick={handleSecondButtonClick}
                     handleThirdButtonClick={handleThirdButtonClick}
+                    handleSaveAndClose={handleSaveAndClose}
                 />
         },
         { title: t("payment.bit"), component: <BitTab /> }

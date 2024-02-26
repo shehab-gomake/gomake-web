@@ -324,7 +324,7 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
                 <ReceiptsTable />
               }
             </div>
-            <WriteCommentComp getQuote={getQuote} isQuoteConfirmation={isQuoteConfirmation} />
+            <WriteCommentComp getQuote={getQuote} isQuoteConfirmation={isQuoteConfirmation} documentType={documentType}/>
           </div>
           {!isQuoteConfirmation &&
             <ButtonsContainer

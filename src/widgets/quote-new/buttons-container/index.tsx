@@ -118,7 +118,7 @@ const ButtonsContainer = ({
           </GomakePrimaryButton>
         }
         {
-          (documentType === DOCUMENT_TYPE.receipt && quoteItemValue.status !== DELIVERY_NOTE_STATUSES.Canceled)&& <GomakePrimaryButton
+          (documentType === DOCUMENT_TYPE.receipt &&  !isNewCreation && quoteItemValue.status !== DELIVERY_NOTE_STATUSES.Canceled )&& <GomakePrimaryButton
             style={classes.btnThirdContainer}
             onClick={quoteItemValue.creditCardTotal > 0 ? onClickOpenCancelReceiptModal : onClickOpenDeleteModal}
           >

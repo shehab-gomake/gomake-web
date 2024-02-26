@@ -8,6 +8,7 @@ import { CheckData, CreditCardData, ERPAccountsData, ERPAccountsState, ReceiptCr
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { createCreditTransactionApi } from "@/services/api-service/generic-doc/receipts-api";
 import { isTransactedState } from "@/widgets/quote-new/receipts-table/states";
+import { quoteItemState } from "@/store";
 
 const usePaymentMethodsTabs = () => {
     const { t } = useTranslation();
@@ -17,6 +18,7 @@ const usePaymentMethodsTabs = () => {
     const [totalChecks, setTotalChecks] = useRecoilState<number>(totalChecksState);
     const [data, setData] = useRecoilState<CheckData[]>(checksRowState);
     const ERPAccounts = useRecoilValue<ERPAccountsData[]>(ERPAccountsState);
+    const quoteItemValue: any = useRecoilValue(quoteItemState);
 
     const addRow = () => {
         const newRow = {
@@ -224,17 +226,17 @@ const usePaymentMethodsTabs = () => {
         value: index + 1,
     }));
 
-
-    const onClickMakePayment = async () => {
+    const onClickMakePayment = async (handleSaveAndClose) => {
         const callBack = (res) => {
             if (res?.success) {
                 setIsTransacted(true);
                 alertSuccessUpdate();
+                handleSaveAndClose();
             } else {
                 alertFaultUpdate();
             }
         };
-        await createCreditTransactionApi(callApi, callBack, creditCard);
+        await createCreditTransactionApi(callApi, callBack, {ClientID : quoteItemValue?.client?.id , creditCard});
     };
 
     return {

@@ -57,7 +57,6 @@ const usePaymentsTable = () => {
     const [secondCreditCard, setSecondCreditCard] = useRecoilState<ReceiptCreditCardData>(receiptCreditCardState);
     const resetSecondCreditCardState = useResetRecoilState(receiptCreditCardState);
 
-
     // flag isTransacted 
     const resetIsTransactedState = useResetRecoilState(isTransactedState);
 
@@ -131,6 +130,7 @@ const usePaymentsTable = () => {
     };
 
     const handleSave = () => {
+        const isSecondCreditCardEmpty = Object.keys(secondCreditCard).length === 0 && secondCreditCard.constructor === Object;
         const receiptItemCopy = {
             ...documentItemValue,
             bitSum: Number(totalBit),
@@ -145,7 +145,7 @@ const usePaymentsTable = () => {
             checksAccount: checkAccountCode,
             cashAccount: cashAccountCode,
             creditCardTotal: totalCreditCard,
-            receiptCreditCards:secondCreditCard
+            receiptCreditCards: isSecondCreditCardEmpty  ? [] : [secondCreditCard],
         };
         setDocumentItemValue(receiptItemCopy);
         setFinalTotalPayment(totalPayment);
@@ -157,7 +157,9 @@ const usePaymentsTable = () => {
     };
 
     // Previous State // 
+
     const [previousState, setPreviousState] = useRecoilState<prevStateStateData>(prevStateState);
+
     const savePreviousState = () => {
         let cardWidgetValue;
 
@@ -198,9 +200,6 @@ const usePaymentsTable = () => {
         setTotalCreditCard(previousState.totalCreditCard);
         setCreditCardState(previousState.creditCardState);
         setSecondCreditCard(previousState.secondCreditCard);
-
-
-
         setFirstWidget(previousState.cardWidget === 1);
         setSecondWidget(previousState.cardWidget === 2);
         setThirdWidget(previousState.cardWidget === 3);
@@ -246,12 +245,11 @@ const usePaymentsTable = () => {
         setSecondWidget(false);
         setThirdWidget(false);
     };
-
+ 
     const handleSecondButtonClick = () => {
         setTotalPayment(totalPayment - totalCreditCard);
         resetTotalCreditCard();
         resetCreditCardState();
-
         setFirstWidget(false);
         setSecondWidget(true);
         setThirdWidget(false);

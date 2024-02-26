@@ -12,7 +12,8 @@ const CreditCardTab = ({
     thirdWidget,
     handleFirstButtonClick,
     handleSecondButtonClick,
-    handleThirdButtonClick
+    handleThirdButtonClick,
+    handleSaveAndClose
 }) => {
     const { classes } = useStyle();
     const { getCardNumberProps, getExpiryDateProps, getCVCProps } = usePaymentInputs();
@@ -31,7 +32,7 @@ const CreditCardTab = ({
         handleChangeInputs,
         isTransacted,
         secondCreditCard,
-        handleChangeCreditCardInputs
+        handleChangeCreditCardInputs,
     } = usePaymentMethodsTabs();
 
 
@@ -169,7 +170,8 @@ const CreditCardTab = ({
                             style={classes.creditSecondCardInputs}
                             placeholder="Total"
                             value={totalCreditCard}
-                            onChange={(e) => handleTotalCreditCardChange(e.target.value)}
+                            onChange={(e) => {handleTotalCreditCardChange(e.target.value); handleChangeInputs("transactionSum", e.target.value)}}
+
                         />
 
                     </div>
@@ -197,7 +199,7 @@ const CreditCardTab = ({
                     </div>
                 </div>
             }
-            {(!secondWidget && !isTransacted) && <PrimaryButton variant="contained" style={{ width: "75%", padding: "4px" }} onClick={onClickMakePayment} >{t('payment.makePayment')}</PrimaryButton>}
+            {(!secondWidget && !isTransacted) && <PrimaryButton variant="contained" style={{ width: "75%", padding: "4px" }} onClick={()=>onClickMakePayment(handleSaveAndClose)} >{t('payment.makePayment')}</PrimaryButton>}
             {!isTransacted && <div style={{ display: "flex", flexDirection: "column", width: "75%" }}>
                 {!firstWidget && <SecondaryButton style={classes.creditButtons} onClick={handleFirstButtonClick}>{t('payment.manualCreditCard')}</SecondaryButton>}
                 {!secondWidget && <SecondaryButton style={classes.creditButtons} onClick={handleSecondButtonClick}>{t('payment.creditDetailsWithoutSwipe')}</SecondaryButton>}

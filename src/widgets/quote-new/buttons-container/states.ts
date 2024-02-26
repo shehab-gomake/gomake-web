@@ -100,22 +100,7 @@ export const creditCardState = atom<CreditCardData>({
 
 export const receiptCreditCardState = atom<ReceiptCreditCardData>({
   key: "receiptCreditCardState",
-  default:
-  {
-    id: "",
-    receiptId: "",
-    creditCardSum: 0,
-    creditCardToken: "",
-    creditCardNum: "",
-    creditCardExpDate: "",
-    creditCardVoucherNumber: "",
-    creditCardTransactionID: "",
-    installments: 0,
-    firstPaymentSum: 0,
-    additionalPaymentSum: 0,
-    isManual: false,
-    depositId: "",
-  },
+  default:{},
 });
 
 export const checksRowState = atom<CheckData[]>({
