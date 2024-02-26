@@ -32,6 +32,7 @@ const AgingReportWidget = () => {
     setDetailedReport,
     getTableDataRows,
     onChangeDetailedReport,
+    onChangeByReferenceDate,
     transformedHeaders
   } = useAgingReport()
   return (
@@ -55,6 +56,7 @@ const AgingReportWidget = () => {
         detailedReport={detailedReport}
         setDetailedReport={setDetailedReport}
         onChangeDetailedReport={onChangeDetailedReport}
+        onChangeByReferenceDate={onChangeByReferenceDate}
 
       />
       <Divider />

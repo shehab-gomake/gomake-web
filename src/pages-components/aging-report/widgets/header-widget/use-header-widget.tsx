@@ -22,6 +22,7 @@ export interface AgingReportHeaderWidgetProps {
   detailedReport: boolean,
   setDetailedReport: any
   onChangeDetailedReport: any;
+  onChangeByReferenceDate: any
 }
 const useAgingReportHeader = ({ getAllCustomersCreateQuote, getAgentCategories }) => {
   const { clasess } = useStyle();

@@ -25,6 +25,7 @@ const AgingReportHeaderWidget = ({
   handleCustomerChange,
   detailedReport,
   setDetailedReport,
+  onChangeByReferenceDate,
   onChangeDetailedReport
 }: AgingReportHeaderWidgetProps) => {
 
@@ -95,8 +96,10 @@ const AgingReportHeaderWidget = ({
         </div>
         <div style={clasess.checkboxStyle}>
           <Checkbox
+            onChange={onChangeByReferenceDate}
             icon={<CheckboxIcon />}
-            checkedIcon={<CheckboxCheckedIcon />}
+            checkedIcon={<CheckboxCheckedIcon />
+            }
           />
           <div style={clasess.labelSwichStyle}>By Reference Date</div>
         </div>

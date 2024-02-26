@@ -1,3 +1,4 @@
+import { EExportType } from "@/enums";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { getAndSetEmployees2 } from "@/services/api-service/customers/employees-api";
 import { EHttpMethod } from "@/services/api-service/enums";
@@ -29,11 +30,16 @@ const useAgingReport = () => {
   const [agent, setAgent] = useState<{ label: string; id: string } | null>();
   const [showTable, setShowTable] = useState<boolean>(false);
   const [detailedReport, setDetailedReport] = useState<boolean>(false);
+  const [byReferenceDate, setByReferenceDate] = useState<boolean>(false);
+  console.log("byReferenceDate", byReferenceDate)
   const [tableData, setTableData] = useState<any>([])
   const [tableHeader, setTableHeader] = useState<any>([])
 
   const onChangeDetailedReport = () => {
     setDetailedReport(!detailedReport)
+  }
+  const onChangeByReferenceDate = () => {
+    setByReferenceDate(!byReferenceDate)
   }
   const transformedHeaders = tableHeader?.map(header => header.name);
   const getTableDataRows = useCallback(() => {
@@ -99,10 +105,10 @@ const useAgingReport = () => {
     getAgingReportFilter()
   }
   const onClickBtn2 = () => {
-    console.log("BBBB")
+    ExportAgingReport(EExportType.PDF)
   }
   const onClickBtn3 = () => {
-    console.log("CCCC")
+    ExportAgingReport(EExportType.EXCEL)
   }
   const getAgingReportFilter = useCallback(
     async () => {
@@ -115,12 +121,11 @@ const useAgingReport = () => {
           clientId: customer?.id,
           referDate: selectDate ? selectDate : new Date(),
           agentId: agent?.id,
-          byCreationDate: true,
+          byCreationDate: byReferenceDate,
           expendedReport: detailedReport
         }
       );
       if (res?.success) {
-        console.log("res?.data?.data?.data", res?.data?.data?.data)
         setTableData(res?.data?.data?.data?.data)
         setTableHeader(res?.data?.data?.data?.headers)
 
@@ -131,7 +136,47 @@ const useAgingReport = () => {
         setShowTable(false)
       }
     },
-    [fromDate, toDate, detailedReport, agent, customer, selectDate]
+    [fromDate, toDate, detailedReport, agent, customer, selectDate, byReferenceDate]
+  );
+
+  const ExportAgingReport = useCallback(
+    async (exportType: number) => {
+      const res = await callApi(
+        EHttpMethod.POST,
+        `/v1/erp-service/reports/export-aging-report`,
+        {
+          exportType: exportType,
+          myBody: {
+            startDate: fromDate,
+            endDate: toDate,
+            clientId: customer?.id,
+            referDate: selectDate ? selectDate : new Date(),
+            agentId: agent?.id,
+            byCreationDate: byReferenceDate,
+            expendedReport: detailedReport
+          }
+        },
+        true,
+        null,
+        "blob"
+      );
+
+      let fileExtension = '';
+      if (exportType === EExportType.EXCEL) {
+        fileExtension = 'xlsx';
+      } else if (exportType === EExportType.PDF) {
+        fileExtension = 'pdf';
+      } else {
+        fileExtension = 'xlsx';
+      }
+      console.log("res", res);
+      const downloadLink = document.createElement('a');
+      const link = URL?.createObjectURL(res.data);
+      downloadLink.href = link
+      downloadLink.download = `aging report.${fileExtension}`;
+      downloadLink.click();
+    },
+    [fromDate, toDate, detailedReport, agent, customer, selectDate, byReferenceDate]
   );
 
   return {
@@ -159,6 +204,7 @@ const useAgingReport = () => {
     setDetailedReport,
     getTableDataRows,
     onChangeDetailedReport,
+    onChangeByReferenceDate,
     transformedHeaders
   };
 };
