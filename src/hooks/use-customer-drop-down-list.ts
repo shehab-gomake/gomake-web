@@ -1,15 +1,15 @@
-import { getAndSetAllCustomers } from "@/services/hooks";
+import { getAndSetAllCustomers, getAndSetClientContacts } from "@/services/hooks";
 import { useCallback, useEffect, useState } from "react";
 import { useGomakeAxios } from "./use-gomake-axios";
 
 const useCustomerDropDownList = () => {
     const { callApi } = useGomakeAxios();
     const [customersListCreateQuote, setCustomersListCreateQuote] = useState([]);
+    const [clientContactsValue, setClientContactsValue] =useState<any>([]);
     const [customer, setCustomer] = useState<{
       label: string;
       id: string;
     } | null>();
-  
     const renderOptions = () => {
       return customersListCreateQuote;
     };
@@ -42,12 +42,26 @@ const useCustomerDropDownList = () => {
     useEffect(() => {
         getAllCustomersCreateQuote();
       }, []);
+
+      const getAllClientContacts = useCallback(async () => {
+          await getAndSetClientContacts(callApi, setClientContactsValue, {
+            ClientId: customer?.id,
+          });
+      }, [customer]);
+
+      // useEffect(() => {
+      //   if (customer?.id) {
+      //     getAllClientContacts();
+      //   }
+      // }, [customer]);
     return {
         customer,
         getAllCustomersCreateQuote,
         renderOptions,
         checkWhatRenderArray,
-        handleCustomerChange
+        handleCustomerChange,
+        getAllClientContacts,
+        clientContactsValue
     };
 };
 

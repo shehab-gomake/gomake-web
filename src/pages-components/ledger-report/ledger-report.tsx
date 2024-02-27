@@ -5,6 +5,8 @@ import { useStyle } from "./style";
 import { PrimaryTable } from "@/components/tables/primary-table";
 import { LedgerReportHeaderWidget } from "./widgets/header-widget";
 import { LedgerReportButtonWidget } from "./widgets/button-widget";
+import { SendEmailLedgerReportModal } from "./widgets/send-email-modal";
+import { useEffect } from "react";
 
 const LedgerReportWidget = () => {
   const { clasess } = useStyle();
@@ -23,8 +25,20 @@ const LedgerReportWidget = () => {
     showTable,
     resetDatePicker,
     customer,
-    tableHeaders
+    tableHeaders,
+    isopenEmailModal,
+    onClickCloseEmailModal,
+    getAllClientContacts,
+    clientContactsValue,
+    setSelectedContactById,
+    selectedContactById,
+    onChangeUpdateClientContact
   } = useLedgerReport()
+  useEffect(() => {
+    if (customer?.id) {
+      getAllClientContacts();
+    }
+  }, [customer]);
   return (
     <div style={clasess.mainContainer}>
       <LedgerReportHeaderWidget
@@ -52,8 +66,16 @@ const LedgerReportWidget = () => {
           maxHeight={650}
         />
       }
-
+      <SendEmailLedgerReportModal
+        openModal={isopenEmailModal}
+        onCloseModal={onClickCloseEmailModal}
+        clientContactsValue={clientContactsValue}
+        setSelectedContactById={setSelectedContactById}
+        selectedContactById={selectedContactById}
+        onChangeUpdateClientContact={onChangeUpdateClientContact}
+      />
     </div>
+
   );
 };
 

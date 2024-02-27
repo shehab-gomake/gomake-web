@@ -7,7 +7,7 @@ const useLedgerReport = () => {
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation()
   const { alertFaultGetData, alertSuccessGetData } = useSnackBar();
-  const { customer, renderOptions, checkWhatRenderArray, handleCustomerChange } = useCustomerDropDownList()
+  const { customer, renderOptions, checkWhatRenderArray, handleCustomerChange, getAllClientContacts, clientContactsValue } = useCustomerDropDownList()
 
   const [resetDatePicker, setResetDatePicker] = useState<boolean>(false);
   const [isExtended, setIsExtended] = useState<boolean>(false);
@@ -15,6 +15,26 @@ const useLedgerReport = () => {
   const [fromDate, setFromDate] = useState<Date>();
   const [toDate, setToDate] = useState<Date>();
   const [dataTable, setDataTable] = useState<any>([]);
+  const [selectedContactById, setSelectedContactById] = useState<any>();
+  const [isopenEmailModal, setIsOpenEmailModal] = useState<boolean>(false);
+  const onClickCloseEmailModal = () => {
+    setIsOpenEmailModal(false);
+  };
+  const onClickOpenEmailModal = () => {
+    setIsOpenEmailModal(true);
+  };
+
+  const onChangeUpdateClientContact = useCallback(
+    (filedName: string, value: any) => {
+      setSelectedContactById((prev) => {
+        return {
+          ...prev,
+          [filedName]: value,
+        };
+      });
+    },
+    [selectedContactById]
+  );
   const getTableDataRows = useCallback(() => {
     return dataTable?.map((data) => [
       data?.docDate?.split("T")[0],
@@ -50,13 +70,11 @@ const useLedgerReport = () => {
   const onChangeIsExtended = () => {
     setIsExtended(!isExtended)
   }
-
-
   const onClickCreateNewTransaction = () => {
     console.log("Transaction")
   }
   const onClickSendingTicketByEmail = () => {
-    console.log(" Ticket By Email")
+    onClickOpenEmailModal()
   }
   const onClickPrintCard = () => {
     console.log("Print Card")
@@ -106,6 +124,13 @@ const useLedgerReport = () => {
     resetDatePicker,
     customer,
     tableHeaders,
+    isopenEmailModal,
+    onClickCloseEmailModal,
+    getAllClientContacts,
+    clientContactsValue,
+    setSelectedContactById,
+    selectedContactById,
+    onChangeUpdateClientContact
   };
 };
 
