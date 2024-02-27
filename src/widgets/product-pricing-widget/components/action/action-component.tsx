@@ -299,9 +299,9 @@ const ActionContainerComponent = ({
                 {source === EWorkSource.OUT 
                   ? `(${
                       calculateOutSourceProfitInMoney()
-                    } ${totalPrice.defaultUnit})`
+                    } ${totalPrice ? totalPrice.defaultUnit : ""})`
                   : `(${calculateProfitInMoney()} ${
-                      totalPrice.defaultUnit
+                        totalPrice ? totalPrice.defaultUnit : ""
                     })`}
               </span>
             </Stack>
