@@ -52,10 +52,12 @@ const useAgingReport = () => {
     getAgingReportFilter()
   }
   const onClickBtn2 = () => {
-    ExportAgingReport(EExportType.PDF)
+    // ExportAgingReport(EExportType.PDF)
+    ExportAgingReportPDF()
   }
   const onClickBtn3 = () => {
-    ExportAgingReport(EExportType.EXCEL)
+    // ExportAgingReport(EExportType.EXCEL)
+    ExportAgingReportExcel()
   }
   const getAgingReportFilter = useCallback(
     async () => {
@@ -85,14 +87,12 @@ const useAgingReport = () => {
     },
     [fromDate, toDate, detailedReport, agent, customer, selectDate, byReferenceDate]
   );
-
-  const ExportAgingReport = useCallback(
-    async (exportType: number) => {
+  const ExportAgingReportPDF = useCallback(
+    async () => {
       const res = await callApi(
         EHttpMethod.POST,
-        `/v1/erp-service/reports/export-aging-report`,
+        `/v1/erp-service/reports/export-aging-report-pdf`,
         {
-          exportType: exportType,
           myBody: {
             startDate: fromDate,
             endDate: toDate,
@@ -108,18 +108,41 @@ const useAgingReport = () => {
         "blob"
       );
 
-      let fileExtension = '';
-      if (exportType === EExportType.EXCEL) {
-        fileExtension = 'xlsx';
-      } else if (exportType === EExportType.PDF) {
-        fileExtension = 'pdf';
-      } else {
-        fileExtension = 'xlsx';
-      }
+
       const downloadLink = document.createElement('a');
       const link = URL?.createObjectURL(res.data);
       downloadLink.href = link
-      downloadLink.download = `aging report.${fileExtension}`;
+      downloadLink.download = `aging report.pdf`;
+      downloadLink.click();
+    },
+    [fromDate, toDate, detailedReport, agent, customer, selectDate, byReferenceDate]
+  );
+  const ExportAgingReportExcel = useCallback(
+    async () => {
+      const res = await callApi(
+        EHttpMethod.POST,
+        `/v1/erp-service/reports/export-aging-report-excel`,
+        {
+          myBody: {
+            startDate: fromDate,
+            endDate: toDate,
+            clientId: customer?.id,
+            referDate: selectDate ? selectDate : new Date(),
+            agentId: agent?.id,
+            byCreationDate: byReferenceDate,
+            expendedReport: detailedReport
+          }
+        },
+        true,
+        null,
+        "blob"
+      );
+
+
+      const downloadLink = document.createElement('a');
+      const link = URL?.createObjectURL(res.data);
+      downloadLink.href = link
+      downloadLink.download = `aging report.xlsx`;
       downloadLink.click();
     },
     [fromDate, toDate, detailedReport, agent, customer, selectDate, byReferenceDate]
