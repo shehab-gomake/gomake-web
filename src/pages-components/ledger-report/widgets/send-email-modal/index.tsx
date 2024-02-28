@@ -7,7 +7,7 @@ import { GoMakeAutoComplate, GoMakeModal, GomakePrimaryButton, GomakeTextInput }
 import { useStyle } from "./style";
 
 
-const SendEmailLedgerReportModal = ({ openModal, onCloseModal, clientContactsValue, setSelectedContactById, selectedContactById, onChangeUpdateClientContact }) => {
+const SendEmailLedgerReportModal = ({ openModal, onCloseModal, clientContactsValue, setSelectedContactById, selectedContactById, onChangeUpdateClientContact, SendCustomerLedgerToMailApi }) => {
   const { clasess } = useStyle();
   const { t } = useTranslation();
   return (
@@ -52,7 +52,7 @@ const SendEmailLedgerReportModal = ({ openModal, onCloseModal, clientContactsVal
               </div>
             </div>
           </div>
-          <GomakePrimaryButton style={clasess.sendBtnContainer}>
+          <GomakePrimaryButton style={clasess.sendBtnContainer} onClick={SendCustomerLedgerToMailApi} >
             Send
           </GomakePrimaryButton>
         </div>

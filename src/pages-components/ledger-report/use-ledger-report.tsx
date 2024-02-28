@@ -5,7 +5,7 @@ import { useCustomerDropDownList, useGomakeAxios, useSnackBar } from "@/hooks";
 import { EHttpMethod } from "@/services/api-service/enums";
 
 const useLedgerReport = () => {
-  const { alertFaultGetData, alertSuccessGetData, alertFault } = useSnackBar();
+  const { alertFaultGetData, alertSuccessGetData, alertFault, alertSuccess } = useSnackBar();
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation()
   const { customer, renderOptions, checkWhatRenderArray, handleCustomerChange, getAllClientContacts, clientContactsValue } = useCustomerDropDownList()
@@ -13,8 +13,8 @@ const useLedgerReport = () => {
   const [resetDatePicker, setResetDatePicker] = useState<boolean>(false);
   const [isExtended, setIsExtended] = useState<boolean>(false);
   const [showTable, setShowTable] = useState<boolean>(false);
-  const [fromDate, setFromDate] = useState<Date>();
-  const [toDate, setToDate] = useState<Date>();
+  const [fromDate, setFromDate] = useState<Date>(new Date());
+  const [toDate, setToDate] = useState<Date>(new Date());
   const [dataTable, setDataTable] = useState<any>([]);
   const [selectedContactById, setSelectedContactById] = useState<any>();
   const [isopenEmailModal, setIsOpenEmailModal] = useState<boolean>(false);
@@ -173,6 +173,30 @@ const useLedgerReport = () => {
       getAllClientContacts();
     }
   }, [customer]);
+
+  const SendCustomerLedgerToMailApi = useCallback(
+    async () => {
+      const res = await callApi(
+        EHttpMethod.POST,
+        `/v1/erp-service/reports/send-customer-ledger-to-mail`,
+        {
+          clientId: customer?.id,
+          startDate: fromDate,
+          endDate: toDate,
+          isExtended: isExtended,
+          mail: selectedContactById?.mail
+        }
+      );
+      if (res?.success) {
+        alertSuccess("reports.sendEmailSuccess")
+        onClickCloseEmailModal()
+      } else {
+        alertFault("reports.sendEmailFailed");
+      }
+    },
+    [fromDate, toDate, isExtended, customer, selectedContactById]
+  );
+
   return {
     onSelectDeliveryTimeDates,
     renderOptions,
@@ -190,6 +214,7 @@ const useLedgerReport = () => {
     onChangeUpdateClientContact,
     onClickCloseAdjustmentsModal,
     getClientPaymentItems,
+    SendCustomerLedgerToMailApi,
     isExtended,
     showTable,
     resetDatePicker,
@@ -200,6 +225,7 @@ const useLedgerReport = () => {
     selectedContactById,
     isopenAdjustmentsModal,
     clientPaymentsList,
+
   };
 };
 

@@ -29,6 +29,7 @@ const LedgerReportWidget = () => {
     onChangeUpdateClientContact,
     onClickCloseAdjustmentsModal,
     getClientPaymentItems,
+    SendCustomerLedgerToMailApi,
     isExtended,
     showTable,
     resetDatePicker,
@@ -60,6 +61,7 @@ const LedgerReportWidget = () => {
         onClickPrintCard={onClickPrintCard}
         onClickShowCard={onClickShowCard}
         onClickAdjustments={onClickAdjustments}
+
       />
       {
         showTable &&
@@ -76,6 +78,7 @@ const LedgerReportWidget = () => {
         setSelectedContactById={setSelectedContactById}
         selectedContactById={selectedContactById}
         onChangeUpdateClientContact={onChangeUpdateClientContact}
+        SendCustomerLedgerToMailApi={SendCustomerLedgerToMailApi}
       />
       <AdjustmentsLedgerReportModal
         onCloseModal={onClickCloseAdjustmentsModal}
