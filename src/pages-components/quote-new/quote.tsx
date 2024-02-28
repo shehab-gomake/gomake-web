@@ -27,6 +27,8 @@ import { ButtonsConfirmContainer } from "@/widgets/quote-new/buttons-cofirm-cont
 import { CopyFromOrderModal } from "@/widgets/quote-new/modals-widgets/copy-from-order-modal/copy-from-order-modal";
 import { ReceiptsTable } from "@/widgets/quote-new/receipts-table";
 import { useRouter } from "next/router";
+import { usePaymentsTable } from "@/widgets/quote-new/receipts-table/use-payments-table";
+import { useEffect } from "react";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -168,7 +170,14 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
     onOpenCopyFromDeliveryNote,
     openCopyFromDeliveryNoteModal
   } = useQuoteNew({ docType: documentType, isQuoteConfirmation: isQuoteConfirmation });
-  const router = useRouter()
+  const { resetReceiptState } = usePaymentsTable();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (documentType === DOCUMENT_TYPE.receipt)
+      resetReceiptState();
+  }, [])
+
   return (
     <>
       {quoteState?.id && (
@@ -178,7 +187,7 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
               <div style={classes.titleSettingContainer}>
                 <div style={classes.titleQuateContainer}>
                   <HeaderTitle
-                    title={router?.query?.isNewCreation ? `${t("sales.quote.createNew")} ${documentTitle}` : documentTitle}
+                    title={router?.query?.isNewCreation ? `${t("sales.quote.createNew")} ${documentTitle.toLowerCase()}` : documentTitle}
                     marginBottom={1}
                     marginTop={1}
                     color="rgba(241, 53, 163, 1)"
@@ -315,14 +324,12 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
                 isQuoteConfirmation={isQuoteConfirmation}
               />
               }
-
-
               {
                 documentType === DOCUMENT_TYPE.receipt &&
                 <ReceiptsTable />
               }
             </div>
-            <WriteCommentComp getQuote={getQuote} isQuoteConfirmation={isQuoteConfirmation} />
+            <WriteCommentComp getQuote={getQuote} isQuoteConfirmation={isQuoteConfirmation} documentType={documentType}/>
           </div>
           {!isQuoteConfirmation &&
             <ButtonsContainer

@@ -1,15 +1,13 @@
 import { useGomakeAxios, useSnackBar } from "@/hooks";
-import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { updateDocumentCommentsApi } from "@/services/api-service/generic-doc/documents-api";
 import { quoteItemState } from "@/store";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState } from "recoil";
 
-const useWriteCommentComp = ({ getQuote }) => {
+const useWriteCommentComp = ({ getQuote, documentType }) => {
   const [isValueChanged, setIsValueChanged] = useState(false);
-  // const quoteItemValue = useRecoilValue<any>(quoteItemState);
   const [quoteItemValue, setQuoteItemValue] = useRecoilState<any>(quoteItemState);
   const [data, setData] = useState(quoteItemValue?.notes)
   const [originalValue,] = useState("");
@@ -18,8 +16,10 @@ const useWriteCommentComp = ({ getQuote }) => {
     alertSuccessUpdate,
     alertFaultUpdate,
   } = useSnackBar();
+
   const router = useRouter()
   const { t } = useTranslation();
+
   const updateDocumentItemContent = async () => {
     if (router.query.isNewCreation) {
       const updatedQuoteItemValue = { ...quoteItemValue };
@@ -36,7 +36,7 @@ const useWriteCommentComp = ({ getQuote }) => {
         }
       }
       await updateDocumentCommentsApi(callApi, callBack, {
-        documentType: DOCUMENT_TYPE.quote,
+        documentType: documentType,
         contact:
         {
           documentId: quoteItemValue?.id,
@@ -55,6 +55,14 @@ const useWriteCommentComp = ({ getQuote }) => {
       updateDocumentItemContent();
     }
   }
+
+  useEffect(() => {
+    if (quoteItemValue?.notes === null)
+      setData("");
+    else
+      setData(quoteItemValue?.notes);
+  }, [quoteItemValue])
+
   return {
     handleChange, handleBlur, data, t, quoteItemValue
   };

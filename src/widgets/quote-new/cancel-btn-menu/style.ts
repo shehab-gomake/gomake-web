@@ -4,7 +4,7 @@ import { FONT_FAMILY } from "@/utils/font-family";
 const useStyle = () => {
   const clasess = useMemo(() => {
     return {
-      writeCommentcontainer: {
+      writeCommentContainer: {
         display: "flex",
         flexDirection: "row" as "row",
         justifyContent: "space-between",

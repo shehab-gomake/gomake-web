@@ -1,7 +1,7 @@
 import { IIconProps } from "@/components/icons/interface";
 export const CreditCardIcon = ({ width, height, color }: IIconProps) => {
     return (
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <svg width={width || "24"} height={height || "24"} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M2 8.50488H22" stroke={color || "#292D32"} stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
             <path d="M6 16.5049H8" stroke={color || "#292D32"} stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
             <path d="M10.5 16.5049H14.5" stroke={color || "#292D32"} stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />

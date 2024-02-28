@@ -33,7 +33,6 @@ const useCustomer = (permissionEnumValue?:Permissions,allowAnonymous?:boolean) =
     }, []);
 
     const validate = useCallback(async () => {
-        debugger
         if(allowAnonymous){
             return true;
         }

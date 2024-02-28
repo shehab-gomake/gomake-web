@@ -7,13 +7,27 @@ const useStyle = () => {
 
     const classes = useMemo(() => {
         return {
+            mainContainer: {
+                display: "flex",
+                flexDirection: "column" as "column",
+                gap: "10px",
+                alignItems: "center",
+            },
+            firstWidgetStyle: {
+                display: "flex",
+                flexDirection: "column" as "column",
+                gap: "10px",
+                width: "100%",
+                alignItems: "center",
+
+            },
             divStyle: {
                 height: "30%",
                 display: "flex",
                 flexDirection: "column" as "column",
                 alignItems: "flex-start",
                 gap: "10px",
-                padding: "0 5px"
+                padding: "0 10px"
             },
             textStyle: {
                 color: primaryColor(900),
@@ -64,6 +78,45 @@ const useStyle = () => {
                 display: "flex",
                 alignItems: "center",
             },
+            creditCardInputsContainer: {
+                display: "flex",
+                width: "75%",
+                padding: "4px",
+                border: `1.5px solid ${primaryColor(300)}`,
+                borderRadius: "4px"
+            },
+            creditCardSecondInputsContainer: {
+                display: "flex",
+                width: "75%",
+                gap: "10%"
+            },
+            creditCardInputs: {
+                border: "none",
+                outline: "none",
+                ...FONT_FAMILY.Lexend(500, 14),
+            },
+            creditSecondCardInputs: {
+                outline: "none",
+                ...FONT_FAMILY.Lexend(500, 14),
+                border: `1.5px solid ${primaryColor(300)}`,
+                borderRadius: "4px",
+                width: "45%",
+                padding: "4px"
+            },
+            selectInputs: {
+               ...FONT_FAMILY.Lexend(500, 14),
+               border: 0,
+                //border: `1.5px solid ${primaryColor(300)}`,
+                width: "100%",
+                height: "33px", 
+            },
+            creditButtons: {
+                ...FONT_FAMILY.Lexend(500, 14),
+                width: "fit-content",
+                height: "fit-content",
+                padding: "10px 10px",
+                textDecoration: "underline"
+            }
         };
     }, [theme]);
     return {

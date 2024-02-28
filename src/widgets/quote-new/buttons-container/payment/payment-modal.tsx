@@ -15,34 +15,51 @@ interface IPaymentModalProps {
     openModal: boolean;
     onClose: () => void;
     selectedTab: number;
-    getERPAccounts: (selectedTabIndex: ErpAccountType) => void;
 }
 
-const PaymentModal = ({ openModal, onClose, selectedTab, getERPAccounts }: IPaymentModalProps) => {
+const PaymentModal = ({ openModal, onClose, selectedTab }: IPaymentModalProps) => {
     const { classes } = useStyle();
-    const { t, resetTotalPayment, resetTotalBit, resetTotalCash, resetTotalTransfer, resetTotalChecks, resetChecksTable } = usePaymentsTable();
+    const {
+        t,
+        revertToPreviousState,
+        firstWidget,
+        secondWidget,
+        thirdWidget,
+        handleFirstButtonClick,
+        handleSecondButtonClick,
+        handleThirdButtonClick,
+        handleSave,
+        documentItemValue
+    } = usePaymentsTable();
+
+    const handleSaveAndClose = () => {
+        handleSave();
+        onClose();
+    }
 
     const tabs: ITab[] = [
         { title: t("payment.transfer"), component: <TransferTab /> },
         { title: t("payment.check"), component: <CheckTab /> },
         { title: t("payment.cash"), component: <CashTab /> },
-        { title: t("payment.creditCard"), component: <CreditCardTab /> },
-        { title: t("payment.bit"), component: <BitTab /> }
+        {
+            title: t("payment.creditCard"),
+            component:
+                <CreditCardTab
+                    firstWidget={firstWidget}
+                    secondWidget={secondWidget}
+                    thirdWidget={thirdWidget}
+                    handleFirstButtonClick={handleFirstButtonClick}
+                    handleSecondButtonClick={handleSecondButtonClick}
+                    handleThirdButtonClick={handleThirdButtonClick}
+                    handleSaveAndClose={handleSaveAndClose}
+                />
+        },
+        documentItemValue?.isBitAccountExist && { title: t("payment.bit"), component: <BitTab /> }
     ];
 
     const handleModalClose = () => {
-        resetTotalPayment();
-        resetTotalBit();
-        resetTotalCash();
-        resetTotalTransfer();
-        resetTotalChecks();
-        resetChecksTable();
-        onClose();
-    };
-
-
-    const handleTabChange = async (newTabIndex) => {
-        await getERPAccounts(newTabIndex)
+        revertToPreviousState(); // if we don't save
+        onClose(); // close modal
     };
 
     return (
@@ -50,11 +67,12 @@ const PaymentModal = ({ openModal, onClose, selectedTab, getERPAccounts }: IPaym
             modalTitle={t('payment.choosePaymentMethod')}
             insideStyle={classes.insideStyle}
             openModal={openModal}
-            onClose={handleModalClose} 
-            >
+            onClose={handleModalClose}
+        >
             <div style={classes.boxStyle}>
-                <div style={classes.firstSection}><PrimaryTabsComponent tabs={tabs} selectedTabIndex={selectedTab} onSelectTab={handleTabChange}
-                /></div>
+                <div style={classes.firstSection}>
+                    <PrimaryTabsComponent tabs={tabs} selectedTabIndex={selectedTab} />
+                </div>
                 <FooterSection onCloseModal={onClose} />
             </div>
         </GoMakeModal>

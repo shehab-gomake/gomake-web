@@ -17,8 +17,9 @@ import { CardsSection } from "./statistics-section/statistics-sections";
 import { GoMakePagination } from "@/components/pagination/gomake-pagination";
 import { ExcelSheetIcon, SettingNewIcon } from "@/icons";
 import { AddRuleModal } from "../products/profits-new/widgets/add-rule-modal";
-import { useGomakeRouter } from "@/hooks";
+import { GoMakeDatepicker } from "@/components/date-picker/date-picker-component";
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+
 interface IProps {
   documentType: DOCUMENT_TYPE;
   isFromHomePage?: boolean;
@@ -32,6 +33,7 @@ const QuotesListPageWidget = ({
     tableHeaders,
     allQuotes,
     quoteStatuses,
+    deliveryNoteStatuses,
     agentsCategories,
     openModal,
     statusId,
@@ -69,8 +71,11 @@ const QuotesListPageWidget = ({
     onOpenAddRuleModal,
     openAddRule,
     navigate,
-    documentPath
+    documentPath,
+    resetDatePicker,
+    onSelectDeliveryTimeDates
   } = useQuotes(documentType);
+
   return (
     <>
       {!isFromHomePage && (
@@ -85,14 +90,6 @@ const QuotesListPageWidget = ({
             <div style={classes.headerStyle}>
               <HeaderTitle title={documentLabel} marginTop={1} marginBottom={1} />
               {documentType === DOCUMENT_TYPE.quote && <CardsSection statistics={allStatistics} activeCard={activeCard} onClick={onclickCreateNew} onClickCard={handleCardClick} onSecondClickCard={handleSecondCardClick} />}
-              {/* {documentType === DOCUMENT_TYPE.deliveryNote &&
-                <Button
-                  style={classes.createNew}
-                  startIcon={<AddCircleOutlineIcon />}
-                  onClick={() => { navigate(`/deliveryNote?isNewCreation=true`) }}
-                >{t("sales.quote.createNew")}
-                </Button>
-              } */}
               {(documentType !== DOCUMENT_TYPE.quote && documentType !== DOCUMENT_TYPE.order) &&
                 <Button
                   style={classes.createNew}
@@ -110,7 +107,7 @@ const QuotesListPageWidget = ({
                   </div>
                   <GoMakeAutoComplate
                     key={statusId?.value}
-                    options={quoteStatuses}
+                    options={documentType === DOCUMENT_TYPE.receipt ? deliveryNoteStatuses : quoteStatuses}
                     style={classes.textInputStyle}
                     getOptionLabel={(option: any) => option.label}
                     placeholder={t("sales.quote.chooseStatus")}
@@ -154,6 +151,10 @@ const QuotesListPageWidget = ({
                     value={agentId}
                   />
                 </div>
+                {documentType === DOCUMENT_TYPE.receipt && <div style={classes.statusFilterContainer}>
+                  <h3 style={classes.filterLabelStyle}>{t("boardMissions.dateRange")}</h3>
+                  <GoMakeDatepicker onChange={onSelectDeliveryTimeDates} placeholder={t("boardMissions.chooseDate")} reset={resetDatePicker} />
+                </div>}
                 <div style={classes.statusFilterContainer}>
                   <div style={classes.filterLabelStyle} />
                   <GomakePrimaryButton

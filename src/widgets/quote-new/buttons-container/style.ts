@@ -5,7 +5,7 @@ const useStyle = () => {
 
   const classes = useMemo(() => {
     return {
-      writeCommentcontainer: {
+      writeCommentContainer: {
         display: "flex",
         flexDirection: "row" as "row",
         justifyContent: "space-between",
@@ -97,7 +97,7 @@ const useStyle = () => {
         display: "flex",
         flexDirection: "column" as "column",
         justifyContent: "space-between",
-        height: "100%"
+        height: "100%",
       },
       saveBtn: {
         display: "flex",
@@ -105,10 +105,15 @@ const useStyle = () => {
         width: "100%"
       },
       firstSection: {
-        maxHeight: "70%",
-        height: "65%",
+        minHeight: "65%",
+       // height: "65%",
         overflow: "hidden" as "hidden"
       },
+      iconStyle: {
+        width: 62,
+        height: 62,
+        color: "#a1a2cd"
+      }
     };
   }, []);
 
