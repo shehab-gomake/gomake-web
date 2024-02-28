@@ -7,6 +7,7 @@ import {useEffect, useState} from "react";
 import {languageOptionsState} from "@/store/languages";
 import {createNewCompanyApi} from "@/services/api-service/quick-setup/company/company-endpoints";
 import {useRouter} from "next/router";
+import {clearStorage} from "@/services/storage-data";
 
 const useCompanyForm = () => {
   const [state, setState] = useRecoilState(signupCompanyState);
@@ -43,6 +44,7 @@ const useCompanyForm = () => {
     await createNewCompanyApi(callApi, callBack, state);
   }
   useEffect(() => {
+    clearStorage();
     getCurrencies().then()
   }, [])
   return {

@@ -1,7 +1,6 @@
 import {useRecoilState} from "recoil";
 import {
     IQuickSetupProduct,
-    quickSetupCurrentProductIndexState,
     quickSetupProductsState, updatedQuantitiesPriceState
 } from "@/widgets/quick-setup-widgets/products/state";
 import {
@@ -11,27 +10,26 @@ import {
 import {useGomakeAxios, useSnackBar} from "@/hooks";
 import {useEffect, useState} from "react";
 import {useRouter} from "next/router";
+import {quickSetupUpdateNextStep} from "@/services/api-service/quick-setup/next-step/update-next-step-endpoint";
 
 const useQuickSetupProducts = () => {
-    const [productsIndex, setProductIndex] = useRecoilState(quickSetupCurrentProductIndexState);
     const [products, setProducts] = useRecoilState(quickSetupProductsState);
     const [product, setProduct] = useState<IQuickSetupProduct | undefined>(undefined);
     const [updatedQuantities, setUpdatedQuantities] = useRecoilState(updatedQuantitiesPriceState)
     const {callApi} = useGomakeAxios();
     const {alertFaultUpdate} = useSnackBar();
-    const {push} = useRouter();
-
+    const {push, query} = useRouter();
+    const {productIndex} = query;
     useEffect(() => {
-        if (products.length > 0 && productsIndex !== null) {
-            setProduct(products[productsIndex]);
+        if (products.length > 0) {
+            setProduct(products[+productIndex - 1]);
         }
-    }, [products, productsIndex])
+    }, [products, productIndex])
 
     const getProducts = async () => {
         const callBack = (res) => {
             if (res.success) {
                 setProducts(res.data);
-                setProductIndex(0);
             }
         }
         await getQuickSetupProducts(callApi, callBack);
@@ -44,27 +42,31 @@ const useQuickSetupProducts = () => {
     const onClickNext = async () => {
         const callBack = (res) => {
             if (res.success) {
-                if (productsIndex + 1 === products.length) {
-                    push('/quick-setup/finish').then();
-                } else {
-                    setProductIndex(productsIndex + 1);
-                }
+                    push(res.data?.nextStepUrl).then();
+
             } else {
                 alertFaultUpdate();
             }
         }
         await updateQuickSetupProductPrice(callApi, callBack, {
             id: product?.id,
-            productQuantitiesPricing: updatedQuantities
+            productQuantitiesPricing: updatedQuantities,
+            nextStepUrl: +productIndex === products?.length ? '/quick-setup/finish' : `/quick-setup/products/${+productIndex + 1}`
         })
     }
 
-    const onClickSkip = () => {
-        if (productsIndex + 1 === products.length) {
-            push('/quick-setup/finish').then();
-        } else {
-            setProductIndex(productsIndex + 1);
+    const onClickSkip = async () => {
+        const callBack = (res) => {
+            if (res.success) {
+                push(res.data?.nextStepUrl).then();
+
+            } else {
+                alertFaultUpdate();
+            }
         }
+        await quickSetupUpdateNextStep(callApi, callBack, {
+            nextStepUrl: +productIndex === products?.length ? '/quick-setup/finish' : `/quick-setup/products/${+productIndex + 1}`
+        })
     }
 
     useEffect(() => {

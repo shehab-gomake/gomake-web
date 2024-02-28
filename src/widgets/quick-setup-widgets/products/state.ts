@@ -10,13 +10,8 @@ export interface IQuantityPrice {
     price: number;
 }
 export const quickSetupProductsState = atom<IQuickSetupProduct[]>({
-    key: '',
+    key: 'quickSetupProductsState',
     default: []
-});
-
-export const quickSetupCurrentProductIndexState = atom<number | null>({
-    key: 'quickSetupCurrentProductIndexState',
-    default: null
 });
 
 export const updatedQuantitiesPriceState = atom<IQuantityPrice[]>({

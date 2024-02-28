@@ -3,6 +3,7 @@ import {quickSetupGetMaterialsPricing, quickSetupSaveMaterialsPricing} from "@/s
 import {useGomakeAxios, useSnackBar} from "@/hooks";
 import {IMaterialPricing} from "@/widgets/quick-setup-widgets/materials/quick-setup-materials-pricing/interface";
 import {useRouter} from "next/router";
+import {quickSetupUpdateNextStep} from "@/services/api-service/quick-setup/next-step/update-next-step-endpoint";
 
 const useMaterialsPricing = () => {
     const [parameters, setParameters] = useState<IMaterialPricing[]>([]);
@@ -32,9 +33,21 @@ const useMaterialsPricing = () => {
         await quickSetupSaveMaterialsPricing(callApi, callBack, parameters.filter(parameter => !!parameter.value));
     }
 
-    const onClickSkip = () => {
-        push('/quick-setup/products').then();
+    const onClickSkip = async () => {
+        const callBack = (res) => {
+            if (res.success) {
+                push(res.data?.nextStepUrl).then();
+
+            } else {
+                alertFaultUpdate();
+            }
+        }
+        await quickSetupUpdateNextStep(callApi, callBack, {
+            nextStepUrl: '/quick-setup/products/1'
+        })
     }
+
+
     useEffect(() => {
         getMaterialsPricingData().then();
     }, [])
