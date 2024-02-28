@@ -5,7 +5,7 @@ import { useCustomerDropDownList, useGomakeAxios, useSnackBar } from "@/hooks";
 import { EHttpMethod } from "@/services/api-service/enums";
 
 const useLedgerReport = () => {
-  const { alertFaultGetData, alertSuccessGetData } = useSnackBar();
+  const { alertFaultGetData, alertSuccessGetData, alertFault } = useSnackBar();
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation()
   const { customer, renderOptions, checkWhatRenderArray, handleCustomerChange, getAllClientContacts, clientContactsValue } = useCustomerDropDownList()
@@ -25,13 +25,23 @@ const useLedgerReport = () => {
     setIsOpenEmailModal(false);
   };
   const onClickOpenEmailModal = () => {
-    setIsOpenEmailModal(true);
+    if (customer?.id) {
+      setIsOpenEmailModal(true);
+    }
+    else {
+      alertFault("reports.pleaseSelectCustomer");
+    }
   };
   const onClickCloseAdjustmentsModal = () => {
     setIsOpenAdjustmentsModal(false);
   };
   const onClickOpenAdjustmentsModal = () => {
-    setIsOpenAdjustmentsModal(true);
+    if (customer?.id) {
+      setIsOpenAdjustmentsModal(true);
+    }
+    else {
+      alertFault("reports.pleaseSelectCustomer");
+    }
   };
 
   const onChangeUpdateClientContact = useCallback(
@@ -96,8 +106,13 @@ const useLedgerReport = () => {
     onClickOpenAdjustmentsModal()
   }
   const onClickShowCard = () => {
-    setShowTable(false);
-    getAgingReportFilter()
+    if (customer?.id) {
+      setShowTable(false);
+      getAgingReportFilter()
+    }
+    else {
+      alertFault("reports.pleaseSelectCustomer");
+    }
   }
 
   const getAgingReportFilter = useCallback(
@@ -134,9 +149,13 @@ const useLedgerReport = () => {
         }
       );
       if (res?.success) {
-        const newData = res.data?.data?.data.map(item => ({ ...item, fixedPrice: item.price }));
-        setClientPaymentsList(newData);
-        alertSuccessGetData();
+        let data = res.data?.data?.data
+        if (data?.length > 0) {
+          const newData = data?.map(item => ({ ...item, fixedPrice: item.price }));
+          setClientPaymentsList(newData);
+          alertSuccessGetData();
+        }
+
       } else {
         alertFaultGetData();
       }
