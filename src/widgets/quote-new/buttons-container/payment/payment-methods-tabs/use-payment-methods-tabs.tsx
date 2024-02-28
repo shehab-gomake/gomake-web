@@ -156,15 +156,28 @@ const usePaymentMethodsTabs = () => {
     }, [data, totalCash, totalBit, totalTransfer]);
 
 
-    const mapERPAccountsOptions = ERPAccounts.map((account) => ({
+    ////////////////////////////////////// Account code /////////////////////////////////////////
+
+    const cashAccountsOptions = quoteItemValue?.cashAccounts.map((account) => ({
         label: `${account.name} - ${account.code}`,
         value: account.code,
+        isSelected: account.isSelected
     }));
 
-    const formattedOptions = mapERPAccountsOptions.map((code) => ({
-        text: code.label,
-        value: code.value,
-    }))
+
+    const checksAccountsOptions = quoteItemValue?.checksAccounts.map((account) => ({
+        label: `${account.name} - ${account.code}`,
+        value: account.code,
+        isSelected: account.isSelected
+    }));
+
+
+    const transferAccountsOptions = quoteItemValue?.transferAccounts.map((account) => ({
+        text: `${account.name} - ${account.code}`,
+        value: account.code,
+        isSelected: account.isSelected
+    }));
+
 
     ////////////////////////////////////// CREDIT CARD /////////////////////////////////////////
 
@@ -270,11 +283,9 @@ const usePaymentMethodsTabs = () => {
         totalBit,
         handleTotalTransferChange,
         totalTransfer,
-        mapERPAccountsOptions,
         handleCardNumberChange,
         handleExpiryDateChange,
         handleCVVChange,
-        formattedOptions,
         onClickMakePayment,
         numberOfPayments,
         transactionTypes,
@@ -287,7 +298,11 @@ const usePaymentMethodsTabs = () => {
         secondCreditCard,
         transactionSelected,
         cardTransactionsOptions,
-        handleChooseExistingCard
+        handleChooseExistingCard,
+        cashAccountsOptions,
+        checksAccountsOptions,
+        transferAccountsOptions,
+
     };
 
 };

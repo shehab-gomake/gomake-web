@@ -9,10 +9,9 @@ import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 
 interface IPaymentBtn {
     handleOpenModal: (selectedTabIndex: number) => void;
-    getERPAccounts: (selectedTabIndex: ErpAccountType) => void;
 }
 
-const PaymentBtn = ({ handleOpenModal, getERPAccounts }: IPaymentBtn) => {
+const PaymentBtn = ({ handleOpenModal }: IPaymentBtn) => {
     const { classes } = useStyle();
     const {
         t,
@@ -29,7 +28,6 @@ const PaymentBtn = ({ handleOpenModal, getERPAccounts }: IPaymentBtn) => {
             alertFault("sales.quote.chooseCustomer");
             return
         }
-        await getERPAccounts(paymentMethod);
         handleOpenModal(paymentMethod);
         handleClose();
     }
@@ -56,8 +54,8 @@ const PaymentBtn = ({ handleOpenModal, getERPAccounts }: IPaymentBtn) => {
                     onClick={() => onSelectPaymentMethod(ErpAccountType.CashPayment)}>{t("payment.cash")}</Button>
                 <Button sx={{ ...classes.statusLabel, borderRadius: 0 }}
                     onClick={() => onSelectPaymentMethod(ErpAccountType.CreditCardPayment)}>{t("payment.creditCard")}</Button>
-                <Button sx={{ ...classes.statusLabel, borderRadius: 0 }}
-                    onClick={() => onSelectPaymentMethod(ErpAccountType.CreditCardPayment + 1)}>{t("payment.bit")}</Button>
+                { quoteItemValue?.isBitAccountExist && <Button sx={{ ...classes.statusLabel, borderRadius: 0 }}
+                    onClick={() => onSelectPaymentMethod(ErpAccountType.CreditCardPayment + 1)}>{t("payment.bit")}</Button>}
             </Menu>
         </>
     );

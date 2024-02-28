@@ -15,12 +15,11 @@ interface IPaymentModalProps {
     openModal: boolean;
     onClose: () => void;
     selectedTab: number;
-    getERPAccounts: (selectedTabIndex: ErpAccountType) => void;
 }
 
-const PaymentModal = ({ openModal, onClose, selectedTab, getERPAccounts }: IPaymentModalProps) => {
+const PaymentModal = ({ openModal, onClose, selectedTab }: IPaymentModalProps) => {
     const { classes } = useStyle();
-    const { 
+    const {
         t,
         revertToPreviousState,
         firstWidget,
@@ -29,10 +28,11 @@ const PaymentModal = ({ openModal, onClose, selectedTab, getERPAccounts }: IPaym
         handleFirstButtonClick,
         handleSecondButtonClick,
         handleThirdButtonClick,
-         handleSave
+        handleSave,
+        documentItemValue
     } = usePaymentsTable();
 
-    const handleSaveAndClose =()=>{
+    const handleSaveAndClose = () => {
         handleSave();
         onClose();
     }
@@ -54,16 +54,12 @@ const PaymentModal = ({ openModal, onClose, selectedTab, getERPAccounts }: IPaym
                     handleSaveAndClose={handleSaveAndClose}
                 />
         },
-        { title: t("payment.bit"), component: <BitTab /> }
+        documentItemValue?.isBitAccountExist && { title: t("payment.bit"), component: <BitTab /> }
     ];
 
     const handleModalClose = () => {
         revertToPreviousState(); // if we don't save
         onClose(); // close modal
-    };
-
-    const handleTabChange = async (newTabIndex) => {
-        await getERPAccounts(newTabIndex)
     };
 
     return (
@@ -74,8 +70,9 @@ const PaymentModal = ({ openModal, onClose, selectedTab, getERPAccounts }: IPaym
             onClose={handleModalClose}
         >
             <div style={classes.boxStyle}>
-                <div style={classes.firstSection}><PrimaryTabsComponent tabs={tabs} selectedTabIndex={selectedTab} onSelectTab={handleTabChange}
-                /></div>
+                <div style={classes.firstSection}>
+                    <PrimaryTabsComponent tabs={tabs} selectedTabIndex={selectedTab} />
+                </div>
                 <FooterSection onCloseModal={onClose} />
             </div>
         </GoMakeModal>

@@ -2,7 +2,7 @@ import { useTranslation } from "react-i18next";
 import { TableCell, styled, tableCellClasses } from "@mui/material";
 import { useState } from "react";
 import { useRecoilState, useResetRecoilState, useSetRecoilState } from "recoil";
-import { totalDocumentsState, totalPaymentState, finalTotalPaymentState, totalCashState, totalBitState, totalTransferState, totalChecksState, checksRowState, CheckData, checkedItemsIdsState, transferTabState, prevStateState, prevStateStateData, taxDeductionState, checksAccountCodeState, totalCreditCardState, CreditCardData, creditCardState, ReceiptCreditCardData, receiptCreditCardState, selectedCreditTransactionState, transactionOptionsData } from "../buttons-container/states";
+import { totalDocumentsState, totalPaymentState, finalTotalPaymentState, totalCashState, totalBitState, totalTransferState, totalChecksState, checksRowState, CheckData, checkedItemsIdsState, transferTabState, prevStateState, prevStateStateData, taxDeductionState, checksAccountCodeState, totalCreditCardState, CreditCardData, creditCardState, ReceiptCreditCardData, receiptCreditCardState, selectedCreditTransactionState, transactionOptionsData, cashAccountCodeState } from "../buttons-container/states";
 import { quoteItemState } from "@/store";
 import { useRouter } from "next/router";
 import { firstWidgetState, isTransactedState, secondWidgetState, thirdWidgetState } from "./states";
@@ -46,8 +46,8 @@ const usePaymentsTable = () => {
     // accounts code
     const [checkAccountCode, setCheckAccountCode] = useRecoilState<any>(checksAccountCodeState);
     const resetCheckAccountCode = useResetRecoilState(checksAccountCodeState);
-    const [cashAccountCode, setCashAccountCode] = useRecoilState<any>(checksAccountCodeState);
-    const resetCashAccountCode = useResetRecoilState(checksAccountCodeState);
+    const [cashAccountCode, setCashAccountCode] = useRecoilState<any>(cashAccountCodeState);
+    const resetCashAccountCode = useResetRecoilState(cashAccountCodeState);
     // creditCard 
     const [totalCreditCard, setTotalCreditCard] = useRecoilState<number>(totalCreditCardState);
     const resetTotalCreditCard = useResetRecoilState(totalCreditCardState);

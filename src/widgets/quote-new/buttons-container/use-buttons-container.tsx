@@ -5,7 +5,7 @@ import { useRecoilValue, useSetRecoilState } from "recoil";
 import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
 import { createOrderApi, getDocumentPdfApi } from "@/services/api-service/generic-doc/documents-api";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
-import { cancelReceiptApi, createReceiptApi, getERPAccountsApi, getReceiptPdfApi } from "@/services/api-service/generic-doc/receipts-api";
+import { cancelReceiptApi, createReceiptApi, getReceiptPdfApi } from "@/services/api-service/generic-doc/receipts-api";
 import { ERPAccountsData, ERPAccountsState, ErpAccountType, checkedItemsIdsState, finalTotalPaymentState } from "./states";
 
 const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
@@ -105,17 +105,6 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
         }
     };
 
-    const getERPAccounts = async (accountType: ErpAccountType) => {
-        const callBack = (res) => {
-            if (res?.success) {
-                setERPAccounts(res?.data)
-            } else {
-                alertFaultUpdate();
-            }
-        }
-        await getERPAccountsApi(callApi, callBack, { accountType: accountType })
-    }
-
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(event.currentTarget);
     };
@@ -175,7 +164,6 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
         onClickOpenPaymentModal,
         openPaymentModal,
         selectedTabIndex,
-        getERPAccounts,
         quoteItemValue,
         alertFault,
         anchorEl,

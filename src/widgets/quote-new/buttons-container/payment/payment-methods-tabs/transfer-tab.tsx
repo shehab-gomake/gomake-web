@@ -8,7 +8,7 @@ import { transferTabState } from "../../states";
 import { useEffect, useState } from "react";
 
 const TransferTab = () => {
-    const { formattedOptions, handleTotalTransferChange } = usePaymentMethodsTabs();
+    const { transferAccountsOptions, handleTotalTransferChange } = usePaymentMethodsTabs();
     const [state, setState] = useRecoilState(transferTabState);
     const [renderInputs, setRenderInputs] = useState(false);
 
@@ -23,24 +23,26 @@ const TransferTab = () => {
     }
 
     useEffect(() => {
-        if (formattedOptions.length > 0 && !state?.transferAccount) {
+        if (transferAccountsOptions.length > 0 && !state?.transferAccount) {
+            const defaultOption = transferAccountsOptions.find(option => option.isSelected).value;
+
             setState((prev) => ({
                 ...prev,
-                transferAccount: formattedOptions[0]?.value,
+                transferAccount: defaultOption ? defaultOption : transferAccountsOptions[0]?.value,
             }));
         }
         setRenderInputs(true);
-    }, [formattedOptions, state]);
+    }, [transferAccountsOptions, state]);
 
     return (
         <Stack direction="row">
             <Stack padding="0 5px" direction="column" alignItems="flex-start" gap="20px">
-                {renderInputs && TransferInputs(state, formattedOptions).slice(0, 2).map((item) => (
+                {renderInputs && TransferInputs(state, transferAccountsOptions).slice(0, 2).map((item) => (
                     <FormInput input={item as IInput} changeState={onChangeTransferInputs} error={false} readonly={!!item.readOnly} key={item.name} />
                 ))}
             </Stack>
             <Stack padding="0 5px" direction="column" alignItems="flex-start" gap="20px">
-                {renderInputs && TransferInputs(state, formattedOptions).slice(2).map((item) => (
+                {renderInputs && TransferInputs(state, transferAccountsOptions).slice(2).map((item) => (
                     <FormInput input={item as IInput} changeState={onChangeTransferInputs} error={false} readonly={!!item.readOnly} key={item.name} />
                 ))}
             </Stack>

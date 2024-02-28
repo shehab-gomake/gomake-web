@@ -5,27 +5,41 @@ import { GoMakeAutoComplate } from "@/components";
 import { useStyle } from "../style";
 import { useRecoilState } from "recoil";
 import { checksAccountCodeState } from "../../states";
+import { useEffect } from "react";
 
 const CheckTab = () => {
-    const { t, data, tableHeaders, getTableRow , mapERPAccountsOptions} = usePaymentMethodsTabs();
     const { classes } = useStyle();
-    const [checkAccountCode, setCheckAccountCode] = useRecoilState<any>(checksAccountCodeState);
+    const { t, data, tableHeaders, getTableRow, checksAccountsOptions } = usePaymentMethodsTabs();
+    const [checkAccountCode, setCheckAccountCode] = useRecoilState<string>(checksAccountCodeState);
 
     const handleAccountCodeChange = (selectedOption) => {
-       setCheckAccountCode(selectedOption?.value);
+        setCheckAccountCode(selectedOption?.value);
     };
+
+    useEffect(() => {
+        if (checksAccountsOptions.length > 0 && !checkAccountCode) {
+            const defaultOption = checksAccountsOptions.find(option => option.isSelected).value;
+            if (defaultOption) {
+                setCheckAccountCode(defaultOption);
+            }
+            else {
+                setCheckAccountCode(checksAccountsOptions[0].value)
+            }
+        }
+    }, [checksAccountsOptions, checkAccountCode]);
 
     return (
         <Stack display={"flex"} direction={"column"} justifyContent={"space-between"} padding={"0 5px"} gap={"10px"} >
             <Stack direction={"row"} gap={"7px"} padding={"0 5px"} width={"100%"}>
                 <span style={classes.selectLbl} >{t("payment.accountCode")}</span>
-                <GoMakeAutoComplate
-                    style={{ height: "30px", width: 180, border: 0 }}
-                    value={mapERPAccountsOptions.find((option) => option.value === checkAccountCode)}
-                    defaultValue={mapERPAccountsOptions[0]}
-                    options={mapERPAccountsOptions}
-                    onChange={(e: any, value: any) => handleAccountCodeChange(value)}
-                />
+                {checkAccountCode && (
+                    <GoMakeAutoComplate
+                        style={{ height: "30px", width: 180, border: 0 }}
+                        value={checksAccountsOptions.find((option) => option.value === checkAccountCode)}
+                        options={checksAccountsOptions}
+                        onChange={(e: any, value: any) => handleAccountCodeChange(value)}
+                    />
+                )}
             </Stack>
             <PrimaryTable
                 stickyHeader={true}

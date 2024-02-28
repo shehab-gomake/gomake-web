@@ -220,12 +220,12 @@ export const prevStateState = atom<prevStateStateData>({
 });
 
 
-export const checksAccountCodeState = atom<any>({
+export const checksAccountCodeState = atom<string>({
   key: "checksAccountCodeState",
   default: "",
 });
 
-export const cashAccountCodeState = atom<any>({
+export const cashAccountCodeState = atom<string>({
   key: "cashAccountCodeState",
   default: "",
 });

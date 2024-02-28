@@ -40,7 +40,6 @@ const ButtonsContainer = ({
     onClickOpenPaymentModal,
     openPaymentModal,
     selectedTabIndex,
-    getERPAccounts,
     getFormattedDocumentPath,
     onClickCreateNewReceipt,
     onClickCancelReceipt,
@@ -60,7 +59,7 @@ const ButtonsContainer = ({
       <div style={classes.btnsContainer}>
         {
         (isNewCreation && documentType === DOCUMENT_TYPE.receipt) &&
-          <PaymentBtn handleOpenModal={onClickOpenPaymentModal} getERPAccounts={getERPAccounts} />
+          <PaymentBtn handleOpenModal={onClickOpenPaymentModal} />
         }
         {
         documentType !== DOCUMENT_TYPE.receipt && <GomakePrimaryButton
@@ -161,7 +160,6 @@ const ButtonsContainer = ({
           onClose={onClickClosePaymentModal}
           openModal={openPaymentModal}
           selectedTab={selectedTabIndex}
-          getERPAccounts={getERPAccounts}
         />
         <GoMakeDeleteModal
           icon={<WarningAmberIcon style={classes.iconStyle} />}
