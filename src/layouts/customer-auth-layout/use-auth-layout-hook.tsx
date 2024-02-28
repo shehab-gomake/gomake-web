@@ -113,6 +113,11 @@ const useAuthLayoutHook = (permissionEnumValue?: Permissions, allowAnonymous?: b
             path: "/receipts",
             Permission: Permissions.SHOW_ORDERS,
           },
+          {
+            key: "deposits",
+            title: "tabs.deposits",
+            path: "/deposits",
+          },
         ],
         icon: () => {
           return <SalesIcon />;
