@@ -12,7 +12,13 @@ const LedgerReportButtonWidget = ({
   onClickAdjustments
 }: LedgerReportButtonWidgetProps) => {
   const { clasess } = useStyle()
-  const { tabs } = useLedgerReportHeader({ onClickCreateNewTransaction, onClickPrintCard, onClickShowCard, onClickSendingTicketByEmail, onClickAdjustments })
+  const { tabs } = useLedgerReportHeader({
+    onClickCreateNewTransaction,
+    onClickPrintCard,
+    onClickShowCard,
+    onClickSendingTicketByEmail,
+    onClickAdjustments
+  })
   return (
     <div style={clasess.mainContainer}>
       {tabs.map((tab, index) => {

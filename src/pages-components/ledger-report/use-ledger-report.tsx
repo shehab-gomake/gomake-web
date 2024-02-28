@@ -1,12 +1,13 @@
 import { useCallback, useEffect, useState } from "react";
-import { useCustomerDropDownList, useGomakeAxios, useSnackBar } from "@/hooks";
-import { EHttpMethod } from "@/services/api-service/enums";
 import { useTranslation } from "react-i18next";
 
+import { useCustomerDropDownList, useGomakeAxios, useSnackBar } from "@/hooks";
+import { EHttpMethod } from "@/services/api-service/enums";
+
 const useLedgerReport = () => {
+  const { alertFaultGetData, alertSuccessGetData } = useSnackBar();
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation()
-  const { alertFaultGetData, alertSuccessGetData } = useSnackBar();
   const { customer, renderOptions, checkWhatRenderArray, handleCustomerChange, getAllClientContacts, clientContactsValue } = useCustomerDropDownList()
 
   const [resetDatePicker, setResetDatePicker] = useState<boolean>(false);
@@ -19,6 +20,7 @@ const useLedgerReport = () => {
   const [isopenEmailModal, setIsOpenEmailModal] = useState<boolean>(false);
   const [isopenAdjustmentsModal, setIsOpenAdjustmentsModal] = useState<boolean>(false);
   const [clientPaymentsList, setClientPaymentsList] = useState<any>([]);
+
   const onClickCloseEmailModal = () => {
     setIsOpenEmailModal(false);
   };
@@ -44,18 +46,21 @@ const useLedgerReport = () => {
     [selectedContactById]
   );
   const getTableDataRows = useCallback(() => {
-    return dataTable?.map((data) => [
-      data?.docDate?.split("T")[0],
-      data?.dueDate?.split("T")[0],
-      data?.accountName,
-      data?.docNumber,
-      data?.accountCode,
-      data?.remarks,
-      data?.transNumber,
-      data?.credit.toFixed(2),
-      data?.debit.toFixed(2),
-      data?.balance.toFixed(2),
-    ]);
+    if (dataTable?.length) {
+      return dataTable?.map((data) => [
+        data?.docDate?.split("T")[0],
+        data?.dueDate?.split("T")[0],
+        data?.accountName,
+        data?.docNumber,
+        data?.accountCode,
+        data?.remarks,
+        data?.transNumber,
+        data?.credit.toFixed(2),
+        data?.debit.toFixed(2),
+        data?.balance.toFixed(2),
+      ]);
+    }
+
   }, [dataTable]);
 
   const tableHeaders = [
@@ -158,24 +163,24 @@ const useLedgerReport = () => {
     onClickSendingTicketByEmail,
     onClickPrintCard,
     onClickShowCard,
+    onClickAdjustments,
     onChangeIsExtended,
     getTableDataRows,
-    showTable,
+    onClickCloseEmailModal,
+    setSelectedContactById,
+    onChangeUpdateClientContact,
+    onClickCloseAdjustmentsModal,
+    getClientPaymentItems,
     isExtended,
+    showTable,
     resetDatePicker,
     customer,
     tableHeaders,
     isopenEmailModal,
-    onClickCloseEmailModal,
     clientContactsValue,
-    setSelectedContactById,
     selectedContactById,
-    onChangeUpdateClientContact,
-    onClickAdjustments,
-    onClickCloseAdjustmentsModal,
     isopenAdjustmentsModal,
     clientPaymentsList,
-    getClientPaymentItems
   };
 };
 
