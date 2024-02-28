@@ -7,17 +7,21 @@ import { getAndSetEmployees2 } from "@/services/api-service/customers/employees-
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { agentsCategoriesState } from "@/pages/customers/customer-states";
 import { employeesListsState } from "../quotes/states";
+import { getAllDepositsApi } from "@/services/api-service/generic-doc/deposits-api";
+import { useDateFormat } from "@/hooks/use-date-format";
+import { MoreMenuWidget } from "./more-circle";
 
 const useDeposits = () => {
     const { t } = useTranslation();
     const { callApi } = useGomakeAxios();
+    const { GetDateFormat } = useDateFormat();
     const [page, setPage] = useState(1);
     const [pagesCount, setPagesCount] = useState(0);
     const [pageSize, setPageSize] = useState(DEFAULT_VALUES.PageSize);
     const [resetDatePicker, setResetDatePicker] = useState<boolean>(false);
     const [fromDate, setFromDate] = useState<Date>();
     const [toDate, setToDate] = useState<Date>();
-
+    const [allDeposits,setAllDeposits] = useState<any>();
 
     const handlePageSizeChange = (event) => {
         setPage(1);
@@ -41,7 +45,6 @@ const useDeposits = () => {
         t("properties.more")
     ];
 
-
     const typeOfDeposit = [
         {label:t("payment.check") , value : 1},
         {label:t("payment.cash") , value : 2},
@@ -58,7 +61,40 @@ const useDeposits = () => {
         setResetDatePicker(true);
         setPage(1);
       };
-    
+
+    const getAllDeposits= async () => {
+        const callBack = (res) => {
+            if (res?.success) {
+                const data = res?.data?.data;
+                const totalItems = res?.data?.totalItems;
+                const mapData = data?.map((deposit: any) => [
+                    GetDateFormat(deposit?.creationDate),
+                    deposit?.customerName,
+                    deposit?.agentName,
+                    deposit?.number,
+                    deposit?.paymentType,
+                    deposit?.notes,
+                    deposit?.statusStr,
+                    <MoreMenuWidget/>
+                ]);
+                setAllDeposits(mapData);
+                setPagesCount(Math.ceil(totalItems / (pageSize)));
+            }
+        };
+        await getAllDepositsApi(callApi, callBack,
+            {
+                model: {
+                    pageNumber: page,
+                    pageSize: pageSize,
+                },
+                patternSearch: "",
+                fromDate: fromDate && GetDateFormat(fromDate),
+                toDate: toDate && GetDateFormat(toDate),
+                dateRange: "date",
+                paymentType: 1
+            }
+        );
+    };
 
     //////////////////////////// FILTERS ////////////////////////////////////
 
@@ -158,7 +194,9 @@ const useDeposits = () => {
         handleDepositTypeChange,
         onClickClearFilter,
         depositNumber,
-        handleDepositNumberChange
+        handleDepositNumberChange,
+        getAllDeposits,
+        allDeposits
     };
 };
 

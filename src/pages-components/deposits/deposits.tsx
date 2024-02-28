@@ -18,11 +18,14 @@ const DepositsListPageWidget = () => {
         tableHeaders,
         getAgentCategories,
         setAgentsCategories,
-        setEmployeeListValue
+        setEmployeeListValue,
+        getAllDeposits,
+        allDeposits
     } = useDeposits();
 
 
     useEffect(() => {
+        getAllDeposits();
         getAgentCategories(true, setAgentsCategories);
         getAgentCategories(null, setEmployeeListValue);
     }, []);
