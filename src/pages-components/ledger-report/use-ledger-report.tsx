@@ -108,7 +108,7 @@ const useLedgerReport = () => {
     onClickOpenEmailModal()
   }
   const onClickPrintCard = () => {
-    console.log("Print Card")
+    ExportLedgerReportPDF()
   }
   const onClickAdjustments = () => {
     onClickOpenAdjustmentsModal()
@@ -122,6 +122,31 @@ const useLedgerReport = () => {
       alertFault("reports.pleaseSelectCustomer");
     }
   }
+  const ExportLedgerReportPDF = useCallback(
+    async () => {
+      const res = await callApi(
+        EHttpMethod.POST,
+        `/v1/erp-service/reports/export-ledger-report-pdf`,
+        {
+          "clientId": customer?.id,
+          "startDate": fromDate,
+          "endDate": toDate,
+          "isExtended": isExtended
+        },
+        true,
+        null,
+        "blob"
+      );
+
+
+      const downloadLink = document.createElement('a');
+      const link = URL?.createObjectURL(res.data);
+      downloadLink.href = link
+      downloadLink.download = `aging report.pdf`;
+      downloadLink.click();
+    },
+    [fromDate, toDate, customer, isExtended]
+  );
 
   const getAgingReportFilter = useCallback(
     async () => {
