@@ -19,7 +19,15 @@ const useLedgerReport = () => {
   const [selectedContactById, setSelectedContactById] = useState<any>();
   const [isopenEmailModal, setIsOpenEmailModal] = useState<boolean>(false);
   const [isopenAdjustmentsModal, setIsOpenAdjustmentsModal] = useState<boolean>(false);
+  const [isopenCreateTransactionModal, setIsCreateTransactionModal] = useState<boolean>(false);
   const [clientPaymentsList, setClientPaymentsList] = useState<any>([]);
+
+  const onClickCloseCreateTransactionModal = () => {
+    setIsCreateTransactionModal(false)
+  };
+  const onClickOpenCreateTransactionModal = () => {
+    setIsCreateTransactionModal(true)
+  };
 
   const onClickCloseEmailModal = () => {
     setIsOpenEmailModal(false);
@@ -94,7 +102,7 @@ const useLedgerReport = () => {
     setIsExtended(!isExtended)
   }
   const onClickCreateNewTransaction = () => {
-    console.log("Transaction")
+    onClickOpenCreateTransactionModal()
   }
   const onClickSendingTicketByEmail = () => {
     onClickOpenEmailModal()
@@ -215,6 +223,8 @@ const useLedgerReport = () => {
     onClickCloseAdjustmentsModal,
     getClientPaymentItems,
     SendCustomerLedgerToMailApi,
+    onClickCloseCreateTransactionModal,
+    isopenCreateTransactionModal,
     isExtended,
     showTable,
     resetDatePicker,

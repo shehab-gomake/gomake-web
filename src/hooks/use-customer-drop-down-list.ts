@@ -61,6 +61,7 @@ const useCustomerDropDownList = () => {
         checkWhatRenderArray,
         handleCustomerChange,
         getAllClientContacts,
+        setCustomer,
         clientContactsValue
     };
 };

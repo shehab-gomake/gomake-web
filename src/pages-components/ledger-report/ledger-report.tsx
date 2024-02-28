@@ -9,6 +9,7 @@ import { LedgerReportHeaderWidget } from "./widgets/header-widget";
 import { LedgerReportButtonWidget } from "./widgets/button-widget";
 import { useLedgerReport } from "./use-ledger-report";
 import { useStyle } from "./style";
+import { CreateNewTransactionModal } from "./widgets/create-transaction-modal";
 
 const LedgerReportWidget = () => {
   const { clasess } = useStyle();
@@ -30,6 +31,8 @@ const LedgerReportWidget = () => {
     onClickCloseAdjustmentsModal,
     getClientPaymentItems,
     SendCustomerLedgerToMailApi,
+    onClickCloseCreateTransactionModal,
+    isopenCreateTransactionModal,
     isExtended,
     showTable,
     resetDatePicker,
@@ -86,6 +89,7 @@ const LedgerReportWidget = () => {
         clientPaymentsList={clientPaymentsList}
         getClientPaymentItems={getClientPaymentItems}
       />
+      <CreateNewTransactionModal onCloseModal={onClickCloseCreateTransactionModal} openModal={isopenCreateTransactionModal} />
     </div>
 
   );
