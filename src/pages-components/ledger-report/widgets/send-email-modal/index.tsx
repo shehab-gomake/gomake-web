@@ -1,11 +1,10 @@
-import {
-  GoMakeAutoComplate,
-  GoMakeModal,
-  GomakeTextInput,
-} from "@/components";
-import { useStyle } from "./style";
 import { useTranslation } from "react-i18next";
+
 import { Divider } from "@mui/material";
+
+import { GoMakeAutoComplate, GoMakeModal, GomakeTextInput } from "@/components";
+
+import { useStyle } from "./style";
 
 
 const SendEmailLedgerReportModal = ({ openModal, onCloseModal, clientContactsValue, setSelectedContactById, selectedContactById, onChangeUpdateClientContact }) => {
@@ -15,7 +14,7 @@ const SendEmailLedgerReportModal = ({ openModal, onCloseModal, clientContactsVal
     <>
       <GoMakeModal
         openModal={openModal}
-        modalTitle="Choose an Email To Send Card"
+        modalTitle={t("reports.chooseEmailToSendCard")}
         onClose={onCloseModal}
         insideStyle={clasess.insideStyle}
       >

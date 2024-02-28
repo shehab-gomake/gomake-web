@@ -3,9 +3,9 @@ import { useTranslation } from "react-i18next";
 
 import { Checkbox } from "@mui/material";
 
+import { useCustomerDropDownList, useGomakeAxios, useSnackBar } from "@/hooks";
 import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
 import { EHttpMethod } from "@/services/api-service/enums";
-import { useCustomerDropDownList, useGomakeAxios, useSnackBar } from "@/hooks";
 import { GomakeTextInput } from "@/components";
 
 export interface JustmentsModalProps {
@@ -28,7 +28,7 @@ const useadJustmentsModal = ({ getClientPaymentItems, clientPaymentsList }: Just
       setOpenDeleteModal(true);
     }
     else {
-      alertFault("Please select at least one item");
+      alertFault("reports.pleaseSelectOneItem");
     }
   };
   const onClickCloseDeleteModal = () => {
@@ -40,18 +40,18 @@ const useadJustmentsModal = ({ getClientPaymentItems, clientPaymentsList }: Just
       setOpenTransferModal(true);
     }
     else {
-      alertFault("Please select at least one item");
+      alertFault("reports.pleaseSelectOneItem");
     }
   };
   const onClickCloseTransferModal = () => {
     setOpenTransferModal(false);
   };
   const tableHeaders = [
-    "Amount to match",
-    "Sum",
-    "A.Ducument",
-    "S.Ducument",
-    "M.Ducument",
+    t("reports.price"),
+    t("reports.fixedPrice"),
+    t("reports.documentDate"),
+    t("reports.details"),
+    t("reports.documentNumber"),
     ""
   ];
   const internalReconciliationApi = useCallback(
@@ -141,15 +141,15 @@ const useadJustmentsModal = ({ getClientPaymentItems, clientPaymentsList }: Just
   }, [clientPaymentsList, inputErrors]);
   const btns = [
     {
-      name: "Transfer Balance",
+      name: t("reports.transferBalance"),
       onclick: onClickOpenTransferModal
     },
     {
-      name: "Balance Cancellation",
+      name: t("reports.balanceCancellation"),
       onclick: onClickOpenDeleteModal
     },
     {
-      name: "Match",
+      name: t("reports.match"),
       onclick: internalReconciliationApi
     }
   ]
@@ -181,10 +181,10 @@ const useadJustmentsModal = ({ getClientPaymentItems, clientPaymentsList }: Just
         }
       );
       if (res?.success) {
-        alertSuccess(`Successfully moved transaction to ${customer.name}`)
+        alertSuccess(`reports.successfullyMovedTransaction`)
         getClientPaymentItems()
       } else {
-        alertFault("Failed to move transaction");
+        alertFault("reports.failedMoveTransaction");
       }
     },
     [selectedItems, customer]
@@ -192,19 +192,19 @@ const useadJustmentsModal = ({ getClientPaymentItems, clientPaymentsList }: Just
   return {
     getTableDataRows,
     calculateTotalPrice,
-    tableHeaders,
-    btns,
-    t,
-    openDeleteModal,
     onClickCloseDeleteModal,
     cancelTransactionsApi,
-    openTransferModal,
     onClickCloseTransferModal,
-    customer,
     renderOptions,
     checkWhatRenderArray,
     handleCustomerChange,
-    transferBalanceApi
+    transferBalanceApi,
+    t,
+    tableHeaders,
+    btns,
+    openDeleteModal,
+    openTransferModal,
+    customer,
   };
 };
 

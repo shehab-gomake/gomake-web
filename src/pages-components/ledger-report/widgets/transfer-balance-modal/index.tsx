@@ -9,14 +9,14 @@ const TransferBalanceModal = ({ openModal, onCloseModal, customer, renderOptions
   const { t } = useTranslation()
   const btns = [
     {
-      name: "Transfer",
+      name: t("reports.transfer"),
       onclick: () => {
         transferBalanceApi()
         onCloseModal()
       }
     },
     {
-      name: "cancel",
+      name: t("reports.cancel"),
       onclick: () => onCloseModal()
     },
   ]
@@ -25,7 +25,7 @@ const TransferBalanceModal = ({ openModal, onCloseModal, customer, renderOptions
     <>
       <GoMakeModal
         openModal={openModal}
-        modalTitle="Transfer Balance"
+        modalTitle={t("reports.transferBalance")}
         onClose={onCloseModal}
         insideStyle={clasess.insideStyle}
       >

@@ -1,35 +1,37 @@
 
-import { PrimaryTable } from "@/components/tables/primary-table";
 import { GoMakeDeleteModal, GoMakeModal, GomakePrimaryButton } from "@/components";
+import { PrimaryTable } from "@/components/tables/primary-table";
+
+import { TransferBalanceModal } from "../transfer-balance-modal";
 import { useadJustmentsModal } from "./use-adjustments-modal";
 
 import { useStyle } from "./style";
-import { TransferBalanceModal } from "../transfer-balance-modal";
 
 const AdjustmentsLedgerReportModal = ({ openModal, onCloseModal, clientPaymentsList, getClientPaymentItems }) => {
   const { clasess } = useStyle();
   const {
     getTableDataRows,
     calculateTotalPrice,
-    tableHeaders,
-    btns,
-    openDeleteModal,
     onClickCloseDeleteModal,
     cancelTransactionsApi,
-    openTransferModal,
     onClickCloseTransferModal,
-    customer,
     renderOptions,
     checkWhatRenderArray,
     handleCustomerChange,
-    transferBalanceApi
+    transferBalanceApi,
+    t,
+    tableHeaders,
+    btns,
+    openDeleteModal,
+    openTransferModal,
+    customer,
   } = useadJustmentsModal({ clientPaymentsList, getClientPaymentItems })
 
   return (
     <>
       <GoMakeModal
         openModal={openModal}
-        modalTitle="Adjustments Lists"
+        modalTitle={t("reports.adjustmentsLists")}
         onClose={onCloseModal}
         insideStyle={clasess.insideStyle}
       >
