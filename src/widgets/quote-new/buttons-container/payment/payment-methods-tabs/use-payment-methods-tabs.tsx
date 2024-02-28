@@ -247,10 +247,17 @@ const usePaymentMethodsTabs = () => {
 
     const onClickMakePayment = async (handleSaveAndClose) => {
         const callBack = (res) => {
-            if (res?.success) {
+            if (res?.success) { 
                 setIsTransacted(true);
+                // setSecondCreditCard({
+                //     creditCardTransactionID:res?.data,
+                //     creditCardSum:totalCreditCard
+                // });
                 alertSuccessUpdate();
-                handleSaveAndClose();
+                handleSaveAndClose({
+                    creditCardTransactionID:res?.data,
+                    creditCardSum:totalCreditCard
+                });
             } else {
                 alertFaultUpdate();
             }
@@ -258,6 +265,8 @@ const usePaymentMethodsTabs = () => {
         await createCreditTransactionApi(callApi, callBack, { ClientID: quoteItemValue?.client?.id, creditCard });
     };
 
+
+    
 
     const cardTransactionsOptions = useRecoilValue<transactionOptionsData[]>(creditTransactionsState);
     const [transactionSelected, setTransactionSelected] = useRecoilState<transactionOptionsData>(selectedCreditTransactionState);
