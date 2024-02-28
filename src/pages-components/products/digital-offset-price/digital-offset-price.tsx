@@ -78,7 +78,6 @@ const PriceListPageWidget = ({ widgetType }) => {
     setIsChargeForNewDie,
     straightKnife
   } = useDigitalOffsetPrice({ clasess, widgetType });
-  const direction = t("direction");
   return (
     <div>
       {productTemplate?.sections?.length > 0 && (

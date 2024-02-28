@@ -195,14 +195,14 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             parseFloat(selectedWorkFlow.totalPrice.values[0])
           );
         }
-       // const currentWorkFlowsCount = currentWorkFlows.length;
-       // const totalWorkFlowsCount =
-         // calculationResult?.productItemValue.totalWorkFlows;
-       /* setCalculationProgress({
-          totalWorkFlowsCount: totalWorkFlowsCount,
-          currentWorkFlowsCount: currentWorkFlowsCount,
-        });*/
-        if(calculationResult.isCalculationFinished){
+        // const currentWorkFlowsCount = currentWorkFlows.length;
+        // const totalWorkFlowsCount =
+        // calculationResult?.productItemValue.totalWorkFlows;
+        /* setCalculationProgress({
+           totalWorkFlowsCount: totalWorkFlowsCount,
+           currentWorkFlowsCount: currentWorkFlowsCount,
+         });*/
+        if (calculationResult.isCalculationFinished) {
           setCalculationProgress({
             totalWorkFlowsCount: 0,
             currentWorkFlowsCount: 0,
@@ -493,6 +493,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   underParameterIdsArray.push({
                     underParameterId: parameter.isUnderParameterId,
                     myParameter: parameter,
+                    sectionId: section.id,
+                    subSectionId: subSection.id
                   });
                 }
                 const isParameterExits = subProduct.parameters.find(
@@ -906,6 +908,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 underParameterIdsArray.push({
                   underParameterId: parameter.isUnderParameterId,
                   myParameter: parameter,
+                  sectionId: section.id,
+                  subSectionId: subSection.id
                 });
               }
               if (parameter.relatedParameter) {
