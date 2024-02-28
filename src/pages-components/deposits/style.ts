@@ -40,7 +40,7 @@ const useStyle = () => {
                 gap: 20,
                 width: "70%",
             },
-            statusFilterContainer: {
+            filterContainerStyle: {
                 display: "flex",
                 flexDirection: "column" as "column",
                 justifyContent: "flex-start",

@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { useStyle } from "../style";
 import { GoMakeAutoComplate } from "@/components/auto-complete/auto-complete";
-import { GomakePrimaryButton } from "@/components";
+import { GomakePrimaryButton, GomakeTextInput } from "@/components";
 import { GoMakeDatepicker } from "@/components/date-picker/date-picker-component";
 import { SearchInputComponent } from "@/components/form-inputs/search-input-component";
 import { useDeposits } from "../use-deposits";
@@ -25,7 +25,9 @@ const DepositsFiltersWidget = () => {
         typeOfDeposit,
         typeId,
         handleDepositTypeChange,
-        onClickClearFilter
+        onClickClearFilter,
+        depositNumber,
+        handleDepositNumberChange
     } = useDeposits();
 
     useEffect(() => {
@@ -34,13 +36,12 @@ const DepositsFiltersWidget = () => {
     }, []);
 
     return (
-
         <div style={classes.filtersContainer}>
             <div style={classes.selectedFilterContainer}>
-                <div style={classes.statusFilterContainer}>
-                    <div style={classes.filterLabelStyle}>
+                <div style={classes.filterContainerStyle}>
+                    <label style={classes.filterLabelStyle}>
                         {t("sales.quote.customer")}
-                    </div>
+                    </label>
                     <GoMakeAutoComplate
                         key={customerId?.id}
                         options={renderOptions()}
@@ -52,10 +53,10 @@ const DepositsFiltersWidget = () => {
                         value={customerId}
                     />
                 </div>
-                <div style={classes.statusFilterContainer}>
-                    <div style={classes.filterLabelStyle}>
+                <div style={classes.filterContainerStyle}>
+                    <label style={classes.filterLabelStyle}>
                         {t("sales.quote.agent")}
-                    </div>
+                    </label>
                     <GoMakeAutoComplate
                         key={agentId?.id}
                         options={agentsCategories}
@@ -66,11 +67,10 @@ const DepositsFiltersWidget = () => {
                         value={agentId}
                     />
                 </div>
-
-                <div style={classes.statusFilterContainer}>
-                    <div style={classes.filterLabelStyle}>
+                <div style={classes.filterContainerStyle}>
+                    <label style={classes.filterLabelStyle}>
                         {t("deposits.typeOfDeposit")}
-                    </div>
+                    </label>
                     <GoMakeAutoComplate
                         key={typeId?.value}
                         options={typeOfDeposit}
@@ -81,13 +81,22 @@ const DepositsFiltersWidget = () => {
                         value={typeId}
                     />
                 </div>
-
-                <div style={classes.statusFilterContainer}>
-                    <h3 style={classes.filterLabelStyle}>{t("boardMissions.dateRange")}</h3>
+                <div style={classes.filterContainerStyle}>
+                    <label style={classes.filterLabelStyle}>
+                        {t("deposits.depositNumber")}
+                    </label>
+                    <GomakeTextInput
+                        value={depositNumber}
+                        onChange={handleDepositNumberChange}
+                        style={{ ...classes.textInputStyle, height: "40px" }}
+                        placeholder={t("deposits.depositNumber")}
+                    />
+                </div>
+                <div style={classes.filterContainerStyle}>
+                    <label style={classes.filterLabelStyle}>{t("boardMissions.dateRange")}</label>
                     <GoMakeDatepicker onChange={onSelectDateRange} placeholder={t("boardMissions.chooseDate")} reset={resetDatePicker} />
                 </div>
-
-                <div style={classes.statusFilterContainer}>
+                <div style={classes.filterContainerStyle}>
                     <div style={classes.filterLabelStyle} />
                     <GomakePrimaryButton
                         style={classes.searchBtnStyle}
@@ -96,13 +105,11 @@ const DepositsFiltersWidget = () => {
                         {t("sales.quote.search")}
                     </GomakePrimaryButton>
                 </div>
-
-                <div style={classes.statusFilterContainer}>
+                <div style={classes.filterContainerStyle}>
                     <div style={classes.filterLabelStyle} />
                     <GomakePrimaryButton
                         style={classes.clearBtnStyle}
-                        onClick={onClickClearFilter}
-                    >
+                        onClick={onClickClearFilter}>
                         {t("sales.quote.clear")}
                     </GomakePrimaryButton>
                 </div>

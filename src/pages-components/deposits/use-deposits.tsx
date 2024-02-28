@@ -51,7 +51,8 @@ const useDeposits = () => {
     const onClickClearFilter = () => {
         setAgentId(null);
         setCustomerId(null);
-        setTypeId(null)
+        setTypeId(null);
+        setDepositNumber("");
         setFromDate(null);
         setToDate(null);
         setResetDatePicker(true);
@@ -69,6 +70,7 @@ const useDeposits = () => {
     const [agentsCategories, setAgentsCategories] = useRecoilState(agentsCategoriesState);
     const setEmployeeListValue = useSetRecoilState<string[]>(employeesListsState);
     const [typeId, setTypeId] = useState<any>();
+    const [depositNumber, setDepositNumber] = useState<string>();
 
 
     const handleCustomerChange = (e: any, value: any) => {
@@ -81,6 +83,10 @@ const useDeposits = () => {
 
     const handleDepositTypeChange = (e: any, value: any) => {
         setTypeId(value);
+    };
+
+    const handleDepositNumberChange = (e: any) => {
+        setDepositNumber(e.target.value);
     };
 
     const renderOptions = () => {
@@ -150,7 +156,9 @@ const useDeposits = () => {
         typeOfDeposit,
         typeId,
         handleDepositTypeChange,
-        onClickClearFilter
+        onClickClearFilter,
+        depositNumber,
+        handleDepositNumberChange
     };
 };
 
