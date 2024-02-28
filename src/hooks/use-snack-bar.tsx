@@ -90,6 +90,13 @@ const useSnackBar = () => {
       type: "error",
     });
   };
+  const alertSuccess = (successMessage: string) => {
+    setSnackbarStateValue({
+      state: true,
+      message: t(successMessage),
+      type: "success",
+    });
+  };
   const alertFaultGetData = () => {
     setSnackbarStateValue({
       state: true,
@@ -119,6 +126,7 @@ const useSnackBar = () => {
     alertRequiredFields,
     alertFaultDuplicate,
     alertFault,
+    alertSuccess,
     alertFaultGetData,
     alertSuccessGetData
   };

@@ -1,12 +1,14 @@
+
 import { Divider } from "@mui/joy";
 
-import { useLedgerReport } from "./use-ledger-report";
-import { useStyle } from "./style";
 import { PrimaryTable } from "@/components/tables/primary-table";
+
+import { AdjustmentsLedgerReportModal } from "./widgets/adjustments-modal";
+import { SendEmailLedgerReportModal } from "./widgets/send-email-modal";
 import { LedgerReportHeaderWidget } from "./widgets/header-widget";
 import { LedgerReportButtonWidget } from "./widgets/button-widget";
-import { SendEmailLedgerReportModal } from "./widgets/send-email-modal";
-import { useEffect } from "react";
+import { useLedgerReport } from "./use-ledger-report";
+import { useStyle } from "./style";
 
 const LedgerReportWidget = () => {
   const { clasess } = useStyle();
@@ -19,26 +21,26 @@ const LedgerReportWidget = () => {
     onClickSendingTicketByEmail,
     onClickPrintCard,
     onClickShowCard,
+    onClickAdjustments,
     onChangeIsExtended,
     getTableDataRows,
+    onClickCloseEmailModal,
+    setSelectedContactById,
+    onChangeUpdateClientContact,
+    onClickCloseAdjustmentsModal,
+    getClientPaymentItems,
     isExtended,
     showTable,
     resetDatePicker,
     customer,
     tableHeaders,
     isopenEmailModal,
-    onClickCloseEmailModal,
-    getAllClientContacts,
     clientContactsValue,
-    setSelectedContactById,
     selectedContactById,
-    onChangeUpdateClientContact
+    isopenAdjustmentsModal,
+    clientPaymentsList,
   } = useLedgerReport()
-  useEffect(() => {
-    if (customer?.id) {
-      getAllClientContacts();
-    }
-  }, [customer]);
+
   return (
     <div style={clasess.mainContainer}>
       <LedgerReportHeaderWidget
@@ -57,6 +59,7 @@ const LedgerReportWidget = () => {
         onClickSendingTicketByEmail={onClickSendingTicketByEmail}
         onClickPrintCard={onClickPrintCard}
         onClickShowCard={onClickShowCard}
+        onClickAdjustments={onClickAdjustments}
       />
       {
         showTable &&
@@ -73,6 +76,12 @@ const LedgerReportWidget = () => {
         setSelectedContactById={setSelectedContactById}
         selectedContactById={selectedContactById}
         onChangeUpdateClientContact={onChangeUpdateClientContact}
+      />
+      <AdjustmentsLedgerReportModal
+        onCloseModal={onClickCloseAdjustmentsModal}
+        openModal={isopenAdjustmentsModal}
+        clientPaymentsList={clientPaymentsList}
+        getClientPaymentItems={getClientPaymentItems}
       />
     </div>
 

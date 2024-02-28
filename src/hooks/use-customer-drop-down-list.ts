@@ -7,7 +7,7 @@ const useCustomerDropDownList = () => {
     const [customersListCreateQuote, setCustomersListCreateQuote] = useState([]);
     const [clientContactsValue, setClientContactsValue] =useState<any>([]);
     const [customer, setCustomer] = useState<{
-      label: string;
+      name: string;
       id: string;
     } | null>();
     const renderOptions = () => {

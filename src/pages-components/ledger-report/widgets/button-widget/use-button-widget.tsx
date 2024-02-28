@@ -5,9 +5,11 @@ export interface LedgerReportButtonWidgetProps {
   onClickPrintCard: () => void;
   onClickShowCard: () => void;
   onClickSendingTicketByEmail: () => void;
+  onClickAdjustments: () => void;
+
 }
 
-const useLedgerReportHeader = ({ onClickCreateNewTransaction, onClickSendingTicketByEmail, onClickPrintCard, onClickShowCard }: LedgerReportButtonWidgetProps) => {
+const useLedgerReportHeader = ({ onClickCreateNewTransaction, onClickSendingTicketByEmail, onClickPrintCard, onClickShowCard, onClickAdjustments }: LedgerReportButtonWidgetProps) => {
   const { t } = useTranslation()
   const tabs = [
     {
@@ -25,6 +27,10 @@ const useLedgerReportHeader = ({ onClickCreateNewTransaction, onClickSendingTick
     {
       name: t("reports.showCard"),
       onclick: onClickShowCard
+    },
+    {
+      name: "Adjustments",
+      onclick: onClickAdjustments
     }
   ]
 

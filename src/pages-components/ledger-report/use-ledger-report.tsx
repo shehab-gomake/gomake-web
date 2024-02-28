@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useCustomerDropDownList, useGomakeAxios, useSnackBar } from "@/hooks";
 import { EHttpMethod } from "@/services/api-service/enums";
 import { useTranslation } from "react-i18next";
@@ -17,11 +17,19 @@ const useLedgerReport = () => {
   const [dataTable, setDataTable] = useState<any>([]);
   const [selectedContactById, setSelectedContactById] = useState<any>();
   const [isopenEmailModal, setIsOpenEmailModal] = useState<boolean>(false);
+  const [isopenAdjustmentsModal, setIsOpenAdjustmentsModal] = useState<boolean>(false);
+  const [clientPaymentsList, setClientPaymentsList] = useState<any>([]);
   const onClickCloseEmailModal = () => {
     setIsOpenEmailModal(false);
   };
   const onClickOpenEmailModal = () => {
     setIsOpenEmailModal(true);
+  };
+  const onClickCloseAdjustmentsModal = () => {
+    setIsOpenAdjustmentsModal(false);
+  };
+  const onClickOpenAdjustmentsModal = () => {
+    setIsOpenAdjustmentsModal(true);
   };
 
   const onChangeUpdateClientContact = useCallback(
@@ -79,6 +87,9 @@ const useLedgerReport = () => {
   const onClickPrintCard = () => {
     console.log("Print Card")
   }
+  const onClickAdjustments = () => {
+    onClickOpenAdjustmentsModal()
+  }
   const onClickShowCard = () => {
     setShowTable(false);
     getAgingReportFilter()
@@ -108,6 +119,36 @@ const useLedgerReport = () => {
     [fromDate, toDate, isExtended, customer]
   );
 
+  const getClientPaymentItems = useCallback(
+    async () => {
+      const res = await callApi(
+        EHttpMethod.GET,
+        `/v1/erp-service/receipts/get-client-payment-items`,
+        {
+          clientId: customer?.id,
+        }
+      );
+      if (res?.success) {
+        const newData = res.data?.data?.data.map(item => ({ ...item, fixedPrice: item.price }));
+        setClientPaymentsList(newData);
+        alertSuccessGetData();
+      } else {
+        alertFaultGetData();
+      }
+    },
+    [customer]
+  );
+  useEffect(() => {
+    if (customer?.id && isopenAdjustmentsModal) {
+      getClientPaymentItems()
+    }
+  }, [customer, isopenAdjustmentsModal])
+
+  useEffect(() => {
+    if (customer?.id) {
+      getAllClientContacts();
+    }
+  }, [customer]);
   return {
     onSelectDeliveryTimeDates,
     renderOptions,
@@ -126,11 +167,15 @@ const useLedgerReport = () => {
     tableHeaders,
     isopenEmailModal,
     onClickCloseEmailModal,
-    getAllClientContacts,
     clientContactsValue,
     setSelectedContactById,
     selectedContactById,
-    onChangeUpdateClientContact
+    onChangeUpdateClientContact,
+    onClickAdjustments,
+    onClickCloseAdjustmentsModal,
+    isopenAdjustmentsModal,
+    clientPaymentsList,
+    getClientPaymentItems
   };
 };
 
