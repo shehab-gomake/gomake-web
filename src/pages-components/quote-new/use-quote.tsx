@@ -75,6 +75,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
   const [openDeleteModalContact, setOpenDeleteModalContact] = useState(false);
   const [openAddNewItemModal, setOpenAddNewItemModal] = useState(false);
   const [openCopyFromOrderModal, setOpenCopyFromOrderModal] = useState(false);
+  const [openCopyFromDeliveryNoteModal, setOpenCopyFromDeliveryNoteModal] = useState(false);
   const [quoteItemId, setQuateItemId] = useState();
   const [openDuplicateWithDifferentQTYModal, setOpenDuplicateWithDifferentQTYModal] = useState(false);
   const [selectedContactById, setSelectedContactById] = useState<any>();
@@ -153,6 +154,9 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
       }
       if (router?.query.deliveryNoteId) {
         requestBody.deliveryNoteID = router.query.deliveryNoteId;
+      }
+      if (router?.query.documentToDuplicateId) {
+        requestBody.documentToDuplicateId = router.query.documentToDuplicateId;
       }
       const res = await callApi(
         EHttpMethod.POST,
@@ -511,6 +515,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
       };
       updatedQuoteItemValue.documentContacts = [...updatedQuoteItemValue.documentContacts, newContact];
       setQuoteItemValue(updatedQuoteItemValue);
+      setIsDisplayWidget(false);
     }
     else {
       const callBack = (res) => {
@@ -650,6 +655,13 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
 
   const onOpenCopyFromOrder = () => {
     setOpenCopyFromOrderModal(true);
+  };
+  const onCloseCopyFromDeliveryNote = () => {
+    setOpenCopyFromDeliveryNoteModal(false);
+  };
+
+  const onOpenCopyFromDeliveryNote = () => {
+    setOpenCopyFromDeliveryNoteModal(true);
   };
   const onCloseNewItem = () => {
     setOpenAddNewItemModal(false);
@@ -1311,7 +1323,15 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     {
       label: t("sales.quote.receipt"),
       value: DOCUMENT_TYPE.receipt,
-    }
+    },
+    {
+      label: t("tabs.deliveryNoteRefund"),
+      value: DOCUMENT_TYPE.deliveryNoteRefund,
+    },
+    {
+      label: t("tabs.invoiceRefund"),
+      value: DOCUMENT_TYPE.invoiceRefund,
+    },
   ];
 
   const documentTitle = documentsTitles.find(item => item.value === docType).label;
@@ -1455,7 +1475,10 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     selectConfirmBusiness,
     openCopyFromOrderModal,
     onCloseCopyFromOrder,
-    onOpenCopyFromOrder
+    onOpenCopyFromOrder,
+    onCloseCopyFromDeliveryNote,
+    onOpenCopyFromDeliveryNote,
+    openCopyFromDeliveryNoteModal
 
   };
 };

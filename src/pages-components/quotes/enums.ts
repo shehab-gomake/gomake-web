@@ -1,10 +1,12 @@
 
 export enum DOCUMENT_TYPE{
     quote = 0,
-    order = 1,
-    deliveryNote = 2,
-    invoice = 3,
-    receipt = 4
+    order,
+    deliveryNote,
+    invoice,
+    receipt,
+    deliveryNoteRefund,
+    invoiceRefund
 }
 
 export enum QUOTE_STATUSES{

@@ -99,7 +99,4 @@ const useStyle = () => {
   };
 };
 export { useStyle };
-function primaryColor(arg0: number): any {
-  throw new Error("Function not implemented.");
-}
 

@@ -1,4 +1,4 @@
-import {clearStorage} from "@/services/storage-data";
+import {clearStorage, updateTokenStorage} from "@/services/storage-data";
 import {systemCurrencyState, systemVATState, userState} from "@/store";
 import {permissionsState} from "@/store/permissions";
 import {useCallback, useState} from "react";
@@ -9,7 +9,7 @@ import {userTypeState} from "@/store/user-type";
 import {userProfileState} from "@/store/user-profile";
 import {useTranslation} from "react-i18next";
 import {Permissions} from "@/components/CheckPermission/enum";
-import { printHouseProfile } from "@/store/print-house-profile";
+import {printHouseProfile} from "@/store/print-house-profile";
 
 
 const useCustomer = (permissionEnumValue?:Permissions,allowAnonymous?:boolean) => {
@@ -39,8 +39,9 @@ const useCustomer = (permissionEnumValue?:Permissions,allowAnonymous?:boolean) =
         const validate: any = await callApi("GET", "/v1/auth/validate");
         if (validate?.success) {
             const user = validate?.data?.data?.customer;
+            updateTokenStorage(user?.token);
             const userPermissions = [...user.permissions];
-            user.permissions = null; 
+            user.permissions = null;
             setUser({...user, type: "user"});
             setUserType({type: "user"});
             setUserProfile(validate?.data?.data?.customer);
@@ -52,13 +53,13 @@ const useCustomer = (permissionEnumValue?:Permissions,allowAnonymous?:boolean) =
                 localStorage.setItem('systemLanguage', validate?.data?.data?.customer?.systemLang)
                 i18n.changeLanguage(validate?.data?.data?.customer?.systemLang).then();
             }
-
-
+            if (!!user?.redirectTo) {
+                navigate(user?.redirectTo);
+            }
             setPermissions(userPermissions);
             if (permissionEnumValue !== null && permissionEnumValue !== undefined) {
 
                 if (userPermissions) {
-                 
                     return !!userPermissions?.includes(permissionEnumValue);
                 } else {
                     return false;

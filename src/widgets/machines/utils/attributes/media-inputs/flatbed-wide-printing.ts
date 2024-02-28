@@ -15,9 +15,11 @@ const flatbedWidePrinting = (state: Record<string, any>) => {
             required: true,
             parameterKey: "mediaType",
             value: state?.attributes?.mediaType,
-            options: [{value: 1, text: 'Roll'}, {value: true, text: 'Flatbed'}],
+            options: [{value: '1', text: 'Roll'}, {value: '2', text: 'Flatbed'}],
+            values: state?.attributes?.mediaType,
             machineInputType: 'input',
             isValid: true,
+            multiple: true
         },
         ...mediaMinMarginWidth(state),
         ...mediaDimensionsSettings(state),

@@ -8,15 +8,17 @@ import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRecoilState } from "recoil";
 
-const useCopyFromOrderModal = ({ onClose, documentType }) => {
+const useCopyFromOrderModal = ({ onClose, documentType, openModal, cliendDocumentType }) => {
   const { t } = useTranslation();
   const [term, setTerm] = useState("")
   const filterItems = (items) => {
     if (!term) return items; // If no search term, return all items
     const searchTerm = term.toLowerCase();
     return items.filter(item =>
-      item.productName.toLowerCase().includes(searchTerm) ||
-      item.details.toLowerCase().includes(searchTerm)
+      item?.productName?.toLowerCase()?.includes(searchTerm) ||
+      item?.details?.toLowerCase()?.includes(searchTerm) ||
+      item?.workName?.toLowerCase()?.includes(searchTerm)
+
     );
   };
   const PrimaryTableCell = styled(TableCell)(() => {
@@ -50,24 +52,31 @@ const useCopyFromOrderModal = ({ onClose, documentType }) => {
   const [documentItems, setDocumentItems] = useState([])
   const { callApi } = useGomakeAxios();
   const getClientOrderItems = async () => {
-    if (quoteItemValue?.customerID) {
-      const callBack = (res) => {
-        if (res?.success) {
-          setDocumentItems(res?.data);
-        } else {
-          setDocumentItems(null);
-        }
-      };
-      await getClientDocumentsApi(callApi, callBack, {
-        documentType: DOCUMENT_TYPE.order,
-        clientId: quoteItemValue?.customerID
-      });
+    let docType;
+    if (cliendDocumentType === DOCUMENT_TYPE.order) {
+      docType = DOCUMENT_TYPE.order;
+    } else if (cliendDocumentType === DOCUMENT_TYPE.deliveryNote) {
+      docType = DOCUMENT_TYPE.deliveryNote;
     }
+    const callBack = (res) => {
+      if (res?.success) {
+        setDocumentItems(res?.data);
+      } else {
+        setDocumentItems(null);
+      }
+    };
+    await getClientDocumentsApi(callApi, callBack, {
+      documentType: docType,
+      clientId: quoteItemValue?.customerID
+    });
+
 
   };
   useEffect(() => {
-    getClientOrderItems()
-  }, [quoteItemValue])
+    if (openModal) {
+      getClientOrderItems()
+    }
+  }, [quoteItemValue, openModal])
   const [selectedItems, setSelectedItems] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
   const calculateTotalPrice = () => {
@@ -90,23 +99,25 @@ const useCopyFromOrderModal = ({ onClose, documentType }) => {
     }
   };
   const handleSelectAll = (documentItem) => {
+    console.log("documentItem", documentItem)
     const selectedIds = selectedItems.map(item => item.id);
-    const sectionItemIds = documentItem.items.map(item => item.id);
-    const allSelected = sectionItemIds.every(id => selectedIds.includes(id));
+    const sectionItemIds = documentItem?.orderItems?.map(item => item.id);
+    const allSelected = sectionItemIds?.every(id => selectedIds?.includes(id));
 
     if (allSelected) {
       // If all items in the section are selected, remove them
       const newSelectedItems = selectedItems.filter(item => !sectionItemIds.includes(item.id));
       setSelectedItems(newSelectedItems);
     } else {
+
       // If any item in the section is not selected, select all items in the section
-      const newSelectedItems = [...selectedItems, ...documentItem.items];
+      const newSelectedItems = [...selectedItems, ...documentItem?.orderItems];
       setSelectedItems(newSelectedItems);
     }
   };
   const areAllItemsSelected = (documentItemId) => {
-    const selectedIds = documentItems.find(item => item.id === documentItemId)?.items?.map(item => item.id) || [];
-    return documentItems.find(item => item.id === documentItemId)?.items?.every(item => selectedItems.some(selectedItem => selectedItem.id === item.id)) || false;
+    const selectedIds = documentItems.find(item => item.id === documentItemId)?.orderItems?.map(item => item.id) || [];
+    return documentItems.find(item => item.id === documentItemId)?.orderItems?.every(item => selectedItems.some(selectedItem => selectedItem.id === item.id)) || false;
   };
 
   const calculateDocument = useCallback(async () => {
@@ -167,7 +178,7 @@ const useCopyFromOrderModal = ({ onClose, documentType }) => {
     selectedItems,
     totalPrice,
     filterItems,
-    addOrdersToDeliveryNote
+    addOrdersToDeliveryNote,
   };
 };
 

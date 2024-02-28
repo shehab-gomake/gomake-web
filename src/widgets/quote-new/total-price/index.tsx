@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { InputUpdatedValues } from "../input-updated-values";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useQuoteGetData } from "@/pages-components/quote-new/use-quote-get-data";
+import { useRouter } from "next/router";
 
 const TotalPriceComp = ({
   getCalculateQuote,
@@ -11,6 +12,7 @@ const TotalPriceComp = ({
   changeQuoteItems,
   isQuoteConfirmation = false,
 }) => {
+  const router = useRouter()
   const { classes } = useStyle();
   const { t } = useTranslation();
   const [isUpdateTotalPayment, setIsUpdateTotalPayment] = useState(null);
@@ -56,9 +58,9 @@ const TotalPriceComp = ({
         <div style={{ ...classes.oddRowContainer, width: "19%" }}>
           <div style={classes.cellTextInputStyle}>
             <InputUpdatedValues
-              value={ (quoteItems?.discount ? quoteItems?.discount : 0)}
+              value={(quoteItems?.discount ? quoteItems?.discount : 0)}
               onBlur={onBlurDiscount}
-              isUpdate={isUpdateDiscount}
+              isUpdate={router.query.Id ? false : isUpdateDiscount}
               setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdateDiscount}
               onInputChange={(e) => onInputDiscount(e)}
             />
@@ -93,7 +95,7 @@ const TotalPriceComp = ({
             <InputUpdatedValues
               value={quoteItems?.totalPayment}
               onBlur={onBlurTotalPayment}
-              isUpdate={isUpdateTotalPayment}
+              isUpdate={router.query.Id ? false : isUpdateTotalPayment}
               setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdateTotalPayment}
               onInputChange={(e) => onInputTotalPayment(e)}
               speicalStyle={{

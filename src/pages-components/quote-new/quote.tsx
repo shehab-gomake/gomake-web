@@ -165,7 +165,10 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
     refreshExchangeRate,
     getQuote,
     selectConfirmBusiness,
-    handleSaveBtnClickForDocument
+    handleSaveBtnClickForDocument,
+    onCloseCopyFromDeliveryNote,
+    onOpenCopyFromDeliveryNote,
+    openCopyFromDeliveryNoteModal
   } = useQuoteNew({ docType: documentType, isQuoteConfirmation: isQuoteConfirmation });
   const { resetReceiptState } = usePaymentsTable();
   const router = useRouter();
@@ -195,13 +198,15 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
 
                 </div>
                 {!isQuoteConfirmation && <div style={classes.settingsStatusContainer}>
-                  <div style={classes.quoteStatusContainer}>
-                    {_renderQuoteStatus(
-                      quoteState?.documentStatus,
-                      quoteState,
-                      t
-                    )}
-                  </div>
+                  {!router?.query?.isNewCreation &&
+                    <div style={classes.quoteStatusContainer}>
+                      {_renderQuoteStatus(
+                        quoteState?.documentStatus,
+                        quoteState,
+                        t
+                      )}
+                    </div>
+                  }
                   <IconButton
                     style={{ marginRight: 4 }}
                     onClick={handleSettingMenuClick}
@@ -336,6 +341,7 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
               documentType={documentType}
               onOpenCopyFromOrder={onOpenCopyFromOrder}
               handleSaveBtnClickForDocument={handleSaveBtnClickForDocument}
+              onOpenCopyFromDeliveryNote={onOpenCopyFromDeliveryNote}
             />
           }
         </div>
@@ -355,6 +361,14 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
         openModal={openCopyFromOrderModal}
         onClose={onCloseCopyFromOrder}
         documentType={documentType}
+        cliendDocumentType={1}
+
+      />
+      <CopyFromOrderModal
+        openModal={openCopyFromDeliveryNoteModal}
+        onClose={onCloseCopyFromDeliveryNote}
+        documentType={documentType}
+        cliendDocumentType={2}
       />
       <DuplicateItemModal
         openModal={openDuplicateWithDifferentQTYModal}

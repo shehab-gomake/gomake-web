@@ -2,6 +2,7 @@ import { useStyle } from "./style";
 import {
   ArrowDownNewIcon,
   PlusIcon,
+  UploadNewIcon,
 } from "@/icons";
 import { useTranslation } from "react-i18next";
 import { GoMakeDeleteModal, GomakePrimaryButton } from "@/components";
@@ -23,7 +24,8 @@ const ButtonsContainer = ({
   onOpenDeliveryModal,
   documentType,
   onOpenCopyFromOrder,
-  handleSaveBtnClickForDocument
+  handleSaveBtnClickForDocument,
+  onOpenCopyFromDeliveryNote
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -58,17 +60,18 @@ const ButtonsContainer = ({
     <div style={classes.writeCommentContainer}>
       <div style={classes.btnsContainer}>
         {
-        (isNewCreation && documentType === DOCUMENT_TYPE.receipt) &&
-          <PaymentBtn handleOpenModal={onClickOpenPaymentModal} />
+            (isNewCreation && documentType === DOCUMENT_TYPE.receipt) &&
+            <PaymentBtn handleOpenModal={onClickOpenPaymentModal} />
         }
         {
-        documentType !== DOCUMENT_TYPE.receipt && <GomakePrimaryButton
-          leftIcon={<PlusIcon stroke={"#344054"} />}
-          style={classes.btnContainer}
-          onClick={() => onOpenNewItem()}
-        >
-          {t("sales.quote.addNewItems")}
-        </GomakePrimaryButton>}
+          !router.query.Id && documentType !== DOCUMENT_TYPE.receipt && <GomakePrimaryButton
+            leftIcon={<PlusIcon stroke={"#344054"} />}
+            style={classes.btnContainer}
+            onClick={() => onOpenNewItem()}
+          >
+            {t("sales.quote.addNewItems")}
+          </GomakePrimaryButton>
+        }
         {
           (documentType === DOCUMENT_TYPE.quote || documentType === DOCUMENT_TYPE.order) && <GomakePrimaryButton
             leftIcon={<PlusIcon stroke={"#344054"} />}
@@ -79,13 +82,21 @@ const ButtonsContainer = ({
           </GomakePrimaryButton>
         }
         {
-          (isNewCreation && documentType !== DOCUMENT_TYPE.receipt) &&
-          <GomakePrimaryButton
+          isNewCreation && documentType !== DOCUMENT_TYPE.deliveryNoteRefund && documentType !== DOCUMENT_TYPE.invoiceRefund && documentType !== DOCUMENT_TYPE.receipt && <GomakePrimaryButton
             leftIcon={<PlusIcon stroke={"#344054"} />}
             style={classes.btnContainer}
             onClick={onOpenCopyFromOrder}
           >
             {t("sales.quote.copyFromOrder")}
+          </GomakePrimaryButton>
+        }
+        {
+          router.query.isNewCreation && documentType === DOCUMENT_TYPE.invoice && <GomakePrimaryButton
+            leftIcon={<PlusIcon stroke={"#344054"} />}
+            style={classes.btnContainer}
+            onClick={onOpenCopyFromDeliveryNote}
+          >
+            {t("sales.quote.copyFromDeliveryNote")}
           </GomakePrimaryButton>
         }
       </div>

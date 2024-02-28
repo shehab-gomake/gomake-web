@@ -83,7 +83,7 @@ const MoreMenuWidget = ({ quote, documentType, onClickOpenModal, onClickPdf, onC
         documentType === DOCUMENT_TYPE.order && <MenuItem onClick={() => navigate(`/deliveryNote?isNewCreation=true&orderId=${quote?.id}`)}>
           <div style={classes.menuRowStyle}>
             <TickIcon />
-            <div style={classes.rowTextStyle}>close as delivery note</div>
+            <div style={classes.rowTextStyle}>{t("sales.quote.closeAsDeliveryNote")}</div>
           </div>
         </MenuItem>
       }
@@ -91,7 +91,7 @@ const MoreMenuWidget = ({ quote, documentType, onClickOpenModal, onClickPdf, onC
         documentType === DOCUMENT_TYPE.order && <MenuItem onClick={() => navigate(`/invoice?isNewCreation=true&orderId=${quote?.id}`)}>
           <div style={classes.menuRowStyle}>
             <TickIcon />
-            <div style={classes.rowTextStyle}>close as invoice</div>
+            <div style={classes.rowTextStyle}>{t("sales.quote.closeAsInvoice")}</div>
           </div>
         </MenuItem>
       }
@@ -99,7 +99,23 @@ const MoreMenuWidget = ({ quote, documentType, onClickOpenModal, onClickPdf, onC
         documentType === DOCUMENT_TYPE.deliveryNote && <MenuItem onClick={() => navigate(`/invoice?isNewCreation=true&deliveryNoteId=${quote?.id}`)}>
           <div style={classes.menuRowStyle}>
             <TickIcon />
-            <div style={classes.rowTextStyle}>close as invoice</div>
+            <div style={classes.rowTextStyle}>{t("sales.quote.closeAsInvoice")}</div>
+          </div>
+        </MenuItem>
+      }
+      {
+        documentType === DOCUMENT_TYPE.deliveryNoteRefund && <MenuItem onClick={() => navigate(`/deliveryNoteRefund?isNewCreation=true&documentToDuplicateId=${quote?.id}`)}>
+          <div style={classes.menuRowStyle}>
+            <TickIcon />
+            <div style={classes.rowTextStyle}>{t("sales.quote.closeAsDeliveryNote")}</div>
+          </div>
+        </MenuItem>
+      }
+      {
+        documentType === DOCUMENT_TYPE.invoiceRefund && <MenuItem onClick={() => navigate(`/invoiceRefund?isNewCreation=true&documentToDuplicateId=${quote?.id}`)}>
+          <div style={classes.menuRowStyle}>
+            <TickIcon />
+            <div style={classes.rowTextStyle}>{t("sales.quote.closeAsInvoice")}</div>
           </div>
         </MenuItem>
       }
