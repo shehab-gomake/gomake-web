@@ -139,6 +139,14 @@ const useadJustmentsModal = ({ getClientPaymentItems, clientPaymentsList }: Just
 
     ]);
   }, [clientPaymentsList, inputErrors]);
+  const onClickMatchItems = () => {
+    if (selectedItems.length > 0 && calculateTotalPrice() === 0) {
+      internalReconciliationApi()
+    }
+    else {
+      alertFault("reports.matchErrorMsg");
+    }
+  }
   const btns = [
     {
       name: t("reports.transferBalance"),
@@ -150,7 +158,7 @@ const useadJustmentsModal = ({ getClientPaymentItems, clientPaymentsList }: Just
     },
     {
       name: t("reports.match"),
-      onclick: internalReconciliationApi
+      onclick: onClickMatchItems
     }
   ]
   const cancelTransactionsApi = useCallback(
