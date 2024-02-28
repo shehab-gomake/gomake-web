@@ -1,6 +1,8 @@
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { useMemo } from "react";
 
 const useStyle = () => {
+  const {secondColor}=useGomakeTheme()
 
   const clasess = useMemo(() => {
     return {
@@ -49,7 +51,10 @@ const useStyle = () => {
         height: 40,
         width: "100%",
       },
-     
+      sendBtnContainer:{
+        height: 40,
+        background: secondColor(500)
+      }
     };
   }, []);
   return {

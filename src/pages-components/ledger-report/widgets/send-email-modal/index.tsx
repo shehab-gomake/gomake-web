@@ -2,7 +2,7 @@ import { useTranslation } from "react-i18next";
 
 import { Divider } from "@mui/material";
 
-import { GoMakeAutoComplate, GoMakeModal, GomakeTextInput } from "@/components";
+import { GoMakeAutoComplate, GoMakeModal, GomakePrimaryButton, GomakeTextInput } from "@/components";
 
 import { useStyle } from "./style";
 
@@ -52,6 +52,9 @@ const SendEmailLedgerReportModal = ({ openModal, onCloseModal, clientContactsVal
               </div>
             </div>
           </div>
+          <GomakePrimaryButton style={clasess.sendBtnContainer}>
+            Send
+          </GomakePrimaryButton>
         </div>
       </GoMakeModal>
     </>
