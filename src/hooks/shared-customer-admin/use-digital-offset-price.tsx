@@ -17,7 +17,7 @@ import {
   subProductsParametersState,
 } from "@/store";
 import { useMaterials } from "../use-materials";
-import { digitslPriceState } from "./store";
+import { checkParameterState, digitslPriceState } from "./store";
 import cloneDeep from "lodash/cloneDeep";
 import lodashClonedeep from "lodash.clonedeep";
 import { EWidgetProductType } from "@/pages-components/products/digital-offset-price/enums";
@@ -65,7 +65,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
   const router = useRouter();
-  const { alertFaultAdded, alertFaultUpdate } = useSnackBar();
+  const { alertFaultAdded, alertFaultUpdate, alertFault } = useSnackBar();
   const [isChargeForNewDie, setIsChargeForNewDie] = useState(false)
   const { clientTypesValue, renderOptions, checkWhatRenderArray } =
     useQuoteWidget();
@@ -75,6 +75,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   );
   const [samlleType, setSamlleType] = useState();
   const [isRequiredParameters, setIsRequiredParameters] = useState<any>([]);
+  const [activeSectionRequiredParameters, setActiveSectionRequiredParameters] = useState([]);
+
   const [GalleryModalOpen, setGalleryModalOpen] = useState(false);
   const [multiParameterModal, setMultiParameterModal] = useState(false);
   const [makeShapeOpen, setMakeShapeOpen] = useState(false);
@@ -381,50 +383,45 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         }
       });
     });
-
-    // Update the state with the modified temp object
     initProduct(temp, allMaterials);
   };
-  /*useEffect(() => {
-      if (pricingDefaultValue?.workFlows?.length > 0 && canCalculation) {
-        const workFlowSelect = pricingDefaultValue?.workFlows?.find(
-          (workFlow) => workFlow?.selected === true
-        );
-        setWorkFlowSelected(workFlowSelect);
-        setDefaultPrice(workFlowSelect?.totalPrice);
-      } else {
-        setWorkFlowSelected({});
-        setDefaultPrice("-----");
-      }
-    }, [pricingDefaultValue, canCalculation]);*/
+
   useEffect(() => {
-    if (productTemplate && productTemplate?.sections?.length > 0) {
+    if (productTemplate && productTemplate.sections?.length > 0) {
       let temp = [...isRequiredParameters];
-      productTemplate?.sections?.map((section) => {
-        return section?.subSections?.map((subSection, i) => {
-          return subSection.parameters?.map((parameter, i) => {
+      let activeSectionTemp = [];
+
+      productTemplate.sections.map((section, sectionIndex) => {
+        return section.subSections?.map((subSection) => {
+          return subSection.parameters?.map((parameter) => {
             const index = temp.findIndex(
               (item) =>
-                item.parameterId === parameter?.id &&
-                item.sectionId === section?.id &&
-                item.subSectionId === subSection?.id &&
-                item?.actionIndex === parameter?.actionIndex
+                item.parameterId === parameter.id &&
+                item.sectionId === section.id &&
+                item.subSectionId === subSection.id &&
+                item.actionIndex === parameter.actionIndex
             );
             if (index !== -1) {
               temp[index] = {
                 ...temp[index],
               };
             } else {
-              if (parameter?.isRequired) {
+              if (parameter.isRequired) {
                 temp.push(parameter);
+                if (sectionIndex === activeIndex) {
+                  activeSectionTemp.push(parameter);
+                }
               }
             }
           });
         });
       });
+
       setIsRequiredParameters(temp);
+      setActiveSectionRequiredParameters(activeSectionTemp);
     }
-  }, [productTemplate]);
+  }, [productTemplate, activeIndex]);
+
   const [relatedParameters, setRelatedParameters] = useState([]);
   const [underParameterIds, setUnderParameterIds] = useState([]);
   useEffect(() => {
@@ -1234,9 +1231,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         <div style={inRow ? clasess.parameterRowContainer : clasess.parameterContainer}>
           <div
             style={
-              value?.values[0] === "true"
-                ? clasess.parameterType3ActiveLabelStyle
-                : clasess.parameterLabelStyle
+              errorText && parameter?.isRequired ? clasess.parameterRequierdLabelStyle :
+                value?.values[0] === "true"
+                  ? clasess.parameterType3ActiveLabelStyle
+                  : clasess.parameterLabelStyle
             }
           >
             {parameter?.name}
@@ -1706,18 +1704,34 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const onCloseMultiParameterModal = () => {
     setMultiParameterModal(false);
   };
-
+  const [errorText, setErrorText] = useState(false)
   const handleTabClick = (index: number) => {
-    if (index !== activeIndex) {
-      setCanCalculation(false);
-      setActiveIndex(index);
-      setCanCalculation(false);
+    if (checkParameter) {
+      setErrorText(false)
+      if (index !== activeIndex) {
+        setCanCalculation(false);
+        setActiveIndex(index);
+        setCanCalculation(false);
+      }
     }
+    else {
+      alertFault("products.offsetPrice.admin.errorReq")
+      setErrorText(true)
+    }
+
   };
   const handleNextClick = () => {
-    if (activeIndex < productTemplate.sections.length) {
-      setActiveIndex(activeIndex + 1);
+    setErrorText(false)
+    if (checkParameter) {
+      if (activeIndex < productTemplate.sections.length) {
+        setActiveIndex(activeIndex + 1);
+      }
     }
+    else {
+      setErrorText(true)
+      alertFault("products.offsetPrice.admin.errorReq")
+    }
+
   };
   const handlePreviousClick = () => {
     if (activeIndex != 0) {
@@ -1888,6 +1902,11 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     }
     return isValid;
   };
+  const [checkParameter, setCheckParameter] = useRecoilState<boolean>(checkParameterState)
+  useEffect(() => {
+    let checkParameter = validateParameters(activeSectionRequiredParameters);
+    setCheckParameter(checkParameter)
+  }, [isRequiredParameters])
 
   const calculationProduct = useCallback(async () => {
     if (requestAbortController) {

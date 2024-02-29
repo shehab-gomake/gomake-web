@@ -158,6 +158,10 @@ const useStyle = () => {
         ...FONT_FAMILY.Lexend(500, 14),
         color: secondColor(500),
       },
+      parameterRequierdLabelStyle: {
+        ...FONT_FAMILY.Lexend(500, 14),
+        color: errorColor(500),
+      },
       spanRequierd: {
         ...FONT_FAMILY.Lexend(500, 14),
         color: errorColor(500),
