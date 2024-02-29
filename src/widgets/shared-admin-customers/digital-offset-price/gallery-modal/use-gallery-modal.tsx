@@ -57,18 +57,17 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
   }, [selectParameterButton, materialsEnumsValues]);
 
   const getProductQuoteItemById = useCallback(async () => {
-    debugger;
     const shapeId = shapeParameter && shapeParameter.valueIds && shapeParameter.valueIds.length ? shapeParameter.valueIds[0] : "";
     let shapeCode = "";
-    if(shapeId){
-       const value =  shapeParameter?.valuesConfigs.find(x=>x.id === shapeId)
+    if (shapeId) {
+      const value = shapeParameter?.valuesConfigs.find(x => x.id === shapeId)
       shapeCode = value?.code;
     }
     const res = await getPrintHouseMaterialsByMaterialKey(callApi, setMaterialData, {
       key: selectParameterButton?.parameter?.materialPath[0],
-      width: widthParameter && widthParameter.values && widthParameter.values.length > 0 ?  widthParameter.values[0] : 0,
-      length: heightParameter && heightParameter.values && heightParameter.values.length > 0 ?  heightParameter.values[0] : 0,
-      shape:shapeCode
+      width: widthParameter && widthParameter.values && widthParameter.values.length > 0 ? widthParameter.values[0] : 0,
+      length: heightParameter && heightParameter.values && heightParameter.values.length > 0 ? heightParameter.values[0] : 0,
+      shape: shapeCode
     });
     if (res?.filters?.length > 0) {
       setMaterialTableFilters(res?.filters)
@@ -181,8 +180,8 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
   }, [materialDataFilter]);
 
   const CheckOptionToStraightKnife = useCallback(async () => {
-    const width = widthParameter && widthParameter.values && widthParameter.values.length > 0 ? +widthParameter?.values[0]  : 0;
-    const height = heightParameter && heightParameter.values && heightParameter.values.length > 0 ? +heightParameter?.values[0]  : 0;
+    const width = widthParameter && widthParameter.values && widthParameter.values.length > 0 ? +widthParameter?.values[0] : 0;
+    const height = heightParameter && heightParameter.values && heightParameter.values.length > 0 ? +heightParameter?.values[0] : 0;
 
     const res = await callApi(
       EHttpMethod.POST,

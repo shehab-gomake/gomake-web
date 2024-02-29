@@ -1275,9 +1275,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                       p.actionIndex === relatedParameter.actionIndex
                   );
 
-                  if (parameter.name == "identical printing sides ") {
-                    debugger;
-                  }
+                  // if (parameter.name == "identical printing sides ") {
+                  //   debugger;
+                  // }
 
                   if (relatedParameter.activateByAllValues && parm?.values) {
                     if (relatedParameter.activateByAllValues) {
