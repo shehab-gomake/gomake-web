@@ -16,11 +16,13 @@ import { StaightKnifeIcon, OrderNowIcon } from "./icons";
 import { useTranslation } from "react-i18next";
 import { EHttpMethod } from "@/services/api-service/enums";
 import { filterState } from "@/widgets/materials-widget/state";
+import { useRouter } from "next/router";
 
 const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForNewDie, straightKnife }) => {
 
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
+  const router = useRouter()
   const selectParameterButton = useRecoilValue<any>(selectParameterButtonState);
   const subProducts = useRecoilValue<any>(subProductsParametersState);
   const materialsEnumsValues = useRecoilValue(materialsCategoriesState);
@@ -67,7 +69,8 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
       key: selectParameterButton?.parameter?.materialPath[0],
       width: widthParameter && widthParameter.values && widthParameter.values.length > 0 ? widthParameter.values[0] : 0,
       length: heightParameter && heightParameter.values && heightParameter.values.length > 0 ? heightParameter.values[0] : 0,
-      shape: shapeCode
+      shape: shapeCode,
+      clientId: router.query.customerId
     });
     if (res?.filters?.length > 0) {
       setMaterialTableFilters(res?.filters)

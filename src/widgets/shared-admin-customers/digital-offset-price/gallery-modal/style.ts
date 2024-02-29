@@ -29,6 +29,7 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "center",
         gap: 10,
+        flexWrap: "wrap" as "wrap",
       },
       bodyContainer: {
         display: "flex",

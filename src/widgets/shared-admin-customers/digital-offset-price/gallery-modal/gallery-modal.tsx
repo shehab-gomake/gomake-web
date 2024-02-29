@@ -40,7 +40,16 @@ const GalleryModal = ({ openModal, onClose, onChangeSubProductsForPrice, isCharg
         withClose={false}
       >
         <div style={clasess.firstContainer}>
+          <div
+            style={{ cursor: "pointer" }}
+            onClick={getProductQuoteItemById}
+          >
+            <RechooseIcon />
+          </div>
 
+
+        </div>
+        <div style={clasess.bodyContainer}>
           <div style={clasess.headerContainer}>
             {materialTableFilters &&
               materialTableFilters.map(({ key, values }) => {
@@ -55,17 +64,7 @@ const GalleryModal = ({ openModal, onClose, onChangeSubProductsForPrice, isCharg
                 );
               })}
             <SearchInputComponent onChange={onChangeSearch} />
-            <div
-              style={{ cursor: "pointer" }}
-              onClick={getProductQuoteItemById}
-            >
-              <RechooseIcon />
-            </div>
-
           </div>
-
-        </div>
-        <div style={clasess.bodyContainer}>
           <div style={clasess.mainContainer}>
             {fixedCartData?.filter((card) => card.isShow)?.map((card, index) => {
               return (
