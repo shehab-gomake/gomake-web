@@ -211,7 +211,6 @@ const SectionMappingWidget = ({
             ?.filter((param: any) => !param.isHidden)
             ?.filter((param: any) => !param.isUnderParameterId)
             ?.map((parameter: any) => {
-              console.log("parameter", parameter)
               const isUnderParameterId = underParameterIds.some(
                 (item) => item.underParameterId === parameter.id && !relatedParameters.some((relatedItem) => relatedItem?.parameterId === item.myParameter?.id)
               );

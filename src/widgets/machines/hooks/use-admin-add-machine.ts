@@ -19,8 +19,6 @@ const useAdminAddMachine = () => {
         setState(initState[categoryId]);
     }
 
-    useEffect(() => {console.log(state)}, [state])
-
     const curMachineCategoryId = useCallback(() => state?.category ? state?.category.toString() : '', [state]);
 
     const adminAddMachine = useCallback(async () => {

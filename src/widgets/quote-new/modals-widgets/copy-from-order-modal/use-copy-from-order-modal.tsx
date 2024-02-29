@@ -99,7 +99,6 @@ const useCopyFromOrderModal = ({ onClose, documentType, openModal, cliendDocumen
     }
   };
   const handleSelectAll = (documentItem) => {
-    console.log("documentItem", documentItem)
     const selectedIds = selectedItems.map(item => item.id);
     const sectionItemIds = documentItem?.orderItems?.map(item => item.id);
     const allSelected = sectionItemIds?.every(id => selectedIds?.includes(id));

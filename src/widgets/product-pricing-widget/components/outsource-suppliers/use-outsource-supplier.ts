@@ -33,7 +33,6 @@ const useOutsourceSupplier = () => {
         })
       }
     const updateCost = (supplerId: string, cost: number) => {
-        console.log("cost",cost)
         setSuppliers(suppliers?.map(suppler => {
             if (suppler.supplierId === supplerId) {
                 return {
@@ -47,7 +46,6 @@ const useOutsourceSupplier = () => {
         updateProductItemValueOutsourceWithKey(supplerId, EOutSoucrceUpdateKey.TotalCost, cost)
     }
     const updateWorHours = (supplerId: string, workHours: number) => {
-        console.log("supplerId",{supplerId,workHours})
         setSuppliers(suppliers?.map(suppler => {
             if (suppler.supplierId === supplerId) {
                 return {
