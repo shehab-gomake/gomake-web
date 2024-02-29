@@ -209,6 +209,7 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
     renderData,
     materialTableFilters,
     setMaterialDataFilter,
+    setMaterialTableFilters,
     setFilterValue
   };
 };
