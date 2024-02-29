@@ -117,7 +117,7 @@ const useStyle = () => {
       subSectionTitleStyle: {
         ...FONT_FAMILY.Lexend(600, 16),
         color: secondColor(500),
-        marginBottom: 16,
+        marginBottom: 10,
       },
       subSectionAccordionActiveStyle: {
         ...FONT_FAMILY.Lexend(600, 16),
@@ -147,7 +147,7 @@ const useStyle = () => {
         alignItems: "flex-start",
         width: "100%",
         gap: 10,
-        paddingBottom: 24,
+        paddingBottom: 12,
       },
       parameterLabelStyle: {
         ...FONT_FAMILY.Lexend(500, 14),
