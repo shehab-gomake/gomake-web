@@ -1,38 +1,35 @@
-import { EExportType } from "@/enums";
-import { useGomakeAxios, useSnackBar } from "@/hooks";
-import { getAndSetEmployees2 } from "@/services/api-service/customers/employees-api";
-import { EHttpMethod } from "@/services/api-service/enums";
-import { getAndSetAllCustomers } from "@/services/hooks";
 import { useCallback, useRef, useState } from "react";
-import { useTranslation } from "react-i18next";
+
+import { useAgentsList, useCustomerDropDownList, useGomakeAxios, useSnackBar } from "@/hooks";
+import { EHttpMethod } from "@/services/api-service/enums";
+import { EExportType } from "@/enums";
 
 const useAgingReport = () => {
   const { callApi } = useGomakeAxios();
-  const dateRef = useRef(null);
-  const { t } = useTranslation()
-  const {
-    alertFaultGetData,
-    alertSuccessGetData
-  } = useSnackBar();
+  const { alertFaultGetData, alertSuccessGetData } = useSnackBar();
+  const { customer, renderOptions, checkWhatRenderArray, handleCustomerChange } = useCustomerDropDownList()
+  const { agent, agentsCategories, handleAgentChange } = useAgentsList()
+
+  const [selectDate, setSelectDate] = useState<string>(new Date().toISOString().split('T')[0]);
+  const [byReferenceDate, setByReferenceDate] = useState<boolean>(false);
   const [resetDatePicker, setResetDatePicker] = useState<boolean>(false);
+  const [detailedReport, setDetailedReport] = useState<boolean>(false);
+  const [showTable, setShowTable] = useState<boolean>(false);
+  const [tableHeader, setTableHeader] = useState<any>([])
+  const [tableData, setTableData] = useState<any>([])
   const [fromDate, setFromDate] = useState<Date>();
   const [toDate, setToDate] = useState<Date>();
+  const transformedHeaders = tableHeader?.map(header => header.name);
+  const dateRef = useRef(null);
+
   const onSelectDeliveryTimeDates = (fromDate: Date, toDate: Date) => {
     setResetDatePicker(false);
     setFromDate(fromDate);
     setToDate(toDate);
   };
-  const [selectDate, setSelectDate] = useState<string>(new Date().toISOString().split('T')[0]);
   const handleClickSelectDate = () => {
     dateRef?.current?.showPicker();
   };
-  const [agentsCategories, setAgentsCategories] = useState<[]>();
-  const [agent, setAgent] = useState<{ label: string; id: string } | null>();
-  const [showTable, setShowTable] = useState<boolean>(false);
-  const [detailedReport, setDetailedReport] = useState<boolean>(false);
-  const [byReferenceDate, setByReferenceDate] = useState<boolean>(false);
-  const [tableData, setTableData] = useState<any>([])
-  const [tableHeader, setTableHeader] = useState<any>([])
 
   const onChangeDetailedReport = () => {
     setDetailedReport(!detailedReport)
@@ -40,7 +37,6 @@ const useAgingReport = () => {
   const onChangeByReferenceDate = () => {
     setByReferenceDate(!byReferenceDate)
   }
-  const transformedHeaders = tableHeader?.map(header => header.name);
   const getTableDataRows = useCallback(() => {
     return tableData.map(data => {
       const rowData = [];
@@ -50,64 +46,18 @@ const useAgingReport = () => {
       return rowData;
     });
   }, [tableData, tableHeader]);
-  const handleAgentChange = (e: any, value: any) => {
-    setAgent(value);
-  };
-  const getAgentCategories = async (isAgent: boolean) => {
-    const callBack = (res) => {
-      if (res.success) {
-        const agentNames = res.data.map((agent) => ({
-          label: agent.text,
-          id: agent.value,
-        }));
-        setAgentsCategories(agentNames);
-      }
-    };
-    await getAndSetEmployees2(callApi, callBack, { isAgent: isAgent });
-  };
-  const [customersListCreateQuote, setCustomersListCreateQuote] = useState([]);
-  const [customer, setCustomer] = useState<{
-    label: string;
-    id: string;
-  } | null>();
 
-  const renderOptions = () => {
-    return customersListCreateQuote;
-  };
-  const getAllCustomersCreateQuote = useCallback(async (SearchTerm?) => {
-    await getAndSetAllCustomers(callApi, setCustomersListCreateQuote, {
-      ClientType: "C",
-      searchTerm: SearchTerm,
-      onlyCreateOrderClients: false,
-    });
-  }, []);
-
-  const getAllCustomersCreateOrder = useCallback(async (SearchTerm?) => {
-    await getAndSetAllCustomers(callApi, setCustomersListCreateQuote, {
-      ClientType: "C",
-      searchTerm: SearchTerm,
-      onlyCreateOrderClients: true,
-    });
-  }, []);
-  const checkWhatRenderArray = (e) => {
-    if (e.target.value) {
-      getAllCustomersCreateOrder(e.target.value);
-    } else {
-      getAllCustomersCreateQuote();
-    }
-  };
-  const handleCustomerChange = (e: any, value: any) => {
-    setCustomer(value);
-  };
   const onClickBtn1 = () => {
     setShowTable(false);
     getAgingReportFilter()
   }
   const onClickBtn2 = () => {
-    ExportAgingReport(EExportType.PDF)
+    // ExportAgingReport(EExportType.PDF)
+    ExportAgingReportPDF()
   }
   const onClickBtn3 = () => {
-    ExportAgingReport(EExportType.EXCEL)
+    // ExportAgingReport(EExportType.EXCEL)
+    ExportAgingReportExcel()
   }
   const getAgingReportFilter = useCallback(
     async () => {
@@ -137,14 +87,12 @@ const useAgingReport = () => {
     },
     [fromDate, toDate, detailedReport, agent, customer, selectDate, byReferenceDate]
   );
-
-  const ExportAgingReport = useCallback(
-    async (exportType: number) => {
+  const ExportAgingReportPDF = useCallback(
+    async () => {
       const res = await callApi(
         EHttpMethod.POST,
-        `/v1/erp-service/reports/export-aging-report`,
+        `/v1/erp-service/reports/export-aging-report-pdf`,
         {
-          exportType: exportType,
           myBody: {
             startDate: fromDate,
             endDate: toDate,
@@ -160,26 +108,47 @@ const useAgingReport = () => {
         "blob"
       );
 
-      let fileExtension = '';
-      if (exportType === EExportType.EXCEL) {
-        fileExtension = 'xlsx';
-      } else if (exportType === EExportType.PDF) {
-        fileExtension = 'pdf';
-      } else {
-        fileExtension = 'xlsx';
-      }
+
       const downloadLink = document.createElement('a');
       const link = URL?.createObjectURL(res.data);
       downloadLink.href = link
-      downloadLink.download = `aging report.${fileExtension}`;
+      downloadLink.download = `aging report.pdf`;
+      downloadLink.click();
+    },
+    [fromDate, toDate, detailedReport, agent, customer, selectDate, byReferenceDate]
+  );
+  const ExportAgingReportExcel = useCallback(
+    async () => {
+      const res = await callApi(
+        EHttpMethod.POST,
+        `/v1/erp-service/reports/export-aging-report-excel`,
+        {
+          myBody: {
+            startDate: fromDate,
+            endDate: toDate,
+            clientId: customer?.id,
+            referDate: selectDate ? selectDate : new Date(),
+            agentId: agent?.id,
+            byCreationDate: byReferenceDate,
+            expendedReport: detailedReport
+          }
+        },
+        true,
+        null,
+        "blob"
+      );
+
+
+      const downloadLink = document.createElement('a');
+      const link = URL?.createObjectURL(res.data);
+      downloadLink.href = link
+      downloadLink.download = `aging report.xlsx`;
       downloadLink.click();
     },
     [fromDate, toDate, detailedReport, agent, customer, selectDate, byReferenceDate]
   );
 
   return {
-    getAllCustomersCreateQuote,
-    getAgentCategories,
     onSelectDeliveryTimeDates,
     resetDatePicker,
     handleClickSelectDate,
