@@ -32,8 +32,8 @@ const PaymentModal = ({ openModal, onClose, selectedTab }: IPaymentModalProps) =
         documentItemValue
     } = usePaymentsTable();
 
-    const handleSaveAndClose = () => {
-        handleSave();
+    const handleSaveAndClose = (transactionData) => {
+        handleSave(transactionData);
         onClose();
     }
 
