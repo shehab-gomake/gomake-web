@@ -12,21 +12,23 @@ const useStyle = () => {
             mainContainer: {
                 display: "flex",
                 flexDirection: "column" as "column",
-                justifyContent: "space-between",
                 alignItems: "flex-start",
                 width: "100%",
                 maxWidth: "100%",
                 position: "relative" as "relative",
                 height: "100%",
                 overflow: "hidden",
+                gap:"20px"
               },
-              secondContainer: {
-                width: "100%",
-                height: "100%",
-                overflow: "hidden",
-                display: "flex",
-                flexDirection: "column" as "column",
-                padding : "none"
+              firstDivStyle:{
+
+              },
+              secondDivStyle:{
+              flex: 0.9,
+              overflow: "auto",
+              paddingLeft: 20,
+              paddingRight: 12,
+              width:"100%"
               },
               titleContainer: {
                 display: "flex",
@@ -65,6 +67,8 @@ const useStyle = () => {
                 color: "white",
               },
               tableHeaderStyle: {
+                height:"40px",
+                width:"14.2%",
                 borderRight: "1px solid #EAECF0",
                 color: "#FFF",
                 textAlign: "center" as "center",
@@ -90,7 +94,7 @@ const useStyle = () => {
                 flexDirection: "column" as "column",
                 justifyContent: "flex-start",
                 alignItems: "flex-start",
-                width: "43%",
+                width: "28.5%",
                 boxShadow: " 0px 1px 3px 0px #1018281A",
                 borderBottomLeftRadius: 6,
                 borderBottomRightRadius: 6,
@@ -144,6 +148,17 @@ const useStyle = () => {
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
+              },
+              lineDateStyle: {
+                // display: "flex",
+                // justifyContent: "center",
+                // alignItems: "center",
+                // width: 1,
+                // height: 19,
+                // color: grayColor(200),
+                // backgroundColor: grayColor(200),
+                width: "100%",
+                borderBottom: `1px solid ${grayColor(200)}`,
               },
         };
     }, [t, theme]);

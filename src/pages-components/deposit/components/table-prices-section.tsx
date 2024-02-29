@@ -1,14 +1,36 @@
 import {
     Table,
     TableBody,
+    TableCell,
     TableContainer,
     TableHead,
-    TableRow
+    TableRow,
+    styled,
+    tableCellClasses
 } from "@mui/material";
 import { useStyle } from "../style";
 import { RowMappingWidget } from "./row-mapping";
+import { TotalPricesDeposits } from "./total-prices";
 
-const DepositTable = ({tableHeaders , tableRows , PrimaryTableCell} : any) => {
+
+const PrimaryTableCell = styled(TableCell)(() => {
+    return {
+        [`&.${tableCellClasses.head}`]: {
+            padding: 0,
+        },
+        [`&.${tableCellClasses.body}`]: {
+            padding: 0,
+        },
+    };
+});
+
+interface ITableProps {
+    tableHeaders:any;
+    tableRows : any ;
+    
+}
+
+const DepositTable = ({tableHeaders , tableRows } : ITableProps) => {
     const { classes } = useStyle();
 
     return (
@@ -17,10 +39,10 @@ const DepositTable = ({tableHeaders , tableRows , PrimaryTableCell} : any) => {
                 <Table stickyHeader={true}>
                     <TableHead>
                         <TableRow style={classes.tableRowStyle}>
-                            {tableHeaders.map((header, index) => (
+                            {tableHeaders().map((header, index) => (
                                 <PrimaryTableCell
                                     key={index}
-                                    style={{ ...classes.tableHeaderStyle, width: "50%"}}>
+                                    style={classes.tableHeaderStyle}>
                                     {header}
                                 </PrimaryTableCell>
                             ))}
@@ -41,9 +63,7 @@ const DepositTable = ({tableHeaders , tableRows , PrimaryTableCell} : any) => {
                     </TableBody>
                 </Table>
             </TableContainer>
-            {/* {isNewReceipt ?  
-                <TotalPricesNewReceipts sum={totalSum} totalPayment={finalTotalPayment} taxDeduction={taxDeduction} /> :
-                <TotalPricesReceipts receiptItemValue={documentItemValue} />} */}
+           <TotalPricesDeposits amountForDeposit={"150"} totalDeposit={"200"}/>
         </div>
     );
 };

@@ -2,25 +2,32 @@
 import { HeaderTitle } from "@/widgets/header-title/header-title";
 import { useStyle } from "../style";
 import { useTranslation } from "react-i18next";
-import { useState } from "react";
+import { useRecoilValue } from "recoil";
+import { depositState } from "@/pages-components/deposits/components/states";
+import { DEPOSIT_ACTIONS } from "../enums";
 
-const DepositHeaderSection = ({ actionType }) => {
+interface IHeaderSection {
+    actionType: DEPOSIT_ACTIONS;
+}
+
+const DepositHeaderSection = ({ actionType }: IHeaderSection) => {
     const { classes } = useStyle();
     const { t } = useTranslation();
-    const [depositState , setDepositState] = useState<any>();
+    const deposit = useRecoilValue<any>(depositState);
 
     return (
         <div style={classes.titleContainer}>
             <HeaderTitle
-                title={actionType === "show" ? t("deposits.deposit") : t("deposits.createNew")}
+                title={actionType === DEPOSIT_ACTIONS.Show ? t("deposits.deposit") : t("deposits.createNew")}
                 marginBottom={1}
                 marginTop={1}
                 color="rgba(241, 53, 163, 1)"
             />
-            {actionType === "show" &&
-             <div style={classes.depositNumberStyle}>
-                {" - "} {depositState?.number}
-            </div>}
+            {actionType === DEPOSIT_ACTIONS.Show &&
+                <div style={classes.depositNumberStyle}>
+                    {" - "} {deposit?.number}
+                </div>
+            }
         </div>
     )
 }

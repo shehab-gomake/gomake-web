@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import { PDFIcon } from "./icons/pdf";
 import { OptionsButton } from "@/components/options-button/options-button";
 import { ShowIcon } from "./icons/show-file";
-import CancelIcon from "@mui/icons-material/Cancel";
+import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
 
 interface IMoreProps {
   deposit?: any;
@@ -32,13 +32,10 @@ const MoreMenuWidget = ({ deposit, onClickCancel, onClickShowDeposit, onClickPdf
 
   return (
     <OptionsButton>
-      <OptionsButton>
-      <MoreMenuWidget  />
         <MoreMenuItem icon={<ShowIcon />} text={t("deposits.showDeposits")} onClick={onClickShowDeposit} />
         <MoreMenuItem icon={<EditingIcon />} text={t("sales.quote.loggers")} onClick={onClickLoggers} />
         <MoreMenuItem icon={<PDFIcon />} text={t("sales.quote.pdf")} onClick={onClickPdf} />
-        <MoreMenuItem icon={<CancelIcon style={{ color: "#a1a2cd" }} />} text={t("sales.quote.cancel")} onClick={onClickCancel} />
-      </OptionsButton>
+        <MoreMenuItem icon={<CancelOutlinedIcon style={{ color: "#8283BE" , height:16 , width:16}} />} text={t("sales.quote.cancel")} onClick={onClickCancel} />
     </OptionsButton>
   );
 };

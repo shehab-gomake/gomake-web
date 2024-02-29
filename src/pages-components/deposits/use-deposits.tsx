@@ -10,6 +10,7 @@ import { employeesListsState } from "../quotes/states";
 import { getAllDepositsApi, showDepositApi } from "@/services/api-service/generic-doc/deposits-api";
 import { useDateFormat } from "@/hooks/use-date-format";
 import { MoreMenuWidget } from "./more-circle";
+import { depositState } from "./components/states";
 
 const useDeposits = () => {
     const { t } = useTranslation();
@@ -23,7 +24,6 @@ const useDeposits = () => {
     const [fromDate, setFromDate] = useState<Date>();
     const [toDate, setToDate] = useState<Date>();
     const [allDeposits,setAllDeposits] = useState<any>();
-    const [depositState,setDepositState] = useState<any>();
 
     const handlePageSizeChange = (event) => {
         setPage(1);
@@ -73,7 +73,6 @@ const useDeposits = () => {
                     deposit?.number,
                     deposit?.accountNumber,
                     deposit?.number,
-                    deposit?.paymentType,
                     deposit?.typeText,
                     deposit?.totalAmount,
                     <MoreMenuWidget onClickShowDeposit={(depositId) => showDeposit(deposit?.id)}/>
@@ -98,16 +97,18 @@ const useDeposits = () => {
     };
 
 
+    useEffect(() => {
+        getAllDeposits();
+      }, [page, pageSize]);
+
+    const setDeposit =useSetRecoilState<any>(depositState);
     const showDeposit= async (depositId : string) => {
         const callBack = (res) => {
             if (res?.success) 
             {
-                const data = res?.data?.data;
-
-                navigate(`/deposit/show?id=${data?.id}`);
-
-                // setDepositState(data)
-                //Navigate...
+                const data = res?.data;
+                setDeposit(data)
+                navigate(`/deposits/show?id=${data?.id}`); 
             }
             else 
             {

@@ -1,35 +1,54 @@
-
 import { useTranslation } from "react-i18next";
-import { TableCell, styled, tableCellClasses } from "@mui/material";
+import { useRecoilValue } from "recoil";
+import { depositState } from "../deposits/components/states";
+import { DEPOSIT_TYPE } from "./enums";
 
 const useDeposit = () => {
     const { t } = useTranslation();
+    const deposit =useRecoilValue<any>(depositState);
 
-    const tableHeaders = [
+    const cashDepositHeaders = [
+        t("deposits.date"),
+        t("deposits.receiptNum"),
+        t("deposits.client"),
+        t("deposits.total")
+    ];
+
+    const checksDepositHeaders = [
         t("deposits.date"),
         t("deposits.client"),
         t("deposits.checkNum"),
         t("deposits.bank"),
         t("deposits.branch"),
         t("deposits.receiptNum"),
-        t("properties.total")
+        t("deposits.total")
     ];
 
-    const PrimaryTableCell = styled(TableCell)(() => {
-        return {
-            [`&.${tableCellClasses.head}`]: {
-                padding: 0,
-            },
-            [`&.${tableCellClasses.body}`]: {
-                padding: 0,
-            },
-        };
-    });
+    const creditDepositHeaders = [
+        t("deposits.date"),
+        t("deposits.voucherNum"),
+        t("deposits.client"),
+        t("deposits.total")
+    ];
+
+
+    const renderTableHeaders = () => {
+        switch (deposit?.depositType) {
+            case (DEPOSIT_TYPE.Checks):
+                return checksDepositHeaders;
+            case (DEPOSIT_TYPE.CreditCard):
+                return creditDepositHeaders;
+            case (DEPOSIT_TYPE.Cash):
+                return cashDepositHeaders;
+            default:
+                return [];
+        }
+    };
 
     return {
         t,
-        tableHeaders,
-        PrimaryTableCell
+        deposit,
+        renderTableHeaders,
     };
 };
 
