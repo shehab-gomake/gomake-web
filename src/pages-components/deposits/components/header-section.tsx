@@ -16,7 +16,7 @@ const DepositsHeaderSection = () => {
             <HeaderTitle title={t("tabs.deposits")} marginTop={1} marginBottom={1} />
             <Button
                 style={classes.createNew}
-                onClick={() => navigate(`/deposit`)}
+                onClick={() => navigate(`/deposits/create`)}
                 startIcon={<AddCircleOutlineIcon style={{ color: 'black', fontSize: "24px" }} />}>
                 {t("sales.quote.createNew")}
             </Button>

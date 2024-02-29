@@ -1,4 +1,4 @@
-import { useGomakeAxios } from "@/hooks";
+import { useGomakeAxios, useGomakeRouter } from "@/hooks";
 import { DEFAULT_VALUES } from "@/pages/customers/enums";
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -7,13 +7,14 @@ import { getAndSetEmployees2 } from "@/services/api-service/customers/employees-
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { agentsCategoriesState } from "@/pages/customers/customer-states";
 import { employeesListsState } from "../quotes/states";
-import { getAllDepositsApi } from "@/services/api-service/generic-doc/deposits-api";
+import { getAllDepositsApi, showDepositApi } from "@/services/api-service/generic-doc/deposits-api";
 import { useDateFormat } from "@/hooks/use-date-format";
 import { MoreMenuWidget } from "./more-circle";
 
 const useDeposits = () => {
     const { t } = useTranslation();
     const { callApi } = useGomakeAxios();
+    const { navigate } = useGomakeRouter();
     const { GetDateFormat } = useDateFormat();
     const [page, setPage] = useState(1);
     const [pagesCount, setPagesCount] = useState(0);
@@ -22,12 +23,12 @@ const useDeposits = () => {
     const [fromDate, setFromDate] = useState<Date>();
     const [toDate, setToDate] = useState<Date>();
     const [allDeposits,setAllDeposits] = useState<any>();
+    const [depositState,setDepositState] = useState<any>();
 
     const handlePageSizeChange = (event) => {
         setPage(1);
         setPageSize(event.target.value);
     };
-
 
     const onSelectDateRange = (fromDate: Date, toDate: Date) => {
         setResetDatePicker(false);
@@ -68,14 +69,14 @@ const useDeposits = () => {
                 const data = res?.data?.data;
                 const totalItems = res?.data?.totalItems;
                 const mapData = data?.map((deposit: any) => [
-                    GetDateFormat(deposit?.creationDate),
-                    deposit?.customerName,
-                    deposit?.agentName,
+                    GetDateFormat(deposit?.createdDate),
+                    deposit?.number,
+                    deposit?.accountNumber,
                     deposit?.number,
                     deposit?.paymentType,
-                    deposit?.notes,
-                    deposit?.statusStr,
-                    <MoreMenuWidget/>
+                    deposit?.typeText,
+                    deposit?.totalAmount,
+                    <MoreMenuWidget onClickShowDeposit={(depositId) => showDeposit(deposit?.id)}/>
                 ]);
                 setAllDeposits(mapData);
                 setPagesCount(Math.ceil(totalItems / (pageSize)));
@@ -94,6 +95,26 @@ const useDeposits = () => {
                 paymentType: 1
             }
         );
+    };
+
+
+    const showDeposit= async (depositId : string) => {
+        const callBack = (res) => {
+            if (res?.success) 
+            {
+                const data = res?.data?.data;
+
+                navigate(`/deposit/show?id=${data?.id}`);
+
+                // setDepositState(data)
+                //Navigate...
+            }
+            else 
+            {
+
+            }
+        };
+        await showDepositApi(callApi, callBack,{Id : depositId});
     };
 
     //////////////////////////// FILTERS ////////////////////////////////////
@@ -196,6 +217,7 @@ const useDeposits = () => {
         depositNumber,
         handleDepositNumberChange,
         getAllDeposits,
+        showDeposit,
         allDeposits
     };
 };

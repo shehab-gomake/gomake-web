@@ -3,6 +3,9 @@ import { EHttpMethod } from "@/services/api-service/enums";
 import { ICallAndSetData } from "@/services/api-service/interface";
 
 const GET_ALL_DEPOSITS_URL = "/v1/erp-service/deposits/get-all-deposits";
+const GET_DEPOSITS_META_DATA_URL = "/v1/erp-service/deposits/get-deposit-meta-data";
+const SHOW_DEPOSIT_URL = "/v1/erp-service/deposits/show-deposit";
+const CREATE_DEPOSIT_URL = "/v1/erp-service/deposits/create-deposits";
 
 const getAllDepositsApi: ICallAndSetData = async (callApi, setState, data) => {
   return await getSetApiData(
@@ -15,7 +18,41 @@ const getAllDepositsApi: ICallAndSetData = async (callApi, setState, data) => {
 };
 
 
+const getDepositsMetaDataApi: ICallAndSetData = async (callApi, setState, data) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    GET_DEPOSITS_META_DATA_URL,
+    setState,
+    data
+  );
+};
+
+
+const showDepositApi: ICallAndSetData = async (callApi, setState, data) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    SHOW_DEPOSIT_URL,
+    setState,
+    data
+  );
+};
+
+const createDepositApi: ICallAndSetData = async (callApi, setState, data) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    CREATE_DEPOSIT_URL,
+    setState,
+    data
+  );
+};
+
 
 export {
     getAllDepositsApi,
+    getDepositsMetaDataApi,
+    showDepositApi,
+    createDepositApi
 };

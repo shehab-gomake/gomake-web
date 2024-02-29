@@ -3,8 +3,8 @@ import { useDeposits } from "./use-deposits";
 import { PrimaryTable } from "@/components/tables/primary-table";
 import { GoMakePagination } from "@/components/pagination/gomake-pagination";
 import { useStyle } from "./style";
-import { DepositsHeaderSection } from "./widgets/header-section";
-import { DepositsFiltersWidget } from "./widgets/filters-section";
+import { DepositsHeaderSection } from "./components/header-section";
+import { DepositsFiltersWidget } from "./components/filters-section";
 import { useEffect } from "react";
 
 const DepositsListPageWidget = () => {
@@ -46,7 +46,7 @@ const DepositsListPageWidget = () => {
                         stickyFirstCol={false}
                         stickyHeader={true}
                         maxHeight={650}
-                        rows={null}
+                        rows={allDeposits}
                         headers={tableHeaders}
                     />
                 </div>
