@@ -84,7 +84,6 @@ const useCustomers = (
   
   const debounce = useDebounce(name, 500);
   useEffect(() => {
-    console.log("debounce", debounce);
     setFinalPatternSearch(debounce);
   }, [debounce]);
   const onChangeCustomer = useCallback((value: string) => {
@@ -257,7 +256,6 @@ const useCustomers = (
     filteredAddresses,
     filteredUsers
   ) => {
-    console.log("customer", customer);
     if (
       !(
         customer &&

@@ -40,7 +40,7 @@ const useBoardMissions = () => {
   const [pageNumber, setPageNumber] = useState(1);
   const [pagesCount, setPagesCount] = useState(0);
   const [pageSize, setPageSize] = useState(DEFAULT_VALUES.PageSize);
-  
+
   const handlePageSizeChange = (event) => {
     setPageNumber(1);
     setPageSize(event.target.value);
@@ -190,7 +190,6 @@ const useBoardMissions = () => {
     ]);
     setAllBoardMissions(mapData);
     setPagesCount(Math.ceil(data?.totalItems / pageSize));
-    console.log(data);
   }, [data, connectionId]);
 
   const getAllCustomersCreateQuote = useCallback(async (SearchTerm?) => {
@@ -223,7 +222,7 @@ const useBoardMissions = () => {
 
   useEffect(() => {
     getAllBoardMissions();
-  }, [connectionId, pageNumber,pageSize, finalPatternSearch]);
+  }, [connectionId, pageNumber, pageSize, finalPatternSearch]);
 
   const handlePageChange = (event, value) => {
     setPageNumber(value);

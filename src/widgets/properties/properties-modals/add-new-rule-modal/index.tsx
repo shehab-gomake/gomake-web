@@ -81,7 +81,6 @@ const AddNewRuleModal = ({ openModal, onClose }) => {
   const [isOpen, setIsOpen] = useState<boolean>(openModal);
   const [value, setValue] = useState<string>("");
   const { machines } = usePrintHouseMachines();
-  console.log("addNewRule", machines)
   const { clientTypes } = usePrintHouseClientTypes();
   const { clients } = usePrintHouseClients();
   const { materials, materialsDropdown } = useMaterials();

@@ -98,10 +98,6 @@ const useMaterialFilters = () => {
     setPageNumber(1);
   };
   
-  /*const getFilterValue = useCallback((key:string)=>{
-    debugger;
-    return filters?.find(x=>x.key === key);
-  },[filters])*/
   const getFilterValue = (key:string) =>{
     return filters?.find(x=>x.key === key);
   }

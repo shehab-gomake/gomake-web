@@ -31,20 +31,17 @@ const useCalculationsWorkFlowsSignalr = () => {
   useEffect(() => {
     if (connection) {
       connection.on("updateWorkFlows", (newData: ICalculationSignalRResult) => {
-        console.log("newData", newData);
         setCalculationExceptionsLogs(newData.exceptions);
         setSignalrRWorkFlows(newData);
       });
       connection.on("startCalculationSession", (newData) => {
         setConnectionSessionId(newData.productItemValueDraftId);
         setCalculationExceptionsLogs(newData.calculationExceptions);
-        console.log("startCalculationSession", newData);
       });
       connection.on("updateSelectedWorkFlow", (newData) => {
         setUpdatedSelectedWorkFlow(newData);
       });
       connection.on("UpdatePricing", (newData) => {
-        console.log("UpdatePricing", newData);
         setSignalRPricingResult(newData);
       });
     }

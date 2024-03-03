@@ -17,7 +17,7 @@ import {
   subProductsParametersState,
 } from "@/store";
 import { useMaterials } from "../use-materials";
-import { digitslPriceState } from "./store";
+import { checkParameterState, digitslPriceState } from "./store";
 import cloneDeep from "lodash/cloneDeep";
 import lodashClonedeep from "lodash.clonedeep";
 import { EWidgetProductType } from "@/pages-components/products/digital-offset-price/enums";
@@ -65,7 +65,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
   const router = useRouter();
-  const { alertFaultAdded, alertFaultUpdate } = useSnackBar();
+  const { alertFaultAdded, alertFaultUpdate, alertFault } = useSnackBar();
   const [isChargeForNewDie, setIsChargeForNewDie] = useState(false)
   const { clientTypesValue, renderOptions, checkWhatRenderArray } =
     useQuoteWidget();
@@ -75,6 +75,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   );
   const [samlleType, setSamlleType] = useState();
   const [isRequiredParameters, setIsRequiredParameters] = useState<any>([]);
+  const [activeSectionRequiredParameters, setActiveSectionRequiredParameters] = useState([]);
+
   const [GalleryModalOpen, setGalleryModalOpen] = useState(false);
   const [multiParameterModal, setMultiParameterModal] = useState(false);
   const [makeShapeOpen, setMakeShapeOpen] = useState(false);
@@ -83,6 +85,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [graphicNotes, setGraphicNotes] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const [productTemplate, setProductTemplate] = useState<any>([]);
+  const [updatedProductTemplate, setupdatedProductTemplate] = useState<any>()
   const [defaultProductTemplate, setDefaultProductTemplate] = useState<any>([]);
   const [subProducts, setSubProducts] = useRecoilState<any>(
     subProductsParametersState
@@ -148,6 +151,19 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     let copy = lodashClonedeep(subProducts);
     setSubProductsCopy(copy);
   }, [subProducts]);
+
+
+
+  const [activeSections, setActiveSections] = useState([]);
+  function handleParameterChange(parameterId, selectedValue) {
+    // Example logic to determine which sections should be active
+    const newActiveSections = productTemplate.sections.filter(section => {
+      return section.relatedToParameters.includes(parameterId); // Removed the incomplete comment
+    }).map(section => section.id);
+
+    setActiveSections(newActiveSections);
+  }
+
 
   useEffect(() => {
     if (calculationResult && calculationResult.productItemValue) {
@@ -381,50 +397,45 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         }
       });
     });
-
-    // Update the state with the modified temp object
     initProduct(temp, allMaterials);
   };
-  /*useEffect(() => {
-      if (pricingDefaultValue?.workFlows?.length > 0 && canCalculation) {
-        const workFlowSelect = pricingDefaultValue?.workFlows?.find(
-          (workFlow) => workFlow?.selected === true
-        );
-        setWorkFlowSelected(workFlowSelect);
-        setDefaultPrice(workFlowSelect?.totalPrice);
-      } else {
-        setWorkFlowSelected({});
-        setDefaultPrice("-----");
-      }
-    }, [pricingDefaultValue, canCalculation]);*/
+
   useEffect(() => {
-    if (productTemplate && productTemplate?.sections?.length > 0) {
+    if (productTemplate && productTemplate.sections?.length > 0) {
       let temp = [...isRequiredParameters];
-      productTemplate?.sections?.map((section) => {
-        return section?.subSections?.map((subSection, i) => {
-          return subSection.parameters?.map((parameter, i) => {
+      let activeSectionTemp = [];
+
+      productTemplate.sections.map((section, sectionIndex) => {
+        return section.subSections?.map((subSection) => {
+          return subSection.parameters?.map((parameter) => {
             const index = temp.findIndex(
               (item) =>
-                item.parameterId === parameter?.id &&
-                item.sectionId === section?.id &&
-                item.subSectionId === subSection?.id &&
-                item?.actionIndex === parameter?.actionIndex
+                item.parameterId === parameter.id &&
+                item.sectionId === section.id &&
+                item.subSectionId === subSection.id &&
+                item.actionIndex === parameter.actionIndex
             );
             if (index !== -1) {
               temp[index] = {
                 ...temp[index],
               };
             } else {
-              if (parameter?.isRequired) {
+              if (parameter.isRequired) {
                 temp.push(parameter);
+                if (sectionIndex === activeIndex) {
+                  activeSectionTemp.push(parameter);
+                }
               }
             }
           });
         });
       });
+
       setIsRequiredParameters(temp);
+      setActiveSectionRequiredParameters(activeSectionTemp);
     }
-  }, [productTemplate]);
+  }, [productTemplate, activeIndex]);
+
   const [relatedParameters, setRelatedParameters] = useState([]);
   const [underParameterIds, setUnderParameterIds] = useState([]);
   useEffect(() => {
@@ -1026,7 +1037,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     value,
     list,
     inModal: any,
-    inRow: boolean
+    inRow: boolean,
+    inunderParameter: boolean
   ) => {
     let Comp;
     const parametersArray = subProducts.flatMap((item) => item.parameters);
@@ -1234,9 +1246,11 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         <div style={inRow ? clasess.parameterRowContainer : clasess.parameterContainer}>
           <div
             style={
-              value?.values[0] === "true"
-                ? clasess.parameterType3ActiveLabelStyle
-                : clasess.parameterLabelStyle
+
+              errorText && parameter?.isRequired ? clasess.parameterRequierdLabelStyle :
+                value?.values[0] === "true"
+                  ? inunderParameter ? clasess.parameterunderParameterStyle : clasess.parameterType3ActiveLabelStyle
+                  : inunderParameter ? clasess.underParameterLabelStyle : clasess.parameterLabelStyle
             }
           >
             {parameter?.name}
@@ -1275,9 +1289,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                       p.actionIndex === relatedParameter.actionIndex
                   );
 
-                  if (parameter.name == "identical printing sides ") {
-                    debugger;
-                  }
+                  // if (parameter.name == "identical printing sides ") {
+                  //   debugger;
+                  // }
 
                   if (relatedParameter.activateByAllValues && parm?.values) {
                     if (relatedParameter.activateByAllValues) {
@@ -1297,6 +1311,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                             myParameter?.value,
                             list,
                             true,
+                            false,
                             false
                           )}
                         </div>
@@ -1335,6 +1350,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                               myParameter?.value,
                               list,
                               true,
+                              false,
                               false
                             )}
                           </div>
@@ -1350,6 +1366,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                             myParameter?.value,
                             list,
                             true,
+                            false,
                             false
                           )}
                         </div>
@@ -1432,6 +1449,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     const targetSubProduct = subProducts.find(
       (item) => item.type === subSectionType
     );
+
     if (targetSubProduct) {
       let temp = [...targetSubProduct.parameters];
       const findIndex = temp.findIndex(
@@ -1670,6 +1688,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         parameters: temp,
       }),
         setSubProducts(temp2);
+      const updatedProductTemplate = updateIsHidden(productTemplateCopy, temp2);
+      setupdatedProductTemplate(updatedProductTemplate)
     }
   };
   const onCloseMakeShape = () => {
@@ -1706,18 +1726,35 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const onCloseMultiParameterModal = () => {
     setMultiParameterModal(false);
   };
-
+  const [errorText, setErrorText] = useState(false)
   const handleTabClick = (index: number) => {
-    if (index !== activeIndex) {
-      setCanCalculation(false);
-      setActiveIndex(index);
-      setCanCalculation(false);
+
+    if (checkParameter) {
+      setErrorText(false)
+      if (index !== activeIndex) {
+        setCanCalculation(false);
+        setActiveIndex(index);
+        setCanCalculation(false);
+      }
     }
+    else {
+      alertFault("products.offsetPrice.admin.errorReq")
+      setErrorText(true)
+    }
+
   };
   const handleNextClick = () => {
-    if (activeIndex < productTemplate.sections.length) {
-      setActiveIndex(activeIndex + 1);
+    setErrorText(false)
+    if (checkParameter) {
+      if (activeIndex < productTemplate.sections.length) {
+        setActiveIndex(activeIndex + 1);
+      }
     }
+    else {
+      setErrorText(true)
+      alertFault("products.offsetPrice.admin.errorReq")
+    }
+
   };
   const handlePreviousClick = () => {
     if (activeIndex != 0) {
@@ -1759,8 +1796,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     await getAndSetProductById(
       callApi,
       (data) => {
-        setDefaultProductTemplate(data);
-        initProduct(data, materials);
+        const updatedTemplate = updateIsHidden(data, subProducts)
+        setDefaultProductTemplate(updatedTemplate);
+        initProduct(updatedTemplate, materials);
       },
       {
         Id: router?.query?.productId,
@@ -1888,6 +1926,11 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     }
     return isValid;
   };
+  const [checkParameter, setCheckParameter] = useRecoilState<boolean>(checkParameterState)
+  useEffect(() => {
+    let checkParameter = validateParameters(activeSectionRequiredParameters);
+    setCheckParameter(checkParameter)
+  }, [isRequiredParameters])
 
   const calculationProduct = useCallback(async () => {
     if (requestAbortController) {
@@ -2138,6 +2181,63 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   useEffect(() => {
     getCurrenciesApi()
   }, [])
+
+  const updateIsHidden = (productTemplate, subProducts) => {
+    if (!productTemplate || !productTemplate.sections || !Array.isArray(productTemplate.sections)) {
+      return productTemplate;
+    }
+    const allParameters = subProducts.flatMap(product => product.parameters);
+    const updatedTemplate = { ...productTemplate };
+    updatedTemplate.sections.forEach(section => {
+      if (section.relatedToParameters.length === 0) {
+        section.isHidden = false;
+      } else {
+        // let isHidden = true;
+        section.relatedToParameters.forEach(parameter => {
+          // Check if any parameter in allParameters matches the condition
+          const matchingParameter = allParameters.find(p => p.parameterId === parameter.parameterId && p.sectionId === parameter.sectionId && p.subSectionId === parameter.subSectionId);
+          if (matchingParameter) {
+            if (parameter.activateByAllValues) {
+              section.isHidden = false;
+            } else {
+              section.isHidden = !parameter.selectedValueIds.includes(matchingParameter.valueIds[0]);
+            }
+          }
+          else {
+            section.isHidden = true;
+          }
+        });
+
+      }
+    });
+    return updatedTemplate;
+  }
+
+  function removeHiddenParameters(subProducts, updatedProductTemplate) {
+    const temp = cloneDeep(updatedProductTemplate)
+    if (!temp || !temp.sections || !Array.isArray(temp.sections)) {
+      return subProducts;
+    }
+    const hiddenSectionIds = temp.sections
+      .filter(section => section.isHidden)
+      .map(section => section.id);
+
+    const updatedSubProducts = subProducts.map(product => {
+      const updatedParameters = product.parameters.filter(parameter =>
+        !hiddenSectionIds.includes(parameter.sectionId)
+      );
+      return {
+        ...product,
+        parameters: updatedParameters
+      };
+    });
+
+    setSubProducts(updatedSubProducts);
+  }
+  useEffect(() => {
+    removeHiddenParameters(subProducts, updatedProductTemplate);
+  }, [updatedProductTemplate]);
+
   return {
     t,
     handleTabClick,

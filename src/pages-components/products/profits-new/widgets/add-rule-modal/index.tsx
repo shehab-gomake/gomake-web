@@ -123,7 +123,6 @@ const AddRuleModal = ({
                 style={clasess.dropDownListContainer}
                 placeholder={t("products.profits.exceptions.selectMachine")}
                 onChange={(e, value) => {
-                  console.log("value", value)
                   setPropertieValue(value?.id)
 
                 }
@@ -219,7 +218,6 @@ const AddRuleModal = ({
                 placeholder={t("products.profits.exceptions.selectValue")}
                 style={clasess.autoComplateStyle}
                 onChange={(e: any, value: any) => {
-                  console.log("value", value)
                   setPropertieValue(value?.value as string);
                 }}
               />

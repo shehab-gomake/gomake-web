@@ -37,7 +37,6 @@ const OutSourceSupplierComponent = ({
     const { secondColor } = useGomakeTheme();
     const { updatePrice, updateWorHours, updateProfit, updateCost, addItem } = useOutsourceSupplier();
     const handleDeliveryTimeUpdate = (newValue: number) => {
-        console.log("newValue", newValue)
         updateWorHours(supplierId, +newValue);
     }
 

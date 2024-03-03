@@ -31,7 +31,6 @@ const useQuickSetupMaterials = () => {
         await quickSetupGetMaterials(callApi, callBack);
     }
     const saveSelectedMaterials = async () => {
-        debugger;
         const callBack = (res) => {
             if (res.success) {
                 push('/quick-setup/materials/pricing').then();

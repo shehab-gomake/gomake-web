@@ -9,7 +9,6 @@ const UploadImgProduct = ({
   onChangeStateProduct,
   UploadProductImage,
 }) => {
-  console.log("productState", productState);
   const { clasess } = useStyle();
   const { t } = useTranslation();
   const dir: "rtl" | "ltr" = t("direction");
