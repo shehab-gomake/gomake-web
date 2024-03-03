@@ -9,6 +9,7 @@ export interface ITableProps {
   maxHeight?: number;
   variant?: TABLE_TYPE;
   withoutShadow?: boolean;
+  dataTour?: string;
 }
 
 export interface ISecondaryTableProps {
