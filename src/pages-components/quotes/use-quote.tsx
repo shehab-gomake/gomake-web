@@ -467,6 +467,10 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
       label: t("sales.quote.invoiceRefundList"),
       value: DOCUMENT_TYPE.invoiceRefund,
     },
+    {
+      label: t("sales.quote.purchaseOrderList"),
+      value: DOCUMENT_TYPE.purchaseOrder,
+    },
   ];
 
   const documentLabel = documentsLabels.find(

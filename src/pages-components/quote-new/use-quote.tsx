@@ -171,7 +171,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
         alertFaultAdded();
       }
     }
-    else if (docType === DOCUMENT_TYPE.receipt){
+    else if (docType === DOCUMENT_TYPE.receipt) {
       const callBack = (res) => {
         if (res?.success) {
           const _data = res?.data || {};
@@ -180,7 +180,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
           alertFaultAdded();
         }
       }
-      await getReceiptByIdApi(callApi, callBack, {receiptId:router?.query?.Id})
+      await getReceiptByIdApi(callApi, callBack, { receiptId: router?.query?.Id })
     }
     else {
       const callBack = (res) => {
@@ -234,7 +234,8 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
         }
       }
       await getDocumentApi(callApi, callBack, { documentType: docType, Id: router?.query?.Id })
-    } }
+    }
+  }
 
   const updateDueDate = async () => {
     if (router.query.isNewCreation) {
@@ -1251,7 +1252,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     }
     await getAllCreditTransactionsApi(callApi, callBack, { clientId: id })
   }
-  
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dateRef.current && !dateRef.current.contains(event.target)) {
@@ -1331,6 +1332,10 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     {
       label: t("tabs.invoiceRefund"),
       value: DOCUMENT_TYPE.invoiceRefund,
+    },
+    {
+      label: t("tabs.purchaseOrder"),
+      value: DOCUMENT_TYPE.purchaseOrder,
     },
   ];
 
