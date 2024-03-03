@@ -5,6 +5,8 @@ import { DepositTable } from "./components/table-prices-section";
 import { DepositFilterSection } from "./components/filters-section";
 import { Stack } from "@mui/material";
 import { DEPOSIT_ACTIONS } from "./enums";
+import { PrimaryTabsComponent } from "@/components/tabs/primary-tabs";
+import { useEffect } from "react";
 
 export interface IDepositProps {
   actionType: DEPOSIT_ACTIONS;
@@ -12,18 +14,27 @@ export interface IDepositProps {
 
 const DepositPageWidget = ({ actionType }: IDepositProps) => {
   const { classes } = useStyle();
-  const { renderTableHeaders, renderTableRows, deposit } = useDeposit();
+  const { depositsTabs, handleResetTotalAndCount ,renderTableHeaders, renderTableRows , getDepositMetaData} = useDeposit();
+
+  useEffect(()=>{
+    if(actionType===DEPOSIT_ACTIONS.Create)
+    getDepositMetaData(); 
+  },[]);
 
   return (
     <>
       <div style={classes.mainContainer}>
         <Stack direction="column" gap="30px" paddingLeft="20px" paddingRight="20px"  >
           <DepositHeaderSection actionType={actionType} />
-          {/* <span style={classes.lineDateStyle} />  */}
           <DepositFilterSection actionType={actionType} />
         </Stack>
         <Stack style={classes.secondDivStyle}>
-          <DepositTable tableHeaders={renderTableHeaders} tableRows={renderTableRows()} />
+          {
+            actionType === DEPOSIT_ACTIONS.Create ?
+              <PrimaryTabsComponent tabs={depositsTabs} selectedColor="secondary" onSelectTab={handleResetTotalAndCount} />
+              :
+              <DepositTable tableHeaders={renderTableHeaders} tableRows={renderTableRows()} />
+          }
         </Stack>
       </div>
     </>

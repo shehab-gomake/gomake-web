@@ -6,6 +6,12 @@ export const depositState = atom<any>({
   default: {},
 });
 
+export const newDepositState = atom<any>({
+  key: "newDepositState",
+  default: {},
+});
+
+
 export const depositsPageState = atom<number>({
   key: "depositsPageState",
   default: 1,

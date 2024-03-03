@@ -18,13 +18,12 @@ const getAllDepositsApi: ICallAndSetData = async (callApi, setState, data) => {
 };
 
 
-const getDepositsMetaDataApi: ICallAndSetData = async (callApi, setState, data) => {
+const getDepositsMetaDataApi: ICallAndSetData = async (callApi, setState) => {
   return await getSetApiData(
     callApi,
     EHttpMethod.GET,
     GET_DEPOSITS_META_DATA_URL,
     setState,
-    data
   );
 };
 
