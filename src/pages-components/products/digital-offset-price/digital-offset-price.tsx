@@ -77,7 +77,6 @@ const PriceListPageWidget = ({ widgetType }) => {
     isChargeForNewDie,
     setIsChargeForNewDie,
     straightKnife,
-    updatedProductTemplate,
   } = useDigitalOffsetPrice({ clasess, widgetType });
   return (
     <div>
@@ -94,7 +93,7 @@ const PriceListPageWidget = ({ widgetType }) => {
             <div style={clasess.leftSideContainer}>
               <div style={clasess.tabsContainer}>
                 <Tabs variant="scrollable" scrollButtons={"auto"}>
-                  {(updatedProductTemplate && updatedProductTemplate.sections ? updatedProductTemplate.sections : []).concat(PricingTab ? [PricingTab] : []).filter(item => !item.isHidden).map((item, index) => {
+                  {(productTemplate && productTemplate.sections ? productTemplate.sections : []).concat(PricingTab ? [PricingTab] : []).filter(item => !item.isHidden).map((item, index) => {
                     return (
                       <TabsMappingWidget
                         key={`tab-${index}`}
@@ -103,7 +102,7 @@ const PriceListPageWidget = ({ widgetType }) => {
                         handleTabClick={handleTabClick}
                         activeIndex={activeIndex}
                         item={item}
-                        productTemplate={updatedProductTemplate}
+                        productTemplate={productTemplate}
                         onDuplicateSection={duplicateSection}
                         onRemoveSection={removeSection}
                         setProductTemplate={setProductTemplate}
@@ -113,30 +112,6 @@ const PriceListPageWidget = ({ widgetType }) => {
                   })}
                 </Tabs>
               </div>
-              {/* <div style={clasess.tabsContainer}>
-                <Tabs variant="scrollable" scrollButtons={"auto"}>
-                  {[...updatedProductTemplate?.sections, PricingTab]?.map(
-                    (item, index) => {
-                      return (
-                        <TabsMappingWidget
-                          key={`tab-${index}`}
-                          clasess={clasess}
-                          index={index}
-                          handleTabClick={handleTabClick}
-                          activeIndex={activeIndex}
-                          item={item}
-                          productTemplate={productTemplate}
-                          onDuplicateSection={duplicateSection}
-                          onRemoveSection={removeSection}
-                          setProductTemplate={setProductTemplate}
-                          isAdmin={false}
-                        />
-                      );
-                    }
-                  )}
-                </Tabs>
-              </div> */}
-
               <div style={{ height: 666, overflow: "scroll", width: "calc(100% - 330px)" }}>
                 <div style={clasess.sectionsContainer}>
                   {[...productTemplate?.sections, PricingTab]?.map(

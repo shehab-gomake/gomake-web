@@ -85,11 +85,11 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [graphicNotes, setGraphicNotes] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const [productTemplate, setProductTemplate] = useState<any>([]);
+  const [updatedProductTemplate, setupdatedProductTemplate] = useState<any>()
   const [defaultProductTemplate, setDefaultProductTemplate] = useState<any>([]);
   const [subProducts, setSubProducts] = useRecoilState<any>(
     subProductsParametersState
   );
-  console.log("subProducts", subProducts)
   const [isSetTemplete, setIsSetTemplete] = useState<boolean>(false);
   const setSubProductsCopy = useSetRecoilState<any>(
     subProductsCopyParametersState
@@ -1444,6 +1444,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     const targetSubProduct = subProducts.find(
       (item) => item.type === subSectionType
     );
+
     if (targetSubProduct) {
       let temp = [...targetSubProduct.parameters];
       const findIndex = temp.findIndex(
@@ -1682,6 +1683,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         parameters: temp,
       }),
         setSubProducts(temp2);
+      const updatedProductTemplate = updateIsHidden(productTemplateCopy, temp2);
+      setupdatedProductTemplate(updatedProductTemplate)
     }
   };
   const onCloseMakeShape = () => {
@@ -1720,6 +1723,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   };
   const [errorText, setErrorText] = useState(false)
   const handleTabClick = (index: number) => {
+
     if (checkParameter) {
       setErrorText(false)
       if (index !== activeIndex) {
@@ -1787,8 +1791,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     await getAndSetProductById(
       callApi,
       (data) => {
-        setDefaultProductTemplate(data);
-        initProduct(data, materials);
+        const updatedTemplate = updateIsHidden(data, subProducts)
+        setDefaultProductTemplate(updatedTemplate);
+        initProduct(updatedTemplate, materials);
       },
       {
         Id: router?.query?.productId,
@@ -2202,33 +2207,33 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     });
     return updatedTemplate;
   }
-  const [updatedProductTemplate, setupdatedProductTemplate] = useState<any>()
-  useEffect(() => {
-    const updatedProductTemplate = updateIsHidden(productTemplate, subProducts);
-    setupdatedProductTemplate(updatedProductTemplate)
-  }, [productTemplate, subProducts])
 
-  const removeHiddenParameters = (subProducts, updatedTemplate) => {
-    if (!updatedTemplate || !updatedTemplate.sections || !Array.isArray(updatedTemplate.sections)) {
+  function removeHiddenParameters(subProducts, updatedProductTemplate) {
+    const temp = cloneDeep(updatedProductTemplate)
+    if (!temp || !temp.sections || !Array.isArray(temp.sections)) {
       return subProducts;
     }
-    const sectionIdsToRemove = updatedTemplate.sections
+    const hiddenSectionIds = temp.sections
       .filter(section => section.isHidden)
       .map(section => section.id);
-    console.log("sectionIdsToRemove", sectionIdsToRemove)
+
     const updatedSubProducts = subProducts.map(product => {
-      const updatedParameters = product.parameters.filter(parameter => !sectionIdsToRemove.includes(parameter.sectionId));
+      const updatedParameters = product.parameters.filter(parameter =>
+        !hiddenSectionIds.includes(parameter.sectionId)
+      );
       return {
         ...product,
         parameters: updatedParameters
       };
     });
-    console.log("updatedSubProducts", updatedSubProducts)
+
     setSubProducts(updatedSubProducts);
   }
+  useEffect(() => {
+    removeHiddenParameters(subProducts, updatedProductTemplate);
+  }, [updatedProductTemplate]);
 
   return {
-    updatedProductTemplate,
     t,
     handleTabClick,
     handleNextClick,
