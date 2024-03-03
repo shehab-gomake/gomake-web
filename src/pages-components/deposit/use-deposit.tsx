@@ -53,7 +53,7 @@ const useDeposit = () => {
             case (DEPOSIT_TYPE.CreditCard):
                 return deposit?.creditDepositData;
             case (DEPOSIT_TYPE.Cash):
-                return deposit?.cashDepositData;
+                return [deposit?.cashDepositData];
             default:
                 return [];
         }
