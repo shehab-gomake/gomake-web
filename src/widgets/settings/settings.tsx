@@ -5,11 +5,8 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { SideBarContainer } from "@/components/containers/side-container/side-bar-container";
 import { IListItem } from "@/components/containers/interface";
-import { SecondaryButton } from "@/components/button/secondary-button";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import { useUserPermission } from "@/hooks/use-permission";
-import {useTour} from "@reactour/tour";
+import {StepType, useTour} from "@reactour/tour";
 
 const SettingsWidget = () => {
   const { t } = useTranslation();
@@ -37,18 +34,38 @@ const SettingsWidget = () => {
     setSteps(settingsSteps);
     setIsOpen(true);
   }, []);
-  const settingsSteps = [
+  const settingsSteps: StepType[] = [
     {
-      selector: '[data-tour="first-step"]',
-      content: 'settings first Step',
+      selector: '[data-tour="profileSettings"]',
+      content: 'Here, you can update all your personal and business details.\n',
+      position: 'center'
     },
     {
-      selector: '[data-tour="settingsProducts"]',
-      content: 'settings products step'
+      selector: '[data-tour="usersSettingsLink"]',
+      content: 'Go to "Users" to manage your employees.',
+      position: 'bottom'
     },
     {
-      selector: '[data-tour="settingsProfile"]',
-      content: 'settings profile button step'
+      selector: '[data-tour="settingUsersWidget"]',
+      content: 'Add and update all system users includes:\n Username and passward\n personal information\n working hours\n',
+      position: 'center',
+      styles: {
+        maskWrapper: props => ({...props, maxHeight: '300px'})
+      }
+    },
+    {
+      selector: '[data-tour="settingsProductsLink"]',
+      content: 'Add and update all system users includes:\n Username and passward\n personal information\n working hours\n',
+      position: 'bottom'
+    },
+    {
+      selector: '[data-tour="productsSettingsWidget"]',
+      content: 'Add and update all system users includes:\n Username and passward\n personal information\n working hours\n',
+      position: 'center',
+      action: elem => elem?.scrollIntoView({block: 'start', behavior: "smooth"}),
+      styles: {
+        maskWrapper: props => ({...props,})
+      }
     },
   ]
   const Side = () => {

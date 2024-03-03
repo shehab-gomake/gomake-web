@@ -1,18 +1,18 @@
 import {ISideBarContainer} from "@/components/containers/interface";
 import {useStyle} from "@/components/containers/machines-container/style";
 
-const MachinesContainer = ({side, children, subHeader, header, actions, sideAction}: ISideBarContainer) => {
+const MachinesContainer = ({side, children, subHeader, header, actions, sideAction, sideDataTour, bodyDataTour}: ISideBarContainer) => {
     const {classes} = useStyle();
     return (
         <div style={classes.gridContainer}>
             {
                 header && <h1 style={classes.header}>{header}</h1>
             }
-            <div style={classes.sideList}>
+            <div data-tour={sideDataTour} style={classes.sideList}>
                 {side}
             </div>
             {subHeader && <h2 style={classes.subHeader}>{subHeader}</h2>}
-            <div style={classes.main}>
+            <div data-tour={bodyDataTour} style={classes.main}>
                 {children}
             </div>
             <div style={classes.sideActionFooter}>

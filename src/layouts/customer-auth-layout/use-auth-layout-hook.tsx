@@ -251,7 +251,7 @@ const useAuthLayoutHook = (permissionEnumValue?: Permissions, allowAnonymous?: b
           return <LocalPrintshopOutlinedIcon style={{ color: "#FFFFFF" }} />;
         },
         isProduction: true,
-        tourData: 'menu-machines'
+        tourData: 'menuMachines'
 
       },
       {
@@ -277,6 +277,7 @@ const useAuthLayoutHook = (permissionEnumValue?: Permissions, allowAnonymous?: b
           return <PendingActionsOutlinedIcon style={{ color: "#FFFFFF" }} />;
         },
         isProduction: true,
+        tourData: 'menuActions'
       },
       {
         isLine: false,

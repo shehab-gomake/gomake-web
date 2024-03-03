@@ -1,5 +1,5 @@
 import { useGomakeAxios } from "@/hooks";
-import { useCallback, useEffect } from "react";
+import { useCallback } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { machineState } from "@/widgets/machines/state/machine-state";
 import { useRouter } from "next/router";
@@ -18,6 +18,7 @@ const usePrintHouseMachines = () => {
     getMachinesByCategoryId(categoryId as ECategoryId).then((res) => {
       if (res?.data?.data?.data?.length > 0) {
         setMachines(res?.data?.data?.data);
+        setMachineState(res?.data?.data?.data[0]);
       }
     });
   };
