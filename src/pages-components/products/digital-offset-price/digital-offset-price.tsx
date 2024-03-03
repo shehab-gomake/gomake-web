@@ -78,6 +78,7 @@ const PriceListPageWidget = ({ widgetType }) => {
     setIsChargeForNewDie,
     straightKnife,
   } = useDigitalOffsetPrice({ clasess, widgetType });
+  console.log("productTemplate", productTemplate)
   return (
     <div>
       {productTemplate?.sections?.length > 0 && (
@@ -93,7 +94,7 @@ const PriceListPageWidget = ({ widgetType }) => {
             <div style={clasess.leftSideContainer}>
               <div style={clasess.tabsContainer}>
                 <Tabs variant="scrollable" scrollButtons={"auto"}>
-                  {(productTemplate && productTemplate.sections ? productTemplate.sections : []).concat(PricingTab ? [PricingTab] : []).filter(item => !item.isHidden).map((item, index) => {
+                  {[...productTemplate?.sections, PricingTab].filter(item => !item.isHidden)?.map((item, index) => {
                     return (
                       <TabsMappingWidget
                         key={`tab-${index}`}
@@ -114,7 +115,7 @@ const PriceListPageWidget = ({ widgetType }) => {
               </div>
               <div style={{ height: 666, overflow: "scroll", width: "calc(100% - 330px)" }}>
                 <div style={clasess.sectionsContainer}>
-                  {[...productTemplate?.sections, PricingTab]?.map(
+                  {[...productTemplate?.sections, PricingTab].filter(item => !item.isHidden)?.map(
                     (section: any, index: number) => {
                       if (index === activeIndex) {
                         if (
