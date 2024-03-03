@@ -9,7 +9,12 @@ import {
 import {GoMakeAutoComplate} from "@/components";
 import {ECategoryId} from "@/widgets/machines/enums/category-id";
 
-const MachinesSetupWidget = () => {
+interface IProps {
+    categories?: ECategoryId[];
+    nextStep: string;
+}
+
+const MachinesSetupWidget = ({categories, nextStep}: IProps) => {
     const {classes} = useStyle();
     const {t} = useTranslation();
     const {
@@ -25,8 +30,9 @@ const MachinesSetupWidget = () => {
         printHouseMachines,
         onRemovePrintHouseMachine,
         onSearchMachine,
-        newMachine
-    } = useMachinesSetupData();
+        newMachine,
+        searchMachineInit
+    } = useMachinesSetupData(categories, nextStep);
     return (
         <Stack gap={'10px'} alignItems={'center'}>
             <h2 style={classes.header}>{t('signup.machinesHeader')}</h2>
@@ -40,6 +46,7 @@ const MachinesSetupWidget = () => {
                                 onChange={(e, machine) => onSelectMachine(machine)}
                                 loading={machinesLoading}
                                 disableClearable={true}
+                                // value={searchMachineInit()}
                                 onChangeTextField={(e) => {onSearchMachine(e?.target?.value)}}
                                 style={classes.autoComplete} options={[newMachine, ...categoryMachines]?.filter(machine => machine?.value !== '')} placeholder={t('signup.machineName')}/>
             <Stack flexWrap={'wrap'} direction={'row'} columnGap={'10px'} rowGap={'2px'} padding={'15px'}
