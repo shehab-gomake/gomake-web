@@ -15,7 +15,7 @@ const MultiParameterModal = ({
   _renderParameterType,
 }) => {
   const { clasess } = useStyle();
-  const { parameterLists, onClickSaveParameter, t,closeModal } = useMultiParameterModal({
+  const { parameterLists, onClickSaveParameter, t, closeModal } = useMultiParameterModal({
     settingParameters,
     onClose,
   });
@@ -37,6 +37,7 @@ const MultiParameterModal = ({
               settingParameters?.parameter,
               settingParameters?.value,
               settingParameters?.list,
+              false,
               false,
               false
             )}

@@ -1037,7 +1037,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     value,
     list,
     inModal: any,
-    inRow: boolean
+    inRow: boolean,
+    inunderParameter: boolean
   ) => {
     let Comp;
     const parametersArray = subProducts.flatMap((item) => item.parameters);
@@ -1245,10 +1246,11 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         <div style={inRow ? clasess.parameterRowContainer : clasess.parameterContainer}>
           <div
             style={
+
               errorText && parameter?.isRequired ? clasess.parameterRequierdLabelStyle :
                 value?.values[0] === "true"
-                  ? clasess.parameterType3ActiveLabelStyle
-                  : clasess.parameterLabelStyle
+                  ? inunderParameter ? clasess.parameterunderParameterStyle : clasess.parameterType3ActiveLabelStyle
+                  : inunderParameter ? clasess.underParameterLabelStyle : clasess.parameterLabelStyle
             }
           >
             {parameter?.name}
@@ -1309,6 +1311,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                             myParameter?.value,
                             list,
                             true,
+                            false,
                             false
                           )}
                         </div>
@@ -1347,6 +1350,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                               myParameter?.value,
                               list,
                               true,
+                              false,
                               false
                             )}
                           </div>
@@ -1362,6 +1366,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                             myParameter?.value,
                             list,
                             true,
+                            false,
                             false
                           )}
                         </div>

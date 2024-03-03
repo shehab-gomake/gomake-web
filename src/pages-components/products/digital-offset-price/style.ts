@@ -154,8 +154,17 @@ const useStyle = () => {
         color: primaryColor(900),
         width: "fit-content",
       },
+      underParameterLabelStyle: {
+        ...FONT_FAMILY.Lexend(500, 12),
+        color: primaryColor(900),
+        width: "fit-content",
+      },
       parameterType3ActiveLabelStyle: {
         ...FONT_FAMILY.Lexend(500, 14),
+        color: secondColor(500),
+      },
+      parameterunderParameterStyle: {
+        ...FONT_FAMILY.Lexend(500, 12),
         color: secondColor(500),
       },
       parameterRequierdLabelStyle: {

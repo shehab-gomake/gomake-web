@@ -165,6 +165,7 @@ const SectionMappingWidget = ({
                                 value,
                                 subSection?.parameters,
                                 true,
+                                false,
                                 false
                               )}
                             </div>
@@ -231,6 +232,7 @@ const SectionMappingWidget = ({
                         _getParameter(parameter, subSection, section),
                         subSection?.parameters,
                         true,
+                        false,
                         false
                       )}
                       <div style={{ marginTop: 5 }}>
@@ -270,6 +272,7 @@ const SectionMappingWidget = ({
                                         _getParameter(myParameter, subSection, section),
                                         subSection?.parameters,
                                         true,
+                                        true,
                                         true
                                       )}
                                     </div>
@@ -291,6 +294,7 @@ const SectionMappingWidget = ({
                                             _getParameter(myParameter, subSection, section),
                                             subSection?.parameters,
                                             true,
+                                            true,
                                             true
                                           )}
                                         </div>
@@ -311,6 +315,7 @@ const SectionMappingWidget = ({
                                             subSection?.parameters,
                                             _getParameter(myParameter, subSection, section),
                                             subSection?.parameters,
+                                            true,
                                             true,
                                             true
                                           )}
@@ -343,6 +348,7 @@ const SectionMappingWidget = ({
                         _getParameter(parameter, subSection, section),
                         subSection?.parameters,
                         true,
+                        false,
                         false
                       )}
                       <div style={{ marginTop: 5 }}>
@@ -353,6 +359,7 @@ const SectionMappingWidget = ({
                           subSection?.parameters,
                           _getParameter(myParameter, subSection, section),
                           subSection?.parameters,
+                          true,
                           true,
                           true
                         )}
@@ -374,6 +381,7 @@ const SectionMappingWidget = ({
                         value,
                         subSection?.parameters,
                         true,
+                        false,
                         false
                       )}
                     </div>
