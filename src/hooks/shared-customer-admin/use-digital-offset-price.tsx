@@ -1689,6 +1689,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       }),
         setSubProducts(temp2);
       const updatedProductTemplate = updateIsHidden(productTemplateCopy, temp2);
+      removeHiddenParameters(temp2, productTemplateCopy)
       setupdatedProductTemplate(updatedProductTemplate)
     }
   };
@@ -2234,9 +2235,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
     setSubProducts(updatedSubProducts);
   }
-  useEffect(() => {
-    removeHiddenParameters(subProducts, updatedProductTemplate);
-  }, [updatedProductTemplate]);
+
 
   return {
     t,
