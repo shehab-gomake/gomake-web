@@ -89,6 +89,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [subProducts, setSubProducts] = useRecoilState<any>(
     subProductsParametersState
   );
+  console.log("subProducts", subProducts)
   const [isSetTemplete, setIsSetTemplete] = useState<boolean>(false);
   const setSubProductsCopy = useSetRecoilState<any>(
     subProductsCopyParametersState
@@ -150,6 +151,19 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     let copy = lodashClonedeep(subProducts);
     setSubProductsCopy(copy);
   }, [subProducts]);
+
+
+
+  const [activeSections, setActiveSections] = useState([]);
+  function handleParameterChange(parameterId, selectedValue) {
+    // Example logic to determine which sections should be active
+    const newActiveSections = productTemplate.sections.filter(section => {
+      return section.relatedToParameters.includes(parameterId); // Removed the incomplete comment
+    }).map(section => section.id);
+
+    setActiveSections(newActiveSections);
+  }
+
 
   useEffect(() => {
     if (calculationResult && calculationResult.productItemValue) {
@@ -2157,7 +2171,64 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   useEffect(() => {
     getCurrenciesApi()
   }, [])
+
+  const updateIsHidden = (productTemplate, subProducts) => {
+    if (!productTemplate || !productTemplate.sections || !Array.isArray(productTemplate.sections)) {
+      return productTemplate;
+    }
+    const allParameters = subProducts.flatMap(product => product.parameters);
+    const updatedTemplate = { ...productTemplate };
+    updatedTemplate.sections.forEach(section => {
+      if (section.relatedToParameters.length === 0) {
+        section.isHidden = false;
+      } else {
+        // let isHidden = true;
+        section.relatedToParameters.forEach(parameter => {
+          // Check if any parameter in allParameters matches the condition
+          const matchingParameter = allParameters.find(p => p.parameterId === parameter.parameterId && p.sectionId === parameter.sectionId && p.subSectionId === parameter.subSectionId);
+          if (matchingParameter) {
+            if (parameter.activateByAllValues) {
+              section.isHidden = false;
+            } else {
+              section.isHidden = !parameter.selectedValueIds.includes(matchingParameter.valueIds[0]);
+            }
+          }
+          else {
+            section.isHidden = true;
+          }
+        });
+
+      }
+    });
+    return updatedTemplate;
+  }
+  const [updatedProductTemplate, setupdatedProductTemplate] = useState<any>()
+  useEffect(() => {
+    const updatedProductTemplate = updateIsHidden(productTemplate, subProducts);
+    setupdatedProductTemplate(updatedProductTemplate)
+  }, [productTemplate, subProducts])
+
+  const removeHiddenParameters = (subProducts, updatedTemplate) => {
+    if (!updatedTemplate || !updatedTemplate.sections || !Array.isArray(updatedTemplate.sections)) {
+      return subProducts;
+    }
+    const sectionIdsToRemove = updatedTemplate.sections
+      .filter(section => section.isHidden)
+      .map(section => section.id);
+    console.log("sectionIdsToRemove", sectionIdsToRemove)
+    const updatedSubProducts = subProducts.map(product => {
+      const updatedParameters = product.parameters.filter(parameter => !sectionIdsToRemove.includes(parameter.sectionId));
+      return {
+        ...product,
+        parameters: updatedParameters
+      };
+    });
+    console.log("updatedSubProducts", updatedSubProducts)
+    setSubProducts(updatedSubProducts);
+  }
+
   return {
+    updatedProductTemplate,
     t,
     handleTabClick,
     handleNextClick,

@@ -76,7 +76,8 @@ const PriceListPageWidget = ({ widgetType }) => {
     setIncludeVAT,
     isChargeForNewDie,
     setIsChargeForNewDie,
-    straightKnife
+    straightKnife,
+    updatedProductTemplate,
   } = useDigitalOffsetPrice({ clasess, widgetType });
   return (
     <div>
@@ -93,7 +94,28 @@ const PriceListPageWidget = ({ widgetType }) => {
             <div style={clasess.leftSideContainer}>
               <div style={clasess.tabsContainer}>
                 <Tabs variant="scrollable" scrollButtons={"auto"}>
-                  {[...productTemplate?.sections, PricingTab]?.map(
+                  {(updatedProductTemplate && updatedProductTemplate.sections ? updatedProductTemplate.sections : []).concat(PricingTab ? [PricingTab] : []).filter(item => !item.isHidden).map((item, index) => {
+                    return (
+                      <TabsMappingWidget
+                        key={`tab-${index}`}
+                        clasess={clasess}
+                        index={index}
+                        handleTabClick={handleTabClick}
+                        activeIndex={activeIndex}
+                        item={item}
+                        productTemplate={updatedProductTemplate}
+                        onDuplicateSection={duplicateSection}
+                        onRemoveSection={removeSection}
+                        setProductTemplate={setProductTemplate}
+                        isAdmin={false}
+                      />
+                    );
+                  })}
+                </Tabs>
+              </div>
+              {/* <div style={clasess.tabsContainer}>
+                <Tabs variant="scrollable" scrollButtons={"auto"}>
+                  {[...updatedProductTemplate?.sections, PricingTab]?.map(
                     (item, index) => {
                       return (
                         <TabsMappingWidget
@@ -113,7 +135,7 @@ const PriceListPageWidget = ({ widgetType }) => {
                     }
                   )}
                 </Tabs>
-              </div>
+              </div> */}
 
               <div style={{ height: 666, overflow: "scroll", width: "calc(100% - 330px)" }}>
                 <div style={clasess.sectionsContainer}>
