@@ -4,26 +4,30 @@ import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { getAndSetAllCustomers } from "@/services/hooks";
 import { getAndSetEmployees2 } from "@/services/api-service/customers/employees-api";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useRecoilState, useResetRecoilState, useSetRecoilState } from "recoil";
 import { agentsCategoriesState } from "@/pages/customers/customer-states";
 import { employeesListsState } from "../quotes/states";
 import { getAllDepositsApi, showDepositApi } from "@/services/api-service/generic-doc/deposits-api";
 import { useDateFormat } from "@/hooks/use-date-format";
 import { MoreMenuWidget } from "./more-circle";
-import { depositState } from "./components/states";
+import { allDepositsState, depositPaymentTypeSate, depositState, depositsFromDateState, depositsPageCountState, depositsPageSizeState, depositsPageState, depositsToDateState } from "./components/states";
+import { PAYMENT_TYPE } from "../deposit/enums";
 
 const useDeposits = () => {
     const { t } = useTranslation();
     const { callApi } = useGomakeAxios();
     const { navigate } = useGomakeRouter();
     const { GetDateFormat } = useDateFormat();
-    const [page, setPage] = useState(1);
-    const [pagesCount, setPagesCount] = useState(0);
-    const [pageSize, setPageSize] = useState(DEFAULT_VALUES.PageSize);
+    const [page, setPage] = useRecoilState<number>(depositsPageState);
+    const resetPage = useResetRecoilState(depositsPageState);
+    const [pagesCount, setPagesCount] = useRecoilState<number>(depositsPageCountState);
+    const [pageSize, setPageSize] = useRecoilState<number>(depositsPageSizeState);
     const [resetDatePicker, setResetDatePicker] = useState<boolean>(false);
-    const [fromDate, setFromDate] = useState<Date>();
-    const [toDate, setToDate] = useState<Date>();
-    const [allDeposits,setAllDeposits] = useState<any>();
+    const [fromDate, setFromDate] = useRecoilState<Date>(depositsFromDateState);
+    const [toDate, setToDate] = useRecoilState<Date>(depositsToDateState);
+    const [allDeposits, setAllDeposits] = useRecoilState<any>(allDepositsState);
+    const setDeposit = useSetRecoilState<any>(depositState);
+    const [depositPaymentType, setDepositPaymentType] = useRecoilState<any>(depositPaymentTypeSate);
 
     const handlePageSizeChange = (event) => {
         setPage(1);
@@ -34,7 +38,7 @@ const useDeposits = () => {
         setResetDatePicker(false);
         setFromDate(fromDate);
         setToDate(toDate);
-      };
+    };
 
     const tableHeaders = [
         t("deposits.creationDate"),
@@ -47,23 +51,12 @@ const useDeposits = () => {
     ];
 
     const typeOfDeposit = [
-        {label:t("payment.check") , value : 1},
-        {label:t("payment.cash") , value : 2},
-        {label:t("payment.creditCard") , value : 3},
+        { label: t("payment.cash"), value: PAYMENT_TYPE.Cash },
+        { label: t("payment.check"), value: PAYMENT_TYPE.Checks },
+        { label: t("payment.creditCard"), value: PAYMENT_TYPE.CreditCard }
     ];
 
-    const onClickClearFilter = () => {
-        setAgentId(null);
-        setCustomerId(null);
-        setTypeId(null);
-        setDepositNumber("");
-        setFromDate(null);
-        setToDate(null);
-        setResetDatePicker(true);
-        setPage(1);
-      };
-
-    const getAllDeposits= async () => {
+    const getAllDeposits = async (isClear = false) => {
         const callBack = (res) => {
             if (res?.success) {
                 const data = res?.data?.data;
@@ -75,49 +68,95 @@ const useDeposits = () => {
                     deposit?.number,
                     deposit?.typeText,
                     deposit?.totalAmount,
-                    <MoreMenuWidget onClickShowDeposit={(depositId) => showDeposit(deposit?.id)}/>
+                    <MoreMenuWidget onClickShowDeposit={(depositId) => getDepositBYId(deposit?.id)} />
                 ]);
                 setAllDeposits(mapData);
                 setPagesCount(Math.ceil(totalItems / (pageSize)));
             }
         };
         await getAllDepositsApi(callApi, callBack,
-            {
-                model: {
-                    pageNumber: page,
-                    pageSize: pageSize,
-                },
-                patternSearch: "",
-                fromDate: fromDate && GetDateFormat(fromDate),
-                toDate: toDate && GetDateFormat(toDate),
-                dateRange: "date",
-                paymentType: 1
-            }
+            isClear ?
+                {
+                    model: {
+                        pageNumber: page,
+                        pageSize: pageSize,
+                    }
+                }
+                :
+                {
+                    model: {
+                        pageNumber: page,
+                        pageSize: pageSize,
+                    },
+                    patternSearch: "",
+                    fromDate: fromDate && GetDateFormat(fromDate),
+                    toDate: toDate && GetDateFormat(toDate),
+                    paymentType: depositPaymentType?.value
+                }
         );
     };
 
-
-    useEffect(() => {
-        getAllDeposits();
-      }, [page, pageSize]);
-
-    const setDeposit =useSetRecoilState<any>(depositState);
-    const showDeposit= async (depositId : string) => {
+    const getDepositBYId = async (depositId: string) => {
         const callBack = (res) => {
-            if (res?.success) 
-            {
+            if (res?.success) {
                 const data = res?.data;
-                setDeposit(data)
-                navigate(`/deposits/show?id=${data?.id}`); 
+                const cashDepositData = [
+                    GetDateFormat(data?.depositDate),
+                    data?.cashAmount,
+                    data?.depositor,
+                    data?.cashAmount,
+                ];
+                const creditDepositData = data?.creditCards?.map((deposit: any) => [
+                    deposit?.payDate,
+                    deposit?.voucherNumber,
+                    deposit?.customer,
+                    deposit?.total,
+                ]);
+                const checksDepositData = data?.checks?.map((deposit: any) => [
+                    deposit?.checkDate,
+                    deposit?.clientName,
+                    deposit?.checkNumber,
+                    deposit?.bank,
+                    deposit?.branch,
+                    deposit?.receiptsNumber,
+                    deposit?.checkAmount,
+                ]);
+                const newData = {
+                    ...data,
+                    cashDepositData,
+                    creditDepositData,
+                    checksDepositData
+                };
+                setDeposit(newData);
+                navigate(`/deposits/show?id=${data?.id}`);
             }
-            else 
-            {
+            else {
 
             }
         };
-        await showDepositApi(callApi, callBack,{Id : depositId});
+        await showDepositApi(callApi, callBack, { Id: depositId });
     };
 
+    const handleDepositTypeChange = (e: any, value: any) => {
+        setDepositPaymentType(value);
+    };
+
+    const onClickSearchFilter = () => {
+        resetPage();
+        getAllDeposits();
+    };
+
+    const onClickClearFilter = () => {
+        setAgentId(null);
+        setCustomerId(null);
+        setDepositPaymentType(null);
+        setDepositNumber("");
+        setFromDate(null);
+        setToDate(null);
+        setResetDatePicker(true);
+        resetPage();
+        getAllDeposits(true);
+    };
     //////////////////////////// FILTERS ////////////////////////////////////
 
     const [customerId, setCustomerId] = useState<any>();
@@ -126,9 +165,8 @@ const useDeposits = () => {
     const [canOrder, setCanOrder] = useState(false);
     const [agentId, setAgentId] = useState<any>();
     const [agentsCategories, setAgentsCategories] = useRecoilState(agentsCategoriesState);
-    const setEmployeeListValue = useSetRecoilState<string[]>(employeesListsState);
-    const [typeId, setTypeId] = useState<any>();
     const [depositNumber, setDepositNumber] = useState<string>();
+    const setEmployeeListValue = useSetRecoilState<string[]>(employeesListsState);
 
 
     const handleCustomerChange = (e: any, value: any) => {
@@ -139,9 +177,6 @@ const useDeposits = () => {
         setAgentId(value);
     };
 
-    const handleDepositTypeChange = (e: any, value: any) => {
-        setTypeId(value);
-    };
 
     const handleDepositNumberChange = (e: any) => {
         setDepositNumber(e.target.value);
@@ -187,6 +222,7 @@ const useDeposits = () => {
         };
         await getAndSetEmployees2(callApi, callBack, { isAgent: isAgent });
     };
+
     //////////////////////////// FILTERS ////////////////////////////////////
 
 
@@ -212,14 +248,14 @@ const useDeposits = () => {
         onSelectDateRange,
         resetDatePicker,
         typeOfDeposit,
-        typeId,
+        depositPaymentType,
         handleDepositTypeChange,
-        onClickClearFilter,
         depositNumber,
         handleDepositNumberChange,
         getAllDeposits,
-        showDeposit,
-        allDeposits
+        allDeposits,
+        onClickSearchFilter,
+        onClickClearFilter
     };
 };
 

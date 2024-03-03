@@ -45,10 +45,25 @@ const useDeposit = () => {
         }
     };
 
+    
+    const renderTableRows = () => {
+        switch (deposit?.depositType) {
+            case (DEPOSIT_TYPE.Checks):
+                return deposit?.checksDepositData;
+            case (DEPOSIT_TYPE.CreditCard):
+                return deposit?.creditDepositData;
+            case (DEPOSIT_TYPE.Cash):
+                return deposit?.cashDepositData;
+            default:
+                return [];
+        }
+    };
+
     return {
         t,
         deposit,
         renderTableHeaders,
+        renderTableRows
     };
 };
 

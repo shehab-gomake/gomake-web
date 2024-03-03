@@ -23,11 +23,12 @@ const DepositsFiltersWidget = () => {
         onSelectDateRange,
         resetDatePicker,
         typeOfDeposit,
-        typeId,
+        depositPaymentType,
         handleDepositTypeChange,
-        onClickClearFilter,
         depositNumber,
-        handleDepositNumberChange
+        handleDepositNumberChange,
+        onClickSearchFilter,
+        onClickClearFilter,
     } = useDeposits();
 
     useEffect(() => {
@@ -72,13 +73,13 @@ const DepositsFiltersWidget = () => {
                         {t("deposits.typeOfDeposit")}
                     </label>
                     <GoMakeAutoComplate
-                        key={typeId?.value}
+                        key={depositPaymentType?.value}
                         options={typeOfDeposit}
                         style={classes.textInputStyle}
                         getOptionLabel={(option: any) => option.label}
                         placeholder={t("deposits.typeOfDeposit")}
                         onChange={handleDepositTypeChange}
-                        value={typeId}
+                        value={depositPaymentType}
                     />
                 </div>
                 <div style={classes.filterContainerStyle}>
@@ -100,7 +101,7 @@ const DepositsFiltersWidget = () => {
                     <div style={classes.filterLabelStyle} />
                     <GomakePrimaryButton
                         style={classes.searchBtnStyle}
-                        onClick={() => alert("loading...")}
+                        onClick={onClickSearchFilter}
                     >
                         {t("sales.quote.search")}
                     </GomakePrimaryButton>

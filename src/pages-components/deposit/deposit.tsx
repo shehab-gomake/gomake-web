@@ -12,19 +12,18 @@ export interface IDepositProps {
 
 const DepositPageWidget = ({ actionType }: IDepositProps) => {
   const { classes } = useStyle();
-  const { renderTableHeaders , deposit } = useDeposit();
+  const { renderTableHeaders, renderTableRows, deposit } = useDeposit();
 
   return (
     <>
       <div style={classes.mainContainer}>
         <Stack direction="column" gap="30px" paddingLeft="20px" paddingRight="20px"  >
           <DepositHeaderSection actionType={actionType} />
-                          {/* <span style={classes.lineDateStyle} />  */}
-
+          {/* <span style={classes.lineDateStyle} />  */}
           <DepositFilterSection actionType={actionType} />
         </Stack>
         <Stack style={classes.secondDivStyle}>
-          <DepositTable tableHeaders={renderTableHeaders} tableRows={[deposit,deposit]} />
+          <DepositTable tableHeaders={renderTableHeaders} tableRows={renderTableRows()} />
         </Stack>
       </div>
     </>

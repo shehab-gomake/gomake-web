@@ -54,7 +54,8 @@ const DepositTable = ({tableHeaders , tableRows } : ITableProps) => {
                                 <>
                                     <RowMappingWidget
                                         key={item.id}
-                                        item={item}
+                                        // item={item}
+                                        cells={Object.values(item)}  
                                         index={index}
                                     />
                                 </>

@@ -23,12 +23,16 @@ const DepositsListPageWidget = () => {
         allDeposits
     } = useDeposits();
 
-
     useEffect(() => {
         getAllDeposits();
         getAgentCategories(true, setAgentsCategories);
         getAgentCategories(null, setEmployeeListValue);
     }, []);
+
+
+    useEffect(() => {
+        getAllDeposits();
+    }, [page, pageSize]);
 
     return (
         <>
