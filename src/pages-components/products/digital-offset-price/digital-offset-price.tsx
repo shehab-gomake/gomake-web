@@ -86,8 +86,6 @@ const PriceListPageWidget = ({widgetType}) => {
             selector: '[data-tour="a330193f-492c-40a8-86f3-8edf5c8f0d5e"]',
             content: 'Please enter a name for the job. You can use any name you prefer, such as \'Test,\' for example.',
             position: 'bottom',
-          action: elem => window.scroll(0,0)
-
         },
         {
             selector: '[data-tour="de2bb7d5-01b1-4b2b-b0fa-81cd0445841b"]',
@@ -98,6 +96,14 @@ const PriceListPageWidget = ({widgetType}) => {
             selector: '[data-tour="4991945c-5e07-4773-8f11-2e3483b70b53"]',
             content: 'Please specify the number of types (designs) required for the job. Let\'s start with one type.',
             position: 'bottom',
+        },
+        {
+            selector: '[data-tour="e6cb1b69-d1f9-4319-85e8-4c2ae7c3e7de"]',
+            content: 'Now, please select a size for the product.',
+            position: 'right',
+            styles: {
+                maskWrapper: (base) => ({...base, zIndex: 1}),
+            },
         },
         {
             selector: '[data-tour="e3f211c6-c9d2-4ba1-83b6-87d2cf3402b4"]',
@@ -130,7 +136,7 @@ const PriceListPageWidget = ({widgetType}) => {
             styles: {
                 maskWrapper: (base) => ({...base, zIndex: 1}),
             },
-            action: elem => window.scroll(0,1800)
+            action: elem => elem?.scrollIntoView({behavior: "smooth", block: 'end'}),
         },
         {
             selector: '[data-tour="5f4b6094-1dc5-40e4-81fd-e1294fca9d10"]',
@@ -139,7 +145,7 @@ const PriceListPageWidget = ({widgetType}) => {
             styles: {
                 maskWrapper: (base) => ({...base, zIndex: 1}),
             },
-            action: elem => elem?.scrollIntoView()
+            action: elem => elem?.scrollIntoView({behavior: "smooth", block: 'end'})
 
         },
         {
@@ -207,7 +213,7 @@ const PriceListPageWidget = ({widgetType}) => {
         setCurrentStep(0);
     }, [relatedParameters]);
     return (
-        <div>
+        <div style={{overflow: 'hidden'}}>
             {productTemplate?.sections?.length > 0 && (
                 <div style={clasess.mainContainer}>
                     <div>

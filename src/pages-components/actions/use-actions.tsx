@@ -20,6 +20,7 @@ const useActions = () => {
   const { t } = useTranslation();
   const { CheckPermission } = useUserPermission();
   const [allActions, setAllActions] = useState<any>();
+  const PRINTING_ACTION_ID = '52b26bea-82ef-4eb6-a031-ea7a9f856cbe';
   const getActions = useCallback(async () => {
     const data = await getAllPrintHouseActions(callApi, setAllActions);
     const mapData = data?.map((action) => [
@@ -47,6 +48,7 @@ const useActions = () => {
       ),
       <PermissionCheck userPermission={Permissions.EDIT_MACHINE}>
         <PrimaryButton
+            data-tour={action?.id === PRINTING_ACTION_ID ? 'editPrintingAction' : undefined}
           startIcon={
             <EditIcon color={primaryColor(500)} width={20} height={20} />
           }

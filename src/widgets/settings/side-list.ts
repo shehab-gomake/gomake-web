@@ -32,7 +32,7 @@ export const list: IListItem[] = [
     path: "products",
     editComponent: EditProductWidget,
     subProductComponent: ProductsSettingsWidget,
-    dataTour: 'settingsProducts'
+    dataTour: 'settingsProductsLink'
 
   },
   {
@@ -55,6 +55,7 @@ export const list: IListItem[] = [
     value: "6",
     icon: PeopleIcon,
     path: "users",
+    dataTour: 'usersSettingsLink'
   },
   {
     component: EmptyComponent,
