@@ -22,6 +22,7 @@ const DepositTabTable = ({ tableHeaders, tableRows, itemsCount, total, onClickMa
         <div style={classes.tabContainerStyle}>
             <div>
                 <Checkbox
+                key={"aa"}
                     icon={<CheckboxIcon />}
                     checkedIcon={<CheckboxCheckedIcon />}
                     onChange={handleSelectAll}
