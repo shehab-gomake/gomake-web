@@ -9,10 +9,12 @@ import { useMemo, useState } from "react";
 import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
 import { Checkbox } from "@mui/material";
 import { DepositTabTable } from "./components/tabs-table-prices";
+import { useDateFormat } from "@/hooks/use-date-format";
 
 const useDeposit = () => {
     const { t } = useTranslation();
     const { callApi } = useGomakeAxios();
+    const { GetDateFormat , GetShortDateFormat } = useDateFormat();
     const { alertFaultGetData } = useSnackBar();
     const [accounts, setAccounts] = useState();
     const [total, setTotal] = useState<number>(0);
@@ -27,7 +29,6 @@ const useDeposit = () => {
         setItemsCount(0);
         setTotal(0);
         setSelectAllChecked(false);
-
         const updatedChecksToDeposit = metaData?.checksToDeposit?.map((deposit) => {
             return {
                 ...deposit,
@@ -49,29 +50,29 @@ const useDeposit = () => {
         setMetaData((prevMetaData) => ({
             ...prevMetaData,
             cashReceiptsToDeposit: updatedCashReceiptsToDeposit,
-            creditCardsToDeposit:updatedCreditsToDeposit,
-            checksToDeposit:updatedChecksToDeposit
+            creditCardsToDeposit: updatedCreditsToDeposit,
+            checksToDeposit: updatedChecksToDeposit
         }));
     }
 
-    const handleSelectAllChange = (itemsToDeposits , stringItemToDeposits, handleCheckBox , totalSting , metaData) => {
+    const handleSelectAllChange = (itemsToDeposits, stringItemToDeposits, handleCheckBox, totalSting, metaData) => {
         setSelectAllChecked((prev) => !prev);
-    
+
         let newTotal = 0;
         let newItemsCount = 0;
-    
+
         itemsToDeposits.forEach((data, index) => {
             const depositItem = metaData?.[stringItemToDeposits][index];
             const isChecked = !selectAllChecked;
-    
+
             newTotal += isChecked ? Number(depositItem?.[totalSting]) || 0 : 0;
             newItemsCount += isChecked ? 1 : 0;
-    
+
             handleCheckBox(index, depositItem)({
                 target: { checked: isChecked },
             });
         });
-    
+
         setTotal(newTotal);
         setItemsCount(newItemsCount);
     };
@@ -117,7 +118,7 @@ const useDeposit = () => {
             };
         });
     };
-    
+
     const handleCreditCheckboxChange = (index, depositItem) => (event) => {
         const isChecked = event.target.checked;
         const creditTotal = Number(depositItem?.total) || 0;
@@ -212,11 +213,10 @@ const useDeposit = () => {
         }
     };
 
-
     const mapDepositsData = {
         cash: useMemo(() => {
             return metaData?.cashReceiptsToDeposit?.map((deposit: any, index: number) => {
-                const isChecked = deposit.isChecked || false; 
+                const isChecked = deposit.isChecked || false;
                 return [
                     <Checkbox
                         key={`${index}-cash-checkBox`}
@@ -225,7 +225,7 @@ const useDeposit = () => {
                         onChange={handleCashCheckboxChange(index, deposit)}
                         checked={isChecked}
                     />,
-                    deposit?.taxDate,
+                    GetShortDateFormat(deposit?.taxDate),
                     "test",
                     deposit?.client?.name,
                     deposit?.cashSum,
@@ -234,7 +234,7 @@ const useDeposit = () => {
         }, [metaData]),
         deferredChecks: useMemo(() => {
             return metaData?.checksToDeposit?.map((deposit: any, index: number) => {
-                const isChecked = deposit.isChecked || false; 
+                const isChecked = deposit.isChecked || false;
                 return isDeferredCheckEligible(deposit?.checkDate) && [
                     <Checkbox
                         key={`${index}-deferredCheck-checkBox`}
@@ -243,7 +243,7 @@ const useDeposit = () => {
                         onChange={handleChecksCheckboxChange(index, deposit)}
                         checked={isChecked}
                     />,
-                    deposit?.checkDate,
+                    GetShortDateFormat(deposit?.checkDate),
                     deposit?.customer,
                     deposit?.checkNumber,
                     deposit?.bank,
@@ -263,7 +263,7 @@ const useDeposit = () => {
                         onChange={handleChecksCheckboxChange(index, deposit)}
                         checked={isChecked}
                     />,
-                    deposit?.checkDate,
+                    GetShortDateFormat(deposit?.checkDate),
                     deposit?.customer,
                     deposit?.checkNumber,
                     deposit?.bank,
@@ -274,7 +274,7 @@ const useDeposit = () => {
         }, [metaData]),
         credit: useMemo(() => {
             return metaData?.creditCardsToDeposit?.map((deposit: any, index: number) => {
-                const isChecked = deposit.isChecked || false; 
+                const isChecked = deposit.isChecked || false;
                 return [
                     <Checkbox
                         key={`${index}-creditCard-checkBox`}
@@ -283,7 +283,7 @@ const useDeposit = () => {
                         onChange={handleCreditCheckboxChange(index, deposit)}
                         checked={isChecked}
                     />,
-                    deposit?.payDate,
+                    GetShortDateFormat(deposit?.payDate),
                     deposit?.voucherNumber,
                     deposit?.customer,
                     deposit?.total
@@ -291,7 +291,7 @@ const useDeposit = () => {
             });
         }, [metaData]),
     };
-    
+
     const depositsTabs: ITab[] = [
         {
             title: t("deposits.checks"),
@@ -301,7 +301,7 @@ const useDeposit = () => {
                     tableRows={mapDepositsData.checks}
                     itemsCount={itemsCount}
                     total={total}
-                   handleSelectAll={() => handleSelectAllChange(mapDepositsData.checks, "checksToDeposit",handleChecksCheckboxChange,"checkAmount",metaData)}
+                    handleSelectAll={() => handleSelectAllChange(mapDepositsData.checks, "checksToDeposit", handleChecksCheckboxChange, "checkAmount", metaData)}
                     selectAllChecked={selectAllChecked}
                 />
         },
@@ -313,7 +313,7 @@ const useDeposit = () => {
                     tableRows={mapDepositsData.deferredChecks}
                     itemsCount={itemsCount}
                     total={total}
-                    handleSelectAll={() => handleSelectAllChange(mapDepositsData.deferredChecks, "checksToDeposit",handleChecksCheckboxChange,"checkAmount",metaData)}
+                    handleSelectAll={() => handleSelectAllChange(mapDepositsData.deferredChecks, "checksToDeposit", handleChecksCheckboxChange, "checkAmount", metaData)}
                     selectAllChecked={selectAllChecked}
                 />
         },
@@ -338,7 +338,7 @@ const useDeposit = () => {
                         tableRows={mapDepositsData.cash}
                         itemsCount={itemsCount}
                         total={total}
-                        handleSelectAll={() => handleSelectAllChange(mapDepositsData.cash, "cashReceiptsToDeposit", handleCashCheckboxChange , "cashSum",metaData)}
+                        handleSelectAll={() => handleSelectAllChange(mapDepositsData.cash, "cashReceiptsToDeposit", handleCashCheckboxChange, "cashSum", metaData)}
                         selectAllChecked={selectAllChecked}
                     />
                 </div>

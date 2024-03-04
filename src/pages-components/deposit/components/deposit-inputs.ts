@@ -104,6 +104,8 @@ const DepositInputs = (state) => {
 }
 
 const newDepositInputs = (state, accountsOptions) => {
+  const { GetShortDateFormat } = useDateFormat();
+
   return [
     {
       name: "depositDate",
@@ -112,7 +114,7 @@ const newDepositInputs = (state, accountsOptions) => {
       placeholder: "deposits.depositDate",
       required: false,
       parameterKey: "depositDate",
-      value: state?.depositDate,
+      value: GetShortDateFormat(state?.depositDate),
       options: [],
       isValid: true,
       readOnly: false,
