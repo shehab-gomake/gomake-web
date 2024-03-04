@@ -64,7 +64,7 @@ const ButtonsContainer = ({
           <PaymentBtn handleOpenModal={onClickOpenPaymentModal} />
         }
         {
-          router.query.canEdit === "true" && documentType !== DOCUMENT_TYPE.receipt && <GomakePrimaryButton
+          router.query.canEdit != "false" && documentType !== DOCUMENT_TYPE.receipt && <GomakePrimaryButton
             leftIcon={<PlusIcon stroke={"#344054"} />}
             style={classes.btnContainer}
             onClick={() => onOpenNewItem()}

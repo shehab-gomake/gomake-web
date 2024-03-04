@@ -100,7 +100,7 @@ const useQuoteWidget = ({ documentType }: any) => {
   const getAllCustomersCreateQuote = useCallback(async (SearchTerm?) => {
     await getAndSetAllCustomers(callApi, setCustomersListCreateQuote, {
       ClientType: documentType === DOCUMENT_TYPE.purchaseOrder ? "S" : "C",
-      onlyCreateOrderClients: false,
+      onlyCreateOrderClients: documentType === DOCUMENT_TYPE.purchaseOrder ? true : false,
       searchTerm: SearchTerm,
     });
   }, []);
