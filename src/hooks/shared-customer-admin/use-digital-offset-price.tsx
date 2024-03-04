@@ -68,7 +68,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const { alertFaultAdded, alertFaultUpdate } = useSnackBar();
   const [isChargeForNewDie, setIsChargeForNewDie] = useState(false)
   const { clientTypesValue, renderOptions, checkWhatRenderArray } =
-    useQuoteWidget();
+    useQuoteWidget({});
   const { allMaterials, getAllMaterial } = useMaterials();
   const [selectedValueConfig, setSelectedValueConfig] = useRecoilState(
     selectedValueConfigState

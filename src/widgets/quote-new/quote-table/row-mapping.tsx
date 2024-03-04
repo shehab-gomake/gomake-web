@@ -120,7 +120,7 @@ const RowMappingWidget = ({
           borderBottom: item?.childsDocumentItems && "none",
         }}
       >
-        <CharacterDetails details={item.details} getQuote={getQuote} documentItemId={item?.id} canUpdate={router.query.Id ? false : !isQuoteConfirmation} />
+        <CharacterDetails details={item.details} getQuote={getQuote} documentItemId={item?.id} canUpdate={router.query.canEdit === "false" ? false : !isQuoteConfirmation} />
       </PrimaryTableCell>
       <PrimaryTableCell
         style={{
@@ -133,7 +133,7 @@ const RowMappingWidget = ({
           <InputUpdatedValues
             value={item.quantity}
             onBlur={onBlurAmount}
-            isUpdate={router.query.Id ? false : isUpdateAmount}
+            isUpdate={router.query.canEdit === "false" ? false : isUpdateAmount}
             setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdateAmount}
             onInputChange={(e) => onInputChangeAmount(e)}
           />
@@ -150,7 +150,7 @@ const RowMappingWidget = ({
           <InputUpdatedValues
             value={item.discount ? item.discount : "0"}
             onBlur={onBlurDiscount}
-            isUpdate={router.query.Id ? false : isUpdateDiscount}
+            isUpdate={router.query.canEdit === "false" ? false : isUpdateDiscount}
             setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdateDiscount}
             onInputChange={(e) => onInputChangeDiscount(e)}
           />
@@ -167,7 +167,7 @@ const RowMappingWidget = ({
           <InputUpdatedValues
             value={item.price}
             onBlur={onBlurPrice}
-            isUpdate={router.query.Id ? false : isUpdatePrice}
+            isUpdate={router.query.canEdit === "false" ? false : isUpdatePrice}
             setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdatePrice}
             onInputChange={(e) => onInputChangePrice(e)}
           />
@@ -184,7 +184,7 @@ const RowMappingWidget = ({
           <InputUpdatedValues
             value={item.finalPrice}
             onBlur={onBlurFinalPrice}
-            isUpdate={router.query.Id ? false : isUpdateFinalPrice}
+            isUpdate={router.query.canEdit === "false" ? false : isUpdateFinalPrice}
             setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdateFinalPrice}
             onInputChange={(e) => onInputChangeFinalPrice(e)}
           />

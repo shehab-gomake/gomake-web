@@ -60,11 +60,11 @@ const ButtonsContainer = ({
     <div style={classes.writeCommentContainer}>
       <div style={classes.btnsContainer}>
         {
-            (isNewCreation && documentType === DOCUMENT_TYPE.receipt) &&
-            <PaymentBtn handleOpenModal={onClickOpenPaymentModal} />
+          (isNewCreation && documentType === DOCUMENT_TYPE.receipt) &&
+          <PaymentBtn handleOpenModal={onClickOpenPaymentModal} />
         }
         {
-          !router.query.Id && documentType !== DOCUMENT_TYPE.receipt && <GomakePrimaryButton
+          router.query.canEdit === "true" && documentType !== DOCUMENT_TYPE.receipt && <GomakePrimaryButton
             leftIcon={<PlusIcon stroke={"#344054"} />}
             style={classes.btnContainer}
             onClick={() => onOpenNewItem()}
@@ -128,7 +128,7 @@ const ButtonsContainer = ({
           </GomakePrimaryButton>
         }
         {
-          (documentType === DOCUMENT_TYPE.receipt &&  !isNewCreation && quoteItemValue.status !== DELIVERY_NOTE_STATUSES.Canceled )&& <GomakePrimaryButton
+          (documentType === DOCUMENT_TYPE.receipt && !isNewCreation && quoteItemValue.status !== DELIVERY_NOTE_STATUSES.Canceled) && <GomakePrimaryButton
             style={classes.btnThirdContainer}
             onClick={quoteItemValue.creditCardTotal > 0 ? onClickOpenCancelReceiptModal : onClickOpenDeleteModal}
           >

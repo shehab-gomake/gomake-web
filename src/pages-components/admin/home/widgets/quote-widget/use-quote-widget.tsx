@@ -8,7 +8,7 @@ import {
 } from "@/services/hooks";
 import { useTranslation } from "react-i18next";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
-import { useRecoilState , useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   QuoteIfExistState,
   QuoteNumberState,
@@ -26,7 +26,7 @@ import { QuotesListPageWidget } from "@/pages-components/quotes/quotes";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { CLIENT_TYPE_Id } from "@/pages/customers/enums";
 
-const useQuoteWidget = () => {
+const useQuoteWidget = ({ documentType }: any) => {
   const { t } = useTranslation();
   const { errorColor } = useGomakeTheme();
   const { callApi } = useGomakeAxios();
@@ -38,10 +38,10 @@ const useQuoteWidget = () => {
   const [userQuote, setUserQuote] = useState<any>(null);
   const [openModal, setOpenModal] = useState(false);
   const [selectedClientType, setSelectedClientType] = useState<any>({});
-  const [selectedClient, setSelectedClient] =useRecoilState<any>(selectedClientState);
-  const [QuoteIfExist, setQuoteIfExist] =useRecoilState<any>(QuoteIfExistState);
+  const [selectedClient, setSelectedClient] = useRecoilState<any>(selectedClientState);
+  const [QuoteIfExist, setQuoteIfExist] = useRecoilState<any>(QuoteIfExistState);
   const [quoteNumber, setquoteNumber] = useRecoilState<any>(QuoteNumberState);
-  const setAllReports =useSetRecoilState<any>(homeReportsState);
+  const setAllReports = useSetRecoilState<any>(homeReportsState);
   const [selectedProduct, setSelectedProduct] = useState<any>({});
   const [isDisabled, setIsDisabled] = useState(true);
 
@@ -99,7 +99,7 @@ const useQuoteWidget = () => {
 
   const getAllCustomersCreateQuote = useCallback(async (SearchTerm?) => {
     await getAndSetAllCustomers(callApi, setCustomersListCreateQuote, {
-      ClientType: "C",
+      ClientType: documentType === DOCUMENT_TYPE.purchaseOrder ? "S" : "C",
       onlyCreateOrderClients: false,
       searchTerm: SearchTerm,
     });
@@ -163,7 +163,7 @@ const useQuoteWidget = () => {
     getAndSetExistQuote();
   }, []);
 
-  useEffect(() => { 
+  useEffect(() => {
     getAllProducts();
   }, [selectedClient, selectedClientType]);
 
@@ -210,7 +210,7 @@ const useQuoteWidget = () => {
   // what is userQuote?.result !!!
   const getAllClientTypes = useCallback(async () => {
     try {
-      await getAndSetClientTypes(callApi, setClientTypesValues , {cardType :CLIENT_TYPE_Id.CUSTOMER});
+      await getAndSetClientTypes(callApi, setClientTypesValues, { cardType: CLIENT_TYPE_Id.CUSTOMER });
       if (userQuote?.result) {
         getAllCustomersCreateQuote(userQuote?.result?.clientName);
       } else {
@@ -249,13 +249,13 @@ const useQuoteWidget = () => {
         setAllReports(res?.data)
       }
     };
-    await getAllReportsApi(callApi, callBack, { customerId: selectedClient?.id , productId:selectedProduct?.id });
+    await getAllReportsApi(callApi, callBack, { customerId: selectedClient?.id, productId: selectedProduct?.id });
   };
 
 
-  useEffect(()=>{
+  useEffect(() => {
     getAllReports();
-  },[selectedClient,selectedProduct])
+  }, [selectedClient, selectedProduct])
 
   return {
     clientTypesValue,
