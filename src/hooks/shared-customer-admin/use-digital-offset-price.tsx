@@ -993,6 +993,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   useEffect(() => {
     if (currentProductItemValueTotalPrice && quantity) {
       const productItemValue = {
+        signalRConnectionId:connectionId,
         productItemValueId: productItemValueDraftId,
         itemId: router?.query?.documentId,
         productId: router?.query?.productId,
