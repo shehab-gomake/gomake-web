@@ -8,9 +8,10 @@ import { DEPOSIT_ACTIONS } from "../enums";
 
 interface IFiltersSection {
     actionType: DEPOSIT_ACTIONS;
+    accountsOptions?: any;
 }
 
-const DepositFilterSection = ({ actionType }: IFiltersSection) => {
+const DepositFilterSection = ({ actionType, accountsOptions }: IFiltersSection) => {
 
     const deposit = useRecoilValue<any>(depositState);
     const [newDeposit, setNewDeposit] = useRecoilState<any>(newDepositState);
@@ -25,7 +26,7 @@ const DepositFilterSection = ({ actionType }: IFiltersSection) => {
     return (
         <Stack direction="column" gap="10px">
             <Stack direction="row" gap="10px">
-                {(actionType === DEPOSIT_ACTIONS.Create ? newDepositInputs(newDeposit) : DepositInputs(deposit)).slice(0, 2).map((item) => (
+                {(actionType === DEPOSIT_ACTIONS.Create ? newDepositInputs(newDeposit, accountsOptions) : DepositInputs(deposit)).slice(0, 2).map((item) => (
                     <FormInput
                         input={item as IInput}
                         changeState={onChangeDepositInputs}
@@ -36,8 +37,8 @@ const DepositFilterSection = ({ actionType }: IFiltersSection) => {
                 ))}
             </Stack>
             <Stack display="flex" flexWrap="wrap" direction="row" gap="10px">
-                {DepositInputs(deposit).slice(2, 8).map((item) => (
-                    <FormInput input={item as IInput} changeState={onChangeDepositInputs} error={false} key={item.name} readonly={actionType === DEPOSIT_ACTIONS.Show} />
+                {(actionType === DEPOSIT_ACTIONS.Create ? newDepositInputs(newDeposit, accountsOptions) : DepositInputs(deposit)).slice(2, 9).map((item) => (
+                    <FormInput input={item as IInput} changeState={onChangeDepositInputs} error={false} key={item.name} readonly={!!item.readOnly} />
                 ))}
             </Stack>
         </Stack>

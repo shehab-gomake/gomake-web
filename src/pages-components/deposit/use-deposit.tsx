@@ -1,11 +1,11 @@
 import { useTranslation } from "react-i18next";
-import { useRecoilState, useResetRecoilState } from "recoil";
+import { useRecoilValue, useResetRecoilState, useSetRecoilState } from "recoil";
 import { depositState, newDepositState } from "../deposits/components/states";
 import { DEPOSIT_TYPE } from "./enums";
 import { ITab } from "@/components/tabs/interface";
 import { getDepositsMetaDataApi } from "@/services/api-service/generic-doc/deposits-api";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
 import { Checkbox } from "@mui/material";
 import { DepositTabTable } from "./components/tabs-table-prices";
@@ -14,25 +14,52 @@ const useDeposit = () => {
     const { t } = useTranslation();
     const { callApi } = useGomakeAxios();
     const { alertFaultGetData } = useSnackBar();
-    const [cashReceiptsToDeposits, setCashReceiptsToDeposits] = useState();
     const [checksToDeposits, setChecksToDeposits] = useState();
+    const [deferredChecksToDeposits, setDeferredChecksToDeposits] = useState();
+
     const [creditCardToDeposits, setCreditCardToDeposits] = useState();
+    const [accounts, setAccounts] = useState();
     const [total, setTotal] = useState<number>(0);
     const [itemsCount, setItemsCount] = useState<number>(0);
-    const [deposit, setDeposit] = useRecoilState<any>(depositState);
+    const deposit = useRecoilValue<any>(depositState);
+    const setNewDeposit = useSetRecoilState<any>(newDepositState);
     const resetDepositState = useResetRecoilState(depositState);
+    const [selectAllChecked, setSelectAllChecked] = useState(false);
+    const [metaData, setMetaData] = useState<any>();
 
 
     const handleResetTotalAndCount = () => {
         setItemsCount(0);
         setTotal(0);
+        setSelectAllChecked(false);
     }
 
-    const handleCashCheckboxChange = (index, depositItem) => (event) => {
-        const isChecked = event.target.checked;
-        const cashSum = Number(depositItem?.cashSum) || 0;
-        setTotal((prevTotal) => isChecked ? prevTotal + cashSum : prevTotal - cashSum);
-        setItemsCount((prevCount) => isChecked ? prevCount + 1 : prevCount - 1);
+    
+
+    
+    const handleSelectAllChange = (cashReceiptsToDeposits, metaData) => {
+        setSelectAllChecked((prev) => !prev);
+    
+        let newTotal = 0;
+        let newItemsCount = 0;
+    
+        cashReceiptsToDeposits.forEach((data, index) => {
+            const depositItem = metaData?.cashReceiptsToDeposit[index];
+            const isChecked = !selectAllChecked;
+    
+            // Update total and itemsCount based on whether the checkbox is checked or unchecked
+            newTotal += isChecked ? Number(depositItem?.cashSum) || 0 : 0;
+            newItemsCount += isChecked ? 1 : 0;
+    
+            // Update metaData state
+            handleCashCheckboxChange(index, depositItem)({
+                target: { checked: isChecked },
+            });
+        });
+    
+        // Set the updated total and itemsCount
+        setTotal(newTotal);
+        setItemsCount(newItemsCount);
     };
 
     const handleCreditCheckboxChange = (index, depositItem) => (event) => {
@@ -49,53 +76,102 @@ const useDeposit = () => {
         setItemsCount((prevCount) => isChecked ? prevCount + 1 : prevCount - 1);
     };
 
-    const [newDeposit, setNewDeposit] = useRecoilState<any>(newDepositState);
+    const isDeferredCheckEligible = (checkDate: string): boolean => {
+        const currentDate = new Date();
+        const checkDateObj = new Date(checkDate);
+        return checkDateObj > currentDate;
+    };
+
+
+
+
+    const handleSelectAllChangeee = (cashReceiptsToDeposits, metaData) => {
+        setSelectAllChecked((prev) => !prev);
+            cashReceiptsToDeposits.forEach((data, index) => {
+            const depositItem = metaData?.cashReceiptsToDeposit[index];
+            handleCashCheckboxChange(index, depositItem)({
+                target: { checked: !selectAllChecked },
+            });
+        });
+    };
+
+    const handleCashCheckboxChange = (index, depositItem) => (event) => {
+        const isChecked = event.target.checked;
+        const cashSum = Number(depositItem?.cashSum) || 0;
+    
+        // Update total and itemsCount based on whether the checkbox is checked or unchecked
+        setTotal((prevTotal) => isChecked ? prevTotal + cashSum : prevTotal - cashSum);
+        setItemsCount((prevCount) => isChecked ? prevCount + 1 : prevCount - 1);
+    
+        // Update metaData state
+        setMetaData((prevMetaData) => {
+            const updatedCashReceiptsToDeposit = [...prevMetaData.cashReceiptsToDeposit];
+            updatedCashReceiptsToDeposit[index] = {
+                ...updatedCashReceiptsToDeposit[index],
+                isChecked: isChecked,
+            };
+            return {
+                ...prevMetaData,
+                cashReceiptsToDeposit: updatedCashReceiptsToDeposit,
+            };
+        });
+    };
+    
 
     const getDepositMetaData = async () => {
         const callBack = (res) => {
             if (res?.success) {
-                setNewDeposit(res?.data?.erpDeposit);
                 const metaData = res?.data?.depositMetaData;
-                const mapCashData = metaData?.cashReceiptsToDeposit?.map((deposit: any, index: number) => [
-                    <Checkbox
-                        icon={<CheckboxIcon />}
-                        checkedIcon={<CheckboxCheckedIcon />}
-                        onChange={handleCashCheckboxChange(index, deposit)}
-                    />,
-                    deposit?.taxDate,
-                    "test",
-                    deposit?.client?.name,
-                    deposit?.cashSum,
-
-                ]);
+                setNewDeposit(res?.data?.erpDeposit);
+                setMetaData(metaData)
+                setAccounts(metaData?.accounts);
+               
                 const mapCreditData = metaData?.creditCardsToDeposit?.map((deposit: any, index: number) => [
                     <Checkbox
+                        key={index}
                         icon={<CheckboxIcon />}
                         checkedIcon={<CheckboxCheckedIcon />}
                         onChange={handleCreditCheckboxChange(index, deposit)}
 
-                    />, deposit?.payDate,
+                    />,
+                    deposit?.payDate,
                     deposit?.voucherNumber,
                     deposit?.customer,
                     deposit?.total
                 ]);
-                const mapChecksData = metaData?.checksToDeposit?.map((deposit: any, index: number) => [
-                    <Checkbox
-                        icon={<CheckboxIcon />}
-                        checkedIcon={<CheckboxCheckedIcon />}
-                        onChange={handleChecksCheckboxChange(index, deposit)}
-
-                    />,
-                    deposit?.checkDate,
-                    deposit?.customer,
-                    deposit?.checkNumber,
-                    deposit?.bank,
-                    deposit?.branch,
-                    deposit?.checkAmount
-                ]);
-                setCashReceiptsToDeposits(mapCashData);
+                const mapChecksData = metaData?.checksToDeposit?.map((deposit: any, index: number) => {
+                    return !isDeferredCheckEligible(deposit?.checkDate) && [
+                        <Checkbox
+                            icon={<CheckboxIcon />}
+                            checkedIcon={<CheckboxCheckedIcon />}
+                            onChange={handleChecksCheckboxChange(index, deposit)}
+                        />,
+                        deposit?.checkDate,
+                        deposit?.customer,
+                        deposit?.checkNumber,
+                        deposit?.bank,
+                        deposit?.branch,
+                        deposit?.checkAmount
+                    ];
+                }).filter(Boolean);
+                const mapDeferredChecksData = metaData?.checksToDeposit?.map((deposit: any, index: number) => {
+                    return isDeferredCheckEligible(deposit?.checkDate) && [
+                        <Checkbox
+                            icon={<CheckboxIcon />}
+                            checkedIcon={<CheckboxCheckedIcon />}
+                            onChange={handleChecksCheckboxChange(index, deposit)}
+                        />,
+                        deposit?.checkDate,
+                        deposit?.customer,
+                        deposit?.checkNumber,
+                        deposit?.bank,
+                        deposit?.branch,
+                        deposit?.checkAmount
+                    ];
+                }).filter(Boolean);
                 setCreditCardToDeposits(mapCreditData);
                 setChecksToDeposits(mapChecksData);
+                setDeferredChecksToDeposits(mapDeferredChecksData)
             }
             else {
                 alertFaultGetData();
@@ -138,6 +214,27 @@ const useDeposit = () => {
         t("deposits.total")
     ];
 
+
+    const mapCashData = useMemo(()=>{
+        return  metaData?.cashReceiptsToDeposit?.map((deposit: any, index: number) => {
+            return [
+                <Checkbox
+                    key={`${index}-cash-checkBox`}
+                    icon={<CheckboxIcon />}
+                    checkedIcon={<CheckboxCheckedIcon />}
+                    onChange={handleCashCheckboxChange(index, deposit)}
+                    checked={deposit.isChecked}
+                />,
+                deposit?.taxDate,
+                "test",
+                deposit?.client?.name,
+                deposit?.cashSum,
+            ];
+        });
+
+    },[metaData]) ;
+
+
     const renderTableHeaders = () => {
         switch (deposit?.depositType) {
             case (DEPOSIT_TYPE.Checks):
@@ -173,16 +270,22 @@ const useDeposit = () => {
                     tableHeaders={checksTabHeaders}
                     tableRows={checksToDeposits}
                     itemsCount={itemsCount}
-                    total={total} />
+                    total={total}
+                    handleSelectAll={() => handleSelectAllChange(checksToDeposits, metaData)}
+                    selectAllChecked={selectAllChecked}
+                />
         },
         {
             title: t("deposits.deferredChecks"),
             component:
                 <DepositTabTable
                     tableHeaders={checksTabHeaders}
-                    tableRows={checksToDeposits}
+                    tableRows={deferredChecksToDeposits}
                     itemsCount={itemsCount}
-                    total={total} />
+                    total={total}
+                    handleSelectAll={() => handleSelectAllChange(deferredChecksToDeposits, metaData)}
+                    selectAllChecked={selectAllChecked}
+                />
         },
         {
             title: t("deposits.creditCard"),
@@ -191,16 +294,24 @@ const useDeposit = () => {
                     tableHeaders={["#", ...creditDepositHeaders]}
                     tableRows={creditCardToDeposits}
                     itemsCount={itemsCount}
-                    total={total} />
+                    total={total}
+                    handleSelectAll={() => handleSelectAllChange(creditCardToDeposits, metaData)}
+                    selectAllChecked={selectAllChecked}
+                />
         },
         {
             title: t("deposits.cash"),
             component:
-                <DepositTabTable
-                    tableHeaders={["#", ...cashDepositHeaders]}
-                    tableRows={cashReceiptsToDeposits}
-                    itemsCount={itemsCount}
-                    total={total} />
+                <div>
+                    <DepositTabTable
+                        tableHeaders={["#", ...cashDepositHeaders]}
+                        tableRows={mapCashData}
+                        itemsCount={itemsCount}
+                        total={total}
+                        handleSelectAll={() => handleSelectAllChange(mapCashData, metaData)}
+                        selectAllChecked={selectAllChecked}
+                    />
+                </div>
         },
     ];
 
@@ -208,6 +319,7 @@ const useDeposit = () => {
         t,
         depositsTabs,
         deposit,
+        accounts,
         renderTableHeaders,
         renderTableRows,
         resetDepositState,

@@ -28,6 +28,7 @@ const DepositHeaderSection = ({ actionType }: IHeaderSection) => {
                     {" - "} {deposit?.number}
                 </div>
             }
+            
         </div>
     )
 }

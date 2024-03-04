@@ -11,7 +11,7 @@ const DepositInputs = (state) => {
       placeholder: "deposits.depositDate",
       required: false,
       parameterKey: "depositDate",
-      value: GetDateFormat(state?.depositDate) ,
+      value: GetDateFormat(state?.depositDate),
       options: [],
       isValid: true,
       readOnly: true,
@@ -103,7 +103,7 @@ const DepositInputs = (state) => {
   ]
 }
 
-const newDepositInputs = (state) => {
+const newDepositInputs = (state, accountsOptions) => {
   return [
     {
       name: "depositDate",
@@ -112,10 +112,10 @@ const newDepositInputs = (state) => {
       placeholder: "deposits.depositDate",
       required: false,
       parameterKey: "depositDate",
-      value: state?.depositDate ,
+      value: state?.depositDate,
       options: [],
       isValid: true,
-      readOnly: true,
+      readOnly: false,
     },
     {
       name: "depositAccount",
@@ -127,7 +127,7 @@ const newDepositInputs = (state) => {
       value: state?.depositAccount,
       options: [],
       isValid: true,
-      readOnly: true,
+      readOnly: false,
     },
     {
       name: "bankName",
@@ -139,7 +139,7 @@ const newDepositInputs = (state) => {
       value: state?.bankName,
       options: [],
       isValid: true,
-      readOnly: true,
+      readOnly: false,
     },
     {
       name: "bankBranch",
@@ -151,7 +151,7 @@ const newDepositInputs = (state) => {
       value: state?.bankBranch,
       options: [],
       isValid: true,
-      readOnly: true,
+      readOnly: false,
     },
     {
       name: "bankAccountNUM",
@@ -163,7 +163,7 @@ const newDepositInputs = (state) => {
       value: state?.bankAccountNUM,
       options: [],
       isValid: true,
-      readOnly: true,
+      readOnly: false,
     },
     {
       name: "bankReference",
@@ -175,7 +175,7 @@ const newDepositInputs = (state) => {
       value: state?.bankReference,
       options: [],
       isValid: true,
-      readOnly: true,
+      readOnly: false,
     },
     {
       name: "depositor",
@@ -187,16 +187,31 @@ const newDepositInputs = (state) => {
       value: state?.depositor,
       options: [],
       isValid: true,
-      readOnly: true,
+      readOnly: false,
     },
     {
       name: "allocationAccount",
       label: "deposits.account",
-      type: "text",
+      type: "select",
       placeholder: "deposits.account",
       required: false,
       parameterKey: "allocationAccount",
       value: state?.allocationAccount,
+      options: accountsOptions?.map(account => ({
+        text: `${account.name} - ${account.code}`,
+        value: account.code,
+      })),
+      isValid: true,
+      readOnly: false,
+    },
+    {
+      name: "balance",
+      label: "payment.balance",
+      type: "text",
+      placeholder: "payment.balance",
+      required: false,
+      parameterKey: "balance",
+      value: state?.balance,
       options: [],
       isValid: true,
       readOnly: true,
@@ -205,4 +220,4 @@ const newDepositInputs = (state) => {
 }
 
 
-export { DepositInputs  , newDepositInputs};
+export { DepositInputs, newDepositInputs };

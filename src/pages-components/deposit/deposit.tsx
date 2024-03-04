@@ -14,19 +14,20 @@ export interface IDepositProps {
 
 const DepositPageWidget = ({ actionType }: IDepositProps) => {
   const { classes } = useStyle();
-  const { depositsTabs, handleResetTotalAndCount ,renderTableHeaders, renderTableRows , getDepositMetaData} = useDeposit();
+  const { depositsTabs, handleResetTotalAndCount, renderTableHeaders, renderTableRows, getDepositMetaData, accounts } = useDeposit();
 
-  useEffect(()=>{
-    if(actionType===DEPOSIT_ACTIONS.Create)
-    getDepositMetaData(); 
-  },[]);
+  useEffect(() => {
+    if (actionType === DEPOSIT_ACTIONS.Create)
+      getDepositMetaData();
+  }, []);
 
   return (
     <>
       <div style={classes.mainContainer}>
-        <Stack direction="column" gap="30px" paddingLeft="20px" paddingRight="20px"  >
+        <Stack direction="column" paddingLeft="20px" paddingRight="20px"  >
           <DepositHeaderSection actionType={actionType} />
-          <DepositFilterSection actionType={actionType} />
+          <div style={classes.borderSecondContainer} />
+          <DepositFilterSection actionType={actionType} accountsOptions={accounts} />
         </Stack>
         <Stack style={classes.secondDivStyle}>
           {

@@ -45,22 +45,11 @@ const useStyle = () => {
         width: "100%",
         marginBottom: 14,
       },
-      borderSecondContainer: {
-        width: "100%",
-        borderBottom: `1px solid ${grayColor(200)}`,
-        marginBottom: 12,
-        marginTop: 12,
-        maxHeight: 140,
-        overflow: "scroll",
-      },
       depositNumberStyle: {
         ...FONT_FAMILY.Lexend(500, 24),
         color: secondColor(500),
         lineHeight: "30px",
       },
-
-
-
       tableRowStyle: {
         //   height: headerHeight,
         background: "#8283BE",
@@ -150,15 +139,23 @@ const useStyle = () => {
         alignItems: "center",
       },
       lineDateStyle: {
-        // display: "flex",
-        // justifyContent: "center",
-        // alignItems: "center",
-        // width: 1,
-        // height: 19,
-        // color: grayColor(200),
-        // backgroundColor: grayColor(200),
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        width: 1,
+        height: 19,
+        color: grayColor(200),
+        backgroundColor: grayColor(200),
+        borderBottom: `1px solid ${grayColor(200)}`,
+      },
+
+      borderSecondContainer: {
         width: "100%",
         borderBottom: `1px solid ${grayColor(200)}`,
+        marginBottom: 12,
+        marginTop: 12,
+        maxHeight: 140,
+        overflow: "scroll",
       },
       tabContainerStyle: {
         display: "flex",

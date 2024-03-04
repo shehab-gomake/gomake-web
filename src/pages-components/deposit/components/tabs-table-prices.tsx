@@ -2,6 +2,8 @@ import { useStyle } from "../style";
 import { PrimaryTable } from "@/components/tables/primary-table";
 import { SecondaryButton } from "@/components/button/secondary-button";
 import { useTranslation } from "react-i18next";
+import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
+import { Checkbox } from "@mui/material";
 
 interface IDepositTabProps {
     tableHeaders: any;
@@ -9,13 +11,24 @@ interface IDepositTabProps {
     itemsCount: number;
     total: number;
     onClickMakePayment?: () => void;
+    handleSelectAll?: any;
+    selectAllChecked?: any;
 }
 
-const DepositTabTable = ({ tableHeaders, tableRows, itemsCount, total, onClickMakePayment }: IDepositTabProps) => {
+const DepositTabTable = ({ tableHeaders, tableRows, itemsCount, total, onClickMakePayment, handleSelectAll, selectAllChecked }: IDepositTabProps) => {
     const { classes } = useStyle();
     const { t } = useTranslation();
     return (
         <div style={classes.tabContainerStyle}>
+            <div>
+                <Checkbox
+                    icon={<CheckboxIcon />}
+                    checkedIcon={<CheckboxCheckedIcon />}
+                    onChange={handleSelectAll}
+                    checked={selectAllChecked}
+                />
+                Select All
+            </div>
             <PrimaryTable
                 stickyFirstCol={false}
                 stickyHeader={true}
