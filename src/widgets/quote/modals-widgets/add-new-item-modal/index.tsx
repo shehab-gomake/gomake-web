@@ -12,6 +12,7 @@ import { useGomakeAxios, useGomakeRouter } from "@/hooks";
 import { quoteItemState } from "@/store";
 import { useRouter } from "next/router";
 import { v4 as uuidv4 } from "uuid";
+import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 
 const AddNewItemModal = ({ openModal, onClose, documentType }) => {
   const { callApi } = useGomakeAxios();
@@ -54,9 +55,15 @@ const AddNewItemModal = ({ openModal, onClose, documentType }) => {
       onClose()
     }
     else {
-      navigate(
-        `/products/create?clientTypeId=${quoteItemValue?.client?.clientTypeId}&customerId=${quoteItemValue?.customerID}&productId=${selectedProduct?.id}&documentType=${documentType}${router?.query?.Id ? `&documentId=${router?.query?.Id}` : ""}`
-      );
+      if (documentType === DOCUMENT_TYPE.purchaseOrder) {
+        console.log("Purchase order")
+      }
+      else {
+        navigate(
+          `/products/create?clientTypeId=${quoteItemValue?.client?.clientTypeId}&customerId=${quoteItemValue?.customerID}&productId=${selectedProduct?.id}&documentType=${documentType}${router?.query?.Id ? `&documentId=${router?.query?.Id}` : ""}`
+        );
+      }
+
     }
 
   };
