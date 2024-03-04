@@ -17,7 +17,7 @@ import { useStyle } from "@/widgets/product-pricing-widget/style";
 import { useRecoilState, useRecoilValue } from "recoil";
 import {
   currentProductItemValueDraftId,
-  currentProductItemValueState,
+  currentProductItemValueState, currentProductItemValueTotalWorkFlowsState,
   selectedWorkFlowState,
 } from "@/widgets/product-pricing-widget/state";
 import cloneDeep from "lodash.clonedeep";
@@ -39,6 +39,7 @@ const PricingWidget = ({
   const selectedWorkFlow = useRecoilValue(selectedWorkFlowState);
   const [currentProductItemValue, setCurrentProductItemValue] =
     useRecoilState<any>(currentProductItemValueState);
+  const currentProductItemValueTotalWorkFlows = useRecoilValue<number>(currentProductItemValueTotalWorkFlowsState);
   const productItemValueDraftId = useRecoilValue<string>(
     currentProductItemValueDraftId
   );
@@ -90,7 +91,7 @@ const PricingWidget = ({
                   ? "contained"
                   : "outlined"
               }
-            >{`${t("pricingWidget.others")} (${workFlows?.length
+            >{`${t("pricingWidget.others")} (${currentProductItemValueTotalWorkFlows
               })`}</PrimaryButton>
           </ButtonGroup>
         ) : (

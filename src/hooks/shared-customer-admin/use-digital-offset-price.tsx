@@ -35,7 +35,7 @@ import {
   calculationProgressState,
   currentProductItemValueDraftId,
   currentProductItemValuePriceState,
-  currentProductItemValueState,
+  currentProductItemValueState, currentProductItemValueTotalWorkFlowsState,
   jobActionsState,
   jobDetailsState,
   outsourceSuppliersState,
@@ -103,7 +103,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     currentProductItemValueTotalPrice,
     setCurrentProductItemValueTotalPrice,
   ] = useRecoilState<number>(currentProductItemValuePriceState);
-
+  const [
+    currentProductItemValueTotalWorkFlows,
+    setCurrentProductItemValueTotalWorkFlows,
+  ] = useRecoilState<number>(currentProductItemValueTotalWorkFlowsState);
   const [clientDefaultValue, setClientDefaultValue] = useState<any>({});
   const [clientTypeDefaultValue, setClientTypeDefaultValue] = useState<any>({});
   const [expanded, setExpanded] = useState<string | false>("");
@@ -218,12 +221,17 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
            totalWorkFlowsCount: totalWorkFlowsCount,
            currentWorkFlowsCount: currentWorkFlowsCount,
          });*/
+        
         if (calculationResult.isCalculationFinished) {
           setCalculationProgress({
             totalWorkFlowsCount: 0,
             currentWorkFlowsCount: 0,
           });
+          setCurrentProductItemValueTotalWorkFlows(calculationResult.productItemValue.totalWorkFlows)
           setLoading(false);
+        }else{
+          setCurrentProductItemValueTotalWorkFlows( currentWorkFlows ? currentWorkFlows.length : 0 )
+
         }
         setWorkFlows(currentWorkFlows);
         setJobActions(calculationResult?.productItemValue.actions);
@@ -1977,7 +1985,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         false,
         newRequestAbortController
       );
-
+      
+      //setLoading(false);
+    }else{
       setLoading(false);
     }
   }, [subProducts, router, isRequiredParameters, validateParameters]);

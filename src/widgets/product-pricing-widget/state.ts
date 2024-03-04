@@ -60,6 +60,10 @@ export const currentProductItemValuePriceState = atom<number>({
   key: "currentProductItemValuePriceState",
   default: null,
 });
+export const currentProductItemValueTotalWorkFlowsState = atom<number>({
+  key: "currentProductItemValueTotalWorkFlowsState",
+  default: 0,
+});
 export const currentProductItemValueDraftId = atom<string>({
   key: "currentProductItemValueDraftId",
   default: null,
