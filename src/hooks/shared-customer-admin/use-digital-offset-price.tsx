@@ -221,7 +221,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
            totalWorkFlowsCount: totalWorkFlowsCount,
            currentWorkFlowsCount: currentWorkFlowsCount,
          });*/
-        
+
         if (calculationResult.isCalculationFinished) {
           setCalculationProgress({
             totalWorkFlowsCount: 0,
@@ -229,8 +229,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           });
           setCurrentProductItemValueTotalWorkFlows(calculationResult.productItemValue.totalWorkFlows)
           setLoading(false);
-        }else{
-          setCurrentProductItemValueTotalWorkFlows( currentWorkFlows ? currentWorkFlows.length : 0 )
+        } else {
+          setCurrentProductItemValueTotalWorkFlows(currentWorkFlows ? currentWorkFlows.length : 0)
 
         }
         setWorkFlows(currentWorkFlows);
@@ -1001,7 +1001,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   useEffect(() => {
     if (currentProductItemValueTotalPrice && quantity) {
       const productItemValue = {
-        signalRConnectionId:connectionId,
+        signalRConnectionId: connectionId,
         productItemValueId: productItemValueDraftId,
         itemId: router?.query?.documentId,
         productId: router?.query?.productId,
@@ -1738,20 +1738,23 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   };
   const [errorText, setErrorText] = useState(false)
   const handleTabClick = (index: number) => {
-
-    if (checkParameter) {
-      setErrorText(false)
-      if (index !== activeIndex) {
+    // Allow moving to any previous tab regardless of checkParameter
+    if (index < activeIndex) {
+      setActiveIndex(index);
+    } else if (index > activeIndex) {
+      // Move to the next tab only if checkParameter is true
+      if (checkParameter) {
+        setErrorText(false);
         setCanCalculation(false);
         setActiveIndex(index);
         setCanCalculation(false);
+      } else {
+        // Show error if trying to move to the next tab but checkParameter is false
+        alertFault("products.offsetPrice.admin.errorReq");
+        setErrorText(true);
       }
     }
-    else {
-      alertFault("products.offsetPrice.admin.errorReq")
-      setErrorText(true)
-    }
-
+    // No action needed if clicking on the current tab
   };
   const handleNextClick = () => {
     setErrorText(false)
@@ -1985,9 +1988,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         false,
         newRequestAbortController
       );
-      
+
       //setLoading(false);
-    }else{
+    } else {
       setLoading(false);
     }
   }, [subProducts, router, isRequiredParameters, validateParameters]);
