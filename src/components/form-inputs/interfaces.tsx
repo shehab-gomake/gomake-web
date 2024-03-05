@@ -19,6 +19,7 @@ export interface IInput {
   direction?: string;
   multiple?: boolean;
   materialType?: string;
+  disableClearable?:boolean;
 }
 export interface IFormInput {
   input: IInput;

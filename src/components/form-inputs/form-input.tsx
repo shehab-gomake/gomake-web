@@ -161,6 +161,7 @@ const FormInput = ({ input, error, changeState, readonly }: IFormInput) => {
                 placeholder={t(input.placeholder)}
                 options={options}
                 multiple={false}
+                disableClearable={input?.disableClearable || false}
                 renderOption={
                   input.multiple
                     ? (props: any, option: any) => {
