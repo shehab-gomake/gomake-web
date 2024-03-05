@@ -2,15 +2,14 @@ import {useStyle} from "./style";
 import {useActions} from "./use-actions";
 import {PrimaryTable} from "@/components/tables/primary-table";
 import {HeaderTitleWithSearch} from "@/widgets/header-title-with-search";
-import {useEffect} from "react";
-import {StepType, useTour} from "@reactour/tour";
+import {StepType} from "@reactour/tour";
+import {useGoMakeTour} from "@/hooks/use-go-make-tour";
 
 const ActionPageWidget = () => {
     const {clasess} = useStyle();
     const {tableHeaders, allActions, materilasSearched, term, setTerm, t} =
         useActions();
 
-    const {setIsOpen, setSteps, setCurrentStep} = useTour();
     const actionsSteps: StepType[] = [
         {
             selector: '[data-tour="actionsTable"]',
@@ -23,12 +22,8 @@ const ActionPageWidget = () => {
             position: 'bottom',
         },
     ]
+    const {} = useGoMakeTour(actionsSteps, [allActions, materilasSearched])
 
-    useEffect(() => {
-        setIsOpen(true);
-        setSteps(actionsSteps);
-        setCurrentStep(0);
-    }, [allActions, materilasSearched]);
     return (
         <div style={clasess.mainContainer}>
             <HeaderTitleWithSearch

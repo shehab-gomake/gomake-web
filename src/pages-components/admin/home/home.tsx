@@ -7,15 +7,14 @@ import {CardsWidget} from "./widgets/cards-widget/cards-widget";
 import {Skeleton} from "@mui/material";
 import {useRecoilValue} from "recoil";
 import {homeReportsState} from "@/pages-components/quote/store/quote";
-import {StepType, useTour} from "@reactour/tour";
+import {StepType} from "@reactour/tour";
 import Stack from "@mui/material/Stack";
+import {useGoMakeTour} from "@/hooks/use-go-make-tour";
 
 const HomePageComponentForAdmin = ({isAdmin}) => {
     const {classes} = useStyle();
     const {Title, setIsDisplay, isDisplay, flag, selectedClient, t} = useHome();
     const allReports = useRecoilValue<any>(homeReportsState);
-
-    const {setIsOpen, setSteps, setCurrentStep} = useTour();
     const homeSteps: StepType[] = [
         {
             selector: '[data-tour="quote-widget"]',
@@ -62,13 +61,7 @@ const HomePageComponentForAdmin = ({isAdmin}) => {
             position: 'bottom',
         },
     ]
-
-    useEffect(() => {
-        setSteps(homeSteps);
-        setIsOpen(true);
-        setCurrentStep(0);
-        localStorage.setItem("isHover", "true");
-    }, []);
+    const {} = useGoMakeTour(homeSteps, []);
 
     useEffect(() => {
         setIsDisplay(flag);

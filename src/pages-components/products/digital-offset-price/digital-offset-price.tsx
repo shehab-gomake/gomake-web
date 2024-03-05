@@ -14,8 +14,8 @@ import {
 import {EWidgetProductType} from "./enums";
 import {PricingWidget} from "@/widgets/product-pricing-widget/pricing-widget";
 import {Tabs} from "@mui/material";
-import {StepType, useTour} from "@reactour/tour";
-import {useEffect} from "react";
+import {StepType} from "@reactour/tour";
+import {useGoMakeTour} from "@/hooks/use-go-make-tour";
 
 const PriceListPageWidget = ({widgetType}) => {
     const {clasess} = useStyle();
@@ -80,8 +80,7 @@ const PriceListPageWidget = ({widgetType}) => {
         setIsChargeForNewDie,
         straightKnife
     } = useDigitalOffsetPrice({clasess, widgetType});
-    const {setIsOpen, setSteps, setCurrentStep} = useTour();
-    const homeSteps: StepType[] = [
+    const productSteps: StepType[] = [
         {
             selector: '[data-tour="a330193f-492c-40a8-86f3-8edf5c8f0d5e"]',
             content: 'Please enter a name for the job. You can use any name you prefer, such as \'Test,\' for example.',
@@ -219,12 +218,7 @@ const PriceListPageWidget = ({widgetType}) => {
             position: 'top',
         },
     ]
-
-    useEffect(() => {
-        setSteps(homeSteps);
-        setIsOpen(true);
-        setCurrentStep(0);
-    }, [relatedParameters]);
+    const {} = useGoMakeTour(productSteps, [relatedParameters])
     return (
         <div style={{overflow: 'hidden'}}>
             {productTemplate?.sections?.length > 0 && (

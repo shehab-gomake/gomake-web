@@ -3,7 +3,7 @@ import {machineCategoriesState} from "@/store/machine-categories";
 import {EditIcon} from "@/components/icons/edit-icon";
 import {useGomakeTheme} from "@/hooks/use-gomake-thme";
 import {useStyle} from "@/widgets/machines/components/categories-table/style";
-import {useCallback, useEffect, useState} from "react";
+import {useCallback, useState} from "react";
 import {SecondaryButton} from "@/components/button/secondary-button";
 import AddIcon from "@mui/icons-material/Add";
 import {ICategoriesTableProps} from "./interface";
@@ -14,8 +14,9 @@ import {useTranslation} from "react-i18next";
 import {PermissionCheck} from "@/components/CheckPermission/check-permission";
 import {Permissions} from "@/components/CheckPermission/enum";
 import {useUserPermission} from "@/hooks/use-permission";
-import {StepType, useTour} from "@reactour/tour";
+import {StepType} from "@reactour/tour";
 import {ECategoryId} from "@/widgets/machines/enums/category-id";
+import {useGoMakeTour} from "@/hooks/use-go-make-tour";
 
 const CategoriesTable = ({isAdmin}: ICategoriesTableProps) => {
     const [filter, setFilter] = useState<string>("");
@@ -55,7 +56,6 @@ const CategoriesTable = ({isAdmin}: ICategoriesTableProps) => {
         </PermissionCheck>,
     ]);
 
-  const {setIsOpen, setSteps, setCurrentStep} = useTour();
   const machinesTableSteps: StepType[] = [
     {
       selector: '[data-tour="machinesTable"]',
@@ -69,13 +69,7 @@ const CategoriesTable = ({isAdmin}: ICategoriesTableProps) => {
       position: 'top',
     },
   ]
-
-  useEffect(() => {
-    setIsOpen(true);
-    setSteps(machinesTableSteps);
-    setCurrentStep(0);
-  }, []);
-
+    const {} = useGoMakeTour(machinesTableSteps, []);
     return (
         <div style={classes.mainContainer}>
             <HeaderTitleWithSearch title={t('machineAttributes.machines')} onChange={(e) => setFilter(e)}/>

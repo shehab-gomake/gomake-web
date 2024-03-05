@@ -24,7 +24,8 @@ import { AddRowModal } from "./components/add-row/add-row-modal";
 import { useMaterialsCategories } from "./use-materials-categories";
 import Pagination from "@mui/material/Pagination";
 import { GoMakeDeleteModal } from "@/components";
-import {StepType, useTour} from "@reactour/tour";
+import {StepType} from "@reactour/tour";
+import {useGoMakeTour} from "@/hooks/use-go-make-tour";
 interface IMaterialsWidgetProps {
   isAdmin: boolean;
 }
@@ -73,7 +74,6 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
     (category) => category.categoryKey === materialCategory?.toString()
   )?.categoryName;
 
-  const {setIsOpen, setSteps, setCurrentStep} = useTour();
   const materialsSteps: StepType[] = [
     {
       selector: '[data-tour="materialsCategories"]',
@@ -98,13 +98,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
       },
     },
   ]
-
-  useEffect(() => {
-    setIsOpen(true);
-    setSteps(materialsSteps);
-    setCurrentStep(0);
-  }, []);
-
+  const {} = useGoMakeTour(materialsSteps, []);
   const Side = () => (
     <Stack direction={"column"} gap={"10px"}>
       <SideList

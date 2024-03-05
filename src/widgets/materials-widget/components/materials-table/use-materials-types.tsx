@@ -1,4 +1,4 @@
-import {useCallback, useEffect, useState} from "react";
+import {useCallback, useState} from "react";
 import {useGomakeAxios} from "@/hooks";
 import {getMaterialsTypesApi} from "@/services/api-service/materials/materials-endpoints";
 import {PrimaryButton} from "@/components/button/primary-button";
@@ -27,10 +27,6 @@ const useMaterialsTypes = (isAdmin:boolean) => {
             position: 'bottom',
         },
     ]
-
-    useEffect(() => {
-
-    }, []);
 
     const onFilterChange = (e) => setFilter(e)
     const getAllMaterials = async () => {

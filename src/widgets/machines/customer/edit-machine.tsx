@@ -13,7 +13,8 @@ import {useTranslation} from "react-i18next";
 import {MachinesContainer} from "@/components/containers/machines-container/machines-container";
 import {MachinesSideList} from "@/components/containers/machines-container/side-list/machines-side-list";
 import {NavigationButtons} from "@/widgets/machines/components/forms/navigationButtons";
-import {StepType, useTour} from "@reactour/tour";
+import {StepType} from "@reactour/tour";
+import {useGoMakeTour} from "@/hooks/use-go-make-tour";
 
 const CustomerEditMachines = () => {
     const router = useRouter();
@@ -61,8 +62,7 @@ const CustomerEditMachines = () => {
                                  title={t("machineAttributes.machines")} quickActions={true}>
         </MachinesSideList>
     }
-    const {setIsOpen, setSteps, setCurrentStep} = useTour();
-    const actionsSteps: StepType[] = [
+    const editMachinesSteps: StepType[] = [
         {
             selector: '[data-tour="machinesList"]',
             content: 'Here, you can navigate between your digital printer modules and add new ones as needed.',
@@ -84,12 +84,7 @@ const CustomerEditMachines = () => {
             },
         },
     ]
-
-    useEffect(() => {
-        setIsOpen(true);
-        setSteps(actionsSteps);
-        setCurrentStep(0);
-    }, []);
+    const {} = useGoMakeTour(editMachinesSteps, []);
     return (
         <MachinesContainer side={Side()} header={t(categoryName)}
                            sideDataTour={'machinesList'}

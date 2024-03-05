@@ -6,7 +6,8 @@ import { useRouter } from "next/router";
 import { SideBarContainer } from "@/components/containers/side-container/side-bar-container";
 import { IListItem } from "@/components/containers/interface";
 import { useUserPermission } from "@/hooks/use-permission";
-import {StepType, useTour} from "@reactour/tour";
+import {StepType} from "@reactour/tour";
+import {useGoMakeTour} from "@/hooks/use-go-make-tour";
 
 const SettingsWidget = () => {
   const { t } = useTranslation();
@@ -29,12 +30,6 @@ const SettingsWidget = () => {
       setSelected(!!item ? item : list[0]);
     }
   }, [settingsRoute, id]);
-  const {setIsOpen, setSteps, setCurrentStep} = useTour();
-  useEffect(() => {
-    setSteps(settingsSteps);
-    setIsOpen(true);
-    setCurrentStep(0);
-  }, []);
   const settingsSteps: StepType[] = [
     {
       selector: '[data-tour="profileSettings"]',
@@ -69,6 +64,8 @@ const SettingsWidget = () => {
       }
     },
   ]
+
+  const {} = useGoMakeTour(settingsSteps, []);
   const Side = () => {
     return (
       <>

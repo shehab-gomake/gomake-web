@@ -4,8 +4,8 @@ import { ProfitHeaderWidget } from "./widgets/profit-header/profit-header";
 import { useNewProfits } from "./use-profits";
 import { useStyle } from "./style";
 import { Skeleton } from "@mui/material";
-import {StepType, useTour} from "@reactour/tour";
-import {useEffect} from "react";
+import {StepType} from "@reactour/tour";
+import {useGoMakeTour} from "@/hooks/use-go-make-tour";
 
 const ProfitsNewPageWidget = () => {
   const { classes } = useStyle();
@@ -69,7 +69,6 @@ const ProfitsNewPageWidget = () => {
     deleteExceptionProfit,
     getProfitsPricingTables,
   } = useNewProfits();
-  const {setIsOpen, setSteps, setCurrentStep} = useTour();
   const profitsSteps: StepType[] = [
     {
       selector: '[data-tour="profitStep1"]',
@@ -118,12 +117,7 @@ const ProfitsNewPageWidget = () => {
       }
     },
   ]
-
-  useEffect(() => {
-    setSteps(profitsSteps);
-    setIsOpen(true);
-    setCurrentStep(0);
-  }, []);
+  const {} = useGoMakeTour(profitsSteps, []);
   return (
     <div data-tour={'profitStep1'} style={classes.mainGridContainer}>
       {router.query.draftId && (
