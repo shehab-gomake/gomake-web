@@ -8,6 +8,8 @@ import { IListItem } from "@/components/containers/interface";
 import { useUserPermission } from "@/hooks/use-permission";
 import {StepType} from "@reactour/tour";
 import {useGoMakeTour} from "@/hooks/use-go-make-tour";
+import {useGomakeAxios} from "@/hooks";
+import {toggleUserFirstLogin} from "@/services/api-service/users/users-api";
 
 const SettingsWidget = () => {
   const { t } = useTranslation();
@@ -15,7 +17,7 @@ const SettingsWidget = () => {
   const { settingsRoute, id, productId } = query;
   const [selected, setSelected] = useState<IListItem>();
   const { CheckPermission } = useUserPermission();
-
+  const {callApi} = useGomakeAxios();
   const onSelectItem = (value: string) => {
     const selectedItem = list.find((item) => item.value === value);
     push("/settings/" + selectedItem.path).then();
@@ -62,6 +64,15 @@ const SettingsWidget = () => {
       styles: {
         maskWrapper: props => ({...props,})
       }
+    },
+    {
+      selector: '[data-tour="start-tour-btn"]',
+      content: 'Congratulations!\n' +
+          'Now you\'re ready to use the system.\n' +
+          'For help,\n' +
+          'click the help button for training on all pages.',
+      position: 'bottom',
+      action: async () => await toggleUserFirstLogin(callApi, () => {}),
     },
   ]
 

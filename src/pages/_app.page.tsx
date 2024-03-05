@@ -9,8 +9,7 @@ import {GoMakeSnackBar} from "@/components";
 import {DndProvider} from "react-dnd";
 import {HTML5Backend} from "react-dnd-html5-backend";
 import Backend from 'i18next-http-backend';
-import {TourProvider} from "@reactour/tour";
-import {FONT_FAMILY} from "@/utils/font-family";
+import {GoMakeTourProvider} from "@/providers/go-make-tour/go-make-tour-provider";
 
 i18n
     .use(Backend)
@@ -38,23 +37,9 @@ export default function App({Component, pageProps}: AppProps) {
                     direction: ${t("direction")};
                   }
                 `}</style>
-                <TourProvider steps={[]}
-                              styles={{
-                                  popover: (base) => ({
-                                      ...base,
-                                      '--reactour-accent': '#ef5a3d',
-                                      borderRadius: 20,
-                                      ...FONT_FAMILY.Outfit(600, 18)
-                                  }),
-                                  maskArea: (base) => ({ ...base, rx: 10, padding: '10px' }),
-                                  maskWrapper: (base) => ({ ...base}),
-                                  badge: (base) => ({ ...base, left: 'auto', right: '-0.8125em', backgroundColor: '#2E3092' }),
-                                  controls: (base) => ({ ...base, marginTop: 100 }),
-                                  close: (base) => ({ ...base, right: 'auto', left: 8, top: 10 }),
-                              }}
-                              scrollSmooth={true}>
+                <GoMakeTourProvider>
                     <Component {...pageProps} />
-                </TourProvider>
+                </GoMakeTourProvider>
                 <GoMakeSnackBar/>
                 <GomakeLoading/>
             </RecoilRoot>
