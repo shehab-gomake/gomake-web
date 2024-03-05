@@ -8,7 +8,8 @@ export default function QuickSetupMachinesRequiredPage() {
         <CustomerAuthLayout disableHeaderSideMenu={true}>
             <QuickSetupLayout pageTitle={'What\'s in your tech squad? Introduce your machines.'}
                               headerColor={'primary'}>
-                <MachinesSetupWidget nextStep={'/quick-setup/machines'} categories={[
+                <MachinesSetupWidget header={'signup.packagingMachinesHeader'}
+                                     nextStep={'/quick-setup/machines'} categories={[
                     ECategoryId.SHRINK_PACKING_MACHINE,
                     ECategoryId.PACKAGE_TYING_MACHINE,
                     ECategoryId.CARTOON_PACKAGING_MACHINE

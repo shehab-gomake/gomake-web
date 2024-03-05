@@ -1,9 +1,10 @@
-import { CircularProgress, Stack} from "@mui/material";
+import {CircularProgress, Stack} from "@mui/material";
 import {PrimaryButton} from "@/components/button/primary-button";
 import {useCompanyForm} from "@/widgets/quick-setup-widgets/company/use-company-form";
 import {useStyle} from "@/widgets/quick-setup-widgets/company/style";
 import {useTranslation} from "react-i18next";
 import {GoMakeAutoComplate, GomakeTextInput} from "@/components";
+import {domainRegex} from "@/utils/regex";
 
 const SignupCompanyForm = () => {
     const {state, onChange, currencies, languages, onclickNext, loading} = useCompanyForm();
@@ -17,10 +18,14 @@ const SignupCompanyForm = () => {
                                  style={classes.input}
                                  placeholder={t('signup.companyName')}
                                  value={state.name}/>
-                <GomakeTextInput onChange={(e) => onChange('domain', e.target.value)}
-                                 style={classes.input}
-                                 placeholder={t('signup.companyDomain')}
-                                 value={state.domain}/>
+                <Stack direction={'row'} alignItems={'flex-end'} width={400}>
+                    <GomakeTextInput onChange={(e) => onChange('domain', e.target.value)}
+                                     style={classes.input}
+                                     placeholder={t('signup.companyDomain')}
+                                     error={state.domain ? !domainRegex.test(state.domain) : false}
+                                     value={state.domain}/>
+                    <span>.gomake.net</span>
+                </Stack>
                 <GoMakeAutoComplate options={currencies}
                                     onChange={(e, v) => onChange('systemCurrency', v?.value)}
                                     value={state.systemCurrency}
