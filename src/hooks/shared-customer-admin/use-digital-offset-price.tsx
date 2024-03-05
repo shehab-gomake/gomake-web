@@ -2014,7 +2014,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         },
         false,
         newRequestAbortController
-      );
+  ).catch(e=>setLoading(false));
 
       //setLoading(false);
     } else {
