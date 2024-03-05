@@ -3,7 +3,7 @@ import { DepositHeaderSection } from "./components/header-section";
 import { useDeposit } from "./use-deposit";
 import { DepositTable } from "./components/table-prices-section";
 import { DepositFilterSection } from "./components/filters-section";
-import { Stack } from "@mui/material";
+import { Skeleton, Stack } from "@mui/material";
 import { DEPOSIT_ACTIONS } from "./enums";
 import { PrimaryTabsComponent } from "@/components/tabs/primary-tabs";
 import { useEffect } from "react";
@@ -14,7 +14,7 @@ export interface IDepositProps {
 
 const DepositPageWidget = ({ actionType }: IDepositProps) => {
   const { classes } = useStyle();
-  const { depositsTabs, handleResetTotalAndCount, renderTableHeaders, renderTableRows, getDepositMetaData, accounts } = useDeposit();
+  const { depositsTabs, handleResetTotalAndCount, renderTableHeaders, renderTableRows, getDepositMetaData, accounts, isLoading } = useDeposit();
 
   useEffect(() => {
     if (actionType === DEPOSIT_ACTIONS.Create)
@@ -27,7 +27,11 @@ const DepositPageWidget = ({ actionType }: IDepositProps) => {
         <Stack direction="column" paddingLeft="20px" paddingRight="20px"  >
           <DepositHeaderSection actionType={actionType} />
           <div style={classes.borderSecondContainer} />
-          <DepositFilterSection actionType={actionType} accountsOptions={accounts} />
+          {isLoading && actionType === DEPOSIT_ACTIONS.Create ? (
+            <Skeleton variant="rectangular" width={"100%"} height={40} />
+          ) : (
+            <DepositFilterSection actionType={actionType} accountsOptions={accounts} />
+          )}
         </Stack>
         <Stack style={classes.secondDivStyle}>
           {

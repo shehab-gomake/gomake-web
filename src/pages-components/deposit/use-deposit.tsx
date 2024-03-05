@@ -5,7 +5,7 @@ import { DEPOSIT_TYPE } from "./enums";
 import { ITab } from "@/components/tabs/interface";
 import { getDepositsMetaDataApi } from "@/services/api-service/generic-doc/deposits-api";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
 import { Checkbox } from "@mui/material";
 import { DepositTabTable } from "./components/tabs-table-prices";
@@ -14,7 +14,7 @@ import { useDateFormat } from "@/hooks/use-date-format";
 const useDeposit = () => {
     const { t } = useTranslation();
     const { callApi } = useGomakeAxios();
-    const { GetDateFormat , GetShortDateFormat } = useDateFormat();
+    const { GetShortDateFormat } = useDateFormat();
     const { alertFaultGetData } = useSnackBar();
     const [accounts, setAccounts] = useState();
     const [total, setTotal] = useState<number>(0);
@@ -24,11 +24,14 @@ const useDeposit = () => {
     const resetDepositState = useResetRecoilState(depositState);
     const [selectAllChecked, setSelectAllChecked] = useState(false);
     const [metaData, setMetaData] = useState<any>();
+    const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [newItemsSelected, setNewItemsSelected] = useState([]);
 
     const handleResetTotalAndCount = () => {
         setItemsCount(0);
         setTotal(0);
         setSelectAllChecked(false);
+        setNewItemsSelected([]); // resetSelectedItems
         const updatedChecksToDeposit = metaData?.checksToDeposit?.map((deposit) => {
             return {
                 ...deposit,
@@ -60,21 +63,26 @@ const useDeposit = () => {
 
         let newTotal = 0;
         let newItemsCount = 0;
+        let selectedIds = [];
 
         itemsToDeposits.forEach((data, index) => {
             const depositItem = metaData?.[stringItemToDeposits][index];
             const isChecked = !selectAllChecked;
-
             newTotal += isChecked ? Number(depositItem?.[totalSting]) || 0 : 0;
             newItemsCount += isChecked ? 1 : 0;
 
             handleCheckBox(index, depositItem)({
                 target: { checked: isChecked },
             });
-        });
 
+            if (isChecked) {
+                selectedIds.push(depositItem);
+              }
+
+        });
         setTotal(newTotal);
         setItemsCount(newItemsCount);
+        setNewItemsSelected(selectedIds);
     };
 
     const handleChecksCheckboxChange = (index, depositItem) => (event) => {
@@ -93,12 +101,13 @@ const useDeposit = () => {
                 checksToDeposit: updatedChecksToDeposit,
             };
         });
-    };
-
-    const isDeferredCheckEligible = (checkDate: string): boolean => {
-        const currentDate = new Date();
-        const checkDateObj = new Date(checkDate);
-        return checkDateObj > currentDate;
+        setNewItemsSelected((prevSelectedItems) => {
+            if (isChecked) {
+              return [...prevSelectedItems, depositItem];
+            } else {
+              return prevSelectedItems.filter((item) => item.checkKey !== depositItem.checkKey);
+            }
+          });
     };
 
     const handleCashCheckboxChange = (index, depositItem) => (event) => {
@@ -117,6 +126,14 @@ const useDeposit = () => {
                 cashReceiptsToDeposit: updatedCashReceiptsToDeposit,
             };
         });
+
+        setNewItemsSelected((prevSelectedItems) => {
+            if (isChecked) {
+              return [...prevSelectedItems, depositItem];
+            } else {
+              return prevSelectedItems.filter((item) => item.id !== depositItem.id);
+            }
+          });
     };
 
     const handleCreditCheckboxChange = (index, depositItem) => (event) => {
@@ -135,11 +152,19 @@ const useDeposit = () => {
                 creditCardsToDeposit: updatedCreditCardsToDeposit,
             };
         });
+        setNewItemsSelected((prevSelectedItems) => {
+            if (isChecked) {
+              return [...prevSelectedItems, depositItem];
+            } else {
+              return prevSelectedItems.filter((item) => item.absId !== depositItem.absId);
+            }
+          });
     };
 
     const getDepositMetaData = async () => {
         const callBack = (res) => {
             if (res?.success) {
+                setIsLoading(false);
                 const metaData = res?.data?.depositMetaData;
                 setNewDeposit(res?.data?.erpDeposit);
                 setMetaData(metaData)
@@ -232,10 +257,11 @@ const useDeposit = () => {
                 ];
             });
         }, [metaData]),
+
         deferredChecks: useMemo(() => {
             return metaData?.checksToDeposit?.map((deposit: any, index: number) => {
                 const isChecked = deposit.isChecked || false;
-                return isDeferredCheckEligible(deposit?.checkDate) && [
+                return deposit?.isDeferred &&  [
                     <Checkbox
                         key={`${index}-deferredCheck-checkBox`}
                         icon={<CheckboxIcon />}
@@ -252,10 +278,11 @@ const useDeposit = () => {
                 ];
             }).filter(Boolean);
         }, [metaData]),
+
         checks: useMemo(() => {
             return metaData?.checksToDeposit?.map((deposit: any, index: number) => {
-                const isChecked = deposit.isChecked || false; // Default to false if not present
-                return !isDeferredCheckEligible(deposit?.checkDate) && [
+                const isChecked = deposit.isChecked || false; 
+                return !deposit?.isDeferred && [
                     <Checkbox
                         key={`${index}-check-checkBox`}
                         icon={<CheckboxIcon />}
@@ -347,6 +374,7 @@ const useDeposit = () => {
 
     return {
         t,
+        metaData,
         depositsTabs,
         deposit,
         accounts,
@@ -354,7 +382,8 @@ const useDeposit = () => {
         renderTableRows,
         resetDepositState,
         getDepositMetaData,
-        handleResetTotalAndCount
+        handleResetTotalAndCount,
+        isLoading
     };
 };
 

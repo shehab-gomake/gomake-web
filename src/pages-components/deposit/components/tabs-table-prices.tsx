@@ -27,7 +27,7 @@ const DepositTabTable = ({ tableHeaders, tableRows, itemsCount, total, onClickMa
                     onChange={handleSelectAll}
                     checked={selectAllChecked}
                 />
-                Select All
+                {t("deposits.selectAll")}
             </div>
             <PrimaryTable
                 stickyFirstCol={false}
