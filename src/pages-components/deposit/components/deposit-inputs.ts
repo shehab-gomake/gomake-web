@@ -103,9 +103,7 @@ const DepositInputs = (state) => {
   ]
 }
 
-const newDepositInputs = (state, accountsOptions) => {
-  const { GetShortDateFormat } = useDateFormat();
-
+const newDepositInputs = (state, accountsOptions, depositAccountsOptions) => {
   return [
     {
       name: "depositDate",
@@ -114,7 +112,7 @@ const newDepositInputs = (state, accountsOptions) => {
       placeholder: "deposits.depositDate",
       required: false,
       parameterKey: "depositDate",
-      value: GetShortDateFormat(state?.depositDate),
+      value: state?.depositDate,
       options: [],
       isValid: true,
       readOnly: false,
@@ -122,14 +120,19 @@ const newDepositInputs = (state, accountsOptions) => {
     {
       name: "depositAccount",
       label: "deposits.accountCode",
-      type: "text",
+      type: "select",
       placeholder: "deposits.accountCode",
       required: false,
       parameterKey: "depositAccount",
       value: state?.depositAccount,
-      options: [],
+      options: depositAccountsOptions?.map(depositAccount => ({
+        text: `${depositAccount.name} - ${depositAccount.code}`,
+        value: depositAccount.code,
+        id: depositAccount.id
+      })),
       isValid: true,
       readOnly: false,
+      disableClearable:true,
     },
     {
       name: "bankName",
