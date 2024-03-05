@@ -8,13 +8,14 @@ import { useStyle } from "./style";
 import { useRecoilState } from "recoil";
 import { useCallback, useEffect, useState } from "react";
 import { getAllProductsForDropDownList } from "@/services/hooks";
-import { useGomakeAxios, useGomakeRouter } from "@/hooks";
+import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
 import { quoteItemState } from "@/store";
 import { useRouter } from "next/router";
 import { v4 as uuidv4 } from "uuid";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
+import { addItemApi } from "@/services/api-service/generic-doc/documents-api";
 
-const AddNewItemModal = ({ openModal, onClose, documentType }) => {
+const AddNewItemModal = ({ openModal, onClose, documentType, getQuote }) => {
   const { callApi } = useGomakeAxios();
   const { navigate } = useGomakeRouter();
   const { t } = useTranslation();
@@ -43,6 +44,31 @@ const AddNewItemModal = ({ openModal, onClose, documentType }) => {
   useEffect(() => {
     getAllProducts();
   }, []);
+  const { alertFaultAdded } = useSnackBar();
+
+  const addItemForQuotes = async () => {
+    const callBack = (res) => {
+      if (res?.success) {
+        getQuote()
+        onClose()
+
+      } else {
+        alertFaultAdded();
+      }
+    };
+
+    await addItemApi(callApi, callBack, {
+      item: {
+        itemId: router?.query?.Id,
+        productId: selectedProduct?.id,
+        unitPrice: 0,
+        amount: 0,
+        jobDetails: "",
+
+      },
+      documentType: documentType,
+    });
+  };
   const onClcikCreateQuoteForCustomer = () => {
     if (router.query.isNewCreation) {
       const updatedQuoteItemValue = { ...quoteItemValue };
@@ -56,7 +82,7 @@ const AddNewItemModal = ({ openModal, onClose, documentType }) => {
     }
     else {
       if (documentType === DOCUMENT_TYPE.purchaseOrder) {
-        console.log("Purchase order")
+        addItemForQuotes()
       }
       else {
         navigate(

@@ -329,7 +329,7 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
                 <ReceiptsTable />
               }
             </div>
-            <WriteCommentComp getQuote={getQuote} isQuoteConfirmation={isQuoteConfirmation} documentType={documentType}/>
+            <WriteCommentComp getQuote={getQuote} isQuoteConfirmation={isQuoteConfirmation} documentType={documentType} />
           </div>
           {!isQuoteConfirmation &&
             <ButtonsContainer
@@ -351,6 +351,7 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
         openModal={openAddNewItemModal}
         onClose={onCloseNewItem}
         documentType={documentType}
+        getQuote={getQuote}
       />
       <AddDeliveryModal
         openModal={openAddDeliveryModal}

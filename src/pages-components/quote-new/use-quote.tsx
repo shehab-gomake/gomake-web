@@ -263,10 +263,10 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
 
   const getAllCustomers = useCallback(async () => {
     await getAndSetAllCustomers(callApi, setCustomersListValue, {
-      ClientType: "C",
-      onlyCreateOrderClients: false,
+      ClientType: docType === DOCUMENT_TYPE.purchaseOrder ? "S" : "C",
+      onlyCreateOrderClients: docType === DOCUMENT_TYPE.purchaseOrder ? true : false,
     });
-  }, []);
+  }, [docType]);
 
   const onBlurPurchaseNumber = async (value) => {
     updatePurchaseNumber(value);
@@ -435,6 +435,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
       await getClientPaymentItemsApi(callApi, callBack, { clientId: item?.id, })
     }
     else if (router?.query?.isNewCreation) {
+      setSelectBusiness(item)
       const res = await callApi(
         EHttpMethod.POST,
         `/v1/erp-service/documents/get-new-document-data`,
@@ -1276,7 +1277,6 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
       setSelectedAgent(selectedAgent1);
     }
   }, [agentListValue, quoteItemValue]);
-
   useEffect(() => {
     const foundItem = customersListValue.find(
       (item: any) => item.id === quoteItemValue?.customerID

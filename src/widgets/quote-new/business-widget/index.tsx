@@ -39,6 +39,7 @@ const BusinessNewWidget = ({
   onClickDeleteAddress,
   documentType,
   isQuoteConfirmation = false,
+
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -58,7 +59,8 @@ const BusinessNewWidget = ({
 
   const mappedCustomers = renderOptions().map(customer => ({
     text: customer?.name,
-    id: customer?.id
+    id: customer?.id,
+    ...customer
   }));
 
   return (
