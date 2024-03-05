@@ -1,7 +1,9 @@
 import {EMeasurementUnits} from "@/widgets/machines/enums/measurement-units";
+import {setupTimeInput} from "@/widgets/machines/utils/attributes/speed-inputs/setup-time-input";
 
 const bookletMachine = (state: Record<string, any>) => {
     return [
+        ...setupTimeInput(state),
         {
             name: "bookletSpeed",
             label: "machineAttributes.bookletSpeed",
