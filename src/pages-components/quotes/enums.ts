@@ -8,7 +8,8 @@ export enum DOCUMENT_TYPE{
     deliveryNoteRefund,
     invoiceRefund, 
     generalLedgerReport,
-    purchaseOrder
+    purchaseOrder,
+    purchaseInvoice
 }
 
 export enum QUOTE_STATUSES{
