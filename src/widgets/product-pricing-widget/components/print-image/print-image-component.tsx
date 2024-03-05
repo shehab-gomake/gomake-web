@@ -28,7 +28,6 @@ const PrintImageComponent = ({materialLength, materialWidth, rectangles, name}: 
     const scaleY = (number)=>{
         return number / 1000;
     }
-    console.log(materialWidth + "," + materialLength + "," + rectangles.length + "," + JSON.stringify(rectangles))
     return (
         <div>
             <PrimaryButton variant={'contained'} style={{fontSize: '15px', padding: '5px 15px'}} onClick={() => setOpen(true)}>{name}</PrimaryButton>
@@ -36,9 +35,11 @@ const PrintImageComponent = ({materialLength, materialWidth, rectangles, name}: 
                          modalTitle={name}
                          insideStyle={{width: `${(scaleX(materialWidth)) + 100}px`, height: 'fit-content',maxHeight:'80%'}}>
                 <Stack>
-                    <IconButton style={{alignSelf: 'end'}} onClick={handleDownloadClick}>
+                    {
+                        /*<IconButton style={{alignSelf: 'end'}} onClick={handleDownloadClick}>
                         <DownloadRoundedIcon/>
-                    </IconButton>
+                    </IconButton>**/
+                    }
                     <Stack  justifyContent={'center'} alignItems={'center'}>
                        <div>
                            <div ref={imageElement} style={{
@@ -50,10 +51,6 @@ const PrintImageComponent = ({materialLength, materialWidth, rectangles, name}: 
                            }}>
                                {
                                    rectangles?.map(({x, y, width, length}: IRectangle) => {
-                                       debugger
-                                       //const newWidth =materialWidth/1000;
-                                       //let diff =((newWidth / materialWidth)*100);
-                                       //console.log(diff)
                                        return(
                                            <div style={{
                                                position: 'absolute',
