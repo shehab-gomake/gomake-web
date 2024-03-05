@@ -428,7 +428,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 ...temp[index],
               };
             } else {
-              if (parameter.isRequired) {
+              if (parameter.isRequired && !parameter.isHidden) {
                 temp.push(parameter);
                 if (sectionIndex === activeIndex) {
                   activeSectionTemp.push(parameter);
@@ -1310,21 +1310,30 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                           p.id === parameterId &&
                           p.actionIndex === actionIndex
                       );
-                      return (
-                        <div key={parameterId}>
-                          {_renderParameterType(
-                            myParameter,
-                            subSection,
-                            section,
-                            subSection?.parameters,
-                            myParameter?.value,
-                            list,
-                            true,
-                            false,
-                            false
-                          )}
-                        </div>
-                      );
+                      let productCopy = cloneDeep(productTemplate);
+                      const sectionCopy = productCopy.sections?.find(x => x.id === section.id);
+                      const subSectionCopy = sectionCopy.subSections?.find(x => x.id === subSection.id);
+                      const param = subSectionCopy.parameters?.find(x => x.id === relatedParameter.parameterId);
+                      if (param.isHidden == false) {
+                        return;
+                      }
+                      param.isHidden = false;
+                      setProductTemplate(productCopy);
+                      // return (
+                      //   <div key={parameterId}>
+                      //     {_renderParameterType(
+                      //       myParameter,
+                      //       subSection,
+                      //       section,
+                      //       subSection?.parameters,
+                      //       myParameter?.value,
+                      //       list,
+                      //       true,
+                      //       false,
+                      //       false
+                      //     )}
+                      //   </div>
+                      // );
                     }
                     let productCopy = cloneDeep(productTemplate);
                     const sectionCopy = productCopy.sections?.find(x => x.id === section.id);
@@ -1349,37 +1358,55 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                             p.id === parameterId &&
                             p.actionIndex === actionIndex
                         );
-                        return (
-                          <div key={parameterId}>
-                            {_renderParameterType(
-                              myParameter,
-                              subSection,
-                              section,
-                              subSection?.parameters,
-                              myParameter?.value,
-                              list,
-                              true,
-                              false,
-                              false
-                            )}
-                          </div>
-                        );
+                        let productCopy = cloneDeep(productTemplate);
+                        const sectionCopy = productCopy.sections?.find(x => x.id === section.id);
+                        const subSectionCopy = sectionCopy.subSections?.find(x => x.id === subSection.id);
+                        const param = subSectionCopy.parameters?.find(x => x.id === relatedParameter.parameterId);
+                        if (param.isHidden == false) {
+                          return;
+                        }
+                        param.isHidden = false;
+                        setProductTemplate(productCopy);
+                        // return (
+                        //   <div key={parameterId}>
+                        //     {_renderParameterType(
+                        //       myParameter,
+                        //       subSection,
+                        //       section,
+                        //       subSection?.parameters,
+                        //       myParameter?.value,
+                        //       list,
+                        //       true,
+                        //       false,
+                        //       false
+                        //     )}
+                        //   </div>
+                        // );
                       }
-                      return (
-                        <div>
-                          {_renderParameterType(
-                            myParameter,
-                            subSection,
-                            section,
-                            subSection?.parameters,
-                            myParameter?.value,
-                            list,
-                            true,
-                            false,
-                            false
-                          )}
-                        </div>
-                      );
+                      // return (
+                      //   <div>
+                      //     {_renderParameterType(
+                      //       myParameter,
+                      //       subSection,
+                      //       section,
+                      //       subSection?.parameters,
+                      //       myParameter?.value,
+                      //       list,
+                      //       true,
+                      //       false,
+                      //       false
+                      //     )}
+                      //   </div>
+                      // );
+                      let productCopy = cloneDeep(productTemplate);
+                      const sectionCopy = productCopy.sections?.find(x => x.id === section.id);
+                      const subSectionCopy = sectionCopy.subSections?.find(x => x.id === subSection.id);
+                      const param = subSectionCopy.parameters?.find(x => x.id === relatedParameter.parameterId);
+                      if (param.isHidden == false) {
+                        return;
+                      }
+                      param.isHidden = false;
+                      setProductTemplate(productCopy);
                     }
 
                     if (relatedParameter.activateByAllValues && parm?.values) {
