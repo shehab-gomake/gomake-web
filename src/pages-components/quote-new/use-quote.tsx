@@ -171,7 +171,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
         alertFaultAdded();
       }
     }
-    else if (docType === DOCUMENT_TYPE.receipt){
+    else if (docType === DOCUMENT_TYPE.receipt) {
       const callBack = (res) => {
         if (res?.success) {
           const _data = res?.data || {};
@@ -180,7 +180,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
           alertFaultAdded();
         }
       }
-      await getReceiptByIdApi(callApi, callBack, {receiptId:router?.query?.Id})
+      await getReceiptByIdApi(callApi, callBack, { receiptId: router?.query?.Id })
     }
     else {
       const callBack = (res) => {
@@ -234,7 +234,8 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
         }
       }
       await getDocumentApi(callApi, callBack, { documentType: docType, Id: router?.query?.Id })
-    } }
+    }
+  }
 
   const updateDueDate = async () => {
     if (router.query.isNewCreation) {
@@ -262,10 +263,10 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
 
   const getAllCustomers = useCallback(async () => {
     await getAndSetAllCustomers(callApi, setCustomersListValue, {
-      ClientType: "C",
-      onlyCreateOrderClients: false,
+      ClientType: docType === DOCUMENT_TYPE.purchaseOrder ? "S" : "C",
+      onlyCreateOrderClients: docType === DOCUMENT_TYPE.purchaseOrder ? true : false,
     });
-  }, []);
+  }, [docType]);
 
   const onBlurPurchaseNumber = async (value) => {
     updatePurchaseNumber(value);
@@ -434,6 +435,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
       await getClientPaymentItemsApi(callApi, callBack, { clientId: item?.id, })
     }
     else if (router?.query?.isNewCreation) {
+      setSelectBusiness(item)
       const res = await callApi(
         EHttpMethod.POST,
         `/v1/erp-service/documents/get-new-document-data`,
@@ -1080,46 +1082,26 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
   const setOpenModal = useSetRecoilState<boolean>(addressModalState);
 
   const onClickAddNewAddress = useCallback(async (item: any, isUpdate: boolean) => {
-    if (router.query.isNewCreation) {
-      const updatedQuoteItemValue = { ...quoteItemValue };
-      if (!Array.isArray(updatedQuoteItemValue.documentAddresses)) {
-        updatedQuoteItemValue.documentAddresses = [];
-      }
-      const newAddress = {
-        id: uuidv4(),
-        addressID: uuidv4(),
+
+    const res = await callApi(
+      EHttpMethod.POST,
+      `/v1/crm-service/customer/create-address`,
+      {
+        address1: item?.addressId,
         street: item?.street,
         city: item?.city,
         entry: item?.entry,
         apartment: item?.apartment,
-        notes: "",
-        documentID: updatedQuoteItemValue?.id,
-      };
-      updatedQuoteItemValue.documentAddresses = [...updatedQuoteItemValue.documentAddresses, newAddress];
-      setQuoteItemValue(updatedQuoteItemValue);
-      setOpenModal(false);
-    }
-    else {
-      const res = await callApi(
-        EHttpMethod.POST,
-        `/v1/crm-service/customer/create-address`,
-        {
-          address1: item?.addressId,
-          street: item?.street,
-          city: item?.city,
-          entry: item?.entry,
-          apartment: item?.apartment,
-          clientId: quoteItemValue?.customerID,
-        }
-      );
-      if (res?.success) {
-        alertSuccessAdded();
-        const result = await getAllClientAddress();
-        isUpdate ? updateClientAddress(result.find(item => item.id === res.data.data.result)) :
-          onClickAddAddress(result.find(item => item.id === res.data.data.result))
-      } else {
-        alertFaultAdded();
+        clientId: quoteItemValue?.customerID,
       }
+    );
+    if (res?.success) {
+      alertSuccessAdded();
+      const result = await getAllClientAddress();
+      isUpdate ? updateClientAddress(result.find(item => item.id === res.data.data.result)) :
+        onClickAddAddress(result.find(item => item.id === res.data.data.result))
+    } else {
+      alertFaultAdded();
     }
 
   }, [quoteItemValue, router]);
@@ -1251,7 +1233,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     }
     await getAllCreditTransactionsApi(callApi, callBack, { clientId: id })
   }
-  
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dateRef.current && !dateRef.current.contains(event.target)) {
@@ -1275,7 +1257,6 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
       setSelectedAgent(selectedAgent1);
     }
   }, [agentListValue, quoteItemValue]);
-
   useEffect(() => {
     const foundItem = customersListValue.find(
       (item: any) => item.id === quoteItemValue?.customerID
@@ -1331,6 +1312,10 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     {
       label: t("tabs.invoiceRefund"),
       value: DOCUMENT_TYPE.invoiceRefund,
+    },
+    {
+      label: t("tabs.purchaseOrder"),
+      value: DOCUMENT_TYPE.purchaseOrder,
     },
   ];
 

@@ -53,7 +53,7 @@ const QuoteWidget = ({ isAdmin = true }) => {
     checkWhatRenderArray,
     handleClicktoSelectedCustomer,
     renderOptions,
-  } = useQuoteWidget();
+  } = useQuoteWidget({});
 
   useEffect(() => {
     if (userQuote) {
@@ -133,8 +133,8 @@ const QuoteWidget = ({ isAdmin = true }) => {
                   isDisabled
                     ? handleClick
                     : isAdmin
-                    ? onClcikCreateQuote
-                    : onClcikCreateQuoteForCustomer
+                      ? onClcikCreateQuote
+                      : onClcikCreateQuoteForCustomer
                 }
                 variant="contained"
                 style={{ width: "100%", height: 40 }}
@@ -164,8 +164,8 @@ const QuoteWidget = ({ isAdmin = true }) => {
               isDisabled
                 ? handleClick
                 : isAdmin
-                ? onClcikCreateQuote
-                : onClcikCreateQuoteForCustomer
+                  ? onClcikCreateQuote
+                  : onClcikCreateQuoteForCustomer
             }
             variant="contained"
             style={{ width: "100%", height: 40 }}

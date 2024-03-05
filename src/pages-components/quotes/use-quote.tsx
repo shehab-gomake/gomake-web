@@ -150,24 +150,48 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
       if (res?.success) {
         const data = res?.data?.data;
         const totalItems = res?.data?.totalItems;
-        const mapData = data?.map((quote: any) => [
-          GetDateFormat(quote?.createdDate),
-          quote?.customerName,
-          quote?.agentName,
-          quote?.number,
-          quote?.worksNames,
-          quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
-          quote?.notes,
-          _renderQuoteStatus(quote?.documentStatus, quote, t),
-          <MoreMenuWidget
-            quote={quote}
-            documentType={docType}
-            onClickOpenModal={onClickOpenModal}
-            onClickPdf={onClickQuotePdf}
-            onClickDuplicate={onClickQuoteDuplicate}
-            onClickLoggers={() => onClickOpenLogsModal(quote?.number)}
-          />,
-        ]);
+        const mapData = data?.map((quote: any) => {
+          if (docType === DOCUMENT_TYPE.purchaseOrder) {
+            return [
+              GetDateFormat(quote?.creationDate),
+              quote?.number,
+              quote?.orderNumber,
+              quote?.supplierName,
+              quote?.clientName,
+              quote?.itemsNumber,
+              quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
+              quote?.notes,
+              _renderQuoteStatus(quote?.documentStatus, quote, t),
+              <MoreMenuWidget
+                quote={quote}
+                documentType={docType}
+                onClickOpenModal={onClickOpenModal}
+                onClickPdf={onClickQuotePdf}
+                onClickDuplicate={onClickQuoteDuplicate}
+                onClickLoggers={() => onClickOpenLogsModal(quote?.number)}
+              />,
+            ];
+          } else {
+            return [
+              GetDateFormat(quote?.createdDate),
+              quote?.customerName,
+              quote?.agentName,
+              quote?.number,
+              quote?.worksNames,
+              quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
+              quote?.notes,
+              _renderQuoteStatus(quote?.documentStatus, quote, t),
+              <MoreMenuWidget
+                quote={quote}
+                documentType={docType}
+                onClickOpenModal={onClickOpenModal}
+                onClickPdf={onClickQuotePdf}
+                onClickDuplicate={onClickQuoteDuplicate}
+                onClickLoggers={() => onClickOpenLogsModal(quote?.number)}
+              />,
+            ];
+          }
+        });
         const mapReceiptData = data?.map((quote: any) => [
           GetDateFormat(quote?.creationDate),
           quote?.customerName,
@@ -309,8 +333,18 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     getAllQuotesInitial();
     setPage(1);
   };
-
-  const tableHeaders = [
+  const tableHeaders = docType === DOCUMENT_TYPE.purchaseOrder ? [
+    t("sales.quote.creationDate"),
+    t("sales.quote.purchaseOrderNumber"),
+    t("sales.quote.orderNumber"),
+    t("sales.quote.supplierName"),
+    t("sales.quote.client"),
+    t("sales.quote.itemsNumber"),
+    t("sales.quote.totalPrice"),
+    t("sales.quote.notes"),
+    t("sales.quote.status"),
+    t("sales.quote.more"),
+  ] : [
     t("sales.quote.createdDate"),
     t("sales.quote.client"),
     t("sales.quote.agent"),
@@ -466,6 +500,10 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     {
       label: t("sales.quote.invoiceRefundList"),
       value: DOCUMENT_TYPE.invoiceRefund,
+    },
+    {
+      label: t("sales.quote.purchaseOrderList"),
+      value: DOCUMENT_TYPE.purchaseOrder,
     },
   ];
 

@@ -4,14 +4,14 @@ import { PrimaryTabsComponent } from "@/components/tabs/primary-tabs";
 
 const HomeTableWidget = () => {
 
-    const { tabs } = useQuoteWidget();
+    const { tabs } = useQuoteWidget({});
     const { classes } = useStyle();
-    
+
     return (
         <div style={classes.mainContainer}>
             <PrimaryTabsComponent tabs={tabs} variant="ButtonedTabs" />
         </div>
-    ); 
+    );
 };
 
 export { HomeTableWidget };
