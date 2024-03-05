@@ -67,6 +67,7 @@ const HomePageComponentForAdmin = ({isAdmin}) => {
         setSteps(homeSteps);
         setIsOpen(true);
         setCurrentStep(0);
+        localStorage.setItem("isHover", "true");
     }, []);
 
     useEffect(() => {

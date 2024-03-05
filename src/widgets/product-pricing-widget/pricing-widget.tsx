@@ -90,6 +90,7 @@ const PricingWidget = ({
                             {t("pricingWidget.selected")}
                         </PrimaryButton>
                         <PrimaryButton
+                            data-tour={'allWorkflowsBtn'}
                             onClick={() => setView(EPricingViews.OTHERS_WORKFLOWS)}
                             sx={classes.button}
                             variant={
@@ -145,10 +146,13 @@ const PricingWidget = ({
                 </div>
             )}
             {workFlows && view === EPricingViews.OTHERS_WORKFLOWS && (
+                <div data-tour={'allWorkflowsContainer'}>
                 <WorkFlowsComponent
+
                     showSelected={() => setView(EPricingViews.SELECTED_WORKFLOW)}
                     workflows={workFlows}
                 />
+                </div>
             )}
             {view === EPricingViews.OUTSOURCE_WORKFLOW && <OutSourceSuppliers/>}
         </Stack>

@@ -198,11 +198,24 @@ const PriceListPageWidget = ({widgetType}) => {
             position: 'top',
         },
         {
-            selector: '[data-tour="action"]',
+            selector: '[data-tour="allWorkflowsBtn"]',
             content: 'Here, you can view the recommended workflow.\n' +
                 'A set price is determined by summing the cost\n' +
                 'of operations and multiplying it by\n' +
                 'the defined profit percentage',
+            position: 'top',
+        },
+        {
+            selector: '[data-tour="allWorkflowsContainer"]',
+            content: 'Here, you have the option to\n' +
+                'change the selected workflow to\n' +
+                'any other available workflow.',
+            position: 'top',
+        },
+        {
+            selector: '[data-tour="addPricingBtn"]',
+            content: 'Let\'s proceed by adding the item to the quote.\n' +
+                'Please press "Add" to navigate to the cart.',
             position: 'top',
         },
     ]
@@ -399,6 +412,7 @@ const PriceListPageWidget = ({widgetType}) => {
                                 </GomakePrimaryButton>
                             ) : (
                                 <GomakePrimaryButton
+                                    data-tour={'addPricingBtn'}
                                     style={clasess.addOrderBtn}
                                     onClick={navigateForRouter}
                                 >

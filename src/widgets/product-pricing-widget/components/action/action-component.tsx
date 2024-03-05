@@ -54,7 +54,6 @@ const Actions = ({
     <Stack gap={"10px"}>
       {actions?.map((action, index) => (
         <ActionContainerComponent
-            data-toure={'action'}
           productType={productType}
           workFlowId={workFlowId}
           delay={index * 800}

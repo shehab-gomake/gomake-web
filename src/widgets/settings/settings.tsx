@@ -29,10 +29,11 @@ const SettingsWidget = () => {
       setSelected(!!item ? item : list[0]);
     }
   }, [settingsRoute, id]);
-  const {setIsOpen, setSteps} = useTour();
+  const {setIsOpen, setSteps, setCurrentStep} = useTour();
   useEffect(() => {
     setSteps(settingsSteps);
     setIsOpen(true);
+    setCurrentStep(0);
   }, []);
   const settingsSteps: StepType[] = [
     {
