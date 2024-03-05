@@ -1082,46 +1082,26 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
   const setOpenModal = useSetRecoilState<boolean>(addressModalState);
 
   const onClickAddNewAddress = useCallback(async (item: any, isUpdate: boolean) => {
-    if (router.query.isNewCreation) {
-      const updatedQuoteItemValue = { ...quoteItemValue };
-      if (!Array.isArray(updatedQuoteItemValue.documentAddresses)) {
-        updatedQuoteItemValue.documentAddresses = [];
-      }
-      const newAddress = {
-        id: uuidv4(),
-        addressID: uuidv4(),
+
+    const res = await callApi(
+      EHttpMethod.POST,
+      `/v1/crm-service/customer/create-address`,
+      {
+        address1: item?.addressId,
         street: item?.street,
         city: item?.city,
         entry: item?.entry,
         apartment: item?.apartment,
-        notes: "",
-        documentID: updatedQuoteItemValue?.id,
-      };
-      updatedQuoteItemValue.documentAddresses = [...updatedQuoteItemValue.documentAddresses, newAddress];
-      setQuoteItemValue(updatedQuoteItemValue);
-      setOpenModal(false);
-    }
-    else {
-      const res = await callApi(
-        EHttpMethod.POST,
-        `/v1/crm-service/customer/create-address`,
-        {
-          address1: item?.addressId,
-          street: item?.street,
-          city: item?.city,
-          entry: item?.entry,
-          apartment: item?.apartment,
-          clientId: quoteItemValue?.customerID,
-        }
-      );
-      if (res?.success) {
-        alertSuccessAdded();
-        const result = await getAllClientAddress();
-        isUpdate ? updateClientAddress(result.find(item => item.id === res.data.data.result)) :
-          onClickAddAddress(result.find(item => item.id === res.data.data.result))
-      } else {
-        alertFaultAdded();
+        clientId: quoteItemValue?.customerID,
       }
+    );
+    if (res?.success) {
+      alertSuccessAdded();
+      const result = await getAllClientAddress();
+      isUpdate ? updateClientAddress(result.find(item => item.id === res.data.data.result)) :
+        onClickAddAddress(result.find(item => item.id === res.data.data.result))
+    } else {
+      alertFaultAdded();
     }
 
   }, [quoteItemValue, router]);
