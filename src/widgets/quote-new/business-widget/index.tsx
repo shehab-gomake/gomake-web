@@ -1,18 +1,19 @@
-import { InputUpdatedValues } from "../input-updated-values";
-import { useStyle } from "./style";
-import { AutoCompleteUpdatedValue } from "../auto-complete-updated";
+import { useSetRecoilState, useRecoilValue } from "recoil";
 import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
+
 import { useQuoteWidget } from "@/pages-components/admin/home/widgets/quote-widget/use-quote-widget";
-import { useRecoilState, useSetRecoilState } from "recoil";
-import { addressModalState } from "./address-widget/state";
-import { PlusNewIcon } from "@/icons";
-import { MinusIcon } from "@/icons/minus-icon";
-import { AddressModal } from "./address-widget/address-modal";
-import { useRecoilValue } from "recoil";
 import { quoteConfirmationState, quoteItemState } from "@/store";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
-import { useRouter } from "next/router";
+import { MinusIcon } from "@/icons/minus-icon";
+import { PlusNewIcon } from "@/icons";
+
+import { AutoCompleteUpdatedValue } from "../auto-complete-updated";
+import { AddressModal } from "./address-widget/address-modal";
+import { InputUpdatedValues } from "../input-updated-values";
+import { addressModalState } from "./address-widget/state";
+import { useStyle } from "./style";
 
 const BusinessNewWidget = ({
   values,
@@ -126,14 +127,6 @@ const BusinessNewWidget = ({
               <div style={classes.addNewAddressTextStyle} onClick={() => setOpenModal(true)} >{t("sales.quote.addAddress")}</div>
             </div>
           )}
-        {/* <GoMakeAlertModal 
-        title={t("Change client")}
-        openModal={openAlertModal}
-        onClose={onCloseAlertModal}
-        subTitle={t("Are you sure to change client")}
-        onClickConfirm={()=>{onChangeSelectBusiness(client).then(setOpenAlertModal(false)); }}
-        >
-        </GoMakeAlertModal> */}
         {!isQuoteConfirmation && <AddressModal isUpdate={values?.documentAddresses?.length > 0} documentType={documentType} />}
       </div>
     </>
