@@ -14,7 +14,7 @@ export interface IDepositProps {
 
 const DepositPageWidget = ({ actionType }: IDepositProps) => {
   const { classes } = useStyle();
-  const { depositsTabs, onSelectTab, renderTableHeaders, renderTableRows, getDepositMetaData, accounts, depositAccounts,isLoading } = useDeposit();
+  const { depositsTabs, onSelectTab, renderTableHeaders, renderTableRows, getDepositMetaData, accounts, depositAccounts,isLoading , deposit} = useDeposit();
 
   useEffect(() => {
     if (actionType === DEPOSIT_ACTIONS.Create)
@@ -40,7 +40,7 @@ const DepositPageWidget = ({ actionType }: IDepositProps) => {
             actionType === DEPOSIT_ACTIONS.Create ?
               <PrimaryTabsComponent tabs={depositsTabs} selectedColor="secondary" onSelectTab={onSelectTab} />
               :
-              <DepositTable tableHeaders={renderTableHeaders} tableRows={renderTableRows()} />
+              <DepositTable tableHeaders={renderTableHeaders()} tableRows={renderTableRows()} deposit={deposit} />
           }
         </Stack>
       </div>

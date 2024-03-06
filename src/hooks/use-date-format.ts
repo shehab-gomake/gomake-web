@@ -23,8 +23,6 @@ const useDateFormat = () => {
         return "N/A";
       };
 
-      
-
     return {
         GetDateFormat,
         GetShortDateFormat ,

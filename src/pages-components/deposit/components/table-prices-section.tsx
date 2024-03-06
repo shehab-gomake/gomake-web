@@ -11,6 +11,8 @@ import {
 import { useStyle } from "../style";
 import { RowMappingWidget } from "./row-mapping";
 import { TotalPricesDeposits } from "./total-prices";
+import { DEPOSIT_TYPE } from "../enums";
+import { useTranslation } from "react-i18next";
 
 
 const PrimaryTableCell = styled(TableCell)(() => {
@@ -27,11 +29,15 @@ const PrimaryTableCell = styled(TableCell)(() => {
 interface ITableProps {
     tableHeaders:any;
     tableRows : any ;
-    
+    deposit:any; 
 }
 
-const DepositTable = ({tableHeaders , tableRows } : ITableProps) => {
+const DepositTable = ({tableHeaders , tableRows ,deposit } : ITableProps) => {
     const { classes } = useStyle();
+    const { t } = useTranslation();
+    const width = deposit?.depositType === DEPOSIT_TYPE.Checks ? "28.57%" : "25%";
+    const direction = t('direction');
+    const footerDirection = direction === "ltr" ? "rtl" : "ltr"
 
     return (
         <div>
@@ -39,7 +45,7 @@ const DepositTable = ({tableHeaders , tableRows } : ITableProps) => {
                 <Table stickyHeader={true}>
                     <TableHead>
                         <TableRow style={classes.tableRowStyle}>
-                            {tableHeaders().map((header, index) => (
+                            {tableHeaders.map((header, index) => (
                                 <PrimaryTableCell
                                     key={index}
                                     style={classes.tableHeaderStyle}>
@@ -54,7 +60,6 @@ const DepositTable = ({tableHeaders , tableRows } : ITableProps) => {
                                 <>
                                     <RowMappingWidget
                                         key={item.id}
-                                        // item={item}
                                         cells={Object.values(item)}  
                                         index={index}
                                     />
@@ -64,7 +69,9 @@ const DepositTable = ({tableHeaders , tableRows } : ITableProps) => {
                     </TableBody>
                 </Table>
             </TableContainer>
-           <TotalPricesDeposits amountForDeposit={"150"} totalDeposit={"200"}/>
+            <div dir={footerDirection}>
+           <TotalPricesDeposits amountForDeposit={tableRows?.length} totalDeposit={deposit?.cashAmount} footerWith={width} footerDirection={direction}/>
+           </div>
         </div>
     );
 };

@@ -11,13 +11,13 @@ import { getAllDepositsApi, showDepositApi } from "@/services/api-service/generi
 import { useDateFormat } from "@/hooks/use-date-format";
 import { MoreMenuWidget } from "./more-circle";
 import { allDepositsState, depositPaymentTypeSate, depositState, depositsFromDateState, depositsPageCountState, depositsPageSizeState, depositsPageState, depositsToDateState } from "./components/states";
-import { PAYMENT_TYPE } from "../deposit/enums";
+import { DEPOSIT_TYPE, PAYMENT_TYPE } from "../deposit/enums";
 
 const useDeposits = () => {
     const { t } = useTranslation();
     const { callApi } = useGomakeAxios();
     const { navigate } = useGomakeRouter();
-    const { GetDateFormat } = useDateFormat();
+    const { GetDateFormat, GetShortDateFormat } = useDateFormat();
     const [page, setPage] = useRecoilState<number>(depositsPageState);
     const resetPage = useResetRecoilState(depositsPageState);
     const [pagesCount, setPagesCount] = useRecoilState<number>(depositsPageCountState);
@@ -56,17 +56,28 @@ const useDeposits = () => {
         { label: t("payment.creditCard"), value: PAYMENT_TYPE.CreditCard }
     ];
 
+    const getDepositTypeText = (typeNum: number) => {
+        switch (typeNum) {
+            case (DEPOSIT_TYPE.Checks):
+                return t("payment.check");
+            case (DEPOSIT_TYPE.CreditCard):
+                return t("payment.creditCard");
+            case (DEPOSIT_TYPE.Cash):
+                return t("payment.cash");
+        }
+    };
+
     const getAllDeposits = async (isClear = false) => {
         const callBack = (res) => {
             if (res?.success) {
                 const data = res?.data?.data;
                 const totalItems = res?.data?.totalItems;
                 const mapData = data?.map((deposit: any) => [
-                    GetDateFormat(deposit?.createdDate),
+                    deposit?.createdDate,
                     deposit?.number,
                     deposit?.accountNumber,
                     deposit?.number,
-                    deposit?.typeText,
+                    getDepositTypeText(deposit?.depositType),
                     deposit?.totalAmount,
                     <MoreMenuWidget onClickShowDeposit={(depositId) => getDepositBYId(deposit?.id)} />
                 ]);
@@ -113,8 +124,9 @@ const useDeposits = () => {
                     deposit?.total,
                 ]);
                 const checksDepositData = data?.checks?.map((deposit: any) => [
-                    deposit?.checkDate,
-                    deposit?.clientName,
+                    GetDateFormat(deposit?.checkDate),
+                    // deposit?.clientName,
+                    deposit?.customer,
                     deposit?.checkNumber,
                     deposit?.bank,
                     deposit?.branch,

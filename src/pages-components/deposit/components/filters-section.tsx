@@ -24,7 +24,7 @@ const DepositFilterSection = ({ actionType, accountsOptions , depositAccountsOpt
     }
 
     return (
-        <Stack direction="column" gap="10px">
+        <Stack direction="column" gap="20px">
             <Stack direction="row" gap="10px">
                 {(actionType === DEPOSIT_ACTIONS.Create ? newDepositInputs(newDeposit, accountsOptions , depositAccountsOptions) : DepositInputs(deposit)).slice(0, 2).map((item) => (
                     <FormInput

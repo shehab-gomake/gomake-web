@@ -18,6 +18,9 @@ interface IDepositTabProps {
 const DepositTabTable = ({ tableHeaders, tableRows, itemsCount, total, onClickMakePayment, handleSelectAll, selectAllChecked }: IDepositTabProps) => {
     const { classes } = useStyle();
     const { t } = useTranslation();
+    const direction = t('direction');
+    const footerDirection = direction === "ltr" ? "rtl" : "ltr"
+
     return (
         <div style={classes.tabContainerStyle}>
             <div>
@@ -36,21 +39,24 @@ const DepositTabTable = ({ tableHeaders, tableRows, itemsCount, total, onClickMa
                 rows={tableRows}
                 headers={tableHeaders}
             />
-            <div style={classes.tabFooterStyle}>
-                <PrimaryTable
-                    rows={[
-                        [t("deposits.depositAmount"), itemsCount],
-                        [t("deposits.totalDeposit"), total]]}
-                    headers={null}
-                />
-                <SecondaryButton
-                    variant={'contained'}
-                    style={{ width: "100%" }}
-                    onClick={onClickMakePayment}>
-                    {t('deposits.makeDeposit')}
-                </SecondaryButton>
+            <div dir={footerDirection}>
+                <div dir={direction} style={classes.tabFooterStyle}>
+                    <PrimaryTable
+                        rows={[
+                            [t("deposits.depositAmount"), itemsCount],
+                            [t("deposits.totalDeposit"), total]]}
+                        headers={null}
+                    />
+                    <SecondaryButton
+                        variant={'contained'}
+                        style={{ width: "100%" }}
+                        onClick={onClickMakePayment}>
+                        {t('deposits.makeDeposit')}
+                    </SecondaryButton>
+                </div>
             </div>
         </div>
+
     );
 };
 

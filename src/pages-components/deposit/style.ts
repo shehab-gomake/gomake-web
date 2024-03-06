@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
-const useStyle = () => {
+const useStyle = (width? : string) => {
   const { t } = useTranslation();
   const { theme, grayColor, secondColor } = useGomakeTheme();
   const dir = t('direction');
@@ -24,11 +24,11 @@ const useStyle = () => {
 
       },
       secondDivStyle: {
-        // flex: 0.9,
         overflow: "auto",
         paddingLeft: 20,
         paddingRight: 12,
-        width: "100%"
+        width: "100%",
+        height:"100%"
       },
       titleContainer: {
         display: "flex",
@@ -83,7 +83,7 @@ const useStyle = () => {
         flexDirection: "column" as "column",
         justifyContent: "flex-start",
         alignItems: "flex-start",
-        width: "28.5%",
+        width: width,
         boxShadow: " 0px 1px 3px 0px #1018281A",
         borderBottomLeftRadius: 6,
         borderBottomRightRadius: 6,

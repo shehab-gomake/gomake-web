@@ -12,22 +12,6 @@ const RowCell = ({ text }) => {
     );
 };
 
-// const RowMappingWidget = ({
-//     item,
-//     index,
-// }) => {
-//     return (
-//         <TableRow
-//             key={item.id}
-//             style={{ background: index % 2 === 0 ? "#FFFFFF" : "#F8FAFB" }}>
-//             <RowCell text={item.cashAmount} />
-//             <RowCell text={item.cashAmount} />
-//             <RowCell text={item.cashAmount} />
-//             <RowCell text={item.cashAmount} />
-//         </TableRow>
-//     );
-// };
-// export { RowMappingWidget };
 
 const RowMappingWidget = ({ cells, index }) => {
     return (

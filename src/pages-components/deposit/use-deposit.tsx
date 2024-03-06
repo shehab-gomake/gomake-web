@@ -4,7 +4,7 @@ import { depositState, newDepositState } from "../deposits/components/states";
 import { DEPOSIT_TYPE } from "./enums";
 import { ITab } from "@/components/tabs/interface";
 import { createDepositApi, getDepositsMetaDataApi } from "@/services/api-service/generic-doc/deposits-api";
-import { useGomakeAxios, useSnackBar } from "@/hooks";
+import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
 import { useMemo, useState } from "react";
 import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
 import { Checkbox } from "@mui/material";
@@ -15,6 +15,7 @@ import { Console } from "console";
 const useDeposit = () => {
     const { t } = useTranslation();
     const { callApi } = useGomakeAxios();
+    const { navigate } = useGomakeRouter();
     const { GetShortDateFormat } = useDateFormat();
     const { alertSuccessAdded, alertFaultAdded, alertFaultGetData } = useSnackBar();
     const [accounts, setAccounts] = useState([]);
@@ -31,23 +32,6 @@ const useDeposit = () => {
     const [metaData, setMetaData] = useState<any>();
     const [depositMetaData, setDepositMetaData] = useState<any>();
 
-
-    /*
-      itemsToDeposits.forEach((data, index) => {
-            const depositItem = metaData?.cashReceiptsToDeposit[index];
-          //  const isChecked = !selectAllChecked;
-        newTotal += depositItem?.isChecked ? Number(depositItem?.cashSum) || 0 : 0;
-
-          
-
-           
-
-        });
-        return(newTotal);
-
-              
-
-    */
     const onSelectTab = (index: number) => {
         setNewDeposit({ ...newDeposit, balance: renderBalance(index), allocationAccount: renderAccountCode(index) })
         setItemsCount(0);
@@ -267,7 +251,7 @@ const useDeposit = () => {
         }
         const metaDataCopy = {
             ...metaData,
-            erpDeposit: {...newDeposit , depositType: renderDepositType(labelArray) , cashAmount:updatedTotal},
+            erpDeposit: {...newDeposit , depositType: renderDepositType(labelArray) , cashAmount: updatedTotal},
             depositMetaData: {
                 accounts: metaData.depositMetaData.accounts,
                 [labelArray]: newItemsSelected
@@ -276,8 +260,7 @@ const useDeposit = () => {
         const callBack = (res) => {
             if (res?.success) {
                 alertSuccessAdded();
-                // navigate to deposits
-            }
+                navigate(`/deposits`)            }
             else {
                 alertFaultAdded();
             }
@@ -428,13 +411,13 @@ const useDeposit = () => {
                     GetShortDateFormat(deposit?.dueDate),
                     "test",
                     deposit?.client?.name,
-                    <div>
+                    <div style={{display:"flex" ,alignItems:"center" ,justifyContent:"center", gap:"2px", }}>
                         <input
-                            style={{ width: "100px", marginRight: "5px" }}
+                            style={{ width: "100px" }}
                             type="text"
                             value={deposit?.cashSum}
                             onChange={(e) => handleCashInputChange(index, e.target.value)}
-                        />{t("From")}<span> {deposit?.cashSumOriginal}</span>
+                        />{t("deposits.from")}<span>{deposit?.cashSumOriginal}</span>
                     </div>,
                 ];
             });

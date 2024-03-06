@@ -3,14 +3,16 @@ import { useStyle } from "../style";
 
 const TotalPricesDeposits = ({
     amountForDeposit,
-    totalDeposit
+    totalDeposit,
+    footerWith,
+    footerDirection
 }) => {
-    const { classes } = useStyle();
+    const { classes } = useStyle(footerWith);
     const { t } = useTranslation();
     const dir = t('direction');
 
     return (
-        <div style={classes.priceFooterContainer}>
+        <div dir={footerDirection}  style={classes.priceFooterContainer}>
             <div style={classes.firstRowForFooterContainer}>
                 <label style={{ ...classes.evenRowContainer, width: "55.8%", borderBottom: "1px solid #EAECF0" }}>
                     {t("deposits.amountForDeposit")}
