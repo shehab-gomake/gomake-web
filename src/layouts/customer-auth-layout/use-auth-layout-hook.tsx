@@ -26,6 +26,7 @@ const useAuthLayoutHook = (permissionEnumValue?: Permissions, allowAnonymous?: b
           return <HomeIcon />;
         },
         isProduction: true,
+        tourData: 'menu-home'
       },
       {
         isLine: false,
@@ -237,6 +238,7 @@ const useAuthLayoutHook = (permissionEnumValue?: Permissions, allowAnonymous?: b
           return <CubeIcon width={24} height={24} color={"white"} />;
         },
         isProduction: true,
+        tourData: 'menu-materials'
       },
       {
         isLine: false,
@@ -261,6 +263,8 @@ const useAuthLayoutHook = (permissionEnumValue?: Permissions, allowAnonymous?: b
           return <LocalPrintshopOutlinedIcon style={{ color: "#FFFFFF" }} />;
         },
         isProduction: true,
+        tourData: 'menuMachines'
+
       },
       {
         isLine: false,
@@ -285,6 +289,7 @@ const useAuthLayoutHook = (permissionEnumValue?: Permissions, allowAnonymous?: b
           return <PendingActionsOutlinedIcon style={{ color: "#FFFFFF" }} />;
         },
         isProduction: true,
+        tourData: 'menuActions'
       },
       {
         isLine: false,
@@ -297,7 +302,8 @@ const useAuthLayoutHook = (permissionEnumValue?: Permissions, allowAnonymous?: b
           return <SettingNavBar />;
         },
         isProduction: true,
-      },
+        tourData: 'menu-settings'
+      },      
     ];
   }, []);
 

@@ -1,32 +1,33 @@
-import { useTranslation } from "react-i18next";
+import {useTranslation} from "react-i18next";
 import {
-  GoMakeAutoComplate,
-  GoMakeDeleteModal,
-  GomakePrimaryButton,
+    GoMakeAutoComplate,
+    GoMakeDeleteModal,
+    GomakePrimaryButton,
 } from "@/components";
-import { useQuoteWidget } from "./use-quote-widget";
+import {useQuoteWidget} from "./use-quote-widget";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
-import { useStyle } from "./style";
-import { Popover } from "@mui/material";
-import { PermissionCheck } from "@/components/CheckPermission/check-permission";
-import { Permissions } from "@/components/CheckPermission/enum";
-import { useEffect, useState } from "react";
-import { SecondaryButton } from "@/components/button/secondary-button";
-import { useResetRecoilState, useSetRecoilState } from "recoil";
+import {useStyle} from "./style";
+import {Paper, Popover} from "@mui/material";
+import {PermissionCheck} from "@/components/CheckPermission/check-permission";
+import {Permissions} from "@/components/CheckPermission/enum";
+import {useEffect, useState} from "react";
+import {SecondaryButton} from "@/components/button/secondary-button";
+import {useResetRecoilState, useSetRecoilState} from "recoil";
 import {
-  QuoteIfExistState,
-  QuoteNumberState,
+    QuoteIfExistState,
+    QuoteNumberState,
 } from "@/pages-components/quote/store/quote";
 import Stack from "@mui/material/Stack";
-import { selectedClientState } from "@/pages-components/quotes/states";
+import {selectedClientState} from "@/pages-components/quotes/states";
+import {useTour} from "@reactour/tour";
 
-const QuoteWidget = ({ isAdmin = true }) => {
-  const { classes } = useStyle();
-  const { t } = useTranslation();
-  const [QuoteId, setQuoteId] = useState("");
-  const setQuoteNumber = useSetRecoilState<any>(QuoteNumberState);
-  const setQuoteIfExist = useSetRecoilState<any>(QuoteIfExistState);
-  const resetSelectedClient = useResetRecoilState(selectedClientState);
+const QuoteWidget = ({isAdmin = true}) => {
+    const {classes} = useStyle();
+    const {t} = useTranslation();
+    const [QuoteId, setQuoteId] = useState("");
+    const setQuoteNumber = useSetRecoilState<any>(QuoteNumberState);
+    const setQuoteIfExist = useSetRecoilState<any>(QuoteIfExistState);
+    const resetSelectedClient = useResetRecoilState(selectedClientState);
 
   const {
     clientTypesValue,
@@ -72,11 +73,16 @@ const QuoteWidget = ({ isAdmin = true }) => {
       setQuoteIfExist(false);
     }
   }, [userQuote, clientTypesValue]);
-
+  const {setIsOpen, currentStep} = useTour();
+  useEffect(() => {
+    if (currentStep < 3) {
+      setIsOpen(true);
+    }
+  }, [currentStep])
   return (
-    <div style={classes.mainContainer}>
+    <div data-tour="quote-widget" style={classes.mainContainer}>
       <div style={classes.autoComplateRowContainer}>
-        <div style={{ width: "65%" }}>
+        <div data-tour="select-customer" style={{ width: "65%" }}>
           <GoMakeAutoComplate
             options={renderOptions() ? renderOptions() : []}
             placeholder={t("home.admin.selectCustomer")}
@@ -94,7 +100,7 @@ const QuoteWidget = ({ isAdmin = true }) => {
             }}
           />
         </div>
-        <div style={{ width: "30%" }}>
+        <div data-tour="select-type" style={{ width: "30%" }}>
           <GoMakeAutoComplate
             options={clientTypesValue}
             placeholder={t("home.admin.selectType")}
@@ -112,7 +118,7 @@ const QuoteWidget = ({ isAdmin = true }) => {
         </div>
       </div>
       <div style={classes.autoComplateRowContainer}>
-        <div style={{ width: "65%" }}>
+        <div data-tour="select-product" style={{ width: "65%" }}>
           <GoMakeAutoComplate
             options={productValue}
             placeholder={t("home.admin.selectProduct")}
@@ -158,7 +164,7 @@ const QuoteWidget = ({ isAdmin = true }) => {
           </div>
         </Stack>
       ) : (
-        <div style={{ width: "50%" }}>
+        <div data-tour="create-quote" style={{ width: "50%" }}>
           <GomakePrimaryButton
             onClick={
               isDisabled
@@ -207,4 +213,4 @@ const QuoteWidget = ({ isAdmin = true }) => {
   );
 };
 
-export { QuoteWidget };
+export {QuoteWidget};

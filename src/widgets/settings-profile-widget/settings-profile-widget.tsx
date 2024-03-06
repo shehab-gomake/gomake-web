@@ -10,7 +10,7 @@ import { useUserPermission } from "@/hooks/use-permission";
 const SettingsProfileWidget = () => {
   const { t } = useTranslation();
   const { CheckPermission } = useUserPermission();
-  const { openModal, setOpenModal } = useEmployee();
+  const {} = useEmployee();
 
   const tabs: ITab[] = [
     { title: t("profileSettings.profileTab"), component: <UserProfile /> },
@@ -19,7 +19,7 @@ const SettingsProfileWidget = () => {
       component: <CompanyProfileComponent />,
     },
   ];
-  return <PrimaryTabsComponent tabs={tabs} />;
+  return <div data-tour={'profileSettings'}><PrimaryTabsComponent tabs={tabs} /></div>;
 };
 
 export { SettingsProfileWidget };
