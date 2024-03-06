@@ -99,8 +99,8 @@ const useQuoteWidget = ({ documentType }: any) => {
 
   const getAllCustomersCreateQuote = useCallback(async (SearchTerm?) => {
     await getAndSetAllCustomers(callApi, setCustomersListCreateQuote, {
-      ClientType: documentType === DOCUMENT_TYPE.purchaseOrder ? "S" : "C",
-      onlyCreateOrderClients: documentType === DOCUMENT_TYPE.purchaseOrder ? true : false,
+      ClientType: documentType === DOCUMENT_TYPE.purchaseOrder || documentType === DOCUMENT_TYPE.purchaseInvoice ? "S" : "C",
+      onlyCreateOrderClients: documentType === DOCUMENT_TYPE.purchaseOrder || documentType === DOCUMENT_TYPE.purchaseInvoice ? true : false,
       searchTerm: SearchTerm,
     });
   }, []);

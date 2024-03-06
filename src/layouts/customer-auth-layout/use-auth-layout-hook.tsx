@@ -115,6 +115,12 @@ const useAuthLayoutHook = (permissionEnumValue?: Permissions, allowAnonymous?: b
             Permission: Permissions.SHOW_ORDERS,
           },
           {
+            key: "purchase invoice",
+            title: "tabs.purchaseInvoice",
+            path: "/purchaseInvoices",
+            Permission: Permissions.SHOW_ORDERS,
+          },
+          {
             key: "receipts",
             title: "tabs.receipts",
             path: "/receipts",
