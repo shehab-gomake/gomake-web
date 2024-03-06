@@ -10,6 +10,7 @@ import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
 import { Checkbox } from "@mui/material";
 import { DepositTabTable } from "./components/tabs-table-prices";
 import { useDateFormat } from "@/hooks/use-date-format";
+import { Console } from "console";
 
 const useDeposit = () => {
     const { t } = useTranslation();
@@ -31,8 +32,24 @@ const useDeposit = () => {
     const [depositMetaData, setDepositMetaData] = useState<any>();
 
 
+    /*
+      itemsToDeposits.forEach((data, index) => {
+            const depositItem = metaData?.cashReceiptsToDeposit[index];
+          //  const isChecked = !selectAllChecked;
+        newTotal += depositItem?.isChecked ? Number(depositItem?.cashSum) || 0 : 0;
+
+          
+
+           
+
+        });
+        return(newTotal);
+
+              
+
+    */
     const onSelectTab = (index: number) => {
-        setNewDeposit({ ...newDeposit, balance: renderBalance(index) , allocationAccount: renderAccountCode(index)})
+        setNewDeposit({ ...newDeposit, balance: renderBalance(index), allocationAccount: renderAccountCode(index) })
         setItemsCount(0);
         setTotal(0);
         setSelectAllChecked(false);
@@ -69,7 +86,6 @@ const useDeposit = () => {
             deferredChecksToDeposit: updatedDeferredChecksToDeposit
         }));
     }
-
 
     const handleSelectAllChange = (itemsToDeposits, stringItemToDeposits, handleCheckBox, totalSting, metaData) => {
         setSelectAllChecked((prev) => !prev);
@@ -151,8 +167,8 @@ const useDeposit = () => {
 
     const handleCashCheckboxChange = (index, depositItem) => (event) => {
         const isChecked = event.target.checked;
-        const cashSum = Number(depositItem?.cashSum) || 0;
-        setTotal((prevTotal) => isChecked ? prevTotal + cashSum : prevTotal - cashSum);
+        // const cashSum = Number(depositItem?.cashSum) || 0;
+        //   setTotal((prevTotal) => isChecked ? prevTotal + cashSum : prevTotal - cashSum);
         setItemsCount((prevCount) => isChecked ? prevCount + 1 : prevCount - 1);
         setDepositMetaData((prevMetaData) => {
             const updatedCashReceiptsToDeposit = [...prevMetaData.cashReceiptsToDeposit];
@@ -165,7 +181,6 @@ const useDeposit = () => {
                 cashReceiptsToDeposit: updatedCashReceiptsToDeposit,
             };
         });
-
         setNewItemsSelected((prevSelectedItems) => {
             if (isChecked) {
                 return [...prevSelectedItems, depositItem];
@@ -208,7 +223,6 @@ const useDeposit = () => {
                 const metaData = res?.data;
                 const depositMetaData = res?.data?.depositMetaData;
                 setMetaData(metaData)
-                setDepositMetaData(depositMetaData)
                 setAccounts(depositMetaData?.accounts);
                 setDepositAccounts(metaData?.depositAccounts);
                 const cashSumTotal = depositMetaData?.cashReceiptsToDeposit?.reduce((total, deposit) => {
@@ -225,7 +239,19 @@ const useDeposit = () => {
                     checksBalance: checksSumTotal,
                     creditCardBalance: creditSumTotal
                 });
-                setNewDeposit({ ...res?.data?.erpDeposit, balance: checksSumTotal , allocationAccount:"71100" , depositAccount:metaData?.depositAccounts[0].code})
+                setNewDeposit({ ...res?.data?.erpDeposit, balance: checksSumTotal, allocationAccount: "71100", depositAccount: metaData?.depositAccounts[0].code })
+
+                const updatedCashReceipts = depositMetaData?.cashReceiptsToDeposit?.map(cashReceipt => {
+                    return {
+                        ...cashReceipt,
+                        cashSumOriginal: cashReceipt.cashSum
+                    };
+                });
+
+                setDepositMetaData({
+                    ...depositMetaData,
+                    cashReceiptsToDeposit: updatedCashReceipts
+                });
             }
             else {
                 alertFaultGetData();
@@ -234,14 +260,14 @@ const useDeposit = () => {
         await getDepositsMetaDataApi(callApi, callBack);
     };
 
-    const createDeposit = async (labelArray : string) => {
-        if (total === 0 || itemsCount === 0) {
+    const createDeposit = async (labelArray: string) => {
+        if (itemsCount === 0) {
             alertFaultAdded();
-                       return;
+            return;
         }
         const metaDataCopy = {
             ...metaData,
-            erpDeposit: newDeposit,
+            erpDeposit: {...newDeposit , depositType: renderDepositType(labelArray) , cashAmount:updatedTotal},
             depositMetaData: {
                 accounts: metaData.depositMetaData.accounts,
                 [labelArray]: newItemsSelected
@@ -349,6 +375,44 @@ const useDeposit = () => {
         }
     };
 
+    const renderDepositType = (labelArray: string) => {
+        switch (labelArray) {
+            case ("checksToDeposit"):
+                return DEPOSIT_TYPE.Checks;
+            case ("creditCardsToDeposit"):
+                return DEPOSIT_TYPE.CreditCard;
+            case ("cashReceiptsToDeposit"):
+                return DEPOSIT_TYPE.Cash;
+        }
+    };
+
+    const handleCashInputChange = (index, value) => {
+        const updatedCashReceiptsToDeposit = [...depositMetaData.cashReceiptsToDeposit];
+        updatedCashReceiptsToDeposit[index] = {
+            ...updatedCashReceiptsToDeposit[index],
+            cashSum: value,
+        };
+        setDepositMetaData((prevMetaData) => ({
+            ...prevMetaData,
+            cashReceiptsToDeposit: updatedCashReceiptsToDeposit,
+        }));
+
+        const depositItem = updatedCashReceiptsToDeposit[index];
+        const isChecked = depositItem.isChecked || false;
+
+
+        setNewItemsSelected((prevSelectedItems) => {
+            if (isChecked) {
+                const updatedSelectedItems = prevSelectedItems.map((item) =>
+                    item.id === depositItem.id ? depositItem : item
+                );
+                return updatedSelectedItems;
+            } else {
+                return prevSelectedItems.filter((item) => item.id !== depositItem.id);
+            }
+        });
+    };
+
     const mapDepositsData = {
         cash: useMemo(() => {
             return depositMetaData?.cashReceiptsToDeposit?.map((deposit: any, index: number) => {
@@ -364,7 +428,14 @@ const useDeposit = () => {
                     GetShortDateFormat(deposit?.dueDate),
                     "test",
                     deposit?.client?.name,
-                    deposit?.cashSum,
+                    <div>
+                        <input
+                            style={{ width: "100px", marginRight: "5px" }}
+                            type="text"
+                            value={deposit?.cashSum}
+                            onChange={(e) => handleCashInputChange(index, e.target.value)}
+                        />{t("From")}<span> {deposit?.cashSumOriginal}</span>
+                    </div>,
                 ];
             });
         }, [depositMetaData]),
@@ -428,6 +499,16 @@ const useDeposit = () => {
         }, [depositMetaData]),
     };
 
+    const updatedTotal = useMemo(() => {
+        let newTotal = 0;
+        mapDepositsData?.cash?.forEach((data, index) => {
+            const depositItem = depositMetaData?.cashReceiptsToDeposit[index];
+            newTotal += depositItem?.isChecked ? Number(depositItem?.cashSum) || 0 : 0;
+        });
+        return (newTotal);
+    }, [depositMetaData])
+
+
     const depositsTabs: ITab[] = [
         {
             title: t("deposits.checks"),
@@ -478,7 +559,7 @@ const useDeposit = () => {
                         tableHeaders={["#", ...cashDepositHeaders]}
                         tableRows={mapDepositsData.cash}
                         itemsCount={itemsCount}
-                        total={total}
+                        total={updatedTotal}
                         handleSelectAll={() => handleSelectAllChange(mapDepositsData.cash, "cashReceiptsToDeposit", handleCashCheckboxChange, "cashSum", depositMetaData)}
                         selectAllChecked={selectAllChecked}
                         onClickMakePayment={() => createDeposit("cashReceiptsToDeposit")}
@@ -486,8 +567,6 @@ const useDeposit = () => {
                 </div>
         },
     ];
-
-
 
     return {
         t,
