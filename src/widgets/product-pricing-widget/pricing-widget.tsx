@@ -20,9 +20,9 @@ import {useTranslation} from "react-i18next";
 import {useStyle} from "@/widgets/product-pricing-widget/style";
 import {useRecoilState, useRecoilValue} from "recoil";
 import {
-    currentProductItemValueDraftId,
-    currentProductItemValueState,
-    selectedWorkFlowState,
+  currentProductItemValueDraftId,
+  currentProductItemValueState, currentProductItemValueTotalWorkFlowsState,
+  selectedWorkFlowState,
 } from "@/widgets/product-pricing-widget/state";
 import cloneDeep from "lodash.clonedeep";
 import {SubWorkFlowsComponent} from "@/widgets/product-pricing-widget/components/work-flow/sub-work-flow-component";
@@ -33,30 +33,30 @@ import {useGomakeAxios} from "@/hooks";
 import {currentCalculationConnectionId} from "@/store";
 
 const PricingWidget = ({
-                           workFlows,
-                           getOutSourcingSuppliers,
-                       }: IPricingWidgetProps) => {
-    const [view, setView] = useState<EPricingViews>(
-        EPricingViews.SELECTED_WORKFLOW
-    );
-    const {callApi} = useGomakeAxios();
-    const {t} = useTranslation();
-    const {classes} = useStyle();
-    const selectedWorkFlow = useRecoilValue(selectedWorkFlowState);
-    const [currentProductItemValue, setCurrentProductItemValue] =
-        useRecoilState<any>(currentProductItemValueState);
-    const productItemValueDraftId = useRecoilValue<string>(
-        currentProductItemValueDraftId
-    );
-    const connectionId = useRecoilValue(currentCalculationConnectionId);
-    const updateProductItemValue = async (sourceType: number) => {
-        await updateProductItemValueOutsource(callApi, () => {
-        }, {
-            productItemValueId: productItemValueDraftId,
-            signalRConnectionId: connectionId,
-            sourceType
-        })
-    }
+  workFlows,
+  getOutSourcingSuppliers,
+}: IPricingWidgetProps) => {
+  const [view, setView] = useState<EPricingViews>(
+    EPricingViews.SELECTED_WORKFLOW
+  );
+  const { callApi } = useGomakeAxios();
+  const { t } = useTranslation();
+  const { classes } = useStyle();
+  const selectedWorkFlow = useRecoilValue(selectedWorkFlowState);
+  const [currentProductItemValue, setCurrentProductItemValue] =
+    useRecoilState<any>(currentProductItemValueState);
+  const currentProductItemValueTotalWorkFlows = useRecoilValue<number>(currentProductItemValueTotalWorkFlowsState);
+  const productItemValueDraftId = useRecoilValue<string>(
+    currentProductItemValueDraftId
+  );
+  const connectionId = useRecoilValue(currentCalculationConnectionId);
+  const updateProductItemValue = async (sourceType: number) => {
+    await updateProductItemValueOutsource(callApi, () => { }, {
+      productItemValueId: productItemValueDraftId,
+      signalRConnectionId: connectionId,
+      sourceType
+    })
+  }
 
     useEffect(() => {
         getOutSourcingSuppliers();
@@ -73,45 +73,45 @@ const PricingWidget = ({
         }
     }, [selectedWorkFlow]);
 
-    return (
-        <Stack gap={"16px"} width={"100%"}>
-            <Stack direction={"row"} justifyContent={"space-between"}>
-                {!!workFlows && view !== EPricingViews.OUTSOURCE_WORKFLOW ? (
-                    <ButtonGroup sx={classes.buttonGroup} orientation={"horizontal"}>
-                        <PrimaryButton
-                            onClick={() => setView(EPricingViews.SELECTED_WORKFLOW)}
-                            sx={classes.button}
-                            variant={
-                                view === EPricingViews.SELECTED_WORKFLOW
-                                    ? "contained"
-                                    : "outlined"
-                            }
-                        >
-                            {t("pricingWidget.selected")}
-                        </PrimaryButton>
-                        <PrimaryButton
-                            data-tour={'allWorkflowsBtn'}
-                            onClick={() => setView(EPricingViews.OTHERS_WORKFLOWS)}
-                            sx={classes.button}
-                            variant={
-                                view === EPricingViews.OTHERS_WORKFLOWS
-                                    ? "contained"
-                                    : "outlined"
-                            }
-                        >{`${t("pricingWidget.others")} (${workFlows?.length
-                        })`}</PrimaryButton>
-                    </ButtonGroup>
-                ) : (
-                    <div/>
-                )}
-                <InOutSourceSelect
-                    onChange={(v: EWorkSource) => {
-                        setView(
-                            v === EWorkSource.OUT
-                                ? EPricingViews.OUTSOURCE_WORKFLOW
-                                : EPricingViews.SELECTED_WORKFLOW
-                        )
-                        updateProductItemValue(v)
+  return (
+    <Stack gap={"16px"} width={"100%"}>
+      <Stack direction={"row"} justifyContent={"space-between"}>
+        {!!workFlows && view !== EPricingViews.OUTSOURCE_WORKFLOW ? (
+          <ButtonGroup sx={classes.buttonGroup} orientation={"horizontal"}>
+            <PrimaryButton
+              onClick={() => setView(EPricingViews.SELECTED_WORKFLOW)}
+              sx={classes.button}
+              variant={
+                view === EPricingViews.SELECTED_WORKFLOW
+                  ? "contained"
+                  : "outlined"
+              }
+            >
+              {t("pricingWidget.selected")}
+            </PrimaryButton>
+            <PrimaryButton
+                data-tour={'allWorkflowsBtn'}
+              onClick={() => setView(EPricingViews.OTHERS_WORKFLOWS)}
+              sx={classes.button}
+              variant={
+                view === EPricingViews.OTHERS_WORKFLOWS
+                  ? "contained"
+                  : "outlined"
+              }
+            >{`${t("pricingWidget.others")} (${currentProductItemValueTotalWorkFlows
+              })`}</PrimaryButton>
+          </ButtonGroup>
+        ) : (
+          <div />
+        )}
+        <InOutSourceSelect
+          onChange={(v: EWorkSource) => {
+            setView(
+              v === EWorkSource.OUT
+                ? EPricingViews.OUTSOURCE_WORKFLOW
+                : EPricingViews.SELECTED_WORKFLOW
+            )
+            updateProductItemValue(v)
 
                     }
 

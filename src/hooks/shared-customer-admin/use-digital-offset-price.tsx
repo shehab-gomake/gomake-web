@@ -35,7 +35,7 @@ import {
   calculationProgressState,
   currentProductItemValueDraftId,
   currentProductItemValuePriceState,
-  currentProductItemValueState,
+  currentProductItemValueState, currentProductItemValueTotalWorkFlowsState,
   jobActionsState,
   jobDetailsState,
   outsourceSuppliersState,
@@ -68,7 +68,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const { alertFaultAdded, alertFaultUpdate, alertFault } = useSnackBar();
   const [isChargeForNewDie, setIsChargeForNewDie] = useState(false)
   const { clientTypesValue, renderOptions, checkWhatRenderArray } =
-    useQuoteWidget();
+    useQuoteWidget({});
   const { allMaterials, getAllMaterial } = useMaterials();
   const [selectedValueConfig, setSelectedValueConfig] = useRecoilState(
     selectedValueConfigState
@@ -103,7 +103,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     currentProductItemValueTotalPrice,
     setCurrentProductItemValueTotalPrice,
   ] = useRecoilState<number>(currentProductItemValuePriceState);
-
+  const [
+    currentProductItemValueTotalWorkFlows,
+    setCurrentProductItemValueTotalWorkFlows,
+  ] = useRecoilState<number>(currentProductItemValueTotalWorkFlowsState);
   const [clientDefaultValue, setClientDefaultValue] = useState<any>({});
   const [clientTypeDefaultValue, setClientTypeDefaultValue] = useState<any>({});
   const [expanded, setExpanded] = useState<string | false>("");
@@ -218,12 +221,17 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
            totalWorkFlowsCount: totalWorkFlowsCount,
            currentWorkFlowsCount: currentWorkFlowsCount,
          });*/
+
         if (calculationResult.isCalculationFinished) {
           setCalculationProgress({
             totalWorkFlowsCount: 0,
             currentWorkFlowsCount: 0,
           });
+          setCurrentProductItemValueTotalWorkFlows(calculationResult.productItemValue.totalWorkFlows)
           setLoading(false);
+        } else {
+          setCurrentProductItemValueTotalWorkFlows(currentWorkFlows ? currentWorkFlows.length : 0)
+
         }
         setWorkFlows(currentWorkFlows);
         setJobActions(calculationResult?.productItemValue.actions);
@@ -420,7 +428,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 ...temp[index],
               };
             } else {
-              if (parameter.isRequired) {
+              if (parameter.isRequired && !parameter.isHidden) {
                 temp.push(parameter);
                 if (sectionIndex === activeIndex) {
                   activeSectionTemp.push(parameter);
@@ -993,7 +1001,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   useEffect(() => {
     if (currentProductItemValueTotalPrice && quantity) {
       const productItemValue = {
-        signalRConnectionId:connectionId,
+        signalRConnectionId: connectionId,
         productItemValueId: productItemValueDraftId,
         itemId: router?.query?.documentId,
         productId: router?.query?.productId,
@@ -1302,21 +1310,30 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                           p.id === parameterId &&
                           p.actionIndex === actionIndex
                       );
-                      return (
-                        <div key={parameterId}>
-                          {_renderParameterType(
-                            myParameter,
-                            subSection,
-                            section,
-                            subSection?.parameters,
-                            myParameter?.value,
-                            list,
-                            true,
-                            false,
-                            false
-                          )}
-                        </div>
-                      );
+                      let productCopy = cloneDeep(productTemplate);
+                      const sectionCopy = productCopy.sections?.find(x => x.id === section.id);
+                      const subSectionCopy = sectionCopy.subSections?.find(x => x.id === subSection.id);
+                      const param = subSectionCopy.parameters?.find(x => x.id === relatedParameter.parameterId);
+                      if (param.isHidden == false) {
+                        return;
+                      }
+                      param.isHidden = false;
+                      setProductTemplate(productCopy);
+                      // return (
+                      //   <div key={parameterId}>
+                      //     {_renderParameterType(
+                      //       myParameter,
+                      //       subSection,
+                      //       section,
+                      //       subSection?.parameters,
+                      //       myParameter?.value,
+                      //       list,
+                      //       true,
+                      //       false,
+                      //       false
+                      //     )}
+                      //   </div>
+                      // );
                     }
                     let productCopy = cloneDeep(productTemplate);
                     const sectionCopy = productCopy.sections?.find(x => x.id === section.id);
@@ -1341,37 +1358,55 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                             p.id === parameterId &&
                             p.actionIndex === actionIndex
                         );
-                        return (
-                          <div key={parameterId}>
-                            {_renderParameterType(
-                              myParameter,
-                              subSection,
-                              section,
-                              subSection?.parameters,
-                              myParameter?.value,
-                              list,
-                              true,
-                              false,
-                              false
-                            )}
-                          </div>
-                        );
+                        let productCopy = cloneDeep(productTemplate);
+                        const sectionCopy = productCopy.sections?.find(x => x.id === section.id);
+                        const subSectionCopy = sectionCopy.subSections?.find(x => x.id === subSection.id);
+                        const param = subSectionCopy.parameters?.find(x => x.id === relatedParameter.parameterId);
+                        if (param.isHidden == false) {
+                          return;
+                        }
+                        param.isHidden = false;
+                        setProductTemplate(productCopy);
+                        // return (
+                        //   <div key={parameterId}>
+                        //     {_renderParameterType(
+                        //       myParameter,
+                        //       subSection,
+                        //       section,
+                        //       subSection?.parameters,
+                        //       myParameter?.value,
+                        //       list,
+                        //       true,
+                        //       false,
+                        //       false
+                        //     )}
+                        //   </div>
+                        // );
                       }
-                      return (
-                        <div>
-                          {_renderParameterType(
-                            myParameter,
-                            subSection,
-                            section,
-                            subSection?.parameters,
-                            myParameter?.value,
-                            list,
-                            true,
-                            false,
-                            false
-                          )}
-                        </div>
-                      );
+                      // return (
+                      //   <div>
+                      //     {_renderParameterType(
+                      //       myParameter,
+                      //       subSection,
+                      //       section,
+                      //       subSection?.parameters,
+                      //       myParameter?.value,
+                      //       list,
+                      //       true,
+                      //       false,
+                      //       false
+                      //     )}
+                      //   </div>
+                      // );
+                      let productCopy = cloneDeep(productTemplate);
+                      const sectionCopy = productCopy.sections?.find(x => x.id === section.id);
+                      const subSectionCopy = sectionCopy.subSections?.find(x => x.id === subSection.id);
+                      const param = subSectionCopy.parameters?.find(x => x.id === relatedParameter.parameterId);
+                      if (param.isHidden == false) {
+                        return;
+                      }
+                      param.isHidden = false;
+                      setProductTemplate(productCopy);
                     }
 
                     if (relatedParameter.activateByAllValues && parm?.values) {
@@ -1730,20 +1765,23 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   };
   const [errorText, setErrorText] = useState(false)
   const handleTabClick = (index: number) => {
-
-    if (checkParameter) {
-      setErrorText(false)
-      if (index !== activeIndex) {
+    // Allow moving to any previous tab regardless of checkParameter
+    if (index < activeIndex) {
+      setActiveIndex(index);
+    } else if (index > activeIndex) {
+      // Move to the next tab only if checkParameter is true
+      if (checkParameter) {
+        setErrorText(false);
         setCanCalculation(false);
         setActiveIndex(index);
         setCanCalculation(false);
+      } else {
+        // Show error if trying to move to the next tab but checkParameter is false
+        alertFault("products.offsetPrice.admin.errorReq");
+        setErrorText(true);
       }
     }
-    else {
-      alertFault("products.offsetPrice.admin.errorReq")
-      setErrorText(true)
-    }
-
+    // No action needed if clicking on the current tab
   };
   const handleNextClick = () => {
     setErrorText(false)
@@ -1976,8 +2014,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         },
         false,
         newRequestAbortController
-      );
+  ).catch(e=>setLoading(false));
 
+      //setLoading(false);
+    } else {
       setLoading(false);
     }
   }, [subProducts, router, isRequiredParameters, validateParameters]);

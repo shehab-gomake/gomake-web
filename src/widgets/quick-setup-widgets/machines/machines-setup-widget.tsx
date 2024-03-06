@@ -12,9 +12,10 @@ import {ECategoryId} from "@/widgets/machines/enums/category-id";
 interface IProps {
     categories?: ECategoryId[];
     nextStep: string;
+    header: string;
 }
 
-const MachinesSetupWidget = ({categories, nextStep}: IProps) => {
+const MachinesSetupWidget = ({categories, nextStep, header}: IProps) => {
     const {classes} = useStyle();
     const {t} = useTranslation();
     const {
@@ -31,32 +32,37 @@ const MachinesSetupWidget = ({categories, nextStep}: IProps) => {
         onRemovePrintHouseMachine,
         onSearchMachine,
         newMachine,
-        searchMachineInit
     } = useMachinesSetupData(categories, nextStep);
     return (
         <Stack gap={'10px'} alignItems={'center'}>
-            <h2 style={classes.header}>{t('signup.machinesHeader')}</h2>
+            <h2 style={classes.header}>{t(header)}</h2>
             <GoMakeAutoComplate style={classes.autoComplete} value={selectedCategory}
                                 onChange={(e, v) => onSelectCategory(v?.value as ECategoryId)}
                                 options={machinesCategoriesList}
                                 disableClearable={true}
                                 placeholder={t('signup.chooseMachineCategory')}/>
             <GoMakeAutoComplate
-                                disabled={machinesLoading}
-                                onChange={(e, machine) => onSelectMachine(machine)}
-                                loading={machinesLoading}
-                                disableClearable={true}
-                                // value={searchMachineInit()}
-                                onChangeTextField={(e) => {onSearchMachine(e?.target?.value)}}
-                                style={classes.autoComplete} options={[newMachine, ...categoryMachines]?.filter(machine => machine?.value !== '')} placeholder={t('signup.machineName')}/>
+                disabled={machinesLoading}
+                onChange={(e, machine) => onSelectMachine(machine)}
+                loading={machinesLoading}
+                disableClearable={true}
+                // value={searchMachineInit()}
+                onChangeTextField={(e) => {
+                    onSearchMachine(e?.target?.value)
+                }}
+                style={classes.autoComplete}
+                options={[newMachine, ...categoryMachines]?.filter(machine => machine?.value !== '')}
+                placeholder={t('signup.machineName')}/>
             <Stack flexWrap={'wrap'} direction={'row'} columnGap={'10px'} rowGap={'2px'} padding={'15px'}
                    overflow={'auto'}
                    position={'relative'}
                    style={classes.selectedMachinesContainer}>
                 {
-                    printHouseMachines.map((machine, index) => <MaterialViewComponent id={machine?.value} label={machine?.label}
-                                                                             bgColor={getMachineColor(machine?.category as ECategoryId)}
-                                                                             onRemove={() => onRemovePrintHouseMachine(index)}/>)
+                    printHouseMachines.map((machine, index) => <MaterialViewComponent id={machine?.value}
+                                                                                      label={machine?.label}
+                                                                                      bgColor={getMachineColor(machine?.category as ECategoryId)}
+                                                                                      textColor={'#FFF'}
+                                                                                      onRemove={() => onRemovePrintHouseMachine(index)}/>)
                 }
             </Stack>
             <PrimaryButton endIcon={loading && <CircularProgress style={{width: '20px', height: '20px'}}/>}

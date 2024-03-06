@@ -60,7 +60,7 @@ const TotalPriceComp = ({
             <InputUpdatedValues
               value={(quoteItems?.discount ? quoteItems?.discount : 0)}
               onBlur={onBlurDiscount}
-              isUpdate={router.query.Id ? false : isUpdateDiscount}
+              isUpdate={router.query.canEdit === "false" ? false : isUpdateDiscount}
               setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdateDiscount}
               onInputChange={(e) => onInputDiscount(e)}
             />
@@ -95,7 +95,7 @@ const TotalPriceComp = ({
             <InputUpdatedValues
               value={quoteItems?.totalPayment}
               onBlur={onBlurTotalPayment}
-              isUpdate={router.query.Id ? false : isUpdateTotalPayment}
+              isUpdate={router.query.canEdit === "false" ? false : isUpdateTotalPayment}
               setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdateTotalPayment}
               onInputChange={(e) => onInputTotalPayment(e)}
               speicalStyle={{

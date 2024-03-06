@@ -8,7 +8,8 @@ export default function QuickSetupMachinesRequiredPage() {
         <CustomerAuthLayout disableHeaderSideMenu={true}>
             <QuickSetupLayout pageTitle={'What\'s in your tech squad? Introduce your machines.'}
                               headerColor={'primary'}>
-                <MachinesSetupWidget nextStep={'/quick-setup/machines/cutting'}
+                <MachinesSetupWidget header={'signup.printersMachinesHeader'}
+                                     nextStep={'/quick-setup/machines/cutting'}
                                      categories={[
                                          ECategoryId.DIGITAL_PRINTING,
                                          ECategoryId.OFSSET_PRINTING,

@@ -66,7 +66,7 @@ const useMoreCircle = ({
       icon: <AnalysisIcon />,
       onclick: () => null,
     },
-    !router.query.Id &&
+    router.query.canEdit === "true" &&
     {
       name: "Delete",
       icon: <DeleteMenuIcon />,

@@ -234,175 +234,175 @@ const QuoteNewPageWidget = ({documentType, isQuoteConfirmation = false}: IProps)
                                         {" - "} {quoteState?.number}
                                     </div>}
 
-                                </div>
-                                {!isQuoteConfirmation && <div style={classes.settingsStatusContainer}>
-                                    {!router?.query?.isNewCreation &&
-                                        <div style={classes.quoteStatusContainer}>
-                                            {_renderQuoteStatus(
-                                                quoteState?.documentStatus,
-                                                quoteState,
-                                                t
-                                            )}
-                                        </div>
-                                    }
-                                    <IconButton
-                                        style={{marginRight: 4}}
-                                        onClick={handleSettingMenuClick}
-                                    >
-                                        <SettingNewIcon/>
-                                    </IconButton>
-                                </div>}
-                            </div>
-                            <div style={classes.datesContainer}>
-                                <div
-                                    style={classes.deleverdDate}
-                                    onClick={handleClickSelectDate}
-                                >
-                                    {t("sales.quote.dateOfReference")}{" "}
-                                    {selectDate
-                                        ? DateFormatterDDMMYYYY(selectDate)
-                                        : "select date"}
-                                    <div style={classes.datePickerContainer}>
-                                        <input
-                                            type="datetime-local"
-                                            onChange={(e) => {
-                                                setSelectDate(e.target.value);
-                                                setActiveClickAway(true);
-                                            }}
-                                            ref={dateRef}
-                                        />
-                                    </div>
-                                </div>
-                                {/* <div style={classes.lineDateStyle} /> Don't Delete */}
-                            </div>
-                            <div style={classes.bordersecondContainer}>
-                                <BusinessNewWidget
-                                    values={quoteState}
-                                    selectBusiness={selectBusiness}
-                                    selectConfirmBusiness={selectConfirmBusiness}
-                                    onBlurBusinessName={onBlurBusinessName}
-                                    isUpdateBusinessName={isUpdateBusinessName}
-                                    setIsUpdateBusinessName={setIsUpdateBusinessName}
-                                    onBlurPurchaseNumber={onBlurPurchaseNumber}
-                                    isUpdatePurchaseNumber={isUpdatePurchaseNumber}
-                                    setIsUpdatePurchaseNumber={setIsUpdatePurchaseNumber}
-                                    onBlurBusinessCode={onBlurBusinessCode}
-                                    setIsUpdateBusinessCode={setIsUpdateBusinessCode}
-                                    onBlurAddress={onBlurAddress}
-                                    isUpdateAddress={isUpdateAddress}
-                                    setIsUpdateAddress={setIsUpdateAddress}
-                                    selectedAgent={selectedAgent}
-                                    agentListValue={agentListValue}
-                                    onBlurAgent={onBlurAgent}
-                                    isUpdateAgent={isUpdateAgent}
-                                    setIsUpdateAgent={setIsUpdateAgent}
-                                    updateAgent={updateAgent}
-                                    onChangeSelectBusiness={onChangeSelectBusiness}
-                                    onClickDeleteAddress={onClickDeleteAddress}
-                                    documentType={documentType}
-                                    isQuoteConfirmation={isQuoteConfirmation}
-                                />
-                                <ContactNewWidget
-                                    handleShowLess={handleShowLess}
-                                    items={items}
-                                    displayedItems={displayedItems}
-                                    setIsDisplayWidget={setIsDisplayWidget}
-                                    onOpenDeleteModalContact={onOpenDeleteModalContact}
-                                    changeItems={changeItems}
-                                    updateClientContact={updateClientContact}
-                                    setIsUpdateContactName={setIsUpdateContactName}
-                                    isUpdateContactMobile={isUpdateContactMobile}
-                                    setIsUpdateContactMobile={setIsUpdateContactMobile}
-                                    isUpdateContactEmail={isUpdateContactEmail}
-                                    setIsUpdateContactEmail={setIsUpdateContactEmail}
-                                    handleShowMore={handleShowMore}
-                                    isDisplayWidget={isDisplayWidget}
-                                    clientContactsValue={clientContactsValue}
-                                    onBlurContactName={onBlurContactName}
-                                    setSelectedContactById={setSelectedContactById}
-                                    selectedContactById={selectedContactById}
-                                    onBlurContactMobile={onBlurContactMobile}
-                                    onInputChangePhone={onInputChangePhone}
-                                    onBlurContactEmail={onBlurContactEmail}
-                                    onInputChangeMail={onInputChangeMail}
-                                    onClickAddNewContact={onClickAddNewContact}
-                                    openDeleteModalContact={openDeleteModalContact}
-                                    onCloseDeleteModalContact={onCloseDeleteModalContact}
-                                    onClickDeleteContact={onClickDeleteContact}
-                                    selectedContact={selectedContact}
-                                    isQuoteConfirmation={isQuoteConfirmation}
-                                />
-                            </div>
-                        </div>
-                        <div
-                            style={{
-                                flex: 0.9,
-                                overflow: "auto",
-                                paddingLeft: 20,
-                                paddingRight: 12,
-                            }}
-                        >
-                            {documentType !== DOCUMENT_TYPE.receipt && <QuoteForPriceTable
-                                documentItems={isQuoteConfirmation ? quoteConfirm?.documentItems : documentItems}
-                                tableHeaders={tableHeaders}
-                                columnWidths={columnWidths}
-                                headerHeight={headerHeight}
-                                changedocumentItems={changedocumentItems}
-                                getCalculateQuoteItem={getCalculateQuoteItem}
-                                onClickDuplicateWithDifferentQTY={
-                                    onClickDuplicateWithDifferentQTY
-                                }
-                                onClickDeleteQouteItem={onClickDeleteQouteItem}
-                                quoteItems={isQuoteConfirmation ? quoteConfirm : quoteItems}
-                                changeQuoteItems={changeQuoteItems}
-                                getCalculateQuote={getCalculateQuote}
-                                changedocumentItemsChild={changedocumentItemsChild}
-                                documentType={documentType}
-                                getQuote={getQuote}
-                                isQuoteConfirmation={isQuoteConfirmation}
-                            />
-                            }
-                            {
-                                documentType === DOCUMENT_TYPE.receipt &&
-                                <ReceiptsTable/>
-                            }
-                        </div>
-                        <WriteCommentComp getQuote={getQuote} isQuoteConfirmation={isQuoteConfirmation}
-                                          documentType={documentType}/>
-                    </div>
-                    {!isQuoteConfirmation &&
-                        <div style={{width: '100%'}} data-tour={'quoteStep2'}>
-                            <ButtonsContainer
-                                onOpenNewItem={onOpenNewItem}
-                                onOpenDeliveryModal={onOpenDeliveryModal}
-                                handleCancelBtnClick={handleCancelBtnClick}
-                                handleSaveBtnClick={handleSaveBtnClick}
-                                handleSendBtnClick={handleSendBtnClick}
-                                documentType={documentType}
-                                onOpenCopyFromOrder={onOpenCopyFromOrder}
-                                handleSaveBtnClickForDocument={handleSaveBtnClickForDocument}
-                                onOpenCopyFromDeliveryNote={onOpenCopyFromDeliveryNote}
-                            />
-                        </div>
-                    }
                 </div>
-            )}
-            {(isQuoteConfirmation && !quoteConfirm?.isConfirmed) && <ButtonsConfirmContainer/>}
-            <AddNewItemModal
-                openModal={openAddNewItemModal}
-                onClose={onCloseNewItem}
+                {!isQuoteConfirmation && <div style={classes.settingsStatusContainer}>
+                  {!router?.query?.isNewCreation &&
+                    <div style={classes.quoteStatusContainer}>
+                      {_renderQuoteStatus(
+                        quoteState?.documentStatus,
+                        quoteState,
+                        t
+                      )}
+                    </div>
+                  }
+                  <IconButton
+                    style={{ marginRight: 4 }}
+                    onClick={handleSettingMenuClick}
+                  >
+                    <SettingNewIcon />
+                  </IconButton>
+                </div>}
+              </div>
+              <div style={classes.datesContainer}>
+                <div
+                  style={classes.deleverdDate}
+                  onClick={handleClickSelectDate}
+                >
+                  {t("sales.quote.dateOfReference")}{" "}
+                  {selectDate
+                    ? DateFormatterDDMMYYYY(selectDate)
+                    : "select date"}
+                  <div style={classes.datePickerContainer}>
+                    <input
+                      type="datetime-local"
+                      onChange={(e) => {
+                        setSelectDate(e.target.value);
+                        setActiveClickAway(true);
+                      }}
+                      ref={dateRef}
+                    />
+                  </div>
+                </div>
+                {/* <div style={classes.lineDateStyle} /> Don't Delete */}
+              </div>
+              <div style={classes.bordersecondContainer}>
+                <BusinessNewWidget
+                  values={quoteState}
+                  selectBusiness={selectBusiness}
+                  selectConfirmBusiness={selectConfirmBusiness}
+                  onBlurBusinessName={onBlurBusinessName}
+                  isUpdateBusinessName={isUpdateBusinessName}
+                  setIsUpdateBusinessName={setIsUpdateBusinessName}
+                  onBlurPurchaseNumber={onBlurPurchaseNumber}
+                  isUpdatePurchaseNumber={isUpdatePurchaseNumber}
+                  setIsUpdatePurchaseNumber={setIsUpdatePurchaseNumber}
+                  onBlurBusinessCode={onBlurBusinessCode}
+                  setIsUpdateBusinessCode={setIsUpdateBusinessCode}
+                  onBlurAddress={onBlurAddress}
+                  isUpdateAddress={isUpdateAddress}
+                  setIsUpdateAddress={setIsUpdateAddress}
+                  selectedAgent={selectedAgent}
+                  agentListValue={agentListValue}
+                  onBlurAgent={onBlurAgent}
+                  isUpdateAgent={isUpdateAgent}
+                  setIsUpdateAgent={setIsUpdateAgent}
+                  updateAgent={updateAgent}
+                  onChangeSelectBusiness={onChangeSelectBusiness}
+                  onClickDeleteAddress={onClickDeleteAddress}
+                  documentType={documentType}
+                  isQuoteConfirmation={isQuoteConfirmation}
+                />
+                <ContactNewWidget
+                  handleShowLess={handleShowLess}
+                  items={items}
+                  displayedItems={displayedItems}
+                  setIsDisplayWidget={setIsDisplayWidget}
+                  onOpenDeleteModalContact={onOpenDeleteModalContact}
+                  changeItems={changeItems}
+                  updateClientContact={updateClientContact}
+                  setIsUpdateContactName={setIsUpdateContactName}
+                  isUpdateContactMobile={isUpdateContactMobile}
+                  setIsUpdateContactMobile={setIsUpdateContactMobile}
+                  isUpdateContactEmail={isUpdateContactEmail}
+                  setIsUpdateContactEmail={setIsUpdateContactEmail}
+                  handleShowMore={handleShowMore}
+                  isDisplayWidget={isDisplayWidget}
+                  clientContactsValue={clientContactsValue}
+                  onBlurContactName={onBlurContactName}
+                  setSelectedContactById={setSelectedContactById}
+                  selectedContactById={selectedContactById}
+                  onBlurContactMobile={onBlurContactMobile}
+                  onInputChangePhone={onInputChangePhone}
+                  onBlurContactEmail={onBlurContactEmail}
+                  onInputChangeMail={onInputChangeMail}
+                  onClickAddNewContact={onClickAddNewContact}
+                  openDeleteModalContact={openDeleteModalContact}
+                  onCloseDeleteModalContact={onCloseDeleteModalContact}
+                  onClickDeleteContact={onClickDeleteContact}
+                  selectedContact={selectedContact}
+                  isQuoteConfirmation={isQuoteConfirmation}
+                />
+              </div>
+            </div>
+            <div
+              style={{
+                flex: 0.9,
+                overflow: "auto",
+                paddingLeft: 20,
+                paddingRight: 12,
+              }}
+            >
+              {documentType !== DOCUMENT_TYPE.receipt && <QuoteForPriceTable
+                documentItems={isQuoteConfirmation ? quoteConfirm?.documentItems : documentItems}
+                tableHeaders={tableHeaders}
+                columnWidths={columnWidths}
+                headerHeight={headerHeight}
+                changedocumentItems={changedocumentItems}
+                getCalculateQuoteItem={getCalculateQuoteItem}
+                onClickDuplicateWithDifferentQTY={
+                  onClickDuplicateWithDifferentQTY
+                }
+                onClickDeleteQouteItem={onClickDeleteQouteItem}
+                quoteItems={isQuoteConfirmation ? quoteConfirm : quoteItems}
+                changeQuoteItems={changeQuoteItems}
+                getCalculateQuote={getCalculateQuote}
+                changedocumentItemsChild={changedocumentItemsChild}
                 documentType={documentType}
-            />
-            <AddDeliveryModal
-                openModal={openAddDeliveryModal}
-                onClose={onCloseDeliveryModal}
-                onClickAdd={onAddDelivery}
-            />
-            <CopyFromOrderModal
-                openModal={openCopyFromOrderModal}
-                onClose={onCloseCopyFromOrder}
-                documentType={documentType}
-                cliendDocumentType={1}
+                getQuote={getQuote}
+                isQuoteConfirmation={isQuoteConfirmation}
+              />
+              }
+              {
+                documentType === DOCUMENT_TYPE.receipt &&
+                <ReceiptsTable />
+              }
+            </div>
+            <WriteCommentComp getQuote={getQuote} isQuoteConfirmation={isQuoteConfirmation} documentType={documentType} />
+          </div>
+          {!isQuoteConfirmation &&
+              <div style={{width: '100%'}} data-tour={'quoteStep2'}>
+                <ButtonsContainer
+                    onOpenNewItem={onOpenNewItem}
+                    onOpenDeliveryModal={onOpenDeliveryModal}
+                    handleCancelBtnClick={handleCancelBtnClick}
+                    handleSaveBtnClick={handleSaveBtnClick}
+                    handleSendBtnClick={handleSendBtnClick}
+                    documentType={documentType}
+                    onOpenCopyFromOrder={onOpenCopyFromOrder}
+                    handleSaveBtnClickForDocument={handleSaveBtnClickForDocument}
+                    onOpenCopyFromDeliveryNote={onOpenCopyFromDeliveryNote}
+                />
+              </div>
+          }
+        </div>
+      )}
+      {(isQuoteConfirmation && !quoteConfirm?.isConfirmed) && <ButtonsConfirmContainer />}
+      <AddNewItemModal
+        openModal={openAddNewItemModal}
+        onClose={onCloseNewItem}
+        documentType={documentType}
+        getQuote={getQuote}
+      />
+      <AddDeliveryModal
+        openModal={openAddDeliveryModal}
+        onClose={onCloseDeliveryModal}
+        onClickAdd={onAddDelivery}
+      />
+      <CopyFromOrderModal
+        openModal={openCopyFromOrderModal}
+        onClose={onCloseCopyFromOrder}
+        documentType={documentType}
+        cliendDocumentType={1}
 
             />
             <CopyFromOrderModal

@@ -39,12 +39,13 @@ const BusinessNewWidget = ({
   onClickDeleteAddress,
   documentType,
   isQuoteConfirmation = false,
+
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
   const router = useRouter()
   const [isConfirmation, setIsConfirmation] = useState();
-  const { renderOptions, checkWhatRenderArray } = useQuoteWidget();
+  const { renderOptions, checkWhatRenderArray } = useQuoteWidget({ documentType });
   const setOpenModal = useSetRecoilState<boolean>(addressModalState);
   const [purchaseNumber, setPurchaseNumber] = useState(values?.purchaseNumber || t("sales.quote.noPurchaseNumber"));
   const quoteStateValue = useRecoilValue<any>(quoteItemState);
@@ -58,7 +59,8 @@ const BusinessNewWidget = ({
 
   const mappedCustomers = renderOptions().map(customer => ({
     text: customer?.name,
-    id: customer?.id
+    id: customer?.id,
+    ...customer
   }));
 
   return (
