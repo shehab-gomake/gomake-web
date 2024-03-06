@@ -30,6 +30,7 @@ import {useRouter} from "next/router";
 import {usePaymentsTable} from "@/widgets/quote-new/receipts-table/use-payments-table";
 import {useEffect} from "react";
 import {StepType, useTour} from "@reactour/tour";
+import {useGoMakeTour} from "@/hooks/use-go-make-tour";
 
 interface IProps {
     documentType: DOCUMENT_TYPE;
@@ -179,7 +180,6 @@ const QuoteNewPageWidget = ({documentType, isQuoteConfirmation = false}: IProps)
         if (documentType === DOCUMENT_TYPE.receipt)
             resetReceiptState();
     }, [])
-    const {setIsOpen, setSteps, setCurrentStep} = useTour();
     const quoteSteps: StepType[] = [
         {
             selector: '[data-tour="quoteStep1"]',
@@ -210,12 +210,12 @@ const QuoteNewPageWidget = ({documentType, isQuoteConfirmation = false}: IProps)
             }
         },
     ]
-
-    useEffect(() => {
+    const {} = useGoMakeTour(quoteSteps,[]);
+    /*useEffect(() => {
         setSteps(quoteSteps);
         setIsOpen(true);
         setCurrentStep(0);
-    }, []);
+    }, []);*/
     return (
         <>
             {quoteState?.id && (
