@@ -261,12 +261,6 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     }
   }
 
-  // const getAllCustomers = useCallback(async () => {
-  //   await getAndSetAllCustomers(callApi, setCustomersListValue, {
-  //     ClientType: docType === DOCUMENT_TYPE.purchaseOrder ? "S" : "C",
-  //     onlyCreateOrderClients: docType === DOCUMENT_TYPE.purchaseOrder ? true : false,
-  //   });
-  // }, [docType]);
   const getAllCustomers = useCallback(async () => {
     await getAndSetAllCustomers(callApi, setCustomersListValue, {
       ClientType: docType === DOCUMENT_TYPE.purchaseOrder || docType === DOCUMENT_TYPE.purchaseInvoice ? "S" : "C",
