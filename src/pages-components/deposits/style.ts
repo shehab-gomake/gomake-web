@@ -54,6 +54,7 @@ const useStyle = () => {
             },
             textInputStyle: {
                 width: "100%",
+                maxWidth:"180px",
                 border: "none",
             },
             searchBtnStyle: {

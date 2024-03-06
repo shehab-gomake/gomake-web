@@ -251,7 +251,7 @@ const useDeposit = () => {
         }
         const metaDataCopy = {
             ...metaData,
-            erpDeposit: {...newDeposit , depositType: renderDepositType(labelArray) , cashAmount: updatedTotal},
+            erpDeposit: { ...newDeposit, depositType: renderDepositType(labelArray), cashAmount: updatedTotal },
             depositMetaData: {
                 accounts: metaData.depositMetaData.accounts,
                 [labelArray]: newItemsSelected
@@ -260,7 +260,8 @@ const useDeposit = () => {
         const callBack = (res) => {
             if (res?.success) {
                 alertSuccessAdded();
-                navigate(`/deposits`)            }
+                navigate(`/deposits`)
+            }
             else {
                 alertFaultAdded();
             }
@@ -411,7 +412,7 @@ const useDeposit = () => {
                     GetShortDateFormat(deposit?.dueDate),
                     "test",
                     deposit?.client?.name,
-                    <div style={{display:"flex" ,alignItems:"center" ,justifyContent:"center", gap:"2px", }}>
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "2px", }}>
                         <input
                             style={{ width: "100px" }}
                             type="text"

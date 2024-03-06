@@ -16,23 +16,16 @@ const DepositsListPageWidget = () => {
         pageSize,
         handlePageSizeChange,
         tableHeaders,
-        getAgentCategories,
-        setAgentsCategories,
-        setEmployeeListValue,
         getAllDeposits,
-        allDeposits
+        allDeposits,
+        finalPatternSearch,
+        handleSearchChange
     } = useDeposits();
 
-    useEffect(() => {
-        getAllDeposits();
-        getAgentCategories(true, setAgentsCategories);
-        getAgentCategories(null, setEmployeeListValue);
-    }, []);
-
 
     useEffect(() => {
         getAllDeposits();
-    }, [page, pageSize]);
+    }, [page, pageSize , finalPatternSearch]);
 
     return (
         <>
@@ -45,7 +38,7 @@ const DepositsListPageWidget = () => {
             >
                 <div style={classes.mainContainer}>
                     <DepositsHeaderSection />
-                    <DepositsFiltersWidget />
+                    <DepositsFiltersWidget onClickSearch={handleSearchChange}/>
                     <PrimaryTable
                         stickyFirstCol={false}
                         stickyHeader={true}

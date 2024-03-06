@@ -1,17 +1,13 @@
 import { useGomakeAxios, useGomakeRouter } from "@/hooks";
-import { DEFAULT_VALUES } from "@/pages/customers/enums";
-import { useCallback, useEffect, useState } from "react";
+import {  useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { getAndSetAllCustomers } from "@/services/hooks";
-import { getAndSetEmployees2 } from "@/services/api-service/customers/employees-api";
 import { useRecoilState, useResetRecoilState, useSetRecoilState } from "recoil";
-import { agentsCategoriesState } from "@/pages/customers/customer-states";
-import { employeesListsState } from "../quotes/states";
 import { getAllDepositsApi, showDepositApi } from "@/services/api-service/generic-doc/deposits-api";
 import { useDateFormat } from "@/hooks/use-date-format";
 import { MoreMenuWidget } from "./more-circle";
 import { allDepositsState, depositPaymentTypeSate, depositState, depositsFromDateState, depositsPageCountState, depositsPageSizeState, depositsPageState, depositsToDateState } from "./components/states";
 import { DEPOSIT_TYPE, PAYMENT_TYPE } from "../deposit/enums";
+import { useDebounce } from "@/utils/use-debounce";
 
 const useDeposits = () => {
     const { t } = useTranslation();
@@ -28,6 +24,10 @@ const useDeposits = () => {
     const [allDeposits, setAllDeposits] = useRecoilState<any>(allDepositsState);
     const setDeposit = useSetRecoilState<any>(depositState);
     const [depositPaymentType, setDepositPaymentType] = useRecoilState<any>(depositPaymentTypeSate);
+    const [depositNumber, setDepositNumber] = useState<string>();
+    const [patternSearch, setPatternSearch] = useState("");
+    const [finalPatternSearch, setFinalPatternSearch] = useState("");
+    const debounce = useDebounce(patternSearch, 500);
 
     const handlePageSizeChange = (event) => {
         setPage(1);
@@ -99,7 +99,7 @@ const useDeposits = () => {
                         pageNumber: page,
                         pageSize: pageSize,
                     },
-                    patternSearch: "",
+                    patternSearch: finalPatternSearch,
                     fromDate: fromDate && GetDateFormat(fromDate),
                     toDate: toDate && GetDateFormat(toDate),
                     paymentType: depositPaymentType?.value
@@ -159,8 +159,6 @@ const useDeposits = () => {
     };
 
     const onClickClearFilter = () => {
-        setAgentId(null);
-        setCustomerId(null);
         setDepositPaymentType(null);
         setDepositNumber("");
         setFromDate(null);
@@ -169,74 +167,26 @@ const useDeposits = () => {
         resetPage();
         getAllDeposits(true);
     };
-    //////////////////////////// FILTERS ////////////////////////////////////
-
-    const [customerId, setCustomerId] = useState<any>();
-    const [customersListCreateQuote, setCustomersListCreateQuote] = useState([]);
-    const [customersListCreateOrder, setCustomersListCreateOrder] = useState([]);
-    const [canOrder, setCanOrder] = useState(false);
-    const [agentId, setAgentId] = useState<any>();
-    const [agentsCategories, setAgentsCategories] = useRecoilState(agentsCategoriesState);
-    const [depositNumber, setDepositNumber] = useState<string>();
-    const setEmployeeListValue = useSetRecoilState<string[]>(employeesListsState);
-
-
-    const handleCustomerChange = (e: any, value: any) => {
-        setCustomerId(value);
-    };
-
-    const handleAgentChange = (e: any, value: any) => {
-        setAgentId(value);
-    };
 
 
     const handleDepositNumberChange = (e: any) => {
         setDepositNumber(e.target.value);
     };
 
-    const renderOptions = () => {
-        if (!!canOrder) {
-            return customersListCreateOrder;
-        } else return customersListCreateQuote;
+    const handleSearchChange = (e) => {
+        setPatternSearch(e)
     };
 
-    const getAllCustomersCreateQuote = useCallback(async () => {
-        await getAndSetAllCustomers(callApi, setCustomersListCreateQuote, {
-            ClientType: "C",
-            onlyCreateOrderClients: false,
-        });
-    }, []);
 
-    const getAllCustomersCreateOrder = useCallback(async () => {
-        await getAndSetAllCustomers(callApi, setCustomersListCreateOrder, {
-            ClientType: "C",
-            onlyCreateOrderClients: true,
-        });
-    }, []);
 
-    const checkWhatRenderArray = (e) => {
-        if (e.target.value) {
-            setCanOrder(true);
-        } else {
-            setCanOrder(false);
-        }
-    };
 
-    const getAgentCategories = async (isAgent: boolean, setState: any) => {
-        const callBack = (res) => {
-            if (res.success) {
-                const agentNames = res.data.map((agent) => ({
-                    label: agent.text,
-                    id: agent.value,
-                }));
-                setState(agentNames);
-            }
-        };
-        await getAndSetEmployees2(callApi, callBack, { isAgent: isAgent });
-    };
 
-    //////////////////////////// FILTERS ////////////////////////////////////
 
+
+
+  useEffect(() => {
+    setFinalPatternSearch(debounce);
+  }, [debounce]);
 
     return {
         page,
@@ -245,18 +195,6 @@ const useDeposits = () => {
         pageSize,
         handlePageSizeChange,
         tableHeaders,
-        getAllCustomersCreateQuote,
-        getAllCustomersCreateOrder,
-        getAgentCategories,
-        setAgentsCategories,
-        setEmployeeListValue,
-        renderOptions,
-        checkWhatRenderArray,
-        customerId,
-        handleCustomerChange,
-        agentId,
-        handleAgentChange,
-        agentsCategories,
         onSelectDateRange,
         resetDatePicker,
         typeOfDeposit,
@@ -267,7 +205,10 @@ const useDeposits = () => {
         getAllDeposits,
         allDeposits,
         onClickSearchFilter,
-        onClickClearFilter
+        onClickClearFilter,
+        setPatternSearch,
+        finalPatternSearch,
+        handleSearchChange
     };
 };
 
