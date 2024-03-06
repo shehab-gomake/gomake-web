@@ -8,7 +8,7 @@ const getPrintHouseMaterialsByMaterialKey = async (
 ) => {
   const result: any = await callApi(
     "GET",
-    "/v1/materials/get-print-house-materials-by-key",
+    `/v1/printhouse-materials/get-print-house-materials-by-key`,
     data
   );
   const _data = returnResult(result, undefined);

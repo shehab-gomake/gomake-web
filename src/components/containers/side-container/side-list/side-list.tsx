@@ -3,7 +3,8 @@ import {
     Box,
     Divider,
     List,
-    ListItemButton, ListItemIcon,
+    ListItemButton,
+    ListItemIcon,
     ListItemText,
     MenuItem,
 } from "@mui/material";
@@ -42,7 +43,7 @@ const SideList = ({
                       quickActions = false,
                       children,
                       isAdmin,
-                      isHaveDeleteIcon
+                      isHaveDeleteIcon,
                   }: ISideListProps) => {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const {classes} = useStyle();
@@ -54,7 +55,6 @@ const SideList = ({
         setFilter(event.target.value);
     };
 
-
     const handleCloseMenu = () => {
         setAnchorEl(null);
     };
@@ -63,7 +63,6 @@ const SideList = ({
         if (isAdmin) {
             adminDuplicateMachine();
         } else {
-
             duplicateMachine();
         }
         handleCloseMenu();
@@ -87,49 +86,73 @@ const SideList = ({
         <>
             <Box style={classes.container}>
                 <h1 style={classes.header}>{title}</h1>
-                <SearchInput
-                    name={'side-list-search'}
-                    placeholder={t('header.search')}
-                    onChange={handleFilterChange}
-                    value={filter}
-                />
+                <div data-tour="first-step">
+                    <SearchInput
+                        name={"side-list-search"}
+                        placeholder={t("header.search")}
+                        onChange={handleFilterChange}
+                        value={filter}
+                    />
+                </div>
                 <List
                     style={classes.listContainer}
                     component="nav"
                     aria-label="main mailbox folders"
                 >
-                    {filteredList().map((item) => (
-                        <ListButton
-                            selected={item?.value === selectedItem}
-                            onClick={() => onSelect(item?.value)}
-                            style={isHaveDeleteIcon && classes.deleteButtonDirection}
-                        >
-                            {!!item.icon && <ListItemIcon sx={{minWidth: 28 }}>{item.icon()}</ListItemIcon>}
-                            <Stack direction={'row'} alignItems={'center'} justifyContent={'space-between'} width={'100%'}>
-                                <ListItemText style={{maxWidth: 'fit-content'}} primary={item.text}/>
-                                {selectedItem === item?.value && quickActions && (
-                                    <OptionsButton>
-                                        <MenuItem onClick={onClickDuplicate}>
-                                            <div style={classes.menuItem}>
-                                                <DuplicateIcon height={20} width={20} color={classes.iconColor}/>{" "}
-                                                <span>{t('navigationButtons.duplicate')}</span>
-                                            </div>
-                                        </MenuItem>
-                                        <Divider/>
-                                        {
-                                            !isAdmin &&
-                                            <MenuItem onClick={onClickDelete}>
+                    {filteredList().map((item) => {
+                        return (
+                            <ListButton
+                                data-tour={item?.dataTour}
+                                selected={item?.value === selectedItem}
+                                onClick={() => onSelect(item?.value)}
+                                style={isHaveDeleteIcon && classes.deleteButtonDirection}
+                            >
+                                {!!item.icon && (
+                                    <ListItemIcon sx={{minWidth: 28}}>
+                                        {item.icon()}
+                                    </ListItemIcon>
+                                )}
+                                <Stack
+                                    direction={"row"}
+                                    alignItems={"center"}
+                                    justifyContent={"space-between"}
+                                    width={"100%"}
+                                >
+                                    <ListItemText
+                                        style={{maxWidth: "fit-content"}}
+                                        primary={item.text}
+                                    />
+                                    {selectedItem === item?.value && quickActions && (
+                                        <OptionsButton>
+                                            <MenuItem onClick={onClickDuplicate}>
                                                 <div style={classes.menuItem}>
-                                                    <DeleteIcon color={classes.iconColor} width={20} height={20}/>{" "}
-                                                    <span>{t('navigationButtons.delete')}</span>
+                                                    <DuplicateIcon
+                                                        height={20}
+                                                        width={20}
+                                                        color={classes.iconColor}
+                                                    />{" "}
+                                                    <span>{t("navigationButtons.duplicate")}</span>
                                                 </div>
                                             </MenuItem>
-                                        }
-                                    </OptionsButton>
-                                )}
-                            </Stack>
-                        </ListButton>
-                    ))}
+                                            <Divider/>
+                                            {!isAdmin && (
+                                                <MenuItem onClick={onClickDelete}>
+                                                    <div style={classes.menuItem}>
+                                                        <DeleteIcon
+                                                            color={classes.iconColor}
+                                                            width={20}
+                                                            height={20}
+                                                        />{" "}
+                                                        <span>{t("navigationButtons.delete")}</span>
+                                                    </div>
+                                                </MenuItem>
+                                            )}
+                                        </OptionsButton>
+                                    )}
+                                </Stack>
+                            </ListButton>
+                        );
+                    })}
                 </List>
                 {!!children && <div style={classes.buttonWrapper}>{children}</div>}
             </Box>

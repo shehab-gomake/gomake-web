@@ -7,12 +7,12 @@ import {useStyle} from "@/widgets/materials-widget/style";
 import {DotsLoader} from "@/components/dots-loader/dots-Loader";
 
 
-const NumberStringInput = ({value, isEditable, parameterKey, id}: IRowData) => {
+const NumberStringInput = ({value, isEditable, parameterKey, id,isAdmin}: IRowData) => {
     const {classes} = useStyle();
     const [isUpdate, setIsUpdate] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(false)
     const [updateValue, setUpdateValue] = useState('');
-    const {updateCellData} = useTableCellData();
+    const {updateCellData} = useTableCellData(isAdmin);
     const onClick = () => {
         if (isEditable) {
             setIsUpdate(true);

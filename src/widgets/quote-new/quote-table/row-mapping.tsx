@@ -7,19 +7,27 @@ import { CharacterDetails } from "./character-details";
 import { MoreMenuWidget } from "@/widgets/quote/more-circle";
 import { InputUpdatedValues } from "../input-updated-values";
 import { useQuoteTable } from "./use-quote-table";
+import { useState } from "react";
+import { useQuoteConfirmation } from "@/pages-components/quote-confirmation/use-quote-confirmation";
+import { useRouter } from "next/router";
 
 const RowMappingWidget = ({
   item,
   index,
   columnWidths,
   headerHeight,
-  changepriceListItems,
+  changedocumentItems,
   getCalculateQuoteItem,
   onClickDuplicateWithDifferentQTY,
   onClickDeleteQouteItem,
   parentIndex,
+  documentType,
+  getQuote,
+  isQuoteConfirmation = false,
 }) => {
-  const { clasess } = useStyle({ headerHeight });
+  const router = useRouter()
+  const { classes } = useStyle({ headerHeight });
+  const [isConfirmation, setIsConfirmation] = useState(null);
   const {
     isUpdateAmount,
     isUpdateDiscount,
@@ -39,11 +47,16 @@ const RowMappingWidget = ({
     onInputChangeAmount,
   } = useQuoteTable({
     getCalculateQuoteItem,
-    changepriceListItems,
+    changedocumentItems,
     item,
     index,
   });
+
+  // in quote confirmation case
+  const { handleItemCheck } = useQuoteConfirmation();
+
   return (
+
     <TableRow
       key={item.id}
       style={{
@@ -53,8 +66,8 @@ const RowMappingWidget = ({
       <PrimaryTableCell
         style={{
           width: columnWidths[0],
-          ...clasess.cellContainerStyle,
-          borderBottom: item?.childsQuoteItems && "none",
+          ...classes.cellContainerStyle,
+          borderBottom: item?.childsDocumentItems && "none",
         }}
       >
         <div
@@ -65,19 +78,26 @@ const RowMappingWidget = ({
             alignItems: "center",
           }}
         >
-          <Checkbox
-            icon={<CheckboxIcon />}
-            checkedIcon={<CheckboxCheckedIcon />}
-          />
+          {isQuoteConfirmation ?
+            <Checkbox
+              icon={<CheckboxIcon />}
+              checkedIcon={<CheckboxCheckedIcon />}
+              checked={item?.isChecked}
+              onChange={(checked) => handleItemCheck(checked, item.id)}
+            /> :
+            <Checkbox
+              icon={<CheckboxIcon />}
+              checkedIcon={<CheckboxCheckedIcon />}
+            />}
           {parentIndex}
         </div>
       </PrimaryTableCell>
       <PrimaryTableCell
         style={{
           width: columnWidths[1],
-          ...clasess.cellContainerStyle,
+          ...classes.cellContainerStyle,
           color: "#000000",
-          borderBottom: item?.childsQuoteItems && "none",
+          borderBottom: item?.childsDocumentItems && "none",
         }}
       >
         225
@@ -87,8 +107,8 @@ const RowMappingWidget = ({
           width: columnWidths[2],
           ...FONT_FAMILY.Inter(600, 14),
           color: "#5859A8",
-          ...clasess.cellContainerStyle,
-          borderBottom: item?.childsQuoteItems && "none",
+          ...classes.cellContainerStyle,
+          borderBottom: item?.childsDocumentItems && "none",
         }}
       >
         {item.productName}
@@ -97,24 +117,24 @@ const RowMappingWidget = ({
         style={{
           width: columnWidths[3],
           textAlign: "start",
-          borderBottom: item?.childsQuoteItems && "none",
+          borderBottom: item?.childsDocumentItems && "none",
         }}
       >
-        <CharacterDetails details={item.details} />
+        <CharacterDetails details={item.details} getQuote={getQuote} documentItemId={item?.id} canUpdate={router.query.canEdit === "false" ? false : !isQuoteConfirmation} />
       </PrimaryTableCell>
       <PrimaryTableCell
         style={{
           width: columnWidths[4],
-          ...clasess.cellContainerStyle,
-          borderBottom: item?.childsQuoteItems && "none",
+          ...classes.cellContainerStyle,
+          borderBottom: item?.childsDocumentItems && "none",
         }}
       >
-        <div style={clasess.cellTextInputStyle}>
+        <div style={classes.cellTextInputStyle}>
           <InputUpdatedValues
             value={item.quantity}
             onBlur={onBlurAmount}
-            isUpdate={isUpdateAmount}
-            setIsUpdate={setIsUpdateAmount}
+            isUpdate={router.query.canEdit === "false" ? false : isUpdateAmount}
+            setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdateAmount}
             onInputChange={(e) => onInputChangeAmount(e)}
           />
         </div>
@@ -122,16 +142,16 @@ const RowMappingWidget = ({
       <PrimaryTableCell
         style={{
           width: columnWidths[5],
-          ...clasess.cellContainerStyle,
-          borderBottom: item?.childsQuoteItems && "none",
+          ...classes.cellContainerStyle,
+          borderBottom: item?.childsDocumentItems && "none",
         }}
       >
-        <div style={clasess.cellTextInputStyle}>
+        <div style={classes.cellTextInputStyle}>
           <InputUpdatedValues
             value={item.discount ? item.discount : "0"}
             onBlur={onBlurDiscount}
-            isUpdate={isUpdateDiscount}
-            setIsUpdate={setIsUpdateDiscount}
+            isUpdate={router.query.canEdit === "false" ? false : isUpdateDiscount}
+            setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdateDiscount}
             onInputChange={(e) => onInputChangeDiscount(e)}
           />
         </div>
@@ -139,16 +159,16 @@ const RowMappingWidget = ({
       <PrimaryTableCell
         style={{
           width: columnWidths[6],
-          ...clasess.cellContainerStyle,
-          borderBottom: item?.childsQuoteItems && "none",
+          ...classes.cellContainerStyle,
+          borderBottom: item?.childsDocumentItems && "none",
         }}
       >
-        <div style={clasess.cellTextInputStyle}>
+        <div style={classes.cellTextInputStyle}>
           <InputUpdatedValues
             value={item.price}
             onBlur={onBlurPrice}
-            isUpdate={isUpdatePrice}
-            setIsUpdate={setIsUpdatePrice}
+            isUpdate={router.query.canEdit === "false" ? false : isUpdatePrice}
+            setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdatePrice}
             onInputChange={(e) => onInputChangePrice(e)}
           />
         </div>
@@ -156,33 +176,34 @@ const RowMappingWidget = ({
       <PrimaryTableCell
         style={{
           width: columnWidths[7],
-          ...clasess.cellContainerStyle,
-          borderBottom: item?.childsQuoteItems && "none",
+          ...classes.cellContainerStyle,
+          borderBottom: item?.childsDocumentItems && "none",
         }}
       >
-        <div style={clasess.cellTextInputStyle}>
+        <div style={classes.cellTextInputStyle}>
           <InputUpdatedValues
             value={item.finalPrice}
             onBlur={onBlurFinalPrice}
-            isUpdate={isUpdateFinalPrice}
-            setIsUpdate={setIsUpdateFinalPrice}
+            isUpdate={router.query.canEdit === "false" ? false : isUpdateFinalPrice}
+            setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdateFinalPrice}
             onInputChange={(e) => onInputChangeFinalPrice(e)}
           />
         </div>
       </PrimaryTableCell>
-      <PrimaryTableCell
+      {!isQuoteConfirmation && <PrimaryTableCell
         style={{
           width: columnWidths[7],
-          ...clasess.cellContainerStyle,
-          borderBottom: item?.childsQuoteItems && "none",
+          ...classes.cellContainerStyle,
+          borderBottom: item?.childsDocumentItems && "none",
         }}
       >
         <MoreMenuWidget
           quoteItem={item}
           onClickDuplicateWithDifferentQTY={onClickDuplicateWithDifferentQTY}
           onClickDeleteQouteItem={onClickDeleteQouteItem}
+          documentType={documentType}
         />
-      </PrimaryTableCell>
+      </PrimaryTableCell>}
     </TableRow>
   );
 };

@@ -15,20 +15,23 @@ import { RowMappingWidget } from "./row-mapping";
 import { RowMappingChildWidget } from "../quote-child-table/row-mapping";
 import { TotalPriceComp } from "../total-price";
 const QuoteForPriceTable = ({
-  priceListItems,
+  documentItems,
   columnWidths,
   tableHeaders,
   headerHeight,
-  changepriceListItems,
+  changedocumentItems,
   getCalculateQuoteItem,
   onClickDuplicateWithDifferentQTY,
   onClickDeleteQouteItem,
   quoteItems,
   changeQuoteItems,
   getCalculateQuote,
-  changepriceListItemsChild,
+  changedocumentItemsChild,
+  documentType,
+  getQuote,
+  isQuoteConfirmation = false,
 }) => {
-  const { clasess } = useStyle({ headerHeight });
+  const { classes } = useStyle({ headerHeight });
   const PrimaryTableCell = styled(TableCell)(() => {
     return {
       [`&.${tableCellClasses.head}`]: {
@@ -41,33 +44,36 @@ const QuoteForPriceTable = ({
   });
 
   let indexs = 0;
+
   return (
     <div>
       <TableContainer
-        component={Paper}
         style={{
           maxHeight: 420,
           overflow: "scroll",
+          border: "1px solid #EAECF0",
         }}
       >
         <Table stickyHeader={true}>
           <TableHead>
-            <TableRow style={clasess.tableRowStyle}>
+            <TableRow style={classes.tableRowStyle}>
               {tableHeaders.map((header, index) => (
-                <PrimaryTableCell
-                  key={index}
-                  style={{
-                    width: columnWidths[index],
-                    ...clasess.tableHeaderStyle,
-                  }}
-                >
-                  {header}
-                </PrimaryTableCell>
+                !(isQuoteConfirmation && index === tableHeaders.length - 1) && (
+                  <PrimaryTableCell
+                    key={index}
+                    style={{
+                      width: columnWidths[index],
+                      ...classes.tableHeaderStyle,
+                    }}
+                  >
+                    {header}
+                  </PrimaryTableCell>
+                )
               ))}
             </TableRow>
           </TableHead>
           <TableBody style={{ border: "1px solid #EAECF0" }}>
-            {priceListItems?.map((item: any, index: number) => {
+            {documentItems?.map((item: any, index: number) => {
               indexs++;
               const parentIndex = indexs;
               return (
@@ -79,15 +85,18 @@ const QuoteForPriceTable = ({
                     parentIndex={parentIndex}
                     columnWidths={columnWidths}
                     headerHeight={headerHeight}
-                    changepriceListItems={changepriceListItems}
+                    changedocumentItems={changedocumentItems}
                     getCalculateQuoteItem={getCalculateQuoteItem}
                     onClickDuplicateWithDifferentQTY={
                       onClickDuplicateWithDifferentQTY
                     }
                     onClickDeleteQouteItem={onClickDeleteQouteItem}
+                    documentType={documentType}
+                    getQuote={getQuote}
+                    isQuoteConfirmation={isQuoteConfirmation}
                   />
-                  {item?.childsQuoteItems &&
-                    item?.childsQuoteItems?.map(
+                  {item?.childsDocumentItems &&
+                    item?.childsDocumentItems?.map(
                       (childItem: any, childIndex: number) => {
                         indexs++;
                         return (
@@ -99,12 +108,11 @@ const QuoteForPriceTable = ({
                             headerHeight={headerHeight}
                             parentIndex={index}
                             childInex={childIndex}
-                            changepriceListItemsChild={
-                              changepriceListItemsChild
-                            }
+                            changedocumentItemsChild={changedocumentItemsChild}
                             onClickDeleteQouteItem={onClickDeleteQouteItem}
                             getCalculateQuoteItem={getCalculateQuoteItem}
-                            childList={item?.childsQuoteItems}
+                            childList={item?.childsDocumentItems}
+                            isQuoteConfirmation={isQuoteConfirmation}
                           />
                         );
                       }
@@ -119,6 +127,7 @@ const QuoteForPriceTable = ({
         getCalculateQuote={getCalculateQuote}
         quoteItems={quoteItems}
         changeQuoteItems={changeQuoteItems}
+        isQuoteConfirmation={isQuoteConfirmation}
       />
     </div>
   );

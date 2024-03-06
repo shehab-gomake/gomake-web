@@ -5,10 +5,11 @@ import { useTranslation } from "react-i18next";
 
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { FONT_FAMILY } from "@/utils/font-family";
-import {adaptPaddingLeft} from "@/utils/adapter";
+import { adaptLeft, adaptPaddingLeft, adaptPaddingRight, adaptRight } from "@/utils/adapter";
 const useStyle = () => {
   const { t } = useTranslation();
-  const { primaryColor, secondColor, errorColor, neutralColor } =
+  const direction = t("direction");
+  const { primaryColor, secondColor, errorColor, neutralColor, successColor } =
     useGomakeTheme();
 
   const clasess = useMemo(() => {
@@ -19,6 +20,7 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "flex-start",
         width: "100%",
+        ...adaptPaddingRight(direction, 20),
       },
       mainRowContainer: {
         display: "flex",
@@ -34,8 +36,7 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "flex-start",
         width: "100%",
-        ...adaptPaddingLeft(t('direction'), 20)
-
+        ...adaptPaddingLeft(t("direction"), 20),
       },
       rightSideMainContainer: {
         display: "flex",
@@ -45,15 +46,18 @@ const useStyle = () => {
         width: 330,
         minWidth: 330,
         maxWidth: 330,
+        height: "100%",
         backgroundColor: "white",
+        boxShadow: "0px 0px 3px 0px rgba(129, 129, 129, 0.12)",
         padding: 15,
-        marginTop: -77,
-        boxShadow: "0px 4px 40px 0px rgba(129, 129, 129, 0.12)",
+        marginTop: -53,
         borderRadius: 5,
+        position: "fixed" as "fixed",
+        ...adaptLeft(t("direction"), 0),
+        overflow: "scroll",
+        paddingBottom: 150,
       },
       rightSideContainer: {
-        // height: "100%",
-        // overflow: "scroll",
         width: "100%",
       },
       tabsContainer: {
@@ -63,6 +67,8 @@ const useStyle = () => {
         alignItems: "center",
         gap: 40,
         marginBottom: 20,
+        width: "100%",
+        maxWidth: 900,
       },
       tabContainer: {
         display: "flex",
@@ -71,14 +77,17 @@ const useStyle = () => {
         alignItems: "flex-start",
         gap: 6,
         cursor: "pointer",
+        width: "fit-content",
       },
       tabNameStyle: {
         ...FONT_FAMILY.Lexend(500, 16),
         color: primaryColor(500),
+        width: "fit-content",
       },
       tabNameActiveStyle: {
         ...FONT_FAMILY.Lexend(500, 16),
         color: secondColor(500),
+        width: "fit-content",
       },
       selectedTabLine: {
         display: "flex",
@@ -108,7 +117,7 @@ const useStyle = () => {
       subSectionTitleStyle: {
         ...FONT_FAMILY.Lexend(600, 16),
         color: secondColor(500),
-        marginBottom: 16,
+        marginBottom: 10,
       },
       subSectionAccordionActiveStyle: {
         ...FONT_FAMILY.Lexend(600, 16),
@@ -138,15 +147,29 @@ const useStyle = () => {
         alignItems: "flex-start",
         width: "100%",
         gap: 10,
-        paddingBottom: 24,
+        paddingBottom: 12,
       },
       parameterLabelStyle: {
         ...FONT_FAMILY.Lexend(500, 14),
         color: primaryColor(900),
+        width: "fit-content",
+      },
+      underParameterLabelStyle: {
+        ...FONT_FAMILY.Lexend(500, 12),
+        color: primaryColor(900),
+        width: "fit-content",
       },
       parameterType3ActiveLabelStyle: {
         ...FONT_FAMILY.Lexend(500, 14),
         color: secondColor(500),
+      },
+      parameterunderParameterStyle: {
+        ...FONT_FAMILY.Lexend(500, 12),
+        color: secondColor(500),
+      },
+      parameterRequierdLabelStyle: {
+        ...FONT_FAMILY.Lexend(500, 14),
+        color: errorColor(500),
       },
       spanRequierd: {
         ...FONT_FAMILY.Lexend(500, 14),
@@ -160,6 +183,15 @@ const useStyle = () => {
         gap: 10,
         width: "100%",
         minWidth: 180,
+        maxWidth: 180,
+      },
+      parameterRowContainer: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "flex-start",
+        alignItems: "center",
+        gap: 10,
+        width: "100%",
       },
       WastebasketNewStyle: {
         display: "flex",
@@ -167,8 +199,10 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "flex-start",
         width: "180px",
-        gap: 10,
         minWidth: 180,
+        maxWidth: 180,
+        // height: 71,
+        gap: 10,
       },
       parameterType3Container: {
         display: "flex",
@@ -183,7 +217,6 @@ const useStyle = () => {
         width: "100%",
         borderRadius: 4,
         height: 40,
-        backgroundColor: "#FFF",
         border: "0px",
         ...FONT_FAMILY.Lexend(500, 14),
         color: "#000",
@@ -192,14 +225,13 @@ const useStyle = () => {
         width: "100%",
         borderRadius: 4,
         height: 40,
-        backgroundColor: "#FFF",
         border: "0px",
         ...FONT_FAMILY.Lexend(500, 14),
       },
       renderParameterTypeContainer: {
         display: "flex",
         width: "100%",
-        backgroundColor: "#FFF",
+        maxWidth: "180px",
         borderRadius: 4,
       },
 
@@ -215,6 +247,7 @@ const useStyle = () => {
         color: "rgba(52, 64, 84, 1)",
         borderRadius: 8,
         padding: "8px 14px",
+        ...FONT_FAMILY.Lexend(500, 14),
       },
       headerRightSide: {
         display: "flex",
@@ -260,6 +293,7 @@ const useStyle = () => {
         height: 170,
         borderRadius: 16,
         overflow: "hidden",
+        marginBottom: 15,
       },
       secondText: {
         color: primaryColor(200),
@@ -312,17 +346,41 @@ const useStyle = () => {
         alignItems: "center",
         width: "100%",
         marginBottom: 8,
+        height: 35,
+        maxHeight: 35,
+        gap: 5,
       },
       totalStyle: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        width: "100%",
+      },
+      totalStyleText: {
         color: primaryColor(500),
         ...FONT_FAMILY.Lexend(700, 24),
+        width: "fit-content",
+        minWidth: "fit-content",
+        display: "flex",
+        alignItems: "center",
+        height: 35,
+      },
+      totalCurrancyStyle: {
+        color: primaryColor(500),
+        ...FONT_FAMILY.Lexend(700, 14),
+        width: "fit-content",
+        minWidth: "fit-content",
+        display: "flex",
+        alignItems: "center",
+        height: 35,
       },
       inputPriceStyle: {
         color: primaryColor(500),
         ...FONT_FAMILY.Lexend(700, 24),
-        height: 28,
-        width: "130px",
+        height: "100%",
+        width: "100%",
+        maxHeight: 35,
         boxShadow: "none",
+        textAlign: "center" as "center",
       },
       priceRecoveryContainer: {
         display: "flex",
@@ -330,7 +388,7 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "center",
         marginLeft: -8,
-        marginBottom: 16,
+        marginBottom: 0,
       },
       switchAdditionsContainer: {
         display: "flex",
@@ -349,7 +407,7 @@ const useStyle = () => {
         flexDirection: "row" as "row",
         justifyContent: "flex-start",
         alignItems: "center",
-        gap: 16,
+        gap: 5,
         width: "100%",
         marginBottom: 16,
       },
@@ -357,8 +415,19 @@ const useStyle = () => {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        padding: 10,
+        padding: "8px 10px",
         backgroundColor: primaryColor(500),
+        color: "white",
+        ...FONT_FAMILY.Lexend(500, 16),
+        borderRadius: 4,
+        cursor: "pointer",
+      },
+      activeLogsTabStyle: {
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        padding: "8px 10px",
+        backgroundColor: secondColor(500),
         color: "white",
         ...FONT_FAMILY.Lexend(500, 16),
         borderRadius: 4,
@@ -368,7 +437,7 @@ const useStyle = () => {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        padding: 10,
+        padding: "8px 10px",
         backgroundColor: "white",
         color: primaryColor(500),
         ...FONT_FAMILY.Lexend(500, 16),
@@ -380,7 +449,6 @@ const useStyle = () => {
         backgroundColor: secondColor(500),
         height: 40,
         padding: 20,
-        // marginTop: 34,
       },
       noVatStyle: {
         marginTop: 6,
@@ -398,7 +466,6 @@ const useStyle = () => {
         flexDirection: "row" as "row",
         justifyContent: "flex-end",
         alignItems: "center",
-        // marginTop: 30,
         width: "100%",
         gap: 16,
       },
@@ -435,10 +502,13 @@ const useStyle = () => {
       },
       multiLineTextInputStyle: {
         width: "100%",
-        backgroundColor: "#EBECFF",
         borderRadius: 12,
         height: 110,
         overflow: "scroll",
+        padding: 5,
+        border: "1px solid #ccc",
+        color: "#000000",
+        ...FONT_FAMILY.Lexend(500, 14),
       },
       pricingSectionContainer: {
         display: "flex",
@@ -518,7 +588,6 @@ const useStyle = () => {
         width: "100%",
         flexWrap: "wrap" as "wrap",
         textAlign: "center" as "center",
-        backgroundColor: "#FFF",
       },
       cellContainerMod: {
         paddingRight: 22,
@@ -580,8 +649,40 @@ const useStyle = () => {
         alignItems: "center",
         cursor: "pointer",
       },
+      logsContainer: {
+        display: "flex",
+        flexDirection: "column" as "column",
+        justifyContent: "flex-start",
+        alignItems: "flex-start",
+        borderRadius: 8,
+        width: "100%",
+        height: 250,
+        backgroundColor: primaryColor(50),
+        padding: 10,
+        overflowY: "scroll",
+        overflowX: "hidden",
+        gap: 10,
+      },
+      generalMsgTextStyle: {
+        ...FONT_FAMILY.Lexend(400, 14),
+        color: "#504FA1",
+      },
+      titleLogsTextStyle: {
+        ...FONT_FAMILY.Lexend(400, 14),
+        color: secondColor(500),
+        width: "33%",
+      },
+      iconLogsTextStyle: {
+        color: successColor(500),
+        marginTop: 2,
+      },
+      textLogstyle: {
+        ...FONT_FAMILY.Lexend(400, 14),
+        color: secondColor(500),
+        width: "67%",
+      },
     };
-  }, [i18next.language, t]);
+  }, [i18next.language, t, direction]);
   return {
     clasess,
   };

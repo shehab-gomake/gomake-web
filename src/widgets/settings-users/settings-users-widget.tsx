@@ -13,13 +13,11 @@ import {AddUpdateRole} from "@/widgets/settings-users/Permissions/components/add
 import {useAddRole} from "@/widgets/settings-users/use-add-role";
 import { PermissionCheck } from "@/components/CheckPermission";
 import { Permissions } from "@/components/CheckPermission/enum";
-import { useRecoilState } from "recoil";
-import { permissionsState } from "@/store/permissions";
-import { usePermission } from "@/hooks/use-permission";
+import { useUserPermission } from "@/hooks/use-permission";
 
 const SettingsUsersWidget = () => {
     const {t} = useTranslation();
-    const { CheckPermission } = usePermission();
+    const { CheckPermission } = useUserPermission();
     const {
         handleAddEmployeeClick,
         openModal,
@@ -30,12 +28,12 @@ const SettingsUsersWidget = () => {
     } = useEmployee();
     const {addNewRole, setOpenAddRoleModal, openAddRoleModal, inputValue, setInputValue} = useAddRole();
     const tabs: ITab[] = [
-        CheckPermission(Permissions.SHOW_USERS) &&  {title:  t("usersSettings.users"), component: <UsersSettings/> },
-        CheckPermission(Permissions.SHOW_PERMISSION_MANAGMENT) &&  {title:  t("usersSettings.permission"), component:  <PermissionsWidget/>}
+        CheckPermission(Permissions.SHOW_EMPLOYEES) &&  {title:  t("usersSettings.users"), component: <UsersSettings/> },
+        CheckPermission(Permissions.SHOW_PERMISSIONS) &&  {title:  t("usersSettings.permission"), component:  <PermissionsWidget/>}
         
     ];
     return (
-        <div>
+        <div data-tour={'settingUsersWidget'}>
             <PrimaryTabsComponent tabs={tabs} >
                 <div style={{display: "flex", gap: 10}}>
                     <PermissionCheck userPermission={Permissions.ADD_EMPLOYEE} >

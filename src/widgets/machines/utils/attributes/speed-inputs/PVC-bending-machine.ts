@@ -1,6 +1,9 @@
+import {setupTimeInput} from "@/widgets/machines/utils/attributes/speed-inputs/setup-time-input";
+import {EMeasurementUnits} from "@/widgets/machines/enums/measurement-units";
 
 const PVCBendingMachine = (state: Record<string, any>) => {
     return [
+        ...setupTimeInput(state),
         {
             name: "speed",
             label: "machineAttributes.speed",
@@ -12,18 +15,7 @@ const PVCBendingMachine = (state: Record<string, any>) => {
             value: state.attributes?.speed ? state.attributes?.speed : '',
             machineInputType: 'input',
             isValid: !!state?.attributes?.speed,
-        },
-        {
-            name: "delayPerUnit",
-            label: "machineAttributes.delayPerUnit",
-            type: "text",
-            placeholder: "machineAttributes.delayPerUnit",
-            required: true,
-            parameterKey: "delayPerUnit",
-            options: [],
-            value: state.attributes?.delayPerUnit ? state.attributes?.delayPerUnit : '',
-            machineInputType: 'input',
-            isValid: !!state?.attributes?.delayPerUnit,
+            unit: EMeasurementUnits.BENDING_P_H
         },
     ]
 }

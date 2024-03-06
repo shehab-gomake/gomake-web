@@ -1,6 +1,7 @@
 import React from "react";
 import { GoMakeMenu } from "@/components";
 import { MenuItem } from "@mui/material";
+import { useTranslation } from "react-i18next";
 
 const SendBtnMenu = ({
   handleClose,
@@ -8,6 +9,8 @@ const SendBtnMenu = ({
   anchorEl,
   onClickSendQuoteToClient,
 }) => {
+  const { t } = useTranslation();
+
   return (
     <GoMakeMenu
       handleClose={handleClose}
@@ -21,7 +24,7 @@ const SendBtnMenu = ({
           handleClose();
         }}
       >
-        Email
+        {t("sales.quote.email")}
       </MenuItem>
       <MenuItem
         onClick={() => {
@@ -29,14 +32,7 @@ const SendBtnMenu = ({
           handleClose();
         }}
       >
-        Phone
-      </MenuItem>
-      <MenuItem
-        onClick={() => {
-          handleClose();
-        }}
-      >
-        Whatsapp
+        {t("sales.quote.phone")}
       </MenuItem>
     </GoMakeMenu>
   );

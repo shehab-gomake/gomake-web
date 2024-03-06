@@ -1,4 +1,4 @@
-const insertTypeInput = (state: Record<string, any>) => {
+const insertTypeInput = (state: Record<string, any>, disabled?: boolean) => {
     return [
         {
             name: "insertTypes",
@@ -15,6 +15,7 @@ const insertTypeInput = (state: Record<string, any>) => {
             value: state.attributes?.insertTypes ? state.attributes?.insertTypes: '',
             machineInputType: 'input',
             isValid: !!state?.attributes?.insertTypes,
+            disabled
         },
     ]
 }

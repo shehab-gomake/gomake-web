@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { clientContactsState, quoteItemState } from "@/store";
+import { IContactData, clientContactsState, quoteItemState } from "@/store";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { quoteState } from "@/pages-components/quote/store/quote";
 
@@ -12,7 +12,7 @@ const useContactWidget = () => {
 
   const quoteStateValue = useRecoilValue<any>(quoteState);
   const quoteItemValue: any = useRecoilValue(quoteItemState);
-  const [clientContactsValue] = useRecoilState<any>(clientContactsState);
+  const [clientContactsValue] = useRecoilState<IContactData[]>(clientContactsState);
   const [items, setItems] = useState([]);
   const changeItems = (index: number, filedName: string, value: any) => {
     let temp = [...items];
@@ -24,7 +24,7 @@ const useContactWidget = () => {
   };
 
   useEffect(() => {
-    setItems(quoteItemValue?.quoteContacts);
+    setItems(quoteItemValue?.documentContacts);
   }, [quoteItemValue]);
 
   const updateClientContact = useCallback(async (item: any) => {

@@ -13,7 +13,6 @@ const SelectMaterialsParameterWidget = ({
   index,
   temp,
   inModal,
-  onChangeForPrice,
   subSection,
   section,
   setDigidatPriceData,
@@ -21,6 +20,7 @@ const SelectMaterialsParameterWidget = ({
 }) => {
   const materialsEnumsValues = useRecoilValue(materialsCategoriesState);
   let Comp;
+
   if (allMaterials?.length > 0) {
     const data = materialsEnumsValues.find((item) => {
       return compareStrings(item.name, parameter?.materialPath[0]);
@@ -30,6 +30,83 @@ const SelectMaterialsParameterWidget = ({
     let isDefaultObj = parameter?.valuesConfigs?.find(
       (item) => item.isDefault === true
     );
+    const onChange = (value: any) => {
+      if (parameter?.materialPath?.length == 3) {
+        onChangeSubProductsForPrice(
+          parameter?.id,
+          subSection?.id,
+          section?.id,
+          parameter?.parameterType,
+          parameter?.name,
+          parameter?.actionId,
+          {
+            valueIds: value?.valueId,
+            values: value?.value,
+            ...(data?.id > 0 && { material: data?.id }),
+          },
+          subSection?.type,
+          index,
+          parameter?.actionIndex,
+          parameter?.code
+        );
+        setDigidatPriceData({
+          ...digitalPriceData,
+          selectedMaterialLvl3: value,
+          selectedOptionLvl3: value,
+        });
+      }
+      if (parameter?.materialPath?.length == 2) {
+        onChangeSubProductsForPrice(
+          parameter?.id,
+          subSection?.id,
+          section?.id,
+          parameter?.parameterType,
+          parameter?.name,
+          parameter?.actionId,
+          {
+            valueIds: value?.valueId,
+            values: value?.value,
+            ...(data?.id > 0 && { material: data?.id }),
+          },
+          subSection?.type,
+          index,
+          parameter?.actionIndex,
+          parameter?.code
+        );
+        setDigidatPriceData({
+          ...digitalPriceData,
+          selectedMaterialLvl2: value?.data,
+          selectedOptionLvl2: value,
+          selectedMaterialLvl3: null,
+        });
+      }
+      if (parameter?.materialPath?.length == 1) {
+        onChangeSubProductsForPrice(
+          parameter?.id,
+          subSection?.id,
+          section?.id,
+          parameter?.parameterType,
+          parameter?.name,
+          parameter?.actionId,
+          {
+            valueIds: value?.valueId,
+            values: value?.value,
+            ...(data?.id > 0 && { material: data?.id }),
+          },
+          subSection?.type,
+          index,
+          parameter?.actionIndex,
+          parameter?.code
+        );
+        setDigidatPriceData({
+          ...digitalPriceData,
+          selectedMaterialLvl1: value?.data,
+          selectedOptionLvl1: value,
+          selectedMaterialLvl2: { value: "" },
+          selectedMaterialLvl3: { value: "" },
+        });
+      }
+    }
     let options: any = allMaterials;
     let defailtObjectValue = { value: "" };
     if (parameter?.materialPath?.length == 3) {
@@ -42,8 +119,9 @@ const SelectMaterialsParameterWidget = ({
       let defaultParameter = defsultParameters?.valuesConfigs?.find(
         (item) => item?.isDefault
       );
-
-      let valueIdIsDefault = defaultParameter?.materialValueIds[0]?.valueId;
+      if (parameter.name == "Spiral color") {
+      }
+      let valueIdIsDefault = defaultParameter?.materialValueIds && defaultParameter?.materialValueIds.length > 0 ? defaultParameter?.materialValueIds[0]?.valueId : null;
       options = digitalPriceData?.selectedMaterialLvl1;
       if (options) {
         const hiddenValueIds = valuesConfigs
@@ -101,7 +179,9 @@ const SelectMaterialsParameterWidget = ({
       if (selectedObj) {
         defailtObjectValue = selectedObj;
       }
+      //onChange(defailtObjectValue)
     }
+
     Comp = (
       <>
         {options?.length > 0 && (
@@ -116,80 +196,7 @@ const SelectMaterialsParameterWidget = ({
                   : defailtObjectValue
               }
               getOptionLabel={(option: any) => option.value}
-              onChange={(e: any, value: any) => {
-                if (parameter?.materialPath?.length == 3) {
-                  onChangeSubProductsForPrice(
-                      parameter?.id,
-                      subSection?.id,
-                      section?.id,
-                      parameter?.parameterType,
-                      parameter?.name,
-                      parameter?.actionId,
-                      {
-                        valueIds: value?.valueId,
-                        values: value?.value,
-                        ...(data?.id > 0 && { material: data?.id }),
-                      },
-                      subSection?.type,
-                      index,
-                      parameter?.actionIndex
-                  );
-                  setDigidatPriceData({
-                    ...digitalPriceData,
-                    selectedMaterialLvl3: value,
-                    selectedOptionLvl3: value,
-                  });
-                }
-                if (parameter?.materialPath?.length == 2) {
-                  onChangeSubProductsForPrice(
-                      parameter?.id,
-                      subSection?.id,
-                      section?.id,
-                      parameter?.parameterType,
-                      parameter?.name,
-                      parameter?.actionId,
-                      {
-                        valueIds: value?.valueId,
-                        values: value?.value,
-                        ...(data?.id > 0 && { material: data?.id }),
-                      },
-                      subSection?.type,
-                      index,
-                      parameter?.actionIndex
-                  );
-                  setDigidatPriceData({
-                    ...digitalPriceData,
-                    selectedMaterialLvl2: value?.data,
-                    selectedOptionLvl2: value,
-                    selectedMaterialLvl3: null,
-                  });
-                }
-                if (parameter?.materialPath?.length == 1) {
-                  onChangeSubProductsForPrice(
-                      parameter?.id,
-                      subSection?.id,
-                      section?.id,
-                      parameter?.parameterType,
-                      parameter?.name,
-                      parameter?.actionId,
-                      {
-                        valueIds: value?.valueId,
-                        values: value?.value,
-                        ...(data?.id > 0 && { material: data?.id }),
-                      },
-                      subSection?.type,
-                      index,
-                      parameter?.actionIndex
-                  );
-                  setDigidatPriceData({
-                    ...digitalPriceData,
-                    selectedMaterialLvl1: value?.data,
-                    selectedOptionLvl1: value,
-                    selectedMaterialLvl2: { value: "" },
-                    selectedMaterialLvl3: { value: "" },
-                  });
-                }
-              }}
+              onChange={(e, value) => onChange(value)}
             />
             {parameter?.setSettingIcon && inModal && (
               <div style={{ cursor: "pointer" }}>

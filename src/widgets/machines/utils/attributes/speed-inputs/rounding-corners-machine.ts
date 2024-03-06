@@ -1,6 +1,9 @@
+import {EMeasurementUnits} from "@/widgets/machines/enums/measurement-units";
+import {setupTimeInput} from "@/widgets/machines/utils/attributes/speed-inputs/setup-time-input";
 
 const roundingCornersMachine = (state: Record<string, any>) => {
     return [
+        ...setupTimeInput(state),
         {
             name: "maxHeightClick",
             label: "machineAttributes.maxHeightClick",
@@ -12,6 +15,7 @@ const roundingCornersMachine = (state: Record<string, any>) => {
             value: state.attributes?.maxHeightClick ? state.attributes?.maxHeightClick : '',
             machineInputType: 'input',
             isValid: !!state?.attributes?.maxHeightClick,
+            unit: EMeasurementUnits.CM
         },
         {
             name: "speed",
@@ -24,6 +28,7 @@ const roundingCornersMachine = (state: Record<string, any>) => {
             value: state.attributes?.speed ? state.attributes?.speed : '',
             machineInputType: 'input',
             isValid: !!state?.attributes?.speed,
+            unit: EMeasurementUnits.CHICKS_PM
         },
         {
             name: "clickDelay",
@@ -36,6 +41,8 @@ const roundingCornersMachine = (state: Record<string, any>) => {
             value: state.attributes?.clickDelay ? state.attributes?.clickDelay : '',
             machineInputType: 'input',
             isValid: !!state?.attributes?.clickDelay,
+            unit: EMeasurementUnits.SECOND
+
         },
         {
             name: "maxCorners",

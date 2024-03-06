@@ -4,7 +4,6 @@ import {
   getAndSetAllEmployees,
   getAndSetClientAddress,
   getAndSetClientContacts,
-  getAndSetQuotes,
   getAndSetQuotesByUserId,
 } from "@/services/hooks";
 import {
@@ -65,11 +64,13 @@ const useQuoteGetData = () => {
       });
     }
   }, [quoteItemValue]);
+
   useEffect(() => {
     getAllCustomers();
     getQuote();
     getAllEmployees();
   }, []);
+  
   useEffect(() => {
     getAllClientContacts();
     getAllClientAddress();

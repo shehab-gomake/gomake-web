@@ -1,47 +1,56 @@
 import { useCallback, useEffect, useState } from "react";
 
-import { useGomakeAxios, useGomakeRouter } from "@/hooks";
+import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
 import {
   getAllProductsForDropDownList,
   getAndSetAllCustomers,
   getAndSetClientTypes,
-  getAndSetExistQuotes,
-  saveQuote,
 } from "@/services/hooks";
 import { useTranslation } from "react-i18next";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   QuoteIfExistState,
   QuoteNumberState,
+  homeReportsState,
 } from "@/pages-components/quote/store/quote";
+import {
+  getAllReportsApi,
+  getIfCartExistApi,
+  saveDocumentApi,
+} from "@/services/api-service/generic-doc/documents-api";
+import { ITab } from "@/components/tabs/interface";
+import { _renderQuoteStatus } from "@/utils/constants";
+import { selectedClientState } from "@/pages-components/quotes/states";
+import { QuotesListPageWidget } from "@/pages-components/quotes/quotes";
+import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
+import { CLIENT_TYPE_Id } from "@/pages/customers/enums";
 
-const useQuoteWidget = () => {
+const useQuoteWidget = ({ documentType }: any) => {
   const { t } = useTranslation();
   const { errorColor } = useGomakeTheme();
   const { callApi } = useGomakeAxios();
   const { navigate } = useGomakeRouter();
+  const { alertFaultUpdate } = useSnackBar();
   const [clientTypesValue, setClientTypesValues] = useState([]);
   const [productValue, setProductValues] = useState([]);
   const [customersListCreateQuote, setCustomersListCreateQuote] = useState([]);
   const [userQuote, setUserQuote] = useState<any>(null);
-  const [canOrder, setCanOrder] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const [selectedClientType, setSelectedClientType] = useState<any>({});
-  const [selectedClient, setSelectedClient] = useState<any>({});
-  const [QuoteIfExist, setQuoteIfExist] =
-    useRecoilState<any>(QuoteIfExistState);
+  const [selectedClient, setSelectedClient] = useRecoilState<any>(selectedClientState);
+  const [QuoteIfExist, setQuoteIfExist] = useRecoilState<any>(QuoteIfExistState);
   const [quoteNumber, setquoteNumber] = useRecoilState<any>(QuoteNumberState);
-
+  const setAllReports = useSetRecoilState<any>(homeReportsState);
   const [selectedProduct, setSelectedProduct] = useState<any>({});
-
   const [isDisabled, setIsDisabled] = useState(true);
-  const onClcikOpenModal = (quoteId: any) => {
+
+  const onClickOpenModal = (quoteId: any) => {
     setOpenModal(true);
   };
   //PopOver Btns
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
-  const onClcikCloseModal = async () => {
+  const onClickCloseModal = async () => {
     setOpenModal(false);
   };
 
@@ -80,16 +89,18 @@ const useQuoteWidget = () => {
   const renderOptions = () => {
     return customersListCreateQuote;
   };
-  const getAllClientTypes = useCallback(async () => {
-    await getAndSetClientTypes(callApi, setClientTypesValues);
-  }, []);
   const getAllProducts = useCallback(async () => {
-    await getAllProductsForDropDownList(callApi, setProductValues);
-  }, []);
+    if (selectedClient?.id && selectedClientType?.id)
+      await getAllProductsForDropDownList(callApi, setProductValues, {
+        clientId: selectedClient?.id,
+        clientTypeId: selectedClientType?.id,
+      });
+  }, [selectedClient, selectedClientType]);
+
   const getAllCustomersCreateQuote = useCallback(async (SearchTerm?) => {
     await getAndSetAllCustomers(callApi, setCustomersListCreateQuote, {
-      ClientType: "C",
-      onlyCreateOrderClients: false,
+      ClientType: documentType === DOCUMENT_TYPE.purchaseOrder || documentType === DOCUMENT_TYPE.purchaseInvoice ? "S" : "C",
+      onlyCreateOrderClients: documentType === DOCUMENT_TYPE.purchaseOrder || documentType === DOCUMENT_TYPE.purchaseInvoice ? true : false,
       searchTerm: SearchTerm,
     });
   }, []);
@@ -101,7 +112,6 @@ const useQuoteWidget = () => {
       const clientType = clientTypesValue.find(
         (c) => c.id == value?.clientTypeId
       );
-
       if (clientIdifExist != null && value?.id != null) {
         if (clientIdifExist != value?.id) {
           setOpenModal(true);
@@ -117,9 +127,20 @@ const useQuoteWidget = () => {
     [clientTypesValue]
   );
 
-  const getAndSetExistQuote = useCallback(async () => {
-    await getAndSetExistQuotes(callApi, setUserQuote);
-  }, []);
+  useEffect(() => {
+    const clientType = clientTypesValue.find(
+      (c) => c.id == selectedClient?.clientTypeId
+    );
+  }, [clientTypesValue, selectedClient]);
+
+  const getAndSetExistQuote = async () => {
+    const callBack = (res) => {
+      if (res?.success) {
+        setUserQuote(res?.data?.result);
+      }
+    };
+    await getIfCartExistApi(callApi, callBack, { documentType: 0 });
+  };
 
   const updateQuoteExist = useCallback(async () => {
     await getAndSetExistQuote();
@@ -129,6 +150,7 @@ const useQuoteWidget = () => {
     setSelectedClient(null);
     setSelectedClientType(null);
   }, []);
+
   const updateCustomerListSelectedAfterConfirm = useCallback(
     async (selectedCustomersList) => {
       setSelectedClient(selectedCustomersList);
@@ -138,17 +160,31 @@ const useQuoteWidget = () => {
 
   useEffect(() => {
     getAllClientTypes();
-    getAllProducts();
     getAndSetExistQuote();
   }, []);
 
+  useEffect(() => {
+    getAllProducts();
+  }, [selectedClient, selectedClientType]);
+
   const onClickSaveQuote = async (quoteId) => {
-    await saveQuote(callApi, setUserQuote, quoteId);
-    setquoteNumber(null);
-    setQuoteIfExist(false);
-    //setSelectedClient(null);
-    setUserQuote(null);
+    const callBack = (res) => {
+      if (res?.success) {
+        setquoteNumber(null);
+        setQuoteIfExist(false);
+        setUserQuote(null);
+      } else {
+        alertFaultUpdate();
+      }
+    };
+    await saveDocumentApi(callApi, callBack, {
+      documentType: 0,
+      document: {
+        documentId: quoteId,
+      },
+    });
   };
+
   const onClcikCreateQuote = () => {
     navigate(
       `/admin/products/digital-offset-price?clientTypeId=${selectedClientType?.id}&customerId=${selectedClient?.id}&productId=${selectedProduct?.id}`
@@ -171,11 +207,55 @@ const useQuoteWidget = () => {
     }
   };
 
+  // what is userQuote?.result !!!
+  const getAllClientTypes = useCallback(async () => {
+    try {
+      await getAndSetClientTypes(callApi, setClientTypesValues, { cardType: CLIENT_TYPE_Id.CUSTOMER });
+      if (userQuote?.result) {
+        getAllCustomersCreateQuote(userQuote?.result?.clientName);
+      } else {
+        getAllCustomersCreateQuote();
+      }
+    } catch (error) {
+      console.error("Error fetching client types:", error);
+    }
+  }, [callApi, userQuote]);
+
+  const tabs: ITab[] = [
+    {
+      title: t("home.tabs.Quotes"),
+      component: (
+        <QuotesListPageWidget
+          documentType={DOCUMENT_TYPE.quote}
+          isFromHomePage={true}
+        />
+      ),
+    },
+    {
+      title: t("home.tabs.Orders"),
+      component: (
+        <QuotesListPageWidget
+          documentType={DOCUMENT_TYPE.order}
+          isFromHomePage={true}
+        />
+      ),
+    },
+  ];
+
+
+  const getAllReports = async () => {
+    const callBack = (res) => {
+      if (res?.success) {
+        setAllReports(res?.data)
+      }
+    };
+    await getAllReportsApi(callApi, callBack, { customerId: selectedClient?.id, productId: selectedProduct?.id });
+  };
+
+
   useEffect(() => {
-    userQuote?.result
-      ? getAllCustomersCreateQuote(userQuote?.result?.clientName)
-      : getAllCustomersCreateQuote();
-  }, [userQuote]);
+    getAllReports();
+  }, [selectedClient, selectedProduct])
 
   return {
     clientTypesValue,
@@ -193,10 +273,10 @@ const useQuoteWidget = () => {
     selectedClientType,
     handleClick,
     updateQuoteExist,
-    onClcikOpenModal,
+    onClickOpenModal,
     selectedProduct,
     handleClose,
-    onClcikCloseModal,
+    onClickCloseModal,
     setSelectedClientType,
     setSelectedClient,
     selectedClient,
@@ -211,6 +291,8 @@ const useQuoteWidget = () => {
     onClcikCreateQuoteForCustomer,
     _renderErrorMessage,
     onClickSaveQuote,
+    tabs,
+    getAllReports
   };
 };
 

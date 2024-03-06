@@ -20,13 +20,14 @@ const useStyle = () => {
       },
       logoContainer: {
         display: "flex",
+        width: "100%",
+        justifyContent: "center",
       },
       loginContainer: {
         alignItems: "flex-start",
         width: "100%",
         ...adaptPaddingRight(t("direction"), 48),
 
-        // paddingLeft: 48,
       },
       loginLbl: {
         color: primaryColor(600),

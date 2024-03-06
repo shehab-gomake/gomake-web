@@ -30,7 +30,8 @@ const bookletMachine = (state: Record<string, any>) => {
                     required: true,
                     parameterKey: "min",
                     options: [],
-                    value: state.attributes?.width?.min ? state.attributes?.width?.min : ''
+                    value: state.attributes?.width?.min ? state.attributes?.width?.min : '',
+                    unit: EMeasurementUnits.CM
                 },
                 {
                     name: "",
@@ -40,7 +41,8 @@ const bookletMachine = (state: Record<string, any>) => {
                     required: true,
                     parameterKey: "max",
                     options: [],
-                    value: state.attributes?.width?.max ? state.attributes?.width?.max : ''
+                    value: state.attributes?.width?.max ? state.attributes?.width?.max : '',
+                    unit: EMeasurementUnits.CM
                 },
             ]
         },
@@ -59,7 +61,8 @@ const bookletMachine = (state: Record<string, any>) => {
                     required: true,
                     parameterKey: "min",
                     options: [],
-                    value: state.attributes?.length?.min ? state.attributes?.length?.min : ''
+                    value: state.attributes?.length?.min ? state.attributes?.length?.min : '',
+                    unit: EMeasurementUnits.CM
                 },
                 {
                     name: "",
@@ -69,7 +72,8 @@ const bookletMachine = (state: Record<string, any>) => {
                     required: true,
                     parameterKey: "max",
                     options: [],
-                    value: state.attributes?.length?.max ? state.attributes?.length?.max : ''
+                    value: state.attributes?.length?.max ? state.attributes?.length?.max : '',
+                    unit: EMeasurementUnits.CM
                 },
             ]
         },
@@ -88,7 +92,8 @@ const bookletMachine = (state: Record<string, any>) => {
                     required: true,
                     parameterKey: "min",
                     options: [],
-                    value: state.attributes?.paperThickness?.min ? state.attributes?.paperThickness?.min : ''
+                    value: state.attributes?.paperThickness?.min ? state.attributes?.paperThickness?.min : '',
+                    unit: EMeasurementUnits.UM
                 },
                 {
                     name: "",
@@ -98,7 +103,8 @@ const bookletMachine = (state: Record<string, any>) => {
                     required: true,
                     parameterKey: "max",
                     options: [],
-                    value: state.attributes?.paperThickness?.max ? state.attributes?.paperThickness?.max : ''
+                    value: state.attributes?.paperThickness?.max ? state.attributes?.paperThickness?.max : '',
+                    unit: EMeasurementUnits.UM
                 },
             ]
         },

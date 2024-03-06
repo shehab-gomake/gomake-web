@@ -16,10 +16,11 @@ const RowMappingChildWidget = ({
   onClickDeleteQouteItem,
   parentIndex,
   childInex,
-  changepriceListItemsChild,
+  changedocumentItemsChild,
   childList,
+  isQuoteConfirmation = false,
 }: any) => {
-  const { clasess } = useStyle({ headerHeight });
+  const { classes } = useStyle({ headerHeight });
   const {
     isUpdateAmount,
     isUpdateDiscount,
@@ -39,7 +40,7 @@ const RowMappingChildWidget = ({
     onInputChangeAmount,
   } = useQuoteTable({
     getCalculateQuoteItem,
-    changepriceListItemsChild,
+    changedocumentItemsChild,
     item,
     index,
     parentIndex,
@@ -55,7 +56,7 @@ const RowMappingChildWidget = ({
       <PrimaryTableCell
         style={{
           width: columnWidths[0],
-          ...clasess.cellContainerStyle,
+          ...classes.cellContainerStyle,
           borderBottom: childList?.length - 1 !== childInex && "none",
         }}
       >
@@ -77,7 +78,7 @@ const RowMappingChildWidget = ({
       <PrimaryTableCell
         style={{
           width: columnWidths[1],
-          ...clasess.cellContainerStyle,
+          ...classes.cellContainerStyle,
           color: "#000000",
           borderBottom: childList?.length - 1 !== childInex && "none",
         }}
@@ -87,7 +88,7 @@ const RowMappingChildWidget = ({
           width: columnWidths[2],
           ...FONT_FAMILY.Inter(600, 14),
           color: "#5859A8",
-          ...clasess.cellContainerStyle,
+          ...classes.cellContainerStyle,
         }}
       ></PrimaryTableCell>
       <PrimaryTableCell
@@ -100,11 +101,11 @@ const RowMappingChildWidget = ({
       <PrimaryTableCell
         style={{
           width: columnWidths[4],
-          ...clasess.cellContainerStyle,
+          ...classes.cellContainerStyle,
           borderBottom: childList?.length - 1 !== childInex && "none",
         }}
       >
-        <div style={clasess.cellTextInputStyle}>
+        <div style={classes.cellTextInputStyle}>
           <InputUpdatedValues
             value={item.quantity}
             onBlur={onBlurAmount}
@@ -117,11 +118,11 @@ const RowMappingChildWidget = ({
       <PrimaryTableCell
         style={{
           width: columnWidths[5],
-          ...clasess.cellContainerStyle,
+          ...classes.cellContainerStyle,
           borderBottom: childList?.length - 1 !== childInex && "none",
         }}
       >
-        <div style={clasess.cellTextInputStyle}>
+        <div style={classes.cellTextInputStyle}>
           <InputUpdatedValues
             value={item.discount ? item.discount : "0"}
             onBlur={onBlurDiscount}
@@ -134,11 +135,11 @@ const RowMappingChildWidget = ({
       <PrimaryTableCell
         style={{
           width: columnWidths[6],
-          ...clasess.cellContainerStyle,
+          ...classes.cellContainerStyle,
           borderBottom: childList?.length - 1 !== childInex && "none",
         }}
       >
-        <div style={clasess.cellTextInputStyle}>
+        <div style={classes.cellTextInputStyle}>
           <InputUpdatedValues
             value={item.price}
             onBlur={onBlurPrice}
@@ -151,11 +152,11 @@ const RowMappingChildWidget = ({
       <PrimaryTableCell
         style={{
           width: columnWidths[7],
-          ...clasess.cellContainerStyle,
+          ...classes.cellContainerStyle,
           borderBottom: childList?.length - 1 !== childInex && "none",
         }}
       >
-        <div style={clasess.cellTextInputStyle}>
+        <div style={classes.cellTextInputStyle}>
           <InputUpdatedValues
             value={item.finalPrice}
             onBlur={onBlurFinalPrice}
@@ -165,10 +166,10 @@ const RowMappingChildWidget = ({
           />
         </div>
       </PrimaryTableCell>
-      <PrimaryTableCell
+      {!isQuoteConfirmation && <PrimaryTableCell
         style={{
           width: columnWidths[7],
-          ...clasess.cellContainerStyle,
+          ...classes.cellContainerStyle,
           borderBottom: childList?.length - 1 !== childInex && "none",
         }}
       >
@@ -176,7 +177,7 @@ const RowMappingChildWidget = ({
           quoteItem={item}
           onClickDeleteQouteItem={onClickDeleteQouteItem}
         />
-      </PrimaryTableCell>
+      </PrimaryTableCell>}
     </TableRow>
   );
 };

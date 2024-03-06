@@ -4,7 +4,7 @@ import { TextVerticalAligen } from "../const/textVerticalAligen";
 import {DocumentType} from "../interface";
 import { useTranslation } from "react-i18next";
 
-const creationDocumetInputs = (state)  => {
+const creationDocumentInputs = (state)  => {
   const [documentTypes , setdocumentTypes] = useRecoilState<DocumentType[]>(documentTypeState);
  
    const [documentTypeText, setdocumentTypeText] = useRecoilState(documentDesignTypeTextState);
@@ -279,7 +279,7 @@ const FooterInputs1 = (state)  => {
         {
             name: "Phone",
             label: "documentingDesign.Footer.Phone",
-            type: "text",
+            type: "phone",
             placeholder: "documentingDesign.Footer.Phone",
             required: false,
             parameterKey: "mobileNumber",
@@ -396,7 +396,7 @@ const QRCodesInputs3 = (state) =>{
 };
 
 
-export {creationDocumetInputs ,
+export {creationDocumentInputs ,
      TitleDefinitionInputs ,
      TitleDefinitionCustomLogoInputs,
      TableSettingInputs,

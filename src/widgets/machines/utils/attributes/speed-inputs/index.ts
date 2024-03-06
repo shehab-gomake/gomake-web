@@ -6,7 +6,6 @@ import {flatbedWidePrinting} from "@/widgets/machines/utils/attributes/speed-inp
 import {laminationMachine} from "@/widgets/machines/utils/attributes/speed-inputs/lamination-machine";
 import {punchingMachine} from "@/widgets/machines/utils/attributes/speed-inputs/punching-machine";
 import {roundingCornersMachine} from "@/widgets/machines/utils/attributes/speed-inputs/rounding-corners-machine";
-import {foldingMachine} from "@/widgets/machines/utils/attributes/speed-inputs/folding-machine";
 import {pastingBlocksMachine} from "@/widgets/machines/utils/attributes/speed-inputs/pasting-blocks-machine";
 import {scoringMachine} from "@/widgets/machines/utils/attributes/speed-inputs/scoring-machine";
 import {perforationMachine} from "@/widgets/machines/utils/attributes/speed-inputs/perforation-machine";
@@ -51,6 +50,9 @@ import {digitalPrinting} from "@/widgets/machines/utils/attributes/speed-inputs/
 import {ofssetPrinting} from "@/widgets/machines/utils/attributes/speed-inputs/ofsset-printing";
 import {thermalPlateProcessor} from "@/widgets/machines/utils/attributes/speed-inputs/thermal-plate-processor";
 import {analogEnhancement} from "@/widgets/machines/utils/attributes/speed-inputs/analog-enhancement";
+import {creatingDiesMachine} from "@/widgets/machines/utils/attributes/speed-inputs/creating-dies-machines";
+import {meshProcessorMachines} from "@/widgets/machines/utils/attributes/speed-inputs/mesh-processors-machines";
+import {silkPrinter} from "@/widgets/machines/utils/attributes/speed-inputs/silk-printer";
 
 
 const getCategorySpeedInputs = (categoryId: string, state: Record<string, any>) => {
@@ -74,7 +76,7 @@ const getCategorySpeedInputs = (categoryId: string, state: Record<string, any>) 
         case ECategoryId.ROUNDING_CORNERS_MACHINE:
             return roundingCornersMachine(state);
         case ECategoryId.FOLDING_MACHINE:
-            return foldingMachine(state);
+            return scoringMachine(state);
         case ECategoryId.PASTING_BLOCKS_MACHINE:
             return pastingBlocksMachine(state);
         case ECategoryId.SCORING_MACHINE:
@@ -137,7 +139,7 @@ const getCategorySpeedInputs = (categoryId: string, state: Record<string, any>) 
             return packageTyingMachine(state);
         case ECategoryId.CARTOON_PACKAGING_MACHINE:
             return cartoonPackagingMachine(state);
-        case ECategoryId.ROLL_LASER_CUT_MACHINE:
+        case ECategoryId.ROLL_FINISH_MACHINE:
             return rollLaserCutMachine(state);
         case ECategoryId.ROLL_LAMINATION_MACHINE:
             return rollLaminationMachine(state);
@@ -157,6 +159,12 @@ const getCategorySpeedInputs = (categoryId: string, state: Record<string, any>) 
             return thermalPlateProcessor(state);
         case ECategoryId.ANALOG_ENHANCEMENT_MACHINE:
             return analogEnhancement(state);
+        case ECategoryId.CREATING_DIES_MACHINE:
+            return creatingDiesMachine(state);
+        case ECategoryId.MESH_PROCESSORS:
+            return meshProcessorMachines(state);
+        case ECategoryId.SILK_PRINTER:
+            return silkPrinter(state)
         default:
             return [];
     }

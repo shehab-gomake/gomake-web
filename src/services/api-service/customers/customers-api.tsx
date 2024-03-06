@@ -8,6 +8,17 @@ import {EHttpMethod} from "@/services/api-service/enums";
 import { ISetState } from "@/services/hooks/call-api.interface";
 const GET_CUSTOMER_BY_ID_URL = '/v1/customers/get-customer';
 const TOGGLE_CUSTOMER_STATUS_URL = '/v1/crm-service/customer/update-customer-status/';
+const IMPORT_CLIENT_URL = '/v1/crm-service/customer/import-client';
+const EXPORT_CLIENT_URL = '/v1/crm-service/customer/export-client';
+
+
+const exportClientApi: ICallAndSetData = async (callApi, setState, data: {clientType: string}) => {
+  return await getSetApiData(callApi, EHttpMethod.GET, EXPORT_CLIENT_URL, setState, data); 
+}
+
+const importClientApi: ICallAndSetData = async (callApi, setState , data ) => {
+  return  await getSetApiData(callApi, EHttpMethod.POST, IMPORT_CLIENT_URL, setState,data)
+}
 
 
 //get by id
@@ -57,7 +68,6 @@ const customerMapFunction = (customer, onClick, onClickStatus , activeText , inA
   };
 };
 
-
 // data table
 const getAndSetCustomersPagination = async (
   callApi: ICallApi,
@@ -91,5 +101,8 @@ export {
   getAndSetCustomerById,
   getAndSetCustomersPagination,
   customerMapFunction,
-  toggleCustomerStatus
+  toggleCustomerStatus,
+
+  exportClientApi,
+  importClientApi
 };

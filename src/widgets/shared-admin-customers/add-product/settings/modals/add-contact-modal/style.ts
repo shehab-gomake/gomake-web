@@ -7,16 +7,18 @@ const useStyle = () => {
   const clasess = useMemo(() => {
     return {
       insideStyle: {
-        width: "35%",
-        borderRadius: 5,
-        height: "35%",
+        width: "auto",
+        borderRadius: 8,
+        height: "auto",
+        maxHeight: 500,
+        minHeight:200,
+        backgroundColor: "#F6F6F6",
       },
       textInputStyle: {
+        display: "flex",
         width: "100%",
-        border: "1px solid #2E3092",
-        borderRadius: 5,
-        height: 40,
-        boxShadow: "none",
+        height: "40px",
+        borderRadius: 4,
       },
       mainInputsContainer: {
         display: "flex",
@@ -25,6 +27,7 @@ const useStyle = () => {
         alignItems: "flex-start",
         gap: 25,
         width: "100%",
+        height: "100%",
       },
       btnContainer: {
         display: "flex",
@@ -42,6 +45,22 @@ const useStyle = () => {
         color: errorColor(500),
         marginTop: 5,
       },
+      modalMainContainer:{
+        display: "flex",
+        flexDirection: "column" as "column",
+        justifyContent:"flex-start",
+        alignItems:"flex-start",
+        gap:10,
+        padding:10
+      },
+      productMappingContainer:{
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "flex-start",
+        alignItems: "center",
+        width:"100%",
+        gap:15
+      }
     };
   }, []);
   return {

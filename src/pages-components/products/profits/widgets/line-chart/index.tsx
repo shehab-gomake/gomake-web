@@ -10,8 +10,8 @@ import {
   Legend,
 } from "chart.js";
 import { Line } from "react-chartjs-2";
-import { useRecoilValue } from "recoil";
-import { chartDataByActionProfitRow } from "@/store";
+import { LineChartProps } from "@/pages-components/products/profits-new/interface";
+import { useTranslation } from "react-i18next";
 
 ChartJS.register(
   CategoryScale,
@@ -36,21 +36,21 @@ export const options = {
   },
 };
 
-export function LineChart() {
-  const chartDataValue = useRecoilValue<any>(chartDataByActionProfitRow);
+export function LineChart({ actionProfitRowChartData }: LineChartProps) {
+  const { t } = useTranslation(); 
   const data = {
-    labels: chartDataValue?.profitAxis,
+    labels: actionProfitRowChartData?.profitAxis,
     datasets: [
       {
-        label: "Cost",
-        data: chartDataValue?.costAxis,
+        label: actionProfitRowChartData?.label  || t("products.profits.pricingListWidget.cost"),
+        data: actionProfitRowChartData?.costAxis,
         borderColor: "#FF4DCA",
         backgroundColor: "#FF4DCA",
       },
     ],
   };
   return (
-    chartDataValue?.costAxis?.length > 0 && (
+    actionProfitRowChartData?.costAxis?.length > 0 && (
       <Line
         options={options}
         data={data}

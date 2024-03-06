@@ -1,4 +1,5 @@
 import {mediaSheetLossInput} from "@/widgets/machines/utils/attributes/media-inputs/media-sheet-loss-input";
+import {EMeasurementUnits} from "@/widgets/machines/enums/measurement-units";
 
 const flatbedCuttingMachine = (state: Record<string, any>) => {
     return [
@@ -14,6 +15,7 @@ const flatbedCuttingMachine = (state: Record<string, any>) => {
             options: [],
             machineInputType: 'input',
             isValid: !!state?.attributes?.minWidthMarginCutting,
+            unit: EMeasurementUnits.MM
         },
         {
             name: 'machineAttributes.tableDimensions',
@@ -32,7 +34,8 @@ const flatbedCuttingMachine = (state: Record<string, any>) => {
                     required: true,
                     parameterKey: "width",
                     options: [],
-                    value: state.attributes?.tableDimensions?.width ? state.attributes?.tableDimensions?.width : ''
+                    value: state.attributes?.tableDimensions?.width ? state.attributes?.tableDimensions?.width : '',
+                    unit: EMeasurementUnits.CM
                 },
                 {
                     name: "",
@@ -42,8 +45,8 @@ const flatbedCuttingMachine = (state: Record<string, any>) => {
                     required: true,
                     parameterKey: "length",
                     options: [],
-                    value: state.attributes?.tableDimensions?.length ? state.attributes?.tableDimensions?.length : ''
-
+                    value: state.attributes?.tableDimensions?.length ? state.attributes?.tableDimensions?.length : '',
+                    unit: EMeasurementUnits.CM
                 },
                 {
                     name: "",
@@ -53,8 +56,8 @@ const flatbedCuttingMachine = (state: Record<string, any>) => {
                     required: true,
                     parameterKey: "thickness",
                     options: [],
-                    value: state.attributes?.tableDimensions?.thickness ? state.attributes?.tableDimensions?.thickness : ''
-
+                    value: state.attributes?.tableDimensions?.thickness ? state.attributes?.tableDimensions?.thickness : '',
+                    unit: EMeasurementUnits.CM
                 },
             ]
         },

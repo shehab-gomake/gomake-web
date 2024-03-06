@@ -1,32 +1,40 @@
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { useMemo } from "react";
 import { FONT_FAMILY } from "@/utils/font-family";
-import {convertHeightToVH} from "@/utils/adapter";
-import {HEADER_HEIGHT, SCREEN_HEIGHT} from "@/utils/layout-config";
+import {
+  adaptPaddingLeft,
+  adaptPaddingRight,
+  convertHeightToVH,
+} from "@/utils/adapter";
+import { HEADER_HEIGHT, SCREEN_HEIGHT } from "@/utils/layout-config";
+import { useTranslation } from "react-i18next";
 
 const useStyle = () => {
   const { theme, primaryColor, secondColor } = useGomakeTheme();
+  const { t } = useTranslation();
+  const direction = t("direction");
   const classes = useMemo(() => {
     return {
       mainContainer: {
-        padding: '0 3px',
+        padding: "0 3px",
         maxHeight: convertHeightToVH(SCREEN_HEIGHT - HEADER_HEIGHT),
-        height: convertHeightToVH(SCREEN_HEIGHT - HEADER_HEIGHT),
+        // height: convertHeightToVH(SCREEN_HEIGHT - HEADER_HEIGHT),
+        ...adaptPaddingLeft(direction, 20),
+        ...adaptPaddingRight(direction, 20),
       },
       container: {
         display: "flex",
         gap: 26,
         paddingTop: 20,
         minHeight: "100%",
-        maxHeight: convertHeightToVH(750),
-        position: 'relative' as 'relative'
+        maxHeight: 820,
+        position: "relative" as "relative",
       },
       sideList: {
         minWidth: 264,
       },
       main: {
         width: "100%",
-
       },
       header: {
         ...FONT_FAMILY.Lexend(700, 20),
@@ -39,7 +47,7 @@ const useStyle = () => {
         paddingBottom: 12,
       },
     };
-  }, [theme]);
+  }, [theme, direction, t]);
   return {
     classes,
   };

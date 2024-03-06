@@ -3,7 +3,7 @@ import {IStepFormProps} from "@/widgets/machines/components/forms/interface";
 import {InputContainer} from "@/widgets/machines/components/inputs/input-container";
 import {useMachineAttributes} from "@/widgets/machines/hooks/use-machine-attributes";
 
-const MachineRunComponent = ({}: IStepFormProps) => {
+const MachineRunComponent = ({children}: IStepFormProps) => {
     const {classes} = useStyle();
     const {machineFoldingAttributes, changeMachineAttributes, errors} = useMachineAttributes();
 
@@ -15,6 +15,7 @@ const MachineRunComponent = ({}: IStepFormProps) => {
                         <InputContainer key={property.parameterKey} attribute={property} updateState={changeMachineAttributes} error={errors[property.parameterKey]}/>
                     ))
                 }
+                {children}
             </div>
         </div>
     );

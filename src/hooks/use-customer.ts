@@ -1,5 +1,5 @@
-import {clearStorage} from "@/services/storage-data";
-import {userState} from "@/store";
+import {clearStorage, updateTokenStorage} from "@/services/storage-data";
+import {systemCurrencyState, systemVATState, userState} from "@/store";
 import {permissionsState} from "@/store/permissions";
 import {useCallback, useState} from "react";
 import {useRecoilState, useSetRecoilState} from "recoil";
@@ -9,18 +9,23 @@ import {userTypeState} from "@/store/user-type";
 import {userProfileState} from "@/store/user-profile";
 import {useTranslation} from "react-i18next";
 import {Permissions} from "@/components/CheckPermission/enum";
+import {printHouseProfile} from "@/store/print-house-profile";
+import {startGuideTourState} from "@/store/tour-state";
 
 
-const useCustomer = (permissionEnumValue?:Permissions) => {
+const useCustomer = (permissionEnumValue?:Permissions,allowAnonymous?:boolean) => {
 
     const {callApi} = useGomakeAxios();
     const [user, setUser] = useRecoilState<any>(userState);
+    const [systemCurrency, setSystemCurrency] = useRecoilState<any>(systemCurrencyState);
+    const [systemVAT, setSystemVAT] = useRecoilState<number>(systemVATState);
     const setUserProfile = useSetRecoilState(userProfileState);
+    const setPrintHouseProfile = useSetRecoilState(printHouseProfile);
     const [userType, setUserType] = useRecoilState<any>(userTypeState);
     const [adminsAutoComplate, setAdminsAutoComplate] = useState([]);
     const [permissions, setPermissions] = useRecoilState<any>(permissionsState);
     const {navigate} = useGomakeRouter();
-
+    const setStartGuid = useSetRecoilState(startGuideTourState);
     const {i18n} = useTranslation();
     const logOut = useCallback(() => {
         setUser({});
@@ -29,25 +34,35 @@ const useCustomer = (permissionEnumValue?:Permissions) => {
     }, []);
 
     const validate = useCallback(async () => {
+        if(allowAnonymous){
+            return true;
+        }
         const validate: any = await callApi("GET", "/v1/auth/validate");
         if (validate?.success) {
             const user = validate?.data?.data?.customer;
+            updateTokenStorage(user?.token);
             const userPermissions = [...user.permissions];
             user.permissions = null;
+            setStartGuid(!!user?.isFirstLogin);
+            localStorage.setItem("isHover", !!user?.isFirstLogin ? "true" : 'false');
             setUser({...user, type: "user"});
             setUserType({type: "user"});
             setUserProfile(validate?.data?.data?.customer);
+            setPrintHouseProfile(user.printHouseProfile);
+            setSystemCurrency(user.systemCurrency)
+            setSystemVAT(user.systemVat);
+            localStorage.setItem('systemLogo', validate?.data?.data?.customer?.printHouseProfile?.logo)
             if (validate?.data?.data?.customer?.systemLang) {
                 localStorage.setItem('systemLanguage', validate?.data?.data?.customer?.systemLang)
                 i18n.changeLanguage(validate?.data?.data?.customer?.systemLang).then();
             }
-
-
+            if (!!user?.redirectTo) {
+                navigate(user?.redirectTo);
+            }
             setPermissions(userPermissions);
             if (permissionEnumValue !== null && permissionEnumValue !== undefined) {
 
                 if (userPermissions) {
-                 
                     return !!userPermissions?.includes(permissionEnumValue);
                 } else {
                     return false;

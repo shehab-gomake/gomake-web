@@ -12,7 +12,14 @@ const OtherReasonModal = ({
   onClose,
   setReasonText,
   onClickCancelOffer,
-}: any) => {
+  style,
+}: {
+  openModal: boolean;
+  onClose: () => void;
+  setReasonText: (text: string) => void;
+  onClickCancelOffer: () => void;
+  style?: React.CSSProperties | null; 
+}) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
   return (
@@ -21,8 +28,8 @@ const OtherReasonModal = ({
         openModal={openModal}
         modalTitle={t("sales.quote.reasonForCancellation")}
         onClose={onClose}
-        insideStyle={clasess.insideStyle}
-      >
+        insideStyle={style ? { ...clasess.insideStyle, ...style } : clasess.insideStyle}
+        >
         <div style={clasess.mainModalContainer}>
           <GomakeTextInput
             multiline={6}

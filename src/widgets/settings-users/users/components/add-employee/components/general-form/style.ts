@@ -19,7 +19,8 @@ const useStyle = () => {
             container: {
                 display: 'flex',
                 flexDirection: 'column' as 'column',
-                gap: 24, paddingTop: 24
+                gap: 24, 
+                paddingTop: 24,
             },
             subSection: {
                 display: "flex",

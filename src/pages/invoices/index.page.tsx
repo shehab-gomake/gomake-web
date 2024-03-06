@@ -1,12 +1,11 @@
-import { Permissions } from "@/components/CheckPermission/enum";
 import { CustomerAuthLayout } from "@/layouts";
+import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { QuotesListPageWidget } from "@/pages-components/quotes/quotes";
-import {EDocumentTypeEnum} from "@/enums";
 
 export default function Invoices() {
   return (
     <CustomerAuthLayout>
-      <QuotesListPageWidget documentType={EDocumentTypeEnum.Invoice} />
+      <QuotesListPageWidget documentType={DOCUMENT_TYPE.invoice} />
     </CustomerAuthLayout>
   );
 }

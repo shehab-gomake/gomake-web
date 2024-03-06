@@ -1,21 +1,27 @@
-import React, { useState, useTransition } from "react";
 import { useStyle } from "./style";
 import { GomakeTextInput } from "@/components";
-import { useTranslation } from "react-i18next";
+import { useWriteCommentComp } from "./use-character-details";
+import { useButtonsConfirmContainer } from "../buttons-cofirm-container/use-buttons-container";
+import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 
-const WriteCommentComp = () => {
-  const { clasess } = useStyle();
-  const [data, setData] = useState("");
-  const { t } = useTranslation();
-  return (
-    <div style={clasess.writeCommentcontainer}>
+interface IProps {
+    isQuoteConfirmation?: boolean;
+    getQuote?:any;
+    documentType?: DOCUMENT_TYPE;
+}
+const WriteCommentComp = ({ isQuoteConfirmation,getQuote,documentType }: IProps) => {
+    const { classes } = useStyle(isQuoteConfirmation);
+    const { onUpdateComments, quoteComments, setQuoteComments } = useButtonsConfirmContainer();
+    const { handleChange, handleBlur, t, data } = useWriteCommentComp({ getQuote , documentType })
+
+    return (
+    <div style={classes.writeCommentContainer}>
       <GomakeTextInput
-        style={clasess.textInputStyle}
+        style={classes.textInputStyle}
         placeholder={t("sales.quote.writeCommentHere")}
-        onChange={(e: any) => {
-          setData(e.target.value);
-        }}
-        value={data}
+        value={isQuoteConfirmation ? quoteComments : data}
+        onChange={isQuoteConfirmation ? (e) => setQuoteComments(e.target.value) : handleChange}
+        onBlur={isQuoteConfirmation ? onUpdateComments : handleBlur}
       />
     </div>
   );

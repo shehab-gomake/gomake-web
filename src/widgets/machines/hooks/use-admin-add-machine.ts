@@ -19,8 +19,6 @@ const useAdminAddMachine = () => {
         setState(initState[categoryId]);
     }
 
-    useEffect(() => {console.log(state)}, [state])
-
     const curMachineCategoryId = useCallback(() => state?.category ? state?.category.toString() : '', [state]);
 
     const adminAddMachine = useCallback(async () => {
@@ -54,15 +52,15 @@ const useAdminAddMachine = () => {
 
     const updateMachine = async () => {
         const callBack = (res) => {
-            if (result?.success) {
+            if (res?.success) {
                 setState(res.data);
-                setUpdatedMachine(result.data);
+                setUpdatedMachine(res.data);
                 alertSuccessUpdate()
             } else {
                 alertFaultUpdate();
             }
         }
-        const result = await adminUpdateMachine(callApi, callBack, state);
+        await adminUpdateMachine(callApi, callBack, state);
 
     }
 

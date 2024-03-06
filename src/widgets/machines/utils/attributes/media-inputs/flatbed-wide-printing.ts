@@ -1,6 +1,5 @@
 import {mediaLoadingLoss} from "@/widgets/machines/utils/attributes/media-inputs/media-loading-loss";
 import {mediaMinMarginWidth} from "@/widgets/machines/utils/attributes/media-inputs/media-min-margin-width";
-import {mediaImageSizeSettings} from "@/widgets/machines/utils/attributes/media-inputs/media-image-size-settings";
 import {mediaDimensionsSettings} from "@/widgets/machines/utils/attributes/media-inputs/media-dimensions-settings";
 import {mediaWeightSettings} from "@/widgets/machines/utils/attributes/media-inputs/media-weight-settings";
 import {mediaThicknessSettings} from "@/widgets/machines/utils/attributes/media-inputs/media-thickness-settings";
@@ -8,11 +7,24 @@ import {mediaThicknessSettings} from "@/widgets/machines/utils/attributes/media-
 const flatbedWidePrinting = (state: Record<string, any>) => {
     return [
         ...mediaLoadingLoss(state),
+        {
+            name: "mediaType",
+            label: "machineAttributes.mediaType",
+            type: "select",
+            placeholder: "machineAttributes.mediaType",
+            required: true,
+            parameterKey: "mediaType",
+            value: state?.attributes?.mediaType,
+            options: [{value: '1', text: 'Roll'}, {value: '2', text: 'Flatbed'}],
+            values: state?.attributes?.mediaType,
+            machineInputType: 'input',
+            isValid: true,
+            multiple: true
+        },
         ...mediaMinMarginWidth(state),
         ...mediaDimensionsSettings(state),
         ...mediaWeightSettings(state),
         ...mediaThicknessSettings(state),
-        ...mediaImageSizeSettings(state)
     ]
 }
 

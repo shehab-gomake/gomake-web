@@ -46,7 +46,7 @@ const getCategoryConnectionInputs = (categoryId: string, state: Record<string, a
             return pressingMachine(state);
         case ECategoryId.MANUAL_SEWING_MACHINE:
             return manualSewingMachine(state);
-        case ECategoryId.ROLL_LASER_CUT_MACHINE:
+        case ECategoryId.ROLL_FINISH_MACHINE:
             return rollMachinesConnection(state);
         default:
             return rollMachinesConnection(state)

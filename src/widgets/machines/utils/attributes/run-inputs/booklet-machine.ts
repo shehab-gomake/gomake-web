@@ -3,7 +3,34 @@ import {EMeasurementUnits} from "@/widgets/machines/enums/measurement-units";
 
 const bookletMachine = (state: Record<string, any>) => {
     return [
-        ...insertTypeInput(state),
+        {
+            name: "isAvailable",
+            label: "machineAttributes.isAvailable",
+            type: "switch",
+            placeholder: "",
+            required: true,
+            parameterKey: "isAvailableCollectorUnit",
+            value: !!state.attributes?.isAvailableCollectorUnit,
+            options: [],
+            machineInputType: 'input',
+            isValid: true,
+        },
+        {
+            name: "collectorSpeed",
+            label: "machineAttributes.collectorSpeed",
+            type: "text",
+            placeholder: "machineAttributes.collectorSpeed",
+            required: true,
+            parameterKey: "collectorSpeed",
+            value: state.attributes?.collectorSpeed,
+            options: [],
+            machineInputType: 'input',
+            isValid: true,
+            disabled: !state.attributes?.isAvailableCollectorUnit,
+            unit: EMeasurementUnits.PPH
+        },
+        ...insertTypeInput(state, !state.attributes?.isAvailableCollectorUnit),
+
         {
             name: "cellNumber",
             label: "machineAttributes.cellNumber",
@@ -15,31 +42,7 @@ const bookletMachine = (state: Record<string, any>) => {
             options: [],
             machineInputType: 'input',
             isValid: true,
-        },
-        {
-            name: "maxThicknessInCell",
-            label: "machineAttributes.maxThicknessInCell",
-            type: "text",
-            placeholder: "machineAttributes.maxThicknessInCell",
-            required: true,
-            parameterKey: "maxThicknessInCell",
-            options: [],
-            value: state.attributes?.maxThicknessInCell ? state.attributes?.maxThicknessInCell : '',
-            machineInputType: 'input',
-            isValid: !!state?.attributes?.maxThicknessInCell,
-            unit: EMeasurementUnits.MM
-        },
-        {
-            name: "loadingInRun",
-            label: "machineAttributes.loadingInRun",
-            type: "switch",
-            placeholder: "machineAttributes.loadingInRun",
-            required: true,
-            parameterKey: "loadingInRun",
-            options: [],
-            value: state.attributes?.loadingInRun ? state.attributes?.loadingInRun : '',
-            machineInputType: 'input',
-            isValid: !!state?.attributes?.loadingInRun,
+            disabled: !state.attributes?.isAvailableCollectorUnit
         },
         {
             name: "cellChargingTime",
@@ -52,7 +55,50 @@ const bookletMachine = (state: Record<string, any>) => {
             value: state.attributes?.cellChargingTime ? state.attributes?.cellChargingTime : '',
             machineInputType: 'input',
             isValid: !!state?.attributes?.cellChargingTime,
-            unit: EMeasurementUnits.MINUTE
+            unit: EMeasurementUnits.MINUTE,
+        },
+        {
+            name: "loadingInRun",
+            label: "machineAttributes.loadingInRun",
+            type: "switch",
+            placeholder: "machineAttributes.loadingInRun",
+            required: true,
+            parameterKey: "loadingInRun",
+            options: [],
+            value: state.attributes?.loadingInRun ? state.attributes?.loadingInRun : '',
+            machineInputType: 'input',
+            isValid: !!state?.attributes?.loadingInRun,
+            disabled: !state.attributes?.isAvailableCollectorUnit
+        },
+        {
+            name: 'machineAttributes.speedByPaperSizeByColor',
+            parameterKey: 'collectorSpeedByMediaLength',
+            value: state.attributes?.collectorSpeedByMediaLength || [],
+            machineInputType: 'multiArrayInput',
+            isValid: true,
+            disabled: !state.attributes?.isAvailableCollectorUnit,
+            inputs: [
+                {
+                    name: "mediaLength",
+                    label: "machineAttributes.lengthDirection",
+                    type: "text",
+                    placeholder: "machineAttributes.lengthDirection",
+                    required: true,
+                    unit: EMeasurementUnits.CM,
+                    parameterKey: "mediaLength",
+                    options: []
+                },
+                {
+                    name: "speed",
+                    label: "machineAttributes.speedPercentage",
+                    type: "text",
+                    placeholder: "machineAttributes.speedPercentage",
+                    required: true,
+                    unit: EMeasurementUnits.PERCENTAGE,
+                    parameterKey: "speed",
+                    options: []
+                },
+            ]
         },
     ]
 }

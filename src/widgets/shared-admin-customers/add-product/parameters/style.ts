@@ -68,6 +68,7 @@ const useStyle = () => {
         width: "100%",
         marginBottom: 31,
       },
+
       tabsContainer: {
         display: "flex",
         flexDirection: "row" as "row",
@@ -75,6 +76,7 @@ const useStyle = () => {
         alignItems: "center",
         gap: 40,
         width: "100%",
+        maxWidth: 900,
         marginBottom: 31,
       },
       tabContainer: {
@@ -84,6 +86,7 @@ const useStyle = () => {
         alignItems: "center",
         gap: 8,
         cursor: "pointer",
+        height: 30,
       },
       tabNameStyle: {
         ...FONT_FAMILY.Lexend(500, 16),
@@ -154,19 +157,16 @@ const useStyle = () => {
         width: "100%",
         borderRadius: 4,
         height: 40,
-        backgroundColor: "#FFF",
       },
       renderParameterTypeContainer: {
         display: "flex",
         width: "100%",
-        backgroundColor: "#FFF",
         borderRadius: 4,
       },
       dropDownListStyle: {
         width: "100%",
         borderRadius: 4,
         height: 40,
-        backgroundColor: "#FFF",
         border: "0px",
       },
       dynamicBtn: {
@@ -193,6 +193,13 @@ const useStyle = () => {
         backgroundColor: "transparent",
         paddingLeft: 2,
         boxShadow: "none",
+      },
+      paramNameStyle: {
+        ...FONT_FAMILY.Lexend(500, 14),
+        color: primaryColor(900),
+        minWidth: 120,
+        height: 25,
+        paddingLeft: 2,
       },
       plusIconStyle: {
         cursor: "pointer",
@@ -240,10 +247,15 @@ const useStyle = () => {
         border: `1px solid ${secondColor(500)}`,
         color: secondColor(500),
       },
+      // activeTabContainer: {
+      //   backgroundColor: "#EBECFF",
+      //   minHeight: 48,
+      //   marginTop: 20,
+      // },
       activeTabContainer: {
         backgroundColor: "#EBECFF",
         minHeight: 48,
-        marginTop: 20,
+        borderBottom: "none",
       },
       headerAccordionContainer: {
         display: "flex",

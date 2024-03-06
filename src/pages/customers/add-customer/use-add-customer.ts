@@ -19,24 +19,24 @@ const useAddCustomer = () => {
               message: t("modal.addedSusuccessfully"),
               type: "success",
             });
-            resolve(res.data.data.data); 
+            resolve(res.data.data.data);
           } else {
             setSnackbarStateValue({
               state: true,
               message: t("modal.addedfailed"),
               type: "error",
             });
-            reject("API call failed"); 
+            reject("API call failed");
           }
         } catch (error) {
           console.error("Error editing customer:", error);
-          reject(error); 
+          reject(error);
         }
       });
     },
     [state]
   );
-  
+
   return {
     state,
     addNewCustomer,

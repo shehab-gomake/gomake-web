@@ -1,14 +1,17 @@
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { convertHeightToVH, convertWidthToVW } from "@/utils/adapter";
 import { FONT_FAMILY } from "@/utils/font-family";
+import { LAYOUT_DEFAULT_GAP, SIDE_MENU_Layout } from "@/utils/layout-config";
 import { useMemo } from "react";
 
 const useStyle = ({
   isHover = false,
   navStatus,
+  customGap,
 }: {
   isHover?: boolean;
   navStatus: any;
+  customGap: number;
 }) => {
   const { primaryColor } = useGomakeTheme();
   const clasess = useMemo(() => {
@@ -18,20 +21,21 @@ const useStyle = ({
         height: "100vh",
         display: "flex",
         flexDirection: "row" as "row",
-        gap: 20
+        // gap: customGap ? LAYOUT_DEFAULT_GAP : 0,
+        backgroundColor: "#F6F6F6",
       },
       logoContainer: {
         display: "flex",
         marginTop: navStatus?.isClosed ? 20 : 0,
-        backgroundColor:"#504FA1",
-        borderRadius:8,
-        padding:10
+        backgroundColor: "#504FA1",
+        borderRadius: 8,
+        padding: 10,
       },
       leftContainer: {
         backgroundColor: primaryColor(500),
         width: navStatus?.isClosed ? 125 : 245,
         minWidth: navStatus?.isClosed ? 125 : 245,
-        transitionDuration:"0.4s",
+        transitionDuration: "0.4s",
         height: "100vh",
         display: "flex",
         flexDirection: "column" as "column",
@@ -43,27 +47,25 @@ const useStyle = ({
         paddingBottom: navStatus?.isClosed ? 8 : 40,
         overflowY: "scroll" as "scroll",
         position: "relative" as "relative",
-        zIndex:0
+        zIndex: SIDE_MENU_Layout,
       },
       rightContainer: {
         width: "100%",
         display: "flex",
         flexDirection: "column" as "column",
-        backgroundColor: "#FFFFFF",
       },
       headerContainer: {
-        // height: 101,
         display: "flex",
         flexDirection: "column" as "column",
         alignItems: "center",
         justifyContent: "center",
         width: "100%",
-        backgroundColor: "#FFFFFF",
+        backgroundColor: "#F6F6F6",
       },
       bodyContainer: {
         display: "flex",
         flexDirection: "column" as "column",
-        backgroundColor: "#FFFFFF",
+        backgroundColor: "#F6F6F6",
         height: "100%",
         overflow: "scroll",
       },
@@ -88,7 +90,7 @@ const useStyle = ({
         alignSelf: "flex-start",
         width: "100%",
         // height: "100%",
-        marginTop: '10px',
+        marginTop: "10px",
       },
       lastTabsContainer: {
         alignSelf: "flex-start",
@@ -108,7 +110,7 @@ const useStyle = ({
         ...FONT_FAMILY.Inter(400, 16),
         color: "#FFF",
         cursor: "pointer",
-        minWidth:"fit-content"
+        minWidth: "fit-content",
       },
       line: {
         border: "1px solid #FFFFFF",
@@ -128,7 +130,6 @@ const useStyle = ({
         paddingTop: convertWidthToVW(15),
         paddingLeft: convertWidthToVW(40),
         paddingRight: convertWidthToVW(40),
-       
       },
       rotate90: {
         "-webkit-animation": "rotate90 0.5s forwards ",

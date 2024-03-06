@@ -3,7 +3,6 @@ import { useEffect } from "react";
 import Stack from "@mui/material/Stack";
 import { IInput } from "@/widgets/machines/utils/interfaces-temp/inputs-interfaces";
 import { SecondaryButton } from "@/components/button/secondary-button";
-
 import { companyContactsInputs } from "@/widgets/settings-profile-widget/components/profiles/inputs/company-contacts-inputs";
 import { companyProfileInputs } from "@/widgets/settings-profile-widget/components/profiles/inputs/company-profile-inputs";
 import { companyLocationInputs } from "@/widgets/settings-profile-widget/components/profiles/inputs/company-location-inputs";
@@ -14,8 +13,10 @@ import { useCompanyProfile } from "@/hooks/use-company-profile";
 import { useTranslation } from "react-i18next";
 import { PermissionCheck } from "@/components/CheckPermission";
 import { Permissions } from "@/components/CheckPermission/enum";
+import DaysOfWork from "./working-days/working-days";
 
 const CompanyProfileComponent = () => {
+  const { t } = useTranslation();
   const {
     getProfile,
     profileChange,
@@ -23,11 +24,18 @@ const CompanyProfileComponent = () => {
     updateProfileChanges,
     changeCompanyProfileImage,
     changeCompanyLoginImage,
+    daysOfWork,
+    getCurrenciesApi,
+    currencies,
+    countriesWithCodes
   } = useCompanyProfile();
-  const { t } = useTranslation();
+
   useEffect(() => {
-    getProfile().then();
+    getCurrenciesApi().then(() => {
+      getProfile();
+    });
   }, []);
+
   const changeState = (key, value) => {
     profileChange({
       ...profile,
@@ -35,15 +43,17 @@ const CompanyProfileComponent = () => {
     });
   };
 
-  useEffect(() => {}, [profile]);
   const formSections: { inputs: any[]; title: string }[] = [
-    { inputs: companyProfileInputs(profile), title: "profileSettings.company" },
+    {
+      inputs: companyProfileInputs(profile, currencies),
+      title: "profileSettings.company"
+    },
     {
       inputs: companyContactsInputs(profile),
       title: "profileSettings.contacts",
     },
     {
-      inputs: companyLocationInputs(profile),
+      inputs: companyLocationInputs(profile , countriesWithCodes),
       title: "profileSettings.location",
     },
     {
@@ -51,6 +61,8 @@ const CompanyProfileComponent = () => {
       title: "profileSettings.financial",
     },
   ];
+
+
   return (
     <div style={{ paddingBottom: 2, paddingTop: "40px", position: "relative" }}>
       <Stack direction={"row"} gap={"57px"}>
@@ -81,6 +93,7 @@ const CompanyProfileComponent = () => {
                   error={false}
                 />
               ))}
+              {section.title === 'profileSettings.company' && <DaysOfWork options={daysOfWork} label={t("profileSettings.dayOfWork")} setState={profileChange} state={profile} />}
             </FormInputsSectionComponent>
           );
         })}
@@ -94,11 +107,11 @@ const CompanyProfileComponent = () => {
         }}
       >
         <PermissionCheck userPermission={Permissions.EDIT_COMPANY_PROFILE} >
-            <SecondaryButton onClick={updateProfileChanges} variant={"contained"}>
-              {t("profileSettings.update")}
-            </SecondaryButton>
+          <SecondaryButton onClick={updateProfileChanges} variant={"contained"}>
+            {t("profileSettings.update")}
+          </SecondaryButton>
         </PermissionCheck>
-      
+
       </div>
     </div>
   );

@@ -82,19 +82,53 @@ const useSnackBar = () => {
       type: "error",
     });
   };
+
+  const alertFault = (errorMessage: string) => {
+    setSnackbarStateValue({
+      state: true,
+      message: t(errorMessage),
+      type: "error",
+    });
+  };
+  const alertSuccess = (successMessage: string) => {
+    setSnackbarStateValue({
+      state: true,
+      message: t(successMessage),
+      type: "success",
+    });
+  };
+  const alertFaultGetData = () => {
+    setSnackbarStateValue({
+      state: true,
+      message: "get data failed",
+      type: "error",
+    });
+  };
+  const alertSuccessGetData = () => {
+    setSnackbarStateValue({
+      state: true,
+      message: "get data Successfully",
+      type: "success",
+    });
+  };
+
   return {
     snackbarStateValue,
     setSnackbarStateValue,
     handleClose,
     Alert,
     alertFaultUpdate,
-    alertFaultAdded,
     alertSuccessUpdate,
+    alertFaultAdded,
     alertSuccessAdded,
     alertSuccessDelete,
     alertFaultDelete,
     alertRequiredFields,
-    alertFaultDuplicate
+    alertFaultDuplicate,
+    alertFault,
+    alertSuccess,
+    alertFaultGetData,
+    alertSuccessGetData
   };
 };
 

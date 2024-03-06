@@ -1,6 +1,9 @@
+import {EMeasurementUnits} from "@/widgets/machines/enums/measurement-units";
+import {setupTimeInput} from "@/widgets/machines/utils/attributes/speed-inputs/setup-time-input";
 
 const sideColoringMachine = (state: Record<string, any>) => {
     return [
+        ...setupTimeInput(state),
         {
             name: "maxHeightColor",
             label: "machineAttributes.maxHeightColor",
@@ -12,6 +15,7 @@ const sideColoringMachine = (state: Record<string, any>) => {
             value: state.attributes?.maxHeightColor ? state.attributes?.maxHeightColor : '',
             machineInputType: 'input',
             isValid: !!state?.attributes?.maxHeightColor,
+            unit: EMeasurementUnits.CM
         },
         {
             name: "speed",
@@ -23,6 +27,7 @@ const sideColoringMachine = (state: Record<string, any>) => {
             options: [],
             value: state.attributes?.speed ? state.attributes?.speed : '',
             machineInputType: 'input',
+            unit: EMeasurementUnits.SQUARE_CM,
             isValid: !!state?.attributes?.speed,
         },
         {
@@ -36,6 +41,7 @@ const sideColoringMachine = (state: Record<string, any>) => {
             value: state.attributes?.colorDelay ? state.attributes?.colorDelay : '',
             machineInputType: 'input',
             isValid: !!state?.attributes?.colorDelay,
+            unit: EMeasurementUnits.SECOND
         },
         {
             name: "cuttingSets",
@@ -48,6 +54,7 @@ const sideColoringMachine = (state: Record<string, any>) => {
             value: state.attributes?.cuttingSets ? state.attributes?.cuttingSets : '',
             machineInputType: 'input',
             isValid: !!state?.attributes?.cuttingSets,
+            unit: EMeasurementUnits.SETS_HOUR
         },
         {
             name: "baseCollectionSpeed",
@@ -60,6 +67,7 @@ const sideColoringMachine = (state: Record<string, any>) => {
             value: state.attributes?.baseCollectionSpeed ? state.attributes?.baseCollectionSpeed : '',
             machineInputType: 'input',
             isValid: !!state?.attributes?.baseCollectionSpeed,
+            unit: EMeasurementUnits.SETS_HOUR
         },
     ]
 }

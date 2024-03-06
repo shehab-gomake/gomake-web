@@ -1,10 +1,10 @@
 import { CustomerAuthLayout } from "@/layouts";
-import { ProfitsPageWidget } from "@/pages-components/products/profits/profits";
+import { ProfitsNewPageWidget } from "@/pages-components/products/profits-new/profits";
 
 export default function Profits() {
   return (
-    <CustomerAuthLayout>
-      <ProfitsPageWidget />
+    <CustomerAuthLayout customGap={0}>
+      <ProfitsNewPageWidget />
     </CustomerAuthLayout>
   );
 }

@@ -9,6 +9,8 @@ export interface ITabsProps {
     onSelectTab?: (index: number) => void;
     selectedColor?: SELECT_COLOR;
     variant?: TAB_TYPE;
+    withBackGround?:boolean;
+    selectedTabIndex?:number;
 }
 
 export interface ITab {

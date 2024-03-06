@@ -15,19 +15,15 @@ const DropDownListParameterWidget = ({
   onOpeneMultiParameterModal,
   subSectionParameters,
   list,
-  setSelectedValueConfigForSettings,
-  setSelectedValueForSettings,
-  onChangeForPrice,
 }) => {
   const defaultObject = parameter.valuesConfigs.find(
     (item) => item.isDefault === true
   );
-
   return (
-    <div style={clasess.dropDownListWithSettingIcon}>
+    <div data-tour={parameter?.id} style={clasess.dropDownListWithSettingIcon}>
       <GoMakeAutoComplate
         options={parameter?.valuesConfigs?.filter((value) => !value.isHidden)}
-        key={selectedValueConfig}
+        key={parameter?.valuesConfigs + temp[index]?.values}
         placeholder={parameter.name}
         style={clasess.dropDownListStyle}
         getOptionLabel={(option: any) => option.updateName}
@@ -35,25 +31,18 @@ const DropDownListParameterWidget = ({
           index !== -1 ? { updateName: temp[index].values } : defaultObject
         }
         onChange={(e: any, value: any) => {
-          if (parameter?.setSettingIcon) {
-            setSelectedValueForSettings({
-              parameter,
-              subSection,
-              section,
-            });
-            setSelectedValueConfigForSettings(value);
-          }
           onChangeSubProductsForPrice(
-              parameter?.id,
-              subSection?.id,
-              section?.id,
-              parameter?.parameterType,
-              parameter?.name,
-              parameter?.actionId,
-              { valueIds: value?.id, values: value?.updateName },
-              subSection?.type,
-              index,
-              parameter?.actionIndex
+            parameter?.id,
+            subSection?.id,
+            section?.id,
+            parameter?.parameterType,
+            parameter?.name,
+            parameter?.actionId,
+            { valueIds: value?.id, values: value?.updateName },
+            subSection?.type,
+            index,
+            parameter?.actionIndex,
+            parameter?.code
           );
         }}
       />

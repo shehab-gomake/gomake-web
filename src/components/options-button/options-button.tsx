@@ -22,7 +22,6 @@ const OptionsButton = ({ children }: IOptionsButtonProps) => {
       >
         <MoreVertIcon sx={{ width: 13, height: 18 }}>M</MoreVertIcon>
       </IconButton>
-
       <Menu
         open={Boolean(anchorEl)}
         anchorEl={anchorEl}

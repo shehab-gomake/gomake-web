@@ -95,6 +95,8 @@
   },
   "properties": {
     "parameter": "Parameter",
+    "unit": "Einheit",
+    
     "rule": "Regel",
     "type": "Typ",
     "more": "Mehr",
@@ -1354,6 +1356,8 @@
       "itemName": "Artikelname",
       "admin": {
         "title": "Gewinne",
+        "proporties": "Eigenschaften",
+        "OSSettings": "Betriebssystemeinstellungen",
         "chooseAction": "Aktion auswählen"
       },
       "pricingListWidget": {
@@ -1372,10 +1376,16 @@
         "more": "Mehr",
         "height": "Höhe",
         "addNewQuantity": "Neue Menge hinzufügen",
+        "addNewStep": "Neuen Schritt hinzufügen",
         "saveStep": "Schritt speichern",
         "testQuantity": "Menge",
         "unitPrice": "Stückpreis",
-        "testFinalPrice": "Testendpreis"
+        "testFinalPrice": "Testendpreis",
+        "materialQuantity": "Materialmenge",
+        "beats": "Beats",
+        "linear": "Linear",
+        "steps": "Schritte",
+        "pleaseEnterallrequiredvalues": "Bitte geben Sie alle erforderlichen Werte ein"
       },
       "exceptions": {
         "title": "Ausnahmen",
@@ -1396,7 +1406,9 @@
         "additionalProfit": "Zusätzlicher Gewinn",
         "deleteExceptionProfit": "Ausnahme-Gewinn löschen?",
         "updateException": "Ausnahme aktualisieren",
-        "deleteException": "Ausnahme löschen"
+        "deleteException": "Ausnahme löschen",
+        "addNewRule": "Neue Regel hinzufügen",
+        "reorder": "Neu ordnen"
       }
     },
     "actions": {
@@ -1432,7 +1444,12 @@
         "enterCode": "Code eingeben",
         "addNewProduct": "Neues Produkt hinzufügen",
         "addGoToList": "Hinzufügen und zur Liste der Parameter gehen",
-        "updateNewProduct": "Produkt aktualisieren"
+        "updateNewProduct": "Produkt aktualisieren",
+        "clients": "Kunden",
+        "allCustomers": "Alle Kunden",
+        "byClient": "Nach Kunde",
+        "byClientType": "Nach Kundentyp",
+        "uploadImg": "Bild hochladen"
       }
     },
     "parameters": {
@@ -1475,7 +1492,12 @@
         "stationName": "Name der Station",
         "actionType": "Aktionstyp",
         "machine": "Maschine",
-        "loadingOptimalWorkflows": "Laden optimaler Arbeitsabläufe..."
+        "loadingOptimalWorkflows": "Laden optimaler Arbeitsabläufe...",
+        "includeVAT": "Mehrwertsteuer einbeziehen",
+        "graphicDesign": "Grafikdesign",
+        "productionComment": "Produktionskommentar",
+        "graphicDesignComment": "Kommentar zum Grafikdesign",
+        "Pricing": "Preisgestaltung"
       }
     },
     "productManagement": {
@@ -1573,6 +1595,7 @@
       "sendQuote": "Angebot senden",
       "cancel": "Abbrechen",
       "yesBtn": "Ja",
+      "noBtn": "NEIN",
       "subTitleCancelModal": "Sind Sie sicher, dass Sie dieses Angebot stornieren möchten?",
       "cancelBtn": "Stornierung",
       "titleCancelModal": "Stornierung bestätigen",
@@ -1617,6 +1640,9 @@
       "createdBy": "Erstellt von {{name}}",
       "customer": "Kunde",
       "orderList": "Bestellliste",
+      "receiptList": "Quittungsliste",
+      "deliveryNoteList": "Lieferscheinliste",
+      "invoiceList": "Rechnungsliste",
       "deleteItem": "Element löschen",
       "areYouSureDeleteItem": "Sind Sie sicher, dass Sie dieses Element löschen möchten?",
       "amount": "Betrag",
@@ -1999,13 +2025,23 @@
     "changePass": "Passwort ändern",
     "update": "Aktualisieren",
     "loginLogo": "Login-Logo",
-    "companyLogo": "Firmenlogo"
+    "companyLogo": "Firmenlogo",
+    "dayOfWork": "Arbeitstage",
+    "sunday": "Sonntag",
+    "monday": "Montag",
+    "tuesday": "Dienstag",
+    "wednesday": "Mittwoch",
+    "thursday": "Donnerstag",
+    "friday": "Freitag",
+    "saturday": "Samstag"
   },
   "remainWords": {
     "newQuote": "Neues Angebot",
     "convertToInactive": "Inaktiv umwandeln",
     "convertToActive": "Aktiv umwandeln",
-    "editing": "Bearbeitung"
+    "editing": "Bearbeitung",
+    "createSubProduct": "Unterprodukt erstellen",
+    "goToSubProducts": "Zu den Unterprodukten gehen"
   },
   "materialsTrans": {
     "additions": "Zusätze",
@@ -2094,5 +2130,18 @@
     "rollDigitalEnhancement": "Rollen-Digitalveredelungsmaschine",
     "autoBookCutting": "Automatische Buchschneidemaschine",
     "rollAnalogEnhancement": "Rollen-Analogveredelungsmaschine"
+  },
+  "documentingSettings": {
+    "documentNumbering": "Documentnummering",
+    "documentDesign": "Documentontwerp",
+    "showDeliveryTime": "Toon bezorgtijd",
+    "name": "Naam",
+    "prefix": "Voorvoegsel",
+    "value": "Waarde",
+    "details": "Details",
+    "edit": "Bewerken",
+    "editDefinition": "Definitie bewerken",
+    "update": "Bijwerken",
+    "nextValueTip": "Je moet beginnen met een waarde groter dan"
   }
 }

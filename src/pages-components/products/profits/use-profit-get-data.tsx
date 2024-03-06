@@ -28,6 +28,7 @@ import { useCallback, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { renderProfits } from "./use-profit-action.";
 import { PricingListMenuWidget } from "./widgets/pricing-list/more-circle";
+import { CLIENT_TYPE_Id } from "@/pages/customers/enums";
 
 const useProfitsGetData = () => {
   const router: any = useRouter();
@@ -65,7 +66,7 @@ const useProfitsGetData = () => {
   }, []);
 
   const getClientTypes = useCallback(async () => {
-    await getAndSetClientTypes(callApi, setClientTypesState);
+    await getAndSetClientTypes(callApi, setClientTypesState , {cardType : CLIENT_TYPE_Id.CUSTOMER});
   }, []);
 
   const getActionProfits = async (withUpdateAction = true) => {

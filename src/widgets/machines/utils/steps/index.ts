@@ -54,6 +54,9 @@ import {
 } from "@/widgets/machines/utils/steps/roll-digital-enhancement-machine-steps";
 import {adminActionsMaterialsStep} from "@/widgets/machines/utils/steps/admin-actions-materials-step";
 import {thermalPlateProcessorMachineSteps} from "@/widgets/machines/utils/steps/thermal-plate=processor-steps";
+import {creatingDiesMachineSteps} from "@/widgets/machines/utils/steps/creating-dies-machine-steps";
+import {meshProcessorsMachineSteps} from "@/widgets/machines/utils/steps/mesh-processors-machine-steps";
+import {silkPrinterSteps} from "@/widgets/machines/utils/steps/silk-printer-steps";
 
 const getSteps = (categoryId: ECategoryId, isAdmin: boolean): IStep[] => {
     let steps: IStep[];
@@ -184,7 +187,7 @@ const getSteps = (categoryId: ECategoryId, isAdmin: boolean): IStep[] => {
         case ECategoryId.CARTOON_PACKAGING_MACHINE:
             steps = cartoonPackagingMachineSteps;
             break;
-        case ECategoryId.ROLL_LASER_CUT_MACHINE:
+        case ECategoryId.ROLL_FINISH_MACHINE:
             steps = rollLaserCutMachineSteps(isAdmin);
             break;
         case ECategoryId.ROLL_LAMINATION_MACHINE:
@@ -209,7 +212,16 @@ const getSteps = (categoryId: ECategoryId, isAdmin: boolean): IStep[] => {
             steps = rollDigitalEnhancementMachineSteps(isAdmin);
             break;
         case ECategoryId.THERMAL_PLATE_PROCESSOR:
-            steps = thermalPlateProcessorMachineSteps
+            steps = thermalPlateProcessorMachineSteps;
+            break;
+        case ECategoryId.MESH_PROCESSORS:
+            steps = meshProcessorsMachineSteps;
+            break;
+        case ECategoryId.SILK_PRINTER:
+            steps = silkPrinterSteps;
+            break;
+        case ECategoryId.CREATING_DIES_MACHINE:
+            steps = creatingDiesMachineSteps;
     }
     return isAdmin && steps ? [...steps, ...adminActionsMaterialsStep] : steps ? steps : []
 }

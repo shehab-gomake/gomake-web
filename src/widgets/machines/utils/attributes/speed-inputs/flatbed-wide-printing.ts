@@ -1,7 +1,9 @@
 import {quality} from "@/widgets/machines/utils/const/quality";
+import {setupTimeInput} from "@/widgets/machines/utils/attributes/speed-inputs/setup-time-input";
 
 const flatbedWidePrinting = (state: Record<string, any>) => {
     return [
+        ...setupTimeInput(state),
         {
             name: 'machineAttributes.speedByColor',
             parameterKey: 'speedByColor',

@@ -1,4 +1,5 @@
 import {mediaThicknessSettings} from "@/widgets/machines/utils/attributes/media-inputs/media-thickness-settings";
+import {EMeasurementUnits} from "@/widgets/machines/enums/measurement-units";
 
 const bookBinderMachine = (state: Record<string, any>) => {
     return [
@@ -13,6 +14,17 @@ const bookBinderMachine = (state: Record<string, any>) => {
             options: [{value: 0, text: 'Option 1'}, {value: 2, text: 'Option 2'}],
             machineInputType: 'input',
             isValid: true,
+        },
+        {
+            name: "mediaCoatingType",
+            label: "machineAttributes.mediaCoatingType",
+            type: "select",
+            placeholder: "machineAttributes.mediaCoatingType",
+            required: true,
+            parameterKey: "mediaCoatingType",
+            options: [{text: 'coated', value: 'coated'}, {text: 'uncoated', value: 'uncoated'}],
+            values: state?.attributes?.mediaCoatingType,
+            multiple: true
         },
         ...mediaThicknessSettings(state),
         {
@@ -30,7 +42,8 @@ const bookBinderMachine = (state: Record<string, any>) => {
                     required: true,
                     parameterKey: "min",
                     options: [],
-                    value: state.attributes?.width?.min ? state.attributes?.width?.min : ''
+                    value: state.attributes?.width?.min ? state.attributes?.width?.min : '',
+                    unit: EMeasurementUnits.CM
                 },
                 {
                     name: "",
@@ -40,7 +53,8 @@ const bookBinderMachine = (state: Record<string, any>) => {
                     required: true,
                     parameterKey: "max",
                     options: [],
-                    value: state.attributes?.width?.max ? state.attributes?.width?.max : ''
+                    value: state.attributes?.width?.max ? state.attributes?.width?.max : '',
+                    unit: EMeasurementUnits.CM
                 },
             ]
         },
@@ -59,7 +73,8 @@ const bookBinderMachine = (state: Record<string, any>) => {
                     required: true,
                     parameterKey: "min",
                     options: [],
-                    value: state.attributes?.length?.min ? state.attributes?.length?.min : ''
+                    value: state.attributes?.length?.min ? state.attributes?.length?.min : '',
+                    unit: EMeasurementUnits.CM
                 },
                 {
                     name: "",
@@ -69,7 +84,8 @@ const bookBinderMachine = (state: Record<string, any>) => {
                     required: true,
                     parameterKey: "max",
                     options: [],
-                    value: state.attributes?.length?.max ? state.attributes?.length?.max : ''
+                    value: state.attributes?.length?.max ? state.attributes?.length?.max : '',
+                    unit: EMeasurementUnits.CM
                 },
             ]
         },
@@ -89,7 +105,8 @@ const bookBinderMachine = (state: Record<string, any>) => {
                     required: true,
                     parameterKey: "min",
                     options: [],
-                    value: state.attributes?.paperThickness?.min ? state.attributes?.paperThickness?.min : ''
+                    value: state.attributes?.paperThickness?.min ? state.attributes?.paperThickness?.min : '',
+                    unit: EMeasurementUnits.UM
                 },
                 {
                     name: "",
@@ -99,7 +116,8 @@ const bookBinderMachine = (state: Record<string, any>) => {
                     required: true,
                     parameterKey: "max",
                     options: [],
-                    value: state.attributes?.paperThickness?.max ? state.attributes?.paperThickness?.max : ''
+                    value: state.attributes?.paperThickness?.max ? state.attributes?.paperThickness?.max : '',
+                    unit: EMeasurementUnits.UM
                 },
             ]
         },

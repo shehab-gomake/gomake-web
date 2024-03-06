@@ -2,7 +2,7 @@ import { useState } from "react";
 
 const useQuoteTable = ({
   getCalculateQuoteItem,
-  changepriceListItemsChild,
+  changedocumentItemsChild,
   item,
   index,
   parentIndex,
@@ -13,33 +13,33 @@ const useQuoteTable = ({
   const [isUpdatePrice, setIsUpdatePrice] = useState(null);
   const [isUpdateFinalPrice, setIsUpdateFinalPrice] = useState(null);
   const onBlurAmount = async () => {
-    getCalculateQuoteItem(item?.id, 0, item.quantity);
+    getCalculateQuoteItem(item, 0, item.quantity);
     setIsUpdateAmount(null);
   };
   const onInputChangeAmount = (e) => {
-    changepriceListItemsChild(parentIndex, childInex, "quantity", e);
+    changedocumentItemsChild(parentIndex, childInex, "quantity", e);
   };
   const onBlurDiscount = async () => {
-    getCalculateQuoteItem(item?.id, 2, item.discount);
+    getCalculateQuoteItem(item, 2, item.discount);
     setIsUpdateDiscount(null);
   };
   const onInputChangeDiscount = (e) => {
-    changepriceListItemsChild(parentIndex, childInex, "discount", e);
+    changedocumentItemsChild(parentIndex, childInex, "discount", e);
   };
   const onBlurPrice = async () => {
-    getCalculateQuoteItem(item?.id, 1, item.price);
+    getCalculateQuoteItem(item, 1, item.price);
     setIsUpdatePrice(null);
   };
   const onInputChangePrice = (e) => {
-    changepriceListItemsChild(parentIndex, childInex, "price", e);
+    changedocumentItemsChild(parentIndex, childInex, "price", e);
   };
 
   const onBlurFinalPrice = async () => {
-    getCalculateQuoteItem(item?.id, 3, item.finalPrice);
+    getCalculateQuoteItem(item, 3, item.finalPrice);
     setIsUpdateFinalPrice(null);
   };
   const onInputChangeFinalPrice = (e) => {
-    changepriceListItemsChild(parentIndex, childInex, "finalPrice", e);
+    changedocumentItemsChild(parentIndex, childInex, "finalPrice", e);
   };
   return {
     isUpdateAmount,

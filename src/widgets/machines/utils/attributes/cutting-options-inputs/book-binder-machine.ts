@@ -25,6 +25,19 @@ const bookBinderMachine = (state: Record<string, any>) => {
             machineInputType: 'input',
             isValid: !!state?.attributes?.cost,
         },
+        {
+            name: "machineAttributes.glues",
+            label: "machineAttributes.glues",
+            type: "text",
+            placeholder: "machineAttributes.glues",
+            required: true,
+            parameterKey: "glues",
+            options: [],
+            machineInputType: 'materialInput',
+            value: state?.attributes?.glues,
+            isValid: true,
+            materialType: 'Glues'
+        },
     ];
 }
 

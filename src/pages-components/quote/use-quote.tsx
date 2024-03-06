@@ -158,6 +158,7 @@ const useQuote = () => {
       });
     }
   }, [selectedContactById, quoteItemValue]);
+
   const onClickDeleteAddress = useCallback(async (item: any) => {
     const res = await callApi(
       EHttpMethod.DELETE,
@@ -179,6 +180,7 @@ const useQuote = () => {
       });
     }
   }, []);
+  
   const onClickAddNewAddress = useCallback(async () => {
     const res = await callApi(
       EHttpMethod.POST,
@@ -410,7 +412,7 @@ const useQuote = () => {
     onOpenDuplicateWithDifferentQTY();
     setQuateItemId(quoteItem?.id);
   };
-  const [amountVlue, setAmountValue] = useState();
+  const [amountValue, setAmountValue] = useState();
 
   const duplicateQuoteItemWithAnotherQuantity = useCallback(async () => {
     const res = await callApi(
@@ -418,7 +420,7 @@ const useQuote = () => {
       `/v1/erp-service/quote/duplicate-quote-with-another-quantity`,
       {
         quoteItemId: qouteItemId,
-        amount: parseInt(amountVlue),
+        amount: parseInt(amountValue),
       }
     );
     if (res?.success) {
@@ -436,7 +438,7 @@ const useQuote = () => {
         type: "error",
       });
     }
-  }, [qouteItemId, amountVlue]);
+  }, [qouteItemId, amountValue]);
   const [selectDate, setSelectDate] = useState(quoteItemValue?.dueDate);
   const updateDueDate = useCallback(async () => {
     const res = await callApi(

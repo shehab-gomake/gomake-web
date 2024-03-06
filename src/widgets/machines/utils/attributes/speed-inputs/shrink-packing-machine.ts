@@ -1,16 +1,21 @@
+import {EMeasurementUnits} from "@/widgets/machines/enums/measurement-units";
+import {setupTimeInput} from "@/widgets/machines/utils/attributes/speed-inputs/setup-time-input";
+
 const shrinkPackingMachine = (state: Record<string, any>) => {
     return [
+        ...setupTimeInput(state),
         {
-            name: "packagePerHour",
-            label: "machineAttributes.packagePerHour",
+            name: "speed",
+            label: "machineAttributes.speed",
             type: "text",
-            placeholder: "machineAttributes.packagePerHour",
+            placeholder: "machineAttributes.speed",
             required: true,
-            parameterKey: "packagePerHour",
+            parameterKey: "speed",
             options: [],
-            value: state.attributes?.packagePerHour ? state.attributes?.packagePerHour : '',
+            value: state.attributes?.speed ? state.attributes?.speed : '',
             machineInputType: 'input',
-            isValid: !!state?.attributes?.packagePerHour,
+            isValid: !!state?.attributes?.speed,
+            unit: EMeasurementUnits.PACKAGE_P_H
         },
 
     ]

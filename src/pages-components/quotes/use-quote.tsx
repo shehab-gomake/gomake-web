@@ -1,33 +1,44 @@
 import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
-import { EHttpMethod } from "@/services/api-service/enums";
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { QUOTE_STATUSES } from "./enums";
+import { DELIVERY_NOTE_STATUSES, QUOTE_STATUSES } from "./enums";
 import { MoreMenuWidget } from "./more-circle";
 import { getAndSetAllCustomers } from "@/services/hooks";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState, useRecoilValue } from "recoil";
 import { agentsCategoriesState } from "@/pages/customers/customer-states";
 import { getAndSetEmployees2 } from "@/services/api-service/customers/employees-api";
 import { useDebounce } from "@/utils/use-debounce";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { useDateFormat } from "@/hooks/use-date-format";
 import { _renderQuoteStatus } from "@/utils/constants";
-import { duplicateQuoteApi, getQuotePdfApi } from "@/services/api-service/quotes/quotes-table-endpoints";
+import { employeesListsState, selectedClientState } from "./states";
+import {
+  createNewDocumentApi,
+  duplicateDocumentApi,
+  getAllDocumentsApi,
+  getDocumentPdfApi,
+  updateDocumentApi,
+} from "@/services/api-service/generic-doc/documents-api";
+import { DOCUMENT_TYPE } from "./enums";
+import { useQuoteGetData } from "../quote-new/use-quote-get-data";
+import { useStyle } from "./style";
+import { DEFAULT_VALUES } from "@/pages/customers/enums";
+import { getAllReceiptsApi, getReceiptPdfApi } from "@/services/api-service/generic-doc/receipts-api";
 
-const useQuotes = () => {
+const useQuotes = (docType: DOCUMENT_TYPE) => {
   const { t } = useTranslation();
+  const { classes } = useStyle();
   const { callApi } = useGomakeAxios();
-  const { setSnackbarStateValue, alertFaultUpdate, alertFaultDuplicate } = useSnackBar();
-
+  const { alertFaultUpdate, alertFaultDuplicate } = useSnackBar();
+  const { getCurrencyUnitText } = useQuoteGetData();
   const { navigate } = useGomakeRouter();
   const { errorColor } = useGomakeTheme();
   const [patternSearch, setPatternSearch] = useState("");
   const [finalPatternSearch, setFinalPatternSearch] = useState("");
   const debounce = useDebounce(patternSearch, 500);
-  const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(20);
   const { GetDateFormat } = useDateFormat();
   const [statusId, setStatusId] = useState<any>();
+  const [quoteStatusId, setQuoteStatusId] = useState<any>();
   const [customerId, setCustomerId] = useState<any>();
   const [dateRange, setDateRange] = useState<any>();
   const [agentId, setAgentId] = useState<any>();
@@ -36,7 +47,36 @@ const useQuotes = () => {
   const [customersListCreateQuote, setCustomersListCreateQuote] = useState([]);
   const [customersListCreateOrder, setCustomersListCreateOrder] = useState([]);
   const [openModal, setOpenModal] = useState(false);
+  const [openLogsModal, setOpenLogsModal] = useState(false);
+  const [modalLogsTitle, setModalLogsTitle] = useState<string>();
+  const setEmployeeListValue = useSetRecoilState<string[]>(employeesListsState);
   const [selectedQuote, setSelectedQuote] = useState<any>();
+  const [allDocuments, setAllDocuments] = useState([]);
+  const [allStatistics, setAllStatistics] = useState([]);
+  const [activeCard, setActiveCard] = useState(null);
+  const [page, setPage] = useState(1);
+  const [pagesCount, setPagesCount] = useState(0);
+  const [pageSize, setPageSize] = useState(DEFAULT_VALUES.PageSize);
+  const selectedClient = useRecoilValue<any>(selectedClientState);
+  const [openAddRule, setOpenAddRule] = useState<boolean>(false);
+  const [resetDatePicker, setResetDatePicker] = useState<boolean>(false);
+  const [fromDate, setFromDate] = useState<Date>();
+  const [toDate, setToDate] = useState<Date>();
+
+  const documentPath = DOCUMENT_TYPE[docType];
+  const isReceipt = docType === DOCUMENT_TYPE.receipt;
+
+  const onCloseAddRuleModal = () => {
+    setOpenAddRule(false);
+  };
+  const onOpenAddRuleModal = () => {
+    setOpenAddRule(true);
+  };
+  const handlePageSizeChange = (event) => {
+    setPage(1);
+    setPageSize(event.target.value);
+  };
+
   const onClickCloseModal = () => {
     setOpenModal(false);
   };
@@ -49,21 +89,31 @@ const useQuotes = () => {
   const [agentsCategories, setAgentsCategories] = useRecoilState(
     agentsCategoriesState
   );
+
+  const onClickCloseLogsModal = () => {
+    setOpenLogsModal(false);
+  };
+
+  const onClickOpenLogsModal = (quoteNumber: string) => {
+    setModalLogsTitle(quoteNumber);
+    setOpenLogsModal(true);
+  };
+
   useEffect(() => {
     setFinalPatternSearch(debounce);
   }, [debounce]);
 
-  const getAgentCategories = async () => {
+  const getAgentCategories = async (isAgent: boolean, setState: any) => {
     const callBack = (res) => {
       if (res.success) {
         const agentNames = res.data.map((agent) => ({
           label: agent.text,
           id: agent.value,
         }));
-        setAgentsCategories(agentNames);
+        setState(agentNames);
       }
     };
-    await getAndSetEmployees2(callApi, callBack, { isAgent: true });
+    await getAndSetEmployees2(callApi, callBack, { isAgent: isAgent });
   };
 
   const renderOptions = () => {
@@ -71,18 +121,21 @@ const useQuotes = () => {
       return customersListCreateOrder;
     } else return customersListCreateQuote;
   };
+
   const getAllCustomersCreateQuote = useCallback(async () => {
     await getAndSetAllCustomers(callApi, setCustomersListCreateQuote, {
       ClientType: "C",
       onlyCreateOrderClients: false,
     });
   }, []);
+
   const getAllCustomersCreateOrder = useCallback(async () => {
     await getAndSetAllCustomers(callApi, setCustomersListCreateOrder, {
       ClientType: "C",
       onlyCreateOrderClients: true,
     });
   }, []);
+
   const checkWhatRenderArray = (e) => {
     if (e.target.value) {
       setCanOrder(true);
@@ -91,99 +144,230 @@ const useQuotes = () => {
     }
   };
 
-  const getAllQuotes = useCallback(async () => {
-    const res = await callApi(
-      EHttpMethod.POST,
-      `/v1/erp-service/quote/get-all-quotes`,
-      {
-        model: {
-          pageNumber: page,
-          pageSize: limit,
-        },
-        statusId: statusId?.value,
-        patternSearch: finalPatternSearch,
-        customerId: customerId?.id,
-        dateRange,
+
+  const getAllQuotes = async () => {
+    const callBack = (res) => {
+      if (res?.success) {
+        const data = res?.data?.data;
+        const totalItems = res?.data?.totalItems;
+        const mapData = data?.map((quote: any) => {
+          if (docType === DOCUMENT_TYPE.purchaseOrder) {
+            return [
+              GetDateFormat(quote?.creationDate),
+              quote?.number,
+              quote?.orderNumber,
+              quote?.supplierName,
+              quote?.clientName,
+              quote?.itemsNumber,
+              quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
+              quote?.notes,
+              _renderQuoteStatus(quote?.documentStatus, quote, t),
+              <MoreMenuWidget
+                quote={quote}
+                documentType={docType}
+                onClickOpenModal={onClickOpenModal}
+                onClickPdf={onClickQuotePdf}
+                onClickDuplicate={onClickQuoteDuplicate}
+                onClickLoggers={() => onClickOpenLogsModal(quote?.number)}
+              />,
+            ];
+          } else {
+            return [
+              GetDateFormat(quote?.createdDate),
+              quote?.customerName,
+              quote?.agentName,
+              quote?.number,
+              quote?.worksNames,
+              quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
+              quote?.notes,
+              _renderQuoteStatus(quote?.documentStatus, quote, t),
+              <MoreMenuWidget
+                quote={quote}
+                documentType={docType}
+                onClickOpenModal={onClickOpenModal}
+                onClickPdf={onClickQuotePdf}
+                onClickDuplicate={onClickQuoteDuplicate}
+                onClickLoggers={() => onClickOpenLogsModal(quote?.number)}
+              />,
+            ];
+          }
+        });
+        const mapReceiptData = data?.map((quote: any) => [
+          GetDateFormat(quote?.creationDate),
+          quote?.customerName,
+          quote?.agentName,
+          quote?.number,
+          quote?.paymentType,
+          quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
+          quote?.notes,
+          quote?.statusStr,
+          <MoreMenuWidget
+            quote={quote}
+            documentType={docType}
+            onClickOpenModal={onClickOpenModal}
+            onClickPdf={onClickQuotePdf}
+            onClickDuplicate={onClickQuoteDuplicate}
+            onClickLoggers={() => onClickOpenLogsModal(quote?.number)}
+          />,
+        ]);
+        setAllQuotes(isReceipt ? mapReceiptData : mapData);
+        setPagesCount(Math.ceil(totalItems / (pageSize)));
+        setAllStatistics(res?.data?.documentStatisticsList);
+      }
+    };
+    if (isReceipt) {
+      await getAllReceiptsApi(callApi, callBack, {
+        clientId: customerId?.id,
         agentId: agentId?.id,
-      }
-    );
-    const data = res?.data?.data?.result;
-    const totalItems = res?.data?.data?.totalItems;
+        patternSearch: finalPatternSearch,
+        fromDate: fromDate && GetDateFormat(fromDate),
+        toDate: toDate && GetDateFormat(toDate),
 
-    const mapData = data?.map((quote: any) => [
-      GetDateFormat(quote?.createdDate),
-      quote?.customerName,
-      quote?.orderNumber,
-      quote?.quoteNumber,
-      quote?.worksNames,
-      quote?.totalPrice,
-      quote?.notes,
-      _renderQuoteStatus(quote?.statusID, quote, t),
-      <MoreMenuWidget quote={quote} onClickOpenModal={onClickOpenModal} onClickPdf={onClickQuotePdf} onClickDuplicate={onClickQuoteDuplicate} />,
-    ]);
-    setAllQuotes(mapData);
-  }, [
-    page,
-    limit,
-    statusId,
-    customerId,
-    dateRange,
-    agentId,
-    finalPatternSearch,
-  ]);
-
-  const getAllQuotesInitial = useCallback(async () => {
-    const res = await callApi(
-      EHttpMethod.POST,
-      `/v1/erp-service/quote/get-all-quotes`,
-      {
+        status: quoteStatusId?.value || statusId?.value,
         model: {
           pageNumber: page,
-          pageSize: limit,
-        },
+          pageSize: pageSize,
+        }
       }
-    );
-    const data = res?.data?.data?.result;
-    const totalItems = res?.data?.data?.totalItems;
-    const mapData = data?.map((quote: any) => [
-      GetDateFormat(quote?.createdDate),
-      quote?.customerName,
-      quote?.orderNumber,
-      quote?.quoteNumber,
-      quote?.worksNames,
-      quote?.totalPrice,
-      quote?.notes,
-      _renderQuoteStatus(quote?.statusID, quote, t),
-      <MoreMenuWidget quote={quote} onClickOpenModal={onClickOpenModal} />,
-    ]);
-    setAllQuotes(mapData);
-  }, [page, limit]);
+      );
+    } else {
+      await getAllDocumentsApi(callApi, callBack, {
+        documentType: docType,
+        data: {
+          model: {
+            pageNumber: page,
+            pageSize: pageSize,
+          },
+          statusId: quoteStatusId?.value || statusId?.value,
+          patternSearch: finalPatternSearch,
+          customerId: customerId?.id,
+          dateRange,
+          agentId: agentId?.id,
+        },
+      });
+    }
+  };
 
-  useEffect(() => {
-    getAllQuotes();
-  }, []);
+  const getAllQuotesInitial = async () => {
+    const callBack = (res) => {
+      if (res?.success) {
+        const data = res?.data?.data;
+        const totalItems = res?.data?.totalItems;
+        const mapData = data?.map((quote: any) => [
+          GetDateFormat(quote?.createdDate),
+          quote?.customerName,
+          quote?.agentName,
+          quote?.number,
+          quote?.worksNames,
+          quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
+          quote?.notes,
+          _renderQuoteStatus(quote?.documentStatus, quote, t),
+          <MoreMenuWidget
+            quote={quote}
+            documentType={docType}
+            onClickOpenModal={onClickOpenModal}
+            onClickPdf={onClickQuotePdf}
+            onClickDuplicate={onClickQuoteDuplicate}
+            onClickLoggers={() => onClickOpenLogsModal(quote?.number)}
+          />,
+        ]);
+        const mapReceiptData = data?.map((quote: any) => [
+          GetDateFormat(quote?.creationDate),
+          quote?.customerName,
+          quote?.agentName,
+          quote?.number,
+          quote?.paymentType,
+          quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
+          quote?.notes,
+          quote?.statusStr,
+          <MoreMenuWidget
+            quote={quote}
+            documentType={docType}
+            onClickOpenModal={onClickOpenModal}
+            onClickPdf={onClickQuotePdf}
+            onClickDuplicate={onClickQuoteDuplicate}
+            onClickLoggers={() => onClickOpenLogsModal(quote?.number)}
+          />,
+        ]);
+        setAllQuotes(isReceipt ? mapReceiptData : mapData);
+        setPagesCount(Math.ceil(totalItems / pageSize));
+        setAllStatistics(res?.data?.documentStatisticsList);
+      }
+    };
+    if (docType === DOCUMENT_TYPE.receipt) {
+      await getAllReceiptsApi(callApi, callBack, {
+        model: {
+          pageNumber: page,
+          pageSize: pageSize,
+        },
+      });
+    } else {
+      await getAllDocumentsApi(callApi, callBack, {
+        documentType: docType,
+        data: {
+          model: {
+            pageNumber: page,
+            pageSize: pageSize,
+          },
+        },
+      });
+    }
+  };
 
   const onClickSearchFilter = () => {
+    setPage(1);
+    if (statusId !== null) {
+      handleSecondCardClick();
+    }
     getAllQuotes();
   };
 
   const onClickClearFilter = () => {
-    setStatusId(null);
+    handleSecondCardClick();
     setAgentId(null);
     setCustomerId(null);
+    setStatusId(null);
+    setFromDate(null);
+    setToDate(null);
+    setResetDatePicker(true);
     getAllQuotesInitial();
+    setPage(1);
   };
-
-  const tableHeaders = [
-    t("sales.quote.createdDate"),
-    t("sales.quote.client"),
+  const tableHeaders = docType === DOCUMENT_TYPE.purchaseOrder ? [
+    t("sales.quote.creationDate"),
+    t("sales.quote.purchaseOrderNumber"),
     t("sales.quote.orderNumber"),
-    t("sales.quote.quoteNumber"),
-    t("sales.quote.worksName"),
+    t("sales.quote.supplierName"),
+    t("sales.quote.client"),
+    t("sales.quote.itemsNumber"),
     t("sales.quote.totalPrice"),
     t("sales.quote.notes"),
     t("sales.quote.status"),
     t("sales.quote.more"),
+  ] : [
+    t("sales.quote.createdDate"),
+    t("sales.quote.client"),
+    t("sales.quote.agent"),
+    docType === DOCUMENT_TYPE.quote
+      ? t("sales.quote.quoteNumber")
+      : docType === DOCUMENT_TYPE.order
+        ? t("sales.quote.orderNumber")
+        : docType === DOCUMENT_TYPE.deliveryNote
+          ? t("sales.quote.deliveryNoteNumber")
+          : docType === DOCUMENT_TYPE.invoice
+            ? t("sales.quote.invoiceNumber")
+            : t("sales.quote.receiptNumber"),
+    docType === DOCUMENT_TYPE.receipt ? t("sales.quote.paymentMethod") : t("sales.quote.worksName"),
+    t("sales.quote.totalPrice"),
+    t("sales.quote.notes"),
+    t("sales.quote.status"),
+    t("sales.quote.more"),
+  ];
+
+  const logsTableHeaders = [
+    t("sales.quote.actionDate"),
+    t("sales.quote.employeeName"),
+    t("sales.quote.actionDescription"),
   ];
 
   const quoteStatuses = [
@@ -245,35 +429,108 @@ const useQuotes = () => {
     },
   ];
 
-  useEffect(() => {
-    getAllCustomersCreateQuote();
-    getAllCustomersCreateOrder();
-    getAgentCategories();
-  }, []);
+  const deliveryNoteStatuses = [
+    {
+      label: t("sales.quote.open"),
+      value: DELIVERY_NOTE_STATUSES.Open,
+    },
+    {
+      label: t("sales.quote.canceled"),
+      value: DELIVERY_NOTE_STATUSES.Canceled,
+    },
+    {
+      label: t("sales.quote.created"),
+      value: DELIVERY_NOTE_STATUSES.Created,
+    },
+    {
+      label: t("sales.quote.refunded"),
+      value: DELIVERY_NOTE_STATUSES.Refunded,
+    },
+    {
+      label: t("sales.quote.confirmed"),
+      value: DELIVERY_NOTE_STATUSES.Confirmed,
+    },
+    {
+      label: t("sales.quote.rejected"),
+      value: DELIVERY_NOTE_STATUSES.Rejected,
+    },
+    {
+      label: t("sales.quote.partialRefunded"),
+      value: DELIVERY_NOTE_STATUSES.PartialRefunded,
+    },
+    {
+      label: t("sales.quote.closedAsInvoice"),
+      value: DELIVERY_NOTE_STATUSES.ClosedAsInvoice,
+    },
+    {
+      label: t("sales.quote.closedByMultiDocuments"),
+      value: DELIVERY_NOTE_STATUSES.ClosedByMultiDocuments,
+    },
+    {
+      label: t("sales.quote.manualClose"),
+      value: DELIVERY_NOTE_STATUSES.ManualClose,
+    },
+  ];
 
-  const updateQuoteStatus = useCallback(async () => {
-    const res = await callApi(
-      EHttpMethod.PUT,
-      `/v1/erp-service/quote/update-quote`,
-      {
-        quoteId: selectedQuote?.id,
+  const documentsLabels = [
+    {
+      label: t("sales.quote.quoteList"),
+      value: DOCUMENT_TYPE.quote,
+    },
+    {
+      label: t("sales.quote.orderList"),
+      value: DOCUMENT_TYPE.order,
+    },
+    {
+      label: t("sales.quote.invoiceList"),
+      value: DOCUMENT_TYPE.invoice,
+    },
+    {
+      label: t("sales.quote.deliveryNoteList"),
+      value: DOCUMENT_TYPE.deliveryNote,
+    },
+    {
+      label: t("sales.quote.receiptList"),
+      value: DOCUMENT_TYPE.receipt,
+    },
+    {
+      label: t("sales.quote.deliveryNoteRefundList"),
+      value: DOCUMENT_TYPE.deliveryNoteRefund,
+    },
+    {
+      label: t("sales.quote.invoiceRefundList"),
+      value: DOCUMENT_TYPE.invoiceRefund,
+    },
+    {
+      label: t("sales.quote.purchaseOrderList"),
+      value: DOCUMENT_TYPE.purchaseOrder,
+    },
+    {
+      label: t("sales.quote.purchaseInvoiceList"),
+      value: DOCUMENT_TYPE.purchaseInvoice,
+    },
+  ];
+
+  const documentLabel = documentsLabels.find(
+    (item) => item.value === docType
+  ).label;
+
+  const updateQuoteStatus = async () => {
+    const callBack = (res) => {
+      if (res?.success) {
+        navigate("/quote");
+      } else {
+        alertFaultUpdate();
       }
-    );
-    if (res?.success) {
-      setSnackbarStateValue({
-        state: true,
-        message: t("modal.updatedSusuccessfully"),
-        type: "sucess",
-      });
-      navigate("/quote");
-    } else {
-      setSnackbarStateValue({
-        state: true,
-        message: t("modal.updatedfailed"),
-        type: "error",
-      });
-    }
-  }, [selectedQuote]);
+    };
+    await updateDocumentApi(callApi, callBack, {
+      documentType: 0,
+      document: {
+        documentId: selectedQuote?.id,
+      },
+    });
+  };
+
 
 
   const onClickQuotePdf = async (id: string) => {
@@ -285,27 +542,150 @@ const useQuotes = () => {
         alertFaultUpdate();
       }
     };
-    await getQuotePdfApi(callApi, callBack, { quoteId: id });
+    if (isReceipt) {
+      await getReceiptPdfApi(callApi, callBack, {
+        receiptId: id,
+      });
+    }
+    else {
+      await getDocumentPdfApi(callApi, callBack, {
+        documentId: id,
+        documentType: docType,
+      });
+    }
   };
 
   const onClickQuoteDuplicate = async (id: string) => {
     const callBack = (res) => {
       if (res?.success) {
         const isAnotherQuoteInCreate = res?.data?.isAnotherQuoteInCreate;
-        const quoteId = res?.data?.quoteId;
-        console.log(quoteId)
+        const documentId = res?.data?.documentId;
         if (!isAnotherQuoteInCreate) {
           navigate("/quote");
-        }
-        else {
-          onClickOpenModal({id:quoteId })
+        } else {
+          onClickOpenModal({ id: documentId });
         }
       } else {
         alertFaultDuplicate();
       }
     };
-    await duplicateQuoteApi(callApi, callBack, { quoteId: id });
+    await duplicateDocumentApi(callApi, callBack, {
+      documentId: id,
+      documentType: docType,
+    });
   };
+
+  const onclickCreateNew = async () => {
+    const callBack = (res) => {
+      if (res?.success) {
+        const isAnotherQuoteInCreate = res?.data?.isAnotherQuoteInCreate;
+        const documentId = res?.data?.documentId;
+        if (!isAnotherQuoteInCreate) {
+          navigate("/quote");
+        } else {
+          onClickOpenModal({ id: documentId });
+        }
+      } else {
+        alertFaultUpdate();
+      }
+    };
+    await createNewDocumentApi(callApi, callBack, { documentType: docType });
+  };
+
+  useEffect(() => {
+    getAllCustomersCreateQuote();
+    getAllCustomersCreateOrder();
+    getAgentCategories(true, setAgentsCategories);
+    getAgentCategories(null, setEmployeeListValue);
+  }, []);
+
+  useEffect(() => {
+    getAllQuotes();
+  }, [page, quoteStatusId, pageSize, finalPatternSearch]);
+
+
+  // table in home page
+  const getAllDocuments = async (docType) => {
+    const callBack = (res) => {
+      if (res?.success) {
+        const data = res?.data?.data;
+        const mapData = data?.map((document: any) => [
+          document?.number,
+          document?.clientType,
+          document?.worksNames,
+          GetDateFormat(document?.createdDate),
+          document?.totalPrice + " " + getCurrencyUnitText(document?.currency),
+          <div style={{ display: "flex", justifyContent: "center" }}>
+            <h2
+              style={
+                document?.documentStatus == 2
+                  ? classes.openBtnStyle
+                  : classes.closeBtnStyle
+              }
+            >
+              {_renderQuoteStatus(document?.documentStatus, document, t)}
+            </h2>
+          </div>,
+          document?.notes,
+          <MoreMenuWidget
+            quote={document}
+            documentType={docType}
+            onClickOpenModal={onClickOpenModal}
+            onClickPdf={onClickQuotePdf}
+            onClickDuplicate={onClickQuoteDuplicate}
+            onClickLoggers={() => onClickOpenLogsModal(document?.number)}
+          />,
+        ]);
+        setAllDocuments(mapData);
+      }
+    };
+    selectedClient?.id &&
+      (await getAllDocumentsApi(callApi, callBack, {
+        documentType: docType,
+        data: {
+          model: {
+            pageNumber: page,
+            pageSize: 10,
+          },
+          customerId: selectedClient?.id,
+        },
+      }));
+  };
+
+
+  const handleCardClick = (cardKey, statusValue) => {
+    setPage(1);
+    setActiveCard(cardKey);
+    setStatusId(null);
+    setQuoteStatusId({ label: t(`sales.quote.${cardKey}`), value: statusValue });
+  };
+
+  const handleSecondCardClick = () => {
+    setQuoteStatusId(null)
+    setActiveCard(null);
+  };
+
+  const onSelectDeliveryTimeDates = (fromDate: Date, toDate: Date) => {
+    setResetDatePicker(false);
+    setFromDate(fromDate);
+    setToDate(toDate);
+  };
+
+  useEffect(() => {
+    getAllDocuments(docType);
+  }, [selectedClient]);
+
+  const tableHomeHeader = [
+    t("home.headers.documentNumber"),
+    t("home.headers.clientType"),
+    t("home.headers.jobName"),
+    t("home.headers.productDate"),
+    t("home.headers.finalPrice"),
+    t("home.headers.status"),
+    t("home.headers.remark"),
+    t("home.headers.more"),
+  ];
+
 
   return {
     patternSearch,
@@ -332,6 +712,33 @@ const useQuotes = () => {
     onClickClearFilter,
     onClickQuotePdf,
     t,
+    openLogsModal,
+    onClickOpenLogsModal,
+    onClickCloseLogsModal,
+    modalLogsTitle,
+    logsTableHeaders,
+    documentsLabels,
+    documentLabel,
+    allDocuments,
+    tableHomeHeader,
+    pagesCount,
+    page,
+    setPage,
+    allStatistics,
+    onclickCreateNew,
+    pageSize,
+    handlePageSizeChange,
+    activeCard,
+    handleCardClick,
+    handleSecondCardClick,
+    onCloseAddRuleModal,
+    onOpenAddRuleModal,
+    openAddRule,
+    navigate,
+    documentPath,
+    deliveryNoteStatuses,
+    resetDatePicker,
+    onSelectDeliveryTimeDates
   };
 };
 

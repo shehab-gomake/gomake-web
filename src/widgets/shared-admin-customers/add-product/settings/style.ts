@@ -8,7 +8,7 @@ import { FONT_FAMILY } from "@/utils/font-family";
 
 const useStyle = () => {
   const { t } = useTranslation();
-  const { primaryColor, secondColor, errorColor } = useGomakeTheme();
+  const { primaryColor, secondColor } = useGomakeTheme();
 
   const clasess = useMemo(() => {
     return {
@@ -18,6 +18,7 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "flex-start",
         width: "100%",
+        backgroundColor: "transparent",
       },
       categoryNameStyle: {
         ...FONT_FAMILY.Lexend(600, 16),
@@ -40,7 +41,8 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "flex-start",
         gap: 10,
-        width: "180px",
+        // width: "180px",
+        minWidth: 180,
         position: "relative" as "relative",
       },
       itemGropupsContainer: {
@@ -76,14 +78,13 @@ const useStyle = () => {
       multiSelectStyle: {
         backgroundColor: "#FFFFFF",
         width: "100%",
-        height: "100%",
         borderRadius: 4,
         display: "flex",
         border: "0px",
         flexDirection: "row" as "row",
         alignitems: "center",
         justifyContent: "center",
-        // boxShadow: "0px 1px 2px 0px rgba(0, 0, 0, 0.08)",
+        height: 40,
       },
       labelTitleStyle: {
         ...FONT_FAMILY.Lexend(500, 14),
@@ -130,6 +131,66 @@ const useStyle = () => {
         ...FONT_FAMILY.Lexend(500, 16),
         cursor: "pointer",
         height: 40,
+      },
+      button: {
+        height: 32,
+        width: 32,
+        backgroundColor: primaryColor(300),
+        color: "white",
+        "&:hover": {
+          backgroundColor: primaryColor(300),
+          color: "white",
+        },
+      },
+      avatar: {
+        width: "36px",
+        height: "36px",
+        marginLeft: "10px",
+      },
+      attachmentContainer: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        alignItems: "center",
+        justifyContent: "flex-start",
+        gap: "10px",
+        width: "100%",
+        cursor: "pointer",
+        backgroundColor: "#FFF",
+        boxShadow: "0px 1px 10px rgba(0, 0, 0, 0.08)",
+      },
+      IconButtonStyle: {
+        background: primaryColor(100),
+        width: "24px",
+        height: "24px",
+      },
+      labelStyle: {
+        ...FONT_FAMILY.Lexend(400, 12),
+        color: "#000",
+        overflow: "hidden",
+        paddingRight: 10,
+        cursor: "pointer",
+      },
+      attachmentStyle: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: "10px",
+        height: "40px",
+        borderRadius: "4px",
+      },
+      fileInputStyle: {
+        boxSizing: "border-box" as "border-box",
+        borderRadius: "4px",
+        height: "40px",
+        padding: "7px",
+        ...FONT_FAMILY.Lexend(300, 14),
+        display: "flex",
+        alignItems: "center",
+        boxShadow: "0px 1px 10px rgba(0, 0, 0, 0.08)",
+        color: "#8283BE",
+        justifyContent: "space-between",
+        backgroundColor: "#FFFFFF",
       },
     };
   }, [i18next.language, t]);

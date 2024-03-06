@@ -2,6 +2,7 @@ import {mediaCoatingSettings} from "@/widgets/machines/utils/attributes/media-in
 import {mediaDimensionsSettings} from "@/widgets/machines/utils/attributes/media-inputs/media-dimensions-settings";
 import {mediaWeightSettings} from "@/widgets/machines/utils/attributes/media-inputs/media-weight-settings";
 import {mediaThicknessSettings} from "@/widgets/machines/utils/attributes/media-inputs/media-thickness-settings";
+import {EMeasurementUnits} from "@/widgets/machines/enums/measurement-units";
 
 const digitalEnhancementMachine = (state: Record<string, any>) => {
     return [
@@ -35,8 +36,8 @@ const digitalEnhancementMachine = (state: Record<string, any>) => {
                     required: true,
                     parameterKey: "width",
                     options: [],
-                    value: state.attributes?.minMarginWithoutEnhancement?.width ? state.attributes?.minMarginWithoutEnhancement?.width : ''
-
+                    value: state.attributes?.minMarginWithoutEnhancement?.width ? state.attributes?.minMarginWithoutEnhancement?.width : '',
+                    unit: EMeasurementUnits.CM
                 },
                 {
                     name: "maxMediaDimensions",
@@ -46,13 +47,14 @@ const digitalEnhancementMachine = (state: Record<string, any>) => {
                     required: true,
                     parameterKey: "length",
                     options: [],
-                    value: state.attributes?.minMarginWithoutEnhancement?.length ? state.attributes?.minMarginWithoutEnhancement?.length : ''
+                    value: state.attributes?.minMarginWithoutEnhancement?.length ? state.attributes?.minMarginWithoutEnhancement?.length : '',
+                    unit: EMeasurementUnits.CM
 
                 },
             ]
         },
         ...mediaWeightSettings(state),
-        ...mediaThicknessSettings(state),
+        ...mediaThicknessSettings(state,EMeasurementUnits.UM),
     ]
 }
 

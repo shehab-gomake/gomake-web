@@ -6,22 +6,35 @@ import { IBusinessWidget } from "@/interfaces";
 const InputUpdatedValues = ({
   label,
   value,
-  isAnderLine,
+  isUnderLine,
   onBlur,
   isUpdate,
   setIsUpdate,
   onInputChange,
   speicalStyle,
+  onClickFlag,
+  flag,
+  sign,
+  inputMainContainerStyle,
+  isTwoDigit = false,
 }: IBusinessWidget) => {
-  const { clasess } = useStyle({ isAnderLine });
+  const { clasess } = useStyle({ isUnderLine });
   const [updateValue, setUpdateValue] = useState();
   useEffect(() => {
     setUpdateValue(value);
   }, [value]);
 
+  const handleClick = () => {
+    if (flag) {
+      onClickFlag();
+    } else {
+      setIsUpdate(1);
+    }
+  };
+
   return (
     <>
-      <div style={clasess.inputMainContainer}>
+      <div style={inputMainContainerStyle || clasess.inputMainContainer}>
         <div style={clasess.labelStyle}>{label}</div>
         {isUpdate ? (
           <UpdateValueInput
@@ -35,9 +48,14 @@ const InputUpdatedValues = ({
           <div
             style={{ ...clasess.inputTextStyle, ...speicalStyle }}
             className="customInput"
-            onClick={() => setIsUpdate(1)}
+            onClick={handleClick}
           >
-            {value}
+            {isTwoDigit
+              ? typeof value === "number"
+                ? value.toFixed(2)
+                : value
+              : value}{" "}
+            {sign}
           </div>
         )}
       </div>

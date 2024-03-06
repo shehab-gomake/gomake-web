@@ -1,10 +1,7 @@
 import { EditIcon } from "@/icons";
 import { Accordion, AccordionDetails, AccordionSummary } from "@mui/material";
-import { useTranslation } from "react-i18next";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { SectionMappingWidget } from "./section-mapping";
-import { useRecoilState } from "recoil";
-import { generalParametersState } from "@/store";
 const AccordionMappingWidget = ({
   clasess,
   expanded,
@@ -18,23 +15,22 @@ const AccordionMappingWidget = ({
   duplicateParameters,
   template,
   setTemplate,
+  underParameterIds,
 }: any) => {
-  const { t } = useTranslation();
-
   return (
     <Accordion
       expanded={expanded === `panel_${index}`}
       onChange={handleChange(`panel_${index}`)}
       key={index}
-      sx={{ borderBottom: "0px solid red" }}
     >
       <AccordionSummary
+          data-tour={subSection?.id}
         expandIcon={<ExpandMoreIcon />}
         style={
           expanded === `panel_${index}` ? clasess.activeTabContainer : null
         }
       >
-        <div style={clasess.headerAccordionContainer}>
+        <div  style={clasess.headerAccordionContainer}>
           {expanded === `panel_${index}` ? (
             <EditIcon stroke={"rgba(18, 19, 58, 1)"} />
           ) : (
@@ -65,6 +61,7 @@ const AccordionMappingWidget = ({
           duplicateParameters={duplicateParameters}
           template={template}
           setTemplate={setTemplate}
+          underParameterIds={underParameterIds}
         />
       </AccordionDetails>
     </Accordion>

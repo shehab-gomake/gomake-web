@@ -7,6 +7,7 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import { selectedTabState } from "@/store";
 import { navStatusState } from "@/store/nav-status";
 import { useTranslation } from "react-i18next";
+import {useUserPermission} from "@/hooks/use-permission";
 interface IProps {
   tab: {
     isLine?: boolean;
@@ -16,9 +17,11 @@ interface IProps {
     isList?: boolean;
     icon?: any;
     list?: any[];
+    tourData?: string;
   };
+  customGap?: number;
 }
-const Tab = ({ tab }: IProps) => {
+const Tab = ({ tab, customGap }: IProps) => {
   const [selectedTabValue, setSelectedTabValue] =
     useRecoilState(selectedTabState);
   const { navigate } = useGomakeRouter();
@@ -26,7 +29,9 @@ const Tab = ({ tab }: IProps) => {
   const [isHover, setIsHover] = useState(false);
   const navStatus = useRecoilValue(navStatusState);
   const { t } = useTranslation();
-  const { clasess } = useStyle({ isHover, navStatus });
+  const { CheckPermission } = useUserPermission();
+
+  const { clasess } = useStyle({ isHover, navStatus, customGap });
   const handleMouseEnter = useCallback(() => {
     setIsHover(true);
   }, []);
@@ -85,7 +90,7 @@ const Tab = ({ tab }: IProps) => {
       </div>
       <Collapse in={isListOpen}>
         {!navStatus.isClosed &&
-          tab.list?.map((list: any) => {
+          tab.list?.filter(x=>!x.Permission || CheckPermission(x.Permission)).map((list: any) => {
             return (
               <div style={clasess.tabList} key={list?.key}>
                 <div

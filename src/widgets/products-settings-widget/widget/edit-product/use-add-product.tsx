@@ -8,9 +8,11 @@ import { GraphicIcon, PrameterIcon, SettingIcon } from "@/widgets";
 const useAddProduct = () => {
   const { callApi } = useGomakeAxios();
   const router = useRouter();
+
   const { t } = useTranslation();
   const [activeIndex, setActiveIndex] = useState(0);
   const [productState, setProductState] = useState<any>([]);
+  const dir: "rtl" | "ltr" = t("direction");
   const onChangeStateProduct = useCallback(
     (filedName: string, value: any) => {
       setProductState((prev) => {
@@ -28,36 +30,41 @@ const useAddProduct = () => {
     }
   };
 
-  const [activeTab, setActiveTab] = useState("Parameters");
+  const [activeTab, setActiveTab] = useState(t("products.addProduct.admin.settings"));
   const onClickSettingsTab = () => {
-    setActiveTab("Settings");
-  };
+    setActiveTab(t("products.addProduct.admin.settings"));
+  }; 
   const onClickParametersTab = () => {
-    setActiveTab("Parameters");
+    setActiveTab(t("products.addProduct.admin.parameters"));
   };
   const onClickGraphicTab = () => {
-    setActiveTab("Graphic");
+    setActiveTab(t("products.addProduct.admin.graphic"));
   };
+  useEffect(() => {
+    if (router.query.isParameter) setActiveTab(t("products.addProduct.admin.parameters"));
+  }, [router]);
+
   const tabs = [
     {
-      name: "Settings",
+      name: t("products.addProduct.admin.settings"),
       icon: <SettingIcon stroke="#1C1D58" />,
       activeIcon: <SettingIcon />,
       onclick: () => onClickSettingsTab,
     },
     {
-      name: "Parameters",
+      name: t("products.addProduct.admin.parameters"),
       icon: <PrameterIcon />,
       activeIcon: <PrameterIcon stroke="#ED028C" />,
       onclick: () => onClickParametersTab,
     },
     {
-      name: "Graphic",
+      name: t("products.addProduct.admin.graphic"),
       icon: <GraphicIcon />,
       activeIcon: <GraphicIcon stroke="#ED028C" />,
       onclick: () => onClickGraphicTab,
     },
   ];
+
   const getProductById = useCallback(async () => {
     if (router?.query?.id) {
       await getAndSetProductById(callApi, setProductState, {
@@ -69,6 +76,11 @@ const useAddProduct = () => {
   useEffect(() => {
     getProductById();
   }, [router, setProductState, activeIndex]);
+
+  const handleGoBack = () => {
+    router.back();
+  };
+
   return {
     t,
     handleTabClick,
@@ -78,6 +90,9 @@ const useAddProduct = () => {
     activeIndex,
     activeTab,
     tabs,
+    router,
+    dir,
+    handleGoBack,
   };
 };
 

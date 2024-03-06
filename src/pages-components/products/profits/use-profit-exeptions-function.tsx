@@ -12,6 +12,7 @@ import { actionProfitPricingTableRowsState } from "@/store/action-profit-pricing
 import { productTestState } from "@/store/product-test";
 import { chartDataByActionProfitRow } from "@/store";
 import { PricingListMenuWidget } from "./widgets/pricing-list/more-circle";
+import { useRouter } from "next/router";
 
 const useProfitsExeptionsFunction = ({
   getActionExceptionProfitRowByActionExceptionId,
@@ -27,7 +28,7 @@ const useProfitsExeptionsFunction = ({
   actionExceptionProfitRowsVal,
 }: any) => {
   const [state, setState] = useState<any>({});
-
+  const router = useRouter();
   const productTest = useRecoilValue<any>(productTestState);
   const setChartDataValue = useSetRecoilState<any>(chartDataByActionProfitRow);
   const [openAddQuantityModal, setOpenAddQuantityModal] = useState(false);
@@ -412,6 +413,7 @@ const useProfitsExeptionsFunction = ({
           id: actionProfits?.id,
           recordID: actionProfits?.recordID,
           minPrice: value,
+          isOutSource: router.query.isOutSource ? true : false,
         }
       );
       if (res?.success) {

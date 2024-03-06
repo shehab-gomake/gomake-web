@@ -48,6 +48,23 @@ const useStyle = () => {
         border: "0px",
         boxShadow: "0px 1px 2px 0px rgba(0, 0, 0, 0.08)",
       },
+      dropDownListByTableStyle: {
+        width: "100%",
+        height: 30,
+        border: "0px",
+        boxShadow: "none",
+        justifyContent: "center",
+        textAlign: "center",
+        alignItems: "center",
+        color: primaryColor(500),
+        backgroundColor: "transparent",
+      },
+      profitProductsCellStyle: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "center",
+        alignItems: "center",
+      },
       selectProductTextStyle: {
         ...FONT_FAMILY.Lexend(500, 14),
         color: primaryColor(900),
@@ -159,6 +176,28 @@ const useStyle = () => {
       labelTextContainer: {
         ...FONT_FAMILY.Lexend(400, 12),
         color: primaryColor(900),
+      },
+      backButtonStyle: {
+        height: 30,
+        marginRight: 5,
+        background: "#CBCBE5",
+        width: 90,
+        borderRadius: 8,
+      },
+      header: {
+        ...FONT_FAMILY.Lexend(700, 20),
+        color: "#000",
+      },
+      subHeader: {
+        ...FONT_FAMILY.Lexend(600, 20),
+        color: "#5759A8",
+      },
+      subPrductContainer: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "center",
+        alignItems: "center",
+        cursor: "pointer",
       },
     };
   }, []);

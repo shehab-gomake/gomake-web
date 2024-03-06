@@ -95,6 +95,7 @@
   },
   "properties": {
     "parameter": "פרמטר",
+    "unit": "יחידה",
     "rule": "חוק",
     "type": "סוג",
     "more": "עוד",
@@ -1379,6 +1380,8 @@
       "itemName": "שם הפריט",
       "admin": {
         "title": "רווחים",
+        "proporties": "מאפיינים",
+        "OSSettings": "הגדרות מערכת ההפעלה",
         "chooseAction": "בחר פעולה"
       },
       "pricingListWidget": {
@@ -1397,10 +1400,16 @@
         "more": "עוד",
         "height": "גובה",
         "addNewQuantity": "הוסף כמות חדשה",
+        "addNewStep": "הוסף שלב חדש",
         "saveStep": "שמור שלב",
         "testQuantity": "כמות",
         "unitPrice": "מחיר ליחידה",
-        "testFinalPrice": "מחיר סופי לניסוי"
+        "testFinalPrice": "מחיר סופי לניסוי",
+        "materialQuantity": "כמות חומר",
+        "beats": "קצבים",
+        "linear": "לינארי",
+        "steps": "שלבים",
+        "pleaseEnterallrequiredvalues": "אנא הזן את כל הערכים הנדרשים"
       },
       "exceptions": {
         "title": "חריגים",
@@ -1421,7 +1430,9 @@
         "additionalProfit": "רווח נוסף",
         "deleteExceptionProfit": "מחק רווח חריג?",
         "updateException": "עדכן חריג",
-        "deleteException": "מחק חריג"
+        "deleteException": "מחק חריג",
+        "addNewRule": "הוסף כלל חדש",
+        "reorder": "סדר מחדש"
       }
     },
     "actions": {
@@ -1457,7 +1468,12 @@
         "enterCode": "הזן קוד",
         "addNewProduct": "הוסף מוצר חדש",
         "addGoToList": "הוסף ועבור לרשימת הפרמטרים",
-        "updateNewProduct": "עדכן מוצר"
+        "updateNewProduct": "עדכן מוצר",
+        "clients": "לקוחות",
+        "allCustomers": "כל הלקוחות",
+        "byClient": "לפי לקוח",
+        "byClientType": "לפי סוג לקוח",
+        "uploadImg": "העלאת תמונה"
       }
     },
     "parameters": {
@@ -1500,7 +1516,12 @@
         "stationName": "שם התחנה",
         "actionType": "סוג הפעולה",
         "machine": "מכונה",
-        "loadingOptimalWorkflows": "טוען תהליכי עבודה אופטימליים..."
+        "loadingOptimalWorkflows": "טוען תהליכי עבודה אופטימליים...",
+        "includeVAT": "כולל מע",
+        "graphicDesign": "עיצוב גרפי",
+        "productionComment": "הערה על הייצור",
+        "graphicDesignComment": "הערה על עיצוב גרפי",
+        "Pricing": "מחירים"
       }
     },
     "productManagement": {
@@ -1601,6 +1622,7 @@
       "sendQuote": "שלח הצעה",
       "cancel": "ביטול",
       "yesBtn": "כן",
+      "noBtn": "לא",
       "subTitleCancelModal": "האם אתה בטוח שברצונך לבטל הצעה זו?",
       "cancelBtn": "ביטול",
       "titleCancelModal": "אישור ביטול",
@@ -1645,6 +1667,9 @@
       "createdBy": "נוצר על ידי {{name}}",
       "customer": "לקוח",
       "orderList": "רשימת הזמנות",
+      "receiptList": "רשימת קבלות",
+      "deliveryNoteList": "רשימת דוחות משלוח",
+      "invoiceList": "רשימת חשבוניות",
       "deleteItem": "מחיקת פריט",
       "areYouSureDeleteItem": "האם אתה בטוח שברצונך למחוק פריט זה?",
       "amount": "סכום",
@@ -2029,13 +2054,23 @@
     "changePass": "עדכן סיסמה",
     "update": "עדכן",
     "loginLogo": "לוגו התחברות",
-    "companyLogo": "לוגו החברה"
+    "companyLogo": "לוגו החברה",
+    "dayOfWork": "ימי עבודה",
+    "sunday": "א",
+    "monday": "ב",
+    "tuesday": "ג",
+    "wednesday": "ד",
+    "thursday": "ה",
+    "friday": "ו",
+    "saturday": "ש"
   },
   "remainWords": {
     "newQuote": "ציטוט חדש",
     "convertToInactive": "המר לבלתי פעיל",
     "convertToActive": "המר לפעיל",
-    "editing": "עֲרִיכָה"
+    "editing": "עֲרִיכָה",
+    "createSubProduct": "יצירת מוצר משנה",
+    "goToSubProducts": "עבור למוצרים משניים"
   },
   "materialsTrans": {
     "additions": "תוספות",
@@ -2339,6 +2374,17 @@
     "declined": "נדחה",
     "blocked": "חסום",
     "waitingToApprove": "ממתין לאישור"
-}
-
-}
+},
+"documentingSettings": {
+  "documentNumbering": "מספור מסמך",
+  "documentDesign": "עיצוב מסמך",
+  "showDeliveryTime": "הצג זמן משלוח",
+  "name": "שם",
+  "prefix": "קידומת",
+  "value": "ערך",
+  "details": "פרטים",
+  "edit": "עריכה",
+  "editDefinition": "עריכת הגדרה",
+  "update": "עדכון",
+  "nextValueTip": "עליך להתחיל עם ערך גדול מ"
+}}

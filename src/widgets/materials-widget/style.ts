@@ -1,15 +1,38 @@
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { useMemo } from "react";
 import { FONT_FAMILY } from "@/utils/font-family";
+import { adaptPaddingLeft, adaptPaddingRight } from "@/utils/adapter";
+import { useTranslation } from "react-i18next";
 
 const useStyle = () => {
   const { theme, primaryColor, secondColor, neutralColor } = useGomakeTheme();
+  const {t} = useTranslation()
+  const direction = t('direction');
   const classes = useMemo(() => {
     return {
+      header: {
+        ...FONT_FAMILY.Lexend(700, 20),
+        color: "#000",
+      },
+      headerStyle:{
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        width: "100%",
+        paddingRight: 12,
+        ...adaptPaddingRight(direction, 20),
+      },
+      backButtonStyle:{
+        height: 30,
+        marginRight: 5,
+        background: "#CBCBE5",
+        width: 90,
+        borderRadius: 8,
+      },
       subHeader: {
-        ...FONT_FAMILY.Lexend(500, 24),
-        color: secondColor(500),
-        paddingBottom: 12,
+        ...FONT_FAMILY.Lexend(600, 20),
+        color: "#5759A8",
       },
       noData: {
         width: "100%",
@@ -34,14 +57,19 @@ const useStyle = () => {
         cursor: "pointer",
       },
       clickableData: {
-        padding: '0 10px',
-        height: '26px',
-        borderRadius: '4',
+        padding: "0 10px",
+        height: "26px",
+        borderRadius: "4",
         ...FONT_FAMILY.Lexend(400, 14),
-        '&:hover': {
-          backgroundColor: neutralColor(200)
-        }
-      }
+        "&:hover": {
+          backgroundColor: neutralColor(200),
+        },
+      },
+      buttonsContainerStyle: {
+        display: "flex",
+        flexDirection: "column" as "column",
+        gap: "10px",
+      },
     };
   }, [theme]);
   return {

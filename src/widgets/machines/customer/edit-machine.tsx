@@ -13,6 +13,8 @@ import {useTranslation} from "react-i18next";
 import {MachinesContainer} from "@/components/containers/machines-container/machines-container";
 import {MachinesSideList} from "@/components/containers/machines-container/side-list/machines-side-list";
 import {NavigationButtons} from "@/widgets/machines/components/forms/navigationButtons";
+import {StepType} from "@reactour/tour";
+import {useGoMakeTour} from "@/hooks/use-go-make-tour";
 
 const CustomerEditMachines = () => {
     const router = useRouter();
@@ -33,7 +35,6 @@ const CustomerEditMachines = () => {
             setCategoryName(category?.name ? category?.name : '');
             if (category) setMachineSteps(getSteps(category.id, false));
         }
-
     }, [categoryId]);
     const navigateBack = () => {
         setActiveStep(activeStep - 1);
@@ -58,11 +59,36 @@ const CustomerEditMachines = () => {
     const Side = () => {
         return <MachinesSideList list={getPrintHouseMachinesList()} selectedItem={selectedMachine?.id}
                                  onSelect={onSelectMachine}
-                                 title={'Machines'} quickActions={true}>
+                                 title={t("machineAttributes.machines")} quickActions={true}>
         </MachinesSideList>
     }
+    const editMachinesSteps: StepType[] = [
+        {
+            selector: '[data-tour="machinesList"]',
+            content: 'Here, you can navigate between your digital printer modules and add new ones as needed.',
+            position: 'right',
+        },
+        {
+            selector: '[data-tour="editMachineStepper"]',
+            content: 'Here, you can edit your machine  costs, speed, media compatibility, and more.\n',
+            position: 'bottom',
+        },
+        {
+            selector: '[data-tour="menuActions"]',
+            content: 'Take your time to explore and discover all machine details later.\n' +
+                'Now, let\'s proceed to view the most important part.\n' +
+                'Please press "Action" in the bar.',
+            position: 'top',
+            styles: {
+                maskWrapper: (base) => ({...base, zIndex: 1000000}),
+            },
+        },
+    ]
+    const {} = useGoMakeTour(editMachinesSteps, []);
     return (
         <MachinesContainer side={Side()} header={t(categoryName)}
+                           sideDataTour={'machinesList'}
+                           bodyDataTour={'editMachineStepper'}
                            actions={ActionsFooter()}
                            sideAction={<SecondaryButton variant={'contained'} style={{width: '80%', margin: 'auto'}}
                                                                   href={`/machines/add-machine/category/${categoryId}`}>{t('navigationButtons.add')}</SecondaryButton>}

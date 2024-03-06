@@ -1,29 +1,34 @@
-import axios, {AxiosRequestConfig} from "axios";
+import axios, { AxiosRequestConfig, ResponseType } from "axios";
 import config from "@/config";
 import { getUserToken } from "./storage-data";
 // import { clearStorage } from './storage'
-const apiRequest = async (method = "GET", url: string, data: any = {}, language?: string, requestAbortController?:AbortController) => {
+const apiRequest = async (
+  method = "GET",
+  url: string,
+  data: any = {},
+  language?: string,
+  requestAbortController?: AbortController,
+  responseType: ResponseType = undefined
+) => {
   try {
+    //please don't change the server url!!! 
     const SERVER = config.api_server;
-    // if(safdsa){
-    //     trh
-    // }
-    //const SERVER = 'http://localhost:3010'
     const reqUrl = SERVER + url;
     const controller = new AbortController();
     const options: AxiosRequestConfig = {
       method,
       url: reqUrl,
       data,
-      responseType: "json",
-      signal:requestAbortController?.signal,
+      responseType: responseType ?? "json",
+      signal: requestAbortController?.signal,
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
         "project-name": "business-dashboard",
-        ...(getUserToken() && { "Authorization": "Bearer "+ getUserToken() }),
+        ...(getUserToken() && { Authorization: "Bearer " + getUserToken() }),
         ...(data.customAuth && { "auth-token": data.customAuth }),
-        lang: language ? language : 'en',
+        lang: language ? language : "en",
+        domain: '',
       },
     };
     if (method === "GET") {
@@ -32,7 +37,7 @@ const apiRequest = async (method = "GET", url: string, data: any = {}, language?
         ...data,
       };
     }
-    
+
     const response = await axios(options);
     if (response) {
       if (method === "GET") {

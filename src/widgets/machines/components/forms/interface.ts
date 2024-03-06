@@ -1,10 +1,11 @@
 export interface IStepFormProps {
-    navigateBack: () => void;
-    navigateNext: () => void;
-    onClickUpdate: () => void;
-    onClickAdd: () => void;
-    hasBack: boolean;
-    hasNext: boolean;
-    canUpdate: boolean;
-    canAddMachine: boolean;
+    children?: JSX.Element
+    navigateBack:()=>void;
+    navigateNext:()=>void;
+    canAddMachine:boolean;
+    canUpdate:boolean;
+    onClickAdd:()=>void;
+    onClickUpdate:()=>void;
+    hasBack:boolean;
+    hasNext:boolean;
 }

@@ -30,7 +30,7 @@ const companyContactsInputs = (state: ICompanyProfile)  => {
         {
             name: "phone1",
             label: "profileSettings.phone1",
-            type: "text",
+            type: "phone",
             placeholder: "profileSettings.phone1",
             required: true,
             parameterKey: "phone1",
@@ -42,7 +42,7 @@ const companyContactsInputs = (state: ICompanyProfile)  => {
         {
             name: "phone2",
             label: "profileSettings.phone2",
-            type: "text",
+            type: "phone",
             placeholder: "profileSettings.phone2",
             required: true,
             parameterKey: "phone2",
@@ -54,7 +54,7 @@ const companyContactsInputs = (state: ICompanyProfile)  => {
         {
             name: "mobile",
             label: "profileSettings.mobile",
-            type: "text",
+            type: "phone",
             placeholder: "profileSettings.mobile",
             required: true,
             parameterKey: "mobile",

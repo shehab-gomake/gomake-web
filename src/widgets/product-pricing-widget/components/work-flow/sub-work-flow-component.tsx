@@ -5,94 +5,60 @@ import {Collapse, Fade, IconButton} from "@mui/material";
 import Stack from "@mui/material/Stack";
 import Divider from "@mui/material/Divider";
 import {
-    ActionComponent,
+    ActionComponent, ActionContainerComponent,
 } from "@/widgets/product-pricing-widget/components/action/action-component";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import {PrimaryButton} from "@/components/button/primary-button";
-import {useGomakeTheme} from "@/hooks/use-gomake-thme";
-import {ParametersMapping} from "@/widgets/product-pricing-widget/components/action/key-value-view";
-import {useWorkFlows} from "@/widgets/product-pricing-widget/use-work-flows";
-import {WorkflowRateComponent} from "@/widgets/product-pricing-widget/components/work-flow/workflow-rate-component";
-import {useTranslation} from "react-i18next";
-import {useRecoilState} from "recoil";
-import {currentProductItemValueState} from "@/widgets/product-pricing-widget/state";
 
-interface IWorkFlowComponentProps extends ICalculatedWorkFlow {
-    delay: number;
-    index: number;
-    showSelected: () => void;
+interface ISubWorkFlowComponentProps extends ICalculatedWorkFlow {
+    isEditableActions?: boolean;
 }
 
-interface IWorksFlowsProps {
+interface ISubWorkFlowsComponentProps {
     workflows: ICalculatedWorkFlow[];
-    showSelected: () => void;
+    isEditableActions?: boolean;
+
 }
 
-const SubWorkFlowComponent = ({
-                               delay,
-                               index,
-                               selected,
-                               actions,
-                               id,
-                               showSelected,
-                               totalPrice,
-                               totalRealProductionTime,
-                               totalCost,
-                               profit,
-                               recommendationRang
-                           }: IWorkFlowComponentProps) => {
-    const {t} = useTranslation();
+const SubWorkFlowComponent = ({actions, sectionName, isEditableActions, id, productType}: ISubWorkFlowComponentProps) => {
     const [isOpen, setIsOpen] = useState<boolean>(false);
-    const {secondColor} = useGomakeTheme();
     const {classes} = useStyle();
-    const {selectWorkFlow} = useWorkFlows();
-    const [currentProductItemValue, setCurrentProductItemValue] = useRecoilState<any>(currentProductItemValueState);
-
-    const handleSelectWorkFlow = (e) => {
-        e.stopPropagation();
-        if (!selected) {
-            selectWorkFlow(id);
-            showSelected();
-        }
-    }
-    const parameters = [
-        totalRealProductionTime,
-        totalCost,
-        profit,
-        {
-            ...totalPrice,
-            valueColor: secondColor(500),
-        },
-    ]
 
     return (
         <>
-            <Fade in={true} timeout={delay}>
+            <Fade in={true}>
                 <Stack onClick={() => setIsOpen(!isOpen)} alignItems={"center"} direction={"row"}
                        justifyContent={'space-between'} style={{
-                    ...classes.workFlowContainer,
-                    border: selected ? classes.actionContainerBorder : 'unset'
+                    ...classes.subWorkFlowContainer,
                 }}>
                     <Stack direction={'row'} gap={'10px'} alignItems={'center'} flexWrap={'wrap'}>
-                        <span>{`${t('pricingWidget.workFlow')} ${index}`}</span>
-                        <Divider orientation={'vertical'} flexItem/>
-                        <ParametersMapping parameters={parameters}/>
-                        <Divider orientation={'vertical'} flexItem/>
+                        <span>{sectionName}</span>
                     </Stack>
                     <Stack direction={'row'} gap={'12px'} flexWrap={'nowrap'} minWidth={'fit-content'}>
-                        <PrimaryButton onClick={handleSelectWorkFlow}
-                                       variant={selected ? 'text' : 'contained'}>{selected ? t('pricingWidget.selected') : t('pricingWidget.chooseWorkFlow')}</PrimaryButton>
-                        <IconButton onClick={() => setIsOpen(!isOpen)} style={classes.toggleActionButton}>
+                        <IconButton onClick={() => setIsOpen(!isOpen)} style={classes.toggleSubWorkFlowActionButton}>
                             {isOpen ? <KeyboardArrowUpIcon/> : <KeyboardArrowDownIcon/>}
                         </IconButton>
                     </Stack>
                 </Stack>
             </Fade>
             <Collapse in={isOpen} collapsedSize={0} orientation={'vertical'}>
-                <Stack padding={'10px 0'} gap={'10px'} paddingLeft={'100px'}>
+                <Stack padding={'10px 0'} gap={'10px'}>
                     {
-                        actions.map(action => <ActionComponent {...action} />)
+                        actions?.map((action, i) =>
+                            <Stack direction={'row'} alignItems={'center'} position={'relative'} padding={'0 5px'}>
+                                {
+                                    i + 1 < actions?.length ? <Divider orientation={'vertical'} style={{
+                                            width: '2px',
+                                            backgroundColor: '#667085',
+                                            margin: i === 0 ? '-20px 0 -10px 0' : '-10px 0'
+                                        }} flexItem/> :
+                                        <Divider style={classes.subWorkFlowDividerVertical} absolute orientation={"vertical"} />
+                                }
+                                <Divider orientation={'horizontal'}
+                                         style={{width: '30px', height: '2px', backgroundColor: '#667085'}}/>
+                                {isEditableActions ? <ActionContainerComponent productType={productType} workFlowId={id} {...action}/> :
+                                    <ActionComponent {...action}/>}
+                            </Stack>)
                     }
                 </Stack>
             </Collapse>
@@ -100,12 +66,9 @@ const SubWorkFlowComponent = ({
     )
 };
 
-const SubWorkFlowsComponent = ({workflows, showSelected}: IWorksFlowsProps) => {
-    const totalPageDelay = 1000 * 5;
-    const elementDelay = totalPageDelay / workflows.length;
-    return <Stack gap={'10px'}>{workflows.map((flow, index) => <SubWorkFlowComponent showSelected={showSelected}
-                                                                                  delay={index * elementDelay}
-                                                                                  index={index + 1} {...flow}/>)}</Stack>
+const SubWorkFlowsComponent = ({workflows, isEditableActions}: ISubWorkFlowsComponentProps) => {
+    return <Stack gap={'10px'}>{workflows.map((flow) => <SubWorkFlowComponent
+        isEditableActions={isEditableActions} {...flow}/>)}</Stack>
 }
-export {SubWorkFlowComponent, SubWorkFlowsComponent}
+export {SubWorkFlowsComponent, SubWorkFlowComponent}
 

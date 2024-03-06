@@ -14,17 +14,17 @@ const rollDigitalPrinting = (state: Record<string, any>) => {
             isValid: true,
         },
         {
-            name: "coatingUnitCost",
-            label: "machineAttributes.coatingUnitCost",
-            type: "text",
-            placeholder: "machineAttributes.coatingUnitCost",
-            required: state?.coatingUnitCost,
-            parameterKey: "coatingUnitCost",
+            name: "varnishType",
+            label: "machineAttributes.varnishType",
+            type: "select",
+            placeholder: "machineAttributes.varnishType",
+            required: true,
+            parameterKey: "varnishType",
             options: [],
+            values: state?.attributes?.varnishType,
+            optionsUrl: '/v1/materials/get-all-print-house-material-categories?material=varnish',
             disabled: !state?.attributes?.coatingUnit,
-            value: state?.attributes?.coatingUnit && state?.attributes?.coatingUnitCost ? state?.attributes?.coatingUnitCost : '',
-            machineInputType: 'input',
-            isValid: true,
+            multiple: true
         },
     ]
 };

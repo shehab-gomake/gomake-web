@@ -1,7 +1,8 @@
-import {ICompanyProfile} from "@/store/company-profile";
+import { ICompanyProfile } from "@/store/company-profile";
 
 
-const companyProfileInputs = (state: ICompanyProfile)  => {
+const companyProfileInputs = (state: ICompanyProfile, currencies) => {
+
     return [
         {
             name: "businessName",
@@ -25,7 +26,22 @@ const companyProfileInputs = (state: ICompanyProfile)  => {
             value: state.dashboardCode,
             isValid: !!state.dashboardCode,
         },
+        {
+            name: "System Currency",
+            label: "profileSettings.systemCurrency",
+            type: "select",
+            placeholder: "profileSettings.systemCurrency",
+            required: false,
+            parameterKey: "systemCurrency",
+            options: currencies.map(currency => ({
+                value: currency.value,
+                text: currency.label
+            })),
+            // optionsUrl: "/v1/enum/get-enums/currency",
+            value: state?.systemCurrency,
+            isValid: true,
+        },
     ];
 }
 
-export {companyProfileInputs};
+export { companyProfileInputs };

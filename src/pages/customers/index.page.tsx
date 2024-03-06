@@ -5,16 +5,16 @@ import { useStyle } from "./style";
 import { HeaderFilter } from "./header-filter";
 import { useCustomers } from "./use-customers";
 import { AddCustomerButton } from "./add-customer";
-import Pagination from "@mui/material/Pagination";
 import { useState } from "react";
 import Stack from "@mui/material/Stack";
 import { CustomerCardWidget } from "@/widgets/customer-card-modal";
 import { PrimaryTable } from "@/components/tables/primary-table";
 import { useEffect } from "react";
 import { customerMapFunction } from "@/services/api-service/customers/customers-api";
-import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
+import { CLIENT_TYPE, CLIENT_TYPE_Id, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 import { PermissionCheck } from "@/components/CheckPermission/check-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
+import { GoMakePagination } from "@/components/pagination/gomake-pagination";
 
 export default function Home() {
   const { t } = useTranslation();
@@ -44,6 +44,7 @@ export default function Home() {
     onChangeStatus,
     handleClean,
     name,
+    finalPatternSearch,
     agentName,
     valClientType,
     valStatus,
@@ -54,6 +55,9 @@ export default function Home() {
     setShowCustomerModal,
     getCustomerForEdit,
     getAllCustomers,
+    onClickExportClient,
+    onClickImportClient,
+    handlePageSizeChange
   } = useCustomers(CLIENT_TYPE.CUSTOMER, pageNumber, setPageNumber);
   const activeText = t("usersSettings.active");
   const inActiveText = t("usersSettings.active");
@@ -70,7 +74,7 @@ export default function Home() {
 
   useEffect(() => {
     getAgentCategories();
-    getClientTypesCategories();
+    getClientTypesCategories(CLIENT_TYPE_Id.CUSTOMER);
   }, []);
 
   useEffect(() => {
@@ -80,69 +84,82 @@ export default function Home() {
     clientType,
     pageNumber,
     pageSize,
-    name,
+    finalPatternSearch,
     ClientTypeId,
     agentId,
     isActive,
   ]);
 
   return (
-    <CustomerAuthLayout permissionEnumValue={Permissions.SHOW_CUSTOMERS}>
-      <div style={classes.sameRow}>
-        <HeaderTitle marginBottom="20px" title={t("customers.title")} />
-        <PermissionCheck userPermission={Permissions.ADD_CLIENT} >
-          <AddCustomerButton
-            isValidCustomer={isValidCustomer}
-            onCustomerAdd={onCustomerAdd}
+    <CustomerAuthLayout permissionEnumValue={Permissions.SHOW_CLIENT}>
+      <Stack
+        direction="column"
+        justifyContent="space-between"
+        display="flex"
+        spacing={2}
+        height="100%"
+      >
+        <div style={classes.mainContainer}>
+          <div style={classes.sameRow}>
+            <HeaderTitle
+              marginTop={1}
+              marginBottom={1}
+              title={t("customers.title")}
+            />
+            <PermissionCheck userPermission={Permissions.ADD_CLIENT}>
+              <AddCustomerButton
+                isValidCustomer={isValidCustomer}
+                onCustomerAdd={onCustomerAdd}
+                typeClient={CLIENT_TYPE.CUSTOMER}
+              />
+            </PermissionCheck>
+          </div>
+          <HeaderFilter
             typeClient={CLIENT_TYPE.CUSTOMER}
+            agentsCategories={agentsCategories}
+            clientTypesCategories={clientTypesCategories}
+            statuses={statuses}
+            onChangeAgent={onChangeAgent}
+            onChangeCustomer={onChangeCustomer}
+            onChangeClientType={onChangeClientType}
+            onChangeStatus={onChangeStatus}
+            handleClean={handleClean}
+            customerName={name}
+            agentName={agentName}
+            valClientType={valClientType}
+            valStatus={valStatus}
+            onClickExport={onClickExportClient}
+            onClickImport={onClickImportClient}
           />
-        </PermissionCheck>
-    
-      </div>
-      <HeaderFilter
-        typeClient={CLIENT_TYPE.CUSTOMER}
-        agentsCategories={agentsCategories}
-        clientTypesCategories={clientTypesCategories}
-        statuses={statuses}
-        onChangeAgent={onChangeAgent}
-        onChangeCustomer={onChangeCustomer}
-        onChangeClientType={onChangeClientType}
-        onChangeStatus={onChangeStatus}
-        handleClean={handleClean}
-        customerName={name}
-        agentName={agentName}
-        valClientType={valClientType}
-        valStatus={valStatus}
-      />
-      <Stack spacing={3}>
-        <PrimaryTable
-          stickyFirstCol={false}
-          stickyHeader={false}
-          rows={getCustomersRows()}
-          headers={tableHeaders}
-        ></PrimaryTable>
-        <CustomerCardWidget
-          isValidCustomer={isValidCustomer}
-          customerAction={CUSTOMER_ACTIONS.Edit}
-          codeFlag={true}
-          typeClient={CLIENT_TYPE.CUSTOMER}
-          getAllCustomers={getAllCustomers}
-          openModal={showCustomerModal}
-          modalTitle={t("customers.modal.editTitle")}
-          onClose={() => setShowCustomerModal(false)}
-          customer={customerForEdit}
-          setCustomer={setCustomerForEdit}
-          showUpdateButton={true}
-        />
-        <div style={{ marginBottom: "5px" }}>
-          <Pagination
-            count={pagesCount}
-            variant="outlined"
-            color="primary"
-            page={pageNumber}
-            onChange={(event, value) => setPageNumber(value)}
+          <PrimaryTable
+            stickyFirstCol={false}
+            stickyHeader={true}
+            maxHeight={650}
+            rows={getCustomersRows()}
+            headers={tableHeaders}
+          />
+          <CustomerCardWidget
+            isValidCustomer={isValidCustomer}
+            customerAction={CUSTOMER_ACTIONS.Edit}
+            codeFlag={true}
+            typeClient={CLIENT_TYPE.CUSTOMER}
+            getAllCustomers={getAllCustomers}
+            openModal={showCustomerModal}
+            modalTitle={t("customers.modal.editTitle")}
+            onClose={() => setShowCustomerModal(false)}
+            customer={customerForEdit}
+            setCustomer={setCustomerForEdit}
+            showUpdateButton={true}
           />
         </div>
+        <GoMakePagination
+          onChangePageNumber={(event, value) => setPageNumber(value)}
+          onChangePageSize={handlePageSizeChange}
+          page={pageNumber}
+          setPage={setPageNumber}
+          pagesCount={pagesCount}
+          pageSize={pageSize}
+        />
       </Stack>
     </CustomerAuthLayout>
   );

@@ -1,16 +1,20 @@
-import {speedMethods} from "@/widgets/machines/utils/const/speed-methods";
+import {setupTimeInput} from "@/widgets/machines/utils/attributes/speed-inputs/setup-time-input";
+import { useTranslation } from "react-i18next";
 
 const foldingGluingMachine = (state: Record<string, any>) => {
+    const { t } = useTranslation(); 
+
     return [
+        ...setupTimeInput(state),
         {
-            name: "speedMethod",
-            label: "machineAttributes.speed",
+            name: "speedUnit",
+            label: "machineAttributes.speedUnit",
             type: "select",
-            placeholder: "machineAttributes.speed",
+            placeholder: "machineAttributes.speedUnit",
             required: true,
-            parameterKey: "speedMethod",
-            value: state.attributes?.speedMethod,
-            options: speedMethods,
+            parameterKey: "speedUnit",
+            value: state.attributes?.speedUnit,
+            options: [{value: '1', text: t('speedMethods.auto')}, {value: "2", text: t('speedMethods.manual')}], 
             machineInputType: 'input',
             isValid: true,
         },
@@ -25,6 +29,7 @@ const foldingGluingMachine = (state: Record<string, any>) => {
             value: state?.attributes?.perUnit ? state?.attributes?.perUnit : '',
             machineInputType: 'input',
             isValid: !!state?.attributes?.perUnit,
+            disabled: state.attributes?.speedUnit !== '2'
         },
         {
             name: "m/min",
@@ -37,6 +42,7 @@ const foldingGluingMachine = (state: Record<string, any>) => {
             value: state?.attributes?.speed ? state?.attributes?.speed : '',
             machineInputType: 'input',
             isValid: !!state?.attributes?.speed,
+            disabled: state.attributes?.speedUnit !== '1'
         },
     ]
 }

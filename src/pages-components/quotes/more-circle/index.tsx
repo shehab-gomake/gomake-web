@@ -7,52 +7,120 @@ import { useTranslation } from "react-i18next";
 import { QUOTE_STATUSES } from "../enums";
 import { PDFIcon } from "./icons/pdf";
 import { OptionsButton } from "@/components/options-button/options-button";
-import { PermissionCheck } from "@/components/CheckPermission";
-import { Permissions } from "@/components/CheckPermission/enum";
+import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
+import { TickIcon } from "@/icons";
 
-const MoreMenuWidget = ({ quote, onClickOpenModal , onClickPdf , onClickDuplicate }: any) => {
+const MoreMenuWidget = ({ quote, documentType, onClickOpenModal, onClickPdf, onClickDuplicate, onClickLoggers }: any) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
   const { user, navigate } = useMoreCircle();
+  const documentPath = DOCUMENT_TYPE[documentType];
+  const renderMenuItem = () => {
+    if (documentType === DOCUMENT_TYPE.quote) {
+      const isCreateStatus = quote?.documentStatus === QUOTE_STATUSES.Create;
+      const isOpenStatus = quote?.documentStatus === QUOTE_STATUSES.Open;
+      const isCurrentUser = quote?.userID === user?.id;
 
-  return (
-    <OptionsButton>
-      <MenuItem>
-        <div style={classes.menuRowStyle}>
-          <PermissionCheck userPermission={Permissions.SHOW_LOGGERS_QUOTE}>
-            <EditingIcon />
-            <div style={classes.rowTextStyle}>{t("sales.quote.loggers")}</div>
-          </PermissionCheck>
-        </div>
-      </MenuItem>
-      <MenuItem onClick={()=>onClickPdf(quote?.id)}>
-        <div style={classes.menuRowStyle}>
-          <PDFIcon />
-          <div style={classes.rowTextStyle}>{t("sales.quote.pdf")}</div>
-        </div>
-      </MenuItem>
-      <MenuItem onClick={()=>onClickDuplicate(quote?.id)}>
-        <div style={classes.menuRowStyle}>
-          <ConvertIcon />
-          <div style={classes.rowTextStyle}>{t("sales.quote.duplicate")}</div>
-        </div>
-      </MenuItem>
-      {(quote?.statusID === QUOTE_STATUSES.Create &&
-        quote?.userID === user?.id) ||
-        quote?.statusID === QUOTE_STATUSES.Open ? (
-        <MenuItem
-          onClick={() =>
-            quote?.statusID === QUOTE_STATUSES.Create
-              ? navigate(`/quote`)
-              : onClickOpenModal(quote)
-          }
-        >
+      if ((isCreateStatus && isCurrentUser) || isOpenStatus) {
+        return (
+          <MenuItem
+            onClick={() =>
+              isCreateStatus ? navigate(`/quote`) : onClickOpenModal(quote)
+            }
+          >
+            <div style={classes.menuRowStyle}>
+              <EditingIcon />
+              <div style={classes.rowTextStyle}>{t("sales.quote.edit")}</div>
+            </div>
+          </MenuItem>
+        );
+      }
+    }
+    else if (documentType !== DOCUMENT_TYPE.quote) {
+      const canEdit = documentType === DOCUMENT_TYPE.order || documentType === DOCUMENT_TYPE.purchaseOrder;
+      return (
+        <MenuItem onClick={() => navigate(`/${documentPath}?Id=${quote?.id}&canEdit=${canEdit}`)}>
           <div style={classes.menuRowStyle}>
             <EditingIcon />
             <div style={classes.rowTextStyle}>{t("sales.quote.edit")}</div>
           </div>
         </MenuItem>
-      ) : null}
+      );
+    }
+    else {
+      return <></>;
+
+    }
+  };
+
+
+  return (
+    <OptionsButton>
+      <MenuItem onClick={onClickLoggers}>
+        <div style={classes.menuRowStyle}>
+          <EditingIcon />
+          <div style={classes.rowTextStyle}>{t("sales.quote.loggers")}</div>
+        </div>
+      </MenuItem>
+
+      <MenuItem onClick={() => onClickPdf(quote?.id)}>
+        <div style={classes.menuRowStyle}>
+          <PDFIcon />
+          <div style={classes.rowTextStyle}>{t("sales.quote.pdf")}</div>
+        </div>
+      </MenuItem>
+
+
+      {
+        documentType !== DOCUMENT_TYPE.receipt && <MenuItem onClick={() => onClickDuplicate(quote?.id)}>
+          <div style={classes.menuRowStyle}>
+            <ConvertIcon />
+            <div style={classes.rowTextStyle}>{t("sales.quote.duplicate")}</div>
+          </div>
+        </MenuItem>
+      }
+      {renderMenuItem()}
+      {
+        documentType === DOCUMENT_TYPE.order && <MenuItem onClick={() => navigate(`/deliveryNote?isNewCreation=true&orderId=${quote?.id}`)}>
+          <div style={classes.menuRowStyle}>
+            <TickIcon />
+            <div style={classes.rowTextStyle}>{t("sales.quote.closeAsDeliveryNote")}</div>
+          </div>
+        </MenuItem>
+      }
+      {
+        documentType === DOCUMENT_TYPE.order && <MenuItem onClick={() => navigate(`/invoice?isNewCreation=true&orderId=${quote?.id}`)}>
+          <div style={classes.menuRowStyle}>
+            <TickIcon />
+            <div style={classes.rowTextStyle}>{t("sales.quote.closeAsInvoice")}</div>
+          </div>
+        </MenuItem>
+      }
+      {
+        documentType === DOCUMENT_TYPE.deliveryNote && <MenuItem onClick={() => navigate(`/invoice?isNewCreation=true&deliveryNoteId=${quote?.id}`)}>
+          <div style={classes.menuRowStyle}>
+            <TickIcon />
+            <div style={classes.rowTextStyle}>{t("sales.quote.closeAsInvoice")}</div>
+          </div>
+        </MenuItem>
+      }
+      {
+        documentType === DOCUMENT_TYPE.deliveryNoteRefund && <MenuItem onClick={() => navigate(`/deliveryNoteRefund?isNewCreation=true&documentToDuplicateId=${quote?.id}`)}>
+          <div style={classes.menuRowStyle}>
+            <TickIcon />
+            <div style={classes.rowTextStyle}>{t("sales.quote.closeAsDeliveryNote")}</div>
+          </div>
+        </MenuItem>
+      }
+      {
+        documentType === DOCUMENT_TYPE.invoiceRefund && <MenuItem onClick={() => navigate(`/invoiceRefund?isNewCreation=true&documentToDuplicateId=${quote?.id}`)}>
+          <div style={classes.menuRowStyle}>
+            <TickIcon />
+            <div style={classes.rowTextStyle}>{t("sales.quote.closeAsInvoice")}</div>
+          </div>
+        </MenuItem>
+      }
+
     </OptionsButton>
   );
 };

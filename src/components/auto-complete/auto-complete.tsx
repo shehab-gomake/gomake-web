@@ -6,6 +6,7 @@ import { ArrowDownIcon } from "@/icons/arrow-down";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import Stack from "@mui/material/Stack";
+import {DotsLoader} from "@/components/dots-loader/dots-Loader";
 
 const StyledAutocomplete: any = styled(Autocomplete)((props: any) => {
   return {
@@ -20,7 +21,8 @@ const StyledAutocomplete: any = styled(Autocomplete)((props: any) => {
     lineHeight: "21px",
     display: "flex",
     alignItems: "center",
-    color: props?.error ? "red" : "#B9B9D9",
+    color: props?.error ? "red" : "#000000",
+    backgroundColor: "#FFF",
     borderBottom: props?.selectedOption
       ? "2px solid rgb(67,195,232)"
       : "2px solid rgb(237, 2, 140)",
@@ -29,9 +31,9 @@ const StyledAutocomplete: any = styled(Autocomplete)((props: any) => {
       paddingRight: "9px!important",
       color: props?.error ? "red" : "",
       height: props?.style?.height || 40,
-      fontFamily: "Lexend",
+      fontFamily: "Heebo",
       fontStyle: "normal",
-      fontWeight: 300,
+      fontWeight: 500,
       width: "100%",
       ...props?.style,
       "& fieldset": {
@@ -42,6 +44,13 @@ const StyledAutocomplete: any = styled(Autocomplete)((props: any) => {
       "& .MuiAutocomplete-input": {
         padding: 0,
         direction: props?.direction,
+      },
+      "& input::placeholder": {
+        color: "#B1B1B1",
+        opacity: 1,
+        fontFamily: "Heebo",
+        fontStyle: "normal",
+        fontWeight: 500,
       },
     },
     "& .MuiAutocomplete-endAdornment": {
@@ -65,9 +74,9 @@ const GoMakeAutoComplate = ({
   defaultValue,
   disabled,
   multiple = false,
-  arrowColor,
   onChangeTextField,
   PaperComponent,
+    loading
 }: {
   value?: any;
   onChange?: any;
@@ -85,6 +94,7 @@ const GoMakeAutoComplate = ({
   arrowColor?: any;
   onChangeTextField?: any;
   PaperComponent?: any;
+  loading?: boolean;
 }) => {
   const [selectedOption, setSelectedOption] = useState<any>();
   const { t } = useTranslation();
@@ -109,10 +119,11 @@ const GoMakeAutoComplate = ({
       options={options}
       disabled={disabled}
       popupIcon={""}
-      renderInput={(params: any) => (
+      renderInput={(params: any) => loading ?
+          <DotsLoader/> :
         <TextField
           {...params}
-          placeholder={!multiple && (defaultValue?.label || placeholder)}
+          placeholder={defaultValue?.label || placeholder}
           onChange={onChangeTextField || params.onChange}
           InputProps={
             dir === "rtl"
@@ -134,7 +145,7 @@ const GoMakeAutoComplate = ({
                 }
           }
         />
-      )}
+      }
       defaultValue={defaultValue}
       autoHighlight={autoHighlight}
       getOptionLabel={getOptionLabel}

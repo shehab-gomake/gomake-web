@@ -91,16 +91,18 @@
     "purchase": "Purchase",
     "purchaseOrders": "Orders",
     "purchaseInvoices": "invoices",
-    "supplierPayments": "payments"
+    "supplierPayments": "payments",
+    "translations": "Translations"
   },
   "properties": {
     "parameter": "Parameter",
+    "unit":"Unit",
     "rule": "Rule",
     "type": "Type",
     "more": "More",
-    "addNewRule": "add new rule",
-    "addRule": "add rule",
-    "editRules": "edit rules",
+    "addNewRule": "Add new rule",
+    "addRule": "Add rule",
+    "editRules": "Edit Rules",
     "cancel": "cancel",
     "create": "create",
     "statment": "statment",
@@ -287,7 +289,9 @@
       "addNewRow": "Add new row",
       "openImage": "Open image",
       "changeImage": "Change image",
-      "selectImage": "Select Image"
+      "selectImage": "Select Image",
+      "upload": "Upload",
+      "download" : "Download"
     },
     "modals": {
       "subTitleDeleteModal": "Are you sure to delete {{name}}",
@@ -1217,7 +1221,7 @@
     "cellLoadingTime": "Cell loading time",
     "loadingWhileRunning": "Loading on the run",
     "cellsAmount": "Cells amount",
-    "maxThicknessCells": "Maximum thickness in cell (mm)",
+    "maxThicknessCells": "Maximum height in cell",
     "bookletConnection": "Connection to a Booklet machine",
     "BoosbinderConnection": "Connection to a Boosbinder machine",
     "sewingConnection": "Connection to a Sewing machine",
@@ -1328,9 +1332,13 @@
     "insertTypes": "Insert types",
     "foldingUnit": "Folding unit",
     "cellNumber": "Cell number",
-    "maxThicknessInCell": "Maximum thickness in cell",
+    "maxThicknessInCell": "Maximum height in cell",
     "loadingInRun": "Loading in run",
-    "cellChargingTime": "Cell charging time"
+    "cellChargingTime": "Cell loading time",
+    "isAvailable": "Is available",
+    "collectorSpeed": "Collector max speed",
+    "cell": "Cell",
+    "cellsMaxThicknessList": "Cells Max thickness"
   },
   "tyingOptions": {
     "cross": "Cross",
@@ -1426,6 +1434,8 @@
       "itemName": "Item name",
       "admin": {
         "title": "Profits",
+        "proporties":"Proporties",
+        "OSSettings":"OS settings",
         "chooseAction": "Choose action"
       },
       "pricingListWidget": {
@@ -1444,10 +1454,16 @@
         "more": "More",
         "height": "height",
         "addNewQuantity": "add new quantity",
+        "addNewStep": "add new step",
         "saveStep": "Save step",
         "testQuantity": "Quantity",
         "unitPrice": "Unit price",
-        "testFinalPrice": "Test Final Price"
+        "testFinalPrice": "Test Final Price",
+        "materialQuantity":"Material Quantity",
+        "beats":"Beats",
+        "linear":"Linear",
+        "steps":"Steps",
+        "pleaseEnterallrequiredvalues":"Please Enter all required values"
       },
       "exceptions": {
         "title": "Exceptions",
@@ -1455,7 +1471,7 @@
         "parameter": "Parameter",
         "value": "Value",
         "scopeOfChange": "scope of change",
-        "min": "Minimum =",
+        "min": "Minimum",
         "addNewException": "Add new exception",
         "chooseScope": "choose scope",
         "selectTypeOfException": "Select type of exception",
@@ -1468,7 +1484,9 @@
         "additionalProfit": "Additional Profit",
         "deleteExceptionProfit": "Delete Exception Profit ?",
         "updateException": "Update exception",
-        "deleteException": "Delete exception"
+        "deleteException": "Delete exception",
+        "addNewRule":"Add New Rule",
+        "reorder":"Reorder"
       }
     },
     "actions": {
@@ -1504,7 +1522,13 @@
         "enterCode": "Enter Code",
         "addNewProduct": "Add new product",
         "addGoToList": "Add and go to the list of parameters",
-        "updateNewProduct": "Update product"
+        "updateNewProduct": "Update product",
+        "clients":"Clients",
+        "allCustomers":"all customers",
+        "byClient":"by client",
+        "byClientType":"by client type",
+        "uploadImg":"Upload image"
+
       }
     },
     "parameters": {
@@ -1547,7 +1571,13 @@
         "stationName": "Station name",
         "actionType": "Action type",
         "machine": "Machine",
-        "loadingOptimalWorkflows": "loading optimal workflows..."
+        "loadingOptimalWorkflows": "loading optimal workflows...",
+        "includeVAT": "Include VAT",
+        "graphicDesign":"Graphic design",
+        "productionComment":"Production comment",
+        "graphicDesignComment":"Graphic design comment",
+        "Pricing":"Pricing"
+
       }
     },
     "productManagement": {
@@ -1646,6 +1676,7 @@
       "sendQuote": "send quote",
       "cancel": "Cancel",
       "yesBtn": "Yes",
+      "noBtn": "No",
       "subTitleCancelModal": "Are you sure you want to cancel this offer?",
       "cancelBtn": "cancelation",
       "titleCancelModal": "Confirm Cancel",
@@ -1691,6 +1722,9 @@
       "createdBy": "Created by {{name}}",
       "customer": "Customer",
       "orderList": "Order List",
+      "receiptList": "Receipt List",
+      "deliveryNoteList": "Delivery Note List",
+      "invoiceList": "Invoice List",
       "deleteItem": "Delete Item",
       "areYouSureDeleteItem": "Are you sure to delete this item?",
       "amount": "Amount",
@@ -1706,7 +1740,35 @@
       "copyTo": "Copy to",
       "managerApproval": "Manager Approval",
       "dateOfReference" :"Date Of Reference",
-      "quoteNumber": "Quote number"
+      "quoteNumber": "Quote number",
+      "addressLine1": "Address Line 1",
+      "addressLine2": "Address Line 2",
+      "enterYourAddress":"Enter Your Address",
+      "country":"Country",
+      "selectYourCountry":"Select Your Country",
+      "selectYourCity":"Select Your City",
+      "zipCode": "Zip Code",
+      "enterYourZipCode":"Enter Your ZipCode",
+      "save": "Save",
+      "address": "Address",
+      "addressId": "Address ID",
+      "addAddress" :"Add Address",
+      "removeAddress": "Remove Address",
+      "actionDate" :"Action Date",
+      "employeeName":"Employee Name",
+      "actionDescription":"Action Description",
+      "selectEmployee":"select employee",
+      "selectDate":"select date",
+      "quoteLogs":"Logs for quote",
+      "quote": "Quote",
+      "order": "Order",
+      "invoice":"Invoice",
+      "receipt": "Receipt",
+      "deliveryNote" : "Delivery Note",
+      "invoiceNumber": "Invoice Number",
+      "receiptNumber": "Receipt Number",
+      "deliveryNoteNumber": "Delivery Note Number"
+
     }
   },
   "usersSettings": {
@@ -1796,7 +1858,8 @@
     "finances": "Finances",
     "productManagement": "Product management",
     "shipmentsSetting": "Shipments setting",
-    "pricingSetting": "Pricing setting"
+    "pricingSetting": "Pricing setting",
+    "translations" : "Translations"
   },
   "customers": {
     "buttons": {
@@ -2076,14 +2139,24 @@
     "changePass": "Change password",
     "update": "Update",
     "loginLogo": "Login logo",
-    "companyLogo": "Company logo"
+    "companyLogo": "Company logo",
+    "dayOfWork": "Working days",
+    "sunday": "Sun",
+    "monday": "Mon",
+    "tuesday":"Tue",
+    "wednesday":"Wed",
+    "thursday":"Thu",
+    "friday" :"Fri",
+    "saturday":"Sat"
   },
   "remainWords": {
     "newQuote": "New quote",
     "AddItemtoQuote": "Add item to quote",
     "convertToInactive": "Convert to inactive",
     "convertToActive": "Convert to active",
-    "editing": "Editing"
+    "editing": "Editing",
+    "createSubProduct": "Create sub product",
+    "goToSubProducts": "Go to sub products"
   },
   "materialsTrans": {
     "additions": "Additions",
@@ -2155,7 +2228,7 @@
     "framingInFixedFrame": "Framing in fixed frame machine",
     "customFraming": "Custom framing",
     "linkage": "Linkage machine",
-    "PVCBending": "PVC bending machine",
+    "PVCBending": "Flatbed bending machine",
     "collector": "Collector",
     "booklet": "Booklet machine",
     "booksBinder": "Books binder machine",
@@ -2204,7 +2277,8 @@
     "details": "Details",
     "edit": "Edit",
     "editDefinition": "Edit definition",
-    "update": "Update"
+    "update": "Update",
+    "nextValueTip": "You must initialize with a value greater than"
   },
   "documentingDesign": {
     "Save": "Save",
@@ -2301,7 +2375,9 @@
     "squareCM": "cm2",
     "setsHour": "sets/hour",
     "sph": "SPH",
-    "bookPh": "BookPH"
+    "bookPh": "BookPH",
+    "second": "second",
+    "pph": "PPH"
   },
   "mailingSettings": {
     "emailSetting": "Email setting",
@@ -2483,5 +2559,29 @@
     "add": "Add",
     "price": "Price",
     "chooseWorkFlow": "Choose work flow"
+  },
+  "translations" : {
+"title" : "Translations",
+"addNew" : "add new",
+"edit" : "Edit" ,
+"add" : "Add" ,
+"addNewBlock" :"Add new block" ,
+"editTranslation" : "Edit Translation",
+"addTranslation" : "Add Translation",
+"arabic": "Arabic",
+"english": "English",
+"hebrew": "Hebrew",
+"deutsche":"Deutsche",
+"key":"Key",
+"path":"Path",
+"download" : "Download",
+"upload":"Upload"
+  },
+  "quantityTypes": {
+    "quantity": "Quantity",
+    "typeAmount": "Type amount",
+    "equalQuantity": "Equal quantity",
+    "duplicateName": "Duplicate name",
+    "typeName": "Type name"
   }
 }

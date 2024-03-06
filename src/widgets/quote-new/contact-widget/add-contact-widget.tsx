@@ -5,6 +5,7 @@ import { AutoCompleteUpdatedValue } from "../auto-complete-updated";
 import { GomakePrimaryButton } from "@/components";
 import { WastebasketNew2 } from "@/icons";
 import { IconButton } from "@mui/material";
+import { PhoneInputUpdatedValues } from "../phone-input-updated-values";
 
 const AddContactNewWidget = ({
   clientContactsValue,
@@ -23,12 +24,12 @@ const AddContactNewWidget = ({
   onClickAddNewContact,
   setIsDisplayWidget,
 }) => {
-  const { clasess } = useStyle();
+  const { classes } = useStyle();
   const { t } = useTranslation();
 
   return (
     <>
-      <div style={clasess.businessContainerStyle}>
+      <div style={classes.businessContainerStyle}>
         <AutoCompleteUpdatedValue
           label={t("sales.quote.contactName")}
           options={clientContactsValue}
@@ -40,12 +41,11 @@ const AddContactNewWidget = ({
             setSelectedContactById(item);
           }}
         />
-
-        <InputUpdatedValues
+        <PhoneInputUpdatedValues
           value={
             selectedContactById?.phone !== null
               ? selectedContactById?.phone
-              : t("sales.quote.noMobileContact")
+              : ""
           }
           label={t("sales.quote.mobileContact")}
           onBlur={onBlurContactMobile}
@@ -66,7 +66,7 @@ const AddContactNewWidget = ({
           onInputChange={onInputChangeMail}
         />
         <GomakePrimaryButton
-          style={clasess.saveBtnStyle}
+          style={classes.saveBtnStyle}
           onClick={onClickAddNewContact}
         >
           {t("materials.buttons.save")}

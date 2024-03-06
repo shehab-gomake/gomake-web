@@ -3,15 +3,22 @@ import { useStyle } from "./style";
 import { useTranslation } from "react-i18next";
 import { InputUpdatedValues } from "../input-updated-values";
 import { FONT_FAMILY } from "@/utils/font-family";
+import { useQuoteGetData } from "@/pages-components/quote-new/use-quote-get-data";
+import { useRouter } from "next/router";
 
 const TotalPriceComp = ({
   getCalculateQuote,
   quoteItems,
   changeQuoteItems,
+  isQuoteConfirmation = false,
 }) => {
-  const { clasess } = useStyle();
+  const router = useRouter()
+  const { classes } = useStyle();
   const { t } = useTranslation();
   const [isUpdateTotalPayment, setIsUpdateTotalPayment] = useState(null);
+  const { getCurrencyUnitText } = useQuoteGetData();
+  const [isConfirmation, setIsConfirmation] = useState(null);
+
   const onBlurTotalPayment = async () => {
     getCalculateQuote(2, quoteItems?.totalPayment);
     setIsUpdateTotalPayment(null);
@@ -27,46 +34,50 @@ const TotalPriceComp = ({
   const onInputDiscount = (e) => {
     changeQuoteItems("discount", e);
   };
+
   return (
-    <div style={clasess.tableFooterContainer}>
-      <div style={clasess.firstRowForFooterContainer}>
-        <div style={{ ...clasess.evenRowContainer, width: "13%" }}>
+    <div style={classes.tableFooterContainer}>
+      <div style={classes.firstRowForFooterContainer}>
+        <div style={{ ...classes.evenRowContainer, width: "13%" }}>
           {t("sales.quote.totalBeforeVAT")}
         </div>
         <div
           style={{
-            ...clasess.oddRowContainer,
+            ...classes.oddRowContainer,
             width: "19%",
             paddingLeft: 36,
           }}
         >
-          {quoteItems?.totalPrice}
+          {(quoteItems?.totalPrice) +
+            " " +
+            getCurrencyUnitText(quoteItems?.currency)}
         </div>
-        <div style={{ ...clasess.evenRowContainer, width: "13%" }}>
+        <div style={{ ...classes.evenRowContainer, width: "13%" }}>
           {t("sales.quote.discount")}
         </div>
-        <div style={{ ...clasess.oddRowContainer, width: "19%" }}>
-          <div style={clasess.cellTextInputStyle}>
+        <div style={{ ...classes.oddRowContainer, width: "19%" }}>
+          <div style={classes.cellTextInputStyle}>
             <InputUpdatedValues
-              value={quoteItems?.discount}
+              value={(quoteItems?.discount ? quoteItems?.discount : 0)}
               onBlur={onBlurDiscount}
-              isUpdate={isUpdateDiscount}
-              setIsUpdate={setIsUpdateDiscount}
+              isUpdate={router.query.canEdit === "false" ? false : isUpdateDiscount}
+              setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdateDiscount}
               onInputChange={(e) => onInputDiscount(e)}
             />
+            {getCurrencyUnitText(quoteItems?.currency)}
           </div>
         </div>
-        <div style={{ ...clasess.evenRowContainer, width: "13%" }}>
+        <div style={{ ...classes.evenRowContainer, width: "13%" }}>
           VAT (17%)
         </div>
-        <div style={{ ...clasess.oddRowContainer, width: "23%" }}>
-          {Math.ceil(quoteItems?.totalVAT)} ILS
+        <div style={{ ...classes.oddRowContainer, width: "23%" }}>
+          {Math.ceil(quoteItems?.totalVAT) + " " + getCurrencyUnitText(quoteItems?.currency)}
         </div>
       </div>
-      <div style={clasess.firstRowForFooterContainer}>
+      <div style={classes.firstRowForFooterContainer}>
         <div
           style={{
-            ...clasess.evenRowContainer,
+            ...classes.evenRowContainer,
             width: "13%",
             borderBottomLeftRadius: 6,
             borderBottomRightRadius: 6,
@@ -76,22 +87,23 @@ const TotalPriceComp = ({
         </div>
         <div
           style={{
-            ...clasess.oddRowContainer,
+            ...classes.oddRowContainer,
             width: "87%",
           }}
         >
-          <div style={clasess.cellTextInputStyle}>
+          <div style={classes.cellTextInputStyle}>
             <InputUpdatedValues
               value={quoteItems?.totalPayment}
               onBlur={onBlurTotalPayment}
-              isUpdate={isUpdateTotalPayment}
-              setIsUpdate={setIsUpdateTotalPayment}
+              isUpdate={router.query.canEdit === "false" ? false : isUpdateTotalPayment}
+              setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdateTotalPayment}
               onInputChange={(e) => onInputTotalPayment(e)}
               speicalStyle={{
                 color: "#F135A3",
                 ...FONT_FAMILY.Inter(700, 18),
               }}
             />
+            {getCurrencyUnitText(quoteItems?.currency)}
           </div>
         </div>
       </div>

@@ -10,9 +10,12 @@ import {machineState} from "@/widgets/machines/state/machine-state";
 import {useAdminAddMachine} from "@/widgets/machines/hooks/use-admin-add-machine";
 import {SideBarContainer} from "@/components/containers/side-container/side-bar-container";
 import {MachinesSideList} from "@/components/containers/machines-container/side-list/machines-side-list";
+import Button from "@mui/material/Button";
+import { useTranslation } from "react-i18next";
 
 const AdminUpdateMachine = () => {
     const router = useRouter();
+    const {t} = useTranslation();
     const {categoryId} = router.query;
     const [activeStep, setActiveStep] = useState<number>(0);
     const categories = useRecoilValue(machineCategoriesState);
@@ -26,10 +29,11 @@ const AdminUpdateMachine = () => {
         getAndSetAdminMachines().then();
         if (categoryId) {
             const category = categories.find(category => category.id === categoryId)
-            setCategoryName(category?.name ? category?.name : '');
+            setCategoryName(category?.name ? t(category?.name) : '');
             if (category) setMachineSteps(getSteps(category.id, true));
         }
     }, [categoryId]);
+    
     const navigateBack = () => {
         setActiveStep(activeStep - 1);
     }
@@ -45,10 +49,10 @@ const AdminUpdateMachine = () => {
     }
 
     const Side = () => <MachinesSideList list={getMachinesList} selectedItem={selectedMachine?.id} onSelect={onSelectMachine}
-                                 title={'Machines'} quickActions={true} isAdmin={true}/>
+                                 title={t("machineAttributes.machines")} quickActions={true} isAdmin={true}/>
     return (
         <SideBarContainer side={Side()} header={categoryName} subHeader={ selectedMachine.manufacturer ? selectedMachine?.manufacturer + ' - ' + selectedMachine?.model : ''}>
-
+            <Button style={{marginBottom:"10px"}} variant={'contained'} onClick={updateMachine}>{t("machines.updateMachine")}</Button>
             {!!selectedMachine.id && <MachineStepper steps={machineSteps} activeStep={activeStep} previousStep={navigateBack}
                                                      nextStep={navigateNext} actionButtonClicked={updateMachine}
                                                      moveToStep={moveToStepByIndex}

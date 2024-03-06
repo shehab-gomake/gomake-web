@@ -6,6 +6,7 @@ import * as React from "react";
 import { SearchInputComponent } from "@/components/form-inputs/search-input-component";
 import { SecondaryButton } from "@/components/button/secondary-button";
 import { IStatus } from "./use-customers";
+import { ExcelMenu } from "./export-import-buttons";
 
 interface IProps {
   typeClient?: string;
@@ -21,6 +22,8 @@ interface IProps {
   customerName?: string;
   valClientType?: string[];
   valStatus?: IStatus;
+  onClickExport: () => void;
+  onClickImport: (value: any) => void;
 }
 
 const HeaderFilter = ({
@@ -37,6 +40,8 @@ const HeaderFilter = ({
   agentName,
   valClientType,
   valStatus,
+  onClickExport,
+  onClickImport
 }: IProps) => {
   const { t } = useTranslation();
   const { classes } = useStyle();
@@ -46,36 +51,51 @@ const HeaderFilter = ({
         {typeClient == "C" ? (
           <>
             {agentsCategories?.length > 0 ? (
-              <GoMakeAutoComplate
-                options={agentsCategories}
-                style={classes.dropDownListStyle}
-                placeholder={t("customers.selectAgent")}
-                onChange={onChangeAgent}
-                value={agentName}
-              />
+              <div style={classes.filterSectionContainer}>
+                <div style={classes.labelFilterStyle}>
+                  {t("sales.quote.agent")}
+                </div>
+                <GoMakeAutoComplate
+                  options={agentsCategories}
+                  style={classes.dropDownListStyle}
+                  placeholder={t("customers.selectAgent")}
+                  onChange={onChangeAgent}
+                  value={agentName}
+                />
+              </div>
             ) : (
               <Skeleton variant="rectangular" width={200} height={40} />
             )}
             {clientTypesCategories?.length > 0 ? (
-              <GoMakeAutoComplate
-                options={clientTypesCategories}
-                style={classes.dropDownListStyle}
-                placeholder={t("customers.selectCustomerType")}
-                onChange={onChangeClientType}
-                value={valClientType}
-              />
+              <div style={classes.filterSectionContainer}>
+                <div style={classes.labelFilterStyle}>
+                  {t("customers.customerType")}
+                </div>
+                <GoMakeAutoComplate
+                  options={clientTypesCategories}
+                  style={classes.dropDownListStyle}
+                  placeholder={t("customers.selectCustomerType")}
+                  onChange={onChangeClientType}
+                  value={valClientType}
+                />
+              </div>
             ) : (
               <Skeleton variant="rectangular" width={200} height={40} />
             )}
             {statuses?.length > 0 ? (
-              <GoMakeAutoComplate
-                options={statuses}
-                style={classes.dropDownListStyle}
-                placeholder={t("customers.selectStatus")}
-                onChange={onChangeStatus}
-                value={valStatus}
-                disableClearable={true}
-              />
+              <div style={classes.filterSectionContainer}>
+                <div style={classes.labelFilterStyle}>
+                  {t("sales.quote.status")}
+                </div>
+                <GoMakeAutoComplate
+                  options={statuses}
+                  style={classes.dropDownListStyle}
+                  placeholder={t("customers.selectStatus")}
+                  onChange={onChangeStatus}
+                  value={valStatus}
+                  disableClearable={true}
+                />
+              </div>
             ) : (
               <Skeleton variant="rectangular" width={200} height={40} />
             )}
@@ -83,15 +103,20 @@ const HeaderFilter = ({
         ) : (
           <>
             {statuses?.length > 0 ? (
-              <GoMakeAutoComplate
-                options={statuses}
-                style={classes.dropDownListStyle}
-                placeholder={t("customers.selectStatus")}
-                onChange={onChangeStatus}
-                defaultValue={{ label: t("customers.active"), value: "true" }}
-                value={valStatus}
-                disableClearable={true}
-              />
+              <div style={classes.filterSectionContainer}>
+                <div style={classes.labelFilterStyle}>
+                  {t("sales.quote.status")}
+                </div>
+                <GoMakeAutoComplate
+                  options={statuses}
+                  style={classes.dropDownListStyle}
+                  placeholder={t("customers.selectStatus")}
+                  onChange={onChangeStatus}
+                  defaultValue={{ label: t("customers.active"), value: "true" }}
+                  value={valStatus}
+                  disableClearable={true}
+                />
+              </div>
             ) : (
               <Skeleton variant="rectangular" width={200} height={40} />
             )}{" "}
@@ -101,11 +126,15 @@ const HeaderFilter = ({
           {t("customers.buttons.clean")}
         </SecondaryButton>
       </div>
-      <div>
+      <div style={classes.searchContainer}>
         <SearchInputComponent
           onChange={onChangeCustomer}
           value={customerName}
-        ></SearchInputComponent>
+        />
+        <ExcelMenu
+          onClickImport={onClickImport}
+          onClickExport={onClickExport}
+        />
       </div>
     </div>
   );

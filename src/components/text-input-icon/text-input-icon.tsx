@@ -4,7 +4,7 @@ import InputBase from "@mui/material/InputBase";
 
 const StyledTextField = styled(InputBase)((props: any) => ({
   input: {
-    // backgroundColor: "#F8F8F8",
+    backgroundColor: "#FFF",
     boxSizing: "border-box",
     borderRadius: "10px",
     height: 44,
@@ -16,6 +16,33 @@ const StyledTextField = styled(InputBase)((props: any) => ({
     paddingLeft: props?.style?.paddingInputLeft || "40px",
     paddingRight: props?.style?.paddingInputRight || "40px",
     color: props?.error ? "red" : "#000",
+  },
+  "& .MuiOutlinedInput-root": {
+    "&:hover fieldset": {
+      border: props.error
+        ? `2px solid ${props.errorColor(300)}`
+        : `2px solid #FFFFFF`,
+    },
+    "& fieldset": {
+      border: props.error
+        ? `1px solid ${props.errorColor(300)}`
+        : `1px solid #FFFFFF`,
+      boxSizing: "border-box",
+      borderRadius: props?.style?.borderRadius || 4,
+      width: "100%",
+    },
+    "&.Mui-focused fieldset": {
+      borderColor: props.error ? `${props.errorColor(300)}` : "#FFFFFF",
+      borderRadius: props?.style?.borderRadius || 4,
+      width: "100%",
+    },
+  },
+  "& input::placeholder": {
+    color: "#B1B1B1",
+    opacity: 1,
+    fontFamily: "Heebo",
+    fontStyle: "normal",
+    fontWeight: 500,
   },
 }));
 
