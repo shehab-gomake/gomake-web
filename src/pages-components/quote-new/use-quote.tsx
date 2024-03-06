@@ -1060,6 +1060,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     })
   }
   const handleSaveBtnClickForDocument = async () => {
+    const canEdit = docType === DOCUMENT_TYPE.order || docType === DOCUMENT_TYPE.purchaseOrder;
     const res = await callApi(
       EHttpMethod.POST,
       `/v1/erp-service/documents/create-document`,
@@ -1072,7 +1073,8 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     );
     if (res?.success) {
       alertSuccessAdded();
-      navigate(`${documentPath}s`);
+      // navigate(`${documentPath}s`);
+      navigate(`/${documentPath}?Id=${res?.data?.data?.data}&canEdit=${canEdit}`)
     } else {
       alertFaultAdded();
     }
