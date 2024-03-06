@@ -435,7 +435,6 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
       await getClientPaymentItemsApi(callApi, callBack, { clientId: item?.id, })
     }
     else if (router?.query?.isNewCreation) {
-      setSelectBusiness(item)
       const res = await callApi(
         EHttpMethod.POST,
         `/v1/erp-service/documents/get-new-document-data`,
@@ -1260,13 +1259,9 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     }
   }, [agentListValue, quoteItemValue]);
   useEffect(() => {
-    const foundItem = customersListValue.find(
-      (item: any) => item.id === quoteItemValue?.customerID
-    );
     const foundConfirmItem = customersListValue.find(
       (item: any) => item.id === quoteConfirm?.customerID
     );
-    // setSelectBusiness(foundItem);
     setSelectConfirmBusiness(foundConfirmItem) // for quote confirmation
   }, [quoteItemValue, customersListValue]);
 
@@ -1332,7 +1327,6 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     dateRef,
     activeClickAway,
     selectDate,
-    selectBusiness,
     isUpdateBusinessName,
     isUpdatePurchaseNumber,
     isUpdateAddress,

@@ -17,7 +17,6 @@ import { useStyle } from "./style";
 
 const BusinessNewWidget = ({
   values,
-  selectBusiness,
   selectConfirmBusiness,
   onBlurPurchaseNumber,
   isUpdatePurchaseNumber,
@@ -87,7 +86,7 @@ const BusinessNewWidget = ({
           onInputChange={(v) => setPurchaseNumber(v)}
         />}
         <InputUpdatedValues
-          value={isQuoteConfirmation ? `${selectConfirmBusiness?.code}` : `${selectBusiness?.code}`}
+          value={isQuoteConfirmation ? `${selectConfirmBusiness?.code}` : `${quoteStateValue?.client?.code}`}
           label={t("sales.quote.businessCode")}
           onBlur={onBlurBusinessCode}
           setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdateBusinessCode}

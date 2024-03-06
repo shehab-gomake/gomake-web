@@ -44,7 +44,6 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
   const quoteState = isQuoteConfirmation ? quoteConfirm : quoteItemValue;
   const {
     selectDate,
-    selectBusiness,
     isUpdateBusinessName,
     isUpdatePurchaseNumber,
     isUpdateAddress,
@@ -278,7 +277,6 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
               <div style={classes.bordersecondContainer}>
                 <BusinessNewWidget
                   values={quoteState}
-                  selectBusiness={selectBusiness}
                   selectConfirmBusiness={selectConfirmBusiness}
                   onBlurBusinessName={onBlurBusinessName}
                   isUpdateBusinessName={isUpdateBusinessName}
