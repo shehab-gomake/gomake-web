@@ -43,11 +43,13 @@ const useStyle = () => {
       },
       detailsKey: {
         ...FONT_FAMILY.Outfit(600, 18),
-        color: primaryColor(300)
+        color: primaryColor(300),
+        border: 0
       },
       detailsValue: {
         ...FONT_FAMILY.Outfit(600, 24),
-        color: primaryColor(800)
+        color: primaryColor(800),
+        border: 0
       }
     }
   }, [theme]);
