@@ -8,6 +8,7 @@ import {languageOptionsState} from "@/store/languages";
 import {createNewCompanyApi} from "@/services/api-service/quick-setup/company/company-endpoints";
 import {useRouter} from "next/router";
 import {clearStorage} from "@/services/storage-data";
+import {domainRegex} from "@/utils/regex";
 
 const useCompanyForm = () => {
   const [state, setState] = useRecoilState(signupCompanyState);
@@ -32,6 +33,10 @@ const useCompanyForm = () => {
     }))
   }
   const onclickNext = async () => {
+    if (!domainRegex.test(state.domain)) {
+      alertFaultAdded();
+      return
+    }
     setLoading(!loading);
     const callBack = (res) => {
       if (res.success) {

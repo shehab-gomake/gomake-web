@@ -6,14 +6,16 @@ import {ECategoryId} from "@/widgets/machines/enums/category-id";
 export default function QuickSetupMachinesRequiredPage() {
     return (
         <CustomerAuthLayout disableHeaderSideMenu={true}>
-            <QuickSetupLayout pageTitle={'What\'s in your tech squad? Introduce your machines.'}
+            <QuickSetupLayout pageTitle={'signup.machinesPageTitle'}
                               headerColor={'primary'}>
                 <MachinesSetupWidget nextStep={'/quick-setup/machines/packaging'}
+                                     header={'signup.cuttingMachinesHeader'}
                                      categories={[
                                          ECategoryId.GLUING_MACHINE,
                                          ECategoryId.FLATBED_CUTTING_MACHINE,
                                          ECategoryId.ANALOG_ENHANCEMENT_MACHINE,
-                                         ECategoryId.AUTO_BOOK_CUTTING_MACHINE
+                                         ECategoryId.AUTO_BOOK_CUTTING_MACHINE,
+                                         ECategoryId.GUILLOTINE
                                      ]}/>
             </QuickSetupLayout>
         </CustomerAuthLayout>
