@@ -1848,9 +1848,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const getProductQuoteItemById = async (materials) => {
     const callBack = (res) => {
       if (res?.success) {
-        setDefaultProductTemplate(res?.data);
+        const updatedTemplate = updateIsHidden(res?.data, subProducts)
+        setDefaultProductTemplate(updatedTemplate);
         //initProduct(res?.data);
-        initQuoteItemProduct(res?.data, materials);
+        initQuoteItemProduct(updatedTemplate, materials);
       } else {
         alertFaultUpdate();
       }
@@ -2231,9 +2232,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     const allParameters = subProducts.flatMap(product => product.parameters);
     const updatedTemplate = { ...productTemplate };
     updatedTemplate.sections.forEach(section => {
-      if (section.relatedToParameters.length === 0) {
+      if (section.relatedToParameters && section.relatedToParameters.length === 0) {
         section.isHidden = false;
-      } else {
+      } else if(section.relatedToParameters) {
         // let isHidden = true;
         section.relatedToParameters.forEach(parameter => {
           // Check if any parameter in allParameters matches the condition
