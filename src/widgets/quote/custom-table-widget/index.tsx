@@ -1,11 +1,9 @@
-import { GoMakeDeleteModal } from "@/components";
 import { useStyle } from "./style";
 import { useTranslation } from "react-i18next";
 import { HeaderTable } from "./sub-widget/header";
 import { RowCustomTable } from "./sub-widget/row";
 import { useCustomTable } from "./use-custom-table";
 import { AddNegotiateRequestModal } from "../modals-widgets/add-negotiate-request-modal";
-import { DuplicateItemModal } from "../modals-widgets/duplicate-item-modal";
 import { useRecoilValue } from "recoil";
 import { quoteState } from "@/pages-components/quote/store/quote";
 import { RowWithChildsTable } from "./sub-widget/row/row-with-childs";
@@ -67,7 +65,7 @@ const CustomTableWidget = ({
           return (
             <>
               {row?.childsDocumentItems != null &&
-              row?.childsDocumentItems.length > 0 ? (
+                row?.childsDocumentItems.length > 0 ? (
                 <div key={`body_row${index}`} style={{ width: "100%" }}>
                   <RowWithChildsTable
                     row={row}

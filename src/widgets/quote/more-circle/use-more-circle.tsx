@@ -66,7 +66,13 @@ const useMoreCircle = ({
       icon: <AnalysisIcon />,
       onclick: () => null,
     },
-    router.query.canEdit === "true" &&
+    documentType === DOCUMENT_TYPE.quote &&
+    {
+      name: "Delete",
+      icon: <DeleteMenuIcon />,
+      onclick: () => onClickDeleteQouteItem(quoteItem),
+    },
+    (router.query.isNewCreation || router.query.canEdit === "true") &&
     {
       name: "Delete",
       icon: <DeleteMenuIcon />,
