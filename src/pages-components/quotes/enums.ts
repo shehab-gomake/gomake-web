@@ -9,7 +9,8 @@ export enum DOCUMENT_TYPE{
     invoiceRefund, 
     generalLedgerReport,
     purchaseOrder,
-    purchaseInvoice
+    purchaseInvoice,
+    purchaseInvoiceRefund
 }
 
 export enum QUOTE_STATUSES{

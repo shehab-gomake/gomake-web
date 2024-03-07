@@ -121,6 +121,12 @@ const useAuthLayoutHook = (permissionEnumValue?: Permissions, allowAnonymous?: b
             Permission: Permissions.SHOW_ORDERS,
           },
           {
+            key: "purchase invoice",
+            title: "tabs.purchaseInvoiceRefund",
+            path: "/purchaseInvoiceRefunds",
+            Permission: Permissions.SHOW_ORDERS,
+          },
+          {
             key: "receipts",
             title: "tabs.receipts",
             path: "/receipts",
@@ -314,7 +320,7 @@ const useAuthLayoutHook = (permissionEnumValue?: Permissions, allowAnonymous?: b
         },
         isProduction: true,
         tourData: 'menu-settings'
-      },      
+      },
     ];
   }, []);
 
