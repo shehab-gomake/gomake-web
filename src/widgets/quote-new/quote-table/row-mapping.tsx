@@ -64,7 +64,7 @@ const RowMappingWidget = ({
       }}
     >
       {
-        router.query.canEdit === "true" &&
+        (!router.query.canEdit || router.query.canEdit === "true") &&
         <PrimaryTableCell
           style={{
             width: columnWidths[0],
@@ -192,23 +192,25 @@ const RowMappingWidget = ({
             onInputChange={(e) => onInputChangeFinalPrice(e)}
           />
         </div>
-        {
-          router.query.canEdit === "true" && !isQuoteConfirmation && <PrimaryTableCell
-            style={{
-              width: columnWidths[7],
-              ...classes.cellContainerStyle,
-              borderBottom: item?.childsDocumentItems && "none",
-            }}
-          >
-            <MoreMenuWidget
-              quoteItem={item}
-              onClickDuplicateWithDifferentQTY={onClickDuplicateWithDifferentQTY}
-              onClickDeleteQouteItem={onClickDeleteQouteItem}
-              documentType={documentType}
-            />
-          </PrimaryTableCell>
-        }
+
       </PrimaryTableCell>
+      {
+        (!router.query.canEdit || router.query.canEdit === "true") && !isQuoteConfirmation &&
+        <PrimaryTableCell
+          style={{
+            width: columnWidths[7],
+            ...classes.cellContainerStyle,
+            borderBottom: item?.childsDocumentItems && "none",
+          }}
+        >
+          <MoreMenuWidget
+            quoteItem={item}
+            onClickDuplicateWithDifferentQTY={onClickDuplicateWithDifferentQTY}
+            onClickDeleteQouteItem={onClickDeleteQouteItem}
+            documentType={documentType}
+          />
+        </PrimaryTableCell>
+      }
     </TableRow>
   );
 };

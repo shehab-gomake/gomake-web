@@ -129,7 +129,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     t("products.offsetPrice.admin.finalPrice"),
     t("products.profits.more"),
   ];
-  const filteredTableHeaders = router.query.canEdit === "true"
+  const filteredTableHeaders = (!router.query.canEdit || router.query.canEdit === "true")
     ? tableHeaders
     : tableHeaders.filter(header => header !== "#" && header !== t("products.profits.more"));
   const columnWidths = ["5%", "8%", "12%", "33%", "8%", "8%", "8%", "8%"];
