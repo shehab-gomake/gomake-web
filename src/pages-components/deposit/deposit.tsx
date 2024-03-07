@@ -3,10 +3,11 @@ import { DepositHeaderSection } from "./components/header-section";
 import { useDeposit } from "./use-deposit";
 import { DepositTable } from "./components/table-prices-section";
 import { DepositFilterSection } from "./components/filters-section";
-import { Skeleton, Stack } from "@mui/material";
+import { Stack } from "@mui/material";
 import { DEPOSIT_ACTIONS } from "./enums";
 import { PrimaryTabsComponent } from "@/components/tabs/primary-tabs";
 import { useEffect } from "react";
+import { GomakeLoaderWidget } from "@/widgets";
 
 export interface IDepositProps {
   actionType: DEPOSIT_ACTIONS;
@@ -14,7 +15,7 @@ export interface IDepositProps {
 
 const DepositPageWidget = ({ actionType }: IDepositProps) => {
   const { classes } = useStyle();
-  const { depositsTabs, onSelectTab, renderTableHeaders, renderTableRows, getDepositMetaData, accounts, depositAccounts,isLoading , deposit} = useDeposit();
+  const { depositsTabs, onSelectTab, renderTableHeaders, renderTableRows, getDepositMetaData, accounts, depositAccounts, isLoading, deposit } = useDeposit();
 
   useEffect(() => {
     if (actionType === DEPOSIT_ACTIONS.Create)
@@ -23,27 +24,25 @@ const DepositPageWidget = ({ actionType }: IDepositProps) => {
 
   return (
     <>
-      <div style={classes.mainContainer}>
-        <Stack direction="column" paddingLeft="20px" paddingRight="20px" width={"100%"}  >
-          <DepositHeaderSection actionType={actionType} />
-          <div style={classes.borderSecondContainer} />
-          {isLoading && actionType === DEPOSIT_ACTIONS.Create ? (
-            <Skeleton variant="rectangular">
+      {isLoading && actionType === DEPOSIT_ACTIONS.Create ?
+        <GomakeLoaderWidget />
+        :
+        <div style={classes.mainContainer}>
+          <Stack direction="column" paddingLeft="20px" paddingRight="20px" width={"100%"}  >
+            <DepositHeaderSection actionType={actionType} />
+            <div style={classes.borderSecondContainer} />
             <DepositFilterSection actionType={actionType} accountsOptions={accounts} depositAccountsOptions={depositAccounts} />
-            </Skeleton>
-          ) : (
-            <DepositFilterSection actionType={actionType} accountsOptions={accounts} depositAccountsOptions={depositAccounts}/>
-          )}
-        </Stack>
-        <Stack style={classes.secondDivStyle}>
-          {
-            actionType === DEPOSIT_ACTIONS.Create ?
-              <PrimaryTabsComponent tabs={depositsTabs} selectedColor="secondary" onSelectTab={onSelectTab} />
-              :
-              <DepositTable tableHeaders={renderTableHeaders()} tableRows={renderTableRows()} deposit={deposit} />
-          }
-        </Stack>
-      </div>
+          </Stack>
+          <Stack style={classes.secondDivStyle}>
+            {
+              actionType === DEPOSIT_ACTIONS.Create ?
+                <PrimaryTabsComponent tabs={depositsTabs} selectedColor="secondary" onSelectTab={onSelectTab} />
+                :
+                <DepositTable tableHeaders={renderTableHeaders()} tableRows={renderTableRows()} deposit={deposit} />
+            }
+          </Stack>
+        </div>
+      }
     </>
   );
 };

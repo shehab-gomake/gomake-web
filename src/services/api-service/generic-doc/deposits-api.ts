@@ -6,6 +6,7 @@ const GET_ALL_DEPOSITS_URL = "/v1/erp-service/deposits/get-all-deposits";
 const GET_DEPOSITS_META_DATA_URL = "/v1/erp-service/deposits/get-deposit-meta-data";
 const SHOW_DEPOSIT_URL = "/v1/erp-service/deposits/show-deposit";
 const CREATE_DEPOSIT_URL = "/v1/erp-service/deposits/create-deposits";
+const CANCEL_DEPOSIT_URL = "/v1/erp-service/deposits/cancel-deposit";
 
 const getAllDepositsApi: ICallAndSetData = async (callApi, setState, data) => {
   return await getSetApiData(
@@ -48,10 +49,20 @@ const createDepositApi: ICallAndSetData = async (callApi, setState, data) => {
   );
 };
 
+const cancelDepositApi: ICallAndSetData = async (callApi, setState, data) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.PUT,
+    CANCEL_DEPOSIT_URL,
+    setState,
+    data
+  );
+};
 
 export {
     getAllDepositsApi,
     getDepositsMetaDataApi,
     showDepositApi,
-    createDepositApi
+    createDepositApi,
+    cancelDepositApi
 };

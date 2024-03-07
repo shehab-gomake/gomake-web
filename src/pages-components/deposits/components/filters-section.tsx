@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { useStyle } from "../style";
 import { GoMakeAutoComplate } from "@/components/auto-complete/auto-complete";
-import { GomakePrimaryButton, GomakeTextInput } from "@/components";
+import { GomakePrimaryButton } from "@/components";
 import { GoMakeDatepicker } from "@/components/date-picker/date-picker-component";
 import { SearchInputComponent } from "@/components/form-inputs/search-input-component";
 import { useDeposits } from "../use-deposits";
@@ -15,8 +15,6 @@ const DepositsFiltersWidget = ({onClickSearch}) => {
         typeOfDeposit,
         depositPaymentType,
         handleDepositTypeChange,
-        depositNumber,
-        handleDepositNumberChange,
         onClickSearchFilter,
         onClickClearFilter,
     } = useDeposits();
@@ -25,7 +23,6 @@ const DepositsFiltersWidget = ({onClickSearch}) => {
     return (
         <div style={classes.filtersContainer}>
             <div style={classes.selectedFilterContainer}>
-
                 <div style={classes.filterContainerStyle}>
                     <label style={classes.filterLabelStyle}>
                         {t("deposits.typeOfDeposit")}
@@ -41,21 +38,10 @@ const DepositsFiltersWidget = ({onClickSearch}) => {
                     />
                 </div>
                 <div style={classes.filterContainerStyle}>
-                    <label style={classes.filterLabelStyle}>
-                        {t("deposits.depositNumber")}
-                    </label>
-                    <GomakeTextInput
-                        value={depositNumber}
-                        onChange={handleDepositNumberChange}
-                        style={{ ...classes.textInputStyle, height: "40px" }}
-                        placeholder={t("deposits.depositNumber")}
-                    />
-                </div>
-                <div style={classes.filterContainerStyle}>
                     <label style={classes.filterLabelStyle}>{t("boardMissions.dateRange")}</label>
-                    <GoMakeDatepicker onChange={onSelectDateRange} placeholder={t("boardMissions.chooseDate")} reset={resetDatePicker} />
+                    <GoMakeDatepicker onChange={onSelectDateRange} placeholder={t("boardMissions.chooseDate")} reset={resetDatePicker} style={{width:"100%"}} />
                 </div>
-                <div style={classes.filterContainerStyle}>
+                <div style={classes.filterButtonContainerStyle}>
                     <div style={classes.filterLabelStyle} />
                     <GomakePrimaryButton
                         style={classes.searchBtnStyle}
@@ -64,7 +50,7 @@ const DepositsFiltersWidget = ({onClickSearch}) => {
                         {t("sales.quote.search")}
                     </GomakePrimaryButton>
                 </div>
-                <div style={classes.filterContainerStyle}>
+                <div style={classes.filterButtonContainerStyle}>
                     <div style={classes.filterLabelStyle} />
                     <GomakePrimaryButton
                         style={classes.clearBtnStyle}
@@ -75,7 +61,6 @@ const DepositsFiltersWidget = ({onClickSearch}) => {
             </div>
             <SearchInputComponent onChange={onClickSearch} />
         </div>
-
     )
 }
 export { DepositsFiltersWidget }

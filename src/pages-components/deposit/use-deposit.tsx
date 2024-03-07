@@ -410,7 +410,7 @@ const useDeposit = () => {
                         checked={isChecked}
                     />,
                     GetShortDateFormat(deposit?.dueDate),
-                    "test",
+                    deposit?.receiptNumber,
                     deposit?.client?.name,
                     <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "2px", }}>
                         <input

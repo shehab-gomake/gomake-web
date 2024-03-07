@@ -30,6 +30,7 @@ const useStyle = () => {
                 flexDirection: "row" as "row",
                 justifyContent: "space-between",
                 alignItems: "flex-end",
+                gap: 20,
                 width: "100%",
             },
             selectedFilterContainer: {
@@ -48,15 +49,24 @@ const useStyle = () => {
                 gap: 10,
                 width: "25%",
             },
+            filterButtonContainerStyle: {
+                display: "flex",
+                flexDirection: "column" as "column",
+                justifyContent: "flex-start",
+                alignItems: "flex-start",
+                gap: 10,
+                width: "180px"
+            },
             filterLabelStyle: {
                 ...FONT_FAMILY.Lexend(500, 14),
                 height: 21,
+
             },
             textInputStyle: {
                 width: "100%",
-                maxWidth:"180px",
                 border: "none",
             },
+
             searchBtnStyle: {
                 height: 40,
                 backgroundColor: secondColor(500),

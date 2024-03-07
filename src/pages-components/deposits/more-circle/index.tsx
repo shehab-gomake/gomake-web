@@ -9,8 +9,8 @@ import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
 
 interface IMoreProps {
   deposit?: any;
-  onClickCancel?: () => void;
-  onClickShowDeposit?:(depositId: string) => void;
+  onClickCancel?: (depositId: string) => void;
+  onClickShowDeposit?: (depositId: string) => void;
   onClickPdf?: () => void;
   onClickLoggers?: () => void;
 }
@@ -32,11 +32,11 @@ const MoreMenuWidget = ({ deposit, onClickCancel, onClickShowDeposit, onClickPdf
 
   return (
     <OptionsButton>
-        <MoreMenuItem icon={<ShowIcon />} text={t("deposits.showDeposits")} onClick={onClickShowDeposit} />
-        <MoreMenuItem icon={<EditingIcon />} text={t("sales.quote.loggers")} onClick={onClickLoggers} />
-        <MoreMenuItem icon={<PDFIcon />} text={t("sales.quote.pdf")} onClick={onClickPdf} />
-        <MoreMenuItem icon={<CancelOutlinedIcon style={{ color: "#8283BE" , height:16 , width:16}} />} text={t("sales.quote.cancel")} onClick={onClickCancel} />
-    </OptionsButton>
+      <MoreMenuItem icon={<ShowIcon />} text={t("deposits.showDeposits")} onClick={onClickShowDeposit} />
+      <MoreMenuItem icon={<EditingIcon />} text={t("sales.quote.loggers")} onClick={onClickLoggers} />
+      <MoreMenuItem icon={<PDFIcon />} text={t("sales.quote.pdf")} onClick={onClickPdf} />
+      {!deposit?.isCanceled && <MoreMenuItem icon={<CancelOutlinedIcon style={{ color: "#8283BE", height: 16, width: 16 }} />} text={t("sales.quote.cancel")} onClick={onClickCancel} />}    
+      </OptionsButton>
   );
 };
 export { MoreMenuWidget };

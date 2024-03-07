@@ -1,8 +1,8 @@
-import { useGomakeAxios, useGomakeRouter } from "@/hooks";
-import {  useEffect, useState } from "react";
+import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRecoilState, useResetRecoilState, useSetRecoilState } from "recoil";
-import { getAllDepositsApi, showDepositApi } from "@/services/api-service/generic-doc/deposits-api";
+import { cancelDepositApi, getAllDepositsApi, showDepositApi } from "@/services/api-service/generic-doc/deposits-api";
 import { useDateFormat } from "@/hooks/use-date-format";
 import { MoreMenuWidget } from "./more-circle";
 import { allDepositsState, depositPaymentTypeSate, depositState, depositsFromDateState, depositsPageCountState, depositsPageSizeState, depositsPageState, depositsToDateState } from "./components/states";
@@ -13,7 +13,8 @@ const useDeposits = () => {
     const { t } = useTranslation();
     const { callApi } = useGomakeAxios();
     const { navigate } = useGomakeRouter();
-    const { GetDateFormat, GetShortDateFormat } = useDateFormat();
+    const { alertFaultDelete, alertSuccessDelete, alertFaultGetData } = useSnackBar();
+    const { GetDateFormat } = useDateFormat();
     const [page, setPage] = useRecoilState<number>(depositsPageState);
     const resetPage = useResetRecoilState(depositsPageState);
     const [pagesCount, setPagesCount] = useRecoilState<number>(depositsPageCountState);
@@ -24,7 +25,6 @@ const useDeposits = () => {
     const [allDeposits, setAllDeposits] = useRecoilState<any>(allDepositsState);
     const setDeposit = useSetRecoilState<any>(depositState);
     const [depositPaymentType, setDepositPaymentType] = useRecoilState<any>(depositPaymentTypeSate);
-    const [depositNumber, setDepositNumber] = useState<string>();
     const [patternSearch, setPatternSearch] = useState("");
     const [finalPatternSearch, setFinalPatternSearch] = useState("");
     const debounce = useDebounce(patternSearch, 500);
@@ -67,6 +67,15 @@ const useDeposits = () => {
         }
     };
 
+    const getDepositStatusText = (status: any) => {
+        switch (status) {
+            case (true):
+                return t("sales.quote.canceled");
+            default:
+                return t("deposits.open");
+        }
+    };
+
     const getAllDeposits = async (isClear = false) => {
         const callBack = (res) => {
             if (res?.success) {
@@ -76,10 +85,10 @@ const useDeposits = () => {
                     deposit?.createdDate,
                     deposit?.number,
                     deposit?.accountNumber,
-                    deposit?.number,
+                    getDepositStatusText(deposit?.isCanceled),
                     getDepositTypeText(deposit?.depositType),
                     deposit?.totalAmount,
-                    <MoreMenuWidget onClickShowDeposit={(depositId) => getDepositBYId(deposit?.id)} />
+                    <MoreMenuWidget deposit={deposit} onClickShowDeposit={() => getDepositBYId(deposit?.id)} onClickCancel={() => cancelDeposit(deposit?.id)} />
                 ]);
                 setAllDeposits(mapData);
                 setPagesCount(Math.ceil(totalItems / (pageSize)));
@@ -113,7 +122,7 @@ const useDeposits = () => {
                 const data = res?.data;
                 const cashDepositData = [
                     GetDateFormat(data?.depositDate),
-                    data?.cashAmount,
+                    data?.receiptsNumber,
                     data?.depositor,
                     data?.cashAmount,
                 ];
@@ -125,7 +134,6 @@ const useDeposits = () => {
                 ]);
                 const checksDepositData = data?.checks?.map((deposit: any) => [
                     GetDateFormat(deposit?.checkDate),
-                    // deposit?.clientName,
                     deposit?.customer,
                     deposit?.checkNumber,
                     deposit?.bank,
@@ -143,10 +151,23 @@ const useDeposits = () => {
                 navigate(`/deposits/show?id=${data?.id}`);
             }
             else {
-
+                alertFaultGetData();
             }
         };
         await showDepositApi(callApi, callBack, { Id: depositId });
+    };
+
+    const cancelDeposit = async (depositId: string) => {
+        const callBack = (res) => {
+            if (res?.success) {
+                alertSuccessDelete();
+                getAllDeposits();
+            }
+            else {
+                alertFaultDelete();
+            }
+        };
+        await cancelDepositApi(callApi, callBack, { Id : depositId });
     };
 
     const handleDepositTypeChange = (e: any, value: any) => {
@@ -160,7 +181,6 @@ const useDeposits = () => {
 
     const onClickClearFilter = () => {
         setDepositPaymentType(null);
-        setDepositNumber("");
         setFromDate(null);
         setToDate(null);
         setResetDatePicker(true);
@@ -168,25 +188,13 @@ const useDeposits = () => {
         getAllDeposits(true);
     };
 
-
-    const handleDepositNumberChange = (e: any) => {
-        setDepositNumber(e.target.value);
-    };
-
     const handleSearchChange = (e) => {
         setPatternSearch(e)
     };
 
-
-
-
-
-
-
-
-  useEffect(() => {
-    setFinalPatternSearch(debounce);
-  }, [debounce]);
+    useEffect(() => {
+        setFinalPatternSearch(debounce);
+    }, [debounce]);
 
     return {
         page,
@@ -200,8 +208,6 @@ const useDeposits = () => {
         typeOfDeposit,
         depositPaymentType,
         handleDepositTypeChange,
-        depositNumber,
-        handleDepositNumberChange,
         getAllDeposits,
         allDeposits,
         onClickSearchFilter,
