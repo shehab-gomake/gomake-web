@@ -42,6 +42,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     alertSuccessDelete,
     alertFaultDelete,
   } = useSnackBar();
+  const router = useRouter();
   const { callApi } = useGomakeAxios();
   const { navigate } = useGomakeRouter();
   const { t } = useTranslation();
@@ -117,7 +118,6 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
   const onCloseDeliveryModal = () => {
     setOpenAddDeliveryModal(false);
   };
-
   const tableHeaders = [
     "#",
     t("sales.quote.itemCode"),
@@ -129,10 +129,13 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     t("products.offsetPrice.admin.finalPrice"),
     t("products.profits.more"),
   ];
+  const filteredTableHeaders = router.query.canEdit === "true"
+    ? tableHeaders
+    : tableHeaders.filter(header => header !== "#" && header !== t("products.profits.more"));
   const columnWidths = ["5%", "8%", "12%", "33%", "8%", "8%", "8%", "8%"];
   const headerHeight = "44px";
 
-  const router = useRouter();
+
   const getQuote = async () => {
     if (router?.query?.isNewCreation && docType === DOCUMENT_TYPE.receipt) {
       const callBack = (res) => {
@@ -1464,7 +1467,8 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     onOpenCopyFromOrder,
     onCloseCopyFromDeliveryNote,
     onOpenCopyFromDeliveryNote,
-    openCopyFromDeliveryNoteModal
+    openCopyFromDeliveryNoteModal,
+    filteredTableHeaders
 
   };
 };

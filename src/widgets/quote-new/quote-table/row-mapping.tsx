@@ -63,35 +63,38 @@ const RowMappingWidget = ({
         background: index % 2 === 0 ? "#FFFFFF" : "#F8FAFB",
       }}
     >
-      <PrimaryTableCell
-        style={{
-          width: columnWidths[0],
-          ...classes.cellContainerStyle,
-          borderBottom: item?.childsDocumentItems && "none",
-        }}
-      >
-        <div
+      {
+        router.query.canEdit === "true" &&
+        <PrimaryTableCell
           style={{
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "flex-start",
-            alignItems: "center",
+            width: columnWidths[0],
+            ...classes.cellContainerStyle,
+            borderBottom: item?.childsDocumentItems && "none",
           }}
         >
-          {isQuoteConfirmation ?
-            <Checkbox
-              icon={<CheckboxIcon />}
-              checkedIcon={<CheckboxCheckedIcon />}
-              checked={item?.isChecked}
-              onChange={(checked) => handleItemCheck(checked, item.id)}
-            /> :
-            <Checkbox
-              icon={<CheckboxIcon />}
-              checkedIcon={<CheckboxCheckedIcon />}
-            />}
-          {parentIndex}
-        </div>
-      </PrimaryTableCell>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "flex-start",
+              alignItems: "center",
+            }}
+          >
+            {isQuoteConfirmation ?
+              <Checkbox
+                icon={<CheckboxIcon />}
+                checkedIcon={<CheckboxCheckedIcon />}
+                checked={item?.isChecked}
+                onChange={(checked) => handleItemCheck(checked, item.id)}
+              /> :
+              <Checkbox
+                icon={<CheckboxIcon />}
+                checkedIcon={<CheckboxCheckedIcon />}
+              />}
+            {parentIndex}
+          </div>
+        </PrimaryTableCell>
+      }
       <PrimaryTableCell
         style={{
           width: columnWidths[1],
@@ -189,21 +192,23 @@ const RowMappingWidget = ({
             onInputChange={(e) => onInputChangeFinalPrice(e)}
           />
         </div>
+        {
+          router.query.canEdit === "true" && !isQuoteConfirmation && <PrimaryTableCell
+            style={{
+              width: columnWidths[7],
+              ...classes.cellContainerStyle,
+              borderBottom: item?.childsDocumentItems && "none",
+            }}
+          >
+            <MoreMenuWidget
+              quoteItem={item}
+              onClickDuplicateWithDifferentQTY={onClickDuplicateWithDifferentQTY}
+              onClickDeleteQouteItem={onClickDeleteQouteItem}
+              documentType={documentType}
+            />
+          </PrimaryTableCell>
+        }
       </PrimaryTableCell>
-      {!isQuoteConfirmation && <PrimaryTableCell
-        style={{
-          width: columnWidths[7],
-          ...classes.cellContainerStyle,
-          borderBottom: item?.childsDocumentItems && "none",
-        }}
-      >
-        <MoreMenuWidget
-          quoteItem={item}
-          onClickDuplicateWithDifferentQTY={onClickDuplicateWithDifferentQTY}
-          onClickDeleteQouteItem={onClickDeleteQouteItem}
-          documentType={documentType}
-        />
-      </PrimaryTableCell>}
     </TableRow>
   );
 };

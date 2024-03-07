@@ -64,6 +64,7 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
     openDeleteItemModal,
     documentItems,
     tableHeaders,
+    filteredTableHeaders,
     columnWidths,
     headerHeight,
     quoteItems,
@@ -339,25 +340,26 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
                 paddingRight: 12,
               }}
             >
-              {documentType !== DOCUMENT_TYPE.receipt && <QuoteForPriceTable
-                documentItems={isQuoteConfirmation ? quoteConfirm?.documentItems : documentItems}
-                tableHeaders={tableHeaders}
-                columnWidths={columnWidths}
-                headerHeight={headerHeight}
-                changedocumentItems={changedocumentItems}
-                getCalculateQuoteItem={getCalculateQuoteItem}
-                onClickDuplicateWithDifferentQTY={
-                  onClickDuplicateWithDifferentQTY
-                }
-                onClickDeleteQouteItem={onClickDeleteQouteItem}
-                quoteItems={isQuoteConfirmation ? quoteConfirm : quoteItems}
-                changeQuoteItems={changeQuoteItems}
-                getCalculateQuote={getCalculateQuote}
-                changedocumentItemsChild={changedocumentItemsChild}
-                documentType={documentType}
-                getQuote={getQuote}
-                isQuoteConfirmation={isQuoteConfirmation}
-              />
+              {documentType !== DOCUMENT_TYPE.receipt &&
+                <QuoteForPriceTable
+                  documentItems={isQuoteConfirmation ? quoteConfirm?.documentItems : documentItems}
+                  tableHeaders={filteredTableHeaders}
+                  columnWidths={columnWidths}
+                  headerHeight={headerHeight}
+                  changedocumentItems={changedocumentItems}
+                  getCalculateQuoteItem={getCalculateQuoteItem}
+                  onClickDuplicateWithDifferentQTY={
+                    onClickDuplicateWithDifferentQTY
+                  }
+                  onClickDeleteQouteItem={onClickDeleteQouteItem}
+                  quoteItems={isQuoteConfirmation ? quoteConfirm : quoteItems}
+                  changeQuoteItems={changeQuoteItems}
+                  getCalculateQuote={getCalculateQuote}
+                  changedocumentItemsChild={changedocumentItemsChild}
+                  documentType={documentType}
+                  getQuote={getQuote}
+                  isQuoteConfirmation={isQuoteConfirmation}
+                />
               }
               {
                 documentType === DOCUMENT_TYPE.receipt &&
