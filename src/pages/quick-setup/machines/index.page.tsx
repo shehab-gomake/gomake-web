@@ -27,7 +27,7 @@ export default function QuickSetupMachinesPage() {
         <CustomerAuthLayout disableHeaderSideMenu={true}>
             <QuickSetupLayout pageTitle={'What\'s in your tech squad? Introduce your machines.'}
                               headerColor={'primary'}>
-                <MachinesSetupWidget header={'signup.finishMachinesHeader'} nextStep={'/quick-setup/materials'} categories={machinesCategories.filter(category => !notIncludedCategories?.includes(category.id)).map(category => category.id)}/>
+                <MachinesSetupWidget header={'signup.finishMachinesHeader'} nextStep={'/quick-setup/materials/pricing'} categories={machinesCategories.filter(category => !notIncludedCategories?.includes(category.id)).map(category => category.id)}/>
             </QuickSetupLayout>
         </CustomerAuthLayout>
     );

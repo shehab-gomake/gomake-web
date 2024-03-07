@@ -65,7 +65,8 @@ const useQuickSetupProducts = () => {
             }
         }
         await quickSetupUpdateNextStep(callApi, callBack, {
-            nextStepUrl: +productIndex === products?.length ? '/quick-setup/finish' : `/quick-setup/products/${+productIndex + 1}`
+            nextStepUrl: +productIndex === products?.length ? '/quick-setup/finish' : `/quick-setup/products/${+productIndex + 1}`,
+            isFinalStep: false
         })
     }
 
