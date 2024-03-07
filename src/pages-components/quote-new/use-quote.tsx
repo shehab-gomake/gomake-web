@@ -250,6 +250,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
           getQuote();
         } else {
           alertFaultAdded();
+          setSelectDate(quoteItemValue?.dueDate);
         }
       }
       await updateDueDateApi(callApi, callBack, {
