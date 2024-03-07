@@ -28,7 +28,7 @@ import { CopyFromOrderModal } from "@/widgets/quote-new/modals-widgets/copy-from
 import { ReceiptsTable } from "@/widgets/quote-new/receipts-table";
 import { useRouter } from "next/router";
 import { usePaymentsTable } from "@/widgets/quote-new/receipts-table/use-payments-table";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { StepType, useTour } from "@reactour/tour";
 import { useGoMakeTour } from "@/hooks/use-go-make-tour";
 
@@ -209,12 +209,11 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
       }
     },
   ]
+  const [docNumber, setDocNumber] = useState(quoteState?.number)
+  useEffect(() => {
+    setDocNumber(quoteState?.number)
+  }, [quoteState?.number, router, quoteState, isQuoteConfirmation])
   const { } = useGoMakeTour(quoteSteps, []);
-  /*useEffect(() => {
-      setSteps(quoteSteps);
-      setIsOpen(true);
-      setCurrentStep(0);
-  }, []);*/
   return (
     <>
       {quoteState?.id && (
@@ -230,7 +229,7 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
                     color="rgba(241, 53, 163, 1)"
                   />
                   {!router?.query?.isNewCreation && <div style={classes.quoteNumberStyle}>
-                    {" - "} {quoteState?.number}
+                    {" - "} {docNumber}
                   </div>}
 
                 </div>

@@ -678,7 +678,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
         {
           documentType: docType,
           document: {
-            exchangeRate: quoteItemValue?.exchangeRate,
+            exchangeRate: quoteItemValue?.exchangeRate == 0 ? 1 : quoteItemValue?.exchangeRate,
             price: quoteItem?.price,
             discount: quoteItem?.discount,
             finalPrice: quoteItemEdit?.finalPrice,
@@ -799,8 +799,8 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
             discount: updatedQuoteItemValue?.discount,
             discountAmount: updatedQuoteItemValue?.discountAmount,
             totalPayment: updatedQuoteItemValue?.totalPayment,
-            vat: updatedQuoteItemValue?.vat,
-            totalVAT: updatedQuoteItemValue?.totalVAT,
+            vat: updatedQuoteItemValue?.vat || 0.17,
+            totalVAT: updatedQuoteItemValue?.totalVAT || 0.17,
             documentItems: updatedQuoteItemValue?.documentItems.map(item => ({
               finalPrice: item.finalPrice
             }))
@@ -816,7 +816,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
         updatedQuoteItemValue.totalPriceAfterDiscount = _data.totalPriceAfterDiscount;
         updatedQuoteItemValue.totalVAT = _data.totalVAT;
         updatedQuoteItemValue.vat = _data.vat;
-        updatedQuoteItemValue.exchangeRate = documentItems[0]?.exchangeRate;
+        updatedQuoteItemValue.exchangeRate = documentItems[0]?.exchangeRate === 0 ? 1 : documentItems[0]?.exchangeRate;
         setQuoteItemValue(updatedQuoteItemValue);
       }
     }
@@ -861,7 +861,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
         {
           documentType: docType,
           document: {
-            exchangeRate: quoteItemValue?.exchangeRate,
+            exchangeRate: quoteItemValue?.exchangeRate === 0 ? 1 : quoteItemValue?.exchangeRate,
             totalPrice: quoteItemValue?.totalPrice,
             data,
             calculationType,
@@ -869,8 +869,8 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
             discount: data,
             discountAmount: quoteItemValue?.discountAmount,
             totalPayment: quoteItemValue?.totalPayment,
-            vat: quoteItemValue?.vat,
-            totalVAT: quoteItemValue?.totalVAT,
+            vat: quoteItemValue?.vat || 0.17,
+            totalVAT: quoteItemValue?.totalVAT || 0.17,
             documentItems: quoteItemValue.documentItems?.map(item => ({
               finalPrice: item.finalPrice
             }))
@@ -1066,7 +1066,8 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
       {
         documentType: docType,
         document: {
-          ...quoteItemValue
+          ...quoteItemValue,
+          exchangeRate: quoteItemValue.exchangeRate === 0 ? 1 : quoteItemValue.exchangeRate
         }
       }
     );

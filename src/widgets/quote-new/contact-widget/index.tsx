@@ -4,7 +4,6 @@ import { ContactMapping } from "./contact-mapping";
 import { AddContactNewWidget } from "./add-contact-widget";
 import { GoMakeDeleteModal } from "@/components";
 import { useTranslation } from "react-i18next";
-import { useState } from "react";
 
 const ContactNewWidget = ({
   handleShowLess,
@@ -38,7 +37,6 @@ const ContactNewWidget = ({
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
-  const [isConfirmation, setIsConfirmation] = useState();
   return (
     <>
       <div style={classes.mainContainer}>
@@ -56,13 +54,13 @@ const ContactNewWidget = ({
                   items={items}
                   changeItems={changeItems}
                   updateClientContact={updateClientContact}
-                  isQuoteConfirmation={isQuoteConfirmation }
+                  isQuoteConfirmation={isQuoteConfirmation}
                 />
               ))}
             </div>
           </>
         ) : (
-          !isQuoteConfirmation && 
+          !isQuoteConfirmation &&
           <div
             style={classes.addNewContactNameStyle}
             onClick={() => setIsDisplayWidget(true)}

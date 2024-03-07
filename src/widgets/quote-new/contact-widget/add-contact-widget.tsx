@@ -45,7 +45,7 @@ const AddContactNewWidget = ({
           value={
             selectedContactById?.phone !== null
               ? selectedContactById?.phone
-              : ""
+              : t("sales.quote.noMobileContact")
           }
           label={t("sales.quote.mobileContact")}
           onBlur={onBlurContactMobile}
