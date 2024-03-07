@@ -24,6 +24,8 @@ import { AddRowModal } from "./components/add-row/add-row-modal";
 import { useMaterialsCategories } from "./use-materials-categories";
 import Pagination from "@mui/material/Pagination";
 import { GoMakeDeleteModal } from "@/components";
+import {StepType} from "@reactour/tour";
+import {useGoMakeTour} from "@/hooks/use-go-make-tour";
 interface IMaterialsWidgetProps {
   isAdmin: boolean;
 }
@@ -45,7 +47,6 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
     materialType,
     materialsCategoriesList,
     onSelectCategory,
-    tableRows,
     getCurrenciesApi,
     getMaterialCategories,
     getMaterialTableHeaders,
@@ -73,11 +74,35 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
     (category) => category.categoryKey === materialCategory?.toString()
   )?.categoryName;
 
-  const tableRowData = tableRowsNew;
+  const materialsSteps: StepType[] = [
+    {
+      selector: '[data-tour="materialsCategories"]',
+      content: 'Here, you can navigate between sheet types and add new types as needed.',
+      position: 'right',
 
+    },
+    {
+      selector: '[data-tour="materialsActions"]',
+      content: 'Click on the menu to discover all options: Edit price, Update all selected prices by percentage, Change currency, Add and duplicate new, and more',
+      position: 'left',
+      styles: {
+        maskWrapper: (base) => ({...base, zIndex: 1}),
+      },
+    },
+    {
+      selector: '[data-tour="menuMachines"]',
+      content: 'Take your time to explore and discover all materials later. Now, let\'s proceed to view the list of machines.\n Please press "Machines" in the bar.',
+      position: 'left',
+      styles: {
+        maskWrapper: (base) => ({...base, zIndex: 1000000}),
+      },
+    },
+  ]
+  const {} = useGoMakeTour(materialsSteps, []);
   const Side = () => (
     <Stack direction={"column"} gap={"10px"}>
       <SideList
+          data-tour={'materialsCategories'}
         list={materialsCategoriesList()}
         selectedItem={materialCategory?.toString()}
         onSelect={onSelectCategory}
@@ -187,7 +212,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
         </div>
         <FiltersActionsBar isAdmin={props.isAdmin} />
       </div>
-      <SideBarContainer side={Side()} subHeader={""}>
+      <SideBarContainer sideDataTour={'materialsCategories'} bodyDataTour={'materialsTableData'} side={Side()} subHeader={""}>
         {materialCategory && (
           <Stack gap={2}>
             <div style={{ minHeight: "70vh" }}>

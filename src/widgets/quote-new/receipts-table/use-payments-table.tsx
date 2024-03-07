@@ -129,7 +129,7 @@ const usePaymentsTable = () => {
         });
     };
 
-    const handleSave = () => {
+    const handleSave = (transactionData?) => {
         const isSecondCreditCardEmpty = Object.keys(secondCreditCard).length === 0 && secondCreditCard.constructor === Object;
         const receiptItemCopy = {
             ...documentItemValue,
@@ -145,7 +145,7 @@ const usePaymentsTable = () => {
             checksAccount: checkAccountCode,
             cashAccount: cashAccountCode,
             creditCardTotal: totalCreditCard,
-            receiptCreditCards: isSecondCreditCardEmpty ? [] : [secondCreditCard],
+            receiptCreditCards: isSecondCreditCardEmpty ? (transactionData ? [transactionData] : []) : [secondCreditCard],
         };
         setDocumentItemValue(receiptItemCopy);
         setFinalTotalPayment(totalPayment);

@@ -1,28 +1,28 @@
-import {useCallback, useEffect, useState} from "react";
-import {IBoard, ICurrentStation} from "@/widgets/production-floor-widget/interface";
+import { useCallback, useEffect, useState } from "react";
+import { IBoard, ICurrentStation } from "@/widgets/production-floor-widget/interface";
 import {
     getAllWorkJobsApi,
     updateWorkJobStatusApi
 } from "@/services/api-service/production-floor/production-floor-endpoints";
-import {useGomakeAxios} from "@/hooks";
-import {SecondaryCheckBox} from "@/components/check-box/secondary-check-box";
-import {TaskCategoryLabel} from "@/widgets/production-floor-widget/components/task-category-label";
-import {EStatus, StatusBtn} from "@/widgets/production-floor-widget/components/status-btn";
-import {OptionsButton} from "@/components/options-button/options-button";
+import { useGomakeAxios } from "@/hooks";
+import { SecondaryCheckBox } from "@/components/check-box/secondary-check-box";
+import { TaskCategoryLabel } from "@/widgets/production-floor-widget/components/task-category-label";
+import { EStatus, StatusBtn } from "@/widgets/production-floor-widget/components/status-btn";
+import { OptionsButton } from "@/components/options-button/options-button";
 import Link from "next/link";
-import {formatDate} from "tough-cookie";
-import {DateFormatterDDMMYYYY} from "@/utils/adapter";
-import {useRouter} from "next/router";
-import {useRecoilState, useRecoilValue} from "recoil";
-import {productionStatusesState, workJobsState} from "@/widgets/production-floor-widget/state";
-import {useDateFormat} from "@/hooks/use-date-format";
-import {useProductionFloorSignalr} from "@/hooks/signalr/use-production-floor-signalr";
+import { formatDate } from "tough-cookie";
+import { DateFormatterDDMMYYYY } from "@/utils/adapter";
+import { useRouter } from "next/router";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { productionStatusesState, workJobsState } from "@/widgets/production-floor-widget/state";
+import { useDateFormat } from "@/hooks/use-date-format";
+import { useProductionFloorSignalr } from "@/hooks/signalr/use-production-floor-signalr";
 
 const useProductionFloor = () => {
-    const {callApi} = useGomakeAxios();
-    const {GetDateFormat} = useDateFormat();
+    const { callApi } = useGomakeAxios();
+    const { GetDateFormat } = useDateFormat();
     const [workJobs, setWorkJobs] = useRecoilState(workJobsState);
-    const {query} = useRouter();
+    const { query } = useRouter();
     const statuses = useRecoilValue(productionStatusesState);
     const [load, setLoad] = useState(false)
     const data = useProductionFloorSignalr();
@@ -33,28 +33,27 @@ const useProductionFloor = () => {
         }
         return {} as IBoard
     }, [query, workJobs])
-    useEffect(()=>console.log(data),[data])
     const tableHeaders = ['', 'jobs', 'task category', 'station', 'status', 'customer', "Station Delivery time", 'Delivery time', 'tags', 'more']
     const demo = [
-        {id: '1', name: 'demo1', checked: true},
-        {id: '2', name: 'demo2', checked: true},
-        {id: '3', name: 'demo3', checked: true},
-        {id: '4', name: 'demo4', checked: true},
-        {id: '5', name: 'demo5', checked: true},
-        {id: '6', name: 'demo6', checked: true},
-        {id: '7', name: 'demo7', checked: true},
-        {id: '8', name: 'demo8', checked: true},
-        {id: '9', name: 'demo9', checked: true},
-        {id: '10', name: 'demo10', checked: true}]
-    const mockData :IBoard[] = [
+        { id: '1', name: 'demo1', checked: true },
+        { id: '2', name: 'demo2', checked: true },
+        { id: '3', name: 'demo3', checked: true },
+        { id: '4', name: 'demo4', checked: true },
+        { id: '5', name: 'demo5', checked: true },
+        { id: '6', name: 'demo6', checked: true },
+        { id: '7', name: 'demo7', checked: true },
+        { id: '8', name: 'demo8', checked: true },
+        { id: '9', name: 'demo9', checked: true },
+        { id: '10', name: 'demo10', checked: true }]
+    const mockData: IBoard[] = [
         {
             id: "3123",
             currentStation: {
-                name:'Cutting',
-                id:'',
-                actionId:'',
-                machineId:"",
-                employeeId:""
+                name: 'Cutting',
+                id: '',
+                actionId: '',
+                machineId: "",
+                employeeId: ""
             },
             boardMissionNumber: "D7781",
             orderNumber: "O-124888",
@@ -70,18 +69,18 @@ const useProductionFloor = () => {
             creationDate: new Date(),
             stationInDate: new Date(),
             tags: ["#cover"],
-            workOrder:"",
-            startDate:new Date(),
+            workOrder: "",
+            startDate: new Date(),
             checked: false
         },
         {
             id: "5122",
             currentStation: {
-                name:'Printing',
-                id:'',
-                actionId:'',
-                machineId:"",
-                employeeId:""
+                name: 'Printing',
+                id: '',
+                actionId: '',
+                machineId: "",
+                employeeId: ""
             },
             boardMissionNumber: "DB8981",
             orderNumber: "O-124890",
@@ -96,19 +95,19 @@ const useProductionFloor = () => {
             dueDate: new Date(),
             creationDate: new Date(),
             stationInDate: new Date(),
-            tags: ["",""],
-            workOrder:"",
-            startDate:new Date(),
+            tags: ["", ""],
+            workOrder: "",
+            startDate: new Date(),
             checked: false
         },
         {
             id: "88991",
             currentStation: {
-                name:'Finish',
-                id:'',
-                actionId:'',
-                machineId:"",
-                employeeId:""
+                name: 'Finish',
+                id: '',
+                actionId: '',
+                machineId: "",
+                employeeId: ""
             },
             boardMissionNumber: "DB8983",
             orderNumber: "O-124890",
@@ -123,19 +122,19 @@ const useProductionFloor = () => {
             dueDate: new Date(),
             creationDate: new Date(),
             stationInDate: new Date(),
-            tags: ["",""],
-            workOrder:"",
-            startDate:new Date(),
+            tags: ["", ""],
+            workOrder: "",
+            startDate: new Date(),
             checked: false
         },
         {
             id: "512112",
             currentStation: {
-                name:'Printing',
-                id:'',
-                actionId:'',
-                machineId:"",
-                employeeId:""
+                name: 'Printing',
+                id: '',
+                actionId: '',
+                machineId: "",
+                employeeId: ""
             },
             boardMissionNumber: "F8985",
             orderNumber: "O-124892",
@@ -150,19 +149,19 @@ const useProductionFloor = () => {
             dueDate: new Date(),
             creationDate: new Date(),
             stationInDate: new Date(),
-            tags: ["",""],
-            workOrder:"",
-            startDate:new Date(),
+            tags: ["", ""],
+            workOrder: "",
+            startDate: new Date(),
             checked: false
         },
         {
             id: "988122",
             currentStation: {
-                name:'Pre printing',
-                id:'',
-                actionId:'',
-                machineId:"",
-                employeeId:""
+                name: 'Pre printing',
+                id: '',
+                actionId: '',
+                machineId: "",
+                employeeId: ""
             },
             boardMissionNumber: "F8986",
             orderNumber: "O-124892",
@@ -177,19 +176,19 @@ const useProductionFloor = () => {
             dueDate: new Date(),
             creationDate: new Date(),
             stationInDate: new Date(),
-            tags: ["",""],
-            workOrder:"",
-            startDate:new Date(),
+            tags: ["", ""],
+            workOrder: "",
+            startDate: new Date(),
             checked: false
         },
         {
             id: "6612",
             currentStation: {
-                name:'Packaging',
-                id:'',
-                actionId:'',
-                machineId:"",
-                employeeId:""
+                name: 'Packaging',
+                id: '',
+                actionId: '',
+                machineId: "",
+                employeeId: ""
             },
             boardMissionNumber: "X8312",
             orderNumber: "O-124597",
@@ -204,19 +203,19 @@ const useProductionFloor = () => {
             dueDate: new Date(),
             creationDate: new Date(),
             stationInDate: new Date(),
-            tags: ["",""],
-            workOrder:"",
-            startDate:new Date(),
+            tags: ["", ""],
+            workOrder: "",
+            startDate: new Date(),
             checked: false
         },
         {
             id: "55323",
             currentStation: {
-                name:'Cutting',
-                id:'',
-                actionId:'',
-                machineId:"",
-                employeeId:""
+                name: 'Cutting',
+                id: '',
+                actionId: '',
+                machineId: "",
+                employeeId: ""
             },
             boardMissionNumber: "D7783",
             orderNumber: "O-124869",
@@ -232,18 +231,18 @@ const useProductionFloor = () => {
             creationDate: new Date(),
             stationInDate: new Date(),
             tags: ["#cover"],
-            workOrder:"",
-            startDate:new Date(),
+            workOrder: "",
+            startDate: new Date(),
             checked: false
         },
         {
             id: "55215",
             currentStation: {
-                name:'Printing',
-                id:'',
-                actionId:'',
-                machineId:"",
-                employeeId:""
+                name: 'Printing',
+                id: '',
+                actionId: '',
+                machineId: "",
+                employeeId: ""
             },
             boardMissionNumber: "DB8983",
             orderNumber: "O-124892",
@@ -258,19 +257,19 @@ const useProductionFloor = () => {
             dueDate: new Date(),
             creationDate: new Date(),
             stationInDate: new Date(),
-            tags: ["",""],
-            workOrder:"",
-            startDate:new Date(),
+            tags: ["", ""],
+            workOrder: "",
+            startDate: new Date(),
             checked: false
         },
         {
             id: "656556",
             currentStation: {
-                name:'Printing',
-                id:'',
-                actionId:'',
-                machineId:"",
-                employeeId:""
+                name: 'Printing',
+                id: '',
+                actionId: '',
+                machineId: "",
+                employeeId: ""
             },
             boardMissionNumber: "DB8987",
             orderNumber: "O-124890",
@@ -285,19 +284,19 @@ const useProductionFloor = () => {
             dueDate: new Date(),
             creationDate: new Date(),
             stationInDate: new Date(),
-            tags: ["",""],
-            workOrder:"",
-            startDate:new Date(),
+            tags: ["", ""],
+            workOrder: "",
+            startDate: new Date(),
             checked: false
         },
         {
             id: "553523",
             currentStation: {
-                name:'Printing',
-                id:'',
-                actionId:'',
-                machineId:"",
-                employeeId:""
+                name: 'Printing',
+                id: '',
+                actionId: '',
+                machineId: "",
+                employeeId: ""
             },
             boardMissionNumber: "F8987",
             orderNumber: "O-124865",
@@ -312,19 +311,19 @@ const useProductionFloor = () => {
             dueDate: new Date(),
             creationDate: new Date(),
             stationInDate: new Date(),
-            tags: ["",""],
-            workOrder:"",
-            startDate:new Date(),
+            tags: ["", ""],
+            workOrder: "",
+            startDate: new Date(),
             checked: false
         },
         {
             id: "6643434",
             currentStation: {
-                name:'Graphics',
-                id:'',
-                actionId:'',
-                machineId:"",
-                employeeId:""
+                name: 'Graphics',
+                id: '',
+                actionId: '',
+                machineId: "",
+                employeeId: ""
             },
             boardMissionNumber: "F8977",
             orderNumber: "O-124854",
@@ -339,19 +338,19 @@ const useProductionFloor = () => {
             dueDate: new Date(),
             creationDate: new Date(),
             stationInDate: new Date(),
-            tags: ["",""],
-            workOrder:"",
-            startDate:new Date(),
+            tags: ["", ""],
+            workOrder: "",
+            startDate: new Date(),
             checked: false
         },
         {
             id: "53322",
             currentStation: {
-                name:'Finish',
-                id:'',
-                actionId:'',
-                machineId:"",
-                employeeId:""
+                name: 'Finish',
+                id: '',
+                actionId: '',
+                machineId: "",
+                employeeId: ""
             },
             boardMissionNumber: "X8344",
             orderNumber: "O-124567",
@@ -366,19 +365,19 @@ const useProductionFloor = () => {
             dueDate: new Date(),
             creationDate: new Date(),
             stationInDate: new Date(),
-            tags: ["",""],
-            workOrder:"",
-            startDate:new Date(),
+            tags: ["", ""],
+            workOrder: "",
+            startDate: new Date(),
             checked: false
         },
         {
             id: "662223",
             currentStation: {
-                name:'Printing',
-                id:'',
-                actionId:'',
-                machineId:"",
-                employeeId:""
+                name: 'Printing',
+                id: '',
+                actionId: '',
+                machineId: "",
+                employeeId: ""
             },
             boardMissionNumber: "F8960",
             orderNumber: "O-124886",
@@ -393,19 +392,19 @@ const useProductionFloor = () => {
             dueDate: new Date(),
             creationDate: new Date(),
             stationInDate: new Date(),
-            tags: ["",""],
-            workOrder:"",
-            startDate:new Date(),
+            tags: ["", ""],
+            workOrder: "",
+            startDate: new Date(),
             checked: false
         },
         {
             id: "553222",
             currentStation: {
-                name:'Pre printing',
-                id:'',
-                actionId:'',
-                machineId:"",
-                employeeId:""
+                name: 'Pre printing',
+                id: '',
+                actionId: '',
+                machineId: "",
+                employeeId: ""
             },
             boardMissionNumber: "F8955",
             orderNumber: "O-124854",
@@ -420,19 +419,19 @@ const useProductionFloor = () => {
             dueDate: new Date(),
             creationDate: new Date(),
             stationInDate: new Date(),
-            tags: ["",""],
-            workOrder:"",
-            startDate:new Date(),
+            tags: ["", ""],
+            workOrder: "",
+            startDate: new Date(),
             checked: false
         },
         {
             id: "53523",
             currentStation: {
-                name:'Packaging',
-                id:'',
-                actionId:'',
-                machineId:"",
-                employeeId:""
+                name: 'Packaging',
+                id: '',
+                actionId: '',
+                machineId: "",
+                employeeId: ""
             },
             boardMissionNumber: "X8332",
             orderNumber: "O-1245997",
@@ -447,9 +446,9 @@ const useProductionFloor = () => {
             dueDate: new Date(),
             creationDate: new Date(),
             stationInDate: new Date(),
-            tags: ["",""],
-            workOrder:"",
-            startDate:new Date(),
+            tags: ["", ""],
+            workOrder: "",
+            startDate: new Date(),
             checked: false
         }
     ]
@@ -474,11 +473,11 @@ const useProductionFloor = () => {
                 setWorkJobs(workJobs.map(job => job.id === id ? res.data : job))
             }
         }
-        await updateWorkJobStatusApi(callApi, callBack, {id, status})
+        await updateWorkJobStatusApi(callApi, callBack, { id, status })
     }
 
     const handleBordMissionChange = (id: string) => {
-        setWorkJobs(workJobs.map(mission => mission.id === id ? {...mission, checked: !mission.checked} : mission))
+        setWorkJobs(workJobs.map(mission => mission.id === id ? { ...mission, checked: !mission.checked } : mission))
     }
 
     const getWorkJobsRows = useCallback(() => {
@@ -488,12 +487,12 @@ const useProductionFloor = () => {
             .map(workJob => ({
                 checked: workJob.checked,
                 values: [
-                    <SecondaryCheckBox checked={workJob.checked} onChange={() => handleBordMissionChange(workJob.id)}/>,
+                    <SecondaryCheckBox checked={workJob.checked} onChange={() => handleBordMissionChange(workJob.id)} />,
                     <Link
                         href={'/production-floor?productId=' + workJob.id}>{`${workJob.boardMissionNumber}\\${workJob.orderNumber}`}</Link>,
-                    <TaskCategoryLabel label={workJob.productName}/>,
+                    <TaskCategoryLabel label={workJob.productName} />,
                     workJob.currentStation.name,
-                    <StatusBtn id={workJob.id} onChange={onUpdateStatus} status={workJob.statusId}/>,
+                    <StatusBtn id={workJob.id} onChange={onUpdateStatus} status={workJob.statusId} />,
                     workJob?.orderNumber.toString(),
                     GetDateFormat(workJob.stationInDate),
                     GetDateFormat(workJob.actionDueDate),
@@ -514,4 +513,4 @@ const useProductionFloor = () => {
     }
 }
 
-export {useProductionFloor}
+export { useProductionFloor }

@@ -43,7 +43,8 @@ const useMaterialsPricing = () => {
             }
         }
         await quickSetupUpdateNextStep(callApi, callBack, {
-            nextStepUrl: '/quick-setup/products/1'
+            nextStepUrl: '/quick-setup/products/1',
+            IsFinalStep: false
         })
     }
 

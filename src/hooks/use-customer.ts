@@ -10,6 +10,7 @@ import {userProfileState} from "@/store/user-profile";
 import {useTranslation} from "react-i18next";
 import {Permissions} from "@/components/CheckPermission/enum";
 import {printHouseProfile} from "@/store/print-house-profile";
+import {startGuideTourState} from "@/store/tour-state";
 
 
 const useCustomer = (permissionEnumValue?:Permissions,allowAnonymous?:boolean) => {
@@ -24,7 +25,7 @@ const useCustomer = (permissionEnumValue?:Permissions,allowAnonymous?:boolean) =
     const [adminsAutoComplate, setAdminsAutoComplate] = useState([]);
     const [permissions, setPermissions] = useRecoilState<any>(permissionsState);
     const {navigate} = useGomakeRouter();
-
+    const setStartGuid = useSetRecoilState(startGuideTourState);
     const {i18n} = useTranslation();
     const logOut = useCallback(() => {
         setUser({});
@@ -42,6 +43,8 @@ const useCustomer = (permissionEnumValue?:Permissions,allowAnonymous?:boolean) =
             updateTokenStorage(user?.token);
             const userPermissions = [...user.permissions];
             user.permissions = null;
+            setStartGuid(!!user?.isFirstLogin);
+            localStorage.setItem("isHover", !!user?.isFirstLogin ? "true" : 'false');
             setUser({...user, type: "user"});
             setUserType({type: "user"});
             setUserProfile(validate?.data?.data?.customer);

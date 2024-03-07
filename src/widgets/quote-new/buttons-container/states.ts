@@ -19,14 +19,6 @@ export interface CheckData {
   checkSum: number;
 }
 
-export interface ERPAccountsData {
-  balance: number;
-  code: string;
-  cpaAcount: string;
-  isDefault: boolean;
-  name: string;
-}
-
 export interface transactionOptionsData {
   id: string;
   text: string;
@@ -124,10 +116,6 @@ export const checksRowState = atom<CheckData[]>({
   ],
 });
 
-export const ERPAccountsState = atom<ERPAccountsData[]>({
-  key: "ERPAccountsState",
-  default: [],
-});
 
 export const transferTabState = atom<TransferTabData>({
   key: "transferTabState",

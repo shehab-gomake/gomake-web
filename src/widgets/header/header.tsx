@@ -16,7 +16,7 @@ import {
 import { useStyle } from "./style";
 import { useHeader } from "./use-header";
 import { ColoredCycle, GoMakeMenu, GoMakeTextInputIcon } from "@/components";
-import { useRecoilState, useRecoilValue } from "recoil";
+import {useRecoilState, useRecoilValue, useSetRecoilState} from "recoil";
 import { userProfileState } from "@/store/user-profile";
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import { QuoteIfExistState } from "@/pages-components/quote/store/quote";
@@ -26,7 +26,8 @@ import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { PrimaryButton } from "@/components/button/primary-button";
 import { SecondaryButton } from "@/components/button/secondary-button";
 import { MarkIcon } from "@/icons/mark-icon";
-
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+import {startGuideTourState} from "@/store/tour-state";
 const HeaderWidget = () => {
   const { clasess } = useStyle();
   const { t } = useTranslation();
@@ -48,6 +49,7 @@ const HeaderWidget = () => {
     handleClickNotify,
     handleCloseNotify,
   } = useHeader();
+  const setStartGuid = useSetRecoilState(startGuideTourState);
   const userAvatar = () => {
     return !!userProfile.imagePath ? (
       <Avatar style={clasess.avatarProps} src={userProfile.imagePath} />
@@ -68,6 +70,9 @@ const HeaderWidget = () => {
       {/* <SearchInputComponent onChange={() => null} searchInputStyle={clasess.searchInputContainer} /> */}
       <div style={{ width: "100%" }} />
       <div style={clasess.rightSideContainer}>
+        <IconButton data-tour={'start-tour-btn'} onClick={() => setStartGuid(true)}>
+          <HelpOutlineIcon/>
+        </IconButton>
         {QuoteIfExist == true && window.location.pathname != "/quote" && (
           <IconButton onClick={() => navigate("/quote")}>
             <CartIcon />

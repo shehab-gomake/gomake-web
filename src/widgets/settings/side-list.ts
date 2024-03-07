@@ -22,6 +22,7 @@ export const list: IListItem[] = [
     value: "1",
     icon: ProfileIcon,
     path: "profile",
+    dataTour: 'settingsProfile'
   },
   {
     component: ProductsSettingsWidget,
@@ -31,6 +32,8 @@ export const list: IListItem[] = [
     path: "products",
     editComponent: EditProductWidget,
     subProductComponent: ProductsSettingsWidget,
+    dataTour: 'settingsProductsLink'
+
   },
   {
     component: SettingsMailingWidget,
@@ -52,6 +55,7 @@ export const list: IListItem[] = [
     value: "6",
     icon: PeopleIcon,
     path: "users",
+    dataTour: 'usersSettingsLink'
   },
   {
     component: EmptyComponent,

@@ -5,6 +5,8 @@ export interface ISideBarContainer {
   subHeader: string;
   actions?: JSX.Element;
   sideAction?: JSX.Element;
+  sideDataTour?: string;
+  bodyDataTour?: string;
 }
 
 export interface ISideListProps {
@@ -27,4 +29,5 @@ export interface IListItem {
   permission?: string;
   editComponent?: () => JSX.Element;
   subProductComponent?: () => JSX.Element;
+  dataTour?: string;
 }

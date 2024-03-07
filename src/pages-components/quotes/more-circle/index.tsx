@@ -37,8 +37,9 @@ const MoreMenuWidget = ({ quote, documentType, onClickOpenModal, onClickPdf, onC
       }
     }
     else if (documentType !== DOCUMENT_TYPE.quote) {
+      const canEdit = documentType === DOCUMENT_TYPE.order || documentType === DOCUMENT_TYPE.purchaseOrder;
       return (
-        <MenuItem onClick={() => navigate(`/${documentPath}?Id=${quote?.id}`)}>
+        <MenuItem onClick={() => navigate(`/${documentPath}?Id=${quote?.id}&canEdit=${canEdit}`)}>
           <div style={classes.menuRowStyle}>
             <EditingIcon />
             <div style={classes.rowTextStyle}>{t("sales.quote.edit")}</div>
@@ -71,12 +72,12 @@ const MoreMenuWidget = ({ quote, documentType, onClickOpenModal, onClickPdf, onC
 
 
       {
-      documentType !== DOCUMENT_TYPE.receipt && <MenuItem onClick={() => onClickDuplicate(quote?.id)}>
-        <div style={classes.menuRowStyle}>
-          <ConvertIcon />
-          <div style={classes.rowTextStyle}>{t("sales.quote.duplicate")}</div>
-        </div>
-      </MenuItem>
+        documentType !== DOCUMENT_TYPE.receipt && <MenuItem onClick={() => onClickDuplicate(quote?.id)}>
+          <div style={classes.menuRowStyle}>
+            <ConvertIcon />
+            <div style={classes.rowTextStyle}>{t("sales.quote.duplicate")}</div>
+          </div>
+        </MenuItem>
       }
       {renderMenuItem()}
       {

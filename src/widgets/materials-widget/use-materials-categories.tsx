@@ -4,25 +4,32 @@ import {
   IMaterialsTableFilter,
   IMaterialTableFilteringValue
 } from "@/widgets/materials-widget/interface";
-import {useRecoilState, useRecoilValue, useSetRecoilState} from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import {
   activeFilterState, isAllMaterialsCheckedState,
   materialCategoryDataState, materialsTablePageState, materialTableFiltersState,
 } from "@/widgets/materials-widget/state";
 import { EMaterialActiveFilter } from "./enums";
-import { useState } from "react";
-import {getPrintHouseMaterialCategoryDataApi} from "@/services/api-service/materials/printhouse-materials-endpoints";
-import {getMaterialCategoryDataApi} from "@/services/api-service/materials/materials-endpoints";
+import { useEffect, useState } from "react";
+import { getPrintHouseMaterialCategoryDataApi } from "@/services/api-service/materials/printhouse-materials-endpoints";
+import { getMaterialCategoryDataApi } from "@/services/api-service/materials/materials-endpoints";
 
-const useMaterialsCategories = (isAdmin:boolean) => {
+const useMaterialsCategories = (isAdmin: boolean) => {
+  const [inActiveFilter, setInActiveFilter] = useState<boolean>()
   const { callApi } = useGomakeAxios();
   const setMaterialCategoryData = useSetRecoilState<IMaterialCategoryRow[]>(
     materialCategoryDataState
   );
   const setMaterialTableFilters = useSetRecoilState<IMaterialsTableFilter[]>(
-      materialTableFiltersState
+    materialTableFiltersState
   );
   const [activeFilter, setActiveFilter] = useRecoilState(activeFilterState);
+  useEffect(() => {
+    if (inActiveFilter) {
+      setActiveFilter(EMaterialActiveFilter.INACTIVE)
+
+    }
+  }, [inActiveFilter])
   const [pagesCount, setPagesCount] = useState(0);
   const [pageNumber, setPageNumber] = useRecoilState(materialsTablePageState);
   const isAllMaterialsChecked = useRecoilValue<boolean>(isAllMaterialsCheckedState);
@@ -34,51 +41,54 @@ const useMaterialsCategories = (isAdmin:boolean) => {
     supplierId: string,
     pageNumber?: number,
     pageSize?: number,
-    
+
   ) => {
     const callBack = (res) => {
       if (res.success) {
+
         setMaterialCategoryData(
           res.data?.result?.data?.map((row) => ({ ...row, checked: isAllMaterialsChecked }))
         );
-        setPagesCount(Math.ceil( res.data?.result?.totalItems / pageSize));
-        const filters =  res.data?.filters;
+        setPagesCount(Math.ceil(res.data?.result?.totalItems / pageSize));
+        const filters = res.data?.filters;
         setMaterialTableFilters(filters);
+        setInActiveFilter(res.data?.setInActiveFilter)
+
       }
     };
     const isActive =
       activeFilter === EMaterialActiveFilter.ACTIVE
         ? true
         : activeFilter === EMaterialActiveFilter.INACTIVE
-        ? false
-        : null;
-    if(isAdmin){
+          ? false
+          : null;
+    if (isAdmin) {
       const data = await getMaterialCategoryDataApi(callApi, callBack, {
         materialKey: materialType,
         categoryKey: materialCategory,
         pageNumber,
         pageSize,
         customFiltersKeyValueList
-      }).catch(e=>{
-        
+      }).catch(e => {
+
       });
-    }else{
-       await getPrintHouseMaterialCategoryDataApi(callApi, callBack, {
+    } else {
+      await getPrintHouseMaterialCategoryDataApi(callApi, callBack, {
         materialKey: materialType,
         categoryKey: materialCategory,
         supplierId,
         pageNumber,
         pageSize,
-        isActive, 
-         customFiltersKeyValueList
-      }).catch(e=>{
-         setMaterialCategoryData([])
-         setPagesCount(0);
-         setMaterialTableFilters([])
-       });
-     
+        isActive,
+        customFiltersKeyValueList
+      }).catch(e => {
+        setMaterialCategoryData([])
+        setPagesCount(0);
+        setMaterialTableFilters([])
+      });
+
     }
-    
+
   };
 
   return {

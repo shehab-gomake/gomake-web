@@ -40,7 +40,7 @@ const CreditCardTab = ({
     return (
         <div style={{ display: "flex", flexDirection: "column" as "column", gap: "10px" }} >
             {
-                cardTransactionsOptions && <div style={{ width: "75%", alignSelf: "center" }}>
+                cardTransactionsOptions && !isTransacted && <div style={{ width: "75%", alignSelf: "center" }}>
                     <GoMakeAutoComplate
                         key={"chooseExistingCard-select"}
                         value={transactionSelected}

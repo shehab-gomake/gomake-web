@@ -132,7 +132,7 @@ const RightSideWidget = ({
           <div style={clasess.totalStyleText}>
             {t("products.offsetPrice.admin.total")}
           </div>
-          <div style={clasess.totalStyle}>
+          <div data-tour={'product-pricing'} style={clasess.totalStyle}>
             {isLoading ? (
               <DotsLoader />
             ) : (
@@ -140,7 +140,7 @@ const RightSideWidget = ({
                 value={
                   calculationExceptionsLogs?.length > 0
                     ? "---------"
-                    : (currentProductItemValueTotalPrice ? currentProductItemValueTotalPrice.toFixed(2) : currentProductItemValueTotalPrice) ?? "---------"
+                    : currentProductItemValueTotalPrice ?? "---------"
                 }
                 onChange={(e: any) => {
                   setCurrentProductItemValueTotalPrice(e.target.value);

@@ -64,7 +64,13 @@ const EditableKeyValueViewComponent = ({
                                            source
                                        }: IKeyValueViewProps) => {
     const {classes} = useStyle();
-    const value = source === EWorkSource.OUT ? !!outSourceValues && outSourceValues[0] ? outSourceValues[0] : '0' : values[0];
+    let value = '0';
+    //source === EWorkSource.OUT ? !!outSourceValues && outSourceValues[0] ? outSourceValues[0] : '0' : values[0]
+    if(source === EWorkSource.OUT && outSourceValues && outSourceValues.length > 0 ){
+        value = outSourceValues[0];
+    }else if(values && values.length > 0){
+        value = values[0];
+    }
     const [edit, setEdit] = useState<boolean>(false);
     const [editValue, setEditValue] = useState<string>(value);
     const handleValueClick = (e) => {

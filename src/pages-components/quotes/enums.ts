@@ -6,7 +6,10 @@ export enum DOCUMENT_TYPE{
     invoice,
     receipt,
     deliveryNoteRefund,
-    invoiceRefund
+    invoiceRefund, 
+    generalLedgerReport,
+    purchaseOrder,
+    purchaseInvoice
 }
 
 export enum QUOTE_STATUSES{

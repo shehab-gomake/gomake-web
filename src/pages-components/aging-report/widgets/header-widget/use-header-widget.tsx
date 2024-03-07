@@ -1,11 +1,8 @@
 import { useTranslation } from "react-i18next";
-import { useEffect } from "react";
 
 import { useStyle } from "./style";
 
 export interface AgingReportHeaderWidgetProps {
-  getAllCustomersCreateQuote: () => void;
-  getAgentCategories: (arg: boolean) => void;
   onSelectDeliveryTimeDates: any;
   resetDatePicker: any;
   handleClickSelectDate: () => void;
@@ -20,19 +17,12 @@ export interface AgingReportHeaderWidgetProps {
   checkWhatRenderArray: (arg: any) => void;
   handleCustomerChange: any;
   detailedReport: boolean,
-  setDetailedReport: any
   onChangeDetailedReport: any;
   onChangeByReferenceDate: any
 }
-const useAgingReportHeader = ({ getAllCustomersCreateQuote, getAgentCategories }) => {
+const useAgingReportHeader = () => {
   const { clasess } = useStyle();
   const { t } = useTranslation()
-
-  useEffect(() => {
-    getAllCustomersCreateQuote();
-    getAgentCategories(true);
-  }, []);
-
   return {
     clasess, t
   };

@@ -13,8 +13,6 @@ import {AddUpdateRole} from "@/widgets/settings-users/Permissions/components/add
 import {useAddRole} from "@/widgets/settings-users/use-add-role";
 import { PermissionCheck } from "@/components/CheckPermission";
 import { Permissions } from "@/components/CheckPermission/enum";
-import { useRecoilState } from "recoil";
-import { permissionsState } from "@/store/permissions";
 import { useUserPermission } from "@/hooks/use-permission";
 
 const SettingsUsersWidget = () => {
@@ -35,7 +33,7 @@ const SettingsUsersWidget = () => {
         
     ];
     return (
-        <div>
+        <div data-tour={'settingUsersWidget'}>
             <PrimaryTabsComponent tabs={tabs} >
                 <div style={{display: "flex", gap: 10}}>
                     <PermissionCheck userPermission={Permissions.ADD_EMPLOYEE} >

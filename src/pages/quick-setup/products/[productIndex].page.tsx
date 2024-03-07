@@ -7,7 +7,7 @@ import {
 export default function QuickSetupPersonalPage() {
     return (
         <CustomerAuthLayout disableHeaderSideMenu={true}>
-            <QuickSetupLayout pageTitle={'What\'s in your tech squad? Introduce your machines.'}
+            <QuickSetupLayout pageTitle={'signup.productsPageTitle'}
                               headerColor={'magenta'}>
                 <QuickSetupProductsComponent/>
             </QuickSetupLayout>

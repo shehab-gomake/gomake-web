@@ -20,11 +20,12 @@ const MaterialsTableComponent = (props:IMaterialsTableComponentProps) => {
   return (
     <div style={classes.mainContainer}>
       <HeaderTitleWithSearch title={props.isAdmin ? t("tabs.materialsAdmin") : t("tabs.materials")} onChange={onFilterChange} />
-      <PrimaryTable
+        <PrimaryTable
         stickyFirstCol={false}
         stickyHeader={false}
         rows={getTableRows()}
         headers={tableHeaders}
+        dataTour={'materialsTable'}
       />
     </div>
   );

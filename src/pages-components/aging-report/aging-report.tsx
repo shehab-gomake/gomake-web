@@ -9,8 +9,6 @@ import { PrimaryTable } from "@/components/tables/primary-table";
 const AgingReportWidget = () => {
   const { clasess } = useStyle();
   const {
-    getAllCustomersCreateQuote,
-    getAgentCategories,
     onSelectDeliveryTimeDates,
     resetDatePicker,
     handleClickSelectDate,
@@ -29,7 +27,6 @@ const AgingReportWidget = () => {
     onClickBtn3,
     showTable,
     detailedReport,
-    setDetailedReport,
     getTableDataRows,
     onChangeDetailedReport,
     onChangeByReferenceDate,
@@ -38,8 +35,6 @@ const AgingReportWidget = () => {
   return (
     <div style={clasess.mainContainer}>
       <AgingReportHeaderWidget
-        getAllCustomersCreateQuote={getAllCustomersCreateQuote}
-        getAgentCategories={getAgentCategories}
         onSelectDeliveryTimeDates={onSelectDeliveryTimeDates}
         resetDatePicker={resetDatePicker}
         handleClickSelectDate={handleClickSelectDate}
@@ -54,7 +49,6 @@ const AgingReportWidget = () => {
         checkWhatRenderArray={checkWhatRenderArray}
         handleCustomerChange={handleCustomerChange}
         detailedReport={detailedReport}
-        setDetailedReport={setDetailedReport}
         onChangeDetailedReport={onChangeDetailedReport}
         onChangeByReferenceDate={onChangeByReferenceDate}
 

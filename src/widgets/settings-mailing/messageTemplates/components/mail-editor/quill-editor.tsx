@@ -12,7 +12,7 @@ import { RightArrowIcon } from "@/components/icons/right-arrow-icon";
 import { useContext } from "react";
 import { IconButton } from "@mui/material";
 import { EditorTYPE } from '../../enums/enum';
-import 'react-quill/dist/quill.snow.css';
+// import 'react-quill/dist/quill.snow.css';
 const ReactQuill = lazy(() => import('react-quill'));
 import debounce from 'lodash.debounce';
 

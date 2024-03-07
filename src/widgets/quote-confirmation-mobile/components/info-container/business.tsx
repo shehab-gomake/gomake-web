@@ -13,7 +13,7 @@ const BusinessWidget = () => {
     const [selectBusiness, setSelectBusiness] = useState<any>({});
     const customersListValue = useRecoilValue<any>(businessListsState);
     const [isConfirmation, setIsConfirmation] = useState();
-    const { renderOptions } = useQuoteWidget();
+    const { renderOptions } = useQuoteWidget({});
 
     const mappedCustomers = renderOptions().map(customer => ({
         text: customer?.name,

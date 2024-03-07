@@ -39,9 +39,13 @@ const useMoreCircle = ({ updatedProduct, item, getActions }) => {
   const [openDeleteRowModal, setOpenDeleteRowModal] = useState<boolean>(false);
   const onClickCloseDeleteRowModal = () => {
     setOpenDeleteRowModal(false);
+    handleClose();
+
   };
   const onClickOpenDeleteRowModal = () => {
     setOpenDeleteRowModal(true);
+    handleClose();
+
   };
 
   const updatedProductInside = useCallback(async (product: any) => {
@@ -90,13 +94,14 @@ const useMoreCircle = ({ updatedProduct, item, getActions }) => {
     getSubProducts();
   }, [selectProduct]);
 
-  const deleteSection = useCallback(
+  const deleteProductById = useCallback(
     async () => {
       const res = await callApi(
         EHttpMethod.DELETE,
         `/v1/printhouse-config/products/delete-product-by-id?Id=${item?.id}`
       );
       if (res?.success) {
+        handleClose()
         alertSuccessDelete();
         onClickCloseDeleteRowModal()
         getActions()
@@ -129,7 +134,7 @@ const useMoreCircle = ({ updatedProduct, item, getActions }) => {
     openDeleteRowModal,
     onClickCloseDeleteRowModal,
     onClickOpenDeleteRowModal,
-    deleteSection
+    deleteProductById
   };
 };
 

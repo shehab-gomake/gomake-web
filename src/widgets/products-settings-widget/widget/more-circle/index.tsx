@@ -32,7 +32,7 @@ const MoreMenuWidget = ({ item, updatedProduct, getActions }: any) => {
     openDeleteRowModal,
     onClickCloseDeleteRowModal,
     onClickOpenDeleteRowModal,
-    deleteSection
+    deleteProductById
   } = useMoreCircle({
     updatedProduct,
     item,
@@ -125,7 +125,7 @@ const MoreMenuWidget = ({ item, updatedProduct, getActions }: any) => {
       <GoMakeDeleteModal
         openModal={openDeleteRowModal}
         onClose={onClickCloseDeleteRowModal}
-        onClickDelete={deleteSection}
+        onClickDelete={deleteProductById}
       />
     </>
   );

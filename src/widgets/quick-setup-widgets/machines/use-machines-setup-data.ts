@@ -4,13 +4,13 @@ import {IMachineItem, machinesSetup, selectedMachinesSetup} from "@/widgets/quic
 import {ECategoryId} from "@/widgets/machines/enums/category-id";
 import {getAdminMachinesByCategories} from "@/services/api-service/machines/admin-machines";
 import {useRouter} from "next/router";
-import {useEffect, useMemo, useState} from "react";
+import {useCallback, useEffect, useMemo, useState} from "react";
 import {MachinesTypes, machinesTypeCategories} from "@/widgets/quick-setup-widgets/machines/const";
 import {machineCategoriesState} from "@/store/machine-categories";
 import {quickSetupAddMachines} from "@/services/api-service/machines/print-house-machines";
 import {useTranslation} from "react-i18next";
 
-const useMachinesSetupData = () => {
+const useMachinesSetupData = (categories: ECategoryId[], nextStep: string) => {
     const [selectedCategory, setSelectedCategory] = useState<ECategoryId | ''>('');
     const [categoryMachines, setCategoryMachines] = useRecoilState(machinesSetup);
     const [printHouseMachines, setPrintHouseMachines] = useRecoilState(selectedMachinesSetup);
@@ -67,17 +67,18 @@ const useMachinesSetupData = () => {
             if (res?.success) {
                 setSelectedMachinesState([]);
                 setCategoryMachines([]);
-                router.push('/quick-setup/materials');
+                router.push(nextStep);
             } else {
                 alertFaultAdded();
             }
             setLoading(false)
         }
-        if (selectedMachinesState.length === 0) {
+        if (categories?.length > 0 && selectedMachinesState.length === 0) {
             alertFaultAdded();
         } else {
             setLoading(true);
             await quickSetupAddMachines(callApi, callBack, {
+                nextStep,
                 machines: selectedMachinesState?.map(machine => ({
                     id: machine?.value,
                     name: machine?.label,
@@ -88,10 +89,12 @@ const useMachinesSetupData = () => {
         }
     }
 
-    const machinesCategoriesList = machinesCategoriesState?.map(category => ({
-        label: t(category.name),
-        value: category.id
-    }));
+    const machinesCategoriesList = machinesCategoriesState
+        ?.filter(category => categories?.length > 0 ? categories?.includes(category?.id) : true)
+        ?.map(category => ({
+            label: t(category.name),
+            value: category.id
+        }));
 
     const onSelectCategory = (category) => {
         setNewMachine({value: '', category: '', label: ''});
@@ -102,6 +105,7 @@ const useMachinesSetupData = () => {
         if (!!machine?.value) {
             setPrintHouseMachines([...printHouseMachines, machine])
         }
+
     }
     const onRemovePrintHouseMachine = (machineIndex: number) => {
         setPrintHouseMachines(printHouseMachines.filter((machine, index) => index !== machineIndex))
@@ -111,6 +115,7 @@ const useMachinesSetupData = () => {
         setNewMachine({label: newMachineName, category: selectedCategory, value: newMachineName, isAdminMachine: false})
     }
 
+    const searchMachineInit = useCallback(() => '' , [printHouseMachines, selectedCategory])
     return {
         step,
         getMachineNameKey,
@@ -126,7 +131,8 @@ const useMachinesSetupData = () => {
         printHouseMachines,
         onRemovePrintHouseMachine,
         onSearchMachine,
-        newMachine
+        newMachine,
+        searchMachineInit
     }
 }
 export {useMachinesSetupData}

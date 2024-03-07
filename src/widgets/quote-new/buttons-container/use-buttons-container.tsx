@@ -6,7 +6,7 @@ import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
 import { createOrderApi, getDocumentPdfApi } from "@/services/api-service/generic-doc/documents-api";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { cancelReceiptApi, createReceiptApi, getReceiptPdfApi } from "@/services/api-service/generic-doc/receipts-api";
-import { ERPAccountsData, ERPAccountsState, ErpAccountType, checkedItemsIdsState, finalTotalPaymentState } from "./states";
+import { checkedItemsIdsState, finalTotalPaymentState } from "./states";
 
 const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     const { navigate } = useGomakeRouter();
@@ -20,7 +20,6 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     const [openDeleteModal, setOpenDeleteModal] = useState(false);
     const [openCancelReceiptModal, setOpenCancelReceiptModal] = useState(false);
 
-    const setERPAccounts = useSetRecoilState<ERPAccountsData[]>(ERPAccountsState);
     const finalTotalPayment = useRecoilValue<number>(finalTotalPaymentState);
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>();
     const open = Boolean(anchorEl);

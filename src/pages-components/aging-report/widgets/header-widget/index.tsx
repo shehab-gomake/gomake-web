@@ -8,8 +8,6 @@ import { DateFormatter } from "@/utils/adapter";
 import { AgingReportHeaderWidgetProps, useAgingReportHeader } from "./use-header-widget";
 
 const AgingReportHeaderWidget = ({
-  getAllCustomersCreateQuote,
-  getAgentCategories,
   onSelectDeliveryTimeDates,
   resetDatePicker,
   handleClickSelectDate,
@@ -24,12 +22,11 @@ const AgingReportHeaderWidget = ({
   checkWhatRenderArray,
   handleCustomerChange,
   detailedReport,
-  setDetailedReport,
   onChangeByReferenceDate,
   onChangeDetailedReport
 }: AgingReportHeaderWidgetProps) => {
 
-  const { clasess, t } = useAgingReportHeader({ getAllCustomersCreateQuote, getAgentCategories })
+  const { clasess, t } = useAgingReportHeader()
 
   return (
     <div style={clasess.mainContainer}>

@@ -20,7 +20,7 @@ const DropDownListParameterWidget = ({
     (item) => item.isDefault === true
   );
   return (
-    <div style={clasess.dropDownListWithSettingIcon}>
+    <div data-tour={parameter?.id} style={clasess.dropDownListWithSettingIcon}>
       <GoMakeAutoComplate
         options={parameter?.valuesConfigs?.filter((value) => !value.isHidden)}
         key={parameter?.valuesConfigs + temp[index]?.values}

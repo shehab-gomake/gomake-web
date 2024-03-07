@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import { MoreMenuWidget } from "../more-circle";
 import { useRecoilState, useRecoilValue, useResetRecoilState, useSetRecoilState } from "recoil";
-import { CheckData, CreditCardData, ERPAccountsData, ERPAccountsState, ReceiptCreditCardData, checksRowState, creditCardState, creditTransactionsState, receiptCreditCardState, selectedCreditTransactionState, totalBitState, totalCashState, totalChecksState, totalCreditCardState, totalPaymentState, totalTransferState, transactionOptionsData } from "../../states";
+import { CheckData, CreditCardData,  ReceiptCreditCardData, checksRowState, creditCardState, creditTransactionsState, receiptCreditCardState, selectedCreditTransactionState, totalBitState, totalCashState, totalChecksState, totalCreditCardState, totalPaymentState, totalTransferState, transactionOptionsData, transferTabState } from "../../states";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { createCreditTransactionApi } from "@/services/api-service/generic-doc/receipts-api";
 import { isTransactedState } from "@/widgets/quote-new/receipts-table/states";
@@ -17,8 +17,10 @@ const usePaymentMethodsTabs = () => {
     const setTotalPayment = useSetRecoilState<number>(totalPaymentState);
     const [totalChecks, setTotalChecks] = useRecoilState<number>(totalChecksState);
     const [data, setData] = useRecoilState<CheckData[]>(checksRowState);
-    const ERPAccounts = useRecoilValue<ERPAccountsData[]>(ERPAccountsState);
     const quoteItemValue: any = useRecoilValue(quoteItemState);
+    const resetTotalBit = useResetRecoilState(totalBitState);
+    const resetTotalTransfer = useResetRecoilState(totalTransferState);
+    const resetTransferTabState = useResetRecoilState(transferTabState);
 
     const addRow = () => {
         const newRow = {
@@ -132,14 +134,17 @@ const usePaymentMethodsTabs = () => {
     const [totalBit, setTotalBit] = useRecoilState<number>(totalBitState);
     const handleTotalBitChange = (value) => {
         setTotalBit(value);
-        setTotalPayment(Number(value) + Number(totalCash) + Number(totalTransfer) + Number(totalChecks) + Number(totalCreditCard))
+        resetTotalTransfer();
+        resetTransferTabState();
+        setTotalPayment(Number(value) + Number(totalCash)  + Number(totalChecks) + Number(totalCreditCard))
     };
 
     // transfer tab //
     const [totalTransfer, setTotalTransfer] = useRecoilState<number>(totalTransferState);
     const handleTotalTransferChange = (value) => {
         setTotalTransfer(value);
-        setTotalPayment(Number(value) + Number(totalCash) + Number(totalBit) + Number(totalChecks) + Number(totalCreditCard))
+        resetTotalBit();
+        setTotalPayment(Number(value) + Number(totalCash)  + Number(totalChecks) + Number(totalCreditCard))
     };
 
     // credit card tab //
@@ -242,10 +247,17 @@ const usePaymentMethodsTabs = () => {
 
     const onClickMakePayment = async (handleSaveAndClose) => {
         const callBack = (res) => {
-            if (res?.success) {
+            if (res?.success) { 
                 setIsTransacted(true);
+                // setSecondCreditCard({
+                //     creditCardTransactionID:res?.data,
+                //     creditCardSum:totalCreditCard
+                // });
                 alertSuccessUpdate();
-                handleSaveAndClose();
+                handleSaveAndClose({
+                    creditCardTransactionID:res?.data,
+                    creditCardSum:totalCreditCard
+                });
             } else {
                 alertFaultUpdate();
             }
@@ -253,6 +265,8 @@ const usePaymentMethodsTabs = () => {
         await createCreditTransactionApi(callApi, callBack, { ClientID: quoteItemValue?.client?.id, creditCard });
     };
 
+
+    
 
     const cardTransactionsOptions = useRecoilValue<transactionOptionsData[]>(creditTransactionsState);
     const [transactionSelected, setTransactionSelected] = useRecoilState<transactionOptionsData>(selectedCreditTransactionState);

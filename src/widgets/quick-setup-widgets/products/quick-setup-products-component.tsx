@@ -14,21 +14,28 @@ const QuickSetupProductsComponent = () => {
     return (
         <Stack gap={'40px'} minWidth={convertWidthToVW(700)}>
             <h3 style={classes.header}>{'Please calculate your price!'}</h3>
-            <Stack width={'30%'} gap={'10px'}>
-                {
-                    product?.details && Object.entries(product?.details).map(([key, value]) =>
-                        <Stack alignItems={'center'} justifyContent={'space-between'} direction={'row'}>
-                            <span style={classes.detailsKey}>{key}:</span>
-                            <span style={classes.detailsValue}>{value}</span>
-                        </Stack>)
-                }
+            <Stack width={'70%'} margin={'0 auto'} justifyContent={'center'}>
+                <Table>
+                    <TableBody>
+                        {
+                            product?.details && Object.entries(product?.details).map(([key, value]) =>
+                                <TableRow>
+                                    <TableCell style={classes.detailsKey}>{key}:</TableCell>
+                                    <TableCell style={classes.detailsValue}>{value}</TableCell>
+                                </TableRow>)
+                        }
+                    </TableBody>
+                </Table>
             </Stack>
             <Table width={'100%'}>
                 <TableBody>
                     {
                         updatedQuantities?.map(quantity => <TableRow style={{border: 0}}>
                             <TableCell align={'left'}>
-                                <span style={{width: '30%', justifySelf: 'start'}}>{`${quantity.quantity} units price:`}</span>
+                                <span style={{
+                                    width: '30%',
+                                    justifySelf: 'start'
+                                }}>{`${quantity.quantity} units price:`}</span>
                             </TableCell>
                             <TableCell align={'right'}>
                                 <TextField placeholder={'Price'} size={'small'} variant={'outlined'}
@@ -44,7 +51,8 @@ const QuickSetupProductsComponent = () => {
                 </TableBody>
             </Table>
             <Stack width={'100%'} alignItems={'center'} gap={'5px'}>
-                <PrimaryButton onClick={onClickNext} style={classes.nextButton} variant={'contained'}>{t('signup.next')}</PrimaryButton>
+                <PrimaryButton onClick={onClickNext} style={classes.nextButton}
+                               variant={'contained'}>{t('signup.next')}</PrimaryButton>
                 <SecondaryButton onClick={onClickSkip}>Skip</SecondaryButton>
             </Stack>
         </Stack>
