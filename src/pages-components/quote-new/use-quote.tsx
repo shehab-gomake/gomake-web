@@ -186,7 +186,6 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
       const callBack = (res) => {
         if (res?.success) {
           let indexs = 0;
-          // const _data = res?.data;
           const _data = res?.data || {};
           const mapData = _data?.documentItems?.map((item: any, index: number) => {
             indexs++;
