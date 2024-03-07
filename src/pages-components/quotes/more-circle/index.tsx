@@ -69,8 +69,6 @@ const MoreMenuWidget = ({ quote, documentType, onClickOpenModal, onClickPdf, onC
           <div style={classes.rowTextStyle}>{t("sales.quote.pdf")}</div>
         </div>
       </MenuItem>
-
-
       {
         documentType !== DOCUMENT_TYPE.receipt && <MenuItem onClick={() => onClickDuplicate(quote?.id)}>
           <div style={classes.menuRowStyle}>
@@ -105,21 +103,37 @@ const MoreMenuWidget = ({ quote, documentType, onClickOpenModal, onClickPdf, onC
         </MenuItem>
       }
       {
-        documentType === DOCUMENT_TYPE.deliveryNoteRefund && <MenuItem onClick={() => navigate(`/deliveryNoteRefund?isNewCreation=true&documentToDuplicateId=${quote?.id}`)}>
+        documentType === DOCUMENT_TYPE.deliveryNote && <MenuItem onClick={() => navigate(`/deliveryNoteRefund?isNewCreation=true&documentToDuplicateId=${quote?.id}`)}>
           <div style={classes.menuRowStyle}>
             <TickIcon />
-            <div style={classes.rowTextStyle}>{t("sales.quote.closeAsDeliveryNote")}</div>
+            <div style={classes.rowTextStyle}>{t("tabs.deliveryNoteRefund")}</div>
           </div>
         </MenuItem>
       }
       {
+        documentType === DOCUMENT_TYPE.invoice && <MenuItem onClick={() => navigate(`/invoiceRefund?isNewCreation=true&documentToDuplicateId=${quote?.id}`)}>
+          <div style={classes.menuRowStyle}>
+            <TickIcon />
+            <div style={classes.rowTextStyle}>{t("tabs.invoiceRefund")}</div>
+          </div>
+        </MenuItem>
+      }
+      {
+        documentType === DOCUMENT_TYPE.purchaseOrder && <MenuItem onClick={() => navigate(`/purchaseInvoice?isNewCreation=true&documentToDuplicateId=${quote?.id}`)}>
+          <div style={classes.menuRowStyle}>
+            <TickIcon />
+            <div style={classes.rowTextStyle}>{t("sales.quote.closeAsPurchaseInvoice")}</div>
+          </div>
+        </MenuItem>
+      }
+      {/* {
         documentType === DOCUMENT_TYPE.invoiceRefund && <MenuItem onClick={() => navigate(`/invoiceRefund?isNewCreation=true&documentToDuplicateId=${quote?.id}`)}>
           <div style={classes.menuRowStyle}>
             <TickIcon />
             <div style={classes.rowTextStyle}>{t("sales.quote.closeAsInvoice")}</div>
           </div>
         </MenuItem>
-      }
+      } */}
 
     </OptionsButton>
   );

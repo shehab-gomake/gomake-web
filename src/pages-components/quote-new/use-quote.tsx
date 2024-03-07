@@ -186,7 +186,6 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
       const callBack = (res) => {
         if (res?.success) {
           let indexs = 0;
-          // const _data = res?.data;
           const _data = res?.data || {};
           const mapData = _data?.documentItems?.map((item: any, index: number) => {
             indexs++;
@@ -250,6 +249,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
           getQuote();
         } else {
           alertFaultAdded();
+          setSelectDate(quoteItemValue?.dueDate);
         }
       }
       await updateDueDateApi(callApi, callBack, {
@@ -435,7 +435,6 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
       await getClientPaymentItemsApi(callApi, callBack, { clientId: item?.id, })
     }
     else if (router?.query?.isNewCreation) {
-      setSelectBusiness(item)
       const res = await callApi(
         EHttpMethod.POST,
         `/v1/erp-service/documents/get-new-document-data`,
@@ -679,7 +678,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
         {
           documentType: docType,
           document: {
-            exchangeRate: quoteItemValue?.exchangeRate,
+            exchangeRate: quoteItemValue?.exchangeRate == 0 ? 1 : quoteItemValue?.exchangeRate,
             price: quoteItem?.price,
             discount: quoteItem?.discount,
             finalPrice: quoteItemEdit?.finalPrice,
@@ -800,8 +799,8 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
             discount: updatedQuoteItemValue?.discount,
             discountAmount: updatedQuoteItemValue?.discountAmount,
             totalPayment: updatedQuoteItemValue?.totalPayment,
-            vat: updatedQuoteItemValue?.vat,
-            totalVAT: updatedQuoteItemValue?.totalVAT,
+            vat: updatedQuoteItemValue?.vat || 0.17,
+            totalVAT: updatedQuoteItemValue?.totalVAT || 0.17,
             documentItems: updatedQuoteItemValue?.documentItems.map(item => ({
               finalPrice: item.finalPrice
             }))
@@ -817,7 +816,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
         updatedQuoteItemValue.totalPriceAfterDiscount = _data.totalPriceAfterDiscount;
         updatedQuoteItemValue.totalVAT = _data.totalVAT;
         updatedQuoteItemValue.vat = _data.vat;
-        updatedQuoteItemValue.exchangeRate = documentItems[0]?.exchangeRate;
+        updatedQuoteItemValue.exchangeRate = documentItems[0]?.exchangeRate === 0 ? 1 : documentItems[0]?.exchangeRate;
         setQuoteItemValue(updatedQuoteItemValue);
       }
     }
@@ -862,7 +861,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
         {
           documentType: docType,
           document: {
-            exchangeRate: quoteItemValue?.exchangeRate,
+            exchangeRate: quoteItemValue?.exchangeRate === 0 ? 1 : quoteItemValue?.exchangeRate,
             totalPrice: quoteItemValue?.totalPrice,
             data,
             calculationType,
@@ -870,8 +869,8 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
             discount: data,
             discountAmount: quoteItemValue?.discountAmount,
             totalPayment: quoteItemValue?.totalPayment,
-            vat: quoteItemValue?.vat,
-            totalVAT: quoteItemValue?.totalVAT,
+            vat: quoteItemValue?.vat || 0.17,
+            totalVAT: quoteItemValue?.totalVAT || 0.17,
             documentItems: quoteItemValue.documentItems?.map(item => ({
               finalPrice: item.finalPrice
             }))
@@ -1060,19 +1059,22 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     })
   }
   const handleSaveBtnClickForDocument = async () => {
+    const canEdit = docType === DOCUMENT_TYPE.order || docType === DOCUMENT_TYPE.purchaseOrder;
     const res = await callApi(
       EHttpMethod.POST,
       `/v1/erp-service/documents/create-document`,
       {
         documentType: docType,
         document: {
-          ...quoteItemValue
+          ...quoteItemValue,
+          exchangeRate: quoteItemValue.exchangeRate === 0 ? 1 : quoteItemValue.exchangeRate
         }
       }
     );
     if (res?.success) {
       alertSuccessAdded();
-      navigate(`${documentPath}s`);
+      // navigate(`${documentPath}s`);
+      navigate(`/${documentPath}?Id=${res?.data?.data?.data}&canEdit=${canEdit}`)
     } else {
       alertFaultAdded();
     }
@@ -1258,13 +1260,9 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     }
   }, [agentListValue, quoteItemValue]);
   useEffect(() => {
-    const foundItem = customersListValue.find(
-      (item: any) => item.id === quoteItemValue?.customerID
-    );
     const foundConfirmItem = customersListValue.find(
       (item: any) => item.id === quoteConfirm?.customerID
     );
-    setSelectBusiness(foundItem);
     setSelectConfirmBusiness(foundConfirmItem) // for quote confirmation
   }, [quoteItemValue, customersListValue]);
 
@@ -1330,7 +1328,6 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     dateRef,
     activeClickAway,
     selectDate,
-    selectBusiness,
     isUpdateBusinessName,
     isUpdatePurchaseNumber,
     isUpdateAddress,
