@@ -115,6 +115,7 @@ export interface IRectangle {
   y: number;
   width: number;
   length: number;
+  color?: string;
 }
 export interface ICalculationProgress {
   totalWorkFlowsCount: number;

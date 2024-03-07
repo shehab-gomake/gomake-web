@@ -50,7 +50,7 @@ const PrintImageComponent = ({materialLength, materialWidth, rectangles, name}: 
                                position: 'relative'
                            }}>
                                {
-                                   rectangles?.map(({x, y, width, length}: IRectangle) => {
+                                   rectangles?.map(({x, y, width, length,color}: IRectangle) => {
                                        return(
                                            <div style={{
                                                position: 'absolute',
@@ -58,7 +58,7 @@ const PrintImageComponent = ({materialLength, materialWidth, rectangles, name}: 
                                                top: (scaleY(y)),
                                                width: scaleX(width),
                                                height: scaleY(length),
-                                               backgroundColor: 'black',
+                                               backgroundColor: color ?? 'black',
                                            }}/>
                                        )
                                    })
