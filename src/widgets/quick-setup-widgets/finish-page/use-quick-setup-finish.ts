@@ -15,7 +15,7 @@ const useQuickSetupFinish = () => {
         }
         await quickSetupUpdateNextStep(callApi, callBack, {
             nextStepUrl: null,
-            IsFinalStep: true
+            isFinalStep: true
         });
     }
     return {
