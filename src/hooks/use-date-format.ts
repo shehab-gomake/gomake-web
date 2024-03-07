@@ -16,16 +16,25 @@ const useDateFormat = () => {
     }
 
 
-    const GetShortDateFormat = (date : Date) => {
+      const GetShortDateFormat = (date : Date) => {
         if (date) {
-          return new Date(date).toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' });
+        const formattedDate = new Date(date).toLocaleDateString('en-GB', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false,
+          });
+
+          return formattedDate
         }
         return "N/A";
       };
 
     return {
         GetDateFormat,
-        GetShortDateFormat ,
+        GetShortDateFormat 
     };
 };
 

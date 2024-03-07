@@ -14,7 +14,7 @@ const useDeposits = () => {
     const { callApi } = useGomakeAxios();
     const { navigate } = useGomakeRouter();
     const { alertFaultDelete, alertSuccessDelete, alertFaultGetData } = useSnackBar();
-    const { GetDateFormat } = useDateFormat();
+    const { GetDateFormat , GetShortDateFormat} = useDateFormat();
     const [page, setPage] = useRecoilState<number>(depositsPageState);
     const resetPage = useResetRecoilState(depositsPageState);
     const [pagesCount, setPagesCount] = useRecoilState<number>(depositsPageCountState);
@@ -82,7 +82,7 @@ const useDeposits = () => {
                 const data = res?.data?.data;
                 const totalItems = res?.data?.totalItems;
                 const mapData = data?.map((deposit: any) => [
-                    deposit?.createdDate,
+                    GetShortDateFormat(deposit?.createdDate),
                     deposit?.number,
                     deposit?.accountNumber,
                     getDepositStatusText(deposit?.isCanceled),
@@ -122,7 +122,7 @@ const useDeposits = () => {
                 const data = res?.data;
                 const cashDepositData = [
                     GetDateFormat(data?.depositDate),
-                    data?.receiptsNumber,
+                    data?.receiptNumber,
                     data?.depositor,
                     data?.cashAmount,
                 ];

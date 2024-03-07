@@ -22,7 +22,6 @@ const DepositsListPageWidget = () => {
         handleSearchChange
     } = useDeposits();
 
-
     useEffect(() => {
         getAllDeposits();
     }, [page, pageSize , finalPatternSearch]);
@@ -56,7 +55,6 @@ const DepositsListPageWidget = () => {
                     pageSize={pageSize}
                 />
             </Stack>
-
         </>
     );
 };
