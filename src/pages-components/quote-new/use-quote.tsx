@@ -266,8 +266,8 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
 
   const getAllCustomers = useCallback(async () => {
     await getAndSetAllCustomers(callApi, setCustomersListValue, {
-      ClientType: docType === DOCUMENT_TYPE.purchaseOrder || docType === DOCUMENT_TYPE.purchaseInvoice ? "S" : "C",
-      onlyCreateOrderClients: docType === DOCUMENT_TYPE.purchaseOrder || docType === DOCUMENT_TYPE.purchaseInvoice ? true : false,
+      ClientType: docType === DOCUMENT_TYPE.purchaseOrder || docType === DOCUMENT_TYPE.purchaseInvoice || docType === DOCUMENT_TYPE.purchaseInvoiceRefund ? "S" : "C",
+      onlyCreateOrderClients: docType === DOCUMENT_TYPE.purchaseOrder || docType === DOCUMENT_TYPE.purchaseInvoice || docType === DOCUMENT_TYPE.purchaseInvoiceRefund ? true : false,
     });
   }, [docType]);
 
@@ -1321,6 +1321,10 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     {
       label: t("tabs.purchaseInvoice"),
       value: DOCUMENT_TYPE.purchaseInvoice,
+    },
+    {
+      label: t("tabs.purchaseInvoiceRefund"),
+      value: DOCUMENT_TYPE.purchaseInvoiceRefund,
     },
   ];
 
