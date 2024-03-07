@@ -20,7 +20,7 @@ const useMaterialsPricing = () => {
                 setParameters(res.data);
             }
         }
-        await quickSetupGetMaterialsPricing(callApi, callBack);
+        await quickSetupGetMaterialsPricing(callApi, callBack,null,true);
     }
     const saveParameters = async () => {
         const callBack = (res) => {
