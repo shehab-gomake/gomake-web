@@ -1,14 +1,14 @@
 import {TourProvider} from "@reactour/tour";
 import {FONT_FAMILY} from "@/utils/font-family";
-import {useSetRecoilState} from "recoil";
-import {startGuideTourState} from "@/store/tour-state";
+import {useEffect} from "react";
+
 
 interface IProps {
     children: JSX.Element;
 }
 
 const GoMakeTourProvider = ({children}: IProps) => {
-    const setStartGuid = useSetRecoilState(startGuideTourState);
+    useEffect(() => {}, [children])
     return <TourProvider steps={[]}
                          styles={{
                              popover: (base) => ({
@@ -23,10 +23,9 @@ const GoMakeTourProvider = ({children}: IProps) => {
                              controls: (base) => ({...base, marginTop: 100}),
                              close: (base) => ({...base, right: 'auto', left: 8, top: 10}),
                          }}
-                         onClickClose={() => {
-                             setStartGuid(false);
-                         }}
-                         onClickMask={(clickProps) => clickProps.setIsOpen(true)}
+
+                         onClickMask={() => {}}
+                         defaultOpen={false}
                          scrollSmooth={true}>
         {children}
     </TourProvider>

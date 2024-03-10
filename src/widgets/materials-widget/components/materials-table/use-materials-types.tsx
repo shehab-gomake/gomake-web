@@ -5,7 +5,8 @@ import {PrimaryButton} from "@/components/button/primary-button";
 import {EditIcon} from "@/components/icons/edit-icon";
 import {useTranslation} from "react-i18next";
 import {useGomakeTheme} from "@/hooks/use-gomake-thme";
-import {StepType, useTour} from "@reactour/tour";
+import {StepType} from "@reactour/tour";
+import {useGoMakeTour} from "@/hooks/use-go-make-tour";
 
 const useMaterialsTypes = (isAdmin:boolean) => {
     const {callApi} = useGomakeAxios();
@@ -13,7 +14,6 @@ const useMaterialsTypes = (isAdmin:boolean) => {
     const [materialsTypes, setMaterialsTypes] = useState<{ materialTypeKey: string; materialTypeName: string }[]>([]);
     const {t} = useTranslation();
     const {primaryColor} = useGomakeTheme();
-    const {setIsOpen, setSteps, setCurrentStep} = useTour();
     const materialsSteps: StepType[] = [
         {
             selector: '[data-tour="materialsTable"]',
@@ -26,16 +26,13 @@ const useMaterialsTypes = (isAdmin:boolean) => {
             content: 'Please click on "Edit" in the "Sheets" line to explore the functionalities available for managing sheets.',
             position: 'bottom',
         },
-    ]
-
+    ];
+    const {} = useGoMakeTour(materialsSteps, [materialsTypes]);
     const onFilterChange = (e) => setFilter(e)
     const getAllMaterials = async () => {
         const callBack = (res) => {
             if (res.success) {
                 setMaterialsTypes(res.data);
-                setSteps(materialsSteps);
-                setIsOpen(true);
-                setCurrentStep(0);
             }
         }
         await getMaterialsTypesApi(callApi, callBack)

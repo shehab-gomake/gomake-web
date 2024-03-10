@@ -7,7 +7,7 @@ import {
 import {useQuoteWidget} from "./use-quote-widget";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import {useStyle} from "./style";
-import {Paper, Popover} from "@mui/material";
+import {Popover} from "@mui/material";
 import {PermissionCheck} from "@/components/CheckPermission/check-permission";
 import {Permissions} from "@/components/CheckPermission/enum";
 import {useEffect, useState} from "react";
@@ -73,12 +73,7 @@ const QuoteWidget = ({isAdmin = true}) => {
       setQuoteIfExist(false);
     }
   }, [userQuote, clientTypesValue]);
-  const {setIsOpen, currentStep} = useTour();
-  useEffect(() => {
-    if (currentStep < 3) {
-      setIsOpen(true);
-    }
-  }, [currentStep])
+
   return (
     <div data-tour="quote-widget" style={classes.mainContainer}>
       <div style={classes.autoComplateRowContainer}>

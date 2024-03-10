@@ -2,16 +2,12 @@ import { useTranslation } from "react-i18next";
 import {
   Avatar,
   IconButton,
-  InputAdornment,
   MenuItem,
   Stack,
 } from "@mui/material";
 import {
   EditIcon,
-  Messages,
   Notifications,
-  SearchIcon,
-  Statistics,
 } from "@/icons";
 import { useStyle } from "./style";
 import { useHeader } from "./use-header";
@@ -28,6 +24,8 @@ import { SecondaryButton } from "@/components/button/secondary-button";
 import { MarkIcon } from "@/icons/mark-icon";
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import {startGuideTourState} from "@/store/tour-state";
+import {useTour} from "@reactour/tour";
+import {useGoMakeTour} from "@/hooks/use-go-make-tour";
 const HeaderWidget = () => {
   const { clasess } = useStyle();
   const { t } = useTranslation();
@@ -49,7 +47,8 @@ const HeaderWidget = () => {
     handleClickNotify,
     handleCloseNotify,
   } = useHeader();
-  const setStartGuid = useSetRecoilState(startGuideTourState);
+  const {setIsOpen, setCurrentStep} = useTour();
+  const {onClickHelpButton} = useGoMakeTour([], []);
   const userAvatar = () => {
     return !!userProfile.imagePath ? (
       <Avatar style={clasess.avatarProps} src={userProfile.imagePath} />
@@ -70,7 +69,9 @@ const HeaderWidget = () => {
       {/* <SearchInputComponent onChange={() => null} searchInputStyle={clasess.searchInputContainer} /> */}
       <div style={{ width: "100%" }} />
       <div style={clasess.rightSideContainer}>
-        <IconButton data-tour={'start-tour-btn'} onClick={() => setStartGuid(true)}>
+        <IconButton data-tour={'start-tour-btn'} onClick={() => {
+          onClickHelpButton()
+        }}>
           <HelpOutlineIcon/>
         </IconButton>
         {QuoteIfExist == true && window.location.pathname != "/quote" && (
