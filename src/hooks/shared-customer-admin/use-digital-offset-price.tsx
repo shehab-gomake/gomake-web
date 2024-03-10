@@ -52,6 +52,7 @@ import {
   updateDocumentItemApi,
 } from "@/services/api-service/generic-doc/documents-api";
 import {
+  openQuantityComponentModalState,
   productQuantityTypesValuesState,
   tempProductQuantityTypesValuesState
 } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/quantity-parameter/quantity-types/state";
@@ -61,6 +62,7 @@ import { getCurrencies } from "@/services/api-service/general/enums";
 import { currenciesState } from "@/widgets/materials-widget/state";
 
 const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
+  const [, setOpenQuantityComponentModal] = useRecoilState<boolean>(openQuantityComponentModalState);
   const { navigate } = useGomakeRouter();
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
@@ -1079,16 +1081,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             type="number"
             disabled={isInputDisabled}
           />
-          <QuantityParameter
-            classes={clasess}
-            parameter={parameter}
-            index={index}
-            temp={temp}
-            onChangeSubProductsForPrice={onChangeSubProductsForPrice}
-            subSection={subSection}
-            section={section}
-            type="number"
-          />
+          <QuantityParameter />
         </React.Fragment>
 
       );
@@ -1109,6 +1102,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           section={section}
           type="number"
           disabled={isInputDisabled}
+          extraOnChange={() => {
+            setOpenQuantityComponentModal(true)
+          }}
         />
       );
     } else if (
@@ -1541,6 +1537,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       if (subSectionParameter) {
         //types parameter
         if (subSectionParameter.id == "de2bb7d5-01b1-4b2b-b0fa-81cd0445841b") {
+
           const typesNum = Number(data.values);
           const quantityValue = quantity && quantity.values ? quantity?.values[0] : 0;
           const workName = jobNameParameter && jobNameParameter.values ? jobNameParameter.values[0] : "";
@@ -1552,7 +1549,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             for (let i = quantityTypes.length + 1; i <= typesNum; i++) {
               array.push({
                 name: workName + " " + i,
-                quantity: Number(quantityValue),
+                quantity: valuesState[0]?.quantity || Number(quantityValue),
               });
 
               setValuesState([...quantityTypes, ...array]);
@@ -2015,7 +2012,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         },
         false,
         newRequestAbortController
-  ).catch(e=>setLoading(false));
+      ).catch(e => setLoading(false));
 
       //setLoading(false);
     } else {
@@ -2234,7 +2231,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     updatedTemplate.sections.forEach(section => {
       if (section.relatedToParameters && section.relatedToParameters.length === 0) {
         section.isHidden = false;
-      } else if(section.relatedToParameters) {
+      } else if (section.relatedToParameters) {
         // let isHidden = true;
         section.relatedToParameters.forEach(parameter => {
           // Check if any parameter in allParameters matches the condition

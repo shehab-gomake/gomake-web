@@ -8,8 +8,8 @@ import { SecondaryButton } from "@/components/button/secondary-button";
 import { QuantityTypesTable } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/quantity-parameter/table/quantity-types-table";
 import { convertWidthToVW } from "@/utils/adapter";
 
-interface IQuantityTypesComponent {}
-const QuantityTypesComponent = ({}: IQuantityTypesComponent) => {
+interface IQuantityTypesComponent { }
+const QuantityTypesComponent = ({ }: IQuantityTypesComponent) => {
   const { inputs, isDuplicateName, toggleDuplicateName, save, setSave } =
     useQuantityTypes();
   const { t } = useTranslation();
@@ -36,7 +36,7 @@ const QuantityTypesComponent = ({}: IQuantityTypesComponent) => {
         <span style={classes.duplicateName}>{t("Duplicate Name")}</span>
       </Stack>
       <Stack padding={"0 2px"}>
-        <QuantityTypesTable onSave={() => {}} save={save} />
+        <QuantityTypesTable onSave={() => { }} save={save} />
       </Stack>
       <Stack marginTop={"auto"} style={{ backgroundColor: "white" }}>
         <SecondaryButton
