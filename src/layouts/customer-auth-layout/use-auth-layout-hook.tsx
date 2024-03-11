@@ -9,6 +9,7 @@ import { Permissions } from "@/components/CheckPermission/enum";
 
 import LocalPrintshopOutlinedIcon from "@mui/icons-material/LocalPrintshopOutlined";
 import PendingActionsOutlinedIcon from "@mui/icons-material/PendingActionsOutlined";
+import { BankingIcon } from "@/icons/banking-icon";
 
 const useAuthLayoutHook = (permissionEnumValue?: Permissions, allowAnonymous?: boolean) => {
   const { isAuth } = useGomakeAuth(permissionEnumValue, allowAnonymous);
@@ -39,17 +40,6 @@ const useAuthLayoutHook = (permissionEnumValue?: Permissions, allowAnonymous?: b
         },
         isProduction: true,
       },
-      // {
-      //   isLine: false,
-      //   key: "partners",
-      //   title: "tabs.partners",
-      //   path: "/partners",
-      //   isList: false,
-      //   icon: () => {
-      //     return <PartnersIcon />;
-      //   },
-      //   isProduction: true,
-      // },
       {
         isLine: true,
         key: "line_1",
@@ -108,29 +98,6 @@ const useAuthLayoutHook = (permissionEnumValue?: Permissions, allowAnonymous?: b
             path: "/invoiceRefunds",
             Permission: Permissions.SHOW_ORDERS,
           },
-          {
-            key: "purchase order",
-            title: "tabs.purchaseOrder",
-            path: "/purchaseOrders",
-            Permission: Permissions.SHOW_ORDERS,
-          },
-          {
-            key: "purchase invoice",
-            title: "tabs.purchaseInvoice",
-            path: "/purchaseInvoices",
-            Permission: Permissions.SHOW_ORDERS,
-          },
-          {
-            key: "receipts",
-            title: "tabs.receipts",
-            path: "/receipts",
-            Permission: Permissions.SHOW_ORDERS,
-          },
-          {
-            key: "deposits",
-            title: "tabs.deposits",
-            path: "/deposits",
-          },
         ],
         icon: () => {
           return <SalesIcon />;
@@ -156,21 +123,15 @@ const useAuthLayoutHook = (permissionEnumValue?: Permissions, allowAnonymous?: b
         isList: true,
         list: [
           {
-            key: "purchaseOrders",
-            title: "tabs.purchaseOrders",
+            key: "purchase order",
+            title: "tabs.purchaseOrder",
             path: "/purchaseOrders",
             Permission: Permissions.SHOW_ORDERS,
           },
           {
-            key: "purchaseInvoices",
-            title: "tabs.purchaseInvoices",
-            path: "/purchaseOrder",
-            Permission: Permissions.SHOW_ORDERS,
-          },
-          {
-            key: "supplierPayments",
-            title: "tabs.supplierPayments",
-            path: "/purchaseOrder",
+            key: "purchase invoice",
+            title: "tabs.purchaseInvoice",
+            path: "/purchaseInvoices",
             Permission: Permissions.SHOW_ORDERS,
           },
         ],
@@ -179,6 +140,62 @@ const useAuthLayoutHook = (permissionEnumValue?: Permissions, allowAnonymous?: b
         },
         isProduction: true,
       },
+      {
+        isLine: false,
+        key: "banking",
+        title: "tabs.banking",
+        path: "/",
+        isList: true,
+        list: [
+          {
+            key: "receipts",
+            title: "tabs.receipts",
+            path: "/receipts",
+            Permission: Permissions.SHOW_ORDERS,
+          },
+          {
+            key: "deposits",
+            title: "tabs.deposits",
+            path: "/deposits",
+          },
+        ],
+        icon: () => {
+          return <BankingIcon />;
+        },
+        isProduction: true,
+      },
+      // {
+      //   isLine: false,
+      //   key: "purchase",
+      //   title: "tabs.purchase",
+      //   path: "/",
+      //   isList: true,
+      //   list: [
+      //     {
+      //       key: "purchaseOrders",
+      //       title: "tabs.purchaseOrders",
+      //       path: "/purchaseOrders",
+      //       Permission: Permissions.SHOW_ORDERS,
+      //     },
+      //     {
+      //       key: "purchaseInvoices",
+      //       title: "tabs.purchaseInvoices",
+      //       path: "/purchaseOrder",
+      //       Permission: Permissions.SHOW_ORDERS,
+      //     },
+      //     {
+      //       key: "supplierPayments",
+      //       title: "tabs.supplierPayments",
+      //       path: "/purchaseOrder",
+      //       Permission: Permissions.SHOW_ORDERS,
+      //     },
+      //   ],
+      //   icon: () => {
+      //     return <ShopingIcon />;
+      //   },
+      //   isProduction: true,
+      // },
+
       {
         isLine: false,
         key: "contacts",
