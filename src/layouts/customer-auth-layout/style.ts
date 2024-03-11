@@ -53,6 +53,9 @@ const useStyle = ({
         width: "100%",
         display: "flex",
         flexDirection: "column" as "column",
+        height: "100%",
+        overflow: "scroll",
+
       },
       headerContainer: {
         display: "flex",
