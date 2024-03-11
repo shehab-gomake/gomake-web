@@ -8,6 +8,7 @@ export interface TransactionJournalReportHeaderWidgetProps {
   handleDocumentTypeChange: any,
   documentType: any;
   documentsTypeList: any
+  isPayment: boolean;
 
 }
 const useAgingReportHeader = () => {

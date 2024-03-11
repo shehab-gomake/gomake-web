@@ -8,8 +8,11 @@ import { useTransactionJournalReport } from "./use-transaction-journal-report";
 import { useStyle } from "./style";
 import { TransactionJournalReportHeaderWidget } from "./widgets/header-widget";
 import { DocumentsTypeReportList } from "@/enums";
+interface TransactionJournalReportWidgetProps {
+  isPayment: boolean;
+}
 
-const TransactionJournalReportWidget = () => {
+const TransactionJournalReportWidget = ({ isPayment }: TransactionJournalReportWidgetProps) => {
   const { clasess } = useStyle();
   const {
     onSelectDeliveryTimeDates,
@@ -23,7 +26,7 @@ const TransactionJournalReportWidget = () => {
     showTable,
     tableHeaders,
     dataTable
-  } = useTransactionJournalReport()
+  } = useTransactionJournalReport({ isPayment })
   return (
     <div style={clasess.mainContainer}>
       <TransactionJournalReportHeaderWidget
@@ -32,6 +35,7 @@ const TransactionJournalReportWidget = () => {
         handleDocumentTypeChange={handleDocumentTypeChange}
         documentType={documentType}
         documentsTypeList={documentsTypeList}
+        isPayment={isPayment}
       />
       <Divider />
       <LedgerReportButtonWidget
@@ -40,7 +44,7 @@ const TransactionJournalReportWidget = () => {
 
       />
       <div style={{ width: "100%", height: "100%", overflow: "auto" }}>
-        {documentType?.id !== DocumentsTypeReportList.Payments ?
+        {documentType?.id !== DocumentsTypeReportList.Payments && !isPayment ?
           <div>
             {
               showTable &&

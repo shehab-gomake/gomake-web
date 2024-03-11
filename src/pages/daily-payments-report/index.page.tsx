@@ -4,7 +4,7 @@ import { TransactionJournalReportWidget } from "@/pages-components/transaction-j
 export default function TransactionJournalReportPage() {
   return (
     <CustomerAuthLayout>
-      <TransactionJournalReportWidget isPayment={false} />
+      <TransactionJournalReportWidget isPayment={true} />
     </CustomerAuthLayout>
   );
 }

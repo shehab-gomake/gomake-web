@@ -4,8 +4,10 @@ import { useTranslation } from "react-i18next";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { EHttpMethod } from "@/services/api-service/enums";
 import { DocumentsTypeReportList } from "@/enums";
-
-const useTransactionJournalReport = () => {
+interface TransactionJournalReportWidgetProps {
+  isPayment: boolean;
+}
+const useTransactionJournalReport = ({ isPayment }: TransactionJournalReportWidgetProps) => {
   const { alertFaultGetData, alertSuccessGetData } = useSnackBar();
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation()
@@ -136,7 +138,7 @@ const useTransactionJournalReport = () => {
         {
           startDate: fromDate,
           endDate: toDate,
-          documentsType: documentType?.id,
+          documentsType: isPayment ? DocumentsTypeReportList.Payments : documentType?.id,
         }
       );
       if (res?.success) {
@@ -148,7 +150,7 @@ const useTransactionJournalReport = () => {
         setShowTable(false)
       }
     },
-    [fromDate, toDate, documentType,]
+    [fromDate, toDate, documentType, isPayment]
   );
   return {
     onSelectDeliveryTimeDates,

@@ -8,23 +8,27 @@ const TransactionJournalReportHeaderWidget = ({
   resetDatePicker,
   handleDocumentTypeChange,
   documentType,
-  documentsTypeList
+  documentsTypeList,
+  isPayment
 }: TransactionJournalReportHeaderWidgetProps) => {
 
   const { clasess, t } = useAgingReportHeader()
 
   return (
     <div style={clasess.mainContainer}>
-      <div style={clasess.date2FilterContainer}>
-        <h3 style={clasess.filterLabelStyle}>Documents Type</h3>
-        <GoMakeAutoComplate
-          options={documentsTypeList}
-          style={clasess.textInputStyle}
-          placeholder="choose Document Type"
-          onChange={handleDocumentTypeChange}
-          value={documentType}
-        />
-      </div>
+      {
+        !isPayment && <div style={clasess.date2FilterContainer}>
+          <h3 style={clasess.filterLabelStyle}>Documents Type</h3>
+          <GoMakeAutoComplate
+            options={documentsTypeList}
+            style={clasess.textInputStyle}
+            placeholder="choose Document Type"
+            onChange={handleDocumentTypeChange}
+            value={documentType}
+          />
+        </div>
+      }
+
       <div style={clasess.date1FilterContainer}>
         <h3 style={clasess.filterLabelStyle}>{t("boardMissions.dateRange")}</h3>
         <div style={{ width: "100%" }}>
