@@ -13,3 +13,15 @@ export enum EOutSoucrceUpdateKey
     Profit= 2,
     TotalPrice= 3,
 }
+
+export enum DocumentsTypeReportList {
+    Invoice = 13,
+    InvoiceRefund = 14,
+    PurchaseInvoice = 18,
+    PurchaseInvoiceRefund = 19,
+    Payments = 24,
+    Deposits = 25,
+    JournalEntry = 30,
+    OutGoingPayments = 46,
+    SalesDocuments = 47
+  }

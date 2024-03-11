@@ -29,7 +29,8 @@ const CustomerAuthLayout = ({
         disableHeaderSideMenu ?
             <>
                 {canAccess && <div style={{ ...clasess.bodyContainer, backgroundColor: '#FFF' }}>{children}</div>}
-            </> : <div style={clasess.container}>
+            </> :
+            <div style={clasess.container}>
                 <LeftSideLayout customGap={customGap} />
                 <div
                     style={clasess.rightContainer}
@@ -40,9 +41,12 @@ const CustomerAuthLayout = ({
                     }}
                 >
                     <HeaderWidget />
-                    {canAccess && <div style={clasess.bodyContainer}>{children}</div>}
+                    {
+                        canAccess && <div style={clasess.bodyContainer}>
+                            {children}
+                        </div>
+                    }
                 </div>
-                <div></div>
             </div>
     );
 };

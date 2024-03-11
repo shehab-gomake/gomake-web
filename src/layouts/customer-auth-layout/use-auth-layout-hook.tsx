@@ -229,6 +229,12 @@ const useAuthLayoutHook = (permissionEnumValue?: Permissions, allowAnonymous?: b
             path: "/ledger-report",
             Permission: Permissions.SHOW_CLIENT,
           },
+          {
+            key: "transactionJournalReport",
+            title: "tabs.transactionJournalReport",
+            path: "/transaction-journal-report",
+            Permission: Permissions.SHOW_CLIENT,
+          },
         ],
         icon: () => {
           return <ReportsIcon />;
