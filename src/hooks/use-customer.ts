@@ -13,7 +13,7 @@ import {printHouseProfile} from "@/store/print-house-profile";
 import {startGuideTourState} from "@/store/tour-state";
 
 
-const useCustomer = (permissionEnumValue?:Permissions,allowAnonymous?:boolean) => {
+const useCustomer = (permissionEnumValue?: Permissions, allowAnonymous?: boolean) => {
 
     const {callApi} = useGomakeAxios();
     const [user, setUser] = useRecoilState<any>(userState);
@@ -34,7 +34,7 @@ const useCustomer = (permissionEnumValue?:Permissions,allowAnonymous?:boolean) =
     }, []);
 
     const validate = useCallback(async () => {
-        if(allowAnonymous){
+        if (allowAnonymous) {
             return true;
         }
         const validate: any = await callApi("GET", "/v1/auth/validate");
@@ -43,8 +43,10 @@ const useCustomer = (permissionEnumValue?:Permissions,allowAnonymous?:boolean) =
             updateTokenStorage(user?.token);
             const userPermissions = [...user.permissions];
             user.permissions = null;
-            setStartGuid(!!user?.isFirstLogin);
-            localStorage.setItem("isHover", !!user?.isFirstLogin ? "true" : 'false');
+            if (user?.isFirstLogin) {
+                setStartGuid(true);
+                localStorage.setItem("isHover", "true");
+            }
             setUser({...user, type: "user"});
             setUserType({type: "user"});
             setUserProfile(validate?.data?.data?.customer);

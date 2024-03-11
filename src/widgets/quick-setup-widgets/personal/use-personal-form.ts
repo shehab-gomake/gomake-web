@@ -34,6 +34,7 @@ const usePersonalForm = () => {
         if (isValid) {
         await createNewCompanyUserApi(callApi, callBack, {
             ...state,
+            phone: state?.phone?.length < 4 ? '' : state?.phone,
             printHouseId
         });
         } else {

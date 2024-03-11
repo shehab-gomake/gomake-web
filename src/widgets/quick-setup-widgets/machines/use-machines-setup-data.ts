@@ -14,6 +14,7 @@ const useMachinesSetupData = (categories: ECategoryId[], nextStep: string) => {
     const [selectedCategory, setSelectedCategory] = useState<ECategoryId | ''>('');
     const [categoryMachines, setCategoryMachines] = useRecoilState(machinesSetup);
     const [printHouseMachines, setPrintHouseMachines] = useRecoilState(selectedMachinesSetup);
+    const [machinesTextFieldValue, setMachineTextFieldValue] = useState('');
     const [newMachine, setNewMachine] = useState<IMachineItem>({
         label: '',
         value: '',
@@ -99,11 +100,14 @@ const useMachinesSetupData = (categories: ECategoryId[], nextStep: string) => {
     const onSelectCategory = (category) => {
         setNewMachine({value: '', category: '', label: ''});
         setSelectedCategory(category);
+        setMachineTextFieldValue('');
+
     }
 
     const onSelectMachine = (machine: IMachineItem) => {
         if (!!machine?.value) {
             setPrintHouseMachines([...printHouseMachines, machine])
+            setMachineTextFieldValue('');
         }
 
     }
@@ -112,7 +116,8 @@ const useMachinesSetupData = (categories: ECategoryId[], nextStep: string) => {
     }
 
     const onSearchMachine = (newMachineName: string) => {
-        setNewMachine({label: newMachineName, category: selectedCategory, value: newMachineName, isAdminMachine: false})
+        setNewMachine({label: newMachineName, category: selectedCategory, value: newMachineName, isAdminMachine: false});
+        setMachineTextFieldValue(newMachineName);
     }
 
     const searchMachineInit = useCallback(() => '' , [printHouseMachines, selectedCategory])

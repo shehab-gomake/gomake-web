@@ -6,8 +6,12 @@ import {useMachinesSetupData} from "@/widgets/quick-setup-widgets/machines/use-m
 import {
     MaterialViewComponent
 } from "@/widgets/quick-setup-widgets/materials/selected-materials-component/material-view-component";
-import {GoMakeAutoComplate} from "@/components";
+import {GoMakeAutoComplate, StyledAutocomplete} from "@/components";
 import {ECategoryId} from "@/widgets/machines/enums/category-id";
+import TextField from "@mui/material/TextField";
+import * as React from "react";
+import {DotsLoader} from "@/components/dots-loader/dots-Loader";
+import {AutocompleteOption} from "@mui/joy";
 
 interface IProps {
     categories?: ECategoryId[];
@@ -41,17 +45,27 @@ const MachinesSetupWidget = ({categories, nextStep, header}: IProps) => {
                                 options={machinesCategoriesList}
                                 disableClearable={true}
                                 placeholder={t('signup.chooseMachineCategory')}/>
-            <GoMakeAutoComplate
+            <StyledAutocomplete
                 disabled={machinesLoading}
-                onChange={(e, machine) => onSelectMachine(machine)}
                 loading={machinesLoading}
-                disableClearable={true}
-                // value={searchMachineInit()}
-                onChangeTextField={(e) => {
-                    onSearchMachine(e?.target?.value)
+                onChange={() => {
                 }}
+                popupIcon={machinesLoading ? <DotsLoader/> : ''}
+                disableClearable={true}
                 style={classes.autoComplete}
+                renderInput={(params) => <TextField
+                    {...params}
+                    placeholder={t('signup.machineName')}
+                    onChange={(e) => {
+                        onSearchMachine(e?.target?.value)
+                    }}
+                    value={newMachine.value}
+                />}
                 options={[newMachine, ...categoryMachines]?.filter(machine => machine?.value !== '')}
+                renderOption={(props, option) => {
+                    return <AutocompleteOption {...props}
+                                               onClick={() => onSelectMachine(option)}>{option.label}</AutocompleteOption>
+                }}
                 placeholder={t('signup.machineName')}/>
             <Stack flexWrap={'wrap'} direction={'row'} columnGap={'10px'} rowGap={'2px'} padding={'15px'}
                    overflow={'auto'}
