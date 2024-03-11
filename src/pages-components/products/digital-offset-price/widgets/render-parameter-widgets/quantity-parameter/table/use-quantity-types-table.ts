@@ -46,13 +46,6 @@ const useQuantityTypesTable = (save: boolean) => {
     };
     setValuesState(v);
   };
-  // useEffect(() => {
-  //   if (!!equalQuantity) {
-  //     setValuesState((prevState) =>
-  //       prevState.map((value) => ({ ...value, quantity: equalQuantity }))
-  //     );
-  //   }
-  // }, [equalQuantity]);
 
   useEffect(() => {
     if (isDuplicatedName) {
