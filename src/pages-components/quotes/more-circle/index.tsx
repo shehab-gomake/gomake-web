@@ -4,7 +4,7 @@ import { useStyle } from "./style";
 import { ConvertIcon } from "./icons/convert";
 import { EditingIcon } from "./icons/editing";
 import { useTranslation } from "react-i18next";
-import { QUOTE_STATUSES } from "../enums";
+import { DELIVERY_NOTE_STATUSES, QUOTE_STATUSES } from "../enums";
 import { PDFIcon } from "./icons/pdf";
 import { OptionsButton } from "@/components/options-button/options-button";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
@@ -106,15 +106,15 @@ const MoreMenuWidget = ({ quote, documentType, onClickOpenModal, onClickPdf, onC
         documentType === DOCUMENT_TYPE.deliveryNote && <MenuItem onClick={() => navigate(`/deliveryNoteRefund?isNewCreation=true&documentToDuplicateId=${quote?.id}`)}>
           <div style={classes.menuRowStyle}>
             <TickIcon />
-            <div style={classes.rowTextStyle}>{t("tabs.deliveryNoteRefund")}</div>
+            <div style={classes.rowTextStyle}>{t("sales.quote.createDeliveryNoteRefund")}</div>
           </div>
         </MenuItem>
       }
       {
-        documentType === DOCUMENT_TYPE.invoice && <MenuItem onClick={() => navigate(`/invoiceRefund?isNewCreation=true&documentToDuplicateId=${quote?.id}`)}>
+        (documentType === DOCUMENT_TYPE.invoice && quote?.documentStatus !==DELIVERY_NOTE_STATUSES.Refunded) &&<MenuItem onClick={() => navigate(`/invoiceRefund?isNewCreation=true&documentToDuplicateId=${quote?.id}`)}>
           <div style={classes.menuRowStyle}>
             <TickIcon />
-            <div style={classes.rowTextStyle}>{t("tabs.invoiceRefund")}</div>
+            <div style={classes.rowTextStyle}>{t("sales.quote.createInvoiceRefund")}</div>
           </div>
         </MenuItem>
       }
@@ -126,14 +126,6 @@ const MoreMenuWidget = ({ quote, documentType, onClickOpenModal, onClickPdf, onC
           </div>
         </MenuItem>
       }
-      {/* {
-        documentType === DOCUMENT_TYPE.invoiceRefund && <MenuItem onClick={() => navigate(`/invoiceRefund?isNewCreation=true&documentToDuplicateId=${quote?.id}`)}>
-          <div style={classes.menuRowStyle}>
-            <TickIcon />
-            <div style={classes.rowTextStyle}>{t("sales.quote.closeAsInvoice")}</div>
-          </div>
-        </MenuItem>
-      } */}
 
     </OptionsButton>
   );
