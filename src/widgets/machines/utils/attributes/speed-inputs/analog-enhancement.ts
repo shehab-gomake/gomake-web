@@ -29,30 +29,30 @@ const analogEnhancement = (state: Record<string, any>) => {
             isValid: !!state?.attributes?.maxSpeed,
         },
         {
-            name: 'machineAttributes.costBySizeType',
+            name: 'machineAttributes.speedByArea',
             parameterKey: 'costBySizeType',
             value: state.attributes?.costBySizeType || [],
             machineInputType: 'multiArrayInput',
             isValid: true,
             inputs: [
                 {
-                    name: "size",
-                    label: "machineAttributes.size",
+                    name: "area",
+                    label: "machineAttributes.area",
                     type: "text",
-                    placeholder: "machineAttributes.size",
+                    placeholder: "machineAttributes.area",
                     required: true,
-                    parameterKey: "size",
+                    parameterKey: "area",
                     options: [],
                     unit: EMeasurementUnits.SQUARE_CM
                 },
                 {
-                    name: "costPercentage",
-                    label: "machineAttributes.costPercentage",
+                    name: "speedPercentage",
+                    label: "machineAttributes.speedPercentage",
                     type: "text",
                     unit: EMeasurementUnits.PERCENTAGE,
-                    placeholder: "machineAttributes.costPercentage",
+                    placeholder: "machineAttributes.speedPercentage",
                     required: true,
-                    parameterKey: "costPercentage",
+                    parameterKey: "speedPercentage",
                     options: []
                 },
             ]
@@ -65,18 +65,14 @@ const analogEnhancement = (state: Record<string, any>) => {
             isValid: true,
             inputs: [
                 {
-                    name: "complexity",
-                    label: "machineAttributes.complexity",
+                    name: "shape",
+                    label: "machineAttributes.shape",
                     type: "select",
-                    placeholder: "machineAttributes.complexity",
+                    placeholder: "machineAttributes.shape",
                     required: true,
-                    unit: EMeasurementUnits.CM,
-                    parameterKey: "complexity",
-                    options: [
-                        {value: 1, text: 'Simple'},
-                        {value: 2, text: 'Medium'},
-                        {value: 1, text: 'Complex'},
-                    ]
+                    parameterKey: "shape",
+                    options: [],
+                    optionsUrl: '/v1/print-house-config/parameters/shape-complexity'
                 },
                 {
                     name: "speed",

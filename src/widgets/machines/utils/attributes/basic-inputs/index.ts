@@ -23,14 +23,10 @@ const getCategoryBasicInputs = (categoryId: string, state: Record<string, any>) 
             return generalPrintingSettings(state);
         case ECategoryId.LAMINATION_MACHINE:
             return laminationMachine(state);
-        case ECategoryId.DIGITAL_ENHANCEMENT_MACHINE:
-            return basicSettingResolution(state);
         case ECategoryId.ANALOG_ENHANCEMENT_MACHINE:
             return basicSettingResolution(state);
         case ECategoryId.MANUAL_PEELING_STICKERS:
             return manualPeelingMachine(state);
-        case ECategoryId.COLLECTOR:
-            return basicSettingResolution(state);
         case ECategoryId.BOOKLET_MACHINE:
             return generalBookSettings(state);
         case ECategoryId.BOOKS_BINDER_MACHINE:
