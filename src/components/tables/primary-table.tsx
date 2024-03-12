@@ -81,7 +81,8 @@ const PrimaryTable = ({
   maxHeight,
   variant,
   withoutShadow,
-    dataTour
+  dataTour,
+  isLastItemTotal = false
 }: ITableProps) => {
   const { t } = useTranslation();
   const dir: "rtl" | "ltr" = t("direction");
@@ -90,9 +91,10 @@ const PrimaryTable = ({
     variant === "ClassicTable" ? ClassicTableCell : PrimaryTableCell;
   const TableRow =
     variant === "ClassicTable" ? ClassicTableRow : PrimaryTableRow;
+
   return (
-    <Paper sx={{ width: "100%", overflow: "hidden" , boxShadow: withoutShadow && "none" }}>
-      <TableContainer  style={classes.tableContainer}>
+    <Paper sx={{ width: "100%", overflow: "hidden", boxShadow: withoutShadow && "none" }}>
+      <TableContainer style={classes.tableContainer}>
         <Table data-tour={dataTour} stickyHeader={stickyHeader}>
           <TableHead>
             <TableRow >
@@ -109,12 +111,13 @@ const PrimaryTable = ({
           </TableHead>
           <TableBody  >
             {rows?.map((row, index) => (
-              <TableRow key={`row_${index}`}  >
+              <TableRow key={`row_${index}`}
+                style={{ backgroundColor: isLastItemTotal && index === rows.length - 1 ? "#EFDDFF" : "inherit" }} >
                 {row.map((cell, index) => {
                   if (index === 0 && stickyFirstCol) {
                     return <TableCell style={classes.sticky}>{cell}</TableCell>;
                   } else {
-                    return <TableCell  align={"center"}>{cell}</TableCell>;
+                    return <TableCell align={"center"}>{cell}</TableCell>;
                   }
                 })}
               </TableRow>
@@ -122,7 +125,7 @@ const PrimaryTable = ({
           </TableBody>
         </Table>
       </TableContainer>
-      </Paper>
+    </Paper>
   );
 };
 

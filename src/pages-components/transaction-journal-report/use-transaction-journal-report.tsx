@@ -1,7 +1,7 @@
 import { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import { useGomakeAxios, useSnackBar } from "@/hooks";
+import { useDocumentsType, useGomakeAxios, useSnackBar } from "@/hooks";
 import { EHttpMethod } from "@/services/api-service/enums";
 import { DocumentsTypeReportList } from "@/enums";
 interface TransactionJournalReportWidgetProps {
@@ -11,25 +11,7 @@ const useTransactionJournalReport = ({ isPayment }: TransactionJournalReportWidg
   const { alertFaultGetData, alertSuccessGetData } = useSnackBar();
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation()
-
-  const documentsTypeList = [
-    { id: DocumentsTypeReportList.Invoice, label: t("reports.invoice") },
-    { id: DocumentsTypeReportList.InvoiceRefund, label: t("reports.invoiceRefund") },
-    { id: DocumentsTypeReportList.PurchaseInvoice, label: t("reports.purchaseInvoice") },
-    { id: DocumentsTypeReportList.PurchaseInvoiceRefund, label: t("reports.purchaseInvoiceRefund") },
-    { id: DocumentsTypeReportList.Payments, label: t("reports.Payments") },
-    { id: DocumentsTypeReportList.Deposits, label: t("reports.deposits") },
-    { id: DocumentsTypeReportList.JournalEntry, label: t("reports.journalEntry") },
-    { id: DocumentsTypeReportList.OutGoingPayments, label: t("reports.outGoingPayments") },
-    { id: DocumentsTypeReportList.SalesDocuments, label: t("reports.salesDocuments") }
-  ] as const;
-  const [documentType, setDocumentType] = useState<{
-    label: string;
-    id: number;
-  } | null>();
-  const handleDocumentTypeChange = (e: any, value: any) => {
-    setDocumentType(value);
-  };
+  const { documentsTypeList, documentType, handleDocumentTypeChange } = useDocumentsType()
 
 
   const [resetDatePicker, setResetDatePicker] = useState<boolean>(false);
