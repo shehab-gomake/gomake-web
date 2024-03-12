@@ -258,6 +258,12 @@ const useAuthLayoutHook = (permissionEnumValue?: Permissions, allowAnonymous?: b
             path: "/daily-payments-report",
             Permission: Permissions.SHOW_CLIENT,
           },
+          {
+            key: "salesReport",
+            title: "tabs.salesReport",
+            path: "/sales-Report",
+            Permission: Permissions.SHOW_CLIENT,
+          },
         ],
         icon: () => {
           return <ReportsIcon />;
