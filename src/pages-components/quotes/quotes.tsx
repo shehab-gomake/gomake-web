@@ -10,7 +10,7 @@ import {
 import { SearchInputComponent } from "@/components/form-inputs/search-input-component";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import { HeaderTitle } from "@/widgets";
-import { QuoteLogsWidget } from "./quote-widgets/logs-widget";
+import { DocumentLogsWidget } from "./documents-logs-widget/logs-widget";
 import { DOCUMENT_TYPE } from "./enums";
 import { Button, IconButton, Stack } from "@mui/material";
 import { CardsSection } from "./statistics-section/statistics-sections";
@@ -73,7 +73,13 @@ const QuotesListPageWidget = ({
     navigate,
     documentPath,
     resetDatePicker,
-    onSelectDeliveryTimeDates
+    onSelectDeliveryTimeDates,
+    employeeId,
+    handleSelectEmployee,
+    resetLogsDatePicker,
+    onSelectDateRange,
+    onClickSearchLogsFilter,
+    onClickClearLogsFilter
   } = useQuotes(documentType);
 
   return (
@@ -218,14 +224,23 @@ const QuotesListPageWidget = ({
         subTitle={t("sales.quote.subTitleModal")}
         onClickDelete={() => updateQuoteStatus()}
       />
+
       <GoMakeModal
         insideStyle={classes.insideStyle}
         openModal={openLogsModal}
         onClose={onClickCloseLogsModal}
-        modalTitle={t("sales.quote.quoteLogs") + " - " + modalLogsTitle}
+        modalTitle={`${t("sales.quote.logsFor")} ${t(`sales.quote.${DOCUMENT_TYPE[documentType]}`).toLowerCase()} ${t("sales.quote.number")} - ${modalLogsTitle}`}
       >
-        <QuoteLogsWidget logsTableHeaders={logsTableHeaders} />
+        <DocumentLogsWidget 
+        employeeId={employeeId}
+        handleSelectEmployee={handleSelectEmployee}
+        onClickClearLogsFilter={onClickClearLogsFilter}
+        onClickSearchLogsFilter={onClickSearchLogsFilter}
+        resetLogsDatePicker={resetLogsDatePicker}
+        onSelectDateRange={onSelectDateRange}
+        logsTableHeaders={logsTableHeaders} />
       </GoMakeModal>
+
       <AddRuleModal
         openModal={openAddRule}
         onCloseModal={onCloseAddRuleModal}

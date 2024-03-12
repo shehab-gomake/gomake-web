@@ -83,8 +83,8 @@ const useStyle = () => {
         color: errorColor(300),
       },
       insideStyle: {
-        width: "40%",
-        height: "540px",
+        width: "600px",
+        height: "520px",
       },
       openBtnStyle: {
         display: "flex",
