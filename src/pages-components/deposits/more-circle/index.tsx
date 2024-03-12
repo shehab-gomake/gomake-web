@@ -33,7 +33,7 @@ const MoreMenuWidget = ({ deposit, onClickCancel, onClickShowDeposit, onClickPdf
   return (
     <OptionsButton>
       <MoreMenuItem icon={<ShowIcon />} text={t("deposits.showDeposits")} onClick={onClickShowDeposit} />
-      <MoreMenuItem icon={<EditingIcon />} text={t("sales.quote.loggers")} onClick={onClickLoggers} />
+      {/* <MoreMenuItem icon={<EditingIcon />} text={t("sales.quote.loggers")} onClick={onClickLoggers} /> */}
       {/* <MoreMenuItem icon={<PDFIcon />} text={t("sales.quote.pdf")} onClick={onClickPdf} /> */}
       {!deposit?.isCanceled && <MoreMenuItem icon={<CancelOutlinedIcon style={{ color: "#8283BE", height: 16, width: 16 }} />} text={t("sales.quote.cancel")} onClick={onClickCancel} />}    
       </OptionsButton>

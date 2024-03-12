@@ -19,6 +19,8 @@ import { ExcelSheetIcon, SettingNewIcon } from "@/icons";
 import { AddRuleModal } from "../products/profits-new/widgets/add-rule-modal";
 import { GoMakeDatepicker } from "@/components/date-picker/date-picker-component";
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import { useRecoilValue } from "recoil";
+import { employeesListsState } from "./states";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -29,6 +31,7 @@ const QuotesListPageWidget = ({
   isFromHomePage = false,
 }: IProps) => {
   const { classes } = useStyle();
+  const employeeListValue = useRecoilValue<string[]>(employeesListsState);
   const {
     tableHeaders,
     allQuotes,
@@ -51,7 +54,7 @@ const QuotesListPageWidget = ({
     onClickClearFilter,
     openLogsModal,
     onClickCloseLogsModal,
-    modalLogsTitle,
+    logsModalTitle,
     logsTableHeaders,
     documentLabel,
     allDocuments,
@@ -79,7 +82,8 @@ const QuotesListPageWidget = ({
     resetLogsDatePicker,
     onSelectDateRange,
     onClickSearchLogsFilter,
-    onClickClearLogsFilter
+    onClickClearLogsFilter,
+    documentLogsData
   } = useQuotes(documentType);
 
   return (
@@ -224,12 +228,11 @@ const QuotesListPageWidget = ({
         subTitle={t("sales.quote.subTitleModal")}
         onClickDelete={() => updateQuoteStatus()}
       />
-
       <GoMakeModal
         insideStyle={classes.insideStyle}
         openModal={openLogsModal}
         onClose={onClickCloseLogsModal}
-        modalTitle={`${t("sales.quote.logsFor")} ${t(`sales.quote.${DOCUMENT_TYPE[documentType]}`).toLowerCase()} ${t("sales.quote.number")} - ${modalLogsTitle}`}
+        modalTitle={logsModalTitle}
       >
         <DocumentLogsWidget 
         employeeId={employeeId}
@@ -238,9 +241,11 @@ const QuotesListPageWidget = ({
         onClickSearchLogsFilter={onClickSearchLogsFilter}
         resetLogsDatePicker={resetLogsDatePicker}
         onSelectDateRange={onSelectDateRange}
-        logsTableHeaders={logsTableHeaders} />
+        logsTableHeaders={logsTableHeaders} 
+        logsTableRows={documentLogsData}
+        employeesCategories={employeeListValue}
+        />
       </GoMakeModal>
-
       <AddRuleModal
         openModal={openAddRule}
         onCloseModal={onCloseAddRuleModal}

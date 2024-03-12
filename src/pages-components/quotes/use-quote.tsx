@@ -30,7 +30,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
   const { t } = useTranslation();
   const { classes } = useStyle();
   const { callApi } = useGomakeAxios();
-  const { alertFaultUpdate, alertFaultDuplicate ,alertFaultGetData } = useSnackBar();
+  const { alertFaultUpdate, alertFaultDuplicate, alertFaultGetData } = useSnackBar();
   const { getCurrencyUnitText } = useQuoteGetData();
   const { navigate } = useGomakeRouter();
   const { errorColor } = useGomakeTheme();
@@ -49,7 +49,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
   const [customersListCreateOrder, setCustomersListCreateOrder] = useState([]);
   const [openModal, setOpenModal] = useState(false);
   const [openLogsModal, setOpenLogsModal] = useState(false);
-  const [modalLogsTitle, setModalLogsTitle] = useState<string>();
+  const [logsModalTitle, setLogsModalTitle] = useState<string>();
   const setEmployeeListValue = useSetRecoilState<string[]>(employeesListsState);
   const [selectedQuote, setSelectedQuote] = useState<any>();
   const [allDocuments, setAllDocuments] = useState([]);
@@ -63,6 +63,13 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
   const [resetDatePicker, setResetDatePicker] = useState<boolean>(false);
   const [fromDate, setFromDate] = useState<Date>();
   const [toDate, setToDate] = useState<Date>();
+  const [documentIdLogState, setDocumentIdLogState] = useState<string>();
+  const [documentLogsData, setDocumentLogsData] = useState<any>();
+  const [employeeId, setEmployeeId] = useState<any>();
+  const [resetLogsDatePicker, setResetLogsDatePicker] = useState<boolean>(false);
+  const [fromLogsDate, setFromLogsDate] = useState<Date>();
+  const [toLogsDate, setToLogsDate] = useState<Date>();
+  const [agentsCategories, setAgentsCategories] = useRecoilState(agentsCategoriesState);
 
   const documentPath = DOCUMENT_TYPE[docType];
   const isReceipt = docType === DOCUMENT_TYPE.receipt;
@@ -87,25 +94,12 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     setOpenModal(true);
   };
 
-  const [agentsCategories, setAgentsCategories] = useRecoilState(
-    agentsCategoriesState
-  );
-
   const onClickCloseLogsModal = () => {
     setOpenLogsModal(false);
     setEmployeeId(null)
     setFromLogsDate(null);
     setToLogsDate(null);
   };
-
-  const onClickOpenLogsModal = (quoteNumber: string) => {
-    setModalLogsTitle(quoteNumber);
-    setOpenLogsModal(true);
-  };
-
-  useEffect(() => {
-    setFinalPatternSearch(debounce);
-  }, [debounce]);
 
   const getAgentCategories = async (isAgent: boolean, setState: any) => {
     const callBack = (res) => {
@@ -172,7 +166,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
                 onClickOpenModal={onClickOpenModal}
                 onClickPdf={onClickQuotePdf}
                 onClickDuplicate={onClickQuoteDuplicate}
-                onClickLoggers={() => onClickOpenLogsModal(quote?.number)}
+                onClickLoggers={() => onClickDocumentLogs(quote)}
               />,
             ];
           } else {
@@ -192,7 +186,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
                 onClickPdf={onClickQuotePdf}
                 onClickDuplicate={onClickQuoteDuplicate}
                 onClickLoggers={() => onClickDocumentLogs(quote)}
-                
+
               />,
             ];
           }
@@ -212,7 +206,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
             onClickOpenModal={onClickOpenModal}
             onClickPdf={onClickQuotePdf}
             onClickDuplicate={onClickQuoteDuplicate}
-            onClickLoggers={() => onClickOpenLogsModal(quote?.number)}
+            onClickLoggers={() => onClickDocumentLogs(quote)}
           />,
         ]);
         setAllQuotes(isReceipt ? mapReceiptData : mapData);
@@ -273,7 +267,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
             onClickOpenModal={onClickOpenModal}
             onClickPdf={onClickQuotePdf}
             onClickDuplicate={onClickQuoteDuplicate}
-            onClickLoggers={() => onClickOpenLogsModal(quote?.number)}
+            onClickLoggers={() => onClickDocumentLogs(quote)}
           />,
         ]);
         const mapReceiptData = data?.map((quote: any) => [
@@ -291,7 +285,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
             onClickOpenModal={onClickOpenModal}
             onClickPdf={onClickQuotePdf}
             onClickDuplicate={onClickQuoteDuplicate}
-            onClickLoggers={() => onClickOpenLogsModal(quote?.number)}
+            onClickLoggers={() => onClickDocumentLogs(quote)}
           />,
         ]);
         setAllQuotes(isReceipt ? mapReceiptData : mapData);
@@ -563,26 +557,23 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     }
   };
 
-  const [documentIdLogState ,setDocumentIdLogState] = useState<string>();
-  const [documentLogsData ,setDocumentLogsData] = useState<string>();
 
   const getAllDocumentLogs = (documentId?: string): Promise<void> => {
     return new Promise(async (resolve, reject) => {
       const callBack = (res) => {
         if (res?.success) {
           setDocumentIdLogState(res?.data?.documentId);
-          console.log("res?", res?.data);
-          // const mapData = res?.data?.map((log: any) => [
-          //   GetDateFormat(log?.actionDate),
-          //   log?.employeeName,
-          //   log?.actionDesc
-          // ]);
-          // setDocumentLogsData(mapData);
-          resolve(); 
+          const mapData = res?.data?.map((log: any) => [
+            GetDateFormat(log?.actionDate),
+            log?.logAction,
+            log?.logAction
+          ]);
+          setDocumentLogsData(mapData);
+          resolve();
         } else {
           alertFaultGetData();
           setDocumentIdLogState("");
-          reject(); 
+          reject();
         }
       };
       try {
@@ -596,19 +587,17 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
           },
         });
       } catch (error) {
-        reject(); 
+        reject();
       }
     });
   };
-  
+
   const onClickDocumentLogs = async (document: any) => {
     try {
       await getAllDocumentLogs(document?.id);
-      setModalLogsTitle(document?.number);
+      setLogsModalTitle(`${t("sales.quote.logsFor")} ${t(`sales.quote.${DOCUMENT_TYPE[docType]}`).toLowerCase()} ${t("sales.quote.number")} - ${document?.number}`)
       setOpenLogsModal(true);
     } catch (error) {
-      setModalLogsTitle(document?.number);
-      setOpenLogsModal(true);
       console.error("Error fetching document logs:", error);
     }
   };
@@ -650,17 +639,6 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     await createNewDocumentApi(callApi, callBack, { documentType: docType });
   };
 
-  useEffect(() => {
-    getAllCustomersCreateQuote();
-    getAllCustomersCreateOrder();
-    getAgentCategories(true, setAgentsCategories);
-    getAgentCategories(null, setEmployeeListValue);
-  }, []);
-
-  useEffect(() => {
-    getAllQuotes();
-  }, [page, quoteStatusId, pageSize, finalPatternSearch]);
-
 
   // table in home page
   const getAllDocuments = async (docType) => {
@@ -691,8 +669,8 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
             onClickOpenModal={onClickOpenModal}
             onClickPdf={onClickQuotePdf}
             onClickDuplicate={onClickQuoteDuplicate}
-            onClickLoggers={() => onClickOpenLogsModal(document?.number)}
-            />,
+            onClickLoggers={() => onClickDocumentLogs(document)}
+          />,
         ]);
         setAllDocuments(mapData);
       }
@@ -709,7 +687,6 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
         },
       }));
   };
-
 
   const handleCardClick = (cardKey, statusValue) => {
     setPage(1);
@@ -729,10 +706,6 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     setToDate(toDate);
   };
 
-  useEffect(() => {
-    getAllDocuments(docType);
-  }, [selectedClient]);
-
   const tableHomeHeader = [
     t("home.headers.documentNumber"),
     t("home.headers.clientType"),
@@ -744,34 +717,48 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     t("home.headers.more"),
   ];
 
-
-  const [employeeId, setEmployeeId] = useState<any>();
-  const [resetLogsDatePicker, setResetLogsDatePicker] = useState<boolean>(false);
-  const [fromLogsDate, setFromLogsDate] = useState<Date>();
-  const [toLogsDate, setToLogsDate] = useState<Date>();
-
   const onSelectDateRange = (fromDate: Date, toDate: Date) => {
     setResetLogsDatePicker(false);
-      setFromLogsDate(fromDate);
-      setToLogsDate(toDate);
+    setFromLogsDate(fromDate);
+    setToLogsDate(toDate);
   };
 
   const handleSelectEmployee = (e: any, value: any) => {
     setEmployeeId(value);
-}
-  
+  }
+
   const onClickClearLogsFilter = () => {
-     setEmployeeId(null)
-     setFromLogsDate(null);
-     setToLogsDate(null);
-     getAllDocumentLogs(documentIdLogState);
+    setEmployeeId(null)
+    getAllDocumentLogs(documentIdLogState);
   };
 
   const onClickSearchLogsFilter = () => {
     getAllDocumentLogs(documentIdLogState);
- };
+  };
+
+
+  useEffect(() => {
+    getAllCustomersCreateQuote();
+    getAllCustomersCreateOrder();
+    getAgentCategories(true, setAgentsCategories);
+    getAgentCategories(null, setEmployeeListValue);
+  }, []);
+
+  useEffect(() => {
+    getAllQuotes();
+  }, [page, quoteStatusId, pageSize, finalPatternSearch]);
+
+  useEffect(() => {
+    setFinalPatternSearch(debounce);
+  }, [debounce]);
+
+  useEffect(() => {
+    getAllDocuments(docType);
+  }, [selectedClient]);
+
 
   return {
+    t,
     patternSearch,
     tableHeaders,
     allQuotes,
@@ -795,10 +782,9 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     getAllQuotes,
     onClickClearFilter,
     onClickQuotePdf,
-    t,
     openLogsModal,
     onClickCloseLogsModal,
-    modalLogsTitle,
+    logsModalTitle,
     logsTableHeaders,
     documentsLabels,
     documentLabel,
@@ -822,13 +808,13 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     deliveryNoteStatuses,
     resetDatePicker,
     onSelectDeliveryTimeDates,
-
     employeeId,
     handleSelectEmployee,
     resetLogsDatePicker,
     onSelectDateRange,
     onClickSearchLogsFilter,
-    onClickClearLogsFilter
+    onClickClearLogsFilter,
+    documentLogsData
   };
 };
 

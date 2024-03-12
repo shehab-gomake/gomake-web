@@ -89,6 +89,10 @@ const useStyle = () => {
                 textTransform: "none" as "none",
                 gap: "10px",
             },
+            insideStyle: {
+                width: "600px",
+                height: "520px",
+              },
         };
     }, [t, theme]);
     return {
