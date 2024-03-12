@@ -4,11 +4,12 @@ import {perforationMachine} from "@/widgets/machines/utils/attributes/run-inputs
 import {foldingGluingMachine} from "@/widgets/machines/utils/attributes/run-inputs/folding-gluing-machine";
 import {bookletMachine} from "@/widgets/machines/utils/attributes/run-inputs/booklet-machine";
 import {rollFinishMachine} from "@/widgets/machines/utils/attributes/run-inputs/roll-finish-machine";
+import {foldingMachine} from "@/widgets/machines/utils/attributes/run-inputs/folding-machine";
 
 const getCategoryRunInputs = (categoryId: string, state: Record<string, any>): any[] => {
     switch (categoryId) {
         case ECategoryId.FOLDING_MACHINE:
-            return scoringMachine(state);
+            return foldingMachine(state);
         case ECategoryId.SCORING_MACHINE:
             return scoringMachine(state);
         case ECategoryId.PERFORATION_MACHINE:
