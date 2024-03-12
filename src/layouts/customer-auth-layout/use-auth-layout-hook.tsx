@@ -261,7 +261,7 @@ const useAuthLayoutHook = (permissionEnumValue?: Permissions, allowAnonymous?: b
           {
             key: "salesReport",
             title: "tabs.salesReport",
-            path: "/sales-Report",
+            path: "/sales-report",
             Permission: Permissions.SHOW_CLIENT,
           },
         ],
