@@ -33,11 +33,6 @@ const SectionMappingWidget = ({
     const groupedParameters = subSection?.parameters
       ?.filter((param: any) => !param.isHidden)
       ?.filter((param: any) => !param.isUnderParameterId)
-      ?.filter((param: any) => {
-        return !relatedParameters.some(
-          (relatedParam) => relatedParam.parameterId === param.id
-        );
-      })
       .reduce((result, parameter) => {
         const { actionIndex } = parameter;
         if (!result[actionIndex]) {
@@ -212,6 +207,9 @@ const SectionMappingWidget = ({
             ?.filter((param: any) => !param.isHidden)
             ?.filter((param: any) => !param.isUnderParameterId)
             ?.map((parameter: any) => {
+              if(parameter.name == "Foil Color"){
+                debugger;
+              }
               const isUnderParameterId = underParameterIds.some(
                 (item) => item.underParameterId === parameter.id && !relatedParameters.some((relatedItem) => relatedItem?.parameterId === item.myParameter?.id)
               );
