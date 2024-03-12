@@ -12,8 +12,11 @@ export interface SalesReportHeaderWidgetProps {
   renderOptions: () => any[];
   checkWhatRenderArray: (arg: any) => void;
   handleCustomerChange: any;
-  detailedReport: boolean,
-  onChangeDetailedReport: any;
+  displayByGroups: boolean,
+  onChangeDisplayByGroups: any;
+  documentsTypeList: any,
+  handleDocumentTypeChange: any,
+  documentType: any,
 }
 const useSalesReportHeader = () => {
   const { clasess } = useStyle();

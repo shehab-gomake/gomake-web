@@ -20,10 +20,13 @@ const SalesReportWidget = () => {
     handleCustomerChange,
     onClickBtn1,
     showTable,
-    detailedReport,
     getTableDataRows,
-    onChangeDetailedReport,
-    transformedHeaders
+    onChangeDisplayByGroups,
+    handleDocumentTypeChange,
+    documentType,
+    documentsTypeList,
+    displayByGroups,
+    tableHeaders
   } = useSalesReport()
   return (
     <div style={clasess.mainContainer}>
@@ -37,8 +40,11 @@ const SalesReportWidget = () => {
         renderOptions={renderOptions}
         checkWhatRenderArray={checkWhatRenderArray}
         handleCustomerChange={handleCustomerChange}
-        detailedReport={detailedReport}
-        onChangeDetailedReport={onChangeDetailedReport}
+        displayByGroups={displayByGroups}
+        onChangeDisplayByGroups={onChangeDisplayByGroups}
+        documentsTypeList={documentsTypeList}
+        handleDocumentTypeChange={handleDocumentTypeChange}
+        documentType={documentType}
 
       />
       <Divider />
@@ -49,7 +55,7 @@ const SalesReportWidget = () => {
         showTable &&
         <PrimaryTable
           rows={getTableDataRows()}
-          headers={transformedHeaders}
+          headers={tableHeaders}
           maxHeight={650}
         />
       }

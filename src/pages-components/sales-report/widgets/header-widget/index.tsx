@@ -16,8 +16,11 @@ const SalesReportHeaderWidget = ({
   renderOptions,
   checkWhatRenderArray,
   handleCustomerChange,
-  detailedReport,
-  onChangeDetailedReport
+  displayByGroups,
+  onChangeDisplayByGroups,
+  documentsTypeList,
+  handleDocumentTypeChange,
+  documentType
 }: SalesReportHeaderWidgetProps) => {
 
   const { clasess, t } = useSalesReportHeader()
@@ -55,18 +58,30 @@ const SalesReportHeaderWidget = ({
           value={customer}
         />
       </div>
+      <div style={clasess.date2FilterContainer}>
+        <h3 style={clasess.filterLabelStyle}>Documents Type</h3>
+        <GoMakeAutoComplate
+          options={documentsTypeList}
+          style={clasess.textInputStyle}
+          placeholder="choose Document Type"
+          onChange={handleDocumentTypeChange}
+          value={documentType}
+        />
+      </div>
       <div style={clasess.date1FilterContainer}>
         <div style={clasess.checkboxStyle}>
           <Checkbox
             icon={<CheckboxIcon />}
             checkedIcon={<CheckboxCheckedIcon />}
-            onChange={onChangeDetailedReport}
-            checked={detailedReport}
+            onChange={onChangeDisplayByGroups}
+            checked={displayByGroups}
           />
-          <div style={clasess.labelSwichStyle}>Detailed Report</div>
+          <div style={clasess.labelSwichStyle}>Display by groups</div>
         </div>
       </div>
+
     </div>
+
   );
 };
 export { SalesReportHeaderWidget };
