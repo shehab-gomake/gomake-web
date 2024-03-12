@@ -19,7 +19,6 @@ const useSalesReport = () => {
   const [fromDate, setFromDate] = useState<Date>();
   const [toDate, setToDate] = useState<Date>();
   const [dateList, setDateList] = useState<string[]>([]);
-  console.log("dateList", dateList)
 
   function getMonthsArray(date: Date): string[] {
     const currentMonth = date.getMonth();
@@ -30,7 +29,7 @@ const useSalesReport = () => {
       const month = (currentMonth - i + 12) % 12;
       const year = currentYear - Math.floor((currentMonth - i + 12) / 12);
       if (i === 4) {
-        result.push(`Before`);
+        result.push(t("reports.before"));
       }
       else {
         if (month === 11) {
@@ -61,14 +60,27 @@ const useSalesReport = () => {
   }
 
   const tableHeaders = [
-    "client code",
-    "client name ",
-    "number of invoices",
-    "number of refunds",
+    t("reports.clientCode"),
+    t("reports.clientName"),
+    t("reports.salesAmount"),
+    t("reports.refunds amount"),
     ...dateList,
-    "total invoices price",
+    t("reports.totalPrice"),
 
   ];
+  function sumAllItems(salesReports) {
+    return salesReports?.reduce((total, report) => {
+      for (const key in report) {
+        if (typeof report[key] === 'number') {
+          total[key] = (total[key] || 0) + report[key];
+        }
+      }
+      return total;
+    }, {});
+  }
+
+  const totalSum = sumAllItems(tableData);
+  console.log([totalSum]); // This will print the sum of all numeric properties
   const getTableDataRows = useCallback(() => {
     if (tableData?.length) {
       return tableData?.map((data) => [
@@ -76,12 +88,30 @@ const useSalesReport = () => {
         data?.cardName,
         data?.totalSalesAmount,
         data?.totalRefundsAmount,
-        data?.prevSales,
-        data?.prev3MonthSales,
-        data?.prev2MonthSales,
-        data?.prevMonthSales,
-        data?.thisMonthSales,
-        data?.totalSales,
+        data?.prevSales.toFixed(2),
+        data?.prev3MonthSales.toFixed(2),
+        data?.prev2MonthSales.toFixed(2),
+        data?.prevMonthSales.toFixed(2),
+        data?.thisMonthSales.toFixed(2),
+        data?.totalSales.toFixed(2),
+      ]);
+    }
+
+  }, [tableData]);
+
+  const getTotalTableDataRows = useCallback(() => {
+    if ([totalSum]?.length) {
+      return [totalSum]?.map((data) => [
+        t("reports.SumOfColumns"),
+        "",
+        data?.totalSalesAmount,
+        data?.totalRefundsAmount,
+        data?.prevSales.toFixed(2),
+        data?.prev3MonthSales.toFixed(2),
+        data?.prev2MonthSales.toFixed(2),
+        data?.prevMonthSales.toFixed(2),
+        data?.thisMonthSales.toFixed(2),
+        data?.totalSales.toFixed(2),
       ]);
     }
 
@@ -137,7 +167,8 @@ const useSalesReport = () => {
     documentType,
     handleDocumentTypeChange,
     documentsTypeList,
-    tableHeaders
+    tableHeaders,
+    getTotalTableDataRows
   };
 };
 

@@ -26,7 +26,8 @@ const SalesReportWidget = () => {
     documentType,
     documentsTypeList,
     displayByGroups,
-    tableHeaders
+    tableHeaders,
+    getTotalTableDataRows
   } = useSalesReport()
   return (
     <div style={clasess.mainContainer}>
@@ -54,11 +55,13 @@ const SalesReportWidget = () => {
       {
         showTable &&
         <PrimaryTable
-          rows={getTableDataRows()}
+          rows={[...getTableDataRows(), ...getTotalTableDataRows()]}
           headers={tableHeaders}
           maxHeight={650}
+          isLastItemTotal={true}
         />
       }
+
 
     </div>
   );

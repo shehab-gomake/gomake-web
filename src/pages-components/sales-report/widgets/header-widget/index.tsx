@@ -59,11 +59,11 @@ const SalesReportHeaderWidget = ({
         />
       </div>
       <div style={clasess.date2FilterContainer}>
-        <h3 style={clasess.filterLabelStyle}>Documents Type</h3>
+        <h3 style={clasess.filterLabelStyle}>{t("reports.documentsType")}</h3>
         <GoMakeAutoComplate
           options={documentsTypeList}
           style={clasess.textInputStyle}
-          placeholder="choose Document Type"
+          placeholder={t("reports.chooseDocumentType")}
           onChange={handleDocumentTypeChange}
           value={documentType}
         />
@@ -76,7 +76,7 @@ const SalesReportHeaderWidget = ({
             onChange={onChangeDisplayByGroups}
             checked={displayByGroups}
           />
-          <div style={clasess.labelSwichStyle}>Display by groups</div>
+          <div style={clasess.labelSwichStyle}>{t("reports.DisplayByGroups")}</div>
         </div>
       </div>
 
