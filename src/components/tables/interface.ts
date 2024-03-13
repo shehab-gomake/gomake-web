@@ -10,6 +10,7 @@ export interface ITableProps {
   variant?: TABLE_TYPE;
   withoutShadow?: boolean;
   dataTour?: string;
+  columnWidths?:string[];
 }
 
 export interface ISecondaryTableProps {

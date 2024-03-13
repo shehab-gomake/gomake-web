@@ -64,7 +64,7 @@ const TotalPriceComp = ({
               setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdateDiscount}
               onInputChange={(e) => onInputDiscount(e)}
             />
-            {getCurrencyUnitText(quoteItems?.currency)}
+            %
           </div>
         </div>
         <div style={{ ...classes.evenRowContainer, width: "13%" }}>
