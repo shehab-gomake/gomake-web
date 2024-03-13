@@ -80,7 +80,6 @@ const useSalesReport = () => {
   }
 
   const totalSum = sumAllItems(tableData);
-  console.log([totalSum]); // This will print the sum of all numeric properties
   const getTableDataRows = useCallback(() => {
     if (tableData?.length) {
       return tableData?.map((data) => [

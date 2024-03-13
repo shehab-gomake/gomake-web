@@ -37,9 +37,8 @@ const MoreMenuWidget = ({ quote, documentType, onClickOpenModal, onClickPdf, onC
       }
     }
     else if (documentType !== DOCUMENT_TYPE.quote) {
-      const canEdit = documentType === DOCUMENT_TYPE.order || documentType === DOCUMENT_TYPE.purchaseOrder;
       return (
-        <MenuItem onClick={() => navigate(`/${documentPath}?Id=${quote?.id}&canEdit=${canEdit}`)}>
+        <MenuItem onClick={() => navigate(`/${documentPath}?Id=${quote?.id}`)}>
           <div style={classes.menuRowStyle}>
             <EditingIcon />
             <div style={classes.rowTextStyle}>{t("sales.quote.edit")}</div>
@@ -111,7 +110,7 @@ const MoreMenuWidget = ({ quote, documentType, onClickOpenModal, onClickPdf, onC
         </MenuItem>
       }
       {
-        (documentType === DOCUMENT_TYPE.invoice && quote?.documentStatus !==DELIVERY_NOTE_STATUSES.Refunded) &&<MenuItem onClick={() => navigate(`/invoiceRefund?isNewCreation=true&documentToDuplicateId=${quote?.id}`)}>
+        (documentType === DOCUMENT_TYPE.invoice && quote?.documentStatus !== DELIVERY_NOTE_STATUSES.Refunded) && <MenuItem onClick={() => navigate(`/invoiceRefund?isNewCreation=true&documentToDuplicateId=${quote?.id}`)}>
           <div style={classes.menuRowStyle}>
             <TickIcon />
             <div style={classes.rowTextStyle}>{t("sales.quote.createInvoiceRefund")}</div>

@@ -129,9 +129,6 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     t("products.offsetPrice.admin.finalPrice"),
     t("products.profits.more"),
   ];
-  const filteredTableHeaders = (!router.query.canEdit || router.query.canEdit === "true")
-    ? tableHeaders
-    : tableHeaders.filter(header => header !== "#" && header !== t("products.profits.more"));
   const columnWidths = ["5%", "8%", "12%", "33%", "8%", "8%", "8%", "8%"];
   const headerHeight = "44px";
 
@@ -1062,7 +1059,6 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     })
   }
   const handleSaveBtnClickForDocument = async () => {
-    const canEdit = docType === DOCUMENT_TYPE.order || docType === DOCUMENT_TYPE.purchaseOrder;
     const res = await callApi(
       EHttpMethod.POST,
       `/v1/erp-service/documents/create-document`,
@@ -1077,7 +1073,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     if (res?.success) {
       alertSuccessAdded();
       // navigate(`${documentPath}s`);
-      navigate(`/${documentPath}?Id=${res?.data?.data?.data}&canEdit=${canEdit}`)
+      navigate(`/${documentPath}?Id=${res?.data?.data?.data}`)
     } else {
       alertFaultAdded();
     }
@@ -1472,7 +1468,6 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     onCloseCopyFromDeliveryNote,
     onOpenCopyFromDeliveryNote,
     openCopyFromDeliveryNoteModal,
-    filteredTableHeaders
 
   };
 };
