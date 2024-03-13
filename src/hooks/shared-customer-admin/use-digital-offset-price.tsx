@@ -92,6 +92,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [subProducts, setSubProducts] = useRecoilState<any>(
     subProductsParametersState
   );
+  console.log("subProducts", subProducts)
   const [isSetTemplete, setIsSetTemplete] = useState<boolean>(false);
   const setSubProductsCopy = useSetRecoilState<any>(
     subProductsCopyParametersState
@@ -1299,13 +1300,32 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   // }
 
                   if (relatedParameter.activateByAllValues && parm?.values) {
+
                     if (relatedParameter.activateByAllValues) {
-                      const { parameterId, actionIndex } = relatedParameter;
-                      const myParameter = list?.find(
-                        (p) =>
-                          p.id === parameterId &&
-                          p.actionIndex === actionIndex
-                      );
+                      if (subSection.optionToDuplicateContent) {
+                        const { parameterId, actionIndex } = relatedParameter;
+                        const myParameter = list?.find(
+                          (p) =>
+                            p.id === parameterId &&
+                            p.actionIndex === actionIndex
+                        );
+                        return (
+                          <div key={parameterId}>
+                            {_renderParameterType(
+                              myParameter,
+                              subSection,
+                              section,
+                              subSection?.parameters,
+                              myParameter?.value,
+                              list,
+                              true,
+                              false,
+                              false
+                            )}
+                          </div>
+                        );
+                      }
+
                       let productCopy = cloneDeep(productTemplate);
                       const sectionCopy = productCopy.sections?.find(x => x.id === section.id);
                       const subSectionCopy = sectionCopy.subSections?.find(x => x.id === subSection.id);
@@ -1315,21 +1335,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                       }
                       param.isHidden = false;
                       setProductTemplate(productCopy);
-                      // return (
-                      //   <div key={parameterId}>
-                      //     {_renderParameterType(
-                      //       myParameter,
-                      //       subSection,
-                      //       section,
-                      //       subSection?.parameters,
-                      //       myParameter?.value,
-                      //       list,
-                      //       true,
-                      //       false,
-                      //       false
-                      //     )}
-                      //   </div>
-                      // );
+
                     }
                     let productCopy = cloneDeep(productTemplate);
                     const sectionCopy = productCopy.sections?.find(x => x.id === section.id);
@@ -1347,13 +1353,54 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     );
 
                     if (valueInArray) {
-                      if (relatedParameter.activateByAllValues) {
+                      if (subSection.optionToDuplicateContent) {
                         const { parameterId, actionIndex } = relatedParameter;
                         const myParameter = list?.find(
                           (p) =>
                             p.id === parameterId &&
                             p.actionIndex === actionIndex
                         );
+                        return (
+                          <div key={parameterId}>
+                            {_renderParameterType(
+                              myParameter,
+                              subSection,
+                              section,
+                              subSection?.parameters,
+                              myParameter?.value,
+                              list,
+                              true,
+                              false,
+                              false
+                            )}
+                          </div>
+                        );
+                      }
+                      if (relatedParameter.activateByAllValues) {
+                        if (subSection.optionToDuplicateContent) {
+                          const { parameterId, actionIndex } = relatedParameter;
+                          const myParameter = list?.find(
+                            (p) =>
+                              p.id === parameterId &&
+                              p.actionIndex === actionIndex
+                          );
+                          return (
+                            <div key={parameterId}>
+                              {_renderParameterType(
+                                myParameter,
+                                subSection,
+                                section,
+                                subSection?.parameters,
+                                myParameter?.value,
+                                list,
+                                true,
+                                false,
+                                false
+                              )}
+                            </div>
+                          );
+                        }
+
                         let productCopy = cloneDeep(productTemplate);
                         const sectionCopy = productCopy.sections?.find(x => x.id === section.id);
                         const subSectionCopy = sectionCopy.subSections?.find(x => x.id === subSection.id);
@@ -1363,21 +1410,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         }
                         param.isHidden = false;
                         setProductTemplate(productCopy);
-                        // return (
-                        //   <div key={parameterId}>
-                        //     {_renderParameterType(
-                        //       myParameter,
-                        //       subSection,
-                        //       section,
-                        //       subSection?.parameters,
-                        //       myParameter?.value,
-                        //       list,
-                        //       true,
-                        //       false,
-                        //       false
-                        //     )}
-                        //   </div>
-                        // );
+
                       }
                       // return (
                       //   <div>
