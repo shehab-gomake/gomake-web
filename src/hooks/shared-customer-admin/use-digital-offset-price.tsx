@@ -1346,7 +1346,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     }
                     param.isHidden = false;
                     setProductTemplate(productCopy);
-                  } else if (parameter?.parameterType === EParameterTypes.DROP_DOWN_LIST) {
+                  } else if (parameter?.parameterType === EParameterTypes.DROP_DOWN_LIST || parameter?.parameterType === EParameterTypes.SELECT_MATERIALS) {
 
                     const valueInArray = relatedParameter.selectedValueIds?.find(
                       (c) => c == parm?.valueIds
@@ -1412,21 +1412,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         setProductTemplate(productCopy);
 
                       }
-                      // return (
-                      //   <div>
-                      //     {_renderParameterType(
-                      //       myParameter,
-                      //       subSection,
-                      //       section,
-                      //       subSection?.parameters,
-                      //       myParameter?.value,
-                      //       list,
-                      //       true,
-                      //       false,
-                      //       false
-                      //     )}
-                      //   </div>
-                      // );
+
                       let productCopy = cloneDeep(productTemplate);
                       const sectionCopy = productCopy.sections?.find(x => x.id === section.id);
                       const subSectionCopy = sectionCopy.subSections?.find(x => x.id === subSection.id);
@@ -1463,7 +1449,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     const valueInArray = relatedParameter.selectedValueIds?.find(
                       (c) => c == parm?.values
                     );
-
                     if (valueInArray && myParameter || (!parm && relatedParameter && relatedParameter.selectedValueIds && relatedParameter.selectedValueIds.length > 0 && relatedParameter.selectedValueIds[0] === "false")) {
                       let productCopy = cloneDeep(productTemplate);
                       const sectionCopy = productCopy.sections?.find(x => x.id === section.id);
@@ -1475,6 +1460,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                       param.isHidden = false;
                       setProductTemplate(productCopy);
                     } else {
+
                       let productCopy = cloneDeep(productTemplate);
                       const sectionCopy = productCopy.sections.find(x => x.id === section.id);
                       const subSectionCopy = sectionCopy.subSections.find(x => x.id === subSection.id);
