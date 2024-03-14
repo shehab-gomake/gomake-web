@@ -15,7 +15,7 @@ const MoreMenuWidget = ({
     quoteItem,
     onClickDuplicateWithDifferentQTY,
     onClickDeleteQouteItem,
-  documentType
+    documentType
   });
   return (
     <>

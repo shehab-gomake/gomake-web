@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { EditMenuIcon } from "./icons/edit-menu";
 import { DuplicateMenuIcon } from "./icons/duplicate-menu";
 import { DuplicateWithDifferentMenuIcon } from "./icons/duplicate-with-different-menu";
@@ -22,24 +22,27 @@ const useMoreCircle = ({
   const quoteItemValue: any = useRecoilValue(quoteItemState);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
+
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
+
   const handleClose = () => {
     setAnchorEl(null);
   };
-
 
   const onClickEditQuoteItem = (quoteItem, documentType) => {
     navigate(
       `/products/edit?clientTypeId=${quoteItem?.clientTypeId}&customerId=${quoteItemValue?.customerID}&productId=${quoteItem?.productID}&documentItemId=${quoteItem?.id}&documentType=${documentType}${router?.query?.Id ? `&documentId=${router?.query?.Id}` : ""}`
     );
   };
+
   const onClickDuplicateQuoteItem = (quoteItem, documentType) => {
     navigate(
       `/products/duplicate?clientTypeId=${quoteItem?.clientTypeId}&customerId=${quoteItemValue?.customerID}&productId=${quoteItem?.productID}&documentItemId=${quoteItem?.id}&documentType=${documentType}${router?.query?.Id ? `&documentId=${router?.query?.Id}` : ""}`
     );
   };
+
   const menuList = [
     quoteItem.productType === 0 && !router.query.isNewCreation && !router.query.Id && {
       name: "Edits",
@@ -66,13 +69,7 @@ const useMoreCircle = ({
       icon: <AnalysisIcon />,
       onclick: () => null,
     },
-    documentType === DOCUMENT_TYPE.quote && quoteItem?.isDeletable &&
-    {
-      name: "Delete",
-      icon: <DeleteMenuIcon />,
-      onclick: () => onClickDeleteQouteItem(quoteItem),
-    },
-    (router.query.isNewCreation || quoteItem?.isDeletable) &&
+    (router.query.isNewCreation || quoteItem?.isDeletable ) &&
     {
       name: "Delete",
       icon: <DeleteMenuIcon />,

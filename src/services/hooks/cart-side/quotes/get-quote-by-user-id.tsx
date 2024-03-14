@@ -2,6 +2,7 @@ import { returnResult } from "@/utils/helpers";
 import { ICallApi, ISetState } from "../../call-api.interface";
 import { MoreMenuWidget } from "@/widgets/quote/more-circle";
 import { MoreMenuWidgetWithChilds } from "@/widgets/quote/more-circle-with-childs";
+
 const getAndSetQuotesByUserId = async (
   callApi: ICallApi,
   setState?: ISetState,
