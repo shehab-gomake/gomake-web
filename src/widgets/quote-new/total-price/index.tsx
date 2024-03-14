@@ -65,7 +65,6 @@ const TotalPriceComp = ({
               onInputChange={(e) => onInputDiscount(e)}
             />
             %
-            {/* {getCurrencyUnitText(quoteItems?.currency)} */}
           </div>
         </div>
         <div style={{ ...classes.evenRowContainer, width: "13%" }}>

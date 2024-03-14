@@ -100,14 +100,14 @@ const useSnackBar = () => {
   const alertFaultGetData = () => {
     setSnackbarStateValue({
       state: true,
-      message: "get data failed",
+      message: t("modal.getDataFailed"),
       type: "error",
     });
   };
   const alertSuccessGetData = () => {
     setSnackbarStateValue({
       state: true,
-      message: "get data Successfully",
+      message: t("modal.getDataSuccessfully"),
       type: "success",
     });
   };

@@ -1,7 +1,7 @@
 import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { DELIVERY_NOTE_STATUSES, QUOTE_STATUSES } from "./enums";
+import { DELIVERY_NOTE_STATUSES, LogActionType, QUOTE_STATUSES } from "./enums";
 import { MoreMenuWidget } from "./more-circle";
 import { getAndSetAllCustomers } from "@/services/hooks";
 import { useRecoilState, useSetRecoilState, useRecoilValue } from "recoil";
@@ -15,6 +15,7 @@ import { employeesListsState, selectedClientState } from "./states";
 import {
   createNewDocumentApi,
   duplicateDocumentApi,
+  getAllDocumentLogsApi,
   getAllDocumentsApi,
   getDocumentPdfApi,
   updateDocumentApi,
@@ -29,14 +30,14 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
   const { t } = useTranslation();
   const { classes } = useStyle();
   const { callApi } = useGomakeAxios();
-  const { alertFaultUpdate, alertFaultDuplicate } = useSnackBar();
+  const { alertFaultUpdate, alertFaultDuplicate, alertFaultGetData } = useSnackBar();
   const { getCurrencyUnitText } = useQuoteGetData();
   const { navigate } = useGomakeRouter();
   const { errorColor } = useGomakeTheme();
   const [patternSearch, setPatternSearch] = useState("");
   const [finalPatternSearch, setFinalPatternSearch] = useState("");
   const debounce = useDebounce(patternSearch, 500);
-  const { GetDateFormat } = useDateFormat();
+  const { GetDateFormat , GetShortDateFormat} = useDateFormat();
   const [statusId, setStatusId] = useState<any>();
   const [quoteStatusId, setQuoteStatusId] = useState<any>();
   const [customerId, setCustomerId] = useState<any>();
@@ -48,7 +49,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
   const [customersListCreateOrder, setCustomersListCreateOrder] = useState([]);
   const [openModal, setOpenModal] = useState(false);
   const [openLogsModal, setOpenLogsModal] = useState(false);
-  const [modalLogsTitle, setModalLogsTitle] = useState<string>();
+  const [logsModalTitle, setLogsModalTitle] = useState<string>();
   const setEmployeeListValue = useSetRecoilState<string[]>(employeesListsState);
   const [selectedQuote, setSelectedQuote] = useState<any>();
   const [allDocuments, setAllDocuments] = useState([]);
@@ -62,6 +63,13 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
   const [resetDatePicker, setResetDatePicker] = useState<boolean>(false);
   const [fromDate, setFromDate] = useState<Date>();
   const [toDate, setToDate] = useState<Date>();
+  const [documentIdLogState, setDocumentIdLogState] = useState<string>();
+  const [documentLogsData, setDocumentLogsData] = useState<any>();
+  const [employeeId, setEmployeeId] = useState<any>();
+  const [resetLogsDatePicker, setResetLogsDatePicker] = useState<boolean>(false);
+  const [fromLogsDate, setFromLogsDate] = useState<Date>();
+  const [toLogsDate, setToLogsDate] = useState<Date>();
+  const [agentsCategories, setAgentsCategories] = useRecoilState(agentsCategoriesState);
 
   const documentPath = DOCUMENT_TYPE[docType];
   const isReceipt = docType === DOCUMENT_TYPE.receipt;
@@ -86,22 +94,12 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     setOpenModal(true);
   };
 
-  const [agentsCategories, setAgentsCategories] = useRecoilState(
-    agentsCategoriesState
-  );
-
   const onClickCloseLogsModal = () => {
     setOpenLogsModal(false);
+    setEmployeeId(null)
+    setFromLogsDate(null);
+    setToLogsDate(null);
   };
-
-  const onClickOpenLogsModal = (quoteNumber: string) => {
-    setModalLogsTitle(quoteNumber);
-    setOpenLogsModal(true);
-  };
-
-  useEffect(() => {
-    setFinalPatternSearch(debounce);
-  }, [debounce]);
 
   const getAgentCategories = async (isAgent: boolean, setState: any) => {
     const callBack = (res) => {
@@ -174,7 +172,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
                 onClickOpenModal={onClickOpenModal}
                 onClickPdf={onClickQuotePdf}
                 onClickDuplicate={onClickQuoteDuplicate}
-                onClickLoggers={() => onClickOpenLogsModal(quote?.number)}
+                onClickLoggers={() => onClickDocumentLogs(quote)}
               />,
             ];
           } else {
@@ -193,7 +191,8 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
                 onClickOpenModal={onClickOpenModal}
                 onClickPdf={onClickQuotePdf}
                 onClickDuplicate={onClickQuoteDuplicate}
-                onClickLoggers={() => onClickOpenLogsModal(quote?.number)}
+                onClickLoggers={() => onClickDocumentLogs(quote)}
+
               />,
             ];
           }
@@ -213,7 +212,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
             onClickOpenModal={onClickOpenModal}
             onClickPdf={onClickQuotePdf}
             onClickDuplicate={onClickQuoteDuplicate}
-            onClickLoggers={() => onClickOpenLogsModal(quote?.number)}
+            onClickLoggers={() => onClickDocumentLogs(quote)}
           />,
         ]);
         setAllQuotes(isReceipt ? mapReceiptData : mapData);
@@ -274,7 +273,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
             onClickOpenModal={onClickOpenModal}
             onClickPdf={onClickQuotePdf}
             onClickDuplicate={onClickQuoteDuplicate}
-            onClickLoggers={() => onClickOpenLogsModal(quote?.number)}
+            onClickLoggers={() => onClickDocumentLogs(quote)}
           />,
         ]);
         const mapReceiptData = data?.map((quote: any) => [
@@ -292,7 +291,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
             onClickOpenModal={onClickOpenModal}
             onClickPdf={onClickQuotePdf}
             onClickDuplicate={onClickQuoteDuplicate}
-            onClickLoggers={() => onClickOpenLogsModal(quote?.number)}
+            onClickLoggers={() => onClickDocumentLogs(quote)}
           />,
         ]);
         setAllQuotes(isReceipt ? mapReceiptData : mapData);
@@ -339,6 +338,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     getAllQuotesInitial();
     setPage(1);
   };
+
   const tableHeaders = docType === DOCUMENT_TYPE.purchaseOrder ? [
     t("sales.quote.creationDate"),
     t("sales.quote.purchaseOrderNumber"),
@@ -541,8 +541,6 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     });
   };
 
-
-
   const onClickQuotePdf = async (id: string) => {
     const callBack = (res) => {
       if (res?.success) {
@@ -602,18 +600,6 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     await createNewDocumentApi(callApi, callBack, { documentType: docType });
   };
 
-  useEffect(() => {
-    getAllCustomersCreateQuote();
-    getAllCustomersCreateOrder();
-    getAgentCategories(true, setAgentsCategories);
-    getAgentCategories(null, setEmployeeListValue);
-  }, []);
-
-  useEffect(() => {
-    getAllQuotes();
-  }, [page, quoteStatusId, pageSize, finalPatternSearch]);
-
-
   // table in home page
   const getAllDocuments = async (docType) => {
     const callBack = (res) => {
@@ -643,7 +629,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
             onClickOpenModal={onClickOpenModal}
             onClickPdf={onClickQuotePdf}
             onClickDuplicate={onClickQuoteDuplicate}
-            onClickLoggers={() => onClickOpenLogsModal(document?.number)}
+            onClickLoggers={() => onClickDocumentLogs(document)}
           />,
         ]);
         setAllDocuments(mapData);
@@ -661,7 +647,6 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
         },
       }));
   };
-
 
   const handleCardClick = (cardKey, statusValue) => {
     setPage(1);
@@ -681,10 +666,6 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     setToDate(toDate);
   };
 
-  useEffect(() => {
-    getAllDocuments(docType);
-  }, [selectedClient]);
-
   const tableHomeHeader = [
     t("home.headers.documentNumber"),
     t("home.headers.clientType"),
@@ -696,8 +677,151 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     t("home.headers.more"),
   ];
 
+  const onSelectDateRange = (fromDate: Date, toDate: Date) => {
+    setResetLogsDatePicker(false);
+    setFromLogsDate(fromDate);
+    setToLogsDate(toDate);
+  };
+
+  const handleSelectEmployee = (e: any, value: any) => {
+    setEmployeeId(value);
+  }
+
+  ////////////// LOGS //////////////
+
+  const getLogDescription = (logAction: any, values: any): string => {
+    switch (logAction) {
+      case LogActionType[1]:
+        return `${t("logs.theWorkMission")} "${values[0]}" ${t("logs.ITEM_ADD")}`;
+      case LogActionType[2]:
+        return `${t("logs.theWorkMission")} "${values[0]}" ${t("logs.ITEM_UPADTED")}`;
+      case LogActionType[3]:
+        return `${t("logs.theWorkMission")} "${values[0]}" ${t("logs.ITEM_DELETED")}`;
+      case LogActionType[4]:
+        return `${t("logs.ITEM_PRICE_UPDATE")} : "${values[0]}" ${t("logs.from")} ${parseFloat(values[1]).toFixed(2)} ${t("logs.to")} ${parseFloat(values[2]).toFixed(2)}`;
+      case LogActionType[5]:
+        return `${t("logs.DOCUMENT_PRICE_UPDATE")} ${t("logs.from")} ${parseFloat(values[0]).toFixed(2)} ${t("logs.to")} ${parseFloat(values[1]).toFixed(2)}`;
+      case LogActionType[6]:
+        if (values[0] === "" || null) {
+          return `${t("logs.DOCUMENT_DISCUOUNT_UPDATE")} ${t("logs.from")} ${0.00} ${t("logs.to")} ${parseFloat(values[1]).toFixed(2)}`;
+        } else {
+          return `${t("logs.DOCUMENT_DISCUOUNT_UPDATE")} ${t("logs.from")} ${parseFloat(values[0]).toFixed(2)} ${t("logs.to")} ${parseFloat(values[1]).toFixed(2)}`;
+        }
+      case LogActionType[7]:
+        return t("logs.ADDRESS_UPDATED");
+      case LogActionType[8]:
+        return t("logs.CONTACTS_UPDATED");
+      case LogActionType[9]:
+        return `${t("logs.CLIENT_UPDATED")} ${t("logs.from")} "${values[0]}" ${t("logs.to")} "${values[1]}"`;
+      case LogActionType[10]:
+        if (values[0] === null) {
+          return `${t("logs.AGENT_UPDATED")} ${t("logs.to")} ${values[1]}`;
+        } else {
+          return `${t("logs.AGENT_UPDATED")} ${t("logs.from")} ${values[0]} ${t("logs.to")} ${values[1]}`;
+        }
+      case LogActionType[11]:
+        if (values[0] === null) {
+          return `${t("logs.PURCHASE_NUMBER_UPDATE")} ${t("logs.to")} "${values[1]}"`;
+        } else {
+          return `${t("logs.PURCHASE_NUMBER_UPDATE")} ${t("logs.from")} ${values[0]} ${t("logs.to")} ${values[1]}`;
+        }
+      case LogActionType[12]:
+        if (values[0] === null) {
+          return `${t("logs.COMMENTS_UPDATE")} ${t("logs.to")} "${values[1]}"`;
+        } else {
+          return `${t("logs.COMMENTS_UPDATE")} ${t("logs.from")} "${values[0]}" ${t("logs.to")} "${values[1]}"`;
+        }
+      default:
+        return '';
+    }
+  };
+
+
+  const getAllDocumentLogs = (documentId?: string, isClear: boolean = false): Promise<void> => {
+    setDocumentIdLogState(documentId);
+    return new Promise(async (resolve, reject) => {
+      const callBack = (res) => {
+        if (res?.success) {
+          const mapData = res?.data?.map((log: any) => [
+            GetShortDateFormat(log?.actionDate),
+            log?.employeeName,
+            getLogDescription(log?.logAction, log?.values)
+          ]);
+          setDocumentLogsData(mapData);
+          resolve();
+        } else {
+          alertFaultGetData();
+          setDocumentIdLogState("");
+          reject();
+        }
+      };
+      try {
+        await getAllDocumentLogsApi(callApi, callBack,
+          {
+            documentType: docType,
+            documentId: documentId,
+            data:
+              isClear ?
+                {
+                  fromDate: fromLogsDate && GetDateFormat(fromLogsDate),
+                  toDate: toLogsDate && GetDateFormat(toLogsDate),
+                }
+                :
+                {
+                  userId: employeeId?.id,
+                  fromDate: fromLogsDate && GetDateFormat(fromLogsDate),
+                  toDate: toLogsDate && GetDateFormat(toLogsDate),
+                },
+          });
+      } catch (error) {
+        reject();
+      }
+    });
+  };
+
+  const onClickDocumentLogs = async (document: any) => {
+    try {
+      await getAllDocumentLogs(document?.id);
+      setLogsModalTitle(`${t("sales.quote.logsFor")} ${t(`sales.quote.${DOCUMENT_TYPE[docType]}`).toLowerCase()} ${t("sales.quote.number")} - ${document?.number}`)
+      setOpenLogsModal(true);
+    } catch (error) {
+      console.error("Error fetching document logs:", error);
+    }
+  };
+
+  const onClickClearLogsFilter = () => {
+    setEmployeeId(null)
+    getAllDocumentLogs(documentIdLogState, true);
+  };
+
+  const onClickSearchLogsFilter = () => {
+    getAllDocumentLogs(documentIdLogState);
+  };
+
+  ////////////// LOGS //////////////
+
+  useEffect(() => {
+    getAllCustomersCreateQuote();
+    getAllCustomersCreateOrder();
+    getAgentCategories(true, setAgentsCategories);
+    getAgentCategories(null, setEmployeeListValue);
+  }, []);
+
+  useEffect(() => {
+    getAllQuotes();
+  }, [page, quoteStatusId, pageSize, finalPatternSearch]);
+
+  useEffect(() => {
+    setFinalPatternSearch(debounce);
+  }, [debounce]);
+
+  useEffect(() => {
+    getAllDocuments(docType);
+  }, [selectedClient]);
+
 
   return {
+    t,
     patternSearch,
     tableHeaders,
     allQuotes,
@@ -721,11 +845,9 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     getAllQuotes,
     onClickClearFilter,
     onClickQuotePdf,
-    t,
     openLogsModal,
-    onClickOpenLogsModal,
     onClickCloseLogsModal,
-    modalLogsTitle,
+    logsModalTitle,
     logsTableHeaders,
     documentsLabels,
     documentLabel,
@@ -748,7 +870,14 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     documentPath,
     deliveryNoteStatuses,
     resetDatePicker,
-    onSelectDeliveryTimeDates
+    onSelectDeliveryTimeDates,
+    employeeId,
+    handleSelectEmployee,
+    resetLogsDatePicker,
+    onSelectDateRange,
+    onClickSearchLogsFilter,
+    onClickClearLogsFilter,
+    documentLogsData
   };
 };
 

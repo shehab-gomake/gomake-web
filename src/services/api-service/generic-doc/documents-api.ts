@@ -5,11 +5,11 @@ import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 
 const GET_DOCUMENT_URL = "/v1/erp-service/documents/get-document";
 const GET_ALL_DOCUMENTS_URL = "/v1/erp-service/documents/get-all-documents";
+const GET_ALL_DOCUMENT_LOGS_URL = "/v1/erp-service/documents/get-all-document-logs";
 const DELETE_DOCUMENT_ITEM_URL =
   "/v1/erp-service/documents/delete-document-item";
 const ADD_DOCUMENT_CONTACT_URL =
   "/v1/erp-service/document/add-document-contact";
-
 const UPDATE_DOCUMENT_CONTACT_URL =
   "/v1/erp-service/document/update-document-contact";
 const DELETE_DOCUMENT_CONTACT_URL =
@@ -84,6 +84,15 @@ const getAllDocumentsApi: ICallAndSetData = async (callApi, setState, data) => {
   );
 };
 
+const getAllDocumentLogsApi: ICallAndSetData = async (callApi, setState, data) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    GET_ALL_DOCUMENT_LOGS_URL,
+    setState,
+    data
+  );
+};
 const changeDocumentClientApi: ICallAndSetData = async (
   callApi,
   setState,
@@ -566,5 +575,6 @@ export {
   getAllReportsApi,
   updateDocumentItemContentApi,
   updateDocumentCommentsApi,
-  getClientDocumentsApi
+  getClientDocumentsApi,
+  getAllDocumentLogsApi
 };

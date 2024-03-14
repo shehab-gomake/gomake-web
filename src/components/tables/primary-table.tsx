@@ -81,6 +81,7 @@ const PrimaryTable = ({
   maxHeight,
   variant,
   withoutShadow,
+  columnWidths,
   dataTour,
   isLastItemTotal = false
 }: ITableProps) => {
@@ -114,10 +115,15 @@ const PrimaryTable = ({
               <TableRow key={`row_${index}`}
                 style={{ backgroundColor: isLastItemTotal && index === rows.length - 1 ? "#EFDDFF" : "inherit" }} >
                 {row.map((cell, index) => {
+                  const cellStyle = columnWidths
+                    ? {
+                      width: columnWidths?.[index]
+
+                    } : {};
                   if (index === 0 && stickyFirstCol) {
                     return <TableCell style={classes.sticky}>{cell}</TableCell>;
                   } else {
-                    return <TableCell align={"center"}>{cell}</TableCell>;
+                    return <TableCell align={"center"} style={cellStyle}>{cell}</TableCell>;
                   }
                 })}
               </TableRow>

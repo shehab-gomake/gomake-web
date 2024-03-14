@@ -11,6 +11,7 @@ export interface ITableProps {
   withoutShadow?: boolean;
   dataTour?: string;
   isLastItemTotal?: boolean;
+  columnWidths?:string[];
 }
 
 export interface ISecondaryTableProps {

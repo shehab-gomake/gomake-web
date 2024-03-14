@@ -7,9 +7,8 @@ const useStyle = () => {
   const classes = useMemo(() => {
     return {
         dropDownListStyle: {
-            width: "100%",
-            borderRadius: "4px",
-            backgroundColor: "#FFF",
+            width: "150px",
+            border: "none",
           },  
           dateStyle: {
             width: "50%",
