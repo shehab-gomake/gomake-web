@@ -6,14 +6,14 @@ const laminationMachine = (state: Record<string, any>) => {
         {
             name: "laminationSides",
             label: "machineAttributes.laminationSides",
-            type: "text",
+            type: "select",
             placeholder: "machineAttributes.laminationSides",
             required: true,
             parameterKey: "laminationSides",
-            options: [],
-            value: state.attributes?.minManpowerOperation ? state.attributes?.laminationSides : '',
+            options: [{value: 1, text: '1'}, {value: 2, text: '2'}],
+            value: state.attributes?.laminationSides ? state.attributes?.laminationSides : '',
             machineInputType: 'input',
-            isValid: !!state?.attributes?.laminationSides,
+            isValid: true,
 
         },
     ];

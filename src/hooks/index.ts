@@ -9,3 +9,4 @@ export * from "./use-snack-bar";
 export * from "./shared-customer-admin";
 export * from "./use-customer-drop-down-list"
 export * from "./use-agent-list"
+export * from "./use-documents-type"

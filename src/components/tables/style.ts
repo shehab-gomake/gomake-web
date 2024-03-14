@@ -26,6 +26,10 @@ const useStyle = (maxHeight: number, dir: 'rtl' | 'ltr') => {
                 ...adaptRight(dir, 0),
                 zIndex: 999,
                 minWidth: '250px'
+            },
+            lastRowRed :{
+                backgroundColor: "red"
+
             }
         };
     }, [maxHeight]);

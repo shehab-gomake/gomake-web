@@ -10,6 +10,7 @@ export interface ITableProps {
   variant?: TABLE_TYPE;
   withoutShadow?: boolean;
   dataTour?: string;
+  isLastItemTotal?: boolean;
   columnWidths?:string[];
 }
 

@@ -82,7 +82,8 @@ const PrimaryTable = ({
   variant,
   withoutShadow,
   columnWidths,
-  dataTour
+  dataTour,
+  isLastItemTotal = false
 }: ITableProps) => {
   const { t } = useTranslation();
   const dir: "rtl" | "ltr" = t("direction");
@@ -91,6 +92,7 @@ const PrimaryTable = ({
     variant === "ClassicTable" ? ClassicTableCell : PrimaryTableCell;
   const TableRow =
     variant === "ClassicTable" ? ClassicTableRow : PrimaryTableRow;
+
   return (
     <Paper sx={{ width: "100%", overflow: "hidden", boxShadow: withoutShadow && "none" }}>
       <TableContainer style={classes.tableContainer}>
@@ -110,7 +112,8 @@ const PrimaryTable = ({
           </TableHead>
           <TableBody  >
             {rows?.map((row, index) => (
-              <TableRow key={`row_${index}`}  >
+              <TableRow key={`row_${index}`}
+                style={{ backgroundColor: isLastItemTotal && index === rows.length - 1 ? "#EFDDFF" : "inherit" }} >
                 {row.map((cell, index) => {
                   const cellStyle = columnWidths
                     ? {

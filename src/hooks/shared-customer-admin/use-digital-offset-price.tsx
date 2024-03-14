@@ -207,6 +207,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           currentWorkFlows[0].selected = true;
         }
         selectedWorkFlow = currentWorkFlows?.find((x) => x.selected);
+        console.log("selectedWorkFlow",calculationResult.productItemValue)
         if (
           selectedWorkFlow &&
           selectedWorkFlow.totalPrice &&
@@ -268,6 +269,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     setCurrentSignalRConnectionId(connectionId)
   }, [connectionId])
   useEffect(() => {
+    console.log("calculationExceptionsLogs",calculationExceptionsLogs)
     setCalculationExceptionsLogs(calculationExceptionsLogs);
   }, [calculationExceptionsLogs]);
   useEffect(() => {

@@ -132,7 +132,7 @@ export interface IRecommendationRang {
 }
 
 export interface IExceptionsLog{
-    text:string;
+    exceptionKey:string;
     title?:string;
-    type?:ECalculationLogType
+    exceptionType?:ECalculationLogType
 }

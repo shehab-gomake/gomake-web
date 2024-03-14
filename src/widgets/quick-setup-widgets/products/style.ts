@@ -42,12 +42,12 @@ const useStyle = () => {
       parameterInput: {
       },
       detailsKey: {
-        ...FONT_FAMILY.Outfit(600, 18),
+        ...FONT_FAMILY.Outfit(600, 16),
         color: primaryColor(300),
         border: 0
       },
       detailsValue: {
-        ...FONT_FAMILY.Outfit(600, 24),
+        ...FONT_FAMILY.Outfit(600, 16),
         color: primaryColor(800),
         border: 0
       }

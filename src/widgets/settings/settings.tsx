@@ -9,7 +9,7 @@ import { useUserPermission } from "@/hooks/use-permission";
 import {StepType} from "@reactour/tour";
 import {useGoMakeTour} from "@/hooks/use-go-make-tour";
 import {useGomakeAxios} from "@/hooks";
-import {toggleUserFirstLogin} from "@/services/api-service/users/users-api";
+import {inactiveUserFirstLogin} from "@/services/api-service/users/users-api";
 
 const SettingsWidget = () => {
   const { t } = useTranslation();
@@ -72,7 +72,7 @@ const SettingsWidget = () => {
           'For help,\n' +
           'click the help button for training on all pages.',
       position: 'bottom',
-      action: async () => await toggleUserFirstLogin(callApi, () => {}),
+      action: async () => await inactiveUserFirstLogin(callApi, () => {}),
     },
   ]
 

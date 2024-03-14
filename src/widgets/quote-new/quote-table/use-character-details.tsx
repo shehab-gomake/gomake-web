@@ -54,8 +54,6 @@ const useCharacterDetails = ({ details, getQuote, documentItemId }) => {
           ...updatedQuoteItemValue,
           documentItems: updatedDocumentItems
         });
-      } else {
-        console.log('Document item not found.');
       }
     }
     else {

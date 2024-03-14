@@ -142,7 +142,13 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     }
   };
 
-
+  const _renderStatus = (document: any) => {
+    if (document.DocumentNumbers?.length > 0 || document.SecondDocumentNumbers?.length > 0) {
+      return `${document.titleDocumentNumber}: ${document.documentNumbers[0]} ${document.titleSecondDocumentNumber}: ${document.secondDocumentNumbers[0]}`;
+    } else {
+      return t(`documentStatus.${document.statusTitleText}`);
+    }
+  };
   const getAllQuotes = async () => {
     const callBack = (res) => {
       if (res?.success) {
@@ -159,7 +165,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
               quote?.itemsNumber,
               quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
               quote?.notes,
-              _renderQuoteStatus(quote?.documentStatus, quote, t),
+              _renderStatus(quote),
               <MoreMenuWidget
                 quote={quote}
                 documentType={docType}
@@ -178,7 +184,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
               quote?.worksNames,
               quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
               quote?.notes,
-              _renderQuoteStatus(quote?.documentStatus, quote, t),
+              _renderStatus(quote),
               <MoreMenuWidget
                 quote={quote}
                 documentType={docType}
@@ -199,7 +205,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
           quote?.paymentType,
           quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
           quote?.notes,
-          quote?.statusStr,
+          _renderStatus(quote),
           <MoreMenuWidget
             quote={quote}
             documentType={docType}
