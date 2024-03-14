@@ -9,6 +9,7 @@ import { PDFIcon } from "./icons/pdf";
 import { OptionsButton } from "@/components/options-button/options-button";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { TickIcon } from "@/icons";
+import { LoggerIcon } from "@/pages-components/admin/home/widgets/more-circle/icons/logger";
 
 const MoreMenuWidget = ({ quote, documentType, onClickOpenModal, onClickPdf, onClickDuplicate, onClickLoggers }: any) => {
   const { classes } = useStyle();
@@ -57,7 +58,7 @@ const MoreMenuWidget = ({ quote, documentType, onClickOpenModal, onClickPdf, onC
     <OptionsButton>
       <MenuItem onClick={onClickLoggers}>
         <div style={classes.menuRowStyle}>
-          <EditingIcon />
+        <LoggerIcon />
           <div style={classes.rowTextStyle}>{t("sales.quote.loggers")}</div>
         </div>
       </MenuItem>
