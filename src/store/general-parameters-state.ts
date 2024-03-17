@@ -27,7 +27,7 @@ export const itemParmetersValuesState = selector<any>({
       });
     });
     //const allParameters = subProducts.flatMap((item) => item.parameters?.map(x=>x.subProductType = item.sectionName));
-    const filteredArray = result.filter((obj) => obj.values[0] !== "false");
+    const filteredArray = result.filter((obj) => obj.values && obj.values.length && obj.values[0] !== "false");
     return filteredArray;
   },
 });
