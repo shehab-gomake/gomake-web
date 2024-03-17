@@ -9,7 +9,6 @@ import { hoverStatusState } from "@/store";
 import { LAYOUT_DEFAULT_GAP } from "@/utils/layout-config";
 
 const CustomerAuthLayout = ({
-
     children,
     permissionEnumValue,
     customGap = LAYOUT_DEFAULT_GAP,
@@ -17,23 +16,23 @@ const CustomerAuthLayout = ({
     disableHeaderSideMenu
 }: IAuthLayout) => {
     const { canAccess } = useAuthLayoutHook(permissionEnumValue, allowAnonymous);
-    const { clasess } = useStyle({
+    const { classes } = useStyle({
         isHover: false,
         navStatus: null,
         customGap,
     });
-
     const setNavStatus = useSetRecoilState(navStatusState);
     const isHover = useRecoilValue(hoverStatusState);
+
     return (
         disableHeaderSideMenu ?
             <>
-                {canAccess && <div style={{ ...clasess.bodyContainer, backgroundColor: '#FFF' }}>{children}</div>}
+                {canAccess && <div style={{ ...classes.bodyContainer, backgroundColor: '#FFF' }}>{children}</div>}
             </> :
-            <div style={clasess.container}>
+            <div style={classes.container}>
                 <LeftSideLayout customGap={customGap} />
                 <div
-                    style={clasess.rightContainer}
+                    style={classes.rightContainer}
                     onMouseEnter={() => {
                         if (!isHover) {
                             setNavStatus({ isClosed: true });
@@ -42,7 +41,7 @@ const CustomerAuthLayout = ({
                 >
                     <HeaderWidget />
                     {
-                        canAccess && <div style={clasess.bodyContainer}>
+                        canAccess && <div style={classes.bodyContainer}>
                             {children}
                         </div>
                     }

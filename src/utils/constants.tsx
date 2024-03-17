@@ -113,20 +113,21 @@ export const _renderDocumentStatus = (status: number, t: any) => {
   }
 };
 
-export const _renderStatus = (document: any , t ): string => {
+export const _renderStatus = (document: any, t: any): string => {
   if (document && document.documentNumbers && document.documentNumbers.length > 0 ||
     document.secondDocumentNumbers && document.secondDocumentNumbers.length > 0) {
     const firstDocuments = document.documentNumbers ? document.documentNumbers.join(', ') : '';
     const secondDocuments = document.secondDocumentNumbers ? document.secondDocumentNumbers.join(', ') : '';
     let result = '';
     if (firstDocuments) {
-      result += `${document.titleDocumentNumber}: ${firstDocuments}`;
+
+      result += `${t(`documentStatus.${document.titleDocumentNumber}.title`)}: ${firstDocuments}`;
     }
     if (secondDocuments) {
       if (firstDocuments) {
         result += `, `;
       }
-      result += `${document.titleSecondDocumentNumber}: ${secondDocuments}`;
+      result += `${t(`documentStatus.${document.titleSecondDocumentNumber}.title`)}: ${secondDocuments}`;
     }
     return result;
   } else {

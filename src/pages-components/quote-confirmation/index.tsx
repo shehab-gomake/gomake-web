@@ -1,5 +1,4 @@
 import { useStyle } from "./style";
-import { _renderQuoteStatus } from "@/utils/constants";
 import { DOCUMENT_TYPE } from "../quotes/enums";
 import { useEffect, useState } from "react";
 import { GoMakeIcon } from "@/components/icons/go-make-icon";

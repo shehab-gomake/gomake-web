@@ -20,7 +20,6 @@ import {
   saveDocumentApi,
 } from "@/services/api-service/generic-doc/documents-api";
 import { ITab } from "@/components/tabs/interface";
-import { _renderQuoteStatus } from "@/utils/constants";
 import { selectedClientState } from "@/pages-components/quotes/states";
 import { QuotesListPageWidget } from "@/pages-components/quotes/quotes";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";

@@ -10,19 +10,20 @@ import { hoverStatusState } from "@/store";
 import LockIcon from "@mui/icons-material/Lock";
 import { useUserPermission } from "@/hooks/use-permission";
 import { useEffect, useState } from "react";
+
 const LeftSideLayout = (customGap) => {
   const { t } = useTranslation();
-
   const { tabs1, tabs2, tabs3 } = useAuthLayoutHook();
-
   const [navStatus, setNavStatus] = useRecoilState(navStatusState);
   const [isHover, setIsHover] = useRecoilState(hoverStatusState);
   const { CheckPermission } = useUserPermission();
-  const { clasess } = useStyle({ navStatus, customGap });
+  const { classes } = useStyle({ navStatus, customGap });
   const [myProfileLogo, setMyProfileLogo] = useState("")
+
   useEffect(() => {
     setMyProfileLogo(localStorage.getItem("systemLogo"))
   }, [])
+
   useEffect(() => {
     const isHover = localStorage.getItem("isHover");
     if (isHover && isHover == "true") {
@@ -30,8 +31,8 @@ const LeftSideLayout = (customGap) => {
       setNavStatus({ isClosed: false });
     }
   }, []);
-  const checkTabPermissions = (tab) => {
 
+  const checkTabPermissions = (tab) => {
     if (tab.isList && tab.list) {
       for (let i = 0; i < tab.list.length; i++) {
         if (!tab.list[i].Permission) {
@@ -48,9 +49,10 @@ const LeftSideLayout = (customGap) => {
     }
     return true;
   }
+
   return (
     <div
-      style={clasess.leftContainer}
+      style={classes.leftContainer}
       onMouseEnter={() => {
         setNavStatus({ isClosed: false });
       }}
@@ -80,18 +82,18 @@ const LeftSideLayout = (customGap) => {
           <LockIcon style={{ color: "#FFF", width: 20, height: 20 }} />
         </div>
       )}
-      <div style={clasess.logoContainer}>
+      <div style={classes.logoContainer}>
         {myProfileLogo &&
           <Image
             src={myProfileLogo}
             alt="logo"
-            style={{objectFit:'contain'}}
+            style={{ objectFit: 'contain' }}
             width={80}
             height={80}
           />
         }
       </div>
-      {/* <div style={clasess.logoContainer}>
+      {/* <div style={classes.logoContainer}>
         <Image
           src={
             myProfileLogo
@@ -103,13 +105,12 @@ const LeftSideLayout = (customGap) => {
           height={80}
         />
       </div> */}
-
-      <div style={clasess.tabsContainer}>
+      <div style={classes.tabsContainer}>
         {tabs1.map((tab, i) => {
           if (tab.isLine) {
             return (
-              <div style={clasess.lineContainer}>
-                <div key={tab.key} style={clasess.line} />
+              <div style={classes.lineContainer}>
+                <div key={tab.key} style={classes.line} />
               </div>
             );
           } else if (checkTabPermissions(tab)) {
@@ -126,15 +127,15 @@ const LeftSideLayout = (customGap) => {
         }}
       >
         {tabs2.every((tab) => tab.Permission === false) ? (
-          <div style={clasess.lineContainer}>
-            <div style={clasess.line} />
+          <div style={classes.lineContainer}>
+            <div style={classes.line} />
           </div>
         ) : (
           [...tabs2, ...tabs3].map((tab) => {
             if (tab.isLine) {
               return (
-                <div style={clasess.lineContainer} key={tab.key}>
-                  <div style={clasess.line} />
+                <div style={classes.lineContainer} key={tab.key}>
+                  <div style={classes.line} />
                 </div>
               );
             } else if (checkTabPermissions(tab)) {
@@ -143,9 +144,9 @@ const LeftSideLayout = (customGap) => {
           })
         )}
       </div>
-      <div style={clasess.poweredContainer}>
-        <div style={clasess.poweredByLbl}>{t("login.poweredBy")}</div>
-        <div style={clasess.gomakeByLbl}>{t("login.GoMake")}</div>
+      <div style={classes.poweredContainer}>
+        <div style={classes.poweredByLbl}>{t("login.poweredBy")}</div>
+        <div style={classes.gomakeByLbl}>{t("login.GoMake")}</div>
       </div>
     </div>
   );
