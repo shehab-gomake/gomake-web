@@ -92,7 +92,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [subProducts, setSubProducts] = useRecoilState<any>(
     subProductsParametersState
   );
-  console.log("subProducts", subProducts)
+  useEffect(() => {
+    console.log("subProducts", subProducts)
+  }, [subProducts])
   const [isSetTemplete, setIsSetTemplete] = useState<boolean>(false);
   const setSubProductsCopy = useSetRecoilState<any>(
     subProductsCopyParametersState
@@ -1480,7 +1482,67 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       </div>
     );
   };
+  const processRelatedParameters = (parameter, subSection, section, subProducts) => {
+    if (parameter?.relatedParameters?.length > 0) {
+      for (const relatedParameter of parameter.relatedParameters) {
+        const subProduct = subProducts?.find(
+          (x) => x.type === subSection?.type
+        );
+        const parm = subProduct?.parameters?.find(
+          (param) =>
+            param.parameterId === parameter.id &&
+            param.actionIndex === parameter.actionIndex &&
+            param.sectionId === section.id &&
+            param.subSectionId === subSection.id
+        );
+        if (parm) {
 
+          const matchingSubProduct = subProduct.parameters.find(subProduct => subProduct.parameterId === parameter.id);
+
+          if (matchingSubProduct) {
+            // Check related parameter conditions
+            if (relatedParameter.activateByAllValues) {
+              let productCopy = cloneDeep(productTemplate);
+              const sectionCopy = productCopy.sections?.find(x => x.id === section.id);
+              const subSectionCopy = sectionCopy.subSections?.find(x => x.id === subSection.id);
+              const param = subSectionCopy.parameters?.find(x => x.id === relatedParameter.parameterId);
+              if (param?.isHidden == false) {
+                return;
+              }
+              if (param) {
+                param.isHidden = false;
+                setProductTemplate(productCopy);
+              }
+            } else {
+              // const match = relatedParameter.selectedValueIds.some(selectedId => matchingSubProduct.values.includes(selectedId));
+              const match = relatedParameter.selectedValueIds.some(selectedId => {
+                if (parm.ParameterType === 3) {
+                  return matchingSubProduct?.values?.includes(selectedId);
+                } else {
+                  return matchingSubProduct?.valueIds?.includes(selectedId);
+                }
+              });
+
+              if (match) {
+                let productCopy = cloneDeep(productTemplate);
+                const sectionCopy = productCopy.sections?.find(x => x.id === section.id);
+                const subSectionCopy = sectionCopy.subSections?.find(x => x.id === subSection.id);
+                const param = subSectionCopy.parameters?.find(x => x.id === relatedParameter.parameterId);
+                if (param?.isHidden == false) {
+                  return;
+                }
+                if (param) {
+                  param.isHidden = false;
+                  setProductTemplate(productCopy);
+                }
+              }
+            }
+          }
+        }
+
+      }
+    }
+  }
   const [quantityTypes, setQuantityTypes] = useRecoilState(productQuantityTypesValuesState);
   const [valuesState, setValuesState] = useRecoilState(tempProductQuantityTypesValuesState);
   const onChangeSubProductsForPrice = (
@@ -2307,7 +2369,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 if (rp.activateByAllValues) {
                   return subParam.parameters.every(param => param.parameterId === rp.parameterId);
                 } else {
-                  console.log("subParam", { subParam, rp })
                   return subParam.parameters.some(param => param.parameterId === rp.parameterId && rp.selectedValueIds.some(id => param.valueIds.includes(id)));
                 }
               }
@@ -2316,7 +2377,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             return { ...section, isHidden: !hasHidden };
           }
         });
-        console.log("updatedSections", updatedSections);
         setProductTemplate(updatedSections)
       };
       updateSections();
