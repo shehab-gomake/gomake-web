@@ -10,7 +10,7 @@ import { getAndSetEmployees2 } from "@/services/api-service/customers/employees-
 import { useDebounce } from "@/utils/use-debounce";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { useDateFormat } from "@/hooks/use-date-format";
-import { _renderQuoteStatus } from "@/utils/constants";
+import { _renderDocumentStatus, _renderQuoteStatus, _renderStatus } from "@/utils/constants";
 import { employeesListsState, selectedClientState } from "./states";
 import {
   createNewDocumentApi,
@@ -37,7 +37,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
   const [patternSearch, setPatternSearch] = useState("");
   const [finalPatternSearch, setFinalPatternSearch] = useState("");
   const debounce = useDebounce(patternSearch, 500);
-  const { GetDateFormat , GetShortDateFormat} = useDateFormat();
+  const { GetDateFormat, GetShortDateFormat } = useDateFormat();
   const [statusId, setStatusId] = useState<any>();
   const [quoteStatusId, setQuoteStatusId] = useState<any>();
   const [customerId, setCustomerId] = useState<any>();
@@ -70,7 +70,6 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
   const [fromLogsDate, setFromLogsDate] = useState<Date>();
   const [toLogsDate, setToLogsDate] = useState<Date>();
   const [agentsCategories, setAgentsCategories] = useRecoilState(agentsCategoriesState);
-
   const documentPath = DOCUMENT_TYPE[docType];
   const isReceipt = docType === DOCUMENT_TYPE.receipt;
 
@@ -142,13 +141,28 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     }
   };
 
-  const _renderStatus = (document: any) => {
-    if (document.DocumentNumbers?.length > 0 || document.SecondDocumentNumbers?.length > 0) {
-      return `${document.titleDocumentNumber}: ${document.documentNumbers[0]} ${document.titleSecondDocumentNumber}: ${document.secondDocumentNumbers[0]}`;
-    } else {
-      return t(`documentStatus.${document.statusTitleText}`);
-    }
-  };
+  const _renderPaymentType = (paymentType) => {
+    if (!paymentType) return '';
+    const types = paymentType.split(',').map(type => type.trim());
+    const translatedTypes = types.map(type => {
+      switch (type) {
+        case 'מזומן':
+          return t('payment.cash');
+        case 'המחאה':
+          return t('payment.check');
+        case 'bit':
+          return t('payment.bit');
+        case 'אשראי':
+          return t('payment.creditCard');
+        case 'העברה':
+          return t('payment.transfer');
+        default:
+          return type;
+      }
+    });
+    return translatedTypes.join(', ');
+  }
+
   const getAllQuotes = async () => {
     const callBack = (res) => {
       if (res?.success) {
@@ -165,7 +179,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
               quote?.itemsNumber,
               quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
               quote?.notes,
-              _renderStatus(quote),
+              _renderStatus(quote, t),
               <MoreMenuWidget
                 quote={quote}
                 documentType={docType}
@@ -184,7 +198,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
               quote?.worksNames,
               quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
               quote?.notes,
-              _renderStatus(quote),
+              _renderStatus(quote, t),
               <MoreMenuWidget
                 quote={quote}
                 documentType={docType}
@@ -202,10 +216,10 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
           quote?.customerName,
           quote?.agentName,
           quote?.number,
-          quote?.paymentType,
+          _renderPaymentType(quote?.paymentType),
           quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
           quote?.notes,
-          _renderStatus(quote),
+          _renderDocumentStatus(quote?.status, t),
           <MoreMenuWidget
             quote={quote}
             documentType={docType}
@@ -266,7 +280,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
           quote?.worksNames,
           quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
           quote?.notes,
-          _renderQuoteStatus(quote?.documentStatus, quote, t),
+          _renderStatus(quote , t),
           <MoreMenuWidget
             quote={quote}
             documentType={docType}
@@ -281,10 +295,10 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
           quote?.customerName,
           quote?.agentName,
           quote?.number,
-          quote?.paymentType,
+          _renderPaymentType(quote?.paymentType),
           quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
           quote?.notes,
-          quote?.statusStr,
+          _renderDocumentStatus(quote?.status, t),
           <MoreMenuWidget
             quote={quote}
             documentType={docType}

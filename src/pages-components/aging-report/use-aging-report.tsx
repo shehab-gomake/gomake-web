@@ -1,15 +1,12 @@
 import { useCallback, useRef, useState } from "react";
-
 import { useAgentsList, useCustomerDropDownList, useGomakeAxios, useSnackBar } from "@/hooks";
 import { EHttpMethod } from "@/services/api-service/enums";
-import { EExportType } from "@/enums";
 
 const useAgingReport = () => {
   const { callApi } = useGomakeAxios();
   const { alertFaultGetData, alertSuccessGetData } = useSnackBar();
-  const { customer, renderOptions, checkWhatRenderArray, handleCustomerChange } = useCustomerDropDownList()
-  const { agent, agentsCategories, handleAgentChange } = useAgentsList()
-
+  const { customer, renderOptions, checkWhatRenderArray, handleCustomerChange } = useCustomerDropDownList();
+  const { agent, agentsCategories, handleAgentChange } = useAgentsList();
   const [selectDate, setSelectDate] = useState<string>(new Date().toISOString().split('T')[0]);
   const [byReferenceDate, setByReferenceDate] = useState<boolean>(false);
   const [resetDatePicker, setResetDatePicker] = useState<boolean>(false);
