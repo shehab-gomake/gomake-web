@@ -222,7 +222,7 @@ const PriceListPageWidget = ({ widgetType }) => {
     ]
     const { } = useGoMakeTour(productSteps, [relatedParameters])
     return (
-        <div style={{ overflow: 'hidden' }}>
+        <div>
             {productTemplate?.sections?.length > 0 && (
                 <div style={clasess.mainContainer}>
                     <div>
