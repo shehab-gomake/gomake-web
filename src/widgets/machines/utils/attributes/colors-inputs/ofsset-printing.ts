@@ -54,6 +54,19 @@ const ofssetPrinting = (state: Record<string, any>) => {
             isValid: true
         },
         {
+            name: "machineAttributes.colors",
+            label: "machineAttributes.color",
+            type: "text",
+            placeholder: "machineAttributes.color",
+            required: true,
+            parameterKey: "colors",
+            options: [],
+            machineInputType: 'materialInput',
+            value: state?.attributes?.colors,
+            isValid: true,
+            materialType: 'colors'
+        },
+        {
             name: 'machineAttributes.varnishPrice',
             parameterKey: 'varnishPrice',
             value: state?.attributes?.varnishPrice ? state?.attributes?.varnishPrice : [],

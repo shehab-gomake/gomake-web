@@ -60,11 +60,11 @@ const TotalPriceComp = ({
             <InputUpdatedValues
               value={(quoteItems?.discount ? quoteItems?.discount : 0)}
               onBlur={onBlurDiscount}
-              isUpdate={router.query.canEdit === "false" ? false : isUpdateDiscount}
+              isUpdate={router.query.isNewCreation ? isUpdateDiscount : !quoteItems?.isEditable ? false : isUpdateDiscount}
               setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdateDiscount}
               onInputChange={(e) => onInputDiscount(e)}
             />
-            {getCurrencyUnitText(quoteItems?.currency)}
+            %
           </div>
         </div>
         <div style={{ ...classes.evenRowContainer, width: "13%" }}>
@@ -95,7 +95,7 @@ const TotalPriceComp = ({
             <InputUpdatedValues
               value={quoteItems?.totalPayment}
               onBlur={onBlurTotalPayment}
-              isUpdate={router.query.canEdit === "false" ? false : isUpdateTotalPayment}
+              isUpdate={router.query.isNewCreation ? isUpdateTotalPayment : !quoteItems?.isEditable ? false : isUpdateTotalPayment}
               setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdateTotalPayment}
               onInputChange={(e) => onInputTotalPayment(e)}
               speicalStyle={{

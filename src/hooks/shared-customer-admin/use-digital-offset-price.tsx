@@ -192,6 +192,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           currentWorkFlows[0].selected = true;
         }
         selectedWorkFlow = currentWorkFlows?.find((x) => x.selected);
+        console.log("selectedWorkFlow",calculationResult.productItemValue)
         if (
           selectedWorkFlow &&
           selectedWorkFlow.totalPrice &&
@@ -253,27 +254,37 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     setCurrentSignalRConnectionId(connectionId)
   }, [connectionId])
   useEffect(() => {
+    console.log("calculationExceptionsLogs",calculationExceptionsLogs)
     setCalculationExceptionsLogs(calculationExceptionsLogs);
   }, [calculationExceptionsLogs]);
   useEffect(() => {
-    setWorkFlows(
-      workFlows.map((flow) =>
-        flow.id === updatedSelectedWorkFlow?.id
-          ? updatedSelectedWorkFlow
-          : {
-            ...flow,
-            selected: false,
-          }
-      )
-    );
-    if (
-      updatedSelectedWorkFlow?.totalPrice &&
-      updatedSelectedWorkFlow?.totalPrice?.values
-    ) {
-      setCurrentProductItemValueTotalPrice(
-        +updatedSelectedWorkFlow?.totalPrice.values[0]
-      );
+    if(updatedSelectedWorkFlow){
+      if(!workFlows.find(x => x.id == updatedSelectedWorkFlow?.id)){
+        setWorkFlows(
+            workFlows.map((flow) =>
+                flow.id === updatedSelectedWorkFlow?.id
+                    ? updatedSelectedWorkFlow
+                    : {
+                      ...flow,
+                      selected: false,
+                    }
+            )
+        );
+      }else{
+        let temp = workFlows.map((flow)=> { return {...flow,selected:false} } );
+        setWorkFlows([...temp,{...updatedSelectedWorkFlow,selected:true}]);
+      }
+
+      if (
+          updatedSelectedWorkFlow?.totalPrice &&
+          updatedSelectedWorkFlow?.totalPrice?.values
+      ) {
+        setCurrentProductItemValueTotalPrice(
+            +updatedSelectedWorkFlow?.totalPrice.values[0]
+        );
+      }
     }
+    
   }, [updatedSelectedWorkFlow]);
 
   useEffect(() => {

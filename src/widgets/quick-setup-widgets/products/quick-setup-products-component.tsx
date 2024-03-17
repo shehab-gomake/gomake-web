@@ -1,4 +1,4 @@
-import {Stack, Table, TableBody, TableCell, TableRow} from "@mui/material";
+import {CircularProgress, Stack, Table, TableBody, TableCell, TableRow} from "@mui/material";
 import {SecondaryButton} from "@/components/button/secondary-button";
 import {convertWidthToVW} from "@/utils/adapter";
 import TextField from "@mui/material/TextField";
@@ -10,23 +10,26 @@ import {useQuickSetupProducts} from "@/widgets/quick-setup-widgets/products/use-
 const QuickSetupProductsComponent = () => {
     const {t} = useTranslation();
     const {classes} = useStyle();
-    const {product, onChange, onClickNext, updatedQuantities, onClickSkip} = useQuickSetupProducts();
+    const {product, onChange, onClickNext, updatedQuantities, onClickSkip, currency, loading} = useQuickSetupProducts();
     return (
         <Stack gap={'40px'} minWidth={convertWidthToVW(700)}>
             <h3 style={classes.header}>{'Please calculate your price!'}</h3>
-            <Stack width={'70%'} margin={'0 auto'} justifyContent={'center'}>
-                <Table>
-                    <TableBody>
-                        {
-                            product?.details && Object.entries(product?.details).map(([key, value]) =>
-                                <TableRow>
-                                    <TableCell style={classes.detailsKey}>{key}:</TableCell>
-                                    <TableCell style={classes.detailsValue}>{value}</TableCell>
-                                </TableRow>)
-                        }
-                    </TableBody>
-                </Table>
-            </Stack>
+            {
+                loading ? <CircularProgress style={{margin: 'auto'}} size="50px"/> :
+                    <Stack width={'70%'} margin={'0 auto'} justifyContent={'center'}>
+                        <Table>
+                            <TableBody>
+                                {
+                                    product?.details && Object.entries(product?.details).map(([key, value]) =>
+                                        <TableRow>
+                                            <TableCell style={classes.detailsKey}>{key}:</TableCell>
+                                            <TableCell style={classes.detailsValue}>{value}</TableCell>
+                                        </TableRow>)
+                                }
+                            </TableBody>
+                        </Table>
+                    </Stack>
+            }
             <Table width={'100%'}>
                 <TableBody>
                     {
@@ -39,12 +42,13 @@ const QuickSetupProductsComponent = () => {
                             </TableCell>
                             <TableCell align={'right'}>
                                 <TextField placeholder={'Price'} size={'small'} variant={'outlined'}
-                                           style={{width: '100px', padding: 0, border: '1px solid black'}}
+                                           style={{width: '150px', padding: 0, border: '1px solid black'}}
                                            type={'number'}
                                            onChange={(e) => onChange(quantity?.quantity, +e?.target?.value)}
                                            value={quantity?.price > 0 ? quantity?.price : ''}/>
                             </TableCell>
-                            <TableCell align={'right'}>
+                            <TableCell>
+                                {currency()}
                             </TableCell>
                         </TableRow>)
                     }

@@ -1,15 +1,8 @@
 import {cuttingLevel} from "@/widgets/machines/utils/const/cutting-level";
 import {EMeasurementUnits} from "@/widgets/machines/enums/measurement-units";
 import {setupTimeInput} from "@/widgets/machines/utils/attributes/speed-inputs/setup-time-input";
-import { useTranslation } from "react-i18next";
 
 const rollbedCuttingMachine = (state: Record<string, any>) => {
-    const { t } = useTranslation(); 
-    const translatedCuttingLevel = cuttingLevel.map(({ value, text }) => ({
-        value,
-        text: t(text)
-    }));
-
     return [
         ...setupTimeInput(state),
         {
@@ -39,7 +32,9 @@ const rollbedCuttingMachine = (state: Record<string, any>) => {
                     placeholder: "machineAttributes.cuttingLevel",
                     required: true,
                     parameterKey: "cuttingLevel",
-                    options: translatedCuttingLevel,
+                    options: [],
+                    optionsUrl: '/v1/print-house-config/parameters/shape-complexity'
+
                 },
                 {
                     name: "speedPercentage",

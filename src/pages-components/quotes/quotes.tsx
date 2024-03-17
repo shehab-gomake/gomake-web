@@ -10,7 +10,7 @@ import {
 import { SearchInputComponent } from "@/components/form-inputs/search-input-component";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import { HeaderTitle } from "@/widgets";
-import { QuoteLogsWidget } from "./quote-widgets/logs-widget";
+import { DocumentLogsWidget } from "./documents-logs-widget/logs-widget";
 import { DOCUMENT_TYPE } from "./enums";
 import { Button, IconButton, Stack } from "@mui/material";
 import { CardsSection } from "./statistics-section/statistics-sections";
@@ -19,6 +19,8 @@ import { ExcelSheetIcon, SettingNewIcon } from "@/icons";
 import { AddRuleModal } from "../products/profits-new/widgets/add-rule-modal";
 import { GoMakeDatepicker } from "@/components/date-picker/date-picker-component";
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import { useRecoilValue } from "recoil";
+import { employeesListsState } from "./states";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -29,16 +31,8 @@ const QuotesListPageWidget = ({
   isFromHomePage = false,
 }: IProps) => {
   const { classes } = useStyle();
+  const employeeListValue = useRecoilValue<string[]>(employeesListsState);
   const {
-    tableHeaders,
-    allQuotes,
-    quoteStatuses,
-    deliveryNoteStatuses,
-    agentsCategories,
-    openModal,
-    statusId,
-    customerId,
-    agentId,
     onClickCloseModal,
     setPatternSearch,
     setStatusId,
@@ -49,31 +43,47 @@ const QuotesListPageWidget = ({
     updateQuoteStatus,
     onClickSearchFilter,
     onClickClearFilter,
-    openLogsModal,
     onClickCloseLogsModal,
-    modalLogsTitle,
+    setPage,
+    onclickCreateNew,
+    t,
+    handlePageSizeChange,
+    handleCardClick,
+    handleSecondCardClick,
+    onCloseAddRuleModal,
+    onOpenAddRuleModal,
+    navigate,
+    tableHeaders,
+    allQuotes,
+    quoteStatuses,
+    deliveryNoteStatuses,
+    agentsCategories,
+    openModal,
+    statusId,
+    customerId,
+    agentId,
+    openLogsModal,
+    logsModalTitle,
     logsTableHeaders,
     documentLabel,
     allDocuments,
     tableHomeHeader,
     pagesCount,
     page,
-    setPage,
     allStatistics,
-    onclickCreateNew,
-    t,
-    handlePageSizeChange,
     pageSize,
     activeCard,
-    handleCardClick,
-    handleSecondCardClick,
-    onCloseAddRuleModal,
-    onOpenAddRuleModal,
     openAddRule,
-    navigate,
     documentPath,
     resetDatePicker,
-    onSelectDeliveryTimeDates
+    onSelectDeliveryTimeDates,
+    employeeId,
+    handleSelectEmployee,
+    resetLogsDatePicker,
+    onSelectDateRange,
+    onClickSearchLogsFilter,
+    onClickClearLogsFilter,
+    documentLogsData
   } = useQuotes(documentType);
 
   return (
@@ -222,9 +232,19 @@ const QuotesListPageWidget = ({
         insideStyle={classes.insideStyle}
         openModal={openLogsModal}
         onClose={onClickCloseLogsModal}
-        modalTitle={t("sales.quote.quoteLogs") + " - " + modalLogsTitle}
+        modalTitle={logsModalTitle}
       >
-        <QuoteLogsWidget logsTableHeaders={logsTableHeaders} />
+        <DocumentLogsWidget 
+        employeeId={employeeId}
+        handleSelectEmployee={handleSelectEmployee}
+        onClickClearLogsFilter={onClickClearLogsFilter}
+        onClickSearchLogsFilter={onClickSearchLogsFilter}
+        resetLogsDatePicker={resetLogsDatePicker}
+        onSelectDateRange={onSelectDateRange}
+        logsTableHeaders={logsTableHeaders} 
+        logsTableRows={documentLogsData}
+        employeesCategories={employeeListValue}
+        />
       </GoMakeModal>
       <AddRuleModal
         openModal={openAddRule}

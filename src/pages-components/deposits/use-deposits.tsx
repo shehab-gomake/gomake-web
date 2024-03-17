@@ -14,7 +14,7 @@ const useDeposits = () => {
     const { callApi } = useGomakeAxios();
     const { navigate } = useGomakeRouter();
     const { alertFaultDelete, alertSuccessDelete, alertFaultGetData } = useSnackBar();
-    const { GetDateFormat , GetShortDateFormat} = useDateFormat();
+    const { GetDateFormat, GetShortDateFormat } = useDateFormat();
     const [page, setPage] = useRecoilState<number>(depositsPageState);
     const resetPage = useResetRecoilState(depositsPageState);
     const [pagesCount, setPagesCount] = useRecoilState<number>(depositsPageCountState);
@@ -27,12 +27,22 @@ const useDeposits = () => {
     const [depositPaymentType, setDepositPaymentType] = useRecoilState<any>(depositPaymentTypeSate);
     const [patternSearch, setPatternSearch] = useState("");
     const [finalPatternSearch, setFinalPatternSearch] = useState("");
+    const [openLogsModal, setOpenLogsModal] = useState(false);
+    const [depositLogTitle, setDepositLogTitle] = useState<string>();
+    const [employeeId, setEmployeeId] = useState<any>();
+    const [resetLogsDatePicker, setResetLogsDatePicker] = useState<boolean>(false);
+    const [fromLogsDate, setFromLogsDate] = useState<Date>(new Date());
+    const [toLogsDate, setToLogsDate] = useState<Date>(new Date());
     const debounce = useDebounce(patternSearch, 500);
 
     const handlePageSizeChange = (event) => {
         setPage(1);
         setPageSize(event.target.value);
     };
+
+    const handleSelectEmployee = (e: any, value: any) => {
+        setEmployeeId(value);
+    }
 
     const onSelectDateRange = (fromDate: Date, toDate: Date) => {
         setResetDatePicker(false);
@@ -56,6 +66,12 @@ const useDeposits = () => {
         { label: t("payment.creditCard"), value: PAYMENT_TYPE.CreditCard }
     ];
 
+    const logsTableHeaders = [
+        t("sales.quote.actionDate"),
+        t("sales.quote.employeeName"),
+        t("sales.quote.actionDescription"),
+    ];
+
     const getDepositTypeText = (typeNum: number) => {
         switch (typeNum) {
             case (DEPOSIT_TYPE.Checks):
@@ -76,6 +92,15 @@ const useDeposits = () => {
         }
     };
 
+    const onClickDocumentLogs = async (deposit: any) => {
+        setDepositLogTitle(`${t("deposits.LogsForDepositNumber")} - ${deposit?.number}`)
+        setOpenLogsModal(true);
+    };
+
+    const onClickCloseLogsModal = () => {
+        setOpenLogsModal(false);
+    };
+
     const getAllDeposits = async (isClear = false) => {
         const callBack = (res) => {
             if (res?.success) {
@@ -88,7 +113,7 @@ const useDeposits = () => {
                     getDepositStatusText(deposit?.isCanceled),
                     getDepositTypeText(deposit?.depositType),
                     deposit?.totalAmount,
-                    <MoreMenuWidget deposit={deposit} onClickShowDeposit={() => getDepositBYId(deposit?.id)} onClickCancel={() => cancelDeposit(deposit?.id)} />
+                    <MoreMenuWidget deposit={deposit} onClickLoggers={() => onClickDocumentLogs(deposit)} onClickShowDeposit={() => getDepositBYId(deposit?.id)} onClickCancel={() => cancelDeposit(deposit?.id)} />
                 ]);
                 setAllDeposits(mapData);
                 setPagesCount(Math.ceil(totalItems / (pageSize)));
@@ -167,7 +192,7 @@ const useDeposits = () => {
                 alertFaultDelete();
             }
         };
-        await cancelDepositApi(callApi, callBack, { Id : depositId });
+        await cancelDepositApi(callApi, callBack, { Id: depositId });
     };
 
     const handleDepositTypeChange = (e: any, value: any) => {
@@ -192,6 +217,12 @@ const useDeposits = () => {
         setPatternSearch(e)
     };
 
+    const onSelectLogsDateRange = (fromDate: Date, toDate: Date) => {
+        setResetLogsDatePicker(false);
+        setFromLogsDate(fromDate);
+        setToLogsDate(toDate);
+    };
+
     useEffect(() => {
         setFinalPatternSearch(debounce);
     }, [debounce]);
@@ -214,7 +245,15 @@ const useDeposits = () => {
         onClickClearFilter,
         setPatternSearch,
         finalPatternSearch,
-        handleSearchChange
+        handleSearchChange,
+        openLogsModal,
+        onClickCloseLogsModal,
+        logsTableHeaders,
+        depositLogTitle,
+        handleSelectEmployee,
+        employeeId,
+        onSelectLogsDateRange,
+        resetLogsDatePicker
     };
 };
 

@@ -64,7 +64,6 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
     openDeleteItemModal,
     documentItems,
     tableHeaders,
-    filteredTableHeaders,
     columnWidths,
     headerHeight,
     quoteItems,
@@ -343,7 +342,7 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
               {documentType !== DOCUMENT_TYPE.receipt &&
                 <QuoteForPriceTable
                   documentItems={isQuoteConfirmation ? quoteConfirm?.documentItems : documentItems}
-                  tableHeaders={filteredTableHeaders}
+                  tableHeaders={tableHeaders}
                   columnWidths={columnWidths}
                   headerHeight={headerHeight}
                   changedocumentItems={changedocumentItems}

@@ -18,7 +18,6 @@ const useGoMakeTour = (steps: StepType[], deps?: DependencyList[]) => {
 
     useEffect(() => {
         if (!!startGuid) {
-            alert(startGuid)
             startGoMakeTour();
         }
     }, []);

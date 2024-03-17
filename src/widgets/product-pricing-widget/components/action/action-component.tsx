@@ -88,7 +88,7 @@ const ActionContainerComponent = ({
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [chooseMachine, setChooseMachine] = useState<boolean>(false);
   const currentProductItemValue = useRecoilValue(currentProductItemValueState);
-
+  const { t } = useTranslation();
   const {
     getActionMachinesList,
     selectNewMachine,
@@ -332,7 +332,7 @@ const ActionContainerComponent = ({
             }}
           >
             {!isCalculated && (
-              <Tooltip title={actionException?.exceptionMessage}>
+              <Tooltip title={t("CalculationExceptions."+actionException?.exceptionKey)}>
                 <IconButton>
                   <WarningIcon />
                 </IconButton>

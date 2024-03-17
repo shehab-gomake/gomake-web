@@ -1,6 +1,8 @@
 import {TourProvider} from "@reactour/tour";
 import {FONT_FAMILY} from "@/utils/font-family";
 import {useEffect} from "react";
+import {useGomakeAxios} from "@/hooks";
+import {inactiveUserFirstLogin} from "@/services/api-service/users/users-api";
 
 
 interface IProps {
@@ -8,7 +10,12 @@ interface IProps {
 }
 
 const GoMakeTourProvider = ({children}: IProps) => {
+    const {callApi} = useGomakeAxios();
     useEffect(() => {}, [children])
+
+    const onCloseTour = async () => {
+        await inactiveUserFirstLogin(callApi, () =>{});
+    }
     return <TourProvider steps={[]}
                          styles={{
                              popover: (base) => ({
@@ -25,6 +32,11 @@ const GoMakeTourProvider = ({children}: IProps) => {
                          }}
 
                          onClickMask={() => {}}
+                         onClickClose={(clickProps) => {
+                             clickProps.setCurrentStep(0);
+                             clickProps.setIsOpen(false);
+                             onCloseTour().then();
+                         }}
                          defaultOpen={false}
                          scrollSmooth={true}>
         {children}

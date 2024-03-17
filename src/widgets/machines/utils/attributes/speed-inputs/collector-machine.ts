@@ -11,7 +11,7 @@ const collectorMachine = (state: Record<string, any>) => {
             type: "text",
             placeholder: "machineAttributes.speed",
             required: true,
-            parameterKey: "speedSet",
+            parameterKey: "speed",
             options: [],
             value: state.attributes?.speed ? state.attributes?.speed: '',
             machineInputType: 'input',

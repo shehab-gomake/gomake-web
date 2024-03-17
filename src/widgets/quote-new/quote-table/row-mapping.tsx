@@ -51,10 +51,7 @@ const RowMappingWidget = ({
     item,
     index,
   });
-
-  // in quote confirmation case
   const { handleItemCheck } = useQuoteConfirmation();
-
   return (
 
     <TableRow
@@ -64,7 +61,6 @@ const RowMappingWidget = ({
       }}
     >
       {
-        (!router.query.canEdit || router.query.canEdit === "true") &&
         <PrimaryTableCell
           style={{
             width: columnWidths[0],
@@ -123,7 +119,7 @@ const RowMappingWidget = ({
           borderBottom: item?.childsDocumentItems && "none",
         }}
       >
-        <CharacterDetails details={item.details} getQuote={getQuote} documentItemId={item?.id} canUpdate={router.query.canEdit === "false" ? false : !isQuoteConfirmation} />
+        <CharacterDetails details={item.details} getQuote={getQuote} documentItemId={item?.id} canUpdate={router.query.isNewCreation ? true : item?.isEditable} />
       </PrimaryTableCell>
       <PrimaryTableCell
         style={{
@@ -136,7 +132,7 @@ const RowMappingWidget = ({
           <InputUpdatedValues
             value={item.quantity}
             onBlur={onBlurAmount}
-            isUpdate={router.query.canEdit === "false" ? false : isUpdateAmount}
+            isUpdate={router.query.isNewCreation ? isUpdateAmount : !item?.isEditable ? false : isUpdateAmount}
             setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdateAmount}
             onInputChange={(e) => onInputChangeAmount(e)}
           />
@@ -153,7 +149,7 @@ const RowMappingWidget = ({
           <InputUpdatedValues
             value={item.discount ? item.discount : "0"}
             onBlur={onBlurDiscount}
-            isUpdate={router.query.canEdit === "false" ? false : isUpdateDiscount}
+            isUpdate={router.query.isNewCreation ? isUpdateDiscount : !item?.isEditable ? false : isUpdateDiscount}
             setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdateDiscount}
             onInputChange={(e) => onInputChangeDiscount(e)}
           />
@@ -170,7 +166,7 @@ const RowMappingWidget = ({
           <InputUpdatedValues
             value={item.price}
             onBlur={onBlurPrice}
-            isUpdate={router.query.canEdit === "false" ? false : isUpdatePrice}
+            isUpdate={router.query.isNewCreation ? isUpdatePrice : !item?.isEditable ? false : isUpdatePrice}
             setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdatePrice}
             onInputChange={(e) => onInputChangePrice(e)}
           />
@@ -187,7 +183,7 @@ const RowMappingWidget = ({
           <InputUpdatedValues
             value={item.finalPrice}
             onBlur={onBlurFinalPrice}
-            isUpdate={router.query.canEdit === "false" ? false : isUpdateFinalPrice}
+            isUpdate={router.query.isNewCreation ? isUpdateFinalPrice : !item?.isEditable ? false : isUpdateFinalPrice}
             setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdateFinalPrice}
             onInputChange={(e) => onInputChangeFinalPrice(e)}
           />
@@ -195,7 +191,7 @@ const RowMappingWidget = ({
 
       </PrimaryTableCell>
       {
-        (!router.query.canEdit || router.query.canEdit === "true") && !isQuoteConfirmation &&
+        !isQuoteConfirmation &&
         <PrimaryTableCell
           style={{
             width: columnWidths[7],
