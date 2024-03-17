@@ -273,30 +273,33 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     setCalculationExceptionsLogs(calculationExceptionsLogs);
   }, [calculationExceptionsLogs]);
   useEffect(() => {
-    if(!workFlows.find(x => x.id == updatedSelectedWorkFlow?.id)){
-      setWorkFlows(
-          workFlows.map((flow) =>
-              flow.id === updatedSelectedWorkFlow?.id
-                  ? updatedSelectedWorkFlow
-                  : {
-                    ...flow,
-                    selected: false,
-                  }
-          )
-      );
-    }else{
-      let temp = workFlows.map((flow)=> { return {...flow,selected:false} } );
-      setWorkFlows([...temp,{...updatedSelectedWorkFlow,selected:true}]);
+    if(updatedSelectedWorkFlow){
+      if(!workFlows.find(x => x.id == updatedSelectedWorkFlow?.id)){
+        setWorkFlows(
+            workFlows.map((flow) =>
+                flow.id === updatedSelectedWorkFlow?.id
+                    ? updatedSelectedWorkFlow
+                    : {
+                      ...flow,
+                      selected: false,
+                    }
+            )
+        );
+      }else{
+        let temp = workFlows.map((flow)=> { return {...flow,selected:false} } );
+        setWorkFlows([...temp,{...updatedSelectedWorkFlow,selected:true}]);
+      }
+
+      if (
+          updatedSelectedWorkFlow?.totalPrice &&
+          updatedSelectedWorkFlow?.totalPrice?.values
+      ) {
+        setCurrentProductItemValueTotalPrice(
+            +updatedSelectedWorkFlow?.totalPrice.values[0]
+        );
+      }
     }
     
-    if (
-      updatedSelectedWorkFlow?.totalPrice &&
-      updatedSelectedWorkFlow?.totalPrice?.values
-    ) {
-      setCurrentProductItemValueTotalPrice(
-        +updatedSelectedWorkFlow?.totalPrice.values[0]
-      );
-    }
   }, [updatedSelectedWorkFlow]);
 
   useEffect(() => {
