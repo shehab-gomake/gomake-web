@@ -15,7 +15,7 @@ import { ContactWidget } from "@/widgets/quote/contact-widget";
 import { AddressWidget } from "@/widgets/quote/address-widget";
 import { CustomTableWidget } from "@/widgets/quote/custom-table-widget";
 import { TotalPriceAndVatWidit } from "@/widgets/quote/total-price-and-vat";
-import { AddNewItemModal } from "@/widgets/quote/modals-widgets/add-new-item-modal";
+import { AddNewItemModal } from "@/widgets/quote-new/modals-widgets/add-new-item-modal";
 const QuotePageWidget = () => {
   const { clasess } = useStyle();
   const setQuoteState = useSetRecoilState<any>(quoteState);

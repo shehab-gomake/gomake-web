@@ -4,12 +4,12 @@ import { useStyle } from "./style";
 import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { CharacterDetails } from "./character-details";
-import { MoreMenuWidget } from "@/widgets/quote/more-circle";
 import { InputUpdatedValues } from "../input-updated-values";
 import { useQuoteTable } from "./use-quote-table";
 import { useState } from "react";
 import { useQuoteConfirmation } from "@/pages-components/quote-confirmation/use-quote-confirmation";
 import { useRouter } from "next/router";
+import { MoreMenuWidget } from "../more-circle";
 
 const RowMappingWidget = ({
   item,

@@ -1,16 +1,22 @@
 import { IconButton, MenuItem } from "@mui/material";
 import { MoreCircleIcon } from "@/icons";
 import { GoMakeMenu } from "@/components";
-import { useMoreCircleWithChilds } from "./use-more-circle";
+import { useMoreCircle } from "./use-more-circle";
 import { useStyle } from "./style";
 
-const MoreMenuWidgetWithChilds = ({ quoteItem, onClickDeleteQouteItem }) => {
+const MoreMenuWidget = ({
+  quoteItem,
+  onClickDuplicateWithDifferentQTY,
+  onClickDeleteQouteItem,
+  documentType
+}) => {
   const { clasess } = useStyle();
-  const { open, anchorEl, menuList, handleClose, handleClick } =
-    useMoreCircleWithChilds({
-      quoteItem,
-      onClickDeleteQouteItem,
-    }); 
+  const { open, anchorEl, menuList, handleClose, handleClick } = useMoreCircle({
+    quoteItem,
+    onClickDuplicateWithDifferentQTY,
+    onClickDeleteQouteItem,
+    documentType
+  });
   return (
     <>
       <IconButton onClick={handleClick}>
@@ -38,4 +44,4 @@ const MoreMenuWidgetWithChilds = ({ quoteItem, onClickDeleteQouteItem }) => {
     </>
   );
 };
-export { MoreMenuWidgetWithChilds };
+export { MoreMenuWidget };

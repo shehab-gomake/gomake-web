@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { HeaderTable } from "./sub-widget/header";
 import { RowCustomTable } from "./sub-widget/row";
 import { useCustomTable } from "./use-custom-table";
-import { AddNegotiateRequestModal } from "../modals-widgets/add-negotiate-request-modal";
+import { AddNegotiateRequestModal } from "../../quote-new/modals-widgets/add-negotiate-request-modal";
 import { useRecoilValue } from "recoil";
 import { quoteState } from "@/pages-components/quote/store/quote";
 import { RowWithChildsTable } from "./sub-widget/row/row-with-childs";
