@@ -41,7 +41,7 @@ export const findParameterByCode = (template, targetCode) => {
   };
 
   // Call the findParameter function with the top-level sections
-  return findParameter(template.sections || []);
+  return findParameter(template?.sections || []);
 };
 
 export function detectLanguage(text) {

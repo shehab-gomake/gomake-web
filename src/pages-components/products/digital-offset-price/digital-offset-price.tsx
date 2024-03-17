@@ -1,24 +1,24 @@
-import {useStyle} from "./style";
-import {HeaderTitle} from "@/widgets";
-import {useDigitalOffsetPrice} from "@/hooks";
-import {GomakePrimaryButton} from "@/components";
-import {TabsMappingWidget} from "./widgets/tabs-mapping";
-import {AccordionMappingWidget} from "./widgets/accordion-mapping";
-import {SectionMappingWidget} from "./widgets/section-mapping";
-import {RightSideWidget} from "./widgets/right-side-widget";
+import { useStyle } from "./style";
+import { HeaderTitle } from "@/widgets";
+import { useDigitalOffsetPrice } from "@/hooks";
+import { GomakePrimaryButton } from "@/components";
+import { TabsMappingWidget } from "./widgets/tabs-mapping";
+import { AccordionMappingWidget } from "./widgets/accordion-mapping";
+import { SectionMappingWidget } from "./widgets/section-mapping";
+import { RightSideWidget } from "./widgets/right-side-widget";
 import {
     GalleryModal,
     MakeShapeModal,
     MultiParameterModal,
 } from "@/widgets/shared-admin-customers/digital-offset-price";
-import {EWidgetProductType} from "./enums";
-import {PricingWidget} from "@/widgets/product-pricing-widget/pricing-widget";
-import {Tabs} from "@mui/material";
-import {StepType} from "@reactour/tour";
-import {useGoMakeTour} from "@/hooks/use-go-make-tour";
+import { EWidgetProductType } from "./enums";
+import { PricingWidget } from "@/widgets/product-pricing-widget/pricing-widget";
+import { Tabs } from "@mui/material";
+import { StepType } from "@reactour/tour";
+import { useGoMakeTour } from "@/hooks/use-go-make-tour";
 
-const PriceListPageWidget = ({widgetType}) => {
-    const {clasess} = useStyle();
+const PriceListPageWidget = ({ widgetType }) => {
+    const { clasess } = useStyle();
     const {
         t,
         handleTabClick,
@@ -79,7 +79,9 @@ const PriceListPageWidget = ({widgetType}) => {
         isChargeForNewDie,
         setIsChargeForNewDie,
         straightKnife
-    } = useDigitalOffsetPrice({clasess, widgetType});
+    } = useDigitalOffsetPrice({ clasess, widgetType });
+    const visibleSections = productTemplate?.sections?.filter(section => !section.isHidden);
+
     const productSteps: StepType[] = [
         {
             selector: '[data-tour="a330193f-492c-40a8-86f3-8edf5c8f0d5e"]',
@@ -101,7 +103,7 @@ const PriceListPageWidget = ({widgetType}) => {
             content: 'Now, please select a size for the product.',
             position: 'right',
             styles: {
-                maskWrapper: (base) => ({...base, zIndex: 1}),
+                maskWrapper: (base) => ({ ...base, zIndex: 1 }),
             },
         },
         {
@@ -109,7 +111,7 @@ const PriceListPageWidget = ({widgetType}) => {
             content: 'Now, please select a size for the product.',
             position: 'right',
             styles: {
-                maskWrapper: (base) => ({...base, zIndex: 1}),
+                maskWrapper: (base) => ({ ...base, zIndex: 1 }),
             },
         },
         {
@@ -117,7 +119,7 @@ const PriceListPageWidget = ({widgetType}) => {
             content: 'Next, select the type of paper.',
             position: 'right',
             styles: {
-                maskWrapper: (base) => ({...base, zIndex: 1}),
+                maskWrapper: (base) => ({ ...base, zIndex: 1 }),
             },
         },
         {
@@ -125,7 +127,7 @@ const PriceListPageWidget = ({widgetType}) => {
             content: ' Please specify the paper weight.',
             position: 'right',
             styles: {
-                maskWrapper: (base) => ({...base, zIndex: 1}),
+                maskWrapper: (base) => ({ ...base, zIndex: 1 }),
             },
         },
         {
@@ -133,18 +135,18 @@ const PriceListPageWidget = ({widgetType}) => {
             content: 'Please indicate the printing sides.',
             position: 'right',
             styles: {
-                maskWrapper: (base) => ({...base, zIndex: 1}),
+                maskWrapper: (base) => ({ ...base, zIndex: 1 }),
             },
-            action: elem => elem?.scrollIntoView({behavior: "smooth", block: 'end'}),
+            action: elem => elem?.scrollIntoView({ behavior: "smooth", block: 'end' }),
         },
         {
             selector: '[data-tour="5f4b6094-1dc5-40e4-81fd-e1294fca9d10"]',
             content: 'Finally, specify the printing colors.',
             position: 'right',
             styles: {
-                maskWrapper: (base) => ({...base, zIndex: 1}),
+                maskWrapper: (base) => ({ ...base, zIndex: 1 }),
             },
-            action: elem => elem?.scrollIntoView({behavior: "smooth", block: 'end'})
+            action: elem => elem?.scrollIntoView({ behavior: "smooth", block: 'end' })
 
         },
         {
@@ -167,7 +169,7 @@ const PriceListPageWidget = ({widgetType}) => {
             content: 'Please select the lamination sides required.',
             position: 'right',
             styles: {
-                maskWrapper: (base) => ({...base, zIndex: 1}),
+                maskWrapper: (base) => ({ ...base, zIndex: 1 }),
             },
         },
         {
@@ -175,7 +177,7 @@ const PriceListPageWidget = ({widgetType}) => {
             content: 'And specify the lamination type.',
             position: 'right',
             styles: {
-                maskWrapper: (base) => ({...base, zIndex: 1}),
+                maskWrapper: (base) => ({ ...base, zIndex: 1 }),
             },
         },
         {
@@ -218,9 +220,9 @@ const PriceListPageWidget = ({widgetType}) => {
             position: 'top',
         },
     ]
-    const {} = useGoMakeTour(productSteps, [relatedParameters])
+    const { } = useGoMakeTour(productSteps, [relatedParameters])
     return (
-        <div style={{overflow: 'hidden'}}>
+        <div>
             {productTemplate?.sections?.length > 0 && (
                 <div style={clasess.mainContainer}>
                     <div>
@@ -234,7 +236,7 @@ const PriceListPageWidget = ({widgetType}) => {
                         <div style={clasess.leftSideContainer}>
                             <div style={clasess.tabsContainer}>
                                 <Tabs variant="scrollable" scrollButtons={"auto"}>
-                                    {[...productTemplate?.sections, PricingTab]?.map(
+                                    {[...visibleSections, PricingTab]?.map(
                                         (item, index) => {
                                             return (
                                                 <TabsMappingWidget
@@ -256,9 +258,9 @@ const PriceListPageWidget = ({widgetType}) => {
                                 </Tabs>
                             </div>
 
-                            <div style={{height: 666, overflow: "scroll", width: "calc(100% - 330px)"}}>
+                            <div style={{ height: 666, overflow: "scroll", width: "calc(100% - 330px)" }}>
                                 <div style={clasess.sectionsContainer}>
-                                    {[...productTemplate?.sections, PricingTab]?.map(
+                                    {[...visibleSections, PricingTab]?.map(
                                         (section: any, index: number) => {
                                             if (index === activeIndex) {
                                                 if (
@@ -373,7 +375,7 @@ const PriceListPageWidget = ({widgetType}) => {
                             backgroundColor: "#FFF",
                         }}
                     >
-                        <div style={{width: "68%"}}>
+                        <div style={{ width: "68%" }}>
                             <div style={clasess.addPreviousContainer}>
                                 {activeIndex != 0 ? (
                                     <GomakePrimaryButton
@@ -384,7 +386,7 @@ const PriceListPageWidget = ({widgetType}) => {
                                     </GomakePrimaryButton>
                                 ) : null}
                                 {[...productTemplate?.sections, PricingTab].length - 1 !=
-                                activeIndex ? (
+                                    activeIndex ? (
                                     <div data-tour={'next-button'}>
                                         <GomakePrimaryButton
                                             style={clasess.nextBtnStyle}
@@ -396,7 +398,7 @@ const PriceListPageWidget = ({widgetType}) => {
                                 ) : null}
                             </div>
                         </div>
-                        <div style={{width: 220, height: 40, marginLeft: 55, marginRight: 55}}>
+                        <div style={{ width: 220, height: 40, marginLeft: 55, marginRight: 55 }}>
                             {widgetType === EWidgetProductType.EDIT ? (
                                 <GomakePrimaryButton
                                     style={clasess.addOrderBtn}
@@ -444,4 +446,4 @@ const PriceListPageWidget = ({widgetType}) => {
     );
 };
 
-export {PriceListPageWidget};
+export { PriceListPageWidget };
