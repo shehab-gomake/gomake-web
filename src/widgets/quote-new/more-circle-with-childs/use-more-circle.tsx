@@ -1,8 +1,6 @@
 import { useState } from "react";
 import { AnalysisIcon } from "../more-circle-with-childs/icons/analysis";
 import { DeleteMenuIcon } from "../more-circle-with-childs/icons/delete-menu";
-import { useRecoilValue } from "recoil";
-import { quoteState } from "@/pages-components/quote/store/quote";
 
 const useMoreCircleWithChilds = ({ quoteItem, onClickDeleteQouteItem }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);

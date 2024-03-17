@@ -14,7 +14,7 @@ export const QuoteNumberState = atom({
 
 export const QuoteIfExistState = atom({
   key: "QuoteIfExistState",
-  default: "",
+  default: "", 
 });
 
 interface ReportItem {

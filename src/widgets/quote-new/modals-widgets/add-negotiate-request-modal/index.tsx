@@ -7,7 +7,7 @@ import {
 
 import { useStyle } from "./style";
 import { useRecoilValue } from "recoil";
-import { quoteState } from "@/pages-components/quote/store/quote";
+import { quoteState } from "@/pages-components/quote-new/store/quote";
 
 const AddNegotiateRequestModal = () => {
   const { t } = useTranslation();

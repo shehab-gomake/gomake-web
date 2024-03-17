@@ -13,7 +13,7 @@ import {
   QuoteIfExistState,
   QuoteNumberState,
   homeReportsState,
-} from "@/pages-components/quote/store/quote";
+} from "@/pages-components/quote-new/store/quote";
 import {
   getAllReportsApi,
   getIfCartExistApi,

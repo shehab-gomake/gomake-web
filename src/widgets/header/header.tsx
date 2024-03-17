@@ -15,7 +15,7 @@ import { ColoredCycle, GoMakeMenu, GoMakeTextInputIcon } from "@/components";
 import {useRecoilState, useRecoilValue, useSetRecoilState} from "recoil";
 import { userProfileState } from "@/store/user-profile";
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
-import { QuoteIfExistState } from "@/pages-components/quote/store/quote";
+import { QuoteIfExistState } from "@/pages-components/quote-new/store/quote";
 import { CartIcon } from "@/icons/cart-icon";
 import { SearchInputComponent } from "@/components/form-inputs/search-input-component";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
