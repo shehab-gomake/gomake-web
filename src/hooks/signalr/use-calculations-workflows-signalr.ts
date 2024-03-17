@@ -44,6 +44,12 @@ const useCalculationsWorkFlowsSignalr = () => {
       connection.on("UpdatePricing", (newData) => {
         setSignalRPricingResult(newData);
       });
+      connection.on("calculationFinished", (newData) => {
+        
+      });
+      connection.on("calculationServerError", () => {
+
+      });
     }
   }, [connection]);
   return {
