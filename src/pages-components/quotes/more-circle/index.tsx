@@ -53,16 +53,16 @@ const MoreMenuWidget = ({ quote, documentType, onClickOpenModal, onClickPdf, onC
     }
   };
 
+  const showNewDuplicate = documentType === DOCUMENT_TYPE.deliveryNote || documentType === DOCUMENT_TYPE.deliveryNoteRefund || documentType === DOCUMENT_TYPE.invoice || documentType === DOCUMENT_TYPE.invoiceRefund;
 
   return (
     <OptionsButton>
       <MenuItem onClick={onClickLoggers}>
         <div style={classes.menuRowStyle}>
-        <LoggerIcon />
+          <LoggerIcon />
           <div style={classes.rowTextStyle}>{t("sales.quote.loggers")}</div>
         </div>
       </MenuItem>
-
       <MenuItem onClick={() => onClickPdf(quote?.id)}>
         <div style={classes.menuRowStyle}>
           <PDFIcon />
@@ -70,7 +70,15 @@ const MoreMenuWidget = ({ quote, documentType, onClickOpenModal, onClickPdf, onC
         </div>
       </MenuItem>
       {
-        documentType !== DOCUMENT_TYPE.receipt && <MenuItem onClick={() => onClickDuplicate(quote?.id)}>
+        (documentType === DOCUMENT_TYPE.order || documentType === DOCUMENT_TYPE.quote) && <MenuItem onClick={() => onClickDuplicate(quote?.id)}>
+          <div style={classes.menuRowStyle}>
+            <ConvertIcon />
+            <div style={classes.rowTextStyle}>{t("sales.quote.duplicate")}</div>
+          </div>
+        </MenuItem>
+      }
+      {
+        showNewDuplicate && <MenuItem onClick={() => navigate(`/${documentPath}?isNewCreation=true&documentToDuplicateId=${quote?.id}`)}>
           <div style={classes.menuRowStyle}>
             <ConvertIcon />
             <div style={classes.rowTextStyle}>{t("sales.quote.duplicate")}</div>
@@ -103,7 +111,7 @@ const MoreMenuWidget = ({ quote, documentType, onClickOpenModal, onClickPdf, onC
         </MenuItem>
       }
       {
-        documentType === DOCUMENT_TYPE.deliveryNote && <MenuItem onClick={() => navigate(`/deliveryNoteRefund?isNewCreation=true&documentToDuplicateId=${quote?.id}`)}>
+        (documentType === DOCUMENT_TYPE.deliveryNote && quote?.documentStatus !== DELIVERY_NOTE_STATUSES.Refunded) && <MenuItem onClick={() => navigate(`/deliveryNoteRefund?isNewCreation=true&documentId=${quote?.id}`)}>
           <div style={classes.menuRowStyle}>
             <TickIcon />
             <div style={classes.rowTextStyle}>{t("sales.quote.createDeliveryNoteRefund")}</div>
@@ -111,10 +119,18 @@ const MoreMenuWidget = ({ quote, documentType, onClickOpenModal, onClickPdf, onC
         </MenuItem>
       }
       {
-        (documentType === DOCUMENT_TYPE.invoice && quote?.documentStatus !== DELIVERY_NOTE_STATUSES.Refunded) && <MenuItem onClick={() => navigate(`/invoiceRefund?isNewCreation=true&documentToDuplicateId=${quote?.id}`)}>
+        (documentType === DOCUMENT_TYPE.invoice && quote?.documentStatus !== DELIVERY_NOTE_STATUSES.Refunded) && <MenuItem onClick={() => navigate(`/invoiceRefund?isNewCreation=true&documentId=${quote?.id}`)}>
           <div style={classes.menuRowStyle}>
             <TickIcon />
             <div style={classes.rowTextStyle}>{t("sales.quote.createInvoiceRefund")}</div>
+          </div>
+        </MenuItem>
+      }
+      {
+        documentType === DOCUMENT_TYPE.purchaseInvoice && <MenuItem onClick={() => navigate(`/purchaseInvoiceRefund?isNewCreation=true&documentId=${quote?.id}`)}>
+          <div style={classes.menuRowStyle}>
+            <TickIcon />
+            <div style={classes.rowTextStyle}>{t("sales.quote.createPurchaseInvoiceRefund")}</div>
           </div>
         </MenuItem>
       }
@@ -126,7 +142,6 @@ const MoreMenuWidget = ({ quote, documentType, onClickOpenModal, onClickPdf, onC
           </div>
         </MenuItem>
       }
-
     </OptionsButton>
   );
 };

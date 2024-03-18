@@ -2254,6 +2254,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     subProducts,
     "Sets"
   );
+
   const addItemForQuotes = async () => {
     const docType = router?.query?.documentType ?? "0" ;
     const callBack = (res) => {

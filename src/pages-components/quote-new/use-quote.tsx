@@ -158,6 +158,9 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
       if (router?.query.documentToDuplicateId) {
         requestBody.documentToDuplicateId = router.query.documentToDuplicateId;
       }
+      if (router?.query.documentId) {
+        requestBody.documentId = router.query.documentId;
+      }
       const res = await callApi(
         EHttpMethod.POST,
         `/v1/erp-service/documents/get-new-document-data`,

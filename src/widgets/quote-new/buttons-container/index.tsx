@@ -2,7 +2,6 @@ import { useStyle } from "./style";
 import {
   ArrowDownNewIcon,
   PlusIcon,
-  UploadNewIcon,
 } from "@/icons";
 import { useTranslation } from "react-i18next";
 import { GoMakeDeleteModal, GomakePrimaryButton } from "@/components";
@@ -14,7 +13,6 @@ import { PaymentBtn } from "./payment/payment-button";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import { CancelReceiptModal } from "./payment/cancel-receipt-modal/cancel-receipt-modal";
 import { OrderNowModal } from "../total-price-and-vat/order-now-modal";
-
 
 const ButtonsContainer = ({
   onOpenNewItem,
@@ -53,8 +51,11 @@ const ButtonsContainer = ({
     onClickCloseCancelReceiptModal
   } = useButtonsContainer(documentType);
 
-  const isNewCreation = router.query.isNewCreation;
-
+  const isNewCreation = router?.query?.isNewCreation;
+  const showAddNewItemBtn =
+    documentType === DOCUMENT_TYPE.quote ||
+    (DOCUMENT_TYPE.order && quoteItemValue?.isEditable) ||
+    isNewCreation;
 
   return (
     <div style={classes.writeCommentContainer}>
@@ -64,7 +65,7 @@ const ButtonsContainer = ({
           <PaymentBtn handleOpenModal={onClickOpenPaymentModal} />
         }
         {
-          documentType !== DOCUMENT_TYPE.receipt && <GomakePrimaryButton
+          showAddNewItemBtn && <GomakePrimaryButton
             leftIcon={<PlusIcon stroke={"#344054"} />}
             style={classes.btnContainer}
             onClick={() => onOpenNewItem()}
@@ -130,7 +131,7 @@ const ButtonsContainer = ({
         {
           (documentType === DOCUMENT_TYPE.receipt && !isNewCreation && quoteItemValue.status !== DELIVERY_NOTE_STATUSES.Canceled) && <GomakePrimaryButton
             style={classes.btnThirdContainer}
-            onClick={quoteItemValue.creditCardTotal > 0 ? onClickOpenCancelReceiptModal : onClickOpenDeleteModal}
+            onClick={quoteItemValue?.creditCardTotal > 0 ? onClickOpenCancelReceiptModal : onClickOpenDeleteModal}
           >
             {t("materials.buttons.cancel")}
           </GomakePrimaryButton>
