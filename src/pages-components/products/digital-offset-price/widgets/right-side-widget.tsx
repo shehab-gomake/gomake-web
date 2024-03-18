@@ -34,6 +34,7 @@ const RightSideWidget = ({
   graphicDesigner,
   setGraphicDesigner,
   errorMsg,
+  calculationServerErrorState
 }: any) => {
   const {
     currentProductItemValueTotalPrice,
@@ -49,7 +50,6 @@ const RightSideWidget = ({
     t,
     _renderIconLogs,
   } = useRightSideWidget({ includeVAT });
-  console.log("calculationExceptionsLogs", calculationExceptionsLogs)
   return (
     <div style={clasess.rightSideMainContainer}>
       <div style={clasess.rightSideContainer}>
@@ -363,6 +363,11 @@ const RightSideWidget = ({
               {errorMsg && (
                 <div style={clasess.generalMsgTextStyle}>
                   {t("products.offsetPrice.admin.general")} {errorMsg}
+                </div>
+              )}
+              {calculationServerErrorState && (
+                <div style={clasess.generalMsgTextStyle}>
+                  {t("products.offsetPrice.admin.general")} calculation Server Error
                 </div>
               )}
 

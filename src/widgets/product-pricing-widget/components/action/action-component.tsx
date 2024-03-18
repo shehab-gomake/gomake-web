@@ -135,7 +135,6 @@ const Actions = ({
             />
           );
         } else {
-          console.log("actionwwww", action);
           return (
             <ActionContainerComponent
               key={action.id} // Make sure to add a unique key to each component
@@ -171,7 +170,6 @@ const ActionContainerComponent = ({
   isCalculated,
   actionException,
 }: IActionContainerComponentProps) => {
-  console.log("totalProductionTime", totalProductionTime)
 
   source = source === EWorkSource.OUT ? EWorkSource.OUT : EWorkSource.INTERNAL;
   const [isOpen, setIsOpen] = useState<boolean>(false);

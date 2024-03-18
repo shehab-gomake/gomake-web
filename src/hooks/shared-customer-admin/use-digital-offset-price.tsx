@@ -144,9 +144,18 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     connectionId,
     updatedSelectedWorkFlow,
     calculationExceptionsLogs,
-    signalRPricingResult
+    signalRPricingResult,
+    calculationServerErrorState
   } = useCalculationsWorkFlowsSignalr();
-  console.log("connectionId", connectionId)
+  useEffect(() => {
+    if (calculationServerErrorState) {
+      setCalculationProgress({
+        totalWorkFlowsCount: 0,
+        currentWorkFlowsCount: 0,
+      });
+      setLoading(false);
+    }
+  }, [calculationServerErrorState])
   const [currentSignalRConnectionId, setCurrentSignalRConnectionId] = useRecoilState(currentCalculationConnectionId);
   const [currentCalculationSessionId, setCurrentCalculationSessionId] = useState<string>("");
   const [requestAbortController, setRequestAbortController] =
@@ -194,7 +203,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           currentWorkFlows[0].selected = true;
         }
         selectedWorkFlow = currentWorkFlows?.find((x) => x.selected);
-        console.log("selectedWorkFlow", calculationResult.productItemValue)
         if (
           selectedWorkFlow &&
           selectedWorkFlow.totalPrice &&
@@ -256,7 +264,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     setCurrentSignalRConnectionId(connectionId)
   }, [connectionId])
   useEffect(() => {
-    console.log("calculationExceptionsLogs", calculationExceptionsLogs)
     setCalculationExceptionsLogs(calculationExceptionsLogs);
   }, [calculationExceptionsLogs]);
   useEffect(() => {
@@ -2496,6 +2503,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     onChangeSubProductsForPrice,
     underParameterIds,
     straightKnife,
+    calculationServerErrorState
   };
 };
 export { useDigitalOffsetPrice };

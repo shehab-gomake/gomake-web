@@ -43,7 +43,6 @@ const PricingWidget = ({
   const { t } = useTranslation();
   const { classes } = useStyle();
   const selectedWorkFlow = useRecoilValue(selectedWorkFlowState);
-  console.log("selectedWorkFlow?.actions", selectedWorkFlow?.actions)
   useEffect(() => {
     // Transform actions when component mounts
     selectedWorkFlow?.actions.map(action => {
