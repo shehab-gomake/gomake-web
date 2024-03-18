@@ -1,8 +1,5 @@
 import { useStyle } from "./style";
-import {
-  ArrowDownNewIcon,
-  PlusIcon,
-} from "@/icons";
+import { ArrowDownNewIcon, PlusIcon } from "@/icons";
 import { useTranslation } from "react-i18next";
 import { GoMakeDeleteModal, GomakePrimaryButton } from "@/components";
 import { useButtonsContainer } from "./use-buttons-container";
@@ -10,9 +7,9 @@ import { DELIVERY_NOTE_STATUSES, DOCUMENT_TYPE } from "@/pages-components/quotes
 import { useRouter } from "next/router";
 import { PaymentModal } from "./payment/payment-modal";
 import { PaymentBtn } from "./payment/payment-button";
-import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import { CancelReceiptModal } from "./payment/cancel-receipt-modal/cancel-receipt-modal";
 import { OrderNowModal } from "../total-price-and-vat/order-now-modal";
+import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 
 const ButtonsContainer = ({
   onOpenNewItem,
@@ -158,7 +155,8 @@ const ButtonsContainer = ({
           documentType === DOCUMENT_TYPE.quote &&
           <GomakePrimaryButton
             style={classes.btnOrderNowContainer}
-            onClick={onClickOpenOrderNowModal}>
+            onClick={onClickOpenOrderNowModal}
+          >
             {t("sales.quote.orderNowTitle")}
           </GomakePrimaryButton>
         }

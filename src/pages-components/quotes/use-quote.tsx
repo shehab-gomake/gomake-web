@@ -174,7 +174,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
               GetDateFormat(quote?.creationDate),
               quote?.number,
               quote?.orderNumber,
-              quote?.supplierName,
+              quote?.supplierName, 
               quote?.clientName,
               quote?.itemsNumber,
               quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
@@ -185,11 +185,31 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
                 documentType={docType}
                 onClickOpenModal={onClickOpenModal}
                 onClickPdf={onClickQuotePdf}
-                onClickDuplicate={onClickQuoteDuplicate}
-                onClickLoggers={() => onClickDocumentLogs(quote)}
+                onClickLoggers={onClickDocumentLogs}
               />,
             ];
-          } else {
+          }
+          else if (docType === (DOCUMENT_TYPE.purchaseInvoice || DOCUMENT_TYPE.purchaseInvoiceRefund)) {
+            return [
+              GetDateFormat(quote?.createdDate),
+              quote?.number,
+              quote?.purchaseInvoiceNumber,
+              quote?.purchaseOrderNumber,
+              quote?.customerName,
+              quote?.itemsNumber,
+              quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
+              quote?.notes,
+              _renderStatus(quote, t),
+              <MoreMenuWidget
+                quote={quote}
+                documentType={docType}
+                onClickOpenModal={onClickOpenModal}
+                onClickPdf={onClickQuotePdf}
+                onClickLoggers={onClickDocumentLogs}
+              />,
+            ];
+          }
+          else {
             return [
               GetDateFormat(quote?.createdDate),
               quote?.customerName,
@@ -205,7 +225,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
                 onClickOpenModal={onClickOpenModal}
                 onClickPdf={onClickQuotePdf}
                 onClickDuplicate={onClickQuoteDuplicate}
-                onClickLoggers={() => onClickDocumentLogs(quote)}
+                onClickLoggers={onClickDocumentLogs}
 
               />,
             ];
@@ -226,8 +246,8 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
             onClickOpenModal={onClickOpenModal}
             onClickPdf={onClickQuotePdf}
             onClickDuplicate={onClickQuoteDuplicate}
-            onClickLoggers={() => onClickDocumentLogs(quote)}
-          />,
+            onClickLoggers={onClickDocumentLogs}
+            />,
         ]);
         setAllQuotes(isReceipt ? mapReceiptData : mapData);
         setPagesCount(Math.ceil(totalItems / (pageSize)));
@@ -272,24 +292,69 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
       if (res?.success) {
         const data = res?.data?.data;
         const totalItems = res?.data?.totalItems;
-        const mapData = data?.map((quote: any) => [
-          GetDateFormat(quote?.createdDate),
-          quote?.customerName,
-          quote?.agentName,
-          quote?.number,
-          quote?.worksNames,
-          quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
-          quote?.notes,
-          _renderStatus(quote , t),
-          <MoreMenuWidget
-            quote={quote}
-            documentType={docType}
-            onClickOpenModal={onClickOpenModal}
-            onClickPdf={onClickQuotePdf}
-            onClickDuplicate={onClickQuoteDuplicate}
-            onClickLoggers={() => onClickDocumentLogs(quote)}
-          />,
-        ]);
+        const mapData = data?.map((quote: any) => {
+          if (docType === DOCUMENT_TYPE.purchaseOrder) {
+            return [
+              GetDateFormat(quote?.creationDate),
+              quote?.number,
+              quote?.orderNumber,
+              quote?.supplierName,
+              quote?.clientName,
+              quote?.itemsNumber,
+              quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
+              quote?.notes,
+              _renderStatus(quote, t),
+              <MoreMenuWidget
+                quote={quote}
+                documentType={docType}
+                onClickOpenModal={onClickOpenModal}
+                onClickPdf={onClickQuotePdf}
+                onClickLoggers={onClickDocumentLogs}
+              />,
+            ];
+          }
+          else if (docType === (DOCUMENT_TYPE.purchaseInvoice || DOCUMENT_TYPE.purchaseInvoiceRefund)) {
+            return [
+              GetDateFormat(quote?.createdDate),
+              quote?.number,
+              quote?.purchaseInvoiceNumber,
+              quote?.purchaseOrderNumber,
+              quote?.customerName,
+              quote?.itemsNumber,
+              quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
+              quote?.notes,
+              _renderStatus(quote, t),
+              <MoreMenuWidget
+                quote={quote}
+                documentType={docType}
+                onClickOpenModal={onClickOpenModal}
+                onClickPdf={onClickQuotePdf}
+                onClickLoggers={onClickDocumentLogs}
+              />,
+            ];
+          }
+          else {
+            return [
+              GetDateFormat(quote?.createdDate),
+              quote?.customerName,
+              quote?.agentName,
+              quote?.number,
+              quote?.worksNames,
+              quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
+              quote?.notes,
+              _renderStatus(quote, t),
+              <MoreMenuWidget
+                quote={quote}
+                documentType={docType}
+                onClickOpenModal={onClickOpenModal}
+                onClickPdf={onClickQuotePdf}
+                onClickDuplicate={onClickQuoteDuplicate}
+                onClickLoggers={onClickDocumentLogs}
+
+              />,
+            ];
+          }
+        });
         const mapReceiptData = data?.map((quote: any) => [
           GetDateFormat(quote?.creationDate),
           quote?.customerName,
@@ -305,8 +370,8 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
             onClickOpenModal={onClickOpenModal}
             onClickPdf={onClickQuotePdf}
             onClickDuplicate={onClickQuoteDuplicate}
-            onClickLoggers={() => onClickDocumentLogs(quote)}
-          />,
+            onClickLoggers={onClickDocumentLogs}
+            />,
         ]);
         setAllQuotes(isReceipt ? mapReceiptData : mapData);
         setPagesCount(Math.ceil(totalItems / pageSize));
@@ -364,19 +429,39 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     t("sales.quote.notes"),
     t("sales.quote.status"),
     t("sales.quote.more"),
+  ] : (docType === (DOCUMENT_TYPE.purchaseInvoice || DOCUMENT_TYPE.purchaseInvoiceRefund)) ? [
+    t("sales.quote.creationDate"),
+    t("sales.quote.purchaseInvoiceNumber"),
+    t("sales.quote.invoiceNumber"),
+    t("sales.quote.purchaseOrderNumber"),
+    t("sales.quote.supplierName"),
+    t("sales.quote.itemsNumber"),
+    t("sales.quote.totalPrice"),
+    t("sales.quote.notes"),
+    t("sales.quote.status"),
+    t("sales.quote.more"),
   ] : [
     t("sales.quote.createdDate"),
     t("sales.quote.client"),
     t("sales.quote.agent"),
-    docType === DOCUMENT_TYPE.quote
-      ? t("sales.quote.quoteNumber")
-      : docType === DOCUMENT_TYPE.order
-        ? t("sales.quote.orderNumber")
-        : docType === DOCUMENT_TYPE.deliveryNote
-          ? t("sales.quote.deliveryNoteNumber")
-          : docType === DOCUMENT_TYPE.invoice
-            ? t("sales.quote.invoiceNumber")
-            : t("sales.quote.receiptNumber"),
+    (() => {
+      switch (docType) {
+        case DOCUMENT_TYPE.quote:
+          return t("sales.quote.quoteNumber");
+        case DOCUMENT_TYPE.order:
+          return t("sales.quote.orderNumber");
+        case DOCUMENT_TYPE.deliveryNote:
+          return t("sales.quote.deliveryNoteNumber");
+        case DOCUMENT_TYPE.deliveryNoteRefund:
+          return t("sales.quote.deliveryNoteNumber");
+        case DOCUMENT_TYPE.invoice:
+          return t("sales.quote.invoiceNumber");
+        case DOCUMENT_TYPE.invoiceRefund:
+          return t("sales.quote.invoiceNumber");
+        case DOCUMENT_TYPE.receipt:
+          return t("sales.quote.receiptNumber");
+      }
+    })(),
     docType === DOCUMENT_TYPE.receipt ? t("sales.quote.paymentMethod") : t("sales.quote.worksName"),
     t("sales.quote.totalPrice"),
     t("sales.quote.notes"),
@@ -643,8 +728,8 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
             onClickOpenModal={onClickOpenModal}
             onClickPdf={onClickQuotePdf}
             onClickDuplicate={onClickQuoteDuplicate}
-            onClickLoggers={() => onClickDocumentLogs(document)}
-          />,
+            onClickLoggers={onClickDocumentLogs}
+            />,
         ]);
         setAllDocuments(mapData);
       }
