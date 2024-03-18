@@ -49,6 +49,7 @@ const RightSideWidget = ({
     t,
     _renderIconLogs,
   } = useRightSideWidget({ includeVAT });
+  console.log("calculationExceptionsLogs", calculationExceptionsLogs)
   return (
     <div style={clasess.rightSideMainContainer}>
       <div style={clasess.rightSideContainer}>
@@ -391,12 +392,12 @@ const RightSideWidget = ({
                           <div>{item.title}:</div>
                         </div>
                         <div style={clasess.textLogstyle}>
-                          <span style={{ color: "black" }}>{t("CalculationExceptions."+item?.exceptionKey)}</span>
+                          <span style={{ color: "black" }}>{t("CalculationExceptions." + item?.exceptionKey)}</span>
                         </div>
                       </div>
                     ) : (
                       <div style={clasess.generalMsgTextStyle}>
-                        {t("products.offsetPrice.admin.general")} {t("CalculationExceptions."+item?.exceptionKey)}
+                        {t("products.offsetPrice.admin.general")} {t("CalculationExceptions." + item?.exceptionKey)}
                       </div>
                     )}
                   </>

@@ -52,15 +52,102 @@ const Actions = ({
 }: IActionsComponentProps) => {
   return (
     <Stack gap={"10px"}>
-      {actions?.map((action, index) => (
-        <ActionContainerComponent
-            data-toure={'action'}
-          productType={productType}
-          workFlowId={workFlowId}
-          delay={index * 800}
-          {...action}
-        />
-      ))}
+      {actions?.map((action, index) => {
+        if (!action.isCalculated && action.profit === null) {
+          // Create a new object with updated profit property
+          const updatedAction = {
+            ...action,
+            profit: {
+              id: '00000000-0000-0000-0000-000000000000',
+              name: 'Profit',
+              values: ['----'],
+              outSourceValues: ['0'],
+              index: null,
+              rectangles: null,
+              materialWidth: 0,
+              materialLength: 0,
+              unitType: 6,
+              defaultUnit: '%',
+              displayInOutputId: null,
+              propertyType: 0,
+              htmlElementType: 1,
+              isEditable: true
+            },
+            totalCost: {
+              "id": "00000000-0000-0000-0000-000000000000",
+              "name": "Cost",
+              "values": ["----"],
+              "outSourceValues": null,
+              "index": null,
+              "rectangles": null,
+              "materialWidth": 0,
+              "materialLength": 0,
+              "unitType": 2,
+              "defaultUnit": "₪",
+              "displayInOutputId": null,
+              "propertyType": 0,
+              "htmlElementType": 1,
+              "isEditable": false
+            },
+            totalPrice: {
+              "id": "00000000-0000-0000-0000-000000000000",
+              "name": "Price",
+              "values": ["----"],
+              "outSourceValues": [
+                "0"
+              ],
+              "index": null,
+              "rectangles": null,
+              "materialWidth": 0,
+              "materialLength": 0,
+              "unitType": 2,
+              "defaultUnit": "₪",
+              "displayInOutputId": null,
+              "propertyType": 0,
+              "htmlElementType": 1,
+              "isEditable": true
+            },
+            totalProductionTime: {
+              "id": "00000000-0000-0000-0000-000000000000",
+              "name": "Delivery Time",
+              "values": ["----"],
+              "outSourceValues": null,
+              "index": null,
+              "rectangles": null,
+              "materialWidth": 0,
+              "materialLength": 0,
+              "unitType": 5,
+              "defaultUnit": "min",
+              "displayInOutputId": null,
+              "propertyType": 0,
+              "htmlElementType": 1,
+              "isEditable": false
+            }
+          };
+          return (
+            <ActionContainerComponent
+              key={action.id} // Make sure to add a unique key to each component
+              data-toure={'action'}
+              productType={productType}
+              workFlowId={workFlowId}
+              delay={index * 800}
+              {...updatedAction}
+            />
+          );
+        } else {
+          console.log("actionwwww", action);
+          return (
+            <ActionContainerComponent
+              key={action.id} // Make sure to add a unique key to each component
+              data-toure={'action'}
+              productType={productType}
+              workFlowId={workFlowId}
+              delay={index * 800}
+              {...action}
+            />
+          );
+        }
+      })}
     </Stack>
   );
 };
@@ -84,6 +171,8 @@ const ActionContainerComponent = ({
   isCalculated,
   actionException,
 }: IActionContainerComponentProps) => {
+  console.log("totalProductionTime", totalProductionTime)
+
   source = source === EWorkSource.OUT ? EWorkSource.OUT : EWorkSource.INTERNAL;
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [chooseMachine, setChooseMachine] = useState<boolean>(false);
@@ -149,7 +238,7 @@ const ActionContainerComponent = ({
   const handleSupplierChange = (e, value) => {
     updateActionData(id, value?.value, "supplierId", productType).then();
   };
-  const calculateProfitInMoney = () =>{
+  const calculateProfitInMoney = () => {
     const totalPriceValue = totalPrice && totalPrice.values && totalPrice.values.length > 0 ? +totalPrice.values[0] : 0;
     const totalCostValue = totalCost && totalCost.values && totalCost.values.length > 0 ? +totalCost.values[0] : 0;
     return (totalPriceValue - totalCostValue).toFixed(2);
@@ -297,13 +386,11 @@ const ActionContainerComponent = ({
                 source={source}
               />
               <span>
-                {source === EWorkSource.OUT 
-                  ? `(${
-                      calculateOutSourceProfitInMoney()
-                    } ${totalPrice ? totalPrice.defaultUnit : ""})`
-                  : `(${calculateProfitInMoney()} ${
-                        totalPrice ? totalPrice.defaultUnit : ""
-                    })`}
+                {source === EWorkSource.OUT
+                  ? `(${calculateOutSourceProfitInMoney()
+                  } ${totalPrice ? totalPrice.defaultUnit : ""})`
+                  : `(${calculateProfitInMoney()} ${totalPrice ? totalPrice.defaultUnit : ""
+                  })`}
               </span>
             </Stack>
             <Divider
@@ -332,7 +419,7 @@ const ActionContainerComponent = ({
             }}
           >
             {!isCalculated && (
-              <Tooltip title={t("CalculationExceptions."+actionException?.exceptionKey)}>
+              <Tooltip title={t("CalculationExceptions." + actionException?.exceptionKey)}>
                 <IconButton>
                   <WarningIcon />
                 </IconButton>
@@ -392,7 +479,7 @@ const ActionContainerComponent = ({
                   parameters={outputsParameters}
                 />
                 {imageOutputs.map((parameter) => (
-                  <PrintImageComponent {...parameter}  />
+                  <PrintImageComponent {...parameter} />
                 ))}
               </Stack>
             </>
