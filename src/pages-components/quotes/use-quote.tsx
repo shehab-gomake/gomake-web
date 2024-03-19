@@ -174,7 +174,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
               GetDateFormat(quote?.creationDate),
               quote?.number,
               quote?.orderNumber,
-              quote?.supplierName, 
+              quote?.supplierName,
               quote?.clientName,
               quote?.itemsNumber,
               quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
@@ -189,12 +189,13 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
               />,
             ];
           }
-          else if (docType === (DOCUMENT_TYPE.purchaseInvoice || DOCUMENT_TYPE.purchaseInvoiceRefund)) {
+          else if (docType === DOCUMENT_TYPE.purchaseInvoice || docType === DOCUMENT_TYPE.purchaseInvoiceRefund) {
+            const purchaseOrderNumbers = quote?.orderNumbers ? quote?.orderNumbers.join(', ') : '';
             return [
               GetDateFormat(quote?.createdDate),
               quote?.number,
-              quote?.purchaseInvoiceNumber,
-              quote?.purchaseOrderNumber,
+              quote?.invoiceNumber,
+              purchaseOrderNumbers,
               quote?.customerName,
               quote?.itemsNumber,
               quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
@@ -247,7 +248,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
             onClickPdf={onClickQuotePdf}
             onClickDuplicate={onClickQuoteDuplicate}
             onClickLoggers={onClickDocumentLogs}
-            />,
+          />,
         ]);
         setAllQuotes(isReceipt ? mapReceiptData : mapData);
         setPagesCount(Math.ceil(totalItems / (pageSize)));
@@ -313,12 +314,13 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
               />,
             ];
           }
-          else if (docType === (DOCUMENT_TYPE.purchaseInvoice || DOCUMENT_TYPE.purchaseInvoiceRefund)) {
+          else if (docType === DOCUMENT_TYPE.purchaseInvoice || docType === DOCUMENT_TYPE.purchaseInvoiceRefund) {
+            const purchaseOrderNumbers = quote?.orderNumbers ? quote?.orderNumbers.join(', ') : '';
             return [
               GetDateFormat(quote?.createdDate),
               quote?.number,
-              quote?.purchaseInvoiceNumber,
-              quote?.purchaseOrderNumber,
+              quote?.invoiceNumber,
+              quote?.purchaseOrderNumbers,
               quote?.customerName,
               quote?.itemsNumber,
               quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
@@ -371,7 +373,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
             onClickPdf={onClickQuotePdf}
             onClickDuplicate={onClickQuoteDuplicate}
             onClickLoggers={onClickDocumentLogs}
-            />,
+          />,
         ]);
         setAllQuotes(isReceipt ? mapReceiptData : mapData);
         setPagesCount(Math.ceil(totalItems / pageSize));
@@ -429,7 +431,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     t("sales.quote.notes"),
     t("sales.quote.status"),
     t("sales.quote.more"),
-  ] : (docType === (DOCUMENT_TYPE.purchaseInvoice || DOCUMENT_TYPE.purchaseInvoiceRefund)) ? [
+  ] : (docType === DOCUMENT_TYPE.purchaseInvoice || docType === DOCUMENT_TYPE.purchaseInvoiceRefund) ? [
     t("sales.quote.creationDate"),
     t("sales.quote.purchaseInvoiceNumber"),
     t("sales.quote.invoiceNumber"),
@@ -631,7 +633,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
       } else {
         alertFaultUpdate();
       }
-    }; 
+    };
     await updateDocumentApi(callApi, callBack, {
       documentType: 0,
       document: {
@@ -729,7 +731,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
             onClickPdf={onClickQuotePdf}
             onClickDuplicate={onClickQuoteDuplicate}
             onClickLoggers={onClickDocumentLogs}
-            />,
+          />,
         ]);
         setAllDocuments(mapData);
       }

@@ -120,7 +120,6 @@ export const _renderStatus = (document: any, t: any): string => {
     const secondDocuments = document.secondDocumentNumbers ? document.secondDocumentNumbers.join(', ') : '';
     let result = '';
     if (firstDocuments) {
-
       result += `${t(`documentStatus.${document.titleDocumentNumber}.title`)}: ${firstDocuments}`;
     }
     if (secondDocuments) {
