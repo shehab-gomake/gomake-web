@@ -5,6 +5,7 @@ export enum EPricingBy {
   BEATS = 4,
   SQUARE_METER = 5,
   CUBIC_METER = 6,
+  METER=8
 }
 export enum ETransition {
   LINEAR = 0,
