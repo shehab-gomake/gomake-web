@@ -1,81 +1,92 @@
 import { useTranslation } from "react-i18next";
 import { TableCell, styled, tableCellClasses } from "@mui/material";
 import { useState } from "react";
-import { useRecoilState, useResetRecoilState } from "recoil";
-import { totalDocumentsState, totalPaymentState, finalTotalPaymentState, totalCashState, totalBitState, totalTransferState, totalChecksState, checksRowState } from "../buttons-container/states";
+import { useRecoilState, useResetRecoilState, useSetRecoilState } from "recoil";
+import { totalDocumentsState, totalPaymentState, finalTotalPaymentState, totalCashState, totalBitState, totalTransferState, totalChecksState, checksRowState, CheckData, checkedItemsIdsState, transferTabState, prevStateState, prevStateStateData, taxDeductionState, checksAccountCodeState, totalCreditCardState, CreditCardData, creditCardState, ReceiptCreditCardData, receiptCreditCardState, selectedCreditTransactionState, transactionOptionsData, cashAccountCodeState } from "../buttons-container/states";
+import { quoteItemState } from "@/store";
+import { useRouter } from "next/router";
+import { firstWidgetState, isTransactedState, secondWidgetState, thirdWidgetState } from "./states";
 
 const usePaymentsTable = () => {
     const { t } = useTranslation();
+    const router = useRouter();
     const [checkedItems, setCheckedItems] = useState({});
+    const [documentItemValue, setDocumentItemValue] = useRecoilState<any>(quoteItemState);
+    const tableRows = documentItemValue?.receiptItems;
+    const setCheckedItemsIds = useSetRecoilState(checkedItemsIdsState);
+    const resetCheckedItemsIds = useResetRecoilState(checkedItemsIdsState);
+    // total documents
     const [totalSum, setTotalSum] = useRecoilState<number>(totalDocumentsState);
-    const [totalPayment, setTotalPayment] = useRecoilState<number>(totalPaymentState);
+    const resetTotalSum = useResetRecoilState(totalDocumentsState);
+    // final total payment
     const [finalTotalPayment, setFinalTotalPayment] = useRecoilState<number>(finalTotalPaymentState);
+    const resetFinalTotalPayment = useResetRecoilState(finalTotalPaymentState);
+    // total payment
+    const [totalPayment, setTotalPayment] = useRecoilState<number>(totalPaymentState);
     const resetTotalPayment = useResetRecoilState(totalPaymentState);
+    //bit
+    const [totalBit, setTotalBit] = useRecoilState<number>(totalBitState);
     const resetTotalBit = useResetRecoilState(totalBitState);
+    //cash
+    const [totalCash, setTotalCash] = useRecoilState<number>(totalCashState);
     const resetTotalCash = useResetRecoilState(totalCashState);
+    // transfer
+    const [totalTransfer, setTotalTransfer] = useRecoilState<number>(totalTransferState);
+    const [transferState, setTransferState] = useRecoilState<any>(transferTabState);
     const resetTotalTransfer = useResetRecoilState(totalTransferState);
+    const resetTransferTabState = useResetRecoilState(transferTabState);
+    //checks
+    const [totalChecks, setTotalChecks] = useRecoilState<number>(totalChecksState);
+    const [checksReceipt, setChecksReceipt] = useRecoilState<CheckData[]>(checksRowState);
     const resetTotalChecks = useResetRecoilState(totalChecksState);
-    const resetChecksTable = useResetRecoilState(checksRowState);
+    const resetChecksReceipt = useResetRecoilState(checksRowState);
+    // withholding tax
+    const [taxDeduction, setTaxDeduction] = useRecoilState<number>(taxDeductionState);
+    const resetTaxDeduction = useResetRecoilState(taxDeductionState);
+    // accounts code
+    const [checkAccountCode, setCheckAccountCode] = useRecoilState<any>(checksAccountCodeState);
+    const resetCheckAccountCode = useResetRecoilState(checksAccountCodeState);
+    const [cashAccountCode, setCashAccountCode] = useRecoilState<any>(cashAccountCodeState);
+    const resetCashAccountCode = useResetRecoilState(cashAccountCodeState);
+    // creditCard 
+    const [totalCreditCard, setTotalCreditCard] = useRecoilState<number>(totalCreditCardState);
+    const resetTotalCreditCard = useResetRecoilState(totalCreditCardState);
+    const [creditCardSate, setCreditCardState] = useRecoilState<CreditCardData>(creditCardState);
+    const resetCreditCardState = useResetRecoilState(creditCardState);
+    const [secondCreditCard, setSecondCreditCard] = useRecoilState<ReceiptCreditCardData>(receiptCreditCardState);
+    const resetSecondCreditCardState = useResetRecoilState(receiptCreditCardState);
+    const [transactionSelected, setTransactionSelected] = useRecoilState<transactionOptionsData>(selectedCreditTransactionState);
+    const resetSelectedCreditTransaction = useResetRecoilState(selectedCreditTransactionState);
+    // flag isTransacted 
+    const resetIsTransactedState = useResetRecoilState(isTransactedState);
 
-    const columnWidths = ["5%", "19%", "19%", "19%", "19%", "19%"];
+    const isNewReceipt = router?.query?.isNewCreation;
+    const columnWidths =
+        isNewReceipt ?
+            [
+                "5%",
+                "19%",
+                "19%",
+                "19%",
+                "19%",
+                "19%"
+            ] : [
+                "20%",
+                "20%",
+                "20%",
+                "20%",
+                "20%",
+                "20%"
+            ];
 
     const tableHeaders = [
-        "#",
+        isNewReceipt && "#",
         t("payment.documentDate"),
         t("payment.documentNumber"),
         t("payment.documentType"),
         t("payment.detail"),
         t("payment.sum"),
-
-    ];
-
-
-
-    const tableRows = [
-        {
-            "finalPrice": -0.001,
-            "isRefund": false,
-            "docTypeText": "תנועת יומן",
-            "docNumber": "855",
-            "docLine": 3,
-            "content": "Hello",
-            "docDate": "3/30/2023 12:00:00 AM",
-            "docEntry": 4413,
-            "documentNumber": null,
-            "occasionalClientName": "",
-            "occasionalBusinessNumber": "",
-            "documentType": 7
-        },
-        {
-            "finalPrice": 585,
-            "isRefund": false,
-            "docTypeText": "חשבונית",
-            "docNumber": "1844",
-            "docLine": 0,
-            "content": "World",
-            "docDate": "4/5/2023 12:00:00 AM",
-            "docEntry": 1848,
-            "documentNumber": null,
-            "occasionalClientName": "",
-            "occasionalBusinessNumber": "",
-            "documentType": 2
-        },
-        {
-            "finalPrice": 235,
-            "isRefund": false,
-            "docTypeText": "חשבונית",
-            "docNumber": "1854",
-            "docLine": 0,
-            "content": "!!",
-            "docDate": "4/6/2023 12:00:00 AM",
-            "docEntry": 1858,
-            "documentNumber": null,
-            "occasionalClientName": "",
-            "occasionalBusinessNumber": "",
-            "documentType": 2
-        },
-        
-    ]
+    ].filter(Boolean);
 
     const PrimaryTableCell = styled(TableCell)(() => {
         return {
@@ -88,63 +99,179 @@ const usePaymentsTable = () => {
         };
     });
 
-    const handleCheckboxChange = (index) => {
+    const handleCheckboxChange = (index, itemId) => {
         setCheckedItems((prevCheckedItems) => {
             const updatedCheckedItems = {
                 ...prevCheckedItems,
                 [index]: !prevCheckedItems[index],
             };
+            setCheckedItemsIds((prevCheckedItemsIds) => {
+                const updatedCheckedItemsIds = {
+                    ...prevCheckedItemsIds,
+                };
 
+                if (updatedCheckedItems[index]) {
+                    updatedCheckedItemsIds[index] = itemId;
+                } else {
+                    delete updatedCheckedItemsIds[index];
+                }
+
+                return updatedCheckedItemsIds;
+            });
             let sum = 0;
             tableRows.forEach((item, index) => {
                 if (updatedCheckedItems[index]) {
-                    sum += item.finalPrice;
+                    sum += item.sumApplied;
                 }
             });
-
             setTotalSum(sum);
             return updatedCheckedItems;
         });
     };
 
-
-    const handleSave = () => {
+    const handleSave = (transactionData?) => {
+        const isSecondCreditCardEmpty = Object.keys(secondCreditCard).length === 0 && secondCreditCard.constructor === Object;
+        const receiptItemCopy = {
+            ...documentItemValue,
+            bitSum: Number(totalBit),
+            cashSum: Number(totalCash),
+            checksTotal: Number(totalChecks),
+            receiptChecks: Number(totalChecks) === 0 ? [] : checksReceipt,
+            transferAccount: transferState?.transferAccount,
+            transferDate: transferState?.transferDate,
+            transferReference: transferState?.transferReference,
+            transferSum: Number(totalTransfer),
+            wtTaxableAmount: Number(taxDeduction),
+            checksAccount: checkAccountCode,
+            cashAccount: cashAccountCode,
+            creditCardTotal: totalCreditCard,
+            receiptCreditCards: isSecondCreditCardEmpty ? (transactionData ? [transactionData] : []) : [secondCreditCard],
+        };
+        setDocumentItemValue(receiptItemCopy);
         setFinalTotalPayment(totalPayment);
+        savePreviousState(); // save previous state
+    };
+
+    const handleTaxDeductionChange = (event) => {
+        setTaxDeduction(event.target.value);
+    };
+
+    // Previous State // 
+
+    const [previousState, setPreviousState] = useRecoilState<prevStateStateData>(prevStateState);
+
+    const savePreviousState = () => {
+        let cardWidgetValue;
+
+        if (firstWidget) {
+            cardWidgetValue = 1;
+        } else if (secondWidget) {
+            cardWidgetValue = 2;
+        } else if (thirdWidget) {
+            cardWidgetValue = 3;
+        }
+        setPreviousState({
+            totalBit: totalBit,
+            totalCash: totalCash,
+            totalChecks: totalChecks,
+            totalTransfer: totalTransfer,
+            transferState: transferState,
+            checksReceipt: checksReceipt,
+            taxDeduction: taxDeduction,
+            checkAccountCode: checkAccountCode,
+            cashAccountCode: cashAccountCode,
+            totalCreditCard: totalCreditCard,
+            creditCardState: creditCardSate,
+            secondCreditCard: secondCreditCard,
+            cardWidget: cardWidgetValue,
+            selectedCreditTransaction: transactionSelected
+        });
+    };
+
+    const revertToPreviousState = () => {
+        setTotalBit(previousState.totalBit);
+        setTotalCash(previousState.totalCash);
+        setTotalTransfer(previousState.totalTransfer);
+        setTransferState(previousState.transferState);
+        setTotalChecks(previousState.totalChecks);
+        setChecksReceipt(previousState.checksReceipt);
+        setTaxDeduction(previousState.taxDeduction);
+        setCheckAccountCode(previousState.checkAccountCode);
+        setCashAccountCode(previousState.cashAccountCode);
+        setTotalCreditCard(previousState.totalCreditCard);
+        setCreditCardState(previousState.creditCardState);
+        setSecondCreditCard(previousState.secondCreditCard);
+        setTransactionSelected(previousState.selectedCreditTransaction);
+        setFirstWidget(previousState.cardWidget === 1);
+        setSecondWidget(previousState.cardWidget === 2);
+        setThirdWidget(previousState.cardWidget === 3);
+    };
+
+    const resetReceiptState = () => {
+        setCheckedItems(null);
+        resetCheckedItemsIds();
+        resetTotalPayment();
+        resetFinalTotalPayment();
+        resetTotalSum();
+        resetTotalBit();
+        resetTotalCash();
+        resetTotalTransfer();
+        resetTransferTabState();
+        resetTotalChecks();
+        resetChecksReceipt();
+        resetTaxDeduction();
+        setCheckAccountCode(previousState.checkAccountCode);
+        setCashAccountCode(previousState.cashAccountCode);
+        resetCheckAccountCode();
+        resetCashAccountCode();
+        resetTotalCreditCard();
+        resetCreditCardState();
+        resetSecondCreditCardState();
+        resetIsTransactedState();
+        resetSelectedCreditTransaction();
     };
 
 
+    // Credit card widgets // 
+
+    const [firstWidget, setFirstWidget] = useRecoilState<boolean>(firstWidgetState);
+    const [secondWidget, setSecondWidget] = useRecoilState<boolean>(secondWidgetState);
+    const [thirdWidget, setThirdWidget] = useRecoilState<boolean>(thirdWidgetState);
 
 
+    const handleFirstButtonClick = () => {
+        setTotalPayment(totalPayment - totalCreditCard);
+        resetTotalCreditCard();
+        resetCreditCardState();
+        resetSecondCreditCardState();
+        setFirstWidget(true);
+        setSecondWidget(false);
+        setThirdWidget(false);
+    };
 
+    const handleSecondButtonClick = () => {
+        setTotalPayment(totalPayment - totalCreditCard);
+        resetTotalCreditCard();
+        resetCreditCardState();
+        resetSecondCreditCardState();
+        setFirstWidget(false);
+        setSecondWidget(true);
+        setThirdWidget(false);
+    };
 
+    const handleThirdButtonClick = () => {
+        setTotalPayment(totalPayment - totalCreditCard);
+        resetTotalCreditCard();
+        resetCreditCardState();
+        resetSecondCreditCardState();
+        setFirstWidget(false);
+        setSecondWidget(false);
+        setThirdWidget(true);
+    };
 
-    //////////////////////////////////////////////////
-
-    const [selectAllChecked, setSelectAllChecked] = useState(false);
-
-    
-    const handleSelectAllCheckboxChange = () => {
-        setSelectAllChecked((prev) => !prev);
-      
-        // Update the checkedItems state for all rows based on the state of "Select All"
-        setCheckedItems((prevCheckedItems) => {
-          const updatedCheckedItems = {};
-          tableRows.forEach((_, index) => {
-            updatedCheckedItems[index] = !prevCheckedItems[index];
-          });
-      
-          // Calculate the total sum for all checked items
-          const sum = tableRows.reduce(
-            (acc, item, index) => (updatedCheckedItems[index] ? acc + item.finalPrice : acc),
-            0
-          );
-      
-          setTotalSum(sum);
-          return updatedCheckedItems;
-        });
-      };
     return {
         t,
+        documentItemValue,
         columnWidths,
         tableHeaders,
         tableRows,
@@ -154,14 +281,24 @@ const usePaymentsTable = () => {
         handleCheckboxChange,
         totalPayment,
         setTotalPayment,
-        resetTotalPayment,
         handleSave,
         finalTotalPayment,
-        resetTotalCash,
-        resetTotalBit,
-        resetTotalTransfer,
-        resetTotalChecks,
-        resetChecksTable
+        handleTaxDeductionChange,
+        taxDeduction,
+        savePreviousState,
+        revertToPreviousState,
+        setTotalTransfer,
+        setTotalCash,
+        setTotalBit,
+        previousState,
+        isNewReceipt,
+        firstWidget,
+        secondWidget,
+        thirdWidget,
+        handleFirstButtonClick,
+        handleSecondButtonClick,
+        handleThirdButtonClick,
+        resetReceiptState
     };
 };
 

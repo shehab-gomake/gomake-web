@@ -12,11 +12,11 @@ const LeftSideLayout = () => {
   const { tabs } = useAuthLayoutHook();
   const displayedProductionTabs = tabs.filter((tab) => tab.isProduction);
   const [navStatus, setNavStatus] = useRecoilState(navStatusState);
-  const { clasess } = useStyle({ navStatus });
+  const { classes } = useStyle({ navStatus });
   return (
     <div
       style={{
-        ...clasess.leftContainer,
+        ...classes.leftContainer,
       }}
     >
       <div
@@ -36,15 +36,15 @@ const LeftSideLayout = () => {
         <BackNavIcon />
       </div>
 
-      <div style={clasess.logoContainer}>Admin panel</div>
+      <div style={classes.logoContainer}>Admin panel</div>
 
-      <div style={clasess.tabsContainer}>
+      <div style={classes.tabsContainer}>
         {config.enviroment !== "dev"
           ? displayedProductionTabs.map((tab) => {
               if (tab.isLine) {
                 return (
-                  <div style={clasess.lineContainer}>
-                    <div key={tab.key} style={clasess.line} />
+                  <div style={classes.lineContainer}>
+                    <div key={tab.key} style={classes.line} />
                   </div>
                 );
               } else {
@@ -54,8 +54,8 @@ const LeftSideLayout = () => {
           : tabs.map((tab) => {
               if (tab.isLine) {
                 return (
-                  <div style={clasess.lineContainer}>
-                    <div key={tab.key} style={clasess.line} />
+                  <div style={classes.lineContainer}>
+                    <div key={tab.key} style={classes.line} />
                   </div>
                 );
               } else {
@@ -64,9 +64,9 @@ const LeftSideLayout = () => {
             })}
       </div>
 
-      <div style={clasess.poweredContainer}>
-        <div style={clasess.poweredByLbl}>{t("login.poweredBy")}</div>
-        <div style={clasess.gomakeByLbl}>{t("login.GoMake")}</div>
+      <div style={classes.poweredContainer}>
+        <div style={classes.poweredByLbl}>{t("login.poweredBy")}</div>
+        <div style={classes.gomakeByLbl}>{t("login.GoMake")}</div>
       </div>
     </div>
   );

@@ -1,5 +1,6 @@
-import { DeleteMenuIcon } from "@/widgets/quote/more-circle/icons/delete-menu";
-import { DuplicateMenuIcon } from "@/widgets/quote/more-circle/icons/duplicate-menu";
+import { DeleteMenuIcon } from "@/widgets/quote-new/more-circle/icons/delete-menu";
+import { DuplicateMenuIcon } from "@/widgets/quote-new/more-circle/icons/duplicate-menu";
+
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 

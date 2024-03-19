@@ -2,7 +2,7 @@ import { useCustomer, useGomakeAxios, useGomakeRouter } from "@/hooks";
 import {
   QuoteIfExistState,
   QuoteNumberState,
-} from "@/pages-components/quote/store/quote";
+} from "@/pages-components/quote-new/store/quote";
 import { selectedClientState } from "@/pages-components/quotes/states";
 import { getIfCartExistApi } from "@/services/api-service/generic-doc/documents-api";
 import { useEffect, useState } from "react";

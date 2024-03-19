@@ -4,10 +4,9 @@ import InputBase from "@mui/material/InputBase";
 import CloseIcon from "@mui/icons-material/Close";
 import CheckIcon from "@mui/icons-material/Check";
 import { FONT_FAMILY } from "@/utils/font-family";
-import { ChangeEvent, KeyboardEvent, useEffect, useState } from "react";
+import { ChangeEvent, KeyboardEvent } from "react";
 import { ClickOutside } from "@/components/click-out-side/click-out-side";
 import { RouteChangeConfirmation } from "@/components/handle-navigation/handle-navigation";
-import { detectLanguage } from "@/utils/helpers";
 
 interface IUpdateValueInputProps {
     value: string;
@@ -34,23 +33,6 @@ const UpdateValueInput = ({
             onUpdate();
         }
     };
-    const systemLanguage = localStorage.getItem("systemLanguage");
-    const lang = systemLanguage === "ar" ? "ar" : "en";
-    const inputDir = lang === "ar" ? "rtl" : "ltr";
-    const [direction, setDirection] = useState(inputDir)
-    const language = detectLanguage(value);
-    useEffect(() => {
-        if (language === "English") {
-            setDirection("ltr")
-        }
-        else if (language === "Arabic") {
-            setDirection("rtl")
-        }
-        else {
-            setDirection(inputDir)
-        }
-
-    }, [value])
 
     return (
         <ClickOutside onClick={clickedOut}>
@@ -68,7 +50,7 @@ const UpdateValueInput = ({
                 }}
             >
                 <InputBase
-                    sx={{ ml: 1, flex: 1, ...FONT_FAMILY.Lexend(400, 14), direction: direction }}
+                    sx={{ ml: 1, flex: 1, ...FONT_FAMILY.Lexend(400, 14) }}
                     value={value}
                     onChange={handleTextChange}
                     autoFocus={true}

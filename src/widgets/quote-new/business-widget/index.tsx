@@ -1,20 +1,22 @@
-import { InputUpdatedValues } from "../input-updated-values";
-import { useStyle } from "./style";
-import { AutoCompleteUpdatedValue } from "../auto-complete-updated";
+import { useSetRecoilState, useRecoilValue } from "recoil";
 import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
+
 import { useQuoteWidget } from "@/pages-components/admin/home/widgets/quote-widget/use-quote-widget";
-import { useRecoilState, useSetRecoilState } from "recoil";
-import { addressModalState } from "./address-widget/state";
-import { PlusNewIcon } from "@/icons";
-import { MinusIcon } from "@/icons/minus-icon";
-import { AddressModal } from "./address-widget/address-modal";
-import { useRecoilValue } from "recoil";
 import { quoteConfirmationState, quoteItemState } from "@/store";
+import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
+import { MinusIcon } from "@/icons/minus-icon";
+import { PlusNewIcon } from "@/icons";
+
+import { AutoCompleteUpdatedValue } from "../auto-complete-updated";
+import { AddressModal } from "./address-widget/address-modal";
+import { InputUpdatedValues } from "../input-updated-values";
+import { addressModalState } from "./address-widget/state";
+import { useStyle } from "./style";
 
 const BusinessNewWidget = ({
   values,
-  selectBusiness,
   selectConfirmBusiness,
   onBlurPurchaseNumber,
   isUpdatePurchaseNumber,
@@ -37,16 +39,19 @@ const BusinessNewWidget = ({
   onClickDeleteAddress,
   documentType,
   isQuoteConfirmation = false,
+
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
+  const router = useRouter()
   const [isConfirmation, setIsConfirmation] = useState();
-  const { renderOptions, checkWhatRenderArray } = useQuoteWidget();
+  const { renderOptions, checkWhatRenderArray } = useQuoteWidget({ documentType });
   const setOpenModal = useSetRecoilState<boolean>(addressModalState);
   const [purchaseNumber, setPurchaseNumber] = useState(values?.purchaseNumber || t("sales.quote.noPurchaseNumber"));
   const quoteStateValue = useRecoilValue<any>(quoteItemState);
   const quoteConfirm = useRecoilValue<any>(quoteConfirmationState);
-
+  const isReceipt = documentType === DOCUMENT_TYPE.receipt;
+  const isExistReceipt = isReceipt && !router?.query?.isNewCreation;
 
   useEffect(() => {
     setPurchaseNumber(values?.purchaseNumber || t("sales.quote.noPurchaseNumber"));
@@ -54,7 +59,8 @@ const BusinessNewWidget = ({
 
   const mappedCustomers = renderOptions().map(customer => ({
     text: customer?.name,
-    id: customer?.id
+    id: customer?.id,
+    ...customer
   }));
 
   return (
@@ -66,21 +72,21 @@ const BusinessNewWidget = ({
           options={mappedCustomers}
           onBlur={onBlurBusinessName}
           isUpdate={isUpdateBusinessName}
-          setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdateBusinessName}
+          setIsUpdate={isQuoteConfirmation || isExistReceipt ? setIsConfirmation : setIsUpdateBusinessName}
           getOptionLabel={(item) => item.text}
           onChange={(e, value) => onChangeSelectBusiness(value)}
           onChangeTextField={checkWhatRenderArray}
         />
-        <InputUpdatedValues
+        {!isReceipt && <InputUpdatedValues
           value={purchaseNumber}
           label={t("sales.quote.purchaseNumber")}
           onBlur={() => onBlurPurchaseNumber(purchaseNumber)}
           isUpdate={isUpdatePurchaseNumber}
           setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdatePurchaseNumber}
           onInputChange={(v) => setPurchaseNumber(v)}
-        />
+        />}
         <InputUpdatedValues
-          value={isQuoteConfirmation ? `${selectConfirmBusiness?.code}` : `${selectBusiness?.code}`}
+          value={isQuoteConfirmation ? `${selectConfirmBusiness?.code}` : `${quoteStateValue?.client?.code}`}
           label={t("sales.quote.businessCode")}
           onBlur={onBlurBusinessCode}
           setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdateBusinessCode}
@@ -91,7 +97,7 @@ const BusinessNewWidget = ({
           options={agentListValue}
           onBlur={onBlurAgent}
           isUpdate={isUpdateAgent}
-          setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdateAgent}
+          setIsUpdate={isQuoteConfirmation || isExistReceipt ? setIsConfirmation : setIsUpdateAgent}
           getOptionLabel={(item) => item.text}
           onChange={(e, value) => updateAgent(value)}
         />}
@@ -120,14 +126,6 @@ const BusinessNewWidget = ({
               <div style={classes.addNewAddressTextStyle} onClick={() => setOpenModal(true)} >{t("sales.quote.addAddress")}</div>
             </div>
           )}
-        {/* <GoMakeAlertModal 
-        title={t("Change client")}
-        openModal={openAlertModal}
-        onClose={onCloseAlertModal}
-        subTitle={t("Are you sure to change client")}
-        onClickConfirm={()=>{onChangeSelectBusiness(client).then(setOpenAlertModal(false)); }}
-        >
-        </GoMakeAlertModal> */}
         {!isQuoteConfirmation && <AddressModal isUpdate={values?.documentAddresses?.length > 0} documentType={documentType} />}
       </div>
     </>

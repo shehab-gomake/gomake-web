@@ -6,16 +6,16 @@ import { HeaderWidget } from "@/widgets/header";
 
 const AdminAuthLayout = ({ children }: IAuthLayout) => {
   const {} = useAuthLayoutHook();
-  const { clasess } = useStyle({isHover:null, navStatus:null});
+  const { classes } = useStyle({isHover:null, navStatus:null});
 
   return (
-    <div style={clasess.container}>
+    <div style={classes.container}>
       <LeftSideLayout />
-      <div style={clasess.rightContainer}>
-        <div style={clasess.headerContainer}>
+      <div style={classes.rightContainer}>
+        <div style={classes.headerContainer}>
           <HeaderWidget />
         </div>
-        <div style={clasess.bodyContainer}>{children}</div>
+        <div style={classes.bodyContainer}>{children}</div>
       </div>
     </div>
   );

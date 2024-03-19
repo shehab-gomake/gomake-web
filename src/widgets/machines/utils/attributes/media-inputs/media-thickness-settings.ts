@@ -28,7 +28,7 @@ const mediaThicknessSettings = (state: Record<string, any>,unit = EMeasurementUn
                     type: "text",
                     placeholder: "machineAttributes.max",
                     required: true,
-                    unit: EMeasurementUnits.UM,
+                    unit: unit,
                     parameterKey: "max",
                     options: [],
                     value: state.attributes?.mediaThickness?.max ? state.attributes?.mediaThickness?.max : ''

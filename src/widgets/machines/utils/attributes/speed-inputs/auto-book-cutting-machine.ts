@@ -1,6 +1,8 @@
+import {setupTimeInput} from "@/widgets/machines/utils/attributes/speed-inputs/setup-time-input";
 
 const autoBookCuttingMachine = (state: Record<string, any>) => {
     return [
+        ...setupTimeInput(state),
         {
             name: "maxSpeed",
             label: "machineAttributes.maxSpeed",

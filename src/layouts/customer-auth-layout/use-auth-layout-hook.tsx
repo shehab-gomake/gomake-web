@@ -1,16 +1,18 @@
-import {useGomakeAuth, useGomakeAxios, useGomakeRouter} from "@/hooks";
-import {CustomersIcon, HomeIcon, ProductFloorIcon, SalesIcon, SettingNavBar, ShopingIcon,} from "@/icons";
-import {useEffect, useMemo, useState} from "react";
-import {CubeIcon} from "@/components/icons/cube-icon";
-import {useRecoilValue} from "recoil";
-import {companyProfileState, ICompanyProfile} from "@/store/company-profile";
-import {Permissions} from "@/components/CheckPermission/enum";
+import { useGomakeAuth, useGomakeAxios, useGomakeRouter } from "@/hooks";
+import { CustomersIcon, HomeIcon, ProductFloorIcon, ReportsIcon, SalesIcon, SettingNavBar, ShopingIcon, } from "@/icons";
+
+import { useEffect, useMemo, useState } from "react";
+import { CubeIcon } from "@/components/icons/cube-icon";
+import { useRecoilValue } from "recoil";
+import { companyProfileState, ICompanyProfile } from "@/store/company-profile";
+import { Permissions } from "@/components/CheckPermission/enum";
 
 import LocalPrintshopOutlinedIcon from "@mui/icons-material/LocalPrintshopOutlined";
 import PendingActionsOutlinedIcon from "@mui/icons-material/PendingActionsOutlined";
+import { BankingIcon } from "@/icons/banking-icon";
 
-const useAuthLayoutHook = (permissionEnumValue?: Permissions,allowAnonymous?:boolean) => {
-  const { isAuth } = useGomakeAuth(permissionEnumValue,allowAnonymous);
+const useAuthLayoutHook = (permissionEnumValue?: Permissions, allowAnonymous?: boolean) => {
+  const { isAuth } = useGomakeAuth(permissionEnumValue, allowAnonymous);
   const { navigate } = useGomakeRouter();
   const [canAccess, setCanAccess] = useState<boolean | null>(null);
   const tabs1: any = useMemo(() => {
@@ -25,6 +27,7 @@ const useAuthLayoutHook = (permissionEnumValue?: Permissions,allowAnonymous?:boo
           return <HomeIcon />;
         },
         isProduction: true,
+        tourData: 'menu-home'
       },
       {
         isLine: false,
@@ -37,17 +40,6 @@ const useAuthLayoutHook = (permissionEnumValue?: Permissions,allowAnonymous?:boo
         },
         isProduction: true,
       },
-      // {
-      //   isLine: false,
-      //   key: "partners",
-      //   title: "tabs.partners",
-      //   path: "/partners",
-      //   isList: false,
-      //   icon: () => {
-      //     return <PartnersIcon />;
-      //   },
-      //   isProduction: true,
-      // },
       {
         isLine: true,
         key: "line_1",
@@ -89,15 +81,21 @@ const useAuthLayoutHook = (permissionEnumValue?: Permissions,allowAnonymous?:boo
             Permission: Permissions.SHOW_ORDERS,
           },
           {
+            key: "delivery note refund",
+            title: "tabs.deliveryNoteRefund",
+            path: "/deliveryNoteRefunds",
+            Permission: Permissions.SHOW_ORDERS,
+          },
+          {
             key: "invoices",
             title: "tabs.invoices",
             path: "/invoices",
             Permission: Permissions.SHOW_ORDERS,
           },
           {
-            key: "receipts",
-            title: "tabs.receipts",
-            path: "/receipts",
+            key: "invoice refund",
+            title: "tabs.invoiceRefund",
+            path: "/invoiceRefunds",
             Permission: Permissions.SHOW_ORDERS,
           },
         ],
@@ -125,21 +123,21 @@ const useAuthLayoutHook = (permissionEnumValue?: Permissions,allowAnonymous?:boo
         isList: true,
         list: [
           {
-            key: "purchaseOrders",
-            title: "tabs.purchaseOrders",
+            key: "purchase order",
+            title: "tabs.purchaseOrder",
             path: "/purchaseOrders",
             Permission: Permissions.SHOW_ORDERS,
           },
           {
-            key: "purchaseInvoices",
-            title: "tabs.purchaseInvoices",
-            path: "/purchaseOrder",
+            key: "purchase invoice",
+            title: "tabs.purchaseInvoice",
+            path: "/purchaseInvoices",
             Permission: Permissions.SHOW_ORDERS,
           },
           {
-            key: "supplierPayments",
-            title: "tabs.supplierPayments",
-            path: "/purchaseOrder",
+            key: "purchase invoice",
+            title: "tabs.purchaseInvoiceRefund",
+            path: "/purchaseInvoiceRefunds",
             Permission: Permissions.SHOW_ORDERS,
           },
         ],
@@ -148,6 +146,62 @@ const useAuthLayoutHook = (permissionEnumValue?: Permissions,allowAnonymous?:boo
         },
         isProduction: true,
       },
+      {
+        isLine: false,
+        key: "banking",
+        title: "tabs.banking",
+        path: "/",
+        isList: true,
+        list: [
+          {
+            key: "receipts",
+            title: "tabs.receipts",
+            path: "/receipts",
+            Permission: Permissions.SHOW_ORDERS,
+          },
+          {
+            key: "deposits",
+            title: "tabs.deposits",
+            path: "/deposits",
+          },
+        ],
+        icon: () => {
+          return <BankingIcon />;
+        },
+        isProduction: true,
+      },
+      // {
+      //   isLine: false,
+      //   key: "purchase",
+      //   title: "tabs.purchase",
+      //   path: "/",
+      //   isList: true,
+      //   list: [
+      //     {
+      //       key: "purchaseOrders",
+      //       title: "tabs.purchaseOrders",
+      //       path: "/purchaseOrders",
+      //       Permission: Permissions.SHOW_ORDERS,
+      //     },
+      //     {
+      //       key: "purchaseInvoices",
+      //       title: "tabs.purchaseInvoices",
+      //       path: "/purchaseOrder",
+      //       Permission: Permissions.SHOW_ORDERS,
+      //     },
+      //     {
+      //       key: "supplierPayments",
+      //       title: "tabs.supplierPayments",
+      //       path: "/purchaseOrder",
+      //       Permission: Permissions.SHOW_ORDERS,
+      //     },
+      //   ],
+      //   icon: () => {
+      //     return <ShopingIcon />;
+      //   },
+      //   isProduction: true,
+      // },
+
       {
         isLine: false,
         key: "contacts",
@@ -173,18 +227,49 @@ const useAuthLayoutHook = (permissionEnumValue?: Permissions,allowAnonymous?:boo
         },
         isProduction: true,
       },
-      // {
-      //   isLine: false,
-      //   key: "reports",
-      //   title: "tabs.reports",
-      //   path: "/reports",
-      //   Permission: Permissions.SHOW_REPORTS,
-      //   isList: false,
-      //   icon: () => {
-      //     return <ReportsIcon />;
-      //   },
-      //   isProduction: true,
-      // },
+      {
+        isLine: false,
+        key: "reports",
+        title: "tabs.reports",
+        Permission: Permissions.SHOW_CLIENT,
+        isList: true,
+        list: [
+          {
+            key: "agingReport",
+            title: "tabs.agingReport",
+            path: "/aging-report",
+            Permission: Permissions.SHOW_CLIENT,
+          },
+          {
+            key: "ledgerReport",
+            title: "tabs.ledgerReport",
+            path: "/ledger-report",
+            Permission: Permissions.SHOW_CLIENT,
+          },
+          {
+            key: "transactionJournalReport",
+            title: "tabs.transactionJournalReport",
+            path: "/transaction-journal-report",
+            Permission: Permissions.SHOW_CLIENT,
+          },
+          {
+            key: "dailyPaymentsReport",
+            title: "tabs.dailyPaymentsReport",
+            path: "/daily-payments-report",
+            Permission: Permissions.SHOW_CLIENT,
+          },
+          {
+            key: "salesReport",
+            title: "tabs.salesReport",
+            path: "/sales-report",
+            Permission: Permissions.SHOW_CLIENT,
+          },
+        ],
+        icon: () => {
+          return <ReportsIcon />;
+        },
+        isProduction: true,
+      },
     ];
   }, []);
   const tabs3: any = useMemo(() => {
@@ -205,6 +290,7 @@ const useAuthLayoutHook = (permissionEnumValue?: Permissions,allowAnonymous?:boo
           return <CubeIcon width={24} height={24} color={"white"} />;
         },
         isProduction: true,
+        tourData: 'menu-materials'
       },
       {
         isLine: false,
@@ -229,6 +315,8 @@ const useAuthLayoutHook = (permissionEnumValue?: Permissions,allowAnonymous?:boo
           return <LocalPrintshopOutlinedIcon style={{ color: "#FFFFFF" }} />;
         },
         isProduction: true,
+        tourData: 'menuMachines'
+
       },
       {
         isLine: false,
@@ -253,6 +341,7 @@ const useAuthLayoutHook = (permissionEnumValue?: Permissions,allowAnonymous?:boo
           return <PendingActionsOutlinedIcon style={{ color: "#FFFFFF" }} />;
         },
         isProduction: true,
+        tourData: 'menuActions'
       },
       {
         isLine: false,
@@ -265,7 +354,8 @@ const useAuthLayoutHook = (permissionEnumValue?: Permissions,allowAnonymous?:boo
           return <SettingNavBar />;
         },
         isProduction: true,
-      },      
+        tourData: 'menu-settings'
+      },
     ];
   }, []);
 

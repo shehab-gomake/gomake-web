@@ -30,6 +30,8 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "center",
         gap: 8,
+        width: "100%",
+        padding: 3,
       },
       rowTextStyle: {
         ...FONT_FAMILY.Lexend(500, 10),

@@ -5,9 +5,9 @@ import { SecondaryButton } from "@/components/button/secondary-button";
 import { useButtonsConfirmContainer } from "@/widgets/quote-new/buttons-cofirm-container/use-buttons-container";
 import { CancelBtnMenu } from "@/widgets/quote-new/cancel-btn-menu";
 import { GoMakeDeleteModal } from "@/components";
-import { QuoteStatuses } from "@/widgets/quote/total-price-and-vat/enums";
-import { OtherReasonModal } from "@/widgets/quote/total-price-and-vat/other-reason-modal";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
+import { QuoteStatuses } from "@/widgets/quote-new/total-price-and-vat/enums";
+import { OtherReasonModal } from "@/widgets/quote-new/total-price-and-vat/other-reason-modal";
 
 const ButtonsConfirmContainer = () => {
   const { classes } = useStyle();

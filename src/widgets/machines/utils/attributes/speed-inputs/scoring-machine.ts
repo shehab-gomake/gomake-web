@@ -1,8 +1,10 @@
 import {maxSpeedInput} from "@/widgets/machines/utils/attributes/speed-inputs/max-speed-input";
 import {EMeasurementUnits} from "@/widgets/machines/enums/measurement-units";
+import {setupTimeInput} from "@/widgets/machines/utils/attributes/speed-inputs/setup-time-input";
 
 const scoringMachine = (state: Record<string, any>) => {
     return [
+        ...setupTimeInput(state),
         ...maxSpeedInput(state, EMeasurementUnits.SPH),
         {
             name: "unitDelay",

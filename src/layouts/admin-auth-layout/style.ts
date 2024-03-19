@@ -11,7 +11,7 @@ const useStyle = ({
   navStatus?: any;
 }) => {
   const { primaryColor } = useGomakeTheme();
-  const clasess = useMemo(() => {
+  const classes = useMemo(() => {
     return {
       container: {
         width: "100%",
@@ -136,7 +136,7 @@ const useStyle = ({
     };
   }, [isHover, navStatus]);
   return {
-    clasess,
+    classes,
   };
 };
 export { useStyle };

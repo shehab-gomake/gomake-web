@@ -2,10 +2,10 @@ import * as React from "react";
 import TextField from "@mui/material/TextField";
 import { styled } from "@mui/material/styles";
 import Autocomplete from "@mui/material/Autocomplete";
-import { ArrowDownIcon } from "@/icons/arrow-down";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import Stack from "@mui/material/Stack";
+import {DotsLoader} from "@/components/dots-loader/dots-Loader";
 
 const StyledAutocomplete: any = styled(Autocomplete)((props: any) => {
   return {
@@ -73,9 +73,9 @@ const GoMakeAutoComplate = ({
   defaultValue,
   disabled,
   multiple = false,
-  arrowColor,
   onChangeTextField,
   PaperComponent,
+    loading
 }: {
   value?: any;
   onChange?: any;
@@ -93,6 +93,7 @@ const GoMakeAutoComplate = ({
   arrowColor?: any;
   onChangeTextField?: any;
   PaperComponent?: any;
+  loading?: boolean;
 }) => {
   const [selectedOption, setSelectedOption] = useState<any>();
   const { t } = useTranslation();
@@ -117,7 +118,8 @@ const GoMakeAutoComplate = ({
       options={options}
       disabled={disabled}
       popupIcon={""}
-      renderInput={(params: any) => (
+      renderInput={(params: any) => loading ?
+          <DotsLoader/> :
         <TextField
           {...params}
           placeholder={defaultValue?.label || placeholder}
@@ -142,7 +144,7 @@ const GoMakeAutoComplate = ({
                 }
           }
         />
-      )}
+      }
       defaultValue={defaultValue}
       autoHighlight={autoHighlight}
       getOptionLabel={getOptionLabel}
@@ -162,4 +164,4 @@ const GoMakeAutoComplate = ({
   );
 };
 
-export { GoMakeAutoComplate };
+export { GoMakeAutoComplate, StyledAutocomplete };

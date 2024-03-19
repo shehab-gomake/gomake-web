@@ -12,6 +12,27 @@ const digitalEnhancementMachine = (state: Record<string, any>) => {
             machineInputType: 'input',
             isValid: true
         },
+        state?.attributes?.embossingAvailable ?
+        {
+            name: "machineAttributes.varnish",
+            label: "machineAttributes.varnish",
+            type: "text",
+            placeholder: "machineAttributes.varnish",
+            required: true,
+            parameterKey: "varnishTypes",
+            options: [],
+            disabled: !state?.attributes?.embossingAvailable,
+            machineInputType: 'materialInput',
+            value: state?.attributes?.varnishTypes ? state?.attributes?.varnishTypes : [],
+            isValid: true,
+            materialType: 'varnish'
+        } : {
+                name: '',
+                label: '',
+                value: '',
+                parameterKey: '',
+                disabled: true
+            },
     ]
 };
 

@@ -161,6 +161,7 @@ const FormInput = ({ input, error, changeState, readonly }: IFormInput) => {
                 placeholder={t(input.placeholder)}
                 options={options}
                 multiple={false}
+                disableClearable={input?.disableClearable || false}
                 renderOption={
                   input.multiple
                     ? (props: any, option: any) => {
@@ -222,7 +223,7 @@ const FormInput = ({ input, error, changeState, readonly }: IFormInput) => {
               />
             ) : (
               <GomakeTextInput
-                style={{ height: "40px", maxWidth: 180 }}
+                style={{ height: "40px", minWidth: 180}}
                 onChange={onChangeState}
                 type={input.type}
                 error={

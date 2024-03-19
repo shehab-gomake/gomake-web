@@ -83,11 +83,32 @@ const useSnackBar = () => {
     });
   };
 
-  const alertFault = (errorMessage : string) => {
+  const alertFault = (errorMessage: string) => {
     setSnackbarStateValue({
       state: true,
       message: t(errorMessage),
       type: "error",
+    });
+  };
+  const alertSuccess = (successMessage: string) => {
+    setSnackbarStateValue({
+      state: true,
+      message: t(successMessage),
+      type: "success",
+    });
+  };
+  const alertFaultGetData = () => {
+    setSnackbarStateValue({
+      state: true,
+      message: t("modal.getDataFailed"),
+      type: "error",
+    });
+  };
+  const alertSuccessGetData = () => {
+    setSnackbarStateValue({
+      state: true,
+      message: t("modal.getDataSuccessfully"),
+      type: "success",
     });
   };
 
@@ -104,7 +125,10 @@ const useSnackBar = () => {
     alertFaultDelete,
     alertRequiredFields,
     alertFaultDuplicate,
-    alertFault
+    alertFault,
+    alertSuccess,
+    alertFaultGetData,
+    alertSuccessGetData
   };
 };
 

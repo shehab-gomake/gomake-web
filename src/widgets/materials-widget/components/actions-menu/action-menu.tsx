@@ -57,7 +57,7 @@ const ActionMenu = (props: IActionMenuProps) => {
   }
   return (
     <>
-      <IconButton onClick={handleMoreOptionIconClick}>
+      <IconButton data-tour={'materialsActions'} onClick={handleMoreOptionIconClick}>
         <SettingsIcon stroke={"#000000"} />
       </IconButton>
       <input

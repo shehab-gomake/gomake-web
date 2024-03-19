@@ -1,21 +1,17 @@
-const TransferInputs = (state , accountCodes) => {
-  const formattedOptions = accountCodes.map((code) => ({
-    text: code.label,
-    value: code.value,
-  }))
-
+const TransferInputs = (state , formattedOptions) => {
+ 
     return [
         {
-            name: "accountCode",
+            name: "transferAccount",
             label: "payment.accountCode",
             type: "select",
             required: false,
             placeholder: "payment.accountCode",
-            parameterKey: "accountCode",
+            parameterKey: "transferAccount",
             options: formattedOptions,
-            value:formattedOptions[0]?.value,
+            value:state?.transferAccount,
             isValid: true,
-            readOnly: true,
+            readOnly: false,
         },
         {
             name: "transferDate",
@@ -29,24 +25,24 @@ const TransferInputs = (state , accountCodes) => {
             isValid: true,
           },
           {
-            name: "referenceNumber",
+            name: "transferReference",
             label: "payment.referenceNumber",
             type: "text",
             placeholder: "payment.referenceNumber",
             required: false,
-            parameterKey: "referenceNumber",
-            value: state?.referenceNumber,
+            parameterKey: "transferReference",
+            value: state?.transferReference,
             options: [],
             isValid: true,
           },
           {
-            name: "totalTransfer",
+            name: "transferSum",
             label: "payment.totalTransfer",
             type: "number",
             placeholder: "payment.totalTransfer",
             required: false,
-            parameterKey: "totalTransfer",
-            value: state?.totalTransfer,
+            parameterKey: "transferSum",
+            value: state?.transferSum,
             options: [],
             isValid: true,
           },

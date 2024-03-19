@@ -1,13 +1,15 @@
-import React from "react";
 import { useStyle } from "./style";
 import { ArrowDownNewIcon, PlusIcon } from "@/icons";
 import { useTranslation } from "react-i18next";
-import { GomakePrimaryButton } from "@/components";
-import { OrderNowModal } from "@/widgets/quote/total-price-and-vat/order-now-modal";
+import { GoMakeDeleteModal, GomakePrimaryButton } from "@/components";
 import { useButtonsContainer } from "./use-buttons-container";
-import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
+import { DELIVERY_NOTE_STATUSES, DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { useRouter } from "next/router";
 import { PaymentModal } from "./payment/payment-modal";
+import { PaymentBtn } from "./payment/payment-button";
+import { CancelReceiptModal } from "./payment/cancel-receipt-modal/cancel-receipt-modal";
+import { OrderNowModal } from "../total-price-and-vat/order-now-modal";
+import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 
 const ButtonsContainer = ({
   onOpenNewItem,
@@ -22,13 +24,45 @@ const ButtonsContainer = ({
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
-  const { openOrderNowModal, onClickCloseOrderNowModal, onClickOpenOrderNowModal, onClickConfirmWithoutNotification, onClickConfirmWithNotification, onClickPrint, onClickClosePaymentModal, onClickOpenPaymentModal, openPaymentModal, selectedTabIndex, getERPAccounts } = useButtonsContainer(documentType);
   const router = useRouter()
+  const {
+    quoteItemValue,
+    openOrderNowModal,
+    onClickCloseOrderNowModal,
+    onClickOpenOrderNowModal,
+    onClickConfirmWithoutNotification,
+    onClickConfirmWithNotification,
+    onClickPrint,
+    onClickClosePaymentModal,
+    onClickOpenPaymentModal,
+    openPaymentModal,
+    selectedTabIndex,
+    getFormattedDocumentPath,
+    onClickCreateNewReceipt,
+    onClickCancelReceipt,
+    openDeleteModal,
+    onClickCloseDeleteModal,
+    onClickOpenDeleteModal,
+    openCancelReceiptModal,
+    onClickOpenCancelReceiptModal,
+    onClickCloseCancelReceiptModal
+  } = useButtonsContainer(documentType);
+
+  const isNewCreation = router?.query?.isNewCreation;
+  const showAddNewItemBtn =
+    documentType === DOCUMENT_TYPE.quote ||
+    (DOCUMENT_TYPE.order && quoteItemValue?.isEditable) ||
+    isNewCreation;
+
   return (
-    <div style={classes.writeCommentcontainer}>
+    <div style={classes.writeCommentContainer}>
       <div style={classes.btnsContainer}>
         {
-          !router.query.Id && <GomakePrimaryButton
+          (isNewCreation && documentType === DOCUMENT_TYPE.receipt) &&
+          <PaymentBtn handleOpenModal={onClickOpenPaymentModal} />
+        }
+        {
+          showAddNewItemBtn && <GomakePrimaryButton
             leftIcon={<PlusIcon stroke={"#344054"} />}
             style={classes.btnContainer}
             onClick={() => onOpenNewItem()}
@@ -46,12 +80,12 @@ const ButtonsContainer = ({
           </GomakePrimaryButton>
         }
         {
-          router.query.isNewCreation && <GomakePrimaryButton
+          isNewCreation && documentType !== DOCUMENT_TYPE.deliveryNoteRefund && documentType !== DOCUMENT_TYPE.invoiceRefund && documentType !== DOCUMENT_TYPE.receipt && <GomakePrimaryButton
             leftIcon={<PlusIcon stroke={"#344054"} />}
             style={classes.btnContainer}
             onClick={onOpenCopyFromOrder}
           >
-            Copy from order
+            {t("sales.quote.copyFromOrder")}
           </GomakePrimaryButton>
         }
         {
@@ -60,14 +94,13 @@ const ButtonsContainer = ({
             style={classes.btnContainer}
             onClick={onOpenCopyFromDeliveryNote}
           >
-            Copy from delivery note
+            {t("sales.quote.copyFromDeliveryNote")}
           </GomakePrimaryButton>
         }
-
       </div>
       <div style={classes.btnsContainer}>
         {
-          !router.query.isNewCreation &&
+          !isNewCreation &&
           <GomakePrimaryButton
             rightIcon={<ArrowDownNewIcon />}
             style={classes.btnSecondContainer}
@@ -76,35 +109,81 @@ const ButtonsContainer = ({
             {t("login.send")}
           </GomakePrimaryButton>
         }
-        <GomakePrimaryButton
-          style={classes.btnSecondContainer}
-          onClick={() => onClickPrint()}
-        >
-          {t("sales.quote.print")}
-        </GomakePrimaryButton>
-
-        {documentType === DOCUMENT_TYPE.quote && <GomakePrimaryButton
-          style={classes.btnSecondContainer}
-          onClick={handleCancelBtnClick}
-        >
-          {t("materials.buttons.cancel")}
-        </GomakePrimaryButton>}
-        <GomakePrimaryButton
-          style={classes.btnThirdContainer}
-          onClick={documentType != DOCUMENT_TYPE.quote ? handleSaveBtnClickForDocument : handleSaveBtnClick}
-        >
-          {t("materials.buttons.save")}
-        </GomakePrimaryButton>
-        {documentType === DOCUMENT_TYPE.quote && <GomakePrimaryButton style={classes.btnOrderNowContainer} onClick={onClickOpenOrderNowModal}>
-          {t("sales.quote.orderNowTitle")}
-        </GomakePrimaryButton>}
+        {
+          !isNewCreation &&
+          <GomakePrimaryButton
+            style={classes.btnSecondContainer}
+            onClick={() => onClickPrint()}
+          >
+            {t("sales.quote.print")}
+          </GomakePrimaryButton>}
+        {
+          documentType === DOCUMENT_TYPE.quote && <GomakePrimaryButton
+            style={classes.btnSecondContainer}
+            onClick={handleCancelBtnClick}
+          >
+            {t("materials.buttons.cancel")}
+          </GomakePrimaryButton>
+        }
+        {
+          (documentType === DOCUMENT_TYPE.receipt && !isNewCreation && quoteItemValue.status !== DELIVERY_NOTE_STATUSES.Canceled) && <GomakePrimaryButton
+            style={classes.btnThirdContainer}
+            onClick={quoteItemValue?.creditCardTotal > 0 ? onClickOpenCancelReceiptModal : onClickOpenDeleteModal}
+          >
+            {t("materials.buttons.cancel")}
+          </GomakePrimaryButton>
+        }
+        {
+          isNewCreation &&
+          <GomakePrimaryButton
+            style={classes.btnThirdContainer}
+            onClick={documentType === DOCUMENT_TYPE.receipt ? onClickCreateNewReceipt : handleSaveBtnClickForDocument}
+          >
+            {t(`sales.quote.create${getFormattedDocumentPath(documentType)}`)}
+          </GomakePrimaryButton>
+        }
+        {
+          (documentType === DOCUMENT_TYPE.quote || documentType === DOCUMENT_TYPE.order) &&
+          <GomakePrimaryButton
+            style={classes.btnThirdContainer}
+            onClick={handleSaveBtnClick}
+          >
+            {t("materials.buttons.save")}
+          </GomakePrimaryButton>
+        }
+        {
+          documentType === DOCUMENT_TYPE.quote &&
+          <GomakePrimaryButton
+            style={classes.btnOrderNowContainer}
+            onClick={onClickOpenOrderNowModal}
+          >
+            {t("sales.quote.orderNowTitle")}
+          </GomakePrimaryButton>
+        }
         <OrderNowModal
           openModal={openOrderNowModal}
           onClose={onClickCloseOrderNowModal}
           confirmWithoutNotification={onClickConfirmWithoutNotification}
           confirmWithNotification={onClickConfirmWithNotification}
         />
-        <PaymentModal onClose={onClickClosePaymentModal} openModal={openPaymentModal} selectedTab={selectedTabIndex} getERPAccounts={getERPAccounts} />
+        <PaymentModal
+          onClose={onClickClosePaymentModal}
+          openModal={openPaymentModal}
+          selectedTab={selectedTabIndex}
+        />
+        <GoMakeDeleteModal
+          icon={<WarningAmberIcon style={classes.iconStyle} />}
+          title={t("payment.cancelReceipt")}
+          yesBtn={t("sales.quote.yesBtn")}
+          openModal={openDeleteModal}
+          onClose={onClickCloseDeleteModal}
+          onClickDelete={onClickCancelReceipt}
+        />
+        <CancelReceiptModal
+          openModal={openCancelReceiptModal}
+          handleModalClose={onClickCloseCancelReceiptModal}
+          onClickCancel={onClickCancelReceipt}
+        />
       </div>
     </div>
   );

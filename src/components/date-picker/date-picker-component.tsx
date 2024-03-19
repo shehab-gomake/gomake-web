@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { useCallback, useEffect, useState } from "react";
+import { CSSProperties, useCallback, useEffect, useState } from "react";
 import { GoMakeModal, GomakePrimaryButton, GomakeTextInput } from "@/components";
 import 'react-date-range/dist/styles.css';
 import 'react-date-range/dist/theme/default.css';
@@ -14,9 +14,10 @@ interface IGoMakeDatepicker {
     onChange: (fromDate: Date, toDate: Date) => void;
     placeholder?: string;
     reset?: boolean;
+    style?:CSSProperties;
 }
 
-const GoMakeDatepicker = ({ onChange, placeholder, reset }: IGoMakeDatepicker) => {
+const GoMakeDatepicker = ({ onChange, placeholder, reset , style}: IGoMakeDatepicker) => {
     const { t } = useTranslation();
     const [state, setState] = useState({
         selection: {
@@ -62,7 +63,7 @@ const GoMakeDatepicker = ({ onChange, placeholder, reset }: IGoMakeDatepicker) =
         return !!endDate && !!startDate ? `${startDate} - ${endDate}` : ''
     }, [state])
     return (
-        <div>
+        <div style={style}>
             <Stack direction={'row'} gap={'3px'} alignItems={'center'}>
                 <GomakeTextInput disabled={false} style={{ height: '40px', cursor: 'pointer' }}
                     value={dateString()} labelText={'select'} placeholder={placeholder}

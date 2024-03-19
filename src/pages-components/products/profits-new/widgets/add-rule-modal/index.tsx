@@ -8,7 +8,6 @@ import { useStyle } from "./style";
 import { useTranslation } from "react-i18next";
 import { AddPlusIcon } from "@/icons";
 import { FONT_FAMILY } from "@/utils/font-family";
-import { DeleteMenuIcon } from "@/widgets/quote/more-circle/icons/delete-menu";
 import { useAddRuleModal } from "./use-add-rule-modal";
 import { ETypeException, EValueType } from "../../enums/profites-enum";
 import { useEffect, useState } from "react";
@@ -16,6 +15,7 @@ import { selectedOutputsProps, selectedParametersProps } from "../../interface";
 import { EParameterTypes } from "@/enums";
 import { useRouter } from "next/router";
 import { GoMakeDatepicker } from "@/components/date-picker/date-picker-component";
+import { DeleteMenuIcon } from "@/widgets/quote-new/more-circle/icons/delete-menu";
 
 const AddRuleModal = ({
   openModal,
@@ -123,7 +123,6 @@ const AddRuleModal = ({
                 style={clasess.dropDownListContainer}
                 placeholder={t("products.profits.exceptions.selectMachine")}
                 onChange={(e, value) => {
-                  console.log("value", value)
                   setPropertieValue(value?.id)
 
                 }
@@ -219,7 +218,6 @@ const AddRuleModal = ({
                 placeholder={t("products.profits.exceptions.selectValue")}
                 style={clasess.autoComplateStyle}
                 onChange={(e: any, value: any) => {
-                  console.log("value", value)
                   setPropertieValue(value?.value as string);
                 }}
               />

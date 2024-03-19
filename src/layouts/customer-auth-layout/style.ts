@@ -14,7 +14,7 @@ const useStyle = ({
   customGap: number;
 }) => {
   const { primaryColor } = useGomakeTheme();
-  const clasess = useMemo(() => {
+  const classes = useMemo(() => {
     return {
       container: {
         width: "100%",
@@ -53,6 +53,9 @@ const useStyle = ({
         width: "100%",
         display: "flex",
         flexDirection: "column" as "column",
+        height: "100%",
+        overflow: "scroll",
+
       },
       headerContainer: {
         display: "flex",
@@ -128,8 +131,8 @@ const useStyle = ({
       },
       tabList: {
         paddingTop: convertWidthToVW(15),
-        paddingLeft: convertWidthToVW(40),
-        paddingRight: convertWidthToVW(40),
+        paddingLeft: convertWidthToVW(25),
+        paddingRight: convertWidthToVW(25),
       },
       rotate90: {
         "-webkit-animation": "rotate90 0.5s forwards ",
@@ -139,7 +142,7 @@ const useStyle = ({
     };
   }, [isHover, navStatus]);
   return {
-    clasess,
+    classes,
   };
 };
 export { useStyle };

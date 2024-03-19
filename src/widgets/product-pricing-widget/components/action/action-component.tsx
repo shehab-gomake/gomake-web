@@ -54,6 +54,7 @@ const Actions = ({
     <Stack gap={"10px"}>
       {actions?.map((action, index) => (
         <ActionContainerComponent
+            data-toure={'action'}
           productType={productType}
           workFlowId={workFlowId}
           delay={index * 800}
@@ -87,7 +88,7 @@ const ActionContainerComponent = ({
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [chooseMachine, setChooseMachine] = useState<boolean>(false);
   const currentProductItemValue = useRecoilValue(currentProductItemValueState);
-
+  const { t } = useTranslation();
   const {
     getActionMachinesList,
     selectNewMachine,
@@ -148,6 +149,16 @@ const ActionContainerComponent = ({
   const handleSupplierChange = (e, value) => {
     updateActionData(id, value?.value, "supplierId", productType).then();
   };
+  const calculateProfitInMoney = () =>{
+    const totalPriceValue = totalPrice && totalPrice.values && totalPrice.values.length > 0 ? +totalPrice.values[0] : 0;
+    const totalCostValue = totalCost && totalCost.values && totalCost.values.length > 0 ? +totalCost.values[0] : 0;
+    return (totalPriceValue - totalCostValue).toFixed(2);
+  }
+  const calculateOutSourceProfitInMoney = () => {
+    const totalPriceValue = totalPrice && totalPrice.outSourceValues && totalPrice.outSourceValues.length > 0 ? +totalPrice.outSourceValues[0] : 0;
+    const totalCostValue = totalCost && totalCost.outSourceValues && totalCost.outSourceValues.length > 0 ? +totalCost.outSourceValues[0] : 0;
+    return (totalPriceValue - totalCostValue).toFixed(2);
+  }
   const getSupplierId = useCallback(() => {
     if (supplierId) {
       const supplier = suppliers?.find((sup) => sup.value === supplierId);
@@ -286,12 +297,12 @@ const ActionContainerComponent = ({
                 source={source}
               />
               <span>
-                {source === EWorkSource.OUT
+                {source === EWorkSource.OUT 
                   ? `(${
-                        ( +totalPrice.outSourceValues[0] - +totalCost.outSourceValues[0]).toFixed(2)
-                    } ${totalPrice.defaultUnit})`
-                  : `(${(+totalPrice.values[0] - +totalCost.values[0]).toFixed(2)} ${
-                      totalPrice.defaultUnit
+                      calculateOutSourceProfitInMoney()
+                    } ${totalPrice ? totalPrice.defaultUnit : ""})`
+                  : `(${calculateProfitInMoney()} ${
+                        totalPrice ? totalPrice.defaultUnit : ""
                     })`}
               </span>
             </Stack>
@@ -321,7 +332,7 @@ const ActionContainerComponent = ({
             }}
           >
             {!isCalculated && (
-              <Tooltip title={actionException?.exceptionMessage}>
+              <Tooltip title={t("CalculationExceptions."+actionException?.exceptionKey)}>
                 <IconButton>
                   <WarningIcon />
                 </IconButton>

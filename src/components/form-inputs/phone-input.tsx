@@ -14,7 +14,7 @@ const PhoneInputComponent = ({ onChange, value, autoFocus }: IProps) => {
   const printHouseProfileState = useRecoilValue(printHouseProfile);
   return (
     <PhoneInput
-     defaultCountry={printHouseProfileState?.country.toLowerCase()}
+     defaultCountry={printHouseProfileState?.country?.toLowerCase()}
       value={value || ""}
       onChange={(value) => {
         value.length !== 4 && onChange(value);

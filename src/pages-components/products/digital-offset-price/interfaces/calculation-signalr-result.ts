@@ -6,4 +6,5 @@ export interface ICalculationSignalRResult {
     productItemValue?:any;
     monials?:IWorkFlowMonial[];
     exceptions?:IExceptionsLog[]
+    isCalculationFinished:boolean;
 }

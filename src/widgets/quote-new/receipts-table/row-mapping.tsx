@@ -3,6 +3,8 @@ import { Checkbox, TableRow } from "@mui/material";
 import { useStyle } from "./style";
 import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
 import { FONT_FAMILY } from "@/utils/font-family";
+import { useTranslation } from "react-i18next";
+import { useRouter } from "next/router";
 
 const RowMappingWidget = ({
     item,
@@ -13,13 +15,15 @@ const RowMappingWidget = ({
     isChecked
 }) => {
     const { classes } = useStyle({ headerHeight });
+    const { t } = useTranslation();
+    const router = useRouter();
 
     return (
 
         <TableRow
             key={item.id}
             style={{ background: index % 2 === 0 ? "#FFFFFF" : "#F8FAFB" }}>
-            <PrimaryTableCell
+            {router?.query?.isNewCreation && <PrimaryTableCell
                 style={{ width: columnWidths[0], ...classes.cellContainerStyle }}
             >
                 <div
@@ -38,6 +42,7 @@ const RowMappingWidget = ({
                     />
                 </div>
             </PrimaryTableCell>
+            }
             <PrimaryTableCell
                 style={{
                     width: columnWidths[1],
@@ -55,7 +60,7 @@ const RowMappingWidget = ({
                     ...classes.cellContainerStyle,
                 }}
             >
-                {item.docNumber}
+                {item.docNum}
             </PrimaryTableCell>
 
             <PrimaryTableCell
@@ -70,15 +75,14 @@ const RowMappingWidget = ({
                     width: columnWidths[4],
                     ...classes.cellContainerStyle,
                 }}
-            >{item?.content}
+            >{t(item?.documentTypeText)}
             </PrimaryTableCell>
-
             <PrimaryTableCell
                 style={{
                     width: columnWidths[5],
                     ...classes.cellContainerStyle,
                 }}
-            >{item?.finalPrice}
+            >{item?.sumApplied}
             </PrimaryTableCell>
         </TableRow>
     );

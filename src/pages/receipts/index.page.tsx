@@ -1,4 +1,3 @@
-import { Permissions } from "@/components/CheckPermission/enum";
 import { CustomerAuthLayout } from "@/layouts";
 import { QuotesListPageWidget } from "@/pages-components/quotes/quotes";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";

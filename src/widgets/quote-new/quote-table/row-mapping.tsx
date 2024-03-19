@@ -4,11 +4,12 @@ import { useStyle } from "./style";
 import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { CharacterDetails } from "./character-details";
-import { MoreMenuWidget } from "@/widgets/quote/more-circle";
 import { InputUpdatedValues } from "../input-updated-values";
 import { useQuoteTable } from "./use-quote-table";
 import { useState } from "react";
 import { useQuoteConfirmation } from "@/pages-components/quote-confirmation/use-quote-confirmation";
+import { useRouter } from "next/router";
+import { MoreMenuWidget } from "../more-circle";
 
 const RowMappingWidget = ({
   item,
@@ -24,6 +25,7 @@ const RowMappingWidget = ({
   getQuote,
   isQuoteConfirmation = false,
 }) => {
+  const router = useRouter()
   const { classes } = useStyle({ headerHeight });
   const [isConfirmation, setIsConfirmation] = useState(null);
   const {
@@ -49,10 +51,7 @@ const RowMappingWidget = ({
     item,
     index,
   });
-
-  // in quote confirmation case
   const { handleItemCheck } = useQuoteConfirmation();
-
   return (
 
     <TableRow
@@ -61,35 +60,37 @@ const RowMappingWidget = ({
         background: index % 2 === 0 ? "#FFFFFF" : "#F8FAFB",
       }}
     >
-      <PrimaryTableCell
-        style={{
-          width: columnWidths[0],
-          ...classes.cellContainerStyle,
-          borderBottom: item?.childsDocumentItems && "none",
-        }}
-      >
-        <div
+      {
+        <PrimaryTableCell
           style={{
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "flex-start",
-            alignItems: "center",
+            width: columnWidths[0],
+            ...classes.cellContainerStyle,
+            borderBottom: item?.childsDocumentItems && "none",
           }}
         >
-          {isQuoteConfirmation ?
-            <Checkbox
-              icon={<CheckboxIcon />}
-              checkedIcon={<CheckboxCheckedIcon />}
-              checked={item?.isChecked}
-              onChange={(checked) => handleItemCheck(checked, item.id)}
-            /> :
-            <Checkbox
-              icon={<CheckboxIcon />}
-              checkedIcon={<CheckboxCheckedIcon />}
-            />}
-          {parentIndex}
-        </div>
-      </PrimaryTableCell>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "flex-start",
+              alignItems: "center",
+            }}
+          >
+            {isQuoteConfirmation ?
+              <Checkbox
+                icon={<CheckboxIcon />}
+                checkedIcon={<CheckboxCheckedIcon />}
+                checked={item?.isChecked}
+                onChange={(checked) => handleItemCheck(checked, item.id)}
+              /> :
+              <Checkbox
+                icon={<CheckboxIcon />}
+                checkedIcon={<CheckboxCheckedIcon />}
+              />}
+            {parentIndex}
+          </div>
+        </PrimaryTableCell>
+      }
       <PrimaryTableCell
         style={{
           width: columnWidths[1],
@@ -118,7 +119,7 @@ const RowMappingWidget = ({
           borderBottom: item?.childsDocumentItems && "none",
         }}
       >
-        <CharacterDetails details={item.details} getQuote={getQuote} documentItemId={item?.id} canUpdate={!isQuoteConfirmation} />
+        <CharacterDetails details={item.details} getQuote={getQuote} documentItemId={item?.id} canUpdate={router.query.isNewCreation ? true : item?.isEditable} />
       </PrimaryTableCell>
       <PrimaryTableCell
         style={{
@@ -131,7 +132,7 @@ const RowMappingWidget = ({
           <InputUpdatedValues
             value={item.quantity}
             onBlur={onBlurAmount}
-            isUpdate={isUpdateAmount}
+            isUpdate={router.query.isNewCreation ? isUpdateAmount : !item?.isEditable ? false : isUpdateAmount}
             setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdateAmount}
             onInputChange={(e) => onInputChangeAmount(e)}
           />
@@ -148,7 +149,7 @@ const RowMappingWidget = ({
           <InputUpdatedValues
             value={item.discount ? item.discount : "0"}
             onBlur={onBlurDiscount}
-            isUpdate={isUpdateDiscount}
+            isUpdate={router.query.isNewCreation ? isUpdateDiscount : !item?.isEditable ? false : isUpdateDiscount}
             setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdateDiscount}
             onInputChange={(e) => onInputChangeDiscount(e)}
           />
@@ -165,7 +166,7 @@ const RowMappingWidget = ({
           <InputUpdatedValues
             value={item.price}
             onBlur={onBlurPrice}
-            isUpdate={isUpdatePrice}
+            isUpdate={router.query.isNewCreation ? isUpdatePrice : !item?.isEditable ? false : isUpdatePrice}
             setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdatePrice}
             onInputChange={(e) => onInputChangePrice(e)}
           />
@@ -182,26 +183,30 @@ const RowMappingWidget = ({
           <InputUpdatedValues
             value={item.finalPrice}
             onBlur={onBlurFinalPrice}
-            isUpdate={isUpdateFinalPrice}
+            isUpdate={router.query.isNewCreation ? isUpdateFinalPrice : !item?.isEditable ? false : isUpdateFinalPrice}
             setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdateFinalPrice}
             onInputChange={(e) => onInputChangeFinalPrice(e)}
           />
         </div>
+
       </PrimaryTableCell>
-      {!isQuoteConfirmation && <PrimaryTableCell
-        style={{
-          width: columnWidths[7],
-          ...classes.cellContainerStyle,
-          borderBottom: item?.childsDocumentItems && "none",
-        }}
-      >
-        <MoreMenuWidget
-          quoteItem={item}
-          onClickDuplicateWithDifferentQTY={onClickDuplicateWithDifferentQTY}
-          onClickDeleteQouteItem={onClickDeleteQouteItem}
-          documentType={documentType}
-        />
-      </PrimaryTableCell>}
+      {
+        !isQuoteConfirmation &&
+        <PrimaryTableCell
+          style={{
+            width: columnWidths[7],
+            ...classes.cellContainerStyle,
+            borderBottom: item?.childsDocumentItems && "none",
+          }}
+        >
+          <MoreMenuWidget
+            quoteItem={item}
+            onClickDuplicateWithDifferentQTY={onClickDuplicateWithDifferentQTY}
+            onClickDeleteQouteItem={onClickDeleteQouteItem}
+            documentType={documentType}
+          />
+        </PrimaryTableCell>
+      }
     </TableRow>
   );
 };

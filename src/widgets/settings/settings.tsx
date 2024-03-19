@@ -5,10 +5,11 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { SideBarContainer } from "@/components/containers/side-container/side-bar-container";
 import { IListItem } from "@/components/containers/interface";
-import { SecondaryButton } from "@/components/button/secondary-button";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import { useUserPermission } from "@/hooks/use-permission";
+import {StepType} from "@reactour/tour";
+import {useGoMakeTour} from "@/hooks/use-go-make-tour";
+import {useGomakeAxios} from "@/hooks";
+import {inactiveUserFirstLogin} from "@/services/api-service/users/users-api";
 
 const SettingsWidget = () => {
   const { t } = useTranslation();
@@ -16,7 +17,7 @@ const SettingsWidget = () => {
   const { settingsRoute, id, productId } = query;
   const [selected, setSelected] = useState<IListItem>();
   const { CheckPermission } = useUserPermission();
-
+  const {callApi} = useGomakeAxios();
   const onSelectItem = (value: string) => {
     const selectedItem = list.find((item) => item.value === value);
     push("/settings/" + selectedItem.path).then();
@@ -31,6 +32,51 @@ const SettingsWidget = () => {
       setSelected(!!item ? item : list[0]);
     }
   }, [settingsRoute, id]);
+  const settingsSteps: StepType[] = [
+    {
+      selector: '[data-tour="profileSettings"]',
+      content: 'Here, you can update all your personal and business details.\n',
+      position: 'center'
+    },
+    {
+      selector: '[data-tour="usersSettingsLink"]',
+      content: 'Go to "Users" to manage your employees.',
+      position: 'bottom'
+    },
+    {
+      selector: '[data-tour="settingUsersWidget"]',
+      content: 'Add and update all system users includes:\n Username and passward\n personal information\n working hours\n',
+      position: 'center',
+      styles: {
+        maskWrapper: props => ({...props, maxHeight: '300px'})
+      }
+    },
+    {
+      selector: '[data-tour="settingsProductsLink"]',
+      content: 'Add and update all system users includes:\n Username and passward\n personal information\n working hours\n',
+      position: 'bottom'
+    },
+    {
+      selector: '[data-tour="productsSettingsWidget"]',
+      content: 'Add and update all system users includes:\n Username and passward\n personal information\n working hours\n',
+      position: 'center',
+      action: elem => elem?.scrollIntoView({block: 'start', behavior: "smooth"}),
+      styles: {
+        maskWrapper: props => ({...props,})
+      }
+    },
+    {
+      selector: '[data-tour="start-tour-btn"]',
+      content: 'Congratulations!\n' +
+          'Now you\'re ready to use the system.\n' +
+          'For help,\n' +
+          'click the help button for training on all pages.',
+      position: 'bottom',
+      action: async () => await inactiveUserFirstLogin(callApi, () => {}),
+    },
+  ]
+
+  const {} = useGoMakeTour(settingsSteps, []);
   const Side = () => {
     return (
       <>

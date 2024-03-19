@@ -6,8 +6,6 @@ import { useTranslation } from "react-i18next";
 import { SearchInputComponent } from "@/components/form-inputs/search-input-component";
 import { RechooseIcon } from "@/icons";
 import { GalleryModalMapping } from "./gallery-modal-mapping";
-import { useRecoilState } from "recoil";
-import { filterState } from "@/widgets/materials-widget/state";
 
 const GalleryModal = ({ openModal, onClose, onChangeSubProductsForPrice, isChargeForNewDie, setIsChargeForNewDie, straightKnife }) => {
   const { clasess } = useStyle();
@@ -24,9 +22,8 @@ const GalleryModal = ({ openModal, onClose, onChangeSubProductsForPrice, isCharg
     searchResult,
     materialDataFilter,
     materialTableFilters,
-    setFilterValue
+    setMaterialTableFilters
   } = useGalleryModal({ onClose, onChangeSubProductsForPrice, setIsChargeForNewDie, straightKnife });
-
 
   return (
     <>
@@ -35,12 +32,25 @@ const GalleryModal = ({ openModal, onClose, onChangeSubProductsForPrice, isCharg
         modalTitle={t("products.offsetPrice.admin.chooseShape", {
           name: `${materialData?.materialName}`,
         })}
-        onClose={onClose}
+        onClose={() => {
+          setMaterialTableFilters([])
+          onClose()
+
+        }}
         insideStyle={clasess.insideStyle}
         withClose={false}
       >
         <div style={clasess.firstContainer}>
+          <div
+            style={{ cursor: "pointer" }}
+            onClick={getProductQuoteItemById}
+          >
+            <RechooseIcon />
+          </div>
 
+
+        </div>
+        <div style={clasess.bodyContainer}>
           <div style={clasess.headerContainer}>
             {materialTableFilters &&
               materialTableFilters.map(({ key, values }) => {
@@ -55,17 +65,7 @@ const GalleryModal = ({ openModal, onClose, onChangeSubProductsForPrice, isCharg
                 );
               })}
             <SearchInputComponent onChange={onChangeSearch} />
-            <div
-              style={{ cursor: "pointer" }}
-              onClick={getProductQuoteItemById}
-            >
-              <RechooseIcon />
-            </div>
-
           </div>
-
-        </div>
-        <div style={clasess.bodyContainer}>
           <div style={clasess.mainContainer}>
             {fixedCartData?.filter((card) => card.isShow)?.map((card, index) => {
               return (

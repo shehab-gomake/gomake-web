@@ -102,7 +102,6 @@ const useAddProduct = ({ clasess }) => {
       const data = await getAndSetProductById(callApi, setTemplate, {
         Id: router?.query?.id,
       });
-      console.log("data", data?.sections);
       setProductState(data);
     }
   }, [router, template]);
@@ -137,7 +136,6 @@ const useAddProduct = ({ clasess }) => {
     };
     const allRelatedParameters = collectRelatedParameters(template);
     setaRelatedParameters(allRelatedParameters);
-    console.log("allRelatedParameters", allRelatedParameters);
   }, [template]);
 
   useEffect(() => {
@@ -720,10 +718,10 @@ const useAddProduct = ({ clasess }) => {
             (item) => item?.isDefault
           );
           let valueIdIsDefault = "";
-          if(defaultParameter &&  defaultParameter?.materialValueIds &&  defaultParameter?.materialValueIds.length > 0){
+          if (defaultParameter && defaultParameter?.materialValueIds && defaultParameter?.materialValueIds.length > 0) {
             valueIdIsDefault = defaultParameter?.materialValueIds[0]?.valueId;
           }
-          
+
 
           options = digitalPriceData?.selectedMaterialLvl1;
 

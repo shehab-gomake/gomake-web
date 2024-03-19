@@ -5,7 +5,7 @@ import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { InputUpdatedValues } from "../input-updated-values";
 import { useQuoteTable } from "./use-quote-table";
-import { MoreMenuWidgetWithChilds } from "@/widgets/quote/more-circle-with-childs";
+import { MoreMenuWidgetWithChilds } from "../more-circle-with-childs";
 
 const RowMappingChildWidget = ({
   item,

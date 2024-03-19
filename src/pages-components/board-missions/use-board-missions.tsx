@@ -1,4 +1,4 @@
-import { useGomakeAxios } from "@/hooks";
+import { useAgentsList, useCustomerDropDownList, useGomakeAxios } from "@/hooks";
 import { useBoardMissionsSignalr } from "@/hooks/signalr/use-board-missions-signalr";
 import { getAndSetEmployees2 } from "@/services/api-service/customers/employees-api";
 import { getAllProductsForDropDownList } from "@/services/hooks";
@@ -16,17 +16,10 @@ const useBoardMissions = () => {
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
   const { data, connectionId } = useBoardMissionsSignalr();
-  const [customersListCreateQuote, setCustomersListCreateQuote] = useState([]);
-  const [customer, setCustomer] = useState<{
-    label: string;
-    id: string;
-  } | null>();
-  const [agent, setAgent] = useState<{ label: string; id: string } | null>();
   const [status, setStatus] = useState<{
     label: string;
     value: PStatus;
   } | null>();
-  const [agentsCategories, setAgentsCategories] = useState<[]>();
   const [productIds, setProductIds] = useState<string[]>([]);
   const [productsList, setProductsList] = useState([]);
   const [patternSearch, setPatternSearch] = useState<string>();
@@ -40,34 +33,25 @@ const useBoardMissions = () => {
   const [pageNumber, setPageNumber] = useState(1);
   const [pagesCount, setPagesCount] = useState(0);
   const [pageSize, setPageSize] = useState(DEFAULT_VALUES.PageSize);
-  
+  const { customer, setCustomer, renderOptions, checkWhatRenderArray, handleCustomerChange } = useCustomerDropDownList()
+  const { agent, setAgent, agentsCategories, handleAgentChange } = useAgentsList()
+
+
   const handlePageSizeChange = (event) => {
     setPageNumber(1);
     setPageSize(event.target.value);
   };
-
-
 
   const onSelectDeliveryTimeDates = (fromDate: Date, toDate: Date) => {
     setResetDatePicker(false);
     setFromDate(fromDate);
     setToDate(toDate);
   };
+
   useEffect(() => {
     setFinalPatternSearch(debounce);
   }, [debounce]);
-  const getAgentCategories = async (isAgent: boolean) => {
-    const callBack = (res) => {
-      if (res.success) {
-        const agentNames = res.data.map((agent) => ({
-          label: agent.text,
-          id: agent.value,
-        }));
-        setAgentsCategories(agentNames);
-      }
-    };
-    await getAndSetEmployees2(callApi, callBack, { isAgent: isAgent });
-  };
+
 
   const productionStatuses = [
     { label: t("boardMissions.inProduction"), value: PStatus.IN_PROCESS },
@@ -94,13 +78,7 @@ const useBoardMissions = () => {
     setProductIds(newValues);
   };
 
-  const handleAgentChange = (e: any, value: any) => {
-    setAgent(value);
-  };
 
-  const handleCustomerChange = (e: any, value: any) => {
-    setCustomer(value);
-  };
   const handleStatusChange = (e: any, value: any) => {
     setStatus(value);
   };
@@ -190,40 +168,11 @@ const useBoardMissions = () => {
     ]);
     setAllBoardMissions(mapData);
     setPagesCount(Math.ceil(data?.totalItems / pageSize));
-    console.log(data);
   }, [data, connectionId]);
-
-  const getAllCustomersCreateQuote = useCallback(async (SearchTerm?) => {
-    await getAndSetAllCustomers(callApi, setCustomersListCreateQuote, {
-      ClientType: "C",
-      searchTerm: SearchTerm,
-      onlyCreateOrderClients: false,
-    });
-  }, []);
-
-  const getAllCustomersCreateOrder = useCallback(async (SearchTerm?) => {
-    await getAndSetAllCustomers(callApi, setCustomersListCreateQuote, {
-      ClientType: "C",
-      searchTerm: SearchTerm,
-      onlyCreateOrderClients: true,
-    });
-  }, []);
-
-  const checkWhatRenderArray = (e) => {
-    if (e.target.value) {
-      getAllCustomersCreateOrder(e.target.value);
-    } else {
-      getAllCustomersCreateQuote();
-    }
-  };
-
-  const renderOptions = () => {
-    return customersListCreateQuote;
-  };
 
   useEffect(() => {
     getAllBoardMissions();
-  }, [connectionId, pageNumber,pageSize, finalPatternSearch]);
+  }, [connectionId, pageNumber, pageSize, finalPatternSearch]);
 
   const handlePageChange = (event, value) => {
     setPageNumber(value);
@@ -231,7 +180,6 @@ const useBoardMissions = () => {
 
   return {
     tableHeader,
-    getAgentCategories,
     agentsCategories,
     renderOptions,
     customer,
@@ -251,8 +199,6 @@ const useBoardMissions = () => {
     handleStatusChange,
     handleCustomerChange,
     checkWhatRenderArray,
-    getAllCustomersCreateQuote,
-    getAllCustomersCreateOrder,
     pagesCount,
     pageNumber,
     setPageNumber,

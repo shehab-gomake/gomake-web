@@ -115,6 +115,7 @@ export interface IRectangle {
   y: number;
   width: number;
   length: number;
+  color?: string;
 }
 export interface ICalculationProgress {
   totalWorkFlowsCount: number;
@@ -131,7 +132,7 @@ export interface IRecommendationRang {
 }
 
 export interface IExceptionsLog{
-    text:string;
+    exceptionKey:string;
     title?:string;
-    type?:ECalculationLogType
+    exceptionType?:ECalculationLogType
 }

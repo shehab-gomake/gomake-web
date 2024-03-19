@@ -99,7 +99,6 @@ const useCopyFromOrderModal = ({ onClose, documentType, openModal, cliendDocumen
     }
   };
   const handleSelectAll = (documentItem) => {
-    console.log("documentItem", documentItem)
     const selectedIds = selectedItems.map(item => item.id);
     const sectionItemIds = documentItem?.orderItems?.map(item => item.id);
     const allSelected = sectionItemIds?.every(id => selectedIds?.includes(id));
@@ -127,7 +126,7 @@ const useCopyFromOrderModal = ({ onClose, documentType, openModal, cliendDocumen
       {
         documentType: documentType,
         document: {
-          exchangeRate: documentItems[0]?.exchangeRate,
+          exchangeRate: documentItems[0]?.exchangeRate === 0 ? 1 : documentItems[0]?.exchangeRate,
           totalPrice: quoteItemValue?.totalPrice,
           data: 0,
           calculationType: 0,
@@ -135,8 +134,8 @@ const useCopyFromOrderModal = ({ onClose, documentType, openModal, cliendDocumen
           discount: quoteItemValue?.discount,
           discountAmount: quoteItemValue?.discountAmount,
           totalPayment: quoteItemValue?.totalPayment,
-          vat: documentItems[0]?.vat,
-          totalVAT: quoteItemValue?.totalVAT,
+          vat: documentItems[0]?.vat || 0.17,
+          totalVAT: quoteItemValue?.totalVAT || 0.17,
           documentItems: selectedItems.map(item => ({
             finalPrice: item.finalPrice
           }))

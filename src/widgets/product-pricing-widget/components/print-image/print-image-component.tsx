@@ -5,17 +5,10 @@ import {PrimaryButton} from "@/components/button/primary-button";
 import {IconButton, Stack} from "@mui/material";
 import html2canvas from "html2canvas";
 import DownloadRoundedIcon from '@mui/icons-material/DownloadRounded';
-import { useWindowSize } from "@uidotdev/usehooks";
 
 const PrintImageComponent = ({materialLength, materialWidth, rectangles, name}: IOutput) => {
     const [open, setOpen] = useState<boolean>(false);
     const imageElement = useRef(null);
-    const size = useWindowSize();
-    const modalWidthFactor = 0.7;
-    const modalHeightFactor = 0.9;
-    const convertRange = ( value, x0, x1,y0,y1  ) => {
-        return y0 + (y1 - y0) * (value - x0) / (x1 - x0);
-    }
     const handleDownloadClick = () => {
         const element = imageElement?.current;
         if (element) {
@@ -29,57 +22,49 @@ const PrintImageComponent = ({materialLength, materialWidth, rectangles, name}: 
             });
         }
     };
-    const resizer = (number)=>{
-        let max = materialWidth > materialLength ? materialWidth/1000 : materialLength/1000;
-        let divider = 1000;
-        let newNumber =  (number/divider);
-       // newNumber = convertRange(newNumber,0,materialWidth,0,size.width*modalWidthFactor);
-        return newNumber;
+    const scaleX = (number)=>{
+        return number / 1000;
     }
-    const resizerHeight = (number)=>{
-        let max = materialWidth > materialLength ? materialWidth/1000 : materialLength/1000;
-        let divider = 1000;
-        let newNumber =  (number/divider );
-        //newNumber = convertRange(newNumber,0,materialLength,0,size.height*modalHeightFactor);
-        return newNumber;
+    const scaleY = (number)=>{
+        return number / 1000;
     }
     return (
         <div>
             <PrimaryButton variant={'contained'} style={{fontSize: '15px', padding: '5px 15px'}} onClick={() => setOpen(true)}>{name}</PrimaryButton>
             <GoMakeModal openModal={open} onClose={() => setOpen(false)}
                          modalTitle={name}
-                         insideStyle={{width: size.width*modalWidthFactor, height: size.height*modalHeightFactor}}>
+                         insideStyle={{width: `${(scaleX(materialWidth)) + 100}px`, height: 'fit-content',maxHeight:'80%'}}>
                 <Stack>
-                    <IconButton style={{alignSelf: 'end'}} onClick={handleDownloadClick}>
+                    {
+                        /*<IconButton style={{alignSelf: 'end'}} onClick={handleDownloadClick}>
                         <DownloadRoundedIcon/>
-                    </IconButton>
+                    </IconButton>**/
+                    }
                     <Stack  justifyContent={'center'} alignItems={'center'}>
-                        <div ref={imageElement} style={{
-                            width: `100%`,
-                            height: `100%`,
-                            border: '1px solid black',
-                            position: 'relative'
-                        }}>
-                            {
-                                rectangles?.map(({x, y, width, length}: IRectangle) => {
-                                    debugger;
-                                    const newWidth = resizer(width);
-                                    const newHeight = resizerHeight(length);
-                                    const newX = resizer(x);
-                                    const newY = resizerHeight(y);
-                                    return(
-                                        <div style={{
-                                            position: 'absolute',
-                                            left: newX,
-                                            top: newY,
-                                            width: newWidth,
-                                            height: newHeight,
-                                            backgroundColor: 'black',
-                                        }}/>
-                                    )
-                                })
-                            }
-                        </div>
+                       <div>
+                           <div ref={imageElement} style={{
+                               width: `${scaleX(materialWidth)}px`,
+                               height: `${scaleX(materialLength)}px`,
+                               maxHeight:'80%',
+                               border: '1px solid black',
+                               position: 'relative'
+                           }}>
+                               {
+                                   rectangles?.map(({x, y, width, length,color}: IRectangle) => {
+                                       return(
+                                           <div style={{
+                                               position: 'absolute',
+                                               left: (scaleX(x)),
+                                               top: (scaleY(y)),
+                                               width: scaleX(width),
+                                               height: scaleY(length),
+                                               backgroundColor: color ?? 'black',
+                                           }}/>
+                                       )
+                                   })
+                               }
+                           </div>
+                       </div>
                     </Stack>
                 </Stack>
             </GoMakeModal>

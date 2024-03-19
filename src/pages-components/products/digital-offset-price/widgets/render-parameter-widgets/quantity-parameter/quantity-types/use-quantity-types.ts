@@ -1,5 +1,6 @@
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue,  } from "recoil";
 import {
+  openQuantityComponentModalState,
   productQuantityTypesState,
   tempProductQuantityTypesValuesState,
 } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/quantity-parameter/quantity-types/state";
@@ -31,6 +32,7 @@ const useQuantityTypes = () => {
 
   const JobNameParameter = getParameterByParameterCode(subProducts,"JobName");
   const quantityParameter = getParameterByParameterCode(subProducts,"quantity");
+  const [openModal, setOpenModal] = useRecoilState<boolean>(openQuantityComponentModalState);
   const updateTypesValues = (newValues) => {
     const updatedSubProducts = JSON.parse(JSON.stringify(subProducts));
     const typesParameter = updatedSubProducts[0]?.parameters.find(
@@ -41,6 +43,7 @@ const useQuantityTypes = () => {
       typesParameter.values = [newValues];
       setSubProducts(updatedSubProducts);
     }
+    setOpenModal(false)
   };
   const handleInputChange = (event, myvalue) => {
     const value = myvalue;
@@ -52,7 +55,7 @@ const useQuantityTypes = () => {
       for (let i = quantityTypesValues.length + 1; i <= Number(myvalue); i++) {
         array.push({
           name: JobNameParameter?.values[0] + " " + i,
-          quantity: +quantityParameter?.values[0],
+          quantity: +valueState[0]?.quantity,
         });
         setValuesState([...quantityTypesValues, ...array]);
       }
@@ -82,7 +85,7 @@ const useQuantityTypes = () => {
   const quantityTypesValues = useRecoilValue(
     tempProductQuantityTypesValuesState
   );
-  const setValuesState = useSetRecoilState(tempProductQuantityTypesValuesState);
+  const [valueState,setValuesState] = useRecoilState(tempProductQuantityTypesValuesState);
   const quantity = useMemo(() => {
     return quantityTypesValues
       .reduce((acc, val) => acc + val.quantity, 0)
@@ -95,10 +98,6 @@ const useQuantityTypes = () => {
     }));
   };
   const equalQuantityChange = (key: string, newValue: string) => {
-    setQuantityState((state) => ({
-      ...state,
-      equalQuantity: +newValue,
-    }));
     setValuesState((prevState) =>
       prevState.map((value) => ({ ...value, quantity: +newValue }))
     );
@@ -117,6 +116,8 @@ const useQuantityTypes = () => {
         options: [],
         isValid: true,
         onChange: () => {},
+        readonly: true,
+        
       },
       {
         name: "typeAmount",
@@ -137,7 +138,7 @@ const useQuantityTypes = () => {
         placeholder: "quantityTypes.equalQuantity",
         required: false,
         parameterKey: "equalQuantity",
-        value: state.equalQuantity?.toString(),
+        value: valueState[0]?.quantity?.toString(),
         options: [],
         isValid: true,
         onChange: equalQuantityChange,

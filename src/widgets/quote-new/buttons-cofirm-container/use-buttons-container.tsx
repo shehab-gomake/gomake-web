@@ -3,8 +3,8 @@ import { useState } from "react";
 import { useRecoilValue } from "recoil";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { getDocumentPdfApi } from "@/services/api-service/generic-doc/documents-api";
-import { QuoteStatuses } from "@/widgets/quote/total-price-and-vat/enums";
 import { approveDocumentItemsApi, rejectDocumentApi, updateDocumentCommentsConfirmationApi } from "@/services/api-service/generic-doc/quote-confirmation-api";
+import { QuoteStatuses } from "../total-price-and-vat/enums";
 
 const useButtonsConfirmContainer = () => {
     const { callApi } = useGomakeAxios();

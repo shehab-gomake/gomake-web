@@ -23,7 +23,6 @@ const ContactMapping = ({
   const [isUpdateContactEmail, setIsUpdateContactEmail] = useState(null);
   const [isUpdateContactMobile, setIsUpdateContactMobile] = useState(null);
   const [isConfirmation, setIsConfirmation] = useState(null);
-
   const onBlurContactName = async (item) => {
     updateClientContact(item);
     setIsUpdateContactName(null);
@@ -51,8 +50,9 @@ const ContactMapping = ({
         }}
       />
       <PhoneInputUpdatedValues
+        key={item?.id}
         value={
-          item?.contactPhone !== null ? item?.contactPhone : t("sales.quote.noMobile")
+          item?.contactPhone !== null ? item?.contactPhone : t("sales.quote.noMobileContact")
         }
         label={t("sales.quote.mobileContact")}
         onBlur={() => onBlurContactMobile(item)}
@@ -73,33 +73,33 @@ const ContactMapping = ({
           changeItems(index, "contactMail", e);
         }}
       />
-    {!isQuoteConfirmation && 
-     <div style={classes.addDeleteContainer}>
-        <IconButton
-          onClick={() => onOpenDeleteModalContact(item)}
-          style={{ padding: 4 }}
-        >
-          <WastebasketNew2 />
-        </IconButton>
-        {index === 0 && items?.length === 1 && (
-          <div
-            style={classes.addNewContactNameStyle}
-            onClick={() => setIsDisplayWidget(true)}
+      {!isQuoteConfirmation &&
+        <div style={classes.addDeleteContainer}>
+          <IconButton
+            onClick={() => onOpenDeleteModalContact(item)}
+            style={{ padding: 4 }}
           >
-            <PlusNewIcon />
-            <div style={classes.addNewContactNameTextStyle}>{t("sales.quote.addContact")}</div>
-          </div>
-        )}
-        {index === displayedItems - 1 && (
-          <div
-            style={classes.addNewContactNameStyle}
-            onClick={() => setIsDisplayWidget(true)}
-          >
-            <PlusNewIcon />
-            <div style={classes.addNewContactNameTextStyle}>{t("sales.quote.addContact")}</div>
-          </div>
-        )}
-      </div>}
+            <WastebasketNew2 />
+          </IconButton>
+          {index === 0 && items?.length === 1 && (
+            <div
+              style={classes.addNewContactNameStyle}
+              onClick={() => setIsDisplayWidget(true)}
+            >
+              <PlusNewIcon />
+              <div style={classes.addNewContactNameTextStyle}>{t("sales.quote.addContact")}</div>
+            </div>
+          )}
+          {index === displayedItems - 1 && (
+            <div
+              style={classes.addNewContactNameStyle}
+              onClick={() => setIsDisplayWidget(true)}
+            >
+              <PlusNewIcon />
+              <div style={classes.addNewContactNameTextStyle}>{t("sales.quote.addContact")}</div>
+            </div>
+          )}
+        </div>}
     </div>
   );
 };

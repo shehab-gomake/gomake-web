@@ -6,7 +6,6 @@ const getPrintHouseMaterialsByMaterialKey = async (
   setState?: ISetState,
   data?: any
 ) => {
-  console.log("data",data)
   const result: any = await callApi(
     "GET",
     `/v1/printhouse-materials/get-print-house-materials-by-key`,

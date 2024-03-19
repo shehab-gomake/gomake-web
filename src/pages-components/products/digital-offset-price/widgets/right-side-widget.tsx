@@ -132,7 +132,7 @@ const RightSideWidget = ({
           <div style={clasess.totalStyleText}>
             {t("products.offsetPrice.admin.total")}
           </div>
-          <div style={clasess.totalStyle}>
+          <div data-tour={'product-pricing'} style={clasess.totalStyle}>
             {isLoading ? (
               <DotsLoader />
             ) : (
@@ -140,7 +140,7 @@ const RightSideWidget = ({
                 value={
                   calculationExceptionsLogs?.length > 0
                     ? "---------"
-                    : (currentProductItemValueTotalPrice ? currentProductItemValueTotalPrice.toFixed(2) : currentProductItemValueTotalPrice) ?? "---------"
+                    : currentProductItemValueTotalPrice ?? "---------"
                 }
                 onChange={(e: any) => {
                   setCurrentProductItemValueTotalPrice(e.target.value);
@@ -380,7 +380,7 @@ const RightSideWidget = ({
                         }}
                       >
                         <div style={clasess.iconLogsTextStyle}>
-                          <div>{_renderIconLogs(item.type)}</div>
+                          <div>{_renderIconLogs(item.exceptionType)}</div>
                         </div>
                         <div
                           style={{
@@ -391,12 +391,12 @@ const RightSideWidget = ({
                           <div>{item.title}:</div>
                         </div>
                         <div style={clasess.textLogstyle}>
-                          <span style={{ color: "black" }}>{item.text}</span>
+                          <span style={{ color: "black" }}>{t("CalculationExceptions."+item?.exceptionKey)}</span>
                         </div>
                       </div>
                     ) : (
                       <div style={clasess.generalMsgTextStyle}>
-                        {t("products.offsetPrice.admin.general")} {item.text}
+                        {t("products.offsetPrice.admin.general")} {t("CalculationExceptions."+item?.exceptionKey)}
                       </div>
                     )}
                   </>

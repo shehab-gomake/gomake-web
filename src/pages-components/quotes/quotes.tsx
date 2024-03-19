@@ -10,15 +10,18 @@ import {
 import { SearchInputComponent } from "@/components/form-inputs/search-input-component";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import { HeaderTitle } from "@/widgets";
-import { QuoteLogsWidget } from "./quote-widgets/logs-widget";
+import { DocumentLogsWidget } from "./documents-logs-widget/logs-widget";
 import { DOCUMENT_TYPE } from "./enums";
 import { Button, IconButton, Stack } from "@mui/material";
 import { CardsSection } from "./statistics-section/statistics-sections";
 import { GoMakePagination } from "@/components/pagination/gomake-pagination";
 import { ExcelSheetIcon, SettingNewIcon } from "@/icons";
 import { AddRuleModal } from "../products/profits-new/widgets/add-rule-modal";
-import { useGomakeRouter } from "@/hooks";
+import { GoMakeDatepicker } from "@/components/date-picker/date-picker-component";
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import { useRecoilValue } from "recoil";
+import { employeesListsState } from "./states";
+
 interface IProps {
   documentType: DOCUMENT_TYPE;
   isFromHomePage?: boolean;
@@ -28,15 +31,8 @@ const QuotesListPageWidget = ({
   isFromHomePage = false,
 }: IProps) => {
   const { classes } = useStyle();
+  const employeeListValue = useRecoilValue<string[]>(employeesListsState);
   const {
-    tableHeaders,
-    allQuotes,
-    quoteStatuses,
-    agentsCategories,
-    openModal,
-    statusId,
-    customerId,
-    agentId,
     onClickCloseModal,
     setPatternSearch,
     setStatusId,
@@ -47,30 +43,49 @@ const QuotesListPageWidget = ({
     updateQuoteStatus,
     onClickSearchFilter,
     onClickClearFilter,
-    openLogsModal,
     onClickCloseLogsModal,
-    modalLogsTitle,
+    setPage,
+    onclickCreateNew,
+    t,
+    handlePageSizeChange,
+    handleCardClick,
+    handleSecondCardClick,
+    onCloseAddRuleModal,
+    onOpenAddRuleModal,
+    navigate,
+    tableHeaders,
+    allQuotes,
+    quoteStatuses,
+    deliveryNoteStatuses,
+    agentsCategories,
+    openModal,
+    statusId,
+    customerId,
+    agentId,
+    openLogsModal,
+    logsModalTitle,
     logsTableHeaders,
     documentLabel,
     allDocuments,
     tableHomeHeader,
     pagesCount,
     page,
-    setPage,
     allStatistics,
-    onclickCreateNew,
-    t,
-    handlePageSizeChange,
     pageSize,
     activeCard,
-    handleCardClick,
-    handleSecondCardClick,
-    onCloseAddRuleModal,
-    onOpenAddRuleModal,
     openAddRule,
-    navigate,
-    documentPath
+    documentPath,
+    resetDatePicker,
+    onSelectDeliveryTimeDates,
+    employeeId,
+    handleSelectEmployee,
+    resetLogsDatePicker,
+    onSelectDateRange,
+    onClickSearchLogsFilter,
+    onClickClearLogsFilter,
+    documentLogsData
   } = useQuotes(documentType);
+
   return (
     <>
       {!isFromHomePage && (
@@ -85,14 +100,6 @@ const QuotesListPageWidget = ({
             <div style={classes.headerStyle}>
               <HeaderTitle title={documentLabel} marginTop={1} marginBottom={1} />
               {documentType === DOCUMENT_TYPE.quote && <CardsSection statistics={allStatistics} activeCard={activeCard} onClick={onclickCreateNew} onClickCard={handleCardClick} onSecondClickCard={handleSecondCardClick} />}
-              {/* {documentType === DOCUMENT_TYPE.deliveryNote &&
-                <Button
-                  style={classes.createNew}
-                  startIcon={<AddCircleOutlineIcon />}
-                  onClick={() => { navigate(`/deliveryNote?isNewCreation=true`) }}
-                >{t("sales.quote.createNew")}
-                </Button>
-              } */}
               {(documentType !== DOCUMENT_TYPE.quote && documentType !== DOCUMENT_TYPE.order) &&
                 <Button
                   style={classes.createNew}
@@ -110,7 +117,7 @@ const QuotesListPageWidget = ({
                   </div>
                   <GoMakeAutoComplate
                     key={statusId?.value}
-                    options={quoteStatuses}
+                    options={documentType === DOCUMENT_TYPE.receipt ? deliveryNoteStatuses : quoteStatuses}
                     style={classes.textInputStyle}
                     getOptionLabel={(option: any) => option.label}
                     placeholder={t("sales.quote.chooseStatus")}
@@ -154,6 +161,10 @@ const QuotesListPageWidget = ({
                     value={agentId}
                   />
                 </div>
+                {documentType === DOCUMENT_TYPE.receipt && <div style={classes.statusFilterContainer}>
+                  <h3 style={classes.filterLabelStyle}>{t("boardMissions.dateRange")}</h3>
+                  <GoMakeDatepicker onChange={onSelectDeliveryTimeDates} placeholder={t("boardMissions.chooseDate")} reset={resetDatePicker} />
+                </div>}
                 <div style={classes.statusFilterContainer}>
                   <div style={classes.filterLabelStyle} />
                   <GomakePrimaryButton
@@ -221,9 +232,19 @@ const QuotesListPageWidget = ({
         insideStyle={classes.insideStyle}
         openModal={openLogsModal}
         onClose={onClickCloseLogsModal}
-        modalTitle={t("sales.quote.quoteLogs") + " - " + modalLogsTitle}
+        modalTitle={logsModalTitle}
       >
-        <QuoteLogsWidget logsTableHeaders={logsTableHeaders} />
+        <DocumentLogsWidget 
+        employeeId={employeeId}
+        handleSelectEmployee={handleSelectEmployee}
+        onClickClearLogsFilter={onClickClearLogsFilter}
+        onClickSearchLogsFilter={onClickSearchLogsFilter}
+        resetLogsDatePicker={resetLogsDatePicker}
+        onSelectDateRange={onSelectDateRange}
+        logsTableHeaders={logsTableHeaders} 
+        logsTableRows={documentLogsData}
+        employeesCategories={employeeListValue}
+        />
       </GoMakeModal>
       <AddRuleModal
         openModal={openAddRule}
