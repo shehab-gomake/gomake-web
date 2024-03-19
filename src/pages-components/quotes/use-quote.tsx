@@ -631,7 +631,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
       } else {
         alertFaultUpdate();
       }
-    };
+    }; 
     await updateDocumentApi(callApi, callBack, {
       documentType: 0,
       document: {

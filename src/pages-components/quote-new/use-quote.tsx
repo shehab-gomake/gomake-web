@@ -39,6 +39,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     alertFaultUpdate,
     alertSuccessAdded,
     alertFaultAdded,
+    alertFaultGetData,
     alertSuccessDelete,
     alertFaultDelete,
   } = useSnackBar();
@@ -140,7 +141,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
           const _data = res?.data || {};
           setQuoteItemValue(_data);
         } else {
-          alertFaultAdded();
+          alertFaultGetData();
         }
       }
       await getClientPaymentItemsApi(callApi, callBack)
@@ -171,7 +172,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
         const _data = res?.data?.data?.result || {};
         setQuoteItemValue(_data);
       } else {
-        alertFaultAdded();
+        alertFaultGetData();
       }
     }
     else if (docType === DOCUMENT_TYPE.receipt) {
@@ -180,7 +181,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
           const _data = res?.data || {};
           setQuoteItemValue(_data);
         } else {
-          alertFaultAdded();
+          alertFaultGetData();
         }
       }
       await getReceiptByIdApi(callApi, callBack, { receiptId: router?.query?.Id })
@@ -231,8 +232,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
           _data.documentItemsMapping = mapData;
           setQuoteItemValue(_data);
         } else {
-          // alertFaultAdded();
-
+          alertFaultGetData();
         }
       }
       await getDocumentApi(callApi, callBack, { documentType: docType, Id: router?.query?.Id })
@@ -1061,6 +1061,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
       }
     })
   }
+  
   const handleSaveBtnClickForDocument = async () => {
     const res = await callApi(
       EHttpMethod.POST,
@@ -1076,7 +1077,9 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     if (res?.success) {
       alertSuccessAdded();
       // navigate(`${documentPath}s`);
-      navigate(`/${documentPath}?Id=${res?.data?.data?.data}`)
+      const _data = res?.data?.data?.data || {};
+      setQuoteItemValue(_data);
+      navigate(`/${documentPath}?Id=${res?.data?.data?.data?.id}`)
     } else {
       alertFaultAdded();
     }

@@ -71,7 +71,7 @@ const BusinessNewWidget = ({
           value={isQuoteConfirmation ? quoteConfirm?.client?.name : quoteStateValue?.client?.name ? quoteStateValue?.client?.name : t("sales.quote.selectBusinessName")}
           options={mappedCustomers}
           onBlur={onBlurBusinessName}
-          isUpdate={isUpdateBusinessName}
+          isUpdate={quoteStateValue?.isEditable || router.query.isNewCreation ? isUpdateBusinessName : quoteStateValue?.isEditable}
           setIsUpdate={isQuoteConfirmation || isExistReceipt ? setIsConfirmation : setIsUpdateBusinessName}
           getOptionLabel={(item) => item.text}
           onChange={(e, value) => onChangeSelectBusiness(value)}
@@ -96,7 +96,7 @@ const BusinessNewWidget = ({
           value={selectedAgent?.text ? selectedAgent.text : t("sales.quote.selectAgent")}
           options={agentListValue}
           onBlur={onBlurAgent}
-          isUpdate={isUpdateAgent}
+          isUpdate={quoteStateValue?.isEditable || router.query.isNewCreation ? isUpdateAgent : quoteStateValue?.isEditable}
           setIsUpdate={isQuoteConfirmation || isExistReceipt ? setIsConfirmation : setIsUpdateAgent}
           getOptionLabel={(item) => item.text}
           onChange={(e, value) => updateAgent(value)}
