@@ -3,7 +3,7 @@ import { useStyle } from "./style";
 import { useTranslation } from "react-i18next";
 import { useCardWidget } from "./use-cards-widget";
 import { useRecoilValue } from "recoil";
-import { homeReportsState } from "@/pages-components/quote/store/quote";
+import { homeReportsState } from "@/pages-components/quote-new/store/quote";
 
 const CardsWidget = () => {
     const { classes } = useStyle();

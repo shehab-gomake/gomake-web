@@ -16,7 +16,7 @@ import {useResetRecoilState, useSetRecoilState} from "recoil";
 import {
     QuoteIfExistState,
     QuoteNumberState,
-} from "@/pages-components/quote/store/quote";
+} from "@/pages-components/quote-new/store/quote";
 import Stack from "@mui/material/Stack";
 import {selectedClientState} from "@/pages-components/quotes/states";
 import {useTour} from "@reactour/tour";

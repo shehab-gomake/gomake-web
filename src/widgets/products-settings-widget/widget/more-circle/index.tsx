@@ -9,7 +9,8 @@ import { useTranslation } from "react-i18next";
 import { PermissionCheck } from "@/components/CheckPermission";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { DocumentIcon } from "./icons/document";
-import { DeleteMenuIcon } from "@/widgets/quote/more-circle/icons/delete-menu";
+import { DeleteMenuIcon } from "@/widgets/quote-new/more-circle/icons/delete-menu";
+
 
 const MoreMenuWidget = ({ item, updatedProduct, getActions }: any) => {
   const { clasess } = useStyle();

@@ -1,8 +1,7 @@
 import { useDateFormat } from "@/hooks/use-date-format";
 
 const DepositInputs = (state) => {
-  const { GetDateFormat } = useDateFormat();
-
+  const { GetShortDateFormat } = useDateFormat();
   return [
     {
       name: "depositDate",
@@ -11,7 +10,7 @@ const DepositInputs = (state) => {
       placeholder: "deposits.depositDate",
       required: false,
       parameterKey: "depositDate",
-      value: GetDateFormat(state?.depositDate),
+      value: GetShortDateFormat(state?.depositDate),
       options: [],
       isValid: true,
       readOnly: true,
@@ -132,7 +131,7 @@ const newDepositInputs = (state, accountsOptions, depositAccountsOptions) => {
       })),
       isValid: true,
       readOnly: false,
-      disableClearable:true,
+      disableClearable: true,
     },
     {
       name: "bankName",
@@ -223,6 +222,5 @@ const newDepositInputs = (state, accountsOptions, depositAccountsOptions) => {
     },
   ]
 }
-
 
 export { DepositInputs, newDepositInputs };

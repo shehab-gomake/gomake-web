@@ -22,7 +22,7 @@ const Tab = ({ tab }: IProps) => {
   const [isHover, setIsHover] = useState(false);
   const navStatus = useRecoilValue(navStatusState);
 
-  const { clasess } = useStyle({ isHover, navStatus });
+  const { classes } = useStyle({ isHover, navStatus });
   // const [navStatus, setNavStatus] = useRecoilState(navStatusState);
   const { t } = useTranslation();
   const { navigate } = useGomakeRouter();
@@ -47,7 +47,7 @@ const Tab = ({ tab }: IProps) => {
   return (
     <>
       <div
-        style={clasess.tabContainer}
+        style={classes.tabContainer}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
         onClick={onClickTab}
@@ -55,7 +55,7 @@ const Tab = ({ tab }: IProps) => {
         {tab.isList ? (
           <div>
             {isListOpen ? (
-              <div style={clasess.rotate90}>
+              <div style={classes.rotate90}>
                 <TabCloseIcon />
               </div>
             ) : (
@@ -66,17 +66,17 @@ const Tab = ({ tab }: IProps) => {
           <div style={{ marginLeft: 5 }} />
         )}
         <div>{tab?.icon()}</div>
-        <div style={clasess.tabTitle} onClick={onClickTab}>
+        <div style={classes.tabTitle} onClick={onClickTab}>
           {!navStatus.isClosed ? tab.title : null}
         </div>
       </div>
       <Collapse in={isListOpen}>
         {tab.list?.map((list: any) => {
           return (
-            <div style={clasess.tabList} key={list.key}>
+            <div style={classes.tabList} key={list.key}>
               <div
                 onClick={() => changeRoute(list?.path)}
-                style={clasess.tabTitle}
+                style={classes.tabTitle}
               >
                 {list.title}
               </div>
