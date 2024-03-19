@@ -147,6 +147,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     signalRPricingResult,
     calculationServerErrorState
   } = useCalculationsWorkFlowsSignalr();
+  console.log("calculationExceptionsLssssogs", selectedWorkFlow)
+
   useEffect(() => {
     if (calculationServerErrorState) {
       setCalculationProgress({
