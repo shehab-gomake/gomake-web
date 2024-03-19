@@ -149,7 +149,6 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
     onClickSendQuoteToClient,
     onChangeSelectBusiness,
     updatePurchaseNumber,
-    updateClientAddress,
     onClickDeleteAddress,
     onOpenDeliveryModal,
     openAddDeliveryModal,
