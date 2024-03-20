@@ -162,7 +162,7 @@ const TotalPriceAndVatWidit = () => {
             </div>
             <div style={clasess.priceContainer}>
               <div style={clasess.numbersStyle}>
-                {Math.ceil(quoteItems?.totalVAT)}
+                {quoteItems?.totalVAT}
               </div>
             </div>
           </div>
@@ -174,7 +174,7 @@ const TotalPriceAndVatWidit = () => {
             <GomakeTextInput
               style={clasess.textInputTotalWithoutStyle}
               //@ts-ignore
-              value={Math.ceil(quoteItems?.totalPayment)}
+              value={quoteItems?.totalPayment}
               onChange={(e: any) => {
                 changeItems("totalPayment", e.target.value);
               }}

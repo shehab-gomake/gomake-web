@@ -2,16 +2,13 @@ import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { addressModalState, isNewAddress } from "./state";
-import { useQuoteNew } from "@/pages-components/quote-new/use-quote";
 import { quoteItemState } from "@/store";
 import { useQuoteGetData } from "@/pages-components/quote-new/use-quote-get-data";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 
-const useAddressWidget = (docType : DOCUMENT_TYPE) => {
+const useAddressWidget = (docType: DOCUMENT_TYPE) => {
     const { t } = useTranslation();
-    
-    const { updateClientAddress, onClickAddAddress, onClickAddNewAddress } = useQuoteNew({docType});
-    const { getAllClientAddress, clientAddressValue, addressSelect } = useQuoteGetData();
+    const { updateClientAddress, onClickAddAddress, onClickAddNewAddress, getAllClientAddress, clientAddressValue, addressSelect } = useQuoteGetData(docType);
     const quoteStateValue = useRecoilValue<any>(quoteItemState);
     const [openModal, setOpenModal] = useRecoilState<boolean>(addressModalState);
     const [addressState, setAddressState] = useState<any>(quoteStateValue?.documentAddresses?.[0]);
@@ -24,17 +21,18 @@ const useAddressWidget = (docType : DOCUMENT_TYPE) => {
     }
 
     useEffect(() => {
-        getAllClientAddress();
-        if (quoteStateValue?.documentAddresses?.length > 0) {
-            const addressId = quoteStateValue?.documentAddresses[0]?.addressID;
-            const city = quoteStateValue?.documentAddresses[0]?.city;
-            setFlag(true);
-            setSelectedAddress({ label: city, value: addressId });
+        if (openModal) {
+            getAllClientAddress();
+            if (quoteStateValue?.documentAddresses?.length > 0) {
+                const addressId = quoteStateValue?.documentAddresses[0]?.addressID;
+                const city = quoteStateValue?.documentAddresses[0]?.city;
+                setFlag(true);
+                setSelectedAddress({ label: city, value: addressId });
+            } else {
+                setSelectedAddress(addressSelect[0]);
+            }
         }
-        else {
-            setSelectedAddress(addressSelect[0])
-        }
-    }, [quoteStateValue, openModal]);
+    }, [quoteStateValue?.customerID, openModal]);
 
     useEffect(() => {
         if (selectedAddress?.label == "add new address") {
