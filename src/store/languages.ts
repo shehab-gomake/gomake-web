@@ -15,19 +15,28 @@ export const languagesState = atom({
     default: [
         {
             value: "en",
-            text: "English"
+            text: "English",
+            supported: true,
         },
         {
             value: "he",
-            text: "עברית"
+            text: "עברית",
+            supported: true,
         },
         {
             value: "ar",
-            text: "العربية"
+            text: "العربية",
+            supported: true,
         },
         {
             value: "de",
-            text: "Deutsch"
+            text: "Deutsch",
+            supported: true,
+        },
+        {
+            value: "fr",
+            text: "French",
+            supported: false,
         }
     ]
 });
