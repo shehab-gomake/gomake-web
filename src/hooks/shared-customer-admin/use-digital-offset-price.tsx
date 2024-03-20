@@ -269,6 +269,11 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   }, [connectionId])
   useEffect(() => {
     setCalculationExceptionsLogs(calculationExceptionsLogs);
+    setCalculationProgress({
+      totalWorkFlowsCount: 0,
+      currentWorkFlowsCount: 0,
+    });
+    setLoading(false)
   }, [calculationExceptionsLogs]);
   useEffect(() => {
     if (updatedSelectedWorkFlow) {
