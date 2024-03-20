@@ -44,6 +44,7 @@ const PriceListPageWidget = ({ widgetType }) => {
         duplicateParameters,
         setProductTemplate,
         multiParameterModal,
+        calculationServerErrorState,
         settingParameters,
         priceRecovery,
         graphicNotes,
@@ -354,6 +355,7 @@ const PriceListPageWidget = ({ widgetType }) => {
                             graphicDesigner={graphicDesigner}
                             setGraphicDesigner={setGraphicDesigner}
                             errorMsg={errorMsg}
+                            calculationServerErrorState={calculationServerErrorState}
                         />
                     </div>
 

@@ -67,6 +67,10 @@ const useNewProfits = () => {
       value: EPricingBy.BEATS,
     },
     {
+      label: t("products.profits.pricingListWidget.meter"),
+      value: EPricingBy.METER,
+    },
+    {
       label: "M^2",
       value: EPricingBy.SQUARE_METER,
     },
@@ -254,9 +258,9 @@ const useNewProfits = () => {
       setTableHeaders([
         t("products.profits.pricingListWidget.quantity"),
         `${selectedPricingBy?.label}` +
-          (selectedPricingBy?.value === EPricingBy.COST
-            ? ` ${ProfitCurrency}`
-            : ""),
+        (selectedPricingBy?.value === EPricingBy.COST
+          ? ` ${ProfitCurrency}`
+          : ""),
         t("products.profits.pricingListWidget.profit"),
         t("products.profits.pricingListWidget.unitPrice"),
         `${t(
@@ -267,9 +271,9 @@ const useNewProfits = () => {
       if (selectedPricingBy?.value != EPricingBy.COST) {
         setTableHeaders([
           `${selectedPricingBy?.label}` +
-            (selectedPricingBy?.value === EPricingBy.COST
-              ? ` ${ProfitCurrency}`
-              : ""),
+          (selectedPricingBy?.value === EPricingBy.COST
+            ? ` ${ProfitCurrency}`
+            : ""),
           t("products.profits.pricingListWidget.cost"),
           t("products.profits.pricingListWidget.profit"),
           t("products.profits.pricingListWidget.unitPrice"),
@@ -283,9 +287,9 @@ const useNewProfits = () => {
         setTableHeaders([
           t("products.profits.pricingListWidget.quantity"),
           `${selectedPricingBy?.label}` +
-            (selectedPricingBy?.value === EPricingBy.COST
-              ? ` ${ProfitCurrency}`
-              : ""),
+          (selectedPricingBy?.value === EPricingBy.COST
+            ? ` ${ProfitCurrency}`
+            : ""),
           t("products.profits.pricingListWidget.profit"),
           `Profit value ${ProfitCurrency}`,
           t("products.profits.pricingListWidget.unitPrice"),
@@ -298,9 +302,9 @@ const useNewProfits = () => {
     } else if (selectedPricingBy?.value === EPricingBy.COST) {
       setTableHeaders([
         `${selectedPricingBy?.label}` +
-          (selectedPricingBy?.value === EPricingBy.COST
-            ? ` ${ProfitCurrency}`
-            : ""),
+        (selectedPricingBy?.value === EPricingBy.COST
+          ? ` ${ProfitCurrency}`
+          : ""),
         t("products.profits.pricingListWidget.profit"),
         `${t(
           "products.profits.pricingListWidget.totalPrice"
@@ -310,9 +314,9 @@ const useNewProfits = () => {
       if (selectedAdditionalProfitRow?.id) {
         setTableHeaders([
           `${selectedPricingBy?.label}` +
-            (selectedPricingBy?.value === EPricingBy.COST
-              ? ` ${ProfitCurrency}`
-              : ""),
+          (selectedPricingBy?.value === EPricingBy.COST
+            ? ` ${ProfitCurrency}`
+            : ""),
           t("products.profits.pricingListWidget.profit"),
           `Profit value ${ProfitCurrency}`,
           `${t(
@@ -324,9 +328,9 @@ const useNewProfits = () => {
     } else {
       setTableHeaders([
         `${selectedPricingBy?.label}` +
-          (selectedPricingBy?.value === EPricingBy.COST
-            ? ` ${ProfitCurrency}`
-            : ""),
+        (selectedPricingBy?.value === EPricingBy.COST
+          ? ` ${ProfitCurrency}`
+          : ""),
         t("products.profits.pricingListWidget.unitPrice"),
         `${t(
           "products.profits.pricingListWidget.totalPrice"
@@ -336,9 +340,9 @@ const useNewProfits = () => {
       if (selectedAdditionalProfitRow?.id) {
         setTableHeaders([
           `${selectedPricingBy?.label}` +
-            (selectedPricingBy?.value === EPricingBy.COST
-              ? ` ${ProfitCurrency}`
-              : ""),
+          (selectedPricingBy?.value === EPricingBy.COST
+            ? ` ${ProfitCurrency}`
+            : ""),
           t("products.profits.pricingListWidget.unitPrice"),
           `Profit value ${ProfitCurrency}`,
           `${t(
@@ -655,8 +659,7 @@ const useNewProfits = () => {
   const reOrderPricingTables = useCallback(async (data: any) => {
     const res = await callApi(
       EHttpMethod.PUT,
-      `/v1/printhouse-config/profits/update-re-order-pricing-tables?actionIdOrProductId=${
-        router.query.actionId
+      `/v1/printhouse-config/profits/update-re-order-pricing-tables?actionIdOrProductId=${router.query.actionId
       }?isOutSourc=${router.query.isOutSource ? true : false}`,
       {
         data,

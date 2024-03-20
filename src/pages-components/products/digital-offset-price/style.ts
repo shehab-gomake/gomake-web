@@ -664,6 +664,10 @@ const useStyle = () => {
         gap: 10,
       },
       generalMsgTextStyle: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "flex-start",
+        alignItems: "flex-start",
         ...FONT_FAMILY.Lexend(400, 14),
         color: "#504FA1",
       },
@@ -673,8 +677,8 @@ const useStyle = () => {
         width: "33%",
       },
       iconLogsTextStyle: {
-        color: successColor(500),
-        marginTop: 2,
+        marginTop: 2.5,
+        marginRight: 2.5,
       },
       textLogstyle: {
         ...FONT_FAMILY.Lexend(400, 14),
