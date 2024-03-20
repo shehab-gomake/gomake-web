@@ -10,6 +10,7 @@ import { UploadImgProduct } from "./upload-widget";
 import { EProductClient } from "./settings-data";
 import { useSettings } from "./use-settings";
 import { useStyle } from "./style";
+import { CloseCircleIcon } from "@/components/icons/icons";
 
 const SettingsWidget = ({
   onClickParametersTab,
@@ -43,6 +44,7 @@ const SettingsWidget = ({
     UploadProductImage,
     deleteProductSKURow
   } = useSettings({ onClickParametersTab, productState, onChangeStateProduct });
+  console.log("productState", productState)
   const defultProductSKU = allProductSKU?.find(
     (item) => item.id === productState?.productSKUId
   );
@@ -324,6 +326,11 @@ const SettingsWidget = ({
               }}
               format="hex"
             />
+            {productState?.noteColor &&
+              <div style={{ cursor: "pointer" }} onClick={() => onChangeStateProduct("noteColor", null)}>
+                <CloseCircleIcon />
+              </div>
+            }
           </div>
         </div>
         <div style={clasess.itemOnFirstContainer}>
@@ -341,6 +348,11 @@ const SettingsWidget = ({
               }}
               format="hex"
             />
+            {productState?.textColor &&
+              <div style={{ cursor: "pointer" }} onClick={() => onChangeStateProduct("textColor", null)}>
+                <CloseCircleIcon />
+              </div>
+            }
           </div>
         </div>
       </div>
