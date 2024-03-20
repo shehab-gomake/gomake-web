@@ -90,7 +90,7 @@ const useMoreCircle = () => {
       },
       {
         condition: documentType === DOCUMENT_TYPE.purchaseOrder && quote?.isCanClose,
-        onClick: () => navigate(`/purchaseInvoice?isNewCreation=true&documentToDuplicateId=${quote?.id}`),
+        onClick: () => navigate(`/purchaseInvoice?isNewCreation=true&documentId=${quote?.id}`),
         icon: <TickIcon />,
         name: t("sales.quote.closeAsPurchaseInvoice")
       }

@@ -43,6 +43,8 @@ const useMoreCircle = ({
     );
   };
 
+  // documentType === DOCUMENT_TYPE.quote || documentType === DOCUMENT_TYPE.order // for Negotiate request 
+  // (router.query.isNewCreation || quoteItem?.isDeletable ) 
   const menuList = [
     quoteItem.productType === 0 && !router.query.isNewCreation && !router.query.Id && {
       name: "Edits",
