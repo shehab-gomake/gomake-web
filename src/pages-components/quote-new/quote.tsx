@@ -149,7 +149,6 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
     onClickSendQuoteToClient,
     onChangeSelectBusiness,
     updatePurchaseNumber,
-    updateClientAddress,
     onClickDeleteAddress,
     onOpenDeliveryModal,
     openAddDeliveryModal,
@@ -210,9 +209,11 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
     },
   ]
   const [docNumber, setDocNumber] = useState(quoteState?.number)
+  
   useEffect(() => {
     setDocNumber(quoteState?.number)
   }, [quoteState?.number, router, quoteState, isQuoteConfirmation])
+
   const { } = useGoMakeTour(quoteSteps, []);
   return (
     <>

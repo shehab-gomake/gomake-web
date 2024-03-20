@@ -132,6 +132,8 @@ export interface IRecommendationRang {
 }
 
 export interface IExceptionsLog{
+    actionId?: string;
+    actionName?: string;
     exceptionKey:string;
     title?:string;
     exceptionType?:ECalculationLogType

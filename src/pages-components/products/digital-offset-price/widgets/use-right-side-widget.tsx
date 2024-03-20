@@ -19,9 +19,15 @@ import {
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRecoilState, useRecoilValue } from "recoil";
-import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
-import { WarningIcon } from "@/icons";
+
+import WarningIcon from '@mui/icons-material/Warning';
+import ErrorIcon from '@mui/icons-material/Error';
+import HelpCenterIcon from '@mui/icons-material/HelpCenter';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 const useRightSideWidget = ({ includeVAT }) => {
+  const { errorColor, successColor, warningColor, neutralColor } = useGomakeTheme();
+
   const isLoading = useRecoilValue(isLoadgingState);
   const calculationExceptionsLogs = useRecoilValue(
     calculationExceptionsLogsState
@@ -88,13 +94,13 @@ const useRightSideWidget = ({ includeVAT }) => {
   // i need change to the icons when add new types
   const _renderIconLogs = (type) => {
     if (type === ECalculationLogType.ERROR) {
-      return <WarningIcon width="15" height="15" />;
+      return <ErrorIcon sx={{ width: 15, height: 15, color: errorColor(500) }} />;
     } else if (type === ECalculationLogType.MESSAGE) {
-      return <WarningIcon width="15" height="15" />;
+      return <HelpCenterIcon sx={{ width: 15, height: 15, color: neutralColor(500) }} />;
     } else if (type === ECalculationLogType.SUCCESS) {
-      return <CheckCircleOutlineIcon sx={{ width: 15, height: 15 }} />;
+      return <CheckCircleIcon sx={{ width: 15, height: 15, color: successColor(500) }} />;
     } else if (type === ECalculationLogType.WARN) {
-      return <WarningIcon width="15" height="15" />;
+      return <WarningIcon sx={{ width: 15, height: 15, color: warningColor(500) }} />;
     }
   };
   return {

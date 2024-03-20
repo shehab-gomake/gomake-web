@@ -71,7 +71,7 @@ const TotalPriceComp = ({
           VAT (17%)
         </div>
         <div style={{ ...classes.oddRowContainer, width: "23%" }}>
-          {Math.ceil(quoteItems?.totalVAT) + " " + getCurrencyUnitText(quoteItems?.currency)}
+          {quoteItems?.totalVAT + " " + getCurrencyUnitText(quoteItems?.currency)}
         </div>
       </div>
       <div style={classes.firstRowForFooterContainer}>

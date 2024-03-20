@@ -60,7 +60,9 @@ import { findParameterByCode } from "@/utils/helpers";
 import React from "react";
 import { getCurrencies } from "@/services/api-service/general/enums";
 import { currenciesState } from "@/widgets/materials-widget/state";
+import { EHttpMethod } from "@/services/api-service/enums";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
+
 
 const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [, setOpenQuantityComponentModal] = useRecoilState<boolean>(openQuantityComponentModalState);
@@ -144,8 +146,20 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     connectionId,
     updatedSelectedWorkFlow,
     calculationExceptionsLogs,
-    signalRPricingResult
+    signalRPricingResult,
+    calculationServerErrorState
   } = useCalculationsWorkFlowsSignalr();
+  console.log("calculationExceptionsLssssogs", selectedWorkFlow)
+
+  useEffect(() => {
+    if (calculationServerErrorState) {
+      setCalculationProgress({
+        totalWorkFlowsCount: 0,
+        currentWorkFlowsCount: 0,
+      });
+      setLoading(false);
+    }
+  }, [calculationServerErrorState])
   const [currentSignalRConnectionId, setCurrentSignalRConnectionId] = useRecoilState(currentCalculationConnectionId);
   const [currentCalculationSessionId, setCurrentCalculationSessionId] = useState<string>("");
   const [requestAbortController, setRequestAbortController] =
@@ -193,7 +207,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           currentWorkFlows[0].selected = true;
         }
         selectedWorkFlow = currentWorkFlows?.find((x) => x.selected);
-        console.log("selectedWorkFlow",calculationResult.productItemValue)
         if (
           selectedWorkFlow &&
           selectedWorkFlow.totalPrice &&
@@ -255,37 +268,41 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     setCurrentSignalRConnectionId(connectionId)
   }, [connectionId])
   useEffect(() => {
-    console.log("calculationExceptionsLogs",calculationExceptionsLogs)
     setCalculationExceptionsLogs(calculationExceptionsLogs);
+    setCalculationProgress({
+      totalWorkFlowsCount: 0,
+      currentWorkFlowsCount: 0,
+    });
+    setLoading(false)
   }, [calculationExceptionsLogs]);
   useEffect(() => {
-    if(updatedSelectedWorkFlow){
-      if(!workFlows.find(x => x.id == updatedSelectedWorkFlow?.id)){
+    if (updatedSelectedWorkFlow) {
+      if (!workFlows.find(x => x.id == updatedSelectedWorkFlow?.id)) {
         setWorkFlows(
-            workFlows.map((flow) =>
-                flow.id === updatedSelectedWorkFlow?.id
-                    ? updatedSelectedWorkFlow
-                    : {
-                      ...flow,
-                      selected: false,
-                    }
-            )
+          workFlows.map((flow) =>
+            flow.id === updatedSelectedWorkFlow?.id
+              ? updatedSelectedWorkFlow
+              : {
+                ...flow,
+                selected: false,
+              }
+          )
         );
-      }else{
-        let temp = workFlows.map((flow)=> { return {...flow,selected:false} } );
-        setWorkFlows([...temp,{...updatedSelectedWorkFlow,selected:true}]);
+      } else {
+        let temp = workFlows.map((flow) => { return { ...flow, selected: false } });
+        setWorkFlows([...temp, { ...updatedSelectedWorkFlow, selected: true }]);
       }
 
       if (
-          updatedSelectedWorkFlow?.totalPrice &&
-          updatedSelectedWorkFlow?.totalPrice?.values
+        updatedSelectedWorkFlow?.totalPrice &&
+        updatedSelectedWorkFlow?.totalPrice?.values
       ) {
         setCurrentProductItemValueTotalPrice(
-            +updatedSelectedWorkFlow?.totalPrice.values[0]
+          +updatedSelectedWorkFlow?.totalPrice.values[0]
         );
       }
     }
-    
+
   }, [updatedSelectedWorkFlow]);
 
   useEffect(() => {
@@ -2136,7 +2153,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       if (productQuantityTypes && productQuantityTypes.length > 0 && productQuantityTypes[0].quantity > 0) {
         workTypes = productQuantityTypes;
       }
-      const res = await callApi(
+      const res: any = await callApi(
         "POST",
         `/v1/calculation-service/calculations/calculate-productV2`,
         {
@@ -2152,9 +2169,18 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         false,
         newRequestAbortController
       ).catch(e => setLoading(false));
-
-      //setLoading(false);
+      if (res?.status === 500) {
+        setCalculationProgress({
+          totalWorkFlowsCount: 0,
+          currentWorkFlowsCount: 0,
+        });
+        setLoading(false);
+      }
     } else {
+      setCalculationProgress({
+        totalWorkFlowsCount: 0,
+        currentWorkFlowsCount: 0,
+      });
       setLoading(false);
     }
   }, [subProducts, router, isRequiredParameters, validateParameters]);
@@ -2487,6 +2513,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     onChangeSubProductsForPrice,
     underParameterIds,
     straightKnife,
+    calculationServerErrorState
   };
 };
 export { useDigitalOffsetPrice };

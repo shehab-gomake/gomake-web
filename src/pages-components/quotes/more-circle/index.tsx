@@ -12,7 +12,7 @@ const MoreMenuWidget = ({ quote, documentType, onClickOpenModal, onClickPdf, onC
  
   return (
     <OptionsButton>
-      {menuList.map((item, index) => (
+      {menuList.map((item, index) => ( 
         item.condition && (
           <MenuItem style={classes.menuRowStyle} key={index} onClick={item.onClick}>
             {item.icon}

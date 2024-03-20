@@ -9,6 +9,7 @@ import {createNewCompanyApi} from "@/services/api-service/quick-setup/company/co
 import {useRouter} from "next/router";
 import {clearStorage} from "@/services/storage-data";
 import {domainRegex} from "@/utils/regex";
+import {Lan} from "@mui/icons-material";
 
 const useCompanyForm = () => {
   const [state, setState] = useRecoilState(signupCompanyState);

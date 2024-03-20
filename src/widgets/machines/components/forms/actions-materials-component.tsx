@@ -37,12 +37,13 @@ const ActionsMaterialsComponent = ({}: IStepFormProps) => {
                 }
             }
         });
-        callApi('GET', '/v1/administrator/get-all-materials').then((res) => {
+        callApi('GET', '/v1/materials/getMaterialsTypes').then((res) => {
             if (res?.success) {
                 if (res?.data?.data?.data) {
-                    const apiMaterials = Object.entries(res?.data?.data?.data).map(([key, value]) => ({
-                        id: key,
-                        name: value,
+                    debugger;
+                    const apiMaterials = res?.data?.data?.data.map((materialType) => ({
+                        id: materialType.enumCode,
+                        name: materialType.materialTypeName,
                         checked: false
                     }));
                     if (machineState?.attributes?.materials) {

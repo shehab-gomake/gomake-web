@@ -26,7 +26,7 @@ const TotalPriceAndVatContainer = () => {
                 </div>
                 <div style={classes.thirdDiv}>
                     <div style={classes.tableHeader} ><h3 style={classes.headerStyle}>{t("sales.quote.vat") + " (17%)"}</h3></div>
-                    <div style={classes.tableCell}><GomakeTextInput style={classes.inputStyle} value={Math.ceil(quoteConfirm?.totalVAT) + " " + getCurrencyUnitText(quoteConfirm?.currency)} disabled={true}/></div>
+                    <div style={classes.tableCell}><GomakeTextInput style={classes.inputStyle} value={quoteConfirm?.totalVAT + " " + getCurrencyUnitText(quoteConfirm?.currency)} disabled={true}/></div>
                 </div>
                 <div style={classes.fourthDiv}>
                     <div style={classes.tableHeader} ><h3 style={classes.headerStyle}>{t("sales.quote.totalPrice")}</h3></div>

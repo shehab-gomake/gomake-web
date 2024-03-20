@@ -1,11 +1,11 @@
 import Stack from "@mui/material/Stack";
-import {useStyle} from "@/widgets/product-pricing-widget/style";
-import {Divider} from "@mui/material";
-import {IOutput} from "@/widgets/product-pricing-widget/interface";
-import {useState} from "react";
-import {UpdateValueInput} from "@/components/text-input/update-value-input";
+import { useStyle } from "@/widgets/product-pricing-widget/style";
+import { Divider } from "@mui/material";
+import { IOutput } from "@/widgets/product-pricing-widget/interface";
+import { useState } from "react";
+import { UpdateValueInput } from "@/components/text-input/update-value-input";
 import Button from "@mui/material/Button";
-import {EWorkSource} from "@/widgets/product-pricing-widget/enums";
+import { EWorkSource } from "@/widgets/product-pricing-widget/enums";
 
 interface IKeyValueViewProps extends IOutput {
     valueColor?: string;
@@ -19,26 +19,26 @@ interface IParametersMappingProps {
     source?: EWorkSource;
 }
 
-const ParametersMapping = ({parameters, source}: IParametersMappingProps) => {
+const ParametersMapping = ({ parameters, source }: IParametersMappingProps) => {
     return <>
         {
             parameters?.flatMap((parameter, index, array) => {
-                return index < array.length - 1 ? [<KeyValueViewComponent source={source} {...parameter}/>,
-                    <Divider orientation={'vertical'} flexItem/>] : [
-                    <KeyValueViewComponent {...parameter} source={source}/>]
+                return index < array.length - 1 ? [<KeyValueViewComponent source={source} {...parameter} />,
+                <Divider orientation={'vertical'} flexItem />] : [
+                    <KeyValueViewComponent {...parameter} source={source} />]
             })
         }
     </>
 }
 const KeyValueViewComponent = ({
-                                   name,
-                                   values,
-                                   valueColor,
-                                   defaultUnit,
-                                   outSourceValues,
-                                   source
-                               }: IKeyValueViewProps) => {
-    const {classes} = useStyle();
+    name,
+    values,
+    valueColor,
+    defaultUnit,
+    outSourceValues,
+    source
+}: IKeyValueViewProps) => {
+    const { classes } = useStyle();
     const curValues = source === EWorkSource.OUT ? !!outSourceValues ? outSourceValues : ['0'] : values;
     return (
         <Stack direction={'row'} gap={'10px'} alignItems={'center'}>
@@ -55,20 +55,20 @@ const KeyValueViewComponent = ({
 }
 
 const EditableKeyValueViewComponent = ({
-                                           name,
-                                           values,
-                                           valueColor,
-                                           defaultUnit,
-                                           onUpdate,
-                                           outSourceValues,
-                                           source
-                                       }: IKeyValueViewProps) => {
-    const {classes} = useStyle();
+    name,
+    values,
+    valueColor,
+    defaultUnit,
+    onUpdate,
+    outSourceValues,
+    source
+}: IKeyValueViewProps) => {
+    const { classes } = useStyle();
     let value = '0';
     //source === EWorkSource.OUT ? !!outSourceValues && outSourceValues[0] ? outSourceValues[0] : '0' : values[0]
-    if(source === EWorkSource.OUT && outSourceValues && outSourceValues.length > 0 ){
+    if (source === EWorkSource.OUT && outSourceValues && outSourceValues.length > 0) {
         value = outSourceValues[0];
-    }else if(values && values.length > 0){
+    } else if (values && values.length > 0) {
         value = values[0];
     }
     const [edit, setEdit] = useState<boolean>(false);
@@ -95,7 +95,7 @@ const EditableKeyValueViewComponent = ({
         <Stack direction={'row'} gap={'10px'} alignItems={'center'}>
             <span style={classes.detailTitle}>{name}</span>
             {edit ? <UpdateValueInput value={editValue} onUpdate={handleValueUpdate} onInputChange={onInputChange}
-                                      clickedOut={handleValueUpdate} onCancel={handleCancelUpdate}/> :
+                clickedOut={handleValueUpdate} onCancel={handleCancelUpdate} /> :
                 <Button onClick={handleValueClick} variant={'text'} style={valueColor ? {
                     ...classes.detailValue,
                     color: valueColor
@@ -106,4 +106,4 @@ const EditableKeyValueViewComponent = ({
     )
 }
 
-export {KeyValueViewComponent, ParametersMapping, EditableKeyValueViewComponent}
+export { KeyValueViewComponent, ParametersMapping, EditableKeyValueViewComponent }
