@@ -2,7 +2,7 @@
 
 import { useTranslation } from "react-i18next";
 import { useRecoilValue } from "recoil";
-import { QuoteNumberState } from "@/pages-components/quote/store/quote";
+import { QuoteNumberState } from "@/pages-components/quote-new/store/quote";
 import { selectedClientState } from "@/pages-components/quotes/states";
 import { useState } from "react";
 

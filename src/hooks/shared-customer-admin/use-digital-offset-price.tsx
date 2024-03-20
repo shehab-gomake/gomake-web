@@ -61,6 +61,8 @@ import React from "react";
 import { getCurrencies } from "@/services/api-service/general/enums";
 import { currenciesState } from "@/widgets/materials-widget/state";
 import { EHttpMethod } from "@/services/api-service/enums";
+import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
+
 
 const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [, setOpenQuantityComponentModal] = useRecoilState<boolean>(openQuantityComponentModalState);
@@ -2273,13 +2275,14 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     subProducts,
     "Sets"
   );
+
   const addItemForQuotes = async () => {
-    const docType = router?.query?.documentType ?? "0";
+    const docType = router?.query?.documentType ?? "0" ;
     const callBack = (res) => {
       if (res?.success) {
         docType === "0"
-          ? navigate("/quote")
-          : navigate(`/order/Id=${router?.query?.documentId}`);
+          ? navigate("/quote") 
+          : navigate(`/order?Id=${router?.query?.documentId}`);
       } else {
         alertFaultAdded();
       }
@@ -2295,7 +2298,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       if (res?.success) {
         router?.query?.documentType == "0"
           ? navigate("/quote")
-          : navigate(`/order/Id=${router?.query?.documentId}`);
+          : navigate(`/order?Id=${router?.query?.documentId}`);
         setWorkFlows([]);
         setJobActions([]);
       } else {

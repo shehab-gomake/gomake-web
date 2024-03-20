@@ -22,7 +22,8 @@ import { useMaterialsCategories } from "../../hooks/use-materials-categories";
 import { useOutputs } from "../../hooks/use-outputs";
 import { useSnackBar } from "@/hooks";
 import { useRule } from "../../hooks/use-rule";
-import { DeleteMenuIcon } from "@/widgets/quote/more-circle/icons/delete-menu";
+import { DeleteMenuIcon } from "@/widgets/quote-new/more-circle/icons/delete-menu";
+
 
 interface IAddNewModalProps {
   openModal: boolean;

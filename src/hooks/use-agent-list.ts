@@ -30,6 +30,7 @@ const useAgentsList = () => {
 
   return {
     agent,
+    setAgent,
     agentsCategories,
     handleAgentChange,
     getAgentCategories

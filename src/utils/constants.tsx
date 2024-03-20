@@ -1,7 +1,7 @@
 import { ETabsIcon } from "@/enums";
 import { FinishingIcon, PricingIcon, PrintingDetailsIcon } from "@/icons";
-import { QUOTE_STATUSES } from "@/pages-components/quotes/enums";
-import { useTranslation } from "react-i18next";
+import { DELIVERY_NOTE_STATUSES, QUOTE_STATUSES } from "@/pages-components/quotes/enums";
+
 export const _renderActiveIcon = (icon) => {
   if (icon === ETabsIcon.PRINTING_DETAILS) {
     return <PrintingDetailsIcon />;
@@ -13,6 +13,7 @@ export const _renderActiveIcon = (icon) => {
     return <PricingIcon />;
   }
 };
+
 export const _renderUnActiveIcon = (icon) => {
   if (icon === ETabsIcon.PRINTING_DETAILS) {
     return <PrintingDetailsIcon stroke="#1C1D58" />;
@@ -75,6 +76,62 @@ export const _renderQuoteStatus = (status: number, quote: any, t: any) => {
   }
   if (status === QUOTE_STATUSES.WaitForPrintHouseConfirm) {
     return t("sales.quote.waitForPrintHouseConfirm");
+  }
+};
+
+// for receipts / delivery note / delivery note refund
+export const _renderDocumentStatus = (status: number, t: any) => {
+  if (status === DELIVERY_NOTE_STATUSES.Open) {
+    return t("sales.quote.open");
+  }
+  if (status === DELIVERY_NOTE_STATUSES.Canceled) {
+    return t("sales.quote.canceled");
+  }
+  if (status === DELIVERY_NOTE_STATUSES.Created) {
+    return t("sales.quote.created");
+  }
+  if (status === DELIVERY_NOTE_STATUSES.Refunded) {
+    return t("sales.quote.refunded");
+  }
+  if (status === DELIVERY_NOTE_STATUSES.Confirmed) {
+    return t("sales.quote.confirmed");
+  }
+  if (status === DELIVERY_NOTE_STATUSES.Rejected) {
+    return t("sales.quote.rejected");
+  }
+  if (status === DELIVERY_NOTE_STATUSES.PartialRefunded) {
+    return t("sales.quote.partialRefunded");
+  }
+  if (status === DELIVERY_NOTE_STATUSES.ClosedAsInvoice) {
+    return t("sales.quote.closedAsInvoice");
+  }
+  if (status === DELIVERY_NOTE_STATUSES.ClosedByMultiDocuments) {
+    return t("sales.quote.closedByMultiDocuments");
+  }
+  if (status === DELIVERY_NOTE_STATUSES.ManualClose) {
+    return t("sales.quote.manualClose");
+  }
+};
+
+export const _renderStatus = (document: any, t: any): string => {
+  if (document && document.documentNumbers && document.documentNumbers.length > 0 ||
+    document.secondDocumentNumbers && document.secondDocumentNumbers.length > 0) {
+    const firstDocuments = document.documentNumbers ? document.documentNumbers.join(', ') : '';
+    const secondDocuments = document.secondDocumentNumbers ? document.secondDocumentNumbers.join(', ') : '';
+    let result = '';
+    if (firstDocuments) {
+
+      result += `${t(`documentStatus.${document.titleDocumentNumber}.title`)}: ${firstDocuments}`;
+    }
+    if (secondDocuments) {
+      if (firstDocuments) {
+        result += `, `;
+      }
+      result += `${t(`documentStatus.${document.titleSecondDocumentNumber}.title`)}: ${secondDocuments}`;
+    }
+    return result;
+  } else {
+    return t(`documentStatus.${document.statusTitleText}`);
   }
 };
 

@@ -1,10 +1,10 @@
 import { useRecoilValue } from "recoil";
-import { DuplicateItemModal } from "@/widgets/quote/modals-widgets/duplicate-item-modal";
-import { AddNewItemModal } from "@/widgets/quote/modals-widgets/add-new-item-modal";
+import { DuplicateItemModal } from "@/widgets/quote-new/modals-widgets/duplicate-item-modal";
+import { AddNewItemModal } from "@/widgets/quote-new/modals-widgets/add-new-item-modal";
 import { ButtonsContainer } from "@/widgets/quote-new/buttons-container";
 import { BusinessNewWidget } from "@/widgets/quote-new/business-widget";
 import { ContactNewWidget } from "@/widgets/quote-new/contact-widget";
-import { QuoteForPriceTable } from "@/widgets/quote-new/quote-table";
+import { QuoteForPriceTable } from "@/widgets/quote-new/quote-table"; 
 import { WriteCommentComp } from "@/widgets/quote-new/write-comment";
 import { DateFormatterDDMMYYYY } from "@/utils/adapter";
 import { GoMakeDeleteModal } from "@/components";
@@ -16,8 +16,6 @@ import { quoteConfirmationState, quoteItemState } from "@/store";
 import { useStyle } from "./style";
 import { CancelBtnMenu } from "@/widgets/quote-new/cancel-btn-menu";
 import { SendBtnMenu } from "@/widgets/quote-new/send-btn-menu";
-import { OtherReasonModal } from "@/widgets/quote/total-price-and-vat/other-reason-modal";
-import { QuoteStatuses } from "@/widgets/quote/total-price-and-vat/enums";
 import { _renderQuoteStatus } from "@/utils/constants";
 import { IconButton } from "@mui/material";
 import { SettingQuoteMenu } from "@/widgets/quote-new/setting-quote-menu";
@@ -31,6 +29,8 @@ import { usePaymentsTable } from "@/widgets/quote-new/receipts-table/use-payment
 import { useEffect, useState } from "react";
 import { StepType, useTour } from "@reactour/tour";
 import { useGoMakeTour } from "@/hooks/use-go-make-tour";
+import { OtherReasonModal } from "@/widgets/quote-new/total-price-and-vat/other-reason-modal";
+import { QuoteStatuses } from "@/widgets/quote-new/total-price-and-vat/enums";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;

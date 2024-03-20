@@ -21,7 +21,6 @@ const BoardMissionsListWidget = () => {
     agent,
     status,
     agentsCategories,
-    getAgentCategories,
     productionStatuses,
     productIds,
     handleMultiSelectChange,
@@ -36,7 +35,6 @@ const BoardMissionsListWidget = () => {
     handleStatusChange,
     handleCustomerChange,
     checkWhatRenderArray,
-    getAllCustomersCreateQuote,
     handlePageChange,
     pagesCount,
     pageNumber,
@@ -48,8 +46,6 @@ const BoardMissionsListWidget = () => {
   } = useBoardMissions();
 
   useEffect(() => {
-    getAllCustomersCreateQuote();
-    getAgentCategories(true);
     getAllProducts();
   }, []);
 
