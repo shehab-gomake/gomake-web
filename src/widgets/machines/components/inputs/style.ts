@@ -32,7 +32,11 @@ const useStyle = () => {
         alignSelf: 'flex-end'
       },
       addColor: {
+        display: 'flex',
+        justifyContent: "flex-end",
+        alignItems: "flex-end",
         alignSelf: 'flex-end',
+        height: 85
       },
       inputContainer: {
         display: "flex",
