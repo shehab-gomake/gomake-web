@@ -43,7 +43,7 @@ const ContactMapping = ({
         }
         label={t("sales.quote.contactName")}
         onBlur={() => onBlurContactName(item)}
-        isUpdate={isUpdateContactName}
+        isUpdate={false}
         setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdateContactName}
         onInputChange={(e: any) => {
           changeItems(index, "contactName", e);
