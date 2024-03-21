@@ -44,7 +44,6 @@ const SettingsWidget = ({
     UploadProductImage,
     deleteProductSKURow
   } = useSettings({ onClickParametersTab, productState, onChangeStateProduct });
-  console.log("productState", productState)
   const defultProductSKU = allProductSKU?.find(
     (item) => item.id === productState?.productSKUId
   );
@@ -181,6 +180,7 @@ const SettingsWidget = ({
         <div style={clasess.itemOnFirstContainer}>
           <div style={clasess.labelTitleStyle}>
             {t("products.addProduct.admin.productSKU")}
+            <span style={clasess.requierdInput}>*</span>
             {
               !isUpdate && <span onClick={onClickOpenProductSKU} style={clasess.plusInput}>
                 +
@@ -211,6 +211,7 @@ const SettingsWidget = ({
         <div style={clasess.itemOnFirstContainer}>
           <div style={clasess.labelTitleStyle}>
             {t("products.addProduct.admin.pricingType")}
+            <span style={clasess.requierdInput}>*</span>
           </div>
           <div style={{ width: "100%" }}>
             {allTemplate && (
