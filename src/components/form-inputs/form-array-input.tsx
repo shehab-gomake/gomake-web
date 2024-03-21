@@ -51,7 +51,7 @@ const FormArrayInput = ({
         }
         else {
             if (name === "usersSettings.ipAddresses") {
-                alertFault("the ip address 192.168.1.1 for example");
+                alertFault(t("usersSettings.enterValidIP"));
 
             }
 
