@@ -30,6 +30,7 @@ import { ChangePasswordComponent } from "@/components/change-password/change-pas
 import { clientTypesCategoriesState } from "@/pages/customers/customer-states";
 import { ClientTypeModal } from "./components/add-client-type-modal/add-client-type-modal";
 import { SettingIcon } from "../shared-admin-customers/add-product/icons/setting";
+import {emailRegex} from "@/utils/regex";
 
 interface IProps {
   isValidCustomer?: (
@@ -71,7 +72,7 @@ const CustomerCardWidget = ({
   const { editCustomer } = useEditCustomer();
   const { updateUserPassword } = useUserProfile();
   const { t } = useTranslation();
-  const { alertRequiredFields } = useSnackBar();
+  const { alertRequiredFields , alertFault} = useSnackBar();
   const [resetPassModal, setResetPassModalModal] =
     useRecoilState<boolean>(resetPassModalState);
   const [gomakeUser, setGomakeUser] = useRecoilState<any>(gomakeUserState);
@@ -258,6 +259,9 @@ const CustomerCardWidget = ({
     );
   };
 
+
+  const validateEmail = (state : any , fieldName: string) => !!state?.[fieldName] ? emailRegex.test(state?.[fieldName]) : true;
+
   // add customer button
   const handleAddCustomer = async () => {
     const filteredContacts = contacts.filter(
@@ -267,8 +271,7 @@ const CustomerCardWidget = ({
       (address) => !isNameIndexOnly(address)
     );
     const filteredUsers = users.filter((user) => !isNameIndexOnly(user));
-    const cardTypeId =
-      typeClient === "C" ? CLIENT_TYPE_Id.CUSTOMER : CLIENT_TYPE_Id.SUPPLIER;
+    const cardTypeId = typeClient === "C" ? CLIENT_TYPE_Id.CUSTOMER : CLIENT_TYPE_Id.SUPPLIER;
     const updatedCustomer = {
       ...customer,
       contacts: filteredContacts,
@@ -276,6 +279,12 @@ const CustomerCardWidget = ({
       users: filteredUsers,
       cardTypeId: cardTypeId,
     };
+    // Check if email is valid
+    const isEmailValid = validateEmail(customer,"mail");
+    if (!isEmailValid) {
+      alertFault("customers.invalidEmail");
+      return;
+    }
     setCustomer(updatedCustomer);
     if (
       isValidCustomer(
@@ -294,6 +303,7 @@ const CustomerCardWidget = ({
     }
   };
 
+
   // edit customer button
   const handleEditCustomer = () => {
     const filteredContacts = contacts.filter(
@@ -309,6 +319,12 @@ const CustomerCardWidget = ({
       addresses: filteredAddresses,
       users: filteredUsers,
     };
+    // Check if email is valid
+    const isEmailValid = validateEmail(customer,"mail");
+    if (!isEmailValid) {
+      alertFault("customers.invalidEmail");
+      return;
+    }
     setCustomer(updatedCustomer);
     if (
       isValidCustomer(
