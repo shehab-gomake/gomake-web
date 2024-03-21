@@ -1,16 +1,13 @@
 import React from "react";
-
 import { MuiColorInput } from "mui-color-input";
 import { useTranslation } from "react-i18next";
-
 import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
-
 import { AddProductSkuModal } from "./modals/add-contact-modal";
 import { UploadImgProduct } from "./upload-widget";
 import { EProductClient } from "./settings-data";
 import { useSettings } from "./use-settings";
 import { useStyle } from "./style";
-import { CloseCircleIcon } from "@/components/icons/icons";
+import FormatColorResetIcon from '@mui/icons-material/FormatColorReset';
 
 const SettingsWidget = ({
   onClickParametersTab,
@@ -329,7 +326,7 @@ const SettingsWidget = ({
             />
             {productState?.noteColor &&
               <div style={{ cursor: "pointer" }} onClick={() => onChangeStateProduct("noteColor", null)}>
-                <CloseCircleIcon />
+                <FormatColorResetIcon/>
               </div>
             }
           </div>
@@ -351,7 +348,7 @@ const SettingsWidget = ({
             />
             {productState?.textColor &&
               <div style={{ cursor: "pointer" }} onClick={() => onChangeStateProduct("textColor", null)}>
-                <CloseCircleIcon />
+                <FormatColorResetIcon />
               </div>
             }
           </div>
