@@ -54,3 +54,15 @@ export function detectLanguage(text) {
     return 'Arabic';
   }
 }
+
+export const isValidPhoneNumber = (phoneNumber) => {
+  // Regular expression for a valid phone number (example: +1234567890)
+  const phoneRegex = /^\+\d{10,}$/;
+  return phoneRegex.test(phoneNumber);
+};
+
+export const isValidEmail = (email) => {
+  // Regular expression for a valid email address
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+};

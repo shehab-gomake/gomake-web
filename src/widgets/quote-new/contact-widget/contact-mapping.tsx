@@ -5,6 +5,8 @@ import { PlusNewIcon, WastebasketNew2 } from "@/icons";
 import { IconButton } from "@mui/material";
 import { useState } from "react";
 import { PhoneInputUpdatedValues } from "../phone-input-updated-values";
+import { useSnackBar } from "@/hooks";
+import { isValidEmail, isValidPhoneNumber } from "@/utils/helpers";
 
 const ContactMapping = ({
   item,
@@ -18,22 +20,44 @@ const ContactMapping = ({
   isQuoteConfirmation = false,
 }) => {
   const { classes } = useStyle();
+  const { alertFault } = useSnackBar();
   const { t } = useTranslation();
   const [isUpdateContactName, setIsUpdateContactName] = useState(null);
   const [isUpdateContactEmail, setIsUpdateContactEmail] = useState(null);
   const [isUpdateContactMobile, setIsUpdateContactMobile] = useState(null);
   const [isConfirmation, setIsConfirmation] = useState(null);
+
+
   const onBlurContactName = async (item) => {
-    updateClientContact(item);
-    setIsUpdateContactName(null);
+    if (!item.contactName) {
+      alertFault("login.thisFieldRequired")
+    }
+    else {
+      updateClientContact(item);
+      setIsUpdateContactName(null);
+    }
+
   };
   const onBlurContactEmail = async (item) => {
-    updateClientContact(item);
-    setIsUpdateContactEmail(null);
+    if (!item.contactMail || !isValidEmail(item.contactMail)) {
+      alertFault("Invalid email address format or missing contact email")
+    }
+    else {
+      updateClientContact(item);
+      setIsUpdateContactEmail(null);
+    }
+
   };
   const onBlurContactMobile = async (item) => {
-    updateClientContact(item);
-    setIsUpdateContactMobile(null);
+    if (!item.contactPhone || !isValidPhoneNumber(item.contactPhone)) {
+      alertFault("Phone number must be in the format +1234567890 and have a minimum length of 10 digits")
+    }
+    else {
+      updateClientContact(item);
+      setIsUpdateContactMobile(null);
+    }
+
+
   };
   return (
     <div style={classes.businessContainerStyle}>
@@ -43,7 +67,7 @@ const ContactMapping = ({
         }
         label={t("sales.quote.contactName")}
         onBlur={() => onBlurContactName(item)}
-        isUpdate={false}
+        isUpdate={isUpdateContactName}
         setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdateContactName}
         onInputChange={(e: any) => {
           changeItems(index, "contactName", e);
