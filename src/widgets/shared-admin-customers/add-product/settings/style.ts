@@ -41,7 +41,7 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "flex-start",
         gap: 10,
-        // width: "180px",
+        width: "180px",
         minWidth: 180,
         position: "relative" as "relative",
       },
@@ -68,7 +68,8 @@ const useStyle = () => {
         alignSelf: "flex-end",
       },
       dropDownListStyle: {
-        width: "100%",
+        //width:"100%"
+        width: "180px",
         borderRadius: 4,
         height: 40,
         backgroundColor: "#FFF",
