@@ -135,7 +135,7 @@ const MoreMenuWidget = ({ quote, documentType, onClickOpenModal, onClickPdf, onC
         </MenuItem>
       }
       {
-        documentType === DOCUMENT_TYPE.purchaseOrder && <MenuItem onClick={() => navigate(`/purchaseInvoice?isNewCreation=true&documentToDuplicateId=${quote?.id}`)}>
+        documentType === DOCUMENT_TYPE.purchaseOrder && <MenuItem onClick={() => navigate(`/purchaseInvoice?isNewCreation=true&documentId=${quote?.id}`)}>
           <div style={classes.menuRowStyle}>
             <TickIcon />
             <div style={classes.rowTextStyle}>{t("sales.quote.closeAsPurchaseInvoice")}</div>

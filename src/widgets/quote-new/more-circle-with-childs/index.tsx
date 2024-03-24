@@ -3,9 +3,11 @@ import { MoreCircleIcon } from "@/icons";
 import { GoMakeMenu } from "@/components";
 import { useMoreCircleWithChilds } from "./use-more-circle";
 import { useStyle } from "./style";
+import { useTranslation } from "react-i18next";
 
 const MoreMenuWidgetWithChilds = ({ quoteItem, onClickDeleteQouteItem }) => {
-  const { clasess } = useStyle();
+  const { classes } = useStyle();
+  const { t } = useTranslation();
   const { open, anchorEl, menuList, handleClose, handleClick } =
     useMoreCircleWithChilds({
       quoteItem,
@@ -21,15 +23,15 @@ const MoreMenuWidgetWithChilds = ({ quoteItem, onClickDeleteQouteItem }) => {
           return (
             <>
               <MenuItem
-                style={clasess.menuItemContainer}
+                style={classes.menuItemContainer}
                 key={index}
                 onClick={item?.onclick}
               >
                 {item?.icon}
-                <div style={clasess.menuTitleStyle}>{item?.name}</div>
+                <div style={classes.menuTitleStyle}>{t(`sales.quote.${item?.name}`)}</div>
               </MenuItem>
               {index != menuList?.length - 1 ? (
-                <div style={clasess.lineStyle} />
+                <div style={classes.lineStyle} />
               ) : null}
             </>
           );

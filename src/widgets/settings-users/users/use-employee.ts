@@ -22,7 +22,8 @@ import {
 
 
 const useEmployee = () => {
-    const {alertFaultUpdate, alertSuccessUpdate, alertSuccessAdded, alertFaultAdded} = useSnackBar();
+
+    const {alertFaultUpdate, alertSuccessUpdate, alertSuccessAdded, alertFaultAdded,alertFault} = useSnackBar();
     const [employee, setEmployeeState] = useRecoilState<IUserData>(employeeState);
     const [users, setUsers] = useRecoilState<IUser[]>(usersArrayState);
     const [showInActiveEmployees, setShowInActiveEmployees] = useState<boolean>(false);
@@ -107,6 +108,9 @@ const useEmployee = () => {
             }
            await addNewEmployee(callApi, callback, employee);
         }
+        else {
+            alertFault("products.offsetPrice.admin.errorReq");
+        }
     }
     const onUpdateEmployee = async () => {
         if (isValidEditEmployee() && validateEmail()) {
@@ -123,6 +127,9 @@ const useEmployee = () => {
             }
 
             await updateEmployee(callApi, callBack, employee)
+        }
+        else {
+            alertFault("products.offsetPrice.admin.errorReq");
         }
     }
 

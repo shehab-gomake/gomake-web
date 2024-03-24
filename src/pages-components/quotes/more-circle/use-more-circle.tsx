@@ -5,6 +5,8 @@ import { ConvertIcon } from "./icons/convert";
 import { EditingIcon } from "./icons/editing";
 import { PDFIcon } from "./icons/pdf";
 import { TickIcon } from "@/icons";
+import { DuplicateIcon } from "@/components/icons/icons";
+
 const useMoreCircle = () => {
   const { user } = useCustomer();
   const { navigate } = useGomakeRouter();
@@ -43,13 +45,13 @@ const useMoreCircle = () => {
       {
         condition: documentType === DOCUMENT_TYPE.order || documentType === DOCUMENT_TYPE.quote,
         onClick: () => onClickDuplicate(quote?.id),
-        icon: <ConvertIcon />,
+        icon: <DuplicateIcon />, 
         name: t("sales.quote.duplicate")
       },
       {
         condition: showNewDuplicate,
         onClick: () => navigate(`/${documentPath}?isNewCreation=true&documentToDuplicateId=${quote?.id}`),
-        icon: <ConvertIcon />,
+        icon: <DuplicateIcon />,
         name: t("sales.quote.duplicate")
       },
       {
@@ -90,7 +92,7 @@ const useMoreCircle = () => {
       },
       {
         condition: documentType === DOCUMENT_TYPE.purchaseOrder && quote?.isCanClose,
-        onClick: () => navigate(`/purchaseInvoice?isNewCreation=true&documentToDuplicateId=${quote?.id}`),
+        onClick: () => navigate(`/purchaseInvoice?isNewCreation=true&orderId=${quote?.id}`),
         icon: <TickIcon />,
         name: t("sales.quote.closeAsPurchaseInvoice")
       }
