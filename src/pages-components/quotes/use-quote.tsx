@@ -720,7 +720,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
                   : classes.closeBtnStyle
               }
             >
-              {_renderQuoteStatus(document?.documentStatus, document, t)}
+              {_renderStatus(document, t)}
             </h2>
           </div>,
           document?.notes,

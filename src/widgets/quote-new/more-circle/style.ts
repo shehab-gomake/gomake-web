@@ -4,7 +4,7 @@ import { useMemo } from "react";
 
 const useStyle = () => {
   const { primaryColor } = useGomakeTheme();
-  const clasess = useMemo(() => {
+  const classes = useMemo(() => {
     return {
       insideStyle: { width: "85%" },
       menuItemContainer: {
@@ -27,7 +27,7 @@ const useStyle = () => {
     };
   }, []);
   return {
-    clasess,
+    classes,
   };
 };
 export { useStyle };

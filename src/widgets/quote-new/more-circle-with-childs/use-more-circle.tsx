@@ -14,12 +14,12 @@ const useMoreCircleWithChilds = ({ quoteItem, onClickDeleteQouteItem }) => {
 
   const menuList = [
     {
-      name: "Analysis",
+      name: "analysis",
       icon: <AnalysisIcon />,
       onclick: () => null,
-    },
+    }, 
     {
-      name: "Delete",
+      name: "delete",
       icon: <DeleteMenuIcon />,
       onclick: () => onClickDeleteQouteItem(quoteItem),
     },
