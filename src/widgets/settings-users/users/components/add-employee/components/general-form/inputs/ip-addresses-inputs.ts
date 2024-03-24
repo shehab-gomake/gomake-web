@@ -15,7 +15,7 @@ const ipAddressesInputs = (state: IUserData)  => {
                     label: "usersSettings.ip",
                     type: "text",
                     placeholder: "usersSettings.ip",
-                    required: true,
+                    required: false,
                     parameterKey: "ip",
                     options: [],
                     readonly: true,
