@@ -5,10 +5,11 @@ import { Stack } from "react-bootstrap";
 
 const CompanyReportWidget = () => {
     const {AllReport , tableHeaders , t} = useCompanyReport();
+    console.log(AllReport)
    
     return(
         <>
-        <Stack gap={20}>   
+        <div style={{margin:20}} >   
             <PrimaryTable
                 stickyFirstCol={false}
                 stickyHeader={true}
@@ -16,8 +17,7 @@ const CompanyReportWidget = () => {
                 rows={AllReport}
                 headers={tableHeaders}
                 />
-
-        </Stack>
+        </div>
         </>
     )
 

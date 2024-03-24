@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import {useTranslation} from "react-i18next";
-import {getAllCompanyReport} from '@/services/hooks';
 import { useGomakeAxios } from "@/hooks";
+import { getAllDataPrintHousesReports } from "@/services/api-service/company-report/get-print-houses-report";
 
 export const useCompanyReport = () => {
     const { t } = useTranslation();
@@ -11,8 +11,8 @@ export const useCompanyReport = () => {
         t("companyReports.PhoneNumber"),
         t("companyReports.Email"),
         t("companyReports.StartingDate"),
-        t("companyReports.LastUpdateIn30Days"),
-        t("companyReports.Users"),
+        // t("companyReports.LastUpdateIn30Days"),
+        // t("companyReports.Users"),
         t("companyReports.Quote"),
         t("companyReports.QuoteItems"),
         t("companyReports.Orders"),
@@ -20,16 +20,32 @@ export const useCompanyReport = () => {
         t("companyReports.EstimationSuccessRate"),
     ];
  
-    const [AllReport, setAllReport] = useState<any>();
+    const [AllReport, setAllReport] = useState([]);
     const { callApi } = useGomakeAxios();
     const getReport = useCallback(async () => {
-        const data = await getAllCompanyReport(callApi);
-        setAllReport(data);
+        const callBack = (res) => {
+            if (res?.success) {
+                const formattedData = res.data.map((item) => [
+                    item?.printHouseName,
+                    item?.domain,
+                    item?.phone,
+                    item?.mail,
+                    item.creationDate ? new Date(item.creationDate).toLocaleDateString() : "N/A",
+                    item?.quotesCount,
+                    item?.orderCount,
+                    item?.quoteItemsCount,
+                    item?.orderItemsCount,
+                    item?.successRate
+            ]);
+                setAllReport(formattedData);
+            }
+        }
+       await getAllDataPrintHousesReports(callApi, callBack).then();
     }, [callApi]);
 
     useEffect(() => {
-        getReport();
-    }, [getReport]);
+        getReport()
+    }, [])
 
 
   return {
