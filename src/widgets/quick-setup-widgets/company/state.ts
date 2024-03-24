@@ -5,6 +5,7 @@ export interface ICompanyDataState {
     domain: string;
     systemLanguage: string;
     systemCurrency: string;
+    supportedLanguage:boolean;
 
 }
 export const signupCompanyState = atom<ICompanyDataState>({
@@ -13,6 +14,7 @@ export const signupCompanyState = atom<ICompanyDataState>({
         domain: '',
         systemLanguage: '',
         systemCurrency: '',
+        supportedLanguage:false,
     },
     key: 'signupCompanyState'
 })
