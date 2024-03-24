@@ -1,7 +1,9 @@
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {useTranslation} from "react-i18next";
+import {getAllCompanyReport} from '@/services/hooks';
+import { useGomakeAxios } from "@/hooks";
 
-const useCompanyReport = () => {
+export const useCompanyReport = () => {
     const { t } = useTranslation();
     const tableHeaders =  [
         t("companyReports.companyName"),
@@ -19,6 +21,15 @@ const useCompanyReport = () => {
     ];
  
     const [AllReport, setAllReport] = useState<any>();
+    const { callApi } = useGomakeAxios();
+    const getReport = useCallback(async () => {
+        const data = await getAllCompanyReport(callApi);
+        setAllReport(data);
+    }, [callApi]);
+
+    useEffect(() => {
+        getReport();
+    }, [getReport]);
 
 
   return {
@@ -29,4 +40,4 @@ const useCompanyReport = () => {
 
 };
 
-export { useCompanyReport };
+
