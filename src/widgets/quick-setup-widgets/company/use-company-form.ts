@@ -9,6 +9,8 @@ import {createNewCompanyApi} from "@/services/api-service/quick-setup/company/co
 import {useRouter} from "next/router";
 import {clearStorage} from "@/services/storage-data";
 import {domainRegex} from "@/utils/regex";
+import {Lan} from "@mui/icons-material";
+
 
 const useCompanyForm = () => {
   const [state, setState] = useRecoilState(signupCompanyState);
@@ -16,7 +18,7 @@ const useCompanyForm = () => {
   const {callApi} = useGomakeAxios();
   const languages = useRecoilValue(languageOptionsState);
   const [loading, setLoading] = useState<boolean>(false);
-  const {alertFaultAdded} = useSnackBar();
+  const {alertFaultAdded, alertFault} = useSnackBar();
   const {push} = useRouter();
   const getCurrencies = async () => {
     const callBack = (res) => {
@@ -37,6 +39,10 @@ const useCompanyForm = () => {
       alertFaultAdded();
       return
     }
+    const selectedLanguage = languages.find(lang => lang.value === state.systemLanguage);
+    if (!selectedLanguage || !selectedLanguage.supported) {
+      alertFault(`"${selectedLanguage.text}" not supported yet, system remains in English.Thank you for your understanding. `);
+    }
     setLoading(!loading);
     const callBack = (res) => {
       if (res.success) {
@@ -48,6 +54,14 @@ const useCompanyForm = () => {
     }
     await createNewCompanyApi(callApi, callBack, state);
   }
+  useEffect(() => {
+    const supportedLanguages = languages.filter(lang => lang.supported);
+    const selectedLanguage = supportedLanguages.find(lang => lang.value === state.systemLanguage);
+    setState((prevState) => ({
+      ...prevState,
+      supportedLanguage: !!selectedLanguage,
+    }));
+  }, [languages, state.systemLanguage, setState]);
   useEffect(() => {
     clearStorage();
     getCurrencies().then()

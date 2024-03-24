@@ -1,15 +1,13 @@
 import React from "react";
-
 import { MuiColorInput } from "mui-color-input";
 import { useTranslation } from "react-i18next";
-
 import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
-
 import { AddProductSkuModal } from "./modals/add-contact-modal";
 import { UploadImgProduct } from "./upload-widget";
 import { EProductClient } from "./settings-data";
 import { useSettings } from "./use-settings";
 import { useStyle } from "./style";
+import FormatColorResetIcon from '@mui/icons-material/FormatColorReset';
 
 const SettingsWidget = ({
   onClickParametersTab,
@@ -179,6 +177,7 @@ const SettingsWidget = ({
         <div style={clasess.itemOnFirstContainer}>
           <div style={clasess.labelTitleStyle}>
             {t("products.addProduct.admin.productSKU")}
+            <span style={clasess.requierdInput}>*</span>
             {
               !isUpdate && <span onClick={onClickOpenProductSKU} style={clasess.plusInput}>
                 +
@@ -209,6 +208,7 @@ const SettingsWidget = ({
         <div style={clasess.itemOnFirstContainer}>
           <div style={clasess.labelTitleStyle}>
             {t("products.addProduct.admin.pricingType")}
+            <span style={clasess.requierdInput}>*</span>
           </div>
           <div style={{ width: "100%" }}>
             {allTemplate && (
@@ -324,6 +324,11 @@ const SettingsWidget = ({
               }}
               format="hex"
             />
+            {productState?.noteColor &&
+              <div style={{ cursor: "pointer" }} onClick={() => onChangeStateProduct("noteColor", null)}>
+                <FormatColorResetIcon/>
+              </div>
+            }
           </div>
         </div>
         <div style={clasess.itemOnFirstContainer}>
@@ -341,6 +346,11 @@ const SettingsWidget = ({
               }}
               format="hex"
             />
+            {productState?.textColor &&
+              <div style={{ cursor: "pointer" }} onClick={() => onChangeStateProduct("textColor", null)}>
+                <FormatColorResetIcon />
+              </div>
+            }
           </div>
         </div>
       </div>
