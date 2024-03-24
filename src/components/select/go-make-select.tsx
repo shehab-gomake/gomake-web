@@ -5,10 +5,10 @@ import {MenuItem, Select, SelectChangeEvent, SelectProps} from "@mui/material";
 import {ReactNode} from "react";
 import {EWorkSource} from "@/widgets/product-pricing-widget/enums";
 
-interface ISelectProps extends SelectProps{
+/*interface ISelectProps extends SelectProps{
     options: { value: EWorkSource, label: string }[];
     onSelectWorkSource: (source: EWorkSource) => void
-}
+}*/
 
 const StyledInput = styled(InputBase)(({theme}) => {
     return {
@@ -34,7 +34,7 @@ const StyledInput = styled(InputBase)(({theme}) => {
         },
     }
 });
-const GoMakeSelect = ({options, disabled, onSelectWorkSource, value}: ISelectProps) => {
+const GoMakeSelect = ({options, disabled, onSelectWorkSource, value}: any) => {
     const handleChange = (event: SelectChangeEvent<EWorkSource>) => {
         onSelectWorkSource(event.target.value as EWorkSource);
     };
