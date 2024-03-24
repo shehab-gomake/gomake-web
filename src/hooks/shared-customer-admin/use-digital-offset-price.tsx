@@ -723,6 +723,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     unitType: parameter?.unitType,
                   });
                 }
+                processRelatedParameters2(parameter, subSection, section, productTemplate, subProductsArray);
+
               });
 
             if (temp.length > 0) {
@@ -737,9 +739,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 typeMap[subSection.type].parameters.push(...temp);
               }
             }
+
           });
         });
-
+        setProductTemplate(productTemplate)
         setSubProducts(subProductsArray);
         setUnderParameterIds(underParameterIdsArray);
         setIsSetTemplete(true);
@@ -948,6 +951,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   relatedParameter.actionIndex = parameter.actionIndex;
                 });
               }
+
             });
         });
       });
@@ -2007,7 +2011,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           console.log("resresres", res)
           const updatedTemplate = updateIsHidden(res?.data, subProducts)
           setDefaultProductTemplate(updatedTemplate);
-          //initProduct(res?.data);
+          //initProduct(updatedTemplate, materials);
           initQuoteItemProduct(updatedTemplate, materials);
         } else {
           alertFaultUpdate();
@@ -2030,7 +2034,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     ) {
       //setItemParmetersValues(quoteItemProduct.productItemValue.itemParmetersValues);
       const quoteItemSubProducts = [];
-      quoteItemProduct.productItemValue.itemParmetersValues.forEach(
+      /*quoteItemProduct.productItemValue.itemParmetersValues.forEach(
         (itemParmetersValue) => {
           const section = quoteItemProduct?.sections?.find(
             (x) => x.id === itemParmetersValue?.sectionId
@@ -2093,7 +2097,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             quoteItemSubProducts.push(newSubProduct);
           }
         }
-      );
+      );*/
       setCurrentProductItemValueTotalPrice(
         quoteItemProduct.docmentItem.finalPrice
       );
@@ -2103,8 +2107,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       );
       setWorkFlows(quoteItemProduct.productItemValue.workFlows);
       setJobActions(quoteItemProduct.productItemValue.actions);
-      setSubProducts(quoteItemSubProducts);
-      setSubProductsCopy(quoteItemSubProducts);
+      //setSubProducts(quoteItemSubProducts);
+      //setSubProductsCopy(quoteItemSubProducts);
       setCalculationProgress({
         totalWorkFlowsCount: 0,
         currentWorkFlowsCount: 0,
