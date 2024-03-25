@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import {
   GoMakeModal,
-  GomakePrimaryButton, 
+  GomakePrimaryButton,
   GomakeTextInput,
 } from "@/components";
 
@@ -24,7 +24,7 @@ const DuplicateItemModal = ({
         insideStyle={clasess.insideStyle}
       >
         <div style={clasess.mainContainer}>
-          <div style={{ width: "40%", marginTop: 15 }}>
+          <div style={{ width: "100%", marginTop: 15 }}>
             <GomakeTextInput
               style={clasess.textInputStyle}
               placeholder={t("sales.quote.item")}

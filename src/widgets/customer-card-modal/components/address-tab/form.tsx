@@ -31,7 +31,7 @@ interface IProps {
 }
 
 const AddressForm = ({ address, onDelete, setAddress }: IProps) => {
-  const { clasess } = useStyle();
+  const { classes } = useStyle();
   const [cities, setCities] = useState([]);
   const [cityStreets, setCityStreets] = useState([]);
 
@@ -68,7 +68,7 @@ const AddressForm = ({ address, onDelete, setAddress }: IProps) => {
 
   return (
     <div>
-      <div style={clasess.customerInfoStyle}>
+      <div style={classes.customerInfoStyle}>
         {cities &&
           cities.length > 0 &&
           cityStreets &&
@@ -95,7 +95,7 @@ const AddressForm = ({ address, onDelete, setAddress }: IProps) => {
           onClick={() => onDelete(address.index)}
         >
           <RemoveIcon></RemoveIcon>
-          <button style={clasess.buttonsStyle}>
+          <button style={classes.buttonsStyle}>
             {t("customers.buttons.remove")}
           </button>
         </a>
