@@ -267,12 +267,15 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     setCurrentSignalRConnectionId(connectionId)
   }, [connectionId])
   useEffect(() => {
-    setCalculationExceptionsLogs(calculationExceptionsLogs);
-    setCalculationProgress({
-      totalWorkFlowsCount: 0,
-      currentWorkFlowsCount: 0,
-    });
-    setLoading(false)
+    if(calculationExceptionsLogs){
+      setCalculationExceptionsLogs(calculationExceptionsLogs);
+      setCalculationProgress({
+        totalWorkFlowsCount: 0,
+        currentWorkFlowsCount: 0,
+      });
+      setLoading(false)
+    }
+    
   }, [calculationExceptionsLogs]);
   useEffect(() => {
     if (updatedSelectedWorkFlow) {
@@ -2150,6 +2153,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     });
     let checkParameter = validateParameters(isRequiredParameters);
     if (!!checkParameter) {
+      
       setLoading(true);
       setCurrentCalculationSessionId(null);
       const newRequestAbortController = new AbortController();
@@ -2178,7 +2182,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         },
         false,
         newRequestAbortController
-      ).catch(e => setLoading(false));
+      )
       if (res?.status === 500) {
         setCalculationProgress({
           totalWorkFlowsCount: 0,
