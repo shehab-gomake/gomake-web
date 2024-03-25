@@ -60,6 +60,12 @@ const useStyle = ({ headerHeight }) => {
         justifyContent: "center",
         alignItems: "center",
       },
+      checkBoxContainer: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "flex-start",
+        alignItems: "center"
+      }
     };
   }, []);
   return {

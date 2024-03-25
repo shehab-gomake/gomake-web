@@ -59,11 +59,11 @@ const useMoreCircle = ({
       icon: <DuplicateWithDifferentMenuIcon />,
       onclick: () => onClickDuplicateWithDifferentQTY(quoteItem),
     },
-    !router.query.isNewCreation && {
-      name: "negotiateRequest",
-      icon: <NegotiateRequestIcon />,
-      // onclick: () => onOpenNegotiateRequest(),
-    },
+    // !router.query.isNewCreation && {
+    //   name: "negotiateRequest",
+    //   icon: <NegotiateRequestIcon />,
+    //   // onclick: () => onOpenNegotiateRequest(),
+    // },
     !router.query.isNewCreation && quoteItem.productType === 0 && {
       name: "analysis",
       icon: <AnalysisIcon />,

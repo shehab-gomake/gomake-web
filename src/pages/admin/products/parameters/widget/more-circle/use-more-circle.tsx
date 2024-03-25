@@ -32,11 +32,11 @@ const useMoreCircle = () => {
       icon: <DuplicateWithDifferentMenuIcon />,
       onclick: () => null,
     },
-    {
-      name: "Negotiate request",
-      icon: <NegotiateRequestIcon />,
-      onclick: () => null,
-    },
+    // {
+    //   name: "Negotiate request",
+    //   icon: <NegotiateRequestIcon />,
+    //   onclick: () => null,
+    // },
     {
       name: "Analysis",
       icon: <AnalysisIcon />,
