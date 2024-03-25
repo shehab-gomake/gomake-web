@@ -30,6 +30,7 @@ import { ChangePasswordComponent } from "@/components/change-password/change-pas
 import { clientTypesCategoriesState } from "@/pages/customers/customer-states";
 import { ClientTypeModal } from "./components/add-client-type-modal/add-client-type-modal";
 import { SettingIcon } from "../shared-admin-customers/add-product/icons/setting";
+import { emailRegex } from "@/utils/regex";
 
 interface IProps {
   isValidCustomer?: (
@@ -71,10 +72,22 @@ const CustomerCardWidget = ({
   const { editCustomer } = useEditCustomer();
   const { updateUserPassword } = useUserProfile();
   const { t } = useTranslation();
-  const { alertRequiredFields } = useSnackBar();
+  const { alertRequiredFields, alertFault } = useSnackBar();
   const [resetPassModal, setResetPassModalModal] =
     useRecoilState<boolean>(resetPassModalState);
   const [gomakeUser, setGomakeUser] = useRecoilState<any>(gomakeUserState);
+  const { classes } = useStyle();
+  const [selectedTab, setSelectedTab] = useState(0);
+  const [contacts, setContacts] = useState(
+    customer && customer.contacts ? customer.contacts : []
+  );
+  const [addresses, setAddresses] = useState(
+    customer && customer.addresses ? customer.addresses : []
+  );
+  const [users, setUsers] = useState(
+    customer && customer.users ? customer.users : []
+  );
+  const clientTypesCategories = useRecoilValue(clientTypesCategoriesState);
 
   const theme = createMuiTheme({
     palette: {
@@ -101,23 +114,12 @@ const CustomerCardWidget = ({
     );
   };
 
-  const { classes } = useStyle();
-  const [selectedTab, setSelectedTab] = useState(0);
-  const [contacts, setContacts] = useState(
-    customer && customer.contacts ? customer.contacts : []
-  );
-  const [addresses, setAddresses] = useState(
-    customer && customer.addresses ? customer.addresses : []
-  );
-  const [users, setUsers] = useState(
-    customer && customer.users ? customer.users : []
-  );
-  const clientTypesCategories = useRecoilValue(clientTypesCategoriesState);
+
   const clientTypeLabel = typeClient === "C"
     ? t("customers.modal.clientType")
     : t("suppliers.supplierType");
 
-    const clientTypeId = typeClient === "C"
+  const clientTypeId = typeClient === "C"
     ? CLIENT_TYPE_Id.CUSTOMER
     : CLIENT_TYPE_Id.SUPPLIER;
 
@@ -258,6 +260,9 @@ const CustomerCardWidget = ({
     );
   };
 
+
+  const validateEmail = (state: any, fieldName: string) => !!state?.[fieldName] ? emailRegex.test(state?.[fieldName]) : true;
+
   // add customer button
   const handleAddCustomer = async () => {
     const filteredContacts = contacts.filter(
@@ -267,8 +272,7 @@ const CustomerCardWidget = ({
       (address) => !isNameIndexOnly(address)
     );
     const filteredUsers = users.filter((user) => !isNameIndexOnly(user));
-    const cardTypeId =
-      typeClient === "C" ? CLIENT_TYPE_Id.CUSTOMER : CLIENT_TYPE_Id.SUPPLIER;
+    const cardTypeId = typeClient === "C" ? CLIENT_TYPE_Id.CUSTOMER : CLIENT_TYPE_Id.SUPPLIER;
     const updatedCustomer = {
       ...customer,
       contacts: filteredContacts,
@@ -276,6 +280,19 @@ const CustomerCardWidget = ({
       users: filteredUsers,
       cardTypeId: cardTypeId,
     };
+
+    // Check if email is valid
+    const areEmailsValid = filteredUsers.every(user => validateEmail(user, "email"));
+    if (!areEmailsValid) {
+      alertFault("customers.invalidEmail");
+      return;
+    }
+
+    const isEmailValid = validateEmail(customer, "mail");
+    if (!isEmailValid) {
+      alertFault("customers.invalidEmail");
+      return;
+    }
     setCustomer(updatedCustomer);
     if (
       isValidCustomer(
@@ -294,6 +311,7 @@ const CustomerCardWidget = ({
     }
   };
 
+
   // edit customer button
   const handleEditCustomer = () => {
     const filteredContacts = contacts.filter(
@@ -309,6 +327,20 @@ const CustomerCardWidget = ({
       addresses: filteredAddresses,
       users: filteredUsers,
     };
+
+    // Check if email is valid
+    const areEmailsValid = filteredUsers.every(user => validateEmail(user, "email"));
+    if (!areEmailsValid) {
+      alertFault("customers.invalidEmail");
+      return;
+    }
+
+    const isClientEmailValid = validateEmail(customer, "mail");
+    if (!isClientEmailValid) {
+      alertFault("customers.invalidEmail");
+      return;
+    }
+
     setCustomer(updatedCustomer);
     if (
       isValidCustomer(
@@ -408,7 +440,15 @@ const CustomerCardWidget = ({
           ))}
           <div style={classes.itemOnFirstContainer}>
             <div style={classes.labelTitleStyle}>
-              {clientTypeLabel}
+              <div style={classes.inputLbl}>
+                <Stack
+                  direction={"row"}
+                  gap={"7px"}
+                  alignItems={"flex-end"}
+                  padding={"0 5px"}
+                >{clientTypeLabel}</Stack>
+                <span style={classes.required}>*</span>
+              </div>
               <span onClick={onClickOpenClientType} style={classes.plusInput}>
                 <SettingIcon
                   width={20}
@@ -608,7 +648,7 @@ const CustomerCardWidget = ({
                   }}
                   onClick={addEmptyAddress}
                 >
-                  <AddIcon></AddIcon>
+                  <AddIcon />
                   <button style={classes.buttonsStyle}>
                     {t("customers.buttons.newAddress")}
                   </button>
@@ -702,11 +742,12 @@ const CustomerCardWidget = ({
         openModal={isClientType}
         onClose={onClickCloseClientType}
         modalTitle={typeClient === "C"
-        ? t("customers.customerTypes")
-        : t("suppliers.supplierTypes")}
+          ? t("customers.customerTypes")
+          : t("suppliers.supplierTypes")}
         clientTypeId={clientTypeId}
       />
     </GoMakeModal>
   );
 };
+
 export { CustomerCardWidget };
