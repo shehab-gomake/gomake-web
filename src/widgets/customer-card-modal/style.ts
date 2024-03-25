@@ -4,7 +4,7 @@ import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 
 const useStyle = () => {
-  const {theme, primaryColor , secondColor} = useGomakeTheme();
+  const {theme, primaryColor , secondColor , errorColor} = useGomakeTheme();
   const classes = useMemo(() => {
     return {
       buttonStyle: {
@@ -199,6 +199,17 @@ const useStyle = () => {
         gap: 10,
         minWidth: 180,
         position: "relative" as "relative",
+      },
+      required: {
+        ...FONT_FAMILY.Lexend(500, 14),
+        color: errorColor(500),
+      },
+      inputLbl: {
+        color: primaryColor(900),
+        ...FONT_FAMILY.Lexend(600, 14),
+        display: "flex",
+        //  justifyContent: 'space-between',
+        alignItems: "flex-end",
       },
     };
   }, [theme]);

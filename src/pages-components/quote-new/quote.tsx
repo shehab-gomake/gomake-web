@@ -4,7 +4,7 @@ import { AddNewItemModal } from "@/widgets/quote-new/modals-widgets/add-new-item
 import { ButtonsContainer } from "@/widgets/quote-new/buttons-container";
 import { BusinessNewWidget } from "@/widgets/quote-new/business-widget";
 import { ContactNewWidget } from "@/widgets/quote-new/contact-widget";
-import { QuoteForPriceTable } from "@/widgets/quote-new/quote-table"; 
+import { QuoteForPriceTable } from "@/widgets/quote-new/quote-table";
 import { WriteCommentComp } from "@/widgets/quote-new/write-comment";
 import { DateFormatterDDMMYYYY } from "@/utils/adapter";
 import { GoMakeDeleteModal } from "@/components";
@@ -169,6 +169,7 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
     handleSaveBtnClickForDocument,
     onCloseCopyFromDeliveryNote,
     onOpenCopyFromDeliveryNote,
+    getAllClientContacts,
     openCopyFromDeliveryNoteModal
   } = useQuoteNew({ docType: documentType, isQuoteConfirmation: isQuoteConfirmation });
   const { resetReceiptState } = usePaymentsTable();
@@ -209,7 +210,7 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
     },
   ]
   const [docNumber, setDocNumber] = useState(quoteState?.number)
-  
+
   useEffect(() => {
     setDocNumber(quoteState?.number)
   }, [quoteState?.number, router, quoteState, isQuoteConfirmation])
@@ -329,6 +330,9 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
                   onClickDeleteContact={onClickDeleteContact}
                   selectedContact={selectedContact}
                   isQuoteConfirmation={isQuoteConfirmation}
+                  documentType={documentType}
+                  getQuote={getQuote}
+                  getAllClientContacts={getAllClientContacts}
                 />
               </div>
             </div>

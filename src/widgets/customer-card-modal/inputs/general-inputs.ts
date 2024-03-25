@@ -1,3 +1,5 @@
+import {emailRegex} from "@/utils/regex";
+
 const generalInputs = (typeClient, state) => {
   return [
     {
@@ -55,7 +57,8 @@ const generalInputs = (typeClient, state) => {
       parameterKey: "mail",
       options: [],
       value: state?.mail,
-      isValid: true,
+      isValid: !!state?.mail, 
+      regex: emailRegex
     },
     {
       name: "fax",

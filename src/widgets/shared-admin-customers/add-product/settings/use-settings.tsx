@@ -123,7 +123,7 @@ const useSettings = ({
 
 
   const createNewProduct = useCallback(async () => {
-    if (!productState.name || !productState.productSKUId) {
+    if (!productState.name || !productState.productSKUId || !productState.templateId) {
       setSnackbarStateValue({
         state: true,
         message: t("products.addProduct.admin.requiredField"),
@@ -168,7 +168,7 @@ const useSettings = ({
     }
   }, [productState, RandomId]);
   const createNewProductAndGoToParameterList = useCallback(async () => {
-    if (!productState.name || !productState.productSKUId) {
+    if (!productState.name || !productState.productSKUId || !productState.templateId) {
       setSnackbarStateValue({
         state: true,
         message: t("products.addProduct.admin.requiredField"),
@@ -215,10 +215,10 @@ const useSettings = ({
   }, [productState, RandomId]);
 
   const updatedProduct = useCallback(async () => {
-    if (!productState.name || !productState.productSKUId) {
+    if (!productState?.name || !productState?.productSKUId || !productState?.templateId) {
       setSnackbarStateValue({
         state: true,
-        message: t("products.addProduct.admin.requiredField"),
+        message: t("products.offsetPrice.admin.errorReq"),
         type: "error",
       });
     } else {

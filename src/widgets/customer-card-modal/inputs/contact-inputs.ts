@@ -1,3 +1,5 @@
+import {emailRegex} from "@/utils/regex";
+
 const contactInputs1 = (state) => {
   return [
     {
@@ -108,7 +110,8 @@ const contactInputs1 = (state) => {
       parameterKey: "mail",
       options: [],
       value: state?.mail,
-      isValid: true,
+      isValid: !!state?.mail, 
+      regex: emailRegex
     },
   ];
 };

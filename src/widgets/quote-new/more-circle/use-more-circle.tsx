@@ -45,33 +45,33 @@ const useMoreCircle = ({
 
   const menuList = [
     quoteItem.productType === 0 && !router.query.isNewCreation && !router.query.Id && {
-      name: "Edits",
+      name: "edit",
       icon: <EditMenuIcon />,
       onclick: () => onClickEditQuoteItem(quoteItem, documentType),
     },
     quoteItem.productType === 0 && !router.query.isNewCreation && {
-      name: "Duplicate",
+      name: "duplicate",
       icon: <DuplicateMenuIcon />,
       onclick: () => onClickDuplicateQuoteItem(quoteItem, documentType),
     },
     quoteItem.productType === 0 && documentType === DOCUMENT_TYPE.quote && !router.query.isNewCreation && {
-      name: "Duplicate with different QTY",
+      name: "duplicateItemWithDifferentQTY",
       icon: <DuplicateWithDifferentMenuIcon />,
       onclick: () => onClickDuplicateWithDifferentQTY(quoteItem),
     },
-    !router.query.isNewCreation && {
-      name: "Negotiate request",
-      icon: <NegotiateRequestIcon />,
-      // onclick: () => onOpenNegotiateRequest(),
-    },
+    // !router.query.isNewCreation && {
+    //   name: "negotiateRequest",
+    //   icon: <NegotiateRequestIcon />,
+    //   // onclick: () => onOpenNegotiateRequest(),
+    // },
     !router.query.isNewCreation && quoteItem.productType === 0 && {
-      name: "Analysis",
+      name: "analysis",
       icon: <AnalysisIcon />,
       onclick: () => null,
     },
     (router.query.isNewCreation || quoteItem?.isDeletable ) &&
     {
-      name: "Delete",
+      name: "delete",
       icon: <DeleteMenuIcon />,
       onclick: () => onClickDeleteQouteItem(quoteItem),
     },

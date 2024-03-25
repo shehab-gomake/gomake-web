@@ -263,36 +263,41 @@ input::placeholder {
 .react-international-phone-flag-emoji {
   display: none;
 }
+
 .react-international-phone-country-selector-button__dropdown-arrow {
   margin-left: 4px;
 }
+
 .react-international-phone-input-container .react-international-phone-input {
   height: 40px !important;
   border: 0px !important;
   width: 100%;
   box-shadow: 0px 1px 10px rgba(0, 0, 0, 0.08) !important;
 }
+
 .react-international-phone-input-container .react-international-phone-country-selector-button {
   height: 40px !important;
   border: 0px !important;
   box-shadow: 0px 1px 10px rgba(0, 0, 0, 0.08) !important;
 }
-.react-international-phone-country-selector-dropdown{
+
+.react-international-phone-country-selector-dropdown {
   min-width: 180px !important;
-  width:  180px !important;
-  position: fixed  !important;
+  width: 180px !important;
+  position: fixed !important;
   top: var(--react-international-phone-dropdown-left, 40px) !important;
   left: unset !important;
   z-index: 10 !important;
 }
-:root{
-  --react-international-phone-dropdown-left:20;
+
+:root {
+  --react-international-phone-dropdown-left: 20;
 }
 
-.MuiTooltip-tooltip{
+.MuiTooltip-tooltip {
   background: #EBECFF;
-  color:#1C1D58;
-  font-size:16px;
+  color: #1C1D58;
+  font-size: 16px;
   font-weight: 500;
   max-width: 180px;
 }

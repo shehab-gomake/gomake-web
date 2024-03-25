@@ -54,9 +54,8 @@ const UnderlinedTabs = styled(Tabs)(
     const { selectedColor } = props;
     return {
       "& .MuiTabs-indicator": {
-        borderBottom: `2px solid ${
-          selectedColor === "secondary" ? secondColor(500) : primaryColor(500)
-        }`,
+        borderBottom: `2px solid ${selectedColor === "secondary" ? secondColor(500) : primaryColor(500)
+          }`,
       },
       "& .MuiButtonBase-root": {
         textTransform: "initial",
@@ -93,7 +92,7 @@ const PrimaryTabsComponent = ({
   onSelectTab,
   selectedColor,
   variant,
-  selectedTabIndex=0
+  selectedTabIndex = 0
 }: ITabsProps) => {
   const { classes } = useStyle();
   const [value, setValue] = useRecoilState<number>(selectedHorizontalTabState);
@@ -112,7 +111,7 @@ const PrimaryTabsComponent = ({
 
   useEffect(() => {
     setValue(selectedTabIndex);
-}, [selectedTabIndex, setValue]);
+  }, [selectedTabIndex, setValue]);
 
 
   return (
