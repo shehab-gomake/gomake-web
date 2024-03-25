@@ -28,7 +28,7 @@ const accountInputs = (state: IUserData, action: EmployeeActions)  => {
             value: state.password,
             machineInputType: 'input',
             isValid: !!state.password,
-            disabled: action === EmployeeActions.UPDATE
+           // disabled: action === EmployeeActions.UPDATE
         },
         {
             name: "roleID",
