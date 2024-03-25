@@ -2011,7 +2011,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           console.log("resresres", res)
           const updatedTemplate = updateIsHidden(res?.data, subProducts)
           setDefaultProductTemplate(updatedTemplate);
-          //initProduct(updatedTemplate, materials);
           initQuoteItemProduct(updatedTemplate, materials);
         } else {
           alertFaultUpdate();
