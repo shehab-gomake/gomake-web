@@ -50,8 +50,6 @@ const RightSideWidget = ({
     t,
     _renderIconLogs,
   } = useRightSideWidget({ includeVAT });
-
-  console.log("calculationExceptionsLogs", calculationExceptionsLogs)
   return (
     <div style={clasess.rightSideMainContainer}>
       <div style={clasess.rightSideContainer}>

@@ -982,7 +982,6 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     );
     if (res?.success) {
       alertSuccessAdded();
-      // navigate(`${documentPath}s`);
       const _data = res?.data?.data?.data || {};
       setQuoteItemValue(_data);
       navigate(`/${documentPath}?Id=${res?.data?.data?.data?.id}`)
