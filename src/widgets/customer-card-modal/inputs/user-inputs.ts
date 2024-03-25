@@ -1,3 +1,5 @@
+import {emailRegex} from "@/utils/regex";
+
 const userInputs = (state, showPass) => {
   return [
     {
@@ -9,7 +11,8 @@ const userInputs = (state, showPass) => {
       parameterKey: "email",
       options: [],
       value: state?.email,
-      isValid: true,
+      isValid: !!state?.email, 
+      regex: emailRegex,
       readonly: false,
     },
     {
