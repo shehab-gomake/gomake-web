@@ -149,7 +149,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     signalRPricingResult,
     calculationServerErrorState
   } = useCalculationsWorkFlowsSignalr();
-  console.log("calculationExceptionsLssssogs", selectedWorkFlow)
 
   useEffect(() => {
     if (calculationServerErrorState) {
@@ -724,6 +723,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     unitType: parameter?.unitType,
                   });
                 }
+                processRelatedParameters2(parameter, subSection, section, productTemplate, subProductsArray);
+
               });
 
             if (temp.length > 0) {
@@ -738,9 +739,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 typeMap[subSection.type].parameters.push(...temp);
               }
             }
+
           });
         });
-
+        setProductTemplate(productTemplate)
         setSubProducts(subProductsArray);
         setUnderParameterIds(underParameterIdsArray);
         setIsSetTemplete(true);
@@ -949,6 +951,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   relatedParameter.actionIndex = parameter.actionIndex;
                 });
               }
+
             });
         });
       });
@@ -997,14 +1000,17 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       widgetType === EWidgetProductType.DUPLICATE
     ) {
       getAllMaterial().then((materials) => {
-        getProductQuoteItemById(materials);
+        if (connectionId) {
+          getProductQuoteItemById(materials);
+
+        }
       });
     } else {
       getAllMaterial().then((materials) => {
         getProductById(materials);
       });
     }
-  }, [router, widgetType]);
+  }, [router, widgetType, connectionId]);
   useEffect(() => {
     if (canCalculation) {
       calculationProduct();
@@ -1999,20 +2005,24 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     );
   };
   const getProductQuoteItemById = async (materials) => {
-    const callBack = (res) => {
-      if (res?.success) {
-        const updatedTemplate = updateIsHidden(res?.data, subProducts)
-        setDefaultProductTemplate(updatedTemplate);
-        //initProduct(res?.data);
-        initQuoteItemProduct(updatedTemplate, materials);
-      } else {
-        alertFaultUpdate();
-      }
-    };
-    await getProductByItemIdApi(callApi, callBack, {
-      documentItemId: router?.query?.documentItemId,
-      documentType: router?.query?.documentType,
-    });
+    if (connectionId) {
+      const callBack = (res) => {
+        if (res?.success) {
+          console.log("resresres", res)
+          const updatedTemplate = updateIsHidden(res?.data, subProducts)
+          setDefaultProductTemplate(updatedTemplate);
+          initQuoteItemProduct(updatedTemplate, materials);
+        } else {
+          alertFaultUpdate();
+        }
+      };
+      await getProductByItemIdApi(callApi, callBack, {
+        documentItemId: router?.query?.documentItemId,
+        signalRConnectionId: connectionId,
+        documentType: router?.query?.documentType,
+
+      });
+    }
   };
 
   const initQuoteItemProduct = (quoteItemProduct, materials) => {
@@ -2023,7 +2033,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     ) {
       //setItemParmetersValues(quoteItemProduct.productItemValue.itemParmetersValues);
       const quoteItemSubProducts = [];
-      quoteItemProduct.productItemValue.itemParmetersValues.forEach(
+      /*quoteItemProduct.productItemValue.itemParmetersValues.forEach(
         (itemParmetersValue) => {
           const section = quoteItemProduct?.sections?.find(
             (x) => x.id === itemParmetersValue?.sectionId
@@ -2086,7 +2096,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             quoteItemSubProducts.push(newSubProduct);
           }
         }
-      );
+      );*/
       setCurrentProductItemValueTotalPrice(
         quoteItemProduct.docmentItem.finalPrice
       );
@@ -2096,8 +2106,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       );
       setWorkFlows(quoteItemProduct.productItemValue.workFlows);
       setJobActions(quoteItemProduct.productItemValue.actions);
-      setSubProducts(quoteItemSubProducts);
-      setSubProductsCopy(quoteItemSubProducts);
+      //setSubProducts(quoteItemSubProducts);
+      //setSubProductsCopy(quoteItemSubProducts);
       setCalculationProgress({
         totalWorkFlowsCount: 0,
         currentWorkFlowsCount: 0,
@@ -2282,11 +2292,11 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   );
 
   const addItemForQuotes = async () => {
-    const docType = router?.query?.documentType ?? "0" ;
+    const docType = router?.query?.documentType ?? "0";
     const callBack = (res) => {
       if (res?.success) {
         docType === "0"
-          ? navigate("/quote") 
+          ? navigate("/quote")
           : navigate(`/order?Id=${router?.query?.documentId}`);
       } else {
         alertFaultAdded();
@@ -2312,6 +2322,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     };
     await updateDocumentItemApi(callApi, callBack, {
       Item: {
+        signalRConnectionId: connectionId,
         productItemValueId: productItemValueDraftId,
         itemId: router?.query?.documentItemId,
         productId: router?.query?.productId,
