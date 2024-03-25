@@ -61,6 +61,7 @@ const UPDATE_DOCUMENT_ITEM_CONTENT_URL =
 const UPDATE_DOCUMENT_COMMENTS_URL = "/v1/erp-service/document/update-document-comments";
 const GET_CLIENT_DOCUMENTS = "/v1/erp-service/documents/get-client-documents";
 
+const ADD_CREATE_CONTACT_URL = "/v1/crm-service/customer/create-contact";
 
 
 
@@ -130,6 +131,20 @@ const addDocumentContactApi: ICallAndSetData = async (
     callApi,
     EHttpMethod.POST,
     ADD_DOCUMENT_CONTACT_URL,
+    setState,
+    data
+  );
+};
+
+const addCustomerContactApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    ADD_CREATE_CONTACT_URL,
     setState,
     data
   );
@@ -576,5 +591,6 @@ export {
   updateDocumentItemContentApi,
   updateDocumentCommentsApi,
   getClientDocumentsApi,
-  getAllDocumentLogsApi
+  getAllDocumentLogsApi,
+  addCustomerContactApi
 };
