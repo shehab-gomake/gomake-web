@@ -32,9 +32,8 @@ const useCopyFromOrderModal = ({ onClose, documentType, openModal, cliendDocumen
     };
   });
   const addOrdersToDeliveryNote = () => {
-    calculateDocument()
+    calculateDocument();
     onClose();
-
   };
 
   const { callApi } = useGomakeAxios();
@@ -82,31 +81,6 @@ const useCopyFromOrderModal = ({ onClose, documentType, openModal, cliendDocumen
     t("products.offsetPrice.admin.finalPrice"),
   ];
 
-  const getClientOrderItems = async () => {
-    let docType;
-    if (cliendDocumentType === DOCUMENT_TYPE.order) {
-      docType = DOCUMENT_TYPE.order;
-    } else if (cliendDocumentType === DOCUMENT_TYPE.deliveryNote) {
-      docType = DOCUMENT_TYPE.deliveryNote;
-    }
-    else if (cliendDocumentType === DOCUMENT_TYPE.purchaseOrder) {
-      docType = DOCUMENT_TYPE.purchaseOrder;
-    }
-    const callBack = (res) => {
-      if (res?.success) {
-        setDocumentItems(res?.data);
-      } else {
-        setDocumentItems(null);
-      }
-    };
-    await getClientDocumentsApi(callApi, callBack, {
-      documentType: docType,
-      clientId: quoteItemValue?.customerID
-    });
-
-
-  };
-
   const calculateTotalPrice = () => {
     let total = 0;
     selectedItems.forEach(item => {
@@ -147,6 +121,31 @@ const useCopyFromOrderModal = ({ onClose, documentType, openModal, cliendDocumen
     return documentItems.find(item => item.id === documentItemId)?.orderItems?.every(item => selectedItems.some(selectedItem => selectedItem.id === item.id)) || false;
   };
 
+  const getClientOrderItems = async () => {
+    let docType;
+    if (cliendDocumentType === DOCUMENT_TYPE.order) {
+      docType = DOCUMENT_TYPE.order;
+    } else if (cliendDocumentType === DOCUMENT_TYPE.deliveryNote) {
+      docType = DOCUMENT_TYPE.deliveryNote;
+    }
+    else if (cliendDocumentType === DOCUMENT_TYPE.purchaseOrder) {
+      docType = DOCUMENT_TYPE.purchaseOrder;
+    }
+    const callBack = (res) => {
+      if (res?.success) {
+        setDocumentItems(res?.data);
+      } else {
+        setDocumentItems(null);
+      }
+    };
+    await getClientDocumentsApi(callApi, callBack, {
+      documentType: docType,
+      clientId: quoteItemValue?.customerID
+    });
+
+
+  };
+
   const calculateDocument = useCallback(async () => {
     const res = await callApi(
       EHttpMethod.POST,
@@ -176,6 +175,7 @@ const useCopyFromOrderModal = ({ onClose, documentType, openModal, cliendDocumen
       updatedQuoteItemValue.discount = _data.discount;
       updatedQuoteItemValue.discountAmount = _data.discountAmount;
       updatedQuoteItemValue.totalPayment = _data.totalPayment;
+      //updatedQuoteItemValue.totalPayment = (updatedQuoteItemValue.totalPayment || 0) + (_data.totalPayment || 0);
       updatedQuoteItemValue.totalPrice = _data.totalPrice;
       updatedQuoteItemValue.totalPriceAfterDiscount = _data.totalPriceAfterDiscount;
       updatedQuoteItemValue.totalVAT = _data.totalVAT;
@@ -184,6 +184,7 @@ const useCopyFromOrderModal = ({ onClose, documentType, openModal, cliendDocumen
       const filteredSelectedItems = selectedItems.filter(selectedItem => {
         return !updatedQuoteItemValue.documentItems.some(documentItem => documentItem.id === selectedItem.id);
       });
+
       updatedQuoteItemValue.documentItems = [
         ...updatedQuoteItemValue.documentItems,
         ...filteredSelectedItems
@@ -191,7 +192,6 @@ const useCopyFromOrderModal = ({ onClose, documentType, openModal, cliendDocumen
       setQuoteItemValue(updatedQuoteItemValue);
     }
   }, [quoteItemValue, selectedItems, documentType, documentItems]);
-
 
   useEffect(() => {
     calculateTotalPrice();
