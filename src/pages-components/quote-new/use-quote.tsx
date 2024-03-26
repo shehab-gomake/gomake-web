@@ -76,7 +76,6 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
   const [openDeleteModalContact, setOpenDeleteModalContact] = useState(false);
   const [openAddNewItemModal, setOpenAddNewItemModal] = useState(false);
   const [openCopyFromOrderModal, setOpenCopyFromOrderModal] = useState(false);
-  const [openCopyFromDeliveryNoteModal, setOpenCopyFromDeliveryNoteModal] = useState(false);
   const [quoteItemId, setQuateItemId] = useState();
   const [openDuplicateWithDifferentQTYModal, setOpenDuplicateWithDifferentQTYModal] = useState(false);
   const [selectedContactById, setSelectedContactById] = useState<any>();
@@ -543,16 +542,13 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     setOpenCopyFromOrderModal(false);
   };
 
-  const onOpenCopyFromOrder = () => {
+  const [copyFromDocumentType, setCopyFromDocumentType] = useState<DOCUMENT_TYPE>();
+
+  const onOpenCopyFromOrder = (documentNum: DOCUMENT_TYPE) => {
+    setCopyFromDocumentType(documentNum)
     setOpenCopyFromOrderModal(true);
   };
-  const onCloseCopyFromDeliveryNote = () => {
-    setOpenCopyFromDeliveryNoteModal(false);
-  };
 
-  const onOpenCopyFromDeliveryNote = () => {
-    setOpenCopyFromDeliveryNoteModal(true);
-  };
   const onCloseNewItem = () => {
     setOpenAddNewItemModal(false);
   };
@@ -1253,10 +1249,8 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     openCopyFromOrderModal,
     onCloseCopyFromOrder,
     onOpenCopyFromOrder,
-    onCloseCopyFromDeliveryNote,
-    onOpenCopyFromDeliveryNote,
-    openCopyFromDeliveryNoteModal,
-    getAllClientContacts
+    getAllClientContacts,
+    copyFromDocumentType
   };
 };
 
