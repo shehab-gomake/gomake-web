@@ -3,7 +3,6 @@ import { SideList } from "@/components/containers/side-container/side-list/side-
 import { PrimaryTable } from "@/components/tables/primary-table";
 import { useMaterials } from "@/widgets/materials-widget/use-materials";
 import React, { useEffect } from "react";
-import Stack from "@mui/material/Stack";
 import { useTranslation } from "react-i18next";
 import { useStyle } from "@/widgets/materials-widget/style";
 import { FiltersActionsBar } from "@/widgets/materials-widget/components/filters/filters-actions-bar";
@@ -24,8 +23,9 @@ import { AddRowModal } from "./components/add-row/add-row-modal";
 import { useMaterialsCategories } from "./use-materials-categories";
 import Pagination from "@mui/material/Pagination";
 import { GoMakeDeleteModal } from "@/components";
-import {StepType} from "@reactour/tour";
-import {useGoMakeTour} from "@/hooks/use-go-make-tour";
+import { StepType } from "@reactour/tour";
+import { useGoMakeTour } from "@/hooks/use-go-make-tour";
+import { Stack } from "@mui/material";
 interface IMaterialsWidgetProps {
   isAdmin: boolean;
 }
@@ -86,7 +86,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
       content: 'Click on the menu to discover all options: Edit price, Update all selected prices by percentage, Change currency, Add and duplicate new, and more',
       position: 'left',
       styles: {
-        maskWrapper: (base) => ({...base, zIndex: 1}),
+        maskWrapper: (base) => ({ ...base, zIndex: 1 }),
       },
     },
     {
@@ -94,15 +94,15 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
       content: 'Take your time to explore and discover all materials later. Now, let\'s proceed to view the list of machines.\n Please press "Machines" in the bar.',
       position: 'left',
       styles: {
-        maskWrapper: (base) => ({...base, zIndex: 1000000}),
+        maskWrapper: (base) => ({ ...base, zIndex: 1000000 }),
       },
     },
   ]
-  const {} = useGoMakeTour(materialsSteps, []);
+  const { } = useGoMakeTour(materialsSteps, []);
   const Side = () => (
     <Stack direction={"column"} gap={"10px"}>
       <SideList
-          data-tour={'materialsCategories'}
+        data-tour={'materialsCategories'}
         list={materialsCategoriesList()}
         selectedItem={materialCategory?.toString()}
         onSelect={onSelectCategory}
