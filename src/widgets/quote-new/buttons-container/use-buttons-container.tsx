@@ -25,7 +25,13 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     const open = Boolean(anchorEl);
 
     const onClickOpenOrderNowModal = () => {
-        setOpenOrderNowModal(true);
+        if (quoteItemValue?.client?.isCreateOrder) {
+            setOpenOrderNowModal(true);
+
+        }
+        else {
+            alertFault("home.admin.pleaseSelectClient")
+        }
     };
     const onClickCloseOrderNowModal = () => {
         setOpenOrderNowModal(false);
