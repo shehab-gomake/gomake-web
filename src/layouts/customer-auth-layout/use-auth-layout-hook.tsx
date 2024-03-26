@@ -264,6 +264,12 @@ const useAuthLayoutHook = (permissionEnumValue?: Permissions, allowAnonymous?: b
             path: "/sales-report",
             Permission: Permissions.SHOW_CLIENT,
           },
+          {
+            key: "creditcardtransactions",
+            title: "tabs.creditcardtransactions",
+            path: "/credit-card-transactions",
+            Permission: Permissions.SHOW_CLIENT,
+          },
         ],
         icon: () => {
           return <ReportsIcon />;
