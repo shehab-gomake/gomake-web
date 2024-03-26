@@ -1,5 +1,4 @@
 import { IPricingWidgetProps } from "@/widgets/product-pricing-widget/interface";
-import Stack from "@mui/material/Stack";
 import {
   GeneralInformationComponent
 } from "@/widgets/product-pricing-widget/components/general-information/general-information-component";
@@ -30,7 +29,8 @@ import {
   updateProductItemValueOutsource
 } from "@/services/api-service/product-item-value-draft/product-item-draft-endpoints";
 import { useGomakeAxios } from "@/hooks";
-import { currentCalculationConnectionId } from "@/store";
+import { currentCalculationConnectionId, isLoadgingState } from "@/store";
+import { Stack } from "@mui/material";
 
 const PricingWidget = ({
   workFlows,
@@ -43,6 +43,7 @@ const PricingWidget = ({
   const { t } = useTranslation();
   const { classes } = useStyle();
   const selectedWorkFlow = useRecoilValue(selectedWorkFlowState);
+  const [isChangeView, setIsChangeView] = useState(true)
   useEffect(() => {
     // Transform actions when component mounts
     selectedWorkFlow?.actions.map(action => {
@@ -88,8 +89,16 @@ const PricingWidget = ({
       const productItemValue = cloneDeep(currentProductItemValue);
       productItemValue.id = productItemValueDraftId;
       setCurrentProductItemValue(productItemValue);
+
     }
+
   }, [selectedWorkFlow]);
+  useEffect(() => {
+    if (selectedWorkFlow && currentProductItemValue && isChangeView) {
+      setView(EPricingViews.SELECTED_WORKFLOW);
+
+    }
+  }, [selectedWorkFlow, currentProductItemValue, isChangeView])
 
   return (
     <Stack gap={"16px"} width={"100%"}>
@@ -130,6 +139,8 @@ const PricingWidget = ({
                 : EPricingViews.SELECTED_WORKFLOW
             )
             updateProductItemValue(v)
+            setIsChangeView(false)
+
 
           }
 
