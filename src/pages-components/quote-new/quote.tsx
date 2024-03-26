@@ -167,10 +167,8 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
     getQuote,
     selectConfirmBusiness,
     handleSaveBtnClickForDocument,
-    onCloseCopyFromDeliveryNote,
-    onOpenCopyFromDeliveryNote,
     getAllClientContacts,
-    openCopyFromDeliveryNoteModal
+    copyFromDocumentType
   } = useQuoteNew({ docType: documentType, isQuoteConfirmation: isQuoteConfirmation });
   const { resetReceiptState } = usePaymentsTable();
   const router = useRouter();
@@ -179,6 +177,7 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
     if (documentType === DOCUMENT_TYPE.receipt)
       resetReceiptState();
   }, [])
+
   const quoteSteps: StepType[] = [
     {
       selector: '[data-tour="quoteStep1"]',
@@ -216,6 +215,7 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
   }, [quoteState?.number, router, quoteState, isQuoteConfirmation])
 
   const { } = useGoMakeTour(quoteSteps, []);
+
   return (
     <>
       {quoteState?.id && (
@@ -383,8 +383,7 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
                 documentType={documentType}
                 onOpenCopyFromOrder={onOpenCopyFromOrder}
                 handleSaveBtnClickForDocument={handleSaveBtnClickForDocument}
-                onOpenCopyFromDeliveryNote={onOpenCopyFromDeliveryNote}
-              />
+              /> 
             </div>
           }
         </div>
@@ -405,14 +404,7 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
         openModal={openCopyFromOrderModal}
         onClose={onCloseCopyFromOrder}
         documentType={documentType}
-        cliendDocumentType={1}
-
-      />
-      <CopyFromOrderModal
-        openModal={openCopyFromDeliveryNoteModal}
-        onClose={onCloseCopyFromDeliveryNote}
-        documentType={documentType}
-        cliendDocumentType={2}
+        cliendDocumentType={copyFromDocumentType}
       />
       <DuplicateItemModal
         openModal={openDuplicateWithDifferentQTYModal}

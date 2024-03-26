@@ -10,6 +10,7 @@ import { PaymentBtn } from "./payment/payment-button";
 import { CancelReceiptModal } from "./payment/cancel-receipt-modal/cancel-receipt-modal";
 import { OrderNowModal } from "../total-price-and-vat/order-now-modal";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
+import { useSnackBar } from "@/hooks";
 
 const ButtonsContainer = ({
   onOpenNewItem,
@@ -20,10 +21,10 @@ const ButtonsContainer = ({
   documentType,
   onOpenCopyFromOrder,
   handleSaveBtnClickForDocument,
-  onOpenCopyFromDeliveryNote
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
+  const {alertFault} = useSnackBar();
   const router = useRouter()
   const {
     quoteItemValue,
@@ -48,6 +49,15 @@ const ButtonsContainer = ({
     onClickCloseCancelReceiptModal
   } = useButtonsContainer(documentType);
 
+
+  const handleCopyFromDocumentClick = (documentNumber) => {
+    if (!quoteItemValue?.client) {
+      alertFault("home.admin.pleaseSelectCustomer");
+    } else {
+      onOpenCopyFromOrder(documentNumber);
+    }
+  };
+  
   const isNewCreation = router?.query?.isNewCreation;
   const showAddNewItemBtn =
     documentType === DOCUMENT_TYPE.quote ||
@@ -80,10 +90,10 @@ const ButtonsContainer = ({
           </GomakePrimaryButton>
         }
         {
-          isNewCreation && documentType !== DOCUMENT_TYPE.deliveryNoteRefund && documentType !== DOCUMENT_TYPE.invoiceRefund && documentType !== DOCUMENT_TYPE.receipt && <GomakePrimaryButton
+          isNewCreation && (documentType === DOCUMENT_TYPE.deliveryNote || documentType === DOCUMENT_TYPE.invoice) && <GomakePrimaryButton
             leftIcon={<PlusIcon stroke={"#344054"} />}
             style={classes.btnContainer}
-            onClick={onOpenCopyFromOrder}
+            onClick={() => handleCopyFromDocumentClick(DOCUMENT_TYPE.order)}
           >
             {t("sales.quote.copyFromOrder")}
           </GomakePrimaryButton>
@@ -92,9 +102,18 @@ const ButtonsContainer = ({
           router.query.isNewCreation && documentType === DOCUMENT_TYPE.invoice && <GomakePrimaryButton
             leftIcon={<PlusIcon stroke={"#344054"} />}
             style={classes.btnContainer}
-            onClick={onOpenCopyFromDeliveryNote}
+            onClick={() => handleCopyFromDocumentClick(DOCUMENT_TYPE.deliveryNote)}
           >
             {t("sales.quote.copyFromDeliveryNote")}
+          </GomakePrimaryButton>
+        }
+        {
+          router.query.isNewCreation && documentType === DOCUMENT_TYPE.purchaseInvoice && <GomakePrimaryButton
+            leftIcon={<PlusIcon stroke={"#344054"} />}
+            style={classes.btnContainer}
+            onClick={() => handleCopyFromDocumentClick(DOCUMENT_TYPE.purchaseOrder)}
+          >
+            {t("sales.quote.copyFromPurchaseOrder")}
           </GomakePrimaryButton>
         }
       </div>

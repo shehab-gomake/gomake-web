@@ -76,7 +76,6 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
   const [openDeleteModalContact, setOpenDeleteModalContact] = useState(false);
   const [openAddNewItemModal, setOpenAddNewItemModal] = useState(false);
   const [openCopyFromOrderModal, setOpenCopyFromOrderModal] = useState(false);
-  const [openCopyFromDeliveryNoteModal, setOpenCopyFromDeliveryNoteModal] = useState(false);
   const [quoteItemId, setQuateItemId] = useState();
   const [openDuplicateWithDifferentQTYModal, setOpenDuplicateWithDifferentQTYModal] = useState(false);
   const [selectedContactById, setSelectedContactById] = useState<any>();
@@ -543,16 +542,13 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     setOpenCopyFromOrderModal(false);
   };
 
-  const onOpenCopyFromOrder = () => {
+  const [copyFromDocumentType, setCopyFromDocumentType] = useState<DOCUMENT_TYPE>();
+
+  const onOpenCopyFromOrder = (documentNum: DOCUMENT_TYPE) => {
+    setCopyFromDocumentType(documentNum)
     setOpenCopyFromOrderModal(true);
   };
-  const onCloseCopyFromDeliveryNote = () => {
-    setOpenCopyFromDeliveryNoteModal(false);
-  };
 
-  const onOpenCopyFromDeliveryNote = () => {
-    setOpenCopyFromDeliveryNoteModal(true);
-  };
   const onCloseNewItem = () => {
     setOpenAddNewItemModal(false);
   };
@@ -914,22 +910,42 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
       }
     })
   }
-
-  const onClickSendQuoteToClient = async (messageType: number) => {
-    const callBack = (res) => {
-      if (res?.success) {
-        alertSuccessAdded();
-      } else {
-        alertFaultAdded();
+  function checkArrayNotEmptyOrPhoneNotEmpty(array) {
+    if (array.length === 0) {
+      return false;
+    }
+    for (let i = 0; i < array.length; i++) {
+      if (array[i].contactPhone && array[i].contactPhone.trim() !== '') {
+        return true;
       }
     }
-    await sendDocumentToClientApi(callApi, callBack, {
-      documentType: docType,
-      document: {
-        documentId: quoteItemValue?.id,
-        messageType,
+
+    return false;
+  }
+
+
+  const onClickSendQuoteToClient = async (messageType: number) => {
+    let checkPhones = checkArrayNotEmptyOrPhoneNotEmpty(quoteItemValue?.documentContacts)
+    if (checkPhones) {
+      const callBack = (res) => {
+        if (res?.success) {
+          alertSuccessAdded();
+        } else {
+          alertFaultAdded();
+        }
       }
-    })
+      await sendDocumentToClientApi(callApi, callBack, {
+        documentType: docType,
+        document: {
+          documentId: quoteItemValue?.id,
+          messageType,
+        }
+      })
+    }
+    else {
+      alertFault("sales.quote.phoneContectErrorMsg")
+    }
+
   }
 
   const handleSaveBtnClick = async () => {
@@ -962,7 +978,6 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     );
     if (res?.success) {
       alertSuccessAdded();
-      // navigate(`${documentPath}s`);
       const _data = res?.data?.data?.data || {};
       setQuoteItemValue(_data);
       navigate(`/${documentPath}?Id=${res?.data?.data?.data?.id}`)
@@ -1234,10 +1249,8 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     openCopyFromOrderModal,
     onCloseCopyFromOrder,
     onOpenCopyFromOrder,
-    onCloseCopyFromDeliveryNote,
-    onOpenCopyFromDeliveryNote,
-    openCopyFromDeliveryNoteModal,
-    getAllClientContacts
+    getAllClientContacts,
+    copyFromDocumentType
   };
 };
 
