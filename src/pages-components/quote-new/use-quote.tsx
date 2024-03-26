@@ -914,22 +914,42 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
       }
     })
   }
-
-  const onClickSendQuoteToClient = async (messageType: number) => {
-    const callBack = (res) => {
-      if (res?.success) {
-        alertSuccessAdded();
-      } else {
-        alertFaultAdded();
+  function checkArrayNotEmptyOrPhoneNotEmpty(array) {
+    if (array.length === 0) {
+      return false;
+    }
+    for (let i = 0; i < array.length; i++) {
+      if (array[i].contactPhone && array[i].contactPhone.trim() !== '') {
+        return true;
       }
     }
-    await sendDocumentToClientApi(callApi, callBack, {
-      documentType: docType,
-      document: {
-        documentId: quoteItemValue?.id,
-        messageType,
+
+    return false;
+  }
+
+
+  const onClickSendQuoteToClient = async (messageType: number) => {
+    let checkPhones = checkArrayNotEmptyOrPhoneNotEmpty(quoteItemValue?.documentContacts)
+    if (checkPhones) {
+      const callBack = (res) => {
+        if (res?.success) {
+          alertSuccessAdded();
+        } else {
+          alertFaultAdded();
+        }
       }
-    })
+      await sendDocumentToClientApi(callApi, callBack, {
+        documentType: docType,
+        document: {
+          documentId: quoteItemValue?.id,
+          messageType,
+        }
+      })
+    }
+    else {
+      alertFault("sales.quote.phoneContectErrorMsg")
+    }
+
   }
 
   const handleSaveBtnClick = async () => {
@@ -962,7 +982,6 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     );
     if (res?.success) {
       alertSuccessAdded();
-      // navigate(`${documentPath}s`);
       const _data = res?.data?.data?.data || {};
       setQuoteItemValue(_data);
       navigate(`/${documentPath}?Id=${res?.data?.data?.data?.id}`)
