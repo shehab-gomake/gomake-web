@@ -13,7 +13,7 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     const { t } = useTranslation();
     const { callApi } = useGomakeAxios();
     const quoteItemValue: any = useRecoilValue(quoteItemState);
-    const { alertFault, alertSuccessDelete, alertFaultDelete, alertSuccessUpdate, alertFaultUpdate, alertFaultAdded, alertSuccessAdded } = useSnackBar();
+    const { alertFault, alertSuccessDelete, alertFaultDelete, alertSuccessUpdate, alertFaultUpdate, alertFaultAdded, alertSuccessAdded , alertFaultGetData } = useSnackBar();
     const [selectedTabIndex, setSelectedTabIndex] = useState<number>(0);
     const [openPaymentModal, setOpenPaymentModal] = useState(false);
     const [openOrderNowModal, setOpenOrderNowModal] = useState(false);
@@ -93,7 +93,7 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
                 const pdfLink = res.data;
                 window.open(pdfLink, "_blank");
             } else {
-                alertFaultUpdate();
+                alertFaultGetData();
             }
         };
         if (docType === DOCUMENT_TYPE.receipt) {

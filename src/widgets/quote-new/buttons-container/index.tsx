@@ -62,7 +62,7 @@ const ButtonsContainer = ({
   const showAddNewItemBtn =
     documentType === DOCUMENT_TYPE.quote ||
     (DOCUMENT_TYPE.order && quoteItemValue?.isEditable) ||
-    isNewCreation;
+    (isNewCreation && documentType !== DOCUMENT_TYPE.receipt);
 
   return (
     <div style={classes.writeCommentContainer}>
