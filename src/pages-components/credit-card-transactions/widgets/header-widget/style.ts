@@ -8,15 +8,26 @@ const useStyle = () => {
     const { primaryColor, secondColor } = useGomakeTheme();
     const classes = useMemo(() => {
         return {
-            mainContainer:{
+              mainContainer: {
                 display: "flex",
-                flexDirection: "row" as "row",
-                justifyContent: "flex-start",
-                alignItems: "center",
-                width: "100%",
-                gap:10,
+                flexDirection: "column" as "column",
+                paddingLeft: 20,
+                paddingRight: 20,
+                height: "100%",
+                width:"100%",
+                overflowY: "hidden" as "hidden",
+                marginBottom: "20px",
+                gap: 20,
+              },
+             secondContainer:{
+              display: "flex",
+              flexDirection: "row" as "row",
+              justifyContent: "flex-start",
+              alignItems: "center",
+              width: "100%",
+              gap:10,
 
-            },
+          },
             date1FilterContainer: {
                 display: "flex",
                 flexDirection: "column" as "column",
@@ -48,6 +59,37 @@ const useStyle = () => {
                 gap: 10,
                 width: "13%",
             },
+            headerStyle: {
+              display: "flex",
+              flexWrap: "wrap" as "wrap",
+              gap: 10,
+              justifyContent: "space-between",
+              width: "100%"
+            },
+            date3FilterContainer: {
+              display: "flex",
+              flexDirection: "column" as "column",
+              justifyContent: "flex-start",
+              alignItems: "flex-start",
+              gap: 29,
+              width: "13%",
+          },
+          searchFilterContainer: {
+            display: "flex",
+            flexDirection: "column" as "column",
+            justifyContent: "flex-start",
+            alignItems: "flex-start",
+            gap: 29,
+            width: "20%",
+        },
+        filtersContainer: {
+          display: "flex",
+          flexDirection: "row" as "row",
+          justifyContent: "space-between",
+          alignItems: "flex-end",
+          gap: 20,
+          width: "100%",
+        },
             filterLabelStyle: {
                 ...FONT_FAMILY.Lexend(500, 14),
             },

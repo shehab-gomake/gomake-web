@@ -22,18 +22,17 @@ const CreditCardTransactionsWidget = () => {
   return (
     <div style={clasess.mainContainer}>
     <CreditCardTransactionsReportHeaderWidget
-      agent={agent}
-      onClickSearchFilter={onClickSearchFilter}
-      onClickClearFilter={onClickClearFilter}
-      onSelectDeliveryTimeDates={onSelectDeliveryTimeDates}
-      resetDatePicker={resetDatePicker}
-      agentsCategories={agentsCategories}
-      handleAgentChange={handleAgentChange}
-      customer={customer}
-      renderOptions={renderOptions}
-      checkWhatRenderArray={checkWhatRenderArray}
-      handleCustomerChange={handleCustomerChange}
-     
+        agent={agent}
+        onClickSearchFilter={onClickSearchFilter}
+        onClickClearFilter={onClickClearFilter}
+        onSelectDeliveryTimeDates={onSelectDeliveryTimeDates}
+        resetDatePicker={resetDatePicker}
+        agentsCategories={agentsCategories}
+        handleAgentChange={handleAgentChange}
+        customer={customer}
+        renderOptions={renderOptions}
+        checkWhatRenderArray={checkWhatRenderArray}
+        handleCustomerChange={handleCustomerChange} 
     />
     <Divider />
     </div>
