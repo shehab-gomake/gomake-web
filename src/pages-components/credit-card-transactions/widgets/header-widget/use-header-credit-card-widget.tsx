@@ -1,7 +1,6 @@
 
-import { useTranslation } from "react-i18next";
 import { useStyle } from "./style";
-import { t } from "i18next";
+
 
 export interface CreditCardTransactionsReportHeaderWidgetProps {
   onSelectDeliveryTimeDates:any;
@@ -18,10 +17,10 @@ export interface CreditCardTransactionsReportHeaderWidgetProps {
 }
 const useCreditCardTransactionsReportHeader = () => {
   const { classes } = useStyle();
-  const { t }= useTranslation();
+
   return {
     classes,
-    t
+    
 
   };
 };

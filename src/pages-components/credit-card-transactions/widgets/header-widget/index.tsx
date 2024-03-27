@@ -1,9 +1,10 @@
-import { Checkbox } from "@mui/material";
+
 
 import { GoMakeDatepicker } from "@/components/date-picker/date-picker-component";
 import { GoMakeAutoComplate, GomakePrimaryButton } from "@/components"
-import { CreditCardTransactionsReportHeaderWidgetProps, useCreditCardTransactionsReportHeader } from "./use-header-widget";
+import { CreditCardTransactionsReportHeaderWidgetProps, useCreditCardTransactionsReportHeader } from "./use-header-credit-card-widget";
 import { useTranslation } from "react-i18next";
+
 
 
 const CreditCardTransactionsReportHeaderWidget = ({
@@ -21,8 +22,8 @@ const CreditCardTransactionsReportHeaderWidget = ({
   handleCustomerChange,
 }: CreditCardTransactionsReportHeaderWidgetProps) => {
 
-  const { classes , t } = useCreditCardTransactionsReportHeader();
-
+  const { classes } = useCreditCardTransactionsReportHeader();
+  const { t }= useTranslation();
 
   return (
     <div style={classes.mainContainer}>
