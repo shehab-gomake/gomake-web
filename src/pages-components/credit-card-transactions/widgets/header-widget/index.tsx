@@ -13,7 +13,6 @@ import { ExcelSheetIcon } from "@/icons";
 import { HeaderTitle } from "@/widgets";
 import { PrimaryTable } from "@/components/tables/primary-table";
 import { GoMakePagination } from "@/components/pagination/gomake-pagination";
-import { DEFAULT_VALUES } from "@/pages/customers/enums";
 
 interface CreditCardTransactionsReportHeaderWidgetProps {
     onSelectDeliveryTimeDates:any;
@@ -42,17 +41,9 @@ const CreditCardTransactionsReportHeaderWidget = ({
   handleCustomerChange,
 }: CreditCardTransactionsReportHeaderWidgetProps) => {
   const [patternSearch, setPatternSearch] = useState("");
-  const {   t , tableHeaders} = useCreditCardTransactionsReportHeader();
-  const allQuotes = [];
-  const [page, setPage] = useState(1);
-  const [pagesCount, setPagesCount] = useState(0);
-  const [pageSize, setPageSize] = useState(DEFAULT_VALUES.PageSize);
-  const handlePageSizeChange = (event) => {
-    setPage(1);
-    setPageSize(event.target.value);
-  };
+  const {   t , tableHeaders , setPage ,handlePageSizeChange ,page ,pagesCount , pageSize,allCreditCardTransaction} = useCreditCardTransactionsReportHeader();
   const { classes } = useStyle();
-   
+   console.log(page);
   return (
     <>
           <div style={classes.mainContainer}>
@@ -121,7 +112,7 @@ const CreditCardTransactionsReportHeaderWidget = ({
               stickyFirstCol={false}
               stickyHeader={true}
               maxHeight={650}
-              rows={allQuotes}
+              rows={allCreditCardTransaction}
               headers={tableHeaders}
             />
         </div>

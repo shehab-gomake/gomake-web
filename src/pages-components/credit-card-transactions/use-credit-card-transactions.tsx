@@ -6,7 +6,6 @@ const useCreditCardTransactions = () => {
   const { customer, renderOptions, checkWhatRenderArray, handleCustomerChange } = useCustomerDropDownList();
   const { agent, agentsCategories, handleAgentChange } = useAgentsList();
   const [resetDatePicker, setResetDatePicker] = useState<boolean>(false);
-  const [tableHeader, setTableHeader] = useState<any>([])
   const [fromDate, setFromDate] = useState<Date>();
   const [toDate, setToDate] = useState<Date>();
 
@@ -17,10 +16,10 @@ const useCreditCardTransactions = () => {
   };
 
   const onClickClearFilter = () => {
-
+        console.log("onClickSearchFilter");
   };
   const onClickSearchFilter = ()=>{
-
+    console.log("onClickSearchFilter");
   };
 
 
