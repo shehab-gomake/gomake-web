@@ -17,9 +17,11 @@ import {
 } from "@/widgets/product-pricing-widget/components/outsource-suppliers/out-source-suppliers-widget";
 import { useTranslation } from "react-i18next";
 import { useStyle } from "@/widgets/product-pricing-widget/style";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import {
+  calculationProgressState,
   currentProductItemValueDraftId,
+  currentProductItemValuePriceState,
   currentProductItemValueState, currentProductItemValueTotalWorkFlowsState,
   selectedWorkFlowState,
 } from "@/widgets/product-pricing-widget/state";
@@ -99,6 +101,22 @@ const PricingWidget = ({
 
     }
   }, [selectedWorkFlow, currentProductItemValue, isChangeView])
+  const [
+    currentProductItemValueTotalPrice,
+    setCurrentProductItemValueTotalPrice,
+  ] = useRecoilState<number>(currentProductItemValuePriceState);
+
+  useEffect(() => {
+    if (view === EPricingViews.OUTSOURCE_WORKFLOW || selectedWorkFlow?.actions?.some(
+      (action) => action.source === EWorkSource.OUT
+    )) {
+      // setCurrentProductItemValueTotalPrice(null)
+      setTimeout(() => {
+        setCurrentProductItemValueTotalPrice(null)
+
+      }, 2000);
+    }
+  }, [view, selectedWorkFlow])
 
   return (
     <Stack gap={"16px"} width={"100%"}>
