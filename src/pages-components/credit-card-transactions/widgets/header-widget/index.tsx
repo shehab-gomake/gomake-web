@@ -2,9 +2,11 @@ import { Checkbox } from "@mui/material";
 
 import { GoMakeDatepicker } from "@/components/date-picker/date-picker-component";
 import { GoMakeAutoComplate, GomakePrimaryButton } from "@/components"
-import { useCreditCardTransactionsReportHeader } from "./use-header-widget";
 import { useTranslation } from "react-i18next";
 import {useStyle} from "@/pages-components/credit-card-transactions/widgets/header-widget/style";
+import {
+    useCreditCardTransactionsReportHeader
+} from "@/pages-components/credit-card-transactions/widgets/header-widget/use-header-credit-card-widget";
 
 interface CreditCardTransactionsReportHeaderWidgetProps {
     onSelectDeliveryTimeDates:any;
