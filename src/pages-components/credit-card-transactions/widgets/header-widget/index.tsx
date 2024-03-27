@@ -2,10 +2,23 @@ import { Checkbox } from "@mui/material";
 
 import { GoMakeDatepicker } from "@/components/date-picker/date-picker-component";
 import { GoMakeAutoComplate, GomakePrimaryButton } from "@/components"
-import { CreditCardTransactionsReportHeaderWidgetProps, useCreditCardTransactionsReportHeader } from "./use-header-widget";
+import { useCreditCardTransactionsReportHeader } from "./use-header-widget";
 import { useTranslation } from "react-i18next";
+import {useStyle} from "@/pages-components/credit-card-transactions/widgets/header-widget/style";
 
-
+interface CreditCardTransactionsReportHeaderWidgetProps {
+    onSelectDeliveryTimeDates:any;
+    resetDatePicker:any;
+    onClickSearchFilter:any,
+    onClickClearFilter:any,
+    agent: any;
+    agentsCategories: any[];
+    handleAgentChange: any;
+    customer: any;
+    renderOptions: () => any[];
+    checkWhatRenderArray: (arg: any) => void;
+    handleCustomerChange: any;
+}
 const CreditCardTransactionsReportHeaderWidget = ({
  
   agent,
@@ -21,7 +34,8 @@ const CreditCardTransactionsReportHeaderWidget = ({
   handleCustomerChange,
 }: CreditCardTransactionsReportHeaderWidgetProps) => {
 
-  const { classes , t } = useCreditCardTransactionsReportHeader();
+  const {   t } = useCreditCardTransactionsReportHeader();
+    const { classes } = useStyle();
 
 
   return (
