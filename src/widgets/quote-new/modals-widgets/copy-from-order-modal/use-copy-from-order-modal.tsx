@@ -145,8 +145,28 @@ const useCopyFromOrderModal = ({ onClose, documentType, openModal, cliendDocumen
 
 
   };
-
   const calculateDocument = useCallback(async () => {
+    const sharedDeletedArry = quoteItemValue.documentItems.filter(item => {
+      const isIncludedInOrderItems = documentItems.some(docItem => {
+        return docItem.orderItems.some(orderItem => orderItem.id === item.id);
+      });
+      const isNotIncludedInSelectedItems = !selectedItems.some(selectedItem => selectedItem.id === item.id);
+      return isIncludedInOrderItems && isNotIncludedInSelectedItems;
+    });
+    const documentItemsFilters = quoteItemValue.documentItems.filter(item => {
+      return !sharedDeletedArry.some(sharedItem => sharedItem.id === item.id);
+    });
+    const mergedItems = [...documentItemsFilters, ...selectedItems];
+    const idMap = new Map();
+    const uniqueItems = mergedItems.filter(item => {
+      if (!idMap.has(item.id)) {
+        idMap.set(item.id, true);
+        return true;
+      }
+      return false;
+    }).map(item => ({
+      finalPrice: item.finalPrice
+    }));
     const res = await callApi(
       EHttpMethod.POST,
       `/v1/erp-service/documents/calculate-document-new`,
@@ -163,9 +183,7 @@ const useCopyFromOrderModal = ({ onClose, documentType, openModal, cliendDocumen
           totalPayment: quoteItemValue?.totalPayment,
           vat: documentItems[0]?.vat || 0.17,
           totalVAT: quoteItemValue?.totalVAT || 0.17,
-          documentItems: selectedItems.map(item => ({
-            finalPrice: item.finalPrice
-          }))
+          documentItems: uniqueItems
         }
       }
     );
@@ -175,7 +193,6 @@ const useCopyFromOrderModal = ({ onClose, documentType, openModal, cliendDocumen
       updatedQuoteItemValue.discount = _data.discount;
       updatedQuoteItemValue.discountAmount = _data.discountAmount;
       updatedQuoteItemValue.totalPayment = _data.totalPayment;
-      //updatedQuoteItemValue.totalPayment = (updatedQuoteItemValue.totalPayment || 0) + (_data.totalPayment || 0);
       updatedQuoteItemValue.totalPrice = _data.totalPrice;
       updatedQuoteItemValue.totalPriceAfterDiscount = _data.totalPriceAfterDiscount;
       updatedQuoteItemValue.totalVAT = _data.totalVAT;
@@ -186,7 +203,7 @@ const useCopyFromOrderModal = ({ onClose, documentType, openModal, cliendDocumen
       });
 
       updatedQuoteItemValue.documentItems = [
-        ...updatedQuoteItemValue.documentItems,
+        ...documentItemsFilters,
         ...filteredSelectedItems
       ];
       setQuoteItemValue(updatedQuoteItemValue);
