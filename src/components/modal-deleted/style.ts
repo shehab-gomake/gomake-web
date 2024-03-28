@@ -3,15 +3,15 @@ import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 
 const useStyle = () => {
-  const { primaryColor, neutralColor, errorColor } = useGomakeTheme();
+  const {theme, primaryColor, neutralColor, errorColor } = useGomakeTheme();
 
-  const clasess = useMemo(() => {
+  const classes = useMemo(() => {
     return {
       container: {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        width: "25%",
+        width: "45%",
         borderRadius: 20,
         backgroundColor: "#FFFFFF",
         position: "absolute" as "absolute",
@@ -54,24 +54,31 @@ const useStyle = () => {
         gap: 11,
         width: "100%",
       },
-      confermBtn: {
-        width: "50%",
-        height: 33.29,
+      confirmBtn: {
+       // width: "50%",
+       height: 35,
+       lineHeight:"10px",
         borderRadius: "10px",
-        ...FONT_FAMILY.Lexend(500, 9),
+        ...FONT_FAMILY.Lexend(500, 10),
         backgroundColor: primaryColor(500),
       },
       cancelBtn: {
-        width: "50%",
-        height: 33.29,
+      //  width: "50%",
+        height: 35,
         borderRadius: "10px",
-        ...FONT_FAMILY.Lexend(500, 9),
+        ...FONT_FAMILY.Lexend(500, 10),
         backgroundColor: errorColor(500),
       },
+      iconStyle:{
+        width: 120,
+        height: 120,
+        color: errorColor(300) 
+      }
     };
-  }, []);
+  }, [theme]);
+
   return {
-    clasess,
+    classes,
   };
 };
 export { useStyle };
