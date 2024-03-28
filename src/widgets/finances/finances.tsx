@@ -9,7 +9,15 @@ import { FinancesTableWidget } from "./widgets/finances-table/finances";
 const FinancesWidget = () => {
   const { clasess } = useStyle();
   const { t } = useTranslation();
-  const { accountName, accountEmail, dayOfMonth, onChangeAccountName, onChangeAccountEmail, onChangeSelectDayOfMonth } = useFinances()
+  const {
+    accountName,
+    accountEmail,
+    dayOfMonth,
+    onChangeAccountName,
+    onChangeAccountEmail,
+    onChangeSelectDayOfMonth,
+    getAccountRows
+  } = useFinances()
 
   return (
     <div style={clasess.mainContainer}>
@@ -22,7 +30,7 @@ const FinancesWidget = () => {
         onChangeAccountEmail={onChangeAccountEmail}
         onChangeSelectDayOfMonth={onChangeSelectDayOfMonth}
       />
-      <FinancesTableWidget />
+      <FinancesTableWidget getAccountRows={getAccountRows} />
     </div>
   );
 };

@@ -25,32 +25,33 @@ const FinancesHeaderInputsWidget: React.FC<FinancesHeaderInputsWidgetProps> = ({
   const { clasess } = useStyle();
   const { t } = useTranslation();
   const daysInMonth = Array.from({ length: 31 }, (_, i) => i + 1);
+
   return (
     <div style={clasess.mainContainer} >
       <div style={clasess.inputContainer}>
-        <div style={clasess.inputLabel}>Account Name</div>
+        <div style={clasess.inputLabel}>{t("financesWidget.accountName")}</div>
         <GomakeTextInput
-          style={{ height: "40px", minWidth: 180 }}
+          style={clasess.dropDownListStyle}
           onChange={onChangeAccountName}
           value={accountName}
-          placeholder="Enter your account name"
+          placeholder={t("financesWidget.enterAccountName")}
         />
       </div>
       <div style={clasess.inputContainer}>
-        <div style={clasess.inputLabel}>Account Manager Email</div>
+        <div style={clasess.inputLabel}>{t("financesWidget.accountManagerEmail")}</div>
         <GomakeTextInput
-          style={{ height: "40px", minWidth: 180 }}
+          style={clasess.dropDownListStyle}
           onChange={onChangeAccountEmail}
           value={accountEmail}
-          placeholder="Enter your account email"
+          placeholder={t("financesWidget.enterAccountEmail")}
         />
       </div>
       <div style={clasess.inputContainer}>
-        <div style={clasess.inputLabel}>Day Of Month For Sending An Account Statement</div>
+        <div style={clasess.inputLabel}>{t("financesWidget.dayOfMonth")}</div>
         <GoMakeAutoComplate
           options={daysInMonth}
           style={clasess.dropDownListStyle}
-          placeholder="Select Day Of Month"
+          placeholder={t("financesWidget.selectDayOfMonth")}
           onChange={onChangeSelectDayOfMonth}
           value={dayOfMonth}
           disableClearable={true}

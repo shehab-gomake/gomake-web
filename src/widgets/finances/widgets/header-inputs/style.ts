@@ -20,7 +20,7 @@ const useStyle = () => {
         gap:5
       },
       inputLabel:{
-        ...FONT_FAMILY.Lexend(500,14)
+        ...FONT_FAMILY.Lexend(600,12)
       },
       dropDownListStyle: {
         borderRadius: 4,
@@ -28,7 +28,7 @@ const useStyle = () => {
         backgroundColor: "#FFF",
         border: "0px",
         boxShadow: "0px 1px 2px 0px rgba(0, 0, 0, 0.08)",
-        width: 300,
+        width: 200,
       },
     };
   }, []);
