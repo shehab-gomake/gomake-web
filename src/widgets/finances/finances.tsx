@@ -4,6 +4,7 @@ import { useStyle } from "./style";
 import { FinancesHeaderWidget } from "./widgets/header/finances";
 import { FinancesHeaderInputsWidget } from "./widgets/header-inputs/header-inputs";
 import { useFinances } from "./use-finances";
+import { FinancesTableWidget } from "./widgets/finances-table/finances";
 
 const FinancesWidget = () => {
   const { clasess } = useStyle();
@@ -21,6 +22,7 @@ const FinancesWidget = () => {
         onChangeAccountEmail={onChangeAccountEmail}
         onChangeSelectDayOfMonth={onChangeSelectDayOfMonth}
       />
+      <FinancesTableWidget />
     </div>
   );
 };

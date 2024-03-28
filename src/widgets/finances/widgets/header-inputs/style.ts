@@ -10,6 +10,7 @@ const useStyle = () => {
         alignItems: "center",
         gap:15,
         width:"100%",
+        marginBottom:15
       },
       inputContainer:{
         display: 'flex',
