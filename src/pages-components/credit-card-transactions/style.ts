@@ -17,6 +17,10 @@ const useStyle = () => {
         padding:20,
         overflowY: "scroll" as "scroll",
       },
+      insideStyle: {
+        width: "600px",
+        height: "520px",
+      },
     };
   }, [i18next.language, t]);
   return {

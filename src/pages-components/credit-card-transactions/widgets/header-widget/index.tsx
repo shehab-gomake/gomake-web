@@ -1,49 +1,27 @@
-import { Checkbox } from "@mui/material";
 
 import { GoMakeDatepicker } from "@/components/date-picker/date-picker-component";
 import { GoMakeAutoComplate, GomakePrimaryButton } from "@/components"
-import {useStyle} from "@/pages-components/credit-card-transactions/widgets/header-widget/style";
-import {SearchInput} from "@/components/containers/search-input";
 import {
-    useCreditCardTransactionsReportHeader
+    useCreditCardTransactionsReportHeader , CreditCardTransactionsReportHeaderWidgetProps
 } from "@/pages-components/credit-card-transactions/widgets/header-widget/use-header-credit-card-widget";
-import { useState } from "react";
-import { SearchInputComponent } from "@/components/form-inputs/search-input-component";
-import { ExcelSheetIcon } from "@/icons";
 import { HeaderTitle } from "@/widgets";
-import { PrimaryTable } from "@/components/tables/primary-table";
-import { GoMakePagination } from "@/components/pagination/gomake-pagination";
 
-interface CreditCardTransactionsReportHeaderWidgetProps {
-    onSelectDeliveryTimeDates:any;
-    resetDatePicker:any;
-    onClickSearchFilter:any,
-    onClickClearFilter:any,
-    agent: any;
-    agentsCategories: any[];
-    handleAgentChange: any;
-    customer: any;
-    renderOptions: () => any[];
-    checkWhatRenderArray: (arg: any) => void;
-    handleCustomerChange: any;
-}
+
+
 const CreditCardTransactionsReportHeaderWidget = ({
-  agent,
   onSelectDeliveryTimeDates,
   resetDatePicker,
-  agentsCategories,
-  handleAgentChange,
   customer,
+  customerId,
   renderOptions,
   onClickSearchFilter,
   onClickClearFilter,
   checkWhatRenderArray,
   handleCustomerChange,
 }: CreditCardTransactionsReportHeaderWidgetProps) => {
-  const [patternSearch, setPatternSearch] = useState("");
-  const {   t , tableHeaders , setPage ,handlePageSizeChange ,page ,pagesCount , pageSize,allCreditCardTransaction} = useCreditCardTransactionsReportHeader();
-  const { classes } = useStyle();
-   console.log(page);
+
+  const {   t ,classes} = useCreditCardTransactionsReportHeader();
+
   return (
     <>
           <div style={classes.mainContainer}>
@@ -62,21 +40,9 @@ const CreditCardTransactionsReportHeaderWidget = ({
                 </div>
               </div>
               <div style={classes.date2FilterContainer}>
-                <h3 style={classes.filterLabelStyle}>{t("sales.quote.agent")}</h3>
-                <GoMakeAutoComplate
-                  key={agent?.id}
-                  options={agentsCategories}
-                  style={classes.textInputStyle}
-                  getOptionLabel={(option: any) => option.label}
-                  placeholder={t("sales.quote.ChooseAgent")}
-                  onChange={handleAgentChange}
-                  value={agent}
-                />
-              </div>
-              <div style={classes.date2FilterContainer}>
                 <h3 style={classes.filterLabelStyle}>{t("sales.quote.customer")}</h3>
                 <GoMakeAutoComplate
-                  key={customer?.id}
+                  key={customerId}
                   options={renderOptions()}
                   onChangeTextField={checkWhatRenderArray}
                   getOptionLabel={(option: any) => `${option.name}`}
@@ -104,26 +70,10 @@ const CreditCardTransactionsReportHeaderWidget = ({
                             {t("sales.quote.clear")}
                           </GomakePrimaryButton>
               </div>    
-              <div style={classes.searchFilterContainer}>
-              <SearchInputComponent onChange={(e) => setPatternSearch(e)} />
-            </div>
           </div>
-          <PrimaryTable
-              stickyFirstCol={false}
-              stickyHeader={true}
-              maxHeight={650}
-              rows={allCreditCardTransaction}
-              headers={tableHeaders}
-            />
+      
         </div>
-        <GoMakePagination
-            onChangePageNumber={(event, value) => setPage(value)}
-            onChangePageSize={handlePageSizeChange}
-            page={page}
-            setPage={setPage}
-            pagesCount={pagesCount}
-            pageSize={pageSize}
-          />
+    
   </>
 
   );

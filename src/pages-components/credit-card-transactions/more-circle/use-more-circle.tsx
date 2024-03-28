@@ -9,11 +9,11 @@ import { DuplicateIcon } from "@/components/icons/icons";
 const useMoreCircle = () => {
   const { user } = useCustomer();
   const { navigate } = useGomakeRouter();
-  const getMenuList = ({  onClickOpenModal, onClickPdf, onClickDuplicate, onClickLoggers, t }) => {
+  const getMenuList = ({  creditCardTransaction ,onClickOpenModal, onClickPdf, onClickDuplicate, onClickLoggers, t }) => {
     return [
       {
         condition: true, 
-        onClick: () => navigate(``),
+        onClick: () => onClickOpenModal(creditCardTransaction),
         icon: <TickIcon />,
         name: t("creditcardTransactions.Transfertoanothercustomer")
       },
