@@ -10,6 +10,7 @@ import { useGomakeRouter } from "@/hooks";
 import { quoteItemState } from "@/store";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { useRouter } from "next/router";
+import { DuplicateType } from "@/enums";
 
 const useMoreCircle = ({
   quoteItem,
@@ -39,7 +40,7 @@ const useMoreCircle = ({
 
   const onClickDuplicateQuoteItem = (quoteItem, documentType) => {
     navigate(
-      `/products/duplicate?clientTypeId=${quoteItem?.clientTypeId}&customerId=${quoteItemValue?.customerID}&productId=${quoteItem?.productID}&documentItemId=${quoteItem?.id}&documentType=${documentType}${router?.query?.Id ? `&documentId=${router?.query?.Id}` : ""}`
+      `/products/duplicate?clientTypeId=${quoteItem?.clientTypeId}&customerId=${quoteItemValue?.customerID}&productId=${quoteItem?.productID}&documentItemId=${quoteItem?.id}&documentType=${documentType}${router?.query?.Id ? `&documentId=${router?.query?.Id}` : ""}&duplicateType=${DuplicateType.SameOrder}`
     );
   };
 
@@ -69,7 +70,7 @@ const useMoreCircle = ({
       icon: <AnalysisIcon />,
       onclick: () => null,
     },
-    (router.query.isNewCreation || quoteItem?.isDeletable ) &&
+    (router.query.isNewCreation || quoteItem?.isDeletable) &&
     {
       name: "delete",
       icon: <DeleteMenuIcon />,
