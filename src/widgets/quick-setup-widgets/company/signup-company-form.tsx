@@ -10,6 +10,7 @@ const SignupCompanyForm = () => {
     const {state, onChange, currencies, languages, onclickNext, loading} = useCompanyForm();
     const {classes} = useStyle();
     const {t} = useTranslation();
+    
     return (
         <Stack gap={'30px'} alignItems={'center'}>
             <h2 style={classes.header}>{t('signup.companyHeader')}</h2>

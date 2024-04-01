@@ -71,14 +71,8 @@ const useQuoteWidget = ({ documentType }: any) => {
       return true;
     }
   };
-  useEffect(() => {
-    const isDisabled = checkVariables(
-      selectedClientType,
-      selectedClient,
-      selectedProduct
-    );
-    setIsDisabled(isDisabled);
-  }, [selectedClientType, selectedClient, selectedProduct]);
+
+
 
   const checkWhatRenderArray = (e) => {
     if (e.target.value) {
@@ -99,7 +93,7 @@ const useQuoteWidget = ({ documentType }: any) => {
   const getAllCustomersCreateQuote = useCallback(async (SearchTerm?) => {
     await getAndSetAllCustomers(callApi, setCustomersListCreateQuote, {
       ClientType: documentType === DOCUMENT_TYPE.purchaseOrder || documentType === DOCUMENT_TYPE.purchaseInvoice || documentType === DOCUMENT_TYPE.purchaseInvoiceRefund ? "S" : "C",
-      onlyCreateOrderClients: documentType === DOCUMENT_TYPE.purchaseOrder || documentType === DOCUMENT_TYPE.purchaseInvoice || documentType === DOCUMENT_TYPE.purchaseInvoiceRefund ? true : false,
+      onlyCreateOrderClients: documentType != DOCUMENT_TYPE.quote ? true : false,
       searchTerm: SearchTerm,
     });
   }, []);
@@ -126,12 +120,6 @@ const useQuoteWidget = ({ documentType }: any) => {
     [clientTypesValue]
   );
 
-  useEffect(() => {
-    const clientType = clientTypesValue.find(
-      (c) => c.id == selectedClient?.clientTypeId
-    );
-  }, [clientTypesValue, selectedClient]);
-
   const getAndSetExistQuote = async () => {
     const callBack = (res) => {
       if (res?.success) {
@@ -157,14 +145,6 @@ const useQuoteWidget = ({ documentType }: any) => {
     []
   );
 
-  useEffect(() => {
-    getAllClientTypes();
-    getAndSetExistQuote();
-  }, []);
-
-  useEffect(() => {
-    getAllProducts();
-  }, [selectedClient, selectedClientType]);
 
   const onClickSaveQuote = async (quoteId) => {
     const callBack = (res) => {
@@ -251,10 +231,35 @@ const useQuoteWidget = ({ documentType }: any) => {
     await getAllReportsApi(callApi, callBack, { customerId: selectedClient?.id, productId: selectedProduct?.id });
   };
 
+  useEffect(() => {
+    const clientType = clientTypesValue.find(
+      (c) => c.id == selectedClient?.clientTypeId
+    );
+  }, [clientTypesValue, selectedClient]);
+
+  useEffect(() => {
+    getAllClientTypes();
+    getAndSetExistQuote();
+  }, []);
+
+  useEffect(() => {
+    getAllProducts();
+  }, [selectedClient, selectedClientType]);
 
   useEffect(() => {
     getAllReports();
   }, [selectedClient, selectedProduct])
+
+
+  useEffect(() => {
+    const isDisabled = checkVariables(
+      selectedClientType,
+      selectedClient,
+      selectedProduct
+    );
+    setIsDisabled(isDisabled);
+  }, [selectedClientType, selectedClient, selectedProduct]);
+
 
   return {
     clientTypesValue,

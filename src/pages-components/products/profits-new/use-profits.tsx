@@ -49,7 +49,8 @@ const useNewProfits = () => {
       value: ETransition.STEPS,
     },
   ];
-  const PricingBy = [
+
+  const PricingByList = [
     {
       label: t("products.profits.pricingListWidget.cost"),
       value: EPricingBy.COST,
@@ -79,6 +80,19 @@ const useNewProfits = () => {
       value: EPricingBy.CUBIC_METER,
     },
   ];
+  const [PricingBy, setPricingBy] = useState([])
+  const modifiedPricingBy = PricingByList.slice(1);
+
+
+  useEffect(() => {
+    if (router.query.isOutSource) {
+      setPricingBy(modifiedPricingBy)
+    }
+    else {
+      setPricingBy(PricingByList)
+    }
+  }, [PricingByList, modifiedPricingBy, router])
+
   const systemCurrency = useRecoilValue<any>(systemCurrencyState);
   const currenciesUnits = useRecoilValue<any>(currencyUnitState);
   const [ProfitCurrency, setProfitCurrency] = useState("");
@@ -254,6 +268,13 @@ const useNewProfits = () => {
     }
   }, [actionProfitByActionId]);
   useEffect(() => {
+    const unitPriceLabel = router.query.isOutSource
+      ? t("products.profits.pricingListWidget.unitCost")
+      : t("products.profits.pricingListWidget.unitPrice");
+
+    const totalPriceLabel = router.query.isOutSource
+      ? t("products.profits.pricingListWidget.totalCost")
+      : t("products.profits.pricingListWidget.totalPrice");
     if (router.query.draftId) {
       setTableHeaders([
         t("products.profits.pricingListWidget.quantity"),
@@ -262,10 +283,8 @@ const useNewProfits = () => {
           ? ` ${ProfitCurrency}`
           : ""),
         t("products.profits.pricingListWidget.profit"),
-        t("products.profits.pricingListWidget.unitPrice"),
-        `${t(
-          "products.profits.pricingListWidget.totalPrice"
-        )} ${ProfitCurrency}`,
+        unitPriceLabel,
+        `${totalPriceLabel} ${ProfitCurrency}`,
         t("products.profits.pricingListWidget.more"),
       ]);
       if (selectedPricingBy?.value != EPricingBy.COST) {
@@ -276,10 +295,8 @@ const useNewProfits = () => {
             : ""),
           t("products.profits.pricingListWidget.cost"),
           t("products.profits.pricingListWidget.profit"),
-          t("products.profits.pricingListWidget.unitPrice"),
-          `${t(
-            "products.profits.pricingListWidget.totalPrice"
-          )} ${ProfitCurrency}`,
+          unitPriceLabel,
+          `${totalPriceLabel} ${ProfitCurrency}`,
           t("products.profits.pricingListWidget.more"),
         ]);
       }
@@ -292,10 +309,8 @@ const useNewProfits = () => {
             : ""),
           t("products.profits.pricingListWidget.profit"),
           `Profit value ${ProfitCurrency}`,
-          t("products.profits.pricingListWidget.unitPrice"),
-          `${t(
-            "products.profits.pricingListWidget.totalPrice"
-          )} ${ProfitCurrency}`,
+          unitPriceLabel,
+          `${totalPriceLabel} ${ProfitCurrency}`,
           t("products.profits.pricingListWidget.more"),
         ]);
       }
@@ -306,9 +321,7 @@ const useNewProfits = () => {
           ? ` ${ProfitCurrency}`
           : ""),
         t("products.profits.pricingListWidget.profit"),
-        `${t(
-          "products.profits.pricingListWidget.totalPrice"
-        )} ${ProfitCurrency}`,
+        `${totalPriceLabel} ${ProfitCurrency}`,
         t("products.profits.pricingListWidget.more"),
       ]);
       if (selectedAdditionalProfitRow?.id) {
@@ -319,9 +332,7 @@ const useNewProfits = () => {
             : ""),
           t("products.profits.pricingListWidget.profit"),
           `Profit value ${ProfitCurrency}`,
-          `${t(
-            "products.profits.pricingListWidget.totalPrice"
-          )} ${ProfitCurrency}`,
+          `${totalPriceLabel} ${ProfitCurrency}`,
           t("products.profits.pricingListWidget.more"),
         ]);
       }
@@ -331,10 +342,8 @@ const useNewProfits = () => {
         (selectedPricingBy?.value === EPricingBy.COST
           ? ` ${ProfitCurrency}`
           : ""),
-        t("products.profits.pricingListWidget.unitPrice"),
-        `${t(
-          "products.profits.pricingListWidget.totalPrice"
-        )} ${ProfitCurrency}`,
+        unitPriceLabel,
+        `${totalPriceLabel} ${ProfitCurrency}`,
         t("products.profits.pricingListWidget.more"),
       ]);
       if (selectedAdditionalProfitRow?.id) {
@@ -343,11 +352,9 @@ const useNewProfits = () => {
           (selectedPricingBy?.value === EPricingBy.COST
             ? ` ${ProfitCurrency}`
             : ""),
-          t("products.profits.pricingListWidget.unitPrice"),
+          unitPriceLabel,
           `Profit value ${ProfitCurrency}`,
-          `${t(
-            "products.profits.pricingListWidget.totalPrice"
-          )} ${ProfitCurrency}`,
+          `${totalPriceLabel} ${ProfitCurrency}`,
           t("products.profits.pricingListWidget.more"),
         ]);
       }

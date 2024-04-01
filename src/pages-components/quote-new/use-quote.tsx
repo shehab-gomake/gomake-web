@@ -7,7 +7,6 @@ import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
 import {
   getAndSetAllCustomers,
   getAndSetAllEmployees,
-  getAndSetClientContacts,
 } from "@/services/hooks";
 import { v4 as uuidv4 } from "uuid";
 import {
@@ -18,9 +17,8 @@ import {
   quoteConfirmationState,
   quoteItemState,
 } from "@/store";
-import { addressModalState } from "@/widgets/quote-new/business-widget/address-widget/state";
 import { useQuoteGetData } from "./use-quote-get-data";
-import { addDeliveryApi, addDocumentAddressApi, addDocumentContactApi, calculateDocumentApi, calculateDocumentItemApi, cancelDocumentApi, changeDocumentClientApi, deleteDocumentAddressApi, deleteDocumentContactApi, deleteDocumentItemApi, duplicateWithAnotherQuantityApi, getDocumentApi, refreshExchangeRateApi, saveDocumentApi, sendDocumentToClientApi, updateAgentApi, updateDocumentAddressApi, updateDocumentContactApi, updateDocumentCurrencyApi, updateDueDateApi, updateExchangeRateApi, updatePurchaseNumberApi } from "@/services/api-service/generic-doc/documents-api";
+import { addDeliveryApi, addDocumentContactApi, calculateDocumentApi, calculateDocumentItemApi, cancelDocumentApi, changeDocumentClientApi, deleteDocumentAddressApi, deleteDocumentContactApi, deleteDocumentItemApi, duplicateWithAnotherQuantityApi, getDocumentApi, refreshExchangeRateApi, saveDocumentApi, sendDocumentToClientApi, updateAgentApi, updateDocumentAddressApi, updateDocumentContactApi, updateDocumentCurrencyApi, updateDueDateApi, updateExchangeRateApi, updatePurchaseNumberApi } from "@/services/api-service/generic-doc/documents-api";
 import { DOCUMENT_TYPE } from "../quotes/enums";
 import { useRouter } from "next/router";
 import { getAllCreditTransactionsApi, getClientPaymentItemsApi, getReceiptByIdApi } from "@/services/api-service/generic-doc/receipts-api";
@@ -42,12 +40,13 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     alertFaultGetData,
     alertSuccessDelete,
     alertFaultDelete,
+    alertFault
   } = useSnackBar();
   const router = useRouter();
   const { callApi } = useGomakeAxios();
   const { navigate } = useGomakeRouter();
   const { t } = useTranslation();
-  const {getQuote , getAllClientContacts } = useQuoteGetData(docType);
+  const { getQuote, getAllClientContacts } = useQuoteGetData(docType);
   const [quoteItemValue, setQuoteItemValue] = useRecoilState<any>(quoteItemState);
   const quoteConfirm = useRecoilValue<any>(quoteConfirmationState);
   const [selectDate, setSelectDate] = useState(isQuoteConfirmation ? quoteConfirm?.dueDate : quoteItemValue?.dueDate);
@@ -77,7 +76,6 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
   const [openDeleteModalContact, setOpenDeleteModalContact] = useState(false);
   const [openAddNewItemModal, setOpenAddNewItemModal] = useState(false);
   const [openCopyFromOrderModal, setOpenCopyFromOrderModal] = useState(false);
-  const [openCopyFromDeliveryNoteModal, setOpenCopyFromDeliveryNoteModal] = useState(false);
   const [quoteItemId, setQuateItemId] = useState();
   const [openDuplicateWithDifferentQTYModal, setOpenDuplicateWithDifferentQTYModal] = useState(false);
   const [selectedContactById, setSelectedContactById] = useState<any>();
@@ -544,16 +542,13 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     setOpenCopyFromOrderModal(false);
   };
 
-  const onOpenCopyFromOrder = () => {
+  const [copyFromDocumentType, setCopyFromDocumentType] = useState<DOCUMENT_TYPE>();
+
+  const onOpenCopyFromOrder = (documentNum: DOCUMENT_TYPE) => {
+    setCopyFromDocumentType(documentNum)
     setOpenCopyFromOrderModal(true);
   };
-  const onCloseCopyFromDeliveryNote = () => {
-    setOpenCopyFromDeliveryNoteModal(false);
-  };
 
-  const onOpenCopyFromDeliveryNote = () => {
-    setOpenCopyFromDeliveryNoteModal(true);
-  };
   const onCloseNewItem = () => {
     setOpenAddNewItemModal(false);
   };
@@ -585,7 +580,8 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
             data: data,
             calculationType: calculationType
           }
-        }
+        },
+        false
       );
       if (res?.success) {
         const _data = res?.data?.data?.data
@@ -915,22 +911,42 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
       }
     })
   }
-
-  const onClickSendQuoteToClient = async (messageType: number) => {
-    const callBack = (res) => {
-      if (res?.success) {
-        alertSuccessAdded();
-      } else {
-        alertFaultAdded();
+  function checkArrayNotEmptyOrPhoneNotEmpty(array) {
+    if (array.length === 0) {
+      return false;
+    }
+    for (let i = 0; i < array.length; i++) {
+      if (array[i].contactPhone && array[i].contactPhone.trim() !== '') {
+        return true;
       }
     }
-    await sendDocumentToClientApi(callApi, callBack, {
-      documentType: docType,
-      document: {
-        documentId: quoteItemValue?.id,
-        messageType,
+
+    return false;
+  }
+
+
+  const onClickSendQuoteToClient = async (messageType: number) => {
+    let checkPhones = checkArrayNotEmptyOrPhoneNotEmpty(quoteItemValue?.documentContacts)
+    if (checkPhones) {
+      const callBack = (res) => {
+        if (res?.success) {
+          alertSuccessAdded();
+        } else {
+          alertFaultAdded();
+        }
       }
-    })
+      await sendDocumentToClientApi(callApi, callBack, {
+        documentType: docType,
+        document: {
+          documentId: quoteItemValue?.id,
+          messageType,
+        }
+      })
+    }
+    else {
+      alertFault("sales.quote.phoneContectErrorMsg")
+    }
+
   }
 
   const handleSaveBtnClick = async () => {
@@ -950,6 +966,18 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
   }
 
   const handleSaveBtnClickForDocument = async () => {
+
+    if (!quoteItemValue?.documentItems || quoteItemValue.documentItems.length === 0) {
+      alertFault("alerts.noItems");
+      return;
+    }
+
+    if (quoteItemValue?.totalPrice === 0) {
+      console.log("quoteItemValue : ", quoteItemValue, " quoteItemValue.d", quoteItemValue?.documentItems)
+      alertFault("alerts.cannotCreateWithPriceZero");
+      return;
+    }
+
     const res = await callApi(
       EHttpMethod.POST,
       `/v1/erp-service/documents/create-document`,
@@ -963,7 +991,6 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     );
     if (res?.success) {
       alertSuccessAdded();
-      // navigate(`${documentPath}s`);
       const _data = res?.data?.data?.data || {};
       setQuoteItemValue(_data);
       navigate(`/${documentPath}?Id=${res?.data?.data?.data?.id}`)
@@ -1235,9 +1262,8 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     openCopyFromOrderModal,
     onCloseCopyFromOrder,
     onOpenCopyFromOrder,
-    onCloseCopyFromDeliveryNote,
-    onOpenCopyFromDeliveryNote,
-    openCopyFromDeliveryNoteModal,
+    getAllClientContacts,
+    copyFromDocumentType
   };
 };
 

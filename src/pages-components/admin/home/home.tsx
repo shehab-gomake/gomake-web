@@ -1,19 +1,19 @@
-import {QuoteWidget} from "./widgets/quote-widget/quote-widget";
-import {useStyle} from "./style";
-import {HomeTableWidget} from "./widgets/home-table-widget/home-table-widget";
-import {useHome} from "./use-home";
-import {useEffect} from "react";
-import {CardsWidget} from "./widgets/cards-widget/cards-widget";
-import {Skeleton} from "@mui/material";
-import {useRecoilValue} from "recoil";
-import {homeReportsState} from "@/pages-components/quote-new/store/quote";
-import {StepType} from "@reactour/tour";
+import { QuoteWidget } from "./widgets/quote-widget/quote-widget";
+import { useStyle } from "./style";
+import { HomeTableWidget } from "./widgets/home-table-widget/home-table-widget";
+import { useHome } from "./use-home";
+import { useEffect } from "react";
+import { CardsWidget } from "./widgets/cards-widget/cards-widget";
+import { Skeleton } from "@mui/material";
+import { useRecoilValue } from "recoil";
+import { homeReportsState } from "@/pages-components/quote-new/store/quote";
+import { StepType } from "@reactour/tour";
 import Stack from "@mui/material/Stack";
-import {useGoMakeTour} from "@/hooks/use-go-make-tour";
+import { useGoMakeTour } from "@/hooks/use-go-make-tour";
 
-const HomePageComponentForAdmin = ({isAdmin}) => {
-    const {classes} = useStyle();
-    const {Title, setIsDisplay, isDisplay, flag, selectedClient, t} = useHome();
+const HomePageComponentForAdmin = ({ isAdmin }) => {
+    const { classes } = useStyle();
+    const { Title, setIsDisplay, isDisplay, flag, selectedClient, t } = useHome();
     const allReports = useRecoilValue<any>(homeReportsState);
     const homeSteps: StepType[] = [
         {
@@ -31,7 +31,7 @@ const HomePageComponentForAdmin = ({isAdmin}) => {
             </Stack>,
             position: 'right',
             styles: {
-                maskWrapper: (base) => ({...base, zIndex: 1}),
+                maskWrapper: (base) => ({ ...base, zIndex: 1 }),
             }
         },
         {
@@ -39,7 +39,7 @@ const HomePageComponentForAdmin = ({isAdmin}) => {
             content: 'select customer type',
             position: 'right',
             styles: {
-                maskWrapper: (base) => ({...base, zIndex: 1}),
+                maskWrapper: (base) => ({ ...base, zIndex: 1 }),
             }
         },
         {
@@ -47,7 +47,7 @@ const HomePageComponentForAdmin = ({isAdmin}) => {
             content: 'Now, please select a product from the list.',
             position: 'right',
             styles: {
-                maskWrapper: (base) => ({...base, zIndex: 1}),
+                maskWrapper: (base) => ({ ...base, zIndex: 1 }),
             }
         },
         {
@@ -61,26 +61,28 @@ const HomePageComponentForAdmin = ({isAdmin}) => {
             position: 'bottom',
         },
     ]
-    const {} = useGoMakeTour(homeSteps, []);
+
+    const { } = useGoMakeTour(homeSteps, []);
 
     useEffect(() => {
         setIsDisplay(flag);
     }, [selectedClient]);
+
     return (
         <div style={classes.mainContainer}>
             <div style={classes.firstRowContainer}>
                 <div style={classes.titleStyle}>{Title}</div>
                 <div style={classes.containerStyle}>
                     <div style={classes.widgetStyle}>
-                        <QuoteWidget isAdmin={isAdmin}/>
+                        <QuoteWidget isAdmin={isAdmin} />
                     </div>
                     <div style={classes.widgetStyle}>
                         {
                             allReports ? (
-                                    <CardsWidget/>
-                                ) :
+                                <CardsWidget />
+                            ) :
                                 (
-                                    <Skeleton variant="rectangular" sx={classes.skeltonStyle}/>
+                                    <Skeleton variant="rectangular" sx={classes.skeltonStyle} />
                                 )
                         }
                     </div>
@@ -90,15 +92,15 @@ const HomePageComponentForAdmin = ({isAdmin}) => {
                 <div style={classes.secondRowContainer}>
                     <div style={classes.titleStyle}>
                         {t("sales.quote.documents")}{" "}
-                        <span style={{color: "rgb(213, 214, 233)"}}>
-              / {selectedClient?.name}
-            </span>
+                        <span style={{ color: "rgb(213, 214, 233)" }}>
+                            / {selectedClient?.name}
+                        </span>
                     </div>
-                    <HomeTableWidget/>
+                    <HomeTableWidget />
                 </div>
             )}
         </div>
     );
 };
 
-export {HomePageComponentForAdmin};
+export { HomePageComponentForAdmin };

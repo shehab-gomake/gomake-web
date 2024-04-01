@@ -7,6 +7,7 @@ import { useStyle } from "./style";
 import { AddStepModalProps } from "../../interface";
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
+import { useRouter } from "next/router";
 
 const AddStepModal = ({
   openModal,
@@ -14,11 +15,15 @@ const AddStepModal = ({
   selectedPricingBy,
   addNewStepForActionProfitRow,
 }: AddStepModalProps) => {
+  const router = useRouter()
   const { clasess } = useStyle();
   const { t } = useTranslation();
   const [value, setValue] = useState<number>(null);
   const [totalPrice, setTotalPrice] = useState<number>(null);
   const [errorMsg, setErrorMsg] = useState<string>("");
+  const totalPriceLabel = router.query.isOutSource
+    ? t("products.profits.pricingListWidget.totalCost")
+    : t("products.profits.pricingListWidget.totalPrice");
   return (
     <>
       <GoMakeModal
@@ -42,9 +47,9 @@ const AddStepModal = ({
               />
             </div>
             <div style={clasess.labelTextContainer}>
-              <div>{t("products.profits.pricingListWidget.totalPrice")}</div>
+              <div>{totalPriceLabel}</div>
               <GomakeTextInput
-                placeholder={t("products.profits.pricingListWidget.totalPrice")}
+                placeholder={totalPriceLabel}
                 style={clasess.textInputStyle}
                 value={totalPrice}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {

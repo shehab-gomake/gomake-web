@@ -6,6 +6,12 @@ import { GomakePrimaryButton } from "@/components";
 import { WastebasketNew2 } from "@/icons";
 import { IconButton } from "@mui/material";
 import { PhoneInputUpdatedValues } from "../phone-input-updated-values";
+import { useState } from "react";
+import { addCustomerContactApi, addDocumentContactApi } from "@/services/api-service/generic-doc/documents-api";
+import { useRecoilValue } from "recoil";
+import { quoteItemState } from "@/store";
+import { useGomakeAxios, useSnackBar } from "@/hooks";
+import { v4 as uuidv4 } from "uuid";
 
 const AddContactNewWidget = ({
   clientContactsValue,
@@ -23,9 +29,67 @@ const AddContactNewWidget = ({
   onInputChangeMail,
   onClickAddNewContact,
   setIsDisplayWidget,
+  documentType,
+  getQuote,
+  getAllClientContacts
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
+  const [newContactName, setNewContactName] = useState("")
+  const quoteItemValue = useRecoilValue<any>(quoteItemState);
+  const { callApi } = useGomakeAxios();
+  const { alertSuccessAdded, alertFaultAdded } = useSnackBar();
+
+  const addNewContactNew = async (contactID) => {
+    const callBack = (res) => {
+      if (res?.success) {
+        alertSuccessAdded();
+        setIsDisplayWidget(false);
+        getQuote();
+      } else {
+        alertFaultAdded();
+      }
+    }
+    await addDocumentContactApi(callApi, callBack, {
+      documentType: documentType,
+      contact:
+      {
+        contactID: contactID,
+        contactName: newContactName,
+        contactMail: selectedContactById?.mail,
+        contactPhone: selectedContactById?.phone,
+        documentID: quoteItemValue?.id,
+      }
+    })
+  }
+
+  const createNewContactNew = async () => {
+    const callBack = (res) => {
+      if (res?.success) {
+        alertSuccessAdded();
+        setIsDisplayWidget(false);
+        getQuote();
+        getAllClientContacts()
+        addNewContactNew(res?.data?.data?.data)
+      } else {
+        alertFaultAdded();
+      }
+    }
+    await addCustomerContactApi(callApi, callBack, {
+      contactName: newContactName,
+      contactMail: selectedContactById?.mail,
+      contactPhone: selectedContactById?.phone,
+      clientId: quoteItemValue?.customerID,
+    })
+  }
+  const onClickAddNewContactNew = () => {
+    if (newContactName) {
+      createNewContactNew()
+    }
+    else {
+      onClickAddNewContact()
+    }
+  }
 
   return (
     <>
@@ -40,6 +104,9 @@ const AddContactNewWidget = ({
           onChange={(e: any, item: any) => {
             setSelectedContactById(item);
           }}
+          onChangeTextField={
+            (e) => setNewContactName(e.target.value)
+          }
         />
         <PhoneInputUpdatedValues
           value={
@@ -67,7 +134,7 @@ const AddContactNewWidget = ({
         />
         <GomakePrimaryButton
           style={classes.saveBtnStyle}
-          onClick={onClickAddNewContact}
+          onClick={onClickAddNewContactNew}
         >
           {t("materials.buttons.save")}
         </GomakePrimaryButton>

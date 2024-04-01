@@ -648,7 +648,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
         const pdfLink = res.data;
         window.open(pdfLink, "_blank");
       } else {
-        alertFaultUpdate();
+        alertFaultGetData();
       }
     };
     if (isReceipt) {
@@ -720,7 +720,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
                   : classes.closeBtnStyle
               }
             >
-              {_renderQuoteStatus(document?.documentStatus, document, t)}
+              {_renderStatus(document, t)}
             </h2>
           </div>,
           document?.notes,

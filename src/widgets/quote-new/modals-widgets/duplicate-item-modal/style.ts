@@ -9,7 +9,7 @@ const useStyle = () => {
       insideStyle: {
         width: "30%",
         borderRadius: 5,
-        height: "30%",
+        height: "200px",
       },
       mainContainer: {
         display: "flex",
@@ -20,8 +20,7 @@ const useStyle = () => {
       },
       textInputStyle: {
         width: "100%",
-        border: "1px solid #2E3092",
-        borderRadius: 4,
+        borderRadius: 8,
         height: 40,
       },
       btnContainer: {

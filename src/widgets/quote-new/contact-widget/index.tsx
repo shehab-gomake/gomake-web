@@ -34,6 +34,9 @@ const ContactNewWidget = ({
   onClickDeleteContact,
   selectedContact,
   isQuoteConfirmation = false,
+  documentType,
+  getQuote,
+  getAllClientContacts
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -99,6 +102,9 @@ const ContactNewWidget = ({
           onInputChangeMail={onInputChangeMail}
           onClickAddNewContact={onClickAddNewContact}
           setIsDisplayWidget={setIsDisplayWidget}
+          documentType={documentType}
+          getQuote={getQuote}
+          getAllClientContacts={getAllClientContacts}
         />
       )}
 

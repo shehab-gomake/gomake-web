@@ -129,7 +129,17 @@ export const _renderStatus = (document: any, t: any): string => {
       result += `${t(`documentStatus.${document.titleSecondDocumentNumber}.title`)}: ${secondDocuments}`;
     }
     return result;
-  } else {
+  } else if (document?.statusTitleText === "Quote.Create")
+  {
+   
+      if (document?.agentId) {
+        return t("sales.quote.create");
+      } else {
+        return t("sales.quote.createdBy", { name: document?.userName });
+      }
+    
+  }
+  else {
     return t(`documentStatus.${document.statusTitleText}`);
   }
 };

@@ -52,45 +52,34 @@ const RowMappingWidget = ({
     index,
   });
   const { handleItemCheck } = useQuoteConfirmation();
-  return (
+  const canUpdate = router.query.isNewCreation ? true : item?.isEditable;
 
+  return (
     <TableRow
       key={item.id}
       style={{
         background: index % 2 === 0 ? "#FFFFFF" : "#F8FAFB",
       }}
     >
-      {
-        <PrimaryTableCell
-          style={{
-            width: columnWidths[0],
-            ...classes.cellContainerStyle,
-            borderBottom: item?.childsDocumentItems && "none",
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              justifyContent: "flex-start",
-              alignItems: "center",
-            }}
-          >
-            {isQuoteConfirmation ?
-              <Checkbox
-                icon={<CheckboxIcon />}
-                checkedIcon={<CheckboxCheckedIcon />}
-                checked={item?.isChecked}
-                onChange={(checked) => handleItemCheck(checked, item.id)}
-              /> :
-              <Checkbox
-                icon={<CheckboxIcon />}
-                checkedIcon={<CheckboxCheckedIcon />}
-              />}
+      <PrimaryTableCell
+        style={{
+          width: columnWidths[0],
+          ...classes.cellContainerStyle,
+          borderBottom: item?.childsDocumentItems && "none",
+        }}
+      >
+        {isQuoteConfirmation ?
+          <div style={classes.checkBoxContainer} >
+            <Checkbox
+              icon={<CheckboxIcon />}
+              checkedIcon={<CheckboxCheckedIcon />}
+              checked={item?.isChecked}
+              onChange={(checked) => handleItemCheck(checked, item.id)}
+            />
             {parentIndex}
           </div>
-        </PrimaryTableCell>
-      }
+          : parentIndex}
+      </PrimaryTableCell>
       <PrimaryTableCell
         style={{
           width: columnWidths[1],
@@ -99,7 +88,7 @@ const RowMappingWidget = ({
           borderBottom: item?.childsDocumentItems && "none",
         }}
       >
-        225
+        {item?.code ? item?.code : "225"}
       </PrimaryTableCell>
       <PrimaryTableCell
         style={{
@@ -119,7 +108,7 @@ const RowMappingWidget = ({
           borderBottom: item?.childsDocumentItems && "none",
         }}
       >
-        <CharacterDetails details={item.details} getQuote={getQuote} documentItemId={item?.id} canUpdate={router.query.isNewCreation ? true : item?.isEditable} />
+        <CharacterDetails details={item.details} getQuote={getQuote} documentItemId={item?.id} canUpdate={canUpdate} />
       </PrimaryTableCell>
       <PrimaryTableCell
         style={{
@@ -199,12 +188,12 @@ const RowMappingWidget = ({
             borderBottom: item?.childsDocumentItems && "none",
           }}
         >
-          <MoreMenuWidget
+          {canUpdate && <MoreMenuWidget
             quoteItem={item}
             onClickDuplicateWithDifferentQTY={onClickDuplicateWithDifferentQTY}
             onClickDeleteQouteItem={onClickDeleteQouteItem}
             documentType={documentType}
-          />
+          />}
         </PrimaryTableCell>
       }
     </TableRow>

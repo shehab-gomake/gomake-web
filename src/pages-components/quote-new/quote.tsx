@@ -4,7 +4,7 @@ import { AddNewItemModal } from "@/widgets/quote-new/modals-widgets/add-new-item
 import { ButtonsContainer } from "@/widgets/quote-new/buttons-container";
 import { BusinessNewWidget } from "@/widgets/quote-new/business-widget";
 import { ContactNewWidget } from "@/widgets/quote-new/contact-widget";
-import { QuoteForPriceTable } from "@/widgets/quote-new/quote-table"; 
+import { QuoteForPriceTable } from "@/widgets/quote-new/quote-table";
 import { WriteCommentComp } from "@/widgets/quote-new/write-comment";
 import { DateFormatterDDMMYYYY } from "@/utils/adapter";
 import { GoMakeDeleteModal } from "@/components";
@@ -167,9 +167,8 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
     getQuote,
     selectConfirmBusiness,
     handleSaveBtnClickForDocument,
-    onCloseCopyFromDeliveryNote,
-    onOpenCopyFromDeliveryNote,
-    openCopyFromDeliveryNoteModal
+    getAllClientContacts,
+    copyFromDocumentType
   } = useQuoteNew({ docType: documentType, isQuoteConfirmation: isQuoteConfirmation });
   const { resetReceiptState } = usePaymentsTable();
   const router = useRouter();
@@ -178,6 +177,7 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
     if (documentType === DOCUMENT_TYPE.receipt)
       resetReceiptState();
   }, [])
+
   const quoteSteps: StepType[] = [
     {
       selector: '[data-tour="quoteStep1"]',
@@ -209,12 +209,13 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
     },
   ]
   const [docNumber, setDocNumber] = useState(quoteState?.number)
-  
+
   useEffect(() => {
     setDocNumber(quoteState?.number)
   }, [quoteState?.number, router, quoteState, isQuoteConfirmation])
 
   const { } = useGoMakeTour(quoteSteps, []);
+
   return (
     <>
       {quoteState?.id && (
@@ -329,6 +330,9 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
                   onClickDeleteContact={onClickDeleteContact}
                   selectedContact={selectedContact}
                   isQuoteConfirmation={isQuoteConfirmation}
+                  documentType={documentType}
+                  getQuote={getQuote}
+                  getAllClientContacts={getAllClientContacts}
                 />
               </div>
             </div>
@@ -379,7 +383,6 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
                 documentType={documentType}
                 onOpenCopyFromOrder={onOpenCopyFromOrder}
                 handleSaveBtnClickForDocument={handleSaveBtnClickForDocument}
-                onOpenCopyFromDeliveryNote={onOpenCopyFromDeliveryNote}
               />
             </div>
           }
@@ -401,14 +404,7 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
         openModal={openCopyFromOrderModal}
         onClose={onCloseCopyFromOrder}
         documentType={documentType}
-        cliendDocumentType={1}
-
-      />
-      <CopyFromOrderModal
-        openModal={openCopyFromDeliveryNoteModal}
-        onClose={onCloseCopyFromDeliveryNote}
-        documentType={documentType}
-        cliendDocumentType={2}
+        cliendDocumentType={copyFromDocumentType}
       />
       <DuplicateItemModal
         openModal={openDuplicateWithDifferentQTYModal}

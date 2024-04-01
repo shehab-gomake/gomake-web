@@ -36,6 +36,15 @@ const ChildParameterModal = ({
         index !== currentIndex
     );
   };
+  function checkUpdateNames(array) {
+    for (let item of array) {
+      if (!item.updateName || item.updateName.trim() === "") {
+        return false; // If any updateName is empty or only whitespace, return false
+      }
+    }
+    return true; // If all updateNames are non-empty, return true
+  }
+
   useEffect(() => {
     if (selectedParameter?.valuesConfigs) {
       setState({
@@ -171,7 +180,7 @@ const ChildParameterModal = ({
                                   snapshot.isDragging,
                                   provided.draggableProps.style
                                 )}
-                                // style={clasess.addNewValueContainer}
+                              // style={clasess.addNewValueContainer}
                               >
                                 <div
                                   style={{
@@ -232,7 +241,7 @@ const ChildParameterModal = ({
                                           }}
                                           defaultValue={
                                             state.valuesConfigs[index].values[
-                                              value?.id
+                                            value?.id
                                             ]
                                           }
                                         />
@@ -272,8 +281,8 @@ const ChildParameterModal = ({
                 const hasRepeatedNames = state.valuesConfigs.some(
                   (item, index) => isUpdateNameRepeated(item?.updateName, index)
                 );
-
-                if (!hasRepeatedNames) {
+                const hasUpdateNames = checkUpdateNames(state.valuesConfigs)
+                if (!hasRepeatedNames && hasUpdateNames) {
                   updatedValuesConfigsForParameters(
                     selectedSectonId,
                     selectedSubSection,
@@ -281,11 +290,21 @@ const ChildParameterModal = ({
                   );
                   onClose();
                 } else {
-                  setSnackbarStateValue({
-                    state: true,
-                    message: t("products.offsetPrice.admin.valuesErrorMsg"),
-                    type: "error",
-                  });
+                  if (!hasUpdateNames) {
+                    setSnackbarStateValue({
+                      state: true,
+                      message: t("products.offsetPrice.admin.fillValue"),
+                      type: "error",
+                    });
+                  }
+                  else {
+                    setSnackbarStateValue({
+                      state: true,
+                      message: t("products.offsetPrice.admin.valuesErrorMsg"),
+                      type: "error",
+                    });
+                  }
+
                 }
               }}
             >

@@ -14,6 +14,7 @@ import { SettingsMailingWidget } from "../settings-mailing/settings-mailing-widg
 import { SettingsDocumentingWidget } from "../settings-documenting/settings-documenting-widget";
 import { TranslationsWidget } from "../translation-widget/translation-widget";
 import {Permissions} from "@/components/CheckPermission/enum";
+import { FinancesWidget } from "../finances";
 
 export const list: IListItem[] = [
   {
@@ -58,7 +59,7 @@ export const list: IListItem[] = [
     dataTour: 'usersSettingsLink'
   },
   {
-    component: EmptyComponent,
+    component: FinancesWidget,
     text: "settings.finances",
     value: "7",
     icon: DollarCircleIcon,
