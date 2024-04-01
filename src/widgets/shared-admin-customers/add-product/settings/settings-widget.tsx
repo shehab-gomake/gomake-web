@@ -1,6 +1,6 @@
 import React from "react";
 
-//import { MuiColorInput } from "mui-color-input";
+import { MuiColorInput } from "mui-color-input";
 import { useTranslation } from "react-i18next";
 
 import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
@@ -314,18 +314,16 @@ const SettingsWidget = ({
             {t("products.addProduct.admin.noteColor")}
           </div>
           <div style={clasess.fileInputStyle}>
-          {/**
-           *   <MuiColorInput
-              value={
-                productState?.noteColor ??
-                t("products.addProduct.admin.noteColor")
-              }
-              onChange={(value: any) => {
-                onChangeStateProduct("noteColor", value);
-              }}
-              format="hex"
+            <MuiColorInput
+                value={
+                    productState?.noteColor ??
+                    t("products.addProduct.admin.noteColor")
+                }
+                onChange={(value: any) => {
+                  onChangeStateProduct("noteColor", value);
+                }}
+                format="hex"
             />
-           */}
           </div>
         </div>
         <div style={clasess.itemOnFirstContainer}>
