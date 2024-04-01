@@ -356,6 +356,19 @@ const useAuthLayoutHook = (permissionEnumValue?: Permissions, allowAnonymous?: b
         isProduction: true,
         tourData: 'menu-settings'
       },
+      {
+        isLine: false,
+        key: "companyReports",
+        title: "tabs.companyReports",
+        path: "/companyReports",
+        Permission: Permissions.SHOW_PRINTHOUSES_TABLE,
+        isList: false,
+        icon: () => {
+          return <ReportsIcon />;
+        },
+        isProduction: true,
+        tourData: 'menu-companyReports'
+      },
     ];
   }, []);
 

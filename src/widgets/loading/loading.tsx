@@ -12,17 +12,19 @@ const GomakeLoading = () => {
   const { primaryColor } = useGomakeTheme();
 
   return (
-    <Backdrop sx={{ zIndex: 9999999999999999 }} open={loading}>
-      <div
-        style={{
-          position: "absolute",
-          bottom: 10,
-          ...adaptLeft(t("direction"), 15),
-        }}
-      >
-        <CircularProgress style={{ color: primaryColor(500) }} />
-      </div>
-    </Backdrop>
+
+    loading &&
+
+    <div
+      style={{
+        position: "absolute",
+        bottom: 10,
+        ...adaptLeft(t("direction"), 15),
+      }}
+    >
+      <CircularProgress style={{ color: primaryColor(500) }} />
+    </div>
+
   );
 };
 

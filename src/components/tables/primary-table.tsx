@@ -92,7 +92,6 @@ const PrimaryTable = ({
     variant === "ClassicTable" ? ClassicTableCell : PrimaryTableCell;
   const TableRow =
     variant === "ClassicTable" ? ClassicTableRow : PrimaryTableRow;
-
   return (
     <Paper sx={{ width: "100%", overflow: "hidden", boxShadow: withoutShadow && "none" }}>
       <TableContainer style={classes.tableContainer}>

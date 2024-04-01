@@ -580,7 +580,8 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
             data: data,
             calculationType: calculationType
           }
-        }
+        },
+        false
       );
       if (res?.success) {
         const _data = res?.data?.data?.data
@@ -965,6 +966,18 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
   }
 
   const handleSaveBtnClickForDocument = async () => {
+
+    if (!quoteItemValue?.documentItems || quoteItemValue.documentItems.length === 0) {
+      alertFault("alerts.noItems");
+      return;
+    }
+
+    if (quoteItemValue?.totalPrice === 0) {
+      console.log("quoteItemValue : ", quoteItemValue, " quoteItemValue.d", quoteItemValue?.documentItems)
+      alertFault("alerts.cannotCreateWithPriceZero");
+      return;
+    }
+
     const res = await callApi(
       EHttpMethod.POST,
       `/v1/erp-service/documents/create-document`,

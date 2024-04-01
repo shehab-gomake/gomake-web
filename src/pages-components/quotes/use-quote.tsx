@@ -648,7 +648,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
         const pdfLink = res.data;
         window.open(pdfLink, "_blank");
       } else {
-        alertFaultUpdate();
+        alertFaultGetData();
       }
     };
     if (isReceipt) {
