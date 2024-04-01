@@ -336,8 +336,7 @@ const SettingsWidget = ({
             {t("products.addProduct.admin.textColor")}
           </div>
           <div style={clasess.fileInputStyle}>
-            {/**
-             * <MuiColorInput
+            <MuiColorInput
               value={
                 productState?.textColor ??
                 t("products.addProduct.admin.textColor")

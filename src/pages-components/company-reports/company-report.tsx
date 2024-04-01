@@ -13,7 +13,6 @@ const CompanyReportWidget = () => {
             <PrimaryTable
                 stickyFirstCol={false}
                 stickyHeader={true}
-                maxHeight={650}
                 rows={AllReport}
                 headers={tableHeaders}
                 />
