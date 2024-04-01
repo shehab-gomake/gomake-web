@@ -206,9 +206,9 @@ const FormInput = ({ input, error, changeState, readonly }: IFormInput) => {
             ) : input.type === "color" ? (
               <div style={classes.fileInputStyle}>
                 <MuiColorInput
-                  value={color}
-                  onChange={handleChange}
-                  format="hex"
+                    value={color}
+                    onChange={handleChange}
+                    format="hex"
                 />
               </div>
             ) : input.type === "image" ? (

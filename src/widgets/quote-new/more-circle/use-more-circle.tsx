@@ -49,7 +49,7 @@ const useMoreCircle = ({
       icon: <EditMenuIcon />,
       onclick: () => onClickEditQuoteItem(quoteItem, documentType),
     },
-    quoteItem.productType === 0 && !router.query.isNewCreation && {
+    quoteItem.productType === 0 && !router.query.isNewCreation && documentType === DOCUMENT_TYPE.purchaseInvoice && {
       name: "duplicate",
       icon: <DuplicateMenuIcon />,
       onclick: () => onClickDuplicateQuoteItem(quoteItem, documentType),
@@ -69,7 +69,7 @@ const useMoreCircle = ({
       icon: <AnalysisIcon />,
       onclick: () => null,
     },
-    (router.query.isNewCreation || quoteItem?.isDeletable ) &&
+    (router.query.isNewCreation || quoteItem?.isDeletable) &&
     {
       name: "delete",
       icon: <DeleteMenuIcon />,

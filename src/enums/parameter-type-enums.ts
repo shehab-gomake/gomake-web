@@ -23,3 +23,11 @@ export enum EGroupByEnum
   Material,
   Machine
 }
+
+export enum CpaFileType
+{
+    ALL = 0,
+    Incoming,
+    Payments,
+    Deposits,
+}

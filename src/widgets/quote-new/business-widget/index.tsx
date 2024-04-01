@@ -81,7 +81,7 @@ const BusinessNewWidget = ({
           value={purchaseNumber}
           label={t("sales.quote.purchaseNumber")}
           onBlur={() => onBlurPurchaseNumber(purchaseNumber)}
-          isUpdate={isUpdatePurchaseNumber}
+          isUpdate={quoteStateValue?.isEditable || router.query.isNewCreation ? isUpdatePurchaseNumber : quoteStateValue?.isEditable}
           setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdatePurchaseNumber}
           onInputChange={(v) => setPurchaseNumber(v)}
         />}

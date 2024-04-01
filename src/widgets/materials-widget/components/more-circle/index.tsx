@@ -11,7 +11,7 @@ import { DuplicateIcon } from "@/components/icons/duplicate-icon";
 import { useMaterialsCategories } from "../../use-materials-categories";
 import { useRouter } from "next/router";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
-import {filterState, selectedMaterialIdForUpdateState, selectedSupplierIdState} from "../../state";
+import { filterState, selectedMaterialIdForUpdateState, selectedSupplierIdState } from "../../state";
 import { EMaterialsActions } from "../../enums";
 import { actionMenuState } from "@/store";
 
@@ -67,14 +67,14 @@ const MaterialMenuWidget = ({
               <div style={clasess.menuRowStyle}>
                 <ConvertIcon />
                 <div
-                    style={clasess.rowTextStyle}
-                    onClick={() => {
-                      toggleIsActive(dataRow?.id, "Active", dataRow?.isActive);
-                    }}
+                  style={clasess.rowTextStyle}
+                  onClick={() => {
+                    toggleIsActive(dataRow?.id, "Active", dataRow?.isActive);
+                  }}
                 >
                   {dataRow?.isActive
-                      ? t("remainWords.convertToInactive")
-                      : t("remainWords.convertToActive")}
+                    ? t("remainWords.convertToInactive")
+                    : t("remainWords.convertToActive")}
                 </div>
               </div>
             </MenuItem>
@@ -85,6 +85,8 @@ const MaterialMenuWidget = ({
           style={clasess.menuItemContainer}
           onClick={() => {
             onClickActionModal();
+            handleClose();
+
           }}
         >
           <DuplicateIcon height={20} width={20} color={clasess.iconColor} />

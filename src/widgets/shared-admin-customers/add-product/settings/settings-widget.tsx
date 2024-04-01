@@ -315,14 +315,14 @@ const SettingsWidget = ({
           </div>
           <div style={clasess.fileInputStyle}>
             <MuiColorInput
-              value={
-                productState?.noteColor ??
-                t("products.addProduct.admin.noteColor")
-              }
-              onChange={(value: any) => {
-                onChangeStateProduct("noteColor", value);
-              }}
-              format="hex"
+                value={
+                    productState?.noteColor ??
+                    t("products.addProduct.admin.noteColor")
+                }
+                onChange={(value: any) => {
+                  onChangeStateProduct("noteColor", value);
+                }}
+                format="hex"
             />
             {productState?.noteColor &&
               <div style={{ cursor: "pointer" }} onClick={() => onChangeStateProduct("noteColor", null)}>
@@ -346,7 +346,7 @@ const SettingsWidget = ({
               }}
               format="hex"
             />
-            {productState?.textColor &&
+     {productState?.textColor &&
               <div style={{ cursor: "pointer" }} onClick={() => onChangeStateProduct("textColor", null)}>
                 <FormatColorResetIcon />
               </div>
