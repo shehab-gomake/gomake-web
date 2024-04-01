@@ -114,36 +114,6 @@ export const _renderDocumentStatus = (status: number, t: any) => {
   }
 };
 
-export const _renderStatusOld = (document: any, t: any): string => {
-  if (document && document.documentNumbers && document.documentNumbers.length > 0 ||
-    document.secondDocumentNumbers && document.secondDocumentNumbers.length > 0) {
-    const firstDocuments = document.documentNumbers ? document.documentNumbers.join(', ') : '';
-    const secondDocuments = document.secondDocumentNumbers ? document.secondDocumentNumbers.join(', ') : '';
-    let result = '';
-    if (firstDocuments) {
-      result += `${t(`documentStatus.${document.titleDocumentNumber}.title`)}: ${firstDocuments}`;
-    }
-    if (secondDocuments) {
-      if (firstDocuments) {
-        result += `, `;
-      }
-      result += `${t(`documentStatus.${document.titleSecondDocumentNumber}.title`)}: ${secondDocuments}`;
-    }
-    return result;
-  } else if (document?.statusTitleText === "Quote.Create") {
-
-    if (document?.agentId) {
-      return t("sales.quote.create");
-    } else {
-      return t("sales.quote.createdBy", { name: document?.userName });
-    }
-
-  }
-  else {
-    return t(`documentStatus.${document.statusTitleText}`);
-  }
-};
-
 export const _renderStatus = (document: any, t: any, navigate): JSX.Element => {
   if (document) {
     if ((document.documentNumbers && document.documentNumbers.length > 0) ||
@@ -151,12 +121,12 @@ export const _renderStatus = (document: any, t: any, navigate): JSX.Element => {
       const firstDocuments = document.documentNumbers ? document.documentNumbers.map((item: any, index: number) => (
         <span key={index}>
           <Button
-             sx={{
+            sx={{
               minWidth: "auto",
               height: "auto",
               padding: 0,
-              color:"#2e3092",
-             }}
+              color: "#2e3092"
+            }}
             variant={'text'}
             onClick={() => navigate(`/${document.titleDocumentNumber.charAt(0).toLowerCase() + document.titleDocumentNumber.slice(1)}?Id=${item.documentId}`)}>
             {item.documentNumber}</Button>
@@ -171,8 +141,14 @@ export const _renderStatus = (document: any, t: any, navigate): JSX.Element => {
               minWidth: "auto",
               height: "auto",
               padding: 0,
-              color:"#2e3092",
-             }}
+              color: "#2e3092",
+              "&:active": {
+                backgroundColor: "transparent !important"
+              },
+              "&:hover": {
+                backgroundColor: "transparent !important"
+              }
+            }}
             variant={'text'}
             onClick={() => navigate(`/${document.titleSecondDocumentNumber.charAt(0).toLowerCase() + document.titleSecondDocumentNumber.slice(1)}?Id=${item.documentId}`)}>
             {item.documentNumber}</Button>
