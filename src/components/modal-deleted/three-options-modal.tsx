@@ -4,35 +4,38 @@ import { Modal } from "@mui/material";
 import { Wastebasket } from "@/icons";
 import { GomakePrimaryButton } from "../button";
 import { useStyle } from "./style";
+import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 
-const GoMakeDeleteModal = ({
+const ThreeOptionsModal = ({
   openModal,
   onClose,
   insideStyle,
   subTitle,
-  onClickDelete,
+  onClickYes,
+  onClickNo,
   hideIcon = false,
-  title = "Confirm Delete",
-  yesBtn = "Delete",
+  title ,
+  yesBtn = "modal.yes",
+  noBtn = "modal.no",
+  cancelBtn = "modal.cancel",
   ...props
 }: any) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
-
   return (
     <Modal
       disableEnforceFocus
       open={openModal}
       onClose={onClose}
       {...props}
-      style={{
-        outline: "none",
-      }}
+      style={{ outline: "none"}}
     >
       <div style={{...classes.container , ...props.style}}>
         <div style={classes.content}>
           {!hideIcon && (
-            <div style={classes.icon}>{props.icon || <Wastebasket />}</div>
+            <div style={classes.icon}>{props?.icon ||   <WarningAmberIcon
+              style={classes.iconStyle}
+            /> }</div>
           )}
           <div style={classes.title}>{title}</div>
           <div style={classes.subTitle}>{subTitle}</div>
@@ -40,14 +43,26 @@ const GoMakeDeleteModal = ({
             <GomakePrimaryButton
               style={classes.confirmBtn}
               onClick={() => {
-                onClickDelete();
+                onClickYes();
                 onClose();
               }}
             >
-              {yesBtn}
+              {t(yesBtn)}
             </GomakePrimaryButton>{" "}
-            <GomakePrimaryButton style={classes.cancelBtn} onClick={onClose}>
-              {props?.cancelBtn || t("materials.buttons.cancel")}
+            <GomakePrimaryButton
+              style={classes.confirmBtn}
+              onClick={() => {
+                onClickNo();
+                onClose();
+              }}
+            >
+              {t(noBtn)}
+            </GomakePrimaryButton>{" "}
+            <GomakePrimaryButton
+              style={classes.cancelBtn}
+              onClick={onClose}
+            >
+              {t(cancelBtn)}
             </GomakePrimaryButton>
           </div>
         </div>
@@ -56,4 +71,4 @@ const GoMakeDeleteModal = ({
   );
 };
 
-export { GoMakeDeleteModal };
+export { ThreeOptionsModal };
