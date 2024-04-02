@@ -5,6 +5,7 @@ import { useQuoteWidget } from "@/pages-components/admin/home/widgets/quote-widg
 import { useRecoilValue } from "recoil";
 import { businessListsState, quoteConfirmationState } from "@/store";
 import { InputUpdatedValues } from "@/widgets/quote-new/input-updated-values";
+import {DOCUMENT_TYPE} from "@/pages-components/quotes/enums";
 
 const BusinessWidget = () => {
     const { classes } = useStyle();
@@ -13,7 +14,7 @@ const BusinessWidget = () => {
     const [selectBusiness, setSelectBusiness] = useState<any>({});
     const customersListValue = useRecoilValue<any>(businessListsState);
     const [isConfirmation, setIsConfirmation] = useState();
-    const { renderOptions } = useQuoteWidget({});
+    const { renderOptions } = useQuoteWidget(DOCUMENT_TYPE.quote);
 
     const mappedCustomers = renderOptions().map(customer => ({
         text: customer?.name,
