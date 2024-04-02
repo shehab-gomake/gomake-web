@@ -74,7 +74,7 @@ const useBoardMissions = () => {
     t("boardMissions.numberOfBoardMissionsInOrder"),
     t("boardMissions.productName"),
     t("boardMissions.currentBoardMissionStatus"),
-    t("properties.more")
+   // t("properties.more")
   ];
 
   const handleMultiSelectChange = (newValues: string[]) => {
@@ -135,14 +135,12 @@ const useBoardMissions = () => {
             mission?.numberOfBoardMissions,
             mission?.productName,
             mission?.status,
-            <MoreMenuWidget
-              mission={mission}
-              onClickDuplicate={onOpenDuplicateModal}
-              onClickMarksAsDone={onOpenMarkReadyModal}
-              onClickReturnToProduction={onOpenReturnToProdModal}
-
-
-            />
+            // <MoreMenuWidget
+            //   mission={mission}
+            //   onClickDuplicate={onOpenDuplicateModal}
+            //   onClickMarksAsDone={onOpenMarkReadyModal}
+            //   onClickReturnToProduction={onOpenReturnToProdModal}
+            // />
           ]);
           setAllBoardMissions(mapData);
           setPagesCount(Math.ceil(_data?.totalItems / pageSize));
