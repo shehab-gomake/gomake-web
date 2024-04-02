@@ -179,7 +179,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
               quote?.itemsNumber,
               quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
               quote?.notes,
-              _renderStatus(quote, t),
+              _renderStatus(quote, t , navigate),
               <MoreMenuWidget
                 quote={quote}
                 documentType={docType}
@@ -200,7 +200,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
               quote?.itemsNumber,
               quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
               quote?.notes,
-              _renderStatus(quote, t),
+              _renderStatus(quote, t, navigate),
               <MoreMenuWidget
                 quote={quote}
                 documentType={docType}
@@ -219,7 +219,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
               quote?.worksNames,
               quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
               quote?.notes,
-              _renderStatus(quote, t),
+              _renderStatus(quote, t, navigate),
               <MoreMenuWidget
                 quote={quote}
                 documentType={docType}
@@ -304,7 +304,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
               quote?.itemsNumber,
               quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
               quote?.notes,
-              _renderStatus(quote, t),
+              _renderStatus(quote, t, navigate),
               <MoreMenuWidget
                 quote={quote}
                 documentType={docType}
@@ -325,7 +325,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
               quote?.itemsNumber,
               quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
               quote?.notes,
-              _renderStatus(quote, t),
+              _renderStatus(quote, t , navigate),
               <MoreMenuWidget
                 quote={quote}
                 documentType={docType}
@@ -344,7 +344,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
               quote?.worksNames,
               quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
               quote?.notes,
-              _renderStatus(quote, t),
+              _renderStatus(quote, t , navigate),
               <MoreMenuWidget
                 quote={quote}
                 documentType={docType}
@@ -720,7 +720,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
                   : classes.closeBtnStyle
               }
             >
-              {_renderStatus(document, t)}
+              {_renderStatus(document, t , navigate)}
             </h2>
           </div>,
           document?.notes,
