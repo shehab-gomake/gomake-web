@@ -141,13 +141,7 @@ export const _renderStatus = (document: any, t: any, navigate): JSX.Element => {
               minWidth: "auto",
               height: "auto",
               padding: 0,
-              color: "#2e3092",
-              "&:active": {
-                backgroundColor: "transparent !important"
-              },
-              "&:hover": {
-                backgroundColor: "transparent !important"
-              }
+              color: "#2e3092"
             }}
             variant={'text'}
             onClick={() => navigate(`/${document.titleSecondDocumentNumber.charAt(0).toLowerCase() + document.titleSecondDocumentNumber.slice(1)}?Id=${item.documentId}`)}>
@@ -191,7 +185,6 @@ export const _renderStatus = (document: any, t: any, navigate): JSX.Element => {
   }
   return <></>;
 };
-
 
 export function getParameterByParameterCode(subProductArray, code) {
   for (let i = 0; i < subProductArray.length; i++) {
