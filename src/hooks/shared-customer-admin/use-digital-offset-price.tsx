@@ -267,7 +267,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     setCurrentSignalRConnectionId(connectionId)
   }, [connectionId])
   useEffect(() => {
-    if(calculationExceptionsLogs){
+    if (calculationExceptionsLogs) {
       setCalculationExceptionsLogs(calculationExceptionsLogs);
       setCalculationProgress({
         totalWorkFlowsCount: 0,
@@ -275,7 +275,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       });
       setLoading(false)
     }
-    
+
   }, [calculationExceptionsLogs]);
   useEffect(() => {
     if (updatedSelectedWorkFlow) {
@@ -1039,6 +1039,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         isDuplicatedWithAnotherQuantity: false,
         graphicsEmployeeId: graphicDesigner?.id,
         graphicsPricingType: billingMethod?.value,
+        duplicateType: router?.query?.duplicateType,
+        documentId: router?.query?.documentId
       };
       setCurrentProductItemValue(productItemValue);
     }
@@ -2152,7 +2154,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     });
     let checkParameter = validateParameters(isRequiredParameters);
     if (!!checkParameter) {
-      
+
       setLoading(true);
       setCurrentCalculationSessionId(null);
       const newRequestAbortController = new AbortController();
