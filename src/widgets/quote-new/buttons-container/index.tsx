@@ -58,11 +58,20 @@ const ButtonsContainer = ({
     }
   };
   
+
+  const handleAddItemClick = () => {
+    if (!quoteItemValue?.client) {
+      alertFault("home.admin.pleaseSelectCustomer");
+    } else {
+      onOpenNewItem();
+    }
+  };
+
   const isNewCreation = router?.query?.isNewCreation;
   const showAddNewItemBtn =
     documentType === DOCUMENT_TYPE.quote ||
     (DOCUMENT_TYPE.order && quoteItemValue?.isEditable) ||
-    isNewCreation;
+    (isNewCreation && documentType !== DOCUMENT_TYPE.receipt);
 
   return (
     <div style={classes.writeCommentContainer}>
@@ -75,7 +84,7 @@ const ButtonsContainer = ({
           showAddNewItemBtn && <GomakePrimaryButton
             leftIcon={<PlusIcon stroke={"#344054"} />}
             style={classes.btnContainer}
-            onClick={() => onOpenNewItem()}
+            onClick={() => handleAddItemClick()}
           >
             {t("sales.quote.addNewItems")}
           </GomakePrimaryButton>

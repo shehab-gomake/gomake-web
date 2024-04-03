@@ -15,7 +15,7 @@ import {
   SecondSwitch,
   PrimarySwitch,
 } from "@/components";
-//import { MuiColorInput } from "mui-color-input";
+import { MuiColorInput } from "mui-color-input";
 import { GoMakeFileFiled } from "../file-filed/file-filed";
 import { ImageUploadComponent } from "./image-input";
 import Stack from "@mui/material/Stack";
@@ -205,11 +205,11 @@ const FormInput = ({ input, error, changeState, readonly }: IFormInput) => {
               />
             ) : input.type === "color" ? (
               <div style={classes.fileInputStyle}>
-              {/**  <MuiColorInput
-                  value={color}
-                  onChange={handleChange}
-                  format="hex"
-                /> */}
+                <MuiColorInput
+                    value={color}
+                    onChange={handleChange}
+                    format="hex"
+                />
               </div>
             ) : input.type === "image" ? (
               <ImageUploadComponent

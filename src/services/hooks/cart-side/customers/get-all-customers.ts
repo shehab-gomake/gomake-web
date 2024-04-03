@@ -11,7 +11,8 @@ const getAndSetAllCustomers = async (
   const result: any = await callApi(
     "GET",
     "/v1/crm-service/customer/get-all-customers",
-    data
+    data,
+    false
   );
   return returnResult(result, setState);
 };

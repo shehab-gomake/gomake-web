@@ -13,7 +13,7 @@ const useAddMaterialCategory = (isAdmin:boolean) => {
     const { callApi } = useGomakeAxios();
     const { query } = useRouter();
     const { materialType } = query;
-    const { alertSuccessAdded, alertFaultAdded } = useSnackBar();
+    const { alertSuccessAdded, alertFaultAdded,alertFault } = useSnackBar();
     const [openModal, setOpenModal] = useRecoilState(openAddCategoryModalState);
     const { getMaterialCategories } = useMaterials(isAdmin);
     const [newCategory, setNewCategory] = useState<string>(null);
@@ -24,30 +24,35 @@ const useAddMaterialCategory = (isAdmin:boolean) => {
     const onSetCategory = (e) => {
         setNewCategory(e.target.value);
     }
-
     const onAddCategory = async () => {
-        const callBack = (res) => {
-            if (res.success) {
-                alertSuccessAdded();
-                setActiveFilter(EMaterialActiveFilter.ALL);
-                getMaterialCategories(materialType).then();
-                setOpenModal(false);
-                setFlagState(false);
-            } else {
-                alertFaultAdded();
+        if(newCategory){
+            const callBack = (res) => {
+                if (res.success) {
+                    alertSuccessAdded();
+                    setActiveFilter(EMaterialActiveFilter.ALL);
+                    getMaterialCategories(materialType).then();
+                    setOpenModal(false);
+                    setFlagState(false);
+                } else {
+                    alertFaultAdded();
+                }
+            }
+            if(isAdmin){
+                await addMaterialCategoryApi(callApi, callBack, {
+                    materialTypeKey: materialType.toString(),
+                    categoryKey: newCategory
+                })
+            }else{
+                await addPrintHouseMaterialCategoryApi(callApi, callBack, {
+                    materialTypeKey: materialType.toString(),
+                    categoryKey: newCategory
+                })
             }
         }
-        if(isAdmin){
-            await addMaterialCategoryApi(callApi, callBack, {
-                materialTypeKey: materialType.toString(),
-                categoryKey: newCategory
-            })
-        }else{
-            await addPrintHouseMaterialCategoryApi(callApi, callBack, {
-                materialTypeKey: materialType.toString(),
-                categoryKey: newCategory
-            })
+        else {
+            alertFault("login.thisFieldRequired")
         }
+       
     }
 
     return {

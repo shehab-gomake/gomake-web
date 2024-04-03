@@ -1,5 +1,5 @@
 import React from "react";
-//import { MuiColorInput } from "mui-color-input";
+import { MuiColorInput } from "mui-color-input";
 import { useTranslation } from "react-i18next";
 import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
 import { AddProductSkuModal } from "./modals/add-contact-modal";
@@ -314,16 +314,16 @@ const SettingsWidget = ({
             {t("products.addProduct.admin.noteColor")}
           </div>
           <div style={clasess.fileInputStyle}>
-           {/** <MuiColorInput
-              value={
-                productState?.noteColor ??
-                t("products.addProduct.admin.noteColor")
-              }
-              onChange={(value: any) => {
-                onChangeStateProduct("noteColor", value);
-              }}
-              format="hex"
-            /> */}
+            <MuiColorInput
+                value={
+                    productState?.noteColor ??
+                    t("products.addProduct.admin.noteColor")
+                }
+                onChange={(value: any) => {
+                  onChangeStateProduct("noteColor", value);
+                }}
+                format="hex"
+            />
             {productState?.noteColor &&
               <div style={{ cursor: "pointer" }} onClick={() => onChangeStateProduct("noteColor", null)}>
                 <FormatColorResetIcon/>
@@ -336,7 +336,7 @@ const SettingsWidget = ({
             {t("products.addProduct.admin.textColor")}
           </div>
           <div style={clasess.fileInputStyle}>
-            {/**   <MuiColorInput
+            <MuiColorInput
               value={
                 productState?.textColor ??
                 t("products.addProduct.admin.textColor")
@@ -345,8 +345,8 @@ const SettingsWidget = ({
                 onChangeStateProduct("textColor", value);
               }}
               format="hex"
-            /> */}
-            {productState?.textColor &&
+            />
+     {productState?.textColor &&
               <div style={{ cursor: "pointer" }} onClick={() => onChangeStateProduct("textColor", null)}>
                 <FormatColorResetIcon />
               </div>

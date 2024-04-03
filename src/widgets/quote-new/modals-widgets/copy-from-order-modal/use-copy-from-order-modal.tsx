@@ -32,9 +32,8 @@ const useCopyFromOrderModal = ({ onClose, documentType, openModal, cliendDocumen
     };
   });
   const addOrdersToDeliveryNote = () => {
-    calculateDocument()
+    calculateDocument();
     onClose();
-
   };
 
   const { callApi } = useGomakeAxios();
@@ -82,31 +81,6 @@ const useCopyFromOrderModal = ({ onClose, documentType, openModal, cliendDocumen
     t("products.offsetPrice.admin.finalPrice"),
   ];
 
-  const getClientOrderItems = async () => {
-    let docType;
-    if (cliendDocumentType === DOCUMENT_TYPE.order) {
-      docType = DOCUMENT_TYPE.order;
-    } else if (cliendDocumentType === DOCUMENT_TYPE.deliveryNote) {
-      docType = DOCUMENT_TYPE.deliveryNote;
-    }
-    else if (cliendDocumentType === DOCUMENT_TYPE.purchaseOrder) {
-      docType = DOCUMENT_TYPE.purchaseOrder;
-    }
-    const callBack = (res) => {
-      if (res?.success) {
-        setDocumentItems(res?.data);
-      } else {
-        setDocumentItems(null);
-      }
-    };
-    await getClientDocumentsApi(callApi, callBack, {
-      documentType: docType,
-      clientId: quoteItemValue?.customerID
-    });
-
-
-  };
-
   const calculateTotalPrice = () => {
     let total = 0;
     selectedItems.forEach(item => {
@@ -147,7 +121,52 @@ const useCopyFromOrderModal = ({ onClose, documentType, openModal, cliendDocumen
     return documentItems.find(item => item.id === documentItemId)?.orderItems?.every(item => selectedItems.some(selectedItem => selectedItem.id === item.id)) || false;
   };
 
+  const getClientOrderItems = async () => {
+    let docType;
+    if (cliendDocumentType === DOCUMENT_TYPE.order) {
+      docType = DOCUMENT_TYPE.order;
+    } else if (cliendDocumentType === DOCUMENT_TYPE.deliveryNote) {
+      docType = DOCUMENT_TYPE.deliveryNote;
+    }
+    else if (cliendDocumentType === DOCUMENT_TYPE.purchaseOrder) {
+      docType = DOCUMENT_TYPE.purchaseOrder;
+    }
+    const callBack = (res) => {
+      if (res?.success) {
+        setDocumentItems(res?.data);
+      } else {
+        setDocumentItems(null);
+      }
+    };
+    await getClientDocumentsApi(callApi, callBack, {
+      documentType: docType,
+      clientId: quoteItemValue?.customerID
+    });
+
+
+  };
   const calculateDocument = useCallback(async () => {
+    const sharedDeletedArry = quoteItemValue.documentItems.filter(item => {
+      const isIncludedInOrderItems = documentItems.some(docItem => {
+        return docItem.orderItems.some(orderItem => orderItem.id === item.id);
+      });
+      const isNotIncludedInSelectedItems = !selectedItems.some(selectedItem => selectedItem.id === item.id);
+      return isIncludedInOrderItems && isNotIncludedInSelectedItems;
+    });
+    const documentItemsFilters = quoteItemValue.documentItems.filter(item => {
+      return !sharedDeletedArry.some(sharedItem => sharedItem.id === item.id);
+    });
+    const mergedItems = [...documentItemsFilters, ...selectedItems];
+    const idMap = new Map();
+    const uniqueItems = mergedItems.filter(item => {
+      if (!idMap.has(item.id)) {
+        idMap.set(item.id, true);
+        return true;
+      }
+      return false;
+    }).map(item => ({
+      finalPrice: item.finalPrice
+    }));
     const res = await callApi(
       EHttpMethod.POST,
       `/v1/erp-service/documents/calculate-document-new`,
@@ -164,9 +183,7 @@ const useCopyFromOrderModal = ({ onClose, documentType, openModal, cliendDocumen
           totalPayment: quoteItemValue?.totalPayment,
           vat: documentItems[0]?.vat || 0.17,
           totalVAT: quoteItemValue?.totalVAT || 0.17,
-          documentItems: selectedItems.map(item => ({
-            finalPrice: item.finalPrice
-          }))
+          documentItems: uniqueItems
         }
       }
     );
@@ -184,14 +201,14 @@ const useCopyFromOrderModal = ({ onClose, documentType, openModal, cliendDocumen
       const filteredSelectedItems = selectedItems.filter(selectedItem => {
         return !updatedQuoteItemValue.documentItems.some(documentItem => documentItem.id === selectedItem.id);
       });
+
       updatedQuoteItemValue.documentItems = [
-        ...updatedQuoteItemValue.documentItems,
+        ...documentItemsFilters,
         ...filteredSelectedItems
       ];
       setQuoteItemValue(updatedQuoteItemValue);
     }
   }, [quoteItemValue, selectedItems, documentType, documentItems]);
-
 
   useEffect(() => {
     calculateTotalPrice();

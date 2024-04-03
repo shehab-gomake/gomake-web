@@ -20,6 +20,7 @@ import {
 import Stack from "@mui/material/Stack";
 import {selectedClientState} from "@/pages-components/quotes/states";
 import {useTour} from "@reactour/tour";
+import {DOCUMENT_TYPE} from "@/pages-components/quotes/enums";
 
 const QuoteWidget = ({isAdmin = true}) => {
     const {classes} = useStyle();
@@ -54,7 +55,7 @@ const QuoteWidget = ({isAdmin = true}) => {
     checkWhatRenderArray,
     handleClicktoSelectedCustomer,
     renderOptions,
-  } = useQuoteWidget({});
+  } = useQuoteWidget(DOCUMENT_TYPE.quote);
 
   useEffect(() => {
     if (userQuote) {

@@ -43,6 +43,7 @@
     "shoping": "Shoping",
     "customers": "Customers",
     "suppliers": "Suppliers",
+    "companyReports":"company Reports",
     "reports": "Reports",
     "settings": "Settings",
     "employees": "Employees",
@@ -2583,5 +2584,20 @@
     "equalQuantity": "Equal quantity",
     "duplicateName": "Duplicate name",
     "typeName": "Type name"
+  },
+  "companyReports":{
+    "companyName":"Company Name",
+    "Domain":"Domain",
+    "PhoneNumber":"Phone Number",
+    "Email":"Email",
+    "StartingDate":"Starting Date",
+    "LastUpdateIn30Days":"Last UpdatedI In 30 Days",
+    "Users":"Useres",
+    "Quote":"Quote",
+    "QuoteItems":"Quotes Items",
+    "Orders":"Orders",
+    "OrderItems":"Order Item",
+    "EstimationSuccessRate":"Estimation Success Rate(-+5%)"
   }
+  
 }

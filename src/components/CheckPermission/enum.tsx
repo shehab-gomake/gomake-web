@@ -64,5 +64,6 @@ export  enum Permissions {
     MACHINES_ADMIN = "MachinesAdmin",
     MATERIALS_ADMIN = "MaterialAdmin",
     TRANSLATION_ADMIN = "TranslationAdmin",
+    SHOW_PRINTHOUSES_TABLE="ShowPrintHousesTable"
 }
 

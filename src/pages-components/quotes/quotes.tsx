@@ -219,7 +219,7 @@ const QuotesListPageWidget = ({
           withoutShadow={true}
         />
       )}
-      <GoMakeDeleteModal
+      <GoMakeDeleteModal 
         icon={<WarningAmberIcon style={classes.warningIconStyle} />}
         title={t("sales.quote.titleModal")}
         yesBtn={t("sales.quote.changeStatus")}
