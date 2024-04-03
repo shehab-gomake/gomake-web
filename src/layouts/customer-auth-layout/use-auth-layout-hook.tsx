@@ -265,8 +265,8 @@ const useAuthLayoutHook = (permissionEnumValue?: Permissions, allowAnonymous?: b
             Permission: Permissions.SHOW_CLIENT,
           },
           {
-            key: "creditcardtransactions",
-            title: "tabs.creditcardtransactions",
+            key: "creditCardTransactions",
+            title: "tabs.creditCardTransactions",
             path: "/credit-card-transactions",
             Permission: Permissions.SHOW_CLIENT,
           },

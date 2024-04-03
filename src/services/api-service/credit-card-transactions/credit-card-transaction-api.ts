@@ -12,6 +12,7 @@ const getCreditCardTransactionsApi: ICallAndSetData = async (callApi, setState, 
       data
     );
   };
-  export{
-    getCreditCardTransactionsApi
-  };
+
+
+
+  export{ getCreditCardTransactionsApi };

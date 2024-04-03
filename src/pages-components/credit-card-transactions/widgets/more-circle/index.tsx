@@ -5,11 +5,11 @@ import { useMoreCircle } from "./use-more-circle";
 import { useStyle } from "./style";
 
 
-const MoreMenuWidget = ({ creditCardTransaction ,  onClickOpenModal, onClickPdf, onClickDuplicate, onClickLoggers }: any) => {
+const MoreMenuWidget = ({ transaction ,  onClickOpenModal, onClickSecondModal  }: any) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
   const { getMenuList } = useMoreCircle();
-  const menuList = getMenuList({ creditCardTransaction, onClickOpenModal, onClickPdf, onClickDuplicate, onClickLoggers, t });
+  const menuList = getMenuList({ transaction, onClickOpenModal, onClickSecondModal, t });
  
   return (
     <OptionsButton>

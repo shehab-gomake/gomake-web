@@ -1,30 +1,36 @@
 import { useMemo } from "react";
 import i18next from "i18next";
 import { useTranslation } from "react-i18next";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 const useStyle = () => {
   const { t } = useTranslation();
-
-  const clasess = useMemo(() => {
+  const { theme, errorColor } = useGomakeTheme();
+  const classes = useMemo(() => {
     return {
       mainContainer: {
         display: "flex",
         flexDirection: "column" as "column",
-        justifyContent: "flex-start",
-        alignItems: "flex-start",
-        width: "100%",
+        paddingLeft: 20,
+        paddingRight: 20,
+        height: "100%",
+        overflowY: "hidden" as "hidden",
+        marginBottom: "20px",
         gap: 20,
-        padding:20,
-        overflowY: "scroll" as "scroll",
       },
       insideStyle: {
-        width: "600px",
-        height: "520px",
+       // width: "600px",
+        height: "300px",
       },
+      iconStyle: {
+        width: 120,
+        height: 120,
+        color: errorColor(300)
+      }
     };
-  }, [i18next.language, t]);
+  }, [theme, t]);
   return {
-    clasess,
+    classes,
   };
 };
 export { useStyle };

@@ -1,15 +1,16 @@
-import { Divider } from "@mui/material";
 import { useStyle } from "./style";
 import { CreditCardTransactionsReportHeaderWidget } from "./widgets/header-widget";
 import { useCreditCardTransactions } from "./use-credit-card-transactions";
 import { PrimaryTable } from "@/components/tables/primary-table";
 import { GoMakePagination } from "@/components/pagination/gomake-pagination";
-import { GoMakeModal } from "@/components";
-import { ShowCreditCardTransactions } from "./modal/ShowCreditCardTransactions";
+import { GoMakeDeleteModal, GoMakeModal } from "@/components";
+import { Stack } from "@mui/material";
+import WarningAmberIcon from "@mui/icons-material/WarningAmber";
+import { ShowCreditCardTransactions } from "./widgets/modal/ShowCreditCardTransactions";
 
 
 const CreditCardTransactionsWidget = () => {
-  const {
+  const { t,
     onSelectDeliveryTimeDates,
     resetDatePicker,
     onClickSearchFilter,
@@ -29,46 +30,72 @@ const CreditCardTransactionsWidget = () => {
     pageSize,
     handlePageSizeChange,
     tableHeaders,
+    openRefundModal,
+    onClickCloseRefundModal
   } = useCreditCardTransactions();
-  const { clasess } = useStyle();
+
+  const { classes } = useStyle();
+
   return (
-    <div style={clasess.mainContainer}>
-    <CreditCardTransactionsReportHeaderWidget
-        onClickSearchFilter={onClickSearchFilter}
-        onClickClearFilter={onClickClearFilter}
-        onSelectDeliveryTimeDates={onSelectDeliveryTimeDates}
-        resetDatePicker={resetDatePicker}
-        customer={customer}
-        customerId={customerId}
-        renderOptions={renderOptions}
-        checkWhatRenderArray={checkWhatRenderArray}
-        handleCustomerChange={handleCustomerChange}  
-    />
-    <Divider />
-    <PrimaryTable
-              stickyFirstCol={false}
-              stickyHeader={true}
-              maxHeight={650}
-              rows={allCreditCardTransaction}
-              headers={tableHeaders}
-            />
-     <GoMakePagination
-            onChangePageNumber={(event, value) => setPage(value)}
-            onChangePageSize={handlePageSizeChange}
-            page={page}
-            setPage={setPage}
-            pagesCount={pagesCount}
-            pageSize={pageSize}
+    <>
+      <Stack
+        direction="column"
+        justifyContent="space-between"
+        display="flex"
+        spacing={2}
+        height="100%"
+      >
+        <div style={classes.mainContainer}>
+
+          <CreditCardTransactionsReportHeaderWidget
+            onClickSearchFilter={onClickSearchFilter}
+            onClickClearFilter={onClickClearFilter}
+            onSelectDeliveryTimeDates={onSelectDeliveryTimeDates}
+            resetDatePicker={resetDatePicker}
+            customer={customer}
+            customerId={customerId}
+            renderOptions={renderOptions}
+            checkWhatRenderArray={checkWhatRenderArray}
+            handleCustomerChange={handleCustomerChange}
           />
+
+          <PrimaryTable
+            stickyFirstCol={false}
+            stickyHeader={true}
+            maxHeight={650}
+            rows={allCreditCardTransaction}
+            headers={tableHeaders}
+          />
+        </div>
+
+        <GoMakePagination
+          onChangePageNumber={(event, value) => setPage(value)}
+          onChangePageSize={handlePageSizeChange}
+          page={page}
+          setPage={setPage}
+          pagesCount={pagesCount}
+          pageSize={pageSize}
+        />
+      </Stack>
+
       <GoMakeModal
-        insideStyle={clasess.insideStyle}
+        insideStyle={classes.insideStyle}
         openModal={openModal}
         onClose={onClickClosModal}
-        modalTitle={ModalTitle}
+        modalTitle={t("creditCardTransactions.TransferToAnotherCustomer")}
       >
-        <ShowCreditCardTransactions customerId={customerId} renderOptions={undefined} checkWhatRenderArray={undefined} handleCustomerChange={undefined} customer={undefined} />
+        <ShowCreditCardTransactions />
       </GoMakeModal>
-    </div>
+      <GoMakeDeleteModal
+        icon={<WarningAmberIcon style={classes.iconStyle} />}
+        title={t("creditCardTransactions.ProcessRefundModalTitle")}
+        yesBtn={t("sales.quote.yesBtn")}
+        openModal={openRefundModal}
+        onClose={onClickCloseRefundModal}
+        onClickDelete={() => null}
+      />
+
+    </>
   );
 };
 

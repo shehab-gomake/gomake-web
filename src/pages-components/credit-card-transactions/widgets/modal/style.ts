@@ -56,7 +56,7 @@ const useStyle = () => {
                 justifyContent: "flex-start",
                 alignItems: "flex-start",
                 gap: 10,
-                width: "13%",
+                width: "100%",
             },
             headerStyle: {
               display: "flex",
@@ -92,7 +92,7 @@ const useStyle = () => {
                 ...FONT_FAMILY.Lexend(500, 14),
             },
             textInputStyle: {
-                width: "100%",
+                width: "180px",
                 border: "none",
             },
             inputsForQuotesContainer:{
