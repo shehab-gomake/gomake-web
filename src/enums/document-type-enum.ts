@@ -29,5 +29,4 @@ export enum DocumentsTypeReportList {
     SameOrder,
     NewBoardMissionNumber,
     SameBoardMissionNumber,
-
 }
