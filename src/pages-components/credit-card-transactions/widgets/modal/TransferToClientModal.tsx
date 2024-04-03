@@ -4,11 +4,26 @@ import { useTranslation } from "react-i18next";
 import { useCustomerDropDownList } from "@/hooks/use-customer-drop-down-list";
 import { SecondaryButton } from "@/components/button/secondary-button";
 import { Stack } from "@mui/material";
+import { useSnackBar } from "@/hooks";
 
-const ShowCreditCardTransactions = () => {
+interface ITransferToClient {
+  onClickClosModal: () => void;
+  onClickConfirm: (clientID: string) => void;
+}
+
+const TransferToClientModal = ({ onClickClosModal, onClickConfirm }: ITransferToClient) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
+  const { alertFault } = useSnackBar();
   const { customer, renderOptions, checkWhatRenderArray, handleCustomerChange } = useCustomerDropDownList();
+
+  const handleConfirmClick = () => {
+    if (customer != null) {
+      onClickConfirm(customer.id);
+    } else {
+      alertFault("reports.pleaseSelectCustomer");
+    }
+  };
 
   return (
     <Stack display={'flex'} justifyContent={'space-between'} height={"100%"} direction={'column'} padding={'20px'}>
@@ -25,12 +40,12 @@ const ShowCreditCardTransactions = () => {
         />
       </div>
       <Stack direction={'row'} gap={'20px'}>
-        <SecondaryButton variant={'contained'} onClick={() => null} >{t('sales.quote.confirmed')}
+        <SecondaryButton variant={'contained'} onClick={handleConfirmClick} >{t('sales.quote.confirmed')}
         </SecondaryButton>
-        <SecondaryButton variant={'contained'} onClick={() => null} >{t('sales.quote.cancel')}
+        <SecondaryButton variant={'contained'} onClick={onClickClosModal} >{t('sales.quote.cancel')}
         </SecondaryButton>
       </Stack>
     </Stack>
   )
 };
-export { ShowCreditCardTransactions };
+export { TransferToClientModal };

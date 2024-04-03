@@ -6,11 +6,13 @@ import { GoMakePagination } from "@/components/pagination/gomake-pagination";
 import { GoMakeDeleteModal, GoMakeModal } from "@/components";
 import { Stack } from "@mui/material";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
-import { ShowCreditCardTransactions } from "./widgets/modal/ShowCreditCardTransactions";
+import { TransferToClientModal } from "./widgets/modal/TransferToClientModal";
 
 
 const CreditCardTransactionsWidget = () => {
-  const { t,
+  const { classes } = useStyle();
+  const { 
+    t,
     onSelectDeliveryTimeDates,
     resetDatePicker,
     onClickSearchFilter,
@@ -24,41 +26,39 @@ const CreditCardTransactionsWidget = () => {
     setPage,
     openModal,
     onClickClosModal,
-    ModalTitle,
-    customerId,
     pagesCount,
     pageSize,
     handlePageSizeChange,
     tableHeaders,
     openRefundModal,
-    onClickCloseRefundModal
+    onClickCloseRefundModal,
+    onClickMakeRefund,
+    onClickChangeTransactionClient,
+    transactionAmount,
+    receiptNumber,
+    handleTransactionAmountChange,
+    handleReceiptNumberChange,
   } = useCreditCardTransactions();
 
-  const { classes } = useStyle();
 
   return (
     <>
-      <Stack
-        direction="column"
-        justifyContent="space-between"
-        display="flex"
-        spacing={2}
-        height="100%"
-      >
+      <Stack sx={classes.stackStyle}>
         <div style={classes.mainContainer}>
-
           <CreditCardTransactionsReportHeaderWidget
+          transactionAmount={transactionAmount}
+          receiptNumber={receiptNumber}
+          handleTransactionAmountChange={handleTransactionAmountChange}
+          handleReceiptNumberChange={handleReceiptNumberChange}
             onClickSearchFilter={onClickSearchFilter}
             onClickClearFilter={onClickClearFilter}
             onSelectDeliveryTimeDates={onSelectDeliveryTimeDates}
             resetDatePicker={resetDatePicker}
             customer={customer}
-            customerId={customerId}
             renderOptions={renderOptions}
             checkWhatRenderArray={checkWhatRenderArray}
             handleCustomerChange={handleCustomerChange}
           />
-
           <PrimaryTable
             stickyFirstCol={false}
             stickyHeader={true}
@@ -67,7 +67,6 @@ const CreditCardTransactionsWidget = () => {
             headers={tableHeaders}
           />
         </div>
-
         <GoMakePagination
           onChangePageNumber={(event, value) => setPage(value)}
           onChangePageSize={handlePageSizeChange}
@@ -77,14 +76,13 @@ const CreditCardTransactionsWidget = () => {
           pageSize={pageSize}
         />
       </Stack>
-
       <GoMakeModal
         insideStyle={classes.insideStyle}
         openModal={openModal}
         onClose={onClickClosModal}
         modalTitle={t("creditCardTransactions.TransferToAnotherCustomer")}
       >
-        <ShowCreditCardTransactions />
+        <TransferToClientModal onClickClosModal={onClickClosModal} onClickConfirm={onClickChangeTransactionClient} />
       </GoMakeModal>
       <GoMakeDeleteModal
         icon={<WarningAmberIcon style={classes.iconStyle} />}
@@ -92,12 +90,10 @@ const CreditCardTransactionsWidget = () => {
         yesBtn={t("sales.quote.yesBtn")}
         openModal={openRefundModal}
         onClose={onClickCloseRefundModal}
-        onClickDelete={() => null}
+        onClickDelete={onClickMakeRefund}
       />
-
     </>
   );
 };
-
 
 export { CreditCardTransactionsWidget };

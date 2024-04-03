@@ -16,7 +16,7 @@ const useMoreCircle = () => {
       },
       {
         condition: true,
-        onClick: onClickSecondModal,
+        onClick: ()=>onClickSecondModal(transaction),
         icon: <TwoArrowsIcon />,
         name: t("creditCardTransactions.MakeACredit")
       }

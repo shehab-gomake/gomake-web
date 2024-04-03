@@ -18,6 +18,13 @@ const useStyle = () => {
         marginBottom: "20px",
         gap: 20,
       },
+      stackStyle: {
+        flexDirection: "column",
+        justifyContent: "space-between",
+        display: "flex",
+        gap: "2px",
+        height: "100%",
+      },
       insideStyle: {
        // width: "600px",
         height: "300px",
