@@ -10,7 +10,11 @@ interface FinancesHeaderInputsWidgetProps {
   accountEmail: string;
   dayOfMonth: number;
   onChangeAccountName: (value) => void;
-  onChangeAccountEmail: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onResetAccountName: () => void;
+  onClickUpdateCpaMangerName: () => void;
+  onChangeAccountEmail: (value) => void;
+  onResetAccountMail: () => void;
+  onClickUpdateCpaMangerMail: () => void;
   onChangeSelectDayOfMonth: (event: React.ChangeEvent<HTMLInputElement>, value: any) => void;
 }
 
@@ -20,7 +24,11 @@ const FinancesHeaderInputsWidget: React.FC<FinancesHeaderInputsWidgetProps> = ({
   accountEmail,
   dayOfMonth,
   onChangeAccountName,
+  onResetAccountName,
+  onClickUpdateCpaMangerName,
   onChangeAccountEmail,
+  onResetAccountMail,
+  onClickUpdateCpaMangerMail,
   onChangeSelectDayOfMonth
 }) => {
   const { classes } = useStyle();
@@ -30,31 +38,40 @@ const FinancesHeaderInputsWidget: React.FC<FinancesHeaderInputsWidgetProps> = ({
   return (
     <div style={classes.mainContainer} >
       <div style={classes.inputContainer}>
-
-      <UpdateValueInput
-                clickedOut={() =>null}
-                onInputChange={onChangeAccountName}
-                onCancel={() =>null}
-                onUpdate={() =>null}
-                value={accountName}
-              />
-              
         <div style={classes.inputLabel}>{t("financesWidget.accountName")}</div>
-        <GomakeTextInput
+        <UpdateValueInput
+          clickedOut={() => null}
+          onInputChange={onChangeAccountName}
+          onCancel={onResetAccountName}
+          onUpdate={onClickUpdateCpaMangerName}
+          value={accountName}
+          height="40px"
+          width="180px"
+        />
+        {/* <GomakeTextInput
           style={classes.dropDownListStyle}
           onChange={onChangeAccountName}
           value={accountName}
           placeholder={t("financesWidget.enterAccountName")}
-        />
+        /> */}
       </div>
       <div style={classes.inputContainer}>
         <div style={classes.inputLabel}>{t("financesWidget.accountManagerEmail")}</div>
-        <GomakeTextInput
+        <UpdateValueInput
+          clickedOut={() => null}
+          onInputChange={onChangeAccountEmail}
+          onCancel={onResetAccountMail}
+          onUpdate={onClickUpdateCpaMangerMail}
+          value={accountEmail}
+          height="40px"
+          width="180px"
+        />
+        {/* <GomakeTextInput
           style={classes.dropDownListStyle}
           onChange={onChangeAccountEmail}
           value={accountEmail}
           placeholder={t("financesWidget.enterAccountEmail")}
-        />
+        /> */}
       </div>
       <div style={classes.inputContainer}>
         <div style={classes.inputLabel}>{t("financesWidget.dayOfMonth")}</div>

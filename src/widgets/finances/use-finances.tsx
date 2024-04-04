@@ -1,5 +1,5 @@
 import { useGomakeAxios, useSnackBar } from "@/hooks";
-import { getAccountsApi } from "@/services/api-service/settings/finance-api";
+import { getAccountsApi, updateCpaManagerMailApi, updateCpaManagerNameApi } from "@/services/api-service/settings/finance-api";
 import { useCallback, useEffect, useState } from "react";
 import React from 'react';
 
@@ -11,20 +11,33 @@ type Account = {
 
 const useFinances = () => {
   const { callApi } = useGomakeAxios();
-  const { alertFaultGetData } = useSnackBar();
+  const { alertFaultUpdate , alertSuccessUpdate, alertFaultGetData } = useSnackBar();
+  const [financeState, setFinanceState] = useState<any>();
   const [accountList, setAccountList] = useState<Account[]>([]);
 
 
   const [accountName, setAccountName] = useState<string>("")
   const [accountEmail, setAccountEmail] = useState<string>("")
-  const [dayOfMonth, setDayOfMonth] = useState<number>(1)
+  const [dayOfMonth, setDayOfMonth] = useState<number>()
 
   const onChangeAccountName = (v : any) => {
     setAccountName(v);
   }
-  const onChangeAccountEmail = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setAccountEmail(event.target.value);
+  const onResetAccountName = () => {
+    setAccountName(financeState?.cpaName);
   }
+  const onResetAccountMail = () => {
+    setAccountEmail(financeState?.cpaMail);
+  }
+
+  // const onChangeAccountEmail = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   setAccountEmail(event.target.value);
+  // }
+
+  const onChangeAccountEmail = (v) => {
+    setAccountEmail(v);
+  }
+
   const onChangeSelectDayOfMonth = (event: React.ChangeEvent<HTMLInputElement>, value: any) => {
     setDayOfMonth(Number(value));
   }
@@ -32,7 +45,12 @@ const useFinances = () => {
   const getAccountsFromFinance = async () => {
     const callBack = (res) => {
       if (res?.success) {
-        setAccountList(res?.data)
+        setFinanceState(res?.data);
+        setAccountList(res?.data?.accounts);
+        setAccountName(res?.data?.cpaName);
+        setAccountEmail(res?.data?.cpaMail);
+        setDayOfMonth(res?.data?.setDayOfMonth);
+
       }
       else {
         alertFaultGetData();
@@ -61,6 +79,30 @@ const useFinances = () => {
     ]);
   }, [accountList]);
   
+  const onClickUpdateCpaMangerName = async () => {
+    const callBack = (res) => {
+      if (res.success) {
+        alertSuccessUpdate();
+      }
+      else {
+        alertFaultUpdate();
+      }
+    };
+    await updateCpaManagerNameApi(callApi, callBack, { mangerName: accountName});
+  };
+
+  const onClickUpdateCpaMangerMail = async () => {
+    const callBack = (res) => {
+      if (res.success) {
+        alertSuccessUpdate();
+      }
+      else {
+        alertFaultUpdate();
+      }
+    };
+    await updateCpaManagerMailApi(callApi, callBack, { mangerMail: accountEmail});
+  };
+
   useEffect(() => {
     getAccountsFromFinance();
   }, [])
@@ -70,9 +112,14 @@ const useFinances = () => {
     accountEmail,
     dayOfMonth,
     onChangeAccountName,
+    onResetAccountName,
+    onClickUpdateCpaMangerName,
     onChangeAccountEmail,
+    onResetAccountMail,
+    onClickUpdateCpaMangerMail,
     onChangeSelectDayOfMonth,
-    getAccountRows
+    getAccountRows,
+    
   };
 };
 

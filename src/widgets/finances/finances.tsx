@@ -1,5 +1,3 @@
-import { useTranslation } from "react-i18next";
-
 import { useStyle } from "./style";
 import { FinancesHeaderWidget } from "./widgets/header/finances";
 import { FinancesHeaderInputsWidget } from "./widgets/header-inputs/header-inputs";
@@ -13,7 +11,11 @@ const FinancesWidget = () => {
     accountEmail,
     dayOfMonth,
     onChangeAccountName,
+    onResetAccountName,
+    onClickUpdateCpaMangerName,
     onChangeAccountEmail,
+    onResetAccountMail,
+    onClickUpdateCpaMangerMail,
     onChangeSelectDayOfMonth,
     getAccountRows
   } = useFinances()
@@ -26,7 +28,11 @@ const FinancesWidget = () => {
         accountEmail={accountEmail}
         dayOfMonth={dayOfMonth}
         onChangeAccountName={onChangeAccountName}
+        onResetAccountName={onResetAccountName}
+        onClickUpdateCpaMangerName={onClickUpdateCpaMangerName}
         onChangeAccountEmail={onChangeAccountEmail}
+        onResetAccountMail={onResetAccountMail}
+        onClickUpdateCpaMangerMail={onClickUpdateCpaMangerMail}
         onChangeSelectDayOfMonth={onChangeSelectDayOfMonth}
       />
       <FinancesTableWidget getAccountRows={getAccountRows} />
