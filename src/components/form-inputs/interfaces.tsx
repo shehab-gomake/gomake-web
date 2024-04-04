@@ -26,6 +26,7 @@ export interface IFormInput {
   changeState: (key: string, value: any) => void;
   error: boolean;
   readonly?: boolean;
+  disableLabel?: boolean;
 }
 
 export interface IFormArrayInputsProps {

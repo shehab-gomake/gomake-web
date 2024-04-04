@@ -15,9 +15,13 @@ interface IGoMakeDatepicker {
     placeholder?: string;
     reset?: boolean;
     style?:CSSProperties;
+    value?: {
+        fromDate: Date;
+        toDate: Date;
+    };
 }
 
-const GoMakeDatepicker = ({ onChange, placeholder, reset , style}: IGoMakeDatepicker) => {
+const GoMakeDatepicker = ({ onChange, placeholder, reset , style, value}: IGoMakeDatepicker) => {
     const { t } = useTranslation();
     const [state, setState] = useState({
         selection: {
@@ -54,6 +58,19 @@ const GoMakeDatepicker = ({ onChange, placeholder, reset , style}: IGoMakeDatepi
         }
     }, [reset]);
 
+    useEffect(() => {
+        if (value) {
+            setState({
+                ...state,
+                selection: {
+                    ...state.selection,
+                    endDate: value.toDate,
+                    startDate: value.fromDate
+                }
+            })
+        }
+    }, [value])
+
     const dateString = useCallback(() => {
         if (state.selection.startDate === null || state.selection.endDate === null) {
             return '';
@@ -68,7 +85,7 @@ const GoMakeDatepicker = ({ onChange, placeholder, reset , style}: IGoMakeDatepi
                 <GomakeTextInput disabled={false} style={{ height: '40px', cursor: 'pointer' }}
                     value={dateString()} labelText={'select'} placeholder={placeholder}
                     onClick={handleInputClick} />
-                <Clear onClick={handleClear} />
+                {state.selection.endDate && state.selection.startDate && <Clear style={{cursor: 'pointer'}} onClick={handleClear} />}
             </Stack>
             <GoMakeModal modalTitle={t('datepicker.datepicker')} insideStyle={{ width: 'fit-content', height: 'fit-content' }}
                 openModal={openDatepicker} onClose={handleSelectDates}>

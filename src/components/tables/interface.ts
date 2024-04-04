@@ -15,17 +15,13 @@ export interface ITableProps {
 }
 
 export interface ISecondaryTableProps {
-  rows: ITableRow[];
+  rows: (string | number | JSX.Element)[][];
   headers: (string | JSX.Element)[];
   stickyHeader?: boolean;
   stickyFirstCol?: boolean;
   maxHeight?: number;
   onScrolledBottom?: () => void;
-}
-
-interface ITableRow {
-  values: (string | number | JSX.Element)[];
-  checked: boolean;
+  children?: any
 }
 
 export interface IAccordionTable {
