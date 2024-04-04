@@ -50,8 +50,6 @@ const CreditCardTransactionsReportHeaderWidget = ({
             value={customer}
           />
         </div>
-
-
         <div style={classes.date2FilterContainer}>
           <h3 style={classes.filterLabelStyle}>{t("creditCardTransactions.transactionAmount")}</h3>
           <GomakeTextInput
@@ -59,10 +57,9 @@ const CreditCardTransactionsReportHeaderWidget = ({
             value={transactionAmount}
             placeholder={t("creditCardTransactions.transactionAmount")}
             onChange={handleTransactionAmountChange}
+            type={"number"}
           />
         </div>
-
-
         <div style={classes.date2FilterContainer}>
           <h3 style={classes.filterLabelStyle}>{t("sales.quote.receiptNumber")}</h3>
           <GomakeTextInput
@@ -72,17 +69,12 @@ const CreditCardTransactionsReportHeaderWidget = ({
             onChange={handleReceiptNumberChange}
           />
         </div>
-
-
         <div style={classes.date1FilterContainer}>
           <h3 style={classes.filterLabelStyle}>{t("boardMissions.dateRange")}</h3>
           <div style={{ width: "100%" }}>
             <GoMakeDatepicker onChange={onSelectDeliveryTimeDates} placeholder={t("boardMissions.chooseDate")} reset={resetDatePicker} />
           </div>
         </div>
-
-
-
         <div style={classes.date3FilterContainer}>
           <div style={classes.filterLabelStyle} />
           <GomakePrimaryButton
@@ -92,7 +84,6 @@ const CreditCardTransactionsReportHeaderWidget = ({
             {t("sales.quote.search")}
           </GomakePrimaryButton>
         </div>
-
         <div style={classes.date3FilterContainer}>
           <div style={classes.filterLabelStyle} />
           <GomakePrimaryButton
@@ -102,12 +93,9 @@ const CreditCardTransactionsReportHeaderWidget = ({
             {t("sales.quote.clear")}
           </GomakePrimaryButton>
         </div>
-
       </div>
-
-
     </>
-
   );
 };
+
 export { CreditCardTransactionsReportHeaderWidget };

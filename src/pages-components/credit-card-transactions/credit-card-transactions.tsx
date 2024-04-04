@@ -8,10 +8,9 @@ import { Stack } from "@mui/material";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import { TransferToClientModal } from "./widgets/modal/TransferToClientModal";
 
-
 const CreditCardTransactionsWidget = () => {
   const { classes } = useStyle();
-  const { 
+  const {
     t,
     onSelectDeliveryTimeDates,
     resetDatePicker,
@@ -46,10 +45,10 @@ const CreditCardTransactionsWidget = () => {
       <Stack sx={classes.stackStyle}>
         <div style={classes.mainContainer}>
           <CreditCardTransactionsReportHeaderWidget
-          transactionAmount={transactionAmount}
-          receiptNumber={receiptNumber}
-          handleTransactionAmountChange={handleTransactionAmountChange}
-          handleReceiptNumberChange={handleReceiptNumberChange}
+            transactionAmount={transactionAmount}
+            receiptNumber={receiptNumber}
+            handleTransactionAmountChange={handleTransactionAmountChange}
+            handleReceiptNumberChange={handleReceiptNumberChange}
             onClickSearchFilter={onClickSearchFilter}
             onClickClearFilter={onClickClearFilter}
             onSelectDeliveryTimeDates={onSelectDeliveryTimeDates}

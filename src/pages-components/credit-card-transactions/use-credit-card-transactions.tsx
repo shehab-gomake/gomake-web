@@ -12,7 +12,8 @@ const useCreditCardTransactions = () => {
   const { alertSuccessUpdate, alertFaultUpdate, alertFaultGetData } = useSnackBar();
   const { customer, setCustomer, renderOptions, checkWhatRenderArray, handleCustomerChange } = useCustomerDropDownList();
   const [resetDatePicker, setResetDatePicker] = useState<boolean>(false);
-  const [allCreditCardTransaction, setAllCreditCardTransaction] = useState();
+  const [allCreditCardTransaction, setAllCreditCardTransaction] = useState<any>();
+  const [allPureTransaction, setAllPureTransaction] = useState<any>();
   const [page, setPage] = useState(1);
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [openRefundModal, setOpenRefundModal] = useState<boolean>(false);
@@ -22,7 +23,7 @@ const useCreditCardTransactions = () => {
   const [fromDate, setFromDate] = useState<Date>();
   const [toDate, setToDate] = useState<Date>();
   const { GetDateFormat } = useDateFormat();
-  const[transactionAmount,setTransactionAmount]=useState<string>();
+  const [transactionAmount, setTransactionAmount] = useState<number | "">(); 
   const[receiptNumber,setReceiptNumber]=useState<string>();
   
   const tableHeaders = [
@@ -61,10 +62,12 @@ const useCreditCardTransactions = () => {
     getAllCreditCardTransactions();
   };
 
+
   const getAllCreditCardTransactions = async (isClear: boolean = false) => {
     const callBack = (res) => {
-      const totalItems = res.data?.totalItems;
       if (res?.success) {
+        setAllPureTransaction(res.data?.data); 
+        const totalItems = res.data?.totalItems;
         const mapData = res.data?.data.map((item: any) => [
           GetDateFormat(item?.creationDate),
           item?.cardNumber,
@@ -95,8 +98,8 @@ const useCreditCardTransactions = () => {
         :
         {
           clientId: customer?.id,
-          receiptNumber: null,
-          sum: 0,
+          receiptNumber: receiptNumber,
+          sum: transactionAmount && transactionAmount,
           startDate: fromDate,
           endDate: toDate,
           pageNumber: page,
@@ -107,7 +110,27 @@ const useCreditCardTransactions = () => {
   const onClickChangeTransactionClient = async (clientID) => {
     const callBack = (res) => {
       if (res?.success) {
-        getAllCreditCardTransactions();
+      const updatedTransaction = res.data; 
+      const updatedIndex = allPureTransaction.findIndex(item => item?.id === updatedTransaction?.id); 
+      if (updatedIndex !== -1) {
+        const updatedTransactions = [...allCreditCardTransaction];
+        const updatedRow = [
+          GetDateFormat(updatedTransaction.creationDate),
+          updatedTransaction.cardNumber,
+          updatedTransaction.clientName,
+          updatedTransaction.receiptNumber,
+          updatedTransaction.sum,
+          updatedTransaction.isEditable ? (
+            <MoreMenuWidget
+              transaction={updatedTransaction}
+              onClickOpenModal={onClickOpenModal}
+              onClickSecondModal={onClickOpenRefundModal}
+            />
+          ) : t(`creditCardTransactions.${updatedTransaction.status}`),
+        ];
+        updatedTransactions[updatedIndex] = updatedRow;
+        setAllCreditCardTransaction(updatedTransactions);
+      }
         onClickClosModal();
         alertSuccessUpdate();
       }
@@ -124,6 +147,27 @@ const useCreditCardTransactions = () => {
   const onClickMakeRefund = async () => {
     const callBack = (res) => {
       if (res?.success) {
+        const updatedTransaction = res.data; 
+        const updatedIndex = allPureTransaction.findIndex(item => item?.id === updatedTransaction?.id); 
+        if (updatedIndex !== -1) {
+          const updatedTransactions = [...allCreditCardTransaction];
+          const updatedRow = [
+            GetDateFormat(updatedTransaction.creationDate),
+            updatedTransaction.cardNumber,
+            updatedTransaction.clientName,
+            updatedTransaction.receiptNumber,
+            updatedTransaction.sum,
+            updatedTransaction.isEditable ? (
+              <MoreMenuWidget
+                transaction={updatedTransaction}
+                onClickOpenModal={onClickOpenModal}
+                onClickSecondModal={onClickOpenRefundModal}
+              />
+            ) : t(`creditCardTransactions.${updatedTransaction.status}`),
+          ];
+          updatedTransactions[updatedIndex] = updatedRow;
+          setAllCreditCardTransaction(updatedTransactions);
+        }
         onClickCloseRefundModal();
         alertSuccessUpdate();
       }
@@ -146,6 +190,8 @@ const useCreditCardTransactions = () => {
     setFromDate(null);
     setToDate(null);
     setResetDatePicker(true);
+    setTransactionAmount("");
+    setReceiptNumber("");
     getAllCreditCardTransactions(true);
   };
 
@@ -155,12 +201,12 @@ const useCreditCardTransactions = () => {
 
 
 
-  const handleTransactionAmountChange = (e: any, value: any) => {
-    setTransactionAmount(value);
+  const handleTransactionAmountChange = (event) => {
+    setTransactionAmount(event.target.value);
   };
 
-  const handleReceiptNumberChange = (e: any, value: any) => {
-    setReceiptNumber(value);
+  const handleReceiptNumberChange = (event) => {
+    setReceiptNumber(event.target.value);
   };
 
   return {
