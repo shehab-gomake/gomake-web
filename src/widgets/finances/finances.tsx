@@ -7,8 +7,7 @@ import { useFinances } from "./use-finances";
 import { FinancesTableWidget } from "./widgets/finances-table/finances";
 
 const FinancesWidget = () => {
-  const { clasess } = useStyle();
-  const { t } = useTranslation();
+  const { classes } = useStyle();
   const {
     accountName,
     accountEmail,
@@ -20,7 +19,7 @@ const FinancesWidget = () => {
   } = useFinances()
 
   return (
-    <div style={clasess.mainContainer}>
+    <div style={classes.mainContainer}>
       <FinancesHeaderWidget />
       <FinancesHeaderInputsWidget
         accountName={accountName}

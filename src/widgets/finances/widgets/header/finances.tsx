@@ -4,22 +4,20 @@ import { useStyle } from "./style";
 import { GomakePrimaryButton } from "@/components";
 import { useFinancesHeaderWidget } from "./use-header";
 import { DownloadAccountFilesModal } from "../download-account-files-modal/download-account-files-modal";
+import { HeaderTitle } from "@/widgets";
 
 const FinancesHeaderWidget = () => {
-  const { clasess } = useStyle();
+  const { classes } = useStyle();
   const { t } = useTranslation();
-
   const { openModal, onClose, onOpen } = useFinancesHeaderWidget()
 
   return (
-    <div style={clasess.mainContainer}>
-      <div style={clasess.headerContainer}>
-        <div>
-          <GomakePrimaryButton style={clasess.downloadBtnStyle} onClick={onOpen}>{t("financesWidget.downloadAccountFiles")}</GomakePrimaryButton>
-        </div>
-        <div style={clasess.titleStyle}>{t("financesWidget.accountingDefinitions")}</div>
+    <div style={classes.mainContainer}>
+      <div style={classes.headerContainer}>
+        <HeaderTitle marginTop={"0px"} marginBottom={"0px"} title={t("financesWidget.accountingDefinitions")} />
+        <GomakePrimaryButton style={classes.downloadBtnStyle} onClick={onOpen}>{t("financesWidget.downloadAccountFiles")}</GomakePrimaryButton>
       </div>
-      <div style={clasess.dividerStyle} />
+      <div style={classes.dividerStyle} />
       <DownloadAccountFilesModal openModal={openModal} onClose={onClose} />
     </div>
   );

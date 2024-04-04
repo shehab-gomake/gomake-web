@@ -5,7 +5,7 @@ import { useMemo } from "react";
 
 const useStyle = ({ marginTop, marginBottom, color }) => {
   const { primaryColor } = useGomakeTheme();
-  const clasess = useMemo(() => {
+  const classes = useMemo(() => {
     return {
       container: {
         marginTop: marginTop ? marginTop : convertHeightToVH(40),
@@ -20,7 +20,7 @@ const useStyle = ({ marginTop, marginBottom, color }) => {
     };
   }, [marginTop, marginBottom]);
   return {
-    clasess,
+    classes,
   };
 };
 export { useStyle };

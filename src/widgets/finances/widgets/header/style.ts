@@ -3,7 +3,7 @@ import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 const useStyle = () => {
   const {secondColor}=useGomakeTheme()
-  const clasess = useMemo(() => {
+  const classes = useMemo(() => {
 
     return {
       mainContainer:{
@@ -22,6 +22,7 @@ const useStyle = () => {
         width: "100%",
       },
       downloadBtnStyle:{
+        width:"fit-content",
         height: 40,
         backgroundColor:secondColor(500)
       },
@@ -32,7 +33,7 @@ const useStyle = () => {
     };
   }, []);
   return {
-    clasess,
+    classes,
   };
 };
 export { useStyle };
