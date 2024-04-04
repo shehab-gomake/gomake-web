@@ -11,6 +11,7 @@ import { GoMakeDatepicker } from "@/components/date-picker/date-picker-component
 import { Stack } from "@mui/material";
 import { GoMakePagination } from "@/components/pagination/gomake-pagination";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
+import { DuplicateType } from "@/enums";
 
 const BoardMissionsListWidget = () => {
   const { classes } = useStyle();
@@ -49,7 +50,8 @@ const BoardMissionsListWidget = () => {
     openMarkReadyModal,
     onCloseMarkReadyModal,
     openReturnToProdModal,
-    onCloseReturnToProdModal
+    onCloseReturnToProdModal,
+    onClickDuplicateMission
   } = useBoardMissions();
 
   useEffect(() => {
@@ -147,12 +149,8 @@ const BoardMissionsListWidget = () => {
         noBtn={"boardMissions.duplicateModalNo"}
         openModal={openDuplicateModal}
         onClose={onCloseDuplicateModal}
-        onClickYes={() => {
-          alert("yes");
-        }}
-        onClickNo={() => {
-          alert("no");
-        }}
+        onClickYes={() => onClickDuplicateMission(DuplicateType.SameBoardMissionNumber)}
+        onClickNo={() => onClickDuplicateMission(DuplicateType.NewBoardMissionNumber)}
       />
       <ThreeOptionsModal
         title={t("boardMissions.markDoneModalTitle")}

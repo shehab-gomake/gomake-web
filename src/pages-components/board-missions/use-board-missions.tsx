@@ -11,6 +11,8 @@ import { EWorkSource } from "@/widgets/product-pricing-widget/enums";
 import { useDebounce } from "@/utils/use-debounce";
 import { MoreMenuWidget } from "./widgets/more-circle";
 import { BoardMission } from "./widgets/interfaces";
+import { DuplicateType } from "@/enums";
+import { DOCUMENT_TYPE } from "../quotes/enums";
 
 const useBoardMissions = () => {
   const { t } = useTranslation();
@@ -38,7 +40,6 @@ const useBoardMissions = () => {
   const { customer, setCustomer, renderOptions, checkWhatRenderArray, handleCustomerChange } = useCustomerDropDownList()
   const { agent, setAgent, agentsCategories, handleAgentChange } = useAgentsList()
 
-
   const handlePageSizeChange = (event) => {
     setPageNumber(1);
     setPageSize(event.target.value);
@@ -53,7 +54,6 @@ const useBoardMissions = () => {
   useEffect(() => {
     setFinalPatternSearch(debounce);
   }, [debounce]);
-
 
   const productionStatuses = [
     { label: t("boardMissions.inProduction"), value: PStatus.IN_PROCESS },
@@ -74,13 +74,12 @@ const useBoardMissions = () => {
     t("boardMissions.numberOfBoardMissionsInOrder"),
     t("boardMissions.productName"),
     t("boardMissions.currentBoardMissionStatus"),
-   // t("properties.more")
+    t("properties.more")
   ];
 
   const handleMultiSelectChange = (newValues: string[]) => {
     setProductIds(newValues);
   };
-
 
   const handleStatusChange = (e: any, value: any) => {
     setStatus(value);
@@ -117,6 +116,8 @@ const useBoardMissions = () => {
     );
   }, []);
 
+
+  const [missionItem, setMissionItem] = useState<any>();
   const getAllBoardMissions = async (isClear: boolean = false) => {
     if (connectionId) {
       const callBack = (res) => {
@@ -134,13 +135,13 @@ const useBoardMissions = () => {
             mission?.jobName,
             mission?.numberOfBoardMissions,
             mission?.productName,
-            mission?.status,
-            // <MoreMenuWidget
-            //   mission={mission}
-            //   onClickDuplicate={onOpenDuplicateModal}
-            //   onClickMarksAsDone={onOpenMarkReadyModal}
-            //   onClickReturnToProduction={onOpenReturnToProdModal}
-            // />
+            mission?.status && t(`boardMissions.${PStatus[mission?.status]}`),
+            <MoreMenuWidget
+              mission={mission}
+              onClickDuplicate={onOpenDuplicateModal}
+              onClickMarksAsDone={onOpenMarkReadyModal}
+              onClickReturnToProduction={onOpenReturnToProdModal}
+            />
           ]);
           setAllBoardMissions(mapData);
           setPagesCount(Math.ceil(_data?.totalItems / pageSize));
@@ -173,8 +174,9 @@ const useBoardMissions = () => {
     }
   };
 
-  const onClickDuplicateMission = (missionItem) => {
-    navigate(`/products/duplicate?clientTypeId=${missionItem?.clientTypeId}&customerId=${missionItem?.customerID}&productId=${missionItem?.productId}&documentItemId=${missionItem?.id}&documentType=undefined`
+  const onClickDuplicateMission = (duplicateType : DuplicateType ) => {
+    navigate(
+      `/products/duplicate?clientTypeId=${missionItem?.clientTypeId}&customerId=${missionItem?.customerID}&productId=${missionItem?.productID}&documentItemId=${missionItem?.orderItemId}&documentType=${DOCUMENT_TYPE.order}&documentId=${missionItem?.orderItemId}&duplicateType=${duplicateType}`
     );
   };
 
@@ -182,10 +184,10 @@ const useBoardMissions = () => {
   const onCloseDuplicateModal = () => {
     setOpenDuplicateModal(false);
   };
-  const onOpenDuplicateModal = () => {
+  const onOpenDuplicateModal = (mission:any) => {
+    setMissionItem(mission);
     setOpenDuplicateModal(true);
   };
-
 
   const [openMarkReadyModal, setOpenMarkReadyModal] = useState<boolean>(false);
   const onCloseMarkReadyModal = () => {
@@ -225,7 +227,6 @@ const useBoardMissions = () => {
   useEffect(() => {
     getAllBoardMissions();
   }, [connectionId, pageNumber, pageSize, finalPatternSearch]);
-
 
   const handlePageChange = (event, value) => {
     setPageNumber(value);
@@ -268,7 +269,8 @@ const useBoardMissions = () => {
     openMarkReadyModal,
     onCloseMarkReadyModal,
     openReturnToProdModal,
-    onCloseReturnToProdModal
+    onCloseReturnToProdModal,
+    onClickDuplicateMission,
   };
 };
 

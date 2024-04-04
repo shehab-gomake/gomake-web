@@ -9,7 +9,7 @@ interface IBoardMissionsProps {
   onClickLoggers?: () => void;
   onClickMarksAsDone?:()=>void;
   onClickReturnToProduction?:()=>void;
-}
+} 
 const MoreMenuWidget = ({ mission, onClickDuplicate, onClickLoggers , onClickMarksAsDone , onClickReturnToProduction}: IBoardMissionsProps) => {
   const { classes } = useStyle();
   const { t , menuList} = useMoreCircle({

@@ -17,7 +17,7 @@ const useMoreCircle = ({
   onClickReturnToProduction
 }: any) => {
 
-  const { t } = useTranslation();
+  const { t } = useTranslation(); 
   const { classes } = useStyle();
 
   const menuList = [
@@ -43,7 +43,7 @@ const useMoreCircle = ({
       condition: true,
       name: "home.duplicate",
       icon: <DuplicateMenuIcon />,
-      onclick: onClickDuplicate,
+      onclick: ()=>onClickDuplicate(mission),
     },
     {
       //condition: mission?.productionStatus === PStatus.IN_PROCESS,
