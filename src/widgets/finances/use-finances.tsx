@@ -76,11 +76,11 @@ const useFinances = () => {
         }}
         onCancel={() => {
           const previousValue = pureAccountList[index].cpaAccountCode;
-         // const updatedList = [...pureAccountList];
+          //const updatedList = [...pureAccountList];
           const updatedList = [...accountList];
           updatedList[index] = {
             ...updatedList[index],
-            cpaAccountCode: previousValue
+            cpaAccountCode: previousValue !== null ? previousValue : ''
           };
           setAccountList(updatedList);
         }}

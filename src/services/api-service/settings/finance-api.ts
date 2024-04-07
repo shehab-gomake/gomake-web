@@ -8,6 +8,8 @@ const UPDATE_CPA_MANAGER_NAME_URL = '/v1/erp-service/finance/update-cpa-manager-
 const UPDATE_CPA_MANAGER_MAIL_URL = '/v1/erp-service/finance/update-cpa-manager-mail';
 const UPDATE_SEND_CPA_REPORT_URL = '/v1/erp-service/finance/update-send-cpa-report';
 const UPDATE_CPA_ACCOUNT_CODE_URL = '/v1/erp-service/finance/update-cpa-account-code';
+const GET_FINANCIAL_PERIOD_URL = '/v1/erp-service/finance/get-financial-period';
+const UPDATE_FINANCIAL_PERIOD_URL = '/v1/erp-service/finance/update-financial-period';
 
 
 const getAccountsApi: ICallAndSetData = async (callApi, setState) => {
@@ -79,11 +81,37 @@ const updateCpaAccountCodeApi: ICallAndSetData = async (callApi, setState, data)
 };
 
 
+const getFinancialPeriodApi: ICallAndSetData = async (callApi, setState, data) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    GET_FINANCIAL_PERIOD_URL,
+    setState,
+    data,
+    false
+  );
+};
+
+
+const updateFinancialPeriodApi: ICallAndSetData = async (callApi, setState, data) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.PUT,
+    UPDATE_FINANCIAL_PERIOD_URL,
+    setState,
+    data,
+    false
+  );
+};
+
+
 export {
   getAccountsApi,
   downloadCpaFileApi,
   updateCpaManagerNameApi,
   updateCpaManagerMailApi,
   updateSendCpaReportApi,
-  updateCpaAccountCodeApi
+  updateCpaAccountCodeApi,
+  getFinancialPeriodApi,
+  updateFinancialPeriodApi
 };
