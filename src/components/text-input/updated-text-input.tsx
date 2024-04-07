@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { IconButton, Paper } from "@mui/material";
+import { IconButton, Paper, debounce } from "@mui/material";
 import InputBase from "@mui/material/InputBase";
 import CloseIcon from "@mui/icons-material/Close";
 import CheckIcon from "@mui/icons-material/Check";
@@ -7,7 +7,7 @@ import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 interface IUpdateValueInputProps {
     value: string;
-    onUpdate: any;
+    onUpdate: () => void;
     onCancel: () => void;
     onInputChange: (e: string) => void;
     height?: string;
@@ -22,7 +22,7 @@ const UpdatedTextInput = ({
     height,
     width
 }: IUpdateValueInputProps) => {
-    const { errorColor, successColor, secondColor } = useGomakeTheme();
+    const { errorColor, successColor } = useGomakeTheme();
     const [isFocused, setIsFocused] = useState(false);
 
     const handleFocus = () => {
@@ -32,24 +32,15 @@ const UpdatedTextInput = ({
     const handleBlur = () => {
         setIsFocused(false);
     };
-
-    //  const handleBlur = (e: React.FocusEvent<HTMLDivElement>) => {
-    //     // Check if the related target of the blur event is not one of the icons
-    //     if (
-    //         e.relatedTarget !== document.getElementById("cancel-icon") &&
-    //         e.relatedTarget !== document.getElementById("update-icon")
-    //     ) {
-    //         setIsFocused(false);
-    //     }
-    // };
+    const debouncedOnBlur = debounce(handleBlur, 500);
 
     const handleCancelClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-        e.stopPropagation(); // Prevent the click event from bubbling up to the Paper component
+        e.stopPropagation();
         onCancel();
     };
 
     const handleUpdateClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-        e.stopPropagation(); // Prevent the click event from bubbling up to the Paper component
+        e.stopPropagation();
         onUpdate();
     };
 
@@ -62,26 +53,29 @@ const UpdatedTextInput = ({
                 alignItems: "center",
                 width: width || "137px",
                 height: height || "26px",
-                border: `1px solid ${isFocused ? secondColor(400) : 'gray'}`,
                 borderRadius: "5px",
-                boxShadow: "none",
+                boxShadow: "0px 1px 2px 0px rgba(0, 0, 0, 0.08)",
+                backgroundColor: "#FFF",
             }}
-            onClick={handleFocus}
+            onBlur={debouncedOnBlur}
         >
             <InputBase
-                sx={{ ml: 1, flex: 1 }}
+                sx={{
+                    ml: 1, flex: 1, fontFamily: "Heebo",
+                    fontStyle: "normal",
+                    fontWeight: 500,
+                    fontSize: 14,
+                }}
                 value={value}
                 onChange={(e) => onInputChange(e.target.value)}
                 autoFocus={false}
-                onBlur={handleBlur}
-            //onFocus={handleFocus}
+                onFocus={handleFocus}
             />
 
             {isFocused && (
                 <>
                     <IconButton
                         id="cancel-icon"
-                        type="button"
                         onClick={handleCancelClick}
                         sx={{
                             m: "0 4px",
@@ -96,7 +90,6 @@ const UpdatedTextInput = ({
                     </IconButton>
                     <IconButton
                         id="update-icon"
-
                         onClick={handleUpdateClick}
                         sx={{
                             backgroundColor: successColor(100),

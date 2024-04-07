@@ -4,6 +4,7 @@ import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
 
 import { useStyle } from "./style";
 import { UpdateValueInput } from "@/components/text-input/update-value-input";
+import { UpdatedTextInput } from "@/components/text-input/updated-text-input";
 
 interface FinancesHeaderInputsWidgetProps {
   accountName: string;
@@ -39,8 +40,7 @@ const FinancesHeaderInputsWidget: React.FC<FinancesHeaderInputsWidgetProps> = ({
     <div style={classes.mainContainer} >
       <div style={classes.inputContainer}>
         <div style={classes.inputLabel}>{t("financesWidget.accountName")}</div>
-        <UpdateValueInput
-          clickedOut={() => null}
+        <UpdatedTextInput
           onInputChange={onChangeAccountName}
           onCancel={onResetAccountName}
           onUpdate={onClickUpdateCpaMangerName}
@@ -48,17 +48,10 @@ const FinancesHeaderInputsWidget: React.FC<FinancesHeaderInputsWidgetProps> = ({
           height="40px"
           width="180px"
         />
-        {/* <GomakeTextInput
-          style={classes.dropDownListStyle}
-          onChange={onChangeAccountName}
-          value={accountName}
-          placeholder={t("financesWidget.enterAccountName")}
-        /> */}
       </div>
       <div style={classes.inputContainer}>
         <div style={classes.inputLabel}>{t("financesWidget.accountManagerEmail")}</div>
-        <UpdateValueInput
-          clickedOut={() => null}
+        <UpdatedTextInput
           onInputChange={onChangeAccountEmail}
           onCancel={onResetAccountMail}
           onUpdate={onClickUpdateCpaMangerMail}
@@ -66,12 +59,6 @@ const FinancesHeaderInputsWidget: React.FC<FinancesHeaderInputsWidgetProps> = ({
           height="40px"
           width="180px"
         />
-        {/* <GomakeTextInput
-          style={classes.dropDownListStyle}
-          onChange={onChangeAccountEmail}
-          value={accountEmail}
-          placeholder={t("financesWidget.enterAccountEmail")}
-        /> */}
       </div>
       <div style={classes.inputContainer}>
         <div style={classes.inputLabel}>{t("financesWidget.dayOfMonth")}</div>
