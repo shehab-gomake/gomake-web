@@ -1,15 +1,12 @@
 import { useTranslation } from "react-i18next";
-
-import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
-
 import { useStyle } from "./style";
-import { UpdateValueInput } from "@/components/text-input/update-value-input";
 import { UpdatedTextInput } from "@/components/text-input/updated-text-input";
+import { UpdatedAutoComplete } from "@/components/auto-complete/updated-auto-complete";
 
 interface FinancesHeaderInputsWidgetProps {
   accountName: string;
   accountEmail: string;
-  dayOfMonth: number;
+  dayOfMonth: string;
   onChangeAccountName: (value) => void;
   onResetAccountName: () => void;
   onClickUpdateCpaMangerName: () => void;
@@ -17,8 +14,9 @@ interface FinancesHeaderInputsWidgetProps {
   onResetAccountMail: () => void;
   onClickUpdateCpaMangerMail: () => void;
   onChangeSelectDayOfMonth: (event: React.ChangeEvent<HTMLInputElement>, value: any) => void;
+  onResetDayOfMonth: () => void;
+  onClickUpdateDayInMonth:()=>void;
 }
-
 
 const FinancesHeaderInputsWidget: React.FC<FinancesHeaderInputsWidgetProps> = ({
   accountName,
@@ -30,13 +28,15 @@ const FinancesHeaderInputsWidget: React.FC<FinancesHeaderInputsWidgetProps> = ({
   onChangeAccountEmail,
   onResetAccountMail,
   onClickUpdateCpaMangerMail,
-  onChangeSelectDayOfMonth
+  onChangeSelectDayOfMonth,
+  onResetDayOfMonth,
+  onClickUpdateDayInMonth
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
   const daysInMonth = Array.from({ length: 31 }, (_, i) => i + 1);
 
-  return (
+  return ( 
     <div style={classes.mainContainer} >
       <div style={classes.inputContainer}>
         <div style={classes.inputLabel}>{t("financesWidget.accountName")}</div>
@@ -62,14 +62,16 @@ const FinancesHeaderInputsWidget: React.FC<FinancesHeaderInputsWidgetProps> = ({
       </div>
       <div style={classes.inputContainer}>
         <div style={classes.inputLabel}>{t("financesWidget.dayOfMonth")}</div>
-        <GoMakeAutoComplate
-          options={daysInMonth}
-          style={classes.dropDownListStyle}
-          placeholder={t("financesWidget.selectDayOfMonth")}
-          onChange={onChangeSelectDayOfMonth}
-          value={dayOfMonth}
-          disableClearable={true}
-        />
+          <UpdatedAutoComplete
+            clickedOut={() => null}
+            onCancel={onResetDayOfMonth}
+            onUpdate={onClickUpdateDayInMonth}
+            value={dayOfMonth}
+            options={daysInMonth}
+            onChange={onChangeSelectDayOfMonth}
+            height="40px"
+            width="180px"
+          />
       </div>
     </div>
   );

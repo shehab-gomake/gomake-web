@@ -17,7 +17,9 @@ const FinancesWidget = () => {
     onResetAccountMail,
     onClickUpdateCpaMangerMail,
     onChangeSelectDayOfMonth,
-    getAccountRows
+    getAccountRows,
+    onResetDayOfMonth,
+    onClickUpdateDayInMonth
   } = useFinances()
 
   return (
@@ -34,6 +36,8 @@ const FinancesWidget = () => {
         onResetAccountMail={onResetAccountMail}
         onClickUpdateCpaMangerMail={onClickUpdateCpaMangerMail}
         onChangeSelectDayOfMonth={onChangeSelectDayOfMonth}
+        onResetDayOfMonth={onResetDayOfMonth}
+        onClickUpdateDayInMonth={onClickUpdateDayInMonth}
       />
       <FinancesTableWidget getAccountRows={getAccountRows} />
     </div>

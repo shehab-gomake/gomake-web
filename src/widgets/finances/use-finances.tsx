@@ -1,5 +1,5 @@
 import { useGomakeAxios, useSnackBar } from "@/hooks";
-import { getAccountsApi, updateCpaManagerMailApi, updateCpaManagerNameApi } from "@/services/api-service/settings/finance-api";
+import { getAccountsApi, updateCpaManagerMailApi, updateCpaManagerNameApi, updateSendCpaReportApi } from "@/services/api-service/settings/finance-api";
 import { useCallback, useEffect, useState } from "react";
 import React from 'react';
 
@@ -18,7 +18,7 @@ const useFinances = () => {
 
   const [accountName, setAccountName] = useState<string>("")
   const [accountEmail, setAccountEmail] = useState<string>("")
-  const [dayOfMonth, setDayOfMonth] = useState<number>()
+  const [dayOfMonth, setDayOfMonth] = useState<string>("")
 
   const onChangeAccountName = (v : any) => {
     setAccountName(v);
@@ -30,16 +30,16 @@ const useFinances = () => {
     setAccountEmail(financeState?.cpaMail);
   }
 
-  // const onChangeAccountEmail = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   setAccountEmail(event.target.value);
-  // }
+  const onResetDayOfMonth = () => {
+    setDayOfMonth(financeState?.cpaTransmitDate);
+  }
 
   const onChangeAccountEmail = (v) => {
     setAccountEmail(v);
   }
 
   const onChangeSelectDayOfMonth = (event: React.ChangeEvent<HTMLInputElement>, value: any) => {
-    setDayOfMonth(Number(value));
+    setDayOfMonth(value);
   }
 
   const getAccountsFromFinance = async () => {
@@ -49,8 +49,7 @@ const useFinances = () => {
         setAccountList(res?.data?.accounts);
         setAccountName(res?.data?.cpaName);
         setAccountEmail(res?.data?.cpaMail);
-        setDayOfMonth(res?.data?.setDayOfMonth);
-
+        setDayOfMonth(res?.data?.cpaTransmitDate?.toString());
       }
       else {
         alertFaultGetData();
@@ -103,6 +102,18 @@ const useFinances = () => {
     await updateCpaManagerMailApi(callApi, callBack, { mangerMail: accountEmail});
   };
 
+  const onClickUpdateDayInMonth = async () => {
+    const callBack = (res) => {
+      if (res.success) {
+        alertSuccessUpdate();
+      }
+      else {
+        alertFaultUpdate();
+      }
+    };
+    await updateSendCpaReportApi(callApi, callBack, { dayInMonth: dayOfMonth});
+  };
+
   useEffect(() => {
     getAccountsFromFinance();
   }, [])
@@ -119,6 +130,8 @@ const useFinances = () => {
     onClickUpdateCpaMangerMail,
     onChangeSelectDayOfMonth,
     getAccountRows,
+    onResetDayOfMonth,
+    onClickUpdateDayInMonth
     
   };
 };
