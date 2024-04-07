@@ -101,6 +101,7 @@ const useProductionFloorFilters = () => {
     const handleGroupsFilterChange = (groupId, value, valueId) => {
         setFilters({
                 ...filtersState,
+            groupsHistory: filtersState.groupsHistory ? filtersState.groupsHistory.concat({groupId, value, valueId}) : [{groupId, value, valueId}],
                 groups: filtersState.groups?.length > 0 ? [...filtersState?.groups, {groupId, value, valueId}] : [{
                     groupId,
                     value,
@@ -116,7 +117,8 @@ const useProductionFloorFilters = () => {
     const initGroupsFilters = async () => {
         await setFilters({
             ...filtersState,
-            groups: null
+            groups: null,
+            groupsHistory: null
         })
     }
 

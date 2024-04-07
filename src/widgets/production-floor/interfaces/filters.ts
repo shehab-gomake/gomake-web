@@ -11,7 +11,8 @@ export interface IProductionFloorFilter {
     employeeIds: null;
     pageNumber: number;
     customSearchFilters: null;
-    groups: IFilterGroup[]
+    groups: IFilterGroup[];
+    groupsHistory: IFilterGroup[]
 }
 
 export interface IStation {
