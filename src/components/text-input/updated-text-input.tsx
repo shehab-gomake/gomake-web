@@ -26,34 +26,6 @@ const UpdatedTextInput = ({
 }: IUpdateValueInputProps) => {
     const { errorColor, successColor , secondColor } = useGomakeTheme();
     const [isFocused, setIsFocused] = useState(false);
-    // const handleFocus = () => {
-    //     setIsFocused(true);
-    // };
-
-    // const handleBlur = () => {
-    //     setIsFocused(false);
-    // };
-    // const debouncedOnBlur = debounce(handleBlur, 500);
-
-    // const handleCancelClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    //     e.stopPropagation();
-    //     onCancel();
-    // };
-
-    // const handleUpdateClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    //     e.stopPropagation();
-    //     onUpdate();
-    // };
-
-    const [editedValue, setEditedValue] = useState<string>(value);
-    const [originalValue, setOriginalValue] = useState<string>(value);
-
-    useEffect(() => {
-        setOriginalValue(value);
-        setEditedValue(value);
-    }, [value]);
-
-    
     const handleFocus = () => {
         setIsFocused(true);
     };
@@ -65,7 +37,6 @@ const UpdatedTextInput = ({
 
     const handleCancelClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         e.stopPropagation();
-        setEditedValue(originalValue); // Reset value to original
         onCancel();
     };
 
@@ -73,13 +44,6 @@ const UpdatedTextInput = ({
         e.stopPropagation();
         onUpdate();
     };
-
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const newValue = e.target.value;
-        setEditedValue(newValue);
-        onInputChange(newValue);
-    };
-
 
     return (
         <Paper
@@ -105,10 +69,8 @@ const UpdatedTextInput = ({
                     fontWeight: 500,
                     fontSize: 14,
                 }}
-                // value={value}
-                value={editedValue}
-
-                onChange={handleInputChange}
+                value={value}
+                onChange={(e) => onInputChange(e.target.value)}
                 autoFocus={false}
                 onFocus={handleFocus}
             />

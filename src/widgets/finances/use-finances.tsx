@@ -51,7 +51,6 @@ const useFinances = () => {
         setFinanceState(res?.data);
         setAccountList(res?.data?.accounts);
         setPureAccountList(res?.data?.accounts);
-
         setAccountName(res?.data?.cpaName);
         setAccountEmail(res?.data?.cpaMail);
         setDayOfMonth(res?.data?.cpaTransmitDate?.toString());
@@ -101,6 +100,10 @@ const useFinances = () => {
   const onClickUpdateCpaMangerName = async () => {
     const callBack = (res) => {
       if (res.success) {
+        setFinanceState(prevState => ({
+          ...prevState,
+          cpaName: accountName // Update cpaName with accountName
+      }));
         alertSuccessUpdate();
       }
       else {
@@ -114,6 +117,10 @@ const useFinances = () => {
     const callBack = (res) => {
       if (res.success) {
         alertSuccessUpdate();
+        setFinanceState(prevState => ({
+          ...prevState,
+          cpaMail: accountEmail
+      }));
       }
       else {
         alertFaultUpdate();
@@ -126,6 +133,10 @@ const useFinances = () => {
     const callBack = (res) => {
       if (res.success) {
         alertSuccessUpdate();
+        setFinanceState(prevState => ({
+          ...prevState,
+          cpaTransmitDate: dayOfMonth 
+      }));
       }
       else {
         alertFaultUpdate();
@@ -134,6 +145,7 @@ const useFinances = () => {
     await updateSendCpaReportApi(callApi, callBack, { dayInMonth: dayOfMonth});
   };
 
+  
   const onClickUpdateCpaAccountCode = async (accountCode , cpaAccountCode ) => {
     const callBack = (res) => {
       if (res.success) {
