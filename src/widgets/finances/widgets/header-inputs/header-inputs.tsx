@@ -15,7 +15,7 @@ interface FinancesHeaderInputsWidgetProps {
   onClickUpdateCpaMangerMail: () => void;
   onChangeSelectDayOfMonth: (event: React.ChangeEvent<HTMLInputElement>, value: any) => void;
   onResetDayOfMonth: () => void;
-  onClickUpdateDayInMonth:()=>void;
+  onClickUpdateDayInMonth: () => void;
 }
 
 const FinancesHeaderInputsWidget: React.FC<FinancesHeaderInputsWidgetProps> = ({
@@ -36,11 +36,12 @@ const FinancesHeaderInputsWidget: React.FC<FinancesHeaderInputsWidgetProps> = ({
   const { t } = useTranslation();
   const daysInMonth = Array.from({ length: 31 }, (_, i) => i + 1);
 
-  return ( 
+  return (
     <div style={classes.mainContainer} >
       <div style={classes.inputContainer}>
         <div style={classes.inputLabel}>{t("financesWidget.accountName")}</div>
         <UpdatedTextInput
+          key={"accountName"}
           onInputChange={onChangeAccountName}
           onCancel={onResetAccountName}
           onUpdate={onClickUpdateCpaMangerName}
@@ -52,6 +53,7 @@ const FinancesHeaderInputsWidget: React.FC<FinancesHeaderInputsWidgetProps> = ({
       <div style={classes.inputContainer}>
         <div style={classes.inputLabel}>{t("financesWidget.accountManagerEmail")}</div>
         <UpdatedTextInput
+          key={"accountManagerEmail"}
           onInputChange={onChangeAccountEmail}
           onCancel={onResetAccountMail}
           onUpdate={onClickUpdateCpaMangerMail}
@@ -62,16 +64,16 @@ const FinancesHeaderInputsWidget: React.FC<FinancesHeaderInputsWidgetProps> = ({
       </div>
       <div style={classes.inputContainer}>
         <div style={classes.inputLabel}>{t("financesWidget.dayOfMonth")}</div>
-          <UpdatedAutoComplete
-            clickedOut={() => null}
-            onCancel={onResetDayOfMonth}
-            onUpdate={onClickUpdateDayInMonth}
-            value={dayOfMonth}
-            options={daysInMonth}
-            onChange={onChangeSelectDayOfMonth}
-            height="40px"
-            width="180px"
-          />
+        <UpdatedAutoComplete
+          clickedOut={() => null}
+          onCancel={onResetDayOfMonth}
+          onUpdate={onClickUpdateDayInMonth}
+          value={dayOfMonth}
+          options={daysInMonth}
+          onChange={onChangeSelectDayOfMonth}
+          height="40px"
+          width="180px"
+        />
       </div>
     </div>
   );

@@ -1,5 +1,6 @@
+import { UpdatedTextInput } from "@/components/text-input/updated-text-input";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
-import { getAccountsApi, updateCpaManagerMailApi, updateCpaManagerNameApi, updateSendCpaReportApi } from "@/services/api-service/settings/finance-api";
+import { getAccountsApi, updateCpaAccountCodeApi, updateCpaManagerMailApi, updateCpaManagerNameApi, updateSendCpaReportApi } from "@/services/api-service/settings/finance-api";
 import { useCallback, useEffect, useState } from "react";
 import React from 'react';
 
@@ -42,11 +43,15 @@ const useFinances = () => {
     setDayOfMonth(value);
   }
 
+  const [pureAccountList, setPureAccountList] = useState<Account[]>([]);
+
   const getAccountsFromFinance = async () => {
     const callBack = (res) => {
       if (res?.success) {
         setFinanceState(res?.data);
         setAccountList(res?.data?.accounts);
+        setPureAccountList(res?.data?.accounts);
+
         setAccountName(res?.data?.cpaName);
         setAccountEmail(res?.data?.cpaMail);
         setDayOfMonth(res?.data?.cpaTransmitDate?.toString());
@@ -62,19 +67,34 @@ const useFinances = () => {
     return accountList?.map((account, index) => [
       account.accountCode,
       account.accountName,
-      <input
-        key={index}
-        type="text"
-        value={account.cpaAccountCode}
-        onChange={(event) => {
-          const updatedList = [...accountList];
-          updatedList[index] = {
-            ...updatedList[index],
-            cpaAccountCode: event.target.value
-          };
-          setAccountList(updatedList);
-        }}
-      />
+      <UpdatedTextInput
+      key={index}
+      onInputChange={(newValue) => {
+        const updatedList = [...accountList];
+        updatedList[index] = {
+          ...updatedList[index],
+          cpaAccountCode: newValue
+        };
+        setAccountList(updatedList);
+      }}
+      onCancel={() => {
+        // Reset to the previous value of cpaAccountCode
+        const previousValue = pureAccountList[index].cpaAccountCode;
+        const updatedList = [...pureAccountList];
+        updatedList[index] = {
+          ...updatedList[index],
+          cpaAccountCode: previousValue
+        };
+        setAccountList(updatedList);
+      }}
+      onUpdate={() => {
+        onClickUpdateCpaAccountCode(account.accountCode, account.cpaAccountCode);
+      }}
+      value={account.cpaAccountCode}
+      height="30px"
+      width="120px"
+      withBorder={true}
+    />
     ]);
   }, [accountList]);
   
@@ -112,6 +132,21 @@ const useFinances = () => {
       }
     };
     await updateSendCpaReportApi(callApi, callBack, { dayInMonth: dayOfMonth});
+  };
+
+  const onClickUpdateCpaAccountCode = async (accountCode , cpaAccountCode ) => {
+    const callBack = (res) => {
+      if (res.success) {
+        alertSuccessUpdate();
+      }
+      else {
+        alertFaultUpdate();
+      }
+    };
+    await updateCpaAccountCodeApi(callApi, callBack, {
+      accountCode: accountCode,
+      cpaAccountCode: cpaAccountCode
+    });
   };
 
   useEffect(() => {

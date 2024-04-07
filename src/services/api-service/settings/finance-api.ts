@@ -7,6 +7,7 @@ const DOWNLOAD_CPA_FILE_URL = "/v1/erp-service/finance/download-cpa-file";
 const UPDATE_CPA_MANAGER_NAME_URL = '/v1/erp-service/finance/update-cpa-manager-name';
 const UPDATE_CPA_MANAGER_MAIL_URL = '/v1/erp-service/finance/update-cpa-manager-mail';
 const UPDATE_SEND_CPA_REPORT_URL = '/v1/erp-service/finance/update-send-cpa-report';
+const UPDATE_CPA_ACCOUNT_CODE_URL = '/v1/erp-service/finance/update-cpa-account-code';
 
 
 const getAccountsApi: ICallAndSetData = async (callApi, setState) => {
@@ -66,10 +67,23 @@ const updateSendCpaReportApi: ICallAndSetData = async (callApi, setState, data) 
 };
 
 
+const updateCpaAccountCodeApi: ICallAndSetData = async (callApi, setState, data) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    UPDATE_CPA_ACCOUNT_CODE_URL,
+    setState,
+    data,
+    false
+  );
+};
+
+
 export {
   getAccountsApi,
   downloadCpaFileApi,
   updateCpaManagerNameApi,
   updateCpaManagerMailApi,
-  updateSendCpaReportApi
+  updateSendCpaReportApi,
+  updateCpaAccountCodeApi
 };

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { IconButton, Paper, debounce } from "@mui/material";
 import InputBase from "@mui/material/InputBase";
 import CloseIcon from "@mui/icons-material/Close";
@@ -8,10 +8,11 @@ import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 interface IUpdateValueInputProps {
     value: string;
     onUpdate: () => void;
-    onCancel: () => void;
-    onInputChange: (e: string) => void;
+    onCancel?: () => void;
+    onInputChange: (e: any) => void;
     height?: string;
     width?: string;
+    withBorder?: boolean;
 }
 
 const UpdatedTextInput = ({
@@ -20,11 +21,39 @@ const UpdatedTextInput = ({
     onCancel,
     onInputChange,
     height,
-    width
+    width,
+    withBorder=false
 }: IUpdateValueInputProps) => {
-    const { errorColor, successColor } = useGomakeTheme();
+    const { errorColor, successColor , secondColor } = useGomakeTheme();
     const [isFocused, setIsFocused] = useState(false);
+    // const handleFocus = () => {
+    //     setIsFocused(true);
+    // };
 
+    // const handleBlur = () => {
+    //     setIsFocused(false);
+    // };
+    // const debouncedOnBlur = debounce(handleBlur, 500);
+
+    // const handleCancelClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    //     e.stopPropagation();
+    //     onCancel();
+    // };
+
+    // const handleUpdateClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    //     e.stopPropagation();
+    //     onUpdate();
+    // };
+
+    const [editedValue, setEditedValue] = useState<string>(value);
+    const [originalValue, setOriginalValue] = useState<string>(value);
+
+    useEffect(() => {
+        setOriginalValue(value);
+        setEditedValue(value);
+    }, [value]);
+
+    
     const handleFocus = () => {
         setIsFocused(true);
     };
@@ -36,6 +65,7 @@ const UpdatedTextInput = ({
 
     const handleCancelClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         e.stopPropagation();
+        setEditedValue(originalValue); // Reset value to original
         onCancel();
     };
 
@@ -43,6 +73,13 @@ const UpdatedTextInput = ({
         e.stopPropagation();
         onUpdate();
     };
+
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const newValue = e.target.value;
+        setEditedValue(newValue);
+        onInputChange(newValue);
+    };
+
 
     return (
         <Paper
@@ -56,6 +93,8 @@ const UpdatedTextInput = ({
                 borderRadius: "5px",
                 boxShadow: "0px 1px 2px 0px rgba(0, 0, 0, 0.08)",
                 backgroundColor: "#FFF",
+                border: withBorder && `1px solid ${isFocused ? secondColor(400) : 'gray'}`,
+
             }}
             onBlur={debouncedOnBlur}
         >
@@ -66,8 +105,10 @@ const UpdatedTextInput = ({
                     fontWeight: 500,
                     fontSize: 14,
                 }}
-                value={value}
-                onChange={(e) => onInputChange(e.target.value)}
+                // value={value}
+                value={editedValue}
+
+                onChange={handleInputChange}
                 autoFocus={false}
                 onFocus={handleFocus}
             />
