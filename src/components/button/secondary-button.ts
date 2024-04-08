@@ -18,9 +18,9 @@ const SecondaryButton = styled(Button)((props: ButtonProps) => {
         gap: 7,
         color: props.variant === 'contained' ? "#FFFFFF" : secondColor(500),
         "&:hover": {
-            letterSpacing: "0.1em",
-            backgroundColor: props.variant === 'contained' ? secondColor(500) : '#FFFFFF',
+            backgroundColor:  secondColor(100),
             borderColor: secondColor(500),
+            opacity: 0.8
         },
         transition: "0.25s",
         ...FONT_FAMILY.Lexend(500, 16),

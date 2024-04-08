@@ -5,8 +5,7 @@ import { FONT_FAMILY } from "@/utils/font-family";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 const useStyle = () => {
-  const { t } = useTranslation();
-  const { theme, secondColor } = useGomakeTheme();
+  const { theme, secondColor , errorColor} = useGomakeTheme();
   const classes = useMemo(() => {
     return {
       mainContainer: {
@@ -70,7 +69,12 @@ const useStyle = () => {
         paddingLeft: 20,
         paddingRight: 20,
         height:'50px'
-      }
+      },
+      warningIconStyle: {
+        width: 120,
+        height: 120,
+        color: errorColor(300),
+      },
     };
   }, [theme]);
   return {

@@ -1,21 +1,25 @@
-import { useAgentsList, useCustomerDropDownList, useGomakeAxios } from "@/hooks";
+import { useAgentsList, useCustomerDropDownList, useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
 import { useBoardMissionsSignalr } from "@/hooks/signalr/use-board-missions-signalr";
-import { getAndSetEmployees2 } from "@/services/api-service/customers/employees-api";
 import { getAllProductsForDropDownList } from "@/services/hooks";
-import { getAndSetAllCustomers } from "@/services/hooks/cart-side/customers/get-all-customers";
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { PStatus } from "./enums";
+import { PStatus } from "./widgets/enums";
 import { setBoardMissionsFiltersApi } from "@/services/api-service/board-missions-table/set-borad-missions-filters-api";
 import { useDateFormat } from "@/hooks/use-date-format";
 import { DEFAULT_VALUES } from "@/pages/customers/enums";
 import { EWorkSource } from "@/widgets/product-pricing-widget/enums";
 import { useDebounce } from "@/utils/use-debounce";
+import { MoreMenuWidget } from "./widgets/more-circle";
+import { BoardMission } from "./widgets/interfaces";
+import { DuplicateType } from "@/enums";
+import { DOCUMENT_TYPE } from "../quotes/enums";
 
 const useBoardMissions = () => {
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
+  const { alertFaultGetData } = useSnackBar();
   const { data, connectionId } = useBoardMissionsSignalr();
+  const { navigate } = useGomakeRouter();
   const [status, setStatus] = useState<{
     label: string;
     value: PStatus;
@@ -36,7 +40,6 @@ const useBoardMissions = () => {
   const { customer, setCustomer, renderOptions, checkWhatRenderArray, handleCustomerChange } = useCustomerDropDownList()
   const { agent, setAgent, agentsCategories, handleAgentChange } = useAgentsList()
 
-
   const handlePageSizeChange = (event) => {
     setPageNumber(1);
     setPageSize(event.target.value);
@@ -51,7 +54,6 @@ const useBoardMissions = () => {
   useEffect(() => {
     setFinalPatternSearch(debounce);
   }, [debounce]);
-
 
   const productionStatuses = [
     { label: t("boardMissions.inProduction"), value: PStatus.IN_PROCESS },
@@ -72,12 +74,12 @@ const useBoardMissions = () => {
     t("boardMissions.numberOfBoardMissionsInOrder"),
     t("boardMissions.productName"),
     t("boardMissions.currentBoardMissionStatus"),
+    t("properties.more")
   ];
 
   const handleMultiSelectChange = (newValues: string[]) => {
     setProductIds(newValues);
   };
-
 
   const handleStatusChange = (e: any, value: any) => {
     setStatus(value);
@@ -97,7 +99,7 @@ const useBoardMissions = () => {
     setFromDate(null);
     setToDate(null);
     setResetDatePicker(true);
-    pageNumber === 1 ? getAllBoardMissionsClear() : setPageNumber(1);
+    pageNumber === 1 ? getAllBoardMissions(true) : setPageNumber(1);
   };
 
   const onChangeMissionsSearch = (value: string) => {
@@ -114,61 +116,113 @@ const useBoardMissions = () => {
     );
   }, []);
 
-  const getAllBoardMissions = async () => {
+
+  const [missionItem, setMissionItem] = useState<any>();
+  const getAllBoardMissions = async (isClear: boolean = false) => {
     if (connectionId) {
       const callBack = (res) => {
         if (res?.success) {
-          // do nothing
+          const _data = res?.data;
+          const mapData = _data.data?.map((mission: any) => [
+            GetDateFormat(mission?.createdDate),
+            GetDateFormat(mission?.dueDate),
+            mission?.clientName,
+            mission?.number,
+            EWorkSource[mission?.outSourceType],
+            mission?.quantity,
+            mission?.cost,
+            mission?.price,
+            mission?.jobName,
+            mission?.numberOfBoardMissions,
+            mission?.productName,
+            mission?.status && t(`boardMissions.${PStatus[mission?.status]}`),
+            <MoreMenuWidget
+              mission={mission}
+              onClickDuplicate={onOpenDuplicateModal}
+              onClickMarksAsDone={onOpenMarkReadyModal}
+              onClickReturnToProduction={onOpenReturnToProdModal}
+            />
+          ]);
+          setAllBoardMissions(mapData);
+          setPagesCount(Math.ceil(_data?.totalItems / pageSize));
+        }
+        else {
+          alertFaultGetData();
         }
       };
-      await setBoardMissionsFiltersApi(callApi, callBack, {
-        signalrConnectionId: connectionId,
-        clientId: customer?.id,
-        agentId: agent?.id,
-        search: finalPatternSearch,
-        fromDate: fromDate && GetDateFormat(fromDate),
-        toDate: toDate && GetDateFormat(toDate),
-        productsIds: productIds,
-        productionStatus: status?.value,
-        pageNumber: pageNumber,
-        pageSize: pageSize,
-      });
+      await setBoardMissionsFiltersApi(callApi, callBack,
+        isClear ?
+          {
+            // signalrConnectionId: connectionId,
+            productsIds: [],
+            pageNumber: pageNumber,
+            pageSize: pageSize,
+          }
+          :
+          {
+            // signalrConnectionId: connectionId,
+            clientId: customer?.id,
+            agentId: agent?.id,
+            search: finalPatternSearch,
+            fromDate: fromDate && GetDateFormat(fromDate),
+            toDate: toDate && GetDateFormat(toDate),
+            productsIds: productIds,
+            productionStatus: status?.value,
+            pageNumber: pageNumber,
+            pageSize: pageSize,
+          });
     }
   };
 
-  const getAllBoardMissionsClear = async () => {
-    if (connectionId) {
-      const callBack = (res) => {
-        if (res?.success) {
-        }
-      };
-      await setBoardMissionsFiltersApi(callApi, callBack, {
-        signalrConnectionId: connectionId,
-        productsIds: [],
-        pageNumber: pageNumber,
-        pageSize: pageSize,
-      });
-    }
+  const onClickDuplicateMission = (duplicateType : DuplicateType ) => {
+    navigate(
+      `/products/duplicate?clientTypeId=${missionItem?.clientTypeId}&customerId=${missionItem?.customerID}&productId=${missionItem?.productID}&documentItemId=${missionItem?.orderItemId}&documentType=${DOCUMENT_TYPE.order}&documentId=${missionItem?.orderItemId}&duplicateType=${duplicateType}`
+    );
   };
 
-  useEffect(() => {
-    const mapData = data?.data?.map((mission: any) => [
-      GetDateFormat(mission?.createdDate),
-      GetDateFormat(mission?.dueDate),
-      mission?.clientName,
-      mission?.number,
-      EWorkSource[mission?.outSourceType],
-      mission?.quantity,
-      mission?.cost,
-      mission?.price,
-      mission?.jobName,
-      mission?.numberOfBoardMissions,
-      mission?.productName,
-      mission?.status,
-    ]);
-    setAllBoardMissions(mapData);
-    setPagesCount(Math.ceil(data?.totalItems / pageSize));
-  }, [data, connectionId]);
+  const [openDuplicateModal, setOpenDuplicateModal] = useState<boolean>(false);
+  const onCloseDuplicateModal = () => {
+    setOpenDuplicateModal(false);
+  };
+  const onOpenDuplicateModal = (mission:any) => {
+    setMissionItem(mission);
+    setOpenDuplicateModal(true);
+  };
+
+  const [openMarkReadyModal, setOpenMarkReadyModal] = useState<boolean>(false);
+  const onCloseMarkReadyModal = () => {
+    setOpenMarkReadyModal(false);
+  };
+  const onOpenMarkReadyModal = () => {
+    setOpenMarkReadyModal(true);
+  };
+
+  const [openReturnToProdModal, setOpenReturnToProdModalModal] = useState<boolean>(false);
+  const onCloseReturnToProdModal = () => {
+    setOpenReturnToProdModalModal(false);
+  };
+  const onOpenReturnToProdModal = () => {
+    setOpenReturnToProdModalModal(true);
+  };
+
+  // useEffect(() => {
+  //   const mapData = data?.data?.map((mission: any) => [
+  //     GetDateFormat(mission?.createdDate),
+  //     GetDateFormat(mission?.dueDate),
+  //     mission?.clientName,
+  //     mission?.number,
+  //     EWorkSource[mission?.outSourceType],
+  //     mission?.quantity,
+  //     mission?.cost,
+  //     mission?.price,
+  //     mission?.jobName,
+  //     mission?.numberOfBoardMissions,
+  //     mission?.productName,
+  //     mission?.status,
+  //   ]);
+  //   setAllBoardMissions(mapData);
+  //   setPagesCount(Math.ceil(data?.totalItems / pageSize));
+  // }, [data, connectionId]);
 
   useEffect(() => {
     getAllBoardMissions();
@@ -209,7 +263,14 @@ const useBoardMissions = () => {
     resetDatePicker,
     handlePageSizeChange,
     setPageSize,
-    pageSize
+    pageSize,
+    openDuplicateModal,
+    onCloseDuplicateModal,
+    openMarkReadyModal,
+    onCloseMarkReadyModal,
+    openReturnToProdModal,
+    onCloseReturnToProdModal,
+    onClickDuplicateMission,
   };
 };
 

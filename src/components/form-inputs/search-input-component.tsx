@@ -9,14 +9,16 @@ interface ISearchInputProps {
   value?: string;
   placeHolder?: string;
   searchInputStyle?: any;
+  bgColor?: string;
 }
 
-const SearchInputComponent = ({ onChange, value ,placeHolder,searchInputStyle }: ISearchInputProps) => {
+const SearchInputComponent = ({ onChange, value ,placeHolder,searchInputStyle, bgColor }: ISearchInputProps) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
 
   return (
     <GoMakeTextInputIcon
+        bgColor={bgColor}
       onChange={(e) => {
         onChange(e.target.value);
       }}

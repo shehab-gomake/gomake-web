@@ -25,3 +25,8 @@ export enum DocumentsTypeReportList {
     OutGoingPayments = 46,
     SalesDocuments = 47
   }
+  export enum DuplicateType {
+    SameOrder,
+    NewBoardMissionNumber,
+    SameBoardMissionNumber,
+}
