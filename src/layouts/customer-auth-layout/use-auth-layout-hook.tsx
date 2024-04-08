@@ -15,6 +15,7 @@ const useAuthLayoutHook = (permissionEnumValue?: Permissions, allowAnonymous?: b
   const { isAuth } = useGomakeAuth(permissionEnumValue, allowAnonymous);
   const { navigate } = useGomakeRouter();
   const [canAccess, setCanAccess] = useState<boolean | null>(null);
+
   const tabs1: any = useMemo(() => {
     return [
       {
@@ -47,6 +48,7 @@ const useAuthLayoutHook = (permissionEnumValue?: Permissions, allowAnonymous?: b
       },
     ];
   }, []);
+
   const tabs2: any = useMemo(() => {
     return [
       {
@@ -59,7 +61,7 @@ const useAuthLayoutHook = (permissionEnumValue?: Permissions, allowAnonymous?: b
           {
             key: "boardMissions",
             title: "home.tabs.boardMissions",
-            Permission: Permissions.SHOW_PRODUCTION_FLOOR,
+            Permission: Permissions.SHOW_BOARD_MISSIONS,
             path: "/board-missions",
           },
           {
@@ -78,25 +80,25 @@ const useAuthLayoutHook = (permissionEnumValue?: Permissions, allowAnonymous?: b
             key: "delivery notes",
             title: "tabs.deliveryNotes",
             path: "/deliveryNotes",
-            Permission: Permissions.SHOW_ORDERS,
+            Permission: Permissions.SHOW_DELIVERY_NOTES,
           },
           {
             key: "delivery note refund",
             title: "tabs.deliveryNoteRefund",
             path: "/deliveryNoteRefunds",
-            Permission: Permissions.SHOW_ORDERS,
+            Permission: Permissions.SHOW_DELIVERY_NOTES_REFUND,
           },
           {
             key: "invoices",
             title: "tabs.invoices",
             path: "/invoices",
-            Permission: Permissions.SHOW_ORDERS,
+            Permission: Permissions.SHOW_INVOICES,
           },
           {
             key: "invoice refund",
             title: "tabs.invoiceRefund",
             path: "/invoiceRefunds",
-            Permission: Permissions.SHOW_ORDERS,
+            Permission: Permissions.SHOW_INVOICES_REFUND,
           },
         ],
         icon: () => {
@@ -126,19 +128,19 @@ const useAuthLayoutHook = (permissionEnumValue?: Permissions, allowAnonymous?: b
             key: "purchase order",
             title: "tabs.purchaseOrder",
             path: "/purchaseOrders",
-            Permission: Permissions.SHOW_ORDERS,
+            Permission: Permissions.SHOW_PURCHASE_ORDERS,
           },
           {
             key: "purchase invoice",
             title: "tabs.purchaseInvoice",
             path: "/purchaseInvoices",
-            Permission: Permissions.SHOW_ORDERS,
+            Permission: Permissions.SHOW_PURCHASE_INVOICES,
           },
           {
             key: "purchase invoice",
             title: "tabs.purchaseInvoiceRefund",
             path: "/purchaseInvoiceRefunds",
-            Permission: Permissions.SHOW_ORDERS,
+            Permission: Permissions.SHOW_PURCHASE_INVOICES_REFUND,
           },
         ],
         icon: () => {
@@ -157,12 +159,13 @@ const useAuthLayoutHook = (permissionEnumValue?: Permissions, allowAnonymous?: b
             key: "receipts",
             title: "tabs.receipts",
             path: "/receipts",
-            Permission: Permissions.SHOW_ORDERS,
+            Permission: Permissions.SHOW_RECEIPTS,
           },
           {
             key: "deposits",
             title: "tabs.deposits",
             path: "/deposits",
+            Permission: Permissions.SHOW_DEPOSITS,
           },
         ],
         icon: () => {
@@ -181,13 +184,13 @@ const useAuthLayoutHook = (permissionEnumValue?: Permissions, allowAnonymous?: b
       //       key: "purchaseOrders",
       //       title: "tabs.purchaseOrders",
       //       path: "/purchaseOrders",
-      //       Permission: Permissions.SHOW_ORDERS,
+      //       Permission: Permissions.SHOW_PURCHASE_ORDERS,
       //     },
       //     {
       //       key: "purchaseInvoices",
       //       title: "tabs.purchaseInvoices",
       //       path: "/purchaseOrder",
-      //       Permission: Permissions.SHOW_ORDERS,
+      //       Permission: Permissions.SHOW_PURCHASE_INVOICES,
       //     },
       //     {
       //       key: "supplierPayments",
@@ -231,44 +234,44 @@ const useAuthLayoutHook = (permissionEnumValue?: Permissions, allowAnonymous?: b
         isLine: false,
         key: "reports",
         title: "tabs.reports",
-        Permission: Permissions.SHOW_CLIENT,
+        //Permission: Permissions.SHOW_REPORTS,
         isList: true,
         list: [
           {
             key: "agingReport",
             title: "tabs.agingReport",
             path: "/aging-report",
-            Permission: Permissions.SHOW_CLIENT,
+            Permission: Permissions.SHOW_AGING_REPORT,
           },
           {
             key: "ledgerReport",
             title: "tabs.ledgerReport",
             path: "/ledger-report",
-            Permission: Permissions.SHOW_CLIENT,
+            Permission: Permissions.SHOW_LEDGER_REPORT,
           },
           {
             key: "transactionJournalReport",
             title: "tabs.transactionJournalReport",
             path: "/transaction-journal-report",
-            Permission: Permissions.SHOW_CLIENT,
+            Permission: Permissions.SHOW_TRANSACTION_JOURNAL_REPORT,
           },
           {
             key: "dailyPaymentsReport",
             title: "tabs.dailyPaymentsReport",
             path: "/daily-payments-report",
-            Permission: Permissions.SHOW_CLIENT,
+            Permission: Permissions.SHOW_DAILY_PAYMENT_REPORT,
           },
           {
             key: "salesReport",
             title: "tabs.salesReport",
             path: "/sales-report",
-            Permission: Permissions.SHOW_CLIENT,
+            Permission: Permissions.SHOW_SALES_REPORT,
           },
           {
             key: "creditCardTransactions",
             title: "tabs.creditCardTransactions",
             path: "/credit-card-transactions",
-            Permission: Permissions.SHOW_CLIENT,
+            Permission: Permissions.SHOW_CREDIT_CARD_TRANSACTIONS,
           },
         ],
         icon: () => {
@@ -278,6 +281,7 @@ const useAuthLayoutHook = (permissionEnumValue?: Permissions, allowAnonymous?: b
       },
     ];
   }, []);
+
   const tabs3: any = useMemo(() => {
     return [
       {
@@ -367,7 +371,7 @@ const useAuthLayoutHook = (permissionEnumValue?: Permissions, allowAnonymous?: b
         key: "companyReports",
         title: "tabs.companyReports",
         path: "/companyReports",
-        Permission: Permissions.SHOW_PRINTHOUSES_TABLE,
+        Permission: Permissions.SHOW_COMPANY_REPORTS,
         isList: false,
         icon: () => {
           return <ReportsIcon />;
@@ -385,6 +389,7 @@ const useAuthLayoutHook = (permissionEnumValue?: Permissions, allowAnonymous?: b
   }, [isAuth]);
   const { callApi } = useGomakeAxios();
   const profile = useRecoilValue<ICompanyProfile>(companyProfileState);
+
   // const getUserProfile = async () => {
   //   const res = await callApi("GET", "/v1/get-print-house-profile");
   //   if (res.success) {
@@ -395,10 +400,10 @@ const useAuthLayoutHook = (permissionEnumValue?: Permissions, allowAnonymous?: b
   //   getUserProfile();
   // }, []);
 
-  const permissionsofTabs = [tabs1, tabs2, tabs3];
+  const permissionsOfTabs = [tabs1, tabs2, tabs3];
 
   return {
-    permissionsofTabs,
+    permissionsOfTabs,
     tabs1,
     tabs2,
     tabs3,
