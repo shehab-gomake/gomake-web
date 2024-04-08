@@ -88,7 +88,6 @@ const getFinancialPeriodApi: ICallAndSetData = async (callApi, setState, data) =
     GET_FINANCIAL_PERIOD_URL,
     setState,
     data,
-    false
   );
 };
 

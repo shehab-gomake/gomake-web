@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { financialPeriod } from "./interfaces";
 
-const useFinancialPeriodModal = ({onClose}) => {
+const useFinancialPeriodModal = ({ onClose }) => {
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
   const { alertSuccessUpdate, alertFaultUpdate, alertFaultGetData } = useSnackBar();
@@ -24,13 +24,6 @@ const useFinancialPeriodModal = ({onClose}) => {
     { value: "12", label: t("financesWidget.december") }
   ];
 
-  const currentYear = new Date().getFullYear();
-  const years = Array.from({ length: 6 }, (_, index) => {
-    const year = currentYear - index;
-    return { value: year.toString(), label: year.toString() };
-  });
-
-
   const monthStatues = [
     { value: "0", label: t("financesWidget.unlocked") },
     { value: "1", label: t("financesWidget.unlockedExceptSales") },
@@ -38,12 +31,19 @@ const useFinancialPeriodModal = ({onClose}) => {
     { value: "3", label: t("financesWidget.locked") },
   ];
 
-  //const [state, setState] = useState<financialPeriod>({ month: months[0].value, year: years[0].value, status: monthStatues[0].value });
+  const currentMonth = new Date().getMonth() + 1; 
+  const currentYear = new Date().getFullYear();
+  const years = Array.from({ length: 7 }, (_, index) => {
+    const year = currentYear + index - 1; 
+    return { value: year.toString(), label: year.toString() };
+  });
+
   const [state, setState] = useState<financialPeriod>(() => ({
-    month: months[0].value,
-    year: years[0].value,
+    month: currentMonth.toString(), // Set the current month
+    year: currentYear.toString(), // Set the current year
     status: ""
   }));
+
 
   const onChangeInputs = (key, value) => {
     if (key === "year") {
@@ -75,7 +75,7 @@ const useFinancialPeriodModal = ({onClose}) => {
         if (res.success) {
           const data = String(res?.data);
           setState({ ...state, status: data, year, month });
-          resolve(data); 
+          resolve(data);
         } else {
           alertFaultGetData();
           reject(new Error("Failed to get financial period data"));
@@ -88,18 +88,18 @@ const useFinancialPeriodModal = ({onClose}) => {
         });
     });
   };
-  
+
 
   useEffect(() => {
     const fetchData = async () => {
-      const defaultStatus = await getFinancialPeriod(years[0].value, months[0].value);
+      const defaultStatus = await getFinancialPeriod(currentYear.toString(), currentMonth.toString());
       setState(prevState => ({
         ...prevState,
         status: String(defaultStatus)
       }));
     };
-    fetchData(); 
-  }, []); 
+    fetchData();
+  }, []);
 
   return {
     t,
