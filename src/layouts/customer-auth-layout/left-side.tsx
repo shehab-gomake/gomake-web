@@ -146,7 +146,7 @@ const LeftSideLayout = (customGap) => {
       </div>
       <div style={classes.poweredContainer}>
         <div style={classes.poweredByLbl}>{t("login.poweredBy")}</div>
-        <div style={classes.gomakeByLbl}>{t("login.GoMake")}</div>
+        <div style={classes.goMakeByLbl}>{t("login.GoMake")}</div>
       </div>
     </div>
   );

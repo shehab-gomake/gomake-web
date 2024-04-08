@@ -83,7 +83,7 @@ const useStyle = ({
         ...FONT_FAMILY.Lexend(400, 12),
         color: "#FFF",
       },
-      gomakeByLbl: {
+      goMakeByLbl: {
         ...FONT_FAMILY.Lexend(400, 28),
         color: "#FFF",
       },
