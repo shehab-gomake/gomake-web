@@ -111,11 +111,6 @@ const UpdatedAutoComplete = ({
                         />
                     )}
                     onChange={handleChange}
-                    popupIcon={
-                        <div style={{ position: "absolute", top: "50%", transform: "translateY(-50%)" }}>
-                            <ArrowUpIcon />
-                        </div>
-                    }
                     clearIcon={false}
                     PaperComponent={(props) => (
                         <Paper ref={optionsListEl} {...props}>

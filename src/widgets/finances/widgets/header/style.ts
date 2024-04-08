@@ -24,7 +24,7 @@ const useStyle = () => {
       downloadBtnStyle:{
         width:"fit-content",
         height: 40,
-       // backgroundColor:secondColor(500)
+        lineHeight:"17px"
       },
       titleStyle:{
         ...FONT_FAMILY.Lexend(500,16)

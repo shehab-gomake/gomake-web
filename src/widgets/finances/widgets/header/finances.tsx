@@ -24,7 +24,7 @@ const FinancesHeaderWidget = () => {
       <div style={classes.headerContainer}>
         <HeaderTitle marginTop={"0px"} marginBottom={"0px"} title={t("financesWidget.accountingDefinitions")} />
         <Stack direction={"row"} gap="5px">
-        <SecondaryButton variant="contained" style={classes.downloadBtnStyle} onClick={onOpenFinancialModal}>{t("Financial Period")}</SecondaryButton>
+        <SecondaryButton variant="contained" style={classes.downloadBtnStyle} onClick={onOpenFinancialModal}>{t("financesWidget.financialPeriod")}</SecondaryButton>
         <SecondaryButton variant="outlined"  style={classes.downloadBtnStyle} onClick={onOpen}>{t("financesWidget.downloadAccountFiles")}</SecondaryButton>
         </Stack>
       </div>

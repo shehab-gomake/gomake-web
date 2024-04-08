@@ -2,9 +2,8 @@ const FinancialPeriodInputs = (state: any , months , years ,monthStatues) => {
     return [
         {
             name: "financialMonth",
-            label: "Month",
+            label: "financesWidget.month",
             type: "select",
-            placeholder: "select month",
             required: false,
             parameterKey: "month",
             options: months.map((item) => ({
@@ -13,12 +12,12 @@ const FinancialPeriodInputs = (state: any , months , years ,monthStatues) => {
             })),
             value: state?.month,
             isValid: true,
+            disableClearable:true
         },
         {
             name: "financialYear",
-            label: "Year",
+            label: "financesWidget.year",
             type: "select",
-            placeholder: "select month",
             required: false,
             parameterKey: "year",
             options: years.map((item) => ({
@@ -27,10 +26,12 @@ const FinancialPeriodInputs = (state: any , months , years ,monthStatues) => {
             })),
             value: state?.year,
             isValid: true,
+            disableClearable:true
+
         },
         {
-            name: "financialStatus",
-            label: "Status of the month",
+            name: "statusMonth",
+            label: "financesWidget.statusMonth",
             type: "select",
             required: false,
             parameterKey: "status",
@@ -40,6 +41,7 @@ const FinancialPeriodInputs = (state: any , months , years ,monthStatues) => {
             })),
             value: state?.status,
             isValid: true,
+            disableClearable:true
         },
     ]
 }
