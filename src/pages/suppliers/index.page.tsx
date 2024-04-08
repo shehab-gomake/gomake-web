@@ -88,9 +88,9 @@ export default function Home() {
   useEffect(() => {
     getClientTypesCategories(CLIENT_TYPE_Id.SUPPLIER);
   }, []);
-  
+
   return (
-    <CustomerAuthLayout>
+    <CustomerAuthLayout permissionEnumValue={Permissions.SHOW_SUPPLIER}>
       <Stack
         direction="column"
         justifyContent="space-between"
@@ -134,7 +134,7 @@ export default function Home() {
             <PrimaryTable
               stickyFirstCol={false}
               stickyHeader={true}
-              maxHeight={650} 
+              maxHeight={650}
               rows={getCustomersRows()}
               headers={tableHeaders}
             ></PrimaryTable>
@@ -152,14 +152,14 @@ export default function Home() {
             />
           </Stack>
         </div>
-           <GoMakePagination
-            onChangePageNumber={(event, value) => setPageNumber(value)}
-            onChangePageSize={handlePageSizeChange}
-            page={pageNumber}
-            setPage={setPageNumber}
-            pagesCount={pagesCount}
-            pageSize={pageSize}
-          />
+        <GoMakePagination
+          onChangePageNumber={(event, value) => setPageNumber(value)}
+          onChangePageSize={handlePageSizeChange}
+          page={pageNumber}
+          setPage={setPageNumber}
+          pagesCount={pagesCount}
+          pageSize={pageSize}
+        />
       </Stack>
     </CustomerAuthLayout>
   );

@@ -4,7 +4,7 @@ import { QuoteNewPageWidget } from "@/pages-components/quote-new/quote";
 
 export default function deliveryNoteRefund() {
   return (
-    <CustomerAuthLayout>
+    <CustomerAuthLayout >
       <QuoteNewPageWidget documentType={DOCUMENT_TYPE.deliveryNoteRefund} />
     </CustomerAuthLayout>
   );

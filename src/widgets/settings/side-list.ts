@@ -33,8 +33,8 @@ export const list: IListItem[] = [
     path: "products",
     editComponent: EditProductWidget,
     subProductComponent: ProductsSettingsWidget,
-    dataTour: 'settingsProductsLink'
-
+    dataTour: 'settingsProductsLink',
+    permission: Permissions.SHOW_PRODUCTS,
   },
   {
     component: SettingsMailingWidget,
@@ -42,6 +42,7 @@ export const list: IListItem[] = [
     value: "3",
     icon: SmsIcon,
     path: "mailing",
+    permission: Permissions.SHOW_MAILING_TEMPLATES,
   },
   {
     component: SettingsDocumentingWidget,
@@ -49,14 +50,18 @@ export const list: IListItem[] = [
     value: "5",
     icon: DocumentIcon,
     path: "documents",
+    permission: Permissions.SHOW_DOCUMENT_NUMBERING ||  Permissions.SHOW_DOCUMENT_DESIGN,
+
   },
   {
     component: SettingsUsersWidget,
     text: "settings.users",
     value: "6",
-    icon: PeopleIcon,
+    icon: PeopleIcon, 
     path: "users",
-    dataTour: 'usersSettingsLink'
+    dataTour: 'usersSettingsLink',
+    permission: Permissions.SHOW_EMPLOYEES || Permissions.SHOW_PERMISSIONS ,
+
   },
   {
     component: FinancesWidget,
@@ -64,6 +69,8 @@ export const list: IListItem[] = [
     value: "7",
     icon: DollarCircleIcon,
     path: "finances",
+    permission: Permissions.SHOW_FINANCE,
+
   },
   {
     component: TranslationsWidget,

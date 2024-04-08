@@ -14,6 +14,8 @@ interface IUpdateValueInputProps {
     onCancel: () => void;
     onInputChange: (e: string) => void;
     clickedOut: () => void;
+    height?: string;
+    width?: string;
 }
 
 const UpdateValueInput = ({
@@ -22,6 +24,8 @@ const UpdateValueInput = ({
     onCancel,
     onInputChange,
     clickedOut,
+    height,
+    width
 }: IUpdateValueInputProps) => {
     const { errorColor, successColor, secondColor } = useGomakeTheme();
     const handleTextChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -43,8 +47,8 @@ const UpdateValueInput = ({
                     p: "4px 4px",
                     display: "inline-flex",
                     alignItems: "center",
-                    width: "137px",
-                    height: "26px",
+                    width: width || "137px",
+                    height: height || "26px",
                     border: "1px solid " + secondColor(400),
                     boxShadow: "none",
                 }}

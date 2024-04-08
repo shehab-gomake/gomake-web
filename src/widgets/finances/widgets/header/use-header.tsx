@@ -8,8 +8,22 @@ const useFinancesHeaderWidget = () => {
     const onOpen = () => {
         setOpenModal(true)
     }
+
+    const [openFinancialModal, setOpenFinancialModal] = useState<boolean>(false)
+    const onCloseFinancialModal = () => {
+        setOpenFinancialModal(false);
+    }
+    const onOpenFinancialModal = () => {
+        setOpenFinancialModal(true)
+    }
+
     return {
-        openModal, onClose, onOpen
+        openModal,
+        onClose,
+        onOpen,
+        openFinancialModal,
+        onCloseFinancialModal,
+        onOpenFinancialModal
     };
 };
 

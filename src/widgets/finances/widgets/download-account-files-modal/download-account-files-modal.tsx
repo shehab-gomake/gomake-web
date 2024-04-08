@@ -16,7 +16,8 @@ const DownloadAccountFilesModal: React.FC<DownloadAccountFilesModalProps> = ({ o
         fileType,
         fileTypeList,
         onSelectDeliveryTimeDates,
-        onChangeFileTypeState
+        onChangeFileTypeState,
+        onClickDownloadTable
     } = useDownloadAccountFilesModal()
     return (
         <>
@@ -46,7 +47,7 @@ const DownloadAccountFilesModal: React.FC<DownloadAccountFilesModalProps> = ({ o
                         </div>
                     </div>
                     <div style={{ display: "flex", justifyContent: "center" }}>
-                        <GomakePrimaryButton style={classes.btnContainer}>{t("financesWidget.downloadTable")}</GomakePrimaryButton>
+                        <GomakePrimaryButton onClick={()=>onClickDownloadTable(onClose)} style={classes.btnContainer} >{t("financesWidget.downloadTable")}</GomakePrimaryButton>
                     </div>
                 </>
             </GoMakeModal>
