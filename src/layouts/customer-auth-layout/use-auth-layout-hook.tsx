@@ -36,6 +36,7 @@ const useAuthLayoutHook = (permissionEnumValue?: Permissions, allowAnonymous?: b
         title: "tabs.productFloor",
         path: "/production-floor",
         isList: false,
+        Permission: Permissions.SHOW_PRODUCTION_FLOOR,
         icon: () => {
           return <ProductFloorIcon />;
         },
