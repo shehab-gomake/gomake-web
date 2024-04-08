@@ -4,7 +4,7 @@ import { Permissions } from "@/components/CheckPermission/enum";
 
 export default function MaterialsTablePage () {
     return (
-        <CustomerAuthLayout permissionEnumValue={Permissions.SHOW_MATERIALS}>
+        <CustomerAuthLayout permissionEnumValue={Permissions.MATERIALS_ADMIN}>
             <MaterialsTableComponent isAdmin={true}/>
         </CustomerAuthLayout>
     )

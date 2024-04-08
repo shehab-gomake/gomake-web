@@ -1,60 +1,78 @@
 import { useTranslation } from "react-i18next";
-
-import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
-
 import { useStyle } from "./style";
+import { UpdatedTextInput } from "@/components/text-input/updated-text-input";
+import { UpdatedAutoComplete } from "@/components/auto-complete/updated-auto-complete";
 
 interface FinancesHeaderInputsWidgetProps {
   accountName: string;
   accountEmail: string;
-  dayOfMonth: number;
-  onChangeAccountName: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  onChangeAccountEmail: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  dayOfMonth: string;
+  onChangeAccountName: (value) => void;
+  onResetAccountName: () => void;
+  onClickUpdateCpaMangerName: () => void;
+  onChangeAccountEmail: (value) => void;
+  onResetAccountMail: () => void;
+  onClickUpdateCpaMangerMail: () => void;
   onChangeSelectDayOfMonth: (event: React.ChangeEvent<HTMLInputElement>, value: any) => void;
+  onResetDayOfMonth: () => void;
+  onClickUpdateDayInMonth: () => void;
 }
-
 
 const FinancesHeaderInputsWidget: React.FC<FinancesHeaderInputsWidgetProps> = ({
   accountName,
   accountEmail,
   dayOfMonth,
   onChangeAccountName,
+  onResetAccountName,
+  onClickUpdateCpaMangerName,
   onChangeAccountEmail,
-  onChangeSelectDayOfMonth
+  onResetAccountMail,
+  onClickUpdateCpaMangerMail,
+  onChangeSelectDayOfMonth,
+  onResetDayOfMonth,
+  onClickUpdateDayInMonth
 }) => {
-  const { clasess } = useStyle();
+  const { classes } = useStyle();
   const { t } = useTranslation();
   const daysInMonth = Array.from({ length: 31 }, (_, i) => i + 1);
 
   return (
-    <div style={clasess.mainContainer} >
-      <div style={clasess.inputContainer}>
-        <div style={clasess.inputLabel}>{t("financesWidget.accountName")}</div>
-        <GomakeTextInput
-          style={clasess.dropDownListStyle}
-          onChange={onChangeAccountName}
+    <div style={classes.mainContainer} >
+      <div style={classes.inputContainer}>
+        <div style={classes.inputLabel}>{t("financesWidget.accountName")}</div>
+        <UpdatedTextInput
+          key={"accountName"}
+          onInputChange={onChangeAccountName}
+          onCancel={onResetAccountName}
+          onUpdate={onClickUpdateCpaMangerName}
           value={accountName}
-          placeholder={t("financesWidget.enterAccountName")}
+          height="40px"
+          width="180px"
         />
       </div>
-      <div style={clasess.inputContainer}>
-        <div style={clasess.inputLabel}>{t("financesWidget.accountManagerEmail")}</div>
-        <GomakeTextInput
-          style={clasess.dropDownListStyle}
-          onChange={onChangeAccountEmail}
+      <div style={classes.inputContainer}>
+        <div style={classes.inputLabel}>{t("financesWidget.accountManagerEmail")}</div>
+        <UpdatedTextInput
+          key={"accountManagerEmail"}
+          onInputChange={onChangeAccountEmail}
+          onCancel={onResetAccountMail}
+          onUpdate={onClickUpdateCpaMangerMail}
           value={accountEmail}
-          placeholder={t("financesWidget.enterAccountEmail")}
+          height="40px"
+          width="180px"
         />
       </div>
-      <div style={clasess.inputContainer}>
-        <div style={clasess.inputLabel}>{t("financesWidget.dayOfMonth")}</div>
-        <GoMakeAutoComplate
-          options={daysInMonth}
-          style={clasess.dropDownListStyle}
-          placeholder={t("financesWidget.selectDayOfMonth")}
-          onChange={onChangeSelectDayOfMonth}
+      <div style={classes.inputContainer}>
+        <div style={classes.inputLabel}>{t("financesWidget.dayOfMonth")}</div>
+        <UpdatedAutoComplete
+          clickedOut={() => null}
+          onCancel={onResetDayOfMonth}
+          onUpdate={onClickUpdateDayInMonth}
           value={dayOfMonth}
-          disableClearable={true}
+          options={daysInMonth}
+          onChange={onChangeSelectDayOfMonth}
+          height="40px"
+          width="180px"
         />
       </div>
     </div>
