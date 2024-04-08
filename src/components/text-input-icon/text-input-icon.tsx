@@ -4,7 +4,7 @@ import InputBase from "@mui/material/InputBase";
 
 const StyledTextField = styled(InputBase)((props: any) => ({
   input: {
-    backgroundColor: "#FFF",
+    backgroundColor: props?.color || "#FFF",
     boxSizing: "border-box",
     borderRadius: "10px",
     height: 44,
@@ -15,7 +15,7 @@ const StyledTextField = styled(InputBase)((props: any) => ({
     lineHeight: "21px",
     paddingLeft: props?.style?.paddingInputLeft || "40px",
     paddingRight: props?.style?.paddingInputRight || "40px",
-    color: props?.error ? "red" : "#000",
+    color: props?.error ? "red" :  "#000",
   },
   "& .MuiOutlinedInput-root": {
     "&:hover fieldset": {
@@ -55,6 +55,7 @@ const GoMakeTextInputIcon = ({
   type,
   startAdornment,
   placeholder,
+    bgColor
 }: {
   labelText?: string;
   placeholder?: any;
@@ -65,6 +66,7 @@ const GoMakeTextInputIcon = ({
   endAdornment?: any;
   type?: any;
   startAdornment?: any;
+  bgColor?: any;
 }) => {
   return (
     <StyledTextField
@@ -76,6 +78,7 @@ const GoMakeTextInputIcon = ({
       type={type}
       startAdornment={startAdornment}
       placeholder={placeholder}
+      color={bgColor}
     />
   );
 };

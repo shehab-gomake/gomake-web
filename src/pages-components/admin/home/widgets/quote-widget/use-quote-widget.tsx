@@ -25,7 +25,7 @@ import { QuotesListPageWidget } from "@/pages-components/quotes/quotes";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { CLIENT_TYPE_Id } from "@/pages/customers/enums";
 
-const useQuoteWidget = ({ documentType }: any) => {
+const useQuoteWidget = ({ documentType = 0 }: any) => {
   const { t } = useTranslation();
   const { errorColor } = useGomakeTheme();
   const { callApi } = useGomakeAxios();
@@ -93,7 +93,7 @@ const useQuoteWidget = ({ documentType }: any) => {
   const getAllCustomersCreateQuote = useCallback(async (SearchTerm?) => {
     await getAndSetAllCustomers(callApi, setCustomersListCreateQuote, {
       ClientType: documentType === DOCUMENT_TYPE.purchaseOrder || documentType === DOCUMENT_TYPE.purchaseInvoice || documentType === DOCUMENT_TYPE.purchaseInvoiceRefund ? "S" : "C",
-      onlyCreateOrderClients: documentType === DOCUMENT_TYPE.purchaseOrder || documentType === DOCUMENT_TYPE.purchaseInvoice || documentType === DOCUMENT_TYPE.purchaseInvoiceRefund ? true : false,
+      onlyCreateOrderClients:  documentType != DOCUMENT_TYPE.quote ? true : false,
       searchTerm: SearchTerm,
     });
   }, []);

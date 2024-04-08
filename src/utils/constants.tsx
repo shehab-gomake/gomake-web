@@ -1,6 +1,7 @@
 import { ETabsIcon } from "@/enums";
 import { FinishingIcon, PricingIcon, PrintingDetailsIcon } from "@/icons";
 import { DELIVERY_NOTE_STATUSES, QUOTE_STATUSES } from "@/pages-components/quotes/enums";
+import { Button } from "@mui/material";
 
 export const _renderActiveIcon = (icon) => {
   if (icon === ETabsIcon.PRINTING_DETAILS) {
@@ -113,35 +114,76 @@ export const _renderDocumentStatus = (status: number, t: any) => {
   }
 };
 
-export const _renderStatus = (document: any, t: any): string => {
-  if (document && document.documentNumbers && document.documentNumbers.length > 0 ||
-    document.secondDocumentNumbers && document.secondDocumentNumbers.length > 0) {
-    const firstDocuments = document.documentNumbers ? document.documentNumbers.join(', ') : '';
-    const secondDocuments = document.secondDocumentNumbers ? document.secondDocumentNumbers.join(', ') : '';
-    let result = '';
-    if (firstDocuments) {
-      result += `${t(`documentStatus.${document.titleDocumentNumber}.title`)}: ${firstDocuments}`;
-    }
-    if (secondDocuments) {
-      if (firstDocuments) {
-        result += `, `;
+export const _renderStatus = (document: any, t: any, navigate): JSX.Element => {
+  if (document) {
+    if ((document.documentNumbers && document.documentNumbers.length > 0) ||
+      (document.secondDocumentNumbers && document.secondDocumentNumbers.length > 0)) {
+      const firstDocuments = document.documentNumbers ? document.documentNumbers.map((item: any, index: number) => (
+        <span key={index}>
+          <Button
+            sx={{
+              minWidth: "auto",
+              height: "auto",
+              padding: 0,
+              color: "#2e3092"
+            }}
+            variant={'text'}
+            onClick={() => navigate(`/${document.titleDocumentNumber.charAt(0).toLowerCase() + document.titleDocumentNumber.slice(1)}?Id=${item.documentId}`)}>
+            {item.documentNumber}</Button>
+          {index < document.documentNumbers.length - 1 && ', '}
+        </span>
+      )) : [];
+
+      const secondDocuments = document.secondDocumentNumbers ? document.secondDocumentNumbers.map((item: any, index: number) => (
+        <span key={index}>
+          <Button
+            sx={{
+              minWidth: "auto",
+              height: "auto",
+              padding: 0,
+              color: "#2e3092"
+            }}
+            variant={'text'}
+            onClick={() => navigate(`/${document.titleSecondDocumentNumber.charAt(0).toLowerCase() + document.titleSecondDocumentNumber.slice(1)}?Id=${item.documentId}`)}>
+            {item.documentNumber}</Button>
+          {index < document.secondDocumentNumbers.length - 1 && ', '}
+        </span>
+      )) : [];
+
+      let result: JSX.Element[] = [];
+
+      if (firstDocuments.length > 0) {
+        result.push(
+          <div>
+            {t(`documentStatus.${document.titleDocumentNumber}.title`)}: {firstDocuments}
+          </div>
+        );
       }
-      result += `${t(`documentStatus.${document.titleSecondDocumentNumber}.title`)}: ${secondDocuments}`;
-    }
-    return result;
-  } else if (document?.statusTitleText === "Quote.Create")
-  {
-   
+
+      if (secondDocuments.length > 0) {
+        if (firstDocuments.length > 0) {
+          result.push(<div>,</div>);
+        }
+
+        result.push(
+          <div>
+            {t(`documentStatus.${document.titleSecondDocumentNumber}.title`)}: {secondDocuments}
+          </div>
+        );
+      }
+
+      return <>{result}</>;
+    } else if (document?.statusTitleText === "Quote.Create") {
       if (document?.agentId) {
-        return t("sales.quote.create");
+        return <div>{t("sales.quote.create")}</div>;
       } else {
-        return t("sales.quote.createdBy", { name: document?.userName });
+        return <div>{t("sales.quote.createdBy", { name: document?.userName })}</div>;
       }
-    
+    } else {
+      return <div>{t(`documentStatus.${document.statusTitleText}`)}</div>;
+    }
   }
-  else {
-    return t(`documentStatus.${document.statusTitleText}`);
-  }
+  return <></>;
 };
 
 export function getParameterByParameterCode(subProductArray, code) {

@@ -550,7 +550,8 @@ const getClientDocumentsApi: ICallAndSetData = async (
     EHttpMethod.GET,
     GET_CLIENT_DOCUMENTS,
     setState,
-    data
+    data,
+    false
   );
 };
 

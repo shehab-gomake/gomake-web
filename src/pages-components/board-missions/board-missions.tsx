@@ -3,13 +3,15 @@ import { useStyle } from "./style";
 import { HeaderTitle } from "@/widgets";
 import { useBoardMissions } from "./use-board-missions";
 import { PrimaryTable } from "@/components/tables/primary-table";
-import { GoMakeAutoComplate, GomakePrimaryButton } from "@/components";
+import { GoMakeAutoComplate, GoMakeDeleteModal, GomakePrimaryButton, ThreeOptionsModal } from "@/components";
 import { SearchInputComponent } from "@/components/form-inputs/search-input-component";
 import { useEffect } from "react";
 import { GoMakeMultiSelect } from "@/components/auto-complete/multi-select";
 import { GoMakeDatepicker } from "@/components/date-picker/date-picker-component";
 import { Stack } from "@mui/material";
 import { GoMakePagination } from "@/components/pagination/gomake-pagination";
+import WarningAmberIcon from "@mui/icons-material/WarningAmber";
+import { DuplicateType } from "@/enums";
 
 const BoardMissionsListWidget = () => {
   const { classes } = useStyle();
@@ -42,7 +44,14 @@ const BoardMissionsListWidget = () => {
     onSelectDeliveryTimeDates,
     resetDatePicker,
     handlePageSizeChange,
-    pageSize
+    pageSize,
+    openDuplicateModal,
+    onCloseDuplicateModal,
+    openMarkReadyModal,
+    onCloseMarkReadyModal,
+    openReturnToProdModal,
+    onCloseReturnToProdModal,
+    onClickDuplicateMission
   } = useBoardMissions();
 
   useEffect(() => {
@@ -134,6 +143,39 @@ const BoardMissionsListWidget = () => {
           pageSize={pageSize}
         />
       </Stack>
+      <ThreeOptionsModal
+        title={t("boardMissions.duplicateModalTitle")}
+        yesBtn={"boardMissions.duplicateModalYes"}
+        noBtn={"boardMissions.duplicateModalNo"}
+        openModal={openDuplicateModal}
+        onClose={onCloseDuplicateModal}
+        onClickYes={() => onClickDuplicateMission(DuplicateType.SameBoardMissionNumber)}
+        onClickNo={() => onClickDuplicateMission(DuplicateType.NewBoardMissionNumber)}
+      />
+      <ThreeOptionsModal
+        title={t("boardMissions.markDoneModalTitle")}
+        subTitle={t("boardMissions.markDoneModalSubTitle")}
+        yesBtn={"boardMissions.markDoneModalYes"}
+        noBtn={"boardMissions.markDoneModalNo"}
+        openModal={openMarkReadyModal}
+        onClose={onCloseMarkReadyModal}
+        onClickYes={() => {
+          alert("yes");
+        }}
+        onClickNo={() => {
+          alert("no");
+        }}
+      />
+      <GoMakeDeleteModal
+        icon={<WarningAmberIcon style={classes.warningIconStyle} />}
+        title={t("boardMissions.returnToProductionModalTitle")}
+        yesBtn={t("modal.yes")}
+        cancelBtn={t("modal.no")}
+
+        openModal={openReturnToProdModal}
+        onClose={onCloseReturnToProdModal}
+        onClickDelete={() => alert("loading")}
+      />
     </>
   );
 };

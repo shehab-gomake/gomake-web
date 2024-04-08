@@ -1,6 +1,5 @@
 import { GoMakeAutoComplate, SecondSwitch } from "@/components";
 import { ActionMenu } from "@/widgets/materials-widget/components/actions-menu/action-menu";
-import Stack from "@mui/material/Stack";
 import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useMaterialFilters } from "@/widgets/materials-widget/components/filters/use-material-filters";
@@ -16,6 +15,7 @@ import { FONT_FAMILY } from "@/utils/font-family";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { getAllProductsForDropDownList } from "@/services/hooks";
 import { useGomakeAxios } from "@/hooks";
+import { Stack } from "@mui/material";
 interface FiltersActionsBarProps {
   isAdmin: boolean;
 }
@@ -48,6 +48,7 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
     const index = materialSuppliers.map((s) => s.value).indexOf(supplierId);
     setSupplierName(index !== -1 ? materialSuppliers[index] : null);
   }, [supplierId, materialSuppliers]);
+
   const machinesCategories = useRecoilValue<any>(materialsMachinesState);
 
   const options = machinesCategories.map((machine) => ({
@@ -150,7 +151,10 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
         {props.isAdmin === false ? (
           <GoMakeAutoComplate
             style={{ width: "200px" }}
-            options={materialSuppliers}
+            options={materialSuppliers.filter((item, index, self) =>
+              index === self.findIndex((t) => (
+                t.value === item.value
+              )))}
             placeholder={t("materials.sheetPaper.selectSupplier")}
             onChange={(e: any, value: any) => {
               onSelectSupplier(value.value);

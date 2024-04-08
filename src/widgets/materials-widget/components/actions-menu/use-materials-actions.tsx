@@ -45,7 +45,7 @@ import { useMaterialsCategories } from "../../use-materials-categories";
 import { EMaterialsTabsIcon } from "@/enums";
 import { EHttpMethod } from "@/services/api-service/enums";
 import { actionMenuState } from "@/store";
-import {useMaterials} from "@/widgets/materials-widget/use-materials";
+import { useMaterials } from "@/widgets/materials-widget/use-materials";
 
 const useMaterialsActions = (isAdmin: boolean) => {
   const { callApi } = useGomakeAxios();
@@ -70,8 +70,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
   const uncheckedMaterials = useRecoilValue<string[]>(materialsUnCheckedState);
   const supplierId = useRecoilValue(selectedSupplierIdState);
   const activeFilter = useRecoilValue(activeFilterState);
-  const [selectedMaterialIdForUpdate,setSelectedMaterialIdForUpdate] = useRecoilState(selectedMaterialIdForUpdateState);
-
+  const [selectedMaterialIdForUpdate, setSelectedMaterialIdForUpdate] = useRecoilState(selectedMaterialIdForUpdateState);
   const materialFilter = useRecoilValue(filterState);
   const elementRef = useRef(null);
   const uploadImgRef = useRef(null);
@@ -80,7 +79,6 @@ const useMaterialsActions = (isAdmin: boolean) => {
   const { t } = useTranslation();
   const setOpenAddRowModal = useSetRecoilState<boolean>(openAddRowModalState);
   const [selectedMaterialsIds, setSelectedMaterialsIds] = useState([]);
- 
   const onChangeHeaderCheckBox = useCallback(
     (isAllChecked: boolean) => {
       setIsAllMaterialsChecked(isAllChecked);
@@ -88,16 +86,16 @@ const useMaterialsActions = (isAdmin: boolean) => {
     [materialCategoryData, materialCategoryData]
   );
   useEffect(() => {
-    if(selectedMaterialIdForUpdate){
+    if (selectedMaterialIdForUpdate) {
       setSelectedMaterialsIds([selectedMaterialIdForUpdate])
-    }else{
+    } else {
       const getSelectedMaterialsIds = () =>
-          materialCategoryData.filter((row) => row.checked).map((row) => row.id);
+        materialCategoryData.filter((row) => row.checked).map((row) => row.id);
 
       setSelectedMaterialsIds(getSelectedMaterialsIds());
     }
-   
-  }, [materialCategoryData,selectedMaterialIdForUpdate]);
+
+  }, [materialCategoryData, selectedMaterialIdForUpdate]);
   useEffect(() => {
     if (selectedMaterialsIds.length > 0) {
       const myId = selectedMaterialsIds[0];
@@ -158,11 +156,11 @@ const useMaterialsActions = (isAdmin: boolean) => {
       if (isAdmin) {
         if (action.key === "Duplicate") {
           duplicateMaterials();
-        }else{
+        } else {
           await updateMaterialsPropApi(callApi, onUpdateCallBack, {
             materialTypeKey: materialType.toString(),
             categoryKey: materialCategory.toString(),
-            ids: selectedMaterialsIds ,
+            ids: selectedMaterialsIds,
             action: action.action,
             updatedValue,
             priceIndex: 0,
@@ -171,15 +169,15 @@ const useMaterialsActions = (isAdmin: boolean) => {
             tableFilters: {
               materialKey: materialType,
               categoryKey: materialCategory,
-              supplierId:null,
+              supplierId: null,
               pageNumber: null,
               pageSize: null,
               isActive:
-                  activeFilter === EMaterialActiveFilter.ACTIVE
-                      ? true
-                      : activeFilter === EMaterialActiveFilter.INACTIVE
-                          ? false
-                          : null,
+                activeFilter === EMaterialActiveFilter.ACTIVE
+                  ? true
+                  : activeFilter === EMaterialActiveFilter.INACTIVE
+                    ? false
+                    : null,
               customFiltersKeyValueList: materialFilter,
             },
             exchangeRate: rate,
@@ -192,7 +190,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
           await updatePrintHouseMaterialsPropApi(callApi, onUpdateCallBack, {
             materialTypeKey: materialType.toString(),
             categoryKey: materialCategory.toString(),
-            ids: selectedMaterialsIds ,
+            ids: selectedMaterialsIds,
             action: action.action,
             priceIndex: 0,
             updatedValue,
@@ -208,8 +206,8 @@ const useMaterialsActions = (isAdmin: boolean) => {
                 activeFilter === EMaterialActiveFilter.ACTIVE
                   ? true
                   : activeFilter === EMaterialActiveFilter.INACTIVE
-                  ? false
-                  : null,
+                    ? false
+                    : null,
               customFiltersKeyValueList: materialFilter,
             },
             exchangeRate: rate,
@@ -227,17 +225,18 @@ const useMaterialsActions = (isAdmin: boolean) => {
         )
       }
       else {
-      setMaterialCategoryData(
-        materialCategoryData.map((material) =>
-          material.checked || material.id === selectedMaterialIdForUpdate
-            ? {
+        setMaterialCategoryData(
+          materialCategoryData.map((material) =>
+            material.checked || material.id === selectedMaterialIdForUpdate
+              ? {
                 ...material,
                 ...res.data?.find((row) => row.id === material.id),
-                checked:false,
+                checked: false,
               }
-            : material
+              : material
+          )
         )
-      )}
+      }
       setAction(null);
       onChangeHeaderCheckBox(true);
     }
@@ -248,20 +247,20 @@ const useMaterialsActions = (isAdmin: boolean) => {
       const result = await updateMaterialsPropApi(callApi, onUpdateCallBack, {
         materialTypeKey: materialType.toString(),
         categoryKey: materialCategory.toString(),
-        ids: selectedMaterialsIds ,
+        ids: selectedMaterialsIds,
         action: eAction,
         isAllMaterialsChecked: isAllMaterialsChecked,
         uncheckedMaterials: uncheckedMaterials,
         tableFilters: {
           materialKey: materialType,
           categoryKey: materialCategory,
-          supplierId:null,
+          supplierId: null,
           isActive:
-              activeFilter === EMaterialActiveFilter.ACTIVE
-                  ? true
-                  : activeFilter === EMaterialActiveFilter.INACTIVE
-                      ? false
-                      : null,
+            activeFilter === EMaterialActiveFilter.ACTIVE
+              ? true
+              : activeFilter === EMaterialActiveFilter.INACTIVE
+                ? false
+                : null,
           customFiltersKeyValueList: materialFilter,
         },
         priceIndex: 0,
@@ -281,7 +280,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
         {
           materialTypeKey: materialType.toString(),
           categoryKey: materialCategory.toString(),
-          ids: selectedMaterialsIds ,
+          ids: selectedMaterialsIds,
           action: eAction,
           isAllMaterialsChecked: isAllMaterialsChecked,
           uncheckedMaterials: uncheckedMaterials,
@@ -293,8 +292,8 @@ const useMaterialsActions = (isAdmin: boolean) => {
               activeFilter === EMaterialActiveFilter.ACTIVE
                 ? true
                 : activeFilter === EMaterialActiveFilter.INACTIVE
-                ? false
-                : null,
+                  ? false
+                  : null,
             customFiltersKeyValueList: materialFilter,
           },
           priceIndex: 0,
@@ -337,15 +336,15 @@ const useMaterialsActions = (isAdmin: boolean) => {
           }, "")
         );
         let callBack = () => {
-          getMaterialCategories(materialType).then(x=>{
+          getMaterialCategories(materialType).then(x => {
             getMaterialCategoryData(
-                materialType?.toString(),
-                materialCategory?.toString(),
-                [],
-                supplierId
+              materialType?.toString(),
+              materialCategory?.toString(),
+              [],
+              supplierId
             ).then();
           });
-          
+
         }
         uploadMaterialExcelFileApi(callApi, callBack, {
           key: materialType.toString(),
@@ -369,7 +368,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
             return data + String.fromCharCode(byte);
           }, "")
         );
-        updateMaterialsImagesApi(callApi, () => {}, {
+        updateMaterialsImagesApi(callApi, () => { }, {
           materialTypeKey: materialType.toString(),
           base64ZipFile: base64String,
         });
@@ -383,7 +382,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
 
   const materialHeaders =
     useRecoilValue<
-      { key: string; value: string; inputType: number; values: any[],isHideInDuplicate?:boolean }[]
+      { key: string; value: string; inputType: number; values: any[], isHideInDuplicate?: boolean }[]
     >(materialHeadersState);
   const [property, setProperty] = useState<any[]>();
 
@@ -455,7 +454,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
   };
   const duplicatePrintHouseMaterials = useCallback(async () => {
     const transformedArray = properties.map((item) => {
-      const key = item.key.key.toLowerCase();
+      const key = item?.key?.key?.toLowerCase();
       const value = item.value;
 
       return {
@@ -466,21 +465,21 @@ const useMaterialsActions = (isAdmin: boolean) => {
 
     const requestBody: any = {
       props: transformedArray,
-      ids: selectedMaterialsIds ,
-      isAllMaterialsChecked: isAllMaterialsChecked,
+      ids: selectedMaterialsIds,
+      isAllMaterialsChecked: selectedMaterialIdForUpdate ? false : isAllMaterialsChecked,
       uncheckedMaterials: uncheckedMaterials,
       tableFilters: {
         materialKey: materialType,
         categoryKey: materialCategory,
-        supplierId:null,
+        supplierId: null,
         pageNumber: null,
         pageSize: null,
         isActive:
-            activeFilter === EMaterialActiveFilter.ACTIVE
-                ? true
-                : activeFilter === EMaterialActiveFilter.INACTIVE
-                    ? false
-                    : null,
+          activeFilter === EMaterialActiveFilter.ACTIVE
+            ? true
+            : activeFilter === EMaterialActiveFilter.INACTIVE
+              ? false
+              : null,
         customFiltersKeyValueList: materialFilter,
       },
     };
@@ -517,46 +516,46 @@ const useMaterialsActions = (isAdmin: boolean) => {
 
     const requestBody: any = {
       props: transformedArray,
-      ids: selectedMaterialsIds ,
+      ids: selectedMaterialsIds,
       isAllMaterialsChecked: isAllMaterialsChecked,
       uncheckedMaterials: uncheckedMaterials,
       tableFilters: {
         materialKey: materialType,
         categoryKey: materialCategory,
-        supplierId:null,
+        supplierId: null,
         pageNumber: null,
         pageSize: null,
         isActive:
-            activeFilter === EMaterialActiveFilter.ACTIVE
-                ? true
-                : activeFilter === EMaterialActiveFilter.INACTIVE
-                    ? false
-                    : null,
+          activeFilter === EMaterialActiveFilter.ACTIVE
+            ? true
+            : activeFilter === EMaterialActiveFilter.INACTIVE
+              ? false
+              : null,
         customFiltersKeyValueList: materialFilter,
       },
     };
     const res = await callApi(
-        EHttpMethod.POST,
-        `/v1/materials/duplicate-materials`,
-        requestBody
+      EHttpMethod.POST,
+      `/v1/materials/duplicate-materials`,
+      requestBody
     );
 
     if (res?.success) {
       alertSuccessAdded();
       getMaterialCategoryData(
-          materialType?.toString(),
-          materialCategory?.toString(),
-          [],
-          supplierId
+        materialType?.toString(),
+        materialCategory?.toString(),
+        [],
+        supplierId
       ).then();
       handleCloseModal();
     } else {
       alertFaultAdded();
     }
   }, [properties]);
-  
+
   const updateModalCurrency = (newCurrency) => {
-    getExchangeRate(currentCurrency,newCurrency).then()
+    getExchangeRate(currentCurrency, newCurrency).then()
     setCheckedPrice(true);
     onTextInputChange(newCurrency);
   }
