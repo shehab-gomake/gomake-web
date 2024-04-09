@@ -10,15 +10,15 @@ import {useRouter} from "next/router";
 const useProductionFloorHeader = () => {
     const [view, setView] = useRecoilState(productionFloorViewState);
     const [paths, ] = useRecoilState(productionFloorPathsState);
-    const {initGroupsFilters, hasGroupsFilters, setGroupFromPath} = useProductionFloorFilters();
+    const {initGroupsFilters, hasGroupsFilters, setGroupFromPath, groups} = useProductionFloorFilters();
     const showAllJobsButton = useMemo(() => hasGroupsFilters, [hasGroupsFilters]);
     const {push, replace} = useRouter();
 
 
 
-    const onClickPath = (path: IProductionFloorPath) => {
+    const onClickPath = (path: IProductionFloorPath, index: number) => {
         if (path.actionType === EPathActionType.FILTER) {
-            setGroupFromPath(path.data);
+            setGroupFromPath(groups.slice(0, ((index + 1))/2));
             push('/production-floor').then();
         }
     }

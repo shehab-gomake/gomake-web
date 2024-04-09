@@ -23,6 +23,7 @@ const useProductionFloorFilters = () => {
     const setData = useSetRecoilState(boardsMissionsState);
     const setView = useSetRecoilState(productionFloorViewState);
     const {push} = useRouter();
+    const groups = filtersState.groups;
     const setFilters = async (filters: IProductionFloorFilter) => {
         const callBack = (res) => {
             if (res?.success) {
@@ -35,10 +36,11 @@ const useProductionFloorFilters = () => {
         }
         await setBoardFiltersApi(callApi, callBack, filters)
     }
-    const onTagsChange = async (tags: string[]) => {
+    const onTagsChange = async (tag: string) => {
+
         await setFilters({
             ...filtersState,
-            automatedTags: tags
+            automatedTags: filtersState.automatedTags.includes(tag) ? filtersState.automatedTags.filter(t => t !== tag) : [...filtersState.automatedTags, tag]
         })
     }
 
@@ -101,6 +103,7 @@ const useProductionFloorFilters = () => {
     const handleGroupsFilterChange = (groupId, value, valueId) => {
         setFilters({
                 ...filtersState,
+            groupsHistory: filtersState.groupsHistory ? filtersState.groupsHistory.concat({groupId, value, valueId}) : [{groupId, value, valueId}],
                 groups: filtersState.groups?.length > 0 ? [...filtersState?.groups, {groupId, value, valueId}] : [{
                     groupId,
                     value,
@@ -116,7 +119,8 @@ const useProductionFloorFilters = () => {
     const initGroupsFilters = async () => {
         await setFilters({
             ...filtersState,
-            groups: null
+            groups: null,
+            groupsHistory: null
         })
     }
 
@@ -130,10 +134,10 @@ const useProductionFloorFilters = () => {
         fromDate: filtersState.fromDeliveryTime,
         toDate: filtersState.toDeliveryTime
     }), [filtersState])
-    const setGroupFromPath = (group: IFilterGroup) => {
+    const setGroupFromPath = (groups: IFilterGroup[]) => {
         setFilters({
             ...filtersState,
-            groups: [group]
+            groups: groups
         }).then();
     }
     return {
@@ -151,7 +155,8 @@ const useProductionFloorFilters = () => {
         createDateFilter,
         deliveryDateFilter,
         setGroupFromPath,
-        handelSelectMachine
+        handelSelectMachine,
+        groups
     }
 }
 
