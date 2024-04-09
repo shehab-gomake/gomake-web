@@ -11,7 +11,7 @@ phases:
       - echo Installing source NPM dependencies...
   build:
     commands:
-      - npm run build
+      - npm --max-old-space-size=3000 run build
 artifacts:
   type: zip
   files:
