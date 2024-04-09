@@ -27,7 +27,7 @@ const ProductionFloorHeader = () => {
                 }}>Production floor</h1>
                 <Breadcrumbs aria-label="breadcrumb">
                     {
-                        paths.map((path, index) => <Link key={path.name + index} onClick={() => onClickPath(path)} underline={'hover'}
+                        paths.map((path, index) => <Link key={path.name + index} onClick={() => onClickPath(path, index)} underline={'hover'}
                                                          component={NextLink.default} color="inherit"
                                                          href={path?.actionType === EPathActionType.URL ? '/production-floor?groupsId=' + path.data.groupId : '/production-floor'}>
                             {path.name}

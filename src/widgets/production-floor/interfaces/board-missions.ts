@@ -1,4 +1,5 @@
 import {ICurrentStation} from "@/widgets/production-floor/interfaces/current-station";
+import {IProductionStatus} from "@/widgets/production-floor/interfaces/production-floor-status";
 
 export interface IBoardMissions {
     id: string;
@@ -23,4 +24,24 @@ export interface IBoardMissions {
     startDate?: string;
     checked?: boolean;
     automatedTags: string[]
+}
+
+export interface IBoardMissionsDetails {
+    boardMissionId: string;
+    boardMissionNumber: string;
+    orderId: string;
+    orderNumber: string;
+    clientName: string;
+    clientId: string;
+    productName: string;
+    productId: string;
+    agentId?: string
+    agentName: string
+    boardMissionImage: string;
+    dueDate?: string
+    createdDate?: Date
+    boardMissionStatus: IProductionStatus;
+    currentBoardMissionActionId: string;
+    currentActionName: string;
+    currentMachineName: string;
 }

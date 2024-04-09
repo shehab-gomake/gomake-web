@@ -1,15 +1,17 @@
 import {Stack} from "@mui/material";
 import {useProductionFloorFilters} from "@/widgets/production-floor/filters/use-production-floor-filters";
 import {SearchInputComponent} from "@/components/form-inputs/search-input-component";
-import {ActionsListComponent} from "@/widgets/production-floor/filters/actions-select/action-list-select-component";
+import {
+    ActionsListComponent
+} from "@/widgets/production-floor/filters/select/actions-select/action-list-select-component";
 import React from "react";
 import {useTranslation} from "react-i18next";
 import {GoMakeDatepicker} from "@/components/date-picker/date-picker-component";
 import {filtersInputs} from "@/widgets/production-floor/filters/filters-inputs";
-import {FormInput} from "@/components/form-inputs/form-input";
+import {SelectComponent} from "@/widgets/production-floor/filters/select/select-component";
 
 const ProductionFloorFilters = () => {
-    const {tagsInput} = filtersInputs()
+    const {tagsList} = filtersInputs()
     const {
         search,
         setSearch,
@@ -19,7 +21,7 @@ const ProductionFloorFilters = () => {
         onSelectCreateDates,
         createDateFilter,
         deliveryDateFilter,
-        handelSelectMachine
+        handelSelectMachine,
     } = useProductionFloorFilters();
     const {t} = useTranslation();
     return (
@@ -32,9 +34,7 @@ const ProductionFloorFilters = () => {
             <GoMakeDatepicker value={createDateFilter} onChange={onSelectCreateDates}
                               placeholder={t('productionFloor.createTime')}/>
             <Stack flexGrow={1} direction={'row'} position={'relative'}>
-                <div style={{position: 'absolute', bottom: '-13px'}}>
-                <FormInput input={tagsInput} changeState={(key, value) => onTagsChange(value)} error={false}/>
-                </div>
+                <SelectComponent buttonLabel={'tags'} list={tagsList} onChange={onTagsChange}/>
             </Stack>
         </Stack>
     )
