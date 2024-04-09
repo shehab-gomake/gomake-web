@@ -340,7 +340,7 @@ const useAuthLayoutHook = (permissionEnumValue?: Permissions, allowAnonymous?: b
         key: "companyReports",
         title: "tabs.companyReports",
         path: "/companyReports",
-        Permission: Permissions.SHOW_COMPANY_REPORTS,
+        Permission: Permissions.SHOW_PRINTHOUSES_TABLE,
         isList: false,
         icon: () => {
           return <ReportsIcon />;

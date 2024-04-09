@@ -4,7 +4,7 @@ import {Permissions} from "@/components/CheckPermission/enum";
 
 export default function Order() {
   return (
-    <CustomerAuthLayout permissionEnumValue={Permissions.SHOW_COMPANY_REPORTS}>
+    <CustomerAuthLayout permissionEnumValue={Permissions.SHOW_PRINTHOUSES_TABLE}>
         <CompanyReportWidget/>
     </CustomerAuthLayout>
   );
