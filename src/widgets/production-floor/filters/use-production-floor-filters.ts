@@ -23,6 +23,7 @@ const useProductionFloorFilters = () => {
     const setData = useSetRecoilState(boardsMissionsState);
     const setView = useSetRecoilState(productionFloorViewState);
     const {push} = useRouter();
+    const groups = filtersState.groups;
     const setFilters = async (filters: IProductionFloorFilter) => {
         const callBack = (res) => {
             if (res?.success) {
@@ -35,10 +36,11 @@ const useProductionFloorFilters = () => {
         }
         await setBoardFiltersApi(callApi, callBack, filters)
     }
-    const onTagsChange = async (tags: string[]) => {
+    const onTagsChange = async (tag: string) => {
+
         await setFilters({
             ...filtersState,
-            automatedTags: tags
+            automatedTags: filtersState.automatedTags.includes(tag) ? filtersState.automatedTags.filter(t => t !== tag) : [...filtersState.automatedTags, tag]
         })
     }
 
@@ -132,10 +134,10 @@ const useProductionFloorFilters = () => {
         fromDate: filtersState.fromDeliveryTime,
         toDate: filtersState.toDeliveryTime
     }), [filtersState])
-    const setGroupFromPath = (group: IFilterGroup) => {
+    const setGroupFromPath = (groups: IFilterGroup[]) => {
         setFilters({
             ...filtersState,
-            groups: [group]
+            groups: groups
         }).then();
     }
     return {
@@ -153,7 +155,8 @@ const useProductionFloorFilters = () => {
         createDateFilter,
         deliveryDateFilter,
         setGroupFromPath,
-        handelSelectMachine
+        handelSelectMachine,
+        groups
     }
 }
 

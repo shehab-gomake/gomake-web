@@ -10,7 +10,7 @@ import {useGomakeAxios} from "@/hooks";
 const useActionsList = () => {
     const [actions, setActions] = useRecoilState(actionsListState);
     const [productionFilter, ] = useRecoilState(productionFloorFiltersState);
-    const [actionsFilter, setActionFilter] = useState<string>('');
+    const [, setActionFilter] = useState<string>('');
     const {callApi} = useGomakeAxios();
     const [actionsList, setActionsList] = useState<IActionMachines[]>([])
     useEffect(() => {
@@ -24,7 +24,7 @@ const useActionsList = () => {
                     action?.machines?.map(machine => ({...machine, label: machine.label, checked: station?.machineIds?.includes(machine.machineId)}))
             }}))
 
-    }, [actions, actionsFilter, productionFilter])
+    }, [actions, productionFilter])
 
 
     const handelFilterActions = (name: string) => {

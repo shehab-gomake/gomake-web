@@ -2,6 +2,7 @@ import {atom, selector} from "recoil";
 import {
     IStatusesBoardsMissions
 } from "@/widgets/production-floor/interfaces/production-floor-data-response";
+import {IBoardMissionsDetails} from "@/widgets/production-floor/interfaces/board-missions";
 
 export const boardsMissionsState = atom<IStatusesBoardsMissions[]>({
     key: 'boardsMissionsState',
@@ -19,4 +20,9 @@ export const productionFloorStatusesState = selector({
 export const selectedBoardsMissionsState = atom<string[]>({
     default: [],
     key: 'selectedBoardsMissionsState'
+});
+
+export const boardMissionsDetailsState = atom<IBoardMissionsDetails>({
+    default: {} as IBoardMissionsDetails,
+    key: 'boardMissionsDetailsState'
 })

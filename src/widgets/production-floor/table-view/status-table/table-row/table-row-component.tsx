@@ -37,7 +37,7 @@ const TableRowComponent = ({boardMission}: IProps) => {
         </SecondaryTableCell>
         <SecondaryTableCell align={"center"}>
             <Link
-                href={'/production-floor?boardMissionId=' + boardMission?.id}>{`${boardMission?.boardMissionNumber}\\${boardMission?.orderNumber}`}</Link>
+                href={'/production-floor?boardMissionsId=' + boardMission?.id}>{`${boardMission?.boardMissionNumber}\\${boardMission?.orderNumber}`}</Link>
         </SecondaryTableCell>
         <SecondaryTableCell align={"center"}>
             <LabelComponent label={boardMission?.productName}/>
