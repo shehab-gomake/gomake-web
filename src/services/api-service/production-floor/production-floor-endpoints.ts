@@ -5,13 +5,17 @@ import {ICallAndSetData} from "@/services/api-service/interface";
 const GET_PRODUCTION_FLOOR_DATA_URL = '/v1/erp-service/board-missions';
 const UPDATE_WORK_JOB_STATUS_URL = '/v1/erp-service/board-missions/update-board-missions-status';
 const SET_FILTERS_BOARDS_MISSIONS_URL = '/v1/erp-service/board-missions/set-filters';
-const GET_BOARDS_MISSIONS_BY_ID_URL = '/v1/erp-service/board-missions/board-missions/';
+const GET_BOARDS_MISSIONS_BY_ID_URL = '/v1/erp-service/board-missions/board-missions-data/';
 const GET_BOARD_MISSIONS_STATIONS_URL = '/v1/erp-service/board-missions/board-stations';
 const UPDATE_BOARD_MISSIONS_CURRENT_STATION_URL = '/v1/erp-service/board-missions/update-board-missions-current-station';
 const ADD_NEW_PRODUCTION_GROUP_URL = '/v1/erp-service/board-missions-group/create-group';
 const DELETE_PRODUCTION_GROUP_URL = '/v1/erp-service/board-missions-group/delete-group/';
 const GET_PRINT_HOUSE_ACTIONS_MACHINES_URL = '/v1/printhouse-config/actions/get-actions-machines';
 const GET_BOARDS_MISSIONS_GROUPS_URL = '/v1/erp-service/board-missions/groups/';
+const GET_BOARDS_MISSIONS_STATIONS_URL = '/v1/erp-service/board-missions/board-missions-stations/';
+const UPDATE_BOARD_MISSIONS_ACTION_DONE = '/v1/erp-service/board-missions-actions/move-to-done/';
+const CANCEL_BOARD_MISSIONS_ACTION_DONE = '/v1/erp-service/board-missions-actions/back-to-in-process/';
+const TOGGLE_BOARD_MISSIONS_ACTION_TIMER_URL = '/v1/erp-service/board-missions-actions/toggle-timer/';
 
 const getProductionFloorData: ICallAndSetData = async (callApi, setState) => {
     return await getSetApiData(callApi, EHttpMethod.GET, GET_PRODUCTION_FLOOR_DATA_URL, setState, {}, false);
@@ -29,7 +33,7 @@ const updateBoardMissionCurrentStationApi: ICallAndSetData = async (callApi, set
 const setBoardFiltersApi: ICallAndSetData = async (callApi, callBack, filters: {}) => {
     return await getSetApiData(callApi, EHttpMethod.POST, SET_FILTERS_BOARDS_MISSIONS_URL, callBack, filters);
 }
-const getBoardMissionsById: ICallAndSetData = async (callApi, callBack, id) => {
+const getBoardMissionsById: ICallAndSetData = async (callApi, callBack, id: string) => {
     return await getSetApiData(callApi, EHttpMethod.GET, GET_BOARDS_MISSIONS_BY_ID_URL + id, callBack);
 }
 const getBoardMissionsActions: ICallAndSetData = async (callApi, callBack, boardId: string) => {
@@ -49,6 +53,18 @@ const getPrintHouseActions: ICallAndSetData = async (callApi, callBack, ) => {
 const getBoardsMissionsGroupsByID: ICallAndSetData = async (callApi, callBack, groupId: string ) => {
     return await getSetApiData(callApi, EHttpMethod.GET, GET_BOARDS_MISSIONS_GROUPS_URL + groupId , callBack);
 }
+const getBoardsMissionsStations: ICallAndSetData = async (callApi, callBack, boardMissionsId: string ) => {
+    return await getSetApiData(callApi, EHttpMethod.GET, GET_BOARDS_MISSIONS_STATIONS_URL + boardMissionsId , callBack);
+}
+const updateBoardMissionsActionDone: ICallAndSetData = async (callApi, callBack, boardMissionsActionId: string ) => {
+    return await getSetApiData(callApi, EHttpMethod.PUT, UPDATE_BOARD_MISSIONS_ACTION_DONE + boardMissionsActionId , callBack);
+}
+const cancelBoardMissionsActionDone: ICallAndSetData = async (callApi, callBack, boardMissionsActionId: string ) => {
+    return await getSetApiData(callApi, EHttpMethod.PUT, CANCEL_BOARD_MISSIONS_ACTION_DONE + boardMissionsActionId , callBack);
+}
+const toggleBoardMissionsActionTimer: ICallAndSetData = async (callApi, callBack, boardMissionsActionId: string ) => {
+    return await getSetApiData(callApi, EHttpMethod.GET, TOGGLE_BOARD_MISSIONS_ACTION_TIMER_URL + boardMissionsActionId , callBack);
+}
 
 export {
     getProductionFloorData,
@@ -60,5 +76,9 @@ export {
     addNewBoardMissionsGroup,
     deleteBoardMissionsGroup,
     getPrintHouseActions,
-    getBoardsMissionsGroupsByID
+    getBoardsMissionsGroupsByID,
+    getBoardsMissionsStations,
+    updateBoardMissionsActionDone,
+    cancelBoardMissionsActionDone,
+    toggleBoardMissionsActionTimer
 };
