@@ -31,7 +31,7 @@ import {
   updateProductItemValueOutsource
 } from "@/services/api-service/product-item-value-draft/product-item-draft-endpoints";
 import { useGomakeAxios } from "@/hooks";
-import { currentCalculationConnectionId, isLoadgingState } from "@/store";
+import { currentCalculationConnectionId } from "@/store";
 import { Stack } from "@mui/material";
 
 const PricingWidget = ({
