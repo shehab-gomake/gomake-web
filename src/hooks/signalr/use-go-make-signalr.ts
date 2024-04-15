@@ -37,6 +37,7 @@ const useGoMakeSignalr = <T>({
         .then(() => {
           setConnectionId(connection.connectionId);
           connection.on(methodName, (newData) => {
+            console.log("WorkFlows",newData)
             setData(newData);
           });
           connection.onreconnected( (newConnectionId) => {
