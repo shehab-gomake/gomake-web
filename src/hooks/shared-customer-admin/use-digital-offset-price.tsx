@@ -1020,7 +1020,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     }
   }, [subProducts, canCalculation]);
 
-  
+
   useEffect(() => {
     if (currentProductItemValueTotalPrice && quantity) {
       const productItemValue = {
@@ -1934,6 +1934,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     // Allow moving to any previous tab regardless of checkParameter
     if (index < activeIndex) {
       setActiveIndex(index);
+      setCanCalculation(false);
     } else if (index > activeIndex) {
       // Move to the next tab only if checkParameter is true
       if (checkParameter) {
@@ -1954,6 +1955,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     if (checkParameter) {
       if (activeIndex < productTemplate.sections.length) {
         setActiveIndex(activeIndex + 1);
+        setCanCalculation(false);
       }
     }
     else {
@@ -1965,6 +1967,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const handlePreviousClick = () => {
     if (activeIndex != 0) {
       setActiveIndex(activeIndex - 1);
+      setCanCalculation(false);
+
     }
   };
 
@@ -2300,10 +2304,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
   const addItemForQuotes = async () => {
     const docType = router?.query?.documentType ?? "0";
-    const duplicateType = router?.query?.duplicateType ;
+    const duplicateType = router?.query?.duplicateType;
     const callBack = (res) => {
       if (res?.success) {
-        (docType === "0" || duplicateType === '1' ||  duplicateType === '2')
+        (docType === "0" || duplicateType === '1' || duplicateType === '2')
           ? navigate("/quote")
           : navigate(`/order?Id=${router?.query?.documentId}`);
       } else {
@@ -2325,7 +2329,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           : navigate(`/order?Id=${router?.query?.documentId}`);
         setWorkFlows([]);
         setJobActions([]);
-      } else { 
+      } else {
         alertFaultUpdate();
       }
     };
