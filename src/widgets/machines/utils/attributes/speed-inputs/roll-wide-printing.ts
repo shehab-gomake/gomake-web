@@ -12,7 +12,7 @@ const rollWidePrinting = (state: Record<string, any>) => {
             parameterKey: 'speedByQuality',
             value: state.attributes?.speedByQuality || [],
             machineInputType: 'multiArrayInput',
-            isValid: state.attributes?.speedByColor?.length > 0,
+            isValid: true,
             inputs: [
                 {
                     name: "quality",

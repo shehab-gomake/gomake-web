@@ -21,9 +21,9 @@ const useMachinesMaterial = ({materialType, parameterKey, label, name}: IInput) 
     const {callApi} = useGomakeAxios();
     const machineState = useRecoilValue(STATE);
     const [selectedCategoryValueId, setSelectedCategoryValueId] = useState<string>('');
-    const materialTypeManufacturers = materialCategories?.reduce((acc, category) => acc.concat(category.data), []);
+    const materialTypeManufacturers = materialCategories ? materialCategories.reduce((acc, category) => acc.concat(category.data), []) : [];
     const materialCategoryManufacturers = useMemo(() => {
-        const category = materialCategories?.find(c => c.valueId === selectedCategoryValueId)
+        const category = materialCategories ?  materialCategories?.find(c => c.valueId === selectedCategoryValueId) : null;
         if (category) {
             return category.data;
         }
@@ -49,10 +49,10 @@ const useMachinesMaterial = ({materialType, parameterKey, label, name}: IInput) 
 
     const materialInputs = materialCategoriesInput(
         machineState,
-        materialCategories?.map(category => ({
+        materialCategories ? materialCategories?.map(category => ({
             text: category.value,
             value: category.valueId
-        })),
+        })) : null,
         materialCategoryManufacturers?.map((m) => ({text: m.value, value: m.valueId})),
         materialType,
         translatedValue,
