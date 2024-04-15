@@ -13,7 +13,7 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     const { t } = useTranslation();
     const { callApi } = useGomakeAxios();
     const quoteItemValue: any = useRecoilValue(quoteItemState);
-    const { alertFault, alertSuccessDelete, alertFaultDelete, alertSuccessUpdate, alertFaultUpdate, alertFaultAdded, alertSuccessAdded , alertFaultGetData } = useSnackBar();
+    const { alertFault, alertSuccessDelete, alertFaultDelete, alertSuccessUpdate, alertFaultUpdate, alertFaultAdded, alertSuccessAdded, alertFaultGetData } = useSnackBar();
     const [selectedTabIndex, setSelectedTabIndex] = useState<number>(0);
     const [openPaymentModal, setOpenPaymentModal] = useState(false);
     const [openOrderNowModal, setOpenOrderNowModal] = useState(false);
@@ -64,7 +64,7 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
             if (res?.success) {
                 alertSuccessUpdate();
                 onClickCloseOrderNowModal();
-                navigate("/orders");
+                navigate(`/board-missions?orderNumber=${res?.data?.number}`);
             } else {
                 alertFaultUpdate();
             }
@@ -81,7 +81,7 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
             if (res?.success) {
                 alertSuccessUpdate();
                 onClickCloseOrderNowModal();
-                navigate("/orders");
+                navigate(`/board-missions?orderNumber=${res?.data?.number}`);
             } else {
                 alertFaultUpdate();
             }
