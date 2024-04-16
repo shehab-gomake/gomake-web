@@ -94,10 +94,22 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     }
 
     const onClickPrint = async () => {
+        const downloadPdf = (url) => {
+            const anchor = document.createElement("a");
+            anchor.href = url;
+            anchor.target = "_blank";
+            anchor.addEventListener("click", () => {
+                setTimeout(() => {
+                    anchor.remove();
+                }, 100);
+            });
+            anchor.click();
+        };
         const callBack = (res) => {
             if (res?.success) {
                 const pdfLink = res.data;
-                window.open(pdfLink, "_blank");
+                downloadPdf(pdfLink)
+                // window.open(pdfLink, "_blank");
             } else {
                 alertFaultGetData();
             }
