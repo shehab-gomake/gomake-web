@@ -3,9 +3,9 @@ import { useStyle } from "./style";
 import { HeaderTitle } from "@/widgets";
 import { useBoardMissions } from "./use-board-missions";
 import { PrimaryTable } from "@/components/tables/primary-table";
-import { GoMakeAutoComplate, GoMakeDeleteModal, GomakePrimaryButton, ThreeOptionsModal } from "@/components";
+import { GoMakeAutoComplate, GoMakeDeleteModal, GoMakeModal, GomakePrimaryButton, GomakeTextInput, ThreeOptionsModal } from "@/components";
 import { SearchInputComponent } from "@/components/form-inputs/search-input-component";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { GoMakeMultiSelect } from "@/components/auto-complete/multi-select";
 import { GoMakeDatepicker } from "@/components/date-picker/date-picker-component";
 import { Stack } from "@mui/material";
@@ -51,12 +51,35 @@ const BoardMissionsListWidget = () => {
     onCloseMarkReadyModal,
     openReturnToProdModal,
     onCloseReturnToProdModal,
-    onClickDuplicateMission
+    onClickDuplicateMission,
+    missionItem,
+    openPackagesModal,
+    onClosePackagesModal
   } = useBoardMissions();
 
   useEffect(() => {
     getAllProducts();
   }, []);
+
+
+
+
+  const [quantityOfPackages, setQuantityOfPackages] = useState(1);
+  const [quantityPerPackage, setQuantityPerPackage] = useState(missionItem?.quantity || 0);
+
+  const remainingQuantity = missionItem?.quantity - quantityPerPackage * (quantityOfPackages - 1);
+
+  const handleQuantityOfPackagesChange = (event) => {
+    const newQuantity = parseInt(event.target.value, 10);
+    setQuantityOfPackages(newQuantity);
+  };
+
+  const handleQuantityPerPackageChange = (event) => {
+    const newQuantity = parseInt(event.target.value, 10);
+    setQuantityPerPackage(newQuantity);
+  };
+
+
 
   return (
     <>
@@ -129,7 +152,8 @@ const BoardMissionsListWidget = () => {
           </div>
           <PrimaryTable
             stickyFirstCol={false}
-            stickyHeader={false}
+            stickyHeader={true}
+            maxHeight={650}
             rows={allBoardMissions}
             headers={tableHeader}
           />
@@ -171,11 +195,61 @@ const BoardMissionsListWidget = () => {
         title={t("boardMissions.returnToProductionModalTitle")}
         yesBtn={t("modal.yes")}
         cancelBtn={t("modal.no")}
-
         openModal={openReturnToProdModal}
         onClose={onCloseReturnToProdModal}
         onClickDelete={() => alert("loading")}
       />
+
+      <GoMakeModal
+        openModal={openPackagesModal}
+        onClose={onClosePackagesModal}
+        modalTitle={t("The distribution of the total quantity into packages")}
+      >
+        <Stack direction={"column"}>
+          <div>
+            <h3 style={classes.filterLabelStyle}>
+              {t("Quantity of packages")}
+            </h3>
+            <GomakeTextInput
+              style={classes.textInputStyle}
+              value={quantityOfPackages}
+              placeholder={t("creditCardTransactions.transactionAmount")}
+              onChange={handleQuantityOfPackagesChange}
+              type={"number"}
+            />
+          </div>
+          <div>
+            <h3 style={classes.filterLabelStyle}>
+              {t("Quantity per package")}
+            </h3>
+            <GomakeTextInput
+              style={classes.textInputStyle}
+              value={quantityPerPackage}
+              placeholder={t("Quantity per package")}
+              onChange={handleQuantityPerPackageChange}
+              type={"number"}
+            />
+          </div>
+          {[...Array(quantityOfPackages)].map((_, index) => (
+            <div key={index}>
+              <h3 style={classes.filterLabelStyle}>
+                {t(`Package ${index + 1}`)}
+              </h3>
+              <GomakeTextInput
+                style={classes.textInputStyle}
+                value={
+                  index === quantityOfPackages - 1
+                    ? remainingQuantity
+                    : quantityPerPackage
+                }
+                placeholder={t("Package quantity")}
+                type={"number"}
+                disabled
+              />
+            </div>
+          ))}
+        </Stack>
+      </GoMakeModal>
     </>
   );
 };

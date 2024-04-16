@@ -14,7 +14,10 @@ const useMoreCircle = ({
   onClickDuplicate,
   onClickLoggers,
   onClickMarksAsDone,
-  onClickReturnToProduction
+  onClickReturnToProduction,
+  onClickOrderSummeryPdf,
+  onClickWorkMissionPdf,
+  onClickPrintPackagingSlip
 }: any) => {
 
   const { t } = useTranslation(); 
@@ -25,19 +28,28 @@ const useMoreCircle = ({
       condition: true,
       name: "boardMissions.viewTask",
       icon: <VisibilityOutlinedIcon style={classes.iconStyle} />,
-      onclick: () => null,
+      onclick: () => {
+        window.open(`/production-floor?boardMissionsId=${mission?.id}&step=stations`, '_blank');
+      },
     },
     {
       condition: true,
       name: "boardMissions.pdfWorkMission",
       icon: <PDFIcon />,
-      onclick: () => null,
+      onclick: ()=>onClickWorkMissionPdf(mission?.id),
     },
     {
       condition: true,
       name: "boardMissions.pdfProductionOrderSummary",
       icon: <PDFIcon />,
-      onclick: () => null,
+      onclick: ()=>onClickOrderSummeryPdf(mission?.id),
+    },
+    {
+      condition: true,
+      name: "Print packaging slip",
+      icon: <VisibilityOutlinedIcon style={classes.iconStyle} />,
+      onclick: ()=>onClickPrintPackagingSlip(mission),
+
     },
     {
       condition: true,
@@ -46,16 +58,13 @@ const useMoreCircle = ({
       onclick: ()=>onClickDuplicate(mission),
     },
     {
-      //condition: mission?.productionStatus === PStatus.IN_PROCESS,
-      condition: true,
+      condition: mission?.status === PStatus.IN_PROCESS,
       name: "boardMissions.markAsReady",
       icon: <TaskAltOutlinedIcon style={classes.iconStyle} />,
       onclick: onClickMarksAsDone,
     },
     {
-      condition: true,
-
-      //condition: mission?.productionStatus === PStatus.DONE,
+      condition: mission?.status === PStatus.DONE,
       name: "boardMissions.returnToProduction",
       icon: <LockOpenOutlinedIcon style={classes.iconStyle} />,
       onclick: onClickReturnToProduction,

@@ -4,7 +4,7 @@ import { getAllProductsForDropDownList } from "@/services/hooks";
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { PStatus } from "./widgets/enums";
-import { setBoardMissionsFiltersApi } from "@/services/api-service/board-missions-table/set-borad-missions-filters-api";
+import { getOrderSummeryPdfApi, getWorkMissionPdfApi, setBoardMissionsFiltersApi } from "@/services/api-service/board-missions-table/board-missions-table";
 import { useDateFormat } from "@/hooks/use-date-format";
 import { DEFAULT_VALUES } from "@/pages/customers/enums";
 import { EWorkSource } from "@/widgets/product-pricing-widget/enums";
@@ -139,10 +139,13 @@ const useBoardMissions = () => {
             <MoreMenuWidget
               mission={mission}
               onClickDuplicate={onOpenDuplicateModal}
+              onClickPrintPackagingSlip={onOpenPackagesModal}
               onClickMarksAsDone={onOpenMarkReadyModal}
               onClickReturnToProduction={onOpenReturnToProdModal}
+              onClickOrderSummeryPdf={onClickOrderSummeryPdf}
+              onClickWorkMissionPdf={onClickWorkMissionPdf}
             />
-          ]);
+          ]); 
           setAllBoardMissions(mapData);
           setPagesCount(Math.ceil(_data?.totalItems / pageSize));
         }
@@ -174,16 +177,53 @@ const useBoardMissions = () => {
     }
   };
 
+  const [openPackagesModal, setOpenPackagesModal] = useState<boolean>(false);
+
+  const onOpenPackagesModal = (mission:any) => {
+    setMissionItem(mission);
+    setOpenPackagesModal(true);
+  };
+
+  const onClosePackagesModal = () => {
+    setOpenPackagesModal(false);
+  };
+
   const onClickDuplicateMission = (duplicateType : DuplicateType ) => {
     navigate(
       `/products/duplicate?clientTypeId=${missionItem?.clientTypeId}&customerId=${missionItem?.customerID}&productId=${missionItem?.productID}&documentItemId=${missionItem?.orderItemId}&documentType=${DOCUMENT_TYPE.order}&documentId=${missionItem?.orderItemId}&duplicateType=${duplicateType}`
     );
   };
 
+
+  const onClickOrderSummeryPdf = async (boardMissionId: string) => {
+    const callBack = (res) => {
+      if (res?.success) {
+        const pdfLink = res.data;
+        window.open(pdfLink, "_blank");
+      } else {
+        alertFaultGetData();
+      }
+    };
+      await getOrderSummeryPdfApi(callApi, callBack, {boardMissionId});
+  };
+
+  const onClickWorkMissionPdf = async (boardMissionId: string) => {
+    const callBack = (res) => {
+      if (res?.success) {
+        const pdfLink = res.data;
+        window.open(pdfLink, "_blank");
+      } else {
+        alertFaultGetData();
+      }
+    };
+      await getWorkMissionPdfApi(callApi, callBack, {boardMissionId});
+  };
+
   const [openDuplicateModal, setOpenDuplicateModal] = useState<boolean>(false);
   const onCloseDuplicateModal = () => {
     setOpenDuplicateModal(false);
   };
+
   const onOpenDuplicateModal = (mission:any) => {
     setMissionItem(mission);
     setOpenDuplicateModal(true);
@@ -271,7 +311,10 @@ const useBoardMissions = () => {
     openReturnToProdModal,
     onCloseReturnToProdModal,
     onClickDuplicateMission,
-  };
+missionItem  ,
+openPackagesModal,
+onClosePackagesModal
+};
 };
 
 export { useBoardMissions };
