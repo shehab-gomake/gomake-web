@@ -48,6 +48,7 @@ export interface ICalculatedWorkFlow {
   productType: string | null;
   isCalculated: boolean;
   exceptions: any[];
+  isCompleteWorkFlow:boolean;
 }
 
 export interface IPrintActionType {

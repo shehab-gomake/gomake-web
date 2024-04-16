@@ -57,7 +57,7 @@ const useStyle = () => {
         borderRadius: "5px",
         border: "1px solid" + primaryColor(500),
         overflow: "hidden",
-        width: "400px",
+        // width: "400px",
       },
       button: {
         width: "200px",

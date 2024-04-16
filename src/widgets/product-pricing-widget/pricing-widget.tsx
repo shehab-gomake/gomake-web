@@ -17,9 +17,8 @@ import {
 } from "@/widgets/product-pricing-widget/components/outsource-suppliers/out-source-suppliers-widget";
 import { useTranslation } from "react-i18next";
 import { useStyle } from "@/widgets/product-pricing-widget/style";
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import {
-  calculationProgressState,
   currentProductItemValueDraftId,
   currentProductItemValuePriceState,
   currentProductItemValueState, currentProductItemValueTotalWorkFlowsState,
@@ -31,7 +30,7 @@ import {
   updateProductItemValueOutsource
 } from "@/services/api-service/product-item-value-draft/product-item-draft-endpoints";
 import { useGomakeAxios } from "@/hooks";
-import { currentCalculationConnectionId, isLoadgingState } from "@/store";
+import { currentCalculationConnectionId } from "@/store";
 import { Stack } from "@mui/material";
 
 const PricingWidget = ({
@@ -117,7 +116,37 @@ const PricingWidget = ({
       }, 2000);
     }
   }, [view, selectedWorkFlow])
+  const [tabs, setTabs] = useState([]);
+  const [selectedTab, setSelectedTab] = useState("")
+  const [filterWorkFlow, setFilterWorkFlow] = useState()
 
+  console.log("workFlowsworkFlowsworkFlowsworkFlowsworkFlows", workFlows)
+  console.log("workFlowsworkFlowsworkFlowsworkFlowsworkFlows", { tabs, filterWorkFlow })
+
+  useEffect(() => {
+    const newTabs = workFlows.reduce((accumulator, currentItem) => {
+      if (currentItem.isCompleteWorkFlow === false && currentItem.productType !== null) {
+        const existingTab = accumulator.find(tab => tab.tabName === currentItem.sectionName && tab.key === currentItem.productType);
+        if (!existingTab) {
+          accumulator.push({ tabName: currentItem.sectionName, key: currentItem.productType });
+        }
+      } else if (currentItem.isCompleteWorkFlow === false && currentItem.productType === null) {
+        const existingTab = accumulator.find(tab => tab.tabName === "General" && tab.key === null);
+        if (!existingTab) {
+          accumulator.push({ tabName: "General", key: null });
+        }
+      }
+      else if (currentItem.isCompleteWorkFlow === true && currentItem.productType === null) {
+        const existingTab = accumulator.find(tab => tab.tabName === "Other" && tab.key === null);
+        if (!existingTab) {
+          accumulator.push({ tabName: "Other", key: null });
+        }
+      }
+      return accumulator;
+    }, []);
+
+    setTabs(newTabs);
+  }, [workFlows]);
   return (
     <Stack gap={"16px"} width={"100%"}>
       <Stack direction={"row"} justifyContent={"space-between"}>
@@ -134,17 +163,25 @@ const PricingWidget = ({
             >
               {t("pricingWidget.selected")}
             </PrimaryButton>
-            <PrimaryButton
-              data-tour={'allWorkflowsBtn'}
-              onClick={() => setView(EPricingViews.OTHERS_WORKFLOWS)}
-              sx={classes.button}
-              variant={
-                view === EPricingViews.OTHERS_WORKFLOWS
-                  ? "contained"
-                  : "outlined"
-              }
-            >{`${t("pricingWidget.others")} (${currentProductItemValueTotalWorkFlows
-              })`}</PrimaryButton>
+            {tabs.map((tab, index) => {
+              return (
+                <PrimaryButton
+                  data-tour={'allWorkflowsBtn'}
+                  onClick={() => {
+                    setView(EPricingViews.OTHERS_WORKFLOWS)
+                    setSelectedTab(tab.key)
+                    setFilterWorkFlow(tab.key)
+                  }}
+                  sx={classes.button}
+                  variant={
+                    view === EPricingViews.OTHERS_WORKFLOWS && selectedTab === tab.key
+                      ? "contained"
+                      : "outlined"
+                  }
+                >{tab?.tabName}</PrimaryButton>
+              )
+            })}
+
           </ButtonGroup>
         ) : (
           <div />
@@ -195,9 +232,8 @@ const PricingWidget = ({
       {workFlows && view === EPricingViews.OTHERS_WORKFLOWS && (
         <div data-tour={'allWorkflowsContainer'}>
           <WorkFlowsComponent
-
             showSelected={() => setView(EPricingViews.SELECTED_WORKFLOW)}
-            workflows={workFlows}
+            workflows={workFlows.filter(flow => flow.productType === filterWorkFlow)}
           />
         </div>
       )}
