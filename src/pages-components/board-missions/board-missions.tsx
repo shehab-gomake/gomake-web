@@ -5,13 +5,14 @@ import { useBoardMissions } from "./use-board-missions";
 import { PrimaryTable } from "@/components/tables/primary-table";
 import { GoMakeAutoComplate, GoMakeDeleteModal, GoMakeModal, GomakePrimaryButton, GomakeTextInput, ThreeOptionsModal } from "@/components";
 import { SearchInputComponent } from "@/components/form-inputs/search-input-component";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { GoMakeMultiSelect } from "@/components/auto-complete/multi-select";
 import { GoMakeDatepicker } from "@/components/date-picker/date-picker-component";
 import { Stack } from "@mui/material";
 import { GoMakePagination } from "@/components/pagination/gomake-pagination";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import { DuplicateType } from "@/enums";
+import { PrintPackingSlipModal } from "./widgets/print-packing-slip-modal";
 
 const BoardMissionsListWidget = () => {
   const { classes } = useStyle();
@@ -52,32 +53,24 @@ const BoardMissionsListWidget = () => {
     openReturnToProdModal,
     onCloseReturnToProdModal,
     onClickDuplicateMission,
-    missionItem,
     openPackagesModal,
-    onClosePackagesModal
+    onClosePackagesModal,
+    quantityPerPackage,
+    quantityOfPackages,
+    packageInputs,
+    handleQuantityPerPackageChange,
+    handleQuantityOfPackagesChange,
+    openModal,
+    onCloseModal,
+    onOpenPackagesModal,
+    onOpenMarkReadyModal,
+    missionItem
   } = useBoardMissions();
 
   useEffect(() => {
     getAllProducts();
   }, []);
 
-
-
-
-  const [quantityOfPackages, setQuantityOfPackages] = useState(1);
-  const [quantityPerPackage, setQuantityPerPackage] = useState(missionItem?.quantity || 0);
-
-  const remainingQuantity = missionItem?.quantity - quantityPerPackage * (quantityOfPackages - 1);
-
-  const handleQuantityOfPackagesChange = (event) => {
-    const newQuantity = parseInt(event.target.value, 10);
-    setQuantityOfPackages(newQuantity);
-  };
-
-  const handleQuantityPerPackageChange = (event) => {
-    const newQuantity = parseInt(event.target.value, 10);
-    setQuantityPerPackage(newQuantity);
-  };
 
 
 
@@ -183,12 +176,8 @@ const BoardMissionsListWidget = () => {
         noBtn={"boardMissions.markDoneModalNo"}
         openModal={openMarkReadyModal}
         onClose={onCloseMarkReadyModal}
-        onClickYes={() => {
-          alert("yes");
-        }}
-        onClickNo={() => {
-          alert("no");
-        }}
+        onClickYes={() => onOpenPackagesModal(missionItem)}
+        onClickNo={() => onOpenPackagesModal(missionItem)}
       />
       <GoMakeDeleteModal
         icon={<WarningAmberIcon style={classes.warningIconStyle} />}
@@ -199,57 +188,67 @@ const BoardMissionsListWidget = () => {
         onClose={onCloseReturnToProdModal}
         onClickDelete={() => alert("loading")}
       />
-
-      <GoMakeModal
+      <ThreeOptionsModal
+        title={t("Would you like to print a delivery slip and move the order to ready?")}
+        yesBtn={"Print and transfer to ready"}
+        noBtn={"Printing only"}
+        openModal={openModal}
+        onClose={onCloseModal}
+        onClickYes={onOpenMarkReadyModal}
+        onClickNo={() => onOpenPackagesModal(missionItem)}
+      />
+      {/* <GoMakeModal
         openModal={openPackagesModal}
         onClose={onClosePackagesModal}
-        modalTitle={t("The distribution of the total quantity into packages")}
+        modalTitle={t("boardMissions.packagesTitle")}
+        insideStyle={{
+          width: "25%",
+          borderRadius: "8px",
+          height: "auto",
+          maxHeight: 600,
+          gap: "10px"
+        }}
+
       >
-        <Stack direction={"column"}>
-          <div>
+        <Stack direction={"column"} gap={"15px"}>
+          <div style={{ width: "40%" }}>
             <h3 style={classes.filterLabelStyle}>
-              {t("Quantity of packages")}
+              {t("boardMissions.quantityOfPackages")}
             </h3>
             <GomakeTextInput
               style={classes.textInputStyle}
               value={quantityOfPackages}
-              placeholder={t("creditCardTransactions.transactionAmount")}
+              placeholder={t("boardMissions.quantityOfPackages")}
               onChange={handleQuantityOfPackagesChange}
               type={"number"}
             />
           </div>
-          <div>
+          <div style={{ width: "40%" }}>
             <h3 style={classes.filterLabelStyle}>
-              {t("Quantity per package")}
+              {t("boardMissions.quantityPerPackage")}
             </h3>
             <GomakeTextInput
               style={classes.textInputStyle}
               value={quantityPerPackage}
-              placeholder={t("Quantity per package")}
+              placeholder={t("boardMissions.quantityPerPackage")}
               onChange={handleQuantityPerPackageChange}
               type={"number"}
             />
           </div>
-          {[...Array(quantityOfPackages)].map((_, index) => (
-            <div key={index}>
-              <h3 style={classes.filterLabelStyle}>
-                {t(`Package ${index + 1}`)}
-              </h3>
-              <GomakeTextInput
-                style={classes.textInputStyle}
-                value={
-                  index === quantityOfPackages - 1
-                    ? remainingQuantity
-                    : quantityPerPackage
-                }
-                placeholder={t("Package quantity")}
-                type={"number"}
-                disabled
-              />
-            </div>
-          ))}
+          {packageInputs}
         </Stack>
-      </GoMakeModal>
+      </GoMakeModal> */}
+      <PrintPackingSlipModal
+
+        openPackagesModal={openPackagesModal}
+        onClosePackagesModal={onClosePackagesModal}
+        packageInputs={packageInputs}
+        quantityOfPackages={quantityOfPackages}
+        quantityPerPackage={quantityPerPackage}
+        handleQuantityOfPackagesChange={handleQuantityOfPackagesChange}
+        handleQuantityPerPackageChange={handleQuantityPerPackageChange}
+
+      />
     </>
   );
 };

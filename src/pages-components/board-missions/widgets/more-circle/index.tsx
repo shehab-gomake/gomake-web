@@ -11,9 +11,10 @@ interface IBoardMissionsProps {
   onClickReturnToProduction?:()=>void;
   onClickOrderSummeryPdf?:(id : string)=>void;
   onClickWorkMissionPdf?:(id : string)=>void;
+  onOpenModal?:(mission?: any) => void;
   onClickPrintPackagingSlip?:(mission?: any) => void;
 } 
-const MoreMenuWidget = ({ mission, onClickDuplicate, onClickLoggers , onClickMarksAsDone , onClickReturnToProduction , onClickOrderSummeryPdf ,onClickWorkMissionPdf, onClickPrintPackagingSlip }: IBoardMissionsProps) => {
+const MoreMenuWidget = ({ mission, onClickDuplicate, onClickLoggers , onClickMarksAsDone , onClickReturnToProduction , onClickOrderSummeryPdf ,onClickWorkMissionPdf, onClickPrintPackagingSlip ,onOpenModal}: IBoardMissionsProps) => {
   const { classes } = useStyle();
   const { t , menuList} = useMoreCircle({
     mission,
@@ -23,7 +24,8 @@ const MoreMenuWidget = ({ mission, onClickDuplicate, onClickLoggers , onClickMar
     onClickReturnToProduction,
     onClickOrderSummeryPdf,
     onClickWorkMissionPdf,
-    onClickPrintPackagingSlip
+    onClickPrintPackagingSlip,
+    onOpenModal
   });
 
   return (

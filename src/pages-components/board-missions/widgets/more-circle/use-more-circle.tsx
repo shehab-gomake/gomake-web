@@ -8,7 +8,7 @@ import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import LockOpenOutlinedIcon from '@mui/icons-material/LockOpenOutlined';
 import { PStatus } from "../enums";
 import { useStyle } from "./style";
-
+import { PackageIcon } from "@/icons/package-icon";
 const useMoreCircle = ({
   mission,
   onClickDuplicate,
@@ -17,7 +17,8 @@ const useMoreCircle = ({
   onClickReturnToProduction,
   onClickOrderSummeryPdf,
   onClickWorkMissionPdf,
-  onClickPrintPackagingSlip
+  onClickPrintPackagingSlip,
+  onOpenModal
 }: any) => {
 
   const { t } = useTranslation(); 
@@ -46,9 +47,9 @@ const useMoreCircle = ({
     },
     {
       condition: true,
-      name: "Print packaging slip",
-      icon: <VisibilityOutlinedIcon style={classes.iconStyle} />,
-      onclick: ()=>onClickPrintPackagingSlip(mission),
+      name: "boardMissions.printPackagingSlip",
+      icon: <PackageIcon/>,
+      onclick: mission?.status === PStatus.IN_PROCESS ? ()=>onOpenModal(mission) : ()=>onClickPrintPackagingSlip(mission),
 
     },
     {
