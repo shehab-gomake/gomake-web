@@ -13,6 +13,7 @@ import { MoreMenuWidget } from "./widgets/more-circle";
 import { BoardMission } from "./widgets/interfaces";
 import { DuplicateType } from "@/enums";
 import { DOCUMENT_TYPE } from "../quotes/enums";
+import { useRouter } from "next/router";
 
 const useBoardMissions = () => {
   const { t } = useTranslation();
@@ -39,6 +40,8 @@ const useBoardMissions = () => {
   const [pageSize, setPageSize] = useState(DEFAULT_VALUES.PageSize);
   const { customer, setCustomer, renderOptions, checkWhatRenderArray, handleCustomerChange } = useCustomerDropDownList()
   const { agent, setAgent, agentsCategories, handleAgentChange } = useAgentsList()
+  const router = useRouter()
+  console.log("RRRR", router.query)
 
   const handlePageSizeChange = (event) => {
     setPageNumber(1);
@@ -101,7 +104,12 @@ const useBoardMissions = () => {
     setResetDatePicker(true);
     pageNumber === 1 ? getAllBoardMissions(true) : setPageNumber(1);
   };
+  useEffect(() => {
+    if (router.query.orderNumber) {
+      setPatternSearch(router.query.orderNumber as string);
+    }
 
+  }, [router])
   const onChangeMissionsSearch = (value: string) => {
     setPatternSearch(value);
   };
@@ -174,7 +182,7 @@ const useBoardMissions = () => {
     }
   };
 
-  const onClickDuplicateMission = (duplicateType : DuplicateType ) => {
+  const onClickDuplicateMission = (duplicateType: DuplicateType) => {
     navigate(
       `/products/duplicate?clientTypeId=${missionItem?.clientTypeId}&customerId=${missionItem?.customerID}&productId=${missionItem?.productID}&documentItemId=${missionItem?.orderItemId}&documentType=${DOCUMENT_TYPE.order}&documentId=${missionItem?.orderItemId}&duplicateType=${duplicateType}`
     );
@@ -184,7 +192,7 @@ const useBoardMissions = () => {
   const onCloseDuplicateModal = () => {
     setOpenDuplicateModal(false);
   };
-  const onOpenDuplicateModal = (mission:any) => {
+  const onOpenDuplicateModal = (mission: any) => {
     setMissionItem(mission);
     setOpenDuplicateModal(true);
   };

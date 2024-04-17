@@ -25,6 +25,7 @@ import { useQuoteGetData } from "../quote-new/use-quote-get-data";
 import { useStyle } from "./style";
 import { DEFAULT_VALUES } from "@/pages/customers/enums";
 import { getAllReceiptsApi, getReceiptPdfApi } from "@/services/api-service/generic-doc/receipts-api";
+import { EHttpMethod } from "@/services/api-service/enums";
 
 const useQuotes = (docType: DOCUMENT_TYPE) => {
   const { t } = useTranslation();
@@ -179,7 +180,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
               quote?.itemsNumber,
               quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
               quote?.notes,
-              _renderStatus(quote, t , navigate),
+              _renderStatus(quote, t, navigate),
               <MoreMenuWidget
                 quote={quote}
                 documentType={docType}
@@ -325,7 +326,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
               quote?.itemsNumber,
               quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
               quote?.notes,
-              _renderStatus(quote, t , navigate),
+              _renderStatus(quote, t, navigate),
               <MoreMenuWidget
                 quote={quote}
                 documentType={docType}
@@ -344,7 +345,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
               quote?.worksNames,
               quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
               quote?.notes,
-              _renderStatus(quote, t , navigate),
+              _renderStatus(quote, t, navigate),
               <MoreMenuWidget
                 quote={quote}
                 documentType={docType}
@@ -643,10 +644,22 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
   };
 
   const onClickQuotePdf = async (id: string) => {
+    const downloadPdf = (url) => {
+      const anchor = document.createElement("a");
+      anchor.href = url;
+      anchor.target = "_blank";
+      anchor.addEventListener("click", () => {
+        setTimeout(() => {
+          anchor.remove();
+        }, 100);
+      });
+      anchor.click();
+    };
     const callBack = (res) => {
       if (res?.success) {
         const pdfLink = res.data;
-        window.open(pdfLink, "_blank");
+        // window.open(pdfLink, "_blank");
+        downloadPdf(pdfLink);
       } else {
         alertFaultGetData();
       }
@@ -663,6 +676,39 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
       });
     }
   };
+
+  // const onClickQuotePdf = useCallback(async (id: string) => {
+  //   let requestBody;
+
+  //   if (isReceipt) {
+  //     requestBody = {
+  //       receiptId: id,
+  //     };
+  //   } else {
+  //     requestBody = {
+  //       documentId: id,
+  //       documentType: docType,
+  //     };
+  //   }
+  //   const res = await callApi(
+  //     EHttpMethod.POST,
+  //     `/v1/erp-service/documents/get-document-pdf`,
+  //     requestBody,
+  //     true,
+  //     null,
+  //     "blob"
+  //   );
+  //   const downloadLink = document.createElement('a');
+  //   const link = URL?.createObjectURL(res.data);
+  //   downloadLink.href = link
+  //   downloadLink.download = 'Reports Rule engine.xlsx';
+  //   downloadLink.click();
+  //   if (res?.success) {
+
+  //   } else {
+  //     alertFaultGetData();
+  //   }
+  // }, [isReceipt]);
 
   const onClickQuoteDuplicate = async (id: string) => {
     const callBack = (res) => {
@@ -720,7 +766,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
                   : classes.closeBtnStyle
               }
             >
-              {_renderStatus(document, t , navigate)}
+              {_renderStatus(document, t, navigate)}
             </h2>
           </div>,
           document?.notes,

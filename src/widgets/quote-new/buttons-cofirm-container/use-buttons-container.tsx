@@ -9,7 +9,7 @@ import { QuoteStatuses } from "../total-price-and-vat/enums";
 const useButtonsConfirmContainer = () => {
     const { callApi } = useGomakeAxios();
     const quoteConfirm = useRecoilValue<any>(quoteConfirmationState);
-    const { alertFaultUpdate, alertSuccessUpdate , alertFault} = useSnackBar();
+    const { alertFaultUpdate, alertSuccessUpdate, alertFault } = useSnackBar();
     const [reasonText, setReasonText] = useState("");
     const [anchorElRejectBtn, setAnchorElRejectBtn] = useState<null | HTMLElement>(null);
     const openRejectBtn = Boolean(anchorElRejectBtn);
@@ -77,10 +77,23 @@ const useButtonsConfirmContainer = () => {
     }
 
     const onClickPrint = async () => {
+        const downloadPdf = (url) => {
+            const anchor = document.createElement("a");
+            anchor.href = url;
+            anchor.target = "_blank";
+            anchor.addEventListener("click", () => {
+                setTimeout(() => {
+                    anchor.remove();
+                }, 100);
+            });
+            anchor.click();
+        };
         const callBack = (res) => {
             if (res?.success) {
                 const pdfLink = res.data;
-                window.open(pdfLink, "_blank");
+                downloadPdf(pdfLink);
+                // window.open(pdfLink, "_blank");
+
             } else {
                 alertFaultUpdate();
             }
