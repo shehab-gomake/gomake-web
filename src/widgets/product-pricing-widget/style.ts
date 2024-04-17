@@ -60,11 +60,11 @@ const useStyle = () => {
         // width: "400px",
       },
       button: {
-        width: "200px",
+        width: "fit-content",
         borderRadius: 0,
         border: 0,
         "&:hover": {
-          width: "200px",
+          width: "fit-content",
           borderRadius: 0,
           border: 0,
         },

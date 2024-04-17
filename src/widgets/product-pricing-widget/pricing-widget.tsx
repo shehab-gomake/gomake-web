@@ -178,7 +178,7 @@ const PricingWidget = ({
                       ? "contained"
                       : "outlined"
                   }
-                >{tab?.tabName}</PrimaryButton>
+                >{tab?.tabName} ({((workFlows.filter(flow => flow.productType === tab.key).length))})</PrimaryButton>
               )
             })}
 
