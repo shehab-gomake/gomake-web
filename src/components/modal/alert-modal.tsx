@@ -5,6 +5,7 @@ import { Wastebasket } from "@/icons";
 import { GomakePrimaryButton } from "../button";
 import { useStyle } from "./style";
 import { PrimaryButton } from "../button/primary-button";
+import ReportProblemOutlinedIcon from '@mui/icons-material/ReportProblemOutlined';
 
 const GoMakeAlertModal = ({
   openModal,
@@ -14,6 +15,7 @@ const GoMakeAlertModal = ({
   onClickConfirm,
   title,
   yesBtn = "Confirm",
+  withIcon = false, 
   ...props
 }: any) => {
   const { classes } = useStyle({insideStyle});
@@ -31,6 +33,7 @@ const GoMakeAlertModal = ({
     >
       <div style={classes.modalContainer}>
         <div style={classes.content}>
+        {withIcon && <ReportProblemOutlinedIcon style={classes.iconStyle} />}
           <div style={classes.title}>{title}</div>
           <div style={classes.subTitle}>{subTitle}</div>
           <div style={classes.btnsContainer}>

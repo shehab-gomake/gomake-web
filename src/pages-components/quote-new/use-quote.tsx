@@ -1127,6 +1127,18 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
   ];
   const documentTitle = documentsTitles.find(item => item.value === docType).label;
 
+
+
+  const [openLoginModal, setOpenLoginModal] = useState<boolean>(false);
+
+  const onClickClosLoginModal = () => {
+    setOpenLoginModal(false);
+  };
+
+  const onClickOpenLoginModal = () => {
+    setOpenLoginModal(true);
+  };
+
   return {
     dateRef,
     activeClickAway,
@@ -1263,7 +1275,10 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     onCloseCopyFromOrder,
     onOpenCopyFromOrder,
     getAllClientContacts,
-    copyFromDocumentType
+    copyFromDocumentType,
+    openLoginModal,
+    onClickClosLoginModal,
+    onClickOpenLoginModal
   };
 };
 

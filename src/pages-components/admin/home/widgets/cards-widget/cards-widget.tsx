@@ -1,4 +1,4 @@
-import { CardComponent } from "@/pages-components/quotes/statistics-section/card";
+import { CardComponent } from "@/pages-components/quotes/widgets/statistics-section/card";
 import { useStyle } from "./style";
 import { useTranslation } from "react-i18next";
 import { useCardWidget } from "./use-cards-widget";
