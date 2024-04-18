@@ -522,7 +522,7 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
         openModal={openLoginModal}
         onClose={onClickClosLoginModal}
         subTitle={t("No login!!!!")}
-        yesBtn={t("login.login")}
+        yesBtn={"login.login"}
         withIcon={true}
         onClickConfirm={() => {
           window.open(LoginTaxesUrl + printHouseProfileState?.business_ID, "_blank");

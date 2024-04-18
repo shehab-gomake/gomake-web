@@ -14,7 +14,7 @@ const GoMakeAlertModal = ({
   subTitle,
   onClickConfirm,
   title,
-  yesBtn = "Confirm",
+  yesBtn = "sales.quote.Confirm",
   withIcon = false, 
   ...props
 }: any) => {
@@ -41,7 +41,7 @@ const GoMakeAlertModal = ({
               style={classes.confermBtn}
               onClick={onClickConfirm}
             >
-              {yesBtn}
+              {t(yesBtn)}
             </GomakePrimaryButton>{" "}
             <PrimaryButton style={classes.cancelBtn} onClick={onClose} variant="outlined">
               {props?.cancelBtn || t("materials.buttons.cancel")}

@@ -1,19 +1,11 @@
-import { useSetRecoilState, useRecoilValue } from "recoil";
-import { useTranslation } from "react-i18next";
-import { useEffect, useState } from "react";
-import { useRouter } from "next/router";
-
-import { useQuoteWidget } from "@/pages-components/admin/home/widgets/quote-widget/use-quote-widget";
-import { quoteConfirmationState, quoteItemState } from "@/store";
-import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
+import { useEffect } from "react";
 import { MinusIcon } from "@/icons/minus-icon";
 import { PlusNewIcon } from "@/icons";
-
 import { AutoCompleteUpdatedValue } from "../auto-complete-updated";
 import { AddressModal } from "./address-widget/address-modal";
 import { InputUpdatedValues } from "../input-updated-values";
-import { addressModalState } from "./address-widget/state";
 import { useStyle } from "./style";
+import { useBusinessWidget } from "./use-business-widget";
 
 const BusinessNewWidget = ({
   values,
@@ -42,26 +34,35 @@ const BusinessNewWidget = ({
 
 }) => {
   const { classes } = useStyle();
-  const { t } = useTranslation();
-  const router = useRouter()
-  const [isConfirmation, setIsConfirmation] = useState();
-  const { renderOptions, checkWhatRenderArray } = useQuoteWidget({ documentType });
-  const setOpenModal = useSetRecoilState<boolean>(addressModalState);
-  const [purchaseNumber, setPurchaseNumber] = useState(values?.purchaseNumber || t("sales.quote.noPurchaseNumber"));
-  const quoteStateValue = useRecoilValue<any>(quoteItemState);
-  const quoteConfirm = useRecoilValue<any>(quoteConfirmationState);
-  const isReceipt = documentType === DOCUMENT_TYPE.receipt;
-  const isExistReceipt = isReceipt && !router?.query?.isNewCreation;
-
+  const {
+    t,
+    router,
+    setIsConfirmation,
+    checkWhatRenderArray,
+    setOpenModal,
+    purchaseNumber,
+    setPurchaseNumber,
+    quoteStateValue,
+    quoteConfirm,
+    isReceipt,
+    isExistReceipt,
+    taxConfirmationNumber,
+    setTaxConfirmationNumber,
+    isInvoice,
+    isUpdateTaxNumber,
+    setIsUpdateTaxNumber,
+    onBlurTaxNumber,
+    mappedCustomers,
+  } = useBusinessWidget({ values, documentType });
+  
   useEffect(() => {
     setPurchaseNumber(values?.purchaseNumber || t("sales.quote.noPurchaseNumber"));
   }, [values?.purchaseNumber]);
 
-  const mappedCustomers = renderOptions().map(customer => ({
-    text: customer?.name,
-    id: customer?.id,
-    ...customer
-  }));
+  useEffect(() => {
+    setTaxConfirmationNumber(values?.taxConfirmationNumber || t("sales.quote.noTaxConfirmationNumber"));
+  }, [values?.taxConfirmationNumber]);
+
 
   return (
     <>
@@ -84,6 +85,14 @@ const BusinessNewWidget = ({
           isUpdate={quoteStateValue?.isEditable || router.query.isNewCreation ? isUpdatePurchaseNumber : quoteStateValue?.isEditable}
           setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdatePurchaseNumber}
           onInputChange={(v) => setPurchaseNumber(v)}
+        />}
+        {isInvoice && <InputUpdatedValues
+          value={taxConfirmationNumber}
+          label={t("sales.quote.taxConfirmationNumber")}
+          onBlur={onBlurTaxNumber}
+          isUpdate={quoteStateValue?.isEditable || router.query.isNewCreation ? isUpdateTaxNumber : false}
+          setIsUpdate={setIsUpdateTaxNumber}
+          onInputChange={(v) => setTaxConfirmationNumber(v)}
         />}
         <InputUpdatedValues
           value={isQuoteConfirmation ? `${selectConfirmBusiness?.code}` : `${quoteStateValue?.client?.code}`}
