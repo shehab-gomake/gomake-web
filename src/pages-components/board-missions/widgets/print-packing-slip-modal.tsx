@@ -41,7 +41,7 @@ const PrintPackingSlipModal = ({openPackagesModal , onClosePackagesModal , packa
         </h3>
         <GomakeTextInput
           style={classes.textInputStyle}
-          value={quantityPerPackage}
+         value={quantityPerPackage}
           placeholder={t("boardMissions.quantityPerPackage")}
           onChange={handleQuantityPerPackageChange}
           type={"number"}

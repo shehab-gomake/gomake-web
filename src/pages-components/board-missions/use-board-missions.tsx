@@ -180,14 +180,11 @@ const useBoardMissions = () => {
     }
   };
 
-
-
   const onClickDuplicateMission = (duplicateType: DuplicateType) => {
     navigate(
       `/products/duplicate?clientTypeId=${missionItem?.clientTypeId}&customerId=${missionItem?.customerID}&productId=${missionItem?.productID}&documentItemId=${missionItem?.orderItemId}&documentType=${DOCUMENT_TYPE.order}&documentId=${missionItem?.orderItemId}&duplicateType=${duplicateType}`
     );
   };
-
 
   const onClickOrderSummeryPdf = async (boardMissionId: string) => {
     const callBack = (res) => {
@@ -278,45 +275,30 @@ const useBoardMissions = () => {
   };
 
 
+    // const handleQuantityOfPackagesChange = (event) => {
+  //   const newQuantity = parseInt(event.target.value, 10);
+  //   setQuantityOfPackages(newQuantity);
+  // };
+
+  //////////////////////////////////////////////////////////////////////////
+  
   const [quantityOfPackages, setQuantityOfPackages] = useState(1);
   const [quantityPerPackage, setQuantityPerPackage] = useState(missionItem?.quantity || 0);
 
   const remainingQuantity = missionItem?.quantity - quantityPerPackage * (quantityOfPackages - 1);
 
   const handleQuantityOfPackagesChange = (event) => {
-    // const newQuantity = parseInt(event.target.value, 10);
-    //setQuantityOfPackages(newQuantity);
-
-    const inputValue = event.target.value.trim(); // Remove leading/trailing spaces
-    let newQuantity = parseInt(inputValue, 10);
-    if (isNaN(newQuantity)) {
-      newQuantity = 0; // Set to 0 if input is NaN
-    }
-    console.log("New quantity of packages:", newQuantity);
-    setQuantityOfPackages(newQuantity);
-
+    const newQuantityOfPackages = parseInt(event.target.value, 10);
+    const totalQuantity = missionItem?.quantity || 0;
+    const newQuantityPerPackage = Math.ceil(totalQuantity / newQuantityOfPackages);
+    setQuantityOfPackages(newQuantityOfPackages);
+    setQuantityPerPackage(newQuantityPerPackage);
   };
 
-
   const handleQuantityPerPackageChange = (event) => {
-    // const newQuantityPerPackage = parseInt(event.target.value, 10);
-    // const newQuantityOfPackages = Math.ceil(missionItem?.quantity / newQuantityPerPackage);
-    // setQuantityPerPackage(newQuantityPerPackage);
-    // setQuantityOfPackages(newQuantityOfPackages);
-
-    const inputValue = event.target.value.trim();
-    let newQuantityPerPackage = parseInt(inputValue, 10);
-    if (isNaN(newQuantityPerPackage)) {
-      newQuantityPerPackage = 0; 
-    }
-
-    let newQuantityOfPackages;
-    if (newQuantityPerPackage !== 0) {
-      newQuantityOfPackages = Math.ceil(missionItem?.quantity / newQuantityPerPackage);
-    } else {
-      newQuantityOfPackages = 0;
-    }
-
+    const newQuantityPerPackage = parseInt(event.target.value, 10);
+    const totalQuantity = missionItem?.quantity ;
+    const newQuantityOfPackages = Math.ceil(totalQuantity / newQuantityPerPackage);
     setQuantityPerPackage(newQuantityPerPackage);
     setQuantityOfPackages(newQuantityOfPackages);
   };
