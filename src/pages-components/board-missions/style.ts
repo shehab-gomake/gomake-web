@@ -5,7 +5,7 @@ import { FONT_FAMILY } from "@/utils/font-family";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 const useStyle = () => {
-  const { theme, secondColor , errorColor} = useGomakeTheme();
+  const { theme, secondColor, errorColor, primaryColor } = useGomakeTheme();
   const classes = useMemo(() => {
     return {
       mainContainer: {
@@ -16,7 +16,7 @@ const useStyle = () => {
         gap: 20,
         paddingLeft: 20,
         paddingRight: 20,
-        height:"100%",
+        height: "100%",
         overflowY: 'auto' as 'auto',
 
       },
@@ -52,10 +52,32 @@ const useStyle = () => {
       },
       filterLabelStyle: {
         ...FONT_FAMILY.Lexend(500, 14),
+        marginBottom: 7
+      },
+      packageLabelStyle: {
+        ...FONT_FAMILY.Lexend(550, 14),
+        color: primaryColor(400),
+        marginBottom: 7
+      },
+      inputValueStyle: {
+        ...FONT_FAMILY.Lexend(500, 14),
+        boxSizing: 'border-box' as 'border-box',
+        borderRadius: 4,
+        height: 45,
+        lineHeight: "21px",
+        display: "flex",
+        alignItems: "center",
+        color: "#000000",
+        boxShadow: "0px 1px 10px rgba(0, 0, 0, 0.08)",
+        backgroundColor: "#FFF",
+        width: "100%",
+        borderBottom: `0px solid #FFFFFF`,
       },
       textInputStyle: {
         width: "100%",
         border: "none",
+        height: 45,
+
       },
       clearBtnStyle: {
         height: 40,
@@ -63,12 +85,12 @@ const useStyle = () => {
         border: `1px solid ${secondColor(500)}`,
         color: secondColor(500),
         width: "12.5%",
-        minWidth:"fit-content"
+        minWidth: "fit-content"
       },
       paginationStyle: {
         paddingLeft: 20,
         paddingRight: 20,
-        height:'50px'
+        height: '50px'
       },
       warningIconStyle: {
         width: 120,
@@ -81,4 +103,5 @@ const useStyle = () => {
     classes,
   };
 };
+
 export { useStyle };

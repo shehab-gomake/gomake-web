@@ -306,20 +306,16 @@ const useBoardMissions = () => {
   const packageInputs = useMemo(() => {
     return [...Array(quantityOfPackages)].map((_, index) => (
       <div key={index} style={{ width: "40%" }} >
-        <h3 style={classes.filterLabelStyle}>
+        <h3 style={classes.packageLabelStyle}>
           {`${t("boardMissions.package")} ${index + 1}`}
         </h3>
-        <GomakeTextInput
-          style={classes.textInputStyle}
-          value={
-            index === quantityOfPackages - 1
-              ? remainingQuantity
-              : quantityPerPackage
-          }
-          placeholder={t("boardMissions.packageQuantity")}
-          type={"number"}
-          disabled
-        />
+        <div style={classes.inputValueStyle}>
+        {
+          index === quantityOfPackages - 1
+            ? remainingQuantity
+            : quantityPerPackage
+        }
+        </div>
       </div>
     ));
   }, [quantityOfPackages, quantityPerPackage, remainingQuantity]);
