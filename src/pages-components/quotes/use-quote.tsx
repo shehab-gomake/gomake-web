@@ -171,13 +171,19 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
         const data = res?.data?.data;
         const totalItems = res?.data?.totalItems;
         const mapData = data?.map((quote: any) => {
-          console.log("quote", quote)
           if (docType === DOCUMENT_TYPE.purchaseOrder) {
             return [
               GetDateFormat(quote?.creationDate),
               quote?.number,
               quote?.orderNumber,
+              // quote?.sourceDocumentNumber?.map((item, index) => {
+              //   return (
+              //     <span key={index}>{renderDocumentTypeForSourceDocumentNumber(item?.sourceDocumentType)}:{item?.documentNumber}<br /></span>
+
+              //   )
+              // }),
               quote?.supplierName,
+
               quote?.clientName,
               quote?.itemsNumber,
               quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
@@ -199,7 +205,14 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
               quote?.number,
               quote?.invoiceNumber,
               purchaseOrderNumbers,
+              // quote?.sourceDocumentNumber?.map((item, index) => {
+              //   return (
+              //     <span key={index}>{renderDocumentTypeForSourceDocumentNumber(item?.sourceDocumentType)}:{item?.documentNumber}<br /></span>
+
+              //   )
+              // }),
               quote?.customerName,
+
               quote?.itemsNumber,
               quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
               quote?.notes,
@@ -242,8 +255,19 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
               quote?.number,
               quote?.sourceDocumentNumber.map((item, index) => {
                 return (
-                  <span key={index}>{renderDocumentTypeForSourceDocumentNumber(item?.sourceDocumentType)}:{item?.documentNumber}{index !== quote.sourceDocumentNumber.length - 1 ? ',' : ''}</span>
-
+                  <>
+                    {
+                      docType === DOCUMENT_TYPE.order ?
+                        <span key={index}>{item?.documentNumber}
+                          <br />
+                        </span>
+                        :
+                        <span key={index}>
+                          {renderDocumentTypeForSourceDocumentNumber(item?.sourceDocumentType)}:{item?.documentNumber}
+                          <br />
+                        </span>
+                    }
+                  </>
                 )
               }),
               quote?.worksNames,
@@ -454,7 +478,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     t("sales.quote.creationDate"),
     t("sales.quote.purchaseOrderNumber"),
     t("sales.quote.orderNumber"),
-    t("sales.quote.sourceDocument"),
+    // t("sales.quote.sourceDocument"),
     t("sales.quote.supplierName"),
     t("sales.quote.client"),
     t("sales.quote.itemsNumber"),
@@ -467,7 +491,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     t("sales.quote.purchaseInvoiceNumber"),
     t("sales.quote.invoiceNumber"),
     t("sales.quote.purchaseOrderNumber"),
-    t("sales.quote.sourceDocument"),
+    // t("sales.quote.sourceDocument"),
     t("sales.quote.supplierName"),
     t("sales.quote.itemsNumber"),
     t("sales.quote.totalPrice"),
