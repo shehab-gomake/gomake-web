@@ -26,7 +26,7 @@ import { useStyle } from "./style";
 import { DEFAULT_VALUES } from "@/pages/customers/enums";
 import { getAllReceiptsApi, getReceiptPdfApi } from "@/services/api-service/generic-doc/receipts-api";
 import { EHttpMethod } from "@/services/api-service/enums";
-import { renderDocumentTypeForSourceDocumentNumber } from "@/widgets/settings-documenting/documentDesign/enums/document-type";
+import { renderDocumentTypeForSourceDocumentNumber, renderURLDocumentType } from "@/widgets/settings-documenting/documentDesign/enums/document-type";
 
 const useQuotes = (docType: DOCUMENT_TYPE) => {
   const { t } = useTranslation();
@@ -35,6 +35,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
   const { alertFaultUpdate, alertFaultDuplicate, alertFaultGetData } = useSnackBar();
   const { getCurrencyUnitText } = useQuoteGetData();
   const { navigate } = useGomakeRouter();
+
   const { errorColor } = useGomakeTheme();
   const [patternSearch, setPatternSearch] = useState("");
   const [finalPatternSearch, setFinalPatternSearch] = useState("");
@@ -262,7 +263,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
                           <br />
                         </span>
                         :
-                        <span key={index}>
+                        <span key={index} onClick={() => navigate(renderURLDocumentType(item?.sourceDocumentType, item.documentId))} style={{ cursor: "pointer" }}>
                           {renderDocumentTypeForSourceDocumentNumber(item?.sourceDocumentType)}:{item?.documentNumber}
                           <br />
                         </span>

@@ -64,3 +64,28 @@ export function renderDocumentTypeForSourceDocumentNumber(documentType: ERPDocum
             return "Unknown Document Type";
     }
 }
+
+export function renderURLDocumentType(documentType: ERPDocumentsTypesEnum, documentId): string {
+    switch (documentType) {
+        case ERPDocumentsTypesEnum.Order:
+            return `/order?Id=${documentId}`;
+        case ERPDocumentsTypesEnum.Invoice:
+            return `/invoice?Id=${documentId}`;
+        case ERPDocumentsTypesEnum.DeliveryNotes:
+            return `/deliveryNote?Id=${documentId}`;
+        case ERPDocumentsTypesEnum.Purchase:
+            return `/purchaseOrder?Id=${documentId}`;
+        case ERPDocumentsTypesEnum.InvoiceRefund:
+            return `/invoiceRefund?Id=${documentId}`;
+        case ERPDocumentsTypesEnum.PurchaseInvoice:
+            return `/purchaseInvoice?Id=${documentId}`;
+        case ERPDocumentsTypesEnum.PurchaseInvoiceRefund:
+            return `/purchaseInvoiceRefund?Id=${documentId}`;
+        case ERPDocumentsTypesEnum.ForeignJournalEntry:
+            return "Foreign Journal Entry";
+        case ERPDocumentsTypesEnum.DeliveryNoteRefund:
+            return `/deliveryNoteRefund?Id=${documentId}`;
+        default:
+            return "Unknown Document Type";
+    }
+}
