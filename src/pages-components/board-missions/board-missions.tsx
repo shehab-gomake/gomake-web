@@ -64,15 +64,16 @@ const BoardMissionsListWidget = () => {
     onCloseModal,
     onOpenPackagesModal,
     onOpenMarkReadyModal,
-    missionItem
+    missionItem,
+    onClickPrintPackagingSlip,
+    openMarkReadyThenPrintModal,
+    onCloseMarkReadyThenPrintModal,
+    onOpenMarkReadyThenPrintModal
   } = useBoardMissions();
 
   useEffect(() => {
     getAllProducts();
   }, []);
-
-
-
 
   return (
     <>
@@ -160,6 +161,7 @@ const BoardMissionsListWidget = () => {
           pageSize={pageSize}
         />
       </Stack>
+
       <ThreeOptionsModal
         title={t("boardMissions.duplicateModalTitle")}
         yesBtn={"boardMissions.duplicateModalYes"}
@@ -169,6 +171,7 @@ const BoardMissionsListWidget = () => {
         onClickYes={() => onClickDuplicateMission(DuplicateType.SameBoardMissionNumber)}
         onClickNo={() => onClickDuplicateMission(DuplicateType.NewBoardMissionNumber)}
       />
+
       <ThreeOptionsModal
         title={t("boardMissions.markDoneModalTitle")}
         subTitle={t("boardMissions.markDoneModalSubTitle")}
@@ -176,6 +179,16 @@ const BoardMissionsListWidget = () => {
         noBtn={"boardMissions.markDoneModalNo"}
         openModal={openMarkReadyModal}
         onClose={onCloseMarkReadyModal}
+        onClickYes={() => alert(missionItem?.id)}
+        onClickNo={() => alert(missionItem?.id)}
+      />
+      <ThreeOptionsModal
+        title={t("boardMissions.markDoneFromPrintSlipModalTitle")}
+        subTitle={t("boardMissions.markDoneModalSubTitle")}
+        yesBtn={"boardMissions.markDoneModalYes"}
+        noBtn={"boardMissions.markDoneModalNo"}
+        openModal={openMarkReadyThenPrintModal}
+        onClose={onCloseMarkReadyThenPrintModal}
         onClickYes={() => onOpenPackagesModal(missionItem)}
         onClickNo={() => onOpenPackagesModal(missionItem)}
       />
@@ -189,12 +202,12 @@ const BoardMissionsListWidget = () => {
         onClickDelete={() => alert("loading")}
       />
       <ThreeOptionsModal
-        title={t("Would you like to print a delivery slip and move the order to ready?")}
-        yesBtn={"Print and transfer to ready"}
-        noBtn={"Printing only"}
+        title={t("boardMissions.printAndMoveToReadyTitle")}
+        yesBtn={t("boardMissions.printAndTransferToReady")}
+        noBtn={t("boardMissions.printOnly")}
         openModal={openModal}
         onClose={onCloseModal}
-        onClickYes={onOpenMarkReadyModal}
+        onClickYes={onOpenMarkReadyThenPrintModal}
         onClickNo={() => onOpenPackagesModal(missionItem)}
       />
       <PrintPackingSlipModal
@@ -205,6 +218,7 @@ const BoardMissionsListWidget = () => {
         quantityPerPackage={quantityPerPackage}
         handleQuantityOfPackagesChange={handleQuantityOfPackagesChange}
         handleQuantityPerPackageChange={handleQuantityPerPackageChange}
+        onClickConfirm={onClickPrintPackagingSlip}
       />
     </>
   );

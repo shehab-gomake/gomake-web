@@ -4,7 +4,7 @@ import { getAllProductsForDropDownList } from "@/services/hooks";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { PStatus } from "./widgets/enums";
-import { getOrderSummeryPdfApi, getWorkMissionPdfApi, setBoardMissionsFiltersApi } from "@/services/api-service/board-missions-table/board-missions-table";
+import { getDeliveryTickerPdfApi, getOrderSummeryPdfApi, getWorkMissionPdfApi, setBoardMissionsFiltersApi } from "@/services/api-service/board-missions-table/board-missions-table";
 import { useDateFormat } from "@/hooks/use-date-format";
 import { DEFAULT_VALUES } from "@/pages/customers/enums";
 import { EWorkSource } from "@/widgets/product-pricing-widget/enums";
@@ -19,7 +19,7 @@ const useBoardMissions = () => {
   const { t } = useTranslation();
   const { classes } = useStyle();
   const { callApi } = useGomakeAxios();
-  const { alertFaultGetData } = useSnackBar();
+  const { alertFault , alertFaultGetData } = useSnackBar();
   const { data, connectionId } = useBoardMissionsSignalr();
   const { navigate } = useGomakeRouter();
   const [status, setStatus] = useState<{
@@ -177,7 +177,7 @@ const useBoardMissions = () => {
             pageNumber: pageNumber,
             pageSize: pageSize,
           });
-    }
+    } 
   };
 
   const onClickDuplicateMission = (duplicateType: DuplicateType) => {
@@ -210,6 +210,21 @@ const useBoardMissions = () => {
     await getWorkMissionPdfApi(callApi, callBack, { boardMissionId });
   };
 
+  const onClickPrintPackagingSlip = async () => {
+    if (quantityPerPackage > missionItem?.quantity) {
+      alertFault("boardMissions.alertQuantity");
+      return;
+    }
+    const callBack = (res) => {
+      if (res?.success) {
+        console.log("result : ", res?.data)
+      } else {
+        alertFaultGetData();
+      }
+    };
+    await getDeliveryTickerPdfApi(callApi, callBack, { boardMissionId: missionItem?.id, quantityOnPackages: quantityPerPackage });
+  };
+
   const [openDuplicateModal, setOpenDuplicateModal] = useState<boolean>(false);
   const onCloseDuplicateModal = () => {
     setOpenDuplicateModal(false);
@@ -227,6 +242,17 @@ const useBoardMissions = () => {
   const onOpenMarkReadyModal = () => {
     setOpenMarkReadyModal(true);
   };
+
+
+  const [openMarkReadyThenPrintModal, setOpenMarkReadyThenPrintModal] = useState<boolean>(false);
+  const onCloseMarkReadyThenPrintModal = () => {
+    setOpenMarkReadyThenPrintModal(false);
+  };
+  const onOpenMarkReadyThenPrintModal = () => {
+    setOpenMarkReadyThenPrintModal(true);
+  };
+
+
 
   const [openReturnToProdModal, setOpenReturnToProdModalModal] = useState<boolean>(false);
   const onCloseReturnToProdModal = () => {
@@ -246,6 +272,11 @@ const useBoardMissions = () => {
   const onClosePackagesModal = () => {
     setOpenPackagesModal(false);
   };
+
+  useEffect(()=>{
+    setQuantityOfPackages(1);
+    setQuantityPerPackage(missionItem?.quantity || 0);
+  },[missionItem])
 
   // useEffect(() => {
   //   const mapData = data?.data?.map((mission: any) => [
@@ -273,14 +304,6 @@ const useBoardMissions = () => {
   const handlePageChange = (event, value) => {
     setPageNumber(value);
   };
-
-
-    // const handleQuantityOfPackagesChange = (event) => {
-  //   const newQuantity = parseInt(event.target.value, 10);
-  //   setQuantityOfPackages(newQuantity);
-  // };
-
-  //////////////////////////////////////////////////////////////////////////
   
   const [quantityOfPackages, setQuantityOfPackages] = useState(1);
   const [quantityPerPackage, setQuantityPerPackage] = useState(missionItem?.quantity || 0);
@@ -380,7 +403,11 @@ const useBoardMissions = () => {
     openModal,
     onCloseModal,
     onOpenPackagesModal,
-    onOpenMarkReadyModal
+    onOpenMarkReadyModal,
+    onClickPrintPackagingSlip,
+    openMarkReadyThenPrintModal,
+    onCloseMarkReadyThenPrintModal,
+    onOpenMarkReadyThenPrintModal
   };
 };
 

@@ -97,6 +97,13 @@ const useStyle = () => {
         height: 120,
         color: errorColor(300),
       },
+      modalStyle:{
+        width: "25%",
+        borderRadius: "8px",
+        height: "auto",
+        maxHeight: 600,
+        gap: "10px"
+      },
     };
   }, [theme]);
   return {
