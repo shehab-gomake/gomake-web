@@ -80,6 +80,16 @@ const useActionUpdateValues = () => {
             signalRConnectionId: connectionId
         }).then()
     }
+    const selectNewMaterials = (printHouseMaterialSizeId: string, actionId: string, productType: string, actionIndex: number) => {
+        updateProductItemDraftActionMachine(callApi, apiCallBack, {
+            actionId: actionId,
+            printHouseMaterialSizeId: printHouseMaterialSizeId,
+            productType: productType,
+            productItemValueId: currentProductItemValue,
+            actionIndex: actionIndex,
+            signalRConnectionId: connectionId
+        }).then()
+    }
 
     const updateActionData = async (actionId: string, newValue: number, key: string, productType: string) => {
         await updateProductItemDraftActionData(callApi, apiCallBack, {
@@ -96,6 +106,7 @@ const useActionUpdateValues = () => {
         getActionMachinesList,
         getActionMaterialsList,
         selectNewMachine,
+        selectNewMaterials,
         updateActionData,
         open,
         anchorEl,

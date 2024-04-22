@@ -172,7 +172,7 @@ const ActionContainerComponent = ({
   actionException,
   materials
 }: IActionContainerComponentProps) => {
-
+  console.log("materials", materials)
   source = source === EWorkSource.OUT ? EWorkSource.OUT : EWorkSource.INTERNAL;
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [chooseMachine, setChooseMachine] = useState<boolean>(false);
@@ -183,6 +183,7 @@ const ActionContainerComponent = ({
     getActionMachinesList,
     getActionMaterialsList,
     selectNewMachine,
+    selectNewMaterials,
     anchorEl,
     open,
     handleClick,
@@ -392,12 +393,12 @@ const ActionContainerComponent = ({
                       >
                         <GoMakeAutoComplate
                           onChange={(e, v) => {
-                            // selectNewMachine(
-                            //   v?.value,
-                            //   actionId,
-                            //   productType,
-                            //   actionIndex
-                            // );
+                            selectNewMaterials(
+                              v?.value,
+                              actionId,
+                              productType,
+                              actionIndex
+                            );
                             setChooseMaterial(false);
                           }}
                           style={{ width: "200px" }}
