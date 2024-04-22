@@ -41,7 +41,6 @@ const useBoardMissions = () => {
   const { customer, setCustomer, renderOptions, checkWhatRenderArray, handleCustomerChange } = useCustomerDropDownList()
   const { agent, setAgent, agentsCategories, handleAgentChange } = useAgentsList()
   const router = useRouter()
-  console.log("RRRR", router.query)
 
   const handlePageSizeChange = (event) => {
     setPageNumber(1);

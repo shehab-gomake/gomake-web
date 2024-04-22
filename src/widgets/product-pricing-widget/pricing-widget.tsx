@@ -121,7 +121,6 @@ const PricingWidget = ({
   const [filterWorkFlow, setFilterWorkFlow] = useState()
 
   console.log("workFlowsworkFlowsworkFlowsworkFlowsworkFlows", workFlows)
-  console.log("workFlowsworkFlowsworkFlowsworkFlowsworkFlows", { tabs, filterWorkFlow })
 
   useEffect(() => {
     const newTabs = workFlows.reduce((accumulator, currentItem) => {

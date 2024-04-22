@@ -973,7 +973,6 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     }
 
     if (quoteItemValue?.totalPrice === 0) {
-      console.log("quoteItemValue : ", quoteItemValue, " quoteItemValue.d", quoteItemValue?.documentItems)
       alertFault("alerts.cannotCreateWithPriceZero");
       return;
     }
