@@ -38,6 +38,25 @@ const useActionUpdateValues = () => {
         return [];
     };
 
+    const getActionMaterialsList = (
+        actionId: string,
+        productType: string | null
+    ) => {
+        const material = actions.find(
+            (action) =>
+                action.actionId === actionId && productType === action.productType
+        );
+        if (material) {
+            return material?.materials
+                ?.flatMap((category) => category.materialCategories)
+                ?.map((machine) => ({
+                    value: machine.printHouseMaterialId,
+                    label: machine.name,
+                }));
+        }
+        return [];
+    };
+
     const apiCallBack = (res: {success: boolean}) => {
         if (res.success) {
             alertSuccessUpdate()
@@ -75,6 +94,7 @@ const useActionUpdateValues = () => {
 
     return {
         getActionMachinesList,
+        getActionMaterialsList,
         selectNewMachine,
         updateActionData,
         open,

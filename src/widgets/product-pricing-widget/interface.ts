@@ -19,6 +19,7 @@ export interface IPricingAction {
   actionId: string;
   machineCategories: IPricingMachineCategory[];
   productType: string | null;
+  materials?:any
 }
 
 export interface IPricingMachineCategory {
@@ -84,6 +85,7 @@ export interface IWorkFlowAction {
   materialVolume: number;
   pagesQuantity?: number;
   totalBookletDelay?: number;
+  materials?:any
 }
 
 export interface IOutput {
