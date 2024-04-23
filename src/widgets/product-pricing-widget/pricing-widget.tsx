@@ -128,9 +128,9 @@ const PricingWidget = ({
     if (a.selected === b.selected) {
       return 0;
     } else if (a.selected) {
-      return -1; // "a" comes before "b"
+      return -1;
     } else {
-      return 1; // "b" comes before "a"
+      return 1;
     }
   });
   console.log("workFlowsworkFlowsworkFlowsworkFlowsworkFlows", workFlows)
