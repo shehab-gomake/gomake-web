@@ -13,6 +13,10 @@ import {EBoardMissionsViews} from "@/widgets/production-floor/views/board-missio
 import {
     BoardMissionsStationsComponent
 } from "@/widgets/production-floor/views/board-missions-view/stations/board-missions-stations-component";
+import {
+    BoardMissionsActivities
+} from "@/widgets/production-floor/views/board-missions-view/activity/board-missions-activities";
+import {useBoardMissionsSignalr} from "@/hooks/signalr/use-board-missions-signalr";
 
 interface IProps {
     boardMissionsId: string;
@@ -21,12 +25,13 @@ interface IProps {
 
 const BoardMissionsComponent = ({boardMissionsId, step}: IProps) => {
     const {getBoardMissions} = useBoardMissions();
+    const {connectionId} = useBoardMissionsSignalr();
 
     useEffect(() => {
-        if (!!boardMissionsId) {
-            getBoardMissions(boardMissionsId).then();
+        if (!!boardMissionsId && !!connectionId) {
+            getBoardMissions(boardMissionsId, connectionId).then();
         }
-    }, [boardMissionsId])
+    }, [boardMissionsId, connectionId])
     return <Stack maxHeight={'100%'} overflow={'hidden'} gap={'16px'} padding={'34px 24px'} borderRadius={'24px, 24px, 0px, 0px'}>
         <BoardMissionsDetailsHeader/>
         <Divider orientation={'horizontal'} flexItem/>
@@ -42,7 +47,7 @@ const BoardMissionsComponent = ({boardMissionsId, step}: IProps) => {
                 step === EBoardMissionsViews.APPROVAL && <></>
             }
             {
-                step === EBoardMissionsViews.ACTIVITY && <></>
+                step === EBoardMissionsViews.ACTIVITY && <BoardMissionsActivities/>
             }
         </Stack>
     </Stack>

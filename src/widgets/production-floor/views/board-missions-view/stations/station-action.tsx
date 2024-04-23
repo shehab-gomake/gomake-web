@@ -20,8 +20,6 @@ import {
 } from "@/services/api-service/production-floor/production-floor-endpoints";
 import Button from "@mui/material/Button";
 import {ActionTimer} from "@/widgets/production-floor/views/board-missions-view/stations/action-timer/action-timer";
-import {useRecoilState} from "recoil";
-import {boardMissionsStationsState} from "@/widgets/production-floor/views/board-missions-view/stations/state";
 
 interface IProps extends IBoardMissionsStation {
     delay: number
@@ -43,7 +41,6 @@ const BoardMissionsStationAction = ({
     const {t} = useTranslation();
     const {classes} = useStyle();
     const {callApi} = useGomakeAxios();
-    const [stations, setStations] = useRecoilState(boardMissionsStationsState);
     const {alertSuccessUpdate, alertFaultUpdate} = useSnackBar();
     const inputsParameters = outputs.filter(
         (parameter) =>
@@ -60,10 +57,6 @@ const BoardMissionsStationAction = ({
         const callBack = (res) => {
             if (res.success) {
                 alertSuccessUpdate();
-                setStations(stations?.map(station => station.boardMissionActionId === boardMissionActionId ? {
-                    ...station,
-                    isDone: true
-                } : station))
             } else {
                 alertFaultUpdate()
             }
@@ -74,10 +67,6 @@ const BoardMissionsStationAction = ({
         const callBack = (res) => {
             if (res.success) {
                 alertSuccessUpdate()
-                setStations(stations?.map(station => station.boardMissionActionId === boardMissionActionId ? {
-                    ...station,
-                    isDone: false
-                } : station))
             } else {
                 alertFaultUpdate()
             }
@@ -89,13 +78,6 @@ const BoardMissionsStationAction = ({
         const callBack = (res) => {
             if (res.success) {
                 alertSuccessUpdate()
-                setStations(stations?.map(station => station.boardMissionActionId === boardMissionActionId ? {
-                    ...station,
-                    boardMissionActionTimer: {
-                        ...station.boardMissionActionTimer,
-                        isTimerRunning: !station.boardMissionActionTimer?.isTimerRunning
-                    }
-                } : station))
             } else {
                 alertFaultUpdate()
             }
