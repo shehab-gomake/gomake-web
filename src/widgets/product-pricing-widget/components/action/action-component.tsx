@@ -592,7 +592,6 @@ const ActionContainerComponent = ({
           yesBtn={t("modal.confirm")}
           onClickDelete={updateWorkFlowForMachine}
         />
-        {/* pricingWidget */}
         <GoMakeDeleteModal
           insideStyle={classes.insideStyle}
           openModal={openModalMaterial}
