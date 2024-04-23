@@ -40,6 +40,7 @@ const useCalculationsWorkFlowsSignalr = () => {
         setCalculationExceptionsLogs(newData.calculationExceptions);
       });
       connection.on("updateSelectedWorkFlow", (newData) => {
+        console.log("updateSelectedWorkFlow", newData)
         setUpdatedSelectedWorkFlow(newData);
       });
       connection.on("UpdatePricing", (newData) => {
