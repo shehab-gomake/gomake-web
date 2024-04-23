@@ -117,9 +117,22 @@ const PricingWidget = ({
     }
   }, [view, selectedWorkFlow])
   const [tabs, setTabs] = useState([]);
+  const reorderedTabs = [
+    ...(tabs.find(tab => tab.key === "general") ? [tabs.find(tab => tab.key === "general")] : []), // "Flows Pending" tab if exists
+    ...tabs.filter(tab => tab.key !== "general") // Other tabs
+  ];
   const [selectedTab, setSelectedTab] = useState("")
   const [filterWorkFlow, setFilterWorkFlow] = useState()
 
+  const sortedArray = workFlows.slice().sort((a, b) => {
+    if (a.selected === b.selected) {
+      return 0;
+    } else if (a.selected) {
+      return -1;
+    } else {
+      return 1;
+    }
+  });
   console.log("workFlowsworkFlowsworkFlowsworkFlowsworkFlows", workFlows)
 
   useEffect(() => {
@@ -130,15 +143,15 @@ const PricingWidget = ({
           accumulator.push({ tabName: currentItem.sectionName, key: currentItem.productType });
         }
       } else if (currentItem.isCompleteWorkFlow === false && currentItem.productType === null) {
-        const existingTab = accumulator.find(tab => tab.tabName === "General" && tab.key === null);
+        const existingTab = accumulator.find(tab => tab.tabName === t("pricingWidget.flowsPending") && tab.key === "general");
         if (!existingTab) {
-          accumulator.push({ tabName: "General", key: null });
+          accumulator.push({ tabName: t("pricingWidget.flowsPending"), key: "general" });
         }
       }
-      else if (currentItem.isCompleteWorkFlow === true && currentItem.productType === null) {
-        const existingTab = accumulator.find(tab => tab.tabName === "Other" && tab.key === null);
+      else if (currentItem.isCompleteWorkFlow === true && currentItem.productType === null && currentItem.subWorkFlows.length === 0) {
+        const existingTab = accumulator.find(tab => tab.tabName === t("pricingWidget.flows") && tab.key === "other");
         if (!existingTab) {
-          accumulator.push({ tabName: "Other", key: null });
+          accumulator.push({ tabName: t("pricingWidget.flows"), key: "other" });
         }
       }
       return accumulator;
@@ -159,10 +172,11 @@ const PricingWidget = ({
                   ? "contained"
                   : "outlined"
               }
+
             >
               {t("pricingWidget.selected")}
             </PrimaryButton>
-            {tabs.map((tab, index) => {
+            {reorderedTabs.map((tab, index) => {
               return (
                 <PrimaryButton
                   data-tour={'allWorkflowsBtn'}
@@ -177,7 +191,22 @@ const PricingWidget = ({
                       ? "contained"
                       : "outlined"
                   }
-                >{tab?.tabName} ({((workFlows.filter(flow => flow.productType === tab.key).length))})</PrimaryButton>
+                >{tab?.tabName}{" "}
+                  ({
+                    workFlows.filter(flow => {
+                      if (flow.productType !== null) {
+                        return flow.productType === tab?.key;
+                      } else {
+                        if (flow.isCompleteWorkFlow === true && flow.subWorkFlows.length === 0) {
+                          return tab?.key === "other";
+                        } else if (flow.isCompleteWorkFlow === false) {
+                          return tab?.key === "general";
+                        }
+
+                      }
+                    }).length
+                  })
+                </PrimaryButton>
               )
             })}
 
@@ -216,6 +245,7 @@ const PricingWidget = ({
         />
       )}
       <Divider />
+
       {selectedWorkFlow && view === EPricingViews.SELECTED_WORKFLOW && (
         <div data-tour={'actions-container'}>
           <SubWorkFlowsComponent
@@ -232,7 +262,18 @@ const PricingWidget = ({
         <div data-tour={'allWorkflowsContainer'}>
           <WorkFlowsComponent
             showSelected={() => setView(EPricingViews.SELECTED_WORKFLOW)}
-            workflows={workFlows.filter(flow => flow.productType === filterWorkFlow)}
+            workflows={sortedArray.filter(flow => {
+              if (flow.productType !== null) {
+                return flow.productType === filterWorkFlow;
+              } else {
+                if (flow.isCompleteWorkFlow === true) {
+                  return filterWorkFlow === "other";
+                } else {
+                  return filterWorkFlow === "general";
+                }
+
+              }
+            })}
           />
         </div>
       )}

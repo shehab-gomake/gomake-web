@@ -24,7 +24,7 @@ import {
   currentProductItemValueState,
   outsourceSuppliersState,
 } from "@/widgets/product-pricing-widget/state";
-import { GoMakeAutoComplate } from "@/components";
+import { GoMakeAutoComplate, GoMakeDeleteModal, GoMakeModal } from "@/components";
 import Button from "@mui/material/Button";
 import { useTranslation } from "react-i18next";
 import { PrintImageComponent } from "@/widgets/product-pricing-widget/components/print-image/print-image-component";
@@ -172,7 +172,6 @@ const ActionContainerComponent = ({
   actionException,
   materials
 }: IActionContainerComponentProps) => {
-
   source = source === EWorkSource.OUT ? EWorkSource.OUT : EWorkSource.INTERNAL;
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [chooseMachine, setChooseMachine] = useState<boolean>(false);
@@ -183,11 +182,19 @@ const ActionContainerComponent = ({
     getActionMachinesList,
     getActionMaterialsList,
     selectNewMachine,
+    selectNewMaterials,
     anchorEl,
     open,
     handleClick,
     handleClose,
     updateActionData,
+    openModalMachine,
+    openModalMaterial,
+    onClickCloseModalMachine,
+    onClickCloseModalMaterial,
+    setAttributesData,
+    updateWorkFlowForMachine,
+    updateWorkFlowForMaterials
   } = useActionUpdateValues();
   const suppliersState = useRecoilValue(outsourceSuppliersState);
   const suppliers = useMemo(() => {
@@ -339,6 +346,15 @@ const ActionContainerComponent = ({
                               productType,
                               actionIndex
                             );
+                            setAttributesData({
+                              actionId,
+                              productType,
+                              actionIndex,
+                              machineName: v.label,
+                              machineId: v?.value,
+                              printingActionId: id,
+
+                            })
                             setChooseMachine(false);
                           }}
                           style={{ width: "200px" }}
@@ -392,12 +408,20 @@ const ActionContainerComponent = ({
                       >
                         <GoMakeAutoComplate
                           onChange={(e, v) => {
-                            // selectNewMachine(
-                            //   v?.value,
-                            //   actionId,
-                            //   productType,
-                            //   actionIndex
-                            // );
+                            selectNewMaterials(
+                              v?.value,
+                              actionId,
+                              productType,
+                              actionIndex
+                            );
+                            setAttributesData({
+                              actionId,
+                              productType,
+                              actionIndex,
+                              printHouseMaterialSizeName: v.label,
+                              printHouseMaterialSizeId: v?.value,
+                              printingActionId: id,
+                            })
                             setChooseMaterial(false);
                           }}
                           style={{ width: "200px" }}
@@ -559,7 +583,26 @@ const ActionContainerComponent = ({
           machineName={machineName}
           categoryId={categoryId}
         />
+        <GoMakeDeleteModal
+          insideStyle={classes.insideStyle}
+          openModal={openModalMachine}
+          onClose={onClickCloseModalMachine}
+          title={t("pricingWidget.machineMsg")}
+          hideIcon={true}
+          yesBtn={t("modal.confirm")}
+          onClickDelete={updateWorkFlowForMachine}
+        />
+        <GoMakeDeleteModal
+          insideStyle={classes.insideStyle}
+          openModal={openModalMaterial}
+          onClose={onClickCloseModalMaterial}
+          title={t("pricingWidget.materialMsg")}
+          hideIcon={true}
+          yesBtn={t("modal.confirm")}
+          onClickDelete={updateWorkFlowForMaterials}
+        />
       </Stack>
+
     </Fade>
   );
 };
