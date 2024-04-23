@@ -11,7 +11,6 @@ import { exampleTypeState } from "@/store/example-type";
 import { currenciesState } from "@/widgets/materials-widget/state";
 import { ECalculationLogType } from "@/widgets/product-pricing-widget/enums";
 import {
-  calculationExceptionsLogsState,
   calculationProgressState,
   currentProductItemValuePriceState,
   selectedWorkFlowState,
@@ -29,9 +28,7 @@ const useRightSideWidget = ({ includeVAT }) => {
   const { errorColor, successColor, warningColor, neutralColor } = useGomakeTheme();
 
   const isLoading = useRecoilValue(isLoadgingState);
-  const calculationExceptionsLogs = useRecoilValue(
-    calculationExceptionsLogsState
-  );
+
   const subProducts = useRecoilValue<any>(subProductsParametersState);
   const systemVAT = useRecoilValue<number>(systemVATState);
   const selectedWorkFlow = useRecoilValue(selectedWorkFlowState);
@@ -113,7 +110,6 @@ const useRightSideWidget = ({ includeVAT }) => {
     isLoading,
     quantity,
     selectedWorkFlow,
-    calculationExceptionsLogs,
     setCurrentProductItemValueTotalPrice,
     _renderIconLogs,
     t,
