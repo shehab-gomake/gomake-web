@@ -989,15 +989,23 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   ]);
 
   useEffect(() => {
-    setCanCalculation(false);
+    let checkParameter = validateParameters(isRequiredParameters);
     setCurrentProductItemValueTotalPrice(null);
     setWorkFlows([]);
     setJobActions([]);
     setSubProducts([]);
+    if (checkParameter) {
+      setCanCalculation(true);
+
+    } else {
+      setCanCalculation(false);
+
+    }
     setCalculationProgress({
       totalWorkFlowsCount: 0,
       currentWorkFlowsCount: 0,
     });
+
     if (
       widgetType === EWidgetProductType.EDIT ||
       widgetType === EWidgetProductType.DUPLICATE
@@ -2146,6 +2154,15 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     setCheckParameter(checkParameter)
   }, [isRequiredParameters])
 
+  // useEffect(() => {
+  //   let checkParameter = validateParameters(isRequiredParameters);
+  //   console.log("isRequiredParameters", isRequiredParameters, checkParameter)
+  //   // if (checkParameter) {
+  //   //   setCanCalculation(true)
+  //   // }
+
+  // }, [isRequiredParameters])
+
   const calculationProduct = useCallback(async () => {
     if (requestAbortController) {
       requestAbortController.abort();
@@ -2166,9 +2183,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       const newRequestAbortController = new AbortController();
       setRequestAbortController(newRequestAbortController);
       let subProductsCopy = cloneDeep(subProducts);
-      let generalParameters = subProductsCopy.find((x) => !x.type).parameters;
+      let generalParameters = subProductsCopy.find((x) => !x.type)?.parameters;
       let calculationSubProducts = subProductsCopy.filter((x) => x.type);
-      generalParameters.forEach(x => x.valuesConfigs = null);
+      generalParameters?.forEach(x => x.valuesConfigs = null);
       calculationSubProducts.forEach(x => x.parameters.forEach(y => y.valuesConfigs = null))
       let workTypes = [];
       if (productQuantityTypes && productQuantityTypes.length > 0 && productQuantityTypes[0].quantity > 0) {
