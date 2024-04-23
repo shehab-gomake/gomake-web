@@ -24,7 +24,7 @@ import {
   currentProductItemValueState,
   outsourceSuppliersState,
 } from "@/widgets/product-pricing-widget/state";
-import { GoMakeAutoComplate } from "@/components";
+import { GoMakeAutoComplate, GoMakeDeleteModal, GoMakeModal } from "@/components";
 import Button from "@mui/material/Button";
 import { useTranslation } from "react-i18next";
 import { PrintImageComponent } from "@/widgets/product-pricing-widget/components/print-image/print-image-component";
@@ -172,7 +172,6 @@ const ActionContainerComponent = ({
   actionException,
   materials
 }: IActionContainerComponentProps) => {
-  console.log("materials", materials)
   source = source === EWorkSource.OUT ? EWorkSource.OUT : EWorkSource.INTERNAL;
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [chooseMachine, setChooseMachine] = useState<boolean>(false);
@@ -189,6 +188,13 @@ const ActionContainerComponent = ({
     handleClick,
     handleClose,
     updateActionData,
+    openModalMachine,
+    openModalMaterial,
+    onClickCloseModalMachine,
+    onClickCloseModalMaterial,
+    setAttributesData,
+    updateWorkFlowForMachine,
+    updateWorkFlowForMaterials
   } = useActionUpdateValues();
   const suppliersState = useRecoilValue(outsourceSuppliersState);
   const suppliers = useMemo(() => {
@@ -340,6 +346,15 @@ const ActionContainerComponent = ({
                               productType,
                               actionIndex
                             );
+                            setAttributesData({
+                              actionId,
+                              productType,
+                              actionIndex,
+                              machineName: v.label,
+                              machineId: v?.value,
+                              printingActionId: id,
+
+                            })
                             setChooseMachine(false);
                           }}
                           style={{ width: "200px" }}
@@ -399,6 +414,14 @@ const ActionContainerComponent = ({
                               productType,
                               actionIndex
                             );
+                            setAttributesData({
+                              actionId,
+                              productType,
+                              actionIndex,
+                              printHouseMaterialSizeName: v.label,
+                              printHouseMaterialSizeId: v?.value,
+                              printingActionId: id,
+                            })
                             setChooseMaterial(false);
                           }}
                           style={{ width: "200px" }}
@@ -560,7 +583,26 @@ const ActionContainerComponent = ({
           machineName={machineName}
           categoryId={categoryId}
         />
+        <GoMakeDeleteModal
+          insideStyle={classes.insideStyle}
+          openModal={openModalMachine}
+          onClose={onClickCloseModalMachine}
+          title="It seems like there's no existing workflow associated with this machine. Would you like to create a new one or modify the current workflow?"
+          hideIcon={true}
+          yesBtn="confirm"
+          onClickDelete={updateWorkFlowForMachine}
+        />
+        <GoMakeDeleteModal
+          insideStyle={classes.insideStyle}
+          openModal={openModalMaterial}
+          onClose={onClickCloseModalMaterial}
+          title="It seems like there's no existing workflow associated with this material size. Would you like to create a new one or modify the current workflow?"
+          hideIcon={true}
+          yesBtn="confirm"
+          onClickDelete={updateWorkFlowForMaterials}
+        />
       </Stack>
+
     </Fade>
   );
 };

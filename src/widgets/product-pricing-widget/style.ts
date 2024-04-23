@@ -14,6 +14,10 @@ const useStyle = () => {
         ...FONT_FAMILY.Lexend(500, 14),
         color: neutralColor(500),
       },
+      insideStyle: {
+        // width: "600px",
+         height: "300px",
+       },
       detailValue: {
         ...FONT_FAMILY.Inter(500, 14),
         color: primaryColor(900),
