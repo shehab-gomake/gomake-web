@@ -312,9 +312,18 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     }
 
   }, [calculationExceptionsLogs]);
+  function setSelectedTrue(workFlowsArray, selectedId) {
+    workFlowsArray.forEach(workFlow => {
+      if (workFlow.id === selectedId ||
+        (updatedSelectedWorkFlow.subWorkFlows &&
+          updatedSelectedWorkFlow.subWorkFlows.some(subFlow => subFlow.orginalBookPartId === selectedId))) {
+        workFlow.selected = true;
+      }
+    });
+  }
   useEffect(() => {
     if (updatedSelectedWorkFlow) {
-      if (!workFlows.find(x => x.id == updatedSelectedWorkFlow?.id)) {
+      if (workFlows.find(x => x.id == updatedSelectedWorkFlow?.id)) {
         setWorkFlows(
           workFlows.map((flow) =>
             flow.id === updatedSelectedWorkFlow?.id
@@ -327,6 +336,19 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         );
       } else {
         let temp = workFlows.map((flow) => { return { ...flow, selected: false } });
+        temp.forEach(item => {
+          if (updatedSelectedWorkFlow.orginalBookPartId === item.id) {
+            item.selected = true;
+          }
+          if (updatedSelectedWorkFlow.subWorkFlows) {
+            updatedSelectedWorkFlow.subWorkFlows.forEach(subFlow => {
+              if (subFlow.orginalBookPartId === item.id) {
+                item.selected = true;
+              }
+            });
+          }
+        });
+
         setWorkFlows([...temp, { ...updatedSelectedWorkFlow, selected: true }]);
       }
 

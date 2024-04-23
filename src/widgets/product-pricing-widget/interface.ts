@@ -50,6 +50,7 @@ export interface ICalculatedWorkFlow {
   isCalculated: boolean;
   exceptions: any[];
   isCompleteWorkFlow:boolean;
+  orginalBookPartId:string;
 }
 
 export interface IPrintActionType {
