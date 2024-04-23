@@ -143,15 +143,15 @@ const PricingWidget = ({
           accumulator.push({ tabName: currentItem.sectionName, key: currentItem.productType });
         }
       } else if (currentItem.isCompleteWorkFlow === false && currentItem.productType === null) {
-        const existingTab = accumulator.find(tab => tab.tabName === "Flows Pending" && tab.key === "general");
+        const existingTab = accumulator.find(tab => tab.tabName === t("pricingWidget.flowsPending") && tab.key === "general");
         if (!existingTab) {
-          accumulator.push({ tabName: "Flows Pending", key: "general" });
+          accumulator.push({ tabName: t("pricingWidget.flowsPending"), key: "general" });
         }
       }
       else if (currentItem.isCompleteWorkFlow === true && currentItem.productType === null && currentItem.subWorkFlows.length === 0) {
-        const existingTab = accumulator.find(tab => tab.tabName === "Flows" && tab.key === "other");
+        const existingTab = accumulator.find(tab => tab.tabName === t("pricingWidget.flows") && tab.key === "other");
         if (!existingTab) {
-          accumulator.push({ tabName: "Flows", key: "other" });
+          accumulator.push({ tabName: t("pricingWidget.flows"), key: "other" });
         }
       }
       return accumulator;
@@ -172,6 +172,7 @@ const PricingWidget = ({
                   ? "contained"
                   : "outlined"
               }
+
             >
               {t("pricingWidget.selected")}
             </PrimaryButton>

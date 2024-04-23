@@ -587,18 +587,19 @@ const ActionContainerComponent = ({
           insideStyle={classes.insideStyle}
           openModal={openModalMachine}
           onClose={onClickCloseModalMachine}
-          title="It seems like there's no existing workflow associated with this machine. Would you like to create a new one or modify the current workflow?"
+          title={t("pricingWidget.machineMsg")}
           hideIcon={true}
-          yesBtn="confirm"
+          yesBtn={t("modal.confirm")}
           onClickDelete={updateWorkFlowForMachine}
         />
+        {/* pricingWidget */}
         <GoMakeDeleteModal
           insideStyle={classes.insideStyle}
           openModal={openModalMaterial}
           onClose={onClickCloseModalMaterial}
-          title="It seems like there's no existing workflow associated with this material size. Would you like to create a new one or modify the current workflow?"
+          title={t("pricingWidget.materialMsg")}
           hideIcon={true}
-          yesBtn="confirm"
+          yesBtn={t("modal.confirm")}
           onClickDelete={updateWorkFlowForMaterials}
         />
       </Stack>
