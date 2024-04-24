@@ -4,7 +4,7 @@ import {
     currentProductItemValueState,
     outsourceSuppliersState,
 } from "@/widgets/product-pricing-widget/state";
-import {useGomakeAxios, useGomakeRouter} from "@/hooks";
+import {useGomakeAxios, useGomakeRouter, useSnackBar} from "@/hooks";
 import {currentCalculationConnectionId, } from "@/store";
 import {EWorkSource} from "@/widgets/product-pricing-widget/enums";
 import {addItemApi} from "@/services/api-service/generic-doc/documents-api";
@@ -22,7 +22,7 @@ const useOutsourceSupplier = () => {
           const connectionId = useRecoilValue(currentCalculationConnectionId);
     const {navigate} = useGomakeRouter();
     const {callApi} = useGomakeAxios();
-
+    const { alertFaultAdded, } = useSnackBar();
     const updateProductItemValueOutsourceWithKey = async (supplierId:string, key: number, value:number) => {
         await updateProductItemValueOutsourceSupplierCost(callApi, () => { }, {
         productItemValueId: productItemValueDraftId,
@@ -109,7 +109,9 @@ const useOutsourceSupplier = () => {
         const addItemCallBack = (res) => {
             if (res.success) {
                 navigate("/quote");
-            }
+            }else {
+                alertFaultAdded();
+              }
         }
 
         return {

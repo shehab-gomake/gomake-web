@@ -5,6 +5,7 @@ import { EWidgetProductType } from "../enums";
 import { DotsLoader } from "@/components/dots-loader/dots-Loader";
 import { ProgressBar } from "@/components/progress-bar/progress-bar";
 import { useRightSideWidget } from "./use-right-side-widget";
+import { useState } from "react";
 const RightSideWidget = ({
   clasess,
   clientDefaultValue,
@@ -50,7 +51,7 @@ const RightSideWidget = ({
     t,
     _renderIconLogs,
   } = useRightSideWidget({ includeVAT });
-
+  const [myvalue, setMyValue] = useState("---------")
   return (
     <div style={clasess.rightSideMainContainer}>
       <div style={clasess.rightSideContainer}>
@@ -141,11 +142,13 @@ const RightSideWidget = ({
               <GomakeTextInput
                 value={
                   selectedWorkFlow?.exceptions?.length > 0
-                    ? "---------"
-                    : currentProductItemValueTotalPrice ?? "---------"
+                    ? myvalue
+                    : currentProductItemValueTotalPrice ?? myvalue
                 }
                 onChange={(e: any) => {
-                  setCurrentProductItemValueTotalPrice(e.target.value);
+                  selectedWorkFlow?.exceptions?.length > 0 ?
+                    setMyValue(e.target.value) :
+                    setCurrentProductItemValueTotalPrice(e.target.value);
                 }}
                 style={clasess.inputPriceStyle}
                 type={selectedWorkFlow?.exceptions?.length > 0 ? "text" : typeof (currentProductItemValueTotalPrice) === "number" ? "number" : "text"}
@@ -185,8 +188,10 @@ const RightSideWidget = ({
               )
                 ? 0
                 : (
-                  currentProductItemValueTotalPrice / quantity?.values[0]
-                ).toFixed(2),
+                  selectedWorkFlow?.exceptions?.length > 0
+                    ? parseFloat(myvalue) / (quantity?.values[0] || 1)
+                    : (currentProductItemValueTotalPrice || 0) / (quantity?.values[0] || 1)
+                )?.toFixed(2),
               unitPrice: systemCurrency,
             })}
           </div>
