@@ -48,6 +48,12 @@ const useGomakeLogin = () => {
     }
    
   }, [state]);
+
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      onClickLogin();
+    }
+  };
   const inputs = useMemo(() => {
     return [
       {
@@ -82,6 +88,7 @@ const useGomakeLogin = () => {
     changeState,
     onClickLogin,
     getUserProfile,
+    handleKeyPress,
     t
   };
 };
