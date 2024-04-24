@@ -260,10 +260,8 @@ const useCustomers = (
       !(
         customer &&
         customer.name &&
-        customer.clientTypeId &&
-        customer.tel1 &&
-        customer.phone &&
-        customer.mail
+        customer.clientTypeId
+    
       )
     ) {
       return false;

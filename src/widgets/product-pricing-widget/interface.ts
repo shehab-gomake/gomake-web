@@ -19,6 +19,7 @@ export interface IPricingAction {
   actionId: string;
   machineCategories: IPricingMachineCategory[];
   productType: string | null;
+  materials?:any
 }
 
 export interface IPricingMachineCategory {
@@ -48,6 +49,8 @@ export interface ICalculatedWorkFlow {
   productType: string | null;
   isCalculated: boolean;
   exceptions: any[];
+  isCompleteWorkFlow:boolean;
+  orginalBookPartId:string;
 }
 
 export interface IPrintActionType {
@@ -83,6 +86,7 @@ export interface IWorkFlowAction {
   materialVolume: number;
   pagesQuantity?: number;
   totalBookletDelay?: number;
+  materials?:any
 }
 
 export interface IOutput {

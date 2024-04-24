@@ -2,7 +2,7 @@ version: 0.2
 phases:
   install:
     runtime-versions:
-      nodejs: 16
+      nodejs: 18
     commands:
       - npm install -g typescript
       - npm install
@@ -11,7 +11,7 @@ phases:
       - echo Installing source NPM dependencies...
   build:
     commands:
-      - npm --max-old-space-size=3000 run build
+      - npm run build
 artifacts:
   type: zip
   files:

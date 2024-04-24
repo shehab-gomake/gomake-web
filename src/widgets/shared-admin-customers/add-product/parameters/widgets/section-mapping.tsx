@@ -32,18 +32,19 @@ const SectionMappingWidget = ({
               <div key={index}>
                 <div style={clasess.parameterContainer}>
                   <div style={clasess.parameterLabelStyle}>
-                    <div style={clasess.paramNameStyle}>{parameter?.name}</div>
+                    <div style={clasess.paramNameStyle}>{parameter?.name} <small>&nbsp;{parameter?.defaultUnit}</small></div>
+
                     {parameter?.parameterType ===
                       EParameterTypes.SELECT_CHILDS_PARAMETERS && (
-                      <div
-                        style={clasess.plusIconStyle}
-                        onClick={() =>
-                          onOpenModal(parameter, section?.id, subSection?.id)
-                        }
-                      >
-                        <SettingIcon width={20} height={20} />
-                      </div>
-                    )}
+                        <div
+                          style={clasess.plusIconStyle}
+                          onClick={() =>
+                            onOpenModal(parameter, section?.id, subSection?.id)
+                          }
+                        >
+                          <SettingIcon width={20} height={20} />
+                        </div>
+                      )}
                     {!isHiddenIcon && (
                       <>
                         {parameter?.isHidden ? (

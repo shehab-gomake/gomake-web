@@ -25,6 +25,8 @@ import { useQuoteGetData } from "../quote-new/use-quote-get-data";
 import { useStyle } from "./style";
 import { DEFAULT_VALUES } from "@/pages/customers/enums";
 import { getAllReceiptsApi, getReceiptPdfApi } from "@/services/api-service/generic-doc/receipts-api";
+import { EHttpMethod } from "@/services/api-service/enums";
+import { renderDocumentTypeForSourceDocumentNumber, renderURLDocumentType } from "@/widgets/settings-documenting/documentDesign/enums/document-type";
 
 const useQuotes = (docType: DOCUMENT_TYPE) => {
   const { t } = useTranslation();
@@ -33,6 +35,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
   const { alertFaultUpdate, alertFaultDuplicate, alertFaultGetData } = useSnackBar();
   const { getCurrencyUnitText } = useQuoteGetData();
   const { navigate } = useGomakeRouter();
+
   const { errorColor } = useGomakeTheme();
   const [patternSearch, setPatternSearch] = useState("");
   const [finalPatternSearch, setFinalPatternSearch] = useState("");
@@ -174,12 +177,19 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
               GetDateFormat(quote?.creationDate),
               quote?.number,
               quote?.orderNumber,
+              // quote?.sourceDocumentNumber?.map((item, index) => {
+              //   return (
+              //     <span key={index}>{renderDocumentTypeForSourceDocumentNumber(item?.sourceDocumentType)}:{item?.documentNumber}<br /></span>
+
+              //   )
+              // }),
               quote?.supplierName,
+
               quote?.clientName,
               quote?.itemsNumber,
               quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
               quote?.notes,
-              _renderStatus(quote, t , navigate),
+              _renderStatus(quote, t, navigate),
               <MoreMenuWidget
                 quote={quote}
                 documentType={docType}
@@ -196,7 +206,14 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
               quote?.number,
               quote?.invoiceNumber,
               purchaseOrderNumbers,
+              // quote?.sourceDocumentNumber?.map((item, index) => {
+              //   return (
+              //     <span key={index}>{renderDocumentTypeForSourceDocumentNumber(item?.sourceDocumentType)}:{item?.documentNumber}<br /></span>
+
+              //   )
+              // }),
               quote?.customerName,
+
               quote?.itemsNumber,
               quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
               quote?.notes,
@@ -210,12 +227,50 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
               />,
             ];
           }
+          else if (docType === DOCUMENT_TYPE.quote) {
+            return [
+              GetDateFormat(quote?.createdDate),
+              quote?.customerName,
+              quote?.agentName,
+              quote?.number,
+              quote?.worksNames,
+              quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
+              quote?.notes,
+              _renderStatus(quote, t, navigate),
+              <MoreMenuWidget
+                quote={quote}
+                documentType={docType}
+                onClickOpenModal={onClickOpenModal}
+                onClickPdf={onClickQuotePdf}
+                onClickDuplicate={onClickQuoteDuplicate}
+                onClickLoggers={onClickDocumentLogs}
+
+              />,
+            ];
+          }
           else {
             return [
               GetDateFormat(quote?.createdDate),
               quote?.customerName,
               quote?.agentName,
               quote?.number,
+              quote?.sourceDocumentNumber.map((item, index) => {
+                return (
+                  <>
+                    {
+                      docType === DOCUMENT_TYPE.order ?
+                        <span key={index}>{item?.documentNumber}
+                          <br />
+                        </span>
+                        :
+                        <span key={index} onClick={() => navigate(renderURLDocumentType(item?.sourceDocumentType, item.documentId))} style={{ cursor: "pointer" }}>
+                          {renderDocumentTypeForSourceDocumentNumber(item?.sourceDocumentType)}:{item?.documentNumber}
+                          <br />
+                        </span>
+                    }
+                  </>
+                )
+              }),
               quote?.worksNames,
               quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
               quote?.notes,
@@ -325,7 +380,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
               quote?.itemsNumber,
               quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
               quote?.notes,
-              _renderStatus(quote, t , navigate),
+              _renderStatus(quote, t, navigate),
               <MoreMenuWidget
                 quote={quote}
                 documentType={docType}
@@ -344,7 +399,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
               quote?.worksNames,
               quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
               quote?.notes,
-              _renderStatus(quote, t , navigate),
+              _renderStatus(quote, t, navigate),
               <MoreMenuWidget
                 quote={quote}
                 documentType={docType}
@@ -424,6 +479,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     t("sales.quote.creationDate"),
     t("sales.quote.purchaseOrderNumber"),
     t("sales.quote.orderNumber"),
+    // t("sales.quote.sourceDocument"),
     t("sales.quote.supplierName"),
     t("sales.quote.client"),
     t("sales.quote.itemsNumber"),
@@ -436,8 +492,19 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     t("sales.quote.purchaseInvoiceNumber"),
     t("sales.quote.invoiceNumber"),
     t("sales.quote.purchaseOrderNumber"),
+    // t("sales.quote.sourceDocument"),
     t("sales.quote.supplierName"),
     t("sales.quote.itemsNumber"),
+    t("sales.quote.totalPrice"),
+    t("sales.quote.notes"),
+    t("sales.quote.status"),
+    t("sales.quote.more"),
+  ] : docType === DOCUMENT_TYPE.quote ? [
+    t("sales.quote.createdDate"),
+    t("sales.quote.client"),
+    t("sales.quote.agent"),
+    t("sales.quote.quoteNumber"),
+    t("sales.quote.worksName"),
     t("sales.quote.totalPrice"),
     t("sales.quote.notes"),
     t("sales.quote.status"),
@@ -446,10 +513,10 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     t("sales.quote.createdDate"),
     t("sales.quote.client"),
     t("sales.quote.agent"),
+
+
     (() => {
       switch (docType) {
-        case DOCUMENT_TYPE.quote:
-          return t("sales.quote.quoteNumber");
         case DOCUMENT_TYPE.order:
           return t("sales.quote.orderNumber");
         case DOCUMENT_TYPE.deliveryNote:
@@ -464,6 +531,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
           return t("sales.quote.receiptNumber");
       }
     })(),
+    docType === DOCUMENT_TYPE.order ? t("sales.quote.quoteNumber") : t("sales.quote.sourceDocument"),
     docType === DOCUMENT_TYPE.receipt ? t("sales.quote.paymentMethod") : t("sales.quote.worksName"),
     t("sales.quote.totalPrice"),
     t("sales.quote.notes"),
@@ -643,10 +711,22 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
   };
 
   const onClickQuotePdf = async (id: string) => {
+    const downloadPdf = (url) => {
+      const anchor = document.createElement("a");
+      anchor.href = url;
+      anchor.target = "_blank";
+      anchor.addEventListener("click", () => {
+        setTimeout(() => {
+          anchor.remove();
+        }, 100);
+      });
+      anchor.click();
+    };
     const callBack = (res) => {
       if (res?.success) {
         const pdfLink = res.data;
-        window.open(pdfLink, "_blank");
+        // window.open(pdfLink, "_blank");
+        downloadPdf(pdfLink);
       } else {
         alertFaultGetData();
       }
@@ -663,6 +743,39 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
       });
     }
   };
+
+  // const onClickQuotePdf = useCallback(async (id: string) => {
+  //   let requestBody;
+
+  //   if (isReceipt) {
+  //     requestBody = {
+  //       receiptId: id,
+  //     };
+  //   } else {
+  //     requestBody = {
+  //       documentId: id,
+  //       documentType: docType,
+  //     };
+  //   }
+  //   const res = await callApi(
+  //     EHttpMethod.POST,
+  //     `/v1/erp-service/documents/get-document-pdf`,
+  //     requestBody,
+  //     true,
+  //     null,
+  //     "blob"
+  //   );
+  //   const downloadLink = document.createElement('a');
+  //   const link = URL?.createObjectURL(res.data);
+  //   downloadLink.href = link
+  //   downloadLink.download = 'Reports Rule engine.xlsx';
+  //   downloadLink.click();
+  //   if (res?.success) {
+
+  //   } else {
+  //     alertFaultGetData();
+  //   }
+  // }, [isReceipt]);
 
   const onClickQuoteDuplicate = async (id: string) => {
     const callBack = (res) => {
@@ -720,7 +833,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
                   : classes.closeBtnStyle
               }
             >
-              {_renderStatus(document, t , navigate)}
+              {_renderStatus(document, t, navigate)}
             </h2>
           </div>,
           document?.notes,
