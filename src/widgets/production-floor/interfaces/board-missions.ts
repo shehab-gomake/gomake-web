@@ -44,4 +44,5 @@ export interface IBoardMissionsDetails {
     currentBoardMissionActionId: string;
     currentActionName: string;
     currentMachineName: string;
+    notes: string[];
 }

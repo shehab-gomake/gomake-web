@@ -36,7 +36,7 @@ const BoardMissionsDetailsHeader = () => {
                     <LabelComponent label={'Test text'}/>
                 </Stack>
                 <Stack direction={'row'} alignItems={'center'} gap={'16px'}>
-                    <span>Started on 5 May 2023</span>
+                    <span>Started {DateFormatterDDMMYYYY(boardMissionsDetails.createdDate?.toString())}</span>
                     <Divider flexItem orientation={'vertical'}/>
                     <Stack direction={'row'} gap={'8px'} alignItems={'center'}>
                         <span style={classes.parameterLabel}>Status:</span>

@@ -1,4 +1,4 @@
-import {Button, Menu, MenuItem} from "@mui/material";
+import {Button, ButtonGroup, Menu, MenuItem} from "@mui/material";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowRight";
 import {ICurrentStation} from "@/widgets/production-floor/interfaces/current-station";
 import {useStyle} from "@/widgets/production-floor/table-view/style";
@@ -24,15 +24,18 @@ const CurrentStationComponent = ({boardMissionId, machineName, actionName}: IPro
     const {classes} = useStyle();
     return (
         <div>
-            <Stack direction={'row'} justifyContent={'center'} alignItems={'center'} borderRadius={'10px'} width={"fit-content"} display={'inline-flex'} overflow={'hidden'}>
-                <Button sx={classes.currentStationBtn} variant={'contained'}
-                        onClick={(e) => handleClick(e, boardMissionId)}>
-                    <span>{machineName ? machineName : actionName}</span>
-                </Button>
-                <Button sx={classes.currentStationBtn} variant={'contained'}
-                        onClick={() => onUpdateToNextStation(boardMissionId)}>
-                    <KeyboardArrowDownIcon/>
-                </Button>
+            <Stack direction={'row'} justifyContent={'center'} alignItems={'center'} borderRadius={'10px'}
+                   width={"fit-content"} display={'inline-flex'} overflow={'hidden'}>
+                <ButtonGroup>
+                    <Button sx={classes.currentStationBtn} variant={'contained'}
+                            onClick={(e) => handleClick(e, boardMissionId)}>
+                        <span>{machineName ? machineName : actionName}</span>
+                    </Button>
+                    <Button sx={classes.currentStationBtn} variant={'contained'}
+                            onClick={() => onUpdateToNextStation(boardMissionId)}>
+                        <KeyboardArrowDownIcon/>
+                    </Button>
+                </ButtonGroup>
             </Stack>
             <Menu anchorEl={anchorEl}
                   open={open && boardMissionsStations?.length > 0}

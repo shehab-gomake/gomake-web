@@ -28,6 +28,12 @@ const useStyle = () => {
         width: "100%",
 
       },
+      addNoteBtn: {
+        color: '#344054',
+        borderColor: '#D0D5DD',
+        borderRadius: '8px',
+        height: '33px'
+      },
       actionContainerBorder: "2px solid " + primaryColor(500),
       toggleActionButton: {
         backgroundColor: primaryColor(50),
