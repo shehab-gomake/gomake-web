@@ -253,6 +253,7 @@ const useAddProduct = ({ clasess }) => {
       parameter: any,
       option: any
     ) => {
+
       let temp = [...parameter?.valuesConfigs];
 
       let objectIdToUpdate = option?.id;
@@ -279,6 +280,7 @@ const useAddProduct = ({ clasess }) => {
       parameter: any,
       option: any
     ) => {
+
       let temp = [...parameter?.valuesConfigs];
 
       let objectIdToUpdate = option?.id;
@@ -308,6 +310,8 @@ const useAddProduct = ({ clasess }) => {
       subSectionParameters,
       level: number
     ) => {
+      console.log("parameter", parameter);
+
       let temp = [...parameter?.valuesConfigs];
       if (temp?.length <= 0) {
         temp.push({
@@ -330,18 +334,9 @@ const useAddProduct = ({ clasess }) => {
         });
       } else {
         let objectIdToUpdate = option?.valueId;
-        if (
-          temp.findIndex(
-            (item) => item?.materialValueIds[0]?.valueId === objectIdToUpdate
-          ) !== -1
-        ) {
-          const updatedArray = temp.map((obj) => {
-            if (obj.materialValueIds[0]?.valueId === objectIdToUpdate) {
-              return { ...obj, isDefault: true };
-            } else {
-              return { ...obj, isDefault: false };
-            }
-          });
+        if (!objectIdToUpdate) {
+          // Case where the option is deleted and no new option is selected
+          const updatedArray = temp.map(obj => ({ ...obj, isDefault: false }));
           await updateProductParameterEndPoint(sectionId, subSectionId, {
             parameter: {
               ...parameter,
@@ -349,45 +344,63 @@ const useAddProduct = ({ clasess }) => {
             },
           });
         } else {
-          temp.push({
-            id: uuidv4(),
-            isHidden: false,
-            isDefault: true,
-            isDeleted: false,
-            value: option?.value,
-            materialValueIds: [
-              {
-                path: option?.pathName,
-                valueId: option?.valueId,
-                value: option?.value,
+          if (
+            temp.findIndex(
+              (item) =>
+                item?.materialValueIds[0]?.valueId === objectIdToUpdate
+            ) !== -1
+          ) {
+            const updatedArray = temp.map((obj) => {
+              if (obj.materialValueIds[0]?.valueId === objectIdToUpdate) {
+                return { ...obj, isDefault: true };
+              } else {
+                return { ...obj, isDefault: false };
+              }
+            });
+            await updateProductParameterEndPoint(sectionId, subSectionId, {
+              parameter: {
+                ...parameter,
+                valuesConfigs: updatedArray,
               },
-            ],
-          });
-          const updatedArray = temp.map((obj) => {
-            if (obj.materialValueIds[0]?.valueId === objectIdToUpdate) {
-              return { ...obj, isDefault: true };
-            } else {
-              return { ...obj, isDefault: false };
-            }
-          });
-          await updatedValuesConfigsForParameters(sectionId, subSectionId, {
-            ...parameter,
-            valuesConfigs: updatedArray,
-          });
+            });
+          } else {
+            temp.push({
+              id: uuidv4(),
+              isHidden: false,
+              isDefault: true,
+              isDeleted: false,
+              value: option?.value,
+              materialValueIds: [
+                {
+                  path: option?.pathName,
+                  valueId: option?.valueId,
+                  value: option?.value,
+                },
+              ],
+            });
+            const updatedArray = temp
+              .filter(
+                (value) =>
+                  !(
+                    value?.materialValueIds?.length === 1 &&
+                    value?.materialValueIds[0]?.path === null &&
+                    value?.materialValueIds[0]?.valueId === null
+                  )
+              )
+              .map((obj) => {
+                if (obj.materialValueIds[0]?.valueId === objectIdToUpdate) {
+                  return { ...obj, isDefault: true };
+                } else {
+                  return { ...obj, isDefault: false };
+                }
+              });
+            await updatedValuesConfigsForParameters(sectionId, subSectionId, {
+              ...parameter,
+              valuesConfigs: updatedArray,
+            });
+          }
         }
       }
-      /*if (level === 1) {
-        const lvl2 = subSectionParameters?.find(
-          (item) =>
-            item?.materialPath[0] === parameter?.materialPath[0] &&
-            item.materialPath.length == 2
-        );
-        await updatedValuesConfigsForParameters(sectionId, subSectionId, {
-          ...lvl2,
-          valuesConfigs: [],
-        });
-      } else if (level === 2) {
-      }*/
     },
     [router]
   );
