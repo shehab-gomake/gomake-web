@@ -512,6 +512,7 @@ const useAddProduct = ({ clasess }) => {
 
   const [digitalPriceData, setDigidatPriceData] =
     useRecoilState<any>(digitslPriceState);
+  console.log("digitalPriceData", digitalPriceData)
   const _renderParameterType = (
     sectionId,
     subSectionId,
@@ -725,6 +726,7 @@ const useAddProduct = ({ clasess }) => {
 
           options = digitalPriceData?.selectedMaterialLvl1;
 
+
           if (!!!options) {
             let optionsLvl1 = allMaterials
               ?.find((material) => {
@@ -741,6 +743,10 @@ const useAddProduct = ({ clasess }) => {
                 item?.valueId === isDefaultObj?.materialValueIds[0]?.valueId
             );
             defailtObjectValue = x;
+
+          }
+          else {
+            defailtObjectValue = digitalPriceData.selectedOptionLvl2
           }
         }
         if (parameter?.materialPath?.length == 1) {
@@ -755,6 +761,7 @@ const useAddProduct = ({ clasess }) => {
               item?.valueId === isDefaultObj?.materialValueIds[0]?.valueId
           );
           defailtObjectValue = defaultOptionData;
+
         }
         return (
           <GoMakeAutoComplate
