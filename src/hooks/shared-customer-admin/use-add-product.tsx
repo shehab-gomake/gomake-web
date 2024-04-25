@@ -713,13 +713,10 @@ const useAddProduct = ({ clasess }) => {
         const defailtObjectValue = parameter?.valuesConfigs?.find((item) => item.isDefault === true);
         const options = [];
         let selectedOption
-        console.log("defailtObjectValue", defailtObjectValue)
         const materialPath = parameter.materialPath;
         const currentMaterialPath = materialPath[materialPath.length - 1];
         const parentMaterialPath = materialPath.slice(0, -1);
-        if (parameter.code === "Sheetcategory") {
-          debugger;
-        }
+
         let allMaterialsCopy = cloneDeep(allMaterials);
         if (selectedOption && compareStrings(currentMaterialPath, selectedOption.pathName)) {
           options.push(...selectedOption.data);
@@ -737,9 +734,6 @@ const useAddProduct = ({ clasess }) => {
               if (parentParameterDefaultValueConfig) {
                 const parentParameterValue = parentParameterDefaultValueConfig.materialValueIds[0].valueId;
                 allMaterialsCopy = allMaterialsCopy.data.find(x => x.valueId === parentParameterValue);
-                //options.push(...currentParameterMaterials.data)
-
-                const data = [];
               }
 
             }
@@ -748,13 +742,6 @@ const useAddProduct = ({ clasess }) => {
           if (allMaterialsCopy && allMaterialsCopy.data && allMaterialsCopy.data.length > 0) {
             options.push(...allMaterialsCopy?.data)
           }
-
-          /*let data = matchingMaterials[0]?.data;
-          if (data) {
-            options.push(...data);
-          } else {
-            data = [];
-          }*/
         } else {
           allMaterialsCopy = allMaterialsCopy.find(material =>
             compareStrings(material.pathName, currentMaterialPath)
@@ -771,15 +758,7 @@ const useAddProduct = ({ clasess }) => {
           );
         }
         console.log("options", options);
-        // -> get the last item in the material path (currentMaterailPath)
-        // -> remove the last item in the material path ["Sheets"]
-        // -> iterate over the material path and get the parameter that related to this path 
-        // -> filter all the materials using the parameters values
 
-        /*let isDefaultObj = parameter?.valuesConfigs?.find(
-          (item) => item.isDefault === true
-        );
-        }*/
         return (
           <GoMakeAutoComplate
             options={options?.length > 0 ? options : []}
