@@ -525,7 +525,6 @@ const useAddProduct = ({ clasess }) => {
 
   const [digitalPriceData, setDigidatPriceData] =
     useRecoilState<any>(digitslPriceState);
-  console.log("digitalPriceData", digitalPriceData)
   const _renderParameterType = (
     sectionId,
     subSectionId,
