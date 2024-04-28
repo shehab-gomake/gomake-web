@@ -268,6 +268,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       selectedWorkFlow.totalPrice &&
       selectedWorkFlow.totalPrice.values
     ) {
+      console.log("CCCCCCCC")
       setCurrentProductItemValueTotalPrice(
         parseFloat(selectedWorkFlow.totalPrice.values[0])
       );
@@ -277,6 +278,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   useEffect(() => {
     if (signalRPricingResult && signalRPricingResult.productItemValueDraftId === currentCalculationSessionId) {
       setLoading(false);
+      console.log("DDDDDDDD")
       setCurrentProductItemValueTotalPrice(
         parseFloat(signalRPricingResult.totalPrice)
       );
@@ -288,6 +290,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   }, [signalRPricingResult])
   useEffect(() => {
     setWorkFlows([]);
+    console.log("EEEEEEEEE")
     setCurrentProductItemValueTotalPrice(null);
     setJobActions([]);
     setIsCalculationFinished(false);
@@ -356,6 +359,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         updatedSelectedWorkFlow?.totalPrice &&
         updatedSelectedWorkFlow?.totalPrice?.values
       ) {
+        console.log("FFFFFFFFFFFF")
         setCurrentProductItemValueTotalPrice(
           +updatedSelectedWorkFlow?.totalPrice.values[0]
         );
@@ -1047,6 +1051,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
   useEffect(() => {
     let checkParameter = validateParameters(isRequiredParameters);
+    console.log("GGGGGGG")
     setCurrentProductItemValueTotalPrice(null);
     setWorkFlows([]);
     setJobActions([]);
@@ -2172,6 +2177,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           }
         }
       );*/
+      console.log("HHHHHHHHHHH")
       setCurrentProductItemValueTotalPrice(
         quoteItemProduct.docmentItem.finalPrice
       );
@@ -2225,6 +2231,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       requestAbortController.abort();
     }
     setWorkFlows([]);
+    console.log("IIIIIIIIIIIIII")
     setCurrentProductItemValueTotalPrice(null);
     setJobActions([]);
     setIsCalculationFinished(false);

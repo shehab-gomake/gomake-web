@@ -19,16 +19,13 @@ const DropDownListParameterWidget = ({
   const defaultObject = parameter.valuesConfigs.find(
     (item) => item.isDefault === true
   );
-  const isUUID = (str) => {
-    const uuidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
-    return !uuidRegex.test(str);
-  };
+
   return (
     <div data-tour={parameter?.id} style={clasess.dropDownListWithSettingIcon}>
       <GoMakeAutoComplate
         options={parameter?.valuesConfigs?.filter(value => {
           return !(value?.materialValueIds?.length === 1 && value?.materialValueIds[0]?.path === null && value?.materialValueIds[0]?.valueId === null);
-        })?.filter((value) => !value.isHidden)?.filter(item => isUUID(item.id))}
+        })?.filter((value) => !value.isHidden)}
         key={parameter?.valuesConfigs + temp[index]?.values}
         placeholder={parameter.name}
         style={clasess.dropDownListStyle}

@@ -1,33 +1,33 @@
-import {useStyle} from "@/widgets/machines/components/forms/style";
-import {IStepFormProps} from "@/widgets/machines/components/forms/interface";
-import {useMachineAttributes} from "@/widgets/machines/hooks/use-machine-attributes";
-import {useEffect, useState} from "react";
-import {useGomakeAxios} from "@/hooks";
-import {Grid} from "@mui/material";
+import { useStyle } from "@/widgets/machines/components/forms/style";
+import { IStepFormProps } from "@/widgets/machines/components/forms/interface";
+import { useMachineAttributes } from "@/widgets/machines/hooks/use-machine-attributes";
+import { useEffect, useState } from "react";
+import { useGomakeAxios } from "@/hooks";
+import { Grid } from "@mui/material";
 import Button from "@mui/material/Button";
-import {useTranslation} from "react-i18next";
-import {CheckBoxList} from "@/widgets/machines/components/list/check-box-list";
-import {useRecoilValue} from "recoil";
-import {machineState as STATE} from "@/widgets/machines/state/machine-state";
+import { useTranslation } from "react-i18next";
+import { CheckBoxList } from "@/widgets/machines/components/list/check-box-list";
+import { useRecoilValue } from "recoil";
+import { machineState as STATE } from "@/widgets/machines/state/machine-state";
 
 
-const ActionsMaterialsComponent = ({}: IStepFormProps) => {
-    const {classes} = useStyle();
+const ActionsMaterialsComponent = ({ }: IStepFormProps) => {
+    const { classes } = useStyle();
     const machineState = useRecoilValue(STATE);
-    const {changeMachineAttributes} = useMachineAttributes();
-    const {callApi} = useGomakeAxios();
+    const { changeMachineAttributes } = useMachineAttributes();
+    const { callApi } = useGomakeAxios();
     const [actions, setActions] = useState([]);
     const [machineActions, setMachineActions] = useState([]);
     const [materials, setMaterials] = useState([]);
     const [machineMaterials, setMachineMaterials] = useState([]);
 
-    const {t} = useTranslation();
+    const { t } = useTranslation();
     useEffect(() => {
         callApi('GET', '/v1/printhouse-config/actions/get-all-actions').then((res) => {
             if (res?.success) {
                 if (res?.data?.data?.data) {
                     const data = res?.data?.data?.data;
-                    const apiActions = data.map(action => ({...action, checked: false}));
+                    const apiActions = data.map(action => ({ ...action, checked: false }));
                     if (machineState?.attributes?.actions) {
                         setActions(apiActions.filter(action => !machineState?.attributes?.actions.includes(action.id)));
                         setMachineActions(apiActions.filter(action => machineState?.attributes?.actions.includes(action.id)));
@@ -40,7 +40,6 @@ const ActionsMaterialsComponent = ({}: IStepFormProps) => {
         callApi('GET', '/v1/materials/getMaterialsTypes').then((res) => {
             if (res?.success) {
                 if (res?.data?.data?.data) {
-                    debugger;
                     const apiMaterials = res?.data?.data?.data.map((materialType) => ({
                         id: materialType.enumCode,
                         name: materialType.materialTypeName,
@@ -130,15 +129,15 @@ const ActionsMaterialsComponent = ({}: IStepFormProps) => {
     }
 
     const moveCheckedRelatedActionsTActions = () => {
-        setActions(actions.concat(machineActions.filter(a => a.checked)).map(item => ({...item, checked: false})));
-        setMachineActions(machineActions.filter(a => !a.checked).map(item => ({...item, checked: false})));
+        setActions(actions.concat(machineActions.filter(a => a.checked)).map(item => ({ ...item, checked: false })));
+        setMachineActions(machineActions.filter(a => !a.checked).map(item => ({ ...item, checked: false })));
     }
     const moveCheckedMaterialsToMachineMaterials = () => {
         setMachineMaterials(machineMaterials.concat(materials.filter(m => m.checked)).map(item => ({
             ...item,
             checked: false
         })));
-        setMaterials(materials.filter(m => !m.checked).map(item => ({...item, checked: false})));
+        setMaterials(materials.filter(m => !m.checked).map(item => ({ ...item, checked: false })));
     }
 
     const moveCheckedMachineMaterialsToMaterials = () => {
@@ -146,7 +145,7 @@ const ActionsMaterialsComponent = ({}: IStepFormProps) => {
             ...item,
             checked: false
         })));
-        setMachineMaterials(machineMaterials.filter(m => !m.checked).map(item => ({...item, checked: false})));
+        setMachineMaterials(machineMaterials.filter(m => !m.checked).map(item => ({ ...item, checked: false })));
     }
 
     return (
@@ -160,7 +159,7 @@ const ActionsMaterialsComponent = ({}: IStepFormProps) => {
                     <Grid item>
                         <Grid container direction="column" alignItems="center">
                             <Button
-                                sx={{my: 0.5}}
+                                sx={{ my: 0.5 }}
                                 variant="outlined"
                                 size="small"
                                 onClick={moveCheckedActionsToRelatedActions}
@@ -169,7 +168,7 @@ const ActionsMaterialsComponent = ({}: IStepFormProps) => {
                                 &gt;
                             </Button>
                             <Button
-                                sx={{my: 0.5}}
+                                sx={{ my: 0.5 }}
                                 variant="outlined"
                                 size="small"
                                 onClick={moveCheckedRelatedActionsTActions}
@@ -190,7 +189,7 @@ const ActionsMaterialsComponent = ({}: IStepFormProps) => {
                     <Grid item>
                         <Grid container direction="column" alignItems="center">
                             <Button
-                                sx={{my: 0.5}}
+                                sx={{ my: 0.5 }}
                                 variant="outlined"
                                 size="small"
                                 onClick={moveCheckedMaterialsToMachineMaterials}
@@ -199,7 +198,7 @@ const ActionsMaterialsComponent = ({}: IStepFormProps) => {
                                 &gt;
                             </Button>
                             <Button
-                                sx={{my: 0.5}}
+                                sx={{ my: 0.5 }}
                                 variant="outlined"
                                 size="small"
                                 onClick={moveCheckedMachineMaterialsToMaterials}
@@ -219,4 +218,4 @@ const ActionsMaterialsComponent = ({}: IStepFormProps) => {
     );
 }
 
-export {ActionsMaterialsComponent};
+export { ActionsMaterialsComponent };

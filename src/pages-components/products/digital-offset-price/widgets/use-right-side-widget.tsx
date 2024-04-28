@@ -78,10 +78,12 @@ const useRightSideWidget = ({ includeVAT }) => {
   useEffect(() => {
     if (currentProductItemValueTotalPrice != null) {
       if (includeVAT) {
+        console.log("AAAAAAAA")
         setCurrentProductItemValueTotalPrice(
           currentProductItemValueTotalPrice * (1 + systemVAT)
         );
       } else {
+        console.log("BBBBBBBBBB")
         setCurrentProductItemValueTotalPrice(
           currentProductItemValueTotalPrice / (1 + systemVAT)
         );
