@@ -254,7 +254,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       });
     }
     currentWorkFlows.sort((a, b) => b.monials - a.monials);
-    let selectedWorkFlow = currentWorkFlows?.find((x) => x.selected && x.isCompleteWorkFlow);
+    let selectedWorkFlow = currentWorkFlows?.find((x) => x.selected );
     if (
       !selectedWorkFlow &&
       currentWorkFlows &&
@@ -262,9 +262,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     ) {
       currentWorkFlows[0].selected = true;
     }
-    selectedWorkFlow = currentWorkFlows?.find((x) => x.selected && x.isCompleteWorkFlow);
+    selectedWorkFlow = currentWorkFlows?.find((x) => x.selected);
+    if(selectedWorkFlow.isC)
     if (
-      selectedWorkFlow &&
+      selectedWorkFlow && selectedWorkFlow.isCompleteWorkFlow &&
       selectedWorkFlow.totalPrice &&
       selectedWorkFlow.totalPrice.values
     ) {
