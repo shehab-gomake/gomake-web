@@ -19,7 +19,6 @@ const DropDownListParameterWidget = ({
   const defaultObject = parameter.valuesConfigs.find(
     (item) => item.isDefault === true
   );
-  console.log("parameter?.valuesConfigs", parameter?.valuesConfigs)
   return (
     <div data-tour={parameter?.id} style={clasess.dropDownListWithSettingIcon}>
       <GoMakeAutoComplate

@@ -760,8 +760,6 @@ const useAddProduct = ({ clasess }) => {
             option.valueId === defailtObjectValue?.materialValueIds[0]?.valueId
           );
         }
-        console.log("options", options);
-
         return (
           <GoMakeAutoComplate
             options={options?.length > 0 ? options : []}

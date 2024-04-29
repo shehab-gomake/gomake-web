@@ -110,7 +110,6 @@ const PricingWidget = ({
       (action) => action.source === EWorkSource.OUT
     )) {
       setTimeout(() => {
-        console.log("JJJJJJJJJ")
         setCurrentProductItemValueTotalPrice(null)
 
       }, 2000);
@@ -133,7 +132,6 @@ const PricingWidget = ({
       return 1;
     }
   });
-  console.log("workFlowsworkFlowsworkFlowsworkFlowsworkFlows", workFlows)
 
   useEffect(() => {
     const newTabs = workFlows.reduce((accumulator, currentItem) => {
