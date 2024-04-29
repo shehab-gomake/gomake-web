@@ -109,7 +109,6 @@ const PricingWidget = ({
     if (view === EPricingViews.OUTSOURCE_WORKFLOW || selectedWorkFlow?.actions?.some(
       (action) => action.source === EWorkSource.OUT
     )) {
-      // setCurrentProductItemValueTotalPrice(null)
       setTimeout(() => {
         setCurrentProductItemValueTotalPrice(null)
 
