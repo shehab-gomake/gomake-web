@@ -263,7 +263,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       currentWorkFlows[0].selected = true;
     }
     selectedWorkFlow = currentWorkFlows?.find((x) => x.selected);
-    if(selectedWorkFlow.isC)
     if (
       selectedWorkFlow && selectedWorkFlow.isCompleteWorkFlow &&
       selectedWorkFlow.totalPrice &&
