@@ -254,7 +254,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       });
     }
     currentWorkFlows.sort((a, b) => b.monials - a.monials);
-    let selectedWorkFlow = currentWorkFlows?.find((x) => x.selected);
+    let selectedWorkFlow = currentWorkFlows?.find((x) => x.selected && x.isCompleteWorkFlow);
     if (
       !selectedWorkFlow &&
       currentWorkFlows &&
@@ -262,7 +262,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     ) {
       currentWorkFlows[0].selected = true;
     }
-    selectedWorkFlow = currentWorkFlows?.find((x) => x.selected);
+    selectedWorkFlow = currentWorkFlows?.find((x) => x.selected && x.isCompleteWorkFlow);
     if (
       selectedWorkFlow &&
       selectedWorkFlow.totalPrice &&
@@ -312,15 +312,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     }
 
   }, [calculationExceptionsLogs]);
-  function setSelectedTrue(workFlowsArray, selectedId) {
-    workFlowsArray.forEach(workFlow => {
-      if (workFlow.id === selectedId ||
-        (updatedSelectedWorkFlow.subWorkFlows &&
-          updatedSelectedWorkFlow.subWorkFlows.some(subFlow => subFlow.orginalBookPartId === selectedId))) {
-        workFlow.selected = true;
-      }
-    });
-  }
+
   useEffect(() => {
     if (updatedSelectedWorkFlow) {
       if (workFlows.find(x => x.id == updatedSelectedWorkFlow?.id)) {
