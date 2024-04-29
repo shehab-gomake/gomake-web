@@ -295,7 +295,8 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
           _renderPaymentType(quote?.paymentType),
           quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
           quote?.notes,
-          _renderDocumentStatus(quote?.status, t),
+        //  _renderDocumentStatus(quote?.status, t),
+            quote?.status,
           <MoreMenuWidget
             quote={quote}
             documentType={docType}
@@ -419,7 +420,8 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
           _renderPaymentType(quote?.paymentType),
           quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
           quote?.notes,
-          _renderDocumentStatus(quote?.status, t),
+         // _renderDocumentStatus(quote?.status, t),
+         t(quote?.status),
           <MoreMenuWidget
             quote={quote}
             documentType={docType}
@@ -534,7 +536,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     t("sales.quote.notes"),
     t("sales.quote.status"),
     t("sales.quote.more"),
-  ];
+  ].filter(Boolean);
 
   const logsTableHeaders = [
     t("sales.quote.actionDate"),
