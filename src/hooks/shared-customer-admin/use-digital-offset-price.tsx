@@ -11,6 +11,7 @@ import {
   currentCalculationConnectionId,
   isLoadgingState,
   itemParmetersValuesState,
+  listEmployeesAtom,
   selectedValueConfigState,
   selectParameterButtonState,
   subProductsCopyParametersState,
@@ -62,6 +63,8 @@ import { getCurrencies } from "@/services/api-service/general/enums";
 import { currenciesState } from "@/widgets/materials-widget/state";
 import { EHttpMethod } from "@/services/api-service/enums";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
+import { exampleTypeState } from "@/store/example-type";
+import { billingMethodState } from "@/store/billing-method";
 
 
 const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
@@ -81,7 +84,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [samlleType, setSamlleType] = useState();
   const [isRequiredParameters, setIsRequiredParameters] = useState<any>([]);
   const [activeSectionRequiredParameters, setActiveSectionRequiredParameters] = useState([]);
-
+  const [docmentItemByEdit, setDocmentItemByEdit] = useState<any>({})
   const [GalleryModalOpen, setGalleryModalOpen] = useState(false);
   const [multiParameterModal, setMultiParameterModal] = useState(false);
   const [makeShapeOpen, setMakeShapeOpen] = useState(false);
@@ -1072,6 +1075,46 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       });
     }
   }, [router, widgetType, connectionId]);
+  const exampleTypeValues = useRecoilValue(exampleTypeState);
+  const billingMethodValues = useRecoilValue(billingMethodState);
+  const listEmployeesValues = useRecoilValue(listEmployeesAtom);
+
+  const getGraphicsTypeValue = (billingMethod?: GraphicsTypesParam) => {
+    if (billingMethod && billingMethod === GraphicsTypesParam.PriceHour) {
+      return billingMethodValues.find((item) => item.value === "workingHours")
+    } else {
+      return billingMethodValues.find((item) => item.value === "fixedPrice")
+    }
+  }
+  const getSamlleTypeValue = (samlleType?: SampleTypeParm) => {
+    if (samlleType && samlleType === SampleTypeParm.Full) {
+      return exampleTypeValues.find((item) => item.value === "Full");
+    } else {
+      return exampleTypeValues.find((item) => item.value === "PrintOnly");
+    }
+  }
+  useEffect(() => {
+    if (
+      widgetType === EWidgetProductType.EDIT ||
+      widgetType === EWidgetProductType.DUPLICATE
+    ) {
+      if (docmentItemByEdit) {
+        setGraphicNotes(docmentItemByEdit.graphicNotes)
+        setPrintingNotes(docmentItemByEdit.printingNotes)
+        if (docmentItemByEdit?.exampleType) {
+          setSamlleType(getSamlleTypeValue(docmentItemByEdit?.exampleType))
+        }
+        if (docmentItemByEdit?.graphicsTypes) {
+          setBillingMethod(getGraphicsTypeValue(docmentItemByEdit?.graphicsTypes))
+        }
+        if (docmentItemByEdit?.graphicsEmployeeId) {
+          setGraphicDesigner(listEmployeesValues?.find((item) => item.id === docmentItemByEdit?.graphicsEmployeeId))
+
+        }
+
+      }
+    }
+  }, [widgetType, docmentItemByEdit])
   useEffect(() => {
     if (canCalculation) {
       calculationProduct();
@@ -1104,7 +1147,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         productItemValueId: productItemValueDraftId,
         itemId: router?.query?.documentId,
         productId: router?.query?.productId,
-        supplierId: graphicDesigner && graphicDesigner?.id,
+        // supplierId: graphicDesigner && graphicDesigner?.id,
         customerID: router?.query?.customerId,
         unitPrice: +currentProductItemValueTotalPrice / +quantity?.values[0],
         amount: quantity?.values[0],
@@ -1115,7 +1158,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         isNeedExample: false,
         isDuplicatedWithAnotherQuantity: false,
         graphicsEmployeeId: graphicDesigner?.id,
-        graphicsPricingType: billingMethod && getGraphicsType(billingMethod),
+        graphicsTypes: billingMethod && getGraphicsType(billingMethod),
         duplicateType: router?.query?.duplicateType,
         documentId: router?.query?.documentId,
         exampleType: samlleType && getSamlleType(samlleType)
@@ -2109,9 +2152,12 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     if (connectionId) {
       const callBack = (res) => {
         if (res?.success) {
+          console.log("res", res)
+
           const updatedTemplate = updateIsHidden(res?.data, subProducts)
           setDefaultProductTemplate(updatedTemplate);
           initQuoteItemProduct(updatedTemplate, materials);
+          setDocmentItemByEdit(res?.data.docmentItem)
         } else {
           alertFaultUpdate();
         }

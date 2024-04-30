@@ -41,8 +41,8 @@ const RightSideWidget = ({
     calculationProgress,
     exampleTypeValues,
     billingMethodValues,
+    listEmployeesValues,
     systemCurrency,
-    listEmployees,
     isLoading,
     quantity,
     selectedWorkFlow,
@@ -327,15 +327,7 @@ const RightSideWidget = ({
               <div style={clasess.autoCompleteContainer}>
                 <GoMakeAutoComplate
                   key={graphicDesigner}
-                  options={[
-                    {
-                      id: "00415c86-165f-463a-bde0-f37c66f00000",
-                      firstname: "Recommeded",
-                      lastname: "",
-                      email: "recommeded@gomake.net",
-                    },
-                    ...listEmployees,
-                  ]}
+                  options={listEmployeesValues}
                   getOptionLabel={(option: any) =>
                     `${option.firstname}` + ` ${option.lastname}`
                   }

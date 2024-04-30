@@ -13,7 +13,10 @@ const SelectChildParameterWidget = ({
   section,
 }) => {
   const hasValues = (obj) => {
-    return Object.keys(obj.values).length !== 0;
+    if (obj) {
+      return Object?.keys(obj?.values)?.length !== 0;
+
+    }
   }
   const defaultObject = parameter.valuesConfigs.find(
     (item) => item.isDefault === true
