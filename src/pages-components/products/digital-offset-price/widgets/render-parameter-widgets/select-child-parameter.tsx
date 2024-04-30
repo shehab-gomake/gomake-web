@@ -12,6 +12,9 @@ const SelectChildParameterWidget = ({
   subSection,
   section,
 }) => {
+  const hasValues = (obj) => {
+    return Object.keys(obj.values).length !== 0;
+  }
   const defaultObject = parameter.valuesConfigs.find(
     (item) => item.isDefault === true
   );
@@ -22,40 +25,44 @@ const SelectChildParameterWidget = ({
     (item) => item.type === subSection?.type
   )?.parameters;
   const [value, setValue] = useState<any>();
+
   useEffect(() => {
     if (subProductsParams) {
+
       let temp = [...subProductsParams];
       parameter?.childsParameters.forEach((myparameter) => {
         const parameterId = myparameter.id;
-        if (value?.values.hasOwnProperty(parameterId)) {
-          const myindex = temp.findIndex((item) => {
-            return (
-              item?.parameterId === myparameter?.id &&
-              item?.sectionId === section?.id &&
-              item?.subSectionId === subSection?.id &&
-              item?.actionIndex === myparameter?.actionIndex
-            );
-          });
 
-          if (myindex !== -1) {
-            temp[myindex] = {
-              ...temp[myindex],
-              parameterCode: myparameter?.code,
-              values: [value?.values[parameterId]],
-            };
-          } else {
-            temp.push({
-              parameterId: myparameter?.id,
-              sectionId: section?.id,
-              subSectionId: subSection?.id,
-              ParameterType: myparameter?.parameterType,
-              values: [value?.values[parameterId]],
-              actionIndex: myparameter?.actionIndex,
-              parameterName: myparameter?.name,
-              parameterCode: myparameter?.code,
-            });
-          }
+        const myindex = temp.findIndex((item) => {
+          return (
+            item?.parameterId === myparameter?.id &&
+            item?.sectionId === section?.id &&
+            item?.subSectionId === subSection?.id &&
+            item?.actionIndex === myparameter?.actionIndex
+          );
+        });
+        if (myindex !== -1) {
+          temp[myindex] = {
+            ...temp[myindex],
+            parameterCode: myparameter?.code,
+            values: [value?.values[parameterId]],
+            isDisabled: hasValues(value)
+          };
+        } else {
+
+          temp.push({
+            parameterId: myparameter?.id,
+            sectionId: section?.id,
+            subSectionId: subSection?.id,
+            ParameterType: myparameter?.parameterType,
+            values: [value?.values[parameterId]],
+            actionIndex: myparameter?.actionIndex,
+            parameterName: myparameter?.name,
+            parameterCode: myparameter?.code,
+            isDisabled: hasValues(value)
+          });
         }
+
       });
       const updatedSubProducts = subProducts.map((item) => {
         if (item.type === subSection?.type) {
@@ -71,10 +78,10 @@ const SelectChildParameterWidget = ({
     }
   }, [value]);
   return (
-    <div data-tour={parameter?.id} style={{width: '100%'}}>
+    <div data-tour={parameter?.id} style={{ width: '100%' }}>
       {parameter?.valuesConfigs?.length > 0 && (
         <GoMakeAutoComplate
-            data-tour={parameter?.id}
+          data-tour={parameter?.id}
           options={parameter?.valuesConfigs?.filter((value) => !value.isHidden)}
           placeholder={parameter.name}
           key={parameter.id + "-" + parameter.actionIndex}
