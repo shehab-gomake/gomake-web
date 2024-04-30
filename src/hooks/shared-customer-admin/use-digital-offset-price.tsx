@@ -22,7 +22,7 @@ import cloneDeep from "lodash/cloneDeep";
 import lodashClonedeep from "lodash.clonedeep";
 import { EWidgetProductType } from "@/pages-components/products/digital-offset-price/enums";
 import { compareStrings, getParameterByParameterCode } from "@/utils/constants";
-import { EButtonTypes, EParameterTypes } from "@/enums";
+import { EButtonTypes, EParameterTypes, GraphicsTypesParam, SampleTypeParm } from "@/enums";
 import { QuantityParameter } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/quantity-parameter/quantity-parameter";
 import { InputNumberParameterWidget } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/input-number-parameter";
 import { DropDownListParameterWidget } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/drop-down-list-parameter";
@@ -1078,7 +1078,25 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     }
   }, [subProducts, canCalculation]);
 
+  interface BillingMethod {
+    value: string;
+    text: string;
+  }
 
+  const getGraphicsType = (billingMethod?: BillingMethod): GraphicsTypesParam => {
+    if (billingMethod && billingMethod.value === "workingHours") {
+      return GraphicsTypesParam.PriceHour;
+    } else {
+      return GraphicsTypesParam.PriceRegularHour;
+    }
+  }
+  const getSamlleType = (samlleType?: BillingMethod): SampleTypeParm => {
+    if (samlleType && samlleType.value === "Full") {
+      return SampleTypeParm.Full;
+    } else {
+      return SampleTypeParm.PrintOnly;
+    }
+  }
   useEffect(() => {
     if (currentProductItemValueTotalPrice && quantity) {
       const productItemValue = {
@@ -1086,7 +1104,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         productItemValueId: productItemValueDraftId,
         itemId: router?.query?.documentId,
         productId: router?.query?.productId,
-        supplierId: "",
+        supplierId: graphicDesigner && graphicDesigner?.id,
         customerID: router?.query?.customerId,
         unitPrice: +currentProductItemValueTotalPrice / +quantity?.values[0],
         amount: quantity?.values[0],
@@ -1097,13 +1115,27 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         isNeedExample: false,
         isDuplicatedWithAnotherQuantity: false,
         graphicsEmployeeId: graphicDesigner?.id,
-        graphicsPricingType: billingMethod?.value,
+        graphicsPricingType: billingMethod && getGraphicsType(billingMethod),
         duplicateType: router?.query?.duplicateType,
-        documentId: router?.query?.documentId
+        documentId: router?.query?.documentId,
+        exampleType: samlleType && getSamlleType(samlleType)
       };
       setCurrentProductItemValue(productItemValue);
     }
-  }, [subProducts, selectedWorkFlow, currentProductItemValueTotalPrice]);
+  }, [
+    subProducts,
+    selectedWorkFlow,
+    currentProductItemValueTotalPrice,
+    graphicDesigner,
+    connectionId,
+    productItemValueDraftId,
+    router,
+    urgentOrder,
+    printingNotes,
+    graphicNotes,
+    billingMethod,
+    samlleType
+  ]);
 
   const handleChange =
     (panel: string) => (event: React.SyntheticEvent, newExpanded: boolean) => {
