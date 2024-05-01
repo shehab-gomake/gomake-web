@@ -51,9 +51,10 @@ const BoardMissionsListWidget = () => {
     onCloseMarkReadyModal,
     openReturnToProdModal,
     onCloseReturnToProdModal,
-    onClickDuplicateMission
+    onClickDuplicateMission,
+    onClickMoveBoardMissionToDone,
+    onClickBackToProcess
   } = useBoardMissions();
-
   useEffect(() => {
     getAllProducts();
   }, []);
@@ -160,10 +161,10 @@ const BoardMissionsListWidget = () => {
         openModal={openMarkReadyModal}
         onClose={onCloseMarkReadyModal}
         onClickYes={() => {
-          alert("yes");
+          onClickMoveBoardMissionToDone(true)
         }}
         onClickNo={() => {
-          alert("no");
+          onClickMoveBoardMissionToDone(false)
         }}
       />
       <GoMakeDeleteModal
@@ -174,7 +175,7 @@ const BoardMissionsListWidget = () => {
 
         openModal={openReturnToProdModal}
         onClose={onCloseReturnToProdModal}
-        onClickDelete={() => alert("loading")}
+        onClickDelete={onClickBackToProcess}
       />
     </>
   );
