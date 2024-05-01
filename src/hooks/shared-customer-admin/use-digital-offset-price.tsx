@@ -2534,6 +2534,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   useEffect(() => {
     getCurrenciesApi()
   }, [])
+  useEffect(() => {
+    const updatedProductTemplate = updateIsHidden(productTemplate, subProducts);
+    setProductTemplate(updatedProductTemplate)
+  }, [subProducts])
 
   const updateIsHidden = (productTemplate, subProducts) => {
     if (!productTemplate || !productTemplate.sections || !Array.isArray(productTemplate.sections)) {
