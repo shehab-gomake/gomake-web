@@ -22,12 +22,12 @@ const StatusTableComponent = ({status, boards, count}: IProps) => {
     const {updateStatus} = useProductionFloorData();
     const [{isOver}, drop] = useDrop(() => ({
         accept: 'task',
-        drop: (item: { id: string, selectedIds: string[] }, monitor) => {
+        drop: (item: { board: IBoardMissions, selectedIds: {BoardMissionId: string; productType: string}[] }, monitor) => {
             const didDrop = monitor.didDrop();
             if (didDrop) {
                 return;
             }
-            updateStatus(item.selectedIds.length > 0 ? item.selectedIds : [item.id], status.id).then();
+            updateStatus(item.selectedIds.length > 0 ? item.selectedIds : [{BoardMissionId: item.board.id, productType: item.board.productType}], status.id).then();
         },
         collect: monitor => ({
             isOver: !!monitor.isOver(),
@@ -36,7 +36,7 @@ const StatusTableComponent = ({status, boards, count}: IProps) => {
     }), [status, boards]);
 
 
-    return <Stack ref={drop} border={isOver ? '1px solid black' : 'none'}>
+    return <Stack ref={drop} border={isOver ? '1px solid black' : 'none'} gap={'5px'}>
         <Button onClick={onClickStatus}
                 startIcon={isOpen ? <KeyboardArrowDownIcon/> : <KeyboardArrowUpIcon/>}
                 sx={{
@@ -58,11 +58,11 @@ const StatusTableComponent = ({status, boards, count}: IProps) => {
                 <Paper>
                     <TableContainer>
                         <Table stickyHeader={false}>
-                            <TableHead>
+                            <TableHead style={{backgroundColor: status.backgroundColor}}>
                                 <SecondaryTableRow>
                                     {
                                         tableHeaders(status.id)?.map((header, index) =>
-                                            <SecondaryTableCell key={'statusTable' + index} align={"center"}>{header}</SecondaryTableCell>)
+                                            <SecondaryTableCell style={{backgroundColor: status.backgroundColor}} key={'statusTable' + index} align={"center"}>{header}</SecondaryTableCell>)
                                     }
                                 </SecondaryTableRow>
                             </TableHead>

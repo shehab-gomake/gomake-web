@@ -72,7 +72,7 @@ const GoMakeDatepicker = ({ onChange, placeholder, reset , style, value}: IGoMak
     }, [value])
 
     const dateString = useCallback(() => {
-        if (state.selection.startDate === null || state.selection.endDate === null) {
+        if (!state.selection.startDate || !state.selection.endDate) {
             return '';
         }
         const startDate = dateStringFormat(new Date(state.selection.startDate));

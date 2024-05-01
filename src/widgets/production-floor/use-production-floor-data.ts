@@ -33,7 +33,7 @@ const useProductionFloorData = () => {
     }
 
 
-    const updateStatus = async (boardsIds: string[], statusId: string) => {
+    const updateStatus = async (boardsIds: {BoardMissionId: string; productType: string;}[], statusId: string) => {
         const callBack = (res) => {
             if (res.success) {
                 getData().then();

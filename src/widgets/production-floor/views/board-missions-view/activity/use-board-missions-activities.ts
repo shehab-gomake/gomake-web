@@ -6,8 +6,9 @@ import {
 import {useRouter} from "next/router";
 import {useRecoilState} from "recoil";
 import {boardMissionsActivitiesState} from "@/widgets/production-floor/state/board-missions-activities";
-import {useMemo, useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 import {EActivityType} from "@/widgets/production-floor/enums/activity-type";
+import {IBoardMissionsActivity} from "@/widgets/production-floor/interfaces/board-missions-activity";
 
 enum EActivitiesFilter {
     ALL = 1,
@@ -16,10 +17,10 @@ enum EActivitiesFilter {
 }
 const useBoardMissionsActivities = () => {
     const [activities, setActivities] = useRecoilState(boardMissionsActivitiesState);
-    const [filter, setFilter] = useState<EActivitiesFilter>(EActivitiesFilter.ALL);
+    const [filter, setFilter] = useState<EActivitiesFilter>();
     const {callApi} = useGomakeAxios();
     const {query} = useRouter();
-    const {boardMissionsId, step} = query;
+    const {boardMissionsId, step, productType} = query;
     const getAllActivities = async () => {
         const callBack = (res) => {
             if (res.success) {
@@ -35,7 +36,7 @@ const useBoardMissionsActivities = () => {
 
             }
         }
-        addBoardMissionsComment(callApi, callBack, {comment, boardMissionId: boardMissionsId}).then();
+        addBoardMissionsComment(callApi, callBack, {comment, boardMissionId: boardMissionsId, productType}).then();
     }
 
     const filtersButtonsArray = useMemo(() => [
@@ -56,7 +57,7 @@ const useBoardMissionsActivities = () => {
         },
     ], [filter]);
 
-    const activitiesList = useMemo(() => {
+    const activitiesList: IBoardMissionsActivity[] = useMemo(() => {
         switch (filter) {
             case EActivitiesFilter.ALL:
                 return activities;
@@ -64,8 +65,12 @@ const useBoardMissionsActivities = () => {
                 return activities?.filter(activity => activity.activityType === EActivityType.COMMENT);
             case EActivitiesFilter.LOGS:
                 return activities?.filter(activity => activity.activityType === EActivityType.LOG);
+            default:
+                return [];
         }
     }, [filter, activities]);
+
+    useEffect(() => console.log('activities',activities), [activities])
 
     return {
         getAllActivities,
@@ -74,7 +79,7 @@ const useBoardMissionsActivities = () => {
         step,
         boardMissionsId,
         filtersButtonsArray,
-        activitiesList
+        activitiesList,
     }
 }
 
