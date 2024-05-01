@@ -1,30 +1,20 @@
-import { Stack} from "@mui/material";
+import {Stack} from "@mui/material";
 import Button from "@mui/material/Button";
 import * as React from "react";
 import {GoMakeTextEditor} from "@/components/text-editor/go-make-text-editor";
 import {
     useBoardMissionsActivities
 } from "@/widgets/production-floor/views/board-missions-view/activity/use-board-missions-activities";
-import {useEffect} from "react";
 import {ActivityComponent} from "@/widgets/production-floor/views/board-missions-view/activity/activity-component";
 import {convertHeightToVH} from "@/utils/adapter";
+import {IBoardMissionsActivity} from "@/widgets/production-floor/interfaces/board-missions-activity";
 
 
-const BoardMissionsActivities = () => {
+const BoardMissionsActivities = ({activities}: {activities: IBoardMissionsActivity[]}) => {
     const {
-        getAllActivities,
         addComment,
-        step,
-        boardMissionsId,
         filtersButtonsArray,
-        activitiesList
     } = useBoardMissionsActivities();
-
-    useEffect(() => {
-        if (step === 'activity') {
-            getAllActivities().then();
-        }
-    }, [step, boardMissionsId])
 
     return (
         <Stack width={'40%'} gap={'25px'} height={'100%'}>
@@ -45,7 +35,7 @@ const BoardMissionsActivities = () => {
                 height: convertHeightToVH(650)
             }}>
                 {
-                    activitiesList?.map(activity => <ActivityComponent {...activity}/>)
+                    activities?.map(activity => <ActivityComponent {...activity}/>)
                 }
             </div>
             <GoMakeTextEditor onSend={addComment} containerStyle={{marginTop: 'auto'}}/>

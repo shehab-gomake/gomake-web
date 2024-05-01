@@ -11,7 +11,7 @@ interface IProps extends ICurrentStation {
     boardMissionId: string;
 }
 
-const CurrentStationComponent = ({boardMissionId, machineName, actionName}: IProps) => {
+const CurrentStationComponent = ({boardMissionId, machineName, actionName, productType, id}: IProps) => {
     const {
         handleClick,
         handleClose,
@@ -28,11 +28,11 @@ const CurrentStationComponent = ({boardMissionId, machineName, actionName}: IPro
                    width={"fit-content"} display={'inline-flex'} overflow={'hidden'}>
                 <ButtonGroup>
                     <Button sx={classes.currentStationBtn} variant={'contained'}
-                            onClick={(e) => handleClick(e, boardMissionId)}>
+                            onClick={(e) => handleClick(e, boardMissionId, productType)}>
                         <span>{machineName ? machineName : actionName}</span>
                     </Button>
                     <Button sx={classes.currentStationBtn} variant={'contained'}
-                            onClick={() => onUpdateToNextStation(boardMissionId)}>
+                            onClick={() => onUpdateToNextStation(boardMissionId, productType)}>
                         <KeyboardArrowDownIcon/>
                     </Button>
                 </ButtonGroup>
@@ -41,8 +41,8 @@ const CurrentStationComponent = ({boardMissionId, machineName, actionName}: IPro
                   open={open && boardMissionsStations?.length > 0}
                   onClose={handleClose}>
                 {
-                    boardMissionsStations?.map(station => <MenuItem
-                        onClick={() => onUpdateCurrentStation(boardMissionId, station.id)}>{station.actionName}</MenuItem>)
+                    boardMissionsStations?.filter(s => s.id !== id)?.map(station => <MenuItem
+                        onClick={() => onUpdateCurrentStation(boardMissionId, station.id, productType)}>{station.actionName}</MenuItem>)
                 }
             </Menu>
         </div>

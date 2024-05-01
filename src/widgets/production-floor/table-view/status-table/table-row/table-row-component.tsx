@@ -22,22 +22,29 @@ const TableRowComponent = ({boardMission}: IProps) => {
     const [selectedIds, setSelectedIds] = useRecoilState(selectedBoardsMissionsState);
     const [, drag] = useDrag(() => ({
         type: 'task',
-        item: {id: boardMission.id, type: 'TASK', selectedIds},
+        item: {board: boardMission, type: 'TASK', selectedIds},
         collect: (monitor) => ({
             isDragging: !!monitor.isDragging(),
         }),
     }), [selectedIds]);
     const {updateStatus} = useProductionFloorData();
-    const onSelectBoardMissions = (id: string) => {
-        setSelectedIds(selectedIds.includes(id) ? selectedIds.filter(selectedId => selectedId !== id) : [...selectedIds, id]);
+    const onSelectBoardMissions = (id: string, checked: boolean) => {
+        setSelectedIds(checked ? [...selectedIds, {
+                boardMissionId: id,
+                productType: boardMission.productType
+            }] :
+            selectedIds.filter(selectedBoard => selectedBoard.boardMissionId !== id && selectedBoard.productType === boardMission.productType));
     }
     return <SecondaryTableRow ref={drag} style={{cursor: 'move'}}>
-        <SecondaryTableCell align={"center"}> <SecondaryCheckBox checked={selectedIds.includes(boardMission.id)}
-                                                                 onChange={() => onSelectBoardMissions(boardMission.id)}/>
+        <SecondaryTableCell align={"center"}> <SecondaryCheckBox
+            checked={!!selectedIds?.find(si => si.boardMissionId === boardMission.id && si.productType === boardMission.productType)}
+            onChange={(a) => {
+                onSelectBoardMissions(boardMission.id, a.target.checked)
+            }}/>
         </SecondaryTableCell>
         <SecondaryTableCell align={"center"}>
             <Link
-                href={'/production-floor?boardMissionsId=' + boardMission?.id}>{`${boardMission?.boardMissionNumber}\\${boardMission?.orderNumber}`}</Link>
+                href={`/production-floor?boardMissionsId=${boardMission?.id}&productType=${boardMission?.productType}&step=stations`}>{`${boardMission?.boardMissionNumber}\\${boardMission?.orderNumber}`}</Link>
         </SecondaryTableCell>
         <SecondaryTableCell align={"center"}>
             <LabelComponent label={boardMission?.productName}/>
@@ -48,7 +55,10 @@ const TableRowComponent = ({boardMission}: IProps) => {
         </SecondaryTableCell>
         <SecondaryTableCell align={"center"}>
             <BoardStatusComponent statusId={boardMission.statusId} id={boardMission.id}
-                                  onChange={(id, statusId) => updateStatus([id], statusId)}/>
+                                  onChange={(id, statusId) => updateStatus([{
+                                      BoardMissionId: id,
+                                      productType: boardMission.productType
+                                  }], statusId)}/>
         </SecondaryTableCell>
         <SecondaryTableCell align={"center"}>
             {boardMission?.clientName}

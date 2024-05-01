@@ -23,7 +23,8 @@ export interface IBoardMissions {
     workOrder?: string;
     startDate?: string;
     checked?: boolean;
-    automatedTags: string[]
+    automatedTags: string[];
+    productType: string;
 }
 
 export interface IBoardMissionsDetails {
@@ -44,5 +45,9 @@ export interface IBoardMissionsDetails {
     currentBoardMissionActionId: string;
     currentActionName: string;
     currentMachineName: string;
+    orderItemId: string;
     notes: string[];
+    filesPath: string;
+    productType: string;
+    sectionName: string;
 }

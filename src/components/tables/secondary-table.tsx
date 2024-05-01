@@ -31,7 +31,7 @@ const SecondaryTableCell = styled(TableCell)(() => {
 
 const SecondaryTableRow = styled(TableRow)(() => {
     return {
-        backgroundColor: 'unset',
+        // backgroundColor: bgColor,
     }
 });
 
