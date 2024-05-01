@@ -1,16 +1,16 @@
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useGomakeAxios } from "@/hooks";
+import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { getAllDataPrintHousesReports } from "@/services/api-service/company-report/get-print-houses-report";
 import { PrimaryButton } from "@/components/button/primary-button";
-import { DirectboxSendIcon, EditIcon } from "@/icons";
+import { DirectboxSendIcon } from "@/icons";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
-import { GenerateCalculateProductsExcelForPrintHouses } from "@/services/hooks";
+import { generateCalculateProductsExcelForPrintHousesApi } from "@/services/hooks";
 
 export const useCompanyReport = () => {
     const { t } = useTranslation();
     const { primaryColor } = useGomakeTheme();
-
+    const { alertFault, alertSuccess, } = useSnackBar()
 
     const tableHeaders = [
         t("companyReports.companyName"),
@@ -45,6 +45,7 @@ export const useCompanyReport = () => {
                     item?.orderItemsCount,
                     item?.successRate,
                     <PrimaryButton
+                        onClick={() => generateCalculateProductsExcelForPrintHousesWithPrintHouseId(item?.id)}
                         startIcon={
                             <DirectboxSendIcon stroke={primaryColor(500)} width={20} height={20} />
                         }
@@ -68,24 +69,36 @@ export const useCompanyReport = () => {
         getReport()
     }, [])
 
-    const getDocumentDesignByCreationDoc = async (printHouseId) => {
+    const generateCalculateProductsExcelForPrintHouses = async () => {
 
         const callBack = (res) => {
             if (res.success) {
-                // setdocumentDesign(res.data);      
-                // setdocumentDesignURL(res.data.previewUrl);
+                alertSuccess("Email has been sent")
             }
             else {
-
+                alertFault("Failed to send email")
             }
 
         }
-        await GenerateCalculateProductsExcelForPrintHouses(callApi, callBack, { printHouseId: printHouseId })
+        await generateCalculateProductsExcelForPrintHousesApi(callApi, callBack, {})
+    }
+    const generateCalculateProductsExcelForPrintHousesWithPrintHouseId = async (printHouseId) => {
+        const callBack = (res) => {
+            if (res.success) {
+                alertSuccess("Email has been sent")
+            }
+            else {
+                alertFault("Failed to send email")
+            }
+
+        }
+        await generateCalculateProductsExcelForPrintHousesApi(callApi, callBack, { printHouseId: printHouseId })
     }
     return {
         t,
         tableHeaders,
-        AllReport
+        AllReport,
+        generateCalculateProductsExcelForPrintHouses
     }
 
 };
