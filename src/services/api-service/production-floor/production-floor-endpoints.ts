@@ -20,6 +20,9 @@ const BOARD_MISSIONS_ADD_NOTE_URL = '/v1/erp-service/board-missions/add-note';
 const BOARD_MISSIONS_DELETE_NOTE_URL = '/v1/erp-service/board-missions/delete-note';
 const GET_BOARD_MISSIONS_ACTIVITIES_URL = '/v1/erp-service/board-missions-comments/get-all-comments/';
 const ADD_BOARD_MISSIONS_COMMENT_URL = '/v1/erp-service/board-missions-comments/add-comment';
+const START_BOARD_MISSIONS_CHANEL_URL = '/v1/erp-service/board-missions/start-signalr';
+const MOVE_BOARD_MISSION_TO_DONE_URL = '/v1/erp-service/board-missions/move-board-mission-to-done';
+const BACK_TO_PROCESS_URL = '/v1/erp-service/board-missions/back-to-process';
 const SAVE_UPLOADED_FILE_URL = '/v1/erp-service/board-missions/save-uploaded-file';
 const GET_UPLOADED_FILES_URL = '/v1/erp-service/board-missions/get-uploaded-files/';
 
@@ -92,6 +95,14 @@ const saveUploadedFile: ICallAndSetData = async (callApi, callBack, data ) => {
 const getAllBoardMissionsUploadedFiles: ICallAndSetData = async (callApi, callBack, orderItemId: string ) => {
     return await getSetApiData(callApi, EHttpMethod.GET, GET_UPLOADED_FILES_URL + orderItemId , callBack);
 }
+
+const moveBoardMissionToDoneApi: ICallAndSetData = async (callApi, setState, data: { boardMissionId: string, sendMessage?: string }) => {
+    return await getSetApiData(callApi, EHttpMethod.POST, MOVE_BOARD_MISSION_TO_DONE_URL, setState, data);
+};
+
+const backToProcessApi: ICallAndSetData = async (callApi, setState, data: { boardMissionId: string, sendMessage?: string }) => {
+    return await getSetApiData(callApi, EHttpMethod.POST, BACK_TO_PROCESS_URL, setState, data);
+};
 export {
     getProductionFloorData,
     updateBoardsMissionsStatusApi,
@@ -111,6 +122,9 @@ export {
     boardMissionsDeleteNote,
     getAllBoardMissionsActivities,
     addBoardMissionsComment,
+    startBoardMissionsChanel,
+    moveBoardMissionToDoneApi,
+    backToProcessApi,
     saveUploadedFile,
     getAllBoardMissionsUploadedFiles
 };

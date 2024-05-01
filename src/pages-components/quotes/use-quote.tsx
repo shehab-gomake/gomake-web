@@ -254,7 +254,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
               quote?.customerName,
               quote?.agentName,
               quote?.number,
-              quote?.sourceDocumentNumber.map((item, index) => {
+              quote?.sourceDocumentNumber?.map((item, index) => {
                 return (
                   <>
                     {
@@ -295,7 +295,8 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
           _renderPaymentType(quote?.paymentType),
           quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
           quote?.notes,
-          _renderDocumentStatus(quote?.status, t),
+        //  _renderDocumentStatus(quote?.status, t),
+            quote?.status,
           <MoreMenuWidget
             quote={quote}
             documentType={docType}
@@ -317,7 +318,6 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
         patternSearch: finalPatternSearch,
         fromDate: fromDate && GetDateFormat(fromDate),
         toDate: toDate && GetDateFormat(toDate),
-
         status: quoteStatusId?.value || statusId?.value,
         model: {
           pageNumber: page,
@@ -420,7 +420,8 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
           _renderPaymentType(quote?.paymentType),
           quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
           quote?.notes,
-          _renderDocumentStatus(quote?.status, t),
+         // _renderDocumentStatus(quote?.status, t),
+         t(quote?.status),
           <MoreMenuWidget
             quote={quote}
             documentType={docType}
@@ -513,8 +514,6 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     t("sales.quote.createdDate"),
     t("sales.quote.client"),
     t("sales.quote.agent"),
-
-
     (() => {
       switch (docType) {
         case DOCUMENT_TYPE.order:
@@ -531,13 +530,13 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
           return t("sales.quote.receiptNumber");
       }
     })(),
-    docType === DOCUMENT_TYPE.order ? t("sales.quote.quoteNumber") : t("sales.quote.sourceDocument"),
+    docType === DOCUMENT_TYPE.order ? t("sales.quote.quoteNumber") : docType === DOCUMENT_TYPE.receipt ? null : t("sales.quote.sourceDocument"),
     docType === DOCUMENT_TYPE.receipt ? t("sales.quote.paymentMethod") : t("sales.quote.worksName"),
     t("sales.quote.totalPrice"),
     t("sales.quote.notes"),
     t("sales.quote.status"),
     t("sales.quote.more"),
-  ];
+  ].filter(Boolean);
 
   const logsTableHeaders = [
     t("sales.quote.actionDate"),

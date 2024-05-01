@@ -2,6 +2,7 @@ import { useGomakeAxios } from "@/hooks";
 import { getAllUsersApi } from "@/services/api-service/users/users-api";
 import {
   isLoadgingState,
+  listEmployeesAtom,
   subProductsParametersState,
   systemCurrencyState,
   systemVATState,
@@ -58,6 +59,10 @@ const useRightSideWidget = ({ includeVAT }) => {
   }, [subProducts]);
   const exampleTypeValues = useRecoilValue(exampleTypeState);
   const billingMethodValues = useRecoilValue(billingMethodState);
+  const [listEmployeesValues, setListEmployeesValues] = useRecoilState(listEmployeesAtom);
+
+
+
 
   const [changePrice, setChangePrice] = useState<number>(0);
   const { t } = useTranslation();
@@ -100,6 +105,21 @@ const useRightSideWidget = ({ includeVAT }) => {
       return <WarningIcon sx={{ width: 15, height: 15, color: warningColor(500) }} />;
     }
   };
+  useEffect(() => {
+    if (listEmployees) {
+      setListEmployeesValues(
+        [
+          {
+            id: "00415c86-165f-463a-bde0-f37c66f00000",
+            firstname: "Recommeded",
+            lastname: "",
+            email: "recommeded@gomake.net",
+          },
+          ...listEmployees,
+        ]
+      )
+    }
+  }, [listEmployees])
   return {
     currentProductItemValueTotalPrice,
     calculationProgress,
@@ -110,6 +130,7 @@ const useRightSideWidget = ({ includeVAT }) => {
     isLoading,
     quantity,
     selectedWorkFlow,
+    listEmployeesValues,
     setCurrentProductItemValueTotalPrice,
     _renderIconLogs,
     t,
