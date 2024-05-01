@@ -45,3 +45,4 @@ export * from "./warning";
 export * from "./enter-arrow";
 export * from "./excel-sheet"
 export * from "./tick-icon"
+export * from "./directbox-send"
