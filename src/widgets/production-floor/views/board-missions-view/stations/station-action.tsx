@@ -5,7 +5,7 @@ import Divider from "@mui/material/Divider";
 import {
     ParametersMapping
 } from "@/widgets/product-pricing-widget/components/action/key-value-view";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {useTranslation} from "react-i18next";
 import CheckIcon from "@mui/icons-material/Check";
 import {useStyle} from "@/widgets/production-floor/views/board-missions-view/stations/style";
@@ -21,10 +21,11 @@ import {
 import Button from "@mui/material/Button";
 import {ActionTimer} from "@/widgets/production-floor/views/board-missions-view/stations/action-timer/action-timer";
 import {useRecoilState} from "recoil";
-import {boardMissionsStationsState} from "@/widgets/production-floor/views/board-missions-view/stations/state";
+import {boardMissionsDetailsState} from "@/widgets/production-floor/state/boards";
 
 interface IProps extends IBoardMissionsStation {
-    delay: number
+    delay: number;
+    selected?: boolean;
 }
 
 const BoardMissionsStationAction = ({
@@ -37,14 +38,15 @@ const BoardMissionsStationAction = ({
                                         outputs,
                                         isDone,
                                         boardMissionActionId,
-                                        boardMissionActionTimer
+                                        boardMissionActionTimer,
+                                        selected
                                     }: IProps) => {
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const {t} = useTranslation();
     const {classes} = useStyle();
     const {callApi} = useGomakeAxios();
-    const [stations, setStations] = useRecoilState(boardMissionsStationsState);
     const {alertSuccessUpdate, alertFaultUpdate} = useSnackBar();
+    const [boardMissions] = useRecoilState(boardMissionsDetailsState);
     const inputsParameters = outputs.filter(
         (parameter) =>
             parameter.propertyType === RuleType.PARAMETER &&
@@ -60,49 +62,37 @@ const BoardMissionsStationAction = ({
         const callBack = (res) => {
             if (res.success) {
                 alertSuccessUpdate();
-                setStations(stations?.map(station => station.boardMissionActionId === boardMissionActionId ? {
-                    ...station,
-                    isDone: true
-                } : station))
             } else {
                 alertFaultUpdate()
             }
         }
-        await updateBoardMissionsActionDone(callApi, callBack, boardMissionsActionId);
+        await updateBoardMissionsActionDone(callApi, callBack, {boardMissionsActionId: boardMissionsActionId, productType: boardMissions.productType});
     }
     const onClickBackToProcess = async (boardMissionsActionId: string) => {
         const callBack = (res) => {
             if (res.success) {
                 alertSuccessUpdate()
-                setStations(stations?.map(station => station.boardMissionActionId === boardMissionActionId ? {
-                    ...station,
-                    isDone: false
-                } : station))
             } else {
                 alertFaultUpdate()
             }
         }
-        await cancelBoardMissionsActionDone(callApi, callBack, boardMissionsActionId);
+        await cancelBoardMissionsActionDone(callApi, callBack, {boardMissionsActionId: boardMissionsActionId, productType: boardMissions.productType});
     }
 
     const onToggleTimer = async () => {
         const callBack = (res) => {
             if (res.success) {
                 alertSuccessUpdate()
-                setStations(stations?.map(station => station.boardMissionActionId === boardMissionActionId ? {
-                    ...station,
-                    boardMissionActionTimer: {
-                        ...station.boardMissionActionTimer,
-                        isTimerRunning: !station.boardMissionActionTimer?.isTimerRunning
-                    }
-                } : station))
             } else {
                 alertFaultUpdate()
             }
         }
-        await toggleBoardMissionsActionTimer(callApi, callBack, boardMissionActionId);
+        await toggleBoardMissionsActionTimer(callApi, callBack, {boardMissionsActionId: boardMissionActionId, productType: boardMissions.productType});
     }
 
+    useEffect(() => {
+        setIsOpen(!!selected)
+    }, [selected])
     return (
         <Fade in={true} timeout={delay} style={{width: "100%", position: "relative"}}>
             <Stack direction={'row'} alignItems={'center'} justifyContent={'space-between'}
@@ -110,7 +100,7 @@ const BoardMissionsStationAction = ({
                    style={{
                        ...classes.actionContainer,
                        backgroundColor: isDone ? '#EAECF0' : '#F9FAFB',
-                       border: isOpen ? classes.actionContainerBorder : "unset",
+                       border: selected ? classes.actionContainerBorder : "unset",
                    }}>
                 <Stack>
                     <Stack padding={"10px 0"} direction={"row"} justifyContent={"space-between"}>

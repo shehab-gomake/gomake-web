@@ -41,15 +41,16 @@ const RightSideWidget = ({
     calculationProgress,
     exampleTypeValues,
     billingMethodValues,
+    listEmployeesValues,
     systemCurrency,
-    listEmployees,
     isLoading,
     quantity,
-    calculationExceptionsLogs,
+    selectedWorkFlow,
     setCurrentProductItemValueTotalPrice,
     t,
     _renderIconLogs,
   } = useRightSideWidget({ includeVAT });
+
   return (
     <div style={clasess.rightSideMainContainer}>
       <div style={clasess.rightSideContainer}>
@@ -139,7 +140,7 @@ const RightSideWidget = ({
             ) : (
               <GomakeTextInput
                 value={
-                  calculationExceptionsLogs?.length > 0
+                  selectedWorkFlow?.exceptions?.length > 0
                     ? "---------"
                     : currentProductItemValueTotalPrice ?? "---------"
                 }
@@ -147,7 +148,7 @@ const RightSideWidget = ({
                   setCurrentProductItemValueTotalPrice(e.target.value);
                 }}
                 style={clasess.inputPriceStyle}
-                type={currentProductItemValueTotalPrice ? "number" : "text"}
+                type={selectedWorkFlow?.exceptions?.length > 0 ? "text" : typeof (currentProductItemValueTotalPrice) === "number" ? "number" : "text"}
               />
             )}
           </div>
@@ -326,15 +327,7 @@ const RightSideWidget = ({
               <div style={clasess.autoCompleteContainer}>
                 <GoMakeAutoComplate
                   key={graphicDesigner}
-                  options={[
-                    {
-                      id: "00415c86-165f-463a-bde0-f37c66f00000",
-                      firstname: "Recommeded",
-                      lastname: "",
-                      email: "recommeded@gomake.net",
-                    },
-                    ...listEmployees,
-                  ]}
+                  options={listEmployeesValues}
                   getOptionLabel={(option: any) =>
                     `${option.firstname}` + ` ${option.lastname}`
                   }
@@ -371,7 +364,7 @@ const RightSideWidget = ({
                 </div>
               )}
 
-              {calculationExceptionsLogs?.map((item) => {
+              {selectedWorkFlow?.exceptions?.map((item) => {
                 return (
                   <>
                     {item.actionName ? (
@@ -385,7 +378,7 @@ const RightSideWidget = ({
                           gap: 5,
                         }}
                       >
-                        {_renderIconLogs(item.exceptionType)}
+                        {_renderIconLogs(item.exception?.exceptionType)}
                         <div
                           style={{
                             ...clasess.titleLogsTextStyle,
@@ -395,7 +388,7 @@ const RightSideWidget = ({
                           <div style={{ width: 85 }}>{item.actionName}:</div>
                         </div>
                         <div style={clasess.textLogstyle}>
-                          <span style={{ color: "black" }}>{t("CalculationExceptions." + item?.exceptionKey)}</span>
+                          <span style={{ color: "black" }}>{t("CalculationExceptions." + item?.exception?.exceptionKey)}</span>
                         </div>
                       </div>
                     ) : (

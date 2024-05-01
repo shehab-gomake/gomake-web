@@ -14,6 +14,10 @@ const useStyle = () => {
         ...FONT_FAMILY.Lexend(500, 14),
         color: neutralColor(500),
       },
+      insideStyle: {
+        // width: "600px",
+         height: "300px",
+       },
       detailValue: {
         ...FONT_FAMILY.Inter(500, 14),
         color: primaryColor(900),
@@ -57,14 +61,14 @@ const useStyle = () => {
         borderRadius: "5px",
         border: "1px solid" + primaryColor(500),
         overflow: "hidden",
-        width: "400px",
+        // width: "400px",
       },
       button: {
-        width: "200px",
+        width: "fit-content",
         borderRadius: 0,
         border: 0,
         "&:hover": {
-          width: "200px",
+          width: "fit-content",
           borderRadius: 0,
           border: 0,
         },

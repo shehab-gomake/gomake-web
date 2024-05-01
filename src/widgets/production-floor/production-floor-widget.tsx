@@ -17,7 +17,7 @@ const ProductionFloorWidget = () => {
     const [view, setView] = useRecoilState(productionFloorViewState);
     const [openBoardMissionsDrawer, setOpenBoardMissionsDarawer] = useState<boolean>(false);
     const {query, replace, pathname} = useRouter();
-    const {groupsId, boardMissionsId, step} = query;
+    const {groupsId, boardMissionsId, step, productType} = query;
 
     useEffect(() => {
         setOpenBoardMissionsDarawer(!!boardMissionsId)
@@ -41,13 +41,13 @@ const ProductionFloorWidget = () => {
         </Stack>
         <Drawer sx={{zIndex: 999999}} open={openBoardMissionsDrawer} anchor={'bottom'} onClose={() => {
         }}>
-            <Stack width={'100vw'} height={'calc(100vh - 50px)'}>
+            <Stack paddingBottom={'10px'} width={'100vw'} height={'calc(100vh - 50px)'}>
                 <IconButton onClick={() => {
                     replace('/production-floor', undefined, {shallow: true}).then();
                 }} sx={{width: 'fit-content', height: 'fit-content', padding: 1, color: 'white', position: 'fixed', top: 10, right: 10}}>
                     <ClearRoundedIcon width={48} height={48}/>
                 </IconButton>
-                {openBoardMissionsDrawer && <BoardMissionsComponent step={step?.toString()} boardMissionsId={boardMissionsId?.toString()}/>}
+                {openBoardMissionsDrawer && <BoardMissionsComponent productType={!!productType ? productType.toString() : ''} step={step?.toString()} boardMissionsId={boardMissionsId?.toString()}/>}
             </Stack>
         </Drawer>
     </Stack>

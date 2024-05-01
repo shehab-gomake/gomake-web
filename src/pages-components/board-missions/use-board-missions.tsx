@@ -13,11 +13,13 @@ import { MoreMenuWidget } from "./widgets/more-circle";
 import { BoardMission } from "./widgets/interfaces";
 import { DuplicateType } from "@/enums";
 import { DOCUMENT_TYPE } from "../quotes/enums";
+import { useRouter } from "next/router";
+import { backToProcessApi, moveBoardMissionToDoneApi } from "@/services/api-service/production-floor/production-floor-endpoints";
 
 const useBoardMissions = () => {
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
-  const { alertFaultGetData } = useSnackBar();
+  const { alertFaultGetData, alertFaultUpdate, alertSuccessUpdate } = useSnackBar();
   const { data, connectionId } = useBoardMissionsSignalr();
   const { navigate } = useGomakeRouter();
   const [status, setStatus] = useState<{
@@ -39,6 +41,8 @@ const useBoardMissions = () => {
   const [pageSize, setPageSize] = useState(DEFAULT_VALUES.PageSize);
   const { customer, setCustomer, renderOptions, checkWhatRenderArray, handleCustomerChange } = useCustomerDropDownList()
   const { agent, setAgent, agentsCategories, handleAgentChange } = useAgentsList()
+  const router = useRouter()
+  const [selectedMission, setSelectedMission] = useState<any>({})
 
   const handlePageSizeChange = (event) => {
     setPageNumber(1);
@@ -101,7 +105,12 @@ const useBoardMissions = () => {
     setResetDatePicker(true);
     pageNumber === 1 ? getAllBoardMissions(true) : setPageNumber(1);
   };
+  useEffect(() => {
+    if (router.query.orderNumber) {
+      setPatternSearch(router.query.orderNumber as string);
+    }
 
+  }, [router])
   const onChangeMissionsSearch = (value: string) => {
     setPatternSearch(value);
   };
@@ -174,7 +183,7 @@ const useBoardMissions = () => {
     }
   };
 
-  const onClickDuplicateMission = (duplicateType : DuplicateType ) => {
+  const onClickDuplicateMission = (duplicateType: DuplicateType) => {
     navigate(
       `/products/duplicate?clientTypeId=${missionItem?.clientTypeId}&customerId=${missionItem?.customerID}&productId=${missionItem?.productID}&documentItemId=${missionItem?.orderItemId}&documentType=${DOCUMENT_TYPE.order}&documentId=${missionItem?.orderItemId}&duplicateType=${duplicateType}`
     );
@@ -184,24 +193,28 @@ const useBoardMissions = () => {
   const onCloseDuplicateModal = () => {
     setOpenDuplicateModal(false);
   };
-  const onOpenDuplicateModal = (mission:any) => {
+  const onOpenDuplicateModal = (mission: any) => {
     setMissionItem(mission);
     setOpenDuplicateModal(true);
   };
 
   const [openMarkReadyModal, setOpenMarkReadyModal] = useState<boolean>(false);
   const onCloseMarkReadyModal = () => {
+    setSelectedMission({})
     setOpenMarkReadyModal(false);
   };
-  const onOpenMarkReadyModal = () => {
+  const onOpenMarkReadyModal = (mission) => {
+    setSelectedMission(mission)
     setOpenMarkReadyModal(true);
   };
 
   const [openReturnToProdModal, setOpenReturnToProdModalModal] = useState<boolean>(false);
   const onCloseReturnToProdModal = () => {
+    setSelectedMission({})
     setOpenReturnToProdModalModal(false);
   };
-  const onOpenReturnToProdModal = () => {
+  const onOpenReturnToProdModal = (mission) => {
+    setSelectedMission(mission)
     setOpenReturnToProdModalModal(true);
   };
 
@@ -232,6 +245,26 @@ const useBoardMissions = () => {
     setPageNumber(value);
   };
 
+  const onClickMoveBoardMissionToDone = async (sendMessage: boolean) => {
+    const callBack = (res) => {
+      if (res?.success) {
+        alertSuccessUpdate()
+      } else {
+        alertFaultUpdate();
+      }
+    };
+    await moveBoardMissionToDoneApi(callApi, callBack, { boardMissionId: selectedMission?.id, sendMessage });
+  };
+  const onClickBackToProcess = async () => {
+    const callBack = (res) => {
+      if (res?.success) {
+        alertSuccessUpdate()
+      } else {
+        alertFaultUpdate();
+      }
+    };
+    await backToProcessApi(callApi, callBack, { boardMissionId: selectedMission?.id, sendMessage: false });
+  };
   return {
     tableHeader,
     agentsCategories,
@@ -271,6 +304,8 @@ const useBoardMissions = () => {
     openReturnToProdModal,
     onCloseReturnToProdModal,
     onClickDuplicateMission,
+    onClickMoveBoardMissionToDone,
+    onClickBackToProcess
   };
 };
 

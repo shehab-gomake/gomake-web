@@ -12,12 +12,13 @@ const InputNumberParameterWidget = ({
   disabled = false,
   extraOnChange
 }: any) => {
+  const myParameter = temp.find((item) => item.parameterId === parameter.id)
   return (
     <div data-tour={parameter?.id?.toString()}>
       <GomakeTextInput
         //key={disabled + "parameter" + index}
         style={clasess.textInputStyle}
-        disabled={disabled}
+        disabled={disabled ? disabled : myParameter?.isDisabled}
         defaultValue={parameter.defaultValue}
         placeholder={parameter.name}
         value={index !== -1 ? temp[index].values : ""}

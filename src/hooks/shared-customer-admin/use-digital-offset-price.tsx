@@ -11,6 +11,7 @@ import {
   currentCalculationConnectionId,
   isLoadgingState,
   itemParmetersValuesState,
+  listEmployeesAtom,
   selectedValueConfigState,
   selectParameterButtonState,
   subProductsCopyParametersState,
@@ -22,7 +23,7 @@ import cloneDeep from "lodash/cloneDeep";
 import lodashClonedeep from "lodash.clonedeep";
 import { EWidgetProductType } from "@/pages-components/products/digital-offset-price/enums";
 import { compareStrings, getParameterByParameterCode } from "@/utils/constants";
-import { EButtonTypes, EParameterTypes } from "@/enums";
+import { EButtonTypes, EParameterTypes, GraphicsTypesParam, SampleTypeParm } from "@/enums";
 import { QuantityParameter } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/quantity-parameter/quantity-parameter";
 import { InputNumberParameterWidget } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/input-number-parameter";
 import { DropDownListParameterWidget } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/drop-down-list-parameter";
@@ -62,6 +63,8 @@ import { getCurrencies } from "@/services/api-service/general/enums";
 import { currenciesState } from "@/widgets/materials-widget/state";
 import { EHttpMethod } from "@/services/api-service/enums";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
+import { exampleTypeState } from "@/store/example-type";
+import { billingMethodState } from "@/store/billing-method";
 
 
 const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
@@ -81,7 +84,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [samlleType, setSamlleType] = useState();
   const [isRequiredParameters, setIsRequiredParameters] = useState<any>([]);
   const [activeSectionRequiredParameters, setActiveSectionRequiredParameters] = useState([]);
-
+  const [docmentItemByEdit, setDocmentItemByEdit] = useState<any>({})
   const [GalleryModalOpen, setGalleryModalOpen] = useState(false);
   const [multiParameterModal, setMultiParameterModal] = useState(false);
   const [makeShapeOpen, setMakeShapeOpen] = useState(false);
@@ -174,47 +177,40 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     if (calculationResult && calculationResult.productItemValue) {
       if (calculationResult.productItemValueDraftId === currentCalculationSessionId) {
         setCurrentProductItemValueDraftId(calculationResult.productItemValueDraftId);
+        let productTypes = new Set();
         const currentWorkFlows = cloneDeep(workFlows);
         const newWorkFlows = calculationResult?.productItemValue.workFlows;
-        newWorkFlows.forEach((flow) => {
-          const isExists = currentWorkFlows.find((x) => x.id === flow.id);
-          if (!isExists) {
-            currentWorkFlows.push(flow);
+        currentWorkFlows.forEach((workFlow) => { productTypes.add(workFlow.productType) })
+        newWorkFlows.forEach((workFlow) => { productTypes.add(workFlow.productType) })
+        const allWorkFlows = [];
+        productTypes.forEach((productType) => {
+
+          if (productType === null) {
+            // general workflows 
+            let newProductTypeWorkFlows = cloneDeep(newWorkFlows);
+            newProductTypeWorkFlows = newProductTypeWorkFlows.filter(x => x.productType === productType && !x.isCompleteWorkFlow);
+            let currentProductTypeWorkFlows = cloneDeep(currentWorkFlows);
+            currentProductTypeWorkFlows = currentProductTypeWorkFlows.filter(x => x.productType === productType && !x.isCompleteWorkFlow);
+            let result = setSelectedWorkflow(newProductTypeWorkFlows, currentProductTypeWorkFlows);
+            allWorkFlows.push(...result);
+            // completed workflows
+            let newProductTypeCompletedWorkFlows = cloneDeep(newWorkFlows);
+            newProductTypeCompletedWorkFlows = newProductTypeCompletedWorkFlows.filter(x => x.productType === productType && x.isCompleteWorkFlow);
+            let currentProductTypeCompletedWorkFlows = cloneDeep(currentWorkFlows);
+            currentProductTypeCompletedWorkFlows = currentProductTypeCompletedWorkFlows.filter(x => x.productType === productType && x.isCompleteWorkFlow);
+            let completedWorkFlowsResult = setSelectedWorkflow(newProductTypeCompletedWorkFlows, currentProductTypeCompletedWorkFlows);
+            allWorkFlows.push(...completedWorkFlowsResult);
+          } else {
+            let newProductTypeWorkFlows = cloneDeep(newWorkFlows);
+            newProductTypeWorkFlows = newProductTypeWorkFlows.filter(x => x.productType === productType);
+            let currentProductTypeWorkFlows = cloneDeep(currentWorkFlows);
+            currentProductTypeWorkFlows = currentProductTypeWorkFlows.filter(x => x.productType === productType);
+            let result = setSelectedWorkflow(newProductTypeWorkFlows, currentProductTypeWorkFlows);
+            allWorkFlows.push(...result);
           }
-          if (flow.selected) {
-            currentWorkFlows.forEach((f) => (f.selected = false));
-          }
-        });
-        if (calculationResult?.monials) {
-          calculationResult?.monials.forEach((m) => {
-            const workFlow = currentWorkFlows.find(
-              (x) => x.id === m.workFlowId
-            );
-            if (workFlow) {
-              workFlow.monials = m?.monials;
-              workFlow.recommendationRang = m?.recommendationRang;
-            }
-          });
-        }
-        currentWorkFlows.sort((a, b) => b.monials - a.monials);
-        let selectedWorkFlow = currentWorkFlows?.find((x) => x.selected);
-        if (
-          !selectedWorkFlow &&
-          currentWorkFlows &&
-          currentWorkFlows.length > 0
-        ) {
-          currentWorkFlows[0].selected = true;
-        }
-        selectedWorkFlow = currentWorkFlows?.find((x) => x.selected);
-        if (
-          selectedWorkFlow &&
-          selectedWorkFlow.totalPrice &&
-          selectedWorkFlow.totalPrice.values
-        ) {
-          setCurrentProductItemValueTotalPrice(
-            parseFloat(selectedWorkFlow.totalPrice.values[0])
-          );
-        }
+
+        })
+
         // const currentWorkFlowsCount = currentWorkFlows.length;
         // const totalWorkFlowsCount =
         // calculationResult?.productItemValue.totalWorkFlows;
@@ -234,11 +230,53 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           setCurrentProductItemValueTotalWorkFlows(currentWorkFlows ? currentWorkFlows.length : 0)
 
         }
-        setWorkFlows(currentWorkFlows);
+        setWorkFlows(allWorkFlows);
         setJobActions(calculationResult?.productItemValue.actions);
       }
     }
   }, [calculationResult]);
+  const setSelectedWorkflow = (newWorkFlows, currentWorkFlows) => {
+    newWorkFlows.forEach((flow) => {
+      const isExists = currentWorkFlows.find((x) => x.id === flow.id);
+      if (!isExists) {
+        currentWorkFlows.push(flow);
+      }
+      if (flow.selected) {
+        currentWorkFlows.forEach((f) => (f.selected = false));
+      }
+    });
+    if (calculationResult?.monials) {
+      calculationResult?.monials.forEach((m) => {
+        const workFlow = currentWorkFlows.find(
+          (x) => x.id === m.workFlowId
+        );
+        if (workFlow) {
+          workFlow.monials = m?.monials;
+          workFlow.recommendationRang = m?.recommendationRang;
+        }
+      });
+    }
+    currentWorkFlows.sort((a, b) => b.monials - a.monials);
+    let selectedWorkFlow = currentWorkFlows?.find((x) => x.selected);
+    if (
+      !selectedWorkFlow &&
+      currentWorkFlows &&
+      currentWorkFlows.length > 0
+    ) {
+      currentWorkFlows[0].selected = true;
+    }
+    selectedWorkFlow = currentWorkFlows?.find((x) => x.selected);
+    if (
+      selectedWorkFlow && selectedWorkFlow.isCompleteWorkFlow &&
+      selectedWorkFlow.totalPrice &&
+      selectedWorkFlow.totalPrice.values
+    ) {
+      setCurrentProductItemValueTotalPrice(
+        parseFloat(selectedWorkFlow.totalPrice.values[0])
+      );
+    }
+    return currentWorkFlows;
+  }
   useEffect(() => {
     if (signalRPricingResult && signalRPricingResult.productItemValueDraftId === currentCalculationSessionId) {
       setLoading(false);
@@ -277,9 +315,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     }
 
   }, [calculationExceptionsLogs]);
+
   useEffect(() => {
     if (updatedSelectedWorkFlow) {
-      if (!workFlows.find(x => x.id == updatedSelectedWorkFlow?.id)) {
+      if (workFlows.find(x => x.id == updatedSelectedWorkFlow?.id)) {
         setWorkFlows(
           workFlows.map((flow) =>
             flow.id === updatedSelectedWorkFlow?.id
@@ -292,6 +331,19 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         );
       } else {
         let temp = workFlows.map((flow) => { return { ...flow, selected: false } });
+        temp.forEach(item => {
+          if (updatedSelectedWorkFlow.orginalBookPartId === item.id) {
+            item.selected = true;
+          }
+          if (updatedSelectedWorkFlow.subWorkFlows) {
+            updatedSelectedWorkFlow.subWorkFlows.forEach(subFlow => {
+              if (subFlow.orginalBookPartId === item.id) {
+                item.selected = true;
+              }
+            });
+          }
+        });
+
         setWorkFlows([...temp, { ...updatedSelectedWorkFlow, selected: true }]);
       }
 
@@ -705,6 +757,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                           valuesConfigs: childParam?.valuesConfigs,
                           unitKey: childParam?.unitKey,
                           unitType: childParam?.unitType,
+                          isDisabled: item.defaultValue != null ? true : (childParam?.defaultValue != null ? true : false),
                         });
                       });
                     }
@@ -989,15 +1042,23 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   ]);
 
   useEffect(() => {
-    setCanCalculation(false);
+    let checkParameter = validateParameters(isRequiredParameters);
     setCurrentProductItemValueTotalPrice(null);
     setWorkFlows([]);
     setJobActions([]);
     setSubProducts([]);
+    if (checkParameter) {
+      setCanCalculation(true);
+
+    } else {
+      setCanCalculation(false);
+
+    }
     setCalculationProgress({
       totalWorkFlowsCount: 0,
       currentWorkFlowsCount: 0,
     });
+
     if (
       widgetType === EWidgetProductType.EDIT ||
       widgetType === EWidgetProductType.DUPLICATE
@@ -1014,13 +1075,71 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       });
     }
   }, [router, widgetType, connectionId]);
+  const exampleTypeValues = useRecoilValue(exampleTypeState);
+  const billingMethodValues = useRecoilValue(billingMethodState);
+  const listEmployeesValues = useRecoilValue(listEmployeesAtom);
+
+  const getGraphicsTypeValue = (billingMethod?: GraphicsTypesParam) => {
+    if (billingMethod && billingMethod === GraphicsTypesParam.PriceHour) {
+      return billingMethodValues.find((item) => item.value === "workingHours")
+    } else {
+      return billingMethodValues.find((item) => item.value === "fixedPrice")
+    }
+  }
+  const getSamlleTypeValue = (samlleType?: SampleTypeParm) => {
+    if (samlleType && samlleType === SampleTypeParm.Full) {
+      return exampleTypeValues.find((item) => item.value === "Full");
+    } else {
+      return exampleTypeValues.find((item) => item.value === "PrintOnly");
+    }
+  }
+  useEffect(() => {
+    if (
+      widgetType === EWidgetProductType.EDIT ||
+      widgetType === EWidgetProductType.DUPLICATE
+    ) {
+      if (docmentItemByEdit) {
+        setGraphicNotes(docmentItemByEdit.graphicNotes)
+        setPrintingNotes(docmentItemByEdit.printingNotes)
+        if (docmentItemByEdit?.exampleType) {
+          setSamlleType(getSamlleTypeValue(docmentItemByEdit?.exampleType))
+        }
+        if (docmentItemByEdit?.graphicsTypes) {
+          setBillingMethod(getGraphicsTypeValue(docmentItemByEdit?.graphicsTypes))
+        }
+        if (docmentItemByEdit?.graphicsEmployeeId) {
+          setGraphicDesigner(listEmployeesValues?.find((item) => item.id === docmentItemByEdit?.graphicsEmployeeId))
+
+        }
+
+      }
+    }
+  }, [widgetType, docmentItemByEdit])
   useEffect(() => {
     if (canCalculation) {
       calculationProduct();
     }
   }, [subProducts, canCalculation]);
 
-  
+  interface BillingMethod {
+    value: string;
+    text: string;
+  }
+
+  const getGraphicsType = (billingMethod?: BillingMethod): GraphicsTypesParam => {
+    if (billingMethod && billingMethod.value === "workingHours") {
+      return GraphicsTypesParam.PriceHour;
+    } else {
+      return GraphicsTypesParam.PriceRegularHour;
+    }
+  }
+  const getSamlleType = (samlleType?: BillingMethod): SampleTypeParm => {
+    if (samlleType && samlleType.value === "Full") {
+      return SampleTypeParm.Full;
+    } else {
+      return SampleTypeParm.PrintOnly;
+    }
+  }
   useEffect(() => {
     if (currentProductItemValueTotalPrice && quantity) {
       const productItemValue = {
@@ -1028,7 +1147,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         productItemValueId: productItemValueDraftId,
         itemId: router?.query?.documentId,
         productId: router?.query?.productId,
-        supplierId: "",
+        // supplierId: graphicDesigner && graphicDesigner?.id,
         customerID: router?.query?.customerId,
         unitPrice: +currentProductItemValueTotalPrice / +quantity?.values[0],
         amount: quantity?.values[0],
@@ -1039,13 +1158,27 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         isNeedExample: false,
         isDuplicatedWithAnotherQuantity: false,
         graphicsEmployeeId: graphicDesigner?.id,
-        graphicsPricingType: billingMethod?.value,
+        graphicsTypes: billingMethod && getGraphicsType(billingMethod),
         duplicateType: router?.query?.duplicateType,
-        documentId: router?.query?.documentId
+        documentId: router?.query?.documentId,
+        exampleType: samlleType && getSamlleType(samlleType)
       };
       setCurrentProductItemValue(productItemValue);
     }
-  }, [subProducts, selectedWorkFlow, currentProductItemValueTotalPrice]);
+  }, [
+    subProducts,
+    selectedWorkFlow,
+    currentProductItemValueTotalPrice,
+    graphicDesigner,
+    connectionId,
+    productItemValueDraftId,
+    router,
+    urgentOrder,
+    printingNotes,
+    graphicNotes,
+    billingMethod,
+    samlleType
+  ]);
 
   const handleChange =
     (panel: string) => (event: React.SyntheticEvent, newExpanded: boolean) => {
@@ -1934,6 +2067,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     // Allow moving to any previous tab regardless of checkParameter
     if (index < activeIndex) {
       setActiveIndex(index);
+      setCanCalculation(false);
     } else if (index > activeIndex) {
       // Move to the next tab only if checkParameter is true
       if (checkParameter) {
@@ -1954,6 +2088,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     if (checkParameter) {
       if (activeIndex < productTemplate.sections.length) {
         setActiveIndex(activeIndex + 1);
+        setCanCalculation(false);
       }
     }
     else {
@@ -1965,6 +2100,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const handlePreviousClick = () => {
     if (activeIndex != 0) {
       setActiveIndex(activeIndex - 1);
+      setCanCalculation(false);
+
     }
   };
 
@@ -2015,9 +2152,12 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     if (connectionId) {
       const callBack = (res) => {
         if (res?.success) {
+          console.log("res", res)
+
           const updatedTemplate = updateIsHidden(res?.data, subProducts)
           setDefaultProductTemplate(updatedTemplate);
           initQuoteItemProduct(updatedTemplate, materials);
+          setDocmentItemByEdit(res?.data.docmentItem)
         } else {
           alertFaultUpdate();
         }
@@ -2142,6 +2282,15 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     setCheckParameter(checkParameter)
   }, [isRequiredParameters])
 
+  // useEffect(() => {
+  //   let checkParameter = validateParameters(isRequiredParameters);
+  //   console.log("isRequiredParameters", isRequiredParameters, checkParameter)
+  //   // if (checkParameter) {
+  //   //   setCanCalculation(true)
+  //   // }
+
+  // }, [isRequiredParameters])
+
   const calculationProduct = useCallback(async () => {
     if (requestAbortController) {
       requestAbortController.abort();
@@ -2162,9 +2311,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       const newRequestAbortController = new AbortController();
       setRequestAbortController(newRequestAbortController);
       let subProductsCopy = cloneDeep(subProducts);
-      let generalParameters = subProductsCopy.find((x) => !x.type).parameters;
+      let generalParameters = subProductsCopy.find((x) => !x.type)?.parameters;
       let calculationSubProducts = subProductsCopy.filter((x) => x.type);
-      generalParameters.forEach(x => x.valuesConfigs = null);
+      generalParameters?.forEach(x => x.valuesConfigs = null);
       calculationSubProducts.forEach(x => x.parameters.forEach(y => y.valuesConfigs = null))
       let workTypes = [];
       if (productQuantityTypes && productQuantityTypes.length > 0 && productQuantityTypes[0].quantity > 0) {
@@ -2300,10 +2449,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
   const addItemForQuotes = async () => {
     const docType = router?.query?.documentType ?? "0";
-    const duplicateType = router?.query?.duplicateType ;
+    const duplicateType = router?.query?.duplicateType;
     const callBack = (res) => {
       if (res?.success) {
-        (docType === "0" || duplicateType === '1' ||  duplicateType === '2')
+        (docType === "0" || duplicateType === '1' || duplicateType === '2')
           ? navigate("/quote")
           : navigate(`/order?Id=${router?.query?.documentId}`);
       } else {
@@ -2325,7 +2474,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           : navigate(`/order?Id=${router?.query?.documentId}`);
         setWorkFlows([]);
         setJobActions([]);
-      } else { 
+      } else {
         alertFaultUpdate();
       }
     };
@@ -2385,6 +2534,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   useEffect(() => {
     getCurrenciesApi()
   }, [])
+  useEffect(() => {
+    const updatedProductTemplate = updateIsHidden(productTemplate, subProducts);
+    setProductTemplate(updatedProductTemplate)
+  }, [subProducts])
 
   const updateIsHidden = (productTemplate, subProducts) => {
     if (!productTemplate || !productTemplate.sections || !Array.isArray(productTemplate.sections)) {

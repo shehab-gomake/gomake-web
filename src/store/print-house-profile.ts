@@ -12,4 +12,5 @@ export interface IPrintHouseProfile {
     pdfLogo: string | null;
     loginLogo: string | null;
     country: string,
+    filesApiAddress?: string;
 }

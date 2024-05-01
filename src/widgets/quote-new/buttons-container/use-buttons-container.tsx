@@ -13,7 +13,7 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     const { t } = useTranslation();
     const { callApi } = useGomakeAxios();
     const quoteItemValue: any = useRecoilValue(quoteItemState);
-    const { alertFault, alertSuccessDelete, alertFaultDelete, alertSuccessUpdate, alertFaultUpdate, alertFaultAdded, alertSuccessAdded , alertFaultGetData } = useSnackBar();
+    const { alertFault, alertSuccessDelete, alertFaultDelete, alertSuccessUpdate, alertFaultUpdate, alertFaultAdded, alertSuccessAdded, alertFaultGetData } = useSnackBar();
     const [selectedTabIndex, setSelectedTabIndex] = useState<number>(0);
     const [openPaymentModal, setOpenPaymentModal] = useState(false);
     const [openOrderNowModal, setOpenOrderNowModal] = useState(false);
@@ -64,7 +64,7 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
             if (res?.success) {
                 alertSuccessUpdate();
                 onClickCloseOrderNowModal();
-                navigate("/orders");
+                navigate(`/board-missions?orderNumber=${res?.data?.number}`);
             } else {
                 alertFaultUpdate();
             }
@@ -81,7 +81,7 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
             if (res?.success) {
                 alertSuccessUpdate();
                 onClickCloseOrderNowModal();
-                navigate("/orders");
+                navigate(`/board-missions?orderNumber=${res?.data?.number}`);
             } else {
                 alertFaultUpdate();
             }
@@ -94,10 +94,22 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     }
 
     const onClickPrint = async () => {
+        const downloadPdf = (url) => {
+            const anchor = document.createElement("a");
+            anchor.href = url;
+            anchor.target = "_blank";
+            anchor.addEventListener("click", () => {
+                setTimeout(() => {
+                    anchor.remove();
+                }, 100);
+            });
+            anchor.click();
+        };
         const callBack = (res) => {
             if (res?.success) {
                 const pdfLink = res.data;
-                window.open(pdfLink, "_blank");
+                downloadPdf(pdfLink)
+                // window.open(pdfLink, "_blank");
             } else {
                 alertFaultGetData();
             }

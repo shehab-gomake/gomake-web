@@ -16,28 +16,37 @@ const GET_BOARDS_MISSIONS_STATIONS_URL = '/v1/erp-service/board-missions/board-m
 const UPDATE_BOARD_MISSIONS_ACTION_DONE = '/v1/erp-service/board-missions-actions/move-to-done/';
 const CANCEL_BOARD_MISSIONS_ACTION_DONE = '/v1/erp-service/board-missions-actions/back-to-in-process/';
 const TOGGLE_BOARD_MISSIONS_ACTION_TIMER_URL = '/v1/erp-service/board-missions-actions/toggle-timer/';
+const BOARD_MISSIONS_ADD_NOTE_URL = '/v1/erp-service/board-missions/add-note';
+const BOARD_MISSIONS_DELETE_NOTE_URL = '/v1/erp-service/board-missions/delete-note';
+const GET_BOARD_MISSIONS_ACTIVITIES_URL = '/v1/erp-service/board-missions-comments/get-all-comments/';
+const ADD_BOARD_MISSIONS_COMMENT_URL = '/v1/erp-service/board-missions-comments/add-comment';
+const START_BOARD_MISSIONS_CHANEL_URL = '/v1/erp-service/board-missions/start-signalr';
+const MOVE_BOARD_MISSION_TO_DONE_URL = '/v1/erp-service/board-missions/move-board-mission-to-done';
+const BACK_TO_PROCESS_URL = '/v1/erp-service/board-missions/back-to-process';
+const SAVE_UPLOADED_FILE_URL = '/v1/erp-service/board-missions/save-uploaded-file';
+const GET_UPLOADED_FILES_URL = '/v1/erp-service/board-missions/get-uploaded-files/';
 
 const getProductionFloorData: ICallAndSetData = async (callApi, setState) => {
     return await getSetApiData(callApi, EHttpMethod.GET, GET_PRODUCTION_FLOOR_DATA_URL, setState, {}, false);
 };
 
 
-const updateBoardsMissionsStatusApi: ICallAndSetData = async (callApi, setState, data: { boardsIds: string[], statusId: string }) => {
+const updateBoardsMissionsStatusApi: ICallAndSetData = async (callApi, setState, data: { boardsIds: any[], statusId: string}) => {
     return await getSetApiData(callApi, EHttpMethod.POST, UPDATE_WORK_JOB_STATUS_URL, setState, data);
 };
 
-const updateBoardMissionCurrentStationApi: ICallAndSetData = async (callApi, setState, data: { boardId: string, stationId: string | null }) => {
-    return await getSetApiData(callApi, EHttpMethod.POST, UPDATE_BOARD_MISSIONS_CURRENT_STATION_URL, setState, {boardMissionId: data.boardId, newStationId: data.stationId});
+const updateBoardMissionCurrentStationApi: ICallAndSetData = async (callApi, setState, data: { boardId: string, stationId: string | null, productType: string }) => {
+    return await getSetApiData(callApi, EHttpMethod.POST, UPDATE_BOARD_MISSIONS_CURRENT_STATION_URL, setState, {boardMissionId: data.boardId, newStationId: data.stationId, productType: data.productType});
 };
 
 const setBoardFiltersApi: ICallAndSetData = async (callApi, callBack, filters: {}) => {
     return await getSetApiData(callApi, EHttpMethod.POST, SET_FILTERS_BOARDS_MISSIONS_URL, callBack, filters);
 }
-const getBoardMissionsById: ICallAndSetData = async (callApi, callBack, id: string) => {
-    return await getSetApiData(callApi, EHttpMethod.GET, GET_BOARDS_MISSIONS_BY_ID_URL + id, callBack);
+const getBoardMissionsById: ICallAndSetData = async (callApi, callBack, {id, connectionId, productType}) => {
+    return await getSetApiData(callApi, EHttpMethod.GET, GET_BOARDS_MISSIONS_BY_ID_URL + id + '/' + connectionId + '?productType=' + productType, callBack);
 }
-const getBoardMissionsActions: ICallAndSetData = async (callApi, callBack, boardId: string) => {
-    return await getSetApiData(callApi, EHttpMethod.GET, GET_BOARD_MISSIONS_STATIONS_URL + `?boardMissionId=${boardId}`, callBack);
+const getBoardMissionsActions: ICallAndSetData = async (callApi, callBack, data: {boardMissionId: string, productType: string}) => {
+    return await getSetApiData(callApi, EHttpMethod.GET, GET_BOARD_MISSIONS_STATIONS_URL + `?boardMissionId=${data.boardMissionId}&productType=${data.productType}`, callBack);
 }
 
 const addNewBoardMissionsGroup: ICallAndSetData = async (callApi, callBack, group) => {
@@ -53,19 +62,47 @@ const getPrintHouseActions: ICallAndSetData = async (callApi, callBack, ) => {
 const getBoardsMissionsGroupsByID: ICallAndSetData = async (callApi, callBack, groupId: string ) => {
     return await getSetApiData(callApi, EHttpMethod.GET, GET_BOARDS_MISSIONS_GROUPS_URL + groupId , callBack);
 }
-const getBoardsMissionsStations: ICallAndSetData = async (callApi, callBack, boardMissionsId: string ) => {
-    return await getSetApiData(callApi, EHttpMethod.GET, GET_BOARDS_MISSIONS_STATIONS_URL + boardMissionsId , callBack);
+const getBoardsMissionsStations: ICallAndSetData = async (callApi, callBack, data: {boardMissionsId: string; productType: string} ) => {
+    return await getSetApiData(callApi, EHttpMethod.GET, GET_BOARDS_MISSIONS_STATIONS_URL + data.boardMissionsId + `${data.productType ? '?productType=' + data.productType : ''}` , callBack);
 }
-const updateBoardMissionsActionDone: ICallAndSetData = async (callApi, callBack, boardMissionsActionId: string ) => {
-    return await getSetApiData(callApi, EHttpMethod.PUT, UPDATE_BOARD_MISSIONS_ACTION_DONE + boardMissionsActionId , callBack);
+const updateBoardMissionsActionDone: ICallAndSetData = async (callApi, callBack, data: {boardMissionsActionId: string; productType: string;} ) => {
+    return await getSetApiData(callApi, EHttpMethod.PUT, UPDATE_BOARD_MISSIONS_ACTION_DONE + data.boardMissionsActionId +`${data.productType ? '?productType=' + data.productType : ''}` , callBack);
 }
-const cancelBoardMissionsActionDone: ICallAndSetData = async (callApi, callBack, boardMissionsActionId: string ) => {
-    return await getSetApiData(callApi, EHttpMethod.PUT, CANCEL_BOARD_MISSIONS_ACTION_DONE + boardMissionsActionId , callBack);
+const cancelBoardMissionsActionDone: ICallAndSetData = async (callApi, callBack, data: {boardMissionsActionId: string; productType: string} ) => {
+    return await getSetApiData(callApi, EHttpMethod.PUT, CANCEL_BOARD_MISSIONS_ACTION_DONE + data.boardMissionsActionId + `${data.productType ? '?productType=' + data.productType : ''}` , callBack);
 }
-const toggleBoardMissionsActionTimer: ICallAndSetData = async (callApi, callBack, boardMissionsActionId: string ) => {
-    return await getSetApiData(callApi, EHttpMethod.GET, TOGGLE_BOARD_MISSIONS_ACTION_TIMER_URL + boardMissionsActionId , callBack);
+const toggleBoardMissionsActionTimer: ICallAndSetData = async (callApi, callBack, data: {boardMissionsActionId: string; productType: string} ) => {
+    return await getSetApiData(callApi, EHttpMethod.GET, TOGGLE_BOARD_MISSIONS_ACTION_TIMER_URL + data.boardMissionsActionId +`${data.productType ? '?productType=' + data.productType : ''}`, callBack);
 }
 
+const boardMissionsAddNote: ICallAndSetData = async (callApi, callBack, data) => {
+    return await getSetApiData(callApi, EHttpMethod.POST, BOARD_MISSIONS_ADD_NOTE_URL , callBack, data);
+}
+const boardMissionsDeleteNote: ICallAndSetData = async (callApi, callBack, data) => {
+    return await getSetApiData(callApi, EHttpMethod.POST, BOARD_MISSIONS_DELETE_NOTE_URL , callBack, data);
+}
+
+const getAllBoardMissionsActivities: ICallAndSetData = async (callApi, callBack, boardMissionsId: string ) => {
+    return await getSetApiData(callApi, EHttpMethod.GET, GET_BOARD_MISSIONS_ACTIVITIES_URL + boardMissionsId , callBack);
+}
+const addBoardMissionsComment: ICallAndSetData = async (callApi, callBack, data ) => {
+    return await getSetApiData(callApi, EHttpMethod.POST, ADD_BOARD_MISSIONS_COMMENT_URL , callBack, data);
+}
+const saveUploadedFile: ICallAndSetData = async (callApi, callBack, data ) => {
+    return await getSetApiData(callApi, EHttpMethod.POST, SAVE_UPLOADED_FILE_URL , callBack, data);
+}
+
+const getAllBoardMissionsUploadedFiles: ICallAndSetData = async (callApi, callBack, orderItemId: string ) => {
+    return await getSetApiData(callApi, EHttpMethod.GET, GET_UPLOADED_FILES_URL + orderItemId , callBack);
+}
+
+const moveBoardMissionToDoneApi: ICallAndSetData = async (callApi, setState, data: { boardMissionId: string, sendMessage?: string }) => {
+    return await getSetApiData(callApi, EHttpMethod.POST, MOVE_BOARD_MISSION_TO_DONE_URL, setState, data);
+};
+
+const backToProcessApi: ICallAndSetData = async (callApi, setState, data: { boardMissionId: string, sendMessage?: string }) => {
+    return await getSetApiData(callApi, EHttpMethod.POST, BACK_TO_PROCESS_URL, setState, data);
+};
 export {
     getProductionFloorData,
     updateBoardsMissionsStatusApi,
@@ -80,5 +117,14 @@ export {
     getBoardsMissionsStations,
     updateBoardMissionsActionDone,
     cancelBoardMissionsActionDone,
-    toggleBoardMissionsActionTimer
+    toggleBoardMissionsActionTimer,
+    boardMissionsAddNote,
+    boardMissionsDeleteNote,
+    getAllBoardMissionsActivities,
+    addBoardMissionsComment,
+    startBoardMissionsChanel,
+    moveBoardMissionToDoneApi,
+    backToProcessApi,
+    saveUploadedFile,
+    getAllBoardMissionsUploadedFiles
 };

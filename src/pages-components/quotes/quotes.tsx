@@ -10,17 +10,18 @@ import {
 import { SearchInputComponent } from "@/components/form-inputs/search-input-component";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import { HeaderTitle } from "@/widgets";
-import { DocumentLogsWidget } from "./documents-logs-widget/logs-widget";
+import { DocumentLogsWidget } from "./widgets/documents-logs-widget/logs-widget";
 import { DOCUMENT_TYPE } from "./enums";
-import { Button, IconButton, Stack } from "@mui/material";
-import { CardsSection } from "./statistics-section/statistics-sections";
+import { Button, Stack } from "@mui/material";
+import { CardsSection } from "./widgets/statistics-section/statistics-sections";
 import { GoMakePagination } from "@/components/pagination/gomake-pagination";
-import { ExcelSheetIcon, SettingNewIcon } from "@/icons";
+import { ExcelSheetIcon } from "@/icons";
 import { AddRuleModal } from "../products/profits-new/widgets/add-rule-modal";
 import { GoMakeDatepicker } from "@/components/date-picker/date-picker-component";
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import { useRecoilValue } from "recoil";
 import { employeesListsState } from "./states";
+
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -83,7 +84,7 @@ const QuotesListPageWidget = ({
     onSelectDateRange,
     onClickSearchLogsFilter,
     onClickClearLogsFilter,
-    documentLogsData
+    documentLogsData,
   } = useQuotes(documentType);
 
   return (
@@ -219,7 +220,7 @@ const QuotesListPageWidget = ({
           withoutShadow={true}
         />
       )}
-      <GoMakeDeleteModal 
+      <GoMakeDeleteModal
         icon={<WarningAmberIcon style={classes.warningIconStyle} />}
         title={t("sales.quote.titleModal")}
         yesBtn={t("sales.quote.changeStatus")}
@@ -234,16 +235,16 @@ const QuotesListPageWidget = ({
         onClose={onClickCloseLogsModal}
         modalTitle={logsModalTitle}
       >
-        <DocumentLogsWidget 
-        employeeId={employeeId}
-        handleSelectEmployee={handleSelectEmployee}
-        onClickClearLogsFilter={onClickClearLogsFilter}
-        onClickSearchLogsFilter={onClickSearchLogsFilter}
-        resetLogsDatePicker={resetLogsDatePicker}
-        onSelectDateRange={onSelectDateRange}
-        logsTableHeaders={logsTableHeaders} 
-        logsTableRows={documentLogsData}
-        employeesCategories={employeeListValue}
+        <DocumentLogsWidget
+          employeeId={employeeId}
+          handleSelectEmployee={handleSelectEmployee}
+          onClickClearLogsFilter={onClickClearLogsFilter}
+          onClickSearchLogsFilter={onClickSearchLogsFilter}
+          resetLogsDatePicker={resetLogsDatePicker}
+          onSelectDateRange={onSelectDateRange}
+          logsTableHeaders={logsTableHeaders}
+          logsTableRows={documentLogsData}
+          employeesCategories={employeeListValue}
         />
       </GoMakeModal>
       <AddRuleModal

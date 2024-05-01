@@ -7,7 +7,7 @@ import { DepositsHeaderSection } from "./components/header-section";
 import { DepositsFiltersWidget } from "./components/filters-section";
 import { useEffect, useState } from "react";
 import { GoMakeModal } from "@/components";
-import { DocumentLogsWidget } from "../quotes/documents-logs-widget/logs-widget";
+import { DocumentLogsWidget } from "../quotes/widgets/documents-logs-widget/logs-widget";
 import { useAgentsList } from "@/hooks/use-agent-list";
 
 const DepositsListPageWidget = () => {

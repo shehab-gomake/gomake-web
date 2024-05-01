@@ -73,7 +73,7 @@
     "react-international-phone": "^4.0.4",
     "react-json-editor-ajrm": "^2.5.14",
     "react-payment-inputs": "^1.1.9",
-    "react-quill": "^0.0.2",
+    "react-quill": "^2.0.0",
     "react-test-renderer": "^18.2.0",
     "react18-json-view": "^0.2.7-canary.2",
     "recoil": "^0.7.7",
