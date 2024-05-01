@@ -34,7 +34,7 @@ const BoardMissionsStationsComponent = () => {
             <Divider orientation={'horizontal'} flexItem/>
             {
                 !!boardMissions?.productType &&
-                <Button onClick={onClickAllJob} startIcon={<ArrowBackIcon/>} variant={'contained'} sx={{width: 'fit-content', backgroundColor: '#CBCBE4', color: '#252675', '&:hover': {backgroundColor: '#CBCBE4', color: '#252675', opacity: 0.7}}}>all jobs</Button>
+                <Button onClick={onClickAllJob} startIcon={<ArrowBackIcon/>} variant={'contained'} sx={{width: 'fit-content', backgroundColor: '#CBCBE4', color: '#252675', '&:hover': {backgroundColor: '#CBCBE4', color: '#252675', opacity: 0.7}}}>All  Book Stations</Button>
             }
             <Stack gap={'10px'} minHeight={'fit-content'} overflow={'scroll'}>
                 {stations?.length > 0 && <CompletedBoardMissionsComponent/>}
