@@ -26,7 +26,7 @@ const NavigationButtonsComponent = () => {
                 }
             </PrimaryToggleButtonGroup>
             <Stack direction={'row'} alignItems={'center'} gap={'12px'}>
-                <DocumentsButton/>
+                {/*<DocumentsButton/>*/}
                 <MoreActionsButton/>
             </Stack>
         </Stack>
