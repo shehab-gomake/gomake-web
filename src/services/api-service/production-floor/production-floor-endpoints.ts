@@ -122,7 +122,6 @@ export {
     boardMissionsDeleteNote,
     getAllBoardMissionsActivities,
     addBoardMissionsComment,
-    startBoardMissionsChanel,
     moveBoardMissionToDoneApi,
     backToProcessApi,
     saveUploadedFile,
