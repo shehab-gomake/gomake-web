@@ -20,7 +20,7 @@ function KanbanColumnComponent({status, boardsMissions, count}: IProps) {
             if (didDrop) {
                 return;
             }
-            updateStatus([item.id], status.id).then();
+            updateStatus([{BoardMissionId:item.id,productType:item.productType}], status.id).then();
         },
         collect: monitor => ({
             isOver: !!monitor.isOver(),
