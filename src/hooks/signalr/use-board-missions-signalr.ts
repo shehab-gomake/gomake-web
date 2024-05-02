@@ -28,13 +28,15 @@ const useBoardMissionsSignalr = () => {
     useEffect(() => {
         if (connection) {
             connection.on('UpdateBoardMissionModal', (newData) => {
-                console.log(newData);
-                setActivities(newData?.activites);
-                setBoardMissions(newData?.details);
-                setBoardMissionsStations(newData?.stations.workFlow?.actions);
-                setSubWorkFlows(newData?.stations.workFlow?.subWorkFlows);
-                setIsReady(newData?.stations.isReady);
-                setFiles(newData?.orderItemFiles);
+                if (!!newData) {
+                    console.log(newData);
+                    setActivities(newData?.activites);
+                    setBoardMissions(newData?.details);
+                    setBoardMissionsStations(newData?.stations.workFlow?.actions);
+                    setSubWorkFlows(newData?.stations.workFlow?.subWorkFlows);
+                    setIsReady(newData?.stations.isReady);
+                    setFiles(newData?.orderItemFiles);
+                }
             })
         }
     }, [connection])

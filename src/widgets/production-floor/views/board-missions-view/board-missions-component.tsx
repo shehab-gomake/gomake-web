@@ -19,9 +19,6 @@ import {
 import {useBoardMissionsSignalr} from "@/hooks/signalr/use-board-missions-signalr";
 import {BoardMissionsFiles} from "@/widgets/production-floor/views/board-missions-view/files/board-missions-files";
 import {useProductionFloorData} from "@/widgets/production-floor/use-production-floor-data";
-import {
-    useBoardMissionsActivities
-} from "@/widgets/production-floor/views/board-missions-view/activity/use-board-missions-activities";
 
 interface IProps {
     boardMissionsId: string;
@@ -30,25 +27,17 @@ interface IProps {
 }
 
 const BoardMissionsComponent = ({boardMissionsId, step, productType}: IProps) => {
-    const {getBoardMissions, initStates} = useBoardMissions();
+    const {getBoardMissions} = useBoardMissions();
     const {connectionId} = useBoardMissionsSignalr();
     const {getData} = useProductionFloorData();
-    const {getAllActivities, activities} = useBoardMissionsActivities()
     useEffect(() => {
         if (!!boardMissionsId && !!connectionId) {
             getBoardMissions(boardMissionsId, connectionId, productType).then();
         }
         return () => {
-            initStates();
             getData().then();
         };
     }, [boardMissionsId, connectionId, productType])
-
-    useEffect(() => {
-        if (step === 'activity') {
-            getAllActivities().then();
-        }
-    }, [step])
     return <Stack maxHeight={'100%'} overflow={'hidden'} gap={'16px'} padding={'34px 24px'}
                   borderRadius={'24px, 24px, 0px, 0px'}>
         <BoardMissionsDetailsHeader/>
@@ -65,7 +54,7 @@ const BoardMissionsComponent = ({boardMissionsId, step, productType}: IProps) =>
                 step === EBoardMissionsViews.APPROVAL && <></>
             }
             {
-                step === EBoardMissionsViews.ACTIVITY && <BoardMissionsActivities activities={!!activities ? activities : []}/>
+                step === EBoardMissionsViews.ACTIVITY && <BoardMissionsActivities/>
             }
         </Stack>
     </Stack>

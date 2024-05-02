@@ -16,8 +16,9 @@ enum EActivitiesFilter {
     LOGS
 }
 const useBoardMissionsActivities = () => {
-    const [activities, setActivities] = useRecoilState(boardMissionsActivitiesState);
-    const [filter, setFilter] = useState<EActivitiesFilter>();
+    const [activities, setActivities] = useState([]);
+    const [activitiesState] = useRecoilState(boardMissionsActivitiesState);
+    const [filter, setFilter] = useState<EActivitiesFilter>(EActivitiesFilter.ALL);
     const {callApi} = useGomakeAxios();
     const {query} = useRouter();
     const {boardMissionsId, step, productType} = query;
@@ -70,7 +71,11 @@ const useBoardMissionsActivities = () => {
         }
     }, [filter, activities]);
 
-    useEffect(() => console.log('activities',activities), [activities])
+    useEffect(() => {
+        if (!!activitiesState) {
+            setActivities(activitiesState);
+        }
+    }, [activitiesState])
 
     return {
         getAllActivities,
