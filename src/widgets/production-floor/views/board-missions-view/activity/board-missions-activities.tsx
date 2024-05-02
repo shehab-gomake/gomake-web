@@ -7,15 +7,20 @@ import {
 } from "@/widgets/production-floor/views/board-missions-view/activity/use-board-missions-activities";
 import {ActivityComponent} from "@/widgets/production-floor/views/board-missions-view/activity/activity-component";
 import {convertHeightToVH} from "@/utils/adapter";
-import {IBoardMissionsActivity} from "@/widgets/production-floor/interfaces/board-missions-activity";
+import {useEffect} from "react";
 
 
-const BoardMissionsActivities = ({activities}: {activities: IBoardMissionsActivity[]}) => {
+const BoardMissionsActivities = () => {
     const {
         addComment,
         filtersButtonsArray,
+        activitiesList,
+        getAllActivities,
     } = useBoardMissionsActivities();
 
+    useEffect(() => {
+        getAllActivities().then();
+    }, [])
     return (
         <Stack width={'40%'} gap={'25px'} height={'100%'}>
             <Stack direction={'row'} gap={'10px'} alignItems={'center'}>
@@ -35,7 +40,7 @@ const BoardMissionsActivities = ({activities}: {activities: IBoardMissionsActivi
                 height: convertHeightToVH(650)
             }}>
                 {
-                    activities?.map(activity => <ActivityComponent {...activity}/>)
+                    activitiesList?.map(activity => <ActivityComponent {...activity}/>)
                 }
             </div>
             <GoMakeTextEditor onSend={addComment} containerStyle={{marginTop: 'auto'}}/>
