@@ -13,7 +13,8 @@ import {
     useTheme
 } from '@mui/material';
 import React from "react";
-import {Chart} from "@/pages/reports/components/chart";
+import { Chart } from "@/pages/reports/components/chart";
+import { LabelsIcon, SheetsIcon, WidePrintIcon } from './icons';
 
 const useChartOptions = (labels) => {
     const theme = useTheme();
@@ -64,19 +65,22 @@ const useChartOptions = (labels) => {
 };
 
 const iconMap = {
-    Desktop: (
+    'Wide print': (
         <SvgIcon>
-            <ComputerDesktopIcon />
+            <WidePrintIcon />
+            {/*   <ComputerDesktopIcon /> */}
         </SvgIcon>
     ),
-    Tablet: (
+    Labels: (
         <SvgIcon>
-            <DeviceTabletIcon />
+            <LabelsIcon />
+            {/* <DeviceTabletIcon /> */}
         </SvgIcon>
     ),
-    Phone: (
+    Sheets: (
         <SvgIcon>
-            <PhoneIcon />
+            <SheetsIcon />
+            {/* <PhoneIcon /> */}
         </SvgIcon>
     )
 };
