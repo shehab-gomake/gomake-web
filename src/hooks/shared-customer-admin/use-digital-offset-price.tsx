@@ -807,9 +807,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       }
     }
   }, [materialsEnumsValues, allMaterials, productTemplate]);
-  /*useEffect(() => {
 
-    }, [productTemplate]);*/
   const initProduct = (product, materials) => {
     if (product && product?.sections?.length > 0) {
       let sectionData: any = product.sections;
