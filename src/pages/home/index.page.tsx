@@ -20,7 +20,7 @@ export const CustomChatButton = () => {
     return (
         <>
             <IconButton onClick={toggleChat} style={{ position: 'fixed', bottom: '20px', right: '20px', zIndex: 1000, border: 0 }}>
-                <img src="/Go-01.svg" alt="Chat" style={{ width: '50px', height: '50px', }} />
+                <img src="https://gomake-contents.s3.eu-west-3.amazonaws.com/chatbot_icon.png" alt="Chat" style={{ width: '50px', height: '50px', }} />
             </IconButton>
             {
               isOpen && <df-messenger
