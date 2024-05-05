@@ -1223,6 +1223,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     inRow: boolean,
     inunderParameter: boolean
   ) => {
+    console.log("value", value)
     let Comp;
     const parametersArray = subProducts.flatMap((item) => item.parameters);
     const temp = [...parametersArray];
@@ -1423,8 +1424,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         <div style={inRow ? clasess.parameterRowContainer : clasess.parameterContainer}>
           <div
             style={
-
-              errorText && parameter?.isRequired ? clasess.parameterRequierdLabelStyle :
+              errorText && parameter?.isRequired && !value?.values[0] ? clasess.parameterRequierdLabelStyle :
                 value?.values[0] === "true"
                   ? inunderParameter ? clasess.parameterunderParameterStyle : clasess.parameterType3ActiveLabelStyle
                   : inunderParameter ? clasess.underParameterLabelStyle : clasess.parameterLabelStyle
@@ -2089,6 +2089,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     setMultiParameterModal(false);
   };
   const [errorText, setErrorText] = useState(false)
+  console.log("errorText", errorText)
   const handleTabClick = (index: number) => {
     // Allow moving to any previous tab regardless of checkParameter
     if (index < activeIndex) {
