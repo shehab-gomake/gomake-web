@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { DuplicateMenuIcon } from "./icons/duplicate-menu";
 import { LoggerIcon } from "./icons/logger";
 import { useTranslation } from "react-i18next";
