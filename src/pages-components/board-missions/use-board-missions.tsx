@@ -70,6 +70,7 @@ const useBoardMissions = () => {
     t("boardMissions.dueDate"),
     t("boardMissions.clientName"),
     t("boardMissions.missionNumber"),
+    t("mailingSettings.orderNumber"),
     t("boardMissions.outSourceType"),
     t("boardMissions.quantity"),
     t("boardMissions.costFromOrderItem"),
@@ -137,6 +138,7 @@ const useBoardMissions = () => {
             GetDateFormat(mission?.dueDate),
             mission?.clientName,
             mission?.number,
+            mission?.orderNumber,
             EWorkSource[mission?.outSourceType],
             mission?.quantity,
             mission?.cost,
@@ -144,7 +146,7 @@ const useBoardMissions = () => {
             mission?.jobName,
             mission?.numberOfBoardMissions,
             mission?.productName,
-            mission?.status && t(`boardMissions.${PStatus[mission?.status]}`),
+            `${mission?.boardMissionStatus?.name} / ${mission?.station?.actionName}`,
             <MoreMenuWidget
               mission={mission}
               onClickDuplicate={onOpenDuplicateModal}

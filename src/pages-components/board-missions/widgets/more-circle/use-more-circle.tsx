@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { DuplicateMenuIcon } from "./icons/duplicate-menu";
 import { LoggerIcon } from "./icons/logger";
 import { useTranslation } from "react-i18next";
@@ -8,7 +7,7 @@ import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import LockOpenOutlinedIcon from '@mui/icons-material/LockOpenOutlined';
 import { useStyle } from "./style";
 import { getBoardMissionPDF } from "@/services/api-service/generic-doc/documents-api";
-import { useGomakeAxios, useSnackBar } from "@/hooks";
+import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
 
 const useMoreCircle = ({
   mission,
@@ -22,6 +21,7 @@ const useMoreCircle = ({
   const { classes } = useStyle();
   const { callApi } = useGomakeAxios();
   const { alertFaultGetData, } = useSnackBar();
+  const { navigate } = useGomakeRouter();
   const downloadPdf = (url) => {
     const anchor = document.createElement("a");
     anchor.href = url;
@@ -53,7 +53,7 @@ const useMoreCircle = ({
       condition: true,
       name: "boardMissions.viewTask",
       icon: <VisibilityOutlinedIcon style={classes.iconStyle} />,
-      onclick: () => null,
+      onclick: () => navigate(`/production-floor?boardMissionsId=${mission?.id}}`),
     },
     {
       condition: true,
