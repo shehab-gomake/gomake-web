@@ -98,10 +98,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [subProducts, setSubProducts] = useRecoilState<any>(
     subProductsParametersState
   );
-  useEffect(() => {
-    console.log("productTemplate", { productTemplate, subProducts })
-
-  }, [subProducts])
 
   const [isSetTemplete, setIsSetTemplete] = useState<boolean>(false);
   const setSubProductsCopy = useSetRecoilState<any>(
@@ -805,7 +801,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           });
         });
         setProductTemplate(productTemplate)
-        console.log("subProductsArray", subProductsArray)
         setSubProducts(subProductsArray);
         setUnderParameterIds(underParameterIdsArray);
         setIsSetTemplete(true);
@@ -831,9 +826,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 const isParameterIdExisting = subSection.parameters.some(
                   (p) => p.id === relatedParameter.parameterId
                 );
-                if (parameter.code === "BothsideSameprintcolor") {
-                  debugger
-                }
                 if (isParameterIdExisting) {
                   relatedParametersArray.push(relatedParameter);
                 }
@@ -1658,10 +1650,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       if (subSection.optionToDuplicateContent) {
         return;
       }
-      if (parameter.code === "BothsideSameprintcolor") {
-        console.log("BothsideSameprintcolor", parameter)
-        debugger;
-      }
       parameter?.relatedParameters
         ?.filter((relatedParameter) =>
           subSection.parameters.some((p) => p.id === relatedParameter.parameterId)
@@ -2061,7 +2049,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         parameters: temp,
       })
       processRelatedParameters2(subSectionParameter, subSection, section, productTemplateCopy, temp2);
-      console.log("temp2: " + temp2)
       setSubProducts(temp2);
       setProductTemplate(productTemplateCopy);
       const updatedProductTemplate = updateIsHidden(productTemplateCopy, temp2);
@@ -2587,7 +2574,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     }
     const allParameters = subProducts.flatMap(product => product.parameters);
     const updatedTemplate = { ...productTemplate };
-    console.log("updatedTemplateupdatedTemplate", updatedTemplate)
     updatedTemplate.sections.forEach(section => {
       if (section.relatedToParameters && section.relatedToParameters.length === 0) {
         section.isHidden = false;
