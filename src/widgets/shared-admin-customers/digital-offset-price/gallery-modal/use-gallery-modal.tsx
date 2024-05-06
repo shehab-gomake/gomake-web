@@ -3,7 +3,6 @@ import { useRecoilState, useRecoilValue } from "recoil";
 
 import {
   materialBtnDataState,
-  productTemplateState,
   selectParameterButtonState,
   subProductsParametersState
 } from "@/store";
