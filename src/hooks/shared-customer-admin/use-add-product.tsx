@@ -717,33 +717,29 @@ const useAddProduct = ({ clasess }) => {
         }
         let allMaterialsCopy = cloneDeep(allMaterials);
         if (parentMaterialPath && parentMaterialPath.length > 0) {
+          allMaterialsCopy = allMaterialsCopy?.find(material =>
+              compareStrings(material.pathName, parentMaterialPath[0])
+          );
           for (let i = 0; i < parentMaterialPath.length; i++) {
             const currentPath = parentMaterialPath.slice(0, i + 1).toString();
             const parentParameter = subSectionParameters.find(x => x.materialPath && x.materialPath.toString() == currentPath)
             if (parentParameter) {
-              try {
-                allMaterialsCopy = allMaterialsCopy?.find(material =>
+              /*allMaterialsCopy = allMaterialsCopy?.data?.find(material =>
                   compareStrings(material.pathName, parentMaterialPath[i])
-                );
-              }
-              catch (e) {
-                allMaterialsCopy = allMaterialsCopy?.data?.find(material =>
-                  compareStrings(material.pathName, parentMaterialPath[i])
-                )?.data;
-              }
-
+              )?.data;*/
               const parentParameterDefaultValueConfig = parentParameter?.valuesConfigs?.find((item) => item.isDefault === true);
-              if (parentParameterDefaultValueConfig) {
+              if (parentParameterDefaultValueConfig ) {
                 const parentParameterValue = parentParameterDefaultValueConfig.materialValueIds[0].valueId;
-                allMaterialsCopy = allMaterialsCopy?.data?.find(x => x.valueId === parentParameterValue)?.data;
-                if (allMaterialsCopy) {
-                  options = []
-                  options.push(...allMaterialsCopy)
-                }
+                allMaterialsCopy = allMaterialsCopy?.data.find(x => x.valueId === parentParameterValue);
+                
               }
 
             }
 
+          }
+          if (allMaterialsCopy) {
+            options = []
+            options.push(...allMaterialsCopy.data)
           }
         } else {
           allMaterialsCopy = allMaterialsCopy?.find(material =>
