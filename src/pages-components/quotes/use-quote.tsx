@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { DELIVERY_NOTE_STATUSES, LogActionType, QUOTE_STATUSES } from "./enums";
 import { MoreMenuWidget } from "./more-circle";
-import { getAndSetAllCustomers } from "@/services/hooks";
+import { getAllProductsForDropDownList, getAndSetAllCustomers } from "@/services/hooks";
 import { useRecoilState, useSetRecoilState, useRecoilValue } from "recoil";
 import { agentsCategoriesState } from "@/pages/customers/customer-states";
 import { getAndSetEmployees2 } from "@/services/api-service/customers/employees-api";
@@ -35,7 +35,6 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
   const { alertFaultUpdate, alertFaultDuplicate, alertFaultGetData } = useSnackBar();
   const { getCurrencyUnitText } = useQuoteGetData();
   const { navigate } = useGomakeRouter();
-
   const { errorColor } = useGomakeTheme();
   const [patternSearch, setPatternSearch] = useState("");
   const [finalPatternSearch, setFinalPatternSearch] = useState("");
@@ -184,7 +183,6 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
               //   )
               // }),
               quote?.supplierName,
-
               quote?.clientName,
               quote?.itemsNumber,
               quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
@@ -213,7 +211,6 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
               //   )
               // }),
               quote?.customerName,
-
               quote?.itemsNumber,
               quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
               quote?.notes,
@@ -295,8 +292,8 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
           _renderPaymentType(quote?.paymentType),
           quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
           quote?.notes,
-        //  _renderDocumentStatus(quote?.status, t),
-            quote?.status,
+          //  _renderDocumentStatus(quote?.status, t),
+          quote?.status,
           <MoreMenuWidget
             quote={quote}
             documentType={docType}
@@ -319,6 +316,8 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
         fromDate: fromDate && GetDateFormat(fromDate),
         toDate: toDate && GetDateFormat(toDate),
         status: quoteStatusId?.value || statusId?.value,
+        minPrice: minPrice,
+        maxPrice: maxPrice,
         model: {
           pageNumber: page,
           pageSize: pageSize,
@@ -338,6 +337,11 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
           customerId: customerId?.id,
           dateRange,
           agentId: agentId?.id,
+          minPrice: minPrice,
+          maxPrice: maxPrice,
+          productList: productIds,
+          fromDate: fromDate && GetDateFormat(fromDate),
+          toDate: toDate && GetDateFormat(toDate),
         },
       });
     }
@@ -420,8 +424,8 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
           _renderPaymentType(quote?.paymentType),
           quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
           quote?.notes,
-         // _renderDocumentStatus(quote?.status, t),
-         t(quote?.status),
+          // _renderDocumentStatus(quote?.status, t),
+          t(quote?.status),
           <MoreMenuWidget
             quote={quote}
             documentType={docType}
@@ -474,6 +478,10 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     setResetDatePicker(true);
     getAllQuotesInitial();
     setPage(1);
+    setMinPrice("");
+    setMaxPrice("");
+    setProductIds([]);
+
   };
 
   const tableHeaders = docType === DOCUMENT_TYPE.purchaseOrder ? [
@@ -1033,6 +1041,35 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
   }, [selectedClient]);
 
 
+  //////////////////////////////////////////////////////////////////
+  const [productsList, setProductsList] = useState([]);
+  const [productIds, setProductIds] = useState<string[]>([]);
+  const [minPrice, setMinPrice] = useState('');
+  const [maxPrice, setMaxPrice] = useState('');
+
+
+  const getAllProducts = useCallback(async () => {
+    const products = await getAllProductsForDropDownList(
+      callApi,
+      setProductsList
+    );
+    setProductsList(
+      products.map(({ id, name }) => ({ label: name, value: id }))
+    );
+  }, []);
+  
+  const handleMinPriceChange = (e) => {
+    setMinPrice(e.target.value);
+  };
+
+  const handleMaxPriceChange = (e) => {
+    setMaxPrice(e.target.value);
+  };
+
+  const handleMultiSelectChange = (newValues: string[]) => {
+    setProductIds(newValues);
+  };
+
   return {
     t,
     patternSearch,
@@ -1090,7 +1127,15 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     onSelectDateRange,
     onClickSearchLogsFilter,
     onClickClearLogsFilter,
-    documentLogsData
+    documentLogsData,
+    handleMaxPriceChange,
+    handleMinPriceChange,
+    minPrice,
+    maxPrice,
+    handleMultiSelectChange,
+    productIds,
+    productsList,
+    getAllProducts
   };
 };
 

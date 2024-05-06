@@ -6,6 +6,7 @@ import {
   GoMakeDeleteModal,
   GoMakeModal,
   GomakePrimaryButton,
+  GomakeTextInput,
 } from "@/components";
 import { SearchInputComponent } from "@/components/form-inputs/search-input-component";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
@@ -21,6 +22,8 @@ import { GoMakeDatepicker } from "@/components/date-picker/date-picker-component
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import { useRecoilValue } from "recoil";
 import { employeesListsState } from "./states";
+import { GoMakeMultiSelect } from "@/components/auto-complete/multi-select";
+import { useEffect } from "react";
 
 
 interface IProps {
@@ -85,7 +88,20 @@ const QuotesListPageWidget = ({
     onClickSearchLogsFilter,
     onClickClearLogsFilter,
     documentLogsData,
+    handleMaxPriceChange,
+    handleMinPriceChange,
+    minPrice,
+    maxPrice,
+    handleMultiSelectChange,
+    productIds,
+    productsList,
+    getAllProducts
   } = useQuotes(documentType);
+
+
+  useEffect(() => {
+    getAllProducts();
+  }, []);
 
   return (
     <>
@@ -162,10 +178,44 @@ const QuotesListPageWidget = ({
                     value={agentId}
                   />
                 </div>
-                {documentType === DOCUMENT_TYPE.receipt && <div style={classes.statusFilterContainer}>
+
+                {documentType !== DOCUMENT_TYPE.purchaseInvoice && documentType !== DOCUMENT_TYPE.purchaseInvoiceRefund && documentType !== DOCUMENT_TYPE.purchaseOrder && documentType !== DOCUMENT_TYPE.receipt &&
+                <div style={classes.statusFilterContainer}>
+                  <h3 style={classes.filterLabelStyle}>{t("boardMissions.products")}</h3>
+                  <GoMakeMultiSelect
+                    onChange={handleMultiSelectChange}
+                    style={classes.textInputStyle}
+                    options={productsList}
+                    values={productIds}
+                    placeholder={t("boardMissions.selectProducts")} />
+                </div>}
+
+
+
+                <div style={classes.statusFilterContainer}>
                   <h3 style={classes.filterLabelStyle}>{t("boardMissions.dateRange")}</h3>
                   <GoMakeDatepicker onChange={onSelectDeliveryTimeDates} placeholder={t("boardMissions.chooseDate")} reset={resetDatePicker} />
-                </div>}
+                </div>
+                {documentType !== DOCUMENT_TYPE.purchaseInvoice && documentType !== DOCUMENT_TYPE.purchaseInvoiceRefund && documentType !== DOCUMENT_TYPE.purchaseOrder &&
+                  <div style={{ ...classes.statusFilterContainer, width: "50%" }}>
+                    <div style={classes.filterLabelStyle}>{t("sales.quote.priceRange")}</div>
+                    <div style={classes.priceDivStyle}>
+                      <GomakeTextInput
+                        onChange={handleMinPriceChange}
+                        value={minPrice}
+                        type={'number'}
+                        style={{ ...classes.textInputStyle, height: '40px' }}
+                        placeholder={t("sales.quote.minPrice")}
+                      />
+                      -
+                      <GomakeTextInput
+                        onChange={handleMaxPriceChange}
+                        value={maxPrice}
+                        type={'number'}
+                        style={{ ...classes.textInputStyle, height: '40px' }}
+                        placeholder={t("sales.quote.maxPrice")}
+                      />
+                    </div></div>}
                 <div style={classes.statusFilterContainer}>
                   <div style={classes.filterLabelStyle} />
                   <GomakePrimaryButton
