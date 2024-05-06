@@ -293,7 +293,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
           _renderPaymentType(quote?.paymentType),
           quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
           quote?.notes,
-          //  _renderDocumentStatus(quote?.status, t),
+          //_renderDocumentStatus(quote?.status, t),
           quote?.status,
           <MoreMenuWidget
             quote={quote}
@@ -316,7 +316,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
         patternSearch: finalPatternSearch,
         fromDate: fromDate && GetDateFormat(fromDate),
         toDate: toDate && GetDateFormat(toDate),
-        status: quoteStatusId?.value || statusId?.value,
+        status: statusId?.value,
         minPrice: minPrice,
         maxPrice: maxPrice,
         model: {
@@ -333,10 +333,9 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
             pageNumber: page,
             pageSize: pageSize,
           },
-          //statusId: quoteStatusId?.value || statusId?.value,
-          status: quoteStatusId?.value || statusId?.value,
-          closeStatus:accountingStatus?.value,
-          productionStatus:productionStatus?.value,
+          statusId: quoteStatusId?.value || statusId?.value,
+          closeStatus: accountingStatus?.value,
+          productionStatus: productionStatus?.value,
           patternSearch: finalPatternSearch,
           customerId: customerId?.id,
           dateRange,
@@ -398,12 +397,50 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
               />,
             ];
           }
+          else if (docType === DOCUMENT_TYPE.quote) {
+            return [
+              GetDateFormat(quote?.createdDate),
+              quote?.customerName,
+              quote?.agentName,
+              quote?.number,
+              quote?.worksNames,
+              quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
+              quote?.notes,
+              _renderStatus(quote, t, navigate),
+              <MoreMenuWidget
+                quote={quote}
+                documentType={docType}
+                onClickOpenModal={onClickOpenModal}
+                onClickPdf={onClickQuotePdf}
+                onClickDuplicate={onClickQuoteDuplicate}
+                onClickLoggers={onClickDocumentLogs}
+
+              />,
+            ];
+          }
           else {
             return [
               GetDateFormat(quote?.createdDate),
               quote?.customerName,
               quote?.agentName,
               quote?.number,
+              quote?.sourceDocumentNumber?.map((item, index) => {
+                return (
+                  <>
+                    {
+                      docType === DOCUMENT_TYPE.order ?
+                        <span key={index}>{item?.documentNumber}
+                          <br />
+                        </span>
+                        :
+                        <span key={index} onClick={() => navigate(renderURLDocumentType(item?.sourceDocumentType, item.documentId))} style={{ cursor: "pointer" }}>
+                          {renderDocumentTypeForSourceDocumentNumber(item?.sourceDocumentType)}:{item?.documentNumber}
+                          <br />
+                        </span>
+                    }
+                  </>
+                )
+              }),
               quote?.worksNames,
               quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
               quote?.notes,
@@ -487,7 +524,6 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     setMinPrice("");
     setMaxPrice("");
     setProductIds([]);
-    
   };
 
   const tableHeaders = docType === DOCUMENT_TYPE.purchaseOrder ? [
@@ -1063,7 +1099,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
       products.map(({ id, name }) => ({ label: name, value: id }))
     );
   }, []);
-  
+
   const handleMinPriceChange = (e) => {
     setMinPrice(e.target.value);
   };
@@ -1104,7 +1140,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
   const handleAccountingStatusChange = (e: any, value: any) => {
     setAccountingStatus(value);
   };
-  
+
 
   return {
     t,

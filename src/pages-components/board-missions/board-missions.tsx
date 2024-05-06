@@ -19,7 +19,7 @@ const BoardMissionsListWidget = () => {
   const {
     tableHeader,
     renderOptions,
-    customer, 
+    customer,  
     agent,
     status,
     agentsCategories,

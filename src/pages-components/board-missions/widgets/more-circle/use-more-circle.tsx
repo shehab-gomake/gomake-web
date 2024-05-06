@@ -8,6 +8,7 @@ import LockOpenOutlinedIcon from '@mui/icons-material/LockOpenOutlined';
 import { useStyle } from "./style";
 import { getBoardMissionPDF } from "@/services/api-service/generic-doc/documents-api";
 import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
+import { PStatus } from "../enums";
 
 const useMoreCircle = ({
   mission,
@@ -34,7 +35,6 @@ const useMoreCircle = ({
     anchor.click();
   };
 
-
   const onClickPrint = async (mission) => {
     const callBack = (res) => {
       if (res?.success) {
@@ -46,7 +46,6 @@ const useMoreCircle = ({
     };
     await getBoardMissionPDF(callApi, callBack, { boardMissionId: mission?.id });
   };
-
 
   const menuList = [
     {
@@ -74,16 +73,13 @@ const useMoreCircle = ({
       onclick: () => onClickDuplicate(mission),
     },
     {
-      //condition: mission?.productionStatus === PStatus.IN_PROCESS,
-      condition: true,
+      condition: mission?.status === PStatus.IN_PROCESS,
       name: "boardMissions.markAsReady",
       icon: <TaskAltOutlinedIcon style={classes.iconStyle} />,
       onclick: () => onClickMarksAsDone(mission),
     },
     {
-      condition: true,
-
-      //condition: mission?.productionStatus === PStatus.DONE,
+      condition: mission?.status === PStatus.DONE,
       name: "boardMissions.returnToProduction",
       icon: <LockOpenOutlinedIcon style={classes.iconStyle} />,
       onclick: () => onClickReturnToProduction(mission),

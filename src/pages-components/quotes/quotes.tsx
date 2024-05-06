@@ -135,8 +135,7 @@ const QuotesListPageWidget = ({
 
             <div style={classes.filtersContainer}>
               <div style={classes.selectedFilterContainer}>
-
-    <div style={classes.statusFilterContainer}>
+                <div style={classes.statusFilterContainer}>
                   <div style={classes.filterLabelStyle}>
                     {t("sales.quote.customer")}
                   </div>
@@ -186,7 +185,7 @@ const QuotesListPageWidget = ({
                     value={statusId}
                   />
                 </div>
-                } 
+                }
                 {documentType === DOCUMENT_TYPE.order &&
                   <div style={classes.statusFilterContainer}>
                     <h3 style={classes.filterLabelStyle}>{t("boardMissions.productionStatus")}</h3>
@@ -200,7 +199,6 @@ const QuotesListPageWidget = ({
                     />
                   </div>
                 }
-
                 {documentType !== DOCUMENT_TYPE.quote &&
                   <div style={classes.statusFilterContainer}>
                     <h3 style={classes.filterLabelStyle}>{t("sales.quote.accountingStatus")}</h3>
@@ -214,11 +212,6 @@ const QuotesListPageWidget = ({
                     />
                   </div>
                 }
-
-
-
-            
-
                 {documentType !== DOCUMENT_TYPE.purchaseInvoice && documentType !== DOCUMENT_TYPE.purchaseInvoiceRefund && documentType !== DOCUMENT_TYPE.purchaseOrder && documentType !== DOCUMENT_TYPE.receipt &&
                   <div style={classes.statusFilterContainer}>
                     <h3 style={classes.filterLabelStyle}>{t("boardMissions.products")}</h3>
@@ -229,14 +222,7 @@ const QuotesListPageWidget = ({
                       values={productIds}
                       placeholder={t("boardMissions.selectProducts")} />
                   </div>}
-
-
-
-                <div style={classes.statusFilterContainer}>
-                  <h3 style={classes.filterLabelStyle}>{t("boardMissions.dateRange")}</h3>
-                  <GoMakeDatepicker onChange={onSelectDeliveryTimeDates} placeholder={t("boardMissions.chooseDate")} reset={resetDatePicker} />
-                </div>
-                {documentType !== DOCUMENT_TYPE.purchaseInvoice && documentType !== DOCUMENT_TYPE.purchaseInvoiceRefund && documentType !== DOCUMENT_TYPE.purchaseOrder &&
+                  {documentType !== DOCUMENT_TYPE.purchaseInvoice && documentType !== DOCUMENT_TYPE.purchaseInvoiceRefund && documentType !== DOCUMENT_TYPE.purchaseOrder &&
                   <div style={{ ...classes.statusFilterContainer, width: "50%" }}>
                     <div style={classes.filterLabelStyle}>{t("sales.quote.priceRange")}</div>
                     <div style={classes.priceDivStyle}>
@@ -257,6 +243,10 @@ const QuotesListPageWidget = ({
                       />
                     </div></div>}
                 <div style={classes.statusFilterContainer}>
+                  <h3 style={classes.filterLabelStyle}>{t("boardMissions.dateRange")}</h3>
+                  <GoMakeDatepicker onChange={onSelectDeliveryTimeDates} placeholder={t("boardMissions.chooseDate")} reset={resetDatePicker} />
+                </div>
+                <div style={classes.statusFilterContainer}>
                   <div style={classes.filterLabelStyle} />
                   <GomakePrimaryButton
                     style={classes.searchBtnStyle}
@@ -275,6 +265,7 @@ const QuotesListPageWidget = ({
                   </GomakePrimaryButton>
                 </div>
               </div>
+              
               <div style={{ display: "flex", flexDirection: "row", gap: 8 }}>
                 <SearchInputComponent onChange={(e) => setPatternSearch(e)} />
                 <div style={{ cursor: "pointer" }} onClick={onOpenAddRuleModal}>
