@@ -16,7 +16,6 @@ const InputNumberParameterWidget = ({
   return (
     <div data-tour={parameter?.id?.toString()}>
       <GomakeTextInput
-        //key={disabled + "parameter" + index}
         style={clasess.textInputStyle}
         disabled={disabled ? disabled : myParameter?.isDisabled}
         defaultValue={parameter.defaultValue}
@@ -39,6 +38,7 @@ const InputNumberParameterWidget = ({
           extraOnChange && extraOnChange()
         }}
         type={type}
+        InputProps={{ inputProps: { min: type === "number" ? 0 : undefined } }}
       />
     </div>
   );

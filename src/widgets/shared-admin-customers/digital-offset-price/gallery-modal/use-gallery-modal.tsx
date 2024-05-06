@@ -3,7 +3,6 @@ import { useRecoilState, useRecoilValue } from "recoil";
 
 import {
   materialBtnDataState,
-  productTemplateState,
   selectParameterButtonState,
   subProductsParametersState
 } from "@/store";
@@ -100,9 +99,9 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
 
     const result = items?.filter((item) =>
       item.rowData.name.value.toLowerCase().includes(searchText) ||
-      (item.rowData.type.value && item.rowData.type.value.some(type => type.toLowerCase().includes(searchText))
+      (item?.rowData?.type?.value && item?.rowData?.type?.value?.some(type => type?.toLowerCase().includes(searchText))
         ||
-        item.category.toLowerCase().includes(searchText))
+        item?.category?.toLowerCase()?.includes(searchText))
     );
 
     return result;
