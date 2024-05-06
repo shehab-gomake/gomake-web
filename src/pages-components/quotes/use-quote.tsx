@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { DELIVERY_NOTE_STATUSES, LogActionType, QUOTE_STATUSES } from "./enums";
 import { MoreMenuWidget } from "./more-circle";
-import { getAndSetAllCustomers } from "@/services/hooks";
+import { getAllProductsForDropDownList, getAndSetAllCustomers } from "@/services/hooks";
 import { useRecoilState, useSetRecoilState, useRecoilValue } from "recoil";
 import { agentsCategoriesState } from "@/pages/customers/customer-states";
 import { getAndSetEmployees2 } from "@/services/api-service/customers/employees-api";
@@ -27,6 +27,7 @@ import { DEFAULT_VALUES } from "@/pages/customers/enums";
 import { getAllReceiptsApi, getReceiptPdfApi } from "@/services/api-service/generic-doc/receipts-api";
 import { EHttpMethod } from "@/services/api-service/enums";
 import { renderDocumentTypeForSourceDocumentNumber, renderURLDocumentType } from "@/widgets/settings-documenting/documentDesign/enums/document-type";
+import { AStatus, PStatus } from "../board-missions/widgets/enums";
 
 const useQuotes = (docType: DOCUMENT_TYPE) => {
   const { t } = useTranslation();
@@ -35,7 +36,6 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
   const { alertFaultUpdate, alertFaultDuplicate, alertFaultGetData } = useSnackBar();
   const { getCurrencyUnitText } = useQuoteGetData();
   const { navigate } = useGomakeRouter();
-
   const { errorColor } = useGomakeTheme();
   const [patternSearch, setPatternSearch] = useState("");
   const [finalPatternSearch, setFinalPatternSearch] = useState("");
@@ -184,7 +184,6 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
               //   )
               // }),
               quote?.supplierName,
-
               quote?.clientName,
               quote?.itemsNumber,
               quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
@@ -213,7 +212,6 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
               //   )
               // }),
               quote?.customerName,
-
               quote?.itemsNumber,
               quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
               quote?.notes,
@@ -295,8 +293,8 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
           _renderPaymentType(quote?.paymentType),
           quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
           quote?.notes,
-        //  _renderDocumentStatus(quote?.status, t),
-            quote?.status,
+          //_renderDocumentStatus(quote?.status, t),
+          quote?.status,
           <MoreMenuWidget
             quote={quote}
             documentType={docType}
@@ -318,7 +316,9 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
         patternSearch: finalPatternSearch,
         fromDate: fromDate && GetDateFormat(fromDate),
         toDate: toDate && GetDateFormat(toDate),
-        status: quoteStatusId?.value || statusId?.value,
+        status: statusId?.value,
+        minPrice: minPrice,
+        maxPrice: maxPrice,
         model: {
           pageNumber: page,
           pageSize: pageSize,
@@ -334,10 +334,17 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
             pageSize: pageSize,
           },
           statusId: quoteStatusId?.value || statusId?.value,
+          closeStatus: accountingStatus?.value,
+          productionStatus: productionStatus?.value,
           patternSearch: finalPatternSearch,
           customerId: customerId?.id,
           dateRange,
           agentId: agentId?.id,
+          minPrice: minPrice,
+          maxPrice: maxPrice,
+          productList: productIds,
+          fromDate: fromDate && GetDateFormat(fromDate),
+          toDate: toDate && GetDateFormat(toDate),
         },
       });
     }
@@ -390,12 +397,50 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
               />,
             ];
           }
+          else if (docType === DOCUMENT_TYPE.quote) {
+            return [
+              GetDateFormat(quote?.createdDate),
+              quote?.customerName,
+              quote?.agentName,
+              quote?.number,
+              quote?.worksNames,
+              quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
+              quote?.notes,
+              _renderStatus(quote, t, navigate),
+              <MoreMenuWidget
+                quote={quote}
+                documentType={docType}
+                onClickOpenModal={onClickOpenModal}
+                onClickPdf={onClickQuotePdf}
+                onClickDuplicate={onClickQuoteDuplicate}
+                onClickLoggers={onClickDocumentLogs}
+
+              />,
+            ];
+          }
           else {
             return [
               GetDateFormat(quote?.createdDate),
               quote?.customerName,
               quote?.agentName,
               quote?.number,
+              quote?.sourceDocumentNumber?.map((item, index) => {
+                return (
+                  <>
+                    {
+                      docType === DOCUMENT_TYPE.order ?
+                        <span key={index}>{item?.documentNumber}
+                          <br />
+                        </span>
+                        :
+                        <span key={index} onClick={() => navigate(renderURLDocumentType(item?.sourceDocumentType, item.documentId))} style={{ cursor: "pointer" }}>
+                          {renderDocumentTypeForSourceDocumentNumber(item?.sourceDocumentType)}:{item?.documentNumber}
+                          <br />
+                        </span>
+                    }
+                  </>
+                )
+              }),
               quote?.worksNames,
               quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
               quote?.notes,
@@ -420,8 +465,8 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
           _renderPaymentType(quote?.paymentType),
           quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
           quote?.notes,
-         // _renderDocumentStatus(quote?.status, t),
-         t(quote?.status),
+          // _renderDocumentStatus(quote?.status, t),
+          t(quote?.status),
           <MoreMenuWidget
             quote={quote}
             documentType={docType}
@@ -469,11 +514,16 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     setAgentId(null);
     setCustomerId(null);
     setStatusId(null);
+    setAccountingStatus(null);
+    setProductionStatus(null);
     setFromDate(null);
     setToDate(null);
     setResetDatePicker(true);
     getAllQuotesInitial();
     setPage(1);
+    setMinPrice("");
+    setMaxPrice("");
+    setProductIds([]);
   };
 
   const tableHeaders = docType === DOCUMENT_TYPE.purchaseOrder ? [
@@ -1033,6 +1083,65 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
   }, [selectedClient]);
 
 
+  //////////////////////////////////////////////////////////////////
+  const [productsList, setProductsList] = useState([]);
+  const [productIds, setProductIds] = useState<string[]>([]);
+  const [minPrice, setMinPrice] = useState('');
+  const [maxPrice, setMaxPrice] = useState('');
+
+
+  const getAllProducts = useCallback(async () => {
+    const products = await getAllProductsForDropDownList(
+      callApi,
+      setProductsList
+    );
+    setProductsList(
+      products.map(({ id, name }) => ({ label: name, value: id }))
+    );
+  }, []);
+
+  const handleMinPriceChange = (e) => {
+    setMinPrice(e.target.value);
+  };
+
+  const handleMaxPriceChange = (e) => {
+    setMaxPrice(e.target.value);
+  };
+
+  const handleMultiSelectChange = (newValues: string[]) => {
+    setProductIds(newValues);
+  };
+
+  const productionStatuses = [
+    { label: t("boardMissions.inProduction"), value: PStatus.IN_PROCESS },
+    { label: t("boardMissions.done"), value: PStatus.DONE },
+  ];
+
+  const accountingStatuses = [
+    { label: t("sales.quote.open"), value: AStatus.OPEN },
+    { label: t("sales.quote.partialClosed"), value: AStatus.PARTIAL_CLOSED },
+    { label: t("sales.quote.closed"), value: AStatus.CLOSED },
+  ];
+
+  const [accountingStatus, setAccountingStatus] = useState<{
+    label: string;
+    value: PStatus;
+  } | null>();
+
+  const [productionStatus, setProductionStatus] = useState<{
+    label: string;
+    value: PStatus;
+  } | null>();
+
+  const handleProductionStatusChange = (e: any, value: any) => {
+    setProductionStatus(value);
+  };
+
+  const handleAccountingStatusChange = (e: any, value: any) => {
+    setAccountingStatus(value);
+  };
+
+
   return {
     t,
     patternSearch,
@@ -1090,7 +1199,21 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     onSelectDateRange,
     onClickSearchLogsFilter,
     onClickClearLogsFilter,
-    documentLogsData
+    documentLogsData,
+    handleMaxPriceChange,
+    handleMinPriceChange,
+    minPrice,
+    maxPrice,
+    handleMultiSelectChange,
+    productIds,
+    productsList,
+    getAllProducts,
+    accountingStatuses,
+    accountingStatus,
+    productionStatuses,
+    productionStatus,
+    handleProductionStatusChange,
+    handleAccountingStatusChange
   };
 };
 

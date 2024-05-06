@@ -123,6 +123,13 @@ const useStyle = () => {
         textTransform: "none" as "none",
         gap: "10px",
     },
+    priceDivStyle:{
+      display: "flex",
+      flexDirection: "row" as "row", 
+      justifyContent: "flex-start",
+      alignItems: "center",
+      gap: 5,
+    }
     };
   }, [i18next.language, t, theme]);
   return {

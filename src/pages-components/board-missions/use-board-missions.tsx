@@ -49,6 +49,7 @@ const useBoardMissions = () => {
     setPageSize(event.target.value);
   };
 
+
   const onSelectDeliveryTimeDates = (fromDate: Date, toDate: Date) => {
     setResetDatePicker(false);
     setFromDate(fromDate);
@@ -267,6 +268,7 @@ const useBoardMissions = () => {
     };
     await backToProcessApi(callApi, callBack, { boardMissionId: selectedMission?.id, sendMessage: false });
   };
+
   return {
     tableHeader,
     agentsCategories,

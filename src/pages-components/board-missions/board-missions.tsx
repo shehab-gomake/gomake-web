@@ -19,7 +19,7 @@ const BoardMissionsListWidget = () => {
   const {
     tableHeader,
     renderOptions,
-    customer,
+    customer,  
     agent,
     status,
     agentsCategories,
@@ -55,6 +55,7 @@ const BoardMissionsListWidget = () => {
     onClickMoveBoardMissionToDone,
     onClickBackToProcess
   } = useBoardMissions();
+  
   useEffect(() => {
     getAllProducts();
   }, []);
