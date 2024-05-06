@@ -2310,7 +2310,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
   // useEffect(() => {
   //   let checkParameter = validateParameters(isRequiredParameters);
-  //   console.log("isRequiredParameters", isRequiredParameters, checkParameter)
   //   // if (checkParameter) {
   //   //   setCanCalculation(true)
   //   // }
