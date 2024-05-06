@@ -23,7 +23,8 @@ import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import { useRecoilValue } from "recoil";
 import { employeesListsState } from "./states";
 import { GoMakeMultiSelect } from "@/components/auto-complete/multi-select";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { PStatus } from "../board-missions/widgets/enums";
 
 
 interface IProps {
@@ -95,9 +96,14 @@ const QuotesListPageWidget = ({
     handleMultiSelectChange,
     productIds,
     productsList,
-    getAllProducts
+    getAllProducts,
+    accountingStatuses,
+    accountingStatus,
+    productionStatuses,
+    productionStatus,
+    handleProductionStatusChange,
+    handleAccountingStatusChange
   } = useQuotes(documentType);
-
 
   useEffect(() => {
     getAllProducts();
@@ -126,26 +132,11 @@ const QuotesListPageWidget = ({
                 </Button>
               }
             </div>
+
             <div style={classes.filtersContainer}>
               <div style={classes.selectedFilterContainer}>
-                <div style={classes.statusFilterContainer}>
-                  <div style={classes.filterLabelStyle}>
-                    {t("sales.quote.status")}
-                  </div>
-                  <GoMakeAutoComplate
-                    key={statusId?.value}
-                    options={documentType === DOCUMENT_TYPE.receipt ? deliveryNoteStatuses : quoteStatuses}
-                    style={classes.textInputStyle}
-                    getOptionLabel={(option: any) => option.label}
-                    placeholder={t("sales.quote.chooseStatus")}
-                    onChange={(e: any, value: any) => {
-                      setPage(1);
-                      setStatusId(value);
-                    }}
-                    value={statusId}
-                  />
-                </div>
-                <div style={classes.statusFilterContainer}>
+
+    <div style={classes.statusFilterContainer}>
                   <div style={classes.filterLabelStyle}>
                     {t("sales.quote.customer")}
                   </div>
@@ -178,17 +169,66 @@ const QuotesListPageWidget = ({
                     value={agentId}
                   />
                 </div>
+                {documentType === DOCUMENT_TYPE.quote && <div style={classes.statusFilterContainer}>
+                  <div style={classes.filterLabelStyle}>
+                    {t("sales.quote.status")}
+                  </div>
+                  <GoMakeAutoComplate
+                    key={statusId?.value}
+                    options={quoteStatuses}
+                    style={classes.textInputStyle}
+                    getOptionLabel={(option: any) => option.label}
+                    placeholder={t("sales.quote.chooseStatus")}
+                    onChange={(e: any, value: any) => {
+                      setPage(1);
+                      setStatusId(value);
+                    }}
+                    value={statusId}
+                  />
+                </div>
+                } 
+                {documentType === DOCUMENT_TYPE.order &&
+                  <div style={classes.statusFilterContainer}>
+                    <h3 style={classes.filterLabelStyle}>{t("boardMissions.productionStatus")}</h3>
+                    <GoMakeAutoComplate
+                      key={productionStatus?.value}
+                      options={productionStatuses}
+                      style={classes.textInputStyle}
+                      placeholder={t("boardMissions.productionStatus")}
+                      onChange={handleProductionStatusChange}
+                      value={productionStatus}
+                    />
+                  </div>
+                }
+
+                {documentType !== DOCUMENT_TYPE.quote &&
+                  <div style={classes.statusFilterContainer}>
+                    <h3 style={classes.filterLabelStyle}>{t("sales.quote.accountingStatus")}</h3>
+                    <GoMakeAutoComplate
+                      key={accountingStatus?.value}
+                      options={accountingStatuses}
+                      style={classes.textInputStyle}
+                      placeholder={t("sales.quote.accountingStatus")}
+                      onChange={handleAccountingStatusChange}
+                      value={accountingStatus}
+                    />
+                  </div>
+                }
+
+
+
+            
 
                 {documentType !== DOCUMENT_TYPE.purchaseInvoice && documentType !== DOCUMENT_TYPE.purchaseInvoiceRefund && documentType !== DOCUMENT_TYPE.purchaseOrder && documentType !== DOCUMENT_TYPE.receipt &&
-                <div style={classes.statusFilterContainer}>
-                  <h3 style={classes.filterLabelStyle}>{t("boardMissions.products")}</h3>
-                  <GoMakeMultiSelect
-                    onChange={handleMultiSelectChange}
-                    style={classes.textInputStyle}
-                    options={productsList}
-                    values={productIds}
-                    placeholder={t("boardMissions.selectProducts")} />
-                </div>}
+                  <div style={classes.statusFilterContainer}>
+                    <h3 style={classes.filterLabelStyle}>{t("boardMissions.products")}</h3>
+                    <GoMakeMultiSelect
+                      onChange={handleMultiSelectChange}
+                      style={classes.textInputStyle}
+                      options={productsList}
+                      values={productIds}
+                      placeholder={t("boardMissions.selectProducts")} />
+                  </div>}
 
 
 

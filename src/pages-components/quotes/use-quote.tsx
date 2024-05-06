@@ -27,6 +27,7 @@ import { DEFAULT_VALUES } from "@/pages/customers/enums";
 import { getAllReceiptsApi, getReceiptPdfApi } from "@/services/api-service/generic-doc/receipts-api";
 import { EHttpMethod } from "@/services/api-service/enums";
 import { renderDocumentTypeForSourceDocumentNumber, renderURLDocumentType } from "@/widgets/settings-documenting/documentDesign/enums/document-type";
+import { AStatus, PStatus } from "../board-missions/widgets/enums";
 
 const useQuotes = (docType: DOCUMENT_TYPE) => {
   const { t } = useTranslation();
@@ -332,7 +333,10 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
             pageNumber: page,
             pageSize: pageSize,
           },
-          statusId: quoteStatusId?.value || statusId?.value,
+          //statusId: quoteStatusId?.value || statusId?.value,
+          status: quoteStatusId?.value || statusId?.value,
+          closeStatus:accountingStatus?.value,
+          productionStatus:productionStatus?.value,
           patternSearch: finalPatternSearch,
           customerId: customerId?.id,
           dateRange,
@@ -473,6 +477,8 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     setAgentId(null);
     setCustomerId(null);
     setStatusId(null);
+    setAccountingStatus(null);
+    setProductionStatus(null);
     setFromDate(null);
     setToDate(null);
     setResetDatePicker(true);
@@ -481,7 +487,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     setMinPrice("");
     setMaxPrice("");
     setProductIds([]);
-
+    
   };
 
   const tableHeaders = docType === DOCUMENT_TYPE.purchaseOrder ? [
@@ -1070,6 +1076,36 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     setProductIds(newValues);
   };
 
+  const productionStatuses = [
+    { label: t("boardMissions.inProduction"), value: PStatus.IN_PROCESS },
+    { label: t("boardMissions.done"), value: PStatus.DONE },
+  ];
+
+  const accountingStatuses = [
+    { label: t("sales.quote.open"), value: AStatus.OPEN },
+    { label: t("sales.quote.partialClosed"), value: AStatus.PARTIAL_CLOSED },
+    { label: t("sales.quote.closed"), value: AStatus.CLOSED },
+  ];
+
+  const [accountingStatus, setAccountingStatus] = useState<{
+    label: string;
+    value: PStatus;
+  } | null>();
+
+  const [productionStatus, setProductionStatus] = useState<{
+    label: string;
+    value: PStatus;
+  } | null>();
+
+  const handleProductionStatusChange = (e: any, value: any) => {
+    setProductionStatus(value);
+  };
+
+  const handleAccountingStatusChange = (e: any, value: any) => {
+    setAccountingStatus(value);
+  };
+  
+
   return {
     t,
     patternSearch,
@@ -1135,7 +1171,13 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     handleMultiSelectChange,
     productIds,
     productsList,
-    getAllProducts
+    getAllProducts,
+    accountingStatuses,
+    accountingStatus,
+    productionStatuses,
+    productionStatus,
+    handleProductionStatusChange,
+    handleAccountingStatusChange
   };
 };
 
