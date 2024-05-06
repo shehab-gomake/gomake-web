@@ -37,6 +37,13 @@ const useAddRuleModal = ({
   const { callApi } = useGomakeAxios();
   const {t} = useTranslation();
   const { clients } = usePrintHouseClients();
+  const [openScheduleModal,setOpenScheduleModal]=useState(false)
+  const onCloseScheduleModal =()=>{
+    setOpenScheduleModal(false)
+  }
+  const onOpenScheduleModal =()=>{
+    setOpenScheduleModal(true)
+  }
   const [propertieValue, setPropertieValue] = useState<any>();
   const isDefaultException =
     selectedPricingTableItems?.exceptionType === ETypeException.DEFAULT;
@@ -455,7 +462,10 @@ const useAddRuleModal = ({
     agentsCategories,
     createForQuoteWidget,
     setRules,
-    initialRule
+    initialRule,
+    openScheduleModal,
+    onCloseScheduleModal,
+    onOpenScheduleModal
   };
 };
 
