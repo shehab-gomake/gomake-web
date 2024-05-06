@@ -16,6 +16,7 @@ import { EParameterTypes } from "@/enums";
 import { useRouter } from "next/router";
 import { GoMakeDatepicker } from "@/components/date-picker/date-picker-component";
 import { DeleteMenuIcon } from "@/widgets/quote-new/more-circle/icons/delete-menu";
+import { ScheduleSendWidget } from "@/pages-components/quotes/widgets/schedule-send-widget/schedule-send-widget";
 
 const AddRuleModal = ({
   openModal,
@@ -60,7 +61,10 @@ const AddRuleModal = ({
     addRule,
     createForQuoteWidget,
     setRules,
-    initialRule
+    initialRule,
+    openScheduleModal,
+    onCloseScheduleModal,
+    onOpenScheduleModal
   } = useAddRuleModal({
     typeExceptionSelected,
     selectedPricingBy,
@@ -758,6 +762,14 @@ const AddRuleModal = ({
 
 
           <div style={clasess.btnContainer}>
+            {
+              isQuoteWidge && <GomakePrimaryButton
+                style={clasess.sendBtn}
+                onClick={onOpenScheduleModal}
+              >
+                {t("properties.scheduleSend")}
+              </GomakePrimaryButton>
+            }
             <GomakePrimaryButton
               style={clasess.sendBtn}
               onClick={() => {
@@ -772,6 +784,7 @@ const AddRuleModal = ({
             >
               {t("properties.create")}
             </GomakePrimaryButton>
+
           </div>
           <div>
             <div>
@@ -793,6 +806,7 @@ const AddRuleModal = ({
             </div>
           </div>
         </div>
+        <ScheduleSendWidget openModal={openScheduleModal} onCloseModal={onCloseScheduleModal} />
       </GoMakeModal>
     </>
   );

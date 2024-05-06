@@ -19,11 +19,12 @@ const useStyle = () => {
       },
       btnContainer: {
         display: "flex",
-        flexDirection: "column" as "column",
+        flexDirection: "row" as "row",
         justifyContent: "flex-end",
         alignItems: "flex-end",
         width: "100%",
         marginTop: 50,
+        gap:10
       },
       sendBtn: {
         width: "20%",
