@@ -5,7 +5,9 @@ import Autocomplete from "@mui/material/Autocomplete";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import Stack from "@mui/material/Stack";
-import {DotsLoader} from "@/components/dots-loader/dots-Loader";
+import { DotsLoader } from "@/components/dots-loader/dots-Loader";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 
 const StyledAutocomplete: any = styled(Autocomplete)((props: any) => {
   return {
@@ -75,7 +77,8 @@ const GoMakeAutoComplate = ({
   multiple = false,
   onChangeTextField,
   PaperComponent,
-    loading
+  loading,
+  withArrow = false,
 }: {
   value?: any;
   onChange?: any;
@@ -94,10 +97,13 @@ const GoMakeAutoComplate = ({
   onChangeTextField?: any;
   PaperComponent?: any;
   loading?: boolean;
+  withArrow?: boolean;
 }) => {
   const [selectedOption, setSelectedOption] = useState<any>();
+  const [menuOpen, setMenuOpen] = useState(false);
   const { t } = useTranslation();
   const dir: "rtl" | "ltr" = t("direction");
+
   React.useEffect(() => {
     if (value?.name) {
       setSelectedOption(value);
@@ -105,11 +111,15 @@ const GoMakeAutoComplate = ({
       setSelectedOption(null);
     }
   }, [value]);
+
   return (
     <StyledAutocomplete
       {...(value && { value })}
       {...(selectedOption && { selectedOption })}
       direction={dir}
+      open={menuOpen}
+      onOpen={() => setMenuOpen(true)}
+      onClose={() => setMenuOpen(false)}
       onChange={(e: any, value: any) => {
         onChange(e, value);
         setSelectedOption(value);
@@ -118,32 +128,29 @@ const GoMakeAutoComplate = ({
       options={options}
       disabled={disabled}
       popupIcon={""}
-      renderInput={(params: any) => loading ?
-          <DotsLoader/> :
-        <TextField
-          {...params}
-          placeholder={defaultValue?.label || placeholder}
-          onChange={onChangeTextField || params.onChange}
-          InputProps={
-            dir === "rtl"
-              ? {
-                  ...params.InputProps,
-                  startAdornment: (
-                    <Stack
-                      display={"flex"}
-                      gap={"1px"}
-                      flexDirection={"row-reverse"}
-                    >
-                      {params.InputProps.endAdornment.props.children}
-                    </Stack>
-                  ),
-                  endAdornment: null,
-                }
-              : {
-                  ...params.InputProps,
-                }
-          }
-        />
+      renderInput={(params: any) =>
+        loading ? (
+          <DotsLoader />
+        ) : (
+          <TextField
+            {...params}
+            placeholder={defaultValue?.label || placeholder}
+            onChange={onChangeTextField || params.onChange}
+            InputProps={{
+              ...params.InputProps,
+              endAdornment: withArrow ? ( // Conditionally render arrow based on prop
+                <React.Fragment>
+                  {params.InputProps.endAdornment}
+                  {menuOpen ? (
+                    <ArrowDropUpIcon /> // Arrow up when menu is open
+                  ) : (
+                    <ArrowDropDownIcon /> // Arrow down when menu is closed
+                  )}
+                </React.Fragment>
+              ) : null, // If withArrow is false, don't render the arrow
+            }}
+          />
+        )
       }
       defaultValue={defaultValue}
       autoHighlight={autoHighlight}
@@ -153,12 +160,8 @@ const GoMakeAutoComplate = ({
       disableClearable={disableClearable}
       placeholder="Enter"
       multiple={multiple}
-      isOptionEqualToValue={(option: any, value: any) =>
-        option?.id === value?.id
-      }
-      getOptionSelected={(option: any, value: any) => {
-        return option?.id === value?.id;
-      }}
+      isOptionEqualToValue={(option: any, value: any) => option?.id === value?.id}
+      getOptionSelected={(option: any, value: any) => option?.id === value?.id}
       PaperComponent={PaperComponent}
     />
   );
