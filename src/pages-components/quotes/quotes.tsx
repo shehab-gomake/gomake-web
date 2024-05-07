@@ -28,6 +28,7 @@ import { IconButton } from "@mui/material";
 import { GoMakeMenu } from "@/components";
 import { InputAdornment } from "@mui/material";
 import TuneIcon from '@mui/icons-material/Tune';
+
 interface IProps {
   documentType: DOCUMENT_TYPE;
   isFromHomePage?: boolean;
@@ -129,7 +130,7 @@ const QuotesListPageWidget = ({
               <HeaderTitle title={documentLabel} marginTop={1} marginBottom={1} />
               {documentType === DOCUMENT_TYPE.quote && <CardsSection statistics={allStatistics} activeCard={activeCard} onClick={onclickCreateNew} onClickCard={handleCardClick} onSecondClickCard={handleSecondCardClick} />}
               {(documentType !== DOCUMENT_TYPE.quote && documentType !== DOCUMENT_TYPE.order) &&
-                <Button
+                <Button 
                   style={classes.createNew}
                   onClick={() => navigate(`/${documentPath}?isNewCreation=true`)}
                   startIcon={<AddCircleOutlineIcon style={{ color: 'black', fontSize: "24px" }} />}>
@@ -270,7 +271,9 @@ const QuotesListPageWidget = ({
                               <GoMakeDatepicker onChange={onSelectDeliveryTimeDates} placeholder={t("boardMissions.chooseDate")} reset={resetDatePicker} />
                             </div>
                           </div>
+                         
                           <div style={{ display: "flex", flexDirection: "row", justifyContent: "flex-end", width: "100%", gap: "10px" }}>
+                           
                             <div style={classes.buttonsFilterContainer}>
                               <div style={classes.filterLabelStyle} />
                               <GomakePrimaryButton
@@ -291,6 +294,7 @@ const QuotesListPageWidget = ({
                             </div>
 
                           </div>
+                          
                         </div>
                       </GoMakeMenu>
                     </div>

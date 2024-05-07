@@ -269,6 +269,16 @@ const useBoardMissions = () => {
     await backToProcessApi(callApi, callBack, { boardMissionId: selectedMission?.id, sendMessage: false });
   };
 
+
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
   return {
     tableHeader,
     agentsCategories,
@@ -309,7 +319,11 @@ const useBoardMissions = () => {
     onCloseReturnToProdModal,
     onClickDuplicateMission,
     onClickMoveBoardMissionToDone,
-    onClickBackToProcess
+    onClickBackToProcess,
+    handleClick,
+    handleClose,
+    open,
+    anchorEl
   };
 };
 
