@@ -75,8 +75,6 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
   const documentPath = DOCUMENT_TYPE[docType];
   const isReceipt = docType === DOCUMENT_TYPE.receipt;
 
-
-
   const onCloseAddRuleModal = () => {
     setOpenAddRule(false);
   };
@@ -348,7 +346,6 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
           toDate: toDate && GetDateFormat(toDate),
         },
       });
-
     }
   };
 
@@ -1144,6 +1141,14 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
   };
   const [filterData, setFilterData] = useState({});
 
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
   const removeEmptyValues = (obj) => {
     return Object.fromEntries(
       Object.entries(obj).filter(([_, value]) =>
@@ -1248,6 +1253,10 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     productionStatus,
     handleProductionStatusChange,
     handleAccountingStatusChange,
+    handleClick,
+    handleClose,
+    open,
+    anchorEl,
     filterData
   };
 };

@@ -28,14 +28,12 @@ const SelectChildParameterWidget = ({
     (item) => item.type === subSection?.type
   )?.parameters;
   const [value, setValue] = useState<any>();
-
   useEffect(() => {
     if (subProductsParams) {
 
       let temp = [...subProductsParams];
       parameter?.childsParameters.forEach((myparameter) => {
         const parameterId = myparameter.id;
-
         const myindex = temp.findIndex((item) => {
           return (
             item?.parameterId === myparameter?.id &&
@@ -44,15 +42,32 @@ const SelectChildParameterWidget = ({
             item?.actionIndex === myparameter?.actionIndex
           );
         });
-        if (myindex !== -1) {
-          temp[myindex] = {
-            ...temp[myindex],
-            parameterCode: myparameter?.code,
-            values: [value?.values[parameterId]],
-            isDisabled: hasValues(value)
-          };
-        } else {
+        if (value?.values) {
+          if (myindex !== -1) {
+            temp[myindex] = {
+              ...temp[myindex],
+              parameterCode: myparameter?.code,
+              values: [value?.values[parameterId]],
+              isDisabled: hasValues(value)
+            };
+          }
+          else {
 
+            temp.push({
+              parameterId: myparameter?.id,
+              sectionId: section?.id,
+              subSectionId: subSection?.id,
+              ParameterType: myparameter?.parameterType,
+              values: [value?.values[parameterId]],
+              actionIndex: myparameter?.actionIndex,
+              parameterName: myparameter?.name,
+              parameterCode: myparameter?.code,
+              isDisabled: hasValues(value)
+            });
+          }
+        }
+        else {
+          setValue(undefined)
           temp.push({
             parameterId: myparameter?.id,
             sectionId: section?.id,
@@ -62,7 +77,7 @@ const SelectChildParameterWidget = ({
             actionIndex: myparameter?.actionIndex,
             parameterName: myparameter?.name,
             parameterCode: myparameter?.code,
-            isDisabled: hasValues(value)
+            isDisabled: false
           });
         }
 
