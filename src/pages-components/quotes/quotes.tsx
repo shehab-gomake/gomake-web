@@ -102,7 +102,8 @@ const QuotesListPageWidget = ({
     productionStatuses,
     productionStatus,
     handleProductionStatusChange,
-    handleAccountingStatusChange
+    handleAccountingStatusChange,
+    filterData
   } = useQuotes(documentType);
 
   useEffect(() => {
@@ -222,7 +223,7 @@ const QuotesListPageWidget = ({
                       values={productIds}
                       placeholder={t("boardMissions.selectProducts")} />
                   </div>}
-                  {documentType !== DOCUMENT_TYPE.purchaseInvoice && documentType !== DOCUMENT_TYPE.purchaseInvoiceRefund && documentType !== DOCUMENT_TYPE.purchaseOrder &&
+                {documentType !== DOCUMENT_TYPE.purchaseInvoice && documentType !== DOCUMENT_TYPE.purchaseInvoiceRefund && documentType !== DOCUMENT_TYPE.purchaseOrder &&
                   <div style={{ ...classes.statusFilterContainer, width: "50%" }}>
                     <div style={classes.filterLabelStyle}>{t("sales.quote.priceRange")}</div>
                     <div style={classes.priceDivStyle}>
@@ -265,7 +266,7 @@ const QuotesListPageWidget = ({
                   </GomakePrimaryButton>
                 </div>
               </div>
-              
+
               <div style={{ display: "flex", flexDirection: "row", gap: 8 }}>
                 <SearchInputComponent onChange={(e) => setPatternSearch(e)} />
                 <div style={{ cursor: "pointer" }} onClick={onOpenAddRuleModal}>
@@ -332,6 +333,7 @@ const QuotesListPageWidget = ({
         openModal={openAddRule}
         onCloseModal={onCloseAddRuleModal}
         isQuoteWidge={true}
+        filterData={filterData}
       />
     </>
   );
