@@ -108,7 +108,8 @@ const QuotesListPageWidget = ({
     handleClick,
     handleClose,
     open,
-    anchorEl
+    anchorEl,
+    filterData
   } = useQuotes(documentType);
 
   useEffect(() => {
@@ -367,6 +368,7 @@ const QuotesListPageWidget = ({
         openModal={openAddRule}
         onCloseModal={onCloseAddRuleModal}
         isQuoteWidge={true}
+        filterData={filterData}
       />
     </>
   );

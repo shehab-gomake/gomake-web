@@ -25,7 +25,6 @@ import { useQuoteGetData } from "../quote-new/use-quote-get-data";
 import { useStyle } from "./style";
 import { DEFAULT_VALUES } from "@/pages/customers/enums";
 import { getAllReceiptsApi, getReceiptPdfApi } from "@/services/api-service/generic-doc/receipts-api";
-import { EHttpMethod } from "@/services/api-service/enums";
 import { renderDocumentTypeForSourceDocumentNumber, renderURLDocumentType } from "@/widgets/settings-documenting/documentDesign/enums/document-type";
 import { AStatus, PStatus } from "../board-missions/widgets/enums";
 
@@ -1140,6 +1139,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
   const handleAccountingStatusChange = (e: any, value: any) => {
     setAccountingStatus(value);
   };
+  const [filterData, setFilterData] = useState({});
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -1149,7 +1149,38 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
   const handleClose = () => {
     setAnchorEl(null);
   };
+  const removeEmptyValues = (obj) => {
+    return Object.fromEntries(
+      Object.entries(obj).filter(([_, value]) =>
+        value !== undefined &&
+        value !== null &&
+        value !== "" &&
+        !(Array.isArray(value) && value.length === 0)
+      )
+    );
+  };
+  useEffect(() => {
+    const filteredData = {
+      statusId: quoteStatusId?.value || statusId?.value,
+      closeStatus: accountingStatus?.value && accountingStatus?.value,
+      productionStatus: productionStatus?.value && productionStatus?.value,
+      patternSearch: finalPatternSearch && finalPatternSearch,
+      customerId: customerId?.id && customerId?.id,
+      dateRange: dateRange && dateRange,
+      agentId: agentId?.id && agentId?.id,
+      minPrice: minPrice && minPrice,
+      maxPrice: maxPrice && maxPrice,
+      productList: productIds && productIds,
+      fromDate: fromDate,
+      toDate: toDate,
+    };
 
+    const filteredDataWithoutEmptyValues = removeEmptyValues(filteredData);
+
+    if (JSON.stringify(filteredDataWithoutEmptyValues) !== JSON.stringify(filterData)) {
+      setFilterData(filteredDataWithoutEmptyValues);
+    }
+  }, [quoteStatusId, statusId, accountingStatus, productionStatus, finalPatternSearch, customerId, dateRange, agentId, minPrice, maxPrice, productIds, fromDate, toDate]);
   return {
     t,
     patternSearch,
@@ -1225,7 +1256,8 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     handleClick,
     handleClose,
     open,
-    anchorEl
+    anchorEl,
+    filterData
   };
 };
 
