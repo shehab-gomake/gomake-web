@@ -9,3 +9,4 @@ export * from "./shared-admin-customers";
 export * from "./forgot-password"
 export * from "./reset-password"
 export * from "./login-by-code"
+export * from "./machine-list"

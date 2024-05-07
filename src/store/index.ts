@@ -35,3 +35,4 @@ export * from "./action-menu";
 export * from "./loading-with-shadow"
 export * from "./list-employess"
 export * from "./view-pricing-tab"
+export * from "./dashboard-date"
