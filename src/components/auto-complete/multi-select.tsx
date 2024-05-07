@@ -44,6 +44,7 @@ const GoMakeMultiSelect = ({ options, values, style, onChange, placeholder = "" 
             value={selectedLabels}
             disableClearable={true} placeholder={placeholder}
             options={reorderedOptions}
+            withArrow={true}
             renderOption={(props: any, option: any) => {
                 return (
                     <Stack style={classes.multiSelectOption}>

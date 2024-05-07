@@ -30,15 +30,15 @@ import {
   updateProductItemValueOutsource
 } from "@/services/api-service/product-item-value-draft/product-item-draft-endpoints";
 import { useGomakeAxios } from "@/hooks";
-import { currentCalculationConnectionId } from "@/store";
+import { currentCalculationConnectionId, viewPricingTab } from "@/store";
 import { Stack } from "@mui/material";
 
 const PricingWidget = ({
   workFlows,
   getOutSourcingSuppliers,
 }: IPricingWidgetProps) => {
-  const [view, setView] = useState<EPricingViews>(
-    EPricingViews.SELECTED_WORKFLOW
+  const [view, setView] = useRecoilState<EPricingViews>(
+    viewPricingTab
   );
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
@@ -132,7 +132,6 @@ const PricingWidget = ({
       return 1;
     }
   });
-  console.log("workFlowsworkFlowsworkFlowsworkFlowsworkFlows", workFlows)
 
   useEffect(() => {
     const newTabs = workFlows.reduce((accumulator, currentItem) => {

@@ -9,6 +9,7 @@ const InputContainer = ({
   error,
   changeState,
   placeholder,
+  handleKeyPress
 }: IInputContainer) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
@@ -24,6 +25,7 @@ const InputContainer = ({
           type={input.type}
           error={error}
           placeholder={placeholder}
+          onKeyDown={handleKeyPress}
         />
       </div>
     </div>

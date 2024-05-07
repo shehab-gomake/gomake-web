@@ -16,6 +16,9 @@ import { PricingWidget } from "@/widgets/product-pricing-widget/pricing-widget";
 import { Tabs } from "@mui/material";
 import { StepType } from "@reactour/tour";
 import { useGoMakeTour } from "@/hooks/use-go-make-tour";
+import { useRecoilValue } from "recoil";
+import { EPricingViews } from "@/widgets/product-pricing-widget/enums";
+import { viewPricingTab } from "@/store";
 
 const PriceListPageWidget = ({ widgetType }) => {
     const { clasess } = useStyle();
@@ -82,6 +85,9 @@ const PriceListPageWidget = ({ widgetType }) => {
         straightKnife
     } = useDigitalOffsetPrice({ clasess, widgetType });
     const visibleSections = productTemplate?.sections?.filter(section => !section.isHidden);
+    const viewWorkFlow = useRecoilValue<EPricingViews>(
+        viewPricingTab
+    );
 
     const productSteps: StepType[] = [
         {
@@ -400,26 +406,27 @@ const PriceListPageWidget = ({ widgetType }) => {
                                 ) : null}
                             </div>
                         </div>
-                        <div style={{ width: 220, height: 40, marginLeft: 55, marginRight: 55 }}>
-                            {widgetType === EWidgetProductType.EDIT ? (
-                                <GomakePrimaryButton
-                                    style={clasess.addOrderBtn}
-                                    onClick={updateQuoteItem}
-                                >
-                                    {t("materials.buttons.edit")}
-                                </GomakePrimaryButton>
-                            ) : (
-                                <GomakePrimaryButton
-                                    data-tour={'addPricingBtn'}
-                                    style={clasess.addOrderBtn}
-                                    onClick={navigateForRouter}
-                                >
-                                    {t("products.offsetPrice.admin.addOrder")}
-                                </GomakePrimaryButton>
-                            )}
+                        {
+                            viewWorkFlow === EPricingViews.OUTSOURCE_WORKFLOW ? <div style={{ width: 220, height: 40, marginLeft: 55, marginRight: 55 }} /> : <div style={{ width: 220, height: 40, marginLeft: 55, marginRight: 55 }}>
+                                {widgetType === EWidgetProductType.EDIT ? (
+                                    <GomakePrimaryButton
+                                        style={clasess.addOrderBtn}
+                                        onClick={updateQuoteItem}
+                                    >
+                                        {t("materials.buttons.edit")}
+                                    </GomakePrimaryButton>
+                                ) : (
+                                    <GomakePrimaryButton
+                                        data-tour={'addPricingBtn'}
+                                        style={clasess.addOrderBtn}
+                                        onClick={navigateForRouter}
+                                    >
+                                        {t("products.offsetPrice.admin.addOrder")}
+                                    </GomakePrimaryButton>
+                                )}
+                            </div>
+                        }
 
-                            {/* <div style={clasess.errorMsgStyle}>{errorMsg}</div> */}
-                        </div>
                     </div>
                 </div>
             )}

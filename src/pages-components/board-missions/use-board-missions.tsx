@@ -49,6 +49,7 @@ const useBoardMissions = () => {
     setPageSize(event.target.value);
   };
 
+
   const onSelectDeliveryTimeDates = (fromDate: Date, toDate: Date) => {
     setResetDatePicker(false);
     setFromDate(fromDate);
@@ -70,6 +71,7 @@ const useBoardMissions = () => {
     t("boardMissions.dueDate"),
     t("boardMissions.clientName"),
     t("boardMissions.missionNumber"),
+    t("mailingSettings.orderNumber"),
     t("boardMissions.outSourceType"),
     t("boardMissions.quantity"),
     t("boardMissions.costFromOrderItem"),
@@ -137,6 +139,7 @@ const useBoardMissions = () => {
             GetDateFormat(mission?.dueDate),
             mission?.clientName,
             mission?.number,
+            mission?.orderNumber,
             EWorkSource[mission?.outSourceType],
             mission?.quantity,
             mission?.cost,
@@ -144,7 +147,7 @@ const useBoardMissions = () => {
             mission?.jobName,
             mission?.numberOfBoardMissions,
             mission?.productName,
-            mission?.status && t(`boardMissions.${PStatus[mission?.status]}`),
+            `${mission?.boardMissionStatus?.name} / ${mission?.station?.actionName}`,
             <MoreMenuWidget
               mission={mission}
               onClickDuplicate={onOpenDuplicateModal}
@@ -265,6 +268,17 @@ const useBoardMissions = () => {
     };
     await backToProcessApi(callApi, callBack, { boardMissionId: selectedMission?.id, sendMessage: false });
   };
+
+
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
   return {
     tableHeader,
     agentsCategories,
@@ -305,7 +319,11 @@ const useBoardMissions = () => {
     onCloseReturnToProdModal,
     onClickDuplicateMission,
     onClickMoveBoardMissionToDone,
-    onClickBackToProcess
+    onClickBackToProcess,
+    handleClick,
+    handleClose,
+    open,
+    anchorEl
   };
 };
 

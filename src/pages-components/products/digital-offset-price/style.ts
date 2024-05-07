@@ -182,8 +182,8 @@ const useStyle = () => {
         alignItems: "flex-start",
         gap: 10,
         width: "100%",
-        minWidth: 180,
-        maxWidth: 180,
+        minWidth: 185,
+        maxWidth: 185,
       },
       parameterRowContainer: {
         display: "flex",
@@ -198,9 +198,9 @@ const useStyle = () => {
         flexDirection: "column" as "column",
         justifyContent: "flex-start",
         alignItems: "flex-start",
-        width: "180px",
-        minWidth: 180,
-        maxWidth: 180,
+        width: "185px",
+        minWidth: 185,
+        maxWidth: 185,
         // height: 71,
         gap: 10,
       },
@@ -231,7 +231,7 @@ const useStyle = () => {
       renderParameterTypeContainer: {
         display: "flex",
         width: "100%",
-        maxWidth: "180px",
+        maxWidth: "185px",
         borderRadius: 4,
       },
 

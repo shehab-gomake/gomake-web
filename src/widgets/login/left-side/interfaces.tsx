@@ -11,4 +11,5 @@ export interface IInputContainer {
   changeState: (key: string, value: any) => void;
   error: boolean;
   placeholder?: string;
+  handleKeyPress?: any
 }

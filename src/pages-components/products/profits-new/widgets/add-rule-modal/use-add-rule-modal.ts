@@ -31,12 +31,20 @@ const useAddRuleModal = ({
   selectedPricingTableItems,
   selectedProperties,
   getProperitesService,
-  isQuoteWidge
+  isQuoteWidge,
+  filterData
 }) => {
   const GET_MATERIALS_TYPES_URL = "/v1/materials/getMaterialsTypes";
   const { callApi } = useGomakeAxios();
   const {t} = useTranslation();
   const { clients } = usePrintHouseClients();
+  const [openScheduleModal,setOpenScheduleModal]=useState(false)
+  const onCloseScheduleModal =()=>{
+    setOpenScheduleModal(false)
+  }
+  const onOpenScheduleModal =()=>{
+    setOpenScheduleModal(true)
+  }
   const [propertieValue, setPropertieValue] = useState<any>();
   const isDefaultException =
     selectedPricingTableItems?.exceptionType === ETypeException.DEFAULT;
@@ -376,21 +384,23 @@ const useAddRuleModal = ({
     setToDate(toDate);
   };
   const createForQuoteWidget = useCallback(async () => {
-    if (!fromDate || !toDate) {
-      setSnackbarStateValue({
-        state: true,
-        message: t("properties.fieldsMissing"),
-        type: "error",
-      });
-      return;
-    }
     const res = await callApi(
       EHttpMethod.POST,
       `/v1/erp-service/documents/generate-document-report`,
       {
         groupBy: propertieValue,
-        fromDate,
-        toDate,
+        statusId: filterData?.statusId,
+        closeStatus: filterData?.closeStatus,
+        productionStatus: filterData?.productionStatus,
+        patternSearch: filterData?.patternSearch,
+        customerId: filterData?.customerId,
+        dateRange:filterData?.dateRange,
+        agentId: filterData?.agentId,
+        minPrice: filterData?.minPrice,
+        maxPrice: filterData?.maxPrice,
+        productList: filterData?.productList,
+        fromDate: filterData?.fromDate,
+        toDate: filterData?.toDate,
         exceptionConditionProperties: rules.map((item) => {
           return {
             statementValue:
@@ -410,18 +420,23 @@ const useAddRuleModal = ({
       null,
       "blob"
     );
-    const downloadLink = document.createElement('a');
-    const link = URL?.createObjectURL(res.data);
-    downloadLink.href = link
-    downloadLink.download = 'Reports Rule engine.xlsx';
-    downloadLink.click();
-    if (res?.success) {
-      onCloseModal();
-      setRules([initialRule])
-    } else {
+    try{
+      const downloadLink = document.createElement('a');
+      const link = URL?.createObjectURL(res.data);
+      downloadLink.href = link
+      downloadLink.download = 'Reports Rule engine.xlsx';
+      downloadLink.click();
+      if (res?.success) {
+        onCloseModal();
+        setRules([initialRule])
+      } else {
+        alertFaultAdded();
+      }
+    }
+    catch{
       alertFaultAdded();
     }
-  }, [propertieValue, EStatementCategory, rules, fromDate, toDate]);
+  }, [propertieValue, EStatementCategory, rules,filterData]);
   return {
     rules,
     deleteRule,
@@ -455,7 +470,10 @@ const useAddRuleModal = ({
     agentsCategories,
     createForQuoteWidget,
     setRules,
-    initialRule
+    initialRule,
+    openScheduleModal,
+    onCloseScheduleModal,
+    onOpenScheduleModal
   };
 };
 
