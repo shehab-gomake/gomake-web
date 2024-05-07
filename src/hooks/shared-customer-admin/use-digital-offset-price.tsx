@@ -186,7 +186,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         newWorkFlows.forEach((workFlow) => { productTypes.add(workFlow.productType) })
         const allWorkFlows = [];
         productTypes.forEach((productType) => {
-
           if (productType === null) {
             // general workflows 
             let newProductTypeWorkFlows = cloneDeep(newWorkFlows);
@@ -212,15 +211,21 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           }
 
         })
+        let myselectedWorkFlow = allWorkFlows?.find((x) => x.selected && x.isCompleteWorkFlow);
+        if (myselectedWorkFlow) {
+          myselectedWorkFlow?.subWorkFlows?.forEach(element => {
+            const subWorkFlow = allWorkFlows.find(x => x.id === element.orginalBookPartId)
+            if (subWorkFlow) {
+              allWorkFlows.forEach(workflow => {
+                if (workflow.productType == subWorkFlow.productType) {
+                  workflow.selected = false;
+                }
+              })
+              subWorkFlow.selected = true;
+            }
+          });
 
-        // const currentWorkFlowsCount = currentWorkFlows.length;
-        // const totalWorkFlowsCount =
-        // calculationResult?.productItemValue.totalWorkFlows;
-        /* setCalculationProgress({
-           totalWorkFlowsCount: totalWorkFlowsCount,
-           currentWorkFlowsCount: currentWorkFlowsCount,
-         });*/
-
+        }
         if (calculationResult.isCalculationFinished) {
           setCalculationProgress({
             totalWorkFlowsCount: 0,
@@ -259,26 +264,28 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       });
     }
     currentWorkFlows.sort((a, b) => b.monials - a.monials);
-    let selectedWorkFlow = currentWorkFlows?.find((x) => x.selected);
+
+    let myselectedWorkFlow = currentWorkFlows?.find((x) => x.selected);
     if (
-      !selectedWorkFlow &&
+      !myselectedWorkFlow &&
       currentWorkFlows &&
       currentWorkFlows.length > 0
     ) {
       currentWorkFlows[0].selected = true;
     }
-    selectedWorkFlow = currentWorkFlows?.find((x) => x.selected);
+    myselectedWorkFlow = currentWorkFlows?.find((x) => x.selected);
     if (
-      selectedWorkFlow && selectedWorkFlow.isCompleteWorkFlow &&
-      selectedWorkFlow.totalPrice &&
-      selectedWorkFlow.totalPrice.values
+      myselectedWorkFlow && myselectedWorkFlow.isCompleteWorkFlow &&
+      myselectedWorkFlow.totalPrice &&
+      myselectedWorkFlow.totalPrice.values
     ) {
       setCurrentProductItemValueTotalPrice(
-        parseFloat(selectedWorkFlow.totalPrice.values[0])
+        parseFloat(myselectedWorkFlow.totalPrice.values[0])
       );
     }
     return currentWorkFlows;
   }
+
   useEffect(() => {
     if (signalRPricingResult && signalRPricingResult.productItemValueDraftId === currentCalculationSessionId) {
       setLoading(false);
