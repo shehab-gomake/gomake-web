@@ -13,7 +13,9 @@ interface ISearchInputProps {
   filtersButton?: JSX.Element;
 }
 
+
 const SearchInputComponent = ({ onChange, value, placeHolder, searchInputStyle, bgColor, filtersButton }: ISearchInputProps) => {
+
   const { classes } = useStyle();
   const { t } = useTranslation();
 
