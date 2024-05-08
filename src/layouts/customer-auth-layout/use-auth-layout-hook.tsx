@@ -1,5 +1,5 @@
 import { useGomakeAuth, useGomakeAxios, useGomakeRouter } from "@/hooks";
-import { CustomersIcon, HomeIcon, ProductFloorIcon, ReportsIcon, SalesIcon, SettingNavBar, ShopingIcon, } from "@/icons";
+import { CustomersIcon, HomeIcon, ProductFloorIcon, ProductionTrackingIcon, ReportsIcon, SalesIcon, SettingNavBar, ShopingIcon, } from "@/icons";
 import { useEffect, useMemo, useState } from "react";
 import { CubeIcon } from "@/components/icons/cube-icon";
 import { useRecoilValue } from "recoil";
@@ -42,18 +42,18 @@ const useAuthLayoutHook = (permissionEnumValue?: Permissions, allowAnonymous?: b
         },
         isProduction: true,
       },
-      // {
-      //   isLine: false,
-      //   key: "productFloor",
-      //   title: "production dashboard",
-      //   path: "/production-dashboard",
-      //   isList: false,
-      //   Permission: Permissions.SHOW_PRODUCTION_FLOOR,
-      //   icon: () => {
-      //     return <ProductFloorIcon />;
-      //   },
-      //   isProduction: true,
-      // },
+      {
+        isLine: false,
+        key: "productFloor",
+        title: "tabs.productionTracking",
+        path: "/production-tracking",
+        isList: false,
+        Permission: Permissions.SHOW_PRODUCTION_FLOOR,
+        icon: () => {
+          return <ProductionTrackingIcon />;
+        },
+        isProduction: true,
+      },
       {
         isLine: true,
         key: "line_1",
