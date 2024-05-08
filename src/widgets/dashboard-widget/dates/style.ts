@@ -8,9 +8,6 @@ const useStyle = () => {
         return {
             container: {
                 display: 'flex',
-                padding: '0 21px 0 32px',
-                gap: '32px'
-
             },
             datesContainer: {
                 display: 'flex',

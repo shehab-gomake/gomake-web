@@ -1,18 +1,18 @@
 import Button from '@mui/material/Button';
-import Menu, {MenuProps} from '@mui/material/Menu';
+import Menu, { MenuProps } from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-import {IMachineList} from "@/widgets/machine-list/interface";
-import {useStyle} from "@/widgets/machine-list/style";
-import React, {FormEvent, useEffect, useState} from "react";
-import {IMachine} from "@/shared/interfaces";
-import {Checkbox, FormControlLabel, FormGroup} from "@mui/material";
-import {useTranslation} from "react-i18next";
+import { IMachineList } from "@/widgets/machine-list/interface";
+import { useStyle } from "@/widgets/machine-list/style";
+import React, { FormEvent, useEffect, useState } from "react";
+import { IMachine } from "@/shared/interfaces";
+import { Checkbox, FormControlLabel, FormGroup } from "@mui/material";
+import { useTranslation } from "react-i18next";
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import {styled} from "@mui/material/styles";
-import {GomakeTextInput} from "@/components";
-import {useGomakeMachines} from "@/hooks";
+import { styled } from "@mui/material/styles";
+import { GomakeTextInput } from "@/components";
+import { useGomakeMachines } from "@/hooks";
 
-const MachineList = ({}: IMachineList) => {
+const MachineList = ({ }: IMachineList) => {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [filter, setFilter] = useState<string>();
     const open = Boolean(anchorEl);
@@ -22,10 +22,10 @@ const MachineList = ({}: IMachineList) => {
     const handleClose = () => {
         setAnchorEl(null);
     };
-    const {classes} = useStyle();
-    const {t} = useTranslation();
+    const { classes } = useStyle();
+    const { t } = useTranslation();
 
-    const {getMachinesList, machines, setMachineChecked, checkAllMachines} = useGomakeMachines();
+    const { getMachinesList, machines, setMachineChecked, checkAllMachines } = useGomakeMachines();
 
     const handleFilterChange = (event: FormEvent<HTMLInputElement>) => {
         setFilter(event.currentTarget.value);
@@ -34,7 +34,7 @@ const MachineList = ({}: IMachineList) => {
     const getMachines = () => {
         if (filter) {
             return machines.filter((machine) => machine.name.toLowerCase().includes(filter.toLowerCase()));
-        }else {
+        } else {
             return machines;
         }
     }
@@ -47,35 +47,35 @@ const MachineList = ({}: IMachineList) => {
     return (
         <div>
             <Button style={classes.button} variant={'contained'} onClick={handleClick}>
-                <span>{t('machines-list-widget.machinesList')}</span>
-                <KeyboardArrowDownIcon/>
+                <span>{t('dashboard-widget.machinesList')}</span>
+                <KeyboardArrowDownIcon />
             </Button>
-            <StyledMenu  anchorEl={anchorEl}
-                  open={open}
-                  onClose={handleClose}
-                  MenuListProps={{
-                      'aria-labelledby': 'basic-button',
-                  }}>
+            <StyledMenu anchorEl={anchorEl}
+                open={open}
+                onClose={handleClose}
+                MenuListProps={{
+                    'aria-labelledby': 'basic-button',
+                }}>
                 <FormGroup>
                     <div style={classes.searchInput}>
-                        <GomakeTextInput  placeholder={'search machine'} value={filter} onChange={handleFilterChange}/>
+                        <GomakeTextInput placeholder={'search machine'} value={filter} onChange={handleFilterChange} />
                     </div>
                     <MenuItem style={classes.machineName}>
-                        <FormControlLabel  label={t('dashboard-widget.all')}
-                                           control={<Checkbox checked={getMachines().every(machine => machine.checked)}
-                                                              onChange={() => {
-                                                                  checkAllMachines();
-                                                              }}/>}
+                        <FormControlLabel label={t('dashboard-widget.all')}
+                            control={<Checkbox checked={getMachines().every(machine => machine.checked)}
+                                onChange={() => {
+                                    checkAllMachines();
+                                }} />}
                         />
                     </MenuItem>
                     {
                         getMachines().map((machine: IMachine) => {
                             return <MenuItem style={classes.machineName} key={machine.id}>
-                                <FormControlLabel  label={machine.name}
-                                                  control={<Checkbox checked={machine.checked}
-                                                                     onChange={() => {
-                                                                         setMachineChecked(machine.id)
-                                                                     }}/>}
+                                <FormControlLabel label={machine.name}
+                                    control={<Checkbox checked={machine.checked}
+                                        onChange={() => {
+                                            setMachineChecked(machine.id)
+                                        }} />}
                                 />
                             </MenuItem>
 
@@ -121,4 +121,4 @@ const StyledMenu = styled((props: MenuProps) => (
         }
     },
 }));
-export {MachineList,StyledMenu}
+export { MachineList, StyledMenu }
