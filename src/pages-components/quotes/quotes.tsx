@@ -23,9 +23,11 @@ import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import { useRecoilValue } from "recoil";
 import { employeesListsState } from "./states";
 import { GoMakeMultiSelect } from "@/components/auto-complete/multi-select";
-import { useEffect, useState } from "react";
-import { PStatus } from "../board-missions/widgets/enums";
-
+import { useEffect } from "react";
+import { IconButton } from "@mui/material";
+import { GoMakeMenu } from "@/components";
+import { InputAdornment } from "@mui/material";
+import TuneIcon from '@mui/icons-material/Tune';
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -102,7 +104,12 @@ const QuotesListPageWidget = ({
     productionStatuses,
     productionStatus,
     handleProductionStatusChange,
-    handleAccountingStatusChange
+    handleAccountingStatusChange,
+    handleClick,
+    handleClose,
+    open,
+    anchorEl,
+    filterData
   } = useQuotes(documentType);
 
   useEffect(() => {
@@ -124,7 +131,7 @@ const QuotesListPageWidget = ({
               <HeaderTitle title={documentLabel} marginTop={1} marginBottom={1} />
               {documentType === DOCUMENT_TYPE.quote && <CardsSection statistics={allStatistics} activeCard={activeCard} onClick={onclickCreateNew} onClickCard={handleCardClick} onSecondClickCard={handleSecondCardClick} />}
               {(documentType !== DOCUMENT_TYPE.quote && documentType !== DOCUMENT_TYPE.order) &&
-                <Button
+                <Button 
                   style={classes.createNew}
                   onClick={() => navigate(`/${documentPath}?isNewCreation=true`)}
                   startIcon={<AddCircleOutlineIcon style={{ color: 'black', fontSize: "24px" }} />}>
@@ -133,146 +140,175 @@ const QuotesListPageWidget = ({
               }
             </div>
 
-            <div style={classes.filtersContainer}>
-              <div style={classes.selectedFilterContainer}>
-                <div style={classes.statusFilterContainer}>
-                  <div style={classes.filterLabelStyle}>
-                    {t("sales.quote.customer")}
-                  </div>
-                  <GoMakeAutoComplate
-                    key={customerId?.id}
-                    options={renderOptions()}
-                    getOptionLabel={(option: any) => `${option.name}`}
-                    onChangeTextField={checkWhatRenderArray}
-                    style={classes.textInputStyle}
-                    placeholder={t("sales.quote.chooseCustomer")}
-                    onChange={(e: any, value: any) => {
-                      setCustomerId(value);
-                    }}
-                    value={customerId}
-                  />
-                </div>
-                <div style={classes.statusFilterContainer}>
-                  <div style={classes.filterLabelStyle}>
-                    {t("sales.quote.agent")}
-                  </div>
-                  <GoMakeAutoComplate
-                    key={agentId?.id}
-                    options={agentsCategories}
-                    style={classes.textInputStyle}
-                    getOptionLabel={(option: any) => option.label}
-                    placeholder={t("sales.quote.ChooseAgent")}
-                    onChange={(e: any, value: any) => {
-                      setAgentId(value);
-                    }}
-                    value={agentId}
-                  />
-                </div>
-                {documentType === DOCUMENT_TYPE.quote && <div style={classes.statusFilterContainer}>
-                  <div style={classes.filterLabelStyle}>
-                    {t("sales.quote.status")}
-                  </div>
-                  <GoMakeAutoComplate
-                    key={statusId?.value}
-                    options={quoteStatuses}
-                    style={classes.textInputStyle}
-                    getOptionLabel={(option: any) => option.label}
-                    placeholder={t("sales.quote.chooseStatus")}
-                    onChange={(e: any, value: any) => {
-                      setPage(1);
-                      setStatusId(value);
-                    }}
-                    value={statusId}
-                  />
-                </div>
+            {/* search */}
+
+            <div style={{ display: "flex", flexDirection: "row",justifyContent:"space-between" }}>
+              <SearchInputComponent
+                searchInputStyle={{ width: "20vw" }}
+                filtersButton={
+                  <InputAdornment position="start">
+                    <div>
+                      <IconButton onClick={handleClick}>
+                        <TuneIcon />
+                      </IconButton>
+                      <GoMakeMenu handleClose={handleClose} open={open} anchorEl={anchorEl} >
+                        <div style={classes.filtersContainer}>
+                          <div style={classes.selectedFilterContainer}>
+                            <div style={classes.statusFilterContainer}>
+                              <div style={classes.filterLabelStyle}>
+                                {t("sales.quote.customer")}
+                              </div>
+                              <GoMakeAutoComplate
+                                key={customerId?.id}
+                                options={renderOptions()}
+                                getOptionLabel={(option: any) => `${option.name}`}
+                                onChangeTextField={checkWhatRenderArray}
+                                style={classes.textInputStyle}
+                                placeholder={t("sales.quote.chooseCustomer")}
+                                onChange={(e: any, value: any) => {
+                                  setCustomerId(value);
+                                }}
+                                value={customerId}
+                                withArrow={true}
+                              />
+                            </div>
+                            <div style={classes.statusFilterContainer}>
+                              <div style={classes.filterLabelStyle}>
+                                {t("sales.quote.agent")}
+                              </div>
+                              <GoMakeAutoComplate
+                                key={agentId?.id}
+                                options={agentsCategories}
+                                style={classes.textInputStyle}
+                                getOptionLabel={(option: any) => option.label}
+                                placeholder={t("sales.quote.ChooseAgent")}
+                                onChange={(e: any, value: any) => {
+                                  setAgentId(value);
+                                }}
+                                value={agentId}
+                                withArrow={true}
+                              />
+                            </div>
+                            {documentType === DOCUMENT_TYPE.quote &&
+                              <div style={classes.statusFilterContainer}>
+                                <div style={classes.filterLabelStyle}>
+                                  {t("sales.quote.status")}
+                                </div>
+                                <GoMakeAutoComplate
+                                  key={statusId?.value}
+                                  options={quoteStatuses}
+                                  style={classes.textInputStyle}
+                                  getOptionLabel={(option: any) => option.label}
+                                  placeholder={t("sales.quote.chooseStatus")}
+                                  onChange={(e: any, value: any) => {
+                                    setPage(1);
+                                    setStatusId(value);
+                                  }}
+                                  value={statusId}
+                                  withArrow={true}
+                                />
+                              </div>
+                            }
+                            {documentType === DOCUMENT_TYPE.order &&
+                              <div style={classes.statusFilterContainer}>
+                                <h3 style={classes.filterLabelStyle}>{t("boardMissions.productionStatus")}</h3>
+                                <GoMakeAutoComplate
+                                  key={productionStatus?.value}
+                                  options={productionStatuses}
+                                  style={classes.textInputStyle}
+                                  placeholder={t("boardMissions.productionStatus")}
+                                  onChange={handleProductionStatusChange}
+                                  value={productionStatus}
+                                  withArrow={true}
+                                />
+                              </div>
+                            }
+                            {documentType !== DOCUMENT_TYPE.quote &&
+                              <div style={classes.statusFilterContainer}>
+                                <h3 style={classes.filterLabelStyle}>{t("sales.quote.accountingStatus")}</h3>
+                                <GoMakeAutoComplate
+                                  key={accountingStatus?.value}
+                                  options={accountingStatuses}
+                                  style={classes.textInputStyle}
+                                  placeholder={t("sales.quote.accountingStatus")}
+                                  onChange={handleAccountingStatusChange}
+                                  value={accountingStatus}
+                                  withArrow={true}
+                                />
+                              </div>
+                            }
+                            {documentType !== DOCUMENT_TYPE.purchaseInvoice && documentType !== DOCUMENT_TYPE.purchaseInvoiceRefund && documentType !== DOCUMENT_TYPE.purchaseOrder && documentType !== DOCUMENT_TYPE.receipt &&
+                              <div style={classes.statusFilterContainer}>
+                                <h3 style={classes.filterLabelStyle}>{t("boardMissions.products")}</h3>
+                                <GoMakeMultiSelect
+                                  onChange={handleMultiSelectChange}
+                                  style={classes.textInputStyle}
+                                  options={productsList}
+                                  values={productIds}
+                                  placeholder={t("boardMissions.selectProducts")} />
+                              </div>}
+                            {documentType !== DOCUMENT_TYPE.purchaseInvoice && documentType !== DOCUMENT_TYPE.purchaseInvoiceRefund && documentType !== DOCUMENT_TYPE.purchaseOrder &&
+                              <div style={classes.statusFilterContainer}>
+                                <div style={classes.filterLabelStyle}>{t("sales.quote.priceRange")}</div>
+                                <div style={classes.priceDivStyle}>
+                                  <GomakeTextInput
+                                    onChange={handleMinPriceChange}
+                                    value={minPrice}
+                                    type={'number'}
+                                    style={{ ...classes.textInputStyle, height: '40px' }}
+                                    placeholder={t("sales.quote.minPrice")}
+                                  />
+                                  -
+                                  <GomakeTextInput
+                                    onChange={handleMaxPriceChange}
+                                    value={maxPrice}
+                                    type={'number'}
+                                    style={{ ...classes.textInputStyle, height: '40px' }}
+                                    placeholder={t("sales.quote.maxPrice")}
+                                  />
+                                </div></div>}
+                            <div style={classes.statusFilterContainer}>
+                              <h3 style={classes.filterLabelStyle}>{t("boardMissions.dateRange")}</h3>
+                              <GoMakeDatepicker onChange={onSelectDeliveryTimeDates} placeholder={t("boardMissions.chooseDate")} reset={resetDatePicker} />
+                            </div>
+                          </div>
+                         
+                          <div style={{ display: "flex", flexDirection: "row", justifyContent: "flex-end", width: "100%", gap: "10px" }}>
+                           
+                            <div style={classes.buttonsFilterContainer}>
+                              <div style={classes.filterLabelStyle} />
+                              <GomakePrimaryButton
+                                style={classes.clearBtnStyle}
+                                onClick={onClickClearFilter}
+                              >
+                                {t("sales.quote.clear")}
+                              </GomakePrimaryButton>
+                            </div>
+                            <div style={classes.buttonsFilterContainer}>
+                              <div style={classes.filterLabelStyle} />
+                              <GomakePrimaryButton
+                                style={classes.searchBtnStyle}
+                                onClick={onClickSearchFilter}
+                              >
+                                {t("sales.quote.search")}
+                              </GomakePrimaryButton>
+                            </div>
+
+                          </div>
+                          
+                        </div>
+                      </GoMakeMenu>
+                    </div>
+                  </InputAdornment>
                 }
-                {documentType === DOCUMENT_TYPE.order &&
-                  <div style={classes.statusFilterContainer}>
-                    <h3 style={classes.filterLabelStyle}>{t("boardMissions.productionStatus")}</h3>
-                    <GoMakeAutoComplate
-                      key={productionStatus?.value}
-                      options={productionStatuses}
-                      style={classes.textInputStyle}
-                      placeholder={t("boardMissions.productionStatus")}
-                      onChange={handleProductionStatusChange}
-                      value={productionStatus}
-                    />
-                  </div>
-                }
-                {documentType !== DOCUMENT_TYPE.quote &&
-                  <div style={classes.statusFilterContainer}>
-                    <h3 style={classes.filterLabelStyle}>{t("sales.quote.accountingStatus")}</h3>
-                    <GoMakeAutoComplate
-                      key={accountingStatus?.value}
-                      options={accountingStatuses}
-                      style={classes.textInputStyle}
-                      placeholder={t("sales.quote.accountingStatus")}
-                      onChange={handleAccountingStatusChange}
-                      value={accountingStatus}
-                    />
-                  </div>
-                }
-                {documentType !== DOCUMENT_TYPE.purchaseInvoice && documentType !== DOCUMENT_TYPE.purchaseInvoiceRefund && documentType !== DOCUMENT_TYPE.purchaseOrder && documentType !== DOCUMENT_TYPE.receipt &&
-                  <div style={classes.statusFilterContainer}>
-                    <h3 style={classes.filterLabelStyle}>{t("boardMissions.products")}</h3>
-                    <GoMakeMultiSelect
-                      onChange={handleMultiSelectChange}
-                      style={classes.textInputStyle}
-                      options={productsList}
-                      values={productIds}
-                      placeholder={t("boardMissions.selectProducts")} />
-                  </div>}
-                  {documentType !== DOCUMENT_TYPE.purchaseInvoice && documentType !== DOCUMENT_TYPE.purchaseInvoiceRefund && documentType !== DOCUMENT_TYPE.purchaseOrder &&
-                  <div style={{ ...classes.statusFilterContainer, width: "50%" }}>
-                    <div style={classes.filterLabelStyle}>{t("sales.quote.priceRange")}</div>
-                    <div style={classes.priceDivStyle}>
-                      <GomakeTextInput
-                        onChange={handleMinPriceChange}
-                        value={minPrice}
-                        type={'number'}
-                        style={{ ...classes.textInputStyle, height: '40px' }}
-                        placeholder={t("sales.quote.minPrice")}
-                      />
-                      -
-                      <GomakeTextInput
-                        onChange={handleMaxPriceChange}
-                        value={maxPrice}
-                        type={'number'}
-                        style={{ ...classes.textInputStyle, height: '40px' }}
-                        placeholder={t("sales.quote.maxPrice")}
-                      />
-                    </div></div>}
-                <div style={classes.statusFilterContainer}>
-                  <h3 style={classes.filterLabelStyle}>{t("boardMissions.dateRange")}</h3>
-                  <GoMakeDatepicker onChange={onSelectDeliveryTimeDates} placeholder={t("boardMissions.chooseDate")} reset={resetDatePicker} />
-                </div>
-                <div style={classes.statusFilterContainer}>
-                  <div style={classes.filterLabelStyle} />
-                  <GomakePrimaryButton
-                    style={classes.searchBtnStyle}
-                    onClick={onClickSearchFilter}
-                  >
-                    {t("sales.quote.search")}
-                  </GomakePrimaryButton>
-                </div>
-                <div style={classes.statusFilterContainer}>
-                  <div style={classes.filterLabelStyle} />
-                  <GomakePrimaryButton
-                    style={classes.clearBtnStyle}
-                    onClick={onClickClearFilter}
-                  >
-                    {t("sales.quote.clear")}
-                  </GomakePrimaryButton>
-                </div>
-              </div>
-              
-              <div style={{ display: "flex", flexDirection: "row", gap: 8 }}>
-                <SearchInputComponent onChange={(e) => setPatternSearch(e)} />
-                <div style={{ cursor: "pointer" }} onClick={onOpenAddRuleModal}>
-                  <ExcelSheetIcon />
-                </div>
+                onChange={(e) => setPatternSearch(e)}
+              />
+              <div style={{ cursor: "pointer" }} onClick={onOpenAddRuleModal}>
+                <ExcelSheetIcon />
               </div>
             </div>
+
+            {/* search */}
             <PrimaryTable
               stickyFirstCol={false}
               stickyHeader={true}
@@ -332,6 +368,7 @@ const QuotesListPageWidget = ({
         openModal={openAddRule}
         onCloseModal={onCloseAddRuleModal}
         isQuoteWidge={true}
+        filterData={filterData}
       />
     </>
   );

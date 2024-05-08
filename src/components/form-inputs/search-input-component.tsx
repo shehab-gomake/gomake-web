@@ -10,9 +10,12 @@ interface ISearchInputProps {
   placeHolder?: string;
   searchInputStyle?: any;
   bgColor?: string;
+  filtersButton?: JSX.Element;
 }
 
-const SearchInputComponent = ({ onChange, value, placeHolder, searchInputStyle, bgColor }: ISearchInputProps) => {
+
+const SearchInputComponent = ({ onChange, value, placeHolder, searchInputStyle, bgColor, filtersButton }: ISearchInputProps) => {
+
   const { classes } = useStyle();
   const { t } = useTranslation();
 
@@ -32,6 +35,7 @@ const SearchInputComponent = ({ onChange, value, placeHolder, searchInputStyle, 
           </div>
         </InputAdornment>
       }
+      endAdornment={filtersButton}
     />
   );
 };
