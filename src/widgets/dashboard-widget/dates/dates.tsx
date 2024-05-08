@@ -1,7 +1,6 @@
 import { useStyle } from "@/widgets/dashboard-widget/dates/style";
 import { GomakePrimaryButton } from "@/components";
 import { MachineList } from "@/widgets";
-import { IDashboardDates } from "@/widgets/dashboard-widget/dates/interface";
 import { GoMakeDatepicker } from "@/components/datepicker";
 import Button from "@mui/material/Button";
 import { useGomakeDateRange } from "@/hooks";
@@ -10,9 +9,6 @@ import { LateMissionsButton } from "@/widgets/dashboard-widget/components/late-m
 import { DashboardActions } from "@/store";
 import { ClientsList } from "@/widgets/clients/clients-list";
 import { AgentsList } from "@/widgets/agents/agents-list";
-import { Box } from "@mui/material";
-import { SearchInput } from "../components/search-input";
-import { SearchIcon } from "@/icons";
 import { SearchInputComponent } from "@/components/form-inputs/search-input-component";
 
 

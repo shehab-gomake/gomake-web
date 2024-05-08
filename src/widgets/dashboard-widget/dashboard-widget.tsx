@@ -67,9 +67,8 @@ const DashboardWidget = ({ }: IDashboardWidget) => {
         return () => clearInterval(interval);
     }, [dates, action, selectedAgents]);
 
-    const handelSearchValueChange = (event: ChangeEvent<HTMLInputElement>) => {
-        const { value } = event.target;
-        setTasksFilter(value);
+    const handelSearchValueChange = (event) => {
+        setTasksFilter(event);
     }
 
     const usedMachines = useCallback(() => {
