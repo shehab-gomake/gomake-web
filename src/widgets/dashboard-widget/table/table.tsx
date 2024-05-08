@@ -53,7 +53,6 @@ const BoardMissionsTable = ({ boardsMissions, usedMachines }: IBoardMissionsTabl
         return data;
     }
     const boards = useCallback(() => {
-        debugger;
         let boards = getFilteredBoardMissions(selectedStatusFilter) //littedBoards = x.splittedBoards.filter(y=>y.status == selectedStatusFilter) ).filter()] : [...boardsMissions];
         if (orderByMachine) {
             boards = boards.sort((board1: IBoardMissions, board2: IBoardMissions) => {
@@ -124,7 +123,7 @@ const BoardMissionsTable = ({ boardsMissions, usedMachines }: IBoardMissionsTabl
                         {
                             boards() && boards().map((board: IBoardMissions, index: number) => {
                                 return (
-                                    board.splittedBoards.length > 0 ?
+                                    board?.splittedBoards?.length > 0 ?
                                         board.splittedBoards.map((splitBoard, k) => {
                                             return (
                                                 <tr style={board.isLate ? classes.lateMission : {}}>

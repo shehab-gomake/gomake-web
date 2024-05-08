@@ -2,21 +2,16 @@ import { IBoardMissions, IDashboardStatistic, IDashboardWidget, } from "@/widget
 import { useStyle } from "@/widgets/dashboard-widget/style";
 import { ChangeEvent, useCallback, useEffect, useState } from "react";
 import { Cards } from "@/widgets/dashboard-widget/cards/cards";
-import { IDateRange, IMachine } from "@/shared/interfaces";
+import { IDateRange } from "@/shared/interfaces";
 import { BoardMissionsTable } from "@/widgets/dashboard-widget/table";
 import { DashboardDates } from "@/widgets/dashboard-widget/dates/dates";
 import { useGomakeDateRange, useGomakeMachines } from "@/hooks";
 import { useBoardMissions } from "@/widgets/dashboard-widget/use-board-missions";
 import { useTranslation } from "react-i18next";
-import { ClientsList } from "@/widgets/clients/clients-list";
 import { useRecoilValue } from "recoil";
 import { selectedClientIdState } from "@/widgets/clients/state/selected-client-id";
-import { SearchInput } from "@/widgets/dashboard-widget/components/search-input";
 import { clientsState } from "@/store/clients-state";
-import { Box } from "@mui/material";
-import SearchIcon from '@mui/icons-material/Search';
 import { DashboardActions } from "@/store";
-import { AgentsList } from "@/widgets/agents/agents-list";
 import { selectedAgentsState } from "@/store/agents-state";
 
 const DashboardWidget = ({ }: IDashboardWidget) => {
@@ -76,9 +71,16 @@ const DashboardWidget = ({ }: IDashboardWidget) => {
         const { value } = event.target;
         setTasksFilter(value);
     }
+
     const usedMachines = useCallback(() => {
-        return getCheckedMachines().filter((machine: IMachine) => {
-            for (const board of getFilteredBoardsMissions()) {
+        const checkedMachines = getCheckedMachines();
+        const filteredBoardsMissions = getFilteredBoardsMissions();
+        if (!Array.isArray(filteredBoardsMissions)) {
+            console.error("getFilteredBoardsMissions did not return an array:", filteredBoardsMissions);
+            return [];
+        }
+        return checkedMachines.filter((machine) => {
+            for (const board of filteredBoardsMissions) {
                 if (board.machinesStatuses[machine.id]) {
                     return true;
                 }
@@ -86,7 +88,6 @@ const DashboardWidget = ({ }: IDashboardWidget) => {
             return false;
         });
     }, [machines]);
-
     const tasks = useCallback(() => {
         let tasksArray = getFilteredBoardsMissions().map(board => {
             if (clients.length > 0) {
@@ -111,18 +112,7 @@ const DashboardWidget = ({ }: IDashboardWidget) => {
     return (
         <div style={classes.container}>
             <Cards data={statistics ? statistics : {} as IDashboardStatistic} />
-            <DashboardDates>
-                <div style={{ display: 'flex', gap: '16px', width: 'fit-content', alignItems: 'center', }}>
-                    <Box sx={{ position: 'relative' }}>
-                        <SearchInput placeholder={t('dashboard-widget.search') as string}
-                            onChange={handelSearchValueChange} />
-                        <SearchIcon sx={{ position: 'absolute', left: '5px', top: '8px', color: 'action.active' }} />
-                    </Box>
-
-                    <ClientsList />
-                    <AgentsList />
-                </div>
-            </DashboardDates>
+            <DashboardDates handelSearchValueChange={handelSearchValueChange} />
             <div>
                 {usedMachines() && getFilteredBoardsMissions() &&
                     <BoardMissionsTable boardsMissions={tasks()}

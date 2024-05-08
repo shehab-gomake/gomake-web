@@ -17,7 +17,6 @@ const useStyle = () => {
                 overflow: 'overlay' as 'overlay',
                 width: 'fit-content',
                 maxHeight: '80vh',
-                maxWidth: '96vw',
             },
             table: {
                 borderCollapse: 'collapse' as 'collapse',
@@ -75,7 +74,7 @@ const useStyle = () => {
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
-                borderRight: 0
+                borderRight: 0,
             },
             firstColCell: {
                 display: 'flex',

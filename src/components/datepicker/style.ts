@@ -6,7 +6,7 @@ const useStyle = () => {
         return {
             button: {
                 width: '163px',
-                height: '40px',
+                height: '44px',
                 borderRadius: '10px',
                 border: '1px solid #504FA1',
                 backgroundColor: 'inherit',

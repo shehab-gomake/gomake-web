@@ -10,6 +10,7 @@ import { GomakeTextInput } from "@/components";
 import MenuItem from "@mui/material/MenuItem";
 import { useStyle } from "@/widgets/machine-list/style";
 import { StyledMenu } from "@/widgets";
+import { getAndSetEmployees2 } from "@/services/api-service/customers/employees-api";
 
 
 const AgentsList = () => {
@@ -21,14 +22,22 @@ const AgentsList = () => {
     const setAgents = useSetRecoilState(agentsState);
     const agents = useRecoilValue(agentsState);
     const [filter, setFilter] = useState<string>();
-    useEffect(() => {
-        callApi('GET', '/agents', {}, true, true).then((res) => {
-            if (res && res.success) {
-                const agentsResult = res.data;
-                agentsResult.forEach((x: any) => x.checked = false);
-                setAgents(agentsResult);
+
+    const getAgentCategories = async (isAgent: boolean) => {
+        const callBack = (res) => {
+            if (res.success) {
+                const agentNames = res.data.map((agent) => ({
+                    label: agent.text,
+                    id: agent.value,
+                    checked: false
+                }));
+                setAgents(agentNames);
             }
-        })
+        };
+        await getAndSetEmployees2(callApi, callBack, { isAgent: isAgent });
+    };
+    useEffect(() => {
+        getAgentCategories(true)
     }, [])
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(event.currentTarget);
@@ -92,7 +101,7 @@ const AgentsList = () => {
                         {
                             getAgents().map((agent: any) => {
                                 return <MenuItem style={classes.machineName} key={agent.id}>
-                                    <FormControlLabel label={agent.name}
+                                    <FormControlLabel label={agent.label}
                                         control={<Checkbox checked={agent.checked}
                                             onChange={() => {
                                                 setAgentChecked(agent.id)

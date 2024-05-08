@@ -9,6 +9,7 @@ import { useTranslation } from "react-i18next";
 import { styled } from "@mui/material/styles";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { AccountCircle } from "@mui/icons-material";
+import { getAndSetAllCustomers } from "@/services/hooks";
 
 
 
@@ -28,27 +29,11 @@ const Input = styled(TextField)(() => {
             alignItems: "center",
             width: "100%",
             color: primaryColor(500),
+            paddingLeft: 10
         },
-
-        "& .MuiOutlinedInput-root": {
-            "&:hover fieldset": {
-                border: `2px solid ${primaryColor(500)}`
-
-            },
-            "& fieldset": {
-                border: `1px solid ${primaryColor(500)}`,
-                boxSizing: "border-box",
-                borderRadius: 10,
-                width: "100%",
-            },
-            "&.Mui-focused fieldset": {
-                borderColor: primaryColor(500),
-                borderRadius: 10,
-                width: "100%",
-            },
-        },
-        '& .MuiInputBase-root': {
-            height: 40
+        '& .MuiAutocomplete-input': {
+            height: 44,
+            paddingLeft: 20
         },
     }
 });
@@ -69,16 +54,19 @@ const ClientsList = () => {
     const clients = useRecoilValue(clientsState);
     const setSelectedClientId = useSetRecoilState(selectedClientIdState);
 
+    const getAllCustomersCreateQuote = useCallback(async (SearchTerm?) => {
+        await getAndSetAllCustomers(callApi, setClients, {
+            ClientType: "C",
+            onlyCreateOrderClients: false,
+        });
+    }, []);
+
     useEffect(() => {
-        callApi('GET', '/clients', {}, true, true).then((res) => {
-            if (res && res.success) {
-                setClients(res.data);
-            }
-        })
+        getAllCustomersCreateQuote()
     }, [])
 
     const getClientsList = useCallback(() => {
-        return clients.map(client => ({ label: client.code + ' - ' + client.name, id: client.id }))
+        return clients.map(client => ({ label: client.name + ' - ' + client.code, id: client.id }))
     }, [clients]);
 
     const handleChange = (event: object, value: any) => {
@@ -92,7 +80,7 @@ const ClientsList = () => {
                 onChange={handleChange}
                 renderInput={(params) => <Box sx={{ position: 'relative' }}>
                     <Input {...params} placeholder={t('dashboard-widget.clients') as string} />
-                    <AccountCircle sx={{ position: 'absolute', left: '5px', top: '8px', color: 'action.active' }} />
+                    <AccountCircle sx={{ position: 'absolute', left: '5px', top: '11px', color: 'action.active' }} />
                 </Box>}
                 options={getClientsList()} />
         </div>

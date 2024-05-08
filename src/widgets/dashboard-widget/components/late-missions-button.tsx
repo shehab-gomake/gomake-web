@@ -15,7 +15,7 @@ const LateMissionsButton = styled(Button)((props: { selected: boolean }) => {
         gap: 7,
         color: props.selected ? "#FFFFFF" : errorColor(500),
         width: '134px',
-        height: '40px',
+        height: '44px',
         borderColor: errorColor(500),
         borderRadius: '10px',
         "&:hover": {

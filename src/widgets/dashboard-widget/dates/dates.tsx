@@ -8,9 +8,15 @@ import { useGomakeDateRange } from "@/hooks";
 import { useTranslation } from "react-i18next";
 import { LateMissionsButton } from "@/widgets/dashboard-widget/components/late-missions-button";
 import { DashboardActions } from "@/store";
+import { ClientsList } from "@/widgets/clients/clients-list";
+import { AgentsList } from "@/widgets/agents/agents-list";
+import { Box } from "@mui/material";
+import { SearchInput } from "../components/search-input";
+import { SearchIcon } from "@/icons";
+import { SearchInputComponent } from "@/components/form-inputs/search-input-component";
 
 
-const DashboardDates = ({ children }: IDashboardDates) => {
+const DashboardDates = ({ handelSearchValueChange }) => {
     const { classes } = useStyle();
     const { t } = useTranslation();
     const {
@@ -21,6 +27,7 @@ const DashboardDates = ({ children }: IDashboardDates) => {
         setLateBoardsMissions,
         setAllBoardsMissions
     } = useGomakeDateRange();
+
     return (
         <div style={classes.container}>
             <div style={classes.datesContainer}>
@@ -52,12 +59,12 @@ const DashboardDates = ({ children }: IDashboardDates) => {
                         <Button variant={'outlined'} onClick={setAllBoardsMissions} style={classes.button}>{t('dashboard-widget.all')}</Button>
                 }
                 <GoMakeDatepicker />
-
-            </div>
-            {children}
-            <div style={classes.machinesWrapper}>
                 <MachineList />
+                <AgentsList />
+                <ClientsList />
+                <SearchInputComponent onChange={handelSearchValueChange} searchInputStyle={{ width: 180 }} />
             </div>
+
         </div>
     );
 }

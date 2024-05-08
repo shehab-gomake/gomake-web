@@ -12,18 +12,18 @@ interface ISearchInputProps {
   bgColor?: string;
 }
 
-const SearchInputComponent = ({ onChange, value ,placeHolder,searchInputStyle, bgColor }: ISearchInputProps) => {
+const SearchInputComponent = ({ onChange, value, placeHolder, searchInputStyle, bgColor }: ISearchInputProps) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
 
   return (
     <GoMakeTextInputIcon
-        bgColor={bgColor}
+      bgColor={bgColor}
       onChange={(e) => {
         onChange(e.target.value);
       }}
       style={searchInputStyle || classes.searchInput}
-      placeholder={ placeHolder || t("header.search")}
+      placeholder={placeHolder || t("header.search")}
       value={value}
       startAdornment={
         <InputAdornment position="start">

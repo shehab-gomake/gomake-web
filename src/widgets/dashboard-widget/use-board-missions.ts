@@ -17,35 +17,42 @@ const useBoardMissions = () => {
     const {callApi} = useGomakeAxios();
 
     const getBoardsMissionsByDateRange = async (dateRange: IDateRange) => {
-        const res = await callApi("POST", '/boardMissions', {
+        const res = await callApi("POST", '/v1/erp-service/board-missions/get-board-missions-for-dashboard', {
             startDate: dateRange?.startDate?.toISOString(),
             endDate: dateRange?.endDate?.toISOString(),
             agents: selectedAgents,
-        }, true, true);
-
-        setBoardsMissions(res?.data?.boardsMissions);
-        setMachinesProgress(res?.data?.machinesProgress);
-        setStatistics(res?.data?.statistics);
+        },true);
+        if(res?.success){
+        setBoardsMissions(res?.data?.data?.data?.boardsMissions);
+        setMachinesProgress(res?.data?.data?.data?.machinesProgress);
+        setStatistics(res?.data?.data?.data?.statistics);
+        }
     };
 
     const getLateBoardsMissions = async () => {
-        const res = await callApi("POST", '/lateBoardMissions', {agents: selectedAgents}, true, true);
-        setBoardsMissions(res?.data?.boardsMissions);
-        setMachinesProgress(res?.data?.machinesProgress);
-        setStatistics(res?.data?.statistics);
+        const res = await callApi("POST", '/v1/erp-service/board-missions/get-board-missions-for-dashboard', {
+            isLate:true
+        },true);
+        if(res?.success){
+        setBoardsMissions(res?.data?.data?.data?.boardsMissions);
+        setMachinesProgress(res?.data?.data?.data?.machinesProgress);
+        setStatistics(res?.data?.data?.data?.statistics);
+        }
     };
 
 
     const getLateTodayBoardsMissions = async () => {
-        const res = await callApi("POST", '/today-late-boardMissions', {
+        const res = await callApi("POST", '/v1/erp-service/board-missions/get-board-missions-for-dashboard', {
             startDate: TODAY_DATE_RANGE.startDate?.toISOString(),
             endDate: TODAY_DATE_RANGE.endDate?.toISOString(),
             agents: selectedAgents,
-        }, true, true);
-        setBoardsMissions(res?.data?.boardsMissions);
-        setMachinesProgress(res?.data?.machinesProgress);
-        setStatistics(res?.data?.statistics);
-
+            isLate:true
+        },true);
+        if(res?.success){
+        setBoardsMissions(res?.data?.data?.data?.boardsMissions);
+        setMachinesProgress(res?.data?.data?.data?.machinesProgress);
+        setStatistics(res?.data?.data?.data?.statistics);
+        }
     }
     const getAllBoardsMissions = async () => {
         const date = new Date();
@@ -57,7 +64,7 @@ const useBoardMissions = () => {
             startDate: TODAY_DATE_RANGE.startDate?.toISOString(),
             endDate: endOfDay(nextYearDate).toISOString(),
             agents: selectedAgents,
-        }, true, true);
+        }, true);
         setBoardsMissions(res?.data?.boardsMissions);
         setMachinesProgress(res?.data?.machinesProgress);
         setStatistics(res?.data?.statistics);
