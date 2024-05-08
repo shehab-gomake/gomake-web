@@ -13,7 +13,7 @@ const useStyle = () => {
                 borderRadius: BORDER_RADIUS,
                 borderRight: 0,
                 padding: 0,
-                margin: '10px 21px 15px 21px',
+                margin: '10px 0px 15px 0px',
                 overflow: 'overlay' as 'overlay',
                 width: 'fit-content',
                 maxHeight: '80vh',

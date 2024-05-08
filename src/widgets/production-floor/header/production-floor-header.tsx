@@ -54,14 +54,6 @@ const ProductionFloorHeader = () => {
                         }}>
                         <ViewHeadlineIcon />
                     </PrimaryButton>
-                    <PrimaryButton style={{ width: '20px' }}
-                        variant={view === EProductionFloorView.DASHBOARD ? 'contained' : 'outlined'}
-                        onClick={() => {
-                            setView(EProductionFloorView.DASHBOARD);
-
-                        }}>
-                        <GridViewIcon />
-                    </PrimaryButton>
                 </ButtonGroup>
             </Stack>
         </Stack>

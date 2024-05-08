@@ -33,18 +33,13 @@ const ProductionFloorWidget = () => {
 
     return <Stack padding={'0 20px'} gap={'10px'} height={'100%'} maxHeight={'100%'} overflow={'hidden'}>
         <ProductionFloorHeader />
-        {
-
-            view !== EProductionFloorView.DASHBOARD && <ProductionFloorFilters />
-        }
+        <ProductionFloorFilters />
         <Stack overflow={'auto'} maxHeight={'100%'}>
 
             {
                 view === EProductionFloorView.GROUPS ? <GroupsTable /> : <ProductionFloorBoardMissionsViews />
             }
-            {
-                view === EProductionFloorView.DASHBOARD && <DashboardWidget />
-            }
+
         </Stack>
         <Drawer sx={{ zIndex: 999999 }} open={openBoardMissionsDrawer} anchor={'bottom'} onClose={() => {
         }}>

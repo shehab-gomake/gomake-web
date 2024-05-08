@@ -42,6 +42,18 @@ const useAuthLayoutHook = (permissionEnumValue?: Permissions, allowAnonymous?: b
         },
         isProduction: true,
       },
+      // {
+      //   isLine: false,
+      //   key: "productFloor",
+      //   title: "production dashboard",
+      //   path: "/production-dashboard",
+      //   isList: false,
+      //   Permission: Permissions.SHOW_PRODUCTION_FLOOR,
+      //   icon: () => {
+      //     return <ProductFloorIcon />;
+      //   },
+      //   isProduction: true,
+      // },
       {
         isLine: true,
         key: "line_1",
