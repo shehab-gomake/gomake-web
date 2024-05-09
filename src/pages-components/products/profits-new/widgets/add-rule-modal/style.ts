@@ -27,7 +27,7 @@ const useStyle = () => {
         gap:10
       },
       sendBtn: {
-        width: "20%",
+        width: "fit-content",
         backgroundColor: secondColor(500),
         height: 20,
         padding: 20,

@@ -118,7 +118,7 @@ const AddRuleModal = ({
                     : allMachincesList?.map((value) => {
                       return {
                         ...value,
-                        label: value?.name,
+                        label: `${value?.manufacturer} - ${value?.model}`,
                         id: value.id,
                       };
                     })
@@ -508,7 +508,7 @@ const AddRuleModal = ({
                             : allMachincesList?.map((value) => {
                               return {
                                 ...value,
-                                label: value?.name,
+                                label: `${value?.manufacturer} - ${value?.model}`,
                                 id: value.id,
                               };
                             })
@@ -568,7 +568,7 @@ const AddRuleModal = ({
                               : allMachincesList?.map((value) => {
                                 return {
                                   ...value,
-                                  label: value?.name,
+                                  label: `${value?.manufacturer} - ${value?.model}`,
                                   id: value.id,
                                 };
                               })
