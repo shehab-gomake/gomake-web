@@ -1,6 +1,6 @@
 import { IBoardMissions, IDashboardStatistic, IDashboardWidget, } from "@/widgets/dashboard-widget/interfaces";
 import { useStyle } from "@/widgets/dashboard-widget/style";
-import { ChangeEvent, useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Cards } from "@/widgets/dashboard-widget/cards/cards";
 import { IDateRange } from "@/shared/interfaces";
 import { BoardMissionsTable } from "@/widgets/dashboard-widget/table";
