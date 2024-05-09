@@ -3,10 +3,10 @@ import { QuoteConfirmationPageWidget } from "@/pages-components/quote-confirmati
 
 
 export default function QuoteConfirmation() {
-  
+
   return (
-      <CustomerAuthLayout allowAnonymous={true} >
-          <QuoteConfirmationPageWidget />
-      </CustomerAuthLayout>
+    <CustomerAuthLayout allowAnonymous={true} disableHeaderSideMenu={true}>
+      <QuoteConfirmationPageWidget />
+    </CustomerAuthLayout>
   );
 }
