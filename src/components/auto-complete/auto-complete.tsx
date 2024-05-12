@@ -4,7 +4,7 @@ import { styled } from "@mui/material/styles";
 import Autocomplete from "@mui/material/Autocomplete";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import Stack from "@mui/material/Stack";
+
 import { DotsLoader } from "@/components/dots-loader/dots-Loader";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
@@ -138,7 +138,7 @@ const GoMakeAutoComplate = ({
             onChange={onChangeTextField || params.onChange}
             InputProps={{
               ...params.InputProps,
-              endAdornment: withArrow ? ( // Conditionally render arrow based on prop
+              endAdornment: withArrow ? (
                 <React.Fragment>
                   {params.InputProps.endAdornment}
                   {menuOpen ? (
@@ -147,7 +147,7 @@ const GoMakeAutoComplate = ({
                     <ArrowDropDownIcon /> // Arrow down when menu is closed
                   )}
                 </React.Fragment>
-              ) : null, // If withArrow is false, don't render the arrow
+              ) : params.InputProps.endAdornment,
             }}
           />
         )
