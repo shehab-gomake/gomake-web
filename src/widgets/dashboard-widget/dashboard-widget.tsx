@@ -1,6 +1,6 @@
 import { IBoardMissions, IDashboardStatistic, IDashboardWidget, } from "@/widgets/dashboard-widget/interfaces";
 import { useStyle } from "@/widgets/dashboard-widget/style";
-import { ChangeEvent, useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Cards } from "@/widgets/dashboard-widget/cards/cards";
 import { IDateRange } from "@/shared/interfaces";
 import { BoardMissionsTable } from "@/widgets/dashboard-widget/table";
@@ -67,9 +67,8 @@ const DashboardWidget = ({ }: IDashboardWidget) => {
         return () => clearInterval(interval);
     }, [dates, action, selectedAgents]);
 
-    const handelSearchValueChange = (event: ChangeEvent<HTMLInputElement>) => {
-        const { value } = event.target;
-        setTasksFilter(value);
+    const handelSearchValueChange = (event) => {
+        setTasksFilter(event);
     }
 
     const usedMachines = useCallback(() => {
