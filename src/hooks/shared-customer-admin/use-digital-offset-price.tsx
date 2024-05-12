@@ -2295,7 +2295,25 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     initProduct(quoteItemProduct, materials);
   };
 
-  const validateParameters = (inputArray) => {
+  // const validateParameters = (inputArray) => {
+  //   let isValid = false;
+  //   const allParameters = subProducts.flatMap((item) => item.parameters);
+  //   console.log("allParameters", { allParameters, inputArray })
+  //   for (const item of inputArray) {
+  //     const index = allParameters.findIndex(
+  //       (par) => par.parameterId === item.id && par?.values[0]?.length
+  //     );
+  //     if (index == -1) {
+  //       isValid = false;
+  //       break;
+  //     }
+  //     else {
+  //       isValid = true;
+  //     }
+  //   }
+  //   return isValid;
+  // };
+  const validateParameters = useCallback((inputArray) => {
     let isValid = true;
     const allParameters = subProducts.flatMap((item) => item.parameters);
     for (const item of inputArray) {
@@ -2306,9 +2324,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         isValid = false;
         break;
       }
+
     }
     return isValid;
-  };
+  }, [subProducts]);
   const [checkParameter, setCheckParameter] = useRecoilState<boolean>(checkParameterState)
   useEffect(() => {
     let checkParameter = validateParameters(activeSectionRequiredParameters);
@@ -2337,7 +2356,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     });
     let checkParameter = validateParameters(isRequiredParameters);
     if (!!checkParameter) {
-
       setLoading(true);
       setCurrentCalculationSessionId(null);
       const newRequestAbortController = new AbortController();
@@ -2351,36 +2369,41 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       if (quantityTypes && quantityTypes.length > 0 && quantityTypes[0].quantity > 0) {
         workTypes = quantityTypes;
       }
-      const res: any = await callApi(
-        "POST",
-        `/v1/calculation-service/calculations/calculate-productV2`,
-        {
-          signalRConnectionId: connectionId,
-          clientId: router?.query?.customerId,
-          clientTypeId: router?.query?.clientTypeId,
-          productId: router?.query?.productId,
-          generalParameters: generalParameters,
-          subProducts: calculationSubProducts,
-          itemParmetersValues: itemParmetersValues,
-          workTypes: workTypes,
-        },
-        false,
-        newRequestAbortController
-      )
-      if (res?.status === 500) {
-        setCalculationProgress({
-          totalWorkFlowsCount: 0,
-          currentWorkFlowsCount: 0,
-        });
-        setLoading(false);
+      if (generalParameters) {
+        const res: any = await callApi(
+          "POST",
+          `/v1/calculation-service/calculations/calculate-productV2`,
+          {
+            signalRConnectionId: connectionId,
+            clientId: router?.query?.customerId,
+            clientTypeId: router?.query?.clientTypeId,
+            productId: router?.query?.productId,
+            generalParameters: generalParameters,
+            subProducts: calculationSubProducts,
+            itemParmetersValues: itemParmetersValues,
+            workTypes: workTypes,
+          },
+          false,
+          newRequestAbortController
+        )
+        if (res?.status === 500) {
+          setCalculationProgress({
+            totalWorkFlowsCount: 0,
+            currentWorkFlowsCount: 0,
+          });
+          setLoading(false);
+        }
+        else {
+          setCalculationProgress({
+            totalWorkFlowsCount: 0,
+            currentWorkFlowsCount: 0,
+          });
+          setLoading(false);
+        }
       }
-    } else {
-      setCalculationProgress({
-        totalWorkFlowsCount: 0,
-        currentWorkFlowsCount: 0,
-      });
-      setLoading(false);
     }
+
+
   }, [subProducts, router, isRequiredParameters, validateParameters]);
 
   const getOutSourcingSuppliers = () => {
