@@ -772,22 +772,22 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     }
                   }
                 }
-                if (!isParameterExits && parameter.code === "quantity") {
-                  subProduct.parameters.push({
-                    parameterId: parameter?.id,
-                    parameterName: parameter?.name,
-                    actionId: parameter?.actionId,
-                    parameterType: parameter?.parameterType,
-                    values: [""],
-                    sectionId: section?.id,
-                    subSectionId: subSection?.id,
-                    actionIndex: parameter?.actionIndex,
-                    parameterCode: parameter?.code,
-                    valuesConfigs: parameter?.valuesConfigs,
-                    unitKey: parameter?.unitKey,
-                    unitType: parameter?.unitType,
-                  });
-                }
+                // if (!isParameterExits && parameter.code === "quantity") {
+                //   subProduct.parameters.push({
+                //     parameterId: parameter?.id,
+                //     parameterName: parameter?.name,
+                //     actionId: parameter?.actionId,
+                //     parameterType: parameter?.parameterType,
+                //     values: [""],
+                //     sectionId: section?.id,
+                //     subSectionId: subSection?.id,
+                //     actionIndex: parameter?.actionIndex,
+                //     parameterCode: parameter?.code,
+                //     valuesConfigs: parameter?.valuesConfigs,
+                //     unitKey: parameter?.unitKey,
+                //     unitType: parameter?.unitType,
+                //   });
+                // }
                 processRelatedParameters2(parameter, subSection, section, productTemplate, subProductsArray);
 
               });
