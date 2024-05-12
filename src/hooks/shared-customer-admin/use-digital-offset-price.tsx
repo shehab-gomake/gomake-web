@@ -2369,7 +2369,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       if (quantityTypes && quantityTypes.length > 0 && quantityTypes[0].quantity > 0) {
         workTypes = quantityTypes;
       }
-      if (generalParameters) {
+      if (generalParameters && generalParameters?.length > 0) {
         const res: any = await callApi(
           "POST",
           `/v1/calculation-service/calculations/calculate-productV2`,
