@@ -21,6 +21,7 @@ import { useTranslation } from "react-i18next";
 import { EGroupByEnum } from "@/enums";
 import { agentsCategoriesState } from "@/pages/customers/customer-states";
 import { getAndSetEmployees2 } from "@/services/api-service/customers/employees-api";
+import { getALLMachinesApi } from "@/services/api-service/machines/print-house-machines-colors";
 
 const useAddRuleModal = ({
   typeExceptionSelected,
@@ -174,6 +175,7 @@ const useAddRuleModal = ({
 
   const [machincesList, setMachincesList] = useState<any>();
   const [allMachincesList, setAllMachincesList] = useState<any>();
+  console.log("allMachincesList",allMachincesList)
   const [productsStateValue, setProductsState] =
     useRecoilState<any>(productsState);
   const [clientTypesStateValue, setClientTypesState] =
@@ -181,13 +183,22 @@ const useAddRuleModal = ({
   const [parametersStateValue, setParametersState] =
     useRecoilState<any>(parametersState);
 
+    const getMachinesList = async () => {
+      const callBack = (res) => {
+          if (res.success) {
+            setAllMachincesList(res.data)
+          }
+      }
+      await getALLMachinesApi(callApi,callBack ).then();
+
+  }
   const getMachincesByActionId = useCallback(async () => {
     if (router.query.actionId) {
       await getAndSetMachincesByActionId(callApi, setMachincesList, {
         actionId: router.query.actionId,
       });
     } else {
-      setAllMachincesList(machines);
+      getMachinesList()
     }
   }, [router, machines]);
   const getProducts = useCallback(async () => {
@@ -207,6 +218,7 @@ const useAddRuleModal = ({
   }, []);
   useEffect(() => {
     getMachincesByActionId();
+    // getMachinesList()
   }, [router, machines]);
 
   const [exceptionType, setExceptionType] = useState<any>();
