@@ -1729,7 +1729,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             );
 
             if (valueInArray) {
-
               const sectionCopy = productTemplate.sections?.find(x => x.id === section.id);
               const subSectionCopy = sectionCopy.subSections?.find(x => x.id === subSection.id);
               const param = subSectionCopy.parameters?.find(x => x.id === relatedParameter.parameterId);
@@ -1744,11 +1743,16 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               if (param.isHidden == true) {
                 return;
               }
+              // subProducts.forEach(x => {
+              //   if (x.type == subSection.type) {
+              //     x.parameters = x.parameters.filter(p => p.parameterId != param.id)
+              //   }
+              // })
               subProducts.forEach(x => {
                 if (x.type == subSection.type) {
-                  x.parameters = x.parameters.filter(p => p.parameterId != param.id)
+                  x = { ...x, parameters: x.parameters.filter(p => p.parameterId != param.id) };
                 }
-              })
+              });
               param.isHidden = true;
               processRelatedParameters2(param, subSection, section, productTemplate, subProducts)
             }
