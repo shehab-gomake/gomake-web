@@ -421,11 +421,13 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
   const duplicateSection = (item) => {
     let defaultProductTemplateCopy = cloneDeep(defaultProductTemplate);
+    const productTemplateCopy = cloneDeep(productTemplate);
+
     const section = defaultProductTemplateCopy.sections.find(
       (x) => x.id === item.id
     );
     const sectionCopy = cloneDeep(section);
-    const numberOfCopies = defaultProductTemplateCopy.sections.filter(
+    const numberOfCopies = productTemplateCopy.sections.filter(
       (x) => x.duplicatedFromSectionId === item.id
     ).length;
     if (!numberOfCopies) {
@@ -444,7 +446,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       }
     });
     const sectionsArr = [];
-    const productTemplateCopy = cloneDeep(productTemplate);
     productTemplateCopy.sections.forEach((sec) => {
       sectionsArr.push(sec);
       if (!numberOfCopies && sec.id === item.id) {
@@ -1686,7 +1687,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
             subProducts.forEach(x => {
               if (x.type == subSection.type) {
-                x.parameters = x.parameters.filter(p => p.parameterId != param.id)
+                x.parameters = x?.parameters?.filter(p => p.parameterId != param.id)
               }
             })
             param.isHidden = true;
