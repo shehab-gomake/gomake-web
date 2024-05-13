@@ -7,12 +7,13 @@ import {
   IExceptionsLog,
 } from "@/widgets/product-pricing-widget/interface";
 import { useGomakeAxios } from "../use-gomake-axios";
+import config from "@/config";
 
 const useCalculationsWorkFlowsSignalr = () => {
 
   const { data, connection, connectionId } =
     useGoMakeSignalr<ICalculationSignalRResult>({
-      url:  "https://erp-service.gomake-dev.net/hubs/workFlows",
+      url:  config.erp_server +"/hubs/workFlows",
       accessToken: getUserToken(),
       methodName: "updateWorkFlows",
     });
