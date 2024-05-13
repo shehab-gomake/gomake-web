@@ -90,6 +90,20 @@ const useStyle = () => {
         height: "50%",
         ...adaptRight(direction, 5),
       },
+      nameStyle:{
+        marginRight: 10,
+        ...FONT_FAMILY.Lexend(500, 14),
+        color:"#25267A"
+      },
+      secondPartStyle:{
+        ...FONT_FAMILY.Lexend(500, 14),
+        color:"#FFF"
+      },
+      secondPartStyle2:{
+        ...FONT_FAMILY.Lexend(500, 14),
+        color:"#FFF"
+      }
+
     };
   }, [theme, direction]);
   return {
