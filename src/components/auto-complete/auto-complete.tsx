@@ -8,6 +8,7 @@ import { useTranslation } from "react-i18next";
 import { DotsLoader } from "@/components/dots-loader/dots-Loader";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
+import { Stack } from "@mui/material";
 
 const StyledAutocomplete: any = styled(Autocomplete)((props: any) => {
   return {
@@ -136,19 +137,43 @@ const GoMakeAutoComplate = ({
             {...params}
             placeholder={defaultValue?.label || placeholder}
             onChange={onChangeTextField || params.onChange}
-            InputProps={{
-              ...params.InputProps,
-              endAdornment: withArrow ? (
-                <React.Fragment>
-                  {params.InputProps.endAdornment}
-                  {menuOpen ? (
-                    <ArrowDropUpIcon /> // Arrow up when menu is open
-                  ) : (
-                    <ArrowDropDownIcon /> // Arrow down when menu is closed
-                  )}
-                </React.Fragment>
-              ) : params.InputProps.endAdornment,
-            }}
+            InputProps={
+              dir === "rtl" ?
+                {
+                  ...params.InputProps,
+                  startAdornment: withArrow ? (
+                    <React.Fragment>
+                      {params.InputProps.startAdornment}
+                      {menuOpen ? (
+                        <ArrowDropUpIcon /> // Arrow up when menu is open
+                      ) : (
+                        <ArrowDropDownIcon /> // Arrow down when menu is closed
+                      )}
+                    </React.Fragment>
+
+                  ) : <div
+                    style={{ position: "absolute", left: 40, top: 19 }}
+                  >
+                    {params.InputProps.endAdornment}
+                  </div>,
+                  endAdornment: null,
+                }
+                :
+                {
+                  ...params.InputProps,
+                  startAdornment: null,
+                  endAdornment: withArrow ? (
+                    <React.Fragment>
+                      {params.InputProps.endAdornment}
+                      {menuOpen ? (
+                        <ArrowDropUpIcon /> // Arrow up when menu is open
+                      ) : (
+                        <ArrowDropDownIcon /> // Arrow down when menu is closed
+                      )}
+                    </React.Fragment>
+                  ) : params.InputProps.endAdornment,
+                }
+            }
           />
         )
       }

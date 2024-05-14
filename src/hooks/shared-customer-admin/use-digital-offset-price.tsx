@@ -57,7 +57,7 @@ import {
   productQuantityTypesValuesState,
   tempProductQuantityTypesValuesState
 } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/quantity-parameter/quantity-types/state";
-import { findParameterByCode } from "@/utils/helpers";
+import { findParameterByCode, hasValues } from "@/utils/helpers";
 import React from "react";
 import { getCurrencies } from "@/services/api-service/general/enums";
 import { currenciesState } from "@/widgets/materials-widget/state";
@@ -145,6 +145,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const setSelectParameterButton = useSetRecoilState(
     selectParameterButtonState
   );
+
   const {
     calculationResult,
     calculationSessionId,
@@ -273,7 +274,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     ) {
       currentWorkFlows[0].selected = true;
     }
-    myselectedWorkFlow = currentWorkFlows?.find((x) => x.selected);
+    myselectedWorkFlow = currentWorkFlows?.find((x) => x.selected && x.isCompleteWorkFlow);
     if (
       myselectedWorkFlow && myselectedWorkFlow.isCompleteWorkFlow &&
       myselectedWorkFlow.totalPrice &&
@@ -355,7 +356,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
         setWorkFlows([...temp, { ...updatedSelectedWorkFlow, selected: true }]);
       }
-
       if (
         updatedSelectedWorkFlow?.totalPrice &&
         updatedSelectedWorkFlow?.totalPrice?.values
@@ -420,11 +420,13 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
   const duplicateSection = (item) => {
     let defaultProductTemplateCopy = cloneDeep(defaultProductTemplate);
+    const productTemplateCopy = cloneDeep(productTemplate);
+
     const section = defaultProductTemplateCopy.sections.find(
       (x) => x.id === item.id
     );
     const sectionCopy = cloneDeep(section);
-    const numberOfCopies = defaultProductTemplateCopy.sections.filter(
+    const numberOfCopies = productTemplateCopy.sections.filter(
       (x) => x.duplicatedFromSectionId === item.id
     ).length;
     if (!numberOfCopies) {
@@ -443,7 +445,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       }
     });
     const sectionsArr = [];
-    const productTemplateCopy = cloneDeep(productTemplate);
     productTemplateCopy.sections.forEach((sec) => {
       sectionsArr.push(sec);
       if (!numberOfCopies && sec.id === item.id) {
@@ -1063,7 +1064,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   ]);
 
   useEffect(() => {
-    let checkParameter = validateParameters(isRequiredParameters);
+    let checkParameter = validateParameters(isRequiredParameters, subProducts);
     setCurrentProductItemValueTotalPrice(null);
     setWorkFlows([]);
     setJobActions([]);
@@ -1139,7 +1140,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   }, [widgetType, docmentItemByEdit])
   useEffect(() => {
     if (canCalculation) {
-      calculationProduct();
+      calculationProduct(subProducts);
     }
   }, [subProducts, canCalculation]);
 
@@ -1683,11 +1684,16 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               return;
             }
 
+            // subProducts.forEach(x => {
+            //   if (x.type == subSection.type) {
+            //     x.parameters = x?.parameters?.filter(p => p.parameterId != param.id)
+            //   }
+            // })
             subProducts.forEach(x => {
               if (x.type == subSection.type) {
-                x.parameters = x.parameters.filter(p => p.parameterId != param.id)
+                x = { ...x, parameters: x.parameters.filter(p => p.parameterId != param.id) };
               }
-            })
+            });
             param.isHidden = true;
             processRelatedParameters2(param, subSection, section, productTemplate, subProducts)
             return;;
@@ -1713,11 +1719,16 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               return;
             }
             param.isHidden = true;
+            // subProducts.forEach(x => {
+            //   if (x.type == subSection.type) {
+            //     x.parameters = x.parameters.filter(p => p.parameterId != param.id)
+            //   }
+            // })
             subProducts.forEach(x => {
               if (x.type == subSection.type) {
-                x.parameters = x.parameters.filter(p => p.parameterId != param.id)
+                x = { ...x, parameters: x.parameters.filter(p => p.parameterId != param.id) };
               }
-            })
+            });
             processRelatedParameters2(param, subSection, section, productTemplate, subProducts)
           }
           else if (parameter?.parameterType === EParameterTypes.DROP_DOWN_LIST || parameter?.parameterType === EParameterTypes.SELECT_MATERIALS) {
@@ -1727,7 +1738,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             );
 
             if (valueInArray) {
-
               const sectionCopy = productTemplate.sections?.find(x => x.id === section.id);
               const subSectionCopy = sectionCopy.subSections?.find(x => x.id === subSection.id);
               const param = subSectionCopy.parameters?.find(x => x.id === relatedParameter.parameterId);
@@ -1742,11 +1752,16 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               if (param.isHidden == true) {
                 return;
               }
+              // subProducts.forEach(x => {
+              //   if (x.type == subSection.type) {
+              //     x.parameters = x.parameters.filter(p => p.parameterId != param.id)
+              //   }
+              // })
               subProducts.forEach(x => {
                 if (x.type == subSection.type) {
-                  x.parameters = x.parameters.filter(p => p.parameterId != param.id)
+                  x = { ...x, parameters: x.parameters.filter(p => p.parameterId != param.id) };
                 }
-              })
+              });
               param.isHidden = true;
               processRelatedParameters2(param, subSection, section, productTemplate, subProducts)
             }
@@ -1771,11 +1786,16 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               if (param.isHidden == true) {
                 return;
               }
+              // subProducts.forEach(x => {
+              //   if (x.type == subSection.type) {
+              //     x.parameters = x.parameters.filter(p => p.parameterId != param.id)
+              //   }
+              // })
               subProducts.forEach(x => {
                 if (x.type == subSection.type) {
-                  x.parameters = x.parameters.filter(p => p.parameterId != param.id)
+                  x = { ...x, parameters: x.parameters.filter(p => p.parameterId != param.id) };
                 }
-              })
+              });
               param.isHidden = true;
               processRelatedParameters2(param, subSection, section, productTemplate, subProducts)
             }
@@ -1799,13 +1819,15 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     actionIndex: number,
     parameterCode: string,
   ) => {
+    let copySubProducts = cloneDeep(subProducts)
     setCanCalculation(true);
-    const targetSubProduct = subProducts.find(
+    const targetSubProduct = copySubProducts.find(
       (item) => item.type === subSectionType
     );
 
     if (targetSubProduct) {
       let temp = [...targetSubProduct.parameters];
+
       const findIndex = temp.findIndex(
         (item) =>
           item.parameterId === parameterId &&
@@ -1857,6 +1879,50 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         });
       }
       if (subSectionParameter) {
+        if (subSectionParameter?.childsParameters) {
+          subSectionParameter?.childsParameters.forEach((myparameter) => {
+            const parameterId = myparameter.id;
+            const myindex = temp.findIndex((item) => {
+              return (
+                item?.parameterId === myparameter?.id &&
+                item?.sectionId === section?.id &&
+                item?.subSectionId === subSection?.id &&
+                item?.actionIndex === myparameter?.actionIndex
+              );
+            });
+            if (data?.value?.values) {
+
+              if (myindex !== -1) {
+                if (data?.value?.values[parameterId] !== undefined) {
+                  temp[myindex] = {
+                    ...temp[myindex],
+                    parameterCode: myparameter?.code,
+                    values: [data?.value?.values[parameterId]],
+                    isDisabled: hasValues(data?.value)
+                  };
+                }
+                else {
+                  temp.splice(myindex, 1)
+                }
+
+              }
+              else {
+                temp.push({
+                  parameterId: myparameter?.id,
+                  sectionId: section?.id,
+                  subSectionId: subSection?.id,
+                  ParameterType: myparameter?.parameterType,
+                  values: [data?.value?.values[parameterId]],
+                  actionIndex: myparameter?.actionIndex,
+                  parameterName: myparameter?.name,
+                  parameterCode: myparameter?.code,
+                  isDisabled: hasValues(data?.value)
+                });
+              }
+            }
+
+          });
+        }
         //types parameter
         if (subSectionParameter.id == "de2bb7d5-01b1-4b2b-b0fa-81cd0445841b") {
 
@@ -2043,17 +2109,17 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         }
       }
       let temp2 = [...subProducts];
-      const index2 = subProducts.findIndex(
+      const index2 = temp2.findIndex(
         (item) => item.type === subSectionType
       );
-      (temp2[index2] = {
+      temp2[index2] = {
         type: subSectionType,
         sectionId: sectionId,
         sectionName: section.name,
         parameters: temp,
-      })
-      processRelatedParameters2(subSectionParameter, subSection, section, productTemplateCopy, temp2);
+      }
       setSubProducts(temp2);
+      processRelatedParameters2(subSectionParameter, subSection, section, productTemplateCopy, temp2);
       setProductTemplate(productTemplateCopy);
       const updatedProductTemplate = updateIsHidden(productTemplateCopy, temp2);
       removeHiddenParameters(temp2, productTemplateCopy)
@@ -2295,27 +2361,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     initProduct(quoteItemProduct, materials);
   };
 
-  // const validateParameters = (inputArray) => {
-  //   let isValid = false;
-  //   const allParameters = subProducts.flatMap((item) => item.parameters);
-  //   console.log("allParameters", { allParameters, inputArray })
-  //   for (const item of inputArray) {
-  //     const index = allParameters.findIndex(
-  //       (par) => par.parameterId === item.id && par?.values[0]?.length
-  //     );
-  //     if (index == -1) {
-  //       isValid = false;
-  //       break;
-  //     }
-  //     else {
-  //       isValid = true;
-  //     }
-  //   }
-  //   return isValid;
-  // };
-  const validateParameters = useCallback((inputArray) => {
+ const validateParameters = (inputArray, currentSubProducts) => {
     let isValid = true;
-    const allParameters = subProducts.flatMap((item) => item.parameters);
+    const allParameters = currentSubProducts.flatMap((item) => item.parameters);
     for (const item of inputArray) {
       const index = allParameters.findIndex(
         (par) => par.parameterId === item.id && par?.values[0]?.length
@@ -2327,10 +2375,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
     }
     return isValid;
-  }, [subProducts]);
+  };
   const [checkParameter, setCheckParameter] = useRecoilState<boolean>(checkParameterState)
   useEffect(() => {
-    let checkParameter = validateParameters(activeSectionRequiredParameters);
+    let checkParameter = validateParameters(activeSectionRequiredParameters, subProducts);
     setCheckParameter(checkParameter)
   }, [isRequiredParameters])
 
@@ -2342,7 +2390,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
   // }, [isRequiredParameters])
 
-  const calculationProduct = useCallback(async () => {
+  const calculationProduct = async (currentSubProducts) => {
     if (requestAbortController) {
       requestAbortController.abort();
     }
@@ -2354,13 +2402,13 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       totalWorkFlowsCount: 0,
       currentWorkFlowsCount: 0,
     });
-    let checkParameter = validateParameters(isRequiredParameters);
+    let checkParameter = validateParameters(isRequiredParameters, currentSubProducts);
     if (!!checkParameter) {
       setLoading(true);
       setCurrentCalculationSessionId(null);
       const newRequestAbortController = new AbortController();
       setRequestAbortController(newRequestAbortController);
-      let subProductsCopy = cloneDeep(subProducts);
+      let subProductsCopy = cloneDeep(currentSubProducts);
       let generalParameters = subProductsCopy.find((x) => !x.type)?.parameters;
       let calculationSubProducts = subProductsCopy.filter((x) => x.type);
       generalParameters?.forEach(x => x.valuesConfigs = null);
@@ -2402,9 +2450,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         }
       }
     }
-
-
-  }, [subProducts, router, isRequiredParameters, validateParameters]);
+  };
 
   const getOutSourcingSuppliers = () => {
     const callBack = (res) => {
@@ -2555,7 +2601,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   };
   const straightKnife = findParameterByCode(productTemplate, "IsStraightKnife");
   const navigateForRouter = () => {
-    let checkParameter = validateParameters(isRequiredParameters);
+    let checkParameter = validateParameters(isRequiredParameters, subProducts);
     if (!!checkParameter) {
       setErrorMsg("");
       if (router?.query?.actionId) {
