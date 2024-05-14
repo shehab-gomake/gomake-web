@@ -20,14 +20,13 @@ const BOARD_MISSIONS_ADD_NOTE_URL = '/v1/erp-service/board-missions/add-note';
 const BOARD_MISSIONS_DELETE_NOTE_URL = '/v1/erp-service/board-missions/delete-note';
 const GET_BOARD_MISSIONS_ACTIVITIES_URL = '/v1/erp-service/board-missions-comments/get-all-comments/';
 const ADD_BOARD_MISSIONS_COMMENT_URL = '/v1/erp-service/board-missions-comments/add-comment';
-const START_BOARD_MISSIONS_CHANEL_URL = '/v1/erp-service/board-missions/start-signalr';
 const MOVE_BOARD_MISSION_TO_DONE_URL = '/v1/erp-service/board-missions/move-board-mission-to-done';
 const BACK_TO_PROCESS_URL = '/v1/erp-service/board-missions/back-to-process';
 const SAVE_UPLOADED_FILE_URL = '/v1/erp-service/board-missions/save-uploaded-file';
 const GET_UPLOADED_FILES_URL = '/v1/erp-service/board-missions/get-uploaded-files/';
 
-const getProductionFloorData: ICallAndSetData = async (callApi, setState) => {
-    return await getSetApiData(callApi, EHttpMethod.GET, GET_PRODUCTION_FLOOR_DATA_URL, setState, {}, false);
+const getProductionFloorData: ICallAndSetData = async (callApi, setState, connectionId: string) => {
+    return await getSetApiData(callApi, EHttpMethod.GET, GET_PRODUCTION_FLOOR_DATA_URL + '?connectionId=' + connectionId, setState, {}, false);
 };
 
 

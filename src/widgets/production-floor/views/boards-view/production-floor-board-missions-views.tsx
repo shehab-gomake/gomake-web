@@ -4,23 +4,28 @@ import {ProductionFloorTableView} from "@/widgets/production-floor/table-view/pr
 import {ProductionFloorKanbanBoard} from "@/widgets/production-floor/kanban-view/production-floor-kanban-board";
 import {useProductionFloorData} from "@/widgets/production-floor/use-production-floor-data";
 import {useEffect} from "react";
+import {useBoardMissionsSignalr} from "@/hooks/signalr/use-board-missions-signalr";
 
 const ProductionFloorBoardMissionsViews = () => {
     const [view] = useRecoilState(productionFloorViewState);
     const {getData} = useProductionFloorData();
+    const {connectionId} = useBoardMissionsSignalr();
+
     useEffect(() => {
-        getData().then();
-    }, [])
+        if (!!connectionId) {
+            getData(connectionId).then();
+        }
+    }, [connectionId])
     return (
-      <>
-          {
-              view === EProductionFloorView.TABLE && <ProductionFloorTableView/>
-          }
-          {
-              view === EProductionFloorView.KANBAN && <ProductionFloorKanbanBoard/>
-          }
-      </>
-  )
+        <>
+            {
+                view === EProductionFloorView.TABLE && <ProductionFloorTableView/>
+            }
+            {
+                view === EProductionFloorView.KANBAN && <ProductionFloorKanbanBoard/>
+            }
+        </>
+    )
 };
 
 export {ProductionFloorBoardMissionsViews}
