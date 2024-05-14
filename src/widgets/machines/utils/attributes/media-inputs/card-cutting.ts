@@ -4,8 +4,8 @@ import {minMaxInput} from "@/widgets/machines/utils/attributes/media-inputs/min-
 const cardCutting = (state: Record<string, any>) => {
     return [
         ...minMaxInput(state, 'paperThickness', 'paperThickness', EMeasurementUnits.MM),
-        ...minMaxInput(state, 'paperThickness', 'paperLength', EMeasurementUnits.MM),
-        ...minMaxInput(state, 'paperThickness', 'paperWidth', EMeasurementUnits.MM),
+        ...minMaxInput(state, 'paperLength', 'paperLength', EMeasurementUnits.MM),
+        ...minMaxInput(state, 'paperWidth', 'paperWidth', EMeasurementUnits.MM),
     ]
 }
 
