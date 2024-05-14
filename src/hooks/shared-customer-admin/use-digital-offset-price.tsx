@@ -274,7 +274,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     ) {
       currentWorkFlows[0].selected = true;
     }
-    myselectedWorkFlow = currentWorkFlows?.find((x) => x.selected);
+    myselectedWorkFlow = currentWorkFlows?.find((x) => x.selected && x.isCompleteWorkFlow);
     if (
       myselectedWorkFlow && myselectedWorkFlow.isCompleteWorkFlow &&
       myselectedWorkFlow.totalPrice &&
@@ -356,7 +356,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
         setWorkFlows([...temp, { ...updatedSelectedWorkFlow, selected: true }]);
       }
-
       if (
         updatedSelectedWorkFlow?.totalPrice &&
         updatedSelectedWorkFlow?.totalPrice?.values
