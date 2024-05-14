@@ -6,6 +6,9 @@ export interface ICompanyDataState {
     systemLanguage: string;
     systemCurrency: string;
     supportedLanguage:boolean;
+    email:string;
+    fullName:string;
+    phone:string;
 
 }
 export const signupCompanyState = atom<ICompanyDataState>({
@@ -15,6 +18,9 @@ export const signupCompanyState = atom<ICompanyDataState>({
         systemLanguage: '',
         systemCurrency: '',
         supportedLanguage:false,
+        email:"",
+        fullName:"",
+        phone:"",
     },
     key: 'signupCompanyState'
 })
