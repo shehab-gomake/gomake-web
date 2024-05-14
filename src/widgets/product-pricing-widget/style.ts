@@ -101,7 +101,10 @@ const useStyle = () => {
       },
       lineStyle:{
         ...FONT_FAMILY.Inter(500, 14),
-        color:"#FFF"
+        color:"#FFF",
+        height:20,
+        width:1,
+        backgroundColor:"#FFF"
       }
 
     };
