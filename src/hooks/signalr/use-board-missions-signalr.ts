@@ -10,6 +10,7 @@ import {
 import {boardMissionsActivitiesState} from "@/widgets/production-floor/state/board-missions-activities";
 import {useEffect} from "react";
 import {boardMissionsFilesState} from "@/widgets/production-floor/views/board-missions-view/files/state";
+import {useProductionFloorData} from "@/widgets/production-floor/use-production-floor-data";
 
 const useBoardMissionsSignalr = () => {
     const setBoardMissions = useSetRecoilState(boardMissionsDetailsState);
@@ -17,7 +18,7 @@ const useBoardMissionsSignalr = () => {
     const setActivities = useSetRecoilState(boardMissionsActivitiesState);
     const [, setIsReady] = useRecoilState(isReadyBoardMissionsState)
     const [, setFiles] = useRecoilState(boardMissionsFilesState);
-
+    const {getData} = useProductionFloorData();
     const setSubWorkFlows = useSetRecoilState(boardMissionsSubWorkFlowsState);
     const {connectionId, data, connection} = useGoMakeSignalr<any>({
         url: config.erp_server + '/hubs/boardMissions',
@@ -29,7 +30,6 @@ const useBoardMissionsSignalr = () => {
         if (connection) {
             connection.on('UpdateBoardMissionModal', (newData) => {
                 if (!!newData) {
-                    console.log(newData);
                     setActivities(newData?.activites);
                     setBoardMissions(newData?.details);
                     setBoardMissionsStations(newData?.stations.workFlow?.actions);
@@ -37,6 +37,10 @@ const useBoardMissionsSignalr = () => {
                     setIsReady(newData?.stations.isReady);
                     setFiles(newData?.orderItemFiles);
                 }
+            })
+
+            connection.on('UpdateBoardMissionsStation', () => {
+                getData().then();
             })
         }
     }, [connection])
