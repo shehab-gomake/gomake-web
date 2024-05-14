@@ -17,18 +17,17 @@ const ProductionFloorFilters = () => {
         setSearch,
         onTagsChange,
         onSelectDeliveryTimeDates,
-        handleSelectStation,
         onSelectCreateDates,
         createDateFilter,
         deliveryDateFilter,
-        handelSelectMachine,
+        onStationsChange
     } = useProductionFloorFilters();
     const {t} = useTranslation();
     return (
         <Stack direction={'row'} padding={'12px 0'} style={{backgroundColor: '#FFF'}} alignItems={'center'}
                gap={'20px'}>
             <SearchInputComponent bgColor={'#F8F8F8'} value={search} onChange={setSearch}/>
-            <ActionsListComponent onClickAction={handleSelectStation} onClickMachine={handelSelectMachine}/>
+            <ActionsListComponent onClickApply={onStationsChange}/>
             <GoMakeDatepicker value={deliveryDateFilter} onChange={onSelectDeliveryTimeDates}
                               placeholder={t('productionFloor.deliveryTime')}/>
             <GoMakeDatepicker value={createDateFilter} onChange={onSelectCreateDates}

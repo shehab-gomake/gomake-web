@@ -18,8 +18,7 @@ const useProductionFloorData = () => {
     const [, setUserGroups] = useRecoilState(userProductionFloorGroupsState);
     const [, setPath] = useRecoilState(productionFloorPathsState);
 
-
-    const getData = async () => {
+    const getData = async (connectionId?: string) => {
         const callBack = (res) => {
             if (res.success) {
                 setData(res?.data?.boardMissionsCollections);
@@ -29,14 +28,13 @@ const useProductionFloorData = () => {
                 setPath(res?.data?.path ? res?.data?.path : []);
             }
         }
-        await getProductionFloorData(callApi, callBack);
+        await getProductionFloorData(callApi, callBack, connectionId);
     }
 
 
     const updateStatus = async (boardsIds: {BoardMissionId: string; productType: string;}[], statusId: string) => {
         const callBack = (res) => {
             if (res.success) {
-                getData().then();
             }
         }
         await updateBoardsMissionsStatusApi(callApi, callBack, {boardsIds, statusId})
