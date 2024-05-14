@@ -91,16 +91,16 @@ const useStyle = () => {
         ...adaptRight(direction, 5),
       },
       nameStyle:{
-        marginRight: 10,
-        ...FONT_FAMILY.Lexend(500, 14),
-        color:"#25267A"
-      },
-      secondPartStyle:{
-        ...FONT_FAMILY.Lexend(500, 14),
+        marginRight: 12,
+        ...FONT_FAMILY.Inter(400, 12),
         color:"#FFF"
       },
-      secondPartStyle2:{
-        ...FONT_FAMILY.Lexend(500, 14),
+      secondPartStyle:{
+        ...FONT_FAMILY.Inter(700, 14),
+        color:"#FFF"
+      },
+      lineStyle:{
+        ...FONT_FAMILY.Inter(500, 14),
         color:"#FFF"
       }
 
