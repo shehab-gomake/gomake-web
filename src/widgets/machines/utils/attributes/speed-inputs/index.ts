@@ -53,6 +53,7 @@ import {analogEnhancement} from "@/widgets/machines/utils/attributes/speed-input
 import {creatingDiesMachine} from "@/widgets/machines/utils/attributes/speed-inputs/creating-dies-machines";
 import {meshProcessorMachines} from "@/widgets/machines/utils/attributes/speed-inputs/mesh-processors-machines";
 import {silkPrinter} from "@/widgets/machines/utils/attributes/speed-inputs/silk-printer";
+import {cardCutting} from "@/widgets/machines/utils/attributes/speed-inputs/card-cutting";
 
 
 const getCategorySpeedInputs = (categoryId: string, state: Record<string, any>) => {
@@ -164,7 +165,9 @@ const getCategorySpeedInputs = (categoryId: string, state: Record<string, any>) 
         case ECategoryId.MESH_PROCESSORS:
             return meshProcessorMachines(state);
         case ECategoryId.SILK_PRINTER:
-            return silkPrinter(state)
+            return silkPrinter(state);
+        case ECategoryId.CARD_CUTTING:
+            return cardCutting(state);
         default:
             return [];
     }
