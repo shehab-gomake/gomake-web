@@ -1685,11 +1685,16 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               return;
             }
 
+            // subProducts.forEach(x => {
+            //   if (x.type == subSection.type) {
+            //     x.parameters = x?.parameters?.filter(p => p.parameterId != param.id)
+            //   }
+            // })
             subProducts.forEach(x => {
               if (x.type == subSection.type) {
-                x.parameters = x?.parameters?.filter(p => p.parameterId != param.id)
+                x = { ...x, parameters: x.parameters.filter(p => p.parameterId != param.id) };
               }
-            })
+            });
             param.isHidden = true;
             processRelatedParameters2(param, subSection, section, productTemplate, subProducts)
             return;;
