@@ -52,5 +52,6 @@ export enum ECategoryId {
     THERMAL_PLATE_PROCESSOR = '51',
     CREATING_DIES_MACHINE = '52',
     MESH_PROCESSORS = '53',
-    SILK_PRINTER = '54'
+    SILK_PRINTER = '54',
+    CARD_CUTTING = '55'
 }
