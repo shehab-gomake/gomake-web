@@ -1715,11 +1715,16 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               return;
             }
             param.isHidden = true;
+            // subProducts.forEach(x => {
+            //   if (x.type == subSection.type) {
+            //     x.parameters = x.parameters.filter(p => p.parameterId != param.id)
+            //   }
+            // })
             subProducts.forEach(x => {
               if (x.type == subSection.type) {
-                x.parameters = x.parameters.filter(p => p.parameterId != param.id)
+                x = { ...x, parameters: x.parameters.filter(p => p.parameterId != param.id) };
               }
-            })
+            });
             processRelatedParameters2(param, subSection, section, productTemplate, subProducts)
           }
           else if (parameter?.parameterType === EParameterTypes.DROP_DOWN_LIST || parameter?.parameterType === EParameterTypes.SELECT_MATERIALS) {
@@ -1777,11 +1782,16 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               if (param.isHidden == true) {
                 return;
               }
+              // subProducts.forEach(x => {
+              //   if (x.type == subSection.type) {
+              //     x.parameters = x.parameters.filter(p => p.parameterId != param.id)
+              //   }
+              // })
               subProducts.forEach(x => {
                 if (x.type == subSection.type) {
-                  x.parameters = x.parameters.filter(p => p.parameterId != param.id)
+                  x = { ...x, parameters: x.parameters.filter(p => p.parameterId != param.id) };
                 }
-              })
+              });
               param.isHidden = true;
               processRelatedParameters2(param, subSection, section, productTemplate, subProducts)
             }
