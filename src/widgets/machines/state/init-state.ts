@@ -531,5 +531,10 @@ const initState: Record<string, Record<string, any>> = {
         price: {price: 0, currency: 0},
         attributes: {}
     },
+    [ECategoryId.CARD_CUTTING]: {
+        category: ECategoryId.CARD_CUTTING,
+        price: {price: 0, currency: 0},
+        attributes: {}
+    },
 }
 export {initState};

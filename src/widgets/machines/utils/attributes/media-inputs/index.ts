@@ -41,6 +41,7 @@ import {analogEnhacmentMachine} from "@/widgets/machines/utils/attributes/media-
 import {creatingDiesMachine} from "@/widgets/machines/utils/attributes/media-inputs/creating-dies-machine";
 import {meshProcessorMachine} from "@/widgets/machines/utils/attributes/media-inputs/mesh-processor-machine";
 import {silkPrinter} from "@/widgets/machines/utils/attributes/media-inputs/silk-printer";
+import {cardCutting} from "@/widgets/machines/utils/attributes/media-inputs/card-cutting";
 
 const getCategoryMediaInputs = (categoryId: string, state: Record<string, any>) => {
     switch (categoryId) {
@@ -150,6 +151,8 @@ const getCategoryMediaInputs = (categoryId: string, state: Record<string, any>) 
             return meshProcessorMachine(state);
         case ECategoryId.SILK_PRINTER:
             return silkPrinter(state);
+        case ECategoryId.CARD_CUTTING:
+            return cardCutting(state);
         default:
             return []
     }

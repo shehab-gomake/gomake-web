@@ -57,6 +57,7 @@ import {thermalPlateProcessorMachineSteps} from "@/widgets/machines/utils/steps/
 import {creatingDiesMachineSteps} from "@/widgets/machines/utils/steps/creating-dies-machine-steps";
 import {meshProcessorsMachineSteps} from "@/widgets/machines/utils/steps/mesh-processors-machine-steps";
 import {silkPrinterSteps} from "@/widgets/machines/utils/steps/silk-printer-steps";
+import {cardCuttingSteps} from "@/widgets/machines/utils/steps/card-cutting-steps";
 
 const getSteps = (categoryId: ECategoryId, isAdmin: boolean): IStep[] => {
     let steps: IStep[];
@@ -222,6 +223,9 @@ const getSteps = (categoryId: ECategoryId, isAdmin: boolean): IStep[] => {
             break;
         case ECategoryId.CREATING_DIES_MACHINE:
             steps = creatingDiesMachineSteps;
+            break;
+        case ECategoryId.CARD_CUTTING:
+            steps = cardCuttingSteps;
     }
     return isAdmin && steps ? [...steps, ...adminActionsMaterialsStep] : steps ? steps : []
 }
