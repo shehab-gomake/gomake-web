@@ -2361,7 +2361,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     initProduct(quoteItemProduct, materials);
   };
 
-  const validateParameters = (inputArray, currentSubProducts) => {
+ const validateParameters = (inputArray, currentSubProducts) => {
     let isValid = true;
     const allParameters = currentSubProducts.flatMap((item) => item.parameters);
     for (const item of inputArray) {
@@ -2372,6 +2372,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         isValid = false;
         break;
       }
+
     }
     return isValid;
   };
@@ -2416,35 +2417,38 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       if (quantityTypes && quantityTypes.length > 0 && quantityTypes[0].quantity > 0) {
         workTypes = quantityTypes;
       }
-      const res: any = await callApi(
-        "POST",
-        `/v1/calculation-service/calculations/calculate-productV2`,
-        {
-          signalRConnectionId: connectionId,
-          clientId: router?.query?.customerId,
-          clientTypeId: router?.query?.clientTypeId,
-          productId: router?.query?.productId,
-          generalParameters: generalParameters,
-          subProducts: calculationSubProducts,
-          itemParmetersValues: itemParmetersValues,
-          workTypes: workTypes,
-        },
-        false,
-        newRequestAbortController
-      )
-      if (res?.status === 500) {
-        setCalculationProgress({
-          totalWorkFlowsCount: 0,
-          currentWorkFlowsCount: 0,
-        });
-        setLoading(false);
+      if (generalParameters && generalParameters?.length > 0) {
+        const res: any = await callApi(
+          "POST",
+          `/v1/calculation-service/calculations/calculate-productV2`,
+          {
+            signalRConnectionId: connectionId,
+            clientId: router?.query?.customerId,
+            clientTypeId: router?.query?.clientTypeId,
+            productId: router?.query?.productId,
+            generalParameters: generalParameters,
+            subProducts: calculationSubProducts,
+            itemParmetersValues: itemParmetersValues,
+            workTypes: workTypes,
+          },
+          false,
+          newRequestAbortController
+        )
+        if (res?.status === 500) {
+          setCalculationProgress({
+            totalWorkFlowsCount: 0,
+            currentWorkFlowsCount: 0,
+          });
+          setLoading(false);
+        }
+        else {
+          setCalculationProgress({
+            totalWorkFlowsCount: 0,
+            currentWorkFlowsCount: 0,
+          });
+          setLoading(false);
+        }
       }
-    } else {
-      setCalculationProgress({
-        totalWorkFlowsCount: 0,
-        currentWorkFlowsCount: 0,
-      });
-      setLoading(false);
     }
   };
 

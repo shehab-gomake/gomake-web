@@ -90,6 +90,23 @@ const useStyle = () => {
         height: "50%",
         ...adaptRight(direction, 5),
       },
+      nameStyle:{
+        marginRight: 12,
+        ...FONT_FAMILY.Inter(400, 12),
+        color:"#FFF"
+      },
+      secondPartStyle:{
+        ...FONT_FAMILY.Inter(700, 14),
+        color:"#FFF"
+      },
+      lineStyle:{
+        ...FONT_FAMILY.Inter(500, 14),
+        color:"#FFF",
+        height:20,
+        width:1,
+        backgroundColor:"#FFF"
+      }
+
     };
   }, [theme, direction]);
   return {

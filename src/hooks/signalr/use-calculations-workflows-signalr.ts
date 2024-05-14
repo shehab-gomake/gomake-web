@@ -13,7 +13,7 @@ const useCalculationsWorkFlowsSignalr = () => {
 
   const { data, connection, connectionId } =
     useGoMakeSignalr<ICalculationSignalRResult>({
-      url:  config.erp_server +`/hubs/workFlows`,
+      url: config.erp_server +`/hubs/workFlows`,
       accessToken: getUserToken(),
       methodName: "updateWorkFlows",
     });
