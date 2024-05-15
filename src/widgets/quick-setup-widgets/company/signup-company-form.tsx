@@ -18,6 +18,7 @@ const SignupCompanyForm = ({ isMobile }: any) => {
         currencies,
         languages,
         setIsAvailable,
+        checkPrintHouseDomain
     } = useCompanyForm();
     const { classes } = useStyle();
     const { t } = useTranslation();
@@ -34,7 +35,7 @@ const SignupCompanyForm = ({ isMobile }: any) => {
                         onChange('name', e.target.value)
                         onChange('domain', e.target.value)
                     }}
-                    onBlur={() => { setIsAvailable(true) }}
+                    onBlur={(e) => { checkPrintHouseDomain(e.target.value) }}
                     style={classes.input}
                     placeholder={t('signup.companyName')}
                     value={state.name}

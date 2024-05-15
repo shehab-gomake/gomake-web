@@ -3,12 +3,11 @@ import {ICompanyDataState, ICountry, signupCompanyState} from "@/widgets/quick-s
 import {currenciesState} from "@/widgets/materials-widget/state";
 import {getCurrenciesApi} from "@/services/api-service/enums/enums-endpoints";
 import {useGomakeAxios, useSnackBar} from "@/hooks";
-import {useEffect, useState} from "react";
+import { useEffect, useState} from "react";
 import {languageOptionsState} from "@/store/languages";
-import {createNewCompanyApi} from "@/services/api-service/quick-setup/company/company-endpoints";
 import {useRouter} from "next/router";
 import {clearStorage} from "@/services/storage-data";
-import {domainRegex} from "@/utils/regex";
+import { checkPrintHouseDomainApi } from "@/services/api-service/profiles/company-profile-api";
 
 
 const useCompanyForm = () => {
@@ -19,14 +18,9 @@ const useCompanyForm = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const {alertFaultAdded, alertFault} = useSnackBar();
   const [isAvailable, setIsAvailable] = useState(false)
-  const domainList = [
-      "Account  1",
-      "Account  2",
-      "Account  3",
-  ]
+
   useEffect(() => {
       if (state.country?.currency) {
-          console.log("GGGGGGGGGGGGGGGG")
           let currenciesTemp = currencies.find((item) => item.value === state.country.currency)
           if (currenciesTemp?.value) {
               onChange('systemCurrency', currenciesTemp)
@@ -88,14 +82,24 @@ const useCompanyForm = () => {
     // }
     // await createNewCompanyApi(callApi, callBack, state);
   }
-  // useEffect(() => {
-  //   const supportedLanguages = languages.filter(lang => lang.supported);
-  //   const selectedLanguage = supportedLanguages.find(lang => lang.value === state.systemLanguage);
-  //   setState((prevState) => ({
-  //     ...prevState,
-  //     supportedLanguage: !!selectedLanguage,
-  //   }));
-  // }, [languages, state.systemLanguage, setState]);
+  const checkPrintHouseDomain = async (domain: string) => {
+    const callBack = (res) => {
+        if (res.success) {
+           setDomainCheck(res?.data)
+        }
+    }
+    const res = await checkPrintHouseDomainApi(callApi, callBack, { domain: domain })
+
+    return res.success
+}
+const [domainCheck,setDomainCheck]=useState("")
+console.log("domainCheck",domainCheck)
+
+useEffect(()=>{
+  if(domainCheck){
+    onChange('domain', domainCheck)
+  }
+},[domainCheck])
   useEffect(() => {
     clearStorage();
     getCurrencies().then()
@@ -110,7 +114,7 @@ const useCompanyForm = () => {
     countryList,
     isAvailable, 
     setIsAvailable,
-    domainList
+    checkPrintHouseDomain
   }
 }
 export {useCompanyForm}
