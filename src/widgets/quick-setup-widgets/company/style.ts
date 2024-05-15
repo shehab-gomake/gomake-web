@@ -42,6 +42,26 @@ const useStyle = () => {
       nextButton: {
         width: '100%'
       },
+      suggestionStyle:{ marginTop: -15, border: "1px solid #F2F2F2", padding: 5, borderRadius: 8,gap:8 },
+      suggestionItemStyle:{ 
+        display: "flex",
+        flexDirection:"row" as "row",
+        justifyContent:"space-between",
+        alignItems: "center",
+        width:"100%",
+        ...FONT_FAMILY.Lexend(400,14),
+        cursor:"pointer"
+        
+      },
+      selectSuggestionStyle:{
+        ...FONT_FAMILY.Lexend(400,14),
+      },
+      lineStyle:{
+        display: "flex",
+        width:"100%",
+        height:1,
+        backgroundColor:"#F2F2F2"
+      },
       msgTestStyle:{
         display: "flex",
         flexDirection:"row" as "row",
@@ -70,7 +90,7 @@ const useStyle = () => {
         ...FONT_FAMILY.Inter(400,12),
         color:"#9A9A9A",
         marginTop:-10,
-        marginBottom:-10
+        marginBottom:-5
       }
     }
   }, [theme]);

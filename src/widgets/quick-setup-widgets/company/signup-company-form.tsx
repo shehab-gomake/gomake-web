@@ -6,8 +6,6 @@ import { useTranslation } from "react-i18next";
 import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
 import { domainRegex, emailRegex } from "@/utils/regex";
 import { PhoneInputComponent } from "@/components/form-inputs/phone-input";
-import CloseIcon from '@mui/icons-material/Close';
-import CheckIcon from '@mui/icons-material/Check';
 import { NewLogo } from "@/icons";
 
 const SignupCompanyForm = ({ isMobile }: any) => {
@@ -19,9 +17,7 @@ const SignupCompanyForm = ({ isMobile }: any) => {
         countryList,
         currencies,
         languages,
-        isAvailable,
         setIsAvailable,
-        domainList
     } = useCompanyForm();
     const { classes } = useStyle();
     const { t } = useTranslation();
@@ -52,26 +48,30 @@ const SignupCompanyForm = ({ isMobile }: any) => {
                     <span style={{ position: "absolute", right: 8 }}>.gomake.net</span>
                 </Stack>
                 <div style={classes.noteStyle}>You can use letters, numbers & periods</div>
-                {
+                {/* {
                     isAvailable &&
-                    <Stack direction={'column'} alignItems={'flex-start'} gap={"8px"} style={{ marginTop: -15 }}>
+                    <Stack direction={'column'} alignItems={'flex-start'} gap={"8px"} style={classes.suggestionStyle}>
                         <span style={classes.msgTestStyle}>
                             <CloseIcon style={{ color: "red", width: 18, height: 18 }} /> {t('signup.errorDomain')}
                         </span>
                         {domainList.map((domain) => {
                             return (
-                                <Stack direction={'row'} alignItems={'center'} gap={"5px"} style={{ cursor: 'pointer' }}
-                                    onClick={() => {
-                                        onChange('domain', domain)
-                                        setIsAvailable(false)
-                                    }} >
-                                    <CheckIcon style={{ color: "green" }} />
-                                    {domain}
-                                </Stack>
+                                <>
+                                    <Stack style={classes.suggestionItemStyle}
+                                        onClick={() => {
+                                            onChange('domain', domain)
+                                            setIsAvailable(false)
+                                        }} >
+                                        {domain}
+                                        <div style={classes.selectSuggestionStyle}>select Suggestion</div>
+                                    </Stack>
+                                    <div style={classes.lineStyle} />
+                                </>
+
                             )
                         })}
                     </Stack>
-                }
+                } */}
                 <GomakeTextInput onChange={(e) => onChange('fullName', e.target.value)}
                     style={classes.input}
                     placeholder={t('signup.fullName')}
