@@ -25,9 +25,9 @@ const cardCutting = (state: Record<string, any>) => {
             parameterKey: "sheetDelay",
             unit: EMeasurementUnits.SECOND,
             options: [],
-            value: state.attributes?.cutsDelay ? state.attributes?.cutsDelay : '',
+            value: state.attributes?.sheetDelay ? state.attributes?.sheetDelay : '',
             machineInputType: 'input',
-            isValid: !!state?.attributes?.cutsDelay,
+            isValid: !!state?.attributes?.sheetDelay,
         },
         ...maxSpeedInput(state, EMeasurementUnits.CUTS_P_MIN),
         {
