@@ -1,11 +1,10 @@
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { convertHeightToVH, convertWidthToVW } from "@/utils/adapter";
 import { FONT_FAMILY } from "@/utils/font-family";
-import { LAYOUT_DEFAULT_GAP, SIDE_MENU_Layout } from "@/utils/layout-config";
 import { useMemo } from "react";
 
 const useStyle = () => {
-  const {theme, primaryColor } = useGomakeTheme();
+  const {theme, primaryColor,errorColor } = useGomakeTheme();
   const classes = useMemo(() => {
     return {
       header: {
@@ -24,6 +23,14 @@ const useStyle = () => {
       },
       nextButton: {
         width: '100%'
+      },
+      msgTestStyle:{
+        display: "flex",
+        flexDirection:"row" as "row",
+        justifyContent:"flex-start",
+        alignItems: "flex-start",
+        ...FONT_FAMILY.Lexend(400,12),
+        color:errorColor(300)
       }
     }
   }, [theme]);

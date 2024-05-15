@@ -1,5 +1,5 @@
 import {useRecoilState, useRecoilValue} from "recoil";
-import {ICompanyDataState, signupCompanyState} from "@/widgets/quick-setup-widgets/company/state";
+import {ICompanyDataState, ICountry, signupCompanyState} from "@/widgets/quick-setup-widgets/company/state";
 import {currenciesState} from "@/widgets/materials-widget/state";
 import {getCurrenciesApi} from "@/services/api-service/enums/enums-endpoints";
 import {useGomakeAxios, useSnackBar} from "@/hooks";
@@ -9,7 +9,6 @@ import {createNewCompanyApi} from "@/services/api-service/quick-setup/company/co
 import {useRouter} from "next/router";
 import {clearStorage} from "@/services/storage-data";
 import {domainRegex} from "@/utils/regex";
-import {Lan} from "@mui/icons-material";
 
 
 const useCompanyForm = () => {
@@ -19,6 +18,19 @@ const useCompanyForm = () => {
   const languages = useRecoilValue(languageOptionsState);
   const [loading, setLoading] = useState<boolean>(false);
   const {alertFaultAdded, alertFault} = useSnackBar();
+  
+  const countryList: ICountry[]=[
+    {
+      name: 'palestine',
+      lang: 'ar',
+      currency: 'New Shekel',
+    },
+    {
+      name: 'USA',
+      lang: 'en',
+      currency: 'US Dollar',
+    }
+  ]
   const {push} = useRouter();
   const getCurrencies = async () => {
     const callBack = (res) => {
@@ -35,33 +47,33 @@ const useCompanyForm = () => {
     }))
   }
   const onclickNext = async () => {
-    if (!domainRegex.test(state.domain)) {
-      alertFaultAdded();
-      return
-    }
-    const selectedLanguage = languages.find(lang => lang.value === state.systemLanguage);
-    if (!selectedLanguage || !selectedLanguage.supported) {
-      alertFault(`"${selectedLanguage.text}" not supported yet, system remains in English.Thank you for your understanding. `);
-    }
+    // if (!domainRegex.test(state.domain)) {
+    //   alertFaultAdded();
+    //   return
+    // }
+    // const selectedLanguage = languages.find(lang => lang.value === state.systemLanguage);
+    // if (!selectedLanguage || !selectedLanguage.supported) {
+    //   alertFault(`"${selectedLanguage.text}" not supported yet, system remains in English.Thank you for your understanding. `);
+    // }
     setLoading(!loading);
-    const callBack = (res) => {
-      if (res.success) {
-        push(`/quick-setup/personal/${res?.data?.printHouseId}`);
-      } else {
-        alertFaultAdded();
-      }
-      setLoading(false);
-    }
-    await createNewCompanyApi(callApi, callBack, state);
+    // const callBack = (res) => {
+    //   if (res.success) {
+    //     push(`/quick-setup/personal/${res?.data?.printHouseId}`);
+    //   } else {
+    //     alertFaultAdded();
+    //   }
+    //   setLoading(false);
+    // }
+    // await createNewCompanyApi(callApi, callBack, state);
   }
-  useEffect(() => {
-    const supportedLanguages = languages.filter(lang => lang.supported);
-    const selectedLanguage = supportedLanguages.find(lang => lang.value === state.systemLanguage);
-    setState((prevState) => ({
-      ...prevState,
-      supportedLanguage: !!selectedLanguage,
-    }));
-  }, [languages, state.systemLanguage, setState]);
+  // useEffect(() => {
+  //   const supportedLanguages = languages.filter(lang => lang.supported);
+  //   const selectedLanguage = supportedLanguages.find(lang => lang.value === state.systemLanguage);
+  //   setState((prevState) => ({
+  //     ...prevState,
+  //     supportedLanguage: !!selectedLanguage,
+  //   }));
+  // }, [languages, state.systemLanguage, setState]);
   useEffect(() => {
     clearStorage();
     getCurrencies().then()
@@ -72,7 +84,8 @@ const useCompanyForm = () => {
     currencies,
     languages,
     onclickNext,
-    loading
+    loading,
+    countryList
   }
 }
 export {useCompanyForm}
