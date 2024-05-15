@@ -23,7 +23,7 @@ const SignupCompanyForm = ({ isMobile }: any) => {
     const { classes } = useStyle();
     const { t } = useTranslation();
 
-
+    console.log("state", state)
     return (
         <Stack gap={'12px'} alignItems={'flex-start'}>
             <NewLogo />

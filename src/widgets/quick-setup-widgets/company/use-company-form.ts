@@ -2,12 +2,13 @@ import {useRecoilState, useRecoilValue} from "recoil";
 import {ICompanyDataState, ICountry, signupCompanyState} from "@/widgets/quick-setup-widgets/company/state";
 import {currenciesState} from "@/widgets/materials-widget/state";
 import {getCurrenciesApi} from "@/services/api-service/enums/enums-endpoints";
-import {useGomakeAxios, useSnackBar} from "@/hooks";
+import {useGomakeAxios, useGomakeRouter, useSnackBar} from "@/hooks";
 import { useEffect, useState} from "react";
 import {languageOptionsState} from "@/store/languages";
 import {useRouter} from "next/router";
 import {clearStorage} from "@/services/storage-data";
-import { checkPrintHouseDomainApi, getAllCountriesApi } from "@/services/api-service/profiles/company-profile-api";
+import { checkPrintHouseDomainApi, createNewPrintHouseApi, getAllCountriesApi } from "@/services/api-service/profiles/company-profile-api";
+import { domainRegex } from "@/utils/regex";
 
 
 const useCompanyForm = () => {
@@ -19,6 +20,8 @@ const useCompanyForm = () => {
   const {alertFaultAdded, alertFault} = useSnackBar();
   const [isAvailable, setIsAvailable] = useState(false)
   const [countryList,setCountryList]=useState([])
+  const { navigate } = useGomakeRouter();
+
   useEffect(() => {
       if (state.country?.currencyCode) {
           let currenciesTemp = currencies.find((item) => item.value === state.country.currencyCode)
@@ -51,25 +54,37 @@ const useCompanyForm = () => {
     }))
   }
   const onclickNext = async () => {
-    // if (!domainRegex.test(state.domain)) {
-    //   alertFaultAdded();
-    //   return
-    // }
-    // const selectedLanguage = languages.find(lang => lang.value === state.systemLanguage);
-    // if (!selectedLanguage || !selectedLanguage.supported) {
-    //   alertFault(`"${selectedLanguage.text}" not supported yet, system remains in English.Thank you for your understanding. `);
-    // }
+    if (!domainRegex.test(state.domain)) {
+      alertFaultAdded();
+      return
+    }
+  const selectedLanguage = languages.find(lang => lang.value === state.systemLanguage.value);
+     if (!selectedLanguage || !selectedLanguage.supported) {
+       alertFault(`"${selectedLanguage.text}" not supported yet, system remains in English.Thank you for your understanding. `);
+     }
     setLoading(!loading);
-    // const callBack = (res) => {
-    //   if (res.success) {
-    //     push(`/quick-setup/personal/${res?.data?.printHouseId}`);
-    //   } else {
-    //     alertFaultAdded();
-    //   }
-    //   setLoading(false);
-    // }
-    // await createNewCompanyApi(callApi, callBack, state);
-  }
+    const callBack = (res) => {
+        if (res.success) {
+          navigate("/quick-setup/welcome")
+        }
+        else {
+               alertFaultAdded();
+             }
+             setLoading(false);
+    }
+    const res = await createNewPrintHouseApi(callApi, callBack,
+      {
+        name: state?.name,
+        domain: state?.domain,
+        systemLanguage: state?.systemLanguage.value,
+        systemCurrency: state?.systemCurrency.value,
+        fullName: state?.fullName,
+        phone: state?.phone,
+        email: state?.email
+      })
+
+    return res.success
+}
   const checkPrintHouseDomain = async (domain: string) => {
     const callBack = (res) => {
         if (res.success) {
