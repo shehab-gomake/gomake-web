@@ -1,9 +1,12 @@
 import {atom} from "recoil";
 
 export interface ICountry {
-    name:string;
-	lang:string;
-	currency:string;
+    id: string;
+    name: string;
+    language: string;
+    languageCode: string;
+    currency: string;
+    currencyCode: string;
 }
 export interface ISystemLanguage{
     value: string;
@@ -37,9 +40,12 @@ export const signupCompanyState = atom<ICompanyDataState>({
         fullName:"",
         phone:"",
         country:{
-            name: '',
-            lang: '',
-            currency: '',
+            id: "",
+            name: "",
+            language: "",
+            languageCode: "",
+            currency: "",
+            currencyCode: "",
         },
         systemLanguage:
         {

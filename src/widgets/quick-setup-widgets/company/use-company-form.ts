@@ -7,7 +7,7 @@ import { useEffect, useState} from "react";
 import {languageOptionsState} from "@/store/languages";
 import {useRouter} from "next/router";
 import {clearStorage} from "@/services/storage-data";
-import { checkPrintHouseDomainApi } from "@/services/api-service/profiles/company-profile-api";
+import { checkPrintHouseDomainApi, getAllCountriesApi } from "@/services/api-service/profiles/company-profile-api";
 
 
 const useCompanyForm = () => {
@@ -18,35 +18,23 @@ const useCompanyForm = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const {alertFaultAdded, alertFault} = useSnackBar();
   const [isAvailable, setIsAvailable] = useState(false)
-
+  const [countryList,setCountryList]=useState([])
   useEffect(() => {
-      if (state.country?.currency) {
-          let currenciesTemp = currencies.find((item) => item.value === state.country.currency)
+      if (state.country?.currencyCode) {
+          let currenciesTemp = currencies.find((item) => item.value === state.country.currencyCode)
           if (currenciesTemp?.value) {
               onChange('systemCurrency', currenciesTemp)
           }
       }
   }, [state.country])
   useEffect(() => {
-      if (state.country?.lang) {
-          let languagesTemp = languages.find((item) => item.value === state.country.lang)
+      if (state.country?.languageCode) {
+          let languagesTemp = languages.find((item) => item.value === state.country.languageCode)
           if (languagesTemp?.value) {
               onChange('systemLanguage', languagesTemp)
           }
       }
   }, [state.country])
-  const countryList: ICountry[]=[
-    {
-      name: 'palestine',
-      lang: 'ar',
-      currency: 'ILS',
-    },
-    {
-      name: 'USA',
-      lang: 'en',
-      currency: 'USD',
-    }
-  ]
   const {push} = useRouter();
   const getCurrencies = async () => {
     const callBack = (res) => {
@@ -93,7 +81,15 @@ const useCompanyForm = () => {
     return res.success
 }
 const [domainCheck,setDomainCheck]=useState("")
-console.log("domainCheck",domainCheck)
+
+const getAllCountries = async () => {
+  const callBack = (res) => {
+      if (res.success) {
+          setCountryList(res.data);
+      }
+  }
+  await getAllCountriesApi(callApi, callBack)
+}
 
 useEffect(()=>{
   if(domainCheck){
@@ -103,6 +99,7 @@ useEffect(()=>{
   useEffect(() => {
     clearStorage();
     getCurrencies().then()
+    getAllCountries()
   }, [])
   return {
     state,
