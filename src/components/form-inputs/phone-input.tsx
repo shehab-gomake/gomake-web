@@ -8,9 +8,11 @@ interface IProps {
   onChange: (value: string) => void;
   value: string;
   autoFocus?: boolean;
+  customStyle?: React.CSSProperties; // Add the style property
+
 }
 
-const PhoneInputComponent = ({ onChange, value, autoFocus }: IProps) => {
+const PhoneInputComponent = ({ onChange, value, autoFocus, customStyle }: IProps) => {
   const printHouseProfileState = useRecoilValue<any>(printHouseProfile);
 
   return (
@@ -21,7 +23,7 @@ const PhoneInputComponent = ({ onChange, value, autoFocus }: IProps) => {
         value.length !== 4 && onChange(value);
       }}
       autoFocus={autoFocus}
-      style={{ minWidth: 180 }}
+      style={{ minWidth: 180, ...customStyle }}
     />
   );
 };

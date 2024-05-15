@@ -8,8 +8,9 @@ import { domainRegex, emailRegex } from "@/utils/regex";
 import { PhoneInputComponent } from "@/components/form-inputs/phone-input";
 import CloseIcon from '@mui/icons-material/Close';
 import CheckIcon from '@mui/icons-material/Check';
+import { NewLogo } from "@/icons";
 
-const SignupCompanyForm = () => {
+const SignupCompanyForm = ({ isMobile }: any) => {
     const {
         state,
         onChange,
@@ -27,9 +28,11 @@ const SignupCompanyForm = () => {
 
 
     return (
-        <Stack gap={'30px'} alignItems={'center'}>
-            <h2 style={classes.header}>{t('signup.companyHeader')}</h2>
-            <Stack gap={'24px'}>
+        <Stack gap={'12px'} alignItems={'flex-start'}>
+            <NewLogo />
+            <div style={isMobile ? classes.signUpMobileStyle : classes.signUpStyle}>Sign up</div>
+            <div style={isMobile ? classes.subTitleMobileStyle : classes.subTitleStyle}>Please enter the following details to create account.</div>
+            <Stack gap={'24px'} width={"100%"}>
                 <GomakeTextInput
                     onChange={(e) => {
                         onChange('name', e.target.value)
@@ -38,18 +41,20 @@ const SignupCompanyForm = () => {
                     onBlur={() => { setIsAvailable(true) }}
                     style={classes.input}
                     placeholder={t('signup.companyName')}
-                    value={state.name} />
-                <Stack direction={'row'} alignItems={'center'} width={400}>
+                    value={state.name}
+                />
+                <Stack direction={'row'} alignItems={'center'} style={{ position: "relative" }}>
                     <GomakeTextInput onChange={(e) => onChange('domain', e.target.value)}
                         style={classes.input}
                         placeholder={t('signup.companyDomain')}
                         error={state.domain ? !domainRegex.test(state.domain) : false}
                         value={state.domain} />
-                    <span style={{ marginLeft: 5 }}>.gomake.net</span>
+                    <span style={{ position: "absolute", right: 8 }}>.gomake.net</span>
                 </Stack>
+                <div style={classes.noteStyle}>You can use letters, numbers & periods</div>
                 {
                     isAvailable &&
-                    <Stack direction={'column'} alignItems={'flex-start'} gap={"8px"} width={420} style={{ marginTop: -15 }}>
+                    <Stack direction={'column'} alignItems={'flex-start'} gap={"8px"} style={{ marginTop: -15 }}>
                         <span style={classes.msgTestStyle}>
                             <CloseIcon style={{ color: "red", width: 18, height: 18 }} /> {t('signup.errorDomain')}
                         </span>
@@ -79,26 +84,33 @@ const SignupCompanyForm = () => {
                 <PhoneInputComponent
                     onChange={(e) => onChange('phone', e)}
                     value={state.phone}
+                    customStyle={classes.inputPhone}
                 />
                 <GoMakeAutoComplate
                     options={countryList}
                     getOptionLabel={(option: any) => `${option.name}`}
                     onChange={(e, v) => onChange('country', v)}
                     value={state.country}
-                    placeholder={t('signup.country')} />
+                    placeholder={t('signup.country')}
+                    style={classes.dropDownList}
+                />
+
                 <GoMakeAutoComplate
                     options={languages}
                     getOptionLabel={(option: any) => `${option.label}`}
                     onChange={(e, v) => onChange('systemLanguage', v)}
                     value={state.systemLanguage}
                     placeholder={t('signup.defaultLanguage')}
+                    style={classes.dropDownList}
                 />
                 <GoMakeAutoComplate
                     options={currencies}
                     getOptionLabel={(option: any) => `${option.label}`}
                     onChange={(e, v) => onChange('systemCurrency', v)}
                     value={state.systemCurrency}
-                    placeholder={t('signup.defaultCurrency')} />
+                    placeholder={t('signup.defaultCurrency')}
+                    style={classes.dropDownList}
+                />
             </Stack>
             <PrimaryButton endIcon={loading && <CircularProgress style={{ width: '20px', height: '20px' }} />}
                 onClick={onclickNext}

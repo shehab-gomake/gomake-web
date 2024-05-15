@@ -12,9 +12,27 @@ const useStyle = () => {
       },
       input: {
         height: 40,
-        width: 400,
+        width: '100%',
         textAlign: 'flex-start',
-       
+        boxShadow:"none",
+        border: "1px solid #F2F2F2",
+        borderRadius:8,
+        backgroundColor:"transparent",
+      },
+      inputPhone:{
+        boxShadow:"none",
+        border: "1px solid #F2F2F2",
+        borderRadius:8,
+        backgroundColor:"transparent",
+      },
+      dropDownList:{
+        height: 40,
+        width: '100%',
+        textAlign: 'flex-start',
+        boxShadow:"none",
+        border: "1px solid #F2F2F2",
+        borderRadius:8,
+        backgroundColor:"transparent",
       },
       nameInput: {
         height: 50,
@@ -31,6 +49,28 @@ const useStyle = () => {
         alignItems: "flex-start",
         ...FONT_FAMILY.Lexend(400,12),
         color:errorColor(300)
+      },
+      signUpStyle:{
+        ...FONT_FAMILY.Inter(700,40),
+        color:"#232323"
+      },
+      signUpMobileStyle:{
+        ...FONT_FAMILY.Inter(700,26),
+        color:"#232323"
+      },
+      subTitleStyle:{
+        ...FONT_FAMILY.Inter(400,18), 
+        color:"#969696"
+      },
+      subTitleMobileStyle:{
+        ...FONT_FAMILY.Inter(400,14), 
+        color:"#969696"
+      },
+      noteStyle:{
+        ...FONT_FAMILY.Inter(400,12),
+        color:"#9A9A9A",
+        marginTop:-10,
+        marginBottom:-10
       }
     }
   }, [theme]);

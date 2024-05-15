@@ -1,10 +1,22 @@
-import { QuickSetupLayout } from "@/layouts/quick-setup-layout/quick-setup-layout";
-import { SignupCompanyForm } from "@/widgets/quick-setup-widgets/company/signup-company-form";
+import { QuickSetipWidget } from "@/widgets/quick-setup-widgets/quick-setup/quick-setup";
+import { QuickSetipMobileWidget } from "@/widgets/quick-setup-widgets/quick-setup/quick-setup-mobile";
+import { useEffect, useState } from "react";
 
 export default function QuickSetupCompanyPage() {
+    const [isMobile, setIsMobile] = useState(false);
+    useEffect(() => {
+        const checkIsMobile = () => setIsMobile(window.innerWidth <= 768);
+        checkIsMobile();
+
+        window.addEventListener('resize', checkIsMobile);
+        return () => window.removeEventListener('resize', checkIsMobile);
+    }, []);
     return (
-        <QuickSetupLayout pageTitle={'Let\'s get personal. Share your details with us!'} headerColor={'primary'}>
-            <SignupCompanyForm />
-        </QuickSetupLayout>
+        <>
+            {
+                isMobile ? <QuickSetipMobileWidget isMobile={isMobile} /> : <QuickSetipWidget />
+            }
+
+        </>
     );
 }
