@@ -1,5 +1,4 @@
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
-import { convertHeightToVH, convertWidthToVW } from "@/utils/adapter";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 
@@ -12,9 +11,10 @@ const useStyle = () => {
         ...FONT_FAMILY.Outfit(600, 24)
       },
       input: {
-        height: 50,
+        height: 40,
         width: 400,
-        textAlign: 'center',
+        textAlign: 'flex-start',
+       
       },
       nameInput: {
         height: 50,

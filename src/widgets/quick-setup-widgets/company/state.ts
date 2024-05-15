@@ -5,6 +5,16 @@ export interface ICountry {
 	lang:string;
 	currency:string;
 }
+export interface ISystemLanguage{
+    value: string;
+    text: string;
+    supported:boolean;
+    label: string;
+}
+export interface ISystemCurrency{
+    value: string;
+    label: string;
+}
 export interface ICompanyDataState {
     name: string;
     domain: string;
@@ -12,7 +22,10 @@ export interface ICompanyDataState {
     email:string;
     fullName:string;
     phone:string;
-    country:ICountry
+    country:ICountry,
+    systemCurrency:ISystemCurrency;
+    systemLanguage:ISystemLanguage;
+
 
 }
 export const signupCompanyState = atom<ICompanyDataState>({
@@ -23,6 +36,17 @@ export const signupCompanyState = atom<ICompanyDataState>({
         email:"",
         fullName:"",
         phone:"",
+        systemCurrency:{
+            value: "",
+            label:""
+        },
+        systemLanguage:
+        {
+            value: "",
+            text: "",
+            supported:false,
+            label: "",  
+        },
         country:{
             name: '',
             lang: '',

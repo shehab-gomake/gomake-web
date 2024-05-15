@@ -15,7 +15,7 @@ const useCompanyForm = () => {
   const [state, setState] = useRecoilState(signupCompanyState);
   const [currencies, setCurrencies] = useRecoilState(currenciesState);
   const {callApi} = useGomakeAxios();
-  const languages = useRecoilValue(languageOptionsState);
+  const languages  = useRecoilValue(languageOptionsState);
   const [loading, setLoading] = useState<boolean>(false);
   const {alertFaultAdded, alertFault} = useSnackBar();
   
@@ -23,12 +23,12 @@ const useCompanyForm = () => {
     {
       name: 'palestine',
       lang: 'ar',
-      currency: 'New Shekel',
+      currency: 'ILS',
     },
     {
       name: 'USA',
       lang: 'en',
-      currency: 'US Dollar',
+      currency: 'USD',
     }
   ]
   const {push} = useRouter();
@@ -40,7 +40,7 @@ const useCompanyForm = () => {
     }
     await getCurrenciesApi(callApi, callBack)
   }
-  const onChange = (key: keyof ICompanyDataState, value: string) => {
+  const onChange = (key: keyof ICompanyDataState, value: any) => {
     setState((preState) => ({
       ...preState,
       [key]: value

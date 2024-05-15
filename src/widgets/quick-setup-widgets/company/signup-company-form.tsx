@@ -6,12 +6,12 @@ import { useTranslation } from "react-i18next";
 import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
 import { domainRegex, emailRegex } from "@/utils/regex";
 import { PhoneInputComponent } from "@/components/form-inputs/phone-input";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CloseIcon from '@mui/icons-material/Close';
 import CheckIcon from '@mui/icons-material/Check';
 
 const SignupCompanyForm = () => {
-    const { state, onChange, onclickNext, loading, countryList } = useCompanyForm();
+    const { state, onChange, onclickNext, loading, countryList, currencies, languages } = useCompanyForm();
     const { classes } = useStyle();
     const { t } = useTranslation();
     const [isAvailable, setIsAvailable] = useState(false)
@@ -21,7 +21,21 @@ const SignupCompanyForm = () => {
         "Account  3",
     ]
 
-    console.log("state", state)
+    console.log("state", { currencies, languages, state })
+
+    useEffect(() => {
+        if (state.country) {
+            let languagesTemp = languages.find((item) => item.value === state.country.lang)
+            let currenciesTemp = currencies.find((item) => item.value === state.country.currency)
+            console.log("languagesTemp", languagesTemp)
+            if (languagesTemp) {
+                onChange('systemLanguage', languagesTemp)
+            }
+            if (currenciesTemp) {
+                onChange('systemCurrency', currenciesTemp)
+            }
+        }
+    }, [state.country])
 
     return (
         <Stack gap={'30px'} alignItems={'center'}>
@@ -46,7 +60,7 @@ const SignupCompanyForm = () => {
                 </Stack>
                 {
                     isAvailable &&
-                    <Stack direction={'column'} alignItems={'center'} gap={"8px"} width={420}>
+                    <Stack direction={'column'} alignItems={'flex-start'} gap={"8px"} width={420} style={{ marginTop: -15 }}>
                         <span style={classes.msgTestStyle}>
                             <CloseIcon style={{ color: "red", width: 18, height: 18 }} /> {t('signup.errorDomain')}
                         </span>
@@ -84,6 +98,22 @@ const SignupCompanyForm = () => {
                     onChange={(e, v) => onChange('country', v)}
                     value={state.country}
                     placeholder={t('signup.country')} />
+                <GoMakeAutoComplate
+                    key={state?.systemCurrency?.value}
+                    options={currencies}
+                    getOptionLabel={(option: any) => `${option.label}`}
+                    onChange={(e, v) => onChange('systemCurrency', v)}
+                    value={state.systemCurrency}
+                    placeholder={t('signup.defaultCurrency')} />
+
+                <GoMakeAutoComplate
+                    key={state?.systemLanguage?.value}
+                    options={languages}
+                    onChange={(e, v) => onChange('systemLanguage', v)}
+                    getOptionLabel={(option: any) => `${option.label}`}
+                    value={state.systemLanguage}
+                    placeholder={t('signup.defaultLanguage')}
+                />
             </Stack>
             <PrimaryButton endIcon={loading && <CircularProgress style={{ width: '20px', height: '20px' }} />}
                 onClick={onclickNext}
