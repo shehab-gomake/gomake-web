@@ -10,9 +10,21 @@ import CloseIcon from '@mui/icons-material/Close';
 import CheckIcon from '@mui/icons-material/Check';
 
 const SignupCompanyForm = () => {
-    const { state, onChange, onclickNext, loading, countryList, currencies, languages, isAvailable, setIsAvailable, domainList } = useCompanyForm();
+    const {
+        state,
+        onChange,
+        onclickNext,
+        loading,
+        countryList,
+        currencies,
+        languages,
+        isAvailable,
+        setIsAvailable,
+        domainList
+    } = useCompanyForm();
     const { classes } = useStyle();
     const { t } = useTranslation();
+
 
     return (
         <Stack gap={'30px'} alignItems={'center'}>
@@ -75,21 +87,18 @@ const SignupCompanyForm = () => {
                     value={state.country}
                     placeholder={t('signup.country')} />
                 <GoMakeAutoComplate
-                    key={state?.systemCurrency?.value}
+                    options={languages}
+                    getOptionLabel={(option: any) => `${option.label}`}
+                    onChange={(e, v) => onChange('systemLanguage', v)}
+                    value={state.systemLanguage}
+                    placeholder={t('signup.defaultLanguage')}
+                />
+                <GoMakeAutoComplate
                     options={currencies}
                     getOptionLabel={(option: any) => `${option.label}`}
                     onChange={(e, v) => onChange('systemCurrency', v)}
                     value={state.systemCurrency}
                     placeholder={t('signup.defaultCurrency')} />
-
-                <GoMakeAutoComplate
-                    key={state?.systemLanguage?.value}
-                    options={languages}
-                    onChange={(e, v) => onChange('systemLanguage', v)}
-                    getOptionLabel={(option: any) => `${option.label}`}
-                    value={state.systemLanguage}
-                    placeholder={t('signup.defaultLanguage')}
-                />
             </Stack>
             <PrimaryButton endIcon={loading && <CircularProgress style={{ width: '20px', height: '20px' }} />}
                 onClick={onclickNext}

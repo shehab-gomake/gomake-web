@@ -24,17 +24,20 @@ const useCompanyForm = () => {
       "Account  2",
       "Account  3",
   ]
-  
   useEffect(() => {
-      if (state.country) {
-          let languagesTemp = languages.find((item) => item.value === state.country.lang)
+      if (state.country?.currency) {
+          console.log("GGGGGGGGGGGGGGGG")
           let currenciesTemp = currencies.find((item) => item.value === state.country.currency)
-          console.log("languagesTemp", languagesTemp)
-          if (languagesTemp) {
-              onChange('systemLanguage', languagesTemp)
-          }
-          if (currenciesTemp) {
+          if (currenciesTemp?.value) {
               onChange('systemCurrency', currenciesTemp)
+          }
+      }
+  }, [state.country])
+  useEffect(() => {
+      if (state.country?.lang) {
+          let languagesTemp = languages.find((item) => item.value === state.country.lang)
+          if (languagesTemp?.value) {
+              onChange('systemLanguage', languagesTemp)
           }
       }
   }, [state.country])

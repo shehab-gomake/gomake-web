@@ -36,9 +36,10 @@ export const signupCompanyState = atom<ICompanyDataState>({
         email:"",
         fullName:"",
         phone:"",
-        systemCurrency:{
-            value: "",
-            label:""
+        country:{
+            name: '',
+            lang: '',
+            currency: '',
         },
         systemLanguage:
         {
@@ -47,11 +48,10 @@ export const signupCompanyState = atom<ICompanyDataState>({
             supported:false,
             label: "",  
         },
-        country:{
-            name: '',
-            lang: '',
-            currency: '',
-        }
+        systemCurrency:{
+            value: "",
+            label:""
+        },
     },
     key: 'signupCompanyState'
 })
