@@ -18,7 +18,26 @@ const useCompanyForm = () => {
   const languages  = useRecoilValue(languageOptionsState);
   const [loading, setLoading] = useState<boolean>(false);
   const {alertFaultAdded, alertFault} = useSnackBar();
+  const [isAvailable, setIsAvailable] = useState(false)
+  const domainList = [
+      "Account  1",
+      "Account  2",
+      "Account  3",
+  ]
   
+  useEffect(() => {
+      if (state.country) {
+          let languagesTemp = languages.find((item) => item.value === state.country.lang)
+          let currenciesTemp = currencies.find((item) => item.value === state.country.currency)
+          console.log("languagesTemp", languagesTemp)
+          if (languagesTemp) {
+              onChange('systemLanguage', languagesTemp)
+          }
+          if (currenciesTemp) {
+              onChange('systemCurrency', currenciesTemp)
+          }
+      }
+  }, [state.country])
   const countryList: ICountry[]=[
     {
       name: 'palestine',
@@ -85,7 +104,10 @@ const useCompanyForm = () => {
     languages,
     onclickNext,
     loading,
-    countryList
+    countryList,
+    isAvailable, 
+    setIsAvailable,
+    domainList
   }
 }
 export {useCompanyForm}

@@ -6,36 +6,13 @@ import { useTranslation } from "react-i18next";
 import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
 import { domainRegex, emailRegex } from "@/utils/regex";
 import { PhoneInputComponent } from "@/components/form-inputs/phone-input";
-import { useEffect, useState } from "react";
 import CloseIcon from '@mui/icons-material/Close';
 import CheckIcon from '@mui/icons-material/Check';
 
 const SignupCompanyForm = () => {
-    const { state, onChange, onclickNext, loading, countryList, currencies, languages } = useCompanyForm();
+    const { state, onChange, onclickNext, loading, countryList, currencies, languages, isAvailable, setIsAvailable, domainList } = useCompanyForm();
     const { classes } = useStyle();
     const { t } = useTranslation();
-    const [isAvailable, setIsAvailable] = useState(false)
-    const domainList = [
-        "Account  1",
-        "Account  2",
-        "Account  3",
-    ]
-
-    console.log("state", { currencies, languages, state })
-
-    useEffect(() => {
-        if (state.country) {
-            let languagesTemp = languages.find((item) => item.value === state.country.lang)
-            let currenciesTemp = currencies.find((item) => item.value === state.country.currency)
-            console.log("languagesTemp", languagesTemp)
-            if (languagesTemp) {
-                onChange('systemLanguage', languagesTemp)
-            }
-            if (currenciesTemp) {
-                onChange('systemCurrency', currenciesTemp)
-            }
-        }
-    }, [state.country])
 
     return (
         <Stack gap={'30px'} alignItems={'center'}>
@@ -74,7 +51,6 @@ const SignupCompanyForm = () => {
                                     <CheckIcon style={{ color: "green" }} />
                                     {domain}
                                 </Stack>
-                                // <div >{domain}</div>
                             )
                         })}
                     </Stack>
