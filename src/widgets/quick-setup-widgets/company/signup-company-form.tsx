@@ -22,8 +22,6 @@ const SignupCompanyForm = ({ isMobile }: any) => {
     } = useCompanyForm();
     const { classes } = useStyle();
     const { t } = useTranslation();
-
-    console.log("state", state)
     return (
         <Stack gap={'12px'} alignItems={'flex-start'}>
             <NewLogo />
@@ -33,7 +31,6 @@ const SignupCompanyForm = ({ isMobile }: any) => {
                 <GomakeTextInput
                     onChange={(e) => {
                         onChange('name', e.target.value)
-                        onChange('domain', e.target.value)
                     }}
                     onBlur={(e) => { checkPrintHouseDomain(e.target.value) }}
                     style={classes.input}
