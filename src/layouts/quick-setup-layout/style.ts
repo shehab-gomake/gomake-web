@@ -17,7 +17,8 @@ const useStyle = (color: 'primary' | 'cyan' | 'magenta') => {
         display: 'flex',
         justifyContent: 'center' as 'center',
         alignItems: 'center' as 'center',
-        height: convertHeightToVH(361)
+        height: convertHeightToVH(250),
+        padding:50
       },
       title: {
         ...FONT_FAMILY.Outfit(600, 36),

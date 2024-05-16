@@ -53,7 +53,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
   const { materialType, materialCategory } = query;
   const { getMaterialCategories } = useMaterials(isAdmin);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const { alertSuccessAdded, alertFaultAdded } = useSnackBar();
+  const { alertSuccessAdded, alertFaultAdded, alertFault } = useSnackBar();
   const [materialCategoryData, setMaterialCategoryData] = useRecoilState<
     IMaterialCategoryRow[]
   >(materialCategoryDataState);
@@ -138,6 +138,22 @@ const useMaterialsActions = (isAdmin: boolean) => {
       action?.action === EMaterialsActions.UpdateIsInActive
     ) {
       await updateStatus(action?.action);
+      return;
+    }
+    if (action?.action === EMaterialsActions.UpdateCurrency) {
+      const selectedMaterials = materialCategoryData.filter(item =>
+        selectedMaterialsIds.includes(item.id)
+      );
+      const areCurrenciesSame = selectedMaterials.every(
+        item => item.rowData.currency.value === selectedMaterials[0].rowData.currency.value
+      );
+      if (areCurrenciesSame) {
+        setAction(action);
+      }
+      else {
+        alertFault(t("materials.inputs.errorCurrencyMsg"));
+      }
+
       return;
     }
     setAction(action);
