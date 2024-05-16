@@ -15,7 +15,10 @@ const SideLeftMenuWidget = ({
   const { t } = useTranslation();
   return (
     <>
-      <IconButton onClick={handleClick}>
+      <IconButton onClick={(e) => {
+        handleClick(e)
+        e.stopPropagation();
+      }} style={{ zIndex: 99999999 }}>
         <MoreCircleIcon />
       </IconButton>
       <GoMakeMenu handleClose={handleClose} open={open} anchorEl={anchorEl}>
