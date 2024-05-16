@@ -6,6 +6,8 @@ const cardCutting = (state: Record<string, any>) => {
         ...minMaxInput(state, 'paperThickness', 'paperThickness', EMeasurementUnits.MM),
         ...minMaxInput(state, 'paperLength', 'paperLength', EMeasurementUnits.MM),
         ...minMaxInput(state, 'paperWidth', 'paperWidth', EMeasurementUnits.MM),
+        ...minMaxInput(state, 'mediaWeight', 'mediaWeight', EMeasurementUnits.GRAM),
+
     ]
 }
 

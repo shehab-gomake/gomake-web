@@ -283,7 +283,6 @@ const useMaterials = (isAdmin: boolean) => {
       const filteredHeaders = isAdmin
         ? materialHeaders.filter((x) => x.key !== "stock")
         : materialHeaders.filter((header) => !header.isForAdmin);
-
       return [
         <Checkbox
           onChange={(e, checked) => onChangeRowCheckBox(dataRow.id, checked)}

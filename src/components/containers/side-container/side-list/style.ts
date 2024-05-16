@@ -28,6 +28,7 @@ const useStyle = () => {
       deleteButtonDirection: {
         display: "flex",
         flexDirection: "row-reverse" as "row-reverse",
+        zIndex:0
       },
       menuStyle: {
         elevation: 0,

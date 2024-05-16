@@ -29,5 +29,6 @@ export enum EMeasurementUnits {
     BOOKS_P_MIN = 'booksPerMinute',
     SETS_MIN = 'setsPerMinute',
     COVERS_P_H = "coversPH",
-    PACKAGE_P_H = 'packagePH'
+    PACKAGE_P_H = 'packagePH',
+    CUTS_P_MIN = 'cutsPMIN',
 }

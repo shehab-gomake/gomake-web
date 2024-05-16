@@ -2,13 +2,11 @@ import * as React from "react";
 import TextField from "@mui/material/TextField";
 import { styled } from "@mui/material/styles";
 import Autocomplete from "@mui/material/Autocomplete";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-
-import { DotsLoader } from "@/components/dots-loader/dots-Loader";
-import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
-import { Stack } from "@mui/material";
+import Stack from "@mui/material/Stack";
 
 const StyledAutocomplete: any = styled(Autocomplete)((props: any) => {
   return {
@@ -76,9 +74,9 @@ const GoMakeAutoComplate = ({
   defaultValue,
   disabled,
   multiple = false,
+  arrowColor,
   onChangeTextField,
   PaperComponent,
-  loading,
   withArrow = false,
 }: {
   value?: any;
@@ -97,14 +95,11 @@ const GoMakeAutoComplate = ({
   arrowColor?: any;
   onChangeTextField?: any;
   PaperComponent?: any;
-  loading?: boolean;
   withArrow?: boolean;
 }) => {
   const [selectedOption, setSelectedOption] = useState<any>();
-  const [menuOpen, setMenuOpen] = useState(false);
   const { t } = useTranslation();
   const dir: "rtl" | "ltr" = t("direction");
-
   React.useEffect(() => {
     if (value?.name) {
       setSelectedOption(value);
@@ -112,15 +107,11 @@ const GoMakeAutoComplate = ({
       setSelectedOption(null);
     }
   }, [value]);
-
   return (
     <StyledAutocomplete
       {...(value && { value })}
       {...(selectedOption && { selectedOption })}
       direction={dir}
-      open={menuOpen}
-      onOpen={() => setMenuOpen(true)}
-      onClose={() => setMenuOpen(false)}
       onChange={(e: any, value: any) => {
         onChange(e, value);
         setSelectedOption(value);
@@ -128,55 +119,33 @@ const GoMakeAutoComplate = ({
       style={style}
       options={options}
       disabled={disabled}
-      popupIcon={""}
-      renderInput={(params: any) =>
-        loading ? (
-          <DotsLoader />
-        ) : (
-          <TextField
-            {...params}
-            placeholder={defaultValue?.label || placeholder}
-            onChange={onChangeTextField || params.onChange}
-            InputProps={
-              dir === "rtl" ?
-                {
-                  ...params.InputProps,
-                  startAdornment: withArrow ? (
-                    <React.Fragment>
-                      {params.InputProps.startAdornment}
-                      {menuOpen ? (
-                        <ArrowDropUpIcon /> // Arrow up when menu is open
-                      ) : (
-                        <ArrowDropDownIcon /> // Arrow down when menu is closed
-                      )}
-                    </React.Fragment>
-
-                  ) : <div
-                    style={{ position: "absolute", left: 40, top: 19 }}
+      popupIcon={withArrow ? <ArrowDropDownIcon /> : ""} // Conditionally render popupIcon based on withArrow prop
+      renderInput={(params: any) => (
+        <TextField
+          {...params}
+          placeholder={defaultValue?.label || placeholder}
+          onChange={onChangeTextField || params.onChange}
+          InputProps={
+            dir === "rtl"
+              ? {
+                ...params.InputProps,
+                startAdornment: (
+                  <Stack
+                    display={"flex"}
+                    gap={"1px"}
+                    flexDirection={"row-reverse"}
                   >
-                    {params.InputProps.endAdornment}
-                  </div>,
-                  endAdornment: null,
-                }
-                :
-                {
-                  ...params.InputProps,
-                  startAdornment: null,
-                  endAdornment: withArrow ? (
-                    <React.Fragment>
-                      {params.InputProps.endAdornment}
-                      {menuOpen ? (
-                        <ArrowDropUpIcon /> // Arrow up when menu is open
-                      ) : (
-                        <ArrowDropDownIcon /> // Arrow down when menu is closed
-                      )}
-                    </React.Fragment>
-                  ) : params.InputProps.endAdornment,
-                }
-            }
-          />
-        )
-      }
+                    {params.InputProps.endAdornment.props.children}
+                  </Stack>
+                ),
+                endAdornment: null,
+              }
+              : {
+                ...params.InputProps,
+              }
+          }
+        />
+      )}
       defaultValue={defaultValue}
       autoHighlight={autoHighlight}
       getOptionLabel={getOptionLabel}
@@ -185,11 +154,15 @@ const GoMakeAutoComplate = ({
       disableClearable={disableClearable}
       placeholder="Enter"
       multiple={multiple}
-      isOptionEqualToValue={(option: any, value: any) => option?.id === value?.id}
-      getOptionSelected={(option: any, value: any) => option?.id === value?.id}
+      isOptionEqualToValue={(option: any, value: any) =>
+        option?.id === value?.id
+      }
+      getOptionSelected={(option: any, value: any) => {
+        return option?.id === value?.id;
+      }}
       PaperComponent={PaperComponent}
     />
   );
 };
 
-export { GoMakeAutoComplate, StyledAutocomplete };
+export { GoMakeAutoComplate };
