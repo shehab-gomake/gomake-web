@@ -115,7 +115,7 @@ const SignupCompanyForm = ({ isMobile }: any) => {
                 style={classes.nextButton}
                 disabled={loading}
                 variant={'contained'}>
-                {loading ? `${t('signup.creating')} ${state.domain}` : t('signup.create')}
+                {loading ? `${t('signup.create')} ${state.domain}` : t('signup.create')}
             </PrimaryButton>
         </Stack>
     )
