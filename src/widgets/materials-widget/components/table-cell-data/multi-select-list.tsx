@@ -8,7 +8,7 @@ import { useStyle } from "./style";
 
 interface IProps {
   parameterKey: string;
-  values: string[];
+  values: any;
   id: string;
   isAdmin: boolean;
   options: { label: string; value: string }[];
@@ -38,7 +38,6 @@ const MultiSelectList = ({
       return 0;
     }
   });
-
   const selectedLabels = values
     .map((selectedId) => options.find((opt) => opt.value === selectedId)?.label)
     .filter((label) => label !== null && label !== undefined);
