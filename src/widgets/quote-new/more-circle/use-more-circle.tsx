@@ -45,7 +45,7 @@ const useMoreCircle = ({
   };
 
   const menuList = [
-    quoteItem.productType === 0 && !router.query.isNewCreation && !router.query.Id && {
+    quoteItem.productType === 0 && (documentType === DOCUMENT_TYPE.quote || documentType ===  DOCUMENT_TYPE.order) && {
       name: "edit",
       icon: <EditMenuIcon />,
       onclick: () => onClickEditQuoteItem(quoteItem, documentType),
