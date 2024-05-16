@@ -45,15 +45,15 @@ const ActionMenu = (props: IActionMenuProps) => {
     handleChange,
     deleteProperty,
     addProperty,
-      updateModalCurrency
+    updateModalCurrency
   } = useMaterialsActions(props.isAdmin);
-  const getMaterialActions = ()=>{
-      if(props.isAdmin){
-          return materialActions.filter(x=>x.action !== EMaterialsActions.UpdateIsActive && x.action !== EMaterialsActions.UpdateIsInActive);
-      }else{
-          return materialActions.filter(x=>x.action !== EMaterialsActions.DownLoadExcel &&  x.action !== EMaterialsActions.UploadExcel );
-      }
-     
+  const getMaterialActions = () => {
+    if (props.isAdmin) {
+      return materialActions.filter(x => x.action !== EMaterialsActions.UpdateIsActive && x.action !== EMaterialsActions.UpdateIsInActive);
+    } else {
+      return materialActions.filter(x => x.action !== EMaterialsActions.DownLoadExcel && x.action !== EMaterialsActions.UploadExcel);
+    }
+
   }
   return (
     <>
@@ -126,9 +126,10 @@ const ActionMenu = (props: IActionMenuProps) => {
                   value={updatedValue}
                   options={currencies}
                   onChange={(e, value) => {
-                      updateModalCurrency(value?.value)
+                    updateModalCurrency(value?.value)
                   }}
                   disableClearable
+                  placeholder={t("materials.inputs.chooseCurrency")}
                 />
                 <div style={clasess.priceCheckedContainer}>
                   <Checkbox
@@ -142,7 +143,7 @@ const ActionMenu = (props: IActionMenuProps) => {
                     }}
                     checked={checkedPrice}
                   />
-                  <div style={clasess.secondText}>update prices</div>
+                  <div style={clasess.secondText}>{t("materials.inputs.updatePrices")}</div>
                 </div>
                 {rate && (
                   <GomakeTextInput
@@ -187,7 +188,7 @@ const ActionMenu = (props: IActionMenuProps) => {
                         <GoMakeAutoComplate
                           placeholder={"select property"}
                           getOptionLabel={(option: any) => option.key}
-                          options={materialHeaders.filter(x=>!x.isHideInDuplicate)}
+                          options={materialHeaders.filter(x => !x.isHideInDuplicate)}
                           onChange={(event, value) => {
                             handleChange(index, "key", value);
                           }}
