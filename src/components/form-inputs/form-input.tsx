@@ -56,7 +56,7 @@ const FormInput = ({ input, error, changeState, readonly }: IFormInput) => {
     value: product.id,
     label: `${product.name}`,
   }));
-  console.log("productValue", productValue)
+  const [switchValue, setSwitchValue] = useState(false);
   const getAllProducts = useCallback(async () => {
     await getAllProductsForDropDownList(callApi, setProductValues);
   }, []);
@@ -82,6 +82,8 @@ const FormInput = ({ input, error, changeState, readonly }: IFormInput) => {
   };
 
   const handleSwitchCheck = (event: ChangeEvent<HTMLInputElement>) => {
+    console.log("event", event.target.checked)
+    setSwitchValue(event.target.checked)
     changeState(input.parameterKey, event.target.checked);
   };
 
@@ -234,12 +236,12 @@ const FormInput = ({ input, error, changeState, readonly }: IFormInput) => {
               />
             ) : input.type === "switch" ? (
               <SecondSwitch
-                checked={!!input.value}
+                checked={switchValue}
                 onChange={handleSwitchCheck}
               />
             ) : input.type === "primeSwitch" ? (
               <PrimarySwitch
-                checked={!!input.value}
+                checked={switchValue}
                 onChange={handleSwitchCheck}
               />
             ) : input.type === "color" ? (
