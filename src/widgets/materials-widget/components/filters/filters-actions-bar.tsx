@@ -35,9 +35,11 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
     materialTableFilters,
     setFilterValue,
     getFilterValue,
-    materialCategory
+    materialCategory,
+    filters
   } = useMaterialFilters();
   const { callApi } = useGomakeAxios();
+  const [selectedOption, setSelectedOptions] = useState([])
   const [supplierName, setSupplierName] = useState<{
     value: string;
     label: string;
@@ -71,7 +73,13 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
   useEffect(() => {
     getAllProducts();
   }, []);
+  function filterItemsById(options, values) {
+    // Create a Set from values array for quick lookup
+    const valuesSet = new Set(values?.values);
 
+    // Filter options array by checking if the id exists in the values set
+    return options.filter(option => valuesSet.has(option.id));
+  }
   const productsOptions = productValue?.map((product) => ({
     ...product,
     value: product.id,
@@ -110,19 +118,31 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
             );
           }
           if (key === "machines") {
+            let filtersTemp = filters.find((item) => item.key === key)
+            const filteredItems = filterItemsById(options, filtersTemp)
+            console.log(filteredItems);
+
             return (
               <GoMakeAutoComplate
                 key={materialCategory + "-" + key}
-                onChange={(e, v) =>
+                onChange={(e, v) => {
+                  setSelectedOptions(v)
                   setFilterValue(
                     key,
                     v.map((item) => item.id)
                   )
                 }
+                }
+                value={selectedOption?.map((item: any) => {
+                  return {
+                    label: item?.label,
+                    id: item?.id,
+                  };
+                })}
                 style={{ width: "300px", height: 40, overflow: "scroll" }}
                 options={options}
                 placeholder={key}
-                multiple
+                multiple={true}
               />
             );
           } else {

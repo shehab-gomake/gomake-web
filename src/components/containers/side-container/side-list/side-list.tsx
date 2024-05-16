@@ -1,4 +1,4 @@
-import {ISideListProps} from "@/components/containers/interface";
+import { ISideListProps } from "@/components/containers/interface";
 import {
     Box,
     Divider,
@@ -8,21 +8,21 @@ import {
     ListItemText,
     MenuItem,
 } from "@mui/material";
-import {useStyle} from "@/components/containers/side-container/side-list/style";
-import {styled} from "@mui/material/styles";
-import {useGomakeTheme} from "@/hooks/use-gomake-thme";
-import {SearchInput} from "@/components/containers/search-input";
-import {useCallback, useState} from "react";
-import {usePrintHouseAddMachine} from "@/widgets/machines/hooks/use-print-house-add-machine";
-import {DeleteIcon} from "@/components/icons/delete-icon";
-import {DuplicateIcon} from "@/components/icons/duplicate-icon";
-import {useAdminAddMachine} from "@/widgets/machines/hooks/use-admin-add-machine";
-import {OptionsButton} from "@/components/options-button/options-button";
-import {useTranslation} from "react-i18next";
+import { useStyle } from "@/components/containers/side-container/side-list/style";
+import { styled } from "@mui/material/styles";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { SearchInput } from "@/components/containers/search-input";
+import { useCallback, useState } from "react";
+import { usePrintHouseAddMachine } from "@/widgets/machines/hooks/use-print-house-add-machine";
+import { DeleteIcon } from "@/components/icons/delete-icon";
+import { DuplicateIcon } from "@/components/icons/duplicate-icon";
+import { useAdminAddMachine } from "@/widgets/machines/hooks/use-admin-add-machine";
+import { OptionsButton } from "@/components/options-button/options-button";
+import { useTranslation } from "react-i18next";
 import Stack from "@mui/material/Stack";
 
 const ListButton = styled(ListItemButton)(() => {
-    const {primaryColor} = useGomakeTheme();
+    const { primaryColor } = useGomakeTheme();
     return {
         "&.Mui-selected": {
             backgroundColor: primaryColor(50),
@@ -36,21 +36,21 @@ const ListButton = styled(ListItemButton)(() => {
     };
 });
 const SideList = ({
-                      list,
-                      selectedItem,
-                      onSelect,
-                      title,
-                      quickActions = false,
-                      children,
-                      isAdmin,
-                      isHaveDeleteIcon,
-                  }: ISideListProps) => {
+    list,
+    selectedItem,
+    onSelect,
+    title,
+    quickActions = false,
+    children,
+    isAdmin,
+    isHaveDeleteIcon,
+}: ISideListProps) => {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-    const {classes} = useStyle();
+    const { classes } = useStyle();
     const [filter, setFilter] = useState<string>();
-    const {duplicateMachine, deleteMachine} = usePrintHouseAddMachine();
-    const {adminDuplicateMachine} = useAdminAddMachine();
-    const {t} = useTranslation();
+    const { duplicateMachine, deleteMachine } = usePrintHouseAddMachine();
+    const { adminDuplicateMachine } = useAdminAddMachine();
+    const { t } = useTranslation();
     const handleFilterChange = (event) => {
         setFilter(event.target.value);
     };
@@ -108,7 +108,7 @@ const SideList = ({
                                 style={isHaveDeleteIcon && classes.deleteButtonDirection}
                             >
                                 {!!item.icon && (
-                                    <ListItemIcon sx={{minWidth: 28}}>
+                                    <ListItemIcon sx={{ minWidth: 28 }}>
                                         {item.icon()}
                                     </ListItemIcon>
                                 )}
@@ -119,7 +119,7 @@ const SideList = ({
                                     width={"100%"}
                                 >
                                     <ListItemText
-                                        style={{maxWidth: "fit-content"}}
+                                        style={{ maxWidth: "fit-content" }}
                                         primary={item.text}
                                     />
                                     {selectedItem === item?.value && quickActions && (
@@ -134,7 +134,7 @@ const SideList = ({
                                                     <span>{t("navigationButtons.duplicate")}</span>
                                                 </div>
                                             </MenuItem>
-                                            <Divider/>
+                                            <Divider />
                                             {!isAdmin && (
                                                 <MenuItem onClick={onClickDelete}>
                                                     <div style={classes.menuItem}>
@@ -160,4 +160,4 @@ const SideList = ({
     );
 };
 
-export {SideList};
+export { SideList };
