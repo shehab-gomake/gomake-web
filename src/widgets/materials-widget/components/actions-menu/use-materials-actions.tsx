@@ -62,6 +62,11 @@ const useMaterialsActions = (isAdmin: boolean) => {
     key: string;
   } | null>(actionMenuState);
   const [updatedValue, setUpdatedValue] = useState<string>("");
+  useEffect(() => {
+    if (action === null && updatedValue != "") {
+      setUpdatedValue("")
+    }
+  }, [action, updatedValue])
   const [currentCurrency, setCurrentCurrency] = useState<any>("");
   const [checkedPrice, setCheckedPrice] = useState(false);
   const { rate, setRate, getExchangeRate } = useExchangeRate();
