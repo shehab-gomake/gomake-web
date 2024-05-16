@@ -1,3 +1,5 @@
+@import "react-quill/dist/quill.snow.css";
+
 * {
   box-sizing: border-box;
   padding: 0;
@@ -169,28 +171,28 @@ input::placeholder {
   }
 }
 
-/* Editor styling */
+/*!* Editor styling *!*/
 
-.ql-toolbar.ql-snow {
-  background-color: #EBECFF;
-  border-radius: 12px 12px 0px 0px;
-  border-color: #9695C7 !important;
+/*.ql-toolbar.ql-snow {*/
+/*  background-color: #EBECFF;*/
+/*  border-radius: 12px 12px 0px 0px;*/
+/*  border-color: #9695C7 !important;*/
 
-}
+/*}*/
 
-.ql-toolbar.ql-snow .ql-picker.ql-expanded .ql-picker-options {
-  background-color: #FFFFFF;
-}
+/*.ql-toolbar.ql-snow .ql-picker.ql-expanded .ql-picker-options {*/
+/*  background-color: #FFFFFF;*/
+/*}*/
 
-.ql-toolbar.ql-snow .ql-header-rtl .ql-picker-label {
-  display: flex;
-  flex-direction: row-reverse;
-}
+/*.ql-toolbar.ql-snow .ql-header-rtl .ql-picker-label {*/
+/*  display: flex;*/
+/*  flex-direction: row-reverse;*/
+/*}*/
 
-.ql-toolbar.ql-snow .ql-font-rtl .ql-picker-label {
-  display: flex;
-  flex-direction: row-reverse;
-}
+/*.ql-toolbar.ql-snow .ql-font-rtl .ql-picker-label {*/
+/*  display: flex;*/
+/*  flex-direction: row-reverse;*/
+/*}*/
 
 .scroll-container {
   overflow-x: scroll;
@@ -210,19 +212,19 @@ input::placeholder {
   align-items: center;
 }
 
-/* new editor*/
-.ql-container.ql-snow {
-  border-radius: 0px 0px 12px 12px;
-}
+/*!* new editor*!*/
+/*.ql-container.ql-snow {*/
+/*  border-radius: 0px 0px 12px 12px;*/
+/*}*/
 
-.badgeVariable {
-  background-color: rgb(235, 236, 255);
-}
+/*.badgeVariable {*/
+/*  background-color: rgb(235, 236, 255);*/
+/*}*/
 
-.editorDiv[dir=rtl] .ql-toolbar.ql-snow .ql-picker-label {
-  display: flex;
-  flex-direction: row-reverse;
-}
+/*.editorDiv[dir=rtl] .ql-toolbar.ql-snow .ql-picker-label {*/
+/*  display: flex;*/
+/*  flex-direction: row-reverse;*/
+/*}*/
 
 .react-horizontal-scrolling-menu--inner-wrapper {
   display: flex;
@@ -242,7 +244,7 @@ input::placeholder {
 
 .MuiAutocomplete-input {
   padding: 0 !important;
-  padding-left: 3px !important;
+  padding-left: 20px !important;
   padding-top: 1px !important;
 }
 
@@ -300,4 +302,16 @@ input::placeholder {
   font-size: 16px;
   font-weight: 500;
   max-width: 180px;
+}
+
+df-messenger {
+  z-index: 999;
+  position: fixed;
+  --df-messenger-font-color: #000;
+  --df-messenger-font-family: Google Sans;
+  --df-messenger-chat-background: #f3f6fc;
+  --df-messenger-message-user-background: #d3e3fd;
+  --df-messenger-message-bot-background: #fff;
+  bottom: 16px;
+  right: 16px;
 }

@@ -70,7 +70,7 @@ export default function Reports() {
                                 difference={12}
                                 positive
                                 sx={{ height: '100%' }}
-                                value="$24k"
+                                value="$240k"
                             />
                         </Grid>
                         <Grid
@@ -82,7 +82,7 @@ export default function Reports() {
                                 difference={16}
                                 positive={false}
                                 sx={{ height: '100%' }}
-                                value="1.6k"
+                                value="200"
                             />
                         </Grid>
                         <Grid
@@ -102,7 +102,7 @@ export default function Reports() {
                         >
                             <OverviewTotalProfit
                                 sx={{ height: '100%' }}
-                                value="$15k"
+                                value="$48K"
                             />
                         </Grid>
                         <Grid
@@ -130,7 +130,7 @@ export default function Reports() {
                         >
                             <OverviewTraffic
                                 chartSeries={[63, 15, 22]}
-                                labels={['Desktop', 'Tablet', 'Phone']}
+                                labels={['Wide print', 'Labels', 'Sheets']}
                                 sx={{ height: '100%' }}
                             />
                         </Grid>

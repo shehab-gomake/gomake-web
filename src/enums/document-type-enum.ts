@@ -30,3 +30,14 @@ export enum DocumentsTypeReportList {
     NewBoardMissionNumber,
     SameBoardMissionNumber,
 }
+
+export enum GraphicsTypesParam
+{
+    PriceHour = 1,
+    PriceRegularHour
+}
+export enum SampleTypeParm
+{
+    Full = 1,
+    PrintOnly
+}

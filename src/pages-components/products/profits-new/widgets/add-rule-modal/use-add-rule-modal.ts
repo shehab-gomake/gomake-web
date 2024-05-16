@@ -21,6 +21,7 @@ import { useTranslation } from "react-i18next";
 import { EGroupByEnum } from "@/enums";
 import { agentsCategoriesState } from "@/pages/customers/customer-states";
 import { getAndSetEmployees2 } from "@/services/api-service/customers/employees-api";
+import { getALLMachinesApi } from "@/services/api-service/machines/print-house-machines-colors";
 
 const useAddRuleModal = ({
   typeExceptionSelected,
@@ -31,12 +32,20 @@ const useAddRuleModal = ({
   selectedPricingTableItems,
   selectedProperties,
   getProperitesService,
-  isQuoteWidge
+  isQuoteWidge,
+  filterData
 }) => {
   const GET_MATERIALS_TYPES_URL = "/v1/materials/getMaterialsTypes";
   const { callApi } = useGomakeAxios();
   const {t} = useTranslation();
   const { clients } = usePrintHouseClients();
+  const [openScheduleModal,setOpenScheduleModal]=useState(false)
+  const onCloseScheduleModal =()=>{
+    setOpenScheduleModal(false)
+  }
+  const onOpenScheduleModal =()=>{
+    setOpenScheduleModal(true)
+  }
   const [propertieValue, setPropertieValue] = useState<any>();
   const isDefaultException =
     selectedPricingTableItems?.exceptionType === ETypeException.DEFAULT;
@@ -54,12 +63,12 @@ const useAddRuleModal = ({
   }, [isQuoteWidge]);
   const EStatementCategory = {
     Machine: 1,
-    "Client Type": 2,
-    Client: 3,
-    "Property input": 4,
-    "Property output": 5,
-    Products: 6,
-    Agent:7
+    "Client Type": 3,
+    Client: 4,
+    "Property input": 5,
+    "Property output": 6,
+    Products: 7,
+    Agent:8
    
   };
   const { Outputs } = useOutputs();
@@ -166,6 +175,7 @@ const useAddRuleModal = ({
 
   const [machincesList, setMachincesList] = useState<any>();
   const [allMachincesList, setAllMachincesList] = useState<any>();
+  console.log("allMachincesList",allMachincesList)
   const [productsStateValue, setProductsState] =
     useRecoilState<any>(productsState);
   const [clientTypesStateValue, setClientTypesState] =
@@ -173,13 +183,22 @@ const useAddRuleModal = ({
   const [parametersStateValue, setParametersState] =
     useRecoilState<any>(parametersState);
 
+    const getMachinesList = async () => {
+      const callBack = (res) => {
+          if (res.success) {
+            setAllMachincesList(res.data)
+          }
+      }
+      await getALLMachinesApi(callApi,callBack ).then();
+
+  }
   const getMachincesByActionId = useCallback(async () => {
     if (router.query.actionId) {
       await getAndSetMachincesByActionId(callApi, setMachincesList, {
         actionId: router.query.actionId,
       });
     } else {
-      setAllMachincesList(machines);
+      getMachinesList()
     }
   }, [router, machines]);
   const getProducts = useCallback(async () => {
@@ -199,6 +218,7 @@ const useAddRuleModal = ({
   }, []);
   useEffect(() => {
     getMachincesByActionId();
+    // getMachinesList()
   }, [router, machines]);
 
   const [exceptionType, setExceptionType] = useState<any>();
@@ -376,21 +396,25 @@ const useAddRuleModal = ({
     setToDate(toDate);
   };
   const createForQuoteWidget = useCallback(async () => {
-    if (!fromDate || !toDate) {
-      setSnackbarStateValue({
-        state: true,
-        message: t("properties.fieldsMissing"),
-        type: "error",
-      });
-      return;
-    }
     const res = await callApi(
       EHttpMethod.POST,
       `/v1/erp-service/documents/generate-document-report`,
       {
-        groupBy: propertieValue,
-        fromDate,
-        toDate,
+        filterDTO:{
+          groupBy: propertieValue,
+          statusId: filterData?.statusId,
+          closeStatus: filterData?.closeStatus,
+          productionStatus: filterData?.productionStatus,
+          patternSearch: filterData?.patternSearch,
+          customerId: filterData?.customerId,
+          dateRange:filterData?.dateRange,
+          agentId: filterData?.agentId,
+          minPrice: filterData?.minPrice,
+          maxPrice: filterData?.maxPrice,
+          productList: filterData?.productList,
+          fromDate: filterData?.fromDate,
+          toDate: filterData?.toDate,
+        },
         exceptionConditionProperties: rules.map((item) => {
           return {
             statementValue:
@@ -410,18 +434,23 @@ const useAddRuleModal = ({
       null,
       "blob"
     );
-    const downloadLink = document.createElement('a');
-    const link = URL?.createObjectURL(res.data);
-    downloadLink.href = link
-    downloadLink.download = 'Reports Rule engine.xlsx';
-    downloadLink.click();
-    if (res?.success) {
-      onCloseModal();
-      setRules([initialRule])
-    } else {
+    try{
+      const downloadLink = document.createElement('a');
+      const link = URL?.createObjectURL(res.data);
+      downloadLink.href = link
+      downloadLink.download = 'Reports Rule engine.xlsx';
+      downloadLink.click();
+      if (res?.success) {
+        onCloseModal();
+        setRules([initialRule])
+      } else {
+        alertFaultAdded();
+      }
+    }
+    catch{
       alertFaultAdded();
     }
-  }, [propertieValue, EStatementCategory, rules, fromDate, toDate]);
+  }, [propertieValue, EStatementCategory, rules,filterData]);
   return {
     rules,
     deleteRule,
@@ -455,7 +484,10 @@ const useAddRuleModal = ({
     agentsCategories,
     createForQuoteWidget,
     setRules,
-    initialRule
+    initialRule,
+    openScheduleModal,
+    onCloseScheduleModal,
+    onOpenScheduleModal
   };
 };
 

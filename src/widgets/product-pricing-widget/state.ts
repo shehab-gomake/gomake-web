@@ -19,7 +19,7 @@ export const selectedWorkFlowState = selector<ICalculatedWorkFlow>({
   key: "selectedWorkFlowState",
   get: ({ get }) => {
     const workFlows = get(workFlowsState);
-    return workFlows?.find((flow) => flow.selected);
+    return workFlows?.find((flow) => flow.selected && flow.isCompleteWorkFlow );
   },
 });
 export const jobDetailsState = atom<any[]>({

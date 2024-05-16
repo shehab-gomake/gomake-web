@@ -9,4 +9,14 @@ export const boardMissionsStationsState = atom<IBoardMissionsStation[]>({
 export const stationGeneralInformationState = atom<{name: string; values: string[]}[]>({
     default: [],
     key: 'stationGeneralInformationState'
+});
+
+export const boardMissionsSubWorkFlowsState = atom({
+    key: 'boardMissionsSubWorkFlowsState',
+    default: []
+});
+
+export const isReadyBoardMissionsState = atom<boolean>({
+    key: '',
+    default: false
 })

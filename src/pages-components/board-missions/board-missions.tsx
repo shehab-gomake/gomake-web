@@ -13,6 +13,10 @@ import { GoMakePagination } from "@/components/pagination/gomake-pagination";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import { DuplicateType } from "@/enums";
 import { PrintPackingSlipModal } from "./widgets/print-packing-slip-modal";
+import { IconButton } from "@mui/material";
+import { GoMakeMenu } from "@/components";
+import { InputAdornment } from "@mui/material";
+import TuneIcon from '@mui/icons-material/Tune';
 
 const BoardMissionsListWidget = () => {
   const { classes } = useStyle();
@@ -68,7 +72,13 @@ const BoardMissionsListWidget = () => {
     onClickPrintPackagingSlip,
     openMarkReadyThenPrintModal,
     onCloseMarkReadyThenPrintModal,
-    onOpenMarkReadyThenPrintModal
+    onOpenMarkReadyThenPrintModal,
+    onClickMoveBoardMissionToDone,
+    onClickBackToProcess,
+    handleClick,
+    handleClose,
+    open,
+    anchorEl
   } = useBoardMissions();
 
   useEffect(() => {
@@ -80,70 +90,99 @@ const BoardMissionsListWidget = () => {
       <Stack direction="column" justifyContent="space-between" display="flex" spacing={1} height="100%" >
         <div style={classes.mainContainer}>
           <HeaderTitle title={t("boardMissions.title")} marginTop={1} marginBottom={1} />
-          <div style={classes.filtersContainer}>
-            <div style={classes.selectedFilterContainer}>
-              <div style={classes.statusFilterContainer}>
-                <h3 style={classes.filterLabelStyle}>{t("sales.quote.agent")}</h3>
-                <GoMakeAutoComplate
-                  key={agent?.id}
-                  options={agentsCategories}
-                  style={classes.textInputStyle}
-                  getOptionLabel={(option: any) => option.label}
-                  placeholder={t("sales.quote.ChooseAgent")}
-                  onChange={handleAgentChange}
-                  value={agent}
-                />
-              </div>
-              <div style={classes.statusFilterContainer}>
-                <h3 style={classes.filterLabelStyle}>{t("sales.quote.customer")}</h3>
-                <GoMakeAutoComplate
-                  key={customer?.id}
-                  options={renderOptions()}
-                  onChangeTextField={checkWhatRenderArray}
-                  getOptionLabel={(option: any) => `${option.name}`}
-                  style={classes.textInputStyle}
-                  placeholder={t("sales.quote.chooseCustomer")}
-                  onChange={handleCustomerChange}
-                  value={customer}
-                />
-              </div>
-              <div style={classes.statusFilterContainer}>
-                <h3 style={classes.filterLabelStyle}>{t("boardMissions.productionStatus")}</h3>
-                <GoMakeAutoComplate
-                  key={status?.value}
-                  options={productionStatuses}
-                  style={classes.textInputStyle}
-                  placeholder={t("boardMissions.productionStatus")}
-                  onChange={handleStatusChange}
-                  value={status}
-                />
-              </div>
-              <div style={classes.statusFilterContainer}>
-                <h3 style={classes.filterLabelStyle}>{t("boardMissions.products")}</h3>
-                <GoMakeMultiSelect
-                  onChange={handleMultiSelectChange}
-                  style={classes.textInputStyle}
-                  options={productsList}
-                  values={productIds}
-                  placeholder={t("boardMissions.selectProducts")} />
-              </div>
-              <div style={classes.statusFilterContainer}>
-                <h3 style={classes.filterLabelStyle}>{t("boardMissions.dateRange")}</h3>
-                <GoMakeDatepicker onChange={onSelectDeliveryTimeDates} placeholder={t("boardMissions.chooseDate")} reset={resetDatePicker} />
-              </div>
-              <GomakePrimaryButton
-                style={classes.searchBtnStyle}
-                onClick={handleClickSearch}
-              >{t("sales.quote.search")}
-              </GomakePrimaryButton>
-              <GomakePrimaryButton
-                style={classes.clearBtnStyle}
-                onClick={handleClickClear}
-              >{t("sales.quote.clear")}
-              </GomakePrimaryButton>
-            </div>
-            <SearchInputComponent onChange={onChangeMissionsSearch} value={patternSearch} />
-          </div>
+          <SearchInputComponent
+            searchInputStyle={{ width: "20vw" }}
+            filtersButton={
+              <InputAdornment position="start">
+                <div>
+                  <IconButton onClick={handleClick}>
+                    <TuneIcon />
+                  </IconButton>
+                  <GoMakeMenu handleClose={handleClose} open={open} anchorEl={anchorEl} >
+                    <div style={classes.filtersContainer}>
+                      <div style={classes.selectedFilterContainer}>
+                        <div style={classes.statusFilterContainer}>
+                          <h3 style={classes.filterLabelStyle}>{t("sales.quote.agent")}</h3>
+                          <GoMakeAutoComplate
+                            key={agent?.id}
+                            options={agentsCategories}
+                            style={classes.textInputStyle}
+                            getOptionLabel={(option: any) => option.label}
+                            placeholder={t("sales.quote.ChooseAgent")}
+                            onChange={handleAgentChange}
+                            value={agent}
+                            withArrow={true}
+                          />
+                        </div>
+                        <div style={classes.statusFilterContainer}>
+                          <h3 style={classes.filterLabelStyle}>{t("sales.quote.customer")}</h3>
+                          <GoMakeAutoComplate
+                            key={customer?.id}
+                            options={renderOptions()}
+                            onChangeTextField={checkWhatRenderArray}
+                            getOptionLabel={(option: any) => `${option.name}`}
+                            style={classes.textInputStyle}
+                            placeholder={t("sales.quote.chooseCustomer")}
+                            onChange={handleCustomerChange}
+                            value={customer}
+                            withArrow={true}
+                          />
+                        </div>
+                        <div style={classes.statusFilterContainer}>
+                          <h3 style={classes.filterLabelStyle}>{t("boardMissions.productionStatus")}</h3>
+                          <GoMakeAutoComplate
+                            key={status?.value}
+                            options={productionStatuses}
+                            style={classes.textInputStyle}
+                            placeholder={t("boardMissions.productionStatus")}
+                            onChange={handleStatusChange}
+                            value={status}
+                            withArrow={true}
+                          />
+                        </div>
+                        <div style={classes.statusFilterContainer}>
+                          <h3 style={classes.filterLabelStyle}>{t("boardMissions.products")}</h3>
+                          <GoMakeMultiSelect
+                            onChange={handleMultiSelectChange}
+                            style={classes.textInputStyle}
+                            options={productsList}
+                            values={productIds}
+                            placeholder={t("boardMissions.selectProducts")} />
+                        </div>
+                        <div style={classes.statusFilterContainer}>
+                          <h3 style={classes.filterLabelStyle}>{t("boardMissions.dateRange")}</h3>
+                          <GoMakeDatepicker onChange={onSelectDeliveryTimeDates} placeholder={t("boardMissions.chooseDate")} reset={resetDatePicker} />
+                        </div>
+                      </div>
+
+                      <div style={classes.buttonsFiltersContainer}>
+                        <div style={classes.buttonsFilterContainer}>
+                          <div style={classes.filterLabelStyle} />
+                          <GomakePrimaryButton
+                            style={classes.clearBtnStyle}
+                            onClick={handleClickClear}
+                          >
+                            {t("sales.quote.clear")}
+                          </GomakePrimaryButton>
+                        </div>
+                        <div style={classes.buttonsFilterContainer}>
+                          <div style={classes.filterLabelStyle} />
+                          <GomakePrimaryButton
+                            style={classes.searchBtnStyle}
+                            onClick={handleClickSearch}
+                          >
+                            {t("sales.quote.search")}
+                          </GomakePrimaryButton>
+                        </div>
+                      </div>
+                    </div>
+                  </GoMakeMenu>
+                </div>
+              </InputAdornment>
+            }
+            onChange={onChangeMissionsSearch}
+            value={patternSearch}
+          />
           <PrimaryTable
             stickyFirstCol={false}
             stickyHeader={true}
@@ -199,7 +238,7 @@ const BoardMissionsListWidget = () => {
         cancelBtn={t("modal.no")}
         openModal={openReturnToProdModal}
         onClose={onCloseReturnToProdModal}
-        onClickDelete={() => alert("loading")}
+        onClickDelete={onClickBackToProcess}
       />
       <ThreeOptionsModal
         title={t("boardMissions.printAndMoveToReadyTitle")}

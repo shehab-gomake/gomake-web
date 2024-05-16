@@ -6,6 +6,10 @@ const GET_COMPANY_PROFILE_URL = "/v1/get-print-house-profile";
 const UPDATE_COMPANY_PROFILE_URL = "/v1/update-print-house-profile";
 const UPDATE_COMPANY_LOGO_URL = "/v1/update-print-house-profile-image";
 const GET_COMPANY_LOGIN_LOGO_URL = "/v1/get-print-house-login-logo";
+const CHECk_PRINtT_HOUSE_DOMAIN = "/v1/check-print-house-domain";
+const GET_ALL_CoUNTRIES_URL = "/v1/admins/get-all-countries";
+const CREATE_NEW_PRINT_HOUSE = "/v1/create-new-print-house";
+
 
 const getCompanyProfile: ICallAndSetData = async (callApi, setState) => {
   return await getSetApiData(
@@ -47,10 +51,40 @@ const updateCompanyLogo: ICallAndSetData = async (callApi, setState, data) => {
     data
   );
 };
+const checkPrintHouseDomainApi: ICallAndSetData = async (callApi, setState, data) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    CHECk_PRINtT_HOUSE_DOMAIN,
+    setState,
+    data
+  );
+};
+const getAllCountriesApi: ICallAndSetData = async (callApi, setState) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    GET_ALL_CoUNTRIES_URL,
+    setState
+  );
+};
+
+const createNewPrintHouseApi: ICallAndSetData = async (callApi, setState, data) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    CREATE_NEW_PRINT_HOUSE,
+    setState,
+    data
+  );
+};
 
 export {
   getCompanyProfile,
   updateCompanyProfile,
   updateCompanyLogo,
   getCompanyLoginLogo,
+  checkPrintHouseDomainApi,
+  getAllCountriesApi,
+  createNewPrintHouseApi
 };

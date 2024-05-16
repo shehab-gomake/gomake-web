@@ -18,8 +18,8 @@ const TabsMappingWidget = ({
   setProductTemplate,
   isAdmin,
   getProductById,
-  onDuplicateSection, 
-   onRemoveSection,
+  onDuplicateSection,
+  onRemoveSection,
 }: any) => {
   const { callApi } = useGomakeAxios();
   const {
@@ -29,8 +29,8 @@ const TabsMappingWidget = ({
     alertFaultDelete,
   } = useSnackBar();
   const router = useRouter();
-  
-  
+
+
   const duplicateSectionFunction = useCallback(
     async (item) => {
       const res = await callApi(
@@ -107,7 +107,7 @@ const TabsMappingWidget = ({
         ) : (
           <></>
         )}
-        {item.isCanDeleted ? (
+        {item.isCanDeleted && isAdmin ? (
           <div onClick={() => deleteSection(item)} style={{ marginTop: 5 }}>
             <RemoveIcon />
           </div>

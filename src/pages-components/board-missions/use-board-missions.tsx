@@ -14,12 +14,14 @@ import { DuplicateType } from "@/enums";
 import { DOCUMENT_TYPE } from "../quotes/enums";
 import { GomakeTextInput } from "@/components/text-input/text-input";
 import { useStyle } from "./style";
+import { useRouter } from "next/router";
+import { backToProcessApi, moveBoardMissionToDoneApi } from "@/services/api-service/production-floor/production-floor-endpoints";
 
 const useBoardMissions = () => {
   const { t } = useTranslation();
   const { classes } = useStyle();
   const { callApi } = useGomakeAxios();
-  const { alertFault , alertFaultGetData } = useSnackBar();
+  const { alertFault , alertFaultGetData, alertFaultUpdate, alertSuccessUpdate } = useSnackBar();
   const { data, connectionId } = useBoardMissionsSignalr();
   const { navigate } = useGomakeRouter();
   const [status, setStatus] = useState<{
@@ -41,11 +43,14 @@ const useBoardMissions = () => {
   const [pageSize, setPageSize] = useState(DEFAULT_VALUES.PageSize);
   const { customer, setCustomer, renderOptions, checkWhatRenderArray, handleCustomerChange } = useCustomerDropDownList()
   const { agent, setAgent, agentsCategories, handleAgentChange } = useAgentsList()
+  const router = useRouter()
+  const [selectedMission, setSelectedMission] = useState<any>({})
 
   const handlePageSizeChange = (event) => {
     setPageNumber(1);
     setPageSize(event.target.value);
   };
+
 
   const onSelectDeliveryTimeDates = (fromDate: Date, toDate: Date) => {
     setResetDatePicker(false);
@@ -68,6 +73,7 @@ const useBoardMissions = () => {
     t("boardMissions.dueDate"),
     t("boardMissions.clientName"),
     t("boardMissions.missionNumber"),
+    t("mailingSettings.orderNumber"),
     t("boardMissions.outSourceType"),
     t("boardMissions.quantity"),
     t("boardMissions.costFromOrderItem"),
@@ -103,7 +109,12 @@ const useBoardMissions = () => {
     setResetDatePicker(true);
     pageNumber === 1 ? getAllBoardMissions(true) : setPageNumber(1);
   };
+  useEffect(() => {
+    if (router.query.orderNumber) {
+      setPatternSearch(router.query.orderNumber as string);
+    }
 
+  }, [router])
   const onChangeMissionsSearch = (value: string) => {
     setPatternSearch(value);
   };
@@ -130,6 +141,7 @@ const useBoardMissions = () => {
             GetDateFormat(mission?.dueDate),
             mission?.clientName,
             mission?.number,
+            mission?.orderNumber,
             EWorkSource[mission?.outSourceType],
             mission?.quantity,
             mission?.cost,
@@ -137,7 +149,7 @@ const useBoardMissions = () => {
             mission?.jobName,
             mission?.numberOfBoardMissions,
             mission?.productName,
-            mission?.status && t(`boardMissions.${PStatus[mission?.status]}`),
+            `${mission?.boardMissionStatus?.name} / ${mission?.station?.actionName}`,
             <MoreMenuWidget
               mission={mission}
               onClickDuplicate={onOpenDuplicateModal}
@@ -229,7 +241,6 @@ const useBoardMissions = () => {
   const onCloseDuplicateModal = () => {
     setOpenDuplicateModal(false);
   };
-
   const onOpenDuplicateModal = (mission: any) => {
     setMissionItem(mission);
     setOpenDuplicateModal(true);
@@ -237,9 +248,11 @@ const useBoardMissions = () => {
 
   const [openMarkReadyModal, setOpenMarkReadyModal] = useState<boolean>(false);
   const onCloseMarkReadyModal = () => {
+    setSelectedMission({})
     setOpenMarkReadyModal(false);
   };
-  const onOpenMarkReadyModal = () => {
+  const onOpenMarkReadyModal = (mission) => {
+    setSelectedMission(mission)
     setOpenMarkReadyModal(true);
   };
 
@@ -256,9 +269,11 @@ const useBoardMissions = () => {
 
   const [openReturnToProdModal, setOpenReturnToProdModalModal] = useState<boolean>(false);
   const onCloseReturnToProdModal = () => {
+    setSelectedMission({})
     setOpenReturnToProdModalModal(false);
   };
-  const onOpenReturnToProdModal = () => {
+  const onOpenReturnToProdModal = (mission) => {
+    setSelectedMission(mission)
     setOpenReturnToProdModalModal(true);
   };
 
@@ -353,6 +368,37 @@ const useBoardMissions = () => {
     setOpenModal(true);
   };
 
+  const onClickMoveBoardMissionToDone = async (sendMessage: boolean) => {
+    const callBack = (res) => {
+      if (res?.success) {
+        alertSuccessUpdate()
+      } else {
+        alertFaultUpdate();
+      }
+    };
+    await moveBoardMissionToDoneApi(callApi, callBack, { boardMissionId: selectedMission?.id, sendMessage });
+  };
+  const onClickBackToProcess = async () => {
+    const callBack = (res) => {
+      if (res?.success) {
+        alertSuccessUpdate()
+      } else {
+        alertFaultUpdate();
+      }
+    };
+    await backToProcessApi(callApi, callBack, { boardMissionId: selectedMission?.id, sendMessage: false });
+  };
+
+
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
   return {
     tableHeader,
     agentsCategories,
@@ -392,6 +438,12 @@ const useBoardMissions = () => {
     openReturnToProdModal,
     onCloseReturnToProdModal,
     onClickDuplicateMission,
+    onClickMoveBoardMissionToDone,
+    onClickBackToProcess,
+    handleClick,
+    handleClose,
+    open,
+    anchorEl,
     missionItem,
     openPackagesModal,
     onClosePackagesModal,

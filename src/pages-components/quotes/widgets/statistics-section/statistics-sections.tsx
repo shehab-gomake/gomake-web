@@ -9,7 +9,7 @@ import DoneAllIcon from '@mui/icons-material/DoneAll';
 import DoDisturbAltIcon from '@mui/icons-material/DoDisturbAlt';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import { GoMakeCurrency } from "@/icons/go-make-currency";
-import { EStatisticsLabels, QUOTE_STATUSES } from "../enums";
+import { EStatisticsLabels, QUOTE_STATUSES } from "../../enums";
 
 interface ICard {
     key: string;

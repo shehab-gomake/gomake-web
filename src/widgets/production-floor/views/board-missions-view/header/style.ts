@@ -3,7 +3,7 @@ import {useMemo} from "react";
 import {FONT_FAMILY} from "@/utils/font-family";
 
 const useStyle = () => {
-    const {theme, primaryColor, grayColor} = useGomakeTheme();
+    const {theme, primaryColor, grayColor, secondColor} = useGomakeTheme();
     const classes = useMemo(() => {
         return {
             title: {
@@ -22,6 +22,10 @@ const useStyle = () => {
                 ...FONT_FAMILY.Inter(600, 14),
                 color:  grayColor(700)
             },
+            productType: {
+                ...FONT_FAMILY.Inter(700, 20),
+                color: secondColor(600)
+            }
         };
     }, [theme]);
     return {

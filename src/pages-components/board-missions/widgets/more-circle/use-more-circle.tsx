@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { DuplicateMenuIcon } from "./icons/duplicate-menu";
 import { LoggerIcon } from "./icons/logger";
 import { useTranslation } from "react-i18next";
@@ -6,9 +5,12 @@ import { PDFIcon } from "./icons/pdf-icon";
 import TaskAltOutlinedIcon from '@mui/icons-material/TaskAltOutlined';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import LockOpenOutlinedIcon from '@mui/icons-material/LockOpenOutlined';
-import { PStatus } from "../enums";
 import { useStyle } from "./style";
 import { PackageIcon } from "@/icons/package-icon";
+import { getBoardMissionPDF } from "@/services/api-service/generic-doc/documents-api";
+import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
+import { PStatus } from "../enums";
+
 const useMoreCircle = ({
   mission,
   onClickDuplicate,
@@ -21,8 +23,34 @@ const useMoreCircle = ({
   onOpenModal
 }: any) => {
 
-  const { t } = useTranslation(); 
+  const { t } = useTranslation();
   const { classes } = useStyle();
+  const { callApi } = useGomakeAxios();
+  const { alertFaultGetData, } = useSnackBar();
+  const { navigate } = useGomakeRouter();
+  const downloadPdf = (url) => {
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.target = "_blank";
+    anchor.addEventListener("click", () => {
+      setTimeout(() => {
+        anchor.remove();
+      }, 100);
+    });
+    anchor.click();
+  };
+
+  const onClickPrint = async (mission) => {
+    const callBack = (res) => {
+      if (res?.success) {
+        const pdfLink = res.data;
+        downloadPdf(pdfLink)
+      } else {
+        alertFaultGetData();
+      }
+    };
+    await getBoardMissionPDF(callApi, callBack, { boardMissionId: mission?.id });
+  };
 
   const menuList = [
     {
@@ -56,19 +84,19 @@ const useMoreCircle = ({
       condition: true,
       name: "home.duplicate",
       icon: <DuplicateMenuIcon />,
-      onclick: ()=>onClickDuplicate(mission),
+      onclick: () => onClickDuplicate(mission),
     },
     {
       condition: mission?.status === PStatus.IN_PROCESS,
       name: "boardMissions.markAsReady",
       icon: <TaskAltOutlinedIcon style={classes.iconStyle} />,
-      onclick: onClickMarksAsDone,
+      onclick: () => onClickMarksAsDone(mission),
     },
     {
       condition: mission?.status === PStatus.DONE,
       name: "boardMissions.returnToProduction",
       icon: <LockOpenOutlinedIcon style={classes.iconStyle} />,
-      onclick: onClickReturnToProduction,
+      onclick: () => onClickReturnToProduction(mission),
     },
     {
       condition: true,

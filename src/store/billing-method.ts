@@ -14,3 +14,8 @@ export const billingMethodState = atom({
   key: "billingMethodState",
   default: billingMethodSelector,
 });
+
+export const listEmployees = atom({
+  key: "listEmployees",
+  default: [],
+});

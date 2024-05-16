@@ -17,9 +17,8 @@ import {
 } from "@/widgets/product-pricing-widget/components/outsource-suppliers/out-source-suppliers-widget";
 import { useTranslation } from "react-i18next";
 import { useStyle } from "@/widgets/product-pricing-widget/style";
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import {
-  calculationProgressState,
   currentProductItemValueDraftId,
   currentProductItemValuePriceState,
   currentProductItemValueState, currentProductItemValueTotalWorkFlowsState,
@@ -31,15 +30,15 @@ import {
   updateProductItemValueOutsource
 } from "@/services/api-service/product-item-value-draft/product-item-draft-endpoints";
 import { useGomakeAxios } from "@/hooks";
-import { currentCalculationConnectionId, isLoadgingState } from "@/store";
+import { currentCalculationConnectionId, viewPricingTab } from "@/store";
 import { Stack } from "@mui/material";
 
 const PricingWidget = ({
   workFlows,
   getOutSourcingSuppliers,
 }: IPricingWidgetProps) => {
-  const [view, setView] = useState<EPricingViews>(
-    EPricingViews.SELECTED_WORKFLOW
+  const [view, setView] = useRecoilState<EPricingViews>(
+    viewPricingTab
   );
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
@@ -110,14 +109,54 @@ const PricingWidget = ({
     if (view === EPricingViews.OUTSOURCE_WORKFLOW || selectedWorkFlow?.actions?.some(
       (action) => action.source === EWorkSource.OUT
     )) {
-      // setCurrentProductItemValueTotalPrice(null)
       setTimeout(() => {
         setCurrentProductItemValueTotalPrice(null)
 
       }, 2000);
     }
   }, [view, selectedWorkFlow])
+  const [tabs, setTabs] = useState([]);
+  const reorderedTabs = [
+    ...(tabs.find(tab => tab.key === "general") ? [tabs.find(tab => tab.key === "general")] : []), // "Flows Pending" tab if exists
+    ...tabs.filter(tab => tab.key !== "general") // Other tabs
+  ];
+  const [selectedTab, setSelectedTab] = useState("")
+  const [filterWorkFlow, setFilterWorkFlow] = useState()
 
+  const sortedArray = workFlows.slice().sort((a, b) => {
+    if (a.selected === b.selected) {
+      return 0;
+    } else if (a.selected) {
+      return -1;
+    } else {
+      return 1;
+    }
+  });
+
+  useEffect(() => {
+    const newTabs = workFlows.reduce((accumulator, currentItem) => {
+      if (currentItem.isCompleteWorkFlow === false && currentItem.productType !== null) {
+        const existingTab = accumulator.find(tab => tab.tabName === currentItem.sectionName && tab.key === currentItem.productType);
+        if (!existingTab) {
+          accumulator.push({ tabName: currentItem.sectionName, key: currentItem.productType });
+        }
+      } else if (currentItem.isCompleteWorkFlow === false && currentItem.productType === null) {
+        const existingTab = accumulator.find(tab => tab.tabName === t("pricingWidget.flowsPending") && tab.key === "general");
+        if (!existingTab) {
+          accumulator.push({ tabName: t("pricingWidget.flowsPending"), key: "general" });
+        }
+      }
+      else if (currentItem.isCompleteWorkFlow === true && currentItem.productType === null && currentItem.subWorkFlows.length === 0) {
+        const existingTab = accumulator.find(tab => tab.tabName === t("pricingWidget.flows") && tab.key === "other");
+        if (!existingTab) {
+          accumulator.push({ tabName: t("pricingWidget.flows"), key: "other" });
+        }
+      }
+      return accumulator;
+    }, []);
+
+    setTabs(newTabs);
+  }, [workFlows]);
   return (
     <Stack gap={"16px"} width={"100%"}>
       <Stack direction={"row"} justifyContent={"space-between"}>
@@ -131,20 +170,44 @@ const PricingWidget = ({
                   ? "contained"
                   : "outlined"
               }
+
             >
               {t("pricingWidget.selected")}
             </PrimaryButton>
-            <PrimaryButton
-              data-tour={'allWorkflowsBtn'}
-              onClick={() => setView(EPricingViews.OTHERS_WORKFLOWS)}
-              sx={classes.button}
-              variant={
-                view === EPricingViews.OTHERS_WORKFLOWS
-                  ? "contained"
-                  : "outlined"
-              }
-            >{`${t("pricingWidget.others")} (${currentProductItemValueTotalWorkFlows
-              })`}</PrimaryButton>
+            {reorderedTabs.map((tab, index) => {
+              return (
+                <PrimaryButton
+                  data-tour={'allWorkflowsBtn'}
+                  onClick={() => {
+                    setView(EPricingViews.OTHERS_WORKFLOWS)
+                    setSelectedTab(tab.key)
+                    setFilterWorkFlow(tab.key)
+                  }}
+                  sx={classes.button}
+                  variant={
+                    view === EPricingViews.OTHERS_WORKFLOWS && selectedTab === tab.key
+                      ? "contained"
+                      : "outlined"
+                  }
+                >{tab?.tabName}{" "}
+                  ({
+                    workFlows.filter(flow => {
+                      if (flow.productType !== null) {
+                        return flow.productType === tab?.key;
+                      } else {
+                        if (flow.isCompleteWorkFlow === true && flow.subWorkFlows.length === 0) {
+                          return tab?.key === "other";
+                        } else if (flow.isCompleteWorkFlow === false) {
+                          return tab?.key === "general";
+                        }
+
+                      }
+                    }).length
+                  })
+                </PrimaryButton>
+              )
+            })}
+
           </ButtonGroup>
         ) : (
           <div />
@@ -180,6 +243,7 @@ const PricingWidget = ({
         />
       )}
       <Divider />
+
       {selectedWorkFlow && view === EPricingViews.SELECTED_WORKFLOW && (
         <div data-tour={'actions-container'}>
           <SubWorkFlowsComponent
@@ -195,9 +259,19 @@ const PricingWidget = ({
       {workFlows && view === EPricingViews.OTHERS_WORKFLOWS && (
         <div data-tour={'allWorkflowsContainer'}>
           <WorkFlowsComponent
-
             showSelected={() => setView(EPricingViews.SELECTED_WORKFLOW)}
-            workflows={workFlows}
+            workflows={sortedArray.filter(flow => {
+              if (flow.productType !== null) {
+                return flow.productType === filterWorkFlow;
+              } else {
+                if (flow.isCompleteWorkFlow === true) {
+                  return filterWorkFlow === "other";
+                } else {
+                  return filterWorkFlow === "general";
+                }
+
+              }
+            })}
           />
         </div>
       )}

@@ -27,6 +27,7 @@ const CHANGE_DOCUMENT_CLIENT_URL =
   "/v1/erp-service/documents/change-document-client";
 const GET_IF_Exist_CART = "/v1/erp-service/documents/get-exist-document";
 const GET_DOCUMENT_PDF_URL = "/v1/erp-service/documents/get-document-pdf";
+const GET_BOARD_MISSION_PDF = "/v1/erp-service/board-missions-tables/export-board-mission-pdf";
 const UPDATE_PURCHASE_NUMBER_URL =
   "/v1/erp-service/documents/update-purchase-number";
 const ADD_DELIVERY_URL = "/v1/erp-service/documents/add-delivery"; 
@@ -555,6 +556,20 @@ const getClientDocumentsApi: ICallAndSetData = async (
   );
 };
 
+const getBoardMissionPDF: ICallAndSetData = async (
+  callApi,
+  setState,
+  data: { boardMissionId: string }
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    GET_BOARD_MISSION_PDF,
+    setState,
+    data
+  );
+};
+
 export {
   getDocumentApi,
   getAllDocumentsApi,
@@ -593,5 +608,6 @@ export {
   updateDocumentCommentsApi,
   getClientDocumentsApi,
   getAllDocumentLogsApi,
-  addCustomerContactApi
+  addCustomerContactApi,
+  getBoardMissionPDF
 };

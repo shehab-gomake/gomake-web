@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { DELIVERY_NOTE_STATUSES, LogActionType, QUOTE_STATUSES } from "./enums";
 import { MoreMenuWidget } from "./more-circle";
-import { getAndSetAllCustomers } from "@/services/hooks";
+import { getAllProductsForDropDownList, getAndSetAllCustomers } from "@/services/hooks";
 import { useRecoilState, useSetRecoilState, useRecoilValue } from "recoil";
 import { agentsCategoriesState } from "@/pages/customers/customer-states";
 import { getAndSetEmployees2 } from "@/services/api-service/customers/employees-api";
@@ -25,6 +25,8 @@ import { useQuoteGetData } from "../quote-new/use-quote-get-data";
 import { useStyle } from "./style";
 import { DEFAULT_VALUES } from "@/pages/customers/enums";
 import { getAllReceiptsApi, getReceiptPdfApi } from "@/services/api-service/generic-doc/receipts-api";
+import { renderDocumentTypeForSourceDocumentNumber, renderURLDocumentType } from "@/widgets/settings-documenting/documentDesign/enums/document-type";
+import { AStatus, PStatus } from "../board-missions/widgets/enums";
 
 const useQuotes = (docType: DOCUMENT_TYPE) => {
   const { t } = useTranslation();
@@ -174,12 +176,18 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
               GetDateFormat(quote?.creationDate),
               quote?.number,
               quote?.orderNumber,
+              // quote?.sourceDocumentNumber?.map((item, index) => {
+              //   return (
+              //     <span key={index}>{renderDocumentTypeForSourceDocumentNumber(item?.sourceDocumentType)}:{item?.documentNumber}<br /></span>
+
+              //   )
+              // }),
               quote?.supplierName,
               quote?.clientName,
               quote?.itemsNumber,
               quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
               quote?.notes,
-              _renderStatus(quote, t , navigate),
+              _renderStatus(quote, t, navigate),
               <MoreMenuWidget
                 quote={quote}
                 documentType={docType}
@@ -196,6 +204,12 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
               quote?.number,
               quote?.invoiceNumber,
               purchaseOrderNumbers,
+              // quote?.sourceDocumentNumber?.map((item, index) => {
+              //   return (
+              //     <span key={index}>{renderDocumentTypeForSourceDocumentNumber(item?.sourceDocumentType)}:{item?.documentNumber}<br /></span>
+
+              //   )
+              // }),
               quote?.customerName,
               quote?.itemsNumber,
               quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
@@ -210,12 +224,50 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
               />,
             ];
           }
+          else if (docType === DOCUMENT_TYPE.quote) {
+            return [
+              GetDateFormat(quote?.createdDate),
+              quote?.customerName,
+              quote?.agentName,
+              quote?.number,
+              quote?.worksNames,
+              quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
+              quote?.notes,
+              _renderStatus(quote, t, navigate),
+              <MoreMenuWidget
+                quote={quote}
+                documentType={docType}
+                onClickOpenModal={onClickOpenModal}
+                onClickPdf={onClickQuotePdf}
+                onClickDuplicate={onClickQuoteDuplicate}
+                onClickLoggers={onClickDocumentLogs}
+
+              />,
+            ];
+          }
           else {
             return [
               GetDateFormat(quote?.createdDate),
               quote?.customerName,
               quote?.agentName,
               quote?.number,
+              quote?.sourceDocumentNumber?.map((item, index) => {
+                return (
+                  <>
+                    {
+                      docType === DOCUMENT_TYPE.order ?
+                        <span key={index}>{item?.documentNumber}
+                          <br />
+                        </span>
+                        :
+                        <span key={index} onClick={() => navigate(renderURLDocumentType(item?.sourceDocumentType, item.documentId))} style={{ cursor: "pointer" }}>
+                          {renderDocumentTypeForSourceDocumentNumber(item?.sourceDocumentType)}:{item?.documentNumber}
+                          <br />
+                        </span>
+                    }
+                  </>
+                )
+              }),
               quote?.worksNames,
               quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
               quote?.notes,
@@ -240,7 +292,8 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
           _renderPaymentType(quote?.paymentType),
           quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
           quote?.notes,
-          _renderDocumentStatus(quote?.status, t),
+          //_renderDocumentStatus(quote?.status, t),
+          quote?.status,
           <MoreMenuWidget
             quote={quote}
             documentType={docType}
@@ -262,8 +315,9 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
         patternSearch: finalPatternSearch,
         fromDate: fromDate && GetDateFormat(fromDate),
         toDate: toDate && GetDateFormat(toDate),
-
-        status: quoteStatusId?.value || statusId?.value,
+        status: statusId?.value,
+        minPrice: minPrice,
+        maxPrice: maxPrice,
         model: {
           pageNumber: page,
           pageSize: pageSize,
@@ -279,10 +333,17 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
             pageSize: pageSize,
           },
           statusId: quoteStatusId?.value || statusId?.value,
+          closeStatus: accountingStatus?.value,
+          productionStatus: productionStatus?.value,
           patternSearch: finalPatternSearch,
           customerId: customerId?.id,
           dateRange,
           agentId: agentId?.id,
+          minPrice: minPrice,
+          maxPrice: maxPrice,
+          productList: productIds,
+          fromDate: fromDate && GetDateFormat(fromDate),
+          toDate: toDate && GetDateFormat(toDate),
         },
       });
     }
@@ -325,7 +386,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
               quote?.itemsNumber,
               quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
               quote?.notes,
-              _renderStatus(quote, t , navigate),
+              _renderStatus(quote, t, navigate),
               <MoreMenuWidget
                 quote={quote}
                 documentType={docType}
@@ -335,7 +396,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
               />,
             ];
           }
-          else {
+          else if (docType === DOCUMENT_TYPE.quote) {
             return [
               GetDateFormat(quote?.createdDate),
               quote?.customerName,
@@ -344,7 +405,45 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
               quote?.worksNames,
               quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
               quote?.notes,
-              _renderStatus(quote, t , navigate),
+              _renderStatus(quote, t, navigate),
+              <MoreMenuWidget
+                quote={quote}
+                documentType={docType}
+                onClickOpenModal={onClickOpenModal}
+                onClickPdf={onClickQuotePdf}
+                onClickDuplicate={onClickQuoteDuplicate}
+                onClickLoggers={onClickDocumentLogs}
+
+              />,
+            ];
+          }
+          else {
+            return [
+              GetDateFormat(quote?.createdDate),
+              quote?.customerName,
+              quote?.agentName,
+              quote?.number,
+              quote?.sourceDocumentNumber?.map((item, index) => {
+                return (
+                  <>
+                    {
+                      docType === DOCUMENT_TYPE.order ?
+                        <span key={index}>{item?.documentNumber}
+                          <br />
+                        </span>
+                        :
+                        <span key={index} onClick={() => navigate(renderURLDocumentType(item?.sourceDocumentType, item.documentId))} style={{ cursor: "pointer" }}>
+                          {renderDocumentTypeForSourceDocumentNumber(item?.sourceDocumentType)}:{item?.documentNumber}
+                          <br />
+                        </span>
+                    }
+                  </>
+                )
+              }),
+              quote?.worksNames,
+              quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
+              quote?.notes,
+              _renderStatus(quote, t, navigate),
               <MoreMenuWidget
                 quote={quote}
                 documentType={docType}
@@ -365,7 +464,8 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
           _renderPaymentType(quote?.paymentType),
           quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
           quote?.notes,
-          _renderDocumentStatus(quote?.status, t),
+          // _renderDocumentStatus(quote?.status, t),
+          t(quote?.status),
           <MoreMenuWidget
             quote={quote}
             documentType={docType}
@@ -413,17 +513,23 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     setAgentId(null);
     setCustomerId(null);
     setStatusId(null);
+    setAccountingStatus(null);
+    setProductionStatus(null);
     setFromDate(null);
     setToDate(null);
     setResetDatePicker(true);
     getAllQuotesInitial();
     setPage(1);
+    setMinPrice("");
+    setMaxPrice("");
+    setProductIds([]);
   };
 
   const tableHeaders = docType === DOCUMENT_TYPE.purchaseOrder ? [
     t("sales.quote.creationDate"),
     t("sales.quote.purchaseOrderNumber"),
     t("sales.quote.orderNumber"),
+    // t("sales.quote.sourceDocument"),
     t("sales.quote.supplierName"),
     t("sales.quote.client"),
     t("sales.quote.itemsNumber"),
@@ -436,8 +542,19 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     t("sales.quote.purchaseInvoiceNumber"),
     t("sales.quote.invoiceNumber"),
     t("sales.quote.purchaseOrderNumber"),
+    // t("sales.quote.sourceDocument"),
     t("sales.quote.supplierName"),
     t("sales.quote.itemsNumber"),
+    t("sales.quote.totalPrice"),
+    t("sales.quote.notes"),
+    t("sales.quote.status"),
+    t("sales.quote.more"),
+  ] : docType === DOCUMENT_TYPE.quote ? [
+    t("sales.quote.createdDate"),
+    t("sales.quote.client"),
+    t("sales.quote.agent"),
+    t("sales.quote.quoteNumber"),
+    t("sales.quote.worksName"),
     t("sales.quote.totalPrice"),
     t("sales.quote.notes"),
     t("sales.quote.status"),
@@ -448,8 +565,6 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     t("sales.quote.agent"),
     (() => {
       switch (docType) {
-        case DOCUMENT_TYPE.quote:
-          return t("sales.quote.quoteNumber");
         case DOCUMENT_TYPE.order:
           return t("sales.quote.orderNumber");
         case DOCUMENT_TYPE.deliveryNote:
@@ -464,12 +579,13 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
           return t("sales.quote.receiptNumber");
       }
     })(),
+    docType === DOCUMENT_TYPE.order ? t("sales.quote.quoteNumber") : docType === DOCUMENT_TYPE.receipt ? null : t("sales.quote.sourceDocument"),
     docType === DOCUMENT_TYPE.receipt ? t("sales.quote.paymentMethod") : t("sales.quote.worksName"),
     t("sales.quote.totalPrice"),
     t("sales.quote.notes"),
     t("sales.quote.status"),
     t("sales.quote.more"),
-  ];
+  ].filter(Boolean);
 
   const logsTableHeaders = [
     t("sales.quote.actionDate"),
@@ -643,10 +759,22 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
   };
 
   const onClickQuotePdf = async (id: string) => {
+    const downloadPdf = (url) => {
+      const anchor = document.createElement("a");
+      anchor.href = url;
+      anchor.target = "_blank";
+      anchor.addEventListener("click", () => {
+        setTimeout(() => {
+          anchor.remove();
+        }, 100);
+      });
+      anchor.click();
+    };
     const callBack = (res) => {
       if (res?.success) {
         const pdfLink = res.data;
-        window.open(pdfLink, "_blank");
+        // window.open(pdfLink, "_blank");
+        downloadPdf(pdfLink);
       } else {
         alertFaultGetData();
       }
@@ -663,6 +791,39 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
       });
     }
   };
+
+  // const onClickQuotePdf = useCallback(async (id: string) => {
+  //   let requestBody;
+
+  //   if (isReceipt) {
+  //     requestBody = {
+  //       receiptId: id,
+  //     };
+  //   } else {
+  //     requestBody = {
+  //       documentId: id,
+  //       documentType: docType,
+  //     };
+  //   }
+  //   const res = await callApi(
+  //     EHttpMethod.POST,
+  //     `/v1/erp-service/documents/get-document-pdf`,
+  //     requestBody,
+  //     true,
+  //     null,
+  //     "blob"
+  //   );
+  //   const downloadLink = document.createElement('a');
+  //   const link = URL?.createObjectURL(res.data);
+  //   downloadLink.href = link
+  //   downloadLink.download = 'Reports Rule engine.xlsx';
+  //   downloadLink.click();
+  //   if (res?.success) {
+
+  //   } else {
+  //     alertFaultGetData();
+  //   }
+  // }, [isReceipt]);
 
   const onClickQuoteDuplicate = async (id: string) => {
     const callBack = (res) => {
@@ -720,7 +881,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
                   : classes.closeBtnStyle
               }
             >
-              {_renderStatus(document, t , navigate)}
+              {_renderStatus(document, t, navigate)}
             </h2>
           </div>,
           document?.notes,
@@ -921,6 +1082,105 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
   }, [selectedClient]);
 
 
+  //////////////////////////////////////////////////////////////////
+  const [productsList, setProductsList] = useState([]);
+  const [productIds, setProductIds] = useState<string[]>([]);
+  const [minPrice, setMinPrice] = useState('');
+  const [maxPrice, setMaxPrice] = useState('');
+
+
+  const getAllProducts = useCallback(async () => {
+    const products = await getAllProductsForDropDownList(
+      callApi,
+      setProductsList
+    );
+    setProductsList(
+      products.map(({ id, name }) => ({ label: name, value: id }))
+    );
+  }, []);
+
+  const handleMinPriceChange = (e) => {
+    setMinPrice(e.target.value);
+  };
+
+  const handleMaxPriceChange = (e) => {
+    setMaxPrice(e.target.value);
+  };
+
+  const handleMultiSelectChange = (newValues: string[]) => {
+    setProductIds(newValues);
+  };
+
+  const productionStatuses = [
+    { label: t("boardMissions.inProduction"), value: PStatus.IN_PROCESS },
+    { label: t("boardMissions.done"), value: PStatus.DONE },
+  ];
+
+  const accountingStatuses = [
+    { label: t("sales.quote.open"), value: AStatus.OPEN },
+    { label: t("sales.quote.partialClosed"), value: AStatus.PARTIAL_CLOSED },
+    { label: t("sales.quote.closed"), value: AStatus.CLOSED },
+  ];
+
+  const [accountingStatus, setAccountingStatus] = useState<{
+    label: string;
+    value: PStatus;
+  } | null>();
+
+  const [productionStatus, setProductionStatus] = useState<{
+    label: string;
+    value: PStatus;
+  } | null>();
+
+  const handleProductionStatusChange = (e: any, value: any) => {
+    setProductionStatus(value);
+  };
+
+  const handleAccountingStatusChange = (e: any, value: any) => {
+    setAccountingStatus(value);
+  };
+  const [filterData, setFilterData] = useState({});
+
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+  const removeEmptyValues = (obj) => {
+    return Object.fromEntries(
+      Object.entries(obj).filter(([_, value]) =>
+        value !== undefined &&
+        value !== null &&
+        value !== "" &&
+        !(Array.isArray(value) && value.length === 0)
+      )
+    );
+  };
+  useEffect(() => {
+    const filteredData = {
+      statusId: quoteStatusId?.value || statusId?.value,
+      closeStatus: accountingStatus?.value && accountingStatus?.value,
+      productionStatus: productionStatus?.value && productionStatus?.value,
+      patternSearch: finalPatternSearch && finalPatternSearch,
+      customerId: customerId?.id && customerId?.id,
+      dateRange: dateRange && dateRange,
+      agentId: agentId?.id && agentId?.id,
+      minPrice: minPrice && minPrice,
+      maxPrice: maxPrice && maxPrice,
+      productList: productIds && productIds,
+      fromDate: fromDate,
+      toDate: toDate,
+    };
+
+    const filteredDataWithoutEmptyValues = removeEmptyValues(filteredData);
+
+    if (JSON.stringify(filteredDataWithoutEmptyValues) !== JSON.stringify(filterData)) {
+      setFilterData(filteredDataWithoutEmptyValues);
+    }
+  }, [quoteStatusId, statusId, accountingStatus, productionStatus, finalPatternSearch, customerId, dateRange, agentId, minPrice, maxPrice, productIds, fromDate, toDate]);
   return {
     t,
     patternSearch,
@@ -978,7 +1238,26 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     onSelectDateRange,
     onClickSearchLogsFilter,
     onClickClearLogsFilter,
-    documentLogsData
+    documentLogsData,
+    handleMaxPriceChange,
+    handleMinPriceChange,
+    minPrice,
+    maxPrice,
+    handleMultiSelectChange,
+    productIds,
+    productsList,
+    getAllProducts,
+    accountingStatuses,
+    accountingStatus,
+    productionStatuses,
+    productionStatus,
+    handleProductionStatusChange,
+    handleAccountingStatusChange,
+    handleClick,
+    handleClose,
+    open,
+    anchorEl,
+    filterData
   };
 };
 

@@ -7,7 +7,7 @@ import { ContactNewWidget } from "@/widgets/quote-new/contact-widget";
 import { QuoteForPriceTable } from "@/widgets/quote-new/quote-table";
 import { WriteCommentComp } from "@/widgets/quote-new/write-comment";
 import { DateFormatterDDMMYYYY } from "@/utils/adapter";
-import { GoMakeDeleteModal } from "@/components";
+import { GoMakeAlertModal, GoMakeDeleteModal } from "@/components";
 import { HeaderTitle } from "@/widgets";
 import { SettingNewIcon } from "@/icons";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
@@ -31,6 +31,8 @@ import { StepType, useTour } from "@reactour/tour";
 import { useGoMakeTour } from "@/hooks/use-go-make-tour";
 import { OtherReasonModal } from "@/widgets/quote-new/total-price-and-vat/other-reason-modal";
 import { QuoteStatuses } from "@/widgets/quote-new/total-price-and-vat/enums";
+import { LoginTaxesUrl, fetchTaxesAuthority } from "@/utils/taxes-authority";
+import { printHouseProfile } from "@/store/print-house-profile";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -39,9 +41,13 @@ interface IProps {
 
 const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProps) => {
   const { classes } = useStyle(isQuoteConfirmation);
+  const router = useRouter();
   const quoteItemValue = useRecoilValue<any>(quoteItemState);
   const quoteConfirm = useRecoilValue<any>(quoteConfirmationState);
+  const printHouseProfileState = useRecoilValue<any>(printHouseProfile);
   const quoteState = isQuoteConfirmation ? quoteConfirm : quoteItemValue;
+  const { resetReceiptState } = usePaymentsTable();
+  const [docNumber, setDocNumber] = useState(quoteState?.number)
   const {
     selectDate,
     isUpdateBusinessName,
@@ -168,15 +174,11 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
     selectConfirmBusiness,
     handleSaveBtnClickForDocument,
     getAllClientContacts,
-    copyFromDocumentType
+    copyFromDocumentType,
+    openLoginModal,
+    onClickClosLoginModal,
+    onClickOpenLoginModal
   } = useQuoteNew({ docType: documentType, isQuoteConfirmation: isQuoteConfirmation });
-  const { resetReceiptState } = usePaymentsTable();
-  const router = useRouter();
-
-  useEffect(() => {
-    if (documentType === DOCUMENT_TYPE.receipt)
-      resetReceiptState();
-  }, [])
 
   const quoteSteps: StepType[] = [
     {
@@ -208,13 +210,33 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
       }
     },
   ]
-  const [docNumber, setDocNumber] = useState(quoteState?.number)
+  const { } = useGoMakeTour(quoteSteps, []);
+
+
+  useEffect(() => {
+    if (documentType === DOCUMENT_TYPE.invoice || documentType === DOCUMENT_TYPE.invoiceRefund) {
+      const fetchTaxesData = async () => {
+        try {
+          const taxesData = await fetchTaxesAuthority(printHouseProfileState?.business_ID);
+          if (taxesData?.statusCode === 404) {
+            onClickOpenLoginModal();
+          }
+        } catch (error) {
+          console.error("Error fetching taxes data:", error);
+        }
+      };
+      fetchTaxesData();
+    }
+  }, []);
+
+  useEffect(() => {
+    if (documentType === DOCUMENT_TYPE.receipt)
+      resetReceiptState();
+  }, [])
 
   useEffect(() => {
     setDocNumber(quoteState?.number)
   }, [quoteState?.number, router, quoteState, isQuoteConfirmation])
-
-  const { } = useGoMakeTour(quoteSteps, []);
 
   return (
     <>
@@ -495,6 +517,17 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
         onClickDelete={() =>
           updateCancelQuote(QuoteStatuses.CANCELED_DELIVERY_TIME)
         }
+      />
+      <GoMakeAlertModal
+        openModal={openLoginModal}
+        onClose={onClickClosLoginModal}
+        subTitle={t("No login!!!!")}
+        yesBtn={"login.login"}
+        withIcon={true}
+        onClickConfirm={() => {
+          window.open(LoginTaxesUrl + printHouseProfileState?.business_ID, "_blank");
+          onClickClosLoginModal();
+        }}
       />
     </>
   );

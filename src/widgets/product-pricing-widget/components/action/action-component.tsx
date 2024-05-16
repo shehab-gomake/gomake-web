@@ -24,7 +24,7 @@ import {
   currentProductItemValueState,
   outsourceSuppliersState,
 } from "@/widgets/product-pricing-widget/state";
-import { GoMakeAutoComplate } from "@/components";
+import { GoMakeAutoComplate, GoMakeDeleteModal, GoMakeModal } from "@/components";
 import Button from "@mui/material/Button";
 import { useTranslation } from "react-i18next";
 import { PrintImageComponent } from "@/widgets/product-pricing-widget/components/print-image/print-image-component";
@@ -37,6 +37,7 @@ interface IActionContainerComponentProps extends IWorkFlowAction {
   delay?: number;
   workFlowId?: string;
   productType: string | null;
+
 }
 
 interface IActionsComponentProps {
@@ -126,7 +127,7 @@ const Actions = ({
           };
           return (
             <ActionContainerComponent
-              key={action.id} // Make sure to add a unique key to each component
+              key={action.id}
               data-toure={'action'}
               productType={productType}
               workFlowId={workFlowId}
@@ -137,7 +138,7 @@ const Actions = ({
         } else {
           return (
             <ActionContainerComponent
-              key={action.id} // Make sure to add a unique key to each component
+              key={action.id}
               data-toure={'action'}
               productType={productType}
               workFlowId={workFlowId}
@@ -169,21 +170,31 @@ const ActionContainerComponent = ({
   categoryId,
   isCalculated,
   actionException,
+  materials
 }: IActionContainerComponentProps) => {
-
   source = source === EWorkSource.OUT ? EWorkSource.OUT : EWorkSource.INTERNAL;
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [chooseMachine, setChooseMachine] = useState<boolean>(false);
+  const [chooseMaterial, setChooseMaterial] = useState<boolean>(false);
   const currentProductItemValue = useRecoilValue(currentProductItemValueState);
   const { t } = useTranslation();
   const {
     getActionMachinesList,
+    getActionMaterialsList,
     selectNewMachine,
+    selectNewMaterials,
     anchorEl,
     open,
     handleClick,
     handleClose,
     updateActionData,
+    openModalMachine,
+    openModalMaterial,
+    onClickCloseModalMachine,
+    onClickCloseModalMaterial,
+    setAttributesData,
+    updateWorkFlowForMachine,
+    updateWorkFlowForMaterials
   } = useActionUpdateValues();
   const suppliersState = useRecoilValue(outsourceSuppliersState);
   const suppliers = useMemo(() => {
@@ -335,6 +346,15 @@ const ActionContainerComponent = ({
                               productType,
                               actionIndex
                             );
+                            setAttributesData({
+                              actionId,
+                              productType,
+                              actionIndex,
+                              machineName: v.label,
+                              machineId: v?.value,
+                              printingActionId: id,
+
+                            })
                             setChooseMachine(false);
                           }}
                           style={{ width: "200px" }}
@@ -357,6 +377,76 @@ const ActionContainerComponent = ({
               )}
             </Stack>
             <Divider orientation={"vertical"} flexItem />
+            <Stack
+              style={classes.sectionTitle}
+              direction={"row"}
+              alignItems={"center"}
+              gap={"10px"}
+            >
+              {
+                materials?.length > 0 && (
+                  <>
+                    {!chooseMaterial ? (
+                      <Button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setChooseMaterial(true);
+                        }}
+                        variant={"text"}
+                        style={classes.sectionTitle}
+                      >
+                        {materials[0]?.materialCategories[0]?.name?.length > 20
+                          ? materials[0]?.materialCategories[0]?.name.slice(0, 20) + "..."
+                          : materials[0]?.materialCategories[0]?.name}
+                      </Button>
+                    ) : (
+                      <Stack
+                        direction={"row"}
+                        gap={"5px"}
+                        alignItems={"center"}
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <GoMakeAutoComplate
+                          onChange={(e, v) => {
+                            selectNewMaterials(
+                              v?.value,
+                              actionId,
+                              productType,
+                              actionIndex
+                            );
+                            setAttributesData({
+                              actionId,
+                              productType,
+                              actionIndex,
+                              printHouseMaterialSizeName: v.label,
+                              printHouseMaterialSizeId: v?.value,
+                              printingActionId: id,
+                            })
+                            setChooseMaterial(false);
+                          }}
+                          style={{ width: "200px" }}
+                          options={getActionMaterialsList(actionId, productType)}
+                          placeholder={"Choose material"}
+                          value={materials[0]?.materialCategories[0]?.name}
+                        />
+                        <IconButton
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setChooseMaterial(false);
+                          }}
+                        >
+                          <ClearRoundedIcon />
+                        </IconButton>
+                      </Stack>
+                    )}
+                  </>
+                )
+              }
+            </Stack>
+            {
+              materials?.length > 0 && <Divider orientation={"vertical"} flexItem />
+            }
+
             <EditableKeyValueViewComponent
               onUpdate={handleDeliveryTimeUpdate}
               {...totalProductionTime}
@@ -493,7 +583,26 @@ const ActionContainerComponent = ({
           machineName={machineName}
           categoryId={categoryId}
         />
+        <GoMakeDeleteModal
+          insideStyle={classes.insideStyle}
+          openModal={openModalMachine}
+          onClose={onClickCloseModalMachine}
+          title={t("pricingWidget.machineMsg")}
+          hideIcon={true}
+          yesBtn={t("modal.confirm")}
+          onClickDelete={updateWorkFlowForMachine}
+        />
+        <GoMakeDeleteModal
+          insideStyle={classes.insideStyle}
+          openModal={openModalMaterial}
+          onClose={onClickCloseModalMaterial}
+          title={t("pricingWidget.materialMsg")}
+          hideIcon={true}
+          yesBtn={t("modal.confirm")}
+          onClickDelete={updateWorkFlowForMaterials}
+        />
       </Stack>
+
     </Fade>
   );
 };

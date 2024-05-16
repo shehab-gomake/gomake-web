@@ -14,8 +14,8 @@ import { useEffect, useState } from "react";
 import { selectedOutputsProps, selectedParametersProps } from "../../interface";
 import { EParameterTypes } from "@/enums";
 import { useRouter } from "next/router";
-import { GoMakeDatepicker } from "@/components/date-picker/date-picker-component";
 import { DeleteMenuIcon } from "@/widgets/quote-new/more-circle/icons/delete-menu";
+import { ScheduleSendWidget } from "@/pages-components/quotes/widgets/schedule-send-widget/schedule-send-widget";
 
 const AddRuleModal = ({
   openModal,
@@ -28,7 +28,8 @@ const AddRuleModal = ({
   isPropertiesWidge,
   selectedProperties,
   getProperitesService,
-  isQuoteWidge = false
+  isQuoteWidge = false,
+  filterData
 }: any) => {
   const { clasess } = useStyle();
   const { t } = useTranslation();
@@ -49,8 +50,6 @@ const AddRuleModal = ({
     conditions,
     GroupByOptions,
     agentsCategories,
-    resetDatePicker,
-    onSelectDeliveryTimeDates,
     create,
     createProperties,
     setPropertieValue,
@@ -60,7 +59,10 @@ const AddRuleModal = ({
     addRule,
     createForQuoteWidget,
     setRules,
-    initialRule
+    initialRule,
+    openScheduleModal,
+    onCloseScheduleModal,
+    onOpenScheduleModal
   } = useAddRuleModal({
     typeExceptionSelected,
     selectedPricingBy,
@@ -71,6 +73,7 @@ const AddRuleModal = ({
     selectedProperties,
     getProperitesService,
     isQuoteWidge,
+    filterData
   });
   const [selectedCategories, setSelectedCategories] = useState<any>("")
   const [selectedStatment2, setSelectedStatment2] = useState<any>("")
@@ -115,7 +118,7 @@ const AddRuleModal = ({
                     : allMachincesList?.map((value) => {
                       return {
                         ...value,
-                        label: value?.name,
+                        label: `${value?.manufacturer} - ${value?.model}`,
                         id: value.id,
                       };
                     })
@@ -335,12 +338,12 @@ const AddRuleModal = ({
             }}
           />
         </div>
-        <div style={clasess.statusFilterContainer}>
+        {/* <div style={clasess.statusFilterContainer}>
           <h3 style={clasess.filterLabelStyle}>{t("boardMissions.dateRange")}</h3>
           <div style={{ width: "100%" }}>
             <GoMakeDatepicker onChange={onSelectDeliveryTimeDates} placeholder={t("boardMissions.chooseDate")} reset={resetDatePicker} />
           </div>
-        </div>
+        </div> */}
       </div>
     );
   }
@@ -505,7 +508,7 @@ const AddRuleModal = ({
                             : allMachincesList?.map((value) => {
                               return {
                                 ...value,
-                                label: value?.name,
+                                label: `${value?.manufacturer} - ${value?.model}`,
                                 id: value.id,
                               };
                             })
@@ -565,7 +568,7 @@ const AddRuleModal = ({
                               : allMachincesList?.map((value) => {
                                 return {
                                   ...value,
-                                  label: value?.name,
+                                  label: `${value?.manufacturer} - ${value?.model}`,
                                   id: value.id,
                                 };
                               })
@@ -758,6 +761,14 @@ const AddRuleModal = ({
 
 
           <div style={clasess.btnContainer}>
+            {
+              isQuoteWidge && <GomakePrimaryButton
+                style={clasess.sendBtn}
+                onClick={onOpenScheduleModal}
+              >
+                {t("properties.scheduleSend")}
+              </GomakePrimaryButton>
+            }
             <GomakePrimaryButton
               style={clasess.sendBtn}
               onClick={() => {
@@ -772,6 +783,7 @@ const AddRuleModal = ({
             >
               {t("properties.create")}
             </GomakePrimaryButton>
+
           </div>
           <div>
             <div>
@@ -793,6 +805,7 @@ const AddRuleModal = ({
             </div>
           </div>
         </div>
+        <ScheduleSendWidget openModal={openScheduleModal} onCloseModal={onCloseScheduleModal} />
       </GoMakeModal>
     </>
   );

@@ -21,20 +21,37 @@ const useStyle = () => {
 
       },
       filtersContainer: {
+        // display: "flex",
+        // flexDirection: "row" as "row",
+        // justifyContent: "space-between",
+        // alignItems: "flex-end",
+        // gap: 20,
+        // width: "100%",
+
         display: "flex",
-        flexDirection: "row" as "row",
+        flexDirection: "column" as "column",
         justifyContent: "space-between",
-        alignItems: "flex-end",
+        alignItems: "flex-start",
         gap: 20,
-        width: "100%",
+        width: "20vw",
+        padding: "10px",
+        flexWrap: "wrap" as "wrap",
+
       },
       selectedFilterContainer: {
         display: "flex",
         flexDirection: "row" as "row",
         justifyContent: "flex-start",
-        alignItems: "flex-end",
+        alignItems: "center",
         gap: 20,
-        width: "70%",
+        flexWrap: "wrap" as "wrap",
+      },
+      buttonsFiltersContainer: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "flex-end",
+        width: "100%",
+        gap: "10px"
       },
       statusFilterContainer: {
         display: "flex",
@@ -42,7 +59,15 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "flex-start",
         gap: 10,
-        width: "25%",
+        minWidth: "40%",
+        width: "fit-content",
+      },
+      buttonsFilterContainer: {
+        display: "flex",
+        flexDirection: "column" as "column",
+        justifyContent: "flex-start",
+        alignItems: "flex-start",
+        gap: 10,
       },
       searchBtnStyle: {
         display: "flex",

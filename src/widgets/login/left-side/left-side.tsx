@@ -11,7 +11,7 @@ import { Link } from "@mui/material";
 const LoginLeftSide = () => {
   const { clasess } = useStyle();
   const userProfile = useRecoilValue(companyProfileState);
-  const { errors, inputs, errorMsg, changeState, onClickLogin, t } =
+  const { errors, inputs, errorMsg, changeState, onClickLogin, handleKeyPress, t } =
     useGomakeLogin();
   return (
     <div style={clasess.leftContainer}>
@@ -20,7 +20,7 @@ const LoginLeftSide = () => {
           <Image
             src={userProfile?.loginLogo}
             alt="logo"
-            style={{objectFit:'contain'}}
+            style={{ objectFit: 'contain' }}
             width={200}
             height={200}
           />
@@ -36,6 +36,7 @@ const LoginLeftSide = () => {
             changeState={changeState}
             error={errors[input.key]}
             placeholder={t(input.placeholder)}
+            handleKeyPress={handleKeyPress}
           />
         ))}
         <Link
@@ -48,7 +49,7 @@ const LoginLeftSide = () => {
         <div style={clasess.errorMsgStyle}>{errorMsg}</div>
       </div>
       <div style={clasess.btnContainer}>
-        <GomakePrimaryButton onClick={onClickLogin}>
+        <GomakePrimaryButton onClick={onClickLogin} >
           {t("login.login")}
         </GomakePrimaryButton>
       </div>

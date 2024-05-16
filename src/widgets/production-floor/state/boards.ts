@@ -17,7 +17,7 @@ export const productionFloorStatusesState = selector({
     }
 })
 
-export const selectedBoardsMissionsState = atom<string[]>({
+export const selectedBoardsMissionsState = atom<{boardMissionId: string, productType: string}[]>({
     default: [],
     key: 'selectedBoardsMissionsState'
 });
