@@ -55,7 +55,7 @@ const cardCutting = (state: Record<string, any>) => {
                     type: "text",
                     placeholder: "machineAttributes.thickness",
                     required: true,
-                    unit: EMeasurementUnits.MM,
+                    unit: EMeasurementUnits.UM,
                     parameterKey: "thickness",
                     options: []
                 },
