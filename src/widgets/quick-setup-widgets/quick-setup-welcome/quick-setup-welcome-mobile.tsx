@@ -1,16 +1,16 @@
 import { useTranslation } from "react-i18next";
 import { useStyle } from "./style";
 
-const QuickSetipMobileWidget = ({ isMobile }) => {
+const QuickSetupWelcomeMobileWidget = ({ isMobile }) => {
 
     const { classes } = useStyle();
     const { t } = useTranslation();
 
     return (
-        <div style={classes.mainMobileContainer}>
+        <div >
             Mobile Page coming soon ...
         </div>
     )
 }
 
-export { QuickSetipMobileWidget }
+export { QuickSetupWelcomeMobileWidget }
