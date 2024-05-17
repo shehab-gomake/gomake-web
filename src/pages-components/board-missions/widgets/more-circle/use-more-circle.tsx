@@ -52,7 +52,9 @@ const useMoreCircle = ({
       condition: true,
       name: "boardMissions.viewTask",
       icon: <VisibilityOutlinedIcon style={classes.iconStyle} />,
-      onclick: () => navigate(`/production-floor?boardMissionsId=${mission?.id}}`),
+      onclick: () => {
+        window.open(`/production-floor?boardMissionsId=${mission?.id}&step=stations`, '_blank');
+      },
     },
     {
       condition: true,
