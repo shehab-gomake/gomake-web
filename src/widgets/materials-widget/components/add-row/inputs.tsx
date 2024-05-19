@@ -69,7 +69,7 @@ const rowInputs = (
               value: machine.id,
               text: `${machine.manufacturer} - ${machine.model}`,
             })),
-            values: state?.machines ? state?.machines : [],
+            values: state?.machine ? state?.machine : [],
             isValid: true,
             multiple: true,
           };

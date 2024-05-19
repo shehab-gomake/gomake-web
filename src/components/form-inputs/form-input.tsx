@@ -187,7 +187,7 @@ const FormInput = ({ input, error, changeState, readonly }: IFormInput) => {
               <GoMakeFileFiled selectedNameFile={selectedNameFile} />
             ) : input.type === "select" || input?.type === "products_list" ? (
               <GoMakeAutoComplate
-                style={{ minWidth: 180, border: 0 }}
+                style={{ minWidth: 180, border: 0, height: 40, overflow: "scroll" }}
                 onChange={input.multiple ? () => null : selectChange}
                 value={input.multiple ? selectedOptions?.map((item: any) => {
                   return {

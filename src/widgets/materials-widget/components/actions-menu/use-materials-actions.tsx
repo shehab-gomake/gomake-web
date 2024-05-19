@@ -476,7 +476,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
   const duplicatePrintHouseMaterials = useCallback(async () => {
     const transformedArray = properties.map((item) => {
       const key = item?.key?.key?.toLowerCase();
-      const value = item.value;
+      const value = String(item.value);
 
       return {
         key,
