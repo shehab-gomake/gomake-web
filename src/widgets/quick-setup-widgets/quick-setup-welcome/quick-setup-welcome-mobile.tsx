@@ -1,14 +1,40 @@
-import { useTranslation } from "react-i18next";
+import { HandQuickSetupIcon } from "@/icons";
 import { useStyle } from "./style";
+import { useQuickSetupWelcome } from "./use-quick-setup-welcome";
+import { GomakePrimaryButton } from "@/components";
 
 const QuickSetupWelcomeMobileWidget = ({ isMobile }) => {
-
     const { classes } = useStyle();
-    const { t } = useTranslation();
+    const { data } = useQuickSetupWelcome()
+
 
     return (
-        <div >
-            Mobile Page coming soon ...
+        <div style={classes.mainMobileContainer}>
+            <div style={classes.firstContainer}>
+                <HandQuickSetupIcon width="109" height="111" />
+                <div style={classes.welcomeTextStyleMobile}>Welcome to Gomake </div>
+                <div style={classes.subTitleTextStyleMobile}>Congratulations on Starting Your Journey with Us!</div>
+            </div>
+            <div style={classes.secondContainer}>
+                {
+                    data?.map((item, index) => {
+                        return (
+                            <div style={classes.mainItemContainer} key={`index-${index}-${item.title}`}>
+                                <div>
+                                    {item.icon}
+                                </div>
+                                <div style={classes.itemColumnContainer}>
+                                    <div style={classes.titleListStyleMobile}> {item.title}</div>
+                                    <div style={classes.descriptionListStyleMobile}> {item.description}</div>
+                                </div>
+                            </div>
+                        )
+                    })
+                }
+            </div>
+            <GomakePrimaryButton style={classes.btnContainerMobile}>
+                Get started
+            </GomakePrimaryButton>
         </div>
     )
 }
