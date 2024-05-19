@@ -1,9 +1,9 @@
 import { HandQuickSetupIcon } from "@/icons";
-import { useStyle } from "./style";
-import { useQuickSetupWelcome } from "./use-quick-setup-welcome";
-import { GomakePrimaryButton } from "@/components";
 
-const QuickSetupWelcomeMobileWidget = ({ isMobile }) => {
+import { useQuickSetupWelcome } from "./use-quick-setup-welcome";
+import { useStyle } from "./style";
+
+const QuickSetupWelcomeMobileWidget = () => {
     const { classes } = useStyle();
     const { data } = useQuickSetupWelcome()
 
@@ -32,9 +32,9 @@ const QuickSetupWelcomeMobileWidget = ({ isMobile }) => {
                     })
                 }
             </div>
-            <GomakePrimaryButton style={classes.btnContainerMobile}>
+            {/* <GomakePrimaryButton style={classes.btnContainerMobile}>
                 Get started
-            </GomakePrimaryButton>
+            </GomakePrimaryButton> */}
         </div>
     )
 }

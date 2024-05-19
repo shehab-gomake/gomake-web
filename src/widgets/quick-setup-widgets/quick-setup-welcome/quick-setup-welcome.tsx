@@ -1,4 +1,3 @@
-import { GomakePrimaryButton } from "@/components";
 import { HandQuickSetupIcon } from "@/icons";
 
 import { useQuickSetupWelcome } from "./use-quick-setup-welcome";
@@ -34,9 +33,9 @@ const QuickSetupWelcomeWidget = () => {
                 <div style={classes.descriptionTextStyle}>
                     Your GoMake account is set up, and we're excited to welcome you to our community of printing professionals. You're just a few steps away from harnessing the full power of our platform.
                 </div>
-                <GomakePrimaryButton style={classes.btnContainer}>
+                {/* <GomakePrimaryButton style={classes.btnContainer}>
                     Get started
-                </GomakePrimaryButton>
+                </GomakePrimaryButton> */}
 
             </div>
         </div>

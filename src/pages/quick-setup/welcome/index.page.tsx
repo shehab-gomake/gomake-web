@@ -14,7 +14,7 @@ export default function WelcomeQuickSetupPage() {
     return (
         <>
             {
-                isMobile ? <QuickSetupWelcomeMobileWidget isMobile={isMobile} /> : <QuickSetupWelcomeWidget />
+                isMobile ? <QuickSetupWelcomeMobileWidget /> : <QuickSetupWelcomeWidget />
             }
 
         </>
