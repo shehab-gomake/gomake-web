@@ -91,7 +91,7 @@ const useNewProfits = () => {
     else {
       setPricingBy(PricingByList)
     }
-  }, [PricingByList, modifiedPricingBy, router])
+  }, [router])
 
   const systemCurrency = useRecoilValue<any>(systemCurrencyState);
   const currenciesUnits = useRecoilValue<any>(currencyUnitState);
