@@ -1,5 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { useStyle } from "./style";
+import { SignupCompanyForm } from "../company/signup-company-form";
 
 const QuickSetipMobileWidget = ({ isMobile }) => {
 
@@ -8,7 +9,7 @@ const QuickSetipMobileWidget = ({ isMobile }) => {
 
     return (
         <div style={classes.mainMobileContainer}>
-            Mobile Page coming soon ...
+            <SignupCompanyForm isMobile={isMobile} />
         </div>
     )
 }
