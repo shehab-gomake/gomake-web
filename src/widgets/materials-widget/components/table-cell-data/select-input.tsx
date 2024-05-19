@@ -4,6 +4,8 @@ import { GoMakeAutoComplate } from "@/components";
 import { getAllProductsForDropDownList } from "@/services/hooks";
 import { useGomakeAxios } from "@/hooks";
 import { useTranslation } from "react-i18next";
+import { useRecoilValue } from "recoil";
+import { productsForDropDownList } from "@/store";
 
 interface IProps {
   parameterKey: string;
@@ -16,15 +18,7 @@ interface IProps {
 const SelectInput = ({ values, parameterKey, id, value, isAdmin }: IProps) => {
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
-  const [productValue, setProductValues] = useState([]);
-  const getAllProducts = useCallback(async () => {
-    if (parameterKey === "productId" || parameterKey === "printed product")
-      await getAllProductsForDropDownList(callApi, setProductValues);
-  }, [parameterKey]);
-  useEffect(() => {
-    if (parameterKey === "productId" || parameterKey === "printed product")
-      getAllProducts();
-  }, []);
+  const productValue = useRecoilValue(productsForDropDownList)
   const { updateCellData } = useTableCellData(isAdmin);
   const options = values
     ? parameterKey === "productId" || parameterKey === "printed product"

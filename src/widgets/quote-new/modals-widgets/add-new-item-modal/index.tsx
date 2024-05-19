@@ -1,19 +1,19 @@
 import { useTranslation } from "react-i18next";
 import {
-  GoMakeAutoComplate, 
+  GoMakeAutoComplate,
   GoMakeModal,
   GomakePrimaryButton,
 } from "@/components";
 import { useStyle } from "./style";
 import { useRecoilState } from "recoil";
-import { useCallback, useEffect, useState } from "react";
-import { getAllProductsForDropDownList } from "@/services/hooks";
+import { useState } from "react";
 import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
 import { quoteItemState } from "@/store";
 import { useRouter } from "next/router";
 import { v4 as uuidv4 } from "uuid";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { addItemApi } from "@/services/api-service/generic-doc/documents-api";
+import { useAllProductsDropDownList } from "@/hooks/use-products-drop-down-list";
 
 const AddNewItemModal = ({ openModal, onClose, documentType, getQuote }) => {
   const { callApi } = useGomakeAxios();
@@ -22,11 +22,9 @@ const AddNewItemModal = ({ openModal, onClose, documentType, getQuote }) => {
   const { clasess } = useStyle();
   const router = useRouter();
   const [quoteItemValue, setQuoteItemValue] = useRecoilState<any>(quoteItemState);
-  const [productValue, setProductValues] = useState([]);
+  const { productList: productValue } = useAllProductsDropDownList()
   const [selectedProduct, setSelectedProduct] = useState<any>({});
-  const getAllProducts = useCallback(async () => {
-    await getAllProductsForDropDownList(callApi, setProductValues);
-  }, []);
+
   const item = {
     id: uuidv4(),
     code: null,
@@ -41,9 +39,6 @@ const AddNewItemModal = ({ openModal, onClose, documentType, getQuote }) => {
     productType: 0,
     productID: selectedProduct?.id,
   }
-  useEffect(() => {
-    getAllProducts();
-  }, []);
   const { alertFaultAdded } = useSnackBar();
 
   const addItemForQuotes = async () => {

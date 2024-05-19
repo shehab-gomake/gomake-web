@@ -25,6 +25,7 @@ import { PhoneInputComponent } from "./phone-input";
 import { useRecoilValue } from "recoil";
 import { materialsClientsState, materialsMachinesState } from "@/widgets/materials-widget/state";
 import { getAllProductsForDropDownList } from "@/services/hooks";
+import { productsForDropDownList } from "@/store";
 
 const FormInput = ({ input, error, changeState, readonly }: IFormInput) => {
   console.log(input);
@@ -39,6 +40,7 @@ const FormInput = ({ input, error, changeState, readonly }: IFormInput) => {
   const [values, setValues] = useState([]);
   const machinesCategories = useRecoilValue<any>(materialsMachinesState);
   const clientsCategories = useRecoilValue<any>(materialsClientsState);
+  const productValue = useRecoilValue(productsForDropDownList)
 
   const machinesCategoriesList = machinesCategories.map((machine) => ({
     ...machine,
@@ -50,19 +52,13 @@ const FormInput = ({ input, error, changeState, readonly }: IFormInput) => {
     value: client.id,
     label: `${client.name} - ${client.code}`,
   }));
-  const [productValue, setProductValues] = useState([]);
   const productsOption = productValue?.map((product) => ({
     ...product,
     value: product.id,
     label: `${product.name}`,
   }));
   const [switchValue, setSwitchValue] = useState(false);
-  const getAllProducts = useCallback(async () => {
-    await getAllProductsForDropDownList(callApi, setProductValues);
-  }, []);
-  useEffect(() => {
-    getAllProducts();
-  }, []);
+
   const handleChange = (value: string) => {
     setColor(value);
     changeState(input.parameterKey, value);
