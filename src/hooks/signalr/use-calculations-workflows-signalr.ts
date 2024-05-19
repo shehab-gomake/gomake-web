@@ -27,7 +27,7 @@ const useCalculationsWorkFlowsSignalr = () => {
     useState<ICalculatedWorkFlow>();
   const [calculationExceptionsLogs, setCalculationExceptionsLogs] =
     useState<IExceptionsLog[]>();
-    const [calculationServerErrorState,setcalculationServerErrorState]=useState(false)
+  const [calculationServerError,setcalculationServerErrorState]=useState(false)
 
 
   useEffect(() => {
@@ -61,7 +61,7 @@ const useCalculationsWorkFlowsSignalr = () => {
     updatedSelectedWorkFlow,
     calculationExceptionsLogs,
     signalRPricingResult,
-    calculationServerErrorState
+    calculationServerError
   };
 };
 export { useCalculationsWorkFlowsSignalr };

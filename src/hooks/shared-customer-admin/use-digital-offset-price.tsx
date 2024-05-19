@@ -66,6 +66,7 @@ import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { exampleTypeState } from "@/store/example-type";
 import { billingMethodState } from "@/store/billing-method";
 
+import {useDebouncedCallback, useThrottledCallback} from "use-debounce";
 
 const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [, setOpenQuantityComponentModal] = useRecoilState<boolean>(openQuantityComponentModalState);
@@ -153,18 +154,21 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     updatedSelectedWorkFlow,
     calculationExceptionsLogs,
     signalRPricingResult,
-    calculationServerErrorState
+    calculationServerError
   } = useCalculationsWorkFlowsSignalr();
 
   useEffect(() => {
-    if (calculationServerErrorState) {
+    if (calculationServerError) {
+      setcalculationServerErrorState(true)
       setCalculationProgress({
         totalWorkFlowsCount: 0,
         currentWorkFlowsCount: 0,
       });
       setLoading(false);
     }
-  }, [calculationServerErrorState])
+  }, [calculationServerError]);
+  const [calculationServerErrorState,setcalculationServerErrorState]=useState(false)
+
   const [currentSignalRConnectionId, setCurrentSignalRConnectionId] = useRecoilState(currentCalculationConnectionId);
   const [currentCalculationSessionId, setCurrentCalculationSessionId] = useState<string>("");
   const [requestAbortController, setRequestAbortController] =
@@ -1097,7 +1101,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       });
 
     }
-  }, [router, widgetType, connectionId,]);
+  }, [router, widgetType,]);
   const exampleTypeValues = useRecoilValue(exampleTypeState);
   const billingMethodValues = useRecoilValue(billingMethodState);
   const listEmployeesValues = useRecoilValue(listEmployeesAtom);
@@ -1140,6 +1144,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   }, [widgetType, docmentItemByEdit])
   useEffect(() => {
     if (canCalculation) {
+      
       calculationProduct(subProducts);
     }
   }, [subProducts, canCalculation]);
@@ -1806,6 +1811,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   }
 
   const [valuesState, setValuesState] = useRecoilState(tempProductQuantityTypesValuesState);
+ 
   const onChangeSubProductsForPrice = (
     parameterId: any,
     subSectionId: any,
@@ -2389,8 +2395,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   //   // }
 
   // }, [isRequiredParameters])
-
-  const calculationProduct = async (currentSubProducts) => {
+  const calculationProduct = useDebouncedCallback(async (currentSubProducts) => {
     if (requestAbortController) {
       requestAbortController.abort();
     }
@@ -2404,7 +2409,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     });
     let checkParameter = validateParameters(isRequiredParameters, currentSubProducts);
     if (!!checkParameter) {
-      setLoading(true);
       setCurrentCalculationSessionId(null);
       const newRequestAbortController = new AbortController();
       setRequestAbortController(newRequestAbortController);
@@ -2418,21 +2422,26 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         workTypes = quantityTypes;
       }
       if (generalParameters && generalParameters?.length > 0) {
+        if(!connectionId){
+          setcalculationServerErrorState(true);
+          return;
+        }
+        setLoading(true);
         const res: any = await callApi(
-          "POST",
-          `/v1/calculation-service/calculations/calculate-productV2`,
-          {
-            signalRConnectionId: connectionId,
-            clientId: router?.query?.customerId,
-            clientTypeId: router?.query?.clientTypeId,
-            productId: router?.query?.productId,
-            generalParameters: generalParameters,
-            subProducts: calculationSubProducts,
-            itemParmetersValues: itemParmetersValues,
-            workTypes: workTypes,
-          },
-          false,
-          newRequestAbortController
+            "POST",
+            `/v1/calculation-service/calculations/calculate-productV2`,
+            {
+              signalRConnectionId: connectionId,
+              clientId: router?.query?.customerId,
+              clientTypeId: router?.query?.clientTypeId,
+              productId: router?.query?.productId,
+              generalParameters: generalParameters,
+              subProducts: calculationSubProducts,
+              itemParmetersValues: itemParmetersValues,
+              workTypes: workTypes,
+            },
+            false,
+            newRequestAbortController
         )
         if (res?.status === 500) {
           setCalculationProgress({
@@ -2449,8 +2458,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           setLoading(false);
         }
       }
+    }else{
+      setLoading(false);
     }
-  };
+  }, 700);
 
   const getOutSourcingSuppliers = () => {
     const callBack = (res) => {
