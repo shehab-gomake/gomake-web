@@ -8,7 +8,6 @@ const rowInputs = (
   clientsCategories?,
   newMaterialHeaders?
 ) => {
-  console.log("state", state)
   const newHeaders = newMaterialHeaders ? newMaterialHeaders : materialHeaders;
   const inputArray = newHeaders
     ?.filter((header) => header.key !== "Active")
@@ -70,7 +69,6 @@ const rowInputs = (
               value: machine.id,
               text: `${machine.manufacturer} - ${machine.model}`,
             })),
-            value: state?.parameterKey,
             values: state?.machines ? state?.machines : [],
             isValid: true,
             multiple: true,

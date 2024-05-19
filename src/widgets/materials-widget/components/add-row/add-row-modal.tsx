@@ -29,7 +29,6 @@ const AddRowModal = (props: IAddRowModalProps) => {
     const onChangeInputs = (key, value) => {
         setRowData({ ...rowData, [key]: value })
     }
-    console.log("rowData", { rowData, materialHeaders, currencies, machinesCategories, clientsCategories })
     return (
         <GoMakeModal
             insideStyle={classes.insideStyle}

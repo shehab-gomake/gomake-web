@@ -27,7 +27,6 @@ import { materialsClientsState, materialsMachinesState } from "@/widgets/materia
 import { productsForDropDownList } from "@/store";
 
 const FormInput = ({ input, error, changeState, readonly }: IFormInput) => {
-  console.log("input", input);
   const [options, setOptions] = useState([]);
   const [dataLoaded, setDataLoaded] = useState<boolean>(false);
   const [selectedLabel, setSelectedLabel] = useState<string>(input.value);
@@ -76,7 +75,6 @@ const FormInput = ({ input, error, changeState, readonly }: IFormInput) => {
   };
 
   const handleSwitchCheck = (event: ChangeEvent<HTMLInputElement>) => {
-    console.log("event", event.target.checked)
     setSwitchValue(event.target.checked)
     changeState(input.parameterKey, event.target.checked);
   };
@@ -156,18 +154,7 @@ const FormInput = ({ input, error, changeState, readonly }: IFormInput) => {
   //   }
   // }, [selectedLabel]);
 
-  // const filterOptions = (values, options) => {
-  //   return options.filter(option => values.includes(option.value));
-  // };
-  // useEffect(() => {
-  //   if (input?.values?.length > 0) {
-  //     let data = input?.values.map(val => options.find(option => option.value === val)?.label)
-  //     const filteredOptions = filterOptions(input?.values, options);
-  //     console.log("SSSSSEEEWWSDDD", { data, filteredOptions, ddd: input?.values });
-  //   }
-  // }, [input])
   const [selectedOptions, setSelectedOptions] = useState([])
-  console.log("selectedOptsssssssions", selectedOptions)
   return (
     <>
       {!input.disabled && (
