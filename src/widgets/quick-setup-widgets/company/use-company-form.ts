@@ -8,7 +8,7 @@ import {languageOptionsState} from "@/store/languages";
 import {useRouter} from "next/router";
 import {clearStorage} from "@/services/storage-data";
 import { checkPrintHouseDomainApi, createNewPrintHouseApi, getAllCountriesApi } from "@/services/api-service/profiles/company-profile-api";
-import { domainRegex } from "@/utils/regex";
+import { domainRegex, emailRegex } from "@/utils/regex";
 
 
 const useCompanyForm = () => {
@@ -54,14 +54,29 @@ const useCompanyForm = () => {
     }))
   }
   const onclickNext = async () => {
-    if (!domainRegex.test(state.domain)) {
-      alertFaultAdded();
-      return
-    }
-  const selectedLanguage = languages.find(lang => lang.value === state.systemLanguage.value);
-     if (!selectedLanguage || !selectedLanguage.supported) {
-       alertFault(`"${selectedLanguage.text}" not supported yet, system remains in English.Thank you for your understanding. `);
-     }
+      // Check if all required fields are filled
+  if (!state.name || !state.domain || !state.fullName || !state.phone || !state.email || !state.systemLanguage || !state.systemCurrency) {
+    alertFault("All fields are required.");
+    return;
+  }
+
+  // Validate domain
+  if (!domainRegex.test(state.domain)) {
+    alertFault("Invalid domain format.");
+    return;
+  }
+
+  // Validate email
+  if (!emailRegex.test(state.email)) {
+    alertFault("Invalid email format.");
+    return;
+  }
+
+  // Validate phone number (assuming E.164 format)
+  if (!state.phone.match(/^\+[1-9]\d{1,14}$/)) {
+    alertFault("Invalid phone number format.");
+    return;
+  }
     setLoading(!loading);
     const callBack = (res) => {
         if (res.success) {
