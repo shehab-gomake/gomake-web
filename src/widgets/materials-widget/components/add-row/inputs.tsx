@@ -50,9 +50,9 @@ const rowInputs = (
             parameterKey: header?.key,
             options: header.values
               ? header.values.map((value) => ({
-                  value: value.key,
-                  text: value.value,
-                }))
+                value: value.key,
+                text: value.value,
+              }))
               : [],
             value: "",
             isValid: true,
@@ -69,29 +69,27 @@ const rowInputs = (
               value: machine.id,
               text: `${machine.manufacturer} - ${machine.model}`,
             })),
-            value: state?.parameterKey,
-            values: state?.machines ? state?.machines : [],
+            values: state?.machine ? state?.machine : [],
             isValid: true,
             multiple: true,
           };
 
-          case "CLIENTS_LIST":
-            return {
-              name: header?.key,
-              label: newMaterialHeaders ? null : header?.value,
-              type: "select",
-              placeholder: header?.value,
-              required: false,
-              parameterKey: header?.key,
-              options: clientsCategories.map((client) => ({
-                value: client.id,
-                text: `${client.name} - ${client.code}`,
-              })),
-              value: state?.parameterKey,
-              values: state?.clients ? state?.clients : [],
-              isValid: true,
-              multiple: true,
-            };
+        case "CLIENTS_LIST":
+          return {
+            name: header?.key,
+            label: newMaterialHeaders ? null : header?.value,
+            type: "select",
+            placeholder: header?.value,
+            required: false,
+            parameterKey: header?.key,
+            options: clientsCategories.map((client) => ({
+              value: client.id,
+              text: `${client.name} - ${client.code}`,
+            })),
+            values: state?.clients ? state?.clients : [],
+            isValid: true,
+            multiple: true,
+          };
         default:
           if (EDataTypeEnum[header?.inputType] === "IMAGE") return null;
           else

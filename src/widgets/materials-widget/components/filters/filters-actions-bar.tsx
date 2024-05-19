@@ -16,6 +16,7 @@ import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { getAllProductsForDropDownList } from "@/services/hooks";
 import { useGomakeAxios } from "@/hooks";
 import { Stack } from "@mui/material";
+import { productsForDropDownList } from "@/store";
 interface FiltersActionsBarProps {
   isAdmin: boolean;
 }
@@ -66,13 +67,8 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
     label: `${client.name} - ${client.code}`,
   }));
 
-  const [productValue, setProductValues] = useState([]);
-  const getAllProducts = useCallback(async () => {
-    await getAllProductsForDropDownList(callApi, setProductValues);
-  }, []);
-  useEffect(() => {
-    getAllProducts();
-  }, []);
+  const productValue = useRecoilValue(productsForDropDownList)
+
   function filterItemsById(options, values) {
     // Create a Set from values array for quick lookup
     const valuesSet = new Set(values?.values);

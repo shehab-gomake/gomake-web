@@ -175,7 +175,6 @@ const useAddRuleModal = ({
 
   const [machincesList, setMachincesList] = useState<any>();
   const [allMachincesList, setAllMachincesList] = useState<any>();
-  console.log("allMachincesList",allMachincesList)
   const [productsStateValue, setProductsState] =
     useRecoilState<any>(productsState);
   const [clientTypesStateValue, setClientTypesState] =

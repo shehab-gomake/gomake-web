@@ -42,10 +42,11 @@ import { MaterialMenuWidget } from "./components/more-circle";
 import cloneDeep from "lodash.clonedeep";
 import { SideLeftMenuWidget } from "./components/side-list-menu";
 import { EMaterialActiveFilter } from "@/widgets/materials-widget/enums";
+import { useAllProductsDropDownList } from "@/hooks/use-products-drop-down-list";
 
 const useMaterials = (isAdmin: boolean) => {
   const { query, push, replace } = useRouter();
-
+  const { productList } = useAllProductsDropDownList()
   const { materialType, materialCategory } = query;
   const [selectedTableRow, setSelectedTableRow] = useState<IMaterialCategoryRow>();
 
@@ -386,6 +387,7 @@ const useMaterials = (isAdmin: boolean) => {
     selectedTableRow,
     materialName,
     getClientsMaterials,
+    productList
   };
 };
 
