@@ -129,4 +129,4 @@ const GomakeTextInput = ({
   );
 };
 
-export { GomakeTextInput };
+export { GomakeTextInput, StyledTextField };

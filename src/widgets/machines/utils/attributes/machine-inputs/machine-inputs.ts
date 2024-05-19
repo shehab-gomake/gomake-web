@@ -30,7 +30,7 @@ const machineInputs = (state: Record<string, any>)  => {
             label: "machineAttributes.nickName",
             type: "text",
             placeholder: "machineAttributes.nickName",
-            required: true,
+            required: false,
             parameterKey: "nickName",
             options: [],
             value: state?.nickName ? state?.nickName : '',

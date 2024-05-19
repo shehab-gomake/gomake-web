@@ -13,7 +13,7 @@ const useStyle = () => {
     return {
       gridContainer: {
         display: 'grid',
-        maxHeight: convertHeightToVH(SCREEN_HEIGHT - HEADER_HEIGHT),
+        maxHeight: convertHeightToVH(SCREEN_HEIGHT - HEADER_HEIGHT - 30),
         height: convertHeightToVH(SCREEN_HEIGHT - HEADER_HEIGHT),
         gridTemplateColumns: '20% auto',
         gridTemplateRows: '40px 40px auto 60px',
