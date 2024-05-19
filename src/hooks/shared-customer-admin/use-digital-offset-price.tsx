@@ -1090,10 +1090,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       widgetType === EWidgetProductType.DUPLICATE
     ) {
       getAllMaterial().then((materials) => {
-        if (connectionId) {
-          getProductQuoteItemById(materials);
+        getProductQuoteItemById(materials);
 
-        }
       });
     } else {
       getAllMaterial().then((materials) => {
