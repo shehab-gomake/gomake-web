@@ -181,7 +181,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
           await updateMaterialsPropApi(callApi, onUpdateCallBack, {
             materialTypeKey: materialType.toString(),
             categoryKey: materialCategory.toString(),
-            ids: selectedMaterialsIds,
+            ids: isAllMaterialsChecked ? [] : selectedMaterialsIds ,
             action: action.action,
             updatedValue,
             priceIndex: 0,
@@ -211,7 +211,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
           await updatePrintHouseMaterialsPropApi(callApi, onUpdateCallBack, {
             materialTypeKey: materialType.toString(),
             categoryKey: materialCategory.toString(),
-            ids: selectedMaterialsIds,
+            ids: isAllMaterialsChecked ? [] : selectedMaterialsIds,
             action: action.action,
             priceIndex: 0,
             updatedValue,
@@ -268,7 +268,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
       const result = await updateMaterialsPropApi(callApi, onUpdateCallBack, {
         materialTypeKey: materialType.toString(),
         categoryKey: materialCategory.toString(),
-        ids: selectedMaterialsIds,
+        ids: isAllMaterialsChecked ? [] : selectedMaterialsIds,
         action: eAction,
         isAllMaterialsChecked: isAllMaterialsChecked,
         uncheckedMaterials: uncheckedMaterials,
@@ -301,7 +301,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
         {
           materialTypeKey: materialType.toString(),
           categoryKey: materialCategory.toString(),
-          ids: selectedMaterialsIds,
+          ids: isAllMaterialsChecked ? [] : selectedMaterialsIds,
           action: eAction,
           isAllMaterialsChecked: isAllMaterialsChecked,
           uncheckedMaterials: uncheckedMaterials,
@@ -486,7 +486,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
 
     const requestBody: any = {
       props: transformedArray,
-      ids: selectedMaterialsIds,
+      ids: isAllMaterialsChecked && !selectedMaterialIdForUpdate ? [] : selectedMaterialsIds,
       isAllMaterialsChecked: selectedMaterialIdForUpdate ? false : isAllMaterialsChecked,
       uncheckedMaterials: uncheckedMaterials,
       tableFilters: {
@@ -537,7 +537,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
 
     const requestBody: any = {
       props: transformedArray,
-      ids: selectedMaterialsIds,
+      ids: isAllMaterialsChecked ? [] : selectedMaterialsIds,
       isAllMaterialsChecked: isAllMaterialsChecked,
       uncheckedMaterials: uncheckedMaterials,
       tableFilters: {
