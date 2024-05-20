@@ -84,12 +84,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
   const { t } = useTranslation();
   const setOpenAddRowModal = useSetRecoilState<boolean>(openAddRowModalState);
   const [selectedMaterialsIds, setSelectedMaterialsIds] = useState([]);
-  const onChangeHeaderCheckBox = useCallback(
-    (isAllChecked: boolean) => {
-      setIsAllMaterialsChecked(isAllChecked);
-    },
-    [materialCategoryData, materialCategoryData]
-  );
+
   useEffect(() => {
     if (selectedMaterialIdForUpdate) {
       setSelectedMaterialsIds([selectedMaterialIdForUpdate])
@@ -239,6 +234,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
   };
 
   const onUpdateCallBack = (res) => {
+    debugger;
     if (res.success) {
       if (action?.action === EMaterialsActions.Delete) {
         setMaterialCategoryData(
@@ -254,12 +250,13 @@ const useMaterialsActions = (isAdmin: boolean) => {
                 ...res.data?.find((row) => row.id === material.id),
                 checked: false,
               }
-              : material
+              : {...material,checked:false}
           )
         )
       }
       setAction(null);
-      onChangeHeaderCheckBox(true);
+      setIsAllMaterialsChecked(false);
+
     }
   };
 
@@ -511,6 +508,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
     );
 
     if (res?.success) {
+      debugger
       alertSuccessAdded();
       getMaterialCategoryData(
         materialType?.toString(),
@@ -518,6 +516,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
         [],
         supplierId
       ).then();
+      setIsAllMaterialsChecked(false)
       handleCloseModal();
     } else {
       alertFaultAdded();

@@ -186,6 +186,7 @@ const useMaterials = (isAdmin: boolean) => {
 
   const onChangeHeaderCheckBox = useCallback(
     (isAllChecked: boolean) => {
+      debugger
       setIsAllMaterialsChecked(isAllChecked);
       const checked = isAllSelected();
       const materialsIds = materialCategoryData.map((material) => material.id);
