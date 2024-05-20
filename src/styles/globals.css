@@ -315,3 +315,15 @@ df-messenger {
   bottom: 16px;
   right: 16px;
 }
+
+.react-chatbot-kit-chat-container {
+  box-shadow: 0 1px 10px rgba(0, 0, 0, 0.8);
+  border-radius: 4px;
+}
+.react-chatbot-kit-chat-btn-send {
+  background-color: #2E3092 !important;
+}
+.react-chatbot-kit-chat-header {
+  background-color: #2E3092 !important;
+  color: #FFF!important;
+}
