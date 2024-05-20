@@ -66,7 +66,7 @@ import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { exampleTypeState } from "@/store/example-type";
 import { billingMethodState } from "@/store/billing-method";
 
-import {useDebouncedCallback, useThrottledCallback} from "use-debounce";
+import { useDebouncedCallback, useThrottledCallback } from "use-debounce";
 
 const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [, setOpenQuantityComponentModal] = useRecoilState<boolean>(openQuantityComponentModalState);
@@ -167,7 +167,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       setLoading(false);
     }
   }, [calculationServerError]);
-  const [calculationServerErrorState,setcalculationServerErrorState]=useState(false)
+  const [calculationServerErrorState, setcalculationServerErrorState] = useState(false)
 
   const [currentSignalRConnectionId, setCurrentSignalRConnectionId] = useRecoilState(currentCalculationConnectionId);
   const [currentCalculationSessionId, setCurrentCalculationSessionId] = useState<string>("");
@@ -1142,7 +1142,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   }, [widgetType, docmentItemByEdit])
   useEffect(() => {
     if (canCalculation) {
-      
+
       calculationProduct(subProducts);
     }
   }, [subProducts, canCalculation]);
@@ -1809,7 +1809,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   }
 
   const [valuesState, setValuesState] = useRecoilState(tempProductQuantityTypesValuesState);
- 
+
   const onChangeSubProductsForPrice = (
     parameterId: any,
     subSectionId: any,
@@ -2363,7 +2363,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     initProduct(quoteItemProduct, materials);
   };
 
- const validateParameters = (inputArray, currentSubProducts) => {
+  const validateParameters = (inputArray, currentSubProducts) => {
     let isValid = true;
     const allParameters = currentSubProducts.flatMap((item) => item.parameters);
     for (const item of inputArray) {
@@ -2418,26 +2418,26 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         workTypes = quantityTypes;
       }
       if (generalParameters && generalParameters?.length > 0) {
-        if(!connectionId){
+        if (!connectionId) {
           setcalculationServerErrorState(true);
           return;
         }
         setLoading(true);
         const res: any = await callApi(
-            "POST",
-            `/v1/calculation-service/calculations/calculate-productV2`,
-            {
-              signalRConnectionId: connectionId,
-              clientId: router?.query?.customerId,
-              clientTypeId: router?.query?.clientTypeId,
-              productId: router?.query?.productId,
-              generalParameters: generalParameters,
-              subProducts: calculationSubProducts,
-              itemParmetersValues: itemParmetersValues,
-              workTypes: workTypes,
-            },
-            false,
-            newRequestAbortController
+          "POST",
+          `/v1/calculation-service/calculations/calculate-productV2`,
+          {
+            signalRConnectionId: connectionId,
+            clientId: router?.query?.customerId,
+            clientTypeId: router?.query?.clientTypeId,
+            productId: router?.query?.productId,
+            generalParameters: generalParameters,
+            subProducts: calculationSubProducts,
+            itemParmetersValues: itemParmetersValues,
+            workTypes: workTypes,
+          },
+          false,
+          newRequestAbortController
         )
         if (res?.status === 500) {
           setCalculationProgress({
@@ -2454,7 +2454,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           setLoading(false);
         }
       }
-    }else{
+    } else {
       setLoading(false);
     }
   }, 700);
@@ -2744,6 +2744,15 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     }
   }, [subProducts])
 
+  const [firstEnter, setFirstEnter] = useState(false)
+  useEffect(() => {
+    if (!firstEnter && router?.query?.isAnalysis && productTemplate?.sections?.length > 0) {
+      const visibleSections = productTemplate?.sections?.filter(section => !section.isHidden);
+      const lastIndex = visibleSections.length;
+      handleTabClick(lastIndex);
+      setFirstEnter(true);
+    }
+  }, [router, productTemplate]);
   return {
     t,
     handleTabClick,

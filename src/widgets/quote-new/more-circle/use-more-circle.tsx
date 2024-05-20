@@ -44,8 +44,14 @@ const useMoreCircle = ({
     );
   };
 
+  const onClickAnalysisQuoteItem = (quoteItem, documentType) => {
+    navigate(
+      `/products/edit?clientTypeId=${quoteItem?.clientTypeId}&customerId=${quoteItemValue?.customerID}&productId=${quoteItem?.productID}&documentItemId=${quoteItem?.id}&documentType=${documentType}${router?.query?.Id ? `&documentId=${router?.query?.Id}` : ""}&isAnalysis=true`
+    );
+  };
+
   const menuList = [
-    quoteItem.productType === 0 && (documentType === DOCUMENT_TYPE.quote || documentType ===  DOCUMENT_TYPE.order) && {
+    quoteItem.productType === 0 && (documentType === DOCUMENT_TYPE.quote || documentType === DOCUMENT_TYPE.order) && {
       name: "edit",
       icon: <EditMenuIcon />,
       onclick: () => onClickEditQuoteItem(quoteItem, documentType),
@@ -68,7 +74,7 @@ const useMoreCircle = ({
     !router.query.isNewCreation && quoteItem.productType === 0 && {
       name: "analysis",
       icon: <AnalysisIcon />,
-      onclick: () => null,
+      onclick: () => onClickAnalysisQuoteItem(quoteItem, documentType),
     },
     (router.query.isNewCreation || quoteItem?.isDeletable) &&
     {
