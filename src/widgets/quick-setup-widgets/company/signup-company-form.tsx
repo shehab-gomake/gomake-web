@@ -40,6 +40,15 @@ const SignupCompanyForm = ({ isMobile }: any) => {
         }
         return '';
     };
+    const [lastCheckedDomain, setLastCheckedDomain] = useState("");
+
+    const handleDomainBlur = useCallback((e) => {
+        const newDomain = e.target.value;
+        if (newDomain !== lastCheckedDomain) {
+            checkPrintHouseDomain(newDomain);
+            setLastCheckedDomain(newDomain);
+        }
+    }, [lastCheckedDomain, checkPrintHouseDomain]);
     const renderPhone = useCallback(() => {
         const countryData = defaultCountries.find((item) => item[0] === state?.country?.name)?.[1];
         return (
@@ -71,7 +80,7 @@ const SignupCompanyForm = ({ isMobile }: any) => {
                     onChange={(e) => {
                         onChange('name', e.target.value)
                     }}
-                    onBlur={(e) => { checkPrintHouseDomain(e.target.value) }}
+                    onBlur={handleDomainBlur}
                     style={classes.input}
                     placeholder={t('signup.companyName')}
                     value={state.name}
