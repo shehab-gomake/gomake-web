@@ -123,6 +123,7 @@ const CustomerCardWidget = ({
     ? CLIENT_TYPE_Id.CUSTOMER
     : CLIENT_TYPE_Id.SUPPLIER;
 
+
   useEffect(() => {
     addInitContact();
     addInitAddress();

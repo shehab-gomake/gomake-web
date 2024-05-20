@@ -73,3 +73,43 @@ export const hasValues = (obj) => {
 
   }
 }
+
+export const isValidCustomer = (
+  customer,
+  filteredContacts,
+  filteredAddresses,
+  filteredUsers
+) => {
+  if (
+    !(
+      customer &&
+      customer.name &&
+      customer.clientTypeId
+  
+    )
+  ) {
+    return false;
+  }
+  for (const contact of filteredContacts) {
+    if (!contact.firstName) {
+      return false;
+    }
+  }
+  for (const address of filteredAddresses) {
+    if (!address.address1) {
+      return false;
+    }
+  }
+  for (const user of filteredUsers) {
+    if (!user.email) {
+      return false;
+    }
+  }
+  //new users
+  for (const user of filteredUsers.filter((user) => !user.id)) {
+    if (!user.password) {
+      return false;
+    }
+  }
+  return true;
+};

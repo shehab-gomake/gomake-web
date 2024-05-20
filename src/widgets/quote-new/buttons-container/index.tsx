@@ -24,7 +24,7 @@ const ButtonsContainer = ({
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
-  const {alertFault} = useSnackBar();
+  const { alertFault } = useSnackBar();
   const router = useRouter()
   const {
     quoteItemValue,
@@ -57,7 +57,7 @@ const ButtonsContainer = ({
       onOpenCopyFromOrder(documentNumber);
     }
   };
-  
+
 
   const handleAddItemClick = () => {
     if (!quoteItemValue?.client) {

@@ -7,6 +7,7 @@ import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
 import {
   getAndSetAllCustomers,
   getAndSetAllEmployees,
+  getAndSetClientTypes,
 } from "@/services/hooks";
 import { v4 as uuidv4 } from "uuid";
 import {
@@ -24,6 +25,8 @@ import { useRouter } from "next/router";
 import { getAllCreditTransactionsApi, getClientPaymentItemsApi, getReceiptByIdApi } from "@/services/api-service/generic-doc/receipts-api";
 import { creditTransactionsState, transactionOptionsData } from "@/widgets/quote-new/buttons-container/states";
 import { QuoteStatuses } from "@/widgets/quote-new/total-price-and-vat/enums";
+import { clientTypesCategoriesState } from "@/pages/customers/customer-states";
+import { CLIENT_TYPE_Id } from "@/pages/customers/enums";
 
 interface IQuoteProps {
   docType: DOCUMENT_TYPE;
@@ -50,6 +53,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
   const [quoteItemValue, setQuoteItemValue] = useRecoilState<any>(quoteItemState);
   const quoteConfirm = useRecoilValue<any>(quoteConfirmationState);
   const [selectDate, setSelectDate] = useState(isQuoteConfirmation ? quoteConfirm?.dueDate : quoteItemValue?.dueDate);
+  const [creationDate, setCreationDate] = useState(isQuoteConfirmation ? quoteConfirm?.creationDate : quoteItemValue?.creationDate);
   const [customersListValue, setCustomersListValue] = useRecoilState<any>(businessListsState);
   const [selectBusiness, setSelectBusiness] = useState<any>({});
   const [selectConfirmBusiness, setSelectConfirmBusiness] = useState<any>({});
@@ -90,6 +94,14 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
   const openSendBtn = Boolean(anchorElSendBtn);
   const openCancelBtn = Boolean(anchorElCancelBtn);
   const openSettingMenu = Boolean(anchorElSettingMenu);
+  const [openWatssAppModal, setOpenWatsAppModal] = useState(false)
+  const onClickOpenWatssAppModal = () => {
+    setOpenWatsAppModal(true)
+  }
+  const onClickCloseWatssAppModal = () => {
+    setOpenWatsAppModal(false)
+
+  }
   const handleSettingMenuClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElSettingMenu(event.currentTarget);
   };
@@ -146,6 +158,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
         } else {
           alertFaultAdded();
           setSelectDate(quoteItemValue?.dueDate);
+          setCreationDate(quoteItemValue?.creationDate)
         }
       }
       await updateDueDateApi(callApi, callBack, {
@@ -1071,6 +1084,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     setquoteItems(quoteItemValue);
     setItems(isQuoteConfirmation ? quoteConfirm?.documentContacts : quoteItemValue?.documentContacts);
     setSelectDate(isQuoteConfirmation ? quoteConfirm?.dueDate : quoteItemValue?.dueDate);
+    setCreationDate(isQuoteConfirmation ? quoteConfirm?.creationDate : quoteItemValue?.creationDate)
   }, [quoteItemValue, quoteConfirm]);
 
 
@@ -1137,11 +1151,32 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
   const onClickOpenLoginModal = () => {
     setOpenLoginModal(true);
   };
+  const [clientTypesCategories, setClientTypesCategories] = useRecoilState(
+    clientTypesCategoriesState
+  );
+  const getClientTypesCategories = async () => {
+    const callBack = (res) => {
+      console.log("res", res)
+
+      if (res) {
+        const clientTypes = res.map((types) => ({
+          label: types.name,
+          id: types.id,
+        }));
+        setClientTypesCategories(clientTypes);
+      }
+    };
+    await getAndSetClientTypes(callApi, callBack, { cardType: CLIENT_TYPE_Id.CUSTOMER });
+  };
+  useEffect(() => {
+    getClientTypesCategories()
+  }, [])
 
   return {
     dateRef,
     activeClickAway,
     selectDate,
+    creationDate,
     isUpdateBusinessName,
     isUpdatePurchaseNumber,
     isUpdateAddress,
@@ -1277,7 +1312,10 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     copyFromDocumentType,
     openLoginModal,
     onClickClosLoginModal,
-    onClickOpenLoginModal
+    onClickOpenLoginModal,
+    openWatssAppModal,
+    onClickOpenWatssAppModal,
+    onClickCloseWatssAppModal
   };
 };
 
