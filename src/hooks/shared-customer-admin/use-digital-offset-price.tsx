@@ -1084,7 +1084,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       totalWorkFlowsCount: 0,
       currentWorkFlowsCount: 0,
     });
-
+    debugger;
     if (
       widgetType === EWidgetProductType.EDIT ||
       widgetType === EWidgetProductType.DUPLICATE
@@ -1099,7 +1099,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       });
 
     }
-  }, [router, widgetType,]);
+  }, [router, widgetType]);
   const exampleTypeValues = useRecoilValue(exampleTypeState);
   const billingMethodValues = useRecoilValue(billingMethodState);
   const listEmployeesValues = useRecoilValue(listEmployeesAtom);
@@ -2252,26 +2252,24 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     );
   };
   const getProductQuoteItemById = async (materials) => {
-    if (connectionId) {
-      const callBack = (res) => {
-        if (res?.success) {
-          console.log("res", res)
+    const callBack = (res) => {
+      if (res?.success) {
+        console.log("res", res)
 
-          const updatedTemplate = updateIsHidden(res?.data, subProducts)
-          setDefaultProductTemplate(updatedTemplate);
-          initQuoteItemProduct(updatedTemplate, materials);
-          setDocmentItemByEdit(res?.data.docmentItem)
-        } else {
-          alertFaultUpdate();
-        }
-      };
-      await getProductByItemIdApi(callApi, callBack, {
-        documentItemId: router?.query?.documentItemId,
-        signalRConnectionId: connectionId,
-        documentType: router?.query?.documentType,
+        const updatedTemplate = updateIsHidden(res?.data, subProducts)
+        setDefaultProductTemplate(updatedTemplate);
+        initQuoteItemProduct(updatedTemplate, materials);
+        setDocmentItemByEdit(res?.data.docmentItem)
+      } else {
+        alertFaultUpdate();
+      }
+    };
+    await getProductByItemIdApi(callApi, callBack, {
+      documentItemId: router?.query?.documentItemId,
+      signalRConnectionId: connectionId,
+      documentType: router?.query?.documentType,
 
-      });
-    }
+    });
   };
 
   const initQuoteItemProduct = (quoteItemProduct, materials) => {
