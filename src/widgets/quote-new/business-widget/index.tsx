@@ -9,6 +9,7 @@ import { useBusinessWidget } from "./use-business-widget";
 import { CustomerCardWidget } from "@/widgets/customer-card-modal";
 import { isValidCustomer } from "@/utils/helpers";
 import { CUSTOMER_ACTIONS } from "@/pages/customers/enums";
+import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 
 const BusinessNewWidget = ({
   values,
@@ -86,7 +87,10 @@ const BusinessNewWidget = ({
           onChange={(e, value) => onChangeSelectBusiness(value)}
           onChangeTextField={checkWhatRenderArray}
         />
-        <span style={classes.plusStyle} onClick={() => setOpenCustomerModal(true)}>+</span>
+        {
+          documentType === DOCUMENT_TYPE.quote && <span style={classes.plusStyle} onClick={() => setOpenCustomerModal(true)}>+</span>
+        }
+
         {!isReceipt && <InputUpdatedValues
           value={purchaseNumber}
           label={t("sales.quote.purchaseNumber")}
