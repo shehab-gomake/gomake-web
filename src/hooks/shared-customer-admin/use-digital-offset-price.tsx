@@ -314,10 +314,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     });
     setCurrentCalculationSessionId(calculationSessionId);
   }, [calculationSessionId]);
-
-  useEffect(() => {
-    setCurrentSignalRConnectionId(connectionId)
-  }, [connectionId])
   useEffect(() => {
     if (calculationExceptionsLogs) {
       setCalculationExceptionsLogs(calculationExceptionsLogs);
@@ -1068,38 +1064,42 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   ]);
 
   useEffect(() => {
-    let checkParameter = validateParameters(isRequiredParameters, subProducts);
-    setCurrentProductItemValueTotalPrice(null);
-    setWorkFlows([]);
-    setJobActions([]);
-    setSubProducts([]);
-    if (checkParameter) {
-      setCanCalculation(true);
+    if(!currentCalculationSessionId){
+      setCurrentSignalRConnectionId(connectionId)
+      let checkParameter = validateParameters(isRequiredParameters, subProducts);
+      setCurrentProductItemValueTotalPrice(null);
+      setWorkFlows([]);
+      setJobActions([]);
+      setSubProducts([]);
+      if (checkParameter) {
+        setCanCalculation(true);
 
-    } else {
-      setCanCalculation(false);
+      } else {
+        setCanCalculation(false);
 
-    }
-    setCalculationProgress({
-      totalWorkFlowsCount: 0,
-      currentWorkFlowsCount: 0,
-    });
-    debugger;
-    if (
-      widgetType === EWidgetProductType.EDIT ||
-      widgetType === EWidgetProductType.DUPLICATE
-    ) {
-      getAllMaterial().then((materials) => {
-        getProductQuoteItemById(materials);
-
+      }
+      setCalculationProgress({
+        totalWorkFlowsCount: 0,
+        currentWorkFlowsCount: 0,
       });
-    } else {
-      getAllMaterial().then((materials) => {
-        getProductById(materials);
-      });
+      debugger;
+      if (
+          widgetType === EWidgetProductType.EDIT ||
+          widgetType === EWidgetProductType.DUPLICATE
+      ) {
+        getAllMaterial().then((materials) => {
+          getProductQuoteItemById(materials);
 
+        });
+      } else {
+        getAllMaterial().then((materials) => {
+          getProductById(materials);
+        });
+
+      }
     }
-  }, [router, widgetType]);
+    
+  }, [router, widgetType,connectionId]);
   const exampleTypeValues = useRecoilValue(exampleTypeState);
   const billingMethodValues = useRecoilValue(billingMethodState);
   const listEmployeesValues = useRecoilValue(listEmployeesAtom);
@@ -2252,24 +2252,26 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     );
   };
   const getProductQuoteItemById = async (materials) => {
-    const callBack = (res) => {
-      if (res?.success) {
-        console.log("res", res)
+    if (connectionId) {
+      const callBack = (res) => {
+        if (res?.success) {
+          console.log("res", res)
 
-        const updatedTemplate = updateIsHidden(res?.data, subProducts)
-        setDefaultProductTemplate(updatedTemplate);
-        initQuoteItemProduct(updatedTemplate, materials);
-        setDocmentItemByEdit(res?.data.docmentItem)
-      } else {
-        alertFaultUpdate();
-      }
-    };
-    await getProductByItemIdApi(callApi, callBack, {
-      documentItemId: router?.query?.documentItemId,
-      signalRConnectionId: connectionId,
-      documentType: router?.query?.documentType,
+          const updatedTemplate = updateIsHidden(res?.data, subProducts)
+          setDefaultProductTemplate(updatedTemplate);
+          initQuoteItemProduct(updatedTemplate, materials);
+          setDocmentItemByEdit(res?.data.docmentItem)
+        } else {
+          alertFaultUpdate();
+        }
+      };
+      await getProductByItemIdApi(callApi, callBack, {
+        documentItemId: router?.query?.documentItemId,
+        signalRConnectionId: connectionId,
+        documentType: router?.query?.documentType,
 
-    });
+      });
+    }
   };
 
   const initQuoteItemProduct = (quoteItemProduct, materials) => {
