@@ -9,11 +9,11 @@ interface CancelBtnMenuProps {
   handleClose: () => void;
   open: boolean;
   anchorEl: null | HTMLElement;
-  onClickOpenDeliveryTimeModal?:any | null;
+  onClickOpenDeliveryTimeModal?: any | null;
   onClickOpenPriceModal?: any | null;
-  onClickOpenIrrelevantModal?:any | null;
+  onClickOpenIrrelevantModal?: any | null;
   onClickOpenModal?: (() => void) | null;
-  menuWidth?: "default" | "small" | "large"; 
+  menuWidth?: "default" | "small" | "large";
 }
 
 const CancelBtnMenu = ({
@@ -24,11 +24,11 @@ const CancelBtnMenu = ({
   onClickOpenPriceModal,
   onClickOpenIrrelevantModal,
   onClickOpenModal,
-} : CancelBtnMenuProps) => {
+}: CancelBtnMenuProps) => {
   const { t } = useTranslation();
 
 
-  
+
   return (
     <GoMakeMenu
       handleClose={handleClose}

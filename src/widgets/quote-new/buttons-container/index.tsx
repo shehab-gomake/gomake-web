@@ -146,7 +146,7 @@ const ButtonsContainer = ({
             {t("sales.quote.print")}
           </GomakePrimaryButton>}
         {
-          documentType === DOCUMENT_TYPE.quote && <GomakePrimaryButton
+          (documentType === DOCUMENT_TYPE.quote || documentType === DOCUMENT_TYPE.order) && <GomakePrimaryButton
             style={classes.btnSecondContainer}
             onClick={handleCancelBtnClick}
           >
