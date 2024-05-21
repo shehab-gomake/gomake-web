@@ -710,9 +710,6 @@ const useAddProduct = ({ clasess }) => {
         const materialPath = parameter.materialPath;
         const currentMaterialPath = materialPath[materialPath.length - 1];
         const parentMaterialPath = materialPath.slice(0, -1);
-        if (parameter.code === "Rollcolor") {
-          debugger
-        }
         let allMaterialsCopy = cloneDeep(allMaterials);
         if (parentMaterialPath && parentMaterialPath.length > 0) {
           allMaterialsCopy = allMaterialsCopy?.find(material =>

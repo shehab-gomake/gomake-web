@@ -141,10 +141,17 @@ const useMaterialsActions = (isAdmin: boolean) => {
       return;
     }
     if (action?.action === EMaterialsActions.UpdateCurrency) {
-      const selectedMaterials = materialCategoryData.filter(item =>
-        selectedMaterialsIds.includes(item.id)
-      );
-      const areCurrenciesSame = selectedMaterials.every(
+      let selectedMaterials = [];
+      if(isAllMaterialsChecked){
+        selectedMaterials = selectedMaterials = materialCategoryData.filter(item =>
+            !uncheckedMaterials.includes(item.id)
+        );
+      }else{
+         selectedMaterials = materialCategoryData.filter(item =>
+            selectedMaterialsIds.includes(item.id)
+        );
+      }
+       const areCurrenciesSame = selectedMaterials.every(
         item => item.rowData.currency.value === selectedMaterials[0].rowData.currency.value
       );
       if (areCurrenciesSame) {
@@ -234,7 +241,6 @@ const useMaterialsActions = (isAdmin: boolean) => {
   };
 
   const onUpdateCallBack = (res) => {
-    debugger;
     if (res.success) {
       if (action?.action === EMaterialsActions.Delete) {
         setMaterialCategoryData(
@@ -508,7 +514,6 @@ const useMaterialsActions = (isAdmin: boolean) => {
     );
 
     if (res?.success) {
-      debugger
       alertSuccessAdded();
       getMaterialCategoryData(
         materialType?.toString(),

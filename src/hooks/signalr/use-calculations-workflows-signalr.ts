@@ -29,6 +29,7 @@ const useCalculationsWorkFlowsSignalr = () => {
     useState<IExceptionsLog[]>();
   const [calculationServerError,setcalculationServerErrorState]=useState(false)
 
+  const [isCalculationFinished,setIsCalculationFinished]=useState(false)
 
   useEffect(() => {
     if (connection) {
@@ -46,8 +47,9 @@ const useCalculationsWorkFlowsSignalr = () => {
       connection.on("UpdatePricing", (newData) => {
         setSignalRPricingResult(newData);
       });
-      connection.on("calculationFinished", (newData) => {
-        setUpdatedSelectedWorkFlow(newData)
+      connection.on("calculationFinished", () => {
+        console.log("calculationFinished")
+        setIsCalculationFinished(true)
       });
       connection.on("calculationServerError", () => {
         setcalculationServerErrorState(true)
@@ -61,7 +63,9 @@ const useCalculationsWorkFlowsSignalr = () => {
     updatedSelectedWorkFlow,
     calculationExceptionsLogs,
     signalRPricingResult,
-    calculationServerError
+    calculationServerError,
+    isCalculationFinished,
+    setIsCalculationFinished
   };
 };
 export { useCalculationsWorkFlowsSignalr };

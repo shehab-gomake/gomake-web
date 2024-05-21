@@ -132,7 +132,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const selectedWorkFlow = useRecoilValue(selectedWorkFlowState);
   const [quantityTypes, setQuantityTypes] = useRecoilState(productQuantityTypesValuesState);
 
-  const setCalculationProgress = useSetRecoilState(calculationProgressState);
+  const [calculationProgress,setCalculationProgress] = useRecoilState(calculationProgressState);
   const jobDetails = useRecoilValue(jobDetailsState);
   const [jobActions, setJobActions] = useRecoilState(jobActionsState);
   const setOutSuppliers = useSetRecoilState(outsourceSuppliersState);
@@ -142,7 +142,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     useRecoilState<any>(digitslPriceState);
   const [priceRecovery, setPriceRecovery] = useState(true);
   const [canCalculation, setCanCalculation] = useState(false);
-  const [isCalculationFinished, setIsCalculationFinished] = useState(false);
   const setSelectParameterButton = useSetRecoilState(
     selectParameterButtonState
   );
@@ -154,7 +153,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     updatedSelectedWorkFlow,
     calculationExceptionsLogs,
     signalRPricingResult,
-    calculationServerError
+    calculationServerError,
+    isCalculationFinished,
+    setIsCalculationFinished
   } = useCalculationsWorkFlowsSignalr();
 
   useEffect(() => {
@@ -167,6 +168,15 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       setLoading(false);
     }
   }, [calculationServerError]);
+  useEffect(() => {
+    if (isCalculationFinished) {
+      setCalculationProgress({
+        totalWorkFlowsCount: 0,
+        currentWorkFlowsCount: 0,
+      });
+      setLoading(false);
+    }
+  }, [isCalculationFinished]);
   const [calculationServerErrorState, setcalculationServerErrorState] = useState(false)
 
   const [currentSignalRConnectionId, setCurrentSignalRConnectionId] = useRecoilState(currentCalculationConnectionId);
@@ -232,11 +242,13 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
         }
         if (calculationResult.isCalculationFinished) {
+          console.log("signalRPricingResult3")
           setCalculationProgress({
             totalWorkFlowsCount: 0,
             currentWorkFlowsCount: 0,
           });
           setCurrentProductItemValueTotalWorkFlows(calculationResult.productItemValue.totalWorkFlows)
+          console.log("setLoading 2")
           setLoading(false);
         } else {
           setCurrentProductItemValueTotalWorkFlows(currentWorkFlows ? currentWorkFlows.length : 0)
@@ -293,13 +305,15 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
   useEffect(() => {
     if (signalRPricingResult && signalRPricingResult.productItemValueDraftId === currentCalculationSessionId) {
-      setLoading(false);
+      //console.log("setLoading 3")
+      //setLoading(false);
       setCurrentProductItemValueTotalPrice(
         parseFloat(signalRPricingResult.totalPrice)
       );
+      console.log("signalRPricingResult1",signalRPricingResult)
       setCalculationProgress({
         totalWorkFlowsCount: signalRPricingResult.totalWorkFlows,
-        currentWorkFlowsCount: signalRPricingResult.currentWorkFlowIndex,
+        currentWorkFlowsCount: signalRPricingResult.currentWorkFlowIndex > calculationProgress.currentWorkFlowsCount ? signalRPricingResult.currentWorkFlowIndex : (calculationProgress.currentWorkFlowsCount + 1)  ,
       });
     }
   }, [signalRPricingResult])
@@ -308,6 +322,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     setCurrentProductItemValueTotalPrice(null);
     setJobActions([]);
     setIsCalculationFinished(false);
+    console.log("signalRPricingResult4")
     setCalculationProgress({
       totalWorkFlowsCount: 0,
       currentWorkFlowsCount: 0,
@@ -317,11 +332,13 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   useEffect(() => {
     if (calculationExceptionsLogs) {
       setCalculationExceptionsLogs(calculationExceptionsLogs);
-      setCalculationProgress({
+      console.log("signalRPricingResult5")
+      /*setCalculationProgress({
         totalWorkFlowsCount: 0,
         currentWorkFlowsCount: 0,
-      });
-      setLoading(false)
+      });*/
+      //console.log("setLoading 4")
+      //setLoading(false)
     }
 
   }, [calculationExceptionsLogs]);
@@ -1078,11 +1095,11 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         setCanCalculation(false);
 
       }
+      console.log("signalRPricingResult7")
       setCalculationProgress({
         totalWorkFlowsCount: 0,
         currentWorkFlowsCount: 0,
       });
-      debugger;
       if (
           widgetType === EWidgetProductType.EDIT ||
           widgetType === EWidgetProductType.DUPLICATE
@@ -2357,6 +2374,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       setJobActions(quoteItemProduct.productItemValue.actions);
       //setSubProducts(quoteItemSubProducts);
       //setSubProductsCopy(quoteItemSubProducts);
+      console.log("signalRPricingResult8")
       setCalculationProgress({
         totalWorkFlowsCount: 0,
         currentWorkFlowsCount: 0,
@@ -2401,6 +2419,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     setCurrentProductItemValueTotalPrice(null);
     setJobActions([]);
     setIsCalculationFinished(false);
+    console.log("signalRPricingResult9")
     setCalculationProgress({
       totalWorkFlowsCount: 0,
       currentWorkFlowsCount: 0,
@@ -2442,21 +2461,26 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           newRequestAbortController
         )
         if (res?.status === 500) {
+          console.log("signalRPricingResult10")
           setCalculationProgress({
             totalWorkFlowsCount: 0,
             currentWorkFlowsCount: 0,
           });
+          console.log("setLoading 5")
           setLoading(false);
         }
         else {
+          console.log("signalRPricingResult11")
           setCalculationProgress({
             totalWorkFlowsCount: 0,
             currentWorkFlowsCount: 0,
           });
+          console.log("setLoading 6")
           setLoading(false);
         }
       }
     } else {
+      console.log("setLoading 7")
       setLoading(false);
     }
   }, 700);
