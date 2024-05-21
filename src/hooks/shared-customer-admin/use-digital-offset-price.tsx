@@ -242,13 +242,11 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
         }
         if (calculationResult.isCalculationFinished) {
-          console.log("signalRPricingResult3")
           setCalculationProgress({
             totalWorkFlowsCount: 0,
             currentWorkFlowsCount: 0,
           });
           setCurrentProductItemValueTotalWorkFlows(calculationResult.productItemValue.totalWorkFlows)
-          console.log("setLoading 2")
           setLoading(false);
         } else {
           setCurrentProductItemValueTotalWorkFlows(currentWorkFlows ? currentWorkFlows.length : 0)
@@ -305,12 +303,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
   useEffect(() => {
     if (signalRPricingResult && signalRPricingResult.productItemValueDraftId === currentCalculationSessionId) {
-      //console.log("setLoading 3")
-      //setLoading(false);
       setCurrentProductItemValueTotalPrice(
         parseFloat(signalRPricingResult.totalPrice)
       );
-      console.log("signalRPricingResult1",signalRPricingResult)
       setCalculationProgress({
         totalWorkFlowsCount: signalRPricingResult.totalWorkFlows,
         currentWorkFlowsCount: signalRPricingResult.currentWorkFlowIndex > calculationProgress.currentWorkFlowsCount ? signalRPricingResult.currentWorkFlowIndex : (calculationProgress.currentWorkFlowsCount + 1)  ,
@@ -322,7 +317,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     setCurrentProductItemValueTotalPrice(null);
     setJobActions([]);
     setIsCalculationFinished(false);
-    console.log("signalRPricingResult4")
     setCalculationProgress({
       totalWorkFlowsCount: 0,
       currentWorkFlowsCount: 0,
@@ -332,7 +326,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   useEffect(() => {
     if (calculationExceptionsLogs) {
       setCalculationExceptionsLogs(calculationExceptionsLogs);
-      console.log("signalRPricingResult5")
       /*setCalculationProgress({
         totalWorkFlowsCount: 0,
         currentWorkFlowsCount: 0,
@@ -1095,7 +1088,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         setCanCalculation(false);
 
       }
-      console.log("signalRPricingResult7")
       setCalculationProgress({
         totalWorkFlowsCount: 0,
         currentWorkFlowsCount: 0,
@@ -2272,8 +2264,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     if (connectionId) {
       const callBack = (res) => {
         if (res?.success) {
-          console.log("res", res)
-
           const updatedTemplate = updateIsHidden(res?.data, subProducts)
           setDefaultProductTemplate(updatedTemplate);
           initQuoteItemProduct(updatedTemplate, materials);
@@ -2374,7 +2364,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       setJobActions(quoteItemProduct.productItemValue.actions);
       //setSubProducts(quoteItemSubProducts);
       //setSubProductsCopy(quoteItemSubProducts);
-      console.log("signalRPricingResult8")
       setCalculationProgress({
         totalWorkFlowsCount: 0,
         currentWorkFlowsCount: 0,
@@ -2419,7 +2408,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     setCurrentProductItemValueTotalPrice(null);
     setJobActions([]);
     setIsCalculationFinished(false);
-    console.log("signalRPricingResult9")
     setCalculationProgress({
       totalWorkFlowsCount: 0,
       currentWorkFlowsCount: 0,
@@ -2461,26 +2449,21 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           newRequestAbortController
         )
         if (res?.status === 500) {
-          console.log("signalRPricingResult10")
           setCalculationProgress({
             totalWorkFlowsCount: 0,
             currentWorkFlowsCount: 0,
           });
-          console.log("setLoading 5")
           setLoading(false);
         }
         else {
-          console.log("signalRPricingResult11")
           setCalculationProgress({
             totalWorkFlowsCount: 0,
             currentWorkFlowsCount: 0,
           });
-          console.log("setLoading 6")
           setLoading(false);
         }
       }
     } else {
-      console.log("setLoading 7")
       setLoading(false);
     }
   }, 700);
