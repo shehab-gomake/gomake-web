@@ -5,12 +5,15 @@ import { useStyle } from "@/widgets/quick-setup-widgets/company/style";
 import { useTranslation } from "react-i18next";
 import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
 import { domainRegex, emailRegex } from "@/utils/regex";
-import { PhoneInputComponent } from "@/components/form-inputs/phone-input";
 import { NewLogo } from "@/icons";
+
+
+import PhoneInput from 'react-phone-input-2';
+import 'react-phone-input-2/lib/style.css';
 import {
     defaultCountries,
 } from "react-international-phone";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 const SignupCompanyForm = ({ isMobile }: any) => {
     const {
         state,
@@ -52,15 +55,16 @@ const SignupCompanyForm = ({ isMobile }: any) => {
     const renderPhone = useCallback(() => {
         const countryData = defaultCountries.find((item) => item[0] === state?.country?.name)?.[1];
         return (
-            <PhoneInputComponent
-                key={countryData}
-                onChange={(e) => onChange('phone', e)}
+            <PhoneInput
+                country={countryData}
+                enableAreaCodes={true}
                 value={state.phone}
-                customStyle={classes.inputPhone}
-                defaultCountry={countryData}
+                onChange={phone => onChange('phone', phone)}
+                inputStyle={{ width: '100%' }}
+                containerStyle={{ width: '100%' }}
             />
         );
-    }, [state.country, state.phone, classes.inputPhone]);
+    }, [state.country, state.phone]);
     return (
         <Stack gap={'12px'} alignItems={'flex-start'}>
             <NewLogo />
