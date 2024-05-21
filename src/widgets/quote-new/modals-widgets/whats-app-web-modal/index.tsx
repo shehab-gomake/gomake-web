@@ -1,4 +1,6 @@
 import { useTranslation } from "react-i18next";
+import { useEffect, useState } from "react";
+
 import {
   GoMakeAutoComplate,
   GoMakeModal,
@@ -7,7 +9,6 @@ import {
 } from "@/components";
 
 import { useStyle } from "./style";
-import { useEffect, useState } from "react";
 
 const WhatsAppWebModal = ({
   openModal,
@@ -18,9 +19,8 @@ const WhatsAppWebModal = ({
 }) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const [selectedClinet, setSelectedClient] = useState<any>()
+  const [, setSelectedClient] = useState<any>()
   const [phoneNumber, setPhoneNumber] = useState("")
-  console.log("selectedClinet", { whatsappMassage })
   useEffect(() => {
     getWhatsAppMessage()
   }, [openModal])

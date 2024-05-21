@@ -10,6 +10,8 @@ import { useState } from "react";
 import { useQuoteConfirmation } from "@/pages-components/quote-confirmation/use-quote-confirmation";
 import { useRouter } from "next/router";
 import { MoreMenuWidget } from "../more-circle";
+import { useRecoilValue } from "recoil";
+import { quoteItemState } from "@/store";
 
 const RowMappingWidget = ({
   item,
@@ -53,6 +55,7 @@ const RowMappingWidget = ({
   });
   const { handleItemCheck } = useQuoteConfirmation();
   const canUpdate = router.query.isNewCreation ? true : item?.isEditable;
+  const quoteItemValue = useRecoilValue<any>(quoteItemState);
 
   return (
     <TableRow
@@ -101,15 +104,19 @@ const RowMappingWidget = ({
       >
         {item.productName}
       </PrimaryTableCell>
-      <PrimaryTableCell
-        style={{
-          width: columnWidths[3],
-          textAlign: "start",
-          borderBottom: item?.childsDocumentItems && "none",
-        }}
-      >
-        <CharacterDetails details={item.details} getQuote={getQuote} documentItemId={item?.id} canUpdate={canUpdate} />
-      </PrimaryTableCell>
+      {
+        quoteItemValue?.isShowDetails &&
+        <PrimaryTableCell
+          style={{
+            width: columnWidths[3],
+            textAlign: "start",
+            borderBottom: item?.childsDocumentItems && "none",
+          }}
+        >
+          <CharacterDetails details={item.details} getQuote={getQuote} documentItemId={item?.id} canUpdate={canUpdate} />
+        </PrimaryTableCell>
+      }
+
       <PrimaryTableCell
         style={{
           width: columnWidths[4],

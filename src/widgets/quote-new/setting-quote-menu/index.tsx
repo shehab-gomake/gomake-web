@@ -20,7 +20,9 @@ const SettingQuoteMenu = ({ handleClose, open, anchorEl, onBlurExchangeRate, set
   const [detailsView, setdetailsView] = useState(quoteStateValue?.isShowDetails)
   const currencies = useRecoilValue<{ label: string, value: string }[]>(currenciesState);
   const matchingCurrency = currencies.find(currency => currency.value === quoteStateValue?.currency)?.label;
-
+  useEffect(() => {
+    setdetailsView(quoteStateValue?.isShowDetails)
+  }, [quoteStateValue?.isShowDetails])
   const [exchangeRate, setExchangeRate] =
     useState(quoteStateValue?.exchangeRate || "-");
   const [anchorElTableSorting, setAnchorElTableSorting] =

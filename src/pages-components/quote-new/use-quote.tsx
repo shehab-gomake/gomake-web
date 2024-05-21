@@ -129,18 +129,19 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
   const onCloseDeliveryModal = () => {
     setOpenAddDeliveryModal(false);
   };
-
+  console.log("quoteItemValue", quoteItemValue)
   const tableHeaders = [
     "#",
     t("sales.quote.itemCode"),
     t("products.profits.itemName"),
-    t("products.profits.details"),
+    quoteItemValue?.isShowDetails ? t("products.profits.details") : null,
     t("sales.quote.amount"),
     t("sales.quote.discount"),
     t("products.profits.pricingListWidget.unitPrice"),
     t("products.offsetPrice.admin.finalPrice"),
     t("products.profits.more"),
-  ];
+  ].filter(Boolean);
+
   const columnWidths = ["5%", "8%", "12%", "33%", "8%", "8%", "8%", "8%"];
   const headerHeight = "44px";
 
