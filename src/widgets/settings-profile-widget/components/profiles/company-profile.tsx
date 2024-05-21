@@ -14,6 +14,7 @@ import { useTranslation } from "react-i18next";
 import { PermissionCheck } from "@/components/CheckPermission";
 import { Permissions } from "@/components/CheckPermission/enum";
 import DaysOfWork from "./working-days/working-days";
+import { companyCommunicationInputs } from "./inputs/company-communication-inputs copy";
 
 const CompanyProfileComponent = () => {
   const { t } = useTranslation();
@@ -27,7 +28,7 @@ const CompanyProfileComponent = () => {
     daysOfWork,
     getCurrenciesApi,
     currencies,
-    countriesWithCodes
+    countriesWithCodes,
   } = useCompanyProfile();
 
   useEffect(() => {
@@ -46,39 +47,34 @@ const CompanyProfileComponent = () => {
   const formSections: { inputs: any[]; title: string }[] = [
     {
       inputs: companyProfileInputs(profile, currencies),
-      title: "profileSettings.company"
+      title: "profileSettings.company",
     },
     {
       inputs: companyContactsInputs(profile),
       title: "profileSettings.contacts",
     },
     {
-      inputs: companyLocationInputs(profile , countriesWithCodes),
+      inputs: companyLocationInputs(profile, countriesWithCodes),
       title: "profileSettings.location",
     },
     {
       inputs: companyFinancialInputs(profile),
       title: "profileSettings.financial",
     },
+    {
+      inputs: companyCommunicationInputs(profile),
+      title: "profileSettings.smsAndEmails",
+    },
   ];
-
 
   return (
     <div style={{ paddingBottom: 2, paddingTop: "40px", position: "relative" }}>
       <Stack direction={"row"} gap={"57px"}>
         <div>
-          <ProfileAvatar
-            onUploadImage={changeCompanyLoginImage}
-            src={profile.loginLogo}
-            title={t("profileSettings.loginLogo")}
-          />
+          <ProfileAvatar onUploadImage={changeCompanyLoginImage} src={profile.loginLogo} title={t("profileSettings.loginLogo")} />
         </div>
         <div>
-          <ProfileAvatar
-            onUploadImage={changeCompanyProfileImage}
-            src={profile.logo}
-            title={t("profileSettings.companyLogo")}
-          />
+          <ProfileAvatar onUploadImage={changeCompanyProfileImage} src={profile.logo} title={t("profileSettings.companyLogo")} />
         </div>
       </Stack>
       <Stack direction={"column"} gap={"32px"} paddingTop={"44px"}>
@@ -93,10 +89,18 @@ const CompanyProfileComponent = () => {
                   error={false}
                 />
               ))}
-              {section.title === 'profileSettings.company' && <DaysOfWork options={daysOfWork} label={t("profileSettings.dayOfWork")} setState={profileChange} state={profile} />}
+              {section.title === "profileSettings.company" && (
+                <DaysOfWork
+                  options={daysOfWork}
+                  label={t("profileSettings.dayOfWork")}
+                  setState={profileChange}
+                  state={profile}
+                />
+              )}
             </FormInputsSectionComponent>
           );
         })}
+        <div>{profile.isSendGridVerificated ? "Service Email Verified" : "Service Email Not Verified!"}</div>
       </Stack>
       <div
         style={{
@@ -106,12 +110,11 @@ const CompanyProfileComponent = () => {
           justifyContent: "flex-end",
         }}
       >
-        <PermissionCheck userPermission={Permissions.EDIT_COMPANY_PROFILE} >
+        <PermissionCheck userPermission={Permissions.EDIT_COMPANY_PROFILE}>
           <SecondaryButton onClick={updateProfileChanges} variant={"contained"}>
             {t("profileSettings.update")}
           </SecondaryButton>
         </PermissionCheck>
-
       </div>
     </div>
   );
