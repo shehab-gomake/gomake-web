@@ -64,6 +64,9 @@ const GET_CLIENT_DOCUMENTS = "/v1/erp-service/documents/get-client-documents";
 
 const ADD_CREATE_CONTACT_URL = "/v1/crm-service/customer/create-contact";
 
+const SORT_DOCUMENT_ITEMS_URL = "/v1/erp-service/documents/sort-document-items";
+const UPDATE_IS_SHOW_DETAILS_URL = "/v1/erp-service/documents/update-is-show-details";
+const GET_WHATSAPP_MESSAGE_URL = "/v1/erp-service/documents/get-whats-app-message";
 
 
 const getDocumentApi: ICallAndSetData = async (callApi, setState, data) => {
@@ -570,6 +573,35 @@ const getBoardMissionPDF: ICallAndSetData = async (
   );
 };
 
+const sortDocumentItemsApi: ICallAndSetData = async (callApi, setState, data) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.PUT,
+    SORT_DOCUMENT_ITEMS_URL,
+    setState,
+    data
+  );
+};
+
+const updateIsShowDetailsApi: ICallAndSetData = async (callApi, setState, data) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.PUT,
+    UPDATE_IS_SHOW_DETAILS_URL,
+    setState,
+    data
+  );
+};
+const getWhatsAppMessageApi: ICallAndSetData = async (callApi, setState, data) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    GET_WHATSAPP_MESSAGE_URL,
+    setState,
+    data
+  );
+};
+
 export {
   getDocumentApi,
   getAllDocumentsApi,
@@ -609,5 +641,8 @@ export {
   getClientDocumentsApi,
   getAllDocumentLogsApi,
   addCustomerContactApi,
-  getBoardMissionPDF
+  getBoardMissionPDF,
+  sortDocumentItemsApi,
+  updateIsShowDetailsApi,
+  getWhatsAppMessageApi
 };

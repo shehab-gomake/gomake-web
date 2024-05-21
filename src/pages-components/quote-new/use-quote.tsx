@@ -19,7 +19,7 @@ import {
   quoteItemState,
 } from "@/store";
 import { useQuoteGetData } from "./use-quote-get-data";
-import { addDeliveryApi, addDocumentContactApi, calculateDocumentApi, calculateDocumentItemApi, cancelDocumentApi, changeDocumentClientApi, deleteDocumentAddressApi, deleteDocumentContactApi, deleteDocumentItemApi, duplicateWithAnotherQuantityApi, getDocumentApi, refreshExchangeRateApi, saveDocumentApi, sendDocumentToClientApi, updateAgentApi, updateDocumentAddressApi, updateDocumentContactApi, updateDocumentCurrencyApi, updateDueDateApi, updateExchangeRateApi, updatePurchaseNumberApi } from "@/services/api-service/generic-doc/documents-api";
+import { addDeliveryApi, addDocumentContactApi, calculateDocumentApi, calculateDocumentItemApi, cancelDocumentApi, changeDocumentClientApi, deleteDocumentAddressApi, deleteDocumentContactApi, deleteDocumentItemApi, duplicateWithAnotherQuantityApi, getDocumentApi, getWhatsAppMessageApi, refreshExchangeRateApi, saveDocumentApi, sendDocumentToClientApi, sortDocumentItemsApi, updateAgentApi, updateDocumentAddressApi, updateDocumentContactApi, updateDocumentCurrencyApi, updateDueDateApi, updateExchangeRateApi, updateIsShowDetailsApi, updatePurchaseNumberApi } from "@/services/api-service/generic-doc/documents-api";
 import { DOCUMENT_TYPE } from "../quotes/enums";
 import { useRouter } from "next/router";
 import { getAllCreditTransactionsApi, getClientPaymentItemsApi, getReceiptByIdApi } from "@/services/api-service/generic-doc/receipts-api";
@@ -1172,6 +1172,59 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     getClientTypesCategories()
   }, [])
 
+  const sortDocumentItems = async (sortType: number) => {
+
+    const callBack = (res) => {
+      if (res?.success) {
+        alertSuccessUpdate();
+        getQuote();
+      } else {
+        alertFaultUpdate();
+      }
+    }
+    await sortDocumentItemsApi(callApi, callBack, {
+      documentType: docType,
+      document: {
+        documentId: quoteItemValue?.id,
+        sortType,
+      }
+    })
+  }
+  const updateIsShowDetails = async () => {
+
+    const callBack = (res) => {
+      if (res?.success) {
+        alertSuccessUpdate();
+        getQuote();
+      } else {
+        alertFaultUpdate();
+      }
+    }
+    await updateIsShowDetailsApi(callApi, callBack, {
+      documentType: docType,
+      document: {
+        documentId: quoteItemValue?.id,
+      }
+    })
+  }
+  const [whatsappMassage, setWhatssAppMassage] = useState("")
+  const getWhatsAppMessage = async () => {
+    if (quoteItemValue?.id) {
+      const callBack = (res) => {
+        if (res?.success) {
+          setWhatssAppMassage(res?.data)
+        } else {
+          alertFaultUpdate();
+        }
+      };
+      await getWhatsAppMessageApi(callApi, callBack, {
+        documentId: quoteItemValue?.id,
+        documentType: docType
+
+      });
+    }
+
+  };
   return {
     dateRef,
     activeClickAway,
@@ -1315,7 +1368,11 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     onClickOpenLoginModal,
     openWatssAppModal,
     onClickOpenWatssAppModal,
-    onClickCloseWatssAppModal
+    onClickCloseWatssAppModal,
+    sortDocumentItems,
+    updateIsShowDetails,
+    getWhatsAppMessage,
+    whatsappMassage
   };
 };
 

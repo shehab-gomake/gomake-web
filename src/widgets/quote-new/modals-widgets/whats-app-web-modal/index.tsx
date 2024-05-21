@@ -7,18 +7,23 @@ import {
 } from "@/components";
 
 import { useStyle } from "./style";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const WhatsAppWebModal = ({
   openModal,
   onClose,
-  clientContactsValue
+  clientContactsValue,
+  getWhatsAppMessage,
+  whatsappMassage
 }) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
   const [selectedClinet, setSelectedClient] = useState<any>()
   const [phoneNumber, setPhoneNumber] = useState("")
-  console.log("selectedClinet", { selectedClinet, phoneNumber })
+  console.log("selectedClinet", { whatsappMassage })
+  useEffect(() => {
+    getWhatsAppMessage()
+  }, [openModal])
   return (
     <>
       <GoMakeModal
@@ -50,7 +55,10 @@ const WhatsAppWebModal = ({
             }}
           />
           <GomakePrimaryButton style={clasess.btnContainer} onClick={() => {
-            window.open(`whatsapp://send?phone=${phoneNumber}&text=hello`, "_blank");
+            if (whatsappMassage) {
+              window.open(`whatsapp://send?phone=${phoneNumber}&text=${whatsappMassage}`, "_blank");
+
+            }
           }}>
             {t("sales.quote.openWhatsAppWeb")}
           </GomakePrimaryButton>

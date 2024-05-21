@@ -41,3 +41,11 @@ export enum SampleTypeParm
     Full = 1,
     PrintOnly
 }
+
+export enum SortByTypes
+{
+    Defualt = 1,
+    Date = 2,
+    ProductABC = 3,
+    WorkNameABC = 4
+}
