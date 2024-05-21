@@ -1,5 +1,5 @@
 import {useRecoilState, useRecoilValue} from "recoil";
-import {ICompanyDataState, ICountry, signupCompanyState} from "@/widgets/quick-setup-widgets/company/state";
+import {ICompanyDataState,  signupCompanyState} from "@/widgets/quick-setup-widgets/company/state";
 import {currenciesState} from "@/widgets/materials-widget/state";
 import {getCurrenciesApi} from "@/services/api-service/enums/enums-endpoints";
 import {useGomakeAxios, useGomakeRouter, useSnackBar} from "@/hooks";
@@ -59,21 +59,19 @@ const useCompanyForm = () => {
     alertFault("All fields are required.");
     return;
   }
-
   // Validate domain
   if (!domainRegex.test(state.domain)) {
     alertFault("Invalid domain format.");
     return;
   }
-
   // Validate email
   if (!emailRegex.test(state.email)) {
     alertFault("Invalid email format.");
     return;
   }
 
-  // Validate phone number (assuming E.164 format)
-  if (!state.phone.match(/^\+[1-9]\d{1,14}$/)) {
+ 
+  if (!state.phone.match(/^\d{10,15}$/)) {
     alertFault("Invalid phone number format.");
     return;
   }

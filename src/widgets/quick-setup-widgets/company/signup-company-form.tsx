@@ -27,22 +27,6 @@ const SignupCompanyForm = ({ isMobile }: any) => {
     } = useCompanyForm();
     const { classes } = useStyle();
     const { t } = useTranslation();
-
-    const validateField = (field, value) => {
-        if (!value) {
-            return t('signup.requiredField');
-        }
-        if (field === 'domain' && !domainRegex.test(value)) {
-            return t('signup.errorDomain');
-        }
-        if (field === 'email' && !emailRegex.test(value)) {
-            return t('signup.errorEmail');
-        }
-        if (field === 'phone' && !value.match(/^\+[1-9]\d{1,14}$/)) { // Assuming E.164 format
-            return t('signup.errorPhone');
-        }
-        return '';
-    };
     const [lastCheckedDomain, setLastCheckedDomain] = useState("");
 
     const handleDomainBlur = useCallback((e) => {
@@ -88,7 +72,6 @@ const SignupCompanyForm = ({ isMobile }: any) => {
                     style={classes.input}
                     placeholder={t('signup.companyName')}
                     value={state.name}
-                    error={validateField('name', state.name)}
                 />
                 <Stack direction={'row'} alignItems={'center'} style={{ position: "relative" }}>
                     <GomakeTextInput onChange={(e) => onChange('domain', e.target.value)}
