@@ -31,4 +31,6 @@ export enum EMeasurementUnits {
     COVERS_P_H = "coversPH",
     PACKAGE_P_H = 'packagePH',
     CUTS_P_MIN = 'cutsPMIN',
+    SQUARE_METER_P_MIN = 'squareMeterPerMin',
+
 }
