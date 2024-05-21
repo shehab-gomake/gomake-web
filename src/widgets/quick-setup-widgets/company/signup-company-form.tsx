@@ -5,9 +5,15 @@ import { useStyle } from "@/widgets/quick-setup-widgets/company/style";
 import { useTranslation } from "react-i18next";
 import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
 import { domainRegex, emailRegex } from "@/utils/regex";
-import { PhoneInputComponent } from "@/components/form-inputs/phone-input";
 import { NewLogo } from "@/icons";
 
+
+import PhoneInput from 'react-phone-input-2';
+import 'react-phone-input-2/lib/style.css';
+import {
+    defaultCountries,
+} from "react-international-phone";
+import { useCallback, useState } from "react";
 const SignupCompanyForm = ({ isMobile }: any) => {
     const {
         state,
@@ -17,7 +23,6 @@ const SignupCompanyForm = ({ isMobile }: any) => {
         countryList,
         currencies,
         languages,
-        setIsAvailable,
         checkPrintHouseDomain
     } = useCompanyForm();
     const { classes } = useStyle();
@@ -38,27 +43,48 @@ const SignupCompanyForm = ({ isMobile }: any) => {
         }
         return '';
     };
+    const [lastCheckedDomain, setLastCheckedDomain] = useState("");
 
-    const allFieldsValid = () => {
-        return state.name && state.domain && state.fullName && state.email && state.phone && state.country && state.systemLanguage && state.systemCurrency &&
-            !validateField('name', state.name) &&
-            !validateField('domain', state.domain) &&
-            !validateField('fullName', state.fullName) &&
-            !validateField('email', state.email) &&
-            !validateField('phone', state.phone) &&
-            state.country && state.systemLanguage && state.systemCurrency;
-    };
+    const handleDomainBlur = useCallback((e) => {
+        const newDomain = e.target.value;
+        if (newDomain !== lastCheckedDomain) {
+            checkPrintHouseDomain(newDomain);
+            setLastCheckedDomain(newDomain);
+        }
+    }, [lastCheckedDomain, checkPrintHouseDomain]);
+    const renderPhone = useCallback(() => {
+        const countryData = defaultCountries.find((item) => item[0] === state?.country?.name)?.[1];
+        return (
+            <PhoneInput
+                country={countryData}
+                enableAreaCodes={true}
+                value={state.phone}
+                onChange={phone => onChange('phone', phone)}
+                inputStyle={{ width: '100%' }}
+                containerStyle={{ width: '100%' }}
+            />
+        );
+    }, [state.country, state.phone]);
     return (
         <Stack gap={'12px'} alignItems={'flex-start'}>
             <NewLogo />
             <div style={isMobile ? classes.signUpMobileStyle : classes.signUpStyle}>Sign up</div>
             <div style={isMobile ? classes.subTitleMobileStyle : classes.subTitleStyle}>Please enter the following details to create account.</div>
             <Stack gap={'24px'} width={"100%"}>
+                <GoMakeAutoComplate
+                    options={countryList}
+                    getOptionLabel={(option: any) => `${option.name}`}
+                    onChange={(e, v) => onChange('country', v)}
+                    value={state.country}
+                    placeholder={t('signup.country')}
+                    style={classes.dropDownList}
+                />
+
                 <GomakeTextInput
                     onChange={(e) => {
                         onChange('name', e.target.value)
                     }}
-                    onBlur={(e) => { checkPrintHouseDomain(e.target.value) }}
+                    onBlur={handleDomainBlur}
                     style={classes.input}
                     placeholder={t('signup.companyName')}
                     value={state.name}
@@ -72,31 +98,6 @@ const SignupCompanyForm = ({ isMobile }: any) => {
                         value={state.domain} />
                     <span style={{ position: "absolute", right: 8 }}>.gomake.net</span>
                 </Stack>
-                <div style={classes.noteStyle}>You can use letters, numbers & periods</div>
-                {/* {
-                    isAvailable &&
-                    <Stack direction={'column'} alignItems={'flex-start'} gap={"8px"} style={classes.suggestionStyle}>
-                        <span style={classes.msgTestStyle}>
-                            <CloseIcon style={{ color: "red", width: 18, height: 18 }} /> {t('signup.errorDomain')}
-                        </span>
-                        {domainList.map((domain) => {
-                            return (
-                                <>
-                                    <Stack style={classes.suggestionItemStyle}
-                                        onClick={() => {
-                                            onChange('domain', domain)
-                                            setIsAvailable(false)
-                                        }} >
-                                        {domain}
-                                        <div style={classes.selectSuggestionStyle}>select Suggestion</div>
-                                    </Stack>
-                                    <div style={classes.lineStyle} />
-                                </>
-
-                            )
-                        })}
-                    </Stack>
-                } */}
                 <GomakeTextInput onChange={(e) => onChange('fullName', e.target.value)}
                     style={classes.input}
                     placeholder={t('signup.fullName')}
@@ -106,20 +107,7 @@ const SignupCompanyForm = ({ isMobile }: any) => {
                     placeholder={t('signup.email')}
                     error={state.email ? !emailRegex.test(state.email) : false}
                     value={state.email} />
-                <PhoneInputComponent
-                    onChange={(e) => onChange('phone', e)}
-                    value={state.phone}
-                    customStyle={classes.inputPhone}
-                />
-                <GoMakeAutoComplate
-                    options={countryList}
-                    getOptionLabel={(option: any) => `${option.name}`}
-                    onChange={(e, v) => onChange('country', v)}
-                    value={state.country}
-                    placeholder={t('signup.country')}
-                    style={classes.dropDownList}
-                />
-
+                {renderPhone()}
                 <GoMakeAutoComplate
                     options={languages}
                     getOptionLabel={(option: any) => `${option.label}`}

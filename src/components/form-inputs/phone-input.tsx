@@ -1,6 +1,10 @@
 import { printHouseProfile } from "@/store/print-house-profile";
-import React from "react";
-import { PhoneInput } from "react-international-phone";
+import React, { useEffect, useState } from "react";
+import {
+  PhoneInput,
+  defaultCountries,
+  parseCountry,
+} from "react-international-phone";
 import "react-international-phone/style.css";
 import { useRecoilValue } from "recoil";
 
@@ -9,15 +13,19 @@ interface IProps {
   value: string;
   autoFocus?: boolean;
   customStyle?: React.CSSProperties; // Add the style property
+  defaultCountry?: string;
 
 }
 
-const PhoneInputComponent = ({ onChange, value, autoFocus, customStyle }: IProps) => {
-  const printHouseProfileState = useRecoilValue<any>(printHouseProfile);
 
+const PhoneInputComponent = ({ onChange, value, autoFocus, customStyle, defaultCountry }: IProps) => {
+
+  const printHouseProfileState = useRecoilValue<any>(printHouseProfile);
+  console.log("defaultCountry", defaultCountry)
   return (
     <PhoneInput
-      defaultCountry={printHouseProfileState?.country?.toLowerCase()}
+      key={defaultCountry}
+      defaultCountry={defaultCountry ? defaultCountry : printHouseProfileState.country?.toLowerCase()}
       value={value || ""}
       onChange={(value) => {
         value.length !== 4 && onChange(value);

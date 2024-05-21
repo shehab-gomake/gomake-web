@@ -40,7 +40,8 @@ const useStyle = () => {
         textAlign: 'center'
       },
       nextButton: {
-        width: '100%'
+        width: '100%',
+        marginTop:12
       },
       suggestionStyle:{ marginTop: -15, border: "1px solid #F2F2F2", padding: 5, borderRadius: 8,gap:8 },
       suggestionItemStyle:{ 

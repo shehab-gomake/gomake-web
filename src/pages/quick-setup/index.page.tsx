@@ -3,7 +3,7 @@ import { QuickSetipMobileWidget } from "@/widgets/quick-setup-widgets/quick-setu
 import { useEffect, useState } from "react";
 
 export default function QuickSetupCompanyPage() {
-    const [isMobile, setIsMobile] = useState(false);
+    const [isMobile, setIsMobile] = useState(null);
     useEffect(() => {
         const checkIsMobile = () => setIsMobile(window.innerWidth <= 768);
         checkIsMobile();
@@ -14,8 +14,11 @@ export default function QuickSetupCompanyPage() {
     return (
         <>
             {
-                isMobile ? <QuickSetipMobileWidget isMobile={isMobile} /> : <QuickSetipWidget />
+                isMobile === null ? <></> :
+                    isMobile === false ? <QuickSetipWidget /> :
+                        <QuickSetipMobileWidget isMobile={isMobile} />
             }
+
 
         </>
     );
