@@ -10,7 +10,6 @@ const useWriteCommentComp = ({ getQuote, documentType }) => {
   const [isValueChanged, setIsValueChanged] = useState(false);
   const [quoteItemValue, setQuoteItemValue] = useRecoilState<any>(quoteItemState);
   const [data, setData] = useState(quoteItemValue?.notes)
-  const [originalValue,] = useState("");
   const { callApi } = useGomakeAxios();
   const {
     alertSuccessUpdate,
@@ -48,13 +47,13 @@ const useWriteCommentComp = ({ getQuote, documentType }) => {
   }
   const handleChange = (e) => {
     setData(e.target.value);
-    setIsValueChanged(e.target.value !== originalValue);
+    setIsValueChanged(e.target.value !== data);
+
   }
   const handleBlur = () => {
-    if (isValueChanged) {
-      updateDocumentItemContent();
-    }
+    updateDocumentItemContent();
   }
+
 
   useEffect(() => {
     if (quoteItemValue?.notes === null)

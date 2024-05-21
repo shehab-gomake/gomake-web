@@ -33,6 +33,7 @@ import { OtherReasonModal } from "@/widgets/quote-new/total-price-and-vat/other-
 import { QuoteStatuses } from "@/widgets/quote-new/total-price-and-vat/enums";
 import { LoginTaxesUrl, fetchTaxesAuthority } from "@/utils/taxes-authority";
 import { printHouseProfile } from "@/store/print-house-profile";
+import { WhatsAppWebModal } from "@/widgets/quote-new/modals-widgets/whats-app-web-modal";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -50,6 +51,7 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
   const [docNumber, setDocNumber] = useState(quoteState?.number)
   const {
     selectDate,
+    creationDate,
     isUpdateBusinessName,
     isUpdatePurchaseNumber,
     isUpdateAddress,
@@ -177,7 +179,10 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
     copyFromDocumentType,
     openLoginModal,
     onClickClosLoginModal,
-    onClickOpenLoginModal
+    onClickOpenLoginModal,
+    openWatssAppModal,
+    onClickOpenWatssAppModal,
+    onClickCloseWatssAppModal
   } = useQuoteNew({ docType: documentType, isQuoteConfirmation: isQuoteConfirmation });
 
   const quoteSteps: StepType[] = [
@@ -237,7 +242,7 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
   useEffect(() => {
     setDocNumber(quoteState?.number)
   }, [quoteState?.number, router, quoteState, isQuoteConfirmation])
-
+  console.log("clientContactsValue", clientContactsValue)
   return (
     <>
       {quoteState?.id && (
@@ -278,6 +283,14 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
               <div style={classes.datesContainer}>
                 <div
                   style={classes.deleverdDate}
+                >
+                  {t("sales.quote.creationDate")}{" "}
+                  {creationDate
+                    ? DateFormatterDDMMYYYY(creationDate)
+                    : "select date"}
+                </div>
+                <div
+                  style={classes.deleverdDate}
                   onClick={handleClickSelectDate}
                 >
                   {t("sales.quote.dateOfReference")}{" "}
@@ -295,7 +308,6 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
                     />
                   </div>
                 </div>
-                {/* <div style={classes.lineDateStyle} /> Don't Delete */}
               </div>
               <div style={classes.bordersecondContainer}>
                 <BusinessNewWidget
@@ -449,6 +461,12 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
         open={openSendBtn}
         anchorEl={anchorElSendBtn}
         onClickSendQuoteToClient={onClickSendQuoteToClient}
+        onClickOpenWatssAppModal={onClickOpenWatssAppModal}
+      />
+      <WhatsAppWebModal
+        openModal={openWatssAppModal}
+        onClose={onClickCloseWatssAppModal}
+        clientContactsValue={clientContactsValue}
       />
       <SettingQuoteMenu
         handleClose={handleSettingMenuClose}

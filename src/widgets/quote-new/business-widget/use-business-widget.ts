@@ -1,4 +1,4 @@
-import { useState } from "react";
+import {  useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRouter } from "next/router";
 import { useQuoteWidget } from "@/pages-components/admin/home/widgets/quote-widget/use-quote-widget";
@@ -6,10 +6,12 @@ import { useSetRecoilState, useRecoilValue } from "recoil";
 import { quoteConfirmationState, quoteItemState } from "@/store";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { addressModalState } from "./address-widget/state";
+import { useGomakeAxios } from "@/hooks";
 
 const useBusinessWidget = ({ values, documentType }) => {
   const { t } = useTranslation();
   const router = useRouter();
+  const { callApi } = useGomakeAxios();
   const [isConfirmation, setIsConfirmation] = useState();
   const { renderOptions, checkWhatRenderArray } = useQuoteWidget({ documentType });
   const setOpenModal = useSetRecoilState<boolean>(addressModalState);
@@ -20,11 +22,15 @@ const useBusinessWidget = ({ values, documentType }) => {
   const isExistReceipt = isReceipt && !router?.query?.isNewCreation;
   const [taxConfirmationNumber, setTaxConfirmationNumber] = useState(values?.taxConfirmationNumber || t("sales.quote.noTaxConfirmationNumber"));
   const isInvoice = documentType === DOCUMENT_TYPE.invoice || documentType === DOCUMENT_TYPE.invoiceRefund;
-
+  const [openCustomerModal, setOpenCustomerModal] = useState(false);
+  const [customer, setCustomer] = useState([]);
   const [isUpdateTaxNumber, setIsUpdateTaxNumber] = useState<number | null>(null);
   const onBlurTaxNumber = async () => {
     setIsUpdateTaxNumber(null);
   };
+  const onCustomerAdd=(customer)=>{
+    setOpenCustomerModal(false)
+  }
 
   const mappedCustomers = renderOptions().map(customer => ({
     text: customer?.name,
@@ -53,6 +59,11 @@ const useBusinessWidget = ({ values, documentType }) => {
     setIsUpdateTaxNumber,
     onBlurTaxNumber,
     mappedCustomers,
+    openCustomerModal, 
+    setOpenCustomerModal,
+    customer, 
+    setCustomer,
+    onCustomerAdd
   };
 };
 

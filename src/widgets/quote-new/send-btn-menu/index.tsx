@@ -8,6 +8,7 @@ const SendBtnMenu = ({
   open,
   anchorEl,
   onClickSendQuoteToClient,
+  onClickOpenWatssAppModal
 }) => {
   const { t } = useTranslation();
 
@@ -33,6 +34,14 @@ const SendBtnMenu = ({
         }}
       >
         {t("sales.quote.phone")}
+      </MenuItem>
+      <MenuItem
+        onClick={() => {
+          onClickOpenWatssAppModal()
+          handleClose();
+        }}
+      >
+        {t("sales.quote.whatsAppWeb")}
       </MenuItem>
     </GoMakeMenu>
   );

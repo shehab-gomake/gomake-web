@@ -289,16 +289,6 @@ const useCustomers = (
     }
     return true;
   };
-
-  // const importClient = async (file) => {
-  //   const callBack = (res) => {
-  //     if (res.success) {
-
-  //     }
-  //   }
-  //   await importClientApi(callApi, callBack, {fileBase64: file , clientType :clientType })
-  // }
-
   const onClickImportClient = async (e) => {
     const file = e.target.files[0];
     if (file) {

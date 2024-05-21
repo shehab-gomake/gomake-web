@@ -6,6 +6,10 @@ import { AddressModal } from "./address-widget/address-modal";
 import { InputUpdatedValues } from "../input-updated-values";
 import { useStyle } from "./style";
 import { useBusinessWidget } from "./use-business-widget";
+import { CustomerCardWidget } from "@/widgets/customer-card-modal";
+import { isValidCustomer } from "@/utils/helpers";
+import { CUSTOMER_ACTIONS } from "@/pages/customers/enums";
+import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 
 const BusinessNewWidget = ({
   values,
@@ -53,8 +57,13 @@ const BusinessNewWidget = ({
     setIsUpdateTaxNumber,
     onBlurTaxNumber,
     mappedCustomers,
+    openCustomerModal,
+    setOpenCustomerModal,
+    customer,
+    setCustomer,
+    onCustomerAdd
   } = useBusinessWidget({ values, documentType });
-  
+
   useEffect(() => {
     setPurchaseNumber(values?.purchaseNumber || t("sales.quote.noPurchaseNumber"));
   }, [values?.purchaseNumber]);
@@ -78,6 +87,10 @@ const BusinessNewWidget = ({
           onChange={(e, value) => onChangeSelectBusiness(value)}
           onChangeTextField={checkWhatRenderArray}
         />
+        {
+          documentType === DOCUMENT_TYPE.quote && <span style={classes.plusStyle} onClick={() => setOpenCustomerModal(true)}>+</span>
+        }
+
         {!isReceipt && <InputUpdatedValues
           value={purchaseNumber}
           label={t("sales.quote.purchaseNumber")}
@@ -137,6 +150,19 @@ const BusinessNewWidget = ({
           )}
         {!isQuoteConfirmation && <AddressModal isUpdate={values?.documentAddresses?.length > 0} documentType={documentType} />}
       </div>
+      <CustomerCardWidget
+        isValidCustomer={isValidCustomer}
+        customerAction={CUSTOMER_ACTIONS.Add}
+        codeFlag={false}
+        typeClient={"C"}
+        onCustomerAdd={onCustomerAdd}
+        openModal={openCustomerModal}
+        modalTitle={t("customers.modal.addTitle")}
+        onClose={() => setOpenCustomerModal(false)}
+        showAddButton={true}
+        customer={customer}
+        setCustomer={setCustomer}
+      />
     </>
   );
 };
