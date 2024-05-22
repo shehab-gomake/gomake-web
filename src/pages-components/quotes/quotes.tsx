@@ -31,6 +31,7 @@ import TuneIcon from '@mui/icons-material/Tune';
 import { CardComponent } from "./widgets/statistics-section/card";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { GoMakeCurrency } from "@/icons/go-make-currency";
+import { QuoteStatuses } from "@/widgets/quote-new/total-price-and-vat/enums";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -112,7 +113,14 @@ const QuotesListPageWidget = ({
     handleClose,
     open,
     anchorEl,
-    filterData
+    filterData,
+    updateCancelQuote,
+    openIrrelevantCancelModal,
+    onClickCloseIrrelevantModal,
+    openPriceCancelModal,
+    openDeliveryTimeCancelModal,
+    onClickCloseDeliveryTimeModal,
+    onClickClosePriceModal,
   } = useQuotes(documentType);
 
   useEffect(() => {
@@ -380,6 +388,46 @@ const QuotesListPageWidget = ({
         onCloseModal={onCloseAddRuleModal}
         isQuoteWidge={true}
         filterData={filterData}
+      />
+      <GoMakeDeleteModal
+        icon={
+          <WarningAmberIcon style={{ width: 60, height: 60, color: "red" }} />
+        }
+        title={t("sales.quote.titleCancelModal")}
+        yesBtn={t("sales.quote.yesBtn")}
+        openModal={openIrrelevantCancelModal}
+        onClose={onClickCloseIrrelevantModal}
+        subTitle={t("sales.quote.subTitleCancelModal")}
+        cancelBtn={t("sales.quote.cancelBtn")}
+        onClickDelete={() =>
+          updateCancelQuote(QuoteStatuses.CANCELED_IRRELEVANT)
+        }
+      />
+      <GoMakeDeleteModal
+        icon={
+          <WarningAmberIcon style={{ width: 60, height: 60, color: "red" }} />
+        }
+        title={t("sales.quote.titleCancelModal")}
+        yesBtn={t("sales.quote.yesBtn")}
+        openModal={openPriceCancelModal}
+        onClose={onClickClosePriceModal}
+        subTitle={t("sales.quote.subTitleCancelModal")}
+        cancelBtn={t("sales.quote.cancelBtn")}
+        onClickDelete={() => updateCancelQuote(QuoteStatuses.CANCELED_PRICE)}
+      />
+      <GoMakeDeleteModal
+        icon={
+          <WarningAmberIcon style={{ width: 60, height: 60, color: "red" }} />
+        }
+        title={t("sales.quote.titleCancelModal")}
+        yesBtn={t("sales.quote.yesBtn")}
+        openModal={openDeliveryTimeCancelModal}
+        onClose={onClickCloseDeliveryTimeModal}
+        subTitle={t("sales.quote.subTitleCancelModal")}
+        cancelBtn={t("sales.quote.cancelBtn")}
+        onClickDelete={() =>
+          updateCancelQuote(QuoteStatuses.CANCELED_DELIVERY_TIME)
+        }
       />
     </>
   );

@@ -116,6 +116,9 @@ export const _renderDocumentStatus = (status: number, t: any) => {
 
 export const _renderStatus = (document: any, t: any, navigate): JSX.Element => {
   if (document) {
+    if (!document?.isCanClose) {
+      return <div>{t("sales.quote.closed")}</div>;
+    }
     if ((document.documentNumbers && document.documentNumbers.length > 0) ||
       (document.secondDocumentNumbers && document.secondDocumentNumbers.length > 0)) {
       const firstDocuments = document.documentNumbers ? document.documentNumbers.map((item: any, index: number) => (

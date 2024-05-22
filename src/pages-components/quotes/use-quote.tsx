@@ -13,6 +13,8 @@ import { useDateFormat } from "@/hooks/use-date-format";
 import { _renderDocumentStatus, _renderQuoteStatus, _renderStatus } from "@/utils/constants";
 import { employeesListsState, selectedClientState } from "./states";
 import {
+  CloseDocumentApi,
+  cancelDocumentApi,
   createNewDocumentApi,
   duplicateDocumentApi,
   getAllDocumentLogsApi,
@@ -32,7 +34,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
   const { t } = useTranslation();
   const { classes } = useStyle();
   const { callApi } = useGomakeAxios();
-  const { alertFaultUpdate, alertFaultDuplicate, alertFaultGetData } = useSnackBar();
+  const { alertFaultUpdate, alertFaultDuplicate, alertFaultGetData, alertSuccessUpdate } = useSnackBar();
   const { getCurrencyUnitText } = useQuoteGetData();
   const { navigate } = useGomakeRouter();
   const { errorColor } = useGomakeTheme();
@@ -260,6 +262,10 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
                 onClickPdf={onClickQuotePdf}
                 onClickDuplicate={onClickQuoteDuplicate}
                 onClickLoggers={onClickDocumentLogs}
+                onClickOpenIrrelevantModal={onClickOpenIrrelevantModal}
+                onClickOpenDeliveryTimeModal={onClickOpenDeliveryTimeModal}
+                onClickOpenPriceModal={onClickOpenPriceModal}
+                CloseDocument={CloseDocument}
 
               />,
             ];
@@ -1194,7 +1200,81 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
       setFilterData(filteredDataWithoutEmptyValues);
     }
   }, [quoteStatusId, statusId, accountingStatus, productionStatus, finalPatternSearch, customerId, dateRange, agentId, minPrice, maxPrice, productIds, fromDate, toDate]);
+
+  const [openIrrelevantCancelModal, setOpenIrrelevantCancelModal] = useState(false);
+  const [openPriceCancelModal, setOpenPriceCancelModal] = useState(false);
+  const [openDeliveryTimeCancelModal, setOpenDeliveryTimeCancelModal] = useState(false);
+  const [selectedOrder, setselectedOrder] = useState<any>({})
+
+  const onClickOpenIrrelevantModal = (order) => {
+    setselectedOrder(order)
+    setOpenIrrelevantCancelModal(true);
+  };
+  const onClickCloseIrrelevantModal = () => {
+    setOpenIrrelevantCancelModal(false);
+  };
+
+
+  const onClickOpenPriceModal = (order) => {
+    setselectedOrder(order)
+    setOpenPriceCancelModal(true);
+  };
+  const onClickClosePriceModal = () => {
+    setOpenPriceCancelModal(false);
+  };
+
+  const onClickOpenDeliveryTimeModal = (order) => {
+    setselectedOrder(order)
+    setOpenDeliveryTimeCancelModal(true);
+  };
+  const onClickCloseDeliveryTimeModal = () => {
+    setOpenDeliveryTimeCancelModal(false);
+  };
+
+
+
+  const updateCancelQuote = async (quoteStatus: number) => {
+    const callBack = (res) => {
+      if (res?.success) {
+        alertSuccessUpdate();
+        getAllQuotes()
+      } else {
+        alertFaultUpdate();
+      }
+    }
+    await cancelDocumentApi(callApi, callBack, {
+      DocumentType: docType,
+      Document: {
+        documentId: selectedOrder?.id,
+        quoteStatus: quoteStatus,
+      }
+    })
+  }
+
+  const CloseDocument = async (quoteItemValue) => {
+    const callBack = (res) => {
+      if (res?.success) {
+        alertSuccessUpdate();
+        getAllQuotes()
+      } else {
+        alertFaultUpdate();
+      }
+    };
+    await CloseDocumentApi(callApi, callBack, {
+      documentId: quoteItemValue?.id,
+      documentType: docType
+
+    });
+  };
+
   return {
+    updateCancelQuote,
+    openIrrelevantCancelModal,
+    onClickCloseIrrelevantModal,
+    openPriceCancelModal,
+    openDeliveryTimeCancelModal,
+    onClickCloseDeliveryTimeModal,
+    onClickClosePriceModal,
     t,
     patternSearch,
     tableHeaders,
