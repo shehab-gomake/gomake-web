@@ -14,7 +14,7 @@ import { HeaderTitle } from "@/widgets";
 import { DocumentLogsWidget } from "./widgets/documents-logs-widget/logs-widget";
 import { DOCUMENT_TYPE } from "./enums";
 import { Button, Stack } from "@mui/material";
-import { CardsSection } from "./widgets/statistics-section/statistics-sections";
+import { CardsSection, ICard } from "./widgets/statistics-section/statistics-sections";
 import { GoMakePagination } from "@/components/pagination/gomake-pagination";
 import { ExcelSheetIcon } from "@/icons";
 import { AddRuleModal } from "../products/profits-new/widgets/add-rule-modal";
@@ -28,6 +28,9 @@ import { IconButton } from "@mui/material";
 import { GoMakeMenu } from "@/components";
 import { InputAdornment } from "@mui/material";
 import TuneIcon from '@mui/icons-material/Tune';
+import { CardComponent } from "./widgets/statistics-section/card";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { GoMakeCurrency } from "@/icons/go-make-currency";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -115,7 +118,11 @@ const QuotesListPageWidget = ({
   useEffect(() => {
     getAllProducts();
   }, []);
-
+  const getValueByKey = (statistics: ICard[], key: string) => {
+    const card = statistics.find((item) => item.key === key);
+    return card ? card.value : "";
+  };
+  const { secondColor, } = useGomakeTheme();
   return (
     <>
       {!isFromHomePage && (
@@ -129,20 +136,24 @@ const QuotesListPageWidget = ({
           <div style={classes.mainContainer}>
             <div style={classes.headerStyle}>
               <HeaderTitle title={documentLabel} marginTop={1} marginBottom={1} />
-              {documentType === DOCUMENT_TYPE.quote && <CardsSection statistics={allStatistics} activeCard={activeCard} onClick={onclickCreateNew} onClickCard={handleCardClick} onSecondClickCard={handleSecondCardClick} />}
-              {(documentType !== DOCUMENT_TYPE.quote && documentType !== DOCUMENT_TYPE.order) &&
-                <Button 
-                  style={classes.createNew}
-                  onClick={() => navigate(`/${documentPath}?isNewCreation=true`)}
-                  startIcon={<AddCircleOutlineIcon style={{ color: 'black', fontSize: "24px" }} />}>
-                  {t("sales.quote.createNew")}
-                </Button>
-              }
+              <div style={classes.rowStyle}>
+                {(documentType === DOCUMENT_TYPE.quote) && <CardsSection statistics={allStatistics} activeCard={activeCard} onClick={onclickCreateNew} onClickCard={handleCardClick} onSecondClickCard={handleSecondCardClick} />}
+                {documentType === DOCUMENT_TYPE.order && <CardComponent text={t("sales.quote.totalPrice")} number={getValueByKey(allStatistics, "totalPrice")} textColor={secondColor(100)} icon={<GoMakeCurrency color={secondColor(100)} />} />
+                }
+                {(documentType !== DOCUMENT_TYPE.quote) &&
+                  <Button
+                    style={classes.createNew}
+                    onClick={() => navigate(`/${documentPath}?isNewCreation=true`)}
+                    startIcon={<AddCircleOutlineIcon style={{ color: 'black', fontSize: "24px" }} />}>
+                    {t("sales.quote.createNew")}
+                  </Button>
+                }
+              </div>
             </div>
 
             {/* search */}
 
-            <div style={{ display: "flex", flexDirection: "row",justifyContent:"space-between" }}>
+            <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
               <SearchInputComponent
                 searchInputStyle={{ width: "20vw" }}
                 filtersButton={
@@ -272,9 +283,9 @@ const QuotesListPageWidget = ({
                               <GoMakeDatepicker onChange={onSelectDeliveryTimeDates} placeholder={t("boardMissions.chooseDate")} reset={resetDatePicker} />
                             </div>
                           </div>
-                         
+
                           <div style={{ display: "flex", flexDirection: "row", justifyContent: "flex-end", width: "100%", gap: "10px" }}>
-                           
+
                             <div style={classes.buttonsFilterContainer}>
                               <div style={classes.filterLabelStyle} />
                               <GomakePrimaryButton
@@ -295,7 +306,7 @@ const QuotesListPageWidget = ({
                             </div>
 
                           </div>
-                          
+
                         </div>
                       </GoMakeMenu>
                     </div>

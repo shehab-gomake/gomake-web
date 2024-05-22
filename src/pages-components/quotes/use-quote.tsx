@@ -240,9 +240,10 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
               quote?.agentName,
               quote?.number,
               quote?.sourceDocumentNumber?.map((item, index) => {
+                console.log("item", item)
                 return (
                   <>
-                    <span key={index}>{item?.documentNumber}
+                    <span onClick={() => navigate(`/${quote.titleDocumentNumber.charAt(0).toLowerCase() + quote.titleDocumentNumber.slice(1)}?Id=${item.documentId}`)} key={index}>{item?.documentNumber}
                       <br />
                     </span>
                   </>
