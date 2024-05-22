@@ -125,29 +125,29 @@ const useMoreCircle = () => {
       },
       {
         condition: documentType === DOCUMENT_TYPE.order && quote?.isCanClose && quote?.statusTitleText !== "Order.Canceled",
-        onClick: () => setIsCancel(!isCancel),
+        onClick: () => onClickOpenIrrelevantModal(quote),
         icon: <TickCloceIcon />,
         name: t("sales.quote.cancel")
       },
 
-      {
-        condition: !isCancel,
-        onClick: () => onClickOpenIrrelevantModal(quote),
-        icon: <TickCloceIcon />,
-        name: t("sales.quote.irrelevant")
-      },
-      {
-        condition: !isCancel,
-        onClick: () => onClickOpenPriceModal(quote),
-        icon: <TickCloceIcon />,
-        name: t("sales.quote.price")
-      },
-      {
-        condition: !isCancel,
-        onClick: () => onClickOpenDeliveryTimeModal(quote),
-        icon: <TickCloceIcon />,
-        name: t("sales.quote.deliveryTime")
-      },
+      // {
+      //   condition: !isCancel,
+      //   onClick: () => onClickOpenIrrelevantModal(quote),
+      //   icon: <TickCloceIcon />,
+      //   name: t("sales.quote.irrelevant")
+      // },
+      // {
+      //   condition: !isCancel,
+      //   onClick: () => onClickOpenPriceModal(quote),
+      //   icon: <TickCloceIcon />,
+      //   name: t("sales.quote.price")
+      // },
+      // {
+      //   condition: !isCancel,
+      //   onClick: () => onClickOpenDeliveryTimeModal(quote),
+      //   icon: <TickCloceIcon />,
+      //   name: t("sales.quote.deliveryTime")
+      // },
     ];
   };
 
