@@ -3,7 +3,7 @@ import { DOCUMENT_TYPE, QUOTE_STATUSES } from "../enums";
 import { LoggerIcon } from "@/pages-components/admin/home/widgets/more-circle/icons/logger";
 import { EditingIcon } from "./icons/editing";
 import { PDFIcon } from "./icons/pdf";
-import { TickIcon } from "@/icons";
+import { TickCloceIcon, TickIcon, TickMoveIcon } from "@/icons";
 import { DuplicateIcon } from "@/components/icons/icons";
 import { useRecoilValue } from "recoil";
 import { userQouteState } from "@/store";
@@ -59,7 +59,7 @@ const useMoreCircle = () => {
       {
         condition: documentType === DOCUMENT_TYPE.order && quote?.isCanClose,
         onClick: () => navigate(`/board-missions?orderNumber=${quote?.number}`),
-        icon: <TickIcon />,
+        icon: <TickMoveIcon />,
         name: t("sales.quote.jobs")
       },
       {
@@ -103,6 +103,12 @@ const useMoreCircle = () => {
         onClick: () => navigate(`/purchaseInvoice?isNewCreation=true&orderId=${quote?.id}`),
         icon: <TickIcon />,
         name: t("sales.quote.closeAsPurchaseInvoice")
+      },
+      {
+        condition: documentType === DOCUMENT_TYPE.order && quote?.isCanClose && quote?.statusTitleText !== "Order.Canceled",
+        onClick: () => navigate(`/purchaseInvoice?isNewCreation=true&orderId=${quote?.id}`),
+        icon: <TickCloceIcon />,
+        name: t("sales.quote.cancel")
       }
     ];
   };
