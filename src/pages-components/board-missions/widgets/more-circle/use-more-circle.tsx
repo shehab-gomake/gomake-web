@@ -6,6 +6,7 @@ import TaskAltOutlinedIcon from '@mui/icons-material/TaskAltOutlined';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import LockOpenOutlinedIcon from '@mui/icons-material/LockOpenOutlined';
 import { useStyle } from "./style";
+import { PackageIcon } from "@/icons/package-icon";
 import { getBoardMissionPDF } from "@/services/api-service/generic-doc/documents-api";
 import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
 import { PStatus } from "../enums";
@@ -15,7 +16,11 @@ const useMoreCircle = ({
   onClickDuplicate,
   onClickLoggers,
   onClickMarksAsDone,
-  onClickReturnToProduction
+  onClickReturnToProduction,
+  onClickOrderSummeryPdf,
+  onClickWorkMissionPdf,
+  onClickPrintPackagingSlip,
+  onOpenModal
 }: any) => {
 
   const { t } = useTranslation();
@@ -60,13 +65,20 @@ const useMoreCircle = ({
       condition: true,
       name: "boardMissions.pdfWorkMission",
       icon: <PDFIcon />,
-      onclick: () => onClickPrint(mission),
+      onclick: ()=>onClickWorkMissionPdf(mission?.id),
     },
     {
       condition: true,
       name: "boardMissions.pdfProductionOrderSummary",
       icon: <PDFIcon />,
-      onclick: () => null,
+      onclick: ()=>onClickOrderSummeryPdf(mission?.id),
+    },
+    {
+      condition: true,
+      name: "boardMissions.printPackagingSlip",
+      icon: <PackageIcon/>,
+      onclick: mission?.status === PStatus.IN_PROCESS ? ()=>onOpenModal(mission) : ()=>onClickPrintPackagingSlip(mission),
+
     },
     {
       condition: true,
