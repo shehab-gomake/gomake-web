@@ -1064,7 +1064,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   ]);
 
   useEffect(() => {
-    if(!currentCalculationSessionId){
+    if (!currentCalculationSessionId) {
       setCurrentSignalRConnectionId(connectionId)
       let checkParameter = validateParameters(isRequiredParameters, subProducts);
       setCurrentProductItemValueTotalPrice(null);
@@ -1084,8 +1084,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       });
       debugger;
       if (
-          widgetType === EWidgetProductType.EDIT ||
-          widgetType === EWidgetProductType.DUPLICATE
+        widgetType === EWidgetProductType.EDIT ||
+        widgetType === EWidgetProductType.DUPLICATE
       ) {
         getAllMaterial().then((materials) => {
           getProductQuoteItemById(materials);
@@ -1098,8 +1098,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
       }
     }
-    
-  }, [router, widgetType,connectionId]);
+
+  }, [router, widgetType, connectionId]);
   const exampleTypeValues = useRecoilValue(exampleTypeState);
   const billingMethodValues = useRecoilValue(billingMethodState);
   const listEmployeesValues = useRecoilValue(listEmployeesAtom);
@@ -2255,8 +2255,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     if (connectionId) {
       const callBack = (res) => {
         if (res?.success) {
-          console.log("res", res)
-
           const updatedTemplate = updateIsHidden(res?.data, subProducts)
           setDefaultProductTemplate(updatedTemplate);
           initQuoteItemProduct(updatedTemplate, materials);

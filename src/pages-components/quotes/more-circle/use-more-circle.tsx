@@ -12,7 +12,6 @@ const useMoreCircle = () => {
   const { user } = useCustomer();
   const { navigate } = useGomakeRouter();
   const userQuote = useRecoilValue<boolean>(userQouteState);
-  console.log("userQuote", userQuote)
   const getMenuList = ({ quote, documentType, onClickOpenModal, onClickPdf, onClickDuplicate, onClickLoggers, t }) => {
     const documentPath = DOCUMENT_TYPE[documentType];
     const showNewDuplicate = documentType === DOCUMENT_TYPE.deliveryNote || documentType === DOCUMENT_TYPE.deliveryNoteRefund || documentType === DOCUMENT_TYPE.invoice || documentType === DOCUMENT_TYPE.invoiceRefund;
@@ -21,7 +20,6 @@ const useMoreCircle = () => {
         condition: documentType === DOCUMENT_TYPE.quote && ((quote?.documentStatus === QUOTE_STATUSES.Create && userQuote) || quote?.documentStatus === QUOTE_STATUSES.Open),
         onClick: () => {
           const isCreateStatus = (quote?.documentStatus === QUOTE_STATUSES.Create && userQuote) || (quote?.documentStatus === QUOTE_STATUSES.Open && !userQuote)
-          console.log("isCreateStatus", isCreateStatus)
           isCreateStatus ? navigate(`/quote`) : onClickOpenModal(quote);
         },
         icon: <EditingIcon />,
