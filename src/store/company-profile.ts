@@ -53,4 +53,5 @@ export interface ICompanyProfile {
   systemCurrency?: string;
   isSendGridVerificated?: null | boolean;
   smsServiceTitle?: string;
+  mailServiceEmail?: string;
 }
