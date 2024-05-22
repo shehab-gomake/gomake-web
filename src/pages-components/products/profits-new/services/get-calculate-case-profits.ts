@@ -10,7 +10,7 @@ const getAndSetCalculateCaseProfits = async (
   setLoading(true);
   const result: any = await callApi(
     "GET",
-    `/v1/printhouse-config/profits/get-calculate-case-profits/${data?.actionId}/${data?.productItemValueId}`,
+    `/v1/printhouse-config/profits/get-calculate-case-profits/${data?.actionId}/${data?.signalRConnectionId}`,
     data
   );
   return returnResult(result, setState);
