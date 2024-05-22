@@ -129,7 +129,6 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
   const onCloseDeliveryModal = () => {
     setOpenAddDeliveryModal(false);
   };
-  console.log("quoteItemValue", quoteItemValue)
   const tableHeaders = [
     "#",
     t("sales.quote.itemCode"),

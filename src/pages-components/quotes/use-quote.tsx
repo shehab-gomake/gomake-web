@@ -176,12 +176,6 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
               GetDateFormat(quote?.creationDate),
               quote?.number,
               quote?.orderNumber,
-              // quote?.sourceDocumentNumber?.map((item, index) => {
-              //   return (
-              //     <span key={index}>{renderDocumentTypeForSourceDocumentNumber(item?.sourceDocumentType)}:{item?.documentNumber}<br /></span>
-
-              //   )
-              // }),
               quote?.supplierName,
               quote?.clientName,
               quote?.itemsNumber,
@@ -204,12 +198,6 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
               quote?.number,
               quote?.invoiceNumber,
               purchaseOrderNumbers,
-              // quote?.sourceDocumentNumber?.map((item, index) => {
-              //   return (
-              //     <span key={index}>{renderDocumentTypeForSourceDocumentNumber(item?.sourceDocumentType)}:{item?.documentNumber}<br /></span>
-
-              //   )
-              // }),
               quote?.customerName,
               quote?.itemsNumber,
               quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
@@ -245,6 +233,37 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
               />,
             ];
           }
+          else if (docType === DOCUMENT_TYPE.order) {
+            return [
+              GetDateFormat(quote?.createdDate),
+              quote?.customerName,
+              quote?.agentName,
+              quote?.number,
+              quote?.sourceDocumentNumber?.map((item, index) => {
+                return (
+                  <>
+                    <span onClick={() => navigate(`/quote?Id=${item.documentId}`)} key={index}>{item?.documentNumber}
+                      <br />
+                    </span>
+                  </>
+                )
+              }),
+              quote?.purchaseNumber,
+              quote?.worksNames,
+              quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
+              quote?.notes,
+              _renderStatus(quote, t, navigate),
+              <MoreMenuWidget
+                quote={quote}
+                documentType={docType}
+                onClickOpenModal={onClickOpenModal}
+                onClickPdf={onClickQuotePdf}
+                onClickDuplicate={onClickQuoteDuplicate}
+                onClickLoggers={onClickDocumentLogs}
+
+              />,
+            ];
+          }
           else {
             return [
               GetDateFormat(quote?.createdDate),
@@ -254,17 +273,10 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
               quote?.sourceDocumentNumber?.map((item, index) => {
                 return (
                   <>
-                    {
-                      docType === DOCUMENT_TYPE.order ?
-                        <span key={index}>{item?.documentNumber}
-                          <br />
-                        </span>
-                        :
-                        <span key={index} onClick={() => navigate(renderURLDocumentType(item?.sourceDocumentType, item.documentId))} style={{ cursor: "pointer" }}>
-                          {renderDocumentTypeForSourceDocumentNumber(item?.sourceDocumentType)}:{item?.documentNumber}
-                          <br />
-                        </span>
-                    }
+                    <span key={index} onClick={() => navigate(renderURLDocumentType(item?.sourceDocumentType, item.documentId))} style={{ cursor: "pointer" }}>
+                      {renderDocumentTypeForSourceDocumentNumber(item?.sourceDocumentType)}:{item?.documentNumber}
+                      <br />
+                    </span>
                   </>
                 )
               }),
@@ -580,6 +592,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
       }
     })(),
     docType === DOCUMENT_TYPE.order ? t("sales.quote.quoteNumber") : docType === DOCUMENT_TYPE.receipt ? null : t("sales.quote.sourceDocument"),
+    docType === DOCUMENT_TYPE.order && t("sales.quote.purchaseNumber"),
     docType === DOCUMENT_TYPE.receipt ? t("sales.quote.paymentMethod") : t("sales.quote.worksName"),
     t("sales.quote.totalPrice"),
     t("sales.quote.notes"),

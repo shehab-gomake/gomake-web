@@ -1074,7 +1074,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   ]);
 
   useEffect(() => {
-    if(!currentCalculationSessionId){
+    if (!currentCalculationSessionId) {
       setCurrentSignalRConnectionId(connectionId)
       setCurrentProductItemValueTotalPrice(null);
       setWorkFlows([]);
@@ -1086,8 +1086,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         currentWorkFlowsCount: 0,
       });
       if (
-          widgetType === EWidgetProductType.EDIT ||
-          widgetType === EWidgetProductType.DUPLICATE
+        widgetType === EWidgetProductType.EDIT ||
+        widgetType === EWidgetProductType.DUPLICATE
       ) {
         getAllMaterial().then((materials) => {
           getProductQuoteItemById(materials);
@@ -1100,8 +1100,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
       }
     }
-    
-  }, [router, widgetType,connectionId]);
+
+  }, [router, widgetType, connectionId]);
   const exampleTypeValues = useRecoilValue(exampleTypeState);
   const billingMethodValues = useRecoilValue(billingMethodState);
   const listEmployeesValues = useRecoilValue(listEmployeesAtom);

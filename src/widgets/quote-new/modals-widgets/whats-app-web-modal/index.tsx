@@ -22,7 +22,9 @@ const WhatsAppWebModal = ({
   const [, setSelectedClient] = useState<any>()
   const [phoneNumber, setPhoneNumber] = useState("")
   useEffect(() => {
-    getWhatsAppMessage()
+    if (openModal) {
+      getWhatsAppMessage()
+    }
   }, [openModal])
   return (
     <>

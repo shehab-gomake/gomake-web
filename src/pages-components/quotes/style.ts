@@ -28,6 +28,13 @@ const useStyle = () => {
         justifyContent: "space-between",
         width: "100%"
       },
+      rowStyle:{
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "flex-start",
+        alignItems: "center",
+        gap:10,
+      },
       filtersContainer: {
         display: "flex",
         flexDirection: "column" as "column",

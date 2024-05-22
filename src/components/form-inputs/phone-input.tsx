@@ -21,7 +21,6 @@ interface IProps {
 const PhoneInputComponent = ({ onChange, value, autoFocus, customStyle, defaultCountry }: IProps) => {
 
   const printHouseProfileState = useRecoilValue<any>(printHouseProfile);
-  console.log("defaultCountry", defaultCountry)
   return (
     <PhoneInput
       key={defaultCountry}

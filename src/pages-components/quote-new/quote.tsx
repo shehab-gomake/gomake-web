@@ -246,7 +246,6 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
   useEffect(() => {
     setDocNumber(quoteState?.number)
   }, [quoteState?.number, router, quoteState, isQuoteConfirmation])
-  console.log("clientContactsValue", clientContactsValue)
   return (
     <>
       {quoteState?.id && (
