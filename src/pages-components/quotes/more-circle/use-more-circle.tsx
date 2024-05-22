@@ -57,6 +57,12 @@ const useMoreCircle = () => {
         name: t("sales.quote.duplicate")
       },
       {
+        condition: documentType === DOCUMENT_TYPE.order && quote?.isCanClose,
+        onClick: () => navigate(`/board-missions?orderNumber=${quote?.number}`),
+        icon: <TickIcon />,
+        name: t("sales.quote.jobs")
+      },
+      {
         condition: documentType === DOCUMENT_TYPE.order && quote?.isCanClose && quote?.statusTitleText !== "Order.Canceled",
         onClick: () => navigate(`/deliveryNote?isNewCreation=true&orderId=${quote?.id}`),
         icon: <TickIcon />,
