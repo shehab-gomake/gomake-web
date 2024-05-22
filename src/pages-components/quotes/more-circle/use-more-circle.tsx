@@ -7,12 +7,26 @@ import { TickCloceIcon, TickIcon, TickMoveIcon } from "@/icons";
 import { DuplicateIcon } from "@/components/icons/icons";
 import { useRecoilValue } from "recoil";
 import { userQouteState } from "@/store";
+import { useState } from "react";
 
 const useMoreCircle = () => {
   const { user } = useCustomer();
   const { navigate } = useGomakeRouter();
   const userQuote = useRecoilValue<boolean>(userQouteState);
-  const getMenuList = ({ quote, documentType, onClickOpenModal, onClickPdf, onClickDuplicate, onClickLoggers, t }) => {
+  const [isCancel, setIsCancel] = useState(true)
+  const getMenuList = ({
+    quote,
+    documentType,
+    onClickOpenModal,
+    onClickPdf,
+    onClickDuplicate,
+    onClickLoggers,
+    t,
+    onClickOpenIrrelevantModal,
+    onClickOpenDeliveryTimeModal,
+    onClickOpenPriceModal,
+    CloseDocument
+  }) => {
     const documentPath = DOCUMENT_TYPE[documentType];
     const showNewDuplicate = documentType === DOCUMENT_TYPE.deliveryNote || documentType === DOCUMENT_TYPE.deliveryNoteRefund || documentType === DOCUMENT_TYPE.invoice || documentType === DOCUMENT_TYPE.invoiceRefund;
     return [
@@ -105,15 +119,41 @@ const useMoreCircle = () => {
       },
       {
         condition: documentType === DOCUMENT_TYPE.order && quote?.isCanClose && quote?.statusTitleText !== "Order.Canceled",
-        onClick: () => navigate(`/purchaseInvoice?isNewCreation=true&orderId=${quote?.id}`),
+        onClick: () => CloseDocument(quote),
+        icon: <TickCloceIcon />,
+        name: t("sales.quote.closed")
+      },
+      {
+        condition: documentType === DOCUMENT_TYPE.order && quote?.isCanClose && quote?.statusTitleText !== "Order.Canceled",
+        onClick: () => setIsCancel(!isCancel),
         icon: <TickCloceIcon />,
         name: t("sales.quote.cancel")
-      }
+      },
+
+      {
+        condition: !isCancel,
+        onClick: () => onClickOpenIrrelevantModal(quote),
+        icon: <TickCloceIcon />,
+        name: t("sales.quote.irrelevant")
+      },
+      {
+        condition: !isCancel,
+        onClick: () => onClickOpenPriceModal(quote),
+        icon: <TickCloceIcon />,
+        name: t("sales.quote.price")
+      },
+      {
+        condition: !isCancel,
+        onClick: () => onClickOpenDeliveryTimeModal(quote),
+        icon: <TickCloceIcon />,
+        name: t("sales.quote.deliveryTime")
+      },
     ];
   };
 
   return {
     user,
+    isCancel,
     navigate,
     getMenuList
   };
