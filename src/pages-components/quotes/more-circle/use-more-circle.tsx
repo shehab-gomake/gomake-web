@@ -1,24 +1,27 @@
 import { useCustomer, useGomakeRouter } from "@/hooks";
 import { DOCUMENT_TYPE, QUOTE_STATUSES } from "../enums";
 import { LoggerIcon } from "@/pages-components/admin/home/widgets/more-circle/icons/logger";
-import { ConvertIcon } from "./icons/convert";
 import { EditingIcon } from "./icons/editing";
 import { PDFIcon } from "./icons/pdf";
 import { TickIcon } from "@/icons";
 import { DuplicateIcon } from "@/components/icons/icons";
+import { useRecoilValue } from "recoil";
+import { userQouteState } from "@/store";
 
 const useMoreCircle = () => {
   const { user } = useCustomer();
   const { navigate } = useGomakeRouter();
-
+  const userQuote = useRecoilValue<boolean>(userQouteState);
+  console.log("userQuote", userQuote)
   const getMenuList = ({ quote, documentType, onClickOpenModal, onClickPdf, onClickDuplicate, onClickLoggers, t }) => {
     const documentPath = DOCUMENT_TYPE[documentType];
     const showNewDuplicate = documentType === DOCUMENT_TYPE.deliveryNote || documentType === DOCUMENT_TYPE.deliveryNoteRefund || documentType === DOCUMENT_TYPE.invoice || documentType === DOCUMENT_TYPE.invoiceRefund;
     return [
       {
-        condition: documentType === DOCUMENT_TYPE.quote && ((quote?.documentStatus === QUOTE_STATUSES.Create && quote?.userID === user?.id) || quote?.documentStatus === QUOTE_STATUSES.Open),
+        condition: documentType === DOCUMENT_TYPE.quote && ((quote?.documentStatus === QUOTE_STATUSES.Create && userQuote) || quote?.documentStatus === QUOTE_STATUSES.Open),
         onClick: () => {
-          const isCreateStatus = quote?.documentStatus === QUOTE_STATUSES.Create;
+          const isCreateStatus = (quote?.documentStatus === QUOTE_STATUSES.Create && userQuote) || (quote?.documentStatus === QUOTE_STATUSES.Open && !userQuote)
+          console.log("isCreateStatus", isCreateStatus)
           isCreateStatus ? navigate(`/quote`) : onClickOpenModal(quote);
         },
         icon: <EditingIcon />,
@@ -45,7 +48,7 @@ const useMoreCircle = () => {
       {
         condition: documentType === DOCUMENT_TYPE.order || documentType === DOCUMENT_TYPE.quote,
         onClick: () => onClickDuplicate(quote?.id),
-        icon: <DuplicateIcon />, 
+        icon: <DuplicateIcon />,
         name: t("sales.quote.duplicate")
       },
       {

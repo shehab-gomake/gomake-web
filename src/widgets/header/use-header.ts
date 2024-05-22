@@ -5,6 +5,7 @@ import {
 } from "@/pages-components/quote-new/store/quote";
 import { selectedClientState } from "@/pages-components/quotes/states";
 import { getIfCartExistApi } from "@/services/api-service/generic-doc/documents-api";
+import { userQouteState } from "@/store";
 import { useEffect, useState } from "react";
 import { useRecoilState, useResetRecoilState, useSetRecoilState } from "recoil";
 
@@ -39,10 +40,12 @@ const useHeader = () => {
     navigate(`/quote`);
   };
   const [userQuote, setUserQuote] = useState<any>(null);
+  const [userQuoteIfExist, setUserQuoteIfExist] = useRecoilState<boolean>(userQouteState);
   const getAndSetExistQuote = async () => {
     const callBack = (res) => {
       if (res?.success) {
         setUserQuote(res?.data?.result);
+        setUserQuoteIfExist(res?.data?.succ)
       }
     };
     await getIfCartExistApi(callApi, callBack, { documentType: 0 }, false);
