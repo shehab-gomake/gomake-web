@@ -4,17 +4,14 @@ import { useStyle } from "@/components/options-button/style";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { useState } from "react";
 
-const OptionsButton = ({ children, shouldCloseMenu = true }: IOptionsButtonProps & { shouldCloseMenu: boolean }) => {
+const OptionsButton = ({ children, }: IOptionsButtonProps) => {
   const { classes } = useStyle();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const handleMoreOptionIconClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
   const handleCloseMenu = () => {
-    console.log("shouldCloseMenu", shouldCloseMenu)
-    if (shouldCloseMenu) {
-      setAnchorEl(null);
-    }
+    setAnchorEl(null);
   };
   const handleClose2Menu = () => {
     setAnchorEl(null);
