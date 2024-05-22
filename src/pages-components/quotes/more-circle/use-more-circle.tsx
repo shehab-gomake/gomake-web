@@ -3,7 +3,7 @@ import { DOCUMENT_TYPE, QUOTE_STATUSES } from "../enums";
 import { LoggerIcon } from "@/pages-components/admin/home/widgets/more-circle/icons/logger";
 import { EditingIcon } from "./icons/editing";
 import { PDFIcon } from "./icons/pdf";
-import { TickIcon } from "@/icons";
+import { TickCloceIcon, TickIcon, TickMoveIcon } from "@/icons";
 import { DuplicateIcon } from "@/components/icons/icons";
 import { useRecoilValue } from "recoil";
 import { userQouteState } from "@/store";
@@ -13,14 +13,13 @@ const useMoreCircle = () => {
   const { navigate } = useGomakeRouter();
   const userQuote = useRecoilValue<boolean>(userQouteState);
   const getMenuList = ({ quote, documentType, onClickOpenModal, onClickPdf, onClickDuplicate, onClickLoggers, t }) => {
-    console.log("quote", quote)
     const documentPath = DOCUMENT_TYPE[documentType];
     const showNewDuplicate = documentType === DOCUMENT_TYPE.deliveryNote || documentType === DOCUMENT_TYPE.deliveryNoteRefund || documentType === DOCUMENT_TYPE.invoice || documentType === DOCUMENT_TYPE.invoiceRefund;
     return [
       {
         condition: documentType === DOCUMENT_TYPE.quote && ((quote?.documentStatus === QUOTE_STATUSES.Create && userQuote) || quote?.documentStatus === QUOTE_STATUSES.Open),
         onClick: () => {
-          const isCreateStatus = (quote?.documentStatus === QUOTE_STATUSES.Create && userQuote) || (quote?.documentStatus === QUOTE_STATUSES.Open && !userQuote)
+          const isCreateStatus = quote?.documentStatus === QUOTE_STATUSES.Create;
           isCreateStatus ? navigate(`/quote`) : onClickOpenModal(quote);
         },
         icon: <EditingIcon />,
@@ -55,6 +54,12 @@ const useMoreCircle = () => {
         onClick: () => navigate(`/${documentPath}?isNewCreation=true&documentToDuplicateId=${quote?.id}`),
         icon: <DuplicateIcon />,
         name: t("sales.quote.duplicate")
+      },
+      {
+        condition: documentType === DOCUMENT_TYPE.order && quote?.isCanClose,
+        onClick: () => navigate(`/board-missions?orderNumber=${quote?.number}`),
+        icon: <TickMoveIcon />,
+        name: t("sales.quote.jobs")
       },
       {
         condition: documentType === DOCUMENT_TYPE.order && quote?.isCanClose && quote?.statusTitleText !== "Order.Canceled",
@@ -97,6 +102,12 @@ const useMoreCircle = () => {
         onClick: () => navigate(`/purchaseInvoice?isNewCreation=true&orderId=${quote?.id}`),
         icon: <TickIcon />,
         name: t("sales.quote.closeAsPurchaseInvoice")
+      },
+      {
+        condition: documentType === DOCUMENT_TYPE.order && quote?.isCanClose && quote?.statusTitleText !== "Order.Canceled",
+        onClick: () => navigate(`/purchaseInvoice?isNewCreation=true&orderId=${quote?.id}`),
+        icon: <TickCloceIcon />,
+        name: t("sales.quote.cancel")
       }
     ];
   };
