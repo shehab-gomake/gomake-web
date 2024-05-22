@@ -23,7 +23,7 @@ import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import { useRecoilValue } from "recoil";
 import { employeesListsState } from "./states";
 import { GoMakeMultiSelect } from "@/components/auto-complete/multi-select";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { IconButton } from "@mui/material";
 import { GoMakeMenu } from "@/components";
 import { InputAdornment } from "@mui/material";
@@ -32,6 +32,9 @@ import { CardComponent } from "./widgets/statistics-section/card";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { GoMakeCurrency } from "@/icons/go-make-currency";
 import { QuoteStatuses } from "@/widgets/quote-new/total-price-and-vat/enums";
+import { CustomerCardWidget } from "@/widgets/customer-card-modal";
+import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
+import { isValidCustomer } from "@/utils/helpers";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -121,7 +124,12 @@ const QuotesListPageWidget = ({
     openDeliveryTimeCancelModal,
     onClickCloseDeliveryTimeModal,
     onClickClosePriceModal,
+    showCustomerModal,
+    customerForEdit,
+    setCustomerForEdit,
+    setShowCustomerModal,
   } = useQuotes(documentType);
+
 
   useEffect(() => {
     getAllProducts();
@@ -428,6 +436,19 @@ const QuotesListPageWidget = ({
         onClickDelete={() =>
           updateCancelQuote(QuoteStatuses.CANCELED_DELIVERY_TIME)
         }
+      />
+      <CustomerCardWidget
+        isValidCustomer={isValidCustomer}
+        customerAction={CUSTOMER_ACTIONS.Edit}
+        codeFlag={true}
+        typeClient={CLIENT_TYPE.CUSTOMER}
+        isgetAllCustomers={false}
+        openModal={showCustomerModal}
+        modalTitle={t("customers.modal.editTitle")}
+        onClose={() => setShowCustomerModal(false)}
+        customer={customerForEdit}
+        setCustomer={setCustomerForEdit}
+        showUpdateButton={true}
       />
     </>
   );
