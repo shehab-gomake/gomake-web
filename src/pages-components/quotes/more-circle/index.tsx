@@ -18,7 +18,7 @@ const MoreMenuWidget = ({
 }: any) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
-  const { getMenuList, isCancel } = useMoreCircle();
+  const { getMenuList } = useMoreCircle();
   const menuList = getMenuList({
     quote,
     documentType,
@@ -34,7 +34,7 @@ const MoreMenuWidget = ({
   });
 
   return (
-    <OptionsButton shouldCloseMenu={!isCancel}>
+    <OptionsButton >
       {menuList.map((item, index) => (
         item.condition && (
           <MenuItem style={classes.menuRowStyle} key={index} onClick={item.onClick}>

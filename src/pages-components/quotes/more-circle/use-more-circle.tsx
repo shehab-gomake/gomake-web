@@ -13,7 +13,6 @@ const useMoreCircle = () => {
   const { user } = useCustomer();
   const { navigate } = useGomakeRouter();
   const userQuote = useRecoilValue<boolean>(userQouteState);
-  const [isCancel, setIsCancel] = useState(true)
   const getMenuList = ({
     quote,
     documentType,
@@ -153,7 +152,6 @@ const useMoreCircle = () => {
 
   return {
     user,
-    isCancel,
     navigate,
     getMenuList
   };
