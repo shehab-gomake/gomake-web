@@ -120,7 +120,7 @@ const ProfitsNewPageWidget = () => {
   const {} = useGoMakeTour(profitsSteps, []);
   return (
     <div data-tour={'profitStep1'} style={classes.mainGridContainer}>
-      {router.query.draftId && (
+      {router.query.signalRConnectionId && (
         <header>
           {!isLoading ? (
             <ProfitHeaderWidget calculateCaseValue={calculateCaseValue} />

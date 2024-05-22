@@ -154,7 +154,7 @@ const useNewProfits = () => {
       };
 
       if (selectedPricingTableItems?.exceptionType != ETypeException.DEFAULT) {
-        if (router.query.draftId) {
+        if (router.query.signalRConnectionId) {
           requestBody.exceptionId = selectedPricingTableItems?.id;
         } else {
           requestBody.exceptionId = selectedPricingTableItems?.id;
@@ -179,7 +179,7 @@ const useNewProfits = () => {
   ]);
 
   useEffect(() => {
-    if (router.query.draftId) {
+    if (router.query.signalRConnectionId) {
       getCalculateCaseProfits();
     } else {
       getAllActionProfitRowsByActionId();
@@ -209,7 +209,7 @@ const useNewProfits = () => {
     setIsLoading(true);
     const requestBody: any = {
       actionId: router.query.actionId,
-      productItemValueId: router.query.draftId,
+      signalRConnectionId: router.query.signalRConnectionId,
       isOutSource: router.query.isOutSource ? true : false,
     };
     if (selectedPricingTableItems?.exceptionType != ETypeException.DEFAULT) {
@@ -275,7 +275,7 @@ const useNewProfits = () => {
     const totalPriceLabel = router.query.isOutSource
       ? t("products.profits.pricingListWidget.totalCost")
       : t("products.profits.pricingListWidget.totalPrice");
-    if (router.query.draftId) {
+    if (router.query.signalRConnectionId) {
       setTableHeaders([
         t("products.profits.pricingListWidget.quantity"),
         `${selectedPricingBy?.label}` +
@@ -403,7 +403,7 @@ const useNewProfits = () => {
       if (res?.success) {
         alertSuccessUpdate();
         setSelectedPricingBy(data);
-        if (router.query.draftId) {
+        if (router.query.signalRConnectionId) {
           getCalculateCaseProfits();
         } else {
           getAllActionProfitRowsByActionId();
@@ -439,7 +439,7 @@ const useNewProfits = () => {
       if (res?.success) {
         alertSuccessUpdate();
         setSelectedTransition(data);
-        if (router.query.draftId) {
+        if (router.query.signalRConnectionId) {
           getCalculateCaseProfits();
         } else {
           getAllActionProfitRowsByActionId();
@@ -456,7 +456,7 @@ const useNewProfits = () => {
     ]
   );
   useEffect(() => {
-    if (router.query.draftId) {
+    if (router.query.signalRConnectionId) {
       setActionProfitRowsList(calculateCaseValue?.caseProfitRows);
     } else {
       setActionProfitRowsList(allActionProfitRowsByActionId);
@@ -501,7 +501,7 @@ const useNewProfits = () => {
 
       if (res?.success) {
         alertSuccessAdded();
-        if (router.query.draftId) {
+        if (router.query.signalRConnectionId) {
           getCalculateCaseProfits();
         } else {
           getAllActionProfitRowsByActionId();
@@ -538,7 +538,7 @@ const useNewProfits = () => {
       );
       if (res?.success) {
         alertSuccessUpdate();
-        if (router.query.draftId) {
+        if (router.query.signalRConnectionId) {
           getCalculateCaseProfits();
         } else {
           getAllActionProfitRowsByActionId();
@@ -573,7 +573,7 @@ const useNewProfits = () => {
       );
       if (res?.success) {
         alertSuccessUpdate();
-        if (router.query.draftId) {
+        if (router.query.signalRConnectionId) {
           getCalculateCaseProfits();
         } else {
           getAllActionProfitRowsByActionId();
@@ -740,7 +740,7 @@ const useNewProfits = () => {
       );
       if (res?.success) {
         alertSuccessDelete();
-        if (router.query.draftId) {
+        if (router.query.signalRConnectionId) {
           getCalculateCaseProfits();
         } else {
           getAllActionProfitRowsByActionId();
