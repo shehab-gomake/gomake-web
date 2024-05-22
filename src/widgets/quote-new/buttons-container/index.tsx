@@ -49,7 +49,6 @@ const ButtonsContainer = ({
     onClickCloseCancelReceiptModal
   } = useButtonsContainer(documentType);
 
-
   const handleCopyFromDocumentClick = (documentNumber) => {
     if (!quoteItemValue?.client) {
       alertFault("home.admin.pleaseSelectCustomer");
@@ -146,7 +145,7 @@ const ButtonsContainer = ({
             {t("sales.quote.print")}
           </GomakePrimaryButton>}
         {
-          (documentType === DOCUMENT_TYPE.quote || documentType === DOCUMENT_TYPE.order) && <GomakePrimaryButton
+          (documentType === DOCUMENT_TYPE.quote || (documentType === DOCUMENT_TYPE.order && quoteItemValue?.documentStatus !== 1)) && <GomakePrimaryButton
             style={classes.btnSecondContainer}
             onClick={handleCancelBtnClick}
           >
