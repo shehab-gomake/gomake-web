@@ -13,6 +13,7 @@ const useMoreCircle = () => {
   const { navigate } = useGomakeRouter();
   const userQuote = useRecoilValue<boolean>(userQouteState);
   const getMenuList = ({ quote, documentType, onClickOpenModal, onClickPdf, onClickDuplicate, onClickLoggers, t }) => {
+    console.log("quote", quote)
     const documentPath = DOCUMENT_TYPE[documentType];
     const showNewDuplicate = documentType === DOCUMENT_TYPE.deliveryNote || documentType === DOCUMENT_TYPE.deliveryNoteRefund || documentType === DOCUMENT_TYPE.invoice || documentType === DOCUMENT_TYPE.invoiceRefund;
     return [
@@ -56,13 +57,13 @@ const useMoreCircle = () => {
         name: t("sales.quote.duplicate")
       },
       {
-        condition: documentType === DOCUMENT_TYPE.order && quote?.isCanClose,
+        condition: documentType === DOCUMENT_TYPE.order && quote?.isCanClose && quote?.statusTitleText !== "Order.Canceled",
         onClick: () => navigate(`/deliveryNote?isNewCreation=true&orderId=${quote?.id}`),
         icon: <TickIcon />,
         name: t("sales.quote.closeAsDeliveryNote")
       },
       {
-        condition: documentType === DOCUMENT_TYPE.order && quote?.isCanClose,
+        condition: documentType === DOCUMENT_TYPE.order && quote?.isCanClose && quote?.statusTitleText !== "Order.Canceled",
         onClick: () => navigate(`/invoice?isNewCreation=true&orderId=${quote?.id}`),
         icon: <TickIcon />,
         name: t("sales.quote.closeAsInvoice")
