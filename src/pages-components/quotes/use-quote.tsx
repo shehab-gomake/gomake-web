@@ -252,6 +252,9 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
                 )
               }),
               quote?.purchaseNumber,
+              quote?.productionStatus,
+              quote?.jobs,
+              quote?.cost,
               quote?.worksNames,
               quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
               quote?.notes,
@@ -418,7 +421,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
           else if (docType === DOCUMENT_TYPE.quote) {
             return [
               GetDateFormat(quote?.createdDate),
-              quote?.customerName,
+              <div style={{ cursor: "pointer" }} onClick={() => onClickOpenCustomerModal(quote?.customerId)}>{quote?.customerName}</div>,
               quote?.agentName,
               quote?.number,
               quote?.worksNames,
@@ -436,6 +439,44 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
               />,
             ];
           }
+          else if (docType === DOCUMENT_TYPE.order) {
+            return [
+              GetDateFormat(quote?.createdDate),
+              <div style={{ cursor: "pointer" }} onClick={() => onClickOpenCustomerModal(quote?.customerId)}>{quote?.customerName}</div>,
+              quote?.agentName,
+              quote?.number,
+              quote?.sourceDocumentNumber?.map((item, index) => {
+                return (
+                  <>
+                    <span style={{ cursor: "pointer" }} onClick={() => navigate(`/quote?Id=${item.documentId}`)} key={index}>{item?.documentNumber}
+                      <br />
+                    </span>
+                  </>
+                )
+              }),
+              quote?.purchaseNumber,
+              quote?.productionStatus,
+              quote?.jobs,
+              quote?.cost,
+              quote?.worksNames,
+              quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
+              quote?.notes,
+              _renderStatus(quote, t, navigate),
+              <MoreMenuWidget
+                quote={quote}
+                documentType={docType}
+                onClickOpenModal={onClickOpenModal}
+                onClickPdf={onClickQuotePdf}
+                onClickDuplicate={onClickQuoteDuplicate}
+                onClickLoggers={onClickDocumentLogs}
+                onClickOpenIrrelevantModal={onClickOpenIrrelevantModal}
+                onClickOpenDeliveryTimeModal={onClickOpenDeliveryTimeModal}
+                onClickOpenPriceModal={onClickOpenPriceModal}
+                CloseDocument={CloseDocument}
+
+              />,
+            ];
+          }
           else {
             return [
               GetDateFormat(quote?.createdDate),
@@ -445,17 +486,10 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
               quote?.sourceDocumentNumber?.map((item, index) => {
                 return (
                   <>
-                    {
-                      docType === DOCUMENT_TYPE.order ?
-                        <span key={index}>{item?.documentNumber}
-                          <br />
-                        </span>
-                        :
-                        <span key={index} onClick={() => navigate(renderURLDocumentType(item?.sourceDocumentType, item.documentId))} style={{ cursor: "pointer" }}>
-                          {renderDocumentTypeForSourceDocumentNumber(item?.sourceDocumentType)}:{item?.documentNumber}
-                          <br />
-                        </span>
-                    }
+                    <span key={index} onClick={() => navigate(renderURLDocumentType(item?.sourceDocumentType, item.documentId))} style={{ cursor: "pointer" }}>
+                      {renderDocumentTypeForSourceDocumentNumber(item?.sourceDocumentType)}:{item?.documentNumber}
+                      <br />
+                    </span>
                   </>
                 )
               }),
@@ -600,6 +634,9 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     })(),
     docType === DOCUMENT_TYPE.order ? t("sales.quote.quoteNumber") : docType === DOCUMENT_TYPE.receipt ? null : t("sales.quote.sourceDocument"),
     docType === DOCUMENT_TYPE.order && t("sales.quote.purchaseNumber"),
+    docType === DOCUMENT_TYPE.order && t("sales.quote.productionStatus"),
+    docType === DOCUMENT_TYPE.order && t("sales.quote.jobs"),
+    docType === DOCUMENT_TYPE.order && t("sales.quote.cost"),
     docType === DOCUMENT_TYPE.receipt ? t("sales.quote.paymentMethod") : t("sales.quote.worksName"),
     t("sales.quote.totalPrice"),
     t("sales.quote.notes"),

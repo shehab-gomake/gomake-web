@@ -23,7 +23,7 @@ import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import { useRecoilValue } from "recoil";
 import { employeesListsState } from "./states";
 import { GoMakeMultiSelect } from "@/components/auto-complete/multi-select";
-import { useEffect, useState } from "react";
+import { useEffect, } from "react";
 import { IconButton } from "@mui/material";
 import { GoMakeMenu } from "@/components";
 import { InputAdornment } from "@mui/material";
@@ -70,7 +70,6 @@ const QuotesListPageWidget = ({
     tableHeaders,
     allQuotes,
     quoteStatuses,
-    deliveryNoteStatuses,
     agentsCategories,
     openModal,
     statusId,
