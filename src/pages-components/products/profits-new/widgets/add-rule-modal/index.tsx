@@ -77,7 +77,6 @@ const AddRuleModal = ({
     filterData,
 
   });
-  console.log("renderOptions", renderOptions())
   const [selectedCategories, setSelectedCategories] = useState<any>("")
   const [selectedStatment2, setSelectedStatment2] = useState<any>("")
   const router = useRouter();
@@ -550,23 +549,6 @@ const AddRuleModal = ({
                           handleChange(index, "statement", null);
                         }}
                       />
-                      {/* <GoMakeAutoComplate
-                         options={clients?.map((value) => {
-                          return {
-                            ...value,
-                            label: value?.name,
-                            id: value.id,
-                          };
-                        })}
-                        style={clasess.dropDownListContainer}
-                        placeholder={t("properties.statment")}
-                        value={rule.statement2}
-                        onChange={(e, value) => {
-                          handleChange(index, "statement2", value)
-                          handleChange(index, "statement", null);
-                        }
-                        }
-                      /> */}
                     </div>
                   )}
                   {rule.category?.id === "Property output" &&

@@ -69,7 +69,6 @@ const CustomerCardWidget = ({
   showAddButton,
   isgetAllCustomers = true
 }: IProps) => {
-  console.log("customer2", customer)
   const [open, setOpen] = useState(false);
   const { addNewCustomer } = useAddCustomer();
   const { editCustomer } = useEditCustomer();
@@ -91,7 +90,6 @@ const CustomerCardWidget = ({
     customer && customer.users ? customer.users : []
   );
   const clientTypesCategories = useRecoilValue(clientTypesCategoriesState);
-  console.log("clientTypesCategories", clientTypesCategories)
   const theme = createMuiTheme({
     palette: {
       secondary: {

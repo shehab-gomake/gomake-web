@@ -1280,7 +1280,6 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     const callBack = (res) => {
       if (res.success) {
         let customer = res.data;
-        console.log("customer", customer)
         if (customer.contacts && customer.contacts.length > 0) {
           let index = 0;
           customer.contacts.forEach((x) => {
