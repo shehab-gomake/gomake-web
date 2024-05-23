@@ -21,8 +21,8 @@ const Cards = ({ data }: ICards) => {
             <div style={classes.statistics}>
 
                 <DashboardCard label={data?.progress?.labelTranslationKey || ''}
-                    value={(data?.inProcess?.value + data?.done?.value + data?.faults?.value + data?.waiting?.value) || 0}
-                    progressValue={(data?.progress?.value * 100) || 0}
+                    value={(data?.progress?.value) || 0}
+                    progressValue={((data?.done?.value / data?.progress?.value ) * 100) || 0}
                     bgColor={'#9747FF'}
                     withProgressBar={true}>
                     <FactCheckOutlinedIcon />

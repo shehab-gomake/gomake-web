@@ -7,9 +7,9 @@ import { useGomakeDateRange } from "@/hooks";
 import { useTranslation } from "react-i18next";
 import { LateMissionsButton } from "@/widgets/dashboard-widget/components/late-missions-button";
 import { DashboardActions } from "@/store";
-import { ClientsList } from "@/widgets/clients/clients-list";
 import { AgentsList } from "@/widgets/agents/agents-list";
 import { SearchInputComponent } from "@/components/form-inputs/search-input-component";
+import {DashboardClientsList} from "@/widgets/dashboard-widget/clients/clients-select";
 
 
 const DashboardDates = ({ handelSearchValueChange }) => {
@@ -57,7 +57,7 @@ const DashboardDates = ({ handelSearchValueChange }) => {
                 <GoMakeDatepicker />
                 <MachineList />
                 <AgentsList />
-                <ClientsList />
+                <DashboardClientsList/>
                 <SearchInputComponent onChange={handelSearchValueChange} searchInputStyle={{ width: 180 }} />
             </div>
 
