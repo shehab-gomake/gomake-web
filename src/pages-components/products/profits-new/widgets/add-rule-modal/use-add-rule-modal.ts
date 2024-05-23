@@ -196,6 +196,7 @@ const useAddRuleModal = ({
       await getAndSetMachincesByActionId(callApi, setMachincesList, {
         actionId: router.query.actionId,
       });
+      getMachinesList()
     } else {
       getMachinesList()
     }

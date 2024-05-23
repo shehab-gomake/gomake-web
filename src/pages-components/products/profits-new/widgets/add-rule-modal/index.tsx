@@ -42,7 +42,6 @@ const AddRuleModal = ({
     parametersStateValue,
     Outputs,
     materialsTypes,
-    machines,
     clients,
     expression,
     mainconditions,
@@ -75,6 +74,7 @@ const AddRuleModal = ({
     isQuoteWidge,
     filterData
   });
+
   const [selectedCategories, setSelectedCategories] = useState<any>("")
   const [selectedStatment2, setSelectedStatment2] = useState<any>("")
   const router = useRouter();
@@ -498,10 +498,10 @@ const AddRuleModal = ({
                       <GoMakeAutoComplate
                         options={
                           router.query.actionId
-                            ? machines?.map((value) => {
+                            ? allMachincesList?.map((value) => {
                               return {
                                 ...value,
-                                label: value?.name,
+                                label: `${value?.manufacturer} - ${value?.model}`,
                                 id: value.id,
                               };
                             })
@@ -558,10 +558,10 @@ const AddRuleModal = ({
                           key={selectedCategories?.id + index + selectedStatment2?.id}
                           options={
                             router.query.actionId
-                              ? machines?.map((value) => {
+                              ? allMachincesList?.map((value) => {
                                 return {
                                   ...value,
-                                  label: value?.name,
+                                  label: `${value?.manufacturer} - ${value?.model}`,
                                   id: value.id,
                                 };
                               })
