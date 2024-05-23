@@ -23,7 +23,7 @@ import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import { useRecoilValue } from "recoil";
 import { employeesListsState } from "./states";
 import { GoMakeMultiSelect } from "@/components/auto-complete/multi-select";
-import { useEffect, useState } from "react";
+import { useEffect, } from "react";
 import { IconButton } from "@mui/material";
 import { GoMakeMenu } from "@/components";
 import { InputAdornment } from "@mui/material";
@@ -35,6 +35,7 @@ import { QuoteStatuses } from "@/widgets/quote-new/total-price-and-vat/enums";
 import { CustomerCardWidget } from "@/widgets/customer-card-modal";
 import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 import { isValidCustomer } from "@/utils/helpers";
+import { useRouter } from "next/router";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -49,6 +50,7 @@ const QuotesListPageWidget = ({
   const {
     onClickCloseModal,
     setPatternSearch,
+    patternSearch,
     setStatusId,
     setCustomerId,
     setAgentId,
@@ -70,7 +72,6 @@ const QuotesListPageWidget = ({
     tableHeaders,
     allQuotes,
     quoteStatuses,
-    deliveryNoteStatuses,
     agentsCategories,
     openModal,
     statusId,
@@ -129,8 +130,13 @@ const QuotesListPageWidget = ({
     setCustomerForEdit,
     setShowCustomerModal,
   } = useQuotes(documentType);
+  const router = useRouter()
+  useEffect(() => {
+    if (router.query.orderNumber) {
+      setPatternSearch(router.query.orderNumber as string);
+    }
 
-
+  }, [router])
   useEffect(() => {
     getAllProducts();
   }, []);
@@ -329,6 +335,7 @@ const QuotesListPageWidget = ({
                   </InputAdornment>
                 }
                 onChange={(e) => setPatternSearch(e)}
+                value={patternSearch}
               />
               <div style={{ cursor: "pointer" }} onClick={onOpenAddRuleModal}>
                 <ExcelSheetIcon />

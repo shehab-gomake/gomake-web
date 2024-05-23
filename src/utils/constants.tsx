@@ -1,6 +1,6 @@
 import { ETabsIcon } from "@/enums";
 import { FinishingIcon, PricingIcon, PrintingDetailsIcon } from "@/icons";
-import { DELIVERY_NOTE_STATUSES, QUOTE_STATUSES } from "@/pages-components/quotes/enums";
+import { DELIVERY_NOTE_STATUSES, DOCUMENT_TYPE, QUOTE_STATUSES } from "@/pages-components/quotes/enums";
 import { Button } from "@mui/material";
 
 export const _renderActiveIcon = (icon) => {
@@ -116,9 +116,9 @@ export const _renderDocumentStatus = (status: number, t: any) => {
 
 export const _renderStatus = (document: any, t: any, navigate): JSX.Element => {
   if (document) {
-    if (!document?.isCanClose) {
-      return <div>{t("sales.quote.closed")}</div>;
-    }
+    // if (!document?.isCanClose && docType === DOCUMENT_TYPE.order) {
+    //   return <div>{t("sales.quote.closed")}</div>;
+    // }
     if ((document.documentNumbers && document.documentNumbers.length > 0) ||
       (document.secondDocumentNumbers && document.secondDocumentNumbers.length > 0)) {
       const firstDocuments = document.documentNumbers ? document.documentNumbers.map((item: any, index: number) => (
