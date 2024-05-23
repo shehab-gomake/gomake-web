@@ -12,8 +12,6 @@ const MoreMenuWidget = ({
   onClickDuplicate,
   onClickLoggers,
   onClickOpenIrrelevantModal,
-  onClickOpenDeliveryTimeModal,
-  onClickOpenPriceModal,
   CloseDocument
 }: any) => {
   const { classes } = useStyle();
@@ -28,8 +26,6 @@ const MoreMenuWidget = ({
     onClickLoggers,
     t,
     onClickOpenIrrelevantModal,
-    onClickOpenDeliveryTimeModal,
-    onClickOpenPriceModal,
     CloseDocument
   });
 
