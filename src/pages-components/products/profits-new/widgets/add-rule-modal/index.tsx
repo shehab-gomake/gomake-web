@@ -16,6 +16,7 @@ import { EParameterTypes } from "@/enums";
 import { useRouter } from "next/router";
 import { DeleteMenuIcon } from "@/widgets/quote-new/more-circle/icons/delete-menu";
 import { ScheduleSendWidget } from "@/pages-components/quotes/widgets/schedule-send-widget/schedule-send-widget";
+import { GoMakeDatepicker } from "@/components/date-picker/date-picker-component";
 
 const AddRuleModal = ({
   openModal,
@@ -63,7 +64,9 @@ const AddRuleModal = ({
     onCloseScheduleModal,
     onOpenScheduleModal,
     renderOptions,
-    checkWhatRenderArray
+    checkWhatRenderArray,
+    onSelectDeliveryTimeDates,
+    resetDatePicker
   } = useAddRuleModal({
     typeExceptionSelected,
     selectedPricingBy,
@@ -340,12 +343,10 @@ const AddRuleModal = ({
             }}
           />
         </div>
-        {/* <div style={clasess.statusFilterContainer}>
+        <div style={clasess.statusFilterContainer}>
           <h3 style={clasess.filterLabelStyle}>{t("boardMissions.dateRange")}</h3>
-          <div style={{ width: "100%" }}>
-            <GoMakeDatepicker onChange={onSelectDeliveryTimeDates} placeholder={t("boardMissions.chooseDate")} reset={resetDatePicker} />
-          </div>
-        </div> */}
+          <GoMakeDatepicker onChange={onSelectDeliveryTimeDates} placeholder={t("boardMissions.chooseDate")} reset={resetDatePicker} />
+        </div>
       </div>
     );
   }

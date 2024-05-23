@@ -437,7 +437,6 @@ const useAddRuleModal = ({
       `/v1/erp-service/documents/generate-document-report`,
       {
         filterDTO:{
-          groupBy: propertieValue,
           statusId: filterData?.statusId,
           closeStatus: filterData?.closeStatus,
           productionStatus: filterData?.productionStatus,
@@ -448,9 +447,10 @@ const useAddRuleModal = ({
           minPrice: filterData?.minPrice,
           maxPrice: filterData?.maxPrice,
           productList: filterData?.productList,
-          fromDate: filterData?.fromDate,
-          toDate: filterData?.toDate,
+          fromDate,
+          toDate
         },
+        groupBy: propertieValue,
         exceptionConditionProperties: rules.map((item) => {
           return {
             statementValue:
@@ -525,7 +525,7 @@ const useAddRuleModal = ({
     onCloseScheduleModal,
     onOpenScheduleModal,
     renderOptions,
-    checkWhatRenderArray
+    checkWhatRenderArray,
   };
 };
 
