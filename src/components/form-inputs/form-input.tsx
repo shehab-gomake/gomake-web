@@ -54,8 +54,7 @@ const FormInput = ({ input, error, changeState, readonly }: IFormInput) => {
     value: product.id,
     label: `${product.name}`,
   }));
-  const [switchValue, setSwitchValue] = useState(false);
-
+  const [switchValue, setSwitchValue] = useState<any>(input?.value);
   const handleChange = (value: string) => {
     setColor(value);
     changeState(input.parameterKey, value);
@@ -247,8 +246,10 @@ const FormInput = ({ input, error, changeState, readonly }: IFormInput) => {
               />
             ) : input.type === "switch" ? (
               <SecondSwitch
+                key={input?.label}
                 checked={switchValue}
                 onChange={handleSwitchCheck}
+                value={input?.value}
               />
             ) : input.type === "primeSwitch" ? (
               <PrimarySwitch
