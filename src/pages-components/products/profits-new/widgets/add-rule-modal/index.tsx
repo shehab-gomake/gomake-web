@@ -61,7 +61,9 @@ const AddRuleModal = ({
     initialRule,
     openScheduleModal,
     onCloseScheduleModal,
-    onOpenScheduleModal
+    onOpenScheduleModal,
+    renderOptions,
+    checkWhatRenderArray
   } = useAddRuleModal({
     typeExceptionSelected,
     selectedPricingBy,
@@ -72,9 +74,10 @@ const AddRuleModal = ({
     selectedProperties,
     getProperitesService,
     isQuoteWidge,
-    filterData
-  });
+    filterData,
 
+  });
+  console.log("renderOptions", renderOptions())
   const [selectedCategories, setSelectedCategories] = useState<any>("")
   const [selectedStatment2, setSelectedStatment2] = useState<any>("")
   const router = useRouter();
@@ -530,7 +533,25 @@ const AddRuleModal = ({
                         {t("properties.statment")}
                       </label>
                       <GoMakeAutoComplate
-                        options={clients?.map((value) => {
+                        options={renderOptions()?.map((value) => {
+                          return {
+                            ...value,
+                            label: value?.name,
+                            id: value.id,
+                          };
+                        })}
+                        getOptionLabel={(option: any) => `${option.name}`}
+                        onChangeTextField={checkWhatRenderArray}
+                        style={clasess.dropDownListContainer}
+                        placeholder={t("sales.quote.chooseCustomer")}
+                        value={rule.statement2}
+                        onChange={(e, value) => {
+                          handleChange(index, "statement2", value)
+                          handleChange(index, "statement", null);
+                        }}
+                      />
+                      {/* <GoMakeAutoComplate
+                         options={clients?.map((value) => {
                           return {
                             ...value,
                             label: value?.name,
@@ -545,7 +566,7 @@ const AddRuleModal = ({
                           handleChange(index, "statement", null);
                         }
                         }
-                      />
+                      /> */}
                     </div>
                   )}
                   {rule.category?.id === "Property output" &&
