@@ -24,7 +24,6 @@ const useMoreCircle = () => {
     onClickOpenIrrelevantModal,
     CloseDocument
   }) => {
-    console.log("quote", quote)
     const documentPath = DOCUMENT_TYPE[documentType];
     const showNewDuplicate = documentType === DOCUMENT_TYPE.deliveryNote || documentType === DOCUMENT_TYPE.deliveryNoteRefund || documentType === DOCUMENT_TYPE.invoice || documentType === DOCUMENT_TYPE.invoiceRefund;
     return [
