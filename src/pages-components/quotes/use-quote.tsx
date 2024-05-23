@@ -40,6 +40,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
   const { navigate } = useGomakeRouter();
   const { errorColor } = useGomakeTheme();
   const [patternSearch, setPatternSearch] = useState("");
+  console.log("patternSearch", patternSearch)
   const [finalPatternSearch, setFinalPatternSearch] = useState("");
   const debounce = useDebounce(patternSearch, 500);
   const { GetDateFormat, GetShortDateFormat } = useDateFormat();
@@ -253,7 +254,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
               }),
               quote?.purchaseNumber,
               quote?.productionStatus,
-              quote?.jobs,
+              <div onClick={() => navigate(`/board-missions?orderNumber=${quote?.number}`)}>{quote?.jobs}</div>,
               quote?.cost,
               quote?.worksNames,
               quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
@@ -456,7 +457,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
               }),
               quote?.purchaseNumber,
               quote?.productionStatus,
-              quote?.jobs,
+              <div style={{ cursor: "pointer" }} onClick={() => navigate(`/board-missions?orderNumber=${quote?.number}`)}>{quote?.jobs}</div>,
               quote?.cost,
               quote?.worksNames,
               quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
