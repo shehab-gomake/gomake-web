@@ -1,25 +1,27 @@
 import { useAgentsList, useCustomerDropDownList, useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
 import { useBoardMissionsSignalr } from "@/hooks/signalr/use-board-missions-signalr";
 import { getAllProductsForDropDownList } from "@/services/hooks";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { PStatus } from "./widgets/enums";
-import { setBoardMissionsFiltersApi } from "@/services/api-service/board-missions-table/set-borad-missions-filters-api";
+import { getDeliveryTickerPdfApi, getOrderSummeryPdfApi, getWorkMissionPdfApi, setBoardMissionsFiltersApi } from "@/services/api-service/board-missions-table/board-missions-table";
 import { useDateFormat } from "@/hooks/use-date-format";
 import { DEFAULT_VALUES } from "@/pages/customers/enums";
 import { EWorkSource } from "@/widgets/product-pricing-widget/enums";
 import { useDebounce } from "@/utils/use-debounce";
 import { MoreMenuWidget } from "./widgets/more-circle";
-import { BoardMission } from "./widgets/interfaces";
 import { DuplicateType } from "@/enums";
 import { DOCUMENT_TYPE } from "../quotes/enums";
+import { GomakeTextInput } from "@/components/text-input/text-input";
+import { useStyle } from "./style";
 import { useRouter } from "next/router";
 import { backToProcessApi, moveBoardMissionToDoneApi } from "@/services/api-service/production-floor/production-floor-endpoints";
 
 const useBoardMissions = () => {
   const { t } = useTranslation();
+  const { classes } = useStyle();
   const { callApi } = useGomakeAxios();
-  const { alertFaultGetData, alertFaultUpdate, alertSuccessUpdate } = useSnackBar();
+  const { alertFault , alertFaultGetData, alertFaultUpdate, alertSuccessUpdate } = useSnackBar();
   const { data, connectionId } = useBoardMissionsSignalr();
   const { navigate } = useGomakeRouter();
   const [status, setStatus] = useState<{
@@ -151,8 +153,12 @@ const useBoardMissions = () => {
             <MoreMenuWidget
               mission={mission}
               onClickDuplicate={onOpenDuplicateModal}
+              onOpenModal={onOpenModal}
+              onClickPrintPackagingSlip={onOpenPackagesModal}
               onClickMarksAsDone={onOpenMarkReadyModal}
               onClickReturnToProduction={onOpenReturnToProdModal}
+              onClickOrderSummeryPdf={onClickOrderSummeryPdf}
+              onClickWorkMissionPdf={onClickWorkMissionPdf}
             />
           ]);
           setAllBoardMissions(mapData);
@@ -183,13 +189,52 @@ const useBoardMissions = () => {
             pageNumber: pageNumber,
             pageSize: pageSize,
           });
-    }
+    } 
   };
 
   const onClickDuplicateMission = (duplicateType: DuplicateType) => {
     navigate(
       `/products/duplicate?clientTypeId=${missionItem?.clientTypeId}&customerId=${missionItem?.customerID}&productId=${missionItem?.productID}&documentItemId=${missionItem?.orderItemId}&documentType=${DOCUMENT_TYPE.order}&documentId=${missionItem?.orderItemId}&duplicateType=${duplicateType}`
     );
+  };
+
+  const onClickOrderSummeryPdf = async (boardMissionId: string) => {
+    const callBack = (res) => {
+      if (res?.success) {
+        const pdfLink = res.data;
+        window.open(pdfLink, "_blank");
+      } else {
+        alertFaultGetData();
+      }
+    };
+    await getOrderSummeryPdfApi(callApi, callBack, { boardMissionId });
+  };
+
+  const onClickWorkMissionPdf = async (boardMissionId: string) => {
+    const callBack = (res) => {
+      if (res?.success) {
+        const pdfLink = res.data;
+        window.open(pdfLink, "_blank");
+      } else {
+        alertFaultGetData();
+      }
+    };
+    await getWorkMissionPdfApi(callApi, callBack, { boardMissionId });
+  };
+
+  const onClickPrintPackagingSlip = async () => {
+    if (quantityPerPackage > missionItem?.quantity) {
+      alertFault("boardMissions.alertQuantity");
+      return;
+    }
+    const callBack = (res) => {
+      if (res?.success) {
+        console.log("result : ", res?.data)
+      } else {
+        alertFaultGetData();
+      }
+    };
+    await getDeliveryTickerPdfApi(callApi, callBack, { boardMissionId: missionItem?.id, quantityOnPackages: quantityPerPackage });
   };
 
   const [openDuplicateModal, setOpenDuplicateModal] = useState<boolean>(false);
@@ -211,6 +256,17 @@ const useBoardMissions = () => {
     setOpenMarkReadyModal(true);
   };
 
+
+  const [openMarkReadyThenPrintModal, setOpenMarkReadyThenPrintModal] = useState<boolean>(false);
+  const onCloseMarkReadyThenPrintModal = () => {
+    setOpenMarkReadyThenPrintModal(false);
+  };
+  const onOpenMarkReadyThenPrintModal = () => {
+    setOpenMarkReadyThenPrintModal(true);
+  };
+
+
+
   const [openReturnToProdModal, setOpenReturnToProdModalModal] = useState<boolean>(false);
   const onCloseReturnToProdModal = () => {
     setSelectedMission({})
@@ -220,6 +276,22 @@ const useBoardMissions = () => {
     setSelectedMission(mission)
     setOpenReturnToProdModalModal(true);
   };
+
+
+  const [openPackagesModal, setOpenPackagesModal] = useState<boolean>(false);
+  const onOpenPackagesModal = (mission: any) => {
+    setMissionItem(mission);
+    setOpenPackagesModal(true);
+  };
+
+  const onClosePackagesModal = () => {
+    setOpenPackagesModal(false);
+  };
+
+  useEffect(()=>{
+    setQuantityOfPackages(1);
+    setQuantityPerPackage(missionItem?.quantity || 0);
+  },[missionItem])
 
   // useEffect(() => {
   //   const mapData = data?.data?.map((mission: any) => [
@@ -246,6 +318,54 @@ const useBoardMissions = () => {
 
   const handlePageChange = (event, value) => {
     setPageNumber(value);
+  };
+  
+  const [quantityOfPackages, setQuantityOfPackages] = useState(1);
+  const [quantityPerPackage, setQuantityPerPackage] = useState(missionItem?.quantity || 0);
+
+  const remainingQuantity = missionItem?.quantity - quantityPerPackage * (quantityOfPackages - 1);
+
+  const handleQuantityOfPackagesChange = (event) => {
+    const newQuantityOfPackages = parseInt(event.target.value, 10);
+    const totalQuantity = missionItem?.quantity || 0;
+    const newQuantityPerPackage = Math.ceil(totalQuantity / newQuantityOfPackages);
+    setQuantityOfPackages(newQuantityOfPackages);
+    setQuantityPerPackage(newQuantityPerPackage);
+  };
+
+  const handleQuantityPerPackageChange = (event) => {
+    const newQuantityPerPackage = parseInt(event.target.value, 10);
+    const totalQuantity = missionItem?.quantity ;
+    const newQuantityOfPackages = Math.ceil(totalQuantity / newQuantityPerPackage);
+    setQuantityPerPackage(newQuantityPerPackage);
+    setQuantityOfPackages(newQuantityOfPackages);
+  };
+
+  const packageInputs = useMemo(() => {
+    return [...Array(quantityOfPackages)].map((_, index) => (
+      <div key={index} style={{ width: "40%" }} >
+        <h3 style={classes.packageLabelStyle}>
+          {`${t("boardMissions.package")} ${index + 1}`}
+        </h3>
+        <div style={classes.inputValueStyle}>
+        {
+          index === quantityOfPackages - 1
+            ? remainingQuantity
+            : quantityPerPackage
+        }
+        </div>
+      </div>
+    ));
+  }, [quantityOfPackages, quantityPerPackage, remainingQuantity]);
+
+
+  const [openModal, setOpenModal] = useState<boolean>(false);
+  const onCloseModal = () => {
+    setOpenModal(false);
+  };
+  const onOpenModal =  (mission: any) => {
+    setMissionItem(mission);
+    setOpenModal(true);
   };
 
   const onClickMoveBoardMissionToDone = async (sendMessage: boolean) => {
@@ -323,7 +443,23 @@ const useBoardMissions = () => {
     handleClick,
     handleClose,
     open,
-    anchorEl
+    anchorEl,
+    missionItem,
+    openPackagesModal,
+    onClosePackagesModal,
+    quantityPerPackage,
+    quantityOfPackages,
+    packageInputs,
+    handleQuantityPerPackageChange,
+    handleQuantityOfPackagesChange,
+    openModal,
+    onCloseModal,
+    onOpenPackagesModal,
+    onOpenMarkReadyModal,
+    onClickPrintPackagingSlip,
+    openMarkReadyThenPrintModal,
+    onCloseMarkReadyThenPrintModal,
+    onOpenMarkReadyThenPrintModal
   };
 };
 

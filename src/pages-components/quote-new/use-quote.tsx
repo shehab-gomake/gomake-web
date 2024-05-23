@@ -1156,8 +1156,6 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
   );
   const getClientTypesCategories = async () => {
     const callBack = (res) => {
-      console.log("res", res)
-
       if (res) {
         const clientTypes = res.map((types) => ({
           label: types.name,

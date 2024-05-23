@@ -121,13 +121,13 @@ const FormInput = ({ input, error, changeState, readonly }: IFormInput) => {
         input.options.map(({ value, text }) => ({ label: text, value }))
       );
     }
-    else if (input.options.length === 0 && input.parameterKey === "machines") {
+    else if (input.options?.length === 0 && input.parameterKey === "machines") {
       setOptions(machinesCategoriesList)
     }
-    else if (input.options.length === 0 && input.parameterKey === "clients") {
+    else if (input.options?.length === 0 && input.parameterKey === "clients") {
       setOptions(clientsOptions)
     }
-    else if (input.options.length === 0 && input.parameterKey === "printed product") {
+    else if (input.options?.length === 0 && input.parameterKey === "printed product") {
       setOptions(productsOption)
     }
     if (input.type === "color") {

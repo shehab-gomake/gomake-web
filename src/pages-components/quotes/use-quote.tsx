@@ -3,9 +3,9 @@ import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { DELIVERY_NOTE_STATUSES, LogActionType, QUOTE_STATUSES } from "./enums";
 import { MoreMenuWidget } from "./more-circle";
-import { getAllProductsForDropDownList, getAndSetAllCustomers } from "@/services/hooks";
+import { getAllProductsForDropDownList, getAndSetAllCustomers, getAndSetClientTypes } from "@/services/hooks";
 import { useRecoilState, useSetRecoilState, useRecoilValue } from "recoil";
-import { agentsCategoriesState } from "@/pages/customers/customer-states";
+import { agentsCategoriesState, clientTypesCategoriesState } from "@/pages/customers/customer-states";
 import { getAndSetEmployees2 } from "@/services/api-service/customers/employees-api";
 import { useDebounce } from "@/utils/use-debounce";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
@@ -13,6 +13,8 @@ import { useDateFormat } from "@/hooks/use-date-format";
 import { _renderDocumentStatus, _renderQuoteStatus, _renderStatus } from "@/utils/constants";
 import { employeesListsState, selectedClientState } from "./states";
 import {
+  CloseDocumentApi,
+  cancelDocumentApi,
   createNewDocumentApi,
   duplicateDocumentApi,
   getAllDocumentLogsApi,
@@ -23,16 +25,17 @@ import {
 import { DOCUMENT_TYPE } from "./enums";
 import { useQuoteGetData } from "../quote-new/use-quote-get-data";
 import { useStyle } from "./style";
-import { DEFAULT_VALUES } from "@/pages/customers/enums";
+import { CLIENT_TYPE_Id, DEFAULT_VALUES } from "@/pages/customers/enums";
 import { getAllReceiptsApi, getReceiptPdfApi } from "@/services/api-service/generic-doc/receipts-api";
 import { renderDocumentTypeForSourceDocumentNumber, renderURLDocumentType } from "@/widgets/settings-documenting/documentDesign/enums/document-type";
 import { AStatus, PStatus } from "../board-missions/widgets/enums";
+import { getAndSetCustomerById, getAndSetCustomersPagination } from "@/services/api-service/customers/customers-api";
 
 const useQuotes = (docType: DOCUMENT_TYPE) => {
   const { t } = useTranslation();
   const { classes } = useStyle();
   const { callApi } = useGomakeAxios();
-  const { alertFaultUpdate, alertFaultDuplicate, alertFaultGetData } = useSnackBar();
+  const { alertFaultUpdate, alertFaultDuplicate, alertFaultGetData, alertSuccessUpdate } = useSnackBar();
   const { getCurrencyUnitText } = useQuoteGetData();
   const { navigate } = useGomakeRouter();
   const { errorColor } = useGomakeTheme();
@@ -215,7 +218,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
           else if (docType === DOCUMENT_TYPE.quote) {
             return [
               GetDateFormat(quote?.createdDate),
-              quote?.customerName,
+              <div style={{ cursor: "pointer" }} onClick={() => onClickOpenCustomerModal(quote?.customerId)}>{quote?.customerName}</div>,
               quote?.agentName,
               quote?.number,
               quote?.worksNames,
@@ -236,7 +239,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
           else if (docType === DOCUMENT_TYPE.order) {
             return [
               GetDateFormat(quote?.createdDate),
-              quote?.customerName,
+              <div style={{ cursor: "pointer" }} onClick={() => onClickOpenCustomerModal(quote?.customerId)}>{quote?.customerName}</div>,
               quote?.agentName,
               quote?.number,
               quote?.sourceDocumentNumber?.map((item, index) => {
@@ -260,6 +263,10 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
                 onClickPdf={onClickQuotePdf}
                 onClickDuplicate={onClickQuoteDuplicate}
                 onClickLoggers={onClickDocumentLogs}
+                onClickOpenIrrelevantModal={onClickOpenIrrelevantModal}
+                onClickOpenDeliveryTimeModal={onClickOpenDeliveryTimeModal}
+                onClickOpenPriceModal={onClickOpenPriceModal}
+                CloseDocument={CloseDocument}
 
               />,
             ];
@@ -1194,7 +1201,143 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
       setFilterData(filteredDataWithoutEmptyValues);
     }
   }, [quoteStatusId, statusId, accountingStatus, productionStatus, finalPatternSearch, customerId, dateRange, agentId, minPrice, maxPrice, productIds, fromDate, toDate]);
+
+  const [openIrrelevantCancelModal, setOpenIrrelevantCancelModal] = useState(false);
+  const [openPriceCancelModal, setOpenPriceCancelModal] = useState(false);
+  const [openDeliveryTimeCancelModal, setOpenDeliveryTimeCancelModal] = useState(false);
+  const [selectedOrder, setselectedOrder] = useState<any>({})
+
+  const onClickOpenIrrelevantModal = (order) => {
+    setselectedOrder(order)
+    setOpenIrrelevantCancelModal(true);
+  };
+  const onClickCloseIrrelevantModal = () => {
+    setOpenIrrelevantCancelModal(false);
+  };
+
+
+  const onClickOpenPriceModal = (order) => {
+    setselectedOrder(order)
+    setOpenPriceCancelModal(true);
+  };
+  const onClickClosePriceModal = () => {
+    setOpenPriceCancelModal(false);
+  };
+
+  const onClickOpenDeliveryTimeModal = (order) => {
+    setselectedOrder(order)
+    setOpenDeliveryTimeCancelModal(true);
+  };
+  const onClickCloseDeliveryTimeModal = () => {
+    setOpenDeliveryTimeCancelModal(false);
+  };
+
+
+
+  const updateCancelQuote = async (quoteStatus: number) => {
+    const callBack = (res) => {
+      if (res?.success) {
+        alertSuccessUpdate();
+        getAllQuotes()
+      } else {
+        alertFaultUpdate();
+      }
+    }
+    await cancelDocumentApi(callApi, callBack, {
+      DocumentType: docType,
+      Document: {
+        documentId: selectedOrder?.id,
+        quoteStatus: quoteStatus,
+      }
+    })
+  }
+
+  const CloseDocument = async (quoteItemValue) => {
+    const callBack = (res) => {
+      if (res?.success) {
+        alertSuccessUpdate();
+        getAllQuotes()
+      } else {
+        alertFaultUpdate();
+      }
+    };
+    await CloseDocumentApi(callApi, callBack, {
+      documentId: quoteItemValue?.id,
+      documentType: docType
+
+    });
+  };
+
+
+  const [showCustomerModal, setShowCustomerModal] = useState(false);
+  const [customerForEdit, setCustomerForEdit] = useState([]);
+  const onClickOpenCustomerModal = (customerId: any) => {
+    setShowCustomerModal(true)
+    getCustomerForEdit(customerId)
+  }
+
+  const getCustomerForEdit = async (customerId) => {
+    const callBack = (res) => {
+      if (res.success) {
+        let customer = res.data;
+        console.log("customer", customer)
+        if (customer.contacts && customer.contacts.length > 0) {
+          let index = 0;
+          customer.contacts.forEach((x) => {
+            x.index = index;
+            index++;
+          });
+        }
+        if (customer.addresses && customer.addresses.length > 0) {
+          let index = 0;
+          customer.addresses.forEach((x) => {
+            x.index = index;
+            index++;
+          });
+        }
+        if (customer.users && customer.users.length > 0) {
+          let index = 0;
+          customer.users.forEach((x) => {
+            x.index = index;
+            index++;
+          });
+        }
+        setCustomerForEdit(customer);
+        setShowCustomerModal(true);
+      }
+    };
+    await getAndSetCustomerById(callApi, callBack, { customerId: customerId });
+  };
+  const [clientTypesCategories, setClientTypesCategories] = useRecoilState(
+    clientTypesCategoriesState
+  );
+  const getClientTypesCategories = async () => {
+    const callBack = (res) => {
+      if (res) {
+        const clientTypes = res.map((types) => ({
+          label: types.name,
+          id: types.id,
+        }));
+        setClientTypesCategories(clientTypes);
+      }
+    };
+    await getAndSetClientTypes(callApi, callBack, { cardType: CLIENT_TYPE_Id.CUSTOMER });
+  };
+  useEffect(() => {
+    getClientTypesCategories()
+  }, [])
   return {
+    showCustomerModal,
+    customerForEdit,
+    setCustomerForEdit,
+    setShowCustomerModal,
+    updateCancelQuote,
+    openIrrelevantCancelModal,
+    onClickCloseIrrelevantModal,
+    openPriceCancelModal,
+    openDeliveryTimeCancelModal,
+    onClickCloseDeliveryTimeModal,
+    onClickClosePriceModal,
     t,
     patternSearch,
     tableHeaders,

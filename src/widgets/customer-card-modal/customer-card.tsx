@@ -51,6 +51,7 @@ interface IProps {
   setCustomer?: (customer: any) => void;
   showUpdateButton?: boolean;
   showAddButton?: boolean;
+  isgetAllCustomers?: boolean;
 }
 
 const CustomerCardWidget = ({
@@ -66,7 +67,9 @@ const CustomerCardWidget = ({
   setCustomer,
   showUpdateButton,
   showAddButton,
+  isgetAllCustomers = true
 }: IProps) => {
+  console.log("customer2", customer)
   const [open, setOpen] = useState(false);
   const { addNewCustomer } = useAddCustomer();
   const { editCustomer } = useEditCustomer();
@@ -88,7 +91,7 @@ const CustomerCardWidget = ({
     customer && customer.users ? customer.users : []
   );
   const clientTypesCategories = useRecoilValue(clientTypesCategoriesState);
-
+  console.log("clientTypesCategories", clientTypesCategories)
   const theme = createMuiTheme({
     palette: {
       secondary: {
@@ -352,7 +355,9 @@ const CustomerCardWidget = ({
       )
     ) {
       editCustomer(updatedCustomer, setCustomer).then((x) => {
-        getAllCustomers();
+        if (isgetAllCustomers) {
+          getAllCustomers();
+        }
         handleClose();
       });
     } else {
@@ -432,6 +437,7 @@ const CustomerCardWidget = ({
           ).map((item) => (
             <div style={{ marginBottom: 10 }}>
               <FormInput
+                key={customer}
                 input={item as IInput}
                 changeState={onChangeInputs}
                 error={item.required && !item.value}
@@ -459,6 +465,7 @@ const CustomerCardWidget = ({
             </div>
             <div style={{ width: "180px" }}>
               <GoMakeAutoComplate
+                key={customer}
                 options={clientTypesCategories}
                 placeholder={typeClient === "C" ? t("customers.modal.clientType") : t("suppliers.supplierType")}
                 style={classes.dropDownListStyle}

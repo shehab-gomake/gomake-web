@@ -3,15 +3,16 @@ import { useStyle } from "./style";
 import { HeaderTitle } from "@/widgets";
 import { useBoardMissions } from "./use-board-missions";
 import { PrimaryTable } from "@/components/tables/primary-table";
-import { GoMakeAutoComplate, GoMakeDeleteModal, GomakePrimaryButton, ThreeOptionsModal } from "@/components";
+import { GoMakeAutoComplate, GoMakeDeleteModal, GoMakeModal, GomakePrimaryButton, GomakeTextInput, ThreeOptionsModal } from "@/components";
 import { SearchInputComponent } from "@/components/form-inputs/search-input-component";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { GoMakeMultiSelect } from "@/components/auto-complete/multi-select";
 import { GoMakeDatepicker } from "@/components/date-picker/date-picker-component";
 import { Stack } from "@mui/material";
 import { GoMakePagination } from "@/components/pagination/gomake-pagination";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import { DuplicateType } from "@/enums";
+import { PrintPackingSlipModal } from "./widgets/print-packing-slip-modal";
 import { IconButton } from "@mui/material";
 import { GoMakeMenu } from "@/components";
 import { InputAdornment } from "@mui/material";
@@ -56,6 +57,22 @@ const BoardMissionsListWidget = () => {
     openReturnToProdModal,
     onCloseReturnToProdModal,
     onClickDuplicateMission,
+    openPackagesModal,
+    onClosePackagesModal,
+    quantityPerPackage,
+    quantityOfPackages,
+    packageInputs,
+    handleQuantityPerPackageChange,
+    handleQuantityOfPackagesChange,
+    openModal,
+    onCloseModal,
+    onOpenPackagesModal,
+    onOpenMarkReadyModal,
+    missionItem,
+    onClickPrintPackagingSlip,
+    openMarkReadyThenPrintModal,
+    onCloseMarkReadyThenPrintModal,
+    onOpenMarkReadyThenPrintModal,
     onClickMoveBoardMissionToDone,
     onClickBackToProcess,
     handleClick,
@@ -168,7 +185,8 @@ const BoardMissionsListWidget = () => {
           />
           <PrimaryTable
             stickyFirstCol={false}
-            stickyHeader={false}
+            stickyHeader={true}
+            maxHeight={650}
             rows={allBoardMissions}
             headers={tableHeader}
           />
@@ -182,6 +200,7 @@ const BoardMissionsListWidget = () => {
           pageSize={pageSize}
         />
       </Stack>
+
       <ThreeOptionsModal
         title={t("boardMissions.duplicateModalTitle")}
         yesBtn={"boardMissions.duplicateModalYes"}
@@ -191,6 +210,7 @@ const BoardMissionsListWidget = () => {
         onClickYes={() => onClickDuplicateMission(DuplicateType.SameBoardMissionNumber)}
         onClickNo={() => onClickDuplicateMission(DuplicateType.NewBoardMissionNumber)}
       />
+
       <ThreeOptionsModal
         title={t("boardMissions.markDoneModalTitle")}
         subTitle={t("boardMissions.markDoneModalSubTitle")}
@@ -198,12 +218,18 @@ const BoardMissionsListWidget = () => {
         noBtn={"boardMissions.markDoneModalNo"}
         openModal={openMarkReadyModal}
         onClose={onCloseMarkReadyModal}
-        onClickYes={() => {
-          onClickMoveBoardMissionToDone(true)
-        }}
-        onClickNo={() => {
-          onClickMoveBoardMissionToDone(false)
-        }}
+        onClickYes={() => alert(missionItem?.id)}
+        onClickNo={() => alert(missionItem?.id)}
+      />
+      <ThreeOptionsModal
+        title={t("boardMissions.markDoneFromPrintSlipModalTitle")}
+        subTitle={t("boardMissions.markDoneModalSubTitle")}
+        yesBtn={"boardMissions.markDoneModalYes"}
+        noBtn={"boardMissions.markDoneModalNo"}
+        openModal={openMarkReadyThenPrintModal}
+        onClose={onCloseMarkReadyThenPrintModal}
+        onClickYes={() => onOpenPackagesModal(missionItem)}
+        onClickNo={() => onOpenPackagesModal(missionItem)}
       />
       <GoMakeDeleteModal
         icon={<WarningAmberIcon style={classes.warningIconStyle} />}
@@ -213,6 +239,25 @@ const BoardMissionsListWidget = () => {
         openModal={openReturnToProdModal}
         onClose={onCloseReturnToProdModal}
         onClickDelete={onClickBackToProcess}
+      />
+      <ThreeOptionsModal
+        title={t("boardMissions.printAndMoveToReadyTitle")}
+        yesBtn={t("boardMissions.printAndTransferToReady")}
+        noBtn={t("boardMissions.printOnly")}
+        openModal={openModal}
+        onClose={onCloseModal}
+        onClickYes={onOpenMarkReadyThenPrintModal}
+        onClickNo={() => onOpenPackagesModal(missionItem)}
+      />
+      <PrintPackingSlipModal
+        openPackagesModal={openPackagesModal}
+        onClosePackagesModal={onClosePackagesModal}
+        packageInputs={packageInputs}
+        quantityOfPackages={quantityOfPackages}
+        quantityPerPackage={quantityPerPackage}
+        handleQuantityOfPackagesChange={handleQuantityOfPackagesChange}
+        handleQuantityPerPackageChange={handleQuantityPerPackageChange}
+        onClickConfirm={onClickPrintPackagingSlip}
       />
     </>
   );
