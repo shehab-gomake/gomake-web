@@ -34,7 +34,8 @@ const useProductionFloorHeader = () => {
         showAllJobsButton,
         paths,
         onClickPath,
-        navigateToProductionFloor
+        navigateToProductionFloor,
+        push
     }
 }
 export {useProductionFloorHeader}

@@ -6,6 +6,7 @@ import {useTranslation} from "react-i18next";
 import {useRecoilState} from "recoil";
 import {boardsMissionsStatusFilterState} from "@/store/boards-missions-status-filter";
 import {useCallback} from "react";
+import Stack from "@mui/material/Stack";
 
 const DashboardCard = ({
                            label,
@@ -17,7 +18,9 @@ const DashboardCard = ({
                            status
                        }: IDashboardCard) => {
     const [selectedStatus, setStatus] = useRecoilState(boardsMissionsStatusFilterState);
-    const isSelected = useCallback(() => {return status === selectedStatus}, [selectedStatus])
+    const isSelected = useCallback(() => {
+        return status === selectedStatus
+    }, [selectedStatus])
     const {classes} = useStyle(bgColor, isSelected());
     const {t} = useTranslation();
     const handleOnClick = () => {
@@ -32,26 +35,25 @@ const DashboardCard = ({
     return (
 
         <Card onClick={handleOnClick} style={classes.container} variant={'outlined'}>
-            <div style={{
-                display: 'flex',
-            }}>
-                <div style={{width: '60px'}}>
+            <Stack>
+                <Stack direction={'row'} justifyContent={'space-between'} alignItems={'center'}>
                     <div style={classes.iconWrapper}>
                         {children}
                     </div>
-                </div>
+                    <div style={classes.value}>{value}</div>
 
-                <div style={classes.value}>{value}</div>
-
-                <div style={classes.progressWrapper}>
-                    {
-                        withProgressBar && <div>
-                            <CircularProgressWithLabel value={progressValue}/>
-                        </div>
-                    }
-                </div>
-            </div>
-            <div style={classes.label}><span>{t(label)}</span></div>
+                    <div style={{width: 'fit-content'}}>
+                        {
+                            withProgressBar && <div>
+                                <CircularProgressWithLabel value={progressValue}/>
+                            </div>
+                        }
+                    </div>
+                </Stack>
+                <Stack alignItems={'center'} justifyContent={'center'} textAlign={'center'}>
+                    <span style={classes.label}>{t('dashboard-widget.' +label)}</span>
+                </Stack>
+            </Stack>
         </Card>
     );
 }

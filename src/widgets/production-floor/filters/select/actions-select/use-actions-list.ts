@@ -12,7 +12,7 @@ import {useTranslation} from "react-i18next";
 const useActionsList = () => {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [filter, setFilter] = useState<string>();
-    const open = Boolean(anchorEl);
+    const [open, setOpen] = useState<boolean>(false)
     const {t} = useTranslation();
     const [actions, setActions] = useRecoilState(actionsListState);
     const [productionFilter, ] = useRecoilState(productionFloorFiltersState);
@@ -79,7 +79,8 @@ const useActionsList = () => {
         setFilter,
         open,
         anchorEl,
-        t
+        t,
+        setOpen
     }
 }
 export {useActionsList}

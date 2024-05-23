@@ -1,15 +1,14 @@
 import React, {CSSProperties, lazy, Suspense, useEffect, useMemo, useRef, useState} from "react";
 import {debounce} from "@mui/material";
 import "react-quill/dist/quill.snow.css";
-
+import {useTranslation} from "react-i18next";
 const ReactQuill = lazy(() => import('react-quill'));
-
 
 const GoMakeTextEditor = ({onSend, containerStyle = {}}: {onSend: (v: string) => void; containerStyle?: CSSProperties}) => {
     const [value, setValue] = useState<string>('');
     const [sendButtonAdded, setButtonAdded] = useState<boolean>(false)
     const reactQuillRef = useRef(null);
-
+    const {t} = useTranslation();
     function handle ()  {
         onSend(this.quill.root.innerHTML)
     }
@@ -23,7 +22,7 @@ const GoMakeTextEditor = ({onSend, containerStyle = {}}: {onSend: (v: string) =>
             buttonWrapper.className = 'ql-formats';
             buttonWrapper.style.marginLeft = 'auto';
             const customButton = document.createElement('button');
-            customButton.innerText = 'send';
+            customButton.innerHTML = t('textEditor.send');
             customButton.onclick = () => handle.call({ quill });
             customButton.style.backgroundColor =  '#2E3092';
             customButton.style.color =  'white';
@@ -90,7 +89,7 @@ const GoMakeTextEditor = ({onSend, containerStyle = {}}: {onSend: (v: string) =>
         <div style={{width: "100%", height: '100%', ...containerStyle}}>
             <Suspense>
                 <ReactQuill ref={reactQuillRef} formats={formats}  style={style} value={value} onChange={handleTextChange} id='editor'
-                            placeholder={'Enter Your Comment here'}/>
+                            placeholder={t('textEditor.placeholder')}/>
             </Suspense>
         </div>
     );

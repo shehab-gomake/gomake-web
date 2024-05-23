@@ -5,13 +5,21 @@ import {useRouter} from "next/router";
 import {useUploadFiles} from "@/widgets/production-floor/views/board-missions-view/navigation-buttons/use-upload-files";
 import {useRecoilState} from "recoil";
 import {printHouseProfile} from "@/store/print-house-profile";
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import {useTranslation} from "react-i18next";
+import {adaptLeft} from "@/utils/adapter";
+import {ClickOutside} from "@/components/click-out-side/click-out-side";
+import {boardMissionsDetailsState} from "@/widgets/production-floor/state/boards";
 
 const MoreActionsButton = () => {
     const [open, setOpen] = useState<boolean>(false);
-    const {query, replace, pathname} = useRouter();
+    const {query, replace, pathname, push} = useRouter();
     const fileInputRef = useRef(null);
     const {handleFileUpload} = useUploadFiles();
     const [companyProfile] = useRecoilState(printHouseProfile);
+    const [boardMissions] = useRecoilState(boardMissionsDetailsState);
+    const {t} = useTranslation();
+    const direction = t('direction');
     const handleClose = () => {
         setOpen(false);
     };
@@ -24,6 +32,10 @@ const MoreActionsButton = () => {
         handleClose();
     }
 
+    const handleClickEdit = () => {
+        push(`/products/edit?clientTypeId=${boardMissions.clientTypeId}customerId=${boardMissions.clientId}&productId=${boardMissions.productId}&documentItemId=${boardMissions.orderItemId}&documentType=${1}&documentId=${boardMissions.orderId}`).then()
+    }
+
     const handleFileSelect = (e) => {
         [...e.target.files]?.forEach(async (file) => {
             console.log(file);
@@ -34,11 +46,23 @@ const MoreActionsButton = () => {
     return (
         <div style={{position: 'relative'}}>
             <PrimaryButton onClick={() => setOpen(!open)} variant={'contained'}
-                           sx={{width: '40px', height: '40px', padding: 0}}>...</PrimaryButton>
+                           sx={{
+                               minWidth: '40px',
+                               width: '40px',
+                               height: '40px',
+                               padding: 0,
+                               borderRadius: '12px'
+                           }}><MoreHorizIcon/></PrimaryButton>
             {
-                !!open && <Paper sx={{position: 'absolute', right: 0, top: '110%'}}>
-                    {!!companyProfile.filesApiAddress && <MenuItem onClick={onClickUpdateFile}>upload file</MenuItem>}
-                </Paper>
+                !!open && <ClickOutside onClick={() => setOpen(false)}>
+                    <Paper sx={{position: 'absolute', top: '110%', ...adaptLeft(direction, 0)}}>
+                        {
+                            !!companyProfile.filesApiAddress &&
+                            <MenuItem onClick={onClickUpdateFile}>{t('productionFloor.uploadFile')}</MenuItem>
+                        }
+                        <MenuItem onClick={handleClickEdit}>{t('productionFloor.edit')}</MenuItem>
+                    </Paper>
+                </ClickOutside>
             }
             <input type={'file'} multiple value={''} onChange={handleFileSelect} hidden={true} ref={fileInputRef}/>
         </div>

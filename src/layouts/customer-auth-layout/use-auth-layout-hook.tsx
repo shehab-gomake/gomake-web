@@ -1,5 +1,5 @@
-import { useGomakeAuth, useGomakeAxios, useGomakeRouter } from "@/hooks";
-import { CustomersIcon, HomeIcon, ProductFloorIcon, ProductionTrackingIcon, ReportsIcon, SalesIcon, SettingNavBar, ShopingIcon, } from "@/icons";
+import { useGomakeAuth, useGomakeRouter } from "@/hooks";
+import { CustomersIcon, HomeIcon, ProductFloorIcon, ReportsIcon, SalesIcon, SettingNavBar, ShopingIcon, } from "@/icons";
 import { useEffect, useMemo, useState } from "react";
 import { CubeIcon } from "@/components/icons/cube-icon";
 import { useRecoilValue } from "recoil";
@@ -13,7 +13,6 @@ const useAuthLayoutHook = (permissionEnumValue?: Permissions, allowAnonymous?: b
   const { isAuth } = useGomakeAuth(permissionEnumValue, allowAnonymous);
   const { navigate } = useGomakeRouter();
   const [canAccess, setCanAccess] = useState<boolean | null>(null);
-  const { callApi } = useGomakeAxios();
   const profile = useRecoilValue<ICompanyProfile>(companyProfileState);
 
   const tabs1: any = useMemo(() => {
@@ -39,18 +38,6 @@ const useAuthLayoutHook = (permissionEnumValue?: Permissions, allowAnonymous?: b
         Permission: Permissions.SHOW_PRODUCTION_FLOOR,
         icon: () => {
           return <ProductFloorIcon />;
-        },
-        isProduction: true,
-      },
-      {
-        isLine: false,
-        key: "productFloor",
-        title: "tabs.productionTracking",
-        path: "/production-tracking",
-        isList: false,
-        Permission: Permissions.SHOW_PRODUCTION_FLOOR,
-        icon: () => {
-          return <ProductionTrackingIcon />;
         },
         isProduction: true,
       },

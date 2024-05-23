@@ -8,9 +8,11 @@ import {
 import {ActivityComponent} from "@/widgets/production-floor/views/board-missions-view/activity/activity-component";
 import {convertHeightToVH} from "@/utils/adapter";
 import {useEffect} from "react";
+import {useTranslation} from "react-i18next";
 
 
 const BoardMissionsActivities = () => {
+    const {t} = useTranslation();
     const {
         addComment,
         filtersButtonsArray,
@@ -29,7 +31,7 @@ const BoardMissionsActivities = () => {
                         backgroundColor: btn.selected ? '#CBCBE4' : '#F2F4F7',
                         borderRadius: '16px',
                         color: btn.selected ? '#252675' : '#344054'
-                    }}>{btn.name}</Button>)
+                    }}>{t(btn.name)}</Button>)
                 }
             </Stack>
             <div style={{

@@ -11,9 +11,11 @@ import {
 import {
     DocumentsButton
 } from "@/widgets/production-floor/views/board-missions-view/navigation-buttons/documents-button";
+import {useTranslation} from "react-i18next";
 
 const NavigationButtonsComponent = () => {
-    const {handleViewChange, step, boardMissionsViews} = useBoardMissionsNavigationButtons()
+    const {handleViewChange, step, boardMissionsViews} = useBoardMissionsNavigationButtons();
+    const {t} = useTranslation();
     return (
         <Stack direction={'row'} justifyContent={'space-between'} alignItems={'center'}>
             <PrimaryToggleButtonGroup value={step}
@@ -21,12 +23,12 @@ const NavigationButtonsComponent = () => {
                                       onChange={handleViewChange}>
                 {
                     boardMissionsViews.map(view => <PrimaryToggleButton value={view.value}>
-                        {view.labelKey}
+                        {t(view.labelKey)}
                     </PrimaryToggleButton>)
                 }
             </PrimaryToggleButtonGroup>
             <Stack direction={'row'} alignItems={'center'} gap={'12px'}>
-                {/*<DocumentsButton/>*/}
+                <DocumentsButton/>
                 <MoreActionsButton/>
             </Stack>
         </Stack>
