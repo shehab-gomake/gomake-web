@@ -9,6 +9,8 @@ import {
 } from "@/widgets/product-pricing-widget/components/action/action-component";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import { adaptPaddingLeft, adaptPaddingRight } from "@/utils/adapter";
+import { useTranslation } from "react-i18next";
 
 interface ISubWorkFlowComponentProps extends ICalculatedWorkFlow {
     isEditableActions?: boolean;
@@ -23,7 +25,8 @@ interface ISubWorkFlowsComponentProps {
 const SubWorkFlowComponent = ({ actions, sectionName, isEditableActions, id, productType, profit, totalCost, totalPrice, totalRealProductionTime }: ISubWorkFlowComponentProps) => {
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const { classes } = useStyle();
-
+    const { t } = useTranslation()
+    const direction = t('direction');
     return (
         <>
             <Fade in={true}>
@@ -32,7 +35,7 @@ const SubWorkFlowComponent = ({ actions, sectionName, isEditableActions, id, pro
                         ...classes.subWorkFlowContainer,
                     }}>
                     <Stack direction={'row'} gap={'10px'} alignItems={'center'} flexWrap={'wrap'}>
-                        <span style={{ marginRight: 60 }}>{sectionName}</span>
+                        <span style={{ ...adaptPaddingLeft(direction, 60), width: 220 }}>{sectionName}</span>
                         <div >
                             <span style={classes.nameStyle}>{totalRealProductionTime?.name}</span>
                             <span style={classes.secondPartStyle}>{totalRealProductionTime?.values[0]} {totalRealProductionTime?.defaultUnit}</span>
