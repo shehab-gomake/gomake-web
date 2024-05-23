@@ -8,14 +8,14 @@ const useBoardMissionsNavigationButtons = () => {
     const {step} = query
     const [companyProfile] = useRecoilState(printHouseProfile);
     const boardMissionsViews = useMemo(() => companyProfile.filesApiAddress ? [
-            {value: 'stations', labelKey: 'stations'},
-            {value: 'files', labelKey: 'files'},
+            {value: 'stations', labelKey: 'productionFloor.stations'},
+            {value: 'files', labelKey: 'productionFloor.files'},
             // {value: 'approval', labelKey: 'approval'},
-            {value: 'activity', labelKey: 'activity'},
+            {value: 'activity', labelKey: 'productionFloor.activity'},
         ] :
         [
-            {value: 'stations', labelKey: 'stations'},
-            {value: 'activity', labelKey: 'activity'},], [companyProfile]);
+            {value: 'stations', labelKey: 'productionFloor.stations'},
+            {value: 'activity', labelKey: 'productionFloor.activity'},], [companyProfile]);
 
     const handleViewChange = (e: MouseEvent<HTMLElement>, newView: string) => {
         replace({pathname: pathname, query: {...query, step: newView}}, undefined, {shallow: true}).then();

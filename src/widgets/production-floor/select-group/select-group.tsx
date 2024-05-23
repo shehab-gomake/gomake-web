@@ -8,8 +8,9 @@ import {useGomakeTheme} from "@/hooks/use-gomake-thme";
 import {PrimaryButton} from "@/components/button/primary-button";
 import {useTranslation} from "react-i18next";
 
+
 const SelectGroup = () => {
-    const {openAddGroupModal, setOpenAddGroupModal, userGroups, deleteGroup, onSelectGroup, selectedGroup, groupsId} = useSelectGroup();
+    const {openAddGroupModal, setOpenAddGroupModal, userGroups, deleteGroup, onSelectGroup, selectedGroup} = useSelectGroup();
     const {secondColor} = useGomakeTheme();
     const {t} = useTranslation();
     return <><GoMakeAutoComplate options={userGroups.map(g => ({label: g.groupName, value: g.id}))}
@@ -47,7 +48,8 @@ const SelectGroup = () => {
                                      );
                                  }}
                                  style={{width: '200px'}}
-                                 value={!!groupsId ? {label: selectedGroup} : ''}
+                                 value={{label: selectedGroup}}
+                                 disableClearable={true}
                                  onChange={(e, v) => {
                                      onSelectGroup(v?.value)
                                  }}/>

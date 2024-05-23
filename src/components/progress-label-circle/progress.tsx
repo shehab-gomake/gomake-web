@@ -2,7 +2,7 @@ import {Box, CircularProgress, CircularProgressProps, Typography} from "@mui/mat
 
 const CircularProgressWithLabel = (props: CircularProgressProps & { value: number }) => {
     return (
-        <Box sx={{position: 'relative', display: 'inline-flex'}}>
+        <div style={{position: 'relative', display: 'inline-flex'}}>
             <CircularProgress
                 variant="determinate"
                 size={60}
@@ -37,7 +37,7 @@ const CircularProgressWithLabel = (props: CircularProgressProps & { value: numbe
                     fontWeight={600}
                 >{`${Math.round(props.value)}%`}</Typography>
             </Box>
-        </Box>
+        </div>
     );
 }
 

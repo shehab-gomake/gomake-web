@@ -50,4 +50,5 @@ export interface IBoardMissionsDetails {
     filesPath: string;
     productType: string;
     sectionName: string;
+    clientTypeId: string;
 }

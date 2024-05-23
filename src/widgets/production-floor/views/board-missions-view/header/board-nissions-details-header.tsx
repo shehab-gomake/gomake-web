@@ -5,6 +5,7 @@ import {Avatar, Divider, Skeleton} from "@mui/material";
 import {useStyle} from "@/widgets/production-floor/views/board-missions-view/header/style"
 import {DateFormatterDDMMYYYY} from "@/utils/adapter";
 import TocIcon from '@mui/icons-material/Toc';
+import {useTranslation} from "react-i18next";
 
 const HeaderTitleComponent = ({title}: { title?: string }) => {
     const {classes} = useStyle();
@@ -17,6 +18,7 @@ const HeaderDividerComponent = () => {
 }
 const BoardMissionsDetailsHeader = () => {
     const {classes} = useStyle();
+    const {t} = useTranslation();
     const boardMissionsDetails = useRecoilValue(boardMissionsDetailsState);
     return (
         !!boardMissionsDetails.boardMissionId ? <Stack gap={'14px'} direction={'row'} alignItems={'center'}>
@@ -37,10 +39,10 @@ const BoardMissionsDetailsHeader = () => {
                     <span style={classes.productType}>{boardMissionsDetails.sectionName}</span>
                 </Stack>
                 <Stack direction={'row'} alignItems={'center'} gap={'16px'}>
-                    <span>Started {DateFormatterDDMMYYYY(boardMissionsDetails.createdDate?.toString())}</span>
+                    <span>{t('productionFloor.started')} {DateFormatterDDMMYYYY(boardMissionsDetails.createdDate?.toString())}</span>
                     <Divider flexItem orientation={'vertical'}/>
                     <Stack direction={'row'} gap={'8px'} alignItems={'center'}>
-                        <span style={classes.parameterLabel}>Status:</span>
+                        <span style={classes.parameterLabel}>{t('productionFloor.status')}:</span>
                         <Stack style={{backgroundColor: boardMissionsDetails?.boardMissionStatus?.backgroundColor}}
                                padding={'0 5px'} direction={'row'} gap={'5px'}
                                color={boardMissionsDetails?.boardMissionStatus?.textColor}>
@@ -51,12 +53,12 @@ const BoardMissionsDetailsHeader = () => {
                     </Stack>
                     <Divider flexItem orientation={'vertical'}/>
                     <Stack direction={'row'} gap={'5px'}>
-                        <span style={classes.parameterLabel}>Agent:</span>
+                        <span style={classes.parameterLabel}>{t('productionFloor.agent')}:</span>
                         <span style={classes.parameterValue}>{boardMissionsDetails.agentName}</span>
                     </Stack>
                     <Divider flexItem orientation={'vertical'}/>
                     <Stack direction={'row'} gap={'5px'}>
-                        <span style={classes.parameterLabel}>Delivered On</span>
+                        <span style={classes.parameterLabel}>{t('productionFloor.deliveredOn')}</span>
                         <span
                             style={classes.parameterValue}>{DateFormatterDDMMYYYY(boardMissionsDetails.dueDate)}</span>
                     </Stack>

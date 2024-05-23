@@ -45,7 +45,7 @@ const GeneralInformationComponent = () => {
 
                 }
                 <Divider flexItem orientation={'vertical'}/>
-                <Button style={classes.addNoteBtn} onClick={()=>setOpenAddNoteModal(true)} variant={'outlined'} startIcon={<PlusIcon stroke={'#344054'}/>}>add note</Button>
+                <Button style={classes.addNoteBtn} onClick={()=>setOpenAddNoteModal(true)} variant={'outlined'} startIcon={<PlusIcon stroke={'#344054'}/>}>{t('productionFloor.addNote')}</Button>
             </Stack>
             <BoardMissionsNotes/>
             <BoardMissionsAddNote onClose={()=>{setOpenAddNoteModal(false)}} openModal={openAddNoteModal}/>

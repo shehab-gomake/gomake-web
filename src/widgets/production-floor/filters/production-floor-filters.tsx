@@ -33,7 +33,7 @@ const ProductionFloorFilters = () => {
             <GoMakeDatepicker value={createDateFilter} onChange={onSelectCreateDates}
                               placeholder={t('productionFloor.createTime')}/>
             <Stack flexGrow={1} direction={'row'} position={'relative'}>
-                <SelectComponent buttonLabel={'tags'} list={tagsList} onChange={onTagsChange}/>
+                <SelectComponent buttonLabel={'productionFloor.tags'} list={tagsList} onChange={onTagsChange}/>
             </Stack>
         </Stack>
     )

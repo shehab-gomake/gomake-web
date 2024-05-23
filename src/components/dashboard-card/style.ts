@@ -14,35 +14,24 @@ const useStyle = (bgColor: string, selected: boolean) => {
                 opacity: selected ? 0.5 : 1
             },
             label: {
-               ...FONT_FAMILY.Lexend(500, 40),
+               ...FONT_FAMILY.Lexend(500, 30),
                 color: '#FFFFFF',
-                display: 'flex',
-                alignItems: 'center' as 'center',
-                justifyContent: 'center' as 'center',
-                height: '50%',
-                textAlign: 'center' as 'center',
-                paddingBottom: '20px'
-
             },
             value: {
-                ...FONT_FAMILY.Lexend(600, 55),
+                ...FONT_FAMILY.Lexend(600, 40),
                 color: '#FFFFFF',
                 textAlign: 'center' as 'center',
-                flex: 1
             },
             iconWrapper: {
                 backgroundColor: 'white',
                 opacity: '0.5',
-                width: '40px',
+                minWidth: '40px',
                 height: '40px',
                 borderRadius: '50%',
                 display: 'flex',
                 justifyContent: 'center' as 'center',
                 alignItems: 'center' as 'center',
             },
-            progressWrapper: {
-                minWidth: '60px'
-            }
 
         };
     }, [selected]);

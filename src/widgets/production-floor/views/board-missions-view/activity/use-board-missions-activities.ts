@@ -42,17 +42,17 @@ const useBoardMissionsActivities = () => {
 
     const filtersButtonsArray = useMemo(() => [
         {
-            name: 'all',
+            name: 'productionFloor.all',
             onClick: () => setFilter(EActivitiesFilter.ALL),
             selected: filter === EActivitiesFilter.ALL
         },
         {
-            name: 'comments',
+            name: 'productionFloor.comments',
             onClick: () => setFilter(EActivitiesFilter.COMMENTS),
             selected: filter === EActivitiesFilter.COMMENTS
         },
         {
-            name: 'logs',
+            name: 'productionFloor.logs',
             onClick: () => setFilter(EActivitiesFilter.LOGS),
             selected: filter === EActivitiesFilter.LOGS
         },

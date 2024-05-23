@@ -327,3 +327,26 @@ df-messenger {
   background-color: #2E3092 !important;
   color: #FFF!important;
 }
+
+.background {
+  position: absolute;
+  z-index: 1;
+  right: 0;
+
+}
+.background svg {
+  color: white;
+  opacity: 0.2;
+}
+.background circle {
+  stroke-dashoffset: 0 !important;
+}
+.foreground {
+  position: relative;
+  z-index: 2;
+}
+.foreground svg {
+  color: white;
+}
+.foreground circle {
+}
