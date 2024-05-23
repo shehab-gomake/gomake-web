@@ -939,8 +939,29 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
 
 
   const onClickSendQuoteToClient = async (messageType: number) => {
-    let checkPhones = checkArrayNotEmptyOrPhoneNotEmpty(quoteItemValue?.documentContacts)
-    if (checkPhones) {
+    if (messageType === 1) {
+      let checkPhones = checkArrayNotEmptyOrPhoneNotEmpty(quoteItemValue?.documentContacts)
+      if (checkPhones) {
+        const callBack = (res) => {
+          if (res?.success) {
+            alertSuccessAdded();
+          } else {
+            alertFaultAdded();
+          }
+        }
+        await sendDocumentToClientApi(callApi, callBack, {
+          documentType: docType,
+          document: {
+            documentId: quoteItemValue?.id,
+            messageType,
+          }
+        })
+      }
+      else {
+        alertFault("sales.quote.phoneContectErrorMsg")
+      }
+    }
+    else {
       const callBack = (res) => {
         if (res?.success) {
           alertSuccessAdded();
@@ -956,9 +977,8 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
         }
       })
     }
-    else {
-      alertFault("sales.quote.phoneContectErrorMsg")
-    }
+
+
 
   }
 
