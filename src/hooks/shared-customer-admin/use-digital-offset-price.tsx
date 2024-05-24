@@ -1826,7 +1826,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     parameterCode: string,
   ) => {
     let copySubProducts = cloneDeep(subProducts)
-    setCanCalculation(true);
+   
     const targetSubProduct = copySubProducts.find(
       (item) => item.type === subSectionType
     );
@@ -2130,6 +2130,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       const updatedProductTemplate = updateIsHidden(productTemplateCopy, temp2);
       removeHiddenParameters(temp2, productTemplateCopy)
       setupdatedProductTemplate(updatedProductTemplate)
+      setCanCalculation(true);
     }
   };
   const onCloseMakeShape = () => {
