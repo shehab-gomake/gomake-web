@@ -27,12 +27,16 @@ const GalleryModalMapping = ({
           />
         </div>
         <div style={clasess.shapeNameStyle}>{item?.rowData?.name?.value}</div>
-        <div style={clasess.shapeWidthHeightStyle}>
-          {t("products.galleryModal.dieSize")}: {item?.rowData?.width?.value}x{item?.rowData?.length?.value}
-        </div>
-        {
-          item?.rowData?.dieUnitWidth?.value && item?.rowData?.dieUnitLength?.value ?
-              <div style={clasess.shapeWidthHeightStyle}>
+          {
+              item?.rowData?.width?.value && item?.rowData?.length?.value ?
+                  <div style={clasess.shapeWidthHeightStyle}>
+                      {t("products.galleryModal.dieSize")}: {item?.rowData?.width?.value}x{item?.rowData?.length?.value}
+                  </div> : <></>
+          }
+
+          {
+              item?.rowData?.dieUnitWidth?.value && item?.rowData?.dieUnitLength?.value ?
+                  <div style={clasess.shapeWidthHeightStyle}>
                 {t("products.galleryModal.dieUnitSize")}: {item?.rowData?.dieUnitWidth?.value}x{item?.rowData?.dieUnitLength?.value}
               </div> : <></>
         }
