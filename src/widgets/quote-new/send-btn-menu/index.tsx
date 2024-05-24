@@ -36,6 +36,14 @@ const SendBtnMenu = ({
         {t("sales.quote.phone")}
       </MenuItem>
       <MenuItem
+      // onClick={() => {
+      //   onClickOpenWatssAppModal()
+      //   handleClose();
+      // }}
+      >
+        {t("sales.quote.whatsApp")}
+      </MenuItem>
+      <MenuItem
         onClick={() => {
           onClickOpenWatssAppModal()
           handleClose();
@@ -43,6 +51,7 @@ const SendBtnMenu = ({
       >
         {t("sales.quote.whatsAppWeb")}
       </MenuItem>
+
     </GoMakeMenu>
   );
 };
