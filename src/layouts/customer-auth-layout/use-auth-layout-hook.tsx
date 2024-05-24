@@ -9,6 +9,7 @@ import LocalPrintshopOutlinedIcon from "@mui/icons-material/LocalPrintshopOutlin
 import PendingActionsOutlinedIcon from "@mui/icons-material/PendingActionsOutlined";
 import { BankingIcon } from "@/icons/banking-icon";
 import { MachineIcon } from "@/icons/machine-icon";
+import { ActionIcon } from "@/icons/action-icon";
 
 const useAuthLayoutHook = (permissionEnumValue?: Permissions, allowAnonymous?: boolean) => {
   const { isAuth } = useGomakeAuth(permissionEnumValue, allowAnonymous);
@@ -305,7 +306,8 @@ const useAuthLayoutHook = (permissionEnumValue?: Permissions, allowAnonymous?: b
         Permission: Permissions.MACHINES_ADMIN,
         isList: false,
         icon: () => {
-          return <MachineIcon/>;        },
+          return <MachineIcon isAdmin="true" />;
+        },
         isProduction: true,
       },
       {
@@ -316,7 +318,7 @@ const useAuthLayoutHook = (permissionEnumValue?: Permissions, allowAnonymous?: b
         Permission: Permissions.SHOW_ACTIONS,
         isList: false,
         icon: () => {
-          return <PendingActionsOutlinedIcon style={{ color: "#FFFFFF" }} />;
+          return <ActionIcon />;
         },
         isProduction: true,
         tourData: 'menuActions'

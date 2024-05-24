@@ -917,7 +917,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
         alertFaultUpdate();
       }
     };
-    await createNewDocumentApi(callApi, callBack, { documentType: docType });
+    await createNewDocumentApi(callApi, callBack, { documentType: 0 });
   };
 
   // table in home page

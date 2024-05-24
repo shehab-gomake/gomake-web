@@ -61,11 +61,11 @@ const useMoreCircle = ({
       icon: <DuplicateMenuIcon />,
       onclick: () => onClickDuplicateQuoteItem(quoteItem, documentType),
     },
-    quoteItem.productType === 0 && documentType === DOCUMENT_TYPE.quote && !router.query.isNewCreation && {
-      name: "duplicateItemWithDifferentQTY",
-      icon: <DuplicateWithDifferentMenuIcon />,
-      onclick: () => onClickDuplicateWithDifferentQTY(quoteItem),
-    },
+    // quoteItem.productType === 0 && documentType === DOCUMENT_TYPE.quote && !router.query.isNewCreation && {
+    //   name: "duplicateItemWithDifferentQTY",
+    //   icon: <DuplicateWithDifferentMenuIcon />,
+    //   onclick: () => onClickDuplicateWithDifferentQTY(quoteItem),
+    // },
     // !router.query.isNewCreation && {
     //   name: "negotiateRequest",
     //   icon: <NegotiateRequestIcon />,

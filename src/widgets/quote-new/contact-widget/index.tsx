@@ -58,6 +58,7 @@ const ContactNewWidget = ({
                   changeItems={changeItems}
                   updateClientContact={updateClientContact}
                   isQuoteConfirmation={isQuoteConfirmation}
+                  clientContactsValue={clientContactsValue}
                 />
               ))}
             </div>

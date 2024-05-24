@@ -7,6 +7,7 @@ import { useState } from "react";
 import { PhoneInputUpdatedValues } from "../phone-input-updated-values";
 import { useSnackBar } from "@/hooks";
 import { isValidEmail, isValidPhoneNumber } from "@/utils/helpers";
+import { AutoCompleteUpdatedValue } from "../auto-complete-updated";
 
 const ContactMapping = ({
   item,
@@ -18,6 +19,7 @@ const ContactMapping = ({
   changeItems,
   updateClientContact,
   isQuoteConfirmation = false,
+  clientContactsValue
 }) => {
   const { classes } = useStyle();
   const { alertFault } = useSnackBar();
@@ -26,7 +28,6 @@ const ContactMapping = ({
   const [isUpdateContactEmail, setIsUpdateContactEmail] = useState(null);
   const [isUpdateContactMobile, setIsUpdateContactMobile] = useState(null);
   const [isConfirmation, setIsConfirmation] = useState(null);
-
 
   const onBlurContactName = async (item) => {
     if (!item.contactName) {
@@ -56,12 +57,33 @@ const ContactMapping = ({
       updateClientContact(item);
       setIsUpdateContactMobile(null);
     }
-
-
   };
   return (
     <div style={classes.businessContainerStyle}>
-      <InputUpdatedValues
+      <AutoCompleteUpdatedValue
+        label={t("sales.quote.contactName")}
+        value={item?.contactName}
+        options={clientContactsValue.map(contanct => ({
+          ...contanct,
+          value: contanct.id,
+          text: contanct.name
+        }))}
+        onBlur={() => null}
+        isUpdate={isUpdateContactName}
+        setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdateContactName}
+        getOptionLabel={(item) => item.text}
+        onChange={(e, value) => {
+          updateClientContact({
+            ...item,
+            contactMail: value?.mail,
+            contactName: value?.name,
+            contactPhone: value?.phone
+          })
+          setIsUpdateContactName(null);
+        }}
+      />
+
+      {/* <InputUpdatedValues
         value={
           item?.contactName !== null ? item?.contactName : t("sales.quote.noName")
         }
@@ -72,7 +94,7 @@ const ContactMapping = ({
         onInputChange={(e: any) => {
           changeItems(index, "contactName", e);
         }}
-      />
+      /> */}
       <PhoneInputUpdatedValues
         key={item?.id}
         value={

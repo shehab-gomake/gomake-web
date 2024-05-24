@@ -160,9 +160,13 @@ const QuotesListPageWidget = ({
               <HeaderTitle title={documentLabel} marginTop={1} marginBottom={1} />
               <div style={classes.rowStyle}>
                 {(documentType === DOCUMENT_TYPE.quote) && <CardsSection statistics={allStatistics} activeCard={activeCard} onClick={onclickCreateNew} onClickCard={handleCardClick} onSecondClickCard={handleSecondCardClick} />}
-                {documentType === DOCUMENT_TYPE.order && <CardComponent text={t("sales.quote.totalPrice")} number={getValueByKey(allStatistics, "totalPrice")} textColor={secondColor(100)} icon={<GoMakeCurrency color={secondColor(100)} />} />
+                {documentType === DOCUMENT_TYPE.order &&
+                  <>
+                    <CardComponent text={t("sales.quote.totalPrice")} number={getValueByKey(allStatistics, "totalPrice")} textColor={secondColor(100)} icon={<GoMakeCurrency color={secondColor(100)} />} />
+                    <Button style={classes.createNew} onClick={onclickCreateNew} startIcon={<AddCircleOutlineIcon style={{ color: 'black', fontSize: "24px" }} />}>{t("sales.quote.createNew")}</Button>
+                  </>
                 }
-                {(documentType !== DOCUMENT_TYPE.quote) &&
+                {(documentType !== DOCUMENT_TYPE.quote && documentType !== DOCUMENT_TYPE.order) &&
                   <Button
                     style={classes.createNew}
                     onClick={() => navigate(`/${documentPath}?isNewCreation=true`)}
