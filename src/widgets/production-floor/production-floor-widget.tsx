@@ -12,6 +12,7 @@ import {
 import Drawer from "@mui/material/Drawer";
 import ClearRoundedIcon from "@mui/icons-material/ClearRounded";
 import {BoardMissionsComponent} from "@/widgets/production-floor/views/board-missions-view/board-missions-component";
+import {DashboardWidget} from "@/widgets/dashboard-widget";
 
 const ProductionFloorWidget = () => {
     const [view, setView] = useRecoilState(productionFloorViewState);
@@ -32,15 +33,14 @@ const ProductionFloorWidget = () => {
 
     return <Stack padding={'0 20px'} gap={'10px'} height={'100%'} maxHeight={'100%'} overflow={'hidden'}>
         <ProductionFloorHeader/>
-        <ProductionFloorFilters/>
+        {view !== EProductionFloorView.DASHBOARD && <ProductionFloorFilters/>}
         <Stack overflow={'auto'} maxHeight={'100%'}>
 
             {
-                view === EProductionFloorView.GROUPS ? <GroupsTable/> : <ProductionFloorBoardMissionsViews/>
+                view === EProductionFloorView.DASHBOARD ? <DashboardWidget/> : view === EProductionFloorView.GROUPS ? <GroupsTable/> : <ProductionFloorBoardMissionsViews/>
             }
         </Stack>
-        <Drawer sx={{zIndex: 999999}} open={openBoardMissionsDrawer} anchor={'bottom'} onClose={() => {
-        }}>
+        <Drawer sx={{zIndex: 999999}} open={openBoardMissionsDrawer} anchor={'bottom'}>
             <Stack paddingBottom={'10px'} width={'100vw'} height={'calc(100vh - 50px)'}>
                 <IconButton onClick={() => {
                     replace('/production-floor', undefined, {shallow: true}).then();

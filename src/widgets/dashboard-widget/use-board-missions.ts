@@ -3,7 +3,6 @@ import {IBoardMissions, IDashboardStatistic} from "@/widgets/dashboard-widget/in
 import {IDateRange, IMachine, IMachineProgress} from "@/shared";
 import {useGomakeAxios, useGomakeMachines} from "@/hooks";
 import {TODAY_DATE_RANGE} from "@/shared/constant";
-import {endOfDay} from "date-fns";
 import {useRecoilValue} from "recoil";
 import {selectedAgentsState} from "@/store/agents-state";
 
@@ -55,19 +54,10 @@ const useBoardMissions = () => {
         }
     }
     const getAllBoardsMissions = async () => {
-        const date = new Date();
-        const year = date.getFullYear();
-        const month = date.getMonth();
-        const day = date.getDate();
-        const nextYearDate = new Date(year + 1, month, day);
-        const res = await callApi("POST", '/today-late-boardMissions', {
-            startDate: TODAY_DATE_RANGE.startDate?.toISOString(),
-            endDate: endOfDay(nextYearDate).toISOString(),
-            agents: selectedAgents,
-        }, true);
-        setBoardsMissions(res?.data?.boardsMissions);
-        setMachinesProgress(res?.data?.machinesProgress);
-        setStatistics(res?.data?.statistics);
+        const res = await callApi("POST", '/v1/erp-service/board-missions/get-board-missions-for-dashboard', {}, true);
+        setBoardsMissions(res?.data?.data?.data?.boardsMissions);
+        setMachinesProgress(res?.data?.data?.data?.machinesProgress);
+        setStatistics(res?.data?.data?.data?.statistics);
 
     }
 

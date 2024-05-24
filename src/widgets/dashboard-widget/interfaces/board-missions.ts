@@ -14,10 +14,12 @@ export interface IBoardMissions {
     productName:string;
     clientId: string;
     agentId: string;
-    clientName?: string;
+    clientName: string;
     splittedBoards: IBoardMissions[];
     isLate: boolean;
     creationDate:Date;
+    productType: string;
+    productTypeName: string;
 }
 
 

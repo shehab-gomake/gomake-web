@@ -1,17 +1,17 @@
-import { IBoardMissionsTable } from "@/widgets/dashboard-widget/table/interface";
-import { useStyle } from "@/widgets/dashboard-widget/table/style";
-import { useTranslation } from "react-i18next";
-import { IBoardMissions } from "@/widgets/dashboard-widget/interfaces";
-import { IMachine } from "@/shared/interfaces";
-import { StatusView } from "@/components/status-view";
+import {IBoardMissionsTable} from "@/widgets/dashboard-widget/table/interface";
+import {useStyle} from "@/widgets/dashboard-widget/table/style";
+import {useTranslation} from "react-i18next";
+import {IBoardMissions} from "@/widgets/dashboard-widget/interfaces";
+import {IMachine} from "@/shared/interfaces";
+import {StatusView} from "@/components/status-view";
 import ElectricBoltSharpIcon from '@mui/icons-material/ElectricBoltSharp';
-import { TYPE_MISSION_NAME_KEY } from "@/shared/constant";
-import { Link } from "@mui/material";
-import React, { useCallback, useState } from "react";
-import { EStatus } from "@/shared";
-import { useRecoilValue } from "recoil";
-import { boardsMissionsStatusFilterState } from "@/store/boards-missions-status-filter";
+import React, {useCallback, useState} from "react";
+import {EStatus} from "@/shared";
+import {useRecoilValue} from "recoil";
+import {boardsMissionsStatusFilterState} from "@/store/boards-missions-status-filter";
 import moment from "moment-timezone";
+import Button from "@mui/material/Button";
+import {useRouter} from "next/router";
 
 const BoardMissionsTable = ({ boardsMissions, usedMachines }: IBoardMissionsTable) => {
     const { classes } = useStyle();
@@ -19,9 +19,9 @@ const BoardMissionsTable = ({ boardsMissions, usedMachines }: IBoardMissionsTabl
     const [orderByMachine, setOrderByMachine] = useState<string>('');
     const selectedStatusFilter = useRecoilValue(boardsMissionsStatusFilterState);
     const [isOrderByCreationDate, SetIsOrderByCreationDate] = useState<boolean>(false);
-    const boardLink = (boardMissions: IBoardMissions): string => {
-
-        return `https://Kanban/Board/${boardMissions.boardId}?missionId=${boardMissions.id}`;
+    const {replace} = useRouter();
+    const boardLink = (boardMissions: IBoardMissions) => {
+        replace(`/production-floor/?boardMissionsId=${boardMissions.id}&step=stations&productType=${!!boardMissions.productType ? boardMissions.productType : ''}`).then();
     }
     const hasMachine = (board: IBoardMissions) => {
         switch (board.machinesStatuses[orderByMachine]) {
@@ -44,10 +44,10 @@ const BoardMissionsTable = ({ boardsMissions, usedMachines }: IBoardMissionsTabl
         if (selectedStatusFilter) {
             data.forEach(x => {
                 if (x.splittedBoards) {
-                    x.splittedBoards = x.splittedBoards.filter(y => y.status === selectedStatusFilter)
+                    x.splittedBoards = x.splittedBoards.filter(y => selectedStatusFilter === EStatus.IN_PROCESS ? (y.status === EStatus.IN_PROCESS || y.status === EStatus.NOT_YET) :  y.status === selectedStatusFilter)
                 }
             })
-            data = data.filter(board => board.status === selectedStatusFilter || (board.splittedBoards && board.splittedBoards.length > 0));
+            data = data.filter(board => selectedStatusFilter === EStatus.IN_PROCESS ? (board.status === selectedStatusFilter || board.status === EStatus.NOT_YET) || (board.splittedBoards && board.splittedBoards.length > 0) : board.status === selectedStatusFilter || (board.splittedBoards && board.splittedBoards.length > 0));
         }
 
         return data;
@@ -169,8 +169,7 @@ const BoardMissionsTable = ({ boardsMissions, usedMachines }: IBoardMissionsTabl
                                                                                     } :
                                                                                     classes.splitBoardsStatusesRow
                                                                             }>
-                                                                            <Link href={boardLink(sBoard)} target="_blank"
-                                                                                rel="noopener">{t(TYPE_MISSION_NAME_KEY[sBoard.missionType])}</Link>
+                                                                            <Button onClick={() => boardLink(sBoard)}>{sBoard.productTypeName}</Button>
                                                                             <StatusView status={sBoard.status}
                                                                                 label={sBoard.currentStation.rowName} />
                                                                         </div>)
@@ -211,8 +210,7 @@ const BoardMissionsTable = ({ boardsMissions, usedMachines }: IBoardMissionsTabl
                                                     </div>
                                                     <div style={{ width: '25%', height: '100%' }}>
                                                         <div style={classes.tdRows}>
-                                                            <div><Link href={boardLink(board)} target="_blank"
-                                                                rel="noopener">{board.code}</Link></div>
+                                                            <div><Button onClick={() => boardLink(board)}>{board.code}</Button></div>
                                                         </div>
                                                     </div>
                                                     <div style={{ width: '30%', height: '100%' }}>

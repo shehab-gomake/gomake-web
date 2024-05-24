@@ -16,6 +16,7 @@ import { EParameterTypes } from "@/enums";
 import { useRouter } from "next/router";
 import { DeleteMenuIcon } from "@/widgets/quote-new/more-circle/icons/delete-menu";
 import { ScheduleSendWidget } from "@/pages-components/quotes/widgets/schedule-send-widget/schedule-send-widget";
+import { GoMakeDatepicker } from "@/components/date-picker/date-picker-component";
 
 const AddRuleModal = ({
   openModal,
@@ -42,7 +43,6 @@ const AddRuleModal = ({
     parametersStateValue,
     Outputs,
     materialsTypes,
-    machines,
     clients,
     expression,
     mainconditions,
@@ -62,7 +62,11 @@ const AddRuleModal = ({
     initialRule,
     openScheduleModal,
     onCloseScheduleModal,
-    onOpenScheduleModal
+    onOpenScheduleModal,
+    renderOptions,
+    checkWhatRenderArray,
+    onSelectDeliveryTimeDates,
+    resetDatePicker
   } = useAddRuleModal({
     typeExceptionSelected,
     selectedPricingBy,
@@ -73,7 +77,8 @@ const AddRuleModal = ({
     selectedProperties,
     getProperitesService,
     isQuoteWidge,
-    filterData
+    filterData,
+
   });
   const [selectedCategories, setSelectedCategories] = useState<any>("")
   const [selectedStatment2, setSelectedStatment2] = useState<any>("")
@@ -338,12 +343,10 @@ const AddRuleModal = ({
             }}
           />
         </div>
-        {/* <div style={clasess.statusFilterContainer}>
+        <div style={clasess.statusFilterContainer}>
           <h3 style={clasess.filterLabelStyle}>{t("boardMissions.dateRange")}</h3>
-          <div style={{ width: "100%" }}>
-            <GoMakeDatepicker onChange={onSelectDeliveryTimeDates} placeholder={t("boardMissions.chooseDate")} reset={resetDatePicker} />
-          </div>
-        </div> */}
+          <GoMakeDatepicker onChange={onSelectDeliveryTimeDates} placeholder={t("boardMissions.chooseDate")} reset={resetDatePicker} />
+        </div>
       </div>
     );
   }
@@ -498,10 +501,10 @@ const AddRuleModal = ({
                       <GoMakeAutoComplate
                         options={
                           router.query.actionId
-                            ? machines?.map((value) => {
+                            ? allMachincesList?.map((value) => {
                               return {
                                 ...value,
-                                label: value?.name,
+                                label: `${value?.manufacturer} - ${value?.model}`,
                                 id: value.id,
                               };
                             })
@@ -530,21 +533,22 @@ const AddRuleModal = ({
                         {t("properties.statment")}
                       </label>
                       <GoMakeAutoComplate
-                        options={clients?.map((value) => {
+                        options={renderOptions()?.map((value) => {
                           return {
                             ...value,
                             label: value?.name,
                             id: value.id,
                           };
                         })}
+                        getOptionLabel={(option: any) => `${option.name}`}
+                        onChangeTextField={checkWhatRenderArray}
                         style={clasess.dropDownListContainer}
-                        placeholder={t("properties.statment")}
+                        placeholder={t("sales.quote.chooseCustomer")}
                         value={rule.statement2}
                         onChange={(e, value) => {
                           handleChange(index, "statement2", value)
                           handleChange(index, "statement", null);
-                        }
-                        }
+                        }}
                       />
                     </div>
                   )}
@@ -558,10 +562,10 @@ const AddRuleModal = ({
                           key={selectedCategories?.id + index + selectedStatment2?.id}
                           options={
                             router.query.actionId
-                              ? machines?.map((value) => {
+                              ? allMachincesList?.map((value) => {
                                 return {
                                   ...value,
-                                  label: value?.name,
+                                  label: `${value?.manufacturer} - ${value?.model}`,
                                   id: value.id,
                                 };
                               })

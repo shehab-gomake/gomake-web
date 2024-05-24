@@ -53,7 +53,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
   const [quoteItemValue, setQuoteItemValue] = useRecoilState<any>(quoteItemState);
   const quoteConfirm = useRecoilValue<any>(quoteConfirmationState);
   const [selectDate, setSelectDate] = useState(isQuoteConfirmation ? quoteConfirm?.dueDate : quoteItemValue?.dueDate);
-  const [creationDate, setCreationDate] = useState(isQuoteConfirmation ? quoteConfirm?.creationDate : quoteItemValue?.creationDate);
+  const [creationDate, setCreationDate] = useState(isQuoteConfirmation ? quoteConfirm?.createdDate : quoteItemValue?.createdDate);
   const [customersListValue, setCustomersListValue] = useRecoilState<any>(businessListsState);
   const [selectBusiness, setSelectBusiness] = useState<any>({});
   const [selectConfirmBusiness, setSelectConfirmBusiness] = useState<any>({});
@@ -158,7 +158,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
         } else {
           alertFaultAdded();
           setSelectDate(quoteItemValue?.dueDate);
-          setCreationDate(quoteItemValue?.creationDate)
+          setCreationDate(quoteItemValue?.createdDate)
         }
       }
       await updateDueDateApi(callApi, callBack, {
@@ -939,8 +939,29 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
 
 
   const onClickSendQuoteToClient = async (messageType: number) => {
-    let checkPhones = checkArrayNotEmptyOrPhoneNotEmpty(quoteItemValue?.documentContacts)
-    if (checkPhones) {
+    if (messageType === 1) {
+      let checkPhones = checkArrayNotEmptyOrPhoneNotEmpty(quoteItemValue?.documentContacts)
+      if (checkPhones) {
+        const callBack = (res) => {
+          if (res?.success) {
+            alertSuccessAdded();
+          } else {
+            alertFaultAdded();
+          }
+        }
+        await sendDocumentToClientApi(callApi, callBack, {
+          documentType: docType,
+          document: {
+            documentId: quoteItemValue?.id,
+            messageType,
+          }
+        })
+      }
+      else {
+        alertFault("sales.quote.phoneContectErrorMsg")
+      }
+    }
+    else {
       const callBack = (res) => {
         if (res?.success) {
           alertSuccessAdded();
@@ -956,9 +977,8 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
         }
       })
     }
-    else {
-      alertFault("sales.quote.phoneContectErrorMsg")
-    }
+
+
 
   }
 
@@ -1084,7 +1104,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     setquoteItems(quoteItemValue);
     setItems(isQuoteConfirmation ? quoteConfirm?.documentContacts : quoteItemValue?.documentContacts);
     setSelectDate(isQuoteConfirmation ? quoteConfirm?.dueDate : quoteItemValue?.dueDate);
-    setCreationDate(isQuoteConfirmation ? quoteConfirm?.creationDate : quoteItemValue?.creationDate)
+    setCreationDate(isQuoteConfirmation ? quoteConfirm?.createdDate : quoteItemValue?.createdDate)
   }, [quoteItemValue, quoteConfirm]);
 
 

@@ -55,39 +55,43 @@ const RightSideWidget = ({
   return (
     <div style={clasess.rightSideMainContainer}>
       <div style={clasess.rightSideContainer}>
-        <div style={clasess.headerClientRightSide}>
-          <div style={clasess.clientContainer}>
-            <div style={clasess.labelTextStyle}>
-              {t("products.offsetPrice.admin.client")}
+        {
+          widgetType === EWidgetProductType.CREATE &&
+          <div style={clasess.headerClientRightSide}>
+            <div style={clasess.clientContainer}>
+              <div style={clasess.labelTextStyle}>
+                {t("products.offsetPrice.admin.client")}
+              </div>
+              {clientDefaultValue && (
+                <GoMakeAutoComplate
+                  options={renderOptions()}
+                  placeholder={t("products.offsetPrice.admin.client")}
+                  getOptionLabel={(option: any) =>
+                    `${option.name}-${option.code}`
+                  }
+                  defaultValue={clientDefaultValue}
+                  onChangeTextField={checkWhatRenderArray}
+                  style={clasess.dropDownListStyle}
+                />
+              )}
             </div>
-            {clientDefaultValue && (
-              <GoMakeAutoComplate
-                options={renderOptions()}
-                placeholder={t("products.offsetPrice.admin.client")}
-                getOptionLabel={(option: any) =>
-                  `${option.name}-${option.code}`
-                }
-                defaultValue={clientDefaultValue}
-                onChangeTextField={checkWhatRenderArray}
-                style={clasess.dropDownListStyle}
-              />
-            )}
-          </div>
-          <div style={clasess.typeContainer}>
-            <div style={clasess.labelTextStyle}>
-              {t("products.offsetPrice.admin.type")}
+            <div style={clasess.typeContainer}>
+              <div style={clasess.labelTextStyle}>
+                {t("products.offsetPrice.admin.type")}
+              </div>
+              {clientTypeDefaultValue && (
+                <GoMakeAutoComplate
+                  options={clientTypesValue}
+                  placeholder={t("products.offsetPrice.admin.type")}
+                  getOptionLabel={(option: any) => option.name}
+                  defaultValue={clientTypeDefaultValue}
+                  style={clasess.dropDownListStyle}
+                />
+              )}
             </div>
-            {clientTypeDefaultValue && (
-              <GoMakeAutoComplate
-                options={clientTypesValue}
-                placeholder={t("products.offsetPrice.admin.type")}
-                getOptionLabel={(option: any) => option.name}
-                defaultValue={clientTypeDefaultValue}
-                style={clasess.dropDownListStyle}
-              />
-            )}
           </div>
-        </div>
+        }
+
         {template.img ? (
           <div style={clasess.imgProductContainer}>
             <img src={template.img} alt="gomake" style={{ width: "100%" }} />

@@ -1,5 +1,5 @@
-import { useGomakeAuth, useGomakeAxios, useGomakeRouter } from "@/hooks";
-import { CustomersIcon, HomeIcon, ProductFloorIcon, ProductionTrackingIcon, ReportsIcon, SalesIcon, SettingNavBar, ShopingIcon, } from "@/icons";
+import { useGomakeAuth, useGomakeRouter } from "@/hooks";
+import { CustomersIcon, HomeIcon, ProductFloorIcon, ReportsIcon, SalesIcon, SettingNavBar, ShopingIcon, } from "@/icons";
 import { useEffect, useMemo, useState } from "react";
 import { CubeIcon } from "@/components/icons/cube-icon";
 import { useRecoilValue } from "recoil";
@@ -8,12 +8,12 @@ import { Permissions } from "@/components/CheckPermission/enum";
 import LocalPrintshopOutlinedIcon from "@mui/icons-material/LocalPrintshopOutlined";
 import PendingActionsOutlinedIcon from "@mui/icons-material/PendingActionsOutlined";
 import { BankingIcon } from "@/icons/banking-icon";
+import { MachineIcon } from "@/icons/machine-icon";
 
 const useAuthLayoutHook = (permissionEnumValue?: Permissions, allowAnonymous?: boolean) => {
   const { isAuth } = useGomakeAuth(permissionEnumValue, allowAnonymous);
   const { navigate } = useGomakeRouter();
   const [canAccess, setCanAccess] = useState<boolean | null>(null);
-  const { callApi } = useGomakeAxios();
   const profile = useRecoilValue<ICompanyProfile>(companyProfileState);
 
   const tabs1: any = useMemo(() => {
@@ -39,18 +39,6 @@ const useAuthLayoutHook = (permissionEnumValue?: Permissions, allowAnonymous?: b
         Permission: Permissions.SHOW_PRODUCTION_FLOOR,
         icon: () => {
           return <ProductFloorIcon />;
-        },
-        isProduction: true,
-      },
-      {
-        isLine: false,
-        key: "productFloor",
-        title: "tabs.productionTracking",
-        path: "/production-tracking",
-        isList: false,
-        Permission: Permissions.SHOW_PRODUCTION_FLOOR,
-        icon: () => {
-          return <ProductionTrackingIcon />;
         },
         isProduction: true,
       },
@@ -303,7 +291,7 @@ const useAuthLayoutHook = (permissionEnumValue?: Permissions, allowAnonymous?: b
         Permission: Permissions.SHOW_MACHINES,
         isList: false,
         icon: () => {
-          return <LocalPrintshopOutlinedIcon style={{ color: "#FFFFFF" }} />;
+          return <MachineIcon/>;
         },
         isProduction: true,
         tourData: 'menuMachines'
@@ -317,8 +305,7 @@ const useAuthLayoutHook = (permissionEnumValue?: Permissions, allowAnonymous?: b
         Permission: Permissions.MACHINES_ADMIN,
         isList: false,
         icon: () => {
-          return <LocalPrintshopOutlinedIcon style={{ color: "#FFFFFF" }} />;
-        },
+          return <MachineIcon/>;        },
         isProduction: true,
       },
       {

@@ -173,10 +173,10 @@ const BoardMissionsStationAction = ({
                                 e.stopPropagation();
                                 onClickBackToProcess(boardMissionActionId).then()
                             }}
-                                    style={{padding: '10px', backgroundColor: '#FFF', color: '#344054'}}>
+                                    style={{padding: '10px', backgroundColor: '#FFF', color: '#344054', borderRadius: '16px'}}>
                                 Completed
                             </Button> :
-                            <PrimaryButton variant={'contained'} style={{height: '40px', width: '40px'}}
+                            <PrimaryButton variant={'contained'} sx={{height: '40px', width: '40px', minWidth: '40px', padding: 0, borderRadius: '12px'}}
                                            onClick={(e) => {
                                                e.stopPropagation();
                                                onClickDone(boardMissionActionId).then()
