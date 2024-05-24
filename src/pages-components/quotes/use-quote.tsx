@@ -254,7 +254,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
               }),
               quote?.purchaseNumber,
               quote?.productionStatus,
-              <div onClick={() => navigate(`/board-missions?orderNumber=${quote?.number}`)}>{quote?.jobs}</div>,
+              <div style={{ cursor: "pointer" }} onClick={() => navigate(`/board-missions?orderNumber=${quote?.number}`)}>{quote?.jobs}</div>,
               quote?.cost,
               quote?.worksNames,
               quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
