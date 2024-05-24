@@ -1371,6 +1371,11 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     } else if (
       parameter?.parameterType === EParameterTypes.SELECT_CHILDS_PARAMETERS
     ) {
+      let disabled = false;
+      const sizeParameter = getParameterByParameterCode(subProducts,"size");
+      if(sizeParameter && sizeParameter.isDisabled){
+        disabled = true;
+      }
       Comp = (
         <SelectChildParameterWidget
           parameter={parameter}
@@ -1380,6 +1385,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           onChangeSubProductsForPrice={onChangeSubProductsForPrice}
           subSection={subSection}
           section={section}
+          disabled={disabled}
         />
       );
     } else if (parameter?.parameterType === EParameterTypes.SWITCH) {
@@ -1715,6 +1721,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               return;
             }
             param.isHidden = false;
+            processRelatedParameters2(param, subSection, section, productTemplate, subProducts)
+
           }
           else if (relatedParameter.activateByAllValues && !paramValue) {
             const sectionCopy = productTemplate.sections.find(x => x.id === section.id);
@@ -1824,9 +1832,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     index: number,
     actionIndex: number,
     parameterCode: string,
+    dieCut:any,
   ) => {
     let copySubProducts = cloneDeep(subProducts)
-   
     const targetSubProduct = copySubProducts.find(
       (item) => item.type === subSectionType
     );
@@ -2016,6 +2024,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             });
 
           }
+          
           materialRelatedParameters?.forEach((param) => {
             if (param.materialPath && param.materialPath.length > 0) {
               const index = param.materialPath.findIndex((x) =>
@@ -2112,6 +2121,57 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               });
             }
           });
+        }
+        
+        if(dieCut && subSectionParameter.code === "DieCut"){
+           let dieUnitWidth = dieCut.rowData.dieUnitWidth.value;
+           let dieUnitLength = dieCut.rowData.dieUnitLength.value;
+           let finalUnitWidth = dieCut.rowData.finalUnitWidth.value;
+           let finalUnitLength = dieCut.rowData.finalUnitLength.value;
+           let finalUnitHeight = dieCut.rowData.finalUnitHeight.value;
+           const dieCutSizesParametersArray = [];
+           dieCutSizesParametersArray.push({parameterCode:"Width",value:dieUnitWidth});
+           dieCutSizesParametersArray.push({parameterCode:"Height",value:dieUnitLength});
+          dieCutSizesParametersArray.push({parameterCode:"DieUnitWidth",value:finalUnitWidth});
+          dieCutSizesParametersArray.push({parameterCode:"DieUnitLength",value:finalUnitLength});
+          dieCutSizesParametersArray.push({parameterCode:"DieUnitHeight",value:finalUnitHeight});
+           dieCutSizesParametersArray.forEach(dieCutSizeParameter=>{
+             let dieCutSizeSubProductParameter = temp.find(x=>x.parameterCode == dieCutSizeParameter.parameterCode);
+             if(dieCutSizeSubProductParameter){
+               dieCutSizeSubProductParameter.values = [dieCutSizeParameter.value]
+               dieCutSizeSubProductParameter.isDisabled = true;
+             }else{
+               const subSectionParameter = subSection.parameters.find(
+                   (param) => param.code === dieCutSizeParameter.parameterCode
+               );
+               temp.push({
+                 parameterId: subSectionParameter.id,
+                 sectionId: sectionId,
+                 subSectionId: subSectionId,
+                 ParameterType: ParameterType,
+                 parameterName: parameterName,
+                 actionId: actionId,
+                 values: [dieCutSizeParameter.value],
+                 valueIds: [],
+                 actionIndex:subSectionParameter.actionIndex,
+                 parameterCode: subSectionParameter.code,
+                 valuesConfigs: subSectionParameter?.valuesConfigs,
+                 unitKey: subSectionParameter?.unitKey,
+                 unitType: subSectionParameter?.unitType,
+                 isDisabled: true,
+               });
+             }
+
+           });
+           
+           let sizeSubProductParameter = temp.find(x=>x.parameterCode == "size");
+           let sizeParameter = subSection.parameters.find(
+               (param) => param.code === "size"
+           );
+           let customValue = sizeParameter.valuesConfigs.find(x=>!x.values || (Object.keys(x.values).length === 0));
+           sizeSubProductParameter.valueIds = [customValue.id];
+           sizeSubProductParameter.values = [customValue.updateName];
+           sizeSubProductParameter.isDisabled = true;
         }
       }
       let temp2 = [...subProducts];

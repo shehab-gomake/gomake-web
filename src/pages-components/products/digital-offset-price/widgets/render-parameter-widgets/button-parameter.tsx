@@ -5,6 +5,7 @@ import { materialBtnDataState, subProductsParametersState } from "@/store";
 import { DeleteIcon } from "@/widgets/settings-mailing/messageTemplates/components/more-circle/icons/delete";
 import { useEffect, useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
+import lodashClonedeep from "lodash.clonedeep";
 const ButtonParameterWidget = ({
   clasess,
   parameter,
@@ -57,22 +58,46 @@ const ButtonParameterWidget = ({
   };
   const removeParameterFromSubProducts = () => {
     if (isSelectedShape) {
-      setProducts((prevSubProducts) => {
-        const updatedSubProducts = prevSubProducts.map((subProduct) => {
-          if (subProduct.type === subSection.type) {
-            const updatedParameters = subProduct.parameters.filter(
-              (param) =>
-                !(
-                  param.parameterId === isSelectedShape.parameterId &&
-                  param.actionIndex === isSelectedShape.actionIndex
-                )
-            );
-            return { ...subProduct, parameters: updatedParameters };
-          }
-          return subProduct;
+        let subProductsCopy = lodashClonedeep(subProducts);
+        subProductsCopy = subProductsCopy.map((subProduct) => {
+            if (subProduct.type === subSection.type) {
+                const updatedParameters = subProduct.parameters.filter(
+                    (param) =>
+                        !(
+                            param.parameterId === isSelectedShape.parameterId &&
+                            param.actionIndex === isSelectedShape.actionIndex
+                        )
+                );
+                return { ...subProduct, parameters: updatedParameters };
+            }
+            return subProduct;
         });
-        return updatedSubProducts;
-      });
+        if(parameter.code == "DieCut"){
+            const dieCutSizesParametersArray = [];
+            dieCutSizesParametersArray.push({parameterCode:"size",value:""});
+            dieCutSizesParametersArray.push({parameterCode:"Width",value:""});
+            dieCutSizesParametersArray.push({parameterCode:"Height",value:""});
+            dieCutSizesParametersArray.push({parameterCode:"DieUnitWidth",value:""});
+            dieCutSizesParametersArray.push({parameterCode:"DieUnitLength",value:""});
+            dieCutSizesParametersArray.push({parameterCode:"DieUnitHeight",value:""});
+            dieCutSizesParametersArray.forEach(dieCutSizesParameter=>{
+                subProductsCopy = subProductsCopy.map((subProduct) => {
+                    if (subProduct.type === subSection.type) {
+                        const updatedParameters = subProduct.parameters.filter(
+                            (param) =>
+                                !(
+                                    param.parameterCode === dieCutSizesParameter.parameterCode &&
+                                    param.actionIndex === isSelectedShape.actionIndex
+                                )
+                        );
+                        return { ...subProduct, parameters: updatedParameters };
+                    }
+                    return subProduct;
+                });
+            })
+            
+        }
+        setProducts(subProductsCopy);
       setSelectedShape(null);
       setIsSelectedShape(null);
     }
