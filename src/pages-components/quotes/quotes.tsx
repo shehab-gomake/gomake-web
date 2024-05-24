@@ -7,6 +7,7 @@ import {
   GoMakeModal,
   GomakePrimaryButton,
   GomakeTextInput,
+  SecondSwitch,
 } from "@/components";
 import { SearchInputComponent } from "@/components/form-inputs/search-input-component";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
@@ -284,6 +285,12 @@ const QuotesListPageWidget = ({
                                   values={productIds}
                                   placeholder={t("boardMissions.selectProducts")} />
                               </div>}
+                            {documentType === DOCUMENT_TYPE.order &&
+                              <div style={classes.statusFilterContainer}>
+                                <h3 style={classes.filterLabelStyle}>{t("sales.quote.canceledOrders")}</h3>
+                                <SecondSwitch />
+                              </div>
+                            }
                             {documentType !== DOCUMENT_TYPE.purchaseInvoice && documentType !== DOCUMENT_TYPE.purchaseInvoiceRefund && documentType !== DOCUMENT_TYPE.purchaseOrder &&
                               <div style={classes.statusFilterContainer}>
                                 <div style={classes.filterLabelStyle}>{t("sales.quote.priceRange")}</div>
