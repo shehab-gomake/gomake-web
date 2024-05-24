@@ -128,9 +128,10 @@ const useStyle = () => {
         ...adaptPaddingRight(direction, 16),
       },
       shapeWidthHeightStyle: {
-        ...FONT_FAMILY.Lexend(400, 16),
+        ...FONT_FAMILY.Lexend(400, 14),
         color: primaryColor(900),
         ...adaptPaddingRight(direction, 16),
+        lineHeight:0.8
       },
       btnsContainer: {
         display: "flex",

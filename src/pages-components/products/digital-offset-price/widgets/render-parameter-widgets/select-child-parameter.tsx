@@ -8,6 +8,7 @@ const SelectChildParameterWidget = ({
   onChangeSubProductsForPrice,
   subSection,
   section,
+  disabled
 }) => {
   const defaultObject = parameter.valuesConfigs.find(
     (item) => item.isDefault === true
@@ -26,6 +27,7 @@ const SelectChildParameterWidget = ({
           defaultValue={
             index !== -1 ? { updateName: temp[index].values } : defaultObject
           }
+          disabled={disabled}
           onChange={(e: any, value: any) => {
             onChangeSubProductsForPrice(
               parameter?.id,
