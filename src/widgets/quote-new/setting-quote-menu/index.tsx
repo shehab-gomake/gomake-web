@@ -61,11 +61,11 @@ const SettingQuoteMenu = ({ handleClose, open, anchorEl, onBlurExchangeRate, set
             className="table-sorting"
             style={clasess.menuTabStyle}
           >{t("sales.quote.tableSortingBy")}</div>
-          <Divider />
+          {/* <Divider />
           <div style={clasess.menuRowStyle}>
             <div style={clasess.menuTabStyle}>{t("sales.quote.autoDiscount")}</div>
             <SecondSwitch />
-          </div>
+          </div> */}
           <Divider />
           <div style={clasess.menuRowStyle}>
             <div style={clasess.menuTabStyle}>{t("sales.quote.details")}</div>
