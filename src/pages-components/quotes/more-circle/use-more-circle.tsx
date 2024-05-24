@@ -88,7 +88,7 @@ const useMoreCircle = () => {
         condition: documentType === DOCUMENT_TYPE.order && quote?.isCanClose && quote?.statusTitleText !== "Order.Canceled",
         onClick: () => navigate(`/purchaseOrders?orderNumber=${quote?.number}`),
         icon: <TickIcon />,
-        name: t("sales.quote.purchaseNumber")
+        name: t("sales.quote.purchaseOrders")
       },
       {
         condition: documentType === DOCUMENT_TYPE.deliveryNote && quote?.isCanClose,
