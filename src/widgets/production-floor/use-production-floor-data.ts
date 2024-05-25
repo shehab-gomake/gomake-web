@@ -12,7 +12,7 @@ import {productionFloorPathsState} from "@/widgets/production-floor/state/produc
 
 const useProductionFloorData = () => {
     const {callApi} = useGomakeAxios();
-    const setData = useSetRecoilState(boardsMissionsState);
+    const [data,setData] = useRecoilState(boardsMissionsState);
     const [, setFilters] = useRecoilState(productionFloorFiltersState);
     const [, setTags] = useRecoilState(tagsState);
     const [, setUserGroups] = useRecoilState(userProductionFloorGroupsState);
@@ -32,7 +32,34 @@ const useProductionFloorData = () => {
     }
 
 
-    const updateStatus = async (boardsIds: {BoardMissionId: string; productType: string;}[], statusId: string) => {
+    const updateStatus = async (boardsIds: {BoardMissionId: string; productType: string;}[], statusId: string,prevStatusId: string) => {
+       // alert(boardsIds.board.statusId + ","+prevStatusId)
+        let updatedData = data;
+        for(let i = 0;i<boardsIds.length;i++){
+            debugger
+            const boardMission = updatedData.find(x=>x.boardMissionStatus.boardMissionStatus.id === prevStatusId)?.boardMissions.find(x=>x.id === boardsIds[i].BoardMissionId && x.productType === boardsIds[i].productType );
+            if(boardMission){
+                updatedData = updatedData.map(x=>{
+                    if(x.boardMissionStatus.boardMissionStatus.id === prevStatusId){
+                        return {
+                            ...x,
+                            boardMissionStatus:{...x.boardMissionStatus,count:x.boardMissionStatus.count - 1},
+                            boardMissions: x.boardMissions.filter(b=> !(b.id === boardsIds[i].BoardMissionId && b.productType === boardsIds[i].productType) )
+                        }
+                    }
+                    if(x.boardMissionStatus.boardMissionStatus.id === statusId){
+                        return {
+                            ...x,
+                            boardMissionStatus:{...x.boardMissionStatus,count:x.boardMissionStatus.count + 1},
+                            boardMissions: [...x.boardMissions,{...boardMission,statusId:statusId}]
+                        }
+                    }
+                    return x;
+                });
+            }
+            
+        }
+        setData(updatedData)
         const callBack = (res) => {
             if (res.success) {
             }

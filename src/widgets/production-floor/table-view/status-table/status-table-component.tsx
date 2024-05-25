@@ -27,7 +27,8 @@ const StatusTableComponent = ({status, boards, count}: IProps) => {
             if (didDrop) {
                 return;
             }
-            updateStatus(item.selectedIds.length > 0 ? item.selectedIds : [{BoardMissionId: item.board.id, productType: item.board.productType}], status.id).then();
+            
+            updateStatus(item.selectedIds.length > 0 ? item.selectedIds : [{BoardMissionId: item.board.id, productType: item.board.productType}], status.id,item.board.statusId).then();
         },
         collect: monitor => ({
             isOver: !!monitor.isOver(),
