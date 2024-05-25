@@ -32,34 +32,36 @@ const useProductionFloorData = () => {
     }
 
 
-    const updateStatus = async (boardsIds: {BoardMissionId: string; productType: string;}[], statusId: string,prevStatusId: string) => {
-       // alert(boardsIds.board.statusId + ","+prevStatusId)
-        let updatedData = data;
-        for(let i = 0;i<boardsIds.length;i++){
-            debugger
-            const boardMission = updatedData.find(x=>x.boardMissionStatus.boardMissionStatus.id === prevStatusId)?.boardMissions.find(x=>x.id === boardsIds[i].BoardMissionId && x.productType === boardsIds[i].productType );
-            if(boardMission){
-                updatedData = updatedData.map(x=>{
-                    if(x.boardMissionStatus.boardMissionStatus.id === prevStatusId){
-                        return {
-                            ...x,
-                            boardMissionStatus:{...x.boardMissionStatus,count:x.boardMissionStatus.count - 1},
-                            boardMissions: x.boardMissions.filter(b=> !(b.id === boardsIds[i].BoardMissionId && b.productType === boardsIds[i].productType) )
+    const updateStatus = async (boardsIds: {BoardMissionId: string; productType: string;}[], statusId: string,prevStatusId?: string) => {
+        if(prevStatusId){
+            let updatedData = data;
+            for(let i = 0;i<boardsIds.length;i++){
+                debugger
+                const boardMission = updatedData.find(x=>x.boardMissionStatus.boardMissionStatus.id === prevStatusId)?.boardMissions.find(x=>x.id === boardsIds[i].BoardMissionId && x.productType === boardsIds[i].productType );
+                if(boardMission){
+                    updatedData = updatedData.map(x=>{
+                        if(x.boardMissionStatus.boardMissionStatus.id === prevStatusId){
+                            return {
+                                ...x,
+                                boardMissionStatus:{...x.boardMissionStatus,count:x.boardMissionStatus.count - 1},
+                                boardMissions: x.boardMissions.filter(b=> !(b.id === boardsIds[i].BoardMissionId && b.productType === boardsIds[i].productType) )
+                            }
                         }
-                    }
-                    if(x.boardMissionStatus.boardMissionStatus.id === statusId){
-                        return {
-                            ...x,
-                            boardMissionStatus:{...x.boardMissionStatus,count:x.boardMissionStatus.count + 1},
-                            boardMissions: [...x.boardMissions,{...boardMission,statusId:statusId}]
+                        if(x.boardMissionStatus.boardMissionStatus.id === statusId){
+                            return {
+                                ...x,
+                                boardMissionStatus:{...x.boardMissionStatus,count:x.boardMissionStatus.count + 1},
+                                boardMissions: [...x.boardMissions,{...boardMission,statusId:statusId}]
+                            }
                         }
-                    }
-                    return x;
-                });
+                        return x;
+                    });
+                }
+
             }
-            
+            setData(updatedData)
         }
-        setData(updatedData)
+        
         const callBack = (res) => {
             if (res.success) {
             }
