@@ -1674,6 +1674,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           const subProduct = subProducts?.find(
             (x) => x.type === subSection?.type
           );
+          let actionIndex = parameter.actionIndex;
+          if(actionIndex == null){
+            actionIndex = 0;
+          }
           const parm = subProduct?.parameters?.find(
             (param) =>
               param.parameterId === parameter.id &&
@@ -1682,7 +1686,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           const myParameter = subSection?.parameters?.find(
             (p) =>
               p.id === relatedParameter.parameterId &&
-              p.actionIndex === relatedParameter.actionIndex
+              p.actionIndex === actionIndex
           );
           if (!myParameter) {
             return;
@@ -2008,6 +2012,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           subSectionParameter.materialPath &&
           subSectionParameter.materialPath.length > 0
         ) {
+         
           const materialPath =
             subSectionParameter.materialPath[
             subSectionParameter.materialPath.length - 1
@@ -2073,6 +2078,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               }
               if (index != -1 && index < param.materialPath.length - 1) {
                 param.valuesConfigs = [];
+                //param.isHidden = false;
                 paramMaterialValues?.forEach((val) => {
                   param.valuesConfigs.push({
                     id: val.valueId,

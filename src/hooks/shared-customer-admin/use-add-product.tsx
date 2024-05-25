@@ -560,7 +560,9 @@ const useAddProduct = ({ clasess }) => {
           disabled={parameter?.isHidden}
         />
       );
-    } else if (parameter?.parameterType === EParameterTypes.DROP_DOWN_LIST) {
+    } 
+    else if (parameter?.parameterType === EParameterTypes.DROP_DOWN_LIST) 
+    {
       const defaultObject = parameter.valuesConfigs.find(
         (item) => item.isDefault === true
       );
@@ -622,7 +624,8 @@ const useAddProduct = ({ clasess }) => {
           }}
         />
       );
-    } else if (parameter?.parameterType === EParameterTypes.SWITCH) {
+    }
+    else if (parameter?.parameterType === EParameterTypes.SWITCH) {
       return (
         <SecondSwitch
           disabled={parameter?.isHidden}
@@ -637,7 +640,8 @@ const useAddProduct = ({ clasess }) => {
           }}
         />
       );
-    } else if (
+    } 
+    else if (
       parameter?.parameterType === EParameterTypes.SELECT_CHILDS_PARAMETERS
     ) {
       const defaultObject = parameter.valuesConfigs.find(
@@ -703,6 +707,9 @@ const useAddProduct = ({ clasess }) => {
       );
     }
     else if (parameter?.parameterType === EParameterTypes.SELECT_MATERIALS) {
+      if(parameter.code == "FlatbedColor"){
+        debugger;
+      }
       if (allMaterials?.length > 0) {
         const defailtObjectValue = parameter?.valuesConfigs?.find((item) => item.isDefault === true);
         let options = [];
@@ -727,6 +734,10 @@ const useAddProduct = ({ clasess }) => {
                 const parentParameterValue = parentParameterDefaultValueConfig.materialValueIds[0].valueId;
                 allMaterialsCopy = allMaterialsCopy?.data.find(x => x.valueId === parentParameterValue);
                 
+              }else{
+                allMaterialsCopy = {
+                  data:[]
+                }
               }
 
             }
