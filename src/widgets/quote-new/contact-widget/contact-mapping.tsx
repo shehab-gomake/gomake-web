@@ -29,14 +29,10 @@ const ContactMapping = ({
   const [isUpdateContactMobile, setIsUpdateContactMobile] = useState(null);
   const [isConfirmation, setIsConfirmation] = useState(null);
 
-  const onBlurContactName = async (item) => {
-    if (!item.contactName) {
-      alertFault("login.thisFieldRequired")
-    }
-    else {
-      updateClientContact(item);
-      setIsUpdateContactName(null);
-    }
+  const onBlurContactName = async () => {
+
+    setIsUpdateContactName(null);
+
 
   };
   const onBlurContactEmail = async (item) => {
@@ -68,10 +64,10 @@ const ContactMapping = ({
           value: contanct.id,
           text: contanct.name
         }))}
-        onBlur={() => null}
         isUpdate={isUpdateContactName}
         setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdateContactName}
         getOptionLabel={(item) => item.text}
+        onBlur={() => onBlurContactName()}
         onChange={(e, value) => {
           updateClientContact({
             ...item,

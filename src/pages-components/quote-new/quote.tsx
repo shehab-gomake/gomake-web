@@ -294,7 +294,7 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
                 </div>
                 <div
                   style={classes.deleverdDate}
-                  onClick={handleClickSelectDate}
+                  onClick={quoteItemValue?.isEditable ? handleClickSelectDate : null}
                 >
                   {t("sales.quote.dateOfReference")}{" "}
                   {selectDate
