@@ -48,7 +48,6 @@ const ButtonsContainer = ({
     onClickOpenCancelReceiptModal,
     onClickCloseCancelReceiptModal
   } = useButtonsContainer(documentType);
-
   const handleCopyFromDocumentClick = (documentNumber) => {
     if (!quoteItemValue?.client) {
       alertFault("home.admin.pleaseSelectCustomer");
@@ -89,7 +88,7 @@ const ButtonsContainer = ({
           </GomakePrimaryButton>
         }
         {
-          (documentType === DOCUMENT_TYPE.quote || documentType === DOCUMENT_TYPE.order) && <GomakePrimaryButton
+          (documentType === DOCUMENT_TYPE.quote || documentType === DOCUMENT_TYPE.order) && quoteItemValue?.isEditable && <GomakePrimaryButton
             leftIcon={<PlusIcon stroke={"#344054"} />}
             style={classes.btnContainer}
             onClick={() => onOpenDeliveryModal()}
