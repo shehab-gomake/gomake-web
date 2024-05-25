@@ -24,7 +24,7 @@ const companyCommunicationInputs = (state: ICompanyProfile) => {
       options: [],
       value: state.mailServiceEmail,
       machineInputType: "input",
-      isValid: !!state.email2,
+      isValid: !!state.mailServiceEmail,
     },
   ];
 };
