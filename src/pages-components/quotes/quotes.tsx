@@ -130,6 +130,8 @@ const QuotesListPageWidget = ({
     customerForEdit,
     setCustomerForEdit,
     setShowCustomerModal,
+    setIsCanceledState,
+    isCanceledState
   } = useQuotes(documentType);
   const router = useRouter()
   useEffect(() => {
@@ -288,7 +290,10 @@ const QuotesListPageWidget = ({
                             {documentType === DOCUMENT_TYPE.order &&
                               <div style={classes.statusFilterContainer}>
                                 <h3 style={classes.filterLabelStyle}>{t("sales.quote.canceledOrders")}</h3>
-                                <SecondSwitch />
+                                <SecondSwitch
+                                  checked={isCanceledState}
+                                  onChange={(e) => { setIsCanceledState(e.target.checked) }}
+                                />
                               </div>
                             }
                             {documentType !== DOCUMENT_TYPE.purchaseInvoice && documentType !== DOCUMENT_TYPE.purchaseInvoiceRefund && documentType !== DOCUMENT_TYPE.purchaseOrder &&

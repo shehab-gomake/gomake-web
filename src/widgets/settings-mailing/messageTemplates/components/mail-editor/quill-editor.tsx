@@ -174,9 +174,9 @@ const QuillEditor = ({ headerEditor }: IProps) => {
             matchVisual: false,
         },
     };
-
+    console.log("FFFFF", body)
     return (
-        <div dir={dir} className='editorDiv' style={{width: "100%"}}>
+        <div dir={dir} className='editorDiv' style={{ width: "100%" }}>
             <Suspense>
                 <ReactQuill modules={modules} style={headerEditor ? classes.myEditorBody : classes.myEditorSubject} value={headerEditor ? body : subject} onChange={headerEditor ? handleChangeBody : handleChangeSubject} ref={editorRef} id='editor' />
             </Suspense>
