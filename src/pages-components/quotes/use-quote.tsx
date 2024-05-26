@@ -47,6 +47,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
   const [statusId, setStatusId] = useState<any>();
   const [quoteStatusId, setQuoteStatusId] = useState<any>();
   const [customerId, setCustomerId] = useState<any>();
+  const [isCanceledState, setIsCanceledState] = useState(null)
   const [dateRange, setDateRange] = useState<any>();
   const [agentId, setAgentId] = useState<any>();
   const [canOrder, setCanOrder] = useState(false);
@@ -339,6 +340,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
         fromDate: fromDate && GetDateFormat(fromDate),
         toDate: toDate && GetDateFormat(toDate),
         status: statusId?.value,
+        isCanceled: isCanceledState,
         minPrice: minPrice,
         maxPrice: maxPrice,
         model: {
@@ -365,6 +367,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
           minPrice: minPrice,
           maxPrice: maxPrice,
           productList: productIds,
+          isCanceled: isCanceledState,
           fromDate: fromDate && GetDateFormat(fromDate),
           toDate: toDate && GetDateFormat(toDate),
         },
@@ -572,6 +575,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     setFromDate(null);
     setToDate(null);
     setResetDatePicker(true);
+    setIsCanceledState(false)
     getAllQuotesInitial();
     setPage(1);
     setMinPrice("");
@@ -1390,6 +1394,8 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     setPatternSearch,
     setStatusId,
     setCustomerId,
+    setIsCanceledState,
+    isCanceledState,
     setDateRange,
     setAgentId,
     renderOptions,
