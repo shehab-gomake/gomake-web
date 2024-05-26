@@ -375,6 +375,7 @@ const useBoardMissions = () => {
     const callBack = (res) => {
       if (res?.success) {
         alertSuccessUpdate()
+        getAllBoardMissions()
       } else {
         alertFaultUpdate();
       }

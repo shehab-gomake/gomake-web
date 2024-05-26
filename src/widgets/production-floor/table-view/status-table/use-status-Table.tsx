@@ -16,14 +16,14 @@ const useStatusTable = () => {
     const onChangeHeaderCheckBox = (statusId: string, checked: boolean) => {
         let selected = [...selectedBoards];
         status(statusId).boardMissions.forEach((boardMission) => {
-            const isSelectedBoard = !!selected?.find(b => b.boardMissionId === boardMission.id);
+            const isSelectedBoard = !!selected?.find(b => b.id === boardMission.id);
             if (checked) {
                 if (!isSelectedBoard) {
                     selected.concat([boardMission]);
                 }
             } else {
                 if (isSelectedBoard) {
-                    selected = selected.filter(b => b.boardMissionId !== boardMission.id)
+                    selected = selected.filter(b => b.id !== boardMission.id)
                 }
             }
         })
@@ -32,7 +32,7 @@ const useStatusTable = () => {
     const status = (statusId: string) => boardsMissions.find(s => s.boardMissionStatus.boardMissionStatus.id === statusId);
 
     const tableHeaders = (statusId: string) => {
-        return [<SecondaryCheckBox checked={status(statusId).boardMissions.every(b => selectedBoards?.find(sb => sb.boardMissionId === b.id && sb.productType === b.productType))}
+        return [<SecondaryCheckBox checked={status(statusId).boardMissions.every(b => selectedBoards?.find(sb => sb.id === b.id && sb.productType === b.productType))}
                                    onChange={(e, checked) => {
                                        onChangeHeaderCheckBox(statusId, checked);
                                    }}/>,

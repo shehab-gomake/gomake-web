@@ -52,10 +52,7 @@ const TableRowComponent = ({boardMission}: IProps) => {
         </SecondaryTableCell>
         <SecondaryTableCell align={"center"}>
             <BoardStatusComponent statusId={boardMission.statusId} id={boardMission.id}
-                                  onChange={(id, statusId) => updateStatus([{
-                                      BoardMissionId: id,
-                                      productType: boardMission.productType
-                                  }], statusId)}/>
+                                  onChange={(id, statusId) => updateStatus([boardMission], statusId)}/>
         </SecondaryTableCell>
         <SecondaryTableCell align={"center"}>
             {boardMission?.clientName}
