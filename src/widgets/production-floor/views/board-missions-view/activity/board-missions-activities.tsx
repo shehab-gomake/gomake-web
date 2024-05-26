@@ -1,25 +1,25 @@
-import {Stack} from "@mui/material";
+import { Stack } from "@mui/material";
 import Button from "@mui/material/Button";
 import * as React from "react";
-import {GoMakeTextEditor} from "@/components/text-editor/go-make-text-editor";
+import { GoMakeTextEditor } from "@/components/text-editor/go-make-text-editor";
 import {
     useBoardMissionsActivities
 } from "@/widgets/production-floor/views/board-missions-view/activity/use-board-missions-activities";
-import {ActivityComponent} from "@/widgets/production-floor/views/board-missions-view/activity/activity-component";
-import {convertHeightToVH} from "@/utils/adapter";
-import {useEffect} from "react";
-import {useTranslation} from "react-i18next";
+import { ActivityComponent } from "@/widgets/production-floor/views/board-missions-view/activity/activity-component";
+import { convertHeightToVH } from "@/utils/adapter";
+import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 
 
 const BoardMissionsActivities = () => {
-    const {t} = useTranslation();
+    const { t } = useTranslation();
     const {
         addComment,
         filtersButtonsArray,
         activitiesList,
         getAllActivities,
     } = useBoardMissionsActivities();
-
+    console.log("activitiesList", activitiesList)
     useEffect(() => {
         getAllActivities().then();
     }, [])
@@ -41,14 +41,15 @@ const BoardMissionsActivities = () => {
                 overflow: 'auto',
                 height: convertHeightToVH(650)
             }}>
-                {
-                    activitiesList?.map(activity => <ActivityComponent {...activity}/>)
+
+                {Array.isArray(activitiesList) &&
+                    activitiesList.map(activity => <ActivityComponent {...activity} />)
                 }
             </div>
-            <GoMakeTextEditor onSend={addComment} containerStyle={{marginTop: 'auto'}}/>
+            <GoMakeTextEditor onSend={addComment} containerStyle={{ marginTop: 'auto' }} />
         </Stack>
 
     )
 }
 
-export {BoardMissionsActivities}
+export { BoardMissionsActivities }

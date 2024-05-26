@@ -65,19 +65,19 @@ const useMoreCircle = ({
       condition: true,
       name: "boardMissions.pdfWorkMission",
       icon: <PDFIcon />,
-      onclick: ()=>onClickWorkMissionPdf(mission?.id),
+      onclick: () => onClickWorkMissionPdf(mission?.id),
     },
     {
       condition: true,
       name: "boardMissions.pdfProductionOrderSummary",
       icon: <PDFIcon />,
-      onclick: ()=>onClickOrderSummeryPdf(mission?.id),
+      onclick: () => onClickOrderSummeryPdf(mission?.id),
     },
     {
       condition: true,
       name: "boardMissions.printPackagingSlip",
-      icon: <PackageIcon/>,
-      onclick: mission?.status === PStatus.IN_PROCESS ? ()=>onOpenModal(mission) : ()=>onClickPrintPackagingSlip(mission),
+      icon: <PackageIcon />,
+      onclick: mission?.status === PStatus.IN_PROCESS ? () => onOpenModal(mission) : () => onClickPrintPackagingSlip(mission),
 
     },
     {
@@ -102,7 +102,9 @@ const useMoreCircle = ({
       condition: true,
       name: "home.loggers",
       icon: <LoggerIcon />,
-      onclick: () => null,
+      onclick: () => {
+        window.open(`/production-floor?boardMissionsId=${mission?.id}&step=activity`, '_blank');
+      },
     }
   ];
 
