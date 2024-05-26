@@ -30,7 +30,7 @@ const useDocumentNumbers = () => {
         const callBackFunction = (data) => {
             if (data.success) {
                 const tableRows = data.data?.map((document) => [
-                    document.docType ? t(`documentingNumbering.${DocumentsTypeEnum[document.docType]}`): "",
+                    t(`documentingNumbering.${DocumentsTypeEnum[document.docType]}`),
                     document.prefix,
                     document.value,
                     document.details,

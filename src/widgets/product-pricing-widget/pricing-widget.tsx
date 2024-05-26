@@ -104,17 +104,7 @@ const PricingWidget = ({
     currentProductItemValueTotalPrice,
     setCurrentProductItemValueTotalPrice,
   ] = useRecoilState<number>(currentProductItemValuePriceState);
-
-  useEffect(() => {
-    if (view === EPricingViews.OUTSOURCE_WORKFLOW || selectedWorkFlow?.actions?.some(
-      (action) => action.source === EWorkSource.OUT
-    )) {
-      setTimeout(() => {
-        setCurrentProductItemValueTotalPrice(null)
-
-      }, 2000);
-    }
-  }, [view, selectedWorkFlow])
+  
   const [tabs, setTabs] = useState([]);
   const reorderedTabs = [
     ...(tabs.find(tab => tab.key === "general") ? [tabs.find(tab => tab.key === "general")] : []), // "Flows Pending" tab if exists

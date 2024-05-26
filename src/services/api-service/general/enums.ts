@@ -13,8 +13,16 @@ const getCurrencies: ICallAndSetData = async (callApi, setState) => {
     setState
   );
 };
-
+const getCurrenciesSymbols : ICallAndSetData = async (callApi, setState) => {
+  return await getSetApiData(
+      callApi,
+      EHttpMethod.GET,
+      GET_ENUMS_URL + 'CurrencyUnit',
+      setState
+  );
+};
 
 export {
-  getCurrencies
+  getCurrencies,
+  getCurrenciesSymbols
 };

@@ -60,7 +60,9 @@ import {
 import { findParameterByCode, hasValues } from "@/utils/helpers";
 import React from "react";
 import { getCurrencies } from "@/services/api-service/general/enums";
-import { currenciesState } from "@/widgets/materials-widget/state";
+import { getCurrenciesSymbols } from "@/services/api-service/general/enums";
+
+import {currenciesState, currenciesSymbols} from "@/widgets/materials-widget/state";
 import { EHttpMethod } from "@/services/api-service/enums";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { exampleTypeState } from "@/store/example-type";
@@ -193,6 +195,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   useEffect(() => {
     if (calculationResult && calculationResult.productItemValue) {
       if (calculationResult.productItemValueDraftId === currentCalculationSessionId) {
+        debugger;
         setCurrentProductItemValueDraftId(calculationResult.productItemValueDraftId);
         let productTypes = new Set();
         const currentWorkFlows = cloneDeep(workFlows);
@@ -2448,6 +2451,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             subProducts: calculationSubProducts,
             itemParmetersValues: itemParmetersValues,
             workTypes: workTypes,
+            isChargeForNewDie:isChargeForNewDie,
           },
           false,
           newRequestAbortController
@@ -2641,16 +2645,16 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       jobDetails,
     });
   }, [workFlows, jobActions, jobDetails]);
-  const setCurrencies = useSetRecoilState(currenciesState);
+  const setCurrenciesSymbols = useSetRecoilState(currenciesSymbols);
   const getCurrenciesApi = async () => {
     const callBack = (res) => {
       if (res.success) {
-        setCurrencies(
+        setCurrenciesSymbols(
           res.data.map(({ value, text }) => ({ label: text, value }))
         );
       }
     };
-    await getCurrencies(callApi, callBack);
+    await getCurrenciesSymbols(callApi, callBack);
   };
   useEffect(() => {
     getCurrenciesApi()

@@ -9,7 +9,7 @@ import {
 } from "@/store";
 import { billingMethodState } from "@/store/billing-method";
 import { exampleTypeState } from "@/store/example-type";
-import { currenciesState } from "@/widgets/materials-widget/state";
+import {currenciesState, currenciesSymbols} from "@/widgets/materials-widget/state";
 import { ECalculationLogType } from "@/widgets/product-pricing-widget/enums";
 import {
   calculationProgressState,
@@ -35,7 +35,7 @@ const useRightSideWidget = ({ includeVAT }) => {
   const selectedWorkFlow = useRecoilValue(selectedWorkFlowState);
   const [systemCurrency, setSystemCurrency] =
     useRecoilState<any>(systemCurrencyState);
-  const currencies = useRecoilValue(currenciesState);
+  const currencies = useRecoilValue(currenciesSymbols);
   useEffect(() => {
     if (currencies?.length > 0) {
       const data = currencies.find((c) => c.value === systemCurrency);

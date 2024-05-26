@@ -63,15 +63,15 @@ export const list: IListItem[] = [
     permission: Permissions.SHOW_EMPLOYEES || Permissions.SHOW_PERMISSIONS ,
 
   },
-  {
-    component: FinancesWidget,
-    text: "settings.finances",
-    value: "7",
-    icon: DollarCircleIcon,
-    path: "finances",
-    permission: Permissions.SHOW_FINANCE,
+  // {
+  //   component: FinancesWidget,
+  //   text: "settings.finances",
+  //   value: "7",
+  //   icon: DollarCircleIcon,
+  //   path: "finances",
+  //   permission: Permissions.SHOW_FINANCE,
 
-  },
+  // },
   {
     component: TranslationsWidget,
     text: "settings.translations",

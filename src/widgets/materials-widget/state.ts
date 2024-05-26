@@ -14,6 +14,10 @@ export const currenciesState = atom<{ label: string; value: string }[]>({
   key: "currenciesState",
   default: [],
 });
+export const currenciesSymbols = atom<{ label: string; value: string }[]>({
+    key: "currenciesSymbolsState",
+    default: [],
+});
 export const materialHeadersState = atom<
   {
     key: string;
