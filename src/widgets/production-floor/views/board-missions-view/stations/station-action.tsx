@@ -27,6 +27,7 @@ import {ThreeOptionsModal} from "@/components";
 interface IProps extends IBoardMissionsStation {
     delay: number;
     selected?: boolean;
+    isLastStation?: boolean;
 }
 
 const BoardMissionsStationAction = ({
