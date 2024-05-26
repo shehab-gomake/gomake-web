@@ -12,9 +12,9 @@ const LoginWidget = () => {
   const { getCompanyLogo } = useCompanyProfile();
 
   useEffect(() => {
-    getCompanyLogo();
+    getCompanyLogo().then();
     localStorage.removeItem("auth-token");
-  }, [getCompanyLogo]);
+  }, []);
 
   return (
     <div>
