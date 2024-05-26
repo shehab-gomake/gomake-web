@@ -9,13 +9,17 @@ import {useChatConfig} from "@/components/chat-bot/config";
 import {useRecoilValue} from "recoil";
 import {userProfileState} from "@/store/user-profile";
 
+
 const ChatBotComponent = () => {
     const [open, setOpen] = useState<boolean>(false);
     const userProfile = useRecoilValue(userProfileState);
     const userAvatar = ()=><Avatar src={userProfile.imagePath}/>
     const botAvatar = () => <Avatar src={"https://gomake-contents.s3.eu-west-3.amazonaws.com/chatbot_icon.png"}/>
-    const {config} = useChatConfig(userAvatar, botAvatar);
+    const {chatbotConfig,clearChat} = useChatConfig(userAvatar, botAvatar);
     const toggleChat = () => {
+        clearChat().then()
+       
+
         setOpen(!open);
     }
     return (
@@ -32,7 +36,7 @@ const ChatBotComponent = () => {
             {
                 open && <div>
                     <Chatbot
-                        config={config}
+                        config={chatbotConfig}
                         messageParser={MessageParser}
                         actionProvider={ActionProvider}
                     />
