@@ -21,7 +21,7 @@ const SelectChildParameterWidget = ({
           data-tour={parameter?.id}
           options={parameter?.valuesConfigs?.filter((value) => !value.isHidden)}
           placeholder={parameter.name}
-          key={parameter.id + "-" + parameter.actionIndex}
+          key={parameter?.valuesConfigs + temp[index]?.values}
           style={clasess.dropDownListStyle}
           getOptionLabel={(option: any) => option.updateName}
           defaultValue={
