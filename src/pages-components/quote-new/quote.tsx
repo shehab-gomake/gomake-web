@@ -34,6 +34,7 @@ import { QuoteStatuses } from "@/widgets/quote-new/total-price-and-vat/enums";
 import { LoginTaxesUrl, fetchTaxesAuthority } from "@/utils/taxes-authority";
 import { printHouseProfile } from "@/store/print-house-profile";
 import { WhatsAppWebModal } from "@/widgets/quote-new/modals-widgets/whats-app-web-modal";
+import { AddNewContactModal } from "@/widgets/quote-new/modals-widgets/add-new-contact-modal";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -186,7 +187,10 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
     sortDocumentItems,
     updateIsShowDetails,
     getWhatsAppMessage,
-    whatsappMassage
+    whatsappMassage,
+    openAddNewContactModal,
+    onCloseNewContact,
+    onOpenNewContact
   } = useQuoteNew({ docType: documentType, isQuoteConfirmation: isQuoteConfirmation });
 
   const quoteSteps: StepType[] = [
@@ -370,6 +374,7 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
                   documentType={documentType}
                   getQuote={getQuote}
                   getAllClientContacts={getAllClientContacts}
+                  onOpenNewContact={onOpenNewContact}
                 />
               </div>
             </div>
@@ -431,6 +436,12 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
         onClose={onCloseNewItem}
         documentType={documentType}
         getQuote={getQuote}
+      />
+      <AddNewContactModal
+        openModal={openAddNewContactModal}
+        onClose={onCloseNewContact}
+        getQuote={getQuote}
+        getAllClientContacts={getAllClientContacts}
       />
       <AddDeliveryModal
         openModal={openAddDeliveryModal}

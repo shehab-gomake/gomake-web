@@ -36,7 +36,8 @@ const ContactNewWidget = ({
   isQuoteConfirmation = false,
   documentType,
   getQuote,
-  getAllClientContacts
+  getAllClientContacts,
+  onOpenNewContact
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -59,6 +60,7 @@ const ContactNewWidget = ({
                   updateClientContact={updateClientContact}
                   isQuoteConfirmation={isQuoteConfirmation}
                   clientContactsValue={clientContactsValue}
+                  onOpenNewContact={onOpenNewContact}
                 />
               ))}
             </div>

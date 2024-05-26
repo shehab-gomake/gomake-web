@@ -79,6 +79,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
   const [selectedContact, setSelectedContact] = useState();
   const [openDeleteModalContact, setOpenDeleteModalContact] = useState(false);
   const [openAddNewItemModal, setOpenAddNewItemModal] = useState(false);
+  const [openAddNewContactModal, setOpenAddNewContactModal] = useState(false);
   const [openCopyFromOrderModal, setOpenCopyFromOrderModal] = useState(false);
   const [quoteItemId, setQuateItemId] = useState();
   const [openDuplicateWithDifferentQTYModal, setOpenDuplicateWithDifferentQTYModal] = useState(false);
@@ -551,6 +552,9 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
   const onOpenNewItem = () => {
     setOpenAddNewItemModal(true);
   };
+  const onOpenNewContact = () => {
+    setOpenAddNewContactModal(true);
+  };
   const onCloseCopyFromOrder = () => {
     setOpenCopyFromOrderModal(false);
   };
@@ -564,6 +568,9 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
 
   const onCloseNewItem = () => {
     setOpenAddNewItemModal(false);
+  };
+  const onCloseNewContact = () => {
+    setOpenAddNewContactModal(false);
   };
 
 
@@ -1390,7 +1397,10 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     sortDocumentItems,
     updateIsShowDetails,
     getWhatsAppMessage,
-    whatsappMassage
+    whatsappMassage,
+    openAddNewContactModal,
+    onCloseNewContact,
+    onOpenNewContact
   };
 };
 
