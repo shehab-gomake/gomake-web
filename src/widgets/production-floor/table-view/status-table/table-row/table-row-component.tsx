@@ -29,15 +29,12 @@ const TableRowComponent = ({boardMission}: IProps) => {
     }), [selectedIds]);
     const {updateStatus} = useProductionFloorData();
     const onSelectBoardMissions = (id: string, checked: boolean) => {
-        setSelectedIds(checked ? [...selectedIds, {
-                boardMissionId: id,
-                productType: boardMission.productType
-            }] :
-            selectedIds.filter(selectedBoard => selectedBoard.boardMissionId !== id && selectedBoard.productType === boardMission.productType));
+        setSelectedIds(checked ? [...selectedIds, boardMission] :
+            selectedIds.filter(selectedBoard => selectedBoard.id !== id && selectedBoard.productType === boardMission.productType));
     }
     return <SecondaryTableRow ref={drag} style={{cursor: 'move'}}>
         <SecondaryTableCell align={"center"}> <SecondaryCheckBox
-            checked={!!selectedIds?.find(si => si.boardMissionId === boardMission.id && si.productType === boardMission.productType)}
+            checked={!!selectedIds?.find(si => si.id === boardMission.id && si.productType === boardMission.productType)}
             onChange={(a) => {
                 onSelectBoardMissions(boardMission.id, a.target.checked)
             }}/>
