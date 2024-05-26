@@ -26,7 +26,7 @@ const ButtonParameterWidget = ({
   const [isSelectedShape, setIsSelectedShape] = useState<any>();
   const [selectedShape, setSelectedShape] = useState<any>();
   const [isStraightKnife, setIsStraightKnife] = useState(false);
-  const isStraightKnifeInSubProducts = subProducts.some(
+  const isStraightKnifeInSubProducts = straightKnife && subProducts.some(
     (subProduct) =>
       subProduct.parameters.some(
         (parameter) => parameter.parameterId === straightKnife.id
@@ -42,19 +42,22 @@ const ButtonParameterWidget = ({
 
   }, [isStraightKnifeInSubProducts])
   const deleteStraightKnifeParameter = () => {
-    const updatedSubProducts = subProducts.map((subProduct) => {
-      const updatedParameters = subProduct.parameters.filter(
-        (parameter) => parameter.parameterId !== straightKnife.id
-      );
+      if(straightKnife){
+          const updatedSubProducts = subProducts.map((subProduct) => {
+              const updatedParameters = subProduct.parameters.filter(
+                  (parameter) => parameter.parameterId !== straightKnife.id
+              );
 
-      return {
-        ...subProduct,
-        parameters: updatedParameters,
-      };
-    });
+              return {
+                  ...subProduct,
+                  parameters: updatedParameters,
+              };
+          });
 
-    setProducts(updatedSubProducts);
-    setIsStraightKnife(false)
+          setProducts(updatedSubProducts);
+        
+      }
+      setIsStraightKnife(false)
   };
   const removeParameterFromSubProducts = () => {
     if (isSelectedShape) {
