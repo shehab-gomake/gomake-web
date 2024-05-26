@@ -9,7 +9,8 @@ export interface IDocument {
 
 export enum DocumentsTypeEnum
 {
-    Order = 1,
+    Quote=0,
+    Order ,
     Invoice,
     DeliveryNotes,
     Purchase,
@@ -21,7 +22,7 @@ export enum DocumentsTypeEnum
     PurchaseInvoiceRefund,
     ForeignJournalEntry,
     DeliveryNoteRefund,
-    Quote,
+    QuoteOld,
     ExternalInvoice,
     All,
     ExternalPayment,
