@@ -9,7 +9,6 @@ import {
     boardMissionsSubWorkFlowsState, stationGeneralInformationState
 } from "@/widgets/production-floor/views/board-missions-view/stations/state";
 import {boardMissionsFilesState} from "@/widgets/production-floor/views/board-missions-view/files/state";
-import {boardMissionsActivitiesState} from "@/widgets/production-floor/state/board-missions-activities";
 
 const useBoardMissions = () => {
     const {callApi} = useGomakeAxios();
@@ -17,12 +16,10 @@ const useBoardMissions = () => {
     const resetStations = useResetRecoilState(boardMissionsStationsState);
     const resetFiles = useResetRecoilState(boardMissionsFilesState);
     const resetDetails = useResetRecoilState(boardMissionsDetailsState);
-    const resetActivities = useResetRecoilState(boardMissionsActivitiesState);
     const resetSubWorkFlows = useResetRecoilState(boardMissionsSubWorkFlowsState);
     const resetGeneralInformation = useResetRecoilState(stationGeneralInformationState)
     const initStates = () => {
         resetDetails();
-        resetActivities();
         resetFiles();
         resetStations();
         resetSubWorkFlows();
@@ -40,7 +37,6 @@ const useBoardMissions = () => {
 
     return {
         getBoardMissions,
-        initStates
     }
 }
 

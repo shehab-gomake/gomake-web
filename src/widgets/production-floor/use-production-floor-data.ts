@@ -3,12 +3,13 @@ import {
     getProductionFloorData,
     updateBoardsMissionsStatusApi
 } from "@/services/api-service/production-floor/production-floor-endpoints";
-import {useRecoilState, useSetRecoilState} from "recoil";
+import {useRecoilState} from "recoil";
 import {productionFloorFiltersState} from "@/widgets/production-floor/state/production-floor-filters";
 import {boardsMissionsState} from "@/widgets/production-floor/state/boards";
 import {tagsState} from "@/widgets/production-floor/state/tags";
 import {userProductionFloorGroupsState} from "@/widgets/production-floor/state/production-floor-groups-state";
 import {productionFloorPathsState} from "@/widgets/production-floor/state/production-floor-paths";
+import {IBoardMissions} from "@/widgets/production-floor/interfaces/board-missions";
 
 const useProductionFloorData = () => {
     const {callApi} = useGomakeAxios();
@@ -17,7 +18,6 @@ const useProductionFloorData = () => {
     const [, setTags] = useRecoilState(tagsState);
     const [, setUserGroups] = useRecoilState(userProductionFloorGroupsState);
     const [, setPath] = useRecoilState(productionFloorPathsState);
-
     const getData = async (connectionId?: string) => {
         const callBack = (res) => {
             if (res.success) {
@@ -28,45 +28,30 @@ const useProductionFloorData = () => {
                 setPath(res?.data?.path ? res?.data?.path : []);
             }
         }
-        await getProductionFloorData(callApi, callBack, connectionId);
+        return await getProductionFloorData(callApi, callBack, connectionId);
     }
 
 
-    const updateStatus = async (boardsIds: {BoardMissionId: string; productType: string;}[], statusId: string,prevStatusId?: string) => {
-        if(prevStatusId){
-            let updatedData = data;
-            for(let i = 0;i<boardsIds.length;i++){
-                debugger
-                const boardMission = updatedData.find(x=>x.boardMissionStatus.boardMissionStatus.id === prevStatusId)?.boardMissions.find(x=>x.id === boardsIds[i].BoardMissionId && x.productType === boardsIds[i].productType );
-                if(boardMission){
-                    updatedData = updatedData.map(x=>{
-                        if(x.boardMissionStatus.boardMissionStatus.id === prevStatusId){
-                            return {
-                                ...x,
-                                boardMissionStatus:{...x.boardMissionStatus,count:x.boardMissionStatus.count - 1},
-                                boardMissions: x.boardMissions.filter(b=> !(b.id === boardsIds[i].BoardMissionId && b.productType === boardsIds[i].productType) )
-                            }
-                        }
-                        if(x.boardMissionStatus.boardMissionStatus.id === statusId){
-                            return {
-                                ...x,
-                                boardMissionStatus:{...x.boardMissionStatus,count:x.boardMissionStatus.count + 1},
-                                boardMissions: [...x.boardMissions,{...boardMission,statusId:statusId}]
-                            }
-                        }
-                        return x;
-                    });
+    const updateStatus = async (boards: IBoardMissions[], statusId: string) => {
+        const boardsIds = boards?.filter(b => b.statusId !== statusId);
+        setData(data?.map((status) => {
+            if (status.boardMissionStatus?.boardMissionStatus?.id === statusId) {
+                return {
+                    ...status,
+                    boardMissions: [...status.boardMissions, ...boardsIds?.map(b => ({...b, statusId: status.boardMissionStatus.boardMissionStatus.id}))]
                 }
-
+            }else {
+                return {
+                    ...status,
+                    boardMissions: status.boardMissions.filter(b => !!!boardsIds.find(bs => b.id === bs.id && b.productType === bs.productType))
+                }
             }
-            setData(updatedData)
-        }
-        
+        }))
         const callBack = (res) => {
             if (res.success) {
             }
         }
-        await updateBoardsMissionsStatusApi(callApi, callBack, {boardsIds, statusId})
+        await updateBoardsMissionsStatusApi(callApi, callBack, {boardsIds: boardsIds?.map(b => ({BoardMissionId: b.id, productType: b.productType})), statusId})
     }
     return {getData, updateStatus, setData}
 }
