@@ -23,8 +23,6 @@ class MessageParser {
             const result = await response.json();
             const lowerCaseMessage = message.toLowerCase();
             console.log(result);
-
-            result.data.data.isFinished = true;
             if(result.data.data.isFinished){
                 window.location.href = `products/create?clientTypeId=${result.data.data.clientTypeId}&customerId=${result.data.data.customserId}&productId=${result.data.data.productId}&isFromChatbot=true`;
                 return;
