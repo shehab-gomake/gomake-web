@@ -275,7 +275,7 @@ const useNewProfits = () => {
     const totalPriceLabel = router.query.isOutSource
       ? t("products.profits.pricingListWidget.totalCost")
       : t("products.profits.pricingListWidget.totalPrice");
-    if (router.query.signalRConnectionId) {
+    if (router.query.signalRConnectionId && !router.query.isOutSource) {
       setTableHeaders([
         t("products.profits.pricingListWidget.quantity"),
         `${selectedPricingBy?.label}` +

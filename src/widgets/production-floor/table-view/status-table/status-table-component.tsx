@@ -16,19 +16,19 @@ interface IProps {
     count: number;
 }
 
-const StatusTableComponent = ({status, boards, count}: IProps) => {
+const StatusTableComponent = ({status, boards}: IProps) => {
     const {isOpen, onClickStatus, tableHeaders} = useStatusTable();
 
     const {updateStatus} = useProductionFloorData();
     const [{isOver}, drop] = useDrop(() => ({
         accept: 'task',
-        drop: (item: { board: IBoardMissions, selectedIds: {BoardMissionId: string; productType: string}[] }, monitor) => {
+        drop: (item: { board: IBoardMissions, selectedIds: IBoardMissions[] }, monitor) => {
             const didDrop = monitor.didDrop();
             if (didDrop) {
                 return;
             }
             
-            updateStatus(item.selectedIds.length > 0 ? item.selectedIds : [{BoardMissionId: item.board.id, productType: item.board.productType}], status.id,item.board.statusId).then();
+            updateStatus(item.selectedIds.length > 0 ? item.selectedIds : [item.board], status.id).then();
         },
         collect: monitor => ({
             isOver: !!monitor.isOver(),
@@ -52,7 +52,7 @@ const StatusTableComponent = ({status, boards, count}: IProps) => {
                         backgroundColor: status?.backgroundColor,
                         color: status?.textColor,
                     }
-                }}>{`${status.name} (${count})`}</Button>
+                }}>{`${status.name} (${boards.length})`}</Button>
         {
             boards.length > 0 &&
             <Collapse in={isOpen}>
@@ -63,13 +63,13 @@ const StatusTableComponent = ({status, boards, count}: IProps) => {
                                 <SecondaryTableRow>
                                     {
                                         tableHeaders(status.id)?.map((header, index) =>
-                                            <SecondaryTableCell style={{backgroundColor: status.backgroundColor}} key={'statusTable' + index} align={"center"}>{header}</SecondaryTableCell>)
+                                            <SecondaryTableCell style={{backgroundColor: status.backgroundColor}} key={'statusTable' + status.id} align={"center"}>{header}</SecondaryTableCell>)
                                     }
                                 </SecondaryTableRow>
                             </TableHead>
                             <TableBody>
                                 {boards?.map((boardMission) => {
-                                    return <TableRowComponent boardMission={boardMission}/>
+                                    return <TableRowComponent key={'status' + status.id + boardMission.id} boardMission={boardMission}/>
                                 })}
                             </TableBody>
                         </Table>

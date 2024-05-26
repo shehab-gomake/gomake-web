@@ -19,6 +19,7 @@ const useStyle = () => {
         top: "50%",
         transform: "translate(-50%, -50%)",
         boxShadow: "0px 10px 30px rgba(0, 0, 0, 0.05)",
+
       },
       content: {
         display: "flex",

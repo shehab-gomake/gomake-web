@@ -22,10 +22,10 @@ const staplerMachine = (state: Record<string, any>) => {
             placeholder: "machineAttributes.maxStapleLength",
             required: true,
             parameterKey: "maxStapleHeight",
-            value: state?.attributes?.maxStapleLength,
+            value: state?.attributes?.maxStapleHeight,
             options: [],
             machineInputType: 'input',
-            isValid: !!state?.attributes?.maxStapleLength,
+            isValid: !!state?.attributes?.maxStapleHeight,
             unit: EMeasurementUnits.CM
         },
         {

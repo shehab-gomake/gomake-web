@@ -19,7 +19,8 @@ const ContactMapping = ({
   changeItems,
   updateClientContact,
   isQuoteConfirmation = false,
-  clientContactsValue
+  clientContactsValue,
+  onOpenNewContact
 }) => {
   const { classes } = useStyle();
   const { alertFault } = useSnackBar();
@@ -59,38 +60,35 @@ const ContactMapping = ({
       <AutoCompleteUpdatedValue
         label={t("sales.quote.contactName")}
         value={item?.contactName}
-        options={clientContactsValue.map(contanct => ({
-          ...contanct,
-          value: contanct.id,
-          text: contanct.name
-        }))}
+        options={[
+          { id: 'new', text: t("sales.quote.addNewContact") }, // Add New Contact option
+          ...clientContactsValue.map(contact => ({
+            ...contact,
+            value: contact.id,
+            text: contact.name
+          }))
+        ]}
+
         isUpdate={isUpdateContactName}
         setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdateContactName}
         getOptionLabel={(item) => item.text}
         onBlur={() => onBlurContactName()}
         onChange={(e, value) => {
-          updateClientContact({
-            ...item,
-            contactMail: value?.mail,
-            contactName: value?.name,
-            contactPhone: value?.phone
-          })
-          setIsUpdateContactName(null);
+          if (value?.id === 'new') {
+            onOpenNewContact(true)
+            setIsUpdateContactName(null);
+          } else {
+            updateClientContact({
+              ...item,
+              contactMail: value?.mail,
+              contactName: value?.name,
+              contactPhone: value?.phone
+            });
+            setIsUpdateContactName(null);
+          }
         }}
-      />
 
-      {/* <InputUpdatedValues
-        value={
-          item?.contactName !== null ? item?.contactName : t("sales.quote.noName")
-        }
-        label={t("sales.quote.contactName")}
-        onBlur={() => onBlurContactName(item)}
-        isUpdate={isUpdateContactName}
-        setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdateContactName}
-        onInputChange={(e: any) => {
-          changeItems(index, "contactName", e);
-        }}
-      /> */}
+      />
       <PhoneInputUpdatedValues
         key={item?.id}
         value={

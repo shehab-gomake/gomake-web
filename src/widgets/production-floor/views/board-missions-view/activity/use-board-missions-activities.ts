@@ -6,7 +6,7 @@ import {
 import {useRouter} from "next/router";
 import {useRecoilState} from "recoil";
 import {boardMissionsActivitiesState} from "@/widgets/production-floor/state/board-missions-activities";
-import {useEffect, useMemo, useState} from "react";
+import { useMemo, useState} from "react";
 import {EActivityType} from "@/widgets/production-floor/enums/activity-type";
 import {IBoardMissionsActivity} from "@/widgets/production-floor/interfaces/board-missions-activity";
 
@@ -16,9 +16,9 @@ enum EActivitiesFilter {
     LOGS
 }
 const useBoardMissionsActivities = () => {
-    const [activities, setActivities] = useState([]);
-    const [activitiesState] = useRecoilState(boardMissionsActivitiesState);
+    const [activitiesState, setActivities] = useRecoilState(boardMissionsActivitiesState);
     const [filter, setFilter] = useState<EActivitiesFilter>(EActivitiesFilter.ALL);
+    const [addActivityLoader, setAddActivityLoader] = useState<boolean>(false);
     const {callApi} = useGomakeAxios();
     const {query} = useRouter();
     const {boardMissionsId, step, productType} = query;
@@ -32,9 +32,10 @@ const useBoardMissionsActivities = () => {
     }
 
     const addComment = (comment: string) => {
+        setAddActivityLoader(true)
         const callBack = res => {
+            setAddActivityLoader(false);
             if (!res.success) {
-
             }
         }
         addBoardMissionsComment(callApi, callBack, {comment, boardMissionId: boardMissionsId, productType}).then();
@@ -60,31 +61,24 @@ const useBoardMissionsActivities = () => {
 
     const activitiesList: IBoardMissionsActivity[] = useMemo(() => {
         switch (filter) {
-            case EActivitiesFilter.ALL:
-                return activities;
             case EActivitiesFilter.COMMENTS:
-                return activities?.filter(activity => activity.activityType === EActivityType.COMMENT);
+                return activitiesState?.filter(activity => activity.activityType === EActivityType.COMMENT);
             case EActivitiesFilter.LOGS:
-                return activities?.filter(activity => activity.activityType === EActivityType.LOG);
+                return activitiesState?.filter(activity => activity.activityType === EActivityType.LOG);
             default:
-                return [];
+                return activitiesState;
         }
-    }, [filter, activities]);
+    }, [filter, activitiesState]);
 
-    useEffect(() => {
-        if (!!activitiesState) {
-            setActivities(activitiesState);
-        }
-    }, [activitiesState])
 
     return {
         getAllActivities,
-        activities,
         addComment,
         step,
         boardMissionsId,
         filtersButtonsArray,
         activitiesList,
+        addActivityLoader
     }
 }
 

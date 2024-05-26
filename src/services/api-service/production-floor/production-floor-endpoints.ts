@@ -64,8 +64,8 @@ const getBoardsMissionsGroupsByID: ICallAndSetData = async (callApi, callBack, g
 const getBoardsMissionsStations: ICallAndSetData = async (callApi, callBack, data: {boardMissionsId: string; productType: string} ) => {
     return await getSetApiData(callApi, EHttpMethod.GET, GET_BOARDS_MISSIONS_STATIONS_URL + data.boardMissionsId + `${data.productType ? '?productType=' + data.productType : ''}` , callBack);
 }
-const updateBoardMissionsActionDone: ICallAndSetData = async (callApi, callBack, data: {boardMissionsActionId: string; productType: string;} ) => {
-    return await getSetApiData(callApi, EHttpMethod.PUT, UPDATE_BOARD_MISSIONS_ACTION_DONE + data.boardMissionsActionId +`${data.productType ? '?productType=' + data.productType : ''}` , callBack);
+const updateBoardMissionsActionDone: ICallAndSetData = async (callApi, callBack, data: {boardMissionsActionId: string; productType: string; isSendMessage: boolean} ) => {
+    return await getSetApiData(callApi, EHttpMethod.PUT, UPDATE_BOARD_MISSIONS_ACTION_DONE + data.boardMissionsActionId  + '?isSendMessage=' + !!data.isSendMessage +`${data.productType ? '&productType=' + data.productType : ''}` , callBack);
 }
 const cancelBoardMissionsActionDone: ICallAndSetData = async (callApi, callBack, data: {boardMissionsActionId: string; productType: string} ) => {
     return await getSetApiData(callApi, EHttpMethod.PUT, CANCEL_BOARD_MISSIONS_ACTION_DONE + data.boardMissionsActionId + `${data.productType ? '?productType=' + data.productType : ''}` , callBack);

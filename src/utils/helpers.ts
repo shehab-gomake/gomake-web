@@ -113,3 +113,15 @@ export const isValidCustomer = (
   }
   return true;
 };
+
+export   const downloadPdf = (url) => {
+  const anchor = document.createElement("a");
+  anchor.href = url;
+  anchor.target = "_blank";
+  anchor.addEventListener("click", () => {
+    setTimeout(() => {
+      anchor.remove();
+    }, 100);
+  });
+  anchor.click();
+};

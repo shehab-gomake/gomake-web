@@ -19,7 +19,7 @@ const useStatusTable = () => {
             const isSelectedBoard = !!selected?.find(b => b.boardMissionId === boardMission.id);
             if (checked) {
                 if (!isSelectedBoard) {
-                    selected.concat([{boardMissionId: boardMission.id, productType: boardMission.productType}]);
+                    selected.concat([boardMission]);
                 }
             } else {
                 if (isSelectedBoard) {
