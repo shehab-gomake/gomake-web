@@ -2451,6 +2451,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             subProducts: calculationSubProducts,
             itemParmetersValues: itemParmetersValues,
             workTypes: workTypes,
+            isChargeForNewDie:isChargeForNewDie,
           },
           false,
           newRequestAbortController
