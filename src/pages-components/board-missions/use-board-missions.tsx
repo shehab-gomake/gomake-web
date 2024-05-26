@@ -16,6 +16,7 @@ import { GomakeTextInput } from "@/components/text-input/text-input";
 import { useStyle } from "./style";
 import { useRouter } from "next/router";
 import { backToProcessApi, moveBoardMissionToDoneApi } from "@/services/api-service/production-floor/production-floor-endpoints";
+import { downloadPdf } from "@/utils/helpers";
 
 const useBoardMissions = () => {
   const { t } = useTranslation();
@@ -140,7 +141,7 @@ const useBoardMissions = () => {
             GetDateFormat(mission?.createdDate),
             GetDateFormat(mission?.dueDate),
             mission?.clientName,
-            mission?.number,
+            mission?.productType ? `${mission?.number} / ${mission?.orderNumber} / ${mission?.productType}` : mission?.number,
             mission?.orderNumber,
             EWorkSource[mission?.outSourceType],
             mission?.quantity,
@@ -229,7 +230,9 @@ const useBoardMissions = () => {
     }
     const callBack = (res) => {
       if (res?.success) {
-        console.log("result : ", res?.data)
+        const pdfLink = res.data;
+        downloadPdf(pdfLink)
+        onClosePackagesModal()
       } else {
         alertFaultGetData();
       }

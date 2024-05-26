@@ -29,6 +29,7 @@ const GET_IF_Exist_CART = "/v1/erp-service/documents/get-exist-document";
 const GET_DOCUMENT_PDF_URL = "/v1/erp-service/documents/get-document-pdf";
 const GET_BOARD_MISSION_PDF = "/v1/erp-service/board-missions-tables/export-board-mission-pdf";
 const GET_ORDER_BOARD_MISSION_PDF = "/v1/erp-service/documents/export-order-board-mission-pdf";
+const GET_PRINTING_TICKET_PDF = "/v1/erp-service/board-missions-tables/get-printing-ticket-pdf";
 const UPDATE_PURCHASE_NUMBER_URL =
   "/v1/erp-service/documents/update-purchase-number";
 const ADD_DELIVERY_URL = "/v1/erp-service/documents/add-delivery"; 
@@ -589,6 +590,20 @@ const getOrderBoardMissionPDF: ICallAndSetData = async (
   );
 };
 
+const GetPrintingTicketPDFApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data: { boardMissionId: string }
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    GET_PRINTING_TICKET_PDF,
+    setState,
+    data
+  );
+};
+
 const sortDocumentItemsApi: ICallAndSetData = async (callApi, setState, data) => {
   return await getSetApiData(
     callApi,
@@ -672,5 +687,6 @@ export {
   updateIsShowDetailsApi,
   getWhatsAppMessageApi,
   CloseDocumentApi,
-  getOrderBoardMissionPDF
+  getOrderBoardMissionPDF,
+  GetPrintingTicketPDFApi
 };
