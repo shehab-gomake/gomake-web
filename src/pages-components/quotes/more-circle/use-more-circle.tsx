@@ -1,4 +1,4 @@
-import { useCustomer, useGomakeRouter } from "@/hooks";
+import { useCustomer, useGomakeAxios, useGomakeRouter } from "@/hooks";
 import { DOCUMENT_TYPE, QUOTE_STATUSES } from "../enums";
 import { LoggerIcon } from "@/pages-components/admin/home/widgets/more-circle/icons/logger";
 import { EditingIcon } from "./icons/editing";
@@ -8,6 +8,8 @@ import { DuplicateIcon } from "@/components/icons/icons";
 import { useRecoilValue } from "recoil";
 import { userQouteState } from "@/store";
 import { useState } from "react";
+import { downloadPdf } from "@/utils/helpers";
+import { getOrderBoardMissionPDF } from "@/services/api-service/generic-doc/documents-api";
 
 const useMoreCircle = () => {
   const { user } = useCustomer();
@@ -25,7 +27,19 @@ const useMoreCircle = () => {
     CloseDocument
   }) => {
     const documentPath = DOCUMENT_TYPE[documentType];
+    const { callApi } = useGomakeAxios();
     const showNewDuplicate = documentType === DOCUMENT_TYPE.deliveryNote || documentType === DOCUMENT_TYPE.deliveryNoteRefund || documentType === DOCUMENT_TYPE.invoice || documentType === DOCUMENT_TYPE.invoiceRefund;
+    const onClickGetOrderBoardMissionPDF = async (quoteItem) => {
+      const callBack = (res) => {
+        if (res?.success) {
+          const pdfLink = res.data;
+          downloadPdf(pdfLink)
+        } else {
+        }
+      };
+      await getOrderBoardMissionPDF(callApi, callBack, { documentId: quoteItem?.id });
+    };
+
     return [
       {
         condition: documentType === DOCUMENT_TYPE.quote && ((quote?.documentStatus === QUOTE_STATUSES.Create && userQuote) || quote?.documentStatus === QUOTE_STATUSES.Open),
@@ -92,7 +106,7 @@ const useMoreCircle = () => {
       },
       {
         condition: documentType === DOCUMENT_TYPE.order && quote?.isCanClose && quote?.statusTitleText !== "Order.Canceled",
-        // onClick: () => navigate(`/purchaseOrders?orderNumber=${quote?.number}`),
+        onClick: () => onClickGetOrderBoardMissionPDF(quote),
         icon: <TickIcon />,
         name: t("sales.quote.boardMissionsPdf")
       },
