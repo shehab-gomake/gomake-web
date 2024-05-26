@@ -7,7 +7,7 @@ import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import LockOpenOutlinedIcon from '@mui/icons-material/LockOpenOutlined';
 import { useStyle } from "./style";
 import { PackageIcon } from "@/icons/package-icon";
-import { getBoardMissionPDF } from "@/services/api-service/generic-doc/documents-api";
+import { GetPrintingTicketPDFApi, getBoardMissionPDF } from "@/services/api-service/generic-doc/documents-api";
 import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
 import { PStatus } from "../enums";
 
@@ -40,7 +40,7 @@ const useMoreCircle = ({
     anchor.click();
   };
 
-  const onClickPrint = async (mission) => {
+  const GetPrintingTicketPDF = async (mission) => {
     const callBack = (res) => {
       if (res?.success) {
         const pdfLink = res.data;
@@ -49,7 +49,7 @@ const useMoreCircle = ({
         alertFaultGetData();
       }
     };
-    await getBoardMissionPDF(callApi, callBack, { boardMissionId: mission?.id });
+    await GetPrintingTicketPDFApi(callApi, callBack, { boardMissionId: mission?.id });
   };
 
   const menuList = [
@@ -65,19 +65,26 @@ const useMoreCircle = ({
       condition: true,
       name: "boardMissions.pdfWorkMission",
       icon: <PDFIcon />,
-      onclick: ()=>onClickWorkMissionPdf(mission?.id),
+      onclick: () => onClickWorkMissionPdf(mission?.id),
     },
     {
       condition: true,
       name: "boardMissions.pdfProductionOrderSummary",
       icon: <PDFIcon />,
-      onclick: ()=>onClickOrderSummeryPdf(mission?.id),
+      onclick: () => onClickOrderSummeryPdf(mission?.id),
+    },
+    {
+      condition: true,
+      name: "boardMissions.printProductionPdf",
+      icon: <PDFIcon />,
+      onclick: () => GetPrintingTicketPDF(mission),
+
     },
     {
       condition: true,
       name: "boardMissions.printPackagingSlip",
-      icon: <PackageIcon/>,
-      onclick: mission?.status === PStatus.IN_PROCESS ? ()=>onOpenModal(mission) : ()=>onClickPrintPackagingSlip(mission),
+      icon: <PackageIcon />,
+      onclick: mission?.status === PStatus.IN_PROCESS ? () => onOpenModal(mission) : () => onClickPrintPackagingSlip(mission),
 
     },
     {
@@ -102,7 +109,9 @@ const useMoreCircle = ({
       condition: true,
       name: "home.loggers",
       icon: <LoggerIcon />,
-      onclick: () => null,
+      onclick: () => {
+        window.open(`/production-floor?boardMissionsId=${mission?.id}&step=activity`, '_blank');
+      },
     }
   ];
 

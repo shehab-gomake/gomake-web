@@ -1,7 +1,7 @@
-import {Stack} from "@mui/material";
+import { Stack } from "@mui/material";
 import Button from "@mui/material/Button";
 import * as React from "react";
-import {GoMakeTextEditor} from "@/components/text-editor/go-make-text-editor";
+import { GoMakeTextEditor } from "@/components/text-editor/go-make-text-editor";
 import {
     useBoardMissionsActivities
 } from "@/widgets/production-floor/views/board-missions-view/activity/use-board-missions-activities";
@@ -23,7 +23,7 @@ const BoardMissionsActivities = () => {
         getAllActivities,
         addActivityLoader
     } = useBoardMissionsActivities();
-
+    console.log("activitiesList", activitiesList)
     useEffect(() => {
         if (addActivityLoader && loaderRef.current) {
             loaderRef.current.scrollIntoView({
@@ -73,10 +73,10 @@ const BoardMissionsActivities = () => {
                     <Stack ref={loaderRef} height={'60px'} alignItems={'center'} justifyContent={'center'}><DotsLoader/></Stack>
                 }
             </div>
-            <GoMakeTextEditor onSend={addComment} containerStyle={{marginTop: 'auto'}}/>
+            <GoMakeTextEditor onSend={addComment} containerStyle={{ marginTop: 'auto' }} />
         </Stack>
 
     )
 }
 
-export {BoardMissionsActivities}
+export { BoardMissionsActivities }

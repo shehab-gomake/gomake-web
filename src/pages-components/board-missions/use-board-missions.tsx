@@ -16,12 +16,13 @@ import { GomakeTextInput } from "@/components/text-input/text-input";
 import { useStyle } from "./style";
 import { useRouter } from "next/router";
 import { backToProcessApi, moveBoardMissionToDoneApi } from "@/services/api-service/production-floor/production-floor-endpoints";
+import { downloadPdf } from "@/utils/helpers";
 
 const useBoardMissions = () => {
   const { t } = useTranslation();
   const { classes } = useStyle();
   const { callApi } = useGomakeAxios();
-  const { alertFault , alertFaultGetData, alertFaultUpdate, alertSuccessUpdate } = useSnackBar();
+  const { alertFault, alertFaultGetData, alertFaultUpdate, alertSuccessUpdate } = useSnackBar();
   const { data, connectionId } = useBoardMissionsSignalr();
   const { navigate } = useGomakeRouter();
   const [status, setStatus] = useState<{
@@ -45,7 +46,7 @@ const useBoardMissions = () => {
   const { agent, setAgent, agentsCategories, handleAgentChange } = useAgentsList()
   const router = useRouter()
   const [selectedMission, setSelectedMission] = useState<any>({})
-
+  console.log("selectedMission", selectedMission)
   const handlePageSizeChange = (event) => {
     setPageNumber(1);
     setPageSize(event.target.value);
@@ -140,7 +141,7 @@ const useBoardMissions = () => {
             GetDateFormat(mission?.createdDate),
             GetDateFormat(mission?.dueDate),
             mission?.clientName,
-            mission?.number,
+            mission?.productType ? `${mission?.number} / ${mission?.orderNumber} / ${mission?.productType}` : mission?.number,
             mission?.orderNumber,
             EWorkSource[mission?.outSourceType],
             mission?.quantity,
@@ -189,7 +190,7 @@ const useBoardMissions = () => {
             pageNumber: pageNumber,
             pageSize: pageSize,
           });
-    } 
+    }
   };
 
   const onClickDuplicateMission = (duplicateType: DuplicateType) => {
@@ -229,7 +230,9 @@ const useBoardMissions = () => {
     }
     const callBack = (res) => {
       if (res?.success) {
-        console.log("result : ", res?.data)
+        const pdfLink = res.data;
+        downloadPdf(pdfLink)
+        onClosePackagesModal()
       } else {
         alertFaultGetData();
       }
@@ -288,10 +291,10 @@ const useBoardMissions = () => {
     setOpenPackagesModal(false);
   };
 
-  useEffect(()=>{
+  useEffect(() => {
     setQuantityOfPackages(1);
     setQuantityPerPackage(missionItem?.quantity || 0);
-  },[missionItem])
+  }, [missionItem])
 
   // useEffect(() => {
   //   const mapData = data?.data?.map((mission: any) => [
@@ -319,7 +322,7 @@ const useBoardMissions = () => {
   const handlePageChange = (event, value) => {
     setPageNumber(value);
   };
-  
+
   const [quantityOfPackages, setQuantityOfPackages] = useState(1);
   const [quantityPerPackage, setQuantityPerPackage] = useState(missionItem?.quantity || 0);
 
@@ -335,7 +338,7 @@ const useBoardMissions = () => {
 
   const handleQuantityPerPackageChange = (event) => {
     const newQuantityPerPackage = parseInt(event.target.value, 10);
-    const totalQuantity = missionItem?.quantity ;
+    const totalQuantity = missionItem?.quantity;
     const newQuantityOfPackages = Math.ceil(totalQuantity / newQuantityPerPackage);
     setQuantityPerPackage(newQuantityPerPackage);
     setQuantityOfPackages(newQuantityOfPackages);
@@ -348,11 +351,11 @@ const useBoardMissions = () => {
           {`${t("boardMissions.package")} ${index + 1}`}
         </h3>
         <div style={classes.inputValueStyle}>
-        {
-          index === quantityOfPackages - 1
-            ? remainingQuantity
-            : quantityPerPackage
-        }
+          {
+            index === quantityOfPackages - 1
+              ? remainingQuantity
+              : quantityPerPackage
+          }
         </div>
       </div>
     ));
@@ -363,7 +366,7 @@ const useBoardMissions = () => {
   const onCloseModal = () => {
     setOpenModal(false);
   };
-  const onOpenModal =  (mission: any) => {
+  const onOpenModal = (mission: any) => {
     setMissionItem(mission);
     setOpenModal(true);
   };
@@ -459,7 +462,8 @@ const useBoardMissions = () => {
     onClickPrintPackagingSlip,
     openMarkReadyThenPrintModal,
     onCloseMarkReadyThenPrintModal,
-    onOpenMarkReadyThenPrintModal
+    onOpenMarkReadyThenPrintModal,
+    selectedMission,
   };
 };
 

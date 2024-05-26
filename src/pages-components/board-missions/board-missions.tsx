@@ -77,6 +77,7 @@ const BoardMissionsListWidget = () => {
     onClickBackToProcess,
     handleClick,
     handleClose,
+    selectedMission,
     open,
     anchorEl
   } = useBoardMissions();
@@ -218,8 +219,8 @@ const BoardMissionsListWidget = () => {
         noBtn={"boardMissions.markDoneModalNo"}
         openModal={openMarkReadyModal}
         onClose={onCloseMarkReadyModal}
-        onClickYes={() => alert(missionItem?.id)}
-        onClickNo={() => alert(missionItem?.id)}
+        onClickYes={() => onClickMoveBoardMissionToDone(true)}
+        onClickNo={() => onClickMoveBoardMissionToDone(false)}
       />
       <ThreeOptionsModal
         title={t("boardMissions.markDoneFromPrintSlipModalTitle")}
