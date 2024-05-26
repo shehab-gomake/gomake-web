@@ -254,7 +254,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
                 )
               }),
               quote?.purchaseNumber,
-              quote?.productionStatus,
+              quote?.productionStatus === true ? t('boardMissions.done') : t('boardMissions.inProduction'),
               <div style={{ cursor: "pointer" }} onClick={() => navigate(`/board-missions?orderNumber=${quote?.number}`)}>{quote?.jobs}</div>,
               quote?.cost,
               quote?.worksNames,
@@ -459,7 +459,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
                 )
               }),
               quote?.purchaseNumber,
-              quote?.productionStatus,
+              quote?.productionStatus === true ? t('boardMissions.done') : t('boardMissions.inProduction'),
               <div style={{ cursor: "pointer" }} onClick={() => navigate(`/board-missions?orderNumber=${quote?.number}`)}>{quote?.jobs}</div>,
               quote?.cost,
               quote?.worksNames,
