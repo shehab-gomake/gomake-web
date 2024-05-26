@@ -2155,22 +2155,25 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                  const subSectionParameter = subSection.parameters.find(
                      (param) => param.code === dieCutSizeParameter.parameterCode
                  );
-                 temp.push({
-                   parameterId: subSectionParameter.id,
-                   sectionId: sectionId,
-                   subSectionId: subSectionId,
-                   ParameterType: ParameterType,
-                   parameterName: parameterName,
-                   actionId: actionId,
-                   values: [dieCutSizeParameter.value],
-                   valueIds: [],
-                   actionIndex:subSectionParameter.actionIndex,
-                   parameterCode: subSectionParameter.code,
-                   valuesConfigs: subSectionParameter?.valuesConfigs,
-                   unitKey: subSectionParameter?.unitKey,
-                   unitType: subSectionParameter?.unitType,
-                   isDisabled: true,
-                 });
+                 if(subSectionParameter){
+                   temp.push({
+                     parameterId: subSectionParameter.id,
+                     sectionId: sectionId,
+                     subSectionId: subSectionId,
+                     ParameterType: ParameterType,
+                     parameterName: parameterName,
+                     actionId: actionId,
+                     values: [dieCutSizeParameter.value],
+                     valueIds: [],
+                     actionIndex:subSectionParameter.actionIndex,
+                     parameterCode: subSectionParameter.code,
+                     valuesConfigs: subSectionParameter?.valuesConfigs,
+                     unitKey: subSectionParameter?.unitKey,
+                     unitType: subSectionParameter?.unitType,
+                     isDisabled: true,
+                   });
+                 }
+                 
                }
 
              });
