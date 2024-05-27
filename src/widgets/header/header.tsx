@@ -11,27 +11,22 @@ import {
 } from "@/icons";
 import { useStyle } from "./style";
 import { useHeader } from "./use-header";
-import { ColoredCycle, GoMakeMenu, GoMakeTextInputIcon } from "@/components";
-import {useRecoilState, useRecoilValue, useSetRecoilState} from "recoil";
+import { ColoredCycle, GoMakeMenu } from "@/components";
+import {useRecoilState, useRecoilValue} from "recoil";
 import { userProfileState } from "@/store/user-profile";
-import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import { QuoteIfExistState } from "@/pages-components/quote-new/store/quote";
 import { CartIcon } from "@/icons/cart-icon";
-import { SearchInputComponent } from "@/components/form-inputs/search-input-component";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
-import { PrimaryButton } from "@/components/button/primary-button";
 import { SecondaryButton } from "@/components/button/secondary-button";
 import { MarkIcon } from "@/icons/mark-icon";
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
-import {startGuideTourState} from "@/store/tour-state";
-import {useTour} from "@reactour/tour";
-import {useGoMakeTour} from "@/hooks/use-go-make-tour";
+import {showTourModalState} from "@/store/tour-state";
 const HeaderWidget = () => {
   const { clasess } = useStyle();
   const { t } = useTranslation();
   const dir: "rtl" | "ltr" = t("direction");
   const userProfile = useRecoilValue(userProfileState);
-  const [QuoteIfExist, setQuoteIfExist] =
+  const [QuoteIfExist] =
     useRecoilState<any>(QuoteIfExistState);
   const { primaryColor, successColor, warningColor } = useGomakeTheme();
   const {
@@ -41,14 +36,11 @@ const HeaderWidget = () => {
     handleClick,
     handleClose,
     navigate,
-    handleClickQuoteExist,
     openNotify,
     anchorNotifyEl,
-    handleClickNotify,
     handleCloseNotify,
   } = useHeader();
-  const {setIsOpen, setCurrentStep} = useTour();
-  const {onClickHelpButton} = useGoMakeTour([], []);
+  const [, setShowTourModal] = useRecoilState(showTourModalState);
   const userAvatar = () => {
     return !!userProfile.imagePath ? (
       <Avatar style={clasess.avatarProps} src={userProfile.imagePath} />
@@ -70,7 +62,7 @@ const HeaderWidget = () => {
       <div style={{ width: "100%" }} />
       <div style={clasess.rightSideContainer}>
         <IconButton data-tour={'start-tour-btn'} onClick={() => {
-          onClickHelpButton()
+          setShowTourModal(true);
         }}>
           <HelpOutlineIcon/>
         </IconButton>
