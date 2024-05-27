@@ -108,6 +108,7 @@ const ContactNewWidget = ({
           documentType={documentType}
           getQuote={getQuote}
           getAllClientContacts={getAllClientContacts}
+          onOpenNewContact={onOpenNewContact}
         />
       )}
 

@@ -931,7 +931,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
       }
     })
   }
-  function checkArrayNotEmptyOrPhoneNotEmpty(array) {
+  const checkArrayNotEmptyOrPhoneNotEmpty = (array) => {
     if (array.length === 0) {
       return false;
     }
@@ -943,8 +943,18 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
 
     return false;
   }
+  const checkArrayNotEmptyOrEmailNotEmpty = (array) => {
+    if (array.length === 0) {
+      return false;
+    }
+    for (let i = 0; i < array.length; i++) {
+      if (array[i].contactMail && array[i].contactMail.trim() !== '') {
+        return true;
+      }
+    }
 
-
+    return false;
+  }
   const onClickSendQuoteToClient = async (messageType: number) => {
     if (messageType === 1) {
       let checkPhones = checkArrayNotEmptyOrPhoneNotEmpty(quoteItemValue?.documentContacts)
@@ -969,20 +979,27 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
       }
     }
     else {
-      const callBack = (res) => {
-        if (res?.success) {
-          alertSuccessAdded();
-        } else {
-          alertFaultAdded();
+      let checkEmails = checkArrayNotEmptyOrEmailNotEmpty(quoteItemValue?.documentContacts)
+      if (checkEmails) {
+        const callBack = (res) => {
+          if (res?.success) {
+            alertSuccessAdded();
+          } else {
+            alertFaultAdded();
+          }
         }
+        await sendDocumentToClientApi(callApi, callBack, {
+          documentType: docType,
+          document: {
+            documentId: quoteItemValue?.id,
+            messageType,
+          }
+        })
       }
-      await sendDocumentToClientApi(callApi, callBack, {
-        documentType: docType,
-        document: {
-          documentId: quoteItemValue?.id,
-          messageType,
-        }
-      })
+      else {
+        alertFault("sales.quote.mailContectErrorMsg")
+      }
+
     }
 
 

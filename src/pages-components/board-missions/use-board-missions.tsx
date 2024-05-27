@@ -143,7 +143,7 @@ const useBoardMissions = () => {
             mission?.clientName,
             mission?.productType ? `${mission?.number} / ${mission?.orderNumber} / ${mission?.productType}` : mission?.number,
             mission?.orderNumber,
-            EWorkSource[mission?.outSourceType],
+            mission?.outSourceType === null ? EWorkSource[0] : EWorkSource[mission?.outSourceType],
             mission?.quantity,
             mission?.cost,
             mission?.price,

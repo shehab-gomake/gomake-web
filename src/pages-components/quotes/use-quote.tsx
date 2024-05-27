@@ -954,6 +954,10 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
             onClickPdf={onClickQuotePdf}
             onClickDuplicate={onClickQuoteDuplicate}
             onClickLoggers={onClickDocumentLogs}
+            onClickOpenIrrelevantModal={onClickOpenIrrelevantModal}
+            onClickOpenDeliveryTimeModal={onClickOpenDeliveryTimeModal}
+            onClickOpenPriceModal={onClickOpenPriceModal}
+            CloseDocument={CloseDocument}
           />,
         ]);
         setAllDocuments(mapData);
@@ -1299,6 +1303,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
       if (res?.success) {
         alertSuccessUpdate();
         getAllQuotes()
+        getAllDocuments(docType)
       } else {
         alertFaultUpdate();
       }

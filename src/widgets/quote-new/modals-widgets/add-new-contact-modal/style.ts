@@ -18,6 +18,7 @@ const useStyle = () => {
         width: "30%",
         borderRadius: 5,
         height: 400,
+        zIndex:9999999999999
       },
       inputsStyle:{
         display:"flex",

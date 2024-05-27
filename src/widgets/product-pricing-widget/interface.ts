@@ -13,6 +13,7 @@ export interface IPricingWidgetProps {
   workFlows: ICalculatedWorkFlow[];
   onSelectNewWorkFlow?: (id: string) => void;
   getOutSourcingSuppliers: () => void;
+  widgetType:string;
 }
 
 export interface IPricingAction {
@@ -112,6 +113,7 @@ export interface IOutSourceSupplier {
   profit: number;
   workHours: number;
   status: EOutsourceSupplierStatus;
+  widgetType:string;
 }
 
 export interface IRectangle {
