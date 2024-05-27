@@ -442,6 +442,7 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
         onClose={onCloseNewContact}
         getQuote={getQuote}
         getAllClientContacts={getAllClientContacts}
+        documentType={documentType}
       />
       <AddDeliveryModal
         openModal={openAddDeliveryModal}

@@ -31,7 +31,8 @@ const AddContactNewWidget = ({
   setIsDisplayWidget,
   documentType,
   getQuote,
-  getAllClientContacts
+  getAllClientContacts,
+  onOpenNewContact
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -96,13 +97,25 @@ const AddContactNewWidget = ({
       <div style={classes.businessContainerStyle}>
         <AutoCompleteUpdatedValue
           label={t("sales.quote.contactName")}
-          options={clientContactsValue}
+          options={[
+            { id: 'new', text: t("sales.quote.addNewContact") }, // Add New Contact option
+            ...clientContactsValue.map(contact => ({
+              ...contact,
+              value: contact.id,
+              text: contact.name
+            }))
+          ]}
           onBlur={onBlurContactName}
           isUpdate={true}
           setIsUpdate={setIsUpdateContactName}
-          getOptionLabel={(item) => item?.name}
+          getOptionLabel={(item) => item.text}
           onChange={(e: any, item: any) => {
-            setSelectedContactById(item);
+            if (item?.id === 'new') {
+              onOpenNewContact(true)
+              setIsDisplayWidget(false)
+            } else {
+              setSelectedContactById(item);
+            }
           }}
           onChangeTextField={
             (e) => setNewContactName(e.target.value)

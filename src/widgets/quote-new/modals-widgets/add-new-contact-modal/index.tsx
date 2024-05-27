@@ -7,9 +7,10 @@ import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
 import { useRecoilState } from "recoil";
 import { quoteItemState } from "@/store";
 import { useState } from "react";
-import { addCustomerContactApi } from "@/services/api-service/generic-doc/documents-api";
+import { addCustomerContactApi, addDocumentContactApi } from "@/services/api-service/generic-doc/documents-api";
+import { PhoneInputComponent } from "@/components/form-inputs/phone-input";
 
-const AddNewContactModal = ({ openModal, onClose, getQuote, getAllClientContacts }) => {
+const AddNewContactModal = ({ openModal, onClose, getQuote, getAllClientContacts, documentType }) => {
   const { callApi } = useGomakeAxios();
   const { navigate } = useGomakeRouter();
   const { t } = useTranslation();
@@ -34,8 +35,7 @@ const AddNewContactModal = ({ openModal, onClose, getQuote, getAllClientContacts
     }
     if (!state.contactPhone) {
       tempErrors.contactPhone = t("validation.phoneRequired");
-    } else if (!/^\+?([0-9]{1,3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4,5})$/.test(state.contactPhone)) {
-      tempErrors.contactPhone = t("validation.invalidPhone");
+
     }
     setErrors(tempErrors);
     return Object.keys(tempErrors).length === 0;
@@ -49,6 +49,12 @@ const AddNewContactModal = ({ openModal, onClose, getQuote, getAllClientContacts
   const onClickAddContact = () => {
     if (validateInput()) {
       createNewContactNew()
+      setState({
+        contactMail: "",
+        contactName: "",
+        contactPhone: ""
+      })
+      setErrors({})
       onClose()
     }
     else {
@@ -56,13 +62,35 @@ const AddNewContactModal = ({ openModal, onClose, getQuote, getAllClientContacts
     }
   };
 
+  const addNewContactNew = async (contactID) => {
+    const callBack = (res) => {
+      if (res?.success) {
+        alertSuccessAdded();
+        getQuote();
+      } else {
+        alertFaultAdded();
+      }
+    }
+    await addDocumentContactApi(callApi, callBack, {
+      documentType: documentType,
+      contact:
+      {
+        contactID: contactID,
+        contactName: state.contactName,
+        contactMail: state.contactMail,
+        contactPhone: state.contactPhone,
+        documentID: quoteItemValue?.id,
+      }
+    })
+  }
+
   const createNewContactNew = async () => {
     const callBack = (res) => {
       if (res?.success) {
         alertSuccessAdded();
         getQuote();
         getAllClientContacts()
-        // addNewContactNew(res?.data?.data?.data)
+        addNewContactNew(res?.data)
       } else {
         alertFaultAdded();
       }
@@ -80,17 +108,18 @@ const AddNewContactModal = ({ openModal, onClose, getQuote, getAllClientContacts
       <GoMakeModal
         openModal={openModal}
         modalTitle={t("sales.quote.addNewContact")}
-        onClose={onClose}
+        onClose={() => {
+          setState({
+            contactMail: "",
+            contactName: "",
+            contactPhone: ""
+          })
+          setErrors({})
+          onClose()
+        }}
         insideStyle={clasess.insideStyle}
       >
         <div style={clasess.inputsStyle}>
-          <GomakeTextInput
-            type="email"
-            value={state.contactMail}
-            onChange={(e) => handleChange('contactMail', e.target.value)}
-            placeholder={t("sales.quote.contactEmail")}
-            error={errors.contactMail}
-          />
           <GomakeTextInput
             type="text"
             value={state.contactName}
@@ -98,13 +127,30 @@ const AddNewContactModal = ({ openModal, onClose, getQuote, getAllClientContacts
             placeholder={t("sales.quote.contactName")}
             error={errors.contactName}
           />
+          {
+            errors?.contactName && <div style={{ fontSize: 12, color: "red" }}>{errors?.contactName}</div>
+          }
           <GomakeTextInput
-            type="tel"
-            value={state.contactPhone}
-            onChange={(e) => handleChange('contactPhone', e.target.value)}
-            placeholder={t("sales.quote.mobileContact")}
-            error={errors.contactPhone}
+            type="email"
+            value={state.contactMail}
+            onChange={(e) => handleChange('contactMail', e.target.value)}
+            placeholder={t("sales.quote.contactEmail")}
+            error={errors.contactMail}
           />
+          {
+            errors?.contactMail && <div style={{ fontSize: 12, color: "red" }}>{errors?.contactMail}</div>
+          }
+
+          <PhoneInputComponent
+            onChange={(e) => handleChange('contactPhone', e)}
+            value={state.contactPhone}
+            customStyle={{ width: '100%' }}
+            autoFocus={true}
+
+          />
+          {
+            errors?.contactPhone && <div style={{ fontSize: 12, color: "red" }}>{errors?.contactPhone}</div>
+          }
           <GomakePrimaryButton style={clasess.sendBtn} onClick={onClickAddContact}>
             {t("sales.quote.addNewContact")}
           </GomakePrimaryButton>

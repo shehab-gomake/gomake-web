@@ -4,28 +4,40 @@ import { useMemo } from "react";
 
 const useStyle = () => {
   const { theme, primaryColor } = useGomakeTheme();
+  const pdfStyle = useMemo(() => {
+    return {
+      container: {
+        width: "100%",
+        // padding: "10px",
+        // backgroundColor: "red",
+        // marginBottom: "10px",
+      },
+    };
+  }, [theme]);
   const classes = useMemo(() => {
     return {
       container: {
         backgroundColor: "#FFFFFF",
         display: "flex",
-        flexDirection: "row" as "row",
+        flexDirection: "row",
         alignItems: "center",
-        justifyContent: "space-between" as "space-between",
+        justifyContent: "space-between",
         width: "100%",
       },
+
       insideStyle: {
-        width: "620px",
+        width: "60%",
         borderRadius: 8,
         gap: "8px",
-        height: "400px",
-        maxHeight: 400,
+        height: "80%",
+        maxHeight: "80vh",
         backgroundColor: "#F7F7F7",
       },
     };
   }, [theme]);
   return {
     classes,
+    pdfStyle,
   };
 };
 export { useStyle };

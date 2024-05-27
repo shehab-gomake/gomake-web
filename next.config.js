@@ -17,12 +17,15 @@ const nextConfig = {
     webpack5: true,
   },
   images: {
-    domains: [process.env.BASE_HOST || "localhost","i.ibb.co"],
-    unoptimized:true
+    domains: [process.env.BASE_HOST || "localhost", "i.ibb.co"],
+    unoptimized: true,
   },
-  productionBrowserSourceMaps: true,  
-    pageExtensions: ['page.tsx', 'page.ts', 'page.jsx', 'page.js']
-
+  webpack: (config) => {
+    config.resolve.alias.canvas = false;
+    return config;
+  },
+  productionBrowserSourceMaps: true,
+  pageExtensions: ["page.tsx", "page.ts", "page.jsx", "page.js"],
 };
 
 module.exports = nextConfig;

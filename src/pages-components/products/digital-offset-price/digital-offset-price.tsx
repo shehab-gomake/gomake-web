@@ -279,6 +279,7 @@ const PriceListPageWidget = ({ widgetType }) => {
                                                             getOutSourcingSuppliers={getOutSourcingSuppliers}
                                                             actions={jobActions}
                                                             workFlows={workFlows}
+                                                            widgetType={widgetType}
                                                         />
                                                     );
                                                 } else {

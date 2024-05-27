@@ -2,7 +2,7 @@ import { QuoteWidget } from "./widgets/quote-widget/quote-widget";
 import { useStyle } from "./style";
 import { HomeTableWidget } from "./widgets/home-table-widget/home-table-widget";
 import { useHome } from "./use-home";
-import {useEffect} from "react";
+import { useEffect } from "react";
 import { CardsWidget } from "./widgets/cards-widget/cards-widget";
 import { Skeleton } from "@mui/material";
 import { useRecoilValue } from "recoil";
@@ -10,7 +10,7 @@ import { homeReportsState } from "@/pages-components/quote-new/store/quote";
 import { StepType } from "@reactour/tour";
 import Stack from "@mui/material/Stack";
 import { useGoMakeTour } from "@/hooks/use-go-make-tour";
-import {ChatBotComponent} from "@/components/chat-bot/chat-bot";
+import { ChatBotComponent } from "@/components/chat-bot/chat-bot";
 
 const HomePageComponentForAdmin = ({ isAdmin }) => {
     const { classes } = useStyle();
@@ -72,7 +72,7 @@ const HomePageComponentForAdmin = ({ isAdmin }) => {
     return (
         <div style={classes.mainContainer}>
             <div style={classes.firstRowContainer}>
-                <ChatBotComponent/>
+                <ChatBotComponent />
                 <div style={classes.titleStyle}>{Title}</div>
                 <div style={classes.containerStyle}>
                     <div style={classes.widgetStyle}>
