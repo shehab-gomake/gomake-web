@@ -1,4 +1,4 @@
-import {useGomakeAxios} from "@/hooks";
+import {useGomakeAxios, useSnackBar} from "@/hooks";
 import {
     getProductionFloorData,
     updateBoardsMissionsStatusApi
@@ -18,6 +18,8 @@ const useProductionFloorData = () => {
     const [, setTags] = useRecoilState(tagsState);
     const [, setUserGroups] = useRecoilState(userProductionFloorGroupsState);
     const [, setPath] = useRecoilState(productionFloorPathsState);
+    const {alertSuccessGetData, alertFaultGetData} = useSnackBar();
+
     const getData = async (connectionId?: string) => {
         const callBack = (res) => {
             if (res.success) {
@@ -26,6 +28,9 @@ const useProductionFloorData = () => {
                 setTags(res?.data?.automatedTagsFilter);
                 setUserGroups(res?.data?.groups);
                 setPath(res?.data?.path ? res?.data?.path : []);
+                alertSuccessGetData();
+            }else {
+                alertFaultGetData();
             }
         }
         return await getProductionFloorData(callApi, callBack, connectionId);

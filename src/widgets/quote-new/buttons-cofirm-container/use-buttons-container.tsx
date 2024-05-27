@@ -5,6 +5,7 @@ import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { getDocumentPdfApi } from "@/services/api-service/generic-doc/documents-api";
 import { approveDocumentItemsApi, rejectDocumentApi, updateDocumentCommentsConfirmationApi } from "@/services/api-service/generic-doc/quote-confirmation-api";
 import { QuoteStatuses } from "../total-price-and-vat/enums";
+import { useQuoteConfirmation } from "@/pages-components/quote-confirmation/use-quote-confirmation";
 
 const useButtonsConfirmContainer = () => {
     const { callApi } = useGomakeAxios();
@@ -17,6 +18,7 @@ const useButtonsConfirmContainer = () => {
     const [openRejectModal, setOpenRejectModal] = useState(false);
     const [rejectStatus, setRejectStatus] = useState<QuoteStatuses>();
     const [isButtonClicked, setIsButtonClicked] = useState(false);
+    const { getQuoteConfirmation } = useQuoteConfirmation();
 
     const handleRejectBtnClick = (event: React.MouseEvent<HTMLElement>) => {
         setIsButtonClicked(true);
@@ -68,7 +70,8 @@ const useButtonsConfirmContainer = () => {
 
         const callBack = (res) => {
             if (res?.success) {
-                // getQuoteConfirmation or getDoment id  THE CHEKCED IF isConfirmed IN DISPLAING BUTTONS CONTAINER
+                alertSuccessUpdate();
+                getQuoteConfirmation();
             } else {
                 alertFaultUpdate();
             }
