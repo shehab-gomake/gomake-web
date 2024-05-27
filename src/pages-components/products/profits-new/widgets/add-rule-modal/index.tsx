@@ -389,7 +389,7 @@ const AddRuleModal = ({
                       placeholder={t("properties.condtion")}
                       value={rule.linkCondition}
                       onChange={(event, value) => {
-                        handleChange(index, "linkCondition", value);
+                        handleChange(index - 1, "linkCondition", value);
                       }}
                     />
                   </div>
