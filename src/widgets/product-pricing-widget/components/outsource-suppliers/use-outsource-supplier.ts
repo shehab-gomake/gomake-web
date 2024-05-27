@@ -15,8 +15,7 @@ import { useRouter } from "next/router";
 const useOutsourceSupplier = () => {
     const router=useRouter()
     const [suppliers, setSuppliers] = useRecoilState(outsourceSuppliersState);
-    const currentProductItemValue =
-        useRecoilValue<any>(currentProductItemValueState);
+    const currentProductItemValue =useRecoilValue<any>(currentProductItemValueState);
 
         const productItemValueDraftId = useRecoilValue<string>(
             currentProductItemValueDraftId
