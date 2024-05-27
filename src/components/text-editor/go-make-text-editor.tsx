@@ -10,7 +10,7 @@ const GoMakeTextEditor = ({onSend, containerStyle = {}}: {onSend: (v: string) =>
     const reactQuillRef = useRef(null);
     const {t} = useTranslation();
     function handle ()  {
-        onSend(this.quill.root.innerHTML)
+        onSend(this.quill.root.innerHTML);
     }
 
     useEffect(() => {

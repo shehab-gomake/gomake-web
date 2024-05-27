@@ -19,6 +19,7 @@ import {
 import {useBoardMissionsSignalr} from "@/hooks/signalr/use-board-missions-signalr";
 import {BoardMissionsFiles} from "@/widgets/production-floor/views/board-missions-view/files/board-missions-files";
 import {useProductionFloorData} from "@/widgets/production-floor/use-production-floor-data";
+import {GoMakeSnackBar} from "@/components";
 
 interface IProps {
     boardMissionsId: string;
@@ -57,6 +58,7 @@ const BoardMissionsComponent = ({boardMissionsId, step, productType}: IProps) =>
                 step === EBoardMissionsViews.ACTIVITY && <BoardMissionsActivities/>
             }
         </Stack>
+        <GoMakeSnackBar/>
     </Stack>
 }
 
