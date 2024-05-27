@@ -4,6 +4,16 @@ import { useMemo } from "react";
 
 const useStyle = () => {
   const { theme, primaryColor } = useGomakeTheme();
+  const pdfStyle = useMemo(() => {
+    return {
+      container: {
+        width: "100%",
+        padding: "10px",
+        backgroundColor: "red",
+        marginBottom: "10px",
+      },
+    };
+  }, [theme]);
   const classes = useMemo(() => {
     return {
       container: {
@@ -15,7 +25,7 @@ const useStyle = () => {
         width: "100%",
       },
       insideStyle: {
-        width: "620px",
+        width: "750px",
         borderRadius: 8,
         gap: "8px",
         height: "400px",
@@ -26,6 +36,7 @@ const useStyle = () => {
   }, [theme]);
   return {
     classes,
+    pdfStyle,
   };
 };
 export { useStyle };
