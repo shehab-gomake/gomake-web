@@ -6,13 +6,15 @@ import { Stack, Checkbox, FormControlLabel } from "@mui/material";
 import { SecondaryButton } from "@/components/button/secondary-button";
 import { useGomakeAxios, useGomakeRouter } from "@/hooks";
 import TermsPDF from "./TermsPDF";
+import { PrimaryButton } from "@/components/button/primary-button";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 const TermModal = ({ open, onClose, setIsTermsAccepted }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
   const { navigate } = useGomakeRouter();
-
+  const { primaryColor } = useGomakeTheme();
   const [isScrolledToBottom, setIsScrolledToBottom] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
   const [isAcceptButtonEnabled, setIsAcceptButtonEnabled] = useState(false);
@@ -59,30 +61,35 @@ const TermModal = ({ open, onClose, setIsTermsAccepted }) => {
             borderWidth: "1px",
             // border: "solid",
             // maxHeight: "300px",
-            // backgroundColor: "green",
+            backgroundColor: "white",
           }}
         >
           <TermsPDF />
         </div>
         <FormControlLabel
           control={
-            <Checkbox checked={isChecked} onChange={(e) => setIsChecked(e.target.checked)} disabled={!isScrolledToBottom} />
+            <Checkbox
+              checked={isChecked}
+              onChange={(e) => setIsChecked(e.target.checked)}
+              disabled={!isScrolledToBottom}
+              style={{ color: primaryColor(500) }}
+            />
           }
           label={t("I have read and accept the terms and conditions.")}
           style={{ alignSelf: "center", marginTop: "10px" }}
         />
         <Stack direction={"row"} gap={"10px"} justifyContent={"end"}>
-          <SecondaryButton style={{ alignSelf: "center" }} variant="outlined" onClick={onClose}>
+          <PrimaryButton style={{ alignSelf: "center", width: "fit-content" }} variant="outlined" onClick={onClose}>
             {t("Decline")}
-          </SecondaryButton>
-          <SecondaryButton
-            style={{ alignSelf: "center" }}
+          </PrimaryButton>
+          <PrimaryButton
+            style={{ alignSelf: "center", width: "fit-content" }}
             variant="contained"
             onClick={handleAcceptTerms}
             disabled={!isAcceptButtonEnabled}
           >
             {t("Accept")}
-          </SecondaryButton>
+          </PrimaryButton>
         </Stack>
       </Stack>
     </GoMakeModal>

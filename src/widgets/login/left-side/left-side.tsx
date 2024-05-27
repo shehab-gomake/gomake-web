@@ -54,8 +54,8 @@ const LoginLeftSide = () => {
       <div style={clasess.btnContainer}>
         <GomakePrimaryButton onClick={onClickLogin}>{t("login.login")}</GomakePrimaryButton>
       </div>
-      {/* <TermModal open={isModalOpen} onClose={() => setIsModalOpen(false)} setIsTermsAccepted={setIsTermsAccepted} /> */}
-      <TermModal open={true} onClose={() => setIsModalOpen(false)} setIsTermsAccepted={setIsTermsAccepted} />
+      <TermModal open={isModalOpen} onClose={() => setIsModalOpen(false)} setIsTermsAccepted={setIsTermsAccepted} />
+      {/* <TermModal open={true} onClose={() => setIsModalOpen(false)} setIsTermsAccepted={setIsTermsAccepted} /> */}
     </div>
   );
 };
