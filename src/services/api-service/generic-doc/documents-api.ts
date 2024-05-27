@@ -325,7 +325,7 @@ const sendDocumentToClientApi: ICallAndSetData = async (
     SEND_DOCUMENT_TO_CLIENT_URL,
     setState,
     data,
-    false
+    true
   );
 };
 
