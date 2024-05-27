@@ -1,4 +1,4 @@
-import {useGomakeAxios} from "@/hooks";
+import {useGomakeAxios, useSnackBar} from "@/hooks";
 import {useState} from "react";
 import {
     boardMissionsAddNote,
@@ -14,24 +14,37 @@ const useBoardMissionsNotes = (onCloseModal?: () => void) => {
     const {query} = useRouter();
     const [boardMissions, setBoardMissions] = useRecoilState(boardMissionsDetailsState);
     const {boardMissionsId} = query;
+    const [deleting, setDeleting] = useState<boolean>(false);
+    const [addingNote, setAddingNote] = useState<boolean>(false);
+    const {alertSuccessAdded, alertFaultAdded, alertSuccessDelete, alertFaultDelete} = useSnackBar();
     const handleAddNote = async () => {
+        setAddingNote(true)
         const callBack = (res) => {
             if (res.success) {
+                alertSuccessAdded();
+                setAddingNote(false)
                 setBoardMissions({...boardMissions, notes: [...boardMissions.notes, newNote]});
                 setNewNote('')
                 onCloseModal && onCloseModal();
+            } else {
+                alertFaultAdded();
             }
         }
         await boardMissionsAddNote(callApi, callBack, {boardMissionsId, note: newNote});
     }
 
     const onDeleteNote = async (noteIndex: number) => {
+        setDeleting(true)
         const callBack = res => {
+            setDeleting(false)
             if (res.success) {
+                alertSuccessDelete();
                 setBoardMissions({
                     ...boardMissions,
                     notes: boardMissions.notes.filter((note, i) => i !== noteIndex)
                 })
+            } else {
+                alertFaultDelete();
             }
         }
         await boardMissionsDeleteNote(callApi, callBack, {index: noteIndex, boardMissionsId})
@@ -41,7 +54,9 @@ const useBoardMissionsNotes = (onCloseModal?: () => void) => {
         setNewNote,
         handleAddNote,
         notes: boardMissions.notes,
-        onDeleteNote
+        onDeleteNote,
+        deleting,
+        addingNote
     }
 }
 

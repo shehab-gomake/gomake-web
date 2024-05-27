@@ -1,4 +1,4 @@
-import {Collapse, Fade} from "@mui/material";
+import {CircularProgress, Collapse, Fade} from "@mui/material";
 import Stack from "@mui/material/Stack";
 import {EWorkSource, HtmlElementType, RuleType} from "@/widgets/product-pricing-widget/enums";
 import Divider from "@mui/material/Divider";
@@ -51,6 +51,8 @@ const BoardMissionsStationAction = ({
     const {alertSuccessUpdate, alertFaultUpdate} = useSnackBar();
     const [openReadyModal, setIsReadyModal] = useState<boolean>(false)
     const [boardMissions] = useRecoilState(boardMissionsDetailsState);
+    const [loading, setLoading] = useState<boolean>(false);
+    const [timerLoading, setTimerLoading] = useState<boolean>(false);
     const inputsParameters = outputs.filter(
         (parameter) =>
             parameter.propertyType === RuleType.PARAMETER &&
@@ -63,11 +65,14 @@ const BoardMissionsStationAction = ({
     );
 
     const onClickDone = async (boardMissionsActionId: string, sendMSg?: boolean) => {
+        setLoading(true);
         const callBack = (res) => {
+            setLoading(false);
             if (res.success) {
                 alertSuccessUpdate();
             } else {
                 alertFaultUpdate()
+                setLoading(false);
             }
         }
         await updateBoardMissionsActionDone(callApi, callBack, {
@@ -77,11 +82,13 @@ const BoardMissionsStationAction = ({
         });
     }
     const onClickBackToProcess = async (boardMissionsActionId: string) => {
+        setLoading(true);
         const callBack = (res) => {
+            setLoading(false);
             if (res.success) {
                 alertSuccessUpdate()
             } else {
-                alertFaultUpdate()
+                alertFaultUpdate();
             }
         }
         await cancelBoardMissionsActionDone(callApi, callBack, {
@@ -91,11 +98,13 @@ const BoardMissionsStationAction = ({
     }
 
     const onToggleTimer = async () => {
+        setTimerLoading(true)
         const callBack = (res) => {
+            setTimerLoading(false);
             if (res.success) {
-                alertSuccessUpdate()
+                alertSuccessUpdate();
             } else {
-                alertFaultUpdate()
+                alertFaultUpdate();
             }
         }
         await toggleBoardMissionsActionTimer(callApi, callBack, {
@@ -145,7 +154,7 @@ const BoardMissionsStationAction = ({
                                 <Divider orientation={"vertical"} flexItem/>
                                 <Stack direction={'row'} gap={'5px'} alignItems={'center'}>
                                     <span style={classes.detailTitle}>Timer</span>
-                                    <ActionTimer onToggle={onToggleTimer} {...boardMissionActionTimer}/>
+                                    <ActionTimer loading={timerLoading} onToggle={onToggleTimer} {...boardMissionActionTimer}/>
                                 </Stack>
                                 <Divider orientation={"vertical"} flexItem/>
                                 <Stack direction={'row'} gap={'5px'} alignItems={'center'}>
@@ -184,49 +193,50 @@ const BoardMissionsStationAction = ({
                     </Stack>
                     <div>
                         {
-                            isDone ?
-                                <Button variant={'contained'} onClick={(e) => {
-                                    e.stopPropagation();
-                                    onClickBackToProcess(boardMissionActionId).then()
-                                }}
-                                        style={{
-                                            padding: '10px',
-                                            backgroundColor: '#FFF',
-                                            color: '#344054',
-                                            borderRadius: '16px'
-                                        }}>
-                                    Completed
-                                </Button> :
-                                <PrimaryButton variant={'contained'} sx={{
-                                    height: '40px',
-                                    width: '40px',
-                                    minWidth: '40px',
-                                    padding: 0,
-                                    borderRadius: '12px'
-                                }}
-                                               onClick={(e) => {
-                                                   e.stopPropagation();
-                                                   if (isLastStation) {
-                                                       setIsReadyModal(true)
-                                                   }else {
-                                                   onClickDone(boardMissionActionId).then()
-                                                   }
-                                               }}>
-                                    <CheckIcon/>
-                                </PrimaryButton>
+                            loading ? <CircularProgress/> :
+                                isDone ?
+                                    <Button variant={'contained'} onClick={(e) => {
+                                        e.stopPropagation();
+                                        onClickBackToProcess(boardMissionActionId).then()
+                                    }}
+                                            style={{
+                                                padding: '10px',
+                                                backgroundColor: '#FFF',
+                                                color: '#344054',
+                                                borderRadius: '16px'
+                                            }}>
+                                        Completed
+                                    </Button> :
+                                    <PrimaryButton variant={'contained'} sx={{
+                                        height: '40px',
+                                        width: '40px',
+                                        minWidth: '40px',
+                                        padding: 0,
+                                        borderRadius: '12px'
+                                    }}
+                                                   onClick={(e) => {
+                                                       e.stopPropagation();
+                                                       if (isLastStation) {
+                                                           setIsReadyModal(true)
+                                                       } else {
+                                                           onClickDone(boardMissionActionId).then()
+                                                       }
+                                                   }}>
+                                        <CheckIcon/>
+                                    </PrimaryButton>
                         }
                     </div>
-            <ThreeOptionsModal
-                title={t("boardMissions.markDoneModalTitle")}
-                subTitle={t("boardMissions.markDoneModalSubTitle")}
-                yesBtn={"boardMissions.markDoneModalYes"}
-                noBtn={"boardMissions.markDoneModalNo"}
-                openModal={openReadyModal}
-                onClose={() => setIsReadyModal(false)}
-                onClickYes={() => onClickDone(boardMissionActionId, true)}
-                onClickNo={() => onClickDone(boardMissionActionId, false)}
-                insideStyle={{zIndex: 999999}}
-            />
+                    <ThreeOptionsModal
+                        title={t("boardMissions.markDoneModalTitle")}
+                        subTitle={t("boardMissions.markDoneModalSubTitle")}
+                        yesBtn={"boardMissions.markDoneModalYes"}
+                        noBtn={"boardMissions.markDoneModalNo"}
+                        openModal={openReadyModal}
+                        onClose={() => setIsReadyModal(false)}
+                        onClickYes={() => onClickDone(boardMissionActionId, true)}
+                        onClickNo={() => onClickDone(boardMissionActionId, false)}
+                        insideStyle={{zIndex: 999999}}
+                    />
                 </Stack>
             </Fade>
         </>

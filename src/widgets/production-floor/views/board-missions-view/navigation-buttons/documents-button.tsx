@@ -77,15 +77,11 @@ const DocumentsButton = () => {
 
     return (
         <div style={{position: 'relative', display: "flex", alignItems: 'center', gap: '5px'}}>
-            {
-                downloading && <div>
-                    <CircularProgress style={{height: '30px', width: '30px'}}/>
-                </div>
-            }
             <PrimaryButton style={{backgroundColor: primaryColor(300), borderRadius: '12px'}}
                            onClick={() => setOpen(!open)} variant={'contained'}
+                           disabled={downloading}
                            startIcon={dir === 'rtl' ? <ArrowDownIcon fill={'#FFF'}/> : undefined}
-                           endIcon={dir === 'ltr' ? <ArrowDownIcon fill={'#FFF'}/> : undefined}>
+                           endIcon={downloading ? <CircularProgress size={25}/> : dir === 'ltr' ? <ArrowDownIcon fill={'#FFF'}/> : undefined}>
                 {t('productionFloor.documents')}
             </PrimaryButton>
             {

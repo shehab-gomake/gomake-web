@@ -4,7 +4,7 @@ import {productionFloorFiltersState} from "@/widgets/production-floor/state/prod
 import {tagsState} from "@/widgets/production-floor/state/tags";
 import {IFilterGroup, IProductionFloorFilter, IStation} from "@/widgets/production-floor/interfaces/filters";
 import {setBoardFiltersApi} from "@/services/api-service/production-floor/production-floor-endpoints";
-import {useGomakeAxios} from "@/hooks";
+import {useGomakeAxios, useSnackBar} from "@/hooks";
 import {boardsMissionsState} from "@/widgets/production-floor/state/boards";
 import {EProductionFloorView, productionFloorViewState} from "@/widgets/production-floor/state/production-floor-view";
 import {useRouter} from "next/router";
@@ -22,15 +22,19 @@ const useProductionFloorFilters = () => {
     const setData = useSetRecoilState(boardsMissionsState);
     const setView = useSetRecoilState(productionFloorViewState);
     const {push} = useRouter();
+    const {alertSuccessUpdate, alertFaultUpdate} = useSnackBar();
     const groups = filtersState.groups;
     const setFilters = async (filters: IProductionFloorFilter) => {
         const callBack = (res) => {
             if (res?.success) {
+                alertSuccessUpdate();
                 setFiltersState(filters);
                 setData(res?.data?.boardMissionsCollections);
                 setTags(res?.data?.automatedTagsFilter);
                 setUserGroups(res?.data?.groups);
                 setPath(res?.data?.path ? res?.data?.path : []);
+            }else {
+                alertFaultUpdate();
             }
         }
         await setBoardFiltersApi(callApi, callBack, filters)

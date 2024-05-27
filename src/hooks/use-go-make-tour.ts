@@ -1,26 +1,20 @@
 import {StepType, useTour} from "@reactour/tour";
 import {DependencyList, useEffect} from "react";
-import {useRecoilState, useRecoilValue} from "recoil";
+import {useRecoilState} from "recoil";
 import {startGuideTourState} from "@/store/tour-state";
 import {hoverStatusState} from "@/store";
 import {navStatusState} from "@/store/nav-status";
 
 const useGoMakeTour = (steps: StepType[], deps?: DependencyList[]) => {
-    const {setIsOpen, setSteps, setCurrentStep, isOpen} = useTour();
-    const [startGuid, setStartGuid] = useRecoilState(startGuideTourState);
-    const [isHover, setIsHover] = useRecoilState(hoverStatusState);
-    const [navStatus, setNavStatus] = useRecoilState(navStatusState);
+    const {setIsOpen, setSteps, setCurrentStep} = useTour();
+    const [, setIsHover] = useRecoilState(hoverStatusState);
+    const [, setNavStatus] = useRecoilState(navStatusState);
 
     useEffect(() => {
+        setIsOpen(false);
         setCurrentStep(0);
         setSteps(steps);
     }, [...deps]);
-
-    useEffect(() => {
-        if (!!startGuid) {
-            startGoMakeTour();
-        }
-    }, []);
 
     const beforeOpenGoMakeTour = () => {
         return new Promise((resolve, reject) => {
@@ -55,7 +49,8 @@ const useGoMakeTour = (steps: StepType[], deps?: DependencyList[]) => {
     //     }
     // }, [isOpen])
     return {
-        onClickHelpButton
+        onClickHelpButton,
+        setIsOpen
     }
 };
 

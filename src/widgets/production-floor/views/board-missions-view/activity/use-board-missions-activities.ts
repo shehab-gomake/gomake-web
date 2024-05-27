@@ -1,4 +1,4 @@
-import {useGomakeAxios} from "@/hooks";
+import {useGomakeAxios, useSnackBar} from "@/hooks";
 import {
     addBoardMissionsComment,
     getAllBoardMissionsActivities
@@ -21,11 +21,15 @@ const useBoardMissionsActivities = () => {
     const [addActivityLoader, setAddActivityLoader] = useState<boolean>(false);
     const {callApi} = useGomakeAxios();
     const {query} = useRouter();
+    const {alertSuccessAdded, alertFaultAdded, alertSuccessGetData, alertFaultGetData} = useSnackBar();
     const {boardMissionsId, step, productType} = query;
     const getAllActivities = async () => {
         const callBack = (res) => {
             if (res.success) {
+                alertSuccessGetData();
                 setActivities(res.data);
+            } else {
+                alertFaultGetData();
             }
         }
         await getAllBoardMissionsActivities(callApi, callBack, boardMissionsId)
@@ -35,7 +39,10 @@ const useBoardMissionsActivities = () => {
         setAddActivityLoader(true)
         const callBack = res => {
             setAddActivityLoader(false);
-            if (!res.success) {
+            if (res.success) {
+                alertSuccessAdded();
+            } else {
+                alertFaultAdded();
             }
         }
         addBoardMissionsComment(callApi, callBack, {comment, boardMissionId: boardMissionsId, productType}).then();

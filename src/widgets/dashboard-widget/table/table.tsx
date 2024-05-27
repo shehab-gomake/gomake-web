@@ -111,7 +111,7 @@ const BoardMissionsTable = ({ boardsMissions, usedMachines }: IBoardMissionsTabl
                                             onClick={() => handleMachineClicked(machine.id)}>
                                             <div style={classes.tdRows}>
                                                 <div>{machine.name}</div>
-                                                <div>{machine.progress?.done}/{machine.progress?.total}</div>
+                                                <div>{machine.progress?.done}/{machine.progress?.total} <small>{t('measurementUnits.minute')}</small></div>
                                             </div>
                                         </th>
                                     );
