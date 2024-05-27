@@ -20,22 +20,35 @@ export default function TermsPDF() {
   }
   return (
     <div style={pdfStyle.container}>
-      <p>
+      {/* <p>
         Page {pageNumber} of {numPages}
-      </p>
+      </p> */}
       <Document
         file="https://gomake-contents.s3.eu-west-3.amazonaws.com/Subscription+Agreement+GoMake.pdf"
         onLoadSuccess={onDocumentLoadSuccess}
+        loading={<GomakeLoaderWidget />}
       >
-        <div style={{ backgroundColor: "blue", paddingBottom: "10px" }}>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            paddingBottom: "10px",
+            width: "100%",
+            // backgroundColor: "blue",
+          }}
+        >
           {Array.apply(null, Array(numPages))
             .map((x, i) => i + 1)
             .map((page) => {
-              return <Page pageNumber={page} width={650} renderTextLayer={false} renderAnnotationLayer={false} />;
+              return (
+                <div style={{ paddingBottom: "50px" }}>
+                  <Page pageNumber={page} width={window.innerWidth * 0.5} renderTextLayer={false} renderAnnotationLayer={false} />
+                </div>
+              );
             })}
         </div>
       </Document>
-      {/* <GomakeLoaderWidget /> */}
     </div>
   );
 }

@@ -31,7 +31,8 @@ const TermModal = ({ open, onClose, setIsTermsAccepted }) => {
   const handleScroll = () => {
     if (contentRef.current) {
       const { scrollTop, scrollHeight, clientHeight } = contentRef.current;
-      if (scrollTop + clientHeight >= scrollHeight) {
+      const threshold = 5;
+      if (scrollTop + clientHeight >= scrollHeight - threshold) {
         setIsScrolledToBottom(true);
       }
     }
@@ -44,12 +45,22 @@ const TermModal = ({ open, onClose, setIsTermsAccepted }) => {
   }, [isScrolledToBottom, isChecked]);
 
   return (
-    <GoMakeModal openModal={open} modalTitle={"Terms and Conditions"} onClose={onClose} insideStyle={classes.insideStyle}>
+    <GoMakeModal openModal={open} modalTitle={t("Terms and Conditions")} onClose={onClose} insideStyle={classes.insideStyle}>
       <Stack display={"flex"} direction={"column"} justifyContent={"space-between"} height={"100%"}>
         <div
           ref={contentRef}
           onScroll={handleScroll}
-          style={{ overflowY: "scroll", maxHeight: "300px", padding: "10px", backgroundColor: "green" }}
+          style={{
+            overflowY: "scroll",
+            height: "90%",
+            border: "1px solid #ccc",
+            borderRadius: 8,
+            padding: "10px",
+            borderWidth: "1px",
+            // border: "solid",
+            // maxHeight: "300px",
+            // backgroundColor: "green",
+          }}
         >
           <TermsPDF />
         </div>
