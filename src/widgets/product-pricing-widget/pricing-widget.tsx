@@ -36,6 +36,7 @@ import { Stack } from "@mui/material";
 const PricingWidget = ({
   workFlows,
   getOutSourcingSuppliers,
+  widgetType
 }: IPricingWidgetProps) => {
   const [view, setView] = useRecoilState<EPricingViews>(
     viewPricingTab
@@ -104,7 +105,7 @@ const PricingWidget = ({
     currentProductItemValueTotalPrice,
     setCurrentProductItemValueTotalPrice,
   ] = useRecoilState<number>(currentProductItemValuePriceState);
-  
+
   const [tabs, setTabs] = useState([]);
   const reorderedTabs = [
     ...(tabs.find(tab => tab.key === "general") ? [tabs.find(tab => tab.key === "general")] : []), // "Flows Pending" tab if exists
@@ -265,7 +266,7 @@ const PricingWidget = ({
           />
         </div>
       )}
-      {view === EPricingViews.OUTSOURCE_WORKFLOW && <OutSourceSuppliers />}
+      {view === EPricingViews.OUTSOURCE_WORKFLOW && <OutSourceSuppliers widgetType={widgetType} />}
     </Stack>
   );
 };

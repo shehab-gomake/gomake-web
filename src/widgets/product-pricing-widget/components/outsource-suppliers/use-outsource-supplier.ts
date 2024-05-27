@@ -7,11 +7,13 @@ import {
 import {useGomakeAxios, useGomakeRouter, useSnackBar} from "@/hooks";
 import {currentCalculationConnectionId, } from "@/store";
 import {EWorkSource} from "@/widgets/product-pricing-widget/enums";
-import {addItemApi} from "@/services/api-service/generic-doc/documents-api";
+import {addItemApi, updateDocumentItemApi} from "@/services/api-service/generic-doc/documents-api";
 import { updateProductItemValueOutsourceSupplierCost } from "@/services/api-service/product-item-value-draft/product-item-draft-endpoints";
 import { EOutSoucrceUpdateKey } from "@/enums";
+import { useRouter } from "next/router";
 
 const useOutsourceSupplier = () => {
+    const router=useRouter()
     const [suppliers, setSuppliers] = useRecoilState(outsourceSuppliersState);
     const currentProductItemValue =
         useRecoilValue<any>(currentProductItemValueState);
@@ -22,7 +24,7 @@ const useOutsourceSupplier = () => {
           const connectionId = useRecoilValue(currentCalculationConnectionId);
     const {navigate} = useGomakeRouter();
     const {callApi} = useGomakeAxios();
-    const { alertFaultAdded, } = useSnackBar();
+    const { alertFaultAdded,alertFaultUpdate } = useSnackBar();
     const updateProductItemValueOutsourceWithKey = async (supplierId:string, key: number, value:number) => {
         await updateProductItemValueOutsourceSupplierCost(callApi, () => { }, {
         productItemValueId: productItemValueDraftId,
@@ -114,12 +116,42 @@ const useOutsourceSupplier = () => {
               }
         }
 
+        const updateQuoteItem = async (supplierId) => {
+            const supplier = suppliers.find(s => s.supplierId === supplierId);
+            if (supplier) {
+                const callBack = (res) => {
+                    if (res?.success) {
+                      navigate("/quote");
+                    } else {
+                      alertFaultUpdate();
+                    }
+                  };
+                  await updateDocumentItemApi(callApi, callBack, {
+                    Item: {
+                      ...currentProductItemValue,
+                      signalRConnectionId: connectionId,
+                      itemId: router?.query?.documentItemId,
+                      sourceType: EWorkSource.OUT,
+                      outSoucreCost: supplier.cost,
+                      outSoucreProfit: supplier.profit,
+                      outSourceFinalPrice: supplier.finalPrice,
+                      supplierId: supplierId,
+                      unitPrice:supplier.finalPrice/parseFloat(currentProductItemValue.amount)
+                    },
+                    DocumentType: Number(router?.query?.documentType),
+                  });
+            }
+           
+          };
+        
+
         return {
             updateCost,
             updateWorHours,
             updateProfit,
             updatePrice,
-            addItem
+            addItem,
+            updateQuoteItem
         }
     }
     export {useOutsourceSupplier}

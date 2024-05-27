@@ -13,6 +13,7 @@ import { useOutsourceSupplier } from "@/widgets/product-pricing-widget/component
 import { useTranslation } from "react-i18next";
 import { useRecoilValue } from "recoil";
 import { systemCurrencyState } from "@/store";
+import { EWidgetProductType } from "@/pages-components/products/digital-offset-price/enums";
 
 interface IProps {
     value: number;
@@ -30,12 +31,13 @@ const OutSourceSupplierComponent = ({
     status,
     workHours,
     finalPrice,
-    profit
+    profit,
+    widgetType
 }: IOutSourceSupplier) => {
     const { t } = useTranslation();
     const { classes } = useStyle();
     const { secondColor } = useGomakeTheme();
-    const { updatePrice, updateWorHours, updateProfit, updateCost, addItem } = useOutsourceSupplier();
+    const { updatePrice, updateWorHours, updateProfit, updateCost, addItem, updateQuoteItem } = useOutsourceSupplier();
     const handleDeliveryTimeUpdate = (newValue: number) => {
         updateWorHours(supplierId, +newValue);
     }
@@ -71,7 +73,16 @@ const OutSourceSupplierComponent = ({
                         valueColor={secondColor(500)} label={t('pricingWidget.finalPrice')} value={finalPrice}
                         onUpdate={handleUpdatePrice} />
                 </Stack>
-                <PrimaryButton onClick={() => addItem(supplierId)} style={{ width: 'fit-content', height: 35 }} variant={'contained'}>{t('pricingWidget.add')}</PrimaryButton>
+                <PrimaryButton
+                    onClick={() => widgetType === EWidgetProductType.EDIT ? updateQuoteItem(supplierId) : addItem(supplierId)}
+                    style={{ width: 'fit-content', height: 35 }}
+                    variant={'contained'}
+                >
+                    {
+                        // updateQuoteItem
+                        widgetType === EWidgetProductType.EDIT ? t("materials.buttons.edit") : t('pricingWidget.add')
+                    }
+                </PrimaryButton>
             </Stack>
         </Fade>
     )
