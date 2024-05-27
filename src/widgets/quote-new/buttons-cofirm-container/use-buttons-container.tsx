@@ -68,7 +68,8 @@ const useButtonsConfirmContainer = () => {
 
         const callBack = (res) => {
             if (res?.success) {
-                // getQuoteConfirmation or getDoment id  THE CHEKCED IF isConfirmed IN DISPLAING BUTTONS CONTAINER
+                alertSuccessUpdate();
+                
             } else {
                 alertFaultUpdate();
             }
