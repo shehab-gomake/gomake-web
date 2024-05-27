@@ -205,17 +205,17 @@ const ActionContainerComponent = ({
   }, [suppliersState]);
   const { classes } = useStyle();
   const { secondColor } = useGomakeTheme();
-  const inputsParameters = outputs.filter(
+  const inputsParameters = outputs?.filter(
     (parameter) =>
       parameter.propertyType === RuleType.PARAMETER &&
       parameter.htmlElementType === HtmlElementType.TEXT
   );
-  const outputsParameters = outputs.filter(
+  const outputsParameters = outputs?.filter(
     (parameter) =>
       parameter.propertyType === RuleType.OUTPUT &&
       parameter.htmlElementType === HtmlElementType.TEXT
   );
-  const imageOutputs = outputs.filter(
+  const imageOutputs = outputs?.filter(
     (parameter) =>
       parameter.propertyType === RuleType.OUTPUT &&
       parameter.htmlElementType === HtmlElementType.IMAGE
@@ -540,7 +540,7 @@ const ActionContainerComponent = ({
           orientation={"vertical"}
           onClick={(e) => e.stopPropagation()}
         >
-          {inputsParameters.length > 0 && (
+          {inputsParameters?.length > 0 && (
             <>
               <Divider />
               <Stack
@@ -553,7 +553,7 @@ const ActionContainerComponent = ({
               </Stack>
             </>
           )}
-          {outputsParameters.length > 0 && source === EWorkSource.INTERNAL && (
+          {outputsParameters?.length > 0 && source === EWorkSource.INTERNAL && (
             <>
               <Divider />
               <Stack
