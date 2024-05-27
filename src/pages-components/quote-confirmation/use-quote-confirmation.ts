@@ -29,8 +29,6 @@ const useQuoteConfirmation = () => {
         await getDocumentByIdApi(callApi, callBack, { id: router?.query?.Id })
     }
 
- 
-
     const calculateSelectedItems = async (quote) => {
         const documentItemIds = quote?.documentItems?.filter(x => x.isChecked)?.map(x => x.id);
         const callBack = (res) => {

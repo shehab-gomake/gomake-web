@@ -88,7 +88,7 @@ const BusinessNewWidget = ({
           onChangeTextField={checkWhatRenderArray}
         />
         {
-          documentType === DOCUMENT_TYPE.quote && <span style={classes.plusStyle} onClick={() => setOpenCustomerModal(true)}>+</span>
+          ( !isQuoteConfirmation && documentType === DOCUMENT_TYPE.quote) && <span style={classes.plusStyle} onClick={() => setOpenCustomerModal(true)}>+</span>
         }
 
         {!isReceipt && <InputUpdatedValues
