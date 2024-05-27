@@ -44,8 +44,8 @@ const useCustomer = (permissionEnumValue?: Permissions, allowAnonymous?: boolean
             const userPermissions = [...user.permissions];
             user.permissions = null;
             if (user?.isFirstLogin) {
-                setStartGuid(true);
-                localStorage.setItem("isHover", "true");
+                // setStartGuid(true);
+                // localStorage.setItem("isHover", "true");
             }
             setUser({...user, type: "user"});
             setUserType({type: "user"});

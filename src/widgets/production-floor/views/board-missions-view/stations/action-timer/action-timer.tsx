@@ -1,18 +1,18 @@
 import Stack from "@mui/material/Stack";
 import {useCallback, useEffect, useState} from "react";
 import {IBoardMissionsStationTimer} from "@/widgets/production-floor/views/board-missions-view/stations/interface";
-import {IconButton} from "@mui/material";
+import {CircularProgress, IconButton} from "@mui/material";
 import PlayCircleIcon from '@mui/icons-material/PlayCircle';
 import PauseCircleIcon from '@mui/icons-material/PauseCircle';
 import {FONT_FAMILY} from "@/utils/font-family";
 
 interface IProps extends IBoardMissionsStationTimer{
-    onToggle: () => void
+    onToggle: () => void;
+    loading: boolean;
 }
-const ActionTimer = ({isTimerRunning, totalRunningTime, onToggle}: IProps) => {
+const ActionTimer = ({isTimerRunning, totalRunningTime, onToggle, loading}: IProps) => {
     const [seconds, setSeconds] = useState<number>(0);
     const [isActive, setIsActive] = useState(false);
-
     useEffect(() => {
         let interval = null;
 
@@ -55,7 +55,7 @@ const ActionTimer = ({isTimerRunning, totalRunningTime, onToggle}: IProps) => {
                 onToggle();
                 }}>
                 {
-                    isActive ? <PauseCircleIcon style={{color: '#43459D'}}/> : <PlayCircleIcon style={{color: '#43459D'}}/>
+                    loading ? <CircularProgress size={15}/> : isActive ? <PauseCircleIcon style={{color: '#43459D'}}/> : <PlayCircleIcon style={{color: '#43459D'}}/>
                 }
             </IconButton>
         </Stack>

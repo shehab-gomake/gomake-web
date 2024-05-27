@@ -7,6 +7,8 @@ import { HeaderWidget } from "@/widgets/header";
 import { navStatusState } from "@/store/nav-status";
 import { hoverStatusState } from "@/store";
 import { LAYOUT_DEFAULT_GAP } from "@/utils/layout-config";
+import {GoMakeModal} from "@/components";
+import {useHtmlTour} from "@/layouts/customer-auth-layout/use-html-tour";
 
 const CustomerAuthLayout = ({
     children,
@@ -23,7 +25,7 @@ const CustomerAuthLayout = ({
     });
     const setNavStatus = useSetRecoilState(navStatusState);
     const isHover = useRecoilValue(hoverStatusState);
-
+    const {htmlTour, openModal, onCloseModal} = useHtmlTour();
     return (
         disableHeaderSideMenu ?
             <>
@@ -46,6 +48,12 @@ const CustomerAuthLayout = ({
                         </div>
                     }
                 </div>
+                <GoMakeModal insideStyle={{height: 'fit-content'}} openModal={openModal} onClose={onCloseModal} >
+                    <div
+                        dangerouslySetInnerHTML={{ __html: htmlTour}}
+                        style={{padding: '10px' }}
+                    />
+                </GoMakeModal>
             </div>
     );
 };

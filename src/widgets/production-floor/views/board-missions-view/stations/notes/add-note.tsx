@@ -1,4 +1,4 @@
-import {Stack} from "@mui/material";
+import {CircularProgress, Stack} from "@mui/material";
 import {GoMakeModal} from "@/components";
 import {Textarea} from "@mui/joy";
 import {FONT_FAMILY} from "@/utils/font-family";
@@ -13,7 +13,7 @@ interface IProps {
 }
 
 const BoardMissionsAddNote = ({openModal, onClose}: IProps) => {
-    const {newNote, setNewNote, handleAddNote} = useBoardMissionsNotes(onClose);
+    const {newNote, setNewNote, handleAddNote, addingNote} = useBoardMissionsNotes(onClose);
     return (
         <GoMakeModal style={{zIndex: 999999}} insideStyle={{width: '400px', height: '350px'}} openModal={openModal}
                      onClose={onClose} modalTitle={'add your note here'}>
@@ -22,7 +22,7 @@ const BoardMissionsAddNote = ({openModal, onClose}: IProps) => {
                           placeholder="Fill your note here..." value={newNote} onChange={(e) => setNewNote(e.target.value)}/>
                 <Stack gap={'12px'} direction={'row'} justifyContent={'space-between'} alignItems={'center'}>
                     <PrimaryButton onClick={onClose} variant={'outlined'}>cancel</PrimaryButton>
-                    <PrimaryButton variant={'contained'} onClick={handleAddNote}>add note</PrimaryButton>
+                    <PrimaryButton disabled={addingNote} endIcon={addingNote ? <CircularProgress size={20}/> : undefined} variant={'contained'} onClick={handleAddNote}>add note</PrimaryButton>
                 </Stack>
             </Stack>
         </GoMakeModal>
