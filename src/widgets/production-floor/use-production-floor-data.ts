@@ -18,7 +18,7 @@ const useProductionFloorData = () => {
     const [, setTags] = useRecoilState(tagsState);
     const [, setUserGroups] = useRecoilState(userProductionFloorGroupsState);
     const [, setPath] = useRecoilState(productionFloorPathsState);
-    const {alertSuccessGetData, alertFaultGetData} = useSnackBar();
+    const {alertSuccessGetData, alertFaultGetData, alertFaultUpdate, alertSuccessUpdate} = useSnackBar();
 
     const getData = async (connectionId?: string) => {
         const callBack = (res) => {
@@ -54,6 +54,9 @@ const useProductionFloorData = () => {
         }))
         const callBack = (res) => {
             if (res.success) {
+                alertSuccessUpdate();
+            } else {
+                alertFaultUpdate();
             }
         }
         await updateBoardsMissionsStatusApi(callApi, callBack, {boardsIds: boardsIds?.map(b => ({BoardMissionId: b.id, productType: b.productType})), statusId})

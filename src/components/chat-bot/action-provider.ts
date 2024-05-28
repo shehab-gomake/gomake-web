@@ -1,3 +1,5 @@
+import {createCustomMessage} from "react-chatbot-kit";
+
 class ActionProvider {
     createChatBotMessage
     setState
@@ -7,10 +9,24 @@ class ActionProvider {
     }
 
     greet(msg: string) {
-        const greetingMessage = this.createChatBotMessage(msg);
+        const greetingMessage = createCustomMessage(msg, 'bot', {loading: false});
         this.setState(prev => ({
             ...prev,
             messages: [...prev.messages, greetingMessage],
+        }));
+    }
+    addLoader() {
+        const greetingMessage = createCustomMessage('', 'loader', {});
+        this.setState(prev => ({
+            ...prev,
+            messages: [...prev.messages, greetingMessage],
+        }));
+    }
+
+    removeLoader() {
+        this.setState(prev => ({
+            ...prev,
+            messages: prev.messages.slice(0, -1),
         }));
     }
 }

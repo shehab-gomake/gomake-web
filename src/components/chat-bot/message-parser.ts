@@ -10,7 +10,7 @@ class MessageParser {
 
     async parse(message) {
         try {
-
+            this.actionProvider.addLoader();
             const response = await fetch(config.api_server + '/v1/erp-service/chat-bot/send-msg', {
                 method: 'POST',
                 headers: {
@@ -21,12 +21,11 @@ class MessageParser {
             });
 
             const result = await response.json();
-            const lowerCaseMessage = message.toLowerCase();
-            console.log(result);
             if(result.data.data.isFinished){
                 window.location.href = `products/create?clientTypeId=${result.data.data.clientTypeId}&customerId=${result.data.data.customserId}&productId=${result.data.data.productId}&isFromChatbot=true`;
                 return;
             }
+            this.actionProvider.removeLoader();
             this.actionProvider.greet(result.data.data.response);
 
         } catch (e) {
