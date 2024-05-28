@@ -108,7 +108,7 @@ const BusinessNewWidget = ({
           onInputChange={(v) => setTaxConfirmationNumber(v)}
         />}
         <InputUpdatedValues
-          value={isQuoteConfirmation ? `${selectConfirmBusiness?.code}` : `${quoteStateValue?.client?.code}`}
+          value={isQuoteConfirmation ? `${quoteConfirm?.client?.code}` : `${quoteStateValue?.client?.code}`}
           label={t("sales.quote.businessCode")}
           onBlur={onBlurBusinessCode}
           setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdateBusinessCode}
