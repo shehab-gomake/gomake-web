@@ -8,6 +8,7 @@ import { GoMakeDeleteModal } from "@/components";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import { QuoteStatuses } from "@/widgets/quote-new/total-price-and-vat/enums";
 import { OtherReasonModal } from "@/widgets/quote-new/total-price-and-vat/other-reason-modal";
+import { QUOTE_STATUSES } from "@/pages-components/quotes/enums";
 
 const ButtonsConfirmContainer = () => {
   const { classes } = useStyle();
@@ -29,9 +30,9 @@ const ButtonsConfirmContainer = () => {
     onClickApprove,
     quoteConfirm
   } = useButtonsConfirmContainer(); 
-
+  
   return (
-    !quoteConfirm?.isConfirmed && <div style={classes.mainContainer}>
+    (!quoteConfirm?.isConfirmed && quoteConfirm?.documentStatus !== QUOTE_STATUSES.Canceled) && <div style={classes.mainContainer}>
       <SecondaryButton
         variant="contained"
         style={classes.btnStyle}
