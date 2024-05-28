@@ -11,7 +11,8 @@ import { useQuoteConfirmation } from "@/pages-components/quote-confirmation/use-
 import { useRouter } from "next/router";
 import { MoreMenuWidget } from "../more-circle";
 import { useRecoilValue } from "recoil";
-import { quoteItemState } from "@/store";
+import { quoteConfirmationState, quoteItemState } from "@/store";
+import { QUOTE_STATUSES } from "@/pages-components/quotes/enums";
 
 const RowMappingWidget = ({
   item,
@@ -56,6 +57,7 @@ const RowMappingWidget = ({
   const { handleItemCheck } = useQuoteConfirmation();
   const canUpdate = router.query.isNewCreation ? true : item?.isEditable;
   const quoteItemValue = useRecoilValue<any>(quoteItemState);
+  const quoteConfirm = useRecoilValue<any>(quoteConfirmationState);
 
   return (
     <TableRow
@@ -71,7 +73,7 @@ const RowMappingWidget = ({
           borderBottom: item?.childsDocumentItems && "none",
         }}
       >
-        {isQuoteConfirmation ?
+        {(isQuoteConfirmation &&  (!quoteConfirm?.isConfirmed && quoteConfirm?.documentStatus !== QUOTE_STATUSES.Canceled)) ?
           <div style={classes.checkBoxContainer} >
             <Checkbox
               icon={<CheckboxIcon />}

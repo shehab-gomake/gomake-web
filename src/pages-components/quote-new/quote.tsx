@@ -20,7 +20,7 @@ import { _renderQuoteStatus } from "@/utils/constants";
 import { IconButton } from "@mui/material";
 import { SettingQuoteMenu } from "@/widgets/quote-new/setting-quote-menu";
 import { AddDeliveryModal } from "@/widgets/quote-new/modals-widgets/add-delivery-modal/add-delivery-modal";
-import { DOCUMENT_TYPE } from "../quotes/enums";
+import { DOCUMENT_TYPE, QUOTE_STATUSES } from "../quotes/enums";
 import { ButtonsConfirmContainer } from "@/widgets/quote-new/buttons-cofirm-container";
 import { CopyFromOrderModal } from "@/widgets/quote-new/modals-widgets/copy-from-order-modal/copy-from-order-modal";
 import { ReceiptsTable } from "@/widgets/quote-new/receipts-table";
@@ -430,7 +430,7 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
           }
         </div>
       )}
-      {(isQuoteConfirmation && !quoteConfirm?.isConfirmed) && <ButtonsConfirmContainer />}
+      {(isQuoteConfirmation && (!quoteConfirm?.isConfirmed && quoteConfirm?.documentStatus !== QUOTE_STATUSES.Canceled)) && <ButtonsConfirmContainer />}
       <AddNewItemModal
         openModal={openAddNewItemModal}
         onClose={onCloseNewItem}
