@@ -59,7 +59,6 @@ const useButtonsConfirmContainer = () => {
         await updateDocumentCommentsConfirmationApi(callApi, callBack, { documentId: quoteConfirm?.id, comments: quoteComments })
     }
 
-
     const onClickApprove = async () => {
         const selectedItemIds = quoteConfirm?.documentItems?.filter(x => x.isChecked)?.map(x => x.id);
 
@@ -110,6 +109,7 @@ const useButtonsConfirmContainer = () => {
             if (res?.success) {
                 onClickCloseOtherModal();
                 alertSuccessUpdate();
+                getQuoteConfirmation();
             } else {
                 alertFaultUpdate();
             }

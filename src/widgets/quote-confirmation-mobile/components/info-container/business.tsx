@@ -47,7 +47,7 @@ const BusinessWidget = () => {
                     speicalStyle={{ padding: "0px" }}
                 />
                 <InputUpdatedValues
-                    value={`${selectBusiness?.code}`}
+                    value={`${quoteConfirm?.client?.code}`}
                     label={t("sales.quote.businessCode")}
                     setIsUpdate={setIsConfirmation}
                     inputMainContainerStyle={classes.inputMainContainer}

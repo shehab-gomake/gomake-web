@@ -3,13 +3,15 @@ import { DOCUMENT_TYPE, QUOTE_STATUSES } from "../enums";
 import { LoggerIcon } from "@/pages-components/admin/home/widgets/more-circle/icons/logger";
 import { EditingIcon } from "./icons/editing";
 import { PDFIcon } from "./icons/pdf";
-import { TickCloceIcon, TickIcon, TickMoveIcon } from "@/icons";
+import { TickCloseIcon, TickIcon, TickMoveIcon } from "@/icons";
 import { DuplicateIcon } from "@/components/icons/icons";
 import { useRecoilValue } from "recoil";
 import { userQouteState } from "@/store";
 import { useState } from "react";
 import { downloadPdf } from "@/utils/helpers";
 import { getOrderBoardMissionPDF } from "@/services/api-service/generic-doc/documents-api";
+import { JobsIcon } from "./icons/jobs";
+import { LockIcon } from "./icons/lock";
 
 const useMoreCircle = () => {
   const { user } = useCustomer();
@@ -42,7 +44,7 @@ const useMoreCircle = () => {
 
     return [
       {
-        condition: documentType === DOCUMENT_TYPE.quote && ((quote?.documentStatus === QUOTE_STATUSES.Create && userQuote) || quote?.documentStatus === QUOTE_STATUSES.Open),
+        condition: documentType === DOCUMENT_TYPE.quote && ((quote?.documentStatus === QUOTE_STATUSES.Create && userQuote) || quote?.documentStatus === QUOTE_STATUSES.Open || quote?.documentStatus === QUOTE_STATUSES.Approved),
         onClick: () => {
           const isCreateStatus = quote?.documentStatus === QUOTE_STATUSES.Create;
           isCreateStatus ? navigate(`/quote`) : onClickOpenModal(quote);
@@ -69,6 +71,12 @@ const useMoreCircle = () => {
         name: t("sales.quote.pdf")
       },
       {
+        condition: documentType === DOCUMENT_TYPE.order && quote?.isCanClose && quote?.statusTitleText !== "Order.Canceled",
+        onClick: () => onClickGetOrderBoardMissionPDF(quote),
+        icon: <PDFIcon />,
+        name: t("sales.quote.boardMissionsPdf")
+      },
+      {
         condition: documentType === DOCUMENT_TYPE.order || documentType === DOCUMENT_TYPE.quote,
         onClick: () => onClickDuplicate(quote?.id),
         icon: <DuplicateIcon />,
@@ -83,7 +91,8 @@ const useMoreCircle = () => {
       {
         condition: documentType === DOCUMENT_TYPE.order && quote?.isCanClose,
         onClick: () => navigate(`/board-missions?orderNumber=${quote?.number}`),
-        icon: <TickMoveIcon />,
+        icon: <JobsIcon />,
+        // icon: <TickMoveIcon />,
         name: t("sales.quote.jobs")
       },
       // {
@@ -101,14 +110,8 @@ const useMoreCircle = () => {
       {
         condition: documentType === DOCUMENT_TYPE.order && quote?.isCanClose && quote?.statusTitleText !== "Order.Canceled",
         onClick: () => navigate(`/purchaseOrders?orderNumber=${quote?.number}`),
-        icon: <TickIcon />,
+        icon: <TickMoveIcon />,
         name: t("sales.quote.purchaseOrders")
-      },
-      {
-        condition: documentType === DOCUMENT_TYPE.order && quote?.isCanClose && quote?.statusTitleText !== "Order.Canceled",
-        onClick: () => onClickGetOrderBoardMissionPDF(quote),
-        icon: <TickIcon />,
-        name: t("sales.quote.boardMissionsPdf")
       },
       {
         condition: documentType === DOCUMENT_TYPE.deliveryNote && quote?.isCanClose,
@@ -143,13 +146,14 @@ const useMoreCircle = () => {
       {
         condition: documentType === DOCUMENT_TYPE.order && quote?.isCanClose && quote?.statusTitleText !== "Order.Canceled",
         onClick: () => CloseDocument(quote),
-        icon: <TickCloceIcon />,
-        name: t("sales.quote.closed")
+        //icon: <TickIcon />,
+        icon: <LockIcon />,
+        name: t("sales.quote.close")
       },
       {
         condition: documentType === DOCUMENT_TYPE.order && quote?.isCanClose && quote?.statusTitleText !== "Order.Canceled",
         onClick: () => onClickOpenIrrelevantModal(quote),
-        icon: <TickCloceIcon />,
+        icon: <TickCloseIcon />,
         name: t("sales.quote.cancel")
       },
 
