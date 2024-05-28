@@ -141,7 +141,7 @@ const useBoardMissions = () => {
             GetDateFormat(mission?.createdDate),
             GetDateFormat(mission?.dueDate),
             mission?.clientName,
-            mission?.productType ? `${mission?.number} / ${mission?.orderNumber} / ${mission?.productType}` : mission?.number,
+            mission?.productType ? `${mission?.number} / ${mission?.productType}` : mission?.number,
             mission?.orderNumber,
             mission?.outSourceType === null ? EWorkSource[0] : EWorkSource[mission?.outSourceType],
             mission?.quantity,
@@ -150,7 +150,7 @@ const useBoardMissions = () => {
             mission?.jobName,
             mission?.numberOfBoardMissions,
             mission?.productName,
-            `${mission?.boardMissionStatus?.name} / ${mission?.station?.actionName}`,
+            mission?.isReady ? t('boardMissions.done') : `${mission?.boardMissionStatus?.name} / ${mission?.station?.actionName}`,
             <MoreMenuWidget
               mission={mission}
               onClickDuplicate={onOpenDuplicateModal}
