@@ -90,6 +90,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [activeSectionRequiredParameters, setActiveSectionRequiredParameters] = useState([]);
   const [docmentItemByEdit, setDocmentItemByEdit] = useState<any>({})
   const [productItemValueByEdit, setProductItemValueByEdit] = useRecoilState<any>(productItemValueByEditState)
+  useEffect(() => {
+    setProductItemValueByEdit({})
+  }, [])
   const [GalleryModalOpen, setGalleryModalOpen] = useState(false);
   const [multiParameterModal, setMultiParameterModal] = useState(false);
   const [makeShapeOpen, setMakeShapeOpen] = useState(false);

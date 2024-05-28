@@ -17,24 +17,27 @@ const useOutsourceSupplier = () => {
     const router=useRouter()
     const [suppliers, setSuppliers] = useRecoilState(outsourceSuppliersState);
     const productItemValueByEdit = useRecoilValue<any>(productItemValueByEditState)
-
     const currentProductItemValue =useRecoilValue<any>(currentProductItemValueState);
     const productItemValueDraftId = useRecoilValue<string>(currentProductItemValueDraftId);
     const updateSupplierInfo=()=>{
-        const { supplierId, outSourceCost, outSourceProfits } = productItemValueByEdit;
-        const updatedSuppliers = suppliers.map(supplier => {
-          if (supplier.supplierId === supplierId) {
-            return {
-              ...supplier,
-              cost: outSourceCost,
-              finalPrice: outSourceCost + outSourceCost*outSourceProfits / 100,
-              profit: outSourceProfits,
-            };
-          }
-          return supplier;
-        });
-    
-        setSuppliers(updatedSuppliers);
+        if(productItemValueByEdit?.sourceType){
+            const { supplierId, outSourceCost, outSourceProfits,outSourceTotalRealProductionTime } = productItemValueByEdit;
+            const updatedSuppliers = suppliers.map(supplier => {
+              if (supplier.supplierId === supplierId) {
+                return {
+                  ...supplier,
+                  cost: outSourceCost,
+                  finalPrice: outSourceCost + outSourceCost*outSourceProfits / 100,
+                  profit: outSourceProfits,
+                  workHours:outSourceTotalRealProductionTime
+                };
+              }
+              return supplier;
+            });
+        
+            setSuppliers(updatedSuppliers);
+        }
+        
     }
     useEffect(() => {
         if(productItemValueByEdit?.sourceType){
