@@ -19,7 +19,7 @@ export default function TermsPDF() {
     setNumPages(numPages);
   }
   return (
-    <div style={pdfStyle.container}>
+    <div style={{ ...pdfStyle.container }}>
       {/* <p>
         Page {pageNumber} of {numPages}
       </p> */}
@@ -35,6 +35,7 @@ export default function TermsPDF() {
             alignItems: "center",
             paddingBottom: "10px",
             width: "100%",
+
             // backgroundColor: "blue",
           }}
         >
@@ -42,7 +43,7 @@ export default function TermsPDF() {
             .map((x, i) => i + 1)
             .map((page) => {
               return (
-                <div style={{ paddingBottom: "50px" }}>
+                <div key={page} style={{ paddingBottom: "50px" }}>
                   <Page pageNumber={page} width={window.innerWidth * 0.5} renderTextLayer={false} renderAnnotationLayer={false} />
                 </div>
               );

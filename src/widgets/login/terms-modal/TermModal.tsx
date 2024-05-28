@@ -50,6 +50,7 @@ const TermModal = ({ open, onClose, setIsTermsAccepted }) => {
     <GoMakeModal openModal={open} modalTitle={t("Terms and Conditions")} onClose={onClose} insideStyle={classes.insideStyle}>
       <Stack display={"flex"} direction={"column"} justifyContent={"space-between"} height={"100%"}>
         <div
+          className={"show-scrollbar"}
           ref={contentRef}
           onScroll={handleScroll}
           style={{
