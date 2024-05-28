@@ -22,7 +22,7 @@ const filtersInputs = () => {
         isValid: true
     } as IInput
 
-    const tagsList = useMemo(() => tags?.map(tag => ({id: tag, name: tag, checked: filters.automatedTags.includes(tag)})), [filters, tags]);
+    const tagsList = useMemo(() => tags?.map(tag => ({id: tag, name: tag, checked: filters?.automatedTags?.includes(tag)})), [filters, tags]);
     return {
         tagsInput,
         tagsList
