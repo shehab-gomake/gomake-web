@@ -79,11 +79,9 @@ const CustomerCardWidget = ({
   const { editCustomer } = useEditCustomer();
   const { updateUserPassword } = useUserProfile();
   const { t } = useTranslation();
-  const {customerTableHeaders, customerTableRows, handleShowTable, handleHideTable, showTable } = useCustomerCard({t});
-
+  const {customerTableHeaders, customerTableRows, handleShowTable, handleHideTable, showTable } = useCustomerCard({t , setCustomer , onClose});
   const { alertRequiredFields, alertFault } = useSnackBar();
-  const [resetPassModal, setResetPassModalModal] =
-    useRecoilState<boolean>(resetPassModalState);
+  const [resetPassModal, setResetPassModalModal] = useRecoilState<boolean>(resetPassModalState);
   const [gomakeUser, setGomakeUser] = useRecoilState<any>(gomakeUserState);
   const { classes } = useStyle();
   const [selectedTab, setSelectedTab] = useState(0);

@@ -101,8 +101,6 @@ const useQuoteWidget = ({ documentType = 0 }: any) => {
   const handleClicktoSelectedCustomer = useCallback(
     async (clientIdifExist, value) => {
       setSelectedClient(value);
-      console.log("heere we are" , clientIdifExist , " " , value )
-
       const clientType = clientTypesValue.find(
         (c) => c.id == value?.clientTypeId
       );
