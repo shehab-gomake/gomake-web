@@ -12,17 +12,19 @@ import { useCompanyProfile } from "@/hooks/use-company-profile";
 import { currenciesState } from "@/widgets/materials-widget/state";
 import { useTranslation } from "react-i18next";
 
-const SettingQuoteMenu = ({ handleClose, open, anchorEl, onBlurExchangeRate, setIsUpdateExchangeRate, isUpdateExchangeRate, onBlurCurrency, isUpdateCurrency, setIsUpdateCurrency, updateCurrency, onClickRefresh, sortDocumentItems, updateIsShowDetails }) => {
+const SettingQuoteMenu = ({ handleClose, open, anchorEl, onBlurExchangeRate, setIsUpdateExchangeRate, isUpdateExchangeRate, onBlurCurrency, isUpdateCurrency, setIsUpdateCurrency, updateCurrency, onClickRefresh, sortDocumentItems, updateIsShowDetails, updateIsShowPrices }) => {
   const { clasess } = useStyle();
   const { t } = useTranslation();
   const quoteStateValue = useRecoilValue<any>(quoteItemState);
   const { getCurrenciesApi } = useCompanyProfile();
   const [detailsView, setdetailsView] = useState(quoteStateValue?.isShowDetails)
+  const [showPrices, setshowPrices] = useState(quoteStateValue?.isShowPrice)
   const currencies = useRecoilValue<{ label: string, value: string }[]>(currenciesState);
   const matchingCurrency = currencies.find(currency => currency.value === quoteStateValue?.currency)?.label;
   useEffect(() => {
     setdetailsView(quoteStateValue?.isShowDetails)
-  }, [quoteStateValue?.isShowDetails])
+    setshowPrices(quoteStateValue?.isShowPrice)
+  }, [quoteStateValue?.isShowDetails, quoteStateValue?.isShowPrice])
   const [exchangeRate, setExchangeRate] =
     useState(quoteStateValue?.exchangeRate || "-");
   const [anchorElTableSorting, setAnchorElTableSorting] =
@@ -45,7 +47,11 @@ const SettingQuoteMenu = ({ handleClose, open, anchorEl, onBlurExchangeRate, set
   const handleSwitchCheck = (event: ChangeEvent<HTMLInputElement>) => {
     setdetailsView(event.target.checked)
     updateIsShowDetails()
+  };
 
+  const handleSwitchCheckForShowPrice = (event: ChangeEvent<HTMLInputElement>) => {
+    setshowPrices(event.target.checked)
+    updateIsShowPrices()
   };
   return (
     <>
@@ -61,17 +67,22 @@ const SettingQuoteMenu = ({ handleClose, open, anchorEl, onBlurExchangeRate, set
             className="table-sorting"
             style={clasess.menuTabStyle}
           >{t("sales.quote.tableSortingBy")}</div>
-          {/* <Divider />
-          <div style={clasess.menuRowStyle}>
-            <div style={clasess.menuTabStyle}>{t("sales.quote.autoDiscount")}</div>
-            <SecondSwitch />
-          </div> */}
           <Divider />
+
           <div style={clasess.menuRowStyle}>
             <div style={clasess.menuTabStyle}>{t("sales.quote.details")}</div>
             <SecondSwitch
               checked={detailsView}
               onChange={handleSwitchCheck}
+            />
+          </div>
+          <Divider />
+
+          <div style={clasess.menuRowStyle}>
+            <div style={clasess.menuTabStyle}>{t("sales.quote.showPrices")}</div>
+            <SecondSwitch
+              checked={showPrices}
+              onChange={handleSwitchCheckForShowPrice}
             />
           </div>
           {quoteStateValue?.isForeignCurrency && <>

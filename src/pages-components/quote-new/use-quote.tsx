@@ -19,7 +19,7 @@ import {
   quoteItemState,
 } from "@/store";
 import { useQuoteGetData } from "./use-quote-get-data";
-import { addDeliveryApi, addDocumentContactApi, calculateDocumentApi, calculateDocumentItemApi, cancelDocumentApi, changeDocumentClientApi, deleteDocumentAddressApi, deleteDocumentContactApi, deleteDocumentItemApi, duplicateWithAnotherQuantityApi, getDocumentApi, getWhatsAppMessageApi, refreshExchangeRateApi, saveDocumentApi, sendDocumentToClientApi, sortDocumentItemsApi, updateAgentApi, updateDocumentAddressApi, updateDocumentContactApi, updateDocumentCurrencyApi, updateDueDateApi, updateExchangeRateApi, updateIsShowDetailsApi, updatePurchaseNumberApi } from "@/services/api-service/generic-doc/documents-api";
+import { addDeliveryApi, addDocumentContactApi, calculateDocumentApi, calculateDocumentItemApi, cancelDocumentApi, changeDocumentClientApi, deleteDocumentAddressApi, deleteDocumentContactApi, deleteDocumentItemApi, duplicateWithAnotherQuantityApi, getDocumentApi, getWhatsAppMessageApi, refreshExchangeRateApi, saveDocumentApi, sendDocumentToClientApi, sortDocumentItemsApi, updateAgentApi, updateDocuementItemSelectApi, updateDocumentAddressApi, updateDocumentContactApi, updateDocumentCurrencyApi, updateDueDateApi, updateExchangeRateApi, updateIsShowDetailsApi, updateIsShowPricesApi, updatePurchaseNumberApi } from "@/services/api-service/generic-doc/documents-api";
 import { DOCUMENT_TYPE } from "../quotes/enums";
 import { useRouter } from "next/router";
 import { getAllCreditTransactionsApi, getClientPaymentItemsApi, getReceiptByIdApi } from "@/services/api-service/generic-doc/receipts-api";
@@ -1120,7 +1120,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     const foundConfirmItem = customersListValue.find(
       (item: any) => item.id === quoteConfirm?.customerID
     );
-    
+
     setSelectConfirmBusiness(foundConfirmItem) // for quote confirmation
   }, [quoteItemValue, customersListValue]);
 
@@ -1250,6 +1250,24 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
       }
     })
   }
+
+  const updateIsShowPrices = async () => {
+
+    const callBack = (res) => {
+      if (res?.success) {
+        alertSuccessUpdate();
+        getQuote();
+      } else {
+        alertFaultUpdate();
+      }
+    }
+    await updateIsShowPricesApi(callApi, callBack, {
+      documentType: docType,
+      document: {
+        documentId: quoteItemValue?.id,
+      }
+    })
+  }
   const [whatsappMassage, setWhatssAppMassage] = useState("")
   const getWhatsAppMessage = async () => {
     if (quoteItemValue?.id) {
@@ -1266,8 +1284,27 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
 
       });
     }
-
   };
+
+  const onChangeSelectedItemRowForQoute = async (isSelected: boolean, itemId: string) => {
+    const callBack = (res) => {
+      if (res?.success) {
+        alertSuccessUpdate();
+        getQuote();
+      } else {
+        alertFaultUpdate();
+      }
+    }
+    await updateDocuementItemSelectApi(callApi, callBack, {
+      documentType: docType,
+      item: {
+        documentItemId: itemId,
+        isSelected,
+      }
+    })
+  }
+
+
   return {
     dateRef,
     activeClickAway,
@@ -1414,11 +1451,13 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     onClickCloseWatssAppModal,
     sortDocumentItems,
     updateIsShowDetails,
+    updateIsShowPrices,
     getWhatsAppMessage,
     whatsappMassage,
     openAddNewContactModal,
     onCloseNewContact,
-    onOpenNewContact
+    onOpenNewContact,
+    onChangeSelectedItemRowForQoute
   };
 };
 
