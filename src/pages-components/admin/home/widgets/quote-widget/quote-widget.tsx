@@ -21,7 +21,6 @@ import Stack from "@mui/material/Stack";
 import { selectedClientState } from "@/pages-components/quotes/states";
 import { useTour } from "@reactour/tour";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
-import { PrimaryButton } from "@/components/button/primary-button";
 import { CustomerCardWidget } from "@/widgets/customer-card-modal/customer-card";
 import { isValidCustomer } from "@/utils/helpers";
 import { CUSTOMER_ACTIONS } from "@/pages/customers/enums";
@@ -86,10 +85,9 @@ const QuoteWidget = ({ isAdmin = true }) => {
   }, [userQuote, clientTypesValue]);
 
 
-
-
   return (
     <div data-tour="quote-widget" style={classes.mainContainer}>
+      <div style={classes.customerSectionStyle}>
       <div style={classes.autoComplateRowContainer}>
         <div data-tour="select-customer" style={{ width: "65%" }}>
           <GoMakeAutoComplate
@@ -126,8 +124,8 @@ const QuoteWidget = ({ isAdmin = true }) => {
           />
         </div>
       </div>
-      <PrimaryButton onClick={onClickAddCustomer} >Add Customer / Search</PrimaryButton>
-
+      <button style={classes.autoButtonStyle} onClick={onClickAddCustomer} >{t("customers.buttons.AddOrSearch")}</button>
+      </div>
       <div style={classes.autoComplateRowContainer}>
         <div data-tour="select-product" style={{ width: "65%" }}>
           <GoMakeAutoComplate

@@ -34,6 +34,7 @@ import { emailRegex } from "@/utils/regex";
 import { SecondaryButton } from "@/components/button/secondary-button";
 import { PrimaryTable } from "@/components/tables/primary-table";
 import { useCustomerCard } from "./use-customer-card";
+import { TableFilter } from "./components/table-filter";
 
 interface IProps {
   isValidCustomer?: (
@@ -55,7 +56,7 @@ interface IProps {
   showUpdateButton?: boolean;
   showAddButton?: boolean;
   isgetAllCustomers?: boolean;
-  isFromHomePage?:boolean;
+  isFromHomePage?: boolean;
 }
 
 const CustomerCardWidget = ({
@@ -72,14 +73,14 @@ const CustomerCardWidget = ({
   showUpdateButton,
   showAddButton,
   isgetAllCustomers = true,
-  isFromHomePage=false,
+  isFromHomePage = false,
 }: IProps) => {
   const [open, setOpen] = useState(false);
   const { addNewCustomer } = useAddCustomer();
   const { editCustomer } = useEditCustomer();
   const { updateUserPassword } = useUserProfile();
   const { t } = useTranslation();
-  const {customerTableHeaders, customerTableRows, handleShowTable, handleHideTable, showTable } = useCustomerCard({t , setCustomer , onClose});
+  const { customerTableHeaders, customerTableRows, handleShowTable, handleHideTable, showTable, setCustomerTableRows } = useCustomerCard({ t, setCustomer, onClose });
   const { alertRequiredFields, alertFault } = useSnackBar();
   const [resetPassModal, setResetPassModalModal] = useRecoilState<boolean>(resetPassModalState);
   const [gomakeUser, setGomakeUser] = useRecoilState<any>(gomakeUserState);
@@ -143,6 +144,7 @@ const CustomerCardWidget = ({
     onClose();
     setCustomer(null);
     handleHideTable();
+    setCustomerTableRows([]);
   };
 
   const handleTabChange = (event, newValue) => {
@@ -409,6 +411,11 @@ const CustomerCardWidget = ({
   const onClickOpenClientType = () => {
     setClientType(true);
   };
+
+  //need to change
+  const onShowInActiveChange = (value: boolean) => {
+    handleShowTable(value)
+  }
 
   return (
     <GoMakeModal
@@ -716,24 +723,20 @@ const CustomerCardWidget = ({
             </Stack>
           )
         }
-
-{/* ///////////////////////////////////////////////////////////////////////////// */}
-
-
-
-        {(isFromHomePage && showTable) && <PrimaryTable
-          stickyHeader={true}
-          maxHeight={210}
-          rows={customerTableRows}
-          headers={customerTableHeaders}
-        />}
-
-
-
-{/* /////////////////////////////////////////////////////////////////////////// */}
+        {(isFromHomePage && showTable) &&
+          <Stack>
+            <TableFilter onChangeShowInActive={onShowInActiveChange} />
+            <PrimaryTable
+              stickyHeader={true}
+              maxHeight={210}
+              rows={customerTableRows}
+              headers={customerTableHeaders}
+            /></Stack>
+        }
         <div style={{ display: "flex", justifyContent: "flex-end" }}>
           <div style={classes.footerStyle}>
-            {isFromHomePage ? <SecondaryButton onClick={handleShowTable} style={classes.autoButtonStyle}>Search</SecondaryButton>
+            {isFromHomePage && !showTable ?
+              <SecondaryButton variant="contained" onClick={() => handleShowTable(false)} style={{ width: "fit-content" }}>{t("customers.buttons.search")}</SecondaryButton>
               :
               showAddButton && (
                 <button
@@ -746,7 +749,6 @@ const CustomerCardWidget = ({
                 </button>
               )
             }
-
             {showUpdateButton && (
               <button
                 style={classes.autoButtonStyle}

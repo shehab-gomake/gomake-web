@@ -1,4 +1,3 @@
-
 import { PrimaryButton } from "@/components/button/primary-button";
 import { useGomakeAxios } from "@/hooks/use-gomake-axios";
 import { useSnackBar } from "@/hooks/use-snack-bar";
@@ -11,7 +10,7 @@ import { getAndSetAllCustomers } from "@/services/hooks";
 
 const CLIENT_TYPE_CUSTOMER = "C";
 
-const useCustomerCard = ({t , setCustomer , onClose}) => {
+const useCustomerCard = ({ t, setCustomer, onClose }) => {
   const { callApi } = useGomakeAxios();
   const { alertFaultGetData } = useSnackBar();
   const [showTable, setShowTable] = useState(false);
@@ -45,19 +44,22 @@ const useCustomerCard = ({t , setCustomer , onClose}) => {
     setCustomer(null);
   };
 
-  const handleShowTable = () => {
-    getAllSimilarCustomer();
-    setShowTable(true)
+  const handleShowTable = (justActiveCustomers) => {
+    getAllSimilarCustomer(justActiveCustomers);
+    setShowTable(true);
   };
 
   const handleHideTable = () => setShowTable(false);
 
   const renderOptions = () => customersListCreateQuote;
 
-  const getAllSimilarCustomer = async () => {
+
+  const getAllSimilarCustomer = async (justActiveCustomers) => {
     const handleResponse = (res) => {
       if (res?.success) {
-        const mapData = res.data?.data.map(mapCustomerData);
+        const mapData = res.data?.data
+          .filter(customer => !justActiveCustomers || customer.isActive)
+          .map(mapCustomerData);
         setCustomerTableRows(mapData);
       } else {
         alertFaultGetData();
@@ -71,6 +73,7 @@ const useCustomerCard = ({t , setCustomer , onClose}) => {
     });
   };
 
+
   const mapCustomerData = (customer) => {
     const { code, name, mail, phone, isActive } = customer;
     const statusText = isActive ? t("usersSettings.active") : t("usersSettings.inactive");
@@ -81,7 +84,7 @@ const useCustomerCard = ({t , setCustomer , onClose}) => {
       name,
       mail,
       phone,
-      <div  style={{ display: "inline-flex", ...FONT_FAMILY.Lexend(500, 14), color: statusColor }}>
+      <div style={{ display: "inline-flex", ...FONT_FAMILY.Lexend(500, 14), color: statusColor }}>
         {statusText}
       </div>,
       <PrimaryButton onClick={() => handleChooseCustomer(customer)} variant="outlined" style={{ width: "fit-content", height: "fit-content" }}>
@@ -103,6 +106,7 @@ const useCustomerCard = ({t , setCustomer , onClose}) => {
     handleShowTable,
     handleHideTable,
     showTable,
+    setCustomerTableRows
   };
 };
 

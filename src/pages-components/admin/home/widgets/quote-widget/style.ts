@@ -1,9 +1,13 @@
 import { useMemo } from "react";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { FONT_FAMILY } from "@/utils/font-family";
+import {adaptPaddingRight} from "@/utils/adapter";
+import { useTranslation } from "react-i18next";
 
 const useStyle = () => {
-  const { errorColor } = useGomakeTheme();
+  const { theme , errorColor , primaryColor } = useGomakeTheme();
+  const {t} = useTranslation();
+  const direction = t('direction');
   const classes = useMemo(() => {
     return {
       mainContainer: {
@@ -24,6 +28,13 @@ const useStyle = () => {
         boxShadow:
           "0 1px 0px 0 rgba(0, 0, 0, 0.08), 0 0px 5px 0 rgba(0, 0, 0, 0.08)",
         gap: 30,
+      },
+      customerSectionStyle:{
+        width: "100%",
+        gap: "10px",
+        display: "flex",
+        flexDirection: "column" as "column",
+        alignItems: "flex-start",
       },
       autoComplateRowContainer: {
         display: "flex",
@@ -60,8 +71,19 @@ const useStyle = () => {
         ...FONT_FAMILY.Lexend(500, 14),
         color: errorColor(500),
       },
+      autoButtonStyle: {
+        ...adaptPaddingRight(direction, 10),
+        background: "none",
+        color: primaryColor(500),
+        TextAlign: "center",
+        fontStyle: "normal",
+        lineHeight: "normal",
+        border: "none",
+        cursor: "pointer",
+        ...FONT_FAMILY.Lexend(500, 14),
+      },
     };
-  }, []);
+  }, [theme]);
   return {
     classes,
   };
