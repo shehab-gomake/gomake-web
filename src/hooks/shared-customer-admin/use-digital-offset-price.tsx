@@ -200,7 +200,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   useEffect(() => {
     if (calculationResult && calculationResult.productItemValue) {
       if (calculationResult.productItemValueDraftId === currentCalculationSessionId) {
-        debugger;
         setCurrentProductItemValueDraftId(calculationResult.productItemValueDraftId);
         let productTypes = new Set();
         const currentWorkFlows = cloneDeep(workFlows);
@@ -2184,7 +2183,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             });
           }
           else if (subSectionParameter.code === "DieKissCut") {
-            debugger
+            // debugger
             let unitWidth = dieCut.rowData.unitWidth.value;
             let unitLength = dieCut.rowData.unitLength.value;
             const dieCutSizesParametersArray = [];

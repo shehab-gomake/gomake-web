@@ -1,34 +1,38 @@
-import {useTranslation} from "react-i18next";
+import { useTranslation } from "react-i18next";
 import {
-    GoMakeAutoComplate,
-    GoMakeDeleteModal,
-    GomakePrimaryButton,
+  GoMakeAutoComplate,
+  GoMakeDeleteModal,
+  GomakePrimaryButton,
 } from "@/components";
-import {useQuoteWidget} from "./use-quote-widget";
+import { useQuoteWidget } from "./use-quote-widget";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
-import {useStyle} from "./style";
-import {Popover} from "@mui/material";
-import {PermissionCheck} from "@/components/CheckPermission/check-permission";
-import {Permissions} from "@/components/CheckPermission/enum";
-import {useEffect, useState} from "react";
-import {SecondaryButton} from "@/components/button/secondary-button";
-import {useResetRecoilState, useSetRecoilState} from "recoil";
+import { useStyle } from "./style";
+import { Popover } from "@mui/material";
+import { PermissionCheck } from "@/components/CheckPermission/check-permission";
+import { Permissions } from "@/components/CheckPermission/enum";
+import { useEffect, useState } from "react";
+import { SecondaryButton } from "@/components/button/secondary-button";
+import { useResetRecoilState, useSetRecoilState } from "recoil";
 import {
-    QuoteIfExistState,
-    QuoteNumberState,
+  QuoteIfExistState,
+  QuoteNumberState,
 } from "@/pages-components/quote-new/store/quote";
 import Stack from "@mui/material/Stack";
-import {selectedClientState} from "@/pages-components/quotes/states";
-import {useTour} from "@reactour/tour";
-import {DOCUMENT_TYPE} from "@/pages-components/quotes/enums";
+import { selectedClientState } from "@/pages-components/quotes/states";
+import { useTour } from "@reactour/tour";
+import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
+import { PrimaryButton } from "@/components/button/primary-button";
+import { CustomerCardWidget } from "@/widgets/customer-card-modal/customer-card";
+import { isValidCustomer } from "@/utils/helpers";
+import { CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 
-const QuoteWidget = ({isAdmin = true}) => {
-    const {classes} = useStyle();
-    const {t} = useTranslation();
-    const [QuoteId, setQuoteId] = useState("");
-    const setQuoteNumber = useSetRecoilState<any>(QuoteNumberState);
-    const setQuoteIfExist = useSetRecoilState<any>(QuoteIfExistState);
-    const resetSelectedClient = useResetRecoilState(selectedClientState);
+const QuoteWidget = ({ isAdmin = true }) => {
+  const { classes } = useStyle();
+  const { t } = useTranslation();
+  const [QuoteId, setQuoteId] = useState("");
+  const setQuoteNumber = useSetRecoilState<any>(QuoteNumberState);
+  const setQuoteIfExist = useSetRecoilState<any>(QuoteIfExistState);
+  const resetSelectedClient = useResetRecoilState(selectedClientState);
 
   const {
     clientTypesValue,
@@ -55,6 +59,12 @@ const QuoteWidget = ({isAdmin = true}) => {
     checkWhatRenderArray,
     handleClicktoSelectedCustomer,
     renderOptions,
+    openCustomerModal,
+    customer,
+    setCustomer,
+    onCustomerAdd,
+    onClickAddCustomer,
+    onCloseCustomerModal
   } = useQuoteWidget(DOCUMENT_TYPE.quote);
 
   useEffect(() => {
@@ -74,6 +84,9 @@ const QuoteWidget = ({isAdmin = true}) => {
       setQuoteIfExist(false);
     }
   }, [userQuote, clientTypesValue]);
+
+
+
 
   return (
     <div data-tour="quote-widget" style={classes.mainContainer}>
@@ -113,6 +126,8 @@ const QuoteWidget = ({isAdmin = true}) => {
           />
         </div>
       </div>
+      <PrimaryButton onClick={onClickAddCustomer} >Add Customer / Search</PrimaryButton>
+
       <div style={classes.autoComplateRowContainer}>
         <div data-tour="select-product" style={{ width: "65%" }}>
           <GoMakeAutoComplate
@@ -205,8 +220,22 @@ const QuoteWidget = ({isAdmin = true}) => {
           onClickSaveQuote(QuoteId).then(() => onClickCloseModal());
         }}
       />
+      <CustomerCardWidget
+        isValidCustomer={isValidCustomer}
+        customerAction={CUSTOMER_ACTIONS.Add}
+        codeFlag={false}
+        typeClient={"C"}
+        onCustomerAdd={onCustomerAdd}
+        openModal={openCustomerModal}
+        modalTitle={t("customers.modal.addTitle")}
+        onClose={onCloseCustomerModal}
+        showAddButton={true}
+        customer={customer}
+        setCustomer={setCustomer}
+        isFromHomePage={true}
+      />
     </div>
   );
 };
 
-export {QuoteWidget};
+export { QuoteWidget };

@@ -31,6 +31,9 @@ import { clientTypesCategoriesState } from "@/pages/customers/customer-states";
 import { ClientTypeModal } from "./components/add-client-type-modal/add-client-type-modal";
 import { SettingIcon } from "../shared-admin-customers/add-product/icons/setting";
 import { emailRegex } from "@/utils/regex";
+import { SecondaryButton } from "@/components/button/secondary-button";
+import { PrimaryTable } from "@/components/tables/primary-table";
+import { useCustomerCard } from "./use-customer-card";
 
 interface IProps {
   isValidCustomer?: (
@@ -52,6 +55,7 @@ interface IProps {
   showUpdateButton?: boolean;
   showAddButton?: boolean;
   isgetAllCustomers?: boolean;
+  isFromHomePage?:boolean;
 }
 
 const CustomerCardWidget = ({
@@ -67,13 +71,16 @@ const CustomerCardWidget = ({
   setCustomer,
   showUpdateButton,
   showAddButton,
-  isgetAllCustomers = true
+  isgetAllCustomers = true,
+  isFromHomePage=false,
 }: IProps) => {
   const [open, setOpen] = useState(false);
   const { addNewCustomer } = useAddCustomer();
   const { editCustomer } = useEditCustomer();
   const { updateUserPassword } = useUserProfile();
   const { t } = useTranslation();
+  const {customerTableHeaders, customerTableRows, handleShowTable, handleHideTable, showTable } = useCustomerCard({t});
+
   const { alertRequiredFields, alertFault } = useSnackBar();
   const [resetPassModal, setResetPassModalModal] =
     useRecoilState<boolean>(resetPassModalState);
@@ -137,6 +144,7 @@ const CustomerCardWidget = ({
     setOpen(false);
     onClose();
     setCustomer(null);
+    handleHideTable();
   };
 
   const handleTabChange = (event, newValue) => {
@@ -389,6 +397,7 @@ const CustomerCardWidget = ({
     );
     return emptyProps;
   };
+
   const tabLabels = [
     t("customers.modal.general"),
     t("customers.modal.contacts"),
@@ -544,7 +553,6 @@ const CustomerCardWidget = ({
           ))}
         </div>
       )}
-
       {selectedTab == 0 && (
         <div>
           <Stack
@@ -710,18 +718,37 @@ const CustomerCardWidget = ({
             </Stack>
           )
         }
+
+{/* ///////////////////////////////////////////////////////////////////////////// */}
+
+
+
+        {(isFromHomePage && showTable) && <PrimaryTable
+          stickyHeader={true}
+          maxHeight={210}
+          rows={customerTableRows}
+          headers={customerTableHeaders}
+        />}
+
+
+
+{/* /////////////////////////////////////////////////////////////////////////// */}
         <div style={{ display: "flex", justifyContent: "flex-end" }}>
           <div style={classes.footerStyle}>
-            {showAddButton && (
-              <button
-                style={classes.autoButtonStyle}
-                onClick={handleAddCustomer}
-              >
-                {typeClient == "C"
-                  ? t("customers.buttons.addCustomer")
-                  : t("suppliers.buttons.addSupplier")}
-              </button>
-            )}
+            {isFromHomePage ? <SecondaryButton onClick={handleShowTable} style={classes.autoButtonStyle}>Search</SecondaryButton>
+              :
+              showAddButton && (
+                <button
+                  style={classes.autoButtonStyle}
+                  onClick={handleAddCustomer}
+                >
+                  {typeClient == "C"
+                    ? t("customers.buttons.addCustomer")
+                    : t("suppliers.buttons.addSupplier")}
+                </button>
+              )
+            }
+
             {showUpdateButton && (
               <button
                 style={classes.autoButtonStyle}

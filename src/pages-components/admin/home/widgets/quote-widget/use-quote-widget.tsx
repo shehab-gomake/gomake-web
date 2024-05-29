@@ -101,6 +101,7 @@ const useQuoteWidget = ({ documentType = 0 }: any) => {
   const handleClicktoSelectedCustomer = useCallback(
     async (clientIdifExist, value) => {
       setSelectedClient(value);
+      console.log("heere we are" , clientIdifExist , " " , value )
 
       const clientType = clientTypesValue.find(
         (c) => c.id == value?.clientTypeId
@@ -261,6 +262,22 @@ const useQuoteWidget = ({ documentType = 0 }: any) => {
   }, [selectedClientType, selectedClient, selectedProduct]);
 
 
+
+
+  const [openCustomerModal, setOpenCustomerModal] = useState(false);
+  const [customer, setCustomer] = useState([]);
+
+  const onCustomerAdd = (customer) => {
+    setOpenCustomerModal(false)
+  }
+
+  const onClickAddCustomer = () => {
+    setOpenCustomerModal(true)
+  }
+  const onCloseCustomerModal= () => {
+    setOpenCustomerModal(false)
+  }
+  
   return {
     clientTypesValue,
     productValue,
@@ -296,7 +313,13 @@ const useQuoteWidget = ({ documentType = 0 }: any) => {
     _renderErrorMessage,
     onClickSaveQuote,
     tabs,
-    getAllReports
+    getAllReports,
+    openCustomerModal,
+    customer, 
+    setCustomer,
+    onCustomerAdd,
+    onClickAddCustomer,
+    onCloseCustomerModal
   };
 };
 
