@@ -5,22 +5,46 @@ import {
     outsourceSuppliersState,
 } from "@/widgets/product-pricing-widget/state";
 import {useGomakeAxios, useGomakeRouter, useSnackBar} from "@/hooks";
-import {currentCalculationConnectionId, } from "@/store";
+import {currentCalculationConnectionId, productItemValueByEditState, } from "@/store";
 import {EWorkSource} from "@/widgets/product-pricing-widget/enums";
 import {addItemApi, updateDocumentItemApi} from "@/services/api-service/generic-doc/documents-api";
 import { updateProductItemValueOutsourceSupplierCost } from "@/services/api-service/product-item-value-draft/product-item-draft-endpoints";
 import { EOutSoucrceUpdateKey } from "@/enums";
 import { useRouter } from "next/router";
+import { useEffect } from "react";
 
 const useOutsourceSupplier = () => {
     const router=useRouter()
     const [suppliers, setSuppliers] = useRecoilState(outsourceSuppliersState);
+    const productItemValueByEdit = useRecoilValue<any>(productItemValueByEditState)
     const currentProductItemValue =useRecoilValue<any>(currentProductItemValueState);
-
-        const productItemValueDraftId = useRecoilValue<string>(
-            currentProductItemValueDraftId
-          );
-          const connectionId = useRecoilValue(currentCalculationConnectionId);
+    const productItemValueDraftId = useRecoilValue<string>(currentProductItemValueDraftId);
+    const updateSupplierInfo=()=>{
+        if(productItemValueByEdit?.sourceType){
+            const { supplierId, outSourceCost, outSourceProfits,outSourceTotalRealProductionTime } = productItemValueByEdit;
+            const updatedSuppliers = suppliers.map(supplier => {
+              if (supplier.supplierId === supplierId) {
+                return {
+                  ...supplier,
+                  cost: outSourceCost,
+                  finalPrice: outSourceCost + outSourceCost*outSourceProfits / 100,
+                  profit: outSourceProfits,
+                  workHours:outSourceTotalRealProductionTime
+                };
+              }
+              return supplier;
+            });
+        
+            setSuppliers(updatedSuppliers);
+        }
+        
+    }
+    useEffect(() => {
+        if(productItemValueByEdit?.sourceType){
+            updateSupplierInfo()
+        }
+      }, [productItemValueByEdit]);
+    const connectionId = useRecoilValue(currentCalculationConnectionId);
     const {navigate} = useGomakeRouter();
     const {callApi} = useGomakeAxios();
     const { alertFaultAdded,alertFaultUpdate } = useSnackBar();
@@ -142,7 +166,7 @@ const useOutsourceSupplier = () => {
             }
            
           };
-        
+         
 
         return {
             updateCost,

@@ -6,7 +6,6 @@ import { Stack } from "@mui/material";
 
 const OutSourceSuppliers = ({ widgetType }) => {
     const suppliers = useRecoilValue(outsourceSuppliersState);
-
     return <Stack gap={'15px'}>
         {
             suppliers?.map(supplier => <OutSourceSupplierComponent {...supplier} widgetType={widgetType} />)
