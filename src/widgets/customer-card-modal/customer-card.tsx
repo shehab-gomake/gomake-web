@@ -80,7 +80,7 @@ const CustomerCardWidget = ({
   const { editCustomer } = useEditCustomer();
   const { updateUserPassword } = useUserProfile();
   const { t } = useTranslation();
-  const { customerTableHeaders, customerTableRows, handleShowTable, handleHideTable, showTable, setCustomerTableRows } = useCustomerCard({ t, setCustomer, onClose });
+  const { customerTableHeaders,mapCustomerData,handleShowTable, handleHideTable, showTable, setCustomerTableRows , getAllSimilarCustomersData,onShowOnlyActiveCustomers} = useCustomerCard({ t, setCustomer, onClose });
   const { alertRequiredFields, alertFault } = useSnackBar();
   const [resetPassModal, setResetPassModalModal] = useRecoilState<boolean>(resetPassModalState);
   const [gomakeUser, setGomakeUser] = useRecoilState<any>(gomakeUserState);
@@ -412,11 +412,6 @@ const CustomerCardWidget = ({
     setClientType(true);
   };
 
-  //need to change
-  const onShowInActiveChange = (value: boolean) => {
-    handleShowTable(value)
-  }
-
   return (
     <GoMakeModal
       openModal={open}
@@ -725,18 +720,18 @@ const CustomerCardWidget = ({
         }
         {(isFromHomePage && showTable) &&
           <Stack>
-            <TableFilter onChangeShowInActive={onShowInActiveChange} />
+            <TableFilter onChangeShowInActive={onShowOnlyActiveCustomers} />
             <PrimaryTable
               stickyHeader={true}
               maxHeight={210}
-              rows={customerTableRows}
+              rows={getAllSimilarCustomersData().map(mapCustomerData)}
               headers={customerTableHeaders}
             /></Stack>
         }
         <div style={{ display: "flex", justifyContent: "flex-end" }}>
           <div style={classes.footerStyle}>
             {isFromHomePage && !showTable ?
-              <SecondaryButton variant="contained" onClick={() => handleShowTable(false)} style={{ width: "fit-content" }}>{t("customers.buttons.search")}</SecondaryButton>
+              <SecondaryButton variant="contained" onClick={handleShowTable} style={{ width: "fit-content" }}>{t("customers.buttons.search")}</SecondaryButton>
               :
               showAddButton && (
                 <button

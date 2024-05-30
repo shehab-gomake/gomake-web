@@ -9,7 +9,7 @@ const TableFilter = ({onChangeShowInActive}: any) => {
   return(
       <div style={classes.container}>
           <SecondSwitch onChange={(e) => {onChangeShowInActive(e.target.checked)}}/>
-          <span style={classes.switchLabel}>{t('Show inactive customers')}</span>
+          <span style={classes.switchLabel}>{t('customers.modal.showOnlyActiveCustomers')}</span>
       </div>
   );
 }

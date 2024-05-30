@@ -16,6 +16,7 @@ const useCustomerCard = ({ t, setCustomer, onClose }) => {
   const [showTable, setShowTable] = useState(false);
   const [customerTableRows, setCustomerTableRows] = useState([]);
   const [customersListCreateQuote, setCustomersListCreateQuote] = useState([]);
+  const [showOnlyActiveCustomers, setShowOnlyActiveCustomers] = useState<boolean>(false);
   const [selectedId, setSelectedId] = useState();
   const setSelectedClient = useSetRecoilState(selectedClientState);
 
@@ -44,8 +45,8 @@ const useCustomerCard = ({ t, setCustomer, onClose }) => {
     setCustomer(null);
   };
 
-  const handleShowTable = (justActiveCustomers) => {
-    getAllSimilarCustomer(justActiveCustomers);
+  const handleShowTable = () => {
+    getAllSimilarCustomer();
     setShowTable(true);
   };
 
@@ -54,12 +55,10 @@ const useCustomerCard = ({ t, setCustomer, onClose }) => {
   const renderOptions = () => customersListCreateQuote;
 
 
-  const getAllSimilarCustomer = async (justActiveCustomers) => {
+  const getAllSimilarCustomer = async () => {
     const handleResponse = (res) => {
       if (res?.success) {
-        const mapData = res.data?.data
-          .filter(customer => !justActiveCustomers || customer.isActive)
-          .map(mapCustomerData);
+        const mapData = res.data?.data;
         setCustomerTableRows(mapData);
       } else {
         alertFaultGetData();
@@ -93,6 +92,19 @@ const useCustomerCard = ({ t, setCustomer, onClose }) => {
     ];
   };
 
+  const getAllSimilarCustomersData = useCallback(() => {
+    let usersArray = [...customerTableRows];
+    if (usersArray?.length > 0) {
+
+      return showOnlyActiveCustomers ? usersArray.filter((user: any) => user.isActive) : usersArray;
+    }
+    return usersArray
+  }, [customerTableRows, showOnlyActiveCustomers])
+
+  const onShowOnlyActiveCustomers = (value: boolean) => {
+    setShowOnlyActiveCustomers(value);
+  }
+
   useEffect(() => {
     if (customersListCreateQuote.length > 0) {
       const selectedValue = renderOptions()?.find((option) => option.id === selectedId);
@@ -100,13 +112,17 @@ const useCustomerCard = ({ t, setCustomer, onClose }) => {
     }
   }, [customersListCreateQuote, selectedId]);
 
+
   return {
     customerTableHeaders,
     customerTableRows,
+    showTable,
     handleShowTable,
     handleHideTable,
-    showTable,
-    setCustomerTableRows
+    setCustomerTableRows,
+    getAllSimilarCustomersData,
+    onShowOnlyActiveCustomers,
+    mapCustomerData
   };
 };
 
