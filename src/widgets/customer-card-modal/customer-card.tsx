@@ -83,13 +83,14 @@ const CustomerCardWidget = ({
   const {
     customerTableHeaders,
     mapCustomerData,
-    handleShowTable,
     handleHideTable,
     showTable,
     setCustomerTableRows,
     getAllSimilarCustomersData,
     onShowOnlyActiveCustomers,
-    setShowOnlyActiveCustomers
+    setShowOnlyActiveCustomers,
+    getAllSimilarCustomer,
+    setShowTable
   } = useCustomerCard({ t, setCustomer, onClose });
   const { alertRequiredFields, alertFault } = useSnackBar();
   const [resetPassModal, setResetPassModalModal] = useRecoilState<boolean>(resetPassModalState);
@@ -420,6 +421,44 @@ const CustomerCardWidget = ({
   };
   const onClickOpenClientType = () => {
     setClientType(true);
+  };
+
+
+  const handleShowTable = async () => {
+    const filteredContacts = contacts.filter(
+      (contact) => !isNameIndexOnly(contact)
+    );
+    const filteredAddresses = addresses.filter(
+      (address) => !isNameIndexOnly(address)
+    );
+    const filteredUsers = users.filter((user) => !isNameIndexOnly(user));
+    const cardTypeId = typeClient === "C" ? CLIENT_TYPE_Id.CUSTOMER : CLIENT_TYPE_Id.SUPPLIER;
+    const updatedCustomer = {
+      ...customer,
+      contacts: filteredContacts,
+      addresses: filteredAddresses,
+      users: filteredUsers,
+      cardTypeId: cardTypeId,
+    };
+
+    // Check if email is valid
+    const areEmailsValid = filteredUsers.every(user => validateEmail(user, "email"));
+    if (!areEmailsValid) {
+      alertFault("customers.invalidEmail");
+      return;
+    }
+
+    const isEmailValid = validateEmail(customer, "mail");
+    if (!isEmailValid) {
+      alertFault("customers.invalidEmail");
+      return;
+    }
+    setCustomer(updatedCustomer);
+
+    getAllSimilarCustomer(updatedCustomer).then((x) => {
+      setShowTable(true);
+    });
+
   };
 
   return (
