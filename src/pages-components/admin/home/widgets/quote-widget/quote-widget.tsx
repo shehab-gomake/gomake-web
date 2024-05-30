@@ -40,8 +40,8 @@ const QuoteWidget = ({ isAdmin = true }) => {
     anchorEl,
     isDisabled,
     handleClick,
-    onClcikCreateQuote,
-    onClcikCreateQuoteForCustomer,
+    onClickCreateQuote,
+    onClickCreateQuoteForCustomer,
     open,
     openModal,
     onClickSaveQuote,
@@ -50,20 +50,21 @@ const QuoteWidget = ({ isAdmin = true }) => {
     selectedClientType,
     selectedClient,
     onClickCloseModal,
-    _renderErrorMessage,
+    _renderErrorMessage, 
     handleClose,
     setSelectedClientType,
     setSelectedClient,
     setSelectedProduct,
     checkWhatRenderArray,
-    handleClicktoSelectedCustomer,
+    handleClickToSelectedCustomer,
     renderOptions,
     openCustomerModal,
     customer,
     setCustomer,
     onCustomerAdd,
     onClickAddCustomer,
-    onCloseCustomerModal
+    onCloseCustomerModal,
+    getCustomerType
   } = useQuoteWidget(DOCUMENT_TYPE.quote);
 
   useEffect(() => {
@@ -100,7 +101,7 @@ const QuoteWidget = ({ isAdmin = true }) => {
             onChangeTextField={checkWhatRenderArray}
             value={selectedClient}
             onChange={(e: any, value: any) => {
-              handleClicktoSelectedCustomer(
+              handleClickToSelectedCustomer(
                 userQuote?.client?.id,
                 value
               ).then();
@@ -108,7 +109,7 @@ const QuoteWidget = ({ isAdmin = true }) => {
           />
         </div>
         <div data-tour="select-type" style={{ width: "30%" }}>
-          <GoMakeAutoComplate
+          <GoMakeAutoComplate 
             options={clientTypesValue}
             placeholder={t("home.admin.selectType")}
             style={classes.selectTypeContainer}
@@ -116,11 +117,7 @@ const QuoteWidget = ({ isAdmin = true }) => {
             onChange={(e: any, value: any) => {
               setSelectedClientType(value);
             }}
-            value={
-              typeof selectedClientType != "undefined"
-                ? selectedClientType
-                : null
-            }
+            value={selectedClientType}
           />
         </div>
       </div>
@@ -148,8 +145,8 @@ const QuoteWidget = ({ isAdmin = true }) => {
                   isDisabled
                     ? handleClick
                     : isAdmin
-                      ? onClcikCreateQuote
-                      : onClcikCreateQuoteForCustomer
+                      ? onClickCreateQuote
+                      : onClickCreateQuoteForCustomer
                 }
                 variant="contained"
                 style={{ width: "100%", height: 40 }}
@@ -179,8 +176,8 @@ const QuoteWidget = ({ isAdmin = true }) => {
               isDisabled
                 ? handleClick
                 : isAdmin
-                  ? onClcikCreateQuote
-                  : onClcikCreateQuoteForCustomer
+                  ? onClickCreateQuote
+                  : onClickCreateQuoteForCustomer
             }
             variant="contained"
             style={{ width: "100%", height: 40 }}

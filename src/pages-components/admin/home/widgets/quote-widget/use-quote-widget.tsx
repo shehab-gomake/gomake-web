@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useState } from "react";
-
 import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
 import {
   getAllProductsForDropDownList,
@@ -72,8 +71,6 @@ const useQuoteWidget = ({ documentType = 0 }: any) => {
     }
   };
 
-
-
   const checkWhatRenderArray = (e) => {
     if (e.target.value) {
       getAllCustomersCreateQuote(e.target.value);
@@ -93,31 +90,35 @@ const useQuoteWidget = ({ documentType = 0 }: any) => {
   const getAllCustomersCreateQuote = useCallback(async (SearchTerm?) => {
     await getAndSetAllCustomers(callApi, setCustomersListCreateQuote, {
       ClientType: documentType === DOCUMENT_TYPE.purchaseOrder || documentType === DOCUMENT_TYPE.purchaseInvoice || documentType === DOCUMENT_TYPE.purchaseInvoiceRefund ? "S" : "C",
-      onlyCreateOrderClients:  documentType != DOCUMENT_TYPE.quote ? true : false,
+      onlyCreateOrderClients: documentType != DOCUMENT_TYPE.quote ? true : false,
       searchTerm: SearchTerm,
     });
   }, []);
 
-  const handleClicktoSelectedCustomer = useCallback(
+  const handleClickToSelectedCustomer = useCallback(
     async (clientIdifExist, value) => {
       setSelectedClient(value);
-      const clientType = clientTypesValue.find(
-        (c) => c.id == value?.clientTypeId
-      );
       if (clientIdifExist != null && value?.id != null) {
-        if (clientIdifExist != value?.id) {
+        if (clientIdifExist !== value?.id) {
           setOpenModal(true);
         }
-      }
-
-      if (clientType) {
-        setSelectedClientType(clientType);
-      } else {
-        setSelectedClientType({});
       }
     },
     [clientTypesValue]
   );
+
+  const getCustomerType = useCallback(() => {
+    const clientType = clientTypesValue.find(
+      (c) => c.id === selectedClient?.clientTypeId
+    );
+
+    return clientType || null;
+  }, [selectedClient, clientTypesValue]);
+
+  useEffect(() => {
+    setSelectedClientType(getCustomerType());
+  }, [selectedClient, getCustomerType]); // Ensure client type is updated when selectedClient changes
+
 
   const getAndSetExistQuote = async () => {
     const callBack = (res) => {
@@ -144,7 +145,6 @@ const useQuoteWidget = ({ documentType = 0 }: any) => {
     []
   );
 
-
   const onClickSaveQuote = async (quoteId) => {
     const callBack = (res) => {
       if (res?.success) {
@@ -163,16 +163,18 @@ const useQuoteWidget = ({ documentType = 0 }: any) => {
     });
   };
 
-  const onClcikCreateQuote = () => {
+  const onClickCreateQuote = () => {
     navigate(
       `/admin/products/digital-offset-price?clientTypeId=${selectedClientType?.id}&customerId=${selectedClient?.id}&productId=${selectedProduct?.id}`
     );
   };
-  const onClcikCreateQuoteForCustomer = () => {
+
+  const onClickCreateQuoteForCustomer = () => {
     navigate(
       `/products/create?clientTypeId=${selectedClientType?.id}&customerId=${selectedClient?.id}&productId=${selectedProduct?.id}`
     );
   };
+
   const _renderErrorMessage = () => {
     if (!selectedClient?.id) {
       return t("home.admin.pleaseSelectCustomer");
@@ -230,11 +232,11 @@ const useQuoteWidget = ({ documentType = 0 }: any) => {
     await getAllReportsApi(callApi, callBack, { customerId: selectedClient?.id, productId: selectedProduct?.id });
   };
 
-  useEffect(() => {
-    const clientType = clientTypesValue.find(
-      (c) => c.id == selectedClient?.clientTypeId
-    );
-  }, [clientTypesValue, selectedClient]);
+  // useEffect(() => {
+  //   const clientType = clientTypesValue.find(
+  //     (c) => c.id == selectedClient?.clientTypeId
+  //   );
+  // }, [clientTypesValue, selectedClient]);
 
   useEffect(() => {
     getAllClientTypes();
@@ -272,10 +274,10 @@ const useQuoteWidget = ({ documentType = 0 }: any) => {
   const onClickAddCustomer = () => {
     setOpenCustomerModal(true)
   }
-  const onCloseCustomerModal= () => {
+  const onCloseCustomerModal = () => {
     setOpenCustomerModal(false)
   }
-  
+
   return {
     clientTypesValue,
     productValue,
@@ -303,21 +305,22 @@ const useQuoteWidget = ({ documentType = 0 }: any) => {
     updateCustomerListSelectedAfterConfirm,
     setOpenModal,
     setUserQuote,
-    handleClicktoSelectedCustomer,
+    handleClickToSelectedCustomer,
     checkWhatRenderArray,
     renderOptions,
-    onClcikCreateQuote,
-    onClcikCreateQuoteForCustomer,
+    onClickCreateQuote,
+    onClickCreateQuoteForCustomer,
     _renderErrorMessage,
     onClickSaveQuote,
     tabs,
     getAllReports,
     openCustomerModal,
-    customer, 
+    customer,
     setCustomer,
     onCustomerAdd,
     onClickAddCustomer,
-    onCloseCustomerModal
+    onCloseCustomerModal,
+    getCustomerType
   };
 };
 
