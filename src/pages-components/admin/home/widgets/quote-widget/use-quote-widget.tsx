@@ -23,6 +23,7 @@ import { selectedClientState } from "@/pages-components/quotes/states";
 import { QuotesListPageWidget } from "@/pages-components/quotes/quotes";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { CLIENT_TYPE_Id } from "@/pages/customers/enums";
+import { priceOfferForSetupModalState, userQuoteState } from "./states";
 
 const useQuoteWidget = ({ documentType = 0 }: any) => {
   const { t } = useTranslation();
@@ -33,8 +34,13 @@ const useQuoteWidget = ({ documentType = 0 }: any) => {
   const [clientTypesValue, setClientTypesValues] = useState([]);
   const [productValue, setProductValues] = useState([]);
   const [customersListCreateQuote, setCustomersListCreateQuote] = useState([]);
-  const [userQuote, setUserQuote] = useState<any>(null);
-  const [openModal, setOpenModal] = useState(false);
+
+  const [userQuote, setUserQuote] = useRecoilState<any>(userQuoteState);
+  const [openModal, setOpenModal] = useRecoilState<any>(priceOfferForSetupModalState);
+
+  // const [userQuote, setUserQuote] = useState<any>(null);
+  // const [openModal, setOpenModal] = useState(false);
+  
   const [selectedClientType, setSelectedClientType] = useState<any>({});
   const [selectedClient, setSelectedClient] = useRecoilState<any>(selectedClientState);
   const [QuoteIfExist, setQuoteIfExist] = useRecoilState<any>(QuoteIfExistState);
@@ -95,11 +101,12 @@ const useQuoteWidget = ({ documentType = 0 }: any) => {
     });
   }, []);
 
+
   const handleClickToSelectedCustomer = useCallback(
-    async (clientIdifExist, value) => {
+    async (clientIdIfExist, value) => {
       setSelectedClient(value);
-      if (clientIdifExist != null && value?.id != null) {
-        if (clientIdifExist !== value?.id) {
+      if (clientIdIfExist != null && value?.id != null) {
+        if (clientIdIfExist !== value?.id) {
           setOpenModal(true);
         }
       }
@@ -107,11 +114,11 @@ const useQuoteWidget = ({ documentType = 0 }: any) => {
     [clientTypesValue]
   );
 
+
   const getCustomerType = useCallback(() => {
     const clientType = clientTypesValue.find(
       (c) => c.id === selectedClient?.clientTypeId
     );
-
     return clientType || null;
   }, [selectedClient, clientTypesValue]);
 
@@ -222,7 +229,6 @@ const useQuoteWidget = ({ documentType = 0 }: any) => {
     },
   ];
 
-
   const getAllReports = async () => {
     const callBack = (res) => {
       if (res?.success) {
@@ -231,12 +237,6 @@ const useQuoteWidget = ({ documentType = 0 }: any) => {
     };
     await getAllReportsApi(callApi, callBack, { customerId: selectedClient?.id, productId: selectedProduct?.id });
   };
-
-  // useEffect(() => {
-  //   const clientType = clientTypesValue.find(
-  //     (c) => c.id == selectedClient?.clientTypeId
-  //   );
-  // }, [clientTypesValue, selectedClient]);
 
   useEffect(() => {
     getAllClientTypes();
@@ -262,8 +262,7 @@ const useQuoteWidget = ({ documentType = 0 }: any) => {
   }, [selectedClientType, selectedClient, selectedProduct]);
 
 
-
-
+  // Add Customer / Search
   const [openCustomerModal, setOpenCustomerModal] = useState(false);
   const [customer, setCustomer] = useState([]);
 
@@ -320,7 +319,6 @@ const useQuoteWidget = ({ documentType = 0 }: any) => {
     onCustomerAdd,
     onClickAddCustomer,
     onCloseCustomerModal,
-    getCustomerType
   };
 };
 

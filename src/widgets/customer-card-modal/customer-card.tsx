@@ -80,7 +80,17 @@ const CustomerCardWidget = ({
   const { editCustomer } = useEditCustomer();
   const { updateUserPassword } = useUserProfile();
   const { t } = useTranslation();
-  const { customerTableHeaders, mapCustomerData, handleShowTable, handleHideTable, showTable, setCustomerTableRows, getAllSimilarCustomersData, onShowOnlyActiveCustomers } = useCustomerCard({ t, setCustomer, onClose });
+  const {
+    customerTableHeaders,
+    mapCustomerData,
+    handleShowTable,
+    handleHideTable,
+    showTable,
+    setCustomerTableRows,
+    getAllSimilarCustomersData,
+    onShowOnlyActiveCustomers,
+    setShowOnlyActiveCustomers
+  } = useCustomerCard({ t, setCustomer, onClose });
   const { alertRequiredFields, alertFault } = useSnackBar();
   const [resetPassModal, setResetPassModalModal] = useRecoilState<boolean>(resetPassModalState);
   const [gomakeUser, setGomakeUser] = useRecoilState<any>(gomakeUserState);
@@ -130,7 +140,6 @@ const CustomerCardWidget = ({
     ? CLIENT_TYPE_Id.CUSTOMER
     : CLIENT_TYPE_Id.SUPPLIER;
 
-
   useEffect(() => {
     addInitContact();
     addInitAddress();
@@ -145,6 +154,7 @@ const CustomerCardWidget = ({
     setCustomer(null);
     handleHideTable();
     setCustomerTableRows([]);
+    setShowOnlyActiveCustomers(false);
   };
 
   const handleTabChange = (event, newValue) => {
@@ -419,9 +429,6 @@ const CustomerCardWidget = ({
       onClose={handleClose}
       insideStyle={classes.insideStyle}
     >
-
-
-
       <div
         style={{
           position: "sticky",
@@ -542,8 +549,6 @@ const CustomerCardWidget = ({
           </Tabs>
         </ThemeProvider>
       </div>
-
-
       <div style={classes.bottomSectionStyle}>
         <div style={classes.tabsContainer}>
           {selectedTab == 0 && (

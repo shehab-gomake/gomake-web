@@ -5,8 +5,9 @@ import { selectedClientState } from "@/pages-components/quotes/states";
 import { getAllSimilarCustomerApi } from "@/services/api-service/customers/customers-api";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useCallback, useEffect, useState } from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import { getAndSetAllCustomers } from "@/services/hooks";
+import { priceOfferForSetupModalState, userQuoteState } from "@/pages-components/admin/home/widgets/quote-widget/states";
 
 const CLIENT_TYPE_CUSTOMER = "C";
 
@@ -45,6 +46,9 @@ const useCustomerCard = ({ t, setCustomer, onClose }) => {
     setCustomer(null);
   };
 
+  const userQuote = useRecoilValue<any>(userQuoteState);
+  const setOpenModal = useSetRecoilState<any>(priceOfferForSetupModalState);
+
   const handleShowTable = () => {
     getAllSimilarCustomer();
     setShowTable(true);
@@ -53,7 +57,6 @@ const useCustomerCard = ({ t, setCustomer, onClose }) => {
   const handleHideTable = () => setShowTable(false);
 
   const renderOptions = () => customersListCreateQuote;
-
 
   const getAllSimilarCustomer = async () => {
     const handleResponse = (res) => {
@@ -71,7 +74,6 @@ const useCustomerCard = ({ t, setCustomer, onClose }) => {
       pageSize: 16,
     });
   };
-
 
   const mapCustomerData = (customer) => {
     const { code, name, mail, phone, isActive } = customer;
@@ -93,12 +95,11 @@ const useCustomerCard = ({ t, setCustomer, onClose }) => {
   };
 
   const getAllSimilarCustomersData = useCallback(() => {
-    let usersArray = [...customerTableRows];
-    if (usersArray?.length > 0) {
-
-      return showOnlyActiveCustomers ? usersArray.filter((user: any) => user.isActive) : usersArray;
+    let customersArray = [...customerTableRows];
+    if (customersArray?.length > 0) {
+      return showOnlyActiveCustomers ? customersArray.filter((user: any) => user.isActive) : customersArray;
     }
-    return usersArray
+    return customersArray
   }, [customerTableRows, showOnlyActiveCustomers])
 
   const onShowOnlyActiveCustomers = (value: boolean) => {
@@ -108,10 +109,17 @@ const useCustomerCard = ({ t, setCustomer, onClose }) => {
   useEffect(() => {
     if (customersListCreateQuote.length > 0) {
       const selectedValue = renderOptions()?.find((option) => option.id === selectedId);
-      selectedValue && setSelectedClient(selectedValue);
+      // selectedValue && setSelectedClient(selectedValue);
+      if (selectedValue) {
+        setSelectedClient(selectedValue);
+        if (userQuote?.client?.id != null && selectedValue?.id != null) {
+          if (userQuote?.client?.id !== selectedValue?.id) {
+            setOpenModal(true);
+          }
+        }
+      }
     }
   }, [customersListCreateQuote, selectedId]);
-
 
   return {
     customerTableHeaders,
@@ -122,7 +130,8 @@ const useCustomerCard = ({ t, setCustomer, onClose }) => {
     setCustomerTableRows,
     getAllSimilarCustomersData,
     onShowOnlyActiveCustomers,
-    mapCustomerData
+    mapCustomerData,
+    setShowOnlyActiveCustomers
   };
 };
 

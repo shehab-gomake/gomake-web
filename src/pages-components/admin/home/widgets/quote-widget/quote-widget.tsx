@@ -60,11 +60,10 @@ const QuoteWidget = ({ isAdmin = true }) => {
     renderOptions,
     openCustomerModal,
     customer,
-    setCustomer,
+    setCustomer, 
     onCustomerAdd,
     onClickAddCustomer,
     onCloseCustomerModal,
-    getCustomerType
   } = useQuoteWidget(DOCUMENT_TYPE.quote);
 
   useEffect(() => {
@@ -99,9 +98,12 @@ const QuoteWidget = ({ isAdmin = true }) => {
               option && option.name ? `${option.name}-${option.code}` : ""
             }
             onChangeTextField={checkWhatRenderArray}
+
             value={selectedClient}
+
+
             onChange={(e: any, value: any) => {
-              handleClickToSelectedCustomer(
+              handleClickToSelectedCustomer( 
                 userQuote?.client?.id,
                 value
               ).then();
