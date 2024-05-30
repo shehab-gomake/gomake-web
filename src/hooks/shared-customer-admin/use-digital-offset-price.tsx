@@ -583,6 +583,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     parameterValue.selectedParameterValues &&
                     parameterValue.selectedParameterValues.length > 0
                   ) {
+                    console.log("parameterValue", parameterValue)
                     parameterValue.selectedParameterValues.forEach((selectedParam) => {
                       if (selectedParam.valueIds && selectedParam.valueIds.length > 0) {
                         const param = parameter.settingParameters.find(
@@ -599,6 +600,20 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                           valueIds: selectedParam.valueIds,
                           actionIndex: param?.actionIndex,
                           parameterCode: param?.code
+                        });
+                      }
+                      else if (productItemValueByEdit) {
+                        const parameterIdsToExtract = [
+                          "e1dfbaab-977e-4267-9e4e-d733f49ee20d",
+                          "8b43efba-f28c-4e73-8fa0-cc64f3ea06f8",
+                          "8eff3238-a321-48f3-85eb-c14afaccbff3"
+                        ];
+
+                        parameterIdsToExtract.forEach(parameterId => {
+                          const parameter = productItemValueByEdit?.itemParmetersValues?.find(item => item.parameterId === parameterId);
+                          if (parameter) {
+                            subProduct.parameters.push(parameter);
+                          }
                         });
                       }
                     });
