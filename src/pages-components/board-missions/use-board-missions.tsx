@@ -17,6 +17,8 @@ import { useStyle } from "./style";
 import { useRouter } from "next/router";
 import { backToProcessApi, moveBoardMissionToDoneApi } from "@/services/api-service/production-floor/production-floor-endpoints";
 import { downloadPdf } from "@/utils/helpers";
+import { useHasPermission } from "@/components/CheckPermission/use-has-permission";
+import { Permissions } from "@/components/CheckPermission/enum";
 
 const useBoardMissions = () => {
   const { t } = useTranslation();
@@ -46,12 +48,13 @@ const useBoardMissions = () => {
   const { agent, setAgent, agentsCategories, handleAgentChange } = useAgentsList()
   const router = useRouter()
   const [selectedMission, setSelectedMission] = useState<any>({})
-  console.log("selectedMission", selectedMission)
+  //Permissions
+  const canShowCostsInBoardMissions = useHasPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS);
+
   const handlePageSizeChange = (event) => {
     setPageNumber(1);
     setPageSize(event.target.value);
   };
-
 
   const onSelectDeliveryTimeDates = (fromDate: Date, toDate: Date) => {
     setResetDatePicker(false);
@@ -77,14 +80,15 @@ const useBoardMissions = () => {
     t("mailingSettings.orderNumber"),
     t("boardMissions.outSourceType"),
     t("boardMissions.quantity"),
-    t("boardMissions.costFromOrderItem"),
-    t("boardMissions.priceFromOrderItem"),
+    canShowCostsInBoardMissions && t("boardMissions.costFromOrderItem"),
+    canShowCostsInBoardMissions && t("boardMissions.priceFromOrderItem"),
     t("boardMissions.jobName"),
     t("boardMissions.numberOfBoardMissionsInOrder"),
     t("boardMissions.productName"),
     t("boardMissions.currentBoardMissionStatus"),
     t("properties.more")
-  ];
+  ].filter(Boolean); 
+
 
   const handleMultiSelectChange = (newValues: string[]) => {
     setProductIds(newValues);
@@ -145,8 +149,8 @@ const useBoardMissions = () => {
             mission?.orderNumber,
             mission?.outSourceType === null ? EWorkSource[0] : EWorkSource[mission?.outSourceType],
             mission?.quantity,
-            mission?.cost,
-            mission?.price,
+            canShowCostsInBoardMissions && mission?.cost,
+            canShowCostsInBoardMissions && mission?.price,
             mission?.jobName,
             mission?.numberOfBoardMissions,
             mission?.productName,
@@ -392,7 +396,6 @@ const useBoardMissions = () => {
     };
     await backToProcessApi(callApi, callBack, { boardMissionId: selectedMission?.id, sendMessage: false });
   };
-
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
