@@ -35,6 +35,7 @@ const useBoardMissions = () => {
   const [fromDate, setFromDate] = useState<Date>();
   const [toDate, setToDate] = useState<Date>();
   const [allBoardMissions, setAllBoardMissions] = useState([]);
+  const [allPurchaseJobs, setAllPurchaseJobs] = useState([]);
   const [resetDatePicker, setResetDatePicker] = useState<boolean>(false);
   const { GetDateFormat } = useDateFormat();
   const [finalPatternSearch, setFinalPatternSearch] = useState("");
@@ -69,7 +70,6 @@ const useBoardMissions = () => {
   ];
 
   const tableHeader = [
-    // t("boardMissions.image"),
     t("boardMissions.creationDate"),
     t("boardMissions.dueDate"),
     t("boardMissions.clientName"),
@@ -78,6 +78,24 @@ const useBoardMissions = () => {
     t("boardMissions.outSourceType"),
     t("boardMissions.quantity"),
     t("boardMissions.costFromOrderItem"),
+    t("boardMissions.priceFromOrderItem"),
+    t("boardMissions.jobName"),
+    t("boardMissions.numberOfBoardMissionsInOrder"),
+    t("boardMissions.productName"),
+    t("boardMissions.currentBoardMissionStatus"),
+    t("properties.more")
+  ];
+  const tableHeaderForPurchaseJobs = [
+    t("boardMissions.creationDate"),
+    t("boardMissions.dueDate"),
+    t("boardMissions.clientName"),
+    t("sales.quote.supplierName"),
+    t("boardMissions.missionNumber"),
+    t("mailingSettings.orderNumber"),
+    t("sales.quote.purchaseOrderNumber"),
+    t("boardMissions.outSourceType"),
+    t("boardMissions.quantity"),
+    t("boardMissions.outSourceCost"),
     t("boardMissions.priceFromOrderItem"),
     t("boardMissions.jobName"),
     t("boardMissions.numberOfBoardMissionsInOrder"),
@@ -162,7 +180,35 @@ const useBoardMissions = () => {
               onClickWorkMissionPdf={onClickWorkMissionPdf}
             />
           ]);
+          const mapData2 = _data.data?.map((mission: any) => [
+            GetDateFormat(mission?.createdDate),
+            GetDateFormat(mission?.dueDate),
+            mission?.clientName,
+            mission?.supplierName,
+            mission?.productType ? `${mission?.number} / ${mission?.productType}` : mission?.number,
+            mission?.orderNumber,
+            mission?.purchaseOrderNumber,
+            mission?.outSourceType === null ? EWorkSource[0] : EWorkSource[mission?.outSourceType],
+            mission?.quantity,
+            mission?.cost,
+            mission?.price,
+            mission?.jobName,
+            mission?.numberOfBoardMissions,
+            mission?.productName,
+            mission?.isReady ? t('boardMissions.done') : `${mission?.boardMissionStatus?.name} / ${mission?.station?.actionName}`,
+            <MoreMenuWidget
+              mission={mission}
+              onClickDuplicate={onOpenDuplicateModal}
+              onOpenModal={onOpenModal}
+              onClickPrintPackagingSlip={onOpenPackagesModal}
+              onClickMarksAsDone={onOpenMarkReadyModal}
+              onClickReturnToProduction={onOpenReturnToProdModal}
+              onClickOrderSummeryPdf={onClickOrderSummeryPdf}
+              onClickWorkMissionPdf={onClickWorkMissionPdf}
+            />
+          ]);
           setAllBoardMissions(mapData);
+          setAllPurchaseJobs(mapData2);
           setPagesCount(Math.ceil(_data?.totalItems / pageSize));
         }
         else {
@@ -405,6 +451,7 @@ const useBoardMissions = () => {
 
   return {
     tableHeader,
+    tableHeaderForPurchaseJobs,
     agentsCategories,
     renderOptions,
     customer,
@@ -419,6 +466,7 @@ const useBoardMissions = () => {
     handleClickClear,
     onChangeMissionsSearch,
     allBoardMissions,
+    allPurchaseJobs,
     patternSearch,
     handleAgentChange,
     handleStatusChange,
