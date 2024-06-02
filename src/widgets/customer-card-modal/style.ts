@@ -4,7 +4,7 @@ import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 
 const useStyle = () => {
-  const {theme, primaryColor , secondColor , errorColor} = useGomakeTheme();
+  const { theme, primaryColor, secondColor, errorColor } = useGomakeTheme();
   const CONTAINER_MAX_HEIGHT = "1007px";
   const CONTAINER_TABS_MAX_HEIGHT = "900px";
   const FOOTER_MAX_HEIGHT = "50px";
@@ -20,7 +20,7 @@ const useStyle = () => {
       insideStyle: {
         width: "64%",
         height: "93%",
-        overFlow:"hidden",
+        overFlow: "hidden",
         maxWidth: "1240px",
         maxHeight: CONTAINER_MAX_HEIGHT,
         paddingLeft: "32px",
@@ -43,16 +43,26 @@ const useStyle = () => {
         marginBottom: 10,
       },
       tabsContainer: {
-        height:"fit-content",
+        height: "fit-content",
         maxHeight: CONTAINER_TABS_MAX_HEIGHT,
         overflow: "auto",
         marginBottom: "50px"
       },
-      bottomSectionStyle:{
+      footerStyle: {
+        display: "flex",
+        justifyContent: "flex-end",
+        position: "sticky" as "sticky",
+        bottom: "0px",
+        height: FOOTER_MAX_HEIGHT,
+        width: "100%",
+        background: "#fff",
+        alignItems: "center",
+      },
+      bottomSectionStyle: {
         display: "flex",
         flexDirection: "column" as "column",
         justifyContent: "space-between",
-        height: "100%"
+        maxHeight: CONTAINER_TABS_MAX_HEIGHT + FOOTER_MAX_HEIGHT,
       },
       colStyle: {
         display: "flex",
@@ -172,15 +182,6 @@ const useStyle = () => {
         fontStyle: "normal",
         lineHeight: "normal",
         ...FONT_FAMILY.Lexend(500, 12),
-      },
-      footerStyle: {
-        display: "flex",
-        justifyContent: "flex-end",
-        position: "sticky" as "sticky",
-        bottom: "0px",
-        height: FOOTER_MAX_HEIGHT,
-        width:"100%",
-        background:"#fff"
       },
       customerInfoStyle: {
         display: "flex",

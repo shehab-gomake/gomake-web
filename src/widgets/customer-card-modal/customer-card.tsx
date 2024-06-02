@@ -91,8 +91,8 @@ const CustomerCardWidget = ({
     showTable,
     setCustomerTableRows,
     getAllSimilarCustomersData,
-    onShowOnlyActiveCustomers,
-    setShowOnlyActiveCustomers,
+    onShowInActiveCustomers,
+    setShowInActiveCustomers,
     getAllSimilarCustomer,
     setShowTable
   } = useCustomerCard({ t, setCustomer, onClose, setOpenOfferModal,userQuote });
@@ -158,7 +158,7 @@ const CustomerCardWidget = ({
     setCustomer(null);
     handleHideTable();
     setCustomerTableRows([]);
-    setShowOnlyActiveCustomers(false);
+    setShowInActiveCustomers(false);
   };
 
   const handleTabChange = (event, newValue) => {
@@ -336,6 +336,7 @@ const CustomerCardWidget = ({
   };
 
 
+
   // edit customer button
   const handleEditCustomer = () => {
     const filteredContacts = contacts.filter(
@@ -427,6 +428,13 @@ const CustomerCardWidget = ({
   };
 
 
+  const validCustomerName = (customer) => {
+    if (!customer || !customer.name) {
+      return false;
+    }
+    return true;
+  };
+
   const handleShowTable = async () => {
     const filteredContacts = contacts.filter(
       (contact) => !isNameIndexOnly(contact)
@@ -451,11 +459,12 @@ const CustomerCardWidget = ({
       return;
     }
 
-    const isEmailValid = validateEmail(customer, "mail");
-    if (!isEmailValid) {
-      alertFault("customers.invalidEmail");
+    const isValidCustomerName = validCustomerName(customer);
+    if (!isValidCustomerName) {
+      alertFault("modal.clientNameIsRequired");
       return;
     }
+  
     setCustomer(updatedCustomer);
 
     getAllSimilarCustomer(updatedCustomer).then((x) => {
@@ -774,12 +783,12 @@ const CustomerCardWidget = ({
             }
             {(isFromHomePage && showTable) &&
               <Stack>
-                <TableFilter onChangeShowInActive={onShowOnlyActiveCustomers} />
+                <TableFilter onChangeShowInActive={onShowInActiveCustomers} />
                 <PrimaryTable
-
                   rows={getAllSimilarCustomersData().map(mapCustomerData)}
                   headers={customerTableHeaders}
-                /></Stack>
+                />
+                </Stack>
             }
           </div>
         </div>

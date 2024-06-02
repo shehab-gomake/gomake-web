@@ -102,6 +102,7 @@ const QuoteWidget = ({ isAdmin = true }) => {
         <div style={classes.autoComplateRowContainer}>
           <div data-tour="select-customer" style={{ width: "65%" }}>
             <GoMakeAutoComplate
+            disableClearable={true}
               options={renderOptions() ? renderOptions() : []}
               placeholder={t("home.admin.selectCustomer")}
               style={classes.selectCustomerContainer}

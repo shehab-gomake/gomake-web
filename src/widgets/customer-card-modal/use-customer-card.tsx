@@ -5,16 +5,15 @@ import { selectedClientState } from "@/pages-components/quotes/states";
 import { getAllSimilarCustomerApi } from "@/services/api-service/customers/customers-api";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useCallback, useState } from "react";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useRecoilState } from "recoil";
 import { prevSelectedClientState } from "@/pages-components/admin/home/widgets/quote-widget/states";
-
 
 const useCustomerCard = ({ t, setCustomer, onClose, setOpenOfferModal, userQuote }) => {
   const { callApi } = useGomakeAxios();
   const { alertFaultGetData } = useSnackBar();
   const [showTable, setShowTable] = useState(false);
   const [customerTableRows, setCustomerTableRows] = useState([]);
-  const [showOnlyActiveCustomers, setShowOnlyActiveCustomers] = useState<boolean>(false);
+  const [showInActiveCustomers, setShowInActiveCustomers] = useState<boolean>(false);
   const [selectedClient, setSelectedClient] = useRecoilState(selectedClientState);
 
   const customerTableHeaders = [
@@ -85,15 +84,14 @@ const useCustomerCard = ({ t, setCustomer, onClose, setOpenOfferModal, userQuote
   const getAllSimilarCustomersData = useCallback(() => {
     let customersArray = [...customerTableRows];
     if (customersArray?.length > 0) {
-      return showOnlyActiveCustomers ? customersArray.filter((user: any) => user.isActive) : customersArray;
+      return showInActiveCustomers ? customersArray : customersArray.filter((user: any) => user.isActive);
     }
     return customersArray
-  }, [customerTableRows, showOnlyActiveCustomers])
+  }, [customerTableRows, showInActiveCustomers])
 
-  const onShowOnlyActiveCustomers = (value: boolean) => {
-    setShowOnlyActiveCustomers(value);
+  const onShowInActiveCustomers = (value: boolean) => {
+    setShowInActiveCustomers(value);
   }
-
 
   return {
     customerTableHeaders,
@@ -102,9 +100,9 @@ const useCustomerCard = ({ t, setCustomer, onClose, setOpenOfferModal, userQuote
     handleHideTable,
     setCustomerTableRows,
     getAllSimilarCustomersData,
-    onShowOnlyActiveCustomers,
+    onShowInActiveCustomers,
     mapCustomerData,
-    setShowOnlyActiveCustomers,
+    setShowInActiveCustomers,
     getAllSimilarCustomer,
     setShowTable
   };
