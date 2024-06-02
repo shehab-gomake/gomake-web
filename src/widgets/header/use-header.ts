@@ -55,6 +55,7 @@ const useHeader = () => {
   }, []);
   const setQuoteNumber = useSetRecoilState<any>(QuoteNumberState);
   const resetSelectedClient = useResetRecoilState(selectedClientState);
+
   useEffect(() => {
     if (window.location.pathname != "/home") {
       if (userQuote) {
@@ -67,6 +68,7 @@ const useHeader = () => {
       }
     }
   }, [userQuote]);
+  
   return {
     user,
     open,

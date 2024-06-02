@@ -4,7 +4,11 @@ import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 
 const useStyle = () => {
-  const {theme, primaryColor , secondColor , errorColor} = useGomakeTheme();
+  const { theme, primaryColor, secondColor, errorColor } = useGomakeTheme();
+  const CONTAINER_MAX_HEIGHT = "1007px";
+  const CONTAINER_TABS_MAX_HEIGHT = "900px";
+  const FOOTER_MAX_HEIGHT = "50px";
+
   const classes = useMemo(() => {
     return {
       buttonStyle: {
@@ -16,8 +20,9 @@ const useStyle = () => {
       insideStyle: {
         width: "64%",
         height: "93%",
+        overFlow: "hidden",
         maxWidth: "1240px",
-        maxHeight: "1007px",
+        maxHeight: CONTAINER_MAX_HEIGHT,
         paddingLeft: "32px",
         paddingRight: "48px",
         paddingTop: "27px",
@@ -36,6 +41,28 @@ const useStyle = () => {
         color: "#ED028C",
         ...FONT_FAMILY.Lexend(600, 16),
         marginBottom: 10,
+      },
+      tabsContainer: {
+        height: "fit-content",
+        maxHeight: CONTAINER_TABS_MAX_HEIGHT,
+        overflow: "auto",
+        marginBottom: "50px"
+      },
+      footerStyle: {
+        display: "flex",
+        justifyContent: "flex-end",
+        position: "sticky" as "sticky",
+        bottom: "0px",
+        height: FOOTER_MAX_HEIGHT,
+        width: "100%",
+        background: "#fff",
+        alignItems: "center",
+      },
+      bottomSectionStyle: {
+        display: "flex",
+        flexDirection: "column" as "column",
+        justifyContent: "space-between",
+        maxHeight: CONTAINER_TABS_MAX_HEIGHT + FOOTER_MAX_HEIGHT,
       },
       colStyle: {
         display: "flex",
@@ -155,12 +182,6 @@ const useStyle = () => {
         fontStyle: "normal",
         lineHeight: "normal",
         ...FONT_FAMILY.Lexend(500, 12),
-      },
-      footerStyle: {
-        display: "flex",
-        justifyContent: "flex-end",
-        position: "fixed" as "fixed",
-        bottom: "10px",
       },
       customerInfoStyle: {
         display: "flex",
