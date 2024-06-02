@@ -18,11 +18,12 @@ import { GoMakeMenu } from "@/components";
 import { InputAdornment } from "@mui/material";
 import TuneIcon from '@mui/icons-material/Tune';
 
-const BoardMissionsListWidget = () => {
+const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
   const {
     tableHeader,
+    tableHeaderForPurchaseJobs,
     renderOptions,
     customer,
     agent,
@@ -37,6 +38,7 @@ const BoardMissionsListWidget = () => {
     handleClickSearch,
     handleClickClear,
     allBoardMissions,
+    allPurchaseJobs,
     patternSearch,
     handleAgentChange,
     handleStatusChange,
@@ -90,7 +92,7 @@ const BoardMissionsListWidget = () => {
     <>
       <Stack direction="column" justifyContent="space-between" display="flex" spacing={1} height="100%" >
         <div style={classes.mainContainer}>
-          <HeaderTitle title={t("boardMissions.title")} marginTop={1} marginBottom={1} />
+          <HeaderTitle title={!isPurchaseJobs ? t("boardMissions.title") : t("boardMissions.purchaseJobsTitle")} marginTop={1} marginBottom={1} />
           <SearchInputComponent
             searchInputStyle={{ width: "20vw" }}
             filtersButton={
@@ -188,8 +190,8 @@ const BoardMissionsListWidget = () => {
             stickyFirstCol={false}
             stickyHeader={true}
             maxHeight={650}
-            rows={allBoardMissions}
-            headers={tableHeader}
+            rows={!isPurchaseJobs ? allBoardMissions : allPurchaseJobs}
+            headers={!isPurchaseJobs ? tableHeader : tableHeaderForPurchaseJobs}
           />
         </div>
         <GoMakePagination
