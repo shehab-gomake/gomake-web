@@ -12,7 +12,6 @@ import { useDebounce } from "@/utils/use-debounce";
 import { MoreMenuWidget } from "./widgets/more-circle";
 import { DuplicateType } from "@/enums";
 import { DOCUMENT_TYPE } from "../quotes/enums";
-import { GomakeTextInput } from "@/components/text-input/text-input";
 import { useStyle } from "./style";
 import { useRouter } from "next/router";
 import { backToProcessApi, moveBoardMissionToDoneApi } from "@/services/api-service/production-floor/production-floor-endpoints";
@@ -29,7 +28,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     label: string;
     value: PStatus;
   } | null>();
-  const [supplierId, selectedSupplierId] = useState("")
+  const [supplierId, selectedSupplierId] = useState<any>()
   const [productIds, setProductIds] = useState<string[]>([]);
   const [productsList, setProductsList] = useState([]);
   const [patternSearch, setPatternSearch] = useState<string>();
@@ -44,7 +43,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
   const [pageNumber, setPageNumber] = useState(1);
   const [pagesCount, setPagesCount] = useState(0);
   const [pageSize, setPageSize] = useState(DEFAULT_VALUES.PageSize);
-  const { customer, setCustomer, renderOptions, checkWhatRenderArray, handleCustomerChange } = useCustomerDropDownList()
+  const { customer, supplierList, setCustomer, renderOptions, checkWhatRenderArray, handleCustomerChange } = useCustomerDropDownList()
   const { agent, setAgent, agentsCategories, handleAgentChange } = useAgentsList()
   const router = useRouter()
   const [selectedMission, setSelectedMission] = useState<any>({})
@@ -277,6 +276,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
             productionStatus: status?.value,
             pageNumber: pageNumber,
             pageSize: pageSize,
+            supplierId: supplierId?.value
           });
     }
   };
@@ -558,6 +558,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     onOpenMarkReadyThenPrintModal,
     selectedMission,
     supplierId,
+    supplierList,
   };
 };
 
