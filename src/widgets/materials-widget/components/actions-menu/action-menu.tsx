@@ -209,7 +209,7 @@ const ActionMenu = (props: IActionMenuProps) => {
                             <FormInput
                               input={item as IInput}
                               changeState={(e, v) =>
-                                handleChange(index, "value", v)
+                                handleChange(index, "values", v)
                               }
                               error={false}
                               readonly={false}
