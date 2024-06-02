@@ -87,10 +87,15 @@ const useWriteCommentComp = ({ getQuote, documentType }) => {
   }
 
   const handleBlur = () => {
-    updateDocumentItemContent();
+    if (data !== quoteItemValue?.notes) {
+      updateDocumentItemContent();
+    }
+
   }
   const handleBlurForInternalNotes = () => {
-    updateDocumentItemInternalNotes();
+    if (dataForInternalNotes !== quoteItemValue?.internalNotes) {
+      updateDocumentItemInternalNotes();
+    }
   }
 
   useEffect(() => {
