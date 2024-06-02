@@ -17,6 +17,8 @@ import { IconButton } from "@mui/material";
 import { GoMakeMenu } from "@/components";
 import { InputAdornment } from "@mui/material";
 import TuneIcon from '@mui/icons-material/Tune';
+import { useRecoilValue } from "recoil";
+import { outsourceSuppliersState } from "@/widgets/product-pricing-widget/state";
 
 const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
   const { classes } = useStyle();
@@ -42,6 +44,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
     patternSearch,
     handleAgentChange,
     handleStatusChange,
+    handledSupplierIdChange,
     handleCustomerChange,
     checkWhatRenderArray,
     handlePageChange,
@@ -81,13 +84,15 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
     handleClose,
     selectedMission,
     open,
-    anchorEl
+    anchorEl,
+    supplierId
   } = useBoardMissions({ isPurchaseJobs });
 
   useEffect(() => {
     getAllProducts();
   }, []);
-
+  const suppliersState = useRecoilValue(outsourceSuppliersState);
+  console.log("suppliersState", suppliersState)
   return (
     <>
       <Stack direction="column" justifyContent="space-between" display="flex" spacing={1} height="100%" >
@@ -152,6 +157,21 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
                             values={productIds}
                             placeholder={t("boardMissions.selectProducts")} />
                         </div>
+                        {isPurchaseJobs && <div style={classes.statusFilterContainer}>
+                          <h3 style={classes.filterLabelStyle}>{t("sales.quote.supplierName")}</h3>
+                          <GoMakeAutoComplate
+                            placeholder={"Select supplier"}
+                            value={supplierId}
+                            style={classes.textInputStyle}
+                            onChange={handledSupplierIdChange}
+                            options={suppliersState?.map((s) => ({
+                              value: s.supplierId,
+                              label: s.supplierName,
+                            }))}
+                            withArrow={true}
+                          />
+
+                        </div>}
                         <div style={classes.statusFilterContainer}>
                           <h3 style={classes.filterLabelStyle}>{t("boardMissions.dateRange")}</h3>
                           <GoMakeDatepicker onChange={onSelectDeliveryTimeDates} placeholder={t("boardMissions.chooseDate")} reset={resetDatePicker} />

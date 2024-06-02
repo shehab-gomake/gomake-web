@@ -29,6 +29,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     label: string;
     value: PStatus;
   } | null>();
+  const [supplierId, selectedSupplierId] = useState("")
   const [productIds, setProductIds] = useState<string[]>([]);
   const [productsList, setProductsList] = useState([]);
   const [patternSearch, setPatternSearch] = useState<string>();
@@ -111,6 +112,9 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     setStatus(value);
   };
 
+  const handledSupplierIdChange = (e: any, value: any) => {
+    selectedSupplierId(value);
+  };
   const handleClickSearch = () => {
     setPageNumber(1);
     getAllData(isPurchaseJobs, false)
@@ -120,6 +124,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     setAgent(null);
     setCustomer(null);
     setStatus(null);
+    selectedSupplierId(null)
     setProductIds([]);
     setPatternSearch("");
     setFromDate(null);
@@ -508,6 +513,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     patternSearch,
     handleAgentChange,
     handleStatusChange,
+    handledSupplierIdChange,
     handleCustomerChange,
     checkWhatRenderArray,
     pagesCount,
@@ -551,6 +557,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     onCloseMarkReadyThenPrintModal,
     onOpenMarkReadyThenPrintModal,
     selectedMission,
+    supplierId,
   };
 };
 
