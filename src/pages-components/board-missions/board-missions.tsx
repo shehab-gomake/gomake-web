@@ -85,7 +85,8 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
     selectedMission,
     open,
     anchorEl,
-    supplierId
+    supplierId,
+    supplierList
   } = useBoardMissions({ isPurchaseJobs });
 
   useEffect(() => {
@@ -164,9 +165,9 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
                             value={supplierId}
                             style={classes.textInputStyle}
                             onChange={handledSupplierIdChange}
-                            options={suppliersState?.map((s) => ({
-                              value: s.supplierId,
-                              label: s.supplierName,
+                            options={supplierList?.map((s) => ({
+                              value: s.id,
+                              label: s.name,
                             }))}
                             withArrow={true}
                           />
