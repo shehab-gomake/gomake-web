@@ -82,7 +82,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
     selectedMission,
     open,
     anchorEl
-  } = useBoardMissions();
+  } = useBoardMissions({ isPurchaseJobs });
 
   useEffect(() => {
     getAllProducts();

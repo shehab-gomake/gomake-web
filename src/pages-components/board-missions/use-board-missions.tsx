@@ -4,7 +4,7 @@ import { getAllProductsForDropDownList } from "@/services/hooks";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { PStatus } from "./widgets/enums";
-import { getDeliveryTickerPdfApi, getOrderSummeryPdfApi, getWorkMissionPdfApi, setBoardMissionsFiltersApi } from "@/services/api-service/board-missions-table/board-missions-table";
+import { getAllPurchaseJobsApi, getDeliveryTickerPdfApi, getOrderSummeryPdfApi, getWorkMissionPdfApi, setBoardMissionsFiltersApi } from "@/services/api-service/board-missions-table/board-missions-table";
 import { useDateFormat } from "@/hooks/use-date-format";
 import { DEFAULT_VALUES } from "@/pages/customers/enums";
 import { EWorkSource } from "@/widgets/product-pricing-widget/enums";
@@ -18,7 +18,7 @@ import { useRouter } from "next/router";
 import { backToProcessApi, moveBoardMissionToDoneApi } from "@/services/api-service/production-floor/production-floor-endpoints";
 import { downloadPdf } from "@/utils/helpers";
 
-const useBoardMissions = () => {
+const useBoardMissions = ({ isPurchaseJobs }) => {
   const { t } = useTranslation();
   const { classes } = useStyle();
   const { callApi } = useGomakeAxios();
@@ -47,7 +47,6 @@ const useBoardMissions = () => {
   const { agent, setAgent, agentsCategories, handleAgentChange } = useAgentsList()
   const router = useRouter()
   const [selectedMission, setSelectedMission] = useState<any>({})
-  console.log("selectedMission", selectedMission)
   const handlePageSizeChange = (event) => {
     setPageNumber(1);
     setPageSize(event.target.value);
@@ -114,7 +113,7 @@ const useBoardMissions = () => {
 
   const handleClickSearch = () => {
     setPageNumber(1);
-    getAllBoardMissions();
+    getAllData(isPurchaseJobs, false)
   };
 
   const handleClickClear = () => {
@@ -126,7 +125,7 @@ const useBoardMissions = () => {
     setFromDate(null);
     setToDate(null);
     setResetDatePicker(true);
-    pageNumber === 1 ? getAllBoardMissions(true) : setPageNumber(1);
+    pageNumber === 1 ? getAllData(isPurchaseJobs, true) : setPageNumber(1);
   };
   useEffect(() => {
     if (router.query.orderNumber) {
@@ -150,6 +149,14 @@ const useBoardMissions = () => {
 
 
   const [missionItem, setMissionItem] = useState<any>();
+
+  const getAllData = async (isPurchaseJobs: boolean, isClear: boolean = false) => {
+    if (isPurchaseJobs) {
+      return await getAllPurchaseJobs(isClear);
+    } else {
+      return await getAllBoardMissions(isClear);
+    }
+  };
   const getAllBoardMissions = async (isClear: boolean = false) => {
     if (connectionId) {
       const callBack = (res) => {
@@ -180,7 +187,40 @@ const useBoardMissions = () => {
               onClickWorkMissionPdf={onClickWorkMissionPdf}
             />
           ]);
-          const mapData2 = _data.data?.map((mission: any) => [
+          setAllBoardMissions(mapData);
+          setPagesCount(Math.ceil(_data?.totalItems / pageSize));
+        }
+        else {
+          alertFaultGetData();
+        }
+      };
+      await setBoardMissionsFiltersApi(callApi, callBack,
+        isClear ?
+          {
+            productsIds: [],
+            pageNumber: pageNumber,
+            pageSize: pageSize,
+          }
+          :
+          {
+            clientId: customer?.id,
+            agentId: agent?.id,
+            search: finalPatternSearch,
+            fromDate: fromDate && GetDateFormat(fromDate),
+            toDate: toDate && GetDateFormat(toDate),
+            productsIds: productIds,
+            productionStatus: status?.value,
+            pageNumber: pageNumber,
+            pageSize: pageSize,
+          });
+    }
+  };
+  const getAllPurchaseJobs = async (isClear: boolean = false) => {
+    if (connectionId) {
+      const callBack = (res) => {
+        if (res?.success) {
+          const _data = res?.data;
+          const mapData = _data.data?.map((mission: any) => [
             GetDateFormat(mission?.createdDate),
             GetDateFormat(mission?.dueDate),
             mission?.clientName,
@@ -207,25 +247,22 @@ const useBoardMissions = () => {
               onClickWorkMissionPdf={onClickWorkMissionPdf}
             />
           ]);
-          setAllBoardMissions(mapData);
-          setAllPurchaseJobs(mapData2);
+          setAllPurchaseJobs(mapData);
           setPagesCount(Math.ceil(_data?.totalItems / pageSize));
         }
         else {
           alertFaultGetData();
         }
       };
-      await setBoardMissionsFiltersApi(callApi, callBack,
+      await getAllPurchaseJobsApi(callApi, callBack,
         isClear ?
           {
-            // signalrConnectionId: connectionId,
             productsIds: [],
             pageNumber: pageNumber,
             pageSize: pageSize,
           }
           :
           {
-            // signalrConnectionId: connectionId,
             clientId: customer?.id,
             agentId: agent?.id,
             search: finalPatternSearch,
@@ -362,7 +399,8 @@ const useBoardMissions = () => {
   // }, [data, connectionId]);
 
   useEffect(() => {
-    getAllBoardMissions();
+    getAllData(isPurchaseJobs, false)
+    // getAllBoardMissions();
   }, [connectionId, pageNumber, pageSize, finalPatternSearch]);
 
   const handlePageChange = (event, value) => {
@@ -421,7 +459,7 @@ const useBoardMissions = () => {
     const callBack = (res) => {
       if (res?.success) {
         alertSuccessUpdate()
-        getAllBoardMissions()
+        getAllData(isPurchaseJobs, false)
       } else {
         alertFaultUpdate();
       }
