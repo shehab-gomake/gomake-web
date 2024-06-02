@@ -17,10 +17,11 @@ import { useStyle } from "./style";
 import { useRouter } from "next/router";
 import { backToProcessApi, moveBoardMissionToDoneApi } from "@/services/api-service/production-floor/production-floor-endpoints";
 import { downloadPdf } from "@/utils/helpers";
-import { useHasPermission } from "@/components/CheckPermission/use-has-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
+import { useUserPermission } from "@/hooks/use-permission";
 
 const useBoardMissions = () => {
+  const { CheckPermission } = useUserPermission();
   const { t } = useTranslation();
   const { classes } = useStyle();
   const { callApi } = useGomakeAxios();
@@ -48,8 +49,6 @@ const useBoardMissions = () => {
   const { agent, setAgent, agentsCategories, handleAgentChange } = useAgentsList()
   const router = useRouter()
   const [selectedMission, setSelectedMission] = useState<any>({})
-  //Permissions
-  const canShowCostsInBoardMissions = useHasPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS);
 
   const handlePageSizeChange = (event) => {
     setPageNumber(1);
@@ -80,8 +79,8 @@ const useBoardMissions = () => {
     t("mailingSettings.orderNumber"),
     t("boardMissions.outSourceType"),
     t("boardMissions.quantity"),
-    canShowCostsInBoardMissions && t("boardMissions.costFromOrderItem"),
-    canShowCostsInBoardMissions && t("boardMissions.priceFromOrderItem"),
+    CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS) && t("boardMissions.costFromOrderItem"),
+    CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS) && t("boardMissions.priceFromOrderItem"),
     t("boardMissions.jobName"),
     t("boardMissions.numberOfBoardMissionsInOrder"),
     t("boardMissions.productName"),
@@ -149,8 +148,8 @@ const useBoardMissions = () => {
             mission?.orderNumber,
             mission?.outSourceType === null ? EWorkSource[0] : EWorkSource[mission?.outSourceType],
             mission?.quantity,
-            canShowCostsInBoardMissions && mission?.cost,
-            canShowCostsInBoardMissions && mission?.price,
+            CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS) && mission?.cost,
+            CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS) && mission?.price,
             mission?.jobName,
             mission?.numberOfBoardMissions,
             mission?.productName,

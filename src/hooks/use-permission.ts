@@ -1,16 +1,16 @@
 import { Permissions } from "@/components/CheckPermission/enum";
 import { permissionsState } from "@/store/permissions";
-import { useEffect } from "react";
-import { useRecoilState } from "recoil";
+import { useRecoilValue } from "recoil";
 
 const useUserPermission = ()=>{
 
-    const [permissions, setPermissions] = useRecoilState<any>(permissionsState);
+    const permissions = useRecoilValue<any>(permissionsState);
    
-    const CheckPermission =  (permission : string) => {
+    const CheckPermission =  (permission : Permissions) => {
         const res = permissions.includes(permission);
         return !!(permissions && res);
     }
+    
     return {
         CheckPermission,
       };

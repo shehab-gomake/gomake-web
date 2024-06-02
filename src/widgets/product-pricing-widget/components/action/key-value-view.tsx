@@ -6,6 +6,14 @@ import { useState } from "react";
 import { UpdateValueInput } from "@/components/text-input/update-value-input";
 import Button from "@mui/material/Button";
 import { EWorkSource } from "@/widgets/product-pricing-widget/enums";
+import { PermissionCheck } from "@/components/CheckPermission/check-permission";
+import { Permissions } from "@/components/CheckPermission/enum";
+
+//move to utils
+const isCurrency = (unit) => {
+    const currencySymbols = ["$", "€", "£", "¥", "₪", "₹", "₽", "₩", "฿"];
+    return currencySymbols.includes(unit);
+};
 
 interface IKeyValueViewProps extends IOutput {
     valueColor?: string;
@@ -41,17 +49,29 @@ const KeyValueViewComponent = ({
     const { classes } = useStyle();
     const curValues = source === EWorkSource.OUT ? !!outSourceValues ? outSourceValues : ['0'] : values;
     return (
-        <Stack direction={'row'} gap={'10px'} alignItems={'center'}>
-            <span style={classes.detailTitle}>{name}</span>
-            {
-                curValues?.map(value => <span style={valueColor ? {
-                    ...classes.detailValue,
-                    color: valueColor
-                } : classes.detailValue}>{!!defaultUnit ? `${value} ${defaultUnit}` : value}</span>)
-            }
+        isCurrency(defaultUnit) ? (
+            <PermissionCheck userPermission={Permissions.SHOW_COSTS_IN_PRODUCTION_FLOOR}>
+                <Stack direction={'row'} gap={'10px'} alignItems={'center'}>
+                    <span style={classes.detailTitle}>{name}</span>
+                    {curValues?.map(value => (
+                        <span style={valueColor ? { ...classes.detailValue, color: valueColor } : classes.detailValue}>
+                            {!!defaultUnit ? `${value} ${defaultUnit}` : value}
+                        </span>
+                    ))}
+                </Stack>
+            </PermissionCheck>
+        ) : (
+            <Stack direction={'row'} gap={'10px'} alignItems={'center'}>
+                <span style={classes.detailTitle}>{name}</span>
+                {curValues?.map(value => (
+                    <span style={valueColor ? { ...classes.detailValue, color: valueColor } : classes.detailValue}>
+                        {!!defaultUnit ? `${value} ${defaultUnit}` : value}
+                    </span>
+                ))}
+            </Stack>
+        )
+    );
 
-        </Stack>
-    )
 }
 
 const EditableKeyValueViewComponent = ({

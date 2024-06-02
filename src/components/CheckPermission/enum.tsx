@@ -11,7 +11,7 @@ export enum Permissions {
     ADD_SUPPLIER = "AddSupplier",
 
     // quote group
-    SHOW_QUOTES = "ShowQuotes",
+    SHOW_QUOTES = "ShowQuotes", 
     CREATE_QUOTES = "CreateQuote",
     EDIT_QUOTES = "EditQuotes", 
     EDIT_QUOTE_PRICES = "EditPriceQuote",
@@ -99,4 +99,3 @@ export enum Permissions {
     SHOW_SALES_REPORT = "ShowSalesReport",
     SHOW_CREDIT_CARD_TRANSACTIONS = "ShowCreditCardTransactions",
 }
-
