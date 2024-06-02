@@ -82,6 +82,11 @@ const useStyle = () => {
         cursor: "pointer",
         ...FONT_FAMILY.Lexend(500, 14),
       },
+      AmberIconStyle: {
+        width: 120,
+        height: 120,
+        color: errorColor(300)
+      }
     };
   }, [theme]);
   return {

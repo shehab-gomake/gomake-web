@@ -57,6 +57,8 @@ interface IProps {
   showAddButton?: boolean;
   isgetAllCustomers?: boolean;
   isFromHomePage?: boolean;
+  setOpenOfferModal?:any;
+  userQuote?:any;
 }
 
 const CustomerCardWidget = ({
@@ -74,6 +76,8 @@ const CustomerCardWidget = ({
   showAddButton,
   isgetAllCustomers = true,
   isFromHomePage = false,
+  setOpenOfferModal,
+  userQuote
 }: IProps) => {
   const [open, setOpen] = useState(false);
   const { addNewCustomer } = useAddCustomer();
@@ -91,7 +95,7 @@ const CustomerCardWidget = ({
     setShowOnlyActiveCustomers,
     getAllSimilarCustomer,
     setShowTable
-  } = useCustomerCard({ t, setCustomer, onClose });
+  } = useCustomerCard({ t, setCustomer, onClose, setOpenOfferModal,userQuote });
   const { alertRequiredFields, alertFault } = useSnackBar();
   const [resetPassModal, setResetPassModalModal] = useRecoilState<boolean>(resetPassModalState);
   const [gomakeUser, setGomakeUser] = useRecoilState<any>(gomakeUserState);
@@ -131,7 +135,6 @@ const CustomerCardWidget = ({
       </Stack>
     );
   };
-
 
   const clientTypeLabel = typeClient === "C"
     ? t("customers.modal.clientType")

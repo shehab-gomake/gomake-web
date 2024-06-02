@@ -10,7 +10,7 @@ import { useStyle } from "./style";
 import { Popover } from "@mui/material";
 import { PermissionCheck } from "@/components/CheckPermission/check-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { SecondaryButton } from "@/components/button/secondary-button";
 import { useResetRecoilState, useSetRecoilState } from "recoil";
 import {
@@ -28,7 +28,6 @@ import { CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 const QuoteWidget = ({ isAdmin = true }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
-  const [QuoteId, setQuoteId] = useState("");
   const setQuoteNumber = useSetRecoilState<any>(QuoteNumberState);
   const setQuoteIfExist = useSetRecoilState<any>(QuoteIfExistState);
   const resetSelectedClient = useResetRecoilState(selectedClientState);
@@ -46,11 +45,10 @@ const QuoteWidget = ({ isAdmin = true }) => {
     openModal,
     onClickSaveQuote,
     userQuote,
-    errorColor,
     selectedClientType,
     selectedClient,
     onClickCloseModal,
-    _renderErrorMessage, 
+    _renderErrorMessage,
     handleClose,
     setSelectedClientType,
     setSelectedClient,
@@ -60,10 +58,16 @@ const QuoteWidget = ({ isAdmin = true }) => {
     renderOptions,
     openCustomerModal,
     customer,
-    setCustomer, 
+    setCustomer,
     onCustomerAdd,
     onClickAddCustomer,
     onCloseCustomerModal,
+    handleCancel,
+    setOpenModal,
+    QuoteId,
+    setQuoteId,
+    getAndSetExistQuote,
+    getAllClientTypes
   } = useQuoteWidget(DOCUMENT_TYPE.quote);
 
   useEffect(() => {
@@ -77,53 +81,57 @@ const QuoteWidget = ({ isAdmin = true }) => {
       );
       setSelectedClientType(clientType);
     } else {
-      resetSelectedClient();
+      // resetSelectedClient();
       setQuoteId(null);
       setQuoteNumber(null);
       setQuoteIfExist(false);
     }
-  }, [userQuote, clientTypesValue]);
+  }, [userQuote]);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      await getAllClientTypes();
+      getAndSetExistQuote();
+    };
+    fetchData();
+  }, []);
 
   return (
     <div data-tour="quote-widget" style={classes.mainContainer}>
       <div style={classes.customerSectionStyle}>
-      <div style={classes.autoComplateRowContainer}>
-        <div data-tour="select-customer" style={{ width: "65%" }}>
-          <GoMakeAutoComplate
-            options={renderOptions() ? renderOptions() : []}
-            placeholder={t("home.admin.selectCustomer")}
-            style={classes.selectCustomerContainer}
-            getOptionLabel={(option: any) =>
-              option && option.name ? `${option.name}-${option.code}` : ""
-            }
-            onChangeTextField={checkWhatRenderArray}
-
-            value={selectedClient}
-
-
-            onChange={(e: any, value: any) => {
-              handleClickToSelectedCustomer( 
-                userQuote?.client?.id,
-                value
-              ).then();
-            }}
-          />
+        <div style={classes.autoComplateRowContainer}>
+          <div data-tour="select-customer" style={{ width: "65%" }}>
+            <GoMakeAutoComplate
+              options={renderOptions() ? renderOptions() : []}
+              placeholder={t("home.admin.selectCustomer")}
+              style={classes.selectCustomerContainer}
+              getOptionLabel={(option: any) =>
+                option && option.name ? `${option.name}-${option.code}` : ""
+              }
+              onChangeTextField={checkWhatRenderArray}
+              value={selectedClient}
+              onChange={(e: any, value: any) => {
+                handleClickToSelectedCustomer(
+                  userQuote?.client?.id,
+                  value
+                ).then();
+              }}
+            />
+          </div>
+          <div data-tour="select-type" style={{ width: "30%" }}>
+            <GoMakeAutoComplate
+              options={clientTypesValue}
+              placeholder={t("home.admin.selectType")}
+              style={classes.selectTypeContainer}
+              getOptionLabel={(option: any) => (option?.name ? option.name : "")}
+              onChange={(e: any, value: any) => {
+                setSelectedClientType(value);
+              }}
+              value={selectedClientType}
+            />
+          </div>
         </div>
-        <div data-tour="select-type" style={{ width: "30%" }}>
-          <GoMakeAutoComplate 
-            options={clientTypesValue}
-            placeholder={t("home.admin.selectType")}
-            style={classes.selectTypeContainer}
-            getOptionLabel={(option: any) => (option?.name ? option.name : "")}
-            onChange={(e: any, value: any) => {
-              setSelectedClientType(value);
-            }}
-            value={selectedClientType}
-          />
-        </div>
-      </div>
-      <button style={classes.autoButtonStyle} onClick={onClickAddCustomer} >{t("customers.buttons.AddOrSearch")}</button>
+        <button style={classes.autoButtonStyle} onClick={onClickAddCustomer} >{t("customers.buttons.AddOrSearch")}</button>
       </div>
       <div style={classes.autoComplateRowContainer}>
         <div data-tour="select-product" style={{ width: "65%" }}>
@@ -201,21 +209,14 @@ const QuoteWidget = ({ isAdmin = true }) => {
         <div style={classes.errorMsgStyle}>{_renderErrorMessage()}</div>
       </Popover>
       <GoMakeDeleteModal
-        icon={
-          <WarningAmberIcon
-            style={{ width: 120, height: 120, color: errorColor(300) }}
-          />
-        }
+        subTitle={t("sales.quote.MessageForClient")}
+        icon={ <WarningAmberIcon style={classes.AmberIconStyle} />}
         title={t("sales.quote.titleMessage")}
         yesBtn={t("sales.quote.Confirm")}
         openModal={openModal}
-        onClose={() => {
-          onClickCloseModal().then();
-        }}
-        subTitle={t("sales.quote.MessageForClient")}
-        onClickDelete={() => {
-          onClickSaveQuote(QuoteId).then(() => onClickCloseModal());
-        }}
+        onClose={onClickCloseModal}
+        onClickDelete={() =>onClickSaveQuote(QuoteId)}
+        onClickCancel={handleCancel}
       />
       <CustomerCardWidget
         isValidCustomer={isValidCustomer}
@@ -230,6 +231,8 @@ const QuoteWidget = ({ isAdmin = true }) => {
         customer={customer}
         setCustomer={setCustomer}
         isFromHomePage={true}
+        setOpenOfferModal={setOpenModal}
+        userQuote={userQuote}
       />
     </div>
   );

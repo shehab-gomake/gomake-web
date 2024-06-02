@@ -5,17 +5,17 @@ import { selectedClientState } from "@/pages-components/quotes/states";
 import { getAllSimilarCustomerApi } from "@/services/api-service/customers/customers-api";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useCallback, useState } from "react";
-import { useRecoilValue, useSetRecoilState } from "recoil";
-import { priceOfferForSetupModalState, userQuoteState } from "@/pages-components/admin/home/widgets/quote-widget/states";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import { prevSelectedClientState } from "@/pages-components/admin/home/widgets/quote-widget/states";
 
 
-const useCustomerCard = ({ t, setCustomer, onClose }) => {
+const useCustomerCard = ({ t, setCustomer, onClose, setOpenOfferModal, userQuote }) => {
   const { callApi } = useGomakeAxios();
   const { alertFaultGetData } = useSnackBar();
   const [showTable, setShowTable] = useState(false);
   const [customerTableRows, setCustomerTableRows] = useState([]);
   const [showOnlyActiveCustomers, setShowOnlyActiveCustomers] = useState<boolean>(false);
-  const setSelectedClient = useSetRecoilState(selectedClientState);
+  const [selectedClient, setSelectedClient] = useRecoilState(selectedClientState);
 
   const customerTableHeaders = [
     t("customers.customerCode"),
@@ -28,28 +28,27 @@ const useCustomerCard = ({ t, setCustomer, onClose }) => {
 
   const handleHideTable = () => setShowTable(false);
 
-  const userQuote = useRecoilValue<any>(userQuoteState);
-  const setOpenModal = useSetRecoilState<any>(priceOfferForSetupModalState);
+  const [previousClient, setPreviousClient] = useRecoilState<any>(prevSelectedClientState);
+
+  const handleOpenModal = (newClient) => {
+    //setPreviousClient(selectedClient ? selectedClient : previousClient );
+    setPreviousClient(selectedClient);
+    setSelectedClient(newClient);
+    setOpenOfferModal(true);
+  };
 
   const handleChooseCustomer = (customer) => {
-    if (customer) {
-      setSelectedClient(customer);
-      if (userQuote?.client?.id != null && customer?.id != null) {
-        if (userQuote?.client?.id !== customer?.id) {
-          setOpenModal(true);
-        }
-      }
-      onClose();
-      handleHideTable();
-      setCustomer(null);
-    };
+    if (userQuote?.client?.id != null && customer?.id != null && userQuote?.client?.id !== customer?.id) {
+      handleOpenModal(customer);
+    }
+    else {
+      setSelectedClient(customer)
+    }
+    onClose();
+    handleHideTable();
+    setCustomer(null);
+
   }
-
-  // const handleShowTable = (customer) => {
-  //   getAllSimilarCustomer(customer);
-  //   setShowTable(true);
-  // };
-
 
   const getAllSimilarCustomer = async (customer) => {
     const handleResponse = (res) => {
