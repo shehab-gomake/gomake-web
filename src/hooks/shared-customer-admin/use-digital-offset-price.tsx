@@ -582,6 +582,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     parameterValue.selectedParameterValues &&
                     parameterValue.selectedParameterValues.length > 0
                   ) {
+                    console.log("parameterValue", parameterValue)
                     parameterValue.selectedParameterValues.forEach((selectedParam) => {
                       if (selectedParam.valueIds && selectedParam.valueIds.length > 0) {
                         const param = parameter.settingParameters.find(
@@ -598,6 +599,20 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                           valueIds: selectedParam.valueIds,
                           actionIndex: param?.actionIndex,
                           parameterCode: param?.code
+                        });
+                      }
+                      else if (productItemValueByEdit) {
+                        const parameterIdsToExtract = [
+                          "e1dfbaab-977e-4267-9e4e-d733f49ee20d",
+                          "8b43efba-f28c-4e73-8fa0-cc64f3ea06f8",
+                          "8eff3238-a321-48f3-85eb-c14afaccbff3"
+                        ];
+
+                        parameterIdsToExtract.forEach(parameterId => {
+                          const parameter = productItemValueByEdit?.itemParmetersValues?.find(item => item.parameterId === parameterId);
+                          if (parameter) {
+                            subProduct.parameters.push(parameter);
+                          }
                         });
                       }
                     });
@@ -2136,86 +2151,85 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             }
           });
         }
+       
+        if(dieCut ){
+           if(subSectionParameter.code === "DieCut"){
+             let dieUnitWidth = dieCut.rowData.dieUnitWidth.value + "";
+             let dieUnitLength = dieCut.rowData.dieUnitLength.value + "";
+             let finalUnitWidth = dieCut.rowData.finalUnitWidth.value +"";
+             let finalUnitLength = dieCut.rowData.finalUnitLength.value + "";
+             let finalUnitHeight = dieCut.rowData.finalUnitHeight.value + "";
+             const dieCutSizesParametersArray = [];
+             dieCutSizesParametersArray.push({parameterCode:"Width",value:dieUnitWidth});
+             dieCutSizesParametersArray.push({parameterCode:"Height",value:dieUnitLength});
+             dieCutSizesParametersArray.push({parameterCode:"DieUnitWidth",value:finalUnitWidth});
+             dieCutSizesParametersArray.push({parameterCode:"DieUnitLength",value:finalUnitLength});
+             dieCutSizesParametersArray.push({parameterCode:"DieUnitHeight",value:finalUnitHeight});
+             dieCutSizesParametersArray.forEach(dieCutSizeParameter=>{
+               let dieCutSizeSubProductParameter = temp.find(x=>x.parameterCode == dieCutSizeParameter.parameterCode);
+               if(dieCutSizeSubProductParameter){
+                 dieCutSizeSubProductParameter.values = [dieCutSizeParameter.value]
+                 dieCutSizeSubProductParameter.isDisabled = true;
+               }else{
+                 const subSectionParameter = subSection.parameters.find(
+                     (param) => param.code === dieCutSizeParameter.parameterCode
+                 );
+                 if(subSectionParameter){
+                   temp.push({
+                     parameterId: subSectionParameter.id,
+                     sectionId: sectionId,
+                     subSectionId: subSectionId,
+                     ParameterType: ParameterType,
+                     parameterName: parameterName,
+                     actionId: actionId,
+                     values: [dieCutSizeParameter.value],
+                     valueIds: [],
+                     actionIndex:subSectionParameter.actionIndex,
+                     parameterCode: subSectionParameter.code,
+                     valuesConfigs: subSectionParameter?.valuesConfigs,
+                     unitKey: subSectionParameter?.unitKey,
+                     unitType: subSectionParameter?.unitType,
+                     isDisabled: true,
+                   });
+                 }
+                 
+               }
 
-        if (dieCut) {
-          if (subSectionParameter.code === "DieCut") {
-            let dieUnitWidth = dieCut.rowData.dieUnitWidth.value;
-            let dieUnitLength = dieCut.rowData.dieUnitLength.value;
-            let finalUnitWidth = dieCut.rowData.finalUnitWidth.value;
-            let finalUnitLength = dieCut.rowData.finalUnitLength.value;
-            let finalUnitHeight = dieCut.rowData.finalUnitHeight.value;
-            const dieCutSizesParametersArray = [];
-            dieCutSizesParametersArray.push({ parameterCode: "Width", value: dieUnitWidth });
-            dieCutSizesParametersArray.push({ parameterCode: "Height", value: dieUnitLength });
-            dieCutSizesParametersArray.push({ parameterCode: "DieUnitWidth", value: finalUnitWidth });
-            dieCutSizesParametersArray.push({ parameterCode: "DieUnitLength", value: finalUnitLength });
-            dieCutSizesParametersArray.push({ parameterCode: "DieUnitHeight", value: finalUnitHeight });
-            dieCutSizesParametersArray.forEach(dieCutSizeParameter => {
-              let dieCutSizeSubProductParameter = temp.find(x => x.parameterCode == dieCutSizeParameter.parameterCode);
-              if (dieCutSizeSubProductParameter) {
-                dieCutSizeSubProductParameter.values = [dieCutSizeParameter.value]
-                dieCutSizeSubProductParameter.isDisabled = true;
-              } else {
-                const subSectionParameter = subSection.parameters.find(
-                  (param) => param.code === dieCutSizeParameter.parameterCode
-                );
-                if (subSectionParameter) {
-                  temp.push({
-                    parameterId: subSectionParameter.id,
-                    sectionId: sectionId,
-                    subSectionId: subSectionId,
-                    ParameterType: ParameterType,
-                    parameterName: parameterName,
-                    actionId: actionId,
-                    values: [dieCutSizeParameter.value],
-                    valueIds: [],
-                    actionIndex: subSectionParameter.actionIndex,
-                    parameterCode: subSectionParameter.code,
-                    valuesConfigs: subSectionParameter?.valuesConfigs,
-                    unitKey: subSectionParameter?.unitKey,
-                    unitType: subSectionParameter?.unitType,
-                    isDisabled: true,
-                  });
-                }
-
-              }
-
-            });
-          }
-          else if (subSectionParameter.code === "DieKissCut") {
-            // debugger
-            let unitWidth = dieCut.rowData.unitWidth.value;
-            let unitLength = dieCut.rowData.unitLength.value;
-            const dieCutSizesParametersArray = [];
-            dieCutSizesParametersArray.push({ parameterCode: "Width", value: unitWidth });
-            dieCutSizesParametersArray.push({ parameterCode: "Height", value: unitWidth });
-            dieCutSizesParametersArray.forEach(dieCutSizeParameter => {
-              let dieCutSizeSubProductParameter = temp.find(x => x.parameterCode == dieCutSizeParameter.parameterCode);
-              if (dieCutSizeSubProductParameter) {
-                dieCutSizeSubProductParameter.values = [dieCutSizeParameter.value]
-                dieCutSizeSubProductParameter.isDisabled = true;
-              } else {
-                const subSectionParameter = subSection.parameters.find(
-                  (param) => param.code === dieCutSizeParameter.parameterCode
-                );
-                temp.push({
-                  parameterId: subSectionParameter.id,
-                  sectionId: sectionId,
-                  subSectionId: subSectionId,
-                  ParameterType: ParameterType,
-                  parameterName: parameterName,
-                  actionId: actionId,
-                  values: [dieCutSizeParameter.value],
-                  valueIds: [],
-                  actionIndex: subSectionParameter.actionIndex,
-                  parameterCode: subSectionParameter.code,
-                  valuesConfigs: subSectionParameter?.valuesConfigs,
-                  unitKey: subSectionParameter?.unitKey,
-                  unitType: subSectionParameter?.unitType,
-                  isDisabled: true,
-                });
-              }
-
+             });
+           }
+           else if(subSectionParameter.code === "DieKissCut"){
+             debugger
+             let unitWidth = dieCut.rowData.unitWidth.value + "";
+             let unitLength = dieCut.rowData.unitLength.value + "";
+             const dieCutSizesParametersArray = [];
+             dieCutSizesParametersArray.push({parameterCode:"Width",value:unitWidth});
+             dieCutSizesParametersArray.push({parameterCode:"Height",value:unitLength});
+             dieCutSizesParametersArray.forEach(dieCutSizeParameter=>{
+               let dieCutSizeSubProductParameter = temp.find(x=>x.parameterCode == dieCutSizeParameter.parameterCode);
+               if(dieCutSizeSubProductParameter){
+                 dieCutSizeSubProductParameter.values = [dieCutSizeParameter.value]
+                 dieCutSizeSubProductParameter.isDisabled = true;
+               }else{
+                 const subSectionParameter = subSection.parameters.find(
+                     (param) => param.code === dieCutSizeParameter.parameterCode
+                 );
+                 temp.push({
+                   parameterId: subSectionParameter.id,
+                   sectionId: sectionId,
+                   subSectionId: subSectionId,
+                   ParameterType: ParameterType,
+                   parameterName: parameterName,
+                   actionId: actionId,
+                   values: [dieCutSizeParameter.value],
+                   valueIds: [],
+                   actionIndex:subSectionParameter.actionIndex,
+                   parameterCode: subSectionParameter.code,
+                   valuesConfigs: subSectionParameter?.valuesConfigs,
+                   unitKey: subSectionParameter?.unitKey,
+                   unitType: subSectionParameter?.unitType,
+                   isDisabled: true,
+                 });
+               }
             });
           }
 

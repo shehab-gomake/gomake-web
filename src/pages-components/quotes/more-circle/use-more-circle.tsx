@@ -44,7 +44,7 @@ const useMoreCircle = () => {
 
     return [
       {
-        condition: documentType === DOCUMENT_TYPE.quote && ((quote?.documentStatus === QUOTE_STATUSES.Create && userQuote) || quote?.documentStatus === QUOTE_STATUSES.Open || quote?.documentStatus === QUOTE_STATUSES.Approved),
+        condition: documentType === DOCUMENT_TYPE.quote && quote?.isEditable,
         onClick: () => {
           const isCreateStatus = quote?.documentStatus === QUOTE_STATUSES.Create;
           isCreateStatus ? navigate(`/quote`) : onClickOpenModal(quote);

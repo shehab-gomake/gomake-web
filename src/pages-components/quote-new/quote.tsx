@@ -186,11 +186,13 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
     onClickCloseWatssAppModal,
     sortDocumentItems,
     updateIsShowDetails,
+    updateIsShowPrices,
     getWhatsAppMessage,
     whatsappMassage,
     openAddNewContactModal,
     onCloseNewContact,
-    onOpenNewContact
+    onOpenNewContact,
+    onChangeSelectedItemRowForQoute
   } = useQuoteNew({ docType: documentType, isQuoteConfirmation: isQuoteConfirmation });
 
   const quoteSteps: StepType[] = [
@@ -405,6 +407,7 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
                   documentType={documentType}
                   getQuote={getQuote}
                   isQuoteConfirmation={isQuoteConfirmation}
+                  onChangeSelectedItemRowForQoute={onChangeSelectedItemRowForQoute}
                 />
               }
               {
@@ -499,6 +502,7 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
         onClickRefresh={refreshExchangeRate}
         sortDocumentItems={sortDocumentItems}
         updateIsShowDetails={updateIsShowDetails}
+        updateIsShowPrices={updateIsShowPrices}
       />
       <CancelBtnMenu
         handleClose={handleCancelBtnClose}
