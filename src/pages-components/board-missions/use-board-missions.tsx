@@ -276,7 +276,8 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
             productionStatus: status?.value,
             pageNumber: pageNumber,
             pageSize: pageSize,
-            supplierId: supplierId?.value
+            supplierId: supplierId?.value,
+            isPurchaseJobs: true,
           });
     }
   };
@@ -299,7 +300,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     await getOrderSummeryPdfApi(callApi, callBack, { boardMissionId });
   };
 
-  const onClickWorkMissionPdf = async (boardMissionId: string) => {
+  const onClickWorkMissionPdf = async (boardMissionId: string, actionId: string) => {
     const callBack = (res) => {
       if (res?.success) {
         const pdfLink = res.data;
@@ -308,7 +309,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
         alertFaultGetData();
       }
     };
-    await getWorkMissionPdfApi(callApi, callBack, { boardMissionId });
+    await getWorkMissionPdfApi(callApi, callBack, { boardMissionId, isPurchaseJobs, actionId: actionId });
   };
 
   const onClickPrintPackagingSlip = async () => {
