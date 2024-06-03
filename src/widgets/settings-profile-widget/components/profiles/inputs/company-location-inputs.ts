@@ -1,7 +1,8 @@
 import {ICompanyProfile} from "@/store/company-profile";
+import {IPrintHouseLocation} from "@/store/print-house-locations-state";
 
 
-const companyLocationInputs = (state: ICompanyProfile , countriesWithCodes)  => {
+const companyLocationInputs = (state: ICompanyProfile | IPrintHouseLocation , countriesWithCodes)  => {
     return [
         {
             name: "country",
