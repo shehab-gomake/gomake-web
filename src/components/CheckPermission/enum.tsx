@@ -75,7 +75,6 @@ export enum Permissions {
     SHOW_PRINTHOUSES_TABLE = "ShowPrintHousesTable",
 
     //sales group
-   // SHOW_BOARD_MISSIONS = "ShowBoardMissions",
     SHOW_DELIVERY_NOTES = "ShowDeliveryNotes",
     SHOW_DELIVERY_NOTES_REFUND = "ShowDeliveryNotesRefund",
     SHOW_INVOICES = "ShowInvoices",

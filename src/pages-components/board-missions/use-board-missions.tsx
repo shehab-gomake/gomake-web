@@ -86,7 +86,7 @@ const useBoardMissions = () => {
     t("boardMissions.productName"),
     t("boardMissions.currentBoardMissionStatus"),
     t("properties.more")
-  ].filter(Boolean); 
+  ]; 
 
 
   const handleMultiSelectChange = (newValues: string[]) => {

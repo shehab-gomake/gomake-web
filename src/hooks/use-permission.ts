@@ -6,7 +6,7 @@ const useUserPermission = ()=>{
 
     const permissions = useRecoilValue<any>(permissionsState);
    
-    const CheckPermission =  (permission : Permissions) => {
+    const CheckPermission =  (permission : string) => {
         const res = permissions.includes(permission);
         return !!(permissions && res);
     }
