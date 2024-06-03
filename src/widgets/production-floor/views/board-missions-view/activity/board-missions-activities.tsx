@@ -46,7 +46,7 @@ const BoardMissionsActivities = () => {
         }
     }, [activitiesList])
     return (
-        <Stack width={'40%'} gap={'25px'} maxHeight={'700px'}>
+        <Stack  width={'40%'} gap={'25px'} maxHeight={'700px'} overflow={'hidden'}>
             <Stack direction={'row'} gap={'10px'} alignItems={'center'}>
                 {
                     filtersButtonsArray?.map(btn => <Button onClick={btn.onClick} variant={'contained'} style={{

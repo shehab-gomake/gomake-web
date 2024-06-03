@@ -15,9 +15,9 @@ const MoreActionsButton = () => {
     const [open, setOpen] = useState<boolean>(false);
     const {query, replace, pathname, push} = useRouter();
     const fileInputRef = useRef(null);
-    const {handleFileUpload} = useUploadFiles();
     const [companyProfile] = useRecoilState(printHouseProfile);
     const [boardMissions] = useRecoilState(boardMissionsDetailsState);
+    const {handleFileUpload} = useUploadFiles(boardMissions?.orderItemId, boardMissions?.filesPath);
     const {t} = useTranslation();
     const direction = t('direction');
     const handleClose = () => {

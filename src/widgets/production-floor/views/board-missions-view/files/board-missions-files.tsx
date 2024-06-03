@@ -25,7 +25,7 @@ const BoardMissionsFiles = () => {
     return (
         <Stack direction={'row'} gap={'20px'} flexWrap={'wrap'}>
             {
-                files?.map(file => <FileCardComponent key={file.name} file={file}/>)
+                files?.filter(file => !!file.screenShotURL)?.map(file => <FileCardComponent key={file.name} file={file}/>)
             }
         </Stack>
     )
