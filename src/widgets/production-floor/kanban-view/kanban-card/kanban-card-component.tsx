@@ -4,6 +4,8 @@ import {Stack} from "@mui/material";
 import { DateFormatter} from "@/utils/adapter";
 import {LabelComponent} from "@/widgets/production-floor/label-component/label-component";
 import {useStyle} from "@/widgets/production-floor/kanban-view/kanban-card/style";
+import { useUserPermission } from '@/hooks/use-permission';
+import { Permissions } from "@/components/CheckPermission/enum";
 
 interface IProp {
     board: IBoardMissions
@@ -14,14 +16,21 @@ const ItemTypes = {
 };
 
 const KanbanCardComponent = ({board}: IProp) => {
-    const [{isDragging}, drag] = useDrag(() => ({
+
+    const {classes} = useStyle();
+    const { CheckPermission } = useUserPermission();
+    const canDrag = CheckPermission(Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR); 
+
+    const [{ isDragging }, drag] = useDrag(() => ({
         type: ItemTypes.TASK,
         item: board,
+        canDrag: canDrag,
         collect: (monitor) => ({
             isDragging: !!monitor.isDragging(),
         }),
-    }));
-    const {classes} = useStyle();
+    }), [canDrag]);
+
+
     return (
         <Stack
             direction={'column'}
@@ -30,11 +39,11 @@ const KanbanCardComponent = ({board}: IProp) => {
             borderRadius={'12px'}
             width={'100%'}
             maxHeight={'fit-content'}
-            ref={drag}
+            ref={canDrag ? drag : null}
             style={{
                 opacity: isDragging ? 0.8 : 1,
                 backgroundColor: 'white',
-                cursor: 'move',
+                cursor: canDrag ? 'move' : 'not-allowed',
             }}
         >
             <div>

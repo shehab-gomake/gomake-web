@@ -12,6 +12,7 @@ interface IProps {
 }
 
 function KanbanColumnComponent({status, boardsMissions, count}: IProps) {
+    
     const {updateStatus} = useProductionFloorData();
     const [{isOver}, drop] = useDrop(() => ({
         accept: 'task',
@@ -27,6 +28,7 @@ function KanbanColumnComponent({status, boardsMissions, count}: IProps) {
             canDrop: !!monitor.canDrop(),
         }),
     }), [status, boardsMissions]);
+
     return (
         <Stack ref={drop}
                gap={'10px'}

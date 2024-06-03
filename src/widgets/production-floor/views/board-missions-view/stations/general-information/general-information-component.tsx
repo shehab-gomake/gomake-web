@@ -53,8 +53,10 @@ const GeneralInformationComponent = () => {
                                 : [parameterComponent, <Divider key={`divider-${key}`} orientation="vertical" flexItem />];
                         })
                     }
-                    <Divider flexItem orientation={'vertical'} />
-                    <Button style={classes.addNoteBtn} onClick={() => setOpenAddNoteModal(true)} variant={'outlined'} startIcon={<PlusIcon stroke={'#344054'} />}>{t('productionFloor.addNote')}</Button>
+                    <PermissionCheck userPermission={Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR}>
+                        <Divider flexItem orientation={'vertical'} />
+                        <Button sx={classes.addNoteBtn} onClick={() => setOpenAddNoteModal(true)} variant={'outlined'} startIcon={<PlusIcon stroke={'#344054'} />}>{t('productionFloor.addNote')}</Button>
+                    </PermissionCheck>
                 </Stack>
                 <BoardMissionsNotes />
                 <BoardMissionsAddNote onClose={() => { setOpenAddNoteModal(false) }} openModal={openAddNoteModal} />
