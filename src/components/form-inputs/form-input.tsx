@@ -83,12 +83,22 @@ const FormInput = ({ input, error, changeState, readonly }: IFormInput) => {
     isChecked: boolean,
     option: any
   ) => {
+    // changeState(
+    //   parameterKey,
+    //   isChecked
+    //     ? [...values, option?.value]
+    //     : values.filter((v) => v !== option?.value)
+    // );
+
     changeState(
       parameterKey,
       isChecked
         ? [...values, option?.value]
         : values.filter((v) => v !== option?.value)
     );
+    isChecked
+      ? setValues([...values, option?.value])
+      : setValues(values.filter((v) => v !== option?.value))
   };
 
   useEffect(() => {
@@ -135,7 +145,7 @@ const FormInput = ({ input, error, changeState, readonly }: IFormInput) => {
     if (input.type === "file" || input.type === "image") {
       setSelectedNameFile(input.value);
     }
-    setValues(!!input?.values ? input?.values : []);
+    // setValues((!!input?.values ? input?.values : []) || (!!input?.defaultInDocsTypes ? input?.defaultInDocsTypes : []));
     if (input?.multiple) {
     }
   }, [input]);
@@ -152,7 +162,7 @@ const FormInput = ({ input, error, changeState, readonly }: IFormInput) => {
   //     }
   //   }
   // }, [selectedLabel]);
-
+  const defaultOptions = options.filter(option => input?.value?.includes(option?.value))
   const [selectedOptions, setSelectedOptions] = useState([])
   return (
     <>
@@ -186,14 +196,15 @@ const FormInput = ({ input, error, changeState, readonly }: IFormInput) => {
               <GoMakeFileFiled selectedNameFile={selectedNameFile} />
             ) : input.type === "select" || input?.type === "products_list" ? (
               <GoMakeAutoComplate
+                key={`${input.value}`}
                 style={{ minWidth: 180, border: 0, height: 40, overflow: "scroll" }}
                 onChange={input.multiple ? () => null : selectChange}
-                value={input.multiple ? selectedOptions?.map((item: any) => {
+                value={input.multiple ? selectedOptions?.length > 0 ? selectedOptions?.map((item: any) => {
                   return {
                     label: item?.label,
                     id: item?.id,
                   };
-                }) : selectedLabel}
+                }) : defaultOptions : selectedLabel}
                 error={error}
                 disabled={!!readonly}
                 placeholder={t(input.placeholder)}
