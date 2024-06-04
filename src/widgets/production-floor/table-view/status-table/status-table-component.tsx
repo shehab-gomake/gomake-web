@@ -19,7 +19,7 @@ interface IProps {
 const StatusTableComponent = ({ status, boards }: IProps) => {
     const { isOpen, onClickStatus, tableHeaders } = useStatusTable();
 
-    const { updateStatus } = useProductionFloorData();
+    const { updateStatus , t} = useProductionFloorData();
     const [{ isOver }, drop] = useDrop(() => ({
         accept: 'task',
         drop: (item: { board: IBoardMissions, selectedIds: IBoardMissions[] }, monitor) => {
@@ -52,7 +52,7 @@ const StatusTableComponent = ({ status, boards }: IProps) => {
                     backgroundColor: status?.backgroundColor,
                     color: status?.textColor,
                 }
-            }}>{`${status.name} (${boards.length})`}
+            }}>{`${t('productionStatuses.' + status.name)} (${boards.length})`}
         </Button>
         {
             boards.length > 0 &&

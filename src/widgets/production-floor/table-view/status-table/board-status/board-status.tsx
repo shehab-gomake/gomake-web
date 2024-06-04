@@ -5,6 +5,7 @@ import { useRecoilValue } from "recoil";
 import { productionFloorStatusesState } from "@/widgets/production-floor/state/boards";
 import { useUserPermission } from '@/hooks/use-permission';
 import { Permissions } from "@/components/CheckPermission/enum";
+import { useTranslation } from "react-i18next";
 
 interface IStatusBtnProps {
     id?: string;
@@ -13,6 +14,7 @@ interface IStatusBtnProps {
 }
 
 const BoardStatusComponent = ({ statusId, id, onChange }: IStatusBtnProps) => {
+    const {t} = useTranslation();
     const { CheckPermission } = useUserPermission();
     const canChangeStatus = CheckPermission(Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR);
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>();
@@ -66,7 +68,7 @@ const BoardStatusComponent = ({ statusId, id, onChange }: IStatusBtnProps) => {
                 }}
                 disabled={!canChangeStatus}
             >
-                {anchorEl ? 'select status' : boardStatus()?.name}
+                {anchorEl ? t("customers.selectStatus") : t('productionStatuses.' + boardStatus()?.name)}
             </Button>
             <Menu
                 closeAfterTransition={true}
@@ -90,7 +92,7 @@ const BoardStatusComponent = ({ statusId, id, onChange }: IStatusBtnProps) => {
                         borderRadius: 0,
                         '&:hover': { opacity: 0.7, backgroundColor: status.backgroundColor, color: status.textColor, }
                     }}
-                        onClick={() => onSelectNewStatus(status.id)}>{status.name}</Button>)
+                        onClick={() => onSelectNewStatus(status.id)}>{t('productionStatuses.' + status.name)}</Button>)
                 }
             </Menu>
         </>

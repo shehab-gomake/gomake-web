@@ -155,12 +155,12 @@ const BoardMissionsStationAction = ({
                                 </Stack>
                                 <Divider orientation={"vertical"} flexItem/>
                                 <Stack direction={'row'} gap={'5px'} alignItems={'center'}>
-                                    <span style={classes.detailTitle}>Timer</span>
+                                    <span style={classes.detailTitle}>{t("productionFloor.timer")}</span>
                                     <ActionTimer loading={timerLoading} onToggle={onToggleTimer} {...boardMissionActionTimer}/>
                                 </Stack>
                                 <Divider orientation={"vertical"} flexItem/>
                                 <Stack direction={'row'} gap={'5px'} alignItems={'center'}>
-                                    <span style={classes.detailTitle}>Delivery time</span>
+                                    <span style={classes.detailTitle}>{t("productionFloor.deliveryTime")}</span>
                                     <span style={classes.detailValue}>{DateFormatterDDMMYYYY(dueDate)}</span>
                                 </Stack>
                                 <span style={classes.sourceLabel}>
