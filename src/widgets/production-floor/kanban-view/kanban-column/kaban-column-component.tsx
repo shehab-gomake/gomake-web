@@ -12,8 +12,7 @@ interface IProps {
 }
 
 function KanbanColumnComponent({status, boardsMissions, count}: IProps) {
-    
-    const {updateStatus} = useProductionFloorData();
+    const {updateStatus,t} = useProductionFloorData();
     const [{isOver}, drop] = useDrop(() => ({
         accept: 'task',
         drop: (item: IBoardMissions, monitor) => {
@@ -46,7 +45,7 @@ function KanbanColumnComponent({status, boardsMissions, count}: IProps) {
                 backgroundColor: status.backgroundColor,
                 color: status.textColor,
                 borderRadius: '16px 16px 0 0',
-            }}>{`${status.name} (${count})`}</h2>
+            }}>{`${t('productionStatuses.' + status.name)} (${count})`}</h2>
             <Stack overflow={'auto'} gap={'10px'}>
                 {boardsMissions.map((board) => (
                     <KanbanCardComponent key={board.id} board={board}/>
