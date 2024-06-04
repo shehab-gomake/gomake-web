@@ -1,4 +1,21 @@
 import {emailRegex} from "@/utils/regex";
+import { t } from "i18next";
+
+enum DocumentTypeEnum
+{
+    Quote,
+    Order,
+    DeliveryNote,
+    Invoice,
+    Receipt,
+    DeliveryNoteRefund,
+    InvoiceRefund, 
+    GeneralLedgerReport,
+    PurchaseOrder,
+    PurchaseInvoice,
+    PurchaseInvoiceRefund,
+    BoardMission
+}
 
 const contactInputs1 = (state) => {
   return [
@@ -113,6 +130,24 @@ const contactInputs1 = (state) => {
       isValid: !!state?.mail, 
       regex: emailRegex
     },
+     {
+       name: " defualt in document",
+       label: " defualt in document",
+       type: "select",
+       placeholder: " defualt in document",
+       required: false,
+       parameterKey: "defaultInDocsTypes",
+       options: [
+                { value: DocumentTypeEnum.Quote, text: t("tabs.quotes") },
+                { value: DocumentTypeEnum.Order, text: t("tabs.orders") },
+                { value: DocumentTypeEnum.DeliveryNote, text: t("tabs.deliveryNotes") },
+                { value: DocumentTypeEnum.Invoice, text: t("tabs.invoices") },
+                { value: DocumentTypeEnum.Receipt, text: t("tabs.receipts") },
+              ],
+       value: state?.defaultInDocsTypes,
+       multiple: true
+      
+   },
   ];
 };
 
