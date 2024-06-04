@@ -57,6 +57,24 @@ const rowInputs = (
             value: "",
             isValid: true,
           };
+        case "MULTI_SELECATION_LIST":
+          return {
+            name: header?.key,
+            label: newMaterialHeaders ? null : header?.value,
+            type: "select",
+            multiple: true,
+            placeholder: header?.value,
+            required: false,
+            parameterKey: header?.key,
+            options: header.values
+              ? header.values.map((value) => ({
+                value: value.key,
+                text: value.value,
+              }))
+              : [],
+            value: "",
+            isValid: true,
+          };
         case "MACHINES_LIST":
           return {
             name: header?.key,

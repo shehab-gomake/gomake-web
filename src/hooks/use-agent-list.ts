@@ -6,7 +6,7 @@ const useAgentsList = () => {
   const { callApi } = useGomakeAxios();
   const [agentsCategories, setAgentsCategories] = useState<[]>();
   const [agent, setAgent] = useState<{ label: string; id: string } | null>();
-
+console.log("agentsCategories",agentsCategories)
   const handleAgentChange = (e: any, value: any) => {
     setAgent(value);
   };
