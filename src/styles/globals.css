@@ -368,3 +368,7 @@ df-messenger {
 }
 .foreground circle {
 }
+
+.MuiTooltip-popper {
+  z-index: 999999;
+}

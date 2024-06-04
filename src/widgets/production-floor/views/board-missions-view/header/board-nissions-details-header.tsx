@@ -14,12 +14,10 @@ import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 import {useRouter} from "next/router";
 import {IBoardMissions} from "@/widgets/production-floor/interfaces/board-missions";
-
 const HeaderTitleComponent = ({title}: { title?: string }) => {
     const {classes} = useStyle();
     return <span style={classes.title}>{title}</span>
 }
-
 const HeaderDividerComponent = () => {
     const {classes} = useStyle()
     return <Divider orientation={'vertical'} style={classes.divider} flexItem/>
@@ -28,8 +26,6 @@ const BoardMissionsDetailsHeader = () => {
     const {classes} = useStyle();
     const {t} = useTranslation();
     const [boardFromTable, setBoardFromTable] = useState<IBoardMissions>({} as IBoardMissions)
-    const [nextBoardFromTable, setNextBoardFromTable] = useState<IBoardMissions>({} as IBoardMissions)
-    const [prevBoardFromTable, setPrevBoardFromTable] = useState<IBoardMissions>({} as IBoardMissions)
     const {push, query, pathname} = useRouter();
     const boardMissionsDetails = useRecoilValue(boardMissionsDetailsState);
     const boards = useRecoilValue(boardsMissionsState);
@@ -94,15 +90,15 @@ const BoardMissionsDetailsHeader = () => {
                     </Stack>
                 </Stack>
                 <Stack direction={'row'} gap={'10px'} alignItems={'center'}>
-                    <Tooltip title={`prev board`} style={{zIndex: 9999999}} open={true}>
-                        <IconButton onClick={() => onNavigateBoardMissions(boardFromTable?.previousBoardMissionId, '')} style={{border: '1px solid'}} color={'error'}
-                                    disabled={!boardFromTable?.previousBoardMissionId}>
+                    <Tooltip  title={`${boardFromTable?.previousBoardMission?.productName} |  ${boardFromTable?.previousBoardMission?.clientName} | ${boardFromTable?.previousBoardMission?.boardMissionNumber} / ${boardFromTable?.previousBoardMission?.orderNumber}`} arrow>
+                        <IconButton onClick={() => onNavigateBoardMissions(boardFromTable?.previousBoardMission?.boardMissionId, '')} style={{border: '1px solid'}} color={'error'}
+                                    disabled={!boardFromTable?.previousBoardMission}>
                             <NavigateBeforeIcon/>
                         </IconButton>
                     </Tooltip>
-                    <Tooltip title={`next board`} style={{zIndex: 9999999}} arrow>
-                        <IconButton onClick={() => onNavigateBoardMissions(boardFromTable?.nextBoardMissionId, '')} style={{border: '1px solid'}} color={'success'}
-                                    disabled={!boardFromTable?.nextBoardMissionId}>
+                    <Tooltip title={`${boardFromTable?.nextBoardMission?.productName} |  ${boardFromTable?.nextBoardMission?.clientName} | ${boardFromTable?.nextBoardMission?.boardMissionNumber} / ${boardFromTable?.nextBoardMission?.orderNumber}`}   arrow>
+                        <IconButton onClick={() => onNavigateBoardMissions(boardFromTable?.nextBoardMission?.boardMissionId, '')} style={{border: '1px solid'}} color={'success'}
+                                    disabled={!boardFromTable?.nextBoardMission}>
                             <NavigateNextIcon/>
                         </IconButton>
                     </Tooltip>
@@ -111,5 +107,4 @@ const BoardMissionsDetailsHeader = () => {
             <Skeleton height={'80px'}/>
     )
 }
-
 export {BoardMissionsDetailsHeader}
