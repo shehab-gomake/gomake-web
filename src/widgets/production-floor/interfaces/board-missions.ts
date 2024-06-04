@@ -25,7 +25,10 @@ export interface IBoardMissions {
     checked?: boolean;
     automatedTags: string[];
     productType: string;
+    nextBoardMissionId?: string;
+    previousBoardMissionId?: string;
 }
+
 
 export interface IBoardMissionsDetails {
     boardMissionId: string;
