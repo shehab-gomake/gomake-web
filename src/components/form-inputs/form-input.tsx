@@ -1,7 +1,6 @@
 import React, {
   ChangeEvent,
   SyntheticEvent,
-  useCallback,
   useEffect,
   useState,
 } from "react";
@@ -162,7 +161,7 @@ const FormInput = ({ input, error, changeState, readonly }: IFormInput) => {
   //     }
   //   }
   // }, [selectedLabel]);
-  const defaultOptions = options.filter(option => input?.value?.includes(option?.value))
+  const defaultOptions = options.filter(option => input?.value?.toString()?.includes(option?.value))
   const [selectedOptions, setSelectedOptions] = useState([])
   return (
     <>
