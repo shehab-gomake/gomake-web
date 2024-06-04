@@ -91,13 +91,13 @@ const BoardMissionsDetailsHeader = () => {
                 </Stack>
                 <Stack direction={'row'} gap={'10px'} alignItems={'center'}>
                     <Tooltip  title={`${boardFromTable?.previousBoardMission?.productName} |  ${boardFromTable?.previousBoardMission?.clientName} | ${boardFromTable?.previousBoardMission?.boardMissionNumber} / ${boardFromTable?.previousBoardMission?.orderNumber}`} arrow>
-                        <IconButton onClick={() => onNavigateBoardMissions(boardFromTable?.previousBoardMission?.boardMissionId, '')} style={{border: '1px solid'}} color={'error'}
+                        <IconButton onClick={() => onNavigateBoardMissions(boardFromTable?.previousBoardMission?.boardMissionId, boardFromTable?.previousBoardMission?.productType)} style={{border: '1px solid'}} color={'error'}
                                     disabled={!boardFromTable?.previousBoardMission}>
                             <NavigateBeforeIcon/>
                         </IconButton>
                     </Tooltip>
                     <Tooltip title={`${boardFromTable?.nextBoardMission?.productName} |  ${boardFromTable?.nextBoardMission?.clientName} | ${boardFromTable?.nextBoardMission?.boardMissionNumber} / ${boardFromTable?.nextBoardMission?.orderNumber}`}   arrow>
-                        <IconButton onClick={() => onNavigateBoardMissions(boardFromTable?.nextBoardMission?.boardMissionId, '')} style={{border: '1px solid'}} color={'success'}
+                        <IconButton onClick={() => onNavigateBoardMissions(boardFromTable?.nextBoardMission?.boardMissionId, boardFromTable?.nextBoardMission?.productType)} style={{border: '1px solid'}} color={'success'}
                                     disabled={!boardFromTable?.nextBoardMission}>
                             <NavigateNextIcon/>
                         </IconButton>
