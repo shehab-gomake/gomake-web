@@ -23,7 +23,7 @@ const BoardMissionsFiles = () => {
         }
     }, [boardMissions.orderItemId])
     return (
-        <Stack direction={'row'} gap={'20px'} flexWrap={'wrap'}>
+        <Stack direction={'row'} gap={'20px'} flexWrap={'wrap'} padding={'0 0 30px 0'}>
             {
                 files?.filter(file => !!file.screenShotURL)?.map(file => <FileCardComponent key={file.name} file={file}/>)
             }

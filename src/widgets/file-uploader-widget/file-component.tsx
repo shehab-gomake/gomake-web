@@ -7,25 +7,25 @@ import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import {useGomakeTheme} from "@/hooks/use-gomake-thme";
 import ReplayIcon from '@mui/icons-material/Replay';
 
-const FileComponent = ({name, status}: IUploadingFile) => {
+const FileComponent = ({fileName, fileStatus}: IUploadingFile) => {
     const {successColor, errorColor, primaryColor} = useGomakeTheme();
     return (
         <Stack direction={'row'} justifyContent={'space-between'} height={'40px'} alignItems={'center'}>
             <Stack direction={'row'} alignItems={'center'} gap={'3px'} style={{color: primaryColor(400)}}>
                 <TextSnippetIcon/>
-                <span>{name}</span>
+                <span>{fileName}</span>
             </Stack>
             <Stack direction={'row'} alignItems={'center'} gap={'5px'}>
                 {
-                    status === EUploadingFileStatus.ERROR &&
+                    fileStatus === EUploadingFileStatus.ERROR &&
                     <IconButton style={{height: '25px', width: '25px'}}>
                         <ReplayIcon style={{height: '20px', width: '20px'}}/>
                     </IconButton>
                 }
                 {
-                    status === EUploadingFileStatus.UPLOADING ?
+                    fileStatus === EUploadingFileStatus.UPLOADING ?
                         <CircularProgress size={'25px'}/> :
-                        status === EUploadingFileStatus.DONE ?
+                        fileStatus === EUploadingFileStatus.DONE ?
                             <TaskAltIcon style={{
                                 color: successColor(500),
                                 backgroundColor: successColor(100),

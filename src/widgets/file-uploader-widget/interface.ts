@@ -5,13 +5,14 @@ export interface IUploadingFileGroup {
     filesInfo: IUploadingFile[];
 }
 export interface IUploadingFile {
-    name: string;
-    status: EUploadingFileStatus;
+    fileName: string;
+    fileStatus: EUploadingFileStatus;
 }
 
 
 export enum EUploadingFileStatus {
-    UPLOADING,
+    UPLOADING = 1,
+    Uploaded,
+    ERROR,
     DONE,
-    ERROR
 }
