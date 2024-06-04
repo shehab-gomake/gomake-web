@@ -20,12 +20,14 @@ const ProductionFloorBoardMissionsViews = () => {
     const [filter] = useRecoilState(productionFloorFiltersState);
     const {secondColor} = useGomakeTheme();
     const {t} = useTranslation();
+    
     useEffect(() => {
         if (!!connectionId) {
             setLoading(true);
             getData(connectionId).then(() => setLoading(false));
         }
     }, [connectionId])
+
     return (
         <>
             {

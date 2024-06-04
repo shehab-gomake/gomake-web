@@ -11,9 +11,9 @@ export enum Permissions {
     ADD_SUPPLIER = "AddSupplier",
 
     // quote group
-    SHOW_QUOTES = "ShowQuotes",
+    SHOW_QUOTES = "ShowQuotes", 
     CREATE_QUOTES = "CreateQuote",
-    EDIT_QUOTES = "EditQuotes",
+    EDIT_QUOTES = "EditQuotes", 
     EDIT_QUOTE_PRICES = "EditPriceQuote",
 
     //Materials group
@@ -60,6 +60,12 @@ export enum Permissions {
     //production floor group
     SHOW_PRODUCTION_FLOOR = "ShowProductionFloor",
     EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR = "EditBoardMissionInProductionFloor",
+    SHOW_COSTS_IN_PRODUCTION_FLOOR="IsShowCostsInProductionFloor",
+
+    //board missions group
+    SHOW_BOARD_MISSIONS = "IsCanShowBoardMissions",
+    SHOW_COSTS_IN_BOARD_MISSIONS = "IsShowCostsInBoardMissions",
+
 
     //administration group
     SHOW_ADMINISTRATION_PERMISSIONS = "ShowAdministrationPermissions",
@@ -69,7 +75,6 @@ export enum Permissions {
     SHOW_PRINTHOUSES_TABLE = "ShowPrintHousesTable",
 
     //sales group
-    SHOW_BOARD_MISSIONS = "ShowBoardMissions",
     SHOW_DELIVERY_NOTES = "ShowDeliveryNotes",
     SHOW_DELIVERY_NOTES_REFUND = "ShowDeliveryNotesRefund",
     SHOW_INVOICES = "ShowInvoices",
@@ -93,4 +98,3 @@ export enum Permissions {
     SHOW_SALES_REPORT = "ShowSalesReport",
     SHOW_CREDIT_CARD_TRANSACTIONS = "ShowCreditCardTransactions",
 }
-

@@ -16,8 +16,12 @@ import { useStyle } from "./style";
 import { useRouter } from "next/router";
 import { backToProcessApi, moveBoardMissionToDoneApi } from "@/services/api-service/production-floor/production-floor-endpoints";
 import { downloadPdf } from "@/utils/helpers";
+import { Permissions } from "@/components/CheckPermission/enum";
+import { useUserPermission } from "@/hooks/use-permission";
+
 
 const useBoardMissions = ({ isPurchaseJobs }) => {
+  const { CheckPermission } = useUserPermission();
   const { t } = useTranslation();
   const { classes } = useStyle();
   const { callApi } = useGomakeAxios();
@@ -52,7 +56,6 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     setPageSize(event.target.value);
   };
 
-
   const onSelectDeliveryTimeDates = (fromDate: Date, toDate: Date) => {
     setResetDatePicker(false);
     setFromDate(fromDate);
@@ -76,8 +79,8 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     t("mailingSettings.orderNumber"),
     t("boardMissions.outSourceType"),
     t("boardMissions.quantity"),
-    t("boardMissions.costFromOrderItem"),
-    t("boardMissions.priceFromOrderItem"),
+    CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS) && t("boardMissions.costFromOrderItem"),
+    CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS) && t("boardMissions.priceFromOrderItem"),
     t("boardMissions.jobName"),
     t("boardMissions.numberOfBoardMissionsInOrder"),
     t("boardMissions.productName"),
@@ -174,8 +177,8 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
             mission?.orderNumber,
             mission?.outSourceType === null ? EWorkSource[0] : EWorkSource[mission?.outSourceType],
             mission?.quantity,
-            mission?.cost,
-            mission?.price,
+            CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS) && mission?.cost,
+            CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS) && mission?.price,
             mission?.jobName,
             mission?.numberOfBoardMissions,
             mission?.productName,
@@ -482,7 +485,6 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     };
     await backToProcessApi(callApi, callBack, { boardMissionId: selectedMission?.id, sendMessage: false });
   };
-
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);

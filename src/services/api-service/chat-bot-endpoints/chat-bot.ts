@@ -9,7 +9,6 @@ const sendMsgApi: ICallAndSetData = async (callApi, setState, msg: string) => {
     return await getSetApiData(callApi, EHttpMethod.POST, SEND_MSG_URL, setState, {message: msg});
 }
 const clearChatData: ICallAndSetData = async (callApi,setState) => {
-    // debugger;
     return await getSetApiData(callApi, EHttpMethod.GET, CLEAR_CHATBOT_MESSAGES_URL, setState, null);
 }
 export {clearChatData};

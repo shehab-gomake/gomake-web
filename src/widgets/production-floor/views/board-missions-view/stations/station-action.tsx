@@ -23,6 +23,8 @@ import {ActionTimer} from "@/widgets/production-floor/views/board-missions-view/
 import {useRecoilState} from "recoil";
 import {boardMissionsDetailsState} from "@/widgets/production-floor/state/boards";
 import {ThreeOptionsModal} from "@/components";
+import { Permissions } from "@/components/CheckPermission/enum";
+import { PermissionCheck } from "@/components/CheckPermission/check-permission";
 
 interface IProps extends IBoardMissionsStation {
     delay: number;
@@ -191,6 +193,7 @@ const BoardMissionsStationAction = ({
                             )}
                         </Collapse>
                     </Stack>
+                    <PermissionCheck userPermission={Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR}>
                     <div>
                         {
                             loading ? <CircularProgress/> :
@@ -205,7 +208,7 @@ const BoardMissionsStationAction = ({
                                                 color: '#344054',
                                                 borderRadius: '16px'
                                             }}>
-                                        Completed
+                                        {t("boardMissions.completed")}
                                     </Button> :
                                     <PrimaryButton variant={'contained'} sx={{
                                         height: '40px',
@@ -226,6 +229,7 @@ const BoardMissionsStationAction = ({
                                     </PrimaryButton>
                         }
                     </div>
+                    </PermissionCheck>
                     <ThreeOptionsModal
                         title={t("boardMissions.markDoneModalTitle")}
                         subTitle={t("boardMissions.markDoneModalSubTitle")}

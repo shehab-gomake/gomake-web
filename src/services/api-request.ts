@@ -11,7 +11,6 @@ const apiRequest = async (
   responseType: ResponseType = undefined
 ) => {
   try {
-    // debugger
     //please don't change the server url!!! 
     const SERVER = config.api_server;
     const reqUrl = SERVER + url;
