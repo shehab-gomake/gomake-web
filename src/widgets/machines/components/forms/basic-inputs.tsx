@@ -2,6 +2,7 @@ import {useStyle} from "@/widgets/machines/components/forms/style";
 import {IStepFormProps} from "@/widgets/machines/components/forms/interface";
 import {InputContainer} from "@/widgets/machines/components/inputs/input-container";
 import {useMachineAttributes} from "@/widgets/machines/hooks/use-machine-attributes";
+import {PrintHouseLocationsWidget} from "@/widgets/print-house-loactions-widget/print-house-locations-widget";
 
 const BasicInputsComponent = ({}: IStepFormProps) => {
     const {classes} = useStyle();
@@ -11,6 +12,7 @@ const BasicInputsComponent = ({}: IStepFormProps) => {
         changeMachineGeneralAttributes,
         changeMachineAttributes,
         errors,
+        machineState
     } = useMachineAttributes()
     return (
         <div style={classes.container}>
@@ -29,8 +31,12 @@ const BasicInputsComponent = ({}: IStepFormProps) => {
                                                error={errors[property.parameterKey]}/>
                     })
                 }
+                <div style={{width: '100%'}}>
+                    <PrintHouseLocationsWidget onSelectLocation={(locationId) => {
+                        changeMachineAttributes('locationId', locationId)
+                    }} selectedLocationId={machineState?.attributes?.locationId || ''}/>
+                </div>
             </div>
-
         </div>
     );
 }
