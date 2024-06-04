@@ -1,9 +1,9 @@
-import {useGomakeTheme} from "@/hooks/use-gomake-thme";
-import {useMemo} from "react";
-import {FONT_FAMILY} from "@/utils/font-family";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { useMemo } from "react";
+import { FONT_FAMILY } from "@/utils/font-family";
 
 const useStyle = () => {
-    const {theme, primaryColor} = useGomakeTheme();
+    const { theme, primaryColor } = useGomakeTheme();
     const classes = useMemo(() => {
         return {
             categoryLabel: {
@@ -32,12 +32,15 @@ const useStyle = () => {
                 '&:hover': {
                     backgroundColor: primaryColor(500),
                     opacity: 0.8
-                }
-            }
+                },
+                '&.Mui-disabled': {
+                    backgroundColor: primaryColor(500),
+                    color: "#FFF"
+                }}
         };
     }, [theme]);
     return {
         classes,
     };
 };
-export {useStyle};
+export { useStyle };

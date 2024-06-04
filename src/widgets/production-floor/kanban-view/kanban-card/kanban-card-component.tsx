@@ -9,7 +9,7 @@ import { Permissions } from "@/components/CheckPermission/enum";
 
 interface IProp {
     board: IBoardMissions
-}
+} 
 
 const ItemTypes = {
     TASK: 'task',
