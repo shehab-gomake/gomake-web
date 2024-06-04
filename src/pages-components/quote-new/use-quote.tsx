@@ -27,6 +27,7 @@ import { creditTransactionsState, transactionOptionsData } from "@/widgets/quote
 import { QuoteStatuses } from "@/widgets/quote-new/total-price-and-vat/enums";
 import { clientTypesCategoriesState } from "@/pages/customers/customer-states";
 import { CLIENT_TYPE_Id } from "@/pages/customers/enums";
+import { isAtLeastOneSelected } from "@/utils/helpers";
 
 interface IQuoteProps {
   docType: DOCUMENT_TYPE;
@@ -51,6 +52,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
   const { t } = useTranslation();
   const { getQuote, getAllClientContacts } = useQuoteGetData(docType);
   const [quoteItemValue, setQuoteItemValue] = useRecoilState<any>(quoteItemState);
+
   const quoteConfirm = useRecoilValue<any>(quoteConfirmationState);
   const [selectDate, setSelectDate] = useState(isQuoteConfirmation ? quoteConfirm?.dueDate : quoteItemValue?.dueDate);
   const [creationDate, setCreationDate] = useState(isQuoteConfirmation ? quoteConfirm?.createdDate : quoteItemValue?.createdDate);
@@ -96,6 +98,15 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
   const openCancelBtn = Boolean(anchorElCancelBtn);
   const openSettingMenu = Boolean(anchorElSettingMenu);
   const [openWatssAppModal, setOpenWatsAppModal] = useState(false)
+  const [isSelectedAtLeastOne, setIsSelectedAtLeastOne] = useState(null)
+
+
+  useEffect(() => {
+    const data = isAtLeastOneSelected(quoteItemValue?.documentItems)
+    setIsSelectedAtLeastOne(data)
+
+  }, [quoteItemValue])
+
   const onClickOpenWatssAppModal = () => {
     setOpenWatsAppModal(true)
   }
@@ -956,51 +967,57 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     return false;
   }
   const onClickSendQuoteToClient = async (messageType: number) => {
-    if (messageType === 1) {
-      let checkPhones = checkArrayNotEmptyOrPhoneNotEmpty(quoteItemValue?.documentContacts)
-      if (checkPhones) {
-        const callBack = (res) => {
-          if (res?.success) {
-            alertSuccessAdded();
-          } else {
-            alertFaultAdded();
-          }
-        }
-        await sendDocumentToClientApi(callApi, callBack, {
-          documentType: docType,
-          document: {
-            documentId: quoteItemValue?.id,
-            messageType,
-          }
-        })
-      }
-      else {
-        alertFault("sales.quote.phoneContectErrorMsg")
-      }
+    if (!isSelectedAtLeastOne) {
+      alertFault("please select at least one item")
     }
     else {
-      let checkEmails = checkArrayNotEmptyOrEmailNotEmpty(quoteItemValue?.documentContacts)
-      if (checkEmails) {
-        const callBack = (res) => {
-          if (res?.success) {
-            alertSuccessAdded();
-          } else {
-            alertFaultAdded();
+      if (messageType === 1) {
+        let checkPhones = checkArrayNotEmptyOrPhoneNotEmpty(quoteItemValue?.documentContacts)
+        if (checkPhones) {
+          const callBack = (res) => {
+            if (res?.success) {
+              alertSuccessAdded();
+            } else {
+              alertFaultAdded();
+            }
           }
+          await sendDocumentToClientApi(callApi, callBack, {
+            documentType: docType,
+            document: {
+              documentId: quoteItemValue?.id,
+              messageType,
+            }
+          })
         }
-        await sendDocumentToClientApi(callApi, callBack, {
-          documentType: docType,
-          document: {
-            documentId: quoteItemValue?.id,
-            messageType,
-          }
-        })
+        else {
+          alertFault("sales.quote.phoneContectErrorMsg")
+        }
       }
       else {
-        alertFault("sales.quote.mailContectErrorMsg")
-      }
+        let checkEmails = checkArrayNotEmptyOrEmailNotEmpty(quoteItemValue?.documentContacts)
+        if (checkEmails) {
+          const callBack = (res) => {
+            if (res?.success) {
+              alertSuccessAdded();
+            } else {
+              alertFaultAdded();
+            }
+          }
+          await sendDocumentToClientApi(callApi, callBack, {
+            documentType: docType,
+            document: {
+              documentId: quoteItemValue?.id,
+              messageType,
+            }
+          })
+        }
+        else {
+          alertFault("sales.quote.mailContectErrorMsg")
+        }
 
+      }
     }
+
 
 
 

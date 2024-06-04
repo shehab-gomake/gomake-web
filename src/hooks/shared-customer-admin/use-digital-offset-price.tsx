@@ -200,7 +200,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   useEffect(() => {
     if (calculationResult && calculationResult.productItemValue) {
       if (calculationResult.productItemValueDraftId === currentCalculationSessionId) {
-     //   debugger;
         setCurrentProductItemValueDraftId(calculationResult.productItemValueDraftId);
         let productTypes = new Set();
         const currentWorkFlows = cloneDeep(workFlows);
@@ -2152,7 +2151,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             }
           });
         }
-        
+       
         if(dieCut ){
            if(subSectionParameter.code === "DieCut"){
              let dieUnitWidth = dieCut.rowData.dieUnitWidth.value + "";
@@ -2231,7 +2230,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                    isDisabled: true,
                  });
                }
-
             });
           }
 

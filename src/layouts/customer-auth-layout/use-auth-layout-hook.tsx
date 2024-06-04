@@ -144,6 +144,12 @@ const useAuthLayoutHook = (permissionEnumValue?: Permissions, allowAnonymous?: b
             path: "/purchaseInvoiceRefunds",
             Permission: Permissions.SHOW_PURCHASE_INVOICES_REFUND,
           },
+          {
+            key: "purchaseJobs",
+            title: "tabs.purchaseJobs",
+            path: "/purchase-jobs",
+            Permission: Permissions.SHOW_PURCHASE_INVOICES_REFUND,
+          },
         ],
         icon: () => {
           return <ShopingIcon />;
@@ -292,7 +298,7 @@ const useAuthLayoutHook = (permissionEnumValue?: Permissions, allowAnonymous?: b
         Permission: Permissions.SHOW_MACHINES,
         isList: false,
         icon: () => {
-          return <MachineIcon/>;
+          return <MachineIcon />;
         },
         isProduction: true,
         tourData: 'menuMachines'
