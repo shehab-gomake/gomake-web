@@ -1,14 +1,12 @@
 import { useTranslation } from "react-i18next";
-import { GoMakeModal, GomakePrimaryButton, GomakeTextInput } from "@/components";
+import { GoMakeModal, GomakePrimaryButton } from "@/components";
 
 import { useStyle } from "./style";
-import { DateFormatterDDMMYYYY } from "@/utils/adapter";
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import SignatureCanvas from 'react-signature-canvas';
+import { CloseIcon } from "@/components/modal/icon/close";
 
-const ApproveSignatureModal = ({ openModal, onClose }: any) => {
-  const [selectDate, setSelectDate] = useState<any>("");
-  const dateRef = useRef(null);
+const ApproveSignatureModal = ({ openModal, onClose, onClickApprove }: any) => {
   const sigPad = useRef(null);
   const clear = () => {
     sigPad.current.clear();
@@ -17,12 +15,8 @@ const ApproveSignatureModal = ({ openModal, onClose }: any) => {
   const save = () => {
     const dataURL = sigPad.current.getTrimmedCanvas().toDataURL('image/png');
     console.log(dataURL); // You can send this to your server or save it in the state
+    onClickApprove()
   };
-  const [activeClickAway, setActiveClickAway] = useState(false);
-  const handleClickSelectDate = () => {
-    dateRef?.current?.showPicker();
-  };
-
   const { t } = useTranslation();
   const { clasess } = useStyle();
   return (
@@ -34,30 +28,15 @@ const ApproveSignatureModal = ({ openModal, onClose }: any) => {
         insideStyle={clasess.insideStyle}
       >
         <div style={clasess.mainContainer}>
-          <input
-            placeholder={"Enter your name"}
-            style={clasess.textInputStyle}
-            onChange={(e: any) => {
-              console.log("DDD", e.target.value);
-            }}
-          />
-          <div
-            style={clasess.deleverdDate}
-            onClick={handleClickSelectDate}
-          >
-            {selectDate
-              ? DateFormatterDDMMYYYY(String(selectDate))
-              : "DD/MM/YYYY"}
-            <div style={clasess.datePickerContainer}>
-              <input
-                type="datetime-local"
-                onChange={(e) => {
-                  setSelectDate(e.target.value);
-                  setActiveClickAway(true);
-                }}
-                ref={dateRef}
-              />
-            </div>
+          <div style={clasess.nameContainer}>
+            <div>You Name</div>
+            <input
+              placeholder={"Enter your name"}
+              style={clasess.textInputStyle}
+              onChange={(e: any) => {
+                console.log("DDD", e.target.value);
+              }}
+            />
           </div>
           <div style={clasess.signatureContainer}>
             <SignatureCanvas
@@ -65,10 +44,16 @@ const ApproveSignatureModal = ({ openModal, onClose }: any) => {
               penColor="black"
               canvasProps={{ width: 500, height: 200, className: 'sigCanvas' }}
             />
+            <div onClick={clear} style={clasess.clearBtn}>
+              <CloseIcon />
+            </div>
+          </div>
+          <div style={clasess.descriptionContainer}>
+            By providing my electronic signature above, I confirm my understanding and agreement with the terms and conditions stated herein. I acknowledge that my electronic signature is legally binding.
           </div>
           <div style={clasess.btnsContainer}>
-            <GomakePrimaryButton style={clasess.clearBtn} onClick={clear}>Clear</GomakePrimaryButton>
-            <GomakePrimaryButton style={clasess.saveBtn} onClick={save}>Save</GomakePrimaryButton>
+            {/* <GomakePrimaryButton style={clasess.clearBtn} onClick={clear}>Clear</GomakePrimaryButton> */}
+            <GomakePrimaryButton style={clasess.saveBtn} onClick={save}>Confirm & Approve Offer</GomakePrimaryButton>
           </div>
 
         </div>

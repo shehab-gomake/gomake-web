@@ -7,9 +7,9 @@ const useStyle = () => {
   const clasess = useMemo(() => {
     return {
       insideStyle: {
-        width: 400,
+        width: 710,
         borderRadius: 5,
-        height: "65%",
+        height: 530,
       },
       mainContainer:{
         display: "flex",
@@ -20,18 +20,28 @@ const useStyle = () => {
         width: "100%",
         marginTop: 15
       },
+      nameContainer:{
+        display: "flex",
+        flexDirection: "column" as "column",
+        justifyContent: "flex-start",
+        alignItems: "flex-start",
+        gap:5,
+        width: "100%",
+      },
       signatureContainer:{
         width: "100%",
-        height: 200,
-        border:"1px solid gray",
-        borderRadius: 4,
+        height: 180,
+        border:`1px solid #D0D5DD`,
+        borderRadius: 16,
+        backgroundColor:"#F4F1F6",
+        position: "relative" as "relative",
 
       },
       textInputStyle: {
-        borderRadius: 4,
+        borderRadius: 16,
         height: 40,
         width: "100%",
-        border:"1px solid gray",
+        border:`1px solid #D0D5DD`,
         boxShadow: "none",        
       },
       deleverdDate: {
@@ -63,16 +73,22 @@ const useStyle = () => {
         justifyContent: "space-between",
         alignItems: "center",
         width:"100%",
-        marginTop:25
+        marginTop:10
       },
       clearBtn:{
-        height:40,
-        width:"48%",
-        backgroundColor:secondColor(500)
+     position: "absolute" as "absolute",
+     right: 8,
+     top: 8,
       },
       saveBtn:{
         height:40,
-        width:"48%",
+        width:"100%",
+        backgroundColor:secondColor(500),
+        borderRadius: 16,
+      },
+      descriptionContainer:{
+        ...FONT_FAMILY.Lexend(400,16),
+        width:"90%",
       }
     };
   }, []);

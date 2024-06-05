@@ -5,6 +5,8 @@ import { InputUpdatedValues } from "../input-updated-values";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useQuoteGetData } from "@/pages-components/quote-new/use-quote-get-data";
 import { useRouter } from "next/router";
+import { useRecoilValue } from "recoil";
+import { quoteItemState } from "@/store";
 
 const TotalPriceComp = ({
   getCalculateQuote,
@@ -18,7 +20,7 @@ const TotalPriceComp = ({
   const [isUpdateTotalPayment, setIsUpdateTotalPayment] = useState(null);
   const { getCurrencyUnitText } = useQuoteGetData();
   const [isConfirmation, setIsConfirmation] = useState(null);
-
+  const quoteItemValue = useRecoilValue<any>(quoteItemState);
   const onBlurTotalPayment = async () => {
     getCalculateQuote(2, quoteItems?.totalPayment);
     setIsUpdateTotalPayment(null);
@@ -64,7 +66,7 @@ const TotalPriceComp = ({
               setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdateDiscount}
               onInputChange={(e) => onInputDiscount(e)}
             />
-            %
+            % {quoteItemValue?.discountAmount != 0 && `(-${quoteItemValue?.discountAmount + " " + quoteItems?.currency})`}
           </div>
         </div>
         <div style={{ ...classes.evenRowContainer, width: "13%" }}>

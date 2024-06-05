@@ -98,11 +98,13 @@ const ButtonsConfirmContainer = () => {
         subTitle={"Are you sure you want to approve this offer?"}
         // onClickDelete={onClickApprove}
         onClickDelete={onClickOpenApproveSignatureModal}
+        hideIcon={true}
 
       />
       <ApproveSignatureModal
         openModal={approveSignatureModal}
         onClose={onClickCloseApproveSignatureModal}
+        onClickApprove={onClickApprove}
 
       />
     </div>
