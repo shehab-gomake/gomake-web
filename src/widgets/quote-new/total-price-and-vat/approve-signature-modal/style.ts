@@ -3,7 +3,7 @@ import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 
 const useStyle = () => {
-  const { grayColor } = useGomakeTheme();
+  const { grayColor ,secondColor} = useGomakeTheme();
   const clasess = useMemo(() => {
     return {
       insideStyle: {
@@ -23,12 +23,16 @@ const useStyle = () => {
       signatureContainer:{
         width: "100%",
         height: 200,
-        backgroundColor:"red"
+        border:"1px solid gray",
+        borderRadius: 4,
+
       },
       textInputStyle: {
         borderRadius: 4,
         height: 40,
         width: "100%",
+        border:"1px solid gray",
+        boxShadow: "none",        
       },
       deleverdDate: {
         display: "flex",
@@ -40,7 +44,8 @@ const useStyle = () => {
         marginTop:5,
         marginBottom:5,
         backgroundColor:"white",
-        boxShadow: "0px 1px 10px rgba(0, 0, 0, 0.08)",
+        border:"1px solid gray",
+        borderRadius: 4,
         height:40,
         width:"100%",
         paddingLeft:18
@@ -52,6 +57,23 @@ const useStyle = () => {
         right: 100,
         visibility: "hidden" as "hidden",
       },
+      btnsContainer:{
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        width:"100%",
+        marginTop:25
+      },
+      clearBtn:{
+        height:40,
+        width:"48%",
+        backgroundColor:secondColor(500)
+      },
+      saveBtn:{
+        height:40,
+        width:"48%",
+      }
     };
   }, []);
   return {
