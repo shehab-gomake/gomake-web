@@ -73,6 +73,21 @@ const useButtonsConfirmContainer = () => {
         await updateDocumentCommentsConfirmationApi(callApi, callBack, { documentId: quoteConfirm?.id, comments: quoteInternalNotes })
     }
     ///////////////////////////////////////////////////////////////////////////////////
+    const [approveModal, setApproveModal] = useState(false)
+    const [approveSignatureModal, setApproveSignatureModal] = useState(false)
+    const onClickOpenApproveModal = () => {
+        setApproveModal(true)
+    }
+    const onClickCloseApproveModal = () => {
+        setApproveModal(false)
+    }
+
+    const onClickOpenApproveSignatureModal = () => {
+        setApproveSignatureModal(true)
+    }
+    const onClickCloseApproveSignatureModal = () => {
+        setApproveSignatureModal(false)
+    }
     const onClickApprove = async () => {
         const selectedItemIds = quoteConfirm?.documentItems?.filter(x => x.isChecked)?.map(x => x.id);
 
@@ -155,7 +170,13 @@ const useButtonsConfirmContainer = () => {
         setQuoteComments,
         onUpdateInternalNotes,
         quoteInternalNotes,
-        setQuoteInternalNotes
+        setQuoteInternalNotes,
+        approveModal,
+        onClickOpenApproveModal,
+        onClickCloseApproveModal,
+        approveSignatureModal,
+        onClickOpenApproveSignatureModal,
+        onClickCloseApproveSignatureModal
     };
 
 };
