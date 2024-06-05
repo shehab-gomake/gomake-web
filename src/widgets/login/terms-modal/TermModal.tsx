@@ -50,44 +50,46 @@ const TermModal = ({ open, onClose, setIsTermsAccepted }) => {
     <GoMakeModal openModal={open} modalTitle={t("Terms and Conditions")} onClose={onClose} insideStyle={classes.insideStyle}>
       <Stack display={"flex"} direction={"column"} justifyContent={"space-between"} height={"100%"}>
         <div
-          className={"show-scrollbar"}
-          ref={contentRef}
-          onScroll={handleScroll}
-          style={{
-            overflowY: "scroll",
-            height: "90%",
-            border: "1px solid #ccc",
-            borderRadius: 8,
-            padding: "10px",
-            borderWidth: "1px",
-            // border: "solid",
-            // maxHeight: "300px",
-            backgroundColor: "white",
-          }}
+            className={"show-scrollbar"}
+            ref={contentRef}
+            onScroll={handleScroll}
+            style={{
+              overflowY: "scroll",
+              height: "90%",
+              border: "1px solid #ccc",
+              borderRadius: 8,
+              padding: "10px",
+              borderWidth: "1px",
+              // border: "solid",
+              // maxHeight: "300px",
+              backgroundColor: "white",
+            }}
         >
-          <TermsPDF />
+          <TermsPDF/>
+
         </div>
+        <span style={{marginTop:5,textAlign:'right', color:"rgb(46, 48, 146)"}}>Scroll to accept terms.</span>
         <FormControlLabel
-          control={
-            <Checkbox
-              checked={isChecked}
-              onChange={(e) => setIsChecked(e.target.checked)}
-              disabled={!isScrolledToBottom}
-              style={{ color: primaryColor(500) }}
-            />
-          }
-          label={t("I have read and accept the terms and conditions.")}
-          style={{ alignSelf: "center", marginTop: "10px" }}
+            control={
+              <Checkbox
+                  checked={isChecked}
+                  onChange={(e) => setIsChecked(e.target.checked)}
+                  disabled={!isScrolledToBottom}
+                  style={{color: primaryColor(500)}}
+              />
+            }
+            label={t("I have read and accept the terms and conditions.")}
+            style={{alignSelf: "center", marginTop: "10px"}}
         />
         <Stack direction={"row"} gap={"10px"} justifyContent={"end"}>
-          <PrimaryButton style={{ alignSelf: "center", width: "fit-content" }} variant="outlined" onClick={onClose}>
+          <PrimaryButton style={{alignSelf: "center", width: "fit-content"}} variant="outlined" onClick={onClose}>
             {t("Decline")}
           </PrimaryButton>
           <PrimaryButton
-            style={{ alignSelf: "center", width: "fit-content" }}
-            variant="contained"
-            onClick={handleAcceptTerms}
-            disabled={!isAcceptButtonEnabled}
+              style={{alignSelf: "center", width: "fit-content"}}
+              variant="contained"
+              onClick={handleAcceptTerms}
+              disabled={!isAcceptButtonEnabled}
           >
             {t("Accept")}
           </PrimaryButton>
@@ -97,4 +99,4 @@ const TermModal = ({ open, onClose, setIsTermsAccepted }) => {
   );
 };
 
-export { TermModal };
+export {TermModal };
