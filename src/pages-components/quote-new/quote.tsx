@@ -27,7 +27,7 @@ import { ReceiptsTable } from "@/widgets/quote-new/receipts-table";
 import { useRouter } from "next/router";
 import { usePaymentsTable } from "@/widgets/quote-new/receipts-table/use-payments-table";
 import { useEffect, useState } from "react";
-import { StepType, useTour } from "@reactour/tour";
+import { StepType } from "@reactour/tour";
 import { useGoMakeTour } from "@/hooks/use-go-make-tour";
 import { OtherReasonModal } from "@/widgets/quote-new/total-price-and-vat/other-reason-modal";
 import { QuoteStatuses } from "@/widgets/quote-new/total-price-and-vat/enums";
@@ -46,7 +46,6 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
   const { classes } = useStyle(isQuoteConfirmation);
   const router = useRouter();
   const quoteItemValue = useRecoilValue<any>(quoteItemState);
-  console.log("quoteItemValue", quoteItemValue?.client)
   const quoteConfirm = useRecoilValue<any>(quoteConfirmationState);
   const printHouseProfileState = useRecoilValue<any>(printHouseProfile);
   const quoteState = isQuoteConfirmation ? quoteConfirm : quoteItemValue;
