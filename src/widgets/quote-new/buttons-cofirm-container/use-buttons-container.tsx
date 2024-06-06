@@ -88,7 +88,8 @@ const useButtonsConfirmContainer = () => {
     const onClickCloseApproveSignatureModal = () => {
         setApproveSignatureModal(false)
     }
-    const onClickApprove = async () => {
+    const onClickApprove = async (dataURL, signerName) => {
+        console.log("dataURL", { dataURL, signerName })
         const selectedItemIds = quoteConfirm?.documentItems?.filter(x => x.isChecked)?.map(x => x.id);
 
         if (!selectedItemIds || selectedItemIds.length === 0) {
@@ -104,7 +105,7 @@ const useButtonsConfirmContainer = () => {
                 alertFaultUpdate();
             }
         }
-        await approveDocumentItemsApi(callApi, callBack, { docuementItemsIds: selectedItemIds })
+        await approveDocumentItemsApi(callApi, callBack, { docuementItemsIds: selectedItemIds, fileBase64: dataURL, signerName: signerName })
     }
 
     const onClickPrint = async () => {

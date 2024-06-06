@@ -2,14 +2,15 @@ import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 
-const useStyle = () => {
+const useStyle = ({isMobile}) => {
   const { grayColor ,secondColor} = useGomakeTheme();
   const clasess = useMemo(() => {
     return {
       insideStyle: {
-        width: 710,
+        width: isMobile?"92%":710,
         borderRadius: 5,
-        height: 530,
+        height: isMobile?550:530,
+        padding:isMobile?5:15
       },
       mainContainer:{
         display: "flex",
@@ -42,13 +43,14 @@ const useStyle = () => {
         height: 40,
         width: "100%",
         border:`1px solid #D0D5DD`,
-        boxShadow: "none",        
+        boxShadow: "none",     
+        padding:5   
       },
       deleverdDate: {
         display: "flex",
         alignItems: "center",
         position: "relative" as "relative",
-        ...FONT_FAMILY.Lexend(400, 16),
+        ...FONT_FAMILY.Lexend(400, isMobile?12:16),
         color: grayColor(500),
         cursor: "pointer",
         marginTop:5,
@@ -91,7 +93,7 @@ const useStyle = () => {
         width:"90%",
       }
     };
-  }, []);
+  }, [isMobile]);
   return {
     clasess,
   };

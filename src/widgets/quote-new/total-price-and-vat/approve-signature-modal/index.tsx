@@ -2,11 +2,12 @@ import { useTranslation } from "react-i18next";
 import { GoMakeModal, GomakePrimaryButton } from "@/components";
 
 import { useStyle } from "./style";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import SignatureCanvas from 'react-signature-canvas';
 import { CloseIcon } from "@/components/modal/icon/close";
 
-const ApproveSignatureModal = ({ openModal, onClose, onClickApprove }: any) => {
+const ApproveSignatureModal = ({ openModal, onClose, onClickApprove, isMobile }: any) => {
+  const [signerName, setSignerName] = useState("")
   const sigPad = useRef(null);
   const clear = () => {
     sigPad.current.clear();
@@ -15,10 +16,10 @@ const ApproveSignatureModal = ({ openModal, onClose, onClickApprove }: any) => {
   const save = () => {
     const dataURL = sigPad.current.getTrimmedCanvas().toDataURL('image/png');
     console.log(dataURL); // You can send this to your server or save it in the state
-    onClickApprove()
+    onClickApprove(dataURL, signerName)
   };
   const { t } = useTranslation();
-  const { clasess } = useStyle();
+  const { clasess } = useStyle({ isMobile });
   return (
     <>
       <GoMakeModal
@@ -34,7 +35,7 @@ const ApproveSignatureModal = ({ openModal, onClose, onClickApprove }: any) => {
               placeholder={"Enter your name"}
               style={clasess.textInputStyle}
               onChange={(e: any) => {
-                console.log("DDD", e.target.value);
+                setSignerName(e.target.value);
               }}
             />
           </div>
