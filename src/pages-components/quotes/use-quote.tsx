@@ -40,7 +40,6 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
   const { navigate } = useGomakeRouter();
   const { errorColor } = useGomakeTheme();
   const [patternSearch, setPatternSearch] = useState("");
-  console.log("patternSearch", patternSearch)
   const [finalPatternSearch, setFinalPatternSearch] = useState("");
   const debounce = useDebounce(patternSearch, 500);
   const { GetDateFormat, GetShortDateFormat } = useDateFormat();
@@ -79,6 +78,16 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
   const [agentsCategories, setAgentsCategories] = useRecoilState(agentsCategoriesState);
   const documentPath = DOCUMENT_TYPE[docType];
   const isReceipt = docType === DOCUMENT_TYPE.receipt;
+
+  const [openCloseOrderNotesModal, setOpenCloseOrderNotesModal] = useState(false)
+  const [selectedQuoteItemValue, setSelectedQuoteItemValue] = useState()
+
+  const onClickOpenCloseOrderNotesModal = () => {
+    setOpenCloseOrderNotesModal(true)
+  }
+  const onClickCloseCloseOrderNotesModal = () => {
+    setOpenCloseOrderNotesModal(false)
+  }
 
   const onCloseAddRuleModal = () => {
     setOpenAddRule(false);
@@ -1299,6 +1308,11 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
   }
 
   const CloseDocument = async (quoteItemValue) => {
+    console.log("quoteItemValue", quoteItemValue)
+    setSelectedQuoteItemValue(quoteItemValue)
+    if (quoteItemValue?.closeOrderNotes && quoteItemValue?.closeOrderNotes.tirm !== "") {
+      onClickOpenCloseOrderNotesModal()
+    }
     const callBack = (res) => {
       if (res?.success) {
         alertSuccessUpdate();
@@ -1461,7 +1475,10 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     handleClose,
     open,
     anchorEl,
-    filterData
+    filterData,
+    openCloseOrderNotesModal,
+    onClickCloseCloseOrderNotesModal,
+    selectedQuoteItemValue
   };
 };
 

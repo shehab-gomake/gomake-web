@@ -146,7 +146,6 @@ const useMoreCircle = () => {
       {
         condition: documentType === DOCUMENT_TYPE.order && quote?.isCanClose && quote?.statusTitleText !== "Order.Canceled",
         onClick: () => CloseDocument(quote),
-        //icon: <TickIcon />,
         icon: <LockIcon />,
         name: t("sales.quote.close")
       },

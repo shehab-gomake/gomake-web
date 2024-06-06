@@ -35,6 +35,7 @@ import { LoginTaxesUrl, fetchTaxesAuthority } from "@/utils/taxes-authority";
 import { printHouseProfile } from "@/store/print-house-profile";
 import { WhatsAppWebModal } from "@/widgets/quote-new/modals-widgets/whats-app-web-modal";
 import { AddNewContactModal } from "@/widgets/quote-new/modals-widgets/add-new-contact-modal";
+import { NewItemNotesModal } from "@/widgets/quote-new/total-price-and-vat/new-item-notes-modal";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -45,6 +46,7 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
   const { classes } = useStyle(isQuoteConfirmation);
   const router = useRouter();
   const quoteItemValue = useRecoilValue<any>(quoteItemState);
+  console.log("quoteItemValue", quoteItemValue?.client)
   const quoteConfirm = useRecoilValue<any>(quoteConfirmationState);
   const printHouseProfileState = useRecoilValue<any>(printHouseProfile);
   const quoteState = isQuoteConfirmation ? quoteConfirm : quoteItemValue;
@@ -192,7 +194,9 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
     openAddNewContactModal,
     onCloseNewContact,
     onOpenNewContact,
-    onChangeSelectedItemRowForQoute
+    onChangeSelectedItemRowForQoute,
+    openNewItemNotesModal,
+    onClickCloseNewItemNotesModal
   } = useQuoteNew({ docType: documentType, isQuoteConfirmation: isQuoteConfirmation });
 
   const quoteSteps: StepType[] = [
@@ -569,6 +573,10 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
           window.open(LoginTaxesUrl + printHouseProfileState?.business_ID, "_blank");
           onClickClosLoginModal();
         }}
+      />
+      <NewItemNotesModal
+        openModal={openNewItemNotesModal}
+        onClose={onClickCloseNewItemNotesModal}
       />
     </>
   );
