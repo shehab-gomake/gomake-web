@@ -33,7 +33,7 @@ const TermModal = ({ open, onClose, setIsTermsAccepted }) => {
   const handleScroll = () => {
     if (contentRef.current) {
       const { scrollTop, scrollHeight, clientHeight } = contentRef.current;
-      const threshold = 5;
+      const threshold = 500;
       if (scrollTop + clientHeight >= scrollHeight - threshold) {
         setIsScrolledToBottom(true);
       }
@@ -74,7 +74,7 @@ const TermModal = ({ open, onClose, setIsTermsAccepted }) => {
               <Checkbox
                   checked={isChecked}
                   onChange={(e) => setIsChecked(e.target.checked)}
-                  disabled={!isScrolledToBottom}
+                  //disabled={!isScrolledToBottom}
                   style={{color: primaryColor(500)}}
               />
             }
@@ -89,7 +89,7 @@ const TermModal = ({ open, onClose, setIsTermsAccepted }) => {
               style={{alignSelf: "center", width: "fit-content"}}
               variant="contained"
               onClick={handleAcceptTerms}
-              disabled={!isAcceptButtonEnabled}
+              //disabled={!isAcceptButtonEnabled}
           >
             {t("Accept")}
           </PrimaryButton>
