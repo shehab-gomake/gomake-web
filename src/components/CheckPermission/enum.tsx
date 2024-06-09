@@ -1,3 +1,5 @@
+import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
+
 export enum Permissions {
     
     // client group
@@ -16,6 +18,7 @@ export enum Permissions {
     EDIT_QUOTES = "EditQuotes", 
     EDIT_QUOTE_PRICES = "EditPriceQuote",
     DELETE_QUOTE_ITEM="DeleteQuoteItem",
+    UPDATE_QUOTE_ITEM="UpdateQuoteItem",
 
     //Materials group
     EDIT_MATERIAL = "EditMaterial",
@@ -57,6 +60,7 @@ export enum Permissions {
     //orders group    
     EDIT_ORDERS = "EditOrders",
     UPDATE_ORDER_ITEM="UpdateOrderItem",
+    UPDATE_PURCHASE_ORDER_ITEM="UpdatePurchaseOrderItem",
     DELETE_ORDER_ITEM="DeleteOrderItem",
     DELETE_PURCHASE_ORDER_ITEM="DeletePurchaseOrderItem",
     SHOW_ORDERS = "ShowOrders",
@@ -102,3 +106,26 @@ export enum Permissions {
     SHOW_SALES_REPORT = "ShowSalesReport",
     SHOW_CREDIT_CARD_TRANSACTIONS = "ShowCreditCardTransactions",
 }
+
+
+export const DocumentPermission = {
+    DELETE_DOCUMENT_ITEM: "DeleteDocumentItem",
+    UPDATE_DOCUMENT_ITEM: "UpdateDocumentItem",
+    // Add more general permissions as needed
+  };
+
+
+  export const documentPermissionMap = {
+    [DocumentPermission.DELETE_DOCUMENT_ITEM]: {
+      [DOCUMENT_TYPE.quote]: Permissions.DELETE_QUOTE_ITEM,
+      [DOCUMENT_TYPE.order]: Permissions.DELETE_ORDER_ITEM,
+      [DOCUMENT_TYPE.purchaseOrder]: Permissions.DELETE_PURCHASE_ORDER_ITEM,
+      // Add other document types and corresponding permissions as needed
+    },
+    [DocumentPermission.UPDATE_DOCUMENT_ITEM]: {
+      [DOCUMENT_TYPE.quote]: Permissions.UPDATE_QUOTE_ITEM,
+      [DOCUMENT_TYPE.order]: Permissions.UPDATE_ORDER_ITEM,
+      // Add other document types and corresponding permissions as needed
+    },
+    // Add more general permissions as needed
+  };

@@ -11,7 +11,7 @@ import { quoteItemState } from "@/store";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { useRouter } from "next/router";
 import { DuplicateType } from "@/enums";
-import { Permissions } from "@/components/CheckPermission/enum";
+import { DocumentPermission, Permissions } from "@/components/CheckPermission/enum";
 import { useUserPermission } from "@/hooks/use-permission";
 
 const useMoreCircle = ({
@@ -25,7 +25,7 @@ const useMoreCircle = ({
   const quoteItemValue: any = useRecoilValue(quoteItemState);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
-  const { CheckPermission } = useUserPermission();
+  const { CheckPermission, CheckDocumentPermission } = useUserPermission();
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -58,7 +58,11 @@ const useMoreCircle = ({
       name: "edit",
       icon: <EditMenuIcon />,
       onclick: () => onClickEditQuoteItem(quoteItem, documentType),
-      condition: quoteItem.productType === 0 && (documentType === DOCUMENT_TYPE.quote || documentType === DOCUMENT_TYPE.order)
+      //condition: quoteItem.productType === 0 && (documentType === DOCUMENT_TYPE.quote || documentType === DOCUMENT_TYPE.order || documentType === DOCUMENT_TYPE.purchaseOrder ),
+      condition:
+        quoteItem.productType === 0 &&
+        quoteItem?.isEditable &&
+        CheckDocumentPermission(documentType, DocumentPermission.UPDATE_DOCUMENT_ITEM)
     },
     {
       name: "duplicate",
@@ -70,7 +74,7 @@ const useMoreCircle = ({
       name: "duplicateItemWithDifferentQTY",
       icon: <DuplicateWithDifferentMenuIcon />,
       onclick: () => onClickDuplicateWithDifferentQTY(quoteItem),
-      condition:false,
+      condition: false,
       //condition:quoteItem.productType === 0 && documentType === DOCUMENT_TYPE.quote && !router.query.isNewCreation
     },
     {
@@ -84,24 +88,23 @@ const useMoreCircle = ({
       name: "analysis",
       icon: <AnalysisIcon />,
       onclick: () => onClickAnalysisQuoteItem(quoteItem, documentType),
-      condition: !router.query.isNewCreation && quoteItem.productType === 0
+      //condition: !router.query.isNewCreation && quoteItem.productType === 0,
+      condition: (
+        documentType === DOCUMENT_TYPE.quote &&
+        quoteItem.productType === 0 &&
+        quoteItem?.isEditable &&
+        CheckPermission(Permissions.UPDATE_QUOTE_ITEM)
+      )
     },
     {
       name: "delete",
       icon: <DeleteMenuIcon />,
       onclick: () => onClickDeleteQouteItem(quoteItem),
-    //  condition: router.query.isNewCreation || quoteItem?.isDeletable 
-      condition: (
+      //  condition: router.query.isNewCreation || quoteItem?.isDeletable 
+      condition:
         router.query.isNewCreation ||
         (quoteItem?.isDeletable &&
-          (
-            (documentType === DOCUMENT_TYPE.quote && CheckPermission(Permissions.DELETE_QUOTE_ITEM)) ||
-            (documentType === DOCUMENT_TYPE.order && CheckPermission(Permissions.DELETE_ORDER_ITEM)) ||
-            (documentType === DOCUMENT_TYPE.purchaseOrder && CheckPermission(Permissions.DELETE_PURCHASE_ORDER_ITEM)) ||
-            (documentType !== DOCUMENT_TYPE.quote && documentType !== DOCUMENT_TYPE.order && documentType !== DOCUMENT_TYPE.purchaseOrder)        
-          )
-        )
-      )
+          CheckDocumentPermission(documentType, DocumentPermission.DELETE_DOCUMENT_ITEM))
     }
   ].filter(item => item.condition);
 
