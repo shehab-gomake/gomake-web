@@ -43,7 +43,6 @@ const useUploadFiles = () => {
             });
 
             const data = await response.json();
-            console.log(`Chunk ${chunkIndex + 1} of ${totalChunks}:`, data);
 
             if (chunkIndex + 1 === totalChunks) {
                 await saveUploadedFile(callApi, () => {

@@ -1,13 +1,12 @@
-import {IBoardMissionsActivity} from "@/widgets/production-floor/interfaces/board-missions-activity";
-import {Avatar, Stack} from "@mui/material";
-import {FONT_FAMILY} from "@/utils/font-family";
-import {EActivityLogType} from "@/widgets/production-floor/enums/activity-type";
-import {useTranslation} from "react-i18next";
-import {useEffect} from "react";
+import { IBoardMissionsActivity } from "@/widgets/production-floor/interfaces/board-missions-activity";
+import { Avatar, Stack } from "@mui/material";
+import { FONT_FAMILY } from "@/utils/font-family";
+import { EActivityLogType } from "@/widgets/production-floor/enums/activity-type";
+import { useTranslation } from "react-i18next";
+import { useEffect } from "react";
 
-const LogComponent = ({userName, userImages, logType, values}: IBoardMissionsActivity) => {
-    useEffect(() => {console.log(values)}, [])
-    const {t} = useTranslation();
+const LogComponent = ({ userName, userImages, logType, values }: IBoardMissionsActivity) => {
+    const { t } = useTranslation();
     const logTypeTextKey = logType === EActivityLogType.UPDATE_STATUS ? 'logs.updateStatus' :
         logType === EActivityLogType.MOVE_TO_NEXT_STATION ? 'logs.nextStation' :
             logType === EActivityLogType.MOVE_TO_PREV_STATION ? 'logs.prevStation' : '';
@@ -16,8 +15,8 @@ const LogComponent = ({userName, userImages, logType, values}: IBoardMissionsAct
     const logText = `${t(logTypeTextKey)} | ${logFromToText}`;
     return (
         <Stack direction={'row'} gap={'12px'} alignItems={'flex-start'}>
-            <Avatar src={userImages}/>
-            <Stack style={{width: '100%', ...FONT_FAMILY.Inter(400, 16)}}>
+            <Avatar src={userImages} />
+            <Stack style={{ width: '100%', ...FONT_FAMILY.Inter(400, 16) }}>
                 <span>{userName}</span>
                 <span style={{
                     backgroundColor: '#F2F4F7',
@@ -29,4 +28,4 @@ const LogComponent = ({userName, userImages, logType, values}: IBoardMissionsAct
     )
 }
 
-export {LogComponent}
+export { LogComponent }

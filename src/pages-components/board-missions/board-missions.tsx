@@ -93,7 +93,6 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
     getAllProducts();
   }, []);
   const suppliersState = useRecoilValue(outsourceSuppliersState);
-  console.log("suppliersState", suppliersState)
   return (
     <>
       <Stack direction="column" justifyContent="space-between" display="flex" spacing={1} height="100%" >

@@ -5,15 +5,15 @@ import { GoMakeTextEditor } from "@/components/text-editor/go-make-text-editor";
 import {
     useBoardMissionsActivities
 } from "@/widgets/production-floor/views/board-missions-view/activity/use-board-missions-activities";
-import {ActivityComponent} from "@/widgets/production-floor/views/board-missions-view/activity/activity-component";
-import {convertHeightToVH} from "@/utils/adapter";
-import {useEffect, useRef} from "react";
-import {useTranslation} from "react-i18next";
-import {DotsLoader} from "@/components/dots-loader/dots-Loader";
+import { ActivityComponent } from "@/widgets/production-floor/views/board-missions-view/activity/activity-component";
+import { convertHeightToVH } from "@/utils/adapter";
+import { useEffect, useRef } from "react";
+import { useTranslation } from "react-i18next";
+import { DotsLoader } from "@/components/dots-loader/dots-Loader";
 
 
 const BoardMissionsActivities = () => {
-    const {t} = useTranslation();
+    const { t } = useTranslation();
     const loaderRef = useRef(null);
     const lastActivityRef = useRef(null);
     const {
@@ -23,7 +23,6 @@ const BoardMissionsActivities = () => {
         getAllActivities,
         addActivityLoader
     } = useBoardMissionsActivities();
-    console.log("activitiesList", activitiesList)
     useEffect(() => {
         if (addActivityLoader && loaderRef.current) {
             loaderRef.current.scrollIntoView({
@@ -65,12 +64,12 @@ const BoardMissionsActivities = () => {
             }}>
                 {
                     activitiesList?.length > 0 && activitiesList?.map((activity, index) => <div key={'activity' + index}
-                                                                                                ref={index + 1 === activitiesList.length ? lastActivityRef : undefined}>
-                        <ActivityComponent {...activity}/></div>)
+                        ref={index + 1 === activitiesList.length ? lastActivityRef : undefined}>
+                        <ActivityComponent {...activity} /></div>)
                 }
                 {
                     addActivityLoader &&
-                    <Stack ref={loaderRef} height={'60px'} alignItems={'center'} justifyContent={'center'}><DotsLoader/></Stack>
+                    <Stack ref={loaderRef} height={'60px'} alignItems={'center'} justifyContent={'center'}><DotsLoader /></Stack>
                 }
             </div>
             <GoMakeTextEditor onSend={addComment} containerStyle={{ marginTop: 'auto' }} />

@@ -97,7 +97,6 @@ const PricingWidget = ({
     }
 
   }, [selectedWorkFlow]);
-  console.log("productItemValueByEdit", productItemValueByEdit)
   useEffect(() => {
     if (productItemValueByEdit?.sourceType && isChangeView) {
       setView(EPricingViews.OUTSOURCE_WORKFLOW)
