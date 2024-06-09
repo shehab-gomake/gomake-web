@@ -65,6 +65,7 @@ export enum Permissions {
     DELETE_PURCHASE_ORDER_ITEM="DeletePurchaseOrderItem",
     SHOW_ORDERS = "ShowOrders",
     SHOW_COSTS_IN_ORDERS="IsShowCostsInOrders",
+    UPDATE_ORDER_ITEM_PRICES="UpdateOrderItemPrices",
 
     //production floor group
     SHOW_PRODUCTION_FLOOR = "ShowProductionFloor",
@@ -111,7 +112,7 @@ export enum Permissions {
 export const DocumentPermission = {
     DELETE_DOCUMENT_ITEM: "DeleteDocumentItem",
     UPDATE_DOCUMENT_ITEM: "UpdateDocumentItem",
-    // Add more general permissions as needed
+    UPDATE_DOCUMENT_ITEM_PRICES: "UpdateDocumentItemPrices",
   };
 
 
@@ -120,12 +121,13 @@ export const DocumentPermission = {
       [DOCUMENT_TYPE.quote]: Permissions.DELETE_QUOTE_ITEM,
       [DOCUMENT_TYPE.order]: Permissions.DELETE_ORDER_ITEM,
       [DOCUMENT_TYPE.purchaseOrder]: Permissions.DELETE_PURCHASE_ORDER_ITEM,
-      // Add other document types and corresponding permissions as needed
     },
     [DocumentPermission.UPDATE_DOCUMENT_ITEM]: {
       [DOCUMENT_TYPE.quote]: Permissions.UPDATE_QUOTE_ITEM,
       [DOCUMENT_TYPE.order]: Permissions.UPDATE_ORDER_ITEM,
-      // Add other document types and corresponding permissions as needed
     },
-    // Add more general permissions as needed
+    [DocumentPermission.UPDATE_DOCUMENT_ITEM_PRICES]: {
+      [DOCUMENT_TYPE.quote]: Permissions.EDIT_QUOTE_PRICES,
+      [DOCUMENT_TYPE.order]: Permissions.UPDATE_ORDER_ITEM_PRICES,
+    },
   };

@@ -61,7 +61,6 @@ const useMoreCircle = ({
       //condition: quoteItem.productType === 0 && (documentType === DOCUMENT_TYPE.quote || documentType === DOCUMENT_TYPE.order || documentType === DOCUMENT_TYPE.purchaseOrder ),
       condition:
         quoteItem.productType === 0 &&
-        quoteItem?.isEditable &&
         CheckDocumentPermission(documentType, DocumentPermission.UPDATE_DOCUMENT_ITEM)
     },
     {

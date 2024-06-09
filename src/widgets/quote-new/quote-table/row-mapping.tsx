@@ -13,6 +13,8 @@ import { MoreMenuWidget } from "../more-circle";
 import { useRecoilValue } from "recoil";
 import { quoteConfirmationState, quoteItemState } from "@/store";
 import { DOCUMENT_TYPE, QUOTE_STATUSES } from "@/pages-components/quotes/enums";
+import { DocumentPermission, Permissions } from "@/components/CheckPermission/enum";
+import { useUserPermission } from "@/hooks/use-permission";
 
 const RowMappingWidget = ({
   item,
@@ -61,11 +63,13 @@ const RowMappingWidget = ({
     item,
     index,
   });
+  const { CheckDocumentPermission } = useUserPermission();
   const { handleItemCheck } = useQuoteConfirmation();
-  const canUpdate = router.query.isNewCreation ? true : item?.isEditable;
   const quoteItemValue = useRecoilValue<any>(quoteItemState);
   const quoteConfirm = useRecoilValue<any>(quoteConfirmationState);
 
+  const canUpdate = router.query.isNewCreation ? true : item?.isEditable;
+  const canUpdatePrices = router.query.isNewCreation ? true : (item?.isEditable && CheckDocumentPermission(documentType, DocumentPermission.UPDATE_DOCUMENT_ITEM_PRICES));
 
   return (
     <TableRow
@@ -103,7 +107,7 @@ const RowMappingWidget = ({
               {parentIndex}
             </span>
             :
-            parentIndex
+            parentIndex 
         }
       </PrimaryTableCell>
       <PrimaryTableCell
@@ -139,7 +143,6 @@ const RowMappingWidget = ({
           <CharacterDetails details={item.details} getQuote={getQuote} documentItemId={item?.id} canUpdate={canUpdate} />
         </PrimaryTableCell>
       }
-
       <PrimaryTableCell
         style={{
           width: columnWidths[4],
@@ -151,7 +154,7 @@ const RowMappingWidget = ({
           <InputUpdatedValues
             value={item.quantity}
             onBlur={onBlurAmount}
-            isUpdate={router.query.isNewCreation ? isUpdateAmount : !item?.isEditable ? false : isUpdateAmount}
+            isUpdate={canUpdatePrices && isUpdateAmount}
             setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdateAmount}
             onInputChange={(e) => onInputChangeAmount(e)}
           />
@@ -168,7 +171,7 @@ const RowMappingWidget = ({
           <InputUpdatedValues
             value={item.discount ? item.discount : "0"}
             onBlur={onBlurDiscount}
-            isUpdate={router.query.isNewCreation ? isUpdateDiscount : !item?.isEditable ? false : isUpdateDiscount}
+            isUpdate={canUpdatePrices && isUpdateDiscount}
             setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdateDiscount}
             onInputChange={(e) => onInputChangeDiscount(e)}
           />
@@ -185,7 +188,7 @@ const RowMappingWidget = ({
           <InputUpdatedValues
             value={item.price}
             onBlur={onBlurPrice}
-            isUpdate={router.query.isNewCreation ? isUpdatePrice : !item?.isEditable ? false : isUpdatePrice}
+            isUpdate={canUpdatePrices && isUpdatePrice}
             setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdatePrice}
             onInputChange={(e) => onInputChangePrice(e)}
           />
@@ -202,12 +205,11 @@ const RowMappingWidget = ({
           <InputUpdatedValues
             value={item.finalPrice}
             onBlur={onBlurFinalPrice}
-            isUpdate={router.query.isNewCreation ? isUpdateFinalPrice : !item?.isEditable ? false : isUpdateFinalPrice}
+           isUpdate={canUpdatePrices && isUpdateFinalPrice}
             setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdateFinalPrice}
             onInputChange={(e) => onInputChangeFinalPrice(e)}
           />
         </div>
-
       </PrimaryTableCell>
       {
         !isQuoteConfirmation &&
