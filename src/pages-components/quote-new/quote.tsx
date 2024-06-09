@@ -27,7 +27,7 @@ import { ReceiptsTable } from "@/widgets/quote-new/receipts-table";
 import { useRouter } from "next/router";
 import { usePaymentsTable } from "@/widgets/quote-new/receipts-table/use-payments-table";
 import { useEffect, useState } from "react";
-import { StepType, useTour } from "@reactour/tour";
+import { StepType, } from "@reactour/tour";
 import { useGoMakeTour } from "@/hooks/use-go-make-tour";
 import { OtherReasonModal } from "@/widgets/quote-new/total-price-and-vat/other-reason-modal";
 import { QuoteStatuses } from "@/widgets/quote-new/total-price-and-vat/enums";
@@ -35,6 +35,7 @@ import { LoginTaxesUrl, fetchTaxesAuthority } from "@/utils/taxes-authority";
 import { printHouseProfile } from "@/store/print-house-profile";
 import { WhatsAppWebModal } from "@/widgets/quote-new/modals-widgets/whats-app-web-modal";
 import { AddNewContactModal } from "@/widgets/quote-new/modals-widgets/add-new-contact-modal";
+import { ViewSignatureApprovalModal } from "@/widgets/quote-new/total-price-and-vat/view-signature-approval-modal";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -192,7 +193,11 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
     openAddNewContactModal,
     onCloseNewContact,
     onOpenNewContact,
-    onChangeSelectedItemRowForQoute
+    onChangeSelectedItemRowForQoute,
+    openSignatureApprovalModal,
+    onClickCloseSignatureApprovalModal,
+    onClickOpenSignatureApprovalModal,
+
   } = useQuoteNew({ docType: documentType, isQuoteConfirmation: isQuoteConfirmation });
 
   const quoteSteps: StepType[] = [
@@ -271,23 +276,32 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
                   </div>}
 
                 </div>
-                {!isQuoteConfirmation && <div style={classes.settingsStatusContainer}>
-                  {!router?.query?.isNewCreation &&
-                    <div style={classes.quoteStatusContainer}>
-                      {_renderQuoteStatus(
-                        quoteState?.documentStatus,
-                        quoteState,
-                        t
-                      )}
-                    </div>
-                  }
-                  <IconButton
-                    style={{ marginRight: 4 }}
-                    onClick={handleSettingMenuClick}
-                  >
-                    <SettingNewIcon />
-                  </IconButton>
-                </div>}
+                {!isQuoteConfirmation &&
+                  <div style={classes.settingsStatusContainer}>
+                    <>
+                      {
+                        quoteItemValue?.signImageUrl && quoteItemValue?.signerName ? <div style={classes.signatureApproval} onClick={onClickOpenSignatureApprovalModal}>Signature approval</div> : <>
+                          {!router?.query?.isNewCreation &&
+                            <div style={classes.quoteStatusContainer}>
+                              {_renderQuoteStatus(
+                                quoteState?.documentStatus,
+                                quoteState,
+                                t
+                              )}
+                            </div>
+                          }
+                        </>
+                      }
+                    </>
+
+
+                    <IconButton
+                      style={{ marginRight: 4 }}
+                      onClick={handleSettingMenuClick}
+                    >
+                      <SettingNewIcon />
+                    </IconButton>
+                  </div>}
               </div>
               <div style={classes.datesContainer}>
                 <div
@@ -518,6 +532,10 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
         onClose={onClickCloseModal}
         setReasonText={setReasonText}
         onClickCancelOffer={onClickCancelOffer}
+      />
+      <ViewSignatureApprovalModal
+        openModal={openSignatureApprovalModal}
+        onClose={onClickCloseSignatureApprovalModal}
       />
       <GoMakeDeleteModal
         icon={
