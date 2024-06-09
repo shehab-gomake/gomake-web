@@ -15,6 +15,7 @@ export enum Permissions {
     CREATE_QUOTES = "CreateQuote",
     EDIT_QUOTES = "EditQuotes", 
     EDIT_QUOTE_PRICES = "EditPriceQuote",
+    DELETE_QUOTE_ITEM="DeleteQuoteItem",
 
     //Materials group
     EDIT_MATERIAL = "EditMaterial",
@@ -54,8 +55,12 @@ export enum Permissions {
     SHOW_FINANCE = "ShowFinance",
 
     //orders group    
-    SHOW_ORDERS = "ShowOrders",
     EDIT_ORDERS = "EditOrders",
+    UPDATE_ORDER_ITEM="UpdateOrderItem",
+    DELETE_ORDER_ITEM="DeleteOrderItem",
+    DELETE_PURCHASE_ORDER_ITEM="DeletePurchaseOrderItem",
+    SHOW_ORDERS = "ShowOrders",
+    SHOW_COSTS_IN_ORDERS="IsShowCostsInOrders",
 
     //production floor group
     SHOW_PRODUCTION_FLOOR = "ShowProductionFloor",
@@ -65,7 +70,6 @@ export enum Permissions {
     //board missions group
     SHOW_BOARD_MISSIONS = "IsCanShowBoardMissions",
     SHOW_COSTS_IN_BOARD_MISSIONS = "IsShowCostsInBoardMissions",
-
 
     //administration group
     SHOW_ADMINISTRATION_PERMISSIONS = "ShowAdministrationPermissions",
