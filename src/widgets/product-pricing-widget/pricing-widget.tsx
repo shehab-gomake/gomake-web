@@ -1,153 +1,35 @@
-import { IPricingWidgetProps } from "@/widgets/product-pricing-widget/interface";
-import {
-  GeneralInformationComponent
-} from "@/widgets/product-pricing-widget/components/general-information/general-information-component";
-import { ButtonGroup, Divider } from "@mui/material";
-import { Actions } from "@/widgets/product-pricing-widget/components/action/action-component";
-import { useEffect, useState } from "react";
-import { PrimaryButton } from "@/components/button/primary-button";
-import { WorkFlowsComponent } from "@/widgets/product-pricing-widget/components/work-flow/work-flow-component";
+import { Stack, ButtonGroup, Divider } from "@mui/material";
+
+import { GeneralInformationComponent } from "@/widgets/product-pricing-widget/components/general-information/general-information-component";
+import { OutSourceSuppliers } from "@/widgets/product-pricing-widget/components/outsource-suppliers/out-source-suppliers-widget";
 import { InOutSourceSelect } from "@/widgets/product-pricing-widget/components/in-out-source-select/in-out-source-select";
-import {
-  EPricingViews,
-  EWorkSource,
-} from "@/widgets/product-pricing-widget/enums";
-import {
-  OutSourceSuppliers
-} from "@/widgets/product-pricing-widget/components/outsource-suppliers/out-source-suppliers-widget";
-import { useTranslation } from "react-i18next";
-import { useStyle } from "@/widgets/product-pricing-widget/style";
-import { useRecoilState, useRecoilValue } from "recoil";
-import {
-  currentProductItemValueDraftId,
-  currentProductItemValuePriceState,
-  currentProductItemValueState, currentProductItemValueTotalWorkFlowsState,
-  selectedWorkFlowState,
-} from "@/widgets/product-pricing-widget/state";
-import cloneDeep from "lodash.clonedeep";
 import { SubWorkFlowsComponent } from "@/widgets/product-pricing-widget/components/work-flow/sub-work-flow-component";
-import {
-  updateProductItemValueOutsource
-} from "@/services/api-service/product-item-value-draft/product-item-draft-endpoints";
-import { useGomakeAxios } from "@/hooks";
-import { currentCalculationConnectionId, productItemValueByEditState, viewPricingTab } from "@/store";
-import { Stack } from "@mui/material";
+import { WorkFlowsComponent } from "@/widgets/product-pricing-widget/components/work-flow/work-flow-component";
+import { Actions } from "@/widgets/product-pricing-widget/components/action/action-component";
+import { EPricingViews, EWorkSource } from "@/widgets/product-pricing-widget/enums";
+import { IPricingWidgetProps } from "@/widgets/product-pricing-widget/interface";
+import { PrimaryButton } from "@/components/button/primary-button";
+import { useStyle } from "@/widgets/product-pricing-widget/style";
+import { usePricingWidget } from "./use-pricing-widget";
 
-const PricingWidget = ({
-  workFlows,
-  getOutSourcingSuppliers,
-  widgetType
-}: IPricingWidgetProps) => {
-  const [view, setView] = useRecoilState<EPricingViews>(viewPricingTab);
-
-  const { callApi } = useGomakeAxios();
-  const { t } = useTranslation();
+const PricingWidget = ({ workFlows, getOutSourcingSuppliers, widgetType }: IPricingWidgetProps) => {
   const { classes } = useStyle();
-  const selectedWorkFlow = useRecoilValue(selectedWorkFlowState);
-  const productItemValueByEdit = useRecoilValue<any>(productItemValueByEditState)
+  const {
+    view,
+    setView,
+    reorderedTabs,
+    setSelectedTab,
+    setFilterWorkFlow,
+    selectedTab,
+    updateProductItemValue,
+    setIsChangeView,
+    selectedWorkFlow,
+    sortedArray,
+    filterWorkFlow,
+    t
 
-  const [isChangeView, setIsChangeView] = useState(true)
+  } = usePricingWidget({ workFlows, getOutSourcingSuppliers })
 
-  useEffect(() => {
-    // Transform actions when component mounts
-    selectedWorkFlow?.actions.map(action => {
-      if (!action.isCalculated) {
-        const originalAction = selectedWorkFlow?.actions.find(a => a.id === action.id);
-        return {
-          ...action,
-          profit: { ...originalAction.profit },
-          totalCost: { ...originalAction.totalCost },
-          totalPrice: { ...originalAction.totalPrice },
-          totalProductionTime: { ...originalAction.totalProductionTime },
-
-        };
-      }
-      return action;
-    });
-
-  }, [selectedWorkFlow?.actions]);
-  const [currentProductItemValue, setCurrentProductItemValue] = useRecoilState<any>(currentProductItemValueState);
-  const productItemValueDraftId = useRecoilValue<string>(currentProductItemValueDraftId);
-  const [tabs, setTabs] = useState([]);
-  const connectionId = useRecoilValue(currentCalculationConnectionId);
-  const updateProductItemValue = async (sourceType: number) => {
-    await updateProductItemValueOutsource(callApi, () => { }, {
-      productItemValueId: productItemValueDraftId,
-      signalRConnectionId: connectionId,
-      sourceType
-    })
-  }
-
-  useEffect(() => {
-    getOutSourcingSuppliers();
-  }, []);
-  useEffect(() => {
-    if (productItemValueByEdit?.sourceType && isChangeView) {
-      setView(EPricingViews.OUTSOURCE_WORKFLOW)
-    }
-    else if (!selectedWorkFlow) {
-      setView(EPricingViews.OUTSOURCE_WORKFLOW);
-    } else if (currentProductItemValue) {
-      let temp = cloneDeep(currentProductItemValue);
-      temp.workFlow = [selectedWorkFlow];
-      const productItemValue = cloneDeep(currentProductItemValue);
-      productItemValue.id = productItemValueDraftId;
-      setCurrentProductItemValue(productItemValue);
-
-    }
-
-  }, [selectedWorkFlow]);
-  useEffect(() => {
-    if (productItemValueByEdit?.sourceType && isChangeView) {
-      setView(EPricingViews.OUTSOURCE_WORKFLOW)
-    }
-    else if (selectedWorkFlow && currentProductItemValue && isChangeView) {
-      setView(EPricingViews.SELECTED_WORKFLOW);
-    }
-  }, [selectedWorkFlow, currentProductItemValue, isChangeView])
-
-
-  const reorderedTabs = [
-    ...(tabs.find(tab => tab.key === "general") ? [tabs.find(tab => tab.key === "general")] : []), // "Flows Pending" tab if exists
-    ...tabs.filter(tab => tab.key !== "general") // Other tabs
-  ];
-  const [selectedTab, setSelectedTab] = useState("")
-  const [filterWorkFlow, setFilterWorkFlow] = useState()
-
-  const sortedArray = workFlows.slice().sort((a, b) => {
-    if (a.selected === b.selected) {
-      return 0;
-    } else if (a.selected) {
-      return -1;
-    } else {
-      return 1;
-    }
-  });
-
-  useEffect(() => {
-    const newTabs = workFlows.reduce((accumulator, currentItem) => {
-      if (currentItem.isCompleteWorkFlow === false && currentItem.productType !== null) {
-        const existingTab = accumulator.find(tab => tab.tabName === currentItem.sectionName && tab.key === currentItem.productType);
-        if (!existingTab) {
-          accumulator.push({ tabName: currentItem.sectionName, key: currentItem.productType });
-        }
-      } else if (currentItem.isCompleteWorkFlow === false && currentItem.productType === null) {
-        const existingTab = accumulator.find(tab => tab.tabName === t("pricingWidget.flowsPending") && tab.key === "general");
-        if (!existingTab) {
-          accumulator.push({ tabName: t("pricingWidget.flowsPending"), key: "general" });
-        }
-      }
-      else if (currentItem.isCompleteWorkFlow === true && currentItem.productType === null && currentItem.subWorkFlows.length === 0) {
-        const existingTab = accumulator.find(tab => tab.tabName === t("pricingWidget.flows") && tab.key === "other");
-        if (!existingTab) {
-          accumulator.push({ tabName: t("pricingWidget.flows"), key: "other" });
-        }
-      }
-      return accumulator;
-    }, []);
-
-    setTabs(newTabs);
-  }, [workFlows]);
 
 
   return (
