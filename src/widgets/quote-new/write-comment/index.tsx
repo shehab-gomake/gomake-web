@@ -11,8 +11,9 @@ interface IProps {
   isQuoteConfirmation?: boolean;
   getQuote?: any;
   documentType?: DOCUMENT_TYPE;
+  onClickOpenRelatedDocumentsModal?: () => void;
 }
-const WriteCommentComp = ({ isQuoteConfirmation, getQuote, documentType }: IProps) => {
+const WriteCommentComp = ({ isQuoteConfirmation, getQuote, documentType, onClickOpenRelatedDocumentsModal }: IProps) => {
   const { classes } = useStyle(isQuoteConfirmation);
   const { onUpdateComments,
     quoteComments,
@@ -75,8 +76,12 @@ const WriteCommentComp = ({ isQuoteConfirmation, getQuote, documentType }: IProp
             style={classes.autoComplateStyle}
             placeholder={t("sales.quote.selectDocuments")}
             onChange={(e: any, item: any) => {
-              console.log("GGGGG", item)
-              navigate(`/${item.title.charAt(0).toLowerCase() + item.title.slice(1)}?Id=${item.documentId}`)
+              if (item?.value === "new") {
+                onClickOpenRelatedDocumentsModal()
+              }
+              else {
+                navigate(`/${item.title.charAt(0).toLowerCase() + item.title.slice(1)}?Id=${item.documentId}`)
+              }
             }}
             withArrow={true}
           // value={dayOfWeek}
@@ -84,7 +89,7 @@ const WriteCommentComp = ({ isQuoteConfirmation, getQuote, documentType }: IProp
         </div>
       }
 
-      <div style={classes.itemContainer}>
+      <div style={classes.item2Container}>
         <div style={classes.labelTextStyle}>{t("sales.quote.comments")}</div>
         <GomakeTextInput
           style={classes.textInputStyle}
@@ -94,7 +99,7 @@ const WriteCommentComp = ({ isQuoteConfirmation, getQuote, documentType }: IProp
           onBlur={isQuoteConfirmation ? onUpdateComments : handleBlur}
         />
       </div>
-      <div style={classes.itemContainer}>
+      <div style={classes.item2Container}>
         <div style={classes.labelTextStyle}>{t("sales.quote.notes")}</div>
         <GomakeTextInput
           style={classes.textInputStyle}

@@ -36,6 +36,7 @@ import { printHouseProfile } from "@/store/print-house-profile";
 import { WhatsAppWebModal } from "@/widgets/quote-new/modals-widgets/whats-app-web-modal";
 import { AddNewContactModal } from "@/widgets/quote-new/modals-widgets/add-new-contact-modal";
 import { NewItemNotesModal } from "@/widgets/quote-new/total-price-and-vat/new-item-notes-modal";
+import { AddRelatedDocumentsModal } from "@/widgets/quote-new/total-price-and-vat/add-related-documents";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -195,7 +196,10 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
     onOpenNewContact,
     onChangeSelectedItemRowForQoute,
     openNewItemNotesModal,
-    onClickCloseNewItemNotesModal
+    onClickCloseNewItemNotesModal,
+    onClickOpenRelatedDocumentsModal,
+    onClickCloseRelatedDocumentsModal,
+    openRelatedDocumentsModal
   } = useQuoteNew({ docType: documentType, isQuoteConfirmation: isQuoteConfirmation });
 
   const quoteSteps: StepType[] = [
@@ -418,7 +422,12 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
                 <ReceiptsTable />
               }
             </div>
-            <WriteCommentComp getQuote={getQuote} isQuoteConfirmation={isQuoteConfirmation} documentType={documentType} />
+            <WriteCommentComp
+              getQuote={getQuote}
+              isQuoteConfirmation={isQuoteConfirmation}
+              documentType={documentType}
+              onClickOpenRelatedDocumentsModal={onClickOpenRelatedDocumentsModal}
+            />
           </div>
           {!isQuoteConfirmation &&
             <div style={{ width: '100%' }} data-tour={'quoteStep2'}>
@@ -576,6 +585,11 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
       <NewItemNotesModal
         openModal={openNewItemNotesModal}
         onClose={onClickCloseNewItemNotesModal}
+      />
+
+      <AddRelatedDocumentsModal
+        openModal={openRelatedDocumentsModal}
+        onClose={onClickCloseRelatedDocumentsModal}
       />
     </>
   );

@@ -101,7 +101,15 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
   const [isSelectedAtLeastOne, setIsSelectedAtLeastOne] = useState(null)
 
   const [openNewItemNotesModal, setOpenNewItemNotesModal] = useState(false)
+  const [openRelatedDocumentsModal, setOpenRelatedDocumentsModal] = useState(false)
 
+
+  const onClickOpenRelatedDocumentsModal = () => {
+    setOpenRelatedDocumentsModal(true)
+  }
+  const onClickCloseRelatedDocumentsModal = () => {
+    setOpenRelatedDocumentsModal(false)
+  }
 
   const onClickOpenNewItemNotesModal = () => {
     setOpenNewItemNotesModal(true)
@@ -1492,7 +1500,10 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     onOpenNewContact,
     onChangeSelectedItemRowForQoute,
     openNewItemNotesModal,
-    onClickCloseNewItemNotesModal
+    onClickCloseNewItemNotesModal,
+    onClickOpenRelatedDocumentsModal,
+    onClickCloseRelatedDocumentsModal,
+    openRelatedDocumentsModal
   };
 };
 

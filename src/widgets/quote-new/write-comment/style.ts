@@ -47,6 +47,14 @@ const useStyle = (isQuoteConfirmation) => {
         alignItems: "flex-start",
         gap:5
       },
+      item2Container:{
+        width: "40%",
+        display: "flex",
+        flexDirection: "column" as "column",
+        justifyContent: "flex-start",
+        alignItems: "flex-start",
+        gap:5
+      },
       labelTextStyle:{
         ...FONT_FAMILY.Lexend(500,14),
         color:"#000"
