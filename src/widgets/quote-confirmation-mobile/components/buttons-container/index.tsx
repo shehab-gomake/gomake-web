@@ -9,8 +9,9 @@ import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import { QuoteStatuses } from "@/widgets/quote-new/total-price-and-vat/enums";
 import { OtherReasonModal } from "@/widgets/quote-new/total-price-and-vat/other-reason-modal";
 import { QUOTE_STATUSES } from "@/pages-components/quotes/enums";
+import { ApproveSignatureModal } from "@/widgets/quote-new/total-price-and-vat/approve-signature-modal";
 
-const ButtonsConfirmContainer = () => {
+const ButtonsConfirmContainer = ({ isMobile }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
   const { onClickCloseRejectModal,
@@ -28,15 +29,18 @@ const ButtonsConfirmContainer = () => {
     onClickPrint,
     isButtonClicked,
     onClickApprove,
-    quoteConfirm
-  } = useButtonsConfirmContainer(); 
-  
+    quoteConfirm,
+    onClickOpenApproveSignatureModal,
+    approveSignatureModal,
+    onClickCloseApproveSignatureModal
+  } = useButtonsConfirmContainer();
+
   return (
     (!quoteConfirm?.isConfirmed && quoteConfirm?.documentStatus !== QUOTE_STATUSES.Canceled) && <div style={classes.mainContainer}>
       <SecondaryButton
         variant="contained"
         style={classes.btnStyle}
-        onClick={onClickApprove}
+        onClick={onClickOpenApproveSignatureModal}
       >{t("sales.quote.approveOffer")}
       </SecondaryButton>
       <SecondaryButton
@@ -60,7 +64,7 @@ const ButtonsConfirmContainer = () => {
         handleClose={handleRejectBtnClose}
         open={openRejectBtn}
         anchorEl={anchorElRejectBtn}
-        onClickOpenModal={()=>onClickOpenOtherModal(QuoteStatuses.CANCELED_OTHER)}
+        onClickOpenModal={() => onClickOpenOtherModal(QuoteStatuses.CANCELED_OTHER)}
         onClickOpenDeliveryTimeModal={() => onClickOpenRejectModal(QuoteStatuses.CANCELED_DELIVERY_TIME)}
         onClickOpenPriceModal={() => onClickOpenRejectModal(QuoteStatuses.CANCELED_PRICE)}
         onClickOpenIrrelevantModal={() => onClickOpenRejectModal(QuoteStatuses.CANCELED_IRRELEVANT)}
@@ -70,7 +74,7 @@ const ButtonsConfirmContainer = () => {
         onClose={onClickCloseOtherModal}
         setReasonText={setReasonText}
         onClickCancelOffer={onClickReject}
-        style={{width:"80%" , height:"60%"}}
+        style={{ width: "80%", height: "60%" }}
       />
       <GoMakeDeleteModal
         icon={<WarningAmberIcon style={{ width: 60, height: 60, color: "red" }} />}
@@ -81,7 +85,14 @@ const ButtonsConfirmContainer = () => {
         subTitle={t("sales.quote.subTitleCancelModal")}
         cancelBtn={t("sales.quote.cancelBtn")}
         onClickDelete={onClickReject}
-        style={{width:"unset"}}
+        style={{ width: "unset" }}
+      />
+      <ApproveSignatureModal
+        openModal={approveSignatureModal}
+        onClose={onClickCloseApproveSignatureModal}
+        onClickApprove={onClickApprove}
+        isMobile={isMobile}
+
       />
     </div>
   );

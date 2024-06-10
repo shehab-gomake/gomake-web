@@ -37,6 +37,7 @@ import { WhatsAppWebModal } from "@/widgets/quote-new/modals-widgets/whats-app-w
 import { AddNewContactModal } from "@/widgets/quote-new/modals-widgets/add-new-contact-modal";
 import { NewItemNotesModal } from "@/widgets/quote-new/total-price-and-vat/new-item-notes-modal";
 import { AddRelatedDocumentsModal } from "@/widgets/quote-new/total-price-and-vat/add-related-documents";
+import { ViewSignatureApprovalModal } from "@/widgets/quote-new/total-price-and-vat/view-signature-approval-modal";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -199,7 +200,11 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
     onClickCloseNewItemNotesModal,
     onClickOpenRelatedDocumentsModal,
     onClickCloseRelatedDocumentsModal,
-    openRelatedDocumentsModal
+    openRelatedDocumentsModal,
+    openSignatureApprovalModal,
+    onClickCloseSignatureApprovalModal,
+    onClickOpenSignatureApprovalModal,
+
   } = useQuoteNew({ docType: documentType, isQuoteConfirmation: isQuoteConfirmation });
 
   const quoteSteps: StepType[] = [
@@ -278,23 +283,32 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
                   </div>}
 
                 </div>
-                {!isQuoteConfirmation && <div style={classes.settingsStatusContainer}>
-                  {!router?.query?.isNewCreation &&
-                    <div style={classes.quoteStatusContainer}>
-                      {_renderQuoteStatus(
-                        quoteState?.documentStatus,
-                        quoteState,
-                        t
-                      )}
-                    </div>
-                  }
-                  <IconButton
-                    style={{ marginRight: 4 }}
-                    onClick={handleSettingMenuClick}
-                  >
-                    <SettingNewIcon />
-                  </IconButton>
-                </div>}
+                {!isQuoteConfirmation &&
+                  <div style={classes.settingsStatusContainer}>
+                    <>
+                      {
+                        quoteItemValue?.signImageUrl && quoteItemValue?.signerName ? <div style={classes.signatureApproval} onClick={onClickOpenSignatureApprovalModal}>Signature approval</div> : <>
+                          {!router?.query?.isNewCreation &&
+                            <div style={classes.quoteStatusContainer}>
+                              {_renderQuoteStatus(
+                                quoteState?.documentStatus,
+                                quoteState,
+                                t
+                              )}
+                            </div>
+                          }
+                        </>
+                      }
+                    </>
+
+
+                    <IconButton
+                      style={{ marginRight: 4 }}
+                      onClick={handleSettingMenuClick}
+                    >
+                      <SettingNewIcon />
+                    </IconButton>
+                  </div>}
               </div>
               <div style={classes.datesContainer}>
                 <div
@@ -530,6 +544,10 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
         onClose={onClickCloseModal}
         setReasonText={setReasonText}
         onClickCancelOffer={onClickCancelOffer}
+      />
+      <ViewSignatureApprovalModal
+        openModal={openSignatureApprovalModal}
+        onClose={onClickCloseSignatureApprovalModal}
       />
       <GoMakeDeleteModal
         icon={

@@ -899,6 +899,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
   };
 
   const [openOtherReasonModal, setOpenOtherReasonModal] = useState(false);
+  const [openSignatureApprovalModal, setOpenSignatureApprovalModal] = useState(false);
   const [openIrrelevantCancelModal, setOpenIrrelevantCancelModal] = useState(false);
   const [openPriceCancelModal, setOpenPriceCancelModal] = useState(false);
   const [openDeliveryTimeCancelModal, setOpenDeliveryTimeCancelModal] = useState(false);
@@ -928,6 +929,13 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
   };
   const onClickCloseModal = () => {
     setOpenOtherReasonModal(false);
+  };
+
+  const onClickOpenSignatureApprovalModal = () => {
+    setOpenSignatureApprovalModal(true);
+  };
+  const onClickCloseSignatureApprovalModal = () => {
+    setOpenSignatureApprovalModal(false);
   };
 
   const onClickCancelOffer = async () => {
@@ -1503,7 +1511,10 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     onClickCloseNewItemNotesModal,
     onClickOpenRelatedDocumentsModal,
     onClickCloseRelatedDocumentsModal,
-    openRelatedDocumentsModal
+    openRelatedDocumentsModal,
+    openSignatureApprovalModal,
+    onClickOpenSignatureApprovalModal,
+    onClickCloseSignatureApprovalModal
   };
 };
 
