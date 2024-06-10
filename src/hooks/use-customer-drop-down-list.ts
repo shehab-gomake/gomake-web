@@ -5,6 +5,7 @@ import { useGomakeAxios } from "./use-gomake-axios";
 const useCustomerDropDownList = () => {
   const { callApi } = useGomakeAxios();
   const [customersListCreateQuote, setCustomersListCreateQuote] = useState([]);
+  const [supplierList, setSupplierList] = useState([]);
   const [clientContactsValue, setClientContactsValue] = useState<any>([]);
   const [customer, setCustomer] = useState<{
     name: string;
@@ -31,6 +32,14 @@ const useCustomerDropDownList = () => {
     });
   }, []);
 
+  const getAllSupplierList = useCallback(async (SearchTerm?) => {
+    await getAndSetAllCustomers(callApi, setSupplierList, {
+      ClientType: "S",
+      searchTerm: SearchTerm,
+      onlyCreateOrderClients: true,
+    });
+  }, []);
+
   const checkWhatRenderArray = (e) => {
     if (e.target.value) {
       getAllCustomersCreateOrder(e.target.value);
@@ -38,6 +47,9 @@ const useCustomerDropDownList = () => {
       getAllCustomersCreateQuote();
     }
   };
+  useEffect(()=>{
+    getAllSupplierList()
+  },[])
 
   const handleCustomerChange = (e: any, value: any) => {
     setCustomer(value);
@@ -61,7 +73,8 @@ const useCustomerDropDownList = () => {
     handleCustomerChange,
     getAllClientContacts,
     setCustomer,
-    clientContactsValue
+    clientContactsValue,
+    supplierList
   };
 };
 

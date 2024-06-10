@@ -71,7 +71,7 @@ const ActionsListComponent = ({onClickApply}: IProps) => {
                 <div style={{position: 'sticky', bottom: 0, right: 0, left: 0, backgroundColor: '#FFF', zIndex: 1}}>
                     <SecondaryButton style={{width: '100%'}} variant={'contained'} onClick={() =>
                         onClickApply(actionsMachinesIds)
-                    }>apply</SecondaryButton>
+                    }>{t("productionFloor.apply")}</SecondaryButton>
                 </div>
             </Paper>
                 </ClickOutside>

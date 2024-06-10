@@ -10,8 +10,10 @@ import {tagsState} from "@/widgets/production-floor/state/tags";
 import {userProductionFloorGroupsState} from "@/widgets/production-floor/state/production-floor-groups-state";
 import {productionFloorPathsState} from "@/widgets/production-floor/state/production-floor-paths";
 import {IBoardMissions} from "@/widgets/production-floor/interfaces/board-missions";
+import { useTranslation } from "react-i18next";
 
 const useProductionFloorData = () => {
+    const {t} = useTranslation();
     const {callApi} = useGomakeAxios();
     const [data,setData] = useRecoilState(boardsMissionsState);
     const [, setFilters] = useRecoilState(productionFloorFiltersState);
@@ -61,7 +63,7 @@ const useProductionFloorData = () => {
         }
         await updateBoardsMissionsStatusApi(callApi, callBack, {boardsIds: boardsIds?.map(b => ({BoardMissionId: b.id, productType: b.productType})), statusId})
     }
-    return {getData, updateStatus, setData}
+    return {getData, updateStatus, setData,t}
 }
 
 export {useProductionFloorData}

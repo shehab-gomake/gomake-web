@@ -65,7 +65,7 @@ const useMoreCircle = ({
       condition: true,
       name: "boardMissions.pdfWorkMission",
       icon: <PDFIcon />,
-      onclick: () => onClickWorkMissionPdf(mission?.id),
+      onclick: () => onClickWorkMissionPdf(mission?.id, mission?.actionId,),
     },
     {
       condition: true,

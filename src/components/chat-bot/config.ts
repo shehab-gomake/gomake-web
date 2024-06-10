@@ -19,7 +19,7 @@ const useChatConfig = (userAvatar: () => JSX.Element, botAvatar: () => JSX.Eleme
         }
     }
     const  clearChat = async () =>  {
-        debugger
+        //debugger
         const response = await fetch(config.api_server + '/v1/erp-service/chat-bot/clear-chat', {
             method: 'GET',
             headers: {

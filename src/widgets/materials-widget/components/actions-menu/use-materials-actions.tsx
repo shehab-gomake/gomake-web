@@ -142,16 +142,16 @@ const useMaterialsActions = (isAdmin: boolean) => {
     }
     if (action?.action === EMaterialsActions.UpdateCurrency) {
       let selectedMaterials = [];
-      if(isAllMaterialsChecked){
+      if (isAllMaterialsChecked) {
         selectedMaterials = selectedMaterials = materialCategoryData.filter(item =>
-            !uncheckedMaterials.includes(item.id)
+          !uncheckedMaterials.includes(item.id)
         );
-      }else{
-         selectedMaterials = materialCategoryData.filter(item =>
-            selectedMaterialsIds.includes(item.id)
+      } else {
+        selectedMaterials = materialCategoryData.filter(item =>
+          selectedMaterialsIds.includes(item.id)
         );
       }
-       const areCurrenciesSame = selectedMaterials.every(
+      const areCurrenciesSame = selectedMaterials.every(
         item => item.rowData.currency.value === selectedMaterials[0].rowData.currency.value
       );
       if (areCurrenciesSame) {
@@ -183,7 +183,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
           await updateMaterialsPropApi(callApi, onUpdateCallBack, {
             materialTypeKey: materialType.toString(),
             categoryKey: materialCategory.toString(),
-            ids: isAllMaterialsChecked ? [] : selectedMaterialsIds ,
+            ids: isAllMaterialsChecked ? [] : selectedMaterialsIds,
             action: action.action,
             updatedValue,
             priceIndex: 0,
@@ -256,7 +256,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
                 ...res.data?.find((row) => row.id === material.id),
                 checked: false,
               }
-              : {...material,checked:false}
+              : { ...material, checked: false }
           )
         )
       }
@@ -458,34 +458,64 @@ const useMaterialsActions = (isAdmin: boolean) => {
       return <UploadMaterialsPictures />;
     }
   };
-  const initialProperties = {
-    key: "",
-    value: "",
-  };
-  const [properties, setProperties] = useState<any>([initialProperties]);
-  const addProperty = () => {
-    setProperties([...properties, initialProperties]);
-  };
   const deleteProperty = (index) => {
     const updatedProperty = [...properties];
     updatedProperty.splice(index, 1);
     setProperties(updatedProperty);
   };
+
+  const initialProperties = {
+    key: "",
+    values: [""],
+  };
+  const [properties, setProperties] = useState<any>([initialProperties]);
+  const addProperty = () => {
+    setProperties([...properties, initialProperties]);
+  };
   const handleChange = (index, field, value) => {
-    const updatedProperty = [...properties];
-    updatedProperty[index][field] = value;
-    setProperties(updatedProperty);
+    const updatedProperties = [...properties];
+    if (field === "values") {
+      let currentValueArray = updatedProperties[index][field];
+      const valueIndex = currentValueArray.indexOf(value);
+
+      if (valueIndex === -1) {
+        // Value doesn't exist, so add it
+        currentValueArray = [...currentValueArray, value].filter(v => v !== "");
+      } else {
+        // Value exists, so remove it
+        currentValueArray = currentValueArray.filter(v => v !== value);
+        // If the array becomes empty, add the "" back to keep initial state consistent
+        if (currentValueArray.length === 0) {
+          currentValueArray = [""];
+        }
+      }
+
+      // Flatten the array if it contains nested arrays
+      const flattenedValues = currentValueArray.flat();
+
+      // Create a new object with the updated values
+      updatedProperties[index].key = { ...updatedProperties[index].key, values: flattenedValues };
+
+      // Update the value array
+      updatedProperties[index][field] = flattenedValues;
+    } else {
+      updatedProperties[index][field] = value;
+    }
+    setProperties(updatedProperties);
   };
   const duplicatePrintHouseMaterials = useCallback(async () => {
     const transformedArray = properties.map((item) => {
       const key = item?.key?.key?.toLowerCase();
-      const value = String(item.value);
+      const value = String(item.values[0]);
+      const values = (item.values);
 
       return {
         key,
         value,
+        values
       };
     });
+
 
     const requestBody: any = {
       props: transformedArray,
@@ -527,7 +557,6 @@ const useMaterialsActions = (isAdmin: boolean) => {
       alertFaultAdded();
     }
   }, [properties]);
-
   const duplicateMaterials = useCallback(async () => {
     const transformedArray = properties.map((item) => {
       const key = item.key.key.toLowerCase();
