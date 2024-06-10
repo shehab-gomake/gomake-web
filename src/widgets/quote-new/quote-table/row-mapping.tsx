@@ -12,7 +12,7 @@ import { useRouter } from "next/router";
 import { MoreMenuWidget } from "../more-circle";
 import { useRecoilValue } from "recoil";
 import { quoteConfirmationState, quoteItemState } from "@/store";
-import { QUOTE_STATUSES } from "@/pages-components/quotes/enums";
+import { DOCUMENT_TYPE, QUOTE_STATUSES } from "@/pages-components/quotes/enums";
 
 const RowMappingWidget = ({
   item,
@@ -27,10 +27,17 @@ const RowMappingWidget = ({
   documentType,
   getQuote,
   isQuoteConfirmation = false,
+  onChangeSelectedItemRowForQoute
+
 }) => {
   const router = useRouter()
   const { classes } = useStyle({ headerHeight });
   const [isConfirmation, setIsConfirmation] = useState(null);
+  const [isSelected, setIsSelected] = useState(item?.isSelected);
+  const handleChangeSelectedItem = (checked, itemId) => {
+    setIsSelected(checked)
+    onChangeSelectedItemRowForQoute(checked, itemId)
+  }
   const {
     isUpdateAmount,
     isUpdateDiscount,
@@ -59,6 +66,7 @@ const RowMappingWidget = ({
   const quoteItemValue = useRecoilValue<any>(quoteItemState);
   const quoteConfirm = useRecoilValue<any>(quoteConfirmationState);
 
+
   return (
     <TableRow
       key={item.id}
@@ -73,7 +81,7 @@ const RowMappingWidget = ({
           borderBottom: item?.childsDocumentItems && "none",
         }}
       >
-        {(isQuoteConfirmation &&  (!quoteConfirm?.isConfirmed && quoteConfirm?.documentStatus !== QUOTE_STATUSES.Canceled)) ?
+        {(isQuoteConfirmation && (!quoteConfirm?.isConfirmed && quoteConfirm?.documentStatus !== QUOTE_STATUSES.Canceled)) ?
           <div style={classes.checkBoxContainer} >
             <Checkbox
               icon={<CheckboxIcon />}
@@ -83,7 +91,20 @@ const RowMappingWidget = ({
             />
             {parentIndex}
           </div>
-          : parentIndex}
+          : documentType === DOCUMENT_TYPE.quote ?
+            <span style={classes.checkBoxContainer}>
+              <Checkbox
+                icon={<CheckboxIcon />}
+                checkedIcon={<CheckboxCheckedIcon fill={item?.isConfirmedByClient && "green"} />}
+                checked={isSelected}
+                disabled={item?.isConfirmedByClient ? true : false}
+                onChange={(e) => handleChangeSelectedItem(e.target.checked, item?.id)}
+              />
+              {parentIndex}
+            </span>
+            :
+            parentIndex
+        }
       </PrimaryTableCell>
       <PrimaryTableCell
         style={{

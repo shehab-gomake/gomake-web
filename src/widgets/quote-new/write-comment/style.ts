@@ -4,8 +4,9 @@ const useStyle = (isQuoteConfirmation) => {
     return {
       writeCommentContainer: {
         display: "flex",
-        justifyContent: "flex-start",
-        alignItems: "flex-start",
+        flexDirection: "row" as "row",
+        justifyContent: "space-between",
+        alignItems: "center",
         width: "100%",
         padding: "14px 29px",
         borderBottom: isQuoteConfirmation ? "none" : "1px solid #67707F",
@@ -19,12 +20,15 @@ const useStyle = (isQuoteConfirmation) => {
         boxShadow: "none",
         border: "1px solid #D0D5DD",
         borderRadius:"8px",
+        width: "100%",
       }
       :
        {
         height: 44,
         background: "#FFFFFF",
         boxShadow: "none",
+        borderRadius:"8px",
+        width: "100%",
       },
     
     };

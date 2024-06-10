@@ -40,8 +40,8 @@ export const useCompanyReport = () => {
                     item.creationDate ? new Date(item.creationDate).toLocaleDateString() : "N/A",
                     item.status,
                     item?.quotesCount,
-                    item?.orderCount,
                     item?.quoteItemsCount,
+                    item?.orderCount,
                     item?.orderItemsCount,
                     item?.successRate,
                     <PrimaryButton

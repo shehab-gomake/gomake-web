@@ -14,7 +14,7 @@ const filtersInputs = () => {
         placeholder: t('productionFloor.tags'),
         type: 'select',
         multiple: true,
-        values: filters.automatedTags,
+        values: filters?.automatedTags,
         options: tags.map(tag =>({text: tag, value: tag})),
         name: '',
         required: false,

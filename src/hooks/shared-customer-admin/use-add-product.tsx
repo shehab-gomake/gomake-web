@@ -708,7 +708,7 @@ const useAddProduct = ({ clasess }) => {
     }
     else if (parameter?.parameterType === EParameterTypes.SELECT_MATERIALS) {
       if(parameter.code == "FlatbedColor"){
-        debugger;
+       // debugger;
       }
       if (allMaterials?.length > 0) {
         const defailtObjectValue = parameter?.valuesConfigs?.find((item) => item.isDefault === true);

@@ -30,7 +30,7 @@ import {
   updateProductItemValueOutsource
 } from "@/services/api-service/product-item-value-draft/product-item-draft-endpoints";
 import { useGomakeAxios } from "@/hooks";
-import { currentCalculationConnectionId, viewPricingTab } from "@/store";
+import { currentCalculationConnectionId, productItemValueByEditState, viewPricingTab } from "@/store";
 import { Stack } from "@mui/material";
 
 const PricingWidget = ({
@@ -38,14 +38,16 @@ const PricingWidget = ({
   getOutSourcingSuppliers,
   widgetType
 }: IPricingWidgetProps) => {
-  const [view, setView] = useRecoilState<EPricingViews>(
-    viewPricingTab
-  );
+  const [view, setView] = useRecoilState<EPricingViews>(viewPricingTab);
+
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
   const { classes } = useStyle();
   const selectedWorkFlow = useRecoilValue(selectedWorkFlowState);
+  const productItemValueByEdit = useRecoilValue<any>(productItemValueByEditState)
+
   const [isChangeView, setIsChangeView] = useState(true)
+
   useEffect(() => {
     // Transform actions when component mounts
     selectedWorkFlow?.actions.map(action => {
@@ -64,12 +66,9 @@ const PricingWidget = ({
     });
 
   }, [selectedWorkFlow?.actions]);
-  const [currentProductItemValue, setCurrentProductItemValue] =
-    useRecoilState<any>(currentProductItemValueState);
-  const currentProductItemValueTotalWorkFlows = useRecoilValue<number>(currentProductItemValueTotalWorkFlowsState);
-  const productItemValueDraftId = useRecoilValue<string>(
-    currentProductItemValueDraftId
-  );
+  const [currentProductItemValue, setCurrentProductItemValue] = useRecoilState<any>(currentProductItemValueState);
+  const productItemValueDraftId = useRecoilValue<string>(currentProductItemValueDraftId);
+  const [tabs, setTabs] = useState([]);
   const connectionId = useRecoilValue(currentCalculationConnectionId);
   const updateProductItemValue = async (sourceType: number) => {
     await updateProductItemValueOutsource(callApi, () => { }, {
@@ -83,7 +82,10 @@ const PricingWidget = ({
     getOutSourcingSuppliers();
   }, []);
   useEffect(() => {
-    if (!selectedWorkFlow) {
+    if (productItemValueByEdit?.sourceType && isChangeView) {
+      setView(EPricingViews.OUTSOURCE_WORKFLOW)
+    }
+    else if (!selectedWorkFlow) {
       setView(EPricingViews.OUTSOURCE_WORKFLOW);
     } else if (currentProductItemValue) {
       let temp = cloneDeep(currentProductItemValue);
@@ -95,18 +97,17 @@ const PricingWidget = ({
     }
 
   }, [selectedWorkFlow]);
+  console.log("productItemValueByEdit", productItemValueByEdit)
   useEffect(() => {
-    if (selectedWorkFlow && currentProductItemValue && isChangeView) {
+    if (productItemValueByEdit?.sourceType && isChangeView) {
+      setView(EPricingViews.OUTSOURCE_WORKFLOW)
+    }
+    else if (selectedWorkFlow && currentProductItemValue && isChangeView) {
       setView(EPricingViews.SELECTED_WORKFLOW);
-
     }
   }, [selectedWorkFlow, currentProductItemValue, isChangeView])
-  const [
-    currentProductItemValueTotalPrice,
-    setCurrentProductItemValueTotalPrice,
-  ] = useRecoilState<number>(currentProductItemValuePriceState);
 
-  const [tabs, setTabs] = useState([]);
+
   const reorderedTabs = [
     ...(tabs.find(tab => tab.key === "general") ? [tabs.find(tab => tab.key === "general")] : []), // "Flows Pending" tab if exists
     ...tabs.filter(tab => tab.key !== "general") // Other tabs
@@ -148,6 +149,8 @@ const PricingWidget = ({
 
     setTabs(newTabs);
   }, [workFlows]);
+
+
   return (
     <Stack gap={"16px"} width={"100%"}>
       <Stack direction={"row"} justifyContent={"space-between"}>

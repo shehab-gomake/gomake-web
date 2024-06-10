@@ -48,6 +48,7 @@ const useButtonsConfirmContainer = () => {
 
     // do you want to be init whit quoteConfirm?.notes ?? 
     const [quoteComments, setQuoteComments] = useState("");
+    const [quoteInternalNotes, setQuoteInternalNotes] = useState("");
     const onUpdateComments = async () => {
         const callBack = (res) => {
             if (res?.success) {
@@ -59,6 +60,19 @@ const useButtonsConfirmContainer = () => {
         await updateDocumentCommentsConfirmationApi(callApi, callBack, { documentId: quoteConfirm?.id, comments: quoteComments })
     }
 
+    //Change the api to internal notes 
+    const onUpdateInternalNotes = async () => {
+        const callBack = (res) => {
+            if (res?.success) {
+                alertSuccessUpdate();
+            } else {
+                alertFaultUpdate();
+            }
+        }
+        //Change the api to internal notes 
+        await updateDocumentCommentsConfirmationApi(callApi, callBack, { documentId: quoteConfirm?.id, comments: quoteInternalNotes })
+    }
+    ///////////////////////////////////////////////////////////////////////////////////
     const onClickApprove = async () => {
         const selectedItemIds = quoteConfirm?.documentItems?.filter(x => x.isChecked)?.map(x => x.id);
 
@@ -138,7 +152,10 @@ const useButtonsConfirmContainer = () => {
         quoteConfirm,
         onUpdateComments,
         quoteComments,
-        setQuoteComments
+        setQuoteComments,
+        onUpdateInternalNotes,
+        quoteInternalNotes,
+        setQuoteInternalNotes
     };
 
 };

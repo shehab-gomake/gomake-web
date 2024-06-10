@@ -5,18 +5,18 @@ import { EditingIcon } from "./icons/editing";
 import { PDFIcon } from "./icons/pdf";
 import { TickCloseIcon, TickIcon, TickMoveIcon } from "@/icons";
 import { DuplicateIcon } from "@/components/icons/icons";
-import { useRecoilValue } from "recoil";
-import { userQouteState } from "@/store";
-import { useState } from "react";
 import { downloadPdf } from "@/utils/helpers";
 import { getOrderBoardMissionPDF } from "@/services/api-service/generic-doc/documents-api";
 import { JobsIcon } from "./icons/jobs";
 import { LockIcon } from "./icons/lock";
+import { useUserPermission } from "@/hooks/use-permission";
+import { Permissions } from "@/components/CheckPermission/enum";
 
 const useMoreCircle = () => {
   const { user } = useCustomer();
   const { navigate } = useGomakeRouter();
-  const userQuote = useRecoilValue<boolean>(userQouteState);
+  const { CheckPermission } = useUserPermission();
+
   const getMenuList = ({
     quote,
     documentType,
@@ -44,7 +44,7 @@ const useMoreCircle = () => {
 
     return [
       {
-        condition: documentType === DOCUMENT_TYPE.quote && ((quote?.documentStatus === QUOTE_STATUSES.Create && userQuote) || quote?.documentStatus === QUOTE_STATUSES.Open || quote?.documentStatus === QUOTE_STATUSES.Approved),
+        condition: documentType === DOCUMENT_TYPE.quote && quote?.isEditable,
         onClick: () => {
           const isCreateStatus = quote?.documentStatus === QUOTE_STATUSES.Create;
           isCreateStatus ? navigate(`/quote`) : onClickOpenModal(quote);
@@ -89,10 +89,9 @@ const useMoreCircle = () => {
         name: t("sales.quote.duplicate")
       },
       {
-        condition: documentType === DOCUMENT_TYPE.order && quote?.isCanClose,
+        condition: documentType === DOCUMENT_TYPE.order && quote?.isCanClose && CheckPermission(Permissions.SHOW_BOARD_MISSIONS),
         onClick: () => navigate(`/board-missions?orderNumber=${quote?.number}`),
         icon: <JobsIcon />,
-        // icon: <TickMoveIcon />,
         name: t("sales.quote.jobs")
       },
       // {
