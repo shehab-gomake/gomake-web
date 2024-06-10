@@ -30,7 +30,6 @@ const RowMappingWidget = ({
   getQuote,
   isQuoteConfirmation = false,
   onChangeSelectedItemRowForQoute
-
 }) => {
   const router = useRouter();
   const { classes } = useStyle({ headerHeight });
@@ -63,14 +62,14 @@ const RowMappingWidget = ({
     item,
     index,
   });
-  const {CheckPermission ,  CheckDocumentPermission } = useUserPermission();
+  const { CheckDocumentPermission } = useUserPermission();
   const { handleItemCheck } = useQuoteConfirmation();
   const quoteItemValue = useRecoilValue<any>(quoteItemState);
   const quoteConfirm = useRecoilValue<any>(quoteConfirmationState);
 
   const canUpdate = router.query.isNewCreation ? true : item?.isEditable;
   const canUpdatePrices = router.query.isNewCreation ? true : (item?.isEditable && CheckDocumentPermission(documentType, DocumentPermission.UPDATE_DOCUMENT_ITEM_PRICES));
-  const canUpdateDeliveryPrices = router.query.isNewCreation ? true : (item?.isEditable && CheckPermission(Permissions.UPDATE_DELIVERY_ITEM_PRICES));
+  const canUpdateDeliveryPrices = router.query.isNewCreation ? true : (item?.isEditable && CheckDocumentPermission(documentType, DocumentPermission.UPDATE_DOCUMENT_DELIVERY_ITEM_PRICES));
   const canUpdatePricesBasedOnType = item?.productType === 1 ? canUpdateDeliveryPrices : canUpdatePrices;
 
   return (

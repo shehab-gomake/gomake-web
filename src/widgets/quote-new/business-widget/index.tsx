@@ -35,7 +35,6 @@ const BusinessNewWidget = ({
   onClickDeleteAddress,
   documentType,
   isQuoteConfirmation = false,
-
 }) => {
   const { classes } = useStyle();
   const {
@@ -61,7 +60,8 @@ const BusinessNewWidget = ({
     setOpenCustomerModal,
     customer,
     setCustomer,
-    onCustomerAdd
+    onCustomerAdd,
+    canEditDocument
   } = useBusinessWidget({ values, documentType });
 
   useEffect(() => {
@@ -90,7 +90,6 @@ const BusinessNewWidget = ({
         {
           ( !isQuoteConfirmation && documentType === DOCUMENT_TYPE.quote) && <span style={classes.plusStyle} onClick={() => setOpenCustomerModal(true)}>+</span>
         }
-
         {!isReceipt && <InputUpdatedValues
           value={purchaseNumber}
           label={t("sales.quote.purchaseNumber")}
@@ -130,11 +129,11 @@ const BusinessNewWidget = ({
           onBlur={onBlurAddress}
           isUpdate={false}
           setIsUpdate={setIsUpdateAddress}
-          flag={!isQuoteConfirmation}
+          flag={!isQuoteConfirmation && canEditDocument}
           onClickFlag={() => setOpenModal(true)}
         />}
         {values?.documentAddresses?.length > 0 ?
-          (!isQuoteConfirmation && <div
+          ((!isQuoteConfirmation && canEditDocument) && <div
             style={classes.addNewAddressStyle}
             onClick={() => null}
           >
@@ -142,7 +141,7 @@ const BusinessNewWidget = ({
             <div style={classes.addNewAddressTextStyle} onClick={() => onClickDeleteAddress(values?.documentAddresses[0])}>{t("sales.quote.removeAddress")}</div>
           </div>)
           :
-          (!isQuoteConfirmation &&
+          ((!isQuoteConfirmation && canEditDocument) &&
             <div style={classes.addNewAddressStyle} >
               <PlusNewIcon />
               <div style={classes.addNewAddressTextStyle} onClick={() => setOpenModal(true)} >{t("sales.quote.addAddress")}</div>

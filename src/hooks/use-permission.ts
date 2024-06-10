@@ -18,7 +18,7 @@ const useUserPermission = () => {
         }
 
         const requiredPermission = specificPermissionMap[documentType];
-        return requiredPermission ? CheckPermission(requiredPermission) : false;
+        return requiredPermission ? CheckPermission(requiredPermission) : true;
     };
 
     return {
