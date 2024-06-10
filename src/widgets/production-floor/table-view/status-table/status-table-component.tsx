@@ -31,8 +31,8 @@ const StatusTableComponent = ({ status, boards }: IProps) => {
             updateStatus(item.selectedIds.length > 0 ? item.selectedIds : [item.board], status.id).then();
         },
         collect: monitor => ({
-            isOver: !!monitor.isOver(),
-            canDrop: !!monitor.canDrop(),
+            isOver: monitor.getItem()?.board?.statusId === status.id ? false :  !!monitor.isOver(),
+            canDrop: monitor.getItem()?.board?.statusId === status.id ? false :!!monitor.canDrop(),
         }),
     }), [status, boards]);
 
@@ -63,14 +63,16 @@ const StatusTableComponent = ({ status, boards }: IProps) => {
                             <TableHead style={{ backgroundColor: status.backgroundColor }}>
                                 <SecondaryTableRow>
                                     {
-                                        tableHeaders(status.id)?.map((header, index) =>
+                                        tableHeaders(status.id)?.map((header) =>
                                             <SecondaryTableCell style={{ backgroundColor: status.backgroundColor }} key={'statusTable' + status.id} align={"center"}>{header}</SecondaryTableCell>)
                                     }
                                 </SecondaryTableRow>
                             </TableHead>
                             <TableBody>
                                 {boards?.map((boardMission) => {
-                                    return <TableRowComponent key={'status' + status.id + boardMission.id} boardMission={boardMission} />
+                                    return <>
+                                        <TableRowComponent key={'status' + status.id + boardMission.id} boardMission={boardMission} />
+                                    </>
                                 })}
                             </TableBody>
                         </Table>
