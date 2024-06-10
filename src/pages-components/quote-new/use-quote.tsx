@@ -100,6 +100,30 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
   const [openWatssAppModal, setOpenWatsAppModal] = useState(false)
   const [isSelectedAtLeastOne, setIsSelectedAtLeastOne] = useState(null)
 
+  const [openNewItemNotesModal, setOpenNewItemNotesModal] = useState(false)
+  const [openRelatedDocumentsModal, setOpenRelatedDocumentsModal] = useState(false)
+
+
+  const onClickOpenRelatedDocumentsModal = () => {
+    setOpenRelatedDocumentsModal(true)
+  }
+  const onClickCloseRelatedDocumentsModal = () => {
+    setOpenRelatedDocumentsModal(false)
+  }
+
+  const onClickOpenNewItemNotesModal = () => {
+    setOpenNewItemNotesModal(true)
+  }
+  const onClickCloseNewItemNotesModal = () => {
+    setOpenNewItemNotesModal(false)
+  }
+
+  useEffect(() => {
+    if (quoteItemValue?.client?.newItemNotes && quoteItemValue?.client?.newItemNotes.trim() !== "") {
+      onClickOpenNewItemNotesModal()
+    }
+
+  }, [quoteItemValue])
 
   useEffect(() => {
     const data = isAtLeastOneSelected(quoteItemValue?.documentItems)
@@ -1483,6 +1507,11 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     onCloseNewContact,
     onOpenNewContact,
     onChangeSelectedItemRowForQoute,
+    openNewItemNotesModal,
+    onClickCloseNewItemNotesModal,
+    onClickOpenRelatedDocumentsModal,
+    onClickCloseRelatedDocumentsModal,
+    openRelatedDocumentsModal,
     openSignatureApprovalModal,
     onClickOpenSignatureApprovalModal,
     onClickCloseSignatureApprovalModal
