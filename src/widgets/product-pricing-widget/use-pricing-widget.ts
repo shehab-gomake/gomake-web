@@ -1,15 +1,16 @@
 import { useRecoilState, useRecoilValue } from "recoil";
-import { EPricingViews } from "./enums";
-import { currentCalculationConnectionId, productItemValueByEditState, viewPricingTab } from "@/store";
-import { useGomakeAxios } from "@/hooks";
 import { useTranslation } from "react-i18next";
-import { currentProductItemValueDraftId, currentProductItemValueState, selectedWorkFlowState } from "./state";
 import { useEffect, useState } from "react";
-import { updateProductItemValueOutsource } from "@/services/api-service/product-item-value-draft/product-item-draft-endpoints";
 import cloneDeep from "lodash.clonedeep";
 
+import { updateProductItemValueOutsource } from "@/services/api-service/product-item-value-draft/product-item-draft-endpoints";
+import { currentCalculationConnectionId, productItemValueByEditState, viewPricingTab } from "@/store";
+import { useGomakeAxios } from "@/hooks";
 
-const usePricingWidget = ({getOutSourcingSuppliers,workFlows}) => {
+import { currentProductItemValueDraftId, currentProductItemValueState, selectedWorkFlowState } from "./state";
+import { EPricingViews } from "./enums";
+
+const usePricingWidget = ({ getOutSourcingSuppliers, workFlows }) => {
 
     const [view, setView] = useRecoilState<EPricingViews>(viewPricingTab);
     const { callApi } = useGomakeAxios();
@@ -83,7 +84,7 @@ const usePricingWidget = ({getOutSourcingSuppliers,workFlows}) => {
       ...tabs.filter(tab => tab.key !== "general") // Other tabs
     ];
     const [selectedTab, setSelectedTab] = useState("")
-    const [filterWorkFlow, setFilterWorkFlow] = useState()
+    const [filterWorkFlow, setFilterWorkFlow] = useState<any>()
   
     const sortedArray = workFlows.slice().sort((a, b) => {
       if (a.selected === b.selected) {

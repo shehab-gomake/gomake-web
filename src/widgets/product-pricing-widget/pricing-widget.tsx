@@ -29,7 +29,23 @@ const PricingWidget = ({ workFlows, getOutSourcingSuppliers, widgetType }: IPric
     t
 
   } = usePricingWidget({ workFlows, getOutSourcingSuppliers })
-
+  const sections = [
+    {
+      sectionName: "Pending Flows",
+      productType: null,
+      sumOfWorkFlow: 22
+    },
+    {
+      sectionName: "Cover",
+      productType: "Cover",
+      sumOfWorkFlow: 8
+    },
+    {
+      sectionName: "Internal Pages",
+      productType: "InternalPages",
+      sumOfWorkFlow: 18
+    }
+  ]
 
 
   return (
@@ -49,7 +65,29 @@ const PricingWidget = ({ workFlows, getOutSourcingSuppliers, widgetType }: IPric
             >
               {t("pricingWidget.selected")}
             </PrimaryButton>
-            {reorderedTabs.map((tab, index) => {
+            {
+              sections?.map((section, index) => {
+                return (
+                  <PrimaryButton
+                    data-tour={'allWorkflowsBtn'}
+                    onClick={() => {
+                      setView(EPricingViews.OTHERS_WORKFLOWS)
+                      setSelectedTab(section.productType)
+                      setFilterWorkFlow(section.productType)
+                    }}
+                    sx={classes.button}
+                    variant={
+                      view === EPricingViews.OTHERS_WORKFLOWS && selectedTab === section.productType
+                        ? "contained"
+                        : "outlined"
+                    }
+                  >{section?.sectionName}{" "}({section.sumOfWorkFlow})
+
+                  </PrimaryButton>
+                )
+              })
+            }
+            {/* {reorderedTabs.map((tab, index) => {
               return (
                 <PrimaryButton
                   data-tour={'allWorkflowsBtn'}
@@ -81,7 +119,7 @@ const PricingWidget = ({ workFlows, getOutSourcingSuppliers, widgetType }: IPric
                   })
                 </PrimaryButton>
               )
-            })}
+            })} */}
 
           </ButtonGroup>
         ) : (
