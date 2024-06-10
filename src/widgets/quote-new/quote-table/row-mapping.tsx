@@ -6,14 +6,14 @@ import { FONT_FAMILY } from "@/utils/font-family";
 import { CharacterDetails } from "./character-details";
 import { InputUpdatedValues } from "../input-updated-values";
 import { useQuoteTable } from "./use-quote-table";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useQuoteConfirmation } from "@/pages-components/quote-confirmation/use-quote-confirmation";
 import { useRouter } from "next/router";
 import { MoreMenuWidget } from "../more-circle";
 import { useRecoilValue } from "recoil";
 import { quoteConfirmationState, quoteItemState } from "@/store";
 import { DOCUMENT_TYPE, QUOTE_STATUSES } from "@/pages-components/quotes/enums";
-import { DocumentPermission, Permissions } from "@/components/CheckPermission/enum";
+import { Permissions , DocumentPermission } from "@/components/CheckPermission/enum";
 import { useUserPermission } from "@/hooks/use-permission";
 
 const RowMappingWidget = ({
@@ -32,7 +32,7 @@ const RowMappingWidget = ({
   onChangeSelectedItemRowForQoute
 
 }) => {
-  const router = useRouter()
+  const router = useRouter();
   const { classes } = useStyle({ headerHeight });
   const [isConfirmation, setIsConfirmation] = useState(null);
   const [isSelected, setIsSelected] = useState(item?.isSelected);
@@ -63,13 +63,15 @@ const RowMappingWidget = ({
     item,
     index,
   });
-  const { CheckDocumentPermission } = useUserPermission();
+  const {CheckPermission ,  CheckDocumentPermission } = useUserPermission();
   const { handleItemCheck } = useQuoteConfirmation();
   const quoteItemValue = useRecoilValue<any>(quoteItemState);
   const quoteConfirm = useRecoilValue<any>(quoteConfirmationState);
 
   const canUpdate = router.query.isNewCreation ? true : item?.isEditable;
   const canUpdatePrices = router.query.isNewCreation ? true : (item?.isEditable && CheckDocumentPermission(documentType, DocumentPermission.UPDATE_DOCUMENT_ITEM_PRICES));
+  const canUpdateDeliveryPrices = router.query.isNewCreation ? true : (item?.isEditable && CheckPermission(Permissions.UPDATE_DELIVERY_ITEM_PRICES));
+  const canUpdatePricesBasedOnType = item?.productType === 1 ? canUpdateDeliveryPrices : canUpdatePrices;
 
   return (
     <TableRow
@@ -154,7 +156,7 @@ const RowMappingWidget = ({
           <InputUpdatedValues
             value={item.quantity}
             onBlur={onBlurAmount}
-            isUpdate={canUpdatePrices && isUpdateAmount}
+            isUpdate={canUpdatePricesBasedOnType && isUpdateAmount}
             setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdateAmount}
             onInputChange={(e) => onInputChangeAmount(e)}
           />
@@ -171,7 +173,7 @@ const RowMappingWidget = ({
           <InputUpdatedValues
             value={item.discount ? item.discount : "0"}
             onBlur={onBlurDiscount}
-            isUpdate={canUpdatePrices && isUpdateDiscount}
+            isUpdate={canUpdatePricesBasedOnType && isUpdateDiscount}
             setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdateDiscount}
             onInputChange={(e) => onInputChangeDiscount(e)}
           />
@@ -188,7 +190,7 @@ const RowMappingWidget = ({
           <InputUpdatedValues
             value={item.price}
             onBlur={onBlurPrice}
-            isUpdate={canUpdatePrices && isUpdatePrice}
+            isUpdate={canUpdatePricesBasedOnType && isUpdatePrice}
             setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdatePrice}
             onInputChange={(e) => onInputChangePrice(e)}
           />
@@ -205,7 +207,7 @@ const RowMappingWidget = ({
           <InputUpdatedValues
             value={item.finalPrice}
             onBlur={onBlurFinalPrice}
-           isUpdate={canUpdatePrices && isUpdateFinalPrice}
+           isUpdate={canUpdatePricesBasedOnType && isUpdateFinalPrice}
             setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdateFinalPrice}
             onInputChange={(e) => onInputChangeFinalPrice(e)}
           />

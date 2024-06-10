@@ -19,6 +19,7 @@ export enum Permissions {
     EDIT_QUOTE_PRICES = "EditPriceQuote",
     DELETE_QUOTE_ITEM="DeleteQuoteItem",
     UPDATE_QUOTE_ITEM="UpdateQuoteItem",
+    UPDATE_QUOTE_DISCOUNT="UpdateQuoteDiscount",
 
     //Materials group
     EDIT_MATERIAL = "EditMaterial",
@@ -66,6 +67,7 @@ export enum Permissions {
     SHOW_ORDERS = "ShowOrders",
     SHOW_COSTS_IN_ORDERS="IsShowCostsInOrders",
     UPDATE_ORDER_ITEM_PRICES="UpdateOrderItemPrices",
+    UPDATE_ORDER_DISCOUNT="UpdateOrderDiscount",
 
     //production floor group
     SHOW_PRODUCTION_FLOOR = "ShowProductionFloor",
@@ -106,6 +108,9 @@ export enum Permissions {
     SHOW_DAILY_PAYMENT_REPORT = "ShowDailyPaymentsReport",
     SHOW_SALES_REPORT = "ShowSalesReport",
     SHOW_CREDIT_CARD_TRANSACTIONS = "ShowCreditCardTransactions",
+
+    // NEW
+    UPDATE_DELIVERY_ITEM_PRICES="UpdateDeliveryItemPrices",
 }
 
 
@@ -113,6 +118,7 @@ export const DocumentPermission = {
     DELETE_DOCUMENT_ITEM: "DeleteDocumentItem",
     UPDATE_DOCUMENT_ITEM: "UpdateDocumentItem",
     UPDATE_DOCUMENT_ITEM_PRICES: "UpdateDocumentItemPrices",
+    UPDATE_DOCUMENT_DISCOUNT:"UpdateDocumentDiscount"
   };
 
 
@@ -129,5 +135,9 @@ export const DocumentPermission = {
     [DocumentPermission.UPDATE_DOCUMENT_ITEM_PRICES]: {
       [DOCUMENT_TYPE.quote]: Permissions.EDIT_QUOTE_PRICES,
       [DOCUMENT_TYPE.order]: Permissions.UPDATE_ORDER_ITEM_PRICES,
+    },
+    [DocumentPermission.UPDATE_DOCUMENT_DISCOUNT]: {
+      [DOCUMENT_TYPE.quote]: Permissions.UPDATE_QUOTE_DISCOUNT,
+      [DOCUMENT_TYPE.order]: Permissions.UPDATE_ORDER_DISCOUNT,
     },
   };
