@@ -345,6 +345,7 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
                   isQuoteConfirmation={isQuoteConfirmation}
                 />
                 <ContactNewWidget
+                  documentState={quoteState}
                   handleShowLess={handleShowLess}
                   items={items}
                   displayedItems={displayedItems}

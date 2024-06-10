@@ -20,7 +20,8 @@ const ContactMapping = ({
   updateClientContact,
   isQuoteConfirmation = false,
   clientContactsValue,
-  onOpenNewContact
+  onOpenNewContact,
+  canEditContacts
 }) => {
   const { classes } = useStyle();
   const { alertFault } = useSnackBar();
@@ -31,11 +32,9 @@ const ContactMapping = ({
   const [isConfirmation, setIsConfirmation] = useState(null);
 
   const onBlurContactName = async () => {
-
     setIsUpdateContactName(null);
-
-
   };
+
   const onBlurContactEmail = async (item) => {
     if (!item.contactMail || !isValidEmail(item.contactMail)) {
       alertFault("Invalid email address format or missing contact email")
@@ -69,7 +68,7 @@ const ContactMapping = ({
           }))
         ]}
 
-        isUpdate={isUpdateContactName}
+        isUpdate={canEditContacts && isUpdateContactName}
         setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdateContactName}
         getOptionLabel={(item) => item.text}
         onBlur={() => onBlurContactName()}
@@ -87,7 +86,6 @@ const ContactMapping = ({
             setIsUpdateContactName(null);
           }
         }}
-
       />
       <PhoneInputUpdatedValues
         key={item?.id}
@@ -96,7 +94,7 @@ const ContactMapping = ({
         }
         label={t("sales.quote.mobileContact")}
         onBlur={() => onBlurContactMobile(item)}
-        isUpdate={isUpdateContactMobile}
+        isUpdate={canEditContacts && isUpdateContactMobile}
         setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdateContactMobile}
         onInputChange={(e: any) => {
           changeItems(index, "contactPhone", e);
@@ -107,13 +105,13 @@ const ContactMapping = ({
         }
         label={t("sales.quote.contactEmail")}
         onBlur={() => onBlurContactEmail(item)}
-        isUpdate={isUpdateContactEmail}
+        isUpdate={canEditContacts && isUpdateContactEmail}
         setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdateContactEmail}
         onInputChange={(e: any) => {
           changeItems(index, "contactMail", e);
         }}
       />
-      {!isQuoteConfirmation &&
+      {(!isQuoteConfirmation && canEditContacts )&&
         <div style={classes.addDeleteContainer}>
           <IconButton
             onClick={() => onOpenDeleteModalContact(item)}

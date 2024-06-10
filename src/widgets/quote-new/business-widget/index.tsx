@@ -10,6 +10,8 @@ import { CustomerCardWidget } from "@/widgets/customer-card-modal";
 import { isValidCustomer } from "@/utils/helpers";
 import { CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
+import { PermissionCheck } from "@/components/CheckPermission/check-permission";
+import { Permissions } from "@/components/CheckPermission/enum";
 
 const BusinessNewWidget = ({
   values,
@@ -39,7 +41,6 @@ const BusinessNewWidget = ({
   const { classes } = useStyle();
   const {
     t,
-    router,
     setIsConfirmation,
     checkWhatRenderArray,
     setOpenModal,
@@ -72,7 +73,6 @@ const BusinessNewWidget = ({
     setTaxConfirmationNumber(values?.taxConfirmationNumber || t("sales.quote.noTaxConfirmationNumber"));
   }, [values?.taxConfirmationNumber]);
 
-
   return (
     <>
       <div style={classes.businessContainerStyle}>
@@ -81,20 +81,21 @@ const BusinessNewWidget = ({
           value={isQuoteConfirmation ? quoteConfirm?.client?.name : quoteStateValue?.client?.name ? quoteStateValue?.client?.name : t("sales.quote.selectBusinessName")}
           options={mappedCustomers}
           onBlur={onBlurBusinessName}
-          isUpdate={quoteStateValue?.isEditable || router.query.isNewCreation ? isUpdateBusinessName : quoteStateValue?.isEditable}
+          isUpdate={canEditDocument && isUpdateBusinessName }
           setIsUpdate={isQuoteConfirmation || isExistReceipt ? setIsConfirmation : setIsUpdateBusinessName}
           getOptionLabel={(item) => item.text}
           onChange={(e, value) => onChangeSelectBusiness(value)}
           onChangeTextField={checkWhatRenderArray}
         />
-        {
-          ( !isQuoteConfirmation && documentType === DOCUMENT_TYPE.quote) && <span style={classes.plusStyle} onClick={() => setOpenCustomerModal(true)}>+</span>
-        }
+        <PermissionCheck userPermission={Permissions.ADD_CLIENT}>
+          {(!isQuoteConfirmation && documentType === DOCUMENT_TYPE.quote) && <span style={classes.plusStyle} onClick={() => setOpenCustomerModal(true)}>+</span>}
+        </PermissionCheck>
         {!isReceipt && <InputUpdatedValues
           value={purchaseNumber}
           label={t("sales.quote.purchaseNumber")}
           onBlur={() => onBlurPurchaseNumber(purchaseNumber)}
-          isUpdate={quoteStateValue?.isEditable || router.query.isNewCreation ? isUpdatePurchaseNumber : quoteStateValue?.isEditable}
+          //isUpdate={quoteStateValue?.isEditable || router.query.isNewCreation ? isUpdatePurchaseNumber : quoteStateValue?.isEditable}
+          isUpdate={canEditDocument && isUpdatePurchaseNumber}
           setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdatePurchaseNumber}
           onInputChange={(v) => setPurchaseNumber(v)}
         />}
@@ -102,7 +103,8 @@ const BusinessNewWidget = ({
           value={taxConfirmationNumber}
           label={t("sales.quote.taxConfirmationNumber")}
           onBlur={onBlurTaxNumber}
-          isUpdate={quoteStateValue?.isEditable || router.query.isNewCreation ? isUpdateTaxNumber : false}
+        //  isUpdate={quoteStateValue?.isEditable || router.query.isNewCreation ? isUpdateTaxNumber : false}
+          isUpdate={canEditDocument && isUpdateTaxNumber}
           setIsUpdate={setIsUpdateTaxNumber}
           onInputChange={(v) => setTaxConfirmationNumber(v)}
         />}
@@ -117,7 +119,7 @@ const BusinessNewWidget = ({
           value={selectedAgent?.text ? selectedAgent.text : t("sales.quote.selectAgent")}
           options={agentListValue}
           onBlur={onBlurAgent}
-          isUpdate={quoteStateValue?.isEditable || router.query.isNewCreation ? isUpdateAgent : quoteStateValue?.isEditable}
+          isUpdate={canEditDocument && isUpdateAgent}
           setIsUpdate={isQuoteConfirmation || isExistReceipt ? setIsConfirmation : setIsUpdateAgent}
           getOptionLabel={(item) => item.text}
           onChange={(e, value) => updateAgent(value)}

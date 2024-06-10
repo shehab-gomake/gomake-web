@@ -3,7 +3,11 @@ import { GomakeTextInput } from "@/components";
 import { useWriteCommentComp } from "./use-character-details";
 import { useButtonsConfirmContainer } from "../buttons-cofirm-container/use-buttons-container";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
-
+import { useUserPermission } from "@/hooks/use-permission";
+import { DocumentPermission } from "@/components/CheckPermission/enum";
+import { useRecoilValue } from "recoil";
+import { quoteItemState } from "@/store/quote-item";
+ 
 interface IProps {
   isQuoteConfirmation?: boolean;
   getQuote?: any;
@@ -11,6 +15,9 @@ interface IProps {
 }
 const WriteCommentComp = ({ isQuoteConfirmation, getQuote, documentType }: IProps) => {
   const { classes } = useStyle(isQuoteConfirmation);
+  const {CheckDocumentPermission } = useUserPermission();
+  const quoteItemValue: any = useRecoilValue(quoteItemState);
+
   const { onUpdateComments,
     quoteComments,
     setQuoteComments,
@@ -28,6 +35,8 @@ const WriteCommentComp = ({ isQuoteConfirmation, getQuote, documentType }: IProp
     handleChangeForInternalNotes
   } = useWriteCommentComp({ getQuote, documentType })
 
+  const canEditDocument = quoteItemValue?.isEditable && CheckDocumentPermission(documentType.toString(), DocumentPermission.EDIT_DOCUMENT);
+
   return (
     <div style={classes.writeCommentContainer}>
       <div style={{ width: "49%" }}>
@@ -37,6 +46,7 @@ const WriteCommentComp = ({ isQuoteConfirmation, getQuote, documentType }: IProp
           value={isQuoteConfirmation ? quoteComments : data}
           onChange={isQuoteConfirmation ? (e) => setQuoteComments(e.target.value) : handleChange}
           onBlur={isQuoteConfirmation ? onUpdateComments : handleBlur}
+          disabled={!canEditDocument}
         />
       </div>
       <div style={{ width: "49%" }}>
@@ -46,6 +56,7 @@ const WriteCommentComp = ({ isQuoteConfirmation, getQuote, documentType }: IProp
           value={isQuoteConfirmation ? quoteInternalNotes : dataForInternalNotes}
           onChange={isQuoteConfirmation ? (e) => setQuoteInternalNotes(e.target.value) : handleChangeForInternalNotes}
           onBlur={isQuoteConfirmation ? onUpdateInternalNotes : handleBlurForInternalNotes}
+          disabled={!canEditDocument}
         />
       </div>
     </div>

@@ -11,6 +11,8 @@ import { CancelReceiptModal } from "./payment/cancel-receipt-modal/cancel-receip
 import { OrderNowModal } from "../total-price-and-vat/order-now-modal";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import { useSnackBar } from "@/hooks";
+import { DocumentPermission } from "@/components/CheckPermission/enum";
+import { useUserPermission } from "@/hooks/use-permission";
 
 const ButtonsContainer = ({
   onOpenNewItem,
@@ -25,7 +27,9 @@ const ButtonsContainer = ({
   const { classes } = useStyle();
   const { t } = useTranslation();
   const { alertFault } = useSnackBar();
-  const router = useRouter()
+  const router = useRouter();
+  const {CheckDocumentPermission } = useUserPermission();
+
   const {
     quoteItemValue,
     openOrderNowModal,
@@ -56,21 +60,18 @@ const ButtonsContainer = ({
     }
   };
 
-
   const handleAddItemClick = () => {
     if (!quoteItemValue?.client) {
       alertFault("home.admin.pleaseSelectCustomer");
     } else {
       onOpenNewItem();
     }
-  };
-
+  }; 
+  
   const isNewCreation = router?.query?.isNewCreation;
-  const showAddNewItemBtn =
-    documentType === DOCUMENT_TYPE.quote ||
-    (DOCUMENT_TYPE.order && quoteItemValue?.isEditable) ||
-    (isNewCreation && documentType !== DOCUMENT_TYPE.receipt);
-
+  const canEditDocument = quoteItemValue?.isEditable && CheckDocumentPermission(documentType, DocumentPermission.EDIT_DOCUMENT);
+  const showAddNewItemBtn = canEditDocument && documentType !== DOCUMENT_TYPE.receipt
+ 
   return (
     <div style={classes.writeCommentContainer}>
       <div style={classes.btnsContainer}>
@@ -88,7 +89,7 @@ const ButtonsContainer = ({
           </GomakePrimaryButton>
         }
         {
-          (documentType === DOCUMENT_TYPE.quote || documentType === DOCUMENT_TYPE.order) && quoteItemValue?.isEditable && <GomakePrimaryButton
+          (documentType === DOCUMENT_TYPE.quote || documentType === DOCUMENT_TYPE.order) && canEditDocument && <GomakePrimaryButton
             leftIcon={<PlusIcon stroke={"#344054"} />}
             style={classes.btnContainer}
             onClick={() => onOpenDeliveryModal()}
@@ -106,7 +107,7 @@ const ButtonsContainer = ({
           </GomakePrimaryButton>
         }
         {
-          router.query.isNewCreation && documentType === DOCUMENT_TYPE.invoice && <GomakePrimaryButton
+          isNewCreation && documentType === DOCUMENT_TYPE.invoice && <GomakePrimaryButton
             leftIcon={<PlusIcon stroke={"#344054"} />}
             style={classes.btnContainer}
             onClick={() => handleCopyFromDocumentClick(DOCUMENT_TYPE.deliveryNote)}
@@ -115,7 +116,7 @@ const ButtonsContainer = ({
           </GomakePrimaryButton>
         }
         {
-          router.query.isNewCreation && documentType === DOCUMENT_TYPE.purchaseInvoice && <GomakePrimaryButton
+          isNewCreation && documentType === DOCUMENT_TYPE.purchaseInvoice && <GomakePrimaryButton
             leftIcon={<PlusIcon stroke={"#344054"} />}
             style={classes.btnContainer}
             onClick={() => handleCopyFromDocumentClick(DOCUMENT_TYPE.purchaseOrder)}
@@ -216,3 +217,4 @@ const ButtonsContainer = ({
 };
 
 export { ButtonsContainer };
+

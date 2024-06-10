@@ -35,6 +35,8 @@ import { SecondaryButton } from "@/components/button/secondary-button";
 import { PrimaryTable } from "@/components/tables/primary-table";
 import { useCustomerCard } from "./use-customer-card";
 import { TableFilter } from "./components/table-filter";
+import { PermissionCheck } from "@/components/CheckPermission/check-permission";
+import { Permissions } from "@/components/CheckPermission/enum";
 
 interface IProps {
   isValidCustomer?: (
@@ -806,6 +808,7 @@ const CustomerCardWidget = ({
               </SecondaryButton>
             )
           }
+        <PermissionCheck userPermission={Permissions.EDIT_CLIENT}>
           {showUpdateButton && (
             <SecondaryButton variant="contained"
               style={{ width: "fit-content" }}
@@ -816,6 +819,7 @@ const CustomerCardWidget = ({
                 : t("suppliers.buttons.updateChanges")}
             </SecondaryButton>
           )}
+          </PermissionCheck>
         </div>
       </div>
       <GoMakeModal

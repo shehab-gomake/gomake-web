@@ -39,8 +39,8 @@ const useBusinessWidget = ({ values, documentType }) => {
   }));
 
   const {CheckDocumentPermission } = useUserPermission();
-
-  const canEditDocument = quoteStateValue?.isEditable && CheckDocumentPermission(documentType, DocumentPermission.EDIT_DOCUMENT);
+  const canEditDocument = router.query.isNewCreation ? true  : 
+  quoteStateValue?.isEditable && CheckDocumentPermission(documentType, DocumentPermission.EDIT_DOCUMENT);
 
   return {
     t,

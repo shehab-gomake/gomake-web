@@ -20,7 +20,6 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     const [openOrderNowModal, setOpenOrderNowModal] = useState(false);
     const [openDeleteModal, setOpenDeleteModal] = useState(false);
     const [openCancelReceiptModal, setOpenCancelReceiptModal] = useState(false);
-
     const [isSelectedAtLeastOne, setIsSelectedAtLeastOne] = useState(null)
 
 
