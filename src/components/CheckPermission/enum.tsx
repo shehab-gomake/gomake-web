@@ -15,6 +15,8 @@ export enum Permissions {
     CREATE_QUOTES = "CreateQuote",
     EDIT_QUOTES = "EditQuotes", 
     EDIT_QUOTE_PRICES = "EditPriceQuote",
+    SHOW_COSTS_IN_QUOTES="IsShowCostsInQuotes",
+
 
     //Materials group
     EDIT_MATERIAL = "EditMaterial",
@@ -56,6 +58,8 @@ export enum Permissions {
     //orders group    
     SHOW_ORDERS = "ShowOrders",
     EDIT_ORDERS = "EditOrders",
+    SHOW_COSTS_IN_ORDERS="IsShowCostsInOrders",
+
 
     //production floor group
     SHOW_PRODUCTION_FLOOR = "ShowProductionFloor",
