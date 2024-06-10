@@ -27,7 +27,7 @@ import { ReceiptsTable } from "@/widgets/quote-new/receipts-table";
 import { useRouter } from "next/router";
 import { usePaymentsTable } from "@/widgets/quote-new/receipts-table/use-payments-table";
 import { useEffect, useState } from "react";
-import { StepType, useTour } from "@reactour/tour";
+import { StepType } from "@reactour/tour";
 import { useGoMakeTour } from "@/hooks/use-go-make-tour";
 import { OtherReasonModal } from "@/widgets/quote-new/total-price-and-vat/other-reason-modal";
 import { QuoteStatuses } from "@/widgets/quote-new/total-price-and-vat/enums";
@@ -35,6 +35,8 @@ import { LoginTaxesUrl, fetchTaxesAuthority } from "@/utils/taxes-authority";
 import { printHouseProfile } from "@/store/print-house-profile";
 import { WhatsAppWebModal } from "@/widgets/quote-new/modals-widgets/whats-app-web-modal";
 import { AddNewContactModal } from "@/widgets/quote-new/modals-widgets/add-new-contact-modal";
+import { NewItemNotesModal } from "@/widgets/quote-new/total-price-and-vat/new-item-notes-modal";
+import { AddRelatedDocumentsModal } from "@/widgets/quote-new/total-price-and-vat/add-related-documents";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -192,7 +194,12 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
     openAddNewContactModal,
     onCloseNewContact,
     onOpenNewContact,
-    onChangeSelectedItemRowForQoute
+    onChangeSelectedItemRowForQoute,
+    openNewItemNotesModal,
+    onClickCloseNewItemNotesModal,
+    onClickOpenRelatedDocumentsModal,
+    onClickCloseRelatedDocumentsModal,
+    openRelatedDocumentsModal
   } = useQuoteNew({ docType: documentType, isQuoteConfirmation: isQuoteConfirmation });
 
   const quoteSteps: StepType[] = [
@@ -415,7 +422,12 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
                 <ReceiptsTable />
               }
             </div>
-            <WriteCommentComp getQuote={getQuote} isQuoteConfirmation={isQuoteConfirmation} documentType={documentType} />
+            <WriteCommentComp
+              getQuote={getQuote}
+              isQuoteConfirmation={isQuoteConfirmation}
+              documentType={documentType}
+              onClickOpenRelatedDocumentsModal={onClickOpenRelatedDocumentsModal}
+            />
           </div>
           {!isQuoteConfirmation &&
             <div style={{ width: '100%' }} data-tour={'quoteStep2'}>
@@ -569,6 +581,15 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
           window.open(LoginTaxesUrl + printHouseProfileState?.business_ID, "_blank");
           onClickClosLoginModal();
         }}
+      />
+      <NewItemNotesModal
+        openModal={openNewItemNotesModal}
+        onClose={onClickCloseNewItemNotesModal}
+      />
+
+      <AddRelatedDocumentsModal
+        openModal={openRelatedDocumentsModal}
+        onClose={onClickCloseRelatedDocumentsModal}
       />
     </>
   );

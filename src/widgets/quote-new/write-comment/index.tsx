@@ -1,15 +1,19 @@
 import { useStyle } from "./style";
-import { GomakeTextInput } from "@/components";
+import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
 import { useWriteCommentComp } from "./use-character-details";
 import { useButtonsConfirmContainer } from "../buttons-cofirm-container/use-buttons-container";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
+import { useRecoilValue } from "recoil";
+import { quoteItemState } from "@/store";
+import { useGomakeRouter } from "@/hooks";
 
 interface IProps {
   isQuoteConfirmation?: boolean;
   getQuote?: any;
   documentType?: DOCUMENT_TYPE;
+  onClickOpenRelatedDocumentsModal?: () => void;
 }
-const WriteCommentComp = ({ isQuoteConfirmation, getQuote, documentType }: IProps) => {
+const WriteCommentComp = ({ isQuoteConfirmation, getQuote, documentType, onClickOpenRelatedDocumentsModal }: IProps) => {
   const { classes } = useStyle(isQuoteConfirmation);
   const { onUpdateComments,
     quoteComments,
@@ -27,10 +31,66 @@ const WriteCommentComp = ({ isQuoteConfirmation, getQuote, documentType }: IProp
     handleBlurForInternalNotes,
     handleChangeForInternalNotes
   } = useWriteCommentComp({ getQuote, documentType })
+  const quoteItemValue = useRecoilValue<any>(quoteItemState);
+  const { navigate } = useGomakeRouter();
+
+  const mergeDocumentNumbers = (quoteItemValue) => {
+    let mergedArray = [];
+
+    // Add documentNumbers with titleDocumentNumber
+    quoteItemValue?.documentNumbers?.forEach(doc => {
+      mergedArray.push({
+        documentId: doc.documentId,
+        documentNumber: doc.documentNumber,
+        title: quoteItemValue.titleDocumentNumber,
+        label: `${quoteItemValue.titleDocumentNumber}  ${doc.documentNumber}`,
+        value: doc.documentId
+      });
+    });
+
+    // Add secondDocumentNumbers with titleSecondDocumentNumber
+    quoteItemValue?.secondDocumentNumbers?.forEach(doc => {
+      mergedArray.push({
+        documentId: doc.documentId,
+        documentNumber: doc.documentNumber,
+        title: quoteItemValue.titleSecondDocumentNumber,
+        label: `${quoteItemValue.titleSecondDocumentNumber}  ${doc.documentNumber}`,
+        value: doc.documentId
+      });
+    });
+
+    return mergedArray;
+  };
+
+  const relatedDocuments = mergeDocumentNumbers(quoteItemValue)
+
 
   return (
     <div style={classes.writeCommentContainer}>
-      <div style={{ width: "49%" }}>
+      {
+        !isQuoteConfirmation &&
+        <div style={classes.itemContainer}>
+          <div style={classes.labelTextStyle}>{t("sales.quote.relatedDocuments")}</div>
+          <GoMakeAutoComplate
+            options={[{ value: 'new', label: t("sales.quote.addRelatedDocument") }, ...relatedDocuments]}
+            style={classes.autoComplateStyle}
+            placeholder={t("sales.quote.selectDocuments")}
+            onChange={(e: any, item: any) => {
+              if (item?.value === "new") {
+                onClickOpenRelatedDocumentsModal()
+              }
+              else {
+                navigate(`/${item.title.charAt(0).toLowerCase() + item.title.slice(1)}?Id=${item.documentId}`)
+              }
+            }}
+            withArrow={true}
+          // value={dayOfWeek}
+          />
+        </div>
+      }
+
+      <div style={classes.item2Container}>
+        <div style={classes.labelTextStyle}>{t("sales.quote.comments")}</div>
         <GomakeTextInput
           style={classes.textInputStyle}
           placeholder={t("sales.quote.writeCommentHere")}
@@ -39,7 +99,8 @@ const WriteCommentComp = ({ isQuoteConfirmation, getQuote, documentType }: IProp
           onBlur={isQuoteConfirmation ? onUpdateComments : handleBlur}
         />
       </div>
-      <div style={{ width: "49%" }}>
+      <div style={classes.item2Container}>
+        <div style={classes.labelTextStyle}>{t("sales.quote.notes")}</div>
         <GomakeTextInput
           style={classes.textInputStyle}
           placeholder={t("sales.quote.writeInternalNotes")}
