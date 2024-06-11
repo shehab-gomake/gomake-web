@@ -100,6 +100,30 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
   const [openWatssAppModal, setOpenWatsAppModal] = useState(false)
   const [isSelectedAtLeastOne, setIsSelectedAtLeastOne] = useState(null)
 
+  const [openNewItemNotesModal, setOpenNewItemNotesModal] = useState(false)
+  const [openRelatedDocumentsModal, setOpenRelatedDocumentsModal] = useState(false)
+
+
+  const onClickOpenRelatedDocumentsModal = () => {
+    setOpenRelatedDocumentsModal(true)
+  }
+  const onClickCloseRelatedDocumentsModal = () => {
+    setOpenRelatedDocumentsModal(false)
+  }
+
+  const onClickOpenNewItemNotesModal = () => {
+    setOpenNewItemNotesModal(true)
+  }
+  const onClickCloseNewItemNotesModal = () => {
+    setOpenNewItemNotesModal(false)
+  }
+
+  useEffect(() => {
+    if (quoteItemValue?.client?.newItemNotes && quoteItemValue?.client?.newItemNotes.trim() !== "") {
+      onClickOpenNewItemNotesModal()
+    }
+
+  }, [quoteItemValue])
 
   useEffect(() => {
     const data = isAtLeastOneSelected(quoteItemValue?.documentItems)
@@ -875,6 +899,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
   };
 
   const [openOtherReasonModal, setOpenOtherReasonModal] = useState(false);
+  const [openSignatureApprovalModal, setOpenSignatureApprovalModal] = useState(false);
   const [openIrrelevantCancelModal, setOpenIrrelevantCancelModal] = useState(false);
   const [openPriceCancelModal, setOpenPriceCancelModal] = useState(false);
   const [openDeliveryTimeCancelModal, setOpenDeliveryTimeCancelModal] = useState(false);
@@ -904,6 +929,13 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
   };
   const onClickCloseModal = () => {
     setOpenOtherReasonModal(false);
+  };
+
+  const onClickOpenSignatureApprovalModal = () => {
+    setOpenSignatureApprovalModal(true);
+  };
+  const onClickCloseSignatureApprovalModal = () => {
+    setOpenSignatureApprovalModal(false);
   };
 
   const onClickCancelOffer = async () => {
@@ -1474,7 +1506,15 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     openAddNewContactModal,
     onCloseNewContact,
     onOpenNewContact,
-    onChangeSelectedItemRowForQoute
+    onChangeSelectedItemRowForQoute,
+    openNewItemNotesModal,
+    onClickCloseNewItemNotesModal,
+    onClickOpenRelatedDocumentsModal,
+    onClickCloseRelatedDocumentsModal,
+    openRelatedDocumentsModal,
+    openSignatureApprovalModal,
+    onClickOpenSignatureApprovalModal,
+    onClickCloseSignatureApprovalModal
   };
 };
 

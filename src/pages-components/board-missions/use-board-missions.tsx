@@ -104,7 +104,8 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     t("boardMissions.productName"),
     t("boardMissions.currentBoardMissionStatus"),
     t("properties.more")
-  ];
+  ]; 
+
 
   const handleMultiSelectChange = (newValues: string[]) => {
     setProductIds(newValues);

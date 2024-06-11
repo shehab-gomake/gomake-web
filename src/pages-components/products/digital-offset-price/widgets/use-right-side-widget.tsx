@@ -9,9 +9,10 @@ import {
 } from "@/store";
 import { billingMethodState } from "@/store/billing-method";
 import { exampleTypeState } from "@/store/example-type";
-import {currenciesState, currenciesSymbols} from "@/widgets/materials-widget/state";
+import { currenciesState, currenciesSymbols } from "@/widgets/materials-widget/state";
 import { ECalculationLogType } from "@/widgets/product-pricing-widget/enums";
 import {
+  calculationExceptionsLogsState,
   calculationProgressState,
   currentProductItemValuePriceState,
   selectedWorkFlowState,
@@ -27,7 +28,7 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 const useRightSideWidget = ({ includeVAT }) => {
   const { errorColor, successColor, warningColor, neutralColor } = useGomakeTheme();
-
+  const calculationExceptionsLogs = useRecoilValue(calculationExceptionsLogsState);
   const isLoading = useRecoilValue(isLoadgingState);
 
   const subProducts = useRecoilValue<any>(subProductsParametersState);
@@ -82,7 +83,7 @@ const useRightSideWidget = ({ includeVAT }) => {
 
   useEffect(() => {
     if (currentProductItemValueTotalPrice != null) {
-      if(includeVAT == null){
+      if (includeVAT == null) {
         return;
       }
       if (includeVAT) {
@@ -134,6 +135,7 @@ const useRightSideWidget = ({ includeVAT }) => {
     quantity,
     selectedWorkFlow,
     listEmployeesValues,
+    calculationExceptionsLogs,
     setCurrentProductItemValueTotalPrice,
     _renderIconLogs,
     t,

@@ -7,6 +7,8 @@ import { useQuoteGetData } from "@/pages-components/quote-new/use-quote-get-data
 import { useRouter } from "next/router";
 import { useUserPermission } from "@/hooks/use-permission";
 import { DocumentPermission } from "@/components/CheckPermission/enum";
+import { useRecoilValue } from "recoil";
+import { quoteItemState } from "@/store";
 
 const TotalPriceComp = ({
   documentType,
@@ -23,6 +25,7 @@ const TotalPriceComp = ({
   const [isConfirmation, setIsConfirmation] = useState(null);
   const {CheckDocumentPermission } = useUserPermission();
 
+  const quoteItemValue = useRecoilValue<any>(quoteItemState);
   const onBlurTotalPayment = async () => {
     getCalculateQuote(2, quoteItems?.totalPayment);
     setIsUpdateTotalPayment(null);
@@ -71,7 +74,7 @@ const TotalPriceComp = ({
               setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdateDiscount}
               onInputChange={(e) => onInputDiscount(e)}
             />
-            %
+            % {quoteItemValue?.discountAmount != 0 && `(-${quoteItemValue?.discountAmount + " " + quoteItems?.currency})`}
           </div>
         </div>
         <div style={{ ...classes.evenRowContainer, width: "13%" }}>

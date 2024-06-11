@@ -25,14 +25,14 @@ const QuoteConfirmationPageWidget = () => {
 
   useEffect(() => {
     getQuoteConfirmation();
-}, [])
- 
+  }, [])
+
   return (
     <div style={classes.firstContainer}>
       <div style={isMobile ? classes.iconMobileStyle : classes.iconStyle}>
         <GoMakeIcon />
       </div>
-      {isMobile ? <QuoteConfirmationMobileWidget /> : <QuoteNewPageWidget documentType={DOCUMENT_TYPE.quote} isQuoteConfirmation={true} />}
+      {isMobile ? <QuoteConfirmationMobileWidget isMobile={isMobile} /> : <QuoteNewPageWidget documentType={DOCUMENT_TYPE.quote} isQuoteConfirmation={true} />}
     </div>
   );
 };

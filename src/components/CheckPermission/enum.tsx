@@ -12,10 +12,12 @@ export enum Permissions {
   EDIT_SUPPLIER = "EditSupplier",
   ADD_SUPPLIER = "AddSupplier",
 
-  // quote group
-  SHOW_QUOTES = "ShowQuotes",
-  CREATE_QUOTES = "CreateQuote",
-  EDIT_QUOTES = "EditQuotes",
+    // quote group
+    SHOW_QUOTES = "ShowQuotes", 
+    CREATE_QUOTES = "CreateQuote",
+    EDIT_QUOTES = "EditQuotes", 
+    EDIT_QUOTE_PRICES = "EditPriceQuote",
+    SHOW_COSTS_IN_QUOTES="IsShowCostsInQuotes",
   UPDATE_QUOTE_ITEM_PRICES = "EditPriceQuote",
   DELETE_QUOTE_ITEM = "DeleteQuoteItem",
   UPDATE_QUOTE_ITEM = "UpdateQuoteItem",
@@ -72,7 +74,7 @@ export enum Permissions {
   UPDATE_ORDER_ITEM = "UpdateOrderItem",
   UPDATE_PURCHASE_ORDER_ITEM = "UpdatePurchaseOrderItem",
   UPDATE_ORDER_DISCOUNT = "UpdateOrderDiscount",
-  UPDATE_PURCHASE_ORDER_DISCOUNT = "UpdatePurchaseOrderDiscount",
+  
 
   //production floor group
   SHOW_PRODUCTION_FLOOR = "ShowProductionFloor",

@@ -9,6 +9,7 @@ import { CancelBtnMenu } from "../cancel-btn-menu";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import { QuoteStatuses } from "../total-price-and-vat/enums";
 import { OtherReasonModal } from "../total-price-and-vat/other-reason-modal";
+import { ApproveSignatureModal } from "../total-price-and-vat/approve-signature-modal";
 
 const ButtonsConfirmContainer = () => {
   const { classes } = useStyle();
@@ -25,9 +26,15 @@ const ButtonsConfirmContainer = () => {
     openOtherReasonModal,
     setReasonText,
     onClickPrint,
-    isButtonClicked ,
+    isButtonClicked,
     onClickReject,
-    onClickApprove
+    onClickApprove,
+    approveModal,
+    onClickOpenApproveModal,
+    onClickCloseApproveModal,
+    approveSignatureModal,
+    onClickOpenApproveSignatureModal,
+    onClickCloseApproveSignatureModal
   } = useButtonsConfirmContainer();
 
   return (
@@ -36,7 +43,7 @@ const ButtonsConfirmContainer = () => {
         <SecondaryButton
           onClick={handleRejectBtnClick}
           variant="outlined"
-          style={ isButtonClicked ? classes.rejectBtnClicked:  classes.rejectBtn}>
+          style={isButtonClicked ? classes.rejectBtnClicked : classes.rejectBtn}>
           {t("sales.quote.rejectOffer")}
         </SecondaryButton>
         <SecondaryButton
@@ -53,7 +60,7 @@ const ButtonsConfirmContainer = () => {
         <SecondaryButton
           variant="contained"
           style={classes.btnStyle}
-          onClick={onClickApprove}>
+          onClick={onClickOpenApproveModal}>
           {t("sales.quote.approveOffer")}
         </SecondaryButton>
       </div>
@@ -61,7 +68,7 @@ const ButtonsConfirmContainer = () => {
         handleClose={handleRejectBtnClose}
         open={openRejectBtn}
         anchorEl={anchorElRejectBtn}
-        onClickOpenModal={()=>onClickOpenOtherModal(QuoteStatuses.CANCELED_OTHER)}
+        onClickOpenModal={() => onClickOpenOtherModal(QuoteStatuses.CANCELED_OTHER)}
         onClickOpenDeliveryTimeModal={() => onClickOpenRejectModal(QuoteStatuses.CANCELED_DELIVERY_TIME)}
         onClickOpenPriceModal={() => onClickOpenRejectModal(QuoteStatuses.CANCELED_PRICE)}
         onClickOpenIrrelevantModal={() => onClickOpenRejectModal(QuoteStatuses.CANCELED_IRRELEVANT)}
@@ -81,6 +88,24 @@ const ButtonsConfirmContainer = () => {
         subTitle={t("sales.quote.subTitleCancelModal")}
         cancelBtn={t("sales.quote.cancelBtn")}
         onClickDelete={onClickReject}
+      />
+
+      <GoMakeDeleteModal
+        title={t("sales.quote.approveOffer")}
+        yesBtn={t("sales.quote.yesBtn")}
+        openModal={approveModal}
+        onClose={onClickCloseApproveModal}
+        subTitle={"Are you sure you want to approve this offer?"}
+        // onClickDelete={onClickApprove}
+        onClickDelete={onClickOpenApproveSignatureModal}
+        hideIcon={true}
+
+      />
+      <ApproveSignatureModal
+        openModal={approveSignatureModal}
+        onClose={onClickCloseApproveSignatureModal}
+        onClickApprove={onClickApprove}
+
       />
     </div>
   );
