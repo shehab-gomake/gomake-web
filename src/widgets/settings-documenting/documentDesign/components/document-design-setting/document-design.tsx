@@ -51,57 +51,53 @@ const DocumentDesign = () => {
 
     ];
     return (
-        <div style={{ ...classes.container, position: 'relative', width: "60%" }}>
-            <div style={{ width: "100%" }}>
-                <Stack direction={'column'} gap={'24px'} paddingTop={'10px'}>
-                    {
-                        DocumentDesignSection1.map(section => {
-                            return (
-                                <FormInputsSectionComponent sectionTitle={section.title}>
-                                    {
-                                        section.inputs.map(companyInput => <FormInput key={companyInput.parameterKey}
-                                            input={companyInput as IInput}
-                                            changeState={onChangeInputs}
-                                            error={false} />)
-                                    }
-                                </FormInputsSectionComponent>
-                            );
-                        })
-                    }
-                </Stack>
-                <Stack direction={'row'} marginTop={"24px"} >
-                    <span style={classes.subTitleStyle} >{t("documentingDesign.Additional.Additional")}</span>
-                </Stack>
-                <Stack direction={'row'} marginTop={"24px"}>
-                    <span style={classes.subTitleSpanStyle} >{t("documentingDesign.Additional.Remarks")}</span>
-                </Stack>
-                <Stack direction={'row'} marginTop={"24px"}>
-                    <TextareaAutosize style={classes.textAreaStyle}></TextareaAutosize>
-                </Stack>
-                <Stack direction={'column'} gap={'32px'} paddingTop={'44px'}>
-                    {
-                        DocumentDesignSection2.map(section => {
-                            return (
-                                <FormInputsSectionComponent sectionTitle={section.title}>
+        <div style={classes.container}>
+            <Stack direction={'column'} gap={'24px'}>
+                {
+                    DocumentDesignSection1.map(section => {
+                        return (
+                            <FormInputsSectionComponent sectionTitle={section.title}>
+                                {
+                                    section.inputs.map(companyInput => <FormInput key={companyInput.parameterKey}
+                                        input={companyInput as IInput}
+                                        changeState={onChangeInputs}
+                                        error={false} />)
+                                }
+                            </FormInputsSectionComponent>
+                        );
+                    })
+                }
+            </Stack>
+            <Stack direction={'row'} marginTop={"24px"} >
+                <span style={classes.subTitleStyle} >{t("documentingDesign.Additional.Additional")}</span>
+            </Stack>
+            <Stack direction={'row'} marginTop={"24px"}>
+                <span style={classes.subTitleSpanStyle} >{t("documentingDesign.Additional.Remarks")}</span>
+            </Stack>
+            <Stack direction={'row'} marginTop={"24px"}>
+                <TextareaAutosize style={classes.textAreaStyle}></TextareaAutosize>
+            </Stack>
+            <Stack direction={'column'} gap={'32px'} paddingTop={'44px'}>
+                {
+                    DocumentDesignSection2.map(section => {
+                        return (
+                            <FormInputsSectionComponent sectionTitle={section.title}>
 
-                                    {
-                                        section.inputs.map(companyInput => <FormInput key={companyInput.parameterKey}
-                                            input={companyInput as IInput}
-                                            changeState={onChangeInputs}
-                                            error={false} />)
-                                    }
-                                </FormInputsSectionComponent>
-                            );
-                        })
-                    }
-                </Stack>
-                <QRCodes />
-                <div style={{ position: 'sticky', bottom: '0', left: '0', backgroundColor: "white", right: '0', padding: '16px' }}>
-                    <div style={{ display: "flex", flexDirection: "row", justifyContent: "flex-end", gap: 16 }}>
-                        <SecondaryButton onClick={ResetDefaultDocumentDesign} variant="outlined" >{t("documentingDesign.Reset")}</SecondaryButton>
-                        <SecondaryButton onClick={addDocumentDesign} variant="contained">{t('documentingDesign.Save')}</SecondaryButton>
-                    </div>
-                </div>
+                                {
+                                    section.inputs.map(companyInput => <FormInput key={companyInput.parameterKey}
+                                        input={companyInput as IInput}
+                                        changeState={onChangeInputs}
+                                        error={false} />)
+                                }
+                            </FormInputsSectionComponent>
+                        );
+                    })
+                }
+            </Stack>
+            <QRCodes />
+            <div style={classes.footerStyle}>
+                <SecondaryButton onClick={ResetDefaultDocumentDesign} variant="outlined" >{t("documentingDesign.Reset")}</SecondaryButton>
+                <SecondaryButton onClick={addDocumentDesign} variant="contained">{t('documentingDesign.Save')}</SecondaryButton>
             </div>
         </div>
     );

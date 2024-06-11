@@ -1,16 +1,27 @@
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
+import { convertHeightToVH } from "@/utils/adapter";
 
 const useStyle = () => {
   const { theme } = useGomakeTheme();
   const { secondColor } = useGomakeTheme();
   const classes = useMemo(() => {
     return {
-      container: {
+      mainContainer: {
         position: "relative" as "relative",
         display: "flex",
         flexDirection: 'row' as 'row',
+        //height:"700px"
+       height:convertHeightToVH(800)
+      },
+      container: {
+        position: "relative" as "relative",
+        display: "flex",
+        flexDirection: 'column' as 'column',
+        width: "60%",
+        height:"100%",
+        overflowY: 'scroll' as 'scroll',
       },
       documentContainerStyle:{
         width: "40%",
@@ -92,7 +103,18 @@ const useStyle = () => {
       cleanBtnStyle: {
         backgroundColor: "#F8F8F8"
       },
-
+      footerStyle: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "flex-end",
+        gap: 16,
+        position: 'sticky' as 'sticky',
+        bottom: '0',
+        left: '0',
+        backgroundColor: "white",
+        right: '0',
+        padding: '16px'
+      }
     };
   }, [theme]);
   return {
