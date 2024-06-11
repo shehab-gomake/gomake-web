@@ -12,7 +12,7 @@ const SettingsDocumentingWidget = () => {
 
     const tabs: ITab[] = [
         CheckPermission(Permissions.SHOW_DOCUMENT_NUMBERING) && { title: t("documentingSettings.documentNumbering"), component: <DocumentNumbering/> },
-        // CheckPermission(Permissions.SHOW_DOCUMENT_DESIGN) && { title: t("documentingSettings.documentDesign"), component: <DocumentDesignSetting /> }
+        CheckPermission(Permissions.SHOW_DOCUMENT_DESIGN) && { title: t("documentingSettings.documentDesign"), component: <DocumentDesignSetting /> }
     ];
 
     return ( 
