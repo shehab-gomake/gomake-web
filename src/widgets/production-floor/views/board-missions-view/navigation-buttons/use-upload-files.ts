@@ -1,14 +1,16 @@
 import {getUserToken} from "@/services/storage-data";
 import {useRecoilState} from "recoil";
 import {printHouseProfile} from "@/store/print-house-profile";
-import {fileUploaderConnectionIdState} from "@/store/file-uploader-state";
+import {fileUploaderConnectionIdState, pinFileUploaderState} from "@/store/file-uploader-state";
 
 const useUploadFiles = (orderItemId, filesPath) => {
     const CHUNK_SIZE = 5 * 1024 * 1024; // 5MB
     const [companyProfile] = useRecoilState(printHouseProfile);
     const [connectionId]= useRecoilState(fileUploaderConnectionIdState);
+    const [, setShowFileUploader] = useRecoilState(pinFileUploaderState);
 
     const handleFileUpload = async (file) => {
+        setShowFileUploader(true);
         const totalChunks = Math.ceil(file.size / CHUNK_SIZE);
         let currentChunk = 0;
 

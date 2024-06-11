@@ -24,7 +24,9 @@ const useFilesUploaderSignalr = () => {
                 console.log(res?.data);
             }, connectionId).then();
         }
-    }, [connectionId])
+    }, [connectionId]);
+
+    useEffect(() => {setFiles(data)}, [data])
 
     return {
         connectionId,

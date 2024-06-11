@@ -1,6 +1,7 @@
 export interface IUploadingFileGroup {
     orderItemId: string;
-    path: string;
+    boardMissionId: string;
+    filePath: string;
     title: string;
     filesInfo: IUploadingFile[];
 }
