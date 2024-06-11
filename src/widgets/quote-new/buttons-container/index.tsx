@@ -11,8 +11,7 @@ import { CancelReceiptModal } from "./payment/cancel-receipt-modal/cancel-receip
 import { OrderNowModal } from "../total-price-and-vat/order-now-modal";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import { useSnackBar } from "@/hooks";
-import { DocumentPermission } from "@/components/CheckPermission/enum";
-import { useUserPermission } from "@/hooks/use-permission";
+
 
 const ButtonsContainer = ({
   onOpenNewItem,
@@ -27,8 +26,7 @@ const ButtonsContainer = ({
   const { classes } = useStyle();
   const { t } = useTranslation();
   const { alertFault } = useSnackBar();
-  const router = useRouter();
-  const {CheckDocumentPermission } = useUserPermission();
+
 
   const {
     quoteItemValue,
@@ -50,8 +48,12 @@ const ButtonsContainer = ({
     onClickOpenDeleteModal,
     openCancelReceiptModal,
     onClickOpenCancelReceiptModal,
-    onClickCloseCancelReceiptModal
+    onClickCloseCancelReceiptModal,
+    showAddNewItemBtn,
+    canEditDocument,
+    isNewCreation
   } = useButtonsContainer(documentType);
+  
   const handleCopyFromDocumentClick = (documentNumber) => {
     if (!quoteItemValue?.client) {
       alertFault("home.admin.pleaseSelectCustomer");
@@ -68,9 +70,6 @@ const ButtonsContainer = ({
     }
   }; 
   
-  const isNewCreation = router?.query?.isNewCreation;
-  const canEditDocument = quoteItemValue?.isEditable && CheckDocumentPermission(documentType, DocumentPermission.EDIT_DOCUMENT);
-  const showAddNewItemBtn = canEditDocument && documentType !== DOCUMENT_TYPE.receipt
  
   return (
     <div style={classes.writeCommentContainer}>

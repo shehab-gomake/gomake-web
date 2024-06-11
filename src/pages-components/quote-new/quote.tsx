@@ -416,7 +416,7 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
                 <ReceiptsTable />
               }
             </div>
-            <WriteCommentComp getQuote={getQuote} isQuoteConfirmation={isQuoteConfirmation} documentType={documentType} />
+            <WriteCommentComp  documentState={quoteState} getQuote={getQuote} isQuoteConfirmation={isQuoteConfirmation} documentType={documentType} />
           </div>
           {!isQuoteConfirmation &&
             <div style={{ width: '100%' }} data-tour={'quoteStep2'}>
