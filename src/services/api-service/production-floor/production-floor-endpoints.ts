@@ -24,6 +24,8 @@ const MOVE_BOARD_MISSION_TO_DONE_URL = '/v1/erp-service/board-missions/move-boar
 const BACK_TO_PROCESS_URL = '/v1/erp-service/board-missions/back-to-process';
 const SAVE_UPLOADED_FILE_URL = '/v1/erp-service/board-missions/save-uploaded-file';
 const GET_UPLOADED_FILES_URL = '/v1/erp-service/board-missions/get-uploaded-files/';
+const GET_UPLOADING_FILES_URL = '/v1/erp-service/board-missions/get-uploading-files/';
+
 
 const getProductionFloorData: ICallAndSetData = async (callApi, setState, connectionId: string) => {
     return await getSetApiData(callApi, EHttpMethod.GET, GET_PRODUCTION_FLOOR_DATA_URL + '?connectionId=' + connectionId, setState, {}, false);
@@ -94,6 +96,9 @@ const saveUploadedFile: ICallAndSetData = async (callApi, callBack, data ) => {
 const getAllBoardMissionsUploadedFiles: ICallAndSetData = async (callApi, callBack, orderItemId: string ) => {
     return await getSetApiData(callApi, EHttpMethod.GET, GET_UPLOADED_FILES_URL + orderItemId , callBack);
 }
+const getAllBoardMissionsUploadingFiles: ICallAndSetData = async (callApi, callBack, connectionID: string ) => {
+    return await getSetApiData(callApi, EHttpMethod.GET, GET_UPLOADING_FILES_URL + connectionID , callBack);
+}
 
 const moveBoardMissionToDoneApi: ICallAndSetData = async (callApi, setState, data: { boardMissionId: string, sendMessage?: string }) => {
     return await getSetApiData(callApi, EHttpMethod.POST, MOVE_BOARD_MISSION_TO_DONE_URL, setState, data);
@@ -124,5 +129,6 @@ export {
     moveBoardMissionToDoneApi,
     backToProcessApi,
     saveUploadedFile,
-    getAllBoardMissionsUploadedFiles
+    getAllBoardMissionsUploadedFiles,
+    getAllBoardMissionsUploadingFiles
 };

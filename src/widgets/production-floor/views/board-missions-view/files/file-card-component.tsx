@@ -46,6 +46,7 @@ const FileCardComponent = ({file}: { file: IBoardMissionsFile }) => {
             }
             setIsLoading(false)
         } catch (error) {
+            setIsLoading(false)
             console.error('Download failed:', error);
         }
     }

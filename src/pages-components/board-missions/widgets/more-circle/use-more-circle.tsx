@@ -7,14 +7,15 @@ import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import LockOpenOutlinedIcon from '@mui/icons-material/LockOpenOutlined';
 import { useStyle } from "./style";
 import { PackageIcon } from "@/icons/package-icon";
-import { GetPrintingTicketPDFApi, getBoardMissionPDF } from "@/services/api-service/generic-doc/documents-api";
-import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
+import { GetPrintingTicketPDFApi } from "@/services/api-service/generic-doc/documents-api";
+import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { PStatus } from "../enums";
-
+import {addBoardMissionsToFileUploaderApi} from "@/services/api-service/board-missions-table/board-missions-table";
+import {useRecoilState} from "recoil";
+import {fileUploaderConnectionIdState, openFileUploaderList, pinFileUploaderState} from "@/store/file-uploader-state";
 const useMoreCircle = ({
   mission,
   onClickDuplicate,
-  onClickLoggers,
   onClickMarksAsDone,
   onClickReturnToProduction,
   onClickOrderSummeryPdf,
@@ -26,8 +27,10 @@ const useMoreCircle = ({
   const { t } = useTranslation();
   const { classes } = useStyle();
   const { callApi } = useGomakeAxios();
-  const { alertFaultGetData, } = useSnackBar();
-  const { navigate } = useGomakeRouter();
+  const { alertFaultGetData } = useSnackBar();
+  const [connectionId] = useRecoilState(fileUploaderConnectionIdState);
+  const [, setOpenFileUploader] = useRecoilState(openFileUploaderList);
+  const [, setShowFileUploader] = useRecoilState(pinFileUploaderState);
   const downloadPdf = (url) => {
     const anchor = document.createElement("a");
     anchor.href = url;
@@ -50,6 +53,16 @@ const useMoreCircle = ({
       }
     };
     await GetPrintingTicketPDFApi(callApi, callBack, { boardMissionId: mission?.id });
+  };
+  const addBoardMissionsToFileUploader = async (mission) => {
+    const callBack = (res) => {
+      if (res?.success) {
+        setOpenFileUploader(true);
+        setShowFileUploader(true);
+      } else {
+      }
+    };
+    await addBoardMissionsToFileUploaderApi(callApi, callBack, { boardMissionsId: mission?.id, connectionId: connectionId });
   };
 
   const menuList = [
@@ -112,6 +125,12 @@ const useMoreCircle = ({
       onclick: () => {
         window.open(`/production-floor?boardMissionsId=${mission?.id}&step=activity`, '_blank');
       },
+    },
+    {
+      condition: true,
+      name: "fileUploader.uploadFile",
+      icon: <PDFIcon />,
+      onclick: () => addBoardMissionsToFileUploader(mission),
     }
   ];
 

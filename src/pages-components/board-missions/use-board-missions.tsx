@@ -19,7 +19,6 @@ import { downloadPdf } from "@/utils/helpers";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { useUserPermission } from "@/hooks/use-permission";
 
-
 const useBoardMissions = ({ isPurchaseJobs }) => {
   const { CheckPermission } = useUserPermission();
   const { t } = useTranslation();
@@ -104,8 +103,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     t("boardMissions.productName"),
     t("boardMissions.currentBoardMissionStatus"),
     t("properties.more")
-  ]; 
-
+  ];
 
   const handleMultiSelectChange = (newValues: string[]) => {
     setProductIds(newValues);
