@@ -125,18 +125,13 @@ const usePricingWidget = ({ getOutSourcingSuppliers, workFlows }) => {
     }, [workFlows]);
     const [selectedWorkFlowsByTabList,settledWorkFlowsByTabList] =useState([])
     const getWorkFlowsByTab = async (productType) => {
-      console.log("productType",productType)
       const callBack = (res) => {
           if (res?.success) {
-             console.log("resssssss", res);
              settledWorkFlowsByTabList(res?.data)
           } else {
               // alertFaultUpdate();
           }
       }
-      console.log("object:",{
-        signalRConnectionId:connectionId,pageSize: 30,productType:productType
-      })
       await getWorkFlowsApi(callApi, callBack, { signalRConnectionId:connectionId,pageSize: 10,productType:productType})
   }
 

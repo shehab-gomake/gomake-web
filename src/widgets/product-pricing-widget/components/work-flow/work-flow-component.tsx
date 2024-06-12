@@ -79,13 +79,6 @@ const WorkFlowComponent = ({
             valueColor: secondColor(500),
         },
     ]
-
-
-    console.log("ididid", {
-        id, selectedWorkFlowId,
-        isEqual: selectedWorkFlowId === id,
-        isOpen
-    })
     return (
         <>
             <Fade in={true} timeout={delay}>
