@@ -281,7 +281,6 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
                   {!router?.query?.isNewCreation && <div style={classes.quoteNumberStyle}>
                     {" - "} {docNumber}
                   </div>}
-
                 </div>
                 {!isQuoteConfirmation &&
                   <div style={classes.settingsStatusContainer}>
@@ -300,8 +299,6 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
                         </>
                       }
                     </>
-
-
                     <IconButton
                       style={{ marginRight: 4 }}
                       onClick={handleSettingMenuClick}
@@ -366,6 +363,7 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
                   isQuoteConfirmation={isQuoteConfirmation}
                 />
                 <ContactNewWidget
+                  documentState={quoteState}
                   handleShowLess={handleShowLess}
                   items={items}
                   displayedItems={displayedItems}
@@ -436,7 +434,8 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
                 <ReceiptsTable />
               }
             </div>
-            <WriteCommentComp
+            <WriteCommentComp 
+              documentState={quoteState}
               getQuote={getQuote}
               isQuoteConfirmation={isQuoteConfirmation}
               documentType={documentType}

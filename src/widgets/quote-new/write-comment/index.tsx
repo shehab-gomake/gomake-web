@@ -3,6 +3,8 @@ import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
 import { useWriteCommentComp } from "./use-character-details";
 import { useButtonsConfirmContainer } from "../buttons-cofirm-container/use-buttons-container";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
+import { useUserPermission } from "@/hooks/use-permission";
+import { DocumentPermission } from "@/components/CheckPermission/enum";
 import { useRecoilValue } from "recoil";
 import { quoteItemState } from "@/store";
 import { useGomakeRouter } from "@/hooks";
@@ -11,10 +13,13 @@ interface IProps {
   isQuoteConfirmation?: boolean;
   getQuote?: any;
   documentType?: DOCUMENT_TYPE;
+  documentState?:any;
   onClickOpenRelatedDocumentsModal?: () => void;
 }
-const WriteCommentComp = ({ isQuoteConfirmation, getQuote, documentType, onClickOpenRelatedDocumentsModal }: IProps) => {
+const WriteCommentComp = ({ isQuoteConfirmation, getQuote, documentType, onClickOpenRelatedDocumentsModal , documentState}: IProps) => {
   const { classes } = useStyle(isQuoteConfirmation);
+  const { CheckDocumentPermission } = useUserPermission();
+
   const { onUpdateComments,
     quoteComments,
     setQuoteComments,
@@ -22,6 +27,7 @@ const WriteCommentComp = ({ isQuoteConfirmation, getQuote, documentType, onClick
     quoteInternalNotes,
     setQuoteInternalNotes
   } = useButtonsConfirmContainer();
+
   const {
     handleChange,
     handleBlur,
@@ -63,7 +69,7 @@ const WriteCommentComp = ({ isQuoteConfirmation, getQuote, documentType, onClick
   };
 
   const relatedDocuments = mergeDocumentNumbers(quoteItemValue)
-
+  const canEditComments = documentState?.isEditable && CheckDocumentPermission(documentType.toString(), DocumentPermission.EDIT_DOCUMENT);
 
   return (
     <div style={classes.writeCommentContainer}>
@@ -88,7 +94,6 @@ const WriteCommentComp = ({ isQuoteConfirmation, getQuote, documentType, onClick
           />
         </div>
       }
-
       <div style={classes.item2Container}>
         <div style={classes.labelTextStyle}>{t("sales.quote.comments")}</div>
         <GomakeTextInput
@@ -97,6 +102,7 @@ const WriteCommentComp = ({ isQuoteConfirmation, getQuote, documentType, onClick
           value={isQuoteConfirmation ? quoteComments : data}
           onChange={isQuoteConfirmation ? (e) => setQuoteComments(e.target.value) : handleChange}
           onBlur={isQuoteConfirmation ? onUpdateComments : handleBlur}
+          disabled={!canEditComments}
         />
       </div>
       <div style={classes.item2Container}>
@@ -107,6 +113,7 @@ const WriteCommentComp = ({ isQuoteConfirmation, getQuote, documentType, onClick
           value={isQuoteConfirmation ? quoteInternalNotes : dataForInternalNotes}
           onChange={isQuoteConfirmation ? (e) => setQuoteInternalNotes(e.target.value) : handleChangeForInternalNotes}
           onBlur={isQuoteConfirmation ? onUpdateInternalNotes : handleBlurForInternalNotes}
+          disabled={!canEditComments}
         />
       </div>
     </div>

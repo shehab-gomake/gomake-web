@@ -16,6 +16,7 @@ import { RowMappingChildWidget } from "../quote-child-table/row-mapping";
 import { TotalPriceComp } from "../total-price";
 import { useRecoilValue } from "recoil";
 import { quoteItemState } from "@/store";
+
 const QuoteForPriceTable = ({
   documentItems,
   columnWidths,
@@ -118,6 +119,7 @@ const QuoteForPriceTable = ({
                             getCalculateQuoteItem={getCalculateQuoteItem}
                             childList={item?.childsDocumentItems}
                             isQuoteConfirmation={isQuoteConfirmation}
+                            documentType={documentType}
                           />
                         );
                       }
@@ -130,6 +132,7 @@ const QuoteForPriceTable = ({
       </TableContainer>
       {quoteItemValue?.isShowPrice &&
         <TotalPriceComp
+          documentType={documentType}
           getCalculateQuote={getCalculateQuote}
           quoteItems={quoteItems}
           changeQuoteItems={changeQuoteItems}

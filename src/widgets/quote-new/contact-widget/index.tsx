@@ -4,6 +4,8 @@ import { ContactMapping } from "./contact-mapping";
 import { AddContactNewWidget } from "./add-contact-widget";
 import { GoMakeDeleteModal } from "@/components";
 import { useTranslation } from "react-i18next";
+import { useUserPermission } from "@/hooks/use-permission";
+import { DocumentPermission } from "@/components/CheckPermission/enum";
 
 const ContactNewWidget = ({
   handleShowLess,
@@ -37,10 +39,14 @@ const ContactNewWidget = ({
   documentType,
   getQuote,
   getAllClientContacts,
-  onOpenNewContact
+  onOpenNewContact,
+  documentState
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
+  const {CheckDocumentPermission } = useUserPermission();
+  const canEditDocument = documentState?.isEditable && CheckDocumentPermission(documentType, DocumentPermission.EDIT_DOCUMENT);
+  
   return (
     <>
       <div style={classes.mainContainer}>
@@ -49,6 +55,7 @@ const ContactNewWidget = ({
             <div>
               {items?.slice(0, displayedItems).map((item, index) => (
                 <ContactMapping
+                  canEditContacts={canEditDocument}
                   key={`${index}-${item.id}`}
                   item={item}
                   index={index}
@@ -66,7 +73,7 @@ const ContactNewWidget = ({
             </div>
           </>
         ) : (
-          !isQuoteConfirmation &&
+          (!isQuoteConfirmation && canEditDocument) &&
           <div
             style={classes.addNewContactNameStyle}
             onClick={() => setIsDisplayWidget(true)}
