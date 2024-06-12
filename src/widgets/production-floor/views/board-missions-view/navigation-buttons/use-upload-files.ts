@@ -1,20 +1,16 @@
 import {getUserToken} from "@/services/storage-data";
-import {useGomakeAxios} from "@/hooks";
-import {saveUploadedFile} from "@/services/api-service/production-floor/production-floor-endpoints";
 import {useRecoilState} from "recoil";
-import {boardMissionsDetailsState} from "@/widgets/production-floor/state/boards";
 import {printHouseProfile} from "@/store/print-house-profile";
-import {useRouter} from "next/router";
+import {fileUploaderConnectionIdState, pinFileUploaderState} from "@/store/file-uploader-state";
 
-const useUploadFiles = () => {
+const useUploadFiles = (orderItemId, filesPath) => {
     const CHUNK_SIZE = 5 * 1024 * 1024; // 5MB
-    const {callApi} = useGomakeAxios();
-    const [boardMissions] = useRecoilState(boardMissionsDetailsState);
     const [companyProfile] = useRecoilState(printHouseProfile);
-    const {query} = useRouter();
-    const {productType} = query
+    const [connectionId]= useRecoilState(fileUploaderConnectionIdState);
+    const [, setShowFileUploader] = useRecoilState(pinFileUploaderState);
 
     const handleFileUpload = async (file) => {
+        setShowFileUploader(true);
         const totalChunks = Math.ceil(file.size / CHUNK_SIZE);
         let currentChunk = 0;
 
@@ -29,10 +25,14 @@ const useUploadFiles = () => {
     const uploadChunk = async (chunk, chunkIndex, totalChunks, fileName) => {
         const formData = new FormData();
         formData.append("file", chunk);
-        formData.append("orderItemId", boardMissions?.orderItemId);
-        formData.append("path", boardMissions.filesPath);
+        formData.append("orderItemId", orderItemId);
         formData.append("fileName", fileName);
+        formData.append("path", filesPath);
         formData.append("takeScreenShot", chunkIndex + 1 === totalChunks ? 'true' : 'false');
+        formData.append("currentPacket", chunkIndex + 1);
+        formData.append("totalPackets", totalChunks);
+        formData.append("signalRConnectId", connectionId);
+
         try {
             const response = await fetch(companyProfile.filesApiAddress + '/api/Files/UploadOrderItemFile', {
                 method: 'POST',
@@ -43,11 +43,7 @@ const useUploadFiles = () => {
             });
 
             const data = await response.json();
-
-            if (chunkIndex + 1 === totalChunks) {
-                await saveUploadedFile(callApi, () => {
-                }, {...data, productType: !!productType ? productType : ''});
-            }
+            console.log(`Chunk ${chunkIndex + 1} of ${totalChunks}:`, data);
         } catch (error) {
             console.error('Error uploading chunk:', error);
         }

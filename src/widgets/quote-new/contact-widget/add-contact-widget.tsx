@@ -11,7 +11,6 @@ import { addCustomerContactApi, addDocumentContactApi } from "@/services/api-ser
 import { useRecoilValue } from "recoil";
 import { quoteItemState } from "@/store";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
-import { v4 as uuidv4 } from "uuid";
 
 const AddContactNewWidget = ({
   clientContactsValue,

@@ -79,6 +79,7 @@
     "react-phone-input-2": "^2.15.1",
     "react-phone-number-input": "^3.4.1",
     "react-quill": "^2.0.0",
+    "react-signature-canvas": "^1.0.6",
     "react-test-renderer": "^18.2.0",
     "react18-json-view": "^0.2.7-canary.2",
     "recoil": "^0.7.7",

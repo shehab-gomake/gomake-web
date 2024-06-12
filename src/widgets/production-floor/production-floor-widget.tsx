@@ -13,6 +13,7 @@ import Drawer from "@mui/material/Drawer";
 import ClearRoundedIcon from "@mui/icons-material/ClearRounded";
 import {BoardMissionsComponent} from "@/widgets/production-floor/views/board-missions-view/board-missions-component";
 import {DashboardWidget} from "@/widgets/dashboard-widget";
+import {FilesUploaderWidget} from "@/widgets/file-uploader-widget/files-uploader-widget";
 
 const ProductionFloorWidget = () => {
     const [view, setView] = useRecoilState(productionFloorViewState);
@@ -49,6 +50,8 @@ const ProductionFloorWidget = () => {
                 </IconButton>
                 {openBoardMissionsDrawer && <BoardMissionsComponent productType={!!productType ? productType.toString() : ''} step={step?.toString()} boardMissionsId={boardMissionsId?.toString()}/>}
             </Stack>
+            <FilesUploaderWidget/>
+
         </Drawer>
     </Stack>
 }
