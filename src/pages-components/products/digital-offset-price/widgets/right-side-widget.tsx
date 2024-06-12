@@ -414,7 +414,6 @@ const RightSideWidget = ({
                 );
               })}
               {calculationExceptionsLogs?.map((item) => {
-                console.log("item", item);
                 if (item.actionName) {
                   return (
                     <div
