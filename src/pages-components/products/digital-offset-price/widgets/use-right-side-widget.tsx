@@ -28,7 +28,7 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 const useRightSideWidget = ({ includeVAT }) => {
   const { errorColor, successColor, warningColor, neutralColor } = useGomakeTheme();
-  const calculationExceptionsLogs = useRecoilValue(calculationExceptionsLogsState);
+  const calculationExceptionsLogs = useRecoilValue<any>(calculationExceptionsLogsState);
   const isLoading = useRecoilValue(isLoadgingState);
 
   const subProducts = useRecoilValue<any>(subProductsParametersState);
