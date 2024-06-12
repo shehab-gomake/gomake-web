@@ -13,7 +13,7 @@ const useStyle = () => {
           fileInputStyle:{
             boxSizing: 'border-box' as 'border-box',
             borderRadius: '4px',
-            minHeight:'70px',
+            minHeight:'40px',
             padding:'7px',
             ...FONT_FAMILY.Lexend(300, 14),
             display: 'flex',
@@ -22,7 +22,6 @@ const useStyle = () => {
             width: '100%',
             color: '#8283BE',
             justifyContent:'space-between',
-    
           },
     };
   }, []);
