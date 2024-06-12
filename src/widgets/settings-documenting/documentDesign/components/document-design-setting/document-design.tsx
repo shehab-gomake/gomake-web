@@ -1,7 +1,6 @@
 
 import { useTranslation } from "react-i18next";
 import { useStyle } from "../../style";
-import { IDocumentDesign, IDocumentDesignProps } from "../../interface";
 import { UseDocumentDesign } from "@/widgets/settings-documenting/use-document-design";
 import { SecondaryButton } from "@/components/button/secondary-button";
 import { useEffect } from "react";
@@ -15,6 +14,7 @@ import { QRCodes } from "./QRCodes/QRCodes";
 const DocumentDesign = () => {
     const { classes } = useStyle();
     const { t } = useTranslation();
+    const dir: "rtl" | "ltr" = t("direction");
     const { AddOrUpdateDocumentDesign, ResetDocumentDesign, getDocumentTypes, documentDesign, documentDesignChange, getDocumentDesignByCreationDoc } = UseDocumentDesign();
     const addDocumentDesign = async () => {
         await AddOrUpdateDocumentDesign(documentDesign);
@@ -95,7 +95,7 @@ const DocumentDesign = () => {
                 }
             </Stack>
             <QRCodes />
-            <div style={classes.footerStyle}>
+            <div style={{...classes.footerStyle,  marginRight: dir == "ltr" ? '10px' : '0px',marginLeft: dir == "rtl" ? '10px' : '0px',}}>
                 <SecondaryButton onClick={ResetDefaultDocumentDesign} variant="outlined" >{t("documentingDesign.Reset")}</SecondaryButton>
                 <SecondaryButton onClick={addDocumentDesign} variant="contained">{t('documentingDesign.Save')}</SecondaryButton>
             </div>
