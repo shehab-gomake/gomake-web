@@ -30,6 +30,9 @@ import { getAllReceiptsApi, getReceiptPdfApi } from "@/services/api-service/gene
 import { renderDocumentTypeForSourceDocumentNumber, renderURLDocumentType } from "@/widgets/settings-documenting/documentDesign/enums/document-type";
 import { AStatus, PStatus } from "../board-missions/widgets/enums";
 import { getAndSetCustomerById, getAndSetCustomersPagination } from "@/services/api-service/customers/customers-api";
+import { useUserPermission } from "@/hooks/use-permission";
+import { Permissions } from "@/components/CheckPermission/enum";
+import { PermissionCheck } from "@/components/CheckPermission/check-permission";
 
 const useQuotes = (docType: DOCUMENT_TYPE) => {
   const { t } = useTranslation();
@@ -40,7 +43,6 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
   const { navigate } = useGomakeRouter();
   const { errorColor } = useGomakeTheme();
   const [patternSearch, setPatternSearch] = useState("");
-  console.log("patternSearch", patternSearch)
   const [finalPatternSearch, setFinalPatternSearch] = useState("");
   const debounce = useDebounce(patternSearch, 500);
   const { GetDateFormat, GetShortDateFormat } = useDateFormat();
@@ -79,6 +81,17 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
   const [agentsCategories, setAgentsCategories] = useRecoilState(agentsCategoriesState);
   const documentPath = DOCUMENT_TYPE[docType];
   const isReceipt = docType === DOCUMENT_TYPE.receipt;
+  const { CheckPermission } = useUserPermission();
+
+  const [openCloseOrderNotesModal, setOpenCloseOrderNotesModal] = useState(false)
+  const [selectedQuoteItemValue, setSelectedQuoteItemValue] = useState()
+
+  const onClickOpenCloseOrderNotesModal = () => {
+    setOpenCloseOrderNotesModal(true)
+  }
+  const onClickCloseCloseOrderNotesModal = () => {
+    setOpenCloseOrderNotesModal(false)
+  }
 
   const onCloseAddRuleModal = () => {
     setOpenAddRule(false);
@@ -239,6 +252,11 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
             ];
           }
           else if (docType === DOCUMENT_TYPE.order) {
+            const jobsElement = CheckPermission(Permissions.SHOW_BOARD_MISSIONS) 
+            ? ( <div style={{ cursor: "pointer" }} onClick={() => navigate(`/board-missions?orderNumber=${quote?.number}`)}>
+                {quote?.jobs}
+              </div>
+            ) : quote?.jobs;
             return [
               GetDateFormat(quote?.createdDate),
               <div style={{ cursor: "pointer" }} onClick={() => onClickOpenCustomerModal(quote?.customerId)}>{quote?.customerName}</div>,
@@ -255,8 +273,8 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
               }),
               quote?.purchaseNumber,
               quote?.productionStatus === true ? t('boardMissions.done') : t('boardMissions.inProduction'),
-              <div style={{ cursor: "pointer" }} onClick={() => navigate(`/board-missions?orderNumber=${quote?.number}`)}>{quote?.jobs}</div>,
-              quote?.cost,
+              jobsElement,
+              CheckPermission(Permissions.SHOW_COSTS_IN_ORDERS) && quote?.cost,
               quote?.worksNames,
               quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
               quote?.notes,
@@ -444,6 +462,12 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
             ];
           }
           else if (docType === DOCUMENT_TYPE.order) {
+            const jobsElement = CheckPermission(Permissions.SHOW_BOARD_MISSIONS) 
+            ? ( <div style={{ cursor: "pointer" }} onClick={() => navigate(`/board-missions?orderNumber=${quote?.number}`)}>
+                {quote?.jobs}
+              </div>
+            ) : quote?.jobs;
+
             return [
               GetDateFormat(quote?.createdDate),
               <div style={{ cursor: "pointer" }} onClick={() => onClickOpenCustomerModal(quote?.customerId)}>{quote?.customerName}</div>,
@@ -460,8 +484,8 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
               }),
               quote?.purchaseNumber,
               quote?.productionStatus === true ? t('boardMissions.done') : t('boardMissions.inProduction'),
-              <div style={{ cursor: "pointer" }} onClick={() => navigate(`/board-missions?orderNumber=${quote?.number}`)}>{quote?.jobs}</div>,
-              quote?.cost,
+              jobsElement,
+              CheckPermission(Permissions.SHOW_COSTS_IN_ORDERS) && quote?.cost,
               quote?.worksNames,
               quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
               quote?.notes,
@@ -479,7 +503,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
                 CloseDocument={CloseDocument}
 
               />,
-            ];
+            ]
           }
           else {
             return [
@@ -641,7 +665,9 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     docType === DOCUMENT_TYPE.order && t("sales.quote.purchaseNumber"),
     docType === DOCUMENT_TYPE.order && t("sales.quote.productionStatus"),
     docType === DOCUMENT_TYPE.order && t("sales.quote.jobs"),
-    docType === DOCUMENT_TYPE.order && t("sales.quote.cost"),
+    docType === DOCUMENT_TYPE.order &&  <PermissionCheck userPermission={Permissions.SHOW_COSTS_IN_ORDERS}>
+      { t("sales.quote.cost")}
+    </PermissionCheck>,
     docType === DOCUMENT_TYPE.receipt ? t("sales.quote.paymentMethod") : t("sales.quote.worksName"),
     t("sales.quote.totalPrice"),
     t("sales.quote.notes"),
@@ -1299,6 +1325,11 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
   }
 
   const CloseDocument = async (quoteItemValue) => {
+    console.log("quoteItemValue", quoteItemValue)
+    setSelectedQuoteItemValue(quoteItemValue)
+    if (quoteItemValue?.closeOrderNotes && quoteItemValue?.closeOrderNotes.tirm !== "") {
+      onClickOpenCloseOrderNotesModal()
+    }
     const callBack = (res) => {
       if (res?.success) {
         alertSuccessUpdate();
@@ -1461,7 +1492,10 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     handleClose,
     open,
     anchorEl,
-    filterData
+    filterData,
+    openCloseOrderNotesModal,
+    onClickCloseCloseOrderNotesModal,
+    selectedQuoteItemValue
   };
 };
 

@@ -1,4 +1,4 @@
-import {EMeasurementUnits} from "@/widgets/machines/enums/measurement-units";
+import { EMeasurementUnits } from "@/widgets/machines/enums/measurement-units";
 
 export interface IInput {
   name: string;
@@ -7,10 +7,10 @@ export interface IInput {
   placeholder: string;
   required: boolean;
   parameterKey: string;
-  options: {value: any; text: string}[];
+  options: { value: any; text: string }[];
   optionsUrl?: string;
   value?: string;
-  values? :string[];
+  values?: string[];
   disabled?: boolean;
   isValid: boolean;
   regex?: RegExp;
@@ -19,7 +19,8 @@ export interface IInput {
   direction?: string;
   multiple?: boolean;
   materialType?: string;
-  disableClearable?:boolean;
+  disableClearable?: boolean;
+  defaultInDocsTypes?: any
 }
 export interface IFormInput {
   input: IInput;

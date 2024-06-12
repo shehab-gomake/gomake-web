@@ -4,24 +4,34 @@ import {Stack} from "@mui/material";
 import { DateFormatter} from "@/utils/adapter";
 import {LabelComponent} from "@/widgets/production-floor/label-component/label-component";
 import {useStyle} from "@/widgets/production-floor/kanban-view/kanban-card/style";
+import { useUserPermission } from '@/hooks/use-permission';
+import { Permissions } from "@/components/CheckPermission/enum";
+import { t } from 'i18next';
 
 interface IProp {
     board: IBoardMissions
-}
+} 
 
 const ItemTypes = {
     TASK: 'task',
 };
 
 const KanbanCardComponent = ({board}: IProp) => {
-    const [{isDragging}, drag] = useDrag(() => ({
+
+    const {classes} = useStyle();
+    const { CheckPermission } = useUserPermission();
+    const canDrag = CheckPermission(Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR); 
+
+    const [{ isDragging }, drag] = useDrag(() => ({
         type: ItemTypes.TASK,
         item: board,
+        canDrag: canDrag,
         collect: (monitor) => ({
             isDragging: !!monitor.isDragging(),
         }),
-    }));
-    const {classes} = useStyle();
+    }), [canDrag]);
+
+
     return (
         <Stack
             direction={'column'}
@@ -30,26 +40,26 @@ const KanbanCardComponent = ({board}: IProp) => {
             borderRadius={'12px'}
             width={'100%'}
             maxHeight={'fit-content'}
-            ref={drag}
+            ref={canDrag ? drag : null}
             style={{
                 opacity: isDragging ? 0.8 : 1,
                 backgroundColor: 'white',
-                cursor: 'move',
+                cursor: canDrag ? 'move' : 'not-allowed',
             }}
         >
             <div>
                 <table style={{borderSpacing: '5px',}}>
                     <tbody>
                     <tr>
-                        <td><span style={classes.jobTitle}>{board.jobName || 'Job title'}</span></td>
+                        <td><span style={classes.jobTitle}>{board.jobName || t("productionFloor.jobTitle")}</span></td>
                         <td><LabelComponent label={board.productName}/></td>
                     </tr>
                     <tr>
-                        <td><span style={classes.secondLabel}>Work order:</span></td>
+                        <td><span style={classes.secondLabel}>{`${t("productionFloor.workOrder")} :`}</span></td>
                         <td><span style={classes.primaryLabel}>{board.workOrder || board.boardMissionNumber}</span></td>
                     </tr>
                     <tr>
-                        <td><span style={classes.secondLabel}>Machine:</span></td>
+                        <td><span style={classes.secondLabel}>{`${t("productionFloor.machine")} :`}</span></td>
                         <td><span
                             style={classes.primaryLabel}>{board.currentStation.machineName || board.currentStation.actionName}</span>
                         </td>

@@ -76,7 +76,6 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
       const value = shapeParameter?.valuesConfigs.find(x => x.id === shapeId)
       shapeCode = value?.code;
     }
-    // debugger;
     const reqObj = {
       key: selectParameterButton?.parameter?.materialPath[0],
       width: widthParameter && widthParameter.values && widthParameter.values.length > 0 && widthParameter.values[0] ? widthParameter.values[0] : 0,

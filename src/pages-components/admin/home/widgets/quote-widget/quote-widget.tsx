@@ -102,7 +102,7 @@ const QuoteWidget = ({ isAdmin = true }) => {
         <div style={classes.autoComplateRowContainer}>
           <div data-tour="select-customer" style={{ width: "65%" }}>
             <GoMakeAutoComplate
-            disableClearable={true}
+              disableClearable={true}
               options={renderOptions() ? renderOptions() : []}
               placeholder={t("home.admin.selectCustomer")}
               style={classes.selectCustomerContainer}
@@ -132,7 +132,9 @@ const QuoteWidget = ({ isAdmin = true }) => {
             />
           </div>
         </div>
+        <PermissionCheck userPermission={Permissions.ADD_CLIENT}>
         <button style={classes.autoButtonStyle} onClick={onClickAddCustomer} >{t("customers.buttons.AddOrSearch")}</button>
+        </PermissionCheck>
       </div>
       <div style={classes.autoComplateRowContainer}>
         <div data-tour="select-product" style={{ width: "65%" }}>

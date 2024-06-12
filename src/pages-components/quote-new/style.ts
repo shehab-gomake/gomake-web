@@ -104,6 +104,19 @@ const useStyle = (isQuoteConfirmation) => {
         flexDirection: "column" as "column",
         padding : isQuoteConfirmation ? "20px 100px 0px 100px" : "none"
       },
+      signatureApproval:{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        paddingLeft:8,
+        paddingRight:8,
+        backgroundColor:"#04BB16",
+        borderRadius: 8,
+        ...FONT_FAMILY.Inter(600,12),
+        color: "#FFF",
+        height:43,
+        cursor: "pointer",
+      }
     };
   }, [isQuoteConfirmation]);
   return {

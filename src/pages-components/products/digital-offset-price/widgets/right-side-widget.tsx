@@ -47,10 +47,13 @@ const RightSideWidget = ({
     isLoading,
     quantity,
     selectedWorkFlow,
+    calculationExceptionsLogs,
     setCurrentProductItemValueTotalPrice,
     t,
     _renderIconLogs,
   } = useRightSideWidget({ includeVAT });
+
+
   const [myvalue, setMyValue] = useState("---------")
   return (
     <div style={clasess.rightSideMainContainer}>
@@ -398,6 +401,42 @@ const RightSideWidget = ({
                         </div>
                         <div style={clasess.textLogstyle}>
                           <span style={{ color: "black" }}>{t("CalculationExceptions." + item?.exception?.exceptionKey)}</span>
+                        </div>
+                      </div>
+                    ) : (
+                      <div style={clasess.generalMsgTextStyle}>
+                        <div style={clasess.iconLogsTextStyle}>
+                          {_renderIconLogs(item.exceptionType)}
+                        </div>{t("products.offsetPrice.admin.general")} {t("CalculationExceptions." + item?.exceptionKey)}
+                      </div>
+                    )}
+                  </>
+                );
+              })}
+              {calculationExceptionsLogs?.map((item) => {
+                return (
+                  <>
+                    {item.actionName ? (
+                      <div
+                        style={{
+                          display: "flex",
+                          flexDirection: "row",
+                          justifyContent: "flex-start",
+                          alignItems: "flex-start",
+                          width: "100%",
+                          gap: 5,
+                        }}
+                      >
+                        {_renderIconLogs(item?.exceptionType)}
+                        <div
+                          style={{
+                            ...clasess.titleLogsTextStyle,
+                          }}
+                        >
+                          <div style={{ width: 85 }}>{item.actionName}:</div>
+                        </div>
+                        <div style={clasess.textLogstyle}>
+                          <span style={{ color: "black" }}>{t("CalculationExceptions." + item?.exceptionKey)}</span>
                         </div>
                       </div>
                     ) : (

@@ -22,9 +22,9 @@ const MoreMenuWidget = ({
 
   return (
     <>
-      <IconButton onClick={handleClick}>
+      {menuList?.length !==0 && <IconButton onClick={handleClick}>
         <MoreCircleIcon />
-      </IconButton>
+      </IconButton>}
       <GoMakeMenu handleClose={handleClose} open={open} anchorEl={anchorEl}>
         {menuList?.map((item, index) => {
           return (

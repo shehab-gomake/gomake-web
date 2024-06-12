@@ -1,25 +1,17 @@
-import { useRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { Permissions } from './enum';
 import { permissionsState } from '@/store/permissions';
 
 interface PermissionCheckProps {
-  userPermission: string;
+  userPermission: Permissions;
   children: any;
-  
 }
 
 const PermissionCheck: React.FC<PermissionCheckProps> = ({ userPermission, children }) => {
-  //const [permissions, setPermissions] = useRecoilState(permissionsState);
-  return children;
-  /*if(permissions){
-    const res = permissions.includes(userPermission);
-    if (res) {
-      return children;
-    } else {
-      return null;
-    }
-  }*/
-  
+  const permissions = useRecoilValue(permissionsState);
+  if (permissions) {
+    return permissions.includes(userPermission) ? <>{children}</> : null;
+  }
 };
 
 export { PermissionCheck };

@@ -49,3 +49,19 @@ export enum SortByTypes
     ProductABC = 3,
     WorkNameABC = 4
 }
+
+export enum DocumentTypeEnums
+{
+    Quote,
+    Order,
+    DeliveryNote,
+    Invoice,
+    Receipt,
+    DeliveryNoteRefund,
+    InvoiceRefund, 
+    GeneralLedgerReport,
+    PurchaseOrder,
+    PurchaseInvoice,
+    PurchaseInvoiceRefund,
+    BoardMission
+}

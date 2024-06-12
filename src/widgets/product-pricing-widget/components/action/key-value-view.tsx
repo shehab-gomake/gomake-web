@@ -6,6 +6,9 @@ import { useState } from "react";
 import { UpdateValueInput } from "@/components/text-input/update-value-input";
 import Button from "@mui/material/Button";
 import { EWorkSource } from "@/widgets/product-pricing-widget/enums";
+import { PermissionCheck } from "@/components/CheckPermission/check-permission";
+import { Permissions } from "@/components/CheckPermission/enum";
+import { isCurrency } from "@/utils/is-currency";
 
 interface IKeyValueViewProps extends IOutput {
     valueColor?: string;
@@ -19,17 +22,49 @@ interface IParametersMappingProps {
     source?: EWorkSource;
 }
 
+// const ParametersMapping = ({ parameters, source }: IParametersMappingProps) => {
+//     return <>
+//         {
+//             parameters?.flatMap((parameter, index, array) => {
+//                 return index < array.length - 1 ? [<KeyValueViewComponent source={source} {...parameter} />,
+//                 <Divider orientation={'vertical'} flexItem />] : [
+//                     <KeyValueViewComponent {...parameter} source={source} />]
+//             })
+//         }
+//     </>
+// }
+
+
 const ParametersMapping = ({ parameters, source }: IParametersMappingProps) => {
-    return <>
-        {
-            parameters?.flatMap((parameter, index, array) => {
-                return index < array.length - 1 ? [<KeyValueViewComponent source={source} {...parameter} />,
-                <Divider orientation={'vertical'} flexItem />] : [
-                    <KeyValueViewComponent {...parameter} source={source} />]
-            })
-        }
-    </>
-}
+    return (
+        <>
+            {parameters?.flatMap((parameter, index, array) => {
+                const isCurrencyUnit = isCurrency(parameter?.defaultUnit);
+                const keyValueComponent = (
+                    <KeyValueViewComponent key={`key-value-${index}`} source={source} {...parameter} />
+                );
+
+                const isLastElement = index >= array.length - 1;
+
+                if (isCurrencyUnit) {
+                    return (
+                        <PermissionCheck key={`permission-check-${index}`} userPermission={Permissions.SHOW_COSTS_IN_PRODUCTION_FLOOR}>
+                            {isLastElement
+                                ? keyValueComponent
+                                : [keyValueComponent, <Divider key={`divider-${index}`} orientation="vertical" flexItem />]
+                            }
+                        </PermissionCheck>
+                    );
+                }
+
+                return isLastElement
+                    ? keyValueComponent
+                    : [keyValueComponent, <Divider key={`divider-${index}`} orientation="vertical" flexItem />];
+            })}
+        </>
+    );
+};
+
 const KeyValueViewComponent = ({
     name,
     values,
@@ -43,15 +78,13 @@ const KeyValueViewComponent = ({
     return (
         <Stack direction={'row'} gap={'10px'} alignItems={'center'}>
             <span style={classes.detailTitle}>{name}</span>
-            {
-                curValues?.map(value => <span style={valueColor ? {
-                    ...classes.detailValue,
-                    color: valueColor
-                } : classes.detailValue}>{!!defaultUnit ? `${value} ${defaultUnit}` : value}</span>)
-            }
-
+            {curValues?.map(value => (
+                <span style={valueColor ? { ...classes.detailValue, color: valueColor } : classes.detailValue}>
+                    {!!defaultUnit ? `${value} ${defaultUnit}` : value}
+                </span>
+            ))}
         </Stack>
-    )
+    );
 }
 
 const EditableKeyValueViewComponent = ({
@@ -100,8 +133,6 @@ const EditableKeyValueViewComponent = ({
                     ...classes.detailValue,
                     color: valueColor
                 } : classes.detailValue}>{!!defaultUnit ? `${value} ${defaultUnit}` : value}</Button>}
-
-
         </Stack>
     )
 }
