@@ -169,7 +169,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   } = useCalculationsWorkFlowsSignalr();
 
   useEffect(() => {
-    if (calculationResult) {
+    if (calculationResult && widgetType != EWidgetProductType.EDIT) {
       setCalculationResult(calculationResult);
     }
   }, [calculationResult])
@@ -2451,9 +2451,11 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       const callBack = (res) => {
         if (res?.success) {
           const updatedTemplate = updateIsHidden(res?.data, subProducts)
+          console.log("updatedTemplate", updatedTemplate)
           setDefaultProductTemplate(updatedTemplate);
           initQuoteItemProduct(updatedTemplate, materials);
           setDocmentItemByEdit(res?.data.docmentItem)
+          setCalculationResult({ ...calculationResult, tabs: res?.data?.tabs });
           setProductItemValueByEdit(res?.data.productItemValue)
         } else {
           alertFaultUpdate();

@@ -11,33 +11,40 @@ import { IPricingWidgetProps } from "@/widgets/product-pricing-widget/interface"
 import { PrimaryButton } from "@/components/button/primary-button";
 import { useStyle } from "@/widgets/product-pricing-widget/style";
 import { usePricingWidget } from "./use-pricing-widget";
-import { useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilValue } from "recoil";
 import { calculationResultState } from "./state";
 import { useState } from "react";
-
+import ReadMoreIcon from '@mui/icons-material/ReadMore';
+import { FONT_FAMILY } from "@/utils/font-family";
 const PricingWidget = ({ workFlows, getOutSourcingSuppliers, widgetType }: IPricingWidgetProps) => {
   const { classes } = useStyle();
   const {
     view,
     setView,
-    reorderedTabs,
     setSelectedTab,
     setFilterWorkFlow,
     selectedTab,
     updateProductItemValue,
     setIsChangeView,
     selectedWorkFlow,
-    sortedArray,
-    filterWorkFlow,
     getWorkFlowsByTab,
     getWorkFlowsActions,
     selectedWorkFlowsByTabList,
     settledWorkFlowsByTabList,
+    setPageSize,
+    pageSize,
+    handleTabClick,
+    setHeightScrolling,
+    heightScrolling,
+    handleScroll,
+    allCountSelectedTabWorkFlow,
     t
 
   } = usePricingWidget({ workFlows, getOutSourcingSuppliers })
   const calculationResult = useRecoilValue(calculationResultState);
+  console.log("calculationResult", calculationResult)
   const [selectedWorkFlowId, setSelectedWorkFlowId] = useState("")
+
   return (
     <Stack gap={"16px"} width={"100%"}>
       <Stack direction={"row"} justifyContent={"space-between"}>
@@ -58,66 +65,26 @@ const PricingWidget = ({ workFlows, getOutSourcingSuppliers, widgetType }: IPric
             >
               {t("pricingWidget.selected")}
             </PrimaryButton>
-            {
-              calculationResult &&
-              calculationResult?.tabs?.map((section, index) => {
-                return (
-                  <PrimaryButton
-                    data-tour={'allWorkflowsBtn'}
-                    onClick={() => {
-                      setView(EPricingViews.OTHERS_WORKFLOWS)
-                      setSelectedTab(section.productType)
-                      setFilterWorkFlow(section.productType)
-                      getWorkFlowsByTab(section.productType)
-                      // getWorkFlowsActions
-                    }}
-                    sx={classes.button}
-                    variant={
-                      view === EPricingViews.OTHERS_WORKFLOWS && selectedTab === section.productType
-                        ? "contained"
-                        : "outlined"
-                    }
-                  >{section?.name}{" "}({section.count})
-
-                  </PrimaryButton>
-                )
-              })
-            }
-            {/* {reorderedTabs.map((tab, index) => {
-              return (
+            {calculationResult &&
+              calculationResult?.tabs?.map((section, index) => (
                 <PrimaryButton
-                  data-tour={'allWorkflowsBtn'}
+                  key={index}
+                  data-tour="allWorkflowsBtn"
                   onClick={() => {
-                    setView(EPricingViews.OTHERS_WORKFLOWS)
-                    setSelectedTab(tab.key)
-                    setFilterWorkFlow(tab.key)
-                    getWorkFlowsByTab(tab.key)
-                    settledWorkFlowsByTabList([])
-                  }}
+                    handleTabClick(section.productType)
+                    setSelectedTab(section)
+                  }
+                  }
                   sx={classes.button}
                   variant={
-                    view === EPricingViews.OTHERS_WORKFLOWS && selectedTab === tab.key
-                      ? "contained"
-                      : "outlined"
+                    view === EPricingViews.OTHERS_WORKFLOWS && selectedTab?.productType === section.productType
+                      ? 'contained'
+                      : 'outlined'
                   }
-                >{tab?.tabName}{" "}
-                  ({
-                    workFlows.filter(flow => {
-                      if (flow.productType !== null) {
-                        return flow.productType === tab?.key;
-                      } else {
-                        if (flow.isCompleteWorkFlow === true && flow.subWorkFlows.length === 0) {
-                          return tab?.key === "other";
-                        } else if (flow.isCompleteWorkFlow === false) {
-                          return tab?.key === "general";
-                        }
-
-                      }
-                    }).length
-                  })
+                >
+                  {section.name} ({section.count + 1})
                 </PrimaryButton>
-              )
-            })} */}
+              ))}
 
           </ButtonGroup>
         ) : (
@@ -167,7 +134,7 @@ const PricingWidget = ({ workFlows, getOutSourcingSuppliers, widgetType }: IPric
           />
         </div>
       )}
-      {workFlows && view === EPricingViews.OTHERS_WORKFLOWS && (
+      {selectedWorkFlowsByTabList?.length > 0 && view === EPricingViews.OTHERS_WORKFLOWS && (
         <div data-tour={'allWorkflowsContainer'}>
           <WorkFlowsComponent
             showSelected={() => setView(EPricingViews.SELECTED_WORKFLOW)}
@@ -176,6 +143,23 @@ const PricingWidget = ({ workFlows, getOutSourcingSuppliers, widgetType }: IPric
             selectedWorkFlowId={selectedWorkFlowId}
             setSelectedWorkFlowId={setSelectedWorkFlowId}
           />
+          {
+            pageSize < allCountSelectedTabWorkFlow &&
+            <>
+              <div style={{
+                display: 'flex',
+                flexDirection: "row",
+                justifyContent: "center",
+                alignItems: "center",
+                gap: 10,
+                ...FONT_FAMILY.Lexend(500, 14),
+                cursor: "pointer",
+                color: "#2E3092"
+              }} onClick={handleScroll}>{t("sales.quote.showMore")} <ReadMoreIcon style={{ color: "#2E3092" }} /></div>
+            </>
+          }
+
+
         </div>
       )}
       {view === EPricingViews.OUTSOURCE_WORKFLOW && <OutSourceSuppliers widgetType={widgetType} />}

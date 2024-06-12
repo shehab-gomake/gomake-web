@@ -1,6 +1,6 @@
 import { useRecoilState, useRecoilValue } from "recoil";
 import { useTranslation } from "react-i18next";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import cloneDeep from "lodash.clonedeep";
 
 import { updateProductItemValueOutsource } from "@/services/api-service/product-item-value-draft/product-item-draft-endpoints";
@@ -19,7 +19,8 @@ const usePricingWidget = ({ getOutSourcingSuppliers, workFlows }) => {
     const { t } = useTranslation();
     const selectedWorkFlow = useRecoilValue(selectedWorkFlowState);
     const productItemValueByEdit = useRecoilValue<any>(productItemValueByEditState)
-  
+    const [pageSize,setPageSize]=useState(10)
+    const [heightScrolling, setHeightScrolling] = useState(50)
     const [isChangeView, setIsChangeView] = useState(true)
   
     useEffect(() => {
@@ -86,7 +87,9 @@ const usePricingWidget = ({ getOutSourcingSuppliers, workFlows }) => {
       ...(tabs.find(tab => tab.key === "general") ? [tabs.find(tab => tab.key === "general")] : []), // "Flows Pending" tab if exists
       ...tabs.filter(tab => tab.key !== "general") // Other tabs
     ];
-    const [selectedTab, setSelectedTab] = useState("")
+    const [selectedTab, setSelectedTab] = useState<any>()
+    const allCountSelectedTabWorkFlow=selectedTab?.count+1
+
     const [filterWorkFlow, setFilterWorkFlow] = useState<any>()
   
     const sortedArray = workFlows.slice().sort((a, b) => {
@@ -124,16 +127,52 @@ const usePricingWidget = ({ getOutSourcingSuppliers, workFlows }) => {
       setTabs(newTabs);
     }, [workFlows]);
     const [selectedWorkFlowsByTabList,settledWorkFlowsByTabList] =useState([])
-    const getWorkFlowsByTab = async (productType) => {
+
+    const fetchWorkflows = async (productType, newPageSize) => {
       const callBack = (res) => {
-          if (res?.success) {
-             settledWorkFlowsByTabList(res?.data)
-          } else {
-              // alertFaultUpdate();
-          }
+        if (res?.success) {
+          settledWorkFlowsByTabList(res?.data);
+        } else {
+          console.error('Failed to fetch workflows');
+        }
+      };
+      await getWorkFlowsApi(callApi, callBack, {
+        signalRConnectionId: connectionId,
+        pageSize: newPageSize,
+        productType: productType,
+      });
+    };
+    const handleTabClick = (productType) => {
+      setView(EPricingViews.OTHERS_WORKFLOWS);
+      setSelectedTab(productType?.name);
+      setPageSize(10); 
+      setHeightScrolling(50)
+      settledWorkFlowsByTabList([]);
+      fetchWorkflows(productType, 10); 
+    };
+  
+    useEffect(() => {
+        fetchWorkflows(selectedTab?.productType, pageSize);
+    }, [pageSize, selectedTab]);
+
+    const handleScroll = () => {
+        setPageSize((prevPageSize) => prevPageSize + 10);
       }
-      await getWorkFlowsApi(callApi, callBack, { signalRConnectionId:connectionId,pageSize: 10,productType:productType})
-  }
+
+  const getWorkFlowsByTab = async productType => {
+    const callBack = res => {
+      if (res?.success) {
+        settledWorkFlowsByTabList(res.data);
+      } else {
+        // alertFaultUpdate();
+      }
+    };
+    await getWorkFlowsApi(callApi, callBack, {
+      signalRConnectionId: connectionId,
+      pageSize: pageSize,
+      productType: productType
+    });
+  };
 
   const getWorkFlowsActions = async (workFlowId) => {
     setActionList([])
@@ -147,6 +186,7 @@ const usePricingWidget = ({ getOutSourcingSuppliers, workFlows }) => {
     }
     await getWorkFlowsActionsApi(callApi, callBack, { signalRConnectionId:connectionId,workFlowId})
 }
+
   
   
     return {
@@ -165,6 +205,13 @@ const usePricingWidget = ({ getOutSourcingSuppliers, workFlows }) => {
         getWorkFlowsActions,
         selectedWorkFlowsByTabList,
         settledWorkFlowsByTabList,
+        setPageSize,
+        pageSize,
+        handleTabClick,
+        setHeightScrolling,
+        heightScrolling,
+        handleScroll,
+        allCountSelectedTabWorkFlow,
         t
     }
 }
