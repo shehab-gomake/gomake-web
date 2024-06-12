@@ -2570,8 +2570,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             subProducts: calculationSubProducts,
             itemParmetersValues: itemParmetersValues,
             workTypes: workTypes,
-            isChargeForNewDie: isChargeForNewDie,
-            appendWorkFlowsQueueName: "appendWorkFlowsDevQueueTest"
+            isChargeForNewDie: isChargeForNewDie
           },
           false,
           newRequestAbortController
