@@ -9,7 +9,6 @@ const UseDocumentDesign = () => {
     const { callApi } = useGomakeAxios();
     const { t } = useTranslation();
     const { alertFaultUpdate, alertSuccessUpdate } = useSnackBar();
-
     const [documentDesign, setDocumentDesign] = useRecoilState(documentDesignState);
     const resetDocumentDesign = useResetRecoilState(documentDesignState);
     const setDocumentTypes = useSetRecoilState(documentTypeState);
@@ -39,7 +38,6 @@ const UseDocumentDesign = () => {
                 setDocumentDesign(res.data);
                 setDocumentDesignURL(res.data.previewUrl);
             }
-
         }
         await getDocumentDesignByCreationDocApi(callApi, callBack, { docType: documentCreationDocType, agentId: documentCreationAgentId })
     }
@@ -52,8 +50,6 @@ const UseDocumentDesign = () => {
             } else {
                 alertFaultUpdate();
             }
-
-
         }
         await AddOrUpdateDocumentDesignDocApi(callApi, callBack, documentDesign)
 

@@ -15,10 +15,7 @@ const DocumentDesign = () => {
     const { classes } = useStyle();
     const { t } = useTranslation();
     const dir: "rtl" | "ltr" = t("direction");
-    const { AddOrUpdateDocumentDesign, ResetDocumentDesign, getDocumentTypes, documentDesign, documentDesignChange, getDocumentDesignByCreationDoc,handleChangeComments } = UseDocumentDesign();
-
-    const dir: "rtl" | "ltr" = t("direction");
-    const { AddOrUpdateDocumentDesign, ResetDocumentDesign, getDocumentTypes, documentDesign, documentDesignChange, getDocumentDesignByCreationDoc } = UseDocumentDesign();
+    const { AddOrUpdateDocumentDesign, ResetDocumentDesign, getDocumentTypes, documentDesign, documentDesignChange, getDocumentDesignByCreationDoc , handleChangeComments} = UseDocumentDesign();
     const addDocumentDesign = async () => {
         await AddOrUpdateDocumentDesign(documentDesign);
     };
@@ -42,17 +39,17 @@ const DocumentDesign = () => {
    
     const DocumentDesignSection1: { inputs: any[], title: string }[] = [
         { inputs: creationDocumentInputs(documentDesign), title: 'documentingDesign.documnetCreation.documentinCreation' },
-        { inputs: TitleDefinitionInputs(documentDesign), title: 'documentingDesign.TitleDefinition.TitleDefinition' },
+        // { inputs: TitleDefinitionInputs(documentDesign), title: 'documentingDesign.TitleDefinition.TitleDefinition' },
         { inputs: TitleDefinitionCustomLogoInputs(documentDesign), title: 'Logo' },
         { inputs: TableSettingInputs(documentDesign), title: 'documentingDesign.TableSetting.TableSetting' },
         { inputs: TableSettingInputs2(documentDesign), title: '' },
     ];
+
     const DocumentDesignSection2: { inputs: any[], title: string }[] = [
         { inputs: AdditionalOptionsInputs(documentDesign), title: 'documentingDesign.Additional.Options' },
         { inputs: AdditionalOptionsInputs2(documentDesign), title: '' },
         { inputs: FooterInputs1(documentDesign), title: 'documentingDesign.Footer.Footer' },
         { inputs: FooterInputs2(documentDesign), title: '' },
-
     ];
 
     return (
