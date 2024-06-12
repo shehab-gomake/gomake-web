@@ -4,15 +4,17 @@ import { useEffect, useState } from "react";
 import cloneDeep from "lodash.clonedeep";
 
 import { updateProductItemValueOutsource } from "@/services/api-service/product-item-value-draft/product-item-draft-endpoints";
-import { currentCalculationConnectionId, productItemValueByEditState, viewPricingTab } from "@/store";
+import { actionListForWorkFlow, currentCalculationConnectionId, productItemValueByEditState, viewPricingTab } from "@/store";
 import { useGomakeAxios } from "@/hooks";
 
 import { currentProductItemValueDraftId, currentProductItemValueState, selectedWorkFlowState } from "./state";
 import { EPricingViews } from "./enums";
+import { getWorkFlowsActionsApi, getWorkFlowsApi } from "@/services/api-service/generic-doc/quote-confirmation-api";
 
 const usePricingWidget = ({ getOutSourcingSuppliers, workFlows }) => {
 
     const [view, setView] = useRecoilState<EPricingViews>(viewPricingTab);
+    const [actionList,setActionList] = useRecoilState(actionListForWorkFlow)
     const { callApi } = useGomakeAxios();
     const { t } = useTranslation();
     const selectedWorkFlow = useRecoilValue(selectedWorkFlowState);
@@ -40,6 +42,7 @@ const usePricingWidget = ({ getOutSourcingSuppliers, workFlows }) => {
     }, [selectedWorkFlow?.actions]);
     const [currentProductItemValue, setCurrentProductItemValue] = useRecoilState<any>(currentProductItemValueState);
     const productItemValueDraftId = useRecoilValue<string>(currentProductItemValueDraftId);
+
     const [tabs, setTabs] = useState([]);
     const connectionId = useRecoilValue(currentCalculationConnectionId);
     const updateProductItemValue = async (sourceType: number) => {
@@ -120,6 +123,36 @@ const usePricingWidget = ({ getOutSourcingSuppliers, workFlows }) => {
   
       setTabs(newTabs);
     }, [workFlows]);
+    const [selectedWorkFlowsByTabList,settledWorkFlowsByTabList] =useState([])
+    const getWorkFlowsByTab = async (productType) => {
+      console.log("productType",productType)
+      const callBack = (res) => {
+          if (res?.success) {
+             console.log("resssssss", res);
+             settledWorkFlowsByTabList(res?.data)
+          } else {
+              // alertFaultUpdate();
+          }
+      }
+      console.log("object:",{
+        signalRConnectionId:connectionId,pageSize: 30,productType:productType
+      })
+      await getWorkFlowsApi(callApi, callBack, { signalRConnectionId:connectionId,pageSize: 10,productType:productType})
+  }
+
+  const getWorkFlowsActions = async (workFlowId) => {
+    setActionList([])
+    const callBack = (res) => {
+        if (res?.success) {
+           setActionList(res?.data)
+          
+        } else {
+            // alertFaultUpdate();
+        }
+    }
+    await getWorkFlowsActionsApi(callApi, callBack, { signalRConnectionId:connectionId,workFlowId})
+}
+  
   
     return {
         view,
@@ -133,6 +166,10 @@ const usePricingWidget = ({ getOutSourcingSuppliers, workFlows }) => {
         selectedWorkFlow,
         sortedArray,
         filterWorkFlow,
+        getWorkFlowsByTab,
+        getWorkFlowsActions,
+        selectedWorkFlowsByTabList,
+        settledWorkFlowsByTabList,
         t
     }
 }

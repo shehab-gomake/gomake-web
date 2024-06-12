@@ -35,6 +35,7 @@ import { ButtonParameterWidget } from "@/pages-components/products/digital-offse
 import {
   calculationExceptionsLogsState,
   calculationProgressState,
+  calculationResultState,
   currentProductItemValueDraftId,
   currentProductItemValuePriceState,
   currentProductItemValueState, currentProductItemValueTotalWorkFlowsState,
@@ -140,6 +141,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [quantityTypes, setQuantityTypes] = useRecoilState(productQuantityTypesValuesState);
 
   const [calculationProgress, setCalculationProgress] = useRecoilState(calculationProgressState);
+  const setCalculationResult = useSetRecoilState(calculationResultState);
+
   const jobDetails = useRecoilValue(jobDetailsState);
   const [jobActions, setJobActions] = useRecoilState(jobActionsState);
   const setOutSuppliers = useSetRecoilState(outsourceSuppliersState);
@@ -164,6 +167,12 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     isCalculationFinished,
     setIsCalculationFinished
   } = useCalculationsWorkFlowsSignalr();
+
+  useEffect(() => {
+    if (calculationResult) {
+      setCalculationResult(calculationResult);
+    }
+  }, [calculationResult])
 
   useEffect(() => {
     if (calculationServerError) {
@@ -2560,6 +2569,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             itemParmetersValues: itemParmetersValues,
             workTypes: workTypes,
             isChargeForNewDie: isChargeForNewDie,
+            appendWorkFlowsQueueName: "appendWorkFlowsDevQueueTest"
           },
           false,
           newRequestAbortController

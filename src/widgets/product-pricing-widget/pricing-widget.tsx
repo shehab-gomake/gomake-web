@@ -11,6 +11,9 @@ import { IPricingWidgetProps } from "@/widgets/product-pricing-widget/interface"
 import { PrimaryButton } from "@/components/button/primary-button";
 import { useStyle } from "@/widgets/product-pricing-widget/style";
 import { usePricingWidget } from "./use-pricing-widget";
+import { useRecoilValue, useSetRecoilState } from "recoil";
+import { calculationResultState } from "./state";
+import { useState } from "react";
 
 const PricingWidget = ({ workFlows, getOutSourcingSuppliers, widgetType }: IPricingWidgetProps) => {
   const { classes } = useStyle();
@@ -26,35 +29,25 @@ const PricingWidget = ({ workFlows, getOutSourcingSuppliers, widgetType }: IPric
     selectedWorkFlow,
     sortedArray,
     filterWorkFlow,
+    getWorkFlowsByTab,
+    getWorkFlowsActions,
+    selectedWorkFlowsByTabList,
+    settledWorkFlowsByTabList,
     t
 
   } = usePricingWidget({ workFlows, getOutSourcingSuppliers })
-  const sections = [
-    {
-      sectionName: "Pending Flows",
-      productType: null,
-      sumOfWorkFlow: 22
-    },
-    {
-      sectionName: "Cover",
-      productType: "Cover",
-      sumOfWorkFlow: 8
-    },
-    {
-      sectionName: "Internal Pages",
-      productType: "InternalPages",
-      sumOfWorkFlow: 18
-    }
-  ]
-
-
+  const calculationResult = useRecoilValue(calculationResultState);
+  const [selectedWorkFlowId, setSelectedWorkFlowId] = useState("")
   return (
     <Stack gap={"16px"} width={"100%"}>
       <Stack direction={"row"} justifyContent={"space-between"}>
         {!!workFlows && view !== EPricingViews.OUTSOURCE_WORKFLOW ? (
           <ButtonGroup sx={classes.buttonGroup} orientation={"horizontal"}>
             <PrimaryButton
-              onClick={() => setView(EPricingViews.SELECTED_WORKFLOW)}
+              onClick={() => {
+                setView(EPricingViews.SELECTED_WORKFLOW)
+                settledWorkFlowsByTabList([])
+              }}
               sx={classes.button}
               variant={
                 view === EPricingViews.SELECTED_WORKFLOW
@@ -66,7 +59,8 @@ const PricingWidget = ({ workFlows, getOutSourcingSuppliers, widgetType }: IPric
               {t("pricingWidget.selected")}
             </PrimaryButton>
             {
-              sections?.map((section, index) => {
+              calculationResult &&
+              calculationResult?.tabs?.map((section, index) => {
                 return (
                   <PrimaryButton
                     data-tour={'allWorkflowsBtn'}
@@ -74,6 +68,8 @@ const PricingWidget = ({ workFlows, getOutSourcingSuppliers, widgetType }: IPric
                       setView(EPricingViews.OTHERS_WORKFLOWS)
                       setSelectedTab(section.productType)
                       setFilterWorkFlow(section.productType)
+                      getWorkFlowsByTab(section.productType)
+                      // getWorkFlowsActions
                     }}
                     sx={classes.button}
                     variant={
@@ -81,7 +77,7 @@ const PricingWidget = ({ workFlows, getOutSourcingSuppliers, widgetType }: IPric
                         ? "contained"
                         : "outlined"
                     }
-                  >{section?.sectionName}{" "}({section.sumOfWorkFlow})
+                  >{section?.name}{" "}({section.count})
 
                   </PrimaryButton>
                 )
@@ -95,6 +91,8 @@ const PricingWidget = ({ workFlows, getOutSourcingSuppliers, widgetType }: IPric
                     setView(EPricingViews.OTHERS_WORKFLOWS)
                     setSelectedTab(tab.key)
                     setFilterWorkFlow(tab.key)
+                    getWorkFlowsByTab(tab.key)
+                    settledWorkFlowsByTabList([])
                   }}
                   sx={classes.button}
                   variant={
@@ -173,18 +171,10 @@ const PricingWidget = ({ workFlows, getOutSourcingSuppliers, widgetType }: IPric
         <div data-tour={'allWorkflowsContainer'}>
           <WorkFlowsComponent
             showSelected={() => setView(EPricingViews.SELECTED_WORKFLOW)}
-            workflows={sortedArray.filter(flow => {
-              if (flow.productType !== null) {
-                return flow.productType === filterWorkFlow;
-              } else {
-                if (flow.isCompleteWorkFlow === true) {
-                  return filterWorkFlow === "other";
-                } else {
-                  return filterWorkFlow === "general";
-                }
-
-              }
-            })}
+            workflows={selectedWorkFlowsByTabList}
+            getWorkFlowsActions={getWorkFlowsActions}
+            selectedWorkFlowId={selectedWorkFlowId}
+            setSelectedWorkFlowId={setSelectedWorkFlowId}
           />
         </div>
       )}

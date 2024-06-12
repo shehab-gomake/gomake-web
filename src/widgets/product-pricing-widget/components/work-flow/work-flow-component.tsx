@@ -16,16 +16,26 @@ import { useWorkFlows } from "@/widgets/product-pricing-widget/use-work-flows";
 import { WorkflowRateComponent } from "@/widgets/product-pricing-widget/components/work-flow/workflow-rate-component";
 import { useTranslation } from "react-i18next";
 import { SubWorkFlowsComponent } from "@/widgets/product-pricing-widget/components/work-flow/sub-work-flow-component";
+import { useRecoilState } from "recoil";
+import { actionListForWorkFlow } from "@/store";
 
 interface IWorkFlowComponentProps extends ICalculatedWorkFlow {
     delay: number;
     index: number;
     showSelected: () => void;
+    getWorkFlowsActions?: any
+    selectedWorkFlowId?: any
+    setSelectedWorkFlowId?: any
+    isOpen?: boolean;
+    toggleOpen?: (id: string) => void;
 }
 
 interface IWorksFlowsProps {
     workflows: ICalculatedWorkFlow[];
     showSelected: () => void;
+    getWorkFlowsActions?: any
+    selectedWorkFlowId?: any,
+    setSelectedWorkFlowId?: any
 }
 
 const WorkFlowComponent = ({
@@ -40,14 +50,19 @@ const WorkFlowComponent = ({
     totalCost,
     profit,
     recommendationRang,
-    subWorkFlows
+    subWorkFlows,
+    getWorkFlowsActions,
+    selectedWorkFlowId,
+    setSelectedWorkFlowId,
+    isOpen,
+    toggleOpen
 }: IWorkFlowComponentProps) => {
     const { t } = useTranslation();
-    const [isOpen, setIsOpen] = useState<boolean>(false);
+    // const [isOpen, setIsOpen] = useState<boolean>(false);
     const { secondColor } = useGomakeTheme();
     const { classes } = useStyle();
     const { selectWorkFlow } = useWorkFlows();
-
+    const [actionList, setActionList] = useRecoilState(actionListForWorkFlow)
     const handleSelectWorkFlow = (e) => {
         e.stopPropagation();
         if (!selected) {
@@ -65,10 +80,16 @@ const WorkFlowComponent = ({
         },
     ]
 
+
+    console.log("ididid", {
+        id, selectedWorkFlowId,
+        isEqual: selectedWorkFlowId === id,
+        isOpen
+    })
     return (
         <>
             <Fade in={true} timeout={delay}>
-                <Stack onClick={() => setIsOpen(!isOpen)} alignItems={"center"} direction={"row"}
+                <Stack alignItems={"center"} direction={"row"}
                     justifyContent={'space-between'} style={{
                         ...classes.workFlowContainer,
                         border: selected ? classes.actionContainerBorder : 'unset'
@@ -87,19 +108,24 @@ const WorkFlowComponent = ({
                     <Stack direction={'row'} gap={'12px'} flexWrap={'nowrap'} minWidth={'fit-content'}>
                         <PrimaryButton onClick={handleSelectWorkFlow}
                             variant={selected ? 'text' : 'contained'}>{selected ? t('pricingWidget.selected') : t('pricingWidget.chooseWorkFlow')}</PrimaryButton>
-                        <IconButton onClick={() => setIsOpen(!isOpen)} style={classes.toggleActionButton}>
+                        <IconButton onClick={(e) => {
+                            e.stopPropagation();
+                            toggleOpen(id);
+                            getWorkFlowsActions(id)
+                            setSelectedWorkFlowId(id)
+                        }} style={classes.toggleActionButton}>
                             {isOpen ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
                         </IconButton>
                     </Stack>
                 </Stack>
             </Fade>
-            <Collapse in={isOpen} collapsedSize={0} orientation={'vertical'}>
+            <Collapse in={isOpen && selectedWorkFlowId === id} collapsedSize={0} orientation={'vertical'}>
                 <Stack padding={'10px 0'} gap={'10px'} paddingLeft={'30px'}>
                     {
                         <SubWorkFlowsComponent isEditableActions={false} workflows={subWorkFlows || []} />
                     }
                     {
-                        actions.map(action => <ActionComponent {...action} />)
+                        actionList.map(action => <ActionComponent {...action} />)
                     }
                 </Stack>
             </Collapse>
@@ -107,10 +133,18 @@ const WorkFlowComponent = ({
     )
 };
 
-const WorkFlowsComponent = ({ workflows, showSelected }: IWorksFlowsProps) => {
+const WorkFlowsComponent = ({ workflows, showSelected, getWorkFlowsActions, selectedWorkFlowId, setSelectedWorkFlowId }: IWorksFlowsProps) => {
+    const [openWorkFlowId, setOpenWorkFlowId] = useState<string | null>(null);
+    const toggleOpen = (id: string) => {
+        setOpenWorkFlowId(prevId => (prevId === id ? null : id));
+    };
     const totalPageDelay = 1000 * 5;
     const elementDelay = totalPageDelay / workflows.length;
-    return <Stack gap={'10px'}>{workflows.map((flow, index) => <WorkFlowComponent showSelected={showSelected}
+    return <Stack gap={'10px'}>{workflows.map((flow, index) => <WorkFlowComponent getWorkFlowsActions={getWorkFlowsActions} showSelected={showSelected}
+        isOpen={openWorkFlowId === flow.id}
+        toggleOpen={toggleOpen}
+        selectedWorkFlowId={selectedWorkFlowId}
+        setSelectedWorkFlowId={setSelectedWorkFlowId}
         delay={index * elementDelay}
         index={index + 1} {...flow} />)}</Stack>
 }
