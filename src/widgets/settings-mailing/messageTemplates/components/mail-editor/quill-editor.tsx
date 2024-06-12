@@ -174,7 +174,6 @@ const QuillEditor = ({ headerEditor }: IProps) => {
             matchVisual: false,
         },
     };
-    console.log("FFFFF", body)
     return (
         <div dir={dir} className='editorDiv' style={{ width: "100%" }}>
             <Suspense>

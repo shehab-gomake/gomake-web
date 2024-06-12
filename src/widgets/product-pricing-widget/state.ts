@@ -15,6 +15,11 @@ export const calculationProgressState = atom<ICalculationProgress>({
   key: "calculationProgressState",
   default: { totalWorkFlowsCount: 0, currentWorkFlowsCount: 0 },
 });
+
+export const calculationResultState = atom<any>({
+  key: "calculationResultState",
+  default: {},
+});
 export const selectedWorkFlowState = selector<ICalculatedWorkFlow>({
   key: "selectedWorkFlowState",
   get: ({ get }) => {
