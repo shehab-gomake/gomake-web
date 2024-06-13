@@ -2451,7 +2451,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       const callBack = (res) => {
         if (res?.success) {
           const updatedTemplate = updateIsHidden(res?.data, subProducts)
-          console.log("updatedTemplate", updatedTemplate)
           setDefaultProductTemplate(updatedTemplate);
           initQuoteItemProduct(updatedTemplate, materials);
           setDocmentItemByEdit(res?.data.docmentItem)
