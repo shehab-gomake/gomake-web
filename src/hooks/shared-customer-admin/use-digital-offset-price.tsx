@@ -806,7 +806,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                           valuesConfigs: childParam?.valuesConfigs,
                           unitKey: childParam?.unitKey,
                           unitType: childParam?.unitType,
-                          isDisabled: sizeParameter?.values[0] === "custom" ? false : childParam?.defaultValue != null ? true : false,
+                          isDisabled: sizeParameter?.values[0] === "custom" ? false : true,
                         });
                       });
                     }
