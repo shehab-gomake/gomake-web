@@ -33,7 +33,7 @@ const AdditionsAndExceptionsMapping = ({
             {t("products.profits.exceptions.value")}
           </div>
           <div style={clasess.valueStyle}>
-            {item?.profitValue} {ProfitCurrency}
+            {item?.profitValue} %
           </div>
         </div>
         <div

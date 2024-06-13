@@ -308,7 +308,7 @@ const useNewProfits = () => {
             ? ` ${ProfitCurrency}`
             : ""),
           t("products.profits.pricingListWidget.profit"),
-          `Profit value ${ProfitCurrency}`,
+          `Profit value %`,
           unitPriceLabel,
           `${totalPriceLabel} ${ProfitCurrency}`,
           t("products.profits.pricingListWidget.more"),
@@ -331,7 +331,7 @@ const useNewProfits = () => {
             ? ` ${ProfitCurrency}`
             : ""),
           t("products.profits.pricingListWidget.profit"),
-          `Profit value ${ProfitCurrency}`,
+          `Profit value %`,
           `${totalPriceLabel} ${ProfitCurrency}`,
           t("products.profits.pricingListWidget.more"),
         ]);
@@ -353,7 +353,7 @@ const useNewProfits = () => {
             ? ` ${ProfitCurrency}`
             : ""),
           unitPriceLabel,
-          `Profit value ${ProfitCurrency}`,
+          `Profit value %`,
           `${totalPriceLabel} ${ProfitCurrency}`,
           t("products.profits.pricingListWidget.more"),
         ]);
