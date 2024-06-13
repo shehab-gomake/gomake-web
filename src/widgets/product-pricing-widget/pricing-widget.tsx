@@ -22,27 +22,21 @@ const PricingWidget = ({ workFlows, getOutSourcingSuppliers, widgetType }: IPric
     view,
     setView,
     setSelectedTab,
-    setFilterWorkFlow,
     selectedTab,
     updateProductItemValue,
     setIsChangeView,
     selectedWorkFlow,
-    getWorkFlowsByTab,
     getWorkFlowsActions,
     selectedWorkFlowsByTabList,
     settledWorkFlowsByTabList,
-    setPageSize,
     pageSize,
     handleTabClick,
-    setHeightScrolling,
-    heightScrolling,
     handleScroll,
     allCountSelectedTabWorkFlow,
     t
 
   } = usePricingWidget({ workFlows, getOutSourcingSuppliers })
   const calculationResult = useRecoilValue(calculationResultState);
-  console.log("calculationResult", calculationResult)
   const [selectedWorkFlowId, setSelectedWorkFlowId] = useState("")
 
   return (
