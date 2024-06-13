@@ -42,65 +42,79 @@ const ButtonParameterWidget = ({
 
   }, [isStraightKnifeInSubProducts])
   const deleteStraightKnifeParameter = () => {
-      if(straightKnife){
-          const updatedSubProducts = subProducts.map((subProduct) => {
-              const updatedParameters = subProduct.parameters.filter(
-                  (parameter) => parameter.parameterId !== straightKnife.id
-              );
+    if (straightKnife) {
+      const updatedSubProducts = subProducts.map((subProduct) => {
+        const updatedParameters = subProduct.parameters.filter(
+          (parameter) => parameter.parameterId !== straightKnife.id
+        );
 
-              return {
-                  ...subProduct,
-                  parameters: updatedParameters,
-              };
-          });
+        return {
+          ...subProduct,
+          parameters: updatedParameters,
+        };
+      });
 
-          setProducts(updatedSubProducts);
-        
-      }
-      setIsStraightKnife(false)
+      setProducts(updatedSubProducts);
+
+    }
+    setIsStraightKnife(false)
   };
   const removeParameterFromSubProducts = () => {
     if (isSelectedShape) {
-        let subProductsCopy = lodashClonedeep(subProducts);
-        subProductsCopy = subProductsCopy.map((subProduct) => {
+      let subProductsCopy = lodashClonedeep(subProducts);
+      subProductsCopy = subProductsCopy.map((subProduct) => {
+        if (subProduct.type === subSection.type) {
+          const updatedParameters = subProduct.parameters.filter(
+            (param) =>
+              !(
+                param.parameterId === isSelectedShape.parameterId &&
+                param.actionIndex === isSelectedShape.actionIndex
+              )
+          );
+          return { ...subProduct, parameters: updatedParameters };
+        }
+        return subProduct;
+      });
+
+      if (parameter.code == "DieCut") {
+        const dieCutSizesParametersArray = [
+          { parameterCode: "size", value: "" },
+          { parameterCode: "Width", value: "" },
+          { parameterCode: "Height", value: "" },
+          { parameterCode: "DieUnitWidth", value: "" },
+          { parameterCode: "DieUnitLength", value: "" },
+          { parameterCode: "DieUnitHeight", value: "" },
+        ];
+        dieCutSizesParametersArray.forEach((dieCutSizesParameter) => {
+          subProductsCopy = subProductsCopy.map((subProduct) => {
             if (subProduct.type === subSection.type) {
-                const updatedParameters = subProduct.parameters.filter(
-                    (param) =>
-                        !(
-                            param.parameterId === isSelectedShape.parameterId &&
-                            param.actionIndex === isSelectedShape.actionIndex
-                        )
-                );
-                return { ...subProduct, parameters: updatedParameters };
+              const updatedParameters = subProduct.parameters.filter(
+                (param) =>
+                  !(
+                    param.parameterCode === dieCutSizesParameter.parameterCode &&
+                    param.actionIndex === isSelectedShape.actionIndex
+                  )
+              );
+              return { ...subProduct, parameters: updatedParameters };
             }
             return subProduct;
+          });
         });
-        if(parameter.code == "DieCut"){
-            const dieCutSizesParametersArray = [];
-            dieCutSizesParametersArray.push({parameterCode:"size",value:""});
-            dieCutSizesParametersArray.push({parameterCode:"Width",value:""});
-            dieCutSizesParametersArray.push({parameterCode:"Height",value:""});
-            dieCutSizesParametersArray.push({parameterCode:"DieUnitWidth",value:""});
-            dieCutSizesParametersArray.push({parameterCode:"DieUnitLength",value:""});
-            dieCutSizesParametersArray.push({parameterCode:"DieUnitHeight",value:""});
-            dieCutSizesParametersArray.forEach(dieCutSizesParameter=>{
-                subProductsCopy = subProductsCopy.map((subProduct) => {
-                    if (subProduct.type === subSection.type) {
-                        const updatedParameters = subProduct.parameters.filter(
-                            (param) =>
-                                !(
-                                    param.parameterCode === dieCutSizesParameter.parameterCode &&
-                                    param.actionIndex === isSelectedShape.actionIndex
-                                )
-                        );
-                        return { ...subProduct, parameters: updatedParameters };
-                    }
-                    return subProduct;
-                });
-            })
-            
+      }
+
+      // Add the code to remove parameters with parameterCode "Width" or "Height"
+      subProductsCopy = subProductsCopy.map((subProduct) => {
+        if (subProduct.type === subSection.type) {
+          const updatedParameters = subProduct.parameters.filter(
+            (param) =>
+              !(param.parameterCode === "Width" || param.parameterCode === "Height")
+          );
+          return { ...subProduct, parameters: updatedParameters };
         }
-        setProducts(subProductsCopy);
+        return subProduct;
+      });
+
+      setProducts(subProductsCopy);
       setSelectedShape(null);
       setIsSelectedShape(null);
     }
