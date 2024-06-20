@@ -19,6 +19,7 @@ import {
   duplicateDocumentApi,
   getAllDocumentLogsApi,
   getAllDocumentsApi,
+  getDocumentApi,
   getDocumentPdfApi,
   updateDocumentApi,
 } from "@/services/api-service/generic-doc/documents-api";
@@ -290,6 +291,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
                 onClickOpenDeliveryTimeModal={onClickOpenDeliveryTimeModal}
                 onClickOpenPriceModal={onClickOpenPriceModal}
                 CloseDocument={CloseDocument}
+                onClickSendPayment={onClickSendPayment}
 
               />,
             ];
@@ -1346,7 +1348,6 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     });
   };
 
-
   const [showCustomerModal, setShowCustomerModal] = useState(false);
   const [customerForEdit, setCustomerForEdit] = useState([]);
   const onClickOpenCustomerModal = (customerId: any) => {
@@ -1385,9 +1386,8 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     };
     await getAndSetCustomerById(callApi, callBack, { customerId: customerId });
   };
-  const [clientTypesCategories, setClientTypesCategories] = useRecoilState(
-    clientTypesCategoriesState
-  );
+
+  const setClientTypesCategories = useSetRecoilState(clientTypesCategoriesState);
   const getClientTypesCategories = async () => {
     const callBack = (res) => {
       if (res) {
@@ -1400,9 +1400,33 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     };
     await getAndSetClientTypes(callApi, callBack, { cardType: CLIENT_TYPE_Id.CUSTOMER });
   };
+
   useEffect(() => {
     getClientTypesCategories()
-  }, [])
+  }, []);
+
+
+  ///////////////////////// SEND PAYMENT //////////////////////////
+  const [openPaymentModal, setOpenPaymentModal] = useState(false);
+  const [paymentModalTitle, setPaymentModalTitle] = useState("");
+
+  const [stateTest, setStateTest] = useState<any>();
+
+  const onClickClosePaymentModal = () => {
+    setOpenPaymentModal(false);
+  };
+
+  const onClickSendPayment = async (document: any) => {
+    try {
+    //  await getDocumentApi(callApi, setStateTest, { documentType: docType, Id: document?.id })
+    console.log("document is : ", document)
+      setPaymentModalTitle(`${t("prePayment.paymentPageFor")} ${t(`sales.quote.${DOCUMENT_TYPE[docType]}`).toLowerCase()} ${t("sales.quote.number")} - ${document?.number}`)
+      setOpenPaymentModal(true);
+    } catch (error) {
+      console.error("Error fetching payment :", error);
+    }
+  };
+
   return {
     showCustomerModal,
     customerForEdit,
@@ -1495,7 +1519,11 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     filterData,
     openCloseOrderNotesModal,
     onClickCloseCloseOrderNotesModal,
-    selectedQuoteItemValue
+    selectedQuoteItemValue,
+
+    paymentModalTitle,
+    openPaymentModal,
+    onClickClosePaymentModal
   };
 };
 

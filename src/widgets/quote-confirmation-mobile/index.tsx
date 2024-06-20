@@ -6,16 +6,20 @@ import { TotalPriceAndVatContainer } from './components/total-price-and-vat';
 import { InfoContainer } from './components/info-container';
 import { QuoteItems } from './components/quote-items';
 
-const QuoteConfirmationMobileWidget = ({ isMobile }) => {
+const QuoteConfirmationMobileWidget = ({ isMobile, isPrePaymentPage }) => {
   const { classes } = useStyle()
 
   return (
     <div style={classes.mainContainer}>
-      <InfoContainer />
-      <QuoteItems />
+      <InfoContainer isPrePaymentPage={isPrePaymentPage} />
+      <QuoteItems isPrePaymentPage={isPrePaymentPage} />
       <TotalPriceAndVatContainer />
-      <TextAreasContainer />
-      <ButtonsConfirmContainer isMobile={isMobile} />
+      {!isPrePaymentPage && <>
+        <TextAreasContainer />
+        <ButtonsConfirmContainer isMobile={isMobile} />
+      </>
+      }
+      {isPrePaymentPage && <div style={classes.titleStyle}>{"Payment"}</div>}
     </div>
   );
 };

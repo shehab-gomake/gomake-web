@@ -38,6 +38,7 @@ import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 import { isValidCustomer } from "@/utils/helpers";
 import { useRouter } from "next/router";
 import { CloseOrderNotesModal } from "../products/profits-new/widgets/close-order-notes-modal";
+import { SendPaymentModal } from "./widgets/send-payment-modal/send-payment-modal";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -135,7 +136,10 @@ const QuotesListPageWidget = ({
     isCanceledState,
     openCloseOrderNotesModal,
     onClickCloseCloseOrderNotesModal,
-    selectedQuoteItemValue
+    selectedQuoteItemValue,
+    paymentModalTitle,
+    openPaymentModal,
+    onClickClosePaymentModal
   } = useQuotes(documentType);
   const router = useRouter()
   useEffect(() => {
@@ -481,7 +485,11 @@ const QuotesListPageWidget = ({
         onClose={onClickCloseCloseOrderNotesModal}
         openModal={openCloseOrderNotesModal}
         quoteItemValue={selectedQuoteItemValue}
-
+      />
+      <SendPaymentModal
+      openPaymentModal={openPaymentModal}
+      onClickClosePaymentModal={onClickClosePaymentModal}
+      paymentModalTitle={paymentModalTitle}
       />
     </>
   );

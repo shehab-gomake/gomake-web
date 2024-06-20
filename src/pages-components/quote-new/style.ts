@@ -79,6 +79,10 @@ const useStyle = (isQuoteConfirmation) => {
         borderBottom: `1px solid ${grayColor(200)}`,
         marginBottom: 14,
       },
+      firstBorder: {
+        width: "100%",
+        borderBottom: `1px solid ${grayColor(200)}`,
+      },
       lineDateStyle: {
         display: "flex",
         justifyContent: "center",

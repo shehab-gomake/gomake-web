@@ -6,7 +6,11 @@ import { QuoteNewPageWidget } from "../quote-new/quote";
 import { QuoteConfirmationMobileWidget } from "@/widgets/quote-confirmation-mobile";
 import { useQuoteConfirmation } from "./use-quote-confirmation";
 
-const QuoteConfirmationPageWidget = () => {
+interface IProps {
+  isPrePaymentPage?: boolean;
+}
+
+const QuoteConfirmationPageWidget = ({isPrePaymentPage = false }: IProps)  => {
   const { classes } = useStyle();
   const [isMobile, setIsMobile] = useState(false);
   const { getQuoteConfirmation } = useQuoteConfirmation();
@@ -23,8 +27,9 @@ const QuoteConfirmationPageWidget = () => {
     setIsMobile(window.innerWidth <= 768);
   };
 
+  // GET DOCUMENT BY ID JUST FOR QUOTE WHY ??
   useEffect(() => {
-    getQuoteConfirmation();
+     getQuoteConfirmation();
   }, [])
 
   return (
@@ -32,7 +37,7 @@ const QuoteConfirmationPageWidget = () => {
       <div style={isMobile ? classes.iconMobileStyle : classes.iconStyle}>
         <GoMakeIcon />
       </div>
-      {isMobile ? <QuoteConfirmationMobileWidget isMobile={isMobile} /> : <QuoteNewPageWidget documentType={DOCUMENT_TYPE.quote} isQuoteConfirmation={true} />}
+      {isMobile ? <QuoteConfirmationMobileWidget isMobile={isMobile} isPrePaymentPage={isPrePaymentPage} /> : <QuoteNewPageWidget documentType={ isPrePaymentPage ?  DOCUMENT_TYPE.order :  DOCUMENT_TYPE.quote} isQuoteConfirmation={true} isPrePaymentPage={isPrePaymentPage}/>}
     </div>
   );
 };

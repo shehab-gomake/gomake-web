@@ -33,6 +33,7 @@ const QuoteForPriceTable = ({
   documentType,
   getQuote,
   isQuoteConfirmation = false,
+  isPrePaymentPage,
   onChangeSelectedItemRowForQoute
 }) => {
   const { classes } = useStyle({ headerHeight });
@@ -99,6 +100,7 @@ const QuoteForPriceTable = ({
                     documentType={documentType}
                     getQuote={getQuote}
                     isQuoteConfirmation={isQuoteConfirmation}
+                    isPrePaymentPage={isPrePaymentPage}
                     onChangeSelectedItemRowForQoute={onChangeSelectedItemRowForQoute}
                   />
                   {item?.childsDocumentItems &&

@@ -29,7 +29,8 @@ const RowMappingWidget = ({
   documentType,
   getQuote,
   isQuoteConfirmation = false,
-  onChangeSelectedItemRowForQoute
+  isPrePaymentPage,
+  onChangeSelectedItemRowForQoute,
 }) => {
   const router = useRouter();
   const { classes } = useStyle({ headerHeight });
@@ -86,7 +87,7 @@ const RowMappingWidget = ({
           borderBottom: item?.childsDocumentItems && "none",
         }}
       >
-        {(isQuoteConfirmation && (!quoteConfirm?.isConfirmed && quoteConfirm?.documentStatus !== QUOTE_STATUSES.Canceled)) ?
+        {( !isPrePaymentPage && isQuoteConfirmation && (!quoteConfirm?.isConfirmed && quoteConfirm?.documentStatus !== QUOTE_STATUSES.Canceled)) ?
           <div style={classes.checkBoxContainer} >
             <Checkbox
               icon={<CheckboxIcon />}
@@ -96,7 +97,7 @@ const RowMappingWidget = ({
             />
             {parentIndex}
           </div>
-          : documentType === DOCUMENT_TYPE.quote ?
+          : (documentType === DOCUMENT_TYPE.quote && !isPrePaymentPage ) ?
             <span style={classes.checkBoxContainer}>
               <Checkbox
                 icon={<CheckboxIcon />}

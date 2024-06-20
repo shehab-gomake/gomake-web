@@ -42,9 +42,10 @@ import { ViewSignatureApprovalModal } from "@/widgets/quote-new/total-price-and-
 interface IProps {
   documentType: DOCUMENT_TYPE;
   isQuoteConfirmation?: boolean;
+  isPrePaymentPage?: boolean
 }
 
-const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProps) => {
+const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false, isPrePaymentPage }: IProps) => {
   const { classes } = useStyle(isQuoteConfirmation);
   const router = useRouter();
   const quoteItemValue = useRecoilValue<any>(quoteItemState);
@@ -264,6 +265,7 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
   useEffect(() => {
     setDocNumber(quoteState?.number)
   }, [quoteState?.number, router, quoteState, isQuoteConfirmation])
+
   return (
     <>
       {quoteState?.id && (
@@ -307,35 +309,40 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
                     </IconButton>
                   </div>}
               </div>
-              <div style={classes.datesContainer}>
-                <div
-                  style={classes.deleverdDate}
-                >
-                  {t("sales.quote.creationDate")}{" "}
-                  {creationDate
-                    ? DateFormatterDDMMYYYY(creationDate)
-                    : "select date"}
-                </div>
-                <div
-                  style={classes.deleverdDate}
-                  onClick={quoteItemValue?.isEditable ? handleClickSelectDate : null}
-                >
-                  {t("sales.quote.dateOfReference")}{" "}
-                  {selectDate
-                    ? DateFormatterDDMMYYYY(selectDate)
-                    : "select date"}
-                  <div style={classes.datePickerContainer}>
-                    <input
-                      type="datetime-local"
-                      onChange={(e) => {
-                        setSelectDate(e.target.value);
-                        setActiveClickAway(true);
-                      }}
-                      ref={dateRef}
-                    />
+              {isPrePaymentPage ?
+                <div style={classes.firstBorder} />
+                :
+                <div style={classes.datesContainer}>
+
+                  <div
+                    style={classes.deleverdDate}
+                  >
+                    {t("sales.quote.creationDate")}{" "}
+                    {creationDate
+                      ? DateFormatterDDMMYYYY(creationDate)
+                      : "select date"}
                   </div>
-                </div>
-              </div>
+                  <div
+                    style={classes.deleverdDate}
+                    onClick={quoteItemValue?.isEditable ? handleClickSelectDate : null}
+                  >
+                    {t("sales.quote.dateOfReference")}{" "}
+                    {selectDate
+                      ? DateFormatterDDMMYYYY(selectDate)
+                      : "select date"}
+                    <div style={classes.datePickerContainer}>
+                      <input
+                        type="datetime-local"
+                        onChange={(e) => {
+                          setSelectDate(e.target.value);
+                          setActiveClickAway(true);
+                        }}
+                        ref={dateRef}
+                      />
+                    </div>
+                  </div>
+
+                </div>}
               <div style={classes.bordersecondContainer}>
                 <BusinessNewWidget
                   values={quoteState}
@@ -426,6 +433,7 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
                   documentType={documentType}
                   getQuote={getQuote}
                   isQuoteConfirmation={isQuoteConfirmation}
+                  isPrePaymentPage={isPrePaymentPage}
                   onChangeSelectedItemRowForQoute={onChangeSelectedItemRowForQoute}
                 />
               }
@@ -434,13 +442,13 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
                 <ReceiptsTable />
               }
             </div>
-            <WriteCommentComp 
+            {!isPrePaymentPage && <WriteCommentComp
               documentState={quoteState}
               getQuote={getQuote}
               isQuoteConfirmation={isQuoteConfirmation}
               documentType={documentType}
               onClickOpenRelatedDocumentsModal={onClickOpenRelatedDocumentsModal}
-            />
+            />}
           </div>
           {!isQuoteConfirmation &&
             <div style={{ width: '100%' }} data-tour={'quoteStep2'}>
@@ -458,7 +466,7 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
           }
         </div>
       )}
-      {(isQuoteConfirmation && (!quoteConfirm?.isConfirmed && quoteConfirm?.documentStatus !== QUOTE_STATUSES.Canceled)) && <ButtonsConfirmContainer />}
+      {(isQuoteConfirmation && !isPrePaymentPage && (!quoteConfirm?.isConfirmed && quoteConfirm?.documentStatus !== QUOTE_STATUSES.Canceled)) && <ButtonsConfirmContainer />}
       <AddNewItemModal
         openModal={openAddNewItemModal}
         onClose={onCloseNewItem}

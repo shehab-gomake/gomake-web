@@ -12,7 +12,8 @@ const MoreMenuWidget = ({
   onClickDuplicate,
   onClickLoggers,
   onClickOpenIrrelevantModal,
-  CloseDocument
+  CloseDocument,
+  onClickSendPayment
 }: any) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -24,6 +25,7 @@ const MoreMenuWidget = ({
     onClickPdf,
     onClickDuplicate,
     onClickLoggers,
+    onClickSendPayment,
     t,
     onClickOpenIrrelevantModal,
     CloseDocument

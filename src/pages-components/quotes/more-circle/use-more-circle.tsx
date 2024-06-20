@@ -11,6 +11,7 @@ import { JobsIcon } from "./icons/jobs";
 import { LockIcon } from "./icons/lock";
 import { useUserPermission } from "@/hooks/use-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
+import { PaymentIcon } from "./icons/payment";
 
 const useMoreCircle = () => {
   const { user } = useCustomer();
@@ -26,7 +27,8 @@ const useMoreCircle = () => {
     onClickLoggers,
     t,
     onClickOpenIrrelevantModal,
-    CloseDocument
+    CloseDocument,
+    onClickSendPayment
   }) => {
     const documentPath = DOCUMENT_TYPE[documentType];
     const { callApi } = useGomakeAxios();
@@ -150,6 +152,12 @@ const useMoreCircle = () => {
       },
       {
         condition: documentType === DOCUMENT_TYPE.order && quote?.isCanClose && quote?.statusTitleText !== "Order.Canceled",
+        onClick: () => onClickSendPayment(quote),
+        icon: <PaymentIcon />,
+        name: t("sales.quote.sendPayment")
+      },
+      {
+        condition: documentType === DOCUMENT_TYPE.order && quote?.isCanClose && quote?.statusTitleText !== "Order.Canceled",
         onClick: () => onClickOpenIrrelevantModal(quote),
         icon: <TickCloseIcon />,
         name: t("sales.quote.cancel")
@@ -173,6 +181,7 @@ const useMoreCircle = () => {
       //   icon: <TickCloceIcon />,
       //   name: t("sales.quote.deliveryTime")
       // },
+
     ];
   };
 
