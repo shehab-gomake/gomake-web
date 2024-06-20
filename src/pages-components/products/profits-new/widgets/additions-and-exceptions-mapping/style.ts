@@ -67,6 +67,7 @@ const useStyle = () => {
         color: "#344054",
         ...FONT_FAMILY.Inter(600, 14),
         width: "10%",
+        marginLeft:5
       },
     };
   }, []);

@@ -5,3 +5,8 @@ export const viewPricingTab = atom({
   key: "viewPricingTab",
   default: EPricingViews.SELECTED_WORKFLOW,
 });
+
+export const actionListForWorkFlow = atom({
+  key: "actionListForWorkFlow",
+  default: [],
+});

@@ -89,7 +89,6 @@ const SubWorkFlowComponent = ({ actions, sectionName, isEditableActions, id, pro
 };
 
 const SubWorkFlowsComponent = ({ workflows, isEditableActions }: ISubWorkFlowsComponentProps) => {
-    console.log("workflows", workflows)
     return <Stack gap={'10px'}>{workflows.map((flow) => <SubWorkFlowComponent
         isEditableActions={isEditableActions}  {...flow} />)}</Stack>
 }

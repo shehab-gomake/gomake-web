@@ -42,14 +42,12 @@ const useCalculationsWorkFlowsSignalr = () => {
         setCalculationExceptionsLogs(newData.calculationExceptions);
       });
       connection.on("updateSelectedWorkFlow", (newData) => {
-        console.log("updateSelectedWorkFlow",newData)
         setUpdatedSelectedWorkFlow(newData);
       });
       connection.on("UpdatePricing", (newData) => {
         setSignalRPricingResult(newData);
       });
       connection.on("calculationFinished", () => {
-        console.log("calculationFinished")
         setIsCalculationFinished(true)
       });
       connection.on("calculationServerError", () => {
