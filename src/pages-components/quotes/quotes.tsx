@@ -204,7 +204,7 @@ const QuotesListPageWidget = ({
                               </div>
                               <GoMakeAutoComplate
                                 key={customerId?.id}
-                                options={renderOptions()}
+                                options={renderOptions() ? renderOptions() : []}
                                 getOptionLabel={(option: any) => `${option.name}`}
                                 onChangeTextField={checkWhatRenderArray}
                                 style={classes.textInputStyle}
