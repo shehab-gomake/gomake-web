@@ -56,6 +56,10 @@ const FilesGroupComponent = ({title, filesInfo, orderItemId, filePath, boardMiss
             await handleFileUpload(file)
         });
     };
+
+    useEffect(()=>{
+        setTempFiles([])
+    }, [filesInfo])
     return (
         <Stack
             onDrop={handleFileDrop}
