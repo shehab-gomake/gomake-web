@@ -98,7 +98,7 @@ const BusinessNewWidget = ({
           {(!isQuoteConfirmation && documentType === DOCUMENT_TYPE.quote) && <span style={classes.plusStyle} onClick={() => setOpenCustomerModal(true)}>+</span>}
         </PermissionCheck>
         {
-          quoteStateValue?.client?.isOccasionalCustomer &&
+          quoteStateValue?.client?.isOccasional &&
           <InputUpdatedValues
             value={clientName ? clientName : t("reports.enterClientName")}
             label={t("reports.clientName")}

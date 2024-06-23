@@ -139,8 +139,6 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
       return customersListCreateOrder;
     } else return customersListCreateQuote;
   };
-  console.log("customersListCreateQuote", { customersListCreateQuote, customersListCreateOrder, canOrder })
-
   const getAllCustomersCreateQuote = useCallback(async (SearchTerm?) => {
     await getAndSetAllCustomers(callApi, setCustomersListCreateQuote, {
       ClientType: "C",
@@ -1337,7 +1335,6 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
   }
 
   const CloseDocument = async (quoteItemValue) => {
-    console.log("quoteItemValue", quoteItemValue)
     setSelectedQuoteItemValue(quoteItemValue)
     if (quoteItemValue?.closeOrderNotes && quoteItemValue?.closeOrderNotes.tirm !== "") {
       onClickOpenCloseOrderNotesModal()
