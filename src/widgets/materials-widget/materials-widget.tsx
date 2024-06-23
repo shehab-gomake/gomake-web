@@ -10,6 +10,7 @@ import { useRecoilValue, useSetRecoilState } from "recoil";
 import {
   activeFilterState,
   flagState,
+  isEditCategoryModalState,
   openAddCategoryModalState,
   openAddSupplierModalState,
   selectedSupplierIdState,
@@ -26,6 +27,7 @@ import { GoMakeDeleteModal } from "@/components";
 import { StepType } from "@reactour/tour";
 import { useGoMakeTour } from "@/hooks/use-go-make-tour";
 import { Stack } from "@mui/material";
+import { useAllProductsDropDownList } from "@/hooks/use-products-drop-down-list";
 interface IMaterialsWidgetProps {
   isAdmin: boolean;
 }
@@ -39,9 +41,10 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
   const activeFilter = useRecoilValue(activeFilterState);
   const setOpenAddSupplierModal = useSetRecoilState(openAddSupplierModalState);
   const setOpenAddCategoryModal = useSetRecoilState(openAddCategoryModalState);
+  const changeEditCategoryModalState = useSetRecoilState(isEditCategoryModalState);
   const supplierId = useRecoilValue(selectedSupplierIdState);
   const flag = useRecoilValue(flagState);
-
+  const { productList } = useAllProductsDropDownList()
   const {
     materialCategory,
     materialType,
@@ -111,7 +114,10 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
       >
         <Stack style={classes.buttonsContainerStyle}>
           <PrimaryButton
-            onClick={() => setOpenAddCategoryModal(true)}
+            onClick={() => {
+              changeEditCategoryModalState(false)
+              setOpenAddCategoryModal(true)
+            }}
             variant={"contained"}
           >
             {t("materials.buttons.addNew")}
@@ -260,7 +266,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
         )}
       </SideBarContainer>
       <AddSupplierModal />
-      <AddCategoryModal isAdmin={props.isAdmin} />
+      <AddCategoryModal isAdmin={props.isAdmin} productList={productList} />
       <AddRowModal isAdmin={props.isAdmin} />
       <GoMakeDeleteModal
         openModal={openDeleteRowModal}
