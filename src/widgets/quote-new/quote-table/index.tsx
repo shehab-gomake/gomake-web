@@ -130,7 +130,7 @@ const QuoteForPriceTable = ({
           </TableBody>
         </Table>
       </TableContainer>
-      {quoteItemValue?.isShowPrice &&
+      {!isQuoteConfirmation && quoteItemValue?.isShowPrice &&
         <TotalPriceComp
           documentType={documentType}
           getCalculateQuote={getCalculateQuote}
@@ -138,6 +138,15 @@ const QuoteForPriceTable = ({
           changeQuoteItems={changeQuoteItems}
           isQuoteConfirmation={isQuoteConfirmation}
         />}
+      {
+        isQuoteConfirmation && <TotalPriceComp
+          documentType={documentType}
+          getCalculateQuote={getCalculateQuote}
+          quoteItems={quoteItems}
+          changeQuoteItems={changeQuoteItems}
+          isQuoteConfirmation={isQuoteConfirmation}
+        />
+      }
 
     </div>
   );
