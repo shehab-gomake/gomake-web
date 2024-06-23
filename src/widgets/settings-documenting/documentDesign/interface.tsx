@@ -18,7 +18,7 @@ export interface IDocumentDesign {
         pdfHeader?:string | null;
         previewUrl?:string;
         pdfLogo?:string | null;
-        showAgentName?:string;
+        showAgentName?:boolean;
         showClientCode?:string;
         showClientType?:string;
         showDocProduserName?:string;
