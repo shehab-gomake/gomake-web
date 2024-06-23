@@ -13,6 +13,7 @@ import {
   itemParmetersValuesState,
   listEmployeesAtom,
   productItemValueByEditState,
+  productTypesNumberState,
   selectedValueConfigState,
   selectParameterButtonState,
   subProductsCopyParametersState,
@@ -86,6 +87,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [selectedValueConfig, setSelectedValueConfig] = useRecoilState(
     selectedValueConfigState
   );
+  const productTypesNumber = useRecoilValue<number>(productTypesNumberState);
+  const [workTypes, setWorkTypes] = useState<any>([])
+
   const [samlleType, setSamlleType] = useState();
   const [isRequiredParameters, setIsRequiredParameters] = useState<any>([]);
   const [activeSectionRequiredParameters, setActiveSectionRequiredParameters] = useState([]);
@@ -139,7 +143,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   );
   const selectedWorkFlow = useRecoilValue(selectedWorkFlowState);
   const [quantityTypes, setQuantityTypes] = useRecoilState(productQuantityTypesValuesState);
-
   const [calculationProgress, setCalculationProgress] = useRecoilState(calculationProgressState);
   const setCalculationResult = useSetRecoilState(calculationResultState);
 
@@ -2518,7 +2521,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     let checkParameter = validateParameters(activeSectionRequiredParameters, subProducts);
     setCheckParameter(checkParameter)
   }, [isRequiredParameters])
-
   // useEffect(() => {
   //   let checkParameter = validateParameters(isRequiredParameters);
   //   // if (checkParameter) {
@@ -2538,6 +2540,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       totalWorkFlowsCount: 0,
       currentWorkFlowsCount: 0,
     });
+
     let checkParameter = validateParameters(isRequiredParameters, currentSubProducts);
     if (!!checkParameter) {
       setCurrentCalculationSessionId(null);
@@ -2548,9 +2551,12 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       let calculationSubProducts = subProductsCopy.filter((x) => x.type);
       generalParameters?.forEach(x => x.valuesConfigs = null);
       calculationSubProducts.forEach(x => x.parameters.forEach(y => y.valuesConfigs = null))
-      let workTypes = [];
-      if (quantityTypes && quantityTypes.length > 0 && quantityTypes[0].quantity > 0) {
-        workTypes = quantityTypes;
+
+      if (productTypesNumber === 1) {
+        setWorkTypes([])
+      }
+      else if (quantityTypes && quantityTypes.length > 0 && quantityTypes[0].quantity > 0) {
+        setWorkTypes(quantityTypes);
       }
       if (generalParameters && generalParameters?.length > 0) {
         if (!connectionId) {
