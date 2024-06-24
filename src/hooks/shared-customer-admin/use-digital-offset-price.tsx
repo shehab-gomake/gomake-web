@@ -111,7 +111,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [subProducts, setSubProducts] = useRecoilState<any>(
     subProductsParametersState
   );
-
   const [isSetTemplete, setIsSetTemplete] = useState<boolean>(false);
   const setSubProductsCopy = useSetRecoilState<any>(
     subProductsCopyParametersState
@@ -714,10 +713,28 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     parameter?.parameterType ===
                     EParameterTypes.SELECT_MATERIALS
                   ) {
+                    // when the parameter is required and the parameter is material select and if there is only one option select it automatically
+                    console.log("GGGG", parameter)
+                    if (parameter?.valuesConfigs && parameter?.valuesConfigs?.length === 1 && parameter?.isRequired) {
+                      subProduct.parameters.push({
+                        parameterId: parameter?.id,
+                        parameterName: parameter?.name,
+                        actionId: parameter?.actionId,
+                        parameterType: parameter?.parameterType,
+                        valueIds: parameter?.valuesConfigs[0]?.values,
+                        values: parameter?.valuesConfigs[0]?.values,
+                        sectionId: section?.id,
+                        subSectionId: subSection?.id,
+                        actionIndex: parameter?.actionIndex,
+                        parameterCode: parameter?.code,
+                        valuesConfigs: parameter?.valuesConfigs,
+                        unitKey: parameter?.unitKey,
+                        unitType: parameter?.unitType,
+                      });
+                    }
                     const value = parameter?.valuesConfigs?.find(
                       (item) => item?.isDefault == true
                     );
-
                     if (
                       value &&
                       value.materialValueIds &&
@@ -815,22 +832,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     }
                   }
                 }
-                // if (!isParameterExits && parameter.code === "quantity") {
-                //   subProduct.parameters.push({
-                //     parameterId: parameter?.id,
-                //     parameterName: parameter?.name,
-                //     actionId: parameter?.actionId,
-                //     parameterType: parameter?.parameterType,
-                //     values: [""],
-                //     sectionId: section?.id,
-                //     subSectionId: subSection?.id,
-                //     actionIndex: parameter?.actionIndex,
-                //     parameterCode: parameter?.code,
-                //     valuesConfigs: parameter?.valuesConfigs,
-                //     unitKey: parameter?.unitKey,
-                //     unitType: parameter?.unitType,
-                //   });
-                // }
                 processRelatedParameters2(parameter, subSection, section, productTemplate, subProductsArray);
 
               });
@@ -1444,7 +1445,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           straightKnife={straightKnife}
         />
       );
-    } else if (parameter?.parameterType === EParameterTypes.SELECT_MATERIALS) {
+    }
+    else if (parameter?.parameterType === EParameterTypes.SELECT_MATERIALS) {
       Comp = (
         <DropDownListParameterWidget
           parameter={parameter}
@@ -1558,7 +1560,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         param.isHidden = false;
                         setProductTemplate(productCopy);
                       } else if (parameter?.parameterType === EParameterTypes.DROP_DOWN_LIST || parameter?.parameterType === EParameterTypes.SELECT_MATERIALS) {
-
                         const valueInArray = relatedParameter.selectedValueIds?.find(
                           (c) => c == parm?.valueIds
                         );
@@ -1724,6 +1725,32 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           if (!myParameter) {
             return;
           }
+          if (myParameter?.valuesConfigs && myParameter?.valuesConfigs?.length === 1 && myParameter?.isRequired) {
+            let copySubProducts = cloneDeep(subProducts)
+
+            let subProduct = copySubProducts.find(
+              (sub) => sub.type == subSection.type
+            );
+            subProduct.parameters.push({
+              parameterId: myParameter?.id,
+              sectionId: section?.id,
+              subSectionId: subSection.id,
+              ParameterType: myParameter?.parameterType,
+              parameterName: myParameter?.name,
+              actionId: myParameter?.actionId,
+              values: myParameter?.valuesConfigs[0]?.values,
+              valueIds: myParameter?.valuesConfigs[0]?.values,
+              actionIndex: myParameter?.actionIndex,
+              parameterCode: myParameter?.code,
+              valuesConfigs: myParameter?.valuesConfigs,
+              unitKey: myParameter?.unitKey,
+              unitType: myParameter?.unitType,
+            });
+            console.log("subProduct1", subProduct)
+            setSubProducts(subProduct);
+
+
+          }
           if (parameter.isHidden == true) {
             const sectionCopy = productTemplate.sections.find(x => x.id === section.id);
             const subSectionCopy = sectionCopy.subSections.find(x => x.id === subSection.id);
@@ -1732,11 +1759,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               return;
             }
 
-            // subProducts.forEach(x => {
-            //   if (x.type == subSection.type) {
-            //     x.parameters = x?.parameters?.filter(p => p.parameterId != param.id)
-            //   }
-            // })
             subProducts.forEach(x => {
               if (x.type == subSection.type) {
                 x = { ...x, parameters: x.parameters.filter(p => p.parameterId != param.id) };
