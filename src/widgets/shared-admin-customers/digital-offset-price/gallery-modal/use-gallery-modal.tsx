@@ -42,16 +42,16 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
     "Height"
   );
   const finalUnitWidthParameter = getParameterByParameterCode(
-      subProducts,
-      "DieUnitWidth"
+    subProducts,
+    "DieUnitWidth"
   );
   const finalUnitLengthParameter = getParameterByParameterCode(
-      subProducts,
-      "DieUnitLength"
+    subProducts,
+    "DieUnitLength"
   );
   const finalUnitHeightParameter = getParameterByParameterCode(
-      subProducts,
-      "DieUnitHeight"
+    subProducts,
+    "DieUnitHeight"
   );
   const shapeParameter = getParameterByParameterCode(subProducts, "Shape")
   const LabelShapeParameter = getParameterByParameterCode(subProducts, "LabelsShape")
@@ -86,11 +86,11 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
       finalLength: finalUnitLengthParameter && finalUnitLengthParameter.values && finalUnitLengthParameter.values.length > 0 && finalUnitLengthParameter.values[0] ? finalUnitLengthParameter.values[0] : 0,
       finalHeight: finalUnitHeightParameter && finalUnitHeightParameter.values && finalUnitHeightParameter.values.length > 0 && finalUnitHeightParameter.values[0] ? finalUnitHeightParameter.values[0] : 0,
     }
-    const res = await getPrintHouseMaterialsByMaterialKey(callApi, setMaterialData,reqObj );
+    const res = await getPrintHouseMaterialsByMaterialKey(callApi, setMaterialData, reqObj);
     if (res?.filters?.length > 0) {
       setMaterialTableFilters(res?.filters)
     }
-  }, [selectParameterButton, widthParameter, heightParameter,finalUnitWidthParameter,finalUnitLengthParameter,finalUnitHeightParameter]);
+  }, [selectParameterButton, widthParameter, heightParameter, finalUnitWidthParameter, finalUnitLengthParameter, finalUnitHeightParameter]);
   const [filters, setFilters] = useRecoilState<any>(filterState);
 
   const setFilterValue = (key: string, value: string | string[]) => {
@@ -128,6 +128,7 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
     setMaterialDataFilter(value);
   };
   const onClickChoosParameter = () => {
+
     onChangeSubProductsForPrice(
       selectParameterButton?.parameter?.id,
       selectParameterButton?.subSectionId,
