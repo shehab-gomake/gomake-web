@@ -39,14 +39,14 @@ const ParametersMapping = ({ parameters, source }: IParametersMappingProps) => {
     return (
         <>
             {parameters?.flatMap((parameter, index, array) => {
-                const isCurrencyUnit = isCurrency(parameter?.defaultUnit);
+                //const isCurrencyUnit = isCurrency(parameter?.defaultUnit);
                 const keyValueComponent = (
                     <KeyValueViewComponent key={`key-value-${index}`} source={source} {...parameter} />
                 );
 
                 const isLastElement = index >= array.length - 1;
 
-                if (isCurrencyUnit) {
+                /*if (isCurrencyUnit) {
                     return (
                         <PermissionCheck key={`permission-check-${index}`} userPermission={Permissions.SHOW_COSTS_IN_PRODUCTION_FLOOR}>
                             {isLastElement
@@ -55,7 +55,7 @@ const ParametersMapping = ({ parameters, source }: IParametersMappingProps) => {
                             }
                         </PermissionCheck>
                     );
-                }
+                }*/
 
                 return isLastElement
                     ? keyValueComponent
