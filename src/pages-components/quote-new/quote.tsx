@@ -205,6 +205,11 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false, isPrePa
     openSignatureApprovalModal,
     onClickCloseSignatureApprovalModal,
     onClickOpenSignatureApprovalModal,
+    onBlurClientName,
+    isUpdateClientName,
+    setIsUpdateClientName,
+    clientName,
+    setClientName
 
   } = useQuoteNew({ docType: documentType, isQuoteConfirmation: isQuoteConfirmation });
 
@@ -368,6 +373,11 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false, isPrePa
                   onClickDeleteAddress={onClickDeleteAddress}
                   documentType={documentType}
                   isQuoteConfirmation={isQuoteConfirmation}
+                  onBlurClientName={onBlurClientName}
+                  isUpdateClientName={isUpdateClientName}
+                  setIsUpdateClientName={setIsUpdateClientName}
+                  clientName={clientName}
+                  setClientName={setClientName}
                 />
                 <ContactNewWidget
                   documentState={quoteState}

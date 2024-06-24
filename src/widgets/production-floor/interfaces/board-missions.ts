@@ -27,6 +27,7 @@ export interface IBoardMissions {
     productType: string;
     nextBoardMission?: IBoardMissionStep;
     previousBoardMission?: IBoardMissionStep;
+    priority: number;
 }
 
 

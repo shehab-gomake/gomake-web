@@ -23,7 +23,7 @@ const useProductionFloorFilters = () => {
     const setView = useSetRecoilState(productionFloorViewState);
     const {push} = useRouter();
     const {alertSuccessUpdate, alertFaultUpdate} = useSnackBar();
-    const groups = filtersState.groups;
+    const groups = filtersState?.groups;
     const setFilters = async (filters: IProductionFloorFilter) => {
         const callBack = (res) => {
             if (res?.success) {

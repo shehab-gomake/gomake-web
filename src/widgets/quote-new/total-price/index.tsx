@@ -23,9 +23,10 @@ const TotalPriceComp = ({
   const [isUpdateTotalPayment, setIsUpdateTotalPayment] = useState(null);
   const { getCurrencyUnitText } = useQuoteGetData();
   const [isConfirmation, setIsConfirmation] = useState(null);
-  const {CheckDocumentPermission } = useUserPermission();
+  const { CheckDocumentPermission } = useUserPermission();
 
   const quoteItemValue = useRecoilValue<any>(quoteItemState);
+  console.log("quoteItems", { quoteItems, quoteItemValue })
   const onBlurTotalPayment = async () => {
     getCalculateQuote(2, quoteItems?.totalPayment);
     setIsUpdateTotalPayment(null);
@@ -43,7 +44,7 @@ const TotalPriceComp = ({
   };
 
   const canUpdateDiscount = router.query.isNewCreation ? true :
-   (quoteItems?.isEditable && CheckDocumentPermission(documentType, DocumentPermission.UPDATE_DOCUMENT_DISCOUNT));
+    (quoteItems?.isEditable && CheckDocumentPermission(documentType, DocumentPermission.UPDATE_DOCUMENT_DISCOUNT));
 
   return (
     <div style={classes.tableFooterContainer}>
@@ -74,11 +75,11 @@ const TotalPriceComp = ({
               setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdateDiscount}
               onInputChange={(e) => onInputDiscount(e)}
             />
-            % {quoteItemValue?.discountAmount != 0 && `(-${quoteItemValue?.discountAmount + " " + quoteItems?.currency})`}
+            % {isQuoteConfirmation ? quoteItems?.discountAmount != 0 && `(-${quoteItems?.discountAmount + " " + quoteItems?.currency})` : quoteItemValue?.discountAmount != 0 && `(-${quoteItemValue?.discountAmount + " " + quoteItems?.currency})`}
           </div>
         </div>
         <div style={{ ...classes.evenRowContainer, width: "13%" }}>
-        {`${t("sales.quote.vat")} (17%)`}
+          {`${t("sales.quote.vat")} (17%)`}
         </div>
         <div style={{ ...classes.oddRowContainer, width: "23%" }}>
           {quoteItems?.totalVAT + " " + getCurrencyUnitText(quoteItems?.currency)}

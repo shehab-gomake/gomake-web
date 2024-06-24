@@ -1,25 +1,23 @@
 import { useGomakeAxios, useSnackBar } from "@/hooks";
-import { AddOrUpdateDocumentDesignDocingApi, ResetDocumentDesigningApi, getAllDocumentDesigningApi, getDocumentDesignByCreationDocingApi } from "@/services/api-service/documenting/document-design";
+import { AddOrUpdateDocumentDesignDocApi, ResetDocumentDesigningApi, getAllDocumentDesigningApi, getDocumentDesignByCreationDocApi } from "@/services/api-service/documenting/document-design";
 import { useTranslation } from "react-i18next";
-import { useRecoilState } from "recoil";
-import { documentDesignState, documentDesignTypeTextState, documentDesignURLState, documentTypeState } from "./state/documents-state";
-import { useState } from "react";
+import { useRecoilState, useResetRecoilState, useSetRecoilState } from "recoil";
+import { documentDesignState, documentDesignURLState, documentTypeState } from "./state/documents-state";
 import { IDocumentDesign } from "./documentDesign/interface";
 
 const UseDocumentDesign = () => {
     const { callApi } = useGomakeAxios();
     const { t } = useTranslation();
-    const [documentTypes, setdocumentTypes] = useRecoilState(documentTypeState);
-    const [documentDesign, setdocumentDesign] = useRecoilState(documentDesignState);
-    const [documentDesignURL, setdocumentDesignURL] = useRecoilState(documentDesignURLState);
-   
-    
-    const {alertFaultUpdate, alertSuccessUpdate} = useSnackBar();
+    const { alertFaultUpdate, alertSuccessUpdate } = useSnackBar();
+    const [documentDesign, setDocumentDesign] = useRecoilState(documentDesignState);
+    const resetDocumentDesign = useResetRecoilState(documentDesignState);
+    const setDocumentTypes = useSetRecoilState(documentTypeState);
+    const setDocumentDesignURL = useSetRecoilState(documentDesignURLState);
 
-    const documentDesignChange = (documentdesign: IDocumentDesign) => {
-        setdocumentDesign(documentdesign);
+    const documentDesignChange = (documentDesign: IDocumentDesign) => {
+        setDocumentDesign(documentDesign);
     }
-    
+
     const getDocumentTypes = async () => {
         const callBack = (res) => {
             if (res.success) {
@@ -27,59 +25,65 @@ const UseDocumentDesign = () => {
                     value: doc.key,
                     text: t(`documentType.${doc.value}`)
                 }));
-                setdocumentTypes(doumentType);
+                setDocumentTypes(doumentType);
             }
         }
         await getAllDocumentDesigningApi(callApi, callBack)
     }
-    const getDocumentDesignByCreationDoc = async (docmentCreationDocType,docmentCreationAgentId) =>{
-  
+
+    const getDocumentDesignByCreationDoc = async (documentCreationDocType, documentCreationAgentId) => {
+
         const callBack = (res) => {
             if (res.success) {
-                setdocumentDesign(res.data);      
-                setdocumentDesignURL(res.data.previewUrl);
+                setDocumentDesign(res.data);
+                setDocumentDesignURL(res.data.previewUrl);
             }
-           
         }
-        await getDocumentDesignByCreationDocingApi(callApi, callBack,{docType : docmentCreationDocType ,agentId : docmentCreationAgentId})
+        await getDocumentDesignByCreationDocApi(callApi, callBack, { docType: documentCreationDocType, agentId: documentCreationAgentId })
     }
 
-    const AddOrUpdateDocumentDesign = async (documentDesign) =>{
-    
+    const AddOrUpdateDocumentDesign = async (documentDesign) => {
         const callBack = (res) => {
             if (res.success) {
-                setdocumentDesignURL(res.data.previewUrl);
+                setDocumentDesignURL(res.data.previewUrl);
                 alertSuccessUpdate();
-            }else{
+            } else {
                 alertFaultUpdate();
             }
-
-      
         }
-        await AddOrUpdateDocumentDesignDocingApi(callApi, callBack,documentDesign)
+        await AddOrUpdateDocumentDesignDocApi(callApi, callBack, documentDesign)
 
     };
-    const ResetDocumentDesign = async (documentDesign) =>{
-      
+
+    const ResetDocumentDesign = async (documentDesign) => {
         const callBack = (res) => {
             if (res.success) {
-                setdocumentDesign(res.data);
+                setDocumentDesign(res.data);
                 alertSuccessUpdate();
-            }else{
+            }
+            else {
                 alertFaultUpdate();
             }
-          
         }
-        await ResetDocumentDesigningApi(callApi, callBack,documentDesign)
-
+        await ResetDocumentDesigningApi(callApi, callBack, documentDesign)
     };
+
+    const handleChangeComments = (event) => {
+        setDocumentDesign({
+            ...documentDesign,
+            notes: event.target.value,
+        });
+    };
+
     return {
         getDocumentTypes,
         getDocumentDesignByCreationDoc,
         AddOrUpdateDocumentDesign,
         ResetDocumentDesign,
         documentDesign,
-        documentDesignChange
+        documentDesignChange,
+        handleChangeComments,
+        resetDocumentDesign
     };
 
 };

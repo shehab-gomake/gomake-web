@@ -9,20 +9,20 @@ const RESET_DOCUMENT_DESIGN_URL = '/v1/erp-service/documentSettings/reset-docume
 const getAllDocumentDesigningApi: ICallAndSetData = async (callApi, setState) => {
     return  await getSetApiData(callApi, EHttpMethod.GET, GET_ALL_DOCUMENT_DESIGN_URL, setState)
 }
-const getDocumentDesignByCreationDocingApi: ICallAndSetData = async (callApi, setState , data ) => {
+const getDocumentDesignByCreationDocApi: ICallAndSetData = async (callApi, setState , data ) => {
     return  await getSetApiData(callApi, EHttpMethod.GET, GET_DOCUMENT_DESIGN_BY_CREATION_DOC_URL, setState,data)
 }
 const ResetDocumentDesigningApi: ICallAndSetData = async (callApi, setState , data ) => {
     return  await getSetApiData(callApi, EHttpMethod.GET, RESET_DOCUMENT_DESIGN_URL, setState,data)
 }
-const AddOrUpdateDocumentDesignDocingApi: ICallAndSetData = async (callApi, setState , data ) => {
+const AddOrUpdateDocumentDesignDocApi: ICallAndSetData = async (callApi, setState , data ) => {
     return  await getSetApiData(callApi, EHttpMethod.POST, ADD_OR_UPDATE_DOCUMENT_DESIGN_URL, setState,data)
 }
 
 export {
     getAllDocumentDesigningApi,
-    getDocumentDesignByCreationDocingApi,
-    AddOrUpdateDocumentDesignDocingApi,
+    getDocumentDesignByCreationDocApi,
+    AddOrUpdateDocumentDesignDocApi,
     ResetDocumentDesigningApi
 
 };

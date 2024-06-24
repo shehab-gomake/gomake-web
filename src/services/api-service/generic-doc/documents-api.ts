@@ -45,6 +45,7 @@ const GET_CALCULATE_DOCUMENT_URL =
   "/v1/erp-service/documents/calculate-document";
 const ADD_ITEM_URL = "/v1/erp-service/documents/add-item";
 const UPDATE_DOCUMENT_URL = "/v1/erp-service/documents/update-document";
+const UPDATE_OCCASIONAL_CLIENT_NAME_URL = "/v1/erp-service/documents/update-occasional-client-name";
 const UPDATE_DOCUMENT_ITEM_URL =
   "/v1/erp-service/documents/update-document-item";
 const UPDATE_DUE_DATE_URL = "/v1/erp-service/documents/update-due-date";
@@ -404,6 +405,15 @@ const updateDocumentApi: ICallAndSetData = async (callApi, setState, data) => {
     data
   );
 };
+const updateOccasionalClientNameApi: ICallAndSetData = async (callApi, setState, data) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.PUT,
+    UPDATE_OCCASIONAL_CLIENT_NAME_URL,
+    setState,
+    data
+  );
+};
 
 const updateDocumentItemApi: ICallAndSetData = async (
   callApi,
@@ -730,5 +740,6 @@ export {
   GetPrintingTicketPDFApi,
   updateDocuementItemSelectApi,
   updateIsShowPricesApi,
-  updateDocumentInternalNotesApi
+  updateDocumentInternalNotesApi,
+  updateOccasionalClientNameApi
 };

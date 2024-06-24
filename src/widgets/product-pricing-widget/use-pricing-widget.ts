@@ -22,6 +22,7 @@ const usePricingWidget = ({ getOutSourcingSuppliers, workFlows }) => {
     const [pageSize,setPageSize]=useState(10)
     const [heightScrolling, setHeightScrolling] = useState(50)
     const [isChangeView, setIsChangeView] = useState(true)
+    const [isFirstEntry,setIsFirstEntry] = useState(false)
   
     useEffect(() => {
       // Transform actions when component mounts
@@ -129,6 +130,7 @@ const usePricingWidget = ({ getOutSourcingSuppliers, workFlows }) => {
     const [selectedWorkFlowsByTabList,settledWorkFlowsByTabList] =useState([])
 
     const fetchWorkflows = async (productType, newPageSize) => {
+      setIsFirstEntry(false);
       const callBack = (res) => {
         if (res?.success) {
           settledWorkFlowsByTabList(res?.data);
@@ -152,10 +154,13 @@ const usePricingWidget = ({ getOutSourcingSuppliers, workFlows }) => {
     };
   
     useEffect(() => {
+      if(isFirstEntry){
         fetchWorkflows(selectedTab?.productType, pageSize);
+      }
     }, [pageSize, selectedTab]);
 
     const handleScroll = () => {
+        setIsFirstEntry(true)
         setPageSize((prevPageSize) => prevPageSize + 10);
       }
 

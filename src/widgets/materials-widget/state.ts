@@ -67,6 +67,14 @@ export const openAddCategoryModalState = atom<boolean>({
   key: "openAddCategoryModalState",
   default: false,
 });
+export const isEditCategoryModalState = atom<boolean>({
+  key: "isEditCategoryModalState",
+  default: false,
+});
+export const selectedCategoryModalState = atom({
+  key: "selectedCategoryModalState",
+  default: {},
+});
 
 export const materialCategorySuppliersState = atom<
   { value: string; label: string; isDefault: boolean }[]

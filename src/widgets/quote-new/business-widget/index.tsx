@@ -37,6 +37,11 @@ const BusinessNewWidget = ({
   onClickDeleteAddress,
   documentType,
   isQuoteConfirmation = false,
+  onBlurClientName,
+  isUpdateClientName,
+  setIsUpdateClientName,
+  clientName,
+  setClientName
 }) => {
   const { classes } = useStyle();
   const {
@@ -62,7 +67,8 @@ const BusinessNewWidget = ({
     customer,
     setCustomer,
     onCustomerAdd,
-    canEditDocument
+    canEditDocument,
+
   } = useBusinessWidget({ values, documentType });
 
   useEffect(() => {
@@ -72,7 +78,6 @@ const BusinessNewWidget = ({
   useEffect(() => {
     setTaxConfirmationNumber(values?.taxConfirmationNumber || t("sales.quote.noTaxConfirmationNumber"));
   }, [values?.taxConfirmationNumber]);
-
   return (
     <>
       <div style={classes.businessContainerStyle}>
@@ -81,15 +86,28 @@ const BusinessNewWidget = ({
           value={isQuoteConfirmation ? quoteConfirm?.client?.name : quoteStateValue?.client?.name ? quoteStateValue?.client?.name : t("sales.quote.selectBusinessName")}
           options={mappedCustomers}
           onBlur={onBlurBusinessName}
-          isUpdate={canEditDocument && isUpdateBusinessName }
+          isUpdate={canEditDocument && isUpdateBusinessName}
           setIsUpdate={isQuoteConfirmation || isExistReceipt ? setIsConfirmation : setIsUpdateBusinessName}
           getOptionLabel={(item) => item.text}
           onChange={(e, value) => onChangeSelectBusiness(value)}
           onChangeTextField={checkWhatRenderArray}
         />
+
+
         <PermissionCheck userPermission={Permissions.ADD_CLIENT}>
           {(!isQuoteConfirmation && documentType === DOCUMENT_TYPE.quote) && <span style={classes.plusStyle} onClick={() => setOpenCustomerModal(true)}>+</span>}
         </PermissionCheck>
+        {
+          quoteStateValue?.client?.isOccasional &&
+          <InputUpdatedValues
+            value={clientName ? clientName : t("reports.enterClientName")}
+            label={t("reports.clientName")}
+            onBlur={onBlurClientName}
+            setIsUpdate={setIsUpdateClientName}
+            isUpdate={isUpdateClientName}
+            onInputChange={(v) => setClientName(v)}
+          />
+        }
         {!isReceipt && <InputUpdatedValues
           value={purchaseNumber}
           label={t("sales.quote.purchaseNumber")}
@@ -103,7 +121,7 @@ const BusinessNewWidget = ({
           value={taxConfirmationNumber}
           label={t("sales.quote.taxConfirmationNumber")}
           onBlur={onBlurTaxNumber}
-        //  isUpdate={quoteStateValue?.isEditable || router.query.isNewCreation ? isUpdateTaxNumber : false}
+          //  isUpdate={quoteStateValue?.isEditable || router.query.isNewCreation ? isUpdateTaxNumber : false}
           isUpdate={canEditDocument && isUpdateTaxNumber}
           setIsUpdate={setIsUpdateTaxNumber}
           onInputChange={(v) => setTaxConfirmationNumber(v)}

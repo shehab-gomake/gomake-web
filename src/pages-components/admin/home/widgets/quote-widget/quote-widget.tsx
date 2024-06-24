@@ -19,7 +19,6 @@ import {
 } from "@/pages-components/quote-new/store/quote";
 import Stack from "@mui/material/Stack";
 import { selectedClientState } from "@/pages-components/quotes/states";
-import { useTour } from "@reactour/tour";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { CustomerCardWidget } from "@/widgets/customer-card-modal/customer-card";
 import { isValidCustomer } from "@/utils/helpers";
@@ -133,7 +132,7 @@ const QuoteWidget = ({ isAdmin = true }) => {
           </div>
         </div>
         <PermissionCheck userPermission={Permissions.ADD_CLIENT}>
-        <button style={classes.autoButtonStyle} onClick={onClickAddCustomer} >{t("customers.buttons.AddOrSearch")}</button>
+          <button style={classes.autoButtonStyle} onClick={onClickAddCustomer} >{t("customers.buttons.AddOrSearch")}</button>
         </PermissionCheck>
       </div>
       <div style={classes.autoComplateRowContainer}>
@@ -213,12 +212,12 @@ const QuoteWidget = ({ isAdmin = true }) => {
       </Popover>
       <GoMakeDeleteModal
         subTitle={t("sales.quote.MessageForClient")}
-        icon={ <WarningAmberIcon style={classes.AmberIconStyle} />}
+        icon={<WarningAmberIcon style={classes.AmberIconStyle} />}
         title={t("sales.quote.titleMessage")}
         yesBtn={t("sales.quote.Confirm")}
         openModal={openModal}
         onClose={onClickCloseModal}
-        onClickDelete={() =>onClickSaveQuote(QuoteId)}
+        onClickDelete={() => onClickSaveQuote(QuoteId)}
         onClickCancel={handleCancel}
       />
       <CustomerCardWidget
