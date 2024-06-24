@@ -39,13 +39,13 @@ const GeneralInformationComponent = () => {
                                 </Stack>
                             );
 
-                            if (parameter.name === "Cost") {
+                            /*if (parameter.name === "Cost") {
                                 return (
                                     <PermissionCheck key={`permission-check-${key}`} userPermission={Permissions.SHOW_COSTS_IN_PRODUCTION_FLOOR}>
                                         {parameterComponent}
                                     </PermissionCheck>
                                 );
-                            }
+                            }*/
 
                             const isLastElement = index >= array.length - 1;
                             return isLastElement
