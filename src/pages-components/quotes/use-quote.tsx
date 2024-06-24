@@ -272,7 +272,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
               quote?.sourceDocumentNumber?.map((item, index) => {
                 return (
                   <>
-                    <span style={{ cursor: "pointer" }} onClick={() => navigate(`/quote?Id=${item.documentId}`)} key={index}>{item?.documentNumber}
+                    <span key={index}>{item?.documentNumber}
                       <br />
                     </span>
                   </>
@@ -483,7 +483,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
               quote?.sourceDocumentNumber?.map((item, index) => {
                 return (
                   <>
-                    <span style={{ cursor: "pointer" }} onClick={() => navigate(`/quote?Id=${item.documentId}`)} key={index}>{item?.documentNumber}
+                    <span key={index}>{item?.documentNumber}
                       <br />
                     </span>
                   </>
