@@ -22,6 +22,7 @@ const ButtonsContainer = ({
   documentType,
   onOpenCopyFromOrder,
   handleSaveBtnClickForDocument,
+  onClickOpenNewItemNotesModal
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -53,7 +54,7 @@ const ButtonsContainer = ({
     canEditDocument,
     isNewCreation
   } = useButtonsContainer(documentType);
-  
+
   const handleCopyFromDocumentClick = (documentNumber) => {
     if (!quoteItemValue?.client) {
       alertFault("home.admin.pleaseSelectCustomer");
@@ -68,9 +69,9 @@ const ButtonsContainer = ({
     } else {
       onOpenNewItem();
     }
-  }; 
-  
- 
+  };
+
+
   return (
     <div style={classes.writeCommentContainer}>
       <div style={classes.btnsContainer}>
@@ -163,7 +164,25 @@ const ButtonsContainer = ({
           isNewCreation &&
           <GomakePrimaryButton
             style={classes.btnThirdContainer}
-            onClick={documentType === DOCUMENT_TYPE.receipt ? onClickCreateNewReceipt : handleSaveBtnClickForDocument}
+            onClick={() => {
+              if (documentType === DOCUMENT_TYPE.receipt) {
+                onClickCreateNewReceipt();
+              }
+              else if (documentType === DOCUMENT_TYPE.invoice) {
+                if (
+                  quoteItemValue?.client?.newItemNotes && quoteItemValue?.client?.newItemNotes.trim() !== "" && quoteItemValue?.client?.newItemNotes.trim() !== null
+                ) {
+                  onClickOpenNewItemNotesModal()
+                }
+                else {
+                  handleSaveBtnClickForDocument();
+                }
+
+              }
+              else {
+                handleSaveBtnClickForDocument();
+              }
+            }}
           >
             {t(`sales.quote.create${getFormattedDocumentPath(documentType)}`)}
           </GomakePrimaryButton>

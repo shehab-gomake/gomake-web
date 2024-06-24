@@ -123,7 +123,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
   }
 
   useEffect(() => {
-    if (quoteItemValue?.client?.newItemNotes && quoteItemValue?.client?.newItemNotes.trim() !== "") {
+    if (quoteItemValue?.client?.newItemNotes && quoteItemValue?.client?.newItemNotes.trim() !== "" && quoteItemValue?.client?.newItemNotes.trim() !== null && docType === DOCUMENT_TYPE.quote) {
       onClickOpenNewItemNotesModal()
     }
 
@@ -1545,7 +1545,8 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     isUpdateClientName,
     setIsUpdateClientName,
     clientName,
-    setClientName
+    setClientName,
+    onClickOpenNewItemNotesModal
   };
 };
 
