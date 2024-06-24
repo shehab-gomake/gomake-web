@@ -4,6 +4,7 @@ import {ICallAndSetData} from "@/services/api-service/interface";
 
 const GET_PRODUCTION_FLOOR_DATA_URL = '/v1/erp-service/board-missions';
 const UPDATE_WORK_JOB_STATUS_URL = '/v1/erp-service/board-missions/update-board-missions-status';
+const UPDATE_BOARD_MISSIONS_ORDER_URL = '/v1/erp-service/board-missions/update-board-missions-order';
 const SET_FILTERS_BOARDS_MISSIONS_URL = '/v1/erp-service/board-missions/set-filters';
 const GET_BOARDS_MISSIONS_BY_ID_URL = '/v1/erp-service/board-missions/board-missions-data/';
 const GET_BOARD_MISSIONS_STATIONS_URL = '/v1/erp-service/board-missions/board-stations';
@@ -24,6 +25,8 @@ const MOVE_BOARD_MISSION_TO_DONE_URL = '/v1/erp-service/board-missions/move-boar
 const BACK_TO_PROCESS_URL = '/v1/erp-service/board-missions/back-to-process';
 const SAVE_UPLOADED_FILE_URL = '/v1/erp-service/board-missions/save-uploaded-file';
 const GET_UPLOADED_FILES_URL = '/v1/erp-service/board-missions/get-uploaded-files/';
+const GET_UPLOADING_FILES_URL = '/v1/erp-service/board-missions/get-uploading-files/';
+
 
 const getProductionFloorData: ICallAndSetData = async (callApi, setState, connectionId: string) => {
     return await getSetApiData(callApi, EHttpMethod.GET, GET_PRODUCTION_FLOOR_DATA_URL + '?connectionId=' + connectionId, setState, {}, false);
@@ -94,6 +97,9 @@ const saveUploadedFile: ICallAndSetData = async (callApi, callBack, data ) => {
 const getAllBoardMissionsUploadedFiles: ICallAndSetData = async (callApi, callBack, orderItemId: string ) => {
     return await getSetApiData(callApi, EHttpMethod.GET, GET_UPLOADED_FILES_URL + orderItemId , callBack);
 }
+const getAllBoardMissionsUploadingFiles: ICallAndSetData = async (callApi, callBack, connectionID: string ) => {
+    return await getSetApiData(callApi, EHttpMethod.GET, GET_UPLOADING_FILES_URL + connectionID , callBack);
+}
 
 const moveBoardMissionToDoneApi: ICallAndSetData = async (callApi, setState, data: { boardMissionId: string, sendMessage?: string }) => {
     return await getSetApiData(callApi, EHttpMethod.POST, MOVE_BOARD_MISSION_TO_DONE_URL, setState, data);
@@ -101,6 +107,10 @@ const moveBoardMissionToDoneApi: ICallAndSetData = async (callApi, setState, dat
 
 const backToProcessApi: ICallAndSetData = async (callApi, setState, data: { boardMissionId: string, sendMessage?: string }) => {
     return await getSetApiData(callApi, EHttpMethod.POST, BACK_TO_PROCESS_URL, setState, data);
+};
+
+const updateBoardsMissionsOrderApi: ICallAndSetData = async (callApi, setState, data) => {
+    return await getSetApiData(callApi, EHttpMethod.POST, UPDATE_BOARD_MISSIONS_ORDER_URL, setState, data);
 };
 export {
     getProductionFloorData,
@@ -124,5 +134,7 @@ export {
     moveBoardMissionToDoneApi,
     backToProcessApi,
     saveUploadedFile,
-    getAllBoardMissionsUploadedFiles
+    getAllBoardMissionsUploadedFiles,
+    getAllBoardMissionsUploadingFiles,
+    updateBoardsMissionsOrderApi
 };

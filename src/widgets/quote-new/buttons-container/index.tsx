@@ -12,6 +12,7 @@ import { OrderNowModal } from "../total-price-and-vat/order-now-modal";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import { useSnackBar } from "@/hooks";
 
+
 const ButtonsContainer = ({
   onOpenNewItem,
   handleCancelBtnClick,
@@ -25,7 +26,8 @@ const ButtonsContainer = ({
   const { classes } = useStyle();
   const { t } = useTranslation();
   const { alertFault } = useSnackBar();
-  const router = useRouter()
+
+
   const {
     quoteItemValue,
     openOrderNowModal,
@@ -46,8 +48,12 @@ const ButtonsContainer = ({
     onClickOpenDeleteModal,
     openCancelReceiptModal,
     onClickOpenCancelReceiptModal,
-    onClickCloseCancelReceiptModal
+    onClickCloseCancelReceiptModal,
+    showAddNewItemBtn,
+    canEditDocument,
+    isNewCreation
   } = useButtonsContainer(documentType);
+  
   const handleCopyFromDocumentClick = (documentNumber) => {
     if (!quoteItemValue?.client) {
       alertFault("home.admin.pleaseSelectCustomer");
@@ -56,21 +62,15 @@ const ButtonsContainer = ({
     }
   };
 
-
   const handleAddItemClick = () => {
     if (!quoteItemValue?.client) {
       alertFault("home.admin.pleaseSelectCustomer");
     } else {
       onOpenNewItem();
     }
-  };
-
-  const isNewCreation = router?.query?.isNewCreation;
-  const showAddNewItemBtn =
-    documentType === DOCUMENT_TYPE.quote ||
-    (DOCUMENT_TYPE.order && quoteItemValue?.isEditable) ||
-    (isNewCreation && documentType !== DOCUMENT_TYPE.receipt);
-
+  }; 
+  
+ 
   return (
     <div style={classes.writeCommentContainer}>
       <div style={classes.btnsContainer}>
@@ -88,7 +88,7 @@ const ButtonsContainer = ({
           </GomakePrimaryButton>
         }
         {
-          (documentType === DOCUMENT_TYPE.quote || documentType === DOCUMENT_TYPE.order) && quoteItemValue?.isEditable && <GomakePrimaryButton
+          (documentType === DOCUMENT_TYPE.quote || documentType === DOCUMENT_TYPE.order) && canEditDocument && <GomakePrimaryButton
             leftIcon={<PlusIcon stroke={"#344054"} />}
             style={classes.btnContainer}
             onClick={() => onOpenDeliveryModal()}
@@ -106,7 +106,7 @@ const ButtonsContainer = ({
           </GomakePrimaryButton>
         }
         {
-          router.query.isNewCreation && documentType === DOCUMENT_TYPE.invoice && <GomakePrimaryButton
+          isNewCreation && documentType === DOCUMENT_TYPE.invoice && <GomakePrimaryButton
             leftIcon={<PlusIcon stroke={"#344054"} />}
             style={classes.btnContainer}
             onClick={() => handleCopyFromDocumentClick(DOCUMENT_TYPE.deliveryNote)}
@@ -115,7 +115,7 @@ const ButtonsContainer = ({
           </GomakePrimaryButton>
         }
         {
-          router.query.isNewCreation && documentType === DOCUMENT_TYPE.purchaseInvoice && <GomakePrimaryButton
+          isNewCreation && documentType === DOCUMENT_TYPE.purchaseInvoice && <GomakePrimaryButton
             leftIcon={<PlusIcon stroke={"#344054"} />}
             style={classes.btnContainer}
             onClick={() => handleCopyFromDocumentClick(DOCUMENT_TYPE.purchaseOrder)}
@@ -216,3 +216,4 @@ const ButtonsContainer = ({
 };
 
 export { ButtonsContainer };
+

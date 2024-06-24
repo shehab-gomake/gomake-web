@@ -47,10 +47,13 @@ const RightSideWidget = ({
     isLoading,
     quantity,
     selectedWorkFlow,
+    calculationExceptionsLogs,
     setCurrentProductItemValueTotalPrice,
     t,
     _renderIconLogs,
   } = useRightSideWidget({ includeVAT });
+
+
   const [myvalue, setMyValue] = useState("---------")
   return (
     <div style={clasess.rightSideMainContainer}>
@@ -409,6 +412,62 @@ const RightSideWidget = ({
                     )}
                   </>
                 );
+              })}
+              {calculationExceptionsLogs?.map((item) => {
+                if (item.actionName) {
+                  return (
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        justifyContent: "flex-start",
+                        alignItems: "flex-start",
+                        width: "100%",
+                        gap: 5,
+                      }}
+                    >
+                      {_renderIconLogs(item.exception?.exceptionType)}
+                      <div
+                        style={{
+                          ...clasess.titleLogsTextStyle,
+                        }}
+                      >
+                        <div style={{ width: 85 }}>{item.actionName}:</div>
+                      </div>
+                      <div style={clasess.textLogstyle}>
+                        <span style={{ color: "black" }}>{t("CalculationExceptions." + item?.exception?.exceptionKey)}</span>
+                      </div>
+                    </div>
+                  );
+                } else if (item.actionName === null) {
+                  return (
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        justifyContent: "flex-start",
+                        alignItems: "flex-start",
+                        width: "100%",
+                        gap: 5,
+                      }}
+                    >
+                      {_renderIconLogs(item.exception?.exceptionType)}
+
+                      <div style={{ width: "100%", marginTop: -3 }}>
+                        <span style={{ color: "black" }}>{t("CalculationExceptions." + item?.exception?.exceptionKey)}</span>
+                      </div>
+                    </div>
+                  );
+                } else {
+                  return (
+                    <div style={clasess.generalMsgTextStyle}>
+                      <div style={clasess.iconLogsTextStyle}>
+                        {_renderIconLogs(item.exceptionType)}
+                      </div>
+                      {t("products.offsetPrice.admin.general")} {t("CalculationExceptions." + item?.exceptionKey)}
+                    </div>
+                  );
+                }
               })}
             </div>
           )}

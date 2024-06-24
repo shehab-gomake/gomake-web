@@ -21,6 +21,7 @@ import {
   getAllDocumentsApi,
   getDocumentPdfApi,
   updateDocumentApi,
+  updateOccasionalClientNameApi,
 } from "@/services/api-service/generic-doc/documents-api";
 import { DOCUMENT_TYPE } from "./enums";
 import { useQuoteGetData } from "../quote-new/use-quote-get-data";
@@ -43,7 +44,6 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
   const { navigate } = useGomakeRouter();
   const { errorColor } = useGomakeTheme();
   const [patternSearch, setPatternSearch] = useState("");
-  console.log("patternSearch", patternSearch)
   const [finalPatternSearch, setFinalPatternSearch] = useState("");
   const debounce = useDebounce(patternSearch, 500);
   const { GetDateFormat, GetShortDateFormat } = useDateFormat();
@@ -83,6 +83,16 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
   const documentPath = DOCUMENT_TYPE[docType];
   const isReceipt = docType === DOCUMENT_TYPE.receipt;
   const { CheckPermission } = useUserPermission();
+
+  const [openCloseOrderNotesModal, setOpenCloseOrderNotesModal] = useState(false)
+  const [selectedQuoteItemValue, setSelectedQuoteItemValue] = useState()
+
+  const onClickOpenCloseOrderNotesModal = () => {
+    setOpenCloseOrderNotesModal(true)
+  }
+  const onClickCloseCloseOrderNotesModal = () => {
+    setOpenCloseOrderNotesModal(false)
+  }
 
   const onCloseAddRuleModal = () => {
     setOpenAddRule(false);
@@ -129,26 +139,32 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
       return customersListCreateOrder;
     } else return customersListCreateQuote;
   };
-
-  const getAllCustomersCreateQuote = useCallback(async () => {
+  const getAllCustomersCreateQuote = useCallback(async (SearchTerm?) => {
     await getAndSetAllCustomers(callApi, setCustomersListCreateQuote, {
       ClientType: "C",
       onlyCreateOrderClients: false,
+      searchTerm: SearchTerm,
+      isOccasionalCustomer: true
     });
   }, []);
 
-  const getAllCustomersCreateOrder = useCallback(async () => {
+  const getAllCustomersCreateOrder = useCallback(async (SearchTerm?) => {
     await getAndSetAllCustomers(callApi, setCustomersListCreateOrder, {
       ClientType: "C",
       onlyCreateOrderClients: true,
+      searchTerm: SearchTerm,
+      isOccasionalCustomer: true
     });
   }, []);
 
   const checkWhatRenderArray = (e) => {
     if (e.target.value) {
       setCanOrder(true);
+      getAllCustomersCreateOrder(e.target.value);
     } else {
       setCanOrder(false);
+      getAllCustomersCreateQuote(e.target.value);
+
     }
   };
 
@@ -243,11 +259,11 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
             ];
           }
           else if (docType === DOCUMENT_TYPE.order) {
-            const jobsElement = CheckPermission(Permissions.SHOW_BOARD_MISSIONS) 
-            ? ( <div style={{ cursor: "pointer" }} onClick={() => navigate(`/board-missions?orderNumber=${quote?.number}`)}>
+            const jobsElement = CheckPermission(Permissions.SHOW_BOARD_MISSIONS)
+              ? (<div style={{ cursor: "pointer" }} onClick={() => navigate(`/board-missions?orderNumber=${quote?.number}`)}>
                 {quote?.jobs}
               </div>
-            ) : quote?.jobs;
+              ) : quote?.jobs;
             return [
               GetDateFormat(quote?.createdDate),
               <div style={{ cursor: "pointer" }} onClick={() => onClickOpenCustomerModal(quote?.customerId)}>{quote?.customerName}</div>,
@@ -453,11 +469,11 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
             ];
           }
           else if (docType === DOCUMENT_TYPE.order) {
-            const jobsElement = CheckPermission(Permissions.SHOW_BOARD_MISSIONS) 
-            ? ( <div style={{ cursor: "pointer" }} onClick={() => navigate(`/board-missions?orderNumber=${quote?.number}`)}>
+            const jobsElement = CheckPermission(Permissions.SHOW_BOARD_MISSIONS)
+              ? (<div style={{ cursor: "pointer" }} onClick={() => navigate(`/board-missions?orderNumber=${quote?.number}`)}>
                 {quote?.jobs}
               </div>
-            ) : quote?.jobs;
+              ) : quote?.jobs;
 
             return [
               GetDateFormat(quote?.createdDate),
@@ -656,8 +672,8 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     docType === DOCUMENT_TYPE.order && t("sales.quote.purchaseNumber"),
     docType === DOCUMENT_TYPE.order && t("sales.quote.productionStatus"),
     docType === DOCUMENT_TYPE.order && t("sales.quote.jobs"),
-    docType === DOCUMENT_TYPE.order &&  <PermissionCheck userPermission={Permissions.SHOW_COSTS_IN_ORDERS}>
-      { t("sales.quote.cost")}
+    docType === DOCUMENT_TYPE.order && <PermissionCheck userPermission={Permissions.SHOW_COSTS_IN_ORDERS}>
+      {t("sales.quote.cost")}
     </PermissionCheck>,
     docType === DOCUMENT_TYPE.receipt ? t("sales.quote.paymentMethod") : t("sales.quote.worksName"),
     t("sales.quote.totalPrice"),
@@ -836,6 +852,9 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
       },
     });
   };
+
+
+
 
   const onClickQuotePdf = async (id: string) => {
     const downloadPdf = (url) => {
@@ -1316,6 +1335,10 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
   }
 
   const CloseDocument = async (quoteItemValue) => {
+    setSelectedQuoteItemValue(quoteItemValue)
+    if (quoteItemValue?.closeOrderNotes && quoteItemValue?.closeOrderNotes.tirm !== "") {
+      onClickOpenCloseOrderNotesModal()
+    }
     const callBack = (res) => {
       if (res?.success) {
         alertSuccessUpdate();
@@ -1389,6 +1412,10 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
   useEffect(() => {
     getClientTypesCategories()
   }, [])
+
+
+
+
   return {
     showCustomerModal,
     customerForEdit,
@@ -1478,7 +1505,10 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     handleClose,
     open,
     anchorEl,
-    filterData
+    filterData,
+    openCloseOrderNotesModal,
+    onClickCloseCloseOrderNotesModal,
+    selectedQuoteItemValue
   };
 };
 

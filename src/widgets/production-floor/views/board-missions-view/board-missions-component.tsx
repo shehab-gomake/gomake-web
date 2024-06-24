@@ -44,7 +44,7 @@ const BoardMissionsComponent = ({boardMissionsId, step, productType}: IProps) =>
         <BoardMissionsDetailsHeader/>
         <Divider orientation={'horizontal'} flexItem/>
         <NavigationButtonsComponent/>
-        <Stack>
+        <Stack overflow={'auto'}>
             {
                 step === EBoardMissionsViews.STATIONS && <BoardMissionsStationsComponent/>
             }

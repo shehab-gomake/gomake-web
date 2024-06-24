@@ -1,4 +1,6 @@
+import { DocumentTypeEnums } from "@/enums";
 import {emailRegex} from "@/utils/regex";
+import { t } from "i18next";
 
 const contactInputs1 = (state) => {
   return [
@@ -113,6 +115,24 @@ const contactInputs1 = (state) => {
       isValid: !!state?.mail, 
       regex: emailRegex
     },
+     {
+       name: " defualt in document",
+       label: " defualt in document",
+       type: "select",
+       placeholder: " defualt in document",
+       required: false,
+       parameterKey: "defaultInDocsTypes",
+       options: [
+                { value: DocumentTypeEnums.Quote, text: t("tabs.quotes") },
+                { value: DocumentTypeEnums.Order, text: t("tabs.orders") },
+                { value: DocumentTypeEnums.DeliveryNote, text: t("tabs.deliveryNotes") },
+                { value: DocumentTypeEnums.Invoice, text: t("tabs.invoices") },
+                { value: DocumentTypeEnums.Receipt, text: t("tabs.receipts") },
+              ],
+       value: state?.defaultInDocsTypes,
+       multiple: true
+      
+   },
   ];
 };
 

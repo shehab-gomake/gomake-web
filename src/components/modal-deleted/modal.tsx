@@ -1,4 +1,3 @@
-import * as React from "react";
 import { useTranslation } from "react-i18next";
 import { Modal } from "@mui/material";
 import { Wastebasket } from "@/icons";
@@ -14,10 +13,18 @@ const GoMakeDeleteModal = ({
   hideIcon = false,
   title = "Confirm Delete",
   yesBtn = "Delete",
+  onClickCancel,
   ...props
 }: any) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
+
+  const handleCancelClick = () => {
+    if (onClickCancel) {
+      onClickCancel();
+    }
+    onClose();
+  };
 
   return (
     <Modal
@@ -29,7 +36,7 @@ const GoMakeDeleteModal = ({
         outline: "none",
       }}
     >
-      <div style={{...classes.container , ...props.style}}>
+      <div style={{ ...classes.container, ...props.style }}>
         <div style={classes.content}>
           {!hideIcon && (
             <div style={classes.icon}>{props.icon || <Wastebasket />}</div>
@@ -46,7 +53,7 @@ const GoMakeDeleteModal = ({
             >
               {yesBtn}
             </GomakePrimaryButton>{" "}
-            <GomakePrimaryButton style={classes.cancelBtn} onClick={onClose}>
+            <GomakePrimaryButton style={classes.cancelBtn} onClick={handleCancelClick}>
               {props?.cancelBtn || t("materials.buttons.cancel")}
             </GomakePrimaryButton>
           </div>

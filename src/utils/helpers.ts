@@ -125,3 +125,10 @@ export   const downloadPdf = (url) => {
   });
   anchor.click();
 };
+
+export  const isAtLeastOneSelected = (items) => {
+  if (items && items?.length > 0) {
+    return items.some(item => item.isSelected === true);
+
+  }
+}

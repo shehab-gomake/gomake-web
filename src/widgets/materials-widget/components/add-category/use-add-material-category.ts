@@ -1,9 +1,9 @@
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { useRouter } from "next/router";
-import { useRecoilState, useSetRecoilState } from "recoil";
-import { activeFilterState, flagState, openAddCategoryModalState } from "@/widgets/materials-widget/state";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { activeFilterState, flagState, isEditCategoryModalState, openAddCategoryModalState, selectedCategoryModalState } from "@/widgets/materials-widget/state";
 import { useMaterials } from "../../use-materials";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { EMaterialActiveFilter } from "../../enums";
 import { useTranslation } from "react-i18next";
 import {addPrintHouseMaterialCategoryApi} from "@/services/api-service/materials/printhouse-materials-endpoints";
@@ -15,12 +15,19 @@ const useAddMaterialCategory = (isAdmin:boolean) => {
     const { materialType } = query;
     const { alertSuccessAdded, alertFaultAdded,alertFault } = useSnackBar();
     const [openModal, setOpenModal] = useRecoilState(openAddCategoryModalState);
+    const [editCategoryModalState,setEditCategoryModalState] = useRecoilState(isEditCategoryModalState);
+    const [selectedCategoryModal,setSelectedCategoryModal] = useRecoilState<any>(selectedCategoryModalState);
     const { getMaterialCategories } = useMaterials(isAdmin);
     const [newCategory, setNewCategory] = useState<string>(null);
     const setActiveFilter = useSetRecoilState(activeFilterState);
     const setFlagState = useSetRecoilState(flagState);
     const { t } = useTranslation();
 
+    useEffect(()=>{
+       if(selectedCategoryModal){
+        setNewCategory(selectedCategoryModal?.categoryName)
+       } 
+    },[selectedCategoryModal])
     const onSetCategory = (e) => {
         setNewCategory(e.target.value);
     }
@@ -57,9 +64,14 @@ const useAddMaterialCategory = (isAdmin:boolean) => {
 
     return {
         openModal,
+        editCategoryModalState,
+        selectedCategoryModal,
+        newCategory,
         setOpenModal,
         onAddCategory,
         onSetCategory,
+        setEditCategoryModalState,
+        setSelectedCategoryModal,
         t,
     }
 }

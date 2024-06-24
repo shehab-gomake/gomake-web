@@ -17,12 +17,15 @@ import { IconButton } from "@mui/material";
 import { GoMakeMenu } from "@/components";
 import { InputAdornment } from "@mui/material";
 import TuneIcon from '@mui/icons-material/Tune';
+import { useRecoilValue } from "recoil";
+import { outsourceSuppliersState } from "@/widgets/product-pricing-widget/state";
 
-const BoardMissionsListWidget = () => {
+const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
   const {
     tableHeader,
+    tableHeaderForPurchaseJobs,
     renderOptions,
     customer,
     agent,
@@ -37,9 +40,11 @@ const BoardMissionsListWidget = () => {
     handleClickSearch,
     handleClickClear,
     allBoardMissions,
+    allPurchaseJobs,
     patternSearch,
     handleAgentChange,
     handleStatusChange,
+    handledSupplierIdChange,
     handleCustomerChange,
     checkWhatRenderArray,
     handlePageChange,
@@ -79,18 +84,20 @@ const BoardMissionsListWidget = () => {
     handleClose,
     selectedMission,
     open,
-    anchorEl
-  } = useBoardMissions();
+    anchorEl,
+    supplierId,
+    supplierList
+  } = useBoardMissions({ isPurchaseJobs });
 
   useEffect(() => {
     getAllProducts();
   }, []);
-
+  const suppliersState = useRecoilValue(outsourceSuppliersState);
   return (
     <>
       <Stack direction="column" justifyContent="space-between" display="flex" spacing={1} height="100%" >
         <div style={classes.mainContainer}>
-          <HeaderTitle title={t("boardMissions.title")} marginTop={1} marginBottom={1} />
+          <HeaderTitle title={!isPurchaseJobs ? t("boardMissions.title") : t("boardMissions.purchaseJobsTitle")} marginTop={1} marginBottom={1} />
           <SearchInputComponent
             searchInputStyle={{ width: "20vw" }}
             filtersButton={
@@ -150,6 +157,21 @@ const BoardMissionsListWidget = () => {
                             values={productIds}
                             placeholder={t("boardMissions.selectProducts")} />
                         </div>
+                        {isPurchaseJobs && <div style={classes.statusFilterContainer}>
+                          <h3 style={classes.filterLabelStyle}>{t("sales.quote.supplierName")}</h3>
+                          <GoMakeAutoComplate
+                            placeholder={"Select supplier"}
+                            value={supplierId}
+                            style={classes.textInputStyle}
+                            onChange={handledSupplierIdChange}
+                            options={supplierList?.map((s) => ({
+                              value: s.id,
+                              label: s.name,
+                            }))}
+                            withArrow={true}
+                          />
+
+                        </div>}
                         <div style={classes.statusFilterContainer}>
                           <h3 style={classes.filterLabelStyle}>{t("boardMissions.dateRange")}</h3>
                           <GoMakeDatepicker onChange={onSelectDeliveryTimeDates} placeholder={t("boardMissions.chooseDate")} reset={resetDatePicker} />
@@ -188,8 +210,8 @@ const BoardMissionsListWidget = () => {
             stickyFirstCol={false}
             stickyHeader={true}
             maxHeight={650}
-            rows={allBoardMissions}
-            headers={tableHeader}
+            rows={!isPurchaseJobs ? allBoardMissions : allPurchaseJobs}
+            headers={!isPurchaseJobs ? tableHeader : tableHeaderForPurchaseJobs}
           />
         </div>
         <GoMakePagination

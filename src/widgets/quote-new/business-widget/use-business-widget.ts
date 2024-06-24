@@ -6,12 +6,12 @@ import { useSetRecoilState, useRecoilValue } from "recoil";
 import { quoteConfirmationState, quoteItemState } from "@/store";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { addressModalState } from "./address-widget/state";
-import { useGomakeAxios } from "@/hooks";
+import { useUserPermission } from "@/hooks/use-permission";
+import { DocumentPermission } from "@/components/CheckPermission/enum";
 
 const useBusinessWidget = ({ values, documentType }) => {
   const { t } = useTranslation();
   const router = useRouter();
-  const { callApi } = useGomakeAxios();
   const [isConfirmation, setIsConfirmation] = useState();
   const { renderOptions, checkWhatRenderArray } = useQuoteWidget({ documentType });
   const setOpenModal = useSetRecoilState<boolean>(addressModalState);
@@ -38,6 +38,10 @@ const useBusinessWidget = ({ values, documentType }) => {
     ...customer
   }));
 
+  const {CheckDocumentPermission } = useUserPermission();
+  const canEditDocument = router.query.isNewCreation ? true  : 
+  quoteStateValue?.isEditable && CheckDocumentPermission(documentType, DocumentPermission.EDIT_DOCUMENT);
+
   return {
     t,
     router,
@@ -63,7 +67,8 @@ const useBusinessWidget = ({ values, documentType }) => {
     setOpenCustomerModal,
     customer, 
     setCustomer,
-    onCustomerAdd
+    onCustomerAdd,
+    canEditDocument
   };
 };
 

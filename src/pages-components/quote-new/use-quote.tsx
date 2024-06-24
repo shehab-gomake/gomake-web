@@ -19,7 +19,7 @@ import {
   quoteItemState,
 } from "@/store";
 import { useQuoteGetData } from "./use-quote-get-data";
-import { addDeliveryApi, addDocumentContactApi, calculateDocumentApi, calculateDocumentItemApi, cancelDocumentApi, changeDocumentClientApi, deleteDocumentAddressApi, deleteDocumentContactApi, deleteDocumentItemApi, duplicateWithAnotherQuantityApi, getDocumentApi, getWhatsAppMessageApi, refreshExchangeRateApi, saveDocumentApi, sendDocumentToClientApi, sortDocumentItemsApi, updateAgentApi, updateDocuementItemSelectApi, updateDocumentAddressApi, updateDocumentContactApi, updateDocumentCurrencyApi, updateDueDateApi, updateExchangeRateApi, updateIsShowDetailsApi, updateIsShowPricesApi, updatePurchaseNumberApi } from "@/services/api-service/generic-doc/documents-api";
+import { addDeliveryApi, addDocumentContactApi, calculateDocumentApi, calculateDocumentItemApi, cancelDocumentApi, changeDocumentClientApi, deleteDocumentAddressApi, deleteDocumentContactApi, deleteDocumentItemApi, duplicateWithAnotherQuantityApi, getDocumentApi, getWhatsAppMessageApi, refreshExchangeRateApi, saveDocumentApi, sendDocumentToClientApi, sortDocumentItemsApi, updateAgentApi, updateDocuementItemSelectApi, updateDocumentAddressApi, updateDocumentContactApi, updateDocumentCurrencyApi, updateDueDateApi, updateExchangeRateApi, updateIsShowDetailsApi, updateIsShowPricesApi, updateOccasionalClientNameApi, updatePurchaseNumberApi } from "@/services/api-service/generic-doc/documents-api";
 import { DOCUMENT_TYPE } from "../quotes/enums";
 import { useRouter } from "next/router";
 import { getAllCreditTransactionsApi, getClientPaymentItemsApi, getReceiptByIdApi } from "@/services/api-service/generic-doc/receipts-api";
@@ -27,6 +27,7 @@ import { creditTransactionsState, transactionOptionsData } from "@/widgets/quote
 import { QuoteStatuses } from "@/widgets/quote-new/total-price-and-vat/enums";
 import { clientTypesCategoriesState } from "@/pages/customers/customer-states";
 import { CLIENT_TYPE_Id } from "@/pages/customers/enums";
+import { isAtLeastOneSelected } from "@/utils/helpers";
 
 interface IQuoteProps {
   docType: DOCUMENT_TYPE;
@@ -51,6 +52,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
   const { t } = useTranslation();
   const { getQuote, getAllClientContacts } = useQuoteGetData(docType);
   const [quoteItemValue, setQuoteItemValue] = useRecoilState<any>(quoteItemState);
+
   const quoteConfirm = useRecoilValue<any>(quoteConfirmationState);
   const [selectDate, setSelectDate] = useState(isQuoteConfirmation ? quoteConfirm?.dueDate : quoteItemValue?.dueDate);
   const [creationDate, setCreationDate] = useState(isQuoteConfirmation ? quoteConfirm?.createdDate : quoteItemValue?.createdDate);
@@ -59,6 +61,10 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
   const [selectConfirmBusiness, setSelectConfirmBusiness] = useState<any>({});
   const [isUpdateBusinessName, setIsUpdateBusinessName] = useState<number | null>(null);
   const [isUpdatePurchaseNumber, setIsUpdatePurchaseNumber] = useState<number | null>(null);
+  const [isUpdateClientName, setIsUpdateClientName] = useState<number | null>(null);
+  const [clientName, setClientName] = useState(quoteItemValue?.occasionalClientName);
+
+
   const [isUpdateExchangeRate, setIsUpdateExchangeRate] = useState<number | null>(null);
   const [isUpdateCurrency, setIsUpdateCurrency] = useState<string>(null);
   const [, setIsUpdateBusinessCode] = useState<number | null>(null);
@@ -96,6 +102,39 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
   const openCancelBtn = Boolean(anchorElCancelBtn);
   const openSettingMenu = Boolean(anchorElSettingMenu);
   const [openWatssAppModal, setOpenWatsAppModal] = useState(false)
+  const [isSelectedAtLeastOne, setIsSelectedAtLeastOne] = useState(null)
+
+  const [openNewItemNotesModal, setOpenNewItemNotesModal] = useState(false)
+  const [openRelatedDocumentsModal, setOpenRelatedDocumentsModal] = useState(false)
+
+
+  const onClickOpenRelatedDocumentsModal = () => {
+    setOpenRelatedDocumentsModal(true)
+  }
+  const onClickCloseRelatedDocumentsModal = () => {
+    setOpenRelatedDocumentsModal(false)
+  }
+
+  const onClickOpenNewItemNotesModal = () => {
+    setOpenNewItemNotesModal(true)
+  }
+  const onClickCloseNewItemNotesModal = () => {
+    setOpenNewItemNotesModal(false)
+  }
+
+  useEffect(() => {
+    if (quoteItemValue?.client?.newItemNotes && quoteItemValue?.client?.newItemNotes.trim() !== "") {
+      onClickOpenNewItemNotesModal()
+    }
+
+  }, [quoteItemValue])
+
+  useEffect(() => {
+    const data = isAtLeastOneSelected(quoteItemValue?.documentItems)
+    setIsSelectedAtLeastOne(data)
+
+  }, [quoteItemValue])
+
   const onClickOpenWatssAppModal = () => {
     setOpenWatsAppModal(true)
   }
@@ -177,12 +216,34 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
       onlyCreateOrderClients: docType === DOCUMENT_TYPE.purchaseOrder || docType === DOCUMENT_TYPE.purchaseInvoice || docType === DOCUMENT_TYPE.purchaseInvoiceRefund ? true : false,
     });
   }, [docType]);
+  console.log("quoteItemValue", clientName)
+  const updateOccasionalClientName = async () => {
+    const callBack = (res) => {
+      if (res?.success) {
+        alertSuccessUpdate()
+      } else {
+        alertFaultUpdate();
+      }
+    };
+    await updateOccasionalClientNameApi(callApi, callBack, {
+      documentType: 0,
+      document: {
+        documentId: quoteItemValue?.id,
+        occasionalClientName: clientName
+      },
+    });
+  };
+
 
   const onBlurPurchaseNumber = async (value) => {
     updatePurchaseNumber(value);
     setIsUpdatePurchaseNumber(null);
   };
 
+  const onBlurClientName = async () => {
+    updateOccasionalClientName()
+    setIsUpdateClientName(null);
+  };
   const onBlurBusinessCode = async () => {
     setIsUpdateBusinessCode(null);
   };
@@ -864,6 +925,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
   };
 
   const [openOtherReasonModal, setOpenOtherReasonModal] = useState(false);
+  const [openSignatureApprovalModal, setOpenSignatureApprovalModal] = useState(false);
   const [openIrrelevantCancelModal, setOpenIrrelevantCancelModal] = useState(false);
   const [openPriceCancelModal, setOpenPriceCancelModal] = useState(false);
   const [openDeliveryTimeCancelModal, setOpenDeliveryTimeCancelModal] = useState(false);
@@ -893,6 +955,13 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
   };
   const onClickCloseModal = () => {
     setOpenOtherReasonModal(false);
+  };
+
+  const onClickOpenSignatureApprovalModal = () => {
+    setOpenSignatureApprovalModal(true);
+  };
+  const onClickCloseSignatureApprovalModal = () => {
+    setOpenSignatureApprovalModal(false);
   };
 
   const onClickCancelOffer = async () => {
@@ -956,51 +1025,57 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     return false;
   }
   const onClickSendQuoteToClient = async (messageType: number) => {
-    if (messageType === 1) {
-      let checkPhones = checkArrayNotEmptyOrPhoneNotEmpty(quoteItemValue?.documentContacts)
-      if (checkPhones) {
-        const callBack = (res) => {
-          if (res?.success) {
-            alertSuccessAdded();
-          } else {
-            alertFaultAdded();
-          }
-        }
-        await sendDocumentToClientApi(callApi, callBack, {
-          documentType: docType,
-          document: {
-            documentId: quoteItemValue?.id,
-            messageType,
-          }
-        })
-      }
-      else {
-        alertFault("sales.quote.phoneContectErrorMsg")
-      }
+    if (!isSelectedAtLeastOne) {
+      alertFault("please select at least one item")
     }
     else {
-      let checkEmails = checkArrayNotEmptyOrEmailNotEmpty(quoteItemValue?.documentContacts)
-      if (checkEmails) {
-        const callBack = (res) => {
-          if (res?.success) {
-            alertSuccessAdded();
-          } else {
-            alertFaultAdded();
+      if (messageType === 1) {
+        let checkPhones = checkArrayNotEmptyOrPhoneNotEmpty(quoteItemValue?.documentContacts)
+        if (checkPhones) {
+          const callBack = (res) => {
+            if (res?.success) {
+              alertSuccessAdded();
+            } else {
+              alertFaultAdded();
+            }
           }
+          await sendDocumentToClientApi(callApi, callBack, {
+            documentType: docType,
+            document: {
+              documentId: quoteItemValue?.id,
+              messageType,
+            }
+          })
         }
-        await sendDocumentToClientApi(callApi, callBack, {
-          documentType: docType,
-          document: {
-            documentId: quoteItemValue?.id,
-            messageType,
-          }
-        })
+        else {
+          alertFault("sales.quote.phoneContectErrorMsg")
+        }
       }
       else {
-        alertFault("sales.quote.mailContectErrorMsg")
-      }
+        let checkEmails = checkArrayNotEmptyOrEmailNotEmpty(quoteItemValue?.documentContacts)
+        if (checkEmails) {
+          const callBack = (res) => {
+            if (res?.success) {
+              alertSuccessAdded();
+            } else {
+              alertFaultAdded();
+            }
+          }
+          await sendDocumentToClientApi(callApi, callBack, {
+            documentType: docType,
+            document: {
+              documentId: quoteItemValue?.id,
+              messageType,
+            }
+          })
+        }
+        else {
+          alertFault("sales.quote.mailContectErrorMsg")
+        }
 
+      }
     }
+
 
 
 
@@ -1457,7 +1532,20 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     openAddNewContactModal,
     onCloseNewContact,
     onOpenNewContact,
-    onChangeSelectedItemRowForQoute
+    onChangeSelectedItemRowForQoute,
+    openNewItemNotesModal,
+    onClickCloseNewItemNotesModal,
+    onClickOpenRelatedDocumentsModal,
+    onClickCloseRelatedDocumentsModal,
+    openRelatedDocumentsModal,
+    openSignatureApprovalModal,
+    onClickOpenSignatureApprovalModal,
+    onClickCloseSignatureApprovalModal,
+    onBlurClientName,
+    isUpdateClientName,
+    setIsUpdateClientName,
+    clientName,
+    setClientName
   };
 };
 

@@ -311,7 +311,7 @@ const useAddRuleModal = ({
       additionalProfit: additionalProfit,
       pricingBy: selectedPricingBy?.value,
       exceptionRule: expression,
-      exceptionConditionProperties: rules.map((item) => {
+      exceptionConditionProperties: rules.map((item) => {   
         return {
           statementId:
             typeof item?.statement === "object"
@@ -394,16 +394,35 @@ const useAddRuleModal = ({
         exceptionConditionProperties: rules.map((item) => {
           return {
             statementId:
-              typeof item?.statement === "object"
+            item.category.id === "Property output" || item.category.id === "Property input"
+                ? item.statement2.id
+                : typeof item?.statement === "object"
                 ? item?.statement?.id
                 : item.statement,
-            statementValue: item?.statement2?.id,
-            operator: item?.condition?.id,
+            statementValue:
+              item.category.id === "Property output" || item.category.id === "Property input"
+                ? typeof item?.statement === "object"
+                  ? item?.statement?.id
+                  : item.statement
+                : item.statement2.id,
+            operator: item.condition.id,
             conditionBetweenStatements: item.linkCondition
               ? item.linkCondition.id
               : "",
             statementCategory: EStatementCategory[item.category.id],
-          };
+          }
+          // return {
+          //   statementId:
+          //     typeof item?.statement === "object"
+          //       ? item?.statement?.id
+          //       : item.statement,
+          //   statementValue: item?.statement2?.id,
+          //   operator: item?.condition?.id,
+          //   conditionBetweenStatements: item.linkCondition
+          //     ? item.linkCondition.id
+          //     : "",
+          //   statementCategory: EStatementCategory[item.category.id],
+          // };
         }),
         successEvent: propertieValue,
         expression: expression,

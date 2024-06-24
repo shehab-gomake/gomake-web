@@ -25,7 +25,6 @@ const MultiSelectList = ({
 }: IProps) => {
   const { classes } = useStyle();
   const { updateCellData } = useTableCellData(isAdmin);
-  console.log("values", values)
   const reorderedOptions = options?.sort((a, b) => {
     const isSelectedA = values.includes(a.value);
     const isSelectedB = values.includes(b.value);

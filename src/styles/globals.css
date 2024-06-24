@@ -49,6 +49,7 @@ html * {
   width: 4px;
   border-radius: 24px;
 }
+
 .show-scrollbar::-webkit-scrollbar {
   width: 12px;
 }
@@ -71,6 +72,7 @@ html * {
 .show-scrollbar::-webkit-scrollbar-thumb:active {
   background: #333;
 }
+
 .MuiSlider-rail {
   height: 7px !important;
 }
@@ -179,7 +181,7 @@ input::placeholder {
   text-align: unset !important;
 }
 
-.dots-loader > div {
+.dots-loader>div {
   animation: dots-loader 0.6s infinite alternate;
 }
 
@@ -339,9 +341,11 @@ df-messenger {
   box-shadow: 0 1px 10px rgba(0, 0, 0, 0.8);
   border-radius: 4px;
 }
+
 .react-chatbot-kit-chat-btn-send {
   background-color: #2e3092 !important;
 }
+
 .react-chatbot-kit-chat-header {
   background-color: #2e3092 !important;
   color: #fff !important;
@@ -352,19 +356,26 @@ df-messenger {
   z-index: 1;
   right: 0;
 }
+
 .background svg {
   color: white;
   opacity: 0.2;
 }
+
 .background circle {
   stroke-dashoffset: 0 !important;
 }
+
 .foreground {
   position: relative;
   z-index: 2;
 }
+
 .foreground svg {
   color: white;
 }
-.foreground circle {
+
+.MuiTooltip-popper {
+  z-index: 999999;
 }
+.foreground circle {}

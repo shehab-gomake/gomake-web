@@ -48,7 +48,7 @@ export const GoMakeFileFiled = ({ selectedNameFile }) => {
     <div style={classes.inputContainer}>
       <div style={classes.fileInputStyle}>
         {imagePreview ||  selectedFileNameinGomakeFiled ? (
-          <img src={imagePreview}  style={{ maxWidth: '100px', maxHeight: '100px' , display:"flex", alignItems:"center"}} />
+          <img src={imagePreview}  style={{ maxWidth: '35px', maxHeight: '35px' , display:"flex", alignItems:"center"}} />
         ) : (
           <><GarlleryIcon /><label
               style={{
@@ -69,7 +69,7 @@ export const GoMakeFileFiled = ({ selectedNameFile }) => {
           type="file"
           style={{ display: 'none' }}
         />
-        <Button variant="contained" onClick={handleButtonClick} style={{ backgroundColor: '#ED028C' }}>{t("general.uploadLogo")}</Button>
+        <Button variant="contained" onClick={handleButtonClick} style={{ backgroundColor: '#ED028C', height:"30px"}}>{t("general.uploadLogo")}</Button>
       </div>
     </div>
   );
