@@ -6,7 +6,7 @@ import {maxSpeedInput} from "@/widgets/machines/utils/attributes/speed-inputs/ma
 const rollWidePrinting = (state: Record<string, any>) => {
     return [
         ...setupTimeInput(state),
-        ...maxSpeedInput(state, EMeasurementUnits.SQUARE_METER_P_MIN),
+        ...maxSpeedInput(state, EMeasurementUnits.SQUARE_METER_P_HOUR),
         {
             name: 'machineAttributes.speedByQuality',
             parameterKey: 'speedByQuality',
@@ -30,7 +30,7 @@ const rollWidePrinting = (state: Record<string, any>) => {
                     placeholder: "machineAttributes.speed",
                     required: true,
                     parameterKey: "speed",
-                    unit: EMeasurementUnits.SQUARE_METER_P_MIN,
+                    unit: EMeasurementUnits.SQUARE_METER_P_HOUR,
                     options: []
                 },
             ]
