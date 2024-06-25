@@ -10,9 +10,10 @@ import { PackageIcon } from "@/icons/package-icon";
 import { GetPrintingTicketPDFApi } from "@/services/api-service/generic-doc/documents-api";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { PStatus } from "../enums";
-import {addBoardMissionsToFileUploaderApi} from "@/services/api-service/board-missions-table/board-missions-table";
-import {useRecoilState} from "recoil";
-import {fileUploaderConnectionIdState, openFileUploaderList, pinFileUploaderState} from "@/store/file-uploader-state";
+import { addBoardMissionsToFileUploaderApi } from "@/services/api-service/board-missions-table/board-missions-table";
+import { useRecoilState } from "recoil";
+import { fileUploaderConnectionIdState, openFileUploaderList, pinFileUploaderState } from "@/store/file-uploader-state";
+import { MarkAsUnReadyIcon } from "./icons/mark-as-un-ready";
 const useMoreCircle = ({
   mission,
   onClickDuplicate,
@@ -23,7 +24,7 @@ const useMoreCircle = ({
   onClickPrintPackagingSlip,
   onOpenModal
 }: any) => {
-
+  console.log("mission", mission)
   const { t } = useTranslation();
   const { classes } = useStyle();
   const { callApi } = useGomakeAxios();
@@ -108,8 +109,8 @@ const useMoreCircle = ({
     },
     {
       condition: mission?.status === PStatus.IN_PROCESS,
-      name: "boardMissions.markAsReady",
-      icon: <TaskAltOutlinedIcon style={classes.iconStyle} />,
+      name: !mission?.isReady ? "boardMissions.markAsReady" : "boardMissions.markAsUnReady",
+      icon: !mission?.isReady ? <TaskAltOutlinedIcon style={classes.iconStyle} /> : <MarkAsUnReadyIcon />,
       onclick: () => onClickMarksAsDone(mission),
     },
     {
