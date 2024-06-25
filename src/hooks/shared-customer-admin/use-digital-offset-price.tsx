@@ -713,10 +713,27 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     parameter?.parameterType ===
                     EParameterTypes.SELECT_MATERIALS
                   ) {
+                    // when the parameter is required and the parameter is material select and if there is only one option select it automatically
+                    if (parameter?.valuesConfigs && parameter?.valuesConfigs?.length === 1 && parameter?.isRequired) {
+                      subProduct.parameters.push({
+                        parameterId: parameter?.id,
+                        parameterName: parameter?.name,
+                        actionId: parameter?.actionId,
+                        parameterType: parameter?.parameterType,
+                        valueIds: parameter?.valuesConfigs[0]?.values,
+                        values: parameter?.valuesConfigs[0]?.values,
+                        sectionId: section?.id,
+                        subSectionId: subSection?.id,
+                        actionIndex: parameter?.actionIndex,
+                        parameterCode: parameter?.code,
+                        valuesConfigs: parameter?.valuesConfigs,
+                        unitKey: parameter?.unitKey,
+                        unitType: parameter?.unitType,
+                      });
+                    }
                     const value = parameter?.valuesConfigs?.find(
                       (item) => item?.isDefault == true
                     );
-
                     if (
                       value &&
                       value.materialValueIds &&
@@ -814,22 +831,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     }
                   }
                 }
-                // if (!isParameterExits && parameter.code === "quantity") {
-                //   subProduct.parameters.push({
-                //     parameterId: parameter?.id,
-                //     parameterName: parameter?.name,
-                //     actionId: parameter?.actionId,
-                //     parameterType: parameter?.parameterType,
-                //     values: [""],
-                //     sectionId: section?.id,
-                //     subSectionId: subSection?.id,
-                //     actionIndex: parameter?.actionIndex,
-                //     parameterCode: parameter?.code,
-                //     valuesConfigs: parameter?.valuesConfigs,
-                //     unitKey: parameter?.unitKey,
-                //     unitType: parameter?.unitType,
-                //   });
-                // }
                 processRelatedParameters2(parameter, subSection, section, productTemplate, subProductsArray);
 
               });
@@ -1443,7 +1444,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           straightKnife={straightKnife}
         />
       );
-    } else if (parameter?.parameterType === EParameterTypes.SELECT_MATERIALS) {
+    }
+    else if (parameter?.parameterType === EParameterTypes.SELECT_MATERIALS) {
       Comp = (
         <DropDownListParameterWidget
           parameter={parameter}
@@ -1557,7 +1559,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         param.isHidden = false;
                         setProductTemplate(productCopy);
                       } else if (parameter?.parameterType === EParameterTypes.DROP_DOWN_LIST || parameter?.parameterType === EParameterTypes.SELECT_MATERIALS) {
-
                         const valueInArray = relatedParameter.selectedValueIds?.find(
                           (c) => c == parm?.valueIds
                         );
@@ -1698,6 +1699,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       if (subSection.optionToDuplicateContent) {
         return;
       }
+
       parameter?.relatedParameters
         ?.filter((relatedParameter) =>
           subSection.parameters.some((p) => p.id === relatedParameter.parameterId)
@@ -1731,11 +1733,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               return;
             }
 
-            // subProducts.forEach(x => {
-            //   if (x.type == subSection.type) {
-            //     x.parameters = x?.parameters?.filter(p => p.parameterId != param.id)
-            //   }
-            // })
             subProducts.forEach(x => {
               if (x.type == subSection.type) {
                 x = { ...x, parameters: x.parameters.filter(p => p.parameterId != param.id) };
@@ -2127,6 +2124,24 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 param.valuesConfigs = param.valuesConfigs.filter(
                   (x) => x.values && x.values.length > 0
                 );
+                if (param?.valuesConfigs && param?.valuesConfigs?.length === 1 && param?.isRequired) {
+                  param.valuesConfigs[0].isDefault = true
+                  temp.push({
+                    parameterId: param?.id,
+                    parameterName: param?.name,
+                    actionId: param?.actionId,
+                    parameterType: param?.parameterType,
+                    valueIds: param?.valuesConfigs[0]?.values,
+                    values: param?.valuesConfigs[0]?.values,
+                    sectionId: section?.id,
+                    subSectionId: subSection?.id,
+                    actionIndex: param?.actionIndex,
+                    parameterCode: param?.code,
+                    valuesConfigs: param?.valuesConfigs,
+                    unitKey: param?.unitKey,
+                    unitType: param?.unitType,
+                  });
+                }
               }
             }
           });
@@ -2475,7 +2490,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       quoteItemProduct.productItemValue &&
       quoteItemProduct.productItemValue.itemParmetersValues
     ) {
-      //setItemParmetersValues(quoteItemProduct.productItemValue.itemParmetersValues);
       const quoteItemSubProducts = [];
       setCurrentProductItemValueTotalPrice(
         quoteItemProduct.docmentItem.finalPrice
@@ -2487,8 +2501,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       setCurrentCalculationSessionId(quoteItemProduct.productItemValueDraftId)
       setWorkFlows(quoteItemProduct.productItemValue.workFlows);
       setJobActions(quoteItemProduct.productItemValue.actions);
-      //setSubProducts(quoteItemSubProducts);
-      //setSubProductsCopy(quoteItemSubProducts);
       setCalculationProgress({
         totalWorkFlowsCount: 0,
         currentWorkFlowsCount: 0,
