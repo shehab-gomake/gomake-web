@@ -58,7 +58,7 @@ const apiRequest = async (
       success: false,
       status: err?.response?.status,
       message: err?.response?.data?.message,
-      errors: err?.response?.data?.errors,
+      errors: err?.response?.data?.error?.error,
       msg: err?.response?.data?.msg,
     };
   }
