@@ -32,6 +32,7 @@ const DropDownListParameterWidget = ({
         defaultValue={
           index !== -1 ? { updateName: temp[index].values } : defaultObject
         }
+        disabled={parameter?.isLock ? parameter?.isLock : false}
         onChange={(e: any, value: any) => {
           onChangeSubProductsForPrice(
             parameter?.id,
