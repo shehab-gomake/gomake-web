@@ -10,7 +10,8 @@ const customerInputs = (typeClient, codeFlag, state, clientTypesCategories) => {
       options: [],
       value: state?.code,
       isValid: true,
-      readonly: codeFlag ?? true,
+     // readonly: codeFlag ?? true,
+     readonly : true
     },
     {
       name: "name",
