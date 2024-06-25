@@ -111,6 +111,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [subProducts, setSubProducts] = useRecoilState<any>(
     subProductsParametersState
   );
+
   const [isSetTemplete, setIsSetTemplete] = useState<boolean>(false);
   const setSubProductsCopy = useSetRecoilState<any>(
     subProductsCopyParametersState
@@ -714,7 +715,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     EParameterTypes.SELECT_MATERIALS
                   ) {
                     // when the parameter is required and the parameter is material select and if there is only one option select it automatically
-                    console.log("GGGG", parameter)
                     if (parameter?.valuesConfigs && parameter?.valuesConfigs?.length === 1 && parameter?.isRequired) {
                       subProduct.parameters.push({
                         parameterId: parameter?.id,
@@ -1700,6 +1700,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       if (subSection.optionToDuplicateContent) {
         return;
       }
+
       parameter?.relatedParameters
         ?.filter((relatedParameter) =>
           subSection.parameters.some((p) => p.id === relatedParameter.parameterId)
@@ -1724,32 +1725,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           );
           if (!myParameter) {
             return;
-          }
-          if (myParameter?.valuesConfigs && myParameter?.valuesConfigs?.length === 1 && myParameter?.isRequired) {
-            let copySubProducts = cloneDeep(subProducts)
-
-            let subProduct = copySubProducts.find(
-              (sub) => sub.type == subSection.type
-            );
-            subProduct.parameters.push({
-              parameterId: myParameter?.id,
-              sectionId: section?.id,
-              subSectionId: subSection.id,
-              ParameterType: myParameter?.parameterType,
-              parameterName: myParameter?.name,
-              actionId: myParameter?.actionId,
-              values: myParameter?.valuesConfigs[0]?.values,
-              valueIds: myParameter?.valuesConfigs[0]?.values,
-              actionIndex: myParameter?.actionIndex,
-              parameterCode: myParameter?.code,
-              valuesConfigs: myParameter?.valuesConfigs,
-              unitKey: myParameter?.unitKey,
-              unitType: myParameter?.unitType,
-            });
-            console.log("subProduct1", subProduct)
-            setSubProducts(subProduct);
-
-
           }
           if (parameter.isHidden == true) {
             const sectionCopy = productTemplate.sections.find(x => x.id === section.id);
@@ -2150,6 +2125,24 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 param.valuesConfigs = param.valuesConfigs.filter(
                   (x) => x.values && x.values.length > 0
                 );
+                if (param?.valuesConfigs && param?.valuesConfigs?.length === 1 && param?.isRequired) {
+                  param.valuesConfigs[0].isDefault = true
+                  temp.push({
+                    parameterId: param?.id,
+                    parameterName: param?.name,
+                    actionId: param?.actionId,
+                    parameterType: param?.parameterType,
+                    valueIds: param?.valuesConfigs[0]?.values,
+                    values: param?.valuesConfigs[0]?.values,
+                    sectionId: section?.id,
+                    subSectionId: subSection?.id,
+                    actionIndex: param?.actionIndex,
+                    parameterCode: param?.code,
+                    valuesConfigs: param?.valuesConfigs,
+                    unitKey: param?.unitKey,
+                    unitType: param?.unitType,
+                  });
+                }
               }
             }
           });
@@ -2500,7 +2493,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       quoteItemProduct.productItemValue &&
       quoteItemProduct.productItemValue.itemParmetersValues
     ) {
-      //setItemParmetersValues(quoteItemProduct.productItemValue.itemParmetersValues);
       const quoteItemSubProducts = [];
       setCurrentProductItemValueTotalPrice(
         quoteItemProduct.docmentItem.finalPrice
@@ -2512,8 +2504,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       setCurrentCalculationSessionId(quoteItemProduct.productItemValueDraftId)
       setWorkFlows(quoteItemProduct.productItemValue.workFlows);
       setJobActions(quoteItemProduct.productItemValue.actions);
-      //setSubProducts(quoteItemSubProducts);
-      //setSubProductsCopy(quoteItemSubProducts);
       setCalculationProgress({
         totalWorkFlowsCount: 0,
         currentWorkFlowsCount: 0,
