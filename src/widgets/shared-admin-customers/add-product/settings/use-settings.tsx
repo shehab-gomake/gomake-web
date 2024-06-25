@@ -161,7 +161,7 @@ const useSettings = ({
       } else {
         setSnackbarStateValue({
           state: true,
-          message: t("modal.addedfailed"),
+          message: res?.errors?.ErrorMessage,
           type: "error",
         });
       }
@@ -207,7 +207,7 @@ const useSettings = ({
       } else {
         setSnackbarStateValue({
           state: true,
-          message: t("modal.addedfailed"),
+          message: res?.errors?.ErrorMessage,
           type: "error",
         });
       }

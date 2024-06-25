@@ -472,12 +472,19 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
         alertFaultUpdate();
       }
     };
-    await moveBoardMissionToDoneApi(callApi, callBack, { boardMissionId: selectedMission?.id, sendMessage });
+    if (selectedMission?.isReady) {
+      onClickBackToProcess()
+    }
+    else {
+      await moveBoardMissionToDoneApi(callApi, callBack, { boardMissionId: selectedMission?.id, sendMessage });
+
+    }
   };
   const onClickBackToProcess = async () => {
     const callBack = (res) => {
       if (res?.success) {
         alertSuccessUpdate()
+        getAllData(isPurchaseJobs, false)
       } else {
         alertFaultUpdate();
       }

@@ -86,15 +86,16 @@ const useSubChildMapping = ({
   };
 
   const incrementValue = () => {
-    let currentValue = textInputValue as number;
-    currentValue++;
+    let currentValue = textInputValue.toString();
+    currentValue = (parseInt(currentValue) + 1).toString();
     setTextInputValue(currentValue);
   };
   const decrementValue = () => {
-    let currentValue = textInputValue as number; //Double.parse(textInputValue);
-    currentValue--;
+    let currentValue = textInputValue.toString();
+    currentValue = (parseInt(currentValue) - 1).toString();
     setTextInputValue(currentValue);
   };
+
   const getMaxSelectionValues = () => {
     if(!subProducts){
       return;

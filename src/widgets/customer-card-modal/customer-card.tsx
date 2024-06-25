@@ -59,8 +59,8 @@ interface IProps {
   showAddButton?: boolean;
   isgetAllCustomers?: boolean;
   isFromHomePage?: boolean;
-  setOpenOfferModal?:any;
-  userQuote?:any;
+  setOpenOfferModal?: any;
+  userQuote?: any;
 }
 
 const CustomerCardWidget = ({
@@ -81,6 +81,7 @@ const CustomerCardWidget = ({
   setOpenOfferModal,
   userQuote
 }: IProps) => {
+  console.log("customer", customer)
   const [open, setOpen] = useState(false);
   const { addNewCustomer } = useAddCustomer();
   const { editCustomer } = useEditCustomer();
@@ -97,7 +98,7 @@ const CustomerCardWidget = ({
     setShowInActiveCustomers,
     getAllSimilarCustomer,
     setShowTable
-  } = useCustomerCard({ t, setCustomer, onClose, setOpenOfferModal,userQuote });
+  } = useCustomerCard({ t, setCustomer, onClose, setOpenOfferModal, userQuote });
   const { alertRequiredFields, alertFault } = useSnackBar();
   const [resetPassModal, setResetPassModalModal] = useRecoilState<boolean>(resetPassModalState);
   const [gomakeUser, setGomakeUser] = useRecoilState<any>(gomakeUserState);
@@ -112,6 +113,14 @@ const CustomerCardWidget = ({
   const [users, setUsers] = useState(
     customer && customer.users ? customer.users : []
   );
+
+  useEffect(() => {
+    if (customer) {
+      setContacts(customer.contacts ? customer.contacts : [])
+      setAddresses(customer.addresses ? customer.addresses : [])
+      setUsers(customer.users ? customer.users : [])
+    }
+  }, [customer])
   const clientTypesCategories = useRecoilValue(clientTypesCategoriesState);
   const theme = createMuiTheme({
     palette: {
@@ -466,7 +475,7 @@ const CustomerCardWidget = ({
       alertFault("modal.clientNameIsRequired");
       return;
     }
-  
+
     setCustomer(updatedCustomer);
 
     getAllSimilarCustomer(updatedCustomer).then((x) => {
@@ -790,7 +799,7 @@ const CustomerCardWidget = ({
                   rows={getAllSimilarCustomersData().map(mapCustomerData)}
                   headers={customerTableHeaders}
                 />
-                </Stack>
+              </Stack>
             }
           </div>
         </div>
@@ -808,17 +817,17 @@ const CustomerCardWidget = ({
               </SecondaryButton>
             )
           }
-        <PermissionCheck userPermission={Permissions.EDIT_CLIENT}>
-          {showUpdateButton && (
-            <SecondaryButton variant="contained"
-              style={{ width: "fit-content" }}
-              onClick={handleEditCustomer}
-            >
-              {typeClient == "C"
-                ? t("customers.buttons.updateChanges")
-                : t("suppliers.buttons.updateChanges")}
-            </SecondaryButton>
-          )}
+          <PermissionCheck userPermission={Permissions.EDIT_CLIENT}>
+            {showUpdateButton && (
+              <SecondaryButton variant="contained"
+                style={{ width: "fit-content" }}
+                onClick={handleEditCustomer}
+              >
+                {typeClient == "C"
+                  ? t("customers.buttons.updateChanges")
+                  : t("suppliers.buttons.updateChanges")}
+              </SecondaryButton>
+            )}
           </PermissionCheck>
         </div>
       </div>

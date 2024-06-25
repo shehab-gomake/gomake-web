@@ -123,7 +123,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
   }
 
   useEffect(() => {
-    if (quoteItemValue?.client?.newItemNotes && quoteItemValue?.client?.newItemNotes.trim() !== "") {
+    if (quoteItemValue?.client?.newItemNotes && quoteItemValue?.client?.newItemNotes.trim() !== "" && quoteItemValue?.client?.newItemNotes.trim() !== null && docType === DOCUMENT_TYPE.quote) {
       onClickOpenNewItemNotesModal()
     }
 
@@ -173,7 +173,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     "#",
     t("sales.quote.itemCode"),
     t("products.profits.itemName"),
-    quoteItemValue?.isShowDetails ? t("products.profits.details") : null,
+    isQuoteConfirmation ? quoteConfirm?.isShowDetails ? t("products.profits.details") : null : quoteItemValue?.isShowDetails ? t("products.profits.details") : null,
     t("sales.quote.amount"),
     t("sales.quote.discount"),
     t("products.profits.pricingListWidget.unitPrice"),
@@ -1545,7 +1545,8 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     isUpdateClientName,
     setIsUpdateClientName,
     clientName,
-    setClientName
+    setClientName,
+    onClickOpenNewItemNotesModal
   };
 };
 

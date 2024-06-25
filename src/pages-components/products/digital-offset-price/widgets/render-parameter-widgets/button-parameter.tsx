@@ -59,6 +59,13 @@ const ButtonParameterWidget = ({
     }
     setIsStraightKnife(false)
   };
+
+  // let sizeParameter = subSection.parameters.find(
+  //   (param) => param.code === "size"
+  // );
+  // let isDefaultSelectedValue = sizeParameter?.valuesConfigs.find((value) => value.isDefault)
+  // console.log("sizeParameter", { isDefaultSelectedValue, sizeParameter })
+
   const removeParameterFromSubProducts = () => {
     if (isSelectedShape) {
       let subProductsCopy = lodashClonedeep(subProducts);
@@ -101,6 +108,27 @@ const ButtonParameterWidget = ({
           });
         });
       }
+      if (parameter.code == "DieKissCut") {
+        const dieCutSizesParametersArray = [
+          { parameterCode: "Width", value: "" },
+          { parameterCode: "Height", value: "" },
+        ];
+        dieCutSizesParametersArray.forEach((dieCutSizesParameter) => {
+          subProductsCopy = subProductsCopy.map((subProduct) => {
+            if (subProduct.type === subSection.type) {
+              const updatedParameters = subProduct.parameters.filter(
+                (param) =>
+                  !(
+                    param.parameterCode === dieCutSizesParameter.parameterCode &&
+                    param.actionIndex === isSelectedShape.actionIndex
+                  )
+              );
+              return { ...subProduct, parameters: updatedParameters };
+            }
+            return subProduct;
+          });
+        });
+      }
 
       // Add the code to remove parameters with parameterCode "Width" or "Height"
       subProductsCopy = subProductsCopy.map((subProduct) => {
@@ -114,6 +142,79 @@ const ButtonParameterWidget = ({
         return subProduct;
       });
 
+
+      let sizeParameter = subSection.parameters.find(
+        (param) => param.code === "size"
+      );
+      let isDefaultSelectedValue = sizeParameter?.valuesConfigs.find(
+        (value) => value.isDefault
+      );
+
+      if (sizeParameter?.childsParameters && isDefaultSelectedValue) {
+
+        let sizeParameterIndex = subProductsCopy.findIndex(
+          (subProduct) =>
+            subProduct.type === subSection.type &&
+            subProduct.parameters.some((param) => param.parameterCode === "size")
+        );
+
+        if (sizeParameterIndex === -1) {
+          // If size parameter doesn't exist, add it
+          sizeParameterIndex = subProductsCopy.findIndex(
+            (subProduct) => subProduct.type === subSection.type
+          );
+
+          if (sizeParameterIndex !== -1) {
+            // Clone subProduct to avoid mutating original
+            const subProductClone = lodashClonedeep(subProductsCopy[sizeParameterIndex]);
+
+            // Create size parameter object and add it to parameters
+            const sizeParameterObject = {
+              parameterId: sizeParameter.id,
+              sectionId: section.id,
+              subSectionId: subSection.id,
+              ParameterType: sizeParameter.parameterType,
+              values: [isDefaultSelectedValue?.updateName],
+              valueIds: [isDefaultSelectedValue?.id],
+              actionIndex: sizeParameter.actionIndex,
+              parameterName: sizeParameter.name,
+              parameterCode: sizeParameter.code,
+              isDisabled: false // Assuming initial state
+            };
+
+            // Add size parameter to parameters
+            subProductClone.parameters.push(sizeParameterObject);
+
+            // Update subProductsCopy with the modified subProductClone
+            subProductsCopy[sizeParameterIndex] = subProductClone;
+          }
+        }
+        const sizeParametersToAdd = sizeParameter.childsParameters.map((myparameter) => {
+          const parameterValue = isDefaultSelectedValue.values[myparameter.id];
+          return {
+            parameterId: myparameter.id,
+            sectionId: section.id,
+            subSectionId: subSection.id,
+            ParameterType: myparameter.parameterType,
+            values: parameterValue ? [parameterValue] : [], // Assign values if available
+            actionIndex: myparameter.actionIndex,
+            parameterName: myparameter.name,
+            parameterCode: myparameter.code,
+            isDisabled: true // Assuming initial state
+          };
+        });
+
+        subProductsCopy = subProductsCopy.map((subProduct) => {
+          if (subProduct.type === subSection.type) {
+            const updatedParameters = [
+              ...subProduct.parameters,
+              ...sizeParametersToAdd
+            ];
+            return { ...subProduct, parameters: updatedParameters };
+          }
+          return subProduct;
+        });
+      }
       setProducts(subProductsCopy);
       setSelectedShape(null);
       setIsSelectedShape(null);
