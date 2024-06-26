@@ -15,7 +15,7 @@ const DocumentDesign = () => {
     const { classes } = useStyle();
     const { t } = useTranslation();
     const dir: "rtl" | "ltr" = t("direction");
-    const { AddOrUpdateDocumentDesign, ResetDocumentDesign, getDocumentTypes, documentDesign, documentDesignChange, getDocumentDesignByCreationDoc } = UseDocumentDesign();
+    const { AddOrUpdateDocumentDesign, ResetDocumentDesign, getDocumentTypes, documentDesign, documentDesignChange, getDocumentDesignByCreationDoc , handleChangeComments} = UseDocumentDesign();
     const addDocumentDesign = async () => {
         await AddOrUpdateDocumentDesign(documentDesign);
     };
@@ -36,20 +36,22 @@ const DocumentDesign = () => {
         getDocumentDesignByCreationDoc(documentDesign?.docType, documentDesign?.agentId);
     }, [documentDesign?.docType, documentDesign?.agentId]);
 
+   
     const DocumentDesignSection1: { inputs: any[], title: string }[] = [
         { inputs: creationDocumentInputs(documentDesign), title: 'documentingDesign.documnetCreation.documentinCreation' },
-        { inputs: TitleDefinitionInputs(documentDesign), title: 'documentingDesign.TitleDefinition.TitleDefinition' },
+        // { inputs: TitleDefinitionInputs(documentDesign), title: 'documentingDesign.TitleDefinition.TitleDefinition' },
         { inputs: TitleDefinitionCustomLogoInputs(documentDesign), title: 'Logo' },
         { inputs: TableSettingInputs(documentDesign), title: 'documentingDesign.TableSetting.TableSetting' },
         { inputs: TableSettingInputs2(documentDesign), title: '' },
     ];
+
     const DocumentDesignSection2: { inputs: any[], title: string }[] = [
         { inputs: AdditionalOptionsInputs(documentDesign), title: 'documentingDesign.Additional.Options' },
         { inputs: AdditionalOptionsInputs2(documentDesign), title: '' },
         { inputs: FooterInputs1(documentDesign), title: 'documentingDesign.Footer.Footer' },
         { inputs: FooterInputs2(documentDesign), title: '' },
-
     ];
+
     return (
         <div style={classes.container}>
             <Stack direction={'column'} gap={'24px'}>
@@ -75,7 +77,7 @@ const DocumentDesign = () => {
                 <span style={classes.subTitleSpanStyle} >{t("documentingDesign.Additional.Remarks")}</span>
             </Stack>
             <Stack direction={'row'} marginTop={"24px"}>
-                <TextareaAutosize style={classes.textAreaStyle}></TextareaAutosize>
+                <TextareaAutosize style={classes.textAreaStyle} value={documentDesign?.notes} onChange={handleChangeComments}></TextareaAutosize>
             </Stack>
             <Stack direction={'column'} gap={'32px'} paddingTop={'44px'}>
                 {

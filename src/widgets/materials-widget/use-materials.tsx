@@ -154,14 +154,18 @@ const useMaterials = (isAdmin: boolean) => {
     return materialCategories.map((category) => ({
       text: category.categoryName,
       value: category.categoryKey,
-      icon: category.isDeletable
-        ? () => (
-          <SideLeftMenuWidget
-            onClickOpenDeleteRowModal={onClickOpenDeleteRowModal}
-            category={category}
-          />
-        )
-        : null,
+      icon: () => <SideLeftMenuWidget
+        onClickOpenDeleteRowModal={onClickOpenDeleteRowModal}
+        category={category}
+      />
+      // icon: category.isDeletable
+      //   ? () => (
+      //     <SideLeftMenuWidget
+      //       onClickOpenDeleteRowModal={onClickOpenDeleteRowModal}
+      //       category={category}
+      //     />
+      //   )
+      //   : null,
     }));
   }, [materialCategories]);
 

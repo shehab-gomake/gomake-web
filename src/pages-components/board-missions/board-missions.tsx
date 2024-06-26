@@ -236,10 +236,10 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
       />
 
       <ThreeOptionsModal
-        title={t("boardMissions.markDoneModalTitle")}
-        subTitle={t("boardMissions.markDoneModalSubTitle")}
-        yesBtn={"boardMissions.markDoneModalYes"}
-        noBtn={"boardMissions.markDoneModalNo"}
+        title={selectedMission?.isReady ? t("boardMissions.unReadyModalTitle") : t("boardMissions.markDoneModalTitle")}
+        subTitle={selectedMission?.isReady ? t("boardMissions.unReadyModalSubTitle") : t("boardMissions.markDoneModalSubTitle")}
+        yesBtn={selectedMission?.isReady ? "boardMissions.unReadyWitNotification" : "boardMissions.markDoneModalYes"}
+        noBtn={selectedMission?.isReady ? "boardMissions.unReadyWithouNotification" : "boardMissions.markDoneModalNo"}
         openModal={openMarkReadyModal}
         onClose={onCloseMarkReadyModal}
         onClickYes={() => onClickMoveBoardMissionToDone(true)}

@@ -13,7 +13,7 @@ import { MoreMenuWidget } from "../more-circle";
 import { useRecoilValue } from "recoil";
 import { quoteConfirmationState, quoteItemState } from "@/store";
 import { DOCUMENT_TYPE, QUOTE_STATUSES } from "@/pages-components/quotes/enums";
-import { Permissions , DocumentPermission } from "@/components/CheckPermission/enum";
+import { Permissions, DocumentPermission } from "@/components/CheckPermission/enum";
 import { useUserPermission } from "@/hooks/use-permission";
 
 const RowMappingWidget = ({
@@ -29,7 +29,8 @@ const RowMappingWidget = ({
   documentType,
   getQuote,
   isQuoteConfirmation = false,
-  onChangeSelectedItemRowForQoute
+  onChangeSelectedItemRowForQoute,
+  quoteItems
 }) => {
   const router = useRouter();
   const { classes } = useStyle({ headerHeight });
@@ -108,7 +109,7 @@ const RowMappingWidget = ({
               {parentIndex}
             </span>
             :
-            parentIndex 
+            parentIndex
         }
       </PrimaryTableCell>
       <PrimaryTableCell
@@ -133,7 +134,7 @@ const RowMappingWidget = ({
         {item.productName}
       </PrimaryTableCell>
       {
-        quoteItemValue?.isShowDetails &&
+        quoteItems?.isShowDetails &&
         <PrimaryTableCell
           style={{
             width: columnWidths[3],
@@ -206,7 +207,7 @@ const RowMappingWidget = ({
           <InputUpdatedValues
             value={item.finalPrice}
             onBlur={onBlurFinalPrice}
-           isUpdate={canUpdatePricesBasedOnType && isUpdateFinalPrice}
+            isUpdate={canUpdatePricesBasedOnType && isUpdateFinalPrice}
             setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdateFinalPrice}
             onInputChange={(e) => onInputChangeFinalPrice(e)}
           />

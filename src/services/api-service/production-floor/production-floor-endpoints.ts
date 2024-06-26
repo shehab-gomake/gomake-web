@@ -4,6 +4,7 @@ import {ICallAndSetData} from "@/services/api-service/interface";
 
 const GET_PRODUCTION_FLOOR_DATA_URL = '/v1/erp-service/board-missions';
 const UPDATE_WORK_JOB_STATUS_URL = '/v1/erp-service/board-missions/update-board-missions-status';
+const UPDATE_BOARD_MISSIONS_ORDER_URL = '/v1/erp-service/board-missions/update-board-missions-order';
 const SET_FILTERS_BOARDS_MISSIONS_URL = '/v1/erp-service/board-missions/set-filters';
 const GET_BOARDS_MISSIONS_BY_ID_URL = '/v1/erp-service/board-missions/board-missions-data/';
 const GET_BOARD_MISSIONS_STATIONS_URL = '/v1/erp-service/board-missions/board-stations';
@@ -111,6 +112,9 @@ const backToProcessApi: ICallAndSetData = async (callApi, setState, data: { boar
     return await getSetApiData(callApi, EHttpMethod.POST, BACK_TO_PROCESS_URL, setState, data);
 };
 
+const updateBoardsMissionsOrderApi: ICallAndSetData = async (callApi, setState, data) => {
+    return await getSetApiData(callApi, EHttpMethod.POST, UPDATE_BOARD_MISSIONS_ORDER_URL, setState, data);
+};
 const getBoardMissionsIdByQrCodeApi: ICallAndSetData = async (callApi, setState, data: string) => {
     return await getSetApiData(callApi, EHttpMethod.GET, GET_BOARD_MISSIONS_ID_BY_QR_CODE_URL + data, setState);
 };
@@ -120,7 +124,6 @@ const handleBoardMissionsQrCodeApi: ICallAndSetData = async (callApi, setState, 
 
 const updateBoardMissionsQrCodeApi: ICallAndSetData = async (callApi, setState, data) => {
     return await getSetApiData(callApi, EHttpMethod.PUT, UPDATE_BOARD_MISSIONS_BY_QR_CODE_URL, setState, data);
-};
 export {
     getProductionFloorData,
     updateBoardsMissionsStatusApi,
@@ -145,6 +148,7 @@ export {
     saveUploadedFile,
     getAllBoardMissionsUploadedFiles,
     getAllBoardMissionsUploadingFiles,
+    updateBoardsMissionsOrderApi,
     getBoardMissionsIdByQrCodeApi,
     handleBoardMissionsQrCodeApi,
     updateBoardMissionsQrCodeApi

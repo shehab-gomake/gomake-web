@@ -204,6 +204,12 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
     openSignatureApprovalModal,
     onClickCloseSignatureApprovalModal,
     onClickOpenSignatureApprovalModal,
+    onBlurClientName,
+    isUpdateClientName,
+    setIsUpdateClientName,
+    clientName,
+    setClientName,
+    onClickOpenNewItemNotesModal
 
   } = useQuoteNew({ docType: documentType, isQuoteConfirmation: isQuoteConfirmation });
 
@@ -361,6 +367,11 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
                   onClickDeleteAddress={onClickDeleteAddress}
                   documentType={documentType}
                   isQuoteConfirmation={isQuoteConfirmation}
+                  onBlurClientName={onBlurClientName}
+                  isUpdateClientName={isUpdateClientName}
+                  setIsUpdateClientName={setIsUpdateClientName}
+                  clientName={clientName}
+                  setClientName={setClientName}
                 />
                 <ContactNewWidget
                   documentState={quoteState}
@@ -434,7 +445,7 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
                 <ReceiptsTable />
               }
             </div>
-            <WriteCommentComp 
+            <WriteCommentComp
               documentState={quoteState}
               getQuote={getQuote}
               isQuoteConfirmation={isQuoteConfirmation}
@@ -453,6 +464,7 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
                 documentType={documentType}
                 onOpenCopyFromOrder={onOpenCopyFromOrder}
                 handleSaveBtnClickForDocument={handleSaveBtnClickForDocument}
+                onClickOpenNewItemNotesModal={onClickOpenNewItemNotesModal}
               />
             </div>
           }
@@ -602,6 +614,8 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
       <NewItemNotesModal
         openModal={openNewItemNotesModal}
         onClose={onClickCloseNewItemNotesModal}
+        handleSaveBtnClickForDocument={handleSaveBtnClickForDocument}
+        documentType={documentType}
       />
 
       <AddRelatedDocumentsModal

@@ -100,6 +100,7 @@ const QuoteForPriceTable = ({
                     getQuote={getQuote}
                     isQuoteConfirmation={isQuoteConfirmation}
                     onChangeSelectedItemRowForQoute={onChangeSelectedItemRowForQoute}
+                    quoteItems={quoteItems}
                   />
                   {item?.childsDocumentItems &&
                     item?.childsDocumentItems?.map(
@@ -130,7 +131,7 @@ const QuoteForPriceTable = ({
           </TableBody>
         </Table>
       </TableContainer>
-      {quoteItemValue?.isShowPrice &&
+      {quoteItems?.isShowPrice &&
         <TotalPriceComp
           documentType={documentType}
           getCalculateQuote={getCalculateQuote}
@@ -138,6 +139,7 @@ const QuoteForPriceTable = ({
           changeQuoteItems={changeQuoteItems}
           isQuoteConfirmation={isQuoteConfirmation}
         />}
+
 
     </div>
   );
