@@ -24,7 +24,7 @@ const useSettings = ({
   const { query } = useRouter();
   const { id } = query;
   const { t } = useTranslation();
-  const { setSnackbarStateValue, alertFaultAdded, alertSuccessAdded, alertSuccessDelete,
+  const { setSnackbarStateValue, alertFaultAdded, alertSuccessAdded, alertSuccessDelete, alertFault,
     alertFaultDelete, } =
     useSnackBar();
   const [RandomId, setRandomId] = useState();
@@ -159,11 +159,12 @@ const useSettings = ({
         });
         navigate("/settings/products");
       } else {
-        setSnackbarStateValue({
-          state: true,
-          message: res?.errors?.ErrorMessage,
-          type: "error",
-        });
+        if (res?.errors?.statusCode === 2627) {
+          alertFault(t("products.offsetPrice.admin.productAlreadyExists"));
+        }
+        else {
+          alertFaultAdded()
+        }
       }
     }
   }, [productState, RandomId]);
@@ -205,11 +206,13 @@ const useSettings = ({
         navigate(`/settings/products/edit/${RandomId}?isParameter=${true}`);
         onClickParametersTab();
       } else {
-        setSnackbarStateValue({
-          state: true,
-          message: res?.errors?.ErrorMessage,
-          type: "error",
-        });
+        if (res?.errors?.statusCode === 2627) {
+          alertFault(t("products.offsetPrice.admin.productAlreadyExists"));
+        }
+        else {
+          alertFaultAdded()
+        }
+
       }
     }
   }, [productState, RandomId]);
