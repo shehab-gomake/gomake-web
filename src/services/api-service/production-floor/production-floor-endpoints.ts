@@ -26,6 +26,9 @@ const BACK_TO_PROCESS_URL = '/v1/erp-service/board-missions/back-to-process';
 const SAVE_UPLOADED_FILE_URL = '/v1/erp-service/board-missions/save-uploaded-file';
 const GET_UPLOADED_FILES_URL = '/v1/erp-service/board-missions/get-uploaded-files/';
 const GET_UPLOADING_FILES_URL = '/v1/erp-service/board-missions/get-uploading-files/';
+const GET_BOARD_MISSIONS_ID_BY_QR_CODE_URL = '/v1/erp-service/qr-codes/board-missions-id/';
+const HANDLE_BOARD_MISSIONS_ID_BY_QR_CODE_URL = '/v1/erp-service/qr-codes/handle-board-missions/';
+const UPDATE_BOARD_MISSIONS_BY_QR_CODE_URL = '/v1/erp-service/qr-codes/update-board-missions';
 
 
 const getProductionFloorData: ICallAndSetData = async (callApi, setState, connectionId: string) => {
@@ -112,6 +115,15 @@ const backToProcessApi: ICallAndSetData = async (callApi, setState, data: { boar
 const updateBoardsMissionsOrderApi: ICallAndSetData = async (callApi, setState, data) => {
     return await getSetApiData(callApi, EHttpMethod.POST, UPDATE_BOARD_MISSIONS_ORDER_URL, setState, data);
 };
+const getBoardMissionsIdByQrCodeApi: ICallAndSetData = async (callApi, setState, data: string) => {
+    return await getSetApiData(callApi, EHttpMethod.GET, GET_BOARD_MISSIONS_ID_BY_QR_CODE_URL + data, setState);
+};
+const handleBoardMissionsQrCodeApi: ICallAndSetData = async (callApi, setState, data: string) => {
+    return await getSetApiData(callApi, EHttpMethod.GET, HANDLE_BOARD_MISSIONS_ID_BY_QR_CODE_URL + data, setState);
+};
+
+const updateBoardMissionsQrCodeApi: ICallAndSetData = async (callApi, setState, data) => {
+    return await getSetApiData(callApi, EHttpMethod.PUT, UPDATE_BOARD_MISSIONS_BY_QR_CODE_URL, setState, data);
 export {
     getProductionFloorData,
     updateBoardsMissionsStatusApi,
@@ -136,5 +148,8 @@ export {
     saveUploadedFile,
     getAllBoardMissionsUploadedFiles,
     getAllBoardMissionsUploadingFiles,
-    updateBoardsMissionsOrderApi
+    updateBoardsMissionsOrderApi,
+    getBoardMissionsIdByQrCodeApi,
+    handleBoardMissionsQrCodeApi,
+    updateBoardMissionsQrCodeApi
 };

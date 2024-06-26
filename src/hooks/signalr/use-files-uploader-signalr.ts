@@ -5,7 +5,7 @@ import {useRecoilState} from "recoil";
 import {useEffect} from "react";
 import {useGomakeAxios} from "@/hooks";
 import {getAllBoardMissionsUploadingFiles} from "@/services/api-service/production-floor/production-floor-endpoints";
-import {fileUploaderConnectionIdState, uploadingFilesState} from "@/store/file-uploader-state";
+import {fileUploaderConnectionIdState, pinFileUploaderState, uploadingFilesState} from "@/store/file-uploader-state";
 
 const useFilesUploaderSignalr = () => {
     const {connectionId, data} = useGoMakeSignalr<any>({
@@ -14,6 +14,7 @@ const useFilesUploaderSignalr = () => {
         methodName: "UpdateFileUploader"
     });
     const [, setFiles] = useRecoilState(uploadingFilesState);
+    const [, setShowFileUploader] = useRecoilState(pinFileUploaderState);
     const [, setConnectionId] = useRecoilState(fileUploaderConnectionIdState);
     const {callApi} = useGomakeAxios();
     useEffect(() => {
@@ -21,12 +22,17 @@ const useFilesUploaderSignalr = () => {
             setConnectionId(connectionId);
             getAllBoardMissionsUploadingFiles(callApi, (res) => {
                 setFiles(res?.data);
+                setShowFileUploader(res?.data?.length > 0);
+
                 console.log(res?.data);
             }, connectionId).then();
         }
     }, [connectionId]);
 
-    useEffect(() => {setFiles(data)}, [data])
+    useEffect(() => {
+        setShowFileUploader(data?.length > 0);
+        setFiles(data)
+    }, [data])
 
     return {
         connectionId,

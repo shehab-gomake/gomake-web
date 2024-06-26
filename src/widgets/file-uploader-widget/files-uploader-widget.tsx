@@ -10,15 +10,17 @@ import {FilesGroupComponent} from "@/widgets/file-uploader-widget/files-group-co
 import CloudUploadRoundedIcon from '@mui/icons-material/CloudUploadRounded';
 import Divider from "@mui/material/Divider";
 import {useTranslation} from "react-i18next";
+import {printHouseProfile} from "@/store/print-house-profile";
 
 const FilesUploaderWidget = () => {
     const [files] = useRecoilState(uploadingFilesState);
     const [open, setOpen] = useRecoilState(openFileUploaderList);
     const [show, setShow] = useRecoilState(pinFileUploaderState);
     const {grayColor} = useGomakeTheme();
+    const [companyProfile] = useRecoilState(printHouseProfile);
     const {t} = useTranslation();
     return (
-        <Paper style={{
+        companyProfile?.filesApiAddress && <Paper style={{
             position: 'fixed',
             right: '300px',
             bottom: 0,
