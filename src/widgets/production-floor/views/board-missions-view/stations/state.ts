@@ -6,7 +6,7 @@ export const boardMissionsStationsState = atom<IBoardMissionsStation[]>({
     key: 'boardMissionsStationsState'
 });
 
-export const stationGeneralInformationState = atom<{name: string; values: string[]}[]>({
+export const stationGeneralInformationState = atom<{name: string; values: string[]; defaultUnit: string;}[]>({
     default: [],
     key: 'stationGeneralInformationState'
 });

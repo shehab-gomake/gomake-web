@@ -14,6 +14,7 @@ import ClearRoundedIcon from "@mui/icons-material/ClearRounded";
 import {BoardMissionsComponent} from "@/widgets/production-floor/views/board-missions-view/board-missions-component";
 import {DashboardWidget} from "@/widgets/dashboard-widget";
 import {FilesUploaderWidget} from "@/widgets/file-uploader-widget/files-uploader-widget";
+import QrListenerWidget from "@/widgets/qr-listener/qr-listener-widget";
 
 const ProductionFloorWidget = () => {
     const [view, setView] = useRecoilState(productionFloorViewState);
@@ -40,6 +41,7 @@ const ProductionFloorWidget = () => {
             {
                 view === EProductionFloorView.DASHBOARD ? <DashboardWidget/> : view === EProductionFloorView.GROUPS ? <GroupsTable/> : <ProductionFloorBoardMissionsViews/>
             }
+        <QrListenerWidget listening={!boardMissionsId}/>
         </Stack>
         <Drawer sx={{zIndex: 999999}} open={openBoardMissionsDrawer} anchor={'bottom'}>
             <Stack paddingBottom={'10px'} width={'100vw'} height={'calc(100vh - 50px)'}>
@@ -51,7 +53,7 @@ const ProductionFloorWidget = () => {
                 {openBoardMissionsDrawer && <BoardMissionsComponent productType={!!productType ? productType.toString() : ''} step={step?.toString()} boardMissionsId={boardMissionsId?.toString()}/>}
             </Stack>
             <FilesUploaderWidget/>
-
+            <QrListenerWidget listening={!!boardMissionsId}/>
         </Drawer>
     </Stack>
 }

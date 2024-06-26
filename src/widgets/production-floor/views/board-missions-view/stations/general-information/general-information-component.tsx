@@ -33,7 +33,7 @@ const GeneralInformationComponent = () => {
                                     <span style={classes.detailTitle}>{parameter.name}</span>
                                     {
                                         parameter.values?.map(value => (
-                                            <span key={value} style={classes.detailValue}>{value}</span>
+                                            <span key={value} style={classes.detailValue}>{!!parameter.defaultUnit ? `${value} ${parameter.defaultUnit}` : value}</span>
                                         ))
                                     }
                                 </Stack>
