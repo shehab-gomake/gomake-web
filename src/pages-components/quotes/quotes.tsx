@@ -142,6 +142,9 @@ const QuotesListPageWidget = ({
     if (router.query.orderNumber) {
       setPatternSearch(router.query.orderNumber as string);
     }
+    else if (router.query.documentNumber) {
+      setPatternSearch(router.query.documentNumber as string);
+    }
 
   }, [router])
   useEffect(() => {
