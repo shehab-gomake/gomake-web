@@ -247,8 +247,8 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
       <ThreeOptionsModal
         title={t("boardMissions.markDoneFromPrintSlipModalTitle")}
         subTitle={t("boardMissions.markDoneModalSubTitle")}
-        yesBtn={"boardMissions.markDoneModalYes"}
-        noBtn={"boardMissions.markDoneModalNo"}
+        yesBtn={selectedMission?.isReady ? "boardMissions.unReadyWitNotification" : "boardMissions.markDoneModalYes"}
+        noBtn={selectedMission?.isReady ? "boardMissions.unReadyWithouNotification" : "boardMissions.markDoneModalNo"}
         openModal={openMarkReadyThenPrintModal}
         onClose={onCloseMarkReadyThenPrintModal}
         onClickYes={() => onOpenPackagesModal(missionItem)}
