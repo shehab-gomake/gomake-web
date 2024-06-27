@@ -21,9 +21,10 @@ interface IParametersMappingProps {
     parameters: IKeyValueViewProps[]
     source?: EWorkSource;
     isWorkFlows?: boolean;
+    isProductionFloor?: boolean
 }
 
-const ParametersMapping = ({ parameters, source, isWorkFlows = false }: IParametersMappingProps) => {
+const ParametersMapping = ({ parameters, source, isWorkFlows = false, isProductionFloor = false }: IParametersMappingProps) => {
     return (
         <>
             {parameters?.flatMap((parameter, index, array) => {
@@ -33,7 +34,19 @@ const ParametersMapping = ({ parameters, source, isWorkFlows = false }: IParamet
                 const isLastElement = index >= array.length - 1;
                 const unitType = parameter?.unitType
                 const parameterKey = parameter?.key
-                if (isWorkFlows) {
+                if (isProductionFloor && unitType === 2) {
+                    return (
+                        <PermissionCheck userPermission={Permissions.SHOW_COSTS_IN_PRODUCTION_FLOOR}>
+                            {
+                                isLastElement
+                                    ? keyValueComponent
+                                    : [keyValueComponent, <Divider key={`divider-${index}`} orientation="vertical" flexItem />]
+                            }
+                        </PermissionCheck>
+
+                    )
+                }
+                else if (isWorkFlows) {
                     if (parameterKey === "totalCost") {
                         return (
                             <PermissionCheck userPermission={Permissions.SHOW_COSTS_IN_CALCULATIONS}>

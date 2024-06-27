@@ -19,7 +19,6 @@ const GeneralInformationComponent = () => {
     const data = useRecoilValue(stationGeneralInformationState);
     const { classes } = useStyle();
     const [openAddNoteModal, setOpenAddNoteModal] = useState<boolean>(false);
-
     return (
         data.length > 0 ?
             <Stack gap={'10px'}>
@@ -38,19 +37,25 @@ const GeneralInformationComponent = () => {
                                     }
                                 </Stack>
                             );
+                            const isLastElement = index >= array.length - 1;
 
-                            /*if (parameter.name === "Cost") {
+                            if (parameter?.unitType === 2) {
                                 return (
-                                    <PermissionCheck key={`permission-check-${key}`} userPermission={Permissions.SHOW_COSTS_IN_PRODUCTION_FLOOR}>
-                                        {parameterComponent}
+                                    <PermissionCheck userPermission={Permissions.SHOW_COSTS_IN_PRODUCTION_FLOOR}>
+                                        {
+                                            isLastElement
+                                                ? [parameterComponent]
+                                                : [parameterComponent, <Divider key={`divider-${key}`} orientation="vertical" flexItem />]
+                                        }
                                     </PermissionCheck>
                                 );
-                            }*/
+                            }
+                            else {
+                                return isLastElement
+                                    ? [parameterComponent]
+                                    : [parameterComponent, <Divider key={`divider-${key}`} orientation="vertical" flexItem />];
+                            }
 
-                            const isLastElement = index >= array.length - 1;
-                            return isLastElement
-                                ? [parameterComponent]
-                                : [parameterComponent, <Divider key={`divider-${key}`} orientation="vertical" flexItem />];
                         })
                     }
                     <PermissionCheck userPermission={Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR}>

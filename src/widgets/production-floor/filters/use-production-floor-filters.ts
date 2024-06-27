@@ -90,8 +90,8 @@ const useProductionFloorFilters = () => {
     const hasGroupsFilters = useMemo(() => filtersState?.groups?.length > 0, [filtersState]);
 
     const createDateFilter = useMemo(() => ({
-        fromDate: filtersState.fromCreateDate,
-        toDate: filtersState.toCreateDate
+        fromDate: filtersState?.fromCreateDate,
+        toDate: filtersState?.toCreateDate
     }), [filtersState])
     const deliveryDateFilter = useMemo(() => ({
         fromDate: filtersState.fromDeliveryTime,
