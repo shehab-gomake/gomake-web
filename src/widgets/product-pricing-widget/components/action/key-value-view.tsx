@@ -20,46 +20,67 @@ interface IKeyValueViewProps extends IOutput {
 interface IParametersMappingProps {
     parameters: IKeyValueViewProps[]
     source?: EWorkSource;
+    isWorkFlows?: boolean;
 }
 
-// const ParametersMapping = ({ parameters, source }: IParametersMappingProps) => {
-//     return <>
-//         {
-//             parameters?.flatMap((parameter, index, array) => {
-//                 return index < array.length - 1 ? [<KeyValueViewComponent source={source} {...parameter} />,
-//                 <Divider orientation={'vertical'} flexItem />] : [
-//                     <KeyValueViewComponent {...parameter} source={source} />]
-//             })
-//         }
-//     </>
-// }
-
-
-const ParametersMapping = ({ parameters, source }: IParametersMappingProps) => {
+const ParametersMapping = ({ parameters, source, isWorkFlows = false }: IParametersMappingProps) => {
     return (
         <>
             {parameters?.flatMap((parameter, index, array) => {
-                //const isCurrencyUnit = isCurrency(parameter?.defaultUnit);
                 const keyValueComponent = (
                     <KeyValueViewComponent key={`key-value-${index}`} source={source} {...parameter} />
                 );
-
                 const isLastElement = index >= array.length - 1;
+                const unitType = parameter?.unitType
+                const parameterKey = parameter?.key
+                if (isWorkFlows) {
+                    if (parameterKey === "totalCost") {
+                        return (
+                            <PermissionCheck userPermission={Permissions.SHOW_COSTS_IN_CALCULATIONS}>
+                                {
+                                    isLastElement
+                                        ? keyValueComponent
+                                        : [keyValueComponent, <Divider key={`divider-${index}`} orientation="vertical" flexItem />]
+                                }
+                            </PermissionCheck>
+                        )
+                    }
+                    if (parameterKey === "profit") {
+                        return (
+                            <PermissionCheck userPermission={Permissions.SHOW_PROFITS_IN_CALCULATIONS}>
+                                {
+                                    isLastElement
+                                        ? keyValueComponent
+                                        : [keyValueComponent, <Divider key={`divider-${index}`} orientation="vertical" flexItem />]
+                                }
+                            </PermissionCheck>
+                        )
+                    }
 
-                /*if (isCurrencyUnit) {
+                    else {
+                        return isLastElement
+                            ? keyValueComponent
+                            : [keyValueComponent, <Divider key={`divider-${index}`} orientation="vertical" flexItem />];
+                    }
+
+                }
+                else if (unitType === 2 && !isWorkFlows) {
                     return (
-                        <PermissionCheck key={`permission-check-${index}`} userPermission={Permissions.SHOW_COSTS_IN_PRODUCTION_FLOOR}>
-                            {isLastElement
-                                ? keyValueComponent
-                                : [keyValueComponent, <Divider key={`divider-${index}`} orientation="vertical" flexItem />]
+                        <PermissionCheck userPermission={Permissions.SHOW_COSTS_IN_CALCULATIONS}>
+                            {
+                                isLastElement
+                                    ? keyValueComponent
+                                    : [keyValueComponent, <Divider key={`divider-${index}`} orientation="vertical" flexItem />]
                             }
                         </PermissionCheck>
-                    );
-                }*/
 
-                return isLastElement
-                    ? keyValueComponent
-                    : [keyValueComponent, <Divider key={`divider-${index}`} orientation="vertical" flexItem />];
+                    )
+                }
+                else {
+                    return isLastElement
+                        ? keyValueComponent
+                        : [keyValueComponent, <Divider key={`divider-${index}`} orientation="vertical" flexItem />];
+                }
             })}
         </>
     );
