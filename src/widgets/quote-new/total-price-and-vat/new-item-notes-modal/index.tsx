@@ -30,7 +30,8 @@ const NewItemNotesModal = ({ openModal, onClose, handleSaveBtnClickForDocument, 
         <>
 
           <div style={clasess.noteTextStyle}>
-            {quoteItemValue?.client?.newItemNotes}
+
+            {documentType === DOCUMENT_TYPE.invoice ? quoteItemValue?.client?.closeOrderNotes : quoteItemValue?.client?.newItemNotes}
           </div>
 
           {

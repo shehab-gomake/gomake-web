@@ -170,7 +170,7 @@ const ButtonsContainer = ({
               }
               else if (documentType === DOCUMENT_TYPE.invoice) {
                 if (
-                  quoteItemValue?.client?.newItemNotes && quoteItemValue?.client?.newItemNotes.trim() !== "" && quoteItemValue?.client?.newItemNotes.trim() !== null
+                  quoteItemValue?.client?.closeOrderNotes && quoteItemValue?.client?.closeOrderNotes.trim() !== "" && quoteItemValue?.client?.closeOrderNotes.trim() !== null
                 ) {
                   onClickOpenNewItemNotesModal()
                 }
