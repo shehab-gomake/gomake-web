@@ -7,16 +7,16 @@ import { useUserPermission } from "@/hooks/use-permission";
 import { DocumentPermission } from "@/components/CheckPermission/enum";
 import { useRecoilValue } from "recoil";
 import { quoteItemState } from "@/store";
-import { useGomakeRouter } from "@/hooks";
+import { renderDocumentTypeForSourceDocumentNumber } from "@/widgets/settings-documenting/documentDesign/enums/document-type";
 
 interface IProps {
   isQuoteConfirmation?: boolean;
   getQuote?: any;
   documentType?: DOCUMENT_TYPE;
-  documentState?:any;
+  documentState?: any;
   onClickOpenRelatedDocumentsModal?: () => void;
 }
-const WriteCommentComp = ({ isQuoteConfirmation, getQuote, documentType, onClickOpenRelatedDocumentsModal , documentState}: IProps) => {
+const WriteCommentComp = ({ isQuoteConfirmation, getQuote, documentType, onClickOpenRelatedDocumentsModal, documentState }: IProps) => {
   const { classes } = useStyle(isQuoteConfirmation);
   const { CheckDocumentPermission } = useUserPermission();
 
@@ -38,37 +38,34 @@ const WriteCommentComp = ({ isQuoteConfirmation, getQuote, documentType, onClick
     handleChangeForInternalNotes
   } = useWriteCommentComp({ getQuote, documentType })
   const quoteItemValue = useRecoilValue<any>(quoteItemState);
-  const { navigate } = useGomakeRouter();
 
   const mergeDocumentNumbers = (quoteItemValue) => {
-    let mergedArray = [];
+    const groupedDocuments = {};
 
-    // Add documentNumbers with titleDocumentNumber
     quoteItemValue?.documentNumbers?.forEach(doc => {
-      mergedArray.push({
-        documentId: doc.documentId,
-        documentNumber: doc.documentNumber,
-        title: quoteItemValue.titleDocumentNumber,
-        label: `${quoteItemValue.titleDocumentNumber}  ${doc.documentNumber}`,
-        value: doc.documentId
+      const { documentType, documentId, documentNumber } = doc;
+      const title = renderDocumentTypeForSourceDocumentNumber(documentType);
+
+      if (!groupedDocuments[title]) {
+        groupedDocuments[title] = [];
+      }
+
+      groupedDocuments[title].push({
+        documentId,
+        documentNumber,
+        label: `${documentNumber}`,
+        title,
+        value: documentId,
+        documentType
       });
     });
 
-    // Add secondDocumentNumbers with titleSecondDocumentNumber
-    quoteItemValue?.secondDocumentNumbers?.forEach(doc => {
-      mergedArray.push({
-        documentId: doc.documentId,
-        documentNumber: doc.documentNumber,
-        title: quoteItemValue.titleSecondDocumentNumber,
-        label: `${quoteItemValue.titleSecondDocumentNumber}  ${doc.documentNumber}`,
-        value: doc.documentId
-      });
-    });
-
-    return mergedArray;
+    return groupedDocuments;
   };
 
-  const relatedDocuments = mergeDocumentNumbers(quoteItemValue)
+  const relatedDocuments = mergeDocumentNumbers(quoteItemValue);
+
+
   const canEditComments = documentState?.isEditable && CheckDocumentPermission(documentType.toString(), DocumentPermission.EDIT_DOCUMENT);
 
   return (
@@ -78,19 +75,41 @@ const WriteCommentComp = ({ isQuoteConfirmation, getQuote, documentType, onClick
         <div style={classes.itemContainer}>
           <div style={classes.labelTextStyle}>{t("sales.quote.relatedDocuments")}</div>
           <GoMakeAutoComplate
-            options={[{ value: 'new', label: t("sales.quote.addRelatedDocument") }, ...relatedDocuments]}
+            options={Object.keys(relatedDocuments).flatMap(key => [
+              { title: key, isHeader: true },
+              ...relatedDocuments[key]
+            ])}
             style={classes.autoComplateStyle}
             placeholder={t("sales.quote.selectDocuments")}
-            onChange={(e: any, item: any) => {
-              if (item?.value === "new") {
-                onClickOpenRelatedDocumentsModal()
-              }
-              else {
-                navigate(`/${item.title.charAt(0).toLowerCase() + item.title.slice(1)}?Id=${item.documentId}`)
+            onChange={(e, item) => {
+              if (!item.isHeader && item?.value) {
+                if (item?.documentType === 12) {
+                  const url = `/quotes?documentNumber=${item.documentNumber}`;
+                  window.open(url, '_blank');
+                }
+                else {
+                  const url = `/${item.title.charAt(0).toLowerCase() + item.title.slice(1)}?Id=${item.documentId}`;
+                  window.open(url, '_blank');
+                }
+
               }
             }}
             withArrow={true}
-          // value={dayOfWeek}
+            renderOption={(props, option) => {
+              if (option.isHeader) {
+                return (
+                  <li {...props} key={option.title} style={{ fontWeight: 'bold', color: 'blue' }} onClick={() => null}>
+                    {option.title}
+                  </li>
+                );
+              }
+
+              return (
+                <li {...props} key={option.documentId}>
+                  {option.label}
+                </li>
+              );
+            }}
           />
         </div>
       }

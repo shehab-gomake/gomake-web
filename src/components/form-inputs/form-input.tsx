@@ -35,6 +35,7 @@ const FormInput = ({ input, error, changeState, readonly }: IFormInput) => {
   const [color, setColor] = useState<string>(input.value);
   const [selectedNameFile, setSelectedNameFile] = useState<string>(input.value);
   const [values, setValues] = useState([]);
+
   const machinesCategories = useRecoilValue<any>(materialsMachinesState);
   const clientsCategories = useRecoilValue<any>(materialsClientsState);
   const productValue = useRecoilValue(productsForDropDownList)
@@ -88,7 +89,6 @@ const FormInput = ({ input, error, changeState, readonly }: IFormInput) => {
     //     ? [...values, option?.value]
     //     : values.filter((v) => v !== option?.value)
     // );
-
     changeState(
       parameterKey,
       isChecked
@@ -149,20 +149,17 @@ const FormInput = ({ input, error, changeState, readonly }: IFormInput) => {
     }
   }, [input]);
 
-  // useEffect(() => {
-  //   if (input.type === "select" || input.type === "products_list") {
-  //     const selectedValue = options?.find(
-  //       (option) => option.value === input.value
-  //     );
-  //     if (selectedValue) {
-  //       setSelectedLabel(selectedValue.label);
-  //     } else {
-  //       setSelectedLabel("");
-  //     }
-  //   }
-  // }, [selectedLabel]);
   const defaultOptions = options.filter(option => input?.value?.toString()?.includes(option?.value))
   const [selectedOptions, setSelectedOptions] = useState([])
+
+  useEffect(() => {
+    setValues(Array.isArray(input.value) ? input.value : []);
+  }, [input.value])
+  useEffect(() => {
+    const selected = options.filter(option => input.value.includes(option.value));
+    setSelectedOptions(selected);
+  }, [input.value])
+
   return (
     <>
       {!input.disabled && (
@@ -239,7 +236,7 @@ const FormInput = ({ input, error, changeState, readonly }: IFormInput) => {
                               }
                               icon={<CheckboxIcon />}
                               checkedIcon={<CheckboxCheckedIcon />}
-                              checked={values?.includes(option?.value)}
+                              checked={values?.length > 0 ? values?.includes(option?.value) : input?.value?.includes(option?.value)}
                             />
                           </div>
                           <div>{option.label}</div>

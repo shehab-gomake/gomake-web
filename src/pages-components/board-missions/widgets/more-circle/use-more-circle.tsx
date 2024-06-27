@@ -14,6 +14,7 @@ import { addBoardMissionsToFileUploaderApi } from "@/services/api-service/board-
 import { useRecoilState } from "recoil";
 import { fileUploaderConnectionIdState, openFileUploaderList, pinFileUploaderState } from "@/store/file-uploader-state";
 import { MarkAsUnReadyIcon } from "./icons/mark-as-un-ready";
+import {printHouseProfile} from "@/store/print-house-profile";
 const useMoreCircle = ({
   mission,
   onClickDuplicate,
@@ -32,6 +33,7 @@ const useMoreCircle = ({
   const [connectionId] = useRecoilState(fileUploaderConnectionIdState);
   const [, setOpenFileUploader] = useRecoilState(openFileUploaderList);
   const [, setShowFileUploader] = useRecoilState(pinFileUploaderState);
+  const [companyProfile] = useRecoilState(printHouseProfile);
   const downloadPdf = (url) => {
     const anchor = document.createElement("a");
     anchor.href = url;
@@ -127,6 +129,7 @@ const useMoreCircle = ({
         window.open(`/production-floor?boardMissionsId=${mission?.id}&step=activity`, '_blank');
       },
     },
+    !!companyProfile.filesApiAddress &&
     {
       condition: true,
       name: "fileUploader.uploadFile",
