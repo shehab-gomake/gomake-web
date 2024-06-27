@@ -42,7 +42,7 @@ const WriteCommentComp = ({ isQuoteConfirmation, getQuote, documentType, onClick
   const mergeDocumentNumbers = (quoteItemValue) => {
     const groupedDocuments = {};
 
-    quoteItemValue?.documentNumbers.forEach(doc => {
+    quoteItemValue?.documentNumbers?.forEach(doc => {
       const { documentType, documentId, documentNumber } = doc;
       const title = renderDocumentTypeForSourceDocumentNumber(documentType);
 
