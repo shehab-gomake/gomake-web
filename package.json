@@ -78,7 +78,6 @@
     "react-pdf": "^8.0.2",
     "react-phone-input-2": "^2.15.1",
     "react-phone-number-input": "^3.4.1",
-    "react-qr-reader": "^3.0.0-beta-1",
     "react-quill": "^2.0.0",
     "react-signature-canvas": "^1.0.6",
     "react-test-renderer": "^18.2.0",
