@@ -7,7 +7,7 @@ const useStyle = () => {
       insideStyle: {
         width: "30%",
         borderRadius: 5,
-        height: "25%",
+        height: "fit-content",
       },
       noteTextStyle:{
         ...FONT_FAMILY.Lexend(700,16),

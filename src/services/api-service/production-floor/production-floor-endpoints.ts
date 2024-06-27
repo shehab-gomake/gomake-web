@@ -124,6 +124,7 @@ const handleBoardMissionsQrCodeApi: ICallAndSetData = async (callApi, setState, 
 
 const updateBoardMissionsQrCodeApi: ICallAndSetData = async (callApi, setState, data) => {
     return await getSetApiData(callApi, EHttpMethod.PUT, UPDATE_BOARD_MISSIONS_BY_QR_CODE_URL, setState, data);
+}
 export {
     getProductionFloorData,
     updateBoardsMissionsStatusApi,
@@ -152,4 +153,4 @@ export {
     getBoardMissionsIdByQrCodeApi,
     handleBoardMissionsQrCodeApi,
     updateBoardMissionsQrCodeApi
-};
+}
