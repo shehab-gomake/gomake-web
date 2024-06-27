@@ -1871,6 +1871,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     const targetSubProduct = copySubProducts.find(
       (item) => item.type === subSectionType
     );
+    console.log("ParameterType", ParameterType)
 
     if (targetSubProduct) {
       let temp = [...targetSubProduct.parameters];
@@ -2173,6 +2174,45 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 parameterCode: param?.code
               });
             }
+          });
+        }
+        console.log("subSectionParameter", subSectionParameter)
+        if (subSectionParameter?.code === "devicesize") {
+          const sizesParametersArray = [];
+          sizesParametersArray.push({ parameterCode: "Width", value: "10" });
+          sizesParametersArray.push({ parameterCode: "Height", value: "15" });
+          sizesParametersArray.push({ parameterCode: "size", value: "custom" });
+          sizesParametersArray.forEach(parameter => {
+            let dieCutSizeSubProductParameter = temp.find(x => x.parameterCode == parameter.parameterCode);
+            if (dieCutSizeSubProductParameter) {
+              dieCutSizeSubProductParameter.values = [parameter.value]
+              dieCutSizeSubProductParameter.isDisabled = true;
+            }
+            // else {
+            //   const subSectionParameter = subSection.parameters.find(
+            //     (param) => param.code === dieCutSizeParameter.parameterCode
+            //   );
+            //   if (subSectionParameter) {
+            //     temp.push({
+            //       parameterId: subSectionParameter.id,
+            //       sectionId: sectionId,
+            //       subSectionId: subSectionId,
+            //       ParameterType: ParameterType,
+            //       parameterName: parameterName,
+            //       actionId: actionId,
+            //       values: [dieCutSizeParameter.value],
+            //       valueIds: [],
+            //       actionIndex: subSectionParameter.actionIndex,
+            //       parameterCode: subSectionParameter.code,
+            //       valuesConfigs: subSectionParameter?.valuesConfigs,
+            //       unitKey: subSectionParameter?.unitKey,
+            //       unitType: subSectionParameter?.unitType,
+            //       isDisabled: true,
+            //     });
+            //   }
+
+            // }
+
           });
         }
         if (dieCut) {
