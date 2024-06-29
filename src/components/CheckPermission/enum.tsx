@@ -115,6 +115,11 @@ export enum Permissions {
   SHOW_SALES_REPORT = "ShowSalesReport",
   SHOW_CREDIT_CARD_TRANSACTIONS = "ShowCreditCardTransactions",
 
+  //calculation and production floor permissions
+  SHOW_COSTS_IN_CALCULATIONS = "ShowCostsInCalculations",
+  SHOW_PROFITS_IN_CALCULATIONS = "ShowProfitsInCalculations"
+
+
 }
 
 
