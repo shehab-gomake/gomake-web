@@ -20,7 +20,6 @@ const useBoardMissionsStations = () => {
     const [boardMissions] = useRecoilState(boardMissionsDetailsState);
     const getStations = async () => {
         const callBack = res => {
-            console.log("res?.data?.generalInformations",res?.data?.generalInformations)
             if (res?.success) {
                 setStations(res?.data?.workFlow?.actions);
                 setSubWorkFlows(res?.data?.workFlow?.subWorkFlows);
