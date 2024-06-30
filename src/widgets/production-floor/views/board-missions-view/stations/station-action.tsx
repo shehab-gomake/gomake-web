@@ -187,7 +187,7 @@ const BoardMissionsStationAction = ({
                                 <>
                                     <Divider />
                                     <Stack padding={"10px 0"} direction={"row"} gap={"16px"} flexWrap={"wrap"}>
-                                        <ParametersMapping source={source} parameters={outputsParameters} />
+                                        <ParametersMapping source={source} parameters={outputsParameters} isProductionFloor={true} />
                                     </Stack>
                                 </>
                             )}
