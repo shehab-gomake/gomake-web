@@ -2,6 +2,7 @@ import { GoMakeAutoComplate } from "@/components";
 import { useGomakeAxios } from "@/hooks";
 import { SettingsIcon } from "@/icons/settings";
 import { getDeviceSizeMockApi } from "@/services/api-service/materials/materials-endpoints";
+import { useEffect, useState } from "react";
 
 const DropDownListParameterWidget = ({
   parameter,
@@ -17,22 +18,15 @@ const DropDownListParameterWidget = ({
   onOpeneMultiParameterModal,
   subSectionParameters,
   list,
-}) => {
+  setDeviceCategory,
+  setDeviceSize
+}: any) => {
   const defaultObject = parameter.valuesConfigs.find(
     (item) => item.isDefault === true
   );
   const { callApi } = useGomakeAxios();
 
-  const getMaterialCategories = async (deviceSize) => {
-    const callBack = (res) => {
-      if (res?.success) {
-        console.log("ddddd")
-      } else {
-        console.log("ssssss")
-      }
-    };
-    await getDeviceSizeMockApi(callApi, callBack, deviceSize);
-  };
+
   return (
     <div data-tour={parameter?.id} style={clasess.dropDownListWithSettingIcon}>
       <GoMakeAutoComplate
@@ -48,10 +42,14 @@ const DropDownListParameterWidget = ({
         }
         disabled={parameter?.isLock ? parameter?.isLock : false}
         onChange={(e: any, value: any) => {
-          if (parameter?.code === "devicesize") {
-            getMaterialCategories(value?.values[0] || null)
+          if (parameter?.code === "devicecategory") {
+            setDeviceCategory(value?.values[0])
+          }
+          else if (parameter?.code === "devicesize") {
+            setDeviceSize(value?.values[0])
 
           }
+
 
           onChangeSubProductsForPrice(
             parameter?.id,

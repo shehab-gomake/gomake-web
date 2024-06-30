@@ -13,7 +13,7 @@ const DOWNLOAD_MATERIAL_EXCEL_FILE = "/v1/materials/download-material-excel";
 const UPLOAD_MATERIAL_EXCEL_FILE = "/v1/materials/upload-material-excel-file";
 const UPDATE_MATERIALS_IMAGES = "/v1/materials/update-materials-images";
 const GET_MATERIAL_CATEGORIES_URL = "/v1/materials/GetMaterialCategories";
-const getDeviceSizeMockURL = "/v1/materials/get-device-size-mock";
+const getDeviceSizeMockURL = "/v1/materials/get-device-size-material";
 const GET_MATERIAL_CATEGORY_DATA_URL = "/v1/materials/GetMaterialCategoryData";
 const UPDATE_MATERIAL_PROPS_URL = "/v1/materials/updateMaterial";
 const UPDATE_MATERIALS_PROPS_URL = "/v1/materials/updateMaterials";
@@ -101,13 +101,14 @@ const getMaterialCategoriesApi: ICallAndSetData = async (
 const getDeviceSizeMockApi: ICallAndSetData = async (
   callApi,
   setState,
-  deviceSize: string
+  data
 ) => {
   return await getSetApiData(
     callApi,
     EHttpMethod.GET,
-    `${getDeviceSizeMockURL}?deviceSize=${deviceSize}`,
-    setState
+    getDeviceSizeMockURL,
+    setState,
+    data
   );
 };
 
