@@ -1,73 +1,100 @@
-import { useState } from "react";
+import { use, useCallback, useEffect, useState } from "react";
+import { useGomakeAxios } from "@/hooks";
+import { createIssueApi, getAllIssuesApi } from "@/services/api-service/customer-service/customer-service-api";
+import { useUserProfile } from "@/hooks/use-user-profile";
 
 export type ticketTypeList = {
-  label: string,
-  value: string
-}
+  label: string;
+  value: string;
+};
 const useCustomerService = () => {
+  const { callApi } = useGomakeAxios();
+  const { profileState } = useUserProfile();
   const [openModal, setOpenModal] = useState<boolean>(false);
-  const [ticketType, setTicketType] = useState<ticketTypeList>()
-  const [assignee, setAssignee] = useState<ticketTypeList>()
-  const [title, setTitle] = useState<string>("")
-  const [description, setDescription] = useState<string>("")
-  const ticketTypeList: ticketTypeList[] = [{ label: "Bug", value: "bug" }, { label: "Task", value: "task" }]
-  const assigneeList: ticketTypeList[] = [{ label: "Ahmed Shehab", value: "11111" }, { label: "Mohand", value: "2222" }]
+  const [AllIssues, setAllIssues] = useState([]);
+  const [ticketType, setTicketType] = useState<ticketTypeList>();
+  const [assignee, setAssignee] = useState<ticketTypeList>();
+  const [title, setTitle] = useState<string>("");
+  const [description, setDescription] = useState<string>("");
+  const ticketTypeList: ticketTypeList[] = [
+    { label: "Bug", value: "10005" },
+    { label: "New Feature", value: "10004" },
+    { label: "Support", value: "10083" },
+  ];
+  const assigneeList: ticketTypeList[] = [
+    { label: "Ahmed Shehab", value: "11111" },
+    { label: "Mohand", value: "2222" },
+  ];
+  const getIssues = useCallback(async () => {
+    const callBack = (res) => {
+      if (res.success) {
+        console.log("issues2", res.data);
+        const formattedData = res.data.map((item) => [
+          item?.summary,
+          item?.description.content[0].content[0].text,
+          item?.issuetype.name,
+          item?.reporterName,
+          item?.created ? new Date(item.created).toLocaleDateString() : "N/A",
+        ]);
+        setAllIssues(formattedData);
+      }
+    };
+    await getAllIssuesApi(callApi, callBack).then();
+  }, [callApi]);
 
+  const createIssue = async () => {
+    const issueData = {
+      fields: {
+        project: { key: "GCS" },
+        summary: title,
+        description: {
+          type: "doc",
+          version: 1,
+          content: [
+            {
+              type: "paragraph",
+              content: [
+                {
+                  text: description,
+                  type: "text",
+                },
+              ],
+            },
+          ],
+        },
+        issuetype: {
+          id: ticketType?.value || "10004",
+        },
+        priority: {
+          id: "3",
+        },
+        customfield_10089: profileState.firstName + " " + profileState.lastName,
+      },
+    };
 
-  const tableHeaders = [
-    "title",
-    "description",
-    "type",
-    "reporter name",
-    "status"
-  ]
-  const rowsMockData = [
-    [
-      "related documents",
-      `1.The related documents are being used incorrectly.  for example : the order should always include a quote number in the related document. However, this is not currently happening because we are relying on the document that closes the document
-      2.Adding a new related document does not work.
-      `,
-      "Bug",
-      "Ahmad Shehab",
-      "URGENT BUGS"
-    ],
-    [
-      "ticketing sytem",
-      <div>
-        OVERVIEW
-        ticketing system is used by the system users to create bugs / features for the system
+    const callBack = (res) => {
+      if (res.success) {
+        getIssues();
+        onClickClosModal();
+      } else {
+        console.error("Failed to create issue", res);
+      }
+    };
 
-        this tickets should be opened in the Jira and the users can track the bugs / features  for the system
+    await createIssueApi(callApi, callBack, issueData);
+  };
 
+  useEffect(() => {
+    getIssues();
+  }, []);
 
-
-        REQUIREMENTS
-        in the header add new icon to move to the customer service page
-
-        inside the customer page create table with these columns: title , description , type , reporter name , status
-
-        add button above the table to create new ticket “ Add Ticket “ this button should open a modal to create new ticket
-
-        the modal new to include these fields :
-
-        type → select bug or feature
-
-        title
-
-        description
-      </div>,
-      "Task",
-      "Ahmad Shehab",
-      "In Progress"
-    ],
-  ]
-
+  const tableHeaders = ["title", "description", "issue type", "reporter name", "created at"];
 
   const onClickClosModal = () => {
-    setTicketType(null)
-    setAssignee(null)
-    setTitle("")
-    setDescription("")
+    setTicketType(null);
+    setAssignee(null);
+    setTitle("");
+    setDescription("");
     setOpenModal(false);
   };
   const onClickOpenModal = (transaction) => {
@@ -75,7 +102,8 @@ const useCustomerService = () => {
   };
   return {
     tableHeaders,
-    rowsMockData,
+    // rowsMockData,
+    AllIssues,
     openModal,
     ticketType,
     ticketTypeList,
@@ -88,7 +116,8 @@ const useCustomerService = () => {
     setTitle,
     setTicketType,
     onClickClosModal,
-    onClickOpenModal
+    onClickOpenModal,
+    createIssue,
   };
 };
 
