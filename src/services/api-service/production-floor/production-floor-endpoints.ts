@@ -31,8 +31,8 @@ const HANDLE_BOARD_MISSIONS_ID_BY_QR_CODE_URL = '/v1/erp-service/qr-codes/handle
 const UPDATE_BOARD_MISSIONS_BY_QR_CODE_URL = '/v1/erp-service/qr-codes/update-board-missions';
 
 
-const getProductionFloorData: ICallAndSetData = async (callApi, setState, connectionId: string) => {
-    return await getSetApiData(callApi, EHttpMethod.GET, GET_PRODUCTION_FLOOR_DATA_URL + '?connectionId=' + connectionId, setState, {}, false);
+const getProductionFloorData: ICallAndSetData = async (callApi, setState, connectionId: string, lock = false, abortController) => {
+    return await getSetApiData(callApi, EHttpMethod.GET, GET_PRODUCTION_FLOOR_DATA_URL + '?connectionId=' + connectionId, setState, {}, false, abortController);
 };
 
 
