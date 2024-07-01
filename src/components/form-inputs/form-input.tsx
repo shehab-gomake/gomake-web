@@ -156,7 +156,7 @@ const FormInput = ({ input, error, changeState, readonly }: IFormInput) => {
     setValues(Array.isArray(input.value) ? input.value : []);
   }, [input.value])
   useEffect(() => {
-    const selected = options.filter(option => input.value.includes(option.value));
+    const selected = options.filter(option => input?.value?.includes(option.value));
     setSelectedOptions(selected);
   }, [input.value])
 

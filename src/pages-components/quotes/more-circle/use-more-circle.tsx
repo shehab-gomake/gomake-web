@@ -26,7 +26,9 @@ const useMoreCircle = () => {
     onClickLoggers,
     t,
     onClickOpenIrrelevantModal,
-    CloseDocument
+    CloseDocument,
+    onClickOpenCloseOrderModal,
+    onClickOpenCloseOrderNotesModal
   }) => {
     const documentPath = DOCUMENT_TYPE[documentType];
     const { callApi } = useGomakeAxios();
@@ -144,7 +146,7 @@ const useMoreCircle = () => {
       },
       {
         condition: documentType === DOCUMENT_TYPE.order && quote?.isCanClose && quote?.statusTitleText !== "Order.Canceled",
-        onClick: () => CloseDocument(quote),
+        onClick: () => quote?.closeOrderNotes && quote?.closeOrderNotes.tirm !== "" ? onClickOpenCloseOrderNotesModal(quote) : onClickOpenCloseOrderModal(quote),
         icon: <LockIcon />,
         name: t("sales.quote.close")
       },

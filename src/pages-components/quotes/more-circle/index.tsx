@@ -12,7 +12,9 @@ const MoreMenuWidget = ({
   onClickDuplicate,
   onClickLoggers,
   onClickOpenIrrelevantModal,
-  CloseDocument
+  CloseDocument,
+  onClickOpenCloseOrderModal,
+  onClickOpenCloseOrderNotesModal
 }: any) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -26,7 +28,9 @@ const MoreMenuWidget = ({
     onClickLoggers,
     t,
     onClickOpenIrrelevantModal,
-    CloseDocument
+    CloseDocument,
+    onClickOpenCloseOrderModal,
+    onClickOpenCloseOrderNotesModal
   });
 
   return (
