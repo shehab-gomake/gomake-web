@@ -236,10 +236,10 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
       />
 
       <ThreeOptionsModal
-        title={selectedMission?.isReady ? t("boardMissions.unReadyModalTitle") : t("boardMissions.markDoneModalTitle")}
-        subTitle={selectedMission?.isReady ? t("boardMissions.unReadyModalSubTitle") : t("boardMissions.markDoneModalSubTitle")}
-        yesBtn={selectedMission?.isReady ? "boardMissions.unReadyWitNotification" : "boardMissions.markDoneModalYes"}
-        noBtn={selectedMission?.isReady ? "boardMissions.unReadyWithouNotification" : "boardMissions.markDoneModalNo"}
+        title={t("boardMissions.markDoneModalTitle")}
+        subTitle={t("boardMissions.markDoneModalSubTitle")}
+        yesBtn={"boardMissions.markDoneModalYes"}
+        noBtn={"boardMissions.markDoneModalNo"}
         openModal={openMarkReadyModal}
         onClose={onCloseMarkReadyModal}
         onClickYes={() => onClickMoveBoardMissionToDone(true)}
@@ -254,12 +254,13 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
         onClose={onCloseMarkReadyThenPrintModal}
         onClickYes={() => onOpenPackagesModal(missionItem)}
         onClickNo={() => onOpenPackagesModal(missionItem)}
-    />
+      />
       <GoMakeDeleteModal
-        icon={<WarningAmberIcon style={classes.warningIconStyle} />}
-        title={t("boardMissions.returnToProductionModalTitle")}
-        yesBtn={t("modal.yes")}
-        cancelBtn={t("modal.no")}
+        hideIcon={true}
+        title={t("boardMissions.unReadyModalTitle")}
+        subTitle={t("boardMissions.unReadyModalSubTitle")}
+        yesBtn={t("boardMissions.unReadyWitNotification")}
+        cancelBtn={t("modal.cancel")}
         openModal={openReturnToProdModal}
         onClose={onCloseReturnToProdModal}
         onClickDelete={onClickBackToProcess}
@@ -283,7 +284,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
         handleQuantityPerPackageChange={handleQuantityPerPackageChange}
         onClickConfirm={onClickPrintPackagingSlip}
       />
-      <QrListenerWidget listening={true}/>
+      <QrListenerWidget listening={true} />
     </>
   );
 };

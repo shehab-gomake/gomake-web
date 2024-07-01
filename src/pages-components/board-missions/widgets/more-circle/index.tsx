@@ -25,7 +25,7 @@ const MoreMenuWidget = ({ mission, onClickDuplicate, onClickLoggers, onClickMark
     onClickOrderSummeryPdf,
     onClickWorkMissionPdf,
     onClickPrintPackagingSlip,
-    onOpenModal
+    onOpenModal,
   });
 
   return (

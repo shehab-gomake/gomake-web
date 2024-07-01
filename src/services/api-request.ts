@@ -11,7 +11,7 @@ const apiRequest = async (
   responseType: ResponseType = undefined
 ) => {
   try {
-    //please don't change the server url!!! 
+    //please don't change the server url!!!
     const SERVER = config.api_server;
     const reqUrl = SERVER + url;
     const controller = new AbortController();
@@ -28,7 +28,7 @@ const apiRequest = async (
         ...(getUserToken() && { Authorization: "Bearer " + getUserToken() }),
         ...(data.customAuth && { "auth-token": data.customAuth }),
         lang: language ? language : "en",
-        domain: '',
+        domain: "",
       },
     };
     if (method === "GET") {
