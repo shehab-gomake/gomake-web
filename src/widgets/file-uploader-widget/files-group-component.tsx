@@ -2,7 +2,7 @@ import Stack from "@mui/material/Stack";
 import {FileComponent} from "@/widgets/file-uploader-widget/file-component";
 import {useGomakeTheme} from "@/hooks/use-gomake-thme";
 import {IUploadingFileGroup} from "@/widgets/file-uploader-widget/interface";
-import {useCallback, useEffect, useRef, useState} from "react";
+import {useCallback, useRef, useState} from "react";
 import {Backdrop, IconButton} from "@mui/material";
 import {useUploadFiles} from "@/widgets/production-floor/views/board-missions-view/navigation-buttons/use-upload-files";
 import {FONT_FAMILY} from "@/utils/font-family";
@@ -15,7 +15,6 @@ const FilesGroupComponent = ({title, filesInfo, orderItemId, filePath, boardMiss
     const {primaryColor} = useGomakeTheme();
     const [isOver, setIsOver] = useState(false);
     const {handleFileUpload} = useUploadFiles(orderItemId, filePath);
-    const [setTempFiles] = useState<string[]>([]);
     const {push} = useRouter();
     const fileInputRef = useRef(null);
     const {t} = useTranslation();
@@ -30,7 +29,6 @@ const FilesGroupComponent = ({title, filesInfo, orderItemId, filePath, boardMiss
         setIsOver(false);
         const files = event.dataTransfer.files;
         for (let i = 0; i < files.length; i++) {
-            setTempFiles(prevState => [...prevState, files[i]?.name]);
             handleFileUpload(files[i]).then();
         }
 
@@ -45,9 +43,7 @@ const FilesGroupComponent = ({title, filesInfo, orderItemId, filePath, boardMiss
         setIsOver(false);
     }, []);
 
-    useEffect(() => {
-        setTempFiles([])
-    }, [filesInfo?.length]);
+
 
     const handleFileSelect = (e) => {
         [...e.target.files]?.forEach(async (file) => {
