@@ -15,10 +15,6 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { languagesState } from "@/store/languages";
 import { GoMakeAutoComplate } from "@/components";
 import { useMessageTemplate } from "@/widgets/settings-mailing/useMessageTemplate";
-import { userProfileState } from "@/store/user-profile";
-import { useEffect } from "react";
-import { getSMSTemplateApi } from "@/services/api-service/mailing/mailing-api";
-import { useGomakeAxios } from "@/hooks";
 
 export interface IProps {
     onClickSave: (value: any) => void;
@@ -32,30 +28,7 @@ const EmailSettings = ({ onClickSave }: IProps) => {
     const [body, setBody] = useRecoilState<string>(smsBodyState);
     const languages = useRecoilValue(languagesState);
     const setLanguageState = useSetRecoilState<string>(languageTemplateState);
-    const stateLang = useRecoilValue(userProfileState);
-    const { callApi } = useGomakeAxios();
-    useEffect(() => {
-        let systemLang = stateLang?.systemLang
-        if (systemLang) {
-            setState({ ...state, lang: systemLang })
-            onClickYes(systemLang)
-        }
 
-    }, [stateLang,])
-
-    const onClickYes = async (languageState) => {
-        await getSmsTemplateById(state?.id, languageState);
-    };
-    const getSmsTemplateById = async (id, language = null) => {
-        const callBack = (res) => {
-            if (res.success) {
-                setState(res.data);
-                setBody(res.data?.text);
-                setSubject(res.data?.title);
-            }
-        }
-        await getSMSTemplateApi(callApi, callBack, { templateId: id, lang: language })
-    }
 
 
     const handleUpdateClick = () => {

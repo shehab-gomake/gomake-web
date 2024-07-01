@@ -3,8 +3,8 @@ import {EHttpMethod} from "@/services/api-service/enums";
 import get from "lodash.get";
 
 
-const getSetApiData = async (callApi: ICallApi, method: EHttpMethod, url: string , callBackFunction: ICallBack = () =>{}, data?: any, lock: boolean = true): Promise<{ success: boolean, data: any }> => {
-    const result: any = await callApi(method, url, data, lock);
+const getSetApiData = async (callApi: ICallApi, method: EHttpMethod, url: string , callBackFunction: ICallBack = () =>{}, data?: any, lock: boolean = true, abort?: AbortController): Promise<{ success: boolean, data: any }> => {
+    const result: any = await callApi(method, url, data, lock, abort);
     const dataKey = "data.data.data";
     const _data = get(result, dataKey);
     const res = {success: !!result.success, data: _data};
