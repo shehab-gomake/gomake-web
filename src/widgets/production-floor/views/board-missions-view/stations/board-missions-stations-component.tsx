@@ -1,13 +1,13 @@
 import Stack from "@mui/material/Stack";
-import {BoardMissionsStationAction} from "@/widgets/production-floor/views/board-missions-view/stations/station-action";
+import { BoardMissionsStationAction } from "@/widgets/production-floor/views/board-missions-view/stations/station-action";
 import {
     useBoardMissionsStations
 } from "@/widgets/production-floor/views/board-missions-view/stations/use-board-missions-stations";
-import {useMemo} from "react";
+import { useMemo } from "react";
 import {
     GeneralInformationComponent
 } from "@/widgets/production-floor/views/board-missions-view/stations/general-information/general-information-component";
-import {Divider} from "@mui/material";
+import { Divider } from "@mui/material";
 import {
     BoardMissionsSubWorkFlowComponent
 } from "@/widgets/production-floor/views/board-missions-view/stations/sub-work-flow-component";
@@ -18,7 +18,7 @@ import Button from "@mui/material/Button";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 const BoardMissionsStationsComponent = () => {
-    const {stations, subWorkFlows, boardMissions, onClickAllJob} = useBoardMissionsStations();
+    const { stations, subWorkFlows, boardMissions, onClickAllJob } = useBoardMissionsStations();
     const sortedStations = useMemo(() => [...stations]
         ?.sort((a, b) => b?.index - a?.index)
         ?.sort((a, b) => b?.isDone && a?.isDone ? 0 : a.isDone ? 1 : -1), [stations])
@@ -30,17 +30,17 @@ const BoardMissionsStationsComponent = () => {
             flexDirection: 'column',
             gap: '18px'
         }}>
-            <GeneralInformationComponent/>
-            <Divider orientation={'horizontal'} flexItem/>
+            <GeneralInformationComponent />
+            <Divider orientation={'horizontal'} flexItem />
             {
                 !!boardMissions?.productType &&
-                <Button onClick={onClickAllJob} startIcon={<ArrowBackIcon/>} variant={'contained'} sx={{width: 'fit-content', backgroundColor: '#CBCBE4', color: '#252675', '&:hover': {backgroundColor: '#CBCBE4', color: '#252675', opacity: 0.7}}}>All  Book Stations</Button>
+                <Button onClick={onClickAllJob} startIcon={<ArrowBackIcon />} variant={'contained'} sx={{ width: 'fit-content', backgroundColor: '#CBCBE4', color: '#252675', '&:hover': { backgroundColor: '#CBCBE4', color: '#252675', opacity: 0.7 } }}>All  Book Stations</Button>
             }
             <Stack gap={'10px'} minHeight={'fit-content'} overflow={'scroll'}>
-                {<CompletedBoardMissionsComponent/>}
+                {<CompletedBoardMissionsComponent />}
                 {
                     subWorkFlows?.map((workflow) => <BoardMissionsSubWorkFlowComponent
-                        currentBoardMissionsActionId={boardMissions.currentBoardMissionActionId}  {...workflow}/>)
+                        currentBoardMissionsActionId={boardMissions.currentBoardMissionActionId}  {...workflow} />)
                 }
                 {
                     sortedStations?.map((station, index) =>
@@ -53,4 +53,4 @@ const BoardMissionsStationsComponent = () => {
     );
 }
 
-export {BoardMissionsStationsComponent}
+export { BoardMissionsStationsComponent }
