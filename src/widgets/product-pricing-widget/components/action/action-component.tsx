@@ -172,19 +172,24 @@ const ActionContainerComponent = ({
   categoryId,
   isCalculated,
   actionException,
-  materials
+  materials,
+  employeeId,
+  employeeName
 }: IActionContainerComponentProps) => {
   source = source === EWorkSource.OUT ? EWorkSource.OUT : EWorkSource.INTERNAL;
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [chooseMachine, setChooseMachine] = useState<boolean>(false);
   const [chooseMaterial, setChooseMaterial] = useState<boolean>(false);
+  const [chooseEmployee, setChooseEmployee] = useState<boolean>(false);
   const currentProductItemValue = useRecoilValue(currentProductItemValueState);
   const { t } = useTranslation();
   const {
     getActionMachinesList,
     getActionMaterialsList,
+    getActionEmloyeeList,
     selectNewMachine,
     selectNewMaterials,
+    selectNewEmployee,
     anchorEl,
     open,
     handleClick,
@@ -196,7 +201,8 @@ const ActionContainerComponent = ({
     onClickCloseModalMaterial,
     setAttributesData,
     updateWorkFlowForMachine,
-    updateWorkFlowForMaterials
+    updateWorkFlowForMaterials,
+    updateWorkFlowForEmployees,
   } = useActionUpdateValues();
   const suppliersState = useRecoilValue(outsourceSuppliersState);
   const suppliers = useMemo(() => {
@@ -378,7 +384,63 @@ const ActionContainerComponent = ({
                 )
               )}
             </Stack>
+
             <Divider orientation={"vertical"} flexItem />
+            <Stack
+              style={classes.sectionTitle}
+              direction={"row"}
+              alignItems={"center"}
+              gap={"10px"}
+            >
+              {
+                employeeId && (
+                  <>
+                    {!chooseEmployee ? (
+                      <Button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setChooseEmployee(true);
+                        }}
+                        variant={"text"}
+                        style={classes.sectionTitle}
+                      >
+                        {employeeName}
+                      </Button>
+                    ) : (
+                      <Stack
+                        direction={"row"}
+                        gap={"5px"}
+                        alignItems={"center"}
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <GoMakeAutoComplate
+                          onChange={(e, v) => {
+                            updateWorkFlowForEmployees(actionId, productType, actionIndex, v.label, v?.value, id)
+                            setChooseEmployee(false);
+                          }}
+                          style={{ width: "200px" }}
+                          options={getActionEmloyeeList(actionId, productType)}
+                          placeholder={"Choose Employee"}
+                          value={employeeName}
+                        />
+                        <IconButton
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setChooseEmployee(false);
+                          }}
+                        >
+                          <ClearRoundedIcon />
+                        </IconButton>
+                      </Stack>
+                    )}
+                  </>
+                )
+              }
+            </Stack>
+            {
+              employeeId && <Divider orientation={"vertical"} flexItem />
+            }
+
             <Stack
               style={classes.sectionTitle}
               direction={"row"}
@@ -425,6 +487,7 @@ const ActionContainerComponent = ({
                               printingActionId: id,
                             })
                             setChooseMaterial(false);
+
                           }}
                           style={{ width: "200px" }}
                           options={getActionMaterialsList(actionId, productType)}

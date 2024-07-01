@@ -21,6 +21,7 @@ export interface IPricingAction {
   machineCategories: IPricingMachineCategory[];
   productType: string | null;
   materials?:any
+  employees?:any
 }
 
 export interface IPricingMachineCategory {
@@ -88,6 +89,8 @@ export interface IWorkFlowAction {
   pagesQuantity?: number;
   totalBookletDelay?: number;
   materials?:any
+  employeeId?:string,
+  employeeName?:string
 }
 
 export interface IOutput {
