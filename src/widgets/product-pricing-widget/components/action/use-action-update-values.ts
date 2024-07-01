@@ -6,6 +6,7 @@ import {
 import {useState} from "react";
 import {
     changeWorkFlw,
+    updateActionEmployeeApi,
     updateProductItemDraftActionData,
     updateProductItemDraftActionMachine
 } from "@/services/api-service/product-item-value-draft/product-item-draft-endpoints";
@@ -21,6 +22,8 @@ interface AttributesData {
     printingActionId?:string;
     printHouseMaterialSizeName?:string;
     printHouseMaterialSizeId?:string;
+    emplyeeId?:string;
+    emplyeeName?:string;
 }
 const useActionUpdateValues = () => {
     const actions = useRecoilValue(jobActionsState);
@@ -65,7 +68,24 @@ const useActionUpdateValues = () => {
         return [];
     };
 
-    const getActionMaterialsList = (
+    const getActionEmloyeeList = (
+        actionId: string,
+        productType: string | null
+    ) => {
+        const employees = actions.find(
+            (action) =>
+                action.actionId === actionId && productType === action.productType
+        );
+        if (employees) {
+            return employees?.employees?.map((employee) => ({
+                    value: employee.id,
+                    label: employee.name,
+                }));
+        }
+        return [];
+    };
+
+    const getActionMaterialsList  = (
         actionId: string,
         productType: string | null
     ) => {
@@ -83,7 +103,6 @@ const useActionUpdateValues = () => {
         }
         return [];
     };
-
     const apiCallBack = (res: {success: boolean}) => {
         if (res.success) {
             alertSuccessUpdate()
@@ -132,6 +151,17 @@ const useActionUpdateValues = () => {
         }).then()
     }
 
+    const selectNewEmployee = (printHouseMaterialSizeId: string, actionId: string, productType: string, actionIndex: number) => {
+        updateProductItemDraftActionMachine(callApi, apiCallBackMaterial, {
+            actionId: actionId,
+            printHouseMaterialSizeId: printHouseMaterialSizeId,
+            productType: productType,
+            productItemValueId: currentProductItemValue,
+            actionIndex: actionIndex,
+            signalRConnectionId: connectionId
+        }).then()
+    }
+
     const updateWorkFlowForMachine = () => {
             changeWorkFlw(callApi, apiCallBack, {
             actionId: attributesData.actionId,
@@ -157,6 +187,20 @@ const useActionUpdateValues = () => {
         }).then()
     }
 
+    const updateWorkFlowForEmployees = (actionId,productType,actionIndex,emplyeeName,emplyeeId,printingActionId) => {
+        updateActionEmployeeApi(callApi, apiCallBack, {
+        actionId: actionId,
+        productType: productType,
+        productItemValueId: currentProductItemValue,
+        actionIndex: actionIndex,
+        signalRConnectionId: connectionId,
+        printingActionId: printingActionId,
+        emplyeeId: emplyeeId,
+        emplyeeName: emplyeeName
+    }).then()
+}
+
+
     const updateActionData = async (actionId: string, newValue: number, key: string, productType: string) => {
         await updateProductItemDraftActionData(callApi, apiCallBack, {
             productItemValueId: currentProductItemValue,
@@ -172,6 +216,7 @@ const useActionUpdateValues = () => {
         getActionMachinesList,
         getActionMaterialsList,
         selectNewMachine,
+        selectNewEmployee,
         selectNewMaterials,
         updateActionData,
         open,
@@ -184,7 +229,9 @@ const useActionUpdateValues = () => {
         onClickCloseModalMaterial,
         setAttributesData,
         updateWorkFlowForMachine,
-        updateWorkFlowForMaterials
+        updateWorkFlowForMaterials,
+        getActionEmloyeeList,
+        updateWorkFlowForEmployees
     };
 };
 
