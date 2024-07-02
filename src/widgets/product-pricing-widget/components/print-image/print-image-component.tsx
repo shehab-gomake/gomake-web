@@ -48,7 +48,7 @@ const PrintImageComponent = ({materialLength, materialWidth, rectangles, name}: 
     }
     return (
         <div>
-            <PrimaryButton variant={'contained'} style={{fontSize: '15px', padding: '5px 15px'}} onClick={() => setOpen(true)}>{name}</PrimaryButton>
+            <PrimaryButton variant={'contained'} style={{fontSize: '15px'}} onClick={() => setOpen(true)}>{name}</PrimaryButton>
             <GoMakeModal openModal={open} onClose={() => setOpen(false)}
                          modalTitle={name}
                          insideStyle={{width: `${(scaleX(materialWidth)) + 100}px`, height: 'fit-content',maxHeight:'80%',maxWidth:'70%'}}>
