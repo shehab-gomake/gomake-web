@@ -8,8 +8,8 @@ import { FormInput } from "@/components/form-inputs/form-input";
 import { PaymentInputs } from "./inputs";
 import { SecondaryCheckBox } from "@/components/check-box/secondary-check-box";
 import { useSendPaymentModal } from "./use-send-payment-modal";
-import { initialState } from "./states";
 import { Divider } from "@mui/material";
+import { useMemo } from "react";
 
 interface ISendPaymentProps {
     openPaymentModal?: any;
@@ -27,23 +27,18 @@ const SendPaymentModal = ({
     const {
         t,
         newState,
-        setNewState,
         handleCopyPaymentLink,
         handleCheckBoxChange,
-        onChangePaymentInputs
+        onChangePaymentInputs,
     } = useSendPaymentModal();
 
-    const handleClose = () => {
-        setNewState(initialState)
-        onClickClosePaymentModal();
-    };
-
+  
     return (
         <GoMakeModal
             insideStyle={classes.insideStyle}
             openModal={openPaymentModal}
-            onClose={handleClose}
-            modalTitle={paymentModalTitle}
+            onClose={onClickClosePaymentModal}
+            modalTitle={paymentModalTitle} 
         >
             <Stack direction={'column'} height={"100%"} justifyContent={"space-between"} width={"100%"}>
                 <Divider style={classes.dividerContainer} />
@@ -64,9 +59,9 @@ const SendPaymentModal = ({
                             changeState={onChangePaymentInputs}
                             error={false}
                             key={item.name}
+                            readonly={!!item.readOnly}
                         />
                     </Stack>
-
                 ))}
                 <Stack display="flex" flexWrap="wrap" direction="row" gap="10px">
                     <div style={classes.inputLbl}>   <SecondaryCheckBox
@@ -91,7 +86,7 @@ const SendPaymentModal = ({
                 <Stack direction={'row'} gap={'10px'} alignItems={"baseline"} >
                     <SecondaryButton variant="contained" style={{ width: "50%", height: "35px", minWidth: "fit-content" }}>{t('prePayment.sendPaymentPage')}</SecondaryButton>
                     <SecondaryButton variant="outlined" onClick={handleCopyPaymentLink} style={{ width: "30%", height: "35px", minWidth: "fit-content" }}>{t('prePayment.copyPaymentLink')}</SecondaryButton>
-                    <PrimaryButton variant="outlined" onClick={handleClose} style={{ width: "20%", height: "35px" }}>{t('modal.cancel')}</PrimaryButton>
+                    <PrimaryButton variant="outlined" onClick={onClickClosePaymentModal} style={{ width: "20%", height: "35px" }}>{t('modal.cancel')}</PrimaryButton>
                 </Stack>
             </Stack>
         </GoMakeModal>

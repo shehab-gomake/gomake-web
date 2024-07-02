@@ -1,11 +1,11 @@
-import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { StatePayment, initialState } from "./states";
+import { useRecoilState, useResetRecoilState } from "recoil";
+import { StatePayment, sendPaymentState } from "./states";
 
 const useSendPaymentModal = () => {
     const { t } = useTranslation();
-    const [newState, setNewState] = useState<StatePayment>(initialState);
-
+    const [newState, setNewState] = useRecoilState<StatePayment>(sendPaymentState);
+    const resetSendPaymentState = useResetRecoilState(sendPaymentState);
 
     const onChangePaymentInputs = (key, value) => {
         setNewState((prev) => ({
@@ -38,7 +38,8 @@ const useSendPaymentModal = () => {
         setNewState,
         handleCopyPaymentLink,
         handleCheckBoxChange,
-        onChangePaymentInputs
+        onChangePaymentInputs,
+        resetSendPaymentState
     };
 };
 

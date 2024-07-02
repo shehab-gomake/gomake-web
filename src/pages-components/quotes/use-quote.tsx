@@ -35,6 +35,8 @@ import { getAndSetCustomerById, getAndSetCustomersPagination } from "@/services/
 import { useUserPermission } from "@/hooks/use-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { PermissionCheck } from "@/components/CheckPermission/check-permission";
+import { sendDocumentToClientForPaymentApi } from "@/services/api-service/pre-payment/pre-payment-api";
+import { StatePayment, sendPaymentState } from "./widgets/send-payment-modal/states";
 
 const useQuotes = (docType: DOCUMENT_TYPE) => {
   const { t } = useTranslation();
@@ -1431,25 +1433,38 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
   useEffect(() => {
     getClientTypesCategories()
   }, [])
-    
+
   ///////////////////////// SEND PAYMENT //////////////////////////
   const [openPaymentModal, setOpenPaymentModal] = useState(false);
   const [paymentModalTitle, setPaymentModalTitle] = useState("");
-
-  const [stateTest, setStateTest] = useState<any>();
+  const [sendPayment, setSendPayment] = useRecoilState<StatePayment>(sendPaymentState);
 
   const onClickClosePaymentModal = () => {
     setOpenPaymentModal(false);
   };
 
+  const onClickSendPaymentOld = (document: any): Promise<void> => {
+    return new Promise<void>((resolve, reject) => {
+      const callBack = (res) => {
+        if (res?.success) {
+          const newSendPaymentState = { ...sendPayment, ...res.data };
+          setSendPayment(newSendPaymentState);
+          resolve();
+        } else {
+          reject(new Error("Failed to update payment state"));
+        }
+      };
+      sendDocumentToClientForPaymentApi(callApi, callBack, { id: document?.id, documentType: DOCUMENT_TYPE.order });
+    });
+  };
+
   const onClickSendPayment = async (document: any) => {
     try {
-    //  await getDocumentApi(callApi, setStateTest, { documentType: docType, Id: document?.id })
-    console.log("document is : ", document)
-      setPaymentModalTitle(`${t("prePayment.paymentPageFor")} ${t(`sales.quote.${DOCUMENT_TYPE[docType]}`).toLowerCase()} ${t("sales.quote.number")} - ${document?.number}`)
+      await onClickSendPaymentOld(document);
+      setPaymentModalTitle(`${t("prePayment.paymentPageFor")} ${t(`sales.quote.${DOCUMENT_TYPE[docType]}`).toLowerCase()} ${t("sales.quote.number")} - ${document?.number}`);
       setOpenPaymentModal(true);
     } catch (error) {
-      console.error("Error fetching payment :", error);
+      alertFaultGetData();
     }
   };
 
