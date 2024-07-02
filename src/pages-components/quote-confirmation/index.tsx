@@ -28,6 +28,7 @@ const QuoteConfirmationPageWidget = ({isPrePaymentPage = false }: IProps)  => {
   };
 
   // GET DOCUMENT BY ID JUST FOR QUOTE WHY ??
+  // if it pre payment then record id not id
   useEffect(() => {
      getQuoteConfirmation();
   }, [])

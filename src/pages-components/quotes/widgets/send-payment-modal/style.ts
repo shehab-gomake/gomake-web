@@ -3,7 +3,7 @@ import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { FONT_FAMILY } from "@/utils/font-family";
 
 const useStyle = () => {
-  const { theme, secondColor , primaryColor} = useGomakeTheme()
+  const { theme, secondColor, primaryColor } = useGomakeTheme()
   const classes = useMemo(() => {
     return {
       dropDownListStyle: {
@@ -29,19 +29,26 @@ const useStyle = () => {
         visibility: "hidden" as "hidden",
       },
       insideStyle: {
-        width: "600px",
-        height: "520px",
+        width: "max-content",
+        height: "650px",
       },
       inputLbl: {
         color: primaryColor(900),
         ...FONT_FAMILY.Lexend(600, 14),
         display: "flex",
         alignItems: "center",
+        width: "max-content"
+      },
+      dividerContainer: {
+        width: "95%",
+        borderColor: secondColor(500),
       },
     };
   }, [theme]);
+
   return {
     classes,
   };
 };
+
 export { useStyle };

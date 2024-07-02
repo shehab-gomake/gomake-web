@@ -1,14 +1,12 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { StatePayment, initialState } from "./states";
 
 const useSendPaymentModal = () => {
     const { t } = useTranslation();
-    const [newState, setNewState] = useState({
-        bySMS: true, 
-        byMail: true, 
-        percentageOfTotal:100,
-        numberOfInstallments:1
-    });
+    const [newState, setNewState] = useState<StatePayment>(initialState);
+
+
     const onChangePaymentInputs = (key, value) => {
         setNewState((prev) => ({
             ...prev,
@@ -30,7 +28,7 @@ const useSendPaymentModal = () => {
     };
 
     const handleCopyPaymentLink = () => {
-        const paymentLink = "https://web.dev.gomake.net/quote-confirmation?Id=test";
+        const paymentLink = "http://localhost:3002/pre-payment?RecordId=test";
         copyToClipboard(paymentLink);
     };
 

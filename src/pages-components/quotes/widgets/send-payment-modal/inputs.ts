@@ -1,6 +1,42 @@
 const PaymentInputs = (state) => {
     return [
       {
+        name: "contactName",
+        label: "sales.quote.contactName",
+        type: "text",
+        placeholder: "sales.quote.contactName",
+        required: false,
+        parameterKey: "contactName",
+        value: state?.contactName,
+        options: [],
+        isValid: true,
+        readOnly: false,
+      },
+      {
+        name: "contactPhone",
+        label: "sales.quote.contactPhone",
+        type: "text",
+        placeholder: "sales.quote.contactPhone",
+        required: false,
+        parameterKey: "contactPhone",
+        value: state?.contactPhone,
+        options: [],
+        isValid: true,
+        readOnly: false,
+      },
+      {
+        name: "contactMail",
+        label: "sales.quote.contactEmail",
+        type: "text",
+        placeholder: "sales.quote.contactEmail",
+        required: false,
+        parameterKey: "contactMail",
+        value: state?.contactMail,
+        options: [],
+        isValid: true,
+        readOnly: false,
+      },
+      {
         name: "percentageOfTotal",
         label: "prePayment.percentageOfTotal",
         type: "text",
@@ -10,7 +46,7 @@ const PaymentInputs = (state) => {
         value: state?.percentageOfTotal,
         options: [],
         isValid: true,
-        readOnly: true,
+        readOnly: false,
       },
       {
         name: "totalToPay",
@@ -19,7 +55,8 @@ const PaymentInputs = (state) => {
         placeholder: "prePayment.totalToPay",
         required: false,
         parameterKey: "totalToPay",
-        value: state?.totalToPay,
+       // value: state?.totalToPay,
+        value: state?.percentageOfTotal/100 * state?.price,
         options: [],
         isValid: true,
         readOnly: true,
@@ -34,7 +71,6 @@ const PaymentInputs = (state) => {
         value: state?.numberOfInstallments ,
         options: [],
         isValid: true,
-        readOnly: true,
       },
       {
         name: "invoiceDate",
@@ -46,7 +82,6 @@ const PaymentInputs = (state) => {
         value: state?.invoiceDate,
         options: [],
         isValid: true,
-        readOnly: true,
       }
     ]
   }
