@@ -10,9 +10,11 @@ import { PackageIcon } from "@/icons/package-icon";
 import { GetPrintingTicketPDFApi } from "@/services/api-service/generic-doc/documents-api";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { PStatus } from "../enums";
-import {addBoardMissionsToFileUploaderApi} from "@/services/api-service/board-missions-table/board-missions-table";
-import {useRecoilState} from "recoil";
-import {fileUploaderConnectionIdState, openFileUploaderList, pinFileUploaderState} from "@/store/file-uploader-state";
+import { addBoardMissionsToFileUploaderApi } from "@/services/api-service/board-missions-table/board-missions-table";
+import { useRecoilState } from "recoil";
+import { fileUploaderConnectionIdState, openFileUploaderList, pinFileUploaderState } from "@/store/file-uploader-state";
+import { MarkAsUnReadyIcon } from "./icons/mark-as-un-ready";
+import { printHouseProfile } from "@/store/print-house-profile";
 const useMoreCircle = ({
   mission,
   onClickDuplicate,
@@ -21,9 +23,8 @@ const useMoreCircle = ({
   onClickOrderSummeryPdf,
   onClickWorkMissionPdf,
   onClickPrintPackagingSlip,
-  onOpenModal
+  onOpenModal,
 }: any) => {
-
   const { t } = useTranslation();
   const { classes } = useStyle();
   const { callApi } = useGomakeAxios();
@@ -31,6 +32,7 @@ const useMoreCircle = ({
   const [connectionId] = useRecoilState(fileUploaderConnectionIdState);
   const [, setOpenFileUploader] = useRecoilState(openFileUploaderList);
   const [, setShowFileUploader] = useRecoilState(pinFileUploaderState);
+  const [companyProfile] = useRecoilState(printHouseProfile);
   const downloadPdf = (url) => {
     const anchor = document.createElement("a");
     anchor.href = url;
@@ -63,6 +65,13 @@ const useMoreCircle = ({
       }
     };
     await addBoardMissionsToFileUploaderApi(callApi, callBack, { boardMissionsId: mission?.id, connectionId: connectionId });
+  };
+  const handleClickMarkAsReady = () => {
+    if (mission?.isReady) {
+      onClickReturnToProduction(mission);
+    } else {
+      onClickMarksAsDone(mission);
+    }
   };
 
   const menuList = [
@@ -108,16 +117,16 @@ const useMoreCircle = ({
     },
     {
       condition: mission?.status === PStatus.IN_PROCESS,
-      name: "boardMissions.markAsReady",
-      icon: <TaskAltOutlinedIcon style={classes.iconStyle} />,
-      onclick: () => onClickMarksAsDone(mission),
+      name: !mission?.isReady ? "boardMissions.markAsReady" : "boardMissions.markAsUnReady",
+      icon: !mission?.isReady ? <TaskAltOutlinedIcon style={classes.iconStyle} /> : <MarkAsUnReadyIcon />,
+      onclick: () => handleClickMarkAsReady(),
     },
-    {
-      condition: mission?.status === PStatus.DONE,
-      name: "boardMissions.returnToProduction",
-      icon: <LockOpenOutlinedIcon style={classes.iconStyle} />,
-      onclick: () => onClickReturnToProduction(mission),
-    },
+    // {
+    //   condition: mission?.status === PStatus.DONE,
+    //   name: "boardMissions.returnToProduction",
+    //   icon: <LockOpenOutlinedIcon style={classes.iconStyle} />,
+    //   onclick: () => onClickReturnToProduction(mission),
+    // },
     {
       condition: true,
       name: "home.loggers",
@@ -126,6 +135,7 @@ const useMoreCircle = ({
         window.open(`/production-floor?boardMissionsId=${mission?.id}&step=activity`, '_blank');
       },
     },
+    !!companyProfile.filesApiAddress &&
     {
       condition: true,
       name: "fileUploader.uploadFile",

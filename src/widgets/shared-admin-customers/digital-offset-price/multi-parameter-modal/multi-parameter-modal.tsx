@@ -4,8 +4,6 @@ import { ChildrenMapping } from "./children-mapping";
 import { HeaderMapping } from "./header-mapping";
 import { useStyle } from "./style";
 import { useMultiParameterModal } from "./use-multi-parameter-modal";
-import { IconButton, Tooltip } from "@mui/material";
-import { CloseIcon } from "@/components/modal/icon/close";
 
 const MultiParameterModal = ({
   openModal,

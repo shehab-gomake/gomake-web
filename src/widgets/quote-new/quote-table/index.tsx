@@ -102,6 +102,7 @@ const QuoteForPriceTable = ({
                     isQuoteConfirmation={isQuoteConfirmation}
                     isPrePaymentPage={isPrePaymentPage}
                     onChangeSelectedItemRowForQoute={onChangeSelectedItemRowForQoute}
+                    quoteItems={quoteItems}
                   />
                   {item?.childsDocumentItems &&
                     item?.childsDocumentItems?.map(
@@ -132,7 +133,7 @@ const QuoteForPriceTable = ({
           </TableBody>
         </Table>
       </TableContainer>
-      {!isQuoteConfirmation && quoteItemValue?.isShowPrice &&
+      {quoteItems?.isShowPrice &&
         <TotalPriceComp
           documentType={documentType}
           getCalculateQuote={getCalculateQuote}
@@ -140,15 +141,7 @@ const QuoteForPriceTable = ({
           changeQuoteItems={changeQuoteItems}
           isQuoteConfirmation={isQuoteConfirmation}
         />}
-      {
-        isQuoteConfirmation && <TotalPriceComp
-          documentType={documentType}
-          getCalculateQuote={getCalculateQuote}
-          quoteItems={quoteItems}
-          changeQuoteItems={changeQuoteItems}
-          isQuoteConfirmation={isQuoteConfirmation}
-        />
-      }
+
 
     </div>
   );

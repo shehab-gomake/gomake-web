@@ -17,6 +17,6 @@ export const openFileUploaderList = atom<boolean>({
 });
 
 export const pinFileUploaderState = atom<boolean>({
-    default: true,
+    default: false,
     key: 'pinFileUploaderState'
 })

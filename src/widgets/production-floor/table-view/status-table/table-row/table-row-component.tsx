@@ -51,19 +51,24 @@ const TableRowComponent = ({boardMission}: IProps) => {
             if (didDrop) {
                 return;
             }
-            updateBoardMissionsOrder({
-                source: {
-                    boardMissionId: item.board.id,
-                    productType: item.board.productType,
-                    priority: item.board.priority
-                },
-                destination: {
-                    boardMissionId: boardMission.id,
-                    productType: boardMission.productType,
-                    priority: boardMission.priority
-                },
-                statusId: boardMission.statusId
-            }).then();
+            if (boardMission.statusId !== item.board.statusId) {
+                updateStatus([item.board], boardMission.statusId).then();
+            }
+            if (item.board.priority !== boardMission.priority && item.board.statusId === boardMission.statusId) {
+                updateBoardMissionsOrder({
+                    source: {
+                        id: item.board.id,
+                        productType: item.board.productType,
+                        priority: item.board.priority
+                    },
+                    destination: {
+                        id: boardMission.id,
+                        productType: boardMission.productType,
+                        priority: boardMission.priority
+                    },
+                    statusId: boardMission.statusId
+                }).then();
+            }
 
         },
         hover: (item: { board: IBoardMissions, selectedIds: IBoardMissions[] }) => {

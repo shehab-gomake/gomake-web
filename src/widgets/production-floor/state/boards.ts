@@ -26,3 +26,8 @@ export const boardMissionsDetailsState = atom<IBoardMissionsDetails>({
     default: {} as IBoardMissionsDetails,
     key: 'boardMissionsDetailsState'
 })
+
+export const getDataAbortController = atom<AbortController>({
+    default: null,
+    key: 'getDataAbortControllerState'
+})

@@ -1,16 +1,38 @@
 import {getUserToken} from "@/services/storage-data";
 import {useRecoilState} from "recoil";
 import {printHouseProfile} from "@/store/print-house-profile";
-import {fileUploaderConnectionIdState, pinFileUploaderState} from "@/store/file-uploader-state";
+import {fileUploaderConnectionIdState, pinFileUploaderState, uploadingFilesState} from "@/store/file-uploader-state";
+import {EUploadingFileStatus} from "@/widgets/file-uploader-widget/interface";
+import {boardMissionsDetailsState} from "@/widgets/production-floor/state/boards";
 
 const useUploadFiles = (orderItemId, filesPath) => {
     const CHUNK_SIZE = 5 * 1024 * 1024; // 5MB
     const [companyProfile] = useRecoilState(printHouseProfile);
-    const [connectionId]= useRecoilState(fileUploaderConnectionIdState);
+    const [connectionId] = useRecoilState(fileUploaderConnectionIdState);
     const [, setShowFileUploader] = useRecoilState(pinFileUploaderState);
+    const [uploadingFiles, setUploadingFiles] = useRecoilState(uploadingFilesState);
+    const [boardMissions] = useRecoilState(boardMissionsDetailsState);
 
     const handleFileUpload = async (file) => {
         setShowFileUploader(true);
+        const filesGroup = uploadingFiles?.find(fg => fg.orderItemId === orderItemId);
+        if (!!filesGroup) {
+            setUploadingFiles(uploadingFiles.map(fg => fg.orderItemId === orderItemId ? {
+                ...filesGroup,
+                filesInfo: [{
+                    fileName: file?.name,
+                    fileStatus: EUploadingFileStatus.UPLOADING
+                }, ...filesGroup.filesInfo]
+            } : fg));
+        } else {
+            setUploadingFiles([{
+                orderItemId: orderItemId,
+                filesInfo: [{fileName: file?.name, fileStatus: EUploadingFileStatus.UPLOADING}],
+                boardMissionId: boardMissions.boardMissionId,
+                filePath: filesPath,
+                title: boardMissions.boardMissionNumber + ' | ' + boardMissions.orderNumber + ' | ' + boardMissions.clientName,
+            }, ...uploadingFiles])
+        }
         const totalChunks = Math.ceil(file.size / CHUNK_SIZE);
         let currentChunk = 0;
 

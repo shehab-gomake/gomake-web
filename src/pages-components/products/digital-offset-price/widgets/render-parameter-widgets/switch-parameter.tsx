@@ -14,6 +14,7 @@ const SWITCHParameterWidget = ({
       checked={
         index !== -1 ? (temp[index].values[0] === "true" ? true : false) : ""
       }
+      disabled={parameter?.isLock ? parameter?.isLock : false}
       onChange={(e: any, value: any) => {
         onChangeSubProductsForPrice(
           parameter?.id,

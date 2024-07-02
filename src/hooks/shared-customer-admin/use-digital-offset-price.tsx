@@ -72,6 +72,7 @@ import { exampleTypeState } from "@/store/example-type";
 import { billingMethodState } from "@/store/billing-method";
 
 import { useDebouncedCallback, useThrottledCallback } from "use-debounce";
+import { getDeviceSizeMockApi } from "@/services/api-service/materials/materials-endpoints";
 
 const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [, setOpenQuantityComponentModal] = useRecoilState<boolean>(openQuantityComponentModalState);
@@ -111,7 +112,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [subProducts, setSubProducts] = useRecoilState<any>(
     subProductsParametersState
   );
-
+  console.log("productTemplate", productTemplate)
   const [isSetTemplete, setIsSetTemplete] = useState<boolean>(false);
   const setSubProductsCopy = useSetRecoilState<any>(
     subProductsCopyParametersState
@@ -714,10 +715,27 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     parameter?.parameterType ===
                     EParameterTypes.SELECT_MATERIALS
                   ) {
+                    // when the parameter is required and the parameter is material select and if there is only one option select it automatically
+                    if (parameter?.valuesConfigs && parameter?.valuesConfigs?.length === 1 && parameter?.isRequired) {
+                      subProduct.parameters.push({
+                        parameterId: parameter?.id,
+                        parameterName: parameter?.name,
+                        actionId: parameter?.actionId,
+                        parameterType: parameter?.parameterType,
+                        valueIds: parameter?.valuesConfigs[0]?.values,
+                        values: parameter?.valuesConfigs[0]?.values,
+                        sectionId: section?.id,
+                        subSectionId: subSection?.id,
+                        actionIndex: parameter?.actionIndex,
+                        parameterCode: parameter?.code,
+                        valuesConfigs: parameter?.valuesConfigs,
+                        unitKey: parameter?.unitKey,
+                        unitType: parameter?.unitType,
+                      });
+                    }
                     const value = parameter?.valuesConfigs?.find(
                       (item) => item?.isDefault == true
                     );
-
                     if (
                       value &&
                       value.materialValueIds &&
@@ -815,22 +833,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     }
                   }
                 }
-                // if (!isParameterExits && parameter.code === "quantity") {
-                //   subProduct.parameters.push({
-                //     parameterId: parameter?.id,
-                //     parameterName: parameter?.name,
-                //     actionId: parameter?.actionId,
-                //     parameterType: parameter?.parameterType,
-                //     values: [""],
-                //     sectionId: section?.id,
-                //     subSectionId: subSection?.id,
-                //     actionIndex: parameter?.actionIndex,
-                //     parameterCode: parameter?.code,
-                //     valuesConfigs: parameter?.valuesConfigs,
-                //     unitKey: parameter?.unitKey,
-                //     unitType: parameter?.unitType,
-                //   });
-                // }
                 processRelatedParameters2(parameter, subSection, section, productTemplate, subProductsArray);
 
               });
@@ -1257,6 +1259,106 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     return temp[index];
   };
 
+  const [deviceCategory, setDeviceCategory] = useState("")
+  const [deviceSize, setDeviceSize] = useState("")
+
+  useEffect(() => {
+    if (subProducts) {
+      let copySubProducts = cloneDeep(subProducts);
+      const targetSubProduct = copySubProducts.find(
+        (item) => item.type === null
+      );
+
+      if (targetSubProduct && targetSubProduct.parameters) {
+        let temp = [...targetSubProduct.parameters];
+        const sizesParametersArray = [];
+        const hasDeviceSize = temp.some(
+          (item) => item.parameterCode === "devicesize"
+        );
+        let widthParm = temp.find((item) => item.parameterCode === "Width");
+        let heightParm = temp.find((item) => item.parameterCode === "Height");
+        let sizeParm = temp.find((item) => item.parameterCode === "size");
+        let devicecategoryParm = temp.find((item) => item.parameterCode === "devicecategory");
+
+        if (!hasDeviceSize && sizeParm?.values[0] !== "custom") {
+          sizesParametersArray.forEach(parameter => {
+            let dieCutSizeSubProductParameter = temp.find(x => x.parameterCode === parameter.parameterCode);
+            if (dieCutSizeSubProductParameter) {
+              dieCutSizeSubProductParameter.isDisabled = true;
+            }
+          });
+        }
+        else if (!hasDeviceSize && devicecategoryParm) {
+          sizesParametersArray.push({ parameterCode: "Width", value: widthParm });
+          sizesParametersArray.push({ parameterCode: "Height", value: heightParm });
+          sizesParametersArray.push({ parameterCode: "size", value: "custom" });
+          sizesParametersArray.forEach(parameter => {
+            let dieCutSizeSubProductParameter = temp.find(x => x.parameterCode === parameter.parameterCode);
+            if (dieCutSizeSubProductParameter) {
+              dieCutSizeSubProductParameter.isDisabled = false;
+            }
+          });
+
+          let temp2 = cloneDeep(subProducts);
+          const index2 = temp2.findIndex(
+            (item) => item.type === null
+          );
+          temp2[index2] = {
+            type: null,
+            parameters: temp,
+          };
+
+          // Only update state if there's a difference
+          if (JSON.stringify(subProducts) !== JSON.stringify(temp2)) {
+            setSubProducts(temp2);
+          }
+        }
+
+      }
+    }
+  }, [subProducts, setSubProducts]);
+  const getMaterialCategories = async () => {
+    let copySubProducts = cloneDeep(subProducts)
+    // i need check the type when the device parameter not in the first section *** Important ***
+    const targetSubProduct = copySubProducts.find(
+      (item) => item.type === null
+    );
+    let temp = [...targetSubProduct.parameters];
+    const sizesParametersArray = [];
+
+    const callBack = (res) => {
+      if (res?.success) {
+        sizesParametersArray.push({ parameterCode: "Width", value: res?.data?.printedMaterialWidth });
+        sizesParametersArray.push({ parameterCode: "Height", value: res?.data?.printedMaterialLength });
+        sizesParametersArray.push({ parameterCode: "size", value: "custom" });
+        sizesParametersArray.forEach(parameter => {
+          let dieCutSizeSubProductParameter = temp.find(x => x.parameterCode == parameter.parameterCode);
+          if (dieCutSizeSubProductParameter) {
+            dieCutSizeSubProductParameter.values = [parameter.value]
+            dieCutSizeSubProductParameter.isDisabled = (res?.data?.printedMaterialWidth === null && res?.data?.printedMaterialLength == null) ? false : true;
+          }
+        });
+
+        let temp2 = [...subProducts];
+        const index2 = temp2.findIndex(
+          (item) => item.type === null
+        );
+        temp2[index2] = {
+          type: null,
+          parameters: temp,
+        }
+        setSubProducts(temp2);
+      }
+    };
+    await getDeviceSizeMockApi(callApi, callBack, { categoryKey: deviceCategory, name: deviceSize });
+  };
+  useEffect(() => {
+    if (deviceSize && deviceCategory) {
+      getMaterialCategories()
+    }
+
+  }, [deviceSize, deviceCategory])
+
   const _renderParameterType = (
     parameter: any,
     subSection: any,
@@ -1444,7 +1546,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           straightKnife={straightKnife}
         />
       );
-    } else if (parameter?.parameterType === EParameterTypes.SELECT_MATERIALS) {
+    }
+    else if (parameter?.parameterType === EParameterTypes.SELECT_MATERIALS) {
       Comp = (
         <DropDownListParameterWidget
           parameter={parameter}
@@ -1460,6 +1563,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           onOpeneMultiParameterModal={onOpeneMultiParameterModal}
           subSectionParameters={subSectionParameters}
           list={list}
+          setDeviceCategory={setDeviceCategory}
+          setDeviceSize={setDeviceSize}
         />
       );
     }
@@ -1558,7 +1663,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         param.isHidden = false;
                         setProductTemplate(productCopy);
                       } else if (parameter?.parameterType === EParameterTypes.DROP_DOWN_LIST || parameter?.parameterType === EParameterTypes.SELECT_MATERIALS) {
-
                         const valueInArray = relatedParameter.selectedValueIds?.find(
                           (c) => c == parm?.valueIds
                         );
@@ -1699,6 +1803,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       if (subSection.optionToDuplicateContent) {
         return;
       }
+
       parameter?.relatedParameters
         ?.filter((relatedParameter) =>
           subSection.parameters.some((p) => p.id === relatedParameter.parameterId)
@@ -1732,11 +1837,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               return;
             }
 
-            // subProducts.forEach(x => {
-            //   if (x.type == subSection.type) {
-            //     x.parameters = x?.parameters?.filter(p => p.parameterId != param.id)
-            //   }
-            // })
             subProducts.forEach(x => {
               if (x.type == subSection.type) {
                 x = { ...x, parameters: x.parameters.filter(p => p.parameterId != param.id) };
@@ -1875,7 +1975,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     const targetSubProduct = copySubProducts.find(
       (item) => item.type === subSectionType
     );
-
     if (targetSubProduct) {
       let temp = [...targetSubProduct.parameters];
 
@@ -2128,6 +2227,24 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 param.valuesConfigs = param.valuesConfigs.filter(
                   (x) => x.values && x.values.length > 0
                 );
+                if (param?.valuesConfigs && param?.valuesConfigs?.length === 1 && param?.isRequired) {
+                  param.valuesConfigs[0].isDefault = true
+                  temp.push({
+                    parameterId: param?.id,
+                    parameterName: param?.name,
+                    actionId: param?.actionId,
+                    parameterType: param?.parameterType,
+                    valueIds: param?.valuesConfigs[0]?.values,
+                    values: param?.valuesConfigs[0]?.values,
+                    sectionId: section?.id,
+                    subSectionId: subSection?.id,
+                    actionIndex: param?.actionIndex,
+                    parameterCode: param?.code,
+                    valuesConfigs: param?.valuesConfigs,
+                    unitKey: param?.unitKey,
+                    unitType: param?.unitType,
+                  });
+                }
               }
             }
           });
@@ -2208,7 +2325,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             });
           }
           else if (subSectionParameter.code === "DieKissCut") {
-            debugger
             let unitWidth = dieCut.rowData.unitWidth.value + "";
             let unitLength = dieCut.rowData.unitLength.value + "";
             const dieCutSizesParametersArray = [];
@@ -2478,7 +2594,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       quoteItemProduct.productItemValue &&
       quoteItemProduct.productItemValue.itemParmetersValues
     ) {
-      //setItemParmetersValues(quoteItemProduct.productItemValue.itemParmetersValues);
       const quoteItemSubProducts = [];
       setCurrentProductItemValueTotalPrice(
         quoteItemProduct.docmentItem.finalPrice
@@ -2490,8 +2605,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       setCurrentCalculationSessionId(quoteItemProduct.productItemValueDraftId)
       setWorkFlows(quoteItemProduct.productItemValue.workFlows);
       setJobActions(quoteItemProduct.productItemValue.actions);
-      //setSubProducts(quoteItemSubProducts);
-      //setSubProductsCopy(quoteItemSubProducts);
       setCalculationProgress({
         totalWorkFlowsCount: 0,
         currentWorkFlowsCount: 0,
@@ -2543,6 +2656,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     let checkParameter = validateParameters(isRequiredParameters, currentSubProducts);
     if (!!checkParameter) {
       setCurrentCalculationSessionId(null);
+      setCalculationExceptionsLogs([])
       const newRequestAbortController = new AbortController();
       setRequestAbortController(newRequestAbortController);
       let subProductsCopy = cloneDeep(currentSubProducts);
@@ -2575,7 +2689,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             subProducts: calculationSubProducts,
             itemParmetersValues: itemParmetersValues,
             workTypes: workTypes,
-            isChargeForNewDie: isChargeForNewDie
+            isChargeForNewDie: isChargeForNewDie,
+            productType: productTemplate?.productType
           },
           false,
           newRequestAbortController

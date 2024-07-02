@@ -65,13 +65,13 @@ const useChildValuesMapping = ({
   };
 
   const incrementValue = () => {
-    let currentValue = valueState as number;
-    currentValue++;
+    let currentValue = valueState.toString();
+    currentValue = (parseInt(currentValue) + 1).toString();
     setTextInputValue(currentValue);
   };
   const decrementValue = () => {
-    let currentValue = valueState as number; //Double.parse(textInputValue);
-    currentValue--;
+    let currentValue = valueState.toString();
+    currentValue = (parseInt(currentValue) - 1).toString();
     setTextInputValue(currentValue);
   };
 
@@ -91,7 +91,7 @@ const useChildValuesMapping = ({
     })
     setSubProducts(newSubProducts);
   };
-  const setTextInputValue = (textInputVal) =>{
+  const setTextInputValue = (textInputVal:string) =>{
     setValueState(textInputVal);
     let newSubProducts = lodashClonedeep(subProducts);
     const subData = value.data;

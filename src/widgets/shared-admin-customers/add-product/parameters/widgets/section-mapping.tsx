@@ -6,6 +6,8 @@ import {
   RequierdIcon,
   SettingIcon,
 } from "../../icons";
+import { LockedIcon } from "../../icons/lock-icon";
+import { NotLockedIcon } from "../../icons/not-lock-icon";
 
 const SectionMappingWidget = ({
   index,
@@ -17,6 +19,7 @@ const SectionMappingWidget = ({
   updatedProductParameteRequierd,
   _renderParameterType,
   relatedParameters,
+  updatedProductParameteLocked
 }) => {
   return (
     <div key={index} style={clasess.subSectionContainer}>
@@ -107,6 +110,35 @@ const SectionMappingWidget = ({
                       )
                     ) : (
                       <></>
+                    )}
+                    {(
+                      parameter?.isLock ? (
+                        <div
+                          style={{ cursor: "pointer" }}
+                          onClick={() =>
+                            updatedProductParameteLocked(
+                              section?.id,
+                              subSection?.id,
+                              parameter
+                            )
+                          }
+                        >
+                          <LockedIcon />
+                        </div>
+                      ) : (
+                        <div
+                          style={{ cursor: "pointer" }}
+                          onClick={() =>
+                            updatedProductParameteLocked(
+                              section?.id,
+                              subSection?.id,
+                              parameter
+                            )
+                          }
+                        >
+                          <NotLockedIcon />
+                        </div>
+                      )
                     )}
                   </div>
                   <div style={clasess.renderParameterTypeContainer}>

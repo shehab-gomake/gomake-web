@@ -199,6 +199,18 @@ const useAddProduct = ({ clasess }) => {
     [router]
   );
 
+  const updatedProductParameteLocked = useCallback(
+    async (sectionId: string, subSectionId: string, parameter: any) => {
+      await updateProductParameterEndPoint(sectionId, subSectionId, {
+        parameter: {
+          ...parameter,
+          isLock: !parameter?.isLock,
+        },
+      });
+    },
+    [router]
+  );
+
   const updatedProductParameteName = useCallback(
     async (sectionId: string, subSectionId: string, parameter: any) => {
       if (changeName !== parameter?.name && changeName?.length) {
@@ -560,9 +572,8 @@ const useAddProduct = ({ clasess }) => {
           disabled={parameter?.isHidden}
         />
       );
-    } 
-    else if (parameter?.parameterType === EParameterTypes.DROP_DOWN_LIST) 
-    {
+    }
+    else if (parameter?.parameterType === EParameterTypes.DROP_DOWN_LIST) {
       const defaultObject = parameter.valuesConfigs.find(
         (item) => item.isDefault === true
       );
@@ -640,7 +651,7 @@ const useAddProduct = ({ clasess }) => {
           }}
         />
       );
-    } 
+    }
     else if (
       parameter?.parameterType === EParameterTypes.SELECT_CHILDS_PARAMETERS
     ) {
@@ -707,8 +718,8 @@ const useAddProduct = ({ clasess }) => {
       );
     }
     else if (parameter?.parameterType === EParameterTypes.SELECT_MATERIALS) {
-      if(parameter.code == "FlatbedColor"){
-       // debugger;
+      if (parameter.code == "FlatbedColor") {
+        // debugger;
       }
       if (allMaterials?.length > 0) {
         const defailtObjectValue = parameter?.valuesConfigs?.find((item) => item.isDefault === true);
@@ -720,7 +731,7 @@ const useAddProduct = ({ clasess }) => {
         let allMaterialsCopy = cloneDeep(allMaterials);
         if (parentMaterialPath && parentMaterialPath.length > 0) {
           allMaterialsCopy = allMaterialsCopy?.find(material =>
-              compareStrings(material.pathName, parentMaterialPath[0])
+            compareStrings(material.pathName, parentMaterialPath[0])
           );
           for (let i = 0; i < parentMaterialPath.length; i++) {
             const currentPath = parentMaterialPath.slice(0, i + 1).toString();
@@ -730,13 +741,13 @@ const useAddProduct = ({ clasess }) => {
                   compareStrings(material.pathName, parentMaterialPath[i])
               )?.data;*/
               const parentParameterDefaultValueConfig = parentParameter?.valuesConfigs?.find((item) => item.isDefault === true);
-              if (parentParameterDefaultValueConfig ) {
+              if (parentParameterDefaultValueConfig) {
                 const parentParameterValue = parentParameterDefaultValueConfig.materialValueIds[0].valueId;
                 allMaterialsCopy = allMaterialsCopy?.data.find(x => x.valueId === parentParameterValue);
-                
-              }else{
+
+              } else {
                 allMaterialsCopy = {
-                  data:[]
+                  data: []
                 }
               }
 
@@ -847,6 +858,7 @@ const useAddProduct = ({ clasess }) => {
     onChangeStateProduct,
     updatedProductParameterHidden,
     updatedProductParameteRequierd,
+    updatedProductParameteLocked,
     updatedProductParameteName,
     setChangeName,
     setChangeDefaultValue,

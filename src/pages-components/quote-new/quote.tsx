@@ -209,7 +209,8 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false, isPrePa
     isUpdateClientName,
     setIsUpdateClientName,
     clientName,
-    setClientName
+    setClientName,
+    onClickOpenNewItemNotesModal
 
   } = useQuoteNew({ docType: documentType, isQuoteConfirmation: isQuoteConfirmation });
 
@@ -471,6 +472,7 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false, isPrePa
                 documentType={documentType}
                 onOpenCopyFromOrder={onOpenCopyFromOrder}
                 handleSaveBtnClickForDocument={handleSaveBtnClickForDocument}
+                onClickOpenNewItemNotesModal={onClickOpenNewItemNotesModal}
               />
             </div>
           }
@@ -620,6 +622,8 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false, isPrePa
       <NewItemNotesModal
         openModal={openNewItemNotesModal}
         onClose={onClickCloseNewItemNotesModal}
+        handleSaveBtnClickForDocument={handleSaveBtnClickForDocument}
+        documentType={documentType}
       />
 
       <AddRelatedDocumentsModal

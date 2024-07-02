@@ -1,8 +1,8 @@
 import Stack from "@mui/material/Stack";
 import {FileComponent} from "@/widgets/file-uploader-widget/file-component";
 import {useGomakeTheme} from "@/hooks/use-gomake-thme";
-import {EUploadingFileStatus, IUploadingFileGroup} from "@/widgets/file-uploader-widget/interface";
-import {useCallback, useEffect, useRef, useState} from "react";
+import {IUploadingFileGroup} from "@/widgets/file-uploader-widget/interface";
+import {useCallback, useRef, useState} from "react";
 import {Backdrop, IconButton} from "@mui/material";
 import {useUploadFiles} from "@/widgets/production-floor/views/board-missions-view/navigation-buttons/use-upload-files";
 import {FONT_FAMILY} from "@/utils/font-family";
@@ -15,7 +15,6 @@ const FilesGroupComponent = ({title, filesInfo, orderItemId, filePath, boardMiss
     const {primaryColor} = useGomakeTheme();
     const [isOver, setIsOver] = useState(false);
     const {handleFileUpload} = useUploadFiles(orderItemId, filePath);
-    const [tempFiles, setTempFiles] = useState<string[]>([]);
     const {push} = useRouter();
     const fileInputRef = useRef(null);
     const {t} = useTranslation();
@@ -30,7 +29,6 @@ const FilesGroupComponent = ({title, filesInfo, orderItemId, filePath, boardMiss
         setIsOver(false);
         const files = event.dataTransfer.files;
         for (let i = 0; i < files.length; i++) {
-            setTempFiles(prevState => [...prevState, files[i]?.name]);
             handleFileUpload(files[i]).then();
         }
 
@@ -45,21 +43,16 @@ const FilesGroupComponent = ({title, filesInfo, orderItemId, filePath, boardMiss
         setIsOver(false);
     }, []);
 
-    useEffect(() => {
-        setTempFiles([])
-    }, [filesInfo?.length]);
+
 
     const handleFileSelect = (e) => {
         [...e.target.files]?.forEach(async (file) => {
-            setTempFiles(prevState => [...prevState, file?.name]);
+            // setTempFiles(prevState => [...prevState, file?.name]);
             console.log(file);
             await handleFileUpload(file)
         });
     };
 
-    useEffect(()=>{
-        setTempFiles([])
-    }, [filesInfo])
     return (
         <Stack
             onDrop={handleFileDrop}
@@ -140,10 +133,6 @@ const FilesGroupComponent = ({title, filesInfo, orderItemId, filePath, boardMiss
                         ...FONT_FAMILY.Inter(500, 15),
                     }}>{t('fileUploader.dropFile')}</span>
                 </Stack>
-            }
-            {
-                tempFiles?.length > 0 && tempFiles?.map(file => <FileComponent fileName={file}
-                                                                               fileStatus={EUploadingFileStatus.UPLOADING}/>)
             }
             <input type={'file'} multiple value={''} onChange={handleFileSelect} hidden={true} ref={fileInputRef}/>
         </Stack>

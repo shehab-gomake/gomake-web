@@ -22,6 +22,7 @@ const useAddGroup = () => {
         {value: EStatementCategory.PARAMETER, text: 'parameter'},
         {value: EStatementCategory.OUTPUT, text: 'output'},
         {value: EStatementCategory.PRODUCT, text: 'product'},
+        {value: EStatementCategory.STATIONS, text: 'stations'},
     ];
     const categoriesHasStatementIdOptions = [EStatementCategory.PARAMETER, EStatementCategory.OUTPUT];
     const inputs = [{

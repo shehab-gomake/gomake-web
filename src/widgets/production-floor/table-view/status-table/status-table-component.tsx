@@ -72,7 +72,7 @@ const StatusTableComponent = ({status, boards}: IProps) => {
                                 </SecondaryTableRow>
                             </TableHead>
                             <TableBody>
-                                {boards?.map((boardMission) => {
+                                {[...boards]?.sort((a, b) => a.priority - b.priority)?.map((boardMission) => {
                                     return <>
                                         <TableRowComponent key={'status' + status.id + boardMission.id}
                                                            boardMission={boardMission}/>

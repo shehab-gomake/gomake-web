@@ -12,7 +12,7 @@ import {
 import { useStyle } from "./style";
 import { useHeader } from "./use-header";
 import { ColoredCycle, GoMakeMenu } from "@/components";
-import {useRecoilState, useRecoilValue} from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { userProfileState } from "@/store/user-profile";
 import { QuoteIfExistState } from "@/pages-components/quote-new/store/quote";
 import { CartIcon } from "@/icons/cart-icon";
@@ -20,7 +20,8 @@ import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { SecondaryButton } from "@/components/button/secondary-button";
 import { MarkIcon } from "@/icons/mark-icon";
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
-import {showTourModalState} from "@/store/tour-state";
+import { showTourModalState } from "@/store/tour-state";
+import SupportAgentIcon from '@mui/icons-material/SupportAgent';
 const HeaderWidget = () => {
   const { clasess } = useStyle();
   const { t } = useTranslation();
@@ -61,10 +62,13 @@ const HeaderWidget = () => {
       {/* <SearchInputComponent onChange={() => null} searchInputStyle={clasess.searchInputContainer} /> */}
       <div style={{ width: "100%" }} />
       <div style={clasess.rightSideContainer}>
+        <IconButton onClick={() => navigate("/customer-service")}>
+          <SupportAgentIcon />
+        </IconButton>
         <IconButton data-tour={'start-tour-btn'} onClick={() => {
           setShowTourModal(true);
         }}>
-          <HelpOutlineIcon/>
+          <HelpOutlineIcon />
         </IconButton>
         {QuoteIfExist == true && window.location.pathname != "/quote" && (
           <IconButton onClick={() => navigate("/quote")}>
@@ -81,6 +85,7 @@ const HeaderWidget = () => {
           <IconButton onClick={handleClick}>{userAvatar()}</IconButton>
           {/* <div style={clasess.userNameStyle}>{user?.displayName}</div> */}
         </div>
+
       </div>
       <GoMakeMenu handleClose={handleClose} open={open} anchorEl={anchorEl}>
         <div style={clasess.mainMenuContainer}>

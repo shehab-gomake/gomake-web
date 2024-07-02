@@ -5,5 +5,6 @@ export enum EStatementCategory {
     CLIENT = '4',
     PARAMETER = '5',
     OUTPUT = '6',
-    PRODUCT = '7'
+    PRODUCT = '7',
+    STATIONS = '8'
 }
