@@ -2110,7 +2110,29 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
 
         }
+
         if (subSectionParameter.id == "0fdbca1a-f250-447b-93e3-5b91909da59c") {
+          if (!quantity) {
+            temp.push({
+              parameterId: "4991945c-5e07-4773-8f11-2e3483b70b53",
+              sectionId: sectionId,
+              subSectionId: subSectionId,
+              ParameterType: 1,
+              parameterName: "Quantity",
+              actionId: null,
+              values: [
+                "0"
+              ],
+              valueIds: [
+                null
+              ],
+              actionIndex: 0,
+              parameterCode: "quantity",
+              valuesConfigs: [],
+              unitKey: null,
+              unitType: 0
+            })
+          }
           //setQuantity
           const setUnits = setUnitsParameter ? setUnitsParameter.values[0] : 0;
           temp = temp.map((x) =>
@@ -2120,6 +2142,27 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           );
         }
         if (subSectionParameter.id == "91d3fe77-b852-4974-beb6-2da7d7616c78") {
+          if (!quantity) {
+            temp.push({
+              parameterId: "4991945c-5e07-4773-8f11-2e3483b70b53",
+              sectionId: sectionId,
+              subSectionId: subSectionId,
+              ParameterType: 1,
+              parameterName: "Quantity",
+              actionId: null,
+              values: [
+                "0"
+              ],
+              valueIds: [
+                null
+              ],
+              actionIndex: 0,
+              parameterCode: "quantity",
+              valuesConfigs: [],
+              unitKey: null,
+              unitType: 0
+            })
+          }
           // SetUnits
           const setQuantity = setQuantityParameter
             ? setQuantityParameter.values[0]
