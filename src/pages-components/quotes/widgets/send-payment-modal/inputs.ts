@@ -10,11 +10,10 @@ const PaymentInputs = (state) => {
         placeholder: "sales.quote.contactName",
         required: false,
         parameterKey: "contactName",
-      //  parameterKey: `documentContacts[${state?.selectedContactIndex}].contactName`,
         value: selectedContact?.contactName || '',
         options: [],
         isValid: true,
-        readOnly: false,
+        readOnly: true,
       },
       {
         name: "contactPhone",
@@ -42,7 +41,6 @@ const PaymentInputs = (state) => {
       },
       {
         name: "documentContacts",
-      //  label: "prePayment.selectContact",
         type: "select",
         placeholder: "prePayment.selectContact",
         required: false,
@@ -74,7 +72,6 @@ const PaymentInputs = (state) => {
         placeholder: "prePayment.totalToPay",
         required: false,
         parameterKey: "totalPayment",
-     //   value: state?.totalPayment,
         value: state?.percentageOfTotal/100 * state?.totalPayment,
         options: [],
         isValid: true,

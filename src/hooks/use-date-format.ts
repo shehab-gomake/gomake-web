@@ -1,8 +1,6 @@
 import moment from "moment-timezone";
 import {useTranslation} from "react-i18next";
 
-
-
 const useDateFormat = () => {
     const {t} = useTranslation();
     const dir: "rtl" | "ltr" = t("direction");

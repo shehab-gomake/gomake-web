@@ -54,8 +54,7 @@ const SendPaymentModal = ({
                     ))}
                 </Stack>
                 {PaymentInputs(payState).slice(3).map((item) => (
-                    <Stack display="flex" flexWrap="wrap" direction="column" width={"max-content"}>
-
+                    <Stack display="flex" flexWrap="wrap" direction="row" width={"max-content"}>
                         <FormInput
                             input={item as IInput}
                             changeState={onChangePaymentInputs}
@@ -63,6 +62,9 @@ const SendPaymentModal = ({
                             key={item.name}
                             readonly={!!item.readOnly}
                         />
+                        {item.name === "percentageOfTotal" && <div style={{ display: "flex", alignItems: "flex-end", marginLeft: "5px" }}>%</div>}
+                        {item.name === "totalToPay" && <div style={{ display: "flex", alignItems: "flex-end", marginLeft: "5px" }}>{payState?.currency}</div>}
+
                     </Stack>
                 ))}
                 <Stack display="flex" flexWrap="wrap" direction="row" gap="10px">

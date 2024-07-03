@@ -15,6 +15,7 @@ export interface StatePayment {
     sendByWhatsapp: boolean;
     documentContacts:any[];
     selectedContactIndex: number;
+    currency:string;
   }
 
 export const initialState: StatePayment = {
@@ -27,6 +28,7 @@ export const initialState: StatePayment = {
   contactName: "",
   contactPhone: "",
   contactMail: "",
+  currency:"$",
   sendByWhatsapp: true,
   documentContacts:[],
   selectedContactIndex: 0

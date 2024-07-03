@@ -30,7 +30,7 @@ const useStyle = () => {
       },
       insideStyle: {
         width: "max-content",
-        height: "650px",
+        height: "670px",
       },
       inputLbl: {
         color: primaryColor(900),
