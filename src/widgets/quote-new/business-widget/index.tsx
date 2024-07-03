@@ -72,11 +72,11 @@ const BusinessNewWidget = ({
   } = useBusinessWidget({ values, documentType });
 
   useEffect(() => {
-    setPurchaseNumber(values?.purchaseNumber || t("sales.quote.noPurchaseNumber"));
+    setPurchaseNumber(values?.purchaseNumber);
   }, [values?.purchaseNumber]);
 
   useEffect(() => {
-    setTaxConfirmationNumber(values?.taxConfirmationNumber || t("sales.quote.noTaxConfirmationNumber"));
+    setTaxConfirmationNumber(values?.taxConfirmationNumber);
   }, [values?.taxConfirmationNumber]);
   return (
     <>
@@ -100,7 +100,8 @@ const BusinessNewWidget = ({
         {
           quoteStateValue?.client?.isOccasional &&
           <InputUpdatedValues
-            value={clientName ? clientName : t("reports.enterClientName")}
+            value={clientName}
+            placeholder={clientName ? clientName : t("reports.enterClientName")}
             label={t("reports.clientName")}
             onBlur={onBlurClientName}
             setIsUpdate={setIsUpdateClientName}
@@ -110,18 +111,18 @@ const BusinessNewWidget = ({
         }
         {!isReceipt && <InputUpdatedValues
           value={purchaseNumber}
+          placeholder={purchaseNumber ? purchaseNumber : t("sales.quote.noPurchaseNumber")}
           label={t("sales.quote.purchaseNumber")}
           onBlur={() => onBlurPurchaseNumber(purchaseNumber)}
-          //isUpdate={quoteStateValue?.isEditable || router.query.isNewCreation ? isUpdatePurchaseNumber : quoteStateValue?.isEditable}
           isUpdate={canEditDocument && isUpdatePurchaseNumber}
           setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdatePurchaseNumber}
           onInputChange={(v) => setPurchaseNumber(v)}
         />}
         {isInvoice && <InputUpdatedValues
           value={taxConfirmationNumber}
+          placeholder={taxConfirmationNumber ? taxConfirmationNumber : t("sales.quote.noTaxConfirmationNumber")}
           label={t("sales.quote.taxConfirmationNumber")}
           onBlur={onBlurTaxNumber}
-          //  isUpdate={quoteStateValue?.isEditable || router.query.isNewCreation ? isUpdateTaxNumber : false}
           isUpdate={canEditDocument && isUpdateTaxNumber}
           setIsUpdate={setIsUpdateTaxNumber}
           onInputChange={(v) => setTaxConfirmationNumber(v)}
