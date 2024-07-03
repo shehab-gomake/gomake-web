@@ -19,7 +19,7 @@ import { CartIcon } from "@/icons/cart-icon";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { SecondaryButton } from "@/components/button/secondary-button";
 import { MarkIcon } from "@/icons/mark-icon";
-import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+import HelpIcon from '@mui/icons-material/Help';
 import { showTourModalState } from "@/store/tour-state";
 import SupportAgentIcon from '@mui/icons-material/SupportAgent';
 const HeaderWidget = () => {
@@ -40,6 +40,10 @@ const HeaderWidget = () => {
     openNotify,
     anchorNotifyEl,
     handleCloseNotify,
+    handleClickSupport,
+    openSupport,
+    anchorSupportEl,
+    handleCloseSupport
   } = useHeader();
   const [, setShowTourModal] = useRecoilState(showTourModalState);
   const userAvatar = () => {
@@ -62,13 +66,8 @@ const HeaderWidget = () => {
       {/* <SearchInputComponent onChange={() => null} searchInputStyle={clasess.searchInputContainer} /> */}
       <div style={{ width: "100%" }} />
       <div style={clasess.rightSideContainer}>
-        <IconButton onClick={() => navigate("/customer-service")}>
-          <SupportAgentIcon />
-        </IconButton>
-        <IconButton data-tour={'start-tour-btn'} onClick={() => {
-          setShowTourModal(true);
-        }}>
-          <HelpOutlineIcon />
+        <IconButton data-tour={'start-tour-btn'} onClick={handleClickSupport}>
+          <HelpIcon fontSize={"large"} />
         </IconButton>
         {QuoteIfExist == true && window.location.pathname != "/quote" && (
           <IconButton onClick={() => navigate("/quote")}>
@@ -219,7 +218,27 @@ const HeaderWidget = () => {
           </MenuItem>
         </div>
       </GoMakeMenu>
+
+      <GoMakeMenu handleClose={handleCloseSupport} open={openSupport} anchorEl={anchorSupportEl}>
+        <div style={clasess.mainMenuContainer}>
+          <MenuItem
+              style={clasess.logoutContainer}
+              onClick={() => navigate("/customer-service")}
+          >
+            <div style={clasess.logoutContainer}>{t("header.customerSupport")}</div>
+          </MenuItem>
+          <div style={clasess.lineContainer}/>
+          <MenuItem
+              style={clasess.logoutContainer}
+              onClick={() => {
+                setShowTourModal(true);
+              }}
+          >
+            <div style={clasess.logoutContainer}>{t("header.guideAndTutorial")}</div>
+          </MenuItem>
+        </div>
+      </GoMakeMenu>
     </div>
   );
 };
-export { HeaderWidget };
+export {HeaderWidget};
