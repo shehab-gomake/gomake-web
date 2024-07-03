@@ -405,7 +405,7 @@ const useStyle = () => {
       tabsTypesContainer: {
         display: "flex",
         flexDirection: "row" as "row",
-        justifyContent: "flex-start",
+        justifyContent: "space-between",
         alignItems: "center",
         gap: 5,
         width: "100%",
@@ -421,6 +421,7 @@ const useStyle = () => {
         ...FONT_FAMILY.Lexend(500, 16),
         borderRadius: 4,
         cursor: "pointer",
+        width:120
       },
       activeLogsTabStyle: {
         display: "flex",
@@ -432,6 +433,7 @@ const useStyle = () => {
         ...FONT_FAMILY.Lexend(500, 16),
         borderRadius: 4,
         cursor: "pointer",
+        width:120
       },
       unActiveTabStyle: {
         display: "flex",
@@ -444,6 +446,7 @@ const useStyle = () => {
         border: `1px solid ${primaryColor(500)}`,
         borderRadius: 4,
         cursor: "pointer",
+        width:120
       },
       addOrderBtn: {
         backgroundColor: secondColor(500),
