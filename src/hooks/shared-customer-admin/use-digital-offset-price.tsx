@@ -112,7 +112,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [subProducts, setSubProducts] = useRecoilState<any>(
     subProductsParametersState
   );
-  console.log("productTemplate", productTemplate)
   const [isSetTemplete, setIsSetTemplete] = useState<boolean>(false);
   const setSubProductsCopy = useSetRecoilState<any>(
     subProductsCopyParametersState
@@ -527,9 +526,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           return subSection.parameters?.map((parameter) => {
             const index = temp.findIndex(
               (item) =>
-                item.parameterId === parameter.id &&
-                item.sectionId === section.id &&
-                item.subSectionId === subSection.id &&
+                item.id === parameter.id &&
+                item?.code === parameter.code &&
                 item.actionIndex === parameter.actionIndex
             );
             if (index !== -1) {
@@ -547,6 +545,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           });
         });
       });
+
+      // Filter out items where isHidden === true
+      temp = temp.filter(item => !item.isHidden);
 
       setIsRequiredParameters(temp);
       setActiveSectionRequiredParameters(activeSectionTemp);
@@ -2634,13 +2635,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     let checkParameter = validateParameters(activeSectionRequiredParameters, subProducts);
     setCheckParameter(checkParameter)
   }, [isRequiredParameters])
-  // useEffect(() => {
-  //   let checkParameter = validateParameters(isRequiredParameters);
-  //   // if (checkParameter) {
-  //   //   setCanCalculation(true)
-  //   // }
 
-  // }, [isRequiredParameters])
   const calculationProduct = useDebouncedCallback(async (currentSubProducts) => {
     if (requestAbortController) {
       requestAbortController.abort();
