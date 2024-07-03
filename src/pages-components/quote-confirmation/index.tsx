@@ -13,7 +13,7 @@ interface IProps {
 const QuoteConfirmationPageWidget = ({isPrePaymentPage = false }: IProps)  => {
   const { classes } = useStyle();
   const [isMobile, setIsMobile] = useState(false);
-  const { getQuoteConfirmation } = useQuoteConfirmation();
+  const { getPrePaymentById , getQuoteConfirmation } = useQuoteConfirmation();
 
   useEffect(() => {
     updateScreenWidth();
@@ -27,9 +27,10 @@ const QuoteConfirmationPageWidget = ({isPrePaymentPage = false }: IProps)  => {
     setIsMobile(window.innerWidth <= 768);
   };
 
-  // GET DOCUMENT BY ID JUST FOR QUOTE WHY ??
-  // if it pre payment then record id not id
   useEffect(() => {
+    if(isPrePaymentPage) 
+      getPrePaymentById();
+    else
      getQuoteConfirmation();
   }, [])
 

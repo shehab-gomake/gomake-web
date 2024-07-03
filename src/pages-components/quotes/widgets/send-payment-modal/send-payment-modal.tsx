@@ -9,7 +9,6 @@ import { PaymentInputs } from "./inputs";
 import { SecondaryCheckBox } from "@/components/check-box/secondary-check-box";
 import { useSendPaymentModal } from "./use-send-payment-modal";
 import { Divider } from "@mui/material";
-import { useMemo } from "react";
 
 interface ISendPaymentProps {
     openPaymentModal?: any;
@@ -26,10 +25,11 @@ const SendPaymentModal = ({
     const { classes } = useStyle();
     const {
         t,
-        newState,
+        payState,
         handleCopyPaymentLink,
         handleCheckBoxChange,
         onChangePaymentInputs,
+        handleSendPaymentPage
     } = useSendPaymentModal();
 
   
@@ -43,15 +43,17 @@ const SendPaymentModal = ({
             <Stack direction={'column'} height={"100%"} justifyContent={"space-between"} width={"100%"}>
                 <Divider style={classes.dividerContainer} />
                 <Stack display="flex" flexWrap="wrap" direction="row" >
-                    {PaymentInputs(newState).slice(0, 3).map((item) => (
+                    {PaymentInputs(payState).slice(0, 3).map((item) => (
                         <FormInput
                             input={item as IInput}
                             changeState={onChangePaymentInputs}
                             error={false}
-                            key={item.name} />
+                            key={item.name}
+                            readonly={!!item.readOnly}
+                            />
                     ))}
                 </Stack>
-                {PaymentInputs(newState).slice(3).map((item) => (
+                {PaymentInputs(payState).slice(3).map((item) => (
                     <Stack display="flex" flexWrap="wrap" direction="column" width={"max-content"}>
 
                         <FormInput
@@ -66,25 +68,25 @@ const SendPaymentModal = ({
                 <Stack display="flex" flexWrap="wrap" direction="row" gap="10px">
                     <div style={classes.inputLbl}>   <SecondaryCheckBox
                         sx={{ padding: "2px" }}
-                        checked={newState?.SendBySms || false}
-                        onChange={(event) => handleCheckBoxChange("SendBySms ", event.target.checked)}
+                        checked={payState?.sendBySms || false}
+                        onChange={(event) => handleCheckBoxChange("sendBySms", event.target.checked)}
                     />SMS</div>
                     <div style={classes.inputLbl}>
                         <SecondaryCheckBox
                             sx={{ padding: "2px" }}
-                            checked={newState?.sendByMail || false}
+                            checked={payState?.sendByMail || false}
                             onChange={(event) => handleCheckBoxChange("sendByMail", event.target.checked)}
                         />{t("sales.quote.email")}</div>
                     <div style={classes.inputLbl}>
                         <SecondaryCheckBox
                             sx={{ padding: "2px" }}
-                            checked={newState?.sendByWhatsapp || false}
+                            checked={payState?.sendByWhatsapp || false}
                             onChange={(event) => handleCheckBoxChange("sendByWhatsapp", event.target.checked)}
                         />{t("sales.quote.whatsApp")}</div>
                 </Stack>
                 {/* Third section */}
                 <Stack direction={'row'} gap={'10px'} alignItems={"baseline"} >
-                    <SecondaryButton variant="contained" style={{ width: "50%", height: "35px", minWidth: "fit-content" }}>{t('prePayment.sendPaymentPage')}</SecondaryButton>
+                    <SecondaryButton variant="contained" onClick={handleSendPaymentPage} style={{ width: "50%", height: "35px", minWidth: "fit-content" }}>{t('prePayment.sendPaymentPage')}</SecondaryButton>
                     <SecondaryButton variant="outlined" onClick={handleCopyPaymentLink} style={{ width: "30%", height: "35px", minWidth: "fit-content" }}>{t('prePayment.copyPaymentLink')}</SecondaryButton>
                     <PrimaryButton variant="outlined" onClick={onClickClosePaymentModal} style={{ width: "20%", height: "35px" }}>{t('modal.cancel')}</PrimaryButton>
                 </Stack>

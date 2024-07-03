@@ -1,4 +1,7 @@
+
 const PaymentInputs = (state) => {
+  const selectedContact = state?.documentContacts && state.documentContacts[state.selectedContactIndex];
+
     return [
       {
         name: "contactName",
@@ -7,7 +10,8 @@ const PaymentInputs = (state) => {
         placeholder: "sales.quote.contactName",
         required: false,
         parameterKey: "contactName",
-        value: state?.documentContacts && state?.documentContacts[0]?.contactName,
+      //  parameterKey: `documentContacts[${state?.selectedContactIndex}].contactName`,
+        value: selectedContact?.contactName || '',
         options: [],
         isValid: true,
         readOnly: false,
@@ -15,11 +19,11 @@ const PaymentInputs = (state) => {
       {
         name: "contactPhone",
         label: "sales.quote.contactPhone",
-        type: "text",
+        type: "phone",
         placeholder: "sales.quote.contactPhone",
         required: false,
         parameterKey: "contactPhone",
-        value: state?.documentContacts && state?.documentContacts[0]?.contactPhone,
+        value: selectedContact?.contactPhone || '',
         options: [],
         isValid: true,
         readOnly: false,
@@ -31,8 +35,23 @@ const PaymentInputs = (state) => {
         placeholder: "sales.quote.contactEmail",
         required: false,
         parameterKey: "contactMail",
-        value: state?.documentContacts && state?.documentContacts[0]?.contactMail,
+        value: selectedContact?.contactMail || '',
         options: [],
+        isValid: true,
+        readOnly: false,
+      },
+      {
+        name: "documentContacts",
+      //  label: "prePayment.selectContact",
+        type: "select",
+        placeholder: "prePayment.selectContact",
+        required: false,
+        parameterKey: "documentContacts",
+        value: state?.documentContacts && state?.documentContacts[state.selectedContactIndex]?.id,
+        options: state?.documentContacts && state?.documentContacts?.map((contact) => ({
+          value: contact.id,
+          text: contact.contactName,
+        })),
         isValid: true,
         readOnly: false,
       },
@@ -55,7 +74,7 @@ const PaymentInputs = (state) => {
         placeholder: "prePayment.totalToPay",
         required: false,
         parameterKey: "totalPayment",
-      //  value: state?.totalPayment,
+     //   value: state?.totalPayment,
         value: state?.percentageOfTotal/100 * state?.totalPayment,
         options: [],
         isValid: true,
@@ -64,7 +83,7 @@ const PaymentInputs = (state) => {
       {
         name: "numberOfInstallments",
         label: "prePayment.numberOfInstallments",
-        type: "text",
+        type: "number",
         placeholder: "prePayment.numberOfInstallments",
         required: false,
         parameterKey: "numberOfInstallments",
@@ -79,7 +98,7 @@ const PaymentInputs = (state) => {
         placeholder: "prePayment.invoiceDate",
         required: false,
         parameterKey: "invoiceDate",
-        value: state?.invoiceDate,
+        value: state?.invoiceDate ? new Date(state.invoiceDate).toISOString().split('T')[0] : '',
         options: [],
         isValid: true,
       }

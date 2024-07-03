@@ -35,8 +35,8 @@ import { getAndSetCustomerById, getAndSetCustomersPagination } from "@/services/
 import { useUserPermission } from "@/hooks/use-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { PermissionCheck } from "@/components/CheckPermission/check-permission";
-import { sendDocumentToClientForPaymentApi } from "@/services/api-service/pre-payment/pre-payment-api";
 import { StatePayment, sendPaymentState } from "./widgets/send-payment-modal/states";
+import { sendDocumentToClientForPaymentApi } from "@/services/api-service/pay/pay-api";
 
 const useQuotes = (docType: DOCUMENT_TYPE) => {
   const { t } = useTranslation();

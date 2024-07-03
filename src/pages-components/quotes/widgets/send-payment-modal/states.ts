@@ -1,32 +1,35 @@
 import { atom } from "recoil";
 
 export interface StatePayment {
-    SendBySms: boolean;
+    sendBySms: boolean;
     sendByMail: boolean;
     percentageOfTotal: number;
     numberOfInstallments: number;
     documentId?: string;
     totalPayment: number;
     maxPayments: number;
-    invoiceDateStr: string;
+    invoiceDate?: Date;
     contactName: string;
     contactPhone: string;
     contactMail: string;
     sendByWhatsapp: boolean;
+    documentContacts:any[];
+    selectedContactIndex: number;
   }
 
 export const initialState: StatePayment = {
-  SendBySms: true,
+  sendBySms: true,
   sendByMail: true,
   percentageOfTotal: 100,
   numberOfInstallments: 1,
   totalPayment: 0,
   maxPayments: 0,
-  invoiceDateStr: "",
-  contactName: "lama",
-  contactPhone: "0545568623",
-  contactMail: "lama@gomake.net",
-  sendByWhatsapp: true
+  contactName: "",
+  contactPhone: "",
+  contactMail: "",
+  sendByWhatsapp: true,
+  documentContacts:[],
+  selectedContactIndex: 0
 };
 
 export const sendPaymentState = atom<StatePayment>({

@@ -5,6 +5,8 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 import { useRecoilState } from "recoil";
 import cloneDeep from "lodash.clonedeep";
+import { getPrePaymentByIdApi } from "@/services/api-service/pay/pay-api";
+import { DOCUMENT_TYPE } from "../quotes/enums";
 
 const useQuoteConfirmation = () => {
     const router = useRouter();
@@ -27,6 +29,19 @@ const useQuoteConfirmation = () => {
             }
         }
         await getDocumentByIdApi(callApi, callBack, { id: router?.query?.Id })
+    }
+
+    const getPrePaymentById = async () => {
+        const callBack = (res) => {
+            if (res?.success) {
+                const quote = res?.data;
+                console.log("heeeeeeeeeeeeeere" , res?.data)
+                setQuoteConfirm(quote);
+            } else {
+                alertFaultUpdate();
+            }
+        }
+        await getPrePaymentByIdApi(callApi, callBack, { recordId: router?.query?.recordId , documentType: DOCUMENT_TYPE.order })
     }
 
     const calculateSelectedItems = async (quote) => {
@@ -60,7 +75,8 @@ const useQuoteConfirmation = () => {
         getQuoteConfirmation,
         checkedItems,
         setCheckedItems,
-        handleItemCheck
+        handleItemCheck,
+        getPrePaymentById
     };
 };
 
