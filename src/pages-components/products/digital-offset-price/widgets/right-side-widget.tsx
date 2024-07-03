@@ -198,7 +198,7 @@ const RightSideWidget = ({
                   selectedWorkFlow?.exceptions?.length > 0
                     ? parseFloat(myvalue) / (quantity?.values[0] || 1)
                     : (currentProductItemValueTotalPrice || 0) / (quantity?.values[0] || 1)
-                )?.toFixed(2),
+                )?.toFixed(4),
               unitPrice: systemCurrency,
             })}
           </div>
