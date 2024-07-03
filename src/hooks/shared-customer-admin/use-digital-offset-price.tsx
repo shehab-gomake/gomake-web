@@ -2497,10 +2497,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     setBillingMethod(null);
     setGraphicDesigner(null);
   };
-  const onClickGraphicDesignTab = () => {
-    setActiveTab(t("products.offsetPrice.admin.graphicDesign"));
-    setSamlleType(null);
-  };
+  // const onClickGraphicDesignTab = () => {
+  //   setActiveTab(t("products.offsetPrice.admin.graphicDesign"));
+  //   setSamlleType(null);
+  // };
   const onClickLogsTab = () => {
     setActiveTab(t("products.offsetPrice.admin.logs"));
     setBillingMethod(null);
@@ -2516,10 +2516,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       name: t("quality.production"),
       onclick: () => onClickProductionTab,
     },
-    {
-      name: t("products.offsetPrice.admin.graphicDesign"),
-      onclick: () => onClickGraphicDesignTab,
-    },
+    // {
+    //   name: t("products.offsetPrice.admin.graphicDesign"),
+    //   onclick: () => onClickGraphicDesignTab,
+    // },
   ];
 
   const getProductById = async (materials) => {
