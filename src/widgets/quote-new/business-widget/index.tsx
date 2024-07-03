@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { MinusIcon } from "@/icons/minus-icon";
 import { PlusNewIcon } from "@/icons";
 import { AutoCompleteUpdatedValue } from "../auto-complete-updated";
@@ -12,6 +12,8 @@ import { CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { PermissionCheck } from "@/components/CheckPermission/check-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
+import { GoMakeDeleteModal } from "@/components";
+import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 
 const BusinessNewWidget = ({
   values,
@@ -78,6 +80,17 @@ const BusinessNewWidget = ({
   useEffect(() => {
     setTaxConfirmationNumber(values?.taxConfirmationNumber || t("sales.quote.noTaxConfirmationNumber"));
   }, [values?.taxConfirmationNumber]);
+
+  const [openChangeClientModal, setOpenChangeClientModal] = useState(false)
+  const [selectedClient, setSelectedClient] = useState({})
+  const onClickCloseChangeClientModal = () => {
+    setOpenChangeClientModal(false);
+  }
+  const onClickopenChangeClientModal = (value) => {
+    setSelectedClient(value)
+    setOpenChangeClientModal(true);
+
+  }
   return (
     <>
       <div style={classes.businessContainerStyle}>
@@ -89,7 +102,7 @@ const BusinessNewWidget = ({
           isUpdate={canEditDocument && isUpdateBusinessName}
           setIsUpdate={isQuoteConfirmation || isExistReceipt ? setIsConfirmation : setIsUpdateBusinessName}
           getOptionLabel={(item) => item.text}
-          onChange={(e, value) => onChangeSelectBusiness(value)}
+          onChange={(e, value) => onClickopenChangeClientModal(value)}
           onChangeTextField={checkWhatRenderArray}
         />
 
@@ -181,6 +194,17 @@ const BusinessNewWidget = ({
         showAddButton={true}
         customer={customer}
         setCustomer={setCustomer}
+      />
+      <GoMakeDeleteModal
+        icon={
+          <WarningAmberIcon style={{ width: 60, height: 60, color: "red" }} />
+        }
+        openModal={openChangeClientModal}
+        onClose={onClickCloseChangeClientModal}
+        title={t("products.profits.titleChangeClient")}
+        subTitle={t("products.profits.subTitleChangeClient")}
+        yesBtn={t("sales.quote.yesBtn")}
+        onClickDelete={() => onChangeSelectBusiness(selectedClient)}
       />
     </>
   );
