@@ -5,6 +5,7 @@ import { ButtonsConfirmContainer } from './components/buttons-container';
 import { TotalPriceAndVatContainer } from './components/total-price-and-vat';
 import { InfoContainer } from './components/info-container';
 import { QuoteItems } from './components/quote-items';
+import { CreditCardPaySection } from './components/credit-card-pay-section';
 
 const QuoteConfirmationMobileWidget = ({ isMobile, isPrePaymentPage }) => {
   const { classes } = useStyle()
@@ -19,7 +20,12 @@ const QuoteConfirmationMobileWidget = ({ isMobile, isPrePaymentPage }) => {
         <ButtonsConfirmContainer isMobile={isMobile} />
       </>
       }
-      {isPrePaymentPage && <div style={classes.titleStyle}>{"Payment"}</div>}
+      {isPrePaymentPage &&
+        <>
+          <div style={classes.borderContainer} />
+          <div style={classes.titleStyle}>{"Payment Details"}</div>
+          <CreditCardPaySection />
+        </>}
     </div>
   );
 };

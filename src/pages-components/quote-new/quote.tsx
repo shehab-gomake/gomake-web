@@ -38,6 +38,8 @@ import { AddNewContactModal } from "@/widgets/quote-new/modals-widgets/add-new-c
 import { NewItemNotesModal } from "@/widgets/quote-new/total-price-and-vat/new-item-notes-modal";
 import { AddRelatedDocumentsModal } from "@/widgets/quote-new/total-price-and-vat/add-related-documents";
 import { ViewSignatureApprovalModal } from "@/widgets/quote-new/total-price-and-vat/view-signature-approval-modal";
+import { CreditCardTab } from "@/widgets/quote-new/buttons-container/payment/payment-methods-tabs/credit-card-tab";
+import { CreditCardPaySection } from "@/widgets/quote-confirmation-mobile/components/credit-card-pay-section";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -447,6 +449,13 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false, isPrePa
                   isPrePaymentPage={isPrePaymentPage}
                   onChangeSelectedItemRowForQoute={onChangeSelectedItemRowForQoute}
                 />
+              }
+              {isPrePaymentPage &&
+                <>
+                  <div style={classes.borderContainer} />
+                  <div style={classes.titleStyle}>{"Payment Details"}</div>
+                  <CreditCardPaySection />
+                </>
               }
               {
                 documentType === DOCUMENT_TYPE.receipt &&
