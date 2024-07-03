@@ -158,6 +158,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const setSelectParameterButton = useSetRecoilState(
     selectParameterButtonState
   );
+  const [deviceCategory, setDeviceCategory] = useState("")
+  const [deviceSize, setDeviceSize] = useState("")
 
   const {
     calculationResult,
@@ -853,6 +855,17 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
           });
         });
+        subProducts.forEach(subProduct => {
+          subProduct.parameters.forEach(parameter => {
+            if (parameter.parameterCode === "devicecategory") {
+              setDeviceCategory(parameter?.values[0])
+
+            }
+            else if (parameter?.parameterCode === "devicesize") {
+              setDeviceSize(parameter?.values[0])
+            }
+          });
+        });
         setProductTemplate(productTemplate)
         setSubProducts(subProductsArray);
         setUnderParameterIds(underParameterIdsArray);
@@ -1261,8 +1274,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     return temp[index];
   };
 
-  const [deviceCategory, setDeviceCategory] = useState("")
-  const [deviceSize, setDeviceSize] = useState("")
+
 
   useEffect(() => {
     if (subProducts) {
