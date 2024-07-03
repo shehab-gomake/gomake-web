@@ -66,9 +66,9 @@ const useSendPaymentModal = () => {
             if (res?.success) {
                 const paymentLink = res?.data;
                 copyToClipboard(paymentLink);
-                alertSuccess(t("prePayment.linkSuccessfullyCopied"))
+                alertSuccess(t("alerts.linkSuccessfullyCopied"))
             } else {
-                alertFault(t("prePayment.linkCopyFailed"))
+                alertFault(t("alerts.linkCopyFailed"))
             }
         }
         await CopyPrePaymentLinkApi(callApi, callBack, { documentType: DOCUMENT_TYPE.order, data: dataToSend })
@@ -93,6 +93,10 @@ const useSendPaymentModal = () => {
         }
         if ((payState.sendBySms || payState.sendByWhatsapp) && !payState.documentContacts[payState.selectedContactIndex]?.contactPhone) {
             alertFault(t("alerts.noPhoneNumber"));
+            return; 
+        }
+        if (!payState.sendBySms && !payState.sendByWhatsapp && !payState.sendByMail) {
+            alertFault(t("alerts.checkAtLeastOne"));
             return; 
         }
         const callBack = (res) => {

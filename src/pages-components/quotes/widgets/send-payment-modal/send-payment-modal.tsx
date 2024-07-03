@@ -15,13 +15,11 @@ interface ISendPaymentProps {
     onClickClosePaymentModal?: any;
     paymentModalTitle?: any;
 }
-
 const SendPaymentModal = ({
     openPaymentModal,
     onClickClosePaymentModal,
     paymentModalTitle
 }: ISendPaymentProps) => {
-
     const { classes } = useStyle();
     const {
         t,
@@ -62,9 +60,8 @@ const SendPaymentModal = ({
                             key={item.name}
                             readonly={!!item.readOnly}
                         />
-                        {item.name === "percentageOfTotal" && <div style={{ display: "flex", alignItems: "flex-end", marginLeft: "5px" }}>%</div>}
-                        {item.name === "totalToPay" && <div style={{ display: "flex", alignItems: "flex-end", marginLeft: "5px" }}>{payState?.currency}</div>}
-
+                        {item.name === "percentageOfTotal" && <div style={classes.symbolStyle}>%</div>}
+                        {item.name === "totalToPay" && <div style={classes.symbolStyle}>{payState?.currency}</div>}
                     </Stack>
                 ))}
                 <Stack display="flex" flexWrap="wrap" direction="row" gap="10px">

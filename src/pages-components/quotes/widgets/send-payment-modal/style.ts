@@ -43,6 +43,10 @@ const useStyle = () => {
         width: "95%",
         borderColor: secondColor(500),
       },
+      symbolStyle: {
+        display: "flex",
+        alignItems: "flex-end"
+      }
     };
   }, [theme]);
 
