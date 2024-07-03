@@ -17,4 +17,5 @@ export interface IBusinessWidget {
   sign?: string;
   isTwoDigit?: boolean;
   inputMainContainerStyle?:React.CSSProperties;
+  placeholder?:string
 }
