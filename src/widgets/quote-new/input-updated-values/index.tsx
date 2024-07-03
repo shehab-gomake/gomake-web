@@ -43,6 +43,7 @@ const InputUpdatedValues = ({
             onCancel={() => setIsUpdate(null)}
             onUpdate={() => onBlur().then()}
             value={updateValue}
+            width={"210px"}
           />
         ) : (
           <div
