@@ -18,10 +18,11 @@ const PhoneInputUpdatedValues = ({
   sign,
   inputMainContainerStyle,
   isTwoDigit = false,
+  placeholder
 }: IBusinessWidget) => {
   const { clasess } = useStyle({ isUnderLine });
   const [updateValue, setUpdateValue] = useState();
-  
+
   useEffect(() => {
     setUpdateValue(value);
   }, [value]);
@@ -45,7 +46,7 @@ const PhoneInputUpdatedValues = ({
             onCancel={() => setIsUpdate(null)}
             onUpdate={() => onBlur().then()}
             value={updateValue}
-            
+
           />
         ) : (
           <div
@@ -53,7 +54,7 @@ const PhoneInputUpdatedValues = ({
             className="customInput"
             onClick={handleClick}
           >
-            {isTwoDigit ? value.toFixed(2) : value} {sign}
+            {placeholder ? placeholder : isTwoDigit ? value.toFixed(2) : value} {sign}
           </div>
         )}
       </div>

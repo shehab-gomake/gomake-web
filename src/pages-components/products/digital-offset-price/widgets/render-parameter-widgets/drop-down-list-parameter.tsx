@@ -1,8 +1,5 @@
 import { GoMakeAutoComplate } from "@/components";
-import { useGomakeAxios } from "@/hooks";
 import { SettingsIcon } from "@/icons/settings";
-import { getDeviceSizeMockApi } from "@/services/api-service/materials/materials-endpoints";
-import { useEffect, useState } from "react";
 
 const DropDownListParameterWidget = ({
   parameter,
@@ -24,8 +21,6 @@ const DropDownListParameterWidget = ({
   const defaultObject = parameter.valuesConfigs.find(
     (item) => item.isDefault === true
   );
-  const { callApi } = useGomakeAxios();
-
 
   return (
     <div data-tour={parameter?.id} style={clasess.dropDownListWithSettingIcon}>
@@ -47,10 +42,7 @@ const DropDownListParameterWidget = ({
           }
           else if (parameter?.code === "devicesize") {
             setDeviceSize(value?.values[0])
-
           }
-
-
           onChangeSubProductsForPrice(
             parameter?.id,
             subSection?.id,

@@ -25,18 +25,20 @@ const AddNewContactModal = ({ openModal, onClose, getQuote, getAllClientContacts
   const [errors, setErrors] = useState<any>({});
   const validateInput = () => {
     let tempErrors: any = {};
-    if (!state.contactMail) {
-      tempErrors.contactMail = t("validation.emailRequired");
-    } else if (!/\S+@\S+\.\S+/.test(state.contactMail)) {
+
+    // Validate that either contactMail or contactPhone is provided
+    if (!state.contactMail && !state.contactPhone) {
+      tempErrors.contactPhone = t("Phone Required or Email Required");
+      tempErrors.contactMail = t("Phone Required or Email Required");
+    } else if (state.contactMail && !/\S+@\S+\.\S+/.test(state.contactMail)) {
       tempErrors.contactMail = t("validation.invalidEmail");
     }
+
+    // Validate contactName
     if (!state.contactName) {
       tempErrors.contactName = t("validation.nameRequired");
     }
-    if (!state.contactPhone) {
-      tempErrors.contactPhone = t("validation.phoneRequired");
 
-    }
     setErrors(tempErrors);
     return Object.keys(tempErrors).length === 0;
   };
