@@ -64,7 +64,6 @@ const ButtonParameterWidget = ({
   //   (param) => param.code === "size"
   // );
   // let isDefaultSelectedValue = sizeParameter?.valuesConfigs.find((value) => value.isDefault)
-  // console.log("sizeParameter", { isDefaultSelectedValue, sizeParameter })
 
   const removeParameterFromSubProducts = () => {
     if (isSelectedShape) {
