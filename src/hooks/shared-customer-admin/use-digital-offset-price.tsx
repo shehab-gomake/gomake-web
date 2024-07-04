@@ -520,7 +520,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
   useEffect(() => {
     if (productTemplate && productTemplate.sections?.length > 0) {
-      let temp = [...isRequiredParameters];
+      debugger
+      let temp = [];
       let activeSectionTemp = [];
 
       productTemplate.sections.map((section, sectionIndex) => {
@@ -537,7 +538,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 ...temp[index],
               };
             } else {
-              if (parameter.isRequired && !parameter.isHidden) {
+              if (parameter.isRequired) {
                 temp.push(parameter);
                 if (sectionIndex === activeIndex) {
                   activeSectionTemp.push(parameter);
@@ -547,9 +548,11 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           });
         });
       });
-
+      console.log("temp", temp)
       // Filter out items where isHidden === true
       temp = temp.filter(item => !item.isHidden);
+      console.log("temp2", { temp, productTemplate })
+
 
       setIsRequiredParameters(temp);
       setActiveSectionRequiredParameters(activeSectionTemp);
