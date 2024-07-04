@@ -28,7 +28,7 @@ const SendPaymentModal = ({
         handleCheckBoxChange,
         onChangePaymentInputs,
         handleSendPaymentPage
-    } = useSendPaymentModal();
+    } = useSendPaymentModal({openPaymentModal});
 
   
     return (

@@ -3,6 +3,9 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRecoilValue } from "recoil";
 import { usePaymentInputs } from 'react-payment-inputs';
+import { useGomakeAxios, useSnackBar } from "@/hooks";
+import { createPaymentTransactionApi } from "@/services/api-service/pay/pay-api";
+import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 
 
 interface PaymentDetails {
@@ -20,10 +23,10 @@ interface PaymentDetails {
     customerEmail?: string;
     phoneNumber?: string;
     itemDescription?: string;
-    documentType: number;
+    documentType?: DOCUMENT_TYPE;
     terminalNumber?: string;
     password?: string;
-    creditType: number;
+    creditType?: number;
     firstPaymentSum?: number;
     otherPaymentsSum?: number;
     currencyType?: number;
@@ -34,6 +37,8 @@ interface PaymentDetails {
 const useCreditCardPaySection = () => {
     const { t } = useTranslation();
     const quoteConfirm = useRecoilValue<any>(quoteConfirmationState);
+    const { alertSuccess, alertFault } = useSnackBar();
+    const { callApi } = useGomakeAxios();
     const initialPaymentDetails: PaymentDetails = {
         documentID: '',
         clientID: '',
@@ -41,17 +46,9 @@ const useCreditCardPaySection = () => {
         cardNumber: '',
         cvv: '',
         expDate_MMYY: '',
+        holderID: '',
         transactionSum: 0,
         numberOfPayments: 0,
-        holderID: '',
-        customerName: '',
-        customerEmail: '',
-        phoneNumber: '',
-        itemDescription: '',
-        documentType: 1,
-        terminalNumber: '',
-        password: '',
-        creditType: 1,
     };
 
     const { getCardNumberProps, getExpiryDateProps, getCVCProps } = usePaymentInputs();
@@ -67,7 +64,7 @@ const useCreditCardPaySection = () => {
         value: index + 1,
     }));
 
-    // the length is depend on what i get from the modal "maxPayments"
+    // the length is depend on what i get from the modal "quoteConfirm?.maxPayments"
     const numberOfPaymentsNEW = Array.from({ length: 13 }, (_, index) => ({
         label: index + 1,
         value: index + 1,
@@ -110,6 +107,25 @@ const useCreditCardPaySection = () => {
         }));
     }
 
+    const handleProceedCheckout = async () => {
+        const finalPaymentDetailsState = {
+            ...paymentDetailsState,
+            documentID: quoteConfirm?.id,
+            documentType : DOCUMENT_TYPE.order,
+            paymentRequestId:quoteConfirm?.paymentRequestId,
+            clientID: quoteConfirm?.customerID
+        };
+
+        const callBack = (res) => {
+            if (res?.success) {
+                alertSuccess(t("prePayment.paymentComplete"))
+            } else {
+                alertFault(t("prePayment.paymentFailed"))
+            }
+        }
+        await createPaymentTransactionApi(callApi, callBack, finalPaymentDetailsState)
+    }
+
     return {
         t,
         quoteConfirm,
@@ -122,7 +138,9 @@ const useCreditCardPaySection = () => {
         handleChangeInputs,
         handleCardNumberChange,
         handleCVVChange,
-        handleExpiryDateChange
+        handleExpiryDateChange,
+        handleProceedCheckout,
+        
     };
 
 };

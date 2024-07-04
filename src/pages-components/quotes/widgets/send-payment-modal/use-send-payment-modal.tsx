@@ -5,35 +5,53 @@ import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { CopyPrePaymentLinkApi, sendPrePaymentToClientApi } from "@/services/api-service/pay/pay-api";
 import { DOCUMENT_TYPE } from "../../enums";
 import { useDateFormat } from "@/hooks/use-date-format";
+import { useEffect, useState } from "react";
 
-const useSendPaymentModal = () => {
+const useSendPaymentModal = ({openPaymentModal}) => {
     const { t } = useTranslation();
-    const [payState, setPayState] = useRecoilState<StatePayment>(sendPaymentState);
     const { callApi } = useGomakeAxios();
-    const { alertSuccess, alertFault, alertFaultGetData } = useSnackBar();
+    const { alertSuccess, alertFault } = useSnackBar();
     const { GetDateWithoutHoursFormat } = useDateFormat();
+    const [payState, setPayState] = useRecoilState<StatePayment>(sendPaymentState);
+    const [originalTotalPayment, setOriginalTotalPayment] = useState(payState.totalPayment);
+
+    useEffect(() => {
+        if ( payState.totalPayment) {
+            setOriginalTotalPayment(payState.totalPayment);
+        }
+    }, [openPaymentModal]); 
 
     const onChangePaymentInputs = (key, value) => {
-        if (key === "contactName" || key === "contactPhone" || key === "contactMail") {
-            setPayState((prev) => ({
-                ...prev,
-                documentContacts: prev.documentContacts.map((contact, index) =>
+        setPayState((prev) => {
+            let newState = { ...prev };
+            if (key === "percentageOfTotal") {
+                const percentage = parseFloat(value) || 0;
+                const totalToPay = (percentage / 100) * originalTotalPayment;
+                newState = {
+                    ...prev,
+                    percentageOfTotal: percentage,
+                    totalPayment: totalToPay
+                };
+            } else if (key === "totalPayment") {
+                const totalToPay = parseFloat(value) || 0;
+                const percentage = (totalToPay / originalTotalPayment) * 100;
+                newState = {
+                    ...prev,
+                    totalPayment: totalToPay,
+                    percentageOfTotal: percentage
+                };
+            } else if (key === "contactName" || key === "contactPhone" || key === "contactMail") {
+                newState.documentContacts = prev.documentContacts.map((contact, index) =>
                     index === prev.selectedContactIndex ? { ...contact, [key]: value } : contact
-                ),
-            }));
-        }
-        else if (key === "documentContacts") {
-            const selectedIndex = payState?.documentContacts.findIndex(contact => contact.id === value);
-            setPayState((prev) => ({
-                ...prev,
-                selectedContactIndex: selectedIndex,
-            }));
-        } else {
-            setPayState((prev) => ({
-                ...prev,
-                [key]: value,
-            }));
-        }
+                );
+            } else if (key === "documentContacts") {
+                const selectedIndex = prev.documentContacts.findIndex(contact => contact.id === value);
+                newState.selectedContactIndex = selectedIndex;
+            } else {
+                newState[key] = value;
+            }
+            return newState;
+        });
     };
 
     const handleCheckBoxChange = (key, checked) => {
@@ -52,7 +70,7 @@ const useSendPaymentModal = () => {
     const handleCopyPaymentLink = async () => {
         const dataToSend = {
             documentId: payState.documentId,
-            price: payState?.percentageOfTotal / 100 * payState?.totalPayment,
+            price: payState?.totalPayment,
             maxPayments: payState.numberOfInstallments,
             invoiceDateStr: GetDateWithoutHoursFormat(payState.invoiceDate),
             contactName: payState.documentContacts[payState.selectedContactIndex]?.contactName || '',
@@ -62,6 +80,12 @@ const useSendPaymentModal = () => {
             sendBySms: payState.sendBySms,
             sendByWhatsapp: payState.sendByWhatsapp
         };
+
+        if (payState.totalPayment === 0) {
+            alertFault(t("alerts.totalPaymentZero"));
+            return;
+        }
+        
         const callBack = (res) => {
             if (res?.success) {
                 const paymentLink = res?.data;
@@ -77,7 +101,7 @@ const useSendPaymentModal = () => {
     const handleSendPaymentPage = async () => {
         const dataToSend = {
             documentId: payState.documentId,
-            price: payState?.percentageOfTotal / 100 * payState?.totalPayment,
+            price: payState?.totalPayment,
             maxPayments: payState.numberOfInstallments,
             invoiceDateStr: GetDateWithoutHoursFormat(payState.invoiceDate),
             contactName: payState.documentContacts[payState.selectedContactIndex]?.contactName || '',
@@ -87,17 +111,21 @@ const useSendPaymentModal = () => {
             sendBySms: payState.sendBySms,
             sendByWhatsapp: payState.sendByWhatsapp
         };
+        if (payState.totalPayment === 0) {
+            alertFault(t("alerts.totalPaymentZero"));
+            return;
+        }
         if (payState.sendByMail && !payState.documentContacts[payState.selectedContactIndex]?.contactMail) {
             alertFault(t("alerts.noMail"));
             return;
         }
         if ((payState.sendBySms || payState.sendByWhatsapp) && !payState.documentContacts[payState.selectedContactIndex]?.contactPhone) {
             alertFault(t("alerts.noPhoneNumber"));
-            return; 
+            return;
         }
         if (!payState.sendBySms && !payState.sendByWhatsapp && !payState.sendByMail) {
             alertFault(t("alerts.checkAtLeastOne"));
-            return; 
+            return;
         }
         const callBack = (res) => {
             if (res?.success) {

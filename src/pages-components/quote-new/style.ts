@@ -123,8 +123,8 @@ const useStyle = (isQuoteConfirmation) => {
       },
       titleStyle: {
         display: "flex",
-        ...FONT_FAMILY.Lexend(500, 20),
-        color:  primaryColor(500),
+        ...FONT_FAMILY.Lexend(500, 18),
+        color:  "Black",
         lineHeight: "30px",
         width: "70%",
         flexDirection: "column" as "column",
@@ -132,13 +132,16 @@ const useStyle = (isQuoteConfirmation) => {
         alignSelf: "center",
         justifyContent: "center",
         gap: "16px",
+        margin: '10px 0px'
+
       },
       borderContainer: {
-        width: "70%",
+        width: "100%",
         alignSelf: "center",
         borderBottom: `1px solid ${grayColor(200)}`,
         maxHeight: 140,
         overflow: "scroll",
+        marginTop:"20px"
       },
     };
   }, [isQuoteConfirmation , theme]);

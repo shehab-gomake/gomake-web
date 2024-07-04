@@ -72,10 +72,10 @@ const PaymentInputs = (state) => {
         placeholder: "prePayment.totalToPay",
         required: false,
         parameterKey: "totalPayment",
-        value: state?.percentageOfTotal/100 * state?.totalPayment,
+        value : state?.totalPayment,
         options: [],
         isValid: true,
-        readOnly: true,
+        readOnly: false,
       },
       {
         name: "numberOfInstallments",

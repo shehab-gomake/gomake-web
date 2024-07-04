@@ -5,8 +5,8 @@ import { useStyle } from './style';
 import { useCreditCardPaySection } from './use-credit-card-pay-section';
 import { useEffect } from 'react';
 
-const CreditCardPaySection = () => {
-    const { classes } = useStyle();
+const CreditCardPaySection = ({ isFromBigScreen = false }) => {
+    const { classes } = useStyle({ isFromBigScreen });
     const {
         t,
         quoteConfirm,
@@ -19,7 +19,8 @@ const CreditCardPaySection = () => {
         handleChangeInputs,
         handleCardNumberChange,
         handleCVVChange,
-        handleExpiryDateChange
+        handleExpiryDateChange,
+        handleProceedCheckout
     } = useCreditCardPaySection();
 
     useEffect(() => {
@@ -85,7 +86,7 @@ const CreditCardPaySection = () => {
                     />
                 </div>
             )}
-            <PrimaryButton onClick={() => console.log(paymentDetailsState)} variant="contained" style={classes.btnStyle}>{t("Proceed Checkout")}
+            <PrimaryButton onClick={handleProceedCheckout} variant="contained" style={classes.btnStyle}>{t("Proceed Checkout")}
             </PrimaryButton>
         </div>
     );

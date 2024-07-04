@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
-const useStyle = () => {
+const useStyle = ({isFromBigScreen}) => {
     const { theme, primaryColor } = useGomakeTheme();
     const classes = useMemo(() => {
         return {
@@ -10,8 +10,8 @@ const useStyle = () => {
                 display: "flex",
                 flexDirection: "column" as "column",
                 gap: "10px",
-                width: "100%",
-                alignItems: "center",
+                width: isFromBigScreen ? "50%" : "100%",
+                alignItems: isFromBigScreen ? "flex-start" : "center",
             },
             creditCardInputsContainer: {
                 display: "flex",
@@ -48,6 +48,7 @@ const useStyle = () => {
                 padding: "8px 14px",
                 borderRadius: 8,
                 lineHeight: "20px",
+                background : isFromBigScreen && "#8283BE",
             },
         };
     }, [theme]);

@@ -454,7 +454,7 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false, isPrePa
                 <>
                   <div style={classes.borderContainer} />
                   <div style={classes.titleStyle}>{"Payment Details"}</div>
-                  <CreditCardPaySection />
+                  <CreditCardPaySection isFromBigScreen={true}/>
                 </>
               }
               {
