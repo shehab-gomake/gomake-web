@@ -362,7 +362,10 @@ const QuotesListPageWidget = ({
                     </div>
                   </InputAdornment>
                 }
-                onChange={(e) => setPatternSearch(e)}
+                onChange={(e) => {
+                  setPage(1)
+                  setPatternSearch(e)
+                }}
                 value={patternSearch}
               />
               <div style={{ cursor: "pointer" }} onClick={onOpenAddRuleModal}>
