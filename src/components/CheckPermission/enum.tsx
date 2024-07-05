@@ -1,7 +1,6 @@
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 
 export enum Permissions {
-
   // client group
   SHOW_CLIENT = "ShowClient",
   EDIT_CLIENT = "EditClient",
@@ -60,7 +59,7 @@ export enum Permissions {
   SHOW_PERMISSIONS = "ShowPermissions",
   SHOW_FINANCE = "ShowFinance",
 
-  //orders group    
+  //orders group
   SHOW_ORDERS = "ShowOrders",
   SHOW_COSTS_IN_ORDERS = "IsShowCostsInOrders",
   EDIT_ORDERS = "EditOrders",
@@ -115,8 +114,9 @@ export enum Permissions {
   SHOW_SALES_REPORT = "ShowSalesReport",
   SHOW_CREDIT_CARD_TRANSACTIONS = "ShowCreditCardTransactions",
 
+  //customer service group
+  SHOW_ADMIN_CUSTOMER_SERVICE = "ShowAdminCustomerService",
 }
-
 
 export const DocumentPermission = {
   EDIT_DOCUMENT: "EditDocument",
@@ -124,9 +124,8 @@ export const DocumentPermission = {
   UPDATE_DOCUMENT_ITEM: "UpdateDocumentItem",
   UPDATE_DOCUMENT_DISCOUNT: "UpdateDocumentDiscount",
   UPDATE_DOCUMENT_ITEM_PRICES: "UpdateDocumentItemPrices",
-  UPDATE_DOCUMENT_DELIVERY_ITEM_PRICES: "UpdateDocumentDeliveryItemPrices"
+  UPDATE_DOCUMENT_DELIVERY_ITEM_PRICES: "UpdateDocumentDeliveryItemPrices",
 };
-
 
 export const documentPermissionMap = {
   [DocumentPermission.EDIT_DOCUMENT]: {
@@ -158,5 +157,4 @@ export const documentPermissionMap = {
     [DOCUMENT_TYPE.quote]: Permissions.UPDATE_QUOTE_DELIVERY_ITEM_PRICES,
     [DOCUMENT_TYPE.order]: Permissions.UPDATE_ORDER_DELIVERY_ITEM_PRICES,
   },
-
 };
