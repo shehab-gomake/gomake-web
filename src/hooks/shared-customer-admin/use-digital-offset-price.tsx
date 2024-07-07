@@ -766,7 +766,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                           parameterType: parameter?.parameterType,
                           ...(value && {
                             valueIds: [defValue],
-                            values: [defValue],
+                            values: [value?.updateName],
                           }),
                           sectionId: section?.id,
                           subSectionId: subSection?.id,
