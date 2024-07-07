@@ -19,20 +19,32 @@ const UseDocumentDesign = () => {
     }
 
     const getDocumentTypes = async () => {
+        const requiredDocumentTypes = [
+            "All",
+            "Quote",
+            "Order",
+            "DeliveryNotes",
+            "Invoice",
+            "Receipt",
+            "Purchase",
+            "PurchaseInvoice"
+        ];
         const callBack = (res) => {
             if (res.success) {
-                const doumentType = res.data.map(doc => ({
+                const documentType = res.data
+                .filter(doc => requiredDocumentTypes.includes(doc.value))
+                .sort((a, b) => requiredDocumentTypes.indexOf(a.value) - requiredDocumentTypes.indexOf(b.value))
+                .map(doc => ({
                     value: doc.key,
                     text: t(`documentType.${doc.value}`)
                 }));
-                setDocumentTypes(doumentType);
+            setDocumentTypes(documentType);
             }
         }
         await getAllDocumentDesigningApi(callApi, callBack)
     }
 
     const getDocumentDesignByCreationDoc = async (documentCreationDocType, documentCreationAgentId) => {
-
         const callBack = (res) => {
             if (res.success) {
                 setDocumentDesign(res.data);
