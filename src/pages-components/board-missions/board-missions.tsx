@@ -3,7 +3,7 @@ import { useStyle } from "./style";
 import { HeaderTitle } from "@/widgets";
 import { useBoardMissions } from "./use-board-missions";
 import { PrimaryTable } from "@/components/tables/primary-table";
-import { GoMakeAutoComplate, GoMakeDeleteModal, GoMakeModal, GomakePrimaryButton, GomakeTextInput, ThreeOptionsModal } from "@/components";
+import { GoMakeAutoComplate, GoMakeDeleteModal, GomakePrimaryButton, ThreeOptionsModal } from "@/components";
 import { SearchInputComponent } from "@/components/form-inputs/search-input-component";
 import { useEffect } from "react";
 import { GoMakeMultiSelect } from "@/components/auto-complete/multi-select";
@@ -19,6 +19,7 @@ import { InputAdornment } from "@mui/material";
 import TuneIcon from '@mui/icons-material/Tune';
 import { useRecoilValue } from "recoil";
 import { outsourceSuppliersState } from "@/widgets/product-pricing-widget/state";
+import QrListenerWidget from "@/widgets/qr-listener/qr-listener-widget";
 
 const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
   const { classes } = useStyle();
@@ -255,10 +256,11 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
         onClickNo={() => onOpenPackagesModal(missionItem)}
       />
       <GoMakeDeleteModal
-        icon={<WarningAmberIcon style={classes.warningIconStyle} />}
-        title={t("boardMissions.returnToProductionModalTitle")}
-        yesBtn={t("modal.yes")}
-        cancelBtn={t("modal.no")}
+        hideIcon={true}
+        title={t("boardMissions.unReadyModalTitle")}
+        subTitle={t("boardMissions.unReadyModalSubTitle")}
+        yesBtn={t("boardMissions.unReadyWitNotification")}
+        cancelBtn={t("modal.cancel")}
         openModal={openReturnToProdModal}
         onClose={onCloseReturnToProdModal}
         onClickDelete={onClickBackToProcess}
@@ -282,6 +284,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
         handleQuantityPerPackageChange={handleQuantityPerPackageChange}
         onClickConfirm={onClickPrintPackagingSlip}
       />
+      <QrListenerWidget listening={true} />
     </>
   );
 };

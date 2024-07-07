@@ -194,6 +194,8 @@ const useAddRuleModal = ({
     statement2: "",
   };
   const [rules, setRules] = useState<any>([initialRule]);
+
+  useEffect(() => {console.log(rules)}, [rules])
   const addRule = () => {
     setRules([...rules, initialRule]);
   };
@@ -298,6 +300,23 @@ const useAddRuleModal = ({
     const joinedText = textArray.join(" "); // Join textArray with " && "
     return `${t("properties.if")} (${joinedText})`;
   }
+
+  const mappingRules = useCallback(() => {
+    return rules.map((rule) => {
+      return {
+        statementId:
+            typeof rule?.statement === "object"
+                ? rule?.statement?.id
+                : rule.statement,
+        statementValue: rule.statement2.id,
+        operator: rule.condition.id,
+        conditionBetweenStatements: rule.linkCondition
+            ? rule.linkCondition.id
+            : "",
+        statementCategory: EStatementCategory[rule.category.id],
+      };
+    })
+  }, [rules])
 
   useEffect(() => {
     const textInput = displayText(rules);
@@ -545,6 +564,7 @@ const useAddRuleModal = ({
     onOpenScheduleModal,
     renderOptions,
     checkWhatRenderArray,
+    mappingRules
   };
 };
 

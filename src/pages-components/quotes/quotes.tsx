@@ -135,12 +135,20 @@ const QuotesListPageWidget = ({
     isCanceledState,
     openCloseOrderNotesModal,
     onClickCloseCloseOrderNotesModal,
-    selectedQuoteItemValue
+    selectedQuoteItemValue,
+    onClickCloseCloseOrderModal,
+    openCloseOrderModal,
+    CloseDocument,
+    selectedOrder,
+    onClickOpenCloseOrderModal,
   } = useQuotes(documentType);
   const router = useRouter()
   useEffect(() => {
     if (router.query.orderNumber) {
       setPatternSearch(router.query.orderNumber as string);
+    }
+    else if (router.query.documentNumber) {
+      setPatternSearch(router.query.documentNumber as string);
     }
 
   }, [router])
@@ -354,7 +362,10 @@ const QuotesListPageWidget = ({
                     </div>
                   </InputAdornment>
                 }
-                onChange={(e) => setPatternSearch(e)}
+                onChange={(e) => {
+                  setPage(1)
+                  setPatternSearch(e)
+                }}
                 value={patternSearch}
               />
               <div style={{ cursor: "pointer" }} onClick={onOpenAddRuleModal}>
@@ -454,6 +465,17 @@ const QuotesListPageWidget = ({
         icon={
           <WarningAmberIcon style={{ width: 60, height: 60, color: "red" }} />
         }
+        title={t("sales.quote.titleCloseModal")}
+        yesBtn={t("sales.quote.yesBtn")}
+        openModal={openCloseOrderModal}
+        onClose={onClickCloseCloseOrderModal}
+        subTitle={t("sales.quote.subTitleCloseModal")}
+        onClickDelete={() => CloseDocument(selectedOrder)}
+      />
+      <GoMakeDeleteModal
+        icon={
+          <WarningAmberIcon style={{ width: 60, height: 60, color: "red" }} />
+        }
         title={t("sales.quote.titleCancelModal")}
         yesBtn={t("sales.quote.yesBtn")}
         openModal={openDeliveryTimeCancelModal}
@@ -481,6 +503,9 @@ const QuotesListPageWidget = ({
         onClose={onClickCloseCloseOrderNotesModal}
         openModal={openCloseOrderNotesModal}
         quoteItemValue={selectedQuoteItemValue}
+        onClickCloseOrder={() => onClickOpenCloseOrderModal(selectedOrder)}
+        documentType={documentType}
+
 
       />
     </>

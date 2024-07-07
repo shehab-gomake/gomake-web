@@ -13,6 +13,7 @@ const useHeader = () => {
   const { navigate } = useGomakeRouter();
   const { user } = useCustomer();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [anchorSupportEl, setAnchorSupportEl] = useState<null | HTMLElement>(null);
   const [anchorNotifyEl, setAnchorNotifyEl] = useState<null | HTMLElement>(
     null
   );
@@ -21,12 +22,18 @@ const useHeader = () => {
   const { callApi } = useGomakeAxios();
   const open = Boolean(anchorEl);
   const openNotify = Boolean(anchorNotifyEl);
-
+  const openSupport = Boolean(anchorSupportEl);
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
+  const handleClickSupport = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorSupportEl(event.currentTarget);
+  };
   const handleClose = () => {
     setAnchorEl(null);
+  };
+  const handleCloseSupport = () => {
+    setAnchorSupportEl(null);
   };
 
   const handleClickNotify = (event: React.MouseEvent<HTMLElement>) => {
@@ -81,6 +88,10 @@ const useHeader = () => {
     anchorNotifyEl,
     handleClickNotify,
     handleCloseNotify,
+    handleClickSupport,
+    openSupport,
+    anchorSupportEl,
+    handleCloseSupport
   };
 };
 

@@ -18,6 +18,8 @@ import { useTranslation } from "react-i18next";
 import { SubWorkFlowsComponent } from "@/widgets/product-pricing-widget/components/work-flow/sub-work-flow-component";
 import { useRecoilState } from "recoil";
 import { actionListForWorkFlow } from "@/store";
+import { PermissionCheck } from "@/components/CheckPermission";
+import { Permissions } from "@/components/CheckPermission/enum";
 
 interface IWorkFlowComponentProps extends ICalculatedWorkFlow {
     delay: number;
@@ -71,11 +73,21 @@ const WorkFlowComponent = ({
         }
     }
     const parameters = [
-        totalRealProductionTime,
-        totalCost,
-        profit,
+        {
+            ...totalRealProductionTime,
+            key: 'totalRealProductionTime',
+        },
+        {
+            ...totalCost,
+            key: 'totalCost',
+        },
+        {
+            ...profit,
+            key: "profit"
+        },
         {
             ...totalPrice,
+            key: "totalPrice",
             valueColor: secondColor(500),
         },
     ]
@@ -90,8 +102,10 @@ const WorkFlowComponent = ({
                     <Stack direction={'row'} gap={'10px'} alignItems={'center'} flexWrap={'wrap'}>
                         <span>{`${t('pricingWidget.workFlow')} ${index}`}</span>
                         <Divider orientation={'vertical'} flexItem />
-                        <ParametersMapping parameters={parameters} />
-                        <Divider orientation={'vertical'} flexItem />
+                        <ParametersMapping parameters={parameters} isWorkFlows={true} />
+                        <PermissionCheck userPermission={Permissions.SHOW_COSTS_IN_CALCULATIONS}>
+                            <Divider orientation={'vertical'} flexItem />
+                        </PermissionCheck>
                         <Stack direction={'row'} flexWrap={"wrap"} alignItems={'center'} gap={'10px'}>
                             <WorkflowRateComponent label={t('pricingWidget.price')} value={recommendationRang?.price} />
                             <WorkflowRateComponent label={t('pricingWidget.profit')} value={recommendationRang?.profit} />

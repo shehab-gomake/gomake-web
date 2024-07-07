@@ -32,7 +32,8 @@ import ClearRoundedIcon from "@mui/icons-material/ClearRounded";
 import { SettingsIcon } from "@/icons/settings";
 import { SettingsMenu } from "./settings-menu";
 import { WarningIcon } from "@/icons";
-
+import { PermissionCheck } from "@/components/CheckPermission";
+import { Permissions } from "@/components/CheckPermission/enum";
 interface IActionContainerComponentProps extends IWorkFlowAction {
   delay?: number;
   workFlowId?: string;
@@ -145,6 +146,7 @@ const Actions = ({
               delay={index * 800}
               {...action}
             />
+
           );
         }
       })}
@@ -170,19 +172,24 @@ const ActionContainerComponent = ({
   categoryId,
   isCalculated,
   actionException,
-  materials
+  materials,
+  employeeId,
+  employeeName
 }: IActionContainerComponentProps) => {
   source = source === EWorkSource.OUT ? EWorkSource.OUT : EWorkSource.INTERNAL;
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [chooseMachine, setChooseMachine] = useState<boolean>(false);
   const [chooseMaterial, setChooseMaterial] = useState<boolean>(false);
+  const [chooseEmployee, setChooseEmployee] = useState<boolean>(false);
   const currentProductItemValue = useRecoilValue(currentProductItemValueState);
   const { t } = useTranslation();
   const {
     getActionMachinesList,
     getActionMaterialsList,
+    getActionEmloyeeList,
     selectNewMachine,
     selectNewMaterials,
+    selectNewEmployee,
     anchorEl,
     open,
     handleClick,
@@ -194,7 +201,8 @@ const ActionContainerComponent = ({
     onClickCloseModalMaterial,
     setAttributesData,
     updateWorkFlowForMachine,
-    updateWorkFlowForMaterials
+    updateWorkFlowForMaterials,
+    updateWorkFlowForEmployees,
   } = useActionUpdateValues();
   const suppliersState = useRecoilValue(outsourceSuppliersState);
   const suppliers = useMemo(() => {
@@ -376,7 +384,63 @@ const ActionContainerComponent = ({
                 )
               )}
             </Stack>
+
             <Divider orientation={"vertical"} flexItem />
+            <Stack
+              style={classes.sectionTitle}
+              direction={"row"}
+              alignItems={"center"}
+              gap={"10px"}
+            >
+              {
+                employeeId && (
+                  <>
+                    {!chooseEmployee ? (
+                      <Button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setChooseEmployee(true);
+                        }}
+                        variant={"text"}
+                        style={classes.sectionTitle}
+                      >
+                        {employeeName}
+                      </Button>
+                    ) : (
+                      <Stack
+                        direction={"row"}
+                        gap={"5px"}
+                        alignItems={"center"}
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <GoMakeAutoComplate
+                          onChange={(e, v) => {
+                            updateWorkFlowForEmployees(actionId, productType, actionIndex, v.label, v?.value, id)
+                            setChooseEmployee(false);
+                          }}
+                          style={{ width: "200px" }}
+                          options={getActionEmloyeeList(actionId, productType)}
+                          placeholder={"Choose Employee"}
+                          value={employeeName}
+                        />
+                        <IconButton
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setChooseEmployee(false);
+                          }}
+                        >
+                          <ClearRoundedIcon />
+                        </IconButton>
+                      </Stack>
+                    )}
+                  </>
+                )
+              }
+            </Stack>
+            {
+              employeeId && <Divider orientation={"vertical"} flexItem />
+            }
+
             <Stack
               style={classes.sectionTitle}
               direction={"row"}
@@ -423,6 +487,7 @@ const ActionContainerComponent = ({
                               printingActionId: id,
                             })
                             setChooseMaterial(false);
+
                           }}
                           style={{ width: "200px" }}
                           options={getActionMaterialsList(actionId, productType)}
@@ -457,35 +522,42 @@ const ActionContainerComponent = ({
               style={{ height: "50%", margin: "auto 0" }}
               flexItem
             />
-            <EditableKeyValueViewComponent
-              onUpdate={handleCostUpdate}
-              {...totalCost}
-              source={source}
-            />
-            <Divider
-              orientation={"vertical"}
-              style={{ height: "50%", margin: "auto 0" }}
-              flexItem
-            />
-            <Stack direction={"row"} gap={"3px"} alignItems={"center"}>
+            <PermissionCheck userPermission={Permissions.SHOW_COSTS_IN_CALCULATIONS}>
               <EditableKeyValueViewComponent
-                onUpdate={handleProfitUpdate}
-                {...profit}
+                onUpdate={handleCostUpdate}
+                {...totalCost}
                 source={source}
               />
-              <span>
-                {source === EWorkSource.OUT
-                  ? `(${calculateOutSourceProfitInMoney()
-                  } ${totalPrice ? totalPrice.defaultUnit : ""})`
-                  : `(${calculateProfitInMoney()} ${totalPrice ? totalPrice.defaultUnit : ""
-                  })`}
-              </span>
-            </Stack>
-            <Divider
-              orientation={"vertical"}
-              style={{ height: "50%", margin: "auto 0" }}
-              flexItem
-            />
+              <Divider
+                orientation={"vertical"}
+                style={{ height: "50%", margin: "auto 0" }}
+                flexItem
+              />
+              <PermissionCheck userPermission={Permissions.SHOW_PROFITS_IN_CALCULATIONS}>
+                <Stack direction={"row"} gap={"3px"} alignItems={"center"}>
+                  <EditableKeyValueViewComponent
+                    onUpdate={handleProfitUpdate}
+                    {...profit}
+                    source={source}
+                  />
+                  <span>
+                    {source === EWorkSource.OUT
+                      ? `(${calculateOutSourceProfitInMoney()
+                      } ${totalPrice ? totalPrice.defaultUnit : ""})`
+                      : `(${calculateProfitInMoney()} ${totalPrice ? totalPrice.defaultUnit : ""
+                      })`}
+                  </span>
+                </Stack>
+                <Divider
+                  orientation={"vertical"}
+                  style={{ height: "50%", margin: "auto 0" }}
+                  flexItem
+                />
+              </PermissionCheck>
+
+
+            </PermissionCheck>
+
             <EditableKeyValueViewComponent
               onUpdate={handleUpdatePrice}
               {...totalPrice}
@@ -622,15 +694,26 @@ const ActionComponent = ({
   const { t } = useTranslation();
   const { secondColor } = useGomakeTheme();
   const suppliers = useRecoilValue(outsourceSuppliersState);
+
   const parameters = [
-    totalProductionTime,
-    totalCost,
-    profit,
+    {
+      ...totalProductionTime,
+      key: 'totalRealProductionTime',
+    },
+    {
+      ...totalCost,
+      key: 'totalCost',
+    },
+    {
+      ...profit,
+      key: "profit"
+    },
     {
       ...totalPrice,
+      key: "totalPrice",
       valueColor: secondColor(500),
     },
-  ];
+  ]
   const getSupplierId = useCallback(() => {
     if (supplierId) {
       const supplier = suppliers?.find((sup) => sup.supplierId === supplierId);
@@ -668,7 +751,7 @@ const ActionComponent = ({
             )}
           </Stack>
           <Divider orientation={"vertical"} flexItem />
-          <ParametersMapping source={source} parameters={parameters} />
+          <ParametersMapping source={source} parameters={parameters} isWorkFlows={true} />
           <Divider orientation={"vertical"} flexItem />
           <span style={classes.sourceLabel}>
             {source === EWorkSource.OUT

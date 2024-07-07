@@ -87,8 +87,10 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
   const [openCloseOrderNotesModal, setOpenCloseOrderNotesModal] = useState(false)
   const [selectedQuoteItemValue, setSelectedQuoteItemValue] = useState()
 
-  const onClickOpenCloseOrderNotesModal = () => {
+  const onClickOpenCloseOrderNotesModal = (order) => {
     setOpenCloseOrderNotesModal(true)
+    setSelectedQuoteItemValue(order)
+    setselectedOrder(order)
   }
   const onClickCloseCloseOrderNotesModal = () => {
     setOpenCloseOrderNotesModal(false)
@@ -296,6 +298,8 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
                 onClickOpenIrrelevantModal={onClickOpenIrrelevantModal}
                 onClickOpenDeliveryTimeModal={onClickOpenDeliveryTimeModal}
                 onClickOpenPriceModal={onClickOpenPriceModal}
+                onClickOpenCloseOrderModal={onClickOpenCloseOrderModal}
+                onClickOpenCloseOrderNotesModal={onClickOpenCloseOrderNotesModal}
                 CloseDocument={CloseDocument}
 
               />,
@@ -507,6 +511,8 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
                 onClickOpenIrrelevantModal={onClickOpenIrrelevantModal}
                 onClickOpenDeliveryTimeModal={onClickOpenDeliveryTimeModal}
                 onClickOpenPriceModal={onClickOpenPriceModal}
+                onClickOpenCloseOrderModal={onClickOpenCloseOrderModal}
+                onClickOpenCloseOrderNotesModal={onClickOpenCloseOrderNotesModal}
                 CloseDocument={CloseDocument}
 
               />,
@@ -993,6 +999,8 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
             onClickOpenIrrelevantModal={onClickOpenIrrelevantModal}
             onClickOpenDeliveryTimeModal={onClickOpenDeliveryTimeModal}
             onClickOpenPriceModal={onClickOpenPriceModal}
+            onClickOpenCloseOrderModal={onClickOpenCloseOrderModal}
+            onClickOpenCloseOrderNotesModal={onClickOpenCloseOrderNotesModal}
             CloseDocument={CloseDocument}
           />,
         ]);
@@ -1286,6 +1294,7 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
 
   const [openIrrelevantCancelModal, setOpenIrrelevantCancelModal] = useState(false);
   const [openPriceCancelModal, setOpenPriceCancelModal] = useState(false);
+  const [openCloseOrderModal, setOpenCloseOrderModal] = useState(false);
   const [openDeliveryTimeCancelModal, setOpenDeliveryTimeCancelModal] = useState(false);
   const [selectedOrder, setselectedOrder] = useState<any>({})
 
@@ -1305,6 +1314,15 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
   const onClickClosePriceModal = () => {
     setOpenPriceCancelModal(false);
   };
+
+  const onClickOpenCloseOrderModal = (order) => {
+    setselectedOrder(order)
+    setOpenCloseOrderModal(true);
+  };
+  const onClickCloseCloseOrderModal = () => {
+    setOpenCloseOrderModal(false);
+  };
+
 
   const onClickOpenDeliveryTimeModal = (order) => {
     setselectedOrder(order)
@@ -1336,9 +1354,9 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
 
   const CloseDocument = async (quoteItemValue) => {
     setSelectedQuoteItemValue(quoteItemValue)
-    if (quoteItemValue?.closeOrderNotes && quoteItemValue?.closeOrderNotes.tirm !== "") {
-      onClickOpenCloseOrderNotesModal()
-    }
+    // if (quoteItemValue?.closeOrderNotes && quoteItemValue?.closeOrderNotes.tirm !== "") {
+    //   onClickOpenCloseOrderNotesModal()
+    // }
     const callBack = (res) => {
       if (res?.success) {
         alertSuccessUpdate();
@@ -1508,7 +1526,12 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     filterData,
     openCloseOrderNotesModal,
     onClickCloseCloseOrderNotesModal,
-    selectedQuoteItemValue
+    selectedQuoteItemValue,
+    onClickCloseCloseOrderModal,
+    openCloseOrderModal,
+    CloseDocument,
+    selectedOrder,
+    onClickOpenCloseOrderModal
   };
 };
 

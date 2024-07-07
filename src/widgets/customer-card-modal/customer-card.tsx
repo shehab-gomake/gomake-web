@@ -81,7 +81,6 @@ const CustomerCardWidget = ({
   setOpenOfferModal,
   userQuote
 }: IProps) => {
-  console.log("customer", customer)
   const [open, setOpen] = useState(false);
   const { addNewCustomer } = useAddCustomer();
   const { editCustomer } = useEditCustomer();

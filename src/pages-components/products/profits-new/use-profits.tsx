@@ -166,8 +166,13 @@ const useNewProfits = () => {
         setAllActionProfitRowsByActionId,
         requestBody
       );
-      if (res) {
+      if (res?.length > 0) {
+
         getActionProfitRowChartData();
+        setIsLoading(false);
+      }
+      else {
+        setActionProfitRowsList([])
         setIsLoading(false);
       }
     }

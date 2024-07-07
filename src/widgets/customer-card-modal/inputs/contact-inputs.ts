@@ -1,5 +1,5 @@
-import { DocumentTypeEnums } from "@/enums";
 import {emailRegex} from "@/utils/regex";
+import { ERPDocumentsTypesEnum } from "@/widgets/settings-documenting/documentDesign/enums/document-type";
 import { t } from "i18next";
 
 const contactInputs1 = (state) => {
@@ -123,11 +123,11 @@ const contactInputs1 = (state) => {
        required: false,
        parameterKey: "defaultInDocsTypes",
        options: [
-                { value: DocumentTypeEnums.Quote, text: t("tabs.quotes") },
-                { value: DocumentTypeEnums.Order, text: t("tabs.orders") },
-                { value: DocumentTypeEnums.DeliveryNote, text: t("tabs.deliveryNotes") },
-                { value: DocumentTypeEnums.Invoice, text: t("tabs.invoices") },
-                { value: DocumentTypeEnums.Receipt, text: t("tabs.receipts") },
+                { value: ERPDocumentsTypesEnum.Quote, text: t("tabs.quotes") },
+                { value: ERPDocumentsTypesEnum.Order, text: t("tabs.orders") },
+                { value: ERPDocumentsTypesEnum.DeliveryNotes, text: t("tabs.deliveryNotes") },
+                { value: ERPDocumentsTypesEnum.Invoice, text: t("tabs.invoices") },
+                { value: ERPDocumentsTypesEnum.Receipt, text: t("tabs.receipts") },
               ],
        value: state?.defaultInDocsTypes,
        multiple: true

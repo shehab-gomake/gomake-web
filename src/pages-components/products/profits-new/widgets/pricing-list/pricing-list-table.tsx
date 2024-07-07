@@ -80,21 +80,23 @@ const PricingListTable = ({
             </TableRow>
           </TableHead>
           <TableBody>
-            {tableBodyList?.map((item: any, index: number) => {
-              return (
-                <RowMappingWidget
-                  key={`${item?.id}-${item?.actionProfitId}-${index}`}
-                  item={item}
-                  index={index}
-                  changeactionProfitRowsItems={changeactionProfitRowsItems}
-                  updateActionProfitRow={updateActionProfitRow}
-                  selectedPricingBy={selectedPricingBy}
-                  handleClickMorePriceTable={handleClickMorePriceTable}
-                  setSelectedActionProfit={setSelectedActionProfit}
-                  selectedAdditionalProfitRow={selectedAdditionalProfitRow}
-                />
-              );
-            })}
+            {
+              tableBodyList &&
+              tableBodyList?.map((item: any, index: number) => {
+                return (
+                  <RowMappingWidget
+                    key={`${item?.id}-${item?.actionProfitId}-${index}`}
+                    item={item}
+                    index={index}
+                    changeactionProfitRowsItems={changeactionProfitRowsItems}
+                    updateActionProfitRow={updateActionProfitRow}
+                    selectedPricingBy={selectedPricingBy}
+                    handleClickMorePriceTable={handleClickMorePriceTable}
+                    setSelectedActionProfit={setSelectedActionProfit}
+                    selectedAdditionalProfitRow={selectedAdditionalProfitRow}
+                  />
+                );
+              })}
           </TableBody>
         </Table>
       </TableContainer>

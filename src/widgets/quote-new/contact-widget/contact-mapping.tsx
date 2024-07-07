@@ -89,9 +89,8 @@ const ContactMapping = ({
       />
       <PhoneInputUpdatedValues
         key={item?.id}
-        value={
-          item?.contactPhone !== null ? item?.contactPhone : t("sales.quote.noMobileContact")
-        }
+        value={item?.contactPhone}
+        placeholder={item?.contactPhone ? item?.contactPhone : t("sales.quote.noMobileContact")}
         label={t("sales.quote.mobileContact")}
         onBlur={() => onBlurContactMobile(item)}
         isUpdate={canEditContacts && isUpdateContactMobile}
@@ -100,9 +99,8 @@ const ContactMapping = ({
           changeItems(index, "contactPhone", e);
         }} />
       <InputUpdatedValues
-        value={
-          item?.contactMail !== null ? item?.contactMail : t("sales.quote.noMail")
-        }
+        value={item?.contactMail}
+        placeholder={item?.contactMail ? item?.contactMail : t("sales.quote.noMail")}
         label={t("sales.quote.contactEmail")}
         onBlur={() => onBlurContactEmail(item)}
         isUpdate={canEditContacts && isUpdateContactEmail}
@@ -111,7 +109,7 @@ const ContactMapping = ({
           changeItems(index, "contactMail", e);
         }}
       />
-      {(!isQuoteConfirmation && canEditContacts )&&
+      {(!isQuoteConfirmation && canEditContacts) &&
         <div style={classes.addDeleteContainer}>
           <IconButton
             onClick={() => onOpenDeleteModalContact(item)}

@@ -15,7 +15,6 @@ const ApproveSignatureModal = ({ openModal, onClose, onClickApprove, isMobile }:
 
   const save = () => {
     const dataURL = sigPad.current.getTrimmedCanvas().toDataURL('image/png');
-    console.log(dataURL); // You can send this to your server or save it in the state
     onClickApprove(dataURL, signerName)
   };
   const { t } = useTranslation();

@@ -48,7 +48,8 @@ const ThreeOptionsModal = ({
             >
               {t(yesBtn)}
             </GomakePrimaryButton>{" "}
-            <GomakePrimaryButton
+            {
+            !!noBtn &&<> <GomakePrimaryButton
               style={classes.confirmBtn}
               onClick={() => {
                 onClickNo();
@@ -56,7 +57,8 @@ const ThreeOptionsModal = ({
               }}
             >
               {t(noBtn)}
-            </GomakePrimaryButton>{" "}
+            </GomakePrimaryButton>{" "}</>
+            }
             <GomakePrimaryButton
               style={classes.cancelBtn}
               onClick={onClose}

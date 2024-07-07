@@ -35,7 +35,6 @@ const DocumentDesign = () => {
     useEffect(() => {
         getDocumentDesignByCreationDoc(documentDesign?.docType, documentDesign?.agentId);
     }, [documentDesign?.docType, documentDesign?.agentId]);
-
    
     const DocumentDesignSection1: { inputs: any[], title: string }[] = [
         { inputs: creationDocumentInputs(documentDesign), title: 'documentingDesign.documnetCreation.documentinCreation' },

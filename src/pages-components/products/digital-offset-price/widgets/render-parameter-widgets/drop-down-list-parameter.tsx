@@ -15,10 +15,13 @@ const DropDownListParameterWidget = ({
   onOpeneMultiParameterModal,
   subSectionParameters,
   list,
-}) => {
+  setDeviceCategory,
+  setDeviceSize
+}: any) => {
   const defaultObject = parameter.valuesConfigs.find(
     (item) => item.isDefault === true
   );
+
   return (
     <div data-tour={parameter?.id} style={clasess.dropDownListWithSettingIcon}>
       <GoMakeAutoComplate
@@ -34,6 +37,12 @@ const DropDownListParameterWidget = ({
         }
         disabled={parameter?.isLock ? parameter?.isLock : false}
         onChange={(e: any, value: any) => {
+          if (parameter?.code === "devicecategory") {
+            setDeviceCategory(value?.values[0])
+          }
+          else if (parameter?.code === "devicesize") {
+            setDeviceSize(value?.values[0])
+          }
           onChangeSubProductsForPrice(
             parameter?.id,
             subSection?.id,

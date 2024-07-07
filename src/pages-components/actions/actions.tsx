@@ -9,7 +9,6 @@ const ActionPageWidget = () => {
     const { clasess } = useStyle();
     const { tableHeaders, allActions, materilasSearched, term, setTerm, t } =
         useActions();
-    console.log("allActions", allActions)
     const actionsSteps: StepType[] = [
         {
             selector: '[data-tour="actionsTable"]',
