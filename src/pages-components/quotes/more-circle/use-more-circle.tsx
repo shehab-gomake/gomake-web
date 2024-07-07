@@ -96,18 +96,18 @@ const useMoreCircle = () => {
         icon: <JobsIcon />,
         name: t("sales.quote.jobs")
       },
-      // {
-      //   condition: documentType === DOCUMENT_TYPE.order && quote?.isCanClose && quote?.statusTitleText !== "Order.Canceled",
-      //   onClick: () => navigate(`/deliveryNote?isNewCreation=true&orderId=${quote?.id}`),
-      //   icon: <TickIcon />,
-      //   name: t("sales.quote.closeAsDeliveryNote")
-      // },
-      // {
-      //   condition: documentType === DOCUMENT_TYPE.order && quote?.isCanClose && quote?.statusTitleText !== "Order.Canceled",
-      //   onClick: () => navigate(`/invoice?isNewCreation=true&orderId=${quote?.id}`),
-      //   icon: <TickIcon />,
-      //   name: t("sales.quote.closeAsInvoice")
-      // },
+      {
+        condition: documentType === DOCUMENT_TYPE.order && quote?.isCanClose && quote?.statusTitleText !== "Order.Canceled",
+        onClick: () => navigate(`/deliveryNote?isNewCreation=true&orderId=${quote?.id}`),
+        icon: <TickIcon />,
+        name: t("sales.quote.closeAsDeliveryNote")
+      },
+      {
+        condition: documentType === DOCUMENT_TYPE.order && quote?.isCanClose && quote?.statusTitleText !== "Order.Canceled",
+        onClick: () => navigate(`/invoice?isNewCreation=true&orderId=${quote?.id}`),
+        icon: <TickIcon />,
+        name: t("sales.quote.closeAsInvoice")
+      },
       {
         condition: documentType === DOCUMENT_TYPE.order && quote?.isCanClose && quote?.statusTitleText !== "Order.Canceled",
         onClick: () => navigate(`/purchaseOrders?orderNumber=${quote?.number}`),
