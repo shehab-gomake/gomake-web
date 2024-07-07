@@ -31,7 +31,7 @@ import { PrintImageComponent } from "@/widgets/product-pricing-widget/components
 import ClearRoundedIcon from "@mui/icons-material/ClearRounded";
 import { SettingsIcon } from "@/icons/settings";
 import { SettingsMenu } from "./settings-menu";
-import { WarningIcon } from "@/icons";
+import { PlusIcon, WarningIcon } from "@/icons";
 import { PermissionCheck } from "@/components/CheckPermission";
 import { Permissions } from "@/components/CheckPermission/enum";
 interface IActionContainerComponentProps extends IWorkFlowAction {
@@ -52,6 +52,7 @@ const Actions = ({
   workFlowId,
   productType,
 }: IActionsComponentProps) => {
+  console.log("actions", actions)
   return (
     <Stack gap={"10px"}>
       {actions?.map((action, index) => {
@@ -641,6 +642,19 @@ const ActionContainerComponent = ({
                 {imageOutputs.map((parameter) => (
                   <PrintImageComponent {...parameter} />
                 ))}
+                <Divider orientation={"vertical"} flexItem />
+                <Stack
+                  padding={"10px 0"}
+                  direction={"row"}
+                  gap={"16px"}
+                  flexWrap={"wrap"}
+                >
+                  <span style={classes.detailTitle}>Notes:</span>
+                  <div>Test tttes ....</div>
+                  <IconButton>
+                    <PlusIcon />
+                  </IconButton>
+                </Stack>
               </Stack>
             </>
           )}
