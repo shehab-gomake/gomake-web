@@ -34,6 +34,7 @@ import { SettingsMenu } from "./settings-menu";
 import { PlusIcon, WarningIcon } from "@/icons";
 import { PermissionCheck } from "@/components/CheckPermission";
 import { Permissions } from "@/components/CheckPermission/enum";
+import { NotesForActionModal } from "./notes-for-action-modal";
 interface IActionContainerComponentProps extends IWorkFlowAction {
   delay?: number;
   workFlowId?: string;
@@ -182,6 +183,13 @@ const ActionContainerComponent = ({
   const [chooseMachine, setChooseMachine] = useState<boolean>(false);
   const [chooseMaterial, setChooseMaterial] = useState<boolean>(false);
   const [chooseEmployee, setChooseEmployee] = useState<boolean>(false);
+  const [openModal, setOpenModal] = useState<boolean>(false);
+  const handleOnClose = () => {
+    setOpenModal(false);
+  }
+  const handleOnOpen = () => {
+    setOpenModal(true);
+  }
   const currentProductItemValue = useRecoilValue(currentProductItemValueState);
   const { t } = useTranslation();
   const {
@@ -651,7 +659,7 @@ const ActionContainerComponent = ({
                 >
                   <span style={classes.detailTitle}>Notes:</span>
                   <div>Test tttes ....</div>
-                  <IconButton>
+                  <IconButton onClick={handleOnOpen}>
                     <PlusIcon />
                   </IconButton>
                 </Stack>
@@ -669,6 +677,7 @@ const ActionContainerComponent = ({
           machineName={machineName}
           categoryId={categoryId}
         />
+        <NotesForActionModal openModal={openModal} onClose={handleOnClose} />
         <GoMakeDeleteModal
           insideStyle={classes.insideStyle}
           openModal={openModalMachine}
