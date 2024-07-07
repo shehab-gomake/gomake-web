@@ -14,7 +14,7 @@ import { HEADER_HEIGHT } from "@/utils/layout-config";
 const useStyle = () => {
   const { t } = useTranslation();
   const { neutralColor, primaryColor, successColor } = useGomakeTheme();
-  const clasess = useMemo(() => {
+  const classes = useMemo(() => {
     return {
       container: {
         display: "flex",
@@ -140,9 +140,9 @@ const useStyle = () => {
         backgroundColor: "#cccccc",
       },
       avatarProps: {
-        width: "30px",
-        height: "30px",
-        fontSize: "12px",
+        width: 26,
+        height: 26,
+        fontSize: "11px",
       },
       menuItemTextStyle: {
         display: "flex",
@@ -187,10 +187,13 @@ const useStyle = () => {
         color: "#3C4257",
         borderColor: "#DDDEE1",
       },
+      iconBtnContainer:{
+        padding:"5px"
+      }
     };
   }, [i18next.language, t]);
   return {
-    clasess,
+    classes,
   };
 };
 export { useStyle };
