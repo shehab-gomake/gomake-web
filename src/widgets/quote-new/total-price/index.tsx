@@ -26,7 +26,6 @@ const TotalPriceComp = ({
   const { CheckDocumentPermission } = useUserPermission();
 
   const quoteItemValue = useRecoilValue<any>(quoteItemState);
-  console.log("quoteItems", { quoteItems, quoteItemValue })
   const onBlurTotalPayment = async () => {
     getCalculateQuote(2, quoteItems?.totalPayment);
     setIsUpdateTotalPayment(null);

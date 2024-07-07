@@ -23,8 +23,6 @@ const useFilesUploaderSignalr = () => {
             getAllBoardMissionsUploadingFiles(callApi, (res) => {
                 setFiles(res?.data);
                 setShowFileUploader(res?.data?.length > 0);
-
-                console.log(res?.data);
             }, connectionId).then();
         }
     }, [connectionId]);

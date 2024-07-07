@@ -65,7 +65,6 @@ const useUploadFiles = (orderItemId, filesPath) => {
             });
 
             const data = await response.json();
-            console.log(`Chunk ${chunkIndex + 1} of ${totalChunks}:`, data);
         } catch (error) {
             console.error('Error uploading chunk:', error);
         }

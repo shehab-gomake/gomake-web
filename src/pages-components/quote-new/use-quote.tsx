@@ -52,6 +52,9 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
   const { t } = useTranslation();
   const { getQuote, getAllClientContacts } = useQuoteGetData(docType);
   const [quoteItemValue, setQuoteItemValue] = useRecoilState<any>(quoteItemState);
+  useEffect(() => {
+    setQuoteItemValue([])
+  }, [])
 
   const quoteConfirm = useRecoilValue<any>(quoteConfirmationState);
   const [selectDate, setSelectDate] = useState(isQuoteConfirmation ? quoteConfirm?.dueDate : quoteItemValue?.dueDate);

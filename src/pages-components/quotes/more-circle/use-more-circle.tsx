@@ -32,7 +32,7 @@ const useMoreCircle = () => {
   }) => {
     const documentPath = DOCUMENT_TYPE[documentType];
     const { callApi } = useGomakeAxios();
-    const showNewDuplicate = documentType === DOCUMENT_TYPE.deliveryNote || documentType === DOCUMENT_TYPE.deliveryNoteRefund || documentType === DOCUMENT_TYPE.invoice || documentType === DOCUMENT_TYPE.invoiceRefund;
+    
     const onClickGetOrderBoardMissionPDF = async (quoteItem) => {
       const callBack = (res) => {
         if (res?.success) {
@@ -44,9 +44,19 @@ const useMoreCircle = () => {
       await getOrderBoardMissionPDF(callApi, callBack, { documentId: quoteItem?.id });
     };
 
+    const isQuote = documentType === DOCUMENT_TYPE.quote;
+    const isOrder = documentType === DOCUMENT_TYPE.order;
+    const isDeliveryNote = documentType === DOCUMENT_TYPE.deliveryNote;
+    const isDeliveryNoteRefund = documentType === DOCUMENT_TYPE.deliveryNoteRefund;
+    const isInvoice = documentType === DOCUMENT_TYPE.invoice;
+    const isInvoiceRefund = documentType === DOCUMENT_TYPE.invoiceRefund;
+    const isPurchaseInvoice = documentType === DOCUMENT_TYPE.purchaseInvoice;
+    const isPurchaseOrder = documentType === DOCUMENT_TYPE.purchaseOrder;
+    const showNewDuplicate = isDeliveryNote || isDeliveryNoteRefund || isInvoice || isInvoiceRefund;
+
     return [
       {
-        condition: documentType === DOCUMENT_TYPE.quote && quote?.isEditable,
+        condition: isQuote && quote?.isEditable,
         onClick: () => {
           const isCreateStatus = quote?.documentStatus === QUOTE_STATUSES.Create;
           isCreateStatus ? navigate(`/quote`) : onClickOpenModal(quote);
@@ -73,13 +83,13 @@ const useMoreCircle = () => {
         name: t("sales.quote.pdf")
       },
       {
-        condition: documentType === DOCUMENT_TYPE.order && quote?.isCanClose && quote?.statusTitleText !== "Order.Canceled",
+        condition: isOrder && quote?.isCanClose && quote?.statusTitleText !== "Order.Canceled",
         onClick: () => onClickGetOrderBoardMissionPDF(quote),
         icon: <PDFIcon />,
         name: t("sales.quote.boardMissionsPdf")
       },
       {
-        condition: documentType === DOCUMENT_TYPE.order || documentType === DOCUMENT_TYPE.quote,
+        condition: isOrder || isQuote,
         onClick: () => onClickDuplicate(quote?.id),
         icon: <DuplicateIcon />,
         name: t("sales.quote.duplicate")
@@ -91,67 +101,67 @@ const useMoreCircle = () => {
         name: t("sales.quote.duplicate")
       },
       {
-        condition: documentType === DOCUMENT_TYPE.order && quote?.isCanClose && CheckPermission(Permissions.SHOW_BOARD_MISSIONS),
+        condition: isOrder && quote?.isCanClose && CheckPermission(Permissions.SHOW_BOARD_MISSIONS),
         onClick: () => navigate(`/board-missions?orderNumber=${quote?.number}`),
         icon: <JobsIcon />,
         name: t("sales.quote.jobs")
       },
-      // {
-      //   condition: documentType === DOCUMENT_TYPE.order && quote?.isCanClose && quote?.statusTitleText !== "Order.Canceled",
-      //   onClick: () => navigate(`/deliveryNote?isNewCreation=true&orderId=${quote?.id}`),
-      //   icon: <TickIcon />,
-      //   name: t("sales.quote.closeAsDeliveryNote")
-      // },
-      // {
-      //   condition: documentType === DOCUMENT_TYPE.order && quote?.isCanClose && quote?.statusTitleText !== "Order.Canceled",
-      //   onClick: () => navigate(`/invoice?isNewCreation=true&orderId=${quote?.id}`),
-      //   icon: <TickIcon />,
-      //   name: t("sales.quote.closeAsInvoice")
-      // },
       {
-        condition: documentType === DOCUMENT_TYPE.order && quote?.isCanClose && quote?.statusTitleText !== "Order.Canceled",
+        condition: isOrder && quote?.isCanClose && quote?.statusTitleText !== "Order.Canceled",
+        onClick: () => navigate(`/deliveryNote?isNewCreation=true&orderId=${quote?.id}`),
+        icon: <TickIcon />,
+        name: t("sales.quote.closeAsDeliveryNote")
+      },
+      {
+        condition: (isOrder && quote?.isCanClose && quote?.statusTitleText !== "Order.Canceled") ||
+          (isDeliveryNote && quote?.isCanClose),
+        onClick: () => {
+          const path = isOrder
+            ? `/invoice?isNewCreation=true&orderId=${quote?.id}`
+            : `/invoice?isNewCreation=true&deliveryNoteId=${quote?.id}`;
+          navigate(path);
+        },
+        icon: <TickIcon />,
+        name: t("sales.quote.closeAsInvoice")
+      },
+      {
+        condition: isOrder && quote?.isCanClose && quote?.statusTitleText !== "Order.Canceled",
         onClick: () => navigate(`/purchaseOrders?orderNumber=${quote?.number}`),
         icon: <TickMoveIcon />,
         name: t("sales.quote.purchaseOrders")
       },
       {
-        condition: documentType === DOCUMENT_TYPE.deliveryNote && quote?.isCanClose,
-        onClick: () => navigate(`/invoice?isNewCreation=true&deliveryNoteId=${quote?.id}`),
-        icon: <TickIcon />,
-        name: t("sales.quote.closeAsInvoice")
-      },
-      {
-        condition: documentType === DOCUMENT_TYPE.deliveryNote && quote?.isCanClose,
+        condition: isDeliveryNote && quote?.isCanClose,
         onClick: () => navigate(`/deliveryNoteRefund?isNewCreation=true&documentId=${quote?.id}`),
         icon: <TickIcon />,
         name: t("sales.quote.createDeliveryNoteRefund")
       },
       {
-        condition: documentType === DOCUMENT_TYPE.invoice && quote?.isCanClose,
+        condition: isInvoice && quote?.isCanClose,
         onClick: () => navigate(`/invoiceRefund?isNewCreation=true&documentId=${quote?.id}`),
         icon: <TickIcon />,
         name: t("sales.quote.createInvoiceRefund")
       },
       {
-        condition: documentType === DOCUMENT_TYPE.purchaseInvoice && quote?.isCanClose,
+        condition: isPurchaseInvoice && quote?.isCanClose,
         onClick: () => navigate(`/purchaseInvoiceRefund?isNewCreation=true&documentId=${quote?.id}`),
         icon: <TickIcon />,
         name: t("sales.quote.createPurchaseInvoiceRefund")
       },
       {
-        condition: documentType === DOCUMENT_TYPE.purchaseOrder && quote?.isCanClose,
+        condition: isPurchaseOrder && quote?.isCanClose,
         onClick: () => navigate(`/purchaseInvoice?isNewCreation=true&orderId=${quote?.id}`),
         icon: <TickIcon />,
         name: t("sales.quote.closeAsPurchaseInvoice")
       },
       {
-        condition: documentType === DOCUMENT_TYPE.order && quote?.isCanClose && quote?.statusTitleText !== "Order.Canceled",
+        condition: isOrder && quote?.isCanClose && quote?.statusTitleText !== "Order.Canceled",
         onClick: () => quote?.closeOrderNotes && quote?.closeOrderNotes.tirm !== "" ? onClickOpenCloseOrderNotesModal(quote) : onClickOpenCloseOrderModal(quote),
         icon: <LockIcon />,
         name: t("sales.quote.close")
       },
       {
-        condition: documentType === DOCUMENT_TYPE.order && quote?.isCanClose && quote?.statusTitleText !== "Order.Canceled",
+        condition: isOrder && quote?.isCanClose && quote?.statusTitleText !== "Order.Canceled",
         onClick: () => onClickOpenIrrelevantModal(quote),
         icon: <TickCloseIcon />,
         name: t("sales.quote.cancel")

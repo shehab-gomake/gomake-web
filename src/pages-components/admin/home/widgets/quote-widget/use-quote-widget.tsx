@@ -96,6 +96,16 @@ const useQuoteWidget = ({ documentType = 0 }: any) => {
       searchTerm: SearchTerm,
     });
   }, []);
+  const [clientListData, setClientListData] = useState([])
+  const getAllCustomersCreateOrder = useCallback(async () => {
+    await getAndSetAllCustomers(callApi, setClientListData, {
+      ClientType: "C",
+      onlyCreateOrderClients: true,
+    });
+  }, []);
+  useEffect(() => {
+    getAllCustomersCreateOrder()
+  }, [])
 
   const handleOpenModal = (newClient) => {
     //setPreviousClient(selectedClient ? selectedClient : previousClient);
@@ -318,7 +328,8 @@ const useQuoteWidget = ({ documentType = 0 }: any) => {
     previousClient,
     QuoteId,
     setQuoteId,
-    getAllClientTypes
+    getAllClientTypes,
+    clientListData,
   };
 };
 

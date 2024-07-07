@@ -89,7 +89,6 @@ const useButtonsConfirmContainer = () => {
         setApproveSignatureModal(false)
     }
     const onClickApprove = async (dataURL, signerName) => {
-        console.log("dataURL", { dataURL, signerName })
         const selectedItemIds = quoteConfirm?.documentItems?.filter(x => x.isChecked)?.map(x => x.id);
 
         if (!selectedItemIds || selectedItemIds.length === 0) {
