@@ -30,7 +30,8 @@ const AddRuleModal = ({
   selectedProperties,
   getProperitesService,
   isQuoteWidge = false,
-  filterData
+  filterData,
+    onCreate
 }: any) => {
   const { clasess } = useStyle();
   const { t } = useTranslation();
@@ -66,7 +67,8 @@ const AddRuleModal = ({
     renderOptions,
     checkWhatRenderArray,
     onSelectDeliveryTimeDates,
-    resetDatePicker
+    resetDatePicker,
+      mappingRules
   } = useAddRuleModal({
     typeExceptionSelected,
     selectedPricingBy,
@@ -82,6 +84,7 @@ const AddRuleModal = ({
   });
   const [selectedCategories, setSelectedCategories] = useState<any>("")
   const [selectedStatment2, setSelectedStatment2] = useState<any>("")
+    const [selectedProfitModel, setSelectedProfitModel] = useState<number>(null);
   const router = useRouter();
   const [selectedOutputs, setSelectedOutputs] =
     useState<selectedOutputsProps>();
@@ -759,6 +762,24 @@ const AddRuleModal = ({
               />
             </div>
           )}
+            {typeExceptionSelected === ETypeException.PROFIT && (
+            <div style={{ width: "20%" }}>
+              <div style={clasess.selectTypeStyle}>
+                {t("products.profits.exceptions.additionalProfit")}
+              </div>
+                <GoMakeAutoComplate
+                    options={[
+                        { label: "Action", value: 0 },
+                        { label: "Product", value: 1 },
+                    ]}
+                    placeholder={t("products.profits.exceptions.selectValue")}
+                    style={clasess.autoComplateStyle}
+                    onChange={(e: any, value: any) => {
+                        setSelectedProfitModel(value?.value);
+                    }}
+                />
+            </div>
+          )}
 
           {isPropertiesWidge && _renderInptsForProperties()}
           {isQuoteWidge && _renderInptsForQuotes()}
@@ -776,6 +797,13 @@ const AddRuleModal = ({
             <GomakePrimaryButton
               style={clasess.sendBtn}
               onClick={() => {
+                  if (onCreate) {
+                      onCreate({
+                          exceptionConditionProperties: mappingRules(),
+                          profitsModel: selectedProfitModel,
+                          expression: expression
+                      })
+                  }else {
                 if (isPropertiesWidge) {
                   createProperties();
                 } else if (isQuoteWidge) {
@@ -783,6 +811,7 @@ const AddRuleModal = ({
                 } else {
                   create();
                 }
+                  }
               }}
             >
               {t("properties.create")}
