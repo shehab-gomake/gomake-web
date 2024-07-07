@@ -112,7 +112,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [subProducts, setSubProducts] = useRecoilState<any>(
     subProductsParametersState
   );
-  console.log("productTemplate", productTemplate)
   const [isSetTemplete, setIsSetTemplete] = useState<boolean>(false);
   const setSubProductsCopy = useSetRecoilState<any>(
     subProductsCopyParametersState
@@ -159,6 +158,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const setSelectParameterButton = useSetRecoilState(
     selectParameterButtonState
   );
+  const [deviceCategory, setDeviceCategory] = useState("")
+  const [deviceSize, setDeviceSize] = useState("")
 
   const {
     calculationResult,
@@ -527,9 +528,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           return subSection.parameters?.map((parameter) => {
             const index = temp.findIndex(
               (item) =>
-                item.parameterId === parameter.id &&
-                item.sectionId === section.id &&
-                item.subSectionId === subSection.id &&
+                item.id === parameter.id &&
+                item?.code === parameter.code &&
                 item.actionIndex === parameter.actionIndex
             );
             if (index !== -1) {
@@ -547,6 +547,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           });
         });
       });
+
+      // Filter out items where isHidden === true
+      temp = temp.filter(item => !item.isHidden);
 
       setIsRequiredParameters(temp);
       setActiveSectionRequiredParameters(activeSectionTemp);
@@ -850,6 +853,17 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               }
             }
 
+          });
+        });
+        subProducts.forEach(subProduct => {
+          subProduct.parameters.forEach(parameter => {
+            if (parameter.parameterCode === "devicecategory") {
+              setDeviceCategory(parameter?.values[0])
+
+            }
+            else if (parameter?.parameterCode === "devicesize") {
+              setDeviceSize(parameter?.values[0])
+            }
           });
         });
         setProductTemplate(productTemplate)
@@ -1212,6 +1226,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         // supplierId: graphicDesigner && graphicDesigner?.id,
         customerID: router?.query?.customerId,
         unitPrice: +currentProductItemValueTotalPrice / +quantity?.values[0],
+        finalPrice: +currentProductItemValueTotalPrice,
         amount: quantity?.values[0],
         isNeedGraphics: false,
         isUrgentWork: urgentOrder,
@@ -1259,8 +1274,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     return temp[index];
   };
 
-  const [deviceCategory, setDeviceCategory] = useState("")
-  const [deviceSize, setDeviceSize] = useState("")
+
 
   useEffect(() => {
     if (subProducts) {
@@ -2108,7 +2122,29 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
 
         }
+
         if (subSectionParameter.id == "0fdbca1a-f250-447b-93e3-5b91909da59c") {
+          if (!quantity) {
+            temp.push({
+              parameterId: "4991945c-5e07-4773-8f11-2e3483b70b53",
+              sectionId: sectionId,
+              subSectionId: subSectionId,
+              ParameterType: 1,
+              parameterName: "Quantity",
+              actionId: null,
+              values: [
+                "0"
+              ],
+              valueIds: [
+                null
+              ],
+              actionIndex: 0,
+              parameterCode: "quantity",
+              valuesConfigs: [],
+              unitKey: null,
+              unitType: 0
+            })
+          }
           //setQuantity
           const setUnits = setUnitsParameter ? setUnitsParameter.values[0] : 0;
           temp = temp.map((x) =>
@@ -2118,6 +2154,27 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           );
         }
         if (subSectionParameter.id == "91d3fe77-b852-4974-beb6-2da7d7616c78") {
+          if (!quantity) {
+            temp.push({
+              parameterId: "4991945c-5e07-4773-8f11-2e3483b70b53",
+              sectionId: sectionId,
+              subSectionId: subSectionId,
+              ParameterType: 1,
+              parameterName: "Quantity",
+              actionId: null,
+              values: [
+                "0"
+              ],
+              valueIds: [
+                null
+              ],
+              actionIndex: 0,
+              parameterCode: "quantity",
+              valuesConfigs: [],
+              unitKey: null,
+              unitType: 0
+            })
+          }
           // SetUnits
           const setQuantity = setQuantityParameter
             ? setQuantityParameter.values[0]
@@ -2496,10 +2553,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     setBillingMethod(null);
     setGraphicDesigner(null);
   };
-  const onClickGraphicDesignTab = () => {
-    setActiveTab(t("products.offsetPrice.admin.graphicDesign"));
-    setSamlleType(null);
-  };
+  // const onClickGraphicDesignTab = () => {
+  //   setActiveTab(t("products.offsetPrice.admin.graphicDesign"));
+  //   setSamlleType(null);
+  // };
   const onClickLogsTab = () => {
     setActiveTab(t("products.offsetPrice.admin.logs"));
     setBillingMethod(null);
@@ -2515,10 +2572,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       name: t("quality.production"),
       onclick: () => onClickProductionTab,
     },
-    {
-      name: t("products.offsetPrice.admin.graphicDesign"),
-      onclick: () => onClickGraphicDesignTab,
-    },
+    // {
+    //   name: t("products.offsetPrice.admin.graphicDesign"),
+    //   onclick: () => onClickGraphicDesignTab,
+    // },
   ];
 
   const getProductById = async (materials) => {
@@ -2633,13 +2690,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     let checkParameter = validateParameters(activeSectionRequiredParameters, subProducts);
     setCheckParameter(checkParameter)
   }, [isRequiredParameters])
-  // useEffect(() => {
-  //   let checkParameter = validateParameters(isRequiredParameters);
-  //   // if (checkParameter) {
-  //   //   setCanCalculation(true)
-  //   // }
 
-  // }, [isRequiredParameters])
   const calculationProduct = useDebouncedCallback(async (currentSubProducts) => {
     if (requestAbortController) {
       requestAbortController.abort();
@@ -2851,6 +2902,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         supplierId: "",
         customerID: router?.query?.customerId,
         unitPrice: +currentProductItemValueTotalPrice / +quantity?.values[0],
+        finalPrice: +currentProductItemValueTotalPrice,
         amount: quantity?.values[0],
         isNeedGraphics: false,
         isUrgentWork: urgentOrder,

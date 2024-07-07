@@ -121,11 +121,8 @@ const AddContactNewWidget = ({
           }
         />
         <PhoneInputUpdatedValues
-          value={
-            selectedContactById?.phone !== null
-              ? selectedContactById?.phone
-              : t("sales.quote.noMobileContact")
-          }
+          value={selectedContactById?.phone}
+          placeholder={selectedContactById?.phone ? selectedContactById?.phone : t("sales.quote.noMobileContact")}
           label={t("sales.quote.mobileContact")}
           onBlur={onBlurContactMobile}
           isUpdate={isUpdateContactMobile}
@@ -133,11 +130,8 @@ const AddContactNewWidget = ({
           onInputChange={onInputChangePhone}
         />
         <InputUpdatedValues
-          value={
-            selectedContactById?.mail !== null
-              ? selectedContactById?.mail
-              : t("sales.quote.noContactEmail")
-          }
+          value={selectedContactById?.mail}
+          placeholder={selectedContactById?.mail ? selectedContactById?.mail : t("sales.quote.noContactEmail")}
           label={t("sales.quote.contactEmail")}
           onBlur={onBlurContactEmail}
           isUpdate={isUpdateContactEmail}
