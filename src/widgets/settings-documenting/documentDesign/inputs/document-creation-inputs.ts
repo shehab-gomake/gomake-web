@@ -26,6 +26,7 @@ const creationDocumentInputs = (state) => {
             options: documentTypes,
             value: state?.docType,
             isValid: true,
+            disableClearable:true
         },
         {
             name: "agent",
