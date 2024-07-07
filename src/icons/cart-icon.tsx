@@ -1,8 +1,10 @@
-const CartIcon = () => {
+import { IIconProps } from "@/components/icons/interface";
+
+const CartIcon = (props: IIconProps) => {
     return (
         <svg
-            width="30"
-            height="30"
+            width= {props?.width || "30" }
+            height={props?.height || "30" }
             viewBox="0 0 40 40"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
