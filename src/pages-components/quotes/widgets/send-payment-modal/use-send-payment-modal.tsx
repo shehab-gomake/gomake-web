@@ -21,24 +21,29 @@ const useSendPaymentModal = ({openPaymentModal}) => {
         }
     }, [openPaymentModal]); 
 
+    const formatFloatValue = (value, decimals) => {
+        const parsedValue = parseFloat(value);
+        return isNaN(parsedValue) ? '' : parsedValue.toFixed(decimals);
+      };
+
     const onChangePaymentInputs = (key, value) => {
         setPayState((prev) => {
             let newState = { ...prev };
             if (key === "percentageOfTotal") {
-                const percentage = parseFloat(value) || 0;
+                const percentage = value || 0;
                 const totalToPay = (percentage / 100) * originalTotalPayment;
                 newState = {
                     ...prev,
                     percentageOfTotal: percentage,
-                    totalPayment: totalToPay
+                    totalPayment: Number(formatFloatValue(totalToPay, 3))
                 };
             } else if (key === "totalPayment") {
-                const totalToPay = parseFloat(value) || 0;
+                const totalToPay = value || 0;
                 const percentage = (totalToPay / originalTotalPayment) * 100;
                 newState = {
                     ...prev,
                     totalPayment: totalToPay,
-                    percentageOfTotal: percentage
+                    percentageOfTotal: Number(formatFloatValue(percentage, 3))
                 };
             } else if (key === "contactName" || key === "contactPhone" || key === "contactMail") {
                 newState.documentContacts = prev.documentContacts.map((contact, index) =>

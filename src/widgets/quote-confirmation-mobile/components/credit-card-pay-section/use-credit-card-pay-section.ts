@@ -64,11 +64,10 @@ const useCreditCardPaySection = () => {
         value: index + 1,
     }));
 
-    // the length is depend on what i get from the modal "quoteConfirm?.maxPayments"
-    const numberOfPaymentsNEW = Array.from({ length: 13 }, (_, index) => ({
-        label: index + 1,
-        value: index + 1,
-    }));
+    // const numberOfPayments = Array.from({ length: quoteConfirm?.maxPayments }, (_, index) => ({
+    //     label: index + 1,
+    //     value: index + 1,
+    // }));
 
     const handleCardNumberChange = (e) => {
         const formattedInput = e.target.value.replace(/\D/g, '');
