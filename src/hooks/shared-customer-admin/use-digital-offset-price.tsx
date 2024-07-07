@@ -1352,6 +1352,28 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       }
     }
   }, [subProducts, setSubProducts]);
+
+  function findParameterInTemplate(template, parameterCodes) {
+    let foundParameters = [];
+
+    // Helper function to search within a given section or subsection
+    function searchParameters(parameters, sectionId, subSectionId) {
+      parameters.forEach(param => {
+        if (parameterCodes.includes(param.code)) {
+          foundParameters.push({ ...param, sectionId, subSectionId });
+        }
+      });
+    }
+
+    // Iterate through sections and their subsections
+    template.sections.forEach(section => {
+      section.subSections.forEach(subSection => {
+        searchParameters(subSection.parameters, section.id, subSection.id);
+      });
+    });
+
+    return foundParameters;
+  }
   const getMaterialCategories = async () => {
     let copySubProducts = cloneDeep(subProducts)
     // i need check the type when the device parameter not in the first section *** Important ***
@@ -1365,12 +1387,44 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       if (res?.success) {
         sizesParametersArray.push({ parameterCode: "Width", value: res?.data?.printedMaterialWidth });
         sizesParametersArray.push({ parameterCode: "Height", value: res?.data?.printedMaterialLength });
-        sizesParametersArray.push({ parameterCode: "size", value: "custom" });
+
+        // Clone the product template
+        let templateCopy = cloneDeep(productTemplate);
+
+        // Check if the template contains a parameter with code "size"
+        const sizeParameterExists = findParameterInTemplate(templateCopy, ["size"]).length > 0;
+
+        // Push 'custom' size code if the template has a size parameter
+        if (sizeParameterExists) {
+          sizesParametersArray.push({ parameterCode: "size", value: "custom" });
+        }
         sizesParametersArray.forEach(parameter => {
-          let dieCutSizeSubProductParameter = temp.find(x => x.parameterCode == parameter.parameterCode);
+          let dieCutSizeSubProductParameter = temp.find(x => x.parameterCode === parameter.parameterCode);
           if (dieCutSizeSubProductParameter) {
-            dieCutSizeSubProductParameter.values = [parameter.value]
-            dieCutSizeSubProductParameter.isDisabled = (res?.data?.printedMaterialWidth === null && res?.data?.printedMaterialLength == null) ? false : true;
+            dieCutSizeSubProductParameter.values = [parameter.value];
+            dieCutSizeSubProductParameter.isDisabled = (res?.data?.printedMaterialWidth === null && res?.data?.printedMaterialLength === null) ? false : true;
+          } else {
+            const foundParameters = findParameterInTemplate(templateCopy, ["Width", "Height"]);
+            if (foundParameters?.length > 0) {
+              foundParameters.forEach(myparameter => {
+                temp.push({
+                  parameterId: myparameter.id,
+                  sectionId: myparameter.sectionId,
+                  subSectionId: myparameter.subSectionId,
+                  ParameterType: myparameter.parameterType,
+                  parameterName: myparameter.name,
+                  actionId: myparameter.actionId,
+                  values: [parameter.value],
+                  valueIds: [],
+                  actionIndex: myparameter.actionIndex,
+                  parameterCode: myparameter.code,
+                  valuesConfigs: myparameter.valuesConfigs,
+                  unitKey: myparameter.unitKey,
+                  unitType: myparameter.unitType,
+                  isDisabled: true,
+                });
+              });
+            }
           }
         });
 
