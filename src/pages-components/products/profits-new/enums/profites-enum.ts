@@ -16,6 +16,7 @@ export enum ETypeException {
   NEWBASE = 1,
   EDITBASE = 2,
   DEFAULT = 3,
+  PROFIT
 }
 
 export enum EProfitRowType {
@@ -37,4 +38,5 @@ export enum EValueType {
   INPUTNUMBER = 3,
   INPUTTEXT = 4,
   BOOLEAN = 5,
+  PROFIT
 }
