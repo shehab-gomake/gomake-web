@@ -37,6 +37,7 @@ const RightSideWidget = ({
   errorMsg,
   calculationServerErrorState
 }: any) => {
+
   const {
     currentProductItemValueTotalPrice,
     calculationProgress,

@@ -82,14 +82,17 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const router = useRouter();
   const { alertFaultAdded, alertFaultUpdate, alertFault } = useSnackBar();
   const [isChargeForNewDie, setIsChargeForNewDie] = useState(false)
-  const { clientTypesValue, renderOptions, checkWhatRenderArray } =
-    useQuoteWidget(DOCUMENT_TYPE.quote);
+  const { clientTypesValue, renderOptions, checkWhatRenderArray, getAllClientTypes, clientListData } = useQuoteWidget(DOCUMENT_TYPE.quote);
   const { allMaterials, getAllMaterial } = useMaterials();
   const [selectedValueConfig, setSelectedValueConfig] = useRecoilState(
     selectedValueConfigState
   );
+  useEffect(() => {
+    getAllClientTypes()
+  }, [])
   const productTypesNumber = useRecoilValue<number>(productTypesNumberState);
   const [workTypes, setWorkTypes] = useState<any>([])
+
 
   const [samlleType, setSamlleType] = useState();
   const [isRequiredParameters, setIsRequiredParameters] = useState<any>([]);
@@ -1106,11 +1109,26 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       );
     }
     if (router?.query?.customerId) {
-      setClientDefaultValue(
-        renderOptions()?.find(
-          (item: any) => item?.id === router?.query?.customerId
-        )
-      );
+      if (renderOptions()?.find(
+        (item: any) => item?.id === router?.query?.customerId
+      )) {
+
+        setClientDefaultValue(
+          renderOptions()?.find(
+            (item: any) => item?.id === router?.query?.customerId
+          )
+        );
+      }
+      else {
+        setClientDefaultValue(
+          clientListData?.find(
+            (item: any) => item?.id === router?.query?.customerId
+          )
+          // clientListData
+        );
+      }
+
+
     }
   }, [
     clientTypesValue,

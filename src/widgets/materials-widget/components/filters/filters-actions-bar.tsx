@@ -116,8 +116,6 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
           if (key === "machines") {
             let filtersTemp = filters.find((item) => item.key === key)
             const filteredItems = filterItemsById(options, filtersTemp)
-            console.log(filteredItems);
-
             return (
               <GoMakeAutoComplate
                 key={materialCategory + "-" + key}
