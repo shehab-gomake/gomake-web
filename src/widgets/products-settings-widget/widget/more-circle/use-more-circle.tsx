@@ -20,7 +20,7 @@ const useMoreCircle = ({ updatedProduct, item, getActions }) => {
   const { callApi } = useGomakeAxios();
   const router = useRouter();
   const { t } = useTranslation();
-  const { setSnackbarStateValue, alertFaultAdded, alertSuccessAdded, alertSuccessDelete, alertFaultDelete } =
+  const { setSnackbarStateValue, alertFaultAdded, alertSuccessAdded, alertSuccessDelete, alertFaultDelete, alertFaultDuplicate } =
     useSnackBar();
   const [selectProduct, setSelectProduct] = useState<any>();
   const [setAllProducts, setSetAllProducts] = useState<any>([]);
@@ -37,15 +37,23 @@ const useMoreCircle = ({ updatedProduct, item, getActions }) => {
     setSelectProduct(null);
   };
   const [openDeleteRowModal, setOpenDeleteRowModal] = useState<boolean>(false);
+  const [openDuplicateRowModal, setOpenDuplicateRowModal] = useState<boolean>(false);
   const onClickCloseDeleteRowModal = () => {
     setOpenDeleteRowModal(false);
     handleClose();
-
   };
   const onClickOpenDeleteRowModal = () => {
     setOpenDeleteRowModal(true);
     handleClose();
+  };
 
+  const onClickCloseDuplicateRowModal = () => {
+    setOpenDuplicateRowModal(false);
+    handleClose();
+  };
+  const onClickOpenDuplicateRowModal = () => {
+    setOpenDuplicateRowModal(true);
+    handleClose();
   };
 
   const updatedProductInside = useCallback(async (product: any) => {
@@ -82,6 +90,25 @@ const useMoreCircle = ({ updatedProduct, item, getActions }) => {
       handleClose();
     }
   }, []);
+
+
+  const onClickDuplicateProduct = useCallback(async () => {
+    const res = await callApi(
+      "POST",
+      `/v1/printhouse-config/products/duplicate-product`,
+      {
+        productId: item?.id,
+      }
+    );
+    if (res?.success) {
+      alertSuccessAdded();
+      handleClose();
+      navigate(`/settings/products/edit/${res?.data?.data?.data}`);
+    } else {
+      alertFaultDuplicate();
+      handleClose();
+    }
+  }, [item]);
 
   const getSubProducts = useCallback(async () => {
     if (selectProduct?.id && !router.query.productId) {
@@ -134,7 +161,11 @@ const useMoreCircle = ({ updatedProduct, item, getActions }) => {
     openDeleteRowModal,
     onClickCloseDeleteRowModal,
     onClickOpenDeleteRowModal,
-    deleteProductById
+    deleteProductById,
+    openDuplicateRowModal,
+    onClickCloseDuplicateRowModal,
+    onClickOpenDuplicateRowModal,
+    onClickDuplicateProduct
   };
 };
 
