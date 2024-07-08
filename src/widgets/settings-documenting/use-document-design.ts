@@ -3,7 +3,6 @@ import { AddOrUpdateDocumentDesignDocApi, ResetDocumentDesigningApi, getAllDocum
 import { useTranslation } from "react-i18next";
 import { useRecoilState, useResetRecoilState, useSetRecoilState } from "recoil";
 import { documentDesignState, documentDesignURLState, documentTypeState } from "./state/documents-state";
-import { IDocumentDesign } from "./documentDesign/interface";
 
 const UseDocumentDesign = () => {
     const { callApi } = useGomakeAxios();
@@ -14,27 +13,11 @@ const UseDocumentDesign = () => {
     const setDocumentTypes = useSetRecoilState(documentTypeState);
     const setDocumentDesignURL = useSetRecoilState(documentDesignURLState);
 
-    const documentDesignChange = (documentDesign: IDocumentDesign) => {
-        setDocumentDesign(documentDesign);
-    }
 
     const getDocumentTypes = async () => {
-        const requiredDocumentTypes = [
-            "All",
-            "Quote",
-            "Order",
-            "DeliveryNotes",
-            "Invoice",
-            "Receipt",
-            "Purchase",
-            "PurchaseInvoice"
-        ];
         const callBack = (res) => {
             if (res.success) {
-                const documentType = res.data
-                .filter(doc => requiredDocumentTypes.includes(doc.value))
-                .sort((a, b) => requiredDocumentTypes.indexOf(a.value) - requiredDocumentTypes.indexOf(b.value))
-                .map(doc => ({
+                const documentType = res.data.map(doc => ({
                     value: doc.key,
                     text: t(`documentType.${doc.value}`)
                 }));
@@ -57,6 +40,7 @@ const UseDocumentDesign = () => {
     const AddOrUpdateDocumentDesign = async (documentDesign) => {
         const callBack = (res) => {
             if (res.success) {
+                // test
                 setDocumentDesignURL(res.data.previewUrl);
                 alertSuccessUpdate();
             } else {
@@ -93,9 +77,9 @@ const UseDocumentDesign = () => {
         AddOrUpdateDocumentDesign,
         ResetDocumentDesign,
         documentDesign,
-        documentDesignChange,
+        setDocumentDesign,
         handleChangeComments,
-        resetDocumentDesign
+        resetDocumentDesign,
     };
 
 };

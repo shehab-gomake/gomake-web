@@ -4,14 +4,12 @@ import { useStyle } from './style';
 import { GarlleryIcon } from '../icons/gallery-icon';
 import { useTranslation } from 'react-i18next';
 
-export const GoMakeFileFiled = ({ selectedNameFile }) => {
-  const {t} = useTranslation();
-  const [selectedFileNameinGomakeFiled, setselectedFileNameinGomakeFiled] = useState(
-    selectedNameFile || ''
-  );
+export const GoMakeImageFiled = ({ selectedNameFile , onChange}) => {
+  const { classes } = useStyle();
+  const { t } = useTranslation();
+  const [selectedFileNameInGoMakeFiled, setSelectedFileNameInGoMakeFiled] = useState(selectedNameFile || '');
   const [imagePreview, setImagePreview] = useState('');
   const fileInputRef = useRef(null);
-
 
   const handleButtonClick = () => {
     if (fileInputRef.current) {
@@ -20,35 +18,27 @@ export const GoMakeFileFiled = ({ selectedNameFile }) => {
   };
 
   useEffect(() => {
-    setselectedFileNameinGomakeFiled(selectedNameFile || '');
+    setSelectedFileNameInGoMakeFiled(selectedNameFile || '');
     setImagePreview(selectedNameFile);
   }, [selectedNameFile]);
 
-  const handleInputChange = (event) => {
-    const selectedFile = event.target.files?.[0];
-    setselectedFileNameinGomakeFiled(selectedFile.name);
-
-    if (selectedFile) {
+ 
+  const handleFileSelect = (e) => {
+    const file = e.target.files[0];
+    setSelectedFileNameInGoMakeFiled(file?.name);
+    if (file) {
       const reader = new FileReader();
-
-      reader.onloadend = () => {
-        const base64Data = reader.result as string;
-        setImagePreview(base64Data);
+      reader.onload = (e) => {
+        onChange(e.target.result);
       };
-
-      reader.readAsDataURL(selectedFile);
-    } else {
-      setImagePreview(''); 
+      reader.readAsDataURL(file);
     }
   };
-
-  const { classes } = useStyle();
-
   return (
     <div style={classes.inputContainer}>
       <div style={classes.fileInputStyle}>
-        {imagePreview ||  selectedFileNameinGomakeFiled ? (
-          <img src={imagePreview}  style={{ maxWidth: '35px', maxHeight: '35px' , display:"flex", alignItems:"center"}} />
+        {imagePreview ||  selectedFileNameInGoMakeFiled ? (
+          <img src={imagePreview}  style={{ width:"fit-content" , height:"fit-content" ,  maxHeight: '35px' , maxWidth: '100px', display:"flex", alignItems:"center"}} />
         ) : (
           <><GarlleryIcon /><label
               style={{
@@ -58,14 +48,14 @@ export const GoMakeFileFiled = ({ selectedNameFile }) => {
                 textOverflow: 'ellipsis',
               }}
             >
-              {selectedFileNameinGomakeFiled ? "" : t("general.uploadHere")}
+              {selectedFileNameInGoMakeFiled ? "" : t("general.uploadHere")}
             </label></>
         )}
         <input
           ref={fileInputRef}
           placeholder={t("general.upload")}
-          onChange={handleInputChange}
-          accept=".pdf, .jpg, .png"
+          onChange={handleFileSelect}
+          accept=".jpg, .jpeg, .png, .gif, .svg, .pdf"
           type="file"
           style={{ display: 'none' }}
         />

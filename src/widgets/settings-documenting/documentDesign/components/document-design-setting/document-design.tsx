@@ -15,7 +15,7 @@ const DocumentDesign = () => {
     const { classes } = useStyle();
     const { t } = useTranslation();
     const dir: "rtl" | "ltr" = t("direction");
-    const { AddOrUpdateDocumentDesign, ResetDocumentDesign, getDocumentTypes, documentDesign, documentDesignChange, getDocumentDesignByCreationDoc , handleChangeComments} = UseDocumentDesign();
+    const { AddOrUpdateDocumentDesign, ResetDocumentDesign, getDocumentTypes, documentDesign, getDocumentDesignByCreationDoc, handleChangeComments, setDocumentDesign } = UseDocumentDesign();
     const addDocumentDesign = async () => {
         await AddOrUpdateDocumentDesign(documentDesign);
     };
@@ -25,8 +25,21 @@ const DocumentDesign = () => {
     };
 
     const onChangeInputs = (key, value) => {
-        documentDesignChange({ ...documentDesign, [key]: value })
+        if (key === "pdfLogo") {
+            setDocumentDesign({ ...documentDesign, pdfLogoBase64: value, pdfLogo: value });
+        } else if (key === "pdfHeader") {
+            setDocumentDesign({ ...documentDesign, pdfHeaderBase64: value, pdfHeader: value });
+        } else if (key === "pdfFooter") {
+            setDocumentDesign({ ...documentDesign, pdfFooterBase64: value, pdfFooter: value });
+        } else {
+            setDocumentDesign({ ...documentDesign, [key]: value });
+        }
     }
+
+    // const onChangeInputs = (key, value) => {
+    //     setDocumentDesign({ ...documentDesign, [key]: value });
+    // }
+
 
     useEffect(() => {
         getDocumentTypes();
@@ -35,7 +48,7 @@ const DocumentDesign = () => {
     useEffect(() => {
         getDocumentDesignByCreationDoc(documentDesign?.docType, documentDesign?.agentId);
     }, [documentDesign?.docType, documentDesign?.agentId]);
-   
+
     const DocumentDesignSection1: { inputs: any[], title: string }[] = [
         { inputs: creationDocumentInputs(documentDesign), title: 'documentingDesign.documnetCreation.documentinCreation' },
         // { inputs: TitleDefinitionInputs(documentDesign), title: 'documentingDesign.TitleDefinition.TitleDefinition' },
@@ -83,7 +96,6 @@ const DocumentDesign = () => {
                     DocumentDesignSection2.map(section => {
                         return (
                             <FormInputsSectionComponent sectionTitle={section.title}>
-
                                 {
                                     section.inputs.map(companyInput => <FormInput key={companyInput.parameterKey}
                                         input={companyInput as IInput}
@@ -96,7 +108,7 @@ const DocumentDesign = () => {
                 }
             </Stack>
             <QRCodes />
-            <div style={{...classes.footerStyle,  marginRight: dir == "ltr" ? '10px' : '0px',marginLeft: dir == "rtl" ? '10px' : '0px',}}>
+            <div style={{ ...classes.footerStyle, marginRight: dir == "ltr" ? '10px' : '0px', marginLeft: dir == "rtl" ? '10px' : '0px', }}>
                 <SecondaryButton onClick={ResetDefaultDocumentDesign} variant="outlined" >{t("documentingDesign.Reset")}</SecondaryButton>
                 <SecondaryButton onClick={addDocumentDesign} variant="contained">{t('documentingDesign.Save')}</SecondaryButton>
             </div>

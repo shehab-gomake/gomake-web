@@ -73,7 +73,7 @@ const TitleDefinitionCustomLogoInputs = (state) => {
         {
             name: "Custom Logo",
             label: "documentingDesign.TitleDefinition.CustomLogo",
-            type: "file",
+            type: "imageFile",
             placeholder: "documentingDesign.TitleDefinition.CustomLogo",
             required: false,
             parameterKey: "pdfLogo",
@@ -83,7 +83,7 @@ const TitleDefinitionCustomLogoInputs = (state) => {
         {
             name: "Logo Upload",
             label: "documentingDesign.TitleDefinition.LogoUpload",
-            type: "file",
+            type: "imageFile",
             placeholder: "documentingDesign.TitleDefinition.LogoUpload",
             required: false,
             parameterKey: "pdfHeader",
@@ -294,7 +294,7 @@ const FooterInputs2 = (state) => {
         {
             name: "Footer Image",
             label: "documentingDesign.Footer.FooterImage",
-            type: "file",
+            type: "imageFile",
             placeholder: "documentingDesign.Footer.FooterImage",
             required: false,
             parameterKey: "pdfFooter",

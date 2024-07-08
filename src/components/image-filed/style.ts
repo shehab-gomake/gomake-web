@@ -20,6 +20,7 @@ const useStyle = () => {
             alignItems: 'center',
             boxShadow: '0px 1px 10px rgba(0, 0, 0, 0.08)',
             width: '100%',
+            height:"100%",
             color: '#8283BE',
             justifyContent:'space-between',
           },
