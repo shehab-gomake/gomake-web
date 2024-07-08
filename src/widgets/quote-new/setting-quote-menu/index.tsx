@@ -77,7 +77,6 @@ const SettingQuoteMenu = ({ handleClose, open, anchorEl, onBlurExchangeRate, set
             />
           </div>
           <Divider />
-
           <div style={clasess.menuRowStyle}>
             <div style={clasess.menuTabStyle}>{t("sales.quote.showPrices")}</div>
             <SecondSwitch
@@ -88,7 +87,7 @@ const SettingQuoteMenu = ({ handleClose, open, anchorEl, onBlurExchangeRate, set
           {quoteStateValue?.isForeignCurrency && <>
             <Divider />
             <div style={clasess.menuRowStyle}>
-              <div style={clasess.menuTabStyle}>Exchange rate</div>
+              <div style={clasess.menuTabStyle}>{t("sales.quote.exchangeRate")}</div>
               <InputUpdatedValues
                 value={exchangeRate}
                 onBlur={() => onBlurExchangeRate(exchangeRate)}
@@ -100,7 +99,6 @@ const SettingQuoteMenu = ({ handleClose, open, anchorEl, onBlurExchangeRate, set
                 <SyncIcon />
               </IconButton>
             </div></>}
-
           <Divider />
           <div style={clasess.menuRowStyle}>
             <div style={clasess.menuTabStyle}>{t("sales.quote.currency")}</div>

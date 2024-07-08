@@ -178,8 +178,8 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     t("products.profits.itemName"),
     isQuoteConfirmation ? quoteConfirm?.isShowDetails ? t("products.profits.details") : null : quoteItemValue?.isShowDetails ? t("products.profits.details") : null,
     t("sales.quote.amount"),
-    t("sales.quote.discount"),
     t("products.profits.pricingListWidget.unitPrice"),
+    t("sales.quote.discount"),
     t("products.offsetPrice.admin.finalPrice"),
     t("products.profits.more"),
   ].filter(Boolean);
@@ -361,10 +361,6 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
 
     })
   }
-
-
-  ///////////////////////////////// currency & exchange rate /////////////////////////////////
-
 
   const updatePurchaseNumber = async (value: string) => {
     if (router.query.isNewCreation) {
