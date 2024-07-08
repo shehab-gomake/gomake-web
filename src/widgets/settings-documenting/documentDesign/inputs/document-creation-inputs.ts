@@ -154,7 +154,7 @@ const TableSettingInputs2 = (state) => {
                 text: t(`documentingDesign.${item.text}`)
             })),
             parameterKey: "textVerticalAligen",
-            value: state?.textVerticalAligen ? state?.textVerticalAligen : " ",
+            value: state?.textVerticalAligen || "",
             isValid: true,
         },
 

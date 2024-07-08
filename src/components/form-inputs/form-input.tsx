@@ -144,6 +144,9 @@ const FormInput = ({ input, error, changeState, readonly }: IFormInput) => {
     if (input.type === "imageFile" || input.type === "image") {
       setSelectedNameFile(input.value);
     }
+    if (input.type === "switch") {
+      setSwitchValue(input.value);
+    }
     // setValues((!!input?.values ? input?.values : []) || (!!input?.defaultInDocsTypes ? input?.defaultInDocsTypes : []));
     if (input?.multiple) {
     }
