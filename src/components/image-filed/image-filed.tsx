@@ -4,7 +4,7 @@ import { useStyle } from './style';
 import { GarlleryIcon } from '../icons/gallery-icon';
 import { useTranslation } from 'react-i18next';
 
-export const GoMakeImageFiled = ({ selectedNameFile , onChange}) => {
+export const GoMakeImageFiled = ({ selectedNameFile , onChange }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
   const [selectedFileNameInGoMakeFiled, setSelectedFileNameInGoMakeFiled] = useState(selectedNameFile || '');
@@ -34,11 +34,12 @@ export const GoMakeImageFiled = ({ selectedNameFile , onChange}) => {
       reader.readAsDataURL(file);
     }
   };
+
   return (
     <div style={classes.inputContainer}>
       <div style={classes.fileInputStyle}>
         {imagePreview ||  selectedFileNameInGoMakeFiled ? (
-          <img src={imagePreview}  style={{ width:"fit-content" , height:"fit-content" ,  maxHeight: '35px' , maxWidth: '100px', display:"flex", alignItems:"center"}} />
+          <img src={imagePreview} style={classes.imageContainerStyle} />
         ) : (
           <><GarlleryIcon /><label
               style={{
