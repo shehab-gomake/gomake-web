@@ -7,6 +7,11 @@ import { PrimaryTable } from "@/components/tables/primary-table";
 import { PrimaryButton } from "@/components/button/primary-button";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { AddRuleModal } from "@/pages-components/products/profits-new/widgets/add-rule-modal";
+import { ETypeException, EValueType } from "@/pages-components/products/profits-new/enums/profites-enum";
+import {
+  EditProductProfitRulesModal
+} from "@/widgets/properties/properties-modals/edit-rule-modal/edit-product-rule-modal";
 
 const ProductManagementWidget = () => {
   const { t } = useTranslation();
@@ -21,6 +26,14 @@ const ProductManagementWidget = () => {
     allProductSKU,
     router,
     handleGoBack,
+    openAddProfitRule,
+    openEditProfitRule,
+    setEditProfitRule,
+    setOpenProfitRule,
+    addProductProfitRule,
+    editProductId,
+    setEditProductId,
+    setProductAddProfitRuleId
   } = useProductManagement();
 
   return (
@@ -120,6 +133,29 @@ const ProductManagementWidget = () => {
           </div>
         </div>
       </div> */}
+
+      <AddRuleModal
+        openModal={openAddProfitRule}
+        onCloseModal={() => setOpenProfitRule(false)}
+        isPropertiesWidge={true}
+        selectedProperties={{ ruleType: 0, valueType: EValueType.PROFIT, propertyName: 'Profit' }}
+        getProperitesService={''}
+        typeExceptionSelected={ETypeException.PROFIT}
+        onCreate={(v) => addProductProfitRule(v).then(() => setOpenProfitRule(false))}
+      />
+      <EditProductProfitRulesModal
+        openModal={openEditProfitRule}
+        onClose={() => {
+          setEditProfitRule(false);
+          setEditProductId('');
+        }}
+        onOpenAddRuleModal={() => {
+          setOpenProfitRule(true);
+          setProductAddProfitRuleId(editProductId);
+          setEditProductId('')
+        }}
+        productId={editProductId}
+      />
     </div>
   );
 };

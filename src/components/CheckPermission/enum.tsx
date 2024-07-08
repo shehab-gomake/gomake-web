@@ -90,7 +90,8 @@ export enum Permissions {
   MATERIALS_ADMIN = "MaterialAdmin",
   TRANSLATION_ADMIN = "TranslationAdmin",
   SHOW_PRINTHOUSES_TABLE = "ShowPrintHousesTable",
-
+  SHOW_ADMIN_CUSTOMER_SERVICE = "ShowAdminCustomerService",
+  
   //sales group
   SHOW_DELIVERY_NOTES = "ShowDeliveryNotes",
   SHOW_DELIVERY_NOTES_REFUND = "ShowDeliveryNotesRefund",
@@ -118,8 +119,6 @@ export enum Permissions {
   //calculation and production floor permissions
   SHOW_COSTS_IN_CALCULATIONS = "ShowCostsInCalculations",
   SHOW_PROFITS_IN_CALCULATIONS = "ShowProfitsInCalculations"
-
-
 }
 
 

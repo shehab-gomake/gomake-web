@@ -11,4 +11,5 @@ export enum EProductClient {
 export enum EProductProfites {
   BY_ACTION = 0,
   BY_PRODUCT = 1,
+  BY_RULE
 }

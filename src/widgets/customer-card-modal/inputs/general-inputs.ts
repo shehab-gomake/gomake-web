@@ -1,6 +1,10 @@
+import { languagesState } from "@/store/languages";
 import {emailRegex} from "@/utils/regex";
+import { useRecoilValue } from "recoil";
 
 const generalInputs = (typeClient, state) => {
+  const languages = useRecoilValue(languagesState);
+
   return [
     {
       name: "phone1",
@@ -13,7 +17,6 @@ const generalInputs = (typeClient, state) => {
       value: state?.tel1,
       isValid: true,
     },
-
     {
       name: "mainContactName",
       label: "customers.modal.mainContactName",
@@ -43,8 +46,7 @@ const generalInputs = (typeClient, state) => {
       placeholder: "customers.modal.language",
       required: false,
       parameterKey: "clientLang",
-      options: [],
-      optionsUrl: "/v1/enum/get-enums/languages",
+      options: languages,
       value: state?.clientLang,
       isValid: true,
     },

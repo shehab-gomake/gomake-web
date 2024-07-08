@@ -28,7 +28,6 @@ const useCustomerService = () => {
   const getIssues = useCallback(async () => {
     const callBack = (res) => {
       if (res.success) {
-        console.log("issues2", res.data);
         const formattedData = res.data.map((item) => [
           item?.summary,
           item?.description.content[0].content[0].text,

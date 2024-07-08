@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { matchSorter } from "match-sorter";
 
 import { getAllProductsMongoDB, getAlltProductSKU } from "@/services/hooks";
-import { useGomakeAxios, useGomakeRouter } from "@/hooks";
+import {useGomakeAxios, useGomakeRouter, useSnackBar} from "@/hooks";
 
 import { useStyle } from "./style";
 import { MoreMenuWidget } from "../more-circle";
@@ -18,6 +18,7 @@ import { EHttpMethod } from "@/services/api-service/enums";
 import { useRouter } from "next/router";
 import { getAllSubProducts } from "@/services/hooks/admin-side/products/get-all-sub-products";
 import { EnterArrow } from "@/icons";
+import {addProductProfitRuleApi} from "@/services/api-service/products/product-endpoints";
 
 const useProductManagement = () => {
   const router = useRouter();
@@ -30,9 +31,14 @@ const useProductManagement = () => {
   const [selectProfitsModal, setSelectProfitsModal] = useState<ProductClient>();
   const { navigate } = useGomakeRouter();
   const [allProductSKU, setAllProductSKU] = useState<any>();
+  const [openAddProfitRule, setOpenProfitRule] = useState<boolean>(false);
+  const [productAddProfitRuleId, setProductAddProfitRuleId] = useState<string>('')
+  const [openEditProfitRule, setEditProfitRule] = useState<boolean>(false);
+  const [editProductId, setEditProductId] = useState<string>('')
   const getAllProductsSKU = useCallback(async () => {
     await getAlltProductSKU(callApi, setAllProductSKU);
   }, []);
+  const {alertFaultAdded, alertSuccessAdded} = useSnackBar();
   const updatedProduct = useCallback(async (product: any) => {
     const res: any = await callApi(
       EHttpMethod.PUT,
@@ -83,6 +89,9 @@ const useProductManagement = () => {
       {
         label: t("products.addProduct.admin.product"),
         id: EProductProfites.BY_PRODUCT,
+      },  {
+        label: t("products.profits.profitByRule"),
+        id: EProductProfites.BY_RULE,
       },
     ],
     []
@@ -118,17 +127,24 @@ const useProductManagement = () => {
             onChange={(e: any, value: any) => {
               setSelectProfitsModal(value);
               UpdateProfitsModal(item, value);
+              if (value?.id === EProductProfites.BY_RULE) {
+                setOpenProfitRule(true);
+                setProductAddProfitRuleId(item?.id);
+              }
             }}
           />
         </div>
-        {item.profitsModal === 1 && (
+        {(item.profitsModal === EProductProfites.BY_PRODUCT || item.profitsModal === EProductProfites.BY_RULE) && (
           <div
             style={{ display: "inline-flex", cursor: "pointer" }}
             onClick={() => {
+              item.profitsModal === EProductProfites.BY_PRODUCT ?
               window.open(
                 `/products/profits?productId=${item?.id}&productName=${item?.name}`,
                 "_blank"
-              );
+              ) :
+              setEditProfitRule(true);
+              setEditProductId(item?.id);
             }}
           >
             <SettingIcon />
@@ -188,6 +204,17 @@ const useProductManagement = () => {
   const handleGoBack = () => {
     router.back();
   };
+
+  const addProductProfitRule = async (data) => {
+    const callBack = res => {
+      if (res.success) {
+        alertSuccessAdded();
+      }else {
+        alertFaultAdded();
+      }
+    }
+    await addProductProfitRuleApi(callApi, callBack, {...data, productId: productAddProfitRuleId});
+  }
   return {
     tableHeaders,
     allProducts,
@@ -197,7 +224,15 @@ const useProductManagement = () => {
     router,
     setTerm,
     handleGoBack,
-  };
+    openAddProfitRule,
+    openEditProfitRule,
+    setEditProfitRule,
+    setOpenProfitRule,
+    addProductProfitRule,
+    editProductId,
+    setEditProductId,
+    setProductAddProfitRuleId
+};
 };
 
 export { useProductManagement };
