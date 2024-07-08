@@ -73,7 +73,16 @@ const OutSourceSupplierComponent = ({
                         valueColor={secondColor(500)} label={t('pricingWidget.finalPrice')} value={finalPrice}
                         onUpdate={handleUpdatePrice} />
                 </Stack>
-                <PrimaryButton
+                {cost !== 0 && (
+                    <PrimaryButton
+                        onClick={() => widgetType === EWidgetProductType.EDIT ? updateQuoteItem(supplierId) : addItem(supplierId)}
+                        style={{ width: 'fit-content', height: 35 }}
+                        variant={'contained'}
+                    >
+                        {widgetType === EWidgetProductType.EDIT ? t("materials.buttons.edit") : t('pricingWidget.add')}
+                    </PrimaryButton>
+                )}
+                {/* <PrimaryButton
                     onClick={() => widgetType === EWidgetProductType.EDIT ? updateQuoteItem(supplierId) : addItem(supplierId)}
                     style={{ width: 'fit-content', height: 35 }}
                     variant={'contained'}
@@ -82,7 +91,7 @@ const OutSourceSupplierComponent = ({
                         // updateQuoteItem
                         widgetType === EWidgetProductType.EDIT ? t("materials.buttons.edit") : t('pricingWidget.add')
                     }
-                </PrimaryButton>
+                </PrimaryButton> */}
             </Stack>
         </Fade>
     )
