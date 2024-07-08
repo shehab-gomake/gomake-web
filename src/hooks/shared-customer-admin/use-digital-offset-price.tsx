@@ -523,7 +523,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
   useEffect(() => {
     if (productTemplate && productTemplate.sections?.length > 0) {
-      debugger
       let temp = [];
       let activeSectionTemp = [];
 
@@ -589,6 +588,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             let temp = [];
             subSection.parameters
               .forEach((parameter) => {
+                
                 parameter.relatedParameters.forEach((x) => {
                   x.sectionId = section.id;
                   x.subSectionId = subSection.id;
@@ -928,7 +928,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 }
 
               }
-              if (relatedToParameter && !defaultValue) {
+              if (relatedToParameter && defaultValue != null && defaultValue != undefined ) {
                 parameter.isHidden = true;
               }
               if (!relatedToParameter) {
@@ -1892,7 +1892,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       if (subSection.optionToDuplicateContent) {
         return;
       }
-
+     
       parameter?.relatedParameters
         ?.filter((relatedParameter) =>
           subSection.parameters.some((p) => p.id === relatedParameter.parameterId)
