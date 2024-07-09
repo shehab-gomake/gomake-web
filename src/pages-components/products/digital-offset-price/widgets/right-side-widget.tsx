@@ -59,7 +59,7 @@ const RightSideWidget = ({
   return (
     <div style={clasess.rightSideMainContainer}>
       <div style={clasess.rightSideContainer}>
-        {
+        {/* {
           widgetType === EWidgetProductType.CREATE &&
           <div style={clasess.headerClientRightSide}>
             <div style={clasess.clientContainer}>
@@ -94,7 +94,7 @@ const RightSideWidget = ({
               )}
             </div>
           </div>
-        }
+        } */}
 
         {template.img ? (
           <div style={clasess.imgProductContainer}>
