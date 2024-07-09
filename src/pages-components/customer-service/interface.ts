@@ -10,8 +10,19 @@ export interface CreateIssueModalProps {
   setTicketType: (ticketType: TicketTypeList | undefined) => void;
   onClickClosModal: () => void;
   createIssue: () => void;
+  onChangeInputs: (e: any, value: any) => void;
+  ticketState: JiraIssueType;
+  setTicketState: any;
 }
-
+export interface JiraIssueType {
+  isAdmin: boolean;
+  openModal: boolean;
+  ticketType: TicketTypeList | undefined;
+  ticketTypeList: TicketTypeList[];
+  title: string;
+  description: string;
+  screenShot: string;
+}
 export interface JiraPrintHouse {
   id: string;
   name: string;

@@ -1,9 +1,11 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { GoMakeAutoComplate, GoMakeModal, GomakePrimaryButton, GomakeTextInput } from "@/components";
-
+import { FormInput } from "@/components/form-inputs/form-input";
 import { useStyle } from "../style";
 import { CreateIssueModalProps, TicketTypeList } from "../interface";
 import { useTranslation } from "react-i18next";
+import { GoMakeFileFiled } from "@/components/file-filed/file-filed";
+import { IInput } from "@/components/form-inputs/interfaces";
 
 const CreateIssueModal: React.FC<CreateIssueModalProps> = ({
   openModal,
@@ -13,9 +15,11 @@ const CreateIssueModal: React.FC<CreateIssueModalProps> = ({
   description,
   setDescription,
   setTitle,
-  setTicketType,
   onClickClosModal,
   createIssue,
+  onChangeInputs,
+  setTicketState,
+  ticketState,
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -32,22 +36,25 @@ const CreateIssueModal: React.FC<CreateIssueModalProps> = ({
           options={ticketTypeList}
           style={{ height: "40px", width: "100%", border: "none" }}
           placeholder={t("customerService.chooseTheTicketType")}
-          onChange={(e: any, item: TicketTypeList) => setTicketType(item)}
-          value={ticketType}
+          // onChange={(e) => setTicketState(ticketType, e.target.value)}
+          onChange={(e, val) => setTicketState({ ...ticketState, ticketType: val })}
+          value={ticketState?.ticketType}
         />
         <GomakeTextInput
-          onChange={(e) => setTitle(e.target.value)}
+          onChange={(e) => setTicketState({ ...ticketState, title: e.target.value })}
+          // onChange={(e) => setTitle(e.target.value)}
           style={{ height: "40px", width: "100%", border: "none" }}
           placeholder={t("customerService.typeTheTicketTitle")}
-          value={title}
+          value={ticketState?.title}
         />
         <GomakeTextInput
-          onChange={(e) => setDescription(e.target.value)}
+          onChange={(e) => setTicketState({ ...ticketState, description: e.target.value })}
           style={classes.multiTextInput}
           placeholder={t("customerService.typeTheTicketDescription")}
-          value={description}
+          value={ticketState?.description}
           multiline
         />
+
         <GomakePrimaryButton style={classes.btnContainer} onClick={createIssue}>
           {t("customerService.addTicket")}
         </GomakePrimaryButton>

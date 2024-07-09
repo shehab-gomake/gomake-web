@@ -7,7 +7,7 @@ import {
   getAllIssuesAdminApi,
 } from "@/services/api-service/customer-service/customer-service-api";
 import { useUserProfile } from "@/hooks/use-user-profile";
-import { JiraPrintHouse, TicketTypeList } from "../interface";
+import { JiraIssueType, JiraPrintHouse, TicketTypeList } from "../interface";
 import { useTranslation } from "react-i18next";
 import { ticketTypeList } from "../enums";
 
@@ -26,9 +26,17 @@ const useCustomerService = (isAdmin: boolean) => {
   const [statusFilter, setStatusFilter] = useState(null);
   const [statuses, setStatuses] = useState([]);
   const [statusKey, setStatusKey] = useState<string>("flag");
+  const [screenShot, setScreenShot] = useState<string>("");
+  const [ticketState, setTicketState] = useState<JiraIssueType>(null);
+
   const columnWidths = isAdmin
     ? ["10%", "10%", "10%", "40%", "10%", "10%", "10%"]
     : ["0%", "10%", "10%", "50%", "10%", "10%", "10%"];
+
+  const onChangeInputs = (key, value) => {
+    console.log("key", key, "value", value);
+    setTicketState({ ...ticketState, [key]: value });
+  };
 
   const getIssues = useCallback(async () => {
     const callBack = (res) => {
@@ -81,7 +89,7 @@ const useCustomerService = (isAdmin: boolean) => {
     const issueData = {
       fields: {
         project: { key: "GCS" },
-        summary: title,
+        summary: ticketState.title,
         description: {
           type: "doc",
           version: 1,
@@ -90,7 +98,7 @@ const useCustomerService = (isAdmin: boolean) => {
               type: "paragraph",
               content: [
                 {
-                  text: description,
+                  text: ticketState.description,
                   type: "text",
                 },
               ],
@@ -98,7 +106,7 @@ const useCustomerService = (isAdmin: boolean) => {
           ],
         },
         issuetype: {
-          id: ticketType?.value || "10004",
+          id: ticketState.ticketType.value || "10004",
         },
         priority: {
           id: "3",
@@ -201,6 +209,11 @@ const useCustomerService = (isAdmin: boolean) => {
     statusFilter,
     filteredIssues,
     columnWidths,
+    screenShot,
+    setScreenShot,
+    onChangeInputs,
+    ticketState,
+    setTicketState,
   };
 };
 

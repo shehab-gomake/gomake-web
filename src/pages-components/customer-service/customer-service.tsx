@@ -32,12 +32,15 @@ const CustomerServicePageWidget = ({ isAdmin }: { isAdmin: boolean }) => {
     printHouses,
     selectedPrintHouseName,
     getIssues,
+    onChangeInputs,
     statuses,
     onChangeStatus,
     statusFilter,
     filteredIssues,
     statusKey,
     columnWidths,
+    ticketState,
+    setTicketState,
   } = useCustomerService(isAdmin);
 
   return (
@@ -47,7 +50,7 @@ const CustomerServicePageWidget = ({ isAdmin }: { isAdmin: boolean }) => {
           <HeaderTitle marginTop={1} marginBottom={1} title={t("customerService.printHouses")} />
           {/* <PermissionCheck userPermission={Permissions.SHOW_ADMIN_CUSTOMER_SERVICE}> */}
           <GomakePrimaryButton style={classes.btnContainer} onClick={onClickOpenModal}>
-            Add New Ticket
+            {t("customerService.addNewTicket")}
           </GomakePrimaryButton>
           {/* </PermissionCheck> */}
         </div>
@@ -75,6 +78,7 @@ const CustomerServicePageWidget = ({ isAdmin }: { isAdmin: boolean }) => {
           />
         </Stack>
         <CreateIssueModal
+          setTicketState={setTicketState}
           isAdmin={isAdmin}
           openModal={openModal}
           ticketType={ticketType}
@@ -86,6 +90,8 @@ const CustomerServicePageWidget = ({ isAdmin }: { isAdmin: boolean }) => {
           setTicketType={setTicketType}
           onClickClosModal={onClickClosModal}
           createIssue={createIssue}
+          onChangeInputs={onChangeInputs}
+          ticketState={ticketState}
         />
       </div>
     </Stack>
