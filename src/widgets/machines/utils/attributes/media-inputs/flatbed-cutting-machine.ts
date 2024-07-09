@@ -18,6 +18,17 @@ const flatbedCuttingMachine = (state: Record<string, any>) => {
             unit: EMeasurementUnits.MM
         },
         {
+            name: "shape",
+            label: "machineAttributes.shape",
+            type: "select",
+            placeholder: "machineAttributes.shape",
+            required: true,
+            parameterKey: "shape",
+            options: [],
+            optionsUrl: '/v1/print-house-config/parameters/shape-complexity',
+            multiple: true
+        },
+        {
             name: 'machineAttributes.tableDimensions',
             parameterKey: 'tableDimensions',
             machineInputType: 'multiInput',

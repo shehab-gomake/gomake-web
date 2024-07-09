@@ -162,6 +162,7 @@ const RowMappingWidget = ({
           />
         </div>
       </PrimaryTableCell>
+
       <PrimaryTableCell
         style={{
           width: columnWidths[5],
@@ -171,11 +172,11 @@ const RowMappingWidget = ({
       >
         <div style={classes.cellTextInputStyle}>
           <InputUpdatedValues
-            value={item.discount ? item.discount : "0"}
-            onBlur={onBlurDiscount}
-            isUpdate={canUpdatePricesBasedOnType && isUpdateDiscount}
-            setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdateDiscount}
-            onInputChange={(e) => onInputChangeDiscount(e)}
+            value={item.price}
+            onBlur={onBlurPrice}
+            isUpdate={canUpdatePricesBasedOnType && isUpdatePrice}
+            setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdatePrice}
+            onInputChange={(e) => onInputChangePrice(e)}
           />
         </div>
       </PrimaryTableCell>
@@ -188,11 +189,11 @@ const RowMappingWidget = ({
       >
         <div style={classes.cellTextInputStyle}>
           <InputUpdatedValues
-            value={item.price}
-            onBlur={onBlurPrice}
-            isUpdate={canUpdatePricesBasedOnType && isUpdatePrice}
-            setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdatePrice}
-            onInputChange={(e) => onInputChangePrice(e)}
+            value={item.discount ? item.discount : "0"}
+            onBlur={onBlurDiscount}
+            isUpdate={canUpdatePricesBasedOnType && isUpdateDiscount}
+            setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdateDiscount}
+            onInputChange={(e) => onInputChangeDiscount(e)}
           />
         </div>
       </PrimaryTableCell>
