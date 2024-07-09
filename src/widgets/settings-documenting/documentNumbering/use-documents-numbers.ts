@@ -32,7 +32,7 @@ const useDocumentNumbers = () => {
                 const tableRows = data.data?.map((document) => [
                     t(`documentingNumbering.${DocumentsTypeEnum[document.docType]}`),
                     document.prefix,
-                    document.value,
+                    document.value, 
                     document.details,
                     ShowDocumentData(document, primaryColor(500), setOpenModal, setDocument, t('documentingSettings.edit')),
                 ]);
