@@ -5,7 +5,7 @@ import {useRouter} from "next/router";
 import {usePrintHouseMachines} from "@/widgets/machines/hooks/use-print-house-machines";
 import {
     printHouseAddNewMachine,
-    printHouseDeleteMachine,
+    printHouseDeleteMachine, printHouseDuplicateMachine,
     printHouseUpdateMachine
 } from "@/services/api-service/machines/print-house-machines";
 
@@ -55,7 +55,7 @@ const usePrintHouseAddMachine = () => {
                 alertFaultAdded();
             }
         }
-        await printHouseAddNewMachine(callApi, callBack, payload);
+        await printHouseDuplicateMachine(callApi, callBack, payload);
     }
 
     const deleteMachine = async () => {
