@@ -35,8 +35,8 @@ import { useUserPermission } from "@/hooks/use-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { PermissionCheck } from "@/components/CheckPermission/check-permission";
 
-const useQuotes = (docType: DOCUMENT_TYPE) => {
-  const { t } = useTranslation();
+const useQuotes = (docType: DOCUMENT_TYPE , isFromHomePage ) => {
+  const { t } = useTranslation(); 
   const { classes } = useStyle();
   const { callApi } = useGomakeAxios();
   const { alertFaultUpdate, alertFaultDuplicate, alertFaultGetData, alertSuccessUpdate } = useSnackBar();
@@ -1172,9 +1172,10 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
 
   ////////////// LOGS //////////////
 
+  // superwoman
   useEffect(() => {
-    getAllCustomersCreateQuote();
-    getAllCustomersCreateOrder();
+    !isFromHomePage && getAllCustomersCreateQuote();
+    !isFromHomePage && getAllCustomersCreateOrder();
     getAgentCategories(true, setAgentsCategories);
     getAgentCategories(null, setEmployeeListValue);
   }, []);
@@ -1373,7 +1374,6 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     });
   };
 
-
   const [showCustomerModal, setShowCustomerModal] = useState(false);
   const [customerForEdit, setCustomerForEdit] = useState([]);
   const onClickOpenCustomerModal = (customerId: any) => {
@@ -1412,9 +1412,8 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     };
     await getAndSetCustomerById(callApi, callBack, { customerId: customerId });
   };
-  const [clientTypesCategories, setClientTypesCategories] = useRecoilState(
-    clientTypesCategoriesState
-  );
+
+  const setClientTypesCategories = useSetRecoilState(clientTypesCategoriesState );
   const getClientTypesCategories = async () => {
     const callBack = (res) => {
       if (res) {
@@ -1427,12 +1426,10 @@ const useQuotes = (docType: DOCUMENT_TYPE) => {
     };
     await getAndSetClientTypes(callApi, callBack, { cardType: CLIENT_TYPE_Id.CUSTOMER });
   };
+
   useEffect(() => {
     getClientTypesCategories()
   }, [])
-
-
-
 
   return {
     showCustomerModal,

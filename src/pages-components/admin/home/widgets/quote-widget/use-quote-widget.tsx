@@ -96,6 +96,8 @@ const useQuoteWidget = ({ documentType = 0 }: any) => {
       searchTerm: SearchTerm,
     });
   }, []);
+  
+
   const [clientListData, setClientListData] = useState([])
   const getAllCustomersCreateOrder = useCallback(async () => {
     await getAndSetAllCustomers(callApi, setClientListData, {
@@ -103,8 +105,11 @@ const useQuoteWidget = ({ documentType = 0 }: any) => {
       onlyCreateOrderClients: true,
     });
   }, []);
+
+  // superwoman
+  // big problem
   useEffect(() => {
-    getAllCustomersCreateOrder()
+     getAllCustomersCreateOrder()
   }, [])
 
   const handleOpenModal = (newClient) => {
@@ -207,7 +212,7 @@ const useQuoteWidget = ({ documentType = 0 }: any) => {
     }
   };
 
-  // what is userQuote?.result !!!
+
   const getAllClientTypes = useCallback(async () => {
     try {
       await getAndSetClientTypes(callApi, setClientTypesValues, { cardType: CLIENT_TYPE_Id.CUSTOMER });
@@ -220,27 +225,6 @@ const useQuoteWidget = ({ documentType = 0 }: any) => {
       console.error("Error fetching client types:", error);
     }
   }, [callApi, userQuote]);
-
-  const tabs: ITab[] = [
-    {
-      title: t("home.tabs.Quotes"),
-      component: (
-        <QuotesListPageWidget
-          documentType={DOCUMENT_TYPE.quote}
-          isFromHomePage={true}
-        />
-      ),
-    },
-    {
-      title: t("home.tabs.Orders"),
-      component: (
-        <QuotesListPageWidget
-          documentType={DOCUMENT_TYPE.order}
-          isFromHomePage={true}
-        />
-      ),
-    },
-  ];
 
   const getAllReports = async () => {
     const callBack = (res) => {
@@ -316,7 +300,6 @@ const useQuoteWidget = ({ documentType = 0 }: any) => {
     onClickCreateQuoteForCustomer,
     _renderErrorMessage,
     onClickSaveQuote,
-    tabs,
     getAllReports,
     openCustomerModal,
     customer,

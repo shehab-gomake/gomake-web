@@ -78,13 +78,15 @@ const useAddRuleModal = ({
     });
   }, []);
 
+  // superwoman 
   useEffect(() => {
     getAllCustomersCreateQuote();
     getAllCustomersCreateOrder();
   }, []);
+
   const [propertieValue, setPropertieValue] = useState<any>();
-  const isDefaultException =
-    selectedPricingTableItems?.exceptionType === ETypeException.DEFAULT;
+  const isDefaultException = selectedPricingTableItems?.exceptionType === ETypeException.DEFAULT;
+  
   const categories = useMemo(() => {
     const filteredCategories = [
       { label: "Machine", id: "Machine" },
