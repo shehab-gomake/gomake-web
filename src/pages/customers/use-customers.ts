@@ -147,9 +147,7 @@ const useCustomers = (
   };
 
   ///////////////////////// select agent //////////////////////////////
-  const [agentsCategories, setAgentsCategories] = useRecoilState(
-    agentsCategoriesState
-  );
+  const [agentsCategories, setAgentsCategories] = useRecoilState(agentsCategoriesState);
   const getAgentCategories = async () => {
     const callBack = (res) => {
       if (res.success) {

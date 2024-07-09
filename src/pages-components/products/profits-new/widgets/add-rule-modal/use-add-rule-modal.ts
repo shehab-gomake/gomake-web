@@ -82,9 +82,10 @@ const useAddRuleModal = ({
     getAllCustomersCreateQuote();
     getAllCustomersCreateOrder();
   }, []);
+
   const [propertieValue, setPropertieValue] = useState<any>();
-  const isDefaultException =
-    selectedPricingTableItems?.exceptionType === ETypeException.DEFAULT;
+  const isDefaultException = selectedPricingTableItems?.exceptionType === ETypeException.DEFAULT;
+  
   const categories = useMemo(() => {
     const filteredCategories = [
       { label: "Machine", id: "Machine" },
@@ -112,9 +113,11 @@ const useAddRuleModal = ({
   const [materialsTypes, setMaterialsTypes] = useState<
     { materialTypeKey: string; materialTypeName: string }[]
   >([]);
+
   const [agentsCategories, setAgentsCategories] = useRecoilState(
     agentsCategoriesState
   );
+
   const getAgentCategories = async () => {
     const callBack = (res) => {
       if (res.success) {
@@ -127,9 +130,11 @@ const useAddRuleModal = ({
     };
     await getAndSetEmployees2(callApi, callBack, { isAgent: true });
   };
+
   useEffect(()=>{
     getAgentCategories()
   },[])
+
   const getMaterialsTypesApi: ICallAndSetData = async (callApi, setState) => {
     return await getSetApiData(
       callApi,
