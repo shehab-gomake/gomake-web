@@ -864,11 +864,11 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         subProductsArray.forEach(subProduct => {
           subProduct.parameters.forEach(parameter => {
             if (parameter.parameterCode === "devicecategory") {
-              setDeviceCategory(parameter?.values[0])
+              setDeviceCategory(parameter?.valueIds[0])
 
             }
             else if (parameter?.parameterCode === "devicesize") {
-              setDeviceSize(parameter?.values[0])
+              setDeviceSize(parameter?.valueIds[0])
             }
           });
         });
