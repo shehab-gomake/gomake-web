@@ -15,7 +15,6 @@ import {
   PrimarySwitch,
 } from "@/components";
 import { MuiColorInput } from "mui-color-input";
-import { GoMakeFileFiled } from "../file-filed/file-filed";
 import { ImageUploadComponent } from "./image-input";
 import Stack from "@mui/material/Stack";
 import { Checkbox, Paper } from "@mui/material";
@@ -24,6 +23,7 @@ import { PhoneInputComponent } from "./phone-input";
 import { useRecoilValue } from "recoil";
 import { materialsClientsState, materialsMachinesState } from "@/widgets/materials-widget/state";
 import { productsForDropDownList } from "@/store";
+import { GoMakeImageFiled } from "../image-filed/image-filed";
 
 const FormInput = ({ input, error, changeState, readonly }: IFormInput) => {
   const [options, setOptions] = useState([]);
@@ -141,8 +141,11 @@ const FormInput = ({ input, error, changeState, readonly }: IFormInput) => {
     if (input.type === "color") {
       setColor(input.value);
     }
-    if (input.type === "file" || input.type === "image") {
+    if (input.type === "imageFile" || input.type === "image") {
       setSelectedNameFile(input.value);
+    }
+    if (input.type === "switch") {
+      setSwitchValue(input.value);
     }
     // setValues((!!input?.values ? input?.values : []) || (!!input?.defaultInDocsTypes ? input?.defaultInDocsTypes : []));
     if (input?.multiple) {
@@ -157,7 +160,7 @@ const FormInput = ({ input, error, changeState, readonly }: IFormInput) => {
   }, [input.value])
 
   useEffect(() => {
-    const selected = options.filter(option => input?.value &&   typeof input?.value === 'string' &&  input?.value.includes(option.value));
+    const selected = options.filter(option => input?.value && typeof input?.value === 'string' && input?.value.includes(option.value));
     setSelectedOptions(selected);
   }, [input.value])
 
@@ -189,8 +192,8 @@ const FormInput = ({ input, error, changeState, readonly }: IFormInput) => {
             {input.required && <span style={classes.required}>*</span>}
           </div>
           <div style={classes.inputs}>
-            {input.type === "file" ? (
-              <GoMakeFileFiled selectedNameFile={selectedNameFile} />
+            {input.type === "imageFile" ? (
+              <GoMakeImageFiled selectedNameFile={selectedNameFile} onChange={(value) => changeState(input.parameterKey, value)} />
             ) : input.type === "select" || input?.type === "products_list" ? (
               <GoMakeAutoComplate
                 key={`${input.value}`}
