@@ -38,10 +38,10 @@ const DropDownListParameterWidget = ({
         disabled={parameter?.isLock ? parameter?.isLock : false}
         onChange={(e: any, value: any) => {
           if (parameter?.code === "devicecategory") {
-            setDeviceCategory(value?.values[0])
+            setDeviceCategory(value?.id)
           }
           else if (parameter?.code === "devicesize") {
-            setDeviceSize(value?.values[0])
+            setDeviceSize(value?.id)
           }
           onChangeSubProductsForPrice(
             parameter?.id,
