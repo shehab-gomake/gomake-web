@@ -49,7 +49,6 @@ const QuotesListPageWidget = ({
 }: IProps) => {
   const { classes } = useStyle();
   const { secondColor, } = useGomakeTheme();
-  const employeeListValue = useRecoilValue<string[]>(employeesListsState);
   const {
     onClickCloseModal,
     setPatternSearch,
@@ -142,10 +141,10 @@ const QuotesListPageWidget = ({
     CloseDocument,
     selectedOrder,
     onClickOpenCloseOrderModal,
+    getEmployeeCategories
   } = useQuotes(documentType,isFromHomePage);
 
   const router = useRouter();
-
   useEffect(() => {
     if (router.query.orderNumber) {
       setPatternSearch(router.query.orderNumber as string);
@@ -155,9 +154,9 @@ const QuotesListPageWidget = ({
     }
 
   }, [router])
-
+ 
   useEffect(() => {
-    getAllProducts();
+    !isFromHomePage && getAllProducts();
   }, []);
 
   const getValueByKey = (statistics: ICard[], key: string) => {
@@ -431,7 +430,6 @@ const QuotesListPageWidget = ({
           onSelectDateRange={onSelectDateRange}
           logsTableHeaders={logsTableHeaders}
           logsTableRows={documentLogsData}
-          employeesCategories={employeeListValue}
         />
       </GoMakeModal>
       {!isFromHomePage && <AddRuleModal

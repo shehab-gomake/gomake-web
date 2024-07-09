@@ -2,8 +2,6 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRouter } from "next/router";
-
-import { useQuoteWidget } from "@/pages-components/admin/home/widgets/quote-widget/use-quote-widget";
 import { materialsCategoriesState } from "@/store/material-categories";
 import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
 import { getAndSetChatBotProductId, getAndSetProductById } from "@/services/hooks";
@@ -62,16 +60,12 @@ import {
 } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/quantity-parameter/quantity-types/state";
 import { findParameterByCode, hasValues } from "@/utils/helpers";
 import React from "react";
-import { getCurrencies } from "@/services/api-service/general/enums";
 import { getCurrenciesSymbols } from "@/services/api-service/general/enums";
-
-import { currenciesState, currenciesSymbols } from "@/widgets/materials-widget/state";
-import { EHttpMethod } from "@/services/api-service/enums";
+import { currenciesSymbols } from "@/widgets/materials-widget/state";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { exampleTypeState } from "@/store/example-type";
 import { billingMethodState } from "@/store/billing-method";
-
-import { useDebouncedCallback, useThrottledCallback } from "use-debounce";
+import { useDebouncedCallback } from "use-debounce";
 import { getDeviceSizeMockApi } from "@/services/api-service/materials/materials-endpoints";
 
 const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
@@ -82,29 +76,17 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const router = useRouter();
   const { alertFaultAdded, alertFaultUpdate, alertFault } = useSnackBar();
   const [isChargeForNewDie, setIsChargeForNewDie] = useState(false)
-  // should find another way , like global hook 
-  const { clientTypesValue, renderOptions, checkWhatRenderArray, getAllClientTypes, clientListData } = useQuoteWidget(DOCUMENT_TYPE.quote);
+  // We should find another way, such as using a global hook 
+  // const { clientTypesValue, renderOptions, checkWhatRenderArray, getAllClientTypes, clientListData } = useQuoteWidget(DOCUMENT_TYPE.quote);
   const { allMaterials, getAllMaterial } = useMaterials();
-  const [selectedValueConfig, setSelectedValueConfig] = useRecoilState(
-    selectedValueConfigState
-  );
-
-  useEffect(() => {
-    getAllClientTypes()
-  }, [])
-  
+  const [selectedValueConfig, setSelectedValueConfig] = useRecoilState(selectedValueConfigState);
   const productTypesNumber = useRecoilValue<number>(productTypesNumberState);
   const [workTypes, setWorkTypes] = useState<any>([])
-
-
   const [samlleType, setSamlleType] = useState();
   const [isRequiredParameters, setIsRequiredParameters] = useState<any>([]);
   const [activeSectionRequiredParameters, setActiveSectionRequiredParameters] = useState([]);
   const [docmentItemByEdit, setDocmentItemByEdit] = useState<any>({})
   const [productItemValueByEdit, setProductItemValueByEdit] = useRecoilState<any>(productItemValueByEditState)
-  useEffect(() => {
-    setProductItemValueByEdit({})
-  }, [])
   const [GalleryModalOpen, setGalleryModalOpen] = useState(false);
   const [multiParameterModal, setMultiParameterModal] = useState(false);
   const [makeShapeOpen, setMakeShapeOpen] = useState(false);
@@ -115,55 +97,37 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [productTemplate, setProductTemplate] = useState<any>([]);
   const [updatedProductTemplate, setupdatedProductTemplate] = useState<any>()
   const [defaultProductTemplate, setDefaultProductTemplate] = useState<any>([]);
-  const [subProducts, setSubProducts] = useRecoilState<any>(
-    subProductsParametersState
-  );
+  const [subProducts, setSubProducts] = useRecoilState<any>(subProductsParametersState);
   const [isSetTemplete, setIsSetTemplete] = useState<boolean>(false);
-  const setSubProductsCopy = useSetRecoilState<any>(
-    subProductsCopyParametersState
-  );
+  const setSubProductsCopy = useSetRecoilState<any>(subProductsCopyParametersState);
   const itemParmetersValues = useRecoilValue(itemParmetersValuesState);
-  const [currentProductItemValue, setCurrentProductItemValue] =
-    useRecoilState<any>(currentProductItemValueState);
-  const [productItemValueDraftId, setCurrentProductItemValueDraftId] =
-    useRecoilState<string>(currentProductItemValueDraftId);
+  const [currentProductItemValue, setCurrentProductItemValue] = useRecoilState<any>(currentProductItemValueState);
+  const [productItemValueDraftId, setCurrentProductItemValueDraftId] = useRecoilState<string>(currentProductItemValueDraftId);
   const [
     currentProductItemValueTotalPrice,
     setCurrentProductItemValueTotalPrice,
   ] = useRecoilState<number>(currentProductItemValuePriceState);
-  const [
-    currentProductItemValueTotalWorkFlows,
-    setCurrentProductItemValueTotalWorkFlows,
-  ] = useRecoilState<number>(currentProductItemValueTotalWorkFlowsState);
+  const setCurrentProductItemValueTotalWorkFlows = useSetRecoilState<number>(currentProductItemValueTotalWorkFlowsState);
   const [clientDefaultValue, setClientDefaultValue] = useState<any>({});
   const [clientTypeDefaultValue, setClientTypeDefaultValue] = useState<any>({});
   const [expanded, setExpanded] = useState<string | false>("");
   const [activeIndex, setActiveIndex] = useState(0);
-  const [activeTab, setActiveTab] = useState(
-    t("products.offsetPrice.admin.logs")
-  );
+  const [activeTab, setActiveTab] = useState(t("products.offsetPrice.admin.logs"));
   const [pricingDefaultValue, setPricingDefaultValue] = useState<any>();
   const [workFlows, setWorkFlows] = useRecoilState(workFlowsState);
-  const setCalculationExceptionsLogs = useSetRecoilState(
-    calculationExceptionsLogsState
-  );
+  const setCalculationExceptionsLogs = useSetRecoilState(calculationExceptionsLogsState);
   const selectedWorkFlow = useRecoilValue(selectedWorkFlowState);
   const [quantityTypes, setQuantityTypes] = useRecoilState(productQuantityTypesValuesState);
   const [calculationProgress, setCalculationProgress] = useRecoilState(calculationProgressState);
   const setCalculationResult = useSetRecoilState(calculationResultState);
-
   const jobDetails = useRecoilValue(jobDetailsState);
   const [jobActions, setJobActions] = useRecoilState(jobActionsState);
   const setOutSuppliers = useSetRecoilState(outsourceSuppliersState);
   const materialsEnumsValues = useRecoilValue(materialsCategoriesState);
   const setLoading = useSetRecoilState(isLoadgingState);
-  const [digitalPriceData, setDigidatPriceData] =
-    useRecoilState<any>(digitslPriceState);
   const [priceRecovery, setPriceRecovery] = useState(true);
   const [canCalculation, setCanCalculation] = useState(false);
-  const setSelectParameterButton = useSetRecoilState(
-    selectParameterButtonState
-  );
+  const setSelectParameterButton = useSetRecoilState( selectParameterButtonState);
   const [deviceCategory, setDeviceCategory] = useState("")
   const [deviceSize, setDeviceSize] = useState("")
 
@@ -178,6 +142,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     isCalculationFinished,
     setIsCalculationFinished
   } = useCalculationsWorkFlowsSignalr();
+
+  useEffect(() => {
+    setProductItemValueByEdit({})
+  }, [])
 
   useEffect(() => {
     if (calculationResult && widgetType != EWidgetProductType.EDIT) {
@@ -195,6 +163,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       setLoading(false);
     }
   }, [calculationServerError]);
+
   useEffect(() => {
     if (isCalculationFinished) {
       setCalculationProgress({
@@ -204,19 +173,20 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       setLoading(false);
     }
   }, [isCalculationFinished]);
-  const [calculationServerErrorState, setcalculationServerErrorState] = useState(false)
 
-  const [currentSignalRConnectionId, setCurrentSignalRConnectionId] = useRecoilState(currentCalculationConnectionId);
+  const [calculationServerErrorState, setcalculationServerErrorState] = useState(false)
+  const  setCurrentSignalRConnectionId = useSetRecoilState(currentCalculationConnectionId);
   const [currentCalculationSessionId, setCurrentCalculationSessionId] = useState<string>("");
-  const [requestAbortController, setRequestAbortController] =
-    useState<AbortController>(null);
+  const [requestAbortController, setRequestAbortController] = useState<AbortController>(null);
   const [billingMethod, setBillingMethod] = useState<any>();
   const [graphicDesigner, setGraphicDesigner] = useState<any>();
   const [includeVAT, setIncludeVAT] = useState<boolean | null>(null);
+
   useEffect(() => {
     let copy = lodashClonedeep(subProducts);
     setSubProductsCopy(copy);
   }, [subProducts]);
+
   useEffect(() => {
     if (calculationResult && calculationResult.productItemValue) {
       if (calculationResult.productItemValueDraftId === currentCalculationSessionId) {
@@ -284,6 +254,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       }
     }
   }, [calculationResult]);
+
   const setSelectedWorkflow = (newWorkFlows, currentWorkFlows) => {
     newWorkFlows.forEach((flow) => {
       const isExists = currentWorkFlows.find((x) => x.id === flow.id);
@@ -338,7 +309,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         currentWorkFlowsCount: signalRPricingResult.currentWorkFlowIndex > calculationProgress.currentWorkFlowsCount ? signalRPricingResult.currentWorkFlowIndex : (calculationProgress.currentWorkFlowsCount + 1),
       });
     }
-  }, [signalRPricingResult])
+  }, [signalRPricingResult]);
+
   useEffect(() => {
     setWorkFlows([]);
     setCurrentProductItemValueTotalPrice(null);
@@ -350,6 +322,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     });
     setCurrentCalculationSessionId(calculationSessionId);
   }, [calculationSessionId]);
+
   useEffect(() => {
     if (calculationExceptionsLogs) {
       setCalculationExceptionsLogs(calculationExceptionsLogs);
@@ -417,7 +390,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       }
     })
     setSubProducts(subProductCopy)
-  }, [quantityTypes])
+  }, [quantityTypes]);
+
   const selectBtnTypeToAction = (
     parameter,
     sectionId,
@@ -436,6 +410,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       onOpeneGalleryModal();
     }
   };
+
   const findLargestActionIndex = (params) => {
     return params.reduce(
       (maxIndex, param) => Math.max(maxIndex, param.actionIndex),
@@ -492,11 +467,13 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     productTemplateCopy.sections = sectionsArr;
     initProduct(productTemplateCopy, allMaterials);
   };
+
   const removeSection = (item) => {
     let temp = cloneDeep(productTemplate);
     temp.sections = temp.sections.filter((x) => x.id !== item.id);
     initProduct(temp, allMaterials);
   };
+
   const duplicateParameters = (mySubSection) => {
     let temp = cloneDeep(productTemplate);
     let myId = mySubSection?.id;
@@ -566,6 +543,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
   const [relatedParameters, setRelatedParameters] = useState([]);
   const [underParameterIds, setUnderParameterIds] = useState([]);
+  
   useEffect(() => {
     if (!isSetTemplete) {
       if (productTemplate && productTemplate?.sections?.length > 0) {
@@ -1106,44 +1084,44 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       setUnderParameterIds(underParameterIdsArray);
     }
   };
-  useEffect(() => {
-    if (router?.query?.clientTypeId) {
-      setClientTypeDefaultValue(
-        clientTypesValue?.find(
-          (item: any) => item?.id === router?.query?.clientTypeId
-        )
-      );
-    }
-    if (router?.query?.customerId) {
-      if (renderOptions()?.find(
-        (item: any) => item?.id === router?.query?.customerId
-      )) {
+  
+  // useEffect(() => {
+  //   if (router?.query?.clientTypeId) {
+  //     setClientTypeDefaultValue(
+  //       clientTypesValue?.find(
+  //         (item: any) => item?.id === router?.query?.clientTypeId
+  //       )
+  //     );
+  //   }
+  //   if (router?.query?.customerId) {
+  //     if (renderOptions()?.find(
+  //       (item: any) => item?.id === router?.query?.customerId
+  //     )) {
 
-        setClientDefaultValue(
-          renderOptions()?.find(
-            (item: any) => item?.id === router?.query?.customerId
-          )
-        );
-      }
-      else {
-        setClientDefaultValue(
-          clientListData?.find(
-            (item: any) => item?.id === router?.query?.customerId
-          )
-          // clientListData
-        );
-      }
+  //       setClientDefaultValue(
+  //         renderOptions()?.find(
+  //           (item: any) => item?.id === router?.query?.customerId
+  //         )
+  //       );
+  //     }
+  //     else {
+  //       setClientDefaultValue(
+  //         clientListData?.find(
+  //           (item: any) => item?.id === router?.query?.customerId
+  //         )
+  //       );
+  //     }
 
 
-    }
-  }, [
-    clientTypesValue,
-    clientDefaultValue,
-    clientTypeDefaultValue,
-    router,
-    router?.query?.customerId,
-    renderOptions,
-  ]);
+  //   }
+  // }, [
+  //   clientTypesValue,
+  //   clientDefaultValue,
+  //   clientTypeDefaultValue,
+  //   router,
+  //   router?.query?.customerId,
+  //   renderOptions,
+  // ]);
 
   useEffect(() => {
     if (!currentCalculationSessionId) {
@@ -3151,8 +3129,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     _renderParameterType,
     _getParameter,
     createProfitTestCase,
-    renderOptions,
-    checkWhatRenderArray,
     navigate,
     navigateForRouter,
     updateQuoteItem,
@@ -3184,7 +3160,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     expanded,
     clientDefaultValue,
     clientTypeDefaultValue,
-    clientTypesValue,
     pricingDefaultValue,
     errorMsg,
     relatedParameters,

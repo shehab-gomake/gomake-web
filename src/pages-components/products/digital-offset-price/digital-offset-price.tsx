@@ -33,8 +33,6 @@ const PriceListPageWidget = ({ widgetType }) => {
         handleChange,
         _renderParameterType,
         _getParameter,
-        renderOptions,
-        checkWhatRenderArray,
         navigateForRouter,
         updateQuoteItem,
         setUrgentOrder,
@@ -63,7 +61,6 @@ const PriceListPageWidget = ({ widgetType }) => {
         expanded,
         clientDefaultValue,
         clientTypeDefaultValue,
-        clientTypesValue,
         pricingDefaultValue,
         errorMsg,
         relatedParameters,
@@ -335,10 +332,7 @@ const PriceListPageWidget = ({ widgetType }) => {
                         <RightSideWidget
                             clasess={clasess}
                             clientDefaultValue={clientDefaultValue}
-                            renderOptions={renderOptions}
-                            checkWhatRenderArray={checkWhatRenderArray}
                             clientTypeDefaultValue={clientTypeDefaultValue}
-                            clientTypesValue={clientTypesValue}
                             template={productTemplate}
                             tabs={tabs}
                             activeTab={activeTab}

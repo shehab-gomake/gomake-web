@@ -78,9 +78,11 @@ const useQuoteWidget = ({ documentType = 0 }: any) => {
       getAllCustomersCreateQuote(e.target.value);
     }
   };
+  
   const renderOptions = () => {
     return customersListCreateQuote;
   };
+
   const getAllProducts = useCallback(async () => {
     if (selectedClient?.id && selectedClientType?.id)
       await getAllProductsForDropDownList(callApi, setProductValues, {
@@ -97,7 +99,6 @@ const useQuoteWidget = ({ documentType = 0 }: any) => {
     });
   }, []);
   
-
   const [clientListData, setClientListData] = useState([])
   const getAllCustomersCreateOrder = useCallback(async () => {
     await getAndSetAllCustomers(callApi, setClientListData, {
@@ -105,12 +106,6 @@ const useQuoteWidget = ({ documentType = 0 }: any) => {
       onlyCreateOrderClients: true,
     });
   }, []);
-
-  // superwoman
-  // big problem
-  useEffect(() => {
-     getAllCustomersCreateOrder()
-  }, [])
 
   const handleOpenModal = (newClient) => {
     //setPreviousClient(selectedClient ? selectedClient : previousClient);

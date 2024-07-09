@@ -4,14 +4,14 @@ import { useTranslation } from "react-i18next";
 import { DELIVERY_NOTE_STATUSES, LogActionType, QUOTE_STATUSES } from "./enums";
 import { MoreMenuWidget } from "./more-circle";
 import { getAllProductsForDropDownList, getAndSetAllCustomers, getAndSetClientTypes } from "@/services/hooks";
-import { useRecoilState, useSetRecoilState, useRecoilValue } from "recoil";
+import {  useSetRecoilState, useRecoilValue } from "recoil";
 import { agentsCategoriesState, clientTypesCategoriesState } from "@/pages/customers/customer-states";
 import { getAndSetEmployees2 } from "@/services/api-service/customers/employees-api";
 import { useDebounce } from "@/utils/use-debounce";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { useDateFormat } from "@/hooks/use-date-format";
 import { _renderDocumentStatus, _renderQuoteStatus, _renderStatus } from "@/utils/constants";
-import { employeesListsState, selectedClientState } from "./states";
+import { selectedClientState } from "./states";
 import {
   CloseDocumentApi,
   cancelDocumentApi,
@@ -21,7 +21,6 @@ import {
   getAllDocumentsApi,
   getDocumentPdfApi,
   updateDocumentApi,
-  updateOccasionalClientNameApi,
 } from "@/services/api-service/generic-doc/documents-api";
 import { DOCUMENT_TYPE } from "./enums";
 import { useQuoteGetData } from "../quote-new/use-quote-get-data";
@@ -30,13 +29,13 @@ import { CLIENT_TYPE_Id, DEFAULT_VALUES } from "@/pages/customers/enums";
 import { getAllReceiptsApi, getReceiptPdfApi } from "@/services/api-service/generic-doc/receipts-api";
 import { renderDocumentTypeForSourceDocumentNumber, renderURLDocumentType } from "@/widgets/settings-documenting/documentDesign/enums/document-type";
 import { AStatus, PStatus } from "../board-missions/widgets/enums";
-import { getAndSetCustomerById, getAndSetCustomersPagination } from "@/services/api-service/customers/customers-api";
+import { getAndSetCustomerById } from "@/services/api-service/customers/customers-api";
 import { useUserPermission } from "@/hooks/use-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { PermissionCheck } from "@/components/CheckPermission/check-permission";
 
-const useQuotes = (docType: DOCUMENT_TYPE , isFromHomePage ) => {
-  const { t } = useTranslation(); 
+const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
+  const { t } = useTranslation();
   const { classes } = useStyle();
   const { callApi } = useGomakeAxios();
   const { alertFaultUpdate, alertFaultDuplicate, alertFaultGetData, alertSuccessUpdate } = useSnackBar();
@@ -60,7 +59,6 @@ const useQuotes = (docType: DOCUMENT_TYPE , isFromHomePage ) => {
   const [openModal, setOpenModal] = useState(false);
   const [openLogsModal, setOpenLogsModal] = useState(false);
   const [logsModalTitle, setLogsModalTitle] = useState<string>();
-  const setEmployeeListValue = useSetRecoilState<string[]>(employeesListsState);
   const [selectedQuote, setSelectedQuote] = useState<any>();
   const [allDocuments, setAllDocuments] = useState([]);
   const [allStatistics, setAllStatistics] = useState([]);
@@ -79,7 +77,7 @@ const useQuotes = (docType: DOCUMENT_TYPE , isFromHomePage ) => {
   const [resetLogsDatePicker, setResetLogsDatePicker] = useState<boolean>(false);
   const [fromLogsDate, setFromLogsDate] = useState<Date>();
   const [toLogsDate, setToLogsDate] = useState<Date>();
-  const [agentsCategories, setAgentsCategories] = useRecoilState(agentsCategoriesState);
+  const agentsCategories = useRecoilValue(agentsCategoriesState);
   const documentPath = DOCUMENT_TYPE[docType];
   const isReceipt = docType === DOCUMENT_TYPE.receipt;
   const { CheckPermission } = useUserPermission();
@@ -123,7 +121,7 @@ const useQuotes = (docType: DOCUMENT_TYPE , isFromHomePage ) => {
     setToLogsDate(null);
   };
 
-  const getAgentCategories = async (isAgent: boolean, setState: any) => {
+  const getEmployeeCategories = async (isAgent: boolean, setState: any) => {
     const callBack = (res) => {
       if (res.success) {
         const agentNames = res.data.map((agent) => ({
@@ -1172,24 +1170,25 @@ const useQuotes = (docType: DOCUMENT_TYPE , isFromHomePage ) => {
 
   ////////////// LOGS //////////////
 
-  // superwoman
   useEffect(() => {
-    !isFromHomePage && getAllCustomersCreateQuote();
-    !isFromHomePage && getAllCustomersCreateOrder();
-    getAgentCategories(true, setAgentsCategories);
-    getAgentCategories(null, setEmployeeListValue);
+    if (!isFromHomePage) {
+      getAllCustomersCreateQuote();
+      getAllCustomersCreateOrder();
+      getClientTypesCategories();
+    }
   }, []);
 
   useEffect(() => {
-    getAllQuotes();
+    !isFromHomePage && getAllQuotes();
   }, [page, quoteStatusId, pageSize, finalPatternSearch]);
 
   useEffect(() => {
     setFinalPatternSearch(debounce);
   }, [debounce]);
 
+  // For HomeTableWidget
   useEffect(() => {
-    getAllDocuments(docType);
+     getAllDocuments(docType);
   }, [selectedClient]);
 
 
@@ -1413,7 +1412,7 @@ const useQuotes = (docType: DOCUMENT_TYPE , isFromHomePage ) => {
     await getAndSetCustomerById(callApi, callBack, { customerId: customerId });
   };
 
-  const setClientTypesCategories = useSetRecoilState(clientTypesCategoriesState );
+  const setClientTypesCategories = useSetRecoilState(clientTypesCategoriesState);
   const getClientTypesCategories = async () => {
     const callBack = (res) => {
       if (res) {
@@ -1427,9 +1426,7 @@ const useQuotes = (docType: DOCUMENT_TYPE , isFromHomePage ) => {
     await getAndSetClientTypes(callApi, callBack, { cardType: CLIENT_TYPE_Id.CUSTOMER });
   };
 
-  useEffect(() => {
-    getClientTypesCategories()
-  }, [])
+
 
   return {
     showCustomerModal,
@@ -1528,7 +1525,8 @@ const useQuotes = (docType: DOCUMENT_TYPE , isFromHomePage ) => {
     openCloseOrderModal,
     CloseDocument,
     selectedOrder,
-    onClickOpenCloseOrderModal
+    onClickOpenCloseOrderModal,
+    getEmployeeCategories
   };
 };
 
