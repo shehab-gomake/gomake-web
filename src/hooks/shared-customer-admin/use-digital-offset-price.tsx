@@ -861,7 +861,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
           });
         });
-        subProducts.forEach(subProduct => {
+        subProductsArray.forEach(subProduct => {
           subProduct.parameters.forEach(parameter => {
             if (parameter.parameterCode === "devicecategory") {
               setDeviceCategory(parameter?.values[0])
