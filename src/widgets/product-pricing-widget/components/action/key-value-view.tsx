@@ -161,7 +161,6 @@ const KeyValueViewComponent = ({
     }
 
     const onClickSaveNoteForAction = async (comment: string) => {
-
         const callBack = (res) => {
             if (res.success) {
                 setValue(comment)
@@ -196,13 +195,17 @@ const KeyValueViewComponent = ({
             </IconButton>}
             {htmlElementType === HtmlElementType.TEXT_AREA && value && isEditable && <IconButton onClick={handleOnOpen}>
                 <EditIcon /></IconButton>}
-            <NotesForActionModal
-                openModal={openModal}
-                onClose={handleOnClose}
-                value={value}
-                setValue={setValue}
-                onSend={onClickSaveNoteForAction}
-            />
+
+            {
+                openModal && <NotesForActionModal
+                    openModal={openModal}
+                    onClose={handleOnClose}
+                    value={value}
+                    setValue={setValue}
+                    onSend={onClickSaveNoteForAction}
+                />
+            }
+
         </Stack>
     );
 }
