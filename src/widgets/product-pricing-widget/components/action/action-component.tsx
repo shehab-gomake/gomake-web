@@ -240,7 +240,7 @@ const ActionContainerComponent = ({
   );
   const handleDeliveryTimeUpdate = (newValue: string) => {
     updateActionData(
-      actionId,
+      id,
       +newValue,
       "totalProductionTime",
       productType
@@ -653,7 +653,7 @@ const ActionContainerComponent = ({
                 <Divider orientation={"vertical"} flexItem />
                 <TextAreaActionsMapping
                   parameters={textAreaOutputs}
-                  actionId={actionId}
+                  actionId={id}
                   currentProductItemValue={currentProductItemValue}
                   productType={productType}
                 />
