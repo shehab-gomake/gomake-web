@@ -10,6 +10,7 @@ import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import {
   EditableKeyValueViewComponent,
   ParametersMapping,
+  TextAreaActionsMapping,
 } from "@/widgets/product-pricing-widget/components/action/key-value-view";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { InOutSourceSelect } from "@/widgets/product-pricing-widget/components/in-out-source-select/in-out-source-select";
@@ -183,13 +184,7 @@ const ActionContainerComponent = ({
   const [chooseMachine, setChooseMachine] = useState<boolean>(false);
   const [chooseMaterial, setChooseMaterial] = useState<boolean>(false);
   const [chooseEmployee, setChooseEmployee] = useState<boolean>(false);
-  const [openModal, setOpenModal] = useState<boolean>(false);
-  const handleOnClose = () => {
-    setOpenModal(false);
-  }
-  const handleOnOpen = () => {
-    setOpenModal(true);
-  }
+
   const currentProductItemValue = useRecoilValue(currentProductItemValueState);
   const { t } = useTranslation();
   const {
@@ -237,6 +232,12 @@ const ActionContainerComponent = ({
       parameter.propertyType === RuleType.OUTPUT &&
       parameter.htmlElementType === HtmlElementType.IMAGE
   );
+
+  const textAreaOutputs = outputs?.filter(
+    (parameter) =>
+      parameter.propertyType === RuleType.OUTPUT &&
+      parameter.htmlElementType === HtmlElementType.TEXT_AREA
+  );
   const handleDeliveryTimeUpdate = (newValue: string) => {
     updateActionData(
       actionId,
@@ -245,7 +246,6 @@ const ActionContainerComponent = ({
       productType
     ).then();
   };
-
   const handleCostUpdate = (newCost: string) => {
     updateActionData(id, +newCost, "totalCost", productType).then();
   };
@@ -651,18 +651,12 @@ const ActionContainerComponent = ({
                   <PrintImageComponent {...parameter} />
                 ))}
                 <Divider orientation={"vertical"} flexItem />
-                <Stack
-                  padding={"10px 0"}
-                  direction={"row"}
-                  gap={"16px"}
-                  flexWrap={"wrap"}
-                >
-                  <span style={classes.detailTitle}>Notes:</span>
-                  <div>Test tttes ....</div>
-                  <IconButton onClick={handleOnOpen}>
-                    <PlusIcon />
-                  </IconButton>
-                </Stack>
+                <TextAreaActionsMapping
+                  parameters={textAreaOutputs}
+                  actionId={actionId}
+                  currentProductItemValue={currentProductItemValue}
+                  productType={productType}
+                />
               </Stack>
             </>
           )}
@@ -677,7 +671,6 @@ const ActionContainerComponent = ({
           machineName={machineName}
           categoryId={categoryId}
         />
-        <NotesForActionModal openModal={openModal} onClose={handleOnClose} />
         <GoMakeDeleteModal
           insideStyle={classes.insideStyle}
           openModal={openModalMachine}
