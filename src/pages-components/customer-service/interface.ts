@@ -1,18 +1,11 @@
 export interface CreateIssueModalProps {
-  isAdmin: boolean;
   openModal: boolean;
-  ticketType: TicketTypeList | undefined;
   ticketTypeList: TicketTypeList[];
-  title: string;
-  description: string;
-  setDescription: (description: string) => void;
-  setTitle: (title: string) => void;
-  setTicketType: (ticketType: TicketTypeList | undefined) => void;
   onClickClosModal: () => void;
   createIssue: () => void;
-  onChangeInputs: (e: any, value: any) => void;
   ticketState: JiraIssueType;
   setTicketState: any;
+  setFileBase64: any;
 }
 export interface JiraIssueType {
   isAdmin: boolean;

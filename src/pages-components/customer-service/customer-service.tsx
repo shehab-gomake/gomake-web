@@ -17,13 +17,7 @@ const CustomerServicePageWidget = ({ isAdmin }: { isAdmin: boolean }) => {
   const {
     tableHeaders,
     openModal,
-    ticketType,
     ticketTypeList,
-    title,
-    description,
-    setDescription,
-    setTitle,
-    setTicketType,
     onClickClosModal,
     onClickOpenModal,
     handleClean,
@@ -31,8 +25,6 @@ const CustomerServicePageWidget = ({ isAdmin }: { isAdmin: boolean }) => {
     onChangePrintHouse,
     printHouses,
     selectedPrintHouseName,
-    getIssues,
-    onChangeInputs,
     statuses,
     onChangeStatus,
     statusFilter,
@@ -41,6 +33,7 @@ const CustomerServicePageWidget = ({ isAdmin }: { isAdmin: boolean }) => {
     columnWidths,
     ticketState,
     setTicketState,
+    setFileBase64,
   } = useCustomerService(isAdmin);
 
   return (
@@ -48,11 +41,9 @@ const CustomerServicePageWidget = ({ isAdmin }: { isAdmin: boolean }) => {
       <div style={classes.mainContainer}>
         <div style={classes.sameRow}>
           <HeaderTitle marginTop={1} marginBottom={1} title={t("customerService.printHouses")} />
-          {/* <PermissionCheck userPermission={Permissions.SHOW_ADMIN_CUSTOMER_SERVICE}> */}
           <GomakePrimaryButton style={classes.btnContainer} onClick={onClickOpenModal}>
             {t("customerService.addNewTicket")}
           </GomakePrimaryButton>
-          {/* </PermissionCheck> */}
         </div>
 
         {isAdmin && (
@@ -79,19 +70,12 @@ const CustomerServicePageWidget = ({ isAdmin }: { isAdmin: boolean }) => {
         </Stack>
         <CreateIssueModal
           setTicketState={setTicketState}
-          isAdmin={isAdmin}
           openModal={openModal}
-          ticketType={ticketType}
           ticketTypeList={ticketTypeList}
-          title={title}
-          description={description}
-          setDescription={setDescription}
-          setTitle={setTitle}
-          setTicketType={setTicketType}
           onClickClosModal={onClickClosModal}
           createIssue={createIssue}
-          onChangeInputs={onChangeInputs}
           ticketState={ticketState}
+          setFileBase64={setFileBase64}
         />
       </div>
     </Stack>

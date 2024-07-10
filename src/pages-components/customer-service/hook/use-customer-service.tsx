@@ -1,4 +1,5 @@
 import { use, useCallback, useEffect, useState } from "react";
+
 import { useGomakeAxios } from "@/hooks";
 import {
   createIssueApi,
@@ -28,6 +29,7 @@ const useCustomerService = (isAdmin: boolean) => {
   const [statusKey, setStatusKey] = useState<string>("flag");
   const [screenShot, setScreenShot] = useState<string>("");
   const [ticketState, setTicketState] = useState<JiraIssueType>(null);
+  const [fileBase64, setFileBase64] = useState<string>("");
 
   const columnWidths = isAdmin
     ? ["10%", "10%", "10%", "40%", "10%", "10%", "10%"]
@@ -58,7 +60,6 @@ const useCustomerService = (isAdmin: boolean) => {
       }
     };
     if (isAdmin) {
-      // debugger;
       if (selectedPrintHouseName) {
         await getAllIssuesAdminApi(callApi, callBack, selectedPrintHouseName);
       } else {
@@ -124,7 +125,7 @@ const useCustomerService = (isAdmin: boolean) => {
       }
     };
 
-    await createIssueApi(callApi, callBack, issueData);
+    await createIssueApi(callApi, callBack, { issueData, fileBase64 });
   };
 
   useEffect(() => {
@@ -214,6 +215,7 @@ const useCustomerService = (isAdmin: boolean) => {
     onChangeInputs,
     ticketState,
     setTicketState,
+    setFileBase64,
   };
 };
 
