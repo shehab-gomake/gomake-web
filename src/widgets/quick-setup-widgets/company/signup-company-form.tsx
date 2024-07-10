@@ -11,14 +11,11 @@ import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import { defaultCountries } from "react-international-phone";
 import { useCallback, useState } from "react";
-import { TermModal } from "@/widgets/login/terms-modal/TermModal";
-import useTermsFlag from "@/hooks/use-terms";
-const SignupCompanyForm = ({ isMobile }: any) => {
+const SignUpCompanyForm = ({ isMobile }: any) => {
+  const { t } = useTranslation();
   const { state, onChange, onclickNext, loading, countryList, currencies, languages, checkPrintHouseDomain } = useCompanyForm();
   const { classes } = useStyle();
-  const { t } = useTranslation();
   const [lastCheckedDomain, setLastCheckedDomain] = useState("");
-  const { isModalOpen, setIsModalOpen, setIsTermsAccepted, isTermsAccepted } = useTermsFlag();
 
   const handleDomainBlur = useCallback(
     (e) => {
@@ -30,6 +27,7 @@ const SignupCompanyForm = ({ isMobile }: any) => {
     },
     [lastCheckedDomain, checkPrintHouseDomain]
   );
+
   const renderPhone = useCallback(() => {
     const countryData = defaultCountries.find((item) => item[0] === state?.country?.name)?.[1];
     return (
@@ -43,8 +41,9 @@ const SignupCompanyForm = ({ isMobile }: any) => {
       />
     );
   }, [state.country, state.phone]);
+
   return (
-    <Stack gap={"12px"} alignItems={"flex-start"}>
+    <Stack gap={"12px"} alignItems={"flex-start"} >
       <NewLogo />
       <div style={isMobile ? classes.signUpMobileStyle : classes.signUpStyle}>Sign up</div>
       <div style={isMobile ? classes.subTitleMobileStyle : classes.subTitleStyle}>
@@ -59,7 +58,6 @@ const SignupCompanyForm = ({ isMobile }: any) => {
           placeholder={t("signup.country")}
           style={classes.dropDownList}
         />
-
         <GomakeTextInput
           onChange={(e) => {
             onChange("name", e.target.value);
@@ -109,26 +107,30 @@ const SignupCompanyForm = ({ isMobile }: any) => {
           placeholder={t("signup.defaultCurrency")}
           style={classes.dropDownList}
         />
+        <p style={isMobile ? classes.privacyPolicyMobileStyle : classes.privacyPolicyStyle} >
+          By clicking Create Account, you agree to our{' '}
+          <a
+            href="https://gomake-contents.s3.eu-west-3.amazonaws.com/Website+Privacy+Notice+-GoMake+(incl+GDPR).pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ color: '#2e3092' }}
+          >
+            <u>Privacy Policy</u>
+          </a>
+          .
+        </p>
       </Stack>
       <PrimaryButton
         endIcon={loading && <CircularProgress style={{ width: "20px", height: "20px" }} />}
-        onClick={() => (isTermsAccepted ? onclickNext() : setIsModalOpen(true))}
+        onClick={() => onclickNext()}
         style={classes.nextButton}
         disabled={loading}
         variant={"contained"}
       >
         {loading ? `${t("signup.create")} ${state.domain}` : t("signup.create")}
       </PrimaryButton>
-
-      <TermModal
-        open={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        setIsTermsAccepted={setIsTermsAccepted}
-        isQuickSetup={true}
-        setIsModalOpen={setIsModalOpen}
-      />
     </Stack>
   );
 };
 
-export { SignupCompanyForm };
+export { SignUpCompanyForm };
