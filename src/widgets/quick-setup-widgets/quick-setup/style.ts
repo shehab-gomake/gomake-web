@@ -1,9 +1,22 @@
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { FONT_FAMILY } from "@/utils/font-family";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 const useStyle = () => {
-  const {theme, primaryColor,errorColor } = useGomakeTheme();
+  const {theme, primaryColor } = useGomakeTheme();
+  const [screenHeight, setScreenHeight] = useState(window.innerHeight);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setScreenHeight(window.innerHeight);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
   const classes = useMemo(() => {
     return {
       mainContainer:{
@@ -28,10 +41,12 @@ const useStyle = () => {
       leftSide:{
         display: 'flex',
         flexDirection: 'column' as "column",
-        justifyContent: 'center',
+        // justifyContent: 'center',
+        justifyContent: screenHeight > 788 ? 'center' : 'flex-start',
         alignItems: "center",
         width: "50%",
-
+        height:"100%",
+        overflow: "scroll" as "scroll",
       },
       rightSide:{
         display: 'flex',
@@ -54,7 +69,6 @@ const useStyle = () => {
         marginTop:20,
         opacity:"50%"
       }
-
     }
   }, [theme]);
   return {
