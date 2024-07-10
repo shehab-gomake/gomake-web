@@ -92,7 +92,13 @@ const useStyle = () => {
         color:"#9A9A9A",
         marginTop:-10,
         marginBottom:-5
-      }
+      },
+      privacyPolicyStyle:{
+        ...FONT_FAMILY.Inter(400,16), 
+      },
+      privacyPolicyMobileStyle:{
+        ...FONT_FAMILY.Inter(400,14), 
+      },
     }
   }, [theme]);
   return {
