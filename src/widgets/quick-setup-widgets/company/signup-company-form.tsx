@@ -11,14 +11,11 @@ import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import { defaultCountries } from "react-international-phone";
 import { useCallback, useState } from "react";
-import { TermModal } from "@/widgets/login/terms-modal/TermModal";
-import useTermsFlag from "@/hooks/use-terms";
 const SignUpCompanyForm = ({ isMobile }: any) => {
   const { t } = useTranslation();
   const { state, onChange, onclickNext, loading, countryList, currencies, languages, checkPrintHouseDomain } = useCompanyForm();
   const { classes } = useStyle();
   const [lastCheckedDomain, setLastCheckedDomain] = useState("");
-  const { isModalOpen, setIsModalOpen, setIsTermsAccepted, isTermsAccepted } = useTermsFlag();
 
   const handleDomainBlur = useCallback(
     (e) => {
@@ -125,20 +122,13 @@ const SignUpCompanyForm = ({ isMobile }: any) => {
       </Stack>
       <PrimaryButton
         endIcon={loading && <CircularProgress style={{ width: "20px", height: "20px" }} />}
-        onClick={() => (isTermsAccepted ? onclickNext() : setIsModalOpen(true))}
+        onClick={() => onclickNext()}
         style={classes.nextButton}
         disabled={loading}
         variant={"contained"}
       >
         {loading ? `${t("signup.create")} ${state.domain}` : t("signup.create")}
       </PrimaryButton>
-      <TermModal
-        open={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        setIsTermsAccepted={setIsTermsAccepted}
-        isQuickSetup={true}
-        setIsModalOpen={setIsModalOpen}
-      />
     </Stack>
   );
 };
