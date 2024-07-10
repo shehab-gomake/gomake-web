@@ -98,6 +98,7 @@ const useCustomerService = (isAdmin: boolean) => {
           id: "3",
         },
         customfield_10089: profileState.firstName + " " + profileState.lastName,
+        customfield_10090: ticketState.gomakeRouteUri,
       },
     };
 

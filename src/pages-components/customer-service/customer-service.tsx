@@ -43,7 +43,10 @@ const CustomerServicePageWidget = ({ isAdmin }: { isAdmin: boolean }) => {
   const { from } = router.query;
 
   useEffect(() => {
-    if (typeof from === "string") decodeURIComponent(from);
+    if (typeof from === "string") {
+      const x = decodeURIComponent(from);
+      setTicketState({ ...ticketState, gomakeRouteUri: decodeURIComponent(from) });
+    }
   }, [from]);
 
   return (

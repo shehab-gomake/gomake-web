@@ -15,6 +15,7 @@ export interface JiraIssueType {
   title: string;
   description: string;
   screenShot: string;
+  gomakeRouteUri: string;
 }
 export interface JiraPrintHouse {
   id: string;
