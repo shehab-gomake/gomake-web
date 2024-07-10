@@ -1366,8 +1366,16 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
     const callBack = (res) => {
       if (res?.success) {
-        sizesParametersArray.push({ parameterCode: "Width", value: res?.data?.printedMaterialWidth });
-        sizesParametersArray.push({ parameterCode: "Height", value: res?.data?.printedMaterialLength });
+        let printedMaterialWidth = res?.data?.printedMaterialWidth;
+        let printedMaterialLength = res?.data?.printedMaterialLength;
+        if(printedMaterialWidth){
+          printedMaterialWidth = parseFloat(printedMaterialWidth).toFixed(2)
+        }
+        if(printedMaterialLength){
+          printedMaterialLength = parseFloat(printedMaterialLength).toFixed(2)
+        }
+        sizesParametersArray.push({ parameterCode: "Width", value: printedMaterialWidth });
+        sizesParametersArray.push({ parameterCode: "Height", value: printedMaterialLength });
 
         // Clone the product template
         let templateCopy = cloneDeep(productTemplate);

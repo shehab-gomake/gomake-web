@@ -105,7 +105,7 @@ const getDeviceSizeMockApi: ICallAndSetData = async (
 ) => {
   return await getSetApiData(
     callApi,
-    EHttpMethod.GET,
+    EHttpMethod.POST,
     getDeviceSizeMockURL,
     setState,
     data
