@@ -1,17 +1,22 @@
 export interface CreateIssueModalProps {
+  openModal: boolean;
+  ticketTypeList: TicketTypeList[];
+  onClickClosModal: () => void;
+  createIssue: () => void;
+  ticketState: JiraIssueType;
+  setTicketState: any;
+  setFileBase64: any;
+}
+export interface JiraIssueType {
   isAdmin: boolean;
   openModal: boolean;
   ticketType: TicketTypeList | undefined;
   ticketTypeList: TicketTypeList[];
   title: string;
   description: string;
-  setDescription: (description: string) => void;
-  setTitle: (title: string) => void;
-  setTicketType: (ticketType: TicketTypeList | undefined) => void;
-  onClickClosModal: () => void;
-  createIssue: () => void;
+  screenShot: string;
+  gomakeRouteUri: string;
 }
-
 export interface JiraPrintHouse {
   id: string;
   name: string;

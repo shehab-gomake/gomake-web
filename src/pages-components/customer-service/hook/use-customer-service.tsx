@@ -1,4 +1,5 @@
 import { use, useCallback, useEffect, useState } from "react";
+
 import { useGomakeAxios } from "@/hooks";
 import {
   createIssueApi,
@@ -7,7 +8,7 @@ import {
   getAllIssuesAdminApi,
 } from "@/services/api-service/customer-service/customer-service-api";
 import { useUserProfile } from "@/hooks/use-user-profile";
-import { JiraPrintHouse, TicketTypeList } from "../interface";
+import { JiraIssueType, JiraPrintHouse, TicketTypeList } from "../interface";
 import { useTranslation } from "react-i18next";
 import { ticketTypeList } from "../enums";
 
@@ -17,18 +18,26 @@ const useCustomerService = (isAdmin: boolean) => {
   const { profileState } = useUserProfile();
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [AllIssues, setAllIssues] = useState([]);
-  const [ticketType, setTicketType] = useState<TicketTypeList>();
-  const [title, setTitle] = useState<string>("");
-  const [description, setDescription] = useState<string>("");
+  // const [ticketType, setTicketType] = useState<TicketTypeList>();
+  // const [title, setTitle] = useState<string>("");
+  // const [description, setDescription] = useState<string>("");
   const [printHouses, setPrintHouses] = useState<JiraPrintHouse[]>([]);
   const [selectedPrintHouseName, setSelectedPrintHouseName] = useState("");
   const [filteredIssues, setFilteredIssues] = useState([]);
   const [statusFilter, setStatusFilter] = useState(null);
   const [statuses, setStatuses] = useState([]);
   const [statusKey, setStatusKey] = useState<string>("flag");
+  const [ticketState, setTicketState] = useState<JiraIssueType>(null);
+  const [fileBase64, setFileBase64] = useState<string>("");
+
   const columnWidths = isAdmin
     ? ["10%", "10%", "10%", "40%", "10%", "10%", "10%"]
     : ["0%", "10%", "10%", "50%", "10%", "10%", "10%"];
+
+  const onChangeInputs = (key, value) => {
+    console.log("key", key, "value", value);
+    setTicketState({ ...ticketState, [key]: value });
+  };
 
   const getIssues = useCallback(async () => {
     const callBack = (res) => {
@@ -50,7 +59,6 @@ const useCustomerService = (isAdmin: boolean) => {
       }
     };
     if (isAdmin) {
-      // debugger;
       if (selectedPrintHouseName) {
         await getAllIssuesAdminApi(callApi, callBack, selectedPrintHouseName);
       } else {
@@ -78,34 +86,39 @@ const useCustomerService = (isAdmin: boolean) => {
   }, [callApi]);
 
   const createIssue = async () => {
-    const issueData = {
+    let issueData: any = {
       fields: {
         project: { key: "GCS" },
-        summary: title,
-        description: {
-          type: "doc",
-          version: 1,
-          content: [
-            {
-              type: "paragraph",
-              content: [
-                {
-                  text: description,
-                  type: "text",
-                },
-              ],
-            },
-          ],
-        },
+        summary: ticketState.title,
+
         issuetype: {
-          id: ticketType?.value || "10004",
+          id: ticketState.ticketType.value || "10004",
         },
         priority: {
           id: "3",
         },
         customfield_10089: profileState.firstName + " " + profileState.lastName,
+        customfield_10090: ticketState.gomakeRouteUri,
       },
     };
+
+    if (ticketState.description) {
+      issueData.fields.description = {
+        type: "doc",
+        version: 1,
+        content: [
+          {
+            type: "paragraph",
+            content: [
+              {
+                text: ticketState.description,
+                type: "text",
+              },
+            ],
+          },
+        ],
+      };
+    }
 
     const callBack = (res) => {
       if (res.success) {
@@ -116,7 +129,7 @@ const useCustomerService = (isAdmin: boolean) => {
       }
     };
 
-    await createIssueApi(callApi, callBack, issueData);
+    await createIssueApi(callApi, callBack, { issueData, fileBase64 });
   };
 
   useEffect(() => {
@@ -151,9 +164,11 @@ const useCustomerService = (isAdmin: boolean) => {
   ];
 
   const onClickClosModal = () => {
-    setTicketType(null);
-    setTitle("");
-    setDescription("");
+    // setTicketType(null);
+    // setTitle("");
+    // setDescription("");
+    setFileBase64("");
+    setTicketState({ ...ticketState, ticketType: null, title: "", description: "" });
     setOpenModal(false);
   };
   const onClickOpenModal = (transaction) => {
@@ -181,13 +196,13 @@ const useCustomerService = (isAdmin: boolean) => {
     handleClean,
     statusKey,
     openModal,
-    ticketType,
+    // ticketType,
     ticketTypeList,
-    title,
-    description,
-    setDescription,
-    setTitle,
-    setTicketType,
+    // title,
+    // description,
+    // setDescription,
+    // setTitle,
+    // setTicketType,
     onClickClosModal,
     onClickOpenModal,
     createIssue,
@@ -201,6 +216,12 @@ const useCustomerService = (isAdmin: boolean) => {
     statusFilter,
     filteredIssues,
     columnWidths,
+    // screenShot,
+    // setScreenShot,
+    onChangeInputs,
+    ticketState,
+    setTicketState,
+    setFileBase64,
   };
 };
 
