@@ -1419,6 +1419,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         const clientTypes = res.map((types) => ({
           label: types.name,
           id: types.id,
+          additionProfits : types?.additionProfits  ?? 0,
         }));
         setClientTypesCategories(clientTypes);
       }
