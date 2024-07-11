@@ -37,6 +37,7 @@ import { useCustomerCard } from "./use-customer-card";
 import { TableFilter } from "./components/table-filter";
 import { PermissionCheck } from "@/components/CheckPermission/check-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
+import { languagesState } from "@/store/languages";
 
 interface IProps {
   isValidCustomer?: (
@@ -102,6 +103,7 @@ const CustomerCardWidget = ({
   const [resetPassModal, setResetPassModalModal] = useRecoilState<boolean>(resetPassModalState);
   const clientTypesCategories = useRecoilValue(clientTypesCategoriesState);
   const gomakeUser= useRecoilValue<any>(gomakeUserState);
+  const languagesOptions = useRecoilValue(languagesState);
   const { classes } = useStyle();
   const [selectedTab, setSelectedTab] = useState(0);
   const [contacts, setContacts] = useState(
@@ -173,7 +175,6 @@ const CustomerCardWidget = ({
   };
 
   const handleTabChange = (event, newValue) => {
-    debugger;
     setSelectedTab(newValue);
   };
 
@@ -616,7 +617,7 @@ const CustomerCardWidget = ({
         <div style={classes.tabsContainer}>
           {selectedTab == 0 && (
             <div style={classes.customerInfoStyle}>
-              {generalInputs(typeClient, customer).map((item) => (
+              {generalInputs(typeClient, customer , languagesOptions).map((item) => (
                 <div style={{ marginBottom: 10 }}>
                   <FormInput
                     input={item as IInput}
