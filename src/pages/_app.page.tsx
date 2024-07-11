@@ -12,6 +12,7 @@ import Backend from "i18next-http-backend";
 import { GoMakeTourProvider } from "@/providers/go-make-tour/go-make-tour-provider";
 import { GomakeLoadingWithShadow } from "@/widgets/loading-with-shadow";
 import useUpdateCurrentPath from "@/pages-components/customer-service/hook/useUpdateCurrentPath";
+import EnhancedErrorBoundary from "@/components/jira-logger/ErrorBoundary";
 
 i18n
   .use(Backend)
@@ -34,18 +35,20 @@ export default function App({ Component, pageProps }: AppProps) {
     <DndProvider backend={HTML5Backend}>
       <RecoilRoot>
         <UpdatePathWrapper>
-          <ThemeProvider />
-          <style jsx global>{`
-            html {
-              direction: ${t("direction")};
-            }
-          `}</style>
-          <GoMakeTourProvider>
-            <Component {...pageProps} />
-          </GoMakeTourProvider>
-          <GoMakeSnackBar />
-          <GomakeLoading />
-          <GomakeLoadingWithShadow />
+          <EnhancedErrorBoundary>
+            <ThemeProvider />
+            <style jsx global>{`
+              html {
+                direction: ${t("direction")};
+              }
+            `}</style>
+            <GoMakeTourProvider>
+              <Component {...pageProps} />
+            </GoMakeTourProvider>
+            <GoMakeSnackBar />
+            <GomakeLoading />
+            <GomakeLoadingWithShadow />
+          </EnhancedErrorBoundary>
         </UpdatePathWrapper>
       </RecoilRoot>
     </DndProvider>
