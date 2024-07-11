@@ -14,6 +14,8 @@ const useClientTypesList = () => {
                 const clientTypes = res.data.map((types) => ({
                     label: types.name,
                     id: types.id,
+                    additionProfits : types?.additionProfits  ?? 0,  
+
                 }));
                 setClientTypesCategories(clientTypes);
             }
