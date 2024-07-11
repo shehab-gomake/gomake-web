@@ -1,9 +1,6 @@
-import { languagesState } from "@/store/languages";
 import {emailRegex} from "@/utils/regex";
-import { useRecoilValue } from "recoil";
 
-const userInputs = (state, showPass) => {
-  const languages = useRecoilValue(languagesState);
+const userInputs = (state, showPass,languagesOptions) => {
 
   return [
     {
@@ -63,7 +60,7 @@ const userInputs = (state, showPass) => {
       placeholder: "customers.modal.language",
       required: false,
       parameterKey: "systemLanguage",
-      options: languages,
+      options: languagesOptions,
       value: state?.systemLanguage, 
       isValid: true,
     },

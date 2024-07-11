@@ -22,13 +22,15 @@ import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { CustomerCardWidget } from "@/widgets/customer-card-modal/customer-card";
 import { isValidCustomer } from "@/utils/helpers";
 import { CUSTOMER_ACTIONS } from "@/pages/customers/enums";
+import { useClientTypesList } from "@/hooks/use-client-types";
 
 const QuoteWidget = ({ isAdmin = true }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
   const setQuoteNumber = useSetRecoilState<any>(QuoteNumberState);
   const setQuoteIfExist = useSetRecoilState<any>(QuoteIfExistState);
- 
+  const {getClientTypesCategories} =useClientTypesList();
+
   const {
     clientTypesValue,
     productValue,
@@ -64,7 +66,7 @@ const QuoteWidget = ({ isAdmin = true }) => {
     QuoteId,
     setQuoteId,
     getAndSetExistQuote,
-    getAllClientTypes
+    getAllClientTypes,
   } = useQuoteWidget(DOCUMENT_TYPE.quote);
 
   useEffect(() => {
@@ -91,6 +93,10 @@ const QuoteWidget = ({ isAdmin = true }) => {
       getAndSetExistQuote();
     };
     fetchData();
+  }, []);
+
+  useEffect(() => {
+    getClientTypesCategories();
   }, []);
 
   return (
@@ -222,7 +228,7 @@ const QuoteWidget = ({ isAdmin = true }) => {
         isValidCustomer={isValidCustomer}
         customerAction={CUSTOMER_ACTIONS.Add}
         codeFlag={false}
-        typeClient={"C"}
+        typeClient={"C"} 
         onCustomerAdd={onCustomerAdd}
         openModal={openCustomerModal}
         modalTitle={t("customers.modal.addTitle")}

@@ -68,7 +68,9 @@ const AddRuleModal = ({
     checkWhatRenderArray,
     onSelectDeliveryTimeDates,
     resetDatePicker,
-    mappingRules
+    mappingRules,
+    categoriesList,
+    employeeList
   } = useAddRuleModal({
     typeExceptionSelected,
     selectedPricingBy,
@@ -438,7 +440,6 @@ const AddRuleModal = ({
                               })}
                               style={clasess.dropDownListContainer}
                               placeholder={t("properties.statment")}
-                              // getOptionLabel={(value: any) => value?.name}
                               value={rule.statement2}
                               onChange={(e, value) => {
                                 handleChange(index, "statement2", value);
@@ -718,6 +719,52 @@ const AddRuleModal = ({
                         </div>
                       )}
                     </>
+                  )}
+                  {rule.category?.id === "Machine category" && (
+                    <div>
+                      <label style={clasess.inputLable}>
+                        {t("properties.statment")}
+                      </label>
+
+                      <GoMakeAutoComplate
+                        options={categoriesList?.map((value) => {
+                          return {
+                            ...value,
+                            label: value.name,
+                            id: value.id,
+                          };
+                        })}
+                        getOptionLabel={(value) => t(`${value.name}`)}
+                        style={clasess.dropDownListContainer}
+                        placeholder={t("properties.statment")}
+                        value={rule.statement2}
+                        onChange={(e, value) => {
+                          handleChange(index, "statement2", value)
+                          handleChange(index, "statement", null);
+                        }
+                        }
+                      />
+                    </div>
+                  )}
+
+                  {rule.category?.id === "Employee" && (
+                    <div>
+                      <label style={clasess.inputLable}>
+                        {t("properties.statment")}
+                      </label>
+
+                      <GoMakeAutoComplate
+                        options={employeeList}
+                        style={clasess.dropDownListContainer}
+                        placeholder={t("properties.statment")}
+                        value={rule.statement2}
+                        onChange={(e, value) => {
+                          handleChange(index, "statement2", value)
+                          handleChange(index, "statement", null);
+                        }
+                        }
+                      />
+                    </div>
                   )}
                   {rules.length > 1 && (
                     <div

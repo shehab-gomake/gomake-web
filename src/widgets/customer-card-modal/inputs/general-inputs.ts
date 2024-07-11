@@ -1,9 +1,6 @@
-import { languagesState } from "@/store/languages";
 import {emailRegex} from "@/utils/regex";
-import { useRecoilValue } from "recoil";
 
-const generalInputs = (typeClient, state) => {
-  const languages = useRecoilValue(languagesState);
+const generalInputs = (typeClient, state , languagesOptions) => {
 
   return [
     {
@@ -46,7 +43,7 @@ const generalInputs = (typeClient, state) => {
       placeholder: "customers.modal.language",
       required: false,
       parameterKey: "clientLang",
-      options: languages,
+      options: languagesOptions,
       value: state?.clientLang,
       isValid: true,
     },
