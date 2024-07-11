@@ -13,7 +13,7 @@ const getAllIssuesApi = async (callApi, setState) => {
 };
 
 const createIssueApi = async (callApi, callback, issueData) => {
-  return await getSetApiData(callApi, EHttpMethod.POST, CREATE_ISSUE_URL, callback, issueData);
+  return await getSetApiData(callApi, EHttpMethod.POST, CREATE_ISSUE_URL, callback, issueData, true);
 };
 
 //Fetches the list of all print houses.

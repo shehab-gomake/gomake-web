@@ -5,11 +5,14 @@ import { useCustomerService } from "./hook/use-customer-service";
 import { useStyle } from "./style";
 import { CreateIssueModal } from "./components/create-issue-modal";
 import { IssuesHeaderSection } from "./components/header-section";
-import { useEffect } from "react";
+import { use, useEffect } from "react";
 import { HeaderTitle } from "@/widgets";
 import { PermissionCheck } from "@/components/CheckPermission";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { Stack } from "@mui/material";
+import { useRecoilValue } from "recoil";
+import { currentPathState } from "./store/currentPathState";
+import { useRouter } from "next/router";
 
 const CustomerServicePageWidget = ({ isAdmin }: { isAdmin: boolean }) => {
   const { classes } = useStyle();
@@ -17,13 +20,7 @@ const CustomerServicePageWidget = ({ isAdmin }: { isAdmin: boolean }) => {
   const {
     tableHeaders,
     openModal,
-    ticketType,
     ticketTypeList,
-    title,
-    description,
-    setDescription,
-    setTitle,
-    setTicketType,
     onClickClosModal,
     onClickOpenModal,
     handleClean,
@@ -31,25 +28,35 @@ const CustomerServicePageWidget = ({ isAdmin }: { isAdmin: boolean }) => {
     onChangePrintHouse,
     printHouses,
     selectedPrintHouseName,
-    getIssues,
     statuses,
     onChangeStatus,
     statusFilter,
     filteredIssues,
     statusKey,
     columnWidths,
+    ticketState,
+    setTicketState,
+    setFileBase64,
   } = useCustomerService(isAdmin);
+
+  const router = useRouter();
+  const { from } = router.query;
+
+  useEffect(() => {
+    if (typeof from === "string") {
+      const x = decodeURIComponent(from);
+      setTicketState({ ...ticketState, gomakeRouteUri: decodeURIComponent(from) });
+    }
+  }, [from]);
 
   return (
     <Stack direction="column" justifyContent="space-between" display="flex" spacing={2} height="100%">
       <div style={classes.mainContainer}>
         <div style={classes.sameRow}>
           <HeaderTitle marginTop={1} marginBottom={1} title={t("customerService.printHouses")} />
-          {/* <PermissionCheck userPermission={Permissions.SHOW_ADMIN_CUSTOMER_SERVICE}> */}
           <GomakePrimaryButton style={classes.btnContainer} onClick={onClickOpenModal}>
-            Add New Ticket
+            {t("customerService.addNewTicket")}
           </GomakePrimaryButton>
-          {/* </PermissionCheck> */}
         </div>
 
         {isAdmin && (
@@ -75,17 +82,13 @@ const CustomerServicePageWidget = ({ isAdmin }: { isAdmin: boolean }) => {
           />
         </Stack>
         <CreateIssueModal
-          isAdmin={isAdmin}
+          setTicketState={setTicketState}
           openModal={openModal}
-          ticketType={ticketType}
           ticketTypeList={ticketTypeList}
-          title={title}
-          description={description}
-          setDescription={setDescription}
-          setTitle={setTitle}
-          setTicketType={setTicketType}
           onClickClosModal={onClickClosModal}
           createIssue={createIssue}
+          ticketState={ticketState}
+          setFileBase64={setFileBase64}
         />
       </div>
     </Stack>

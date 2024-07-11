@@ -6,9 +6,9 @@ import { convertWidthToVW } from "@/utils/adapter";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
-const useStyle = () => {
+const useStyle = (onUpload?: boolean) => {
   const { t } = useTranslation();
-  const { secondColor } = useGomakeTheme();
+  const { secondColor, primaryColor } = useGomakeTheme();
 
   const classes = useMemo(() => {
     return {
@@ -96,6 +96,34 @@ const useStyle = () => {
         boxShadow: "0px 1px 10px rgba(0, 0, 0, 0.08)",
         padding: 10,
         overflow: "scroll",
+      },
+      attachmentContainer: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: "10px",
+      },
+      attachmentStyle: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: "10px",
+        width: "170px",
+        height: "40px",
+        borderRadius: "4px",
+        boxShadow: onUpload ? "0px 1px 10px rgba(0, 0, 0, 0.08)" : "none",
+      },
+      IconButtonStyle: {
+        background: primaryColor(100),
+        width: "24px",
+        height: "24px",
+      },
+      labelStyle: {
+        ...FONT_FAMILY.Lexend(400, 12),
+        color: primaryColor(300),
+        overflow: "hidden",
       },
     };
   }, [i18next.language, t]);
