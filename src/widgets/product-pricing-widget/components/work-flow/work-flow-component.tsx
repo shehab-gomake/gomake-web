@@ -59,12 +59,14 @@ const WorkFlowComponent = ({
     isOpen,
     toggleOpen
 }: IWorkFlowComponentProps) => {
+    console.log("actions", actions)
     const { t } = useTranslation();
     // const [isOpen, setIsOpen] = useState<boolean>(false);
     const { secondColor } = useGomakeTheme();
     const { classes } = useStyle();
     const { selectWorkFlow } = useWorkFlows();
     const [actionList, setActionList] = useRecoilState(actionListForWorkFlow)
+    console.log("actionList", actionList)
     const handleSelectWorkFlow = (e) => {
         e.stopPropagation();
         if (!selected) {

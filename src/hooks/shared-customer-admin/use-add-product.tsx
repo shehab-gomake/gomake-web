@@ -175,6 +175,18 @@ const useAddProduct = ({ clasess }) => {
       });
     }
   };
+  const updatedProductParameterShowToClient = useCallback(
+    async (sectionId: string, subSectionId: string, parameter: any) => {
+      await updateProductParameterEndPoint(sectionId, subSectionId, {
+        parameter: {
+          ...parameter,
+          isShowToClient: !parameter?.isShowToClient,
+        },
+      });
+    },
+    [router]
+  );
+
   const updatedProductParameterHidden = useCallback(
     async (sectionId: string, subSectionId: string, parameter: any) => {
       await updateProductParameterEndPoint(sectionId, subSectionId, {
@@ -857,6 +869,7 @@ const useAddProduct = ({ clasess }) => {
     onClickParametersTab,
     onChangeStateProduct,
     updatedProductParameterHidden,
+    updatedProductParameterShowToClient,
     updatedProductParameteRequierd,
     updatedProductParameteLocked,
     updatedProductParameteName,

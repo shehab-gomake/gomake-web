@@ -21,6 +21,7 @@ const ParameterWidget = () => {
     handleNextClick,
     handlePreviousClick,
     updatedProductParameterHidden,
+    updatedProductParameterShowToClient,
     updatedProductParameteRequierd,
     updatedProductParameteLocked,
     updatedValuesConfigsForParameters,
@@ -83,6 +84,7 @@ const ParameterWidget = () => {
                               updatedProductParameterHidden={
                                 updatedProductParameterHidden
                               }
+                              updatedProductParameterShowToClient={updatedProductParameterShowToClient}
                               updatedProductParameteRequierd={
                                 updatedProductParameteRequierd
                               }
@@ -102,6 +104,7 @@ const ParameterWidget = () => {
                               updatedProductParameterHidden={
                                 updatedProductParameterHidden
                               }
+                              updatedProductParameterShowToClient={updatedProductParameterShowToClient}
                               updatedProductParameteRequierd={
                                 updatedProductParameteRequierd
                               }

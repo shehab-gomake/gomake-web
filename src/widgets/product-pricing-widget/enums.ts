@@ -9,7 +9,8 @@ export enum UnitType {
 
 export enum HtmlElementType {
     TEXT = 1,
-    IMAGE
+    IMAGE,
+    TEXT_AREA = 4,
 }
 
 export enum RuleType {

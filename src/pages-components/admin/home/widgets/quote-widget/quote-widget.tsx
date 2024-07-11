@@ -12,13 +12,12 @@ import { PermissionCheck } from "@/components/CheckPermission/check-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { useEffect } from "react";
 import { SecondaryButton } from "@/components/button/secondary-button";
-import { useResetRecoilState, useSetRecoilState } from "recoil";
+import {  useSetRecoilState } from "recoil";
 import {
   QuoteIfExistState,
   QuoteNumberState,
 } from "@/pages-components/quote-new/store/quote";
 import Stack from "@mui/material/Stack";
-import { selectedClientState } from "@/pages-components/quotes/states";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { CustomerCardWidget } from "@/widgets/customer-card-modal/customer-card";
 import { isValidCustomer } from "@/utils/helpers";
@@ -29,8 +28,7 @@ const QuoteWidget = ({ isAdmin = true }) => {
   const { t } = useTranslation();
   const setQuoteNumber = useSetRecoilState<any>(QuoteNumberState);
   const setQuoteIfExist = useSetRecoilState<any>(QuoteIfExistState);
-  const resetSelectedClient = useResetRecoilState(selectedClientState);
-
+ 
   const {
     clientTypesValue,
     productValue,
@@ -80,13 +78,13 @@ const QuoteWidget = ({ isAdmin = true }) => {
       );
       setSelectedClientType(clientType);
     } else {
-      // resetSelectedClient();
       setQuoteId(null);
       setQuoteNumber(null);
       setQuoteIfExist(false);
     }
   }, [userQuote]);
 
+  // this for select customer in home page
   useEffect(() => {
     const fetchData = async () => {
       await getAllClientTypes();

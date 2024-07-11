@@ -62,7 +62,7 @@ const ImageUploadComponent = ({ onChange, value, size = 100 }: IProps) => {
         type="file"
         accept=".jpg, .jpeg, .png, .gif, .svg"
         onChange={handleFileSelect}
-        style={{ display: "none" }}
+        style={{ display: "none" }} 
         ref={inputRef}
       />
       <Button variant={"contained"} onClick={() => inputRef.current?.click()} style={classes.selectBtn}>

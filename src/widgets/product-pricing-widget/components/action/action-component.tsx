@@ -10,6 +10,7 @@ import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import {
   EditableKeyValueViewComponent,
   ParametersMapping,
+  TextAreaActionsMapping,
 } from "@/widgets/product-pricing-widget/components/action/key-value-view";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { InOutSourceSelect } from "@/widgets/product-pricing-widget/components/in-out-source-select/in-out-source-select";
@@ -31,9 +32,10 @@ import { PrintImageComponent } from "@/widgets/product-pricing-widget/components
 import ClearRoundedIcon from "@mui/icons-material/ClearRounded";
 import { SettingsIcon } from "@/icons/settings";
 import { SettingsMenu } from "./settings-menu";
-import { WarningIcon } from "@/icons";
+import { PlusIcon, WarningIcon } from "@/icons";
 import { PermissionCheck } from "@/components/CheckPermission";
 import { Permissions } from "@/components/CheckPermission/enum";
+import { NotesForActionModal } from "./notes-for-action-modal";
 interface IActionContainerComponentProps extends IWorkFlowAction {
   delay?: number;
   workFlowId?: string;
@@ -52,6 +54,7 @@ const Actions = ({
   workFlowId,
   productType,
 }: IActionsComponentProps) => {
+  console.log("actions", actions)
   return (
     <Stack gap={"10px"}>
       {actions?.map((action, index) => {
@@ -181,6 +184,7 @@ const ActionContainerComponent = ({
   const [chooseMachine, setChooseMachine] = useState<boolean>(false);
   const [chooseMaterial, setChooseMaterial] = useState<boolean>(false);
   const [chooseEmployee, setChooseEmployee] = useState<boolean>(false);
+
   const currentProductItemValue = useRecoilValue(currentProductItemValueState);
   const { t } = useTranslation();
   const {
@@ -228,15 +232,20 @@ const ActionContainerComponent = ({
       parameter.propertyType === RuleType.OUTPUT &&
       parameter.htmlElementType === HtmlElementType.IMAGE
   );
+
+  const textAreaOutputs = outputs?.filter(
+    (parameter) =>
+      parameter.propertyType === RuleType.OUTPUT &&
+      parameter.htmlElementType === HtmlElementType.TEXT_AREA
+  );
   const handleDeliveryTimeUpdate = (newValue: string) => {
     updateActionData(
-      actionId,
+      id,
       +newValue,
       "totalProductionTime",
       productType
     ).then();
   };
-
   const handleCostUpdate = (newCost: string) => {
     updateActionData(id, +newCost, "totalCost", productType).then();
   };
@@ -641,6 +650,13 @@ const ActionContainerComponent = ({
                 {imageOutputs.map((parameter) => (
                   <PrintImageComponent {...parameter} />
                 ))}
+                <Divider orientation={"vertical"} flexItem />
+                <TextAreaActionsMapping
+                  parameters={textAreaOutputs}
+                  actionId={id}
+                  currentProductItemValue={currentProductItemValue}
+                  productType={productType}
+                />
               </Stack>
             </>
           )}

@@ -12,7 +12,6 @@ import { useAgentsList } from "@/hooks/use-agent-list";
 
 const DepositsListPageWidget = () => {
     const { classes } = useStyle();
-    const { agentsCategories, getAgentCategories } = useAgentsList()
     const {
         page,
         setPage,
@@ -31,16 +30,13 @@ const DepositsListPageWidget = () => {
         handleSelectEmployee,
         employeeId,
         onSelectLogsDateRange,
-        resetLogsDatePicker
+        resetLogsDatePicker,
     } = useDeposits();
 
     useEffect(() => {
         getAllDeposits();
     }, [page, pageSize, finalPatternSearch]);
 
-    useEffect(() => {
-        getAgentCategories(null);
-    }, [])
 
     return (
         <>
@@ -83,8 +79,7 @@ const DepositsListPageWidget = () => {
                         handleSelectEmployee={handleSelectEmployee}
                         onSelectDateRange={onSelectLogsDateRange}
                         resetLogsDatePicker={resetLogsDatePicker}
-                        employeesCategories={agentsCategories}
-                    />
+                        />
                 </GoMakeModal>
             </Stack>
         </>

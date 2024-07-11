@@ -11,6 +11,7 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 import Backend from "i18next-http-backend";
 import { GoMakeTourProvider } from "@/providers/go-make-tour/go-make-tour-provider";
 import { GomakeLoadingWithShadow } from "@/widgets/loading-with-shadow";
+import useUpdateCurrentPath from "@/pages-components/customer-service/hook/useUpdateCurrentPath";
 
 i18n
   .use(Backend)
@@ -28,22 +29,30 @@ i18n
 
 export default function App({ Component, pageProps }: AppProps) {
   const { t } = useTranslation();
+
   return (
     <DndProvider backend={HTML5Backend}>
       <RecoilRoot>
-        <ThemeProvider />
-        <style jsx global>{`
-          html {
-            direction: ${t("direction")};
-          }
-        `}</style>
-        <GoMakeTourProvider>
-          <Component {...pageProps} />
-        </GoMakeTourProvider>
-        <GoMakeSnackBar />
-        <GomakeLoading />
-        <GomakeLoadingWithShadow />
+        <UpdatePathWrapper>
+          <ThemeProvider />
+          <style jsx global>{`
+            html {
+              direction: ${t("direction")};
+            }
+          `}</style>
+          <GoMakeTourProvider>
+            <Component {...pageProps} />
+          </GoMakeTourProvider>
+          <GoMakeSnackBar />
+          <GomakeLoading />
+          <GomakeLoadingWithShadow />
+        </UpdatePathWrapper>
       </RecoilRoot>
     </DndProvider>
   );
 }
+
+const UpdatePathWrapper = ({ children }) => {
+  useUpdateCurrentPath();
+  return children;
+};
