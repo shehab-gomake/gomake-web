@@ -5,6 +5,7 @@ import { CreateIssueModalProps, TicketTypeList } from "../interface";
 import { useTranslation } from "react-i18next";
 
 import { JiraImageUpload } from "./jira-Image-Upload";
+import { SectionsList } from "./sections-list";
 
 const CreateIssueModal: React.FC<CreateIssueModalProps> = ({
   openModal,
@@ -14,6 +15,7 @@ const CreateIssueModal: React.FC<CreateIssueModalProps> = ({
   setTicketState,
   ticketState,
   setFileBase64,
+  handleSectionChange,
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -33,7 +35,7 @@ const CreateIssueModal: React.FC<CreateIssueModalProps> = ({
           onChange={(e, val) => setTicketState({ ...ticketState, ticketType: val })}
           value={ticketState?.ticketType}
         />
-
+        <SectionsList onChange={(val1, val2) => handleSectionChange(val1, val2)} />
         <JiraImageUpload onUpload={true} onFileSelect={setFileBase64} />
 
         <GomakeTextInput

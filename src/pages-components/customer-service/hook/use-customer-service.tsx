@@ -18,9 +18,6 @@ const useCustomerService = (isAdmin: boolean) => {
   const { profileState } = useUserProfile();
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [AllIssues, setAllIssues] = useState([]);
-  // const [ticketType, setTicketType] = useState<TicketTypeList>();
-  // const [title, setTitle] = useState<string>("");
-  // const [description, setDescription] = useState<string>("");
   const [printHouses, setPrintHouses] = useState<JiraPrintHouse[]>([]);
   const [selectedPrintHouseName, setSelectedPrintHouseName] = useState("");
   const [filteredIssues, setFilteredIssues] = useState([]);
@@ -34,10 +31,29 @@ const useCustomerService = (isAdmin: boolean) => {
     ? ["10%", "10%", "10%", "40%", "10%", "10%", "10%"]
     : ["0%", "10%", "10%", "50%", "10%", "10%", "10%"];
 
-  const onChangeInputs = (key, value) => {
-    console.log("key", key, "value", value);
-    setTicketState({ ...ticketState, [key]: value });
-  };
+  // const onChangeInputs = (key, value) => {
+  //   console.log("key", key, "value", value);
+  //   setTicketState({ ...ticketState, [key]: value });
+  // };
+
+  const onChangeInputs = useCallback((key, value) => {
+    setTicketState((prevTicketState) => ({
+      ...prevTicketState,
+      [key]: value,
+    }));
+  }, []);
+
+  // const handleSectionChange = (section: string, subSection: string) => {
+  //   setTicketState({ ...ticketState, section, subSection });
+  // };
+
+  const handleSectionChange = useCallback((section: string, subSection: string) => {
+    setTicketState((prevTicketState) => ({
+      ...prevTicketState,
+      section,
+      subSection,
+    }));
+  }, []);
 
   const getIssues = useCallback(async () => {
     const callBack = (res) => {
@@ -164,11 +180,14 @@ const useCustomerService = (isAdmin: boolean) => {
   ];
 
   const onClickClosModal = () => {
-    // setTicketType(null);
-    // setTitle("");
-    // setDescription("");
     setFileBase64("");
-    setTicketState({ ...ticketState, ticketType: null, title: "", description: "" });
+    // setTicketState({ ...ticketState, ticketType: null, title: "", description: "" });
+    setTicketState((prevTicketState) => ({
+      ...prevTicketState,
+      ticketType: null,
+      title: "",
+      description: "",
+    }));
     setOpenModal(false);
   };
   const onClickOpenModal = (transaction) => {
@@ -196,13 +215,7 @@ const useCustomerService = (isAdmin: boolean) => {
     handleClean,
     statusKey,
     openModal,
-    // ticketType,
     ticketTypeList,
-    // title,
-    // description,
-    // setDescription,
-    // setTitle,
-    // setTicketType,
     onClickClosModal,
     onClickOpenModal,
     createIssue,
@@ -216,12 +229,11 @@ const useCustomerService = (isAdmin: boolean) => {
     statusFilter,
     filteredIssues,
     columnWidths,
-    // screenShot,
-    // setScreenShot,
     onChangeInputs,
     ticketState,
     setTicketState,
     setFileBase64,
+    handleSectionChange,
   };
 };
 
