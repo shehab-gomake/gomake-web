@@ -195,6 +195,7 @@ const useSettings = ({
           templateId: productState?.templateId?.id,
           clients: productState?.clients,
           clientsTypes: productState?.clientsTypes,
+          additionProfits: productState?.additionProfits,
         }
       );
       if (res?.success) {
@@ -251,6 +252,7 @@ const useSettings = ({
           status: true,
           clients: productState?.clients,
           clientsTypes: productState?.clientsTypes,
+          additionProfits: productState?.additionProfits ,
           //sections: productState?.sections,
         }
       );
