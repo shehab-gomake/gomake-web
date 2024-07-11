@@ -4,8 +4,8 @@ import { ProfitHeaderWidget } from "./widgets/profit-header/profit-header";
 import { useNewProfits } from "./use-profits";
 import { useStyle } from "./style";
 import { Skeleton } from "@mui/material";
-import {StepType} from "@reactour/tour";
-import {useGoMakeTour} from "@/hooks/use-go-make-tour";
+import { StepType } from "@reactour/tour";
+import { useGoMakeTour } from "@/hooks/use-go-make-tour";
 
 const ProfitsNewPageWidget = () => {
   const { classes } = useStyle();
@@ -73,39 +73,39 @@ const ProfitsNewPageWidget = () => {
     {
       selector: '[data-tour="profitStep1"]',
       content: 'This is the most important screen in the system.\n' +
-          'Here, you can control pricing by\n' +
-          'setting the profit you want for the cost\n' +
-          'calculated from the machines and materials settings.',
+        'Here, you can control pricing by\n' +
+        'setting the profit you want for the cost\n' +
+        'calculated from the machines and materials settings.',
       position: 'center',
     },
     {
       selector: '[data-tour="profitStep2"]',
       content: 'You can change the method and set a price by:\n' +
-          'Units quantity\n' +
-          'Materials quantity\n' +
-          'Square Meters (M^٢)\n' +
-          'Cubic Meters (M^٣)\n' +
-          'And more',
+        'Units quantity\n' +
+        'Materials quantity\n' +
+        'Square Meters (M^٢)\n' +
+        'Cubic Meters (M^٣)\n' +
+        'And more',
       position: 'top',
     },
     {
       selector: '[data-tour="profitStep3"]',
       content: 'Here, we can add rules for 3\n' +
-          'Setting different pricing tables for\n' +
-          'specific clients\n' +
-          'products\n' +
-          'based on inputs\n' +
-          'and more',
+        'Setting different pricing tables for\n' +
+        'specific clients\n' +
+        'products\n' +
+        'based on inputs\n' +
+        'and more',
       position: 'bottom',
     },
     {
       selector: '[data-tour="profitStep4"]',
       content: 'Here, we can add rules for 4\n' +
-          'Adding percentage to the basic price tables for\n' +
-          'specific clients\n' +
-          'products\n' +
-          'based on inputs\n' +
-          'and more',
+        'Adding percentage to the basic price tables for\n' +
+        'specific clients\n' +
+        'products\n' +
+        'based on inputs\n' +
+        'and more',
       position: 'right',
     },
     {
@@ -113,11 +113,11 @@ const ProfitsNewPageWidget = () => {
       content: 'Set minimum price.',
       position: 'right',
       styles: {
-        maskWrapper: props => ({...props, zIndex: 1000000})
+        maskWrapper: props => ({ ...props, zIndex: 1000000 })
       }
     },
   ]
-  const {} = useGoMakeTour(profitsSteps, []);
+  const { } = useGoMakeTour(profitsSteps, []);
   return (
     <div data-tour={'profitStep1'} style={classes.mainGridContainer}>
       {router.query.signalRConnectionId && (
@@ -144,34 +144,34 @@ const ProfitsNewPageWidget = () => {
       )}
       <div style={classes.bodyGridContainer}>
         {!isLoading ? (
-                <div data-tour={'profitStep2'}>
-          <ProfitLeftSideWidget
-            actionProfitRowChartData={actionProfitRowChartData}
-            actionProfitRowsList={actionProfitRowsList}
-            selectedTransition={selectedTransition}
-            selectedPricingBy={selectedPricingBy}
-            tableHeaders={tableHeaders}
-            Transition={Transition}
-            PricingBy={PricingBy}
-            openAddStepModal={openAddStepModal}
-            onCloseAddStepModal={onCloseAddStepModal}
-            onOpenAddStepModal={onOpenAddStepModal}
-            updatePricingByForAction={updatePricingByForAction}
-            updateTransitionForAction={updateTransitionForAction}
-            setSelectedTransition={setSelectedTransition}
-            changeactionProfitRowsItems={changeactionProfitRowsItems}
-            addNewStepForActionProfitRow={addNewStepForActionProfitRow}
-            updateActionProfitRow={updateActionProfitRow}
-            anchorElMorePriceTable={anchorElMorePriceTable}
-            openMorePriceTable={openMorePriceTable}
-            handleClickMorePriceTable={handleClickMorePriceTable}
-            handleCloseMorePriceTable={handleCloseMorePriceTable}
-            selectedActionProfitRow={selectedActionProfitRow}
-            setSelectedActionProfit={setSelectedActionProfit}
-            deleteActionProfitRow={deleteActionProfitRow}
-            selectedAdditionalProfitRow={selectedAdditionalProfitRow}
-          />
-                </div>
+          <div data-tour={'profitStep2'}>
+            <ProfitLeftSideWidget
+              actionProfitRowChartData={actionProfitRowChartData}
+              actionProfitRowsList={actionProfitRowsList}
+              selectedTransition={selectedTransition}
+              selectedPricingBy={selectedPricingBy}
+              tableHeaders={tableHeaders}
+              Transition={Transition}
+              PricingBy={PricingBy}
+              openAddStepModal={openAddStepModal}
+              onCloseAddStepModal={onCloseAddStepModal}
+              onOpenAddStepModal={onOpenAddStepModal}
+              updatePricingByForAction={updatePricingByForAction}
+              updateTransitionForAction={updateTransitionForAction}
+              setSelectedTransition={setSelectedTransition}
+              changeactionProfitRowsItems={changeactionProfitRowsItems}
+              addNewStepForActionProfitRow={addNewStepForActionProfitRow}
+              updateActionProfitRow={updateActionProfitRow}
+              anchorElMorePriceTable={anchorElMorePriceTable}
+              openMorePriceTable={openMorePriceTable}
+              handleClickMorePriceTable={handleClickMorePriceTable}
+              handleCloseMorePriceTable={handleCloseMorePriceTable}
+              selectedActionProfitRow={selectedActionProfitRow}
+              setSelectedActionProfit={setSelectedActionProfit}
+              deleteActionProfitRow={deleteActionProfitRow}
+              selectedAdditionalProfitRow={selectedAdditionalProfitRow}
+            />
+          </div>
         ) : (
           <Skeleton
             variant="rectangular"

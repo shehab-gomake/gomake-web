@@ -646,14 +646,7 @@ const useNewProfits = () => {
     setAnchorElAdditionalProfitMenu(null);
   };
 
-  useEffect(() => {
-    if (profitsPricingTables?.length > 0) {
-      const defaultRow: any = profitsPricingTables?.find((item) => {
-        return item.exceptionType === ETypeException.DEFAULT;
-      });
-      setSelectedPricingTableItems(defaultRow);
-    }
-  }, [profitsPricingTables]);
+
   useEffect(() => {
     if (selectedPricingTableItems?.exceptionType === ETypeException.DEFAULT) {
       setProfitRowType(EProfitRowType.NORMAL_PROFIT_ROW);
@@ -667,6 +660,34 @@ const useNewProfits = () => {
     useState<ProfitsPricingTables[]>();
   const [dataForExceptions, setDataForExceptions] =
     useState<ProfitsPricingTables[]>();
+
+  const [firstRender, setFirstRender] = useState(false)
+  useEffect(() => {
+    if (firstRender) {
+      if (dataForPricing?.length === 0) {
+        const defaultRow = profitsPricingTables?.find((item) => {
+          return item.exceptionType === ETypeException.DEFAULT;
+        });
+        setSelectedPricingTableItems(defaultRow);
+      } else {
+        const maxIndexItem = profitsPricingTables?.reduce((prev, current) => {
+          return (prev.index > current.index) ? prev : current;
+        });
+        setSelectedPricingTableItems(maxIndexItem);
+      }
+    }
+    else {
+      const defaultRow = profitsPricingTables?.find((item) => {
+        return item.exceptionType === ETypeException.DEFAULT;
+      });
+      if (defaultRow) {
+        setFirstRender(true)
+        setSelectedPricingTableItems(defaultRow);
+
+      }
+    }
+
+  }, [dataForPricing]);
 
   const reOrderPricingTables = useCallback(async (data: any) => {
     const res = await callApi(

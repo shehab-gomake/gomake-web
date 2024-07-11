@@ -30,6 +30,16 @@ const useSettings = ({
   const [RandomId, setRandomId] = useState();
   const [selectedProductId, setSelectedProductId] = useState<string>("")
   const [openDeleteRowModal, setOpenDeleteRowModal] = useState<boolean>(false);
+  const [openPricingTypeModal, setOpenPricingTypeModal] = useState<boolean>(false);
+  const [selectPricingType, setPricingType] = useState({})
+
+  const onClickOpenPricingType = (value) => {
+    setPricingType(value)
+    setOpenPricingTypeModal(true)
+  }
+  const onClickClosePricingType = () => {
+    setOpenPricingTypeModal(false)
+  }
 
   useEffect(() => {
     setRandomId(uuidv4());
@@ -374,7 +384,11 @@ const useSettings = ({
     createNewProduct,
     createNewProductAndGoToParameterList,
     updatedProduct,
-    deleteProductSKURow
+    deleteProductSKURow,
+    openPricingTypeModal,
+    onClickOpenPricingType,
+    onClickClosePricingType,
+    selectPricingType
   };
 };
 
