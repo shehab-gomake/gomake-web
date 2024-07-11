@@ -11,6 +11,7 @@ import { useUserProfile } from "@/hooks/use-user-profile";
 import { JiraIssueType, JiraPrintHouse, TicketTypeList } from "../interface";
 import { useTranslation } from "react-i18next";
 import { ticketTypeList } from "../enums";
+import { logSessionData } from "@/utils/sessionManager";
 
 const useCustomerService = (isAdmin: boolean) => {
   const { t } = useTranslation();
@@ -145,6 +146,7 @@ const useCustomerService = (isAdmin: boolean) => {
       }
     };
 
+    logSessionData();
     await createIssueApi(callApi, callBack, { issueData, fileBase64 });
   };
 

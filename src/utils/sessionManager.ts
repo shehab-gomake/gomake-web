@@ -16,3 +16,8 @@ export const addRequestToSession = (request: any) => {
 export const clearSessionData = () => {
   removeItem("sessionData");
 };
+
+export const logSessionData = () => {
+  const sessionData = getSessionData();
+  console.log("Session data:", sessionData);
+};
