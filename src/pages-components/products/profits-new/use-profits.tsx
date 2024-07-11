@@ -110,7 +110,6 @@ const useNewProfits = () => {
   }, [systemCurrency]);
   const [selectedPricingTableItems, setSelectedPricingTableItems] =
     useState<ProfitsPricingTables>();
-  console.log("selectedPricingTableItems", selectedPricingTableItems)
   const [typeExceptionSelected, setTypeExceptionSelected] = useState<number>();
   const [selectedAdditionalProfitRow, setSelectedActionProfitRow] =
     useState<ProfitsPricingTables>();
@@ -138,7 +137,6 @@ const useNewProfits = () => {
   const [openAddStepModal, setOpenAddStepModal] = useState<boolean>(false);
   const [profitsPricingTables, setProfitsPricingTables] =
     useState<ProfitsPricingTables[]>();
-  console.log("profitsPricingTables", profitsPricingTables)
   const [tableHeaders, setTableHeaders] = useState<string[]>([
     t("products.profits.pricingListWidget.cost"),
     t("products.profits.pricingListWidget.profit"),
@@ -663,19 +661,32 @@ const useNewProfits = () => {
   const [dataForExceptions, setDataForExceptions] =
     useState<ProfitsPricingTables[]>();
 
-
+  const [firstRender, setFirstRender] = useState(false)
   useEffect(() => {
-    if (dataForPricing?.length === 0) {
+    if (firstRender) {
+      if (dataForPricing?.length === 0) {
+        const defaultRow = profitsPricingTables?.find((item) => {
+          return item.exceptionType === ETypeException.DEFAULT;
+        });
+        setSelectedPricingTableItems(defaultRow);
+      } else {
+        const maxIndexItem = profitsPricingTables?.reduce((prev, current) => {
+          return (prev.index > current.index) ? prev : current;
+        });
+        setSelectedPricingTableItems(maxIndexItem);
+      }
+    }
+    else {
       const defaultRow = profitsPricingTables?.find((item) => {
         return item.exceptionType === ETypeException.DEFAULT;
       });
-      setSelectedPricingTableItems(defaultRow);
-    } else {
-      const maxIndexItem = profitsPricingTables?.reduce((prev, current) => {
-        return (prev.index > current.index) ? prev : current;
-      });
-      setSelectedPricingTableItems(maxIndexItem);
+      if (defaultRow) {
+        setFirstRender(true)
+        setSelectedPricingTableItems(defaultRow);
+
+      }
     }
+
   }, [dataForPricing]);
 
   const reOrderPricingTables = useCallback(async (data: any) => {
