@@ -110,6 +110,7 @@ const useNewProfits = () => {
   }, [systemCurrency]);
   const [selectedPricingTableItems, setSelectedPricingTableItems] =
     useState<ProfitsPricingTables>();
+  console.log("selectedPricingTableItems", selectedPricingTableItems)
   const [typeExceptionSelected, setTypeExceptionSelected] = useState<number>();
   const [selectedAdditionalProfitRow, setSelectedActionProfitRow] =
     useState<ProfitsPricingTables>();
@@ -137,6 +138,7 @@ const useNewProfits = () => {
   const [openAddStepModal, setOpenAddStepModal] = useState<boolean>(false);
   const [profitsPricingTables, setProfitsPricingTables] =
     useState<ProfitsPricingTables[]>();
+  console.log("profitsPricingTables", profitsPricingTables)
   const [tableHeaders, setTableHeaders] = useState<string[]>([
     t("products.profits.pricingListWidget.cost"),
     t("products.profits.pricingListWidget.profit"),
@@ -646,14 +648,7 @@ const useNewProfits = () => {
     setAnchorElAdditionalProfitMenu(null);
   };
 
-  useEffect(() => {
-    if (profitsPricingTables?.length > 0) {
-      const defaultRow: any = profitsPricingTables?.find((item) => {
-        return item.exceptionType === ETypeException.DEFAULT;
-      });
-      setSelectedPricingTableItems(defaultRow);
-    }
-  }, [profitsPricingTables]);
+
   useEffect(() => {
     if (selectedPricingTableItems?.exceptionType === ETypeException.DEFAULT) {
       setProfitRowType(EProfitRowType.NORMAL_PROFIT_ROW);
@@ -667,6 +662,21 @@ const useNewProfits = () => {
     useState<ProfitsPricingTables[]>();
   const [dataForExceptions, setDataForExceptions] =
     useState<ProfitsPricingTables[]>();
+
+
+  useEffect(() => {
+    if (dataForPricing?.length === 0) {
+      const defaultRow = profitsPricingTables?.find((item) => {
+        return item.exceptionType === ETypeException.DEFAULT;
+      });
+      setSelectedPricingTableItems(defaultRow);
+    } else {
+      const maxIndexItem = profitsPricingTables?.reduce((prev, current) => {
+        return (prev.index > current.index) ? prev : current;
+      });
+      setSelectedPricingTableItems(maxIndexItem);
+    }
+  }, [dataForPricing]);
 
   const reOrderPricingTables = useCallback(async (data: any) => {
     const res = await callApi(
