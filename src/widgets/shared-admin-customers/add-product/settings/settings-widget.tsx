@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { MuiColorInput } from "mui-color-input";
 import { useTranslation } from "react-i18next";
-import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
+import { GoMakeAutoComplate, GoMakeDeleteModal, GomakeTextInput } from "@/components";
 import { AddProductSkuModal } from "./modals/add-contact-modal";
 import { UploadImgProduct } from "./upload-widget";
 import { EProductClient } from "./settings-data";
@@ -39,14 +39,29 @@ const SettingsWidget = ({
     createNewProductAndGoToParameterList,
     updatedProduct,
     UploadProductImage,
-    deleteProductSKURow
+    deleteProductSKURow,
+    openPricingTypeModal,
+    onClickOpenPricingType,
+    selectPricingType,
+    onClickClosePricingType
+
   } = useSettings({ onClickParametersTab, productState, onChangeStateProduct });
-  const defultProductSKU = allProductSKU?.find(
-    (item) => item.id === productState?.productSKUId
-  );
-  const defultTemplate = allTemplate?.find(
-    (item) => item.id === productState?.templateId
-  );
+  const [defultProductSKU, setDefultProductSKU] = useState()
+  const [defultTemplate, setDefultTemplate] = useState()
+  useEffect(() => {
+    const defultProductSKU = allProductSKU?.find(
+      (item) => item.id === productState?.productSKUId
+    );
+    const defultTemplate = allTemplate?.find(
+      (item) => item.id === productState?.templateId
+    );
+    if (defultTemplate) {
+      setDefultTemplate(defultTemplate)
+    }
+    if (defultProductSKU) {
+      setDefultProductSKU(defultProductSKU)
+    }
+  }, [productState, allTemplate, allProductSKU])
   const _renderProductClientSelector = () => {
     if (customersList?.length > 0 && clientTypesList?.length) {
       if (productState?.pricingType === EProductClient.BY_CLIENT) {
@@ -219,12 +234,12 @@ const SettingsWidget = ({
                 style={clasess.dropDownListStyle}
                 getOptionLabel={(option: any) => option.name}
                 value={
-                  typeof productState?.templateId
+                  typeof productState?.templateId != "object"
                     ? defultTemplate
                     : productState?.templateId
                 }
                 onChange={(e: any, value: any) => {
-                  onChangeStateProduct("templateId", value);
+                  onClickOpenPricingType(value)
                 }}
               />
             )}
@@ -315,18 +330,18 @@ const SettingsWidget = ({
           </div>
           <div style={clasess.fileInputStyle}>
             <MuiColorInput
-                value={
-                    productState?.noteColor ??
-                    t("products.addProduct.admin.noteColor")
-                }
-                onChange={(value: any) => {
-                  onChangeStateProduct("noteColor", value);
-                }}
-                format="hex"
+              value={
+                productState?.noteColor ??
+                t("products.addProduct.admin.noteColor")
+              }
+              onChange={(value: any) => {
+                onChangeStateProduct("noteColor", value);
+              }}
+              format="hex"
             />
             {productState?.noteColor &&
               <div style={{ cursor: "pointer" }} onClick={() => onChangeStateProduct("noteColor", null)}>
-                <FormatColorResetIcon/>
+                <FormatColorResetIcon />
               </div>
             }
           </div>
@@ -346,7 +361,7 @@ const SettingsWidget = ({
               }}
               format="hex"
             />
-     {productState?.textColor &&
+            {productState?.textColor &&
               <div style={{ cursor: "pointer" }} onClick={() => onChangeStateProduct("textColor", null)}>
                 <FormatColorResetIcon />
               </div>
@@ -422,6 +437,14 @@ const SettingsWidget = ({
         onClickOpenDeleteRowModal={onClickOpenDeleteRowModal}
         onClickCloseDeleteRowModal={onClickCloseDeleteRowModal}
         deleteProductSKURow={deleteProductSKURow}
+      />
+      <GoMakeDeleteModal
+        title={t("modal.pricingTypeTitle")}
+        yesBtn={t("sales.quote.yesBtn")}
+        openModal={openPricingTypeModal}
+        onClose={onClickClosePricingType}
+        hideIcon={true}
+        onClickDelete={() => onChangeStateProduct("templateId", selectPricingType)}
       />
     </div>
   );
