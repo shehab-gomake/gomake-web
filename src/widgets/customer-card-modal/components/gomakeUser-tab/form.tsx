@@ -6,9 +6,10 @@ import { FormInput } from "@/components/form-inputs/form-input";
 import { IInput } from "@/components/form-inputs/interfaces";
 import { userInputs } from "../../inputs/user-inputs";
 import { Button, Stack } from "@mui/material";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { gomakeUserState } from "./gomakeUserState";
 import { resetPassModalState } from "../../state";
+import { languagesState } from "@/store/languages";
 
 interface IProps {
   user: {
@@ -25,9 +26,9 @@ interface IProps {
 }
 
 const UserForm = ({ user, onDelete, setUser }: IProps) => {
-  const [openModal, setOpenModal] =
-    useRecoilState<boolean>(resetPassModalState);
-  const [gomakeUser, setGomakeUser] = useRecoilState<{}>(gomakeUserState);
+  const setOpenModal =useSetRecoilState<boolean>(resetPassModalState);
+  const setGomakeUser = useSetRecoilState<{}>(gomakeUserState);
+  const languagesOptions = useRecoilValue(languagesState);
   const { classes } = useStyle();
   const { t } = useTranslation();
 
@@ -44,7 +45,7 @@ const UserForm = ({ user, onDelete, setUser }: IProps) => {
   return (
     <div>
       <div style={classes.customerInfoStyle}>
-        {userInputs(user, showPassFiled).map((item) => (
+        {userInputs(user, showPassFiled , languagesOptions).map((item) => (
           <FormInput
             input={item as IInput}
             changeState={onChangeInputs}
