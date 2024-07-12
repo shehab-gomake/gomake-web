@@ -14,6 +14,7 @@ export enum EMaterialsActions {
   DownLoadExcel,
   UploadExcel,
   UploadMaterialsPictures,
+  CreatePurchaseOrder
 }
 
 export enum EMaterialActiveFilter {
