@@ -11,7 +11,7 @@ import FormatColorResetIcon from '@mui/icons-material/FormatColorReset';
 
 const SettingsWidget = ({
   onClickParametersTab,
-  productState,
+  productState, 
   onChangeStateProduct,
   isUpdate = false,
 }) => {
@@ -198,7 +198,6 @@ const SettingsWidget = ({
                 +
               </span>
             }
-
           </div>
           <div style={{ width: 250 }}>
             {allProductSKU && (
@@ -260,7 +259,22 @@ const SettingsWidget = ({
             />
           </div>
         </div>
-
+        <div style={clasess.itemOnFirstContainer}>
+          <div style={clasess.labelTitleStyle}>
+            {`${t("customers.modal.additionProfits")} (%)`}
+          </div>
+          <div>
+            <GomakeTextInput
+              style={clasess.textInputStyle}
+              placeholder={t("customers.modal.additionProfits")}
+              onChange={(e: any) => {
+                onChangeStateProduct("additionProfits", e.target.value);
+              }}
+              value={productState?.additionProfits}
+              type={"number"}
+            />
+          </div>
+        </div>
         <div style={clasess.itemGropupsContainer}>
           <div style={clasess.labelTitleStyle}>
             {t("products.addProduct.admin.groups")}
