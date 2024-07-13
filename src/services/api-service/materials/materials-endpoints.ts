@@ -7,8 +7,7 @@ import {
 } from "@/widgets/materials-widget/interface";
 
 const GET_MATERIALS_TYPES_URL = "/v1/materials/getMaterialsTypes";
-const GET_MATERIAL_TABLE_HEADERS_URL =
-  "/v1/materials/GetMaterialTypeTableHeader";
+const GET_MATERIAL_TABLE_HEADERS_URL ="/v1/materials/GetMaterialTypeTableHeader";
 const DOWNLOAD_MATERIAL_EXCEL_FILE = "/v1/materials/download-material-excel";
 const UPLOAD_MATERIAL_EXCEL_FILE = "/v1/materials/upload-material-excel-file";
 const UPDATE_MATERIALS_IMAGES = "/v1/materials/update-materials-images";
@@ -20,8 +19,8 @@ const UPDATE_MATERIALS_PROPS_URL = "/v1/materials/updateMaterials";
 const ADD_MATERIAL_CATEGORY_URL = "/v1/materials/add-material-category";
 const ADD_MATERIAL_CATEGORY_ROW_URL = "/v1/materials/add-material-category-row";
 const DELETE_MATERIAL_CATEGORY_URL = "/v1/materials/delete-material-category";
-const DELETE_MATERIAL_CATEGORY_Row_URL =
-  "/v1/materials/delete-material-category-row";
+const DELETE_MATERIAL_CATEGORY_Row_URL = "/v1/materials/delete-material-category-row";
+const CREATE_PURCHASE_ORDER_URL = "/v1/materials/create-purchase-order";
 
 const getMaterialTableHeadersApi: ICallAndSetData = async (
   callApi,
@@ -71,6 +70,7 @@ const uploadMaterialExcelFileApi: ICallAndSetData = async (
     data
   );
 };
+
 const updateMaterialsImagesApi: ICallAndSetData = async (
   callApi,
   callBack,
@@ -223,6 +223,21 @@ const deleteMaterialCategoryRowApi: ICallAndSetData = async (
   );
 };
 
+
+const createPurchaseOrderApi: ICallAndSetData = async (
+  callApi,
+  callBack,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    CREATE_PURCHASE_ORDER_URL,
+    callBack,
+    data
+  );
+};
+
 export {
   getMaterialsTypesApi,
   getMaterialTableHeadersApi,
@@ -237,5 +252,6 @@ export {
   addMaterialCategoryRowApi,
   deleteMaterialCategoryApi,
   deleteMaterialCategoryRowApi,
-  getDeviceSizeMockApi
+  getDeviceSizeMockApi,
+  createPurchaseOrderApi
 };

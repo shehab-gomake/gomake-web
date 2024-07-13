@@ -47,6 +47,7 @@ const ActionMenu = (props: IActionMenuProps) => {
     addProperty,
     updateModalCurrency
   } = useMaterialsActions(props.isAdmin);
+  
   const getMaterialActions = () => {
     if (props.isAdmin) {
       return materialActions.filter(x => x.action !== EMaterialsActions.UpdateIsActive && x.action !== EMaterialsActions.UpdateIsInActive);

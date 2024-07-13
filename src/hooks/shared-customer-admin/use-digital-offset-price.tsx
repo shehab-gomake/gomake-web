@@ -530,12 +530,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           });
         });
       });
-      console.log("temp", temp)
       // Filter out items where isHidden === true
       temp = temp.filter(item => !item.isHidden);
-      console.log("temp2", { temp, productTemplate })
-
-
       setIsRequiredParameters(temp);
       setActiveSectionRequiredParameters(activeSectionTemp);
     }
@@ -909,7 +905,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 }
 
               }
-              if (relatedToParameter && defaultValue != null && defaultValue != undefined ) {
+              if (relatedToParameter && !defaultValue) {
                 parameter.isHidden = true;
               }
               if (!relatedToParameter) {
@@ -1586,7 +1582,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       let disabled = false;
       const sizeParameter = getParameterByParameterCode(subProducts, "size");
       if (sizeParameter && sizeParameter.isDisabled) {
-        //debugger
         disabled = true;
       }
       Comp = (
@@ -1887,6 +1882,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           subSection.parameters.some((p) => p.id === relatedParameter.parameterId)
         )
         .map((relatedParameter) => {
+          
           const subProduct = subProducts?.find(
             (x) => x.type === subSection?.type
           );
@@ -1973,6 +1969,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 return;
               }
               param.isHidden = false;
+              processRelatedParameters2(param, subSection, section, productTemplate, subProducts)
+
             } else {
               const sectionCopy = productTemplate.sections.find(x => x.id === section.id);
               const subSectionCopy = sectionCopy.subSections.find(x => x.id === subSection.id);
