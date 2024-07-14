@@ -31,6 +31,7 @@ export enum Permissions {
   SHOW_MACHINES = "ShowMachines",
   ADD_MACHINE = "AddMachine",
   EDIT_MACHINE = "EditMachines",
+  SHOW_ACTION_AND_MATERIAL_IN_MACHINE = "ShowActionAndMaterialInMachines",
 
   //Actions group
   SHOW_ACTIONS = "ShowActions",
