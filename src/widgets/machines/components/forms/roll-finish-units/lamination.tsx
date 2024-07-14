@@ -47,7 +47,7 @@ const inputs = (state) => {
                 machineInputType: 'materialInput',
                 value: state?.attributes?.laminationGlues,
                 isValid: true,
-                materialType: 'colors'
+                materialType: 'Glue'
             } :
             {
                 name: '',
