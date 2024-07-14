@@ -6,7 +6,7 @@ import { DotsLoader } from "@/components/dots-loader/dots-Loader";
 import { ProgressBar } from "@/components/progress-bar/progress-bar";
 import { useRightSideWidget } from "./use-right-side-widget";
 import { useState } from "react";
-const RightSideWidget = ({ 
+const RightSideWidget = ({
   clasess,
   clientDefaultValue,
   renderOptions,
@@ -55,7 +55,7 @@ const RightSideWidget = ({
   } = useRightSideWidget({ includeVAT });
 
   const [myvalue, setMyValue] = useState("---------");
-  
+
   return (
     <div style={clasess.rightSideMainContainer}>
       <div style={clasess.rightSideContainer}>
