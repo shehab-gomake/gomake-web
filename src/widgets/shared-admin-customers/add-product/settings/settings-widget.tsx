@@ -11,7 +11,7 @@ import FormatColorResetIcon from '@mui/icons-material/FormatColorReset';
 
 const SettingsWidget = ({
   onClickParametersTab,
-  productState, 
+  productState,
   onChangeStateProduct,
   isUpdate = false,
 }) => {
@@ -240,6 +240,7 @@ const SettingsWidget = ({
                 onChange={(e: any, value: any) => {
                   onClickOpenPricingType(value)
                 }}
+                disabled={isUpdate}
               />
             )}
           </div>
