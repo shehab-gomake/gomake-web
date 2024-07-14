@@ -2,15 +2,15 @@ import { EParameterTypes } from "@/enums";
 import {
   HiddenIcon,
   NotHiddenIcon,
-  NotRequierdIcon,
-  RequierdIcon,
+  NotRequiredIcon,
+  RequiredIcon,
   SettingIcon,
 } from "../../icons";
 import { LockedIcon } from "../../icons/lock-icon";
 import { NotLockedIcon } from "../../icons/not-lock-icon";
 import { NotDetailIcon } from "../../icons/not-detail-icon";
 import { DetailIcon } from "../../icons/detail-icon";
-
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 const SectionMappingWidget = ({
   index,
   clasess,
@@ -96,7 +96,7 @@ const SectionMappingWidget = ({
                             )
                           }
                         >
-                          <RequierdIcon />
+                          <RequiredIcon />
                         </div>
                       ) : (
                         <div
@@ -109,7 +109,7 @@ const SectionMappingWidget = ({
                             )
                           }
                         >
-                          <NotRequierdIcon />
+                          <NotRequiredIcon />
                         </div>
                       )
                     ) : (
@@ -158,7 +158,7 @@ const SectionMappingWidget = ({
                               )
                             }
                           >
-                            <DetailIcon />
+                            <InfoOutlinedIcon style={{ ...clasess.detailsIconStyle, color: "#F135A3" }} />
                           </div>
                         ) : (
                           <div
@@ -171,7 +171,7 @@ const SectionMappingWidget = ({
                               )
                             }
                           >
-                            <NotDetailIcon />
+                            <InfoOutlinedIcon style={{ ...clasess.detailsIconStyle, color: "#A4A4A4" }} />
                           </div>
                         )}
                       </>
