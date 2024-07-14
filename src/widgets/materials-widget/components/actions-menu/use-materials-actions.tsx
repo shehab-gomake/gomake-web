@@ -99,6 +99,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
     }
 
   }, [materialCategoryData, selectedMaterialIdForUpdate]);
+
   useEffect(() => {
     if (selectedMaterialsIds.length > 0) {
       const myId = selectedMaterialsIds[0];
@@ -144,10 +145,6 @@ const useMaterialsActions = (isAdmin: boolean) => {
       await updateStatus(action?.action);
       return;
     }
-    if (action?.action === EMaterialsActions.CreatePurchaseOrder) {
-      CreatePurchaseOrder().then();
-      return;
-    }
     if (action?.action === EMaterialsActions.UpdateCurrency) {
       let selectedMaterials = [];
       if (isAllMaterialsChecked) {
@@ -187,7 +184,11 @@ const useMaterialsActions = (isAdmin: boolean) => {
       if (isAdmin) {
         if (action.key === "Duplicate") {
           duplicateMaterials();
-        } else {
+        }
+        else if (action.key === "CreatePurchaseOrder") {
+          CreatePurchaseOrder().then();
+        }
+        else {
           await updateMaterialsPropApi(callApi, onUpdateCallBack, {
             materialTypeKey: materialType.toString(),
             categoryKey: materialCategory.toString(),
@@ -217,7 +218,11 @@ const useMaterialsActions = (isAdmin: boolean) => {
       } else {
         if (action.key === "Duplicate") {
           duplicatePrintHouseMaterials();
-        } else {
+        }
+        else if (action.key === "CreatePurchaseOrder") {
+          CreatePurchaseOrder().then();
+        }
+        else {
           await updatePrintHouseMaterialsPropApi(callApi, onUpdateCallBack, {
             materialTypeKey: materialType.toString(),
             categoryKey: materialCategory.toString(),
@@ -358,9 +363,10 @@ const useMaterialsActions = (isAdmin: boolean) => {
     const callBack = (res) => {
       if (res.success) {
         alertSuccessAdded();
+        handleCloseModal();
         setTimeout(() => {
           navigate(`/purchaseOrder?Id=${res?.data}`);
-        }, 500);
+        }, 400);
       }
       else {
         alertFaultAdded();
@@ -385,6 +391,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
               : null,
         customFiltersKeyValueList: materialFilter,
       },
+      quantity: updatedValue,
       priceIndex: 0,
     });
   };
