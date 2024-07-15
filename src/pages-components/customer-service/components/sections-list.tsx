@@ -38,14 +38,16 @@ const SectionsList = ({ onChange }: SectionsListProps) => {
         placeholder={t("customerService.chooseMainSection")}
         onChange={handleMainSectionChange}
         value={selectedSection}
+        withArrow
       />
       {selectedSection && (
         <GoMakeAutoComplate
           options={getSecondarySections(selectedSection)}
-          style={{ height: "40px", width: "100%", border: "none", marginTop: "10px" }}
+          style={{ height: "40px", width: "100%", border: "none" }}
           placeholder={t("customerService.chooseSubSection")}
           onChange={handleSubSectionChange}
           value={selectedSubSection}
+          withArrow
         />
       )}
     </>

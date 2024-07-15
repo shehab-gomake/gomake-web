@@ -43,7 +43,7 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
 
     console.error("Error caught by ErrorBoundary:", error, errorInfo);
     console.error("User ID:", userId);
-    addRequestToSession({ error, errorInfo });
+    addRequestToSession({ userId, error, errorInfo });
     const sessionData = getSessionData();
     if (sessionData) {
       log.info("Session data:", userId, sessionData);
@@ -70,18 +70,19 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
 }
 
 const EnhancedErrorBoundary = ({ children }: { children: ReactNode }) => {
-  // const [user, setUser] = useState<any>(userState);
   // const userStateValue = useRecoilValue<any>(userState);
+  // const [user, setUser] = useState<any>(userStateValue || {});
 
   // useEffect(() => {
   //   if (userStateValue) {
   //     setUser(userStateValue);
-  //     console.log("first time userStateValue", user.userId);
+  //     console.log("userStateValue updated", userStateValue);
   //   }
   // }, [userStateValue]);
-  const user = { userId: "123" };
-
+  // const user = { userId: "123" };
+  const user = useRecoilValue<any>(userState);
   if (!user) {
+    console.log("user not loaded yet");
     return <div>Loading...</div>;
   }
 

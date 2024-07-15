@@ -34,6 +34,7 @@ const CreateIssueModal: React.FC<CreateIssueModalProps> = ({
           placeholder={t("customerService.chooseTheTicketType")}
           onChange={(e, val) => setTicketState({ ...ticketState, ticketType: val })}
           value={ticketState?.ticketType}
+          withArrow
         />
         <SectionsList onChange={(val1, val2) => handleSectionChange(val1, val2)} />
         <JiraImageUpload onUpload={true} onFileSelect={setFileBase64} />
