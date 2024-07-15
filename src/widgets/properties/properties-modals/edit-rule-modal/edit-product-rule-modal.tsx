@@ -119,6 +119,7 @@ const EditProductProfitRulesModal = ({
                                                             key={`${index}-${rule.id}`}
                                                             rule={rule}
                                                             deletePropertyRule={deleteRule}
+                                                            productId={productId}
                                                         />
                                                     </div>
                                                 )}
