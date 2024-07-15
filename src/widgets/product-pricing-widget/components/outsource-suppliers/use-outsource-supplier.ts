@@ -22,7 +22,7 @@ const useOutsourceSupplier = () => {
     const connectionId = useRecoilValue(currentCalculationConnectionId);
     const { navigate } = useGomakeRouter();
     const { callApi } = useGomakeAxios();
-    const { alertFaultAdded, alertFaultUpdate } = useSnackBar();
+    const {alertSuccessUpdate , alertFaultAdded, alertFaultUpdate } = useSnackBar();
 
     const resetOtherSuppliers = (supplierId) => {
         return suppliers.map(supplier => {
@@ -39,7 +39,7 @@ const useOutsourceSupplier = () => {
         });
     };
 
-    const updateProductItemValueOutsourceWithKey = async (supplierId, key, value) => {
+    const updateProductItemValueOutsourceWithKeyss = async (supplierId, key, value) => {
         await updateProductItemValueOutsourceSupplierCost(callApi, () => { }, {
             productItemValueId: productItemValueDraftId,
             signalRConnectionId: connectionId,
@@ -49,6 +49,29 @@ const useOutsourceSupplier = () => {
         });
     };
 
+
+    const updateProductItemValueOutsourceWithKey = async (supplierId, key, value) => {
+        const callBack = (res) => {
+            if (res.success) {
+                alertSuccessUpdate();
+            }
+            else {
+                alertFaultUpdate();
+            }
+        };
+
+        await updateProductItemValueOutsourceSupplierCost(callApi, callBack, {
+            productItemValueId: productItemValueDraftId,
+            signalRConnectionId: connectionId,
+            supplierId,
+            key,
+            value
+        });
+    };
+
+
+
+   
     const updateCost = (supplierId, cost) => {
         const updatedSuppliers = suppliers.map(supplier => {
             if (supplier.supplierId === supplierId) {
