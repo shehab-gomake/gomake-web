@@ -197,7 +197,7 @@ const BoardMissionsStationAction = ({
                                         <TextAreaActionsMapping
                                             parameters={textAreaOutputs}
                                             actionId={id}
-                                            // currentProductItemValue={currentProductItemValue}
+                                            orderItemId={boardMissions?.orderItemId}
                                             productType={boardMissions.productType}
                                         />
                                     </Stack>
