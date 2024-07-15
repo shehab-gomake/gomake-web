@@ -10,7 +10,7 @@ import { LockedIcon } from "../../icons/lock-icon";
 import { NotLockedIcon } from "../../icons/not-lock-icon";
 import { NotDetailIcon } from "../../icons/not-detail-icon";
 import { DetailIcon } from "../../icons/detail-icon";
-import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+
 const SectionMappingWidget = ({
   index,
   clasess,
@@ -158,7 +158,7 @@ const SectionMappingWidget = ({
                               )
                             }
                           >
-                            <InfoOutlinedIcon style={{ ...clasess.detailsIconStyle, color: "#F135A3" }} />
+                            <DetailIcon />
                           </div>
                         ) : (
                           <div
@@ -171,7 +171,7 @@ const SectionMappingWidget = ({
                               )
                             }
                           >
-                            <InfoOutlinedIcon style={{ ...clasess.detailsIconStyle, color: "#A4A4A4" }} />
+                            <NotDetailIcon />
                           </div>
                         )}
                       </>
