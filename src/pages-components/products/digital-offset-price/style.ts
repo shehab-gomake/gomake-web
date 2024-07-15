@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { FONT_FAMILY } from "@/utils/font-family";
-import { adaptLeft, adaptPaddingLeft, adaptPaddingRight, adaptRight } from "@/utils/adapter";
+import { adaptLeft, adaptPaddingLeft, adaptPaddingRight, adaptRight, leftRightAdapter } from "@/utils/adapter";
 const useStyle = () => {
   const { t } = useTranslation();
   const direction = t("direction");
@@ -691,6 +691,20 @@ const useStyle = () => {
         color: secondColor(500),
         width: "67%",
       },
+      advertisingProductCategoryMain:{
+        position: "relative"
+      },
+      advertisingProductCategoryAutoComplete:{ 
+        height: 40, 
+        minWidth: 400, 
+        border: "none", 
+        paddingLeft: 15
+       },
+       advertisingProductCategorySearch:{
+        position: "absolute" as "absolute",
+        ...leftRightAdapter(t("direction"), 10),
+        top: 10,
+      }
     };
   }, [i18next.language, t, direction]);
   return {

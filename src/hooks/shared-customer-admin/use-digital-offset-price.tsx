@@ -67,6 +67,15 @@ import { exampleTypeState } from "@/store/example-type";
 import { billingMethodState } from "@/store/billing-method";
 import { useDebouncedCallback } from "use-debounce";
 import { getDeviceSizeMockApi } from "@/services/api-service/materials/materials-endpoints";
+import { templateMock } from "@/pages-components/products/digital-offset-price/data";
+import { GoMakeAutoComplate, GoMakeModal, GoMakeTextInputIcon, GomakeTextInput } from "@/components";
+import { InputAdornment } from "@mui/material";
+import { SearchIcon } from "@/icons";
+import { adaptPaddingLeft, leftRightAdapter } from "@/utils/adapter";
+import { Padding } from "@mui/icons-material";
+import { FONT_FAMILY } from "@/utils/font-family";
+import { AdvertisingProductCategoryParameterWidget } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/advertising-product-category";
+import { AdvertisingProductNameParameterWidget } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/advertising-product-name";
 
 const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [, setOpenQuantityComponentModal] = useRecoilState<boolean>(openQuantityComponentModalState);
@@ -127,10 +136,16 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const setLoading = useSetRecoilState(isLoadgingState);
   const [priceRecovery, setPriceRecovery] = useState(true);
   const [canCalculation, setCanCalculation] = useState(false);
-  const setSelectParameterButton = useSetRecoilState( selectParameterButtonState);
+  const setSelectParameterButton = useSetRecoilState(selectParameterButtonState);
   const [deviceCategory, setDeviceCategory] = useState("")
   const [deviceSize, setDeviceSize] = useState("")
 
+  // useEffect(() => {
+  //   if (productTemplate) {
+  //     setProductTemplate(templateMock)
+
+  //   }
+  // }, [productTemplate])
   const {
     calculationResult,
     calculationSessionId,
@@ -175,7 +190,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   }, [isCalculationFinished]);
 
   const [calculationServerErrorState, setcalculationServerErrorState] = useState(false)
-  const  setCurrentSignalRConnectionId = useSetRecoilState(currentCalculationConnectionId);
+  const setCurrentSignalRConnectionId = useSetRecoilState(currentCalculationConnectionId);
   const [currentCalculationSessionId, setCurrentCalculationSessionId] = useState<string>("");
   const [requestAbortController, setRequestAbortController] = useState<AbortController>(null);
   const [billingMethod, setBillingMethod] = useState<any>();
@@ -539,7 +554,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
   const [relatedParameters, setRelatedParameters] = useState([]);
   const [underParameterIds, setUnderParameterIds] = useState([]);
-  
+
   useEffect(() => {
     if (!isSetTemplete) {
       if (productTemplate && productTemplate?.sections?.length > 0) {
@@ -565,7 +580,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             let temp = [];
             subSection.parameters
               .forEach((parameter) => {
-                
+
                 parameter.relatedParameters.forEach((x) => {
                   x.sectionId = section.id;
                   x.subSectionId = subSection.id;
@@ -1080,7 +1095,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       setUnderParameterIds(underParameterIdsArray);
     }
   };
-  
+
   // useEffect(() => {
   //   if (router?.query?.clientTypeId) {
   //     setClientTypeDefaultValue(
@@ -1364,10 +1379,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       if (res?.success) {
         let printedMaterialWidth = res?.data?.printedMaterialWidth;
         let printedMaterialLength = res?.data?.printedMaterialLength;
-        if(printedMaterialWidth){
+        if (printedMaterialWidth) {
           printedMaterialWidth = parseFloat(printedMaterialWidth).toFixed(2)
         }
-        if(printedMaterialLength){
+        if (printedMaterialLength) {
           printedMaterialLength = parseFloat(printedMaterialLength).toFixed(2)
         }
         sizesParametersArray.push({ parameterCode: "Width", value: printedMaterialWidth });
@@ -1641,6 +1656,47 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         />
       );
     }
+
+    else if (parameter?.parameterType === EParameterTypes.ADVERTISING_PRODUCT_CATEGORY) {
+      Comp = (
+        <AdvertisingProductCategoryParameterWidget
+          parameter={parameter}
+          clasess={clasess}
+          index={index}
+          temp={temp}
+          onChangeSubProductsForPrice={onChangeSubProductsForPrice}
+          subSection={subSection}
+          section={section}
+          selectedValueConfig={selectedValueConfig}
+          inModal={inModal}
+          setSelectedValueConfig={setSelectedValueConfig}
+          onOpeneMultiParameterModal={onOpeneMultiParameterModal}
+          subSectionParameters={subSectionParameters}
+          list={list}
+        />
+      )
+    }
+
+    else if (parameter?.parameterType === EParameterTypes.ADVERTISING_PRODUCT_NAME) {
+      Comp = (
+        <AdvertisingProductNameParameterWidget
+          parameter={parameter}
+          clasess={clasess}
+          index={index}
+          temp={temp}
+          onChangeSubProductsForPrice={onChangeSubProductsForPrice}
+          subSection={subSection}
+          section={section}
+          selectedValueConfig={selectedValueConfig}
+          inModal={inModal}
+          setSelectedValueConfig={setSelectedValueConfig}
+          onOpeneMultiParameterModal={onOpeneMultiParameterModal}
+          subSectionParameters={subSectionParameters}
+          list={list}
+        />
+
+      )
+    }
     return (
       <div
         style={{
@@ -1876,13 +1932,13 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       if (subSection.optionToDuplicateContent) {
         return;
       }
-     
+
       parameter?.relatedParameters
         ?.filter((relatedParameter) =>
           subSection.parameters.some((p) => p.id === relatedParameter.parameterId)
         )
         .map((relatedParameter) => {
-          
+
           const subProduct = subProducts?.find(
             (x) => x.type === subSection?.type
           );
