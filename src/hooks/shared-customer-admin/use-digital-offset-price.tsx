@@ -709,7 +709,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         actionId: parameter?.actionId,
                         parameterType: parameter?.parameterType,
                         valueIds: parameter?.valuesConfigs[0]?.values,
-                        values: parameter?.valuesConfigs[0]?.values,
+                        values: [parameter?.valuesConfigs[0]?.updateName],
                         sectionId: section?.id,
                         subSectionId: subSection?.id,
                         actionIndex: parameter?.actionIndex,
@@ -2354,7 +2354,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     actionId: param?.actionId,
                     parameterType: param?.parameterType,
                     valueIds: param?.valuesConfigs[0]?.values,
-                    values: param?.valuesConfigs[0]?.values,
+                    values: [param?.valuesConfigs[0]?.updateName],
                     sectionId: section?.id,
                     subSectionId: subSection?.id,
                     actionIndex: param?.actionIndex,
@@ -2574,6 +2574,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       setActiveIndex(index);
       setCanCalculation(false);
     } else if (index > activeIndex) {
+      let currentSectionId = productTemplate.sections[activeIndex].id;
+      let checkParameter = validateParameters(subProducts,currentSectionId)
       // Move to the next tab only if checkParameter is true
       if (checkParameter) {
         setErrorText(false);
@@ -2590,6 +2592,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   };
   const handleNextClick = () => {
     setErrorText(false)
+    let currentSection = productTemplate.sections[activeIndex].id;
+    let checkParameter  = validateParameters(subProducts,currentSection)
     if (checkParameter) {
       if (activeIndex < productTemplate.sections.length) {
         setActiveIndex(activeIndex + 1);
@@ -2648,13 +2652,11 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           const updatedTemplate = updateIsHidden(data, subProducts)
           setDefaultProductTemplate(updatedTemplate);
           initProduct(updatedTemplate, materials);
-          let checkParameter = validateParameters(isRequiredParameters, subProducts);
+          let checkParameter = validateParameters(subProducts);
           if (checkParameter) {
             setCanCalculation(true);
-
           } else {
             setCanCalculation(false);
-
           }
         },
         {
@@ -2668,7 +2670,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           const updatedTemplate = updateIsHidden(data, subProducts)
           setDefaultProductTemplate(updatedTemplate);
           initProduct(updatedTemplate, materials);
-          let checkParameter = validateParameters(isRequiredParameters, subProducts);
+          let checkParameter = validateParameters(subProducts);
           if (checkParameter) {
             setCanCalculation(true);
 
@@ -2731,27 +2733,59 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     }
     initProduct(quoteItemProduct, materials);
   };
-
-  const validateParameters = (inputArray, currentSubProducts) => {
+  
+  const validateParameters = ( currentSubProducts,sectionId?:string) => {
     let isValid = true;
     const allParameters = currentSubProducts.flatMap((item) => item.parameters);
-    for (const item of inputArray) {
-      const index = allParameters.findIndex(
-        (par) => par.parameterId === item.id && par?.values[0]?.length
-      );
-      if (index == -1) {
-        isValid = false;
-        break;
+    if(sectionId){
+      let section = productTemplate.sections.find(x=>x.id === sectionId);
+      for (const subSection of section.subSections){
+        for (const parameter of subSection.parameters){
+          if(parameter.code === "PrintingColorsside2" ){
+            debugger;
+          }
+          if(!parameter.isHidden && parameter.isRequired){
+            const index = allParameters.findIndex(
+                (par) => par.parameterId === parameter.id && (par?.values[0]?.length || par?.valueIds[0]?.length)
+            );
+            if (index == -1) {
+              isValid = false;
+              break;
+            }
+          }
+        }
       }
-
+    }else{
+      if(!productTemplate?.sections){
+        return true;
+      }
+      for (const section of productTemplate?.sections){
+        for (const subSection of section.subSections){
+          for (const parameter of subSection.parameters){
+            if(parameter.code === "PrintingColorsside2"){
+              debugger;
+            }
+            if(!parameter.isHidden && parameter.isRequired){
+              const index = allParameters.findIndex(
+                  (par) => par.parameterId === parameter.id && (par?.values[0]?.length || par?.valueIds[0]?.length)
+              );
+              if (index == -1) {
+                isValid = false;
+                break;
+              }
+            }
+            
+          }
+        }
+      }
     }
     return isValid;
   };
-  const [checkParameter, setCheckParameter] = useRecoilState<boolean>(checkParameterState)
-  useEffect(() => {
+  //const [checkParameter, setCheckParameter] = useRecoilState<boolean>(checkParameterState)
+  /*useEffect(() => {
     let checkParameter = validateParameters(activeSectionRequiredParameters, subProducts);
     setCheckParameter(checkParameter)
-  }, [isRequiredParameters])
+  }, [isRequiredParameters])*/
 
   const calculationProduct = useDebouncedCallback(async (currentSubProducts) => {
     if (requestAbortController) {
@@ -2766,7 +2800,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       currentWorkFlowsCount: 0,
     });
 
-    let checkParameter = validateParameters(isRequiredParameters, currentSubProducts);
+    let checkParameter = validateParameters(currentSubProducts);
     if (!!checkParameter) {
       setCurrentCalculationSessionId(null);
       setCalculationExceptionsLogs([])
@@ -2978,7 +3012,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   };
   const straightKnife = findParameterByCode(productTemplate, "IsStraightKnife");
   const navigateForRouter = () => {
-    let checkParameter = validateParameters(isRequiredParameters, subProducts);
+    let checkParameter = validateParameters( subProducts);
     if (!!checkParameter) {
       setErrorMsg("");
       if (router?.query?.actionId) {
