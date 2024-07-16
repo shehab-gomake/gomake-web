@@ -10,6 +10,16 @@ import {EMeasurementUnits} from "@/widgets/machines/enums/measurement-units";
 const digitalPrinting = (state: Record<string, any>) => {
     return [
         ...mediaCoatingSettings(state),
+        {
+            name: "sheetLost",
+            label: "machineAttributes.mediaSheetsLoss",
+            type: "text",
+            placeholder: "machineAttributes.mediaSheetsLoss",
+            required: true,
+            parameterKey: "sheetsLoss",
+            options: [],
+            value: state?.sheetsLoss
+        },
         ...mediaDimensionsSettings(state),
         ...marginWithoutPrintingSettings(state),
         ...mediaWeightSettings(state),
