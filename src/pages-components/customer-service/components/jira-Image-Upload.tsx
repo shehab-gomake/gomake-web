@@ -40,7 +40,9 @@ const JiraImageUpload = ({ onUpload, onFileSelect }: IProps) => {
           <IconButton style={classes.IconButtonStyle}>
             <FileIcon></FileIcon>
           </IconButton>
-          <label style={classes.labelStyle}>{isAttachment ? fileName : t("mailingSettings.noAttachment")}</label>
+          <label style={classes.labelStyle}>
+            {isAttachment ? (fileName.length > 30 ? fileName.slice(0, 27) + "..." : fileName) : t("mailingSettings.noAttachment")}
+          </label>
         </Stack>
       )}
       <input

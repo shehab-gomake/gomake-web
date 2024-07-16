@@ -37,6 +37,7 @@ const CustomerServicePageWidget = ({ isAdmin }: { isAdmin: boolean }) => {
     ticketState,
     setTicketState,
     setFileBase64,
+    handleSectionChange,
   } = useCustomerService(isAdmin);
 
   const router = useRouter();
@@ -89,6 +90,7 @@ const CustomerServicePageWidget = ({ isAdmin }: { isAdmin: boolean }) => {
           createIssue={createIssue}
           ticketState={ticketState}
           setFileBase64={setFileBase64}
+          handleSectionChange={handleSectionChange}
         />
       </div>
     </Stack>

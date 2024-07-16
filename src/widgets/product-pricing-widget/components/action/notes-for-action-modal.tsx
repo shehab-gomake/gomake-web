@@ -64,6 +64,7 @@ const NotesForActionModal = ({
       onClose={onClose}
       modalTitle={"Notes for Action"}
       insideStyle={classes.modalStyle}
+      style={{ zIndex: 999999 }}
     >
       <div style={{ width: "100%", height: '100%', position: "relative", ...containerStyle }}>
         {typeof window !== 'undefined' && (
