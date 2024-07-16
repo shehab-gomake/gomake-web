@@ -2,8 +2,8 @@ import { EParameterTypes } from "@/enums";
 import {
   HiddenIcon,
   NotHiddenIcon,
-  NotRequierdIcon,
-  RequierdIcon,
+  NotRequiredIcon,
+  RequiredIcon,
   SettingIcon,
 } from "../../icons";
 import { LockedIcon } from "../../icons/lock-icon";
@@ -96,7 +96,7 @@ const SectionMappingWidget = ({
                             )
                           }
                         >
-                          <RequierdIcon />
+                          <RequiredIcon />
                         </div>
                       ) : (
                         <div
@@ -109,7 +109,7 @@ const SectionMappingWidget = ({
                             )
                           }
                         >
-                          <NotRequierdIcon />
+                          <NotRequiredIcon />
                         </div>
                       )
                     ) : (

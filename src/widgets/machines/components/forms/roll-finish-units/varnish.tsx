@@ -36,7 +36,7 @@ const inputs = (state) => {
             machineInputType: 'materialInput',
             value: state?.attributes?.varnishTypes,
             isValid: true,
-            materialType: 'colors'
+            materialType: 'varnish'
         } :
             {
                 name: '',

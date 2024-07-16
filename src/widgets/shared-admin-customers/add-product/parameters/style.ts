@@ -272,6 +272,11 @@ const useStyle = () => {
         ...FONT_FAMILY.Lexend(600, 16),
         color: neutralColor(800),
       },
+      detailsIconStyle: {
+        strokeWidth: "1",
+        width: "23px",
+        height: "23px"
+      }
     };
   }, [i18next.language, t]);
   return {

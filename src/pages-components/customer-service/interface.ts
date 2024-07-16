@@ -6,6 +6,7 @@ export interface CreateIssueModalProps {
   ticketState: JiraIssueType;
   setTicketState: any;
   setFileBase64: any;
+  handleSectionChange: any;
 }
 export interface JiraIssueType {
   isAdmin: boolean;
@@ -16,6 +17,8 @@ export interface JiraIssueType {
   description: string;
   screenShot: string;
   gomakeRouteUri: string;
+  section: string;
+  subSection: string;
 }
 export interface JiraPrintHouse {
   id: string;
@@ -38,3 +41,17 @@ export interface TicketTypeList {
   label: string;
   value: string;
 }
+
+export type Sections =
+  | "General"
+  | "Sales"
+  | "Purchase"
+  | "Banks"
+  | "Contacts"
+  | "Reports"
+  | "Materials, Machines, Actions"
+  | "Settings";
+
+export type SectionPages = {
+  [key in Sections]: string[];
+};

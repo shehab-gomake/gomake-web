@@ -9,6 +9,7 @@ const UPDATE_SELECTED_WORK_FLOW_URL = '/v1/calculation-service/calculations/upda
 const UPDATE_PRODUCT_ITEM_VALUE_OUTSOURCE = '/v1/erp-service/quote/update-product-item-value-out-source';
 const UPDATED_PRODUCT_ITEM_VALUE_OUTSOURCE_SUPPLIER_COST = '/v1/erp-service/quote/update-product-item-value-out-source-supplier-cost';
 
+const UPDATED_BOARD_MISSION_ACTION_OUTPUT_URL = '/v1/erp-service/board-missions/update-board-mission-action-output';
 
 const updateProductItemDraftActionMachine: ICallAndSetData = async (callApi, setState, data:{}) => {
     return await getSetApiData(callApi, EHttpMethod.POST, UPDATE_PRODUCT_ITEM_ACTION_MACHINE_URL, setState , data);
@@ -33,6 +34,10 @@ const updateActionEmployeeApi: ICallAndSetData = async (callApi, setState, data:
     return await getSetApiData(callApi, EHttpMethod.POST, UPDATE_PRODUCT_ITEM_ACTION_Employee_URL, setState , data);
 }
 
+const updateBoardMissionActionOutputApi: ICallAndSetData = async (callApi, setState, data:{}) => {
+    return await getSetApiData(callApi, EHttpMethod.POST, UPDATED_BOARD_MISSION_ACTION_OUTPUT_URL, setState , data);
+}
+
 export 
 { 
     changeWorkFlw, 
@@ -41,5 +46,6 @@ export
     updateSelectedWorkFlowApi, 
     updateProductItemValueOutsource, 
     updateProductItemValueOutsourceSupplierCost,
-    updateActionEmployeeApi
+    updateActionEmployeeApi,
+    updateBoardMissionActionOutputApi
  };

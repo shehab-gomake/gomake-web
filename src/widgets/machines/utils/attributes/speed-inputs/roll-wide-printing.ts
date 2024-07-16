@@ -1,4 +1,3 @@
-import {quality} from "@/widgets/machines/utils/const/quality";
 import {setupTimeInput} from "@/widgets/machines/utils/attributes/speed-inputs/setup-time-input";
 import {EMeasurementUnits} from "@/widgets/machines/enums/measurement-units";
 import {maxSpeedInput} from "@/widgets/machines/utils/attributes/speed-inputs/max-speed-input";
@@ -8,20 +7,21 @@ const rollWidePrinting = (state: Record<string, any>) => {
         ...setupTimeInput(state),
         ...maxSpeedInput(state, EMeasurementUnits.SQUARE_METER_P_HOUR),
         {
-            name: 'machineAttributes.speedByQuality',
-            parameterKey: 'speedByQuality',
-            value: state.attributes?.speedByQuality || [],
+            name: 'machineAttributes.speedBySheetCategories',
+            parameterKey: 'speedBySheetCategories',
+            value: state.attributes?.speedBySheetCategories || [],
             machineInputType: 'multiArrayInput',
             isValid: true,
             inputs: [
                 {
-                    name: "quality",
-                    label: "machineAttributes.quality",
+                    name: "categories",
+                    label: "machineAttributes.categories",
                     type: "select",
-                    placeholder: "machineAttributes.quality",
+                    placeholder: "machineAttributes.categories",
                     required: true,
-                    parameterKey: "quality",
-                    options: quality
+                    parameterKey: "categories",
+                    options: [],
+                    optionsUrl: '/v1/materials/get-material-categories-list?materialKey=sheets',
                 },
                 {
                     name: "speed",
@@ -30,12 +30,69 @@ const rollWidePrinting = (state: Record<string, any>) => {
                     placeholder: "machineAttributes.speed",
                     required: true,
                     parameterKey: "speed",
-                    unit: EMeasurementUnits.SQUARE_METER_P_HOUR,
+                    unit: EMeasurementUnits.PERCENTAGE,
                     options: []
                 },
             ]
         },
-
+        {
+            name: 'machineAttributes.speedByFlatbedsCategories',
+            parameterKey: 'speedByFlatbedsCategories',
+            value: state.attributes?.speedByFlatbedsCategories || [],
+            machineInputType: 'multiArrayInput',
+            isValid: true,
+            inputs: [
+                {
+                    name: "categories",
+                    label: "machineAttributes.categories",
+                    type: "select",
+                    placeholder: "machineAttributes.categories",
+                    required: true,
+                    parameterKey: "categories",
+                    options: [],
+                    optionsUrl: '/v1/materials/get-material-categories-list?materialKey=flatbeds',
+                },
+                {
+                    name: "speed",
+                    label: "machineAttributes.speed",
+                    type: "text",
+                    placeholder: "machineAttributes.speed",
+                    required: true,
+                    parameterKey: "speed",
+                    unit: EMeasurementUnits.PERCENTAGE,
+                    options: []
+                },
+            ]
+        },
+        {
+            name: 'machineAttributes.speedByWideFormatCategories',
+            parameterKey: 'speedByWideFormatCategories',
+            value: state.attributes?.speedByWideFormatCategories || [],
+            machineInputType: 'multiArrayInput',
+            isValid: true,
+            inputs: [
+                {
+                    name: "categories",
+                    label: "machineAttributes.categories",
+                    type: "select",
+                    placeholder: "machineAttributes.categories",
+                    required: true,
+                    parameterKey: "categories",
+                    options: [],
+                    optionsUrl: '/v1/materials/get-material-categories-list?materialKey=wideFormatMaterial',
+                },
+                {
+                    name: "speed",
+                    label: "machineAttributes.speed",
+                    type: "text",
+                    placeholder: "machineAttributes.speed",
+                    required: true,
+                    parameterKey: "speed",
+                    unit: EMeasurementUnits.PERCENTAGE,
+                    options: []
+                },
+            ]
+        },
         {
             name: 'machineAttributes.speedByWidth',
             parameterKey: 'speedByWidth',
