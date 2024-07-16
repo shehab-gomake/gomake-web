@@ -20,10 +20,10 @@ const useAddMaterialCategory = (isAdmin:boolean) => {
     const { getMaterialCategories } = useMaterials(isAdmin);
     const [newCategory, setNewCategory] = useState<string>(null);
     const [imgUrl, setImgUrl] = useState<any>('');
+    const [selectedImgForAdded,setSelectedImgForAdded] = useState()
     const setActiveFilter = useSetRecoilState(activeFilterState);
     const setFlagState = useSetRecoilState(flagState);
     const { t } = useTranslation();
-    console.log("selectedCategoryModal",selectedCategoryModal)
     
     useEffect(()=>{
        if(selectedCategoryModal){
@@ -50,12 +50,15 @@ const useAddMaterialCategory = (isAdmin:boolean) => {
             if(isAdmin){
                 await addMaterialCategoryApi(callApi, callBack, {
                     materialTypeKey: materialType.toString(),
-                    categoryKey: newCategory
+                    categoryKey: newCategory,
+                    imageBase64:selectedImgForAdded
                 })
             }else{
                 await addPrintHouseMaterialCategoryApi(callApi, callBack, {
                     materialTypeKey: materialType.toString(),
-                    categoryKey: newCategory
+                    categoryKey: newCategory,
+                    imageBase64:selectedImgForAdded
+
                 })
             }
         }
@@ -99,6 +102,7 @@ const useAddMaterialCategory = (isAdmin:boolean) => {
         uploadPrintHouseMaterialImage,
         t,
         imgUrl,
+        setSelectedImgForAdded
     }
 }
 

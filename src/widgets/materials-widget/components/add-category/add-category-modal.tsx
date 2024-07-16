@@ -21,6 +21,7 @@ const AddCategoryModal = (props: IAddCategoryModalProps) => {
         setSelectedCategoryModal,
         uploadPrintHouseMaterialImage,
         imgUrl,
+        setSelectedImgForAdded,
         t } = useAddMaterialCategory(props.isAdmin);
     return (
         <GoMakeModal
@@ -55,7 +56,7 @@ const AddCategoryModal = (props: IAddCategoryModalProps) => {
                     }}
                 /> */}
                 <ImageUploadComponent
-                    onChange={(value) => uploadPrintHouseMaterialImage(value)}
+                    onChange={(value) => editCategoryModalState ? uploadPrintHouseMaterialImage(value) : setSelectedImgForAdded(value)}
                     value={imgUrl}
                 />
                 {
