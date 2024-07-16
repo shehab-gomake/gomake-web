@@ -76,7 +76,7 @@ const usePricingWidget = ({ getOutSourcingSuppliers, workFlows }) => {
   
     }, [selectedWorkFlow,]);
     useEffect(() => {
-      if (withPartially){
+      if (withPartially &&isChangeView){
         setView(EPricingViews.SELECTED_WORKFLOW);
       }
      else if (productItemValueByEdit?.sourceType && isChangeView) {
