@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import { EMaterialActiveFilter } from "../../enums";
 import { useTranslation } from "react-i18next";
 import {addPrintHouseMaterialCategoryApi} from "@/services/api-service/materials/printhouse-materials-endpoints";
-import {addMaterialCategoryApi} from "@/services/api-service/materials/materials-endpoints";
+import {addMaterialCategoryApi, uploadPrintHouseMaterialApi} from "@/services/api-service/materials/materials-endpoints";
 
 const useAddMaterialCategory = (isAdmin:boolean) => {
     const { callApi } = useGomakeAxios();
@@ -19,13 +19,16 @@ const useAddMaterialCategory = (isAdmin:boolean) => {
     const [selectedCategoryModal,setSelectedCategoryModal] = useRecoilState<any>(selectedCategoryModalState);
     const { getMaterialCategories } = useMaterials(isAdmin);
     const [newCategory, setNewCategory] = useState<string>(null);
+    const [imgUrl, setImgUrl] = useState<any>('');
     const setActiveFilter = useSetRecoilState(activeFilterState);
     const setFlagState = useSetRecoilState(flagState);
     const { t } = useTranslation();
-
+    console.log("selectedCategoryModal",selectedCategoryModal)
+    
     useEffect(()=>{
        if(selectedCategoryModal){
         setNewCategory(selectedCategoryModal?.categoryName)
+        setImgUrl(selectedCategoryModal?.imageURL)
        } 
     },[selectedCategoryModal])
     const onSetCategory = (e) => {
@@ -62,6 +65,27 @@ const useAddMaterialCategory = (isAdmin:boolean) => {
        
     }
 
+
+
+    const uploadPrintHouseMaterialImage = async (data) => {
+            const callBack = (res) => {
+                if (res.success) {
+                    alertSuccessAdded();
+                    setActiveFilter(EMaterialActiveFilter.ALL);
+                    getMaterialCategories(materialType).then();
+                    setOpenModal(false);
+                    setFlagState(false);
+                } else {
+                    alertFaultAdded();
+                }
+            }
+                await uploadPrintHouseMaterialApi(callApi, callBack, {
+                    materialTypeKey: materialType.toString(),
+                    categoryKey: newCategory,
+                    imageBase64:data
+                })
+    }
+
     return {
         openModal,
         editCategoryModalState,
@@ -72,7 +96,9 @@ const useAddMaterialCategory = (isAdmin:boolean) => {
         onSetCategory,
         setEditCategoryModalState,
         setSelectedCategoryModal,
+        uploadPrintHouseMaterialImage,
         t,
+        imgUrl,
     }
 }
 
