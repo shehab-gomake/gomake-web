@@ -42,16 +42,22 @@ const OutSourceSuppliersRowComponent = ({
     const { t } = useTranslation();
     const { classes } = useStyle();
     const { secondColor } = useGomakeTheme();
-    const { updatePrice, updateWorkHours, updateProfit, updateCost, addItem, updateQuoteItem } = useOutsourceSupplier();
+    const [supplier, setSupplier] = useState<IOutSourceSupplier | null>();
+    const { updatePrice, updateWorkHours, updateProfit, updateCost, addItem, updateQuoteItem , productItemValueByEdit} = useOutsourceSupplier({supplier, setSupplier});
     const systemCurrency = useRecoilValue<any>(systemCurrencyState);
     const setCurrentProductItemValueTotalPrice = useSetRecoilState<number>(currentProductItemValuePriceState);
-    const [supplier, setSupplier] = useState<IOutSourceSupplier | null>(options[0]);
 
     useEffect(() => {
         if (options?.length > 0) {
-            setSupplier(options[0]);
+            if (widgetType === EWidgetProductType.EDIT) {
+                setSupplier(options.find(x => x.supplierId == productItemValueByEdit?.supplierId));
+            }
+            else {
+                setSupplier(options[0]);
+            }
         }
-    }, [options]);
+    }, []);
+
 
     const handleDeliveryTimeUpdate = (newValue: number) => {
         updateWorkHours(supplier?.supplierId, +newValue);
@@ -110,7 +116,6 @@ const OutSourceSuppliersRowComponent = ({
         </Fade>
     )
 }
-
 
 const EditableValue = ({ value, onUpdate, valueColor, label, isEditable, unit }: IProps) => {
     const [edit, setEdit] = useState<boolean>(false);

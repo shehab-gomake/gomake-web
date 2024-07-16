@@ -39,7 +39,8 @@ const OutSourceSupplierComponent = ({
     const { t } = useTranslation();
     const { classes } = useStyle();
     const { secondColor } = useGomakeTheme();
-    const { updatePrice, updateWorkHours, updateProfit, updateCost, addItem, updateQuoteItem } = useOutsourceSupplier();
+    const [supplier, setSupplier] = useState<IOutSourceSupplier | null>();
+    const { updatePrice, updateWorkHours, updateProfit, updateCost, addItem, updateQuoteItem } = useOutsourceSupplier({supplier, setSupplier});
     const handleDeliveryTimeUpdate = (newValue: number) => {
         updateWorkHours(supplierId, +newValue);
     }

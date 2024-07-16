@@ -13,20 +13,22 @@ import { updateProductItemValueOutsourceSupplierCost } from "@/services/api-serv
 import { EOutSoucrceUpdateKey } from "@/enums";
 import { useRouter } from "next/router";
 
-const useOutsourceSupplier = () => {
+interface IProps {
+    supplier?: any,
+    setSupplier?: any;
+}
+
+const useOutsourceSupplier = ({ supplier, setSupplier }: IProps) => {
     const router = useRouter();
     const [suppliers, setSuppliers] = useRecoilState(outsourceSuppliersState);
     const productItemValueByEdit = useRecoilValue<any>(productItemValueByEditState);
-    // const currentProductItemValue = useRecoilValue<any>(currentProductItemValueState);
-    const [currentProductItemValue, setCurrentProductItemValue] = useRecoilState<any>(currentProductItemValueState);
-
+    const currentProductItemValue = useRecoilValue<any>(currentProductItemValueState);
     const productItemValueDraftId = useRecoilValue<string>(currentProductItemValueDraftId);
     const connectionId = useRecoilValue(currentCalculationConnectionId);
     const { navigate } = useGomakeRouter();
     const { callApi } = useGomakeAxios();
     const { alertSuccessUpdate, alertFaultAdded, alertFaultUpdate } = useSnackBar();
 
-    // need to use If tha update failed 
     const resetOtherSuppliers = (supplierId) => {
         return suppliers.map(supplier => {
             if (supplier.supplierId !== supplierId) {
@@ -80,6 +82,12 @@ const useOutsourceSupplier = () => {
             return supplier;
         }));
 
+        setSupplier({
+            ...supplier,
+            cost: cost,
+            finalPrice: cost + cost * supplier.profit / 100
+        });
+
         updateProductItemValueOutsourceWithKey(supplierId, EOutSoucrceUpdateKey.TotalCost, cost);
     };
 
@@ -100,6 +108,11 @@ const useOutsourceSupplier = () => {
             }
             return supplier;
         }));
+
+        setSupplier({
+            ...supplier,
+            workHours: workHours
+        });
 
         updateProductItemValueOutsourceWithKey(supplierId, EOutSoucrceUpdateKey.TotalRealProductionTime, workHours);
     };
@@ -125,6 +138,12 @@ const useOutsourceSupplier = () => {
             return supplier;
         }));
 
+        setSupplier({
+            ...supplier,
+            profit: profit,
+            finalPrice: supplier.cost + supplier.cost * profit / 100
+        });
+
         updateProductItemValueOutsourceWithKey(supplierId, EOutSoucrceUpdateKey.Profit, profit);
     };
 
@@ -146,6 +165,12 @@ const useOutsourceSupplier = () => {
             }
             return supplier;
         }));
+
+        setSupplier({
+            ...supplier,
+            finalPrice: price,
+            profit: (price - supplier.cost) / supplier.cost * 100
+        });
 
         updateProductItemValueOutsourceWithKey(supplierId, EOutSoucrceUpdateKey.TotalPrice, price);
     };
@@ -209,7 +234,8 @@ const useOutsourceSupplier = () => {
         updateProfit,
         updatePrice,
         addItem,
-        updateQuoteItem
+        updateQuoteItem,
+        productItemValueByEdit
     };
 };
 

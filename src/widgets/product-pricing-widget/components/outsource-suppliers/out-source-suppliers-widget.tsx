@@ -10,7 +10,7 @@ const OutSourceSuppliers = ({ widgetType }) => {
 
     return <Stack gap={'15px'}>
         {/* {suppliers?.map(supplier => <OutSourceSupplierComponent {...supplier} widgetType={widgetType} />)} */}
-        {suppliers && <OutSourceSuppliersRowComponent widgetType={widgetType} options={suppliers} />}
+        { suppliers && suppliers.length > 0 && <OutSourceSuppliersRowComponent widgetType={widgetType} options={suppliers} />}
     </Stack>
 }
 export { OutSourceSuppliers }

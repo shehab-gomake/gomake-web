@@ -2759,7 +2759,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       for (const subSection of section.subSections){
         for (const parameter of subSection.parameters){
           if(parameter.code === "PrintingColorsside2" ){
-            debugger;
+           // debugger;
           }
           if(!parameter.isHidden && parameter.isRequired){
             const index = allParameters.findIndex(
@@ -2780,7 +2780,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         for (const subSection of section.subSections){
           for (const parameter of subSection.parameters){
             if(parameter.code === "PrintingColorsside2"){
-              debugger;
+              //debugger;
             }
             if(!parameter.isHidden && parameter.isRequired){
               const index = allParameters.findIndex(
