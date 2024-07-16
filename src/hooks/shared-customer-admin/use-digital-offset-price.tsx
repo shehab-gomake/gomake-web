@@ -706,7 +706,12 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     }
                   } else if (
                     parameter?.parameterType ===
-                    EParameterTypes.SELECT_MATERIALS
+                    EParameterTypes.SELECT_MATERIALS ||
+                    parameter?.parameterType ===
+                    EParameterTypes.ADVERTISING_PRODUCT_CATEGORY
+                    ||
+                    parameter?.parameterType ===
+                    EParameterTypes.ADVERTISING_PRODUCT_NAME
                   ) {
                     // when the parameter is required and the parameter is material select and if there is only one option select it automatically
                     if (parameter?.valuesConfigs && parameter?.valuesConfigs?.length === 1 && parameter?.isRequired) {
@@ -977,12 +982,14 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                           selectedParameterValues: null,
                           updateName: val.value,
                           values: [val.valueId],
-                          additionalAttribute: val?.additionalAttribute
+                          additionalAttribute: val?.additionalAttribute,
+                          currency: val?.currency
                         });
                       } else {
                         existsValue.id = val.valueId;
                         existsValue.updateName = val.value;
-                        additionalAttribute: val?.additionalAttribute
+                        existsValue.additionalAttribute = val?.additionalAttribute,
+                          existsValue.currency = val?.currency
                       }
                     });
                   }
@@ -1042,7 +1049,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                               x.valueIds.length > 0 &&
                               x.valueIds[0] === val.valueId
                           );
-                          console.log("FFGGRESS", { val, existsValue })
                           if (!existsValue) {
                             param.valuesConfigs.push({
                               id: val.valueId,
@@ -1054,10 +1060,15 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                               selectedParameterValues: null,
                               updateName: val.value,
                               values: [val.valueId],
+                              additionalAttribute: val?.additionalAttribute,
+                              currency: val?.currency
                             });
                           } else {
                             existsValue.id = val.valueId;
                             existsValue.updateName = val.value;
+                            existsValue.additionalAttribute = val?.additionalAttribute,
+                              existsValue.currency = val?.currency
+
                           }
                         });
                       }
@@ -2385,7 +2396,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   parameterValue?.values?.find((y) => y === x.valueId)
                 )?.data;
               }
-              console.log("paramMaterialValues", paramMaterialValues)
               if (index != -1 && index < param.materialPath.length - 1) {
                 param.valuesConfigs = [];
                 //param.isHidden = false;
@@ -2400,7 +2410,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     selectedParameterValues: null,
                     updateName: val.value,
                     values: [val.valueId],
-                    additionalAttribute: val?.additionalAttribute
+                    additionalAttribute: val?.additionalAttribute,
+                    currency: val?.currency
                   });
                 });
                 param.valuesConfigs = param.valuesConfigs.filter(

@@ -1,9 +1,10 @@
 import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
 import { Checkbox } from "@mui/material";
 import { useTranslation } from "react-i18next";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 import { subProductsParametersState } from "@/store";
+import { getCurrencySymbol } from "@/utils/helpers";
 
 const AdvertisingProductNameParameterWidget = ({
   parameter,
@@ -18,6 +19,47 @@ const AdvertisingProductNameParameterWidget = ({
   const defaultObject = parameter.valuesConfigs.find(
     (item) => item.isDefault === true
   );
+  useEffect(() => {
+    if (defaultObject) {
+      setSelectedId(defaultObject.id);
+
+      // Ensure default object is set in subProducts
+      const updatedSubProducts = subProducts.map((subProduct) => {
+        if (subProduct.sectionId === section.id) {
+          const updatedParameters = subProduct.parameters.map((param) => {
+            if (param.parameterId === parameter.id) {
+              return {
+                ...param,
+                values: [defaultObject.updateName],
+                valueIds: [defaultObject.id],
+              };
+            }
+            return param;
+          });
+          return {
+            ...subProduct,
+            parameters: updatedParameters,
+          };
+        }
+        return subProduct;
+      });
+
+      setSubProducts(updatedSubProducts);
+      onChangeSubProductsForPrice(
+        parameter.id,
+        subSection.id,
+        section.id,
+        parameter.parameterType,
+        parameter.name,
+        parameter.actionId,
+        { valueIds: defaultObject.id, values: defaultObject.updateName },
+        subSection.type,
+        index,
+        parameter.actionIndex,
+        parameter.code
+      );
+    }
+  }, []);
   const [subProducts, setSubProducts] = useRecoilState<any>(subProductsParametersState);
 
   const { t } = useTranslation();
@@ -116,8 +158,7 @@ const AdvertisingProductNameParameterWidget = ({
                     {item?.updateName}
                   </div>
                   <div style={clasess.advertisingProductPriceStyle}>
-                    ₪124
-                    {/* {price} */}
+                    {getCurrencySymbol(item?.currency)} {price}
                   </div>
                 </div>
                 <div>
