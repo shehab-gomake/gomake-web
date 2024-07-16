@@ -12,7 +12,7 @@ import { useOutputs } from "@/widgets/properties/hooks/use-outputs";
 import { usePrintHouseClients } from "@/widgets/properties/hooks/use-print-house-clients";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { ETypeException } from "../../enums/profites-enum";
 import { ICallAndSetData } from "@/services/api-service/interface";
 import { getSetApiData } from "@/services/api-service/get-set-api-data";
@@ -23,6 +23,7 @@ import { EGroupByEnum } from "@/enums";
 import { agentsCategoriesState } from "@/pages/customers/customer-states";
 import { getAndSetEmployees2 } from "@/services/api-service/customers/employees-api";
 import { getALLMachinesApi } from "@/services/api-service/machines/print-house-machines-colors";
+import { machineCategoriesState } from "@/store/machine-categories";
 
 const useAddRuleModal = ({
   typeExceptionSelected,
@@ -41,6 +42,7 @@ const useAddRuleModal = ({
   const {t} = useTranslation();
   const { clients } = usePrintHouseClients();
   const [openScheduleModal,setOpenScheduleModal]=useState(false)
+  const categoriesList = useRecoilValue(machineCategoriesState);
   const onCloseScheduleModal =()=>{
     setOpenScheduleModal(false)
   }
@@ -82,29 +84,34 @@ const useAddRuleModal = ({
     getAllCustomersCreateQuote();
     getAllCustomersCreateOrder();
   }, []);
+
   const [propertieValue, setPropertieValue] = useState<any>();
-  const isDefaultException =
-    selectedPricingTableItems?.exceptionType === ETypeException.DEFAULT;
+  const isDefaultException = selectedPricingTableItems?.exceptionType === ETypeException.DEFAULT;
+  
   const categories = useMemo(() => {
     const filteredCategories = [
       { label: "Machine", id: "Machine" },
+      { label: "Machine category", id: "Machine category" },
       { label: "Products", id: "Products" },
       { label: "Client type", id: "Client Type" },
       { label: "Client", id: "Client" },
       { label: "Property output", id: "Property output" },
       { label: "Property input", id: "Property input" },
       { label: "Agent", id: "Agent" },
+      { label: "Employee", id: "Employee" },
     ];
     return isQuoteWidge ? filteredCategories : filteredCategories.filter(category => category.id !== "Agent");
   }, [isQuoteWidge]);
   const EStatementCategory = {
     Machine: 1,
+    "Machine category":2,
     "Client Type": 3,
     Client: 4,
     "Property input": 5,
     "Property output": 6,
     Products: 7,
-    Agent:8
+    Agent:8,
+    Employee:9
    
   };
   const { Outputs } = useOutputs();
@@ -112,9 +119,11 @@ const useAddRuleModal = ({
   const [materialsTypes, setMaterialsTypes] = useState<
     { materialTypeKey: string; materialTypeName: string }[]
   >([]);
+
   const [agentsCategories, setAgentsCategories] = useRecoilState(
     agentsCategoriesState
   );
+
   const getAgentCategories = async () => {
     const callBack = (res) => {
       if (res.success) {
@@ -127,9 +136,11 @@ const useAddRuleModal = ({
     };
     await getAndSetEmployees2(callApi, callBack, { isAgent: true });
   };
+
   useEffect(()=>{
     getAgentCategories()
   },[])
+
   const getMaterialsTypesApi: ICallAndSetData = async (callApi, setState) => {
     return await getSetApiData(
       callApi,
@@ -360,6 +371,7 @@ const useAddRuleModal = ({
     );
 
     if (res?.success) {
+      console.log("res",res)
       alertSuccessAdded();
       onCloseModal();
       setRules([initialRule])
@@ -525,6 +537,23 @@ const useAddRuleModal = ({
       alertFaultAdded();
     }
   }, [propertieValue, EStatementCategory, rules,filterData]);
+  const [employeeList,setEmployeeList]=useState([])
+  const getEmployeeCategories = async () => {
+    const callBack = (res) => {
+
+      if (res.success) {
+        const employeeList = res.data.map((employee) => ({
+          label: employee.text,
+          id: employee.value,
+        }));
+        setEmployeeList(employeeList);
+      }
+    };
+    await getAndSetEmployees2(callApi, callBack, { IsGraphicArtist: true });
+  };
+  useEffect(()=>{
+    getEmployeeCategories()
+  },[])
   return {
     rules,
     deleteRule,
@@ -564,7 +593,9 @@ const useAddRuleModal = ({
     onOpenScheduleModal,
     renderOptions,
     checkWhatRenderArray,
-    mappingRules
+    mappingRules,
+    categoriesList,
+    employeeList
   };
 };
 

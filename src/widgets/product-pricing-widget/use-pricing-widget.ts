@@ -8,7 +8,7 @@ import { actionListForWorkFlow, currentCalculationConnectionId, productItemValue
 import { useGomakeAxios } from "@/hooks";
 
 import { currentProductItemValueDraftId, currentProductItemValueState, selectedWorkFlowState } from "./state";
-import { EPricingViews } from "./enums";
+import { EPricingViews, EWorkSource } from "./enums";
 import { getWorkFlowsActionsApi, getWorkFlowsApi } from "@/services/api-service/generic-doc/quote-confirmation-api";
 
 const usePricingWidget = ({ getOutSourcingSuppliers, workFlows }) => {
@@ -54,7 +54,7 @@ const usePricingWidget = ({ getOutSourcingSuppliers, workFlows }) => {
         sourceType
       })
     }
-  
+  const  withPartially=selectedWorkFlow?.actions?.some((action) => action.source === EWorkSource.OUT)
     useEffect(() => {
       getOutSourcingSuppliers();
     }, []);
@@ -62,6 +62,7 @@ const usePricingWidget = ({ getOutSourcingSuppliers, workFlows }) => {
       if (productItemValueByEdit?.sourceType && isChangeView) {
         setView(EPricingViews.OUTSOURCE_WORKFLOW)
       }
+       
       else if (!selectedWorkFlow) {
         setView(EPricingViews.OUTSOURCE_WORKFLOW);
       } else if (currentProductItemValue) {
@@ -73,9 +74,12 @@ const usePricingWidget = ({ getOutSourcingSuppliers, workFlows }) => {
   
       }
   
-    }, [selectedWorkFlow]);
+    }, [selectedWorkFlow,]);
     useEffect(() => {
-      if (productItemValueByEdit?.sourceType && isChangeView) {
+      if (withPartially &&isChangeView){
+        setView(EPricingViews.SELECTED_WORKFLOW);
+      }
+     else if (productItemValueByEdit?.sourceType && isChangeView) {
         setView(EPricingViews.OUTSOURCE_WORKFLOW)
       }
       else if (selectedWorkFlow && currentProductItemValue && isChangeView) {

@@ -7,8 +7,7 @@ const useStyle = () => {
   const classes = useMemo(() => {
     return {
       insideStyle: {
-        width: "25%",
-        //width: "500px",
+        width: "fit-content",
         borderRadius: 8,
         gap: "8px",
         height: "auto",
@@ -98,6 +97,15 @@ const useStyle = () => {
         backgroundColor: "#FFF",
         borderRadius: 4,
       },
+      addClientTypeBtnContainer:{
+        marginTop: "10px",
+        display: "flex",
+        justifyContent: "center" as "center",
+        width: "100%",
+      },
+      addClientTypeBtn:{
+        width: "50%", height: 40
+      }
     };
   }, [theme]);
   return {

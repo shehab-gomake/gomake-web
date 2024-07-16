@@ -2,12 +2,14 @@ import { EParameterTypes } from "@/enums";
 import {
   HiddenIcon,
   NotHiddenIcon,
-  NotRequierdIcon,
-  RequierdIcon,
+  NotRequiredIcon,
+  RequiredIcon,
   SettingIcon,
 } from "../../icons";
 import { LockedIcon } from "../../icons/lock-icon";
 import { NotLockedIcon } from "../../icons/not-lock-icon";
+import { NotDetailIcon } from "../../icons/not-detail-icon";
+import { DetailIcon } from "../../icons/detail-icon";
 
 const SectionMappingWidget = ({
   index,
@@ -19,7 +21,8 @@ const SectionMappingWidget = ({
   updatedProductParameteRequierd,
   _renderParameterType,
   relatedParameters,
-  updatedProductParameteLocked
+  updatedProductParameteLocked,
+  updatedProductParameterShowToClient
 }) => {
   return (
     <div key={index} style={clasess.subSectionContainer}>
@@ -28,6 +31,7 @@ const SectionMappingWidget = ({
         {subSection?.parameters
           ?.filter((x) => !x.isHiddenInSetting)
           ?.map((parameter, index) => {
+            console.log("parameter", parameter)
             const isHiddenIcon = relatedParameters?.some(
               (relatedParam) => relatedParam.parameterId === parameter.id
             );
@@ -92,7 +96,7 @@ const SectionMappingWidget = ({
                             )
                           }
                         >
-                          <RequierdIcon />
+                          <RequiredIcon />
                         </div>
                       ) : (
                         <div
@@ -105,7 +109,7 @@ const SectionMappingWidget = ({
                             )
                           }
                         >
-                          <NotRequierdIcon />
+                          <NotRequiredIcon />
                         </div>
                       )
                     ) : (
@@ -140,6 +144,38 @@ const SectionMappingWidget = ({
                         </div>
                       )
                     )}
+
+                    {
+                      <>
+                        {parameter?.isShowToClient ? (
+                          <div
+                            style={{ cursor: "pointer" }}
+                            onClick={() =>
+                              updatedProductParameterShowToClient(
+                                section?.id,
+                                subSection?.id,
+                                parameter
+                              )
+                            }
+                          >
+                            <DetailIcon />
+                          </div>
+                        ) : (
+                          <div
+                            style={{ cursor: "pointer" }}
+                            onClick={() =>
+                              updatedProductParameterShowToClient(
+                                section?.id,
+                                subSection?.id,
+                                parameter
+                              )
+                            }
+                          >
+                            <NotDetailIcon />
+                          </div>
+                        )}
+                      </>
+                    }
                   </div>
                   <div style={clasess.renderParameterTypeContainer}>
                     {_renderParameterType(

@@ -126,23 +126,6 @@ const RowMappingChildWidget = ({
       </PrimaryTableCell>
       <PrimaryTableCell
         style={{
-          width: columnWidths[5],
-          ...classes.cellContainerStyle,
-          borderBottom: childList?.length - 1 !== childInex && "none",
-        }}
-      >
-        <div style={classes.cellTextInputStyle}>
-          <InputUpdatedValues
-            value={item.discount ? item.discount : "0"}
-            onBlur={onBlurDiscount}
-            isUpdate={canUpdatePrices && isUpdateDiscount}
-            setIsUpdate={setIsUpdateDiscount}
-            onInputChange={(e) => onInputChangeDiscount(e)}
-          />
-        </div>
-      </PrimaryTableCell>
-      <PrimaryTableCell
-        style={{
           width: columnWidths[6],
           ...classes.cellContainerStyle,
           borderBottom: childList?.length - 1 !== childInex && "none",
@@ -155,6 +138,23 @@ const RowMappingChildWidget = ({
             isUpdate={canUpdatePrices && isUpdatePrice}
             setIsUpdate={setIsUpdatePrice}
             onInputChange={(e) => onInputChangePrice(e)}
+          />
+        </div>
+      </PrimaryTableCell>
+      <PrimaryTableCell
+        style={{
+          width: columnWidths[5],
+          ...classes.cellContainerStyle,
+          borderBottom: childList?.length - 1 !== childInex && "none",
+        }}
+      >
+        <div style={classes.cellTextInputStyle}>
+          <InputUpdatedValues
+            value={item.discount ? item.discount : "0"}
+            onBlur={onBlurDiscount}
+            isUpdate={canUpdatePrices && isUpdateDiscount}
+            setIsUpdate={setIsUpdateDiscount}
+            onInputChange={(e) => onInputChangeDiscount(e)}
           />
         </div>
       </PrimaryTableCell>

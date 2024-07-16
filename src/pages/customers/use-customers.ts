@@ -139,6 +139,7 @@ const useCustomers = (
         const clientTypes = res.data.map((types) => ({
           label: types.name,
           id: types.id,
+          additionProfits : types?.additionProfits  ?? 0,  
         }));
         setClientTypesCategories(clientTypes);
       }
@@ -147,9 +148,7 @@ const useCustomers = (
   };
 
   ///////////////////////// select agent //////////////////////////////
-  const [agentsCategories, setAgentsCategories] = useRecoilState(
-    agentsCategoriesState
-  );
+  const [agentsCategories, setAgentsCategories] = useRecoilState(agentsCategoriesState);
   const getAgentCategories = async () => {
     const callBack = (res) => {
       if (res.success) {

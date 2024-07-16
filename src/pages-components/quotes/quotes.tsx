@@ -48,7 +48,7 @@ const QuotesListPageWidget = ({
   isFromHomePage = false,
 }: IProps) => {
   const { classes } = useStyle();
-  const employeeListValue = useRecoilValue<string[]>(employeesListsState);
+  const { secondColor, } = useGomakeTheme();
   const {
     onClickCloseModal,
     setPatternSearch,
@@ -141,8 +141,10 @@ const QuotesListPageWidget = ({
     CloseDocument,
     selectedOrder,
     onClickOpenCloseOrderModal,
-  } = useQuotes(documentType);
-  const router = useRouter()
+    getEmployeeCategories
+  } = useQuotes(documentType,isFromHomePage);
+
+  const router = useRouter();
   useEffect(() => {
     if (router.query.orderNumber) {
       setPatternSearch(router.query.orderNumber as string);
@@ -152,14 +154,16 @@ const QuotesListPageWidget = ({
     }
 
   }, [router])
+ 
   useEffect(() => {
-    getAllProducts();
+    !isFromHomePage && getAllProducts();
   }, []);
+
   const getValueByKey = (statistics: ICard[], key: string) => {
     const card = statistics.find((item) => item.key === key);
     return card ? card.value : "";
   };
-  const { secondColor, } = useGomakeTheme();
+  
   return (
     <>
       {!isFromHomePage && (
@@ -426,15 +430,14 @@ const QuotesListPageWidget = ({
           onSelectDateRange={onSelectDateRange}
           logsTableHeaders={logsTableHeaders}
           logsTableRows={documentLogsData}
-          employeesCategories={employeeListValue}
         />
       </GoMakeModal>
-      <AddRuleModal
+      {!isFromHomePage && <AddRuleModal
         openModal={openAddRule}
         onCloseModal={onCloseAddRuleModal}
         isQuoteWidge={true}
         filterData={filterData}
-      />
+      />}
       <GoMakeDeleteModal
         icon={
           <WarningAmberIcon style={{ width: 60, height: 60, color: "red" }} />

@@ -13,6 +13,7 @@ import {useTranslation} from "react-i18next";
 import {MachinesContainer} from "@/components/containers/machines-container/machines-container";
 import {MachinesSideList} from "@/components/containers/machines-container/side-list/machines-side-list";
 import {NavigationButtons} from "@/widgets/machines/components/forms/navigationButtons";
+import { useUserPermission } from "@/hooks/use-permission";
 
 const CustomerAddMachine = () => {
     const router = useRouter();
@@ -25,6 +26,7 @@ const CustomerAddMachine = () => {
     const {addPrintHouseMachine} = usePrintHouseAddMachine();
     const selectedMachine = useRecoilValue(machineState);
     const {t} = useTranslation();
+    const { CheckPermission } = useUserPermission();
 
     useEffect(() => {
         getAndSetAdminMachines().then()
@@ -33,7 +35,7 @@ const CustomerAddMachine = () => {
                 (category) => category.id === categoryId
             );
             setCategoryName(category?.name ? category?.name : "");
-            if (category) setMachineSteps(getSteps(category.id, false));
+            if (category) setMachineSteps(getSteps(category.id, false , CheckPermission));
         }
     }, [categoryId]);
     const navigateBack = () => {

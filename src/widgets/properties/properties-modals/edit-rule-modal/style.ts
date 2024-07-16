@@ -66,6 +66,12 @@ const useStyle = () => {
       deleteBtn: {
         cursor: "pointer",
       },
+      iconsContainer:{
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "space-between",
+        gap: 5,
+      },
       ruleVlueState: {
         display: "flex",
         flexDirection: "row" as "row",
@@ -73,6 +79,14 @@ const useStyle = () => {
         alignItems: "center",
         gap: 20,
       },
+      mainContainerStyle:{
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "flex-start",
+        alignItems: "center",
+        width: "100%",
+        gap: 8,
+      }
     };
   }, []);
   return {

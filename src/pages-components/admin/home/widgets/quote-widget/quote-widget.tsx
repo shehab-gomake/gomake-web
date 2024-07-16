@@ -12,24 +12,24 @@ import { PermissionCheck } from "@/components/CheckPermission/check-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { useEffect } from "react";
 import { SecondaryButton } from "@/components/button/secondary-button";
-import { useResetRecoilState, useSetRecoilState } from "recoil";
+import {  useSetRecoilState } from "recoil";
 import {
   QuoteIfExistState,
   QuoteNumberState,
 } from "@/pages-components/quote-new/store/quote";
 import Stack from "@mui/material/Stack";
-import { selectedClientState } from "@/pages-components/quotes/states";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { CustomerCardWidget } from "@/widgets/customer-card-modal/customer-card";
 import { isValidCustomer } from "@/utils/helpers";
 import { CUSTOMER_ACTIONS } from "@/pages/customers/enums";
+import { useClientTypesList } from "@/hooks/use-client-types";
 
 const QuoteWidget = ({ isAdmin = true }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
   const setQuoteNumber = useSetRecoilState<any>(QuoteNumberState);
   const setQuoteIfExist = useSetRecoilState<any>(QuoteIfExistState);
-  const resetSelectedClient = useResetRecoilState(selectedClientState);
+  const {getClientTypesCategories} =useClientTypesList();
 
   const {
     clientTypesValue,
@@ -66,7 +66,7 @@ const QuoteWidget = ({ isAdmin = true }) => {
     QuoteId,
     setQuoteId,
     getAndSetExistQuote,
-    getAllClientTypes
+    getAllClientTypes,
   } = useQuoteWidget(DOCUMENT_TYPE.quote);
 
   useEffect(() => {
@@ -80,19 +80,23 @@ const QuoteWidget = ({ isAdmin = true }) => {
       );
       setSelectedClientType(clientType);
     } else {
-      // resetSelectedClient();
       setQuoteId(null);
       setQuoteNumber(null);
       setQuoteIfExist(false);
     }
   }, [userQuote]);
 
+  // this for select customer in home page
   useEffect(() => {
     const fetchData = async () => {
       await getAllClientTypes();
       getAndSetExistQuote();
     };
     fetchData();
+  }, []);
+
+  useEffect(() => {
+    getClientTypesCategories();
   }, []);
 
   return (
@@ -224,7 +228,7 @@ const QuoteWidget = ({ isAdmin = true }) => {
         isValidCustomer={isValidCustomer}
         customerAction={CUSTOMER_ACTIONS.Add}
         codeFlag={false}
-        typeClient={"C"}
+        typeClient={"C"} 
         onCustomerAdd={onCustomerAdd}
         openModal={openCustomerModal}
         modalTitle={t("customers.modal.addTitle")}

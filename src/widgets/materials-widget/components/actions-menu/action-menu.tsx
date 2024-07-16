@@ -47,9 +47,10 @@ const ActionMenu = (props: IActionMenuProps) => {
     addProperty,
     updateModalCurrency
   } = useMaterialsActions(props.isAdmin);
+
   const getMaterialActions = () => {
     if (props.isAdmin) {
-      return materialActions.filter(x => x.action !== EMaterialsActions.UpdateIsActive && x.action !== EMaterialsActions.UpdateIsInActive);
+      return materialActions.filter(x => x.action !== EMaterialsActions.UpdateIsActive && x.action !== EMaterialsActions.UpdateIsInActive && x.action !== EMaterialsActions.CreatePurchaseOrder);
     } else {
       return materialActions.filter(x => x.action !== EMaterialsActions.DownLoadExcel && x.action !== EMaterialsActions.UploadExcel);
     }
@@ -111,7 +112,7 @@ const ActionMenu = (props: IActionMenuProps) => {
           onClose={handleCloseModal}
           insideStyle={{ width: 500, height: "auto" }}
           openModal={action !== null}
-          modalTitle={t("materialsActions." + action?.key)}
+          modalTitle={action?.action === EMaterialsActions.CreatePurchaseOrder ? t("materials.modals.quantityPerMaterial") : t("materialsActions." + action?.key)}
         >
           <Stack
             gap={3}
@@ -241,6 +242,7 @@ const ActionMenu = (props: IActionMenuProps) => {
               <GomakeTextInput
                 onChange={(e) => onTextInputChange(e.target.value)}
                 value={updatedValue}
+                type={action?.action === EMaterialsActions.CreatePurchaseOrder ? "number" : undefined}
               />
             )}
             <SecondaryButton
