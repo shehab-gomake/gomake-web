@@ -401,8 +401,7 @@ const PriceListPageWidget = ({ widgetType }) => {
                                 ) : null}
                             </div>
                         </div>
-                        {
-                            viewWorkFlow === EPricingViews.OUTSOURCE_WORKFLOW ? <div style={{ width: 220, height: 40, marginLeft: 55, marginRight: 55 }} /> : <div style={{ width: 220, height: 40, marginLeft: 55, marginRight: 55 }}>
+                             <div style={{ width: 220, height: 40, marginLeft: 55, marginRight: 55 }}>
                                 {widgetType === EWidgetProductType.EDIT ? (
                                     <GomakePrimaryButton
                                         style={clasess.addOrderBtn}
@@ -420,8 +419,6 @@ const PriceListPageWidget = ({ widgetType }) => {
                                     </GomakePrimaryButton>
                                 )}
                             </div>
-                        }
-
                     </div>
                 </div>
             )}

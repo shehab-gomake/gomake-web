@@ -1,14 +1,14 @@
-import {useRecoilState, useRecoilValue} from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import {
     currentProductItemValueDraftId,
     currentProductItemValuePriceState,
     currentProductItemValueState,
     outsourceSuppliersState,
 } from "@/widgets/product-pricing-widget/state";
-import {useGomakeAxios, useGomakeRouter, useSnackBar} from "@/hooks";
-import {currentCalculationConnectionId, productItemValueByEditState, } from "@/store";
-import {EWorkSource} from "@/widgets/product-pricing-widget/enums";
-import {addItemApi, updateDocumentItemApi} from "@/services/api-service/generic-doc/documents-api";
+import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
+import { currentCalculationConnectionId, productItemValueByEditState, } from "@/store";
+import { EWorkSource } from "@/widgets/product-pricing-widget/enums";
+import { addItemApi, updateDocumentItemApi } from "@/services/api-service/generic-doc/documents-api";
 import { updateProductItemValueOutsourceSupplierCost } from "@/services/api-service/product-item-value-draft/product-item-draft-endpoints";
 import { EOutSoucrceUpdateKey } from "@/enums";
 import { useRouter } from "next/router";
@@ -17,13 +17,16 @@ const useOutsourceSupplier = () => {
     const router = useRouter();
     const [suppliers, setSuppliers] = useRecoilState(outsourceSuppliersState);
     const productItemValueByEdit = useRecoilValue<any>(productItemValueByEditState);
-    const currentProductItemValue = useRecoilValue<any>(currentProductItemValueState);
+    // const currentProductItemValue = useRecoilValue<any>(currentProductItemValueState);
+    const [currentProductItemValue, setCurrentProductItemValue] = useRecoilState<any>(currentProductItemValueState);
+
     const productItemValueDraftId = useRecoilValue<string>(currentProductItemValueDraftId);
     const connectionId = useRecoilValue(currentCalculationConnectionId);
     const { navigate } = useGomakeRouter();
     const { callApi } = useGomakeAxios();
-    const {alertSuccessUpdate , alertFaultAdded, alertFaultUpdate } = useSnackBar();
+    const { alertSuccessUpdate, alertFaultAdded, alertFaultUpdate } = useSnackBar();
 
+    // need to use If tha update failed 
     const resetOtherSuppliers = (supplierId) => {
         return suppliers.map(supplier => {
             if (supplier.supplierId !== supplierId) {
@@ -38,17 +41,6 @@ const useOutsourceSupplier = () => {
             return supplier;
         });
     };
-
-    const updateProductItemValueOutsourceWithKeyss = async (supplierId, key, value) => {
-        await updateProductItemValueOutsourceSupplierCost(callApi, () => { }, {
-            productItemValueId: productItemValueDraftId,
-            signalRConnectionId: connectionId,
-            supplierId,
-            key,
-            value
-        });
-    };
-
 
     const updateProductItemValueOutsourceWithKey = async (supplierId, key, value) => {
         const callBack = (res) => {
@@ -69,9 +61,6 @@ const useOutsourceSupplier = () => {
         });
     };
 
-
-
-   
     const updateCost = (supplierId, cost) => {
         const updatedSuppliers = suppliers.map(supplier => {
             if (supplier.supplierId === supplierId) {
@@ -122,9 +111,9 @@ const useOutsourceSupplier = () => {
                     ...supplier,
                     profit: profit,
                     finalPrice: supplier.cost + supplier.cost * profit / 100
-                    
+
                 };
-                
+
             }
             return supplier;
         });
@@ -138,7 +127,6 @@ const useOutsourceSupplier = () => {
 
         updateProductItemValueOutsourceWithKey(supplierId, EOutSoucrceUpdateKey.Profit, profit);
     };
-    
 
     const updatePrice = (supplierId, price) => {
         const updatedSuppliers = suppliers.map(supplier => {
