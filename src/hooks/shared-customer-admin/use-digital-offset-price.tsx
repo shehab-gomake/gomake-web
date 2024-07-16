@@ -146,7 +146,24 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   useEffect(() => {
     setProductItemValueByEdit({})
   }, [])
-
+  useEffect(() => {
+    const oldConnectionId = currentSignalRConnectionId;
+    if(oldConnectionId && connectionId && connectionId !== oldConnectionId){
+      updateSignalRConnectionId(oldConnectionId,connectionId);
+    }
+    setCurrentSignalRConnectionId(connectionId)
+  }, [connectionId])
+  const updateSignalRConnectionId = async (oldSignalRConnectionId,newSignalRConnectionId)=>{
+    const res: any = await callApi(
+        "POST",
+        `/v1/erp-service/quote/update-product-item-value-signalr-connect-id`,
+        {
+          oldSignalRConnectionId: oldSignalRConnectionId,
+          newSignalRConnectionId: newSignalRConnectionId
+        },
+        false,
+    )
+  }
   useEffect(() => {
     if (calculationResult && widgetType != EWidgetProductType.EDIT) {
       setCalculationResult(calculationResult);
@@ -175,7 +192,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   }, [isCalculationFinished]);
 
   const [calculationServerErrorState, setcalculationServerErrorState] = useState(false)
-  const  setCurrentSignalRConnectionId = useSetRecoilState(currentCalculationConnectionId);
+  const  [currentSignalRConnectionId,setCurrentSignalRConnectionId] = useRecoilState(currentCalculationConnectionId);
   const [currentCalculationSessionId, setCurrentCalculationSessionId] = useState<string>("");
   const [requestAbortController, setRequestAbortController] = useState<AbortController>(null);
   const [billingMethod, setBillingMethod] = useState<any>();
