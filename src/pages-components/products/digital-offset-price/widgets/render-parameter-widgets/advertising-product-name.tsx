@@ -1,108 +1,147 @@
-import { FONT_FAMILY } from "@/utils/font-family";
+import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
+import { Checkbox } from "@mui/material";
 import { useTranslation } from "react-i18next";
+import { useState } from "react";
+import { useRecoilState } from "recoil";
+import { subProductsParametersState } from "@/store";
 
 const AdvertisingProductNameParameterWidget = ({
   parameter,
   clasess,
   index,
-  temp,
   onChangeSubProductsForPrice,
   subSection,
   section,
-  selectedValueConfig,
-  inModal,
-  setSelectedValueConfig,
-  onOpeneMultiParameterModal,
-  subSectionParameters,
-  list,
-
 }: any) => {
+  const [selectedId, setSelectedId] = useState(null);
+
   const defaultObject = parameter.valuesConfigs.find(
     (item) => item.isDefault === true
   );
-  console.log("parameter", parameter)
+  const [subProducts, setSubProducts] = useRecoilState<any>(subProductsParametersState);
 
-  const { t } = useTranslation()
+  const { t } = useTranslation();
+
+  const handleCheckboxChange = (item, checked) => {
+    if (checked) {
+      const updatedSubProducts = subProducts.map((subProduct) => {
+        if (subProduct.sectionId === section.id) {
+          const updatedParameters = subProduct.parameters.map((param) => {
+            if (param.parameterId === parameter.id) {
+              return {
+                ...param,
+                values: [item.updateName],
+                valueIds: [item.id],
+              };
+            }
+            return param;
+          });
+          return {
+            ...subProduct,
+            parameters: updatedParameters,
+          };
+        }
+        return subProduct;
+      });
+
+      setSubProducts(updatedSubProducts);
+      setSelectedId(item.id);
+      onChangeSubProductsForPrice(
+        parameter.id,
+        subSection.id,
+        section.id,
+        parameter.parameterType,
+        parameter.name,
+        parameter.actionId,
+        { valueIds: item.id, values: item.updateName },
+        subSection.type,
+        index,
+        parameter.actionIndex,
+        parameter.code
+      );
+    } else {
+      // Unselect value and remove from subProducts
+      const updatedSubProducts = subProducts.map((subProduct) => {
+        if (subProduct.sectionId === section.id) {
+          const updatedParameters = subProduct.parameters.filter(
+            (param) => param.parameterId !== parameter.id
+          );
+          return {
+            ...subProduct,
+            parameters: updatedParameters,
+          };
+        }
+        return subProduct;
+      });
+
+      setSubProducts(updatedSubProducts);
+      setSelectedId(null);
+    }
+  };
 
   return (
-    <div style={{ minWidth: 1000, width: "100%", }}>
-      <div style={{ display: "flex", flexDirection: "row", justifyContent: "flex-start", alignItems: "center", gap: 24, flexWrap: "wrap" }}>
+    <div style={clasess.advertisingProductNameMain}>
+      <div style={clasess.advertisingProductNameListContainer}>
         {parameter?.valuesConfigs?.map((item) => {
+          const additionalAttribute = item?.additionalAttribute || [];
+          const attributes = additionalAttribute.reduce((acc, attr) => {
+            acc[attr.valueId] = attr.value;
+            return acc;
+          }, {});
+
+          const imageUrl = attributes.image;
+          const width = attributes.width;
+          const length = attributes.length;
+          const height = attributes.height;
+          const price = attributes.price;
+          const isChecked = selectedId === item.id;
+
           return (
-            <div style={{ width: 165, height: 160, position: "relative", borderRadius: 6, background: "#FFF" }}>
-              <img style={{ width: 165, height: 100, borderTopRightRadius: 6, borderTopLeftRadius: 6 }} src={item?.url} />
-              <div style={{ display: "flex", flexDirection: "column", justifyContent: "flex-start", alignItems: "flex-start", padding: 12, gap: 6, height: 54 }}>
-                <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center", }}>
-                  <div style={{ ...FONT_FAMILY.Lexend(600, 10) }}>{item?.updateName}</div>
-                  <div style={{ ...FONT_FAMILY.Lexend(600, 10), color: "#ED028C" }}>₪124</div>
+            <div
+              style={clasess.advertisingProductCard}
+              key={item.id}
+              onClick={() => handleCheckboxChange(item, !isChecked)}
+            >
+              <img
+                style={clasess.advertisingProductImg}
+                src={imageUrl}
+              />
+              <div
+                style={clasess.advertisingProductUnderImgContainer}
+              >
+                <div
+                  style={clasess.advertisingProductNamePriceContainer}
+                >
+                  <div style={clasess.advertisingProductNameStyle}>
+                    {item?.updateName}
+                  </div>
+                  <div style={clasess.advertisingProductPriceStyle}>
+                    ₪124
+                    {/* {price} */}
+                  </div>
                 </div>
                 <div>
-                  <div style={{ ...FONT_FAMILY.Lexend(500, 10), color: "#727272" }}>10*16*20</div>
+                  <div style={clasess.advertisingProductUnitsStyle}>
+                    {width}*{length}*{height}
+                  </div>
                 </div>
               </div>
+              <div
+                style={clasess.checkBoxContainer}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <Checkbox
+                  onChange={(e, checked) => handleCheckboxChange(item, checked)}
+                  icon={<CheckboxIcon />}
+                  checkedIcon={<CheckboxCheckedIcon />}
+                  checked={isChecked}
+                />
+              </div>
             </div>
-          )
+          );
         })}
       </div>
-
     </div>
-    // <div data-tour={parameter?.id} style={clasess.dropDownListWithSettingIcon}>
-    //   <GoMakeAutoComplate
-    //     options={parameter?.valuesConfigs?.filter(value => {
-    //       return !(value?.materialValueIds?.length === 1 && value?.materialValueIds[0]?.path === null && value?.materialValueIds[0]?.valueId === null);
-    //     })?.filter((value) => !value.isHidden)?.filter((value) => value.updateName)}
-    //     key={parameter?.valuesConfigs + temp[index]?.values}
-    //     placeholder={parameter.name}
-    //     style={clasess.dropDownListStyle}
-    //     getOptionLabel={(option: any) => option.updateName}
-    //     defaultValue={
-    //       index !== -1 ? { updateName: temp[index].values } : defaultObject
-    //     }
-    //     disabled={parameter?.isLock ? parameter?.isLock : false}
-    //     onChange={(e: any, value: any) => {
-    //       if (parameter?.code === "devicecategory") {
-    //         setDeviceCategory(value?.id)
-    //       }
-    //       else if (parameter?.code === "devicesize") {
-    //         setDeviceSize(value?.id)
-    //       }
-    //       onChangeSubProductsForPrice(
-    //         parameter?.id,
-    //         subSection?.id,
-    //         section?.id,
-    //         parameter?.parameterType,
-    //         parameter?.name,
-    //         parameter?.actionId,
-    //         { valueIds: value?.id, values: value?.updateName },
-    //         subSection?.type,
-    //         index,
-    //         parameter?.actionIndex,
-    //         parameter?.code
-    //       );
-    //     }}
-    //   />
-    //   {parameter?.setSettingIcon && inModal && (
-    //     <div
-    //       style={{ cursor: "pointer" }}
-    //       onClick={() => {
-    //         setSelectedValueConfig(parameter?.valuesConfigs);
-    //         onOpeneMultiParameterModal(
-    //           parameter,
-    //           subSection,
-    //           section,
-    //           subSectionParameters,
-    //           list
-    //         );
-    //       }}
-    //     >
-    //       <SettingsIcon
-    //         stroke={"rgba(237, 2, 140, 1)"}
-    //         width={24}
-    //         height={24}
-    //       />
-    //     </div>
-    //   )}
-    // </div>
   );
 };
 

@@ -1,7 +1,5 @@
 import { GoMakeAutoComplate } from "@/components";
 import { SearchIcon } from "@/icons";
-import { leftRightAdapter } from "@/utils/adapter";
-import { useTranslation } from "react-i18next";
 
 const AdvertisingProductCategoryParameterWidget = ({
   parameter,
@@ -11,20 +9,10 @@ const AdvertisingProductCategoryParameterWidget = ({
   onChangeSubProductsForPrice,
   subSection,
   section,
-  selectedValueConfig,
-  inModal,
-  setSelectedValueConfig,
-  onOpeneMultiParameterModal,
-  subSectionParameters,
-  list,
 }: any) => {
   const defaultObject = parameter.valuesConfigs.find(
     (item) => item.isDefault === true
   );
-
-
-  const { t } = useTranslation()
-
   return (
     <div style={clasess.advertisingProductCategoryMain}>
       <GoMakeAutoComplate

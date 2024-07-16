@@ -18,7 +18,7 @@ import {
   subProductsParametersState,
 } from "@/store";
 import { useMaterials } from "../use-materials";
-import { checkParameterState, digitslPriceState } from "./store";
+import { checkParameterState } from "./store";
 import cloneDeep from "lodash/cloneDeep";
 import lodashClonedeep from "lodash.clonedeep";
 import { EWidgetProductType } from "@/pages-components/products/digital-offset-price/enums";
@@ -62,18 +62,10 @@ import { findParameterByCode, hasValues } from "@/utils/helpers";
 import React from "react";
 import { getCurrenciesSymbols } from "@/services/api-service/general/enums";
 import { currenciesSymbols } from "@/widgets/materials-widget/state";
-import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { exampleTypeState } from "@/store/example-type";
 import { billingMethodState } from "@/store/billing-method";
 import { useDebouncedCallback } from "use-debounce";
 import { getDeviceSizeMockApi } from "@/services/api-service/materials/materials-endpoints";
-import { templateMock } from "@/pages-components/products/digital-offset-price/data";
-import { GoMakeAutoComplate, GoMakeModal, GoMakeTextInputIcon, GomakeTextInput } from "@/components";
-import { InputAdornment } from "@mui/material";
-import { SearchIcon } from "@/icons";
-import { adaptPaddingLeft, leftRightAdapter } from "@/utils/adapter";
-import { Padding } from "@mui/icons-material";
-import { FONT_FAMILY } from "@/utils/font-family";
 import { AdvertisingProductCategoryParameterWidget } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/advertising-product-category";
 import { AdvertisingProductNameParameterWidget } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/advertising-product-name";
 
@@ -139,7 +131,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const setSelectParameterButton = useSetRecoilState(selectParameterButtonState);
   const [deviceCategory, setDeviceCategory] = useState("")
   const [deviceSize, setDeviceSize] = useState("")
-
+  console.log("subProducts", subProducts)
   // useEffect(() => {
   //   if (productTemplate) {
   //     setProductTemplate(templateMock)
@@ -928,7 +920,13 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   (parameter?.parameterType ===
                     EParameterTypes.DROP_DOWN_LIST ||
                     parameter?.parameterType ===
-                    EParameterTypes.SELECT_MATERIALS) &&
+                    EParameterTypes.SELECT_MATERIALS
+                    ||
+                    parameter?.parameterType ===
+                    EParameterTypes.ADVERTISING_PRODUCT_CATEGORY
+                    ||
+                    parameter?.parameterType ===
+                    EParameterTypes.ADVERTISING_PRODUCT_NAME) &&
                   (!parameter?.valuesConfigs ||
                     parameter?.valuesConfigs.length === 0)
                 ) {
@@ -979,10 +977,12 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                           selectedParameterValues: null,
                           updateName: val.value,
                           values: [val.valueId],
+                          additionalAttribute: val?.additionalAttribute
                         });
                       } else {
                         existsValue.id = val.valueId;
                         existsValue.updateName = val.value;
+                        additionalAttribute: val?.additionalAttribute
                       }
                     });
                   }
@@ -1008,6 +1008,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                       const index = param.materialPath.findIndex((x) =>
                         compareStrings(x, materialPath)
                       );
+                      console.log("", materialRelatedParameters)
                       if (
                         index != -1 &&
                         index < param.materialPath.length - 1
@@ -1041,6 +1042,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                               x.valueIds.length > 0 &&
                               x.valueIds[0] === val.valueId
                           );
+                          console.log("FFGGRESS", { val, existsValue })
                           if (!existsValue) {
                             param.valuesConfigs.push({
                               id: val.valueId,
@@ -2383,6 +2385,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   parameterValue?.values?.find((y) => y === x.valueId)
                 )?.data;
               }
+              console.log("paramMaterialValues", paramMaterialValues)
               if (index != -1 && index < param.materialPath.length - 1) {
                 param.valuesConfigs = [];
                 //param.isHidden = false;
@@ -2397,6 +2400,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     selectedParameterValues: null,
                     updateName: val.value,
                     values: [val.valueId],
+                    additionalAttribute: val?.additionalAttribute
                   });
                 });
                 param.valuesConfigs = param.valuesConfigs.filter(
