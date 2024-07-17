@@ -83,10 +83,11 @@ const DashboardWidget = ({}: IDashboardWidget) => {
             return false;
         });
     }, [machines]);
+
     const tasks = useCallback(() => {
         const selectedClientsIds = selectedClients?.filter(client => client?.checked)?.map(client => client?.id)
         let tasksArray = getFilteredBoardsMissions();
-        tasksArray = tasksArray.filter(board => selectedClientsIds.includes(board.clientId));
+        tasksArray = selectedClientsIds.length !== 0 ? tasksArray.filter(board => selectedClientsIds.includes(board.clientId)) : tasksArray;
         return tasksFilter ?
             tasksArray.filter((boardsMissions: IBoardMissions) => {
                 return boardsMissions.code.toLowerCase().includes(tasksFilter.toLowerCase()) ||
@@ -94,6 +95,7 @@ const DashboardWidget = ({}: IDashboardWidget) => {
             })
             : tasksArray;
     }, [tasksFilter, getFilteredBoardsMissions(), selectedClients])
+
     return (
         <div style={classes.container}>
             <Cards data={statistics ? statistics : {} as IDashboardStatistic}/>
