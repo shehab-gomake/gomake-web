@@ -1,15 +1,15 @@
-import React from 'react';
-import { Box, Typography } from '@mui/material';
-import { useRouter } from 'next/router';
-import { PageNoteFound } from '@/icons/404-page/page-not-found';
-import { PrimaryButton } from '@/components/button/primary-button';
+import React from "react";
+import { Box, Typography } from "@mui/material";
+import { useRouter } from "next/router";
+import { PageNoteFound } from "@/icons/404-page/page-not-found";
+import { PrimaryButton } from "@/components/button/primary-button";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
-export default function PageNotFound() {
+export default function PageNotFound({}) {
   const router = useRouter();
 
   const handleGoBack = () => {
-    router.push('/home');
+    router.push("/home");
   };
 
   return (
@@ -28,12 +28,7 @@ export default function PageNotFound() {
         <Typography variant="h2" component="h2" gutterBottom>
           Page Not Found
         </Typography>
-        <Typography
-          variant="h6"
-          component="h2"
-          gutterBottom
-          style={{ color: '#4B4B4B', fontWeight: 400 }}
-        >
+        <Typography variant="h6" component="h2" gutterBottom style={{ color: "#4B4B4B", fontWeight: 400 }}>
           This page doesn't exist or was removed! We suggest you go back to the home page.
         </Typography>
         <PrimaryButton
