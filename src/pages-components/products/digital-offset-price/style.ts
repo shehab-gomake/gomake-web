@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { FONT_FAMILY } from "@/utils/font-family";
-import { adaptLeft, adaptPaddingLeft, adaptPaddingRight, adaptRight } from "@/utils/adapter";
+import { adaptLeft, adaptPaddingLeft, adaptPaddingRight, adaptRight, leftRightAdapter } from "@/utils/adapter";
 const useStyle = () => {
   const { t } = useTranslation();
   const direction = t("direction");
@@ -691,6 +691,79 @@ const useStyle = () => {
         color: secondColor(500),
         width: "67%",
       },
+      advertisingProductCategoryMain:{
+        position: "relative"
+      },
+      advertisingProductCategoryAutoComplete:{ 
+        height: 40, 
+        minWidth: 400, 
+        border: "none", 
+        paddingLeft: 15
+       },
+       advertisingProductCategorySearch:{
+        position: "absolute" as "absolute",
+        ...leftRightAdapter(t("direction"), 10),
+        top: 10,
+      },
+      advertisingProductNameMain:{
+        minWidth: 1000, 
+        width: "100%"
+      },
+      advertisingProductNameListContainer:{ 
+        display: "flex", 
+        flexDirection: "row", 
+        justifyContent: "flex-start", 
+        alignItems: "center", 
+        gap: 24, 
+        flexWrap: "wrap" 
+      },
+      advertisingProductCard:{
+        width: 165,
+        height: 160,
+        position: "relative",
+        borderRadius: 6,
+        background: "#FFF",
+        cursor: "pointer"
+      },
+      advertisingProductImg:{
+        width: 165,
+        height: 100,
+        borderTopRightRadius: 6,
+        borderTopLeftRadius: 6,
+      },
+      advertisingProductUnderImgContainer:{
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "flex-start",
+        alignItems: "flex-start",
+        padding: 12,
+        gap: 6,
+        height: 54,
+      },
+      advertisingProductNamePriceContainer:{
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        width: "100%",
+      },
+      advertisingProductNameStyle:{ 
+        ...FONT_FAMILY.Lexend(600, 10) 
+      },
+      advertisingProductPriceStyle:{ 
+        ...FONT_FAMILY.Lexend(600, 10), 
+        color: "#ED028C" 
+      },
+      advertisingProductUnitsStyle:{ 
+        ...FONT_FAMILY.Lexend(500, 10), 
+        color: "#727272" 
+      },
+      checkBoxContainer:{
+        position: "absolute",
+        top: 0,
+        right: 0,
+      }
+
     };
   }, [i18next.language, t, direction]);
   return {
