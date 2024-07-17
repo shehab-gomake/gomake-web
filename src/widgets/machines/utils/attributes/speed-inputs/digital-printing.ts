@@ -29,6 +29,18 @@ const digitalPrinting = (state: Record<string, any>) => {
             machineInputType: 'input',
             isValid: !!state?.attributes?.maxSpeed,
         },
+        {
+            name: "doubleHead",
+            label: "machineAttributes.doubleHead",
+            type: "switch",
+            placeholder: "machineAttributes.doubleHead",
+            required: true,
+            parameterKey: "doubleHead",
+            value: state.attributes?.doubleHead,
+            options: [{value: false, text: 'No'}, {value: true, text: 'Yes'}],
+            machineInputType: 'input',
+            isValid: true,
+        },
         ...printingGeneral(state)
     ]
 }
