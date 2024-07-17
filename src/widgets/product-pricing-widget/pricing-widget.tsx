@@ -36,6 +36,8 @@ const PricingWidget = ({ workFlows, getOutSourcingSuppliers, widgetType }: IPric
     t
 
   } = usePricingWidget({ workFlows, getOutSourcingSuppliers })
+
+  console.log("selectedWorkFlow", selectedWorkFlow)
   const calculationResult = useRecoilValue(calculationResultState);
   const [selectedWorkFlowId, setSelectedWorkFlowId] = useState("")
   return (
@@ -101,14 +103,6 @@ const PricingWidget = ({ workFlows, getOutSourcingSuppliers, widgetType }: IPric
           withPartially={selectedWorkFlow?.actions?.some(
             (action) => action.source === EWorkSource.OUT
           )}
-          // value={
-          //   selectedWorkFlow?.actions?.some(
-          //     (action) => action.source === EWorkSource.OUT
-          //   ) ? EWorkSource.INTERNAL :
-          //     view === EPricingViews.OUTSOURCE_WORKFLOW
-          //       ? EWorkSource.OUT
-          //       : EWorkSource.INTERNAL
-          // }
           value={
             view === EPricingViews.OUTSOURCE_WORKFLOW
               ? EWorkSource.OUT

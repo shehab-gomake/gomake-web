@@ -177,7 +177,10 @@ const ActionContainerComponent = ({
   actionException,
   materials,
   employeeId,
-  employeeName
+  employeeName,
+  isNeedEmployee,
+  isNeedMachine,
+  isNeedMaterial,
 }: IActionContainerComponentProps) => {
   source = source === EWorkSource.OUT ? EWorkSource.OUT : EWorkSource.INTERNAL;
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -207,6 +210,12 @@ const ActionContainerComponent = ({
     updateWorkFlowForMachine,
     updateWorkFlowForMaterials,
     updateWorkFlowForEmployees,
+    onClickGetEmployeeForAction,
+    onClickGetMachineForAction,
+    onClickGetMaterialsForAction,
+    employeesList,
+    machinesList,
+    materialsList
   } = useActionUpdateValues();
   const suppliersState = useRecoilValue(outsourceSuppliersState);
   const suppliers = useMemo(() => {
@@ -282,6 +291,10 @@ const ActionContainerComponent = ({
     return "";
   }, [supplierId, suppliers]);
 
+
+
+
+
   return (
     <Fade
       in={true}
@@ -332,7 +345,7 @@ const ActionContainerComponent = ({
                   />
                 </Stack>
               ) : (
-                !!machineName && (
+                isNeedMachine && (
                   <>
                     <Divider orientation={"vertical"} flexItem color={"#000"} />
                     {!chooseMachine ? (
@@ -340,11 +353,12 @@ const ActionContainerComponent = ({
                         onClick={(e) => {
                           e.stopPropagation();
                           setChooseMachine(true);
+                          onClickGetMachineForAction(actionId)
                         }}
                         variant={"text"}
                         style={classes.sectionTitle}
                       >
-                        {machineName.length > 20
+                        {machineName?.length > 20
                           ? machineName.slice(0, 20) + "..."
                           : machineName}
                       </Button>
@@ -375,7 +389,7 @@ const ActionContainerComponent = ({
                             setChooseMachine(false);
                           }}
                           style={{ width: "200px" }}
-                          options={getActionMachinesList(actionId, productType)}
+                          options={machinesList}
                           placeholder={"Choose machine"}
                           value={machineName}
                         />
@@ -402,13 +416,14 @@ const ActionContainerComponent = ({
               gap={"10px"}
             >
               {
-                employeeId && (
+                isNeedEmployee && (
                   <>
                     {!chooseEmployee ? (
                       <Button
                         onClick={(e) => {
                           e.stopPropagation();
                           setChooseEmployee(true);
+                          onClickGetEmployeeForAction(id)
                         }}
                         variant={"text"}
                         style={classes.sectionTitle}
@@ -424,11 +439,11 @@ const ActionContainerComponent = ({
                       >
                         <GoMakeAutoComplate
                           onChange={(e, v) => {
-                            updateWorkFlowForEmployees(actionId, productType, actionIndex, v.label, v?.value, id)
+                            updateWorkFlowForEmployees(actionId, productType, actionIndex, v?.label, v?.value, id)
                             setChooseEmployee(false);
                           }}
                           style={{ width: "200px" }}
-                          options={getActionEmloyeeList(actionId, productType)}
+                          options={employeesList}
                           placeholder={"Choose Employee"}
                           value={employeeName}
                         />
@@ -447,7 +462,7 @@ const ActionContainerComponent = ({
               }
             </Stack>
             {
-              employeeId && <Divider orientation={"vertical"} flexItem />
+              isNeedEmployee && <Divider orientation={"vertical"} flexItem />
             }
 
             <Stack
@@ -457,13 +472,14 @@ const ActionContainerComponent = ({
               gap={"10px"}
             >
               {
-                materials?.length > 0 && (
+                isNeedMaterial && (
                   <>
                     {!chooseMaterial ? (
                       <Button
                         onClick={(e) => {
                           e.stopPropagation();
                           setChooseMaterial(true);
+                          onClickGetMaterialsForAction(materials[0])
                         }}
                         variant={"text"}
                         style={classes.sectionTitle}
@@ -499,7 +515,7 @@ const ActionContainerComponent = ({
 
                           }}
                           style={{ width: "200px" }}
-                          options={getActionMaterialsList(actionId, productType)}
+                          options={materialsList}
                           placeholder={"Choose material"}
                           value={materials[0]?.materialCategories[0]?.name}
                         />
@@ -518,7 +534,7 @@ const ActionContainerComponent = ({
               }
             </Stack>
             {
-              materials?.length > 0 && <Divider orientation={"vertical"} flexItem />
+              isNeedMaterial && <Divider orientation={"vertical"} flexItem />
             }
 
             <EditableKeyValueViewComponent
