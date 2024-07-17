@@ -78,7 +78,7 @@ const updatePrintHouseMaterialsPropApi: ICallAndSetData = async (
 const addPrintHouseMaterialCategoryApi: ICallAndSetData = async (
   callApi,
   callBack,
-  category: { materialTypeKey: string; categoryKey: string }
+  category: { materialTypeKey: string; categoryKey: string,imageBase64:any }
 ) => {
   return await getSetApiData(
     callApi,

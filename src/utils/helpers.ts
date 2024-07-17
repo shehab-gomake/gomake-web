@@ -140,3 +140,13 @@ export function removeTags(str) {
       str = str.toString();
   return str.replace(/(<([^>]+)>)/ig, '');
 }
+
+export function getCurrencySymbol(currencyCode) {
+  const currencySymbols = {
+    'USD': '$',
+    'EUR': '€',
+    'ILS': '₪'
+  };
+
+  return currencySymbols[currencyCode] || null;
+}

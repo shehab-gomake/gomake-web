@@ -18,7 +18,7 @@ import {
   subProductsParametersState,
 } from "@/store";
 import { useMaterials } from "../use-materials";
-import { checkParameterState, digitslPriceState } from "./store";
+import { checkParameterState } from "./store";
 import cloneDeep from "lodash/cloneDeep";
 import lodashClonedeep from "lodash.clonedeep";
 import { EWidgetProductType } from "@/pages-components/products/digital-offset-price/enums";
@@ -62,11 +62,12 @@ import { findParameterByCode, hasValues } from "@/utils/helpers";
 import React from "react";
 import { getCurrenciesSymbols } from "@/services/api-service/general/enums";
 import { currenciesSymbols } from "@/widgets/materials-widget/state";
-import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { exampleTypeState } from "@/store/example-type";
 import { billingMethodState } from "@/store/billing-method";
 import { useDebouncedCallback } from "use-debounce";
 import { getDeviceSizeMockApi } from "@/services/api-service/materials/materials-endpoints";
+import { AdvertisingProductCategoryParameterWidget } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/advertising-product-category";
+import { AdvertisingProductNameParameterWidget } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/advertising-product-name";
 
 const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [, setOpenQuantityComponentModal] = useRecoilState<boolean>(openQuantityComponentModalState);
@@ -127,10 +128,16 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const setLoading = useSetRecoilState(isLoadgingState);
   const [priceRecovery, setPriceRecovery] = useState(true);
   const [canCalculation, setCanCalculation] = useState(false);
-  const setSelectParameterButton = useSetRecoilState( selectParameterButtonState);
+  const setSelectParameterButton = useSetRecoilState(selectParameterButtonState);
   const [deviceCategory, setDeviceCategory] = useState("")
   const [deviceSize, setDeviceSize] = useState("")
+  console.log("subProducts", subProducts)
+  // useEffect(() => {
+  //   if (productTemplate) {
+  //     setProductTemplate(templateMock)
 
+  //   }
+  // }, [productTemplate])
   const {
     calculationResult,
     calculationSessionId,
@@ -556,7 +563,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
   const [relatedParameters, setRelatedParameters] = useState([]);
   const [underParameterIds, setUnderParameterIds] = useState([]);
-  
+
   useEffect(() => {
     if (!isSetTemplete) {
       if (productTemplate && productTemplate?.sections?.length > 0) {
@@ -582,7 +589,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             let temp = [];
             subSection.parameters
               .forEach((parameter) => {
-                
+
                 parameter.relatedParameters.forEach((x) => {
                   x.sectionId = section.id;
                   x.subSectionId = subSection.id;
@@ -716,7 +723,12 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     }
                   } else if (
                     parameter?.parameterType ===
-                    EParameterTypes.SELECT_MATERIALS
+                    EParameterTypes.SELECT_MATERIALS ||
+                    parameter?.parameterType ===
+                    EParameterTypes.ADVERTISING_PRODUCT_CATEGORY
+                    ||
+                    parameter?.parameterType ===
+                    EParameterTypes.ADVERTISING_PRODUCT_NAME
                   ) {
                     // when the parameter is required and the parameter is material select and if there is only one option select it automatically
                     if (parameter?.valuesConfigs && parameter?.valuesConfigs?.length === 1 && parameter?.isRequired) {
@@ -930,7 +942,13 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   (parameter?.parameterType ===
                     EParameterTypes.DROP_DOWN_LIST ||
                     parameter?.parameterType ===
-                    EParameterTypes.SELECT_MATERIALS) &&
+                    EParameterTypes.SELECT_MATERIALS
+                    ||
+                    parameter?.parameterType ===
+                    EParameterTypes.ADVERTISING_PRODUCT_CATEGORY
+                    ||
+                    parameter?.parameterType ===
+                    EParameterTypes.ADVERTISING_PRODUCT_NAME) &&
                   (!parameter?.valuesConfigs ||
                     parameter?.valuesConfigs.length === 0)
                 ) {
@@ -981,10 +999,14 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                           selectedParameterValues: null,
                           updateName: val.value,
                           values: [val.valueId],
+                          additionalAttribute: val?.additionalAttribute,
+                          currency: val?.currency
                         });
                       } else {
                         existsValue.id = val.valueId;
                         existsValue.updateName = val.value;
+                        existsValue.additionalAttribute = val?.additionalAttribute,
+                          existsValue.currency = val?.currency
                       }
                     });
                   }
@@ -1010,6 +1032,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                       const index = param.materialPath.findIndex((x) =>
                         compareStrings(x, materialPath)
                       );
+                      console.log("", materialRelatedParameters)
                       if (
                         index != -1 &&
                         index < param.materialPath.length - 1
@@ -1054,10 +1077,15 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                               selectedParameterValues: null,
                               updateName: val.value,
                               values: [val.valueId],
+                              additionalAttribute: val?.additionalAttribute,
+                              currency: val?.currency
                             });
                           } else {
                             existsValue.id = val.valueId;
                             existsValue.updateName = val.value;
+                            existsValue.additionalAttribute = val?.additionalAttribute,
+                              existsValue.currency = val?.currency
+
                           }
                         });
                       }
@@ -1097,7 +1125,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       setUnderParameterIds(underParameterIdsArray);
     }
   };
-  
+
   // useEffect(() => {
   //   if (router?.query?.clientTypeId) {
   //     setClientTypeDefaultValue(
@@ -1381,10 +1409,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       if (res?.success) {
         let printedMaterialWidth = res?.data?.printedMaterialWidth;
         let printedMaterialLength = res?.data?.printedMaterialLength;
-        if(printedMaterialWidth){
+        if (printedMaterialWidth) {
           printedMaterialWidth = parseFloat(printedMaterialWidth).toFixed(2)
         }
-        if(printedMaterialLength){
+        if (printedMaterialLength) {
           printedMaterialLength = parseFloat(printedMaterialLength).toFixed(2)
         }
         sizesParametersArray.push({ parameterCode: "Width", value: printedMaterialWidth });
@@ -1658,6 +1686,47 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         />
       );
     }
+
+    else if (parameter?.parameterType === EParameterTypes.ADVERTISING_PRODUCT_CATEGORY) {
+      Comp = (
+        <AdvertisingProductCategoryParameterWidget
+          parameter={parameter}
+          clasess={clasess}
+          index={index}
+          temp={temp}
+          onChangeSubProductsForPrice={onChangeSubProductsForPrice}
+          subSection={subSection}
+          section={section}
+          selectedValueConfig={selectedValueConfig}
+          inModal={inModal}
+          setSelectedValueConfig={setSelectedValueConfig}
+          onOpeneMultiParameterModal={onOpeneMultiParameterModal}
+          subSectionParameters={subSectionParameters}
+          list={list}
+        />
+      )
+    }
+
+    else if (parameter?.parameterType === EParameterTypes.ADVERTISING_PRODUCT_NAME) {
+      Comp = (
+        <AdvertisingProductNameParameterWidget
+          parameter={parameter}
+          clasess={clasess}
+          index={index}
+          temp={temp}
+          onChangeSubProductsForPrice={onChangeSubProductsForPrice}
+          subSection={subSection}
+          section={section}
+          selectedValueConfig={selectedValueConfig}
+          inModal={inModal}
+          setSelectedValueConfig={setSelectedValueConfig}
+          onOpeneMultiParameterModal={onOpeneMultiParameterModal}
+          subSectionParameters={subSectionParameters}
+          list={list}
+        />
+
+      )
+    }
     return (
       <div
         style={{
@@ -1893,13 +1962,13 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       if (subSection.optionToDuplicateContent) {
         return;
       }
-     
+
       parameter?.relatedParameters
         ?.filter((relatedParameter) =>
           subSection.parameters.some((p) => p.id === relatedParameter.parameterId)
         )
         .map((relatedParameter) => {
-          
+
           const subProduct = subProducts?.find(
             (x) => x.type === subSection?.type
           );
@@ -2358,6 +2427,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     selectedParameterValues: null,
                     updateName: val.value,
                     values: [val.valueId],
+                    additionalAttribute: val?.additionalAttribute,
+                    currency: val?.currency
                   });
                 });
                 param.valuesConfigs = param.valuesConfigs.filter(

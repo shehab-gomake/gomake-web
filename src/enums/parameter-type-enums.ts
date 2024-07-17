@@ -6,6 +6,8 @@ export enum EParameterTypes {
   BUTTON = 4,
   SELECT_MATERIALS = 5,
   SELECT_CHILDS_PARAMETERS = 6,
+  ADVERTISING_PRODUCT_CATEGORY=10,
+  ADVERTISING_PRODUCT_NAME=11
 }
 
 export enum EButtonTypes {
