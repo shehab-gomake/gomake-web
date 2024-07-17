@@ -25,7 +25,7 @@ const accountInputs = (state: IUserData, action: EmployeeActions)  => {
             required: true,
             parameterKey: "password",
             options: [],
-            //value: state.password,
+            value: state.password,
             machineInputType: 'input',
             isValid: !!state.password,
            // disabled: action === EmployeeActions.UPDATE

@@ -94,24 +94,33 @@ const useEmployee = () => {
 
 
     const onAddEmployee = async () => {
-        if (isValidAddEmployee() && validateEmail()) {
+        if (isValidAddEmployee() && isValidEmployeePass() && validateEmail()) {
             const callback = (data) => {
                 if (data.success) {
                     alertSuccessAdded();
-                    const newEmployee: IUser = data.data
+                    const newEmployee: IUser = data.data;
                     setUsers([newEmployee, ...users]);
                     setOpenModal(false);
                     setEmployeeState(initState);
                 } else {
                     alertFaultAdded();
                 }
+            };
+            await addNewEmployee(callApi, callback, employee);
+        } else {
+            let errorMessage = "modal.addedfailed";
+            if (!isValidAddEmployee()) {
+                errorMessage = "products.offsetPrice.admin.errorReq";
+            } else if (!validateEmail()) {
+                errorMessage = "alerts.invalidEmail";
+            } else if (!isValidEmployeePass()) {
+                errorMessage = "alerts.invalidPass";
             }
-           await addNewEmployee(callApi, callback, employee);
+            alertFault(errorMessage);
         }
-        else {
-            alertFault("products.offsetPrice.admin.errorReq");
-        }
-    }
+    };
+
+ 
     const onUpdateEmployee = async () => {
         if (isValidEditEmployee() && validateEmail()) {
             const callBack = (data) => {
@@ -155,6 +164,10 @@ const useEmployee = () => {
             !!employee.password &&
             !!employee.roleID
 
+    };
+
+    const isValidEmployeePass = () => {
+        return !!employee.password && employee.password.length > 8
     };
 
     const validateEmail = () => !!employee.email ? emailRegex.test(employee.email) : true;
