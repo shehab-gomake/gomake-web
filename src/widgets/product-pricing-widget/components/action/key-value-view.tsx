@@ -11,7 +11,7 @@ import { Permissions } from "@/components/CheckPermission/enum";
 import { isCurrency } from "@/utils/is-currency";
 import { EditIcon, PlusIcon } from "@/icons";
 import { NotesForActionModal } from "./notes-for-action-modal";
-import { updateProductItemDraftActionData } from "@/services/api-service/product-item-value-draft/product-item-draft-endpoints";
+import { updateBoardMissionActionOutputApi, updateProductItemDraftActionData } from "@/services/api-service/product-item-value-draft/product-item-draft-endpoints";
 import { useGomakeAxios } from "@/hooks";
 import { useRecoilValue } from "recoil";
 import { currentCalculationConnectionId } from "@/store";
@@ -107,7 +107,7 @@ const ParametersMapping = ({ parameters, source, isWorkFlows = false, isProducti
 };
 
 
-const TextAreaActionsMapping = ({ parameters, actionId, currentProductItemValue, productType }: any) => {
+const TextAreaActionsMapping = ({ parameters, actionId, currentProductItemValue, productType, orderItemId }: any) => {
     return (
         <>
             {parameters?.flatMap((parameter, index, array) => {
@@ -118,6 +118,7 @@ const TextAreaActionsMapping = ({ parameters, actionId, currentProductItemValue,
                         actionId={actionId}
                         currentProductItemValue={currentProductItemValue}
                         productType={productType}
+                        orderItemId={orderItemId}
                     />
                 );
                 const isLastElement = index >= array.length - 1;
@@ -141,7 +142,8 @@ const KeyValueViewComponent = ({
     isEditable,
     actionId,
     currentProductItemValue,
-    productType
+    productType,
+    orderItemId
 }: any) => {
     const { callApi } = useGomakeAxios();
     const connectionId = useRecoilValue(currentCalculationConnectionId);
@@ -177,6 +179,20 @@ const KeyValueViewComponent = ({
             OutputId: id
         })
     };
+    const onClickSaveNoteBoardMissionActionOutput = async (comment: string) => {
+        const callBack = (res) => {
+            if (res.success) {
+                setValue(comment)
+                handleOnClose()
+            }
+        };
+        await updateBoardMissionActionOutputApi(callApi, callBack, {
+            orderItemId: orderItemId,
+            actionId: actionId,
+            outputId: id,
+            comment
+        })
+    };
     const { classes } = useStyle();
     const curValues = source === EWorkSource.OUT ? !!outSourceValues ? outSourceValues : ['0'] : values;
     const formattedValue = removeTags(value).length > 8 ? `${removeTags(value).substring(0, 4)}...` : removeTags(value);
@@ -202,7 +218,7 @@ const KeyValueViewComponent = ({
                     onClose={handleOnClose}
                     value={value}
                     setValue={setValue}
-                    onSend={onClickSaveNoteForAction}
+                    onSend={orderItemId ? onClickSaveNoteBoardMissionActionOutput : onClickSaveNoteForAction}
                 />
             }
 
