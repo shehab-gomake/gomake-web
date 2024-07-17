@@ -91,7 +91,7 @@ const useAddRuleModal = ({
   const categories = useMemo(() => {
     const filteredCategories = [
       { label: "Machine", id: "Machine" },
-      { label: "Machine category", id: "Machine category" },
+      { label: "Machine type category", id: "Machine category" },
       { label: "Products", id: "Products" },
       { label: "Client type", id: "Client Type" },
       { label: "Client", id: "Client" },
@@ -287,14 +287,18 @@ const useAddRuleModal = ({
         : "";
       const conditionLabel = condition?.condition?.label ?? "";
       const statement2Label = condition.statement2?.label ?? "";
-  
+      console.log("categoryLabel",categoryLabel)
       let text = "";
   
       if (condition.linkCondition) {
         text += ` ${condition?.linkCondition.id} `;
       }
+      if (typeof condition?.statement === "object" && typeof condition?.statement2 ==="object" && categoryLabel==="") {
+        const statementLabel = condition?.statement?.label ?? "";
+        text += `${statement2Label} ${conditionLabel}  ${statementLabel}`;
+      }
       
-      if (typeof condition?.statement === "object") {
+      else if (typeof condition?.statement === "object" && typeof condition?.statement2 ==="object") {
         const statementLabel = condition?.statement?.label ?? "";
         text += `${categoryLabel} ${conditionLabel} ${statement2Label} ${statementLabel}`;
       } else {
