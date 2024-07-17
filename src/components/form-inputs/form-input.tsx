@@ -285,20 +285,36 @@ const FormInput = ({ input, error, changeState, readonly }: IFormInput) => {
                 onChange={onChangePhoneNumber}
                 value={input.value}
               />
-            ) : (
+            ) : input.type === "password" ? (
               <GomakeTextInput
                 style={{ height: "40px", minWidth: 180 }}
                 onChange={onChangeState}
                 type={input.type}
-                error={
-                  error ||
-                  (input.value && input.regex && !input.regex.test(input.value))
+                error={error || (input?.value?.length > 0 && input?.value?.length< 9)}
+                helperText={
+                  input?.value?.length > 0 && input?.value?.length < 9
+                    ? t("alerts.passTooShort")
+                    : undefined
                 }
                 placeholder={t(input.placeholder)}
                 disabled={!!readonly}
                 value={input.value}
               />
-            )}
+            ) :
+              (
+                <GomakeTextInput
+                  style={{ height: "40px", minWidth: 180 }}
+                  onChange={onChangeState}
+                  type={input.type}
+                  error={
+                    error ||
+                    (input.value && input.regex && !input.regex.test(input.value))
+                  }
+                  placeholder={t(input.placeholder)}
+                  disabled={!!readonly}
+                  value={input.value}
+                />
+              )}
           </div>
         </div>
       )}
