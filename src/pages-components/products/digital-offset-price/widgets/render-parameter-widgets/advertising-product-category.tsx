@@ -13,6 +13,7 @@ const AdvertisingProductCategoryParameterWidget = ({
   const defaultObject = parameter.valuesConfigs.find(
     (item) => item.isDefault === true
   );
+  console.log("parameter", parameter)
   return (
     <div style={clasess.advertisingProductCategoryMain}>
       <GoMakeAutoComplate
@@ -42,6 +43,24 @@ const AdvertisingProductCategoryParameterWidget = ({
           index !== -1 ? { updateName: temp[index].values } : defaultObject
         }
         disabled={parameter?.isLock ? parameter?.isLock : false}
+        renderOption={(props, option) => {
+          const image = option.additionalAttribute?.find(
+            (attr) => attr.valueId === 'image'
+          )?.value;
+
+          return (
+            <li {...props}>
+              {image && (
+                <img
+                  src={image}
+                  alt={option.updateName}
+                  style={{ width: '40px', height: '40px', marginRight: '10px', objectFit: 'contain' }}
+                />
+              )}
+              {option.updateName}
+            </li>
+          );
+        }}
       />
       <div style={clasess.advertisingProductCategorySearch}>
         <SearchIcon width={20} height={20} />
