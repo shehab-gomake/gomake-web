@@ -6,6 +6,7 @@ import { DotsLoader } from "@/components/dots-loader/dots-Loader";
 import { ProgressBar } from "@/components/progress-bar/progress-bar";
 import { useRightSideWidget } from "./use-right-side-widget";
 import { useEffect, useState } from "react";
+import { _renderIconLogs } from "@/utils/constants";
 const RightSideWidget = ({
   clasess,
   clientDefaultValue,
@@ -51,7 +52,6 @@ const RightSideWidget = ({
     calculationExceptionsLogs,
     setCurrentProductItemValueTotalPrice,
     t,
-    _renderIconLogs,
   } = useRightSideWidget({ includeVAT });
   const [myvalue, setMyValue] = useState("---------");
   const mergedArray = [...(selectedWorkFlow?.exceptions || []), ...(calculationExceptionsLogs || [])];
@@ -401,14 +401,23 @@ const RightSideWidget = ({
                         gap: 5,
                       }}
                     >
-                      {_renderIconLogs(item.exception?.exceptionType)}
-                      <div
-                        style={{
-                          ...clasess.titleLogsTextStyle,
-                        }}
-                      >
-                        <div style={{ width: 85 }}>{item.actionName}:</div>
+                      <div style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        justifyContent: "flex-start",
+                        alignItems: "center",
+                        gap: 5,
+                      }}>
+                        {_renderIconLogs(item.exception?.exceptionType, 16, 16)}
+                        <div
+                          style={{
+                            ...clasess.titleLogsTextStyle,
+                          }}
+                        >
+                          <div style={{ width: 85 }}>{item.actionName}:</div>
+                        </div>
                       </div>
+
                       <div style={clasess.textLogstyle}>
                         <span style={{ color: "black" }}>{t("CalculationExceptions." + item?.exception?.exceptionKey)}</span>
                       </div>
@@ -426,7 +435,7 @@ const RightSideWidget = ({
                         gap: 5,
                       }}
                     >
-                      {_renderIconLogs(item.exception?.exceptionType)}
+                      {_renderIconLogs(item.exception?.exceptionType, 16, 16)}
 
                       <div style={{ width: "100%", marginTop: -3 }}>
                         <span style={{ color: "black" }}>{t("CalculationExceptions." + item?.exception?.exceptionKey)}</span>
@@ -437,7 +446,7 @@ const RightSideWidget = ({
                   return (
                     <div style={clasess.generalMsgTextStyle}>
                       <div style={clasess.iconLogsTextStyle}>
-                        {_renderIconLogs(item.exceptionType)}
+                        {_renderIconLogs(item.exception?.exceptionType, 16, 16)}
                       </div>
                       {t("products.offsetPrice.admin.general")} {t("CalculationExceptions." + item?.exceptionKey)}
                     </div>

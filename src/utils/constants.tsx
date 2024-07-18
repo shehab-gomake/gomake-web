@@ -1,6 +1,7 @@
 import { ETabsIcon } from "@/enums";
-import { FinishingIcon, PricingIcon, PrintingDetailsIcon } from "@/icons";
-import { DELIVERY_NOTE_STATUSES, DOCUMENT_TYPE, QUOTE_STATUSES } from "@/pages-components/quotes/enums";
+import { ErrorIcon, FinishingIcon, MessageLogsIcon, PricingIcon, PrintingDetailsIcon, SuccessIcon, WarningLogsIcon } from "@/icons";
+import { DELIVERY_NOTE_STATUSES, QUOTE_STATUSES } from "@/pages-components/quotes/enums";
+import { ECalculationLogType } from "@/widgets/product-pricing-widget/enums";
 import { Button } from "@mui/material";
 
 export const _renderActiveIcon = (icon) => {
@@ -200,3 +201,15 @@ export function getParameterByParameterCode(subProductArray, code) {
   }
   return null;
 }
+
+export const _renderIconLogs = (type, width, height) => {
+  if (type === ECalculationLogType.ERROR) {
+    return <ErrorIcon width={width} height={height} />;
+  } else if (type === ECalculationLogType.MESSAGE) {
+    return <MessageLogsIcon width={width} height={height} />;
+  } else if (type === ECalculationLogType.SUCCESS) {
+    return <SuccessIcon width={width} height={height} />;
+  } else if (type === ECalculationLogType.WARN) {
+    return <WarningLogsIcon width={width} height={height} />;
+  }
+};

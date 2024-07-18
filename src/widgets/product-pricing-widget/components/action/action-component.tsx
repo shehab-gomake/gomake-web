@@ -36,6 +36,7 @@ import { PlusIcon, WarningIcon } from "@/icons";
 import { PermissionCheck } from "@/components/CheckPermission";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { NotesForActionModal } from "./notes-for-action-modal";
+import { _renderIconLogs } from "@/utils/constants";
 interface IActionContainerComponentProps extends IWorkFlowAction {
   delay?: number;
   workFlowId?: string;
@@ -54,7 +55,6 @@ const Actions = ({
   workFlowId,
   productType,
 }: IActionsComponentProps) => {
-  console.log("actions", actions)
   return (
     <Stack gap={"10px"}>
       {actions?.map((action, index) => {
@@ -182,6 +182,7 @@ const ActionContainerComponent = ({
   isNeedMachine,
   isNeedMaterial,
 }: IActionContainerComponentProps) => {
+  console.log("actionException", actionException?.exceptionType)
   source = source === EWorkSource.OUT ? EWorkSource.OUT : EWorkSource.INTERNAL;
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [chooseMachine, setChooseMachine] = useState<boolean>(false);
@@ -617,7 +618,8 @@ const ActionContainerComponent = ({
             {actionException?.exceptionKey && (
               <Tooltip title={t("CalculationExceptions." + actionException?.exceptionKey)}>
                 <IconButton>
-                  <WarningIcon />
+                  {_renderIconLogs(actionException?.exceptionType, 24, 24)}
+
                 </IconButton>
               </Tooltip>
             )}

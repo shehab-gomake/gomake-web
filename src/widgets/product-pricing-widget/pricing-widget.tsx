@@ -36,8 +36,6 @@ const PricingWidget = ({ workFlows, getOutSourcingSuppliers, widgetType }: IPric
     t
 
   } = usePricingWidget({ workFlows, getOutSourcingSuppliers })
-
-  console.log("selectedWorkFlow", selectedWorkFlow)
   const calculationResult = useRecoilValue(calculationResultState);
   const [selectedWorkFlowId, setSelectedWorkFlowId] = useState("")
   return (
