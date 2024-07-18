@@ -68,7 +68,6 @@ const RightSideWidget = ({
     }
   }, [selectedWorkFlow, calculationExceptionsLogs])
 
-
   return (
     <div style={clasess.rightSideMainContainer}>
       <div style={clasess.rightSideContainer}>
@@ -162,17 +161,17 @@ const RightSideWidget = ({
             ) : (
               <GomakeTextInput
                 value={
-                  selectedWorkFlow?.exceptions?.length > 0
+                  !selectedWorkFlow?.isCalculated
                     ? myvalue
                     : currentProductItemValueTotalPrice ?? myvalue
                 }
                 onChange={(e: any) => {
-                  selectedWorkFlow?.exceptions?.length > 0 ?
+                  !selectedWorkFlow?.isCalculated ?
                     setMyValue(e.target.value) :
                     setCurrentProductItemValueTotalPrice(e.target.value);
                 }}
                 style={clasess.inputPriceStyle}
-                type={selectedWorkFlow?.exceptions?.length > 0 ? "text" : typeof (currentProductItemValueTotalPrice) === "number" ? "number" : "text"}
+                type={!selectedWorkFlow?.isCalculated ? "text" : typeof (currentProductItemValueTotalPrice) === "number" ? "number" : "text"}
               />
             )}
           </div>
