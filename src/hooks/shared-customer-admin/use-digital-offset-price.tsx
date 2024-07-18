@@ -815,6 +815,12 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                           (x) => x.id === item.id
                         );
                         const sizeParameter = subProduct.parameters.find((item) => item.parameterCode === "size")
+                        const sizeParameterValueConfig  = parameter.valuesConfigs.find(x=>x.id === sizeParameter?.valueIds[0]);
+                        let isDisabled = false;
+                        if(sizeParameterValueConfig && Object.keys(sizeParameterValueConfig.values).length > 0){
+                          isDisabled = true;
+                        }
+                        
                         subProduct.parameters.push({
                           parameterId: childParam?.id,
                           parameterName: childParam?.name,
@@ -830,7 +836,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                           valuesConfigs: childParam?.valuesConfigs,
                           unitKey: childParam?.unitKey,
                           unitType: childParam?.unitType,
-                          isDisabled: sizeParameter?.values[0] === "custom" ? false : true,
+                          isDisabled: isDisabled,
                         });
                       });
                     }
@@ -2758,12 +2764,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       let section = productTemplate.sections.find(x=>x.id === sectionId);
       for (const subSection of section.subSections){
         for (const parameter of subSection.parameters){
-          if(parameter.code === "PrintingColorsside2" ){
-            debugger;
-          }
           if(!parameter.isHidden && parameter.isRequired){
             const index = allParameters.findIndex(
-                (par) => par.parameterId === parameter.id && (par?.values[0]?.length || par?.valueIds[0]?.length)
+                (par) => par.parameterId === parameter.id && ((par?.values && par?.values[0]?.length) || (par?.valueIds && par?.valueIds[0]?.length))
             );
             if (index == -1) {
               isValid = false;
@@ -2779,12 +2782,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       for (const section of productTemplate?.sections){
         for (const subSection of section.subSections){
           for (const parameter of subSection.parameters){
-            if(parameter.code === "PrintingColorsside2"){
-              debugger;
-            }
             if(!parameter.isHidden && parameter.isRequired){
               const index = allParameters.findIndex(
-                  (par) => par.parameterId === parameter.id && (par?.values[0]?.length || par?.valueIds[0]?.length)
+                  (par) => par.parameterId === parameter.id && (( par?.values && par?.values[0]?.length ) || (par?.valueIds && par?.valueIds[0]?.length))
               );
               if (index == -1) {
                 isValid = false;
