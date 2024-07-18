@@ -614,7 +614,7 @@ const ActionContainerComponent = ({
               gap: 10,
             }}
           >
-            {!isCalculated && (
+            {actionException?.exceptionKey && (
               <Tooltip title={t("CalculationExceptions." + actionException?.exceptionKey)}>
                 <IconButton>
                   <WarningIcon />
