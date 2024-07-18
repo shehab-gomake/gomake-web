@@ -358,9 +358,16 @@ const ActionContainerComponent = ({
                         variant={"text"}
                         style={classes.sectionTitle}
                       >
-                        {machineName?.length > 20
-                          ? machineName.slice(0, 20) + "..."
-                          : machineName}
+                        {
+                          machineName != null ? <>
+                            {machineName?.length > 20
+                              ? machineName.slice(0, 20) + "..."
+                              : machineName}
+                          </> : <>
+                            Selecte New Machine
+                          </>
+                        }
+
                       </Button>
                     ) : (
                       <Stack
@@ -428,7 +435,7 @@ const ActionContainerComponent = ({
                         variant={"text"}
                         style={classes.sectionTitle}
                       >
-                        {employeeName}
+                        {employeeName ? employeeName : <>Select New Employee</>}
                       </Button>
                     ) : (
                       <Stack
@@ -484,9 +491,13 @@ const ActionContainerComponent = ({
                         variant={"text"}
                         style={classes.sectionTitle}
                       >
-                        {materials[0]?.materialCategories[0]?.name?.length > 20
-                          ? materials[0]?.materialCategories[0]?.name.slice(0, 20) + "..."
-                          : materials[0]?.materialCategories[0]?.name}
+                        {materials[0]?.materialCategories?.length > 0 ? <>
+                          {materials[0]?.materialCategories[0]?.name?.length > 20
+                            ? materials[0]?.materialCategories[0]?.name.slice(0, 20) + "..."
+                            : materials[0]?.materialCategories[0]?.name}</> : <>
+                          Select New Material
+                        </>}
+
                       </Button>
                     ) : (
                       <Stack
