@@ -91,6 +91,9 @@ export interface IWorkFlowAction {
   materials?:any
   employeeId?:string,
   employeeName?:string
+  isNeedEmployee?:boolean,
+  isNeedMachine?:boolean,
+  isNeedMaterial?:boolean,
 }
 
 export interface IOutput {
