@@ -313,7 +313,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 return (
                   <>
                     <span key={index} onClick={() => navigate(renderURLDocumentType(item?.sourceDocumentType, item.documentId))} style={{ cursor: "pointer" }}>
-                      {renderDocumentTypeForSourceDocumentNumber(item?.sourceDocumentType)}:{item?.documentNumber}
+                      {t(renderDocumentTypeForSourceDocumentNumber(item?.sourceDocumentType))}:{item?.documentNumber}
                       <br />
                     </span>
                   </>
@@ -526,7 +526,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 return (
                   <>
                     <span key={index} onClick={() => navigate(renderURLDocumentType(item?.sourceDocumentType, item.documentId))} style={{ cursor: "pointer" }}>
-                      {renderDocumentTypeForSourceDocumentNumber(item?.sourceDocumentType)}:{item?.documentNumber}
+                      {t(renderDocumentTypeForSourceDocumentNumber(item?.sourceDocumentType))}:{item?.documentNumber}
                       <br />
                     </span>
                   </>

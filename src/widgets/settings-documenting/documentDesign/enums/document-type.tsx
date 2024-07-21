@@ -23,45 +23,45 @@ export enum ERPDocumentsTypesEnum {
 export function renderDocumentTypeForSourceDocumentNumber(documentType: ERPDocumentsTypesEnum): string {
     switch (documentType) {
         case ERPDocumentsTypesEnum.Order:
-            return "Order";
+            return "SourceDocument.order";
         case ERPDocumentsTypesEnum.Invoice:
-            return "Invoice";
+            return "SourceDocument.invoice";
         case ERPDocumentsTypesEnum.DeliveryNotes:
-            return "Delivery Notes";
+            return "SourceDocument.deliveryNotes";
         case ERPDocumentsTypesEnum.Purchase:
-            return "Purchase";
+            return "SourceDocument.purchase";
         case ERPDocumentsTypesEnum.InvoiceRefund:
-            return "Invoice Refund";
+            return "SourceDocument.invoiceRefund";
         case ERPDocumentsTypesEnum.Receipt:
-            return "Receipt";
+            return "SourceDocument.receipt";
         case ERPDocumentsTypesEnum.JournalEntry:
-            return "Journal Entry";
+            return "SourceDocument.journalEntry";
         case ERPDocumentsTypesEnum.PurchaseInvoice:
-            return "Purchase Invoice";
+            return "SourceDocument.purchaseInvoice";
         case ERPDocumentsTypesEnum.PurchaseInvoiceRefund:
-            return "Purchase Invoice Refund";
+            return "SourceDocument.purchaseInvoiceRefund";
         case ERPDocumentsTypesEnum.ForeignJournalEntry:
-            return "Foreign Journal Entry";
+            return "SourceDocument.foreignJournalEntry";
         case ERPDocumentsTypesEnum.DeliveryNoteRefund:
-            return "Delivery Note Refund";
+            return "SourceDocument.deliveryNoteRefund";
         case ERPDocumentsTypesEnum.Quote:
-            return "Quote";
+            return "SourceDocument.quote";
         case ERPDocumentsTypesEnum.ExternalInvoice:
-            return "External Invoice";
+            return "SourceDocument.externalInvoice";
         case ERPDocumentsTypesEnum.All:
-            return "All";
+            return "SourceDocument.all";
         case ERPDocumentsTypesEnum.ExternalPayment:
-            return "External Payment";
+            return "SourceDocument.externalPayment";
         case ERPDocumentsTypesEnum.BoardMission:
-            return "Board Mission";
+            return "SourceDocument.boardMission";
         case ERPDocumentsTypesEnum.AgingReport:
-            return "Aging Report";
+            return "SourceDocument.agingReport";
         case ERPDocumentsTypesEnum.LedgerReport:
-            return "Ledger Report";
+            return "SourceDocument.ledgerReport";
         case ERPDocumentsTypesEnum.SalesReport:
-            return "Sales Report";
+            return "SourceDocument.salesReport";
         default:
-            return "Unknown Document Type";
+            return "SourceDocument.unknown";
     }
 }
 
