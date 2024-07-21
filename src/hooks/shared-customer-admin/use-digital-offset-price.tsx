@@ -963,7 +963,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 }
               }
               if (parameter.materialPath && parameter.materialPath.length > 0) {
-                if (parameter.name == "Spiral type") {
+                if (parameter.code == "FlatbedColor") {
+                  debugger;
                 }
                 if (parameter.materialPath.length == 1) {
                   const materialData = materials?.find((x) =>
