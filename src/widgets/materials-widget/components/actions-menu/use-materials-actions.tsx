@@ -20,7 +20,10 @@ import {
 import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
 import { useRouter } from "next/router";
 import { useTranslation } from "react-i18next";
-import { updatePrintHouseMaterialsPropApi } from "@/services/api-service/materials/printhouse-materials-endpoints";
+import {
+  getPrintHouseMaterialExcelFileApi,
+  updatePrintHouseMaterialsPropApi, uploadPrintHouseMaterialExcelFileApi
+} from "@/services/api-service/materials/printhouse-materials-endpoints";
 import {
   ActiveMaterial,
   AddNewMaterial,
@@ -356,7 +359,11 @@ const useMaterialsActions = (isAdmin: boolean) => {
         downloadLink.click();
       }
     };
-    await getMaterialExcelFileApi(callApi, callBack, materialType);
+    if(isAdmin){
+      await getMaterialExcelFileApi(callApi, callBack, materialType);
+    }else{
+      await getPrintHouseMaterialExcelFileApi(callApi, callBack, materialType);
+    }
   };
 
   const CreatePurchaseOrder = async () => {
@@ -420,10 +427,18 @@ const useMaterialsActions = (isAdmin: boolean) => {
           });
 
         }
-        uploadMaterialExcelFileApi(callApi, callBack, {
-          key: materialType.toString(),
-          base64: base64String,
-        });
+        if(isAdmin){
+          uploadMaterialExcelFileApi(callApi, callBack, {
+            key: materialType.toString(),
+            base64: base64String,
+          });
+        }else{
+          uploadPrintHouseMaterialExcelFileApi(callApi, callBack, {
+            key: materialType.toString(),
+            base64: base64String,
+          });
+        }
+        
       };
       reader.readAsArrayBuffer(file);
     }
