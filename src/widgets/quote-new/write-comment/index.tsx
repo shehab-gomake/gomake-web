@@ -44,7 +44,7 @@ const WriteCommentComp = ({ isQuoteConfirmation, getQuote, documentType, onClick
 
     quoteItemValue?.documentNumbers?.forEach(doc => {
       const { documentType, documentId, documentNumber } = doc;
-      const title = renderDocumentTypeForSourceDocumentNumber(documentType);
+      const title = t(renderDocumentTypeForSourceDocumentNumber(documentType));
 
       if (!groupedDocuments[title]) {
         groupedDocuments[title] = [];
