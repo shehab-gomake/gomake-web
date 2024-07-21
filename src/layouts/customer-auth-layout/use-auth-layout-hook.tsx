@@ -351,7 +351,7 @@ const useAuthLayoutHook = (permissionEnumValue?: Permissions, allowAnonymous?: b
         isLine: false,
         key: "customerService",
         title: "tabs.customerService",
-        path: "customer-service-admin",
+        path: "/customer-service-admin",
         Permission: Permissions.SHOW_ADMIN_CUSTOMER_SERVICE,
         isList: false,
         icon: () => {

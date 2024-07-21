@@ -56,7 +56,7 @@ const RowMappingWidget = ({
           borderBottom: item?.childsDocumentItems && "none",
         }}
       >
-        225
+        {item?.productCode}
       </PrimaryTableCell>
       <PrimaryTableCell
         style={{

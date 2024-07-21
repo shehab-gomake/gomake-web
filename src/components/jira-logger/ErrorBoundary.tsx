@@ -1,10 +1,9 @@
-// src/components/ErrorBoundary.tsx
 import React, { Component, ReactNode, useEffect, useState } from "react";
 import log from "@/utils/logger";
 import { addRequestToSession, getSessionData } from "@/utils/sessionManager";
 import { useRecoilValue } from "recoil";
 import { userState } from "@/store";
-// import createJiraIssue from '@/utils/jira';
+import PageNotFound from "@/pages/404.page";
 
 interface ErrorBoundaryState {
   hasError: boolean;
@@ -47,21 +46,23 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
     const sessionData = getSessionData();
     if (sessionData) {
       log.info("Session data:", userId, sessionData);
+      console.log("Session data:", userId, sessionData);
     }
   }
 
-  handleReload = () => {
-    this.setState({ hasError: false });
-    window.location.reload();
-  };
+  // handleReload = () => {
+  //   this.setState({ hasError: false });
+  //   window.location.reload();
+  // };
 
   render() {
     if (this.state.hasError) {
       return (
-        <div>
-          <h1>Something went wrong.</h1>
-          <button onClick={this.handleReload}>Reload Page</button>
-        </div>
+        // <div>
+        //   <h1>Something went wrong.</h1>
+        //   <button onClick={this.handleReload}>Reload Page</button>
+        // </div>
+        <PageNotFound />
       );
     }
 

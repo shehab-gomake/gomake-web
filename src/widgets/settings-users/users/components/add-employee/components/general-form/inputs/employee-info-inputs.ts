@@ -62,18 +62,18 @@ const employeeInfoInputs = (state: Employee)  => {
             isValid: true,
             optionsUrl: '/v1/crm-service/roles/get-all-sms-templates'
         },
-        {
-            name: "isGraphicArtist",
-            label: "usersSettings.isGraphicArtist",
-            type: "switch",
-            placeholder: "usersSettings.isGraphicArtist",
-            required: false,
-            parameterKey: "isGraphicArtist",
-            value: state.isGraphicArtist,
-            options: [],
-            machineInputType: 'input',
-            isValid: true,
-        },
+        // {
+        //     name: "isGraphicArtist",
+        //     label: "usersSettings.isGraphicArtist",
+        //     type: "switch",
+        //     placeholder: "usersSettings.isGraphicArtist",
+        //     required: false,
+        //     parameterKey: "isGraphicArtist",
+        //     value: state.isGraphicArtist,
+        //     options: [],
+        //     machineInputType: 'input',
+        //     isValid: true,
+        // },
     ];
 }
 

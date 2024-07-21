@@ -43,6 +43,8 @@ const useCopyFromOrderModal = ({ onClose, documentType, openModal, cliendDocumen
   const [documentItems, setDocumentItems] = useState([]);
 
 
+
+
   const modalLabel = () => {
     switch (cliendDocumentType) {
       case DOCUMENT_TYPE.order:
@@ -133,14 +135,26 @@ const useCopyFromOrderModal = ({ onClose, documentType, openModal, cliendDocumen
     }
     const callBack = (res) => {
       if (res?.success) {
-        setDocumentItems(res?.data);
+        const updatedData = res.data.map(doc => {
+          const sourceDocumentNumber = doc.number;
+          const updatedOrderItems = doc.orderItems.map(item => ({
+            ...item,
+            sourceDocumentNumber,
+          }));
+          return {
+            ...doc,
+            orderItems: updatedOrderItems,
+          };
+        });
+        setDocumentItems(updatedData);
       } else {
         setDocumentItems(null);
       }
     };
+
     await getClientDocumentsApi(callApi, callBack, {
       documentType: docType,
-      clientId: quoteItemValue?.customerID
+      clientId: quoteItemValue?.customerID,
     });
 
 
@@ -156,6 +170,7 @@ const useCopyFromOrderModal = ({ onClose, documentType, openModal, cliendDocumen
     const documentItemsFilters = quoteItemValue.documentItems.filter(item => {
       return !sharedDeletedArry.some(sharedItem => sharedItem.id === item.id);
     });
+    console.log("documentItemsFilters", { documentItemsFilters, selectedItems })
     const mergedItems = [...documentItemsFilters, ...selectedItems];
     const idMap = new Map();
     const uniqueItems = mergedItems.filter(item => {
@@ -165,6 +180,7 @@ const useCopyFromOrderModal = ({ onClose, documentType, openModal, cliendDocumen
       }
       return false;
     }).map(item => ({
+      ...item,
       finalPrice: item.finalPrice
     }));
     const res = await callApi(
