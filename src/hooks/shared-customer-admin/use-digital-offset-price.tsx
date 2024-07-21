@@ -131,13 +131,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const setSelectParameterButton = useSetRecoilState(selectParameterButtonState);
   const [deviceCategory, setDeviceCategory] = useState("")
   const [deviceSize, setDeviceSize] = useState("")
-  console.log("subProducts", subProducts)
-  // useEffect(() => {
-  //   if (productTemplate) {
-  //     setProductTemplate(templateMock)
 
-  //   }
-  // }, [productTemplate])
   const {
     calculationResult,
     calculationSessionId,
@@ -155,20 +149,20 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   }, [])
   useEffect(() => {
     const oldConnectionId = currentSignalRConnectionId;
-    if(oldConnectionId && connectionId && connectionId !== oldConnectionId){
-      updateSignalRConnectionId(oldConnectionId,connectionId);
+    if (oldConnectionId && connectionId && connectionId !== oldConnectionId) {
+      updateSignalRConnectionId(oldConnectionId, connectionId);
     }
     setCurrentSignalRConnectionId(connectionId)
   }, [connectionId])
-  const updateSignalRConnectionId = async (oldSignalRConnectionId,newSignalRConnectionId)=>{
+  const updateSignalRConnectionId = async (oldSignalRConnectionId, newSignalRConnectionId) => {
     const res: any = await callApi(
-        "POST",
-        `/v1/erp-service/quote/update-product-item-value-signalr-connect-id`,
-        {
-          oldSignalRConnectionId: oldSignalRConnectionId,
-          newSignalRConnectionId: newSignalRConnectionId
-        },
-        false,
+      "POST",
+      `/v1/erp-service/quote/update-product-item-value-signalr-connect-id`,
+      {
+        oldSignalRConnectionId: oldSignalRConnectionId,
+        newSignalRConnectionId: newSignalRConnectionId
+      },
+      false,
     )
   }
   useEffect(() => {
@@ -199,7 +193,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   }, [isCalculationFinished]);
 
   const [calculationServerErrorState, setcalculationServerErrorState] = useState(false)
-  const  [currentSignalRConnectionId,setCurrentSignalRConnectionId] = useRecoilState(currentCalculationConnectionId);
+  const [currentSignalRConnectionId, setCurrentSignalRConnectionId] = useRecoilState(currentCalculationConnectionId);
   const [currentCalculationSessionId, setCurrentCalculationSessionId] = useState<string>("");
   const [requestAbortController, setRequestAbortController] = useState<AbortController>(null);
   const [billingMethod, setBillingMethod] = useState<any>();
@@ -827,12 +821,12 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                           (x) => x.id === item.id
                         );
                         const sizeParameter = subProduct.parameters.find((item) => item.parameterCode === "size")
-                        const sizeParameterValueConfig  = parameter.valuesConfigs.find(x=>x.id === sizeParameter?.valueIds[0]);
+                        const sizeParameterValueConfig = parameter.valuesConfigs.find(x => x.id === sizeParameter?.valueIds[0]);
                         let isDisabled = false;
-                        if(sizeParameterValueConfig && Object.keys(sizeParameterValueConfig.values).length > 0){
+                        if (sizeParameterValueConfig && Object.keys(sizeParameterValueConfig.values).length > 0) {
                           isDisabled = true;
                         }
-                        
+
                         subProduct.parameters.push({
                           parameterId: childParam?.id,
                           parameterName: childParam?.name,
@@ -1039,7 +1033,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                       const index = param.materialPath.findIndex((x) =>
                         compareStrings(x, materialPath)
                       );
-                      console.log("", materialRelatedParameters)
                       if (
                         index != -1 &&
                         index < param.materialPath.length - 1
@@ -2664,13 +2657,16 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   };
   const [errorText, setErrorText] = useState(false)
   const handleTabClick = (index: number) => {
+    if (!firstEnter) {
+      setActiveIndex(index);
+    }
     // Allow moving to any previous tab regardless of checkParameter
     if (index < activeIndex) {
       setActiveIndex(index);
       setCanCalculation(false);
     } else if (index > activeIndex) {
       let currentSectionId = productTemplate.sections[activeIndex].id;
-      let checkParameter = validateParameters(subProducts,currentSectionId)
+      let checkParameter = validateParameters(subProducts, currentSectionId)
       // Move to the next tab only if checkParameter is true
       if (checkParameter) {
         setErrorText(false);
@@ -2688,7 +2684,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const handleNextClick = () => {
     setErrorText(false)
     let currentSection = productTemplate.sections[activeIndex].id;
-    let checkParameter  = validateParameters(subProducts,currentSection)
+    let checkParameter = validateParameters(subProducts, currentSection)
     if (checkParameter) {
       if (activeIndex < productTemplate.sections.length) {
         setActiveIndex(activeIndex + 1);
@@ -2828,17 +2824,17 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     }
     initProduct(quoteItemProduct, materials);
   };
-  
-  const validateParameters = ( currentSubProducts,sectionId?:string) => {
+
+  const validateParameters = (currentSubProducts, sectionId?: string) => {
     let isValid = true;
     const allParameters = currentSubProducts.flatMap((item) => item.parameters);
-    if(sectionId){
-      let section = productTemplate.sections.find(x=>x.id === sectionId);
-      for (const subSection of section.subSections){
-        for (const parameter of subSection.parameters){
-          if(!parameter.isHidden && parameter.isRequired){
+    if (sectionId) {
+      let section = productTemplate.sections.find(x => x.id === sectionId);
+      for (const subSection of section.subSections) {
+        for (const parameter of subSection.parameters) {
+          if (!parameter.isHidden && parameter.isRequired) {
             const index = allParameters.findIndex(
-                (par) => par.parameterId === parameter.id && ((par?.values && par?.values[0]?.length) || (par?.valueIds && par?.valueIds[0]?.length))
+              (par) => par.parameterId === parameter.id && ((par?.values && par?.values[0]?.length) || (par?.valueIds && par?.valueIds[0]?.length))
             );
             if (index == -1) {
               isValid = false;
@@ -2847,23 +2843,23 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           }
         }
       }
-    }else{
-      if(!productTemplate?.sections){
+    } else {
+      if (!productTemplate?.sections) {
         return true;
       }
-      for (const section of productTemplate?.sections){
-        for (const subSection of section.subSections){
-          for (const parameter of subSection.parameters){
-            if(!parameter.isHidden && parameter.isRequired){
+      for (const section of productTemplate?.sections) {
+        for (const subSection of section.subSections) {
+          for (const parameter of subSection.parameters) {
+            if (!parameter.isHidden && parameter.isRequired) {
               const index = allParameters.findIndex(
-                  (par) => par.parameterId === parameter.id && (( par?.values && par?.values[0]?.length ) || (par?.valueIds && par?.valueIds[0]?.length))
+                (par) => par.parameterId === parameter.id && ((par?.values && par?.values[0]?.length) || (par?.valueIds && par?.valueIds[0]?.length))
               );
               if (index == -1) {
                 isValid = false;
                 break;
               }
             }
-            
+
           }
         }
       }
@@ -3101,7 +3097,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   };
   const straightKnife = findParameterByCode(productTemplate, "IsStraightKnife");
   const navigateForRouter = () => {
-    let checkParameter = validateParameters( subProducts);
+    let checkParameter = validateParameters(subProducts);
     if (!!checkParameter) {
       setErrorMsg("");
       if (router?.query?.actionId) {
