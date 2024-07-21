@@ -11,6 +11,12 @@ const useStyle = () => {
                 color: secondColor(500),
                 margin: '24 0 18 0'
             },
+            subSectionActionHeader: {
+                ...FONT_FAMILY.Lexend(600, 14),
+                color: "#040404",
+                margin: '24 0 18 0'
+                
+            },
             inputsContainer: {
                 display: "flex",
                 gap: 30,
