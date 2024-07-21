@@ -319,6 +319,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
   useEffect(() => {
     if (signalRPricingResult && signalRPricingResult.productItemValueDraftId === currentCalculationSessionId) {
+      setLoading(false)
       setCurrentProductItemValueTotalPrice(
         parseFloat(signalRPricingResult.totalPrice)
       );
@@ -957,9 +958,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 }
               }
               if (parameter.materialPath && parameter.materialPath.length > 0) {
-                if (parameter.code == "FlatbedColor") {
-                  debugger;
-                }
                 if (parameter.materialPath.length == 1) {
                   const materialData = materials?.find((x) =>
                     compareStrings(x.pathName, parameter.materialPath[0])
@@ -1028,24 +1026,44 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                           compareStrings(y, materialPath)
                         )
                     );
-                  materialRelatedParameters?.forEach((param) => {
+                  if(materialRelatedParameters && materialRelatedParameters.length > 0){
+                    let param = materialRelatedParameters[0];
                     if (param.materialPath && param.materialPath.length > 0) {
                       const index = param.materialPath.findIndex((x) =>
-                        compareStrings(x, materialPath)
+                          compareStrings(x, materialPath)
                       );
-                      if (
-                        index != -1 &&
-                        index < param.materialPath.length - 1
-                      ) {
-                        const materialData = materials.find((x) =>
-                          compareStrings(x.pathName, materialPath)
+                      let allMaterialsCopy = materials;
+                      let paramMaterialValues = [];
+                      if (index > 0) {
+                        allMaterialsCopy = allMaterialsCopy?.find((x) =>
+                            compareStrings(x.pathName, param.materialPath[0])
                         )?.data;
-                        const paramMaterialValues = materialData?.find((x) =>
-                          defaultValue.values?.find((y) => y === x.valueId)
-                        )?.data;
-                        if (!parameter.valuesConfigs) {
-                          parameter.valuesConfigs = [];
+                        for (let i = 0; i <= index; i++) {
+                          const prevPath = param.materialPath[i];
+                          const prevPathParam = subSection.parameters.find(
+                              (x) =>
+                                  x.materialPath &&
+                                  x.materialPath.length > i &&
+                                  x.materialPath[i] === prevPath &&
+                                  x.actionIndex === parameter.actionIndex
+                          );
+                          let prevPathParamDefaultValue = prevPathParam.valuesConfigs.find(x=>x.isDefault);
+
+                          allMaterialsCopy = allMaterialsCopy?.find(
+                              (x) => x.valueId === prevPathParamDefaultValue?.valueIds[0]
+                          )?.data;
                         }
+                        paramMaterialValues = allMaterialsCopy;
+                      }
+                      else if (index === 0) {
+                        allMaterialsCopy = allMaterialsCopy.find((x) =>
+                            compareStrings(x.pathName, materialPath)
+                        )?.data;
+                        paramMaterialValues = allMaterialsCopy?.find((x) =>
+                            defaultValue?.values?.find((y) => y === x.valueId)
+                        )?.data;
+                      }
+                      if (index != -1 && index < param.materialPath.length - 1) {
                         param.valuesConfigs.forEach(val => {
                           if (val.materialValueIds && val.materialValueIds.length > 0) {
                             val.valueIds = [];
@@ -1057,14 +1075,14 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                           }
                         })
                         param.valuesConfigs = param.valuesConfigs.filter(
-                          (x) => x.values && x.values.length > 0
+                            (x) => x.values && x.values.length > 0
                         );
                         paramMaterialValues?.forEach((val) => {
                           const existsValue = param.valuesConfigs?.find(
-                            (x) =>
-                              x.valueIds &&
-                              x.valueIds.length > 0 &&
-                              x.valueIds[0] === val.valueId
+                              (x) =>
+                                  x.valueIds &&
+                                  x.valueIds.length > 0 &&
+                                  x.valueIds[0] === val.valueId
                           );
                           if (!existsValue) {
                             param.valuesConfigs.push({
@@ -1084,13 +1102,15 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                             existsValue.id = val.valueId;
                             existsValue.updateName = val.value;
                             existsValue.additionalAttribute = val?.additionalAttribute,
-                              existsValue.currency = val?.currency
+                                existsValue.currency = val?.currency
 
                           }
                         });
                       }
                     }
-                  });
+                  }
+             
+
                 }
               }
               if (parameter?.parameterType === EParameterTypes.SWITCH) {
@@ -2939,7 +2959,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             totalWorkFlowsCount: 0,
             currentWorkFlowsCount: 0,
           });
-          setLoading(false);
+          //setLoading(false);
         }
       }
     } else {
