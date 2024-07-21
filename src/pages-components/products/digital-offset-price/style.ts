@@ -679,8 +679,6 @@ const useStyle = () => {
       },
       titleLogsTextStyle: {
         ...FONT_FAMILY.Lexend(400, 14),
-        color: secondColor(500),
-        width: "33%",
       },
       iconLogsTextStyle: {
         marginTop: 2.5,

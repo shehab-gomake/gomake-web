@@ -1,8 +1,8 @@
-import { useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 
 import {
-  getAndSetSheetSuppliers,
+  getAndSetAllCustomers,
   getAndSetSuppliers,
   getAndSetSuppliersCurrencies,
 } from "@/services/hooks";
@@ -32,11 +32,38 @@ const useSupplier = () => {
     await getAndSetSuppliersCurrencies(callApi, setSuppliersCurrencies);
   }, []);
 
+
+  const [supplierList, setSupplierList] = useState([]);
+  const getAllSupplierList = useCallback(async (SearchTerm?) => {
+    await getAndSetAllCustomers(callApi, setSupplierList, {
+      ClientType: "S",
+      searchTerm: SearchTerm,
+      onlyCreateOrderClients: true,
+    });
+  }, []);
+
+
+  const checkWhatRenderArray = (e) => {
+    if (e.target.value) {
+      getAllSupplierList(e.target.value);
+    } else {
+      getAllSupplierList();
+    }
+  };
+  
+  const renderSuppliersOptions = () => {
+    return supplierList.map((supplier) => ({ value: supplier.id, label: supplier.name }));
+  };
+
+
   return {
     getSupplier,
     getSupplierCurrencies,
     suppliers,
     suppliersCurrencies,
+    getAllSupplierList,
+    checkWhatRenderArray,
+    renderSuppliersOptions
   };
 };
 

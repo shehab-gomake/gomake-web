@@ -145,7 +145,7 @@ const AdvertisingProductNameParameterWidget = ({
               onClick={() => handleCheckboxChange(item, !isChecked)}
             >
               <img
-                style={clasess.advertisingProductImg}
+                style={{ ...clasess.advertisingProductImg, objectFit: 'contain' }}
                 src={imageUrl}
               />
               <div

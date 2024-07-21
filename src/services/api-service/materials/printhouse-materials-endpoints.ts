@@ -12,6 +12,9 @@ const DELETE_MATERIAL_CATEGORY_URL = "/v1/printhouse-materials/delete-printhouse
 const ADD_MATERIAL_CATEGORY_ROW_URL = "/v1/printhouse-materials/add-printhouse-material-category-row";
 const DELETE_MATERIAL_CATEGORY_Row_URL = "/v1/printhouse-materials/delete-printhouse-material-category-row";
 
+const GET_MATERIALS_SIZES_URL = "/v1/printhouse-materials/get-materials-sizes";
+
+
 
 const getPrintHouseMaterialCategoriesApi: ICallAndSetData = async (
     callApi,
@@ -135,6 +138,21 @@ const deletePrintHouseMaterialCategoryRowApi: ICallAndSetData = async (
   );
 };
 
+const getMaterialsSizesApi: ICallAndSetData = async (
+  callApi,
+  callBack,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    GET_MATERIALS_SIZES_URL,
+    callBack,
+    data,
+  );
+};
+
+
 export {
       getPrintHouseMaterialCategoriesApi,
       getPrintHouseMaterialCategoryDataApi,
@@ -144,4 +162,5 @@ export {
       deletePrintHouseMaterialCategoryApi,
       addPrintHouseMaterialCategoryRowApi,
       deletePrintHouseMaterialCategoryRowApi,
+      getMaterialsSizesApi
 };
