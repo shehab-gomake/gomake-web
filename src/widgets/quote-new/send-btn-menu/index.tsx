@@ -8,7 +8,8 @@ const SendBtnMenu = ({
   open,
   anchorEl,
   onClickSendQuoteToClient,
-  onClickOpenWatssAppModal
+  onClickOpenWhatsAppModal,
+  documentState
 }) => {
   const { t } = useTranslation();
 
@@ -19,39 +20,46 @@ const SendBtnMenu = ({
       anchorEl={anchorEl}
       style={{ marginTop: -45 }}
     >
-      <MenuItem
-        onClick={() => {
-          onClickSendQuoteToClient(0);
-          handleClose();
-        }}
-      >
-        {t("sales.quote.email")}
-      </MenuItem>
-      <MenuItem
-        onClick={() => {
-          onClickSendQuoteToClient(1);
-          handleClose();
-        }}
-      >
-        {t("sales.quote.phone")}
-      </MenuItem>
-      <MenuItem
-      // onClick={() => {
-      //   onClickOpenWatssAppModal()
-      //   handleClose();
-      // }}
-      >
-        {t("sales.quote.whatsApp")}
-      </MenuItem>
-      <MenuItem
-        onClick={() => {
-          onClickOpenWatssAppModal()
-          handleClose();
-        }}
-      >
-        {t("sales.quote.whatsAppWeb")}
-      </MenuItem>
-
+      {documentState.isSendMails && (
+        <MenuItem
+          onClick={() => {
+            onClickSendQuoteToClient(0);
+            handleClose();
+          }}
+        >
+          {t("sales.quote.email")}
+        </MenuItem>
+      )}
+      {documentState.isSendSMS && (
+        <MenuItem
+          onClick={() => {
+            onClickSendQuoteToClient(1);
+            handleClose();
+          }}
+        >
+          {t("sales.quote.phone")}
+        </MenuItem>
+      )}
+      {documentState.isSendWhatsapp && (
+        <MenuItem
+        // onClick={() => {
+        //   onClickOpenWhatsAppModal();
+        //   handleClose();
+        // }}
+        >
+          {t("sales.quote.whatsApp")}
+        </MenuItem>
+      )}
+      {documentState.isSendWhatsappWeb && (
+        <MenuItem
+          onClick={() => {
+            onClickOpenWhatsAppModal();
+            handleClose();
+          }}
+        >
+          {t("sales.quote.whatsAppWeb")}
+        </MenuItem>
+      )}
     </GoMakeMenu>
   );
 };

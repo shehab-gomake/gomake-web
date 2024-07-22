@@ -104,7 +104,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
   const openSendBtn = Boolean(anchorElSendBtn);
   const openCancelBtn = Boolean(anchorElCancelBtn);
   const openSettingMenu = Boolean(anchorElSettingMenu);
-  const [openWatssAppModal, setOpenWatsAppModal] = useState(false)
+  const [openWhatsAppModal, setOpenWatsAppModal] = useState(false)
   const [isSelectedAtLeastOne, setIsSelectedAtLeastOne] = useState(null)
 
   const [openNewItemNotesModal, setOpenNewItemNotesModal] = useState(false)
@@ -138,10 +138,10 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
 
   }, [quoteItemValue])
 
-  const onClickOpenWatssAppModal = () => {
+  const onClickOpenWhatsAppModal = () => {
     setOpenWatsAppModal(true)
   }
-  const onClickCloseWatssAppModal = () => {
+  const onClickCloseWhatsAppModal = () => {
     setOpenWatsAppModal(false)
 
   }
@@ -1520,9 +1520,9 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     openLoginModal,
     onClickClosLoginModal,
     onClickOpenLoginModal,
-    openWatssAppModal,
-    onClickOpenWatssAppModal,
-    onClickCloseWatssAppModal,
+    openWhatsAppModal,
+    onClickOpenWhatsAppModal,
+    onClickCloseWhatsAppModal,
     sortDocumentItems,
     updateIsShowDetails,
     updateIsShowPrices,
