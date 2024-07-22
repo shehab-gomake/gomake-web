@@ -55,6 +55,13 @@ const ButtonsContainer = ({
     isNewCreation
   } = useButtonsContainer(documentType);
 
+  
+  const isShowSendButton =
+  quoteItemValue.isSendWhatsapp ||
+  quoteItemValue.isSendWhatsappWeb ||
+  quoteItemValue.isSendMails ||
+  quoteItemValue.isSendSMS;
+
   const handleCopyFromDocumentClick = (documentNumber) => {
     if (!quoteItemValue?.client) {
       alertFault("home.admin.pleaseSelectCustomer");
@@ -127,7 +134,7 @@ const ButtonsContainer = ({
       </div>
       <div style={classes.btnsContainer}>
         {
-          !isNewCreation &&
+          !isNewCreation && isShowSendButton &&
           <GomakePrimaryButton
             rightIcon={<ArrowDownNewIcon />}
             style={classes.btnSecondContainer}

@@ -4,13 +4,13 @@ import { useTranslation } from "react-i18next";
 import { DELIVERY_NOTE_STATUSES, LogActionType, QUOTE_STATUSES } from "./enums";
 import { MoreMenuWidget } from "./more-circle";
 import { getAllProductsForDropDownList, getAndSetAllCustomers, getAndSetClientTypes } from "@/services/hooks";
-import {  useSetRecoilState, useRecoilValue } from "recoil";
+import { useSetRecoilState, useRecoilValue } from "recoil";
 import { agentsCategoriesState, clientTypesCategoriesState } from "@/pages/customers/customer-states";
 import { getAndSetEmployees2 } from "@/services/api-service/customers/employees-api";
 import { useDebounce } from "@/utils/use-debounce";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { useDateFormat } from "@/hooks/use-date-format";
-import { _renderDocumentStatus, _renderQuoteStatus, _renderStatus } from "@/utils/constants";
+import { _renderStatus } from "@/utils/constants";
 import { selectedClientState } from "./states";
 import {
   CloseDocumentApi,
@@ -206,7 +206,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               quote?.itemsNumber,
               quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
               quote?.notes,
-              _renderStatus(quote, t, navigate),
+              _renderStatus(docType, quote, t, navigate),
               <MoreMenuWidget
                 quote={quote}
                 documentType={docType}
@@ -227,7 +227,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               quote?.itemsNumber,
               quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
               quote?.notes,
-              _renderStatus(quote, t, navigate),
+              _renderStatus(docType, quote, t, navigate),
               <MoreMenuWidget
                 quote={quote}
                 documentType={docType}
@@ -246,7 +246,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               quote?.worksNames,
               quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
               quote?.notes,
-              _renderStatus(quote, t, navigate),
+              _renderStatus(docType, quote, t, navigate),
               <MoreMenuWidget
                 quote={quote}
                 documentType={docType}
@@ -285,7 +285,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               quote?.worksNames,
               quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
               quote?.notes,
-              _renderStatus(quote, t, navigate),
+              _renderStatus(docType, quote, t, navigate),
               <MoreMenuWidget
                 quote={quote}
                 documentType={docType}
@@ -322,7 +322,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               quote?.worksNames,
               quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
               quote?.notes,
-              _renderStatus(quote, t, navigate),
+              _renderStatus(docType, quote, t, navigate),
               <MoreMenuWidget
                 quote={quote}
                 documentType={docType}
@@ -343,8 +343,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
           _renderPaymentType(quote?.paymentType),
           quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
           quote?.notes,
-          //_renderDocumentStatus(quote?.status, t),
-          quote?.status,
+          t(`documentStatus.${quote?.status}`),
           <MoreMenuWidget
             quote={quote}
             documentType={docType}
@@ -418,7 +417,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               quote?.itemsNumber,
               quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
               quote?.notes,
-              _renderStatus(quote, t, navigate),
+              _renderStatus(docType, quote, t, navigate),
               <MoreMenuWidget
                 quote={quote}
                 documentType={docType}
@@ -439,7 +438,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               quote?.itemsNumber,
               quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
               quote?.notes,
-              _renderStatus(quote, t, navigate),
+              _renderStatus(docType, quote, t, navigate),
               <MoreMenuWidget
                 quote={quote}
                 documentType={docType}
@@ -458,7 +457,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               quote?.worksNames,
               quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
               quote?.notes,
-              _renderStatus(quote, t, navigate),
+              _renderStatus(docType, quote, t, navigate),
               <MoreMenuWidget
                 quote={quote}
                 documentType={docType}
@@ -498,7 +497,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               quote?.worksNames,
               quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
               quote?.notes,
-              _renderStatus(quote, t, navigate),
+              _renderStatus(docType, quote, t, navigate),
               <MoreMenuWidget
                 quote={quote}
                 documentType={docType}
@@ -535,7 +534,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               quote?.worksNames,
               quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
               quote?.notes,
-              _renderStatus(quote, t, navigate),
+              _renderStatus(docType, quote, t, navigate),
               <MoreMenuWidget
                 quote={quote}
                 documentType={docType}
@@ -556,8 +555,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
           _renderPaymentType(quote?.paymentType),
           quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
           quote?.notes,
-          // _renderDocumentStatus(quote?.status, t),
-          t(quote?.status),
+          t(`documentStatus.${quote?.status}`),
           <MoreMenuWidget
             quote={quote}
             documentType={docType}
@@ -983,7 +981,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                   : classes.closeBtnStyle
               }
             >
-              {_renderStatus(document, t, navigate)}
+              {_renderStatus(docType, document, t, navigate)}
             </h2>
           </div>,
           document?.notes,
@@ -1188,7 +1186,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
 
   // For HomeTableWidget
   useEffect(() => {
-     getAllDocuments(docType);
+    getAllDocuments(docType);
   }, [selectedClient]);
 
 
@@ -1419,7 +1417,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         const clientTypes = res.map((types) => ({
           label: types.name,
           id: types.id,
-          additionProfits : types?.additionProfits  ?? 0,
+          additionProfits: types?.additionProfits ?? 0,
         }));
         setClientTypesCategories(clientTypes);
       }

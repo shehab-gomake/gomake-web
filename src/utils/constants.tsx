@@ -1,6 +1,6 @@
 import { ETabsIcon } from "@/enums";
 import { ErrorIcon, FinishingIcon, MessageLogsIcon, PricingIcon, PrintingDetailsIcon, SuccessIcon, WarningLogsIcon } from "@/icons";
-import { DELIVERY_NOTE_STATUSES, QUOTE_STATUSES } from "@/pages-components/quotes/enums";
+import { DELIVERY_NOTE_STATUSES, DOCUMENT_TYPE, QUOTE_STATUSES } from "@/pages-components/quotes/enums";
 import { ECalculationLogType } from "@/widgets/product-pricing-widget/enums";
 import { Button } from "@mui/material";
 
@@ -115,13 +115,26 @@ export const _renderDocumentStatus = (status: number, t: any) => {
   }
 };
 
-export const _renderStatus = (document: any, t: any, navigate): JSX.Element => {
+export const _renderStatus = (docType: DOCUMENT_TYPE , document: any, t: any, navigate: any): JSX.Element => {
   if (document) {
-    // if (!document?.isCanClose && docType === DOCUMENT_TYPE.order) {
-    //   return <div>{t("sales.quote.closed")}</div>;
-    // }
-    if ((document.documentNumbers && document.documentNumbers.length > 0) ||
+
+    let statusContent: JSX.Element | null = null;
+    const docTypeText = DOCUMENT_TYPE[docType].charAt(0).toUpperCase() + DOCUMENT_TYPE[docType].slice(1);
+    const openStatus = `${docTypeText}.Open`;
+
+    if (document?.statusTitleText === openStatus || document?.statusTitleText === "DeliveryNote.Open" || document?.statusTitleText === "Invoice.Open" || document?.statusTitleText === "PurchaseOrder.Open") {
+      return <div style={{ fontWeight: 'bold' }}>{t("sales.quote.open")}</div>;
+    }
+    else if (document?.statusTitleText === "Quote.Create") {
+      if (document?.agentId) {
+        return <div style={{ fontWeight: 'bold' }}>{t("sales.quote.create")}</div>;
+      } else {
+        return <div style={{ fontWeight: 'bold' }}>{t("sales.quote.createdBy", { name: document?.userName })}</div>;
+      }
+    }
+    else if ((document.documentNumbers && document.documentNumbers.length > 0) ||
       (document.secondDocumentNumbers && document.secondDocumentNumbers.length > 0)) {
+
       const firstDocuments = document.documentNumbers ? document.documentNumbers.map((item: any, index: number) => (
         <span key={index}>
           <Button
@@ -158,37 +171,33 @@ export const _renderStatus = (document: any, t: any, navigate): JSX.Element => {
 
       if (firstDocuments.length > 0) {
         result.push(
-          <div>
+          <div key="first-documents">
             {t(`documentStatus.${document.titleDocumentNumber}.title`)}: {firstDocuments}
           </div>
         );
       }
 
       if (secondDocuments.length > 0) {
-        if (firstDocuments.length > 0) {
-          result.push(<div>,</div>);
-        }
-
         result.push(
-          <div>
+          <div key="second-documents">
             {t(`documentStatus.${document.titleSecondDocumentNumber}.title`)}: {secondDocuments}
           </div>
         );
       }
-
-      return <>{result}</>;
-    } else if (document?.statusTitleText === "Quote.Create") {
-      if (document?.agentId) {
-        return <div>{t("sales.quote.create")}</div>;
-      } else {
-        return <div>{t("sales.quote.createdBy", { name: document?.userName })}</div>;
-      }
-    } else {
-      return <div>{t(`documentStatus.${document.statusTitleText}`)}</div>;
+      statusContent = <>{result}</>;
     }
+
+    return (
+      <div>
+        {<div style={{ fontWeight: 'bold' }}>{t(`documentStatus.${document.statusTitleText}`)}</div>}
+        {statusContent}
+      </div>
+    );
   }
   return <></>;
 };
+
+
 
 export function getParameterByParameterCode(subProductArray, code) {
   for (let i = 0; i < subProductArray.length; i++) {

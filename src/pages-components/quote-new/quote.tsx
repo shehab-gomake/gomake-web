@@ -184,9 +184,9 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
     openLoginModal,
     onClickClosLoginModal,
     onClickOpenLoginModal,
-    openWatssAppModal,
-    onClickOpenWatssAppModal,
-    onClickCloseWatssAppModal,
+    openWhatsAppModal,
+    onClickOpenWhatsAppModal,
+    onClickCloseWhatsAppModal,
     sortDocumentItems,
     updateIsShowDetails,
     updateIsShowPrices,
@@ -516,11 +516,12 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
         open={openSendBtn}
         anchorEl={anchorElSendBtn}
         onClickSendQuoteToClient={onClickSendQuoteToClient}
-        onClickOpenWatssAppModal={onClickOpenWatssAppModal}
+        onClickOpenWhatsAppModal={onClickOpenWhatsAppModal}
+        documentState={quoteItemValue}
       />
       <WhatsAppWebModal
-        openModal={openWatssAppModal}
-        onClose={onClickCloseWatssAppModal}
+        openModal={openWhatsAppModal}
+        onClose={onClickCloseWhatsAppModal}
         clientContactsValue={clientContactsValue}
         getWhatsAppMessage={getWhatsAppMessage}
         whatsappMassage={whatsappMassage}
