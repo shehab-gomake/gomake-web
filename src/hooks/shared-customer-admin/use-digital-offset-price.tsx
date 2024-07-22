@@ -318,13 +318,18 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
   useEffect(() => {
     if (signalRPricingResult && signalRPricingResult.productItemValueDraftId === currentCalculationSessionId) {
+      debugger
       setLoading(false)
-      setCurrentProductItemValueTotalPrice(
-        parseFloat(signalRPricingResult.totalPrice)
-      );
+      const totalWorkFlowsCount = signalRPricingResult.totalWorkFlows;
+      const currentWorkFlowsCount = signalRPricingResult.currentWorkFlowIndex > calculationProgress.currentWorkFlowsCount ? signalRPricingResult.currentWorkFlowIndex : (calculationProgress.currentWorkFlowsCount + 1);
+      if(signalRPricingResult.isCalculationFinished){
+        setCurrentProductItemValueTotalPrice(
+            parseFloat(signalRPricingResult.totalPrice)
+        );
+      }
       setCalculationProgress({
-        totalWorkFlowsCount: signalRPricingResult.totalWorkFlows,
-        currentWorkFlowsCount: signalRPricingResult.currentWorkFlowIndex > calculationProgress.currentWorkFlowsCount ? signalRPricingResult.currentWorkFlowIndex : (calculationProgress.currentWorkFlowsCount + 1),
+        totalWorkFlowsCount: totalWorkFlowsCount,
+        currentWorkFlowsCount: currentWorkFlowsCount,
       });
     }
   }, [signalRPricingResult]);
