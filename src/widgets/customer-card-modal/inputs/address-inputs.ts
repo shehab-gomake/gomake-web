@@ -1,7 +1,7 @@
 const addressInputs1 = (
   state: any,
-  cities: any[],
-  filteredCityStreets: any[]
+  cities?: any[],
+  filteredCityStreets?: any[]
 ) => {
   return [
     {
@@ -18,28 +18,33 @@ const addressInputs1 = (
     {
       name: "city",
       label: "customers.modal.city",
-      type: "select",
+      //type: "select",
+      type: "text",
       placeholder: "customers.modal.city",
       required: false,
       parameterKey: "city",
-      options: cities.map((city) => ({
-        value: city.Name,
-        text: city.Name,
-      })),
+      // options: cities.map((city) => ({
+      //   value: city.Name,
+      //   text: city.Name,
+      // })),
+      options: [],
       value: state?.city,
     },
     {
       name: "street",
       label: "customers.modal.street",
-      type: "select",
+      // type: "select",
+      type: "text",
       placeholder: "customers.modal.street",
       required: false,
       parameterKey: "street",
-      options: filteredCityStreets.map((street) => ({
-        value: street.name,
-        text: street.name,
-      })),
+      // options: filteredCityStreets.map((street) => ({
+      //   value: street.name,
+      //   text: street.name,
+      // })),
+      options: [],
       value: state?.street,
+      isValid: true,
     },
     {
       name: "home",

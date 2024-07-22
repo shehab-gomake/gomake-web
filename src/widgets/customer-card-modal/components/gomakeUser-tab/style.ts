@@ -19,6 +19,7 @@ const useStyle = () => {
         display: "flex",
         justifyContent: "flex-start",
         gap: "7px",
+        cursor: "pointer",
       },
       buttonsStyle: {
         color: "var(--error-500, #D92C2C)",

@@ -27,15 +27,15 @@ interface IProps {
 }
 
 const ContactForm = ({ contact, onDelete, setContact }: IProps) => {
-  const { clasess } = useStyle();
+  const { classes } = useStyle();
   const { t } = useTranslation();
   const onChangeInputs = (key, value) => {
     setContact({ ...contact, [key]: value });
   };
 
-  return (
+  return ( 
     <div>
-      <div style={clasess.customerInfoStyle}>
+      <div style={classes.customerInfoStyle}>
         {contactInputs1(contact).map((item) => (
           <div style={{ marginBottom: 10 }}>
             <FormInput
@@ -48,17 +48,9 @@ const ContactForm = ({ contact, onDelete, setContact }: IProps) => {
         ))}
       </div>
       <Stack direction={"row"} marginTop={"10px"} marginBottom={"10px"}>
-        <a
-          style={{
-            display: "flex",
-            justifyContent: "flex-start",
-            gap: "7px",
-            cursor: "pointer",
-          }}
-          onClick={() => onDelete(contact.index)}
-        >
+        <a style={classes.removeFormStyle} onClick={() => onDelete(contact.index)}>
           <RemoveIcon />
-          <button style={clasess.buttonsStyle}>
+          <button style={classes.buttonsStyle}>
             {t("customers.buttons.remove")}
           </button>
         </a>

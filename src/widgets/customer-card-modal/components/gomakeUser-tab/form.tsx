@@ -72,7 +72,7 @@ const UserForm = ({ user, onDelete, setUser }: IProps) => {
         )}
       </div>
 
-      <Stack direction={"row"} marginTop={"20px"}>
+      <Stack direction={"row"} marginTop={"20px"} marginBottom={"15px"}>
         <a style={classes.removeFormStyle} onClick={() => onDelete(user.index)}>
           <RemoveIcon />
           <button style={classes.buttonsStyle}>
