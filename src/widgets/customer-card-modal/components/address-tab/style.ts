@@ -72,6 +72,12 @@ const useStyle = () => {
         TextAlign: "center",
         ...FONT_FAMILY.Lexend(500, 14),
       },
+      removeFormStyle: {
+        display: "flex",
+        justifyContent: "flex-start",
+        gap: "7px",
+        cursor: "pointer",
+      },
     };
   }, []);
   return {

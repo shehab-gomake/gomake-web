@@ -108,7 +108,6 @@ const useStyle = () => {
         border: "none",
         background: "#FFF",
         ...FONT_FAMILY.Lexend(500, 14),
-        cursor: "pointer",
       },
       tabStyle: {
         width: "62px",
@@ -232,6 +231,12 @@ const useStyle = () => {
         //  justifyContent: 'space-between',
         alignItems: "flex-end",
       },
+      addNewStyle:{
+        display: "flex",
+        justifyContent: "flex-end",
+        alignItems: "center",
+        gap: "5px",
+      }
     };
   }, [theme]);
   return {
