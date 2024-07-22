@@ -5,12 +5,16 @@ import { PageNoteFound } from "@/icons/404-page/page-not-found";
 import { PrimaryButton } from "@/components/button/primary-button";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
-export default function PageNotFound({}) {
+export default function PageNotFound() {
+
   const router = useRouter();
 
   const handleGoBack = () => {
-    router.push("/home");
+    router.push("/home").then(() => {
+      window.location.reload();
+    });
   };
+
 
   return (
     <div>
