@@ -161,9 +161,7 @@ const RightSideWidget = ({
             ) : (
               <GomakeTextInput
                 value={
-                  !selectedWorkFlow?.isCalculated
-                    ? myvalue
-                    : currentProductItemValueTotalPrice ?? myvalue
+                  currentProductItemValueTotalPrice ?? "---------"
                 }
                 onChange={(e: any) => {
                   !selectedWorkFlow?.isCalculated ?
