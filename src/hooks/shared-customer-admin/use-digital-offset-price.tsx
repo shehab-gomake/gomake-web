@@ -188,7 +188,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         totalWorkFlowsCount: 0,
         currentWorkFlowsCount: 0,
       });
-      setLoading(false);
     }
   }, [isCalculationFinished]);
 
@@ -330,7 +329,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     }
   }, [signalRPricingResult]);
 
-  useEffect(() => {
+  /*useEffect(() => {
     setWorkFlows([]);
     setCurrentProductItemValueTotalPrice(null);
     setJobActions([]);
@@ -339,8 +338,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       totalWorkFlowsCount: 0,
       currentWorkFlowsCount: 0,
     });
-    setCurrentCalculationSessionId(calculationSessionId);
-  }, [calculationSessionId]);
+    //setCurrentCalculationSessionId(calculationSessionId);
+  }, [calculationSessionId]);*/
 
   useEffect(() => {
     if (calculationExceptionsLogs) {
@@ -2909,6 +2908,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     if (!!checkParameter) {
       setCurrentCalculationSessionId(null);
       setCalculationExceptionsLogs([])
+      setcalculationServerErrorState(false)
       const newRequestAbortController = new AbortController();
       setRequestAbortController(newRequestAbortController);
       let subProductsCopy = cloneDeep(currentSubProducts);
@@ -2953,8 +2953,15 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             currentWorkFlowsCount: 0,
           });
           setLoading(false);
+          setcalculationServerErrorState(true)
         }
         else {
+          const id = res?.data?.data?.data;
+          if(!id){
+            setcalculationServerErrorState(true);
+            setLoading(false);
+          }
+          setCurrentCalculationSessionId(id);
           setCalculationProgress({
             totalWorkFlowsCount: 0,
             currentWorkFlowsCount: 0,
