@@ -131,13 +131,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const setSelectParameterButton = useSetRecoilState(selectParameterButtonState);
   const [deviceCategory, setDeviceCategory] = useState("")
   const [deviceSize, setDeviceSize] = useState("")
-  console.log("subProducts", subProducts)
-  // useEffect(() => {
-  //   if (productTemplate) {
-  //     setProductTemplate(templateMock)
 
-  //   }
-  // }, [productTemplate])
   const {
     calculationResult,
     calculationSessionId,
@@ -155,20 +149,20 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   }, [])
   useEffect(() => {
     const oldConnectionId = currentSignalRConnectionId;
-    if(oldConnectionId && connectionId && connectionId !== oldConnectionId){
-      updateSignalRConnectionId(oldConnectionId,connectionId);
+    if (oldConnectionId && connectionId && connectionId !== oldConnectionId) {
+      updateSignalRConnectionId(oldConnectionId, connectionId);
     }
     setCurrentSignalRConnectionId(connectionId)
   }, [connectionId])
-  const updateSignalRConnectionId = async (oldSignalRConnectionId,newSignalRConnectionId)=>{
+  const updateSignalRConnectionId = async (oldSignalRConnectionId, newSignalRConnectionId) => {
     const res: any = await callApi(
-        "POST",
-        `/v1/erp-service/quote/update-product-item-value-signalr-connect-id`,
-        {
-          oldSignalRConnectionId: oldSignalRConnectionId,
-          newSignalRConnectionId: newSignalRConnectionId
-        },
-        false,
+      "POST",
+      `/v1/erp-service/quote/update-product-item-value-signalr-connect-id`,
+      {
+        oldSignalRConnectionId: oldSignalRConnectionId,
+        newSignalRConnectionId: newSignalRConnectionId
+      },
+      false,
     )
   }
   useEffect(() => {
@@ -199,7 +193,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   }, [isCalculationFinished]);
 
   const [calculationServerErrorState, setcalculationServerErrorState] = useState(false)
-  const  [currentSignalRConnectionId,setCurrentSignalRConnectionId] = useRecoilState(currentCalculationConnectionId);
+  const [currentSignalRConnectionId, setCurrentSignalRConnectionId] = useRecoilState(currentCalculationConnectionId);
   const [currentCalculationSessionId, setCurrentCalculationSessionId] = useState<string>("");
   const [requestAbortController, setRequestAbortController] = useState<AbortController>(null);
   const [billingMethod, setBillingMethod] = useState<any>();
@@ -325,6 +319,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
   useEffect(() => {
     if (signalRPricingResult && signalRPricingResult.productItemValueDraftId === currentCalculationSessionId) {
+      setLoading(false)
       setCurrentProductItemValueTotalPrice(
         parseFloat(signalRPricingResult.totalPrice)
       );
@@ -827,12 +822,12 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                           (x) => x.id === item.id
                         );
                         const sizeParameter = subProduct.parameters.find((item) => item.parameterCode === "size")
-                        const sizeParameterValueConfig  = parameter.valuesConfigs.find(x=>x.id === sizeParameter?.valueIds[0]);
+                        const sizeParameterValueConfig = parameter.valuesConfigs.find(x => x.id === sizeParameter?.valueIds[0]);
                         let isDisabled = false;
-                        if(sizeParameterValueConfig && Object.keys(sizeParameterValueConfig.values).length > 0){
+                        if (sizeParameterValueConfig && Object.keys(sizeParameterValueConfig.values).length > 0) {
                           isDisabled = true;
                         }
-                        
+
                         subProduct.parameters.push({
                           parameterId: childParam?.id,
                           parameterName: childParam?.name,
@@ -963,8 +958,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 }
               }
               if (parameter.materialPath && parameter.materialPath.length > 0) {
-                if (parameter.name == "Spiral type") {
-                }
                 if (parameter.materialPath.length == 1) {
                   const materialData = materials?.find((x) =>
                     compareStrings(x.pathName, parameter.materialPath[0])
@@ -1033,25 +1026,44 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                           compareStrings(y, materialPath)
                         )
                     );
-                  materialRelatedParameters?.forEach((param) => {
+                  if(materialRelatedParameters && materialRelatedParameters.length > 0){
+                    let param = materialRelatedParameters[0];
                     if (param.materialPath && param.materialPath.length > 0) {
                       const index = param.materialPath.findIndex((x) =>
-                        compareStrings(x, materialPath)
+                          compareStrings(x, materialPath)
                       );
-                      console.log("", materialRelatedParameters)
-                      if (
-                        index != -1 &&
-                        index < param.materialPath.length - 1
-                      ) {
-                        const materialData = materials.find((x) =>
-                          compareStrings(x.pathName, materialPath)
+                      let allMaterialsCopy = materials;
+                      let paramMaterialValues = [];
+                      if (index > 0) {
+                        allMaterialsCopy = allMaterialsCopy?.find((x) =>
+                            compareStrings(x.pathName, param.materialPath[0])
                         )?.data;
-                        const paramMaterialValues = materialData?.find((x) =>
-                          defaultValue.values?.find((y) => y === x.valueId)
-                        )?.data;
-                        if (!parameter.valuesConfigs) {
-                          parameter.valuesConfigs = [];
+                        for (let i = 0; i <= index; i++) {
+                          const prevPath = param.materialPath[i];
+                          const prevPathParam = subSection.parameters.find(
+                              (x) =>
+                                  x.materialPath &&
+                                  x.materialPath.length > i &&
+                                  x.materialPath[i] === prevPath &&
+                                  x.actionIndex === parameter.actionIndex
+                          );
+                          let prevPathParamDefaultValue = prevPathParam.valuesConfigs.find(x=>x.isDefault);
+
+                          allMaterialsCopy = allMaterialsCopy?.find(
+                              (x) => x.valueId === prevPathParamDefaultValue?.valueIds[0]
+                          )?.data;
                         }
+                        paramMaterialValues = allMaterialsCopy;
+                      }
+                      else if (index === 0) {
+                        allMaterialsCopy = allMaterialsCopy.find((x) =>
+                            compareStrings(x.pathName, materialPath)
+                        )?.data;
+                        paramMaterialValues = allMaterialsCopy?.find((x) =>
+                            defaultValue?.values?.find((y) => y === x.valueId)
+                        )?.data;
+                      }
+                      if (index != -1 && index < param.materialPath.length - 1) {
                         param.valuesConfigs.forEach(val => {
                           if (val.materialValueIds && val.materialValueIds.length > 0) {
                             val.valueIds = [];
@@ -1063,14 +1075,14 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                           }
                         })
                         param.valuesConfigs = param.valuesConfigs.filter(
-                          (x) => x.values && x.values.length > 0
+                            (x) => x.values && x.values.length > 0
                         );
                         paramMaterialValues?.forEach((val) => {
                           const existsValue = param.valuesConfigs?.find(
-                            (x) =>
-                              x.valueIds &&
-                              x.valueIds.length > 0 &&
-                              x.valueIds[0] === val.valueId
+                              (x) =>
+                                  x.valueIds &&
+                                  x.valueIds.length > 0 &&
+                                  x.valueIds[0] === val.valueId
                           );
                           if (!existsValue) {
                             param.valuesConfigs.push({
@@ -1090,13 +1102,15 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                             existsValue.id = val.valueId;
                             existsValue.updateName = val.value;
                             existsValue.additionalAttribute = val?.additionalAttribute,
-                              existsValue.currency = val?.currency
+                                existsValue.currency = val?.currency
 
                           }
                         });
                       }
                     }
-                  });
+                  }
+             
+
                 }
               }
               if (parameter?.parameterType === EParameterTypes.SWITCH) {
@@ -2663,13 +2677,16 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   };
   const [errorText, setErrorText] = useState(false)
   const handleTabClick = (index: number) => {
+    if (!firstEnter) {
+      setActiveIndex(index);
+    }
     // Allow moving to any previous tab regardless of checkParameter
     if (index < activeIndex) {
       setActiveIndex(index);
       setCanCalculation(false);
     } else if (index > activeIndex) {
       let currentSectionId = productTemplate.sections[activeIndex].id;
-      let checkParameter = validateParameters(subProducts,currentSectionId)
+      let checkParameter = validateParameters(subProducts, currentSectionId)
       // Move to the next tab only if checkParameter is true
       if (checkParameter) {
         setErrorText(false);
@@ -2687,7 +2704,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const handleNextClick = () => {
     setErrorText(false)
     let currentSection = productTemplate.sections[activeIndex].id;
-    let checkParameter  = validateParameters(subProducts,currentSection)
+    let checkParameter = validateParameters(subProducts, currentSection)
     if (checkParameter) {
       if (activeIndex < productTemplate.sections.length) {
         setActiveIndex(activeIndex + 1);
@@ -2827,17 +2844,17 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     }
     initProduct(quoteItemProduct, materials);
   };
-  
-  const validateParameters = ( currentSubProducts,sectionId?:string) => {
+
+  const validateParameters = (currentSubProducts, sectionId?: string) => {
     let isValid = true;
     const allParameters = currentSubProducts.flatMap((item) => item.parameters);
-    if(sectionId){
-      let section = productTemplate.sections.find(x=>x.id === sectionId);
-      for (const subSection of section.subSections){
-        for (const parameter of subSection.parameters){
-          if(!parameter.isHidden && parameter.isRequired){
+    if (sectionId) {
+      let section = productTemplate.sections.find(x => x.id === sectionId);
+      for (const subSection of section.subSections) {
+        for (const parameter of subSection.parameters) {
+          if (!parameter.isHidden && parameter.isRequired) {
             const index = allParameters.findIndex(
-                (par) => par.parameterId === parameter.id && ((par?.values && par?.values[0]?.length) || (par?.valueIds && par?.valueIds[0]?.length))
+              (par) => par.parameterId === parameter.id && ((par?.values && par?.values[0]?.length) || (par?.valueIds && par?.valueIds[0]?.length))
             );
             if (index == -1) {
               isValid = false;
@@ -2846,23 +2863,23 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           }
         }
       }
-    }else{
-      if(!productTemplate?.sections){
+    } else {
+      if (!productTemplate?.sections) {
         return true;
       }
-      for (const section of productTemplate?.sections){
-        for (const subSection of section.subSections){
-          for (const parameter of subSection.parameters){
-            if(!parameter.isHidden && parameter.isRequired){
+      for (const section of productTemplate?.sections) {
+        for (const subSection of section.subSections) {
+          for (const parameter of subSection.parameters) {
+            if (!parameter.isHidden && parameter.isRequired) {
               const index = allParameters.findIndex(
-                  (par) => par.parameterId === parameter.id && (( par?.values && par?.values[0]?.length ) || (par?.valueIds && par?.valueIds[0]?.length))
+                (par) => par.parameterId === parameter.id && ((par?.values && par?.values[0]?.length) || (par?.valueIds && par?.valueIds[0]?.length))
               );
               if (index == -1) {
                 isValid = false;
                 break;
               }
             }
-            
+
           }
         }
       }
@@ -2942,7 +2959,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             totalWorkFlowsCount: 0,
             currentWorkFlowsCount: 0,
           });
-          setLoading(false);
+          //setLoading(false);
         }
       }
     } else {
@@ -3100,7 +3117,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   };
   const straightKnife = findParameterByCode(productTemplate, "IsStraightKnife");
   const navigateForRouter = () => {
-    let checkParameter = validateParameters( subProducts);
+    let checkParameter = validateParameters(subProducts);
     if (!!checkParameter) {
       setErrorMsg("");
       if (router?.query?.actionId) {

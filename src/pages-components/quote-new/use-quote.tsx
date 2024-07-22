@@ -1278,7 +1278,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
         const clientTypes = res.map((types) => ({
           label: types.name,
           id: types.id,
-          additionProfits : types?.additionProfits  ?? 0,  
+          additionProfits: types?.additionProfits ?? 0,
         }));
         setClientTypesCategories(clientTypes);
       }

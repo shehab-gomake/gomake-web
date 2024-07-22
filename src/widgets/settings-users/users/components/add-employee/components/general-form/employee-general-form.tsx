@@ -15,17 +15,36 @@ import {
 import {
     accountInputs
 } from "@/widgets/settings-users/users/components/add-employee/components/general-form/inputs/account-inputs";
-import { useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { EmployeeActions } from "@/widgets/settings-users/users/enums/employee-actions";
 import { AllowedIP, IUserData } from "@/widgets/settings-users/users/interface/employee";
 import { SecondSwitch } from "@/components";
 import { FormArrayInput } from "@/components/form-inputs/form-array-input";
 import { FormInput } from "@/components/form-inputs/form-input";
+import { getAllActionsRequireEmployeeApi } from "@/services/api-service/production-floor/production-floor-endpoints";
+import { useGomakeAxios } from "@/hooks";
+import { Checkbox } from "@mui/material";
+import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
 
 const EmployeeGeneralForm = ({ action }: { action: EmployeeActions }) => {
     const { t } = useTranslation();
     const { classes } = useStyle();
     const [state, setState] = useRecoilState<IUserData>(employeeState);
+    console.log("state", state)
+    const [actionRequierdForEmployee, setActionRequierdForEmployee] = useState([])
+    const { callApi } = useGomakeAxios();
+
+    const getActions = async () => {
+        const callBack = res => {
+            if (res.success) {
+                setActionRequierdForEmployee(res?.data);
+            }
+        }
+        await getAllActionsRequireEmployeeApi(callApi, callBack)
+    }
+    useEffect(() => {
+        getActions()
+    }, [])
     const updateEmployeeState = (key, value) => {
         setState({
             ...state,
@@ -33,6 +52,25 @@ const EmployeeGeneralForm = ({ action }: { action: EmployeeActions }) => {
                 ...state.employee,
                 [key]: value
             }
+        });
+    };
+    const updateActionIdsEmployeeState = (key, id, checked) => {
+        setState(prevState => {
+            // Get the current list of actionIds
+            const currentActionIds = prevState.employee[key] || [];
+
+            // Update the list based on the checked state
+            const updatedActionIds = checked
+                ? [...currentActionIds, id]
+                : currentActionIds.filter(actionId => actionId !== id);
+
+            return {
+                ...prevState,
+                employee: {
+                    ...prevState.employee,
+                    [key]: updatedActionIds
+                }
+            };
         });
     };
     const updateUserState = (key, value) => {
@@ -127,6 +165,32 @@ const EmployeeGeneralForm = ({ action }: { action: EmployeeActions }) => {
                     }
                 </div>
             </div>
+
+
+            <div style={classes.subSection}>
+                <h3 style={classes.subSectionHeader}>Employee actions</h3>
+                <h1 style={classes.subSectionActionHeader}>Actions</h1>
+                <div style={classes.inputsContainer}>
+                    {
+                        actionRequierdForEmployee?.map((action) => {
+                            return (
+                                <div>
+                                    <Checkbox
+                                        onChange={(e, checked) => { updateActionIdsEmployeeState("actionIds", action.id, checked) }}
+                                        icon={<CheckboxIcon />}
+                                        checkedIcon={<CheckboxCheckedIcon />}
+                                        checked={state?.employee?.actionIds?.includes(action?.id)}
+                                    />
+                                    {action?.name}
+                                </div>
+                            )
+                        })
+                    }
+
+                </div>
+            </div>
+
+
         </div>
     );
 }

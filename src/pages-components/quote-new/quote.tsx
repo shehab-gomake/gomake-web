@@ -279,7 +279,7 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
               <div style={classes.titleSettingContainer}>
                 <div style={classes.titleQuateContainer}>
                   <HeaderTitle
-                    title={router?.query?.isNewCreation ? `${t("sales.quote.createNew")} ${documentTitle.toLowerCase()}` : documentTitle}
+                    title={router?.query?.isNewCreation ? `${t("properties.create")} ${documentTitle.toLowerCase()}` : documentTitle}
                     marginBottom={1}
                     marginTop={1}
                     color="rgba(241, 53, 163, 1)"
