@@ -389,6 +389,14 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
 
   }
 
+  // testttt
+  useEffect(()=>{
+    if(router?.query?.isNewCreation && docType === DOCUMENT_TYPE.receipt){
+      const clientId ={id : router.query.ClientId}
+    onChangeSelectBusiness(clientId);
+  }
+  },[])
+
   const onChangeSelectBusiness = async (item: any) => {
     if (router?.query?.isNewCreation && docType === DOCUMENT_TYPE.receipt) {
       const callBack = (res) => {
