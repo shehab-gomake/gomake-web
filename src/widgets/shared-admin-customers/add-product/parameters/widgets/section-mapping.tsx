@@ -111,7 +111,9 @@ const SectionMappingWidget = ({
                       subSection?.id,
                       parameter,
                       subSection?.parameters,
-                      paramIndex
+                      paramIndex,
+                      section,
+                      subSection,
                     )}
                   </div>
                 </div>

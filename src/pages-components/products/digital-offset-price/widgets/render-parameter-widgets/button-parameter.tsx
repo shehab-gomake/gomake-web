@@ -13,9 +13,11 @@ const ButtonParameterWidget = ({
   subSection,
   section,
   index,
-  straightKnife
-}) => {
+  straightKnife,
+  isParameterSettings = false
+}: any) => {
   let Comp;
+
   const materialData = useRecoilValue<any>(materialBtnDataState);
   const [subProducts, setProducts] = useRecoilState<any>(
     subProductsParametersState
@@ -59,12 +61,6 @@ const ButtonParameterWidget = ({
     }
     setIsStraightKnife(false)
   };
-
-  // let sizeParameter = subSection.parameters.find(
-  //   (param) => param.code === "size"
-  // );
-  // let isDefaultSelectedValue = sizeParameter?.valuesConfigs.find((value) => value.isDefault)
-
   const removeParameterFromSubProducts = () => {
     if (isSelectedShape) {
       let subProductsCopy = lodashClonedeep(subProducts);
@@ -220,20 +216,37 @@ const ButtonParameterWidget = ({
     }
   };
   useEffect(() => {
-    const isSelectedShape = subProductsParameters?.find((param) => {
-      return (
-        param?.parameterId === parameter?.id &&
-        param?.actionIndex === parameter?.actionIndex
-      );
-    });
-    setIsSelectedShape(isSelectedShape);
-  }, [subProductsParameters]);
+    if (isParameterSettings) {
+      const isSelectedShape = parameter?.valuesConfigs && parameter.valuesConfigs?.length > 0
+      if (isSelectedShape) {
+        setIsSelectedShape(parameter?.valuesConfigs)
+      }
+    }
+    else {
+      const isSelectedShape = subProductsParameters?.find((param) => {
+        return (
+          param?.parameterId === parameter?.id &&
+          param?.actionIndex === parameter?.actionIndex
+        );
+      });
+      setIsSelectedShape(isSelectedShape);
+    }
+
+  }, [subProductsParameters, isParameterSettings, parameter]);
   useEffect(() => {
-    const selectedShape = materialData?.data?.find((data) => {
-      return data?.id === isSelectedShape?.valueIds[0];
-    });
-    setSelectedShape(selectedShape);
-  }, [materialData, isSelectedShape]);
+    if (isParameterSettings) {
+      const selectedShape = materialData?.data?.find((data) => {
+        return data?.id === isSelectedShape[0]?.id;
+      });
+      setSelectedShape(selectedShape);
+    } else {
+      const selectedShape = materialData?.data?.find((data) => {
+        return data?.id === isSelectedShape?.valueIds[0];
+      });
+      setSelectedShape(selectedShape);
+    }
+
+  }, [materialData, isSelectedShape, isParameterSettings]);
 
   if (parameter?.buttonAction === EButtonTypes.GALLERY_MODAL) {
     if (isStraightKnife) {

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRouter } from "next/router";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import { v4 as uuidv4 } from "uuid";
 
 import { getAndSetProductById } from "@/services/hooks";
@@ -22,12 +22,15 @@ import {
 
 import { useMaterials } from "../use-materials";
 import { digitslPriceState } from "./store";
-import { EParameterTypes } from "@/enums";
+import { EButtonTypes, EParameterTypes } from "@/enums";
 import cloneDeep from "lodash.clonedeep";
+import { selectParameterButtonState } from "@/store";
+import { ButtonParameterWidget } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/button-parameter";
+import { findParameterByCode } from "@/utils/helpers";
 
 const useAddProduct = ({ clasess }) => {
   const { callApi } = useGomakeAxios();
-  const { setSnackbarStateValue } = useSnackBar();
+  const { alertFaultAdded, alertSuccessAdded } = useSnackBar();
   const [expanded, setExpanded] = useState<string | false>("");
   const handleChange =
     (panel: string) => (event: React.SyntheticEvent, newExpanded: boolean) => {
@@ -39,6 +42,15 @@ const useAddProduct = ({ clasess }) => {
   const [changeName, setChangeName] = useState("");
   const [changeDefaultValue, setChangeDefaultValue] = useState("");
   const { allMaterials, getAllMaterial } = useMaterials();
+  const [GalleryModalOpen, setGalleryModalOpen] = useState(false);
+  const setSelectParameterButton = useSetRecoilState(selectParameterButtonState);
+  const straightKnife = findParameterByCode(productState, "IsStraightKnife");
+  const onCloseGalleryModal = () => {
+    setGalleryModalOpen(false);
+  };
+  const onOpeneGalleryModal = () => {
+    setGalleryModalOpen(true);
+  };
   const onChangeStateProduct = useCallback(
     (filedName: string, value: any) => {
       setProductState((prev) => {
@@ -161,18 +173,10 @@ const useAddProduct = ({ clasess }) => {
       }
     );
     if (res?.success) {
-      setSnackbarStateValue({
-        state: true,
-        message: t("modal.addedSusuccessfully"),
-        type: "sucess",
-      });
+      alertSuccessAdded()
       getProductById();
     } else {
-      setSnackbarStateValue({
-        state: true,
-        message: t("modal.addedfailed"),
-        type: "error",
-      });
+      alertFaultAdded()
     }
   };
   const updatedProductParameterShowToClient = useCallback(
@@ -508,18 +512,10 @@ const useAddProduct = ({ clasess }) => {
         }
       );
       if (res?.success) {
-        setSnackbarStateValue({
-          state: true,
-          message: t("modal.addedSusuccessfully"),
-          type: "sucess",
-        });
+        alertSuccessAdded()
         getProductById();
       } else {
-        setSnackbarStateValue({
-          state: true,
-          message: t("modal.addedfailed"),
-          type: "error",
-        });
+        alertFaultAdded()
       }
     },
     [router]
@@ -546,7 +542,10 @@ const useAddProduct = ({ clasess }) => {
     sectionId,
     subSectionId,
     parameter,
-    subSectionParameters
+    subSectionParameters,
+    index,
+    section,
+    subSection,
   ) => {
     if (parameter?.parameterType === EParameterTypes.INPUT_NUMBER) {
       return (
@@ -853,6 +852,41 @@ const useAddProduct = ({ clasess }) => {
         );
       }
     }
+    else if (parameter?.parameterType === EParameterTypes.BUTTON) {
+
+      return (
+        <ButtonParameterWidget
+          clasess={clasess}
+          parameter={parameter}
+          selectBtnTypeToAction={selectBtnTypeToAction}
+          subSection={subSection}
+          section={section}
+          index={index}
+          straightKnife={straightKnife}
+          isParameterSettings={true}
+        />
+      )
+
+    }
+  };
+
+  const selectBtnTypeToAction = (
+    parameter,
+    sectionId,
+    subSectionId,
+    index,
+    paameterType
+  ) => {
+    if (parameter?.buttonAction === EButtonTypes.GALLERY_MODAL) {
+      setSelectParameterButton({
+        parameter,
+        sectionId,
+        subSectionId,
+        index,
+        paameterType,
+      });
+      onOpeneGalleryModal();
+    }
   };
   return {
     setOpenModal,
@@ -896,6 +930,10 @@ const useAddProduct = ({ clasess }) => {
     expanded,
     handleChange,
     relatedParameters,
+    GalleryModalOpen,
+    onCloseGalleryModal,
+    onOpeneGalleryModal,
+    straightKnife,
   };
 };
 
