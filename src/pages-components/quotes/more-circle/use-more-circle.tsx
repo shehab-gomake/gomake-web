@@ -27,7 +27,6 @@ const useMoreCircle = () => {
     onClickLoggers,
     t,
     onClickOpenIrrelevantModal,
-    CloseDocument,
     onClickOpenCloseOrderModal,
     onClickOpenCloseOrderNotesModal
   }) => {
@@ -156,7 +155,7 @@ const useMoreCircle = () => {
         name: t("sales.quote.closeAsPurchaseInvoice")
       },
       {
-        condition: isOrder && quote?.isCanClose && quote?.statusTitleText !== "Order.Canceled",
+        condition:( isOrder && quote?.isCanClose && quote?.statusTitleText !== "Order.Canceled") || ( isDeliveryNote && quote?.isCanClose )|| ( isInvoice && quote?.isCanClose ),
         onClick: () => quote?.closeOrderNotes && quote?.closeOrderNotes.tirm !== "" ? onClickOpenCloseOrderNotesModal(quote) : onClickOpenCloseOrderModal(quote),
         icon: <LockIcon />,
         name: t("sales.quote.close")
