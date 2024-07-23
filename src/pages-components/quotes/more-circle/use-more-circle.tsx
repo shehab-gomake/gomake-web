@@ -11,6 +11,7 @@ import { JobsIcon } from "./icons/jobs";
 import { LockIcon } from "./icons/lock";
 import { useUserPermission } from "@/hooks/use-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
+import { PayIcon } from "./icons/pay";
 
 const useMoreCircle = () => {
   const { user } = useCustomer();
@@ -165,7 +166,12 @@ const useMoreCircle = () => {
         icon: <TickCloseIcon />,
         name: t("sales.quote.cancel")
       },
-
+      {
+        condition: isInvoice && quote?.isCanClose ,
+        onClick: () => navigate(`/receipt?isNewCreation=true&documentNumber=${quote?.number}&ClientId=${quote?.customerId}`),
+        icon: <PayIcon />,
+        name: t("sales.quote.pay")
+      },
       // {
       //   condition: !isCancel,
       //   onClick: () => onClickOpenIrrelevantModal(quote),

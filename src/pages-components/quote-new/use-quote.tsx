@@ -386,14 +386,29 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
 
       })
     }
-
   }
+
+  useEffect(() => {
+    if (router?.query?.isNewCreation && docType === DOCUMENT_TYPE.receipt && router?.query?.documentNumber && router?.query?.ClientId) {
+      const clientId = { id: router.query.ClientId }
+      onChangeSelectBusiness(clientId);
+    }
+  }, [])
 
   const onChangeSelectBusiness = async (item: any) => {
     if (router?.query?.isNewCreation && docType === DOCUMENT_TYPE.receipt) {
       const callBack = (res) => {
         if (res?.success) {
           const _data = res?.data || {};
+          if (router?.query?.isNewCreation && router?.query?.documentNumber && router?.query?.ClientId) {
+            const documentNumber = router.query.documentNumber;
+            if (documentNumber) {
+              const foundRow = _data.receiptItems.find(row => row.docNum === documentNumber);
+              if (foundRow) {
+                foundRow.isChecked = true;
+              }
+            }
+          }
           setQuoteItemValue(_data);
           setIsUpdateBusinessName(null);
         } else {
