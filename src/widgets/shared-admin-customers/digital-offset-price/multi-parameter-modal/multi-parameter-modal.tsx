@@ -11,7 +11,7 @@ const MultiParameterModal = ({
   modalTitle,
   settingParameters,
   _renderParameterType,
-}) => {
+}: any) => {
   const { clasess } = useStyle();
   const { parameterLists, onClickSaveParameter, t, closeModal } = useMultiParameterModal({
     settingParameters,

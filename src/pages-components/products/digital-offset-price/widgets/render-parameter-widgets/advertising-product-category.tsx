@@ -13,7 +13,6 @@ const AdvertisingProductCategoryParameterWidget = ({
   const defaultObject = parameter.valuesConfigs.find(
     (item) => item.isDefault === true
   );
-  console.log("parameter", parameter)
   return (
     <div style={clasess.advertisingProductCategoryMain}>
       <GoMakeAutoComplate

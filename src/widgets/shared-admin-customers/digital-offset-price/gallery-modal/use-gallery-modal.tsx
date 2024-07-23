@@ -30,7 +30,6 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
     useRecoilState<any>(selectedShapeState);
   const [materialData, setMaterialData] =
     useRecoilState<any>(materialBtnDataState);
-  console.log("materialsEnumsValues", { materialsEnumsValues, sss: materialData?.data })
   const [materialDataFilter, setMaterialDataFilter] = useState("");
   const [materialType, setMaterialType] = useState<any>({});
   const [isShowStraightKnife, setIsShowStraightKnife] = useState(false)
@@ -130,10 +129,10 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
     setMaterialDataFilter(value);
   };
   const [changeDefaultValue, setChangeDefaultValue] = useState("");
-  console.log("changeDefaultValue", changeDefaultValue)
   useEffect(() => {
     if (selectedShape) {
-      setChangeDefaultValue(selectedShape)
+      const updatedShape = { ...selectedShape, isDefault: true };
+      setChangeDefaultValue(updatedShape);
     }
   }, [selectedShape])
   const onClickChoosParameter = () => {

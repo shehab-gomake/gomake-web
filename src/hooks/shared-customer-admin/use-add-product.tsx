@@ -864,6 +864,7 @@ const useAddProduct = ({ clasess }) => {
           index={index}
           straightKnife={straightKnife}
           isParameterSettings={true}
+          allMaterials={allMaterials}
         />
       )
 
