@@ -79,6 +79,7 @@ const useChildValuesMapping = ({
     setIsFocused(false);
   });
   const onChangeCheckBox = (e) => {
+    debugger;
     const subData = value.data;
     let newSubProducts = lodashClonedeep(subProducts);
     subData.forEach(x=>{
