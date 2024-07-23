@@ -322,7 +322,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       setLoading(false)
       const totalWorkFlowsCount = signalRPricingResult.totalWorkFlows;
       const currentWorkFlowsCount = signalRPricingResult.currentWorkFlowIndex > calculationProgress.currentWorkFlowsCount ? signalRPricingResult.currentWorkFlowIndex : (calculationProgress.currentWorkFlowsCount + 1);
-      if(signalRPricingResult.isCalculationFinished){
+      if(signalRPricingResult.isCalculationFinished && signalRPricingResult.totalPrice){
         setCurrentProductItemValueTotalPrice(
             parseFloat(signalRPricingResult.totalPrice)
         );
