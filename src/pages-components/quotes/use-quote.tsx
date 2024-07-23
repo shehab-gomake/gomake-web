@@ -13,13 +13,13 @@ import { useDateFormat } from "@/hooks/use-date-format";
 import { _renderStatus } from "@/utils/constants";
 import { selectedClientState } from "./states";
 import {
-  CloseDocumentApi,
   cancelDocumentApi,
   createNewDocumentApi,
   duplicateDocumentApi,
   getAllDocumentLogsApi,
   getAllDocumentsApi,
   getDocumentPdfApi,
+  manuallyCloseDocumentApi,
   updateDocumentApi,
 } from "@/services/api-service/generic-doc/documents-api";
 import { DOCUMENT_TYPE } from "./enums";
@@ -84,6 +84,11 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
 
   const [openCloseOrderNotesModal, setOpenCloseOrderNotesModal] = useState(false)
   const [selectedQuoteItemValue, setSelectedQuoteItemValue] = useState()
+  const [documentCloseNumber, setDocumentCloseNumber] = useState("");
+
+  const handleDocumentNumberChange = (event) => {
+    setDocumentCloseNumber(event.target.value);
+  };
 
   const onClickOpenCloseOrderNotesModal = (order) => {
     setOpenCloseOrderNotesModal(true)
@@ -298,8 +303,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 onClickOpenPriceModal={onClickOpenPriceModal}
                 onClickOpenCloseOrderModal={onClickOpenCloseOrderModal}
                 onClickOpenCloseOrderNotesModal={onClickOpenCloseOrderNotesModal}
-                CloseDocument={CloseDocument}
-
               />,
             ];
           }
@@ -331,6 +334,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 onClickDuplicate={onClickQuoteDuplicate}
                 onClickLoggers={onClickDocumentLogs}
 
+                onClickOpenCloseOrderModal={onClickOpenCloseOrderModal}
+                onClickOpenCloseOrderNotesModal={onClickOpenCloseOrderNotesModal}
               />,
             ];
           }
@@ -510,8 +515,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 onClickOpenPriceModal={onClickOpenPriceModal}
                 onClickOpenCloseOrderModal={onClickOpenCloseOrderModal}
                 onClickOpenCloseOrderNotesModal={onClickOpenCloseOrderNotesModal}
-                CloseDocument={CloseDocument}
-
               />,
             ]
           }
@@ -543,6 +546,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 onClickDuplicate={onClickQuoteDuplicate}
                 onClickLoggers={onClickDocumentLogs}
 
+                onClickOpenCloseOrderModal={onClickOpenCloseOrderModal}
+                onClickOpenCloseOrderNotesModal={onClickOpenCloseOrderNotesModal}
               />,
             ];
           }
@@ -997,7 +1002,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             onClickOpenPriceModal={onClickOpenPriceModal}
             onClickOpenCloseOrderModal={onClickOpenCloseOrderModal}
             onClickOpenCloseOrderNotesModal={onClickOpenCloseOrderNotesModal}
-            CloseDocument={CloseDocument}
           />,
         ]);
         setAllDocuments(mapData);
@@ -1319,8 +1323,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   };
   const onClickCloseCloseOrderModal = () => {
     setOpenCloseOrderModal(false);
+    setDocumentCloseNumber("")
   };
-
 
   const onClickOpenDeliveryTimeModal = (order) => {
     setselectedOrder(order)
@@ -1329,7 +1333,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const onClickCloseDeliveryTimeModal = () => {
     setOpenDeliveryTimeCancelModal(false);
   };
-
 
 
   const updateCancelQuote = async (quoteStatus: number) => {
@@ -1350,11 +1353,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     })
   }
 
-  const CloseDocument = async (quoteItemValue) => {
+  const ManuallyCloseDocument = async (quoteItemValue) => {
     setSelectedQuoteItemValue(quoteItemValue)
-    // if (quoteItemValue?.closeOrderNotes && quoteItemValue?.closeOrderNotes.tirm !== "") {
-    //   onClickOpenCloseOrderNotesModal()
-    // }
     const callBack = (res) => {
       if (res?.success) {
         alertSuccessUpdate();
@@ -1364,9 +1364,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         alertFaultUpdate();
       }
     };
-    await CloseDocumentApi(callApi, callBack, {
-      documentId: quoteItemValue?.id,
-      documentType: docType
+    await manuallyCloseDocumentApi(callApi, callBack, {
+      documentType: docType,
+      document: { documentId: quoteItemValue?.id, documentNumber: documentCloseNumber }
 
     });
   };
@@ -1522,10 +1522,12 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     selectedQuoteItemValue,
     onClickCloseCloseOrderModal,
     openCloseOrderModal,
-    CloseDocument,
     selectedOrder,
     onClickOpenCloseOrderModal,
-    getEmployeeCategories
+    getEmployeeCategories,
+    ManuallyCloseDocument,
+    documentCloseNumber,
+    handleDocumentNumberChange
   };
 };
 

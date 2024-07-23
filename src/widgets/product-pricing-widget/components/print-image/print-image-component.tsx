@@ -24,6 +24,7 @@ const PrintImageComponent = ({materialLength, materialWidth, rectangles, name}: 
         }
     };
     useEffect(() => {
+        
         calculateZoom();
         window.addEventListener('resize', calculateZoom);
         return () => window.removeEventListener('resize', calculateZoom);
@@ -39,6 +40,7 @@ const PrintImageComponent = ({materialLength, materialWidth, rectangles, name}: 
         }
     }
     const scaleX = (number)=>{
+        debugger
         let newWidth =  number / 1000;
         return newWidth;
     }
@@ -68,7 +70,7 @@ const PrintImageComponent = ({materialLength, materialWidth, rectangles, name}: 
                                position: 'relative'
                            }}>
                                {
-                                   rectangles?.map(({x, y, width, length,color}: IRectangle) => {
+                                   rectangles?.map(({x, y, width, length,color,borderColor,borderThickness}: IRectangle) => {
                                        return(
                                            <div style={{
                                                position: 'absolute',
@@ -76,6 +78,7 @@ const PrintImageComponent = ({materialLength, materialWidth, rectangles, name}: 
                                                top: (scaleY(y)),
                                                width: scaleX(width),
                                                height: scaleY(length),
+                                               border:`${scaleX(borderThickness/1000)}px solid ${borderColor}`,
                                                backgroundColor: color ?? 'black',
                                            }}/>
                                        )

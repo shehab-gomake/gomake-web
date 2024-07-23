@@ -132,6 +132,18 @@ export const _renderStatus = (docType: DOCUMENT_TYPE , document: any, t: any, na
         return <div style={{ fontWeight: 'bold' }}>{t("sales.quote.createdBy", { name: document?.userName })}</div>;
       }
     }
+    else if (document.externalDocumentNumber) {
+    const externalDocument = document.externalDocumentNumber ;
+    let result: JSX.Element[] = [];
+    if (externalDocument.length > 0) {
+      result.push(
+        <div>
+          {t(`documentStatus.${document.titleExternalDocumentNumber}.title`)}: {externalDocument}
+        </div>
+      ); 
+    }
+    statusContent = <>{result}</>;
+  }
     else if ((document.documentNumbers && document.documentNumbers.length > 0) ||
       (document.secondDocumentNumbers && document.secondDocumentNumbers.length > 0)) {
 

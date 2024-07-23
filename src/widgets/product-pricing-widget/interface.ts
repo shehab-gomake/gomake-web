@@ -128,6 +128,8 @@ export interface IRectangle {
   width: number;
   length: number;
   color?: string;
+  borderThickness?: number;
+  borderColor?: string;
 }
 export interface ICalculationProgress {
   totalWorkFlowsCount: number;
