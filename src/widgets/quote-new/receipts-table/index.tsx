@@ -12,12 +12,48 @@ import { usePaymentsTable } from "./use-payments-table";
 import { TotalPricesNewReceipts } from "./total-prices-new-receipt";
 import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
 import { TotalPricesReceipts } from "./total-prices-receipt";
+import { useRouter } from "next/router";
+import { useCallback, useEffect } from "react";
 
 const ReceiptsTable = () => {
     let indexs = 0;
     const headerHeight = "44px";
     const { classes } = useStyle({ headerHeight });
     const { isNewReceipt, documentItemValue, tableHeaders, tableRows, columnWidths, PrimaryTableCell, checkedItems, handleCheckboxChange, totalSum, finalTotalPayment, taxDeduction } = usePaymentsTable();
+    const router = useRouter();
+
+    const renderReceiptsItems = useCallback(() => {
+        return tableRows?.map((item: any, index: number) => {
+            indexs++;
+            return (
+                <>
+                    <RowMappingWidget
+                        key={item.id}
+                        item={item}
+                        index={index}
+                        columnWidths={columnWidths}
+                        headerHeight={headerHeight}
+                        isChecked={checkedItems[index] || item?.isChecked}
+                        onCheckboxChange={() => {
+                            handleCheckboxChange(index, item?.id);
+                        }}
+                    />
+                </>
+            );
+        })
+    }, [checkedItems , documentItemValue]);
+
+    useEffect(() => {
+        if (router?.query?.isNewCreation && router?.query?.documentNumber && tableRows) {
+            const documentNumber = router.query.documentNumber;
+            if (documentNumber) {
+                const foundRow = tableRows.find(row => row.docNum === documentNumber);
+                if (foundRow) {
+                    handleCheckboxChange(tableRows.indexOf(foundRow), foundRow.id);
+                }
+            }
+        }
+    }, []);
 
     return (
         <div>
@@ -44,31 +80,11 @@ const ReceiptsTable = () => {
                         </TableRow>
                     </TableHead>
                     <TableBody style={{ border: "1px solid #EAECF0" }}>
-                        {tableRows?.map((item: any, index: number) => {
-                            indexs++;
-                            return (
-                                <>
-                                    <RowMappingWidget
-                                        key={item.id}
-                                        item={item}
-                                        index={index}
-                                        columnWidths={columnWidths}
-                                        headerHeight={headerHeight}
-                                        isChecked={checkedItems[index]}
-                                        onCheckboxChange={() => {
-                                            handleCheckboxChange(index, item?.id);
-                                        }}
-
-                                    //     onCheckboxChange={handleCheckboxChange.bind(null, index)}
-
-                                    />
-                                </>
-                            );
-                        })}
+                        {renderReceiptsItems()}
                     </TableBody>
                 </Table>
             </TableContainer>
-            {isNewReceipt ?  
+            {isNewReceipt ?
                 <TotalPricesNewReceipts sum={totalSum} totalPayment={finalTotalPayment} taxDeduction={taxDeduction} /> :
                 <TotalPricesReceipts receiptItemValue={documentItemValue} />}
         </div>

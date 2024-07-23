@@ -10,7 +10,7 @@ import { firstWidgetState, isTransactedState, secondWidgetState, thirdWidgetStat
 const usePaymentsTable = () => {
     const { t } = useTranslation();
     const router = useRouter();
-    const [checkedItems, setCheckedItems] = useState({});
+    const [checkedItems, setCheckedItems] = useState<boolean[]>([]);
     const [documentItemValue, setDocumentItemValue] = useRecoilState<any>(quoteItemState);
     const tableRows = documentItemValue?.receiptItems;
     const setCheckedItemsIds = useSetRecoilState(checkedItemsIdsState);
@@ -100,6 +100,8 @@ const usePaymentsTable = () => {
     });
 
     const handleCheckboxChange = (index, itemId) => {
+        const newTableRow = tableRows.map(row=>row.id===itemId ? {...row,isChecked: false} : row) 
+        setDocumentItemValue({...documentItemValue , receiptItems : newTableRow})
         setCheckedItems((prevCheckedItems) => {
             const updatedCheckedItems = {
                 ...prevCheckedItems,
@@ -298,7 +300,8 @@ const usePaymentsTable = () => {
         handleFirstButtonClick,
         handleSecondButtonClick,
         handleThirdButtonClick,
-        resetReceiptState
+        resetReceiptState,
+        setCheckedItems
     };
 };
 
