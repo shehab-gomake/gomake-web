@@ -138,11 +138,13 @@ const QuotesListPageWidget = ({
     selectedQuoteItemValue,
     onClickCloseCloseOrderModal,
     openCloseOrderModal,
-    CloseDocument,
     selectedOrder,
     onClickOpenCloseOrderModal,
-    getEmployeeCategories
-  } = useQuotes(documentType,isFromHomePage);
+    getEmployeeCategories,
+    ManuallyCloseDocument,
+    documentCloseNumber,
+    handleDocumentNumberChange
+  } = useQuotes(documentType, isFromHomePage);
 
   const router = useRouter();
   useEffect(() => {
@@ -154,7 +156,7 @@ const QuotesListPageWidget = ({
     }
 
   }, [router])
- 
+
   useEffect(() => {
     !isFromHomePage && getAllProducts();
   }, []);
@@ -163,7 +165,7 @@ const QuotesListPageWidget = ({
     const card = statistics.find((item) => item.key === key);
     return card ? card.value : "";
   };
-  
+
   return (
     <>
       {!isFromHomePage && (
@@ -472,9 +474,19 @@ const QuotesListPageWidget = ({
         yesBtn={t("sales.quote.yesBtn")}
         openModal={openCloseOrderModal}
         onClose={onClickCloseCloseOrderModal}
-        subTitle={t("sales.quote.subTitleCloseModal")}
-        onClickDelete={() => CloseDocument(selectedOrder)}
-      />
+        subTitle={`${t("sales.quote.subTitleCloseModal", {
+          documentName: t(`sales.quote.${DOCUMENT_TYPE[documentType]}`).toLowerCase(),
+        })}?`}
+        onClickDelete={() => ManuallyCloseDocument(selectedOrder)}
+        style={{ width: "35%" }}
+      >
+        <GomakeTextInput
+          style={{ height: "40px", minWidth: 180 }}
+          placeholder={t("sales.enterDocumentNumber")}
+          value={documentCloseNumber}
+          onChange={handleDocumentNumberChange}
+        />
+      </GoMakeDeleteModal>
       <GoMakeDeleteModal
         icon={
           <WarningAmberIcon style={{ width: 60, height: 60, color: "red" }} />

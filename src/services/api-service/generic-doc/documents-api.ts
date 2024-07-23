@@ -74,7 +74,7 @@ const UPDATE_IS_SHOW_PRICES_URL = "/v1/erp-service/documents/update-is-show-pric
 
 const GET_WHATSAPP_MESSAGE_URL = "/v1/erp-service/documents/get-whats-app-message";
 const CLOSE_DOCUMENT_URL = "/v1/erp-service/documents/close-document";
-
+const MANUALLY_CLOSE_DOCUMENT_URL="/v1/erp-service/documents/manually-close-document";
 
 const getDocumentApi: ICallAndSetData = async (callApi, setState, data) => {
   return await getSetApiData(
@@ -678,6 +678,7 @@ const CloseDocumentApi: ICallAndSetData = async (callApi, setState, data) => {
     data
   );
 };
+
 const updateDocuementItemSelectApi: ICallAndSetData = async (
   callApi,
   setState,
@@ -687,6 +688,16 @@ const updateDocuementItemSelectApi: ICallAndSetData = async (
     callApi,
     EHttpMethod.PUT,
     UPDATE_DOCUMENT_ITEM_SELECT_URL,
+    setState,
+    data
+  );
+};
+
+const manuallyCloseDocumentApi: ICallAndSetData = async (callApi, setState, data) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.PUT,
+    MANUALLY_CLOSE_DOCUMENT_URL,
     setState,
     data
   );
@@ -741,5 +752,6 @@ export {
   updateDocuementItemSelectApi,
   updateIsShowPricesApi,
   updateDocumentInternalNotesApi,
-  updateOccasionalClientNameApi
+  updateOccasionalClientNameApi,
+  manuallyCloseDocumentApi
 };

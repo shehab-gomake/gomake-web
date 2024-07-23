@@ -14,6 +14,7 @@ const GoMakeDeleteModal = ({
   title = "Confirm Delete",
   yesBtn = "Delete",
   onClickCancel,
+  children,
   ...props
 }: any) => {
   const { classes } = useStyle();
@@ -43,6 +44,7 @@ const GoMakeDeleteModal = ({
           )}
           <div style={classes.title}>{title}</div>
           <div style={classes.subTitle}>{subTitle}</div>
+          {children && <div style={classes.children}>{children}</div>}
           <div style={classes.btnsContainer}>
             <GomakePrimaryButton
               style={classes.confirmBtn}
