@@ -66,8 +66,11 @@ const useQuoteGetData = (docType?: DOCUMENT_TYPE) => {
     }
   };
 
-  // in case of an error all these routes have been moved from use-quote.tsx to current hook (use-quote-get-data.tsx) 
+  // in case of an error all these routes have been moved from use-quote.tsx to current hook (use-quote-get-data.tsx)
   const getQuote = async () => {
+    if (router?.query?.isNewCreation && docType === DOCUMENT_TYPE.receipt && router?.query?.documentNumber && router?.query?.ClientId) {
+      return; // No need to call anything , in case we open receipt page from pay option from invoice list
+    }
     if (router?.query?.isNewCreation && docType === DOCUMENT_TYPE.receipt) {
       const callBack = (res) => {
         if (res?.success) {

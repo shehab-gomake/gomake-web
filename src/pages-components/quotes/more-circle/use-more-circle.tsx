@@ -169,7 +169,7 @@ const useMoreCircle = () => {
       },
       {
         condition: isInvoice && quote?.isCanClose ,
-        onClick: () => navigate(`/receipt?isNewCreation=true&documentId=${quote?.id}&ClientId=${quote?.customerId}`),
+        onClick: () => navigate(`/receipt?isNewCreation=true&documentNumber=${quote?.number}&ClientId=${quote?.customerId}`),
         icon: <PayIcon />,
         name: t("sales.quote.pay")
       },
