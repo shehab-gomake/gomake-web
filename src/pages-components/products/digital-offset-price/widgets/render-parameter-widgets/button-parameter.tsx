@@ -21,16 +21,6 @@ const ButtonParameterWidget = ({
 }: any) => {
   let Comp;
   const [materialData, setMaterialData] = useRecoilState<any>(materialBtnDataState);
-  const [defualtValueConfig, setDefualtValueConfig] = useState({})
-  useEffect(() => {
-    const defualtValueConfig = parameter?.valuesConfigs.find((item) => item?.isDefault)
-    if (defualtValueConfig) {
-      setDefualtValueConfig(defualtValueConfig)
-    }
-
-  }, [parameter])
-
-
   const router = useRouter()
   const { alertFaultAdded, alertSuccessAdded } = useSnackBar();
   const { callApi } = useGomakeAxios();
@@ -371,7 +361,6 @@ const ButtonParameterWidget = ({
       let materialDataPath = allMaterials?.find((material) => material?.pathName === materialPath)?.data
       // const selectedShapeId = isSelectedShape[0].id;
       // const selectedMaterial = materialDataPath?.find(material => material.valueId === selectedShapeId);
-
     }
   }, [isParameterSettings])
 
