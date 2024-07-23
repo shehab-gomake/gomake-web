@@ -334,7 +334,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     }
   }, [signalRPricingResult]);
 
-  /*useEffect(() => {
+  useEffect(() => {
     setWorkFlows([]);
     setCurrentProductItemValueTotalPrice(null);
     setJobActions([]);
@@ -343,8 +343,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       totalWorkFlowsCount: 0,
       currentWorkFlowsCount: 0,
     });
-    //setCurrentCalculationSessionId(calculationSessionId);
-  }, [calculationSessionId]);*/
+    setCurrentCalculationSessionId(calculationSessionId);
+  }, [calculationSessionId]);
 
   useEffect(() => {
     if (calculationExceptionsLogs) {
