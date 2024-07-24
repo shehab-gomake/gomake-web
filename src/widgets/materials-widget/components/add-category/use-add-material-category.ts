@@ -1,7 +1,7 @@
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { useRouter } from "next/router";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
-import { activeFilterState, flagState, isEditCategoryModalState, openAddCategoryModalState, selectedCategoryModalState } from "@/widgets/materials-widget/state";
+import { activeFilterState, flagState, isEditCategoryModalState, materialTypeTableState, openAddCategoryModalState, selectedCategoryModalState } from "@/widgets/materials-widget/state";
 import { useMaterials } from "../../use-materials";
 import { useEffect, useState } from "react";
 import { EMaterialActiveFilter } from "../../enums";
@@ -13,6 +13,7 @@ const useAddMaterialCategory = (isAdmin:boolean) => {
     const { callApi } = useGomakeAxios();
     const { query } = useRouter();
     const { materialType } = query;
+    const materialTypeTable = useRecoilValue(materialTypeTableState);
     const { alertSuccessAdded, alertFaultAdded,alertFault } = useSnackBar();
     const [openModal, setOpenModal] = useRecoilState(openAddCategoryModalState);
     const [editCategoryModalState,setEditCategoryModalState] = useRecoilState(isEditCategoryModalState);
@@ -102,7 +103,8 @@ const useAddMaterialCategory = (isAdmin:boolean) => {
         uploadPrintHouseMaterialImage,
         t,
         imgUrl,
-        setSelectedImgForAdded
+        setSelectedImgForAdded,
+        materialTypeTable
     }
 }
 

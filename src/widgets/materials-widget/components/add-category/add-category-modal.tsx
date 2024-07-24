@@ -11,6 +11,7 @@ interface IAddCategoryModalProps {
 }
 const AddCategoryModal = (props: IAddCategoryModalProps) => {
     const {
+        t,
         openModal,
         editCategoryModalState,
         selectedCategoryModal,
@@ -23,8 +24,8 @@ const AddCategoryModal = (props: IAddCategoryModalProps) => {
         uploadPrintHouseMaterialImage,
         imgUrl,
         setSelectedImgForAdded,
-        t } = useAddMaterialCategory(props.isAdmin);
-        
+        materialTypeTable } = useAddMaterialCategory(props.isAdmin);
+
     return (
         <GoMakeModal
             insideStyle={{ width: 400, height: "fit-content", padding: 20 }}
@@ -57,10 +58,13 @@ const AddCategoryModal = (props: IAddCategoryModalProps) => {
                         console.log("value", value)
                     }}
                 /> */}
-                {selectedCategoryModal?.isCanUploadImage &&<ImageUploadComponent
-                    onChange={(value) => editCategoryModalState ? uploadPrintHouseMaterialImage(value) : setSelectedImgForAdded(value)}
-                    value={imgUrl}
-                />}
+
+                {(editCategoryModalState ? selectedCategoryModal?.isCanUploadImage : materialTypeTable?.isCanUploadImage) && (
+                    <ImageUploadComponent
+                        onChange={(value) => editCategoryModalState ? uploadPrintHouseMaterialImage(value) : setSelectedImgForAdded(value)}
+                        value={imgUrl}
+                    />
+                )}
                 {
                     !editCategoryModalState && <SecondaryButton
                         onClick={onAddCategory}
@@ -70,7 +74,6 @@ const AddCategoryModal = (props: IAddCategoryModalProps) => {
                         {editCategoryModalState ? t("materials.buttons.edit") : t("materials.buttons.add")}
                     </SecondaryButton>
                 }
-
             </Stack>
         </GoMakeModal>
     )
