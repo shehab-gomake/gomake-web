@@ -26,6 +26,7 @@ const PricingList = ({
   setSelectedActionProfit,
   deleteActionProfitRow,
   selectedAdditionalProfitRow,
+  selectedPricingTableItems
 }: PricingListProps) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
@@ -42,6 +43,7 @@ const PricingList = ({
               style={clasess.autoCompleteStyleContainer}
               onChange={(e, value) => updatePricingByForAction(value)}
               value={selectedPricingBy}
+              key={selectedPricingTableItems}
             />
           </div>
           <div style={clasess.autoCompleteContainer}>
@@ -50,6 +52,7 @@ const PricingList = ({
               style={clasess.autoCompleteStyleContainer}
               onChange={(e, value) => updateTransitionForAction(value)}
               value={selectedTransition}
+              key={selectedPricingTableItems}
             />
           </div>
         </div>
