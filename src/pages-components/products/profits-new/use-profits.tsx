@@ -83,7 +83,6 @@ const useNewProfits = () => {
   const [PricingBy, setPricingBy] = useState([])
   const modifiedPricingBy = PricingByList.slice(1);
 
-
   useEffect(() => {
     if (router.query.isOutSource) {
       setPricingBy(modifiedPricingBy)
@@ -119,11 +118,13 @@ const useNewProfits = () => {
       label: "",
       value: 0,
     });
+
   const [selectedTransition, setSelectedTransition] =
     useState<SelectedTransition>({
       label: "",
       value: 0,
     });
+  console.log("sssssdddfff", { selectedPricingBy, selectedTransition, selectedPricingTableItems })
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const [allActionProfitRowsByActionId, setAllActionProfitRowsByActionId] =
@@ -374,14 +375,15 @@ const useNewProfits = () => {
   };
   useEffect(() => {
     let defaultPricingByValue = PricingBy.find(
-      (item) => item?.value === actionProfitByActionId?.pricingBy
+      (item) => item?.value === selectedPricingTableItems?.pricingBy
     );
     let defaultTransitionValue = Transition.find(
-      (item) => item?.value === actionProfitByActionId?.transitionType
+      (item) => item?.value === selectedPricingTableItems?.transitionType
     );
     setSelectedPricingBy(defaultPricingByValue);
     setSelectedTransition(defaultTransitionValue);
-  }, [actionProfitByActionId]);
+    // sssssddadfdsad
+  }, [selectedPricingTableItems]);
 
   const updatePricingByForAction = useCallback(
     async (data: SelectedPricingByType) => {
@@ -396,6 +398,7 @@ const useNewProfits = () => {
         actionExpections: [],
         productId: router.query.productId,
         isOutSource: router.query.isOutSource ? true : false,
+        exceptionId: selectedPricingTableItems?.index == 0 ? null : selectedPricingTableItems?.id
       };
       if (router.query.productId) {
         requestBody.productId = router.query.productId;
@@ -411,7 +414,9 @@ const useNewProfits = () => {
         if (router.query.signalRConnectionId) {
           getCalculateCaseProfits();
         } else {
+          getProfitsPricingTables()
           getAllActionProfitRowsByActionId();
+
         }
       } else {
         alertFaultUpdate();
@@ -432,6 +437,7 @@ const useNewProfits = () => {
         actionProfitRows: [],
         actionExpections: [],
         isOutSource: router.query.isOutSource ? true : false,
+        exceptionId: selectedPricingTableItems?.index == 0 ? null : selectedPricingTableItems?.id
       };
       if (router.query.productId) {
         requestBody.productId = router.query.productId;
@@ -447,7 +453,9 @@ const useNewProfits = () => {
         if (router.query.signalRConnectionId) {
           getCalculateCaseProfits();
         } else {
+          getProfitsPricingTables()
           getAllActionProfitRowsByActionId();
+
         }
       } else {
         alertFaultUpdate();
@@ -660,32 +668,41 @@ const useNewProfits = () => {
     useState<ProfitsPricingTables[]>();
   const [dataForExceptions, setDataForExceptions] =
     useState<ProfitsPricingTables[]>();
-
+  const [oneTime, setOneTime] = useState(true)
   const [firstRender, setFirstRender] = useState(false)
   useEffect(() => {
-    if (firstRender) {
-      if (dataForPricing?.length === 0) {
+    if (oneTime) {
+      if (firstRender) {
+        if (dataForPricing?.length === 0) {
+          const defaultRow = profitsPricingTables?.find((item) => {
+            return item.exceptionType === ETypeException.DEFAULT;
+          });
+          setSelectedPricingTableItems(defaultRow);
+          setOneTime(false)
+
+        } else {
+          const maxIndexItem = profitsPricingTables?.reduce((prev, current) => {
+            return (prev.index > current.index) ? prev : current;
+          });
+          setSelectedPricingTableItems(maxIndexItem);
+          setOneTime(false)
+
+        }
+      }
+      else {
         const defaultRow = profitsPricingTables?.find((item) => {
           return item.exceptionType === ETypeException.DEFAULT;
         });
-        setSelectedPricingTableItems(defaultRow);
-      } else {
-        const maxIndexItem = profitsPricingTables?.reduce((prev, current) => {
-          return (prev.index > current.index) ? prev : current;
-        });
-        setSelectedPricingTableItems(maxIndexItem);
-      }
-    }
-    else {
-      const defaultRow = profitsPricingTables?.find((item) => {
-        return item.exceptionType === ETypeException.DEFAULT;
-      });
-      if (defaultRow) {
-        setFirstRender(true)
-        setSelectedPricingTableItems(defaultRow);
+        if (defaultRow) {
+          setFirstRender(true)
+          setSelectedPricingTableItems(defaultRow);
+          setOneTime(false)
 
+
+        }
       }
     }
+
 
   }, [dataForPricing]);
 
