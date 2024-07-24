@@ -3,6 +3,7 @@ import { SecondaryButton } from "@/components/button/secondary-button";
 import { useAddMaterialCategory } from "./use-add-material-category";
 import { Stack } from "@mui/material";
 import { ImageUploadComponent } from "@/components/form-inputs/image-input";
+import { useEffect } from "react";
 
 interface IAddCategoryModalProps {
     isAdmin: boolean;
@@ -23,6 +24,7 @@ const AddCategoryModal = (props: IAddCategoryModalProps) => {
         imgUrl,
         setSelectedImgForAdded,
         t } = useAddMaterialCategory(props.isAdmin);
+        
     return (
         <GoMakeModal
             insideStyle={{ width: 400, height: "fit-content", padding: 20 }}
@@ -55,10 +57,10 @@ const AddCategoryModal = (props: IAddCategoryModalProps) => {
                         console.log("value", value)
                     }}
                 /> */}
-                <ImageUploadComponent
+                {selectedCategoryModal?.isCanUploadImage &&<ImageUploadComponent
                     onChange={(value) => editCategoryModalState ? uploadPrintHouseMaterialImage(value) : setSelectedImgForAdded(value)}
                     value={imgUrl}
-                />
+                />}
                 {
                     !editCategoryModalState && <SecondaryButton
                         onClick={onAddCategory}
