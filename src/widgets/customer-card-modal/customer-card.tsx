@@ -38,6 +38,7 @@ import { TableFilter } from "./components/table-filter";
 import { PermissionCheck } from "@/components/CheckPermission/check-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { languagesState } from "@/store/languages";
+import { systemCurrencyState } from "@/store";
 
 interface IProps {
   isValidCustomer?: (
@@ -100,6 +101,7 @@ const CustomerCardWidget = ({
     setShowTable
   } = useCustomerCard({ t, setCustomer, onClose, setOpenOfferModal, userQuote });
   const { alertRequiredFields, alertFault } = useSnackBar();
+  const systemCurrency = useRecoilValue<any>(systemCurrencyState);
   const [resetPassModal, setResetPassModalModal] = useRecoilState<boolean>(resetPassModalState);
   const clientTypesCategories = useRecoilValue(clientTypesCategoriesState);
   const gomakeUser = useRecoilValue<any>(gomakeUserState);
@@ -319,6 +321,7 @@ const CustomerCardWidget = ({
       addresses: filteredAddresses,
       users: filteredUsers,
       cardTypeId: cardTypeId,
+      currency : customer?.currency ? customer?.currency : systemCurrency
     };
 
     // Check if email is valid
