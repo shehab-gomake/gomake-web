@@ -63,6 +63,8 @@ interface IProps {
   isFromHomePage?: boolean;
   setOpenOfferModal?: any;
   userQuote?: any;
+  isFromCartPage?:boolean;
+  onChangeSelectBusiness?:any;
 }
 
 const CustomerCardWidget = ({
@@ -81,7 +83,9 @@ const CustomerCardWidget = ({
   isgetAllCustomers = true,
   isFromHomePage = false,
   setOpenOfferModal,
-  userQuote
+  userQuote,
+  isFromCartPage=false,
+  onChangeSelectBusiness
 }: IProps) => {
   const [open, setOpen] = useState(false);
   const { addNewCustomer } = useAddCustomer();
@@ -348,6 +352,7 @@ const CustomerCardWidget = ({
       addNewCustomer(updatedCustomer).then((x) => {
         onCustomerAdd(x);
         handleClose();
+        isFromCartPage && onChangeSelectBusiness(x);
       });
     } else {
       alertRequiredFields();
