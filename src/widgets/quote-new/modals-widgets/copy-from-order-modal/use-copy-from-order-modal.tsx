@@ -149,9 +149,11 @@ const useCopyFromOrderModal = ({ onClose, documentType, openModal, cliendDocumen
       if (res?.success) {
         const updatedData = res.data.filter(doc => doc.id !== currentDocumentId).map(doc => {
           const sourceDocumentNumber = doc.number;
+          const sourceDocumentId = doc.id;
           const updatedOrderItems = doc.orderItems.map(item => ({
             ...item,
             sourceDocumentNumber,
+            sourceDocumentId
           }));
           return {
             ...doc,
@@ -182,7 +184,6 @@ const useCopyFromOrderModal = ({ onClose, documentType, openModal, cliendDocumen
     const documentItemsFilters = quoteItemValue.documentItems.filter(item => {
       return !sharedDeletedArry.some(sharedItem => sharedItem.id === item.id);
     });
-    console.log("documentItemsFilters", { documentItemsFilters, selectedItems })
     const mergedItems = [...documentItemsFilters, ...selectedItems];
     const idMap = new Map();
     const uniqueItems = mergedItems.filter(item => {
