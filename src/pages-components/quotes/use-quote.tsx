@@ -265,7 +265,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
           }
           else if (docType === DOCUMENT_TYPE.order) {
             const jobsElement = CheckPermission(Permissions.SHOW_BOARD_MISSIONS)
-              ? (<div style={{ cursor: "pointer" }} onClick={() => navigate(`/board-missions?orderNumber=${quote?.number}`)}>
+              ? (<div style={{ cursor: "pointer" }} onClick={() => navigate(`/jobs?orderNumber=${quote?.number}`)}>
                 {quote?.jobs}
               </div>
               ) : quote?.jobs;
@@ -476,7 +476,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
           }
           else if (docType === DOCUMENT_TYPE.order) {
             const jobsElement = CheckPermission(Permissions.SHOW_BOARD_MISSIONS)
-              ? (<div style={{ cursor: "pointer" }} onClick={() => navigate(`/board-missions?orderNumber=${quote?.number}`)}>
+              ? (<div style={{ cursor: "pointer" }} onClick={() => navigate(`/jobs?orderNumber=${quote?.number}`)}>
                 {quote?.jobs}
               </div>
               ) : quote?.jobs;
