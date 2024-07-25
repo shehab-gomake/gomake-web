@@ -32,7 +32,7 @@ const useMoreCircle = () => {
   }) => {
     const documentPath = DOCUMENT_TYPE[documentType];
     const { callApi } = useGomakeAxios();
-    
+
     const onClickGetOrderBoardMissionPDF = async (quoteItem) => {
       const callBack = (res) => {
         if (res?.success) {
@@ -102,7 +102,7 @@ const useMoreCircle = () => {
       },
       {
         condition: isOrder && quote?.isCanClose && CheckPermission(Permissions.SHOW_BOARD_MISSIONS),
-        onClick: () => navigate(`/board-missions?orderNumber=${quote?.number}`),
+        onClick: () => navigate(`/jobs?orderNumber=${quote?.number}`),
         icon: <JobsIcon />,
         name: t("sales.quote.jobs")
       },
