@@ -2933,12 +2933,12 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           return;
         }
         setLoading(true);
-        const calculationSessionId = uuidv4();
+        const newCalculationSessionId = uuidv4();
         const res: any = await callApi(
           "POST",
           `/v1/calculation-service/calculations/calculate-productV2`,
           {
-            calculationSessionId:calculationSessionId,
+            calculationSessionId:newCalculationSessionId,
             signalRConnectionId: connectionId,
             clientId: router?.query?.customerId,
             clientTypeId: router?.query?.clientTypeId,
