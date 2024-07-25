@@ -61,10 +61,10 @@ const useAuthLayoutHook = (permissionEnumValue?: Permissions, allowAnonymous?: b
         isList: true,
         list: [
           {
-            key: "boardMissions",
-            title: "home.tabs.boardMissions",
+            key: "jobs",
+            title: "home.tabs.jobs",
             Permission: Permissions.SHOW_BOARD_MISSIONS,
-            path: "/board-missions",
+            path: "/jobs",
           },
           {
             key: "quotes",
