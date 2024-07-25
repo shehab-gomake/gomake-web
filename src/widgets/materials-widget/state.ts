@@ -118,7 +118,6 @@ export const materialsClientsState = atom<[]>({
   default: [],
 });
 
-
 export const materialsTablePageState = atom<number>({
   key: "materialsTablePageState",
   default: 1,
@@ -135,4 +134,9 @@ export const materialsUnCheckedState = atom<string[]>({
 export const selectedMaterialIdForUpdateState = atom<string>({
     key: "selectedMaterialIdForUpdateState",
     default: "",
+});
+
+export const materialTypeTableState = atom<any>({
+  key: "materialTypeTableState",
+  default: {},
 });
