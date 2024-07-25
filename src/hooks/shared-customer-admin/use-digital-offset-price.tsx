@@ -318,7 +318,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
   useEffect(() => {
     if (signalRPricingResult && signalRPricingResult.productItemValueDraftId === currentCalculationSessionId) {
-      debugger
       setLoading(false)
       const totalWorkFlowsCount = signalRPricingResult.totalWorkFlows;
       const currentWorkFlowsCount = signalRPricingResult.currentWorkFlowIndex > calculationProgress.currentWorkFlowsCount ? signalRPricingResult.currentWorkFlowIndex : (calculationProgress.currentWorkFlowsCount + 1);
@@ -334,7 +333,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     }
   }, [signalRPricingResult]);
 
-  useEffect(() => {
+  /*useEffect(() => {
     setWorkFlows([]);
     setCurrentProductItemValueTotalPrice(null);
     setJobActions([]);
@@ -344,7 +343,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       currentWorkFlowsCount: 0,
     });
     setCurrentCalculationSessionId(calculationSessionId);
-  }, [calculationSessionId]);
+  }, [calculationSessionId]);*/
 
   useEffect(() => {
     if (calculationExceptionsLogs) {
@@ -2934,10 +2933,12 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           return;
         }
         setLoading(true);
+        const newCalculationSessionId = uuidv4();
         const res: any = await callApi(
           "POST",
           `/v1/calculation-service/calculations/calculate-productV2`,
           {
+            calculationSessionId:newCalculationSessionId,
             signalRConnectionId: connectionId,
             clientId: router?.query?.customerId,
             clientTypeId: router?.query?.clientTypeId,
@@ -2952,13 +2953,23 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           false,
           newRequestAbortController
         )
+        
         if (res?.status === 500) {
           setCalculationProgress({
             totalWorkFlowsCount: 0,
             currentWorkFlowsCount: 0,
           });
+          
           setLoading(false);
           setcalculationServerErrorState(true)
+        }
+        else if(!res.success){
+          setCalculationProgress({
+            totalWorkFlowsCount: 0,
+            currentWorkFlowsCount: 0,
+          });
+
+          setLoading(false);
         }
         else {
           const id = res?.data?.data?.data;

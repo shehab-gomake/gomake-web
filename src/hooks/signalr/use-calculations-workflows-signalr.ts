@@ -48,7 +48,6 @@ const useCalculationsWorkFlowsSignalr = () => {
         setSignalRPricingResult(newData);
       });
       connection.on("calculationFinished", (newData) => {
-        debugger;
         newData.isCalculationFinished = true;
         setSignalRPricingResult(newData);
       });
