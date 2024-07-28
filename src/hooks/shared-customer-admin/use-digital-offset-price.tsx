@@ -333,7 +333,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     }
   }, [signalRPricingResult]);
 
-  /*useEffect(() => {
+  useEffect(() => {
     setWorkFlows([]);
     setCurrentProductItemValueTotalPrice(null);
     setJobActions([]);
@@ -343,7 +343,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       currentWorkFlowsCount: 0,
     });
     setCurrentCalculationSessionId(calculationSessionId);
-  }, [calculationSessionId]);*/
+  }, [calculationSessionId]);
 
   useEffect(() => {
     if (calculationExceptionsLogs) {
@@ -2948,7 +2948,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             itemParmetersValues: itemParmetersValues,
             workTypes: workTypes,
             isChargeForNewDie: isChargeForNewDie,
-            productType: productTemplate?.productType
+            productType: productTemplate?.productType,
           },
           false,
           newRequestAbortController
