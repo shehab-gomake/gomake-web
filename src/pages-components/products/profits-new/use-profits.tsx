@@ -124,7 +124,6 @@ const useNewProfits = () => {
       label: "",
       value: 0,
     });
-  console.log("sssssdddfff", { selectedPricingBy, selectedTransition, selectedPricingTableItems })
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const [allActionProfitRowsByActionId, setAllActionProfitRowsByActionId] =
@@ -284,38 +283,20 @@ const useNewProfits = () => {
     if (router.query.signalRConnectionId && !router.query.isOutSource) {
       setTableHeaders([
         t("products.profits.pricingListWidget.quantity"),
-        `${selectedPricingBy?.label}` +
-        (selectedPricingBy?.value === EPricingBy.COST
-          ? ` ${ProfitCurrency}`
-          : ""),
+        // `${selectedPricingBy?.label}` +
+        // (selectedPricingBy?.value === EPricingBy.COST
+        //   ? ` ${ProfitCurrency}`
+        //   : ""),
         t("products.profits.pricingListWidget.profit"),
-        unitPriceLabel,
+        // unitPriceLabel,
         `${totalPriceLabel} ${ProfitCurrency}`,
         t("products.profits.pricingListWidget.more"),
       ]);
-      if (selectedPricingBy?.value != EPricingBy.COST) {
-        setTableHeaders([
-          `${selectedPricingBy?.label}` +
-          (selectedPricingBy?.value === EPricingBy.COST
-            ? ` ${ProfitCurrency}`
-            : ""),
-          t("products.profits.pricingListWidget.cost"),
-          t("products.profits.pricingListWidget.profit"),
-          unitPriceLabel,
-          `${totalPriceLabel} ${ProfitCurrency}`,
-          t("products.profits.pricingListWidget.more"),
-        ]);
-      }
       if (selectedAdditionalProfitRow?.id) {
         setTableHeaders([
           t("products.profits.pricingListWidget.quantity"),
-          `${selectedPricingBy?.label}` +
-          (selectedPricingBy?.value === EPricingBy.COST
-            ? ` ${ProfitCurrency}`
-            : ""),
           t("products.profits.pricingListWidget.profit"),
           `Profit value %`,
-          unitPriceLabel,
           `${totalPriceLabel} ${ProfitCurrency}`,
           t("products.profits.pricingListWidget.more"),
         ]);
