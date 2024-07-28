@@ -55,7 +55,10 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
   const [docNumber, setDocNumber] = useState(quoteState?.number)
   const {
     selectDate,
+    taxDateRef,
+    creationDateRef,
     creationDate,
+    taxDate,
     isUpdateBusinessName,
     isUpdatePurchaseNumber,
     isUpdateAddress,
@@ -115,6 +118,8 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
     onOpenNewItem,
     onCloseNewItem,
     setSelectDate,
+    setTaxDate,
+    setCreationDate,
     setIsUpdateBusinessName,
     setSelectBusiness,
     openCopyFromOrderModal,
@@ -209,7 +214,14 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
     setIsUpdateClientName,
     clientName,
     setClientName,
-    onClickOpenNewItemNotesModal
+    onClickOpenNewItemNotesModal,
+    handleClickForCreationDate,
+    handleClickForTaxDate,
+    setActiveClickAwayForCreationDate,
+    setActiveClickAwayForTaxDate,
+    openReferenceModal,
+    onClickCloseReferenceModal,
+    onChangeDatesToCreationDate
 
   } = useQuoteNew({ docType: documentType, isQuoteConfirmation: isQuoteConfirmation });
 
@@ -314,14 +326,31 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
                   </div>}
               </div>
               <div style={classes.datesContainer}>
+                {/* // Creation Date */}
+
                 <div
                   style={classes.deleverdDate}
+                  onClick={DOCUMENT_TYPE.invoice && quoteItemValue?.isEditable ? handleClickForCreationDate : null}
                 >
                   {t("sales.quote.creationDate")}{" "}
                   {creationDate
                     ? DateFormatterDDMMYYYY(creationDate)
                     : "select date"}
+                  <div style={classes.datePickerContainer}>
+                    <input
+                      type="datetime-local"
+                      onChange={(e) => {
+                        setCreationDate(e.target.value);
+                        setActiveClickAwayForCreationDate(true);
+                      }}
+                      ref={creationDateRef}
+                    />
+                  </div>
                 </div>
+
+
+                {/* // Due Date */}
+
                 <div
                   style={classes.deleverdDate}
                   onClick={quoteItemValue?.isEditable ? handleClickSelectDate : null}
@@ -337,10 +366,36 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
                         setSelectDate(e.target.value);
                         setActiveClickAway(true);
                       }}
+
                       ref={dateRef}
                     />
                   </div>
                 </div>
+                {/* // TAX Date */}
+
+
+                {
+                  DOCUMENT_TYPE.invoice && <div
+                    style={classes.deleverdDate}
+                    onClick={quoteItemValue?.isEditable ? handleClickForTaxDate : null}
+                  >
+                    {t("sales.quote.taxDate")}{" "}
+                    {taxDate
+                      ? DateFormatterDDMMYYYY(taxDate)
+                      : "select date"}
+                    <div style={classes.datePickerContainer}>
+                      <input
+                        type="datetime-local"
+                        onChange={(e) => {
+                          setTaxDate(e.target.value);
+                          setActiveClickAwayForTaxDate(true);
+                        }}
+                        ref={taxDateRef}
+                      />
+                    </div>
+                  </div>
+                }
+
               </div>
               <div style={classes.bordersecondContainer}>
                 <BusinessNewWidget
@@ -622,6 +677,15 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
       <AddRelatedDocumentsModal
         openModal={openRelatedDocumentsModal}
         onClose={onClickCloseRelatedDocumentsModal}
+      />
+      <GoMakeDeleteModal
+
+        openModal={openReferenceModal}
+        onClose={onClickCloseReferenceModal}
+        hideIcon={true}
+        title={t("sales.quote.titleReferenceModal")}
+        yesBtn={t("sales.quote.yesBtn")}
+        onClickDelete={() => onChangeDatesToCreationDate()}
       />
     </>
   );
