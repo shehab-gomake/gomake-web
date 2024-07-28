@@ -21,7 +21,7 @@ import { Checkbox, Paper } from "@mui/material";
 import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
 import { PhoneInputComponent } from "./phone-input";
 import { useRecoilValue } from "recoil";
-import { materialsClientsState, materialsMachinesState } from "@/widgets/materials-widget/state";
+import { materialsClientsState, materialsMachinesState, materialsParametersState } from "@/widgets/materials-widget/state";
 import { productsForDropDownList } from "@/store";
 import { GoMakeImageFiled } from "../image-filed/image-filed";
 
@@ -35,9 +35,10 @@ const FormInput = ({ input, error, changeState, readonly }: IFormInput) => {
   const [color, setColor] = useState<string>(input.value);
   const [selectedNameFile, setSelectedNameFile] = useState<string>(input.value);
   const [values, setValues] = useState([]);
-
   const machinesCategories = useRecoilValue<any>(materialsMachinesState);
   const clientsCategories = useRecoilValue<any>(materialsClientsState);
+  const parametersCategories = useRecoilValue<any>(materialsParametersState);
+
   const productValue = useRecoilValue(productsForDropDownList)
   const machinesCategoriesList = machinesCategories.map((machine) => ({
     ...machine,
@@ -48,6 +49,11 @@ const FormInput = ({ input, error, changeState, readonly }: IFormInput) => {
     ...client,
     value: client.id,
     label: `${client.name} - ${client.code}`,
+  }));
+  const parameterOptions = parametersCategories.map((parameter) => ({
+    ...parameter,
+    value: parameter.id,
+    label: parameter.name,
   }));
   const productsOption = productValue?.map((product) => ({
     ...product,
@@ -134,6 +140,9 @@ const FormInput = ({ input, error, changeState, readonly }: IFormInput) => {
     }
     else if (input.options?.length === 0 && input.parameterKey === "clients") {
       setOptions(clientsOptions)
+    }
+    else if (input.options?.length === 0 && input.parameterKey === "notebookTypes") {
+      setOptions(parameterOptions)
     }
     else if (input.options?.length === 0 && input.parameterKey === "printed product") {
       setOptions(productsOption)
@@ -290,7 +299,7 @@ const FormInput = ({ input, error, changeState, readonly }: IFormInput) => {
                 style={{ height: "40px", minWidth: 180 }}
                 onChange={onChangeState}
                 type={input.type}
-                error={error || (input?.value?.length > 0 && input?.value?.length< 9)}
+                error={error || (input?.value?.length > 0 && input?.value?.length < 9)}
                 helperText={
                   input?.value?.length > 0 && input?.value?.length < 9
                     ? t("alerts.passTooShort")

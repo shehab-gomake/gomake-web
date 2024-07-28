@@ -118,6 +118,11 @@ export const materialsClientsState = atom<[]>({
   default: [],
 });
 
+export const materialsParametersState = atom<[]>({
+  key: "materialsParametersState",
+  default: [],
+});
+
 export const materialsTablePageState = atom<number>({
   key: "materialsTablePageState",
   default: 1,
