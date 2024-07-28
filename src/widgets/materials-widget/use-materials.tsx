@@ -142,7 +142,7 @@ const useMaterials = (isAdmin: boolean) => {
       if (res?.success) {
         setMaterialCategories(res?.data);
       } else {
-        push("/materials");
+        // push("/materials");
       }
     };
     if (isAdmin) {

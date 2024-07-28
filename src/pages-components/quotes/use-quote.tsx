@@ -1061,7 +1061,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
 
   ////////////// LOGS //////////////
 
-  const getLogDescription = (logAction: any, values: any): string => {
+  const getLogDescription = (logAction: string, values: any, documentType: DOCUMENT_TYPE): string => {
     switch (logAction) {
       case LogActionType[1]:
         return `${t("logs.theWorkMission")} "${values[0]}" ${t("logs.ITEM_ADD")}`;
@@ -1103,6 +1103,10 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         } else {
           return `${t("logs.COMMENTS_UPDATE")} ${t("logs.from")} "${values[0]}" ${t("logs.to")} "${values[1]}"`;
         }
+      case LogActionType[13]:
+        return `${t("logs.DOCUMENT_DUPLICATED", { documentType: t(`sales.quote.${DOCUMENT_TYPE[documentType]}`), documentNumber: values[0] })}`;
+      case LogActionType[14]:
+        return `${t("logs.DOCUMENT_DUPLICATED_FROM_ORDER", { documentNumber: values[0] })}`;
       default:
         return '';
     }
@@ -1117,7 +1121,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
           const mapData = res?.data?.map((log: any) => [
             GetShortDateFormat(log?.actionDate),
             log?.employeeName,
-            getLogDescription(log?.logAction, log?.values)
+            getLogDescription(log?.logAction, log?.values , log?.documentType)
           ]);
           setDocumentLogsData(mapData);
           resolve();
