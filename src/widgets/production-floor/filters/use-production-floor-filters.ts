@@ -2,16 +2,15 @@ import {useRecoilState, useSetRecoilState} from "recoil";
 import {productionFloorTextSearchState} from "@/widgets/production-floor/state/text-search";
 import {productionFloorFiltersState} from "@/widgets/production-floor/state/production-floor-filters";
 import {tagsState} from "@/widgets/production-floor/state/tags";
-import {IFilterGroup, IProductionFloorFilter} from "@/widgets/production-floor/interfaces/filters";
+import {IFilterGroup, IProductionFloorFilter, IStation} from "@/widgets/production-floor/interfaces/filters";
 import {setBoardFiltersApi} from "@/services/api-service/production-floor/production-floor-endpoints";
-import {useGomakeAxios} from "@/hooks";
+import {useGomakeAxios, useSnackBar} from "@/hooks";
 import {boardsMissionsState} from "@/widgets/production-floor/state/boards";
 import {EProductionFloorView, productionFloorViewState} from "@/widgets/production-floor/state/production-floor-view";
 import {useRouter} from "next/router";
 import {useMemo} from "react";
 import {userProductionFloorGroupsState} from "@/widgets/production-floor/state/production-floor-groups-state";
 import {productionFloorPathsState} from "@/widgets/production-floor/state/production-floor-paths";
-import {IActionMachines} from "@/widgets/production-floor/state/actions-list";
 
 const useProductionFloorFilters = () => {
     const [filtersState, setFiltersState] = useRecoilState(productionFloorFiltersState);
@@ -23,15 +22,19 @@ const useProductionFloorFilters = () => {
     const setData = useSetRecoilState(boardsMissionsState);
     const setView = useSetRecoilState(productionFloorViewState);
     const {push} = useRouter();
-    const groups = filtersState.groups;
+    const {alertSuccessUpdate, alertFaultUpdate} = useSnackBar();
+    const groups = filtersState?.groups;
     const setFilters = async (filters: IProductionFloorFilter) => {
         const callBack = (res) => {
             if (res?.success) {
+                alertSuccessUpdate();
                 setFiltersState(filters);
                 setData(res?.data?.boardMissionsCollections);
                 setTags(res?.data?.automatedTagsFilter);
                 setUserGroups(res?.data?.groups);
                 setPath(res?.data?.path ? res?.data?.path : []);
+            }else {
+                alertFaultUpdate();
             }
         }
         await setBoardFiltersApi(callApi, callBack, filters)
@@ -59,46 +62,6 @@ const useProductionFloorFilters = () => {
         })
     }
 
-    const handleSelectStation = async (action: IActionMachines) => {
-        const station = filtersState.stations.find(station => station.actionId === action.actionId);
-        if (!!station) {
-            await setFilters({
-                ...filtersState,
-                stations: station.machineIds.length === 0 ? filtersState.stations.filter(s => s.actionId !== action.actionId) :
-                    filtersState.stations.map(s => s.actionId === action.actionId ? {
-                        actionId: action.actionId,
-                        machineIds: []
-                    } : s)
-            })
-        } else {
-            await setFilters({
-                ...filtersState,
-                stations: filtersState.stations.concat({actionId: action.actionId, machineIds: []})
-            })
-        }
-    }
-
-    const handelSelectMachine = async (actionId: string, machineId: string, option: IActionMachines) => {
-        const station = filtersState.stations.find(station => station.actionId === actionId);
-        if (!!station) {
-            await setFilters({
-                ...filtersState,
-                stations: filtersState?.stations
-                    ?.map(s => s.actionId === actionId ?
-                        {
-                            ...s, machineIds: s?.machineIds?.length === 0 ? option?.machines?.filter(m => m.machineId !== machineId)?.map(s => s.machineId) : s.machineIds.includes(machineId) ?
-                                s.machineIds?.filter(id => id !== machineId) : s.machineIds.concat(machineId)
-                        }: s)
-            })
-        } else {
-            await setFilters({
-                ...filtersState,
-                stations: filtersState?.stations && filtersState?.stations?.length > 0 ?
-                    filtersState?.stations?.concat({actionId, machineIds: [machineId]}) :
-                    [{actionId, machineIds: [machineId]}]
-            })
-        }
-    }
 
     const handleGroupsFilterChange = (groupId, value, valueId) => {
         setFilters({
@@ -127,12 +90,12 @@ const useProductionFloorFilters = () => {
     const hasGroupsFilters = useMemo(() => filtersState?.groups?.length > 0, [filtersState]);
 
     const createDateFilter = useMemo(() => ({
-        fromDate: filtersState.fromCreateDate,
-        toDate: filtersState.toCreateDate
+        fromDate: filtersState?.fromCreateDate,
+        toDate: filtersState?.toCreateDate
     }), [filtersState])
     const deliveryDateFilter = useMemo(() => ({
-        fromDate: filtersState.fromDeliveryTime,
-        toDate: filtersState.toDeliveryTime
+        fromDate: filtersState?.fromDeliveryTime,
+        toDate: filtersState?.toDeliveryTime
     }), [filtersState])
     const setGroupFromPath = (groups: IFilterGroup[]) => {
         setFilters({
@@ -140,6 +103,14 @@ const useProductionFloorFilters = () => {
             groups: groups
         }).then();
     }
+
+    const onStationsChange = (stations: IStation[]) => {
+        setFilters({
+            ...filtersState,
+            stations
+        })
+    }
+
     return {
         search,
         setSearch,
@@ -147,7 +118,6 @@ const useProductionFloorFilters = () => {
         setTags,
         onTagsChange,
         onSelectDeliveryTimeDates,
-        handleSelectStation,
         handleGroupsFilterChange,
         initGroupsFilters,
         hasGroupsFilters,
@@ -155,8 +125,8 @@ const useProductionFloorFilters = () => {
         createDateFilter,
         deliveryDateFilter,
         setGroupFromPath,
-        handelSelectMachine,
-        groups
+        groups,
+        onStationsChange
     }
 }
 

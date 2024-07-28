@@ -61,7 +61,7 @@ const StyledTextField = styled(TextField, {
     fontWeight: 500,
   },
 }));
-
+ 
 const GomakeTextInput = ({
   value,
   onChange,
@@ -80,6 +80,7 @@ const GomakeTextInput = ({
   onClick,
   onFocus,
   id,
+  helperText
 }: {
   labelText?: string;
   value?: any;
@@ -99,14 +100,27 @@ const GomakeTextInput = ({
   onClick?: any;
   onFocus?: any;
   id?: any;
+  helperText?:string;
 }) => {
   const { primaryColor, secondColor, errorColor } = useGomakeTheme();
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const trimmedValue = e.target.value.trimStart();
+    const modifiedEvent = {
+      ...e,
+      target: {
+        ...e.target,
+        value: trimmedValue,
+      },
+    };
+    onChange(modifiedEvent);
+  };
 
   return (
     <StyledTextField
       autoFocus={autoFocus}
       value={value}
-      onChange={onChange}
+      onChange={handleChange}
       style={style}
       error={error}
       type={type}
@@ -125,8 +139,10 @@ const GomakeTextInput = ({
       onClick={onClick}
       onFocus={onFocus}
       id={id}
+      helperText={helperText}
+
     />
   );
 };
 
-export { GomakeTextInput };
+export { GomakeTextInput, StyledTextField };

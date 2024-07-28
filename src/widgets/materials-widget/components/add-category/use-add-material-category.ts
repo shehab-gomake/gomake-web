@@ -1,26 +1,37 @@
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { useRouter } from "next/router";
-import { useRecoilState, useSetRecoilState } from "recoil";
-import { activeFilterState, flagState, openAddCategoryModalState } from "@/widgets/materials-widget/state";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { activeFilterState, flagState, isEditCategoryModalState, materialTypeTableState, openAddCategoryModalState, selectedCategoryModalState } from "@/widgets/materials-widget/state";
 import { useMaterials } from "../../use-materials";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { EMaterialActiveFilter } from "../../enums";
 import { useTranslation } from "react-i18next";
 import {addPrintHouseMaterialCategoryApi} from "@/services/api-service/materials/printhouse-materials-endpoints";
-import {addMaterialCategoryApi} from "@/services/api-service/materials/materials-endpoints";
+import {addMaterialCategoryApi, uploadPrintHouseMaterialApi} from "@/services/api-service/materials/materials-endpoints";
 
 const useAddMaterialCategory = (isAdmin:boolean) => {
     const { callApi } = useGomakeAxios();
     const { query } = useRouter();
     const { materialType } = query;
+    const materialTypeTable = useRecoilValue(materialTypeTableState);
     const { alertSuccessAdded, alertFaultAdded,alertFault } = useSnackBar();
     const [openModal, setOpenModal] = useRecoilState(openAddCategoryModalState);
+    const [editCategoryModalState,setEditCategoryModalState] = useRecoilState(isEditCategoryModalState);
+    const [selectedCategoryModal,setSelectedCategoryModal] = useRecoilState<any>(selectedCategoryModalState);
     const { getMaterialCategories } = useMaterials(isAdmin);
     const [newCategory, setNewCategory] = useState<string>(null);
+    const [imgUrl, setImgUrl] = useState<any>('');
+    const [selectedImgForAdded,setSelectedImgForAdded] = useState()
     const setActiveFilter = useSetRecoilState(activeFilterState);
     const setFlagState = useSetRecoilState(flagState);
     const { t } = useTranslation();
-
+    
+    useEffect(()=>{
+       if(selectedCategoryModal){
+        setNewCategory(selectedCategoryModal?.categoryName)
+        setImgUrl(selectedCategoryModal?.imageURL)
+       } 
+    },[selectedCategoryModal])
     const onSetCategory = (e) => {
         setNewCategory(e.target.value);
     }
@@ -40,12 +51,15 @@ const useAddMaterialCategory = (isAdmin:boolean) => {
             if(isAdmin){
                 await addMaterialCategoryApi(callApi, callBack, {
                     materialTypeKey: materialType.toString(),
-                    categoryKey: newCategory
+                    categoryKey: newCategory,
+                    imageBase64:selectedImgForAdded
                 })
             }else{
                 await addPrintHouseMaterialCategoryApi(callApi, callBack, {
                     materialTypeKey: materialType.toString(),
-                    categoryKey: newCategory
+                    categoryKey: newCategory,
+                    imageBase64:selectedImgForAdded
+
                 })
             }
         }
@@ -55,12 +69,42 @@ const useAddMaterialCategory = (isAdmin:boolean) => {
        
     }
 
+
+
+    const uploadPrintHouseMaterialImage = async (data) => {
+            const callBack = (res) => {
+                if (res.success) {
+                    alertSuccessAdded();
+                    setActiveFilter(EMaterialActiveFilter.ALL);
+                    getMaterialCategories(materialType).then();
+                    setOpenModal(false);
+                    setFlagState(false);
+                } else {
+                    alertFaultAdded();
+                }
+            }
+                await uploadPrintHouseMaterialApi(callApi, callBack, {
+                    materialTypeKey: materialType.toString(),
+                    categoryKey: newCategory,
+                    imageBase64:data
+                })
+    }
+
     return {
         openModal,
+        editCategoryModalState,
+        selectedCategoryModal,
+        newCategory,
         setOpenModal,
         onAddCategory,
         onSetCategory,
+        setEditCategoryModalState,
+        setSelectedCategoryModal,
+        uploadPrintHouseMaterialImage,
         t,
+        imgUrl,
+        setSelectedImgForAdded,
+        materialTypeTable
     }
 }
 

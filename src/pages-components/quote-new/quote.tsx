@@ -7,7 +7,7 @@ import { ContactNewWidget } from "@/widgets/quote-new/contact-widget";
 import { QuoteForPriceTable } from "@/widgets/quote-new/quote-table";
 import { WriteCommentComp } from "@/widgets/quote-new/write-comment";
 import { DateFormatterDDMMYYYY } from "@/utils/adapter";
-import { GoMakeDeleteModal } from "@/components";
+import { GoMakeAlertModal, GoMakeDeleteModal } from "@/components";
 import { HeaderTitle } from "@/widgets";
 import { SettingNewIcon } from "@/icons";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
@@ -20,17 +20,24 @@ import { _renderQuoteStatus } from "@/utils/constants";
 import { IconButton } from "@mui/material";
 import { SettingQuoteMenu } from "@/widgets/quote-new/setting-quote-menu";
 import { AddDeliveryModal } from "@/widgets/quote-new/modals-widgets/add-delivery-modal/add-delivery-modal";
-import { DOCUMENT_TYPE } from "../quotes/enums";
+import { DOCUMENT_TYPE, QUOTE_STATUSES } from "../quotes/enums";
 import { ButtonsConfirmContainer } from "@/widgets/quote-new/buttons-cofirm-container";
 import { CopyFromOrderModal } from "@/widgets/quote-new/modals-widgets/copy-from-order-modal/copy-from-order-modal";
 import { ReceiptsTable } from "@/widgets/quote-new/receipts-table";
 import { useRouter } from "next/router";
 import { usePaymentsTable } from "@/widgets/quote-new/receipts-table/use-payments-table";
 import { useEffect, useState } from "react";
-import { StepType, useTour } from "@reactour/tour";
+import { StepType } from "@reactour/tour";
 import { useGoMakeTour } from "@/hooks/use-go-make-tour";
 import { OtherReasonModal } from "@/widgets/quote-new/total-price-and-vat/other-reason-modal";
 import { QuoteStatuses } from "@/widgets/quote-new/total-price-and-vat/enums";
+import { LoginTaxesUrl, fetchTaxesAuthority } from "@/utils/taxes-authority";
+import { printHouseProfile } from "@/store/print-house-profile";
+import { WhatsAppWebModal } from "@/widgets/quote-new/modals-widgets/whats-app-web-modal";
+import { AddNewContactModal } from "@/widgets/quote-new/modals-widgets/add-new-contact-modal";
+import { NewItemNotesModal } from "@/widgets/quote-new/total-price-and-vat/new-item-notes-modal";
+import { AddRelatedDocumentsModal } from "@/widgets/quote-new/total-price-and-vat/add-related-documents";
+import { ViewSignatureApprovalModal } from "@/widgets/quote-new/total-price-and-vat/view-signature-approval-modal";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -39,11 +46,19 @@ interface IProps {
 
 const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProps) => {
   const { classes } = useStyle(isQuoteConfirmation);
+  const router = useRouter();
   const quoteItemValue = useRecoilValue<any>(quoteItemState);
   const quoteConfirm = useRecoilValue<any>(quoteConfirmationState);
+  const printHouseProfileState = useRecoilValue<any>(printHouseProfile);
   const quoteState = isQuoteConfirmation ? quoteConfirm : quoteItemValue;
+  const { resetReceiptState } = usePaymentsTable();
+  const [docNumber, setDocNumber] = useState(quoteState?.number)
   const {
     selectDate,
+    taxDateRef,
+    creationDateRef,
+    creationDate,
+    taxDate,
     isUpdateBusinessName,
     isUpdatePurchaseNumber,
     isUpdateAddress,
@@ -103,6 +118,8 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
     onOpenNewItem,
     onCloseNewItem,
     setSelectDate,
+    setTaxDate,
+    setCreationDate,
     setIsUpdateBusinessName,
     setSelectBusiness,
     openCopyFromOrderModal,
@@ -168,15 +185,45 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
     selectConfirmBusiness,
     handleSaveBtnClickForDocument,
     getAllClientContacts,
-    copyFromDocumentType
-  } = useQuoteNew({ docType: documentType, isQuoteConfirmation: isQuoteConfirmation });
-  const { resetReceiptState } = usePaymentsTable();
-  const router = useRouter();
+    copyFromDocumentType,
+    openLoginModal,
+    onClickClosLoginModal,
+    onClickOpenLoginModal,
+    openWhatsAppModal,
+    onClickOpenWhatsAppModal,
+    onClickCloseWhatsAppModal,
+    sortDocumentItems,
+    updateIsShowDetails,
+    updateIsShowPrices,
+    getWhatsAppMessage,
+    whatsappMassage,
+    openAddNewContactModal,
+    onCloseNewContact,
+    onOpenNewContact,
+    onChangeSelectedItemRowForQoute,
+    openNewItemNotesModal,
+    onClickCloseNewItemNotesModal,
+    onClickOpenRelatedDocumentsModal,
+    onClickCloseRelatedDocumentsModal,
+    openRelatedDocumentsModal,
+    openSignatureApprovalModal,
+    onClickCloseSignatureApprovalModal,
+    onClickOpenSignatureApprovalModal,
+    onBlurClientName,
+    isUpdateClientName,
+    setIsUpdateClientName,
+    clientName,
+    setClientName,
+    onClickOpenNewItemNotesModal,
+    handleClickForCreationDate,
+    handleClickForTaxDate,
+    setActiveClickAwayForCreationDate,
+    setActiveClickAwayForTaxDate,
+    openReferenceModal,
+    onClickCloseReferenceModal,
+    onChangeDatesToCreationDate
 
-  useEffect(() => {
-    if (documentType === DOCUMENT_TYPE.receipt)
-      resetReceiptState();
-  }, [])
+  } = useQuoteNew({ docType: documentType, isQuoteConfirmation: isQuoteConfirmation });
 
   const quoteSteps: StepType[] = [
     {
@@ -208,14 +255,33 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
       }
     },
   ]
-  const [docNumber, setDocNumber] = useState(quoteState?.number)
+  const { } = useGoMakeTour(quoteSteps, []);
+
+
+  useEffect(() => {
+    if (documentType === DOCUMENT_TYPE.invoice || documentType === DOCUMENT_TYPE.invoiceRefund) {
+      const fetchTaxesData = async () => {
+        try {
+          const taxesData = await fetchTaxesAuthority(printHouseProfileState?.business_ID);
+          if (taxesData?.statusCode === 404) {
+            onClickOpenLoginModal();
+          }
+        } catch (error) {
+          console.error("Error fetching taxes data:", error);
+        }
+      };
+      fetchTaxesData();
+    }
+  }, []);
+
+  useEffect(() => {
+    if (documentType === DOCUMENT_TYPE.receipt)
+      resetReceiptState();
+  }, [])
 
   useEffect(() => {
     setDocNumber(quoteState?.number)
   }, [quoteState?.number, router, quoteState, isQuoteConfirmation])
-
-  const { } = useGoMakeTour(quoteSteps, []);
-
   return (
     <>
       {quoteState?.id && (
@@ -225,7 +291,7 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
               <div style={classes.titleSettingContainer}>
                 <div style={classes.titleQuateContainer}>
                   <HeaderTitle
-                    title={router?.query?.isNewCreation ? `${t("sales.quote.createNew")} ${documentTitle.toLowerCase()}` : documentTitle}
+                    title={router?.query?.isNewCreation ? `${t("properties.create")} ${documentTitle.toLowerCase()}` : documentTitle}
                     marginBottom={1}
                     marginTop={1}
                     color="rgba(241, 53, 163, 1)"
@@ -233,30 +299,61 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
                   {!router?.query?.isNewCreation && <div style={classes.quoteNumberStyle}>
                     {" - "} {docNumber}
                   </div>}
-
                 </div>
-                {!isQuoteConfirmation && <div style={classes.settingsStatusContainer}>
-                  {!router?.query?.isNewCreation &&
-                    <div style={classes.quoteStatusContainer}>
-                      {_renderQuoteStatus(
-                        quoteState?.documentStatus,
-                        quoteState,
-                        t
-                      )}
-                    </div>
-                  }
-                  <IconButton
-                    style={{ marginRight: 4 }}
-                    onClick={handleSettingMenuClick}
-                  >
-                    <SettingNewIcon />
-                  </IconButton>
-                </div>}
+                {!isQuoteConfirmation &&
+                  <div style={classes.settingsStatusContainer}>
+                    <>
+                      {
+                        quoteItemValue?.signImageUrl && quoteItemValue?.signerName ? <div style={classes.signatureApproval} onClick={onClickOpenSignatureApprovalModal}>Signature approval</div> : <>
+                          {!router?.query?.isNewCreation &&
+                            <div style={classes.quoteStatusContainer}>
+                              {_renderQuoteStatus(
+                                quoteState?.documentStatus,
+                                quoteState,
+                                t
+                              )}
+                            </div>
+                          }
+                        </>
+                      }
+                    </>
+                    <IconButton
+                      style={{ marginRight: 4 }}
+                      onClick={handleSettingMenuClick}
+                    >
+                      <SettingNewIcon />
+                    </IconButton>
+                  </div>}
               </div>
               <div style={classes.datesContainer}>
+                {/* // Creation Date */}
+
                 <div
                   style={classes.deleverdDate}
-                  onClick={handleClickSelectDate}
+                  onClick={DOCUMENT_TYPE.invoice && quoteItemValue?.isEditable ? handleClickForCreationDate : null}
+                >
+                  {t("sales.quote.creationDate")}{" "}
+                  {creationDate
+                    ? DateFormatterDDMMYYYY(creationDate)
+                    : "select date"}
+                  <div style={classes.datePickerContainer}>
+                    <input
+                      type="datetime-local"
+                      onChange={(e) => {
+                        setCreationDate(e.target.value);
+                        setActiveClickAwayForCreationDate(true);
+                      }}
+                      ref={creationDateRef}
+                    />
+                  </div>
+                </div>
+
+
+                {/* // Due Date */}
+
+                <div
+                  style={classes.deleverdDate}
+                  onClick={quoteItemValue?.isEditable ? handleClickSelectDate : null}
                 >
                   {t("sales.quote.dateOfReference")}{" "}
                   {selectDate
@@ -269,11 +366,36 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
                         setSelectDate(e.target.value);
                         setActiveClickAway(true);
                       }}
+
                       ref={dateRef}
                     />
                   </div>
                 </div>
-                {/* <div style={classes.lineDateStyle} /> Don't Delete */}
+                {/* // TAX Date */}
+
+
+                {
+                  DOCUMENT_TYPE.invoice && <div
+                    style={classes.deleverdDate}
+                    onClick={quoteItemValue?.isEditable ? handleClickForTaxDate : null}
+                  >
+                    {t("sales.quote.taxDate")}{" "}
+                    {taxDate
+                      ? DateFormatterDDMMYYYY(taxDate)
+                      : "select date"}
+                    <div style={classes.datePickerContainer}>
+                      <input
+                        type="datetime-local"
+                        onChange={(e) => {
+                          setTaxDate(e.target.value);
+                          setActiveClickAwayForTaxDate(true);
+                        }}
+                        ref={taxDateRef}
+                      />
+                    </div>
+                  </div>
+                }
+
               </div>
               <div style={classes.bordersecondContainer}>
                 <BusinessNewWidget
@@ -300,8 +422,14 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
                   onClickDeleteAddress={onClickDeleteAddress}
                   documentType={documentType}
                   isQuoteConfirmation={isQuoteConfirmation}
+                  onBlurClientName={onBlurClientName}
+                  isUpdateClientName={isUpdateClientName}
+                  setIsUpdateClientName={setIsUpdateClientName}
+                  clientName={clientName}
+                  setClientName={setClientName}
                 />
                 <ContactNewWidget
+                  documentState={quoteState}
                   handleShowLess={handleShowLess}
                   items={items}
                   displayedItems={displayedItems}
@@ -333,6 +461,7 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
                   documentType={documentType}
                   getQuote={getQuote}
                   getAllClientContacts={getAllClientContacts}
+                  onOpenNewContact={onOpenNewContact}
                 />
               </div>
             </div>
@@ -363,6 +492,7 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
                   documentType={documentType}
                   getQuote={getQuote}
                   isQuoteConfirmation={isQuoteConfirmation}
+                  onChangeSelectedItemRowForQoute={onChangeSelectedItemRowForQoute}
                 />
               }
               {
@@ -370,7 +500,13 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
                 <ReceiptsTable />
               }
             </div>
-            <WriteCommentComp getQuote={getQuote} isQuoteConfirmation={isQuoteConfirmation} documentType={documentType} />
+            <WriteCommentComp
+              documentState={quoteState}
+              getQuote={getQuote}
+              isQuoteConfirmation={isQuoteConfirmation}
+              documentType={documentType}
+              onClickOpenRelatedDocumentsModal={onClickOpenRelatedDocumentsModal}
+            />
           </div>
           {!isQuoteConfirmation &&
             <div style={{ width: '100%' }} data-tour={'quoteStep2'}>
@@ -383,17 +519,25 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
                 documentType={documentType}
                 onOpenCopyFromOrder={onOpenCopyFromOrder}
                 handleSaveBtnClickForDocument={handleSaveBtnClickForDocument}
+                onClickOpenNewItemNotesModal={onClickOpenNewItemNotesModal}
               />
             </div>
           }
         </div>
       )}
-      {(isQuoteConfirmation && !quoteConfirm?.isConfirmed) && <ButtonsConfirmContainer />}
+      {(isQuoteConfirmation && (!quoteConfirm?.isConfirmed && quoteConfirm?.documentStatus !== QUOTE_STATUSES.Canceled)) && <ButtonsConfirmContainer />}
       <AddNewItemModal
         openModal={openAddNewItemModal}
         onClose={onCloseNewItem}
         documentType={documentType}
         getQuote={getQuote}
+      />
+      <AddNewContactModal
+        openModal={openAddNewContactModal}
+        onClose={onCloseNewContact}
+        getQuote={getQuote}
+        getAllClientContacts={getAllClientContacts}
+        documentType={documentType}
       />
       <AddDeliveryModal
         openModal={openAddDeliveryModal}
@@ -427,6 +571,15 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
         open={openSendBtn}
         anchorEl={anchorElSendBtn}
         onClickSendQuoteToClient={onClickSendQuoteToClient}
+        onClickOpenWhatsAppModal={onClickOpenWhatsAppModal}
+        documentState={quoteItemValue}
+      />
+      <WhatsAppWebModal
+        openModal={openWhatsAppModal}
+        onClose={onClickCloseWhatsAppModal}
+        clientContactsValue={clientContactsValue}
+        getWhatsAppMessage={getWhatsAppMessage}
+        whatsappMassage={whatsappMassage}
       />
       <SettingQuoteMenu
         handleClose={handleSettingMenuClose}
@@ -440,6 +593,9 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
         isUpdateCurrency={isUpdateCurrency}
         updateCurrency={updateCurrency}
         onClickRefresh={refreshExchangeRate}
+        sortDocumentItems={sortDocumentItems}
+        updateIsShowDetails={updateIsShowDetails}
+        updateIsShowPrices={updateIsShowPrices}
       />
       <CancelBtnMenu
         handleClose={handleCancelBtnClose}
@@ -455,6 +611,10 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
         onClose={onClickCloseModal}
         setReasonText={setReasonText}
         onClickCancelOffer={onClickCancelOffer}
+      />
+      <ViewSignatureApprovalModal
+        openModal={openSignatureApprovalModal}
+        onClose={onClickCloseSignatureApprovalModal}
       />
       <GoMakeDeleteModal
         icon={
@@ -495,6 +655,37 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
         onClickDelete={() =>
           updateCancelQuote(QuoteStatuses.CANCELED_DELIVERY_TIME)
         }
+      />
+      <GoMakeAlertModal
+        openModal={openLoginModal}
+        onClose={onClickClosLoginModal}
+        subTitle={t("No login!!!!")}
+        yesBtn={"login.login"}
+        withIcon={true}
+        onClickConfirm={() => {
+          window.open(LoginTaxesUrl + printHouseProfileState?.business_ID, "_blank");
+          onClickClosLoginModal();
+        }}
+      />
+      <NewItemNotesModal
+        openModal={openNewItemNotesModal}
+        onClose={onClickCloseNewItemNotesModal}
+        handleSaveBtnClickForDocument={handleSaveBtnClickForDocument}
+        documentType={documentType}
+      />
+
+      <AddRelatedDocumentsModal
+        openModal={openRelatedDocumentsModal}
+        onClose={onClickCloseRelatedDocumentsModal}
+      />
+      <GoMakeDeleteModal
+
+        openModal={openReferenceModal}
+        onClose={onClickCloseReferenceModal}
+        hideIcon={true}
+        title={t("sales.quote.titleReferenceModal")}
+        yesBtn={t("sales.quote.yesBtn")}
+        onClickDelete={() => onChangeDatesToCreationDate()}
       />
     </>
   );

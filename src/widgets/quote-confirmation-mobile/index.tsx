@@ -6,16 +6,16 @@ import { TotalPriceAndVatContainer } from './components/total-price-and-vat';
 import { InfoContainer } from './components/info-container';
 import { QuoteItems } from './components/quote-items';
 
-const QuoteConfirmationMobileWidget = () => {
+const QuoteConfirmationMobileWidget = ({ isMobile }) => {
   const { classes } = useStyle()
-  
+
   return (
     <div style={classes.mainContainer}>
-      <InfoContainer/>
-      <QuoteItems/>
+      <InfoContainer />
+      <QuoteItems />
       <TotalPriceAndVatContainer />
       <TextAreasContainer />
-      <ButtonsConfirmContainer />
+      <ButtonsConfirmContainer isMobile={isMobile} />
     </div>
   );
 };

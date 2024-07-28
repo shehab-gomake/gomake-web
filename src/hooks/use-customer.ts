@@ -17,11 +17,11 @@ const useCustomer = (permissionEnumValue?: Permissions, allowAnonymous?: boolean
 
     const {callApi} = useGomakeAxios();
     const [user, setUser] = useRecoilState<any>(userState);
-    const [systemCurrency, setSystemCurrency] = useRecoilState<any>(systemCurrencyState);
-    const [systemVAT, setSystemVAT] = useRecoilState<number>(systemVATState);
+    const setSystemCurrency = useSetRecoilState<any>(systemCurrencyState);
+    const setSystemVAT = useSetRecoilState<number>(systemVATState);
     const setUserProfile = useSetRecoilState(userProfileState);
     const setPrintHouseProfile = useSetRecoilState(printHouseProfile);
-    const [userType, setUserType] = useRecoilState<any>(userTypeState);
+    const setUserType = useSetRecoilState<any>(userTypeState);
     const [adminsAutoComplate, setAdminsAutoComplate] = useState([]);
     const [permissions, setPermissions] = useRecoilState<any>(permissionsState);
     const {navigate} = useGomakeRouter();
@@ -44,14 +44,15 @@ const useCustomer = (permissionEnumValue?: Permissions, allowAnonymous?: boolean
             const userPermissions = [...user.permissions];
             user.permissions = null;
             if (user?.isFirstLogin) {
-                setStartGuid(true);
-                localStorage.setItem("isHover", "true");
+                // setStartGuid(true);
+                // localStorage.setItem("isHover", "true");
             }
             setUser({...user, type: "user"});
             setUserType({type: "user"});
             setUserProfile(validate?.data?.data?.customer);
             setPrintHouseProfile(user.printHouseProfile);
-            setSystemCurrency(user.systemCurrency)
+            //setSystemCurrency(user.systemCurrency)
+            setSystemCurrency(user.printHouseProfile.systemCurrency)
             setSystemVAT(user.systemVat);
             localStorage.setItem('systemLogo', validate?.data?.data?.customer?.printHouseProfile?.logo)
             if (validate?.data?.data?.customer?.systemLang) {

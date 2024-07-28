@@ -139,6 +139,7 @@ const useCustomers = (
         const clientTypes = res.data.map((types) => ({
           label: types.name,
           id: types.id,
+          additionProfits : types?.additionProfits  ?? 0,  
         }));
         setClientTypesCategories(clientTypes);
       }
@@ -147,9 +148,7 @@ const useCustomers = (
   };
 
   ///////////////////////// select agent //////////////////////////////
-  const [agentsCategories, setAgentsCategories] = useRecoilState(
-    agentsCategoriesState
-  );
+  const [agentsCategories, setAgentsCategories] = useRecoilState(agentsCategoriesState);
   const getAgentCategories = async () => {
     const callBack = (res) => {
       if (res.success) {
@@ -260,10 +259,8 @@ const useCustomers = (
       !(
         customer &&
         customer.name &&
-        customer.clientTypeId &&
-        customer.tel1 &&
-        customer.phone &&
-        customer.mail
+        customer.clientTypeId
+    
       )
     ) {
       return false;
@@ -291,16 +288,6 @@ const useCustomers = (
     }
     return true;
   };
-
-  // const importClient = async (file) => {
-  //   const callBack = (res) => {
-  //     if (res.success) {
-
-  //     }
-  //   }
-  //   await importClientApi(callApi, callBack, {fileBase64: file , clientType :clientType })
-  // }
-
   const onClickImportClient = async (e) => {
     const file = e.target.files[0];
     if (file) {

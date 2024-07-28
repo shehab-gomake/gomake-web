@@ -50,5 +50,6 @@ export const machineCategoriesState = atom({
         {id: ECategoryId.CREATING_DIES_MACHINE, name: 'machinesCategories.creatingDiesMachine', color: defaultTheme.gray.dark["700"]},
         {id: ECategoryId.MESH_PROCESSORS, name: 'machinesCategories.meshProcessorsMachine', color: defaultTheme.neutral.dark["600"]},
         {id: ECategoryId.SILK_PRINTER, name: 'machinesCategories.silkPrinter', color: defaultTheme.neutral.dark["700"]},
+        {id: ECategoryId.CARD_CUTTING, name: 'machinesCategories.cardCutting', color: defaultTheme.neutral.dark["700"]},
     ],
 });

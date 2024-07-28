@@ -16,6 +16,13 @@ const useStyle = () => {
         gap: 24,
         marginBottom: 14,
       },
+      plusStyle:{
+        color:secondColor(500),
+        marginLeft:-23,
+        ...FONT_FAMILY.Lexend(400,20),
+        cursor: "pointer"
+
+      },
       autoCompleteStyle: {
         background: "#FFFFFF",
         filter: "drop-shadow(0px 2px 6px rgba(0, 0, 0, 0.08))",

@@ -1,19 +1,19 @@
 import {emailRegex} from "@/utils/regex";
 
-const generalInputs = (typeClient, state) => {
+const generalInputs = (typeClient, state , languagesOptions) => {
+
   return [
     {
       name: "phone1",
       label: "customers.modal.phone",
       type: "phone",
       placeholder: "customers.modal.phone",
-      required: true,
+      required: false,
       parameterKey: "tel1",
       options: [],
       value: state?.tel1,
       isValid: true,
     },
-
     {
       name: "mainContactName",
       label: "customers.modal.mainContactName",
@@ -30,7 +30,7 @@ const generalInputs = (typeClient, state) => {
       label: "customers.modal.mobile",
       type: "phone",
       placeholder: "customers.modal.mobile",
-      required: true,
+      required: false,
       parameterKey: "phone",
       options: [],
       value: state?.phone,
@@ -43,8 +43,7 @@ const generalInputs = (typeClient, state) => {
       placeholder: "customers.modal.language",
       required: false,
       parameterKey: "clientLang",
-      options: [],
-      optionsUrl: "/v1/enum/get-enums/languages",
+      options: languagesOptions,
       value: state?.clientLang,
       isValid: true,
     },
@@ -53,7 +52,7 @@ const generalInputs = (typeClient, state) => {
       label: "customers.modal.email",
       type: "text",
       placeholder: "customers.modal.email",
-      required: true,
+      required: false,
       parameterKey: "mail",
       options: [],
       value: state?.mail,

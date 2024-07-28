@@ -1,4 +1,4 @@
-import {FormEvent, useCallback, useState} from "react";
+import {CSSProperties, FormEvent, useCallback, useState} from "react";
 import {Button, Checkbox, FormControlLabel, FormGroup, Menu, MenuItem, MenuProps} from "@mui/material";
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import {useTranslation} from "react-i18next";
@@ -9,6 +9,7 @@ interface ISelectComponentProps {
     buttonLabel: string;
     list: {id: string, name: string, checked: boolean}[];
     onChange: (v: string) => void;
+    style?: CSSProperties;
 }
 
 const StyledMenu = styled((props: MenuProps) => (
@@ -47,7 +48,7 @@ const StyledMenu = styled((props: MenuProps) => (
         }
     },
 }));
-const SelectComponent = ({buttonLabel, list, onChange}: ISelectComponentProps) => {
+const SelectComponent = ({buttonLabel, list, onChange, style}: ISelectComponentProps) => {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [filter, setFilter] = useState<string>();
     const open = Boolean(anchorEl);
@@ -70,7 +71,7 @@ const SelectComponent = ({buttonLabel, list, onChange}: ISelectComponentProps) =
     }, [list, filter])
     return(
         <div>
-            <Button style={{color: '#9E9E9E', borderColor: '#9E9E9E'}} variant={'outlined'} onClick={handleClick}>
+            <Button style={!!style ? style : {color: '#9E9E9E', borderColor: '#9E9E9E'}} variant={!!style ? 'contained':'outlined'} onClick={handleClick}>
                 <span>{t(buttonLabel)}</span>
                 <KeyboardArrowDownIcon/>
             </Button>

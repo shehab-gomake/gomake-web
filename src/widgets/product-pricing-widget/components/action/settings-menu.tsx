@@ -1,6 +1,8 @@
 import { GoMakeMenu } from "@/components";
 import { MenuItem } from "@mui/material";
 import { useTranslation } from "react-i18next";
+import {useRecoilState, useRecoilValue} from "recoil";
+import {currentCalculationConnectionId} from "@/store";
 
 const SettingsMenu = ({
   handleClose,
@@ -13,8 +15,10 @@ const SettingsMenu = ({
   categoryId,
 }) => {
   const { t } = useTranslation();
+  const currentSignalRConnectionId = useRecoilValue(currentCalculationConnectionId);
+
   const onClickProfit = () => {
-    const uri = `/products/profits?actionId=${actionId}&actionName=${actionName}&draftId=${currentProductItemValue.id}`;
+    const uri = `/products/profits?actionId=${actionId}&actionName=${actionName}&signalRConnectionId=${currentSignalRConnectionId}`;
     window.open(uri, "_blank");
     handleClose();
   };
@@ -24,7 +28,7 @@ const SettingsMenu = ({
     handleClose();
   };
   const onClickOsSettings = () => {
-    const uri = `/products/profits?actionId=${actionId}&actionName=${actionName}&draftId=${currentProductItemValue.id}&isOutSource=true`;
+    const uri = `/products/profits?actionId=${actionId}&actionName=${actionName}&signalRConnectionId=${currentSignalRConnectionId}&isOutSource=true`;
     window.open(uri, "_blank");
     handleClose();
   };

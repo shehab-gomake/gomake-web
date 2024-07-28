@@ -66,3 +66,87 @@ export const isValidEmail = (email) => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email);
 };
+
+export const hasValues = (obj) => {
+  if (obj) {
+    return Object?.keys(obj?.values)?.length !== 0;
+
+  }
+}
+
+export const isValidCustomer = (
+  customer,
+  filteredContacts,
+  filteredAddresses,
+  filteredUsers
+) => {
+  if (
+    !(
+      customer &&
+      customer.name &&
+      customer.clientTypeId
+  
+    )
+  ) {
+    return false;
+  }
+  for (const contact of filteredContacts) {
+    if (!contact.firstName) {
+      return false;
+    }
+  }
+  for (const address of filteredAddresses) {
+    if (!address.address1) {
+      return false;
+    }
+  }
+  for (const user of filteredUsers) {
+    if (!user.email) {
+      return false;
+    }
+  }
+  //new users
+  for (const user of filteredUsers.filter((user) => !user.id)) {
+    if (!user.password) {
+      return false;
+    }
+  }
+  return true;
+};
+
+export   const downloadPdf = (url) => {
+  const anchor = document.createElement("a");
+  anchor.href = url;
+  anchor.target = "_blank";
+  anchor.addEventListener("click", () => {
+    setTimeout(() => {
+      anchor.remove();
+    }, 100);
+  });
+  anchor.click();
+};
+
+export  const isAtLeastOneSelected = (items) => {
+  if (items && items?.length > 0) {
+    return items.some(item => item.isSelected === true);
+
+  }
+}
+
+export function removeTags(str) {
+  if ((str === null) || (str === ''))
+      return false;
+  else
+      str = str.toString();
+  return str.replace(/(<([^>]+)>)/ig, '');
+}
+
+export function getCurrencySymbol(currencyCode) {
+  const currencySymbols = {
+    'USD': '$',
+    'EUR': '€',
+    'ILS': '₪'
+  };
+
+  return currencySymbols[currencyCode] || null;
+}

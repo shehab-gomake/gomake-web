@@ -29,6 +29,8 @@ const EmailSettings = ({ onClickSave }: IProps) => {
     const languages = useRecoilValue(languagesState);
     const setLanguageState = useSetRecoilState<string>(languageTemplateState);
 
+
+
     const handleUpdateClick = () => {
         const updatedTemplate = {
             ...state,
@@ -68,7 +70,7 @@ const EmailSettings = ({ onClickSave }: IProps) => {
                 <h3 style={classes.subSectionHeader}>{t("mailingSettings.subject")}</h3>
                 <QuillEditor headerEditor={EditorTYPE.SUBJECT} ></QuillEditor>
             </div>
-            <div style={classes.subSection}>
+            <div style={classes.subSection} key={body}>
                 <h3 style={classes.subSectionHeader} >{t("mailingSettings.body")}</h3>
                 <QuillEditor headerEditor={EditorTYPE.BODY} ></QuillEditor>
             </div>

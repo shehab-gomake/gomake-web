@@ -14,6 +14,9 @@ import { useStyle } from "./style";
 import { RowMappingWidget } from "./row-mapping";
 import { RowMappingChildWidget } from "../quote-child-table/row-mapping";
 import { TotalPriceComp } from "../total-price";
+import { useRecoilValue } from "recoil";
+import { quoteItemState } from "@/store";
+
 const QuoteForPriceTable = ({
   documentItems,
   columnWidths,
@@ -30,8 +33,10 @@ const QuoteForPriceTable = ({
   documentType,
   getQuote,
   isQuoteConfirmation = false,
+  onChangeSelectedItemRowForQoute
 }) => {
   const { classes } = useStyle({ headerHeight });
+  const quoteItemValue = useRecoilValue<any>(quoteItemState);
   const PrimaryTableCell = styled(TableCell)(() => {
     return {
       [`&.${tableCellClasses.head}`]: {
@@ -94,6 +99,8 @@ const QuoteForPriceTable = ({
                     documentType={documentType}
                     getQuote={getQuote}
                     isQuoteConfirmation={isQuoteConfirmation}
+                    onChangeSelectedItemRowForQoute={onChangeSelectedItemRowForQoute}
+                    quoteItems={quoteItems}
                   />
                   {item?.childsDocumentItems &&
                     item?.childsDocumentItems?.map(
@@ -113,6 +120,7 @@ const QuoteForPriceTable = ({
                             getCalculateQuoteItem={getCalculateQuoteItem}
                             childList={item?.childsDocumentItems}
                             isQuoteConfirmation={isQuoteConfirmation}
+                            documentType={documentType}
                           />
                         );
                       }
@@ -123,12 +131,16 @@ const QuoteForPriceTable = ({
           </TableBody>
         </Table>
       </TableContainer>
-      <TotalPriceComp
-        getCalculateQuote={getCalculateQuote}
-        quoteItems={quoteItems}
-        changeQuoteItems={changeQuoteItems}
-        isQuoteConfirmation={isQuoteConfirmation}
-      />
+      {quoteItems?.isShowPrice &&
+        <TotalPriceComp
+          documentType={documentType}
+          getCalculateQuote={getCalculateQuote}
+          quoteItems={quoteItems}
+          changeQuoteItems={changeQuoteItems}
+          isQuoteConfirmation={isQuoteConfirmation}
+        />}
+
+
     </div>
   );
 };

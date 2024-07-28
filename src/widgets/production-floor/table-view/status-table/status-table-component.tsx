@@ -16,27 +16,29 @@ interface IProps {
     count: number;
 }
 
-const StatusTableComponent = ({status, boards, count}: IProps) => {
+const StatusTableComponent = ({status, boards}: IProps) => {
     const {isOpen, onClickStatus, tableHeaders} = useStatusTable();
 
-    const {updateStatus} = useProductionFloorData();
+    const {updateStatus, t} = useProductionFloorData();
     const [{isOver}, drop] = useDrop(() => ({
         accept: 'task',
-        drop: (item: { id: string, selectedIds: string[] }, monitor) => {
+        drop: (item: { board: IBoardMissions, selectedIds: IBoardMissions[] }, monitor) => {
             const didDrop = monitor.didDrop();
             if (didDrop) {
                 return;
             }
-            updateStatus(item.selectedIds.length > 0 ? item.selectedIds : [item.id], status.id).then();
+            if (item.board.statusId !== status.id) {
+                updateStatus(item.selectedIds.length > 0 ? item.selectedIds : [item.board], status.id).then();
+            }
         },
         collect: monitor => ({
-            isOver: !!monitor.isOver(),
-            canDrop: !!monitor.canDrop(),
+            isOver: monitor.getItem()?.board?.statusId === status.id ? false : !!monitor.isOver(),
+            canDrop: monitor.getItem()?.board?.statusId === status.id ? false : !!monitor.canDrop(),
         }),
     }), [status, boards]);
 
 
-    return <Stack ref={drop} border={isOver ? '1px solid black' : 'none'}>
+    return <Stack ref={drop} border={isOver ? '1px solid black' : 'none'} gap={'5px'}>
         <Button onClick={onClickStatus}
                 startIcon={isOpen ? <KeyboardArrowDownIcon/> : <KeyboardArrowUpIcon/>}
                 sx={{
@@ -51,24 +53,30 @@ const StatusTableComponent = ({status, boards, count}: IProps) => {
                         backgroundColor: status?.backgroundColor,
                         color: status?.textColor,
                     }
-                }}>{`${status.name} (${count})`}</Button>
+                }}>{`${t('productionStatuses.' + status.name)} (${boards.length})`}
+        </Button>
         {
             boards.length > 0 &&
             <Collapse in={isOpen}>
                 <Paper>
                     <TableContainer>
                         <Table stickyHeader={false}>
-                            <TableHead>
+                            <TableHead style={{backgroundColor: status.backgroundColor}}>
                                 <SecondaryTableRow>
                                     {
-                                        tableHeaders(status.id)?.map((header, index) =>
-                                            <SecondaryTableCell key={'statusTable' + index} align={"center"}>{header}</SecondaryTableCell>)
+                                        tableHeaders(status.id)?.map((header) =>
+                                            <SecondaryTableCell style={{backgroundColor: status.backgroundColor}}
+                                                                key={'statusTable' + status.id}
+                                                                align={"center"}>{header}</SecondaryTableCell>)
                                     }
                                 </SecondaryTableRow>
                             </TableHead>
                             <TableBody>
-                                {boards?.map((boardMission) => {
-                                    return <TableRowComponent boardMission={boardMission}/>
+                                {[...boards]?.sort((a, b) => a.priority - b.priority)?.map((boardMission) => {
+                                    return <>
+                                        <TableRowComponent key={'status' + status.id + boardMission.id}
+                                                           boardMission={boardMission}/>
+                                    </>
                                 })}
                             </TableBody>
                         </Table>

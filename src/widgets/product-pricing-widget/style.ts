@@ -14,6 +14,10 @@ const useStyle = () => {
         ...FONT_FAMILY.Lexend(500, 14),
         color: neutralColor(500),
       },
+      insideStyle: {
+        // width: "600px",
+         height: "300px",
+       },
       detailValue: {
         ...FONT_FAMILY.Inter(500, 14),
         color: primaryColor(900),
@@ -57,14 +61,14 @@ const useStyle = () => {
         borderRadius: "5px",
         border: "1px solid" + primaryColor(500),
         overflow: "hidden",
-        width: "400px",
+        // width: "400px",
       },
       button: {
-        width: "200px",
+        width: "fit-content",
         borderRadius: 0,
         border: 0,
         "&:hover": {
-          width: "200px",
+          width: "fit-content",
           borderRadius: 0,
           border: 0,
         },
@@ -86,6 +90,30 @@ const useStyle = () => {
         height: "50%",
         ...adaptRight(direction, 5),
       },
+      nameStyle:{
+        marginRight: 12,
+        ...FONT_FAMILY.Inter(400, 12),
+        color:"#FFF"
+      },
+      secondPartStyle:{
+        ...FONT_FAMILY.Inter(700, 14),
+        color:"#FFF"
+      },
+      lineStyle:{
+        ...FONT_FAMILY.Inter(500, 14),
+        color:"#FFF",
+        height:20,
+        width:1,
+        backgroundColor:"#FFF"
+      },
+      modalStyle:{
+        width: "45%",
+        borderRadius: "8px",
+        height: "auto",
+        gap: "10px",
+        zIndex:5
+      },
+
     };
   }, [theme, direction]);
   return {

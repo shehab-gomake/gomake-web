@@ -31,6 +31,14 @@ import { clientTypesCategoriesState } from "@/pages/customers/customer-states";
 import { ClientTypeModal } from "./components/add-client-type-modal/add-client-type-modal";
 import { SettingIcon } from "../shared-admin-customers/add-product/icons/setting";
 import { emailRegex } from "@/utils/regex";
+import { SecondaryButton } from "@/components/button/secondary-button";
+import { PrimaryTable } from "@/components/tables/primary-table";
+import { useCustomerCard } from "./use-customer-card";
+import { TableFilter } from "./components/table-filter";
+import { PermissionCheck } from "@/components/CheckPermission/check-permission";
+import { Permissions } from "@/components/CheckPermission/enum";
+import { languagesState } from "@/store/languages";
+import { systemCurrencyState } from "@/store";
 
 interface IProps {
   isValidCustomer?: (
@@ -51,6 +59,12 @@ interface IProps {
   setCustomer?: (customer: any) => void;
   showUpdateButton?: boolean;
   showAddButton?: boolean;
+  isgetAllCustomers?: boolean;
+  isFromHomePage?: boolean;
+  setOpenOfferModal?: any;
+  userQuote?: any;
+  isFromCartPage?:boolean;
+  onChangeSelectBusiness?:any;
 }
 
 const CustomerCardWidget = ({
@@ -66,16 +80,36 @@ const CustomerCardWidget = ({
   setCustomer,
   showUpdateButton,
   showAddButton,
+  isgetAllCustomers = true,
+  isFromHomePage = false,
+  setOpenOfferModal,
+  userQuote,
+  isFromCartPage=false,
+  onChangeSelectBusiness
 }: IProps) => {
   const [open, setOpen] = useState(false);
   const { addNewCustomer } = useAddCustomer();
   const { editCustomer } = useEditCustomer();
   const { updateUserPassword } = useUserProfile();
   const { t } = useTranslation();
+  const {
+    customerTableHeaders,
+    mapCustomerData,
+    handleHideTable,
+    showTable,
+    setCustomerTableRows,
+    getAllSimilarCustomersData,
+    onShowInActiveCustomers,
+    setShowInActiveCustomers,
+    getAllSimilarCustomer,
+    setShowTable
+  } = useCustomerCard({ t, setCustomer, onClose, setOpenOfferModal, userQuote });
   const { alertRequiredFields, alertFault } = useSnackBar();
-  const [resetPassModal, setResetPassModalModal] =
-    useRecoilState<boolean>(resetPassModalState);
-  const [gomakeUser, setGomakeUser] = useRecoilState<any>(gomakeUserState);
+  const systemCurrency = useRecoilValue<any>(systemCurrencyState);
+  const [resetPassModal, setResetPassModalModal] = useRecoilState<boolean>(resetPassModalState);
+  const clientTypesCategories = useRecoilValue(clientTypesCategoriesState);
+  const gomakeUser = useRecoilValue<any>(gomakeUserState);
+  const languagesOptions = useRecoilValue(languagesState);
   const { classes } = useStyle();
   const [selectedTab, setSelectedTab] = useState(0);
   const [contacts, setContacts] = useState(
@@ -87,7 +121,14 @@ const CustomerCardWidget = ({
   const [users, setUsers] = useState(
     customer && customer.users ? customer.users : []
   );
-  const clientTypesCategories = useRecoilValue(clientTypesCategoriesState);
+
+  useEffect(() => {
+    if (customer) {
+      setContacts(customer.contacts ? customer.contacts : [])
+      setAddresses(customer.addresses ? customer.addresses : [])
+      setUsers(customer.users ? customer.users : [])
+    }
+  }, [customer])
 
   const theme = createMuiTheme({
     palette: {
@@ -114,7 +155,6 @@ const CustomerCardWidget = ({
     );
   };
 
-
   const clientTypeLabel = typeClient === "C"
     ? t("customers.modal.clientType")
     : t("suppliers.supplierType");
@@ -135,6 +175,9 @@ const CustomerCardWidget = ({
     setOpen(false);
     onClose();
     setCustomer(null);
+    handleHideTable();
+    setCustomerTableRows([]);
+    setShowInActiveCustomers(false);
   };
 
   const handleTabChange = (event, newValue) => {
@@ -183,10 +226,12 @@ const CustomerCardWidget = ({
   };
 
   // Address info
+
   const addEmptyAddress = () => {
     var temp = [...addresses];
     const index = temp.length + 1;
-    temp.push({ name: "", index: index, city: " ", street: " " });
+    //  temp.push({ name: "", index: index, city: " ", street: " " });
+    temp.push({ name: "", index: index });
     setAddresses(temp);
   };
 
@@ -196,7 +241,8 @@ const CustomerCardWidget = ({
       temp = [...customer.addresses];
     } else {
       const index = temp.length + 1;
-      temp.push({ name: "", index: index, city: " ", street: " " });
+      // temp.push({ name: "", index: index, city: " ", street: " " });
+      temp.push({ name: "", index: index });
     }
     setAddresses(temp);
   };
@@ -279,6 +325,7 @@ const CustomerCardWidget = ({
       addresses: filteredAddresses,
       users: filteredUsers,
       cardTypeId: cardTypeId,
+      currency : customer?.currency ? customer?.currency : systemCurrency
     };
 
     // Check if email is valid
@@ -305,6 +352,7 @@ const CustomerCardWidget = ({
       addNewCustomer(updatedCustomer).then((x) => {
         onCustomerAdd(x);
         handleClose();
+        isFromCartPage && onChangeSelectBusiness(x);
       });
     } else {
       alertRequiredFields();
@@ -351,7 +399,9 @@ const CustomerCardWidget = ({
       )
     ) {
       editCustomer(updatedCustomer, setCustomer).then((x) => {
-        getAllCustomers();
+        if (isgetAllCustomers) {
+          getAllCustomers();
+        }
         handleClose();
       });
     } else {
@@ -385,6 +435,7 @@ const CustomerCardWidget = ({
     );
     return emptyProps;
   };
+
   const tabLabels = [
     t("customers.modal.general"),
     t("customers.modal.contacts"),
@@ -398,6 +449,62 @@ const CustomerCardWidget = ({
   const onClickOpenClientType = () => {
     setClientType(true);
   };
+
+
+  const validCustomerName = (customer) => {
+    if (!customer || !customer.name) {
+      return false;
+    }
+    return true;
+  };
+
+  const handleShowTable = async () => {
+    const filteredContacts = contacts.filter(
+      (contact) => !isNameIndexOnly(contact)
+    );
+    const filteredAddresses = addresses.filter(
+      (address) => !isNameIndexOnly(address)
+    );
+    const filteredUsers = users.filter((user) => !isNameIndexOnly(user));
+    const cardTypeId = typeClient === "C" ? CLIENT_TYPE_Id.CUSTOMER : CLIENT_TYPE_Id.SUPPLIER;
+    const updatedCustomer = {
+      ...customer,
+      contacts: filteredContacts,
+      addresses: filteredAddresses,
+      users: filteredUsers,
+      cardTypeId: cardTypeId,
+    };
+
+    // Check if email is valid
+    const areEmailsValid = filteredUsers.every(user => validateEmail(user, "email"));
+    if (!areEmailsValid) {
+      alertFault("customers.invalidEmail");
+      return;
+    }
+
+    const isValidCustomerName = validCustomerName(customer);
+    if (!isValidCustomerName) {
+      alertFault("modal.clientNameIsRequired");
+      return;
+    }
+
+    setCustomer(updatedCustomer);
+
+    getAllSimilarCustomer(updatedCustomer).then((x) => {
+      setShowTable(true);
+    });
+
+  };
+
+
+  const renderAddButton = (onClick, labelKey) => (
+    <a style={classes.addNewStyle}>
+      <AddIcon onClick={onClick} />
+      <button style={classes.buttonsStyle}>
+        {t(labelKey)}
+      </button>
+    </a>
+  );
 
   return (
     <GoMakeModal
@@ -431,6 +538,7 @@ const CustomerCardWidget = ({
           ).map((item) => (
             <div style={{ marginBottom: 10 }}>
               <FormInput
+                key={customer}
                 input={item as IInput}
                 changeState={onChangeInputs}
                 error={item.required && !item.value}
@@ -458,6 +566,7 @@ const CustomerCardWidget = ({
             </div>
             <div style={{ width: "180px" }}>
               <GoMakeAutoComplate
+                key={customer}
                 options={clientTypesCategories}
                 placeholder={typeClient === "C" ? t("customers.modal.clientType") : t("suppliers.supplierType")}
                 style={classes.dropDownListStyle}
@@ -524,209 +633,178 @@ const CustomerCardWidget = ({
           </Tabs>
         </ThemeProvider>
       </div>
-      {selectedTab == 0 && (
-        <div style={classes.customerInfoStyle}>
-          {generalInputs(typeClient, customer).map((item) => (
-            <div style={{ marginBottom: 10 }}>
-              <FormInput
-                input={item as IInput}
-                changeState={onChangeInputs}
-                error={false}
-                readonly={false}
-              />
+      <div style={classes.bottomSectionStyle}>
+        <div style={classes.tabsContainer}>
+          {selectedTab == 0 && (
+            <div style={classes.customerInfoStyle}>
+              {generalInputs(typeClient, customer, languagesOptions).map((item) => (
+                <div style={{ marginBottom: 10 }}>
+                  <FormInput
+                    input={item as IInput}
+                    changeState={onChangeInputs}
+                    error={false}
+                    readonly={false}
+                  />
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
-      )}
-
-      {selectedTab == 0 && (
-        <div>
-          <Stack
-            direction={"row"}
-            marginTop={"8px"}
-            marginBottom={"8px"}
-            gap="20px"
-          >
-            {tabPanelTextArea(
-              t("customers.modal.generalComment"),
-              customer?.generalNotes,
-              (e) => setCustomer({ ...customer, generalNotes: e.target.value })
-            )}
-            {tabPanelTextArea(
-              t("customers.modal.orderOpeningNotes"),
-              customer?.newItemNotes,
-              (e) => setCustomer({ ...customer, newItemNotes: e.target.value })
-            )}
-            {tabPanelTextArea(
-              t("customers.modal.orderClosingNotes"),
-              customer?.closeOrderNotes,
-              (e) =>
-                setCustomer({ ...customer, closeOrderNotes: e.target.value })
-            )}
-          </Stack>
-          {codeFlag && (
-            <>
-              <Stack direction={"row"}>
-                <span
-                  style={{
-                    color: "var(--second-500, #ED028C)",
-                    fontStyle: "normal",
-                    ...FONT_FAMILY.Lexend(500, 14),
-                    lineHeight: "normal",
-                    marginBottom: 10,
-                  }}
-                >
-                  {t("customers.modal.lastOrderDetails")}
-                </span>
-              </Stack>
-              <div style={classes.customerInfoStyle}>
-                {lastOrderInputs(customer).map((item) => (
-                  <div style={{ marginBottom: 10 }}>
-                    <FormInput
-                      input={item as IInput}
-                      changeState={onChangeInputs}
-                      error={false}
-                      readonly={!!item.readonly}
-                    />
-                  </div>
-                ))}
-              </div>
-            </>
           )}
+          {selectedTab == 0 && (
+            <div>
+              <Stack
+                direction={"row"}
+                marginTop={"8px"}
+                marginBottom={"8px"}
+                gap="20px"
+              >
+                {tabPanelTextArea(
+                  t("customers.modal.generalComment"),
+                  customer?.generalNotes,
+                  (e) => setCustomer({ ...customer, generalNotes: e.target.value })
+                )}
+                {tabPanelTextArea(
+                  t("customers.modal.orderOpeningNotes"),
+                  customer?.newItemNotes,
+                  (e) => setCustomer({ ...customer, newItemNotes: e.target.value })
+                )}
+                {tabPanelTextArea(
+                  t("customers.modal.orderClosingNotes"),
+                  customer?.closeOrderNotes,
+                  (e) =>
+                    setCustomer({ ...customer, closeOrderNotes: e.target.value })
+                )}
+              </Stack>
+              {codeFlag && (
+                <>
+                  <Stack direction={"row"}>
+                    <span
+                      style={{
+                        color: "var(--second-500, #ED028C)",
+                        fontStyle: "normal",
+                        ...FONT_FAMILY.Lexend(500, 14),
+                        lineHeight: "normal",
+                        marginBottom: 10,
+                      }}
+                    >
+                      {t("customers.modal.lastOrderDetails")}
+                    </span>
+                  </Stack>
+                  <div style={classes.customerInfoStyle}>
+                    {lastOrderInputs(customer).map((item) => (
+                      <div style={{ marginBottom: 10 }}>
+                        <FormInput
+                          input={item as IInput}
+                          changeState={onChangeInputs}
+                          error={false}
+                          readonly={!!item.readonly}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
+          )}
+          <div>
+            {
+              //contacts info
+              selectedTab == 1 && (
+                <Stack direction={"column"} gap={"15px"}>
+                  {renderAddButton(addEmptyContact, "customers.buttons.addContact")}
+                  <Stack direction={"column"}>
+                    {contacts
+                      .filter((contact) => !contact.isMainContact)
+                      .map((x) => (
+                        <ContactForm
+                          key={x.index}
+                          contact={x}
+                          onDelete={deleteContactForm}
+                          setContact={(updatedContactData) =>
+                            updateContact(x.index, updatedContactData)
+                          }
+                        />
+                      ))}
+                  </Stack>
+                </Stack>
+              )
+            }
+            {
+              //address info
+              selectedTab == 2 && (
+                <Stack direction={"column"} gap={"15px"}>
+                  {renderAddButton(addEmptyAddress, "customers.buttons.newAddress")}
+                  <Stack direction={"column"}>
+                    {addresses.map((x) => (
+                      <AddressForm
+                        key={x.index}
+                        address={x}
+                        onDelete={deleteAddressForm}
+                        setAddress={(updatedAddressData) =>
+                          updateAddress(x.index, updatedAddressData)
+                        }
+                      ></AddressForm>
+                    ))}
+                  </Stack>
+                </Stack>
+              )
+            }
+            {
+              //GOMAKEUSER info
+              selectedTab == 3 && (
+                <Stack direction={"column"} gap={"15px"}>
+                  {renderAddButton(addEmptyClient, "customers.buttons.addUser")}
+                  <Stack direction={"column"}>
+                    {users?.map((x) => (
+                      <UserForm
+                        key={x.index}
+                        user={x}
+                        onDelete={deleteUserForm}
+                        setUser={(updatedUserData) =>
+                          updateUser(x.index, updatedUserData)
+                        }
+                      ></UserForm>
+                    ))}
+                  </Stack>
+                </Stack>
+              )
+            }
+            {(isFromHomePage && showTable) &&
+              <Stack>
+                <TableFilter onChangeShowInActive={onShowInActiveCustomers} />
+                <PrimaryTable
+                  rows={getAllSimilarCustomersData().map(mapCustomerData)}
+                  headers={customerTableHeaders}
+                />
+              </Stack>
+            }
+          </div>
         </div>
-      )}
-      <div>
-        {
-          //contacts info
-          selectedTab == 1 && (
-            <Stack direction={"column"} gap={"15px"}>
-              <Stack direction={"column"}>
-                <a
-                  style={{
-                    display: "flex",
-                    justifyContent: "flex-end",
-                    alignItems: "center",
-                    gap: "5px",
-                    cursor: "pointer",
-                  }}
-                  onClick={addEmptyContact}
-                >
-                  <AddIcon />
-                  <button style={classes.buttonsStyle}>
-                    {t("customers.buttons.addContact")}
-                  </button>
-                </a>
-              </Stack>
-              <Stack direction={"column"}>
-                {contacts
-                  .filter((contact) => !contact.isMainContact)
-                  .map((x) => (
-                    <ContactForm
-                      key={x.index}
-                      contact={x}
-                      onDelete={deleteContactForm}
-                      setContact={(updatedContactData) =>
-                        updateContact(x.index, updatedContactData)
-                      }
-                    />
-                  ))}
-              </Stack>
-            </Stack>
-          )
-        }
-        {
-          //address info
-          selectedTab == 2 && (
-            <Stack direction={"column"} gap={"15px"}>
-              <Stack direction={"column"}>
-                <a
-                  style={{
-                    display: "flex",
-                    justifyContent: "flex-end",
-                    alignItems: "center",
-                    gap: "3px",
-                  }}
-                  onClick={addEmptyAddress}
-                >
-                  <AddIcon />
-                  <button style={classes.buttonsStyle}>
-                    {t("customers.buttons.newAddress")}
-                  </button>
-                </a>
-              </Stack>
-              <Stack direction={"column"}>
-                {addresses.map((x) => (
-                  <AddressForm
-                    key={x.index}
-                    address={x}
-                    onDelete={deleteAddressForm}
-                    setAddress={(updatedAddressData) =>
-                      updateAddress(x.index, updatedAddressData)
-                    }
-                  ></AddressForm>
-                ))}
-              </Stack>
-            </Stack>
-          )
-        }
-        {
-          //GOMAKEUSER info
-          selectedTab == 3 && (
-            <Stack direction={"column"} gap={"15px"}>
-              <Stack direction={"column"}>
-                <a
-                  style={{
-                    display: "flex",
-                    justifyContent: "flex-end",
-                    alignItems: "center",
-                    gap: "5px",
-                  }}
-                  onClick={addEmptyClient}
-                >
-                  <AddIcon></AddIcon>
-                  <button style={classes.buttonsStyle}>
-                    {t("customers.buttons.addUser")}
-                  </button>
-                </a>
-              </Stack>
-              <Stack direction={"column"}>
-                {users?.map((x) => (
-                  <UserForm
-                    key={x.index}
-                    user={x}
-                    onDelete={deleteUserForm}
-                    setUser={(updatedUserData) =>
-                      updateUser(x.index, updatedUserData)
-                    }
-                  ></UserForm>
-                ))}
-              </Stack>
-            </Stack>
-          )
-        }
-        <div style={{ display: "flex", justifyContent: "flex-end" }}>
-          <div style={classes.footerStyle}>
-            {showAddButton && (
-              <button
-                style={classes.autoButtonStyle}
+        <div style={classes.footerStyle}>
+          {isFromHomePage && !showTable ?
+            <SecondaryButton variant="contained" style={{ width: "fit-content" }} onClick={handleShowTable} >{t("customers.buttons.search")}</SecondaryButton>
+            :
+            showAddButton && (
+              <SecondaryButton variant="contained" style={{ width: "fit-content" }}
                 onClick={handleAddCustomer}
               >
                 {typeClient == "C"
                   ? t("customers.buttons.addCustomer")
                   : t("suppliers.buttons.addSupplier")}
-              </button>
-            )}
+              </SecondaryButton>
+            )
+          }
+          <PermissionCheck userPermission={Permissions.EDIT_CLIENT}>
             {showUpdateButton && (
-              <button
-                style={classes.autoButtonStyle}
+              <SecondaryButton variant="contained"
+                style={{ width: "fit-content" }}
                 onClick={handleEditCustomer}
               >
                 {typeClient == "C"
                   ? t("customers.buttons.updateChanges")
                   : t("suppliers.buttons.updateChanges")}
-              </button>
+              </SecondaryButton>
             )}
-          </div>
+          </PermissionCheck>
         </div>
       </div>
       <GoMakeModal

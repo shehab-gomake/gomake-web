@@ -24,12 +24,22 @@ const useSettings = ({
   const { query } = useRouter();
   const { id } = query;
   const { t } = useTranslation();
-  const { setSnackbarStateValue, alertFaultAdded, alertSuccessAdded, alertSuccessDelete,
+  const { setSnackbarStateValue, alertFaultAdded, alertSuccessAdded, alertSuccessDelete, alertFault,
     alertFaultDelete, } =
     useSnackBar();
   const [RandomId, setRandomId] = useState();
   const [selectedProductId, setSelectedProductId] = useState<string>("")
   const [openDeleteRowModal, setOpenDeleteRowModal] = useState<boolean>(false);
+  const [openPricingTypeModal, setOpenPricingTypeModal] = useState<boolean>(false);
+  const [selectPricingType, setPricingType] = useState({})
+
+  const onClickOpenPricingType = (value) => {
+    setPricingType(value)
+    setOpenPricingTypeModal(true)
+  }
+  const onClickClosePricingType = () => {
+    setOpenPricingTypeModal(false)
+  }
 
   useEffect(() => {
     setRandomId(uuidv4());
@@ -159,11 +169,12 @@ const useSettings = ({
         });
         navigate("/settings/products");
       } else {
-        setSnackbarStateValue({
-          state: true,
-          message: t("modal.addedfailed"),
-          type: "error",
-        });
+        if (res?.errors?.statusCode === 2627) {
+          alertFault(t("products.offsetPrice.admin.productAlreadyExists"));
+        }
+        else {
+          alertFaultAdded()
+        }
       }
     }
   }, [productState, RandomId]);
@@ -194,6 +205,7 @@ const useSettings = ({
           templateId: productState?.templateId?.id,
           clients: productState?.clients,
           clientsTypes: productState?.clientsTypes,
+          additionProfits: productState?.additionProfits,
         }
       );
       if (res?.success) {
@@ -205,11 +217,13 @@ const useSettings = ({
         navigate(`/settings/products/edit/${RandomId}?isParameter=${true}`);
         onClickParametersTab();
       } else {
-        setSnackbarStateValue({
-          state: true,
-          message: t("modal.addedfailed"),
-          type: "error",
-        });
+        if (res?.errors?.statusCode === 2627) {
+          alertFault(t("products.offsetPrice.admin.productAlreadyExists"));
+        }
+        else {
+          alertFaultAdded()
+        }
+
       }
     }
   }, [productState, RandomId]);
@@ -248,6 +262,7 @@ const useSettings = ({
           status: true,
           clients: productState?.clients,
           clientsTypes: productState?.clientsTypes,
+          additionProfits: productState?.additionProfits ,
           //sections: productState?.sections,
         }
       );
@@ -371,7 +386,11 @@ const useSettings = ({
     createNewProduct,
     createNewProductAndGoToParameterList,
     updatedProduct,
-    deleteProductSKURow
+    deleteProductSKURow,
+    openPricingTypeModal,
+    onClickOpenPricingType,
+    onClickClosePricingType,
+    selectPricingType
   };
 };
 

@@ -1,19 +1,19 @@
-import { useSetRecoilState, useRecoilValue } from "recoil";
-import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/router";
-
-import { useQuoteWidget } from "@/pages-components/admin/home/widgets/quote-widget/use-quote-widget";
-import { quoteConfirmationState, quoteItemState } from "@/store";
-import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { MinusIcon } from "@/icons/minus-icon";
 import { PlusNewIcon } from "@/icons";
-
 import { AutoCompleteUpdatedValue } from "../auto-complete-updated";
 import { AddressModal } from "./address-widget/address-modal";
 import { InputUpdatedValues } from "../input-updated-values";
-import { addressModalState } from "./address-widget/state";
 import { useStyle } from "./style";
+import { useBusinessWidget } from "./use-business-widget";
+import { CustomerCardWidget } from "@/widgets/customer-card-modal";
+import { isValidCustomer } from "@/utils/helpers";
+import { CUSTOMER_ACTIONS } from "@/pages/customers/enums";
+import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
+import { PermissionCheck } from "@/components/CheckPermission/check-permission";
+import { Permissions } from "@/components/CheckPermission/enum";
+import { GoMakeDeleteModal } from "@/components";
+import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 
 const BusinessNewWidget = ({
   values,
@@ -39,30 +39,58 @@ const BusinessNewWidget = ({
   onClickDeleteAddress,
   documentType,
   isQuoteConfirmation = false,
-
+  onBlurClientName,
+  isUpdateClientName,
+  setIsUpdateClientName,
+  clientName,
+  setClientName
 }) => {
   const { classes } = useStyle();
-  const { t } = useTranslation();
-  const router = useRouter()
-  const [isConfirmation, setIsConfirmation] = useState();
-  const { renderOptions, checkWhatRenderArray } = useQuoteWidget({ documentType });
-  const setOpenModal = useSetRecoilState<boolean>(addressModalState);
-  const [purchaseNumber, setPurchaseNumber] = useState(values?.purchaseNumber || t("sales.quote.noPurchaseNumber"));
-  const quoteStateValue = useRecoilValue<any>(quoteItemState);
-  const quoteConfirm = useRecoilValue<any>(quoteConfirmationState);
-  const isReceipt = documentType === DOCUMENT_TYPE.receipt;
-  const isExistReceipt = isReceipt && !router?.query?.isNewCreation;
+  const {
+    t,
+    setIsConfirmation,
+    checkWhatRenderArray,
+    setOpenModal,
+    purchaseNumber,
+    setPurchaseNumber,
+    quoteStateValue,
+    quoteConfirm,
+    isReceipt,
+    isExistReceipt,
+    taxConfirmationNumber,
+    setTaxConfirmationNumber,
+    isInvoice,
+    isUpdateTaxNumber,
+    setIsUpdateTaxNumber,
+    onBlurTaxNumber,
+    mappedCustomers,
+    openCustomerModal,
+    setOpenCustomerModal,
+    customer,
+    setCustomer,
+    onCustomerAdd,
+    canEditDocument,
+
+  } = useBusinessWidget({ values, documentType });
 
   useEffect(() => {
-    setPurchaseNumber(values?.purchaseNumber || t("sales.quote.noPurchaseNumber"));
+    setPurchaseNumber(values?.purchaseNumber);
   }, [values?.purchaseNumber]);
 
-  const mappedCustomers = renderOptions().map(customer => ({
-    text: customer?.name,
-    id: customer?.id,
-    ...customer
-  }));
+  useEffect(() => {
+    setTaxConfirmationNumber(values?.taxConfirmationNumber);
+  }, [values?.taxConfirmationNumber]);
 
+  const [openChangeClientModal, setOpenChangeClientModal] = useState(false)
+  const [selectedClient, setSelectedClient] = useState({})
+  const onClickCloseChangeClientModal = () => {
+    setOpenChangeClientModal(false);
+  }
+  const onClickopenChangeClientModal = (value) => {
+    setSelectedClient(value)
+    setOpenChangeClientModal(true);
+
+  }
   return (
     <>
       <div style={classes.businessContainerStyle}>
@@ -71,22 +99,49 @@ const BusinessNewWidget = ({
           value={isQuoteConfirmation ? quoteConfirm?.client?.name : quoteStateValue?.client?.name ? quoteStateValue?.client?.name : t("sales.quote.selectBusinessName")}
           options={mappedCustomers}
           onBlur={onBlurBusinessName}
-          isUpdate={quoteStateValue?.isEditable || router.query.isNewCreation ? isUpdateBusinessName : quoteStateValue?.isEditable}
+          isUpdate={canEditDocument && isUpdateBusinessName}
           setIsUpdate={isQuoteConfirmation || isExistReceipt ? setIsConfirmation : setIsUpdateBusinessName}
           getOptionLabel={(item) => item.text}
-          onChange={(e, value) => onChangeSelectBusiness(value)}
+          onChange={(e, value) => onClickopenChangeClientModal(value)}
           onChangeTextField={checkWhatRenderArray}
         />
+
+
+        <PermissionCheck userPermission={Permissions.ADD_CLIENT}>
+          {(!isQuoteConfirmation && documentType === DOCUMENT_TYPE.quote) && <span style={classes.plusStyle} onClick={() => setOpenCustomerModal(true)}>+</span>}
+        </PermissionCheck>
+        {
+          quoteStateValue?.client?.isOccasional &&
+          <InputUpdatedValues
+            value={clientName}
+            placeholder={clientName ? clientName : t("reports.enterClientName")}
+            label={t("reports.clientName")}
+            onBlur={onBlurClientName}
+            setIsUpdate={setIsUpdateClientName}
+            isUpdate={isUpdateClientName}
+            onInputChange={(v) => setClientName(v)}
+          />
+        }
         {!isReceipt && <InputUpdatedValues
           value={purchaseNumber}
+          placeholder={purchaseNumber ? purchaseNumber : t("sales.quote.noPurchaseNumber")}
           label={t("sales.quote.purchaseNumber")}
           onBlur={() => onBlurPurchaseNumber(purchaseNumber)}
-          isUpdate={quoteStateValue?.isEditable || router.query.isNewCreation ? isUpdatePurchaseNumber : quoteStateValue?.isEditable}
+          isUpdate={canEditDocument && isUpdatePurchaseNumber}
           setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdatePurchaseNumber}
           onInputChange={(v) => setPurchaseNumber(v)}
         />}
+        {isInvoice && <InputUpdatedValues
+          value={taxConfirmationNumber}
+          placeholder={taxConfirmationNumber ? taxConfirmationNumber : t("sales.quote.noTaxConfirmationNumber")}
+          label={t("sales.quote.taxConfirmationNumber")}
+          onBlur={onBlurTaxNumber}
+          isUpdate={canEditDocument && isUpdateTaxNumber}
+          setIsUpdate={setIsUpdateTaxNumber}
+          onInputChange={(v) => setTaxConfirmationNumber(v)}
+        />}
         <InputUpdatedValues
-          value={isQuoteConfirmation ? `${selectConfirmBusiness?.code}` : `${quoteStateValue?.client?.code}`}
+          value={isQuoteConfirmation ? `${quoteConfirm?.client?.code}` : `${quoteStateValue?.client?.code}`}
           label={t("sales.quote.businessCode")}
           onBlur={onBlurBusinessCode}
           setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdateBusinessCode}
@@ -96,7 +151,7 @@ const BusinessNewWidget = ({
           value={selectedAgent?.text ? selectedAgent.text : t("sales.quote.selectAgent")}
           options={agentListValue}
           onBlur={onBlurAgent}
-          isUpdate={quoteStateValue?.isEditable || router.query.isNewCreation ? isUpdateAgent : quoteStateValue?.isEditable}
+          isUpdate={canEditDocument && isUpdateAgent}
           setIsUpdate={isQuoteConfirmation || isExistReceipt ? setIsConfirmation : setIsUpdateAgent}
           getOptionLabel={(item) => item.text}
           onChange={(e, value) => updateAgent(value)}
@@ -108,11 +163,11 @@ const BusinessNewWidget = ({
           onBlur={onBlurAddress}
           isUpdate={false}
           setIsUpdate={setIsUpdateAddress}
-          flag={!isQuoteConfirmation}
+          flag={!isQuoteConfirmation && canEditDocument}
           onClickFlag={() => setOpenModal(true)}
         />}
         {values?.documentAddresses?.length > 0 ?
-          (!isQuoteConfirmation && <div
+          ((!isQuoteConfirmation && canEditDocument) && <div
             style={classes.addNewAddressStyle}
             onClick={() => null}
           >
@@ -120,7 +175,7 @@ const BusinessNewWidget = ({
             <div style={classes.addNewAddressTextStyle} onClick={() => onClickDeleteAddress(values?.documentAddresses[0])}>{t("sales.quote.removeAddress")}</div>
           </div>)
           :
-          (!isQuoteConfirmation &&
+          ((!isQuoteConfirmation && canEditDocument) &&
             <div style={classes.addNewAddressStyle} >
               <PlusNewIcon />
               <div style={classes.addNewAddressTextStyle} onClick={() => setOpenModal(true)} >{t("sales.quote.addAddress")}</div>
@@ -128,6 +183,32 @@ const BusinessNewWidget = ({
           )}
         {!isQuoteConfirmation && <AddressModal isUpdate={values?.documentAddresses?.length > 0} documentType={documentType} />}
       </div>
+      <CustomerCardWidget
+        isValidCustomer={isValidCustomer}
+        customerAction={CUSTOMER_ACTIONS.Add}
+        codeFlag={false}
+        typeClient={"C"}
+        onCustomerAdd={onCustomerAdd}
+        openModal={openCustomerModal}
+        modalTitle={t("customers.modal.addTitle")}
+        onClose={() => setOpenCustomerModal(false)}
+        showAddButton={true}
+        customer={customer}
+        setCustomer={setCustomer}
+        onChangeSelectBusiness={onChangeSelectBusiness}
+        isFromCartPage={true}
+      />
+      <GoMakeDeleteModal
+        icon={
+          <WarningAmberIcon style={{ width: 60, height: 60, color: "red" }} />
+        }
+        openModal={openChangeClientModal}
+        onClose={onClickCloseChangeClientModal}
+        title={t("products.profits.titleChangeClient")}
+        subTitle={t("products.profits.subTitleChangeClient")}
+        yesBtn={t("sales.quote.yesBtn")}
+        onClickDelete={() => onChangeSelectBusiness(selectedClient)}
+      />
     </>
   );
 };

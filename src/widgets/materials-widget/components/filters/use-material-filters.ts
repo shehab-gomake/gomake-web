@@ -113,7 +113,8 @@ const useMaterialFilters = () => {
     materialTableFilters,
     setFilterValue,
     getFilterValue,
-    materialCategory
+    materialCategory,
+    filters
   };
 };
 

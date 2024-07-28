@@ -29,7 +29,8 @@ const UpdateValueInput = ({
 }: IUpdateValueInputProps) => {
     const { errorColor, successColor, secondColor } = useGomakeTheme();
     const handleTextChange = (event: ChangeEvent<HTMLInputElement>) => {
-        onInputChange(event.target.value);
+        const trimmedValue = event.target.value.trimStart();
+        onInputChange(trimmedValue);
     };
     const handleKeyPress = (event: KeyboardEvent<HTMLInputElement>) => {
         if (event.key === "Enter") {

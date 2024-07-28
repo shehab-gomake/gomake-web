@@ -28,6 +28,27 @@ const useStyle = () => {
         width: "100%",
 
       },
+      addNoteBtn: {
+        color: '#344054',
+        borderColor: '#D0D5DD',
+        borderRadius: '8px',
+        height: '33px',
+        '& .MuiButton-startIcon': {
+          ...(direction === 'rtl' && { margin: '8px 0' }),
+        },
+        '&:hover': {
+          backgroundColor: "transparent",
+          borderColor: '#D0D5DD',
+        },
+        '&:focus': {
+          outline: 'none',
+          borderColor: '#D0D5DD',
+        },
+        '&:active': {
+          outline: 'none',
+          borderColor: '#D0D5DD',
+        },
+      },
       actionContainerBorder: "2px solid " + primaryColor(500),
       toggleActionButton: {
         backgroundColor: primaryColor(50),

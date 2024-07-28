@@ -12,7 +12,14 @@ const useStyle = () => {
         alignItems: "center",
         justifyContent: "space-between" as "space-between",
         width: "100%",
-        
+      },
+      insideStyle: {
+        width: "620px",
+        borderRadius: 8,
+        gap: "8px",
+        height: "300px",
+        maxHeight: 400,
+        backgroundColor: "#F7F7F7",
       },
     };
   }, [theme]);

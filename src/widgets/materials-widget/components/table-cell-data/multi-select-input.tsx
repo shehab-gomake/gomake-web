@@ -41,8 +41,7 @@ const MultiSelectInput = ({
     }
   });
 
-  const selectedLabels = values
-    .map((selectedId) => options.find((opt) => opt.value === selectedId)?.label)
+  const selectedLabels = values?.map((selectedId) => options?.find((opt) => opt?.value === selectedId)?.label)
     .filter((label) => label !== null && label !== undefined);
 
   const handleSelectCheck = (

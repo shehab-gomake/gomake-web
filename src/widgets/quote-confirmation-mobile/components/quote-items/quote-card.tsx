@@ -12,6 +12,7 @@ import { useRecoilValue } from 'recoil';
 import { quoteConfirmationState } from '@/store';
 import { useTranslation } from "react-i18next";
 import { useQuoteConfirmation } from '@/pages-components/quote-confirmation/use-quote-confirmation';
+import { QUOTE_STATUSES } from '@/pages-components/quotes/enums';
 
 
 interface IProps {
@@ -33,13 +34,13 @@ const QuoteCard = ({ key, item, index }: IProps) => {
             <Stack direction={'column'} alignItems={"flex-start"} gap={"16px"} >
                 <Stack sx={{ padding: "0px" }} direction="column" spacing={"4px"}>
                     <Stack sx={classes.firstHeader}>
-                        <Checkbox
+                       {(!quoteConfirm?.isConfirmed && quoteConfirm?.documentStatus !== QUOTE_STATUSES.Canceled) &&  <Checkbox
                             icon={<CheckboxIcon />}
                             checkedIcon={<CheckboxCheckedIcon />}
                             style={{ padding: "0px" }}
                             checked={item?.isChecked}
                             onChange={(checked) => handleItemCheck(checked, item.id)}
-                        />
+                        />}
                         <Typography sx={classes.headerStyle} >{t("sales.quote.item") + " #" + (index + 1)}</Typography>
                     </Stack>
                     <Typography sx={classes.detailsStyle}>{"011" + " • " + item?.productName}</Typography>

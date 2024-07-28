@@ -47,7 +47,7 @@ const useMaterialsCategories = (isAdmin: boolean) => {
       if (res.success) {
 
         setMaterialCategoryData(
-          res.data?.result?.data?.map((row) => ({ ...row, checked: isAllMaterialsChecked }))
+          res.data?.result?.data?.map((row) => ({ ...row, checked: false }))
         );
         setPagesCount(Math.ceil(res.data?.result?.totalItems / pageSize));
         const filters = res.data?.filters;

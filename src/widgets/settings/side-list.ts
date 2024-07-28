@@ -70,7 +70,6 @@ export const list: IListItem[] = [
     icon: DollarCircleIcon,
     path: "finances",
     permission: Permissions.SHOW_FINANCE,
-
   },
   {
     component: TranslationsWidget,

@@ -15,6 +15,9 @@ import {MachinesSideList} from "@/components/containers/machines-container/side-
 import {NavigationButtons} from "@/widgets/machines/components/forms/navigationButtons";
 import {StepType} from "@reactour/tour";
 import {useGoMakeTour} from "@/hooks/use-go-make-tour";
+import {GoMakeModal} from "@/components";
+import {AddMachineModal} from "@/widgets/machines/customer/add-machine-modal";
+import { useUserPermission } from "@/hooks/use-permission";
 
 const CustomerEditMachines = () => {
     const router = useRouter();
@@ -27,13 +30,15 @@ const CustomerEditMachines = () => {
     const {getPrintHouseMachinesList, setMachine, getAndSetMachines} = usePrintHouseMachines();
     const {updateMachine} = usePrintHouseAddMachine();
     const {t} = useTranslation();
+    const [openAddMachineModal, setOpenAddMachineModal] = useState<boolean>(false);
+    const { CheckPermission } = useUserPermission();
 
     useEffect(() => {
         getAndSetMachines();
         if (categoryId) {
             const category = categories.find(category => category.id === categoryId)
             setCategoryName(category?.name ? category?.name : '');
-            if (category) setMachineSteps(getSteps(category.id, false));
+            if (category) setMachineSteps(getSteps(category.id, false , CheckPermission));
         }
     }, [categoryId]);
     const navigateBack = () => {
@@ -52,7 +57,8 @@ const CustomerEditMachines = () => {
     const ActionsFooter = () => {
         return activeStep >= 0 &&
             <NavigationButtons canAddMachine={activeStep + 1 === machineSteps.length}
-                               canUpdate={true} onClickAddMachine={() => {}}
+                               canUpdate={true} onClickAddMachine={() => {
+            }}
                                onClickUpdate={updateMachine} onClickNext={navigateNext} onClickBack={navigateBack}
                                hasBack={activeStep > 0} hasNext={activeStep + 1 < machineSteps.length}/>
     }
@@ -86,20 +92,28 @@ const CustomerEditMachines = () => {
     ]
     const {} = useGoMakeTour(editMachinesSteps, []);
     return (
-        <MachinesContainer side={Side()} header={t(categoryName)}
-                           sideDataTour={'machinesList'}
-                           bodyDataTour={'editMachineStepper'}
-                           actions={ActionsFooter()}
-                           sideAction={<SecondaryButton variant={'contained'} style={{width: '80%', margin: 'auto'}}
-                                                                  href={`/machines/add-machine/category/${categoryId}`}>{t('navigationButtons.add')}</SecondaryButton>}
-                           subHeader={selectedMachine?.manufacturer && selectedMachine?.nickName ? selectedMachine?.manufacturer + ' - ' + selectedMachine?.nickName : ''}>
-            {!!selectedMachine?.id &&
-                <MachineStepper steps={machineSteps} activeStep={activeStep} previousStep={navigateBack}
-                                nextStep={navigateNext} actionButtonClicked={updateMachine}
-                                moveToStep={moveToStepByIndex}
-                                isAddForm={false}/>
-            }
-        </MachinesContainer>
+        <>
+            <MachinesContainer side={Side()} header={t(categoryName)}
+                               sideDataTour={'machinesList'}
+                               bodyDataTour={'editMachineStepper'}
+                               actions={ActionsFooter()}
+                               sideAction={<SecondaryButton onClick={() => setOpenAddMachineModal(true)}
+                                                            variant={'contained'} style={{
+                                   width: '80%',
+                                   margin: 'auto'
+                               }}>{t('navigationButtons.add')}</SecondaryButton>}
+                               subHeader={selectedMachine?.manufacturer && selectedMachine?.nickName ? selectedMachine?.manufacturer + ' - ' + selectedMachine?.nickName : ''}>
+                {!!selectedMachine?.id &&
+                    <MachineStepper steps={machineSteps} activeStep={activeStep} previousStep={navigateBack}
+                                    nextStep={navigateNext} actionButtonClicked={updateMachine}
+                                    moveToStep={moveToStepByIndex}
+                                    isAddForm={false}/>
+                }
+            </MachinesContainer>
+            <GoMakeModal insideStyle={{width: 'fit-content', height: 'fit-content'}} openModal={openAddMachineModal} onClose={()=> setOpenAddMachineModal(false)} modalTitle={t('tabs.addMachine')}>
+                <AddMachineModal closeModal={()=>setOpenAddMachineModal(false)}/>
+            </GoMakeModal>
+        </>
 
     );
 }

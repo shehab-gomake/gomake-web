@@ -29,6 +29,7 @@ import {
   materialsClientsState,
   materialsMachinesState,
   materialsUnCheckedState,
+  materialTypeTableState,
   openAddRowModalState,
   selectedSupplierIdState,
 } from "@/widgets/materials-widget/state";
@@ -42,10 +43,11 @@ import { MaterialMenuWidget } from "./components/more-circle";
 import cloneDeep from "lodash.clonedeep";
 import { SideLeftMenuWidget } from "./components/side-list-menu";
 import { EMaterialActiveFilter } from "@/widgets/materials-widget/enums";
+import { useAllProductsDropDownList } from "@/hooks/use-products-drop-down-list";
 
 const useMaterials = (isAdmin: boolean) => {
   const { query, push, replace } = useRouter();
-
+  const { productList } = useAllProductsDropDownList()
   const { materialType, materialCategory } = query;
   const [selectedTableRow, setSelectedTableRow] = useState<IMaterialCategoryRow>();
 
@@ -91,6 +93,7 @@ const useMaterials = (isAdmin: boolean) => {
   );
   const [materialName, setMaterialName] = useState<string>();
   const setMaterialActions = useSetRecoilState(materialActionState);
+  const setMaterialTypeTable = useSetRecoilState(materialTypeTableState);
   const setDefaultSupplier = useSetRecoilState(selectedSupplierIdState);
   const [activeFilter, setActiveFilter] = useRecoilState(activeFilterState);
   const [materialFilter, setMaterialFilter] = useRecoilState(filterState);
@@ -139,7 +142,7 @@ const useMaterials = (isAdmin: boolean) => {
       if (res?.success) {
         setMaterialCategories(res?.data);
       } else {
-        push("/materials");
+        // push("/materials");
       }
     };
     if (isAdmin) {
@@ -153,14 +156,18 @@ const useMaterials = (isAdmin: boolean) => {
     return materialCategories.map((category) => ({
       text: category.categoryName,
       value: category.categoryKey,
-      icon: category.isDeletable
-        ? () => (
-          <SideLeftMenuWidget
-            onClickOpenDeleteRowModal={onClickOpenDeleteRowModal}
-            category={category}
-          />
-        )
-        : null,
+      icon: () => <SideLeftMenuWidget
+        onClickOpenDeleteRowModal={onClickOpenDeleteRowModal}
+        category={category}
+      />
+      // icon: category.isDeletable
+      //   ? () => (
+      //     <SideLeftMenuWidget
+      //       onClickOpenDeleteRowModal={onClickOpenDeleteRowModal}
+      //       category={category}
+      //     />
+      //   )
+      //   : null,
     }));
   }, [materialCategories]);
 
@@ -172,6 +179,7 @@ const useMaterials = (isAdmin: boolean) => {
           (item) => item.key !== "Active"
         );
         setMaterialHeaders(updatedArray);
+        setMaterialTypeTable(res.data);
         setMaterialActions(res.data?.actions);
         setMaterialName(res.data?.materialTypeName);
       }
@@ -283,7 +291,6 @@ const useMaterials = (isAdmin: boolean) => {
       const filteredHeaders = isAdmin
         ? materialHeaders.filter((x) => x.key !== "stock")
         : materialHeaders.filter((header) => !header.isForAdmin);
-
       return [
         <Checkbox
           onChange={(e, checked) => onChangeRowCheckBox(dataRow.id, checked)}
@@ -387,6 +394,7 @@ const useMaterials = (isAdmin: boolean) => {
     selectedTableRow,
     materialName,
     getClientsMaterials,
+    productList
   };
 };
 

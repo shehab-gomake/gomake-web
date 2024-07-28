@@ -2,10 +2,11 @@ import * as React from "react";
 import TextField from "@mui/material/TextField";
 import { styled } from "@mui/material/styles";
 import Autocomplete from "@mui/material/Autocomplete";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import Stack from "@mui/material/Stack";
-import {DotsLoader} from "@/components/dots-loader/dots-Loader";
 
 const StyledAutocomplete: any = styled(Autocomplete)((props: any) => {
   return {
@@ -73,9 +74,10 @@ const GoMakeAutoComplate = ({
   defaultValue,
   disabled,
   multiple = false,
+  arrowColor,
   onChangeTextField,
   PaperComponent,
-    loading
+  withArrow = false,
 }: {
   value?: any;
   onChange?: any;
@@ -93,7 +95,7 @@ const GoMakeAutoComplate = ({
   arrowColor?: any;
   onChangeTextField?: any;
   PaperComponent?: any;
-  loading?: boolean;
+  withArrow?: boolean;
 }) => {
   const [selectedOption, setSelectedOption] = useState<any>();
   const { t } = useTranslation();
@@ -117,9 +119,8 @@ const GoMakeAutoComplate = ({
       style={style}
       options={options}
       disabled={disabled}
-      popupIcon={""}
-      renderInput={(params: any) => loading ?
-          <DotsLoader/> :
+      popupIcon={withArrow ? <ArrowDropDownIcon /> : ""} // Conditionally render popupIcon based on withArrow prop
+      renderInput={(params: any) => (
         <TextField
           {...params}
           placeholder={defaultValue?.label || placeholder}
@@ -127,24 +128,24 @@ const GoMakeAutoComplate = ({
           InputProps={
             dir === "rtl"
               ? {
-                  ...params.InputProps,
-                  startAdornment: (
-                    <Stack
-                      display={"flex"}
-                      gap={"1px"}
-                      flexDirection={"row-reverse"}
-                    >
-                      {params.InputProps.endAdornment.props.children}
-                    </Stack>
-                  ),
-                  endAdornment: null,
-                }
+                ...params.InputProps,
+                startAdornment: (
+                  <Stack
+                    display={"flex"}
+                    gap={"1px"}
+                    flexDirection={"row-reverse"}
+                  >
+                    {params.InputProps.endAdornment.props.children}
+                  </Stack>
+                ),
+                endAdornment: null,
+              }
               : {
-                  ...params.InputProps,
-                }
+                ...params.InputProps,
+              }
           }
         />
-      }
+      )}
       defaultValue={defaultValue}
       autoHighlight={autoHighlight}
       getOptionLabel={getOptionLabel}
@@ -164,4 +165,4 @@ const GoMakeAutoComplate = ({
   );
 };
 
-export { GoMakeAutoComplate, StyledAutocomplete };
+export { GoMakeAutoComplate };

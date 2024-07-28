@@ -14,8 +14,9 @@ import { useEffect, useState } from "react";
 import { selectedOutputsProps, selectedParametersProps } from "../../interface";
 import { EParameterTypes } from "@/enums";
 import { useRouter } from "next/router";
-import { GoMakeDatepicker } from "@/components/date-picker/date-picker-component";
 import { DeleteMenuIcon } from "@/widgets/quote-new/more-circle/icons/delete-menu";
+import { ScheduleSendWidget } from "@/pages-components/quotes/widgets/schedule-send-widget/schedule-send-widget";
+import { GoMakeDatepicker } from "@/components/date-picker/date-picker-component";
 
 const AddRuleModal = ({
   openModal,
@@ -28,7 +29,9 @@ const AddRuleModal = ({
   isPropertiesWidge,
   selectedProperties,
   getProperitesService,
-  isQuoteWidge = false
+  isQuoteWidge = false,
+  filterData,
+  onCreate
 }: any) => {
   const { clasess } = useStyle();
   const { t } = useTranslation();
@@ -41,7 +44,6 @@ const AddRuleModal = ({
     parametersStateValue,
     Outputs,
     materialsTypes,
-    machines,
     clients,
     expression,
     mainconditions,
@@ -49,8 +51,6 @@ const AddRuleModal = ({
     conditions,
     GroupByOptions,
     agentsCategories,
-    resetDatePicker,
-    onSelectDeliveryTimeDates,
     create,
     createProperties,
     setPropertieValue,
@@ -60,7 +60,17 @@ const AddRuleModal = ({
     addRule,
     createForQuoteWidget,
     setRules,
-    initialRule
+    initialRule,
+    openScheduleModal,
+    onCloseScheduleModal,
+    onOpenScheduleModal,
+    renderOptions,
+    checkWhatRenderArray,
+    onSelectDeliveryTimeDates,
+    resetDatePicker,
+    mappingRules,
+    categoriesList,
+    employeeList
   } = useAddRuleModal({
     typeExceptionSelected,
     selectedPricingBy,
@@ -71,9 +81,12 @@ const AddRuleModal = ({
     selectedProperties,
     getProperitesService,
     isQuoteWidge,
+    filterData,
+
   });
   const [selectedCategories, setSelectedCategories] = useState<any>("")
   const [selectedStatment2, setSelectedStatment2] = useState<any>("")
+  const [selectedProfitModel, setSelectedProfitModel] = useState<number>(null);
   const router = useRouter();
   const [selectedOutputs, setSelectedOutputs] =
     useState<selectedOutputsProps>();
@@ -115,7 +128,7 @@ const AddRuleModal = ({
                     : allMachincesList?.map((value) => {
                       return {
                         ...value,
-                        label: value?.name,
+                        label: `${value?.manufacturer} - ${value?.model}`,
                         id: value.id,
                       };
                     })
@@ -337,9 +350,7 @@ const AddRuleModal = ({
         </div>
         <div style={clasess.statusFilterContainer}>
           <h3 style={clasess.filterLabelStyle}>{t("boardMissions.dateRange")}</h3>
-          <div style={{ width: "100%" }}>
-            <GoMakeDatepicker onChange={onSelectDeliveryTimeDates} placeholder={t("boardMissions.chooseDate")} reset={resetDatePicker} />
-          </div>
+          <GoMakeDatepicker onChange={onSelectDeliveryTimeDates} placeholder={t("boardMissions.chooseDate")} reset={resetDatePicker} />
         </div>
       </div>
     );
@@ -429,7 +440,6 @@ const AddRuleModal = ({
                               })}
                               style={clasess.dropDownListContainer}
                               placeholder={t("properties.statment")}
-                              // getOptionLabel={(value: any) => value?.name}
                               value={rule.statement2}
                               onChange={(e, value) => {
                                 handleChange(index, "statement2", value);
@@ -495,17 +505,17 @@ const AddRuleModal = ({
                       <GoMakeAutoComplate
                         options={
                           router.query.actionId
-                            ? machines?.map((value) => {
+                            ? allMachincesList?.map((value) => {
                               return {
                                 ...value,
-                                label: value?.name,
+                                label: `${value?.manufacturer} - ${value?.model}`,
                                 id: value.id,
                               };
                             })
                             : allMachincesList?.map((value) => {
                               return {
                                 ...value,
-                                label: value?.name,
+                                label: `${value?.manufacturer} - ${value?.model}`,
                                 id: value.id,
                               };
                             })
@@ -527,21 +537,22 @@ const AddRuleModal = ({
                         {t("properties.statment")}
                       </label>
                       <GoMakeAutoComplate
-                        options={clients?.map((value) => {
+                        options={renderOptions()?.map((value) => {
                           return {
                             ...value,
                             label: value?.name,
                             id: value.id,
                           };
                         })}
+                        getOptionLabel={(option: any) => `${option.name}`}
+                        onChangeTextField={checkWhatRenderArray}
                         style={clasess.dropDownListContainer}
-                        placeholder={t("properties.statment")}
+                        placeholder={t("sales.quote.chooseCustomer")}
                         value={rule.statement2}
                         onChange={(e, value) => {
                           handleChange(index, "statement2", value)
                           handleChange(index, "statement", null);
-                        }
-                        }
+                        }}
                       />
                     </div>
                   )}
@@ -555,17 +566,17 @@ const AddRuleModal = ({
                           key={selectedCategories?.id + index + selectedStatment2?.id}
                           options={
                             router.query.actionId
-                              ? machines?.map((value) => {
+                              ? allMachincesList?.map((value) => {
                                 return {
                                   ...value,
-                                  label: value?.name,
+                                  label: `${value?.manufacturer} - ${value?.model}`,
                                   id: value.id,
                                 };
                               })
                               : allMachincesList?.map((value) => {
                                 return {
                                   ...value,
-                                  label: value?.name,
+                                  label: `${value?.manufacturer} - ${value?.model}`,
                                   id: value.id,
                                 };
                               })
@@ -668,7 +679,7 @@ const AddRuleModal = ({
                   )}
                   {rule.category?.id === "Property input" && (
                     <>
-                      {rules[index]?.statement2?.type === 0 ? (
+                      {rules[index]?.statement2?.type === 0 || rules[index]?.statement2?.type === 5 ? (
                         <div>
                           <label style={clasess.inputLable}>
                             {t("properties.statment")}
@@ -708,6 +719,52 @@ const AddRuleModal = ({
                         </div>
                       )}
                     </>
+                  )}
+                  {rule.category?.id === "Machine category" && (
+                    <div>
+                      <label style={clasess.inputLable}>
+                        {t("properties.statment")}
+                      </label>
+
+                      <GoMakeAutoComplate
+                        options={categoriesList?.map((value) => {
+                          return {
+                            ...value,
+                            label: value.name,
+                            id: value.id,
+                          };
+                        })}
+                        getOptionLabel={(value) => t(`${value.name}`)}
+                        style={clasess.dropDownListContainer}
+                        placeholder={t("properties.statment")}
+                        value={rule.statement2}
+                        onChange={(e, value) => {
+                          handleChange(index, "statement2", value)
+                          handleChange(index, "statement", null);
+                        }
+                        }
+                      />
+                    </div>
+                  )}
+
+                  {rule.category?.id === "Employee" && (
+                    <div>
+                      <label style={clasess.inputLable}>
+                        {t("properties.statment")}
+                      </label>
+
+                      <GoMakeAutoComplate
+                        options={employeeList}
+                        style={clasess.dropDownListContainer}
+                        placeholder={t("properties.statment")}
+                        value={rule.statement2}
+                        onChange={(e, value) => {
+                          handleChange(index, "statement2", value)
+                          handleChange(index, "statement", null);
+                        }
+                        }
+                      />
+                    </div>
                   )}
                   {rules.length > 1 && (
                     <div
@@ -752,26 +809,61 @@ const AddRuleModal = ({
               />
             </div>
           )}
+          {typeExceptionSelected === ETypeException.PROFIT && (
+            <div style={{ width: "20%" }}>
+              <div style={clasess.selectTypeStyle}>
+                {t("products.profits.exceptions.additionalProfit")}
+              </div>
+              <GoMakeAutoComplate
+                options={[
+                  { label: "Action", value: 0 },
+                  { label: "Product", value: 1 },
+                ]}
+                placeholder={t("products.profits.exceptions.selectValue")}
+                style={clasess.autoComplateStyle}
+                onChange={(e: any, value: any) => {
+                  setSelectedProfitModel(value?.value);
+                }}
+              />
+            </div>
+          )}
 
           {isPropertiesWidge && _renderInptsForProperties()}
           {isQuoteWidge && _renderInptsForQuotes()}
 
 
           <div style={clasess.btnContainer}>
+            {
+              isQuoteWidge && <GomakePrimaryButton
+                style={clasess.sendBtn}
+                onClick={onOpenScheduleModal}
+              >
+                {t("properties.scheduleSend")}
+              </GomakePrimaryButton>
+            }
             <GomakePrimaryButton
               style={clasess.sendBtn}
               onClick={() => {
-                if (isPropertiesWidge) {
-                  createProperties();
-                } else if (isQuoteWidge) {
-                  createForQuoteWidget();
+                if (onCreate) {
+                  onCreate({
+                    exceptionConditionProperties: mappingRules(),
+                    profitsModel: selectedProfitModel,
+                    expression: expression
+                  })
                 } else {
-                  create();
+                  if (isPropertiesWidge) {
+                    createProperties();
+                  } else if (isQuoteWidge) {
+                    createForQuoteWidget();
+                  } else {
+                    create();
+                  }
                 }
               }}
             >
               {t("properties.create")}
             </GomakePrimaryButton>
+
           </div>
           <div>
             <div>
@@ -793,6 +885,7 @@ const AddRuleModal = ({
             </div>
           </div>
         </div>
+        <ScheduleSendWidget openModal={openScheduleModal} onCloseModal={onCloseScheduleModal} />
       </GoMakeModal>
     </>
   );

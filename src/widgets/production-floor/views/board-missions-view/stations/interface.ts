@@ -16,9 +16,16 @@ export interface IBoardMissionsStation {
     outputs: IOutput[];
     source: EWorkSource;
     index: number;
+    id: string;
 }
 
 export interface IBoardMissionsStationTimer {
     isTimerRunning: boolean,
     totalRunningTime: number
+}
+
+export interface IBoardMissionsSubWorkFlow {
+    productType: string;
+    actions: IBoardMissionsStation[];
+    waitingFor: string[];
 }

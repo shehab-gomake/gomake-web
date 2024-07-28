@@ -30,3 +30,38 @@ export enum DocumentsTypeReportList {
     NewBoardMissionNumber,
     SameBoardMissionNumber,
 }
+
+export enum GraphicsTypesParam
+{
+    PriceHour = 1,
+    PriceRegularHour
+}
+export enum SampleTypeParm
+{
+    Full = 1,
+    PrintOnly
+}
+
+export enum SortByTypes
+{
+    Defualt = 1,
+    Date = 2,
+    ProductABC = 3,
+    WorkNameABC = 4
+}
+
+export enum DocumentTypeEnums
+{
+    Quote,
+    Order,
+    DeliveryNote,
+    Invoice,
+    Receipt,
+    DeliveryNoteRefund,
+    InvoiceRefund, 
+    GeneralLedgerReport,
+    PurchaseOrder,
+    PurchaseInvoice,
+    PurchaseInvoiceRefund,
+    BoardMission
+}

@@ -5,11 +5,12 @@ import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { getDocumentPdfApi } from "@/services/api-service/generic-doc/documents-api";
 import { approveDocumentItemsApi, rejectDocumentApi, updateDocumentCommentsConfirmationApi } from "@/services/api-service/generic-doc/quote-confirmation-api";
 import { QuoteStatuses } from "../total-price-and-vat/enums";
+import { useQuoteConfirmation } from "@/pages-components/quote-confirmation/use-quote-confirmation";
 
 const useButtonsConfirmContainer = () => {
     const { callApi } = useGomakeAxios();
     const quoteConfirm = useRecoilValue<any>(quoteConfirmationState);
-    const { alertFaultUpdate, alertSuccessUpdate , alertFault} = useSnackBar();
+    const { alertFaultUpdate, alertSuccessUpdate, alertFault } = useSnackBar();
     const [reasonText, setReasonText] = useState("");
     const [anchorElRejectBtn, setAnchorElRejectBtn] = useState<null | HTMLElement>(null);
     const openRejectBtn = Boolean(anchorElRejectBtn);
@@ -17,6 +18,7 @@ const useButtonsConfirmContainer = () => {
     const [openRejectModal, setOpenRejectModal] = useState(false);
     const [rejectStatus, setRejectStatus] = useState<QuoteStatuses>();
     const [isButtonClicked, setIsButtonClicked] = useState(false);
+    const { getQuoteConfirmation } = useQuoteConfirmation();
 
     const handleRejectBtnClick = (event: React.MouseEvent<HTMLElement>) => {
         setIsButtonClicked(true);
@@ -46,6 +48,7 @@ const useButtonsConfirmContainer = () => {
 
     // do you want to be init whit quoteConfirm?.notes ?? 
     const [quoteComments, setQuoteComments] = useState("");
+    const [quoteInternalNotes, setQuoteInternalNotes] = useState("");
     const onUpdateComments = async () => {
         const callBack = (res) => {
             if (res?.success) {
@@ -57,8 +60,35 @@ const useButtonsConfirmContainer = () => {
         await updateDocumentCommentsConfirmationApi(callApi, callBack, { documentId: quoteConfirm?.id, comments: quoteComments })
     }
 
+    //Change the api to internal notes 
+    const onUpdateInternalNotes = async () => {
+        const callBack = (res) => {
+            if (res?.success) {
+                alertSuccessUpdate();
+            } else {
+                alertFaultUpdate();
+            }
+        }
+        //Change the api to internal notes 
+        await updateDocumentCommentsConfirmationApi(callApi, callBack, { documentId: quoteConfirm?.id, comments: quoteInternalNotes })
+    }
+    ///////////////////////////////////////////////////////////////////////////////////
+    const [approveModal, setApproveModal] = useState(false)
+    const [approveSignatureModal, setApproveSignatureModal] = useState(false)
+    const onClickOpenApproveModal = () => {
+        setApproveModal(true)
+    }
+    const onClickCloseApproveModal = () => {
+        setApproveModal(false)
+    }
 
-    const onClickApprove = async () => {
+    const onClickOpenApproveSignatureModal = () => {
+        setApproveSignatureModal(true)
+    }
+    const onClickCloseApproveSignatureModal = () => {
+        setApproveSignatureModal(false)
+    }
+    const onClickApprove = async (dataURL, signerName) => {
         const selectedItemIds = quoteConfirm?.documentItems?.filter(x => x.isChecked)?.map(x => x.id);
 
         if (!selectedItemIds || selectedItemIds.length === 0) {
@@ -68,19 +98,33 @@ const useButtonsConfirmContainer = () => {
 
         const callBack = (res) => {
             if (res?.success) {
-                // getQuoteConfirmation or getDoment id  THE CHEKCED IF isConfirmed IN DISPLAING BUTTONS CONTAINER
+                alertSuccessUpdate();
+                getQuoteConfirmation();
             } else {
                 alertFaultUpdate();
             }
         }
-        await approveDocumentItemsApi(callApi, callBack, { docuementItemsIds: selectedItemIds })
+        await approveDocumentItemsApi(callApi, callBack, { docuementItemsIds: selectedItemIds, fileBase64: dataURL, signerName: signerName })
     }
 
     const onClickPrint = async () => {
+        const downloadPdf = (url) => {
+            const anchor = document.createElement("a");
+            anchor.href = url;
+            anchor.target = "_blank";
+            anchor.addEventListener("click", () => {
+                setTimeout(() => {
+                    anchor.remove();
+                }, 100);
+            });
+            anchor.click();
+        };
         const callBack = (res) => {
             if (res?.success) {
                 const pdfLink = res.data;
-                window.open(pdfLink, "_blank");
+                downloadPdf(pdfLink);
+                // window.open(pdfLink, "_blank");
+
             } else {
                 alertFaultUpdate();
             }
@@ -94,6 +138,7 @@ const useButtonsConfirmContainer = () => {
             if (res?.success) {
                 onClickCloseOtherModal();
                 alertSuccessUpdate();
+                getQuoteConfirmation();
             } else {
                 alertFaultUpdate();
             }
@@ -122,7 +167,16 @@ const useButtonsConfirmContainer = () => {
         quoteConfirm,
         onUpdateComments,
         quoteComments,
-        setQuoteComments
+        setQuoteComments,
+        onUpdateInternalNotes,
+        quoteInternalNotes,
+        setQuoteInternalNotes,
+        approveModal,
+        onClickOpenApproveModal,
+        onClickCloseApproveModal,
+        approveSignatureModal,
+        onClickOpenApproveSignatureModal,
+        onClickCloseApproveSignatureModal
     };
 
 };

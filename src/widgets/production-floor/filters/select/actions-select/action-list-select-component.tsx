@@ -1,69 +1,25 @@
-import {FormEvent, useCallback, useState} from "react";
-import {Button,FormGroup, Menu, MenuItem, MenuProps} from "@mui/material";
+import {FormEvent, useCallback} from "react";
+import {Button, FormGroup, MenuItem, Paper} from "@mui/material";
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import {useTranslation} from "react-i18next";
-import {styled} from "@mui/material/styles";
 import {GomakeTextInput} from "@/components";
 import Stack from "@mui/material/Stack";
 import {SecondaryCheckBox} from "@/components/check-box/secondary-check-box";
 import {useActionsList} from "@/widgets/production-floor/filters/select/actions-select/use-actions-list";
-import {IActionMachines} from "@/widgets/production-floor/state/actions-list";
+import {SecondaryButton} from "@/components/button/secondary-button";
+import {IStation} from "@/widgets/production-floor/interfaces/filters";
+import {ClickOutside} from "@/components/click-out-side/click-out-side";
 
 
-
-const StyledMenu = styled((props: MenuProps) => (
-    <Menu
-        elevation={0}
-        anchorOrigin={{
-            vertical: 'bottom',
-            horizontal: 'right',
-        }}
-        transformOrigin={{
-            vertical: 'top',
-            horizontal: 'right',
-        }}
-        {...props}
-    />
-))(() => ({
-    '& .MuiPaper-root': {
-        borderRadius: 6,
-        width: '250px',
-        height: 'fit-content',
-        maxHeight: 500,
-        boxShadow:
-            'rgb(255, 255, 255) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 0px 0px 1px, rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.05) 0px 4px 6px -2px',
-        '& .MuiMenu-list': {
-            padding: '4px 0',
-
-        },
-        '& .MuiMenuItem-root': {
-            fontSize: '12px',
-            color: '#12133A',
-            padding: 0
-
-        },
-        '& .MuiFormControlLabel-root': {
-            margin: 0
-        }
-    },
-}));
 interface IProps {
-    onClickAction: (action: IActionMachines) => void;
-    onClickMachine: (actionId: string, machineId: string, option: IActionMachines) => void;
+    onClickApply: (v: IStation[]) => void
 }
 
-const ActionsListComponent = ({onClickAction, onClickMachine}: IProps) => {
-    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-    const [filter, setFilter] = useState<string>();
-    const open = Boolean(anchorEl);
-    const {t} = useTranslation();
-    const {actionsList} = useActionsList();
+const ActionsListComponent = ({onClickApply}: IProps) => {
 
-    const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-        setAnchorEl(event.currentTarget);
-    };
-    const handleClose = () => {
-        setAnchorEl(null);
+    const {actionsList, onSelectMachine, onSelectStation, actionsMachinesIds, open, setOpen, filter, setFilter, t} = useActionsList();
+
+    const handleClick = () => {
+        setOpen(!open)
     };
     const handleFilterChange = (event: FormEvent<HTMLInputElement>) => {
         setFilter(event.currentTarget.value);
@@ -77,31 +33,31 @@ const ActionsListComponent = ({onClickAction, onClickMachine}: IProps) => {
         return actionsList
     }, [actionsList, filter])
     return(
-        <>
+        <div style={{position: 'relative'}}>
             <Button style={{color: '#9E9E9E', borderColor: '#9E9E9E', height: '38px'}} variant={'outlined'} onClick={handleClick}>
                 <span>{t('productionFloor.selectStations')}</span>
                 <KeyboardArrowDownIcon/>
             </Button>
-            <StyledMenu  anchorEl={anchorEl}
-                         open={open}
-                         onClose={handleClose}>
+            {open &&
+                <ClickOutside onClick={()=> setOpen(false)}>
+                <Paper sx={{position: 'absolute', right: 0, top: '110%', maxWidth: '300px', maxHeight: '600px', overflow: 'auto', zIndex: 99999999}}>
                 <FormGroup>
-                    <div>
+                    <div style={{position: 'sticky', top: 0, backgroundColor: '#FFF', zIndex: 1}}>
                         <GomakeTextInput  placeholder={t('productionFloor.search')} value={filter} onChange={handleFilterChange}/>
                     </div>
                     {
                         getList().map((option, index) => {
                             return  <Stack key={index + option.actionId + option.actionName}>
-                                <MenuItem onClick={() => onClickAction(option)}>
-                                    <SecondaryCheckBox checked={option.checked}/>
+                                <MenuItem onClick={() => onSelectStation(option.actionId, !!option.checked)}>
+                                    <SecondaryCheckBox checked={!!option.checked}/>
                                     <span>{option.actionName}</span>
                                 </MenuItem>
                                 <Stack direction={'row'} gap={'30px'}>
                                     <div/>
                                     <Stack>
                                         {
-                                            option?.machines?.map((machine) => <MenuItem onClick={() => onClickMachine(option.actionId, machine.machineId, option)}>
-                                                <SecondaryCheckBox checked={machine?.checked} />
+                                            option?.machines?.map((machine) => <MenuItem onClick={() => onSelectMachine(option.actionId, machine.machineId)}>
+                                                <SecondaryCheckBox checked={!!machine?.checked} />
                                                 {machine.machineName}
                                             </MenuItem>)
                                         }
@@ -112,8 +68,15 @@ const ActionsListComponent = ({onClickAction, onClickMachine}: IProps) => {
                         })
                     }
                 </FormGroup>
-            </StyledMenu>
-        </>
+                <div style={{position: 'sticky', bottom: 0, right: 0, left: 0, backgroundColor: '#FFF', zIndex: 1}}>
+                    <SecondaryButton style={{width: '100%'}} variant={'contained'} onClick={() =>
+                        onClickApply(actionsMachinesIds)
+                    }>{t("productionFloor.apply")}</SecondaryButton>
+                </div>
+            </Paper>
+                </ClickOutside>
+            }
+        </div>
     )
 }
 

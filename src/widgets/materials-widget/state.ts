@@ -14,6 +14,10 @@ export const currenciesState = atom<{ label: string; value: string }[]>({
   key: "currenciesState",
   default: [],
 });
+export const currenciesSymbols = atom<{ label: string; value: string }[]>({
+    key: "currenciesSymbolsState",
+    default: [],
+});
 export const materialHeadersState = atom<
   {
     key: string;
@@ -63,6 +67,14 @@ export const openAddCategoryModalState = atom<boolean>({
   key: "openAddCategoryModalState",
   default: false,
 });
+export const isEditCategoryModalState = atom<boolean>({
+  key: "isEditCategoryModalState",
+  default: false,
+});
+export const selectedCategoryModalState = atom({
+  key: "selectedCategoryModalState",
+  default: {},
+});
 
 export const materialCategorySuppliersState = atom<
   { value: string; label: string; isDefault: boolean }[]
@@ -106,7 +118,6 @@ export const materialsClientsState = atom<[]>({
   default: [],
 });
 
-
 export const materialsTablePageState = atom<number>({
   key: "materialsTablePageState",
   default: 1,
@@ -123,4 +134,9 @@ export const materialsUnCheckedState = atom<string[]>({
 export const selectedMaterialIdForUpdateState = atom<string>({
     key: "selectedMaterialIdForUpdateState",
     default: "",
+});
+
+export const materialTypeTableState = atom<any>({
+  key: "materialTypeTableState",
+  default: {},
 });

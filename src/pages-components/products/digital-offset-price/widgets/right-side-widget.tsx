@@ -5,6 +5,8 @@ import { EWidgetProductType } from "../enums";
 import { DotsLoader } from "@/components/dots-loader/dots-Loader";
 import { ProgressBar } from "@/components/progress-bar/progress-bar";
 import { useRightSideWidget } from "./use-right-side-widget";
+import { useEffect, useState } from "react";
+import { _renderIconLogs } from "@/utils/constants";
 const RightSideWidget = ({
   clasess,
   clientDefaultValue,
@@ -36,56 +38,75 @@ const RightSideWidget = ({
   errorMsg,
   calculationServerErrorState
 }: any) => {
+
   const {
     currentProductItemValueTotalPrice,
     calculationProgress,
     exampleTypeValues,
     billingMethodValues,
+    listEmployeesValues,
     systemCurrency,
-    listEmployees,
     isLoading,
     quantity,
+    selectedWorkFlow,
     calculationExceptionsLogs,
     setCurrentProductItemValueTotalPrice,
     t,
-    _renderIconLogs,
   } = useRightSideWidget({ includeVAT });
+  const mergedArray = [...(selectedWorkFlow?.exceptions || []), ...(calculationExceptionsLogs || [])];
+  const [logsArray, setLogsArray] = useState(mergedArray)
+  useEffect(() => {
+    const uniqueArray = mergedArray.filter(
+      (item, index, self) =>
+        index === self.findIndex(
+          (t) => t.actionName === item.actionName && t?.exception?.exceptionKey === item?.exception?.exceptionKey
+        )
+    );
+    if (uniqueArray) {
+      setLogsArray(uniqueArray)
+    }
+  }, [selectedWorkFlow, calculationExceptionsLogs])
+
   return (
     <div style={clasess.rightSideMainContainer}>
       <div style={clasess.rightSideContainer}>
-        <div style={clasess.headerClientRightSide}>
-          <div style={clasess.clientContainer}>
-            <div style={clasess.labelTextStyle}>
-              {t("products.offsetPrice.admin.client")}
+        {/* {
+          widgetType === EWidgetProductType.CREATE &&
+          <div style={clasess.headerClientRightSide}>
+            <div style={clasess.clientContainer}>
+              <div style={clasess.labelTextStyle}>
+                {t("products.offsetPrice.admin.client")}
+              </div>
+              {clientDefaultValue && (
+                <GoMakeAutoComplate
+                  options={renderOptions()}
+                  placeholder={t("products.offsetPrice.admin.client")}
+                  getOptionLabel={(option: any) =>
+                    `${option.name}-${option.code}`
+                  }
+                  defaultValue={clientDefaultValue}
+                  onChangeTextField={checkWhatRenderArray}
+                  style={clasess.dropDownListStyle}
+                />
+              )}
             </div>
-            {clientDefaultValue && (
-              <GoMakeAutoComplate
-                options={renderOptions()}
-                placeholder={t("products.offsetPrice.admin.client")}
-                getOptionLabel={(option: any) =>
-                  `${option.name}-${option.code}`
-                }
-                defaultValue={clientDefaultValue}
-                onChangeTextField={checkWhatRenderArray}
-                style={clasess.dropDownListStyle}
-              />
-            )}
-          </div>
-          <div style={clasess.typeContainer}>
-            <div style={clasess.labelTextStyle}>
-              {t("products.offsetPrice.admin.type")}
+            <div style={clasess.typeContainer}>
+              <div style={clasess.labelTextStyle}>
+                {t("products.offsetPrice.admin.type")}
+              </div>
+              {clientTypeDefaultValue && (
+                <GoMakeAutoComplate
+                  options={clientTypesValue}
+                  placeholder={t("products.offsetPrice.admin.type")}
+                  getOptionLabel={(option: any) => option.name}
+                  defaultValue={clientTypeDefaultValue}
+                  style={clasess.dropDownListStyle}
+                />
+              )}
             </div>
-            {clientTypeDefaultValue && (
-              <GoMakeAutoComplate
-                options={clientTypesValue}
-                placeholder={t("products.offsetPrice.admin.type")}
-                getOptionLabel={(option: any) => option.name}
-                defaultValue={clientTypeDefaultValue}
-                style={clasess.dropDownListStyle}
-              />
-            )}
           </div>
-        </div>
+        } */}
+
         {template.img ? (
           <div style={clasess.imgProductContainer}>
             <img src={template.img} alt="gomake" style={{ width: "100%" }} />
@@ -139,15 +160,13 @@ const RightSideWidget = ({
             ) : (
               <GomakeTextInput
                 value={
-                  calculationExceptionsLogs?.length > 0
-                    ? "---------"
-                    : currentProductItemValueTotalPrice ?? "---------"
+                  currentProductItemValueTotalPrice ?? "---------"
                 }
                 onChange={(e: any) => {
                   setCurrentProductItemValueTotalPrice(e.target.value);
                 }}
                 style={clasess.inputPriceStyle}
-                type={currentProductItemValueTotalPrice ? "number" : "text"}
+                type={!selectedWorkFlow?.isCalculated ? "text" : typeof (currentProductItemValueTotalPrice) === "number" ? "number" : "text"}
               />
             )}
           </div>
@@ -184,8 +203,8 @@ const RightSideWidget = ({
               )
                 ? 0
                 : (
-                  currentProductItemValueTotalPrice / quantity?.values[0]
-                ).toFixed(2),
+                      (currentProductItemValueTotalPrice || 0) / (quantity?.values[0] || 1)
+                )?.toFixed(4),
               unitPrice: systemCurrency,
             })}
           </div>
@@ -326,15 +345,7 @@ const RightSideWidget = ({
               <div style={clasess.autoCompleteContainer}>
                 <GoMakeAutoComplate
                   key={graphicDesigner}
-                  options={[
-                    {
-                      id: "00415c86-165f-463a-bde0-f37c66f00000",
-                      firstname: "Recommeded",
-                      lastname: "",
-                      email: "recommeded@gomake.net",
-                    },
-                    ...listEmployees,
-                  ]}
+                  options={listEmployeesValues}
                   getOptionLabel={(option: any) =>
                     `${option.firstname}` + ` ${option.lastname}`
                   }
@@ -370,43 +381,70 @@ const RightSideWidget = ({
                   {t("products.offsetPrice.admin.general")} Server Error
                 </div>
               )}
-
-              {calculationExceptionsLogs?.map((item) => {
-                return (
-                  <>
-                    {item.actionName ? (
-                      <div
-                        style={{
-                          display: "flex",
-                          flexDirection: "row",
-                          justifyContent: "flex-start",
-                          alignItems: "flex-start",
-                          width: "100%",
-                          gap: 5,
-                        }}
-                      >
-                        {_renderIconLogs(item.exceptionType)}
+              {logsArray?.map((item) => {
+                if (item.actionName) {
+                  return (
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        justifyContent: "flex-start",
+                        alignItems: "flex-start",
+                        width: "100%",
+                        gap: 5,
+                      }}
+                    >
+                      <div style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        justifyContent: "flex-start",
+                        alignItems: "center",
+                        gap: 5,
+                      }}>
+                        {_renderIconLogs(item.exception?.exceptionType, 16, 16)}
                         <div
                           style={{
                             ...clasess.titleLogsTextStyle,
-                            // color: item.type ? "" : "",
                           }}
                         >
                           <div style={{ width: 85 }}>{item.actionName}:</div>
                         </div>
-                        <div style={clasess.textLogstyle}>
-                          <span style={{ color: "black" }}>{t("CalculationExceptions." + item?.exceptionKey)}</span>
-                        </div>
                       </div>
-                    ) : (
-                      <div style={clasess.generalMsgTextStyle}>
-                        <div style={clasess.iconLogsTextStyle}>
-                          {_renderIconLogs(item.exceptionType)}
-                        </div>{t("products.offsetPrice.admin.general")} {t("CalculationExceptions." + item?.exceptionKey)}
+
+                      <div style={clasess.textLogstyle}>
+                        <span style={{ color: "black" }}>{t("CalculationExceptions." + item?.exception?.exceptionKey)}</span>
                       </div>
-                    )}
-                  </>
-                );
+                    </div>
+                  );
+                } else if (item.actionName === null) {
+                  return (
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        justifyContent: "flex-start",
+                        alignItems: "flex-start",
+                        width: "100%",
+                        gap: 5,
+                      }}
+                    >
+                      {_renderIconLogs(item.exception?.exceptionType, 16, 16)}
+
+                      <div style={{ width: "100%", marginTop: -3 }}>
+                        <span style={{ color: "black" }}>{t("CalculationExceptions." + item?.exception?.exceptionKey)}</span>
+                      </div>
+                    </div>
+                  );
+                } else {
+                  return (
+                    <div style={clasess.generalMsgTextStyle}>
+                      <div style={clasess.iconLogsTextStyle}>
+                        {_renderIconLogs(item.exception?.exceptionType, 16, 16)}
+                      </div>
+                      {t("products.offsetPrice.admin.general")} {t("CalculationExceptions." + item?.exceptionKey)}
+                    </div>
+                  );
+                }
               })}
             </div>
           )}

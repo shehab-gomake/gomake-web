@@ -21,7 +21,9 @@ const ParameterWidget = () => {
     handleNextClick,
     handlePreviousClick,
     updatedProductParameterHidden,
+    updatedProductParameterShowToClient,
     updatedProductParameteRequierd,
+    updatedProductParameteLocked,
     updatedValuesConfigsForParameters,
     setTemplate,
     getProductById,
@@ -82,9 +84,11 @@ const ParameterWidget = () => {
                               updatedProductParameterHidden={
                                 updatedProductParameterHidden
                               }
+                              updatedProductParameterShowToClient={updatedProductParameterShowToClient}
                               updatedProductParameteRequierd={
                                 updatedProductParameteRequierd
                               }
+                              updatedProductParameteLocked={updatedProductParameteLocked}
                               _renderParameterType={_renderParameterType}
                               relatedParameters={relatedParameters}
                             />
@@ -100,9 +104,11 @@ const ParameterWidget = () => {
                               updatedProductParameterHidden={
                                 updatedProductParameterHidden
                               }
+                              updatedProductParameterShowToClient={updatedProductParameterShowToClient}
                               updatedProductParameteRequierd={
                                 updatedProductParameteRequierd
                               }
+                              updatedProductParameteLocked={updatedProductParameteLocked}
                               _renderParameterType={_renderParameterType}
                               relatedParameters={relatedParameters}
                             />

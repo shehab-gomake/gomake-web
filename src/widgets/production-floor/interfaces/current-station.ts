@@ -6,4 +6,5 @@ export interface ICurrentStation {
     actionName: string;
     isLastStation: boolean;
     machineName: string;
+    productType: string;
 }

@@ -1,7 +1,11 @@
 import axios, { AxiosRequestConfig, ResponseType } from "axios";
 import config from "@/config";
 import { getUserToken } from "./storage-data";
+import log from "@/utils/logger";
+import { addRequestToSession } from "@/utils/sessionManager";
+
 // import { clearStorage } from './storage'
+
 const apiRequest = async (
   method = "GET",
   url: string,
@@ -11,7 +15,7 @@ const apiRequest = async (
   responseType: ResponseType = undefined
 ) => {
   try {
-    //please don't change the server url!!! 
+    //please don't change the server url!!!
     const SERVER = config.api_server;
     const reqUrl = SERVER + url;
     const controller = new AbortController();
@@ -28,7 +32,7 @@ const apiRequest = async (
         ...(getUserToken() && { Authorization: "Bearer " + getUserToken() }),
         ...(data.customAuth && { "auth-token": data.customAuth }),
         lang: language ? language : "en",
-        domain: '',
+        domain: "",
       },
     };
     if (method === "GET") {
@@ -38,7 +42,13 @@ const apiRequest = async (
       };
     }
 
+    // log.info("Starting Request", options);
+    addRequestToSession({ method, url, data, options });
+
     const response = await axios(options);
+    // log.info("Response:", response);
+    addRequestToSession({ method, url, data, options, response });
+
     if (response) {
       if (method === "GET") {
         delete options["data"];
@@ -54,11 +64,25 @@ const apiRequest = async (
       };
     }
   } catch (err: any) {
+    log.error("Request Error", err);
+    addRequestToSession({ method, url, data, error: err });
+
+    // const summary = "API request error";
+    // const description = `An error occurred during an API request:\n\nRequest: ${JSON.stringify(err.config)}\n\nResponse: ${
+    //   err.response ? JSON.stringify(err.response) : "No response"
+    // }`;
+
+    // await createJiraIssue(summary, description).catch(error => {
+    //   log.error('Failed to create Jira issue:', error);
+    // });
+
+    // console.log("summary, description", summary, description);
+
     return {
       success: false,
       status: err?.response?.status,
       message: err?.response?.data?.message,
-      errors: err?.response?.data?.errors,
+      errors: err?.response?.data?.error?.error,
       msg: err?.response?.data?.msg,
     };
   }

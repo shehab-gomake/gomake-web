@@ -57,8 +57,10 @@ import {thermalPlateProcessorMachineSteps} from "@/widgets/machines/utils/steps/
 import {creatingDiesMachineSteps} from "@/widgets/machines/utils/steps/creating-dies-machine-steps";
 import {meshProcessorsMachineSteps} from "@/widgets/machines/utils/steps/mesh-processors-machine-steps";
 import {silkPrinterSteps} from "@/widgets/machines/utils/steps/silk-printer-steps";
+import {cardCuttingSteps} from "@/widgets/machines/utils/steps/card-cutting-steps";
+import { Permissions } from "@/components/CheckPermission/enum";
 
-const getSteps = (categoryId: ECategoryId, isAdmin: boolean): IStep[] => {
+const getSteps = (categoryId: ECategoryId, isAdmin: boolean , CheckPermission?:any): IStep[] => {
     let steps: IStep[];
     switch (categoryId) {
         case ECategoryId.DIGITAL_PRINTING:
@@ -222,8 +224,15 @@ const getSteps = (categoryId: ECategoryId, isAdmin: boolean): IStep[] => {
             break;
         case ECategoryId.CREATING_DIES_MACHINE:
             steps = creatingDiesMachineSteps;
+            break;
+        case ECategoryId.CARD_CUTTING:
+            steps = cardCuttingSteps;
     }
-    return isAdmin && steps ? [...steps, ...adminActionsMaterialsStep] : steps ? steps : []
+    if (steps && (isAdmin || CheckPermission(Permissions.SHOW_ACTION_AND_MATERIAL_IN_MACHINE))) {
+        return [...steps, ...adminActionsMaterialsStep];
+    } else {
+        return steps || [];
+    }
 }
 
 export {getSteps};

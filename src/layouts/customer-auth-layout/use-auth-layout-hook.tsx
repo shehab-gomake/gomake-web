@@ -1,5 +1,5 @@
-import { useGomakeAuth, useGomakeAxios, useGomakeRouter } from "@/hooks";
-import { CustomersIcon, HomeIcon, ProductFloorIcon, ReportsIcon, SalesIcon, SettingNavBar, ShopingIcon, } from "@/icons";
+import { useGomakeAuth, useGomakeRouter } from "@/hooks";
+import { CustomersIcon, HomeIcon, ProductFloorIcon, ReportsIcon, SalesIcon, SettingNavBar, ShopingIcon } from "@/icons";
 import { useEffect, useMemo, useState } from "react";
 import { CubeIcon } from "@/components/icons/cube-icon";
 import { useRecoilValue } from "recoil";
@@ -8,12 +8,13 @@ import { Permissions } from "@/components/CheckPermission/enum";
 import LocalPrintshopOutlinedIcon from "@mui/icons-material/LocalPrintshopOutlined";
 import PendingActionsOutlinedIcon from "@mui/icons-material/PendingActionsOutlined";
 import { BankingIcon } from "@/icons/banking-icon";
+import { MachineIcon } from "@/icons/machine-icon";
+import { ActionIcon } from "@/icons/action-icon";
 
 const useAuthLayoutHook = (permissionEnumValue?: Permissions, allowAnonymous?: boolean) => {
   const { isAuth } = useGomakeAuth(permissionEnumValue, allowAnonymous);
   const { navigate } = useGomakeRouter();
   const [canAccess, setCanAccess] = useState<boolean | null>(null);
-  const { callApi } = useGomakeAxios();
   const profile = useRecoilValue<ICompanyProfile>(companyProfileState);
 
   const tabs1: any = useMemo(() => {
@@ -28,7 +29,7 @@ const useAuthLayoutHook = (permissionEnumValue?: Permissions, allowAnonymous?: b
           return <HomeIcon />;
         },
         isProduction: true,
-        tourData: 'menu-home'
+        tourData: "menu-home",
       },
       {
         isLine: false,
@@ -60,10 +61,10 @@ const useAuthLayoutHook = (permissionEnumValue?: Permissions, allowAnonymous?: b
         isList: true,
         list: [
           {
-            key: "boardMissions",
-            title: "home.tabs.boardMissions",
+            key: "jobs",
+            title: "home.tabs.jobs",
             Permission: Permissions.SHOW_BOARD_MISSIONS,
-            path: "/board-missions",
+            path: "/jobs",
           },
           {
             key: "quotes",
@@ -141,6 +142,12 @@ const useAuthLayoutHook = (permissionEnumValue?: Permissions, allowAnonymous?: b
             key: "purchase invoice",
             title: "tabs.purchaseInvoiceRefund",
             path: "/purchaseInvoiceRefunds",
+            Permission: Permissions.SHOW_PURCHASE_INVOICES_REFUND,
+          },
+          {
+            key: "purchaseJobs",
+            title: "tabs.purchaseJobs",
+            path: "/purchase-jobs",
             Permission: Permissions.SHOW_PURCHASE_INVOICES_REFUND,
           },
         ],
@@ -269,7 +276,7 @@ const useAuthLayoutHook = (permissionEnumValue?: Permissions, allowAnonymous?: b
           return <CubeIcon width={24} height={24} color={"white"} />;
         },
         isProduction: true,
-        tourData: 'menu-materials'
+        tourData: "menu-materials",
       },
       {
         isLine: false,
@@ -291,11 +298,10 @@ const useAuthLayoutHook = (permissionEnumValue?: Permissions, allowAnonymous?: b
         Permission: Permissions.SHOW_MACHINES,
         isList: false,
         icon: () => {
-          return <LocalPrintshopOutlinedIcon style={{ color: "#FFFFFF" }} />;
+          return <MachineIcon />;
         },
         isProduction: true,
-        tourData: 'menuMachines'
-
+        tourData: "menuMachines",
       },
       {
         isLine: false,
@@ -305,7 +311,7 @@ const useAuthLayoutHook = (permissionEnumValue?: Permissions, allowAnonymous?: b
         Permission: Permissions.MACHINES_ADMIN,
         isList: false,
         icon: () => {
-          return <LocalPrintshopOutlinedIcon style={{ color: "#FFFFFF" }} />;
+          return <MachineIcon isAdmin="true" />;
         },
         isProduction: true,
       },
@@ -317,10 +323,41 @@ const useAuthLayoutHook = (permissionEnumValue?: Permissions, allowAnonymous?: b
         Permission: Permissions.SHOW_ACTIONS,
         isList: false,
         icon: () => {
-          return <PendingActionsOutlinedIcon style={{ color: "#FFFFFF" }} />;
+          return <ActionIcon />;
         },
         isProduction: true,
-        tourData: 'menuActions'
+        tourData: "menuActions",
+      },
+
+      {
+        isLine: false,
+        key: "companyReports",
+        title: "tabs.companyReports",
+        path: "/companyReports",
+        Permission: Permissions.SHOW_PRINTHOUSES_TABLE,
+        isList: false,
+        icon: () => {
+          return <ReportsIcon />;
+        },
+        isProduction: true,
+        tourData: "menu-companyReports",
+      },
+      {
+        isLine: true,
+        key: "line_3",
+        isProduction: true,
+      },
+      {
+        isLine: false,
+        key: "customerService",
+        title: "tabs.customerService",
+        path: "/customer-service-admin",
+        Permission: Permissions.SHOW_ADMIN_CUSTOMER_SERVICE,
+        isList: false,
+        icon: () => {
+          return <ReportsIcon />;
+        },
+        isProduction: true,
       },
       {
         isLine: false,
@@ -333,20 +370,7 @@ const useAuthLayoutHook = (permissionEnumValue?: Permissions, allowAnonymous?: b
           return <SettingNavBar />;
         },
         isProduction: true,
-        tourData: 'menu-settings'
-      },
-      {
-        isLine: false,
-        key: "companyReports",
-        title: "tabs.companyReports",
-        path: "/companyReports",
-        Permission: Permissions.SHOW_PRINTHOUSES_TABLE,
-        isList: false,
-        icon: () => {
-          return <ReportsIcon />;
-        },
-        isProduction: true,
-        tourData: 'menu-companyReports'
+        tourData: "menu-settings",
       },
     ];
   }, []);
@@ -356,7 +380,6 @@ const useAuthLayoutHook = (permissionEnumValue?: Permissions, allowAnonymous?: b
       setCanAccess(isAuth);
     }
   }, [isAuth]);
-
 
   // const getUserProfile = async () => {
   //   const res = await callApi("GET", "/v1/get-print-house-profile");

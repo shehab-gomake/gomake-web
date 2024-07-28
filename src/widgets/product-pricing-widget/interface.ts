@@ -13,12 +13,15 @@ export interface IPricingWidgetProps {
   workFlows: ICalculatedWorkFlow[];
   onSelectNewWorkFlow?: (id: string) => void;
   getOutSourcingSuppliers: () => void;
+  widgetType:string;
 }
 
 export interface IPricingAction {
   actionId: string;
   machineCategories: IPricingMachineCategory[];
   productType: string | null;
+  materials?:any
+  employees?:any
 }
 
 export interface IPricingMachineCategory {
@@ -48,6 +51,8 @@ export interface ICalculatedWorkFlow {
   productType: string | null;
   isCalculated: boolean;
   exceptions: any[];
+  isCompleteWorkFlow:boolean;
+  orginalBookPartId:string;
 }
 
 export interface IPrintActionType {
@@ -83,6 +88,12 @@ export interface IWorkFlowAction {
   materialVolume: number;
   pagesQuantity?: number;
   totalBookletDelay?: number;
+  materials?:any
+  employeeId?:string,
+  employeeName?:string
+  isNeedEmployee?:boolean,
+  isNeedMachine?:boolean,
+  isNeedMaterial?:boolean,
 }
 
 export interface IOutput {
@@ -108,6 +119,7 @@ export interface IOutSourceSupplier {
   profit: number;
   workHours: number;
   status: EOutsourceSupplierStatus;
+  widgetType:string;
 }
 
 export interface IRectangle {
@@ -116,6 +128,8 @@ export interface IRectangle {
   width: number;
   length: number;
   color?: string;
+  borderThickness?: number;
+  borderColor?: string;
 }
 export interface ICalculationProgress {
   totalWorkFlowsCount: number;

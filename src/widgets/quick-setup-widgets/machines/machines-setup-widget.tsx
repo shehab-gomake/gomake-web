@@ -6,7 +6,7 @@ import {useMachinesSetupData} from "@/widgets/quick-setup-widgets/machines/use-m
 import {
     MaterialViewComponent
 } from "@/widgets/quick-setup-widgets/materials/selected-materials-component/material-view-component";
-import {GoMakeAutoComplate, StyledAutocomplete} from "@/components";
+import {GoMakeAutoComplate} from "@/components";
 import {ECategoryId} from "@/widgets/machines/enums/category-id";
 import TextField from "@mui/material/TextField";
 import * as React from "react";
@@ -45,7 +45,7 @@ const MachinesSetupWidget = ({categories, nextStep, header}: IProps) => {
                                 options={machinesCategoriesList}
                                 disableClearable={true}
                                 placeholder={t('signup.chooseMachineCategory')}/>
-            <StyledAutocomplete
+            {/*<GoMakeAutoComplate
                 disabled={machinesLoading}
                 loading={machinesLoading}
                 onChange={() => {
@@ -66,7 +66,7 @@ const MachinesSetupWidget = ({categories, nextStep, header}: IProps) => {
                     return <AutocompleteOption {...props}
                                                onClick={() => onSelectMachine(option)}>{option.label}</AutocompleteOption>
                 }}
-                placeholder={t('signup.machineName')}/>
+                placeholder={t('signup.machineName')}/>*/}
             <Stack flexWrap={'wrap'} direction={'row'} columnGap={'10px'} rowGap={'2px'} padding={'15px'}
                    overflow={'auto'}
                    position={'relative'}

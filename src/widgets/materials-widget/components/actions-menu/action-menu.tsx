@@ -45,15 +45,19 @@ const ActionMenu = (props: IActionMenuProps) => {
     handleChange,
     deleteProperty,
     addProperty,
-      updateModalCurrency
+    updateModalCurrency
   } = useMaterialsActions(props.isAdmin);
-  const getMaterialActions = ()=>{
-      if(props.isAdmin){
-          return materialActions.filter(x=>x.action !== EMaterialsActions.UpdateIsActive && x.action !== EMaterialsActions.UpdateIsInActive);
-      }else{
-          return materialActions.filter(x=>x.action !== EMaterialsActions.DownLoadExcel &&  x.action !== EMaterialsActions.UploadExcel );
-      }
-     
+
+  const getMaterialActions = () => {
+    if (props.isAdmin) {
+      return materialActions.filter(x => x.action !== EMaterialsActions.UpdateIsActive && x.action !== EMaterialsActions.UpdateIsInActive && x.action !== EMaterialsActions.CreatePurchaseOrder);
+    }else{
+      return materialActions;
+    }
+    /*else {
+      return materialActions.filter(x => x.action !== EMaterialsActions.DownLoadExcel && x.action !== EMaterialsActions.UploadExcel);
+    }*/
+
   }
   return (
     <>
@@ -111,7 +115,7 @@ const ActionMenu = (props: IActionMenuProps) => {
           onClose={handleCloseModal}
           insideStyle={{ width: 500, height: "auto" }}
           openModal={action !== null}
-          modalTitle={t("materialsActions." + action?.key)}
+          modalTitle={action?.action === EMaterialsActions.CreatePurchaseOrder ? t("materials.modals.quantityPerMaterial") : t("materialsActions." + action?.key)}
         >
           <Stack
             gap={3}
@@ -126,9 +130,10 @@ const ActionMenu = (props: IActionMenuProps) => {
                   value={updatedValue}
                   options={currencies}
                   onChange={(e, value) => {
-                      updateModalCurrency(value?.value)
+                    updateModalCurrency(value?.value)
                   }}
                   disableClearable
+                  placeholder={t("materials.inputs.chooseCurrency")}
                 />
                 <div style={clasess.priceCheckedContainer}>
                   <Checkbox
@@ -142,7 +147,7 @@ const ActionMenu = (props: IActionMenuProps) => {
                     }}
                     checked={checkedPrice}
                   />
-                  <div style={clasess.secondText}>update prices</div>
+                  <div style={clasess.secondText}>{t("materials.inputs.updatePrices")}</div>
                 </div>
                 {rate && (
                   <GomakeTextInput
@@ -187,7 +192,7 @@ const ActionMenu = (props: IActionMenuProps) => {
                         <GoMakeAutoComplate
                           placeholder={"select property"}
                           getOptionLabel={(option: any) => option.key}
-                          options={materialHeaders.filter(x=>!x.isHideInDuplicate)}
+                          options={materialHeaders.filter(x => !x.isHideInDuplicate)}
                           onChange={(event, value) => {
                             handleChange(index, "key", value);
                           }}
@@ -208,7 +213,7 @@ const ActionMenu = (props: IActionMenuProps) => {
                             <FormInput
                               input={item as IInput}
                               changeState={(e, v) =>
-                                handleChange(index, "value", v)
+                                handleChange(index, "values", v)
                               }
                               error={false}
                               readonly={false}
@@ -240,6 +245,7 @@ const ActionMenu = (props: IActionMenuProps) => {
               <GomakeTextInput
                 onChange={(e) => onTextInputChange(e.target.value)}
                 value={updatedValue}
+                type={action?.action === EMaterialsActions.CreatePurchaseOrder ? "number" : undefined}
               />
             )}
             <SecondaryButton

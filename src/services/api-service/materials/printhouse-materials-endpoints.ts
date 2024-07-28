@@ -11,6 +11,11 @@ const ADD_MATERIAL_CATEGORY_URL = "/v1/printhouse-materials/add-printhouse-mater
 const DELETE_MATERIAL_CATEGORY_URL = "/v1/printhouse-materials/delete-printhouse-material-category";
 const ADD_MATERIAL_CATEGORY_ROW_URL = "/v1/printhouse-materials/add-printhouse-material-category-row";
 const DELETE_MATERIAL_CATEGORY_Row_URL = "/v1/printhouse-materials/delete-printhouse-material-category-row";
+const DOWNLOAD_MATERIAL_EXCEL_FILE = "/v1/printhouse-materials/download-material-excel";
+const UPLOAD_MATERIAL_EXCEL_FILE = "/v1/printhouse-materials/upload-material-excel-file";
+
+const GET_MATERIALS_SIZES_URL = "/v1/printhouse-materials/get-materials-sizes";
+
 
 
 const getPrintHouseMaterialCategoriesApi: ICallAndSetData = async (
@@ -78,7 +83,7 @@ const updatePrintHouseMaterialsPropApi: ICallAndSetData = async (
 const addPrintHouseMaterialCategoryApi: ICallAndSetData = async (
   callApi,
   callBack,
-  category: { materialTypeKey: string; categoryKey: string }
+  category: { materialTypeKey: string; categoryKey: string,imageBase64:any }
 ) => {
   return await getSetApiData(
     callApi,
@@ -135,6 +140,44 @@ const deletePrintHouseMaterialCategoryRowApi: ICallAndSetData = async (
   );
 };
 
+const getMaterialsSizesApi: ICallAndSetData = async (
+  callApi,
+  callBack,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    GET_MATERIALS_SIZES_URL,
+    callBack,
+    data,
+  );
+};
+const getPrintHouseMaterialExcelFileApi: ICallAndSetData = async (
+    callApi,
+    setState,
+    material: string
+) => {
+    return await getSetApiData(
+        callApi,
+        EHttpMethod.GET,
+        `${DOWNLOAD_MATERIAL_EXCEL_FILE}?materialKey=${material}`,
+        setState
+    );
+};
+const uploadPrintHouseMaterialExcelFileApi: ICallAndSetData = async (
+    callApi,
+    callBack,
+    data: { key: string; base64: string }
+) => {
+    return await getSetApiData(
+        callApi,
+        EHttpMethod.POST,
+        UPLOAD_MATERIAL_EXCEL_FILE,
+        callBack,
+        data
+    );
+};
 export {
       getPrintHouseMaterialCategoriesApi,
       getPrintHouseMaterialCategoryDataApi,
@@ -144,4 +187,7 @@ export {
       deletePrintHouseMaterialCategoryApi,
       addPrintHouseMaterialCategoryRowApi,
       deletePrintHouseMaterialCategoryRowApi,
+      getMaterialsSizesApi,
+      getPrintHouseMaterialExcelFileApi,
+      uploadPrintHouseMaterialExcelFileApi
 };

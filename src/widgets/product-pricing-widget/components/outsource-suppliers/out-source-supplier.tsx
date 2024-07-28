@@ -6,13 +6,15 @@ import Stack from "@mui/material/Stack";
 import Divider from "@mui/material/Divider";
 import { UpdateValueInput } from "@/components/text-input/update-value-input";
 import Button from "@mui/material/Button";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { IOutSourceSupplier } from "@/widgets/product-pricing-widget/interface";
 import { PrimaryButton } from "@/components/button/primary-button";
 import { useOutsourceSupplier } from "@/widgets/product-pricing-widget/components/outsource-suppliers/use-outsource-supplier";
 import { useTranslation } from "react-i18next";
-import { useRecoilValue } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import { systemCurrencyState } from "@/store";
+import { EWidgetProductType } from "@/pages-components/products/digital-offset-price/enums";
+import { currentProductItemValuePriceState } from "../../state";
 
 interface IProps {
     value: number;
@@ -30,14 +32,16 @@ const OutSourceSupplierComponent = ({
     status,
     workHours,
     finalPrice,
-    profit
+    profit,
+    widgetType
 }: IOutSourceSupplier) => {
+
     const { t } = useTranslation();
     const { classes } = useStyle();
     const { secondColor } = useGomakeTheme();
-    const { updatePrice, updateWorHours, updateProfit, updateCost, addItem } = useOutsourceSupplier();
+    const { updatePrice, updateWorkHours, updateProfit, updateCost, addItem, updateQuoteItem } = useOutsourceSupplier();
     const handleDeliveryTimeUpdate = (newValue: number) => {
-        updateWorHours(supplierId, +newValue);
+        updateWorkHours(supplierId, +newValue);
     }
 
     const handleCostUpdate = (newCost: number) => {
@@ -49,6 +53,14 @@ const OutSourceSupplierComponent = ({
     const handleUpdatePrice = (price: number) => {
         updatePrice(supplierId, price);
     }
+
+    const setCurrentProductItemValueTotalPrice = useSetRecoilState<number>(currentProductItemValuePriceState);
+
+    useEffect(() => {
+        if (finalPrice > 0) {
+            setCurrentProductItemValueTotalPrice(finalPrice)
+        }
+    }, [finalPrice])
     const systemCurrency = useRecoilValue<any>(systemCurrencyState);
 
     return (
@@ -71,7 +83,15 @@ const OutSourceSupplierComponent = ({
                         valueColor={secondColor(500)} label={t('pricingWidget.finalPrice')} value={finalPrice}
                         onUpdate={handleUpdatePrice} />
                 </Stack>
-                <PrimaryButton onClick={() => addItem(supplierId)} style={{ width: 'fit-content', height: 35 }} variant={'contained'}>{t('pricingWidget.add')}</PrimaryButton>
+                {cost !== 0 && (
+                    <PrimaryButton
+                        onClick={() => widgetType === EWidgetProductType.EDIT ? updateQuoteItem(supplierId) : addItem(supplierId)}
+                        style={{ width: 'fit-content', height: 35 }}
+                        variant={'contained'}
+                    >
+                        {widgetType === EWidgetProductType.EDIT ? t("materials.buttons.edit") : t('pricingWidget.add')}
+                    </PrimaryButton>
+                )}
             </Stack>
         </Fade>
     )

@@ -90,6 +90,11 @@ const useStyle = ({ insideStyle, headerPadding, isMiddleTitle }: any) => {
         flexDirection: "column" as "column",
         marginBottom: 10,
       },
+      iconStyle: {
+        width: "61",
+        height: "62",
+        color: "#a1a2cd",
+      },
       title: {
         ...FONT_FAMILY.Lexend(700, 16),
         color: primaryColor(500),

@@ -12,8 +12,10 @@ const AccordionMappingWidget = ({
   section,
   updatedProductParameterHidden,
   updatedProductParameteRequierd,
+  updatedProductParameteLocked,
   _renderParameterType,
   relatedParameters,
+  updatedProductParameterShowToClient
 }) => {
   return (
     <Accordion
@@ -56,6 +58,8 @@ const AccordionMappingWidget = ({
           updatedProductParameteRequierd={updatedProductParameteRequierd}
           _renderParameterType={_renderParameterType}
           relatedParameters={relatedParameters}
+          updatedProductParameteLocked={updatedProductParameteLocked}
+          updatedProductParameterShowToClient={updatedProductParameterShowToClient}
         />
       </AccordionDetails>
     </Accordion>

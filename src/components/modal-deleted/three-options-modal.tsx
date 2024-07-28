@@ -1,7 +1,6 @@
 import * as React from "react";
 import { useTranslation } from "react-i18next";
 import { Modal } from "@mui/material";
-import { Wastebasket } from "@/icons";
 import { GomakePrimaryButton } from "../button";
 import { useStyle } from "./style";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
@@ -28,7 +27,7 @@ const ThreeOptionsModal = ({
       open={openModal}
       onClose={onClose}
       {...props}
-      style={{ outline: "none"}}
+      style={{ outline: "none", zIndex: 999999}}
     >
       <div style={{...classes.container , ...props.style}}>
         <div style={classes.content}>
@@ -49,7 +48,8 @@ const ThreeOptionsModal = ({
             >
               {t(yesBtn)}
             </GomakePrimaryButton>{" "}
-            <GomakePrimaryButton
+            {
+            !!noBtn &&<> <GomakePrimaryButton
               style={classes.confirmBtn}
               onClick={() => {
                 onClickNo();
@@ -57,7 +57,8 @@ const ThreeOptionsModal = ({
               }}
             >
               {t(noBtn)}
-            </GomakePrimaryButton>{" "}
+            </GomakePrimaryButton>{" "}</>
+            }
             <GomakePrimaryButton
               style={classes.cancelBtn}
               onClick={onClose}

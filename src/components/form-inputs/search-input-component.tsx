@@ -10,20 +10,24 @@ interface ISearchInputProps {
   placeHolder?: string;
   searchInputStyle?: any;
   bgColor?: string;
+  filtersButton?: JSX.Element;
 }
 
-const SearchInputComponent = ({ onChange, value ,placeHolder,searchInputStyle, bgColor }: ISearchInputProps) => {
+
+const SearchInputComponent = ({ onChange, value, placeHolder, searchInputStyle, bgColor, filtersButton }: ISearchInputProps) => {
+
   const { classes } = useStyle();
   const { t } = useTranslation();
 
   return (
     <GoMakeTextInputIcon
-        bgColor={bgColor}
+      bgColor={bgColor}
       onChange={(e) => {
-        onChange(e.target.value);
+        const trimmedValue = e.target.value.trimStart();
+        onChange(trimmedValue);
       }}
       style={searchInputStyle || classes.searchInput}
-      placeholder={ placeHolder || t("header.search")}
+      placeholder={placeHolder || t("header.search")}
       value={value}
       startAdornment={
         <InputAdornment position="start">
@@ -32,6 +36,7 @@ const SearchInputComponent = ({ onChange, value ,placeHolder,searchInputStyle, b
           </div>
         </InputAdornment>
       }
+      endAdornment={filtersButton}
     />
   );
 };

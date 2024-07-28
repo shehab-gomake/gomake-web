@@ -1,4 +1,5 @@
 import {digitalPrinting} from "@/widgets/machines/utils/attributes/colors-inputs/digital-printing";
+import {EMeasurementUnits} from "@/widgets/machines/enums/measurement-units";
 
 const rollWidePrinting = (state: Record<string, any>) => {
     return [
@@ -14,7 +15,36 @@ const rollWidePrinting = (state: Record<string, any>) => {
             machineInputType: 'input',
             isValid: true,
         },
-        ...digitalPrinting(state)
+        ...digitalPrinting(state),
+        {
+            name: 'machineAttributes.colorLoadBySheetCategories',
+            parameterKey: 'colorLoadBySheetCategories',
+            value: state.attributes?.colorLoadBySheetCategories || [],
+            machineInputType: 'multiArrayInput',
+            isValid: true,
+            inputs: [
+                {
+                    name: "categories",
+                    label: "machineAttributes.categories",
+                    type: "select",
+                    placeholder: "machineAttributes.categories",
+                    required: true,
+                    parameterKey: "categories",
+                    options: [],
+                    optionsUrl: '/v1/materials/get-material-categories-list?materialKey=sheets',
+                },
+                {
+                    name: "load",
+                    label: "machineAttributes.load",
+                    type: "text",
+                    placeholder: "machineAttributes.load",
+                    required: true,
+                    parameterKey: "load",
+                    unit: EMeasurementUnits.PERCENTAGE,
+                    options: []
+                },
+            ]
+        },
     ]
 };
 

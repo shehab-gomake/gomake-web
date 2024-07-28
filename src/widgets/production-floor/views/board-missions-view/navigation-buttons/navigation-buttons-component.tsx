@@ -2,33 +2,59 @@ import {
     useBoardMissionsNavigationButtons
 } from "@/widgets/production-floor/views/board-missions-view/navigation-buttons/use-navigationButtons";
 import Stack from "@mui/material/Stack";
-import {ToggleButton, ToggleButtonGroup} from "@mui/material";
-import {styled} from "@mui/material/styles";
-import {useGomakeTheme} from "@/hooks/use-gomake-thme";
+import { ToggleButton, ToggleButtonGroup } from "@mui/material";
+import { styled } from "@mui/material/styles";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import {
+    MoreActionsButton
+} from "@/widgets/production-floor/views/board-missions-view/navigation-buttons/more-actions-button";
+import {
+    DocumentsButton
+} from "@/widgets/production-floor/views/board-missions-view/navigation-buttons/documents-button";
+import { useTranslation } from "react-i18next";
+import { Permissions } from "@/components/CheckPermission/enum";
+import { PermissionCheck } from "@/components/CheckPermission/check-permission";
 
 const NavigationButtonsComponent = () => {
-    const {handleViewChange, step, boardMissionsViews} = useBoardMissionsNavigationButtons()
+    const { handleViewChange, step, boardMissionsViews } = useBoardMissionsNavigationButtons();
+    const { t } = useTranslation();
     return (
-        <Stack>
-            <ToggleButtonGroup value={step}
-                               exclusive
-                               onChange={handleViewChange}>
+        <Stack direction={'row'} justifyContent={'space-between'} alignItems={'center'}>
+            <PrimaryToggleButtonGroup value={step}
+                exclusive
+                onChange={handleViewChange}>
                 {
                     boardMissionsViews.map(view => <PrimaryToggleButton value={view.value}>
-                        {view.labelKey}
+                        {t(view.labelKey)}
                     </PrimaryToggleButton>)
                 }
-            </ToggleButtonGroup>
+            </PrimaryToggleButtonGroup>
+            <Stack direction={'row'} alignItems={'center'} gap={'12px'}>
+                <DocumentsButton />
+                <PermissionCheck userPermission={Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR}>
+                    <MoreActionsButton />
+                </PermissionCheck>
+            </Stack>
         </Stack>
     )
 }
 
+const PrimaryToggleButtonGroup = styled(ToggleButtonGroup)(() => {
+    return {
+        borderRadius: '16px',
+        border: '1px solid #D0D5DD',
+        overflow: 'hidden',
+        width: 'fit-content'
+    }
+})
 
 const PrimaryToggleButton = styled(ToggleButton)(() => {
-    const {primaryColor} = useGomakeTheme()
+    const { primaryColor } = useGomakeTheme()
     return {
         color: primaryColor(500),
         backgroundColor: 'white',
+        height: '40px',
+        border: 0,
         '&:hover': {
             color: "white",
             backgroundColor: primaryColor(500)
@@ -39,4 +65,5 @@ const PrimaryToggleButton = styled(ToggleButton)(() => {
         }
     }
 });
-export {NavigationButtonsComponent}
+
+export { NavigationButtonsComponent }

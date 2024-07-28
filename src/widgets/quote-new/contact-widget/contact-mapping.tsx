@@ -7,6 +7,7 @@ import { useState } from "react";
 import { PhoneInputUpdatedValues } from "../phone-input-updated-values";
 import { useSnackBar } from "@/hooks";
 import { isValidEmail, isValidPhoneNumber } from "@/utils/helpers";
+import { AutoCompleteUpdatedValue } from "../auto-complete-updated";
 
 const ContactMapping = ({
   item,
@@ -18,6 +19,9 @@ const ContactMapping = ({
   changeItems,
   updateClientContact,
   isQuoteConfirmation = false,
+  clientContactsValue,
+  onOpenNewContact,
+  canEditContacts
 }) => {
   const { classes } = useStyle();
   const { alertFault } = useSnackBar();
@@ -27,17 +31,10 @@ const ContactMapping = ({
   const [isUpdateContactMobile, setIsUpdateContactMobile] = useState(null);
   const [isConfirmation, setIsConfirmation] = useState(null);
 
-
-  const onBlurContactName = async (item) => {
-    if (!item.contactName) {
-      alertFault("login.thisFieldRequired")
-    }
-    else {
-      updateClientContact(item);
-      setIsUpdateContactName(null);
-    }
-
+  const onBlurContactName = async () => {
+    setIsUpdateContactName(null);
   };
+
   const onBlurContactEmail = async (item) => {
     if (!item.contactMail || !isValidEmail(item.contactMail)) {
       alertFault("Invalid email address format or missing contact email")
@@ -56,48 +53,63 @@ const ContactMapping = ({
       updateClientContact(item);
       setIsUpdateContactMobile(null);
     }
-
-
   };
   return (
     <div style={classes.businessContainerStyle}>
-      <InputUpdatedValues
-        value={
-          item?.contactName !== null ? item?.contactName : t("sales.quote.noName")
-        }
+      <AutoCompleteUpdatedValue
         label={t("sales.quote.contactName")}
-        onBlur={() => onBlurContactName(item)}
-        isUpdate={isUpdateContactName}
+        value={item?.contactName}
+        options={[
+          { id: 'new', text: t("sales.quote.addNewContact") }, // Add New Contact option
+          ...clientContactsValue.map(contact => ({
+            ...contact,
+            value: contact.id,
+            text: contact.name
+          }))
+        ]}
+
+        isUpdate={canEditContacts && isUpdateContactName}
         setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdateContactName}
-        onInputChange={(e: any) => {
-          changeItems(index, "contactName", e);
+        getOptionLabel={(item) => item.text}
+        onBlur={() => onBlurContactName()}
+        onChange={(e, value) => {
+          if (value?.id === 'new') {
+            onOpenNewContact(true)
+            setIsUpdateContactName(null);
+          } else {
+            updateClientContact({
+              ...item,
+              contactMail: value?.mail,
+              contactName: value?.name,
+              contactPhone: value?.phone
+            });
+            setIsUpdateContactName(null);
+          }
         }}
       />
       <PhoneInputUpdatedValues
         key={item?.id}
-        value={
-          item?.contactPhone !== null ? item?.contactPhone : t("sales.quote.noMobileContact")
-        }
+        value={item?.contactPhone}
+        placeholder={item?.contactPhone ? item?.contactPhone : t("sales.quote.noMobileContact")}
         label={t("sales.quote.mobileContact")}
         onBlur={() => onBlurContactMobile(item)}
-        isUpdate={isUpdateContactMobile}
+        isUpdate={canEditContacts && isUpdateContactMobile}
         setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdateContactMobile}
         onInputChange={(e: any) => {
           changeItems(index, "contactPhone", e);
         }} />
       <InputUpdatedValues
-        value={
-          item?.contactMail !== null ? item?.contactMail : t("sales.quote.noMail")
-        }
+        value={item?.contactMail}
+        placeholder={item?.contactMail ? item?.contactMail : t("sales.quote.noMail")}
         label={t("sales.quote.contactEmail")}
         onBlur={() => onBlurContactEmail(item)}
-        isUpdate={isUpdateContactEmail}
+        isUpdate={canEditContacts && isUpdateContactEmail}
         setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdateContactEmail}
         onInputChange={(e: any) => {
           changeItems(index, "contactMail", e);
         }}
       />
-      {!isQuoteConfirmation &&
+      {(!isQuoteConfirmation && canEditContacts) &&
         <div style={classes.addDeleteContainer}>
           <IconButton
             onClick={() => onOpenDeleteModalContact(item)}

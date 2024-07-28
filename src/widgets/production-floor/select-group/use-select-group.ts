@@ -29,8 +29,10 @@ const useSelectGroup = () => {
     }
 
     useEffect(() => {
-        if (userGroups.length > 0) {
+        if (userGroups.length > 0 && !!groupsId) {
             setSelectedGroup(userGroups?.find(g => g.id === groupsId)?.groupName);
+        } else {
+         setSelectedGroup('');
         }
     }, [userGroups, groupsId])
 

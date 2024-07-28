@@ -4,10 +4,11 @@ import i18next from "i18next";
 import { useTranslation } from "react-i18next";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { convertWidthToVW, leftRightAdapter } from "@/utils/adapter";
 
 const useStyle = () => {
   const { t } = useTranslation();
-  const { theme, secondColor, errorColor, successColor } = useGomakeTheme();
+  const { theme, secondColor, errorColor, successColor, primaryColor } = useGomakeTheme();
   const classes = useMemo(() => {
     return {
       mainContainer: {
@@ -27,13 +28,23 @@ const useStyle = () => {
         justifyContent: "space-between",
         width: "100%"
       },
-      filtersContainer: {
+      rowStyle:{
         display: "flex",
         flexDirection: "row" as "row",
+        justifyContent: "flex-start",
+        alignItems: "center",
+        gap:10,
+      },
+      filtersContainer: {
+        display: "flex",
+        flexDirection: "column" as "column",
         justifyContent: "space-between",
-        alignItems: "flex-end",
+        alignItems: "flex-start",
         gap: 20,
-        width: "100%",
+        //width: "500px",
+        width: "20vw",
+        padding: "10px",
+        flexWrap: "wrap" as "wrap",
       },
       selectedFilterContainer: {
         display: "flex",
@@ -41,7 +52,7 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "center",
         gap: 20,
-        width: "70%",
+        flexWrap: "wrap" as "wrap",
       },
       statusFilterContainer: {
         display: "flex",
@@ -49,7 +60,15 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "flex-start",
         gap: 10,
-        width: "25%",
+        minWidth:"40%",
+        width: "fit-content",
+      },
+      buttonsFilterContainer: {
+        display: "flex",
+        flexDirection: "column" as "column",
+        justifyContent: "flex-start",
+        alignItems: "flex-start",
+        gap: 10,
       },
       filterLabelStyle: {
         ...FONT_FAMILY.Lexend(500, 14),
@@ -66,9 +85,9 @@ const useStyle = () => {
       clearBtnStyle: {
         height: 40,
         backgroundColor: "#FFF",
-        border: `1px solid ${secondColor(500)}`,
-        color: secondColor(500),
-        width: "50%",
+      //  border: `1px solid ${secondColor(500)}`,
+        color: "black",
+       // width: "50%",
       },
       paginationStyle: {
         display: "flex",
@@ -122,7 +141,43 @@ const useStyle = () => {
         lineHeight: "20px",
         textTransform: "none" as "none",
         gap: "10px",
-    },
+      },
+      priceDivStyle: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "flex-start",
+        alignItems: "center",
+        gap: 5,
+      },
+
+
+      /// TEST ///
+      menuItemContainer: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "flex-start",
+        alignItems: "center",
+        gap: 8,
+        padding: 15,
+      },
+      menuTitleStyle: {
+        ...FONT_FAMILY.Lexend(500, 12),
+        color: primaryColor(300),
+      },
+      lineStyle: {
+        width: "100%",
+        height: 1,
+        backgroundColor: "#EEEEEE",
+      },
+      iconStyle: {
+        position: "absolute" as "absolute",
+        ...leftRightAdapter(t("direction"), 10),   
+      },
+      searchInput: {
+        height: 40,
+        minWidth: convertWidthToVW(200),
+        borderRadius: 10,
+      },
     };
   }, [i18next.language, t, theme]);
   return {

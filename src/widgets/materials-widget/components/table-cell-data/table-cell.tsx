@@ -117,7 +117,7 @@ const TableCellData = ({
     case EDataTypeEnum.MULTI_SELECATION_LIST:
       return (
         <MultiSelectList
-          values={value as string[]}
+          values={value}
           parameterKey={parameterKey}
           id={id}
           isAdmin={isAdmin}

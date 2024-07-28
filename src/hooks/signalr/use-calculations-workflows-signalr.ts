@@ -7,12 +7,13 @@ import {
   IExceptionsLog,
 } from "@/widgets/product-pricing-widget/interface";
 import { useGomakeAxios } from "../use-gomake-axios";
+import config from "@/config";
 
 const useCalculationsWorkFlowsSignalr = () => {
 
   const { data, connection, connectionId } =
     useGoMakeSignalr<ICalculationSignalRResult>({
-      url:  "https://erp-service.gomake-dev.net/hubs/workFlows",
+      url: config.erp_server +`/hubs/workFlows`,
       accessToken: getUserToken(),
       methodName: "updateWorkFlows",
     });
@@ -26,8 +27,9 @@ const useCalculationsWorkFlowsSignalr = () => {
     useState<ICalculatedWorkFlow>();
   const [calculationExceptionsLogs, setCalculationExceptionsLogs] =
     useState<IExceptionsLog[]>();
-    const [calculationServerErrorState,setcalculationServerErrorState]=useState(false)
+  const [calculationServerError,setcalculationServerErrorState]=useState(false)
 
+  const [isCalculationFinished,setIsCalculationFinished]=useState(false)
 
   useEffect(() => {
     if (connection) {
@@ -46,7 +48,8 @@ const useCalculationsWorkFlowsSignalr = () => {
         setSignalRPricingResult(newData);
       });
       connection.on("calculationFinished", (newData) => {
-        setUpdatedSelectedWorkFlow(newData)
+        newData.isCalculationFinished = true;
+        setSignalRPricingResult(newData);
       });
       connection.on("calculationServerError", () => {
         setcalculationServerErrorState(true)
@@ -60,7 +63,9 @@ const useCalculationsWorkFlowsSignalr = () => {
     updatedSelectedWorkFlow,
     calculationExceptionsLogs,
     signalRPricingResult,
-    calculationServerErrorState
+    calculationServerError,
+    isCalculationFinished,
+    setIsCalculationFinished
   };
 };
 export { useCalculationsWorkFlowsSignalr };

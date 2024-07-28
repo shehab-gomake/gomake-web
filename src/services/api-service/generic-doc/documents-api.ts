@@ -23,10 +23,13 @@ const DELETE_DOCUMENT_ADDRESS_URL =
 const DUPLICATE_DOCUMENT_URL = "/v1/erp-service/documents/duplicate-document";
 const DUPLICATE_DOCUMENT_ITEM_URL =
   "/v1/erp-service/documents/duplicate-document-item-with-another-quantity";
-const CHANGE_DOCUMENT_CLIENT_URL =
-  "/v1/erp-service/documents/change-document-client";
+const CHANGE_DOCUMENT_CLIENT_URL ="/v1/erp-service/documents/change-document-client";
+const UPDATE_DOCUMENT_ITEM_SELECT_URL ="/v1/erp-service/documents/update-docuement-item-select";
 const GET_IF_Exist_CART = "/v1/erp-service/documents/get-exist-document";
 const GET_DOCUMENT_PDF_URL = "/v1/erp-service/documents/get-document-pdf";
+const GET_BOARD_MISSION_PDF = "/v1/erp-service/board-missions-tables/export-board-mission-pdf";
+const GET_ORDER_BOARD_MISSION_PDF = "/v1/erp-service/documents/export-order-board-mission-pdf";
+const GET_PRINTING_TICKET_PDF = "/v1/erp-service/board-missions-tables/get-printing-ticket-pdf";
 const UPDATE_PURCHASE_NUMBER_URL =
   "/v1/erp-service/documents/update-purchase-number";
 const ADD_DELIVERY_URL = "/v1/erp-service/documents/add-delivery"; 
@@ -42,6 +45,7 @@ const GET_CALCULATE_DOCUMENT_URL =
   "/v1/erp-service/documents/calculate-document";
 const ADD_ITEM_URL = "/v1/erp-service/documents/add-item";
 const UPDATE_DOCUMENT_URL = "/v1/erp-service/documents/update-document";
+const UPDATE_OCCASIONAL_CLIENT_NAME_URL = "/v1/erp-service/documents/update-occasional-client-name";
 const UPDATE_DOCUMENT_ITEM_URL =
   "/v1/erp-service/documents/update-document-item";
 const UPDATE_DUE_DATE_URL = "/v1/erp-service/documents/update-due-date";
@@ -59,11 +63,18 @@ const GET_ALL_REPORTS_URL = "/v1/erp-service/quote/get-all-reports"
 const UPDATE_DOCUMENT_ITEM_CONTENT_URL =
   "/v1/erp-service/document/update-document-item-content";
 const UPDATE_DOCUMENT_COMMENTS_URL = "/v1/erp-service/document/update-document-comments";
+const UPDATE_DOCUMENT_INTERNAL_NOTES_URL = "/v1/erp-service/document/update-document-internal-notes";
 const GET_CLIENT_DOCUMENTS = "/v1/erp-service/documents/get-client-documents";
 
 const ADD_CREATE_CONTACT_URL = "/v1/crm-service/customer/create-contact";
 
+const SORT_DOCUMENT_ITEMS_URL = "/v1/erp-service/documents/sort-document-items";
+const UPDATE_IS_SHOW_DETAILS_URL = "/v1/erp-service/documents/update-is-show-details";
+const UPDATE_IS_SHOW_PRICES_URL = "/v1/erp-service/documents/update-is-show-prices";
 
+const GET_WHATSAPP_MESSAGE_URL = "/v1/erp-service/documents/get-whats-app-message";
+const CLOSE_DOCUMENT_URL = "/v1/erp-service/documents/close-document";
+const MANUALLY_CLOSE_DOCUMENT_URL="/v1/erp-service/documents/manually-close-document";
 
 const getDocumentApi: ICallAndSetData = async (callApi, setState, data) => {
   return await getSetApiData(
@@ -318,7 +329,7 @@ const sendDocumentToClientApi: ICallAndSetData = async (
     SEND_DOCUMENT_TO_CLIENT_URL,
     setState,
     data,
-    false
+    true
   );
 };
 
@@ -390,6 +401,15 @@ const updateDocumentApi: ICallAndSetData = async (callApi, setState, data) => {
     callApi,
     EHttpMethod.PUT,
     UPDATE_DOCUMENT_URL,
+    setState,
+    data
+  );
+};
+const updateOccasionalClientNameApi: ICallAndSetData = async (callApi, setState, data) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.PUT,
+    UPDATE_OCCASIONAL_CLIENT_NAME_URL,
     setState,
     data
   );
@@ -539,6 +559,19 @@ const updateDocumentCommentsApi: ICallAndSetData = async (
     data
   );
 };
+const updateDocumentInternalNotesApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.PUT,
+    UPDATE_DOCUMENT_INTERNAL_NOTES_URL,
+    setState,
+    data
+  );
+};
 
 const getClientDocumentsApi: ICallAndSetData = async (
   callApi,
@@ -552,6 +585,121 @@ const getClientDocumentsApi: ICallAndSetData = async (
     setState,
     data,
     false
+  );
+};
+
+const getBoardMissionPDF: ICallAndSetData = async (
+  callApi,
+  setState,
+  data: { boardMissionId: string }
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    GET_BOARD_MISSION_PDF,
+    setState,
+    data
+  );
+};
+
+const getOrderBoardMissionPDF: ICallAndSetData = async (
+  callApi,
+  setState,
+  data: { documentId: string }
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    GET_ORDER_BOARD_MISSION_PDF,
+    setState,
+    data
+  );
+};
+
+const GetPrintingTicketPDFApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data: { boardMissionId: string }
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    GET_PRINTING_TICKET_PDF,
+    setState,
+    data
+  );
+};
+
+const sortDocumentItemsApi: ICallAndSetData = async (callApi, setState, data) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.PUT,
+    SORT_DOCUMENT_ITEMS_URL,
+    setState,
+    data
+  );
+};
+
+const updateIsShowDetailsApi: ICallAndSetData = async (callApi, setState, data) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.PUT,
+    UPDATE_IS_SHOW_DETAILS_URL,
+    setState,
+    data
+  );
+};
+
+const updateIsShowPricesApi: ICallAndSetData = async (callApi, setState, data) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.PUT,
+    UPDATE_IS_SHOW_PRICES_URL,
+    setState,
+    data
+  );
+};
+const getWhatsAppMessageApi: ICallAndSetData = async (callApi, setState, data) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    GET_WHATSAPP_MESSAGE_URL,
+    setState,
+    data
+  );
+};
+
+const CloseDocumentApi: ICallAndSetData = async (callApi, setState, data) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    CLOSE_DOCUMENT_URL,
+    setState,
+    data
+  );
+};
+
+const updateDocuementItemSelectApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.PUT,
+    UPDATE_DOCUMENT_ITEM_SELECT_URL,
+    setState,
+    data
+  );
+};
+
+const manuallyCloseDocumentApi: ICallAndSetData = async (callApi, setState, data) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.PUT,
+    MANUALLY_CLOSE_DOCUMENT_URL,
+    setState,
+    data
   );
 };
 
@@ -593,5 +741,17 @@ export {
   updateDocumentCommentsApi,
   getClientDocumentsApi,
   getAllDocumentLogsApi,
-  addCustomerContactApi
+  addCustomerContactApi,
+  getBoardMissionPDF,
+  sortDocumentItemsApi,
+  updateIsShowDetailsApi,
+  getWhatsAppMessageApi,
+  CloseDocumentApi,
+  getOrderBoardMissionPDF,
+  GetPrintingTicketPDFApi,
+  updateDocuementItemSelectApi,
+  updateIsShowPricesApi,
+  updateDocumentInternalNotesApi,
+  updateOccasionalClientNameApi,
+  manuallyCloseDocumentApi
 };

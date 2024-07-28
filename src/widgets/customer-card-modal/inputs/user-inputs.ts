@@ -1,6 +1,7 @@
 import {emailRegex} from "@/utils/regex";
 
-const userInputs = (state, showPass) => {
+const userInputs = (state, showPass,languagesOptions) => {
+
   return [
     {
       name: "email",
@@ -59,9 +60,8 @@ const userInputs = (state, showPass) => {
       placeholder: "customers.modal.language",
       required: false,
       parameterKey: "systemLanguage",
-      options: [],
-      optionsUrl: "/v1/enum/get-enums/languages",
-      value: state?.systemLanguage,
+      options: languagesOptions,
+      value: state?.systemLanguage, 
       isValid: true,
     },
     {

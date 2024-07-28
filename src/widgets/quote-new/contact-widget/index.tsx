@@ -4,6 +4,8 @@ import { ContactMapping } from "./contact-mapping";
 import { AddContactNewWidget } from "./add-contact-widget";
 import { GoMakeDeleteModal } from "@/components";
 import { useTranslation } from "react-i18next";
+import { useUserPermission } from "@/hooks/use-permission";
+import { DocumentPermission } from "@/components/CheckPermission/enum";
 
 const ContactNewWidget = ({
   handleShowLess,
@@ -36,10 +38,15 @@ const ContactNewWidget = ({
   isQuoteConfirmation = false,
   documentType,
   getQuote,
-  getAllClientContacts
+  getAllClientContacts,
+  onOpenNewContact,
+  documentState
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
+  const {CheckDocumentPermission } = useUserPermission();
+  const canEditDocument = documentState?.isEditable && CheckDocumentPermission(documentType, DocumentPermission.EDIT_DOCUMENT);
+  
   return (
     <>
       <div style={classes.mainContainer}>
@@ -48,6 +55,7 @@ const ContactNewWidget = ({
             <div>
               {items?.slice(0, displayedItems).map((item, index) => (
                 <ContactMapping
+                  canEditContacts={canEditDocument}
                   key={`${index}-${item.id}`}
                   item={item}
                   index={index}
@@ -58,12 +66,14 @@ const ContactNewWidget = ({
                   changeItems={changeItems}
                   updateClientContact={updateClientContact}
                   isQuoteConfirmation={isQuoteConfirmation}
+                  clientContactsValue={clientContactsValue}
+                  onOpenNewContact={onOpenNewContact}
                 />
               ))}
             </div>
           </>
         ) : (
-          !isQuoteConfirmation &&
+          (!isQuoteConfirmation && canEditDocument) &&
           <div
             style={classes.addNewContactNameStyle}
             onClick={() => setIsDisplayWidget(true)}
@@ -105,6 +115,7 @@ const ContactNewWidget = ({
           documentType={documentType}
           getQuote={getQuote}
           getAllClientContacts={getAllClientContacts}
+          onOpenNewContact={onOpenNewContact}
         />
       )}
 

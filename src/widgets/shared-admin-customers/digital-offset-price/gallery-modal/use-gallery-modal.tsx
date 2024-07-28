@@ -3,7 +3,6 @@ import { useRecoilState, useRecoilValue } from "recoil";
 
 import {
   materialBtnDataState,
-  productTemplateState,
   selectParameterButtonState,
   subProductsParametersState
 } from "@/store";
@@ -42,6 +41,18 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
     subProducts,
     "Height"
   );
+  const finalUnitWidthParameter = getParameterByParameterCode(
+    subProducts,
+    "DieUnitWidth"
+  );
+  const finalUnitLengthParameter = getParameterByParameterCode(
+    subProducts,
+    "DieUnitLength"
+  );
+  const finalUnitHeightParameter = getParameterByParameterCode(
+    subProducts,
+    "DieUnitHeight"
+  );
   const shapeParameter = getParameterByParameterCode(subProducts, "Shape")
   const LabelShapeParameter = getParameterByParameterCode(subProducts, "LabelsShape")
   useEffect(() => {
@@ -65,17 +76,21 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
       const value = shapeParameter?.valuesConfigs.find(x => x.id === shapeId)
       shapeCode = value?.code;
     }
-    const res = await getPrintHouseMaterialsByMaterialKey(callApi, setMaterialData, {
+    const reqObj = {
       key: selectParameterButton?.parameter?.materialPath[0],
-      width: widthParameter && widthParameter.values && widthParameter.values.length > 0 ? widthParameter.values[0] : 0,
-      length: heightParameter && heightParameter.values && heightParameter.values.length > 0 ? heightParameter.values[0] : 0,
+      width: widthParameter && widthParameter.values && widthParameter.values.length > 0 && widthParameter.values[0] ? widthParameter.values[0] : 0,
+      length: heightParameter && heightParameter.values && heightParameter.values.length > 0 && heightParameter.values[0] ? heightParameter.values[0] : 0,
       shape: shapeCode,
-      clientId: router.query.customerId
-    });
+      clientId: router.query.customerId,
+      finalWidth: finalUnitWidthParameter && finalUnitWidthParameter.values && finalUnitWidthParameter.values.length > 0 && finalUnitWidthParameter.values[0] ? finalUnitWidthParameter.values[0] : 0,
+      finalLength: finalUnitLengthParameter && finalUnitLengthParameter.values && finalUnitLengthParameter.values.length > 0 && finalUnitLengthParameter.values[0] ? finalUnitLengthParameter.values[0] : 0,
+      finalHeight: finalUnitHeightParameter && finalUnitHeightParameter.values && finalUnitHeightParameter.values.length > 0 && finalUnitHeightParameter.values[0] ? finalUnitHeightParameter.values[0] : 0,
+    }
+    const res = await getPrintHouseMaterialsByMaterialKey(callApi, setMaterialData, reqObj);
     if (res?.filters?.length > 0) {
       setMaterialTableFilters(res?.filters)
     }
-  }, [selectParameterButton, widthParameter, heightParameter]);
+  }, [selectParameterButton, widthParameter, heightParameter, finalUnitWidthParameter, finalUnitLengthParameter, finalUnitHeightParameter]);
   const [filters, setFilters] = useRecoilState<any>(filterState);
 
   const setFilterValue = (key: string, value: string | string[]) => {
@@ -100,9 +115,9 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
 
     const result = items?.filter((item) =>
       item.rowData.name.value.toLowerCase().includes(searchText) ||
-      (item.rowData.type.value && item.rowData.type.value.some(type => type.toLowerCase().includes(searchText))
+      (item?.rowData?.type?.value && item?.rowData?.type?.value?.some(type => type?.toLowerCase().includes(searchText))
         ||
-        item.category.toLowerCase().includes(searchText))
+        item?.category?.toLowerCase()?.includes(searchText))
     );
 
     return result;
@@ -113,6 +128,7 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
     setMaterialDataFilter(value);
   };
   const onClickChoosParameter = () => {
+
     onChangeSubProductsForPrice(
       selectParameterButton?.parameter?.id,
       selectParameterButton?.subSectionId,
@@ -128,8 +144,7 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
       selectParameterButton?.paameterType,
       selectParameterButton?.index,
       selectParameterButton?.parameter?.actionIndex,
-      selectParameterButton?.parameter?.code,
-
+      selectParameterButton?.parameter?.code, selectedShape
     );
 
     onClose();

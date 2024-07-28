@@ -2,13 +2,14 @@ import { useGomakeAxios } from "@/hooks";
 import { getAllUsersApi } from "@/services/api-service/users/users-api";
 import {
   isLoadgingState,
+  listEmployeesAtom,
   subProductsParametersState,
   systemCurrencyState,
   systemVATState,
 } from "@/store";
 import { billingMethodState } from "@/store/billing-method";
 import { exampleTypeState } from "@/store/example-type";
-import { currenciesState } from "@/widgets/materials-widget/state";
+import { currenciesState, currenciesSymbols } from "@/widgets/materials-widget/state";
 import { ECalculationLogType } from "@/widgets/product-pricing-widget/enums";
 import {
   calculationExceptionsLogsState,
@@ -20,24 +21,22 @@ import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRecoilState, useRecoilValue } from "recoil";
 
-import WarningIcon from '@mui/icons-material/Warning';
-import ErrorIcon from '@mui/icons-material/Error';
-import HelpCenterIcon from '@mui/icons-material/HelpCenter';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { ErrorIcon, MessageLogsIcon, SuccessIcon, WarningLogsIcon } from "@/icons";
 const useRightSideWidget = ({ includeVAT }) => {
   const { errorColor, successColor, warningColor, neutralColor } = useGomakeTheme();
-
+  const [calculationExceptionsLogs, setCalculationExceptionsLogs] = useRecoilState<any>(calculationExceptionsLogsState);
+  useEffect(() => {
+    setCalculationExceptionsLogs([])
+  }, [])
   const isLoading = useRecoilValue(isLoadgingState);
-  const calculationExceptionsLogs = useRecoilValue(
-    calculationExceptionsLogsState
-  );
+
   const subProducts = useRecoilValue<any>(subProductsParametersState);
   const systemVAT = useRecoilValue<number>(systemVATState);
   const selectedWorkFlow = useRecoilValue(selectedWorkFlowState);
   const [systemCurrency, setSystemCurrency] =
     useRecoilState<any>(systemCurrencyState);
-  const currencies = useRecoilValue(currenciesState);
+  const currencies = useRecoilValue(currenciesSymbols);
   useEffect(() => {
     if (currencies?.length > 0) {
       const data = currencies.find((c) => c.value === systemCurrency);
@@ -61,6 +60,10 @@ const useRightSideWidget = ({ includeVAT }) => {
   }, [subProducts]);
   const exampleTypeValues = useRecoilValue(exampleTypeState);
   const billingMethodValues = useRecoilValue(billingMethodState);
+  const [listEmployeesValues, setListEmployeesValues] = useRecoilState(listEmployeesAtom);
+
+
+
 
   const [changePrice, setChangePrice] = useState<number>(0);
   const { t } = useTranslation();
@@ -80,6 +83,9 @@ const useRightSideWidget = ({ includeVAT }) => {
 
   useEffect(() => {
     if (currentProductItemValueTotalPrice != null) {
+      if (includeVAT == null) {
+        return;
+      }
       if (includeVAT) {
         setCurrentProductItemValueTotalPrice(
           currentProductItemValueTotalPrice * (1 + systemVAT)
@@ -92,17 +98,21 @@ const useRightSideWidget = ({ includeVAT }) => {
     }
   }, [includeVAT]);
   // i need change to the icons when add new types
-  const _renderIconLogs = (type) => {
-    if (type === ECalculationLogType.ERROR) {
-      return <ErrorIcon sx={{ width: 15, height: 15, color: errorColor(500) }} />;
-    } else if (type === ECalculationLogType.MESSAGE) {
-      return <HelpCenterIcon sx={{ width: 15, height: 15, color: neutralColor(500) }} />;
-    } else if (type === ECalculationLogType.SUCCESS) {
-      return <CheckCircleIcon sx={{ width: 15, height: 15, color: successColor(500) }} />;
-    } else if (type === ECalculationLogType.WARN) {
-      return <WarningIcon sx={{ width: 15, height: 15, color: warningColor(500) }} />;
+  useEffect(() => {
+    if (listEmployees) {
+      setListEmployeesValues(
+        [
+          {
+            id: "00415c86-165f-463a-bde0-f37c66f00000",
+            firstname: "Recommeded",
+            lastname: "",
+            email: "recommeded@gomake.net",
+          },
+          ...listEmployees,
+        ]
+      )
     }
-  };
+  }, [listEmployees])
   return {
     currentProductItemValueTotalPrice,
     calculationProgress,
@@ -113,9 +123,9 @@ const useRightSideWidget = ({ includeVAT }) => {
     isLoading,
     quantity,
     selectedWorkFlow,
+    listEmployeesValues,
     calculationExceptionsLogs,
     setCurrentProductItemValueTotalPrice,
-    _renderIconLogs,
     t,
   };
 };

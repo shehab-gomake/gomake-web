@@ -15,22 +15,50 @@ const DropDownListParameterWidget = ({
   onOpeneMultiParameterModal,
   subSectionParameters,
   list,
-}) => {
+  setDeviceCategory,
+  setDeviceSize
+}: any) => {
   const defaultObject = parameter.valuesConfigs.find(
     (item) => item.isDefault === true
   );
+  console.log("safes", {
+    parameter,
+    index,
+    temp,
+    onChangeSubProductsForPrice,
+    subSection,
+    section,
+    selectedValueConfig,
+    inModal,
+    setSelectedValueConfig,
+    onOpeneMultiParameterModal,
+    subSectionParameters,
+    list,
+    setDeviceCategory,
+    setDeviceSize
+  })
   return (
     <div data-tour={parameter?.id} style={clasess.dropDownListWithSettingIcon}>
       <GoMakeAutoComplate
-        options={parameter?.valuesConfigs?.filter((value) => !value.isHidden)}
-        key={parameter?.valuesConfigs + temp[index]?.values}
+        options={parameter?.valuesConfigs?.filter(value => {
+          return !(value?.materialValueIds?.length === 1 && value?.materialValueIds[0]?.path === null && value?.materialValueIds[0]?.valueId === null);
+        })?.filter((value) => !value.isHidden)?.filter((value) => value.updateName)}
+        // key={parameter?.valuesConfigs + temp[index]?.values}
+        key={parameter?.valuesConfigs}
         placeholder={parameter.name}
         style={clasess.dropDownListStyle}
         getOptionLabel={(option: any) => option.updateName}
         defaultValue={
           index !== -1 ? { updateName: temp[index].values } : defaultObject
         }
+        disabled={parameter?.isLock ? parameter?.isLock : false}
         onChange={(e: any, value: any) => {
+          if (parameter?.code === "devicecategory") {
+            setDeviceCategory(value?.id)
+          }
+          else if (parameter?.code === "devicesize") {
+            setDeviceSize(value?.id)
+          }
           onChangeSubProductsForPrice(
             parameter?.id,
             subSection?.id,

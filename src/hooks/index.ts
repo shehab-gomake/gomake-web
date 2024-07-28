@@ -7,6 +7,8 @@ export * from "./use-admin";
 export * from "./use-supplier";
 export * from "./use-snack-bar";
 export * from "./shared-customer-admin";
-export * from "./use-customer-drop-down-list"
-export * from "./use-agent-list"
-export * from "./use-documents-type"
+export * from "./use-customer-drop-down-list";
+export * from "./use-agent-list";
+export * from "./use-documents-type";
+export * from "./use-gomake-date-range";
+export * from "./use-gomake-machines";

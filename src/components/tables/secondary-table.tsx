@@ -22,7 +22,8 @@ const SecondaryTableCell = styled(TableCell)(() => {
             padding: '3px 0',
             border: 0,
             height: 38,
-            backgroundColor: '#FFFFFF'
+            backgroundColor: '#FFFFFF',
+            borderBottom: '1px solid #DBDBDB',
 
         },
     }
@@ -30,7 +31,7 @@ const SecondaryTableCell = styled(TableCell)(() => {
 
 const SecondaryTableRow = styled(TableRow)(() => {
     return {
-        backgroundColor: 'unset'
+        // backgroundColor: bgColor,
     }
 });
 

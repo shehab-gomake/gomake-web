@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { FONT_FAMILY } from "@/utils/font-family";
-import { adaptLeft, adaptPaddingLeft, adaptPaddingRight, adaptRight } from "@/utils/adapter";
+import { adaptLeft, adaptPaddingLeft, adaptPaddingRight, adaptRight, leftRightAdapter } from "@/utils/adapter";
 const useStyle = () => {
   const { t } = useTranslation();
   const direction = t("direction");
@@ -182,8 +182,8 @@ const useStyle = () => {
         alignItems: "flex-start",
         gap: 10,
         width: "100%",
-        minWidth: 180,
-        maxWidth: 180,
+        minWidth: 185,
+        maxWidth: 185,
       },
       parameterRowContainer: {
         display: "flex",
@@ -198,9 +198,9 @@ const useStyle = () => {
         flexDirection: "column" as "column",
         justifyContent: "flex-start",
         alignItems: "flex-start",
-        width: "180px",
-        minWidth: 180,
-        maxWidth: 180,
+        width: "185px",
+        minWidth: 185,
+        maxWidth: 185,
         // height: 71,
         gap: 10,
       },
@@ -231,7 +231,7 @@ const useStyle = () => {
       renderParameterTypeContainer: {
         display: "flex",
         width: "100%",
-        maxWidth: "180px",
+        maxWidth: "185px",
         borderRadius: 4,
       },
 
@@ -405,9 +405,9 @@ const useStyle = () => {
       tabsTypesContainer: {
         display: "flex",
         flexDirection: "row" as "row",
-        justifyContent: "flex-start",
+        justifyContent: "space-between",
         alignItems: "center",
-        gap: 5,
+        gap: 10,
         width: "100%",
         marginBottom: 16,
       },
@@ -421,6 +421,8 @@ const useStyle = () => {
         ...FONT_FAMILY.Lexend(500, 16),
         borderRadius: 4,
         cursor: "pointer",
+        width:145,
+        height:40
       },
       activeLogsTabStyle: {
         display: "flex",
@@ -432,6 +434,8 @@ const useStyle = () => {
         ...FONT_FAMILY.Lexend(500, 16),
         borderRadius: 4,
         cursor: "pointer",
+        width:145,
+        height:40
       },
       unActiveTabStyle: {
         display: "flex",
@@ -444,6 +448,8 @@ const useStyle = () => {
         border: `1px solid ${primaryColor(500)}`,
         borderRadius: 4,
         cursor: "pointer",
+        width:145,
+        height:40
       },
       addOrderBtn: {
         backgroundColor: secondColor(500),
@@ -673,8 +679,6 @@ const useStyle = () => {
       },
       titleLogsTextStyle: {
         ...FONT_FAMILY.Lexend(400, 14),
-        color: secondColor(500),
-        width: "33%",
       },
       iconLogsTextStyle: {
         marginTop: 2.5,
@@ -685,6 +689,79 @@ const useStyle = () => {
         color: secondColor(500),
         width: "67%",
       },
+      advertisingProductCategoryMain:{
+        position: "relative"
+      },
+      advertisingProductCategoryAutoComplete:{ 
+        height: 40, 
+        minWidth: 400, 
+        border: "none", 
+        paddingLeft: 15
+       },
+       advertisingProductCategorySearch:{
+        position: "absolute" as "absolute",
+        ...leftRightAdapter(t("direction"), 10),
+        top: 10,
+      },
+      advertisingProductNameMain:{
+        minWidth: 1000, 
+        width: "100%"
+      },
+      advertisingProductNameListContainer:{ 
+        display: "flex", 
+        flexDirection: "row", 
+        justifyContent: "flex-start", 
+        alignItems: "center", 
+        gap: 24, 
+        flexWrap: "wrap" 
+      },
+      advertisingProductCard:{
+        width: 165,
+        height: 160,
+        position: "relative",
+        borderRadius: 6,
+        background: "#FFF",
+        cursor: "pointer"
+      },
+      advertisingProductImg:{
+        width: 165,
+        height: 100,
+        borderTopRightRadius: 6,
+        borderTopLeftRadius: 6,
+      },
+      advertisingProductUnderImgContainer:{
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "flex-start",
+        alignItems: "flex-start",
+        padding: 12,
+        gap: 6,
+        height: 54,
+      },
+      advertisingProductNamePriceContainer:{
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        width: "100%",
+      },
+      advertisingProductNameStyle:{ 
+        ...FONT_FAMILY.Lexend(600, 10) 
+      },
+      advertisingProductPriceStyle:{ 
+        ...FONT_FAMILY.Lexend(600, 10), 
+        color: "#ED028C" 
+      },
+      advertisingProductUnitsStyle:{ 
+        ...FONT_FAMILY.Lexend(500, 10), 
+        color: "#727272" 
+      },
+      checkBoxContainer:{
+        position: "absolute",
+        top: 0,
+        right: 0,
+      }
+
     };
   }, [i18next.language, t, direction]);
   return {

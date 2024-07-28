@@ -14,7 +14,7 @@ const filtersInputs = () => {
         placeholder: t('productionFloor.tags'),
         type: 'select',
         multiple: true,
-        values: filters.automatedTags,
+        values: filters?.automatedTags,
         options: tags.map(tag =>({text: tag, value: tag})),
         name: '',
         required: false,
@@ -22,7 +22,7 @@ const filtersInputs = () => {
         isValid: true
     } as IInput
 
-    const tagsList = useMemo(() => tags?.map(tag => ({id: tag, name: tag, checked: filters.automatedTags.includes(tag)})), [filters, tags]);
+    const tagsList = useMemo(() => tags?.map(tag => ({id: tag, name: tag, checked: filters?.automatedTags?.includes(tag)})), [filters, tags]);
     return {
         tagsInput,
         tagsList

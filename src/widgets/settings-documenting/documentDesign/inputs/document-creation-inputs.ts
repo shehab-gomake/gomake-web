@@ -1,21 +1,19 @@
-import { useRecoilState } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import { documentDesignTypeTextState, documentTypeState } from "../../state/documents-state";
 import { TextVerticalAligen } from "../const/textVerticalAligen";
-import {DocumentType} from "../interface";
+import { DocumentType } from "../interface";
 import { useTranslation } from "react-i18next";
 
-const creationDocumentInputs = (state)  => {
-  const [documentTypes , setdocumentTypes] = useRecoilState<DocumentType[]>(documentTypeState);
- 
-   const [documentTypeText, setdocumentTypeText] = useRecoilState(documentDesignTypeTextState);
-   if (Array.isArray(documentTypes)) 
-   {
+const creationDocumentInputs = (state) => {
+    const documentTypes = useRecoilValue<DocumentType[]>(documentTypeState);
+    const setDocumentTypeText = useSetRecoilState(documentDesignTypeTextState);
+
+    if (Array.isArray(documentTypes)) {
         const selectedDocumentType = documentTypes.find(item => item.value === state?.docType);
         if (selectedDocumentType) {
-        setdocumentTypeText(selectedDocumentType.text);
+            setDocumentTypeText(selectedDocumentType.text);
         }
-   }
-   
+    }
 
     return [
         {
@@ -28,6 +26,7 @@ const creationDocumentInputs = (state)  => {
             options: documentTypes,
             value: state?.docType,
             isValid: true,
+            disableClearable:true
         },
         {
             name: "agent",
@@ -41,11 +40,10 @@ const creationDocumentInputs = (state)  => {
             value: state?.agentId,
             isValid: true,
         },
-       
     ];
-
 };
-const TitleDefinitionInputs = (state)  => {
+
+const TitleDefinitionInputs = (state) => {
     return [
         {
             name: "Business name",
@@ -67,42 +65,37 @@ const TitleDefinitionInputs = (state)  => {
             value: state?.authorizedDealer ? state.authorizedDealer : "",
             isValid: true,
         },
-      
-        
-       
-       
     ];
-
 };
-const TitleDefinitionCustomLogoInputs = (state)  => {
-        return [
-            {
-                name: "Custom Logo",
-                label: "documentingDesign.TitleDefinition.CustomLogo",
-                type: "file",
-                placeholder: "documentingDesign.TitleDefinition.CustomLogo",
-                required: false,
-                parameterKey: "pdfLogo",
-                value: state?.pdfLogo,
-                isValid: true,
-            },
-            {
-                name: "Logo Upload",
-                label:"documentingDesign.TitleDefinition.LogoUpload",
-                type: "file",
-                placeholder: "documentingDesign.TitleDefinition.LogoUpload",
-                required: false,
-                parameterKey: "pdfHeader",
-                value: state?.pdfHeader,
-                isValid: true,
-            },
-         
-        ];
-};
-const TableSettingInputs = (state)  => {
 
+const TitleDefinitionCustomLogoInputs = (state) => {
     return [
-    
+        {
+            name: "Pdf Logo",
+            label: "documentingDesign.TitleDefinition.pdfLogo",
+            type: "imageFile",
+            placeholder: "documentingDesign.TitleDefinition.pdfLogo",
+            required: false,
+            parameterKey: "pdfLogo",
+            value: state?.pdfLogo,
+            isValid: true,
+        },
+        {
+            name: "Pdf Header",
+            label: "documentingDesign.TitleDefinition.pdfHeader",
+            type: "imageFile",
+            placeholder: "documentingDesign.TitleDefinition.pdfHeader",
+            required: false,
+            parameterKey: "pdfHeader",
+            value: state?.pdfHeader,
+            isValid: true,
+        },
+
+    ];
+};
+
+const TableSettingInputs = (state) => {
+    return [
         {
             name: "Table Header bg color",
             label: "documentingDesign.TableSetting.TableHeaderbgcolor",
@@ -145,10 +138,11 @@ const TableSettingInputs = (state)  => {
         },
     ];
 };
-const TableSettingInputs2 = (state)  => {
+
+const TableSettingInputs2 = (state) => {
     const { t } = useTranslation();
     return [
-    
+
         {
             name: "Placement of text",
             label: "documentingDesign.TableSetting.Placementoftext",
@@ -160,15 +154,15 @@ const TableSettingInputs2 = (state)  => {
                 text: t(`documentingDesign.${item.text}`)
             })),
             parameterKey: "textVerticalAligen",
-            value: state?.textVerticalAligen ? state?.textVerticalAligen : " ",
+            value: state?.textVerticalAligen || "",
             isValid: true,
         },
-    
+
     ];
 };
-const AdditionalOptionsInputs = (state)  => {
+
+const AdditionalOptionsInputs = (state) => {
     return [
-    
         {
             name: "View salesperson",
             label: "documentingDesign.Additional.Viewsalesperson",
@@ -176,7 +170,7 @@ const AdditionalOptionsInputs = (state)  => {
             placeholder: "documentingDesign.Additional.Viewsalesperson",
             required: false,
             parameterKey: "showAgentName",
-            value: state?.showAgentName,
+            value: state?.showAgentName ,
             isValid: true,
         },
         {
@@ -186,7 +180,7 @@ const AdditionalOptionsInputs = (state)  => {
             placeholder: "documentingDesign.Additional.Viewdocproducer",
             required: false,
             parameterKey: "showDocProduserName",
-            value: state?.showDocProduserName ? state?.showDocProduserName : "",
+            value: state?.showDocProduserName ,
             isValid: true,
         },
         {
@@ -195,8 +189,8 @@ const AdditionalOptionsInputs = (state)  => {
             type: "switch",
             placeholder: "documentingDesign.Additional.Showpaymentdate",
             required: false,
-            parameterKey: "ShowToPayUntil",
-            value: state?.ShowToPayUntil ? state?.shShowToPayUntil : "",
+            parameterKey: "showToPayUntil",
+            value: state?.showToPayUntil ,
             isValid: true,
         },
         {
@@ -209,16 +203,11 @@ const AdditionalOptionsInputs = (state)  => {
             value: state?.showClientType,
             isValid: true,
         },
-        
-       
-            
-            
-
     ];
 };
-const AdditionalOptionsInputs2 = (state)  => {
+
+const AdditionalOptionsInputs2 = (state) => {
     return [
-    
         {
             name: "Show customer code",
             label: "documentingDesign.Additional.Showcustomercode",
@@ -235,8 +224,8 @@ const AdditionalOptionsInputs2 = (state)  => {
             type: "switch",
             placeholder: "documentingDesign.Additional.Viewcustomerbalance",
             required: false,
-            parameterKey: "IsShowBalance",
-            value: state?.IsShowBalance,
+            parameterKey: "isShowBalance",
+            value: state?.isShowBalance ? state?.isShowBalance : false,
             isValid: true,
         },
         {
@@ -258,14 +247,12 @@ const AdditionalOptionsInputs2 = (state)  => {
             parameterKey: "showWithholdingTaxPayable",
             value: state?.showWithholdingTaxPayable,
             isValid: true,
-        },     
-
+        },
     ];
 };
 
-const FooterInputs1 = (state)  => {
+const FooterInputs1 = (state) => {
     return [
-    
         {
             name: "Email",
             label: "documentingDesign.Footer.Email",
@@ -273,7 +260,7 @@ const FooterInputs1 = (state)  => {
             placeholder: "documentingDesign.Footer.Email",
             required: false,
             parameterKey: "email",
-            value: state?.email,
+            value: state?.email? state?.email : "" ,
             isValid: true,
         },
         {
@@ -296,17 +283,17 @@ const FooterInputs1 = (state)  => {
             value: state?.address,
             isValid: true,
         },
-         
+
 
     ];
 };
-const FooterInputs2 = (state)  => {
+
+const FooterInputs2 = (state) => {
     return [
-    
         {
             name: "Footer Image",
             label: "documentingDesign.Footer.FooterImage",
-            type: "file",
+            type: "imageFile",
             placeholder: "documentingDesign.Footer.FooterImage",
             required: false,
             parameterKey: "pdfFooter",
@@ -316,10 +303,8 @@ const FooterInputs2 = (state)  => {
     ];
 };
 
-const QRCodesInputs1 = (state)  => {
+const QRCodesInputs = (state) => {
     return [
-    
-   
         {
             name: "Display QR codes in a work order document",
             label: "documentingDesign.QRCodes.DisplayQRcodesinaworkorderdocument",
@@ -340,12 +325,6 @@ const QRCodesInputs1 = (state)  => {
             value: state?.PDFproductionQrCodes,
             isValid: true,
         },
-      
-    ];
-};
-const QRCodesInputs2 = (state)=>{
-    return [
-   
         {
             name: "Display an initial QR Code for the entire order within the production PDF",
             label: "documentingDesign.QRCodes.DisplayaninitialQRCode",
@@ -355,7 +334,7 @@ const QRCodesInputs2 = (state)=>{
             parameterKey: "DisplayaninitialQRCode",
             value: state?.DisplayaninitialQRCode,
             isValid: true,
-        },   
+        },
         {
             name: "Show payment date",
             label: "documentingDesign.Additional.Showpaymentdate",
@@ -365,13 +344,7 @@ const QRCodesInputs2 = (state)=>{
             parameterKey: "Showpaymentdate",
             value: state?.Showpaymentdate,
             isValid: true,
-        }, 
-    ];
-
-};
-
-const QRCodesInputs3 = (state) =>{
-    return [
+        },
         {
             name: "display all types with equal amounts in the PDF of the PACA",
             label: "documentingDesign.QRCodes.displayall",
@@ -381,7 +354,7 @@ const QRCodesInputs3 = (state) =>{
             parameterKey: "displayall",
             value: state?.displayall,
             isValid: true,
-        }, 
+        },
         {
             name: "Show started and finished QRs in the production PDF",
             label: "documentingDesign.QRCodes.ShowStarted",
@@ -391,21 +364,19 @@ const QRCodesInputs3 = (state) =>{
             parameterKey: "ShowStarted",
             value: state?.ShowStarted,
             isValid: true,
-        },  
+        },
     ];
 };
 
-
-export {creationDocumentInputs ,
-     TitleDefinitionInputs ,
-     TitleDefinitionCustomLogoInputs,
-     TableSettingInputs,
-     TableSettingInputs2,
-     AdditionalOptionsInputs,
-     AdditionalOptionsInputs2,
-     FooterInputs1,
-     FooterInputs2,
-     QRCodesInputs1,
-     QRCodesInputs2,
-     QRCodesInputs3
-    };
+export {
+    creationDocumentInputs,
+    TitleDefinitionInputs,
+    TitleDefinitionCustomLogoInputs,
+    TableSettingInputs,
+    TableSettingInputs2,
+    AdditionalOptionsInputs,
+    AdditionalOptionsInputs2,
+    FooterInputs1,
+    FooterInputs2,
+    QRCodesInputs
+};

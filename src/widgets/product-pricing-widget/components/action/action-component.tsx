@@ -10,6 +10,7 @@ import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import {
   EditableKeyValueViewComponent,
   ParametersMapping,
+  TextAreaActionsMapping,
 } from "@/widgets/product-pricing-widget/components/action/key-value-view";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { InOutSourceSelect } from "@/widgets/product-pricing-widget/components/in-out-source-select/in-out-source-select";
@@ -24,19 +25,23 @@ import {
   currentProductItemValueState,
   outsourceSuppliersState,
 } from "@/widgets/product-pricing-widget/state";
-import { GoMakeAutoComplate } from "@/components";
+import { GoMakeAutoComplate, GoMakeDeleteModal, GoMakeModal } from "@/components";
 import Button from "@mui/material/Button";
 import { useTranslation } from "react-i18next";
 import { PrintImageComponent } from "@/widgets/product-pricing-widget/components/print-image/print-image-component";
 import ClearRoundedIcon from "@mui/icons-material/ClearRounded";
 import { SettingsIcon } from "@/icons/settings";
 import { SettingsMenu } from "./settings-menu";
-import { WarningIcon } from "@/icons";
-
+import { PlusIcon, WarningIcon } from "@/icons";
+import { PermissionCheck } from "@/components/CheckPermission";
+import { Permissions } from "@/components/CheckPermission/enum";
+import { NotesForActionModal } from "./notes-for-action-modal";
+import { _renderIconLogs } from "@/utils/constants";
 interface IActionContainerComponentProps extends IWorkFlowAction {
   delay?: number;
   workFlowId?: string;
   productType: string | null;
+
 }
 
 interface IActionsComponentProps {
@@ -126,7 +131,7 @@ const Actions = ({
           };
           return (
             <ActionContainerComponent
-              key={action.id} // Make sure to add a unique key to each component
+              key={action.id}
               data-toure={'action'}
               productType={productType}
               workFlowId={workFlowId}
@@ -137,13 +142,14 @@ const Actions = ({
         } else {
           return (
             <ActionContainerComponent
-              key={action.id} // Make sure to add a unique key to each component
+              key={action.id}
               data-toure={'action'}
               productType={productType}
               workFlowId={workFlowId}
               delay={index * 800}
               {...action}
             />
+
           );
         }
       })}
@@ -169,21 +175,48 @@ const ActionContainerComponent = ({
   categoryId,
   isCalculated,
   actionException,
+  materials,
+  employeeId,
+  employeeName,
+  isNeedEmployee,
+  isNeedMachine,
+  isNeedMaterial,
 }: IActionContainerComponentProps) => {
-
+  console.log("actionException", actionException?.exceptionType)
   source = source === EWorkSource.OUT ? EWorkSource.OUT : EWorkSource.INTERNAL;
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [chooseMachine, setChooseMachine] = useState<boolean>(false);
+  const [chooseMaterial, setChooseMaterial] = useState<boolean>(false);
+  const [chooseEmployee, setChooseEmployee] = useState<boolean>(false);
+
   const currentProductItemValue = useRecoilValue(currentProductItemValueState);
   const { t } = useTranslation();
   const {
     getActionMachinesList,
+    getActionMaterialsList,
+    getActionEmloyeeList,
     selectNewMachine,
+    selectNewMaterials,
+    selectNewEmployee,
     anchorEl,
     open,
     handleClick,
     handleClose,
     updateActionData,
+    openModalMachine,
+    openModalMaterial,
+    onClickCloseModalMachine,
+    onClickCloseModalMaterial,
+    setAttributesData,
+    updateWorkFlowForMachine,
+    updateWorkFlowForMaterials,
+    updateWorkFlowForEmployees,
+    onClickGetEmployeeForAction,
+    onClickGetMachineForAction,
+    onClickGetMaterialsForAction,
+    employeesList,
+    machinesList,
+    materialsList
   } = useActionUpdateValues();
   const suppliersState = useRecoilValue(outsourceSuppliersState);
   const suppliers = useMemo(() => {
@@ -194,30 +227,35 @@ const ActionContainerComponent = ({
   }, [suppliersState]);
   const { classes } = useStyle();
   const { secondColor } = useGomakeTheme();
-  const inputsParameters = outputs.filter(
+  const inputsParameters = outputs?.filter(
     (parameter) =>
       parameter.propertyType === RuleType.PARAMETER &&
       parameter.htmlElementType === HtmlElementType.TEXT
   );
-  const outputsParameters = outputs.filter(
+  const outputsParameters = outputs?.filter(
     (parameter) =>
       parameter.propertyType === RuleType.OUTPUT &&
       parameter.htmlElementType === HtmlElementType.TEXT
   );
-  const imageOutputs = outputs.filter(
+  const imageOutputs = outputs?.filter(
     (parameter) =>
       parameter.propertyType === RuleType.OUTPUT &&
       parameter.htmlElementType === HtmlElementType.IMAGE
   );
+
+  const textAreaOutputs = outputs?.filter(
+    (parameter) =>
+      parameter.propertyType === RuleType.OUTPUT &&
+      parameter.htmlElementType === HtmlElementType.TEXT_AREA
+  );
   const handleDeliveryTimeUpdate = (newValue: string) => {
     updateActionData(
-      actionId,
+      id,
       +newValue,
       "totalProductionTime",
       productType
     ).then();
   };
-
   const handleCostUpdate = (newCost: string) => {
     updateActionData(id, +newCost, "totalCost", productType).then();
   };
@@ -253,6 +291,10 @@ const ActionContainerComponent = ({
     }
     return "";
   }, [supplierId, suppliers]);
+
+
+
+
 
   return (
     <Fade
@@ -304,7 +346,7 @@ const ActionContainerComponent = ({
                   />
                 </Stack>
               ) : (
-                !!machineName && (
+                isNeedMachine && (
                   <>
                     <Divider orientation={"vertical"} flexItem color={"#000"} />
                     {!chooseMachine ? (
@@ -312,13 +354,21 @@ const ActionContainerComponent = ({
                         onClick={(e) => {
                           e.stopPropagation();
                           setChooseMachine(true);
+                          onClickGetMachineForAction(actionId)
                         }}
                         variant={"text"}
                         style={classes.sectionTitle}
                       >
-                        {machineName.length > 20
-                          ? machineName.slice(0, 20) + "..."
-                          : machineName}
+                        {
+                          machineName != null ? <>
+                            {machineName?.length > 20
+                              ? machineName.slice(0, 20) + "..."
+                              : machineName}
+                          </> : <>
+                            Selecte New Machine
+                          </>
+                        }
+
                       </Button>
                     ) : (
                       <Stack
@@ -335,10 +385,19 @@ const ActionContainerComponent = ({
                               productType,
                               actionIndex
                             );
+                            setAttributesData({
+                              actionId,
+                              productType,
+                              actionIndex,
+                              machineName: v.label,
+                              machineId: v?.value,
+                              printingActionId: id,
+
+                            })
                             setChooseMachine(false);
                           }}
                           style={{ width: "200px" }}
-                          options={getActionMachinesList(actionId, productType)}
+                          options={machinesList}
                           placeholder={"Choose machine"}
                           value={machineName}
                         />
@@ -356,7 +415,140 @@ const ActionContainerComponent = ({
                 )
               )}
             </Stack>
+
             <Divider orientation={"vertical"} flexItem />
+            <Stack
+              style={classes.sectionTitle}
+              direction={"row"}
+              alignItems={"center"}
+              gap={"10px"}
+            >
+              {
+                isNeedEmployee && (
+                  <>
+                    {!chooseEmployee ? (
+                      <Button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setChooseEmployee(true);
+                          onClickGetEmployeeForAction(id)
+                        }}
+                        variant={"text"}
+                        style={classes.sectionTitle}
+                      >
+                        {employeeName ? employeeName : <>Select New Employee</>}
+                      </Button>
+                    ) : (
+                      <Stack
+                        direction={"row"}
+                        gap={"5px"}
+                        alignItems={"center"}
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <GoMakeAutoComplate
+                          onChange={(e, v) => {
+                            updateWorkFlowForEmployees(actionId, productType, actionIndex, v?.label, v?.value, id)
+                            setChooseEmployee(false);
+                          }}
+                          style={{ width: "200px" }}
+                          options={employeesList}
+                          placeholder={"Choose Employee"}
+                          value={employeeName}
+                        />
+                        <IconButton
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setChooseEmployee(false);
+                          }}
+                        >
+                          <ClearRoundedIcon />
+                        </IconButton>
+                      </Stack>
+                    )}
+                  </>
+                )
+              }
+            </Stack>
+            {
+              isNeedEmployee && <Divider orientation={"vertical"} flexItem />
+            }
+
+            <Stack
+              style={classes.sectionTitle}
+              direction={"row"}
+              alignItems={"center"}
+              gap={"10px"}
+            >
+              {
+                isNeedMaterial && (
+                  <>
+                    {!chooseMaterial ? (
+                      <Button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setChooseMaterial(true);
+                          onClickGetMaterialsForAction(materials[0])
+                        }}
+                        variant={"text"}
+                        style={classes.sectionTitle}
+                      >
+                        {materials[0]?.materialCategories?.length > 0 ? <>
+                          {materials[0]?.materialCategories[0]?.name?.length > 20
+                            ? materials[0]?.materialCategories[0]?.name.slice(0, 20) + "..."
+                            : materials[0]?.materialCategories[0]?.name}</> : <>
+                          Select New Material
+                        </>}
+
+                      </Button>
+                    ) : (
+                      <Stack
+                        direction={"row"}
+                        gap={"5px"}
+                        alignItems={"center"}
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <GoMakeAutoComplate
+                          onChange={(e, v) => {
+                            selectNewMaterials(
+                              v?.value,
+                              actionId,
+                              productType,
+                              actionIndex
+                            );
+                            setAttributesData({
+                              actionId,
+                              productType,
+                              actionIndex,
+                              printHouseMaterialSizeName: v.label,
+                              printHouseMaterialSizeId: v?.value,
+                              printingActionId: id,
+                            })
+                            setChooseMaterial(false);
+
+                          }}
+                          style={{ width: "200px" }}
+                          options={materialsList}
+                          placeholder={"Choose material"}
+                          value={materials[0]?.materialCategories[0]?.name}
+                        />
+                        <IconButton
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setChooseMaterial(false);
+                          }}
+                        >
+                          <ClearRoundedIcon />
+                        </IconButton>
+                      </Stack>
+                    )}
+                  </>
+                )
+              }
+            </Stack>
+            {
+              isNeedMaterial && <Divider orientation={"vertical"} flexItem />
+            }
+
             <EditableKeyValueViewComponent
               onUpdate={handleDeliveryTimeUpdate}
               {...totalProductionTime}
@@ -367,35 +559,42 @@ const ActionContainerComponent = ({
               style={{ height: "50%", margin: "auto 0" }}
               flexItem
             />
-            <EditableKeyValueViewComponent
-              onUpdate={handleCostUpdate}
-              {...totalCost}
-              source={source}
-            />
-            <Divider
-              orientation={"vertical"}
-              style={{ height: "50%", margin: "auto 0" }}
-              flexItem
-            />
-            <Stack direction={"row"} gap={"3px"} alignItems={"center"}>
+            <PermissionCheck userPermission={Permissions.SHOW_COSTS_IN_CALCULATIONS}>
               <EditableKeyValueViewComponent
-                onUpdate={handleProfitUpdate}
-                {...profit}
+                onUpdate={handleCostUpdate}
+                {...totalCost}
                 source={source}
               />
-              <span>
-                {source === EWorkSource.OUT
-                  ? `(${calculateOutSourceProfitInMoney()
-                  } ${totalPrice ? totalPrice.defaultUnit : ""})`
-                  : `(${calculateProfitInMoney()} ${totalPrice ? totalPrice.defaultUnit : ""
-                  })`}
-              </span>
-            </Stack>
-            <Divider
-              orientation={"vertical"}
-              style={{ height: "50%", margin: "auto 0" }}
-              flexItem
-            />
+              <Divider
+                orientation={"vertical"}
+                style={{ height: "50%", margin: "auto 0" }}
+                flexItem
+              />
+              <PermissionCheck userPermission={Permissions.SHOW_PROFITS_IN_CALCULATIONS}>
+                <Stack direction={"row"} gap={"3px"} alignItems={"center"}>
+                  <EditableKeyValueViewComponent
+                    onUpdate={handleProfitUpdate}
+                    {...profit}
+                    source={source}
+                  />
+                  <span>
+                    {source === EWorkSource.OUT
+                      ? `(${calculateOutSourceProfitInMoney()
+                      } ${totalPrice ? totalPrice.defaultUnit : ""})`
+                      : `(${calculateProfitInMoney()} ${totalPrice ? totalPrice.defaultUnit : ""
+                      })`}
+                  </span>
+                </Stack>
+                <Divider
+                  orientation={"vertical"}
+                  style={{ height: "50%", margin: "auto 0" }}
+                  flexItem
+                />
+              </PermissionCheck>
+
+
+            </PermissionCheck>
+
             <EditableKeyValueViewComponent
               onUpdate={handleUpdatePrice}
               {...totalPrice}
@@ -416,10 +615,11 @@ const ActionContainerComponent = ({
               gap: 10,
             }}
           >
-            {!isCalculated && (
+            {actionException?.exceptionKey && (
               <Tooltip title={t("CalculationExceptions." + actionException?.exceptionKey)}>
                 <IconButton>
-                  <WarningIcon />
+                  {_renderIconLogs(actionException?.exceptionType, 24, 24)}
+
                 </IconButton>
               </Tooltip>
             )}
@@ -450,7 +650,7 @@ const ActionContainerComponent = ({
           orientation={"vertical"}
           onClick={(e) => e.stopPropagation()}
         >
-          {inputsParameters.length > 0 && (
+          {inputsParameters?.length > 0 && (
             <>
               <Divider />
               <Stack
@@ -463,7 +663,7 @@ const ActionContainerComponent = ({
               </Stack>
             </>
           )}
-          {outputsParameters.length > 0 && source === EWorkSource.INTERNAL && (
+          {outputsParameters?.length > 0 && source === EWorkSource.INTERNAL && (
             <>
               <Divider />
               <Stack
@@ -479,6 +679,13 @@ const ActionContainerComponent = ({
                 {imageOutputs.map((parameter) => (
                   <PrintImageComponent {...parameter} />
                 ))}
+                <Divider orientation={"vertical"} flexItem />
+                <TextAreaActionsMapping
+                  parameters={textAreaOutputs}
+                  actionId={id}
+                  currentProductItemValue={currentProductItemValue}
+                  productType={productType}
+                />
               </Stack>
             </>
           )}
@@ -493,7 +700,26 @@ const ActionContainerComponent = ({
           machineName={machineName}
           categoryId={categoryId}
         />
+        <GoMakeDeleteModal
+          insideStyle={classes.insideStyle}
+          openModal={openModalMachine}
+          onClose={onClickCloseModalMachine}
+          title={t("pricingWidget.machineMsg")}
+          hideIcon={true}
+          yesBtn={t("modal.confirm")}
+          onClickDelete={updateWorkFlowForMachine}
+        />
+        <GoMakeDeleteModal
+          insideStyle={classes.insideStyle}
+          openModal={openModalMaterial}
+          onClose={onClickCloseModalMaterial}
+          title={t("pricingWidget.materialMsg")}
+          hideIcon={true}
+          yesBtn={t("modal.confirm")}
+          onClickDelete={updateWorkFlowForMaterials}
+        />
       </Stack>
+
     </Fade>
   );
 };
@@ -513,15 +739,26 @@ const ActionComponent = ({
   const { t } = useTranslation();
   const { secondColor } = useGomakeTheme();
   const suppliers = useRecoilValue(outsourceSuppliersState);
+
   const parameters = [
-    totalProductionTime,
-    totalCost,
-    profit,
+    {
+      ...totalProductionTime,
+      key: 'totalRealProductionTime',
+    },
+    {
+      ...totalCost,
+      key: 'totalCost',
+    },
+    {
+      ...profit,
+      key: "profit"
+    },
     {
       ...totalPrice,
+      key: "totalPrice",
       valueColor: secondColor(500),
     },
-  ];
+  ]
   const getSupplierId = useCallback(() => {
     if (supplierId) {
       const supplier = suppliers?.find((sup) => sup.supplierId === supplierId);
@@ -559,7 +796,7 @@ const ActionComponent = ({
             )}
           </Stack>
           <Divider orientation={"vertical"} flexItem />
-          <ParametersMapping source={source} parameters={parameters} />
+          <ParametersMapping source={source} parameters={parameters} isWorkFlows={true} />
           <Divider orientation={"vertical"} flexItem />
           <span style={classes.sourceLabel}>
             {source === EWorkSource.OUT

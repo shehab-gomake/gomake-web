@@ -6,7 +6,7 @@ import { openModalState, documentState, documentsArrayState } from "../state/doc
 import { ShowDocumentData } from "./components/show-document-data";
 import { useSnackBar } from "@/hooks";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
-import { IDocument } from "./interface/document";
+import { DocumentsTypeEnum, IDocument } from "./interface/document";
 import { useState } from "react";
 
 const useDocumentNumbers = () => {
@@ -30,9 +30,9 @@ const useDocumentNumbers = () => {
         const callBackFunction = (data) => {
             if (data.success) {
                 const tableRows = data.data?.map((document) => [
-                    document.documentName,
+                    t(`documentingNumbering.${DocumentsTypeEnum[document.docType]}`),
                     document.prefix,
-                    document.value,
+                    document.value, 
                     document.details,
                     ShowDocumentData(document, primaryColor(500), setOpenModal, setDocument, t('documentingSettings.edit')),
                 ]);

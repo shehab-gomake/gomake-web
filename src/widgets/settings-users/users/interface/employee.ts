@@ -28,6 +28,7 @@ export interface Employee {
     quotePriceLimit: number | null;
     mailProvider: string | null;
     pinCodeForLoginWithApplication: string | null;
+    actionIds:string[] | null
 }
 
 export interface IUserData {

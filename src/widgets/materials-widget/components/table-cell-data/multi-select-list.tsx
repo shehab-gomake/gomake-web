@@ -8,7 +8,7 @@ import { useStyle } from "./style";
 
 interface IProps {
   parameterKey: string;
-  values: string[];
+  values: any;
   id: string;
   isAdmin: boolean;
   options: { label: string; value: string }[];
@@ -25,7 +25,6 @@ const MultiSelectList = ({
 }: IProps) => {
   const { classes } = useStyle();
   const { updateCellData } = useTableCellData(isAdmin);
-
   const reorderedOptions = options?.sort((a, b) => {
     const isSelectedA = values.includes(a.value);
     const isSelectedB = values.includes(b.value);
@@ -38,7 +37,10 @@ const MultiSelectList = ({
       return 0;
     }
   });
-
+  if (!Array.isArray(values)) {
+    console.error("TypeError: values.map is not a function. 'values' should be an array.");
+    values = [];
+  }
   const selectedLabels = values
     .map((selectedId) => options.find((opt) => opt.value === selectedId)?.label)
     .filter((label) => label !== null && label !== undefined);

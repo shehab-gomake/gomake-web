@@ -1,11 +1,10 @@
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
-import { convertHeightToVH, convertWidthToVW } from "@/utils/adapter";
+import { convertHeightToVH } from "@/utils/adapter";
 import { FONT_FAMILY } from "@/utils/font-family";
-import { LAYOUT_DEFAULT_GAP, SIDE_MENU_Layout } from "@/utils/layout-config";
 import { useMemo } from "react";
 
 const useStyle = (color: 'primary' | 'cyan' | 'magenta') => {
-  const { primaryColor, secondColor, successColor, theme } = useGomakeTheme();
+  const { primaryColor, theme } = useGomakeTheme();
   const classes = useMemo(() => {
   const backgroundColor = color === 'primary' ? primaryColor(400) : color === 'cyan' ? '#00AEEF' : '#ED028C';
     return {
@@ -17,7 +16,8 @@ const useStyle = (color: 'primary' | 'cyan' | 'magenta') => {
         display: 'flex',
         justifyContent: 'center' as 'center',
         alignItems: 'center' as 'center',
-        height: convertHeightToVH(361)
+        height: convertHeightToVH(250),
+        padding:50
       },
       title: {
         ...FONT_FAMILY.Outfit(600, 36),

@@ -23,8 +23,13 @@ export interface IBoardMissions {
     workOrder?: string;
     startDate?: string;
     checked?: boolean;
-    automatedTags: string[]
+    automatedTags: string[];
+    productType: string;
+    nextBoardMission?: IBoardMissionStep;
+    previousBoardMission?: IBoardMissionStep;
+    priority: number;
 }
+
 
 export interface IBoardMissionsDetails {
     boardMissionId: string;
@@ -44,4 +49,19 @@ export interface IBoardMissionsDetails {
     currentBoardMissionActionId: string;
     currentActionName: string;
     currentMachineName: string;
+    orderItemId: string;
+    notes: string[];
+    filesPath: string;
+    productType: string;
+    sectionName: string;
+    clientTypeId: string;
+}
+
+export interface IBoardMissionStep {
+    boardMissionId: string;
+    productType: string;
+    clientName: string;
+    productName: string;
+    boardMissionNumber: string;
+    orderNumber: string;
 }

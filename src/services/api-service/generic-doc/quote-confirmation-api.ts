@@ -8,11 +8,34 @@ const UPDATE_DOCUMENT_COMMENTS_URL = "/v1/erp-service/quote-confirmation/update-
 const REJECT_DOCUMENT_URL = "/v1/erp-service/quote-confirmation/reject-document";
 const CALCULATE_SELECTED_ITEMS_URL= "/v1/erp-service/quote-confirmation/calculate-document-items";
 
+const GET_WORK_FLOWS_URL = "/v1/erp-service/productItemValueDrafts/get-work-flows";
+const GET_WORK_FLOWS_ACTIONS_URL = "/v1/erp-service/productItemValueDrafts/get-work-flow-actions";
+
+
 const getDocumentByIdApi: ICallAndSetData = async (callApi, setState, data) => {
   return await getSetApiData(
     callApi,
     EHttpMethod.GET,
     GET_DOCUMENT_BY_ID_URL,
+    setState,
+    data
+  );
+};
+
+const getWorkFlowsApi: ICallAndSetData = async (callApi, setState, data) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    GET_WORK_FLOWS_URL,
+    setState,
+    data
+  );
+};
+const getWorkFlowsActionsApi: ICallAndSetData = async (callApi, setState, data) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    GET_WORK_FLOWS_ACTIONS_URL,
     setState,
     data
   );
@@ -66,5 +89,7 @@ export {
     approveDocumentItemsApi,
     rejectDocumentApi,
     updateDocumentCommentsConfirmationApi,
-    calculateSelectedItemsApi
+    calculateSelectedItemsApi,
+    getWorkFlowsApi,
+    getWorkFlowsActionsApi
 };

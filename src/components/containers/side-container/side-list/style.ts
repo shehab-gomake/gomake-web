@@ -10,6 +10,7 @@ const useStyle = () => {
       container: {
         boxShadow: "0px 4px 40px rgba(0, 0, 0, 0.08)",
         //   height: convertHeightToVH(735)
+        //  height:"100%"
       },
       header: {
         ...FONT_FAMILY.Lexend(500, 20),
@@ -28,6 +29,7 @@ const useStyle = () => {
       deleteButtonDirection: {
         display: "flex",
         flexDirection: "row-reverse" as "row-reverse",
+        zIndex: 0
       },
       menuStyle: {
         elevation: 0,
@@ -69,4 +71,5 @@ const useStyle = () => {
     classes,
   };
 };
+
 export { useStyle };

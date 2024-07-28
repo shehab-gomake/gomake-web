@@ -11,7 +11,6 @@ import { addCustomerContactApi, addDocumentContactApi } from "@/services/api-ser
 import { useRecoilValue } from "recoil";
 import { quoteItemState } from "@/store";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
-import { v4 as uuidv4 } from "uuid";
 
 const AddContactNewWidget = ({
   clientContactsValue,
@@ -31,7 +30,8 @@ const AddContactNewWidget = ({
   setIsDisplayWidget,
   documentType,
   getQuote,
-  getAllClientContacts
+  getAllClientContacts,
+  onOpenNewContact
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -96,24 +96,33 @@ const AddContactNewWidget = ({
       <div style={classes.businessContainerStyle}>
         <AutoCompleteUpdatedValue
           label={t("sales.quote.contactName")}
-          options={clientContactsValue}
+          options={[
+            { id: 'new', text: t("sales.quote.addNewContact") }, // Add New Contact option
+            ...clientContactsValue.map(contact => ({
+              ...contact,
+              value: contact.id,
+              text: contact.name
+            }))
+          ]}
           onBlur={onBlurContactName}
           isUpdate={true}
           setIsUpdate={setIsUpdateContactName}
-          getOptionLabel={(item) => item?.name}
+          getOptionLabel={(item) => item.text}
           onChange={(e: any, item: any) => {
-            setSelectedContactById(item);
+            if (item?.id === 'new') {
+              onOpenNewContact(true)
+              setIsDisplayWidget(false)
+            } else {
+              setSelectedContactById(item);
+            }
           }}
           onChangeTextField={
             (e) => setNewContactName(e.target.value)
           }
         />
         <PhoneInputUpdatedValues
-          value={
-            selectedContactById?.phone !== null
-              ? selectedContactById?.phone
-              : t("sales.quote.noMobileContact")
-          }
+          value={selectedContactById?.phone}
+          placeholder={selectedContactById?.phone ? selectedContactById?.phone : t("sales.quote.noMobileContact")}
           label={t("sales.quote.mobileContact")}
           onBlur={onBlurContactMobile}
           isUpdate={isUpdateContactMobile}
@@ -121,11 +130,8 @@ const AddContactNewWidget = ({
           onInputChange={onInputChangePhone}
         />
         <InputUpdatedValues
-          value={
-            selectedContactById?.mail !== null
-              ? selectedContactById?.mail
-              : t("sales.quote.noContactEmail")
-          }
+          value={selectedContactById?.mail}
+          placeholder={selectedContactById?.mail ? selectedContactById?.mail : t("sales.quote.noContactEmail")}
           label={t("sales.quote.contactEmail")}
           onBlur={onBlurContactEmail}
           isUpdate={isUpdateContactEmail}
