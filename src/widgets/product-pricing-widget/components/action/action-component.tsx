@@ -554,12 +554,12 @@ const ActionContainerComponent = ({
               {...totalProductionTime}
               source={source}
             />
-            <Divider
-              orientation={"vertical"}
-              style={{ height: "50%", margin: "auto 0" }}
-              flexItem
-            />
             <PermissionCheck userPermission={Permissions.SHOW_COSTS_IN_CALCULATIONS}>
+              <Divider
+                orientation={"vertical"}
+                style={{ height: "50%", margin: "auto 0" }}
+                flexItem
+              />
               <EditableKeyValueViewComponent
                 onUpdate={handleCostUpdate}
                 {...totalCost}
@@ -570,37 +570,34 @@ const ActionContainerComponent = ({
                 style={{ height: "50%", margin: "auto 0" }}
                 flexItem
               />
-              <PermissionCheck userPermission={Permissions.SHOW_PROFITS_IN_CALCULATIONS}>
-                <Stack direction={"row"} gap={"3px"} alignItems={"center"}>
-                  <EditableKeyValueViewComponent
-                    onUpdate={handleProfitUpdate}
-                    {...profit}
-                    source={source}
-                  />
-                  <span>
-                    {source === EWorkSource.OUT
-                      ? `(${calculateOutSourceProfitInMoney()
-                      } ${totalPrice ? totalPrice.defaultUnit : ""})`
-                      : `(${calculateProfitInMoney()} ${totalPrice ? totalPrice.defaultUnit : ""
-                      })`}
-                  </span>
-                </Stack>
-                <Divider
-                  orientation={"vertical"}
-                  style={{ height: "50%", margin: "auto 0" }}
-                  flexItem
+              <Stack direction={"row"} gap={"3px"} alignItems={"center"}>
+                <EditableKeyValueViewComponent
+                  onUpdate={handleProfitUpdate}
+                  {...profit}
+                  source={source}
                 />
-              </PermissionCheck>
+                <span>
+                  {source === EWorkSource.OUT
+                    ? `(${calculateOutSourceProfitInMoney()
+                    } ${totalPrice ? totalPrice.defaultUnit : ""})`
+                    : `(${calculateProfitInMoney()} ${totalPrice ? totalPrice.defaultUnit : ""
+                    })`}
+                </span>
+              </Stack>
+              <Divider
+                orientation={"vertical"}
+                style={{ height: "50%", margin: "auto 0" }}
+                flexItem
+              />
 
-
+              <EditableKeyValueViewComponent
+                onUpdate={handleUpdatePrice}
+                {...totalPrice}
+                source={source}
+                valueColor={secondColor(500)}
+              />
             </PermissionCheck>
 
-            <EditableKeyValueViewComponent
-              onUpdate={handleUpdatePrice}
-              {...totalPrice}
-              source={source}
-              valueColor={secondColor(500)}
-            />
             <Divider orientation={"vertical"} flexItem />
             <div onClick={(e) => e.stopPropagation()}>
               <InOutSourceSelect value={source} onChange={handleSourceChange} />

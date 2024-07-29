@@ -11,6 +11,7 @@ import { SelectInput } from "./select-input";
 import { useRecoilValue } from "recoil";
 import { machineCategoriesState } from "@/store/machine-categories";
 import { MultiSelectList } from "./multi-select-list";
+import { materialsParametersState } from "../../state";
 
 const TableCellData = ({
   value,
@@ -24,7 +25,7 @@ const TableCellData = ({
 }: IRowData) => {
   const { updateCellData, machinesOptions, clientsOptions } = useTableCellData(isAdmin);
   const machinesCategories = useRecoilValue(machineCategoriesState);
-
+  const parameterCategories = useRecoilValue<any>(materialsParametersState);
   const toggleIsActive = async () => {
     await updateCellData(id, parameterKey, !value);
   };
@@ -126,6 +127,20 @@ const TableCellData = ({
             label: item.key,
           }))}
           placeHolder="Select value"
+        />
+      );
+    case EDataTypeEnum.NOTE_BOOK_TYPES:
+      return (
+        <MultiSelectInput
+          values={value as string[]}
+          parameterKey={parameterKey}
+          id={id}
+          isAdmin={isAdmin}
+          options={parameterCategories?.map((item) => ({
+            value: item.id,
+            label: item.name,
+          }))}
+          placeHolder="Select client"
         />
       );
     default:

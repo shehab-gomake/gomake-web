@@ -54,7 +54,7 @@ const ParametersMapping = ({ parameters, source, isWorkFlows = false, isProducti
                     )
                 }
                 else if (isWorkFlows) {
-                    if (parameterKey === "totalCost") {
+                    if (parameterKey === "totalCost" || parameterKey === "profit") {
                         return (
                             <PermissionCheck userPermission={Permissions.SHOW_COSTS_IN_CALCULATIONS}>
                                 {
@@ -65,18 +65,6 @@ const ParametersMapping = ({ parameters, source, isWorkFlows = false, isProducti
                             </PermissionCheck>
                         )
                     }
-                    if (parameterKey === "profit") {
-                        return (
-                            <PermissionCheck userPermission={Permissions.SHOW_PROFITS_IN_CALCULATIONS}>
-                                {
-                                    isLastElement
-                                        ? keyValueComponent
-                                        : [keyValueComponent, <Divider key={`divider-${index}`} orientation="vertical" flexItem />]
-                                }
-                            </PermissionCheck>
-                        )
-                    }
-
                     else {
                         return isLastElement
                             ? keyValueComponent

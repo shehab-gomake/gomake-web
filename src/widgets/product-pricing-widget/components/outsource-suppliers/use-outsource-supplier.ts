@@ -1,19 +1,24 @@
-import {useRecoilState, useRecoilValue} from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import {
     currentProductItemValueDraftId,
     currentProductItemValuePriceState,
     currentProductItemValueState,
     outsourceSuppliersState,
 } from "@/widgets/product-pricing-widget/state";
-import {useGomakeAxios, useGomakeRouter, useSnackBar} from "@/hooks";
-import {currentCalculationConnectionId, productItemValueByEditState, } from "@/store";
-import {EWorkSource} from "@/widgets/product-pricing-widget/enums";
-import {addItemApi, updateDocumentItemApi} from "@/services/api-service/generic-doc/documents-api";
+import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
+import { currentCalculationConnectionId, productItemValueByEditState, } from "@/store";
+import { EWorkSource } from "@/widgets/product-pricing-widget/enums";
+import { addItemApi, updateDocumentItemApi } from "@/services/api-service/generic-doc/documents-api";
 import { updateProductItemValueOutsourceSupplierCost } from "@/services/api-service/product-item-value-draft/product-item-draft-endpoints";
 import { EOutSoucrceUpdateKey } from "@/enums";
 import { useRouter } from "next/router";
 
-const useOutsourceSupplier = () => {
+interface IProps {
+    supplier?: any,
+    setSupplier?: any;
+}
+
+const useOutsourceSupplier = ({ supplier, setSupplier }: IProps) => {
     const router = useRouter();
     const [suppliers, setSuppliers] = useRecoilState(outsourceSuppliersState);
     const productItemValueByEdit = useRecoilValue<any>(productItemValueByEditState);
@@ -22,7 +27,7 @@ const useOutsourceSupplier = () => {
     const connectionId = useRecoilValue(currentCalculationConnectionId);
     const { navigate } = useGomakeRouter();
     const { callApi } = useGomakeAxios();
-    const { alertFaultAdded, alertFaultUpdate } = useSnackBar();
+    const { alertSuccessUpdate, alertFaultAdded, alertFaultUpdate } = useSnackBar();
 
     const resetOtherSuppliers = (supplierId) => {
         return suppliers.map(supplier => {
@@ -40,7 +45,16 @@ const useOutsourceSupplier = () => {
     };
 
     const updateProductItemValueOutsourceWithKey = async (supplierId, key, value) => {
-        await updateProductItemValueOutsourceSupplierCost(callApi, () => { }, {
+        const callBack = (res) => {
+            if (res.success) {
+                alertSuccessUpdate();
+            }
+            else {
+                alertFaultUpdate();
+            }
+        };
+
+        await updateProductItemValueOutsourceSupplierCost(callApi, callBack, {
             productItemValueId: productItemValueDraftId,
             signalRConnectionId: connectionId,
             supplierId,
@@ -68,6 +82,12 @@ const useOutsourceSupplier = () => {
             return supplier;
         }));
 
+        setSupplier({
+            ...supplier,
+            cost: cost,
+            finalPrice: cost + cost * supplier.profit / 100
+        });
+
         updateProductItemValueOutsourceWithKey(supplierId, EOutSoucrceUpdateKey.TotalCost, cost);
     };
 
@@ -89,6 +109,11 @@ const useOutsourceSupplier = () => {
             return supplier;
         }));
 
+        setSupplier({
+            ...supplier,
+            workHours: workHours
+        });
+
         updateProductItemValueOutsourceWithKey(supplierId, EOutSoucrceUpdateKey.TotalRealProductionTime, workHours);
     };
 
@@ -99,9 +124,9 @@ const useOutsourceSupplier = () => {
                     ...supplier,
                     profit: profit,
                     finalPrice: supplier.cost + supplier.cost * profit / 100
-                    
+
                 };
-                
+
             }
             return supplier;
         });
@@ -113,9 +138,14 @@ const useOutsourceSupplier = () => {
             return supplier;
         }));
 
+        setSupplier({
+            ...supplier,
+            profit: profit,
+            finalPrice: supplier.cost + supplier.cost * profit / 100
+        });
+
         updateProductItemValueOutsourceWithKey(supplierId, EOutSoucrceUpdateKey.Profit, profit);
     };
-    
 
     const updatePrice = (supplierId, price) => {
         const updatedSuppliers = suppliers.map(supplier => {
@@ -135,6 +165,12 @@ const useOutsourceSupplier = () => {
             }
             return supplier;
         }));
+
+        setSupplier({
+            ...supplier,
+            finalPrice: price,
+            profit: (price - supplier.cost) / supplier.cost * 100
+        });
 
         updateProductItemValueOutsourceWithKey(supplierId, EOutSoucrceUpdateKey.TotalPrice, price);
     };
@@ -198,7 +234,8 @@ const useOutsourceSupplier = () => {
         updateProfit,
         updatePrice,
         addItem,
-        updateQuoteItem
+        updateQuoteItem,
+        productItemValueByEdit
     };
 };
 

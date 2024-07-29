@@ -39,7 +39,8 @@ const OutSourceSupplierComponent = ({
     const { t } = useTranslation();
     const { classes } = useStyle();
     const { secondColor } = useGomakeTheme();
-    const { updatePrice, updateWorkHours, updateProfit, updateCost, addItem, updateQuoteItem } = useOutsourceSupplier();
+    const [supplier, setSupplier] = useState<IOutSourceSupplier | null>();
+    const { updatePrice, updateWorkHours, updateProfit, updateCost, addItem, updateQuoteItem } = useOutsourceSupplier({supplier, setSupplier});
     const handleDeliveryTimeUpdate = (newValue: number) => {
         updateWorkHours(supplierId, +newValue);
     }
@@ -124,7 +125,7 @@ const EditableValue = ({ value, onUpdate, valueColor, label, isEditable, unit }:
     }
 
     return (
-        <Stack direction={'row'} gap={'10x'} alignItems={'center'}>
+        <Stack direction={'row'} gap={'10px'} alignItems={'center'}>
             <span style={classes.detailTitle}>{label}</span>
             {edit ? <UpdateValueInput value={editValue.toString()} onUpdate={handleValueUpdate}
                 onInputChange={onInputChange}

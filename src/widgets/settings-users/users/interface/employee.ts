@@ -24,7 +24,7 @@ export interface Employee {
     printHouseId?: string;
     mailProviderId: string | null;
     smsTemplatesGroupId: string | null;
-    quoteLimitationType: string | null;
+    quoteLimitationType: number | null;
     quotePriceLimit: number | null;
     mailProvider: string | null;
     pinCodeForLoginWithApplication: string | null;
