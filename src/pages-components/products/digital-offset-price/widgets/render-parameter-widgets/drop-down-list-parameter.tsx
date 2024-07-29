@@ -21,22 +21,6 @@ const DropDownListParameterWidget = ({
   const defaultObject = parameter.valuesConfigs.find(
     (item) => item.isDefault === true
   );
-  console.log("safes", {
-    parameter,
-    index,
-    temp,
-    onChangeSubProductsForPrice,
-    subSection,
-    section,
-    selectedValueConfig,
-    inModal,
-    setSelectedValueConfig,
-    onOpeneMultiParameterModal,
-    subSectionParameters,
-    list,
-    setDeviceCategory,
-    setDeviceSize
-  })
   return (
     <div data-tour={parameter?.id} style={clasess.dropDownListWithSettingIcon}>
       <GoMakeAutoComplate
