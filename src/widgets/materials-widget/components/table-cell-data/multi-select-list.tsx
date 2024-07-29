@@ -14,7 +14,6 @@ interface IProps {
   options: { label: string; value: string }[];
   placeHolder?: string;
 }
-
 const MultiSelectList = ({
   values,
   parameterKey,
@@ -23,6 +22,8 @@ const MultiSelectList = ({
   options,
   placeHolder,
 }: IProps) => {
+  console.log("values", { values, options })
+
   const { classes } = useStyle();
   const { updateCellData } = useTableCellData(isAdmin);
   const reorderedOptions = options?.sort((a, b) => {
