@@ -3,7 +3,7 @@ import { convertWidthToVW } from "@/utils/adapter";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 
-const useStyle = ({ insideStyle, headerPadding, isMiddleTitle }: any) => {
+const useStyle = ({ insideStyle, headerPadding, isMiddleTitle , modalTitleColor}: any) => {
   const { primaryColor, errorColor , neutralColor} = useGomakeTheme();
 
   const classes = useMemo(() => {
@@ -36,7 +36,7 @@ const useStyle = ({ insideStyle, headerPadding, isMiddleTitle }: any) => {
       },
       titleModalStyle: {
         display: "flex",
-        color: primaryColor(500),
+        color: modalTitleColor || primaryColor(500), 
         ...FONT_FAMILY.Lexend(500, 24),
         ...(isMiddleTitle && { margin: "0 auto" }),
       },

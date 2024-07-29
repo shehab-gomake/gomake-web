@@ -11,6 +11,7 @@ import { isAtLeastOneSelected } from "@/utils/helpers";
 import { useRouter } from "next/router";
 import { useUserPermission } from "@/hooks/use-permission";
 import { DocumentPermission } from "@/components/CheckPermission/enum";
+import { getAllUsersCanApproveQuoteApi } from "@/services/api-service/users/users-api";
 
 const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     const { navigate } = useGomakeRouter();
@@ -26,6 +27,7 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     const [openDeleteModal, setOpenDeleteModal] = useState(false);
     const [openCancelReceiptModal, setOpenCancelReceiptModal] = useState(false);
     const [isSelectedAtLeastOne, setIsSelectedAtLeastOne] = useState(null)
+    const [openMangerApprovalModal, setOpenMangerApprovalModal] = useState(false);
 
 
     useEffect(() => {
@@ -194,6 +196,30 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     const showAddNewItemBtn = canEditDocument && docType !== DOCUMENT_TYPE.receipt
 
 
+    const onClickCloseMangerApprovalModal = () => {
+        setOpenMangerApprovalModal(false);
+    };
+
+    const onClickOpenMangerApprovalModal = () => {
+        setOpenMangerApprovalModal(true);
+    };
+
+
+    const [managersOptions,setManagersOptions]= useState([]);
+    const getAllUsersCanApproveQuote = async () => {
+        const callBack = (res) => {
+            if (res.success) {
+                const mappedManagers = res.data.map(manager => ({
+                    value: manager.id,
+                    text: manager.name
+                }));
+                setManagersOptions(mappedManagers);
+            }
+        }
+        await getAllUsersCanApproveQuoteApi(callApi, callBack)
+    }
+
+
     return {
         openOrderNowModal,
         onClickConfirmWithoutNotification,
@@ -224,7 +250,12 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
         onClickCloseCancelReceiptModal,
         showAddNewItemBtn,
         canEditDocument,
-        isNewCreation
+        isNewCreation,
+        openMangerApprovalModal,
+        onClickCloseMangerApprovalModal,
+        onClickOpenMangerApprovalModal,
+        getAllUsersCanApproveQuote,
+        managersOptions
     };
 
 };
