@@ -26,8 +26,6 @@ const TableCellData = ({
   const { updateCellData, machinesOptions, clientsOptions } = useTableCellData(isAdmin);
   const machinesCategories = useRecoilValue(machineCategoriesState);
   const parameterCategories = useRecoilValue<any>(materialsParametersState);
-  console.log("parameterCatssssegories", { parameterCategories, values, value, type, parameterKey })
-
   const toggleIsActive = async () => {
     await updateCellData(id, parameterKey, !value);
   };
@@ -133,8 +131,8 @@ const TableCellData = ({
       );
     case EDataTypeEnum.NOTE_BOOK_TYPES:
       return (
-        <MultiSelectList
-          values={value}
+        <MultiSelectInput
+          values={value as string[]}
           parameterKey={parameterKey}
           id={id}
           isAdmin={isAdmin}
@@ -142,7 +140,7 @@ const TableCellData = ({
             value: item.id,
             label: item.name,
           }))}
-          placeHolder="Select value"
+          placeHolder="Select client"
         />
       );
     default:
