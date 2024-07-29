@@ -76,7 +76,10 @@ const FormInput = ({ input, error, changeState, readonly }: IFormInput) => {
 
   const selectChange = (event: SyntheticEvent, value): void => {
     setSelectedLabel(value?.label ? value.label : "");
-    changeState(input.parameterKey, value?.value ? value.value : "");
+    const newValue = value?.value !== undefined && value?.value !== null 
+                     ? value.value 
+                     : "";
+    changeState(input.parameterKey, newValue);
   };
 
   const handleSwitchCheck = (event: ChangeEvent<HTMLInputElement>) => {
@@ -110,7 +113,7 @@ const FormInput = ({ input, error, changeState, readonly }: IFormInput) => {
     const selectedValue = options?.find(
       (option) => option.value === input.value
     );
-    if (selectedValue) {
+    if (selectedValue !== undefined && selectedValue !== null) {
       setSelectedLabel(selectedValue.label);
     } else {
       setSelectedLabel("");
@@ -130,7 +133,8 @@ const FormInput = ({ input, error, changeState, readonly }: IFormInput) => {
         }
         setDataLoaded(true);
       });
-    } else if (input.options && input.options.length > 0) {
+    } 
+    else if (input.options && input.options.length > 0) {
       setOptions(
         input.options.map(({ value, text }) => ({ label: text, value }))
       );
