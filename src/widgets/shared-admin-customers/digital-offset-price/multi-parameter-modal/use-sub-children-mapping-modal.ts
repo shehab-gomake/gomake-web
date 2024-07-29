@@ -35,6 +35,7 @@ const useSubChildMapping = ({
     
   }
   const onChangeCheckBox = (e) => {
+    debugger;
     let newSubProducts = lodashClonedeep(subProducts);
     if (e.target.checked){
        newSubProducts = addValueToSubProduct(newSubProducts,value)
@@ -47,9 +48,10 @@ const useSubChildMapping = ({
   
 
   const isChecked = useMemo(() => {
+    debugger;
     const colorParameterValue  = getSelectedColorParameterValue();
     if(colorParameterValue){
-      const colorValue = colorParameterValue.values.find(val => val === value.valueId);
+      const colorValue = colorParameterValue.valueIds.find(val => val === value.valueId);
       if(colorValue)
         return true
     }

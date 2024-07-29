@@ -58,7 +58,8 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
 
   const quoteConfirm = useRecoilValue<any>(quoteConfirmationState);
   const [selectDate, setSelectDate] = useState(isQuoteConfirmation ? quoteConfirm?.dueDate : quoteItemValue?.dueDate);
-  const [creationDate, setCreationDate] = useState(isQuoteConfirmation ? quoteConfirm?.createdDate : quoteItemValue?.createdDate);
+  const [creationDate, setCreationDate] = useState(isQuoteConfirmation ? quoteConfirm?.creationDate : quoteItemValue?.creationDate);
+  const [taxDate, setTaxDate] = useState(isQuoteConfirmation ? quoteConfirm?.taxDate : quoteItemValue?.taxDate);
   const [customersListValue, setCustomersListValue] = useRecoilState<any>(businessListsState);
   const [selectBusiness, setSelectBusiness] = useState<any>({});
   const [selectConfirmBusiness, setSelectConfirmBusiness] = useState<any>({});
@@ -104,7 +105,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
   const openSendBtn = Boolean(anchorElSendBtn);
   const openCancelBtn = Boolean(anchorElCancelBtn);
   const openSettingMenu = Boolean(anchorElSettingMenu);
-  const [openWatssAppModal, setOpenWatsAppModal] = useState(false)
+  const [openWhatsAppModal, setOpenWatsAppModal] = useState(false)
   const [isSelectedAtLeastOne, setIsSelectedAtLeastOne] = useState(null)
 
   const [openNewItemNotesModal, setOpenNewItemNotesModal] = useState(false)
@@ -138,10 +139,10 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
 
   }, [quoteItemValue])
 
-  const onClickOpenWatssAppModal = () => {
+  const onClickOpenWhatsAppModal = () => {
     setOpenWatsAppModal(true)
   }
-  const onClickCloseWatssAppModal = () => {
+  const onClickCloseWhatsAppModal = () => {
     setOpenWatsAppModal(false)
 
   }
@@ -191,6 +192,8 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     if (router.query.isNewCreation) {
       const updatedQuoteItemValue = { ...quoteItemValue };
       updatedQuoteItemValue.dueDate = selectDate;
+      updatedQuoteItemValue.taxDate = taxDate;
+      updatedQuoteItemValue.creationDate = creationDate;
       setQuoteItemValue(updatedQuoteItemValue);
     }
     else {
@@ -201,7 +204,8 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
         } else {
           alertFaultAdded();
           setSelectDate(quoteItemValue?.dueDate);
-          setCreationDate(quoteItemValue?.createdDate)
+          // setCreationDate(quoteItemValue?.creationDate)
+          // setTaxDate(quoteItemValue?.taxDate)
         }
       }
       await updateDueDateApi(callApi, callBack, {
@@ -386,14 +390,29 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
 
       })
     }
-
   }
+
+  useEffect(() => {
+    if (router?.query?.isNewCreation && docType === DOCUMENT_TYPE.receipt && router?.query?.documentNumber && router?.query?.ClientId) {
+      const clientId = { id: router.query.ClientId }
+      onChangeSelectBusiness(clientId);
+    }
+  }, [])
 
   const onChangeSelectBusiness = async (item: any) => {
     if (router?.query?.isNewCreation && docType === DOCUMENT_TYPE.receipt) {
       const callBack = (res) => {
         if (res?.success) {
           const _data = res?.data || {};
+          if (router?.query?.isNewCreation && router?.query?.documentNumber && router?.query?.ClientId) {
+            const documentNumber = router.query.documentNumber;
+            if (documentNumber) {
+              const foundRow = _data.receiptItems.find(row => row.docNum === documentNumber);
+              if (foundRow) {
+                foundRow.isChecked = true;
+              }
+            }
+          }
           setQuoteItemValue(_data);
           setIsUpdateBusinessName(null);
         } else {
@@ -915,12 +934,23 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
   );
 
   const dateRef = useRef(null);
+  const creationDateRef = useRef(null);
+  const taxDateRef = useRef(null);
   const [activeClickAway, setActiveClickAway] = useState(false);
+  const [activeClickAwayForCreationDate, setActiveClickAwayForCreationDate] = useState(false);
+  const [activeClickAwayForTaxDate, setActiveClickAwayForTaxDate] = useState(false);
 
 
   const handleClickSelectDate = () => {
     dateRef?.current?.showPicker();
   };
+  const handleClickForCreationDate = () => {
+    creationDateRef?.current?.showPicker();
+  };
+  const handleClickForTaxDate = () => {
+    taxDateRef?.current?.showPicker();
+  };
+
 
   const [openOtherReasonModal, setOpenOtherReasonModal] = useState(false);
   const [openSignatureApprovalModal, setOpenSignatureApprovalModal] = useState(false);
@@ -1096,7 +1126,6 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
   }
 
   const handleSaveBtnClickForDocument = async () => {
-
     if (!quoteItemValue?.documentItems || quoteItemValue.documentItems.length === 0) {
       alertFault("alerts.noItems");
       return;
@@ -1114,6 +1143,9 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
         documentType: docType,
         document: {
           ...quoteItemValue,
+          creationDate: creationDate,
+          taxDate: taxDate,
+          dueDate: selectDate,
           exchangeRate: quoteItemValue.exchangeRate === 0 ? 1 : quoteItemValue.exchangeRate
         }
       }
@@ -1181,6 +1213,52 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
   }, [dateRef, activeClickAway, quoteItemValue, selectDate]);
 
   useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (taxDateRef.current && !taxDateRef.current.contains(event.target)) {
+        if (activeClickAwayForTaxDate) {
+          // updateDueDate();
+          setActiveClickAwayForTaxDate(false);
+        }
+      }
+    };
+    document.addEventListener("click", handleClickOutside);
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, [taxDateRef, activeClickAway, quoteItemValue, taxDate]);
+
+  const [openReferenceModal, setOpenReferenceModal] = useState(false)
+  const onClickOpenReferenceModal = () => {
+    setOpenReferenceModal(true)
+  }
+  const onClickCloseReferenceModal = () => {
+    setOpenReferenceModal(false)
+  }
+  const onChangeDatesToCreationDate = () => {
+    setSelectDate(creationDate);
+    setCreationDate(creationDate)
+    setTaxDate(creationDate)
+  }
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (creationDateRef.current && !creationDateRef.current.contains(event.target)) {
+        if (activeClickAwayForCreationDate) {
+          setActiveClickAwayForCreationDate(false);
+          onClickOpenReferenceModal()
+
+        }
+      }
+    };
+    document.addEventListener("click", handleClickOutside);
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, [creationDateRef, activeClickAwayForCreationDate, quoteItemValue, creationDate]);
+
+
+
+  useEffect(() => {
     if (agentListValue?.length > 0) {
       const selectedAgent1 = agentListValue.find(
         (agent) => agent.value === quoteItemValue?.agentId
@@ -1202,7 +1280,9 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     setquoteItems(quoteItemValue);
     setItems(isQuoteConfirmation ? quoteConfirm?.documentContacts : quoteItemValue?.documentContacts);
     setSelectDate(isQuoteConfirmation ? quoteConfirm?.dueDate : quoteItemValue?.dueDate);
-    setCreationDate(isQuoteConfirmation ? quoteConfirm?.createdDate : quoteItemValue?.createdDate)
+    setCreationDate(isQuoteConfirmation ? quoteConfirm?.creationDate : quoteItemValue?.creationDate)
+    setTaxDate(isQuoteConfirmation ? quoteConfirm?.taxDate : quoteItemValue?.taxDate)
+
   }, [quoteItemValue, quoteConfirm]);
 
 
@@ -1381,9 +1461,12 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
 
   return {
     dateRef,
+    taxDateRef,
+    creationDateRef,
     activeClickAway,
     selectDate,
     creationDate,
+    taxDate,
     isUpdateBusinessName,
     isUpdatePurchaseNumber,
     isUpdateAddress,
@@ -1452,6 +1535,8 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     setIsUpdateContactEmail1,
     setIsUpdateContactMobile1,
     setSelectDate,
+    setTaxDate,
+    setCreationDate,
     updateDueDate,
     setIsUpdateBusinessName,
     setSelectBusiness,
@@ -1520,9 +1605,9 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     openLoginModal,
     onClickClosLoginModal,
     onClickOpenLoginModal,
-    openWatssAppModal,
-    onClickOpenWatssAppModal,
-    onClickCloseWatssAppModal,
+    openWhatsAppModal,
+    onClickOpenWhatsAppModal,
+    onClickCloseWhatsAppModal,
     sortDocumentItems,
     updateIsShowDetails,
     updateIsShowPrices,
@@ -1545,7 +1630,15 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     setIsUpdateClientName,
     clientName,
     setClientName,
-    onClickOpenNewItemNotesModal
+    onClickOpenNewItemNotesModal,
+    handleClickForCreationDate,
+    handleClickForTaxDate,
+    setActiveClickAwayForCreationDate,
+    setActiveClickAwayForTaxDate,
+    openReferenceModal,
+    onClickOpenReferenceModal,
+    onClickCloseReferenceModal,
+    onChangeDatesToCreationDate
   };
 };
 

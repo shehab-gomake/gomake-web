@@ -53,7 +53,6 @@ const RightSideWidget = ({
     setCurrentProductItemValueTotalPrice,
     t,
   } = useRightSideWidget({ includeVAT });
-  const [myvalue, setMyValue] = useState("---------");
   const mergedArray = [...(selectedWorkFlow?.exceptions || []), ...(calculationExceptionsLogs || [])];
   const [logsArray, setLogsArray] = useState(mergedArray)
   useEffect(() => {
@@ -161,14 +160,10 @@ const RightSideWidget = ({
             ) : (
               <GomakeTextInput
                 value={
-                  !selectedWorkFlow?.isCalculated
-                    ? myvalue
-                    : currentProductItemValueTotalPrice ?? myvalue
+                  currentProductItemValueTotalPrice ?? "---------"
                 }
                 onChange={(e: any) => {
-                  !selectedWorkFlow?.isCalculated ?
-                    setMyValue(e.target.value) :
-                    setCurrentProductItemValueTotalPrice(e.target.value);
+                  setCurrentProductItemValueTotalPrice(e.target.value);
                 }}
                 style={clasess.inputPriceStyle}
                 type={!selectedWorkFlow?.isCalculated ? "text" : typeof (currentProductItemValueTotalPrice) === "number" ? "number" : "text"}
@@ -208,9 +203,7 @@ const RightSideWidget = ({
               )
                 ? 0
                 : (
-                  selectedWorkFlow?.exceptions?.length > 0
-                    ? parseFloat(myvalue) / (quantity?.values[0] || 1)
-                    : (currentProductItemValueTotalPrice || 0) / (quantity?.values[0] || 1)
+                      (currentProductItemValueTotalPrice || 0) / (quantity?.values[0] || 1)
                 )?.toFixed(4),
               unitPrice: systemCurrency,
             })}

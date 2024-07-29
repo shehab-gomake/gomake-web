@@ -58,9 +58,8 @@ const useMoreCircle = ({
       name: "edit",
       icon: <EditMenuIcon />,
       onclick: () => onClickEditQuoteItem(quoteItem, documentType),
-      //condition: quoteItem.productType === 0 && (documentType === DOCUMENT_TYPE.quote || documentType === DOCUMENT_TYPE.order || documentType === DOCUMENT_TYPE.purchaseOrder ),
       condition:
-        quoteItem.productType === 0 &&
+        quoteItem.productType === 0 && !router.query.isNewCreation &&
         CheckDocumentPermission(documentType, DocumentPermission.UPDATE_DOCUMENT_ITEM)
     },
     {

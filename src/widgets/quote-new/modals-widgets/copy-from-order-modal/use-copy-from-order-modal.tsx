@@ -4,12 +4,15 @@ import { EHttpMethod } from "@/services/api-service/enums";
 import { getClientDocumentsApi } from "@/services/api-service/generic-doc/documents-api";
 import { quoteItemState } from "@/store";
 import { TableCell, styled, tableCellClasses } from "@mui/material";
+import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRecoilState } from "recoil";
 
 const useCopyFromOrderModal = ({ onClose, documentType, openModal, cliendDocumentType }) => {
   const { t } = useTranslation();
+  const router = useRouter();
+
   const [term, setTerm] = useState("")
   const filterItems = (items) => {
     if (!term) return items; // If no search term, return all items
@@ -43,7 +46,16 @@ const useCopyFromOrderModal = ({ onClose, documentType, openModal, cliendDocumen
   const [documentItems, setDocumentItems] = useState([]);
 
 
+  const { orderId, deliveryNoteId } = router.query;
+  const [currentDocumentId, setCurrentDocumentId] = useState<string | null>(null);
 
+  useEffect(() => {
+    if (orderId) {
+      setCurrentDocumentId(orderId as string);
+    } else if (deliveryNoteId) {
+      setCurrentDocumentId(deliveryNoteId as string);
+    }
+  }, [orderId, deliveryNoteId]);
 
   const modalLabel = () => {
     switch (cliendDocumentType) {
@@ -135,11 +147,13 @@ const useCopyFromOrderModal = ({ onClose, documentType, openModal, cliendDocumen
     }
     const callBack = (res) => {
       if (res?.success) {
-        const updatedData = res.data.map(doc => {
+        const updatedData = res.data.filter(doc => doc.id !== currentDocumentId).map(doc => {
           const sourceDocumentNumber = doc.number;
+          const sourceDocumentId = doc.id;
           const updatedOrderItems = doc.orderItems.map(item => ({
             ...item,
             sourceDocumentNumber,
+            sourceDocumentId
           }));
           return {
             ...doc,
@@ -170,7 +184,6 @@ const useCopyFromOrderModal = ({ onClose, documentType, openModal, cliendDocumen
     const documentItemsFilters = quoteItemValue.documentItems.filter(item => {
       return !sharedDeletedArry.some(sharedItem => sharedItem.id === item.id);
     });
-    console.log("documentItemsFilters", { documentItemsFilters, selectedItems })
     const mergedItems = [...documentItemsFilters, ...selectedItems];
     const idMap = new Map();
     const uniqueItems = mergedItems.filter(item => {

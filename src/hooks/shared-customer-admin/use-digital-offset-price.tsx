@@ -188,7 +188,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         totalWorkFlowsCount: 0,
         currentWorkFlowsCount: 0,
       });
-      setLoading(false);
     }
   }, [isCalculationFinished]);
 
@@ -320,12 +319,16 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   useEffect(() => {
     if (signalRPricingResult && signalRPricingResult.productItemValueDraftId === currentCalculationSessionId) {
       setLoading(false)
-      setCurrentProductItemValueTotalPrice(
-        parseFloat(signalRPricingResult.totalPrice)
-      );
+      const totalWorkFlowsCount = signalRPricingResult.totalWorkFlows;
+      const currentWorkFlowsCount = signalRPricingResult.currentWorkFlowIndex > calculationProgress.currentWorkFlowsCount ? signalRPricingResult.currentWorkFlowIndex : (calculationProgress.currentWorkFlowsCount + 1);
+      if(signalRPricingResult.isCalculationFinished && signalRPricingResult.totalPrice){
+        setCurrentProductItemValueTotalPrice(
+            parseFloat(signalRPricingResult.totalPrice)
+        );
+      }
       setCalculationProgress({
-        totalWorkFlowsCount: signalRPricingResult.totalWorkFlows,
-        currentWorkFlowsCount: signalRPricingResult.currentWorkFlowIndex > calculationProgress.currentWorkFlowsCount ? signalRPricingResult.currentWorkFlowIndex : (calculationProgress.currentWorkFlowsCount + 1),
+        totalWorkFlowsCount: totalWorkFlowsCount,
+        currentWorkFlowsCount: currentWorkFlowsCount,
       });
     }
   }, [signalRPricingResult]);
@@ -2909,6 +2912,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     if (!!checkParameter) {
       setCurrentCalculationSessionId(null);
       setCalculationExceptionsLogs([])
+      setcalculationServerErrorState(false)
       const newRequestAbortController = new AbortController();
       setRequestAbortController(newRequestAbortController);
       let subProductsCopy = cloneDeep(currentSubProducts);
@@ -2929,10 +2933,12 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           return;
         }
         setLoading(true);
+        const newCalculationSessionId = uuidv4();
         const res: any = await callApi(
           "POST",
           `/v1/calculation-service/calculations/calculate-productV2`,
           {
+            calculationSessionId:newCalculationSessionId,
             signalRConnectionId: connectionId,
             clientId: router?.query?.customerId,
             clientTypeId: router?.query?.clientTypeId,
@@ -2942,19 +2948,36 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             itemParmetersValues: itemParmetersValues,
             workTypes: workTypes,
             isChargeForNewDie: isChargeForNewDie,
-            productType: productTemplate?.productType
+            productType: productTemplate?.productType,
           },
           false,
           newRequestAbortController
         )
+        
         if (res?.status === 500) {
           setCalculationProgress({
             totalWorkFlowsCount: 0,
             currentWorkFlowsCount: 0,
           });
+          
+          setLoading(false);
+          setcalculationServerErrorState(true)
+        }
+        else if(!res.success){
+          setCalculationProgress({
+            totalWorkFlowsCount: 0,
+            currentWorkFlowsCount: 0,
+          });
+
           setLoading(false);
         }
         else {
+          const id = res?.data?.data?.data;
+          if(!id){
+            setcalculationServerErrorState(true);
+            setLoading(false);
+          }
+          setCurrentCalculationSessionId(id);
           setCalculationProgress({
             totalWorkFlowsCount: 0,
             currentWorkFlowsCount: 0,

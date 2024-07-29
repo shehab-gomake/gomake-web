@@ -8,6 +8,7 @@ import {
     ActionComponent, ActionContainerComponent,
 } from "@/widgets/product-pricing-widget/components/action/action-component";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import FmdBadIcon from '@mui/icons-material/FmdBad';
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import { adaptPaddingLeft, adaptPaddingRight } from "@/utils/adapter";
 import { useTranslation } from "react-i18next";
@@ -27,6 +28,7 @@ const SubWorkFlowComponent = ({ actions, sectionName, isEditableActions, id, pro
     const { classes } = useStyle();
     const { t } = useTranslation()
     const direction = t('direction');
+    const hasActionException = actions.some(action => action.actionException);
     return (
         <>
             <Fade in={true}>
@@ -35,7 +37,7 @@ const SubWorkFlowComponent = ({ actions, sectionName, isEditableActions, id, pro
                         ...classes.subWorkFlowContainer,
                     }}>
                     <Stack direction={'row'} gap={'10px'} alignItems={'center'} flexWrap={'wrap'}>
-                        <span style={{ ...adaptPaddingLeft(direction, 60), width: 220 }}>{sectionName}</span>
+                        <span style={{ ...adaptPaddingLeft(direction, 60), width: 180 }}>{sectionName}</span>
                         <div >
                             <span style={classes.nameStyle}>{totalRealProductionTime?.name}</span>
                             <span style={classes.secondPartStyle}>{totalRealProductionTime?.values[0]} {totalRealProductionTime?.defaultUnit}</span>
@@ -56,7 +58,12 @@ const SubWorkFlowComponent = ({ actions, sectionName, isEditableActions, id, pro
                             <span style={classes.secondPartStyle}>{totalPrice?.values[0]} {totalPrice?.defaultUnit}</span>
                         </div>
                     </Stack>
-                    <Stack direction={'row'} gap={'12px'} flexWrap={'nowrap'} minWidth={'fit-content'}>
+
+                    <Stack direction={'row'} alignItems={"center"} gap={'12px'} flexWrap={'nowrap'} minWidth={'fit-content'}>
+                        {hasActionException && <IconButton>
+                            <FmdBadIcon style={{ color: "#F04349" }} />
+                        </IconButton>
+                        }
                         <IconButton onClick={() => setIsOpen(!isOpen)} style={classes.toggleSubWorkFlowActionButton}>
                             {isOpen ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
                         </IconButton>

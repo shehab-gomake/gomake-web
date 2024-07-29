@@ -1,9 +1,8 @@
-import { convertHeightToVH, convertWidthToVW } from "@/utils/adapter";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 
 const useStyle = () => {
-  const clasess = useMemo(() => {
+  const classes = useMemo(() => {
     return {
       customerInfoStyle: {
         display: "flex",
@@ -55,10 +54,17 @@ const useStyle = () => {
         ...FONT_FAMILY.Lexend(500, 14),
         cursor: "pointer",
       },
+
+      removeFormStyle: {
+        display: "flex",
+        justifyContent: "flex-start",
+        gap: "7px",
+        cursor: "pointer",
+      },
     };
   }, []);
   return {
-    clasess,
+    classes,
   };
 };
 export { useStyle };

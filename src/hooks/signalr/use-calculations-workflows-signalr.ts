@@ -38,7 +38,11 @@ const useCalculationsWorkFlowsSignalr = () => {
         setSignalrRWorkFlows(newData);
       });
       connection.on("startCalculationSession", (newData) => {
-        setConnectionSessionId(newData.productItemValueDraftId);
+        if(newData.isDevMode){
+          console.log("isDevMode received")
+          setConnectionSessionId(newData.productItemValueDraftId);
+        }
+        
         setCalculationExceptionsLogs(newData.calculationExceptions);
       });
       connection.on("updateSelectedWorkFlow", (newData) => {
@@ -47,8 +51,9 @@ const useCalculationsWorkFlowsSignalr = () => {
       connection.on("UpdatePricing", (newData) => {
         setSignalRPricingResult(newData);
       });
-      connection.on("calculationFinished", () => {
-        setIsCalculationFinished(true)
+      connection.on("calculationFinished", (newData) => {
+        newData.isCalculationFinished = true;
+        setSignalRPricingResult(newData);
       });
       connection.on("calculationServerError", () => {
         setcalculationServerErrorState(true)

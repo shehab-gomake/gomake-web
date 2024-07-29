@@ -11,6 +11,7 @@ import { JobsIcon } from "./icons/jobs";
 import { LockIcon } from "./icons/lock";
 import { useUserPermission } from "@/hooks/use-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
+import { PayIcon } from "./icons/pay";
 
 const useMoreCircle = () => {
   const { user } = useCustomer();
@@ -26,13 +27,12 @@ const useMoreCircle = () => {
     onClickLoggers,
     t,
     onClickOpenIrrelevantModal,
-    CloseDocument,
     onClickOpenCloseOrderModal,
     onClickOpenCloseOrderNotesModal
   }) => {
     const documentPath = DOCUMENT_TYPE[documentType];
     const { callApi } = useGomakeAxios();
-    
+
     const onClickGetOrderBoardMissionPDF = async (quoteItem) => {
       const callBack = (res) => {
         if (res?.success) {
@@ -102,7 +102,7 @@ const useMoreCircle = () => {
       },
       {
         condition: isOrder && quote?.isCanClose && CheckPermission(Permissions.SHOW_BOARD_MISSIONS),
-        onClick: () => navigate(`/board-missions?orderNumber=${quote?.number}`),
+        onClick: () => navigate(`/jobs?orderNumber=${quote?.number}`),
         icon: <JobsIcon />,
         name: t("sales.quote.jobs")
       },
@@ -155,7 +155,7 @@ const useMoreCircle = () => {
         name: t("sales.quote.closeAsPurchaseInvoice")
       },
       {
-        condition: isOrder && quote?.isCanClose && quote?.statusTitleText !== "Order.Canceled",
+        condition:( isOrder && quote?.isCanClose && quote?.statusTitleText !== "Order.Canceled") || ( isDeliveryNote && quote?.isCanClose )|| ( isInvoice && quote?.isCanClose ),
         onClick: () => quote?.closeOrderNotes && quote?.closeOrderNotes.tirm !== "" ? onClickOpenCloseOrderNotesModal(quote) : onClickOpenCloseOrderModal(quote),
         icon: <LockIcon />,
         name: t("sales.quote.close")
@@ -166,7 +166,12 @@ const useMoreCircle = () => {
         icon: <TickCloseIcon />,
         name: t("sales.quote.cancel")
       },
-
+      {
+        condition: isInvoice && quote?.isCanClose ,
+        onClick: () => navigate(`/receipt?isNewCreation=true&documentNumber=${quote?.number}&ClientId=${quote?.customerId}`),
+        icon: <PayIcon />,
+        name: t("sales.quote.pay")
+      },
       // {
       //   condition: !isCancel,
       //   onClick: () => onClickOpenIrrelevantModal(quote),

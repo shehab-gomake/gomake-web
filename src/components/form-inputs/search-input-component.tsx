@@ -23,7 +23,8 @@ const SearchInputComponent = ({ onChange, value, placeHolder, searchInputStyle, 
     <GoMakeTextInputIcon
       bgColor={bgColor}
       onChange={(e) => {
-        onChange(e.target.value);
+        const trimmedValue = e.target.value.trimStart();
+        onChange(trimmedValue);
       }}
       style={searchInputStyle || classes.searchInput}
       placeholder={placeHolder || t("header.search")}
