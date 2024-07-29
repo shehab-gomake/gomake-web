@@ -38,7 +38,7 @@ interface ISelectProps {
 const OutSourceSuppliersRowComponent = ({
     widgetType,
     options
-}: any) => {
+}: { widgetType: EWidgetProductType; options: IOutSourceSupplier[] }) => {
     const { t } = useTranslation();
     const { classes } = useStyle();
     const { secondColor } = useGomakeTheme();
@@ -80,7 +80,7 @@ const OutSourceSuppliersRowComponent = ({
         if (supplier?.finalPrice > 0) {
             setCurrentProductItemValueTotalPrice(supplier.finalPrice)
         }
-    }, [supplier?.finalPrice])
+    }, [supplier?.finalPrice , setCurrentProductItemValueTotalPrice])
 
     return (
         <Fade in={true} timeout={700}>
@@ -143,7 +143,7 @@ const EditableValue = ({ value, onUpdate, valueColor, label, isEditable, unit }:
     }
 
     return (
-        <Stack direction={'row'} gap={'10x'} alignItems={'center'}>
+        <Stack direction={'row'} gap={'10px'} alignItems={'center'}>
             <span style={classes.detailTitle}>{label}</span>
             {edit ? <UpdateValueInput value={editValue.toString()} onUpdate={handleValueUpdate}
                 onInputChange={onInputChange}

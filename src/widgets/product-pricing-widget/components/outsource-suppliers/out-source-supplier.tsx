@@ -125,7 +125,7 @@ const EditableValue = ({ value, onUpdate, valueColor, label, isEditable, unit }:
     }
 
     return (
-        <Stack direction={'row'} gap={'10x'} alignItems={'center'}>
+        <Stack direction={'row'} gap={'10px'} alignItems={'center'}>
             <span style={classes.detailTitle}>{label}</span>
             {edit ? <UpdateValueInput value={editValue.toString()} onUpdate={handleValueUpdate}
                 onInputChange={onInputChange}
