@@ -134,8 +134,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
   const {
     calculationResult,
-    calculationSessionId,
     connectionId,
+    startCalculationData,
     updatedSelectedWorkFlow,
     calculationExceptionsLogs,
     signalRPricingResult,
@@ -334,16 +334,19 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   }, [signalRPricingResult]);
 
   useEffect(() => {
-    setWorkFlows([]);
-    setCurrentProductItemValueTotalPrice(null);
-    setJobActions([]);
-    setIsCalculationFinished(false);
-    setCalculationProgress({
-      totalWorkFlowsCount: 0,
-      currentWorkFlowsCount: 0,
-    });
-    setCurrentCalculationSessionId(calculationSessionId);
-  }, [calculationSessionId]);
+    if(startCalculationData && startCalculationData.isDevMode ){
+      setWorkFlows([]);
+      setCurrentProductItemValueTotalPrice(null);
+      setJobActions([]);
+      setIsCalculationFinished(false);
+      setCalculationProgress({
+        totalWorkFlowsCount: 0,
+        currentWorkFlowsCount: 0,
+      });
+      setCurrentCalculationSessionId(startCalculationData.productItemValueDraftId);
+    }
+    
+  }, [startCalculationData]);
 
   useEffect(() => {
     if (calculationExceptionsLogs) {
@@ -2907,12 +2910,13 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       totalWorkFlowsCount: 0,
       currentWorkFlowsCount: 0,
     });
+    setCurrentCalculationSessionId(null);
+    setCalculationExceptionsLogs([])
+    setcalculationServerErrorState(false)
 
     let checkParameter = validateParameters(currentSubProducts);
     if (!!checkParameter) {
-      setCurrentCalculationSessionId(null);
-      setCalculationExceptionsLogs([])
-      setcalculationServerErrorState(false)
+ 
       const newRequestAbortController = new AbortController();
       setRequestAbortController(newRequestAbortController);
       let subProductsCopy = cloneDeep(currentSubProducts);

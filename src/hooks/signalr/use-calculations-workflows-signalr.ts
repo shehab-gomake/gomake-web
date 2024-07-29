@@ -18,8 +18,8 @@ const useCalculationsWorkFlowsSignalr = () => {
       methodName: "updateWorkFlows",
     });
    
-  const [calculationSessionId, setConnectionSessionId] = useState<string>();
   const [signalRPricingResult, setSignalRPricingResult] = useState<any>();
+  const [startCalculationData, setStartCalculationData] = useState<any>();
 
   const [signalrRWorkFlows, setSignalrRWorkFlows] =
     useState<ICalculationSignalRResult>();
@@ -38,11 +38,11 @@ const useCalculationsWorkFlowsSignalr = () => {
         setSignalrRWorkFlows(newData);
       });
       connection.on("startCalculationSession", (newData) => {
-        if(newData.isDevMode){
+        /*if(newData.isDevMode){
           console.log("isDevMode received")
           setConnectionSessionId(newData.productItemValueDraftId);
-        }
-        
+        }*/
+        setStartCalculationData(newData)
         setCalculationExceptionsLogs(newData.calculationExceptions);
       });
       connection.on("updateSelectedWorkFlow", (newData) => {
@@ -62,8 +62,8 @@ const useCalculationsWorkFlowsSignalr = () => {
   }, [connection]);
   return {
     calculationResult: signalrRWorkFlows,
-    calculationSessionId,
     connectionId,
+    startCalculationData,
     updatedSelectedWorkFlow,
     calculationExceptionsLogs,
     signalRPricingResult,
