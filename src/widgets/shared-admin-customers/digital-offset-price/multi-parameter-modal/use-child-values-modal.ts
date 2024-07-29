@@ -14,7 +14,8 @@ const useChildValuesMapping = ({
   index,
   parameters,
   settingParameters,
-    item
+    item,
+    isParameterSettings
 }) => {
   const paddingLeft = value?.valueId?.length === 0 ? 13 : 38;
   const selectColorValue = useRecoilValue<any>(selectColorValueState);

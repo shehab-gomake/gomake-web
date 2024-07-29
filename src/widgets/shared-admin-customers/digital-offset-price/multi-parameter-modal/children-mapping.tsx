@@ -7,7 +7,8 @@ const ChildrenMapping = ({
   index,
   clasess,
   settingParameters,
-}) => {
+  isParameterSettings
+}: any) => {
   const { generalParameters, foundMaterial } = useChildMapping({
     parameters,
     settingParameters,
@@ -31,6 +32,7 @@ const ChildrenMapping = ({
             index2={index2}
             key={`abc_${index}_${index2}`}
             settingParameters={settingParameters}
+            isParameterSettings={isParameterSettings}
           />
         ))}
     </div>

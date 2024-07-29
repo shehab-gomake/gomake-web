@@ -24,9 +24,10 @@ import { useMaterials } from "../use-materials";
 import { digitslPriceState } from "./store";
 import { EButtonTypes, EParameterTypes } from "@/enums";
 import cloneDeep from "lodash.clonedeep";
-import { selectParameterButtonState } from "@/store";
+import { selectParameterButtonState, selectedValueConfigState } from "@/store";
 import { ButtonParameterWidget } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/button-parameter";
 import { findParameterByCode } from "@/utils/helpers";
+import { SettingsIcon } from "@/icons/settings";
 
 const useAddProduct = ({ clasess }) => {
   const { callApi } = useGomakeAxios();
@@ -45,6 +46,29 @@ const useAddProduct = ({ clasess }) => {
   const [GalleryModalOpen, setGalleryModalOpen] = useState(false);
   const setSelectParameterButton = useSetRecoilState(selectParameterButtonState);
   const straightKnife = findParameterByCode(productState, "IsStraightKnife");
+  const [multiParameterModal, setMultiParameterModal] = useState(false);
+  const [settingParameters, setSettingParameters] = useState({});
+
+  const onCloseMultiParameterModal = () => {
+    setMultiParameterModal(false);
+  };
+
+  const onOpeneMultiParameterModal = (
+    paameters,
+    subSection,
+    section,
+    subSectionParameters,
+  ) => {
+    setMultiParameterModal(true);
+    const value = paameters?.valuesConfigs?.find((value) => value?.isDefault)
+    setSettingParameters({
+      parameter: paameters,
+      subSection: subSection,
+      section: section,
+      subSectionParameters: subSectionParameters,
+      value: value,
+    });
+  };
   const onCloseGalleryModal = () => {
     setGalleryModalOpen(false);
   };
@@ -589,62 +613,83 @@ const useAddProduct = ({ clasess }) => {
         (item) => item.isDefault === true
       );
       return (
-        <GoMakeAutoComplate
-          options={parameter?.valuesConfigs}
-          disabled={parameter?.isHidden}
-          placeholder={parameter.name}
-          style={clasess.dropDownListStyle}
-          getOptionLabel={(option: any) => option.updateName}
-          defaultValue={defaultObject}
-          onChange={(e: any, value: any) => {
-            updatedProductParameterValuesConfigsDefault(
-              sectionId,
-              subSectionId,
-              parameter,
-              value
-            );
-          }}
-          renderOption={(props: any, option: any) => {
-            return (
-              <div style={clasess.optionsContainer}>
-                <div {...props} style={{ width: "100%" }}>
-                  {option.updateName}
+        <div style={{ display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center", width: "100%", gap: "8px" }}>
+          <GoMakeAutoComplate
+            options={parameter?.valuesConfigs}
+            disabled={parameter?.isHidden}
+            placeholder={parameter.name}
+            style={clasess.dropDownListStyle}
+            getOptionLabel={(option: any) => option.updateName}
+            defaultValue={defaultObject}
+            onChange={(e: any, value: any) => {
+              updatedProductParameterValuesConfigsDefault(
+                sectionId,
+                subSectionId,
+                parameter,
+                value
+              );
+            }}
+            renderOption={(props: any, option: any) => {
+              return (
+                <div style={clasess.optionsContainer}>
+                  <div {...props} style={{ width: "100%", alignSelf: "center", marginTop: 5 }}>
+                    {option.updateName}
+                  </div>
+                  <div>
+                    {option.isHidden ? (
+                      <div
+                        style={{ cursor: "pointer" }}
+                        onClick={() =>
+                          updatedProductParameterValuesConfigsHidden(
+                            sectionId,
+                            subSectionId,
+                            parameter,
+                            option
+                          )
+                        }
+                      >
+                        <HiddenIcon />
+                      </div>
+                    ) : (
+                      <div
+                        style={{ cursor: "pointer" }}
+                        onClick={() =>
+                          updatedProductParameterValuesConfigsHidden(
+                            sectionId,
+                            subSectionId,
+                            parameter,
+                            option
+                          )
+                        }
+                      >
+                        <NotHiddenIcon />
+                      </div>
+                    )}
+                  </div>
                 </div>
-                <div>
-                  {option.isHidden ? (
-                    <div
-                      style={{ cursor: "pointer" }}
-                      onClick={() =>
-                        updatedProductParameterValuesConfigsHidden(
-                          sectionId,
-                          subSectionId,
-                          parameter,
-                          option
-                        )
-                      }
-                    >
-                      <HiddenIcon />
-                    </div>
-                  ) : (
-                    <div
-                      style={{ cursor: "pointer" }}
-                      onClick={() =>
-                        updatedProductParameterValuesConfigsHidden(
-                          sectionId,
-                          subSectionId,
-                          parameter,
-                          option
-                        )
-                      }
-                    >
-                      <NotHiddenIcon />
-                    </div>
-                  )}
-                </div>
-              </div>
-            );
-          }}
-        />
+              );
+            }}
+          />
+          {parameter?.setSettingIcon && (
+            <div
+              style={{ cursor: "pointer" }}
+              onClick={() => {
+                onOpeneMultiParameterModal(
+                  parameter,
+                  subSection,
+                  section,
+                  subSectionParameters,
+                );
+              }}
+            >
+              <SettingsIcon
+                stroke={"rgba(237, 2, 140, 1)"}
+                width={24}
+                height={24}
+              />
+            </div>
+          )}
+        </div>
       );
     }
     else if (parameter?.parameterType === EParameterTypes.SWITCH) {
@@ -935,6 +980,10 @@ const useAddProduct = ({ clasess }) => {
     onCloseGalleryModal,
     onOpeneGalleryModal,
     straightKnife,
+    multiParameterModal,
+    onCloseMultiParameterModal,
+    onOpeneMultiParameterModal,
+    settingParameters
   };
 };
 

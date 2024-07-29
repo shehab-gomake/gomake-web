@@ -11,12 +11,14 @@ const MultiParameterModal = ({
   modalTitle,
   settingParameters,
   _renderParameterType,
+  isParameterSettings = false
 }: any) => {
   const { clasess } = useStyle();
   const { parameterLists, onClickSaveParameter, t, closeModal } = useMultiParameterModal({
     settingParameters,
     onClose,
   });
+  console.log("settingParameters", settingParameters)
 
   return (
     <>
@@ -26,56 +28,111 @@ const MultiParameterModal = ({
         onClose={closeModal}
         insideStyle={clasess.insideStyle}
       >
-        <div style={clasess.mainContainer}>
-          <div style={clasess.multiSelectMainContainer}>
-            {_renderParameterType(
-              settingParameters?.parameter,
-              settingParameters?.subSection,
-              settingParameters?.section,
-              settingParameters?.parameter,
-              settingParameters?.value,
-              settingParameters?.list,
-              false,
-              false,
-              false
-            )}
-          </div>
-          <div style={clasess.tableContainer}>
-            <div style={clasess.headerTableContainer}>
-              {parameterLists?.map((item, index: number) => {
-                return (
-                  <HeaderMapping
-                    key={`header_${index}`}
-                    item={item}
-                    index={index}
-                  />
-                );
-              })}
-            </div>
-            <div style={clasess.childernTableContainer}>
-              <div style={clasess.childernTableRowContainer}>
-                {parameterLists?.map((item, index: number) => {
-                  return (
-                    <ChildrenMapping
-                      key={`child_${index}`}
-                      parameters={parameterLists}
-                      item={item}
-                      index={index}
-                      clasess={clasess}
-                      settingParameters={settingParameters}
-                    />
-                  );
-                })}
+        {
+          isParameterSettings ?
+            <div style={clasess.mainContainer}>
+              <div style={clasess.multiSelectMainContainer}>
+                {_renderParameterType(
+                  settingParameters?.section?.id,
+                  settingParameters?.subSection?.id,
+                  settingParameters?.parameter,
+                  settingParameters?.subSectionParameters,
+                  null,
+                  settingParameters?.section,
+                  settingParameters?.subSection,
+
+                )}
+              </div>
+              <div style={clasess.tableContainer}>
+                <div style={clasess.headerTableContainer}>
+                  {parameterLists?.map((item, index: number) => {
+                    return (
+                      <HeaderMapping
+                        key={`header_${index}`}
+                        item={item}
+                        index={index}
+                      />
+                    );
+                  })}
+                </div>
+                <div style={clasess.childernTableContainer}>
+                  <div style={clasess.childernTableRowContainer}>
+                    {parameterLists?.map((item, index: number) => {
+                      return (
+                        <ChildrenMapping
+                          key={`child_${index}`}
+                          parameters={parameterLists}
+                          item={item}
+                          index={index}
+                          clasess={clasess}
+                          settingParameters={settingParameters}
+                          isParameterSettings={isParameterSettings}
+                        />
+                      );
+                    })}
+                  </div>
+                </div>
+                <GomakePrimaryButton
+                  style={clasess.saveBtnContainerStyle}
+                  onClick={onClickSaveParameter}
+                >
+                  {t("materials.buttons.save")}
+                </GomakePrimaryButton>
               </div>
             </div>
-          </div>
-          <GomakePrimaryButton
-            style={clasess.saveBtnContainerStyle}
-            onClick={onClickSaveParameter}
-          >
-            {t("materials.buttons.save")}
-          </GomakePrimaryButton>
-        </div>
+            :
+            <div style={clasess.mainContainer}>
+              <div style={clasess.multiSelectMainContainer}>
+                {_renderParameterType(
+                  settingParameters?.parameter,
+                  settingParameters?.subSection,
+                  settingParameters?.section,
+                  settingParameters?.parameter,
+                  settingParameters?.value,
+                  settingParameters?.list,
+                  false,
+                  false,
+                  false
+                )}
+              </div>
+              <div style={clasess.tableContainer}>
+                <div style={clasess.headerTableContainer}>
+                  {parameterLists?.map((item, index: number) => {
+                    return (
+                      <HeaderMapping
+                        key={`header_${index}`}
+                        item={item}
+                        index={index}
+                      />
+                    );
+                  })}
+                </div>
+                <div style={clasess.childernTableContainer}>
+                  <div style={clasess.childernTableRowContainer}>
+                    {parameterLists?.map((item, index: number) => {
+                      return (
+                        <ChildrenMapping
+                          key={`child_${index}`}
+                          parameters={parameterLists}
+                          item={item}
+                          index={index}
+                          clasess={clasess}
+                          settingParameters={settingParameters}
+                        />
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+              <GomakePrimaryButton
+                style={clasess.saveBtnContainerStyle}
+                onClick={onClickSaveParameter}
+              >
+                {t("materials.buttons.save")}
+              </GomakePrimaryButton>
+            </div>
+        }
+
       </GoMakeModal>
     </>
   );
