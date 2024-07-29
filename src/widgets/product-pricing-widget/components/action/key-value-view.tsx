@@ -42,7 +42,6 @@ const ParametersMapping = ({ parameters, source, isWorkFlows = false, isProducti
                 const unitType = parameter?.unitType
                 const parameterKey = parameter?.key
                 if (isProductionFloor && unitType === 2) {
-                    debugger;
                     return (
                         <PermissionCheck userPermission={Permissions.SHOW_COSTS_IN_PRODUCTION_FLOOR}>
                             {
