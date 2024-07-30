@@ -19,23 +19,15 @@ import { companyCommunicationInputs } from "./inputs/company-communication-input
 const CompanyProfileComponent = () => {
   const { t } = useTranslation();
   const {
-    getProfile,
     profileChange,
     profile,
     updateProfileChanges,
     changeCompanyProfileImage,
     changeCompanyLoginImage,
     daysOfWork,
-    getCurrenciesApi,
     currencies,
     countriesWithCodes,
   } = useCompanyProfile();
-
-  useEffect(() => {
-    getCurrenciesApi().then(() => {
-      getProfile();
-    });
-  }, []);
 
   const changeState = (key, value) => {
     profileChange({
