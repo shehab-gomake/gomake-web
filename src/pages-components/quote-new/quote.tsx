@@ -38,6 +38,7 @@ import { AddNewContactModal } from "@/widgets/quote-new/modals-widgets/add-new-c
 import { NewItemNotesModal } from "@/widgets/quote-new/total-price-and-vat/new-item-notes-modal";
 import { AddRelatedDocumentsModal } from "@/widgets/quote-new/total-price-and-vat/add-related-documents";
 import { ViewSignatureApprovalModal } from "@/widgets/quote-new/total-price-and-vat/view-signature-approval-modal";
+import moment from 'moment';
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -217,13 +218,25 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
     onClickOpenNewItemNotesModal,
     handleClickForCreationDate,
     handleClickForTaxDate,
-    setActiveClickAwayForCreationDate,
     setActiveClickAwayForTaxDate,
     openReferenceModal,
     onClickCloseReferenceModal,
-    onChangeDatesToCreationDate
-
+    onChangeDatesToCreationDate,
+    onClickOpenReferenceModal,
+    setNewCreationDate
   } = useQuoteNew({ docType: documentType, isQuoteConfirmation: isQuoteConfirmation });
+
+  
+  const handleChangeCreationDate = (event) => {
+    const newDate = event.target.value;
+    const newDateRounded = moment(newDate).seconds(0).milliseconds(0).toISOString();
+    const currentCreationDateRounded = moment(creationDate).seconds(0).milliseconds(0).toISOString();
+
+    if (newDateRounded !== currentCreationDateRounded) {
+      setNewCreationDate(newDate)
+      onClickOpenReferenceModal();
+    }
+  };
 
   const quoteSteps: StepType[] = [
     {
@@ -282,6 +295,7 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
   useEffect(() => {
     setDocNumber(quoteState?.number)
   }, [quoteState?.number, router, quoteState, isQuoteConfirmation])
+
   return (
     <>
       {quoteState?.id && (
@@ -329,7 +343,7 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
                 {/* // Creation Date */}
 
                 <div
-                  style={classes.deleverdDate}
+                  style={{...classes.deleverdDate, cursor: quoteItemValue?.isEditable ? "pointer" : "default" }}
                   onClick={DOCUMENT_TYPE.invoice && quoteItemValue?.isEditable ? handleClickForCreationDate : null}
                 >
                   {t("sales.quote.creationDate")}{" "}
@@ -339,10 +353,7 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
                   <div style={classes.datePickerContainer}>
                     <input
                       type="datetime-local"
-                      onChange={(e) => {
-                        setCreationDate(e.target.value);
-                        setActiveClickAwayForCreationDate(true);
-                      }}
+                      onChange={handleChangeCreationDate}
                       ref={creationDateRef}
                     />
                   </div>
@@ -352,7 +363,7 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
                 {/* // Due Date */}
 
                 <div
-                  style={classes.deleverdDate}
+                  style={{...classes.deleverdDate, cursor: quoteItemValue?.isEditable ? "pointer" : "default" }}
                   onClick={quoteItemValue?.isEditable ? handleClickSelectDate : null}
                 >
                   {t("sales.quote.dateOfReference")}{" "}
@@ -372,12 +383,10 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
                   </div>
                 </div>
                 {/* // TAX Date */}
-
-
                 {
-                  DOCUMENT_TYPE.invoice && <div
-                    style={classes.deleverdDate}
-                    onClick={quoteItemValue?.isEditable ? handleClickForTaxDate : null}
+               (documentType === DOCUMENT_TYPE.invoice || documentType === DOCUMENT_TYPE.invoiceRefund ) && <div
+               style={{...classes.deleverdDate, cursor: quoteItemValue?.isEditable ? "pointer" : "default" }}
+               onClick={quoteItemValue?.isEditable ? handleClickForTaxDate : null}
                   >
                     {t("sales.quote.taxDate")}{" "}
                     {taxDate
@@ -679,7 +688,6 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
         onClose={onClickCloseRelatedDocumentsModal}
       />
       <GoMakeDeleteModal
-
         openModal={openReferenceModal}
         onClose={onClickCloseReferenceModal}
         hideIcon={true}
