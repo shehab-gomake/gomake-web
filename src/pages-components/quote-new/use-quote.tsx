@@ -41,7 +41,6 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     alertFaultUpdate,
     alertSuccessAdded,
     alertFaultAdded,
-    alertFaultGetData,
     alertSuccessDelete,
     alertFaultDelete,
     alertFault
@@ -52,10 +51,6 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
   const { t } = useTranslation();
   const { getQuote, getAllClientContacts } = useQuoteGetData(docType);
   const [quoteItemValue, setQuoteItemValue] = useRecoilState<any>(quoteItemState);
-  useEffect(() => {
-    setQuoteItemValue([])
-  }, [])
-
   const quoteConfirm = useRecoilValue<any>(quoteConfirmationState);
   const [selectDate, setSelectDate] = useState(isQuoteConfirmation ? quoteConfirm?.dueDate : quoteItemValue?.dueDate);
   const [creationDate, setCreationDate] = useState(isQuoteConfirmation ? quoteConfirm?.creationDate : quoteItemValue?.creationDate);
@@ -1219,22 +1214,19 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
   }
 
 
-  // here
-  // const [ originCreationDate ,setOriginCreationDate]= useState(isQuoteConfirmation ? quoteConfirm?.creationDate : quoteItemValue?.creationDate);
-  // useEffect(() => {
-  //   setOriginCreationDate(isQuoteConfirmation ? quoteConfirm?.creationDate : quoteItemValue?.creationDate)
-  // }, []);
+  const [newCreationDate, setNewCreationDate] = useState(isQuoteConfirmation ? quoteConfirm?.creationDate : quoteItemValue?.creationDate);
+  useEffect(() => {
+    setNewCreationDate(isQuoteConfirmation ? quoteConfirm?.creationDate : quoteItemValue?.creationDate)
+  }, [])
 
-  // here
   const onClickCloseReferenceModal = () => {
     setOpenReferenceModal(false);
   }
 
-  // here
   const onChangeDatesToCreationDate = () => {
-    setSelectDate(creationDate);
-    setCreationDate(creationDate)
-    setTaxDate(creationDate)
+    setSelectDate(newCreationDate);
+    setCreationDate(newCreationDate)
+    setTaxDate(newCreationDate)
   }
 
 
@@ -1255,9 +1247,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     setSelectConfirmBusiness(foundConfirmItem) // for quote confirmation
   }, [quoteItemValue, customersListValue]);
 
-  // here
   useEffect(() => {
-    debugger;
     setPriceListItems(quoteItemValue?.documentItems);
     setquoteItems(quoteItemValue);
     setItems(isQuoteConfirmation ? quoteConfirm?.documentContacts : quoteItemValue?.documentContacts);
@@ -1617,8 +1607,10 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     onClickOpenReferenceModal,
     onClickCloseReferenceModal,
     onChangeDatesToCreationDate,
-    activeClickAwayForCreationDate
-  };
+    activeClickAwayForCreationDate,
+    newCreationDate,
+    setNewCreationDate 
+   };
 };
 
 export { useQuoteNew };

@@ -222,19 +222,18 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
     openReferenceModal,
     onClickCloseReferenceModal,
     onChangeDatesToCreationDate,
-    onClickOpenReferenceModal
-
+    onClickOpenReferenceModal,
+    setNewCreationDate
   } = useQuoteNew({ docType: documentType, isQuoteConfirmation: isQuoteConfirmation });
 
   
   const handleChangeCreationDate = (event) => {
-    debugger;
     const newDate = event.target.value;
-    const newDateRounded = moment(newDate).seconds(0).milliseconds(0).toISOString();  
-    const currentCreationDateRounded = moment(creationDate).seconds(0).milliseconds(0).toISOString(); 
-  
+    const newDateRounded = moment(newDate).seconds(0).milliseconds(0).toISOString();
+    const currentCreationDateRounded = moment(creationDate).seconds(0).milliseconds(0).toISOString();
+
     if (newDateRounded !== currentCreationDateRounded) {
-      setCreationDate(newDate);
+      setNewCreationDate(newDate)
       onClickOpenReferenceModal();
     }
   };
