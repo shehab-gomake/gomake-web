@@ -431,7 +431,7 @@ const ActionContainerComponent = ({
                         onClick={(e) => {
                           e.stopPropagation();
                           setChooseEmployee(true);
-                          onClickGetEmployeeForAction(id)
+                          onClickGetEmployeeForAction(actionId)
                         }}
                         variant={"text"}
                         style={classes.sectionTitle}
