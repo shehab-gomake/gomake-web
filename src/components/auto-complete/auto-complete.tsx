@@ -113,7 +113,7 @@ const GoMakeAutoComplate = ({
     <StyledAutocomplete
       // {...(value && { value })}
       //value={value || value === 0 ? value : null}
-      {...(value || value === 0 && { value })}
+      {...(value && { value })}
       {...(selectedOption && { selectedOption })}
       direction={dir}
       onChange={(e: any, value: any) => {
