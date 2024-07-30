@@ -40,7 +40,7 @@ const useAddCategoryRow = (isAdmin:boolean) => {
             await addPrintHouseMaterialCategoryRowApi(callApi, callBack, {
                 materialKey: materialType,
                 categoryKey: materialCategory,
-                supplierId: supplierId,
+                supplierId: supplierId ?? undefined,
                 rowData: dataRow
             })
         }
