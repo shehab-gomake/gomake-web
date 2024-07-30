@@ -15,10 +15,11 @@ interface ManagersState {
 interface ManagerApprovalModalProps {
     openModal: boolean;
     onClose: () => void;
+    onSend?: (managersId: string[]) => void;
     managersOptions: any[];
 }
 
-const ManagerApprovalModal = ({ openModal, onClose, managersOptions }: ManagerApprovalModalProps) => {
+const ManagerApprovalModal = ({ openModal, onClose, managersOptions, onSend }: ManagerApprovalModalProps) => {
     const { t } = useTranslation();
     const { classes } = useStyle();
     const { alertFault } = useSnackBar();
@@ -34,53 +35,51 @@ const ManagerApprovalModal = ({ openModal, onClose, managersOptions }: ManagerAp
     }
 
     const handleSend = () => {
-        if (!managers?.managerIds) {
+        if (!managers?.managerIds || managers?.managerIds.length===0) {
             alertFault(t("sales.cart.approvalRequestAlert"));
             return;
         }
-        console.log("managers : ", managers);
+        onSend(managers.managerIds);
     };
 
     return (
-        <>
-            <GoMakeModal
-                openModal={openModal}
-                modalTitle={t("sales.cart.approvalRequest")}
-                onClose={handleClose}
-                insideStyle={classes.insideStyle}
-                modalTitleColor={"black"}
-            >
-                <div style={classes.mainContainer}>
-                    {managerInput(managers, managersOptions).map((item) => (
-                        <div style={{ marginBottom: 10 }}>
-                            <FormInput
-                                input={item as IInput}
-                                changeState={onChangeInputs}
-                                error={item.required}
-                                readonly={false}
-                            />
-                        </div>
-                    ))}
-                    <div style={classes.mainBtnContainer}>
-                        <PrimaryButton
-                            style={classes.cancelContainer}
-                            onClick={handleClose}
-                            variant="outlined"
-                        >
-                            {t("sales.quote.cancel")}
-                        </PrimaryButton>
-                        <PrimaryButton
-                            style={classes.sendButtonStyle}
-                            onClick={handleSend}
-                            variant="contained"
-                        >
-                            {t("sales.cart.select&send")}
-                        </PrimaryButton>
-
+        <GoMakeModal
+            openModal={openModal}
+            modalTitle={t("sales.cart.approvalRequest")}
+            onClose={handleClose}
+            insideStyle={classes.insideStyle}
+            modalTitleColor={"black"}
+        >
+            <div style={classes.mainContainer}>
+                {managerInput(managers, managersOptions).map((item) => (
+                    <div style={{ marginBottom: 10 }}>
+                        <FormInput
+                            input={item as IInput}
+                            changeState={onChangeInputs}
+                            error={item.required}
+                            readonly={false}
+                        />
                     </div>
+                ))}
+                <div style={classes.mainBtnContainer}>
+                    <PrimaryButton
+                        style={classes.cancelContainer}
+                        onClick={handleClose}
+                        variant="outlined"
+                    >
+                        {t("sales.quote.cancel")}
+                    </PrimaryButton>
+                    <PrimaryButton
+                        style={classes.sendButtonStyle}
+                        onClick={handleSend}
+                        variant="contained"
+                    >
+                        {t("sales.cart.select&send")}
+                    </PrimaryButton>
+
                 </div>
-            </GoMakeModal>
-        </>
+            </div>
+        </GoMakeModal>
     );
 };
 export { ManagerApprovalModal };

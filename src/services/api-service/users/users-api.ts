@@ -10,7 +10,7 @@ const ADD_NEW_EMPLOYEE_URL = '/v1/crm-service/employee/add-employee';
 const UPDATE_EMPLOYEE_URL = '/v1/crm-service/employee/update-employee';
 const INACTIVE_USER_FIRST_LOGIN_URL = '/v1/crm-service/users/inactive-first-login';
 const GET_ALL_USERS_CAN_APPROVE_QUOTE_URL = '/v1/crm-service/employee/get-all-users-can-approve-quote';
-
+const SEND_QUOTE_APPROVAL_TO_MANAGER='';
 
 const getAllUsersApi: ICallAndSetData = async (callApi, setState) => {
     return  await getSetApiData(callApi, EHttpMethod.GET, GET_ALL_USERS_URL, setState)
@@ -37,4 +37,9 @@ const getAllUsersCanApproveQuoteApi: ICallAndSetData = async (callApi, setState)
     return await getSetApiData(callApi, EHttpMethod.GET, GET_ALL_USERS_CAN_APPROVE_QUOTE_URL , setState);
 }
 
-export {getAllUsersApi, getEmployeeApi, toggleEmployeeStatus, addNewEmployee, updateEmployee, inactiveUserFirstLogin,getAllUsersCanApproveQuoteApi};
+const sendQuoteApprovalToManagerApi: ICallAndSetData = async (callApi, setState , data) => {
+    return await getSetApiData(callApi, EHttpMethod.POST, SEND_QUOTE_APPROVAL_TO_MANAGER , setState, data);
+}
+
+
+export {getAllUsersApi, getEmployeeApi, toggleEmployeeStatus, addNewEmployee, updateEmployee, inactiveUserFirstLogin,getAllUsersCanApproveQuoteApi,sendQuoteApprovalToManagerApi};

@@ -59,7 +59,8 @@ const ButtonsContainer = ({
     onClickCloseMangerApprovalModal,
     onClickOpenMangerApprovalModal,
     getAllUsersCanApproveQuote,
-    managersOptions
+    managersOptions,
+    onClickSendAndChat
   } = useButtonsContainer(documentType);
 
 
@@ -244,6 +245,7 @@ const ButtonsContainer = ({
         <ManagerApprovalModal
           openModal={openMangerApprovalModal}
           onClose={onClickCloseMangerApprovalModal}
+          onSend={onClickSendAndChat}
           managersOptions={managersOptions}
         />
         <PaymentModal

@@ -11,7 +11,7 @@ import { isAtLeastOneSelected } from "@/utils/helpers";
 import { useRouter } from "next/router";
 import { useUserPermission } from "@/hooks/use-permission";
 import { DocumentPermission } from "@/components/CheckPermission/enum";
-import { getAllUsersCanApproveQuoteApi } from "@/services/api-service/users/users-api";
+import { getAllUsersCanApproveQuoteApi, sendQuoteApprovalToManagerApi } from "@/services/api-service/users/users-api";
 
 const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     const { navigate } = useGomakeRouter();
@@ -20,7 +20,7 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     const router = useRouter();
     const { CheckDocumentPermission } = useUserPermission();
     const quoteItemValue: any = useRecoilValue(quoteItemState);
-    const { alertFault, alertSuccessDelete, alertFaultDelete, alertSuccessUpdate, alertFaultUpdate, alertFaultAdded, alertSuccessAdded, alertFaultGetData } = useSnackBar();
+    const { alertFault, alertSuccess, alertSuccessDelete, alertFaultDelete, alertSuccessUpdate, alertFaultUpdate, alertFaultAdded, alertSuccessAdded, alertFaultGetData } = useSnackBar();
     const [selectedTabIndex, setSelectedTabIndex] = useState<number>(0);
     const [openPaymentModal, setOpenPaymentModal] = useState(false);
     const [openOrderNowModal, setOpenOrderNowModal] = useState(false);
@@ -54,6 +54,7 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
         }
 
     };
+
     const onClickCloseOrderNowModal = () => {
         setOpenOrderNowModal(false);
     };
@@ -62,6 +63,7 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
         setSelectedTabIndex(selectedTabIndex);
         setOpenPaymentModal(true);
     };
+
     const onClickClosePaymentModal = () => {
         setOpenPaymentModal(false);
     };
@@ -69,6 +71,7 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     const onClickOpenDeleteModal = () => {
         setOpenDeleteModal(true);
     };
+
     const onClickCloseDeleteModal = () => {
         setOpenDeleteModal(false);
     };
@@ -76,6 +79,7 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     const onClickOpenCancelReceiptModal = () => {
         setOpenCancelReceiptModal(true);
     };
+
     const onClickCloseCancelReceiptModal = () => {
         setOpenCancelReceiptModal(false);
     };
@@ -205,7 +209,7 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     };
 
 
-    const [managersOptions,setManagersOptions]= useState([]);
+    const [managersOptions, setManagersOptions] = useState([]);
     const getAllUsersCanApproveQuote = async () => {
         const callBack = (res) => {
             if (res.success) {
@@ -219,6 +223,14 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
         await getAllUsersCanApproveQuoteApi(callApi, callBack)
     }
 
+    const onClickSendAndChat = async (ManagerIds: string[]) => {
+        const callBack = (res) => {
+            if (res?.success) {
+                //alertSuccess("s");
+            }
+        };
+        await sendQuoteApprovalToManagerApi(callApi, callBack, { ManagerIds, DocumentId: quoteItemValue?.id });
+    };
 
     return {
         openOrderNowModal,
@@ -255,9 +267,9 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
         onClickCloseMangerApprovalModal,
         onClickOpenMangerApprovalModal,
         getAllUsersCanApproveQuote,
-        managersOptions
+        managersOptions,
+        onClickSendAndChat
     };
-
 };
 
 export { useButtonsContainer };
