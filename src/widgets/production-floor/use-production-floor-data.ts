@@ -33,8 +33,6 @@ const useProductionFloorData = () => {
                 setUserGroups(res?.data?.groups);
                 setPath(res?.data?.path ? res?.data?.path : []);
                 alertSuccessGetData();
-            } else {
-                alertFaultGetData();
             }
         }
         if (abortController) {
