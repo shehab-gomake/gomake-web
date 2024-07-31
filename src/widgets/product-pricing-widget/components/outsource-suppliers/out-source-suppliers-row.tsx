@@ -42,8 +42,9 @@ const OutSourceSuppliersRowComponent = ({
     const { t } = useTranslation();
     const { classes } = useStyle();
     const { secondColor } = useGomakeTheme();
+    
     const [supplier, setSupplier] = useState<IOutSourceSupplier | null>();
-    const { updatePrice, updateWorkHours, updateProfit, updateCost, addItem, updateQuoteItem , productItemValueByEdit} = useOutsourceSupplier({supplier, setSupplier});
+    const { updatePrice, updateWorkHours, updateProfit, updateCost, productItemValueByEdit} = useOutsourceSupplier({supplier, setSupplier});
     const systemCurrency = useRecoilValue<any>(systemCurrencyState);
     const setCurrentProductItemValueTotalPrice = useSetRecoilState<number>(currentProductItemValuePriceState);
 
@@ -103,24 +104,20 @@ const OutSourceSuppliersRowComponent = ({
                         valueColor={secondColor(500)} label={t('pricingWidget.finalPrice')} value={supplier?.finalPrice}
                         onUpdate={handleUpdatePrice} />
                 </Stack>
-                {/* {supplier?.cost !== 0 && (
-                    <PrimaryButton
-                        onClick={() => widgetType === EWidgetProductType.EDIT ? updateQuoteItem(supplier?.supplierId) : addItem(supplier?.supplierId)}
-                        style={{ width: 'fit-content', height: 35 }}
-                        variant={'contained'}
-                    >
-                        {widgetType === EWidgetProductType.EDIT ? t("materials.buttons.edit") : t('pricingWidget.add')}
-                    </PrimaryButton>
-                )} */}
             </Stack>
         </Fade>
     )
 }
 
 const EditableValue = ({ value, onUpdate, valueColor, label, isEditable, unit }: IProps) => {
-    const [edit, setEdit] = useState<boolean>(false);
-    const [editValue, setEditValue] = useState<number>(0);
     const { classes } = useStyle();
+    const [edit, setEdit] = useState<boolean>(false);
+    const [editValue, setEditValue] = useState<number>(value || 0);
+
+    useEffect(() => {
+        setEditValue(value);
+    }, [value]);
+
     const handleValueClick = (e) => {
         e.stopPropagation();
         if (isEditable) {
@@ -130,7 +127,7 @@ const EditableValue = ({ value, onUpdate, valueColor, label, isEditable, unit }:
 
     const handleCancelUpdate = () => {
         setEdit(false);
-        setEditValue(0);
+        setEditValue(value);
     }
 
     const onInputChange = (v: string) => {
@@ -142,6 +139,7 @@ const EditableValue = ({ value, onUpdate, valueColor, label, isEditable, unit }:
         setEdit(false);
     }
 
+  
     return (
         <Stack direction={'row'} gap={'10px'} alignItems={'center'}>
             <span style={classes.detailTitle}>{label}</span>
@@ -162,6 +160,7 @@ const EditableSelect = ({ value, onUpdate, valueColor, label, isEditable, option
     const [editValue, setEditValue] = useState<any>(null);
     const { classes } = useStyle();
 
+    
     const handleValueClick = (e) => {
         e.stopPropagation();
         if (isEditable) {

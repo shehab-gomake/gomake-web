@@ -16,7 +16,7 @@ const apiRequest = async (
 ) => {
   try {
     //please don't change the server url!!!
-    debugger
+    //debugger
     const SERVER = config.api_server;
     const reqUrl = SERVER + url;
     const controller = new AbortController();

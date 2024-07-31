@@ -1,7 +1,6 @@
 import { useRecoilState, useRecoilValue } from "recoil";
 import {
     currentProductItemValueDraftId,
-    currentProductItemValuePriceState,
     currentProductItemValueState,
     outsourceSuppliersState,
 } from "@/widgets/product-pricing-widget/state";
