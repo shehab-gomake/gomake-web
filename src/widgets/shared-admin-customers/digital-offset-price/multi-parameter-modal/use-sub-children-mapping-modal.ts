@@ -21,10 +21,6 @@ const useSubChildMapping = ({
   item,
   isParameterSettings
 }) => {
-
-  console.log("parameters",{parameters,item,value,settingParameters})
-
-
   const { callApi } = useGomakeAxios();
   const { alertFaultAdded, alertSuccessAdded } = useSnackBar();
   const router = useRouter();
@@ -35,24 +31,6 @@ const useSubChildMapping = ({
   const ref = useClickAway(() => {
     setIsFocused(false);
   });
-  // const getSelectedColorParameterValue = ()=>{
-  //   if(subProducts && !isParameterSettings){
-  //     const subSection = settingParameters.subSection;
-  //     const subProductType = subSection.type;
-  //     let subProduct =  subProducts.find(sub => sub.type == subProductType);
-  //     const colorParameter = settingParameters?.parameter?.settingParameters[0];
-  //     return subProduct.parameters.find(paramValue => paramValue.parameterId === colorParameter.id && paramValue.values);
-  //   }
-  //   else {
-  //     const valuesConfigs = settingParameters?.parameter?.valuesConfigs
-  //     const valueConfigDefault = valuesConfigs?.find((item)=>item.isDefault)
-  //     const colorParameter = settingParameters?.parameter?.settingParameters.find(item => item.code === "printingcolorsDetail");
-  //     return valueConfigDefault.selectedParameterValues.find(paramValue => paramValue.parameterId === colorParameter.id);
-
-
-  //   }
-    
-  // }
   const getSelectedColorParameterValue = () => {
     if (subProducts && !isParameterSettings) {
       const subSection = settingParameters.subSection;
@@ -69,8 +47,11 @@ const useSubChildMapping = ({
   };
   const [isChecked, setIsChecked] = useState(false);
 
+
+
   const onChangeCheckBox = (e) => {
     if (isParameterSettings) {
+      // Handle parameter settings logic
       const printingcolorsDetail = parameters.find(item => item.code === "printingcolorsDetail");
       const loadParameter = parameters.find(p => p.code === "Colorloadpercentage");
       const layersParameter = parameters.find(p => p.code === "ColorLayers");
@@ -130,9 +111,9 @@ const useSubChildMapping = ({
             return config;
           })
         };
-        console.log("updatedParameter", updatedParameter);
+        console.log("updatedParameter",updatedParameter)
   
-        // Call the API to update the parameter
+        // Optionally, call the API to persist changes
         // updatedProductParameteDefaultValue(settingParameters.sectionId, settingParameters.subSectionId, updatedParameter);
       }
     } else {
@@ -155,7 +136,7 @@ const useSubChildMapping = ({
     } else {
       return colorParameterValue?.values?.includes(value.valueId) ?? false;
     }
-  }, [subProducts, settingParameters, isParameterSettings, value]);
+  }, [subProducts, settingParameters, isParameterSettings, value,getSelectedColorParameterValue]);
 
   useEffect(() => {
     setIsChecked(isCheckedMemo);
@@ -198,7 +179,6 @@ const useSubChildMapping = ({
       setSubProducts(newSubProducts);
     }
     else {
-      console.log("textInputVal",textInputVal)
       return textInputVal
     }
    
@@ -225,14 +205,15 @@ const useSubChildMapping = ({
       const subSection = settingParameters.subSection;
       const subProductType = subSection.type;
       const subProduct = subProducts.find(sub => sub.type === subProductType);
+  
       if (subProduct) {
         const parameterValue = subProduct.parameters.find(paramValue => paramValue.parameterId === settingParameters.parameter.id);
         if (parameterValue && parameterValue.valueIds && parameterValue.valueIds.length > 0) {
-          const val = parameterValue.valueIds[0];
+          const val = parameterValue.valueIds[0]; // Assuming this represents the relevant value ID
           const valueConfig = settingParameters.parameter.valuesConfigs.find(conf => conf.id === val);
           if (valueConfig) {
             const selectedParameterValue = valueConfig.selectedParameterValues[0];
-            return selectedParameterValue.selectValuesCount;
+            return selectedParameterValue.selectValuesCount; // Max allowed selections
           }
         }
       }
@@ -243,27 +224,40 @@ const useSubChildMapping = ({
       if (defaultValueConfig) {
         const selectedColorParameterValue = defaultValueConfig.selectedParameterValues.find(paramValue => paramValue.parameterId === settingParameters.parameter.settingParameters[0].id);
         if (selectedColorParameterValue) {
-          return selectedColorParameterValue.selectValuesCount;
+          return selectedColorParameterValue.selectValuesCount; // Max allowed selections
         }
       }
       return null;
     }
   };
   const isDisabled = useMemo(() => {
-    const maxSelection = getMaxSelectionValues();
-    if (maxSelection === null) return false;
-  
-    const colorParameterValue = getSelectedColorParameterValue();
-    if (colorParameterValue && colorParameterValue.values) {
-      const isValueExists = colorParameterValue.values.includes(value.valueId);
-      if (isValueExists) return false; // Allow selection if already exists
-  
-      return colorParameterValue.values.length >= maxSelection;
+    if(isParameterSettings){
+      const maxSelection = getMaxSelectionValues();
+      if (maxSelection === null) return false;
+    
+      const colorParameterValue = getSelectedColorParameterValue();
+      if (colorParameterValue && colorParameterValue.valueIds) {
+        const isValueExists = colorParameterValue.valueIds.includes(value.valueId);
+        return !isValueExists && colorParameterValue.valueIds.length >= maxSelection;
+      }
+    
+      return false;
     }
-  
-    return false;
-  }, [subProducts, settingParameters, isParameterSettings, value]);
-
+    else{
+      const maxSelection = getMaxSelectionValues();
+      if (maxSelection === null) return false;
+    
+      const colorParameterValue = getSelectedColorParameterValue();
+      if (colorParameterValue && colorParameterValue.values) {
+        const isValueExists = colorParameterValue.values.includes(value.valueId);
+        return !isValueExists && colorParameterValue.values.length >= maxSelection;
+      }
+    
+      return false;
+    }
+    
+  }, [subProducts, settingParameters, isParameterSettings, value,getSelectedColorParameterValue]);
+  console.log("isDisabled",isDisabled)
 
   const updatedValuesConfigsForParameters = useCallback(
     async (sectionId: string, subSectionId: string, data: any) => {
@@ -312,7 +306,8 @@ const useSubChildMapping = ({
     setIsFocused,
     onChangeText,
     isChecked,
-    textInputValue
+    textInputValue,
+    isCheckedMemo
   };
 };
 

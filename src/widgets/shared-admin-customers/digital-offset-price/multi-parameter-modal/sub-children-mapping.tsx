@@ -19,7 +19,8 @@ const SubChildrenMapping = ({
   paddingLeft,
   parentValue,
   settingParameters,
-  isParameterSettings
+  isParameterSettings,
+  isCheckedMemo
 }) => {
   const {
     ref,
@@ -50,9 +51,9 @@ const SubChildrenMapping = ({
             icon={<CheckboxIcon />}
             checkedIcon={<CheckboxCheckedIcon />}
             onChange={(e) => onChangeCheckBox(e)}
-            checked={isChecked}
-            value={isChecked}
-            key={`c${index}_${value.value}_${isChecked}`}
+            checked={isCheckedMemo} // This should be true or false based on the selection
+            value={isCheckedMemo}
+            key={`c${index}_${value.value}_${isCheckedMemo}`}
             disabled={isDisabled}
             id={`check_${index}_${index2}_${index3}`}
           />
