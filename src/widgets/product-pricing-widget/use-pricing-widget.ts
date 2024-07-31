@@ -51,22 +51,21 @@ const usePricingWidget = ({ getOutSourcingSuppliers, workFlows }) => {
 
   const [previousProductItemValueTotalPrice, setPreviousProductItemValueTotalPrice] = useState<number | null>(null);
   const [currentProductItemValueTotalPrice ,setCurrentProductItemValueTotalPrice] = useRecoilState<number>(currentProductItemValuePriceState);
-
+ 
   const updateProductItemValue = async (sourceType: number) => {
     const callBack = (res) => {
       if (res?.success) {
         if (sourceType === EWorkSource.OUT || sourceType === EWorkSource.PARTIALLY) {
-          setPreviousProductItemValueTotalPrice(currentProductItemValueTotalPrice); // Save the current value
+          setPreviousProductItemValueTotalPrice(currentProductItemValueTotalPrice); 
           setCurrentProductItemValueTotalPrice(null);
         } else {
-          setCurrentProductItemValueTotalPrice(previousProductItemValueTotalPrice); // Revert to the previous value
+          setCurrentProductItemValueTotalPrice(previousProductItemValueTotalPrice); 
         }
       } else {
         alertFaultUpdate();
       }
     };
-  
-    await updateProductItemValueOutsource(callApi, callBack, {
+    await updateProductItemValueOutsource(callApi,callBack, {
       productItemValueId: productItemValueDraftId,
       signalRConnectionId: connectionId,
       sourceType

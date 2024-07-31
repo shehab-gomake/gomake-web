@@ -50,7 +50,7 @@ const OutSourceSuppliersRowComponent = ({
 
     useEffect(() => {
         if (options?.length > 0) {
-            if (widgetType === EWidgetProductType.EDIT) {
+            if (widgetType === EWidgetProductType.EDIT && productItemValueByEdit?.supplierId) {
                 setSupplier(options.find(x => x.supplierId == productItemValueByEdit?.supplierId));
             }
             else {
