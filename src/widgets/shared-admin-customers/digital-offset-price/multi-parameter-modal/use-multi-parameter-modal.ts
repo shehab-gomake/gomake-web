@@ -12,7 +12,7 @@ import { selectColorValueState } from "./store/selecte-color-value";
 import { useTranslation } from "react-i18next";
 import lodashClonedeep from "lodash.clonedeep";
 
-const useMultiParameterModal = ({ settingParameters, onClose }) => {
+const useMultiParameterModal = ({ settingParameters, onClose,isParameterSettings }) => {
   const [generalParameters, setGeneralParameters] = useRecoilState<any>(
     generalParametersState
   );
@@ -50,9 +50,16 @@ const useMultiParameterModal = ({ settingParameters, onClose }) => {
   }, [generalParameters, selectedValueConfig]);
 
   const onClickSaveParameter = () => {
-    let copy = lodashClonedeep(subProductsCopy);
+    if(isParameterSettings){
+
+    }
+    else{
+      let copy = lodashClonedeep(subProductsCopy);
     setSubProducts(copy)
+    }
     onClose();
+
+    
   };
   const closeModal = () => {
     let copy = lodashClonedeep(subProducts);

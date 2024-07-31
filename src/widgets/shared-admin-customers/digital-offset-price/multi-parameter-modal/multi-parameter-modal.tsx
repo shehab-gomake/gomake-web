@@ -17,6 +17,7 @@ const MultiParameterModal = ({
   const { parameterLists, onClickSaveParameter, t, closeModal } = useMultiParameterModal({
     settingParameters,
     onClose,
+    isParameterSettings
   });
 
   return (
@@ -30,8 +31,8 @@ const MultiParameterModal = ({
         {
           isParameterSettings ?
             <div style={clasess.mainContainer}>
-              {/* <div style={clasess.multiSelectMainContainer}>
-                {_renderParameterType(
+              <div style={clasess.multiSelectMainContainer}>
+                {/* {_renderParameterType(
                   settingParameters?.section?.id,
                   settingParameters?.subSection?.id,
                   settingParameters?.parameter,
@@ -40,8 +41,8 @@ const MultiParameterModal = ({
                   settingParameters?.section,
                   settingParameters?.subSection,
 
-                )}
-              </div> */}
+                )} */}
+              </div>
               <div style={clasess.tableContainer}>
                 <div style={clasess.headerTableContainer}>
                   {parameterLists?.map((item, index: number) => {

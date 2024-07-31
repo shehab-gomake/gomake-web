@@ -36,6 +36,7 @@ const ChildrenValuesMapping = ({
     isChecked,
 
   } = useChildValuesMapping({ value, index, parameters, settingParameters, item, isParameterSettings });
+
   return (
     <>
       {value?.valueId?.length != 0 && (

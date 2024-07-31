@@ -3,7 +3,6 @@ import {selectColorValueState} from "./store/selecte-color-value";
 import lodashClonedeep from "lodash.clonedeep";
 
 const userMultiParameterModalValues = (settingParameters,isParameterSettings) => {
-    console.log("isParameterSettings",isParameterSettings)
     const selectColorValue = useRecoilValue<any>(selectColorValueState);
 
     const getSelectedColorParameterValue = (subProducts)=>{
@@ -143,6 +142,7 @@ const userMultiParameterModalValues = (settingParameters,isParameterSettings) =>
             const colorParameterValue  = subProduct.parameters.find(paramValue => paramValue.parameterId === colorParameter.id );
             if(colorParameterValue){
                 const valueIndex = colorParameterValue.valueIds.findIndex(val => val === value.valueId);
+
                 if(valueIndex !== -1){
                     const parameterValue = subProduct.parameters.find(paramValue => paramValue.parameterId === parameterId );
                     if(parameterValue && parameterValue.values && parameterValue.values.length > valueIndex){

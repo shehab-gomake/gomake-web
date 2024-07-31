@@ -6,7 +6,6 @@ import { CheckboxIcon } from "./icons/checkbox-icon";
 import { MinusIcon } from "./icons/minus";
 import { PlusIcon } from "./icons/plus";
 import { useSubChildMapping } from "./use-sub-children-mapping-modal";
-import { useEffect } from "react";
 
 const SubChildrenMapping = ({
   parameters,
@@ -53,7 +52,7 @@ const SubChildrenMapping = ({
             onChange={(e) => onChangeCheckBox(e)}
             checked={isChecked}
             value={isChecked}
-            key={`c${index}_${value.value}`}
+            key={`c${index}_${value.value}_${isChecked}`}
             disabled={isDisabled}
             id={`check_${index}_${index2}_${index3}`}
           />
