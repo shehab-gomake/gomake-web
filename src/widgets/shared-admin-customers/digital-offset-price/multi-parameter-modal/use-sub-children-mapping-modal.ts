@@ -15,22 +15,32 @@ const useSubChildMapping = ({
   settingParameters,
   value,
   index,
-  parentValue,item
+  parentValue,
+  item,
+  isParameterSettings
 }) => {
   const [isFocused, setIsFocused] = useState<boolean>(false);
   const [subProducts, setSubProducts] = useRecoilState<any>(subProductsCopyParametersState);
-  const {addValueToSubProduct,removeValueFromSubProduct,setSubProductValue} = userMultiParameterModalValues(settingParameters)
+  const {addValueToSubProduct,removeValueFromSubProduct,setSubProductValue} = userMultiParameterModalValues(settingParameters,isParameterSettings)
   const selectColorValue = useRecoilValue<any>(selectColorValueState);
   const ref = useClickAway(() => {
     setIsFocused(false);
   });
   const getSelectedColorParameterValue = ()=>{
-    if(subProducts){
+    if(subProducts && !isParameterSettings){
       const subSection = settingParameters.subSection;
       const subProductType = subSection.type;
       let subProduct =  subProducts.find(sub => sub.type == subProductType);
       const colorParameter = settingParameters?.parameter?.settingParameters[0];
       return subProduct.parameters.find(paramValue => paramValue.parameterId === colorParameter.id && paramValue.values);
+    }
+    else {
+      const valuesConfigs = settingParameters?.parameter?.valuesConfigs
+      const valueConfigDefault = valuesConfigs?.find((item)=>item.isDefault)
+      const colorParameter = settingParameters?.parameter?.settingParameters[0];
+      return valueConfigDefault.selectedParameterValues.find(paramValue => paramValue.parameterId === colorParameter.id);
+
+
     }
     
   }
@@ -48,32 +58,46 @@ const useSubChildMapping = ({
 
   const isChecked = useMemo(() => {
     const colorParameterValue  = getSelectedColorParameterValue();
-    if(colorParameterValue){
-      const colorValue = colorParameterValue.values.find(val => val === value.valueId);
-      if(colorValue)
-        return true
+    if(isParameterSettings){
+      if(colorParameterValue){
+        const colorValue = colorParameterValue.valueIds.find(val => val === value.valueId);
+        if(colorValue)
+          return true
+      }
+      return false
     }
-    return false
-  }, [subProducts]);
+    else{
+      if(colorParameterValue){
+        const colorValue = colorParameterValue.values.find(val => val === value.valueId);
+        if(colorValue)
+          return true
+      }
+      return false
+    }
+
+  }, [subProducts,settingParameters,isParameterSettings]);
   const textInputValue = useMemo(() => {
-    if(!subProducts)
-      return 
-    const subSection = settingParameters.subSection;
-    let subProductsCopy = lodashClonedeep(subProducts);
-    const subProductType = subSection.type;
-    let subProduct =  subProductsCopy.find(sub => sub.type == subProductType);
-    const colorParameter = settingParameters?.parameter?.settingParameters[0];
-    const colorParameterValue  = subProduct.parameters.find(paramValue => paramValue.parameterId === colorParameter.id );
-    if(colorParameterValue){
-      const valueIndex = colorParameterValue.valueIds.findIndex(val => val === value.valueId);
-      if(valueIndex !== -1){
-        const parameterValue = subProduct.parameters.find(paramValue => paramValue.parameterId === item.id );
-        if(parameterValue && parameterValue.values && parameterValue.values.length > valueIndex){
-          return parameterValue.values[valueIndex];
+    if(!isParameterSettings){
+      if(!subProducts)
+        return 
+      const subSection = settingParameters.subSection;
+      let subProductsCopy = lodashClonedeep(subProducts);
+      const subProductType = subSection.type;
+      let subProduct =  subProductsCopy.find(sub => sub.type == subProductType);
+      const colorParameter = settingParameters?.parameter?.settingParameters[0];
+      const colorParameterValue  = subProduct.parameters.find(paramValue => paramValue.parameterId === colorParameter.id );
+      if(colorParameterValue){
+        const valueIndex = colorParameterValue.valueIds.findIndex(val => val === value.valueId);
+        if(valueIndex !== -1){
+          const parameterValue = subProduct.parameters.find(paramValue => paramValue.parameterId === item.id );
+          if(parameterValue && parameterValue.values && parameterValue.values.length > valueIndex){
+            return parameterValue.values[valueIndex];
+          }
         }
       }
+      return  item.defaultValue;
     }
-    return  item.defaultValue;
+   
   }, [subProducts]);
   
   const setTextInputValue = (textInputVal) =>{
@@ -97,22 +121,26 @@ const useSubChildMapping = ({
   };
 
   const getMaxSelectionValues = () => {
-    if(!subProducts){
-      return;
-    }
-    const subSection = settingParameters.subSection;
-    const subProductType = subSection.type;
-    const subProduct =  subProducts.find(sub => sub.type == subProductType);
-    const parameterValue = subProduct.parameters.find(paramValue => paramValue.parameterId === settingParameters.parameter.id && paramValue.values );
-    if(parameterValue && parameterValue.valueIds && parameterValue.valueIds.length > 0){
-      const val = parameterValue.valueIds[0];
-      const valueConfig = settingParameters.parameter.valuesConfigs.find(conf => conf.id == val);
-      if(valueConfig && valueConfig.selectedParameterValues && valueConfig.selectedParameterValues.length > 0){
-        const firstSelectedParameterValue = valueConfig.selectedParameterValues[0];
-        return firstSelectedParameterValue.selectValuesCount
+    if(!isParameterSettings){
+      if(!subProducts){
+        return;
       }
+      const subSection = settingParameters.subSection;
+      const subProductType = subSection.type;
+      const subProduct =  subProducts.find(sub => sub.type == subProductType);
+      const parameterValue = subProduct.parameters.find(paramValue => paramValue.parameterId === settingParameters.parameter.id && paramValue.values );
+
+      if(parameterValue && parameterValue.valueIds && parameterValue.valueIds.length > 0){
+        const val = parameterValue.valueIds[0];
+        const valueConfig = settingParameters.parameter.valuesConfigs.find(conf => conf.id == val);
+        if(valueConfig && valueConfig.selectedParameterValues && valueConfig.selectedParameterValues.length > 0){
+          const firstSelectedParameterValue = valueConfig.selectedParameterValues[0];
+          return firstSelectedParameterValue.selectValuesCount
+        }
+      }
+      return null;
     }
-    return null;
+    
   }
   const isDisabled = useMemo(() => {
     if(selectColorValue?.selectedParameterValues[0].valueIds.length > 0){
@@ -132,7 +160,7 @@ const useSubChildMapping = ({
       }
     }
     return false;
-  }, [subProducts]);
+  }, [subProducts,settingParameters,isParameterSettings]);
   return {
     ref,
     isFocused,

@@ -18,27 +18,27 @@ const ChildrenValuesMapping = ({
   settingParameters,
   isParameterSettings,
 }) => {
-  // const {
-  //   selectColorValue,
-  //   checked,
-  //   ref,
-  //   isFocused,
-  //   valueState,
-  //   forceChange,
-  //   paddingLeft,
-  //   parentValue,
-  //   onChangeCheckBox,
-  //   onChangeText,
-  //   incrementValue,
-  //   decrementValue,
-  //   isDisabled,
-  //   setIsFocused,
-  //   isChecked,
+  const {
+    selectColorValue,
+    checked,
+    ref,
+    isFocused,
+    valueState,
+    forceChange,
+    paddingLeft,
+    parentValue,
+    onChangeCheckBox,
+    onChangeText,
+    incrementValue,
+    decrementValue,
+    isDisabled,
+    setIsFocused,
+    isChecked,
 
-  // } = useChildValuesMapping({ value, index, parameters, settingParameters, item, isParameterSettings });
+  } = useChildValuesMapping({ value, index, parameters, settingParameters, item, isParameterSettings });
   return (
     <>
-      {/* {value?.valueId?.length != 0 && (
+      {value?.valueId?.length != 0 && (
         <div style={clasess.childRowContainer}>
           {item?.name === parameters[0].name && (
             <div style={{ paddingLeft: 13 }}>
@@ -104,11 +104,12 @@ const ChildrenValuesMapping = ({
                 paddingLeft={paddingLeft}
                 parentValue={parentValue}
                 settingParameters={settingParameters}
+                isParameterSettings={isParameterSettings}
               />
             );
           })}
         </div>
-      )} */}
+      )}
     </>
   );
 };

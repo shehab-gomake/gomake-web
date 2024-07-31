@@ -19,8 +19,7 @@ const useChildValuesMapping = ({
 }) => {
   const paddingLeft = value?.valueId?.length === 0 ? 13 : 38;
   const selectColorValue = useRecoilValue<any>(selectColorValueState);
-  const [generalParameters, setGeneralParameters] =
-    useRecoilState(maltiParameterState);
+  const [generalParameters, setGeneralParameters] =useRecoilState(maltiParameterState);
   const [isFocused, setIsFocused] = useState(false);
   const [checked, setChecked] = useState(false);
   const [forceChange, setForceChange] = useState(false);
@@ -31,7 +30,7 @@ const useChildValuesMapping = ({
     parameters[index].defaultValue
   );
   const [subProducts, setSubProducts] = useRecoilState<any>(subProductsCopyParametersState);
-  const {addValueToSubProduct,removeValueFromSubProduct,setSubProductValue,getSelectedColorParameterValue} = userMultiParameterModalValues(settingParameters)
+  const {addValueToSubProduct,removeValueFromSubProduct,setSubProductValue,getSelectedColorParameterValue} = userMultiParameterModalValues(settingParameters,isParameterSettings)
 
  
   const isChecked = useMemo(() => {

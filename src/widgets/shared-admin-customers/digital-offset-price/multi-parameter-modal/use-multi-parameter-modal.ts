@@ -10,8 +10,6 @@ import {
 
 import { selectColorValueState } from "./store/selecte-color-value";
 import { useTranslation } from "react-i18next";
-import { useChildMapping } from "./use-children-mapping-modal";
-import { maltiParameterState } from "./store/multi-param-atom";
 import lodashClonedeep from "lodash.clonedeep";
 
 const useMultiParameterModal = ({ settingParameters, onClose }) => {
@@ -21,16 +19,12 @@ const useMultiParameterModal = ({ settingParameters, onClose }) => {
   const subProductsParameters = useRecoilValue(subProductsParametersState);
 
   const { t } = useTranslation();
-  const generalParametersLocal = useRecoilValue(maltiParameterState);
   const parameterLists = settingParameters?.parameter?.settingParameters;
   const selectedValueConfig = useRecoilValue(selectedValueConfigState);
   const setSelectColorValue = useSetRecoilState(selectColorValueState);
   const [subProducts, setSubProducts] = useRecoilState<any>(subProductsParametersState);
   const [subProductsCopy, setSubProductsCopy] = useRecoilState<any>(subProductsCopyParametersState);
-  const { foundMaterial } = useChildMapping({
-    parameters: parameterLists,
-    settingParameters,
-  });
+
 
   const getObjectById = () => {
     for (const config of selectedValueConfig) {

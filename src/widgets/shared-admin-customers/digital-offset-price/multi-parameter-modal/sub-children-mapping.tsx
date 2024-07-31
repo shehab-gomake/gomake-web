@@ -20,6 +20,7 @@ const SubChildrenMapping = ({
   paddingLeft,
   parentValue,
   settingParameters,
+  isParameterSettings
 }) => {
   const {
     ref,
@@ -39,7 +40,8 @@ const SubChildrenMapping = ({
     value,
     index,
     parentValue,
-    item
+    item,
+    isParameterSettings
   });
   return (
     <div style={clasess.childRowContainer}>
