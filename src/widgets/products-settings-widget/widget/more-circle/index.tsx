@@ -53,9 +53,13 @@ const MoreMenuWidget = ({ item, updatedProduct, getActions }: any) => {
         <GoMakeMenu handleClose={handleClose} open={open} anchorEl={anchorEl}>
           <MenuItem
             onClick={() =>
-              navigate(
-                `/settings/products/edit/${item?.id}?productName=${item?.name}`
-              )
+              router?.query?.isSubProducts ?
+                navigate(
+                  `/settings/products/edit/${item?.id}?productName=${item?.name}&isSubProducts=true`
+                ) :
+                navigate(
+                  `/settings/products/edit/${item?.id}?productName=${item?.name}`
+                )
             }
           >
             <div style={clasess.menuRowStyle}>
