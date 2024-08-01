@@ -73,16 +73,16 @@ const SubChildrenMapping = ({
                 border: isFocused ? "1px solid rgba(237, 2, 140, 1)" : "",
               }}
               onFocus={() => setIsFocused(true)}
-              onChange={onChangeText}
+              onChange={(e) => onChangeText(e, item.id)}
               value={textInputValue}
               id={`input_${index}_${index2}_${index3}`}
             />
             {isFocused && (
               <div style={clasess.iconsContainer}>
-                <div onClick={incrementValue} style={clasess.iconContainer}>
+                <div onClick={() => incrementValue(item.id)} style={clasess.iconContainer}>
                   <PlusIcon />
                 </div>
-                <div onClick={decrementValue} style={clasess.iconContainer}>
+                <div onClick={() => decrementValue(item.id)} style={clasess.iconContainer}>
                   <MinusIcon />
                 </div>
               </div>

@@ -25,7 +25,9 @@ const useSubChildMapping = ({
 
   const [isFocused, setIsFocused] = useState<boolean>(false);
   const [subProducts, setSubProducts] = useRecoilState<any>(subProductsCopyParametersState);
-  const {addValueToSubProduct,removeValueFromSubProduct,setSubProductValue} = userMultiParameterModalValues(settingParameters,isParameterSettings)
+  const {addValueToSubProduct,removeValueFromSubProduct,setSubProductValue,setSubProductValueForParameterSettings,
+    textInputValue,setTextInputValueState
+  } = userMultiParameterModalValues(settingParameters,isParameterSettings)
   const selectColorValue = useRecoilValue<any>(selectColorValueState);
   const ref = useClickAway(() => {
     setIsFocused(false);
@@ -50,6 +52,7 @@ useEffect(()=>{
   getSelectedColorParameterValue()
 },[])
   const [updatedParameter,setUpdatedParameter]=useState()
+  
   const onChangeCheckBox = (e) => {
     if (isParameterSettings) {
       // Handle parameter settings logic
@@ -117,10 +120,6 @@ useEffect(()=>{
           ...prev,
           parameter: updatedParameter
         }));
-        console.log("updatedParameter",updatedParameter)
-  
-        // Optionally, call the API to persist changes
-        // updatedProductParameteDefaultValue(settingParameters.sectionId, settingParameters.subSectionId, updatedParameter);
       }
     } else {
       let newSubProducts = lodashClonedeep(subProducts);
@@ -149,7 +148,7 @@ useEffect(()=>{
   }, [isCheckedMemo]);
 
 
-  const textInputValue = useMemo(() => {
+  const textInputValueMemo = useMemo(() => {
     if(!isParameterSettings){
       if(!subProducts)
         return 
@@ -173,35 +172,77 @@ useEffect(()=>{
       return  item.defaultValue;
     }
     else {
-      return  item.defaultValue;
+      const colorParameter = parameters.find(item => item.code === "printingcolorsDetail");
+      if (!colorParameter) return item.defaultValue;
+  
+      const parameter = settingParameters?.parameter;
+      if (!parameter) return item.defaultValue;
+  
+      const valuesConfigsList = parameter?.valuesConfigs;
+      if (!valuesConfigsList) return item.defaultValue;
+  
+      const defaultValueConfig = valuesConfigsList.find(item => item.isDefault);
+      if (!defaultValueConfig) return item.defaultValue;
+  
+      const colorParameterValue = defaultValueConfig.selectedParameterValues.find(paramValue => paramValue.parameterId === colorParameter.id);
+      if (!colorParameterValue) return item.defaultValue;
+  
+      const valueIndex = colorParameterValue.valueIds.findIndex(val => val === value.valueId);
+      if (valueIndex === -1) return item.defaultValue;
+  
+      const parameterValue = defaultValueConfig.selectedParameterValues.find(paramValue => paramValue.parameterId === item.id);
+      if (parameterValue && parameterValue.valueIds && parameterValue.valueIds.length > valueIndex) {
+        return parameterValue.valueIds[valueIndex];
+      }
+      return item.defaultValue;
     }
    
-  }, [subProducts]);
+  }, [subProducts, isParameterSettings, item, value, settingParameters, parameters]);
   
-  const setTextInputValue = (textInputVal) =>{
-    if(!isParameterSettings){
+  useEffect(()=>{
+    setTextInputValueState(textInputValueMemo)
+  },[textInputValueMemo])
+  // const setTextInputValue = (textInputVal) =>{
+  //   if(!isParameterSettings){
+  //     let newSubProducts = lodashClonedeep(subProducts);
+  //     newSubProducts = setSubProductValue(newSubProducts,item.id,value,textInputVal);
+  //     setSubProducts(newSubProducts);
+  //   }
+  //   else {
+  //    //write code here 
+  //   }
+   
+  // }
+  const setTextInputValue = (textInputVal, parameterId) => {
+    if (isParameterSettings) {
+      const parameter = settingParameters?.parameter;
+      const valuesConfigsList = parameter?.valuesConfigs;
+      const defaultValueConfig = valuesConfigsList?.find(item => item.isDefault);
+      console.log("defaultValueConfig",defaultValueConfig?.selectedParameterValues)
+  
+      const updatedParameters = setSubProductValueForParameterSettings(defaultValueConfig?.selectedParameterValues, parameterId, value, textInputVal);
+      console.log("updatedParameters",updatedParameters)
+   
+    } else {
+      // Existing logic for subProducts update
       let newSubProducts = lodashClonedeep(subProducts);
-      newSubProducts = setSubProductValue(newSubProducts,item.id,value,textInputVal);
+      newSubProducts = setSubProductValue(newSubProducts, item.id, value, textInputVal);
       setSubProducts(newSubProducts);
     }
-    else {
-      return textInputVal
-    }
-   
-  }
-  const onChangeText = (e) => {
-    setTextInputValue(e.target.value);
+  };
+  const onChangeText = (e,paramId) => {
+    setTextInputValue(e.target.value,paramId);
   };
 
-  const incrementValue = () => {
+  const incrementValue = (paramId) => {
     let currentValue = textInputValue.toString();
     currentValue = (parseInt(currentValue) + 1).toString();
-    setTextInputValue(currentValue);
+    setTextInputValue(currentValue,paramId);
   };
-  const decrementValue = () => {
+  const decrementValue = (paramId) => {
     let currentValue = textInputValue.toString();
     currentValue = (parseInt(currentValue) - 1).toString();
-    setTextInputValue(currentValue);
+    setTextInputValue(currentValue,paramId);
   };
 
   const getMaxSelectionValues = () => {
@@ -263,13 +304,6 @@ useEffect(()=>{
     }
     
   }, [subProducts, settingParameters, isParameterSettings, value,getSelectedColorParameterValue]);
-  console.log("isDisabled",isDisabled)
-
- 
-  // const onClickSaveUpdatedParameters = ()=>{
-  //           updatedProductParameteDefaultValue(settingParameters.sectionId?.id, settingParameters.subSectionId?.id, updatedParameter);
-  // }
-
   
   return {
     ref,
@@ -283,6 +317,7 @@ useEffect(()=>{
     isChecked,
     textInputValue,
     isCheckedMemo,
+    textInputValueMemo
   };
 };
 
