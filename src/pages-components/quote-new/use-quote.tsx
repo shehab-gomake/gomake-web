@@ -244,7 +244,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     updateOccasionalClientName()
     setIsUpdateClientName(null);
   };
-  
+
   const onBlurBusinessCode = async () => {
     setIsUpdateBusinessCode(null);
   };
@@ -1207,12 +1207,11 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     };
   }, [dateRef, activeClickAway, quoteItemValue, selectDate]);
 
-  
+
   const [openReferenceModal, setOpenReferenceModal] = useState(false)
   const onClickOpenReferenceModal = () => {
     setOpenReferenceModal(true)
   }
-
 
   const [newCreationDate, setNewCreationDate] = useState(isQuoteConfirmation ? quoteConfirm?.creationDate : quoteItemValue?.creationDate);
   useEffect(() => {
@@ -1226,7 +1225,9 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
   const onChangeDatesToCreationDate = () => {
     setSelectDate(newCreationDate);
     setCreationDate(newCreationDate)
-    setTaxDate(newCreationDate)
+    setTaxDate(newCreationDate);
+    //make sure it works
+    setQuoteItemValue({...quoteItemValue,creationDate:newCreationDate,taxDate:newCreationDate,dueDate:newCreationDate})
   }
 
 
@@ -1319,7 +1320,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     setOpenLoginModal(true);
   };
 
-  const setClientTypesCategories= useSetRecoilState(clientTypesCategoriesState);
+  const setClientTypesCategories = useSetRecoilState(clientTypesCategoriesState);
   const getClientTypesCategories = async () => {
     const callBack = (res) => {
       if (res) {
@@ -1609,8 +1610,8 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     onChangeDatesToCreationDate,
     activeClickAwayForCreationDate,
     newCreationDate,
-    setNewCreationDate 
-   };
+    setNewCreationDate
+  };
 };
 
 export { useQuoteNew };
