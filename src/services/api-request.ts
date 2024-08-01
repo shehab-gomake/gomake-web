@@ -16,7 +16,6 @@ const apiRequest = async (
 ) => {
   try {
     //please don't change the server url!!!
-    //debugger
     const SERVER = config.api_server;
     const reqUrl = SERVER + url;
     const controller = new AbortController();
@@ -32,7 +31,7 @@ const apiRequest = async (
         "project-name": "business-dashboard",
         ...(getUserToken() && { Authorization: "Bearer " + getUserToken() }),
         ...(data.customAuth && { "auth-token": data.customAuth }),
-        lang: "en" ,
+        lang: language ? language : "en",
         domain: "",
       },
     };
