@@ -11,6 +11,7 @@ const userMultiParameterModalValues = (settingParameters) => {
 
     const getSelectedColorParameterValue = (subProducts)=>{
         if(subProducts){
+            
             const subSection = settingParameters.subSection;
             const subProductType = subSection.type;
             let subProduct =  subProducts.find(sub => sub.type == subProductType);
