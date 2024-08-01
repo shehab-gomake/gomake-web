@@ -11,15 +11,16 @@ const MultiParameterModal = ({
   modalTitle,
   settingParameters,
   _renderParameterType,
-  isParameterSettings = false
+  isParameterSettings = false,
+  setSettingParameters
 }: any) => {
   const { clasess } = useStyle();
-  const { parameterLists, onClickSaveParameter, t, closeModal } = useMultiParameterModal({
+  const { parameterLists, onClickSaveParameter, t, closeModal, onClickSaveParameterForSettings } = useMultiParameterModal({
     settingParameters,
     onClose,
     isParameterSettings
   });
-
+  console.log("FSDGHTDF", settingParameters?.parameter)
   return (
     <>
       <GoMakeModal
@@ -67,6 +68,7 @@ const MultiParameterModal = ({
                           clasess={clasess}
                           settingParameters={settingParameters}
                           isParameterSettings={isParameterSettings}
+                          setSettingParameters={setSettingParameters}
                         />
                       );
                     })}
@@ -74,7 +76,7 @@ const MultiParameterModal = ({
                 </div>
                 <GomakePrimaryButton
                   style={clasess.saveBtnContainerStyle}
-                  onClick={onClickSaveParameter}
+                  onClick={() => { isParameterSettings ? onClickSaveParameterForSettings(settingParameters?.section?.id, settingParameters?.subSection?.id, settingParameters?.parameter) : onClickSaveParameter() }}
                 >
                   {t("materials.buttons.save")}
                 </GomakePrimaryButton>
@@ -118,6 +120,7 @@ const MultiParameterModal = ({
                           index={index}
                           clasess={clasess}
                           settingParameters={settingParameters}
+                          setSettingParameters={setSettingParameters}
                         />
                       );
                     })}
@@ -126,7 +129,7 @@ const MultiParameterModal = ({
               </div>
               <GomakePrimaryButton
                 style={clasess.saveBtnContainerStyle}
-                onClick={onClickSaveParameter}
+                onClick={() => { isParameterSettings ? onClickSaveParameterForSettings(settingParameters?.section?.id, settingParameters?.subSection?.id, settingParameters?.parameter) : onClickSaveParameter() }}
               >
                 {t("materials.buttons.save")}
               </GomakePrimaryButton>

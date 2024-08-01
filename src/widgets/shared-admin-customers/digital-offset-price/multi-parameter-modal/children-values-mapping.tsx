@@ -17,6 +17,7 @@ const ChildrenValuesMapping = ({
   index2,
   settingParameters,
   isParameterSettings,
+  setSettingParameters
 }) => {
   const {
     selectColorValue,
@@ -106,6 +107,7 @@ const ChildrenValuesMapping = ({
                 parentValue={parentValue}
                 settingParameters={settingParameters}
                 isParameterSettings={isParameterSettings}
+                setSettingParameters={setSettingParameters}
               />
             );
           })}

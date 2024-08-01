@@ -983,7 +983,8 @@ const useAddProduct = ({ clasess }) => {
     multiParameterModal,
     onCloseMultiParameterModal,
     onOpeneMultiParameterModal,
-    settingParameters
+    settingParameters,
+    setSettingParameters
   };
 };
 

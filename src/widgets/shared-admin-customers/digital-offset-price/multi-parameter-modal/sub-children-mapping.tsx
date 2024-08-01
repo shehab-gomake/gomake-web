@@ -20,7 +20,7 @@ const SubChildrenMapping = ({
   parentValue,
   settingParameters,
   isParameterSettings,
-  isCheckedMemo
+  setSettingParameters
 }) => {
   const {
     ref,
@@ -41,7 +41,8 @@ const SubChildrenMapping = ({
     index,
     parentValue,
     item,
-    isParameterSettings
+    isParameterSettings,
+    setSettingParameters
   });
   return (
     <div style={clasess.childRowContainer}>
@@ -51,9 +52,9 @@ const SubChildrenMapping = ({
             icon={<CheckboxIcon />}
             checkedIcon={<CheckboxCheckedIcon />}
             onChange={(e) => onChangeCheckBox(e)}
-            checked={isCheckedMemo} // This should be true or false based on the selection
-            value={isCheckedMemo}
-            key={`c${index}_${value.value}_${isCheckedMemo}`}
+            checked={isChecked} // This should be true or false based on the selection
+            value={isChecked}
+            key={`c${index}_${value.value}_${isChecked}`}
             disabled={isDisabled}
             id={`check_${index}_${index2}_${index3}`}
           />

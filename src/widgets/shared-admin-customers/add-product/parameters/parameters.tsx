@@ -43,6 +43,7 @@ const ParameterWidget = () => {
     multiParameterModal,
     onCloseMultiParameterModal,
     onOpeneMultiParameterModal,
+    setSettingParameters,
     settingParameters
   } = useAddProduct({ clasess });
 
@@ -174,6 +175,8 @@ const ParameterWidget = () => {
         settingParameters={settingParameters}
         _renderParameterType={_renderParameterType}
         isParameterSettings={true}
+        setSettingParameters={setSettingParameters}
+
       />
     </>
   );

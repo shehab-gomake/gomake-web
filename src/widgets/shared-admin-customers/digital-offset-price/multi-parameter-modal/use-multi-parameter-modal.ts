@@ -1,5 +1,5 @@
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 
 import {
   generalParametersState,
@@ -11,13 +11,17 @@ import {
 import { selectColorValueState } from "./store/selecte-color-value";
 import { useTranslation } from "react-i18next";
 import lodashClonedeep from "lodash.clonedeep";
+import { useGomakeAxios, useSnackBar } from "@/hooks";
+import { useRouter } from "next/router";
 
 const useMultiParameterModal = ({ settingParameters, onClose,isParameterSettings }) => {
   const [generalParameters, setGeneralParameters] = useRecoilState<any>(
     generalParametersState
   );
   const subProductsParameters = useRecoilValue(subProductsParametersState);
-
+  const { callApi } = useGomakeAxios();
+  const { alertFaultAdded, alertSuccessAdded } = useSnackBar();
+  const router = useRouter();
   const { t } = useTranslation();
   const parameterLists = settingParameters?.parameter?.settingParameters;
   const selectedValueConfig = useRecoilValue(selectedValueConfigState);
@@ -61,6 +65,41 @@ const useMultiParameterModal = ({ settingParameters, onClose,isParameterSettings
 
     
   };
+  const updatedValuesConfigsForParameters = useCallback(
+    async (sectionId: string, subSectionId: string, data: any) => {
+      const res = await callApi(
+        "PUT",
+        `/v1/printhouse-config/products/update-product-parameter`,
+        {
+          productId: router?.query?.id,
+          sectionId: sectionId,
+          subSectionId: subSectionId,
+          productParameterType: 1,
+          parameter: data,
+        }
+      );
+      if (res?.success) {
+        alertSuccessAdded()
+      } else {
+        alertFaultAdded()
+      }
+    },
+    [router]
+  );
+
+  const updatedProductParameteDefaultValue = useCallback(
+    async (sectionId: string, subSectionId: string, data: any) => {
+        await updatedValuesConfigsForParameters(sectionId,subSectionId,data);
+    },
+
+    [router]
+  );
+  const onClickSaveParameterForSettings = (sectionId,subSectionId,data) => {
+    updatedProductParameteDefaultValue(sectionId,subSectionId,data)
+    onClose();
+
+    
+  };
   const closeModal = () => {
     let copy = lodashClonedeep(subProducts);
     setSubProductsCopy(copy)
@@ -70,6 +109,7 @@ const useMultiParameterModal = ({ settingParameters, onClose,isParameterSettings
     parameterLists,
     onClickSaveParameter,
     closeModal,
+    onClickSaveParameterForSettings,
     t,
   };
 };

@@ -19,11 +19,10 @@ const useSubChildMapping = ({
   index,
   parentValue,
   item,
-  isParameterSettings
+  isParameterSettings,
+  setSettingParameters
 }) => {
-  const { callApi } = useGomakeAxios();
-  const { alertFaultAdded, alertSuccessAdded } = useSnackBar();
-  const router = useRouter();
+
   const [isFocused, setIsFocused] = useState<boolean>(false);
   const [subProducts, setSubProducts] = useRecoilState<any>(subProductsCopyParametersState);
   const {addValueToSubProduct,removeValueFromSubProduct,setSubProductValue} = userMultiParameterModalValues(settingParameters,isParameterSettings)
@@ -47,8 +46,10 @@ const useSubChildMapping = ({
   };
   const [isChecked, setIsChecked] = useState(false);
 
-
-
+useEffect(()=>{
+  getSelectedColorParameterValue()
+},[])
+  const [updatedParameter,setUpdatedParameter]=useState()
   const onChangeCheckBox = (e) => {
     if (isParameterSettings) {
       // Handle parameter settings logic
@@ -111,6 +112,11 @@ const useSubChildMapping = ({
             return config;
           })
         };
+        setUpdatedParameter(updatedParameter)
+        setSettingParameters(prev => ({
+          ...prev,
+          parameter: updatedParameter
+        }));
         console.log("updatedParameter",updatedParameter)
   
         // Optionally, call the API to persist changes
@@ -132,9 +138,9 @@ const useSubChildMapping = ({
   const isCheckedMemo = useMemo(() => {
     const colorParameterValue = getSelectedColorParameterValue();
     if (isParameterSettings) {
-      return colorParameterValue?.valueIds?.includes(value.valueId) ?? false;
+      return colorParameterValue?.valueIds?.includes(value.valueId);
     } else {
-      return colorParameterValue?.values?.includes(value.valueId) ?? false;
+      return colorParameterValue?.values?.includes(value.valueId);
     }
   }, [subProducts, settingParameters, isParameterSettings, value,getSelectedColorParameterValue]);
 
@@ -259,41 +265,10 @@ const useSubChildMapping = ({
   }, [subProducts, settingParameters, isParameterSettings, value,getSelectedColorParameterValue]);
   console.log("isDisabled",isDisabled)
 
-  const updatedValuesConfigsForParameters = useCallback(
-    async (sectionId: string, subSectionId: string, data: any) => {
-      const res = await callApi(
-        "PUT",
-        `/v1/printhouse-config/products/update-product-parameter111`,
-        {
-          productId: router?.query?.id,
-          sectionId: sectionId,
-          subSectionId: subSectionId,
-          productParameterType: 1,
-          parameter: data,
-        }
-      );
-      if (res?.success) {
-        alertSuccessAdded()
-      } else {
-        alertFaultAdded()
-      }
-    },
-    [router]
-  );
-
-  const updatedProductParameteDefaultValue = useCallback(
-    async (sectionId: string, subSectionId: string, parameter: any) => {
-      console.log("parameter",parameter)
-        await updatedValuesConfigsForParameters(sectionId, subSectionId, {
-          parameter: {
-            ...parameter,
-            valuesConfigs: []
-          },
-        });
-    },
-
-    [router]
-  );
+ 
+  // const onClickSaveUpdatedParameters = ()=>{
+  //           updatedProductParameteDefaultValue(settingParameters.sectionId?.id, settingParameters.subSectionId?.id, updatedParameter);
+  // }
 
   
   return {
@@ -307,7 +282,7 @@ const useSubChildMapping = ({
     onChangeText,
     isChecked,
     textInputValue,
-    isCheckedMemo
+    isCheckedMemo,
   };
 };
 
