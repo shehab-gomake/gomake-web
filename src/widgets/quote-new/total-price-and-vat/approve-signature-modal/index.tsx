@@ -23,15 +23,15 @@ const ApproveSignatureModal = ({ openModal, onClose, onClickApprove, isMobile }:
     <>
       <GoMakeModal
         openModal={openModal}
-        modalTitle="Approved Signature"
+        modalTitle={t("sales.cart.signatureApproval")}
         onClose={onClose}
         insideStyle={clasess.insideStyle}
       >
         <div style={clasess.mainContainer}>
           <div style={clasess.nameContainer}>
-            <div>You Name</div>
+            <div>{t("sales.cart.yourName")}</div>
             <input
-              placeholder={"Enter your name"}
+              placeholder={t("sales.cart.enterYourName")}
               style={clasess.textInputStyle}
               onChange={(e: any) => {
                 setSignerName(e.target.value);
@@ -48,12 +48,9 @@ const ApproveSignatureModal = ({ openModal, onClose, onClickApprove, isMobile }:
               <CloseIcon />
             </div>
           </div>
-          <div style={clasess.descriptionContainer}>
-            By providing my electronic signature above, I confirm my understanding and agreement with the terms and conditions stated herein. I acknowledge that my electronic signature is legally binding.
-          </div>
+          <div style={clasess.descriptionContainer}>{t("sales.cart.signatureLegalConfirmation")}</div>
           <div style={clasess.btnsContainer}>
-            {/* <GomakePrimaryButton style={clasess.clearBtn} onClick={clear}>Clear</GomakePrimaryButton> */}
-            <GomakePrimaryButton style={clasess.saveBtn} onClick={save}>Confirm & Approve Offer</GomakePrimaryButton>
+            <GomakePrimaryButton style={clasess.saveBtn} onClick={save}>{t("sales.cart.confirmAndApprove")}</GomakePrimaryButton>
           </div>
 
         </div>
