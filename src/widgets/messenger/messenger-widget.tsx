@@ -12,8 +12,9 @@ import {SendFileMessageButtonComponent} from "@/widgets/messenger/components/sen
 import {IChatMessage} from "@/widgets/messenger/interfaces/chat-message";
 import {GoMakeModal} from "@/components";
 import {AddDialog} from "@/widgets/messenger/components/add-dialog";
+import {useGomakeAxios, useSnackBar} from "@/hooks";
 import {EFileStatus} from "@/widgets/messenger/enums";
-import {useSnackBar} from "@/hooks";
+import {updateApprovalFileApi} from "@/services/api-service/chat/quick-blox-chat-endpoints";
 
 
 export default function MessangerWidget() {
@@ -25,7 +26,7 @@ export default function MessangerWidget() {
     const {QB, sessionUser, isChatConnected} = useQuickBlox();
     const [uploadingFiles, setUploadingFiles] = useState<boolean>(false);
     const {alertFault} = useSnackBar();
-
+    const {callApi} = useGomakeAxios();
     const unreadMessages = useCallback(() => {
         return dialogs?.reduce((partialSum, dialog) => partialSum + dialog.unread_messages_count, 0);
     }, [dialogs]);
@@ -47,7 +48,11 @@ export default function MessangerWidget() {
                 QB.chat.onMessageListener = (userId, message) => {
                     if (message.dialog_id === selectedDialog?._id) {
                         console.log(message)
-                        addMessage({...message, sender_id: +message.extension?.sender_id, attachments: message.extension?.attachments});
+                        addMessage({
+                            ...message,
+                            sender_id: +message.extension?.sender_id,
+                            attachments: message.extension?.attachments
+                        });
                     }
                 };
             } catch (e) {
@@ -120,60 +125,52 @@ export default function MessangerWidget() {
                 size: file.size,
                 'public': false
             };
+            QB.data.create('ApprovalRequest', {status: '0'}, function (error, result) {
+                QB.content.createAndUpload(params, (err, res) => {
+                    setUploadingFiles(false)
+                    if (err) {
+                        alertFault('try again')
+                    } else {
+                        const attachment = {
+                            id: res.uid,
+                            type: res.content_type,
+                            size: res.size,
+                            name: res.name
+                        };
 
-            QB.content.createAndUpload(params, (err, res) => {
-                setUploadingFiles(false)
-                if (err) {
-                    alertFault('try again')
-                } else {
-                    const attachment = {
-                        id: res.uid,
-                        type: res.content_type,
-                        size: res.size,
-                        name: res.name
-                    };
-
-                    const message = {
-                        type: 'groupchat',
-                        body: res.name,
-                        sender_id: sessionUser.userId,
-
-                        extension: {
-                            dialog_id: selectedDialog._id,
-                            attachments: [attachment],
-                            save_to_history: 1,
+                        const message = {
+                            type: 'groupchat',
+                            body: res.name,
                             sender_id: sessionUser.userId,
-                            fileUrl: res.blob_object_access.params,
-                            status: EFileStatus.PENDING
-                        },
-                        markable: 1
-                    };
-                    const dialogJid = QB.chat.helpers.getRoomJidFromDialogId(selectedDialog._id);
-                    QB.chat.send(dialogJid, message, (error, response) => {
-                    });
-                }
+
+                            extension: {
+                                dialog_id: selectedDialog._id,
+                                attachments: [attachment],
+                                save_to_history: 1,
+                                sender_id: sessionUser.userId,
+                                approval_Request_id: "66ab705507a49d00591a6795",
+                            },
+                            markable: 1
+                        };
+                        const dialogJid = QB.chat.helpers.getRoomJidFromDialogId(selectedDialog._id);
+                        QB.chat.send(dialogJid, message, (error, response) => {
+                        });
+                    }
+                });
             });
         }
     };
 
-    const approveFile = (messageId: string) => {
+    const updateApprovalFile = async (requestId: string, updatedStatus: string) => {
+        const callBack = res => {
+            if (res.success) {
 
-        const params = {
-            chat_dialog_id: selectedDialog._id,
-            message: 'Updated',
-            save_to_history: 1,
-            extension: {
-                status: '1',
+            }else {
+
             }
         };
 
-        QB.chat.message.update(messageId, params, function(err, updatedMessage) {
-            if (err) {
-                console.log(err);
-            } else {
-                console.log('Message extra data updated successfully', updatedMessage);
-            }
-        });
+        await updateApprovalFileApi(callApi, callBack, {requestId, updatedStatus})
     }
 
     const getAttachmentUrl = (attachmentId: string): string => {
@@ -190,6 +187,13 @@ export default function MessangerWidget() {
             setInputValue('');
         }
     };
+
+    const getApprovalFileStatus = (id: string) => {
+        QB.data.list('ApprovalRequest', [id], (e, res)=> {
+            console.log(res);
+        });
+        return EFileStatus.PENDING
+    }
     return (
         <Stack width={'100%'} height={'100%'} style={{backgroundColor: '#FFF'}}>
             {
@@ -213,7 +217,7 @@ export default function MessangerWidget() {
                                 </Stack>
                                 <Divider/>
                                 <Stack width={'100%'} flex={1} overflow={'auto'}>
-                                    <MessagesComponent onApproveFile={approveFile} selectedDialog={selectedDialog}
+                                    <MessagesComponent getApprovalStatus={getApprovalFileStatus} onUpdateApprovalFile={updateApprovalFile} selectedDialog={selectedDialog}
                                                        onDropFile={uploadAndSendMessage}
                                                        getAttachmentUrl={getAttachmentUrl} messages={messages}
                                                        sessionUserId={sessionUser.userId}/>

@@ -1,15 +1,16 @@
-import { Card, CardActions, CardContent, IconButton, Typography} from "@mui/material";
+import {Button, Card, CardActions, CardContent, IconButton, Typography} from "@mui/material";
 import CardMedia from "@mui/material/CardMedia";
 import {IChatMessage} from "@/widgets/messenger/interfaces/chat-message";
+import {EFileStatus} from "@/widgets/messenger/enums";
 import {Download} from "@mui/icons-material";
 import Stack from "@mui/material/Stack";
 
 interface IProps extends IChatMessage {
     isCurrentUserSentMsg: boolean;
-    onApproveFile: (msg: string) => void
+    onUpdateApprovalFile: (requestId: string, updatedStatus: string) => void
 }
 
-const FileMessageComponent = ({message, attachments, _id}: IProps) => {
+const FileMessageComponent = ({message, attachments, status, isCurrentUserSentMsg, onUpdateApprovalFile, _id, approval_Request_id}: IProps) => {
     const downloadFile = async () => {
         try {
             const response = await fetch(attachments[0].url);
@@ -47,18 +48,18 @@ const FileMessageComponent = ({message, attachments, _id}: IProps) => {
             </Stack>
         </CardContent>
         <CardActions>
-            {/*{*/}
-            {/*    status === EFileStatus.PENDING ?*/}
-            {/*        <>*/}
-            {/*            {*/}
-            {/*                isCurrentUserSentMsg ? <span>pending</span> :*/}
-            {/*                    <>*/}
-            {/*                        <Button onClick={() => onApproveFile(_id)}>accept</Button>*/}
-            {/*                        <Button>reject</Button>*/}
-            {/*                    </>*/}
-            {/*            }*/}
-            {/*        </> : <span>{EFileStatus.APPROVED ? 'approved' : 'rejected'}</span>*/}
-            {/*}*/}
+            {
+                status === EFileStatus.PENDING ?
+                    <>
+                        {
+                            isCurrentUserSentMsg ? <span>pending</span> :
+                                <>
+                                    <Button onClick={() => onUpdateApprovalFile(approval_Request_id, EFileStatus.APPROVED)}>accept</Button>
+                                    <Button>reject</Button>
+                                </>
+                        }
+                    </> : <span>{EFileStatus.APPROVED ? 'approved' : 'rejected'}</span>
+            }
 
         </CardActions>
     </Card>

@@ -8,6 +8,7 @@ import {FileMessageComponent} from "@/widgets/messenger/components/file-message"
 import {useEffect, useRef, useState} from "react";
 import {useDrop} from "react-dnd";
 import {IChatDialog} from "@/widgets/messenger/interfaces/dialog";
+import {EFileStatus} from "@/widgets/messenger/enums";
 
 interface IProps {
     messages: IChatMessage[];
@@ -15,7 +16,8 @@ interface IProps {
     selectedDialog?: IChatDialog;
     getAttachmentUrl: (attachmentId) => string;
     onDropFile: (file) => void;
-    onApproveFile: (id: string) => void;
+    onUpdateApprovalFile: (requestId: string, updatedStatus: string) => void;
+    getApprovalStatus: (id: string) => EFileStatus;
 }
 
 const MessagesComponent = ({
@@ -24,7 +26,8 @@ const MessagesComponent = ({
                                selectedDialog,
                                getAttachmentUrl,
                                onDropFile,
-                               onApproveFile
+                               onUpdateApprovalFile,
+                               getApprovalStatus
                            }: IProps) => {
     const [user] = useRecoilState(userProfileState);
     const dropRef = useRef(null);
@@ -100,8 +103,9 @@ const MessagesComponent = ({
                                 <Stack minWidth={'40px'} width={'40px'} height={'40px'}/>
                         }
                         {
-                            msg.attachments?.length > 0 ? <FileMessageComponent onApproveFile={onApproveFile} {...msg}
+                            msg.attachments?.length > 0 ? <FileMessageComponent onUpdateApprovalFile={onUpdateApprovalFile} {...msg}
                                                                                 isCurrentUserSentMsg={msg.sender_id === sessionUserId}
+                                                                                status={getApprovalStatus(msg.approval_Request_id)}
                                                                                 attachments={msg.attachments.map(attachment => ({
                                                                                     ...attachment,
                                                                                     url: getAttachmentUrl(attachment.id)
