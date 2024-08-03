@@ -18,7 +18,8 @@ export interface IChatMessage {
     updated_at: Date;
     _id: string;
     fileUrl?: string;
-    status?: EFileStatus
+    status?: EFileStatus;
+    approval_Request_id?: string;
 }
 
 export interface IChatMessageAttachment {

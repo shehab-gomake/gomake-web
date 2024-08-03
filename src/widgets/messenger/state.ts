@@ -1,6 +1,6 @@
 import {atom} from "recoil";
 
-export const chatDialogIdState = atom<string>({
-    default: '',
-    key: 'chatDialogIdState'
+export const QuickBloxState = atom({
+    default: null,
+    key: 'QuickBloxState'
 })
