@@ -1,3 +1,5 @@
+import {EMeasurementUnits} from "@/widgets/machines/enums/measurement-units";
+
 const manualSewingMachine = (state: Record<string, any>) => {
     return [
         {
@@ -32,9 +34,10 @@ const manualSewingMachine = (state: Record<string, any>) => {
             required: true,
             parameterKey: "unitDelay",
             options: [],
-            value: state.attributes?.speed ? state.attributes?.unitDelay : '',
+            value: state.attributes?.unitDelay ? state.attributes?.unitDelay : '',
             machineInputType: 'input',
             isValid: !!state?.attributes?.unitDelay,
+            unit: EMeasurementUnits.SECOND
         },
 
 
