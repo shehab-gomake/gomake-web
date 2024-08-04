@@ -22,13 +22,14 @@ const DropDownListParameterWidget = ({
     (item) => item.isDefault === true
   );
   return (
+
     <div data-tour={parameter?.id} style={clasess.dropDownListWithSettingIcon}>
       <GoMakeAutoComplate
         options={parameter?.valuesConfigs?.filter(value => {
           return !(value?.materialValueIds?.length === 1 && value?.materialValueIds[0]?.path === null && value?.materialValueIds[0]?.valueId === null);
         })?.filter((value) => !value.isHidden)?.filter((value) => value.updateName)}
-        // key={parameter?.valuesConfigs + temp[index]?.values}
-        key={parameter?.valuesConfigs}
+        key={parameter?.valuesConfigs + temp[index]?.values}
+        //key={parameter?.valuesConfigs}
         placeholder={parameter.name}
         style={clasess.dropDownListStyle}
         getOptionLabel={(option: any) => option.updateName}
