@@ -97,7 +97,7 @@ const RowMappingWidget = ({
             />
             {parentIndex}
           </div>
-          : documentType === DOCUMENT_TYPE.quote ?
+          : (!isQuoteConfirmation &&  documentType === DOCUMENT_TYPE.quote) ?
             <span style={classes.checkBoxContainer}>
               <Checkbox
                 icon={<CheckboxIcon />}

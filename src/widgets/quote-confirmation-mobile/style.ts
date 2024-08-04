@@ -3,7 +3,7 @@ import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 
 const useStyle = () => {
-  const { secondColor, grayColor, theme } = useGomakeTheme();
+  const { secondColor, theme } = useGomakeTheme();
 
   const classes = useMemo(() => {
     return {
@@ -11,7 +11,8 @@ const useStyle = () => {
         display: "flex",
         width: "100%",
         flexDirection: "column" as "column",
-        gap: "20px"
+        gap: "20px",
+        marginBottom:"10px"
       },
       titleQuoteContainer: {
         display: "flex",
@@ -26,7 +27,8 @@ const useStyle = () => {
         ...FONT_FAMILY.Lexend(500, 24),
         color: secondColor(500),
         lineHeight: "30px",
-      }
+      },
+      
     };
   }, [theme]);
   return {
