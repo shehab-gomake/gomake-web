@@ -39,6 +39,7 @@ const useSubChildMapping = ({
   }
   const onChangeCheckBox = (e) => {
     let newSubProducts = lodashClonedeep(subProductsCopy);
+
     if (e.target.checked){
        newSubProducts = addValueToSubProduct(newSubProducts,value)
     }

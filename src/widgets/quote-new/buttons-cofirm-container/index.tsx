@@ -95,7 +95,7 @@ const ButtonsConfirmContainer = () => {
         yesBtn={t("sales.quote.yesBtn")}
         openModal={approveModal}
         onClose={onClickCloseApproveModal}
-        subTitle={"Are you sure you want to approve this offer?"}
+        subTitle={t("sales.cart.approveOfferQuestion")}
         // onClickDelete={onClickApprove}
         onClickDelete={onClickOpenApproveSignatureModal}
         hideIcon={true}

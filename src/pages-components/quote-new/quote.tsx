@@ -270,9 +270,10 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
   ]
   const { } = useGoMakeTour(quoteSteps, []);
 
+  const isInvoice = documentType === DOCUMENT_TYPE.invoice || documentType === DOCUMENT_TYPE.invoiceRefund;
 
   useEffect(() => {
-    if (documentType === DOCUMENT_TYPE.invoice || documentType === DOCUMENT_TYPE.invoiceRefund) {
+    if (isInvoice) {
       const fetchTaxesData = async () => {
         try {
           const taxesData = await fetchTaxesAuthority(printHouseProfileState?.business_ID);
@@ -343,8 +344,8 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
                 {/* // Creation Date */}
 
                 <div
-                  style={{...classes.deleverdDate, cursor: quoteItemValue?.isEditable ? "pointer" : "default" }}
-                  onClick={DOCUMENT_TYPE.invoice && quoteItemValue?.isEditable ? handleClickForCreationDate : null}
+                  style={{...classes.deleverdDate, cursor: (isInvoice &&quoteItemValue?.isEditable) ? "pointer" : "default" }}
+                  onClick={isInvoice && quoteItemValue?.isEditable ? handleClickForCreationDate : null}
                 >
                   {t("sales.quote.creationDate")}{" "}
                   {creationDate
@@ -384,7 +385,7 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
                 </div>
                 {/* // TAX Date */}
                 {
-               (documentType === DOCUMENT_TYPE.invoice || documentType === DOCUMENT_TYPE.invoiceRefund ) && <div
+               isInvoice && <div
                style={{...classes.deleverdDate, cursor: quoteItemValue?.isEditable ? "pointer" : "default" }}
                onClick={quoteItemValue?.isEditable ? handleClickForTaxDate : null}
                   >

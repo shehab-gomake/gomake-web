@@ -32,7 +32,10 @@ const ButtonsConfirmContainer = ({ isMobile }) => {
     quoteConfirm,
     onClickOpenApproveSignatureModal,
     approveSignatureModal,
-    onClickCloseApproveSignatureModal
+    onClickCloseApproveSignatureModal,
+    approveModal,
+    onClickCloseApproveModal,
+    onClickOpenApproveModal
   } = useButtonsConfirmContainer();
 
   return (
@@ -40,7 +43,8 @@ const ButtonsConfirmContainer = ({ isMobile }) => {
       <SecondaryButton
         variant="contained"
         style={classes.btnStyle}
-        onClick={onClickOpenApproveSignatureModal}
+        // onClick={onClickOpenApproveSignatureModal}
+        onClick={onClickOpenApproveModal}
       >{t("sales.quote.approveOffer")}
       </SecondaryButton>
       <SecondaryButton
@@ -87,12 +91,21 @@ const ButtonsConfirmContainer = ({ isMobile }) => {
         onClickDelete={onClickReject}
         style={{ width: "unset" }}
       />
+        <GoMakeDeleteModal
+        style={{width:"90%"}}
+        title={t("sales.quote.approveOffer")}
+        yesBtn={t("sales.quote.yesBtn")}
+        openModal={approveModal}
+        onClose={onClickCloseApproveModal}
+        subTitle={t("sales.cart.approveOfferQuestion")}
+        onClickDelete={onClickOpenApproveSignatureModal}
+        hideIcon={true}
+      />
       <ApproveSignatureModal
         openModal={approveSignatureModal}
         onClose={onClickCloseApproveSignatureModal}
         onClickApprove={onClickApprove}
         isMobile={isMobile}
-
       />
     </div>
   );
