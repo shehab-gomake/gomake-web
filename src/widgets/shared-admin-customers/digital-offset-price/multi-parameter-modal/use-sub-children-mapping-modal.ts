@@ -1,15 +1,11 @@
-import {useCallback, useEffect, useMemo, useState} from "react";
-import {useRecoilState, useRecoilValue} from "recoil";
-import {maltiParameterState} from "./store/multi-param-atom";
-import {selectColorValueState} from "./store/selecte-color-value";
+import {useEffect, useMemo, useState} from "react";
+import {useRecoilState, } from "recoil";
 import lodashClonedeep from "lodash.clonedeep";
 import {useClickAway} from "@uidotdev/usehooks";
-import {subProductsCopyParametersState, subProductsParametersState} from "@/store";
+import {subProductsCopyParametersState, } from "@/store";
 import {
   userMultiParameterModalValues
 } from "@/widgets/shared-admin-customers/digital-offset-price/multi-parameter-modal/use-multi-parameter-modal-values";
-import { useGomakeAxios, useSnackBar } from "@/hooks";
-import { useRouter } from "next/router";
 
 const useSubChildMapping = ({
   forceChange,
@@ -22,13 +18,15 @@ const useSubChildMapping = ({
   isParameterSettings,
   setSettingParameters
 }) => {
-
   const [isFocused, setIsFocused] = useState<boolean>(false);
   const [subProducts, setSubProducts] = useRecoilState<any>(subProductsCopyParametersState);
-  const {addValueToSubProduct,removeValueFromSubProduct,setSubProductValue,setSubProductValueForParameterSettings,
-    textInputValue,setTextInputValueState
+  const {
+    addValueToSubProduct,
+    removeValueFromSubProduct,
+    setSubProductValue,
+    setSubProductValueForParameterSettings,
+    setSubProductValueForParameterSettingsDefaultValueArray
   } = userMultiParameterModalValues(settingParameters,isParameterSettings)
-  const selectColorValue = useRecoilValue<any>(selectColorValueState);
   const ref = useClickAway(() => {
     setIsFocused(false);
   });
@@ -43,7 +41,7 @@ const useSubChildMapping = ({
       const valuesConfigs = settingParameters?.parameter?.valuesConfigs;
       const valueConfigDefault = valuesConfigs?.find((item) => item.isDefault);
       const colorParameter = settingParameters?.parameter?.settingParameters.find(item => item.code === "printingcolorsDetail");
-      return valueConfigDefault.selectedParameterValues.find(paramValue => paramValue.parameterId === colorParameter.id);
+      return valueConfigDefault?.selectedParameterValues?.find(paramValue => paramValue.parameterId === colorParameter.id);
     }
   };
   const [isChecked, setIsChecked] = useState(false);
@@ -148,7 +146,7 @@ useEffect(()=>{
   }, [isCheckedMemo]);
 
 
-  const textInputValueMemo = useMemo(() => {
+  const textInputValue = useMemo(() => {
     if(!isParameterSettings){
       if(!subProducts)
         return 
@@ -172,66 +170,44 @@ useEffect(()=>{
       return  item.defaultValue;
     }
     else {
-      const colorParameter = parameters.find(item => item.code === "printingcolorsDetail");
+      const colorParameter = settingParameters?.parameter?.settingParameters.find(param => param.code === "printingcolorsDetail");
       if (!colorParameter) return item.defaultValue;
   
-      const parameter = settingParameters?.parameter;
-      if (!parameter) return item.defaultValue;
-  
-      const valuesConfigsList = parameter?.valuesConfigs;
-      if (!valuesConfigsList) return item.defaultValue;
-  
-      const defaultValueConfig = valuesConfigsList.find(item => item.isDefault);
-      if (!defaultValueConfig) return item.defaultValue;
-  
-      const colorParameterValue = defaultValueConfig.selectedParameterValues.find(paramValue => paramValue.parameterId === colorParameter.id);
-      if (!colorParameterValue) return item.defaultValue;
-  
-      const valueIndex = colorParameterValue.valueIds.findIndex(val => val === value.valueId);
+      const valueIndex = colorParameter?.defaultValueArray?.findIndex(val => val === value.valueId);
       if (valueIndex === -1) return item.defaultValue;
+      const parameterToUpdate = settingParameters?.parameter?.settingParameters.find(param => param.id === item.id);
+      if (!parameterToUpdate || !parameterToUpdate.defaultValueArray) return item.defaultValue;
   
-      const parameterValue = defaultValueConfig.selectedParameterValues.find(paramValue => paramValue.parameterId === item.id);
-      if (parameterValue && parameterValue.valueIds && parameterValue.valueIds.length > valueIndex) {
-        return parameterValue.valueIds[valueIndex];
+      if (parameterToUpdate.defaultValueArray.length > valueIndex) {
+
+        return parameterToUpdate.defaultValueArray[valueIndex];
       }
       return item.defaultValue;
     }
    
   }, [subProducts, isParameterSettings, item, value, settingParameters, parameters]);
-  
-  useEffect(()=>{
-    setTextInputValueState(textInputValueMemo)
-  },[textInputValueMemo])
-  // const setTextInputValue = (textInputVal) =>{
-  //   if(!isParameterSettings){
-  //     let newSubProducts = lodashClonedeep(subProducts);
-  //     newSubProducts = setSubProductValue(newSubProducts,item.id,value,textInputVal);
-  //     setSubProducts(newSubProducts);
-  //   }
-  //   else {
-  //    //write code here 
-  //   }
-   
-  // }
+  // useEffect(()=>{
+  //   setTextInputValueState(textInputValueMemo)
+  // },[textInputValueMemo])
   const setTextInputValue = (textInputVal, parameterId) => {
     if (isParameterSettings) {
       const parameter = settingParameters?.parameter;
       const valuesConfigsList = parameter?.valuesConfigs;
       const defaultValueConfig = valuesConfigsList?.find(item => item.isDefault);
-      const updatedParameters = setSubProductValueForParameterSettings(defaultValueConfig?.selectedParameterValues, parameterId, value, textInputVal);
       
-      // Now update the state with the updatedParameters
+      const updatedParameters = setSubProductValueForParameterSettings(defaultValueConfig?.selectedParameterValues, parameterId, value, textInputVal);
+      const updatedParametersDefaultValueArray = setSubProductValueForParameterSettingsDefaultValueArray(settingParameters?.parameter?.settingParameters, parameterId, value, textInputVal);
       setSettingParameters(prev => ({
         ...prev,
         parameter: {
           ...parameter,
+          settingParameters: updatedParametersDefaultValueArray,
           valuesConfigs: valuesConfigsList.map(config => 
             config.isDefault ? { ...config, selectedParameterValues: updatedParameters } : config
           )
         }
       }));
-  
-      console.log("updatedParameters", updatedParameters);
+      // console.log("DSFSDGgyt",{parameter,updatedParametersDefaultValueArray})
     } else {
       // Existing logic for subProducts update
       let newSubProducts = lodashClonedeep(subProducts);
@@ -326,7 +302,6 @@ useEffect(()=>{
     isChecked,
     textInputValue,
     isCheckedMemo,
-    textInputValueMemo
   };
 };
 

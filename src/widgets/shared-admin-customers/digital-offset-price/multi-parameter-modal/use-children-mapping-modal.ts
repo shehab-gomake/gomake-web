@@ -4,7 +4,7 @@ import { maltiParameterState } from "./store/multi-param-atom";
 import { compareStrings } from "@/utils/constants";
 import { useEffect, useMemo } from "react";
 
-const useChildMapping = ({ parameters, settingParameters }) => {
+const useChildMapping = ({ parameters, settingParameters,setSettingParameters }) => {
   const allMaterials = useRecoilValue<any>(materialsState);
   const [generalParameters, setGeneralParameters] =
     useRecoilState(maltiParameterState);
@@ -33,7 +33,41 @@ const useChildMapping = ({ parameters, settingParameters }) => {
       setGeneralParameters(temp);
     }
   }, [settingParameters]);
-  return { generalParameters, foundMaterial };
+
+  const updateParameters = (foundMaterial, parameters) => {
+    const materialData = foundMaterial.data[0].data;
+    const materialLength = materialData.length;
+    const valueIds = materialData.map(item => item.valueId);
+  
+    return parameters.map(param => {
+      if (param.code === "printingcolorsDetail") {
+        return {
+          ...param,
+          defaultValueArray: param.defaultValueArray ?? valueIds // Use existing values if not null, otherwise use valueIds
+        };
+      } else if (param.code === "Colorloadpercentage" || param.code === "ColorLayers") {
+        return {
+          ...param,
+          defaultValueArray: param.defaultValueArray ?? Array(materialLength).fill(param.defaultValue) // Use existing values if not null, otherwise initialize with default values
+        };
+      }
+      return param;
+    });
+  };
+  const updatedParameters = updateParameters(foundMaterial, parameters);
+  useEffect(()=>{
+    if(updatedParameters){
+      setSettingParameters(prev => ({
+        ...prev,
+        parameter: {
+          ...prev?.parameter,
+          settingParameters: updatedParameters,
+          
+        }
+      }));
+    }
+  },[])
+  return { generalParameters, foundMaterial,updatedParameters };
 };
 
 export { useChildMapping };

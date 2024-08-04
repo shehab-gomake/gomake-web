@@ -3380,7 +3380,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     onChangeSubProductsForPrice,
     underParameterIds,
     straightKnife,
-    calculationServerErrorState
+    calculationServerErrorState,
+    setSettingParameters
   };
 };
 export { useDigitalOffsetPrice };

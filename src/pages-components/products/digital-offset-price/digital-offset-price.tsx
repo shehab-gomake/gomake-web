@@ -47,6 +47,7 @@ const PriceListPageWidget = ({ widgetType }) => {
         multiParameterModal,
         calculationServerErrorState,
         settingParameters,
+        setSettingParameters,
         priceRecovery,
         graphicNotes,
         printingNotes,
@@ -445,6 +446,7 @@ const PriceListPageWidget = ({ widgetType }) => {
                 onClose={onCloseMultiParameterModal}
                 settingParameters={settingParameters}
                 _renderParameterType={_renderParameterType}
+                setSettingParameters={setSettingParameters}
             />
         </div>
     );

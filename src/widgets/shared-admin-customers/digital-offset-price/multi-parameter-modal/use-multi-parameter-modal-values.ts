@@ -4,7 +4,6 @@ import lodashClonedeep from "lodash.clonedeep";
 import { useState } from "react";
 
 const userMultiParameterModalValues = (settingParameters,isParameterSettings) => {
-  const [textInputValue,setTextInputValueState]=useState("")
 
     const selectColorValue = useRecoilValue<any>(selectColorValueState);
 
@@ -182,13 +181,44 @@ const userMultiParameterModalValues = (settingParameters,isParameterSettings) =>
         }
         return selectedParameterValues; // If isParameterSettings is false, return the original values
       };
+
+      const setSubProductValueForParameterSettingsDefaultValueArray = (parameters, parameterId, value, textInputVal) => {
+        console.log("parameterstextInputVal",{parameters, parameterId, value, textInputVal})
+
+        // Step 1: Find the parameter for colors to get the correct index
+        const colorsParameter = parameters.find(param => param.code === "printingcolorsDetail");
+        if (!colorsParameter) return parameters; // Exit if color parameter not found
+      
+        // Step 2: Find the index of the valueId within the colors parameter
+        const valueIndex = colorsParameter.defaultValueArray.findIndex(val => val === value.valueId);
+        if (valueIndex === -1) return parameters; // Exit if valueId not found
+      
+        // Step 3: Find the parameter to be updated using the parameterId
+        const parameterToUpdate = parameters.find(param => param.id === parameterId);
+        if (!parameterToUpdate) return parameters; // Exit if parameter not found
+      
+        // Step 4: Update the value at the correct index in defaultValueArray
+        const updatedParameters = parameters.map(param => {
+          if (param.id === parameterId) {
+            const newDefaultValueArray = [...param.defaultValueArray];
+            newDefaultValueArray[valueIndex] = textInputVal;
+            return {
+              ...param,
+              defaultValueArray: newDefaultValueArray
+            };
+          }
+          return param;
+        });
+      
+        return updatedParameters; // Return the updated parameters array
+      };
     return {
         addValueToSubProduct,
         removeValueFromSubProduct,
         setSubProductValue,
         getSelectedColorParameterValue,
         setSubProductValueForParameterSettings,
-        textInputValue,setTextInputValueState
+        setSubProductValueForParameterSettingsDefaultValueArray,
     };
 };
 
