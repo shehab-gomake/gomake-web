@@ -17,7 +17,7 @@ const SideBarContainer = ({
                 <div data-tour={sideDataTour} style={classes.sideList}>{side}</div>
                 <div data-tour={bodyDataTour} style={classes.main}>
                     {subHeader && <h2 style={classes.subHeader}>{subHeader}</h2>}
-                    <div style={{overflow: "scroll", maxHeight: "100%"}}>
+                    <div style={{overflow: "scroll", maxHeight: "100%" , height:"100%"}}>
                         {children}
                     </div>
                 </div>
