@@ -5,7 +5,7 @@ import { useButtonsConfirmContainer } from "../buttons-cofirm-container/use-butt
 import { DOCUMENT_TYPE, QUOTE_STATUSES } from "@/pages-components/quotes/enums";
 import { useUserPermission } from "@/hooks/use-permission";
 import { DocumentPermission } from "@/components/CheckPermission/enum";
-import { useRecoilState } from "recoil";
+import { useSetRecoilState } from "recoil";
 import { quoteConfirmationState, quoteItemState } from "@/store";
 import { renderDocumentTypeForSourceDocumentNumber } from "@/widgets/settings-documenting/documentDesign/enums/document-type";
 
@@ -16,12 +16,12 @@ interface IProps {
   documentState?: any;
   onClickOpenRelatedDocumentsModal?: () => void;
 }
+
 const WriteCommentComp = ({ isQuoteConfirmation, getQuote, documentType, onClickOpenRelatedDocumentsModal, documentState }: IProps) => {
   const { classes } = useStyle(isQuoteConfirmation);
   const { CheckDocumentPermission } = useUserPermission();
-  const [quoteState, setQuoteState] = useRecoilState<any>(quoteItemState);
-  const [quoteConfirm, setQuoteConfirm] = useRecoilState<any>(quoteConfirmationState);
-
+  const setQuoteState = useSetRecoilState<any>(quoteItemState);
+  const setQuoteConfirm = useSetRecoilState<any>(quoteConfirmationState);
   const setQuoteItemValue = isQuoteConfirmation ? setQuoteConfirm : setQuoteState;
 
   const {
@@ -66,8 +66,8 @@ const WriteCommentComp = ({ isQuoteConfirmation, getQuote, documentType, onClick
 
   const relatedDocuments = mergeDocumentNumbers(documentState);
   const canEditComments = documentState?.isEditable && CheckDocumentPermission(documentType.toString(), DocumentPermission.EDIT_DOCUMENT);
-  const canNotEditConfirmationComments = quoteConfirm?.isConfirmed || quoteConfirm?.documentStatus === QUOTE_STATUSES.Canceled;
-  
+  const canNotEditConfirmationComments = documentState?.isConfirmed || documentState?.documentStatus === QUOTE_STATUSES.Canceled;
+
   return (
     <div style={classes.writeCommentContainer}>
       {
