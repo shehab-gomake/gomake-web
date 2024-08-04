@@ -6,7 +6,6 @@ const ADD_PRODUCT_PROFIT_RULE_URL = "/v1/printhouse-config/products/add-profit-r
 const ORDER_PRODUCT_PROFIT_RULE_URL = "/v1/printhouse-config/products/order-profit-rules";
 const Delete_PRODUCT_PROFIT_RULE_URL = "/v1/printhouse-config/products/delete-profit-rule";
 const GET_PRODUCT_PROFIT_RULES_URL = "/v1/printhouse-config/products/get-product-profit-rules/";
-const GET_ALL_TEMPLATES_URL = "/v1/printhouse-config/templetes/get-all-templete";
 
 const addProductProfitRuleApi: ICallAndSetData = async (callApi, setState, data) => {
     return await getSetApiData(callApi, EHttpMethod.POST, ADD_PRODUCT_PROFIT_RULE_URL, setState, data);
@@ -21,8 +20,4 @@ const getProductProfitRulesApi: ICallAndSetData = async (callApi, setState, data
     return await getSetApiData(callApi, EHttpMethod.GET, GET_PRODUCT_PROFIT_RULES_URL + data, setState);
 };
 
-const getAllTemplates: ICallAndSetData = async (callApi, setState, data) => {
-    return await getSetApiData(callApi, EHttpMethod.GET, GET_ALL_TEMPLATES_URL, setState , data); 
-  }  
-
-export {addProductProfitRuleApi, getProductProfitRulesApi, deleteProductProfitRuleApi, orderProductProfitRuleApi , getAllTemplates}
+export {addProductProfitRuleApi, getProductProfitRulesApi, deleteProductProfitRuleApi, orderProductProfitRuleApi}

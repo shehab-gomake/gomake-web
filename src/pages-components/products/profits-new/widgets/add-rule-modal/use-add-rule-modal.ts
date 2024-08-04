@@ -2,6 +2,7 @@ import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { EHttpMethod } from "@/services/api-service/enums";
 import {
   getAllProductsForDropDownList,
+  getAllTemplets,
   getAndSetAllCustomers,
   getAndSetAllParameters,
   getAndSetClientTypes,
@@ -24,7 +25,6 @@ import { agentsCategoriesState } from "@/pages/customers/customer-states";
 import { getAndSetEmployees2 } from "@/services/api-service/customers/employees-api";
 import { getALLMachinesApi } from "@/services/api-service/machines/print-house-machines-colors";
 import { machineCategoriesState } from "@/store/machine-categories";
-import { getAllTemplates } from "@/services/api-service/products/product-endpoints";
 
 const useAddRuleModal = ({
   typeExceptionSelected,
@@ -94,17 +94,17 @@ const useAddRuleModal = ({
       { label: "Machine", id: "Machine" },
       { label: "Machine type category", id: "Machine category" },
       { label: "Products", id: "Products" },
+      { label: "Product type", id: "ProductType" },
       { label: "Client type", id: "Client Type" },
       { label: "Client", id: "Client" },
       { label: "Property output", id: "Property output" },
       { label: "Property input", id: "Property input" },
       { label: "Agent", id: "Agent" },
       { label: "Employee", id: "Employee" },
-      { label: "Product type", id: "ProductType" },
-
     ];
-    return isQuoteWidge ? filteredCategories : filteredCategories.filter(category => category.id !== "Agent");
+    return isQuoteWidge ? filteredCategories.filter(category => category.id !== "ProductType") : filteredCategories.filter(category => category.id !== "Agent");
   }, [isQuoteWidge]);
+  
   const EStatementCategory = {
     Machine: 1,
     "Machine category":2,
@@ -117,6 +117,7 @@ const useAddRuleModal = ({
     Employee:9,
     ProductType:10
   };
+  
   const { Outputs } = useOutputs();
   const { machines } = usePrintHouseMachines();
   const [materialsTypes, setMaterialsTypes] = useState<
@@ -265,18 +266,14 @@ const useAddRuleModal = ({
     return await getAndSetAllParameters(callApi, setParametersState);
   }, []);
 
-  const getAllProductTypes = async () => {
-    const callBack = (res) => {
-      if (res.success) {
-        const productTypesList = res.data.map((option) => ({
-          label: option.name,
-          id: option.id,
-        }));
-        setAllProductTypes(productTypesList);
-      }
-    };
-    await getAllTemplates(callApi, callBack);
-  };
+  const getAllProductTypes = useCallback(async () => {
+    const result = await getAllTemplets(callApi);
+    const mappedResult = result.map((item: any) => ({
+      id: item.id,
+      label: item.name,
+    }));
+    setAllProductTypes(mappedResult);
+  }, []);
 
   const getEmployeeCategories = async () => {
     const callBack = (res) => {
