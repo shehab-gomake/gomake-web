@@ -220,8 +220,8 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
       </div>
       <SideBarContainer sideDataTour={'materialsCategories'} bodyDataTour={'materialsTableData'} side={Side()} subHeader={""}>
         {materialCategory && (
-          <Stack gap={2}>
-            <div style={{ minHeight: "70vh" }}>
+          <Stack justifyContent={"space-between"} gap={2} display={"flex"} height={"100%"}>
+            <div >
               {materialCategoryData.length > 0 ? (
                 <Stack display={"grid"}>
                   <PrimaryTable
