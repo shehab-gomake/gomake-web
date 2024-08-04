@@ -22,6 +22,22 @@ const SubChildrenMapping = ({
   isParameterSettings,
   setSettingParameters
 }) => {
+
+  console.log("DSZFSED", {
+    parameters,
+    item,
+    value,
+    clasess,
+    index,
+    index2,
+    index3,
+    forceChange,
+    paddingLeft,
+    parentValue,
+    settingParameters,
+    isParameterSettings,
+    setSettingParameters
+  })
   const {
     ref,
     isFocused,

@@ -218,11 +218,20 @@ useEffect(()=>{
       const parameter = settingParameters?.parameter;
       const valuesConfigsList = parameter?.valuesConfigs;
       const defaultValueConfig = valuesConfigsList?.find(item => item.isDefault);
-      console.log("defaultValueConfig",defaultValueConfig?.selectedParameterValues)
-  
       const updatedParameters = setSubProductValueForParameterSettings(defaultValueConfig?.selectedParameterValues, parameterId, value, textInputVal);
-      console.log("updatedParameters",updatedParameters)
-   
+      
+      // Now update the state with the updatedParameters
+      setSettingParameters(prev => ({
+        ...prev,
+        parameter: {
+          ...parameter,
+          valuesConfigs: valuesConfigsList.map(config => 
+            config.isDefault ? { ...config, selectedParameterValues: updatedParameters } : config
+          )
+        }
+      }));
+  
+      console.log("updatedParameters", updatedParameters);
     } else {
       // Existing logic for subProducts update
       let newSubProducts = lodashClonedeep(subProducts);

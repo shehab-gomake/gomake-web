@@ -162,23 +162,22 @@ const userMultiParameterModalValues = (settingParameters,isParameterSettings) =>
         if (isParameterSettings) {
           // Clone the selectedParameterValues to avoid mutating the original state
           let parametersCopy = lodashClonedeep(selectedParameterValues);
-            console.log("parametersCopy",parametersCopy)
+          
           // Step 1: Find the parameter for colors to get the correct index
           const colorParameter = parametersCopy.find(param => param.parameterId === "8eff3238-a321-48f3-85eb-c14afaccbff3");
           if (!colorParameter) return parametersCopy; // Exit if color parameter not found
-      
+          
           // Step 2: Find the index of the valueId within the colors parameter
           const valueIndex = colorParameter.valueIds.indexOf(value.valueId);
           if (valueIndex === -1) return parametersCopy; // Exit if valueId not found
-      
+          
           // Step 3: Find the parameter to be updated using the parameterId
           const parameterToUpdate = parametersCopy.find(param => param.parameterId === parameterId);
           if (!parameterToUpdate || !parameterToUpdate.valueIds) return parametersCopy; // Exit if parameter not found
-      
+          
           // Step 4: Update the value at the correct index
           parameterToUpdate.valueIds[valueIndex] = textInputVal;
-          setTextInputValueState(textInputVal)
-      
+          
           return parametersCopy; // Return the updated parameters
         }
         return selectedParameterValues; // If isParameterSettings is false, return the original values
