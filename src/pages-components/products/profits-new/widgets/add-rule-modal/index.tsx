@@ -70,7 +70,8 @@ const AddRuleModal = ({
     resetDatePicker,
     mappingRules,
     categoriesList,
-    employeeList
+    employeeList,
+    allProductTypes
   } = useAddRuleModal({
     typeExceptionSelected,
     selectedPricingBy,
@@ -355,6 +356,7 @@ const AddRuleModal = ({
       </div>
     );
   }
+
   return (
     <>
       <GoMakeModal
@@ -766,6 +768,27 @@ const AddRuleModal = ({
                       />
                     </div>
                   )}
+
+                  {rule.category?.id === "ProductType" && (
+                    <div>
+                      <label style={clasess.inputLable}>
+                        {t("properties.statment")}
+                      </label>
+
+                      <GoMakeAutoComplate
+                        options={allProductTypes}
+                        style={clasess.dropDownListContainer}
+                        placeholder={t("properties.statment")}
+                        value={rule.statement2}
+                        onChange={(e, value) => {
+                          handleChange(index, "statement2", value)
+                          handleChange(index, "statement", null);
+                        }
+                        }
+                      />
+                    </div>
+                  )}
+
                   {rules.length > 1 && (
                     <div
                       style={{
