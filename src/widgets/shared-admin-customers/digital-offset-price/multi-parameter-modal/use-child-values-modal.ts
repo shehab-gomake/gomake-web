@@ -30,13 +30,12 @@ const useChildValuesMapping = ({
     parameters[index].defaultValue
   );
   const [subProductsCopy, setSubProductsCopy] = useRecoilState<any>(subProductsCopyParametersState);
-  const [subProducts, setSubProducts] = useRecoilState<any>(subProductsParametersState);
 
   const {addValueToSubProduct,removeValueFromSubProduct,setSubProductValue,getSelectedColorParameterValue} = userMultiParameterModalValues(settingParameters)
   
   const isChecked = useMemo(() => {
     
-    const colorParameterValue  = getSelectedColorParameterValue(subProducts);
+    const colorParameterValue  = getSelectedColorParameterValue(subProductsCopy);
     if(colorParameterValue){
       if(value.valueId){
         const subData = value.data;
@@ -80,7 +79,6 @@ const useChildValuesMapping = ({
     setIsFocused(false);
   });
   const onChangeCheckBox = (e) => {
-    debugger;
     const subData = value.data;
     let newSubProducts = lodashClonedeep(subProductsCopy);
     subData.forEach(x=>{
@@ -106,9 +104,11 @@ const useChildValuesMapping = ({
     setTextInputValue(e.target.value);
   };
   const isDisabled = useMemo(()=>{
-    debugger;
     let isDisabled = false;
-    const selectedColorParameterValue  = getSelectedColorParameterValue(subProducts);
+    const selectedColorParameterValue  = getSelectedColorParameterValue(subProductsCopy);
+    if(!selectedColorParameterValue){
+      return isDisabled;
+    }
     if (selectColorValue?.selectedParameterValues[0]?.selectValuesCount <= selectedColorParameterValue?.valueIds?.length || (selectColorValue?.selectedParameterValues[0].valueIds && selectColorValue?.selectedParameterValues[0].valueIds.length > 0) ) {
       isDisabled = true;
     }

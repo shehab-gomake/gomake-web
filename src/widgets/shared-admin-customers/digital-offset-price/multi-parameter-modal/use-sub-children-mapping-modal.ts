@@ -19,7 +19,6 @@ const useSubChildMapping = ({
 }) => {
   const [isFocused, setIsFocused] = useState<boolean>(false);
   const [subProductsCopy, setSubProductsCopy] = useRecoilState<any>(subProductsCopyParametersState);
-  const [subProducts, setSubProducts] = useRecoilState<any>(subProductsParametersState);
 
   const {addValueToSubProduct,removeValueFromSubProduct,setSubProductValue} = userMultiParameterModalValues(settingParameters)
   const selectColorValue = useRecoilValue<any>(selectColorValueState);
@@ -32,9 +31,9 @@ const useSubChildMapping = ({
 
       const subSection = settingParameters.subSection;
       const subProductType = subSection.type;
-      let subProduct =  subProducts.find(sub => sub.type == subProductType);
+      let subProduct =  subProductsCopy.find(sub => sub.type == subProductType);
       const colorParameter = settingParameters?.parameter?.settingParameters[0];
-      return subProduct.parameters.find(paramValue => paramValue.parameterId === colorParameter.id && paramValue.values);
+      return subProduct?.parameters?.find(paramValue => paramValue.parameterId === colorParameter.id && paramValue.values);
     }
     
   }
@@ -122,7 +121,6 @@ const useSubChildMapping = ({
     if(selectColorValue?.selectedParameterValues[0].valueIds.length > 0){
       return true;
     }
-    debugger;
     const maxSelection = getMaxSelectionValues();
     if(maxSelection){
       const colorParameterValue  = getSelectedColorParameterValue();

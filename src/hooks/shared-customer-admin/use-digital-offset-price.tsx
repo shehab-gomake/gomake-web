@@ -99,6 +99,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [updatedProductTemplate, setupdatedProductTemplate] = useState<any>()
   const [defaultProductTemplate, setDefaultProductTemplate] = useState<any>([]);
   const [subProducts, setSubProducts] = useRecoilState<any>(subProductsParametersState);
+  const [subProductsColorsModal, setSubProductsColorsModal] = useRecoilState<any>(subProductsCopyParametersState);
+
   const [isSetTemplete, setIsSetTemplete] = useState<boolean>(false);
   const setSubProductsCopy = useSetRecoilState<any>(subProductsCopyParametersState);
   const itemParmetersValues = useRecoilValue(itemParmetersValuesState);
@@ -2167,7 +2169,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     parameterCode: string,
     dieCut: any,
   ) => {
-    debugger
     let copySubProducts = cloneDeep(subProducts)
     const targetSubProduct = copySubProducts.find(
       (item) => item.type === subSectionType
@@ -2403,7 +2404,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           }
 
           materialRelatedParameters?.forEach((param) => {
-            debugger
             if (param.materialPath && param.materialPath.length > 0) {
               const materialPath =
                   param.materialPath[param.materialPath.length - 1];
@@ -2632,6 +2632,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           }
 
         }
+       
       }
       let temp2 = [...subProducts];
       const index2 = temp2.findIndex(
@@ -2643,7 +2644,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         sectionName: section.name,
         parameters: temp,
       }
+      
       setSubProducts(temp2);
+      setSubProductsColorsModal(temp2)
       processRelatedParameters2(subSectionParameter, subSection, section, productTemplateCopy, temp2);
       setProductTemplate(productTemplateCopy);
       const updatedProductTemplate = updateIsHidden(productTemplateCopy, temp2);
@@ -3186,6 +3189,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   useEffect(() => {
     const updatedProductTemplate = updateIsHidden(productTemplate, subProducts);
     setProductTemplate(updatedProductTemplate)
+    
   }, [subProducts])
 
   const updateIsHidden = (productTemplate, subProducts) => {
