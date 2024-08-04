@@ -1,14 +1,12 @@
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { updateDocumentCommentsApi, updateDocumentInternalNotesApi } from "@/services/api-service/generic-doc/documents-api";
-import { quoteItemState } from "@/store";
+import { quoteConfirmationState, quoteItemState } from "@/store";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useRecoilState } from "recoil";
 
-const useWriteCommentComp = ({ getQuote, documentType }) => {
+const useWriteCommentComp = ({ getQuote, documentType , quoteItemValue, setQuoteItemValue}) => {
   const [isValueChanged, setIsValueChanged] = useState(false);
-  const [quoteItemValue, setQuoteItemValue] = useRecoilState<any>(quoteItemState);
   const [data, setData] = useState(quoteItemValue?.notes)
   const [dataForInternalNotes, setDataForInternalNotes] = useState(quoteItemValue?.internalNotes)
 

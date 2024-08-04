@@ -5,18 +5,33 @@ import { useStyle } from "./style";
 import { useRef, useState } from "react";
 import SignatureCanvas from 'react-signature-canvas';
 import { CloseIcon } from "@/components/modal/icon/close";
+import { useSnackBar } from "@/hooks";
 
 const ApproveSignatureModal = ({ openModal, onClose, onClickApprove, isMobile }: any) => {
-  const [signerName, setSignerName] = useState("")
+  const { alertFault, } = useSnackBar();
+  const [signerName, setSignerName] = useState("");
   const sigPad = useRef(null);
+
+
   const clear = () => {
     sigPad.current.clear();
   };
 
   const save = () => {
+    if (sigPad.current.isEmpty()) {
+      alertFault(t("sales.cart.signatureEmptyError"));
+      return;
+    }
+    if (!signerName.trim()) {
+      alertFault(t("sales.cart.signerNameEmptyError"));
+      return;
+    }
+
     const dataURL = sigPad.current.getTrimmedCanvas().toDataURL('image/png');
-    onClickApprove(dataURL, signerName)
+    onClickApprove(dataURL, signerName);
   };
+
+
   const { t } = useTranslation();
   const { clasess } = useStyle({ isMobile });
   return (

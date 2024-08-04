@@ -45,9 +45,7 @@ const useButtonsConfirmContainer = () => {
         setOpenOtherReasonModal(false);
     };
 
-    // do you want to be init whit quoteConfirm?.notes ?? 
-    const [quoteComments, setQuoteComments] = useState("");
-    const [quoteInternalNotes, setQuoteInternalNotes] = useState("");
+    const [quoteComments, setQuoteComments] = useState(quoteConfirm?.notes);
     const onUpdateComments = async () => {
         const callBack = (res) => {
             if (res?.success) {
@@ -59,19 +57,7 @@ const useButtonsConfirmContainer = () => {
         await updateDocumentCommentsConfirmationApi(callApi, callBack, { documentId: quoteConfirm?.id, comments: quoteComments })
     }
 
-    //Change the api to internal notes 
-    const onUpdateInternalNotes = async () => {
-        const callBack = (res) => {
-            if (res?.success) {
-                alertSuccessUpdate();
-            } else {
-                alertFaultUpdate();
-            }
-        }
-        //Change the api to internal notes 
-        await updateDocumentCommentsConfirmationApi(callApi, callBack, { documentId: quoteConfirm?.id, comments: quoteInternalNotes })
-    }
-    ///////////////////////////////////////////////////////////////////////////////////
+
     const [approveModal, setApproveModal] = useState(false)
     const [approveSignatureModal, setApproveSignatureModal] = useState(false)
     const onClickOpenApproveModal = () => {
@@ -144,9 +130,6 @@ const useButtonsConfirmContainer = () => {
         onUpdateComments,
         quoteComments,
         setQuoteComments,
-        onUpdateInternalNotes,
-        quoteInternalNotes,
-        setQuoteInternalNotes,
         approveModal,
         onClickOpenApproveModal,
         onClickCloseApproveModal,
