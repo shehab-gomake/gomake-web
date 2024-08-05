@@ -38,13 +38,13 @@ const useCalculationsWorkFlowsSignalr = () => {
         //setCalculationExceptionsLogs(newData.exceptions);
         setSignalrRWorkFlows(newData);
       });
-      connection.on("startCalculationSession", (newData) => {
+      connection.on("startCalculationSession", async (newData) => {
         /*if(newData.isDevMode){
           console.log("isDevMode received")
           setConnectionSessionId(newData.productItemValueDraftId);
         }*/
-        setStartCalculationData(newData)
-        setCalculationExceptionsLogs(newData.calculationExceptions);
+        //setStartCalculationData(newData)
+        //setCalculationExceptionsLogs(newData.calculationExceptions);
       });
       connection.on("updateSelectedWorkFlow", (newData) => {
         setUpdatedSelectedWorkFlow(newData);
@@ -59,6 +59,7 @@ const useCalculationsWorkFlowsSignalr = () => {
       connection.on("calculationServerError", () => {
         setcalculationServerErrorState(true)
       });
+      
     }
   }, [connection]);
   return {

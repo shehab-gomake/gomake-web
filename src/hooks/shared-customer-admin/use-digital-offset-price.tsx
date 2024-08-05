@@ -242,6 +242,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     setLoading(false);
     setWorkFlows(result.productItemValue.workFlows);
     setJobActions(result?.productItemValue.actions);
+    setCalculationResult(result)
   }
   const setSelectedWorkflow = (newWorkFlows, currentWorkFlows) => {
     newWorkFlows.forEach((flow) => {
