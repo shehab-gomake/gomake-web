@@ -2938,7 +2938,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             workTypes: workTypes,
             isChargeForNewDie: isChargeForNewDie,
             productType: productTemplate?.productType,
-            appendWorkFlowsQueueName: "appendWorkFlowsDevQueue2",
           },
           false,
           newRequestAbortController
