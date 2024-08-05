@@ -207,68 +207,42 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   }, [subProducts]);
 
   useEffect(() => {
-    if (calculationResult && calculationResult.productItemValue) {
-      if (calculationResult.productItemValueDraftId === currentCalculationSessionId) {
-        setCurrentProductItemValueDraftId(calculationResult.productItemValueDraftId);
-        let productTypes = new Set();
-        const currentWorkFlows = cloneDeep(workFlows);
-        const newWorkFlows = calculationResult?.productItemValue.workFlows;
-        //currentWorkFlows.forEach((workFlow) => { productTypes.add(workFlow.productType) })
-        //newWorkFlows.forEach((workFlow) => { productTypes.add(workFlow.productType) })
-       // const allWorkFlows = [];
-        /*productTypes.forEach((productType) => {
-          if (productType === null) {
-            // general workflows 
-            let newProductTypeWorkFlows = cloneDeep(newWorkFlows);
-            newProductTypeWorkFlows = newProductTypeWorkFlows.filter(x => x.productType === productType && !x.isCompleteWorkFlow);
-            let currentProductTypeWorkFlows = cloneDeep(currentWorkFlows);
-            currentProductTypeWorkFlows = currentProductTypeWorkFlows.filter(x => x.productType === productType && !x.isCompleteWorkFlow);
-            let result = setSelectedWorkflow(newProductTypeWorkFlows, currentProductTypeWorkFlows);
-            allWorkFlows.push(...result);
-            // completed workflows
-            let newProductTypeCompletedWorkFlows = cloneDeep(newWorkFlows);
-            newProductTypeCompletedWorkFlows = newProductTypeCompletedWorkFlows.filter(x => x.productType === productType && x.isCompleteWorkFlow);
-            let currentProductTypeCompletedWorkFlows = cloneDeep(currentWorkFlows);
-            currentProductTypeCompletedWorkFlows = currentProductTypeCompletedWorkFlows.filter(x => x.productType === productType && x.isCompleteWorkFlow);
-            let completedWorkFlowsResult = setSelectedWorkflow(newProductTypeCompletedWorkFlows, currentProductTypeCompletedWorkFlows);
-            allWorkFlows.push(...completedWorkFlowsResult);
-          } else {
-            let newProductTypeWorkFlows = cloneDeep(newWorkFlows);
-            newProductTypeWorkFlows = newProductTypeWorkFlows.filter(x => x.productType === productType);
-            let currentProductTypeWorkFlows = cloneDeep(currentWorkFlows);
-            currentProductTypeWorkFlows = currentProductTypeWorkFlows.filter(x => x.productType === productType);
-            let result = setSelectedWorkflow(newProductTypeWorkFlows, currentProductTypeWorkFlows);
-            allWorkFlows.push(...result);
-          }
-
-        })*/
-        /*let myselectedWorkFlow = allWorkFlows?.find((x) => x.selected && x.isCompleteWorkFlow);
-        if (myselectedWorkFlow) {
-          myselectedWorkFlow?.subWorkFlows?.forEach(element => {
-            const subWorkFlow = allWorkFlows.find(x => x.id === element.orginalBookPartId)
-            if (subWorkFlow) {
-              allWorkFlows.forEach(workflow => {
-                if (workflow.productType == subWorkFlow.productType) {
-                  workflow.selected = false;
-                }
-              })
-              subWorkFlow.selected = true;
-            }
-          });
-
-        }*/
-        setCalculationProgress({
-          totalWorkFlowsCount: 0,
-          currentWorkFlowsCount: 0,
-        });
-        setCurrentProductItemValueTotalWorkFlows(calculationResult.productItemValue.totalWorkFlows)
-        setLoading(false);
-        setWorkFlows(newWorkFlows);
-        setJobActions(calculationResult?.productItemValue.actions);
-      }
+    if (calculationResult && calculationResult.productItemValueDraftId === currentCalculationSessionId){
+      getSelectedWorkFlow();
     }
+ 
   }, [calculationResult]);
+  const getSelectedWorkFlow = async ()=>{
+    const res: any = await callApi(
+        "GET",
+        `/v1/erp-service/productItemValueDrafts/get-selected-work-flow?signalRConnectionId=${connectionId}`,
+        {},
+        false,
+    )
+    debugger
+    if(!res.success){
+      setCalculationProgress({
+        totalWorkFlowsCount: 0,
+        currentWorkFlowsCount: 0,
+      });
 
+      setLoading(false);
+      setcalculationServerErrorState(true)
+      return;
+    }
+    
+    const result = res?.data?.data?.data;
+    setCalculationExceptionsLogs(result.exceptions);
+    setCurrentProductItemValueDraftId(result.productItemValueDraftId);
+    setCalculationProgress({
+      totalWorkFlowsCount: 0,
+      currentWorkFlowsCount: 0,
+    });
+    setCurrentProductItemValueTotalWorkFlows(result.productItemValue.totalWorkFlows)
+    setLoading(false);
+    setWorkFlows(result.productItemValue.workFlows);
+    setJobActions(result?.productItemValue.actions);
+  }
   const setSelectedWorkflow = (newWorkFlows, currentWorkFlows) => {
     newWorkFlows.forEach((flow) => {
       const isExists = currentWorkFlows.find((x) => x.id === flow.id);
@@ -2964,6 +2938,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             workTypes: workTypes,
             isChargeForNewDie: isChargeForNewDie,
             productType: productTemplate?.productType,
+            appendWorkFlowsQueueName: "appendWorkFlowsDevQueue2",
           },
           false,
           newRequestAbortController
