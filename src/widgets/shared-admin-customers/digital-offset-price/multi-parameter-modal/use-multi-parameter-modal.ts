@@ -54,13 +54,9 @@ const useMultiParameterModal = ({ settingParameters, onClose,isParameterSettings
   }, [generalParameters, selectedValueConfig]);
 
   const onClickSaveParameter = () => {
-    if(isParameterSettings){
-
-    }
-    else{
-      let copy = lodashClonedeep(subProductsCopy);
+    let copy = lodashClonedeep(subProductsCopy);
     setSubProducts(copy)
-    }
+    setSubProductsCopy(copy)
     onClose();
 
     
@@ -101,8 +97,8 @@ const useMultiParameterModal = ({ settingParameters, onClose,isParameterSettings
     
   };
   const closeModal = () => {
-    let copy = lodashClonedeep(subProducts);
-    setSubProductsCopy(copy)
+    // let copy = lodashClonedeep(subProducts);
+    // setSubProductsCopy(copy)
     onClose();
   }
   return {

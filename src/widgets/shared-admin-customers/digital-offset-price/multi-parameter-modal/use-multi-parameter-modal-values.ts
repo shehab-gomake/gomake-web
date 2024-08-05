@@ -47,7 +47,7 @@ const userMultiParameterModalValues = (settingParameters,isParameterSettings) =>
         const loadParamValue = subProduct.parameters.find(param => param.parameterId === loadParam.id);
         const layersParamValue = subProduct.parameters.find(param => param.parameterId === layersParam.id);
     
-        const index = colorParam.defaultValueArray.indexOf(value.value);
+        const index = colorParam.defaultValueArray.indexOf(value.valueId);
         if (index !== -1) {
             const layerValue = layersParam.defaultValueArray[index];
             const loadValue = loadParam.defaultValueArray[index];
@@ -77,9 +77,21 @@ const userMultiParameterModalValues = (settingParameters,isParameterSettings) =>
       const addValueToSubProduct = (subProducts, value, settingParameters, section, subSection) => {
         let subProductsCopy = lodashClonedeep(subProducts);
         let subProduct = getSubProduct(subProductsCopy, subSection.type);
+      
+        if (!subProduct) {
+          console.error('SubProduct not found for subSection.type:', subSection.type);
+          return subProductsCopy;
+        }
+      
         subProduct = ensureParametersExist(subProduct, settingParameters.parameter.settingParameters, section, subSection);
+      
+        if (!subProduct) {
+          console.error('SubProduct parameters not ensured.');
+          return subProductsCopy;
+        }
+      
         subProduct = updateValues(subProduct, value, settingParameters.parameter.settingParameters);
-        console.log("subProductsCopy",subProductsCopy)
+      
         return subProductsCopy;
       };
       const removeValueFromSubProduct = (subProducts, value) => {

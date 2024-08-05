@@ -35,8 +35,10 @@ const useSubChildMapping = ({
       const subSection = settingParameters.subSection;
       const subProductType = subSection.type;
       let subProduct = subProducts?.find(sub => sub.type === subProductType);
+      
       const colorParameter = settingParameters?.parameter?.settingParameters[0];
-      return subProduct.parameters.find(paramValue => paramValue.parameterId === colorParameter.id && paramValue.values);
+      console.log("subProdssdvdfhtghguct",{subProduct,colorParameter})
+      return subProduct.parameters.find(paramValue => paramValue.parameterId === colorParameter.id);
     } else {
       const valuesConfigs = settingParameters?.parameter?.valuesConfigs;
       const valueConfigDefault = valuesConfigs?.find((item) => item.isDefault);
@@ -49,9 +51,9 @@ const useSubChildMapping = ({
   };
   const [isChecked, setIsChecked] = useState(false);
 
-useEffect(()=>{
-  getSelectedColorParameterValue()
-},[])
+// useEffect(()=>{
+//   getSelectedColorParameterValue()
+// },[])
 
   const onChangeCheckBox = (e) => {
     if (isParameterSettings) {
@@ -138,7 +140,7 @@ useEffect(()=>{
     if (isParameterSettings) {
       return colorParameterValue?.valueIds?.includes(value.valueId);
     } else {
-      return colorParameterValue?.values?.includes(value.valueId);
+      return colorParameterValue?.valueIds?.includes(value.valueId);
     }
   }, [subProducts, settingParameters, isParameterSettings, value,getSelectedColorParameterValue]);
 
@@ -252,7 +254,10 @@ useEffect(()=>{
         const parameterValue = subProduct.parameters.find(paramValue => paramValue.parameterId === settingParameters.parameter.id);
         if (parameterValue && parameterValue.valueIds && parameterValue.valueIds.length > 0) {
           const val = parameterValue.valueIds[0]; // Assuming this represents the relevant value ID
+
           const valueConfig = settingParameters.parameter.valuesConfigs.find(conf => conf.id === val);
+                  console.log("parameterValue",valueConfig)
+
           if (valueConfig) {
             const selectedParameterValue = valueConfig.selectedParameterValues[0];
             return selectedParameterValue.selectValuesCount; // Max allowed selections
@@ -273,6 +278,7 @@ useEffect(()=>{
     }
   };
   const isDisabled = useMemo(() => {
+    // debugger
     if(isParameterSettings){
       const maxSelection = getMaxSelectionValues();
       if (maxSelection === null) return false;
@@ -291,8 +297,10 @@ useEffect(()=>{
     
       const colorParameterValue = getSelectedColorParameterValue();
       if (colorParameterValue && colorParameterValue.values) {
-        const isValueExists = colorParameterValue.values.includes(value.valueId);
-        return !isValueExists && colorParameterValue.values.length >= maxSelection;
+        const isValueExists = colorParameterValue.valueIds.includes(value.valueId);
+        console.log("SDFSDFGF",!isValueExists && colorParameterValue.valueIds.length >= maxSelection)
+
+        return !isValueExists && colorParameterValue.valueIds.length >= maxSelection;
       }
     
       return false;
