@@ -79,6 +79,7 @@ const userMultiParameterModalValues = (settingParameters,isParameterSettings) =>
         let subProduct = getSubProduct(subProductsCopy, subSection.type);
         subProduct = ensureParametersExist(subProduct, settingParameters.parameter.settingParameters, section, subSection);
         subProduct = updateValues(subProduct, value, settingParameters.parameter.settingParameters);
+        console.log("subProductsCopy",subProductsCopy)
         return subProductsCopy;
       };
       const removeValueFromSubProduct = (subProducts, value) => {
