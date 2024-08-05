@@ -124,12 +124,13 @@ useEffect(()=>{
       let newSubProducts = lodashClonedeep(subProducts);
       if (e.target.checked) {
         newSubProducts = addValueToSubProduct(newSubProducts, value);
+        setSubProducts(newSubProducts);
         setIsChecked(true);
       } else {
         newSubProducts = removeValueFromSubProduct(newSubProducts, value);
+        setSubProducts(newSubProducts);
         setIsChecked(false);
       }
-      setSubProducts(newSubProducts);
     }
   };
   const isCheckedMemo = useMemo(() => {
