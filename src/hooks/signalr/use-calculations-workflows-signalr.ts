@@ -43,8 +43,8 @@ const useCalculationsWorkFlowsSignalr = () => {
           console.log("isDevMode received")
           setConnectionSessionId(newData.productItemValueDraftId);
         }*/
-        //setStartCalculationData(newData)
-        //setCalculationExceptionsLogs(newData.calculationExceptions);
+        setStartCalculationData(newData)
+        setCalculationExceptionsLogs(newData.calculationExceptions);
       });
       connection.on("updateSelectedWorkFlow", (newData) => {
         setUpdatedSelectedWorkFlow(newData);
