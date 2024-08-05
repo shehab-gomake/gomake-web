@@ -40,8 +40,11 @@ const useSubChildMapping = ({
     } else {
       const valuesConfigs = settingParameters?.parameter?.valuesConfigs;
       const valueConfigDefault = valuesConfigs?.find((item) => item.isDefault);
-      const colorParameter = settingParameters?.parameter?.settingParameters.find(item => item.code === "printingcolorsDetail");
-      return valueConfigDefault?.selectedParameterValues?.find(paramValue => paramValue.parameterId === colorParameter.id);
+      if(valueConfigDefault){
+        const colorParameter = settingParameters?.parameter?.settingParameters.find(item => item.code === "printingcolorsDetail");
+        return valueConfigDefault?.selectedParameterValues?.find(paramValue => paramValue.parameterId === colorParameter.id);
+      }
+    
     }
   };
   const [isChecked, setIsChecked] = useState(false);
@@ -49,11 +52,9 @@ const useSubChildMapping = ({
 useEffect(()=>{
   getSelectedColorParameterValue()
 },[])
-  const [updatedParameter,setUpdatedParameter]=useState()
-  
+
   const onChangeCheckBox = (e) => {
     if (isParameterSettings) {
-      // Handle parameter settings logic
       const printingcolorsDetail = parameters.find(item => item.code === "printingcolorsDetail");
       const loadParameter = parameters.find(p => p.code === "Colorloadpercentage");
       const layersParameter = parameters.find(p => p.code === "ColorLayers");
@@ -66,16 +67,16 @@ useEffect(()=>{
           if (paramValue.parameterId === printingcolorsDetail.id) {
             if (e.target.checked) {
               if (paramValue.valueIds.length < paramValue.selectValuesCount) {
-                paramValue.valueIds.push(value.value);
+                paramValue.valueIds.push(value.valueId);
               }
             } else {
-              paramValue.valueIds = paramValue.valueIds.filter(val => val !== value.value);
+              paramValue.valueIds = paramValue.valueIds.filter(val => val !== value.valueId);
             }
           }
           return paramValue;
         });
   
-        const ensureParameterValue = (paramId, defaultValue) => {
+        const ensureParameterValue = (paramId) => {
           let paramValue = selectedParameterValues.find(pv => pv.parameterId === paramId);
           if (!paramValue) {
             paramValue = { parameterId: paramId, valueIds: [], selectValuesCount: selectedParameterValues[0]?.selectValuesCount };
@@ -84,23 +85,24 @@ useEffect(()=>{
           return paramValue;
         };
   
-        const loadParamValue = ensureParameterValue(loadParameter.id, loadParameter.defaultValue);
-        const layersParamValue = ensureParameterValue(layersParameter.id, layersParameter.defaultValue);
+        const loadParamValue = ensureParameterValue(loadParameter.id);
+        const layersParamValue = ensureParameterValue(layersParameter.id);
   
-        // Sync load and layer values with the number of color values
-        const colorCount = selectedParameterValues.find(pv => pv.parameterId === printingcolorsDetail.id).valueIds.length;
-        const updateValues = (paramValue, defaultValue) => {
-          if (paramValue.valueIds.length < colorCount) {
-            paramValue.valueIds = Array(colorCount).fill(defaultValue);
-          } else {
-            paramValue.valueIds = paramValue.valueIds.slice(0, colorCount);
-          }
+        const colorParamValue = selectedParameterValues.find(pv => pv.parameterId === printingcolorsDetail.id);
+        const colorDefaultValueArray = printingcolorsDetail.defaultValueArray;
+  
+        // Sync load and layer values with the selected color values
+        const updateValues = (paramValue, defaultValueArray) => {
+          const newValues = colorParamValue.valueIds.map(val => {
+            const index = colorDefaultValueArray.findIndex(defaultVal => defaultVal === val);
+            return defaultValueArray[index];
+          });
+          paramValue.valueIds = newValues;
         };
   
-        updateValues(loadParamValue, loadParameter.defaultValue);
-        updateValues(layersParamValue, layersParameter.defaultValue);
+        updateValues(loadParamValue, loadParameter.defaultValueArray);
+        updateValues(layersParamValue, layersParameter.defaultValueArray);
   
-        // Update the parameter with the new selectedParameterValues
         const updatedParameter = {
           ...parameter,
           valuesConfigs: valuesConfigsList.map(config => {
@@ -113,7 +115,6 @@ useEffect(()=>{
             return config;
           })
         };
-        setUpdatedParameter(updatedParameter)
         setSettingParameters(prev => ({
           ...prev,
           parameter: updatedParameter
@@ -131,7 +132,6 @@ useEffect(()=>{
       setSubProducts(newSubProducts);
     }
   };
-
   const isCheckedMemo = useMemo(() => {
     const colorParameterValue = getSelectedColorParameterValue();
     if (isParameterSettings) {
