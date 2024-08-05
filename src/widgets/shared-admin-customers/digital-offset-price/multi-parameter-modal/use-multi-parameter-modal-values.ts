@@ -1,24 +1,68 @@
-import {useRecoilValue} from "recoil";
-import {selectColorValueState} from "./store/selecte-color-value";
 import lodashClonedeep from "lodash.clonedeep";
 
 const userMultiParameterModalValues = (settingParameters,isParameterSettings) => {
 
-    const removeDuplicateParameters = (parameters) => {
-        const uniqueParameters = [];
-        const seenParameterIds = new Set();
+    const getSubProduct = (subProducts, subSectionType) => {
+        let subProduct = subProducts.find(sub => sub.type === subSectionType);
+        if (subProduct) {
+          subProduct.parameters = removeDuplicateParameters(subProduct.parameters);
+        }
+        return subProduct;
+      };
       
-        parameters.forEach((parameter) => {
-          if (!seenParameterIds.has(parameter.parameterId)) {
-            uniqueParameters.push(parameter);
-            seenParameterIds.add(parameter.parameterId);
+      const removeDuplicateParameters = (parameters) => {
+        let seen = new Set();
+        return parameters.filter(param => {
+          const isDuplicate = seen.has(param.parameterId);
+          seen.add(param.parameterId);
+          return !isDuplicate;
+        });
+      };
+      const ensureParametersExist = (subProduct, settingParameters, section, subSection) => {
+        settingParameters.forEach(settingParam => {
+          const existingParam = subProduct.parameters.find(param => param.parameterId === settingParam.id);
+          if (!existingParam) {
+            subProduct.parameters.push({
+              parameterId: settingParam.id,
+              parameterName: settingParam.name,
+              actionId: settingParam.actionId,
+              parameterType: settingParam.parameterType,
+              values: [],
+              valueIds: [],
+              sectionId: section.id,
+              subSectionId: subSection.id,
+              actionIndex: settingParam.actionIndex,
+            });
           }
         });
-      
-        return uniqueParameters;
+        return subProduct;
       };
+      
+      const updateValues = (subProduct, value, settingParameters) => {
+        const colorParam = settingParameters.find(param => param.code === "printingcolorsDetail");
+        const loadParam = settingParameters.find(param => param.code === "Colorloadpercentage");
+        const layersParam = settingParameters.find(param => param.code === "ColorLayers");
+    
+        const colorParamValue = subProduct.parameters.find(param => param.parameterId === colorParam.id);
+        const loadParamValue = subProduct.parameters.find(param => param.parameterId === loadParam.id);
+        const layersParamValue = subProduct.parameters.find(param => param.parameterId === layersParam.id);
+    
+        const index = colorParam.defaultValueArray.indexOf(value.value);
+        if (index !== -1) {
+            const layerValue = layersParam.defaultValueArray[index];
+            const loadValue = loadParam.defaultValueArray[index];
+            // Add color value only if it doesn't exist
+            if (!colorParamValue.valueIds.includes(value.valueId)) {
+                colorParamValue.valueIds.push(value.valueId);
+                loadParamValue.valueIds.push(loadValue);
+                layersParamValue.valueIds.push(layerValue);
 
-    const selectColorValue = useRecoilValue<any>(selectColorValueState);
+            }
+             
+        }
+    
+        return subProduct;
+    };
     const getSelectedColorParameterValue = (subProducts) => {
         if (subProducts && !isParameterSettings) {
           const subSection = settingParameters.subSection;
@@ -29,134 +73,44 @@ const userMultiParameterModalValues = (settingParameters,isParameterSettings) =>
         }
         return null; // Return null if subProducts is null or undefined
       };
-      
-      const addValueToSubProduct = (subProducts, value) => {
-        if (!isParameterSettings) {
-          const selectedColorParameterValue = getSelectedColorParameterValue(subProducts);
-      
-          if (selectedColorParameterValue && selectColorValue?.selectedParameterValues[0]?.selectValuesCount <= selectedColorParameterValue?.valueIds?.length) {
-            return subProducts;
-          }
-          const section = settingParameters.section;
-          const subSection = settingParameters.subSection;
-          let subProductsCopy = lodashClonedeep(subProducts);
-          const subProductType = subSection.type;
-          let subProduct = subProductsCopy.find(sub => sub.type === subProductType);
-          subProduct.parameters = removeDuplicateParameters(subProduct.parameters);
-          const colorParameter = settingParameters?.parameter?.settingParameters[0];
-          const colorParameterValue = subProduct.parameters.find(paramValue => paramValue.parameterId === colorParameter.id);
-      
-          if (colorParameterValue) {
-            if (!colorParameterValue.valueIds) {
-              colorParameterValue.valueIds = [];
-            }
-            if (!colorParameterValue.values) {
-              colorParameterValue.values = [];
-            }
-      
-            let settingParameterIndex = 0;
-            settingParameters?.parameter?.settingParameters.forEach(settingParameter => {
-              let newParamValues = [];
-              let newParamValueIds = [];
-              const currentSubProductParameter = subProduct.parameters.find(x => x.parameterId === settingParameter?.id);
-      
-              if (settingParameterIndex === 0) {
-                newParamValueIds = [...colorParameterValue.valueIds, value.valueId];
-                newParamValues = [...colorParameterValue.values, value.value];
-              } else {
-                if (currentSubProductParameter) {
-                  // Use values from defaultValueArray if they exist, otherwise use the default value
-                  const fallbackParameter = settingParameters?.parameter?.settingParameters.find(param => param.id === settingParameter?.id);
-                  const fallbackValue = fallbackParameter?.defaultValueArray?.length > colorParameterValue.valueIds.length
-                    ? fallbackParameter.defaultValueArray[colorParameterValue.valueIds.length]
-                    : settingParameter.defaultValue;
-      
-                  newParamValues = [...currentSubProductParameter.values, fallbackValue];
-                } else {
-                  newParamValues.push(settingParameter.defaultValue);
-                }
-              }
-      
-              if (currentSubProductParameter) {
-                currentSubProductParameter.valueIds = newParamValueIds;
-                currentSubProductParameter.values = newParamValues;
-              } else {
-                subProduct.parameters.push({
-                  parameterId: settingParameter?.id,
-                  parameterName: settingParameter?.name,
-                  actionId: settingParameter?.actionId,
-                  parameterType: settingParameter?.parameterType,
-                  values: newParamValues,
-                  valueIds: newParamValueIds,
-                  sectionId: section?.id,
-                  subSectionId: subSection?.id,
-                  actionIndex: settingParameter?.actionIndex,
-                });
-              }
-      
-              settingParameterIndex++;
-            });
-          } else {
-            let settingParameterIndex = 0;
-            settingParameters?.parameter?.settingParameters.forEach(settingParameter => {
-              const newParamValues = [];
-              const newParamValueIds = [];
-              if (settingParameterIndex === 0) {
-                newParamValues.push(value.value);
-                newParamValueIds.push(value.valueId);
-              } else {
-                newParamValues.push(settingParameter.defaultValue);
-              }
-              subProduct.parameters.push({
-                parameterId: settingParameter?.id,
-                parameterName: settingParameter?.name,
-                actionId: settingParameter?.actionId,
-                parameterType: settingParameter?.parameterType,
-                values: newParamValues,
-                valueIds: newParamValueIds,
-                sectionId: section?.id,
-                subSectionId: subSection?.id,
-                actionIndex: settingParameter?.actionIndex,
-              });
-              settingParameterIndex++;
-            });
-          }
-          return subProductsCopy;
-        }
-        return subProducts; // Return the original subProducts if isParameterSettings is true
+
+      const addValueToSubProduct = (subProducts, value, settingParameters, section, subSection) => {
+        let subProductsCopy = lodashClonedeep(subProducts);
+        let subProduct = getSubProduct(subProductsCopy, subSection.type);
+        subProduct = ensureParametersExist(subProduct, settingParameters.parameter.settingParameters, section, subSection);
+        subProduct = updateValues(subProduct, value, settingParameters.parameter.settingParameters);
+        return subProductsCopy;
       };
-      
       const removeValueFromSubProduct = (subProducts, value) => {
         if (!isParameterSettings) {
-          const section = settingParameters.section;
           const subSection = settingParameters.subSection;
           let subProductsCopy = lodashClonedeep(subProducts);
           const subProductType = subSection.type;
           let subProduct = subProductsCopy.find(sub => sub.type === subProductType);
           subProduct.parameters = removeDuplicateParameters(subProduct.parameters);
-          const colorParameter = settingParameters?.parameter?.settingParameters[0];
+      
+          const colorParameter = settingParameters.parameter.settingParameters.find(param => param.code === "printingcolorsDetail");
+          const loadParameter = settingParameters.parameter.settingParameters.find(param => param.code === "Colorloadpercentage");
+          const layersParameter = settingParameters.parameter.settingParameters.find(param => param.code === "ColorLayers");
+      
           const colorParameterValue = subProduct.parameters.find(paramValue => paramValue.parameterId === colorParameter.id);
+          const loadParameterValue = subProduct.parameters.find(paramValue => paramValue.parameterId === loadParameter.id);
+          const layersParameterValue = subProduct.parameters.find(paramValue => paramValue.parameterId === layersParameter.id);
+      
           if (colorParameterValue && colorParameterValue.valueIds && colorParameterValue.values) {
             const valueIndex = colorParameterValue.valueIds.findIndex(val => val === value.valueId);
             if (valueIndex !== -1) {
               colorParameterValue.valueIds.splice(valueIndex, 1);
-              colorParameterValue.values.splice(valueIndex, 1);
       
-              settingParameters?.parameter?.settingParameters.forEach(settingParameter => {
-                const param = subProduct.parameters.find(p => p.parameterId === settingParameter?.id);
-                if (param && param.values.length > valueIndex) {
-                  param.values.splice(valueIndex, 1);
-                }
-                if (param && param.valueIds.length > valueIndex) {
-                  param.valueIds.splice(valueIndex, 1);
-                }
-                if (!param.values || param.values.length === 0) {
-                  subProduct.parameters = subProduct.parameters.filter(p => p.parameterId != settingParameter?.id);
-                }
-              });
+              if (loadParameterValue && loadParameterValue.valueIds && loadParameterValue.values.length > valueIndex) {
+                loadParameterValue.valueIds.splice(valueIndex, 1);
+              }
+      
+              if (layersParameterValue && layersParameterValue.valueIds && layersParameterValue.values.length > valueIndex) {
+                layersParameterValue.valueIds.splice(valueIndex, 1);
+              }
             }
           }
-      
           return subProductsCopy;
         }
         return subProducts; // Return the original subProducts if isParameterSettings is true
@@ -189,7 +143,6 @@ const userMultiParameterModalValues = (settingParameters,isParameterSettings) =>
                 if (parameterValue && parameterValue.values) {
                   parameterValue.values[valueIndex] = textInputVal;
                   subProduct.parameters[parameterValueIndex] = parameterValue; // Ensure the updated parameter is placed back
-                  console.log("parameterValueIndex", {parameterValueIndex, parameterValue, valueIndex, subProduct});
                 }
               }
             }
@@ -259,6 +212,7 @@ const userMultiParameterModalValues = (settingParameters,isParameterSettings) =>
         getSelectedColorParameterValue,
         setSubProductValueForParameterSettings,
         setSubProductValueForParameterSettingsDefaultValueArray,
+        removeDuplicateParameters
     };
 };
 

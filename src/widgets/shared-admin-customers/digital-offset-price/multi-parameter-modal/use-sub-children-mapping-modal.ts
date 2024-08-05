@@ -25,7 +25,7 @@ const useSubChildMapping = ({
     removeValueFromSubProduct,
     setSubProductValue,
     setSubProductValueForParameterSettings,
-    setSubProductValueForParameterSettingsDefaultValueArray
+    setSubProductValueForParameterSettingsDefaultValueArray,
   } = userMultiParameterModalValues(settingParameters,isParameterSettings)
   const ref = useClickAway(() => {
     setIsFocused(false);
@@ -34,7 +34,7 @@ const useSubChildMapping = ({
     if (subProducts && !isParameterSettings) {
       const subSection = settingParameters.subSection;
       const subProductType = subSection.type;
-      let subProduct = subProducts.find(sub => sub.type === subProductType);
+      let subProduct = subProducts?.find(sub => sub.type === subProductType);
       const colorParameter = settingParameters?.parameter?.settingParameters[0];
       return subProduct.parameters.find(paramValue => paramValue.parameterId === colorParameter.id && paramValue.values);
     } else {
@@ -120,10 +120,10 @@ useEffect(()=>{
           parameter: updatedParameter
         }));
       }
-    } else {
+    }  else {
       let newSubProducts = lodashClonedeep(subProducts);
       if (e.target.checked) {
-        newSubProducts = addValueToSubProduct(newSubProducts, value);
+        newSubProducts = addValueToSubProduct(newSubProducts, value,settingParameters,settingParameters?.section,settingParameters?.subSection);
         setSubProducts(newSubProducts);
         setIsChecked(true);
       } else {

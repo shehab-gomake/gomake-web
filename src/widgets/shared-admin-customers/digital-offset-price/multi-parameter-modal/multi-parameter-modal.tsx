@@ -20,7 +20,6 @@ const MultiParameterModal = ({
     onClose,
     isParameterSettings
   });
-  console.log("FSDGHTDF", settingParameters?.parameter)
   return (
     <>
       <GoMakeModal

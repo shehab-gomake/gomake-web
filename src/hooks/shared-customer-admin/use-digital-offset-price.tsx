@@ -131,7 +131,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const setSelectParameterButton = useSetRecoilState(selectParameterButtonState);
   const [deviceCategory, setDeviceCategory] = useState("")
   const [deviceSize, setDeviceSize] = useState("")
-  console.log("subProducts", subProducts)
   // useEffect(() => {
   //   if (productTemplate) {
   //     setProductTemplate(templateMock)
