@@ -147,27 +147,40 @@ useEffect(()=>{
 
 
   const textInputValue = useMemo(() => {
-    if(!isParameterSettings){
-      if(!subProducts)
-        return 
+    if (!isParameterSettings) {
+      if (!subProducts) return item.defaultValue;
+  
       const subSection = settingParameters.subSection;
       let subProductsCopy = lodashClonedeep(subProducts);
       const subProductType = subSection.type;
-      let subProduct =  subProductsCopy.find(sub => sub.type == subProductType);
+      let subProduct = subProductsCopy.find(sub => sub.type == subProductType);
       const colorParameter = settingParameters?.parameter?.settingParameters[0];
-      const colorParameterValue  = subProduct.parameters.find(paramValue => paramValue.parameterId === colorParameter.id );
-      if(colorParameterValue){
+      const colorParameterValue = subProduct.parameters.find(paramValue => paramValue.parameterId === colorParameter.id);
+  
+      if (colorParameterValue) {
         const valueIndex = colorParameterValue.valueIds.findIndex(val => val === value.valueId);
-
-        if(valueIndex !== -1){
-          const parameterValue = subProduct.parameters.find(paramValue => paramValue.parameterId === item.id );
-
-          if(parameterValue && parameterValue.values && parameterValue.values.length > valueIndex){
+  
+        if (valueIndex !== -1) {
+          const parameterValue = subProduct.parameters.find(paramValue => paramValue.parameterId === item.id);
+  
+          if (parameterValue && parameterValue.values && parameterValue.values.length > valueIndex) {
             return parameterValue.values[valueIndex];
           }
         }
       }
-      return  item.defaultValue;
+  
+      // If not found in subProducts, fallback to defaultValueArray
+      if (colorParameter) {
+        const valueIndex = colorParameter.defaultValueArray?.findIndex(val => val === value.valueId);
+        if (valueIndex !== -1) {
+          const fallbackParameter = settingParameters?.parameter?.settingParameters.find(param => param.id === item.id);
+          if (fallbackParameter && fallbackParameter.defaultValueArray && fallbackParameter.defaultValueArray.length > valueIndex) {
+            return fallbackParameter.defaultValueArray[valueIndex];
+          }
+        }
+      }
+  
+      return item.defaultValue;
     }
     else {
       const colorParameter = settingParameters?.parameter?.settingParameters.find(param => param.code === "printingcolorsDetail");
@@ -186,9 +199,6 @@ useEffect(()=>{
     }
    
   }, [subProducts, isParameterSettings, item, value, settingParameters, parameters]);
-  // useEffect(()=>{
-  //   setTextInputValueState(textInputValueMemo)
-  // },[textInputValueMemo])
   const setTextInputValue = (textInputVal, parameterId) => {
     if (isParameterSettings) {
       const parameter = settingParameters?.parameter;
@@ -207,7 +217,6 @@ useEffect(()=>{
           )
         }
       }));
-      // console.log("DSFSDGgyt",{parameter,updatedParametersDefaultValueArray})
     } else {
       // Existing logic for subProducts update
       let newSubProducts = lodashClonedeep(subProducts);
