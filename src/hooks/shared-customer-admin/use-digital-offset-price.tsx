@@ -213,10 +213,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         let productTypes = new Set();
         const currentWorkFlows = cloneDeep(workFlows);
         const newWorkFlows = calculationResult?.productItemValue.workFlows;
-        currentWorkFlows.forEach((workFlow) => { productTypes.add(workFlow.productType) })
-        newWorkFlows.forEach((workFlow) => { productTypes.add(workFlow.productType) })
-        const allWorkFlows = [];
-        productTypes.forEach((productType) => {
+        //currentWorkFlows.forEach((workFlow) => { productTypes.add(workFlow.productType) })
+        //newWorkFlows.forEach((workFlow) => { productTypes.add(workFlow.productType) })
+       // const allWorkFlows = [];
+        /*productTypes.forEach((productType) => {
           if (productType === null) {
             // general workflows 
             let newProductTypeWorkFlows = cloneDeep(newWorkFlows);
@@ -241,8 +241,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             allWorkFlows.push(...result);
           }
 
-        })
-        let myselectedWorkFlow = allWorkFlows?.find((x) => x.selected && x.isCompleteWorkFlow);
+        })*/
+        /*let myselectedWorkFlow = allWorkFlows?.find((x) => x.selected && x.isCompleteWorkFlow);
         if (myselectedWorkFlow) {
           myselectedWorkFlow?.subWorkFlows?.forEach(element => {
             const subWorkFlow = allWorkFlows.find(x => x.id === element.orginalBookPartId)
@@ -256,19 +256,14 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             }
           });
 
-        }
-        if (calculationResult.isCalculationFinished) {
-          setCalculationProgress({
-            totalWorkFlowsCount: 0,
-            currentWorkFlowsCount: 0,
-          });
-          setCurrentProductItemValueTotalWorkFlows(calculationResult.productItemValue.totalWorkFlows)
-          setLoading(false);
-        } else {
-          setCurrentProductItemValueTotalWorkFlows(currentWorkFlows ? currentWorkFlows.length : 0)
-
-        }
-        setWorkFlows(allWorkFlows);
+        }*/
+        setCalculationProgress({
+          totalWorkFlowsCount: 0,
+          currentWorkFlowsCount: 0,
+        });
+        setCurrentProductItemValueTotalWorkFlows(calculationResult.productItemValue.totalWorkFlows)
+        setLoading(false);
+        setWorkFlows(newWorkFlows);
         setJobActions(calculationResult?.productItemValue.actions);
       }
     }
@@ -328,10 +323,18 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             parseFloat(signalRPricingResult.totalPrice)
         );
       }
-      setCalculationProgress({
-        totalWorkFlowsCount: totalWorkFlowsCount,
-        currentWorkFlowsCount: currentWorkFlowsCount,
-      });
+      if(signalRPricingResult.isCalculationFinished){
+        setCalculationProgress({
+          totalWorkFlowsCount: 0,
+          currentWorkFlowsCount: 0,
+        });
+      }else{
+        setCalculationProgress({
+          totalWorkFlowsCount: totalWorkFlowsCount,
+          currentWorkFlowsCount: currentWorkFlowsCount,
+        });
+      }
+      
     }
   }, [signalRPricingResult]);
 
