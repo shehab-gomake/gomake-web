@@ -29,13 +29,13 @@ const useChildValuesMapping = ({
   const [parentValue, setParentValue] = useState(
     parameters[index].defaultValue
   );
-  const [subProducts, setSubProducts] = useRecoilState<any>(subProductsCopyParametersState);
-  const {addValueToSubProduct,removeValueFromSubProduct,setSubProductValue,getSelectedColorParameterValue} = userMultiParameterModalValues(settingParameters)
+  const [subProductsCopy, setSubProductsCopy] = useRecoilState<any>(subProductsCopyParametersState);
 
- 
+  const {addValueToSubProduct,removeValueFromSubProduct,setSubProductValue,getSelectedColorParameterValue} = userMultiParameterModalValues(settingParameters)
+  
   const isChecked = useMemo(() => {
     
-    const colorParameterValue  = getSelectedColorParameterValue(subProducts);
+    const colorParameterValue  = getSelectedColorParameterValue(subProductsCopy);
     if(colorParameterValue){
       if(value.valueId){
         const subData = value.data;
@@ -52,7 +52,7 @@ const useChildValuesMapping = ({
       }
     }
     return false
-  }, [subProducts]);
+  }, [subProductsCopy]);
   const updateValue = (increment: boolean) => {
     let temp = lodashClonedeep(generalParameters);
     const indexOfName = temp[0].value.findIndex((p) => p === value?.value);
@@ -80,7 +80,7 @@ const useChildValuesMapping = ({
   });
   const onChangeCheckBox = (e) => {
     const subData = value.data;
-    let newSubProducts = lodashClonedeep(subProducts);
+    let newSubProducts = lodashClonedeep(subProductsCopy);
     subData.forEach(x=>{
       if (e.target.checked){
         newSubProducts = addValueToSubProduct(newSubProducts,x)
@@ -89,28 +89,31 @@ const useChildValuesMapping = ({
          newSubProducts = removeValueFromSubProduct(newSubProducts,x)
       }
     })
-    setSubProducts(newSubProducts);
+    setSubProductsCopy(newSubProducts);
   };
   const setTextInputValue = (textInputVal:string) =>{
     setValueState(textInputVal);
-    let newSubProducts = lodashClonedeep(subProducts);
+    let newSubProducts = lodashClonedeep(subProductsCopy);
     const subData = value.data;
     subData.forEach(x=>{
       newSubProducts = setSubProductValue(newSubProducts,item.id,x,textInputVal);
     })
-    setSubProducts(newSubProducts);
+    setSubProductsCopy(newSubProducts);
   }
   const onChangeText = (e) => {
     setTextInputValue(e.target.value);
   };
   const isDisabled = useMemo(()=>{
     let isDisabled = false;
-    const selectedColorParameterValue  = getSelectedColorParameterValue(subProducts);
+    const selectedColorParameterValue  = getSelectedColorParameterValue(subProductsCopy);
+    if(!selectedColorParameterValue){
+      return isDisabled;
+    }
     if (selectColorValue?.selectedParameterValues[0]?.selectValuesCount <= selectedColorParameterValue?.valueIds?.length || (selectColorValue?.selectedParameterValues[0].valueIds && selectColorValue?.selectedParameterValues[0].valueIds.length > 0) ) {
       isDisabled = true;
     }
     return isDisabled;
-  },[subProducts])
+  },[subProductsCopy])
   useEffect(() => {
     const temp = parameters.map((item: any) => ({
       parameterId: item.id,

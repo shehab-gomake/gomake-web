@@ -18,31 +18,35 @@ const useSubChildMapping = ({
   parentValue,item
 }) => {
   const [isFocused, setIsFocused] = useState<boolean>(false);
-  const [subProducts, setSubProducts] = useRecoilState<any>(subProductsCopyParametersState);
+  const [subProductsCopy, setSubProductsCopy] = useRecoilState<any>(subProductsCopyParametersState);
+
   const {addValueToSubProduct,removeValueFromSubProduct,setSubProductValue} = userMultiParameterModalValues(settingParameters)
   const selectColorValue = useRecoilValue<any>(selectColorValueState);
   const ref = useClickAway(() => {
     setIsFocused(false);
   });
+
   const getSelectedColorParameterValue = ()=>{
-    if(subProducts){
+    if(subProductsCopy){
+
       const subSection = settingParameters.subSection;
       const subProductType = subSection.type;
-      let subProduct =  subProducts.find(sub => sub.type == subProductType);
+      let subProduct =  subProductsCopy.find(sub => sub.type == subProductType);
       const colorParameter = settingParameters?.parameter?.settingParameters[0];
-      return subProduct.parameters.find(paramValue => paramValue.parameterId === colorParameter.id && paramValue.values);
+      return subProduct?.parameters?.find(paramValue => paramValue.parameterId === colorParameter.id && paramValue.values);
     }
     
   }
   const onChangeCheckBox = (e) => {
-    let newSubProducts = lodashClonedeep(subProducts);
+    let newSubProducts = lodashClonedeep(subProductsCopy);
+
     if (e.target.checked){
        newSubProducts = addValueToSubProduct(newSubProducts,value)
     }
     else {
        newSubProducts = removeValueFromSubProduct(newSubProducts,value)
     }
-    setSubProducts(newSubProducts);
+    setSubProductsCopy(newSubProducts);
   };
   
 
@@ -54,14 +58,14 @@ const useSubChildMapping = ({
         return true
     }
     return false
-  }, [subProducts]);
+  }, [subProductsCopy]);
   const textInputValue = useMemo(() => {
-    if(!subProducts)
+    if(!subProductsCopy)
       return 
     const subSection = settingParameters.subSection;
-    let subProductsCopy = lodashClonedeep(subProducts);
+    let subProductsClone = lodashClonedeep(subProductsCopy);
     const subProductType = subSection.type;
-    let subProduct =  subProductsCopy.find(sub => sub.type == subProductType);
+    let subProduct =  subProductsClone.find(sub => sub.type == subProductType);
     const colorParameter = settingParameters?.parameter?.settingParameters[0];
     const colorParameterValue  = subProduct.parameters.find(paramValue => paramValue.parameterId === colorParameter.id );
     if(colorParameterValue){
@@ -74,12 +78,12 @@ const useSubChildMapping = ({
       }
     }
     return  item.defaultValue;
-  }, [subProducts]);
+  }, [subProductsCopy]);
   
   const setTextInputValue = (textInputVal) =>{
-    let newSubProducts = lodashClonedeep(subProducts);
+    let newSubProducts = lodashClonedeep(subProductsCopy);
     newSubProducts = setSubProductValue(newSubProducts,item.id,value,textInputVal);
-    setSubProducts(newSubProducts);
+    setSubProductsCopy(newSubProducts);
   }
   const onChangeText = (e) => {
     setTextInputValue(e.target.value);
@@ -97,12 +101,12 @@ const useSubChildMapping = ({
   };
 
   const getMaxSelectionValues = () => {
-    if(!subProducts){
+    if(!subProductsCopy){
       return;
     }
     const subSection = settingParameters.subSection;
     const subProductType = subSection.type;
-    const subProduct =  subProducts.find(sub => sub.type == subProductType);
+    const subProduct =  subProductsCopy.find(sub => sub.type == subProductType);
     const parameterValue = subProduct.parameters.find(paramValue => paramValue.parameterId === settingParameters.parameter.id && paramValue.values );
     if(parameterValue && parameterValue.valueIds && parameterValue.valueIds.length > 0){
       const val = parameterValue.valueIds[0];
@@ -132,7 +136,7 @@ const useSubChildMapping = ({
       }
     }
     return false;
-  }, [subProducts]);
+  }, [subProductsCopy]);
   return {
     ref,
     isFocused,
