@@ -1,62 +1,176 @@
-import {useEffect, useState} from 'react';
-import {QBConfig} from "@/widgets/messenger/QB-config";
-import {useGomakeAxios} from "@/hooks";
-import {getQuickBloxSessionApi} from "@/services/api-service/chat/quick-blox-chat-endpoints";
+import {useInitQuickBlox} from "@/widgets/messenger/use-init-quick-blox";
+import {useSnackBar} from "@/hooks";
+import {IChatDialog} from "@/widgets/messenger/interfaces/dialog";
+import {QBChatNewMessage, QBSystemMessage} from "quickblox";
+import {EFileStatus} from "@/widgets/messenger/enums";
 
 const useQuickBlox = () => {
-    const [QB, setQB] = useState(null);
-    const {callApi} = useGomakeAxios();
-    const [sessionUser, setSessionUser] = useState<{userId: number, password: string}>(null);
-    const [isChatConnected, setIsChatConnected] = useState<boolean>(false);
-    const getQuickBloxSession = async () => {
-        const callBack = (res) => {
-            if (res.success) {
-                setSessionUser({userId: +res?.data?.userId, password: res?.data?.token});
-            }
+    const {QB, sessionUser, isChatConnected} = useInitQuickBlox();
+    const {alertFaultGetData, alertSuccessAdded, alertFaultUpdate} = useSnackBar();
+    const APPROVAL_REQUEST_CLASS_NAME = 'ApprovalRequest';
+    //listeners
+    const listenToNewMessages = (listener: (userId, message) => void) => {
+        if (isChatConnected) {
+            QB.chat.onMessageListener = listener
         }
-        await getQuickBloxSessionApi(callApi, callBack);
     }
 
-    useEffect(() => {
-        getQuickBloxSession().then()
-    }, [])
+    const listenToSystemMessages = (listener: (message) => void) => {
 
+        QB.chat.onSystemMessageListener = listener
+    }
 
-    useEffect(() => {
-        if (sessionUser?.userId) {
-            if (typeof window !== 'undefined') {
-                import('quickblox').then((QuickBlox) => {
-                    const quickBlox = QuickBlox.default;
-                    quickBlox.init(QBConfig.credentials.appId, QBConfig.credentials.authKey, QBConfig.credentials.authSecret, QBConfig.credentials.accountKey, {debug: true});
-                    quickBlox?.startSessionWithToken(sessionUser.password, ()=>{});
-                    quickBlox.chat.connect(sessionUser, async function (errorConnect: any, resultConnect: any) {
-                        if (errorConnect) {
-                            alert('error')
-                        } else {
-                            console.log('result', resultConnect)
-                            setIsChatConnected(true);
-                        }
-                    });
-                    setQB(quickBlox);
-                });
-            }
+    const destroyListeners = () => {
+        QB.chat.onMessageListener = () => {
         }
-    }, [sessionUser]);
+        QB.chat.onSystemMessageListener = () => {
+        }
+    };
 
-    useEffect(() => {
-        if (QB) {
-            QB.getSession(function (error, session) {
-                if (error) {
-
-                alert('error')
+    //Dialogs
+    const getChatDialogs = (): Promise<IChatDialog[]> => {
+        return new Promise((resolve, reject) => {
+            QB.chat.dialog.list({}, (err, res) => {
+                if (err) {
+                    alertFaultGetData();
+                    reject([]);
                 } else {
-                    console.log(session)
+                    resolve(res.items);
+                }
+            });
+        });
+    }
+    //Dialog
+    const joinToDialog = (roomJid: string) => {
+        QB.chat.muc.join(roomJid, function () {
+        });
+    };
+    const getRoomJidFromDialogId = (dialogId: string): string => {
+        return QB.chat.helpers.getRoomJidFromDialogId(dialogId)
+    }
+    const getDialogMessages = (dialogId: string) => {
+        return new Promise((resolve, reject) => {
+            QB.chat.message.list({chat_dialog_id: dialogId}, (err, result) => {
+                if (err) {
+                    alertFaultGetData();
+                    reject([])
+                } else {
+                    resolve(result.items);
+                    alertSuccessAdded();
+                }
+            });
+        })
+    }
+
+    //Messages
+    const sendMessage = (dialogId: string, message: QBChatNewMessage) => {
+        return new Promise((resolve, reject) => {
+            const roomJid = getRoomJidFromDialogId(dialogId);
+            QB.chat.send(roomJid, message, (e, r) => {
+                if (e) {
+                    reject(e);
+                } else {
+                    resolve(r)
                 }
             })
+        })
+    }
+
+    //Messages Files
+    const uploadFile = (params): Promise<{ uid: string; content_type: string; size: number; name: string }> => {
+        return new Promise((resolve, reject) => {
+            QB.content.createAndUpload(params, (err, res) => {
+                if (err) {
+                    reject(err);
+                    alertFaultUpdate();
+                } else {
+                    resolve(res)
+                }
+            });
+        })
+    }
+
+    const getAttachmentUrl = (attachmentId: string): string => {
+        return QB.content.privateUrl(attachmentId)
+    }
+
+
+    //System messages
+
+    const sendSystemMessage = (senderId: number, message: { extension: QBSystemMessage['extension'] }) => {
+        QB.chat.sendSystemMessage(senderId, message);
+    }
+
+
+    //Data
+    const createNewApprovalRequestObj = (): Promise<{ _id: string }> => {
+        const OPTIONS = {
+            status: '0',
+            permissions: {
+                "update": {
+                    "access": "open"
+                }
+            }
         }
-    }, [QB])
+        return new Promise((resolve, reject) => {
+            QB.data.create(APPROVAL_REQUEST_CLASS_NAME, OPTIONS, (err, res) => {
+                if (err) {
+                    reject(err)
+                } else {
+                    resolve(res)
+                }
+            })
+        })
+    }
 
-    return {QB, sessionUser, isChatConnected};
-};
+    const getApprovalFileStatus = (id): Promise<{ status: EFileStatus }> => {
+        return new Promise((resolve, reject) => {
+            QB.data.list(APPROVAL_REQUEST_CLASS_NAME, {_id: id}, (error, response) => {
+                if (error) {
+                    alertFaultGetData();
+                    reject(error)
+                } else {
+                    const item = response.items.find(item => item._id === id);
+                    resolve(item);
+                }
+            });
+        });
+    };
 
-export {useQuickBlox};
+    const dialogs = {
+        getDialogs: getChatDialogs,
+        getMessages: getDialogMessages,
+        join: joinToDialog,
+        getRoomJid: getRoomJidFromDialogId
+    };
+    const listeners = {
+        onMessage: listenToNewMessages,
+        onSystemMessage: listenToSystemMessages,
+        destroy: destroyListeners
+    };
+    const customObj = {
+        create: createNewApprovalRequestObj,
+        getData: getApprovalFileStatus
+    };
+    const messages = {
+        send: sendMessage,
+        uploadFile,
+        getAttachmentUrl
+
+    }
+    const systemMessage = {
+        send: sendSystemMessage
+    }
+
+    return {
+        listeners,
+        dialogs,
+        customObj,
+        messages,
+        systemMessage,
+        sessionUser,
+        isChatConnected
+    }
+}
+
+export {useQuickBlox}

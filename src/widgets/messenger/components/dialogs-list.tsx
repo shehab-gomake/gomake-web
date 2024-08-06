@@ -15,6 +15,7 @@ import {PlusIcon} from "@/icons";
 import {SearchInputComponent} from "@/components/form-inputs/search-input-component";
 import {useState} from "react";
 import {IChatDialog} from "@/widgets/messenger/interfaces/dialog";
+import {useTranslation} from "react-i18next";
 
 export interface IProps {
     onSelectDialog: (dialogId: IChatDialog) => void
@@ -26,11 +27,12 @@ export interface IProps {
 
 const DialogList = ({onSelectDialog, dialogs, selectedDialogId, unRead, onClickAddDialog}: IProps) => {
     const [filter, setFilter] = useState<string>('');
+    const {t} = useTranslation();
     return (
         <Stack style={{backgroundColor: '#FFF'}} padding={'12px'} gap={'12px'}>
             <Stack padding={'12px'} direction={'row'} alignItems={'center'} justifyContent={'space-between'}>
                 <Stack  direction={'row'} alignItems={'center'} gap={'10px'}>
-                    <h3>Messages</h3>
+                    <h3>{t('messenger.dialogsTitle')}</h3>
                     <div style={{
                         width: '24px',
                         height: '24px',

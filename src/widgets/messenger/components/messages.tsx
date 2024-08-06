@@ -16,8 +16,9 @@ interface IProps {
     selectedDialog?: IChatDialog;
     getAttachmentUrl: (attachmentId) => string;
     onDropFile: (file) => void;
-    onUpdateApprovalFile: (requestId: string, updatedStatus: string) => void;
-    getApprovalStatus: (id: string) => EFileStatus;
+    onUpdateApprovalFile: (requestId: string, updatedStatus: string, senderId: number) => void;
+    getApprovalStatus: (id: string) => Promise<unknown>;
+    updatedApprovalRequest: {approvalRequestId: string, newStatus: EFileStatus};
 }
 
 const MessagesComponent = ({
@@ -27,7 +28,8 @@ const MessagesComponent = ({
                                getAttachmentUrl,
                                onDropFile,
                                onUpdateApprovalFile,
-                               getApprovalStatus
+                               getApprovalStatus,
+                               updatedApprovalRequest
                            }: IProps) => {
     const [user] = useRecoilState(userProfileState);
     const dropRef = useRef(null);
@@ -92,24 +94,27 @@ const MessagesComponent = ({
                 messages.map((msg, index) =>
                     <Stack ref={index + 1 === messages.length ? lastMessageRef : null} maxWidth={'50%'}
                            direction={msg.sender_id === sessionUserId ? 'row-reverse' : 'row'}
-                           gap={'10px'} alignItems={'center'}
+                           gap={'10px'} alignItems={'start'}
                            alignSelf={msg.sender_id === sessionUserId ? 'flex-end' : 'flex-start'}>
                         {
                             (index === 0 || index > 0 && msg.sender_id !== messages[index - 1].sender_id) ?
                                 <Avatar variant={'rounded'} style={{
                                     backgroundColor: msg.sender_id === sessionUserId ? user?.avatarBackGroundColor : '',
                                 }}
-                                        src={msg.sender_id === sessionUserId ? user?.imagePath : selectedDialog?.photo}>{msg.sender_id === sessionUserId && !user.imagePath ? user.avatarInitials?.toUpperCase() : undefined}</Avatar> :
+                                        src={msg.sender_id === sessionUserId ? user?.imagePath : msg.userMetaData?.profileImage}>{msg.sender_id === sessionUserId && !user.imagePath ? user.avatarInitials?.toUpperCase() : msg.userMetaData?.avatarInitials?.toUpperCase()}</Avatar> :
                                 <Stack minWidth={'40px'} width={'40px'} height={'40px'}/>
                         }
                         {
-                            msg.attachments?.length > 0 ? <FileMessageComponent onUpdateApprovalFile={onUpdateApprovalFile} {...msg}
-                                                                                isCurrentUserSentMsg={msg.sender_id === sessionUserId}
-                                                                                status={getApprovalStatus(msg.approval_Request_id)}
-                                                                                attachments={msg.attachments.map(attachment => ({
-                                                                                    ...attachment,
-                                                                                    url: getAttachmentUrl(attachment.id)
-                                                                                }))}/> :
+                            msg.attachments?.length > 0 ?
+                                <FileMessageComponent updatedApprovalRequest={updatedApprovalRequest}
+                                                      direction={'column'}
+                                                      onUpdateApprovalFile={onUpdateApprovalFile} {...msg}
+                                                      isCurrentUserSentMsg={msg.sender_id === sessionUserId}
+                                                      getApprovalStatus={getApprovalStatus}
+                                                      attachments={msg.attachments.map(attachment => ({
+                                                          ...attachment,
+                                                          url: getAttachmentUrl(attachment.id)
+                                                      }))}/> :
                                 <TextMessageComponent message={msg} sessionUserId={sessionUserId}/>
                         }
                     </Stack>)
