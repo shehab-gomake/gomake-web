@@ -4,7 +4,6 @@ export enum EmployeeActions {
 }
 
 export enum EmployeeQuoteLimitationType {
-    NoLimit=0,
-    LimitedTotalPrice ,
+    LimitedTotalPrice=1,
     ConfirmationNeeded ,
 }
