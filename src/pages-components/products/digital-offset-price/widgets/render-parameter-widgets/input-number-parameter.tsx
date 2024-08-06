@@ -22,7 +22,6 @@ const InputNumberParameterWidget = ({
         placeholder={parameter.name}
         value={index !== -1 ? temp[index].values : ""}
         onChange={(e: any, item: any) => {
-          console.log("e", e?.target.value)
           onChangeSubProductsForPrice(
             parameter?.id,
             subSection?.id,
