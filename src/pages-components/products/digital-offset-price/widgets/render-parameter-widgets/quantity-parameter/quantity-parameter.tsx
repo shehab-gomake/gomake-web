@@ -7,6 +7,7 @@ import Stack from "@mui/material/Stack";
 
 const QuantityParameter = () => {
   const { openModal, setOpenModal, productTypesNumber, productSetsParam, t } = useQuantityParameter();
+
   return (
     <Stack direction={"row"}>
       {productTypesNumber > 1 && productSetsParam != "true" && (
