@@ -7,11 +7,12 @@ import { updateProductItemValueOutsource } from "@/services/api-service/product-
 import { actionListForWorkFlow, currentCalculationConnectionId, productItemValueByEditState, viewPricingTab } from "@/store";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 
-import { currentProductItemValueDraftId, currentProductItemValuePriceState, currentProductItemValueState, selectedWorkFlowState } from "./state";
+import { calculationResultState, currentProductItemValueDraftId, currentProductItemValuePriceState, currentProductItemValueState, selectedWorkFlowState } from "./state";
 import { EPricingViews, EWorkSource } from "./enums";
 import { getWorkFlowsActionsApi, getWorkFlowsApi } from "@/services/api-service/generic-doc/quote-confirmation-api";
+import { EWidgetProductType } from "@/pages-components/products/digital-offset-price/enums";
 
-const usePricingWidget = ({ getOutSourcingSuppliers, workFlows }) => {
+const usePricingWidget = ({ getOutSourcingSuppliers, workFlows , widgetType}) => {
 
   const [view, setView] = useRecoilState<EPricingViews>(viewPricingTab);
   const [actionList, setActionList] = useRecoilState(actionListForWorkFlow)
@@ -51,21 +52,51 @@ const usePricingWidget = ({ getOutSourcingSuppliers, workFlows }) => {
 
   const [previousProductItemValueTotalPrice, setPreviousProductItemValueTotalPrice] = useState<number | null>(null);
   const [currentProductItemValueTotalPrice ,setCurrentProductItemValueTotalPrice] = useRecoilState<number>(currentProductItemValuePriceState);
- 
+  const calculationResult = useRecoilValue(calculationResultState);
+
+  useEffect(() => {
+    console.log("calculationResult is: ", calculationResult)
+    //setCurrentProductItemValueTotalPrice(calculationResult?.totalPrice)
+  }, [calculationResult])
+  // here
+
+
   const updateProductItemValue = async (sourceType: number) => {
     const callBack = (res) => {
       if (res?.success) {
-        if (sourceType === EWorkSource.OUT || sourceType === EWorkSource.PARTIALLY) {
-          setPreviousProductItemValueTotalPrice(currentProductItemValueTotalPrice); 
-          setCurrentProductItemValueTotalPrice(null);
-        } else {
-          setCurrentProductItemValueTotalPrice(previousProductItemValueTotalPrice); 
-        }
-      } else {
+      
+        console.log("1111 calculationResult is: ", calculationResult)
+
+
+
+        // if (widgetType === EWidgetProductType.CREATE || widgetType === EWidgetProductType.DUPLICATE) {
+        //   if (sourceType === EWorkSource.OUT || sourceType === EWorkSource.PARTIALLY) {
+        //     setPreviousProductItemValueTotalPrice(currentProductItemValueTotalPrice);
+        //     setCurrentProductItemValueTotalPrice(null);
+        //   }
+        //   else {
+        //     setCurrentProductItemValueTotalPrice(previousProductItemValueTotalPrice);
+        //   }
+        // }
+        // else { // Edit
+        //   if (sourceType === EWorkSource.INTERNAL) {
+        //     //calc again
+        //   }
+        //   else {
+        //     // setCurrentProductItemValueTotalPrice(null);
+        //   }
+        // }
+
+
+
+        /// test
+        //setCurrentProductItemValueTotalPrice(calculationResult?.totalPrice) 
+      }
+      else {
         alertFaultUpdate();
       }
     };
-    await updateProductItemValueOutsource(callApi,callBack, {
+    await updateProductItemValueOutsource(callApi, callBack, {
       productItemValueId: productItemValueDraftId,
       signalRConnectionId: connectionId,
       sourceType

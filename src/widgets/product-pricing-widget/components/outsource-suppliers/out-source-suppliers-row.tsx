@@ -59,7 +59,6 @@ const OutSourceSuppliersRowComponent = ({
         }
     }, []);
 
-
     const handleDeliveryTimeUpdate = (newValue: number) => {
         updateWorkHours(supplier?.supplierId, +newValue);
     }
@@ -74,7 +73,10 @@ const OutSourceSuppliersRowComponent = ({
     }
 
     const handleSupplierUpdate = (value) => {
-        setSupplier(options.find(x => x.supplierId == value?.value));
+        const selectedSupp = options.find(x => x.supplierId == value?.value);
+        //new
+        setCurrentProductItemValueTotalPrice(selectedSupp.finalPrice)
+        setSupplier(selectedSupp);
     }
 
     useEffect(() => {
@@ -82,6 +84,7 @@ const OutSourceSuppliersRowComponent = ({
             setCurrentProductItemValueTotalPrice(supplier.finalPrice)
         }
     }, [supplier?.finalPrice , setCurrentProductItemValueTotalPrice])
+
 
     return (
         <Fade in={true} timeout={700}>

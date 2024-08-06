@@ -46,7 +46,7 @@ import {
   workFlowsState,
 } from "@/widgets/product-pricing-widget/state";
 import { getOutsourcingSuppliersListApi } from "@/services/api-service/suppliers/suppliers-endpoints";
-import { useCalculationsWorkFlowsSignalr } from "../signalr/use-calculations-workflows-signalr";
+import { useCalculationsWorkFlowsSignalR } from "../signalr/use-calculations-workflows-signalr";
 import { v4 as uuidv4 } from "uuid";
 import {
   addItemApi,
@@ -144,11 +144,12 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     calculationServerError,
     isCalculationFinished,
     setIsCalculationFinished
-  } = useCalculationsWorkFlowsSignalr();
+  } = useCalculationsWorkFlowsSignalR();
 
   useEffect(() => {
     setProductItemValueByEdit({})
   }, [])
+
   useEffect(() => {
     const oldConnectionId = currentSignalRConnectionId;
     if (oldConnectionId && connectionId && connectionId !== oldConnectionId) {
@@ -156,6 +157,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     }
     setCurrentSignalRConnectionId(connectionId)
   }, [connectionId])
+
   const updateSignalRConnectionId = async (oldSignalRConnectionId, newSignalRConnectionId) => {
     const res: any = await callApi(
       "POST",
@@ -167,6 +169,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       false,
     )
   }
+  
   useEffect(() => {
     if (calculationResult && widgetType != EWidgetProductType.EDIT) {
       setCalculationResult(calculationResult);

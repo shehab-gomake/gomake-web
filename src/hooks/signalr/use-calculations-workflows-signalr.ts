@@ -6,10 +6,9 @@ import {
   ICalculatedWorkFlow,
   IExceptionsLog,
 } from "@/widgets/product-pricing-widget/interface";
-import { useGomakeAxios } from "../use-gomake-axios";
 import config from "@/config";
 
-const useCalculationsWorkFlowsSignalr = () => {
+const useCalculationsWorkFlowsSignalR = () => {
 
   const { data, connection, connectionId } =
     useGoMakeSignalr<ICalculationSignalRResult>({
@@ -21,13 +20,13 @@ const useCalculationsWorkFlowsSignalr = () => {
   const [signalRPricingResult, setSignalRPricingResult] = useState<any>();
   const [startCalculationData, setStartCalculationData] = useState<any>();
 
-  const [signalrRWorkFlows, setSignalrRWorkFlows] =
+  const [signalRWorkFlows, setSignalRWorkFlows] =
     useState<ICalculationSignalRResult>();
   const [updatedSelectedWorkFlow, setUpdatedSelectedWorkFlow] =
     useState<ICalculatedWorkFlow>();
   const [calculationExceptionsLogs, setCalculationExceptionsLogs] =
     useState<IExceptionsLog[]>();
-  const [calculationServerError,setcalculationServerErrorState]=useState(false)
+  const [calculationServerError,setCalculationServerErrorState]=useState(false)
 
   const [isCalculationFinished,setIsCalculationFinished]=useState(false)
 
@@ -35,8 +34,9 @@ const useCalculationsWorkFlowsSignalr = () => {
     if (connection) {
       connection.on("updateWorkFlows", (newData: ICalculationSignalRResult) => {
         setCalculationExceptionsLogs(newData.exceptions);
-        setSignalrRWorkFlows(newData);
+        setSignalRWorkFlows(newData);
       });
+
       connection.on("startCalculationSession", (newData) => {
         /*if(newData.isDevMode){
           console.log("isDevMode received")
@@ -56,12 +56,14 @@ const useCalculationsWorkFlowsSignalr = () => {
         setSignalRPricingResult(newData);
       });
       connection.on("calculationServerError", () => {
-        setcalculationServerErrorState(true)
+        setCalculationServerErrorState(true)
       });
     }
   }, [connection]);
+
+
   return {
-    calculationResult: signalrRWorkFlows,
+    calculationResult: signalRWorkFlows,
     connectionId,
     startCalculationData,
     updatedSelectedWorkFlow,
@@ -72,4 +74,4 @@ const useCalculationsWorkFlowsSignalr = () => {
     setIsCalculationFinished
   };
 };
-export { useCalculationsWorkFlowsSignalr };
+export { useCalculationsWorkFlowsSignalR };
