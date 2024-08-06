@@ -152,7 +152,8 @@ const useOutsourceSupplier = ({ supplier, setSupplier }: IProps) => {
                 return {
                     ...supplier,
                     finalPrice: price,
-                    profit: (price - supplier.cost) / supplier.cost * 100
+                    cost: price,
+                    profit: 0
                 };
             }
             return supplier;
@@ -168,7 +169,8 @@ const useOutsourceSupplier = ({ supplier, setSupplier }: IProps) => {
         setSupplier({
             ...supplier,
             finalPrice: price,
-            profit: (price - supplier.cost) / supplier.cost * 100
+            cost: price,
+            profit: 0
         });
 
         updateProductItemValueOutsourceWithKey(supplierId, EOutSoucrceUpdateKey.TotalPrice, price);

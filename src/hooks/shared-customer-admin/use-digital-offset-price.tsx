@@ -45,7 +45,7 @@ import {
   workFlowsState,
 } from "@/widgets/product-pricing-widget/state";
 import { getOutsourcingSuppliersListApi } from "@/services/api-service/suppliers/suppliers-endpoints";
-import { useCalculationsWorkFlowsSignalr } from "../signalr/use-calculations-workflows-signalr";
+import { useCalculationsWorkFlowsSignalR } from "../signalr/use-calculations-workflows-signalr";
 import { v4 as uuidv4 } from "uuid";
 import {
   addItemApi,
@@ -143,11 +143,12 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     calculationServerError,
     isCalculationFinished,
     setIsCalculationFinished
-  } = useCalculationsWorkFlowsSignalr();
+  } = useCalculationsWorkFlowsSignalR();
 
   useEffect(() => {
     setProductItemValueByEdit({})
   }, [])
+
   useEffect(() => {
     const oldConnectionId = currentSignalRConnectionId;
     if (oldConnectionId && connectionId && connectionId !== oldConnectionId) {
@@ -155,6 +156,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     }
     setCurrentSignalRConnectionId(connectionId)
   }, [connectionId])
+
   const updateSignalRConnectionId = async (oldSignalRConnectionId, newSignalRConnectionId) => {
     const res: any = await callApi(
       "POST",
@@ -166,6 +168,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       false,
     )
   }
+  
   useEffect(() => {
     if (calculationResult && widgetType != EWidgetProductType.EDIT) {
       setCalculationResult(calculationResult);
@@ -209,8 +212,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     if (calculationResult && calculationResult.productItemValueDraftId === currentCalculationSessionId) {
       getSelectedWorkFlow();
     }
-
   }, [calculationResult]);
+  
   const getSelectedWorkFlow = async () => {
     const res: any = await callApi(
       "GET",
@@ -242,6 +245,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     setJobActions(result?.productItemValue.actions);
     setCalculationResult(result)
   }
+  
   const setSelectedWorkflow = (newWorkFlows, currentWorkFlows) => {
     newWorkFlows.forEach((flow) => {
       const isExists = currentWorkFlows.find((x) => x.id === flow.id);
@@ -3058,7 +3062,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
   const getOutSourcingSuppliers = () => {
     const callBack = (res) => {
-      if (res.success && !productItemValueByEdit?.sourceType) {
+       if (res.success ) {
         setOutSuppliers(res.data);
       }
     };
