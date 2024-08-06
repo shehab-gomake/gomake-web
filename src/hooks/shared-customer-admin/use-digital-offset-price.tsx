@@ -710,6 +710,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     ||
                     parameter?.parameterType ===
                     EParameterTypes.ADVERTISING_PRODUCT_NAME
+                    ||
+                    parameter?.parameterType ===
+                    EParameterTypes.BUTTON
                   ) {
                     // when the parameter is required and the parameter is material select and if there is only one option select it automatically
                     if (parameter?.valuesConfigs && parameter?.valuesConfigs?.length === 1 && parameter?.isRequired) {
@@ -767,6 +770,30 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                           unitType: parameter?.unitType,
                         });
                       }
+                    }
+                    else if (value && parameter.code === "DieCut") {
+                      let values = value?.additionalAttribute?.find((val) => val.valueId === "name")
+
+                      subProduct.parameters.push({
+                        parameterId: parameter?.id,
+                        parameterName: parameter?.name,
+                        actionId:
+                          value?.activateAction === true
+                            ? parameter?.actionId
+                            : null,
+                        parameterType: parameter?.parameterType,
+                        ...(value && {
+                          valueIds: [value?.id],
+                          values: [values?.value],
+                        }),
+                        sectionId: section?.id,
+                        subSectionId: subSection?.id,
+                        actionIndex: parameter?.actionIndex,
+                        parameterCode: parameter?.code,
+                        valuesConfigs: parameter?.valuesConfigs,
+                        unitKey: parameter?.unitKey,
+                        unitType: parameter?.unitType,
+                      });
                     }
                   } else if (
                     parameter?.parameterType ===
@@ -884,6 +911,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           subSection.parameters
             .filter((parameter) => !parameter.isHidden)
             .forEach((parameter) => {
+
               parameter.relatedParameters.forEach((relatedParameter) => {
                 // Check if the relatedParameter's parameterId exists in parameters
                 const isParameterIdExisting = subSection.parameters.some(
@@ -949,6 +977,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     compareStrings(x.pathName, parameter.materialPath[0])
                   )?.data;
                   if (!parameter.valuesConfigs) {
+
                     parameter.valuesConfigs = [];
                   }
                   parameter.valuesConfigs.forEach(val => {
@@ -961,40 +990,84 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                       })
                     }
                   })
-
-                  parameter.valuesConfigs = parameter.valuesConfigs.filter(
-                    (x) => x.valueIds && x.valueIds.length > 0
-                  );
-                  if (materialData) {
-                    materialData.forEach((val) => {
-                      const existsValue = parameter.valuesConfigs.find(
-                        (x) =>
-                          x.valueIds &&
-                          x.valueIds.length > 0 &&
-                          x.valueIds[0] === val.valueId
-                      );
-                      if (!existsValue) {
-                        parameter.valuesConfigs.push({
-                          id: val.valueId,
-                          activateAction: false,
-                          isDefault: false,
-                          isDeleted: false,
+                  if (parameter.code === "DieCut") {
+                    if (parameter.valuesConfigs.length === 0) {
+                      parameter.valuesConfigs = materialData.map(data => ({
+                        id: data.valueId,
+                        isHidden: false,
+                        isDefault: false,
+                        updateName: null,
+                        activateAction: false,
+                        isDeleted: false,
+                        materialValueIds: null,
+                        values: null,
+                        selectedParameterValues: null,
+                        code: null, // Add code if needed
+                        additionalAttribute: data.additionalAttribute,
+                        currency: data.currency
+                      }));
+                    } else {
+                      // If valueConfigs has objects, update it based on materialData
+                      parameter.valuesConfigs = materialData.map(data => {
+                        const existingConfig = parameter.valuesConfigs.find(config => config.id === data.valueId);
+                        return existingConfig ? {
+                          ...existingConfig,
+                          isDefault: true,
+                          additionalAttribute: data.additionalAttribute,
+                          currency: data.currency
+                        } : {
+                          id: data.valueId,
                           isHidden: false,
+                          isDefault: false,
+                          updateName: null,
+                          activateAction: false,
+                          isDeleted: false,
                           materialValueIds: null,
+                          values: null,
                           selectedParameterValues: null,
-                          updateName: val.value,
-                          values: [val.valueId],
-                          additionalAttribute: val?.additionalAttribute,
-                          currency: val?.currency
-                        });
-                      } else {
-                        existsValue.id = val.valueId;
-                        existsValue.updateName = val.value;
-                        existsValue.additionalAttribute = val?.additionalAttribute,
-                          existsValue.currency = val?.currency
-                      }
-                    });
+                          code: null, // Add code if needed
+                          additionalAttribute: data.additionalAttribute,
+                          currency: data.currency
+                        };
+                      });
+                    }
                   }
+                  else {
+                    parameter.valuesConfigs = parameter.valuesConfigs.filter(
+                      (x) => x.valueIds && x.valueIds.length > 0
+                    );
+                    if (materialData) {
+                      materialData.forEach((val) => {
+                        const existsValue = parameter.valuesConfigs.find(
+                          (x) =>
+                            x.valueIds &&
+                            x.valueIds.length > 0 &&
+                            x.valueIds[0] === val.valueId
+                        );
+                        if (!existsValue) {
+                          parameter.valuesConfigs.push({
+                            id: val.valueId,
+                            activateAction: false,
+                            isDefault: false,
+                            isDeleted: false,
+                            isHidden: false,
+                            materialValueIds: null,
+                            selectedParameterValues: null,
+                            updateName: val.value,
+                            values: [val.valueId],
+                            additionalAttribute: val?.additionalAttribute,
+                            currency: val?.currency
+                          });
+                        } else {
+                          existsValue.id = val.valueId;
+                          existsValue.updateName = val.value;
+                          existsValue.additionalAttribute = val?.additionalAttribute,
+                            existsValue.currency = val?.currency
+                        }
+                      });
+                    }
+                  }
+
                 }
 
                 const defaultValue = parameter.valuesConfigs?.find(
@@ -1676,6 +1749,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           section={section}
           index={index}
           straightKnife={straightKnife}
+          allMaterials={allMaterials}
         />
       );
     }
@@ -2494,7 +2568,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             }
           });
         }
-
         if (dieCut) {
           if (subSectionParameter.code === "DieCut") {
             let dieUnitWidth = dieCut.rowData.dieUnitWidth.value + "";
@@ -3337,7 +3410,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     onChangeSubProductsForPrice,
     underParameterIds,
     straightKnife,
-    calculationServerErrorState
+    calculationServerErrorState,
+    setSettingParameters
   };
 };
 export { useDigitalOffsetPrice };

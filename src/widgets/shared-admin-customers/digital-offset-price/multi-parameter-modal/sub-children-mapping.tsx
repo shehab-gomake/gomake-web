@@ -6,7 +6,6 @@ import { CheckboxIcon } from "./icons/checkbox-icon";
 import { MinusIcon } from "./icons/minus";
 import { PlusIcon } from "./icons/plus";
 import { useSubChildMapping } from "./use-sub-children-mapping-modal";
-import { useEffect } from "react";
 
 const SubChildrenMapping = ({
   parameters,
@@ -20,6 +19,8 @@ const SubChildrenMapping = ({
   paddingLeft,
   parentValue,
   settingParameters,
+  isParameterSettings,
+  setSettingParameters
 }) => {
   const {
     ref,
@@ -39,7 +40,9 @@ const SubChildrenMapping = ({
     value,
     index,
     parentValue,
-    item
+    item,
+    isParameterSettings,
+    setSettingParameters
   });
   return (
     <div style={clasess.childRowContainer}>
@@ -49,9 +52,9 @@ const SubChildrenMapping = ({
             icon={<CheckboxIcon />}
             checkedIcon={<CheckboxCheckedIcon />}
             onChange={(e) => onChangeCheckBox(e)}
-            checked={isChecked}
+            checked={isChecked} // This should be true or false based on the selection
             value={isChecked}
-            key={`c${index}_${value.value}`}
+            key={`c${index}_${value.value}_${isChecked}`}
             disabled={isDisabled}
             id={`check_${index}_${index2}_${index3}`}
           />
@@ -70,16 +73,16 @@ const SubChildrenMapping = ({
                 border: isFocused ? "1px solid rgba(237, 2, 140, 1)" : "",
               }}
               onFocus={() => setIsFocused(true)}
-              onChange={onChangeText}
+              onChange={(e) => onChangeText(e, item.id)}
               value={textInputValue}
               id={`input_${index}_${index2}_${index3}`}
             />
             {isFocused && (
               <div style={clasess.iconsContainer}>
-                <div onClick={incrementValue} style={clasess.iconContainer}>
+                <div onClick={() => incrementValue(item.id)} style={clasess.iconContainer}>
                   <PlusIcon />
                 </div>
-                <div onClick={decrementValue} style={clasess.iconContainer}>
+                <div onClick={() => decrementValue(item.id)} style={clasess.iconContainer}>
                   <MinusIcon />
                 </div>
               </div>
