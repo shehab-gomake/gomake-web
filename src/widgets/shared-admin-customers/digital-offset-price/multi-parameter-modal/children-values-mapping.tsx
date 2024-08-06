@@ -16,6 +16,8 @@ const ChildrenValuesMapping = ({
   index,
   index2,
   settingParameters,
+  isParameterSettings,
+  setSettingParameters
 }) => {
   const {
     selectColorValue,
@@ -34,7 +36,8 @@ const ChildrenValuesMapping = ({
     setIsFocused,
     isChecked,
 
-  } = useChildValuesMapping({ value, index, parameters, settingParameters, item });
+  } = useChildValuesMapping({ value, index, parameters, settingParameters, item, isParameterSettings });
+
   return (
     <>
       {value?.valueId?.length != 0 && (
@@ -103,6 +106,8 @@ const ChildrenValuesMapping = ({
                 paddingLeft={paddingLeft}
                 parentValue={parentValue}
                 settingParameters={settingParameters}
+                isParameterSettings={isParameterSettings}
+                setSettingParameters={setSettingParameters}
               />
             );
           })}

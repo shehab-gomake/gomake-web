@@ -9,7 +9,7 @@ import {
 import { getPrintHouseMaterialsByMaterialKey } from "@/services/hooks";
 import { materialsCategoriesState } from "@/store/material-categories";
 import { compareStrings, getParameterByParameterCode } from "@/utils/constants";
-import { useGomakeAxios } from "@/hooks";
+import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { selectedShapeState } from "./gallery-modal-store";
 import { StaightKnifeIcon, OrderNowIcon } from "./icons";
 import { useTranslation } from "react-i18next";
@@ -17,9 +17,10 @@ import { EHttpMethod } from "@/services/api-service/enums";
 import { filterState } from "@/widgets/materials-widget/state";
 import { useRouter } from "next/router";
 
-const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForNewDie, straightKnife }) => {
+const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForNewDie, straightKnife, isParameterSettings, getProductById }) => {
 
   const { callApi } = useGomakeAxios();
+  const { alertFaultAdded, alertSuccessAdded } = useSnackBar();
   const { t } = useTranslation();
   const router = useRouter()
   const selectParameterButton = useRecoilValue<any>(selectParameterButtonState);
@@ -80,7 +81,7 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
       key: selectParameterButton?.parameter?.materialPath[0],
       width: widthParameter && widthParameter.values && widthParameter.values.length > 0 && widthParameter.values[0] ? widthParameter.values[0] : 0,
       length: heightParameter && heightParameter.values && heightParameter.values.length > 0 && heightParameter.values[0] ? heightParameter.values[0] : 0,
-      shape: shapeCode,
+      shape: shapeCode || "",
       clientId: router.query.customerId,
       finalWidth: finalUnitWidthParameter && finalUnitWidthParameter.values && finalUnitWidthParameter.values.length > 0 && finalUnitWidthParameter.values[0] ? finalUnitWidthParameter.values[0] : 0,
       finalLength: finalUnitLengthParameter && finalUnitLengthParameter.values && finalUnitLengthParameter.values.length > 0 && finalUnitLengthParameter.values[0] ? finalUnitLengthParameter.values[0] : 0,
@@ -127,25 +128,37 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
   const onChangeSearch = (value: string) => {
     setMaterialDataFilter(value);
   };
+  const [changeDefaultValue, setChangeDefaultValue] = useState("");
+  useEffect(() => {
+    if (selectedShape) {
+      const updatedShape = { ...selectedShape, isDefault: true };
+      setChangeDefaultValue(updatedShape);
+    }
+  }, [selectedShape])
   const onClickChoosParameter = () => {
+    if (isParameterSettings) {
+      updatedProductParameteDefaultValue(selectParameterButton?.sectionId, selectParameterButton?.subSectionId, selectParameterButton?.parameter)
+    }
+    else {
+      onChangeSubProductsForPrice(
+        selectParameterButton?.parameter?.id,
+        selectParameterButton?.subSectionId,
+        selectParameterButton?.sectionId,
+        selectParameterButton?.parameter?.parameterType,
+        selectParameterButton?.parameter?.name,
+        selectParameterButton?.parameter?.actionId,
+        {
+          valueIds: selectedShape?.id,
+          values: selectedShape?.rowData?.name?.value,
+          ...(materialType?.id > 0 && { material: materialType?.id }),
+        },
+        selectParameterButton?.paameterType,
+        selectParameterButton?.index,
+        selectParameterButton?.parameter?.actionIndex,
+        selectParameterButton?.parameter?.code, selectedShape
+      );
+    }
 
-    onChangeSubProductsForPrice(
-      selectParameterButton?.parameter?.id,
-      selectParameterButton?.subSectionId,
-      selectParameterButton?.sectionId,
-      selectParameterButton?.parameter?.parameterType,
-      selectParameterButton?.parameter?.name,
-      selectParameterButton?.parameter?.actionId,
-      {
-        valueIds: selectedShape?.id,
-        values: selectedShape?.rowData?.name?.value,
-        ...(materialType?.id > 0 && { material: materialType?.id }),
-      },
-      selectParameterButton?.paameterType,
-      selectParameterButton?.index,
-      selectParameterButton?.parameter?.actionIndex,
-      selectParameterButton?.parameter?.code, selectedShape
-    );
 
     onClose();
   };
@@ -210,6 +223,44 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
       setIsShowStraightKnife(res.data?.data?.data)
     }
   }, [widthParameter, heightParameter, shapeParameter, LabelShapeParameter, selectParameterButton]);
+  const updatedProductParameteDefaultValue = useCallback(
+    async (sectionId: string, subSectionId: string, parameter: any) => {
+      if (changeDefaultValue !== parameter?.defaultValue) {
+        await updateProductParameterEndPoint(sectionId, subSectionId, {
+          parameter: {
+            ...parameter,
+            valuesConfigs: [changeDefaultValue]
+          },
+        });
+        setChangeDefaultValue("");
+      }
+    },
+
+    [router, changeDefaultValue]
+  );
+  const updateProductParameterEndPoint = async (
+    sectionId: string,
+    subSectionId: string,
+    data: any
+  ) => {
+    const res = await callApi(
+      "PUT",
+      `/v1/printhouse-config/products/update-product-parameter`,
+      {
+        productId: router?.query?.id,
+        sectionId: sectionId,
+        subSectionId: subSectionId,
+        productParameterType: 1,
+        ...data,
+      }
+    );
+    if (res?.success) {
+      alertSuccessAdded()
+      getProductById();
+    } else {
+      alertFaultAdded()
+    }
+  };
 
   return {
     materialData,

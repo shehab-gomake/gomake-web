@@ -8,6 +8,7 @@ import { useStyle } from "./style";
 import { Tabs } from "@mui/material";
 import { AccordionMappingWidget } from "./widgets/accordion-mapping";
 import { SectionMappingWidget } from "./widgets/section-mapping";
+import { GalleryModal, MultiParameterModal } from "../../digital-offset-price";
 
 const ParameterWidget = () => {
   const { clasess } = useStyle();
@@ -36,6 +37,14 @@ const ParameterWidget = () => {
     expanded,
     handleChange,
     relatedParameters,
+    GalleryModalOpen,
+    onCloseGalleryModal,
+    straightKnife,
+    multiParameterModal,
+    onCloseMultiParameterModal,
+    onOpeneMultiParameterModal,
+    setSettingParameters,
+    settingParameters
   } = useAddProduct({ clasess });
 
   return (
@@ -153,6 +162,22 @@ const ParameterWidget = () => {
           />
         </>
       )}
+      <GalleryModal
+        openModal={GalleryModalOpen}
+        onClose={onCloseGalleryModal}
+        isParameterSettings={true}
+        straightKnife={straightKnife}
+        getProductById={getProductById}
+      />
+      <MultiParameterModal
+        openModal={multiParameterModal}
+        onClose={onCloseMultiParameterModal}
+        settingParameters={settingParameters}
+        _renderParameterType={_renderParameterType}
+        isParameterSettings={true}
+        setSettingParameters={setSettingParameters}
+
+      />
     </>
   );
 };
