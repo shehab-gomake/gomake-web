@@ -180,6 +180,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         totalWorkFlowsCount: 0,
         currentWorkFlowsCount: 0,
       });
+      debugger
       setLoading(false);
     }
   }, [calculationServerError]);
@@ -226,7 +227,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         currentWorkFlowsCount: 0,
       });
 
-      setLoading(false);
+      //setLoading(false);
       setcalculationServerErrorState(true)
       return;
     }
@@ -239,7 +240,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       currentWorkFlowsCount: 0,
     });
     setCurrentProductItemValueTotalWorkFlows(result.productItemValue.totalWorkFlows)
-    setLoading(false);
+    //setLoading(false);
     setWorkFlows(result.productItemValue.workFlows);
     setJobActions(result?.productItemValue.actions);
     setCalculationResult(result)
@@ -315,6 +316,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
   useEffect(() => {
     if(startCalculationData && startCalculationData.isDevMode ){
+      debugger
       setWorkFlows([]);
       setCurrentProductItemValueTotalPrice(null);
       setJobActions([]);
@@ -2969,7 +2971,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       totalWorkFlowsCount: 0,
       currentWorkFlowsCount: 0,
     });
-    setCurrentCalculationSessionId(null);
+    
     setCalculationExceptionsLogs([])
     setcalculationServerErrorState(false)
 
@@ -2997,6 +2999,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         }
         setLoading(true);
         const newCalculationSessionId = uuidv4();
+        setCurrentCalculationSessionId(newCalculationSessionId);
         const res: any = await callApi(
           "POST",
           `/v1/calculation-service/calculations/calculate-productV2`,
@@ -3022,7 +3025,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             totalWorkFlowsCount: 0,
             currentWorkFlowsCount: 0,
           });
-          
+          debugger
           setLoading(false);
           setcalculationServerErrorState(true)
         }
@@ -3031,13 +3034,14 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             totalWorkFlowsCount: 0,
             currentWorkFlowsCount: 0,
           });
-
-          setLoading(false);
+          debugger
+          //setLoading(false);
         }
         else {
           const id = res?.data?.data?.data;
           if(!id){
             setcalculationServerErrorState(true);
+            debugger
             setLoading(false);
           }
           setCurrentCalculationSessionId(id);
@@ -3045,11 +3049,13 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             totalWorkFlowsCount: 0,
             currentWorkFlowsCount: 0,
           });
-          //setLoading(false);
+          setLoading(true);
         }
       }
     } else {
+      debugger
       setLoading(false);
+      setCurrentCalculationSessionId(null);
     }
   }, 700);
 
