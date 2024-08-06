@@ -18,7 +18,6 @@ import {
   subProductsParametersState,
 } from "@/store";
 import { useMaterials } from "../use-materials";
-import { checkParameterState } from "./store";
 import cloneDeep from "lodash/cloneDeep";
 import lodashClonedeep from "lodash.clonedeep";
 import { EWidgetProductType } from "@/pages-components/products/digital-offset-price/enums";
@@ -1563,6 +1562,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     }
 
   }, [deviceSize, deviceCategory])
+  const setOpenQuantityComponent = useDebouncedCallback(() => {
+    setOpenQuantityComponentModal(true);
+  }, 700);
 
   const _renderParameterType = (
     parameter: any,
@@ -1629,7 +1631,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           type="number"
           disabled={isInputDisabled}
           extraOnChange={() => {
-            setOpenQuantityComponentModal(true);
+            setOpenQuantityComponent();
           }}
         />
       );
