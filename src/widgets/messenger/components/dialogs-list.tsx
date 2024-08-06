@@ -1,4 +1,3 @@
-import 'react-chat-elements/dist/main.css';
 import Stack from "@mui/material/Stack";
 import {
     Avatar,
@@ -65,7 +64,7 @@ const DialogList = ({onSelectDialog, dialogs, selectedDialogId, unRead, onClickA
                                       ...FONT_FAMILY.Inter(500, 14),
                                       opacity: 0.3,
                                       marginTop: 'auto'
-                                  }}>{formatDistanceToNow(new Date(dialog.last_message_date_sent * 1000), {addSuffix: true})}</span>}
+                                  }}>{dialog.last_message_date_sent ? formatDistanceToNow(new Date(dialog.last_message_date_sent * 1000), {addSuffix: true}): ''}</span>}
                                   sx={{
                                       borderRadius: '12px',
                                       backgroundColor: dialog._id === selectedDialogId ? '#615EF00F' : '#FFF'
