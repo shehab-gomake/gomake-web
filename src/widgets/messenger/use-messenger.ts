@@ -222,6 +222,12 @@ const useMessenger = () => {
 
     }, [selectedDialog, messenger.isChatConnected]);
 
+    useEffect(() => {
+        if (usersMetaData.length > 0) {
+            setMessages(prevState => prevState.map(msg => ({...msg, userMetaData: usersMetaData?.find(user => user.userId == msg.sender_id)})));
+        }
+    }, [usersMetaData, messages])
+
     return {
         selectedDialog,
         setSelectedDialog,
