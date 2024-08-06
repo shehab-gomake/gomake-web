@@ -180,7 +180,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         totalWorkFlowsCount: 0,
         currentWorkFlowsCount: 0,
       });
-      debugger
       setLoading(false);
     }
   }, [calculationServerError]);
@@ -220,7 +219,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         {},
         false,
     )
-    debugger
     if(!res.success){
       setCalculationProgress({
         totalWorkFlowsCount: 0,
@@ -316,7 +314,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
   useEffect(() => {
     if(startCalculationData && startCalculationData.isDevMode ){
-      debugger
       setWorkFlows([]);
       setCurrentProductItemValueTotalPrice(null);
       setJobActions([]);
@@ -3025,7 +3022,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             totalWorkFlowsCount: 0,
             currentWorkFlowsCount: 0,
           });
-          debugger
           setLoading(false);
           setcalculationServerErrorState(true)
         }
@@ -3034,14 +3030,12 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             totalWorkFlowsCount: 0,
             currentWorkFlowsCount: 0,
           });
-          debugger
           //setLoading(false);
         }
         else {
           const id = res?.data?.data?.data;
           if(!id){
             setcalculationServerErrorState(true);
-            debugger
             setLoading(false);
           }
           setCurrentCalculationSessionId(id);
@@ -3053,7 +3047,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         }
       }
     } else {
-      debugger
       setLoading(false);
       setCurrentCalculationSessionId(null);
     }
