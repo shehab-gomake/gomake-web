@@ -49,15 +49,17 @@ const EmployeeGeneralForm = ({ action }: { action: EmployeeActions }) => {
 
     const updateEmployeeState = (key, value) => {
         if (key === "quoteLimitationType")
-
+            {
+            const newValue = value === "" || value === null ? 0 : value;
             setState({
                 ...state,
                 employee: {
                     ...state.employee,
                     quotePriceLimit: 0,
-                    [key]: value
+                    [key]: newValue
                 }
             });
+        }
         else
             setState({
                 ...state,
