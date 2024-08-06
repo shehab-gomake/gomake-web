@@ -14,7 +14,7 @@ const useCalculationsWorkFlowsSignalR = () => {
     useGoMakeSignalr<ICalculationSignalRResult>({
       url: config.erp_server +`/hubs/workFlows`,
       accessToken: getUserToken(),
-      methodName: "updateWorkFlows",
+      methodName: "updateWorkFlows2",
     });
    
   const [signalRPricingResult, setSignalRPricingResult] = useState<any>();
@@ -33,11 +33,11 @@ const useCalculationsWorkFlowsSignalR = () => {
   useEffect(() => {
     if (connection) {
       connection.on("updateWorkFlows", (newData: ICalculationSignalRResult) => {
-        setCalculationExceptionsLogs(newData.exceptions);
-        setSignalRWorkFlows(newData);
+        console.log("updateWorkFlows",newData)
+        //setCalculationExceptionsLogs(newData.exceptions);
+        setSignalrRWorkFlows(newData);
       });
-
-      connection.on("startCalculationSession", (newData) => {
+      connection.on("startCalculationSession", async (newData) => {
         /*if(newData.isDevMode){
           console.log("isDevMode received")
           setConnectionSessionId(newData.productItemValueDraftId);
@@ -58,6 +58,7 @@ const useCalculationsWorkFlowsSignalR = () => {
       connection.on("calculationServerError", () => {
         setCalculationServerErrorState(true)
       });
+      
     }
   }, [connection]);
 
