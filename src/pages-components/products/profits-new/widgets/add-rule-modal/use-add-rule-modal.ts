@@ -371,6 +371,7 @@ const useAddRuleModal = ({
     setExpression(textInput);
   }, [rules]);
   const create = useCallback(async () => {
+    debugger
     const requestBody: any = {
       actionId: router?.query?.actionId,
       actionProfitId: actionProfitByActionId?.id,
@@ -384,7 +385,7 @@ const useAddRuleModal = ({
             typeof item?.statement === "object"
               ? item?.statement?.id
               : item.statement,
-          statementValue: item.statement2.id,
+          statementValue:  item.statement2.type === 5 ? item.statement2.code : item.statement2.id,
           operator: item.condition.id,
           conditionBetweenStatements: item.linkCondition
             ? item.linkCondition.id
@@ -429,6 +430,7 @@ const useAddRuleModal = ({
   ]);
 
   const createProperties = useCallback(async () => {
+    debugger
     if (!propertieValue) {
       alertFaultAdded();
       return;
