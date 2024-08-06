@@ -37,7 +37,6 @@ const useSubChildMapping = ({
       let subProduct = subProducts?.find(sub => sub.type === subProductType);
       
       const colorParameter = settingParameters?.parameter?.settingParameters[0];
-      console.log("subProdssdvdfhtghguct",{subProduct,colorParameter})
       return subProduct.parameters.find(paramValue => paramValue.parameterId === colorParameter.id);
     } else {
       const valuesConfigs = settingParameters?.parameter?.valuesConfigs;
@@ -256,8 +255,6 @@ const useSubChildMapping = ({
           const val = parameterValue.valueIds[0]; // Assuming this represents the relevant value ID
 
           const valueConfig = settingParameters.parameter.valuesConfigs.find(conf => conf.id === val);
-                  console.log("parameterValue",valueConfig)
-
           if (valueConfig) {
             const selectedParameterValue = valueConfig.selectedParameterValues[0];
             return selectedParameterValue.selectValuesCount; // Max allowed selections
@@ -298,7 +295,6 @@ const useSubChildMapping = ({
       const colorParameterValue = getSelectedColorParameterValue();
       if (colorParameterValue && colorParameterValue.values) {
         const isValueExists = colorParameterValue.valueIds.includes(value.valueId);
-        console.log("SDFSDFGF",!isValueExists && colorParameterValue.valueIds.length >= maxSelection)
 
         return !isValueExists && colorParameterValue.valueIds.length >= maxSelection;
       }
