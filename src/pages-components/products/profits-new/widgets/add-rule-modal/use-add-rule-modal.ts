@@ -370,8 +370,17 @@ const useAddRuleModal = ({
     const textInput = displayText(rules);
     setExpression(textInput);
   }, [rules]);
+  const getStatementId = (item)=>{
+    if(typeof item?.statement === "object"){
+      //material input
+      if(item.statement2 && item.statement2.type === 5){
+        return item?.statement?.code;
+      }
+      return item?.statement?.id;
+    }
+    return item?.statement
+  }
   const create = useCallback(async () => {
-    debugger
     const requestBody: any = {
       actionId: router?.query?.actionId,
       actionProfitId: actionProfitByActionId?.id,
@@ -381,11 +390,8 @@ const useAddRuleModal = ({
       exceptionRule: expression,
       exceptionConditionProperties: rules.map((item) => {   
         return {
-          statementId:
-            typeof item?.statement === "object"
-              ? item?.statement?.id
-              : item.statement,
-          statementValue:  item.statement2.type === 5 ? item.statement2.code : item.statement2.id,
+          statementId:getStatementId(item),
+          statementValue:  item.statement2.id,
           operator: item.condition.id,
           conditionBetweenStatements: item.linkCondition
             ? item.linkCondition.id
