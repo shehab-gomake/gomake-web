@@ -62,6 +62,7 @@ const OutSourceSupplierComponent = ({
             setCurrentProductItemValueTotalPrice(finalPrice)
         }
     }, [finalPrice])
+    
     const systemCurrency = useRecoilValue<any>(systemCurrencyState);
 
     return (

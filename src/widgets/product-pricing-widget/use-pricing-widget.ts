@@ -50,52 +50,26 @@ const usePricingWidget = ({ getOutSourcingSuppliers, workFlows , widgetType}) =>
   const [tabs, setTabs] = useState([]);
   const connectionId = useRecoilValue(currentCalculationConnectionId);
 
-  const [previousProductItemValueTotalPrice, setPreviousProductItemValueTotalPrice] = useState<number | null>(null);
-  const [currentProductItemValueTotalPrice ,setCurrentProductItemValueTotalPrice] = useRecoilState<number>(currentProductItemValuePriceState);
+  const setCurrentProductItemValueTotalPrice = useSetRecoilState<number>(currentProductItemValuePriceState);
   const calculationResult = useRecoilValue(calculationResultState);
+  const [isUpdateResolved, setIsUpdateResolved] = useState(false);
 
   useEffect(() => {
-    console.log("calculationResult is: ", calculationResult)
-    //setCurrentProductItemValueTotalPrice(calculationResult?.totalPrice)
-  }, [calculationResult])
-  // here
-
+    if (isUpdateResolved) {
+      setCurrentProductItemValueTotalPrice(calculationResult?.totalPrice);
+      setIsUpdateResolved(false);
+    }
+  }, [ calculationResult]);
 
   const updateProductItemValue = async (sourceType: number) => {
     const callBack = (res) => {
       if (res?.success) {
-      
-        console.log("1111 calculationResult is: ", calculationResult)
-
-
-
-        // if (widgetType === EWidgetProductType.CREATE || widgetType === EWidgetProductType.DUPLICATE) {
-        //   if (sourceType === EWorkSource.OUT || sourceType === EWorkSource.PARTIALLY) {
-        //     setPreviousProductItemValueTotalPrice(currentProductItemValueTotalPrice);
-        //     setCurrentProductItemValueTotalPrice(null);
-        //   }
-        //   else {
-        //     setCurrentProductItemValueTotalPrice(previousProductItemValueTotalPrice);
-        //   }
-        // }
-        // else { // Edit
-        //   if (sourceType === EWorkSource.INTERNAL) {
-        //     //calc again
-        //   }
-        //   else {
-        //     // setCurrentProductItemValueTotalPrice(null);
-        //   }
-        // }
-
-
-
-        /// test
-        //setCurrentProductItemValueTotalPrice(calculationResult?.totalPrice) 
-      }
-      else {
+        setIsUpdateResolved(true);
+      } else {
         alertFaultUpdate();
       }
     };
+
     await updateProductItemValueOutsource(callApi, callBack, {
       productItemValueId: productItemValueDraftId,
       signalRConnectionId: connectionId,

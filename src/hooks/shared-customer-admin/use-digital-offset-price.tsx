@@ -213,8 +213,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     if (calculationResult && calculationResult.productItemValueDraftId === currentCalculationSessionId){
       getSelectedWorkFlow();
     }
- 
   }, [calculationResult]);
+
   const getSelectedWorkFlow = async ()=>{
     const res: any = await callApi(
         "GET",
@@ -222,7 +222,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         {},
         false,
     )
-    debugger
     if(!res.success){
       setCalculationProgress({
         totalWorkFlowsCount: 0,
@@ -247,6 +246,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     setJobActions(result?.productItemValue.actions);
     setCalculationResult(result)
   }
+  
   const setSelectedWorkflow = (newWorkFlows, currentWorkFlows) => {
     newWorkFlows.forEach((flow) => {
       const isExists = currentWorkFlows.find((x) => x.id === flow.id);
@@ -2985,7 +2985,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
   const getOutSourcingSuppliers = () => {
     const callBack = (res) => {
-      if (res.success && !productItemValueByEdit?.sourceType) {
+       if (res.success ) {
         setOutSuppliers(res.data);
       }
     };

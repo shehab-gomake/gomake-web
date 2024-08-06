@@ -35,7 +35,7 @@ const useCalculationsWorkFlowsSignalR = () => {
       connection.on("updateWorkFlows", (newData: ICalculationSignalRResult) => {
         console.log("updateWorkFlows",newData)
         //setCalculationExceptionsLogs(newData.exceptions);
-        setSignalrRWorkFlows(newData);
+        setSignalRWorkFlows(newData);
       });
       connection.on("startCalculationSession", async (newData) => {
         /*if(newData.isDevMode){
