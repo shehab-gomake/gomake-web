@@ -6,11 +6,24 @@ import { ITab } from "@/components/tabs/interface";
 import { PrimaryTabsComponent } from "@/components/tabs/primary-tabs";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { useUserPermission } from "@/hooks/use-permission";
+import { useEffect } from "react";
+import { useCompanyProfile } from "@/hooks/use-company-profile";
 
 const SettingsProfileWidget = () => {
   const { t } = useTranslation();
   const { CheckPermission } = useUserPermission();
   const {} = useEmployee();
+  const {
+    getCurrenciesApi,
+    getProfile
+  } = useCompanyProfile();
+
+  
+  useEffect(() => {
+    getCurrenciesApi().then(() => {
+      getProfile();
+    });
+  }, []);
 
   const tabs: ITab[] = [
     { title: t("profileSettings.profileTab"), component: <UserProfile /> },

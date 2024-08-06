@@ -774,9 +774,6 @@ const useAddProduct = ({ clasess }) => {
       );
     }
     else if (parameter?.parameterType === EParameterTypes.SELECT_MATERIALS || parameter?.parameterType === EParameterTypes.ADVERTISING_PRODUCT_CATEGORY || parameter?.parameterType === EParameterTypes.ADVERTISING_PRODUCT_NAME) {
-      if (parameter.code == "FlatbedColor") {
-        // debugger;
-      }
       if (allMaterials?.length > 0) {
         const defailtObjectValue = parameter?.valuesConfigs?.find((item) => item.isDefault === true);
         let options = [];

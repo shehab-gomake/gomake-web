@@ -269,8 +269,7 @@ const PriceListPageWidget = ({ widgetType }) => {
                                         (section: any, index: number) => {
                                             if (index === activeIndex) {
                                                 if (
-                                                    section.name ===
-                                                    t("products.offsetPrice.admin.Pricing")
+                                                    section.name === t("products.offsetPrice.admin.Pricing")
                                                 ) {
                                                     return (
                                                         <PricingWidget
@@ -402,27 +401,24 @@ const PriceListPageWidget = ({ widgetType }) => {
                                 ) : null}
                             </div>
                         </div>
-                        {
-                            viewWorkFlow === EPricingViews.OUTSOURCE_WORKFLOW ? <div style={{ width: 220, height: 40, marginLeft: 55, marginRight: 55 }} /> : <div style={{ width: 220, height: 40, marginLeft: 55, marginRight: 55 }}>
-                                {widgetType === EWidgetProductType.EDIT ? (
-                                    <GomakePrimaryButton
-                                        style={clasess.addOrderBtn}
-                                        onClick={updateQuoteItem}
-                                    >
-                                        {t("materials.buttons.edit")}
-                                    </GomakePrimaryButton>
-                                ) : (
-                                    <GomakePrimaryButton
-                                        data-tour={'addPricingBtn'}
-                                        style={clasess.addOrderBtn}
-                                        onClick={navigateForRouter}
-                                    >
-                                        {t("products.offsetPrice.admin.addOrder")}
-                                    </GomakePrimaryButton>
-                                )}
-                            </div>
-                        }
-
+                        <div style={{ width: 220, height: 40, marginLeft: 55, marginRight: 55 }}>
+                            {widgetType === EWidgetProductType.EDIT ? (
+                                <GomakePrimaryButton
+                                    style={clasess.addOrderBtn}
+                                    onClick={updateQuoteItem}
+                                >
+                                    {t("materials.buttons.edit")}
+                                </GomakePrimaryButton>
+                            ) : (
+                                <GomakePrimaryButton
+                                    data-tour={'addPricingBtn'}
+                                    style={clasess.addOrderBtn}
+                                    onClick={navigateForRouter}
+                                >
+                                    {t("products.offsetPrice.admin.addOrder")}
+                                </GomakePrimaryButton>
+                            )}
+                        </div>
                     </div>
                 </div>
             )}

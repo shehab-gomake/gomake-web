@@ -17,7 +17,7 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     const { t } = useTranslation();
     const { callApi } = useGomakeAxios();
     const router = useRouter();
-    const {CheckDocumentPermission } = useUserPermission();
+    const { CheckDocumentPermission } = useUserPermission();
     const quoteItemValue: any = useRecoilValue(quoteItemState);
     const { alertFault, alertSuccessDelete, alertFaultDelete, alertSuccessUpdate, alertFaultUpdate, alertFaultAdded, alertSuccessAdded, alertFaultGetData } = useSnackBar();
     const [selectedTabIndex, setSelectedTabIndex] = useState<number>(0);
@@ -83,7 +83,7 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
             if (res?.success) {
                 alertSuccessUpdate();
                 onClickCloseOrderNowModal();
-                navigate(`/board-missions?orderNumber=${res?.data?.number}`);
+                navigate(`/jobs?orderNumber=${res?.data?.number}`);
             } else {
                 alertFaultUpdate();
             }
@@ -100,7 +100,7 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
             if (res?.success) {
                 alertSuccessUpdate();
                 onClickCloseOrderNowModal();
-                navigate(`/board-missions?orderNumber=${res?.data?.number}`);
+                navigate(`/jobs?orderNumber=${res?.data?.number}`);
             } else {
                 alertFaultUpdate();
             }
@@ -192,7 +192,7 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     const isNewCreation = router?.query?.isNewCreation;
     const canEditDocument = quoteItemValue?.isEditable && CheckDocumentPermission(docType.toString(), DocumentPermission.EDIT_DOCUMENT);
     const showAddNewItemBtn = canEditDocument && docType !== DOCUMENT_TYPE.receipt
-    
+
 
     return {
         openOrderNowModal,

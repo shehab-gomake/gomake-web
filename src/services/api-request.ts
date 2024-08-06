@@ -31,7 +31,7 @@ const apiRequest = async (
         "project-name": "business-dashboard",
         ...(getUserToken() && { Authorization: "Bearer " + getUserToken() }),
         ...(data.customAuth && { "auth-token": data.customAuth }),
-        lang: language ? language : "en",
+        lang: "en" ,
         domain: "",
       },
     };

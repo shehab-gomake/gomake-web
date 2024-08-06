@@ -435,6 +435,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
         }else{
           uploadPrintHouseMaterialExcelFileApi(callApi, callBack, {
             key: materialType.toString(),
+            supplierId:supplierId,
             base64: base64String,
           });
         }

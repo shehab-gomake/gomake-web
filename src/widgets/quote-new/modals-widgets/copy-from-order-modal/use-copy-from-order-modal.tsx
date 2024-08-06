@@ -4,12 +4,15 @@ import { EHttpMethod } from "@/services/api-service/enums";
 import { getClientDocumentsApi } from "@/services/api-service/generic-doc/documents-api";
 import { quoteItemState } from "@/store";
 import { TableCell, styled, tableCellClasses } from "@mui/material";
+import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRecoilState } from "recoil";
 
 const useCopyFromOrderModal = ({ onClose, documentType, openModal, cliendDocumentType }) => {
   const { t } = useTranslation();
+  const router = useRouter();
+
   const [term, setTerm] = useState("")
   const filterItems = (items) => {
     if (!term) return items; // If no search term, return all items
@@ -42,6 +45,17 @@ const useCopyFromOrderModal = ({ onClose, documentType, openModal, cliendDocumen
   const [totalPrice, setTotalPrice] = useState(0);
   const [documentItems, setDocumentItems] = useState([]);
 
+
+  const { orderId, deliveryNoteId } = router.query;
+  const [currentDocumentId, setCurrentDocumentId] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (orderId) {
+      setCurrentDocumentId(orderId as string);
+    } else if (deliveryNoteId) {
+      setCurrentDocumentId(deliveryNoteId as string);
+    }
+  }, [orderId, deliveryNoteId]);
 
   const modalLabel = () => {
     switch (cliendDocumentType) {
@@ -133,14 +147,28 @@ const useCopyFromOrderModal = ({ onClose, documentType, openModal, cliendDocumen
     }
     const callBack = (res) => {
       if (res?.success) {
-        setDocumentItems(res?.data);
+        const updatedData = res.data.filter(doc => doc.id !== currentDocumentId).map(doc => {
+          const sourceDocumentNumber = doc.number;
+          const sourceDocumentId = doc.id;
+          const updatedOrderItems = doc.orderItems.map(item => ({
+            ...item,
+            sourceDocumentNumber,
+            sourceDocumentId
+          }));
+          return {
+            ...doc,
+            orderItems: updatedOrderItems,
+          };
+        });
+        setDocumentItems(updatedData);
       } else {
         setDocumentItems(null);
       }
     };
+
     await getClientDocumentsApi(callApi, callBack, {
       documentType: docType,
-      clientId: quoteItemValue?.customerID
+      clientId: quoteItemValue?.customerID,
     });
 
 
@@ -165,6 +193,7 @@ const useCopyFromOrderModal = ({ onClose, documentType, openModal, cliendDocumen
       }
       return false;
     }).map(item => ({
+      ...item,
       finalPrice: item.finalPrice
     }));
     const res = await callApi(

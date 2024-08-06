@@ -97,7 +97,7 @@ const RowMappingWidget = ({
             />
             {parentIndex}
           </div>
-          : documentType === DOCUMENT_TYPE.quote ?
+          : (!isQuoteConfirmation &&  documentType === DOCUMENT_TYPE.quote) ?
             <span style={classes.checkBoxContainer}>
               <Checkbox
                 icon={<CheckboxIcon />}
@@ -120,7 +120,7 @@ const RowMappingWidget = ({
           borderBottom: item?.childsDocumentItems && "none",
         }}
       >
-        {item?.code ? item?.code : "225"}
+        {item?.productCode ? item?.productCode : "000"}
       </PrimaryTableCell>
       <PrimaryTableCell
         style={{

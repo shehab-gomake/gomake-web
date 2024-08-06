@@ -262,7 +262,7 @@ const useSettings = ({
           status: true,
           clients: productState?.clients,
           clientsTypes: productState?.clientsTypes,
-          additionProfits: productState?.additionProfits ,
+          additionProfits: productState?.additionProfits,
           //sections: productState?.sections,
         }
       );
@@ -375,6 +375,7 @@ const useSettings = ({
     customersList,
     clientTypesList,
     openDeleteRowModal,
+    query,
     onClickOpenDeleteRowModal,
     onClickCloseDeleteRowModal,
     UploadProductImage,

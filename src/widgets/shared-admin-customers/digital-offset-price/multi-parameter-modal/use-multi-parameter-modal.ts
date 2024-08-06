@@ -51,7 +51,7 @@ const useMultiParameterModal = ({ settingParameters, onClose,isParameterSettings
   useEffect(() => {
     const result = getObjectById();
     setSelectColorValue(result);
-  }, [generalParameters, selectedValueConfig]);
+  }, [generalParameters, selectedValueConfig,subProducts]);
 
   const onClickSaveParameter = () => {
     let copy = lodashClonedeep(subProductsCopy);

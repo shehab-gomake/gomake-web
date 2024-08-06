@@ -9,6 +9,7 @@ const rowInputs = (
   newMaterialHeaders?
 ) => {
   const newHeaders = newMaterialHeaders ? newMaterialHeaders : materialHeaders;
+  console.log("newHeaders", newHeaders)
   const inputArray = newHeaders
     ?.filter((header) => header.key !== "Active")
     .map((header) => {
@@ -107,6 +108,19 @@ const rowInputs = (
             values: state?.clients ? state?.clients : [],
             isValid: true,
             multiple: true,
+          };
+        case "NOTE_BOOK_TYPES":
+          return {
+            name: header?.key,
+            label: newMaterialHeaders ? null : header?.value,
+            type: "select",
+            multiple: true,
+            placeholder: header?.value,
+            required: false,
+            parameterKey: header?.key,
+            options: [],
+            value: "",
+            isValid: true,
           };
         default:
           if (EDataTypeEnum[header?.inputType] === "IMAGE") return null;

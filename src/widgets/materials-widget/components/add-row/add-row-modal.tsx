@@ -3,14 +3,16 @@ import { useTranslation } from "react-i18next";
 import { FormInput } from "@/components/form-inputs/form-input";
 import { IInput } from "@/components/form-inputs/interfaces";
 import { GoMakeModal } from "@/components";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { currenciesState, materialHeadersState, materialsClientsState, materialsMachinesState, openAddRowModalState } from "../../state";
+import { currenciesState, materialHeadersState, materialsClientsState, materialsMachinesState, materialsParametersState, openAddRowModalState } from "../../state";
 import { rowInputs } from "./inputs";
 import { useStyle } from "./style";
 import { Stack } from "@mui/material";
 import { SecondaryButton } from "@/components/button/secondary-button";
 import { useAddCategoryRow } from "./use-add-row";
+import { useGomakeAxios, useSnackBar } from "@/hooks";
+import { GetParameterValuesByIdAi } from "@/services/api-service/parameters/parameters-outputs";
 interface IAddRowModalProps {
     isAdmin: boolean;
 }
@@ -18,13 +20,38 @@ const AddRowModal = (props: IAddRowModalProps) => {
     const { t } = useTranslation();
     const { classes } = useStyle()
     const [rowData, setRowData] = useState<any>({});
+    const { alertFaultGetData, alertSuccessGetData } = useSnackBar();
+    const { callApi } = useGomakeAxios();
+
     const { onAddCategoryRow } = useAddCategoryRow(props.isAdmin);
     const currencies = useRecoilValue(currenciesState);
     const machinesCategories = useRecoilValue<any>(materialsMachinesState);
     const clientsCategories = useRecoilValue<any>(materialsClientsState);
+    const [, setParameterCategories] = useRecoilState(materialsParametersState)
+
+
 
     const [openModal, setOpenModal] = useRecoilState<boolean>(openAddRowModalState);
     const materialHeaders = useRecoilValue<{ key: string, value: string, inputType: number, values: any[] }[]>(materialHeadersState);
+    const notebookTypesObj = materialHeaders?.find((item) => item.key === "notebookTypes")
+
+    const getParameterValuesById = async (data: any) => {
+        const callBack = res => {
+            if (res.success) {
+                setParameterCategories(res?.data)
+            } else {
+                alertFaultGetData()
+
+            }
+        }
+        await GetParameterValuesByIdAi(callApi, callBack, { Id: data?.parameterId });
+    };
+
+    useEffect(() => {
+        if (notebookTypesObj) {
+            getParameterValuesById(notebookTypesObj)
+        }
+    }, [notebookTypesObj]);
 
     const onChangeInputs = (key, value) => {
         setRowData({ ...rowData, [key]: value })

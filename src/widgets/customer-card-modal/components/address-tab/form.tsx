@@ -35,41 +35,47 @@ const AddressForm = ({ address, onDelete, setAddress }: IProps) => {
   const [cities, setCities] = useState([]);
   const [cityStreets, setCityStreets] = useState([]);
 
-  useEffect(() => {
-    const fetchCities = async () => {
-      try {
-        const data = await fetchS3JsonContent("cities.json");
-        setCities(data);
-        const data1 = await fetchS3JsonContent("streets.json");
-        setCityStreets(data1);
-      } catch (error) {
-        console.error("Error fetching cities:", error);
-      }
-    };
-    fetchCities();
-  }, []);
+  // useEffect(() => {
+  //   const fetchCities = async () => {
+  //     try {
+  //       const data = await fetchS3JsonContent("cities.json");
+  //       setCities(data);
+  //       const data1 = await fetchS3JsonContent("streets.json");
+  //       setCityStreets(data1);
+  //     } catch (error) {
+  //       console.error("Error fetching cities:", error);
+  //     }
+  //   };
+  //   fetchCities();
+  // }, []);
+
+  // const onChangeInputs = (key, value) => {
+  //   if (key == "city") {
+  //     setAddress({ ...address, city: value, street: "" });
+  //   } else {
+  //     setAddress({ ...address, [key]: value });
+  //   }
+  // };
+
+
+  // const addresses = useCallback(() => {
+  //   const selectedCity = address?.city;
+  //   const foundCity = cities.filter((city) => city.Name == selectedCity);
+  //   const filteredCityStreets = cityStreets.filter(
+  //     (street) => street.city_code == foundCity[0]?.Code
+  //   );
+  //   return addressInputs1(address, cities, filteredCityStreets);
+  // }, [address, cities, cityStreets]);
+
 
   const onChangeInputs = (key, value) => {
-    if (key == "city") {
-      setAddress({ ...address, city: value, street: "" });
-    } else {
-      setAddress({ ...address, [key]: value });
-    }
+    setAddress({ ...address, [key]: value });
   };
 
-  const addresses = useCallback(() => {
-    const selectedCity = address?.city;
-    const foundCity = cities.filter((city) => city.Name == selectedCity);
-    const filteredCityStreets = cityStreets.filter(
-      (street) => street.city_code == foundCity[0]?.Code
-    );
-    return addressInputs1(address, cities, filteredCityStreets);
-  }, [address, cities, cityStreets]);
-
-  return (
+  return ( 
     <div>
       <div style={classes.customerInfoStyle}>
-        {cities &&
+        {/* {cities &&
           cities.length > 0 &&
           cityStreets &&
           cityStreets.length > 0 &&
@@ -82,19 +88,21 @@ const AddressForm = ({ address, onDelete, setAddress }: IProps) => {
                 readonly={false}
               />
             </div>
-          ))}
+          ))} */}
+        {addressInputs1(address).map((item) => (
+          <div style={{ marginBottom: 10 }}>
+            <FormInput
+              input={item as IInput}
+              changeState={onChangeInputs}
+              error={item.required && !item.value}
+              readonly={false}
+            />
+          </div>
+        ))}
       </div>
-      <Stack direction={"row"}>
-        <a
-          style={{
-            display: "flex",
-            justifyContent: "flex-start",
-            gap: "7px",
-            cursor: "pointer",
-          }}
-          onClick={() => onDelete(address.index)}
-        >
-          <RemoveIcon></RemoveIcon>
+      <Stack direction={"row"} marginTop={"10px"} marginBottom={"10px"}>
+        <a style={classes.removeFormStyle}  onClick={() => onDelete(address.index)}>
+          <RemoveIcon/>
           <button style={classes.buttonsStyle}>
             {t("customers.buttons.remove")}
           </button>

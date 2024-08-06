@@ -170,6 +170,7 @@ const ProfitsNewPageWidget = () => {
               setSelectedActionProfit={setSelectedActionProfit}
               deleteActionProfitRow={deleteActionProfitRow}
               selectedAdditionalProfitRow={selectedAdditionalProfitRow}
+              selectedPricingTableItems={selectedPricingTableItems}
             />
           </div>
         ) : (

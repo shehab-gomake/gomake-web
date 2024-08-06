@@ -4,22 +4,22 @@ import { useTranslation } from "react-i18next";
 import { DELIVERY_NOTE_STATUSES, LogActionType, QUOTE_STATUSES } from "./enums";
 import { MoreMenuWidget } from "./more-circle";
 import { getAllProductsForDropDownList, getAndSetAllCustomers, getAndSetClientTypes } from "@/services/hooks";
-import {  useSetRecoilState, useRecoilValue } from "recoil";
+import { useSetRecoilState, useRecoilValue } from "recoil";
 import { agentsCategoriesState, clientTypesCategoriesState } from "@/pages/customers/customer-states";
 import { getAndSetEmployees2 } from "@/services/api-service/customers/employees-api";
 import { useDebounce } from "@/utils/use-debounce";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { useDateFormat } from "@/hooks/use-date-format";
-import { _renderDocumentStatus, _renderQuoteStatus, _renderStatus } from "@/utils/constants";
+import { _renderStatus } from "@/utils/constants";
 import { selectedClientState } from "./states";
 import {
-  CloseDocumentApi,
   cancelDocumentApi,
   createNewDocumentApi,
   duplicateDocumentApi,
   getAllDocumentLogsApi,
   getAllDocumentsApi,
   getDocumentPdfApi,
+  manuallyCloseDocumentApi,
   updateDocumentApi,
 } from "@/services/api-service/generic-doc/documents-api";
 import { DOCUMENT_TYPE } from "./enums";
@@ -84,6 +84,11 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
 
   const [openCloseOrderNotesModal, setOpenCloseOrderNotesModal] = useState(false)
   const [selectedQuoteItemValue, setSelectedQuoteItemValue] = useState()
+  const [documentCloseNumber, setDocumentCloseNumber] = useState("");
+
+  const handleDocumentNumberChange = (event) => {
+    setDocumentCloseNumber(event.target.value);
+  };
 
   const onClickOpenCloseOrderNotesModal = (order) => {
     setOpenCloseOrderNotesModal(true)
@@ -206,7 +211,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               quote?.itemsNumber,
               quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
               quote?.notes,
-              _renderStatus(quote, t, navigate),
+              _renderStatus(docType, quote, t, navigate),
               <MoreMenuWidget
                 quote={quote}
                 documentType={docType}
@@ -227,7 +232,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               quote?.itemsNumber,
               quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
               quote?.notes,
-              _renderStatus(quote, t, navigate),
+              _renderStatus(docType, quote, t, navigate),
               <MoreMenuWidget
                 quote={quote}
                 documentType={docType}
@@ -246,7 +251,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               quote?.worksNames,
               quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
               quote?.notes,
-              _renderStatus(quote, t, navigate),
+              _renderStatus(docType, quote, t, navigate),
               <MoreMenuWidget
                 quote={quote}
                 documentType={docType}
@@ -260,7 +265,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
           }
           else if (docType === DOCUMENT_TYPE.order) {
             const jobsElement = CheckPermission(Permissions.SHOW_BOARD_MISSIONS)
-              ? (<div style={{ cursor: "pointer" }} onClick={() => navigate(`/board-missions?orderNumber=${quote?.number}`)}>
+              ? (<div style={{ cursor: "pointer" }} onClick={() => navigate(`/jobs?orderNumber=${quote?.number}`)}>
                 {quote?.jobs}
               </div>
               ) : quote?.jobs;
@@ -285,7 +290,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               quote?.worksNames,
               quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
               quote?.notes,
-              _renderStatus(quote, t, navigate),
+              _renderStatus(docType, quote, t, navigate),
               <MoreMenuWidget
                 quote={quote}
                 documentType={docType}
@@ -298,8 +303,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 onClickOpenPriceModal={onClickOpenPriceModal}
                 onClickOpenCloseOrderModal={onClickOpenCloseOrderModal}
                 onClickOpenCloseOrderNotesModal={onClickOpenCloseOrderNotesModal}
-                CloseDocument={CloseDocument}
-
               />,
             ];
           }
@@ -313,7 +316,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 return (
                   <>
                     <span key={index} onClick={() => navigate(renderURLDocumentType(item?.sourceDocumentType, item.documentId))} style={{ cursor: "pointer" }}>
-                      {renderDocumentTypeForSourceDocumentNumber(item?.sourceDocumentType)}:{item?.documentNumber}
+                      {t(renderDocumentTypeForSourceDocumentNumber(item?.sourceDocumentType))}:{item?.documentNumber}
                       <br />
                     </span>
                   </>
@@ -322,7 +325,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               quote?.worksNames,
               quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
               quote?.notes,
-              _renderStatus(quote, t, navigate),
+              _renderStatus(docType, quote, t, navigate),
               <MoreMenuWidget
                 quote={quote}
                 documentType={docType}
@@ -331,6 +334,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 onClickDuplicate={onClickQuoteDuplicate}
                 onClickLoggers={onClickDocumentLogs}
 
+                onClickOpenCloseOrderModal={onClickOpenCloseOrderModal}
+                onClickOpenCloseOrderNotesModal={onClickOpenCloseOrderNotesModal}
               />,
             ];
           }
@@ -343,8 +348,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
           _renderPaymentType(quote?.paymentType),
           quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
           quote?.notes,
-          //_renderDocumentStatus(quote?.status, t),
-          quote?.status,
+          t(`documentStatus.${quote?.status}`),
           <MoreMenuWidget
             quote={quote}
             documentType={docType}
@@ -418,7 +422,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               quote?.itemsNumber,
               quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
               quote?.notes,
-              _renderStatus(quote, t, navigate),
+              _renderStatus(docType, quote, t, navigate),
               <MoreMenuWidget
                 quote={quote}
                 documentType={docType}
@@ -439,7 +443,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               quote?.itemsNumber,
               quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
               quote?.notes,
-              _renderStatus(quote, t, navigate),
+              _renderStatus(docType, quote, t, navigate),
               <MoreMenuWidget
                 quote={quote}
                 documentType={docType}
@@ -458,7 +462,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               quote?.worksNames,
               quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
               quote?.notes,
-              _renderStatus(quote, t, navigate),
+              _renderStatus(docType, quote, t, navigate),
               <MoreMenuWidget
                 quote={quote}
                 documentType={docType}
@@ -472,7 +476,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
           }
           else if (docType === DOCUMENT_TYPE.order) {
             const jobsElement = CheckPermission(Permissions.SHOW_BOARD_MISSIONS)
-              ? (<div style={{ cursor: "pointer" }} onClick={() => navigate(`/board-missions?orderNumber=${quote?.number}`)}>
+              ? (<div style={{ cursor: "pointer" }} onClick={() => navigate(`/jobs?orderNumber=${quote?.number}`)}>
                 {quote?.jobs}
               </div>
               ) : quote?.jobs;
@@ -498,7 +502,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               quote?.worksNames,
               quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
               quote?.notes,
-              _renderStatus(quote, t, navigate),
+              _renderStatus(docType, quote, t, navigate),
               <MoreMenuWidget
                 quote={quote}
                 documentType={docType}
@@ -511,8 +515,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 onClickOpenPriceModal={onClickOpenPriceModal}
                 onClickOpenCloseOrderModal={onClickOpenCloseOrderModal}
                 onClickOpenCloseOrderNotesModal={onClickOpenCloseOrderNotesModal}
-                CloseDocument={CloseDocument}
-
               />,
             ]
           }
@@ -526,7 +528,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 return (
                   <>
                     <span key={index} onClick={() => navigate(renderURLDocumentType(item?.sourceDocumentType, item.documentId))} style={{ cursor: "pointer" }}>
-                      {renderDocumentTypeForSourceDocumentNumber(item?.sourceDocumentType)}:{item?.documentNumber}
+                      {t(renderDocumentTypeForSourceDocumentNumber(item?.sourceDocumentType))}:{item?.documentNumber}
                       <br />
                     </span>
                   </>
@@ -535,7 +537,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               quote?.worksNames,
               quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
               quote?.notes,
-              _renderStatus(quote, t, navigate),
+              _renderStatus(docType, quote, t, navigate),
               <MoreMenuWidget
                 quote={quote}
                 documentType={docType}
@@ -544,6 +546,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 onClickDuplicate={onClickQuoteDuplicate}
                 onClickLoggers={onClickDocumentLogs}
 
+                onClickOpenCloseOrderModal={onClickOpenCloseOrderModal}
+                onClickOpenCloseOrderNotesModal={onClickOpenCloseOrderNotesModal}
               />,
             ];
           }
@@ -556,8 +560,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
           _renderPaymentType(quote?.paymentType),
           quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
           quote?.notes,
-          // _renderDocumentStatus(quote?.status, t),
-          t(quote?.status),
+          t(`documentStatus.${quote?.status}`),
           <MoreMenuWidget
             quote={quote}
             documentType={docType}
@@ -983,7 +986,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                   : classes.closeBtnStyle
               }
             >
-              {_renderStatus(document, t, navigate)}
+              {_renderStatus(docType, document, t, navigate)}
             </h2>
           </div>,
           document?.notes,
@@ -999,7 +1002,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             onClickOpenPriceModal={onClickOpenPriceModal}
             onClickOpenCloseOrderModal={onClickOpenCloseOrderModal}
             onClickOpenCloseOrderNotesModal={onClickOpenCloseOrderNotesModal}
-            CloseDocument={CloseDocument}
           />,
         ]);
         setAllDocuments(mapData);
@@ -1059,7 +1061,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
 
   ////////////// LOGS //////////////
 
-  const getLogDescription = (logAction: any, values: any): string => {
+  const getLogDescription = (logAction: string, values: any, documentType: DOCUMENT_TYPE): string => {
     switch (logAction) {
       case LogActionType[1]:
         return `${t("logs.theWorkMission")} "${values[0]}" ${t("logs.ITEM_ADD")}`;
@@ -1101,6 +1103,10 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         } else {
           return `${t("logs.COMMENTS_UPDATE")} ${t("logs.from")} "${values[0]}" ${t("logs.to")} "${values[1]}"`;
         }
+      case LogActionType[13]:
+        return `${t("logs.DOCUMENT_DUPLICATED", { documentType: t(`sales.quote.${DOCUMENT_TYPE[documentType]}`), documentNumber: values[0] })}`;
+      case LogActionType[14]:
+        return `${t("logs.DOCUMENT_DUPLICATED_FROM_ORDER", { documentNumber: values[0] })}`;
       default:
         return '';
     }
@@ -1115,7 +1121,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
           const mapData = res?.data?.map((log: any) => [
             GetShortDateFormat(log?.actionDate),
             log?.employeeName,
-            getLogDescription(log?.logAction, log?.values)
+            getLogDescription(log?.logAction, log?.values , log?.documentType)
           ]);
           setDocumentLogsData(mapData);
           resolve();
@@ -1188,7 +1194,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
 
   // For HomeTableWidget
   useEffect(() => {
-     getAllDocuments(docType);
+    getAllDocuments(docType);
   }, [selectedClient]);
 
 
@@ -1321,8 +1327,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   };
   const onClickCloseCloseOrderModal = () => {
     setOpenCloseOrderModal(false);
+    setDocumentCloseNumber("")
   };
-
 
   const onClickOpenDeliveryTimeModal = (order) => {
     setselectedOrder(order)
@@ -1331,7 +1337,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const onClickCloseDeliveryTimeModal = () => {
     setOpenDeliveryTimeCancelModal(false);
   };
-
 
 
   const updateCancelQuote = async (quoteStatus: number) => {
@@ -1352,11 +1357,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     })
   }
 
-  const CloseDocument = async (quoteItemValue) => {
+  const ManuallyCloseDocument = async (quoteItemValue) => {
     setSelectedQuoteItemValue(quoteItemValue)
-    // if (quoteItemValue?.closeOrderNotes && quoteItemValue?.closeOrderNotes.tirm !== "") {
-    //   onClickOpenCloseOrderNotesModal()
-    // }
     const callBack = (res) => {
       if (res?.success) {
         alertSuccessUpdate();
@@ -1366,9 +1368,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         alertFaultUpdate();
       }
     };
-    await CloseDocumentApi(callApi, callBack, {
-      documentId: quoteItemValue?.id,
-      documentType: docType
+    await manuallyCloseDocumentApi(callApi, callBack, {
+      documentType: docType,
+      document: { documentId: quoteItemValue?.id, documentNumber: documentCloseNumber }
 
     });
   };
@@ -1419,7 +1421,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         const clientTypes = res.map((types) => ({
           label: types.name,
           id: types.id,
-          additionProfits : types?.additionProfits  ?? 0,
+          additionProfits: types?.additionProfits ?? 0,
         }));
         setClientTypesCategories(clientTypes);
       }
@@ -1524,10 +1526,12 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     selectedQuoteItemValue,
     onClickCloseCloseOrderModal,
     openCloseOrderModal,
-    CloseDocument,
     selectedOrder,
     onClickOpenCloseOrderModal,
-    getEmployeeCategories
+    getEmployeeCategories,
+    ManuallyCloseDocument,
+    documentCloseNumber,
+    handleDocumentNumberChange
   };
 };
 

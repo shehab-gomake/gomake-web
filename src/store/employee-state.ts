@@ -29,7 +29,8 @@ export const initState: IUserData = {
     quoteLimitationType: null,
     quotePriceLimit: null,
     mailProvider: null,
-    pinCodeForLoginWithApplication: null
+    pinCodeForLoginWithApplication: null,
+    actionIds:[]
   }
 };
 export const employeeState = atom<IUserData>({

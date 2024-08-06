@@ -8,13 +8,13 @@ const HeaderFilter = ({
     onchange,
     val
   }: any) => {
-    const { clasess } = useStyle();
+    const { classes } = useStyle();
     return (
         <div >
             {setAllOptions?.length > 0 ? (
                 <GoMakeAutoComplate
                     options={setAllOptions}
-                    style={clasess.autoComplateStyle}
+                    style={classes.autoComplateStyle}
                     placeholder={setPlaceholder}
                     onChange={onchange}
                     value={val}

@@ -195,6 +195,8 @@ const BusinessNewWidget = ({
         showAddButton={true}
         customer={customer}
         setCustomer={setCustomer}
+        onChangeSelectBusiness={onChangeSelectBusiness}
+        isFromCartPage={true}
       />
       <GoMakeDeleteModal
         icon={

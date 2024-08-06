@@ -15,11 +15,11 @@ const useCalculationsWorkFlowsSignalr = () => {
     useGoMakeSignalr<ICalculationSignalRResult>({
       url: config.erp_server +`/hubs/workFlows`,
       accessToken: getUserToken(),
-      methodName: "updateWorkFlows",
+      methodName: "updateWorkFlows2",
     });
    
-  const [calculationSessionId, setConnectionSessionId] = useState<string>();
   const [signalRPricingResult, setSignalRPricingResult] = useState<any>();
+  const [startCalculationData, setStartCalculationData] = useState<any>();
 
   const [signalrRWorkFlows, setSignalrRWorkFlows] =
     useState<ICalculationSignalRResult>();
@@ -34,11 +34,16 @@ const useCalculationsWorkFlowsSignalr = () => {
   useEffect(() => {
     if (connection) {
       connection.on("updateWorkFlows", (newData: ICalculationSignalRResult) => {
-        setCalculationExceptionsLogs(newData.exceptions);
+        console.log("updateWorkFlows",newData)
+        //setCalculationExceptionsLogs(newData.exceptions);
         setSignalrRWorkFlows(newData);
       });
-      connection.on("startCalculationSession", (newData) => {
-        setConnectionSessionId(newData.productItemValueDraftId);
+      connection.on("startCalculationSession", async (newData) => {
+        /*if(newData.isDevMode){
+          console.log("isDevMode received")
+          setConnectionSessionId(newData.productItemValueDraftId);
+        }*/
+        setStartCalculationData(newData)
         setCalculationExceptionsLogs(newData.calculationExceptions);
       });
       connection.on("updateSelectedWorkFlow", (newData) => {
@@ -47,18 +52,20 @@ const useCalculationsWorkFlowsSignalr = () => {
       connection.on("UpdatePricing", (newData) => {
         setSignalRPricingResult(newData);
       });
-      connection.on("calculationFinished", () => {
-        setIsCalculationFinished(true)
+      connection.on("calculationFinished", (newData) => {
+        newData.isCalculationFinished = true;
+        setSignalRPricingResult(newData);
       });
       connection.on("calculationServerError", () => {
         setcalculationServerErrorState(true)
       });
+      
     }
   }, [connection]);
   return {
     calculationResult: signalrRWorkFlows,
-    calculationSessionId,
     connectionId,
+    startCalculationData,
     updatedSelectedWorkFlow,
     calculationExceptionsLogs,
     signalRPricingResult,
