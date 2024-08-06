@@ -1,6 +1,6 @@
 import {atom} from "recoil";
 
-export const QuickBloxState = atom({
-    default: null,
-    key: 'QuickBloxState'
+export const updatedApprovalRequestIdState = atom<string>({
+    default: '',
+    key: 'approvedFileMessageIdState'
 })

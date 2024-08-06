@@ -41,12 +41,13 @@ const AddDialog = ({onAddDialog}: IProps) => {
     const {callApi} = useGomakeAxios();
     const {alertSuccessAdded, alertFaultAdded} = useSnackBar();
     const inputs = () => {
+        const {t} = useTranslation();
         return [
             {
-                name: "groupName",
-                label: "groupName",
+                name: "messenger.groupName",
+                label: "messenger.groupName",
                 type: "text",
-                placeholder: "groupName",
+                placeholder: "messenger.groupName",
                 required: true,
                 parameterKey: "name",
                 value: state.name,
@@ -55,20 +56,20 @@ const AddDialog = ({onAddDialog}: IProps) => {
             },
             {
                 name: "userType",
-                label: "user type",
+                label: "messenger.userType",
                 type: "select",
-                placeholder: "user type",
+                placeholder: "messenger.userType",
                 required: true,
                 parameterKey: "userType",
                 value: state.userType,
-                options: [{text: 'customer', value: EUserType.Customer}, {text: 'client', value: EUserType.Employee}],
+                options: [{text: t('messenger.customer'), value: EUserType.Customer}, {text: t('messenger.client'), value: EUserType.Employee}],
                 isValid: true,
             },
             {
                 name: "employees",
-                label: "employees ",
+                label: "messenger.clients",
                 type: "select",
-                placeholder: "employees",
+                placeholder: "messenger.clients",
                 required: true,
                 parameterKey: "id",
                 value: state.id,
@@ -142,7 +143,6 @@ const AddDialog = ({onAddDialog}: IProps) => {
                         options={customers}
                         getOptionLabel={(option: any) => `${option.name}`}
                         onChangeTextField={checkWhatRenderArray}
-                        // style={classes.textInputStyle}
                         placeholder={t("sales.quote.chooseCustomer")}
                         onChange={(e: any, value: any) => {
                             setState(prevState => ({...prevState, id: value.id}))
@@ -152,7 +152,7 @@ const AddDialog = ({onAddDialog}: IProps) => {
                     />
                 </Stack>
             }
-            <PrimaryButton variant={'contained'} onClick={addDialog}>add</PrimaryButton>
+            <PrimaryButton variant={'contained'} onClick={addDialog}>{t('messenger.add')}</PrimaryButton>
         </Stack>
     );
 };
