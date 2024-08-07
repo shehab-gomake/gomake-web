@@ -21,6 +21,7 @@ import { selectedClientState } from "@/pages-components/quotes/states";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { CLIENT_TYPE_Id } from "@/pages/customers/enums";
 import { prevSelectedClientState } from "./states";
+import { getPrintHouseMaterialCategoriesApi } from "@/services/api-service/materials/printhouse-materials-endpoints";
 
 const useQuoteWidget = ({ documentType = 0 }: any) => {
   const { t } = useTranslation();
@@ -41,6 +42,44 @@ const useQuoteWidget = ({ documentType = 0 }: any) => {
   const [isDisabled, setIsDisabled] = useState(true);
   const [QuoteId, setQuoteId] = useState("");
   const setQuoteNumber = useSetRecoilState<any>(QuoteNumberState);
+
+  const [materialCategories, setMaterialCategories] = useState([]);
+
+
+  const getMaterialCategories = async () => {
+    const callBack = (res) => {
+      if (res?.success) {
+        const mappedMaterials = res?.data?.map(option => ({id: option.categoryKey, name: option?.categoryName}))
+
+        setMaterialCategories(mappedMaterials);
+      } 
+    };
+    await getPrintHouseMaterialCategoriesApi(callApi, callBack, "Advertising Products");
+
+  };
+
+  // Select product/material
+  const productsOptions = productValue.map((product) => ({
+    ...product,
+    title: product.name,
+    category: product.category || t('home.admin.selectProduct'),
+  }));
+
+  const materialsOptions = materialCategories.map((material) => ({
+    ...material,
+    title: material.name,
+    category: material.category || t('home.admin.selectMaterial'),
+  }));
+
+  const options = [...productsOptions, ...materialsOptions];
+  const [searchQuery, setSearchQuery] = useState<string>("");
+
+  // Filter options based on search query
+  const filteredOptions = options?.filter((option: any) =>
+    option.title?.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+
 
   const onClickOpenModal = (quoteId: any) => {
     setOpenModal(true);
@@ -76,7 +115,7 @@ const useQuoteWidget = ({ documentType = 0 }: any) => {
       getAllCustomersCreateQuote(e.target.value);
     }
   };
-  
+
   const renderOptions = () => {
     return customersListCreateQuote;
   };
@@ -96,7 +135,7 @@ const useQuoteWidget = ({ documentType = 0 }: any) => {
       searchTerm: SearchTerm,
     });
   }, []);
-  
+
   const [clientListData, setClientListData] = useState([])
   const getAllCustomersCreateOrder = useCallback(async () => {
     await getAndSetAllCustomers(callApi, setClientListData, {
@@ -167,7 +206,6 @@ const useQuoteWidget = ({ documentType = 0 }: any) => {
         setQuoteNumber(null);
         setQuoteIfExist(false);
         setUserQuote(null);
-        /////////////////////////////////////
       } else {
         alertFaultUpdate();
       }
@@ -230,6 +268,7 @@ const useQuoteWidget = ({ documentType = 0 }: any) => {
 
   useEffect(() => {
     getAllProducts();
+    getMaterialCategories();
   }, [selectedClient, selectedClientType]);
 
   useEffect(() => {
@@ -248,7 +287,7 @@ const useQuoteWidget = ({ documentType = 0 }: any) => {
   }, [selectedClientType, selectedClient, selectedProduct]);
 
 
-  // Add Customer / Search
+  //  Add Customer / Search
   const [openCustomerModal, setOpenCustomerModal] = useState(false);
   const [customer, setCustomer] = useState([]);
 
@@ -307,6 +346,9 @@ const useQuoteWidget = ({ documentType = 0 }: any) => {
     setQuoteId,
     getAllClientTypes,
     clientListData,
+    options,
+    filteredOptions,
+    setSearchQuery
   };
 };
 

@@ -12,7 +12,7 @@ import { PermissionCheck } from "@/components/CheckPermission/check-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { useEffect } from "react";
 import { SecondaryButton } from "@/components/button/secondary-button";
-import {  useSetRecoilState } from "recoil";
+import { useSetRecoilState } from "recoil";
 import {
   QuoteIfExistState,
   QuoteNumberState,
@@ -23,17 +23,16 @@ import { CustomerCardWidget } from "@/widgets/customer-card-modal/customer-card"
 import { isValidCustomer } from "@/utils/helpers";
 import { CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 import { useClientTypesList } from "@/hooks/use-client-types";
-
+ 
 const QuoteWidget = ({ isAdmin = true }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
   const setQuoteNumber = useSetRecoilState<any>(QuoteNumberState);
   const setQuoteIfExist = useSetRecoilState<any>(QuoteIfExistState);
-  const {getClientTypesCategories} =useClientTypesList();
+  const { getClientTypesCategories } = useClientTypesList();
 
   const {
     clientTypesValue,
-    productValue,
     id,
     anchorEl,
     isDisabled,
@@ -67,7 +66,9 @@ const QuoteWidget = ({ isAdmin = true }) => {
     setQuoteId,
     getAndSetExistQuote,
     getAllClientTypes,
-  } = useQuoteWidget(DOCUMENT_TYPE.quote);
+    filteredOptions,
+    setSearchQuery
+    } = useQuoteWidget(DOCUMENT_TYPE.quote);
 
   useEffect(() => {
     if (userQuote) {
@@ -142,13 +143,16 @@ const QuoteWidget = ({ isAdmin = true }) => {
       <div style={classes.autoComplateRowContainer}>
         <div data-tour="select-product" style={{ width: "65%" }}>
           <GoMakeAutoComplate
-            options={productValue}
-            placeholder={t("home.admin.selectProduct")}
+            options={filteredOptions}
+            placeholder={t("home.admin.selectProductOrMaterial")}
             style={classes.selectTypeContainer}
             getOptionLabel={(option: any) => option.name}
             onChange={(e: any, value: any) => {
               setSelectedProduct(value);
             }}
+            //new change
+            groupBy={(option) => option.category}
+            onChangeTextField={(e) => setSearchQuery(e.target.value)}
           />
         </div>
       </div>
@@ -228,7 +232,7 @@ const QuoteWidget = ({ isAdmin = true }) => {
         isValidCustomer={isValidCustomer}
         customerAction={CUSTOMER_ACTIONS.Add}
         codeFlag={false}
-        typeClient={"C"} 
+        typeClient={"C"}
         onCustomerAdd={onCustomerAdd}
         openModal={openCustomerModal}
         modalTitle={t("customers.modal.addTitle")}
