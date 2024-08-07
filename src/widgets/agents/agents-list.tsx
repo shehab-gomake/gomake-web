@@ -20,7 +20,7 @@ const AgentsList = () => {
     const open = Boolean(anchorEl);
     const { classes } = useStyle();
     const setAgents = useSetRecoilState(agentsState);
-    const agents = useRecoilValue(agentsState);
+    const agents: any = useRecoilValue(agentsState);
     const [filter, setFilter] = useState<string>();
 
     const getAgentCategories = async (isAgent: boolean) => {
@@ -46,8 +46,9 @@ const AgentsList = () => {
         setAnchorEl(null);
     };
     const getAgents = () => {
+        console.log("agents", agents)
         if (filter) {
-            return agents.filter((agent) => agent.name.toLowerCase().includes(filter.toLowerCase()));
+            return agents.filter((agent) => agent?.label?.toLowerCase()?.includes(filter.toLowerCase()));
         } else {
             return agents;
         }
