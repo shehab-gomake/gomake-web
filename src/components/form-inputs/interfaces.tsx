@@ -28,6 +28,7 @@ export interface IFormInput {
   error: boolean;
   readonly?: boolean;
   disableLabel?: boolean;
+  checkWhatRenderArray?: any;
 }
 
 export interface IFormArrayInputsProps {
