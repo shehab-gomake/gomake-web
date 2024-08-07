@@ -6,10 +6,9 @@ import {
   ICalculatedWorkFlow,
   IExceptionsLog,
 } from "@/widgets/product-pricing-widget/interface";
-import { useGomakeAxios } from "../use-gomake-axios";
 import config from "@/config";
 
-const useCalculationsWorkFlowsSignalr = () => {
+const useCalculationsWorkFlowsSignalR = () => {
 
   const { data, connection, connectionId } =
     useGoMakeSignalr<ICalculationSignalRResult>({
@@ -21,13 +20,13 @@ const useCalculationsWorkFlowsSignalr = () => {
   const [signalRPricingResult, setSignalRPricingResult] = useState<any>();
   const [startCalculationData, setStartCalculationData] = useState<any>();
 
-  const [signalrRWorkFlows, setSignalrRWorkFlows] =
+  const [signalRWorkFlows, setSignalRWorkFlows] =
     useState<ICalculationSignalRResult>();
   const [updatedSelectedWorkFlow, setUpdatedSelectedWorkFlow] =
     useState<ICalculatedWorkFlow>();
   const [calculationExceptionsLogs, setCalculationExceptionsLogs] =
     useState<IExceptionsLog[]>();
-  const [calculationServerError,setcalculationServerErrorState]=useState(false)
+  const [calculationServerError,setCalculationServerErrorState]=useState(false)
 
   const [isCalculationFinished,setIsCalculationFinished]=useState(false)
 
@@ -36,15 +35,15 @@ const useCalculationsWorkFlowsSignalr = () => {
       connection.on("updateWorkFlows", (newData: ICalculationSignalRResult) => {
         console.log("updateWorkFlows",newData)
         //setCalculationExceptionsLogs(newData.exceptions);
-        setSignalrRWorkFlows(newData);
+        setSignalRWorkFlows(newData);
       });
       connection.on("startCalculationSession", async (newData) => {
         /*if(newData.isDevMode){
           console.log("isDevMode received")
           setConnectionSessionId(newData.productItemValueDraftId);
         }*/
-        //setStartCalculationData(newData)
-        //setCalculationExceptionsLogs(newData.calculationExceptions);
+        setStartCalculationData(newData)
+        setCalculationExceptionsLogs(newData.calculationExceptions);
       });
       connection.on("updateSelectedWorkFlow", (newData) => {
         setUpdatedSelectedWorkFlow(newData);
@@ -57,13 +56,15 @@ const useCalculationsWorkFlowsSignalr = () => {
         setSignalRPricingResult(newData);
       });
       connection.on("calculationServerError", () => {
-        setcalculationServerErrorState(true)
+        setCalculationServerErrorState(true)
       });
       
     }
   }, [connection]);
+
+
   return {
-    calculationResult: signalrRWorkFlows,
+    calculationResult: signalRWorkFlows,
     connectionId,
     startCalculationData,
     updatedSelectedWorkFlow,
@@ -74,4 +75,4 @@ const useCalculationsWorkFlowsSignalr = () => {
     setIsCalculationFinished
   };
 };
-export { useCalculationsWorkFlowsSignalr };
+export { useCalculationsWorkFlowsSignalR };

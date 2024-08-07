@@ -415,7 +415,6 @@ const useAddRuleModal = ({
     );
 
     if (res?.success) {
-      console.log("res",res)
       alertSuccessAdded();
       onCloseModal();
       setRules([initialRule])

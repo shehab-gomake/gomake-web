@@ -47,6 +47,7 @@ const PriceListPageWidget = ({ widgetType }) => {
         multiParameterModal,
         calculationServerErrorState,
         settingParameters,
+        setSettingParameters,
         priceRecovery,
         graphicNotes,
         printingNotes,
@@ -434,13 +435,14 @@ const PriceListPageWidget = ({ widgetType }) => {
                 isChargeForNewDie={isChargeForNewDie}
                 setIsChargeForNewDie={setIsChargeForNewDie}
                 straightKnife={straightKnife}
+                isParameterSettings={false}
             />
             <MultiParameterModal
                 openModal={multiParameterModal}
                 onClose={onCloseMultiParameterModal}
-                modalTitle={""}
                 settingParameters={settingParameters}
                 _renderParameterType={_renderParameterType}
+                setSettingParameters={setSettingParameters}
             />
         </div>
     );

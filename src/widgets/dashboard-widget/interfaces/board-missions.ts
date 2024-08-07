@@ -18,6 +18,7 @@ export interface IBoardMissions {
     splittedBoards: IBoardMissions[];
     isLate: boolean;
     creationDate:Date;
+    dueDate: Date;
     productType: string;
     productTypeName: string;
 }

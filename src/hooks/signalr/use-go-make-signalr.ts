@@ -21,6 +21,7 @@ const useGoMakeSignalr = <T>({
   const getAccessToken = () => {
     return accessToken;
   };
+
   useEffect(() => {
     const connect = new HubConnectionBuilder()
       .withUrl(url, { accessTokenFactory: () => getAccessToken() })
@@ -46,6 +47,7 @@ const useGoMakeSignalr = <T>({
         .catch((error) => console.log(error));
     }
   }, [connection]);
+  
   return {
     data, 
     connection,

@@ -8,6 +8,7 @@ import { IInput } from "@/components/form-inputs/interfaces";
 import { useEffect, useMemo, useState } from "react";
 import { subProductsParametersState } from "@/store";
 import { getParameterByParameterCode } from "@/utils/constants";
+import { useDebouncedCallback } from "use-debounce";
 
 interface QuantityTypesInputs extends IInput {
   onChange: (key, value: string) => void;
@@ -45,9 +46,7 @@ const useQuantityTypes = () => {
     }
     setOpenModal(false)
   };
-  const handleInputChange = (event, myvalue) => {
-    const value = myvalue;
-    setNewTypesValue(value);
+  const debouncedHandleInputChange = useDebouncedCallback((myvalue) => {
     if (quantityTypesValues.length === Number(myvalue)) {
       setValuesState(quantityTypesValues);
     } else if (quantityTypesValues.length < Number(myvalue)) {
@@ -55,14 +54,20 @@ const useQuantityTypes = () => {
       for (let i = quantityTypesValues.length + 1; i <= Number(myvalue); i++) {
         array.push({
           name: JobNameParameter?.values[0] + " " + i,
-          quantity: +valueState[0]?.quantity,
+          quantity: +valueState[0]?.quantity||0,
         });
-        setValuesState([...quantityTypesValues, ...array]);
       }
+      setValuesState([...quantityTypesValues, ...array]);
     } else if (quantityTypesValues.length > Number(myvalue)) {
       setValuesState(quantityTypesValues.slice(0, Number(myvalue)));
     }
+  }, 700);
+
+  const handleInputChange = (event,value) => {
+    setNewTypesValue(value); // Update state immediately
+    debouncedHandleInputChange(value); // Apply debounced logic
   };
+
   useEffect(() => {
     if (save) {
       updateTypesValues(newTypesValue);
@@ -129,7 +134,7 @@ const useQuantityTypes = () => {
         value: newTypesValue,
         options: [],
         isValid: true,
-        onChange: handleInputChange,
+        onChange:handleInputChange,
       },
       {
         name: "equalQuantity",
@@ -138,7 +143,7 @@ const useQuantityTypes = () => {
         placeholder: "quantityTypes.equalQuantity",
         required: false,
         parameterKey: "equalQuantity",
-        value: valueState[0]?.quantity?.toString(),
+        value: valueState[0]?.quantity?.toString()||"0",
         options: [],
         isValid: true,
         onChange: equalQuantityChange,
