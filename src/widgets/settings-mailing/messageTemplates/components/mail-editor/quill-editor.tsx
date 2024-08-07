@@ -29,6 +29,7 @@ const QuillEditor = ({ headerEditor }: IProps) => {
     const editorRef = headerEditor ? editorRefBody : editorRefSubject;
     type scrollVisibilityApiType = React.ContextType<typeof VisibilityContext>;
     const dir: 'rtl' | 'ltr' = t('direction');
+
     const RTL = dir === 'rtl';
     const apiRef: { current: scrollVisibilityApiType } = useRef(null);
 
@@ -168,6 +169,7 @@ const QuillEditor = ({ headerEditor }: IProps) => {
                 ['bold', 'italic', 'underline', 'strike'],
                 [{ 'header': '1' }, { 'header': '2' }, { 'font': [] }],
                 ['link'],
+                [{ 'direction': 'rtl' }]
             ],
         },
         clipboard: {
@@ -176,6 +178,12 @@ const QuillEditor = ({ headerEditor }: IProps) => {
     };
     return (
         <div dir={dir} className='editorDiv' style={{ width: "100%" }}>
+            <style jsx global>{`
+              .ql-editor {
+                direction: ${dir};
+                text-align: ${RTL ? "right" : "left"};
+              }
+            `}</style>
             <Suspense>
                 <ReactQuill modules={modules} style={headerEditor ? classes.myEditorBody : classes.myEditorSubject} value={headerEditor ? body : subject} onChange={headerEditor ? handleChangeBody : handleChangeSubject} ref={editorRef} id='editor' />
             </Suspense>
