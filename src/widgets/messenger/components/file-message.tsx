@@ -60,12 +60,11 @@ const FileMessageComponent = ({
     }
 
     useEffect(() => {
-        if (!status) {
             getApprovalStatus(approval_Request_id)
                 .then(s => {
                     setStatus(s as EFileStatus)
                 })
-        }
+
     }, []);
 
     useEffect(() => {
