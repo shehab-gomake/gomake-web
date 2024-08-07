@@ -1,24 +1,24 @@
-import {IBoardMissions, IDashboardStatistic, IDashboardWidget,} from "@/widgets/dashboard-widget/interfaces";
-import {useStyle} from "@/widgets/dashboard-widget/style";
-import {useCallback, useEffect, useState} from "react";
-import {Cards} from "@/widgets/dashboard-widget/cards/cards";
-import {IDateRange} from "@/shared/interfaces";
-import {BoardMissionsTable} from "@/widgets/dashboard-widget/table";
-import {DashboardDates} from "@/widgets/dashboard-widget/dates/dates";
-import {useGomakeDateRange, useGomakeMachines} from "@/hooks";
-import {useBoardMissions} from "@/widgets/dashboard-widget/use-board-missions";
-import {useRecoilValue} from "recoil";
-import {DashboardActions} from "@/store";
-import {selectedAgentsState} from "@/store/agents-state";
-import {dashboardClientsState} from "@/widgets/dashboard-widget/clients/clients-state";
+import { IBoardMissions, IDashboardStatistic, IDashboardWidget, } from "@/widgets/dashboard-widget/interfaces";
+import { useStyle } from "@/widgets/dashboard-widget/style";
+import { useCallback, useEffect, useState } from "react";
+import { Cards } from "@/widgets/dashboard-widget/cards/cards";
+import { IDateRange } from "@/shared/interfaces";
+import { BoardMissionsTable } from "@/widgets/dashboard-widget/table";
+import { DashboardDates } from "@/widgets/dashboard-widget/dates/dates";
+import { useGomakeDateRange, useGomakeMachines } from "@/hooks";
+import { useBoardMissions } from "@/widgets/dashboard-widget/use-board-missions";
+import { useRecoilValue } from "recoil";
+import { DashboardActions } from "@/store";
+import { selectedAgentsState } from "@/store/agents-state";
+import { dashboardClientsState } from "@/widgets/dashboard-widget/clients/clients-state";
 
-const DashboardWidget = ({}: IDashboardWidget) => {
+const DashboardWidget = ({ }: IDashboardWidget) => {
     const INTERVAL_TIMEOUT = 2 * 60 * 1000;
-    const {machines, addMachineProgress, getCheckedMachines} = useGomakeMachines();
+    const { machines, addMachineProgress, getCheckedMachines } = useGomakeMachines();
     const [tasksFilter, setTasksFilter] = useState<string>('');
     const selectedClients = useRecoilValue(dashboardClientsState);
-    const {classes} = useStyle();
-    const {dates, action} = useGomakeDateRange();
+    const { classes } = useStyle();
+    const { dates, action } = useGomakeDateRange();
     const selectedAgents = useRecoilValue(selectedAgentsState);
 
     const {
@@ -98,12 +98,12 @@ const DashboardWidget = ({}: IDashboardWidget) => {
 
     return (
         <div style={classes.container}>
-            <Cards data={statistics ? statistics : {} as IDashboardStatistic}/>
-            <DashboardDates handelSearchValueChange={handelSearchValueChange}/>
+            <Cards data={statistics ? statistics : {} as IDashboardStatistic} />
+            <DashboardDates handelSearchValueChange={handelSearchValueChange} />
             <div>
                 {usedMachines() && getFilteredBoardsMissions() &&
                     <BoardMissionsTable boardsMissions={tasks()}
-                                        usedMachines={usedMachines()}
+                        usedMachines={usedMachines()}
                     />}
             </div>
             {/* <div><Link component={Button} color={secondColor(500)}
@@ -111,6 +111,6 @@ const DashboardWidget = ({}: IDashboardWidget) => {
         </div>
     );
 }
-export {DashboardWidget}
+export { DashboardWidget }
 
 
