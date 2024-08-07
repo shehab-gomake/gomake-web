@@ -379,3 +379,33 @@ df-messenger {
   z-index: 999999;
 }
 .foreground circle {}
+
+/* Base styles for tree nodes */
+.p-treenode-content {
+  display: flex;
+  align-items: center;
+}
+
+/* Hide icons */
+.p-treenode-content .p-treenode-icon {
+  display: none !important; /* Hide the arrow icon */
+}
+
+/* Indentation styles */
+.p-treenode {
+  padding-left: 10px; /* Base padding for the first level */
+}
+
+.p-treenode.p-treenode-parent > .p-treenode-content {
+  padding-left: 20px; /* Additional padding for child nodes */
+}
+
+.p-treenode.p-treenode-parent > .p-treenode-content > .p-treenode-content {
+  padding-left: 30px; /* More padding for deeper nodes */
+}
+
+.p-treenode.p-treenode-parent > .p-treenode-content > .p-treenode-content > .p-treenode-content {
+  padding-left: 40px; /* Even more padding for deeper nodes */
+}
+
+/* Add more styles if needed for deeper levels */
