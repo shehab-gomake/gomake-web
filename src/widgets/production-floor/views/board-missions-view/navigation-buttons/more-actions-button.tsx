@@ -10,6 +10,8 @@ import { useTranslation } from "react-i18next";
 import { adaptLeft } from "@/utils/adapter";
 import { ClickOutside } from "@/components/click-out-side/click-out-side";
 import { boardMissionsDetailsState } from "@/widgets/production-floor/state/boards";
+import {createBoardMissionsChatRoomApi} from "@/services/api-service/chat/quick-blox-chat-endpoints";
+import {useGomakeAxios} from "@/hooks";
 
 const MoreActionsButton = () => {
     const [open, setOpen] = useState<boolean>(false);
@@ -19,6 +21,7 @@ const MoreActionsButton = () => {
     const [boardMissions] = useRecoilState(boardMissionsDetailsState);
     const {handleFileUpload} = useUploadFiles(boardMissions?.orderItemId, boardMissions?.filesPath);
     const {t} = useTranslation();
+    const {callApi} = useGomakeAxios();
     const direction = t('direction');
     const handleClose = () => {
         setOpen(false);
@@ -42,6 +45,16 @@ const MoreActionsButton = () => {
         });
     };
 
+    const getBoardMissionChatRoomId = async () => {
+        const callBack = res => {
+            if (res.success) {
+                push(`/messenger?dialogId=${res.data?._id}`)
+            }else {
+
+            }
+        }
+        await createBoardMissionsChatRoomApi(callApi, callBack, {boardMissionId: boardMissions.boardMissionId})
+    }
     return (
         <div style={{ position: 'relative' }}>
             <PrimaryButton onClick={() => setOpen(!open)} variant={'contained'}
@@ -60,6 +73,7 @@ const MoreActionsButton = () => {
                             <MenuItem onClick={onClickUpdateFile}>{t('productionFloor.uploadFile')}</MenuItem>
                         }
                         <MenuItem onClick={handleClickEdit}>{t('productionFloor.edit')}</MenuItem>
+                        <MenuItem onClick={getBoardMissionChatRoomId}>{t('productionFloor.sendGraphicsApprove')}</MenuItem>
                     </Paper>
                 </ClickOutside>
             }

@@ -63,7 +63,7 @@ const useQuickBlox = () => {
     }
 
     //Messages
-    const sendMessage = (dialogId: string, message: QBChatNewMessage) => {
+    const sendMessage = (dialogId: string, message: QBChatNewMessage): Promise<string> => {
         return new Promise((resolve, reject) => {
             const roomJid = getRoomJidFromDialogId(dialogId);
             QB.chat.send(roomJid, message, (e, r) => {

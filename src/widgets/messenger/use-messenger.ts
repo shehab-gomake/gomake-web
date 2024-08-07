@@ -6,6 +6,7 @@ import {EFileStatus} from "@/widgets/messenger/enums";
 import {useGomakeAxios, useSnackBar} from "@/hooks";
 import {getUsersMetaDataApi, updateApprovalFileApi} from "@/services/api-service/chat/quick-blox-chat-endpoints";
 import {QBChatNewMessage} from "quickblox";
+import {useRouter} from "next/router";
 
 const useMessenger = () => {
     const [selectedDialog, setSelectedDialog] = useState<IChatDialog | null>(null);
@@ -16,6 +17,9 @@ const useMessenger = () => {
     const [updatedApprovalRequestId, setUpdatedApprovalRequestId] = useState<{ approvalRequestId: string, newStatus: EFileStatus }>();
     const [usersMetaData, setUsersMetaDta] = useState([]);
     const {alertFaultUpdate} = useSnackBar();
+    const {query} = useRouter();
+    const {dialogId} = query;
+
     const unreadMessages = useCallback(() => {
         return dialogs?.reduce((partialSum, dialog) => partialSum + dialog.unread_messages_count, 0);
     }, [dialogs]);
@@ -71,17 +75,22 @@ const useMessenger = () => {
     };
 
     const sendTextMessage = async (text: string) => {
-        const message = {
-            type: 'groupchat',
-            body: text,
-            extension: {
-                dialog_id: selectedDialog?._id,
-                save_to_history: 1,
-                sender_id: messenger.sessionUser.userId,
-            },
-            markable: 1,
-        };
-        await messenger.messages.send(selectedDialog._id, message as QBChatNewMessage)
+        try {
+            const message = {
+                type: 'groupchat',
+                body: text,
+                extension: {
+                    dialog_id: selectedDialog?._id,
+                    save_to_history: 1,
+                    sender_id: messenger.sessionUser.userId,
+                },
+                markable: 1,
+            };
+            setInputValue('');
+            await messenger.messages.send(selectedDialog._id, message as QBChatNewMessage);
+        } catch (e) {
+
+        }
     };
 
 
@@ -224,9 +233,19 @@ const useMessenger = () => {
 
     useEffect(() => {
         if (usersMetaData.length > 0) {
-            setMessages(prevState => prevState.map(msg => ({...msg, userMetaData: usersMetaData?.find(user => user.userId == msg.sender_id)})));
+            setMessages(prevState => prevState.map(msg => ({
+                ...msg,
+                userMetaData: usersMetaData?.find(user => user.userId == msg.sender_id)
+            })));
         }
     }, [usersMetaData, messages])
+
+    useEffect(() => {
+        if (!!dialogId) {
+            const dialog = dialogs?.find(dialog => dialog._id === dialogId);
+            setSelectedDialog(dialog);
+        }
+    }, [dialogId, dialogs])
 
     return {
         selectedDialog,
