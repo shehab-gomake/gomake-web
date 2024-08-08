@@ -31,7 +31,6 @@ const EmployeeGeneralForm = ({ action }: { action: EmployeeActions }) => {
     const { t } = useTranslation();
     const { classes } = useStyle();
     const [state, setState] = useRecoilState<IUserData>(employeeState);
-    console.log("state", state)
     const [actionRequierdForEmployee, setActionRequierdForEmployee] = useState([])
     const { callApi } = useGomakeAxios();
 
@@ -48,8 +47,7 @@ const EmployeeGeneralForm = ({ action }: { action: EmployeeActions }) => {
     }, [])
 
     const updateEmployeeState = (key, value) => {
-        if (key === "quoteLimitationType")
-            {
+        if (key === "quoteLimitationType") {
             const newValue = value === "" || value === null ? 0 : value;
             setState({
                 ...state,
@@ -68,7 +66,7 @@ const EmployeeGeneralForm = ({ action }: { action: EmployeeActions }) => {
                     [key]: value
                 }
             });
-    };   
+    };
 
     const updateActionIdsEmployeeState = (key, id, checked) => {
         setState(prevState => {
@@ -124,7 +122,7 @@ const EmployeeGeneralForm = ({ action }: { action: EmployeeActions }) => {
 
     const inputs = useCallback(() => {
         return {
-            employee: employeeInfoInputs(state.employee , quoteLimitationOptions),
+            employee: employeeInfoInputs(state.employee, quoteLimitationOptions),
             account: accountInputs(state, action),
             agent: agentInputs(state.employee),
             ips: ipAddressesInputs(state)

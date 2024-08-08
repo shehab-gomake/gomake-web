@@ -46,7 +46,6 @@ const AgentsList = () => {
         setAnchorEl(null);
     };
     const getAgents = () => {
-        console.log("agents", agents)
         if (filter) {
             return agents.filter((agent) => agent?.label?.toLowerCase()?.includes(filter.toLowerCase()));
         } else {

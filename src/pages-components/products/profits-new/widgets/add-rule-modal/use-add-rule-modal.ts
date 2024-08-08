@@ -178,7 +178,6 @@ const useAddRuleModal = ({
   };
   const [rules, setRules] = useState<any>([initialRule]);
 
-  useEffect(() => {console.log(rules)}, [rules])
   const addRule = () => {
     setRules([...rules, initialRule]);
   };
@@ -288,7 +287,6 @@ const useAddRuleModal = ({
         : "";
       const conditionLabel = condition?.condition?.label ?? "";
       const statement2Label = condition.statement2?.label ?? "";
-      console.log("categoryLabel",categoryLabel)
       let text = "";
   
       if (condition.linkCondition) {
