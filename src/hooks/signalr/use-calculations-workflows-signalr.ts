@@ -33,13 +33,11 @@ const useCalculationsWorkFlowsSignalR = () => {
   useEffect(() => {
     if (connection) {
       connection.on("updateWorkFlows", (newData: ICalculationSignalRResult) => {
-        console.log("updateWorkFlows",newData)
         //setCalculationExceptionsLogs(newData.exceptions);
         setSignalRWorkFlows(newData);
       });
       connection.on("startCalculationSession", async (newData) => {
         /*if(newData.isDevMode){
-          console.log("isDevMode received")
           setConnectionSessionId(newData.productItemValueDraftId);
         }*/
         setStartCalculationData(newData)

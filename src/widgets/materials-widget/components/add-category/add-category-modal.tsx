@@ -55,7 +55,6 @@ const AddCategoryModal = (props: IAddCategoryModalProps) => {
                     }}
                     placeholder={t("home.admin.selectProduct")}
                     onChange={(e, value) => {
-                        console.log("value", value)
                     }}
                 /> */}
 
