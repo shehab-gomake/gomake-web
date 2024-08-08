@@ -55,7 +55,6 @@ const QuoteWidget = ({ isAdmin = true }) => {
     handleClose,
     setSelectedClientType,
     setSelectedClient,
-    setSelectedProduct,
     checkWhatRenderArray,
     handleClickToSelectedCustomer,
     renderOptions,

@@ -20,8 +20,9 @@ import {
 import { selectedClientState } from "@/pages-components/quotes/states";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { CLIENT_TYPE_Id } from "@/pages/customers/enums";
-import { prevSelectedClientState } from "./states";
+import { prevSelectedClientState, ProductCategoryType } from "./states";
 import { getAllProductAndMaterialsApi } from "@/services/api-service/products/product-endpoints";
+import { addDocumentItemFromMaterialApi } from "@/services/api-service/materials/materials-endpoints";
 
 const useQuoteWidget = ({ documentType = 0 }: any) => {
   const { t } = useTranslation();
@@ -29,6 +30,7 @@ const useQuoteWidget = ({ documentType = 0 }: any) => {
   const { navigate } = useGomakeRouter();
   const { alertFaultUpdate } = useSnackBar();
   const [clientTypesValue, setClientTypesValues] = useState([]);
+  const { alertFaultAdded, alertSuccessAdded } = useSnackBar();
   // const [productValue, setProductValues] = useState([]);
   const [customersListCreateQuote, setCustomersListCreateQuote] = useState([]);
   const [userQuote, setUserQuote] = useState<any>(null);
@@ -183,15 +185,22 @@ const useQuoteWidget = ({ documentType = 0 }: any) => {
 
 
   const onClickCreateQuote = () => {
-    navigate(
-      `/admin/products/digital-offset-price?clientTypeId=${selectedClientType?.id}&customerId=${selectedClient?.id}&productId=${selectedProduct?.id}`
-    );
+    if (selectedProduct?.category === "material") {
+      addDocumentItemFromMaterial()
+    } else
+      navigate(
+        `/admin/products/digital-offset-price?clientTypeId=${selectedClientType?.id}&customerId=${selectedClient?.id}&productId=${selectedProduct?.id}`
+      );
   };
 
   const onClickCreateQuoteForCustomer = () => {
-    navigate(
-      `/products/create?clientTypeId=${selectedClientType?.id}&customerId=${selectedClient?.id}&productId=${selectedProduct?.id}`
-    );
+    if (selectedProduct?.category === "material") {
+      addDocumentItemFromMaterial()
+    }
+    else
+      navigate(
+        `/products/create?clientTypeId=${selectedClientType?.id}&customerId=${selectedClient?.id}&productId=${selectedProduct?.id}`
+      );
   };
 
   const _renderErrorMessage = () => {
@@ -277,7 +286,7 @@ const useQuoteWidget = ({ documentType = 0 }: any) => {
             children: products.map(product => ({
               key: product.id, // Using product id as the key
               label: product.name, // Using product name as the label
-              category: "product"
+              category: ProductCategoryType.PRODUCT
             }))
           };
         };
@@ -294,7 +303,7 @@ const useQuoteWidget = ({ documentType = 0 }: any) => {
                 children: category.rows.map(row => ({
                   key: row.id, // Using row id as the key
                   label: row.value, // Using row value as the label,
-                  category: "material" // Ensure category is present
+                  category: ProductCategoryType.MATERIAL // Ensure category is present
                 }))
               }))
             }))
@@ -340,11 +349,23 @@ const useQuoteWidget = ({ documentType = 0 }: any) => {
     const selectedNode = findNodeByKey(selectedValue, combinedData);
 
     if (selectedNode && !selectedNode.children) {
-      setSelectedProduct({ id: selectedValue });
+      setSelectedProduct({ id: selectedValue, category: selectedNode?.category });
     } else {
       setSelectedProduct(null);
     }
   };
+
+  const addDocumentItemFromMaterial = async () => {
+    const callBack = (res) => {
+      if (res.success) {
+        alertSuccessAdded();
+        navigate("/quote")
+      } else {
+        alertFaultAdded();
+      }
+    }
+    await addDocumentItemFromMaterialApi(callApi, callBack, { ClientId: selectedClient?.id, PrintHouseMaterialId: selectedProduct?.id })
+  }
 
   return {
     clientTypesValue,
