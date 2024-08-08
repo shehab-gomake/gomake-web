@@ -408,4 +408,50 @@ df-messenger {
   padding-left: 40px; /* Even more padding for deeper nodes */
 }
 
-/* Add more styles if needed for deeper levels */
+.p-treeselect-panel .p-treeselect-header .p-treeselect-filter-container {
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Center the container content horizontally */
+  position: relative; /* Ensure positioning context */
+}
+
+.p-treeselect-panel .p-treeselect-header .p-treeselect-filter-container .p-treeselect-filter-icon {
+  position: absolute;
+  right: 10px; /* Adjust as needed */
+  top: 50%;
+  transform: translateY(-50%); /* Center vertically */
+}
+
+.p-treeselect-panel .p-treeselect-header .p-treeselect-filter-container input {
+  padding-right: 40px; /* Add padding to make space for the icon */
+}
+
+
+.p-treeselect-panel .p-treeselect-empty-message {
+  display: flex;
+  align-items: center;
+  height: 100%; /* Ensure it takes up the full height of the container */
+  color: #B1B1B1;
+  font-family: Heebo; /* Apply desired font family */
+  font-style: normal; /* Apply desired font style */
+  font-weight: 500; /* Apply desired font weight */
+  text-align: center; /* Center text within the message */
+  padding: 4px 10px;
+
+}
+
+.p-treenode.p-tree-empty-message {
+  display: flex;
+  align-items: center;
+  height: 100%; /* Ensure it takes up the full height of the container */
+  color: #B1B1B1;
+  font-family: Heebo; /* Apply desired font family */
+  font-style: normal; /* Apply desired font style */
+  font-weight: 500; /* Apply desired font weight */
+  text-align: center; /* Center text within the message */
+  padding: 4px 10px;
+}
+
+.p-treeselect-panel .p-treeselect-header .p-treeselect-close {
+  display: none; /* Hide the close icon */
+}

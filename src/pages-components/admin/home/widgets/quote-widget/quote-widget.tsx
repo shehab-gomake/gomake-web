@@ -23,11 +23,10 @@ import { CustomerCardWidget } from "@/widgets/customer-card-modal/customer-card"
 import { isValidCustomer } from "@/utils/helpers";
 import { CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 import { useClientTypesList } from "@/hooks/use-client-types";
-import { GoMakeTreeSelect } from "@/components/auto-complete/test";
+import { GoMakeTreeSelect } from "@/components/auto-complete/tree-select";
  
-
-import 'primereact/resources/themes/saga-blue/theme.css'; // Replace with your preferred theme
-import 'primereact/resources/primereact.min.css'; // Core PrimeReact styles
+import 'primereact/resources/themes/saga-blue/theme.css'; 
+import 'primereact/resources/primereact.min.css'; 
 import 'primeicons/primeicons.css'; 
 
 const QuoteWidget = ({ isAdmin = true }) => {
@@ -115,8 +114,6 @@ const QuoteWidget = ({ isAdmin = true }) => {
     console.log("value " , value)
     setSelectedValue(value);
     setSelectedProduct({id: value?.value});
-
-
   };
 
   const handleChangeNew = (e) => {
@@ -151,7 +148,6 @@ const QuoteWidget = ({ isAdmin = true }) => {
       setSelectedValue(null); // Optionally reset the selection
     }
   };
-  
 
   return (
     <div data-tour="quote-widget" style={classes.mainContainer}>

@@ -23,8 +23,10 @@ const StyledTreeSelect = styled(TreeSelect)(({ theme }) => ({
   fontStyle: "normal",
   fontWeight: 500,
   lineHeight: "20px",
-  border: "transparent !important", 
+  border: "transparent !important",
   borderBottom: "2px solid rgb(67,195,232) !important",
+  width: "100%",
+
   "& .p-dropdown-label": {
     padding: 0,
     direction: "ltr",
@@ -38,7 +40,6 @@ const StyledTreeSelect = styled(TreeSelect)(({ theme }) => ({
     fontStyle: "normal",
     fontWeight: 500,
     width: "100%",
-    maxWidth:"100%"
   },
   "& .p-dropdown-empty-message": {
     fontFamily: "Heebo",
@@ -51,6 +52,8 @@ const StyledTreeSelect = styled(TreeSelect)(({ theme }) => ({
     fontWeight: 400,
     fontSize: "16px",
     padding: '4px 10px',
+    width: "40%",
+
   },
   "& .p-placeholder": {
     color: "#B1B1B1",
@@ -64,46 +67,43 @@ const StyledTreeSelect = styled(TreeSelect)(({ theme }) => ({
   "& .p-treeselect-trigger-icon": {
     display: "none",
   },
-  "& .p-treeselect-empty-message": {
-    color:"red !important",
-    PaddingLeft:"0"
-  },
 }));
 
 
 const GoMakeTreeSelect = ({
-    value,
-    onChange,
-    options,
-    placeholder,
-    style,
-    ...props
-  }: {
-    value?: any;
-    onChange?: (e: { value: any }) => void;
-    options: any[];
-    placeholder?: string;
-    style?: React.CSSProperties;
-  }) => {
-    const [selectedNodeKey, setSelectedNodeKey] = useState<any>(value);
-  
-    const handleChange = (e: { value: any }) => {
-      setSelectedNodeKey(e.value);
-      if (onChange) {
-        onChange(e);
-      }
-    };
-  
-    return (
-      <StyledTreeSelect
-        value={selectedNodeKey}
-        onChange={handleChange}
-        options={options}
-        placeholder={placeholder}
-        style={style}
-        {...props}
-      />
-    );
+  value,
+  onChange,
+  options,
+  placeholder,
+  style,
+  ...props
+}: {
+  value?: any;
+  onChange?: (e: { value: any }) => void;
+  options: any[];
+  placeholder?: string;
+  style?: React.CSSProperties;
+}) => {
+  const [selectedNodeKey, setSelectedNodeKey] = useState<any>(value);
+
+  const handleChange = (e: { value: any }) => {
+    setSelectedNodeKey(e.value);
+    if (onChange) {
+      onChange(e);
+    }
   };
-  
+
+  return (
+    <StyledTreeSelect
+      value={selectedNodeKey}
+      onChange={handleChange}
+      options={options}
+      placeholder={placeholder}
+      style={style}
+      {...props}
+      filter
+    />
+  );
+};
+
 export { GoMakeTreeSelect };
