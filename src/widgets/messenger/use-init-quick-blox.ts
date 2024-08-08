@@ -22,18 +22,19 @@ const useInitQuickBlox = () => {
     const getQuickBloxSession = async () => {
         await getQuickBloxSessionApi(callApi, callBack);
     }
-    const getCustomerQuickBloxSession = async () => {
-        await getCustomerQuickBloxSessionApi(callApi, callBack, clientId);
+    const getCustomerQuickBloxSession = async (client: string) => {
+        await getCustomerQuickBloxSessionApi(callApi, callBack, client);
     }
 
     useEffect(() => {
         if (pathname === '/messenger/client/[clientId]') {
-            getCustomerQuickBloxSession().then()
+            if (!!clientId) {
+                getCustomerQuickBloxSession(clientId?.toString()).then()
+            }
         } else {
-
             getQuickBloxSession().then()
         }
-    }, [pathname])
+    }, [pathname, clientId])
 
 
     useEffect(() => {
