@@ -1,6 +1,7 @@
 import { getAndSetAllCustomers, getAndSetClientContacts } from "@/services/hooks";
 import { useCallback, useEffect, useState } from "react";
 import { useGomakeAxios } from "./use-gomake-axios";
+import { useDebouncedCallback } from "use-debounce";
 
 const useCustomerDropDownList = () => {
   const { callApi } = useGomakeAxios();
@@ -40,9 +41,14 @@ const useCustomerDropDownList = () => {
     });
   }, []);
 
+  const debouncedGetAllCustomersCreateOrder = useDebouncedCallback((value) => {
+    getAllCustomersCreateOrder(value);
+  }, 500);
+
   const checkWhatRenderArray = (e) => {
-    if (e.target.value) {
-      getAllCustomersCreateOrder(e.target.value);
+    const value = e.target.value;
+    if (value) {
+      debouncedGetAllCustomersCreateOrder(value);
     } else {
       getAllCustomersCreateQuote();
     }

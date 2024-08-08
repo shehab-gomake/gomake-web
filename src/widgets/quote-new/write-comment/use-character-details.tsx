@@ -1,14 +1,11 @@
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { updateDocumentCommentsApi, updateDocumentInternalNotesApi } from "@/services/api-service/generic-doc/documents-api";
-import { quoteItemState } from "@/store";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useRecoilState } from "recoil";
 
-const useWriteCommentComp = ({ getQuote, documentType }) => {
+const useWriteCommentComp = ({ getQuote, documentType, quoteItemValue, setQuoteItemValue }) => {
   const [isValueChanged, setIsValueChanged] = useState(false);
-  const [quoteItemValue, setQuoteItemValue] = useRecoilState<any>(quoteItemState);
   const [data, setData] = useState(quoteItemValue?.notes)
   const [dataForInternalNotes, setDataForInternalNotes] = useState(quoteItemValue?.internalNotes)
 
@@ -75,15 +72,15 @@ const useWriteCommentComp = ({ getQuote, documentType }) => {
     }
 
   }
+
   const handleChange = (e) => {
     setData(e.target.value);
     setIsValueChanged(e.target.value !== data);
-
   }
+
   const handleChangeForInternalNotes = (e) => {
     setDataForInternalNotes(e.target.value);
     setIsValueChanged(e.target.value !== data);
-
   }
 
   const handleBlur = () => {
@@ -101,12 +98,14 @@ const useWriteCommentComp = ({ getQuote, documentType }) => {
   useEffect(() => {
     if (quoteItemValue?.notes === null)
       setData("");
-    else if (quoteItemValue?.internalNotes === null) {
-      setDataForInternalNotes("")
-    }
     else
       setData(quoteItemValue?.notes);
-    setDataForInternalNotes(quoteItemValue?.internalNotes)
+
+    if (quoteItemValue?.internalNotes === null)
+      setDataForInternalNotes("")
+    else
+      setDataForInternalNotes(quoteItemValue?.internalNotes)
+
   }, [quoteItemValue])
 
   return {

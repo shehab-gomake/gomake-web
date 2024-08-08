@@ -100,6 +100,7 @@ const GoMakeAutoComplate = ({
   const [selectedOption, setSelectedOption] = useState<any>();
   const { t } = useTranslation();
   const dir: "rtl" | "ltr" = t("direction");
+
   React.useEffect(() => {
     if (value?.name) {
       setSelectedOption(value);
@@ -107,8 +108,11 @@ const GoMakeAutoComplate = ({
       setSelectedOption(null);
     }
   }, [value]);
+  
   return (
     <StyledAutocomplete
+      // {...(value && { value })}
+      //value={value || value === 0 ? value : null}
       {...(value && { value })}
       {...(selectedOption && { selectedOption })}
       direction={dir}

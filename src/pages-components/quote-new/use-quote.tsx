@@ -41,7 +41,6 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     alertFaultUpdate,
     alertSuccessAdded,
     alertFaultAdded,
-    alertFaultGetData,
     alertSuccessDelete,
     alertFaultDelete,
     alertFault
@@ -52,10 +51,6 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
   const { t } = useTranslation();
   const { getQuote, getAllClientContacts } = useQuoteGetData(docType);
   const [quoteItemValue, setQuoteItemValue] = useRecoilState<any>(quoteItemState);
-  useEffect(() => {
-    setQuoteItemValue([])
-  }, [])
-
   const quoteConfirm = useRecoilValue<any>(quoteConfirmationState);
   const [selectDate, setSelectDate] = useState(isQuoteConfirmation ? quoteConfirm?.dueDate : quoteItemValue?.dueDate);
   const [creationDate, setCreationDate] = useState(isQuoteConfirmation ? quoteConfirm?.creationDate : quoteItemValue?.creationDate);
@@ -130,7 +125,6 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     if (quoteItemValue?.client?.newItemNotes && quoteItemValue?.client?.newItemNotes.trim() !== "" && quoteItemValue?.client?.newItemNotes.trim() !== null && docType === DOCUMENT_TYPE.quote) {
       onClickOpenNewItemNotesModal()
     }
-
   }, [quoteItemValue])
 
   useEffect(() => {
@@ -223,6 +217,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
       onlyCreateOrderClients: docType === DOCUMENT_TYPE.purchaseOrder || docType === DOCUMENT_TYPE.purchaseInvoice || docType === DOCUMENT_TYPE.purchaseInvoiceRefund ? true : false,
     });
   }, [docType]);
+
   const updateOccasionalClientName = async () => {
     const callBack = (res) => {
       if (res?.success) {
@@ -240,7 +235,6 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     });
   };
 
-
   const onBlurPurchaseNumber = async (value) => {
     updatePurchaseNumber(value);
     setIsUpdatePurchaseNumber(null);
@@ -250,6 +244,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     updateOccasionalClientName()
     setIsUpdateClientName(null);
   };
+
   const onBlurBusinessCode = async () => {
     setIsUpdateBusinessCode(null);
   };
@@ -1212,50 +1207,28 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     };
   }, [dateRef, activeClickAway, quoteItemValue, selectDate]);
 
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (taxDateRef.current && !taxDateRef.current.contains(event.target)) {
-        if (activeClickAwayForTaxDate) {
-          // updateDueDate();
-          setActiveClickAwayForTaxDate(false);
-        }
-      }
-    };
-    document.addEventListener("click", handleClickOutside);
-    return () => {
-      document.removeEventListener("click", handleClickOutside);
-    };
-  }, [taxDateRef, activeClickAway, quoteItemValue, taxDate]);
 
   const [openReferenceModal, setOpenReferenceModal] = useState(false)
   const onClickOpenReferenceModal = () => {
     setOpenReferenceModal(true)
   }
-  const onClickCloseReferenceModal = () => {
-    setOpenReferenceModal(false)
-  }
-  const onChangeDatesToCreationDate = () => {
-    setSelectDate(creationDate);
-    setCreationDate(creationDate)
-    setTaxDate(creationDate)
-  }
 
+  const [newCreationDate, setNewCreationDate] = useState(isQuoteConfirmation ? quoteConfirm?.creationDate : quoteItemValue?.creationDate);
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (creationDateRef.current && !creationDateRef.current.contains(event.target)) {
-        if (activeClickAwayForCreationDate) {
-          setActiveClickAwayForCreationDate(false);
-          onClickOpenReferenceModal()
+    setNewCreationDate(isQuoteConfirmation ? quoteConfirm?.creationDate : quoteItemValue?.creationDate)
+  }, [])
 
-        }
-      }
-    };
-    document.addEventListener("click", handleClickOutside);
-    return () => {
-      document.removeEventListener("click", handleClickOutside);
-    };
-  }, [creationDateRef, activeClickAwayForCreationDate, quoteItemValue, creationDate]);
+  const onClickCloseReferenceModal = () => {
+    setOpenReferenceModal(false);
+  }
 
+  const onChangeDatesToCreationDate = () => {
+    setSelectDate(newCreationDate);
+    setCreationDate(newCreationDate)
+    setTaxDate(newCreationDate);
+    //make sure it works
+    setQuoteItemValue({...quoteItemValue,creationDate:newCreationDate,taxDate:newCreationDate,dueDate:newCreationDate})
+  }
 
 
   useEffect(() => {
@@ -1282,9 +1255,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     setSelectDate(isQuoteConfirmation ? quoteConfirm?.dueDate : quoteItemValue?.dueDate);
     setCreationDate(isQuoteConfirmation ? quoteConfirm?.creationDate : quoteItemValue?.creationDate)
     setTaxDate(isQuoteConfirmation ? quoteConfirm?.taxDate : quoteItemValue?.taxDate)
-
   }, [quoteItemValue, quoteConfirm]);
-
 
   useEffect(() => {
     getAllCustomers();
@@ -1336,9 +1307,8 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
       value: DOCUMENT_TYPE.purchaseInvoiceRefund,
     },
   ];
+
   const documentTitle = documentsTitles.find(item => item.value === docType).label;
-
-
 
   const [openLoginModal, setOpenLoginModal] = useState<boolean>(false);
 
@@ -1349,9 +1319,8 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
   const onClickOpenLoginModal = () => {
     setOpenLoginModal(true);
   };
-  const [clientTypesCategories, setClientTypesCategories] = useRecoilState(
-    clientTypesCategoriesState
-  );
+
+  const setClientTypesCategories = useSetRecoilState(clientTypesCategoriesState);
   const getClientTypesCategories = async () => {
     const callBack = (res) => {
       if (res) {
@@ -1638,7 +1607,10 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     openReferenceModal,
     onClickOpenReferenceModal,
     onClickCloseReferenceModal,
-    onChangeDatesToCreationDate
+    onChangeDatesToCreationDate,
+    activeClickAwayForCreationDate,
+    newCreationDate,
+    setNewCreationDate
   };
 };
 

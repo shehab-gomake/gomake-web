@@ -106,8 +106,8 @@ const EmailSettings = ({ onClickSave }: IProps) => {
                     </Stack>}
             </div>
             <div style={classes.footerStyle} >
-                <SecondaryButton onClick={handleResetClick} variant={"outlined"}>{t("mailingSettings.reset")}</SecondaryButton>
-                <SecondaryButton onClick={handleUpdateClick} variant={"contained"}>{t("mailingSettings.save")}</SecondaryButton>
+                <SecondaryButton style={{ width: "fit-content" }} onClick={handleResetClick} variant={"outlined"}>{t("mailingSettings.reset")}</SecondaryButton>
+                <SecondaryButton style={{ width: "fit-content" }} onClick={handleUpdateClick} variant={"contained"}>{t("mailingSettings.save")}</SecondaryButton>
             </div>
         </div>
     );

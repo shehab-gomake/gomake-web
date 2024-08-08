@@ -1,6 +1,8 @@
-import {Employee} from "@/widgets/settings-users/users/interface/employee";
+import { EmployeeQuoteLimitationType } from "@/widgets/settings-users/users/enums/employee-actions";
+import { Employee } from "@/widgets/settings-users/users/interface/employee";
 
-const employeeInfoInputs = (state: Employee)  => {
+const employeeInfoInputs = (state: Employee, quoteLimitationOptions: any) => {
+
     return [
         {
             name: "firstName",
@@ -74,7 +76,29 @@ const employeeInfoInputs = (state: Employee)  => {
         //     machineInputType: 'input',
         //     isValid: true,
         // },
-    ];
+        {
+            name: "QuoteLimitationType",
+            label: "usersSettings.QuoteLimitationType",
+            type: "select",
+            placeholder: "usersSettings.QuoteLimitationType",
+            required: false,
+            parameterKey: "quoteLimitationType",
+            value: state?.quoteLimitationType,
+            options: quoteLimitationOptions,
+            isValid: true,
+        },
+        state?.quoteLimitationType === EmployeeQuoteLimitationType.LimitedTotalPrice && {
+            name: "QuotePriceLimit",
+            label: "usersSettings.QuotePriceLimit",
+            type: "number",
+            placeholder: "usersSettings.QuotePriceLimit",
+            required: false,
+            parameterKey: "quotePriceLimit",
+            options: [],
+            value: state.quotePriceLimit,
+            isValid: true,
+        },
+    ].filter(Boolean);
 }
 
-export {employeeInfoInputs};
+export { employeeInfoInputs };

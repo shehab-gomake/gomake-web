@@ -25,7 +25,7 @@ import { materialsClientsState, materialsMachinesState, materialsParametersState
 import { productsForDropDownList } from "@/store";
 import { GoMakeImageFiled } from "../image-filed/image-filed";
 
-const FormInput = ({ input, error, changeState, readonly }: IFormInput) => {
+const FormInput = ({ input, error, changeState, readonly, checkWhatRenderArray }: IFormInput) => {
   const [options, setOptions] = useState([]);
   const [dataLoaded, setDataLoaded] = useState<boolean>(false);
   const [selectedLabel, setSelectedLabel] = useState<string>(input.value);
@@ -76,7 +76,10 @@ const FormInput = ({ input, error, changeState, readonly }: IFormInput) => {
 
   const selectChange = (event: SyntheticEvent, value): void => {
     setSelectedLabel(value?.label ? value.label : "");
-    changeState(input.parameterKey, value?.value ? value.value : "");
+    const newValue = value?.value !== undefined && value?.value !== null
+      ? value.value
+      : "";
+    changeState(input.parameterKey, newValue);
   };
 
   const handleSwitchCheck = (event: ChangeEvent<HTMLInputElement>) => {
@@ -110,7 +113,7 @@ const FormInput = ({ input, error, changeState, readonly }: IFormInput) => {
     const selectedValue = options?.find(
       (option) => option.value === input.value
     );
-    if (selectedValue) {
+    if (selectedValue !== undefined && selectedValue !== null) {
       setSelectedLabel(selectedValue.label);
     } else {
       setSelectedLabel("");
@@ -130,7 +133,8 @@ const FormInput = ({ input, error, changeState, readonly }: IFormInput) => {
         }
         setDataLoaded(true);
       });
-    } else if (input.options && input.options.length > 0) {
+    }
+    else if (input.options && input.options.length > 0) {
       setOptions(
         input.options.map(({ value, text }) => ({ label: text, value }))
       );
@@ -139,6 +143,7 @@ const FormInput = ({ input, error, changeState, readonly }: IFormInput) => {
       setOptions(machinesCategoriesList)
     }
     else if (input.options?.length === 0 && input.parameterKey === "clients") {
+
       setOptions(clientsOptions)
     }
     else if (input.options?.length === 0 && input.parameterKey === "notebookTypes") {
@@ -218,6 +223,7 @@ const FormInput = ({ input, error, changeState, readonly }: IFormInput) => {
                 disabled={!!readonly}
                 placeholder={t(input.placeholder)}
                 options={options}
+                onChangeTextField={input.parameterKey === "clients" ? checkWhatRenderArray : undefined}
                 multiple={input.multiple ? true : false}
                 disableClearable={input?.disableClearable || false}
                 renderOption={

@@ -8,13 +8,12 @@ import { UpdateValueInput } from "@/components/text-input/update-value-input";
 import Button from "@mui/material/Button";
 import { useEffect, useState } from "react";
 import { IOutSourceSupplier } from "@/widgets/product-pricing-widget/interface";
-import { PrimaryButton } from "@/components/button/primary-button";
 import { useOutsourceSupplier } from "@/widgets/product-pricing-widget/components/outsource-suppliers/use-outsource-supplier";
 import { useTranslation } from "react-i18next";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { systemCurrencyState } from "@/store";
 import { EWidgetProductType } from "@/pages-components/products/digital-offset-price/enums";
-import { currentProductItemValuePriceState } from "../../state";
+import { calculationResultState, currentProductItemValuePriceState } from "../../state";
 import { UpdateValueAutoComplete } from "@/components";
 
 interface IProps {
@@ -43,20 +42,32 @@ const OutSourceSuppliersRowComponent = ({
     const { classes } = useStyle();
     const { secondColor } = useGomakeTheme();
     const [supplier, setSupplier] = useState<IOutSourceSupplier | null>();
-    const { updatePrice, updateWorkHours, updateProfit, updateCost, addItem, updateQuoteItem , productItemValueByEdit} = useOutsourceSupplier({supplier, setSupplier});
+    const { updatePrice, updateWorkHours, updateProfit, updateCost, productItemValueByEdit} = useOutsourceSupplier({supplier, setSupplier});
     const systemCurrency = useRecoilValue<any>(systemCurrencyState);
     const setCurrentProductItemValueTotalPrice = useSetRecoilState<number>(currentProductItemValuePriceState);
+    const calculationResult = useRecoilValue(calculationResultState);
 
     useEffect(() => {
         if (options?.length > 0) {
-            if (widgetType === EWidgetProductType.EDIT) {
-                setSupplier(options.find(x => x.supplierId == productItemValueByEdit?.supplierId));
-            }
-            else {
-                setSupplier(options[0]);
+            const isEditOrDuplicate = widgetType === EWidgetProductType.EDIT || widgetType === EWidgetProductType.DUPLICATE;
+            const suppId = isEditOrDuplicate ? productItemValueByEdit?.supplierId : calculationResult?.productItemValue?.supplierId;
+            
+            const foundSupplier = options.find(x => x.supplierId == suppId) || options[0];
+    
+            if (isEditOrDuplicate && foundSupplier) {
+                setSupplier({
+                    ...foundSupplier,
+                    finalPrice: productItemValueByEdit?.outSourceTotalPrice,
+                    cost: productItemValueByEdit?.outSourceCost,
+                    profit: productItemValueByEdit?.outSourceProfits,
+                    workHours: productItemValueByEdit?.outSourceTotalRealProductionTime
+                });
+            } else {
+                setSupplier(foundSupplier);
             }
         }
     }, []);
+    
 
 
     const handleDeliveryTimeUpdate = (newValue: number) => {
@@ -73,7 +84,9 @@ const OutSourceSuppliersRowComponent = ({
     }
 
     const handleSupplierUpdate = (value) => {
-        setSupplier(options.find(x => x.supplierId == value?.value));
+        const selectedSupp = options.find(x => x.supplierId == value?.value);
+        setCurrentProductItemValueTotalPrice(selectedSupp.finalPrice)
+        setSupplier(selectedSupp);
     }
 
     useEffect(() => {
@@ -81,6 +94,7 @@ const OutSourceSuppliersRowComponent = ({
             setCurrentProductItemValueTotalPrice(supplier.finalPrice)
         }
     }, [supplier?.finalPrice , setCurrentProductItemValueTotalPrice])
+
 
     return (
         <Fade in={true} timeout={700}>
@@ -103,24 +117,20 @@ const OutSourceSuppliersRowComponent = ({
                         valueColor={secondColor(500)} label={t('pricingWidget.finalPrice')} value={supplier?.finalPrice}
                         onUpdate={handleUpdatePrice} />
                 </Stack>
-                {/* {supplier?.cost !== 0 && (
-                    <PrimaryButton
-                        onClick={() => widgetType === EWidgetProductType.EDIT ? updateQuoteItem(supplier?.supplierId) : addItem(supplier?.supplierId)}
-                        style={{ width: 'fit-content', height: 35 }}
-                        variant={'contained'}
-                    >
-                        {widgetType === EWidgetProductType.EDIT ? t("materials.buttons.edit") : t('pricingWidget.add')}
-                    </PrimaryButton>
-                )} */}
             </Stack>
         </Fade>
     )
 }
 
 const EditableValue = ({ value, onUpdate, valueColor, label, isEditable, unit }: IProps) => {
-    const [edit, setEdit] = useState<boolean>(false);
-    const [editValue, setEditValue] = useState<number>(0);
     const { classes } = useStyle();
+    const [edit, setEdit] = useState<boolean>(false);
+    const [editValue, setEditValue] = useState<number>(value || 0);
+
+    useEffect(() => {
+        setEditValue(value);
+    }, [value]);
+
     const handleValueClick = (e) => {
         e.stopPropagation();
         if (isEditable) {
@@ -130,7 +140,7 @@ const EditableValue = ({ value, onUpdate, valueColor, label, isEditable, unit }:
 
     const handleCancelUpdate = () => {
         setEdit(false);
-        setEditValue(0);
+        setEditValue(value);
     }
 
     const onInputChange = (v: string) => {
@@ -142,6 +152,7 @@ const EditableValue = ({ value, onUpdate, valueColor, label, isEditable, unit }:
         setEdit(false);
     }
 
+  
     return (
         <Stack direction={'row'} gap={'10px'} alignItems={'center'}>
             <span style={classes.detailTitle}>{label}</span>
@@ -162,6 +173,7 @@ const EditableSelect = ({ value, onUpdate, valueColor, label, isEditable, option
     const [editValue, setEditValue] = useState<any>(null);
     const { classes } = useStyle();
 
+    
     const handleValueClick = (e) => {
         e.stopPropagation();
         if (isEditable) {

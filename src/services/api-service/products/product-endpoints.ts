@@ -6,6 +6,7 @@ const ADD_PRODUCT_PROFIT_RULE_URL = "/v1/printhouse-config/products/add-profit-r
 const ORDER_PRODUCT_PROFIT_RULE_URL = "/v1/printhouse-config/products/order-profit-rules";
 const Delete_PRODUCT_PROFIT_RULE_URL = "/v1/printhouse-config/products/delete-profit-rule";
 const GET_PRODUCT_PROFIT_RULES_URL = "/v1/printhouse-config/products/get-product-profit-rules/";
+
 const addProductProfitRuleApi: ICallAndSetData = async (callApi, setState, data) => {
     return await getSetApiData(callApi, EHttpMethod.POST, ADD_PRODUCT_PROFIT_RULE_URL, setState, data);
 };

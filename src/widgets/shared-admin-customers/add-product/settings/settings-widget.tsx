@@ -43,9 +43,11 @@ const SettingsWidget = ({
     openPricingTypeModal,
     onClickOpenPricingType,
     selectPricingType,
-    onClickClosePricingType
+    onClickClosePricingType,
+    query
 
   } = useSettings({ onClickParametersTab, productState, onChangeStateProduct });
+
   const [defultProductSKU, setDefultProductSKU] = useState()
   const [defultTemplate, setDefultTemplate] = useState()
   useEffect(() => {
@@ -246,7 +248,7 @@ const SettingsWidget = ({
                     onChangeStateProduct("templateId", value)
                   }
                 }}
-                disabled={isUpdate}
+                disabled={isUpdate && !query?.isSubProducts}
               />
             )}
           </div>

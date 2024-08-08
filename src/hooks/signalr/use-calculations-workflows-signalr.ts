@@ -6,43 +6,41 @@ import {
   ICalculatedWorkFlow,
   IExceptionsLog,
 } from "@/widgets/product-pricing-widget/interface";
-import { useGomakeAxios } from "../use-gomake-axios";
 import config from "@/config";
 
-const useCalculationsWorkFlowsSignalr = () => {
+const useCalculationsWorkFlowsSignalR = () => {
 
   const { data, connection, connectionId } =
     useGoMakeSignalr<ICalculationSignalRResult>({
       url: config.erp_server +`/hubs/workFlows`,
       accessToken: getUserToken(),
-      methodName: "updateWorkFlows",
+      methodName: "updateWorkFlows2",
     });
    
-  const [calculationSessionId, setConnectionSessionId] = useState<string>();
   const [signalRPricingResult, setSignalRPricingResult] = useState<any>();
+  const [startCalculationData, setStartCalculationData] = useState<any>();
 
-  const [signalrRWorkFlows, setSignalrRWorkFlows] =
+  const [signalRWorkFlows, setSignalRWorkFlows] =
     useState<ICalculationSignalRResult>();
   const [updatedSelectedWorkFlow, setUpdatedSelectedWorkFlow] =
     useState<ICalculatedWorkFlow>();
   const [calculationExceptionsLogs, setCalculationExceptionsLogs] =
     useState<IExceptionsLog[]>();
-  const [calculationServerError,setcalculationServerErrorState]=useState(false)
+  const [calculationServerError,setCalculationServerErrorState]=useState(false)
 
   const [isCalculationFinished,setIsCalculationFinished]=useState(false)
 
   useEffect(() => {
     if (connection) {
       connection.on("updateWorkFlows", (newData: ICalculationSignalRResult) => {
-        setCalculationExceptionsLogs(newData.exceptions);
-        setSignalrRWorkFlows(newData);
+        //setCalculationExceptionsLogs(newData.exceptions);
+        setSignalRWorkFlows(newData);
       });
-      connection.on("startCalculationSession", (newData) => {
-        if(newData.isDevMode){
-          console.log("isDevMode received")
+      connection.on("startCalculationSession", async (newData) => {
+        /*if(newData.isDevMode){
           setConnectionSessionId(newData.productItemValueDraftId);
-        }
-        
+        }*/
+        setStartCalculationData(newData)
         setCalculationExceptionsLogs(newData.calculationExceptions);
       });
       connection.on("updateSelectedWorkFlow", (newData) => {
@@ -56,14 +54,17 @@ const useCalculationsWorkFlowsSignalr = () => {
         setSignalRPricingResult(newData);
       });
       connection.on("calculationServerError", () => {
-        setcalculationServerErrorState(true)
+        setCalculationServerErrorState(true)
       });
+      
     }
   }, [connection]);
+
+
   return {
-    calculationResult: signalrRWorkFlows,
-    calculationSessionId,
+    calculationResult: signalRWorkFlows,
     connectionId,
+    startCalculationData,
     updatedSelectedWorkFlow,
     calculationExceptionsLogs,
     signalRPricingResult,
@@ -72,4 +73,4 @@ const useCalculationsWorkFlowsSignalr = () => {
     setIsCalculationFinished
   };
 };
-export { useCalculationsWorkFlowsSignalr };
+export { useCalculationsWorkFlowsSignalR };

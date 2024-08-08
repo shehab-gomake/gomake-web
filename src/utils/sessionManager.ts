@@ -19,5 +19,4 @@ export const clearSessionData = () => {
 
 export const logSessionData = () => {
   const sessionData = getSessionData();
-  console.log("Session data:", sessionData);
 };

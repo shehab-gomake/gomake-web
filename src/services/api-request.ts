@@ -31,7 +31,7 @@ const apiRequest = async (
         "project-name": "business-dashboard",
         ...(getUserToken() && { Authorization: "Bearer " + getUserToken() }),
         ...(data.customAuth && { "auth-token": data.customAuth }),
-        lang: language ? language : "en",
+        lang: "en" ,
         domain: "",
       },
     };
@@ -75,9 +75,6 @@ const apiRequest = async (
     // await createJiraIssue(summary, description).catch(error => {
     //   log.error('Failed to create Jira issue:', error);
     // });
-
-    // console.log("summary, description", summary, description);
-
     return {
       success: false,
       status: err?.response?.status,

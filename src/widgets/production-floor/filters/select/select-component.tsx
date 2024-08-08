@@ -1,15 +1,16 @@
-import {CSSProperties, FormEvent, useCallback, useState} from "react";
-import {Button, Checkbox, FormControlLabel, FormGroup, Menu, MenuItem, MenuProps} from "@mui/material";
+import { CSSProperties, FormEvent, useCallback, useState } from "react";
+import { Button, Checkbox, FormControlLabel, FormGroup, Menu, MenuItem, MenuProps } from "@mui/material";
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import {useTranslation} from "react-i18next";
-import {styled} from "@mui/material/styles";
-import {GomakeTextInput} from "@/components";
+import { useTranslation } from "react-i18next";
+import { styled } from "@mui/material/styles";
+import { GomakeTextInput } from "@/components";
 
 interface ISelectComponentProps {
     buttonLabel: string;
-    list: {id: string, name: string, checked: boolean}[];
+    list: { id: string, name: string, checked: boolean }[];
     onChange: (v: string) => void;
     style?: CSSProperties;
+    checkWhatRenderArray?: any
 }
 
 const StyledMenu = styled((props: MenuProps) => (
@@ -48,46 +49,53 @@ const StyledMenu = styled((props: MenuProps) => (
         }
     },
 }));
-const SelectComponent = ({buttonLabel, list, onChange, style}: ISelectComponentProps) => {
+const SelectComponent = ({ buttonLabel, list, onChange, style, checkWhatRenderArray }: ISelectComponentProps) => {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [filter, setFilter] = useState<string>();
     const open = Boolean(anchorEl);
-    const {t} = useTranslation();
+    const { t } = useTranslation();
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(event.currentTarget);
     };
     const handleClose = () => {
         setAnchorEl(null);
+        setFilter("")
     };
     const handleFilterChange = (event: FormEvent<HTMLInputElement>) => {
-        setFilter(event.currentTarget.value);
+        if (buttonLabel === "dashboard-widget.clients") {
+            setFilter(event.currentTarget.value);
+            checkWhatRenderArray(event.currentTarget.value)
+        } else {
+            setFilter(event.currentTarget.value);
+
+        }
     }
 
-    const getList = useCallback(()=> {
+    const getList = useCallback(() => {
         if (filter) {
             return list.filter(item => item.name.toLowerCase().includes(filter.toLowerCase()))
         }
         return list
     }, [list, filter])
-    return(
+    return (
         <div>
-            <Button style={!!style ? style : {color: '#9E9E9E', borderColor: '#9E9E9E'}} variant={!!style ? 'contained':'outlined'} onClick={handleClick}>
+            <Button style={!!style ? style : { color: '#9E9E9E', borderColor: '#9E9E9E' }} variant={!!style ? 'contained' : 'outlined'} onClick={handleClick}>
                 <span>{t(buttonLabel)}</span>
-                <KeyboardArrowDownIcon/>
+                <KeyboardArrowDownIcon />
             </Button>
-            <StyledMenu  anchorEl={anchorEl}
-                         open={open}
-                         onClose={handleClose}>
+            <StyledMenu anchorEl={anchorEl}
+                open={open}
+                onClose={handleClose}>
                 <FormGroup>
                     <div>
-                        <GomakeTextInput  placeholder={t('productionFloor.search')} value={filter} onChange={handleFilterChange}/>
+                        <GomakeTextInput placeholder={t('productionFloor.search')} value={filter} onChange={handleFilterChange} />
                     </div>
                     {
                         getList().map((item, index) => {
                             return <MenuItem key={item.id + index}>
-                                <FormControlLabel  label={item.name}
-                                                   control={<Checkbox checked={item.checked}
-                                                                      onChange={() => {onChange(item.id)}}/>}
+                                <FormControlLabel label={item.name}
+                                    control={<Checkbox checked={item.checked}
+                                        onChange={() => { onChange(item.id) }} />}
                                 />
                             </MenuItem>
 
@@ -99,4 +107,4 @@ const SelectComponent = ({buttonLabel, list, onChange, style}: ISelectComponentP
     )
 }
 
-export {SelectComponent}
+export { SelectComponent }

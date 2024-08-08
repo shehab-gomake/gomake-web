@@ -182,7 +182,6 @@ const ActionContainerComponent = ({
   isNeedMachine,
   isNeedMaterial,
 }: IActionContainerComponentProps) => {
-  console.log("actionException", actionException?.exceptionType)
   source = source === EWorkSource.OUT ? EWorkSource.OUT : EWorkSource.INTERNAL;
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [chooseMachine, setChooseMachine] = useState<boolean>(false);
@@ -431,7 +430,7 @@ const ActionContainerComponent = ({
                         onClick={(e) => {
                           e.stopPropagation();
                           setChooseEmployee(true);
-                          onClickGetEmployeeForAction(id)
+                          onClickGetEmployeeForAction(actionId)
                         }}
                         variant={"text"}
                         style={classes.sectionTitle}

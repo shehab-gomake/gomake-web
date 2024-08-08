@@ -193,6 +193,9 @@ const useStyle = () => {
         gap: 10,
         width: "100%",
       },
+      oldSystemValueText:{
+        ...FONT_FAMILY.Lexend(500, 14),
+      },
       WastebasketNewStyle: {
         display: "flex",
         flexDirection: "column" as "column",

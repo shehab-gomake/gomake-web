@@ -18,7 +18,6 @@ import {
   subProductsParametersState,
 } from "@/store";
 import { useMaterials } from "../use-materials";
-import { checkParameterState } from "./store";
 import cloneDeep from "lodash/cloneDeep";
 import lodashClonedeep from "lodash.clonedeep";
 import { EWidgetProductType } from "@/pages-components/products/digital-offset-price/enums";
@@ -46,7 +45,7 @@ import {
   workFlowsState,
 } from "@/widgets/product-pricing-widget/state";
 import { getOutsourcingSuppliersListApi } from "@/services/api-service/suppliers/suppliers-endpoints";
-import { useCalculationsWorkFlowsSignalr } from "../signalr/use-calculations-workflows-signalr";
+import { useCalculationsWorkFlowsSignalR } from "../signalr/use-calculations-workflows-signalr";
 import { v4 as uuidv4 } from "uuid";
 import {
   addItemApi,
@@ -99,6 +98,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [updatedProductTemplate, setupdatedProductTemplate] = useState<any>()
   const [defaultProductTemplate, setDefaultProductTemplate] = useState<any>([]);
   const [subProducts, setSubProducts] = useRecoilState<any>(subProductsParametersState);
+  const [subProductsColorsModal, setSubProductsColorsModal] = useRecoilState<any>(subProductsCopyParametersState);
+
   const [isSetTemplete, setIsSetTemplete] = useState<boolean>(false);
   const setSubProductsCopy = useSetRecoilState<any>(subProductsCopyParametersState);
   const itemParmetersValues = useRecoilValue(itemParmetersValuesState);
@@ -134,19 +135,20 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
   const {
     calculationResult,
-    calculationSessionId,
     connectionId,
+    startCalculationData,
     updatedSelectedWorkFlow,
     calculationExceptionsLogs,
     signalRPricingResult,
     calculationServerError,
     isCalculationFinished,
     setIsCalculationFinished
-  } = useCalculationsWorkFlowsSignalr();
+  } = useCalculationsWorkFlowsSignalR();
 
   useEffect(() => {
     setProductItemValueByEdit({})
   }, [])
+
   useEffect(() => {
     const oldConnectionId = currentSignalRConnectionId;
     if (oldConnectionId && connectionId && connectionId !== oldConnectionId) {
@@ -154,6 +156,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     }
     setCurrentSignalRConnectionId(connectionId)
   }, [connectionId])
+
   const updateSignalRConnectionId = async (oldSignalRConnectionId, newSignalRConnectionId) => {
     const res: any = await callApi(
       "POST",
@@ -165,6 +168,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       false,
     )
   }
+
   useEffect(() => {
     if (calculationResult && widgetType != EWidgetProductType.EDIT) {
       setCalculationResult(calculationResult);
@@ -205,72 +209,42 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   }, [subProducts]);
 
   useEffect(() => {
-    if (calculationResult && calculationResult.productItemValue) {
-      if (calculationResult.productItemValueDraftId === currentCalculationSessionId) {
-        setCurrentProductItemValueDraftId(calculationResult.productItemValueDraftId);
-        let productTypes = new Set();
-        const currentWorkFlows = cloneDeep(workFlows);
-        const newWorkFlows = calculationResult?.productItemValue.workFlows;
-        currentWorkFlows.forEach((workFlow) => { productTypes.add(workFlow.productType) })
-        newWorkFlows.forEach((workFlow) => { productTypes.add(workFlow.productType) })
-        const allWorkFlows = [];
-        productTypes.forEach((productType) => {
-          if (productType === null) {
-            // general workflows 
-            let newProductTypeWorkFlows = cloneDeep(newWorkFlows);
-            newProductTypeWorkFlows = newProductTypeWorkFlows.filter(x => x.productType === productType && !x.isCompleteWorkFlow);
-            let currentProductTypeWorkFlows = cloneDeep(currentWorkFlows);
-            currentProductTypeWorkFlows = currentProductTypeWorkFlows.filter(x => x.productType === productType && !x.isCompleteWorkFlow);
-            let result = setSelectedWorkflow(newProductTypeWorkFlows, currentProductTypeWorkFlows);
-            allWorkFlows.push(...result);
-            // completed workflows
-            let newProductTypeCompletedWorkFlows = cloneDeep(newWorkFlows);
-            newProductTypeCompletedWorkFlows = newProductTypeCompletedWorkFlows.filter(x => x.productType === productType && x.isCompleteWorkFlow);
-            let currentProductTypeCompletedWorkFlows = cloneDeep(currentWorkFlows);
-            currentProductTypeCompletedWorkFlows = currentProductTypeCompletedWorkFlows.filter(x => x.productType === productType && x.isCompleteWorkFlow);
-            let completedWorkFlowsResult = setSelectedWorkflow(newProductTypeCompletedWorkFlows, currentProductTypeCompletedWorkFlows);
-            allWorkFlows.push(...completedWorkFlowsResult);
-          } else {
-            let newProductTypeWorkFlows = cloneDeep(newWorkFlows);
-            newProductTypeWorkFlows = newProductTypeWorkFlows.filter(x => x.productType === productType);
-            let currentProductTypeWorkFlows = cloneDeep(currentWorkFlows);
-            currentProductTypeWorkFlows = currentProductTypeWorkFlows.filter(x => x.productType === productType);
-            let result = setSelectedWorkflow(newProductTypeWorkFlows, currentProductTypeWorkFlows);
-            allWorkFlows.push(...result);
-          }
-
-        })
-        let myselectedWorkFlow = allWorkFlows?.find((x) => x.selected && x.isCompleteWorkFlow);
-        if (myselectedWorkFlow) {
-          myselectedWorkFlow?.subWorkFlows?.forEach(element => {
-            const subWorkFlow = allWorkFlows.find(x => x.id === element.orginalBookPartId)
-            if (subWorkFlow) {
-              allWorkFlows.forEach(workflow => {
-                if (workflow.productType == subWorkFlow.productType) {
-                  workflow.selected = false;
-                }
-              })
-              subWorkFlow.selected = true;
-            }
-          });
-
-        }
-        if (calculationResult.isCalculationFinished) {
-          setCalculationProgress({
-            totalWorkFlowsCount: 0,
-            currentWorkFlowsCount: 0,
-          });
-          setCurrentProductItemValueTotalWorkFlows(calculationResult.productItemValue.totalWorkFlows)
-          setLoading(false);
-        } else {
-          setCurrentProductItemValueTotalWorkFlows(currentWorkFlows ? currentWorkFlows.length : 0)
-
-        }
-        setWorkFlows(allWorkFlows);
-        setJobActions(calculationResult?.productItemValue.actions);
-      }
+    if (calculationResult && calculationResult.productItemValueDraftId === currentCalculationSessionId) {
+      getSelectedWorkFlow();
     }
   }, [calculationResult]);
+
+  const getSelectedWorkFlow = async () => {
+    const res: any = await callApi(
+      "GET",
+      `/v1/erp-service/productItemValueDrafts/get-selected-work-flow?signalRConnectionId=${connectionId}`,
+      {},
+      false,
+    )
+    if (!res.success) {
+      setCalculationProgress({
+        totalWorkFlowsCount: 0,
+        currentWorkFlowsCount: 0,
+      });
+
+      //setLoading(false);
+      setcalculationServerErrorState(true)
+      return;
+    }
+
+    const result = res?.data?.data?.data;
+    setCalculationExceptionsLogs(result.exceptions);
+    setCurrentProductItemValueDraftId(result.productItemValueDraftId);
+    setCalculationProgress({
+      totalWorkFlowsCount: 0,
+      currentWorkFlowsCount: 0,
+    });
+    setCurrentProductItemValueTotalWorkFlows(result.productItemValue.totalWorkFlows)
+    //setLoading(false);
+    setWorkFlows(result.productItemValue.workFlows);
+    setJobActions(result?.productItemValue.actions);
+    setCalculationResult(result)
+  }
 
   const setSelectedWorkflow = (newWorkFlows, currentWorkFlows) => {
     newWorkFlows.forEach((flow) => {
@@ -321,29 +295,40 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       setLoading(false)
       const totalWorkFlowsCount = signalRPricingResult.totalWorkFlows;
       const currentWorkFlowsCount = signalRPricingResult.currentWorkFlowIndex > calculationProgress.currentWorkFlowsCount ? signalRPricingResult.currentWorkFlowIndex : (calculationProgress.currentWorkFlowsCount + 1);
-      if(signalRPricingResult.isCalculationFinished && signalRPricingResult.totalPrice){
+      if (signalRPricingResult.isCalculationFinished && signalRPricingResult.totalPrice) {
         setCurrentProductItemValueTotalPrice(
-            parseFloat(signalRPricingResult.totalPrice)
+          parseFloat(signalRPricingResult.totalPrice)
         );
       }
-      setCalculationProgress({
-        totalWorkFlowsCount: totalWorkFlowsCount,
-        currentWorkFlowsCount: currentWorkFlowsCount,
-      });
+      if (signalRPricingResult.isCalculationFinished) {
+        setCalculationProgress({
+          totalWorkFlowsCount: 0,
+          currentWorkFlowsCount: 0,
+        });
+      } else {
+        setCalculationProgress({
+          totalWorkFlowsCount: totalWorkFlowsCount,
+          currentWorkFlowsCount: currentWorkFlowsCount,
+        });
+      }
+
     }
   }, [signalRPricingResult]);
 
   useEffect(() => {
-    setWorkFlows([]);
-    setCurrentProductItemValueTotalPrice(null);
-    setJobActions([]);
-    setIsCalculationFinished(false);
-    setCalculationProgress({
-      totalWorkFlowsCount: 0,
-      currentWorkFlowsCount: 0,
-    });
-    setCurrentCalculationSessionId(calculationSessionId);
-  }, [calculationSessionId]);
+    if (startCalculationData && startCalculationData.isDevMode) {
+      setWorkFlows([]);
+      setCurrentProductItemValueTotalPrice(null);
+      setJobActions([]);
+      setIsCalculationFinished(false);
+      setCalculationProgress({
+        totalWorkFlowsCount: 0,
+        currentWorkFlowsCount: 0,
+      });
+      setCurrentCalculationSessionId(startCalculationData.productItemValueDraftId);
+    }
+
+  }, [startCalculationData]);
 
   useEffect(() => {
     if (calculationExceptionsLogs) {
@@ -727,6 +712,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     ||
                     parameter?.parameterType ===
                     EParameterTypes.ADVERTISING_PRODUCT_NAME
+                    ||
+                    parameter?.parameterType ===
+                    EParameterTypes.BUTTON
                   ) {
                     // when the parameter is required and the parameter is material select and if there is only one option select it automatically
                     if (parameter?.valuesConfigs && parameter?.valuesConfigs?.length === 1 && parameter?.isRequired) {
@@ -784,6 +772,30 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                           unitType: parameter?.unitType,
                         });
                       }
+                    }
+                    else if (value && parameter.code === "DieCut") {
+                      let values = value?.additionalAttribute?.find((val) => val.valueId === "name")
+
+                      subProduct.parameters.push({
+                        parameterId: parameter?.id,
+                        parameterName: parameter?.name,
+                        actionId:
+                          value?.activateAction === true
+                            ? parameter?.actionId
+                            : null,
+                        parameterType: parameter?.parameterType,
+                        ...(value && {
+                          valueIds: [value?.id],
+                          values: [values?.value],
+                        }),
+                        sectionId: section?.id,
+                        subSectionId: subSection?.id,
+                        actionIndex: parameter?.actionIndex,
+                        parameterCode: parameter?.code,
+                        valuesConfigs: parameter?.valuesConfigs,
+                        unitKey: parameter?.unitKey,
+                        unitType: parameter?.unitType,
+                      });
                     }
                   } else if (
                     parameter?.parameterType ===
@@ -901,6 +913,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           subSection.parameters
             .filter((parameter) => !parameter.isHidden)
             .forEach((parameter) => {
+
               parameter.relatedParameters.forEach((relatedParameter) => {
                 // Check if the relatedParameter's parameterId exists in parameters
                 const isParameterIdExisting = subSection.parameters.some(
@@ -966,6 +979,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     compareStrings(x.pathName, parameter.materialPath[0])
                   )?.data;
                   if (!parameter.valuesConfigs) {
+
                     parameter.valuesConfigs = [];
                   }
                   parameter.valuesConfigs.forEach(val => {
@@ -978,40 +992,84 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                       })
                     }
                   })
-
-                  parameter.valuesConfigs = parameter.valuesConfigs.filter(
-                    (x) => x.valueIds && x.valueIds.length > 0
-                  );
-                  if (materialData) {
-                    materialData.forEach((val) => {
-                      const existsValue = parameter.valuesConfigs.find(
-                        (x) =>
-                          x.valueIds &&
-                          x.valueIds.length > 0 &&
-                          x.valueIds[0] === val.valueId
-                      );
-                      if (!existsValue) {
-                        parameter.valuesConfigs.push({
-                          id: val.valueId,
-                          activateAction: false,
-                          isDefault: false,
-                          isDeleted: false,
+                  if (parameter.code === "DieCut") {
+                    if (parameter.valuesConfigs.length === 0) {
+                      parameter.valuesConfigs = materialData.map(data => ({
+                        id: data.valueId,
+                        isHidden: false,
+                        isDefault: false,
+                        updateName: null,
+                        activateAction: false,
+                        isDeleted: false,
+                        materialValueIds: null,
+                        values: null,
+                        selectedParameterValues: null,
+                        code: null, // Add code if needed
+                        additionalAttribute: data.additionalAttribute,
+                        currency: data.currency
+                      }));
+                    } else {
+                      // If valueConfigs has objects, update it based on materialData
+                      parameter.valuesConfigs = materialData.map(data => {
+                        const existingConfig = parameter.valuesConfigs.find(config => config.id === data.valueId);
+                        return existingConfig ? {
+                          ...existingConfig,
+                          isDefault: true,
+                          additionalAttribute: data.additionalAttribute,
+                          currency: data.currency
+                        } : {
+                          id: data.valueId,
                           isHidden: false,
+                          isDefault: false,
+                          updateName: null,
+                          activateAction: false,
+                          isDeleted: false,
                           materialValueIds: null,
+                          values: null,
                           selectedParameterValues: null,
-                          updateName: val.value,
-                          values: [val.valueId],
-                          additionalAttribute: val?.additionalAttribute,
-                          currency: val?.currency
-                        });
-                      } else {
-                        existsValue.id = val.valueId;
-                        existsValue.updateName = val.value;
-                        existsValue.additionalAttribute = val?.additionalAttribute,
-                          existsValue.currency = val?.currency
-                      }
-                    });
+                          code: null, // Add code if needed
+                          additionalAttribute: data.additionalAttribute,
+                          currency: data.currency
+                        };
+                      });
+                    }
                   }
+                  else {
+                    parameter.valuesConfigs = parameter.valuesConfigs.filter(
+                      (x) => x.valueIds && x.valueIds.length > 0
+                    );
+                    if (materialData) {
+                      materialData.forEach((val) => {
+                        const existsValue = parameter.valuesConfigs.find(
+                          (x) =>
+                            x.valueIds &&
+                            x.valueIds.length > 0 &&
+                            x.valueIds[0] === val.valueId
+                        );
+                        if (!existsValue) {
+                          parameter.valuesConfigs.push({
+                            id: val.valueId,
+                            activateAction: false,
+                            isDefault: false,
+                            isDeleted: false,
+                            isHidden: false,
+                            materialValueIds: null,
+                            selectedParameterValues: null,
+                            updateName: val.value,
+                            values: [val.valueId],
+                            additionalAttribute: val?.additionalAttribute,
+                            currency: val?.currency
+                          });
+                        } else {
+                          existsValue.id = val.valueId;
+                          existsValue.updateName = val.value;
+                          existsValue.additionalAttribute = val?.additionalAttribute,
+                            existsValue.currency = val?.currency
+                        }
+                      });
+                    }
+                  }
+
                 }
 
                 const defaultValue = parameter.valuesConfigs?.find(
@@ -1029,41 +1087,46 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                           compareStrings(y, materialPath)
                         )
                     );
-                  if(materialRelatedParameters && materialRelatedParameters.length > 0){
+                  if (materialRelatedParameters && materialRelatedParameters.length > 0) {
                     let param = materialRelatedParameters[0];
                     if (param.materialPath && param.materialPath.length > 0) {
                       const index = param.materialPath.findIndex((x) =>
-                          compareStrings(x, materialPath)
+                        compareStrings(x, materialPath)
                       );
                       let allMaterialsCopy = materials;
                       let paramMaterialValues = [];
                       if (index > 0) {
                         allMaterialsCopy = allMaterialsCopy?.find((x) =>
-                            compareStrings(x.pathName, param.materialPath[0])
+                          compareStrings(x.pathName, param.materialPath[0])
                         )?.data;
                         for (let i = 0; i <= index; i++) {
                           const prevPath = param.materialPath[i];
                           const prevPathParam = subSection.parameters.find(
-                              (x) =>
-                                  x.materialPath &&
-                                  x.materialPath.length > i &&
-                                  x.materialPath[i] === prevPath &&
-                                  x.actionIndex === parameter.actionIndex
+                            (x) =>
+                              x.materialPath &&
+                              x.materialPath.length > i &&
+                              x.materialPath[i] === prevPath &&
+                              x.actionIndex === parameter.actionIndex
                           );
-                          let prevPathParamDefaultValue = prevPathParam.valuesConfigs.find(x=>x.isDefault);
+                          let prevPathParamDefaultValue = prevPathParam.valuesConfigs.find(x => x.isDefault);
 
-                          allMaterialsCopy = allMaterialsCopy?.find(
-                              (x) => x.valueId === prevPathParamDefaultValue?.valueIds[0]
-                          )?.data;
+                          if (prevPathParamDefaultValue && prevPathParamDefaultValue?.values && prevPathParamDefaultValue?.values.length) {
+                            allMaterialsCopy = allMaterialsCopy?.find(
+                              (x) => x.valueId === prevPathParamDefaultValue?.values[0]
+                            )?.data;
+                          } else {
+                            allMaterialsCopy = []
+                          }
+
                         }
                         paramMaterialValues = allMaterialsCopy;
                       }
                       else if (index === 0) {
                         allMaterialsCopy = allMaterialsCopy.find((x) =>
-                            compareStrings(x.pathName, materialPath)
+                          compareStrings(x.pathName, materialPath)
                         )?.data;
                         paramMaterialValues = allMaterialsCopy?.find((x) =>
-                            defaultValue?.values?.find((y) => y === x.valueId)
+                          defaultValue?.values?.find((y) => y === x.valueId)
                         )?.data;
                       }
                       if (index != -1 && index < param.materialPath.length - 1) {
@@ -1078,14 +1141,14 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                           }
                         })
                         param.valuesConfigs = param.valuesConfigs.filter(
-                            (x) => x.values && x.values.length > 0
+                          (x) => x.values && x.values.length > 0
                         );
                         paramMaterialValues?.forEach((val) => {
                           const existsValue = param.valuesConfigs?.find(
-                              (x) =>
-                                  x.valueIds &&
-                                  x.valueIds.length > 0 &&
-                                  x.valueIds[0] === val.valueId
+                            (x) =>
+                              x.valueIds &&
+                              x.valueIds.length > 0 &&
+                              x.valueIds[0] === val.valueId
                           );
                           if (!existsValue) {
                             param.valuesConfigs.push({
@@ -1105,14 +1168,17 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                             existsValue.id = val.valueId;
                             existsValue.updateName = val.value;
                             existsValue.additionalAttribute = val?.additionalAttribute,
-                                existsValue.currency = val?.currency
+                              existsValue.currency = val?.currency
 
                           }
                         });
+                        if (param?.valuesConfigs && param?.valuesConfigs?.length === 1 && param?.isRequired) {
+                          param.valuesConfigs[0].isDefault = true
+                        }
                       }
                     }
                   }
-             
+
 
                 }
               }
@@ -1500,6 +1566,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     }
 
   }, [deviceSize, deviceCategory])
+  const setOpenQuantityComponent = useDebouncedCallback(() => {
+    setOpenQuantityComponentModal(true);
+  }, 700);
 
   const _renderParameterType = (
     parameter: any,
@@ -1510,7 +1579,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     list,
     inModal: any,
     inRow: boolean,
-    inunderParameter: boolean
+    inunderParameter: boolean,
   ) => {
     let Comp;
     const parametersArray = subProducts.flatMap((item) => item.parameters);
@@ -1527,6 +1596,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       parameter?.id === quantity?.parameterId
     ) {
       const typesNum = typesParam && typesParam.values ? typesParam.values[0] : 0;
+
       const isSets = isSetsParameter && isSetsParameter.values ? isSetsParameter.values[0] : "";
       const isInputDisabled = typesNum > 1 || isSets === "true";
       Comp = (
@@ -1546,7 +1616,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         </React.Fragment>
 
       );
-    } else if (
+    }
+    else if (
       parameter?.parameterType === EParameterTypes.INPUT_NUMBER &&
       parameter?.id === typesParam?.parameterId
     ) {
@@ -1564,7 +1635,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           type="number"
           disabled={isInputDisabled}
           extraOnChange={() => {
-            setOpenQuantityComponentModal(true)
+            setOpenQuantityComponent();
           }}
         />
       );
@@ -1685,6 +1756,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           section={section}
           index={index}
           straightKnife={straightKnife}
+          allMaterials={allMaterials}
         />
       );
     }
@@ -1774,7 +1846,15 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               <span style={clasess.spanRequierd}> *</span>
             ) : null}
           </div>
-          <div style={inRow ? { width: "5%" } : clasess.renderParameterTypeContainer}>{Comp}</div>
+          <div style={inRow ? { width: "5%" } : clasess.renderParameterTypeContainer}>
+            {Comp}
+          </div>
+          {
+            !inunderParameter && <div style={clasess.oldSystemValueText}>{parameter?.oldSystemValue}</div>
+          }
+
+
+
         </div>
         <>
           {
@@ -1830,6 +1910,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                                   false,
                                   false
                                 )}
+
                               </div>
                             );
                           }
@@ -2392,6 +2473,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
           materialRelatedParameters?.forEach((param) => {
             if (param.materialPath && param.materialPath.length > 0) {
+              const materialPath =
+                param.materialPath[param.materialPath.length - 1];
               const index = param.materialPath.findIndex((x) =>
                 compareStrings(x, materialPath)
               );
@@ -2410,22 +2493,16 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                       x.materialPath[i] === prevPath &&
                       x.actionIndex === actionIndex
                   );
-                  if (subSectionParameter.id === prevPathParam.id) {
+                  let prevPathParamDefaultValue = temp.find(x => x.parameterId === prevPathParam.id);
+
+                  if (prevPathParamDefaultValue && prevPathParamDefaultValue?.valueIds && prevPathParamDefaultValue?.valueIds.length) {
                     allMaterialsCopy = allMaterialsCopy?.find(
-                      (x) => x.valueId === parameterValue?.id
+                      (x) => x.valueId === prevPathParamDefaultValue?.valueIds[0]
                     )?.data;
                   } else {
-                    const subProductParam = targetSubProduct?.parameters?.find(
-                      (item) =>
-                        item.parameterId === prevPathParam.id &&
-                        item.sectionId === sectionId &&
-                        item.subSectionId === subSectionId &&
-                        item.actionIndex === actionIndex
-                    );
-                    allMaterialsCopy = allMaterialsCopy?.find(
-                      (x) => x.valueId === subProductParam?.valueIds[0]
-                    )?.data;
+                    // allMaterialsCopy = []
                   }
+
                 }
                 paramMaterialValues = allMaterialsCopy;
               } else if (index === 0) {
@@ -2436,45 +2513,44 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   parameterValue?.values?.find((y) => y === x.valueId)
                 )?.data;
               }
-              if (index != -1 && index < param.materialPath.length - 1) {
-                param.valuesConfigs = [];
-                //param.isHidden = false;
-                paramMaterialValues?.forEach((val) => {
-                  param.valuesConfigs.push({
-                    id: val.valueId,
-                    activateAction: false,
-                    isDefault: false,
-                    isDeleted: false,
-                    isHidden: false,
-                    materialValueIds: null,
-                    selectedParameterValues: null,
-                    updateName: val.value,
-                    values: [val.valueId],
-                    additionalAttribute: val?.additionalAttribute,
-                    currency: val?.currency
-                  });
+              param.valuesConfigs = [];
+              //param.isHidden = false;
+              paramMaterialValues?.forEach((val) => {
+                param.valuesConfigs.push({
+                  id: val.valueId,
+                  activateAction: false,
+                  isDefault: false,
+                  isDeleted: false,
+                  isHidden: false,
+                  materialValueIds: null,
+                  selectedParameterValues: null,
+                  updateName: val.value,
+                  values: [val.valueId],
+                  additionalAttribute: val?.additionalAttribute,
+                  currency: val?.currency
                 });
-                param.valuesConfigs = param.valuesConfigs.filter(
-                  (x) => x.values && x.values.length > 0
-                );
-                if (param?.valuesConfigs && param?.valuesConfigs?.length === 1 && param?.isRequired) {
-                  param.valuesConfigs[0].isDefault = true
-                  temp.push({
-                    parameterId: param?.id,
-                    parameterName: param?.name,
-                    actionId: param?.actionId,
-                    parameterType: param?.parameterType,
-                    valueIds: param?.valuesConfigs[0]?.values,
-                    values: [param?.valuesConfigs[0]?.updateName],
-                    sectionId: section?.id,
-                    subSectionId: subSection?.id,
-                    actionIndex: param?.actionIndex,
-                    parameterCode: param?.code,
-                    valuesConfigs: param?.valuesConfigs,
-                    unitKey: param?.unitKey,
-                    unitType: param?.unitType,
-                  });
-                }
+              });
+              param.valuesConfigs = param.valuesConfigs.filter(
+                (x) => x.values && x.values.length > 0
+              );
+              if (param?.valuesConfigs && param?.valuesConfigs?.length === 1 && param?.isRequired) {
+
+                param.valuesConfigs[0].isDefault = true
+                temp.push({
+                  parameterId: param?.id,
+                  parameterName: param?.name,
+                  actionId: param?.actionId,
+                  parameterType: param?.parameterType,
+                  valueIds: param?.valuesConfigs[0]?.values,
+                  values: [param?.valuesConfigs[0]?.updateName],
+                  sectionId: section?.id,
+                  subSectionId: subSection?.id,
+                  actionIndex: param?.actionIndex,
+                  parameterCode: param?.code,
+                  valuesConfigs: param?.valuesConfigs,
+                  unitKey: param?.unitKey,
+                  unitType: param?.unitType,
+                });
               }
             }
           });
@@ -2508,7 +2584,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             }
           });
         }
-
         if (dieCut) {
           if (subSectionParameter.code === "DieCut") {
             let dieUnitWidth = dieCut.rowData.dieUnitWidth.value + "";
@@ -2624,6 +2699,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           }
 
         }
+
       }
       let temp2 = [...subProducts];
       const index2 = temp2.findIndex(
@@ -2635,7 +2711,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         sectionName: section.name,
         parameters: temp,
       }
+
       setSubProducts(temp2);
+      setSubProductsColorsModal(temp2)
       processRelatedParameters2(subSectionParameter, subSection, section, productTemplateCopy, temp2);
       setProductTemplate(productTemplateCopy);
       const updatedProductTemplate = updateIsHidden(productTemplateCopy, temp2);
@@ -2908,11 +2986,12 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       currentWorkFlowsCount: 0,
     });
 
+    setCalculationExceptionsLogs([])
+    setcalculationServerErrorState(false)
+
     let checkParameter = validateParameters(currentSubProducts);
     if (!!checkParameter) {
-      setCurrentCalculationSessionId(null);
-      setCalculationExceptionsLogs([])
-      setcalculationServerErrorState(false)
+
       const newRequestAbortController = new AbortController();
       setRequestAbortController(newRequestAbortController);
       let subProductsCopy = cloneDeep(currentSubProducts);
@@ -2934,11 +3013,12 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         }
         setLoading(true);
         const newCalculationSessionId = uuidv4();
+        setCurrentCalculationSessionId(newCalculationSessionId);
         const res: any = await callApi(
           "POST",
           `/v1/calculation-service/calculations/calculate-productV2`,
           {
-            calculationSessionId:newCalculationSessionId,
+            calculationSessionId: newCalculationSessionId,
             signalRConnectionId: connectionId,
             clientId: router?.query?.customerId,
             clientTypeId: router?.query?.clientTypeId,
@@ -2953,27 +3033,25 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           false,
           newRequestAbortController
         )
-        
+
         if (res?.status === 500) {
           setCalculationProgress({
             totalWorkFlowsCount: 0,
             currentWorkFlowsCount: 0,
           });
-          
           setLoading(false);
           setcalculationServerErrorState(true)
         }
-        else if(!res.success){
+        else if (!res.success) {
           setCalculationProgress({
             totalWorkFlowsCount: 0,
             currentWorkFlowsCount: 0,
           });
-
-          setLoading(false);
+          //setLoading(false);
         }
         else {
           const id = res?.data?.data?.data;
-          if(!id){
+          if (!id) {
             setcalculationServerErrorState(true);
             setLoading(false);
           }
@@ -2982,17 +3060,18 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             totalWorkFlowsCount: 0,
             currentWorkFlowsCount: 0,
           });
-          //setLoading(false);
+          setLoading(true);
         }
       }
     } else {
       setLoading(false);
+      setCurrentCalculationSessionId(null);
     }
   }, 700);
 
   const getOutSourcingSuppliers = () => {
     const callBack = (res) => {
-      if (res.success && !productItemValueByEdit?.sourceType) {
+      if (res.success) {
         setOutSuppliers(res.data);
       }
     };
@@ -3177,6 +3256,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   useEffect(() => {
     const updatedProductTemplate = updateIsHidden(productTemplate, subProducts);
     setProductTemplate(updatedProductTemplate)
+
   }, [subProducts])
 
   const updateIsHidden = (productTemplate, subProducts) => {
@@ -3346,7 +3426,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     onChangeSubProductsForPrice,
     underParameterIds,
     straightKnife,
-    calculationServerErrorState
+    calculationServerErrorState,
+    setSettingParameters
   };
 };
 export { useDigitalOffsetPrice };

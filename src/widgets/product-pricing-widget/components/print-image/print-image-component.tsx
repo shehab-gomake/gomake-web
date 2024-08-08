@@ -40,7 +40,6 @@ const PrintImageComponent = ({materialLength, materialWidth, rectangles, name}: 
         }
     }
     const scaleX = (number)=>{
-        debugger
         let newWidth =  number / 1000;
         return newWidth;
     }

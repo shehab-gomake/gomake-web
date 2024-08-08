@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRouter } from "next/router";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import { v4 as uuidv4 } from "uuid";
 
 import { getAndSetProductById } from "@/services/hooks";
@@ -22,12 +22,16 @@ import {
 
 import { useMaterials } from "../use-materials";
 import { digitslPriceState } from "./store";
-import { EParameterTypes } from "@/enums";
+import { EButtonTypes, EParameterTypes } from "@/enums";
 import cloneDeep from "lodash.clonedeep";
+import { selectParameterButtonState, selectedValueConfigState } from "@/store";
+import { ButtonParameterWidget } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/button-parameter";
+import { findParameterByCode } from "@/utils/helpers";
+import { SettingsIcon } from "@/icons/settings";
 
 const useAddProduct = ({ clasess }) => {
   const { callApi } = useGomakeAxios();
-  const { setSnackbarStateValue } = useSnackBar();
+  const { alertFaultAdded, alertSuccessAdded } = useSnackBar();
   const [expanded, setExpanded] = useState<string | false>("");
   const handleChange =
     (panel: string) => (event: React.SyntheticEvent, newExpanded: boolean) => {
@@ -39,6 +43,38 @@ const useAddProduct = ({ clasess }) => {
   const [changeName, setChangeName] = useState("");
   const [changeDefaultValue, setChangeDefaultValue] = useState("");
   const { allMaterials, getAllMaterial } = useMaterials();
+  const [GalleryModalOpen, setGalleryModalOpen] = useState(false);
+  const setSelectParameterButton = useSetRecoilState(selectParameterButtonState);
+  const straightKnife = findParameterByCode(productState, "IsStraightKnife");
+  const [multiParameterModal, setMultiParameterModal] = useState(false);
+  const [settingParameters, setSettingParameters] = useState({});
+
+  const onCloseMultiParameterModal = () => {
+    setMultiParameterModal(false);
+  };
+
+  const onOpeneMultiParameterModal = (
+    paameters,
+    subSection,
+    section,
+    subSectionParameters,
+  ) => {
+    setMultiParameterModal(true);
+    const value = paameters?.valuesConfigs?.find((value) => value?.isDefault)
+    setSettingParameters({
+      parameter: paameters,
+      subSection: subSection,
+      section: section,
+      subSectionParameters: subSectionParameters,
+      value: value,
+    });
+  };
+  const onCloseGalleryModal = () => {
+    setGalleryModalOpen(false);
+  };
+  const onOpeneGalleryModal = () => {
+    setGalleryModalOpen(true);
+  };
   const onChangeStateProduct = useCallback(
     (filedName: string, value: any) => {
       setProductState((prev) => {
@@ -161,18 +197,10 @@ const useAddProduct = ({ clasess }) => {
       }
     );
     if (res?.success) {
-      setSnackbarStateValue({
-        state: true,
-        message: t("modal.addedSusuccessfully"),
-        type: "sucess",
-      });
+      alertSuccessAdded()
       getProductById();
     } else {
-      setSnackbarStateValue({
-        state: true,
-        message: t("modal.addedfailed"),
-        type: "error",
-      });
+      alertFaultAdded()
     }
   };
   const updatedProductParameterShowToClient = useCallback(
@@ -508,18 +536,10 @@ const useAddProduct = ({ clasess }) => {
         }
       );
       if (res?.success) {
-        setSnackbarStateValue({
-          state: true,
-          message: t("modal.addedSusuccessfully"),
-          type: "sucess",
-        });
+        alertSuccessAdded()
         getProductById();
       } else {
-        setSnackbarStateValue({
-          state: true,
-          message: t("modal.addedfailed"),
-          type: "error",
-        });
+        alertFaultAdded()
       }
     },
     [router]
@@ -546,7 +566,10 @@ const useAddProduct = ({ clasess }) => {
     sectionId,
     subSectionId,
     parameter,
-    subSectionParameters
+    subSectionParameters,
+    index,
+    section,
+    subSection,
   ) => {
     if (parameter?.parameterType === EParameterTypes.INPUT_NUMBER) {
       return (
@@ -590,62 +613,83 @@ const useAddProduct = ({ clasess }) => {
         (item) => item.isDefault === true
       );
       return (
-        <GoMakeAutoComplate
-          options={parameter?.valuesConfigs}
-          disabled={parameter?.isHidden}
-          placeholder={parameter.name}
-          style={clasess.dropDownListStyle}
-          getOptionLabel={(option: any) => option.updateName}
-          defaultValue={defaultObject}
-          onChange={(e: any, value: any) => {
-            updatedProductParameterValuesConfigsDefault(
-              sectionId,
-              subSectionId,
-              parameter,
-              value
-            );
-          }}
-          renderOption={(props: any, option: any) => {
-            return (
-              <div style={clasess.optionsContainer}>
-                <div {...props} style={{ width: "100%" }}>
-                  {option.updateName}
+        <div style={{ display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center", width: "100%", gap: "8px" }}>
+          <GoMakeAutoComplate
+            options={parameter?.valuesConfigs}
+            disabled={parameter?.isHidden}
+            placeholder={parameter.name}
+            style={clasess.dropDownListStyle}
+            getOptionLabel={(option: any) => option.updateName}
+            defaultValue={defaultObject}
+            onChange={(e: any, value: any) => {
+              updatedProductParameterValuesConfigsDefault(
+                sectionId,
+                subSectionId,
+                parameter,
+                value
+              );
+            }}
+            renderOption={(props: any, option: any) => {
+              return (
+                <div style={clasess.optionsContainer}>
+                  <div {...props} style={{ width: "100%", alignSelf: "center", marginTop: 5 }}>
+                    {option.updateName}
+                  </div>
+                  <div>
+                    {option.isHidden ? (
+                      <div
+                        style={{ cursor: "pointer" }}
+                        onClick={() =>
+                          updatedProductParameterValuesConfigsHidden(
+                            sectionId,
+                            subSectionId,
+                            parameter,
+                            option
+                          )
+                        }
+                      >
+                        <HiddenIcon />
+                      </div>
+                    ) : (
+                      <div
+                        style={{ cursor: "pointer" }}
+                        onClick={() =>
+                          updatedProductParameterValuesConfigsHidden(
+                            sectionId,
+                            subSectionId,
+                            parameter,
+                            option
+                          )
+                        }
+                      >
+                        <NotHiddenIcon />
+                      </div>
+                    )}
+                  </div>
                 </div>
-                <div>
-                  {option.isHidden ? (
-                    <div
-                      style={{ cursor: "pointer" }}
-                      onClick={() =>
-                        updatedProductParameterValuesConfigsHidden(
-                          sectionId,
-                          subSectionId,
-                          parameter,
-                          option
-                        )
-                      }
-                    >
-                      <HiddenIcon />
-                    </div>
-                  ) : (
-                    <div
-                      style={{ cursor: "pointer" }}
-                      onClick={() =>
-                        updatedProductParameterValuesConfigsHidden(
-                          sectionId,
-                          subSectionId,
-                          parameter,
-                          option
-                        )
-                      }
-                    >
-                      <NotHiddenIcon />
-                    </div>
-                  )}
-                </div>
-              </div>
-            );
-          }}
-        />
+              );
+            }}
+          />
+          {parameter?.setSettingIcon && (
+            <div
+              style={{ cursor: "pointer" }}
+              onClick={() => {
+                onOpeneMultiParameterModal(
+                  parameter,
+                  subSection,
+                  section,
+                  subSectionParameters,
+                );
+              }}
+            >
+              <SettingsIcon
+                stroke={"rgba(237, 2, 140, 1)"}
+                width={24}
+                height={24}
+              />
+            </div>
+          )}
+        </div>
       );
     }
     else if (parameter?.parameterType === EParameterTypes.SWITCH) {
@@ -730,9 +774,6 @@ const useAddProduct = ({ clasess }) => {
       );
     }
     else if (parameter?.parameterType === EParameterTypes.SELECT_MATERIALS || parameter?.parameterType === EParameterTypes.ADVERTISING_PRODUCT_CATEGORY || parameter?.parameterType === EParameterTypes.ADVERTISING_PRODUCT_NAME) {
-      if (parameter.code == "FlatbedColor") {
-        // debugger;
-      }
       if (allMaterials?.length > 0) {
         const defailtObjectValue = parameter?.valuesConfigs?.find((item) => item.isDefault === true);
         let options = [];
@@ -853,6 +894,42 @@ const useAddProduct = ({ clasess }) => {
         );
       }
     }
+    else if (parameter?.parameterType === EParameterTypes.BUTTON) {
+
+      return (
+        <ButtonParameterWidget
+          clasess={clasess}
+          parameter={parameter}
+          selectBtnTypeToAction={selectBtnTypeToAction}
+          subSection={subSection}
+          section={section}
+          index={index}
+          straightKnife={straightKnife}
+          isParameterSettings={true}
+          allMaterials={allMaterials}
+        />
+      )
+
+    }
+  };
+
+  const selectBtnTypeToAction = (
+    parameter,
+    sectionId,
+    subSectionId,
+    index,
+    paameterType
+  ) => {
+    if (parameter?.buttonAction === EButtonTypes.GALLERY_MODAL) {
+      setSelectParameterButton({
+        parameter,
+        sectionId,
+        subSectionId,
+        index,
+        paameterType,
+      });
+      onOpeneGalleryModal();
+    }
   };
   return {
     setOpenModal,
@@ -896,6 +973,15 @@ const useAddProduct = ({ clasess }) => {
     expanded,
     handleChange,
     relatedParameters,
+    GalleryModalOpen,
+    onCloseGalleryModal,
+    onOpeneGalleryModal,
+    straightKnife,
+    multiParameterModal,
+    onCloseMultiParameterModal,
+    onOpeneMultiParameterModal,
+    settingParameters,
+    setSettingParameters
   };
 };
 
