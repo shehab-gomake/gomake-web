@@ -3029,6 +3029,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             workTypes: workTypes,
             isChargeForNewDie: isChargeForNewDie,
             productType: productTemplate?.productType,
+            templateId:productTemplate?.templateId
           },
           false,
           newRequestAbortController
