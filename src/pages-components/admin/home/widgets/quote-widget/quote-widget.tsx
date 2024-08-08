@@ -24,7 +24,6 @@ import { isValidCustomer } from "@/utils/helpers";
 import { CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 import { useClientTypesList } from "@/hooks/use-client-types";
 import { GoMakeTreeSelect } from "@/components/auto-complete/test";
-import { TreeSelect } from "primereact/treeselect";
  
 
 import 'primereact/resources/themes/saga-blue/theme.css'; // Replace with your preferred theme
@@ -109,31 +108,15 @@ const QuoteWidget = ({ isAdmin = true }) => {
   }, []);
   
 
-  const mockOptions = [
-    {
-      key: '0',
-      label: 'Group 1',
-      children: [
-        { key: '0-0', label: 'Option 1-1' },
-        { key: '0-1', label: 'Option 1-2' }
-      ]
-    },
-    {
-      key: '1',
-      label: 'Group 2',
-      children: [
-        { key: '1-0', label: 'Option 2-1' },
-        { key: '1-1', label: 'Option 2-2' },
-        { key: '1-2', label: 'Option 2-3' }
-      ]
-    }
-  ];
-
+  // last updates
   const [selectedValue, setSelectedValue] = useState(null);
 
   const handleChange = (value) => {
     console.log("value " , value)
     setSelectedValue(value);
+    setSelectedProduct({id: value?.value});
+
+
   };
 
   const handleChangeNew = (e) => {
@@ -227,7 +210,7 @@ const QuoteWidget = ({ isAdmin = true }) => {
 
           <GoMakeTreeSelect options={combinedData} value={selectedValue}
             onChange={handleChange}
-            placeholder="Select an option"
+            placeholder="Select product/material"
             
             />
             

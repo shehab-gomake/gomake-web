@@ -2,25 +2,29 @@ import * as React from "react";
 import { TreeSelect } from 'primereact/treeselect';
 import { styled } from "@mui/material/styles";
 import { useState } from "react";
-import { useTranslation } from "react-i18next";
-import { GlobalStyles } from "@mui/material";
 
 const StyledTreeSelect = styled(TreeSelect)(({ theme }) => ({
   direction: "ltr",
   boxSizing: "border-box",
   borderRadius: "4px",
   height: "40px",
-  fontFamily: "Lexend",
-  fontStyle: "normal",
-  fontWeight: 300,
-  fontSize: "14px",
-  lineHeight: "21px",
+  // fontFamily: "Lexend",
+  // fontStyle: "normal",
+  // fontWeight: 300,
+  // lineHeight: "21px",
+  fontSize: 14,
   display: "flex",
   alignItems: "center",
   color: "#000000",
   backgroundColor: "#FFF",
-  borderBottom: "2px solid rgb(67,195,232)",
   boxShadow: "0px 1px 10px rgba(0, 0, 0, 0.08)",
+  padding: '4px 10px',
+  fontFamily: "Heebo",
+  fontStyle: "normal",
+  fontWeight: 500,
+  lineHeight: "20px",
+  border: "transparent !important", 
+  borderBottom: "2px solid rgb(67,195,232) !important",
   "& .p-dropdown-label": {
     padding: 0,
     direction: "ltr",
@@ -34,24 +38,39 @@ const StyledTreeSelect = styled(TreeSelect)(({ theme }) => ({
     fontStyle: "normal",
     fontWeight: 500,
     width: "100%",
+    maxWidth:"100%"
   },
   "& .p-dropdown-empty-message": {
     fontFamily: "Heebo",
     fontStyle: "normal",
     fontWeight: 500,
   },
-
   "& .p-treeselect-label-container": {
     fontFamily: "Lexend",
     fontStyle: "normal",
     fontWeight: 400,
     fontSize: "16px",
-    paddingLeft: "15px!important",
+    padding: '4px 10px',
+  },
+  "& .p-placeholder": {
+    color: "#B1B1B1",
+    opacity: 1,
+    fontFamily: "Heebo",
+    fontStyle: "normal",
+    fontWeight: 500,
+    fontSize: "12px",
+  },
+  // arrow icon
+  "& .p-treeselect-trigger-icon": {
+    display: "none",
+  },
+  "& .p-treeselect-empty-message": {
+    color:"red !important",
+    PaddingLeft:"0"
   },
 }));
 
 
-  
 const GoMakeTreeSelect = ({
     value,
     onChange,
