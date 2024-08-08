@@ -71,9 +71,9 @@ const QuoteWidget = ({ isAdmin = true }) => {
     setQuoteId,
     getAndSetExistQuote,
     getAllClientTypes,
-    filteredOptions,
-    setSearchQuery,
-    combinedData
+    combinedData,
+    selectedProduct,
+    handleProductChange
     } = useQuoteWidget(DOCUMENT_TYPE.quote);
 
   useEffect(() => {
@@ -107,47 +107,6 @@ const QuoteWidget = ({ isAdmin = true }) => {
   }, []);
   
 
-  // last updates
-  const [selectedValue, setSelectedValue] = useState(null);
-
-  const handleChange = (value) => {
-    console.log("value " , value)
-    setSelectedValue(value);
-    setSelectedProduct({id: value?.value});
-  };
-
-  const handleChangeNew = (e) => {
-    const selectedValue = e.value;
-  
-    // Find the selected node from combinedData
-    const findNodeByKey = (key, nodes) => {
-      for (const node of nodes) {
-        if (node.key === key) {
-          return node;
-        }
-        if (node.children) {
-          const found = findNodeByKey(key, node.children);
-          if (found) {
-            return found;
-          }
-        }
-      }
-      return null;
-    };
-  
-    const selectedNode = findNodeByKey(selectedValue, combinedData);
-  
-    if (selectedNode && !selectedNode.children) {
-      // Node is a leaf
-      console.log("Leaf Node Selected: ", selectedNode);
-      setSelectedValue(selectedValue); // Update state with the selected value
-    } else {
-      // Node is not a leaf
-      console.log("Cannot select non-leaf node");
-      // Reset the value or show an error message
-      setSelectedValue(null); // Optionally reset the selection
-    }
-  };
 
   return (
     <div data-tour="quote-widget" style={classes.mainContainer}>
@@ -191,25 +150,12 @@ const QuoteWidget = ({ isAdmin = true }) => {
       </div>
       <div style={classes.autoComplateRowContainer}>
         <div data-tour="select-product" style={{ width: "65%" }}>
-          {/* <GoMakeAutoComplate
-            options={filteredOptions}
+          <GoMakeTreeSelect
+            value={selectedProduct }
+            options={combinedData}
+            onChange={handleProductChange}
             placeholder={t("home.admin.selectProductOrMaterial")}
-            style={classes.selectTypeContainer}
-            getOptionLabel={(option: any) => option.name}
-            onChange={(e: any, value: any) => {
-              setSelectedProduct(value);
-            }}
-            //new change
-            groupBy={(option) => option.category}
-            onChangeTextField={(e) => setSearchQuery(e.target.value)}
-          /> */}
-
-          <GoMakeTreeSelect options={combinedData} value={selectedValue}
-            onChange={handleChange}
-            placeholder="Select product/material"
-            
-            />
-            
+          />
         </div>
       </div>
       {userQuote ? (

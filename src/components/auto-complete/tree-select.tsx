@@ -2,9 +2,9 @@ import * as React from "react";
 import { TreeSelect } from 'primereact/treeselect';
 import { styled } from "@mui/material/styles";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 const StyledTreeSelect = styled(TreeSelect)(({ theme }) => ({
-  direction: "ltr",
   boxSizing: "border-box",
   borderRadius: "4px",
   height: "40px",
@@ -84,6 +84,9 @@ const GoMakeTreeSelect = ({
   placeholder?: string;
   style?: React.CSSProperties;
 }) => {
+  const { t } = useTranslation();
+  const direction = t('direction');
+
   const [selectedNodeKey, setSelectedNodeKey] = useState<any>(value);
 
   const handleChange = (e: { value: any }) => {
@@ -101,6 +104,7 @@ const GoMakeTreeSelect = ({
       placeholder={placeholder}
       style={style}
       {...props}
+      dir={direction}
       filter
     />
   );
