@@ -7,7 +7,7 @@ import {
 } from "@/widgets/materials-widget/interface";
 
 const GET_MATERIALS_TYPES_URL = "/v1/materials/getMaterialsTypes";
-const GET_MATERIAL_TABLE_HEADERS_URL ="/v1/materials/GetMaterialTypeTableHeader";
+const GET_MATERIAL_TABLE_HEADERS_URL = "/v1/materials/GetMaterialTypeTableHeader";
 const DOWNLOAD_MATERIAL_EXCEL_FILE = "/v1/materials/download-material-excel";
 const UPLOAD_MATERIAL_EXCEL_FILE = "/v1/materials/upload-material-excel-file";
 const UPDATE_MATERIALS_IMAGES = "/v1/materials/update-materials-images";
@@ -168,7 +168,7 @@ const updateMaterialsPropApi: ICallAndSetData = async (
 const addMaterialCategoryApi: ICallAndSetData = async (
   callApi,
   callBack,
-  category: { materialTypeKey: string; categoryKey: string,imageBase64:any; }
+  category: { materialTypeKey: string; categoryKey: string, imageBase64: any; }
 ) => {
   return await getSetApiData(
     callApi,
@@ -258,7 +258,7 @@ const uploadPrintHouseMaterialApi: ICallAndSetData = async (
 const addDocumentItemFromMaterialApi: ICallAndSetData = async (
   callApi,
   callBack,
-  data: { id1: string; id2: string }
+  data
 ) => {
   return await getSetApiData(
     callApi,
@@ -268,6 +268,7 @@ const addDocumentItemFromMaterialApi: ICallAndSetData = async (
     data
   );
 };
+
 export {
   getMaterialsTypesApi,
   getMaterialTableHeadersApi,

@@ -393,20 +393,21 @@ df-messenger {
 
 /* Indentation styles */
 .p-treenode {
-  padding-left: 10px; /* Base padding for the first level */
+  padding-inline-start: 10px; /* Base padding for the first level */
 }
 
 .p-treenode.p-treenode-parent > .p-treenode-content {
-  padding-left: 20px; /* Additional padding for child nodes */
+  padding-inline-start: 20px; /* Additional padding for child nodes */
 }
 
 .p-treenode.p-treenode-parent > .p-treenode-content > .p-treenode-content {
-  padding-left: 30px; /* More padding for deeper nodes */
+  padding-inline-start: 30px; /* More padding for deeper nodes */
 }
 
 .p-treenode.p-treenode-parent > .p-treenode-content > .p-treenode-content > .p-treenode-content {
-  padding-left: 40px; /* Even more padding for deeper nodes */
+  padding-inline-start: 40px; /* Even more padding for deeper nodes */
 }
+
 
 .p-treeselect-panel .p-treeselect-header .p-treeselect-filter-container {
   display: flex;
@@ -454,4 +455,8 @@ df-messenger {
 
 .p-treeselect-panel .p-treeselect-header .p-treeselect-close {
   display: none; /* Hide the close icon */
+}
+
+.p-connected-overlay-enter-done {
+  z-index: 1400 !important
 }

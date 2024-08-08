@@ -185,7 +185,7 @@ const useQuoteWidget = ({ documentType = 0 }: any) => {
 
 
   const onClickCreateQuote = () => {
-    if (selectedProduct?.category === "material") {
+    if (selectedProduct?.category === ProductCategoryType.MATERIAL) {
       addDocumentItemFromMaterial()
     } else
       navigate(
@@ -194,7 +194,7 @@ const useQuoteWidget = ({ documentType = 0 }: any) => {
   };
 
   const onClickCreateQuoteForCustomer = () => {
-    if (selectedProduct?.category === "material") {
+    if (selectedProduct?.category === ProductCategoryType.MATERIAL) {
       addDocumentItemFromMaterial()
     }
     else
@@ -364,7 +364,7 @@ const useQuoteWidget = ({ documentType = 0 }: any) => {
         alertFaultAdded();
       }
     }
-    await addDocumentItemFromMaterialApi(callApi, callBack, { ClientId: selectedClient?.id, PrintHouseMaterialId: selectedProduct?.id })
+    await addDocumentItemFromMaterialApi(callApi, callBack, { clientId: selectedClient?.id, printHouseMaterialId: selectedProduct?.id });
   }
 
   return {

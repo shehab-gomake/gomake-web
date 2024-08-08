@@ -3,15 +3,13 @@ import { TreeSelect } from 'primereact/treeselect';
 import { styled } from "@mui/material/styles";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import ClearIcon from '@mui/icons-material/Clear'; // Import a clear icon
+import IconButton from "@mui/material/IconButton";
 
-const StyledTreeSelect = styled(TreeSelect)(({ theme }) => ({
+const StyledTreeSelect = styled(TreeSelect)(({ theme, dir }) => ({
   boxSizing: "border-box",
   borderRadius: "4px",
   height: "40px",
-  // fontFamily: "Lexend",
-  // fontStyle: "normal",
-  // fontWeight: 300,
-  // lineHeight: "21px",
   fontSize: 14,
   display: "flex",
   alignItems: "center",
@@ -23,10 +21,8 @@ const StyledTreeSelect = styled(TreeSelect)(({ theme }) => ({
   fontStyle: "normal",
   fontWeight: 500,
   lineHeight: "20px",
-  border: "transparent !important",
+  border: "transparent !important", 
   borderBottom: "2px solid rgb(67,195,232) !important",
-  width: "100%",
-
   "& .p-dropdown-label": {
     padding: 0,
     direction: "ltr",
@@ -52,8 +48,6 @@ const StyledTreeSelect = styled(TreeSelect)(({ theme }) => ({
     fontWeight: 400,
     fontSize: "16px",
     padding: '4px 10px',
-    width: "40%",
-
   },
   "& .p-placeholder": {
     color: "#B1B1B1",
@@ -67,47 +61,70 @@ const StyledTreeSelect = styled(TreeSelect)(({ theme }) => ({
   "& .p-treeselect-trigger-icon": {
     display: "none",
   },
+  // clear button container
+  position: "relative",
 }));
 
+const ClearButton = styled(IconButton)(({ theme, dir }) => ({
+  position: "absolute",
+  [dir === "rtl" ? "left" : "right"]: "8px", 
+  top: "50%",
+  transform: "translateY(-50%)",
+  padding: "4px",
+  zIndex: 1,
+}));
 
 const GoMakeTreeSelect = ({
-  value,
-  onChange,
-  options,
-  placeholder,
-  style,
-  ...props
-}: {
-  value?: any;
-  onChange?: (e: { value: any }) => void;
-  options: any[];
-  placeholder?: string;
-  style?: React.CSSProperties;
-}) => {
-  const { t } = useTranslation();
-  const direction = t('direction');
+    value,
+    onChange,
+    options,
+    placeholder,
+    style,
+    ...props
+  }: {
+    value?: any;
+    onChange?: (e: { value: any }) => void;
+    options: any[];
+    placeholder?: string;
+    style?: React.CSSProperties;
+  }) => {
+    const { t } = useTranslation();
+    const direction = t('direction'); 
+    const [selectedNodeKey, setSelectedNodeKey] = useState<any>(value);
+  
+    const handleChange = (e: { value: any }) => {
+      setSelectedNodeKey(e.value);
+      if (onChange) {
+        onChange(e);
+      }
+    };
 
-  const [selectedNodeKey, setSelectedNodeKey] = useState<any>(value);
-
-  const handleChange = (e: { value: any }) => {
-    setSelectedNodeKey(e.value);
-    if (onChange) {
-      onChange(e);
-    }
+    const handleClear = () => {
+      setSelectedNodeKey(null);
+      if (onChange) {
+        onChange({ value: null });
+      }
+    };
+  
+    return (
+      <div style={{ position: 'relative', width: '100%' }}>
+        <StyledTreeSelect
+          value={selectedNodeKey}
+          onChange={handleChange}
+          options={options}
+          placeholder={placeholder}
+          style={style}
+          {...props}
+          dir={direction}
+          filter 
+        />
+        {selectedNodeKey && (
+          <ClearButton dir={direction} onClick={handleClear}>
+            <ClearIcon />
+          </ClearButton>
+        )}
+      </div>
+    );
   };
-
-  return (
-    <StyledTreeSelect
-      value={selectedNodeKey}
-      onChange={handleChange}
-      options={options}
-      placeholder={placeholder}
-      style={style}
-      {...props}
-      dir={direction}
-      filter
-    />
-  );
-};
-
+  
 export { GoMakeTreeSelect };
