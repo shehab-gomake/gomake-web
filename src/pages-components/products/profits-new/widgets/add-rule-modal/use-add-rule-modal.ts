@@ -1,9 +1,8 @@
-import { useGomakeAxios, useSnackBar } from "@/hooks";
+import { useCustomerDropDownList, useGomakeAxios, useSnackBar } from "@/hooks";
 import { EHttpMethod } from "@/services/api-service/enums";
 import {
   getAllProductsForDropDownList,
   getAllTemplets,
-  getAndSetAllCustomers,
   getAndSetAllParameters,
   getAndSetClientTypes,
   getAndSetMachincesByActionId,
@@ -50,41 +49,10 @@ const useAddRuleModal = ({
   const onOpenScheduleModal =()=>{
     setOpenScheduleModal(true)
   }
-  const [customersListCreateQuote, setCustomersListCreateQuote] = useState([]);
-  const [customersListCreateOrder, setCustomersListCreateOrder] = useState([]);
-  const [canOrder, setCanOrder] = useState(false);
-
-  const renderOptions = () => {
-    if (!!canOrder) {
-      return customersListCreateOrder;
-    } else return customersListCreateQuote;
-  };
-
-  const getAllCustomersCreateQuote = useCallback(async () => {
-    await getAndSetAllCustomers(callApi, setCustomersListCreateQuote, {
-      ClientType: "C",
-      onlyCreateOrderClients: false,
-    });
-  }, []);
-
-  const checkWhatRenderArray = (e) => {
-    if (e.target.value) {
-      setCanOrder(true);
-    } else {
-      setCanOrder(false);
-    }
-  };
-  const getAllCustomersCreateOrder = useCallback(async () => {
-    await getAndSetAllCustomers(callApi, setCustomersListCreateOrder, {
-      ClientType: "C",
-      onlyCreateOrderClients: true,
-    });
-  }, []);
-
-  useEffect(() => {
-    getAllCustomersCreateQuote();
-    getAllCustomersCreateOrder();
-  }, []);
+  const {
+    renderOptions,
+    checkWhatRenderArray,
+  }=useCustomerDropDownList()
 
   const [propertieValue, setPropertieValue] = useState<any>();
   const isDefaultException = selectedPricingTableItems?.exceptionType === ETypeException.DEFAULT;
