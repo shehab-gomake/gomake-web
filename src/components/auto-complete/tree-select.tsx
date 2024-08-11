@@ -89,7 +89,9 @@ const GoMakeTreeSelect = ({
     style?: React.CSSProperties;
   }) => {
     const { t } = useTranslation();
-    const direction = t('direction'); 
+    const dir: 'rtl' | 'ltr' = t('direction');
+    const RTL = dir === 'rtl';
+
     const [selectedNodeKey, setSelectedNodeKey] = useState<any>(value);
   
     const handleChange = (e: { value: any }) => {
@@ -105,9 +107,14 @@ const GoMakeTreeSelect = ({
         onChange({ value: null });
       }
     };
-  
+
     return (
-      <div style={{ position: 'relative', width: '100%' }}>
+      <div className='editorDiv' style={{ position: 'relative', width: '100%' }}>
+        <style jsx global>{`
+           .p-tree .p-tree-container .p-treenode .p-treenode-content .p-tree-toggler {
+            transform: ${RTL? "rotate(180deg)" : "none"};
+          }
+            `}</style>
         <StyledTreeSelect
           value={selectedNodeKey}
           onChange={handleChange}
@@ -115,11 +122,11 @@ const GoMakeTreeSelect = ({
           placeholder={placeholder}
           style={style}
           {...props}
-          dir={direction}
+          dir={dir}
           filter 
         />
         {selectedNodeKey && (
-          <ClearButton dir={direction} onClick={handleClear}>
+          <ClearButton dir={dir} onClick={handleClear}>
             <ClearIcon />
           </ClearButton>
         )}
