@@ -4,7 +4,7 @@ import { BoardMissionsListWidget } from "@/pages-components/board-missions/board
 
 export default function BoardMissions() {
   return (
-    <CustomerAuthLayout permissionEnumValue={Permissions.SHOW_BOARD_MISSIONS}>
+    <CustomerAuthLayout permissionEnumValue={Permissions.SHOW_BOARD_MISSIONS} className={`custom-scrollbar`}>
       <BoardMissionsListWidget />
     </CustomerAuthLayout>
   );

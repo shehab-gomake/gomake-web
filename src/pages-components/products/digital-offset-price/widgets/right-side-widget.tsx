@@ -203,7 +203,7 @@ const RightSideWidget = ({
               )
                 ? 0
                 : (
-                      (currentProductItemValueTotalPrice || 0) / (quantity?.values[0] || 1)
+                  (currentProductItemValueTotalPrice || 0) / (quantity?.values[0] || 1)
                 )?.toFixed(4),
               unitPrice: systemCurrency,
             })}
@@ -381,6 +381,7 @@ const RightSideWidget = ({
                   {t("products.offsetPrice.admin.general")} Server Error
                 </div>
               )}
+
               {logsArray?.map((item) => {
                 if (item.actionName) {
                   return (

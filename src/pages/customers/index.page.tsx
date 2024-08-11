@@ -91,7 +91,7 @@ export default function Home() {
   ]);
 
   return (
-    <CustomerAuthLayout permissionEnumValue={Permissions.SHOW_CLIENT}>
+    <CustomerAuthLayout permissionEnumValue={Permissions.SHOW_CLIENT} className={`custom-scrollbar`}>
       <Stack
         direction="column"
         justifyContent="space-between"

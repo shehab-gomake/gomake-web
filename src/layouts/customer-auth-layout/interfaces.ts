@@ -6,4 +6,5 @@ export interface IAuthLayout {
   customGap?: number;
   allowAnonymous?:boolean;
   disableHeaderSideMenu?: boolean;
+  className?: string;
 }

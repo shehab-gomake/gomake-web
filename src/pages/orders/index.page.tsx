@@ -5,7 +5,7 @@ import { QuotesListPageWidget } from "@/pages-components/quotes/quotes";
 
 export default function Orders() {
   return (
-    <CustomerAuthLayout permissionEnumValue={Permissions.SHOW_ORDERS}>
+    <CustomerAuthLayout permissionEnumValue={Permissions.SHOW_ORDERS} className={`custom-scrollbar`}>
       <QuotesListPageWidget documentType={DOCUMENT_TYPE.order} />
     </CustomerAuthLayout>
   );

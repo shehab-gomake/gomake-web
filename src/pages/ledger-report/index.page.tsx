@@ -4,7 +4,7 @@ import { Permissions } from "../../components/CheckPermission/enum";
 
 export default function LedgerReportPage() {
   return (
-    <CustomerAuthLayout permissionEnumValue={Permissions.SHOW_LEDGER_REPORT}>
+    <CustomerAuthLayout permissionEnumValue={Permissions.SHOW_LEDGER_REPORT} className={`custom-scrollbar`}>
       <LedgerReportWidget />
     </CustomerAuthLayout>
   );

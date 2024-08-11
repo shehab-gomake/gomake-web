@@ -4,7 +4,7 @@ import { Permissions } from "../../components/CheckPermission/enum";
 
 export default function TransactionJournalReportPage() {
   return (
-    <CustomerAuthLayout permissionEnumValue={Permissions.SHOW_TRANSACTION_JOURNAL_REPORT}>
+    <CustomerAuthLayout permissionEnumValue={Permissions.SHOW_TRANSACTION_JOURNAL_REPORT} className={`custom-scrollbar`}>
       <TransactionJournalReportWidget isPayment={false} />
     </CustomerAuthLayout>
   );

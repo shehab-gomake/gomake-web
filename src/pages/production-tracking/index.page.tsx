@@ -4,7 +4,7 @@ import { DashboardWidget } from "@/widgets/dashboard-widget";
 
 export default function ProductionDashBordPage() {
     return (
-        <CustomerAuthLayout permissionEnumValue={Permissions.SHOW_PRODUCTION_FLOOR}>
+        <CustomerAuthLayout permissionEnumValue={Permissions.SHOW_PRODUCTION_FLOOR} className={`custom-scrollbar`}>
             <div style={{ padding: 15 }}>
                 <DashboardWidget />
             </div>

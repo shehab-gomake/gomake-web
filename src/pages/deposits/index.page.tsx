@@ -4,8 +4,8 @@ import { Permissions } from "../../components/CheckPermission/enum";
 
 export default function Deposits() {
   return (
-    <CustomerAuthLayout permissionEnumValue={Permissions.SHOW_DEPOSITS}>
-        <DepositsListPageWidget/>
+    <CustomerAuthLayout permissionEnumValue={Permissions.SHOW_DEPOSITS} className={`custom-scrollbar`}>
+      <DepositsListPageWidget />
     </CustomerAuthLayout>
   );
 }
