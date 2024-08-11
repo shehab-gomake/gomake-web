@@ -16,7 +16,6 @@ const useStyle = () => {
         width: "100%",
         gap: 20,
         padding:20,
-        overflowY: "scroll" as "scroll",
       },
     };
   }, [i18next.language, t]);

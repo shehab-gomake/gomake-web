@@ -4,7 +4,7 @@ import { CategoriesTable } from "@/widgets/machines/components/categories-table/
 
 export default function CustomerMachinesPage() {
   return (
-    <CustomerAuthLayout permissionEnumValue={Permissions.SHOW_MACHINES}>
+    <CustomerAuthLayout permissionEnumValue={Permissions.SHOW_MACHINES} className={`custom-scrollbar`}>
       <CategoriesTable isAdmin={false} />
     </CustomerAuthLayout>
   );

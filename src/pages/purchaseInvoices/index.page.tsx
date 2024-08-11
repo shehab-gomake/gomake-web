@@ -5,7 +5,7 @@ import { Permissions } from "../../components/CheckPermission/enum";
 
 export default function PurchaseOrders() {
   return (
-    <CustomerAuthLayout permissionEnumValue={Permissions.SHOW_PURCHASE_INVOICES}>
+    <CustomerAuthLayout permissionEnumValue={Permissions.SHOW_PURCHASE_INVOICES} className={`custom-scrollbar`}>
       <QuotesListPageWidget documentType={DOCUMENT_TYPE.purchaseInvoice} />
     </CustomerAuthLayout>
   );

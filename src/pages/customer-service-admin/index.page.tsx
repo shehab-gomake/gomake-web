@@ -4,7 +4,7 @@ import { CustomerServicePageWidget } from "@/pages-components/customer-service/c
 
 export default function CustomerServicePage() {
   return (
-    <CustomerAuthLayout permissionEnumValue={Permissions.SHOW_ADMIN_CUSTOMER_SERVICE}>
+    <CustomerAuthLayout permissionEnumValue={Permissions.SHOW_ADMIN_CUSTOMER_SERVICE} className={`custom-scrollbar`}>
       <CustomerServicePageWidget isAdmin={true} />
     </CustomerAuthLayout>
   );

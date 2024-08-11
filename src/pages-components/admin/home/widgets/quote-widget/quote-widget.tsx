@@ -10,9 +10,9 @@ import { useStyle } from "./style";
 import { Popover } from "@mui/material";
 import { PermissionCheck } from "@/components/CheckPermission/check-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { SecondaryButton } from "@/components/button/secondary-button";
-import {  useSetRecoilState } from "recoil";
+import { useSetRecoilState } from "recoil";
 import {
   QuoteIfExistState,
   QuoteNumberState,
@@ -23,17 +23,21 @@ import { CustomerCardWidget } from "@/widgets/customer-card-modal/customer-card"
 import { isValidCustomer } from "@/utils/helpers";
 import { CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 import { useClientTypesList } from "@/hooks/use-client-types";
+import { GoMakeTreeSelect } from "@/components/auto-complete/tree-select";
+ 
+import 'primereact/resources/themes/saga-blue/theme.css'; 
+import 'primereact/resources/primereact.min.css'; 
+import 'primeicons/primeicons.css'; 
 
 const QuoteWidget = ({ isAdmin = true }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
   const setQuoteNumber = useSetRecoilState<any>(QuoteNumberState);
   const setQuoteIfExist = useSetRecoilState<any>(QuoteIfExistState);
-  const {getClientTypesCategories} =useClientTypesList();
+  const { getClientTypesCategories } = useClientTypesList();
 
   const {
     clientTypesValue,
-    productValue,
     id,
     anchorEl,
     isDisabled,
@@ -51,7 +55,6 @@ const QuoteWidget = ({ isAdmin = true }) => {
     handleClose,
     setSelectedClientType,
     setSelectedClient,
-    setSelectedProduct,
     checkWhatRenderArray,
     handleClickToSelectedCustomer,
     renderOptions,
@@ -67,7 +70,10 @@ const QuoteWidget = ({ isAdmin = true }) => {
     setQuoteId,
     getAndSetExistQuote,
     getAllClientTypes,
-  } = useQuoteWidget(DOCUMENT_TYPE.quote);
+    combinedData,
+    selectedProduct,
+    handleProductChange
+    } = useQuoteWidget(DOCUMENT_TYPE.quote);
 
   useEffect(() => {
     if (userQuote) {
@@ -98,6 +104,8 @@ const QuoteWidget = ({ isAdmin = true }) => {
   useEffect(() => {
     getClientTypesCategories();
   }, []);
+  
+
 
   return (
     <div data-tour="quote-widget" style={classes.mainContainer}>
@@ -141,14 +149,11 @@ const QuoteWidget = ({ isAdmin = true }) => {
       </div>
       <div style={classes.autoComplateRowContainer}>
         <div data-tour="select-product" style={{ width: "65%" }}>
-          <GoMakeAutoComplate
-            options={productValue}
-            placeholder={t("home.admin.selectProduct")}
-            style={classes.selectTypeContainer}
-            getOptionLabel={(option: any) => option.name}
-            onChange={(e: any, value: any) => {
-              setSelectedProduct(value);
-            }}
+          <GoMakeTreeSelect
+            value={selectedProduct }
+            options={combinedData}
+            onChange={handleProductChange}
+            placeholder={t("home.admin.selectProductOrMaterial")}
           />
         </div>
       </div>
@@ -228,7 +233,7 @@ const QuoteWidget = ({ isAdmin = true }) => {
         isValidCustomer={isValidCustomer}
         customerAction={CUSTOMER_ACTIONS.Add}
         codeFlag={false}
-        typeClient={"C"} 
+        typeClient={"C"}
         onCustomerAdd={onCustomerAdd}
         openModal={openCustomerModal}
         modalTitle={t("customers.modal.addTitle")}
