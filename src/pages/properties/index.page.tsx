@@ -3,7 +3,7 @@ import { PropertiesTable } from "@/widgets/properties/properties-table/propertie
 
 export default function properties() {
   return (
-    <CustomerAuthLayout>
+    <CustomerAuthLayout className={`custom-scrollbar`}>
       <PropertiesTable />
     </CustomerAuthLayout>
   );

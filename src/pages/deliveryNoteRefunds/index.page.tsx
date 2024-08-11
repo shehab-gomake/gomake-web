@@ -5,7 +5,7 @@ import { Permissions } from "../../components/CheckPermission/enum";
 
 export default function deliveryNotesRefund() {
   return (
-    <CustomerAuthLayout permissionEnumValue={Permissions.SHOW_DELIVERY_NOTES_REFUND}>
+    <CustomerAuthLayout permissionEnumValue={Permissions.SHOW_DELIVERY_NOTES_REFUND} className={`custom-scrollbar`}>
       <QuotesListPageWidget documentType={DOCUMENT_TYPE.deliveryNoteRefund} />
     </CustomerAuthLayout>
   );

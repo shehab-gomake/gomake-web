@@ -4,7 +4,7 @@ import { Permissions } from "../../components/CheckPermission/enum";
 
 export default function ProductionFloorPage() {
     return (
-        <CustomerAuthLayout permissionEnumValue={Permissions.SHOW_PRODUCTION_FLOOR}>
+        <CustomerAuthLayout permissionEnumValue={Permissions.SHOW_PRODUCTION_FLOOR} className={`custom-scrollbar`}>
             <ProductionFloorWidget />
         </CustomerAuthLayout>
     );

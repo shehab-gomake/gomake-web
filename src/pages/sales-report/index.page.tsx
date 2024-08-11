@@ -4,7 +4,7 @@ import { Permissions } from "../../components/CheckPermission/enum";
 
 export default function SalesReportPage() {
   return (
-    <CustomerAuthLayout permissionEnumValue={Permissions.SHOW_SALES_REPORT}>
+    <CustomerAuthLayout permissionEnumValue={Permissions.SHOW_SALES_REPORT} className={`custom-scrollbar`}>
       <SalesReportWidget />
     </CustomerAuthLayout>
   );

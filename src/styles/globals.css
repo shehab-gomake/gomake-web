@@ -462,3 +462,10 @@ df-messenger {
 }
 .foreground circle {}
 
+.custom-scrollbar {
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.5) #f1f1f1;
+}
+

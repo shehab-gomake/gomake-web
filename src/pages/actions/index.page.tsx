@@ -4,7 +4,7 @@ import { ActionPageWidget } from "@/pages-components/actions/actions";
 
 export default function ActionsPage() {
   return (
-    <CustomerAuthLayout permissionEnumValue={Permissions.SHOW_ACTIONS}>
+    <CustomerAuthLayout permissionEnumValue={Permissions.SHOW_ACTIONS} className={`custom-scrollbar`}>
       <ActionPageWidget />
     </CustomerAuthLayout>
   );

@@ -5,7 +5,7 @@ import { Permissions } from "../../components/CheckPermission/enum";
 
 export default function Receipts() {
   return (
-    <CustomerAuthLayout permissionEnumValue={Permissions.SHOW_RECEIPTS}>
+    <CustomerAuthLayout permissionEnumValue={Permissions.SHOW_RECEIPTS} className={`custom-scrollbar`}>
       <QuotesListPageWidget documentType={DOCUMENT_TYPE.receipt} />
     </CustomerAuthLayout>
   );

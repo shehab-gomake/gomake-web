@@ -7,17 +7,18 @@ import { HeaderWidget } from "@/widgets/header";
 import { navStatusState } from "@/store/nav-status";
 import { hoverStatusState } from "@/store";
 import { LAYOUT_DEFAULT_GAP } from "@/utils/layout-config";
-import {GoMakeModal} from "@/components";
-import {useHtmlTour} from "@/layouts/customer-auth-layout/use-html-tour";
-import {useFilesUploaderSignalr} from "@/hooks/signalr/use-files-uploader-signalr";
-import {FilesUploaderWidget} from "@/widgets/file-uploader-widget/files-uploader-widget";
+import { GoMakeModal } from "@/components";
+import { useHtmlTour } from "@/layouts/customer-auth-layout/use-html-tour";
+import { useFilesUploaderSignalr } from "@/hooks/signalr/use-files-uploader-signalr";
+import { FilesUploaderWidget } from "@/widgets/file-uploader-widget/files-uploader-widget";
 
 const CustomerAuthLayout = ({
     children,
     permissionEnumValue,
     customGap = LAYOUT_DEFAULT_GAP,
     allowAnonymous,
-    disableHeaderSideMenu
+    disableHeaderSideMenu,
+    className
 }: IAuthLayout) => {
     const { canAccess } = useAuthLayoutHook(permissionEnumValue, allowAnonymous);
     const { classes } = useStyle({
@@ -27,8 +28,8 @@ const CustomerAuthLayout = ({
     });
     const setNavStatus = useSetRecoilState(navStatusState);
     const isHover = useRecoilValue(hoverStatusState);
-    const {htmlTour, openModal, onCloseModal} = useHtmlTour();
-    const {} = useFilesUploaderSignalr();
+    const { htmlTour, openModal, onCloseModal } = useHtmlTour();
+    const { } = useFilesUploaderSignalr();
     return (
         disableHeaderSideMenu ?
             <>
@@ -37,6 +38,7 @@ const CustomerAuthLayout = ({
             <div style={classes.container}>
                 <LeftSideLayout customGap={customGap} />
                 <div
+
                     style={classes.rightContainer}
                     onMouseEnter={() => {
                         if (!isHover) {
@@ -46,16 +48,16 @@ const CustomerAuthLayout = ({
                 >
                     <HeaderWidget />
                     {
-                        canAccess && <div style={classes.bodyContainer}>
+                        canAccess && <div style={classes.bodyContainer} className={className}>
                             {children}
                         </div>
                     }
                 </div>
-                <FilesUploaderWidget/>
-                <GoMakeModal insideStyle={{height: 'fit-content'}} openModal={openModal} onClose={onCloseModal} >
+                <FilesUploaderWidget />
+                <GoMakeModal insideStyle={{ height: 'fit-content' }} openModal={openModal} onClose={onCloseModal} >
                     <div
-                        dangerouslySetInnerHTML={{ __html: htmlTour}}
-                        style={{padding: '10px' }}
+                        dangerouslySetInnerHTML={{ __html: htmlTour }}
+                        style={{ padding: '10px' }}
                     />
                 </GoMakeModal>
             </div>

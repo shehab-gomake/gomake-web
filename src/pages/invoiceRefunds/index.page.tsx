@@ -5,7 +5,7 @@ import { Permissions } from "../../components/CheckPermission/enum";
 
 export default function invoicesRefund() {
   return (
-    <CustomerAuthLayout permissionEnumValue={Permissions.SHOW_INVOICES_REFUND}>
+    <CustomerAuthLayout permissionEnumValue={Permissions.SHOW_INVOICES_REFUND} className={`custom-scrollbar`}>
       <QuotesListPageWidget documentType={DOCUMENT_TYPE.invoiceRefund} />
     </CustomerAuthLayout>
   );
