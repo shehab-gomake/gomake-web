@@ -378,5 +378,87 @@ df-messenger {
 .MuiTooltip-popper {
   z-index: 999999;
 }
-
 .foreground circle {}
+
+/* Base styles for tree nodes */
+.p-treenode-content {
+  display: flex;
+  align-items: center;
+}
+
+/* Hide icons */
+.p-treenode-content .p-treenode-icon {
+  display: none !important; /* Hide the arrow icon */
+}
+
+/* Indentation styles */
+.p-treenode {
+  padding-inline-start: 10px; /* Base padding for the first level */
+}
+
+.p-treenode.p-treenode-parent > .p-treenode-content {
+  padding-inline-start: 20px; /* Additional padding for child nodes */
+}
+
+.p-treenode.p-treenode-parent > .p-treenode-content > .p-treenode-content {
+  padding-inline-start: 30px; /* More padding for deeper nodes */
+}
+
+.p-treenode.p-treenode-parent > .p-treenode-content > .p-treenode-content > .p-treenode-content {
+  padding-inline-start: 40px; /* Even more padding for deeper nodes */
+}
+
+
+.p-treeselect-panel .p-treeselect-header .p-treeselect-filter-container {
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Center the container content horizontally */
+  position: relative; /* Ensure positioning context */
+}
+
+.p-treeselect-panel .p-treeselect-header .p-treeselect-filter-container .p-treeselect-filter-icon {
+  position: absolute;
+  right: 10px; /* Adjust as needed */
+  top: 50%;
+  transform: translateY(-50%); /* Center vertically */
+}
+
+.p-treeselect-panel .p-treeselect-header .p-treeselect-filter-container input {
+  padding-right: 40px; /* Add padding to make space for the icon */
+}
+
+
+.p-treeselect-panel .p-treeselect-empty-message {
+  display: flex;
+  align-items: center;
+  height: 100%; /* Ensure it takes up the full height of the container */
+  color: #B1B1B1;
+  font-family: Heebo; /* Apply desired font family */
+  font-style: normal; /* Apply desired font style */
+  font-weight: 500; /* Apply desired font weight */
+  text-align: center; /* Center text within the message */
+  padding: 4px 10px;
+
+}
+
+.p-treenode.p-tree-empty-message {
+  display: flex;
+  align-items: center;
+  height: 100%; /* Ensure it takes up the full height of the container */
+  color: #B1B1B1;
+  font-family: Heebo; /* Apply desired font family */
+  font-style: normal; /* Apply desired font style */
+  font-weight: 500; /* Apply desired font weight */
+  text-align: center; /* Center text within the message */
+  padding: 4px 10px;
+}
+
+.p-treeselect-panel .p-treeselect-header .p-treeselect-close {
+  display: none; /* Hide the close icon */
+}
+
+.p-connected-overlay-enter-done {
+  z-index: 1400 !important
+}
+.foreground circle {}
+

@@ -6,24 +6,28 @@ import {
 } from "@/components";
 import { useStyle } from "./style";
 import { useRecoilState } from "recoil";
-import { useState } from "react";
 import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
 import { quoteItemState } from "@/store";
 import { useRouter } from "next/router";
 import { v4 as uuidv4 } from "uuid";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { addItemApi } from "@/services/api-service/generic-doc/documents-api";
-import { useAllProductsDropDownList } from "@/hooks/use-products-drop-down-list";
+import { GoMakeTreeSelect } from "@/components/auto-complete/tree-select";
+
+import 'primereact/resources/themes/saga-blue/theme.css';
+import 'primereact/resources/primereact.min.css';
+import 'primeicons/primeicons.css';
+import { useAddNewItem } from "./use-add-new-item";
+import { ProductCategoryType } from "@/pages-components/admin/home/widgets/quote-widget/states";
 
 const AddNewItemModal = ({ openModal, onClose, documentType, getQuote }) => {
   const { callApi } = useGomakeAxios();
   const { navigate } = useGomakeRouter();
   const { t } = useTranslation();
-  const { clasess } = useStyle();
+  const { classes } = useStyle();
   const router = useRouter();
   const [quoteItemValue, setQuoteItemValue] = useRecoilState<any>(quoteItemState);
-  const { productList: productValue } = useAllProductsDropDownList()
-  const [selectedProduct, setSelectedProduct] = useState<any>({});
+  const { handleProductChange, combinedData, selectedProduct, addDocumentItemFromMaterial } = useAddNewItem({ onClose, getQuote, documentType });
 
   const item = {
     id: uuidv4(),
@@ -39,14 +43,14 @@ const AddNewItemModal = ({ openModal, onClose, documentType, getQuote }) => {
     productType: 0,
     productID: selectedProduct?.id,
   }
+
   const { alertFaultAdded } = useSnackBar();
 
   const addItemForQuotes = async () => {
     const callBack = (res) => {
       if (res?.success) {
-        getQuote()
-        onClose()
-
+        getQuote();
+        onClose();
       } else {
         alertFaultAdded();
       }
@@ -59,61 +63,78 @@ const AddNewItemModal = ({ openModal, onClose, documentType, getQuote }) => {
         unitPrice: 0,
         amount: 0,
         jobDetails: "",
-
       },
       documentType: documentType,
     });
   };
-  const onClcikCreateQuoteForCustomer = () => {
+
+  const onClickCreateQuoteForCustomer = () => {
     if (router.query.isNewCreation) {
-      const updatedQuoteItemValue = { ...quoteItemValue };
-      const newItem = { ...item, id: uuidv4() };
-      updatedQuoteItemValue.documentItems = [
-        ...updatedQuoteItemValue.documentItems,
-        newItem
-      ];
-      setQuoteItemValue(updatedQuoteItemValue);
-      onClose()
+      if (selectedProduct?.category === ProductCategoryType.MATERIAL) {
+        addDocumentItemFromMaterial()
+      }
+      else {
+        const updatedQuoteItemValue = { ...quoteItemValue };
+        const newItem = { ...item, id: uuidv4() };
+        updatedQuoteItemValue.documentItems = [
+          ...updatedQuoteItemValue.documentItems,
+          newItem
+        ];
+        setQuoteItemValue(updatedQuoteItemValue);
+        onClose();
+      }
     }
     else {
       if (documentType === DOCUMENT_TYPE.purchaseOrder) {
-        addItemForQuotes()
+        if (selectedProduct?.category === ProductCategoryType.MATERIAL) {
+          addDocumentItemFromMaterial()
+        }
+        else
+          addItemForQuotes()
       }
       else {
-        navigate(
+        if (selectedProduct?.category === ProductCategoryType.MATERIAL) {
+          addDocumentItemFromMaterial()
+        }
+        else navigate(
           `/products/create?clientTypeId=${quoteItemValue?.client?.clientTypeId}&customerId=${quoteItemValue?.customerID}&productId=${selectedProduct?.id}&documentType=${documentType}${router?.query?.Id ? `&documentId=${router?.query?.Id}` : ""}`
         );
       }
-
     }
-
   };
+
   return (
     <>
       <GoMakeModal
         openModal={openModal}
         modalTitle={t("sales.quote.addNewItem")}
         onClose={onClose}
-        insideStyle={clasess.insideStyle}
+        insideStyle={classes.insideStyle}
       >
-        <div style={clasess.mainContainer}>
-          <div style={clasess.autoComplateRowContainer}>
+        <div style={classes.mainContainer}>
+          <div style={classes.autoComplateRowContainer}>
             <div style={{ width: "100%", marginTop: 15 }}>
-              <GoMakeAutoComplate
+              {/* <GoMakeAutoComplate
                 options={productValue}
                 placeholder={t("home.admin.selectProduct")}
-                style={clasess.selectTypeContainer}
+                style={classes.selectTypeContainer}
                 getOptionLabel={(option: any) => option.name}
                 onChange={(e: any, value: any) => {
                   setSelectedProduct(value);
                 }}
+              /> */}
+              <GoMakeTreeSelect
+                value={selectedProduct}
+                options={combinedData}
+                onChange={handleProductChange}
+                placeholder={t("home.admin.selectProductOrMaterial")}
               />
             </div>
           </div>
-          <div style={clasess.btnContainer}>
+          <div style={classes.btnContainer}>
             <GomakePrimaryButton
-              style={clasess.sendBtn}
-              onClick={onClcikCreateQuoteForCustomer}
+              style={classes.sendBtn}
+              onClick={onClickCreateQuoteForCustomer}
             >
               {t("sales.quote.add")}
             </GomakePrimaryButton>
