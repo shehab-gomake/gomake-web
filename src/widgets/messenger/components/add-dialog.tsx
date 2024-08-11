@@ -16,8 +16,8 @@ interface IProps {
 }
 
 enum EUserType {
-    Employee = 1,
-    Customer
+    Employee = '1',
+    Customer = '2'
 }
 
 interface IData {
@@ -28,7 +28,7 @@ interface IData {
 }
 
 const INIT_STATE = {
-    userType: 1,
+    userType: EUserType.Employee,
     id: '',
     name: '',
     type: 2
@@ -89,7 +89,7 @@ const AddDialog = ({onAddDialog}: IProps) => {
             receivers: [
                 {
                     clientId: state.id,
-                    clientType: state.userType
+                    clientType: +state.userType
                 }
             ]
         }

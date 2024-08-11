@@ -46,7 +46,6 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
     const sessionData = getSessionData();
     if (sessionData) {
       log.info("Session data:", userId, sessionData);
-      console.log("Session data:", userId, sessionData);
     }
   }
 
@@ -77,13 +76,11 @@ const EnhancedErrorBoundary = ({ children }: { children: ReactNode }) => {
   // useEffect(() => {
   //   if (userStateValue) {
   //     setUser(userStateValue);
-  //     console.log("userStateValue updated", userStateValue);
   //   }
   // }, [userStateValue]);
   // const user = { userId: "123" };
   const user = useRecoilValue<any>(userState);
   if (!user) {
-    console.log("user not loaded yet");
     return <div>Loading...</div>;
   }
 

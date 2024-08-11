@@ -450,7 +450,6 @@ const ButtonParameterWidget = ({
         });
 
         setProducts(updatedSubProducts);
-        console.log("transformedShape", { temp, parameter });
       }
     }
 

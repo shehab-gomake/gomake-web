@@ -1,34 +1,42 @@
-import {useGomakeAxios} from "@/hooks";
-import {useCallback, useEffect} from "react";
-import {SelectComponent} from "@/widgets/production-floor/filters/select/select-component";
-import {useRecoilState} from "recoil";
-import {dashboardClientsState} from "@/widgets/dashboard-widget/clients/clients-state";
-import {FONT_FAMILY} from "@/utils/font-family";
-import {useGomakeTheme} from "@/hooks/use-gomake-thme";
+import { useGomakeAxios } from "@/hooks";
+import { useCallback, useEffect } from "react";
+import { SelectComponent } from "@/widgets/production-floor/filters/select/select-component";
+import { useRecoilState } from "recoil";
+import { dashboardClientsState } from "@/widgets/dashboard-widget/clients/clients-state";
+import { FONT_FAMILY } from "@/utils/font-family";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { getAndSetAllCustomers } from "@/services/hooks";
+import { useDebouncedCallback } from "use-debounce";
 
 const DashboardClientsList = () => {
     const { callApi } = useGomakeAxios();
     const [clients, setClients] = useRecoilState(dashboardClientsState);
-
     useEffect(() => {
-        getClients().then((res) => {
-            setClients(res?.data?.data?.data?.map(client => ({...client, checked: true})));
+        getClients()
+    }, []);
+    const getClients = useCallback(async (SearchTerm?) => {
+        await getAndSetAllCustomers(callApi, setClients, {
+            ClientType: "C",
+            searchTerm: SearchTerm,
+            onlyCreateOrderClients: true,
         });
     }, []);
-    const getClients = async () => {
-        return await callApi(
-            "GET",
-            "/v1/crm-service/customer/get-all-customers?ClientType=C&onlyCreateOrderClients=true"
-        );
+    const debouncedGetClients = useDebouncedCallback((e) => {
+        getClients(e);
+    }, 700);
+
+    const checkWhatRenderArray = (e) => {
+        debouncedGetClients(e);
     };
+
     const getClientsList = useCallback(() => {
         return clients.map(client => ({ name: client.name + ' - ' + client.code, id: client.id, checked: client.checked }))
     }, [clients]);
 
     const handleChange = (v: string) => {
-        setClients(clients?.map(client => v === client.id ? {...client, checked: !client.checked} : client));
+        setClients(clients?.map(client => v === client.id ? { ...client, checked: !client.checked } : client));
     }
-    const {primaryColor, neutralColor} = useGomakeTheme();
+    const { primaryColor, neutralColor } = useGomakeTheme();
     return (
         <div>
             <SelectComponent style={{
@@ -43,7 +51,7 @@ const DashboardClientsList = () => {
                 justifyContent: 'space-between',
                 alignItems: 'center',
                 ...FONT_FAMILY.Lexend(500, 12)
-            }} buttonLabel={'dashboard-widget.clients'} list={getClientsList()} onChange={handleChange}/>
+            }} buttonLabel={'dashboard-widget.clients'} list={getClientsList()} onChange={handleChange} checkWhatRenderArray={checkWhatRenderArray} />
         </div>
     );
 };

@@ -460,3 +460,5 @@ df-messenger {
 .p-connected-overlay-enter-done {
   z-index: 1400 !important
 }
+.foreground circle {}
+
