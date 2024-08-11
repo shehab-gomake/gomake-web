@@ -4,6 +4,7 @@ import { LineChart } from "@/pages-components/products/profits/widgets/line-char
 import { PricingListTable } from "./pricing-list-table";
 import { useStyle } from "./style";
 import { PricingListProps } from "../../interface";
+import { useRouter } from "next/router";
 
 const PricingList = ({
   tableHeaders,
@@ -30,11 +31,12 @@ const PricingList = ({
 }: PricingListProps) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
+  const router = useRouter()
   return (
     <div style={clasess.pricListWidgetMainContainer}>
       <div style={clasess.headerMainCointaner}>
         <div style={clasess.listTitle}>
-          {t("products.profits.pricingListWidget.pricingListTitle")}
+          {t("products.profits.pricingListWidget.pricingListTitle")} ({`${router?.query?.actionName}`})
         </div>
         <div style={clasess.filtersCointaner}>
           <div style={clasess.autoCompleteContainer}>
