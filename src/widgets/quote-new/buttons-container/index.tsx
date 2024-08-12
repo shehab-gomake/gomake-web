@@ -11,6 +11,8 @@ import { CancelReceiptModal } from "./payment/cancel-receipt-modal/cancel-receip
 import { OrderNowModal } from "../total-price-and-vat/order-now-modal";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import { useSnackBar } from "@/hooks";
+import { ManagerApprovalModal } from "../total-price-and-vat/manger-approval-modal";
+import { useEffect } from "react";
 
 
 const ButtonsContainer = ({
@@ -52,15 +54,21 @@ const ButtonsContainer = ({
     onClickCloseCancelReceiptModal,
     showAddNewItemBtn,
     canEditDocument,
-    isNewCreation
+    isNewCreation,
+    openMangerApprovalModal,
+    onClickCloseMangerApprovalModal,
+    onClickOpenMangerApprovalModal,
+    getAllUsersCanApproveQuote,
+    managersOptions,
+    onClickSendAndChat
   } = useButtonsContainer(documentType);
 
-  
+
   const isShowSendButton =
-  quoteItemValue.isSendWhatsapp ||
-  quoteItemValue.isSendWhatsappWeb ||
-  quoteItemValue.isSendMails ||
-  quoteItemValue.isSendSMS;
+    quoteItemValue.isSendWhatsapp ||
+    quoteItemValue.isSendWhatsappWeb ||
+    quoteItemValue.isSendMails ||
+    quoteItemValue.isSendSMS;
 
   const handleCopyFromDocumentClick = (documentNumber) => {
     if (!quoteItemValue?.client) {
@@ -78,6 +86,9 @@ const ButtonsContainer = ({
     }
   };
 
+  useEffect(() => {
+    quoteItemValue?.isNeedApproval && getAllUsersCanApproveQuote();
+  }, [])
 
   return (
     <div style={classes.writeCommentContainer}>
@@ -204,19 +215,38 @@ const ButtonsContainer = ({
           </GomakePrimaryButton>
         }
         {
-          documentType === DOCUMENT_TYPE.quote &&
-          <GomakePrimaryButton
-            style={classes.btnOrderNowContainer}
-            onClick={onClickOpenOrderNowModal}
-          >
-            {t("sales.quote.orderNowTitle")}
-          </GomakePrimaryButton>
+          documentType === DOCUMENT_TYPE.quote && (
+            quoteItemValue?.isNeedApproval ? (
+              <GomakePrimaryButton
+                style={classes.btnOrderNowContainer}
+                onClick={onClickOpenMangerApprovalModal}
+              >
+                {t("sales.quote.managerApproval")}
+                {/* {t("sales.quote.sendToSalesManager")} */}
+
+              </GomakePrimaryButton>
+            ) : (
+              <GomakePrimaryButton
+                style={classes.btnOrderNowContainer}
+                onClick={onClickOpenOrderNowModal}
+              >
+                {t("sales.quote.orderNowTitle")}
+              </GomakePrimaryButton>
+            )
+          )
         }
+
         <OrderNowModal
           openModal={openOrderNowModal}
           onClose={onClickCloseOrderNowModal}
           confirmWithoutNotification={onClickConfirmWithoutNotification}
           confirmWithNotification={onClickConfirmWithNotification}
+        />
+        <ManagerApprovalModal
+          openModal={openMangerApprovalModal}
+          onClose={onClickCloseMangerApprovalModal}
+          onSend={onClickSendAndChat}
+          managersOptions={managersOptions}
         />
         <PaymentModal
           onClose={onClickClosePaymentModal}
