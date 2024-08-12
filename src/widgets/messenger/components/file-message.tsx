@@ -11,7 +11,7 @@ import {FONT_FAMILY} from "@/utils/font-family";
 
 interface IProps extends IChatMessage {
     isCurrentUserSentMsg: boolean;
-    onUpdateApprovalFile: (requestId: string, updatedStatus: string, senderId: number) => void;
+    onUpdateApprovalFile: (requestId: string, updatedStatus: string, senderId: number, type: number) => void;
     getApprovalStatus: (id: string) => Promise<unknown>;
     direction: 'column' | 'row';
     updatedApprovalRequest: { approvalRequestId: string, newStatus: EFileStatus };
@@ -24,7 +24,7 @@ const FileMessageComponent = ({
                                   isCurrentUserSentMsg,
                                   onUpdateApprovalFile,
                                   _id,
-                                  approval_Request_id,
+                                  file_approval_Request_id,
                                   getApprovalStatus,
                                   sender_id,
                                   direction,
@@ -54,13 +54,13 @@ const FileMessageComponent = ({
     };
 
     const onUpdateStatus = (newStatus: EFileStatus) => {
-        onUpdateApprovalFile(approval_Request_id, newStatus, sender_id);
+        onUpdateApprovalFile(file_approval_Request_id, newStatus, sender_id, 11);
         setStatus(newStatus)
 
     }
 
     useEffect(() => {
-            getApprovalStatus(approval_Request_id)
+            getApprovalStatus(file_approval_Request_id)
                 .then(s => {
                     setStatus(s as EFileStatus)
                 })
@@ -69,7 +69,7 @@ const FileMessageComponent = ({
 
     useEffect(() => {
         if (!!updatedApprovalRequest) {
-            if (updatedApprovalRequest.approvalRequestId == approval_Request_id) {
+            if (updatedApprovalRequest.approvalRequestId == file_approval_Request_id) {
                 setStatus(updatedApprovalRequest.newStatus);
             }
         }

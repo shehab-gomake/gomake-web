@@ -4,7 +4,7 @@ import {IChatDialog} from "@/widgets/messenger/interfaces/dialog";
 import {IChatMessage} from "@/widgets/messenger/interfaces/chat-message";
 import {EFileStatus} from "@/widgets/messenger/enums";
 import {useGomakeAxios, useSnackBar} from "@/hooks";
-import {getUsersMetaDataApi, updateApprovalFileApi} from "@/services/api-service/chat/quick-blox-chat-endpoints";
+import {getUsersMetaDataApi, updateApprovalRequestApi} from "@/services/api-service/chat/quick-blox-chat-endpoints";
 import {QBChatNewMessage} from "quickblox";
 import {useRouter} from "next/router";
 
@@ -25,7 +25,7 @@ const useMessenger = () => {
     }, [dialogs]);
 
     const files = useCallback(() => {
-        return messages.filter(msg => !!msg.approval_Request_id);
+        return messages.filter(msg => !!msg.file_approval_Request_id);
     }, [messages])
     const {callApi} = useGomakeAxios();
     const messenger = useQuickBlox();
@@ -59,7 +59,8 @@ const useMessenger = () => {
                     ...message,
                     sender_id: +message.extension?.sender_id,
                     attachments: message.extension?.attachments,
-                    approval_Request_id: message.extension?.approval_Request_id,
+                    file_approval_Request_id: message.extension?.file_approval_Request_id,
+                    quote_approval_Request_id: message.extension?.qoute_approval_Request_id,
                     message: message.body,
                     date: new Date(message.date_sent * 1000),
                 }
@@ -124,7 +125,7 @@ const useMessenger = () => {
                     attachments: [attachment],
                     save_to_history: 1,
                     sender_id: messenger.sessionUser.userId,
-                    approval_Request_id: approvalRequestObj._id,
+                    file_approval_Request_id: approvalRequestObj._id,
                 },
                 markable: 1
             };
@@ -152,7 +153,7 @@ const useMessenger = () => {
         }
 
     }
-    const updateApprovalFile = async (requestId: string, updatedStatus: string, senderId: number) => {
+    const updateApprovalRequest = async (requestId: string, updatedStatus: string, senderId: number, type: number) => {
         const callBack = res => {
             if (res.success) {
                 sendSystemMessage(senderId, requestId, res.data.status);
@@ -161,12 +162,13 @@ const useMessenger = () => {
             }
         };
 
-        await updateApprovalFileApi(callApi, callBack, {
+        await updateApprovalRequestApi(callApi, callBack, {
             requestId,
             updatedStatus,
-            messageId: '',
+            messageId: 'message id',
             chatDialogId: selectedDialog._id,
-            SenderUserId: senderId
+            SenderUserId: senderId,
+            documentType: type
         })
     }
 
@@ -253,7 +255,7 @@ const useMessenger = () => {
         dialogs,
         messages,
         unreadMessages,
-        updateApprovalFile,
+        updateApprovalFile: updateApprovalRequest,
         getApprovalFileStatus,
         sendApprovalFileMessage,
         getAttachmentUrl,

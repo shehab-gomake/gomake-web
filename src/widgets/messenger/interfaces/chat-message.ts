@@ -17,7 +17,8 @@ export interface IChatMessage {
     updated_at: Date;
     _id: string;
     fileUrl?: string;
-    approval_Request_id?: string;
+    file_approval_Request_id?: string;
+    quote_approval_Request_id?: string;
     userMetaData: {
         profileImage?: string;
         avatarInitials?: string;

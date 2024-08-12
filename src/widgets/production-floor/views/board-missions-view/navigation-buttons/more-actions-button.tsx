@@ -1,21 +1,21 @@
-import { PrimaryButton } from "@/components/button/primary-button";
-import { MenuItem, Paper } from "@mui/material";
-import { useRef, useState } from "react";
-import { useRouter } from "next/router";
-import { useUploadFiles } from "@/widgets/production-floor/views/board-missions-view/navigation-buttons/use-upload-files";
-import { useRecoilState } from "recoil";
-import { printHouseProfile } from "@/store/print-house-profile";
+import {PrimaryButton} from "@/components/button/primary-button";
+import {CircularProgress, MenuItem, Paper} from "@mui/material";
+import {useRef, useState} from "react";
+import {useRouter} from "next/router";
+import {useUploadFiles} from "@/widgets/production-floor/views/board-missions-view/navigation-buttons/use-upload-files";
+import {useRecoilState} from "recoil";
+import {printHouseProfile} from "@/store/print-house-profile";
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import { useTranslation } from "react-i18next";
-import { adaptLeft } from "@/utils/adapter";
-import { ClickOutside } from "@/components/click-out-side/click-out-side";
-import { boardMissionsDetailsState } from "@/widgets/production-floor/state/boards";
+import {useTranslation} from "react-i18next";
+import {adaptLeft} from "@/utils/adapter";
+import {ClickOutside} from "@/components/click-out-side/click-out-side";
+import {boardMissionsDetailsState} from "@/widgets/production-floor/state/boards";
 import {createBoardMissionsChatRoomApi} from "@/services/api-service/chat/quick-blox-chat-endpoints";
-import {useGomakeAxios} from "@/hooks";
+import {useGomakeAxios, useSnackBar} from "@/hooks";
 
 const MoreActionsButton = () => {
     const [open, setOpen] = useState<boolean>(false);
-    const { query, replace, pathname, push } = useRouter();
+    const {query, replace, pathname, push} = useRouter();
     const fileInputRef = useRef(null);
     const [companyProfile] = useRecoilState(printHouseProfile);
     const [boardMissions] = useRecoilState(boardMissionsDetailsState);
@@ -23,12 +23,14 @@ const MoreActionsButton = () => {
     const {t} = useTranslation();
     const {callApi} = useGomakeAxios();
     const direction = t('direction');
+    const [loading, setLoading] = useState<boolean>(false);
+    const {alertFaultGetData} = useSnackBar();
     const handleClose = () => {
         setOpen(false);
     };
 
     const onClickUpdateFile = () => {
-        replace({ pathname: pathname, query: { ...query, step: 'files' } }, undefined, { shallow: true }).then();
+        replace({pathname: pathname, query: {...query, step: 'files'}}, undefined, {shallow: true}).then();
         if (fileInputRef) {
             fileInputRef.current?.click();
         }
@@ -46,28 +48,31 @@ const MoreActionsButton = () => {
     };
 
     const getBoardMissionChatRoomId = async () => {
+        setLoading(true)
+        setOpen(false);
         const callBack = res => {
+            setLoading(false);
             if (res.success) {
                 push(`/messenger?dialogId=${res.data?._id}`)
-            }else {
-
+            } else {
+                alertFaultGetData();
             }
         }
         await createBoardMissionsChatRoomApi(callApi, callBack, {boardMissionId: boardMissions.boardMissionId})
     }
     return (
-        <div style={{ position: 'relative' }}>
-            <PrimaryButton onClick={() => setOpen(!open)} variant={'contained'}
-                sx={{
-                    minWidth: '40px',
-                    width: '40px',
-                    height: '40px',
-                    padding: 0,
-                    borderRadius: '12px'
-                }}><MoreHorizIcon /></PrimaryButton>
+        <div style={{position: 'relative'}}>
+            <PrimaryButton disabled={loading} onClick={() => setOpen(!open)} variant={'contained'}
+                           sx={{
+                               minWidth: '40px',
+                               width: '40px',
+                               height: '40px',
+                               padding: 0,
+                               borderRadius: '12px'
+                           }}>{loading ? <CircularProgress size={'20px'}/> : <MoreHorizIcon/>}</PrimaryButton>
             {
                 !!open && <ClickOutside onClick={() => setOpen(false)}>
-                    <Paper sx={{ position: 'absolute', top: '110%', ...adaptLeft(direction, 0) }}>
+                    <Paper sx={{position: 'absolute', top: '110%', ...adaptLeft(direction, 0)}}>
                         {
                             !!companyProfile.filesApiAddress &&
                             <MenuItem onClick={onClickUpdateFile}>{t('productionFloor.uploadFile')}</MenuItem>
@@ -77,9 +82,9 @@ const MoreActionsButton = () => {
                     </Paper>
                 </ClickOutside>
             }
-            <input type={'file'} multiple value={''} onChange={handleFileSelect} hidden={true} ref={fileInputRef} />
+            <input type={'file'} multiple value={''} onChange={handleFileSelect} hidden={true} ref={fileInputRef}/>
         </div>
     );
 }
 
-export { MoreActionsButton }
+export {MoreActionsButton}
