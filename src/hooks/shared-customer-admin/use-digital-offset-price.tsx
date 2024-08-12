@@ -1713,6 +1713,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           onOpeneMultiParameterModal={onOpeneMultiParameterModal}
           subSectionParameters={subSectionParameters}
           list={list}
+          multiParameterModal={multiParameterModal}
         />
       );
     } else if (
@@ -3029,7 +3030,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             workTypes: workTypes,
             isChargeForNewDie: isChargeForNewDie,
             productType: productTemplate?.productType,
-            templateId:productTemplate?.templateId
+            templateId: productTemplate?.templateId
           },
           false,
           newRequestAbortController
