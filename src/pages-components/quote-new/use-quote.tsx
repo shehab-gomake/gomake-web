@@ -1123,8 +1123,8 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
   const handleRejectBtnClick = async () => {
     const callBack = (res) => {
       if (res?.success) {
-        // navigate("/home");
-        getQuote();
+        navigate("/home");
+        // getQuote();
       } else {
         alertFaultUpdate();
       }
@@ -1140,8 +1140,8 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
   const handleAcceptBtnClick = async () => {
     const callBack = (res) => {
       if (res?.success) {
-        // navigate("/home");
-        getQuote();
+        navigate("/home");
+        // getQuote();
       } else {
         alertFaultUpdate();
       }
