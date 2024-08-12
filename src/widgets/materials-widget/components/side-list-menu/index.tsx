@@ -6,7 +6,8 @@ import { useStyle } from "./style";
 import { useTranslation } from "react-i18next";
 import { DeleteIcon } from "@/widgets/settings-mailing/messageTemplates/components/more-circle/icons/delete";
 import { useSetRecoilState } from "recoil";
-import { isEditCategoryModalState, openAddCategoryModalState, selectedCategoryModalState } from "../../state";
+import { isDuplicateCategoryModalState, isEditCategoryModalState, openAddCategoryModalState, selectedCategoryModalState } from "../../state";
+import { DuplicateIcon } from "@/components/icons/icons";
 
 const SideLeftMenuWidget = ({
   onClickOpenDeleteRowModal,
@@ -16,6 +17,7 @@ const SideLeftMenuWidget = ({
   const { open, anchorEl, handleClose, handleClick } = useMoreCircle();
   const setOpenAddCategoryModal = useSetRecoilState(openAddCategoryModalState);
   const changeEditCategoryModalState = useSetRecoilState(isEditCategoryModalState);
+  const changeDuplicateCategoryModalState = useSetRecoilState(isDuplicateCategoryModalState);
   const setSelectedCategoryModalState = useSetRecoilState(selectedCategoryModalState);
   const { t } = useTranslation();
   return (
@@ -39,6 +41,20 @@ const SideLeftMenuWidget = ({
           <EditIcon />
           <div style={clasess.rowTextStyle}>
             {t("navigationButtons.edit")}
+          </div>
+        </MenuItem>
+        <MenuItem
+          style={clasess.menuItemContainer}
+          onClick={() => {
+            setOpenAddCategoryModal(true);
+            changeDuplicateCategoryModalState(true)
+            setSelectedCategoryModalState(category)
+            handleClose();
+          }}
+        >
+          <DuplicateIcon />
+          <div style={clasess.rowTextStyle}>
+            {t("navigationButtons.duplicate")}
           </div>
         </MenuItem>
         {

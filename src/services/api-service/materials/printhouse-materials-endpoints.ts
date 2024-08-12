@@ -11,6 +11,7 @@ const ADD_MATERIAL_CATEGORY_URL = "/v1/printhouse-materials/add-printhouse-mater
 const DELETE_MATERIAL_CATEGORY_URL = "/v1/printhouse-materials/delete-printhouse-material-category";
 const ADD_MATERIAL_CATEGORY_ROW_URL = "/v1/printhouse-materials/add-printhouse-material-category-row";
 const UPDATE_MATERIAL_CATEGORY_DISPLAY_NAME_URL = "/v1/printhouse-materials/update-print-house-material-display-name";
+const DUPLICATE_MATERIAL_CATEGORY_URL = "/v1/printhouse-materials/duplicate-print-house-material-category";
 
 const DELETE_MATERIAL_CATEGORY_Row_URL = "/v1/printhouse-materials/delete-printhouse-material-category-row";
 const DOWNLOAD_MATERIAL_EXCEL_FILE = "/v1/printhouse-materials/download-material-excel";
@@ -145,6 +146,23 @@ const updatePrintHouseMaterialDisplayNameApi: ICallAndSetData = async (
     row
   );
 };
+const duplicatePrintHouseMaterialDisplayNameApi: ICallAndSetData = async (
+  callApi,
+  callBack,
+  row: {
+    materialTypeKey: string;
+    categoryKey: string;
+    newCategoryKey: string;
+  }
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    DUPLICATE_MATERIAL_CATEGORY_URL,
+    callBack,
+    row
+  );
+};
 
 const deletePrintHouseMaterialCategoryRowApi: ICallAndSetData = async (
   callApi,
@@ -210,5 +228,6 @@ export {
       getMaterialsSizesApi,
       getPrintHouseMaterialExcelFileApi,
       uploadPrintHouseMaterialExcelFileApi,
-      updatePrintHouseMaterialDisplayNameApi
+      updatePrintHouseMaterialDisplayNameApi,
+      duplicatePrintHouseMaterialDisplayNameApi
 };
