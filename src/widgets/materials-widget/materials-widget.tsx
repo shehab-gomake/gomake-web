@@ -10,6 +10,7 @@ import { useRecoilValue, useSetRecoilState } from "recoil";
 import {
   activeFilterState,
   flagState,
+  isDuplicateCategoryModalState,
   isEditCategoryModalState,
   openAddCategoryModalState,
   openAddSupplierModalState,
@@ -42,6 +43,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
   const setOpenAddSupplierModal = useSetRecoilState(openAddSupplierModalState);
   const setOpenAddCategoryModal = useSetRecoilState(openAddCategoryModalState);
   const changeEditCategoryModalState = useSetRecoilState(isEditCategoryModalState);
+  const changeDuplicateCategoryModalState = useSetRecoilState(isDuplicateCategoryModalState);
   const supplierId = useRecoilValue(selectedSupplierIdState);
   const flag = useRecoilValue(flagState);
   const { productList } = useAllProductsDropDownList()
@@ -116,6 +118,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
           <PrimaryButton
             onClick={() => {
               changeEditCategoryModalState(false)
+              changeDuplicateCategoryModalState(false)
               setOpenAddCategoryModal(true)
             }}
             variant={"contained"}
