@@ -173,6 +173,8 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
     onCloseDeliveryModal,
     onAddDelivery,
     handleSaveBtnClick,
+    handleRejectBtnClick,
+    handleAcceptBtnClick,
     documentTitle,
     onBlurExchangeRate,
     setIsUpdateExchangeRate,
@@ -226,7 +228,7 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
     setNewCreationDate
   } = useQuoteNew({ docType: documentType, isQuoteConfirmation: isQuoteConfirmation });
 
-  
+
   const handleChangeCreationDate = (event) => {
     const newDate = event.target.value;
     const newDateRounded = moment(newDate).seconds(0).milliseconds(0).toISOString();
@@ -344,7 +346,7 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
                 {/* // Creation Date */}
 
                 <div
-                  style={{...classes.deleverdDate, cursor: (isInvoice &&quoteItemValue?.isEditable) ? "pointer" : "default" }}
+                  style={{ ...classes.deleverdDate, cursor: (isInvoice && quoteItemValue?.isEditable) ? "pointer" : "default" }}
                   onClick={isInvoice && quoteItemValue?.isEditable ? handleClickForCreationDate : null}
                 >
                   {t("sales.quote.creationDate")}{" "}
@@ -364,7 +366,7 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
                 {/* // Due Date */}
 
                 <div
-                  style={{...classes.deleverdDate, cursor: quoteItemValue?.isEditable ? "pointer" : "default" }}
+                  style={{ ...classes.deleverdDate, cursor: quoteItemValue?.isEditable ? "pointer" : "default" }}
                   onClick={quoteItemValue?.isEditable ? handleClickSelectDate : null}
                 >
                   {t("sales.quote.dateOfReference")}{" "}
@@ -385,9 +387,9 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
                 </div>
                 {/* // TAX Date */}
                 {
-               isInvoice && <div
-               style={{...classes.deleverdDate, cursor: quoteItemValue?.isEditable ? "pointer" : "default" }}
-               onClick={quoteItemValue?.isEditable ? handleClickForTaxDate : null}
+                  isInvoice && <div
+                    style={{ ...classes.deleverdDate, cursor: quoteItemValue?.isEditable ? "pointer" : "default" }}
+                    onClick={quoteItemValue?.isEditable ? handleClickForTaxDate : null}
                   >
                     {t("sales.quote.taxDate")}{" "}
                     {taxDate
@@ -530,6 +532,8 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false }: IProp
                 onOpenCopyFromOrder={onOpenCopyFromOrder}
                 handleSaveBtnClickForDocument={handleSaveBtnClickForDocument}
                 onClickOpenNewItemNotesModal={onClickOpenNewItemNotesModal}
+                handleRejectBtnClick={handleRejectBtnClick}
+                handleAcceptBtnClick={handleAcceptBtnClick}
               />
             </div>
           }

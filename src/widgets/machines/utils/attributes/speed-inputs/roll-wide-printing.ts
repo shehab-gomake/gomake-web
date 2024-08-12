@@ -7,6 +7,19 @@ const rollWidePrinting = (state: Record<string, any>) => {
         ...setupTimeInput(state),
         ...maxSpeedInput(state, EMeasurementUnits.SQUARE_METER_P_HOUR),
         {
+            name: "unitDelay",
+            label: "machineAttributes.loadingDelay",
+            type: "text",
+            placeholder: "machineAttributes.loadingDelay",
+            required: true,
+            parameterKey: "unitDelay",
+            options: [],
+            value: state?.attributes?.unitDelay ? state?.attributes?.unitDelay : '',
+            machineInputType: 'input',
+            isValid: !!state?.attributes?.unitDelay,
+            unit: EMeasurementUnits.MINUTE
+        },
+        {
             name: 'machineAttributes.speedBySheetCategories',
             parameterKey: 'speedBySheetCategories',
             value: state.attributes?.speedBySheetCategories || [],
@@ -22,6 +35,17 @@ const rollWidePrinting = (state: Record<string, any>) => {
                     parameterKey: "categories",
                     options: [],
                     optionsUrl: '/v1/materials/get-material-categories-list?materialKey=sheets',
+                },
+                {
+                    name: "",
+                    label: "machineAttributes.maxThickness",
+                    type: "text",
+                    placeholder: "machineAttributes.maxThickness",
+                    required: false,
+                    parameterKey: "thickness",
+                    options: [],
+                    unit: EMeasurementUnits.UM,
+                    isValid: true
                 },
                 {
                     name: "speed",
@@ -53,6 +77,17 @@ const rollWidePrinting = (state: Record<string, any>) => {
                     optionsUrl: '/v1/materials/get-material-categories-list?materialKey=flatbeds',
                 },
                 {
+                    name: "",
+                    label: "machineAttributes.maxThickness",
+                    type: "text",
+                    placeholder: "machineAttributes.maxThickness",
+                    required: false,
+                    parameterKey: "maxThickness",
+                    options: [],
+                    value: state.attributes?.pvc?.maxThickness ? state.attributes?.pvc?.maxThickness : '',
+                    unit: EMeasurementUnits.MM
+                },
+                {
                     name: "speed",
                     label: "machineAttributes.speed",
                     type: "text",
@@ -76,10 +111,21 @@ const rollWidePrinting = (state: Record<string, any>) => {
                     label: "machineAttributes.categories",
                     type: "select",
                     placeholder: "machineAttributes.categories",
-                    required: true,
+                    required: false,
                     parameterKey: "categories",
                     options: [],
                     optionsUrl: '/v1/materials/get-material-categories-list?materialKey=wideFormatMaterial',
+                },
+                {
+                    name: "",
+                    label: "machineAttributes.maxThickness",
+                    type: "text",
+                    placeholder: "machineAttributes.maxThickness",
+                    required: true,
+                    parameterKey: "maxThickness",
+                    options: [],
+                    value: state.attributes?.pvc?.maxThickness ? state.attributes?.pvc?.maxThickness : '',
+                    unit: EMeasurementUnits.UM
                 },
                 {
                     name: "speed",

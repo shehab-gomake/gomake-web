@@ -37,6 +37,8 @@ const CANCEL_DOCUMENT_URL = "/v1/erp-service/documents/cancel-document";
 const SEND_DOCUMENT_TO_CLIENT_URL =
   "/v1/erp-service/documents/send-document-to-client";
 const SAVE_DOCUMENT_URL = "/v1/erp-service/documents/save-document";
+const ACCEPT_DOCUMENT_URL = "/v1/erp-service/documents/approved-by-manager";
+const REJECT_DOCUMENT_URL = "/v1/erp-service/documents/rejected-by-manager";
 const CONVERT_QUOTE_TO_ORDER_URL =
   "/v1/erp-service/documents/convert-quote-to-order";
 const GET_CALCULATE_DOCUMENT_ITEM_URL =
@@ -336,6 +338,25 @@ const saveDocumentApi: ICallAndSetData = async (callApi, setState, data) => {
     callApi,
     EHttpMethod.POST,
     SAVE_DOCUMENT_URL,
+    setState,
+    data
+  );
+};
+
+const acceptDocumentApi: ICallAndSetData = async (callApi, setState, data) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.PUT,
+    ACCEPT_DOCUMENT_URL,
+    setState,
+    data
+  );
+};
+const rejectDocumentApi: ICallAndSetData = async (callApi, setState, data) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.PUT,
+    REJECT_DOCUMENT_URL,
     setState,
     data
   );
@@ -762,5 +783,7 @@ export {
   updateDocumentInternalNotesApi,
   updateOccasionalClientNameApi,
   manuallyCloseDocumentApi,
-  sendQuoteApprovalToManagerApi
+  sendQuoteApprovalToManagerApi,
+  acceptDocumentApi,
+  rejectDocumentApi
 };

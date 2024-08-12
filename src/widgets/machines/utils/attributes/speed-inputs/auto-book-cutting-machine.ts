@@ -1,4 +1,5 @@
 import {setupTimeInput} from "@/widgets/machines/utils/attributes/speed-inputs/setup-time-input";
+import {EMeasurementUnits} from "@/widgets/machines/enums/measurement-units";
 
 const autoBookCuttingMachine = (state: Record<string, any>) => {
     return [
@@ -14,6 +15,7 @@ const autoBookCuttingMachine = (state: Record<string, any>) => {
             value: state.attributes?.maxSpeed ? state.attributes?.maxSpeed : '',
             machineInputType: 'input',
             isValid: !!state?.attributes?.maxSpeed,
+            unit: EMeasurementUnits.BOOK_PH
         },
         {
             name: 'machineAttributes.speedByBookThickness',
@@ -29,7 +31,8 @@ const autoBookCuttingMachine = (state: Record<string, any>) => {
                     placeholder: "machineAttributes.thickness",
                     required: true,
                     parameterKey: "thickness",
-                    options: []
+                    options: [],
+                    unit: EMeasurementUnits.MM
                 },
                 {
                     name: "speedPercentage",
@@ -38,7 +41,8 @@ const autoBookCuttingMachine = (state: Record<string, any>) => {
                     placeholder: "machineAttributes.speedPercentage",
                     required: true,
                     parameterKey: "speedPercentage",
-                    options: []
+                    options: [],
+                    unit: EMeasurementUnits.PERCENTAGE
                 },
             ]
         },

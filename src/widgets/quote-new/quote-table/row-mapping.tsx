@@ -6,15 +6,17 @@ import { FONT_FAMILY } from "@/utils/font-family";
 import { CharacterDetails } from "./character-details";
 import { InputUpdatedValues } from "../input-updated-values";
 import { useQuoteTable } from "./use-quote-table";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useQuoteConfirmation } from "@/pages-components/quote-confirmation/use-quote-confirmation";
 import { useRouter } from "next/router";
 import { MoreMenuWidget } from "../more-circle";
 import { useRecoilValue } from "recoil";
 import { quoteConfirmationState, quoteItemState } from "@/store";
 import { DOCUMENT_TYPE, QUOTE_STATUSES } from "@/pages-components/quotes/enums";
-import { Permissions, DocumentPermission } from "@/components/CheckPermission/enum";
+import { DocumentPermission } from "@/components/CheckPermission/enum";
 import { useUserPermission } from "@/hooks/use-permission";
+import PriceOfferWidget from "@/widgets/price-offer-widget/price-offer-widget";
+import { useQuoteGetData } from "@/pages-components/quote-new/use-quote-get-data";
 
 const RowMappingWidget = ({
   item,
@@ -32,10 +34,12 @@ const RowMappingWidget = ({
   onChangeSelectedItemRowForQoute,
   quoteItems
 }) => {
+  console.log("item", { item, quoteItems })
   const router = useRouter();
   const { classes } = useStyle({ headerHeight });
   const [isConfirmation, setIsConfirmation] = useState(null);
   const [isSelected, setIsSelected] = useState(item?.isSelected);
+  const { getCurrencyUnitText } = useQuoteGetData();
   const handleChangeSelectedItem = (checked, itemId) => {
     setIsSelected(checked)
     onChangeSelectedItemRowForQoute(checked, itemId)
@@ -97,7 +101,7 @@ const RowMappingWidget = ({
             />
             {parentIndex}
           </div>
-          : (!isQuoteConfirmation &&  documentType === DOCUMENT_TYPE.quote) ?
+          : (!isQuoteConfirmation && documentType === DOCUMENT_TYPE.quote) ?
             <span style={classes.checkBoxContainer}>
               <Checkbox
                 icon={<CheckboxIcon />}
@@ -205,13 +209,30 @@ const RowMappingWidget = ({
         }}
       >
         <div style={classes.cellTextInputStyle}>
-          <InputUpdatedValues
-            value={item.finalPrice}
-            onBlur={onBlurFinalPrice}
-            isUpdate={canUpdatePricesBasedOnType && isUpdateFinalPrice}
-            setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdateFinalPrice}
-            onInputChange={(e) => onInputChangeFinalPrice(e)}
-          />
+          {quoteItems?.isManager && item?.pricingHistories.length > 0 ?
+            <PriceOfferWidget
+              oldPrice={item?.pricingHistories[item?.pricingHistories.length - 1]?.finalPrice.toFixed(2)}
+              newPrice={item.finalPrice}
+              currency={getCurrencyUnitText(quoteItems?.currency)}
+              item={item}
+              onBlurFinalPrice={onBlurFinalPrice}
+              canUpdatePricesBasedOnType={canUpdatePricesBasedOnType}
+              isUpdateFinalPrice={isUpdateFinalPrice}
+              isQuoteConfirmation={isQuoteConfirmation}
+              setIsConfirmation={setIsConfirmation}
+              setIsUpdateFinalPrice={setIsUpdateFinalPrice}
+              onInputChangeFinalPrice={onInputChangeFinalPrice}
+            /> :
+            <InputUpdatedValues
+              value={item.finalPrice}
+              onBlur={onBlurFinalPrice}
+              isUpdate={canUpdatePricesBasedOnType && isUpdateFinalPrice}
+              setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdateFinalPrice}
+              onInputChange={(e) => onInputChangeFinalPrice(e)}
+            />
+          }
+
+
         </div>
       </PrimaryTableCell>
       {

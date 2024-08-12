@@ -12,10 +12,10 @@ import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { SecondaryButton } from "@/components/button/secondary-button";
 import { MarkIcon } from "@/icons/mark-icon";
 import { showTourModalState } from "@/store/tour-state";
-import SupportAgentIcon from "@mui/icons-material/SupportAgent";
 import { HelpIcon } from "@/icons/help-icon";
 import { currentPathState } from "@/pages-components/customer-service/store/currentPathState";
 import { useRouter } from "next/router";
+import {MessengerNotifications} from "@/widgets/messenger-notifications-widget/messenger-notifications";
 const HeaderWidget = () => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -62,6 +62,10 @@ const HeaderWidget = () => {
       {/* <SearchInputComponent onChange={() => null} searchInputStyle={classes.searchInputContainer} /> */}
       <div style={{ width: "100%" }} />
       <div style={classes.rightSideContainer}>
+        {/*<IconButton style={{ padding: "5px", backgroundColor: primaryColor(300) }} onClick={handleClickSupport}>*/}
+        {/*  <EmailOutlinedIcon style={{color: '#FFF', width: 18, height: 18}}/>*/}
+        {/*</IconButton>*/}
+        <MessengerNotifications/>
         <IconButton style={{ padding: "5px" }} data-tour={"start-tour-btn"} onClick={handleClickSupport}>
           <HelpIcon width={26} height={26} />
         </IconButton>
