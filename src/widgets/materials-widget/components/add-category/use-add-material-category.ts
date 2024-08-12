@@ -83,7 +83,7 @@ const useAddMaterialCategory = (isAdmin:boolean) => {
             }
                 await updatePrintHouseMaterialDisplayNameApi(callApi, callBack, {
                     materialTypeKey: materialType.toString(),
-                    categoryKey: selectedCategoryModal?.categoryName,
+                    categoryKey: selectedCategoryModal?.categoryKey,
                     displayName:newCategory
 
                 })
@@ -103,7 +103,7 @@ const useAddMaterialCategory = (isAdmin:boolean) => {
         }
             await duplicatePrintHouseMaterialDisplayNameApi(callApi, callBack, {
                 materialTypeKey: materialType.toString(),
-                categoryKey: selectedCategoryModal?.categoryName,
+                categoryKey: selectedCategoryModal?.categoryKey,
                 newCategoryKey:newCategory
 
             })
@@ -129,7 +129,7 @@ const useAddMaterialCategory = (isAdmin:boolean) => {
                     imageBase64:data
                 })
     }
-
+console.log("selectedCategoryModal",selectedCategoryModal)
     return {
         openModal,
         editCategoryModalState,
