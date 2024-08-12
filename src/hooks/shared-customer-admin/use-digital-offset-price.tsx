@@ -168,7 +168,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       false,
     )
   }
-  
+
   useEffect(() => {
     if (calculationResult && widgetType != EWidgetProductType.EDIT) {
       setCalculationResult(calculationResult);
@@ -213,7 +213,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       getSelectedWorkFlow();
     }
   }, [calculationResult]);
-  
+
   const getSelectedWorkFlow = async () => {
     const res: any = await callApi(
       "GET",
@@ -221,7 +221,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       {},
       false,
     )
-    if(!res.success){
+    if (!res.success) {
       setCalculationProgress({
         totalWorkFlowsCount: 0,
         currentWorkFlowsCount: 0,
@@ -245,7 +245,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     setJobActions(result?.productItemValue.actions);
     setCalculationResult(result)
   }
-  
+
   const setSelectedWorkflow = (newWorkFlows, currentWorkFlows) => {
     newWorkFlows.forEach((flow) => {
       const isExists = currentWorkFlows.find((x) => x.id === flow.id);
@@ -1713,6 +1713,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           onOpeneMultiParameterModal={onOpeneMultiParameterModal}
           subSectionParameters={subSectionParameters}
           list={list}
+          multiParameterModal={multiParameterModal}
         />
       );
     } else if (
@@ -1846,7 +1847,15 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               <span style={clasess.spanRequierd}> *</span>
             ) : null}
           </div>
-          <div style={inRow ? { width: "5%" } : clasess.renderParameterTypeContainer}>{Comp}</div>
+          <div style={inRow ? { width: "5%" } : clasess.renderParameterTypeContainer}>
+            {Comp}
+          </div>
+          {
+            !inunderParameter && <div style={clasess.oldSystemValueText}>{parameter?.oldSystemValue}</div>
+          }
+
+
+
         </div>
         <>
           {
@@ -1902,6 +1911,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                                   false,
                                   false
                                 )}
+
                               </div>
                             );
                           }
@@ -2976,7 +2986,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       totalWorkFlowsCount: 0,
       currentWorkFlowsCount: 0,
     });
-    
+
     setCalculationExceptionsLogs([])
     setcalculationServerErrorState(false)
 
@@ -3020,7 +3030,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             workTypes: workTypes,
             isChargeForNewDie: isChargeForNewDie,
             productType: productTemplate?.productType,
-            templateId:productTemplate?.templateId
+            templateId: productTemplate?.templateId
           },
           false,
           newRequestAbortController
@@ -3063,7 +3073,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
   const getOutSourcingSuppliers = () => {
     const callBack = (res) => {
-       if (res.success ) {
+      if (res.success) {
         setOutSuppliers(res.data);
       }
     };

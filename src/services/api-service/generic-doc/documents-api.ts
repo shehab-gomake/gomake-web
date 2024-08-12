@@ -23,8 +23,8 @@ const DELETE_DOCUMENT_ADDRESS_URL =
 const DUPLICATE_DOCUMENT_URL = "/v1/erp-service/documents/duplicate-document";
 const DUPLICATE_DOCUMENT_ITEM_URL =
   "/v1/erp-service/documents/duplicate-document-item-with-another-quantity";
-const CHANGE_DOCUMENT_CLIENT_URL ="/v1/erp-service/documents/change-document-client";
-const UPDATE_DOCUMENT_ITEM_SELECT_URL ="/v1/erp-service/documents/update-docuement-item-select";
+const CHANGE_DOCUMENT_CLIENT_URL = "/v1/erp-service/documents/change-document-client";
+const UPDATE_DOCUMENT_ITEM_SELECT_URL = "/v1/erp-service/documents/update-docuement-item-select";
 const GET_IF_Exist_CART = "/v1/erp-service/documents/get-exist-document";
 const GET_DOCUMENT_PDF_URL = "/v1/erp-service/documents/get-document-pdf";
 const GET_BOARD_MISSION_PDF = "/v1/erp-service/board-missions-tables/export-board-mission-pdf";
@@ -32,7 +32,7 @@ const GET_ORDER_BOARD_MISSION_PDF = "/v1/erp-service/documents/export-order-boar
 const GET_PRINTING_TICKET_PDF = "/v1/erp-service/board-missions-tables/get-printing-ticket-pdf";
 const UPDATE_PURCHASE_NUMBER_URL =
   "/v1/erp-service/documents/update-purchase-number";
-const ADD_DELIVERY_URL = "/v1/erp-service/documents/add-delivery"; 
+const ADD_DELIVERY_URL = "/v1/erp-service/documents/add-delivery";
 const CANCEL_DOCUMENT_URL = "/v1/erp-service/documents/cancel-document";
 const SEND_DOCUMENT_TO_CLIENT_URL =
   "/v1/erp-service/documents/send-document-to-client";
@@ -65,16 +65,14 @@ const UPDATE_DOCUMENT_ITEM_CONTENT_URL =
 const UPDATE_DOCUMENT_COMMENTS_URL = "/v1/erp-service/document/update-document-comments";
 const UPDATE_DOCUMENT_INTERNAL_NOTES_URL = "/v1/erp-service/document/update-document-internal-notes";
 const GET_CLIENT_DOCUMENTS = "/v1/erp-service/documents/get-client-documents";
-
 const ADD_CREATE_CONTACT_URL = "/v1/crm-service/customer/create-contact";
-
 const SORT_DOCUMENT_ITEMS_URL = "/v1/erp-service/documents/sort-document-items";
 const UPDATE_IS_SHOW_DETAILS_URL = "/v1/erp-service/documents/update-is-show-details";
 const UPDATE_IS_SHOW_PRICES_URL = "/v1/erp-service/documents/update-is-show-prices";
-
 const GET_WHATSAPP_MESSAGE_URL = "/v1/erp-service/documents/get-whats-app-message";
 const CLOSE_DOCUMENT_URL = "/v1/erp-service/documents/close-document";
-const MANUALLY_CLOSE_DOCUMENT_URL="/v1/erp-service/documents/manually-close-document";
+const MANUALLY_CLOSE_DOCUMENT_URL = "/v1/erp-service/documents/manually-close-document";
+const SEND_QUOTE_APPROVAL_TO_MANAGER = '/v1/erp-service/documents/send-quote-approval-to-manager';
 
 const getDocumentApi: ICallAndSetData = async (callApi, setState, data) => {
   return await getSetApiData(
@@ -257,7 +255,7 @@ const duplicateWithAnotherQuantityApi: ICallAndSetData = async (
     DUPLICATE_DOCUMENT_ITEM_URL,
     setState,
     data
-  ); 
+  );
 };
 
 const getIfCartExistApi: ICallAndSetData = async (callApi, setState, data) => {
@@ -341,7 +339,7 @@ const saveDocumentApi: ICallAndSetData = async (callApi, setState, data) => {
     setState,
     data
   );
-}; 
+};
 
 const createOrderApi: ICallAndSetData = async (callApi, setState, data) => {
   return await getSetApiData(
@@ -522,7 +520,7 @@ const createNewDocumentApi: ICallAndSetData = async (
 const getAllReportsApi: ICallAndSetData = async (
   callApi,
   setState,
-  data: { customerId: string , productId:string }
+  data: { customerId: string, productId: string }
 ) => {
   return await getSetApiData(
     callApi,
@@ -576,7 +574,7 @@ const updateDocumentInternalNotesApi: ICallAndSetData = async (
 const getClientDocumentsApi: ICallAndSetData = async (
   callApi,
   setState,
-  data: {clientId: string}
+  data: { clientId: string }
 ) => {
   return await getSetApiData(
     callApi,
@@ -703,6 +701,16 @@ const manuallyCloseDocumentApi: ICallAndSetData = async (callApi, setState, data
   );
 };
 
+const sendQuoteApprovalToManagerApi: ICallAndSetData = async (callApi, setState, data) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    SEND_QUOTE_APPROVAL_TO_MANAGER,
+    setState,
+    data
+  );
+}
+
 export {
   getDocumentApi,
   getAllDocumentsApi,
@@ -753,5 +761,6 @@ export {
   updateIsShowPricesApi,
   updateDocumentInternalNotesApi,
   updateOccasionalClientNameApi,
-  manuallyCloseDocumentApi
+  manuallyCloseDocumentApi,
+  sendQuoteApprovalToManagerApi
 };

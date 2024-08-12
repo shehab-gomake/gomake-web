@@ -33,7 +33,6 @@ const useCustomerService = (isAdmin: boolean) => {
     : ["0%", "10%", "10%", "50%", "10%", "10%", "10%"];
 
   // const onChangeInputs = (key, value) => {
-  //   console.log("key", key, "value", value);
   //   setTicketState({ ...ticketState, [key]: value });
   // };
 

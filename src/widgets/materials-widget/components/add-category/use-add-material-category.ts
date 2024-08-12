@@ -6,7 +6,7 @@ import { useMaterials } from "../../use-materials";
 import { useEffect, useState } from "react";
 import { EMaterialActiveFilter } from "../../enums";
 import { useTranslation } from "react-i18next";
-import {addPrintHouseMaterialCategoryApi} from "@/services/api-service/materials/printhouse-materials-endpoints";
+import {addPrintHouseMaterialCategoryApi, updatePrintHouseMaterialDisplayNameApi} from "@/services/api-service/materials/printhouse-materials-endpoints";
 import {addMaterialCategoryApi, uploadPrintHouseMaterialApi} from "@/services/api-service/materials/materials-endpoints";
 
 const useAddMaterialCategory = (isAdmin:boolean) => {
@@ -25,7 +25,6 @@ const useAddMaterialCategory = (isAdmin:boolean) => {
     const setActiveFilter = useSetRecoilState(activeFilterState);
     const setFlagState = useSetRecoilState(flagState);
     const { t } = useTranslation();
-    
     useEffect(()=>{
        if(selectedCategoryModal){
         setNewCategory(selectedCategoryModal?.categoryName)
@@ -69,6 +68,26 @@ const useAddMaterialCategory = (isAdmin:boolean) => {
        
     }
 
+    const updatePrintHouseMaterialCategoryName = async () => {
+            const callBack = (res) => {
+                if (res.success) {
+                    alertSuccessAdded();
+                    setActiveFilter(EMaterialActiveFilter.ALL);
+                    getMaterialCategories(materialType).then();
+                    setOpenModal(false);
+                    setFlagState(false);
+                } else {
+                    alertFaultAdded();
+                }
+            }
+                await updatePrintHouseMaterialDisplayNameApi(callApi, callBack, {
+                    materialTypeKey: materialType.toString(),
+                    categoryKey: selectedCategoryModal?.categoryName,
+                    displayName:newCategory
+
+                })
+    }
+
 
 
     const uploadPrintHouseMaterialImage = async (data) => {
@@ -104,7 +123,8 @@ const useAddMaterialCategory = (isAdmin:boolean) => {
         t,
         imgUrl,
         setSelectedImgForAdded,
-        materialTypeTable
+        materialTypeTable,
+        updatePrintHouseMaterialCategoryName
     }
 }
 

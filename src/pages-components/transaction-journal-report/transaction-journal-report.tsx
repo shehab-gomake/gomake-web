@@ -43,7 +43,7 @@ const TransactionJournalReportWidget = ({ isPayment }: TransactionJournalReportW
         onClickShowCard={onClickShowCard}
 
       />
-      <div style={{ width: "100%", height: "100%", overflow: "auto" }}>
+      <div style={{ width: "100%", height: "100%" }}>
         {documentType?.id !== DocumentsTypeReportList.Payments && !isPayment ?
           <div>
             {
@@ -57,7 +57,7 @@ const TransactionJournalReportWidget = ({ isPayment }: TransactionJournalReportW
               })
 
             }</div> :
-          <div >
+          <div>
             {
               showTable &&
               dataTable?.map((item) => {

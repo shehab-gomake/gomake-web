@@ -90,7 +90,7 @@ export default function Home() {
   }, []);
 
   return (
-    <CustomerAuthLayout permissionEnumValue={Permissions.SHOW_SUPPLIER}>
+    <CustomerAuthLayout permissionEnumValue={Permissions.SHOW_SUPPLIER} className={`custom-scrollbar`}>
       <Stack
         direction="column"
         justifyContent="space-between"

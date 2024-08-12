@@ -9,7 +9,6 @@ const rowInputs = (
   newMaterialHeaders?
 ) => {
   const newHeaders = newMaterialHeaders ? newMaterialHeaders : materialHeaders;
-  console.log("newHeaders", newHeaders)
   const inputArray = newHeaders
     ?.filter((header) => header.key !== "Active")
     .map((header) => {

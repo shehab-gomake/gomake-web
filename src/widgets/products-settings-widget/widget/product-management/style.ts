@@ -16,6 +16,8 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "flex-start",
         width: "100%",
+        marginBottom: 20
+
       },
       subHeaderContainer: {
         display: "flex",

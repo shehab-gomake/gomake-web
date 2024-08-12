@@ -24,6 +24,7 @@ const AddCategoryModal = (props: IAddCategoryModalProps) => {
         uploadPrintHouseMaterialImage,
         imgUrl,
         setSelectedImgForAdded,
+        updatePrintHouseMaterialCategoryName,
         materialTypeTable } = useAddMaterialCategory(props.isAdmin);
 
     return (
@@ -43,7 +44,7 @@ const AddCategoryModal = (props: IAddCategoryModalProps) => {
                     onChange={onSetCategory}
                     placeholder={t("materials.inputs.addCategory")}
                     style={{ width: '100%', height: "40px" }}
-                    disabled={editCategoryModalState}
+                // disabled={editCategoryModalState}
                 />
                 {/* <GoMakeAutoComplate
                     options={props?.productList}
@@ -55,7 +56,6 @@ const AddCategoryModal = (props: IAddCategoryModalProps) => {
                     }}
                     placeholder={t("home.admin.selectProduct")}
                     onChange={(e, value) => {
-                        console.log("value", value)
                     }}
                 /> */}
 
@@ -66,8 +66,8 @@ const AddCategoryModal = (props: IAddCategoryModalProps) => {
                     />
                 )}
                 {
-                    !editCategoryModalState && <SecondaryButton
-                        onClick={onAddCategory}
+                    <SecondaryButton
+                        onClick={editCategoryModalState ? updatePrintHouseMaterialCategoryName : onAddCategory}
                         variant={'contained'}
                         sx={{ width: '100%' }}
                     >

@@ -75,9 +75,6 @@ const apiRequest = async (
     // await createJiraIssue(summary, description).catch(error => {
     //   log.error('Failed to create Jira issue:', error);
     // });
-
-    // console.log("summary, description", summary, description);
-
     return {
       success: false,
       status: err?.response?.status,

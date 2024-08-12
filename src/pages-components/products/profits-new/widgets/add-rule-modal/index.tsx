@@ -65,6 +65,7 @@ const AddRuleModal = ({
     onCloseScheduleModal,
     onOpenScheduleModal,
     renderOptions,
+
     checkWhatRenderArray,
     onSelectDeliveryTimeDates,
     resetDatePicker,
