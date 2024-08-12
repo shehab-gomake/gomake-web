@@ -24,7 +24,9 @@ const ButtonsContainer = ({
   documentType,
   onOpenCopyFromOrder,
   handleSaveBtnClickForDocument,
-  onClickOpenNewItemNotesModal
+  onClickOpenNewItemNotesModal,
+  handleRejectBtnClick,
+  handleAcceptBtnClick
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -212,6 +214,24 @@ const ButtonsContainer = ({
             onClick={handleSaveBtnClick}
           >
             {t("materials.buttons.save")}
+          </GomakePrimaryButton>
+        }
+        {
+          (documentType === DOCUMENT_TYPE.quote) && quoteItemValue?.isManager &&
+          <GomakePrimaryButton
+            style={classes.btnThirdContainer}
+            onClick={handleAcceptBtnClick}
+          >
+            {t("materials.buttons.accept")}
+          </GomakePrimaryButton>
+        }
+        {
+          (documentType === DOCUMENT_TYPE.quote) && quoteItemValue?.isManager &&
+          <GomakePrimaryButton
+            style={classes.btnThirdContainer}
+            onClick={handleRejectBtnClick}
+          >
+            {t("materials.buttons.reject")}
           </GomakePrimaryButton>
         }
         {

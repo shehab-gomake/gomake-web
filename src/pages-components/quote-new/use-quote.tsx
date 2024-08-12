@@ -19,7 +19,7 @@ import {
   quoteItemState,
 } from "@/store";
 import { useQuoteGetData } from "./use-quote-get-data";
-import { addDeliveryApi, addDocumentContactApi, calculateDocumentApi, calculateDocumentItemApi, cancelDocumentApi, changeDocumentClientApi, deleteDocumentAddressApi, deleteDocumentContactApi, deleteDocumentItemApi, duplicateWithAnotherQuantityApi, getDocumentApi, getWhatsAppMessageApi, refreshExchangeRateApi, saveDocumentApi, sendDocumentToClientApi, sortDocumentItemsApi, updateAgentApi, updateDocuementItemSelectApi, updateDocumentAddressApi, updateDocumentContactApi, updateDocumentCurrencyApi, updateDueDateApi, updateExchangeRateApi, updateIsShowDetailsApi, updateIsShowPricesApi, updateOccasionalClientNameApi, updatePurchaseNumberApi } from "@/services/api-service/generic-doc/documents-api";
+import { acceptDocumentApi, addDeliveryApi, addDocumentContactApi, calculateDocumentApi, calculateDocumentItemApi, cancelDocumentApi, changeDocumentClientApi, deleteDocumentAddressApi, deleteDocumentContactApi, deleteDocumentItemApi, duplicateWithAnotherQuantityApi, getDocumentApi, getWhatsAppMessageApi, refreshExchangeRateApi, rejectDocumentApi, saveDocumentApi, sendDocumentToClientApi, sortDocumentItemsApi, updateAgentApi, updateDocuementItemSelectApi, updateDocumentAddressApi, updateDocumentContactApi, updateDocumentCurrencyApi, updateDueDateApi, updateExchangeRateApi, updateIsShowDetailsApi, updateIsShowPricesApi, updateOccasionalClientNameApi, updatePurchaseNumberApi } from "@/services/api-service/generic-doc/documents-api";
 import { DOCUMENT_TYPE } from "../quotes/enums";
 import { useRouter } from "next/router";
 import { getAllCreditTransactionsApi, getClientPaymentItemsApi, getReceiptByIdApi } from "@/services/api-service/generic-doc/receipts-api";
@@ -1120,6 +1120,40 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     })
   }
 
+  const handleRejectBtnClick = async () => {
+    const callBack = (res) => {
+      if (res?.success) {
+        // navigate("/home");
+        getQuote();
+      } else {
+        alertFaultUpdate();
+      }
+    }
+    await rejectDocumentApi(callApi, callBack, {
+      documentType: docType,
+      document: {
+        documentId: quoteItemValue?.id,
+      }
+    })
+  }
+
+  const handleAcceptBtnClick = async () => {
+    const callBack = (res) => {
+      if (res?.success) {
+        // navigate("/home");
+        getQuote();
+      } else {
+        alertFaultUpdate();
+      }
+    }
+    await acceptDocumentApi(callApi, callBack, {
+      documentType: docType,
+      document: {
+        documentId: quoteItemValue?.id,
+      }
+    })
+  }
+
   const handleSaveBtnClickForDocument = async () => {
     if (!quoteItemValue?.documentItems || quoteItemValue.documentItems.length === 0) {
       alertFault("alerts.noItems");
@@ -1227,7 +1261,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     setCreationDate(newCreationDate)
     setTaxDate(newCreationDate);
     //make sure it works
-    setQuoteItemValue({...quoteItemValue,creationDate:newCreationDate,taxDate:newCreationDate,dueDate:newCreationDate})
+    setQuoteItemValue({ ...quoteItemValue, creationDate: newCreationDate, taxDate: newCreationDate, dueDate: newCreationDate })
   }
 
 
@@ -1553,6 +1587,8 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     onCloseDeliveryModal,
     onAddDelivery,
     handleSaveBtnClick,
+    handleRejectBtnClick,
+    handleAcceptBtnClick,
     handleSaveBtnClickForDocument,
     documentTitle,
     onBlurExchangeRate,
