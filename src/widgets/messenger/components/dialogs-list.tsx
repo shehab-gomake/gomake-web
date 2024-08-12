@@ -12,7 +12,7 @@ import {formatDistanceToNow} from "date-fns";
 import {FONT_FAMILY} from "@/utils/font-family";
 import {PlusIcon} from "@/icons";
 import {SearchInputComponent} from "@/components/form-inputs/search-input-component";
-import {useState} from "react";
+import {useCallback, useState} from "react";
 import {IChatDialog} from "@/widgets/messenger/interfaces/dialog";
 import {useTranslation} from "react-i18next";
 
@@ -27,6 +27,9 @@ export interface IProps {
 const DialogList = ({onSelectDialog, dialogs, selectedDialogId, unRead, onClickAddDialog}: IProps) => {
     const [filter, setFilter] = useState<string>('');
     const {t} = useTranslation();
+    const getDialogs = useCallback(() => {
+      return filter ? dialogs.filter(d => d.name?.includes(filter)) : dialogs
+    }, [dialogs, filter]);
     return (
         <Stack style={{backgroundColor: '#FFF'}} padding={'12px'} gap={'12px'}>
             <Stack padding={'12px'} direction={'row'} alignItems={'center'} justifyContent={'space-between'}>
@@ -55,9 +58,9 @@ const DialogList = ({onSelectDialog, dialogs, selectedDialogId, unRead, onClickA
                 cursor: 'pointer',
                 padding: 0
             }}>
-                <SearchInputComponent bgColor={'#F3F3F3'} onChange={()=>{}}/>
+                <SearchInputComponent bgColor={'#F3F3F3'} onChange={setFilter}/>
                 {
-                    dialogs.map(dialog =>
+                    getDialogs().map(dialog =>
                         <ListItem alignItems="flex-start"
                                   onClick={() => onSelectDialog(dialog)}
                                   secondaryAction={<span style={{

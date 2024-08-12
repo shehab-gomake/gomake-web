@@ -1,3 +1,5 @@
+import {EMeasurementUnits} from "@/widgets/machines/enums/measurement-units";
+
 const autoBookCuttingMachine = (state: Record<string, any>) => {
     return [
         {
@@ -16,7 +18,8 @@ const autoBookCuttingMachine = (state: Record<string, any>) => {
                     required: true,
                     parameterKey: "min",
                     options: [],
-                    value: state.attributes?.bookThickness?.min ? state.attributes?.bookThickness?.min : ''
+                    value: state.attributes?.bookThickness?.min ? state.attributes?.bookThickness?.min : '',
+                    unit: EMeasurementUnits.MM
                 },
                 {
                     name: "",
@@ -26,8 +29,8 @@ const autoBookCuttingMachine = (state: Record<string, any>) => {
                     required: true,
                     parameterKey: "max",
                     options: [],
-                    value: state.attributes?.bookThickness?.max ? state.attributes?.bookThickness?.max : ''
-
+                    value: state.attributes?.bookThickness?.max ? state.attributes?.bookThickness?.max : '',
+                    unit: EMeasurementUnits.MM
                 },
             ]
         },
@@ -47,8 +50,8 @@ const autoBookCuttingMachine = (state: Record<string, any>) => {
                     required: true,
                     parameterKey: "min",
                     options: [],
-                    value: state.attributes?.bookHeight?.min ? state.attributes?.bookHeight?.min : ''
-
+                    value: state.attributes?.bookHeight?.min ? state.attributes?.bookHeight?.min : '',
+                    unit: EMeasurementUnits.CM
                 },
                 {
                     name: "",
@@ -58,7 +61,8 @@ const autoBookCuttingMachine = (state: Record<string, any>) => {
                     required: true,
                     parameterKey: "max",
                     options: [],
-                    value: state.attributes?.bookHeight?.max ? state.attributes?.bookHeight?.max : ''
+                    value: state.attributes?.bookHeight?.max ? state.attributes?.bookHeight?.max : '',
+                    unit: EMeasurementUnits.CM
                 },
             ]
         },
@@ -78,8 +82,8 @@ const autoBookCuttingMachine = (state: Record<string, any>) => {
                     required: true,
                     parameterKey: "min",
                     options: [],
-                    value: state.attributes?.bookWidth?.min ? state.attributes?.bookWidth?.min : ''
-
+                    value: state.attributes?.bookWidth?.min ? state.attributes?.bookWidth?.min : '',
+                    unit: EMeasurementUnits.CM
                 },
                 {
                     name: "",
@@ -89,7 +93,8 @@ const autoBookCuttingMachine = (state: Record<string, any>) => {
                     required: true,
                     parameterKey: "max",
                     options: [],
-                    value: state.attributes?.bookWidth?.max ? state.attributes?.bookWidth?.max : ''
+                    value: state.attributes?.bookWidth?.max ? state.attributes?.bookWidth?.max : '',
+                    unit: EMeasurementUnits.CM
                 },
             ]
         },

@@ -105,7 +105,7 @@ const useQuickBlox = () => {
     //Data
     const createNewApprovalRequestObj = (): Promise<{ _id: string }> => {
         const OPTIONS = {
-            status: '0',
+            status: EFileStatus.PENDING,
             permissions: {
                 "update": {
                     "access": "open"

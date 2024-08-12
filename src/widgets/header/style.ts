@@ -49,6 +49,7 @@ const useStyle = () => {
         flexDirection: "row" as "row",
         justifyContent: "flex-start",
         alignItems: "center",
+        gap: '5px'
       },
       profileContainer: {
         display: "flex",
@@ -194,6 +195,7 @@ const useStyle = () => {
   }, [i18next.language, t]);
   return {
     classes,
+    primaryColor
   };
 };
 export { useStyle };
