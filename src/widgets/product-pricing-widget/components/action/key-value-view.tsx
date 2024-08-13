@@ -183,15 +183,14 @@ const KeyValueViewComponent = ({
     };
     const { classes } = useStyle();
     const curValues = source === EWorkSource.OUT ? !!outSourceValues ? outSourceValues : ['0'] : values;
-    const formattedValue = removeTags(value).length > 8 ? `${removeTags(value).substring(0, 4)}...` : removeTags(value);
+    // const formattedValue = removeTags(value).length > 8 ? `${removeTags(value).substring(0, 4)}...` : removeTags(value);
 
     return (
         <Stack direction={'row'} gap={'10px'} alignItems={'center'}>
             <span style={classes.detailTitle}>{name}</span>
 
             <span style={valueColor ? { ...classes.detailValue, color: valueColor } : classes.detailValue}>
-                {/* {!!defaultUnit ? `${removeTags(value)} ${defaultUnit}` : removeTags(value)} */}
-                {!!defaultUnit ? `${formattedValue} ${defaultUnit}` : formattedValue}
+                {!!defaultUnit ? `${removeTags(value)} ${defaultUnit}` : removeTags(value)}
 
             </span>
             {htmlElementType === HtmlElementType.TEXT_AREA && !value && isEditable && <IconButton onClick={handleOnOpen}>
