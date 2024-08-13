@@ -129,7 +129,6 @@ const useAddMaterialCategory = (isAdmin:boolean) => {
                     imageBase64:data
                 })
     }
-console.log("selectedCategoryModal",selectedCategoryModal)
     return {
         openModal,
         editCategoryModalState,
