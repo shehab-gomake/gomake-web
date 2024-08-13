@@ -20,6 +20,14 @@ import { useAdminAddMachine } from "@/widgets/machines/hooks/use-admin-add-machi
 import { OptionsButton } from "@/components/options-button/options-button";
 import { useTranslation } from "react-i18next";
 import Stack from "@mui/material/Stack";
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { SortIcon } from "@/icons";
+import { useRecoilState } from "recoil";
+import { materialCategoriesState } from "@/widgets/materials-widget/state";
+import { useGomakeAxios, useSnackBar } from "@/hooks";
+import { EHttpMethod } from "@/services/api-service/enums";
+import { updateCategoriesOrderApi, updatePrintHouseCategoriesOrderApi } from "@/services/api-service/materials/printhouse-materials-endpoints";
+import { useRouter } from "next/router";
 
 const ListButton = styled(ListItemButton)(() => {
     const { primaryColor } = useGomakeTheme();
@@ -45,6 +53,8 @@ const SideList = ({
     isAdmin,
     isHaveDeleteIcon,
 }: ISideListProps) => {
+    const { query } = useRouter();
+    const { materialType } = query;
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const { classes } = useStyle();
     const [filter, setFilter] = useState<string>();
@@ -82,6 +92,54 @@ const SideList = ({
             return list;
         }
     }, [filter, list]);
+    const [materialCategories, setMaterialCategories] = useRecoilState<
+        {
+            categoryKey: string;
+            categoryName: string;
+            isDeletable: boolean;
+        }[]
+    >(materialCategoriesState);
+    const onDragEnd = (result) => {
+        if (!result.destination) {
+            return;
+        }
+
+        const newList: any = Array.from(list);
+        const [removed] = newList.splice(result.source.index, 1);
+        newList.splice(result.destination.index, 0, removed);
+        const transformedArray = newList.map((item, index) => ({
+            categoryKey: item?.categoryKey,
+            order: index + 1,
+        }));
+        // Update the state with the new order
+        setMaterialCategories(newList);
+
+        // If needed, call a reorder function here to handle any side effects
+        reOrderMaterialCategories(transformedArray);
+    };
+    const { callApi } = useGomakeAxios();
+    const { alertSuccessUpdate, alertFaultUpdate } = useSnackBar();
+    const reOrderMaterialCategories = useCallback(async (data: any) => {
+        const callBack = (res) => {
+            if (res.success) {
+                alertSuccessUpdate()
+            } else {
+                alertFaultUpdate()
+            }
+        }
+        if (isAdmin) {
+            await updateCategoriesOrderApi(callApi, callBack, {
+                materialTypeKey: materialType.toString(),
+                categories: data,
+            })
+        } else {
+            await updatePrintHouseCategoriesOrderApi(callApi, callBack, {
+                materialTypeKey: materialType.toString(),
+                categories: data,
+            })
+        }
+
+    }, []);
     return (
         <>
             <Box style={classes.container}>
@@ -94,7 +152,86 @@ const SideList = ({
                         value={filter}
                     />
                 </div>
-                <List
+                <DragDropContext onDragEnd={onDragEnd}>
+                    <Droppable droppableId="droppable">
+                        {(provided) => (
+                            <List
+                                style={classes.listContainer}
+                                component="nav"
+                                aria-label="main mailbox folders"
+                                {...provided.droppableProps}
+                                ref={provided.innerRef}
+                            >
+                                {filteredList().map((item, index) => (
+                                    <Draggable
+                                        key={item.value}
+                                        draggableId={item.value}
+                                        index={index}
+                                    >
+                                        {(provided) => (
+                                            <ListButton
+                                                data-tour={item?.dataTour}
+                                                selected={item?.value === selectedItem}
+                                                onClick={() => onSelect(item?.value)}
+                                                style={isHaveDeleteIcon && classes.deleteButtonDirection}
+                                                ref={provided.innerRef}
+                                                {...provided.draggableProps}
+                                                {...provided.dragHandleProps}
+                                            >
+                                                <SortIcon />
+                                                {!!item.icon && (
+                                                    <ListItemIcon sx={{ minWidth: 28 }}>
+                                                        {item.icon()}
+                                                    </ListItemIcon>
+                                                )}
+                                                <Stack
+                                                    direction={"row"}
+                                                    alignItems={"center"}
+                                                    justifyContent={"space-between"}
+                                                    width={"100%"}
+                                                >
+                                                    <ListItemText
+                                                        style={{ maxWidth: "fit-content" }}
+                                                        primary={item.text}
+                                                    />
+                                                    {selectedItem === item?.value && quickActions && (
+                                                        <OptionsButton>
+                                                            <MenuItem onClick={onClickDuplicate}>
+                                                                <div style={classes.menuItem}>
+                                                                    <DuplicateIcon
+                                                                        height={20}
+                                                                        width={20}
+                                                                        color={classes.iconColor}
+                                                                    />{" "}
+                                                                    <span>{t("navigationButtons.duplicate")}</span>
+                                                                </div>
+                                                            </MenuItem>
+                                                            <Divider />
+                                                            {!isAdmin && (
+                                                                <MenuItem onClick={onClickDelete}>
+                                                                    <div style={classes.menuItem}>
+                                                                        <DeleteIcon
+                                                                            color={classes.iconColor}
+                                                                            width={20}
+                                                                            height={20}
+                                                                        />{" "}
+                                                                        <span>{t("navigationButtons.delete")}</span>
+                                                                    </div>
+                                                                </MenuItem>
+                                                            )}
+                                                        </OptionsButton>
+                                                    )}
+                                                </Stack>
+                                            </ListButton>
+                                        )}
+                                    </Draggable>
+                                ))}
+                                {provided.placeholder}
+                            </List>
+                        )}
+                    </Droppable>
+                </DragDropContext>
+                {/* <List
                     style={classes.listContainer}
                     component="nav"
                     aria-label="main mailbox folders"
@@ -153,7 +290,7 @@ const SideList = ({
                             </ListButton>
                         );
                     })}
-                </List>
+                </List> */}
                 {!!children && <div style={classes.buttonWrapper}>{children}</div>}
             </Box>
         </>

@@ -34,7 +34,6 @@ const RowMappingWidget = ({
   onChangeSelectedItemRowForQoute,
   quoteItems
 }) => {
-  console.log("item", { item, quoteItems })
   const router = useRouter();
   const { classes } = useStyle({ headerHeight });
   const [isConfirmation, setIsConfirmation] = useState(null);
