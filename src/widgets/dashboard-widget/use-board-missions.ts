@@ -1,6 +1,6 @@
 import {useCallback, useState} from "react";
 import {IBoardMissions, IDashboardStatistic} from "@/widgets/dashboard-widget/interfaces";
-import {IDateRange, IMachine, IMachineProgress} from "@/shared";
+import {IDashboardColumns, IDateRange, IMachine, IMachineProgress} from "@/shared";
 import {useGomakeAxios, useGomakeMachines} from "@/hooks";
 import {TODAY_DATE_RANGE} from "@/shared/constant";
 import {useRecoilValue} from "recoil";
@@ -10,6 +10,7 @@ const useBoardMissions = () => {
     const {machines, getCheckedMachines} = useGomakeMachines();
     const [boardsMissions, setBoardsMissions] = useState<IBoardMissions[]>([]);
     const [machinesProgress, setMachinesProgress] = useState<Record<string, IMachineProgress>>({})
+    const [dashboardColumns, setDashboardColumns] = useState<IDashboardColumns[]>([])
     const [statistics, setStatistics] = useState<IDashboardStatistic>();
     const selectedAgents = useRecoilValue(selectedAgentsState);
 
@@ -24,6 +25,7 @@ const useBoardMissions = () => {
         if(res?.success){
         setBoardsMissions(res?.data?.data?.data?.boardsMissions);
         setMachinesProgress(res?.data?.data?.data?.machinesProgress);
+        setDashboardColumns(res?.data?.data?.data?.dashboardColumns);
         setStatistics(res?.data?.data?.data?.statistics);
         }
     };
@@ -35,6 +37,7 @@ const useBoardMissions = () => {
         if(res?.success){
         setBoardsMissions(res?.data?.data?.data?.boardsMissions);
         setMachinesProgress(res?.data?.data?.data?.machinesProgress);
+        setDashboardColumns(res?.data?.data?.data?.dashboardColumns);
         setStatistics(res?.data?.data?.data?.statistics);
         }
     };
@@ -50,6 +53,7 @@ const useBoardMissions = () => {
         if(res?.success){
         setBoardsMissions(res?.data?.data?.data?.boardsMissions);
         setMachinesProgress(res?.data?.data?.data?.machinesProgress);
+        setDashboardColumns(res?.data?.data?.data?.dashboardColumns);
         setStatistics(res?.data?.data?.data?.statistics);
         }
     }
@@ -57,6 +61,7 @@ const useBoardMissions = () => {
         const res = await callApi("POST", '/v1/erp-service/board-missions/get-board-missions-for-dashboard', {}, true);
         setBoardsMissions(res?.data?.data?.data?.boardsMissions);
         setMachinesProgress(res?.data?.data?.data?.machinesProgress);
+        setDashboardColumns(res?.data?.data?.data?.dashboardColumns);
         setStatistics(res?.data?.data?.data?.statistics);
 
     }
@@ -127,7 +132,8 @@ const useBoardMissions = () => {
         getFilteredBoardsMissions,
         boardsMissions,
         getLateTodayBoardsMissions,
-        getAllBoardsMissions
+        getAllBoardsMissions,
+        dashboardColumns
     }
 }
 

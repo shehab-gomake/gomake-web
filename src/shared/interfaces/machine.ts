@@ -9,4 +9,10 @@ export interface IMachine {
 export interface IMachineProgress {
     total: number;
     done: number;
+    name?:string;
+}
+
+export interface IDashboardColumns {
+    id: string;
+    name: number;
 }
