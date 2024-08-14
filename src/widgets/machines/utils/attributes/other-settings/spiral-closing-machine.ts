@@ -8,7 +8,7 @@ const spiralClosingMachine = (state: Record<string, any>) => {
             required: true,
             parameterKey: "spiralType",
             options: [],
-            values: state?.attributes?.spiralType,
+            value: state?.attributes?.spiralType,
             optionsUrl: '/v1/materials/GetMaterialTypeTableHeader?materialKey=spiral&headerName=type',
             multiple: true
         },
@@ -20,7 +20,7 @@ const spiralClosingMachine = (state: Record<string, any>) => {
             required: true,
             parameterKey: "spiralCategories",
             options: [],
-            values: state?.attributes?.spiralCategories,
+            value: state?.attributes?.spiralCategories,
             optionsUrl: '/v1/materials/get-all-print-house-material-categories?material=spiral',
             multiple: true
         },
@@ -32,7 +32,7 @@ const spiralClosingMachine = (state: Record<string, any>) => {
             required: true,
             parameterKey: "pitch",
             options: [],
-            values: state?.attributes?.pitch,
+            value: state?.attributes?.pitch,
             optionsUrl: '/v1/materials/GetMaterialTypeTableHeader?materialKey=spiral&headerName=pitch',
             multiple: true
         },
