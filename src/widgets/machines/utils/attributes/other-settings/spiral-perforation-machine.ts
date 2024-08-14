@@ -8,7 +8,7 @@ const spiralPerforationMachine = (state: Record<string, any>) => {
             required: true,
             parameterKey: "pitch",
             options: [],
-            values: state?.attributes?.pitch,
+            value: state?.attributes?.pitch,
             optionsUrl: '/v1/materials/GetMaterialTypeTableHeader?materialKey=spiral&headerName=pitch',
             multiple: true
         },

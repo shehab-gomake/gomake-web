@@ -106,12 +106,12 @@ const BoardMissionsTable = ({ boardsMissions, usedMachines }: IBoardMissionsTabl
                             {
                                 usedMachines.map((machine: IMachine) => {
                                     return (
-                                        <th key={machine.id}
-                                            style={orderByMachine === machine.id ? { ...classes.tableHead, ...classes.selectedMachine } : classes.tableHead}
-                                            onClick={() => handleMachineClicked(machine.id)}>
+                                        <th key={machine?.id}
+                                            style={orderByMachine === machine?.id ? { ...classes.tableHead, ...classes.selectedMachine } : classes.tableHead}
+                                            onClick={() => handleMachineClicked(machine?.id)}>
                                             <div style={classes.tdRows}>
-                                                <div>{machine.name}</div>
-                                                <div>{machine.progress?.done}/{machine.progress?.total} <small>{t('measurementUnits.minute')}</small></div>
+                                                <div>{machine?.progress?.name}</div>
+                                                <div>{machine?.progress?.done}/{machine?.progress?.total} <small>{t('measurementUnits.minute')}</small></div>
                                             </div>
                                         </th>
                                     );
@@ -181,13 +181,13 @@ const BoardMissionsTable = ({ boardsMissions, usedMachines }: IBoardMissionsTabl
                                                     {
                                                         usedMachines.map((machine: IMachine, i: number) => {
                                                             return (
-                                                                <td key={machine.id + i}
+                                                                <td key={machine?.id + i}
                                                                     style={k + 1 === board.splittedBoards.length ? classes.tableCell : {
                                                                         ...classes.tableCell,
                                                                         borderBottom: 0
                                                                     }}>
                                                                     <StatusView style={{ margin: 'auto' }}
-                                                                        status={splitBoard.machinesStatuses[machine.id]} />
+                                                                        status={splitBoard.machinesStatuses[machine?.id]} />
                                                                 </td>
                                                             );
                                                         })
@@ -233,10 +233,10 @@ const BoardMissionsTable = ({ boardsMissions, usedMachines }: IBoardMissionsTabl
                                             {
                                                 usedMachines.map((machine: IMachine, i: number) => {
                                                     return (
-                                                        <td key={machine.id + i}
+                                                        <td key={machine?.id + i}
                                                             style={classes.tableCell}>
                                                             <StatusView style={{ margin: 'auto' }}
-                                                                status={board.machinesStatuses[machine.id]} />
+                                                                status={board.machinesStatuses[machine?.id]} />
                                                         </td>
                                                     );
                                                 })

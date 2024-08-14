@@ -14,7 +14,7 @@ import { dashboardClientsState } from "@/widgets/dashboard-widget/clients/client
 
 const DashboardWidget = ({ }: IDashboardWidget) => {
     const INTERVAL_TIMEOUT = 2 * 60 * 1000;
-    const { machines, addMachineProgress, getCheckedMachines } = useGomakeMachines();
+    const { machines, addMachineProgress, addEmployeeProgress, getCheckedMachines, employeesList } = useGomakeMachines();
     const [tasksFilter, setTasksFilter] = useState<string>('');
     const selectedClients = useRecoilValue(dashboardClientsState);
     const { classes } = useStyle();
@@ -29,9 +29,9 @@ const DashboardWidget = ({ }: IDashboardWidget) => {
         getFilteredBoardsMissions,
         getLateBoardsMissions,
         getLateTodayBoardsMissions,
-        getAllBoardsMissions
+        getAllBoardsMissions,
+        dashboardColumns
     } = useBoardMissions();
-
     const actions = (action: DashboardActions, dateRange: IDateRange) => {
         switch (action) {
             case DashboardActions.LATE_TODAY_BOARDS_MISSIONS:
@@ -54,6 +54,7 @@ const DashboardWidget = ({ }: IDashboardWidget) => {
 
     useEffect(() => {
         addMachineProgress(machinesProgress);
+        addEmployeeProgress(machinesProgress)
     }, [boardsMissions])
 
     useEffect(() => {
@@ -96,6 +97,23 @@ const DashboardWidget = ({ }: IDashboardWidget) => {
             : tasksArray;
     }, [tasksFilter, getFilteredBoardsMissions(), selectedClients])
 
+    const cleanedDataForEmployeesList = useCallback(() => {
+        return employeesList?.filter(item => item !== false) || [];
+    }, [employeesList])
+
+    const mergedLists = useCallback(() => {
+        const mergedList = [...usedMachines(), ...cleanedDataForEmployeesList()]
+        return mergedList
+    }, [usedMachines(), cleanedDataForEmployeesList()])
+
+    const orderMap = {};
+    dashboardColumns.forEach((item, index) => {
+        orderMap[item.id] = index;
+    });
+    const sortedMergedLists = mergedLists().sort((a, b) => {
+        return orderMap[a.id] - orderMap[b.id];
+    });
+
     return (
         <div style={classes.container}>
             <Cards data={statistics ? statistics : {} as IDashboardStatistic} />
@@ -103,11 +121,9 @@ const DashboardWidget = ({ }: IDashboardWidget) => {
             <div>
                 {usedMachines() && getFilteredBoardsMissions() &&
                     <BoardMissionsTable boardsMissions={tasks()}
-                        usedMachines={usedMachines()}
+                        usedMachines={sortedMergedLists}
                     />}
             </div>
-            {/* <div><Link component={Button} color={secondColor(500)}
-                onClick={logout}>{t('dashboard-widget.logout')}</Link></div> */}
         </div>
     );
 }
