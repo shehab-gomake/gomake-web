@@ -71,6 +71,10 @@ export const isEditCategoryModalState = atom<boolean>({
   key: "isEditCategoryModalState",
   default: false,
 });
+export const isDuplicateCategoryModalState = atom<boolean>({
+  key: "isDuplicateCategoryModalState",
+  default: false,
+});
 export const selectedCategoryModalState = atom({
   key: "selectedCategoryModalState",
   default: {},

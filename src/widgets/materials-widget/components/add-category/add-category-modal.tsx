@@ -11,21 +11,25 @@ interface IAddCategoryModalProps {
 }
 const AddCategoryModal = (props: IAddCategoryModalProps) => {
     const {
-        t,
         openModal,
         editCategoryModalState,
+        duplicateCategoryModalState,
         selectedCategoryModal,
         newCategory,
         setOpenModal,
         onAddCategory,
         onSetCategory,
         setEditCategoryModalState,
+        setDuplicateCategoryModalState,
         setSelectedCategoryModal,
         uploadPrintHouseMaterialImage,
+        t,
         imgUrl,
         setSelectedImgForAdded,
+        materialTypeTable,
         updatePrintHouseMaterialCategoryName,
-        materialTypeTable } = useAddMaterialCategory(props.isAdmin);
+        duplicatePrintHouseMaterialCategoryName
+    } = useAddMaterialCategory(props.isAdmin);
 
     return (
         <GoMakeModal
@@ -33,10 +37,15 @@ const AddCategoryModal = (props: IAddCategoryModalProps) => {
             openModal={openModal}
             onClose={() => {
                 setEditCategoryModalState(false)
+                setDuplicateCategoryModalState(false)
                 setSelectedCategoryModal({})
                 setOpenModal(false)
             }}
-            modalTitle={editCategoryModalState ? t("materials.buttons.edit") : t("materials.buttons.addNew")}
+            modalTitle={duplicateCategoryModalState
+                ? t("navigationButtons.duplicate")
+                : editCategoryModalState
+                    ? t("materials.buttons.edit")
+                    : t("materials.buttons.addNew")}
         >
             <Stack gap={5} justifyContent={'flex-start'} height={'100%'} width={'90%'} margin={'auto'} marginTop={"20px"}>
                 <GomakeTextInput
@@ -44,7 +53,6 @@ const AddCategoryModal = (props: IAddCategoryModalProps) => {
                     onChange={onSetCategory}
                     placeholder={t("materials.inputs.addCategory")}
                     style={{ width: '100%', height: "40px" }}
-                // disabled={editCategoryModalState}
                 />
                 {/* <GoMakeAutoComplate
                     options={props?.productList}
@@ -67,11 +75,17 @@ const AddCategoryModal = (props: IAddCategoryModalProps) => {
                 )}
                 {
                     <SecondaryButton
-                        onClick={editCategoryModalState ? updatePrintHouseMaterialCategoryName : onAddCategory}
+                        onClick={duplicateCategoryModalState ? duplicatePrintHouseMaterialCategoryName : editCategoryModalState ? updatePrintHouseMaterialCategoryName : onAddCategory}
                         variant={'contained'}
                         sx={{ width: '100%' }}
                     >
-                        {editCategoryModalState ? t("materials.buttons.edit") : t("materials.buttons.add")}
+                        {
+                            duplicateCategoryModalState
+                                ? t("navigationButtons.duplicate")
+                                : editCategoryModalState
+                                    ? t("materials.buttons.edit")
+                                    : t("materials.buttons.addNew")
+                        }
                     </SecondaryButton>
                 }
             </Stack>

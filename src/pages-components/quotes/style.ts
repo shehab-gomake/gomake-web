@@ -18,7 +18,6 @@ const useStyle = () => {
         paddingRight: 20,
         height: "100%",
         overflowY: "hidden" as "hidden",
-        marginBottom: "20px",
         gap: 20,
       },
       headerStyle: {

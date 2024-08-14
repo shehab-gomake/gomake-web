@@ -378,14 +378,23 @@ const QuotesListPageWidget = ({
                 <ExcelSheetIcon />
               </div>
             </div>
-
-            {/* search */}
             <PrimaryTable
               stickyFirstCol={false}
               stickyHeader={true}
-              maxHeight={650}
+              maxHeight={750}
               rows={allQuotes}
               headers={tableHeaders}
+              columnWidths={
+                documentType === DOCUMENT_TYPE.purchaseOrder
+                  ? ["10%", "10%", "10%", "10%", "10%", "10%", "10%", "10%", "10%", "10%"]
+                  : documentType === DOCUMENT_TYPE.purchaseInvoice || documentType === DOCUMENT_TYPE.purchaseInvoiceRefund
+                    ? ["10%", "10%", "10%", "10%", "10%", "10%", "10%", "10%", "10%", "10%"]
+                    : documentType === DOCUMENT_TYPE.quote
+                      ? ["11%", "11%", "11%", "8%", "11%", "11%", "14%", "16%", "6%"]
+                      : documentType === DOCUMENT_TYPE.order
+                        ? ["9%", "7%", "7%", "7%", "7%", "7%", "7%", "7%", "7%", "7%", "7%", "7%", "6%",]
+                        : ["10%", "10%", "10%", "10%", "10%", "10%", "10%", "10%", "10%", "10%"]
+              }
             />
           </div>
           <GoMakePagination

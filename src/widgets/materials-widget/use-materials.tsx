@@ -154,20 +154,13 @@ const useMaterials = (isAdmin: boolean) => {
   const [selectedCategory, setSelectedCategory] = useState<any>();
   const materialsCategoriesList = useCallback(() => {
     return materialCategories.map((category) => ({
+      ...category,
       text: category.categoryName,
       value: category.categoryKey,
       icon: () => <SideLeftMenuWidget
         onClickOpenDeleteRowModal={onClickOpenDeleteRowModal}
         category={category}
       />
-      // icon: category.isDeletable
-      //   ? () => (
-      //     <SideLeftMenuWidget
-      //       onClickOpenDeleteRowModal={onClickOpenDeleteRowModal}
-      //       category={category}
-      //     />
-      //   )
-      //   : null,
     }));
   }, [materialCategories]);
 

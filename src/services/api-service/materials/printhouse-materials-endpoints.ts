@@ -8,9 +8,12 @@ const GET_MATERIAL_CATEGORY_DATA_URL = "/v1/printhouse-materials/GetPrintHouseMa
 const UPDATE_MATERIAL_PROPS_URL = "/v1/printhouse-materials/updatePrintHouseMaterial";
 const UPDATE_MATERIALS_PROPS_URL = "/v1/printhouse-materials/updatePrintHouseMaterials";
 const ADD_MATERIAL_CATEGORY_URL = "/v1/printhouse-materials/add-printhouse-material-category";
+const UPDATE_MATERIAL_CATEGORY_ORDER_URL = "/v1/printhouse-materials/update-print-house-categories-order";
+const UPDATE_MATERIAL_ORDER_FOR_CATEGORY_URL = "/v1/materials/update-categories-order";
 const DELETE_MATERIAL_CATEGORY_URL = "/v1/printhouse-materials/delete-printhouse-material-category";
 const ADD_MATERIAL_CATEGORY_ROW_URL = "/v1/printhouse-materials/add-printhouse-material-category-row";
 const UPDATE_MATERIAL_CATEGORY_DISPLAY_NAME_URL = "/v1/printhouse-materials/update-print-house-material-display-name";
+const DUPLICATE_MATERIAL_CATEGORY_URL = "/v1/printhouse-materials/duplicate-print-house-material-category";
 
 const DELETE_MATERIAL_CATEGORY_Row_URL = "/v1/printhouse-materials/delete-printhouse-material-category-row";
 const DOWNLOAD_MATERIAL_EXCEL_FILE = "/v1/printhouse-materials/download-material-excel";
@@ -96,6 +99,34 @@ const addPrintHouseMaterialCategoryApi: ICallAndSetData = async (
   );
 };
 
+const updatePrintHouseCategoriesOrderApi: ICallAndSetData = async (
+  callApi,
+  callBack,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    UPDATE_MATERIAL_CATEGORY_ORDER_URL,
+    callBack,
+    data
+  );
+};
+
+const updateCategoriesOrderApi: ICallAndSetData = async (
+  callApi,
+  callBack,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    UPDATE_MATERIAL_ORDER_FOR_CATEGORY_URL,
+    callBack,
+    data
+  );
+};
+
 const deletePrintHouseMaterialCategoryApi: ICallAndSetData = async (
   callApi,
   callBack,
@@ -141,6 +172,23 @@ const updatePrintHouseMaterialDisplayNameApi: ICallAndSetData = async (
     callApi,
     EHttpMethod.POST,
     UPDATE_MATERIAL_CATEGORY_DISPLAY_NAME_URL,
+    callBack,
+    row
+  );
+};
+const duplicatePrintHouseMaterialDisplayNameApi: ICallAndSetData = async (
+  callApi,
+  callBack,
+  row: {
+    materialTypeKey: string;
+    categoryKey: string;
+    newCategoryKey: string;
+  }
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    DUPLICATE_MATERIAL_CATEGORY_URL,
     callBack,
     row
   );
@@ -210,5 +258,8 @@ export {
       getMaterialsSizesApi,
       getPrintHouseMaterialExcelFileApi,
       uploadPrintHouseMaterialExcelFileApi,
-      updatePrintHouseMaterialDisplayNameApi
+      updatePrintHouseMaterialDisplayNameApi,
+      duplicatePrintHouseMaterialDisplayNameApi,
+      updatePrintHouseCategoriesOrderApi,
+      updateCategoriesOrderApi
 };

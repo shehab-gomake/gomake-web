@@ -1,12 +1,12 @@
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { useRouter } from "next/router";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
-import { activeFilterState, flagState, isEditCategoryModalState, materialTypeTableState, openAddCategoryModalState, selectedCategoryModalState } from "@/widgets/materials-widget/state";
+import { activeFilterState, flagState, isDuplicateCategoryModalState, isEditCategoryModalState, materialTypeTableState, openAddCategoryModalState, selectedCategoryModalState } from "@/widgets/materials-widget/state";
 import { useMaterials } from "../../use-materials";
 import { useEffect, useState } from "react";
 import { EMaterialActiveFilter } from "../../enums";
 import { useTranslation } from "react-i18next";
-import {addPrintHouseMaterialCategoryApi, updatePrintHouseMaterialDisplayNameApi} from "@/services/api-service/materials/printhouse-materials-endpoints";
+import {addPrintHouseMaterialCategoryApi, duplicatePrintHouseMaterialDisplayNameApi, updatePrintHouseMaterialDisplayNameApi} from "@/services/api-service/materials/printhouse-materials-endpoints";
 import {addMaterialCategoryApi, uploadPrintHouseMaterialApi} from "@/services/api-service/materials/materials-endpoints";
 
 const useAddMaterialCategory = (isAdmin:boolean) => {
@@ -17,6 +17,7 @@ const useAddMaterialCategory = (isAdmin:boolean) => {
     const { alertSuccessAdded, alertFaultAdded,alertFault } = useSnackBar();
     const [openModal, setOpenModal] = useRecoilState(openAddCategoryModalState);
     const [editCategoryModalState,setEditCategoryModalState] = useRecoilState(isEditCategoryModalState);
+    const [duplicateCategoryModalState,setDuplicateCategoryModalState] = useRecoilState(isDuplicateCategoryModalState);
     const [selectedCategoryModal,setSelectedCategoryModal] = useRecoilState<any>(selectedCategoryModalState);
     const { getMaterialCategories } = useMaterials(isAdmin);
     const [newCategory, setNewCategory] = useState<string>(null);
@@ -82,11 +83,31 @@ const useAddMaterialCategory = (isAdmin:boolean) => {
             }
                 await updatePrintHouseMaterialDisplayNameApi(callApi, callBack, {
                     materialTypeKey: materialType.toString(),
-                    categoryKey: selectedCategoryModal?.categoryName,
+                    categoryKey: selectedCategoryModal?.categoryKey,
                     displayName:newCategory
 
                 })
     }
+
+    const duplicatePrintHouseMaterialCategoryName = async () => {
+        const callBack = (res) => {
+            if (res.success) {
+                alertSuccessAdded();
+                setActiveFilter(EMaterialActiveFilter.ALL);
+                getMaterialCategories(materialType).then();
+                setOpenModal(false);
+                setFlagState(false);
+            } else {
+                alertFaultAdded();
+            }
+        }
+            await duplicatePrintHouseMaterialDisplayNameApi(callApi, callBack, {
+                materialTypeKey: materialType.toString(),
+                categoryKey: selectedCategoryModal?.categoryKey,
+                newCategoryKey:newCategory
+
+            })
+}
 
 
 
@@ -108,23 +129,25 @@ const useAddMaterialCategory = (isAdmin:boolean) => {
                     imageBase64:data
                 })
     }
-
     return {
         openModal,
         editCategoryModalState,
+        duplicateCategoryModalState,
         selectedCategoryModal,
         newCategory,
         setOpenModal,
         onAddCategory,
         onSetCategory,
         setEditCategoryModalState,
+        setDuplicateCategoryModalState,
         setSelectedCategoryModal,
         uploadPrintHouseMaterialImage,
         t,
         imgUrl,
         setSelectedImgForAdded,
         materialTypeTable,
-        updatePrintHouseMaterialCategoryName
+        updatePrintHouseMaterialCategoryName,
+        duplicatePrintHouseMaterialCategoryName
     }
 }
 
