@@ -152,145 +152,152 @@ const SideList = ({
                         value={filter}
                     />
                 </div>
-                <DragDropContext onDragEnd={onDragEnd}>
-                    <Droppable droppableId="droppable">
-                        {(provided) => (
-                            <List
-                                style={classes.listContainer}
-                                component="nav"
-                                aria-label="main mailbox folders"
-                                {...provided.droppableProps}
-                                ref={provided.innerRef}
-                            >
-                                {filteredList().map((item, index) => (
-                                    <Draggable
-                                        key={item.value}
-                                        draggableId={item.value}
-                                        index={index}
-                                    >
-                                        {(provided) => (
-                                            <ListButton
-                                                data-tour={item?.dataTour}
-                                                selected={item?.value === selectedItem}
-                                                onClick={() => onSelect(item?.value)}
-                                                style={isHaveDeleteIcon && classes.deleteButtonDirection}
-                                                ref={provided.innerRef}
-                                                {...provided.draggableProps}
-                                                {...provided.dragHandleProps}
-                                            >
-                                                <SortIcon />
-                                                {!!item.icon && (
-                                                    <ListItemIcon sx={{ minWidth: 28 }}>
-                                                        {item.icon()}
-                                                    </ListItemIcon>
-                                                )}
-                                                <Stack
-                                                    direction={"row"}
-                                                    alignItems={"center"}
-                                                    justifyContent={"space-between"}
-                                                    width={"100%"}
+                {
+                    isHaveDeleteIcon ? <DragDropContext onDragEnd={onDragEnd}>
+                        <Droppable droppableId="droppable">
+                            {(provided) => (
+                                <List
+                                    style={classes.listContainer}
+                                    component="nav"
+                                    aria-label="main mailbox folders"
+                                    {...provided.droppableProps}
+                                    ref={provided.innerRef}
+                                >
+                                    {filteredList().map((item, index) => (
+                                        <Draggable
+                                            key={item.value}
+                                            draggableId={item.value}
+                                            index={index}
+                                        >
+                                            {(provided) => (
+                                                <ListButton
+                                                    data-tour={item?.dataTour}
+                                                    selected={item?.value === selectedItem}
+                                                    onClick={() => onSelect(item?.value)}
+                                                    style={isHaveDeleteIcon && classes.deleteButtonDirection}
+                                                    ref={provided.innerRef}
+                                                    {...provided.draggableProps}
+                                                    {...provided.dragHandleProps}
                                                 >
-                                                    <ListItemText
-                                                        style={{ maxWidth: "fit-content" }}
-                                                        primary={item.text}
-                                                    />
-                                                    {selectedItem === item?.value && quickActions && (
-                                                        <OptionsButton>
-                                                            <MenuItem onClick={onClickDuplicate}>
-                                                                <div style={classes.menuItem}>
-                                                                    <DuplicateIcon
-                                                                        height={20}
-                                                                        width={20}
-                                                                        color={classes.iconColor}
-                                                                    />{" "}
-                                                                    <span>{t("navigationButtons.duplicate")}</span>
-                                                                </div>
-                                                            </MenuItem>
-                                                            <Divider />
-                                                            {!isAdmin && (
-                                                                <MenuItem onClick={onClickDelete}>
+                                                    <div style={{ marginRight: 8 }}>
+                                                        <SortIcon />
+                                                    </div>
+
+                                                    <Stack
+                                                        direction={"row"}
+                                                        alignItems={"center"}
+                                                        justifyContent={"space-between"}
+                                                        width={"100%"}
+                                                    >
+                                                        <ListItemText
+                                                            style={{ maxWidth: "fit-content" }}
+                                                            primary={item.text}
+                                                        />
+                                                        {selectedItem === item?.value && quickActions && (
+                                                            <OptionsButton>
+                                                                <MenuItem onClick={onClickDuplicate}>
                                                                     <div style={classes.menuItem}>
-                                                                        <DeleteIcon
-                                                                            color={classes.iconColor}
-                                                                            width={20}
+                                                                        <DuplicateIcon
                                                                             height={20}
+                                                                            width={20}
+                                                                            color={classes.iconColor}
                                                                         />{" "}
-                                                                        <span>{t("navigationButtons.delete")}</span>
+                                                                        <span>{t("navigationButtons.duplicate")}</span>
                                                                     </div>
                                                                 </MenuItem>
-                                                            )}
-                                                        </OptionsButton>
+                                                                <Divider />
+                                                                {!isAdmin && (
+                                                                    <MenuItem onClick={onClickDelete}>
+                                                                        <div style={classes.menuItem}>
+                                                                            <DeleteIcon
+                                                                                color={classes.iconColor}
+                                                                                width={20}
+                                                                                height={20}
+                                                                            />{" "}
+                                                                            <span>{t("navigationButtons.delete")}</span>
+                                                                        </div>
+                                                                    </MenuItem>
+                                                                )}
+                                                            </OptionsButton>
+                                                        )}
+                                                    </Stack>
+                                                    {!!item.icon && (
+                                                        <ListItemIcon sx={{ minWidth: 28 }}>
+                                                            {item.icon()}
+                                                        </ListItemIcon>
                                                     )}
-                                                </Stack>
-                                            </ListButton>
-                                        )}
-                                    </Draggable>
-                                ))}
-                                {provided.placeholder}
-                            </List>
-                        )}
-                    </Droppable>
-                </DragDropContext>
-                {/* <List
-                    style={classes.listContainer}
-                    component="nav"
-                    aria-label="main mailbox folders"
-                >
-                    {filteredList().map((item) => {
-                        return (
-                            <ListButton
-                                data-tour={item?.dataTour}
-                                selected={item?.value === selectedItem}
-                                onClick={() => onSelect(item?.value)}
-                                style={isHaveDeleteIcon && classes.deleteButtonDirection}
-                            >
-                                {!!item.icon && (
-                                    <ListItemIcon sx={{ minWidth: 28 }}>
-                                        {item.icon()}
-                                    </ListItemIcon>
-                                )}
-                                <Stack
-                                    direction={"row"}
-                                    alignItems={"center"}
-                                    justifyContent={"space-between"}
-                                    width={"100%"}
-                                >
-                                    <ListItemText
-                                        style={{ maxWidth: "fit-content" }}
-                                        primary={item.text}
-                                    />
-                                    {selectedItem === item?.value && quickActions && (
-                                        <OptionsButton>
-                                            <MenuItem onClick={onClickDuplicate}>
-                                                <div style={classes.menuItem}>
-                                                    <DuplicateIcon
-                                                        height={20}
-                                                        width={20}
-                                                        color={classes.iconColor}
-                                                    />{" "}
-                                                    <span>{t("navigationButtons.duplicate")}</span>
-                                                </div>
-                                            </MenuItem>
-                                            <Divider />
-                                            {!isAdmin && (
-                                                <MenuItem onClick={onClickDelete}>
-                                                    <div style={classes.menuItem}>
-                                                        <DeleteIcon
-                                                            color={classes.iconColor}
-                                                            width={20}
-                                                            height={20}
-                                                        />{" "}
-                                                        <span>{t("navigationButtons.delete")}</span>
-                                                    </div>
-                                                </MenuItem>
+                                                </ListButton>
                                             )}
-                                        </OptionsButton>
-                                    )}
-                                </Stack>
-                            </ListButton>
-                        );
-                    })}
-                </List> */}
+                                        </Draggable>
+                                    ))}
+                                    {provided.placeholder}
+                                </List>
+                            )}
+                        </Droppable>
+                    </DragDropContext> :
+                        <List
+                            style={classes.listContainer}
+                            component="nav"
+                            aria-label="main mailbox folders"
+                        >
+                            {filteredList().map((item) => {
+                                return (
+                                    <ListButton
+                                        data-tour={item?.dataTour}
+                                        selected={item?.value === selectedItem}
+                                        onClick={() => onSelect(item?.value)}
+                                        style={isHaveDeleteIcon && classes.deleteButtonDirection}
+                                    >
+                                        {!!item.icon && (
+                                            <ListItemIcon sx={{ minWidth: 28 }}>
+                                                {item.icon()}
+                                            </ListItemIcon>
+                                        )}
+                                        <Stack
+                                            direction={"row"}
+                                            alignItems={"center"}
+                                            justifyContent={"space-between"}
+                                            width={"100%"}
+                                        >
+                                            <ListItemText
+                                                style={{ maxWidth: "fit-content" }}
+                                                primary={item.text}
+                                            />
+                                            {selectedItem === item?.value && quickActions && (
+                                                <OptionsButton>
+                                                    <MenuItem onClick={onClickDuplicate}>
+                                                        <div style={classes.menuItem}>
+                                                            <DuplicateIcon
+                                                                height={20}
+                                                                width={20}
+                                                                color={classes.iconColor}
+                                                            />{" "}
+                                                            <span>{t("navigationButtons.duplicate")}</span>
+                                                        </div>
+                                                    </MenuItem>
+                                                    <Divider />
+                                                    {!isAdmin && (
+                                                        <MenuItem onClick={onClickDelete}>
+                                                            <div style={classes.menuItem}>
+                                                                <DeleteIcon
+                                                                    color={classes.iconColor}
+                                                                    width={20}
+                                                                    height={20}
+                                                                />{" "}
+                                                                <span>{t("navigationButtons.delete")}</span>
+                                                            </div>
+                                                        </MenuItem>
+                                                    )}
+                                                </OptionsButton>
+                                            )}
+                                        </Stack>
+                                    </ListButton>
+                                );
+                            })}
+                        </List>
+                }
+
+
                 {!!children && <div style={classes.buttonWrapper}>{children}</div>}
             </Box>
         </>
