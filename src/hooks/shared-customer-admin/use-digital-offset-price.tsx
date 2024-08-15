@@ -1733,6 +1733,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           subSection={subSection}
           section={section}
           disabled={disabled}
+          multiParameterModal={multiParameterModal}
+
         />
       );
     } else if (parameter?.parameterType === EParameterTypes.SWITCH) {
@@ -3413,39 +3415,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       setFirstEnter(true);
     }
   }, [router, productTemplate]);
-
-  // useEffect(() => {
-  //   const checkAndRemoveRelatedParameters = () => {
-  //     let hasChanged = false;
-  //     if (subProducts?.length > 0) {
-  //       const updatedSubProducts = subProducts[0]?.parameters?.map(product => {
-  //         const parentParameterCodes = product.parameters
-  //           .filter(param => param.relatedParameters && param.relatedParameters.length > 0)
-  //           .map(param => param.parameterCode);
-
-  //         const filteredParameters = product.parameters.filter(param => {
-  //           // Check if this parameter is a related parameter and its parent is not present
-  //           const isRelatedParameter = parentParameterCodes.some(parentCode =>
-  //             param.relatedParameters?.some(related => related.parameterId === param.parameterId)
-  //           );
-  //           if (isRelatedParameter && !parentParameterCodes.includes(param.parameterCode)) {
-  //             hasChanged = true;
-  //             return false;
-  //           }
-  //           return true;
-  //         });
-
-  //         return { ...product, parameters: filteredParameters };
-  //       });
-
-  //       if (hasChanged) {
-  //         setSubProducts(updatedSubProducts);
-  //       }
-  //     }
-  //   };
-
-  //   checkAndRemoveRelatedParameters();
-  // }, [subProducts, setSubProducts]);
 
   return {
     t,
