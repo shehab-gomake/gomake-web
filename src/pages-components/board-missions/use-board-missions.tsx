@@ -181,7 +181,11 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
             mission?.jobName,
             mission?.numberOfBoardMissions,
             mission?.productName,
-            mission?.isReady ? t('boardMissions.done') : `${mission?.boardMissionStatus?.name} / ${mission?.station?.actionName}`,
+            mission?.isReady
+              ? t('boardMissions.done')
+              : (mission?.boardMissionStatus && mission?.station
+                ? `${mission.boardMissionStatus.name} / ${mission.station.actionName}`
+                : ""),
             <MoreMenuWidget
               mission={mission}
               onClickDuplicate={onOpenDuplicateModal}
@@ -242,7 +246,11 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
             mission?.jobName,
             mission?.numberOfBoardMissions,
             mission?.productName,
-            mission?.isReady ? t('boardMissions.done') : `${mission?.boardMissionStatus?.name} / ${mission?.station?.actionName}`,
+            mission?.isReady
+              ? t('boardMissions.done')
+              : (mission?.boardMissionStatus && mission?.station
+                ? `${mission.boardMissionStatus.name} / ${mission.station.actionName}`
+                : ""),
             <MoreMenuWidget
               mission={mission}
               onClickDuplicate={onOpenDuplicateModal}
