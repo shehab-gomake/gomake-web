@@ -99,7 +99,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [defaultProductTemplate, setDefaultProductTemplate] = useState<any>([]);
   const [subProducts, setSubProducts] = useRecoilState<any>(subProductsParametersState);
   const [subProductsColorsModal, setSubProductsColorsModal] = useRecoilState<any>(subProductsCopyParametersState);
-
   const [isSetTemplete, setIsSetTemplete] = useState<boolean>(false);
   const setSubProductsCopy = useSetRecoilState<any>(subProductsCopyParametersState);
   const itemParmetersValues = useRecoilValue(itemParmetersValuesState);
@@ -2224,6 +2223,50 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
   const [valuesState, setValuesState] = useRecoilState(tempProductQuantityTypesValuesState);
 
+  const removeRelatedParametersFromSubProducts = (
+    parameterId: string,
+    sectionId: string,
+    subSectionId: string,
+    parameters: any[]
+  ) => {
+    // Find the parameter in the productTemplate
+    const productTemplateCopy = cloneDeep(productTemplate);
+    const section = productTemplateCopy.sections.find(
+      (section) => section.id === sectionId
+    );
+    const subSection = section?.subSections.find(
+      (sub) => sub.id === subSectionId
+    );
+    const deletedParameter = subSection?.parameters.find(
+      (param) => param.id === parameterId
+    );
+
+    // Check if the deleted parameter has related parameters
+    if (deletedParameter && deletedParameter.relatedParameters) {
+      deletedParameter.relatedParameters.forEach((relatedParam) => {
+        // Remove the related parameter from the parameters array
+        const relatedIndex = parameters.findIndex(
+          (param) => param.parameterId === relatedParam.parameterId
+        );
+
+        if (relatedIndex !== -1) {
+          const relatedParameterId = parameters[relatedIndex].parameterId;
+
+          // Remove the related parameter
+          parameters.splice(relatedIndex, 1);
+
+          // Recursively remove related parameters for the removed parameter
+          removeRelatedParametersFromSubProducts(
+            relatedParameterId,
+            sectionId,
+            subSectionId,
+            parameters
+          );
+        }
+      });
+    }
+  };
+
   const onChangeSubProductsForPrice = (
     parameterId: any,
     subSectionId: any,
@@ -2252,6 +2295,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           item.subSectionId === subSectionId &&
           item.actionIndex === actionIndex
       );
+
       const productTemplateCopy = cloneDeep(productTemplate);
       const section = productTemplateCopy.sections.find(
         (section) => section.id === sectionId
@@ -2262,6 +2306,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       const subSectionParameter = subSection.parameters.find(
         (param) => param.id === parameterId
       );
+
       if (findIndex !== -1) {
         const valuesArray = [data.values].filter(Boolean);
         temp[findIndex] = {
@@ -2277,6 +2322,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           };
         } else {
           temp.splice(findIndex, 1);
+          removeRelatedParametersFromSubProducts(parameterId, sectionId, subSectionId, temp);
         }
       } else {
         temp.push({
@@ -3367,6 +3413,40 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       setFirstEnter(true);
     }
   }, [router, productTemplate]);
+
+  // useEffect(() => {
+  //   const checkAndRemoveRelatedParameters = () => {
+  //     let hasChanged = false;
+  //     if (subProducts?.length > 0) {
+  //       const updatedSubProducts = subProducts[0]?.parameters?.map(product => {
+  //         const parentParameterCodes = product.parameters
+  //           .filter(param => param.relatedParameters && param.relatedParameters.length > 0)
+  //           .map(param => param.parameterCode);
+
+  //         const filteredParameters = product.parameters.filter(param => {
+  //           // Check if this parameter is a related parameter and its parent is not present
+  //           const isRelatedParameter = parentParameterCodes.some(parentCode =>
+  //             param.relatedParameters?.some(related => related.parameterId === param.parameterId)
+  //           );
+  //           if (isRelatedParameter && !parentParameterCodes.includes(param.parameterCode)) {
+  //             hasChanged = true;
+  //             return false;
+  //           }
+  //           return true;
+  //         });
+
+  //         return { ...product, parameters: filteredParameters };
+  //       });
+
+  //       if (hasChanged) {
+  //         setSubProducts(updatedSubProducts);
+  //       }
+  //     }
+  //   };
+
+  //   checkAndRemoveRelatedParameters();
+  // }, [subProducts, setSubProducts]);
+
   return {
     t,
     handleTabClick,
