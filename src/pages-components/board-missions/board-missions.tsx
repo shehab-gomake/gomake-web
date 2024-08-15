@@ -210,7 +210,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
           <PrimaryTable
             stickyFirstCol={false}
             stickyHeader={true}
-            maxHeight={680}
+            maxHeight={750}
             rows={!isPurchaseJobs ? allBoardMissions : allPurchaseJobs}
             headers={!isPurchaseJobs ? tableHeader : tableHeaderForPurchaseJobs}
           />
