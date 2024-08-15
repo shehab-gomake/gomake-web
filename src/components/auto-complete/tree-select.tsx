@@ -3,10 +3,11 @@ import { TreeSelect } from 'primereact/treeselect';
 import { styled } from "@mui/material/styles";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import ClearIcon from '@mui/icons-material/Clear'; // Import a clear icon
+import ClearIcon from '@mui/icons-material/Clear';
 import IconButton from "@mui/material/IconButton";
+import { createGlobalStyle } from "styled-components";
 
-const StyledTreeSelect = styled(TreeSelect)(({ theme, dir }) => ({
+const StyledTreeSelect = styled(TreeSelect)(({ theme, dir, selectedOption }: any) => ({
   boxSizing: "border-box",
   borderRadius: "4px",
   height: "40px",
@@ -21,8 +22,10 @@ const StyledTreeSelect = styled(TreeSelect)(({ theme, dir }) => ({
   fontStyle: "normal",
   fontWeight: 500,
   lineHeight: "20px",
-  border: "transparent !important", 
-  borderBottom: "2px solid rgb(67,195,232) !important",
+  border: "transparent !important",
+  borderBottom: selectedOption
+    ? "2px solid rgb(67,195,232) !important"
+    : "2px solid rgb(237, 2, 140) !important",
   "& .p-dropdown-label": {
     padding: 0,
     direction: "ltr",
@@ -57,6 +60,9 @@ const StyledTreeSelect = styled(TreeSelect)(({ theme, dir }) => ({
     fontWeight: 500,
     fontSize: "12px",
   },
+  "& .p-tree-container": {
+    maxWidth: "450px !important",
+  },
   // arrow icon
   "& .p-treeselect-trigger-icon": {
     display: "none",
@@ -65,9 +71,15 @@ const StyledTreeSelect = styled(TreeSelect)(({ theme, dir }) => ({
   position: "relative",
 }));
 
+const GlobalStyle = createGlobalStyle`
+  .p-tree-container {
+    max-width:450px !important;
+  }
+`;
+
 const ClearButton = styled(IconButton)(({ theme, dir }) => ({
   position: "absolute",
-  [dir === "rtl" ? "left" : "right"]: "8px", 
+  [dir === "rtl" ? "left" : "right"]: "8px",
   top: "50%",
   transform: "translateY(-50%)",
   padding: "4px",
@@ -75,63 +87,83 @@ const ClearButton = styled(IconButton)(({ theme, dir }) => ({
 }));
 
 const GoMakeTreeSelect = ({
-    value,
-    onChange,
-    options,
-    placeholder,
-    style,
-    ...props
-  }: {
-    value?: any;
-    onChange?: (e: { value: any }) => void;
-    options: any[];
-    placeholder?: string;
-    style?: React.CSSProperties;
-  }) => {
-    const { t } = useTranslation();
-    const dir: 'rtl' | 'ltr' = t('direction');
-    const RTL = dir === 'rtl';
+  value,
+  onChange,
+  options,
+  placeholder,
+  style,
+  ...props
+}: {
+  value?: any;
+  onChange?: (e: { value: any }) => void;
+  options: any[];
+  placeholder?: string;
+  style?: React.CSSProperties;
+}) => {
+  const { t } = useTranslation();
+  const dir: 'rtl' | 'ltr' = t('direction');
+  const RTL = dir === 'rtl';
+  const [selectedNodeKey, setSelectedNodeKey] = useState<any>(null);
+  const [expandedKeys, setExpandedKeys] = useState<{ [key: string]: boolean }>({});
+  const treeSelectRef = React.useRef(null);
+  const handleNodeSelect = (e) => {
+    const node = e.node;
 
-    const [selectedNodeKey, setSelectedNodeKey] = useState<any>(value);
-  
-    const handleChange = (e: { value: any }) => {
-      setSelectedNodeKey(e.value);
-      if (onChange) {
-        onChange(e);
+    if (node.children && node.children.length > 0) {
+      const toggler = e.originalEvent.currentTarget.querySelector('.p-tree-toggler');
+      if (toggler) {
+        toggler.click();
       }
-    };
-
-    const handleClear = () => {
-      setSelectedNodeKey(null);
+      setTimeout(() => {
+        treeSelectRef.current.show();
+      }, 0);
+    } else {
+      setSelectedNodeKey(node.key);
       if (onChange) {
-        onChange({ value: null });
+        onChange({ value: node.key });
       }
-    };
+    }
+  };
+  const handleClear = () => {
+    setSelectedNodeKey(null);
+    if (onChange) {
+      onChange({ value: null });
+    }
+  };
 
-    return (
-      <div className='editorDiv' style={{ position: 'relative', width: '100%' }}>
-        <style jsx global>{`
+  return (
+    <div className='editorDiv' style={{ position: 'relative', width: '100%' }}>
+      <GlobalStyle />
+      <style jsx global>{`
            .p-tree .p-tree-container .p-treenode .p-treenode-content .p-tree-toggler {
-            transform: ${RTL? "rotate(180deg)" : "none"};
+            transform: ${RTL ? "rotate(180deg)" : "none"};
+            max-width: 450px,
+            width:450px
           }
             `}</style>
-        <StyledTreeSelect
-          value={selectedNodeKey}
-          onChange={handleChange}
-          options={options}
-          placeholder={placeholder}
-          style={style}
-          {...props}
-          dir={dir}
-          filter 
-        />
-        {selectedNodeKey && (
-          <ClearButton dir={dir} onClick={handleClear}>
-            <ClearIcon />
-          </ClearButton>
-        )}
-      </div>
-    );
-  };
-  
+
+      <StyledTreeSelect
+        ref={treeSelectRef}
+        value={selectedNodeKey}
+        options={options}
+        placeholder={placeholder}
+        style={style}
+        expandedKeys={expandedKeys}
+        onToggle={(e) => setExpandedKeys(e.value)}
+        // @ts-ignore
+        selectedOption={!!selectedNodeKey}
+        onNodeSelect={handleNodeSelect}
+        {...props}
+        dir={dir}
+        filter
+      />
+      {selectedNodeKey && (
+        <ClearButton dir={dir} onClick={handleClear}>
+          <ClearIcon />
+        </ClearButton>
+      )}
+    </div>
+  );
+};
+
 export { GoMakeTreeSelect };
