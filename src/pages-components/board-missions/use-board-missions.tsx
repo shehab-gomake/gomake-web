@@ -135,12 +135,6 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     setResetDatePicker(true);
     pageNumber === 1 ? getAllData(isPurchaseJobs, true) : setPageNumber(1);
   };
-  // useEffect(() => {
-  //   if (router.query.orderNumber) {
-  //     setPatternSearch(router.query.orderNumber as string);
-  //   }
-
-  // }, [router])
   const onChangeMissionsSearch = (value: string) => {
     setPatternSearch(value);
   };
