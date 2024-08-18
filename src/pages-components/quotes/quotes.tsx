@@ -385,15 +385,13 @@ const QuotesListPageWidget = ({
               rows={allQuotes}
               headers={tableHeaders}
               columnWidths={
-                documentType === DOCUMENT_TYPE.purchaseOrder
-                  ? ["10%", "10%", "10%", "10%", "10%", "10%", "10%", "10%", "10%", "10%"]
-                  : documentType === DOCUMENT_TYPE.purchaseInvoice || documentType === DOCUMENT_TYPE.purchaseInvoiceRefund
-                    ? ["10%", "10%", "10%", "10%", "10%", "10%", "10%", "10%", "10%", "10%"]
-                    : documentType === DOCUMENT_TYPE.quote
-                      ? ["11%", "11%", "11%", "8%", "11%", "11%", "14%", "16%", "6%"]
-                      : documentType === DOCUMENT_TYPE.order
-                        ? ["9%", "7%", "7%", "7%", "7%", "7%", "7%", "7%", "7%", "7%", "7%", "7%", "6%",]
-                        : ["10%", "10%", "10%", "10%", "10%", "10%", "10%", "10%", "10%", "10%"]
+                documentType === DOCUMENT_TYPE.quote
+                  ? ["11%", "11%", "7%", "7%", "20%", "11%", "10%", "16%", "6%"]
+                  : documentType === DOCUMENT_TYPE.order
+                    ? ["6%", "5%", "5%", "7%", "7%", "8%", "8%", "3%", "20%", "7%", "7%", "7%", "5%", "5%"]
+                    : documentType === DOCUMENT_TYPE.purchaseInvoice || documentType === DOCUMENT_TYPE.purchaseInvoiceRefund
+                      ? ["7%", "15%", "10%", "13%", "10%", "10%", "10%", "10%", "10%", "5%",]
+                      : ["7%", "8%", "8%", "8%", "10%", "26%", "10%", "10%", "10%", "3%"]
               }
             />
           </div>
