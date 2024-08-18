@@ -18,9 +18,11 @@ import { backToProcessApi, moveBoardMissionToDoneApi } from "@/services/api-serv
 import { downloadPdf } from "@/utils/helpers";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { useUserPermission } from "@/hooks/use-permission";
+import { useQuoteGetData } from "../quote-new/use-quote-get-data";
 
 const useBoardMissions = ({ isPurchaseJobs }) => {
   const { CheckPermission } = useUserPermission();
+  const { getCurrencyUnitText } = useQuoteGetData();
   const { t } = useTranslation();
   const { classes } = useStyle();
   const { callApi } = useGomakeAxios();
@@ -85,7 +87,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     t("boardMissions.productName"),
     t("boardMissions.currentBoardMissionStatus"),
     t("properties.more")
-  ];
+  ].filter(Boolean); // This filters out falsy values
   const tableHeaderForPurchaseJobs = [
     t("boardMissions.creationDate"),
     t("boardMissions.dueDate"),
@@ -163,24 +165,35 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
       return await getAllBoardMissions(isClear);
     }
   };
+  function formatTextTo40CharsPerLine(text) {
+    const lineLength = 40;
+    let formattedText = '';
+
+    for (let i = 0; i < text.length; i += lineLength) {
+      formattedText += text.slice(i, i + lineLength) + '\n';
+    }
+
+    return formattedText;
+  }
+
   const getAllBoardMissions = async (isClear: boolean = false) => {
     if (connectionId) {
       const callBack = (res) => {
         if (res?.success) {
           const _data = res?.data;
           const mapData = _data.data?.map((mission: any) => [
-            GetDateFormat(mission?.createdDate),
-            GetDateFormat(mission?.dueDate),
+            mission?.createdDate?.split("T")[0],
+            mission?.dueDate?.split("T")[0],
             mission?.clientName,
             mission?.productType ? `${mission?.number} / ${mission?.productType}` : mission?.number,
             mission?.orderNumber,
             mission?.outSourceType === null ? EWorkSource[0] : EWorkSource[mission?.outSourceType],
             mission?.quantity,
-            CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS) && mission?.cost,
-            CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS) && mission?.price,
+            ...(CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS) ? [mission?.cost + " " + getCurrencyUnitText(mission?.currency)] : []),
+            ...(CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS) ? [mission?.price + " " + getCurrencyUnitText(mission?.currency)] : []),
             mission?.jobName,
             mission?.numberOfBoardMissions,
-            mission?.productName,
+            "mission?.productName sdsada wsadsada",
             mission?.isReady
               ? t('boardMissions.done')
               : (mission?.boardMissionStatus && mission?.station
@@ -232,8 +245,8 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
         if (res?.success) {
           const _data = res?.data;
           const mapData = _data.data?.map((mission: any) => [
-            GetDateFormat(mission?.createdDate),
-            GetDateFormat(mission?.dueDate),
+            mission?.createdDate?.split("T")[0],
+            mission?.dueDate?.split("T")[0],
             mission?.clientName,
             mission?.supplierName,
             mission?.productType ? `${mission?.number} / ${mission?.productType}` : mission?.number,
@@ -395,29 +408,8 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     setQuantityOfPackages(1);
     setQuantityPerPackage(missionItem?.quantity || 0);
   }, [missionItem])
-
-  // useEffect(() => {
-  //   const mapData = data?.data?.map((mission: any) => [
-  //     GetDateFormat(mission?.createdDate),
-  //     GetDateFormat(mission?.dueDate),
-  //     mission?.clientName,
-  //     mission?.number,
-  //     EWorkSource[mission?.outSourceType],
-  //     mission?.quantity,
-  //     mission?.cost,
-  //     mission?.price,
-  //     mission?.jobName,
-  //     mission?.numberOfBoardMissions,
-  //     mission?.productName,
-  //     mission?.status,
-  //   ]);
-  //   setAllBoardMissions(mapData);
-  //   setPagesCount(Math.ceil(data?.totalItems / pageSize));
-  // }, [data, connectionId]);
-
   useEffect(() => {
     getAllData(isPurchaseJobs, false)
-    // getAllBoardMissions();
   }, [connectionId, pageNumber, pageSize, finalPatternSearch]);
 
   const handlePageChange = (event, value) => {

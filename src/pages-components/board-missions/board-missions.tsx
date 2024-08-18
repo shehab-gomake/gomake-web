@@ -20,10 +20,13 @@ import TuneIcon from '@mui/icons-material/Tune';
 import { useRecoilValue } from "recoil";
 import { outsourceSuppliersState } from "@/widgets/product-pricing-widget/state";
 import QrListenerWidget from "@/widgets/qr-listener/qr-listener-widget";
+import { useUserPermission } from "@/hooks/use-permission";
+import { Permissions } from "@/components/CheckPermission/enum";
 
 const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
+  const { CheckPermission } = useUserPermission();
   const {
     tableHeader,
     tableHeaderForPurchaseJobs,
@@ -213,6 +216,13 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
             maxHeight={750}
             rows={!isPurchaseJobs ? allBoardMissions : allPurchaseJobs}
             headers={!isPurchaseJobs ? tableHeader : tableHeaderForPurchaseJobs}
+            columnWidths={!isPurchaseJobs ?
+              CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS) ?
+                ["7%", "6%", "6%", "7%", "7%", "8%", "7%", "4%", "6%", "12%", "7%", "13%", "7%", "3%"]
+                :
+                ["7%", "7%", "7%", "7%", "7%", "8%", "7%", "18%", "7%", "15%", "7%", "3%"]
+              :
+              ["7%", "5%", "6%", "7%", "6%", "7%", "11%", "8%", "6%", "8%", "5%", "5%", "7%", "7%", "4%", "2%"]}
           />
         </div>
         <GoMakePagination
