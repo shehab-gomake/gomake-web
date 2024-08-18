@@ -1,5 +1,6 @@
 import { GomakePrimaryButton } from "@/components";
 import { useStyle } from "./style";
+import { useTranslation } from "react-i18next";
 
 
 export interface AgingReportButtonWidgetProps {
@@ -8,18 +9,20 @@ export interface AgingReportButtonWidgetProps {
   onClickBtn3: () => void;
 }
 const AgingReportButtonWidget = ({ onClickBtn1, onClickBtn2, onClickBtn3 }: AgingReportButtonWidgetProps) => {
-  const { clasess } = useStyle()
+  const { clasess } = useStyle();
+  const { t } = useTranslation()
+
   const tabs = [
     {
-      name: "Show Delinquency",
+      name: t("reports.showDebtCollection"),
       onclick: onClickBtn1
     },
     {
-      name: "Print Debt Settlement",
+      name: t("reports.printDebtCollection"),
       onclick: onClickBtn2
     },
     {
-      name: "Debt Settlement Excel",
+      name: t("reports.excelDebtCollection"),
       onclick: onClickBtn3
     }
   ]

@@ -41,8 +41,7 @@ const LedgerReportHeaderWidget = ({
         </div>
       </div>
 
-      <div style={clasess.date1FilterContainer}>
-        <h3 style={clasess.filterLabelStyle}>{t("reports.extendedCard")}</h3>
+      <div style={clasess.checkBoxContainer}>
         <div style={clasess.checkboxStyle}>
           <Checkbox
             icon={<CheckboxIcon />}
@@ -51,7 +50,7 @@ const LedgerReportHeaderWidget = ({
             checked={isExtended}
           />
         </div>
-
+        <h3 style={clasess.filterLabelStyle}>{t("reports.extendedCard")}</h3>
       </div>
     </div>
   );

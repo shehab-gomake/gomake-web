@@ -8,6 +8,7 @@ import { useTransactionJournalReport } from "./use-transaction-journal-report";
 import { useStyle } from "./style";
 import { TransactionJournalReportHeaderWidget } from "./widgets/header-widget";
 import { DocumentsTypeReportList } from "@/enums";
+import { HeaderTitle } from "@/widgets/header-title/header-title";
 interface TransactionJournalReportWidgetProps {
   isPayment: boolean;
 }
@@ -15,6 +16,7 @@ interface TransactionJournalReportWidgetProps {
 const TransactionJournalReportWidget = ({ isPayment }: TransactionJournalReportWidgetProps) => {
   const { clasess } = useStyle();
   const {
+    t,
     onSelectDeliveryTimeDates,
     handleDocumentTypeChange,
     onClickPrintCard,
@@ -29,6 +31,7 @@ const TransactionJournalReportWidget = ({ isPayment }: TransactionJournalReportW
   } = useTransactionJournalReport({ isPayment })
   return (
     <div style={clasess.mainContainer}>
+      <HeaderTitle title={isPayment?  t("tabs.dailyPaymentsReport") : t("tabs.transactionJournalReport")} marginTop={"0px"} marginBottom={"0px"} />
       <TransactionJournalReportHeaderWidget
         onSelectDeliveryTimeDates={onSelectDeliveryTimeDates}
         resetDatePicker={resetDatePicker}

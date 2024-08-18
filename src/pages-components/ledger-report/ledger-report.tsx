@@ -10,10 +10,12 @@ import { LedgerReportButtonWidget } from "./widgets/button-widget";
 import { useLedgerReport } from "./use-ledger-report";
 import { useStyle } from "./style";
 import { CreateNewTransactionModal } from "./widgets/create-transaction-modal";
+import { HeaderTitle } from "@/widgets/header-title";
 
 const LedgerReportWidget = () => {
   const { clasess } = useStyle();
   const {
+    t,
     onSelectDeliveryTimeDates,
     renderOptions,
     checkWhatRenderArray,
@@ -47,6 +49,7 @@ const LedgerReportWidget = () => {
 
   return (
     <div style={clasess.mainContainer}>
+       <HeaderTitle title={t("tabs.ledgerReport")} marginTop={"0px"} marginBottom={"0px"} />
       <LedgerReportHeaderWidget
         onSelectDeliveryTimeDates={onSelectDeliveryTimeDates}
         resetDatePicker={resetDatePicker}

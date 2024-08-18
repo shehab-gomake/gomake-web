@@ -231,6 +231,7 @@ const useLedgerReport = () => {
   );
 
   return {
+    t,
     onSelectDeliveryTimeDates,
     renderOptions,
     checkWhatRenderArray,

@@ -14,7 +14,7 @@ const useStyle = () => {
         width: "100%",
         height: "100%",
         gap: 20,
-        padding:20,
+        padding:"0px 20px 20px 20px",
         marginBottom:20
       },
       tableTitleContainer:{
