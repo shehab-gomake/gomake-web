@@ -4,7 +4,11 @@ import {IChatDialog} from "@/widgets/messenger/interfaces/dialog";
 import {IChatMessage} from "@/widgets/messenger/interfaces/chat-message";
 import {EFileStatus} from "@/widgets/messenger/enums";
 import {useGomakeAxios, useSnackBar} from "@/hooks";
-import {getUsersMetaDataApi, updateApprovalRequestApi} from "@/services/api-service/chat/quick-blox-chat-endpoints";
+import {
+    getUsersMetaDataApi,
+    sendMessengerNotificationApi,
+    updateApprovalRequestApi
+} from "@/services/api-service/chat/quick-blox-chat-endpoints";
 import {QBChatNewMessage} from "quickblox";
 import {useRouter} from "next/router";
 
@@ -75,6 +79,11 @@ const useMessenger = () => {
         });
     };
 
+    const sendMessage = async (message: QBChatNewMessage) => {
+        await sendMessengerNotificationApi(callApi, () => {}, selectedDialog.occupants_ids.map(a => a.toString()))
+        // const newMessage = await messenger.messages.send(selectedDialog._id, message as QBChatNewMessage);
+
+    }
     const sendTextMessage = async (text: string) => {
         try {
             const message = {
@@ -88,7 +97,7 @@ const useMessenger = () => {
                 markable: 1,
             };
             setInputValue('');
-            await messenger.messages.send(selectedDialog._id, message as QBChatNewMessage);
+            await sendMessage(message as QBChatNewMessage)
         } catch (e) {
 
         }
@@ -129,6 +138,7 @@ const useMessenger = () => {
                 },
                 markable: 1
             };
+            await sendMessengerNotificationApi(callApi, () => {}, selectedDialog.occupants_ids.map(a => a.toString()))
             await messenger.messages.send(selectedDialog._id, message as QBChatNewMessage);
         } catch (e) {
             alertFaultUpdate();
@@ -202,6 +212,7 @@ const useMessenger = () => {
     useEffect(() => {
         if (messenger.isChatConnected) {
             getDialogs().then();
+            messenger.listeners.onDialogUpdate((a) => alert(a))
         }
     }, [messenger.isChatConnected])
 

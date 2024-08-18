@@ -36,8 +36,8 @@ const useInitQuickBlox = () => {
                 getCustomerQuickBloxSession(clientId?.toString()).then()
             }
         } else {
-            // getQuickBloxSession().then()
-            setSessionUser({userId: +currentUser?.quickBloxUserId, password: currentUser.quickBloxToken});
+            getQuickBloxSession().then()
+            // setSessionUser({userId: +currentUser?.quickBloxUserId, password: currentUser.quickBloxToken});
 
         }
     }, [pathname, clientId, userState])

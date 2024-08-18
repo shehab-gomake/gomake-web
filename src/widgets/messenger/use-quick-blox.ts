@@ -14,6 +14,11 @@ const useQuickBlox = () => {
             QB.chat.onMessageListener = listener
         }
     }
+    const listenToDialogsUpdates = (listener: (v) => void) => {
+        if (isChatConnected) {
+            QB.chat.onDialogUpdateListener  = listener
+        }
+    }
 
     const listenToSystemMessages = (listener: (message) => void) => {
 
@@ -146,7 +151,8 @@ const useQuickBlox = () => {
     const listeners = {
         onMessage: listenToNewMessages,
         onSystemMessage: listenToSystemMessages,
-        destroy: destroyListeners
+        destroy: destroyListeners,
+        onDialogUpdate: listenToDialogsUpdates
     };
     const customObj = {
         create: createNewApprovalRequestObj,
