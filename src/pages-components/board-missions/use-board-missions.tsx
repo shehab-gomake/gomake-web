@@ -187,7 +187,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
             ...(CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS) ? [mission?.price + " " + getCurrencyUnitText(mission?.currency)] : []),
             mission?.jobName,
             mission?.numberOfBoardMissions,
-            "mission?.productName sdsada wsadsada",
+            mission?.productName,
             mission?.isReady
               ? t('boardMissions.done')
               : (mission?.boardMissionStatus && mission?.station
