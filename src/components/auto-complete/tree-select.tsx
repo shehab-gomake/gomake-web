@@ -6,6 +6,9 @@ import { useTranslation } from "react-i18next";
 import ClearIcon from '@mui/icons-material/Clear';
 import IconButton from "@mui/material/IconButton";
 import { createGlobalStyle } from "styled-components";
+import { useRecoilValue } from "recoil";
+import { navStatusState } from "@/store/nav-status";
+import { useRouter } from "next/router";
 
 const StyledTreeSelect = styled(TreeSelect)(({ theme, dir, selectedOption }: any) => ({
   boxSizing: "border-box",
@@ -71,12 +74,8 @@ const StyledTreeSelect = styled(TreeSelect)(({ theme, dir, selectedOption }: any
   position: "relative",
 }));
 
-const GlobalStyle = createGlobalStyle`
-  .p-tree-container {
-    max-width:450px !important;
-  }
-`;
 
+// p-treeselect-panel p-component p-ripple-disabled p-connected-overlay-enter-done
 const ClearButton = styled(IconButton)(({ theme, dir }) => ({
   position: "absolute",
   [dir === "rtl" ? "left" : "right"]: "8px",
@@ -100,6 +99,25 @@ const GoMakeTreeSelect = ({
   placeholder?: string;
   style?: React.CSSProperties;
 }) => {
+  const router = useRouter();
+  const isHome = router.pathname === "/home"; // Check if the current route is "/home"
+
+  const navStatus = useRecoilValue(navStatusState);
+  const GlobalStyle = createGlobalStyle`
+  .p-tree-container {
+    max-width:450px !important;
+  }
+  ${isHome && `
+    .p-treeselect-panel {
+      position: absolute;
+    top:305px!important;
+     left: ${!navStatus?.isClosed ? "290px" : "168.991px"}!important;
+    min-width: 362.287px;
+    transform-origin: center top;
+    }
+  `}
+  
+`;
   const { t } = useTranslation();
   const dir: 'rtl' | 'ltr' = t('direction');
   const RTL = dir === 'rtl';
