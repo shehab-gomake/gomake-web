@@ -29,11 +29,12 @@ const MessengerNotifications = () => {
     useEffect(() => {
         getUnreadMessagesCount().then();
     }, [pathname])
+
     return (
-        <Badge badgeContent={unreadMessagesCount} color={'warning'} invisible={unreadMessagesCount === 0}>
+        <Badge style={{padding: "2px"}} badgeContent={unreadMessagesCount} color={'warning'} invisible={unreadMessagesCount === 0}>
             <IconButton style={{padding: "5px", backgroundColor: primaryColor(300)}}
                         onClick={handelClick}>
-                <EmailOutlinedIcon style={{color: '#FFF', width: 18, height: 18}}/>
+                <EmailOutlinedIcon style={{color: '#FFF', width: 16, height: 16}}/>
             </IconButton>
         </Badge>
     );

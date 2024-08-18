@@ -3,7 +3,7 @@ import { useMemo } from "react";
 
 const useStyle = () => {
 
-  const clasess = useMemo(() => {
+  const classes = useMemo(() => {
     return {
       mainContainer:{
         display: "flex",
@@ -89,7 +89,7 @@ const useStyle = () => {
     };
   }, []);
   return {
-    clasess,
+    classes,
   };
 };
 export { useStyle };

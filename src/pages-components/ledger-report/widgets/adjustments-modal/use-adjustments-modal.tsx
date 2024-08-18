@@ -1,8 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-
 import { Checkbox } from "@mui/material";
-
 import { useCustomerDropDownList, useGomakeAxios, useSnackBar } from "@/hooks";
 import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
 import { EHttpMethod } from "@/services/api-service/enums";
@@ -13,16 +11,16 @@ export interface JustmentsModalProps {
   clientPaymentsList: any;
 }
 
-const useadJustmentsModal = ({ getClientPaymentItems, clientPaymentsList }: JustmentsModalProps) => {
+const useAdjustmentsModal = ({ getClientPaymentItems, clientPaymentsList }: JustmentsModalProps) => {
+  const { t } = useTranslation();
   const { customer, renderOptions, checkWhatRenderArray, handleCustomerChange } = useCustomerDropDownList()
   const { alertFaultUpdate, alertFaultDelete, alertFault, alertSuccess } = useSnackBar();
   const { callApi } = useGomakeAxios();
-  const { t } = useTranslation();
-
   const [openDeleteModal, setOpenDeleteModal] = useState<boolean>(false);
   const [openTransferModal, setOpenTransferModal] = useState<boolean>(false);
   const [selectedItems, setSelectedItems] = useState([]);
   const [inputErrors, setInputErrors] = useState([]);
+
   const onClickOpenDeleteModal = () => {
     if (selectedItems?.length > 0) {
       setOpenDeleteModal(true);
@@ -31,6 +29,7 @@ const useadJustmentsModal = ({ getClientPaymentItems, clientPaymentsList }: Just
       alertFault("reports.pleaseSelectOneItem");
     }
   };
+
   const onClickCloseDeleteModal = () => {
     setOpenDeleteModal(false);
   };
@@ -43,9 +42,11 @@ const useadJustmentsModal = ({ getClientPaymentItems, clientPaymentsList }: Just
       alertFault("reports.pleaseSelectOneItem");
     }
   };
+
   const onClickCloseTransferModal = () => {
     setOpenTransferModal(false);
   };
+
   const tableHeaders = [
     t("reports.price"),
     t("reports.fixedPrice"),
@@ -54,6 +55,7 @@ const useadJustmentsModal = ({ getClientPaymentItems, clientPaymentsList }: Just
     t("reports.documentNumber"),
     ""
   ];
+
   const internalReconciliationApi = useCallback(
     async () => {
       const res = await callApi(
@@ -83,11 +85,13 @@ const useadJustmentsModal = ({ getClientPaymentItems, clientPaymentsList }: Just
   const calculateTotalPrice = () => {
     return selectedItems.reduce((total, item) => total + item.price, 0);
   };
+
   useEffect(() => {
     if (clientPaymentsList.length > 0) {
       setInputErrors(Array(clientPaymentsList.length).fill(false))
     }
   }, [clientPaymentsList])
+
   const handlePriceChange = (index, newValue) => {
     const newList = [...clientPaymentsList];
     const currentItem = newList[index];
@@ -109,6 +113,7 @@ const useadJustmentsModal = ({ getClientPaymentItems, clientPaymentsList }: Just
     setInputErrors(newInputErrors);
     currentItem.price = newValue;
   };
+  
   const getTableDataRows = useCallback(() => {
     return clientPaymentsList?.map((data, index) => [
 
@@ -139,6 +144,7 @@ const useadJustmentsModal = ({ getClientPaymentItems, clientPaymentsList }: Just
 
     ]);
   }, [clientPaymentsList, inputErrors]);
+
   const onClickMatchItems = () => {
     if (selectedItems.length > 0 && calculateTotalPrice() === 0) {
       internalReconciliationApi()
@@ -147,6 +153,7 @@ const useadJustmentsModal = ({ getClientPaymentItems, clientPaymentsList }: Just
       alertFault("reports.matchErrorMsg");
     }
   }
+
   const btns = [
     {
       name: t("reports.transferBalance"),
@@ -161,6 +168,7 @@ const useadJustmentsModal = ({ getClientPaymentItems, clientPaymentsList }: Just
       onclick: onClickMatchItems
     }
   ]
+
   const cancelTransactionsApi = useCallback(
     async () => {
       const res = await callApi(
@@ -178,6 +186,7 @@ const useadJustmentsModal = ({ getClientPaymentItems, clientPaymentsList }: Just
     },
     [selectedItems]
   );
+
   const transferBalanceApi = useCallback(
     async () => {
       const res = await callApi(
@@ -197,6 +206,7 @@ const useadJustmentsModal = ({ getClientPaymentItems, clientPaymentsList }: Just
     },
     [selectedItems, customer]
   );
+
   return {
     getTableDataRows,
     calculateTotalPrice,
@@ -216,4 +226,4 @@ const useadJustmentsModal = ({ getClientPaymentItems, clientPaymentsList }: Just
   };
 };
 
-export { useadJustmentsModal };
+export { useAdjustmentsModal };

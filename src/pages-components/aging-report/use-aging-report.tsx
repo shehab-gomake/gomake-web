@@ -107,7 +107,7 @@ const useAgingReport = () => {
 
   const getAgingReportFilter = useCallback(
     async () => {
-      if (!format || !toDate) {
+      if (!fromDate || !toDate) {
         alertFault(("alerts.pleaseEnsureDatesSelected"))
         return;
       }
@@ -144,7 +144,7 @@ const useAgingReport = () => {
 
   const ExportAgingReportPDF = useCallback(
     async () => {
-      if (!format || !toDate) {
+      if (!fromDate || !toDate) {
         alertFault(("alerts.pleaseEnsureDatesSelected"))
         return;
       }
@@ -182,7 +182,7 @@ const useAgingReport = () => {
 
   const ExportAgingReportExcel = useCallback(
     async () => {
-      if (!format || !toDate) {
+      if (!fromDate || !toDate) {
         alertFault(("alerts.pleaseEnsureDatesSelected"))
         return;
       }

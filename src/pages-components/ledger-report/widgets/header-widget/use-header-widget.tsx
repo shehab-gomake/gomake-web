@@ -14,10 +14,10 @@ export interface AgingReportHeaderWidgetProps {
 
 }
 const useAgingReportHeader = () => {
-  const { clasess } = useStyle();
+  const { classes } = useStyle();
   const { t } = useTranslation()
   return {
-    clasess, t
+    classes, t
   };
 };
 
