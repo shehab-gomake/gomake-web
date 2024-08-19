@@ -8,16 +8,16 @@ const LedgerReportButtonWidget = ({
   onClickPrintCard,
   onClickShowCard,
 }: LedgerReportButtonWidgetProps) => {
-  const { clasess } = useStyle()
+  const { classes } = useStyle()
   const { tabs } = useLedgerReportHeader({
     onClickPrintCard,
     onClickShowCard,
   })
   return (
-    <div style={clasess.mainContainer}>
+    <div style={classes.mainContainer}>
       {tabs.map((tab, index) => {
         return (
-          <GomakePrimaryButton key={index} onClick={tab.onclick} style={clasess.btnContainer}>{tab.name}</GomakePrimaryButton>
+          <GomakePrimaryButton key={index} onClick={tab.onclick} style={classes.btnContainer}>{tab.name}</GomakePrimaryButton>
         )
       })}
     </div>

@@ -3,7 +3,7 @@ import { useMemo } from "react";
 
 const useStyle = () => {
 const {secondColor}=useGomakeTheme()
-  const clasess = useMemo(() => {
+  const classes = useMemo(() => {
     return {
       mainContainer:{
         display: 'flex',
@@ -20,7 +20,7 @@ const {secondColor}=useGomakeTheme()
     };
   }, []);
   return {
-    clasess,
+    classes,
   };
 };
 export { useStyle };

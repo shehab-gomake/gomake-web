@@ -70,8 +70,8 @@ const useTransactionJournalReport = ({ isPayment }: TransactionJournalReportWidg
     t("reports.TransNumber"),
     t("reports.AccountCode"),
     t("reports.accountName"),
-    t("reports.cardCode"),
-    t("reports.cardName"),
+    t("reports.cardcode"),
+    t("reports.cardname"),
     t("reports.credit"),
 
   ];
@@ -135,6 +135,7 @@ const useTransactionJournalReport = ({ isPayment }: TransactionJournalReportWidg
     [fromDate, toDate, documentType, isPayment]
   );
   return {
+    t,
     onSelectDeliveryTimeDates,
     handleDocumentTypeChange,
     onClickPrintCard,

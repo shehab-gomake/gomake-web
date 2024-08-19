@@ -1,8 +1,6 @@
-import { GomakePrimaryButton } from "@/components";
-
 import { LedgerReportButtonWidgetProps, useLedgerReportHeader } from "./use-button-widget";
 import { useStyle } from "./style";
-
+import { SecondaryButton } from "@/components/button/secondary-button";
 
 const LedgerReportButtonWidget = ({
   onClickCreateNewTransaction,
@@ -11,7 +9,7 @@ const LedgerReportButtonWidget = ({
   onClickSendingTicketByEmail,
   onClickAdjustments
 }: LedgerReportButtonWidgetProps) => {
-  const { clasess } = useStyle()
+  const { classes } = useStyle()
   const { tabs } = useLedgerReportHeader({
     onClickCreateNewTransaction,
     onClickPrintCard,
@@ -20,10 +18,17 @@ const LedgerReportButtonWidget = ({
     onClickAdjustments
   })
   return (
-    <div style={clasess.mainContainer}>
+    <div style={classes.mainContainer}>
       {tabs.map((tab, index) => {
         return (
-          <GomakePrimaryButton key={index} onClick={tab.onclick} style={clasess.btnContainer}>{tab.name}</GomakePrimaryButton>
+          <SecondaryButton
+            variant="contained"
+            key={index}
+            onClick={tab.onclick}
+            style={classes.btnContainer}
+          >
+            {tab.name}
+          </SecondaryButton>
         )
       })}
     </div>

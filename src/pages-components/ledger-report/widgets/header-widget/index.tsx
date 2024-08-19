@@ -17,33 +17,32 @@ const LedgerReportHeaderWidget = ({
   onChangeIsExtended
 }: AgingReportHeaderWidgetProps) => {
 
-  const { clasess, t } = useAgingReportHeader()
+  const { classes, t } = useAgingReportHeader()
 
   return (
-    <div style={clasess.mainContainer}>
-      <div style={clasess.date2FilterContainer}>
-        <h3 style={clasess.filterLabelStyle}>{t("sales.quote.customer")}</h3>
+    <div style={classes.mainContainer}>
+      <div style={classes.date2FilterContainer}>
+        <h3 style={classes.filterLabelStyle}>{t("sales.quote.customer")}</h3>
         <GoMakeAutoComplate
           key={customer?.id}
           options={renderOptions()}
           onChangeTextField={checkWhatRenderArray}
           getOptionLabel={(option: any) => `${option.name}`}
-          style={clasess.textInputStyle}
+          style={classes.textInputStyle}
           placeholder={t("sales.quote.chooseCustomer")}
           onChange={handleCustomerChange}
           value={customer}
         />
       </div>
-      <div style={clasess.date1FilterContainer}>
-        <h3 style={clasess.filterLabelStyle}>{t("boardMissions.dateRange")}</h3>
+      <div style={classes.date1FilterContainer}>
+        <h3 style={classes.filterLabelStyle}>{t("boardMissions.dateRange")}</h3>
         <div style={{ width: "100%" }}>
           <GoMakeDatepicker onChange={onSelectDeliveryTimeDates} placeholder={t("boardMissions.chooseDate")} reset={resetDatePicker} />
         </div>
       </div>
 
-      <div style={clasess.date1FilterContainer}>
-        <h3 style={clasess.filterLabelStyle}>{t("reports.extendedCard")}</h3>
-        <div style={clasess.checkboxStyle}>
+      <div style={classes.checkBoxContainer}>
+        <div style={classes.checkboxStyle}>
           <Checkbox
             icon={<CheckboxIcon />}
             checkedIcon={<CheckboxCheckedIcon />}
@@ -51,7 +50,7 @@ const LedgerReportHeaderWidget = ({
             checked={isExtended}
           />
         </div>
-
+        <h3 style={classes.filterLabelStyle}>{t("reports.extendedCard")}</h3>
       </div>
     </div>
   );

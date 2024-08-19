@@ -3,7 +3,7 @@ import { useMemo } from "react";
 
 const useStyle = () => {
 
-  const clasess = useMemo(() => {
+  const classes = useMemo(() => {
     return {
       mainContainer:{
         display: "flex",
@@ -20,6 +20,14 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "flex-start",
         gap: 10,
+        width: "18%",
+      },
+      checkBoxContainer: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "flex-start",
+        alignItems: "center",
+        alignSelf:"flex-end",
         width: "18%",
       },
       date2FilterContainer: {
@@ -74,7 +82,6 @@ const useStyle = () => {
         flexDirection: "row" as "row",
         justifyContent: "flex-start",
         alignItems: "center",
-        width: "100%",
        },
        labelSwichStyle:{
         ...FONT_FAMILY.Lexend(500,12)
@@ -82,7 +89,7 @@ const useStyle = () => {
     };
   }, []);
   return {
-    clasess,
+    classes,
   };
 };
 export { useStyle };

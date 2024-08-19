@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 const useStyle = () => {
   const { t } = useTranslation();
 
-  const clasess = useMemo(() => {
+  const classes = useMemo(() => {
     return {
       mainContainer: {
         display: "flex",
@@ -15,12 +15,12 @@ const useStyle = () => {
         alignItems: "flex-start",
         width: "100%",
         gap: 20,
-        padding:20,
+        padding:"0px 20px 20px 20px",
       },
     };
   }, [i18next.language, t]);
   return {
-    clasess,
+    classes,
   };
 };
 export { useStyle };

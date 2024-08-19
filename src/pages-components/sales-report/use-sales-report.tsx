@@ -149,6 +149,7 @@ const useSalesReport = () => {
 
 
   return {
+    t,
     onSelectDeliveryTimeDates,
     resetDatePicker,
     agent,

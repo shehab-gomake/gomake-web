@@ -13,25 +13,25 @@ const useLedgerReportHeader = ({ onClickCreateNewTransaction, onClickSendingTick
   const { t } = useTranslation()
   const tabs = [
     {
-      name: t("reports.createNewTransaction"),
-      onclick: onClickCreateNewTransaction
-    },
-    {
-      name: t("reports.sendingTicketByEmail"),
-      onclick: onClickSendingTicketByEmail
+      name: t("reports.showCard"),
+      onclick: onClickShowCard
     },
     {
       name: t("reports.printCard"),
       onclick: onClickPrintCard
     },
     {
-      name: t("reports.showCard"),
-      onclick: onClickShowCard
+      name: t("reports.sendingTicketByEmail"),
+      onclick: onClickSendingTicketByEmail
     },
     {
       name: "Adjustments",
       onclick: onClickAdjustments
-    }
+    },
+    {
+      name: t("reports.createNewTransaction"),
+      onclick: onClickCreateNewTransaction
+    },
   ]
 
   return {
