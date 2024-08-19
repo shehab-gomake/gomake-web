@@ -36,6 +36,9 @@ const StyledTreeSelect = styled(TreeSelect)(({ theme, dir, selectedOption }: any
     fontStyle: "normal",
     fontWeight: 500,
   },
+  "& .p-tree-container": {
+    maxWidth: "450px !important",
+  },
   "& .p-dropdown": {
     height: "40px",
     fontFamily: "Heebo",
@@ -58,9 +61,6 @@ const StyledTreeSelect = styled(TreeSelect)(({ theme, dir, selectedOption }: any
     fontWeight: 500,
     fontSize: "12px",
   },
-  "& .p-tree-container": {
-    maxWidth: "450px !important",
-  },
   // arrow icon
   "& .p-treeselect-trigger-icon": {
     display: "none",
@@ -71,6 +71,14 @@ const StyledTreeSelect = styled(TreeSelect)(({ theme, dir, selectedOption }: any
     color: "red !important", // Set the color of first-level nodes to red
     fontWeight: "bold", // Optionally, make it bold
   },
+
+
+
+  "& .p-treenode-selected > .p-treenode-content": {
+    backgroundColor: "#e0f7fa", // Background color for the selected node
+  },
+
+
 }));
 
 const ClearButton = styled(IconButton)(({ theme, dir }) => ({
@@ -98,12 +106,30 @@ const GoMakeTreeSelect = ({
 }) => {
   const router = useRouter();
   const isHome = router.pathname === "/home"; // Check if the current route is "/home"
-
   const navStatus = useRecoilValue(navStatusState);
+  const [selectedNodeKey, setSelectedNodeKey] = useState<any>(null);
+  const [expandedKeys, setExpandedKeys] = useState<{ [key: string]: boolean }>({});
+  const treeSelectRef = React.useRef(null);
+  const { t } = useTranslation();
+  const dir: 'rtl' | 'ltr' = t('direction');
+  const RTL = dir === 'rtl';
+
   const GlobalStyle = createGlobalStyle`
   .p-tree-container {
-    max-width:450px !important;
-  }
+    max-width:500px !important;
+  },
+  .p-treenode {
+  padding: ${RTL ? "5px 0px 0px 0px;" : "0px 0px 0px 5px"};
+  },
+  .p-tree .p-tree-container .p-treenode .p-treenode-content  {
+     display: 'flex';
+     justify-content: space-between;
+     flex-direction: row-reverse;
+  },
+  .p-tree .p-tree-container .p-treenode .p-treenode-content .p-tree-toggler {
+     transform: ${RTL ? "rotate(180deg)" : "none"};
+     max-width: 450px;
+   },
   ${isHome && `
     .p-treeselect-panel {
       position: absolute;
@@ -113,14 +139,8 @@ const GoMakeTreeSelect = ({
     transform-origin: center top;
     }
   `}
-  
 `;
-  const { t } = useTranslation();
-  const dir: 'rtl' | 'ltr' = t('direction');
-  const RTL = dir === 'rtl';
-  const [selectedNodeKey, setSelectedNodeKey] = useState<any>(null);
-  const [expandedKeys, setExpandedKeys] = useState<{ [key: string]: boolean }>({});
-  const treeSelectRef = React.useRef(null);
+
   const handleNodeSelect = (e) => {
     const node = e.node;
 
@@ -139,6 +159,7 @@ const GoMakeTreeSelect = ({
       }
     }
   };
+
   const handleClear = () => {
     setSelectedNodeKey(null);
     if (onChange) {
@@ -149,14 +170,6 @@ const GoMakeTreeSelect = ({
   return (
     <div className='editorDiv' style={{ position: 'relative', width: '100%' }}>
       <GlobalStyle />
-      <style jsx global>{`
-           .p-tree .p-tree-container .p-treenode .p-treenode-content .p-tree-toggler {
-            transform: ${RTL ? "rotate(180deg)" : "none"};
-            max-width: 450px,
-            width:450px
-          }
-            `}</style>
-
       <StyledTreeSelect
         ref={treeSelectRef}
         value={selectedNodeKey}
