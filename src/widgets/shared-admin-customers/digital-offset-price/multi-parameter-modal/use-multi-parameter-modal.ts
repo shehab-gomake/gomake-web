@@ -98,8 +98,7 @@ const useMultiParameterModal = ({ settingParameters, onClose,isParameterSettings
     
   };
   const closeModal = () => {
-    // let copy = lodashClonedeep(subProducts);
-    // setSubProductsCopy(copy)
+   
     onClose();
   }
   return {
