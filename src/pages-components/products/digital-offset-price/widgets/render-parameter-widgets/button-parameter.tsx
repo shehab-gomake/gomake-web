@@ -126,7 +126,6 @@ const ButtonParameterWidget = ({
           }
           return subProduct;
         });
-
         if (parameter.code == "DieCut") {
           const dieCutSizesParametersArray = [
             { parameterCode: "size", value: "" },
@@ -193,15 +192,15 @@ const ButtonParameterWidget = ({
         let isDefaultSelectedValue = sizeParameter?.valuesConfigs.find(
           (value) => value.isDefault
         );
-
         if (sizeParameter?.childsParameters && isDefaultSelectedValue) {
 
           let sizeParameterIndex = subProductsCopy.findIndex(
-            (subProduct) =>
+            (subProduct) => {
               subProduct.type === subSection.type &&
-              subProduct.parameters.some((param) => param.parameterCode === "size")
-          );
+                subProduct.parameters.some((param) => param.parameterCode === "size")
+            }
 
+          );
           if (sizeParameterIndex === -1) {
             // If size parameter doesn't exist, add it
             sizeParameterIndex = subProductsCopy.findIndex(
@@ -244,7 +243,7 @@ const ButtonParameterWidget = ({
               actionIndex: myparameter.actionIndex,
               parameterName: myparameter.name,
               parameterCode: myparameter.code,
-              isDisabled: true // Assuming initial state
+              isDisabled: false // Assuming initial state
             };
           });
 

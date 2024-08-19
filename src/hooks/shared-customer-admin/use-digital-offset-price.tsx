@@ -772,9 +772,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         });
                       }
                     }
-                    else if (value && parameter.code === "DieCut") {
+                    else if (value && parameter.code === "DieCut" && widgetType === EWidgetProductType.CREATE) {
                       let values = value?.additionalAttribute?.find((val) => val.valueId === "name")
-
                       subProduct.parameters.push({
                         parameterId: parameter?.id,
                         parameterName: parameter?.name,
@@ -2355,8 +2354,14 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 item?.actionIndex === myparameter?.actionIndex
               );
             });
+            if (data?.value === null && data?.values === undefined) {
+              subSectionParameter.childsParameters?.forEach((childParam) => {
+                temp = temp.filter(
+                  (item) => item.parameterId !== childParam.id
+                );
+              });
+            }
             if (data?.value?.values) {
-
               if (myindex !== -1) {
                 if (data?.value?.values[parameterId] !== undefined) {
                   temp[myindex] = {
@@ -2367,7 +2372,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   };
                 }
                 else {
-                  temp.splice(myindex, 1)
+                  temp.splice(myindex, 1);
                 }
 
               }
