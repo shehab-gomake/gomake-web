@@ -1,7 +1,6 @@
-import { GomakePrimaryButton } from "@/components";
-
 import { LedgerReportButtonWidgetProps, useLedgerReportHeader } from "./use-button-widget";
 import { useStyle } from "./style";
+import { SecondaryButton } from "@/components/button/secondary-button";
 
 
 const LedgerReportButtonWidget = ({
@@ -13,11 +12,19 @@ const LedgerReportButtonWidget = ({
     onClickPrintCard,
     onClickShowCard,
   })
+
   return (
     <div style={classes.mainContainer}>
       {tabs.map((tab, index) => {
         return (
-          <GomakePrimaryButton key={index} onClick={tab.onclick} style={classes.btnContainer}>{tab.name}</GomakePrimaryButton>
+          <SecondaryButton
+          variant="contained"
+          key={index}
+          onClick={tab.onclick}
+          style={classes.btnContainer}
+        >
+          {tab.name}
+        </SecondaryButton>
         )
       })}
     </div>

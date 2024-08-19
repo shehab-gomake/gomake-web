@@ -1,8 +1,5 @@
-
 import { Divider } from "@mui/joy";
-
 import { PrimaryTable } from "@/components/tables/primary-table";
-
 import { LedgerReportButtonWidget } from "./widgets/button-widget";
 import { useTransactionJournalReport } from "./use-transaction-journal-report";
 import { useStyle } from "./style";
@@ -29,6 +26,7 @@ const TransactionJournalReportWidget = ({ isPayment }: TransactionJournalReportW
     tableHeaders,
     dataTable
   } = useTransactionJournalReport({ isPayment })
+
   return (
     <div style={classes.mainContainer}>
       <HeaderTitle title={isPayment?  t("tabs.dailyPaymentsReport") : t("tabs.transactionJournalReport")} marginTop={"0px"} marginBottom={"0px"} />
@@ -44,7 +42,6 @@ const TransactionJournalReportWidget = ({ isPayment }: TransactionJournalReportW
       <LedgerReportButtonWidget
         onClickPrintCard={onClickPrintCard}
         onClickShowCard={onClickShowCard}
-
       />
       <div style={{ width: "100%", height: "100%" }}>
         {documentType?.id !== DocumentsTypeReportList.Payments && !isPayment ?
@@ -75,7 +72,6 @@ const TransactionJournalReportWidget = ({ isPayment }: TransactionJournalReportW
                   </div>
                 )
               })
-
             }
           </div>
         }

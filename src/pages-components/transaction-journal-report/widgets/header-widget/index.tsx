@@ -18,11 +18,11 @@ const TransactionJournalReportHeaderWidget = ({
     <div style={classes.mainContainer}>
       {
         !isPayment && <div style={classes.date2FilterContainer}>
-          <h3 style={classes.filterLabelStyle}>Documents Type</h3>
+          <h3 style={classes.filterLabelStyle}>{t("reports.documentsType")}</h3>
           <GoMakeAutoComplate
             options={documentsTypeList}
             style={classes.textInputStyle}
-            placeholder="choose Document Type"
+            placeholder={t("reports.documentsType")}
             onChange={handleDocumentTypeChange}
             value={documentType}
           />

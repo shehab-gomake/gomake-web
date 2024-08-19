@@ -25,6 +25,7 @@ const useCreateNewTransaction = ({ onCloseModal }) => {
   const [price, setPrice] = useState<number>(0)
   const [reference, setReference] = useState<string>("")
   const [selectDate, setSelectDate] = useState<string>(new Date().toISOString().split('T')[0]);
+  
   const handleERPAccountChange = (e: any, value: any) => {
     setErpAccount(value);
   };

@@ -1,23 +1,33 @@
-import { GomakePrimaryButton } from "@/components";
+import { useTranslation } from "react-i18next";
 import { useStyle } from "./style";
+import { SecondaryButton } from "@/components/button/secondary-button";
 
 
 export interface SalesReportButtonWidgetProps {
   onClickBtn1: () => void;
 }
 const SalesReportButtonWidget = ({ onClickBtn1 }: SalesReportButtonWidgetProps) => {
-  const { clasess } = useStyle()
+  const { classes } = useStyle();
+  const {t} = useTranslation();
+  
   const tabs = [
     {
-      name: "Show Report",
+      name: t("permissions.ShowReports"),
       onclick: onClickBtn1
     },
   ]
   return (
-    <div style={clasess.mainContainer}>
+    <div style={classes.mainContainer}>
       {tabs.map((tab, index) => {
         return (
-          <GomakePrimaryButton key={index} onClick={tab.onclick} style={clasess.btnContainer}>{tab.name}</GomakePrimaryButton>
+          <SecondaryButton
+          variant="contained"
+          key={index}
+          onClick={tab.onclick}
+          style={classes.btnContainer}
+        >
+          {tab.name}
+        </SecondaryButton>
         )
       })}
     </div>

@@ -1,19 +1,18 @@
 import { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
-
+import { format } from 'date-fns';
 import { useDocumentsType, useGomakeAxios, useSnackBar } from "@/hooks";
 import { EHttpMethod } from "@/services/api-service/enums";
 import { DocumentsTypeReportList } from "@/enums";
+
 interface TransactionJournalReportWidgetProps {
   isPayment: boolean;
 }
 const useTransactionJournalReport = ({ isPayment }: TransactionJournalReportWidgetProps) => {
-  const { alertFaultGetData, alertSuccessGetData } = useSnackBar();
+  const {alertFault, alertFaultGetData, alertSuccessGetData } = useSnackBar();
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation()
   const { documentsTypeList, documentType, handleDocumentTypeChange } = useDocumentsType()
-
-
   const [resetDatePicker, setResetDatePicker] = useState<boolean>(false);
   const [showTable, setShowTable] = useState<boolean>(false);
   const [fromDate, setFromDate] = useState<Date>(new Date());
@@ -45,6 +44,7 @@ const useTransactionJournalReport = ({ isPayment }: TransactionJournalReportWidg
         return "Unknown";
     }
   }
+
   const getTableDataRows = useCallback((dataTable) => {
     if (dataTable?.length) {
       return dataTable?.map((data) => [
@@ -75,6 +75,7 @@ const useTransactionJournalReport = ({ isPayment }: TransactionJournalReportWidg
     t("reports.credit"),
 
   ];
+
   const onSelectDeliveryTimeDates = (fromDate: Date, toDate: Date) => {
     setResetDatePicker(false);
     setFromDate(fromDate);
@@ -84,6 +85,7 @@ const useTransactionJournalReport = ({ isPayment }: TransactionJournalReportWidg
   const onClickPrintCard = () => {
     ExportLedgerReportPDF()
   }
+
   const onClickShowCard = () => {
     setShowTable(false);
     getTransactionJournalReportFilter()
@@ -91,13 +93,21 @@ const useTransactionJournalReport = ({ isPayment }: TransactionJournalReportWidg
 
   const ExportLedgerReportPDF = useCallback(
     async () => {
+      if (!fromDate || !toDate) {
+        alertFault(("alerts.pleaseEnsureDatesSelected"))
+        return;
+      }
+
+      const formattedStartDate = format(fromDate, 'yyyy-MM-dd');
+      const formattedEndDate = format(toDate, 'yyyy-MM-dd');
+
       const res = await callApi(
         EHttpMethod.POST,
         `/v1/erp-service/reports/export-ledger-report-pdf`,
         {
           // "clientId": customer?.id,
-          "startDate": fromDate,
-          "endDate": toDate,
+          "startDate": formattedStartDate,
+          "endDate": formattedEndDate,
         },
         true,
         null,
@@ -114,12 +124,20 @@ const useTransactionJournalReport = ({ isPayment }: TransactionJournalReportWidg
 
   const getTransactionJournalReportFilter = useCallback(
     async () => {
+      if (!fromDate || !toDate) {
+        alertFault(("alerts.pleaseEnsureDatesSelected"))
+        return;
+      }
+
+      const formattedStartDate = format(fromDate, 'yyyy-MM-dd');
+      const formattedEndDate = format(toDate, 'yyyy-MM-dd');
+
       const res = await callApi(
         EHttpMethod.POST,
         `/v1/erp-service/reports/get-transaction-journal-report`,
         {
-          startDate: fromDate,
-          endDate: toDate,
+             startDate: formattedStartDate,
+            endDate: formattedEndDate,
           documentsType: isPayment ? DocumentsTypeReportList.Payments : documentType?.id,
         }
       );
@@ -134,6 +152,7 @@ const useTransactionJournalReport = ({ isPayment }: TransactionJournalReportWidg
     },
     [fromDate, toDate, documentType, isPayment]
   );
+
   return {
     t,
     onSelectDeliveryTimeDates,
