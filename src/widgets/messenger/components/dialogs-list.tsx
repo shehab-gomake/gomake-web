@@ -10,9 +10,8 @@ import {
 } from "@mui/material";
 import {formatDistanceToNow} from "date-fns";
 import {FONT_FAMILY} from "@/utils/font-family";
-import {PlusIcon} from "@/icons";
 import {SearchInputComponent} from "@/components/form-inputs/search-input-component";
-import {useCallback, useState} from "react";
+import {useCallback, useEffect, useRef, useState} from "react";
 import {IChatDialog} from "@/widgets/messenger/interfaces/dialog";
 import {useTranslation} from "react-i18next";
 import {useGomakeTheme} from "@/hooks/use-gomake-thme";
@@ -25,13 +24,20 @@ export interface IProps {
     onClickAddDialog: () => void;
 }
 
-const DialogList = ({onSelectDialog, dialogs, selectedDialogId, unRead, onClickAddDialog}: IProps) => {
+const DialogList = ({onSelectDialog, dialogs, selectedDialogId, onClickAddDialog}: IProps) => {
     const [filter, setFilter] = useState<string>('');
     const {t} = useTranslation();
     const {primaryColor} = useGomakeTheme();
+    const ref = useRef(null);
     const getDialogs = useCallback(() => {
         return filter ? dialogs.filter(d => d.name?.includes(filter)) : dialogs
     }, [dialogs, filter]);
+
+    useEffect(() => {
+        if (ref.current) {
+            ref.current.scrollIntoView({ behavior: "smooth", block: "start", inline: "nearest" });
+        }
+    }, [selectedDialogId])
     return (
         <Stack style={{backgroundColor: '#FAFAFA'}} padding={'12px'} gap={'12px'} overflow={'hidden'}>
             <Stack padding={'12px'} direction={'row'} alignItems={'center'} justifyContent={'space-between'}>
@@ -67,8 +73,9 @@ const DialogList = ({onSelectDialog, dialogs, selectedDialogId, unRead, onClickA
                     padding: 0,
                 }}>
                     {
-                        getDialogs().map(dialog =>
+                        getDialogs()?.map(dialog =>
                             <ListItem alignItems="center"
+                                      ref={selectedDialogId === dialog?._id ? ref : undefined}
                                       onClick={() => onSelectDialog(dialog)}
                                       secondaryAction={<span style={{
                                           ...FONT_FAMILY.Inter(500, 14),

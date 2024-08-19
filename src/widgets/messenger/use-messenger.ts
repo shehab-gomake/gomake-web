@@ -11,19 +11,17 @@ import {
 } from "@/services/api-service/chat/quick-blox-chat-endpoints";
 import {QBChatNewMessage} from "quickblox";
 import {useRouter} from "next/router";
-import {messengerDialogsState} from "@/widgets/messenger/state";
-import {useRecoilState} from "recoil";
 import {useMessengerSignalr} from "@/hooks/signalr/use-messenger-signalr";
 
 const useMessenger = () => {
     const [selectedDialog, setSelectedDialog] = useState<IChatDialog | null>(null);
-    const [dialogs, setDialogs] = useRecoilState<IChatDialog[]>(messengerDialogsState);
+    const [dialogs, setDialogs] = useState<IChatDialog[]>([]);
     const [messages, setMessages] = useState<IChatMessage[]>([]);
     const [inputValue, setInputValue] = useState('');
     const [uploadingFiles, setUploadingFiles] = useState<boolean>(false);
     const [updatedApprovalRequestId, setUpdatedApprovalRequestId] = useState<{ approvalRequestId: string, newStatus: EFileStatus }>();
     const [usersMetaData, setUsersMetaDta] = useState([]);
-    const {updateState} = useMessengerSignalr();
+    const {updateState, setUpdateState} = useMessengerSignalr();
     const {alertFaultUpdate} = useSnackBar();
     const {query} = useRouter();
     const {dialogId} = query;
@@ -198,6 +196,7 @@ const useMessenger = () => {
     }
     const addNewDialog = (dialog: IChatDialog) => {
         setDialogs(prevState => ([...prevState, dialog]));
+        setSelectedDialog(dialog);
     }
     const handleKeyDown = async (event) => {
         if (event.key === 'Enter') {
@@ -271,8 +270,9 @@ const useMessenger = () => {
         }
     }, [dialogId, dialogs]);
     useEffect(() => {
-        if (messenger.isChatConnected) {
+        if (updateState && messenger.isChatConnected) {
             getDialogs().then();
+            setUpdateState(false);
         }
     }, [updateState, messenger])
 
