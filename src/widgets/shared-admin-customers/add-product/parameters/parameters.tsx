@@ -176,6 +176,7 @@ const ParameterWidget = () => {
         _renderParameterType={_renderParameterType}
         isParameterSettings={true}
         setSettingParameters={setSettingParameters}
+        getProductById={getProductById}
 
       />
     </>

@@ -12,13 +12,15 @@ const MultiParameterModal = ({
   settingParameters,
   _renderParameterType,
   isParameterSettings = false,
-  setSettingParameters
+  setSettingParameters,
+  getProductById
 }: any) => {
   const { clasess } = useStyle();
   const { parameterLists, onClickSaveParameter, t, closeModal, onClickSaveParameterForSettings } = useMultiParameterModal({
     settingParameters,
     onClose,
-    isParameterSettings
+    isParameterSettings,
+    getProductById
   });
   return (
     <>
