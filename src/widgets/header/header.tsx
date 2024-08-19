@@ -65,7 +65,7 @@ const HeaderWidget = () => {
         {/*<IconButton style={{ padding: "5px", backgroundColor: primaryColor(300) }} onClick={handleClickSupport}>*/}
         {/*  <EmailOutlinedIcon style={{color: '#FFF', width: 18, height: 18}}/>*/}
         {/*</IconButton>*/}
-        <MessengerNotifications/>
+        {/*<MessengerNotifications/>*/}
         <IconButton style={{ padding: "5px" }} data-tour={"start-tour-btn"} onClick={handleClickSupport}>
           <HelpIcon width={26} height={26} />
         </IconButton>
