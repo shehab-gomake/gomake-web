@@ -159,16 +159,6 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
       return await getAllBoardMissions(isClear);
     }
   };
-  function formatTextTo40CharsPerLine(text) {
-    const lineLength = 40;
-    let formattedText = '';
-
-    for (let i = 0; i < text.length; i += lineLength) {
-      formattedText += text.slice(i, i + lineLength) + '\n';
-    }
-
-    return formattedText;
-  }
 
   const getAllBoardMissions = async (isClear: boolean = false) => {
     if (connectionId) {
