@@ -4,9 +4,14 @@ import {IChatDialog} from "@/widgets/messenger/interfaces/dialog";
 import {IChatMessage} from "@/widgets/messenger/interfaces/chat-message";
 import {EFileStatus} from "@/widgets/messenger/enums";
 import {useGomakeAxios, useSnackBar} from "@/hooks";
-import {getUsersMetaDataApi, updateApprovalRequestApi} from "@/services/api-service/chat/quick-blox-chat-endpoints";
+import {
+    getUsersMetaDataApi,
+    sendMessengerNotificationApi,
+    updateApprovalRequestApi
+} from "@/services/api-service/chat/quick-blox-chat-endpoints";
 import {QBChatNewMessage} from "quickblox";
 import {useRouter} from "next/router";
+import {useMessengerSignalr} from "@/hooks/signalr/use-messenger-signalr";
 
 const useMessenger = () => {
     const [selectedDialog, setSelectedDialog] = useState<IChatDialog | null>(null);
@@ -16,6 +21,7 @@ const useMessenger = () => {
     const [uploadingFiles, setUploadingFiles] = useState<boolean>(false);
     const [updatedApprovalRequestId, setUpdatedApprovalRequestId] = useState<{ approvalRequestId: string, newStatus: EFileStatus }>();
     const [usersMetaData, setUsersMetaDta] = useState([]);
+    const {updateState, setUpdateState} = useMessengerSignalr();
     const {alertFaultUpdate} = useSnackBar();
     const {query} = useRouter();
     const {dialogId} = query;
@@ -49,6 +55,7 @@ const useMessenger = () => {
     const getDialogs = async () => {
         const dialogs = await messenger.dialogs.getDialogs();
         setDialogs(dialogs)
+
     }
 
     const onMessage = (userId, message) => {
@@ -75,6 +82,16 @@ const useMessenger = () => {
         });
     };
 
+    const sendMessage = async (message: QBChatNewMessage) => {
+        try {
+            await sendMessengerNotificationApi(callApi, () => {
+            }, selectedDialog.occupants_ids.map(a => a.toString()))
+            await messenger.messages.send(selectedDialog._id, message as QBChatNewMessage);
+        } catch (e) {
+
+        }
+
+    }
     const sendTextMessage = async (text: string) => {
         try {
             const message = {
@@ -88,7 +105,7 @@ const useMessenger = () => {
                 markable: 1,
             };
             setInputValue('');
-            await messenger.messages.send(selectedDialog._id, message as QBChatNewMessage);
+            await sendMessage(message as QBChatNewMessage)
         } catch (e) {
 
         }
@@ -129,6 +146,8 @@ const useMessenger = () => {
                 },
                 markable: 1
             };
+            await sendMessengerNotificationApi(callApi, () => {
+            }, selectedDialog.occupants_ids.map(a => a.toString()))
             await messenger.messages.send(selectedDialog._id, message as QBChatNewMessage);
         } catch (e) {
             alertFaultUpdate();
@@ -177,6 +196,7 @@ const useMessenger = () => {
     }
     const addNewDialog = (dialog: IChatDialog) => {
         setDialogs(prevState => ([...prevState, dialog]));
+        setSelectedDialog(dialog);
     }
     const handleKeyDown = async (event) => {
         if (event.key === 'Enter') {
@@ -202,6 +222,7 @@ const useMessenger = () => {
     useEffect(() => {
         if (messenger.isChatConnected) {
             getDialogs().then();
+            messenger.listeners.onDialogUpdate((a) => alert(a))
         }
     }, [messenger.isChatConnected])
 
@@ -247,7 +268,13 @@ const useMessenger = () => {
             const dialog = dialogs?.find(dialog => dialog._id === dialogId);
             setSelectedDialog(dialog);
         }
-    }, [dialogId, dialogs])
+    }, [dialogId, dialogs]);
+    useEffect(() => {
+        if (updateState && messenger.isChatConnected) {
+            getDialogs().then();
+            setUpdateState(false);
+        }
+    }, [updateState, messenger])
 
     return {
         selectedDialog,

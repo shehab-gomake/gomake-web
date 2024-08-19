@@ -11,6 +11,7 @@ import { GoMakeModal } from "@/components";
 import { useHtmlTour } from "@/layouts/customer-auth-layout/use-html-tour";
 import { useFilesUploaderSignalr } from "@/hooks/signalr/use-files-uploader-signalr";
 import { FilesUploaderWidget } from "@/widgets/file-uploader-widget/files-uploader-widget";
+import {useMessengerSignalr} from "@/hooks/signalr/use-messenger-signalr";
 
 const CustomerAuthLayout = ({
     children,
@@ -30,6 +31,7 @@ const CustomerAuthLayout = ({
     const isHover = useRecoilValue(hoverStatusState);
     const { htmlTour, openModal, onCloseModal } = useHtmlTour();
     const { } = useFilesUploaderSignalr();
+    const {} = useMessengerSignalr();
     return (
         disableHeaderSideMenu ?
             <>
