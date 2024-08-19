@@ -9,7 +9,7 @@ export interface AgingReportButtonWidgetProps {
   onClickBtn3: () => void;
 }
 const AgingReportButtonWidget = ({ onClickBtn1, onClickBtn2, onClickBtn3 }: AgingReportButtonWidgetProps) => {
-  const { clasess } = useStyle();
+  const { classes } = useStyle();
   const { t } = useTranslation()
 
   const tabs = [
@@ -27,10 +27,10 @@ const AgingReportButtonWidget = ({ onClickBtn1, onClickBtn2, onClickBtn3 }: Agin
     }
   ]
   return (
-    <div style={clasess.mainContainer}>
+    <div style={classes.mainContainer}>
       {tabs.map((tab, index) => {
         return (
-          <GomakePrimaryButton key={index} onClick={tab.onclick} style={clasess.btnContainer}>{tab.name}</GomakePrimaryButton>
+          <GomakePrimaryButton key={index} onClick={tab.onclick} style={classes.btnContainer}>{tab.name}</GomakePrimaryButton>
         )
       })}
     </div>

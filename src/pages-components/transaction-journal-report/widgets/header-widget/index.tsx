@@ -12,16 +12,16 @@ const TransactionJournalReportHeaderWidget = ({
   isPayment
 }: TransactionJournalReportHeaderWidgetProps) => {
 
-  const { clasess, t } = useAgingReportHeader()
+  const { classes, t } = useAgingReportHeader()
 
   return (
-    <div style={clasess.mainContainer}>
+    <div style={classes.mainContainer}>
       {
-        !isPayment && <div style={clasess.date2FilterContainer}>
-          <h3 style={clasess.filterLabelStyle}>Documents Type</h3>
+        !isPayment && <div style={classes.date2FilterContainer}>
+          <h3 style={classes.filterLabelStyle}>Documents Type</h3>
           <GoMakeAutoComplate
             options={documentsTypeList}
-            style={clasess.textInputStyle}
+            style={classes.textInputStyle}
             placeholder="choose Document Type"
             onChange={handleDocumentTypeChange}
             value={documentType}
@@ -29,8 +29,8 @@ const TransactionJournalReportHeaderWidget = ({
         </div>
       }
 
-      <div style={clasess.date1FilterContainer}>
-        <h3 style={clasess.filterLabelStyle}>{t("boardMissions.dateRange")}</h3>
+      <div style={classes.date1FilterContainer}>
+        <h3 style={classes.filterLabelStyle}>{t("boardMissions.dateRange")}</h3>
         <div style={{ width: "100%" }}>
           <GoMakeDatepicker onChange={onSelectDeliveryTimeDates} placeholder={t("boardMissions.chooseDate")} reset={resetDatePicker} />
         </div>

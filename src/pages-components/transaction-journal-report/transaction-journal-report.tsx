@@ -14,7 +14,7 @@ interface TransactionJournalReportWidgetProps {
 }
 
 const TransactionJournalReportWidget = ({ isPayment }: TransactionJournalReportWidgetProps) => {
-  const { clasess } = useStyle();
+  const { classes } = useStyle();
   const {
     t,
     onSelectDeliveryTimeDates,
@@ -30,7 +30,7 @@ const TransactionJournalReportWidget = ({ isPayment }: TransactionJournalReportW
     dataTable
   } = useTransactionJournalReport({ isPayment })
   return (
-    <div style={clasess.mainContainer}>
+    <div style={classes.mainContainer}>
       <HeaderTitle title={isPayment?  t("tabs.dailyPaymentsReport") : t("tabs.transactionJournalReport")} marginTop={"0px"} marginBottom={"0px"} />
       <TransactionJournalReportHeaderWidget
         onSelectDeliveryTimeDates={onSelectDeliveryTimeDates}
@@ -65,8 +65,8 @@ const TransactionJournalReportWidget = ({ isPayment }: TransactionJournalReportW
               showTable &&
               dataTable?.map((item) => {
                 return (
-                  <div style={clasess.tableTitleContainer}>
-                    <div style={clasess.titleStyle}>{item.accountName}-{item.accountCode}</div>
+                  <div style={classes.tableTitleContainer}>
+                    <div style={classes.titleStyle}>{item.accountName}-{item.accountCode}</div>
                     <PrimaryTable
                       rows={getTableDataRows(item?.data)}
                       headers={tableHeaders}

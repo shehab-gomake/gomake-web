@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 const useStyle = () => {
   const { t } = useTranslation();
 
-  const clasess = useMemo(() => {
+  const classes = useMemo(() => {
     return {
       mainContainer: {
         display: "flex",
@@ -20,7 +20,7 @@ const useStyle = () => {
     };
   }, [i18next.language, t]);
   return {
-    clasess,
+    classes,
   };
 };
 export { useStyle };

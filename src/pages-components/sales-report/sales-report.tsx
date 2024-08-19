@@ -7,7 +7,7 @@ import { useSalesReport } from "./use-sales-report";
 import { HeaderTitle } from "@/widgets/header-title/header-title";
 
 const SalesReportWidget = () => {
-  const { clasess } = useStyle();
+  const { classes } = useStyle();
   const {
     t,
     onSelectDeliveryTimeDates,
@@ -32,7 +32,7 @@ const SalesReportWidget = () => {
   } = useSalesReport();
 
   return (
-    <div style={clasess.mainContainer}>
+    <div style={classes.mainContainer}>
       <HeaderTitle title={t("tabs.salesReport")} marginTop={"0px"} marginBottom={"0px"} />
       <SalesReportHeaderWidget
         onSelectDeliveryTimeDates={onSelectDeliveryTimeDates}
