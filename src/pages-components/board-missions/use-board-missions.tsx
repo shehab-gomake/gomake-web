@@ -180,7 +180,9 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
             mission?.dueDate?.split("T")[0],
             mission?.clientName,
             mission?.productType ? `${mission?.number} / ${mission?.productType}` : mission?.number,
-            mission?.orderNumber,
+            <div style={{ cursor: "pointer" }} onClick={() => { navigate(`/orders?documentNumber=${mission?.orderNumber}`) }}>
+              {mission?.orderNumber}
+            </div>,
             mission?.outSourceType === null ? EWorkSource[0] : EWorkSource[mission?.outSourceType],
             mission?.quantity,
             ...(CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS) ? [mission?.cost + " " + getCurrencyUnitText(mission?.currency)] : []),
