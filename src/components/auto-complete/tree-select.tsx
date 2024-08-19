@@ -43,11 +43,6 @@ const StyledTreeSelect = styled(TreeSelect)(({ theme, dir, selectedOption }: any
     fontWeight: 500,
     width: "100%",
   },
-  "& .p-dropdown-empty-message": {
-    fontFamily: "Heebo",
-    fontStyle: "normal",
-    fontWeight: 500,
-  },
   "& .p-treeselect-label-container": {
     fontFamily: "Lexend",
     fontStyle: "normal",
@@ -72,10 +67,12 @@ const StyledTreeSelect = styled(TreeSelect)(({ theme, dir, selectedOption }: any
   },
   // clear button container
   position: "relative",
+  "& .p-treenode > .p-treenode-content > .p-treenode-label": {
+    color: "red !important", // Set the color of first-level nodes to red
+    fontWeight: "bold", // Optionally, make it bold
+  },
 }));
 
-
-// p-treeselect-panel p-component p-ripple-disabled p-connected-overlay-enter-done
 const ClearButton = styled(IconButton)(({ theme, dir }) => ({
   position: "absolute",
   [dir === "rtl" ? "left" : "right"]: "8px",
@@ -177,7 +174,10 @@ const GoMakeTreeSelect = ({
       />
       {selectedNodeKey && (
         <ClearButton dir={dir} onClick={handleClear}>
-          <ClearIcon />
+          <ClearIcon sx={{
+            width: "20px",
+            height: "20px",
+          }} />
         </ClearButton>
       )}
     </div>

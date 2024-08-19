@@ -282,7 +282,7 @@ const useQuoteWidget = ({ documentType = 0 }: any) => {
         const transformProducts = (products) => {
           return {
             key: 'products',
-            label: t('tabs.products'),
+            label: t('Select Product'),
             children: products.map(product => ({
               key: product.id, // Using product id as the key
               label: product.name, // Using product name as the label
@@ -293,7 +293,7 @@ const useQuoteWidget = ({ documentType = 0 }: any) => {
         const transformMaterials = (materials) => {
           return {
             key: 'materials',
-            label: t('tabs.materials'),
+            label: t('Select Material'),
             children: materials.map(material => ({
               key: material.materialTypeName, // Using materialTypeName as the key
               label: material.materialTypeName, // Using materialTypeName as the label

@@ -441,35 +441,28 @@ df-messenger {
   display: flex;
   align-items: center;
   height: 100%;
-  /* Ensure it takes up the full height of the container */
-  color: #B1B1B1;
+  color: #867f7f;
   font-family: Heebo;
-  /* Apply desired font family */
   font-style: normal;
-  /* Apply desired font style */
-  font-weight: 500;
-  /* Apply desired font weight */
   text-align: center;
-  /* Center text within the message */
   padding: 4px 10px;
-
+  font-weight: 300;
+  text-align: center;
+  font-family: Roboto, Arial, sans-serif;
 }
 
 .p-treenode.p-tree-empty-message {
   display: flex;
   align-items: center;
   height: 100%;
-  /* Ensure it takes up the full height of the container */
-  color: #B1B1B1;
+  color: #867f7f;
   font-family: Heebo;
-  /* Apply desired font family */
   font-style: normal;
-  /* Apply desired font style */
-  font-weight: 500;
-  /* Apply desired font weight */
   text-align: center;
-  /* Center text within the message */
   padding: 4px 10px;
+  font-weight: 300;
+  text-align: center;
+  font-family: Roboto, Arial, sans-serif;
 }
 
 .p-treeselect-panel .p-treeselect-header .p-treeselect-close {
