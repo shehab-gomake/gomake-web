@@ -8,7 +8,7 @@ import { PrimaryTable } from "@/components/tables/primary-table";
 import { HeaderTitle } from "@/widgets/header-title/header-title";
 
 const AgingReportWidget = () => {
-  const { clasess } = useStyle();
+  const { classes } = useStyle();
   const {
     t,
     onSelectDeliveryTimeDates,
@@ -35,7 +35,7 @@ const AgingReportWidget = () => {
     transformedHeaders
   } = useAgingReport()
   return (
-    <div style={clasess.mainContainer}>
+    <div style={classes.mainContainer}>
       <HeaderTitle title={t("tabs.agingReport")} marginTop={"0px"} marginBottom={"0px"} />
       <AgingReportHeaderWidget
         onSelectDeliveryTimeDates={onSelectDeliveryTimeDates}

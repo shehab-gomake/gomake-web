@@ -1,6 +1,5 @@
 
-import { GoMakeAutoComplate, GoMakeModal, GomakePrimaryButton, GomakeTextInput } from "@/components";
-
+import { GoMakeAutoComplate, GoMakeModal, GomakeTextInput } from "@/components";
 import { useCreateNewTransaction } from "./use-create-transaction";
 import { useStyle } from "./style";
 import { DateFormatter } from "@/utils/adapter";
@@ -34,7 +33,7 @@ const CreateNewTransactionModal = ({ openModal, onCloseModal }) => {
     <>
       <GoMakeModal
         openModal={openModal}
-        modalTitle="Create New Transaction"
+        modalTitle={t("reports.newTransaction")}
         onClose={onCloseAndRemoveState}
         insideStyle={classes.insideStyle}
       >
@@ -54,37 +53,37 @@ const CreateNewTransactionModal = ({ openModal, onCloseModal }) => {
               />
             </div>
             <div style={classes.date2FilterContainer}>
-              <h3 style={classes.filterLabelStyle}>Account Code</h3>
+              <h3 style={classes.filterLabelStyle}>{t("reports.accountCode")}</h3>
               <GoMakeAutoComplate
                 key={selectErpAccount?.code}
                 options={erpAccountsList}
                 getOptionLabel={(option: any) => `${option.name}`}
                 style={classes.textInputStyle}
-                placeholder="Select Account Code"
+                placeholder={t("reports.selectAccountCode")}
                 onChange={handleERPAccountChange}
                 value={selectErpAccount}
               />
             </div>
             <div style={classes.date2FilterContainer}>
-              <h3 style={classes.filterLabelStyle}>Type</h3>
+              <h3 style={classes.filterLabelStyle}>{t("reports.Type")}</h3>
               <GoMakeAutoComplate
                 key={selectAccountType?.id}
                 options={accountTypeList}
                 getOptionLabel={(option: any) => `${option.name}`}
                 style={classes.textInputStyle}
-                placeholder="Select Type"
+                placeholder={t("reports.selectType")}
                 onChange={handleAccountTypeChange}
                 value={selectAccountType}
               />
             </div>
             <div style={classes.date2FilterContainer}>
               <h3 style={classes.filterLabelStyle}>{t("reports.price")}</h3>
-              <GomakeTextInput style={classes.textInputStyle} placeholder="Enter Price" type="number" onChange={onChangePrice} />
+              <GomakeTextInput style={classes.textInputStyle} placeholder={t("reports.enterPrice")} type="number" onChange={onChangePrice} />
 
             </div>
             <div style={classes.date2FilterContainer}>
-              <h3 style={classes.filterLabelStyle}>Reference</h3>
-              <GomakeTextInput style={classes.textInputStyle} placeholder="Enter Reference" onChange={onChangeReference} />
+              <h3 style={classes.filterLabelStyle}>{t("reports.reference")}</h3>
+              <GomakeTextInput style={classes.textInputStyle} placeholder={t("reports.enterReference")} onChange={onChangeReference} />
             </div>
             <div style={classes.date2FilterContainer}>
               <h3 style={classes.filterLabelStyle}>{t("customers.modal.referenceDate")}</h3>

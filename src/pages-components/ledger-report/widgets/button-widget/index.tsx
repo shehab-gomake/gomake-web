@@ -1,6 +1,7 @@
 import { LedgerReportButtonWidgetProps, useLedgerReportHeader } from "./use-button-widget";
 import { useStyle } from "./style";
 import { SecondaryButton } from "@/components/button/secondary-button";
+import { PrimaryButton } from "@/components/button/primary-button";
 
 const LedgerReportButtonWidget = ({
   onClickCreateNewTransaction,
@@ -29,6 +30,7 @@ const LedgerReportButtonWidget = ({
           >
             {tab.name}
           </SecondaryButton>
+          // <PrimaryButton variant={index === 4 ? "outlined" :"contained"} key={index} onClick={tab.onclick} style={classes.btnContainer}>{tab.name}</PrimaryButton>
         )
       })}
     </div>

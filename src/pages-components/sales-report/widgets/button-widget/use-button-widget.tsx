@@ -4,11 +4,11 @@ import { useStyle } from "./style";
 
 
 const useSalesReportHeader = () => {
-  const { clasess } = useStyle();
+  const { classes } = useStyle();
   const { t } = useTranslation()
 
   return {
-    clasess, t
+    classes, t
   };
 };
 

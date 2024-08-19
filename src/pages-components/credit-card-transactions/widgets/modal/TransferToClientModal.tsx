@@ -48,4 +48,5 @@ const TransferToClientModal = ({ onClickClosModal, onClickConfirm }: ITransferTo
     </Stack>
   )
 };
+
 export { TransferToClientModal };

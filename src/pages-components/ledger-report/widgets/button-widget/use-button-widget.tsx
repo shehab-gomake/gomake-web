@@ -25,7 +25,7 @@ const useLedgerReportHeader = ({ onClickCreateNewTransaction, onClickSendingTick
       onclick: onClickSendingTicketByEmail
     },
     {
-      name: "Adjustments",
+      name: t("reports.adjustments"),
       onclick: onClickAdjustments
     },
     {

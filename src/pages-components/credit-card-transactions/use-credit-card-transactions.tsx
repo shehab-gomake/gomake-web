@@ -5,6 +5,7 @@ import { DEFAULT_VALUES } from "@/pages/customers/enums";
 import { getCreditCardTransactionsApi, changeTransactionClientApi, makeRefundApi } from "@/services/api-service/credit-card-transactions/credit-card-transaction-api";
 import { useTranslation } from "react-i18next";
 import { MoreMenuWidget } from "./widgets/more-circle";
+import { format } from 'date-fns';
 
 const useCreditCardTransactions = () => {
   const { t } = useTranslation();
@@ -20,8 +21,8 @@ const useCreditCardTransactions = () => {
   const [selectedTransaction, setSelectedTransaction] = useState<any>();
   const [pagesCount, setPagesCount] = useState(0);
   const [pageSize, setPageSize] = useState(DEFAULT_VALUES.PageSize);
-  const [fromDate, setFromDate] = useState<Date>();
-  const [toDate, setToDate] = useState<Date>();
+  const [fromDate, setFromDate] = useState<Date>(new Date());
+  const [toDate, setToDate] = useState<Date>(new Date());
   const { GetDateFormat } = useDateFormat();
   const [transactionAmount, setTransactionAmount] = useState<number | "">(); 
   const[receiptNumber,setReceiptNumber]=useState<string>();
@@ -64,6 +65,9 @@ const useCreditCardTransactions = () => {
 
 
   const getAllCreditCardTransactions = async (isClear: boolean = false) => {
+    const formattedStartDate = format(fromDate, 'yyyy-MM-dd');
+    const formattedEndDate = format(toDate, 'yyyy-MM-dd');
+
     const callBack = (res) => {
       if (res?.success) {
         setAllPureTransaction(res.data?.data); 
@@ -100,8 +104,8 @@ const useCreditCardTransactions = () => {
           clientId: customer?.id,
           receiptNumber: receiptNumber,
           sum: transactionAmount && transactionAmount,
-          startDate: fromDate,
-          endDate: toDate,
+          startDate: formattedStartDate,
+          endDate: formattedEndDate,
           pageNumber: page,
           pageSize: pageSize,
         });

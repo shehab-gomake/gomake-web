@@ -44,11 +44,13 @@ const useStyle = () => {
                 width: "25%",
             },
             clearBtnStyle: {
-                height: 40,
-                backgroundColor: "#FFF",
-                border: `1px solid ${secondColor(500)}`,
-                color: secondColor(500),
-                width: "50%",
+                // height: 40,
+                // backgroundColor: "#FFF",
+                // border: `1px solid ${secondColor(500)}`,
+                // color: secondColor(500),
+                // width: "50%",
+                width: "fit-content",
+
             },
             date2FilterContainer: {
                 display: "flex",
@@ -67,11 +69,10 @@ const useStyle = () => {
             },
             date3FilterContainer: {
                 display: "flex",
-                flexDirection: "column" as "column",
+                flexDirection: "row" as "row",
                 justifyContent: "flex-start",
                 alignItems: "flex-start",
-                gap: 29,
-                width: "13%",
+                gap: 10,
             },
             searchFilterContainer: {
                 display: "flex",
@@ -139,8 +140,8 @@ const useStyle = () => {
                 ...FONT_FAMILY.Lexend(500, 12)
             },
             searchBtnStyle: {
-                height: 40,
-                backgroundColor: secondColor(500),
+                width: "fit-content",
+
             },
         };
     }, [i18next.language, t]);

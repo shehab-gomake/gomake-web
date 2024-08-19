@@ -1,6 +1,6 @@
-import { GomakePrimaryButton } from "@/components";
 import { useStyle } from "./style";
 import { useTranslation } from "react-i18next";
+import { SecondaryButton } from "@/components/button/secondary-button";
 
 
 export interface AgingReportButtonWidgetProps {
@@ -30,7 +30,7 @@ const AgingReportButtonWidget = ({ onClickBtn1, onClickBtn2, onClickBtn3 }: Agin
     <div style={classes.mainContainer}>
       {tabs.map((tab, index) => {
         return (
-          <GomakePrimaryButton key={index} onClick={tab.onclick} style={classes.btnContainer}>{tab.name}</GomakePrimaryButton>
+          <SecondaryButton variant={"contained"} key={index} onClick={tab.onclick} style={classes.btnContainer}>{tab.name}</SecondaryButton>
         )
       })}
     </div>

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-
+import { format } from 'date-fns';
 import { useAgentsList, useCustomerDropDownList, useDocumentsType, useGomakeAxios, useSnackBar } from "@/hooks";
 import { EHttpMethod } from "@/services/api-service/enums";
 import { useTranslation } from "react-i18next";
@@ -8,7 +8,7 @@ const useSalesReport = () => {
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation()
 
-  const { alertFaultGetData, alertSuccessGetData } = useSnackBar();
+  const { alertFault, alertFaultGetData, alertSuccessGetData } = useSnackBar();
   const { customer, renderOptions, checkWhatRenderArray, handleCustomerChange } = useCustomerDropDownList()
   const { agent, agentsCategories, handleAgentChange } = useAgentsList()
   const { documentsTypeList, documentType, handleDocumentTypeChange } = useDocumentsType()
@@ -16,8 +16,8 @@ const useSalesReport = () => {
   const [displayByGroups, setDisplayByGroups] = useState<boolean>(false);
   const [showTable, setShowTable] = useState<boolean>(false);
   const [tableData, setTableData] = useState<any>([])
-  const [fromDate, setFromDate] = useState<Date>();
-  const [toDate, setToDate] = useState<Date>();
+  const [fromDate, setFromDate] = useState<Date>(new Date());
+  const [toDate, setToDate] = useState<Date>(new Date());
   const [dateList, setDateList] = useState<string[]>([]);
 
   function getMonthsArray(date: Date): string[] {
@@ -42,6 +42,7 @@ const useSalesReport = () => {
 
     return result.reverse();
   }
+
   useEffect(() => {
     if (toDate) {
       let getMonthes = getMonthsArray(toDate)
@@ -49,6 +50,7 @@ const useSalesReport = () => {
       setDateList(getMonthes)
     }
   }, [toDate])
+
   const onSelectDeliveryTimeDates = (fromDate: Date, toDate: Date) => {
     setResetDatePicker(false);
     setFromDate(fromDate);
@@ -68,6 +70,7 @@ const useSalesReport = () => {
     t("reports.totalPrice"),
 
   ];
+
   function sumAllItems(salesReports) {
     return salesReports?.reduce((total, report) => {
       for (const key in report) {
@@ -118,16 +121,25 @@ const useSalesReport = () => {
 
   const onClickBtn1 = () => {
     setShowTable(false);
-    getAgingReportFilter()
+    getAgingReportFilter();
   }
+
   const getAgingReportFilter = useCallback(
     async () => {
+      if (!fromDate || !toDate) {
+        alertFault(("alerts.pleaseEnsureDatesSelected"))
+        return;
+      }
+
+      const formattedStartDate = format(fromDate, 'yyyy-MM-dd');
+      const formattedEndDate = format(toDate, 'yyyy-MM-dd');
+
       const res = await callApi(
         EHttpMethod.POST,
         `/v1/erp-service/reports/get-sales-report`,
         {
-          startDate: fromDate,
-          endDate: toDate,
+          startDate: formattedStartDate,
+          endDate: formattedEndDate,
           clientId: customer?.id,
           agentId: agent?.id,
           documentsType: documentType,
