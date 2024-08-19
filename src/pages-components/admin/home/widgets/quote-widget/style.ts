@@ -86,7 +86,7 @@ const useStyle = () => {
         width: 120,
         height: 120,
         color: errorColor(300)
-      }
+      },
     };
   }, [theme]);
   return {

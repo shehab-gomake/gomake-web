@@ -282,7 +282,8 @@ const useQuoteWidget = ({ documentType = 0 }: any) => {
         const transformProducts = (products) => {
           return {
             key: 'products',
-            label: t('Select Product'),
+            label: t('tabs.products'),
+            level: 0,
             children: products.map(product => ({
               key: product.id, // Using product id as the key
               label: product.name, // Using product name as the label
@@ -290,10 +291,12 @@ const useQuoteWidget = ({ documentType = 0 }: any) => {
             }))
           };
         };
+  
         const transformMaterials = (materials) => {
           return {
             key: 'materials',
-            label: t('Select Material'),
+            label: t('tabs.materials'),
+            level: 0,
             children: materials.map(material => ({
               key: material.materialTypeName, // Using materialTypeName as the key
               label: material.materialTypeName, // Using materialTypeName as the label
@@ -309,24 +312,23 @@ const useQuoteWidget = ({ documentType = 0 }: any) => {
             }))
           };
         };
-
-
+  
         const transformedProducts = transformProducts(res?.data?.products);
         const transformedMaterials = transformMaterials((res?.data?.materials));
-
+  
         // Combine the transformed data
         const combinedFinalData = [transformedProducts, transformedMaterials];
         setCombinedData(combinedFinalData);
       }
     };
-
+  
     if (selectedClient?.id && selectedClientType?.id)
       await getAllProductAndMaterialsApi(callApi, callBack, {
         clientId: selectedClient?.id,
         clientTypeId: selectedClientType?.id,
       });
   }, [selectedClient, selectedClientType]);
-
+  
 
   const handleProductChange = (e) => {
     const selectedValue = e?.value;

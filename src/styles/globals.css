@@ -379,11 +379,9 @@ df-messenger {
   z-index: 999999;
 }
 
+
 /* Base styles for tree nodes */
-.p-treenode-content {
-  display: flex;
-  align-items: center;
-}
+
 
 /* Hide icons */
 .p-treenode-content .p-treenode-icon {
@@ -414,7 +412,7 @@ df-messenger {
   display: flex;
   align-items: center;
   height: 100%;
-  color: #867f7f;
+  color: #867f7f !important;
   font-family: Heebo;
   font-style: normal;
   text-align: center;
@@ -428,7 +426,7 @@ df-messenger {
   display: flex;
   align-items: center;
   height: 100%;
-  color: #867f7f;
+  color: #867f7f !important;
   font-family: Heebo;
   font-style: normal;
   text-align: center;
@@ -438,6 +436,8 @@ df-messenger {
   font-family: Roboto, Arial, sans-serif;
 }
 
+
+  
 .p-treeselect-panel .p-treeselect-header .p-treeselect-close {
   display: none;
   /* Hide the close icon */

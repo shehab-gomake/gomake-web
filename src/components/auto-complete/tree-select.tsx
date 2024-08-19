@@ -9,6 +9,12 @@ import { createGlobalStyle } from "styled-components";
 import { useRecoilValue } from "recoil";
 import { navStatusState } from "@/store/nav-status";
 import { useRouter } from "next/router";
+import 'primereact/resources/themes/saga-blue/theme.css';
+import 'primereact/resources/primereact.min.css';
+import 'primeicons/primeicons.css';
+import { ProductIcon } from "./icons";
+import { useStyle } from "./style";
+import CheckIcon from '@mui/icons-material/Check'; 
 
 const StyledTreeSelect = styled(TreeSelect)(({ theme, dir, selectedOption }: any) => ({
   boxSizing: "border-box",
@@ -67,17 +73,6 @@ const StyledTreeSelect = styled(TreeSelect)(({ theme, dir, selectedOption }: any
   },
   // clear button container
   position: "relative",
-  "& .p-treenode > .p-treenode-content > .p-treenode-label": {
-    color: "red !important", // Set the color of first-level nodes to red
-    fontWeight: "bold", // Optionally, make it bold
-  },
-
-
-
-  "& .p-treenode-selected > .p-treenode-content": {
-    backgroundColor: "#e0f7fa", // Background color for the selected node
-  },
-
 
 }));
 
@@ -113,15 +108,16 @@ const GoMakeTreeSelect = ({
   const { t } = useTranslation();
   const dir: 'rtl' | 'ltr' = t('direction');
   const RTL = dir === 'rtl';
+  const { classes } = useStyle();
 
   const GlobalStyle = createGlobalStyle`
   .p-tree-container {
     max-width:500px !important;
   },
   .p-treenode {
-  padding: ${RTL ? "5px 0px 0px 0px;" : "0px 0px 0px 5px"};
+  padding: ${RTL ? "0px 5px 0px 0px" : "0px 0px 0px 5px"};
   },
-  .p-tree .p-tree-container .p-treenode .p-treenode-content  {
+  .p-tree .p-tree-container > .p-treenode > .p-treenode-content {
      display: 'flex';
      justify-content: space-between;
      flex-direction: row-reverse;
@@ -133,10 +129,10 @@ const GoMakeTreeSelect = ({
   ${isHome && `
     .p-treeselect-panel {
       position: absolute;
-    top:305px!important;
-     left: ${!navStatus?.isClosed ? "290px" : "168.991px"}!important;
-    min-width: 362.287px;
-    transform-origin: center top;
+      top:305px!important;
+      left: ${!navStatus?.isClosed ? "290px" : "168.991px"}!important;
+      min-width: 362.287px;
+      transform-origin: center top;
     }
   `}
 `;
@@ -167,6 +163,22 @@ const GoMakeTreeSelect = ({
     }
   };
 
+  const nodeTemplate = (node) => {
+    const isFirstLevel = node.level === 0;
+    const isSelected = selectedNodeKey === node.key;
+    return (
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' , padding: isSelected && (RTL ?  "0px 0px 0px 5px" :"0px 5px 0px 0px")}}>
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          {isFirstLevel && <ProductIcon />}
+          <span style={isFirstLevel ? classes.firstLevelLabel : classes.otherLevelsLabel}>
+            {node.label}
+          </span>
+        </div>
+        {isSelected && <CheckIcon style={{ width: "20px", height: "20px" , color:"#2e3092" }} />}
+      </div>
+    );
+  };
+
   return (
     <div className='editorDiv' style={{ position: 'relative', width: '100%' }}>
       <GlobalStyle />
@@ -178,6 +190,7 @@ const GoMakeTreeSelect = ({
         style={style}
         expandedKeys={expandedKeys}
         onToggle={(e) => setExpandedKeys(e.value)}
+        nodeTemplate={nodeTemplate} // Use the custom node template
         // @ts-ignore
         selectedOption={!!selectedNodeKey}
         onNodeSelect={handleNodeSelect}
