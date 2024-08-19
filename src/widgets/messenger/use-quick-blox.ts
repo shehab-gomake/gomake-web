@@ -35,7 +35,7 @@ const useQuickBlox = () => {
     //Dialogs
     const getChatDialogs = (): Promise<IChatDialog[]> => {
         return new Promise((resolve, reject) => {
-            QB.chat.dialog.list({}, (err, res) => {
+            QB?.chat.dialog.list({}, (err, res) => {
                 if (err) {
                     alertFaultGetData();
                     reject([]);

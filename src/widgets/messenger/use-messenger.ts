@@ -11,15 +11,19 @@ import {
 } from "@/services/api-service/chat/quick-blox-chat-endpoints";
 import {QBChatNewMessage} from "quickblox";
 import {useRouter} from "next/router";
+import {messengerDialogsState} from "@/widgets/messenger/state";
+import {useRecoilState} from "recoil";
+import {useMessengerSignalr} from "@/hooks/signalr/use-messenger-signalr";
 
 const useMessenger = () => {
     const [selectedDialog, setSelectedDialog] = useState<IChatDialog | null>(null);
-    const [dialogs, setDialogs] = useState<IChatDialog[]>([]);
+    const [dialogs, setDialogs] = useRecoilState<IChatDialog[]>(messengerDialogsState);
     const [messages, setMessages] = useState<IChatMessage[]>([]);
     const [inputValue, setInputValue] = useState('');
     const [uploadingFiles, setUploadingFiles] = useState<boolean>(false);
     const [updatedApprovalRequestId, setUpdatedApprovalRequestId] = useState<{ approvalRequestId: string, newStatus: EFileStatus }>();
     const [usersMetaData, setUsersMetaDta] = useState([]);
+    const {updateState} = useMessengerSignalr();
     const {alertFaultUpdate} = useSnackBar();
     const {query} = useRouter();
     const {dialogId} = query;
@@ -53,6 +57,7 @@ const useMessenger = () => {
     const getDialogs = async () => {
         const dialogs = await messenger.dialogs.getDialogs();
         setDialogs(dialogs)
+
     }
 
     const onMessage = (userId, message) => {
@@ -80,8 +85,13 @@ const useMessenger = () => {
     };
 
     const sendMessage = async (message: QBChatNewMessage) => {
-        await sendMessengerNotificationApi(callApi, () => {}, selectedDialog.occupants_ids.map(a => a.toString()))
-        // const newMessage = await messenger.messages.send(selectedDialog._id, message as QBChatNewMessage);
+        try {
+            await sendMessengerNotificationApi(callApi, () => {
+            }, selectedDialog.occupants_ids.map(a => a.toString()))
+            await messenger.messages.send(selectedDialog._id, message as QBChatNewMessage);
+        } catch (e) {
+
+        }
 
     }
     const sendTextMessage = async (text: string) => {
@@ -138,7 +148,8 @@ const useMessenger = () => {
                 },
                 markable: 1
             };
-            await sendMessengerNotificationApi(callApi, () => {}, selectedDialog.occupants_ids.map(a => a.toString()))
+            await sendMessengerNotificationApi(callApi, () => {
+            }, selectedDialog.occupants_ids.map(a => a.toString()))
             await messenger.messages.send(selectedDialog._id, message as QBChatNewMessage);
         } catch (e) {
             alertFaultUpdate();
@@ -258,7 +269,12 @@ const useMessenger = () => {
             const dialog = dialogs?.find(dialog => dialog._id === dialogId);
             setSelectedDialog(dialog);
         }
-    }, [dialogId, dialogs])
+    }, [dialogId, dialogs]);
+    useEffect(() => {
+        if (messenger.isChatConnected) {
+            getDialogs().then();
+        }
+    }, [updateState, messenger])
 
     return {
         selectedDialog,
