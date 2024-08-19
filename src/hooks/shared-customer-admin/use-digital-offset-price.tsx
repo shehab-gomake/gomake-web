@@ -232,7 +232,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     }
 
     const result = res?.data?.data?.data;
-    setCalculationExceptionsLogs(result.exceptions);
+    setCalculationExceptionsLogs(result?.productItemValue?.exceptions);
     setCurrentProductItemValueDraftId(result.productItemValueDraftId);
     setCalculationProgress({
       totalWorkFlowsCount: 0,
@@ -332,11 +332,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   useEffect(() => {
     if (calculationExceptionsLogs) {
       setCalculationExceptionsLogs(calculationExceptionsLogs);
-      /*setCalculationProgress({
-        totalWorkFlowsCount: 0,
-        currentWorkFlowsCount: 0,
-      });*/
-      //setLoading(false)
     }
 
   }, [calculationExceptionsLogs]);
