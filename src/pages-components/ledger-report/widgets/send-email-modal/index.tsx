@@ -1,14 +1,12 @@
 import { useTranslation } from "react-i18next";
-
 import { Divider } from "@mui/material";
-
-import { GoMakeAutoComplate, GoMakeModal, GomakePrimaryButton, GomakeTextInput } from "@/components";
-
+import { GoMakeAutoComplate, GoMakeModal, GomakeTextInput } from "@/components";
 import { useStyle } from "./style";
+import { SecondaryButton } from "@/components/button/secondary-button";
 
 
 const SendEmailLedgerReportModal = ({ openModal, onCloseModal, clientContactsValue, setSelectedContactById, selectedContactById, onChangeUpdateClientContact, SendCustomerLedgerToMailApi }) => {
-  const { clasess } = useStyle();
+  const { classes } = useStyle();
   const { t } = useTranslation();
   return (
     <>
@@ -16,17 +14,17 @@ const SendEmailLedgerReportModal = ({ openModal, onCloseModal, clientContactsVal
         openModal={openModal}
         modalTitle={t("reports.chooseEmailToSendCard")}
         onClose={onCloseModal}
-        insideStyle={clasess.insideStyle}
+        insideStyle={classes.insideStyle}
       >
-        <div style={clasess.mainContainer}>
-          <Divider style={clasess.dividerContainer} />
-          <div style={clasess.inputsContainer}>
-            <div style={clasess.itemInputContainer}>
-              <h3>Content</h3>
+        <div style={classes.mainContainer}>
+          <Divider style={classes.dividerContainer} />
+          <div style={classes.inputsContainer}>
+            <div style={classes.itemInputContainer}>
+              <h3>{t("reports.contact")}</h3>
               <div style={{ width: "100%" }}>
                 <GoMakeAutoComplate
                   options={clientContactsValue}
-                  style={clasess.autoComplateStyle}
+                  style={classes.autoComplateStyle}
                   placeholder={t("sales.quote.contactID")}
                   getOptionLabel={(item) => item?.name}
                   onChange={(e: any, item: any) => {
@@ -35,12 +33,12 @@ const SendEmailLedgerReportModal = ({ openModal, onCloseModal, clientContactsVal
                 />
               </div>
             </div>
-            <div style={clasess.itemInputContainer}>
-              <h3>Mail</h3>
+            <div style={classes.itemInputContainer}>
+              <h3>{t("sales.quote.email")}</h3>
               <div style={{ width: "100%" }}>
                 <GomakeTextInput
                   placeholder={t("sales.quote.email")}
-                  style={clasess.textInputStyle}
+                  style={classes.textInputStyle}
                   value={selectedContactById?.mail}
                   onChange={(e: any) => {
                     onChangeUpdateClientContact(
@@ -52,9 +50,7 @@ const SendEmailLedgerReportModal = ({ openModal, onCloseModal, clientContactsVal
               </div>
             </div>
           </div>
-          <GomakePrimaryButton style={clasess.sendBtnContainer} onClick={SendCustomerLedgerToMailApi} >
-            Send
-          </GomakePrimaryButton>
+          <SecondaryButton variant="contained" onClick={SendCustomerLedgerToMailApi}>{t("login.send")}</SecondaryButton>
         </div>
       </GoMakeModal>
     </>

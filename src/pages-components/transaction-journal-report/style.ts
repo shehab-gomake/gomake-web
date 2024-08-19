@@ -4,7 +4,7 @@ import { useMemo } from "react";
 
 const useStyle = () => {
   const {primaryColor}=useGomakeTheme()
-  const clasess = useMemo(() => {
+  const classes = useMemo(() => {
     return {
       mainContainer: {
         display: "flex",
@@ -14,7 +14,7 @@ const useStyle = () => {
         width: "100%",
         height: "100%",
         gap: 20,
-        padding:20,
+        padding:"0px 20px 20px 20px",
         marginBottom:20
       },
       tableTitleContainer:{
@@ -36,7 +36,7 @@ const useStyle = () => {
     };
   }, []);
   return {
-    clasess,
+    classes,
   };
 };
 export { useStyle };

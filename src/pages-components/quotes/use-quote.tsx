@@ -266,7 +266,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         const mapData = data?.map((quote: any) => {
           if (docType === DOCUMENT_TYPE.purchaseOrder) {
             return [
-              GetDateFormat(quote?.creationDate),
+              quote?.creationDate?.split(" ")[0],
               quote?.number,
               quote?.orderNumber,
               quote?.supplierName,
@@ -286,7 +286,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
           } else if (docType === DOCUMENT_TYPE.purchaseInvoice || docType === DOCUMENT_TYPE.purchaseInvoiceRefund) {
             const purchaseOrderNumbers = quote?.orderNumbers ? quote?.orderNumbers.join(', ') : '';
             return [
-              GetDateFormat(quote?.createdDate),
+              // GetDateFormat(quote?.createdDate),
+              quote?.createdDate?.split("T")[0],
               quote?.number,
               quote?.invoiceNumber,
               purchaseOrderNumbers,
@@ -305,9 +306,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             ];
           } else if (docType === DOCUMENT_TYPE.quote) {
             return [
-              GetDateFormat(quote?.createdDate),
-              <div style={{ cursor: "pointer" }}
-                onClick={() => onClickOpenCustomerModal(quote?.customerId)}>{quote?.customerName}</div>,
+             // GetDateFormat(quote?.createdDate),
+              quote?.createdDate?.split(" ")[0],
+              <div style={{ cursor: "pointer" }} onClick={() => onClickOpenCustomerModal(quote?.customerId)}>{quote?.customerName}</div>,
               quote?.agentName,
               quote?.number,
               quote?.worksNames,
@@ -332,9 +333,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               </div>
               ) : quote?.jobs;
             return [
-              GetDateFormat(quote?.createdDate),
-              <div style={{ cursor: "pointer" }}
-                onClick={() => onClickOpenCustomerModal(quote?.customerId)}>{quote?.customerName}</div>,
+              quote?.createdDate?.split(" ")[0],
+              <div style={{ cursor: "pointer" }} onClick={() => onClickOpenCustomerModal(quote?.customerId)}>{quote?.customerName}</div>,
               quote?.agentName,
               quote?.number,
               quote?.sourceDocumentNumber?.map((item, index) => {
@@ -349,7 +349,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               quote?.purchaseNumber,
               quote?.productionStatus === true ? t('boardMissions.done') : t('boardMissions.inProduction'),
               jobsElement,
-              CheckPermission(Permissions.SHOW_COSTS_IN_ORDERS) && quote?.cost,
+              ...(CheckPermission(Permissions.SHOW_COSTS_IN_ORDERS) ? [quote?.cost] : []),
               quote?.worksNames,
               quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
               quote?.notes,
@@ -370,7 +370,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             ];
           } else {
             return [
-              GetDateFormat(quote?.createdDate),
+              // GetDateFormat(quote?.createdDate),
+              quote?.createdDate?.split(" ")[0],
               quote?.customerName,
               quote?.agentName,
               quote?.number,
@@ -405,7 +406,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
           }
         });
         const mapReceiptData = data?.map((quote: any) => [
-          GetDateFormat(quote?.creationDate),
+          // GetDateFormat(quote?.creationDate),
+          quote?.creationDate?.split(" ")[0],
           quote?.customerName,
           quote?.agentName,
           quote?.number,
@@ -501,7 +503,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         const mapData = data?.map((quote: any) => {
           if (docType === DOCUMENT_TYPE.purchaseOrder) {
             return [
-              GetDateFormat(quote?.creationDate),
+              // GetDateFormat(quote?.creationDate),
+              quote?.creationDate?.split(" ")[0],
               quote?.number,
               quote?.orderNumber,
               quote?.supplierName,
@@ -521,7 +524,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
           } else if (docType === DOCUMENT_TYPE.purchaseInvoice || docType === DOCUMENT_TYPE.purchaseInvoiceRefund) {
             const purchaseOrderNumbers = quote?.orderNumbers ? quote?.orderNumbers.join(', ') : '';
             return [
-              GetDateFormat(quote?.createdDate),
+              // GetDateFormat(quote?.createdDate),
+              quote?.createdDate?.split("T")[0],
               quote?.number,
               quote?.invoiceNumber,
               quote?.purchaseOrderNumbers,
@@ -540,9 +544,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             ];
           } else if (docType === DOCUMENT_TYPE.quote) {
             return [
-              GetDateFormat(quote?.createdDate),
-              <div style={{ cursor: "pointer" }}
-                onClick={() => onClickOpenCustomerModal(quote?.customerId)}>{quote?.customerName}</div>,
+              // GetDateFormat(quote?.createdDate),
+              quote?.createdDate?.split(" ")[0],
+              <div style={{ cursor: "pointer" }} onClick={() => onClickOpenCustomerModal(quote?.customerId)}>{quote?.customerName}</div>,
               quote?.agentName,
               quote?.number,
               quote?.worksNames,
@@ -585,7 +589,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               quote?.purchaseNumber,
               quote?.productionStatus === true ? t('boardMissions.done') : t('boardMissions.inProduction'),
               jobsElement,
-              CheckPermission(Permissions.SHOW_COSTS_IN_ORDERS) && quote?.cost,
+              ...(CheckPermission(Permissions.SHOW_COSTS_IN_ORDERS) ? [quote?.cost] : []),
               quote?.worksNames,
               quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
               quote?.notes,
@@ -606,7 +610,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             ]
           } else {
             return [
-              GetDateFormat(quote?.createdDate),
+              // GetDateFormat(quote?.createdDate),
+              quote?.createdDate?.split(" ")[0],
               quote?.customerName,
               quote?.agentName,
               quote?.number,
@@ -641,7 +646,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
           }
         });
         const mapReceiptData = data?.map((quote: any) => [
-          GetDateFormat(quote?.creationDate),
+          // GetDateFormat(quote?.creationDate),
+          quote?.creationDate?.split(" ")[0],
           quote?.customerName,
           quote?.agentName,
           quote?.number,
@@ -713,7 +719,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     t("sales.quote.creationDate"),
     t("sales.quote.purchaseOrderNumber"),
     t("sales.quote.orderNumber"),
-    // t("sales.quote.sourceDocument"),
     t("sales.quote.supplierName"),
     t("sales.quote.client"),
     t("sales.quote.itemsNumber"),
@@ -726,7 +731,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     t("sales.quote.purchaseInvoiceNumber"),
     t("sales.quote.invoiceNumber"),
     t("sales.quote.purchaseOrderNumber"),
-    // t("sales.quote.sourceDocument"),
     t("sales.quote.supplierName"),
     t("sales.quote.itemsNumber"),
     t("sales.quote.totalPrice"),
@@ -737,7 +741,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     t("sales.quote.createdDate"),
     t("sales.quote.client"),
     t("sales.quote.agent"),
-    t("sales.quote.quoteNumber"),
+    t("documentingDesign.TableSetting.number"),
     t("sales.quote.worksName"),
     t("sales.quote.totalPrice"),
     t("sales.quote.notes"),
@@ -751,25 +755,28 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       switch (docType) {
         case DOCUMENT_TYPE.order:
           return t("sales.quote.orderNumber");
-        case DOCUMENT_TYPE.deliveryNote:
-          return t("sales.quote.deliveryNoteNumber");
-        case DOCUMENT_TYPE.deliveryNoteRefund:
-          return t("sales.quote.deliveryNoteNumber");
-        case DOCUMENT_TYPE.invoice:
-          return t("sales.quote.invoiceNumber");
-        case DOCUMENT_TYPE.invoiceRefund:
-          return t("sales.quote.invoiceNumber");
-        case DOCUMENT_TYPE.receipt:
-          return t("sales.quote.receiptNumber");
+        // case DOCUMENT_TYPE.deliveryNote:
+        //   return t("documentingDesign.TableSetting.number");
+        // case DOCUMENT_TYPE.deliveryNoteRefund:
+        //   return t("sales.quote.deliveryNoteNumber");
+        // case DOCUMENT_TYPE.invoice:
+        //   return t("sales.quote.invoiceNumber");
+        // case DOCUMENT_TYPE.invoiceRefund:
+        //   return t("sales.quote.invoiceNumber");
+        // case DOCUMENT_TYPE.receipt:
+        //   return t("sales.quote.receiptNumber");
+        default: return t("documentingDesign.TableSetting.number");
       }
     })(),
     docType === DOCUMENT_TYPE.order ? t("sales.quote.quoteNumber") : docType === DOCUMENT_TYPE.receipt ? null : t("sales.quote.sourceDocument"),
     docType === DOCUMENT_TYPE.order && t("sales.quote.purchaseNumber"),
     docType === DOCUMENT_TYPE.order && t("sales.quote.productionStatus"),
     docType === DOCUMENT_TYPE.order && t("sales.quote.jobs"),
-    docType === DOCUMENT_TYPE.order && <PermissionCheck userPermission={Permissions.SHOW_COSTS_IN_ORDERS}>
-      {t("sales.quote.cost")}
-    </PermissionCheck>,
+    docType === DOCUMENT_TYPE.order && CheckPermission(Permissions.SHOW_COSTS_IN_ORDERS) && (
+      <PermissionCheck userPermission={Permissions.SHOW_COSTS_IN_ORDERS}>
+        {t("sales.quote.cost")}
+      </PermissionCheck>
+    ),
     docType === DOCUMENT_TYPE.receipt ? t("sales.quote.paymentMethod") : t("sales.quote.worksName"),
     t("sales.quote.totalPrice"),
     t("sales.quote.notes"),
@@ -997,7 +1004,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
           document?.number,
           document?.clientType,
           document?.worksNames,
-          GetDateFormat(document?.createdDate),
+          document?.createdDate?.split("T")[0],
+          // GetDateFormat(document?.createdDate),
           document?.totalPrice + " " + getCurrencyUnitText(document?.currency),
           <div style={{ display: "flex", justifyContent: "center" }}>
             <h2

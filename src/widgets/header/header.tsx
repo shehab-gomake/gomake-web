@@ -62,11 +62,11 @@ const HeaderWidget = () => {
       {/* <SearchInputComponent onChange={() => null} searchInputStyle={classes.searchInputContainer} /> */}
       <div style={{ width: "100%" }} />
       <div style={classes.rightSideContainer}>
-        {/*<IconButton style={{ padding: "5px", backgroundColor: primaryColor(300) }} onClick={handleClickSupport}>*/}
+        {/*<IconButton style={{ padding: "2px", backgroundColor: primaryColor(300) }} onClick={handleClickSupport}>*/}
         {/*  <EmailOutlinedIcon style={{color: '#FFF', width: 18, height: 18}}/>*/}
         {/*</IconButton>*/}
         <MessengerNotifications/>
-        <IconButton style={{ padding: "5px" }} data-tour={"start-tour-btn"} onClick={handleClickSupport}>
+        <IconButton style={{ padding: "2px" }} data-tour={"start-tour-btn"} onClick={handleClickSupport}>
           <HelpIcon width={26} height={26} />
         </IconButton>
         {QuoteIfExist == true && window.location.pathname != "/quote" && (
@@ -81,7 +81,7 @@ const HeaderWidget = () => {
           <Notifications />
         </IconButton> */}
         <div style={classes.profileContainer}>
-          <IconButton style={{ padding: "5px" }} onClick={handleClick}>
+          <IconButton style={{ padding: "2px" }} onClick={handleClick}>
             {userAvatar()}
           </IconButton>
           {/* <div style={classes.userNameStyle}>{user?.displayName}</div> */}

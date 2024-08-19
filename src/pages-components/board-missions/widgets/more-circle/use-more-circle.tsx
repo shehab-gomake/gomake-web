@@ -4,7 +4,6 @@ import { useTranslation } from "react-i18next";
 import { PDFIcon } from "./icons/pdf-icon";
 import TaskAltOutlinedIcon from '@mui/icons-material/TaskAltOutlined';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
-import LockOpenOutlinedIcon from '@mui/icons-material/LockOpenOutlined';
 import { useStyle } from "./style";
 import { PackageIcon } from "@/icons/package-icon";
 import { GetPrintingTicketPDFApi } from "@/services/api-service/generic-doc/documents-api";
@@ -15,6 +14,7 @@ import { useRecoilState } from "recoil";
 import { fileUploaderConnectionIdState, openFileUploaderList, pinFileUploaderState } from "@/store/file-uploader-state";
 import { MarkAsUnReadyIcon } from "./icons/mark-as-un-ready";
 import { printHouseProfile } from "@/store/print-house-profile";
+import { EditIcon } from "@/icons";
 const useMoreCircle = ({
   mission,
   onClickDuplicate,
@@ -24,6 +24,7 @@ const useMoreCircle = ({
   onClickWorkMissionPdf,
   onClickPrintPackagingSlip,
   onOpenModal,
+  handleClickEdit
 }: any) => {
   const { t } = useTranslation();
   const { classes } = useStyle();
@@ -44,7 +45,6 @@ const useMoreCircle = ({
     });
     anchor.click();
   };
-
   const GetPrintingTicketPDF = async (mission) => {
     const callBack = (res) => {
       if (res?.success) {
@@ -114,6 +114,12 @@ const useMoreCircle = ({
       name: "home.duplicate",
       icon: <DuplicateMenuIcon />,
       onclick: () => onClickDuplicate(mission),
+    },
+    {
+      condition: true,
+      name: "materials.buttons.edit",
+      icon: <EditIcon />,
+      onclick: () => handleClickEdit(mission),
     },
     {
       condition: mission?.status === PStatus.IN_PROCESS,

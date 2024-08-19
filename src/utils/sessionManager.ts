@@ -10,7 +10,7 @@ export const addRequestToSession = (request: any) => {
   if (sessionData.length > 10) {
     sessionData.shift(); // Remove the oldest request
   }
-  setItem("sessionData", JSON.stringify(sessionData));
+  //setItem("sessionData", JSON.stringify(sessionData));
 };
 
 export const clearSessionData = () => {

@@ -56,6 +56,9 @@ const userMultiParameterModalValues = (settingParameters,isParameterSettings) =>
                 colorParamValue.valueIds.push(value.valueId);
                 loadParamValue.valueIds.push(loadValue);
                 layersParamValue.valueIds.push(layerValue);
+                colorParamValue.values.push(value.value);
+                loadParamValue.values.push(loadValue);
+                layersParamValue.values.push(layerValue);
 
             }
              

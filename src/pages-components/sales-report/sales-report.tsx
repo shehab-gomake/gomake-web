@@ -1,14 +1,15 @@
 import { Divider } from "@mui/joy";
-
 import { useStyle } from "./style";
 import { PrimaryTable } from "@/components/tables/primary-table";
 import { SalesReportHeaderWidget } from "./widgets/header-widget";
 import { SalesReportButtonWidget } from "./widgets/button-widget";
 import { useSalesReport } from "./use-sales-report";
+import { HeaderTitle } from "@/widgets/header-title/header-title";
 
 const SalesReportWidget = () => {
-  const { clasess } = useStyle();
+  const { classes } = useStyle();
   const {
+    t,
     onSelectDeliveryTimeDates,
     resetDatePicker,
     agent,
@@ -28,9 +29,11 @@ const SalesReportWidget = () => {
     displayByGroups,
     tableHeaders,
     getTotalTableDataRows
-  } = useSalesReport()
+  } = useSalesReport();
+
   return (
-    <div style={clasess.mainContainer}>
+    <div style={classes.mainContainer}>
+      <HeaderTitle title={t("tabs.salesReport")} marginTop={"0px"} marginBottom={"0px"} />
       <SalesReportHeaderWidget
         onSelectDeliveryTimeDates={onSelectDeliveryTimeDates}
         resetDatePicker={resetDatePicker}
@@ -61,8 +64,6 @@ const SalesReportWidget = () => {
           isLastItemTotal={true}
         />
       }
-
-
     </div>
   );
 };

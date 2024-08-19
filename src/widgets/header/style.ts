@@ -189,7 +189,7 @@ const useStyle = () => {
         borderColor: "#DDDEE1",
       },
       iconBtnContainer:{
-        padding:"5px"
+        padding:"2px"
       }
     };
   }, [i18next.language, t]);

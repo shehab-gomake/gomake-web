@@ -5,10 +5,12 @@ import { AgingReportButtonWidget } from "./widgets/button-widget";
 import { useAgingReport } from "./use-aging-report";
 import { useStyle } from "./style";
 import { PrimaryTable } from "@/components/tables/primary-table";
+import { HeaderTitle } from "@/widgets/header-title/header-title";
 
 const AgingReportWidget = () => {
-  const { clasess } = useStyle();
+  const { classes } = useStyle();
   const {
+    t,
     onSelectDeliveryTimeDates,
     resetDatePicker,
     handleClickSelectDate,
@@ -33,7 +35,8 @@ const AgingReportWidget = () => {
     transformedHeaders
   } = useAgingReport()
   return (
-    <div style={clasess.mainContainer}>
+    <div style={classes.mainContainer}>
+      <HeaderTitle title={t("tabs.agingReport")} marginTop={"0px"} marginBottom={"0px"} />
       <AgingReportHeaderWidget
         onSelectDeliveryTimeDates={onSelectDeliveryTimeDates}
         resetDatePicker={resetDatePicker}
@@ -51,7 +54,6 @@ const AgingReportWidget = () => {
         detailedReport={detailedReport}
         onChangeDetailedReport={onChangeDetailedReport}
         onChangeByReferenceDate={onChangeByReferenceDate}
-
       />
       <Divider />
       <AgingReportButtonWidget
