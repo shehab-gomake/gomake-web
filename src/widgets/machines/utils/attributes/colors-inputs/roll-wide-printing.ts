@@ -45,6 +45,64 @@ const rollWidePrinting = (state: Record<string, any>) => {
                 },
             ]
         },
+        {
+            name: 'machineAttributes.colorLoadByWideFormatCategories',
+            parameterKey: 'colorLoadByWideFormatCategories',
+            value: state.attributes?.colorLoadByWideFormatCategories || [],
+            machineInputType: 'multiArrayInput',
+            isValid: true,
+            inputs: [
+                {
+                    name: "categories",
+                    label: "machineAttributes.categories",
+                    type: "select",
+                    placeholder: "machineAttributes.categories",
+                    required: true,
+                    parameterKey: "categories",
+                    options: [],
+                    optionsUrl: '/v1/materials/get-material-categories-list?materialKey=wideFormatMaterial',
+                },
+                {
+                    name: "load",
+                    label: "machineAttributes.load",
+                    type: "text",
+                    placeholder: "machineAttributes.load",
+                    required: true,
+                    parameterKey: "load",
+                    unit: EMeasurementUnits.PERCENTAGE,
+                    options: []
+                },
+            ]
+        },
+        {
+            name: 'machineAttributes.colorLoadByFlatbedsCategories',
+            parameterKey: 'colorLoadByFlatbedsCategories',
+            value: state.attributes?.colorLoadByFlatbedsCategories || [],
+            machineInputType: 'multiArrayInput',
+            isValid: true,
+            inputs: [
+                {
+                    name: "categories",
+                    label: "machineAttributes.categories",
+                    type: "select",
+                    placeholder: "machineAttributes.categories",
+                    required: true,
+                    parameterKey: "categories",
+                    options: [],
+                    optionsUrl: '/v1/materials/get-material-categories-list?materialKey=flatbeds',
+                },
+                {
+                    name: "load",
+                    label: "machineAttributes.load",
+                    type: "text",
+                    placeholder: "machineAttributes.load",
+                    required: true,
+                    parameterKey: "load",
+                    unit: EMeasurementUnits.PERCENTAGE,
+                    options: []
+                },
+            ]
+        },
     ]
 };
 
