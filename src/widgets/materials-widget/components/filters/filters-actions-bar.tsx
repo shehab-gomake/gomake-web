@@ -19,6 +19,7 @@ import { Stack } from "@mui/material";
 import { productsForDropDownList } from "@/store";
 interface FiltersActionsBarProps {
   isAdmin: boolean;
+  subCategory?: string;
 }
 const FiltersActionsBar = (props: FiltersActionsBarProps) => {
   const { t } = useTranslation();
@@ -46,7 +47,7 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
     label: string;
     isDefault: boolean;
   } | null>({ value: "", label: "", isDefault: false });
-
+  console.log("supplierName", supplierName)
   useEffect(() => {
     const index = materialSuppliers.map((s) => s.value).indexOf(supplierId);
     setSupplierName(index !== -1 ? materialSuppliers[index] : null);
@@ -164,6 +165,7 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
       <Stack direction={"row"} gap={"5px"} alignItems={"center"}>
         {props.isAdmin === false ? (
           <GoMakeAutoComplate
+            key={`supplier_${props?.subCategory + supplierName}`}
             style={{ width: "200px" }}
             options={materialSuppliers.filter((item, index, self) =>
               index === self.findIndex((t) => (
