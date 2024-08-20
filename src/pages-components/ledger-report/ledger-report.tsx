@@ -72,7 +72,8 @@ const LedgerReportWidget = () => {
           rows={getTableDataRows()}
           headers={tableHeaders}
           maxHeight={650}
-        />
+          stickyHeader={true}  
+                />
       }
       <SendEmailLedgerReportModal
         openModal={isopenEmailModal}

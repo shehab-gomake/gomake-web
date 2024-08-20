@@ -62,6 +62,7 @@ const SalesReportWidget = () => {
           headers={tableHeaders}
           maxHeight={650}
           isLastItemTotal={true}
+          stickyHeader={true}
         />
       }
     </div>

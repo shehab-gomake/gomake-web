@@ -20,4 +20,4 @@ const SettingsDocumentingWidget = () => {
     );
 };
 
-export { SettingsDocumentingWidget };
+export { SettingsDocumentingWidget }; 

@@ -67,6 +67,7 @@ const AgingReportWidget = () => {
           rows={getTableDataRows()}
           headers={transformedHeaders}
           maxHeight={650}
+          stickyHeader={true}
         />
       }
 

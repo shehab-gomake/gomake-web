@@ -481,9 +481,26 @@ df-messenger {
   z-index: 1400 !important
 }
 
-.custom-scrollbar {
+.custom-scrollbar::-webkit-scrollbar {
+  width: 11px !important;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #f1f1f1 !important;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #CCCDCF !important;
+  border-radius: 10px !important;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #b0b0b0 !important;
+}
+
+/* .custom-scrollbar {
   overflow-y: auto !important;
   overflow-x: hidden !important;
-  scrollbar-width: thin;
+  scrollbar-width: 10px;
   scrollbar-color: rgba(0, 0, 0, 0.5) #f1f1f1;
-}
+} */

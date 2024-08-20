@@ -80,6 +80,7 @@ const CustomerServicePageWidget = ({ isAdmin }: { isAdmin: boolean }) => {
             columnWidths={columnWidths}
             rows={filteredIssues}
             headers={tableHeaders}
+            maxHeight={700}
           />
         </Stack>
         <CreateIssueModal
