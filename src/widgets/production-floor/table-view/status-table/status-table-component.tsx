@@ -9,6 +9,9 @@ import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import {useDrop} from "react-dnd";
 import {TableRowComponent} from "@/widgets/production-floor/table-view/status-table/table-row/table-row-component";
 import {useProductionFloorData} from "@/widgets/production-floor/use-production-floor-data";
+import {useRecoilState} from "recoil";
+import {productionFloorTextSearchState} from "@/widgets/production-floor/state/text-search";
+import {useCallback} from "react";
 
 interface IProps {
     status: IProductionStatus;
@@ -18,7 +21,7 @@ interface IProps {
 
 const StatusTableComponent = ({status, boards}: IProps) => {
     const {isOpen, onClickStatus, tableHeaders} = useStatusTable();
-
+    const [search] = useRecoilState(productionFloorTextSearchState);
     const {updateStatus, t} = useProductionFloorData();
     const [{isOver}, drop] = useDrop(() => ({
         accept: 'task',
@@ -37,7 +40,9 @@ const StatusTableComponent = ({status, boards}: IProps) => {
         }),
     }), [status, boards]);
 
-
+    const getBoards = useCallback(() => {
+        return !!search ? boards?.filter(board => `${board?.boardMissionNumber}\\${board?.orderNumber}`.includes(search)) : boards;
+    }, [boards, search]);
     return <Stack ref={drop} border={isOver ? '1px solid black' : 'none'} gap={'5px'}>
         <Button onClick={onClickStatus}
                 startIcon={isOpen ? <KeyboardArrowDownIcon/> : <KeyboardArrowUpIcon/>}
@@ -56,7 +61,7 @@ const StatusTableComponent = ({status, boards}: IProps) => {
                 }}>{`${t('productionStatuses.' + status.name)} (${boards.length})`}
         </Button>
         {
-            boards.length > 0 &&
+            getBoards().length > 0 &&
             <Collapse in={isOpen}>
                 <Paper>
                     <TableContainer>
@@ -72,7 +77,7 @@ const StatusTableComponent = ({status, boards}: IProps) => {
                                 </SecondaryTableRow>
                             </TableHead>
                             <TableBody>
-                                {[...boards]?.sort((a, b) => a.priority - b.priority)?.map((boardMission) => {
+                                {[...getBoards()]?.sort((a, b) => a.priority - b.priority)?.map((boardMission) => {
                                     return <>
                                         <TableRowComponent key={'status' + status.id + boardMission.id}
                                                            boardMission={boardMission}/>
