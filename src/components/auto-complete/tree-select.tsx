@@ -43,7 +43,7 @@ const StyledTreeSelect = styled(TreeSelect)(({ theme, dir, selectedOption }: any
     fontWeight: 500,
   },
   "& .p-tree-container": {
-    maxWidth: "450px !important",
+    maxWidth: "500px !important",
   },
   "& .p-dropdown": {
     height: "40px",
@@ -113,6 +113,8 @@ const GoMakeTreeSelect = ({
   const GlobalStyle = createGlobalStyle`
   .p-tree-container {
     max-width:500px !important;
+      width:100%;
+
   },
  .p-treenode {
   padding: ${RTL ? "0px 5px 5px 0px" : "0px 0px 5px 5px"};
