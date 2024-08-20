@@ -40,6 +40,7 @@ const AddDialog = ({onAddDialog}: IProps) => {
     const {t} = useTranslation();
     const {callApi} = useGomakeAxios();
     const {alertSuccessAdded, alertFaultAdded} = useSnackBar();
+    const [customerId] = useState<string>('');
     const inputs = () => {
         const {t} = useTranslation();
         return [
@@ -50,7 +51,7 @@ const AddDialog = ({onAddDialog}: IProps) => {
                 placeholder: "messenger.groupName",
                 required: true,
                 parameterKey: "name",
-                value: state.name,
+                value: state.name ? state.name : '',
                 options: [],
                 isValid: true,
             },
@@ -61,7 +62,8 @@ const AddDialog = ({onAddDialog}: IProps) => {
                 placeholder: "messenger.userType",
                 required: true,
                 parameterKey: "userType",
-                value: state.userType,
+                value: state.userType ? state.userType : ''
+                ,
                 options: [{text: t('messenger.customer'), value: EUserType.Customer}, {text: t('messenger.employee'), value: EUserType.Employee}],
                 isValid: true,
             },
@@ -72,7 +74,7 @@ const AddDialog = ({onAddDialog}: IProps) => {
                 placeholder: "messenger.employees",
                 required: true,
                 parameterKey: "id",
-                value: state.id,
+                value: state.id ? state.id : '',
                 options: [],
                 isValid: true,
                 optionsUrl: '/v1/crm-service/employee/get-all-employees',
@@ -116,7 +118,6 @@ const AddDialog = ({onAddDialog}: IProps) => {
             setCustomerSearch(e.target.value);
         }
     };
-    const [customerId, setCustomerId] = useState<any>();
 
     useEffect(() => {
         if (customerSearch) {
@@ -139,7 +140,7 @@ const AddDialog = ({onAddDialog}: IProps) => {
                 state.userType === EUserType.Customer &&
                 <Stack>
                     <GoMakeAutoComplate
-                        key={customerId?.id}
+                        key={customerId}
                         options={customers}
                         getOptionLabel={(option: any) => `${option.name}`}
                         onChangeTextField={checkWhatRenderArray}
@@ -147,7 +148,7 @@ const AddDialog = ({onAddDialog}: IProps) => {
                         onChange={(e: any, value: any) => {
                             setState(prevState => ({...prevState, id: value.id}))
                         }}
-                        value={customerId}
+                        value={state.id ? state.id : ''}
                         withArrow={true}
                     />
                 </Stack>
