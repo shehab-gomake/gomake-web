@@ -213,7 +213,7 @@ const useCopyFromOrderModal = ({ onClose, documentType, openModal, cliendDocumen
           vat: documentItems[0]?.vat || 0.17,
           totalVAT: quoteItemValue?.totalVAT || 0.17,
           documentItems: uniqueItems,
-          priceRound:quoteItemValue?.priceRound
+          priceRound: quoteItemValue?.client?.priceRound,
         }
       }
     );
