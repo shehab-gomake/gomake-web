@@ -43,7 +43,7 @@ const StyledTreeSelect = styled(TreeSelect)(({ theme, dir, selectedOption }: any
     fontWeight: 500,
   },
   "& .p-tree-container": {
-    maxWidth: "500px !important",
+    width: "100%",
   },
   "& .p-dropdown": {
     height: "40px",
@@ -112,9 +112,7 @@ const GoMakeTreeSelect = ({
 
   const GlobalStyle = createGlobalStyle`
   .p-tree-container {
-    max-width:500px !important;
       width:100%;
-
   },
  .p-treenode {
   padding: ${RTL ? "0px 5px 5px 0px" : "0px 0px 5px 5px"};
@@ -135,6 +133,8 @@ const GoMakeTreeSelect = ({
       left: ${!navStatus?.isClosed ? "290px" : "168.991px"}!important;
       min-width: 362.287px;
       transform-origin: center top;
+            max-width:20vw;
+
     },
   `}
 `;
