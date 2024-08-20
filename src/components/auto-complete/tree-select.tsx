@@ -26,7 +26,7 @@ const StyledTreeSelect = styled(TreeSelect)(({ theme, dir, selectedOption }: any
   color: "#000000",
   backgroundColor: "#FFF",
   boxShadow: "0px 1px 10px rgba(0, 0, 0, 0.08)",
-  padding: '4px 10px',
+  // padding: '4px 10px',
   fontFamily: "Heebo",
   fontStyle: "normal",
   fontWeight: 500,
@@ -114,8 +114,8 @@ const GoMakeTreeSelect = ({
   .p-tree-container {
     max-width:500px !important;
   },
-  .p-treenode {
-  padding: ${RTL ? "0px 5px 0px 0px" : "0px 0px 0px 5px"};
+ .p-treenode {
+  padding: ${RTL ? "0px 5px 5px 0px" : "0px 0px 5px 5px"};
   },
   .p-tree .p-tree-container > .p-treenode > .p-treenode-content {
      display: 'flex';
@@ -133,13 +133,12 @@ const GoMakeTreeSelect = ({
       left: ${!navStatus?.isClosed ? "290px" : "168.991px"}!important;
       min-width: 362.287px;
       transform-origin: center top;
-    }
+    },
   `}
 `;
 
   const handleNodeSelect = (e) => {
     const node = e.node;
-
     if (node.children && node.children.length > 0) {
       const toggler = e.originalEvent.currentTarget.querySelector('.p-tree-toggler');
       if (toggler) {
@@ -165,10 +164,11 @@ const GoMakeTreeSelect = ({
 
   const nodeTemplate = (node) => {
     const isFirstLevel = node.level === 0;
-    const isSelected = selectedNodeKey === node.key;
+    const isSelected = selectedNodeKey === node.key;  
+
     return (
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' , padding: isSelected && (RTL ?  "0px 0px 0px 5px" :"0px 5px 0px 0px")}}>
-        <div style={{ display: 'flex', alignItems: 'center' }}>
+        <div style={{ display: 'flex', alignItems: 'center',  }}>
           {isFirstLevel && <ProductIcon />}
           <span style={isFirstLevel ? classes.firstLevelLabel : classes.otherLevelsLabel}>
             {node.label}

@@ -287,6 +287,7 @@ const useQuoteWidget = ({ documentType = 0 }: any) => {
             children: products.map(product => ({
               key: product.id, // Using product id as the key
               label: product.name, // Using product name as the label
+              level: 1,
               category: ProductCategoryType.PRODUCT
             }))
           };
@@ -298,15 +299,18 @@ const useQuoteWidget = ({ documentType = 0 }: any) => {
             label: t('tabs.materials'),
             level: 0,
             children: materials.map(material => ({
-              key: material.materialTypeName, // Using materialTypeName as the key
-              label: material.materialTypeName, // Using materialTypeName as the label
+              key: material.materialTypeName,
+              label: material.materialTypeName,
+              level: 1, // Material Types are level 1
               children: material.categories.map(category => ({
-                key: `${material.materialTypeName}-${category.categoryName}`, // Generate a unique key
-                label: category.categoryName, // Using categoryName as the label
+                key: `${material.materialTypeName}-${category.categoryName}`,
+                label: category.categoryName,
+                level: 2, // Categories are level 2
                 children: category.rows.map(row => ({
-                  key: row.id, // Using row id as the key
-                  label: row.value, // Using row value as the label,
-                  category: ProductCategoryType.MATERIAL // Ensure category is present
+                  key: row.id,
+                  label: row.value,
+                  level: 3, // Rows are level 3
+                  category: ProductCategoryType.MATERIAL
                 }))
               }))
             }))
