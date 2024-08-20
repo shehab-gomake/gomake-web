@@ -7,12 +7,10 @@ import {FONT_FAMILY} from "@/utils/font-family";
 import {SendFileMessageButtonComponent} from "@/widgets/messenger/components/send-file-message";
 import {GoMakeModal} from "@/components";
 import {AddDialog} from "@/widgets/messenger/components/add-dialog";
-import {FileCardMessageComponent} from "@/widgets/messenger/components/file-card-message";
 import {PrimaryButton} from "@/components/button/primary-button";
 import {useOpenModals} from "@/widgets/messenger/use-open-modals";
 import {useMessenger} from "@/widgets/messenger/use-messenger";
 import {FilesHistoryIcon} from "@/widgets/messenger/components/icons/files-history-icon";
-import {SendMessageIcon} from "@/widgets/messenger/components/icons/send-message-icon";
 import {useTranslation} from "react-i18next";
 import {useGomakeTheme} from "@/hooks/use-gomake-thme";
 import SendIcon from '@mui/icons-material/Send';
@@ -34,7 +32,7 @@ export default function MessangerWidget() {
         uploadingFiles,
         handleKeyDown,
         inputValue, setInputValue,
-        sendTextMessage, addNewDialog, files, sessionUserId, isChatConnected
+        sendTextMessage, addNewDialog, files, sessionUserId, isChatConnected, users
     } = useMessenger();
 
     return (
@@ -56,9 +54,19 @@ export default function MessangerWidget() {
                                 <Stack direction={'row'} alignItems={'center'} justifyContent={'space-between'}>
                                     <Stack direction={'row'} gap={'16px'}>
                                         {/*<Avatar variant={'rounded'} src={selectedDialog?.photo}/>*/}
-                                        <span style={{...FONT_FAMILY.Inter(600, 14)}}>{selectedDialog.name}</span>
+                                        <Stack>
+                                        <span style={{...FONT_FAMILY.Inter(600, 16)}}>{selectedDialog.name}</span>
+                                            <Stack>
+                                                {
+                                                    users()?.map((user, index) => <Stack  style={{...FONT_FAMILY.Outfit(500, 13), fontStyle: 'italic', color: primaryColor(300)}}>
+                                                        <span>{user}</span>
+                                                        {index + 1 < users.length && <span>,</span>}
+                                                    </Stack>)
+                                                }
+                                            </Stack>
+                                        </Stack>
                                     </Stack>
-                                    <PrimaryButton onClick={modals.filesHistory.open} startIcon={<FilesHistoryIcon/>}>{t('messenger.filesHistory')}</PrimaryButton>
+                                    {files().length > 0 && <PrimaryButton onClick={modals.filesHistory.open} startIcon={<FilesHistoryIcon/>}>{t('messenger.filesHistory')}</PrimaryButton>}
                                 </Stack>
                                 <Divider/>
                                 <Stack width={'100%'} flex={1} overflow={'auto'}>
