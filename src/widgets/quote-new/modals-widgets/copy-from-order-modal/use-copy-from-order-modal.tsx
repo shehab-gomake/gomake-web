@@ -45,7 +45,7 @@ const useCopyFromOrderModal = ({ onClose, documentType, openModal, cliendDocumen
   const [totalPrice, setTotalPrice] = useState(0);
   const [documentItems, setDocumentItems] = useState([]);
 
-
+  console.log("quoteItemValue", quoteItemValue)
   const { orderId, deliveryNoteId } = router.query;
   const [currentDocumentId, setCurrentDocumentId] = useState<string | null>(null);
 
@@ -213,7 +213,7 @@ const useCopyFromOrderModal = ({ onClose, documentType, openModal, cliendDocumen
           vat: documentItems[0]?.vat || 0.17,
           totalVAT: quoteItemValue?.totalVAT || 0.17,
           documentItems: uniqueItems,
-          priceRound: quoteItemValue?.client?.priceRound,
+          roundPrices: quoteItemValue?.client?.roundPrices,
         }
       }
     );
