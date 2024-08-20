@@ -28,6 +28,7 @@ import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { EHttpMethod } from "@/services/api-service/enums";
 import { updateCategoriesOrderApi, updatePrintHouseCategoriesOrderApi } from "@/services/api-service/materials/printhouse-materials-endpoints";
 import { useRouter } from "next/router";
+import { adaptPaddingLeft } from "@/utils/adapter";
 
 const ListButton = styled(ListItemButton)(() => {
     const { primaryColor } = useGomakeTheme();
@@ -179,7 +180,7 @@ const SideList = ({
                                                     {...provided.draggableProps}
                                                     {...provided.dragHandleProps}
                                                 >
-                                                    <div style={{ marginRight: 8 }}>
+                                                    <div style={{ ...adaptPaddingLeft(t("direction"), 10), }}>
                                                         <SortIcon />
                                                     </div>
 
