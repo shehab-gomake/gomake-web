@@ -1,12 +1,17 @@
 import {useQuickBlox} from "@/widgets/messenger/use-quick-blox";
 import {useCallback, useEffect, useState} from "react";
 import {IChatDialog} from "@/widgets/messenger/interfaces/dialog";
-import {IChatMessage} from "@/widgets/messenger/interfaces/chat-message";
+import {IChatMessage, IUserMetaData} from "@/widgets/messenger/interfaces/chat-message";
 import {EFileStatus} from "@/widgets/messenger/enums";
 import {useGomakeAxios, useSnackBar} from "@/hooks";
-import {getUsersMetaDataApi, updateApprovalRequestApi} from "@/services/api-service/chat/quick-blox-chat-endpoints";
+import {
+    getUsersMetaDataApi,
+    sendMessengerNotificationApi,
+    updateApprovalRequestApi
+} from "@/services/api-service/chat/quick-blox-chat-endpoints";
 import {QBChatNewMessage} from "quickblox";
 import {useRouter} from "next/router";
+import {useMessengerSignalr} from "@/hooks/signalr/use-messenger-signalr";
 
 const useMessenger = () => {
     const [selectedDialog, setSelectedDialog] = useState<IChatDialog | null>(null);
@@ -15,7 +20,8 @@ const useMessenger = () => {
     const [inputValue, setInputValue] = useState('');
     const [uploadingFiles, setUploadingFiles] = useState<boolean>(false);
     const [updatedApprovalRequestId, setUpdatedApprovalRequestId] = useState<{ approvalRequestId: string, newStatus: EFileStatus }>();
-    const [usersMetaData, setUsersMetaDta] = useState([]);
+    const [usersMetaData, setUsersMetaDta] = useState<IUserMetaData[]>([]);
+    const {updateState, setUpdateState} = useMessengerSignalr();
     const {alertFaultUpdate} = useSnackBar();
     const {query} = useRouter();
     const {dialogId} = query;
@@ -26,7 +32,12 @@ const useMessenger = () => {
 
     const files = useCallback(() => {
         return messages.filter(msg => !!msg.file_approval_Request_id);
-    }, [messages])
+    }, [messages]);
+
+    const getUsersNames = useCallback(() => {
+        return usersMetaData?.filter(user => +user.userId !== messenger.sessionUser.userId)
+            .map(user => user.fullName)
+    }, [usersMetaData]);
     const {callApi} = useGomakeAxios();
     const messenger = useQuickBlox();
 
@@ -49,6 +60,7 @@ const useMessenger = () => {
     const getDialogs = async () => {
         const dialogs = await messenger.dialogs.getDialogs();
         setDialogs(dialogs)
+
     }
 
     const onMessage = (userId, message) => {
@@ -75,6 +87,16 @@ const useMessenger = () => {
         });
     };
 
+    const sendMessage = async (message: QBChatNewMessage) => {
+        try {
+            await sendMessengerNotificationApi(callApi, () => {
+            }, selectedDialog.occupants_ids.map(a => a.toString()))
+            await messenger.messages.send(selectedDialog._id, message as QBChatNewMessage);
+        } catch (e) {
+
+        }
+
+    }
     const sendTextMessage = async (text: string) => {
         try {
             const message = {
@@ -88,7 +110,7 @@ const useMessenger = () => {
                 markable: 1,
             };
             setInputValue('');
-            await messenger.messages.send(selectedDialog._id, message as QBChatNewMessage);
+            await sendMessage(message as QBChatNewMessage)
         } catch (e) {
 
         }
@@ -129,6 +151,8 @@ const useMessenger = () => {
                 },
                 markable: 1
             };
+            await sendMessengerNotificationApi(callApi, () => {
+            }, selectedDialog.occupants_ids.map(a => a.toString()))
             await messenger.messages.send(selectedDialog._id, message as QBChatNewMessage);
         } catch (e) {
             alertFaultUpdate();
@@ -177,6 +201,7 @@ const useMessenger = () => {
     }
     const addNewDialog = (dialog: IChatDialog) => {
         setDialogs(prevState => ([...prevState, dialog]));
+        setSelectedDialog(dialog);
     }
     const handleKeyDown = async (event) => {
         if (event.key === 'Enter') {
@@ -202,6 +227,7 @@ const useMessenger = () => {
     useEffect(() => {
         if (messenger.isChatConnected) {
             getDialogs().then();
+            messenger.listeners.onDialogUpdate((a) => alert(a))
         }
     }, [messenger.isChatConnected])
 
@@ -234,10 +260,10 @@ const useMessenger = () => {
     }, [selectedDialog, messenger.isChatConnected]);
 
     useEffect(() => {
-        if (usersMetaData.length > 0) {
+        if (usersMetaData.length > 0 && messages.length > 0 && !messages.some(msg => !!msg.userMetaData)) {
             setMessages(prevState => prevState.map(msg => ({
                 ...msg,
-                userMetaData: usersMetaData?.find(user => user.userId == msg.sender_id)
+                userMetaData: usersMetaData?.find(user => +user.userId === msg.sender_id)
             })));
         }
     }, [usersMetaData, messages])
@@ -247,7 +273,13 @@ const useMessenger = () => {
             const dialog = dialogs?.find(dialog => dialog._id === dialogId);
             setSelectedDialog(dialog);
         }
-    }, [dialogId, dialogs])
+    }, [dialogId, dialogs]);
+    useEffect(() => {
+        if (updateState && messenger.isChatConnected) {
+            getDialogs().then();
+            setUpdateState(false);
+        }
+    }, [updateState, messenger])
 
     return {
         selectedDialog,
@@ -268,7 +300,8 @@ const useMessenger = () => {
         addNewDialog,
         files,
         isChatConnected: messenger.isChatConnected,
-        sessionUserId: messenger?.sessionUser?.userId
+        sessionUserId: messenger?.sessionUser?.userId,
+        users: getUsersNames
     }
 }
 

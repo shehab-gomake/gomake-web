@@ -59,10 +59,10 @@ const MessagesComponent = ({
 
         };
 
-        const handleDragOver = (event) => {
+        const handleDragOver = () => {
             setIsOver(true)
         };
-        const handleDragOLeave = (event) => {
+        const handleDragOLeave = () => {
             setIsOver(false)
         };
 
@@ -89,7 +89,7 @@ const MessagesComponent = ({
                overflow={'auto'}>
             {
                 messages.map((msg, index) =>
-                    <Stack ref={index + 1 === messages.length ? lastMessageRef : null} maxWidth={'50%'}
+                    <Stack key={msg._id} ref={index + 1 === messages.length ? lastMessageRef : null} maxWidth={'50%'}
                            direction={msg.sender_id === sessionUserId ? 'row-reverse' : 'row'}
                            gap={'10px'} alignItems={'start'}
                            alignSelf={msg.sender_id === sessionUserId ? 'flex-end' : 'flex-start'}>

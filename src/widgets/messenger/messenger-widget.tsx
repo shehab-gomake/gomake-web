@@ -7,17 +7,17 @@ import {FONT_FAMILY} from "@/utils/font-family";
 import {SendFileMessageButtonComponent} from "@/widgets/messenger/components/send-file-message";
 import {GoMakeModal} from "@/components";
 import {AddDialog} from "@/widgets/messenger/components/add-dialog";
-import {FileMessageComponent} from "@/widgets/messenger/components/file-message";
 import {PrimaryButton} from "@/components/button/primary-button";
 import {useOpenModals} from "@/widgets/messenger/use-open-modals";
 import {useMessenger} from "@/widgets/messenger/use-messenger";
 import {FilesHistoryIcon} from "@/widgets/messenger/components/icons/files-history-icon";
-import {SendMessageIcon} from "@/widgets/messenger/components/icons/send-message-icon";
 import {useTranslation} from "react-i18next";
-
-
+import {useGomakeTheme} from "@/hooks/use-gomake-thme";
+import SendIcon from '@mui/icons-material/Send';
+import {FIleListComponent} from "@/widgets/messenger/components/file-list-message";
 export default function MessangerWidget() {
     const {t} = useTranslation();
+    const {primaryColor} = useGomakeTheme();
     const modals = useOpenModals();
     const {
         unreadMessages,
@@ -32,32 +32,41 @@ export default function MessangerWidget() {
         uploadingFiles,
         handleKeyDown,
         inputValue, setInputValue,
-        sendTextMessage, addNewDialog, files, sessionUserId, isChatConnected
+        sendTextMessage, addNewDialog, files, sessionUserId, isChatConnected, users
     } = useMessenger();
 
     return (
-        <Stack width={'100%'} height={'100%'} style={{backgroundColor: '#FFF'}}>
+        <Stack width={'100%'} height={'100%'} style={{backgroundColor: '#FFF'}} overflow={'hidden'}>
             {
                 isChatConnected
                     ?
                     <Stack style={{backgroundColor: '#FFF'}} direction={'row'} width={'100%'} height={'100%'}>
-                        <Stack width={'40%'}>
+                        <Stack maxWidth={'350px'} width={'40%'}>
                             <DialogList onClickAddDialog={() => modals.addDialog.open()} unRead={unreadMessages()}
                                         dialogs={dialogs} selectedDialogId={selectedDialog?._id}
                                         onSelectDialog={dialog => {
                                             setSelectedDialog(dialog)
                                         }}/>
                         </Stack>
-                        <Divider flexItem orientation={'vertical'}/>
                         {
                             selectedDialog &&
                             <Stack width={'100%'} padding={'24px 80px 20px 24px'} gap={'10px'}>
                                 <Stack direction={'row'} alignItems={'center'} justifyContent={'space-between'}>
                                     <Stack direction={'row'} gap={'16px'}>
                                         {/*<Avatar variant={'rounded'} src={selectedDialog?.photo}/>*/}
-                                        <span style={{...FONT_FAMILY.Inter(600, 14)}}>{selectedDialog.name}</span>
+                                        <Stack>
+                                        <span style={{...FONT_FAMILY.Inter(600, 16)}}>{selectedDialog.name}</span>
+                                            <Stack>
+                                                {
+                                                    users()?.map((user, index) => <Stack  style={{...FONT_FAMILY.Outfit(500, 13), fontStyle: 'italic', color: primaryColor(300)}}>
+                                                        <span>{user}</span>
+                                                        {index + 1 < users.length && <span>,</span>}
+                                                    </Stack>)
+                                                }
+                                            </Stack>
+                                        </Stack>
                                     </Stack>
-                                    <PrimaryButton onClick={modals.filesHistory.open} startIcon={<FilesHistoryIcon/>}>{t('messenger.filesHistory')}</PrimaryButton>
+                                    {files().length > 0 && <PrimaryButton onClick={modals.filesHistory.open} startIcon={<FilesHistoryIcon/>}>{t('messenger.filesHistory')}</PrimaryButton>}
                                 </Stack>
                                 <Divider/>
                                 <Stack width={'100%'} flex={1} overflow={'auto'}>
@@ -70,21 +79,19 @@ export default function MessangerWidget() {
                                                        sessionUserId={sessionUserId}/>
                                 </Stack>
                                 {uploadingFiles && <LinearProgress/>}
-                                <Stack direction={'row'} alignItems={'center'}>
+                                <Stack style={{backgroundColor: primaryColor(100)}} borderRadius={'8px'} direction={'row'} alignItems={'center'}>
                                     <SendFileMessageButtonComponent onSendFile={sendApprovalFileMessage}/>
                                     <InputBase
                                         onKeyDown={handleKeyDown}
                                         sx={{
                                             flex: 1,
-                                            borderRadius: '12px',
-                                            border: '2px #E2E8F0 solid',
                                             height: '48px'
                                         }}
                                         placeholder={t('messenger.inputPlaceHolder')}
                                         onChange={(e) => setInputValue(e.target.value)}
                                         value={inputValue}/>
                                     <IconButton onClick={() => sendTextMessage(inputValue)} sx={{p: '10px'}}>
-                                        <SendMessageIcon/>
+                                        <SendIcon style={{color: primaryColor(500)}}/>
                                     </IconButton>
                                 </Stack>
                             </Stack>
@@ -103,7 +110,7 @@ export default function MessangerWidget() {
                             <Stack gap={'12px'} alignItems={'center'} padding={'10px'}>
                                 {
                                     files().map(msg =>
-                                        <FileMessageComponent {...msg}
+                                        <FIleListComponent {...msg}
                                                               updatedApprovalRequest={updatedApprovalRequestId}
                                                               isCurrentUserSentMsg={msg.sender_id === sessionUserId}
                                                               direction={'row'}

@@ -19,11 +19,7 @@ export interface IChatMessage {
     fileUrl?: string;
     file_approval_Request_id?: string;
     quote_approval_Request_id?: string;
-    userMetaData: {
-        profileImage?: string;
-        avatarInitials?: string;
-
-    }
+    userMetaData: IUserMetaData
 }
 
 export interface IChatMessageAttachment {
@@ -38,4 +34,11 @@ export interface ISendChatMessage {
     sender_id: number,
     extension: Record<string, any>,
     markable: 1 | 0
+}
+
+export interface IUserMetaData {
+    profileImage: string;
+    avatarInitials: string;
+    fullName: string;
+    userId:string;
 }
