@@ -44,8 +44,6 @@ const useCopyFromOrderModal = ({ onClose, documentType, openModal, cliendDocumen
   const [selectedItems, setSelectedItems] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
   const [documentItems, setDocumentItems] = useState([]);
-
-  console.log("quoteItemValue", quoteItemValue)
   const { orderId, deliveryNoteId } = router.query;
   const [currentDocumentId, setCurrentDocumentId] = useState<string | null>(null);
 
