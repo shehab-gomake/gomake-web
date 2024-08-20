@@ -14,7 +14,8 @@ import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
 import { ProductIcon } from "./icons";
 import { useStyle } from "./style";
-import CheckIcon from '@mui/icons-material/Check'; 
+import CheckIcon from '@mui/icons-material/Check';
+import {Tooltip, tooltipClasses, TooltipProps} from "@mui/material"; 
 
 const StyledTreeSelect = styled(TreeSelect)(({ theme, dir, selectedOption }: any) => ({
   boxSizing: "border-box",
@@ -163,7 +164,27 @@ const GoMakeTreeSelect = ({
       onChange({ value: null });
     }
   };
+  const CustomWidthTooltip = styled(({ className, ...props }: TooltipProps) => (
+      <Tooltip {...props} classes={{ popper: className }} />
+  ))({
+    [`& .${tooltipClasses.tooltip}`]: {
+      maxWidth: 600,
+    },
+  });
 
+  const getLabel = (label) => {
+    if(label && label.length > 48){
+      let shortLabel = label.substring(0,48);
+      let lastSpace =  shortLabel.lastIndexOf(" ");
+      shortLabel = shortLabel.substring(0,lastSpace) + "..."
+      return <div>
+        <CustomWidthTooltip  title={label} placement="right" arrow  style={{maxWidth:500}}>
+          <span>{shortLabel}</span>
+        </CustomWidthTooltip>
+      </div>
+    }
+    return label;
+  }
   const nodeTemplate = (node) => {
     const isFirstLevel = node.level === 0;
     const isSelected = selectedNodeKey === node.key;  
@@ -173,7 +194,7 @@ const GoMakeTreeSelect = ({
         <div style={{ display: 'flex', alignItems: 'center',  }}>
           {isFirstLevel && <ProductIcon />}
           <span style={isFirstLevel ? classes.firstLevelLabel : classes.otherLevelsLabel}>
-            {node.label}
+            {getLabel(node.label)}
           </span>
         </div>
         {isSelected && <CheckIcon style={{ width: "20px", height: "20px" , color:"#2e3092" }} />}
