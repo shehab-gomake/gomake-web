@@ -28,7 +28,7 @@ const pastingBlocksMachine = (state: Record<string, any>) => {
             value: state?.attributes?.speed ? state?.attributes?.speed : '',
             machineInputType: 'input',
             isValid: !!state?.attributes?.speed,
-            unit: EMeasurementUnits.SQUARE_CM
+            unit: EMeasurementUnits.SQUARE_CM_P_MIN
         },
         {
             name: "pastingDelay",

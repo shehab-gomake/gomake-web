@@ -33,4 +33,5 @@ export enum EMeasurementUnits {
     CUTS_P_MIN = 'cutsPMIN',
     SQUARE_METER_P_MIN = 'squareMeterPerMin',
     SQUARE_METER_P_HOUR = 'squareMeterPerHour',
+    SQUARE_CM_P_MIN = 'squareCMPerHour',
 }
