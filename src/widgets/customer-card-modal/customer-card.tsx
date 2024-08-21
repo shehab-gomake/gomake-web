@@ -118,7 +118,8 @@ const CustomerCardWidget = ({
     handleShowTable,
     onUpdatePass,
     onChangeInputs
-  } = useCustomerCard({ t,customer, setCustomer, onClose, setOpenOfferModal, userQuote , typeClient , 
+  } = useCustomerCard({
+    t, customer, setCustomer, onClose, setOpenOfferModal, userQuote, typeClient,
     isValidCustomer,
     getAllCustomers,
     onCustomerAdd,
@@ -179,7 +180,7 @@ const CustomerCardWidget = ({
       />
     </Stack>
   }</>
-  
+
   const tabs: ITab[] = [
     {
       title: t("customers.modal.general"),
@@ -189,6 +190,7 @@ const CustomerCardWidget = ({
             {generalInputs(typeClient, customer, languagesOptions).map((item) => (
               <div style={{ marginBottom: 10 }}>
                 <FormInput
+                  key={"general-input"}
                   input={item as IInput}
                   changeState={onChangeInputs}
                   error={false}
@@ -232,6 +234,7 @@ const CustomerCardWidget = ({
                   {lastOrderInputs(customer).map((item) => (
                     <div style={{ marginBottom: 10 }}>
                       <FormInput
+                        key={"last-order-details-input"}
                         input={item as IInput}
                         changeState={onChangeInputs}
                         error={false}
@@ -340,7 +343,7 @@ const CustomerCardWidget = ({
           ).map((item) => (
             <div style={{ marginBottom: 10 }}>
               <FormInput
-                key={customer}
+                key={"customer-input"}
                 input={item as IInput}
                 changeState={onChangeInputs}
                 error={item.required && !item.value}

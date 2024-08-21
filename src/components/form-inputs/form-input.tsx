@@ -166,17 +166,27 @@ const FormInput = ({ input, error, changeState, readonly, checkWhatRenderArray }
     }
   }, [input]);
 
-  const defaultOptions = options.filter(option => input?.value?.toString()?.includes(option?.value))
-  const [selectedOptions, setSelectedOptions] = useState([])
 
   useEffect(() => {
     setValues(Array.isArray(input.value) ? input.value : []);
   }, [input.value])
 
+  const [selectedOptions, setSelectedOptions] = useState([]);
+
   useEffect(() => {
-    const selected = options.filter(option => input?.value && typeof input?.value === 'string' && input?.value.includes(option.value));
-    setSelectedOptions(selected);
-  }, [input.value])
+    if (typeof input?.value === 'string') {
+      const selectedValues = input.value.split(',').map(val => val.trim());
+      const selected = options.filter(option => selectedValues.includes(option.value.toString()));
+      setSelectedOptions(selected);
+    }
+  }, [input.value, options]);
+
+  useEffect(() => {
+    if (Array.isArray(input?.value)) {
+      const selected = options.filter(option => input.value.includes(option.value));
+      setSelectedOptions(selected);
+    }
+  }, [input.value, options]);
 
   return (
     <>
@@ -213,12 +223,13 @@ const FormInput = ({ input, error, changeState, readonly, checkWhatRenderArray }
                 key={`${input.value}`}
                 style={{ minWidth: 180, border: 0, height: 40, overflow: "scroll" }}
                 onChange={input.multiple ? () => null : selectChange}
-                value={input.multiple ? selectedOptions?.length > 0 ? selectedOptions?.map((item: any) => {
-                  return {
-                    label: item?.label,
-                    id: item?.id,
-                  };
-                }) : defaultOptions : selectedLabel}
+                // value={input.multiple ? selectedOptions?.length > 0 ? selectedOptions?.map((item: any) => {
+                //   return {
+                //     label: item?.label,
+                //     id: item?.id,
+                //   };
+                // }) : selectedOptions : selectedLabel}
+                value={input.multiple ? selectedOptions : selectedLabel}
                 error={error}
                 disabled={!!readonly}
                 placeholder={t(input.placeholder)}
