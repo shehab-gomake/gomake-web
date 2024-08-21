@@ -269,7 +269,6 @@ const CustomerCardWidget = ({
                 />
               ))}
           </Stack>
-          {renderTableSearch}
         </Stack>
       ),
     },
@@ -290,11 +289,9 @@ const CustomerCardWidget = ({
               ></AddressForm>
             ))}
           </Stack>
-          {renderTableSearch}
         </Stack>
       ),
     },
-
     typeClient === CLIENT_TYPE.CUSTOMER && {
       title: t("customers.modal.gomakeUsers"),
       component: (
@@ -312,11 +309,9 @@ const CustomerCardWidget = ({
               ></UserForm>
             ))}
           </Stack>
-          {renderTableSearch}
         </Stack>
       ),
     },
-
   ].filter(Boolean);
 
   return (
@@ -326,93 +321,96 @@ const CustomerCardWidget = ({
       onClose={handleClose}
       insideStyle={classes.insideStyle}
     >
-      <div style={classes.mainContainerStyle} >
-        <Stack direction={"row"}>
-          <span style={classes.subTitleStyle}>
-            {typeClient == "C"
-              ? t("customers.modal.customerInfo")
-              : t("suppliers.supplierInfo")}
-          </span>
-        </Stack>
-        <div style={classes.customerInfoStyle}>
-          {customerInputs(
-            typeClient,
-            codeFlag,
-            customer,
-            clientTypesCategories
-          ).map((item) => (
-            <div style={{ marginBottom: 10 }}>
-              <FormInput
-                key={"customer-input"}
-                input={item as IInput}
-                changeState={onChangeInputs}
-                error={item.required && !item.value}
-                readonly={!!item.readonly}
-              />
-            </div>
-          ))}
-          <div style={classes.itemOnFirstContainer}>
-            <div style={classes.labelTitleStyle}>
-              <div style={classes.inputLbl}>
-                <Stack
-                  direction={"row"}
-                  gap={"7px"}
-                  alignItems={"flex-end"}
-                  padding={"0 5px"}
-                >{clientTypeLabel}</Stack>
-                <span style={classes.required}>*</span>
-              </div>
-              <span onClick={onClickOpenClientType} style={classes.plusInput}>
-                <SettingIcon
-                  width={20}
-                  height={20}
+      <div style={{ display:"flex",flexDirection:"column",width: "100%", height: "100%", overflow: "hidden", justifyContent:"flex-end"}}>
+        <div style={classes.mainContainerStyle} >
+          <Stack direction={"row"}>
+            <span style={classes.subTitleStyle}>
+              {typeClient == "C"
+                ? t("customers.modal.customerInfo")
+                : t("suppliers.supplierInfo")}
+            </span>
+          </Stack>
+          <div style={classes.customerInfoStyle}>
+            {customerInputs(
+              typeClient,
+              codeFlag,
+              customer,
+              clientTypesCategories
+            ).map((item) => (
+              <div style={{ marginBottom: 10 }}>
+                <FormInput
+                  key={"customer-input"}
+                  input={item as IInput}
+                  changeState={onChangeInputs}
+                  error={item.required && !item.value}
+                  readonly={!!item.readonly}
                 />
-              </span>
-            </div>
-            <div style={{ width: "180px" }}>
-              <GoMakeAutoComplate
-                key={customer}
-                options={clientTypesCategories}
-                placeholder={typeClient === "C" ? t("customers.modal.clientType") : t("suppliers.supplierType")}
-                style={classes.dropDownListStyle}
-                getOptionLabel={(option: any) => option.label}
-                value={clientTypesCategories?.find((option: any) => option?.id === customer?.clientTypeId)}
-                onChange={(e: any, value: any) => onChangeInputs("clientTypeId", value?.id)}
-              />
+              </div>
+            ))}
+            <div style={classes.itemOnFirstContainer}>
+              <div style={classes.labelTitleStyle}>
+                <div style={classes.inputLbl}>
+                  <Stack
+                    direction={"row"}
+                    gap={"7px"}
+                    alignItems={"flex-end"}
+                    padding={"0 5px"}
+                  >{clientTypeLabel}</Stack>
+                  <span style={classes.required}>*</span>
+                </div>
+                <span onClick={onClickOpenClientType} style={classes.plusInput}>
+                  <SettingIcon
+                    width={20}
+                    height={20}
+                  />
+                </span>
+              </div>
+              <div style={{ width: "180px" }}>
+                <GoMakeAutoComplate
+                  key={customer}
+                  options={clientTypesCategories}
+                  placeholder={typeClient === "C" ? t("customers.modal.clientType") : t("suppliers.supplierType")}
+                  style={classes.dropDownListStyle}
+                  getOptionLabel={(option: any) => option.label}
+                  value={clientTypesCategories?.find((option: any) => option?.id === customer?.clientTypeId)}
+                  onChange={(e: any, value: any) => onChangeInputs("clientTypeId", value?.id)}
+                />
+              </div>
             </div>
           </div>
         </div>
-      </div>
-      {/* bottom section */}
-      <div style={classes.bottomSectionStyle}>
-        <PrimaryTabsComponent variant="ButtonedTabs" tabs={tabs} withBackGround={false} />
-        <div style={classes.footerStyle}>
-          {isFromHomePage && !showTable ?
-            <SecondaryButton variant="contained" style={{ width: "fit-content" }} onClick={handleShowTable} >{t("customers.buttons.search")}</SecondaryButton>
-            :
-            showAddButton && (
-              <SecondaryButton variant="contained" style={{ width: "fit-content" }}
-                onClick={handleAddCustomer}
-              >
-                {typeClient == "C"
-                  ? t("customers.buttons.addCustomer")
-                  : t("suppliers.buttons.addSupplier")}
-              </SecondaryButton>
-            )
-          }
-          <PermissionCheck userPermission={Permissions.EDIT_CLIENT}>
-            {showUpdateButton && (
-              <SecondaryButton variant="contained"
-                style={{ width: "fit-content" }}
-                onClick={handleEditCustomer}
-              >
-                {typeClient == "C"
-                  ? t("customers.buttons.updateChanges")
-                  : t("suppliers.buttons.updateChanges")}
-              </SecondaryButton>
-            )}
-          </PermissionCheck>
+
+        {/* bottom section */}
+        <div style={classes.bottomSectionStyle}>
+          <PrimaryTabsComponent variant="ButtonedTabs" tabs={tabs} withBackGround={true} />
         </div>
+        <div style={classes.footerStyle}>
+            {isFromHomePage && !showTable ?
+              <SecondaryButton variant="contained" style={{ width: "fit-content" }} onClick={handleShowTable} >{t("customers.buttons.search")}</SecondaryButton>
+              :
+              showAddButton && (
+                <SecondaryButton variant="contained" style={{ width: "fit-content" }}
+                  onClick={handleAddCustomer}
+                >
+                  {typeClient == "C"
+                    ? t("customers.buttons.addCustomer")
+                    : t("suppliers.buttons.addSupplier")}
+                </SecondaryButton>
+              )
+            }
+            <PermissionCheck userPermission={Permissions.EDIT_CLIENT}>
+              {showUpdateButton && (
+                <SecondaryButton variant="contained"
+                  style={{ width: "fit-content" }}
+                  onClick={handleEditCustomer}
+                >
+                  {typeClient == "C"
+                    ? t("customers.buttons.updateChanges")
+                    : t("suppliers.buttons.updateChanges")}
+                </SecondaryButton>
+              )}
+            </PermissionCheck>
+          </div>
       </div>
       <GoMakeModal
         insideStyle={classes.secondInsideStyle}

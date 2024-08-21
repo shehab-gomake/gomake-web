@@ -12,9 +12,7 @@ const useStyle = () => {
   const classes = useMemo(() => {
     return {
       mainContainerStyle: {
-        position: "sticky" as "sticky",
-        top: 0,
-        zIndex: 1,
+        
         backgroundColor: "#FDFDFD",
         marginBottom: 10,
       },
@@ -35,6 +33,8 @@ const useStyle = () => {
         paddingTop: "27px",
         paddingBottom: "27px",
         background: "#FDFDFD",
+
+
       },
       secondInsideStyle: {
         paddingLeft: 0,
@@ -54,13 +54,10 @@ const useStyle = () => {
         maxHeight: CONTAINER_TABS_MAX_HEIGHT,
         overflow: "auto",
         position: 'sticky' as 'sticky',
-
       },
       footerStyle: {
         display: "flex",
         justifyContent: "flex-end",
-        position: "sticky" as "sticky",
-        bottom: "0px",
         height: FOOTER_MAX_HEIGHT,
         width: "100%",
         background: "#fff",
@@ -69,11 +66,10 @@ const useStyle = () => {
       bottomSectionStyle: {
         display: "flex",
         flexDirection: "column" as "column",
-        justifyContent: "space-between",
-        maxHeight: CONTAINER_TABS_MAX_HEIGHT + FOOTER_MAX_HEIGHT,
-        position: 'sticky' as 'sticky',
-        top: 0,
-        zIndex: 0,
+        width: "100%",
+        height: "fit-content",
+        overflow: "auto",
+        flex:1
       },
       colStyle: {
         display: "flex",
