@@ -661,7 +661,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
             discount: quoteItem?.discount,
             finalPrice: quoteItemEdit?.finalPrice,
             quantity: quoteItem?.quantity,
-            priceRound: quoteItemValue?.client?.priceRound,
+            roundPrices: quoteItemValue?.client?.roundPrices,
             document: {
               totalPrice: quoteItemValue?.totalPrice,
               totalPriceAfterDiscount: quoteItemValue?.totalPriceAfterDiscount,
@@ -781,7 +781,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
             totalPayment: updatedQuoteItemValue?.totalPayment,
             vat: updatedQuoteItemValue?.vat || 0.17,
             totalVAT: updatedQuoteItemValue?.totalVAT || 0.17,
-            priceRound: quoteItemValue?.client?.priceRound,
+            roundPrices: quoteItemValue?.client?.roundPrices,
             documentItems: updatedQuoteItemValue?.documentItems.map(item => ({
               finalPrice: item.finalPrice
             }))
@@ -852,7 +852,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
             totalPayment: quoteItemValue?.totalPayment,
             vat: quoteItemValue?.vat || 0.17,
             totalVAT: quoteItemValue?.totalVAT || 0.17,
-            priceRound: quoteItemValue?.client?.priceRound,
+            roundPrices: quoteItemValue?.client?.roundPrices,
             documentItems: quoteItemValue.documentItems?.map(item => ({
               finalPrice: item.finalPrice
             }))

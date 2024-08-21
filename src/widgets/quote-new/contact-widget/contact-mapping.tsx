@@ -81,7 +81,8 @@ const ContactMapping = ({
               ...item,
               contactMail: value?.mail,
               contactName: value?.name,
-              contactPhone: value?.phone
+              contactPhone: value?.phone,
+              contactID: value?.id
             });
             setIsUpdateContactName(null);
           }

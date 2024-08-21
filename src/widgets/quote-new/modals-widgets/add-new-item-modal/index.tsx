@@ -37,7 +37,7 @@ const AddNewItemModal = ({ openModal, onClose, documentType, getQuote }) => {
       >
         <div style={classes.mainContainer}>
           <div style={classes.autoComplateRowContainer}>
-            <div style={{ width: "100%", marginTop: 15 }}>
+            <div style={{ width: "93%", marginTop: 15 }}>
               <GoMakeTreeSelect
                 value={selectedProduct}
                 options={combinedData}

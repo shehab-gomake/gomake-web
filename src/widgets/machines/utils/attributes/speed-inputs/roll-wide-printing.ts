@@ -82,7 +82,7 @@ const rollWidePrinting = (state: Record<string, any>) => {
                     type: "text",
                     placeholder: "machineAttributes.maxThickness",
                     required: false,
-                    parameterKey: "maxThickness",
+                    parameterKey: "thickness",
                     options: [],
                     value: state.attributes?.pvc?.maxThickness ? state.attributes?.pvc?.maxThickness : '',
                     unit: EMeasurementUnits.MM
@@ -122,7 +122,7 @@ const rollWidePrinting = (state: Record<string, any>) => {
                     type: "text",
                     placeholder: "machineAttributes.maxThickness",
                     required: true,
-                    parameterKey: "maxThickness",
+                    parameterKey: "thickness",
                     options: [],
                     value: state.attributes?.pvc?.maxThickness ? state.attributes?.pvc?.maxThickness : '',
                     unit: EMeasurementUnits.UM

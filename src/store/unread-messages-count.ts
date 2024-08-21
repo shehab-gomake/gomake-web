@@ -7,5 +7,5 @@ export const unreadMessagesCountState = atom<number>({
 
 export const isUpdateDialogsState = atom<boolean>({
     default: false,
-    key: 'unreadMessagesCountState'
+    key: 'isUpdateDialogsState'
 })

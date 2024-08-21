@@ -35,11 +35,11 @@ const DialogList = ({onSelectDialog, dialogs, selectedDialogId, onClickAddDialog
 
     useEffect(() => {
         if (ref.current) {
-            ref.current.scrollIntoView({ behavior: "smooth", block: "start", inline: "nearest" });
+            ref.current.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
         }
     }, [selectedDialogId])
     return (
-        <Stack style={{backgroundColor: '#FAFAFA'}} padding={'12px'} gap={'12px'} overflow={'hidden'}>
+        <Stack style={{backgroundColor: '#FAFAFA'}} minHeight={'100%'} flex={1} padding={'12px'} gap={'12px'} overflow={'hidden'}>
             <Stack padding={'12px'} direction={'row'} alignItems={'center'} justifyContent={'space-between'}>
                 <Stack direction={'row'} alignItems={'center'} gap={'10px'}>
                     <h3 style={{color: primaryColor(600), ...FONT_FAMILY.Lexend(600, 24)}}>{t('messenger.dialogsTitle')}</h3>
@@ -62,7 +62,7 @@ const DialogList = ({onSelectDialog, dialogs, selectedDialogId, onClickAddDialog
             </Stack>
             <Divider/>
             <SearchInputComponent bgColor={'#F3F3F3'} onChange={setFilter}/>
-            <div style={{overflow: 'auto',}}>
+            <div style={{overflow: 'auto'}}>
 
                 <List sx={{
                     display: 'flex',
@@ -74,7 +74,8 @@ const DialogList = ({onSelectDialog, dialogs, selectedDialogId, onClickAddDialog
                 }}>
                     {
                         getDialogs()?.map(dialog =>
-                            <ListItem alignItems="center"
+                            <ListItem key={dialog._id}
+                                      alignItems="center"
                                       ref={selectedDialogId === dialog?._id ? ref : undefined}
                                       onClick={() => onSelectDialog(dialog)}
                                       secondaryAction={<span style={{
@@ -89,7 +90,8 @@ const DialogList = ({onSelectDialog, dialogs, selectedDialogId, onClickAddDialog
                                 <ListItemAvatar>
                                     <Avatar variant={'circular'} src={dialog?.photo}/>
                                 </ListItemAvatar>
-                                <ListItemText style={{...FONT_FAMILY.Lexend(500, 16), color: '#141414'}} primary={dialog.name}/>
+                                <ListItemText style={{...FONT_FAMILY.Lexend(500, 16), color: '#141414'}}
+                                              primary={dialog.name}/>
                             </ListItem>
                         )
                     }

@@ -219,7 +219,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
           <h1 style={classes.header}>{materialName}</h1>
           <h4 style={classes.subHeader}>/ {subCategory}</h4>
         </div>
-        <FiltersActionsBar isAdmin={props.isAdmin} />
+        <FiltersActionsBar isAdmin={props.isAdmin} subCategory={subCategory} />
       </div>
       <SideBarContainer sideDataTour={'materialsCategories'} bodyDataTour={'materialsTableData'} side={Side()} subHeader={""}>
         {materialCategory && (

@@ -41,6 +41,7 @@ const useStatusTable = () => {
                 onChange={(e, checked) => {
                     onChangeHeaderCheckBox(statusId, checked);
                 }} />,
+            ' ',
             t('productionFloor.jobs'),
             t('productionFloor.taskCategory'),
             t('productionFloor.station'),

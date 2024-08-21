@@ -1,7 +1,7 @@
 import {useQuickBlox} from "@/widgets/messenger/use-quick-blox";
 import {useCallback, useEffect, useState} from "react";
 import {IChatDialog} from "@/widgets/messenger/interfaces/dialog";
-import {IChatMessage} from "@/widgets/messenger/interfaces/chat-message";
+import {IChatMessage, IUserMetaData} from "@/widgets/messenger/interfaces/chat-message";
 import {EFileStatus} from "@/widgets/messenger/enums";
 import {useGomakeAxios, useSnackBar} from "@/hooks";
 import {
@@ -20,7 +20,7 @@ const useMessenger = () => {
     const [inputValue, setInputValue] = useState('');
     const [uploadingFiles, setUploadingFiles] = useState<boolean>(false);
     const [updatedApprovalRequestId, setUpdatedApprovalRequestId] = useState<{ approvalRequestId: string, newStatus: EFileStatus }>();
-    const [usersMetaData, setUsersMetaDta] = useState([]);
+    const [usersMetaData, setUsersMetaDta] = useState<IUserMetaData[]>([]);
     const {updateState, setUpdateState} = useMessengerSignalr();
     const {alertFaultUpdate} = useSnackBar();
     const {query} = useRouter();
@@ -32,7 +32,12 @@ const useMessenger = () => {
 
     const files = useCallback(() => {
         return messages.filter(msg => !!msg.file_approval_Request_id);
-    }, [messages])
+    }, [messages]);
+
+    const getUsersNames = useCallback(() => {
+        return usersMetaData?.filter(user => +user.userId !== messenger.sessionUser.userId)
+            .map(user => user.fullName)
+    }, [usersMetaData]);
     const {callApi} = useGomakeAxios();
     const messenger = useQuickBlox();
 
@@ -255,10 +260,10 @@ const useMessenger = () => {
     }, [selectedDialog, messenger.isChatConnected]);
 
     useEffect(() => {
-        if (usersMetaData.length > 0) {
+        if (usersMetaData.length > 0 && messages.length > 0 && !messages.some(msg => !!msg.userMetaData)) {
             setMessages(prevState => prevState.map(msg => ({
                 ...msg,
-                userMetaData: usersMetaData?.find(user => user.userId == msg.sender_id)
+                userMetaData: usersMetaData?.find(user => +user.userId === msg.sender_id)
             })));
         }
     }, [usersMetaData, messages])
@@ -295,7 +300,8 @@ const useMessenger = () => {
         addNewDialog,
         files,
         isChatConnected: messenger.isChatConnected,
-        sessionUserId: messenger?.sessionUser?.userId
+        sessionUserId: messenger?.sessionUser?.userId,
+        users: getUsersNames
     }
 }
 
