@@ -10,12 +10,12 @@ const useLedgerReportHeader = ({ onClickPrintCard, onClickShowCard }: LedgerRepo
   const { t } = useTranslation()
   const tabs = [
     {
-      name: t("reports.printCard"),
-      onclick: onClickPrintCard
-    },
-    {
       name: t("reports.showCard"),
       onclick: onClickShowCard
+    },
+    {
+      name: t("reports.printCard"),
+      onclick: onClickPrintCard
     },
   ]
 

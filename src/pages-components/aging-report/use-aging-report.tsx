@@ -1,10 +1,13 @@
 import { useCallback, useRef, useState } from "react";
 import { useAgentsList, useCustomerDropDownList, useGomakeAxios, useSnackBar } from "@/hooks";
 import { EHttpMethod } from "@/services/api-service/enums";
+import { format } from 'date-fns';
+import { useTranslation } from "react-i18next";
 
 const useAgingReport = () => {
+  const { t } = useTranslation()
   const { callApi } = useGomakeAxios();
-  const { alertFaultGetData, alertSuccessGetData } = useSnackBar();
+  const { alertFault, alertFaultGetData, alertSuccessGetData } = useSnackBar();
   const { customer, renderOptions, checkWhatRenderArray, handleCustomerChange } = useCustomerDropDownList();
   const { agent, agentsCategories, handleAgentChange } = useAgentsList();
   const [selectDate, setSelectDate] = useState<string>(new Date().toISOString().split('T')[0]);
@@ -14,9 +17,16 @@ const useAgingReport = () => {
   const [showTable, setShowTable] = useState<boolean>(false);
   const [tableHeader, setTableHeader] = useState<any>([])
   const [tableData, setTableData] = useState<any>([])
-  const [fromDate, setFromDate] = useState<Date>();
-  const [toDate, setToDate] = useState<Date>();
-  const transformedHeaders = tableHeader?.map(header => header.name);
+  const [fromDate, setFromDate] = useState<Date>(new Date());
+  const [toDate, setToDate] = useState<Date>(new Date());
+    const transformedHeaders = tableHeader?.map(header => {
+    // Check if the header key contains any numbers
+    const containsNumber = /\d/.test(header.key);
+  
+    // If it contains numbers, use header.name; otherwise, use the translated text
+    return containsNumber ? header.name : t(`reports.${header.key}`);
+  });
+
   const dateRef = useRef(null);
 
   const onSelectDeliveryTimeDates = (fromDate: Date, toDate: Date) => {
@@ -24,6 +34,7 @@ const useAgingReport = () => {
     setFromDate(fromDate);
     setToDate(toDate);
   };
+
   const handleClickSelectDate = () => {
     dateRef?.current?.showPicker();
   };
@@ -34,15 +45,52 @@ const useAgingReport = () => {
   const onChangeByReferenceDate = () => {
     setByReferenceDate(!byReferenceDate)
   }
+
   const getTableDataRows = useCallback(() => {
-    return tableData.map(data => {
-      const rowData = [];
-      tableHeader.forEach(header => {
-        rowData.push(data[header.key]);
+    return tableData.flatMap((data: any) => {
+      const rows = [];
+
+      const mainRow = tableHeader.map((header: any) => {
+        const nestedKey = header.key;
+        const value = nestedKey.split('.').reduce((acc, part) => acc && acc[part], data);
+
+        if (Array.isArray(value)) {
+          return value.map((item: any) => {
+            return tableHeader.map((nestedHeader: any) => {
+              const nestedValue = nestedHeader.key.split('.').reduce((acc, part) => acc && acc[part], item);
+              return nestedValue || '';
+            });
+          });
+        } else if (typeof value === 'object' && value !== null) {
+          return Object.entries(value)
+            .map(([key, val]) => `${key}: ${val}`)
+            .join(', ');
+        } else {
+          return value || '';
+        }
       });
-      return rowData;
+
+      // Add the main row (this will be the first row)
+      rows.push(mainRow);
+      // Handle nested rows
+      if (Array.isArray(data.data) && detailedReport) {
+        rows.push(...data.data.map((nestedItem: any) => {
+          return tableHeader.map((header: any, index: number) => {
+            if (index < 3) {
+              // Keep the first three headers empty
+              return '';
+            } else {
+              const nestedValue = header.key.split('.').reduce((acc, part) => acc && acc[part], nestedItem);
+              return nestedValue || '';
+            }
+          });
+        }));
+      }
+
+      return rows;
     });
   }, [tableData, tableHeader]);
+
 
   const onClickBtn1 = () => {
     setShowTable(false);
@@ -56,14 +104,23 @@ const useAgingReport = () => {
     // ExportAgingReport(EExportType.EXCEL)
     ExportAgingReportExcel()
   }
+
   const getAgingReportFilter = useCallback(
     async () => {
+      if (!fromDate || !toDate) {
+        alertFault(("alerts.pleaseEnsureDatesSelected"))
+        return;
+      }
+
+      const formattedStartDate = format(fromDate, 'yyyy-MM-dd');
+      const formattedEndDate = format(toDate, 'yyyy-MM-dd');
+
       const res = await callApi(
         EHttpMethod.POST,
         `/v1/erp-service/reports/get-aging-report`,
         {
-          startDate: fromDate,
-          endDate: toDate,
+          startDate: formattedStartDate,
+          endDate: formattedEndDate,
           clientId: customer?.id,
           referDate: selectDate ? selectDate : new Date(),
           agentId: agent?.id,
@@ -84,15 +141,24 @@ const useAgingReport = () => {
     },
     [fromDate, toDate, detailedReport, agent, customer, selectDate, byReferenceDate]
   );
+
   const ExportAgingReportPDF = useCallback(
     async () => {
+      if (!fromDate || !toDate) {
+        alertFault(("alerts.pleaseEnsureDatesSelected"))
+        return;
+      }
+
+      const formattedStartDate = format(fromDate, 'yyyy-MM-dd');
+      const formattedEndDate = format(toDate, 'yyyy-MM-dd');
+
       const res = await callApi(
         EHttpMethod.POST,
         `/v1/erp-service/reports/export-aging-report-pdf`,
         {
           myBody: {
-            startDate: fromDate,
-            endDate: toDate,
+            startDate: formattedStartDate,
+            endDate: formattedEndDate,
             clientId: customer?.id,
             referDate: selectDate ? selectDate : new Date(),
             agentId: agent?.id,
@@ -105,7 +171,6 @@ const useAgingReport = () => {
         "blob"
       );
 
-
       const downloadLink = document.createElement('a');
       const link = URL?.createObjectURL(res.data);
       downloadLink.href = link
@@ -114,15 +179,24 @@ const useAgingReport = () => {
     },
     [fromDate, toDate, detailedReport, agent, customer, selectDate, byReferenceDate]
   );
+
   const ExportAgingReportExcel = useCallback(
     async () => {
+      if (!fromDate || !toDate) {
+        alertFault(("alerts.pleaseEnsureDatesSelected"))
+        return;
+      }
+
+      const formattedStartDate = format(fromDate, 'yyyy-MM-dd');
+      const formattedEndDate = format(toDate, 'yyyy-MM-dd');
+
       const res = await callApi(
         EHttpMethod.POST,
         `/v1/erp-service/reports/export-aging-report-excel`,
         {
           myBody: {
-            startDate: fromDate,
-            endDate: toDate,
+            startDate: formattedStartDate,
+            endDate: formattedEndDate,
             clientId: customer?.id,
             referDate: selectDate ? selectDate : new Date(),
             agentId: agent?.id,
@@ -146,6 +220,7 @@ const useAgingReport = () => {
   );
 
   return {
+    t,
     onSelectDeliveryTimeDates,
     resetDatePicker,
     handleClickSelectDate,

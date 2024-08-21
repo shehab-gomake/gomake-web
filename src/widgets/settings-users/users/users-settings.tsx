@@ -34,19 +34,21 @@ const UsersSettings = () => {
                     onChangeShowInActive={onShowInActiveChange}
                 ></TableFilter>
             </div>
-            <UsersTable
-                users={getEmployees()}
-                onToggleEmployeeStatus={toggleEmployeeActive}
-                onEditEmployee={editEmployee}
-            />
-            {getEmployees()?.length > 0 && (
-                <div style={classes.footer}>
-                    <Button sx={classes.printBtn} onClick={exportToExcel}>
-                        {t("usersSettings.excel")}
-                    </Button>
-                    {/* <Button sx={classes.exportBtn}>{t("usersSettings.print")}</Button> */}
-                </div>
-            )}
+            <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                <UsersTable
+                    users={getEmployees()}
+                    onToggleEmployeeStatus={toggleEmployeeActive}
+                    onEditEmployee={editEmployee}
+                />
+                {getEmployees()?.length > 0 && (
+                    <div style={classes.footer}>
+                        <Button sx={classes.printBtn} onClick={exportToExcel}>
+                            {t("usersSettings.excel")}
+                        </Button>
+                        {/* <Button sx={classes.exportBtn}>{t("usersSettings.print")}</Button> */}
+                    </div>
+                )}
+            </div>
         </div>
     );
 };

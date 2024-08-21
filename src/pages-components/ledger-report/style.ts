@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 
 const useStyle = () => {
-  const clasess = useMemo(() => {
+  const classes = useMemo(() => {
     return {
       mainContainer: {
         display: "flex",
@@ -10,13 +10,13 @@ const useStyle = () => {
         alignItems: "flex-start",
         width: "100%",
         gap: 20,
-        padding:20,
+        padding:"0px 20px 20px 20px",
         overflowY: "scroll" as "scroll",
       },
     };
   }, []);
   return {
-    clasess,
+    classes,
   };
 };
 export { useStyle };

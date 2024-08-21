@@ -1,4 +1,4 @@
-import {Button, Card, CardActions, CardContent, IconButton, Typography} from "@mui/material";
+import {Button, Card, CardActions, CardContent, IconButton, Link, Typography} from "@mui/material";
 import {IChatMessage} from "@/widgets/messenger/interfaces/chat-message";
 import {EFileStatus} from "@/widgets/messenger/enums";
 import Stack from "@mui/material/Stack";
@@ -6,6 +6,7 @@ import {useEffect, useState} from "react";
 import {FileStatusNameComponent} from "@/widgets/messenger/components/file-status-name-component";
 import {useGomakeTheme} from "@/hooks/use-gomake-thme";
 import {FONT_FAMILY} from "@/utils/font-family";
+import {useTranslation} from "react-i18next";
 
 interface IProps extends IChatMessage {
     isCurrentUserSentMsg: boolean;
@@ -26,7 +27,8 @@ const QuoteApprovalMessageComponent = ({
                                   updatedApprovalRequest
                               }: IProps) => {
     const [status, setStatus] = useState<EFileStatus>(EFileStatus.PENDING);
-    const {successColor, errorColor, grayColor} = useGomakeTheme();
+    const {successColor, errorColor, grayColor, primaryColor, secondColor} = useGomakeTheme();
+    const {t} = useTranslation();
 
     const onUpdateStatus = (newStatus: EFileStatus) => {
         onUpdateApprovalQouteMessageStatus(quote_approval_Request_id, newStatus, sender_id, 0);
@@ -55,21 +57,21 @@ const QuoteApprovalMessageComponent = ({
     }}>
         <CardContent>
             <Stack gap={'5px'} justifyContent={'space-between'}>
-                <Typography variant="h5" style={{...FONT_FAMILY.Inter(500, 14), color: grayColor(700)}}>
-                    {message}
-                </Typography>
+                <Link href={`/quotes?quoteNumber=${message}`} style={{...FONT_FAMILY.Inter(500, 14), color: grayColor(700)}}>
+                    {`${t('messenger.quoteMessage')} ${message}`}
+                </Link>
             </Stack>
         </CardContent>
         <CardActions style={{display: 'flex', justifyContent: 'flex-end', flex: 1}}>
             {
-                status === EFileStatus.PENDING ?
+                true ?
                     <>
                         {
                             isCurrentUserSentMsg ? <FileStatusNameComponent status={status}/> :
                                 <>
-                                    <Button variant={'contained'} style={{backgroundColor: successColor(400)}}
+                                    <Button variant={'contained'} style={{backgroundColor: primaryColor(400)}}
                                             onClick={() => onUpdateStatus(EFileStatus.APPROVED)}>Approve</Button>
-                                    <Button variant={'contained'} style={{backgroundColor: errorColor(600)}}
+                                    <Button variant={'contained'} style={{backgroundColor: secondColor(600)}}
                                             onClick={() => onUpdateStatus(EFileStatus.REJECTED)}>reject</Button>
                                 </>
                         }

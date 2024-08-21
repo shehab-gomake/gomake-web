@@ -18,7 +18,7 @@ interface IProps extends IChatMessage {
 }
 
 
-const FileMessageComponent = ({
+const FIleListComponent = ({
                                   message,
                                   attachments,
                                   isCurrentUserSentMsg,
@@ -125,4 +125,4 @@ const FileMessageComponent = ({
     </Card>
 }
 
-export {FileMessageComponent}
+export {FIleListComponent}

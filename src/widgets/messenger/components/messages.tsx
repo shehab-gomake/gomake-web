@@ -4,7 +4,7 @@ import {Avatar} from "@mui/material";
 import {userProfileState} from "@/store/user-profile";
 import {useRecoilState} from "recoil";
 import {IChatMessage} from "@/widgets/messenger/interfaces/chat-message";
-import {FileMessageComponent} from "@/widgets/messenger/components/file-message";
+import {FileCardMessageComponent} from "@/widgets/messenger/components/file-card-message";
 import {useEffect, useRef, useState} from "react";
 import {useDrop} from "react-dnd";
 import {IChatDialog} from "@/widgets/messenger/interfaces/dialog";
@@ -95,7 +95,7 @@ const MessagesComponent = ({
                            alignSelf={msg.sender_id === sessionUserId ? 'flex-end' : 'flex-start'}>
                         {
                             (index === 0 || index > 0 && msg.sender_id !== messages[index - 1].sender_id) ?
-                                <Avatar variant={'rounded'} style={{
+                                <Avatar variant={'circular'} style={{
                                     backgroundColor: msg.sender_id === sessionUserId ? user?.avatarBackGroundColor : '',
                                 }}
                                         src={msg.sender_id === sessionUserId ? user?.imagePath : msg.userMetaData?.profileImage}>{msg.sender_id === sessionUserId && !user.imagePath ? user.avatarInitials?.toUpperCase() : msg.userMetaData?.avatarInitials?.toUpperCase()}</Avatar> :
@@ -103,13 +103,13 @@ const MessagesComponent = ({
                         }
                         {
                             msg.file_approval_Request_id ?
-                                <FileMessageComponent {...msg}
-                                                      updatedApprovalRequest={updatedApprovalRequest}
-                                                      direction={'column'}
-                                                      onUpdateApprovalFile={onUpdateApprovalFile}
-                                                      isCurrentUserSentMsg={msg.sender_id === sessionUserId}
-                                                      getApprovalStatus={getApprovalStatus}
-                                                      attachments={msg.attachments.map(attachment => ({
+                                <FileCardMessageComponent {...msg}
+                                                          updatedApprovalRequest={updatedApprovalRequest}
+                                                          direction={'column'}
+                                                          onUpdateApprovalFile={onUpdateApprovalFile}
+                                                          isCurrentUserSentMsg={msg.sender_id === sessionUserId}
+                                                          getApprovalStatus={getApprovalStatus}
+                                                          attachments={msg.attachments.map(attachment => ({
                                                           ...attachment,
                                                           url: attachment.type === 'application/pdf' ? 'https://gomake-contents.s3.eu-west-3.amazonaws.com/messanger-no-image.jpg' : getAttachmentUrl(attachment.id)
                                                       }))}/> :

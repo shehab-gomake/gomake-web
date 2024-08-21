@@ -25,7 +25,7 @@ const SideLeftMenuWidget = ({
       <IconButton onClick={(e) => {
         handleClick(e)
         e.stopPropagation();
-      }} style={{ zIndex: 99999999 }}>
+      }} >
         <MoreCircleIcon />
       </IconButton>
       <GoMakeMenu handleClose={handleClose} open={open} anchorEl={anchorEl}>

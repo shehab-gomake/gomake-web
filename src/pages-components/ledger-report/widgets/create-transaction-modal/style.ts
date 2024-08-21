@@ -5,7 +5,7 @@ import { useMemo } from "react";
 const useStyle = () => {
   const {secondColor}=useGomakeTheme()
 
-  const clasess = useMemo(() => {
+  const classes = useMemo(() => {
     return {
       insideStyle: {
         width: "50%",
@@ -49,7 +49,7 @@ const useStyle = () => {
       },
       createBtnStyle:{
         height: 40,
-        background:secondColor(500)
+        width:"fit-content"
       },
       datePickerinvidualContainer:{ 
         display: "flex",
@@ -79,7 +79,7 @@ const useStyle = () => {
     };
   }, []);
   return {
-    clasess,
+    classes,
   };
 };
 export { useStyle };

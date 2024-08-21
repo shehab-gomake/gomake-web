@@ -16,7 +16,8 @@ const TemplateTable = () => {
 
     return (
         <div style={{width:"100%"}}>
-        <PrimaryTable stickyFirstCol={false} stickyHeader={false} rows={allSmsTemplates} headers={tableHeaders}></PrimaryTable>
+        <PrimaryTable stickyFirstCol={false}  rows={allSmsTemplates} headers={tableHeaders}    maxHeight={650}
+            stickyHeader={true}></PrimaryTable>
         </div>
     );
 }

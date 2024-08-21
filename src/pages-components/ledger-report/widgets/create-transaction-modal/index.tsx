@@ -1,13 +1,13 @@
 
-import { GoMakeAutoComplate, GoMakeModal, GomakePrimaryButton, GomakeTextInput } from "@/components";
-
+import { GoMakeAutoComplate, GoMakeModal, GomakeTextInput } from "@/components";
 import { useCreateNewTransaction } from "./use-create-transaction";
 import { useStyle } from "./style";
 import { DateFormatter } from "@/utils/adapter";
+import { SecondaryButton } from "@/components/button/secondary-button";
 
 
 const CreateNewTransactionModal = ({ openModal, onCloseModal }) => {
-  const { clasess } = useStyle();
+  const { classes } = useStyle();
   const {
     customer,
     erpAccountsList,
@@ -33,67 +33,67 @@ const CreateNewTransactionModal = ({ openModal, onCloseModal }) => {
     <>
       <GoMakeModal
         openModal={openModal}
-        modalTitle="Create New Transaction"
+        modalTitle={t("reports.newTransaction")}
         onClose={onCloseAndRemoveState}
-        insideStyle={clasess.insideStyle}
+        insideStyle={classes.insideStyle}
       >
-        <div style={clasess.mainContainer}>
-          <div style={clasess.inputsRowStyle}>
-            <div style={clasess.date2FilterContainer}>
-              <h3 style={clasess.filterLabelStyle}>{t("sales.quote.customer")}</h3>
+        <div style={classes.mainContainer}>
+          <div style={classes.inputsRowStyle}>
+            <div style={classes.date2FilterContainer}>
+              <h3 style={classes.filterLabelStyle}>{t("sales.quote.customer")}</h3>
               <GoMakeAutoComplate
                 key={customer?.id}
                 options={renderOptions()}
                 onChangeTextField={checkWhatRenderArray}
                 getOptionLabel={(option: any) => `${option.name}`}
-                style={clasess.textInputStyle}
+                style={classes.textInputStyle}
                 placeholder={t("sales.quote.chooseCustomer")}
                 onChange={handleCustomerChange}
                 value={customer}
               />
             </div>
-            <div style={clasess.date2FilterContainer}>
-              <h3 style={clasess.filterLabelStyle}>Account Code</h3>
+            <div style={classes.date2FilterContainer}>
+              <h3 style={classes.filterLabelStyle}>{t("reports.accountCode")}</h3>
               <GoMakeAutoComplate
                 key={selectErpAccount?.code}
                 options={erpAccountsList}
                 getOptionLabel={(option: any) => `${option.name}`}
-                style={clasess.textInputStyle}
-                placeholder="Select Account Code"
+                style={classes.textInputStyle}
+                placeholder={t("reports.selectAccountCode")}
                 onChange={handleERPAccountChange}
                 value={selectErpAccount}
               />
             </div>
-            <div style={clasess.date2FilterContainer}>
-              <h3 style={clasess.filterLabelStyle}>Type</h3>
+            <div style={classes.date2FilterContainer}>
+              <h3 style={classes.filterLabelStyle}>{t("reports.Type")}</h3>
               <GoMakeAutoComplate
                 key={selectAccountType?.id}
                 options={accountTypeList}
                 getOptionLabel={(option: any) => `${option.name}`}
-                style={clasess.textInputStyle}
-                placeholder="Select Type"
+                style={classes.textInputStyle}
+                placeholder={t("reports.selectType")}
                 onChange={handleAccountTypeChange}
                 value={selectAccountType}
               />
             </div>
-            <div style={clasess.date2FilterContainer}>
-              <h3 style={clasess.filterLabelStyle}>{t("reports.price")}</h3>
-              <GomakeTextInput style={clasess.textInputStyle} placeholder="Enter Price" type="number" onChange={onChangePrice} />
+            <div style={classes.date2FilterContainer}>
+              <h3 style={classes.filterLabelStyle}>{t("reports.price")}</h3>
+              <GomakeTextInput style={classes.textInputStyle} placeholder={t("reports.enterPrice")} type="number" onChange={onChangePrice} />
 
             </div>
-            <div style={clasess.date2FilterContainer}>
-              <h3 style={clasess.filterLabelStyle}>Reference</h3>
-              <GomakeTextInput style={clasess.textInputStyle} placeholder="Enter Reference" onChange={onChangeReference} />
+            <div style={classes.date2FilterContainer}>
+              <h3 style={classes.filterLabelStyle}>{t("reports.reference")}</h3>
+              <GomakeTextInput style={classes.textInputStyle} placeholder={t("reports.enterReference")} onChange={onChangeReference} />
             </div>
-            <div style={clasess.date2FilterContainer}>
-              <h3 style={clasess.filterLabelStyle}>Reference Date</h3>
-              <div style={clasess.datePickerinvidualContainer} onClick={handleClickSelectDate}>
+            <div style={classes.date2FilterContainer}>
+              <h3 style={classes.filterLabelStyle}>{t("customers.modal.referenceDate")}</h3>
+              <div style={classes.datePickerinvidualContainer} onClick={handleClickSelectDate}>
                 <div
-                  style={clasess.dateStyle}
+                  style={classes.dateStyle}
 
                 >
                   {selectDate ? DateFormatter(selectDate) : t("sales.quote.selectDate")}
-                  <div style={clasess.datePickerContainer}>
+                  <div style={classes.datePickerContainer}>
                     <input
                       type="date"
                       onChange={(e) => {
@@ -106,7 +106,7 @@ const CreateNewTransactionModal = ({ openModal, onCloseModal }) => {
               </div>
             </div>
           </div>
-          <GomakePrimaryButton style={clasess.createBtnStyle} onClick={createTransactionsApi}>Create New Transaction</GomakePrimaryButton>
+          <SecondaryButton variant="contained" style={classes.createBtnStyle} onClick={createTransactionsApi}>{t("reports.createNewTransaction")}</SecondaryButton>
         </div>
       </GoMakeModal>
     </>

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-
+import { format } from 'date-fns';
 import { useCustomerDropDownList, useGomakeAxios, useSnackBar } from "@/hooks";
 import { EHttpMethod } from "@/services/api-service/enums";
 
@@ -124,13 +124,20 @@ const useLedgerReport = () => {
   }
   const ExportLedgerReportPDF = useCallback(
     async () => {
+      if (!fromDate || !toDate) {
+        alertFault(("alerts.pleaseEnsureDatesSelected"))
+        return;
+      }
+
+      const formattedStartDate = format(fromDate, 'yyyy-MM-dd');
+      const formattedEndDate = format(toDate, 'yyyy-MM-dd');
       const res = await callApi(
         EHttpMethod.POST,
         `/v1/erp-service/reports/export-ledger-report-pdf`,
         {
           "clientId": customer?.id,
-          "startDate": fromDate,
-          "endDate": toDate,
+          "startDate": formattedStartDate,
+          "endDate": formattedEndDate,
           "isExtended": isExtended
         },
         true,
@@ -150,12 +157,19 @@ const useLedgerReport = () => {
 
   const getAgingReportFilter = useCallback(
     async () => {
+      if (!fromDate || !toDate) {
+        alertFault(("alerts.pleaseEnsureDatesSelected"))
+        return;
+      }
+      const formattedStartDate = format(fromDate, 'yyyy-MM-dd');
+      const formattedEndDate = format(toDate, 'yyyy-MM-dd');
+
       const res = await callApi(
         EHttpMethod.POST,
         `/v1/erp-service/reports/get-customer-ledger-report`,
         {
-          startDate: fromDate,
-          endDate: toDate,
+          startDate: formattedStartDate,
+          endDate: formattedEndDate,
           clientId: customer?.id,
           isExtended: isExtended
         }
@@ -209,13 +223,20 @@ const useLedgerReport = () => {
 
   const SendCustomerLedgerToMailApi = useCallback(
     async () => {
+      if (!fromDate || !toDate) {
+        alertFault(("alerts.pleaseEnsureDatesSelected"))
+        return;
+      }
+      const formattedStartDate = format(fromDate, 'yyyy-MM-dd');
+      const formattedEndDate = format(toDate, 'yyyy-MM-dd');
+      
       const res = await callApi(
         EHttpMethod.POST,
         `/v1/erp-service/reports/send-customer-ledger-to-mail`,
         {
           clientId: customer?.id,
-          startDate: fromDate,
-          endDate: toDate,
+          startDate: formattedStartDate,
+          endDate: formattedEndDate,
           isExtended: isExtended,
           mail: selectedContactById?.mail
         }
@@ -231,6 +252,7 @@ const useLedgerReport = () => {
   );
 
   return {
+    t,
     onSelectDeliveryTimeDates,
     renderOptions,
     checkWhatRenderArray,

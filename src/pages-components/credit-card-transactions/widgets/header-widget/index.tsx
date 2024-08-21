@@ -1,12 +1,13 @@
 
 import { GoMakeDatepicker } from "@/components/date-picker/date-picker-component";
-import { GoMakeAutoComplate, GomakePrimaryButton, GomakeTextInput } from "@/components"
+import { GoMakeAutoComplate , GomakeTextInput } from "@/components"
 import {
   CreditCardTransactionsReportHeaderWidgetProps
 } from "@/pages-components/credit-card-transactions/widgets/header-widget/use-header-credit-card-widget";
 import { HeaderTitle } from "@/widgets";
 import { useTranslation } from "react-i18next";
 import { useStyle } from "./style";
+import { SecondaryButton } from "@/components/button/secondary-button";
 
 const CreditCardTransactionsReportHeaderWidget = ({
   onSelectDeliveryTimeDates,
@@ -75,23 +76,22 @@ const CreditCardTransactionsReportHeaderWidget = ({
             <GoMakeDatepicker onChange={onSelectDeliveryTimeDates} placeholder={t("boardMissions.chooseDate")} reset={resetDatePicker} />
           </div>
         </div>
+
         <div style={classes.date3FilterContainer}>
-          <div style={classes.filterLabelStyle} />
-          <GomakePrimaryButton
+          <SecondaryButton
+            variant="contained"
             style={classes.searchBtnStyle}
             onClick={onClickSearchFilter}
           >
             {t("sales.quote.search")}
-          </GomakePrimaryButton>
-        </div>
-        <div style={classes.date3FilterContainer}>
-          <div style={classes.filterLabelStyle} />
-          <GomakePrimaryButton
+          </SecondaryButton>
+          <SecondaryButton
+            variant="outlined"
             style={classes.clearBtnStyle}
             onClick={onClickClearFilter}
           >
             {t("sales.quote.clear")}
-          </GomakePrimaryButton>
+          </SecondaryButton>
         </div>
       </div>
     </>
