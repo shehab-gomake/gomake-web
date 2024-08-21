@@ -58,7 +58,7 @@ const useQuoteGetData = (docType?: DOCUMENT_TYPE) => {
   }
 
   const getCurrencyUnitText = (currency) => {
-    const foundCurrency = currenciesUnits.find(c => c.value === currency);
+    const foundCurrency = currenciesUnits?.find(c => c.value === currency);
     if (foundCurrency) {
       return foundCurrency.text;
     } else {

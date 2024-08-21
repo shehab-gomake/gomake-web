@@ -17,6 +17,7 @@ const CompanyReportWidget = () => {
                     stickyHeader={true}
                     rows={AllReport}
                     headers={tableHeaders}
+                    maxHeight={800}
                 />
             </div>
         </>

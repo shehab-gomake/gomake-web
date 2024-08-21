@@ -1,13 +1,14 @@
 import {ChangeEvent, useRef, useState} from "react";
 import {IconButton} from "@mui/material";
-import {AttachmentIcon} from "@/widgets/messenger/components/icons/attachment-icon";
-
+import {useGomakeTheme} from "@/hooks/use-gomake-thme";
+import GifBoxOutlinedIcon from '@mui/icons-material/GifBoxOutlined';
 interface IProps {
     onSendFile: (file) => void
 }
 
 const SendFileMessageButtonComponent = ({onSendFile}: IProps) => {
     const [, setFile] = useState<File | null>(null);
+    const {primaryColor} = useGomakeTheme();
     const ref = useRef(null);
     const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
         if (event.target.files && event.target.files[0]) {
@@ -26,7 +27,7 @@ const SendFileMessageButtonComponent = ({onSendFile}: IProps) => {
     return (
         <>
             <IconButton onClick={onClick}>
-               <AttachmentIcon/>
+               <GifBoxOutlinedIcon fontSize={'large'} style={{color: primaryColor(500)}} />
             </IconButton>
             <input ref={ref} type="file" onChange={handleFileChange} hidden={true}/>
         </>

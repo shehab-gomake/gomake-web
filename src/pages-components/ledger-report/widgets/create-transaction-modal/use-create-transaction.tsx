@@ -25,6 +25,7 @@ const useCreateNewTransaction = ({ onCloseModal }) => {
   const [price, setPrice] = useState<number>(0)
   const [reference, setReference] = useState<string>("")
   const [selectDate, setSelectDate] = useState<string>(new Date().toISOString().split('T')[0]);
+  
   const handleERPAccountChange = (e: any, value: any) => {
     setErpAccount(value);
   };
@@ -40,6 +41,7 @@ const useCreateNewTransaction = ({ onCloseModal }) => {
   const onChangePrice = (e: any) => {
     setPrice(e.target.value);
   };
+
   const getAgingReportFilter = useCallback(
     async () => {
       const res = await callApi(
@@ -54,9 +56,11 @@ const useCreateNewTransaction = ({ onCloseModal }) => {
     },
     []
   );
+
   useEffect(() => {
     getAgingReportFilter()
   }, [])
+
   const onCloseAndRemoveState = () => {
     setCustomer(null)
     setErpAccount(null)
@@ -90,6 +94,7 @@ const useCreateNewTransaction = ({ onCloseModal }) => {
     },
     [customer, price, reference, selectDate, selectAccountType, selectErpAccount]
   );
+  
   return {
     customer,
     erpAccountsList,

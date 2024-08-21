@@ -9,6 +9,7 @@ const CREATE_CHAT_ROOM_URL = '/v1/crm-service/quick-blox/create-chat-room';
 const UPDATE_APPROVAL_FILE_URL = '/v1/crm-service/quick-blox/update-approval-file-status';
 const GET_USERS_META_DATA_URL = '/v1/crm-service/quick-blox/get-users-meta-data';
 const CREATE_BOARD_MISSIONS_CAT_ROOM_URL = '/v1/erp-service/board-missions/create-chat-room';
+const SEND_MESSENGER_NOTIFICATION_URL = '/v1/crm-service/users/send-messenger-notifications';
 
 const getQuickBloxSessionApi: ICallAndSetData = async (callApi, setState) => {
     return await getSetApiData(callApi, EHttpMethod.GET, GET_USER_QUICK_BLOX_URL, setState)
@@ -31,6 +32,9 @@ const getUsersMetaDataApi: ICallAndSetData = async (callApi, setState, data) => 
 const createBoardMissionsChatRoomApi: ICallAndSetData = async (callApi, setState, data) => {
     return await getSetApiData(callApi, EHttpMethod.POST, CREATE_BOARD_MISSIONS_CAT_ROOM_URL, setState, data)
 }
+const sendMessengerNotificationApi: ICallAndSetData = async (callApi, setState, data) => {
+    return await getSetApiData(callApi, EHttpMethod.POST, SEND_MESSENGER_NOTIFICATION_URL, setState, data)
+}
 export {
     getQuickBloxSessionApi,
     createChatRoomApi,
@@ -38,5 +42,6 @@ export {
     getUsersMetaDataApi,
     getCustomerQuickBloxSessionApi,
     createBoardMissionsChatRoomApi,
-    getUserUnreadMessagesCountApi
+    getUserUnreadMessagesCountApi,
+    sendMessengerNotificationApi
 };
