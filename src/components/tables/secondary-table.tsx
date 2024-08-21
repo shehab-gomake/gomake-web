@@ -35,6 +35,25 @@ const SecondaryTableRow = styled(TableRow)(() => {
     }
 });
 
+const StyledTableContainer = styled(TableContainer)(() => ({
+    // Enable horizontal scrolling
+    overflowX: 'auto',
+  
+    '&::-webkit-scrollbar': {
+      width: '10px', 
+      height: '10px', // For horizontal scrollbar height
+    },
+    '&::-webkit-scrollbar-track': {
+      background: '#f1f1f1',
+    },
+    '&::-webkit-scrollbar-thumb': {
+      background: '#CCCDCF', 
+      borderRadius: '10px',
+    },
+    '&::-webkit-scrollbar-thumb:hover': {
+      cursor: 'pointer',
+    },
+  }));
 
 const SecondaryTable = ({
                             rows,
@@ -47,7 +66,7 @@ const SecondaryTable = ({
     const dir: 'rtl' | 'ltr' = t('direction');
     const {classes} = useStyle(maxHeight, dir);
     return (
-        <TableContainer style={{margin: 'auto', height: 'fit-content',  maxHeight: '800px', ...classes.tableContainer}}>
+        <StyledTableContainer style={{margin: 'auto', height: 'fit-content',  maxHeight: '800px', ...classes.tableContainer}}>
             <Table stickyHeader={false}>
                 <TableHead>
                     <SecondaryTableRow>
@@ -82,7 +101,7 @@ const SecondaryTable = ({
                     ))}
                 </TableBody>
             </Table>
-        </TableContainer>
+        </StyledTableContainer>
     );
 };
 

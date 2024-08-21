@@ -53,6 +53,7 @@ const TransactionJournalReportWidget = ({ isPayment }: TransactionJournalReportW
                   rows={getTableDataRows(item?.data)}
                   headers={tableHeaders}
                   maxHeight={650}
+                  stickyHeader={true}
                 />
               })
 
