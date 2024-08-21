@@ -28,6 +28,7 @@ export interface IBoardMissions {
     nextBoardMission?: IBoardMissionStep;
     previousBoardMission?: IBoardMissionStep;
     priority: number;
+    ShowGraphicsApprovalAlert?: number
 }
 
 
