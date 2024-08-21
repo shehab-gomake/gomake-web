@@ -99,16 +99,18 @@ const ProductManagementWidget = () => {
         {term ? (
           <PrimaryTable
             stickyFirstCol={false}
-            stickyHeader={false}
             rows={productSearched}
             headers={tableHeaders}
+            maxHeight={650}
+            stickyHeader={true}
           />
         ) : (
           <PrimaryTable
             stickyFirstCol={false}
-            stickyHeader={false}
             rows={allProducts}
             headers={tableHeaders}
+            maxHeight={650}
+            stickyHeader={true}
           />
         )}
       </>

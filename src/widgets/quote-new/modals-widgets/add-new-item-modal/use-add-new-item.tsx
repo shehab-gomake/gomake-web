@@ -29,6 +29,7 @@ const useAddNewItem = ({ onClose, getQuote, documentType }) => {
           return {
             key: 'products',
             label: t('tabs.products'),
+            level: 0,
             children: products.map(product => ({
               key: product.id, // Using product id as the key
               label: product.name, // Using product name as the label
@@ -41,6 +42,7 @@ const useAddNewItem = ({ onClose, getQuote, documentType }) => {
           return {
             key: 'materials',
             label: t('tabs.materials'),
+            level: 0,
             children: materials.map(material => ({
               key: material.materialTypeName, // Using materialTypeName as the key
               label: material.materialTypeName, // Using materialTypeName as the label
