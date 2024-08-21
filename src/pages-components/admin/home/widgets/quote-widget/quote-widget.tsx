@@ -25,9 +25,7 @@ import { CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 import { useClientTypesList } from "@/hooks/use-client-types";
 import { GoMakeTreeSelect } from "@/components/auto-complete/tree-select";
  
-import 'primereact/resources/themes/saga-blue/theme.css'; 
-import 'primereact/resources/primereact.min.css'; 
-import 'primeicons/primeicons.css'; 
+
 
 const QuoteWidget = ({ isAdmin = true }) => {
   const { classes } = useStyle();
@@ -150,7 +148,7 @@ const QuoteWidget = ({ isAdmin = true }) => {
       <div style={classes.autoComplateRowContainer}>
         <div data-tour="select-product" style={{ width: "65%" }}>
           <GoMakeTreeSelect
-            value={selectedProduct }
+            value={selectedProduct}
             options={combinedData}
             onChange={handleProductChange}
             placeholder={t("home.admin.selectProductOrMaterial")}
