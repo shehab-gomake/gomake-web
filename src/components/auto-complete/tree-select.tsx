@@ -73,7 +73,6 @@ const StyledTreeSelect = styled(TreeSelect)(({ theme, dir, selectedOption }: any
     display: "none",
   },
   // clear button container
-  position: "relative",
 
 }));
 
@@ -127,17 +126,12 @@ const GoMakeTreeSelect = ({
      transform: ${RTL ? "rotate(180deg)" : "none"};
      max-width: 450px;
    },
-  ${isHome && `
-    .p-treeselect-panel {
-      position: absolute;
-      top:305px!important;
-      left: ${!navStatus?.isClosed ? "290px" : "168.991px"}!important;
-      min-width: 362.287px;
-      transform-origin: center top;
-            max-width:20vw;
-
-    },
-  `}
+   .p-treeselect-panel .p-treeselect-header .p-treeselect-filter-container .p-treeselect-filter-icon {
+  position: absolute;
+  ${RTL ? "left: 10px;" : "right: 10px;"};
+  top: 50%;
+  transform: translateY(-50%);
+},
 `;
 
   const handleNodeSelect = (e) => {
