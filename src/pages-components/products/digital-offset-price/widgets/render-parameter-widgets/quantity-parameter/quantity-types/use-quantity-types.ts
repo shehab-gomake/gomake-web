@@ -2,6 +2,7 @@ import { useRecoilState, useRecoilValue,  } from "recoil";
 import {
   openQuantityComponentModalState,
   productQuantityTypesState,
+  productQuantityTypesValuesState,
   tempProductQuantityTypesValuesState,
 } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/quantity-parameter/quantity-types/state";
 import { IInput } from "@/components/form-inputs/interfaces";
@@ -9,6 +10,7 @@ import { useEffect, useMemo, useState } from "react";
 import { subProductsParametersState } from "@/store";
 import { getParameterByParameterCode } from "@/utils/constants";
 import { useDebouncedCallback } from "use-debounce";
+import lodashClonedeep from "lodash.clonedeep";
 
 interface QuantityTypesInputs extends IInput {
   onChange: (key, value: string) => void;
@@ -21,21 +23,19 @@ const useQuantityTypes = () => {
     productQuantityTypesState
   );
 
-  const [subProducts, setSubProducts] = useRecoilState<any>(
-    subProductsParametersState
-  );
+  const [subProducts, setSubProducts] = useRecoilState<any>(subProductsParametersState);
   const initialTypesValues = subProducts[0]?.parameters
     .find(
       (param) => param.parameterId === "de2bb7d5-01b1-4b2b-b0fa-81cd0445841b"
     )
     ?.values.join(", ");
   const [newTypesValue, setNewTypesValue] = useState(initialTypesValues);
-
+  const [quantityTypes, setQuantityTypes] = useRecoilState(productQuantityTypesValuesState);
   const JobNameParameter = getParameterByParameterCode(subProducts,"JobName");
   const quantityParameter = getParameterByParameterCode(subProducts,"quantity");
   const [openModal, setOpenModal] = useRecoilState<boolean>(openQuantityComponentModalState);
   const updateTypesValues = (newValues) => {
-    const updatedSubProducts = JSON.parse(JSON.stringify(subProducts));
+    const updatedSubProducts = lodashClonedeep(subProducts);
     const typesParameter = updatedSubProducts[0]?.parameters.find(
       (param) => param.parameterCode === "types"
     );
@@ -71,6 +71,7 @@ const useQuantityTypes = () => {
   useEffect(() => {
     if (save) {
       updateTypesValues(newTypesValue);
+      setQuantityTypes(valueState)
     }
   }, [save, newTypesValue]);
 

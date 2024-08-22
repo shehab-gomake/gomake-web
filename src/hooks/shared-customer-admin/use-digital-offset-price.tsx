@@ -119,6 +119,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const setCalculationExceptionsLogs = useSetRecoilState(calculationExceptionsLogsState);
   const selectedWorkFlow = useRecoilValue(selectedWorkFlowState);
   const [quantityTypes, setQuantityTypes] = useRecoilState(productQuantityTypesValuesState);
+
   const [calculationProgress, setCalculationProgress] = useRecoilState(calculationProgressState);
   const setCalculationResult = useSetRecoilState(calculationResultState);
   const jobDetails = useRecoilValue(jobDetailsState);
@@ -1344,7 +1345,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   }, [widgetType, docmentItemByEdit])
   useEffect(() => {
     if (canCalculation) {
-
       calculationProduct(subProducts);
     }
   }, [subProducts, canCalculation]);
@@ -3102,7 +3102,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             generalParameters: generalParameters,
             subProducts: calculationSubProducts,
             itemParmetersValues: itemParmetersValues,
-            workTypes: workTypes,
+            workTypes: quantityTypes,
             isChargeForNewDie: isChargeForNewDie,
             productType: productTemplate?.productType,
             templateId: productTemplate?.templateId
