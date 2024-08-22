@@ -432,7 +432,15 @@ const RightSideWidget = ({
                       {_renderIconLogs(item.exception?.exceptionType, 16, 16)}
 
                       <div style={{ width: "100%", marginTop: -3 }}>
-                        <span style={{ color: "black" }}>{t("CalculationExceptions." + item?.exception?.exceptionKey)}</span>
+                        {item?.exception?.values && item?.exception?.values?.length > 0 ?
+                          <span style={{ color: "black" }}>
+                            {t("CalculationExceptions." + item?.exception?.exceptionKey)
+                              .replace(/\{\{(\d+)\}\}/g, (_, index) => item?.exception?.values[index] || "")}
+                          </span>
+                          :
+                          <span style={{ color: "black" }}>{t("CalculationExceptions." + item?.exception?.exceptionKey)}</span>
+                        }
+
                       </div>
                     </div>
                   );

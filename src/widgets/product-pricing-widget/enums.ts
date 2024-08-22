@@ -11,6 +11,16 @@ export enum HtmlElementType {
     TEXT = 1,
     IMAGE,
     TEXT_AREA = 4,
+    TABLE = 5
+}
+
+export enum FontStyleEnum
+{
+    Standard,
+    Bold,
+    Italic,
+    BoldItalic,
+    Underline
 }
 
 export enum RuleType {

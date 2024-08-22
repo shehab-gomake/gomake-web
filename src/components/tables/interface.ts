@@ -30,3 +30,30 @@ export interface IAccordionTable {
   children: React.ReactNode;
   onclickOpenMenu: (e) => void;
 }
+
+interface TableHeader {
+  key: string;
+  fontColor: string;
+  fontStyle: number;
+}
+
+interface TableRowCell {
+  values: string[];
+  addionalNote: string | null;
+  fontColor: string;
+  fontStyle: number;
+}
+
+
+export interface ITableForOutputsProps {
+  headers: TableHeader[];
+  rows: TableRowCell[][];
+  stickyHeader?: boolean;
+  stickyFirstCol?: boolean;
+  maxHeight?: number;
+  variant?: TABLE_TYPE;
+  withoutShadow?: boolean;
+  dataTour?: string;
+  isLastItemTotal?: boolean;
+  columnWidths?:string[];
+}

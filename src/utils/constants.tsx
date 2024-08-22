@@ -115,12 +115,7 @@ export const _renderDocumentStatus = (status: number, t: any) => {
   }
 };
 
-export const _renderStatus = (
-  docType: DOCUMENT_TYPE,
-  document: any,
-  t: any,
-  navigate: any
-): JSX.Element => {
+export const _renderStatus = (docType: DOCUMENT_TYPE, document: any, t: any, navigate: any): JSX.Element => {
   if (document) {
     let statusContent: JSX.Element | null = null;
     const docTypeText = DOCUMENT_TYPE[docType].charAt(0).toUpperCase() + DOCUMENT_TYPE[docType].slice(1);
@@ -161,18 +156,22 @@ export const _renderStatus = (
           </div>
         );
       }
-    } else if (document.externalDocumentNumber) {
+
+    }
+    else if (document.externalDocumentNumber) {
       const externalDocument = document.externalDocumentNumber;
       let result: JSX.Element[] = [];
       if (externalDocument.length > 0) {
         result.push(
           <div key="external-doc">
+
             {t(`documentStatus.${document.titleExternalDocumentNumber}.title`)}: {externalDocument}
           </div>
         );
       }
       statusContent = <>{result}</>;
-    } else if ((document.documentNumbers && document.documentNumbers.length > 0) ||
+    }
+    else if ((document.documentNumbers && document.documentNumbers.length > 0) ||
       (document.secondDocumentNumbers && document.secondDocumentNumbers.length > 0)) {
 
       const firstDocuments = document.documentNumbers ? document.documentNumbers.map((item: any, index: number) => (
@@ -266,3 +265,40 @@ export const _renderIconLogs = (type, width, height) => {
     return <WarningLogsIcon width={width} height={height} />;
   }
 };
+
+export const findParameterByCode = (template, paramCode) => {
+  // Check if template is defined, if not return null
+  if (!template || !template.sections || !Array.isArray(template.sections)) {
+    return null;
+  }
+
+  function searchSubSection(subSections, paramCode) {
+    for (let subSection of subSections) {
+      for (let parameter of subSection.parameters) {
+        if (parameter.code === paramCode) {
+          return parameter;
+        }
+      }
+      if (subSection.subSections && subSection.subSections.length > 0) {
+        const result = searchSubSection(subSection.subSections, paramCode);
+        if (result) return result;
+      }
+    }
+    return null;
+  }
+
+  for (let section of template.sections) {
+    const result = searchSubSection(section.subSections, paramCode);
+    if (result) return result;
+  }
+
+  return null;
+}
+
+export const findDefaultOption = (parameter) => {
+  if (parameter.valuesConfigs && parameter.valuesConfigs.length > 0) {
+    const defaultOption = parameter.valuesConfigs.find(option => option.isDefault === true);
+    return defaultOption || null;
+  }
+  return null;
+}

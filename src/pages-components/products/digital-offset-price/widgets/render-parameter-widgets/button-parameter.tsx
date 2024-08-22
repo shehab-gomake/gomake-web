@@ -359,10 +359,9 @@ const ButtonParameterWidget = ({
         const selectedMaterial = materialDataPath?.find(material => material.valueId === selectedShapeId);
         const transformedShape: any = transformSelectedShape(selectedMaterial);
         setSelectedShape(transformedShape);
-
         const dieCutSizesParametersArray = [];
-        let dieUnitWidth = transformedShape?.rowData?.width?.value + "";
-        let dieUnitLength = transformedShape?.rowData?.length?.value + "";
+        let dieUnitWidth = parameter?.code === "DieKissCut" ? transformedShape?.rowData?.unitWidth?.value + "" : transformedShape?.rowData?.width?.value + "";
+        let dieUnitLength = parameter?.code === "DieKissCut" ? transformedShape?.rowData?.unitLength?.value + "" : transformedShape?.rowData?.length?.value + "";
         dieCutSizesParametersArray.push({ parameterCode: "Width", value: dieUnitWidth });
         dieCutSizesParametersArray.push({ parameterCode: "Height", value: dieUnitLength });
 

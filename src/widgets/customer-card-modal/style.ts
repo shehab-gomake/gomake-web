@@ -11,6 +11,11 @@ const useStyle = () => {
 
   const classes = useMemo(() => {
     return {
+      mainContainerStyle: {
+        
+        backgroundColor: "#FDFDFD",
+        marginBottom: 10,
+      },
       buttonStyle: {
         width: convertWidthToVW(100),
         height: convertHeightToVH(50),
@@ -28,6 +33,8 @@ const useStyle = () => {
         paddingTop: "27px",
         paddingBottom: "27px",
         background: "#FDFDFD",
+
+
       },
       secondInsideStyle: {
         paddingLeft: 0,
@@ -46,13 +53,11 @@ const useStyle = () => {
         height: "fit-content",
         maxHeight: CONTAINER_TABS_MAX_HEIGHT,
         overflow: "auto",
-        marginBottom: "50px"
+        position: 'sticky' as 'sticky',
       },
       footerStyle: {
         display: "flex",
         justifyContent: "flex-end",
-        position: "sticky" as "sticky",
-        bottom: "0px",
         height: FOOTER_MAX_HEIGHT,
         width: "100%",
         background: "#fff",
@@ -61,8 +66,10 @@ const useStyle = () => {
       bottomSectionStyle: {
         display: "flex",
         flexDirection: "column" as "column",
-        justifyContent: "space-between",
-        maxHeight: CONTAINER_TABS_MAX_HEIGHT + FOOTER_MAX_HEIGHT,
+        width: "100%",
+        height: "fit-content",
+        overflow: "auto",
+        flex:1
       },
       colStyle: {
         display: "flex",
@@ -101,13 +108,14 @@ const useStyle = () => {
         ...FONT_FAMILY.Lexend(500, 14),
       },
       buttonsStyle: {
-        color: "var(--primary-500, #2E3092)",
+        color: primaryColor(500),
         fontStyle: "normal",
         lineHeight: "normal",
         letterSpacing: "-0.14px",
         border: "none",
         background: "#FFF",
         ...FONT_FAMILY.Lexend(500, 14),
+        cursor: "pointer",
       },
       tabStyle: {
         width: "62px",
@@ -176,7 +184,7 @@ const useStyle = () => {
         alignItems: "flex-start",
         gap: "16px",
         borderRadius: "4px",
-        border: "1px solid var(--primary-500, #2E3092)",
+        border: `1px solid ${primaryColor(500)}`,
         color: "var(--medium-300, #9695C7)",
         fontStyle: "normal",
         lineHeight: "normal",
@@ -231,11 +239,19 @@ const useStyle = () => {
         //  justifyContent: 'space-between',
         alignItems: "flex-end",
       },
-      addNewStyle:{
+      addNewStyle: {
         display: "flex",
         justifyContent: "flex-end",
         alignItems: "center",
         gap: "5px",
+        cursor: "pointer",
+      },
+      lastOrderDetails: {
+        color: "var(--second-500, #ED028C)",
+        fontStyle: "normal",
+        ...FONT_FAMILY.Lexend(500, 14),
+        lineHeight: "normal",
+        marginBottom: 10,
       }
     };
   }, [theme]);

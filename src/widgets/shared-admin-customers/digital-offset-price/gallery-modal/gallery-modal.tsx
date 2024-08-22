@@ -15,7 +15,8 @@ const GalleryModal = ({
   setIsChargeForNewDie,
   straightKnife,
   isParameterSettings,
-  getProductById
+  getProductById,
+  template
 }: any) => {
   const { clasess } = useStyle();
   const { t } = useTranslation();
@@ -38,8 +39,10 @@ const GalleryModal = ({
     setIsChargeForNewDie,
     straightKnife,
     isParameterSettings,
-    getProductById
+    getProductById,
+    template
   });
+
 
   return (
     <>
