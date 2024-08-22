@@ -68,8 +68,6 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
     "DieUnitHeight"
   );
   const shapeParameter = getParameterByParameterCode(subProducts, "Shape")
-  console.log("shapeParameter", shapeParameter)
-
   const LabelShapeParameter = getParameterByParameterCode(subProducts, "LabelsShape")
   useEffect(() => {
     if (selectParameterButton?.parameter?.materialPath?.length > 0) {
