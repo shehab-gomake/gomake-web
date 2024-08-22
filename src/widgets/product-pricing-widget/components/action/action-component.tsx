@@ -37,6 +37,7 @@ import { PermissionCheck } from "@/components/CheckPermission";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { NotesForActionModal } from "./notes-for-action-modal";
 import { _renderIconLogs } from "@/utils/constants";
+import { TableOutPutComponent } from "../table-output/table-output-component";
 interface IActionContainerComponentProps extends IWorkFlowAction {
   delay?: number;
   workFlowId?: string;
@@ -246,6 +247,13 @@ const ActionContainerComponent = ({
     (parameter) =>
       parameter.propertyType === RuleType.OUTPUT &&
       parameter.htmlElementType === HtmlElementType.TEXT_AREA
+  );
+
+
+  const tableOutputs = outputs?.filter(
+    (parameter) =>
+      parameter.propertyType === RuleType.OUTPUT &&
+      parameter.htmlElementType === HtmlElementType.TABLE
   );
   const handleDeliveryTimeUpdate = (newValue: string) => {
     updateActionData(
@@ -682,6 +690,9 @@ const ActionContainerComponent = ({
                   currentProductItemValue={currentProductItemValue}
                   productType={productType}
                 />
+                {tableOutputs.map((parameter) => (
+                  <TableOutPutComponent {...parameter} />
+                ))}
               </Stack>
             </>
           )}
