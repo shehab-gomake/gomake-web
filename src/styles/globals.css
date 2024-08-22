@@ -387,23 +387,6 @@ df-messenger {
   /* Hide the arrow icon */
 }
 
-.p-treeselect-panel .p-treeselect-header .p-treeselect-filter-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-}
-
-.p-treeselect-panel .p-treeselect-header .p-treeselect-filter-container .p-treeselect-filter-icon {
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-}
-
-.p-treeselect-panel .p-treeselect-header .p-treeselect-filter-container input {
-  padding-right: 40px;
-}
 
 .p-treeselect-panel .p-treeselect-empty-message {
   display: flex;
