@@ -69,3 +69,12 @@ export enum LogActionType {
     DOCUMENT_DUPLICATED,
     DOCUMENT_DUPLICATED_FROM_ORDER
 }
+
+export enum ApprovalStatus {
+    SentToManagerApproval = 1,
+    ApprovedByManager,
+    RejectedByManager,
+    WaitingForClient,
+    ApprovedByClient,
+    RejectedByClient
+}

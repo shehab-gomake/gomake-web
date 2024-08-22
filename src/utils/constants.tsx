@@ -1,6 +1,6 @@
 import { ETabsIcon } from "@/enums";
 import { ErrorIcon, FinishingIcon, MessageLogsIcon, PricingIcon, PrintingDetailsIcon, SuccessIcon, WarningLogsIcon } from "@/icons";
-import { DELIVERY_NOTE_STATUSES, DOCUMENT_TYPE, QUOTE_STATUSES } from "@/pages-components/quotes/enums";
+import { ApprovalStatus, DELIVERY_NOTE_STATUSES, DOCUMENT_TYPE, QUOTE_STATUSES } from "@/pages-components/quotes/enums";
 import { ECalculationLogType } from "@/widgets/product-pricing-widget/enums";
 import { Button } from "@mui/material";
 
@@ -117,27 +117,54 @@ export const _renderDocumentStatus = (status: number, t: any) => {
 
 export const _renderStatus = (docType: DOCUMENT_TYPE, document: any, t: any, navigate: any): JSX.Element => {
   if (document) {
-
     let statusContent: JSX.Element | null = null;
     const docTypeText = DOCUMENT_TYPE[docType].charAt(0).toUpperCase() + DOCUMENT_TYPE[docType].slice(1);
     const openStatus = `${docTypeText}.Open`;
 
-    if (document?.statusTitleText === openStatus || document?.statusTitleText === "DeliveryNote.Open" || document?.statusTitleText === "Invoice.Open" || document?.statusTitleText === "PurchaseOrder.Open") {
-      return <div style={{ fontWeight: 'bold' }}>{t("sales.quote.open")}</div>;
+    let statusApproval: JSX.Element | null = null;
+    if (document.approvalStatus !== null) {
+      statusApproval = <>{t(`documentStatus.${ApprovalStatus[document.approvalStatus]}`)}</>;
     }
-    else if (document?.statusTitleText === "Quote.Create") {
+
+    // Handle status with hyphen (-)
+    const statusParts = document?.statusTitleText?.split('-');
+    const translatedStatus = statusParts.length > 0 ? t(`documentStatus.${statusParts[0]}`) : '';
+
+    if (document?.statusTitleText === openStatus ||
+      document?.statusTitleText === "DeliveryNote.Open" ||
+      document?.statusTitleText === "Invoice.Open" ||
+      document?.statusTitleText === "PurchaseOrder.Open") {
+      return (
+        <div>
+          <div style={{ fontWeight: 'bold' }}>{t("sales.quote.open")}</div>
+          {statusApproval}
+        </div>
+      );
+    } else if (document?.statusTitleText === "Quote.Create") {
       if (document?.agentId) {
-        return <div style={{ fontWeight: 'bold' }}>{t("sales.quote.create")}</div>;
+        return (
+          <div>
+            <div style={{ fontWeight: 'bold' }}>{t("sales.quote.create")}</div>
+            {statusApproval}
+          </div>
+        );
       } else {
-        return <div style={{ fontWeight: 'bold' }}>{t("sales.quote.createdBy", { name: document?.userName })}</div>;
+        return (
+          <div>
+            <div style={{ fontWeight: 'bold' }}>{t("sales.quote.createdBy", { name: document?.userName })}</div>
+            {statusApproval}
+          </div>
+        );
       }
+
     }
     else if (document.externalDocumentNumber) {
       const externalDocument = document.externalDocumentNumber;
       let result: JSX.Element[] = [];
       if (externalDocument.length > 0) {
         result.push(
-          <div>
+          <div key="external-doc">
+
             {t(`documentStatus.${document.titleExternalDocumentNumber}.title`)}: {externalDocument}
           </div>
         );
@@ -158,7 +185,8 @@ export const _renderStatus = (docType: DOCUMENT_TYPE, document: any, t: any, nav
             }}
             variant={'text'}
             onClick={() => navigate(`/${document.titleDocumentNumber.charAt(0).toLowerCase() + document.titleDocumentNumber.slice(1)}?Id=${item.documentId}`)}>
-            {item.documentNumber}</Button>
+            {item.documentNumber}
+          </Button>
           {index < document.documentNumbers.length - 1 && ', '}
         </span>
       )) : [];
@@ -174,7 +202,8 @@ export const _renderStatus = (docType: DOCUMENT_TYPE, document: any, t: any, nav
             }}
             variant={'text'}
             onClick={() => navigate(`/${document.titleSecondDocumentNumber.charAt(0).toLowerCase() + document.titleSecondDocumentNumber.slice(1)}?Id=${item.documentId}`)}>
-            {item.documentNumber}</Button>
+            {item.documentNumber}
+          </Button>
           {index < document.secondDocumentNumbers.length - 1 && ', '}
         </span>
       )) : [];
@@ -201,7 +230,9 @@ export const _renderStatus = (docType: DOCUMENT_TYPE, document: any, t: any, nav
 
     return (
       <div>
-        {<div style={{ fontWeight: 'bold' }}>{t(`documentStatus.${document.statusTitleText}`)}</div>}
+        <div style={{ fontWeight: 'bold' }}>
+          {translatedStatus}{statusParts.length > 1 ? ` - ${statusParts.slice(1).join('-')}` : ''}
+        </div>
         {statusContent}
       </div>
     );
