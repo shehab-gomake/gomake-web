@@ -8,7 +8,7 @@ import {
 } from "@/store";
 import { getPrintHouseMaterialsByMaterialKey } from "@/services/hooks";
 import { materialsCategoriesState } from "@/store/material-categories";
-import { compareStrings, getParameterByParameterCode } from "@/utils/constants";
+import { compareStrings, findDefaultOption, findParameterByCode, getParameterByParameterCode } from "@/utils/constants";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { selectedShapeState } from "./gallery-modal-store";
 import { StaightKnifeIcon, OrderNowIcon } from "./icons";
@@ -17,8 +17,7 @@ import { EHttpMethod } from "@/services/api-service/enums";
 import { filterState } from "@/widgets/materials-widget/state";
 import { useRouter } from "next/router";
 
-const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForNewDie, straightKnife, isParameterSettings, getProductById }) => {
-
+const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForNewDie, straightKnife, isParameterSettings, getProductById, template }) => {
   const { callApi } = useGomakeAxios();
   const { alertFaultAdded, alertSuccessAdded } = useSnackBar();
   const { t } = useTranslation();
@@ -34,6 +33,20 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
   const [materialType, setMaterialType] = useState<any>({});
   const [isShowStraightKnife, setIsShowStraightKnife] = useState(false)
   const [materialTableFilters, setMaterialTableFilters] = useState([])
+  const [shapeCodeDefualt, setShapeCodeDefualt] = useState<any>({})
+  useEffect(() => {
+    if (isParameterSettings) {
+      const shapeParameterForSettings = findParameterByCode(template, "Shape")
+      if (shapeParameterForSettings) {
+        const defultShape = findDefaultOption(shapeParameterForSettings)
+        if (defultShape) {
+          setShapeCodeDefualt(defultShape)
+        }
+
+      }
+
+    }
+  }, [isParameterSettings, template])
   const widthParameter = getParameterByParameterCode(
     subProducts,
     "Width"
@@ -81,7 +94,7 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
       key: selectParameterButton?.parameter?.materialPath[0],
       width: widthParameter && widthParameter.values && widthParameter.values.length > 0 && widthParameter.values[0] ? widthParameter.values[0] : 0,
       length: heightParameter && heightParameter.values && heightParameter.values.length > 0 && heightParameter.values[0] ? heightParameter.values[0] : 0,
-      shape: shapeCode || "",
+      shape: isParameterSettings ? shapeCodeDefualt?.code : shapeCode || "",
       clientId: router.query.customerId,
       finalWidth: finalUnitWidthParameter && finalUnitWidthParameter.values && finalUnitWidthParameter.values.length > 0 && finalUnitWidthParameter.values[0] ? finalUnitWidthParameter.values[0] : 0,
       finalLength: finalUnitLengthParameter && finalUnitLengthParameter.values && finalUnitLengthParameter.values.length > 0 && finalUnitLengthParameter.values[0] ? finalUnitLengthParameter.values[0] : 0,
@@ -213,10 +226,13 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
   const CheckOptionToStraightKnife = useCallback(async () => {
     const width = widthParameter && widthParameter.values && widthParameter.values.length > 0 ? +widthParameter?.values[0] : 0;
     const height = heightParameter && heightParameter.values && heightParameter.values.length > 0 ? +heightParameter?.values[0] : 0;
+    const shapeId = isParameterSettings
+      ? shapeCodeDefualt?.id
+      : shapeParameter ? shapeParameter?.parameterId : LabelShapeParameter?.parameterId;
 
     const res = await callApi(
       EHttpMethod.POST,
-      `/v1/calculation-service/calculations/check-option-to-straight-knife?width=${width}&length=${height}&shapeId=${shapeParameter ? shapeParameter?.parameterId : LabelShapeParameter?.parameterId}&materialTypeKey=${selectParameterButton?.parameter?.materialPath[0]}`,
+      `/v1/calculation-service/calculations/check-option-to-straight-knife?width=${width}&length=${height}&shapeId=${shapeId}&materialTypeKey=${selectParameterButton?.parameter?.materialPath[0]}`,
 
     );
     if (res?.success) {

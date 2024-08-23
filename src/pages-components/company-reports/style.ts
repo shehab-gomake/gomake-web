@@ -9,18 +9,28 @@ const useStyle = () => {
 
   const { t } = useTranslation();
 
-  const clasess = useMemo(() => {
+  const classes = useMemo(() => {
     return {
     btnContainer:{
       width: "fit-content",
       height: 40,
       marginBottom: 15,
       backgroundColor:secondColor(500)
-  }
+  },
+  mainContainer: {
+    display: "flex",
+    flexDirection: "column" as "column",
+    justifyContent: "flex-start",
+    alignItems: "flex-start",
+    width: "100%",
+    gap: 20,
+    padding:"0px 20px 20px 20px",
+    overflowY: "scroll" as "scroll",
+  },
     };
   }, [i18next.language, t]);
   return {
-    clasess,
+    classes,
   };
 };
 export { useStyle };

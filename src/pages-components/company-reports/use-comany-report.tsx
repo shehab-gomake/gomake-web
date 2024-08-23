@@ -2,10 +2,10 @@ import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { getAllDataPrintHousesReports } from "@/services/api-service/company-report/get-print-houses-report";
-import { PrimaryButton } from "@/components/button/primary-button";
 import { DirectboxSendIcon } from "@/icons";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { generateCalculateProductsExcelForPrintHousesApi } from "@/services/hooks";
+import { IconButton } from "@mui/material";
 
 export const useCompanyReport = () => {
     const { t } = useTranslation();
@@ -19,6 +19,8 @@ export const useCompanyReport = () => {
         t("companyReports.Email"),
         t("companyReports.StartingDate"),
         t("companyReports.Status"),
+        t("companyReports.lastActivity"),
+        t("companyReports.calculations"),
         t("companyReports.Quote"),
         t("companyReports.QuoteItems"),
         t("companyReports.Orders"),
@@ -39,25 +41,19 @@ export const useCompanyReport = () => {
                     item?.mail,
                     item.creationDate ? new Date(item.creationDate).toLocaleDateString() : "N/A",
                     item.status,
+                    item.lastActivity ? new Date(item.lastActivity).toLocaleDateString() : "N/A",
+                    item.calculationsCount,
                     item?.quotesCount,
                     item?.quoteItemsCount,
                     item?.orderCount,
                     item?.orderItemsCount,
                     item?.successRate,
-                    <PrimaryButton
+                    <IconButton
+                        type="button"
                         onClick={() => generateCalculateProductsExcelForPrintHousesWithPrintHouseId(item?.id)}
-                        startIcon={
-                            <DirectboxSendIcon stroke={primaryColor(500)} width={20} height={20} />
-                        }
-                        // onClick={() =>
-                        //   navigate(
-                        //     `/properties?actionId=${action?.actionId}&actionName=${action?.name}`
-                        //   )
-                        // }
-                        variant={"text"}
                     >
-                        <div style={{ textTransform: "lowercase", }}>{t("companyReports.testCalculation")}</div>
-                    </PrimaryButton>
+                        <DirectboxSendIcon stroke={primaryColor(500)} width={20} height={20} />
+                    </IconButton>
                 ]);
                 setAllReport(formattedData);
             }

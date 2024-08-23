@@ -92,7 +92,8 @@ const PrimaryTabsComponent = ({
   onSelectTab,
   selectedColor,
   variant,
-  selectedTabIndex = 0
+  selectedTabIndex = 0,
+  withBackGround=false
 }: ITabsProps) => {
   const { classes } = useStyle();
   const [value, setValue] = useRecoilState<number>(selectedHorizontalTabState);
@@ -124,6 +125,7 @@ const PrimaryTabsComponent = ({
         top={0}
         zIndex={9}
         marginBottom={2}
+        bgcolor={ withBackGround && '#ffffff'} 
       >
         <TabsContainer
           value={value}

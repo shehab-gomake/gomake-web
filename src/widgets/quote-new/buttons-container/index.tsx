@@ -67,10 +67,11 @@ const ButtonsContainer = ({
 
 
   const isShowSendButton =
-    quoteItemValue.isSendWhatsapp ||
+    (quoteItemValue.isSendWhatsapp ||
     quoteItemValue.isSendWhatsappWeb ||
     quoteItemValue.isSendMails ||
-    quoteItemValue.isSendSMS;
+    quoteItemValue.isSendSMS) &&
+    !quoteItemValue?.isNeedApproval;
 
   const handleCopyFromDocumentClick = (documentNumber) => {
     if (!quoteItemValue?.client) {

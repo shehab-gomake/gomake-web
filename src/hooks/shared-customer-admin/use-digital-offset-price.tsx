@@ -119,6 +119,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const setCalculationExceptionsLogs = useSetRecoilState(calculationExceptionsLogsState);
   const selectedWorkFlow = useRecoilValue(selectedWorkFlowState);
   const [quantityTypes, setQuantityTypes] = useRecoilState(productQuantityTypesValuesState);
+
   const [calculationProgress, setCalculationProgress] = useRecoilState(calculationProgressState);
   const setCalculationResult = useSetRecoilState(calculationResultState);
   const jobDetails = useRecoilValue(jobDetailsState);
@@ -543,6 +544,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
   useEffect(() => {
     if (!isSetTemplete) {
+
       if (productTemplate && productTemplate?.sections?.length > 0) {
         let sectionData: any = cloneDeep(productTemplate?.sections);
         const typeMap = {};
@@ -617,6 +619,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   }
 
                 }
+
                 if (parameter.isUnderParameterId !== null) {
                   underParameterIdsArray.push({
                     underParameterId: parameter.isUnderParameterId,
@@ -768,6 +771,30 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                       }
                     }
                     else if (value && parameter.code === "DieCut" && widgetType === EWidgetProductType.CREATE) {
+                      let values = value?.additionalAttribute?.find((val) => val.valueId === "name")
+                      subProduct.parameters.push({
+                        parameterId: parameter?.id,
+                        parameterName: parameter?.name,
+                        actionId:
+                          value?.activateAction === true
+                            ? parameter?.actionId
+                            : null,
+                        parameterType: parameter?.parameterType,
+                        ...(value && {
+                          valueIds: [value?.id],
+                          values: [values?.value],
+                        }),
+                        sectionId: section?.id,
+                        subSectionId: subSection?.id,
+                        actionIndex: parameter?.actionIndex,
+                        parameterCode: parameter?.code,
+                        valuesConfigs: parameter?.valuesConfigs,
+                        unitKey: parameter?.unitKey,
+                        unitType: parameter?.unitType,
+                      });
+                    }
+
+                    else if (value && parameter.code === "DieKissCut" && widgetType === EWidgetProductType.CREATE) {
                       let values = value?.additionalAttribute?.find((val) => val.valueId === "name")
                       subProduct.parameters.push({
                         parameterId: parameter?.id,
@@ -985,7 +1012,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                       })
                     }
                   })
-                  if (parameter.code === "DieCut") {
+                  if (parameter.code === "DieCut" || parameter.code === "DieKissCut") {
                     if (parameter.valuesConfigs.length === 0) {
                       parameter.valuesConfigs = materialData.map(data => ({
                         id: data.valueId,
@@ -1027,6 +1054,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                       });
                     }
                   }
+
                   else {
                     parameter.valuesConfigs = parameter.valuesConfigs.filter(
                       (x) => x.valueIds && x.valueIds.length > 0
@@ -1317,7 +1345,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   }, [widgetType, docmentItemByEdit])
   useEffect(() => {
     if (canCalculation) {
-
       calculationProduct(subProducts);
     }
   }, [subProducts, canCalculation]);
@@ -3075,7 +3102,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             generalParameters: generalParameters,
             subProducts: calculationSubProducts,
             itemParmetersValues: itemParmetersValues,
-            workTypes: workTypes,
+            workTypes: quantityTypes,
             isChargeForNewDie: isChargeForNewDie,
             productType: productTemplate?.productType,
             templateId: productTemplate?.templateId
