@@ -14,58 +14,88 @@ interface IQuantityTypesTableProps {
 
 const QuantityTypesTable = ({ save }: IQuantityTypesTableProps) => {
   const { values, onQuantityTypeChange } = useQuantityTypesTable(save);
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.dir() === 'rtl';
 
-  const Row = ({ index, style }) => (
-    <div style={style}>
-      <TableRow>
-        <TableCell>
-          <GomakeTextInput
-            onChange={(event: ChangeEvent<HTMLInputElement>) =>
-              onQuantityTypeChange(index, "name", event.target.value)
-            }
-            style={{ height: "40px", width: "150px" }}
-            value={values[index].name}
-          />
-        </TableCell>
-        <TableCell style={{ textAlign: "center" }}>
-          <GomakeTextInput
-            onChange={(event: ChangeEvent<HTMLInputElement>) =>
-              onQuantityTypeChange(index, "quantity", +event.target.value)
-            }
-            style={{ height: "40px", width: "150px" }}
-            value={values[index].quantity}
-          />
-        </TableCell>
-      </TableRow>
-    </div>
-  );
+  const Row = ({ index, style }) => {
+    return (
+      <div style={style} key={index} >
+        <TableRow>
+          <TableCell>
+            <GomakeTextInput
+              key={index}
+              onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                onQuantityTypeChange(index, "name", event.target.value)
 
+              }
+              }
+              style={{ height: "40px", width: "160px" }}
+              value={values[index].name}
+            />
+          </TableCell>
+          <TableCell style={{ textAlign: "center" }}>
+            <GomakeTextInput
+              onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                onQuantityTypeChange(index, "quantity", +event.target.value)
+              }
+
+              }
+              style={{ height: "40px", width: "160px" }}
+              value={values[index].quantity}
+            />
+          </TableCell>
+        </TableRow>
+      </div>
+    );
+  }
+
+
+  const _renderBody = () => {
+    return (
+      <TableBody>
+        <List
+          height={295} // Ensure this is a number
+          itemCount={values.length}
+          itemSize={70}
+          width={370}
+        >
+          {Row}
+        </List>
+      </TableBody>
+    )
+  }
   return (
-    <TableContainer component={Paper} style={{ maxHeight: 390 }}>
-      <Table stickyHeader={true}>
-        <TableHead>
-          <TableRow>
-            <TableCell style={{ backgroundColor: "#EAECF0" }}>
-              {t("quantityTypes.typeName")}
-            </TableCell>
-            <TableCell style={{ textAlign: "center", backgroundColor: "#EAECF0" }}>
-              {t("quantityTypes.quantity")}
-            </TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          <List
-            height={295} // Ensure this is a number
-            itemCount={values.length}
-            itemSize={70}
-            width={400}
-          >
-            {Row}
-          </List>
-        </TableBody>
-      </Table>
-    </TableContainer>
+    <>
+      <TableContainer component={Paper} style={{ maxHeight: 390 }}>
+        <Table stickyHeader={true}>
+          <TableHead>
+            <TableRow>
+              {
+                isRTL ? <>
+                  <TableCell style={{ backgroundColor: "#EAECF0", textAlign: "right" }}>
+                    {t("quantityTypes.quantity")}
+                  </TableCell>
+                  <TableCell style={{ backgroundColor: "#EAECF0", textAlign: "right", paddingRight: 100 }}>
+                    {t("quantityTypes.typeName")}
+                  </TableCell>
+
+                </> : <>
+                  <TableCell style={{ backgroundColor: "#EAECF0", textAlign: "left" }}>
+                    {t("quantityTypes.typeName")}
+                  </TableCell>
+                  <TableCell style={{ backgroundColor: "#EAECF0", textAlign: "right" }}>
+                    {t("quantityTypes.quantity")}
+                  </TableCell>
+                </>
+              }
+            </TableRow>
+          </TableHead>
+
+        </Table>
+      </TableContainer>
+      {_renderBody()}
+    </>
+
   );
 };
 

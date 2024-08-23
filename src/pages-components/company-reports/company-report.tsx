@@ -1,17 +1,17 @@
 import { PrimaryTable } from "@/components/tables/primary-table";
 import { useCompanyReport } from "./use-comany-report";
-
-import { GomakePrimaryButton } from "@/components";
 import { useStyle } from "./style";
+import { HeaderTitle } from "@/widgets";
 
 const CompanyReportWidget = () => {
     const { AllReport, tableHeaders, t, generateCalculateProductsExcelForPrintHouses } = useCompanyReport();
-    const { clasess } = useStyle();
+    const { classes } = useStyle();
 
     return (
         <>
-            <div style={{ margin: 20 }} >
-                <GomakePrimaryButton style={clasess.btnContainer} onClick={generateCalculateProductsExcelForPrintHouses}>{t("companyReports.testCalculation")} </GomakePrimaryButton>
+            <div style={classes.mainContainer}>
+                <HeaderTitle title={t("companyReports.printhouseReport")} marginTop={"0px"} marginBottom={"0px"} />
+                {/* <GomakePrimaryButton style={classes.btnContainer} onClick={generateCalculateProductsExcelForPrintHouses}>{t("companyReports.testCalculation")} </GomakePrimaryButton> */}
                 <PrimaryTable
                     stickyFirstCol={false}
                     stickyHeader={true}

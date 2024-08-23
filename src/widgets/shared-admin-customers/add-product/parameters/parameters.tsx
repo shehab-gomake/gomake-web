@@ -168,6 +168,7 @@ const ParameterWidget = () => {
         isParameterSettings={true}
         straightKnife={straightKnife}
         getProductById={getProductById}
+        template={template}
       />
       <MultiParameterModal
         openModal={multiParameterModal}
