@@ -1,5 +1,31 @@
 import { GoMakeAutoComplate } from "@/components";
 import { SettingsIcon } from "@/icons/settings";
+import Tooltip, { tooltipClasses, TooltipProps } from "@mui/material/Tooltip";
+import { styled } from "@mui/material/styles";
+
+// Custom tooltip component for long text options
+const CustomWidthTooltip = styled(({ className, ...props }: TooltipProps) => (
+  <Tooltip {...props} classes={{ popper: className }} />
+))({
+  [`& .${tooltipClasses.tooltip}`]: {
+    maxWidth: 600,
+  },
+});
+
+// Helper function to handle long text labels and apply tooltips
+const getLabelWithTooltip = (label: string) => {
+  if (label && label.length > 25) {
+    let shortLabel = label.substring(0, 28);
+    let lastSpace = shortLabel.lastIndexOf(" ");
+    shortLabel = shortLabel.substring(0, lastSpace) + "...";
+    return (
+      <CustomWidthTooltip title={label} placement="right" arrow style={{ maxWidth: 500 }}>
+        <span>{shortLabel}</span>
+      </CustomWidthTooltip>
+    );
+  }
+  return label;
+};
 
 const DropDownListParameterWidget = ({
   parameter,
@@ -59,6 +85,11 @@ const DropDownListParameterWidget = ({
             parameter?.code
           );
         }}
+        renderOption={(props, option) => (
+          <li {...props}>
+            {getLabelWithTooltip(option.updateName)}
+          </li>
+        )}
       />
       {parameter?.setSettingIcon && inModal && (
         <div
