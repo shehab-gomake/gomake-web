@@ -18,7 +18,7 @@ import {FIleListComponent} from "@/widgets/messenger/components/file-list-messag
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 
 interface IProps {
-    userType: EUserType;
+    userType?: EUserType;
 }
 
 export enum EUserType {
@@ -54,7 +54,7 @@ export default function MessengerWidget({userType}: IProps) {
         sendFileMessage,
         deleteMessage,
         isMobile
-    } = useMessenger(userType);
+    } = useMessenger();
 
     return (
         <Stack width={'100%'} height={'100%'} style={{backgroundColor: '#FFF'}} overflow={'hidden'}>
