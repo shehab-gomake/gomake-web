@@ -26,7 +26,7 @@ const QuantityParameter = () => {
       {openModal && <GoMakeModal
         insideStyle={{
           width: 420,
-          height: 700,
+          height: 725,
         }}
         modalTitle={t("quantityTypes.title")}
         openModal={openModal}

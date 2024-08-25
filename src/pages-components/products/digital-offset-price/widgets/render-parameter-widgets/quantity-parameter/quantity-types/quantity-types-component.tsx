@@ -18,7 +18,7 @@ const QuantityTypesComponent = ({ }: IQuantityTypesComponent) => {
     <Stack direction={"column"} height={"100%"} gap={"7px"}>
       <Stack direction={"row"} gap={"20%"} flexWrap={"wrap"}>
         {inputs.map((input) => (
-          <Stack width={convertWidthToVW(140)} paddingTop={"7px"}>
+          <Stack width={"30%"} paddingTop={"10px"} paddingBottom={"10px"}>
             <FormInput
               readonly={!!input.readonly}
               input={input}
