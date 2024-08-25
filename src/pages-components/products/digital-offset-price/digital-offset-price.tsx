@@ -230,13 +230,11 @@ const PriceListPageWidget = ({ widgetType }) => {
         <div>
             {productTemplate?.sections?.length > 0 && (
                 <div style={clasess.mainContainer}>
-                    <div>
-                        <HeaderTitle
-                            title={productTemplate?.name}
-                            marginTop={1}
-                            marginBottom={24}
-                        />
-                    </div>
+                    <HeaderTitle
+                        title={productTemplate?.name}
+                        marginTop={1}
+                        marginBottom={24}
+                    />
                     <div style={clasess.mainRowContainer}>
                         <div style={clasess.leftSideContainer}>
                             <div style={clasess.tabsContainer}>
@@ -263,7 +261,7 @@ const PriceListPageWidget = ({ widgetType }) => {
                                 </Tabs>
                             </div>
 
-                            <div style={{ height: 666, overflow: "scroll", width: "calc(100% - 330px)" }}>
+                            <div className={`custom-scrollbar`} style={{ height: 650, overflow: "scroll", width: "calc(100% - 330px)" }}>
                                 <div style={clasess.sectionsContainer}>
                                     {[...visibleSections, PricingTab]?.map(
                                         (section: any, index: number) => {
