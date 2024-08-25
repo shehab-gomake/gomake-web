@@ -17,7 +17,7 @@ const OrderNowModal = ({
   confirmWithoutNotification,
   confirmWithNotification,
   loading
-}) => {
+}: any) => {
   const { t } = useTranslation();
   const { classes } = useStyle();
   const { primaryColor } = useGomakeTheme();
@@ -62,7 +62,7 @@ const OrderNowModal = ({
             </PrimaryButton>
           </div>
         </div>
-        <GoMakeLoadingBackdrop loading={loading} circular={false}/>
+        <GoMakeLoadingBackdrop loading={loading} circular={false} />
       </GoMakeModal>
     </>
   );
