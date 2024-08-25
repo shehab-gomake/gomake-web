@@ -85,7 +85,9 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
         setOpenCancelReceiptModal(false);
     };
 
+    const [loading, setLoading] = useState(false);
     const onClickConfirmWithoutNotification = async () => {
+        setLoading(true);
         const callBack = (res) => {
             if (res?.success) {
                 alertSuccessUpdate();
@@ -94,6 +96,7 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
             } else {
                 alertFaultUpdate();
             }
+            setLoading(false);
         }
         await createOrderApi(callApi, callBack,
             {
@@ -103,6 +106,7 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     }
 
     const onClickConfirmWithNotification = async () => {
+        setLoading(true);
         const callBack = (res) => {
             if (res?.success) {
                 alertSuccessUpdate();
@@ -111,6 +115,8 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
             } else {
                 alertFaultUpdate();
             }
+            setLoading(false);
+
         }
         await createOrderApi(callApi, callBack,
             {
@@ -271,7 +277,8 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
         onClickOpenMangerApprovalModal,
         getAllUsersCanApproveQuote,
         managersOptions,
-        onClickSendAndChat
+        onClickSendAndChat,
+        loading
     };
 };
 
