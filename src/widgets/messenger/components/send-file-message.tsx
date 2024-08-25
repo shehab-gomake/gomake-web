@@ -2,6 +2,7 @@ import {ChangeEvent, useRef, useState, MouseEvent} from "react";
 import {IconButton, Menu, MenuItem} from "@mui/material";
 import {useGomakeTheme} from "@/hooks/use-gomake-thme";
 import AttachFileIcon from '@mui/icons-material/AttachFile';
+import {useTranslation} from "react-i18next";
 interface IProps {
     onSendFile: (file) => void;
     onSendApprovalFile: (file) => void;
@@ -18,6 +19,7 @@ const SendFileMessageButtonComponent = ({onSendFile, isBoardMissionsRoom, onSend
     const ref = useRef(null);
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
+    const {t} = useTranslation();
 
     const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(event.currentTarget);
@@ -53,12 +55,12 @@ const SendFileMessageButtonComponent = ({onSendFile, isBoardMissionsRoom, onSend
                     setFileType(EFileType.Approval);
                     onClick();
                     handleClose();
-                }}>graphic</MenuItem>
+                }}>{t('messenger.sendGraphicFile')}</MenuItem>
                 <MenuItem onClick={()=>{
                     setFileType(EFileType.normal);
                     onClick();
                     handleClose();
-                }}>file</MenuItem>
+                }}>{t('messenger.sendFile')}</MenuItem>
             </Menu>
         </>
     );
