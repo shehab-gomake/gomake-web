@@ -364,7 +364,7 @@ const SectionMappingWidget = ({
                           true
                         )}
                       </div>
-                      <div style={clasess.oldSystemValueText}>{parameter?.oldSystemValue}</div>
+                      <div style={clasess.oldSystemValueText}>{myParameter?.oldSystemValue}</div>
                     </div>
                   </React.Fragment>
                 );
