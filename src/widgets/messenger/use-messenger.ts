@@ -12,6 +12,7 @@ import {
 import {QBChatNewMessage} from "quickblox";
 import {useRouter} from "next/router";
 import {useMessengerSignalr} from "@/hooks/signalr/use-messenger-signalr";
+import {useMediaQuery} from "@mui/material";
 
 const useMessenger = () => {
     const [selectedDialog, setSelectedDialog] = useState<IChatDialog | null>(null);
@@ -24,7 +25,12 @@ const useMessenger = () => {
     const {updateState, setUpdateState} = useMessengerSignalr();
     const {alertFaultUpdate} = useSnackBar();
     const {query} = useRouter();
-    const {dialogId} = query;
+    const {dialogId, clientId} = query;
+    const mobileMediaQuery = useMediaQuery('(max-width:800px)');
+
+    const isMobile = useCallback(() => {
+      return  !!clientId && mobileMediaQuery
+    }, [clientId, mobileMediaQuery]);
 
     const unreadMessages = useCallback(() => {
         return dialogs?.reduce((partialSum, dialog) => partialSum + dialog.unread_messages_count, 0);
@@ -87,11 +93,25 @@ const useMessenger = () => {
         });
     };
 
-    const sendMessage = async (message: QBChatNewMessage) => {
+    const sendMessage = async (message: QBChatNewMessage, isApproval?: boolean) => {
         try {
             await sendMessengerNotificationApi(callApi, () => {
-            }, selectedDialog.occupants_ids.map(a => a.toString()))
+            }, {
+                dialogId: selectedDialog._id,
+                documentType: !!isApproval ? 11 : 1,
+                users: selectedDialog.occupants_ids.map(a => a.toString()),
+            })
             await messenger.messages.send(selectedDialog._id, message as QBChatNewMessage);
+        } catch (e) {
+
+        }
+
+    }
+
+    const deleteMessage = async (messageId: string) => {
+        try {
+            await messenger.messages.delete(messageId);
+            setMessages(prevState => prevState.filter(msg => msg._id !== messageId));
         } catch (e) {
 
         }
@@ -110,7 +130,7 @@ const useMessenger = () => {
                 markable: 1,
             };
             setInputValue('');
-            await sendMessage(message as QBChatNewMessage)
+            await sendMessage(message as QBChatNewMessage, false)
         } catch (e) {
 
         }
@@ -151,14 +171,55 @@ const useMessenger = () => {
                 },
                 markable: 1
             };
-            await sendMessengerNotificationApi(callApi, () => {
-            }, selectedDialog.occupants_ids.map(a => a.toString()))
-            await messenger.messages.send(selectedDialog._id, message as QBChatNewMessage);
+            // await sendMessengerNotificationApi(callApi, () => {
+            // }, selectedDialog.occupants_ids.map(a => a.toString()))
+            // await messenger.messages.send(selectedDialog._id, message as QBChatNewMessage);
+            await sendMessage(message as QBChatNewMessage, true);
         } catch (e) {
             alertFaultUpdate();
         }
     }
 
+    const sendFileMessage = async (file) => {
+        try {
+            setUploadingFiles(true);
+            const fileParams = {
+                name: file.name,
+                file: file,
+                type: file.type,
+                size: file.size,
+                'public': false
+            };
+            const uploadedFile = await messenger.messages.uploadFile(fileParams);
+            if (uploadedFile.uid) {
+                setUploadingFiles(false)
+            }
+            const attachment = {
+                id: uploadedFile?.uid,
+                type: uploadedFile?.content_type,
+                size: uploadedFile?.size,
+                name: uploadedFile?.name,
+            };
+
+            const message = {
+                type: 'groupchat',
+                body: uploadedFile.name,
+                extension: {
+                    dialog_id: selectedDialog._id,
+                    attachments: [attachment],
+                    save_to_history: 1,
+                    sender_id: messenger.sessionUser.userId,
+                },
+                markable: 1
+            };
+            // await sendMessengerNotificationApi(callApi, () => {
+            // }, selectedDialog.occupants_ids.map(a => a.toString()))
+            // await messenger.messages.send(selectedDialog._id, message as QBChatNewMessage);
+            await sendMessage(message as QBChatNewMessage, false)
+        } catch (e) {
+            alertFaultUpdate();
+        }
+    }
     const sendSystemMessage = async (senderId: number, updatedApprovalRequestId: string, newStatus: EFileStatus) => {
         try {
             const message = {
@@ -192,7 +253,8 @@ const useMessenger = () => {
             messageId: 'message id',
             chatDialogId: selectedDialog._id,
             SenderUserId: senderId,
-            documentType: type
+            documentType: type,
+            token: messenger.sessionUser.password
         })
     }
 
@@ -301,7 +363,10 @@ const useMessenger = () => {
         files,
         isChatConnected: messenger.isChatConnected,
         sessionUserId: messenger?.sessionUser?.userId,
-        users: getUsersNames
+        users: getUsersNames,
+        sendFileMessage,
+        deleteMessage,
+        isMobile
     }
 }
 

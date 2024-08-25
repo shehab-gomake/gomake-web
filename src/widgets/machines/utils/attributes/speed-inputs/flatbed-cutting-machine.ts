@@ -221,7 +221,7 @@ const flatbedCuttingMachine = (state: Record<string, any>) => {
                     label: "machineAttributes.maxThickness",
                     type: "text",
                     placeholder: "machineAttributes.maxThickness",
-                    required: true,
+                    required: false,
                     parameterKey: "thickness",
                     options: [],
                     value: state.attributes?.pvc?.maxThickness ? state.attributes?.pvc?.maxThickness : '',

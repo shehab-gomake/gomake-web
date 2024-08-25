@@ -21,7 +21,6 @@ import {Collapse, Skeleton, TableCell, TableRow} from "@mui/material";
 import {
     ApprovalFileStatusComponent
 } from "@/widgets/production-floor/table-view/status-table/table-row/approval-file-status-component";
-import {EFileStatus} from "@/widgets/messenger/enums";
 
 interface IProps {
     boardMission: IBoardMissions
@@ -123,7 +122,7 @@ const TableRowComponent = ({boardMission}: IProps) => {
                 </PermissionCheck>
                 <SecondaryTableCell>
                     {
-                        boardMission.ShowGraphicsApprovalAlert && <ApprovalFileStatusComponent fileStatus={boardMission.ShowGraphicsApprovalAlert?.toString() as EFileStatus}/>
+                        <ApprovalFileStatusComponent fileStatus={boardMission.showGraphicsApprovalAlert}/>
                     }
                 </SecondaryTableCell>
                 <SecondaryTableCell align={"center"}>

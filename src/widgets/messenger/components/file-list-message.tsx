@@ -35,7 +35,7 @@ const FIleListComponent = ({
 
     const downloadFile = async () => {
         try {
-            const response = await fetch(attachments[0].url);
+            const response = await fetch(attachments[0].downloadUrl);
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
@@ -91,7 +91,7 @@ const FIleListComponent = ({
                 width: direction === 'row' && 'auto',
             }}
             height={direction === 'row' ? '50' : "194"}
-            image={attachments[0].url}
+            image={attachments[0].imageUrl}
             alt=""
         />
         <CardContent>
@@ -108,9 +108,9 @@ const FIleListComponent = ({
         <CardActions style={{display: 'flex', justifyContent: 'flex-end', flex: 1}}>
             {
                 status === EFileStatus.PENDING ?
-                    <>
+                    <Stack direction={'row'}  gap={'5px'} width={'200px'}>
                         {
-                            isCurrentUserSentMsg ? <FileStatusNameComponent status={status}/> :
+                            !isCurrentUserSentMsg ? <FileStatusNameComponent status={status}/> :
                                 <>
                                     <Button variant={'contained'} style={{backgroundColor: successColor(400)}}
                                             onClick={() => onUpdateStatus(EFileStatus.APPROVED)}>Approve</Button>
@@ -118,7 +118,7 @@ const FIleListComponent = ({
                                             onClick={() => onUpdateStatus(EFileStatus.REJECTED)}>reject</Button>
                                 </>
                         }
-                    </> : <FileStatusNameComponent status={status}/>
+                    </Stack> : <div style={{width: '200px'}}><FileStatusNameComponent status={status}/></div>
             }
 
         </CardActions>

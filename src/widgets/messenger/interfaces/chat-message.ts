@@ -25,7 +25,8 @@ export interface IChatMessage {
 export interface IChatMessageAttachment {
     id: string;
     type: string;
-    url?: string;
+    imageUrl?: string;
+    downloadUrl?: string
 }
 
 export interface ISendChatMessage {
