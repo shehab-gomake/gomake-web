@@ -28,7 +28,7 @@ const AccordionMappingWidget = ({
       let matchingParameter = parameterList?.find(p =>
         p.parameterId === param.id && p.subSectionId === subSection.id
       );
-      if (matchingParameter) {
+      if (matchingParameter || param.oldSystemValue) {
         return true;
       }
     }
