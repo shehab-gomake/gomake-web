@@ -1,24 +1,5 @@
-export enum ERPDocumentsTypesEnum {
-    Order = 1,
-    Invoice,
-    DeliveryNotes,
-    Purchase,
-    InvoiceRefund,
-    Receipt,
-    JournalEntry,
-    PurchaseInvoice,
-    PurchaseInvoiceRefund,
-    ForeignJournalEntry,
-    DeliveryNoteRefund,
-    Quote,
-    ExternalInvoice,
-    All,
-    ExternalPayment,
-    BoardMission,
-    AgingReport,
-    LedgerReport,
-    SalesReport
-}
+import { ERPDocumentsTypesEnum } from "@/enums/document-type-enum";
+
 
 export function renderDocumentTypeForSourceDocumentNumber(documentType: ERPDocumentsTypesEnum): string {
     switch (documentType) {

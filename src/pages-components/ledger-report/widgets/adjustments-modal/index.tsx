@@ -40,7 +40,7 @@ const AdjustmentsLedgerReportModal = ({ openModal, onCloseModal, clientPaymentsL
             headers={tableHeaders}
             maxHeight={610}
           />
-          <div style={classes.totalPriceContainer}>{calculateTotalPrice().toFixed(2)} NIS</div>
+          <div style={classes.totalPriceContainer}>{calculateTotalPrice().toFixed(3)} NIS</div>
           <div style={classes.btnsContainer}>
             {btns.map((tab, index) => {
               return (
