@@ -62,7 +62,8 @@ const ButtonsContainer = ({
     onClickOpenMangerApprovalModal,
     getAllUsersCanApproveQuote,
     managersOptions,
-    onClickSendAndChat
+    onClickSendAndChat,
+    loading
   } = useButtonsContainer(documentType);
 
 
@@ -262,6 +263,7 @@ const ButtonsContainer = ({
           onClose={onClickCloseOrderNowModal}
           confirmWithoutNotification={onClickConfirmWithoutNotification}
           confirmWithNotification={onClickConfirmWithNotification}
+          loading={loading}
         />
         <ManagerApprovalModal
           openModal={openMangerApprovalModal}
