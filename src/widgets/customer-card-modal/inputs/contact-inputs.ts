@@ -1,5 +1,5 @@
+import { ERPDocumentsTypesEnum } from "@/enums/document-type-enum";
 import { emailRegex } from "@/utils/regex";
-import { ERPDocumentsTypesEnum } from "@/widgets/settings-documenting/documentDesign/enums/document-type";
 import { t } from "i18next";
 
 const contactInputs1 = (state) => {

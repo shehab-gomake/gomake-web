@@ -2,6 +2,7 @@
 import { GoMakeAutoComplate, GoMakeModal, GomakePrimaryButton, } from "@/components";
 import { useStyle } from "./style";
 import { useTranslation } from "react-i18next";
+import { SecondaryButton } from "@/components/button/secondary-button";
 
 const TransferBalanceModal = ({ openModal, onCloseModal, customer, renderOptions, checkWhatRenderArray, handleCustomerChange, transferBalanceApi }) => {
   const { classes } = useStyle();
@@ -45,7 +46,7 @@ const TransferBalanceModal = ({ openModal, onCloseModal, customer, renderOptions
           <div style={classes.btnsContainer}>
             {btns.map((tab, index) => {
               return (
-                <GomakePrimaryButton key={index} onClick={tab.onclick} style={classes.btnContainer}>{tab.name}</GomakePrimaryButton>
+                <SecondaryButton variant={index===0?"contained":"outlined"} key={index} onClick={tab.onclick} style={classes.btnContainer}>{tab.name}</SecondaryButton>
               )
             })}
           </div>
