@@ -122,7 +122,7 @@ export const _renderStatus = (docType: DOCUMENT_TYPE, document: any, t: any, nav
     const openStatus = `${docTypeText}.Open`;
 
     let statusApproval: JSX.Element | null = null;
-    if (document.approvalStatus !== null) {
+    if (docType === DOCUMENT_TYPE.quote && document && document?.approvalStatus && document.approvalStatus !== null) {
       statusApproval = <>{t(`documentStatus.${ApprovalStatus[document.approvalStatus]}`)}</>;
     }
 
