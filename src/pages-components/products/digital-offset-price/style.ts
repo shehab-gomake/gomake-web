@@ -188,8 +188,8 @@ const useStyle = () => {
         alignItems: "flex-start",
         gap: 10,
         width: "100%",
-        minWidth: 185,
-        maxWidth: 185,
+        minWidth: 220,
+        maxWidth: 220,
       },
       parameterRowContainer: {
         display: "flex",
@@ -207,9 +207,9 @@ const useStyle = () => {
         flexDirection: "column" as "column",
         justifyContent: "flex-start",
         alignItems: "flex-start",
-        width: "185px",
-        minWidth: 185,
-        maxWidth: 185,
+        width: "220px",
+        minWidth: 220,
+        maxWidth: 220,
         // height: 71,
         gap: 10,
       },
@@ -223,7 +223,7 @@ const useStyle = () => {
       },
 
       textInputStyle: {
-        width: "100%",
+        width: "220px",
         borderRadius: 4,
         height: 40,
         border: "0px",
@@ -231,7 +231,7 @@ const useStyle = () => {
         color: "#000",
       },
       dropDownListStyle: {
-        width: "100%",
+        width: "220px",
         borderRadius: 4,
         height: 40,
         border: "0px",
@@ -240,7 +240,7 @@ const useStyle = () => {
       renderParameterTypeContainer: {
         display: "flex",
         width: "100%",
-        maxWidth: "185px",
+        maxWidth: "220px",
         borderRadius: 4,
       },
 
