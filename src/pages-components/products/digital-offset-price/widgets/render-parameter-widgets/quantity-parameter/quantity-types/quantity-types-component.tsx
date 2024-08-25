@@ -6,7 +6,6 @@ import { useTranslation } from "react-i18next";
 import { useStyle } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/quantity-parameter/quantity-types/style";
 import { SecondaryButton } from "@/components/button/secondary-button";
 import { QuantityTypesTable } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/quantity-parameter/table/quantity-types-table";
-import { convertWidthToVW } from "@/utils/adapter";
 
 interface IQuantityTypesComponent { }
 const QuantityTypesComponent = ({ }: IQuantityTypesComponent) => {
