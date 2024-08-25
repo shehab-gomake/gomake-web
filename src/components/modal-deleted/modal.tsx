@@ -11,8 +11,8 @@ const GoMakeDeleteModal = ({
   subTitle,
   onClickDelete,
   hideIcon = false,
-  title = "Confirm Delete",
-  yesBtn = "Delete",
+  title = "modal.confirmDelete",
+  yesBtn = "modal.delete",
   onClickCancel,
   children,
   ...props
@@ -42,7 +42,7 @@ const GoMakeDeleteModal = ({
           {!hideIcon && (
             <div style={classes.icon}>{props.icon || <Wastebasket />}</div>
           )}
-          <div style={classes.title}>{title}</div>
+          <div style={classes.title}>{t(title)}</div>
           <div style={classes.subTitle}>{subTitle}</div>
           {children && <div style={classes.children}>{children}</div>}
           <div style={classes.btnsContainer}>
@@ -53,7 +53,7 @@ const GoMakeDeleteModal = ({
                 onClose();
               }}
             >
-              {yesBtn}
+              {t(yesBtn)}
             </GomakePrimaryButton>{" "}
             <GomakePrimaryButton style={classes.cancelBtn} onClick={handleCancelClick}>
               {props?.cancelBtn || t("materials.buttons.cancel")}
