@@ -21,7 +21,7 @@ const useStyle = () => {
         ...FONT_FAMILY.Lexend(500, 10),
         color: "#8283BE",
         cursor: "pointer",
-        backgroundColor: "#EBECFF"
+     //   backgroundColor: "#EBECFF"
       },
       menuRowStyle: {
         display: "flex",
