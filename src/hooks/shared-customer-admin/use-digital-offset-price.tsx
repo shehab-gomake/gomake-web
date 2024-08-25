@@ -133,6 +133,15 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [deviceCategory, setDeviceCategory] = useState("")
   const [deviceSize, setDeviceSize] = useState("")
 
+  useEffect(() => {
+    if (quantityTypes?.length > 0) {
+      setWorkTypes(quantityTypes)
+    }
+    else if (productTypesNumber === 1) {
+      setWorkTypes([])
+    }
+
+  }, [quantityTypes, productTypesNumber])
   const {
     calculationResult,
     connectionId,
@@ -3102,7 +3111,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             generalParameters: generalParameters,
             subProducts: calculationSubProducts,
             itemParmetersValues: itemParmetersValues,
-            workTypes: quantityTypes,
+            workTypes: workTypes,
             isChargeForNewDie: isChargeForNewDie,
             productType: productTemplate?.productType,
             templateId: productTemplate?.templateId
