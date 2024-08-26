@@ -248,6 +248,7 @@ const TotalPriceAndVatWidit = () => {
         onClose={onClickCloseOrderNowModal}
         confirmWithoutNotification={onClickConfirmWithoutNotification}
         confirmWithNotification={onClickConfirmWithNotification}
+        loading={false}
       />
     </div>
   );

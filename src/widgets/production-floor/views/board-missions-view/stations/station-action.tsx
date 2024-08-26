@@ -21,7 +21,7 @@ import {
 } from "@/services/api-service/production-floor/production-floor-endpoints";
 import Button from "@mui/material/Button";
 import { ActionTimer } from "@/widgets/production-floor/views/board-missions-view/stations/action-timer/action-timer";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState } from "recoil";
 import { boardMissionsDetailsState } from "@/widgets/production-floor/state/boards";
 import { ThreeOptionsModal } from "@/components";
 import { Permissions } from "@/components/CheckPermission/enum";
@@ -162,7 +162,7 @@ const BoardMissionsStationAction = ({
                                 <Divider orientation={"vertical"} flexItem />
                                 <Stack direction={'row'} gap={'5px'} alignItems={'center'}>
                                     <span style={classes.detailTitle}>{t("productionFloor.timer")}</span>
-                                    <ActionTimer loading={timerLoading} onToggle={onToggleTimer} {...boardMissionActionTimer} />
+                                    <ActionTimer actionId={boardMissionActionId} loading={timerLoading} onToggle={onToggleTimer} {...boardMissionActionTimer} />
                                 </Stack>
                                 <Divider orientation={"vertical"} flexItem />
                                 <Stack direction={'row'} gap={'5px'} alignItems={'center'}>

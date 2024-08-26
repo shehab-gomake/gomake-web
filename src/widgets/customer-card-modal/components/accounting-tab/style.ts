@@ -1,0 +1,96 @@
+import { convertHeightToVH, convertWidthToVW } from "@/utils/adapter";
+import { FONT_FAMILY } from "@/utils/font-family";
+import { useMemo } from "react";
+
+const useStyle = () => {
+  const classes = useMemo(() => {
+    return {
+      customerInfoStyle: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "flex-start",
+        alignItems: "center",
+        marginBottom: 10,
+        flexWrap: "wrap" as "wrap",
+        gap: 30,
+        
+      },
+      testSTYLE: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "flex-start",
+        alignItems: "center",
+        flexWrap: "wrap" as "wrap",
+        gap: 20,
+      },
+      headerStyle: {
+        color: "var(--primary-900, #090A1D)",
+        fontStyle: "normal",
+        lineHeight: "normal",
+        TextAlign: "center",
+        ...FONT_FAMILY.Lexend(500, 14),
+      },
+
+      inputStyle: {
+        width: "180px",
+        height: "40px",
+        flexShrink: 0,
+        borderRadius: "4px",
+        background: "#FFF",
+        boxShadow: "0px 4px 60px 0px #00000014",
+        border: "none",
+        ...FONT_FAMILY.Lexend(500, 14),
+        color: "#8283BE",
+      },
+
+      autoButtonStyle: {
+        width: convertWidthToVW(50),
+        height: convertHeightToVH(30),
+        marginRight: convertWidthToVW(1),
+        marginTop: "23px",
+        background: "#F135A3",
+      },
+
+      autoComplateStyle: {
+        display: "flex",
+        width: "180px",
+        height: "40px",
+        flexShrink: 0,
+        borderRadius: "4px",
+        background: "#FFF",
+        boxShadow: "0px 4px 60px 0px #00000014",
+        border: "none",
+        ...FONT_FAMILY.Lexend(500, 14),
+        color: "#8283BE",
+      },
+
+      buttonsStyle: {
+        color: "var(--error-500, #D92C2C)",
+        ...FONT_FAMILY.Lexend(500, 14),
+        fontStyle: "normal",
+        lineHeight: "normal",
+        border: "none",
+        background: "#FFF",
+        cursor: "pointer",
+      },
+
+      switchHeaderStyle: {
+        color: "var(--primary-900, #090A1D)",
+        fontStyle: "normal",
+        lineHeight: "normal",
+        TextAlign: "center",
+        ...FONT_FAMILY.Lexend(500, 14),
+      },
+      removeFormStyle: {
+        display: "flex",
+        justifyContent: "flex-start",
+        gap: "7px",
+        cursor: "pointer",
+      },
+    };
+  }, []);
+  return {
+    classes,
+  };
+};
+export { useStyle };

@@ -2,19 +2,18 @@ import {Button, Card, CardActions, CardContent, IconButton, Typography} from "@m
 import CardMedia from "@mui/material/CardMedia";
 import {IChatMessage} from "@/widgets/messenger/interfaces/chat-message";
 import {EFileStatus} from "@/widgets/messenger/enums";
-import {Download} from "@mui/icons-material";
 import Stack from "@mui/material/Stack";
 import {useEffect, useState} from "react";
 import {FileStatusNameComponent} from "@/widgets/messenger/components/file-status-name-component";
 import {useGomakeTheme} from "@/hooks/use-gomake-thme";
-import {FONT_FAMILY} from "@/utils/font-family";
-
+import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 interface IProps extends IChatMessage {
     isCurrentUserSentMsg: boolean;
     onUpdateApprovalFile: (requestId: string, updatedStatus: string, senderId: number, type: number) => void;
     getApprovalStatus: (id: string) => Promise<unknown>;
     direction: 'column' | 'row';
     updatedApprovalRequest: { approvalRequestId: string, newStatus: EFileStatus };
+    onDeleteMessage: (messageId: string) => void;
 }
 
 
@@ -28,14 +27,15 @@ const FileCardMessageComponent = ({
                                       getApprovalStatus,
                                       sender_id,
                                       direction,
-                                      updatedApprovalRequest
+                                      updatedApprovalRequest,
+                                      onDeleteMessage
                                   }: IProps) => {
     const [status, setStatus] = useState<EFileStatus>(EFileStatus.PENDING);
     const {successColor, errorColor, primaryColor, grayColor, secondColor} = useGomakeTheme();
 
     const downloadFile = async () => {
         try {
-            const response = await fetch(attachments[0].url);
+            const response = await fetch(attachments[0].downloadUrl);
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
@@ -60,10 +60,12 @@ const FileCardMessageComponent = ({
     }
 
     useEffect(() => {
-        getApprovalStatus(file_approval_Request_id)
-            .then(s => {
-                setStatus(s as EFileStatus)
-            })
+        if (file_approval_Request_id) {
+            getApprovalStatus(file_approval_Request_id)
+                .then(s => {
+                    setStatus(s as EFileStatus)
+                })
+        }
 
     }, []);
 
@@ -85,26 +87,17 @@ const FileCardMessageComponent = ({
             component="img"
             style={{borderRadius: '10px'}}
             height={"165px"}
-            image={attachments[0].url}
+            image={attachments[0].imageUrl}
             alt=""
         />
-        {/*<CardContent>*/}
-        {/*    <Stack direction={direction === 'row' ? 'column' : 'row'} gap={'5px'}*/}
-        {/*           alignItems={direction === 'row' ? 'start' : 'center'} justifyContent={'space-between'}>*/}
-        {/*        <Typography variant="h5" style={{...FONT_FAMILY.Inter(500, 14), color: grayColor(700)}}>*/}
-        {/*            {message}*/}
-        {/*        </Typography>*/}
-        {/*        <IconButton style={{padding: direction === 'row' && 0}}>*/}
-        {/*            <Download onClick={downloadFile}/>*/}
-        {/*        </IconButton>*/}
-        {/*    </Stack>*/}
-        {/*</CardContent>*/}
+            <IconButton style={{position: 'absolute', top: 5, right: 5, padding: '5px', color: '#FFF', borderRadius: '4px', backgroundColor: 'rgba(256,256,256,0.3)'}}
+                    onClick={()=> onDeleteMessage(_id)}><DeleteOutlineOutlinedIcon/></IconButton>
         <Stack gap={'5px'}
                style={{position: 'absolute', top: '40%', left: '-20px', right: '-20px', border: 0, display: 'static'}}>
             <Button variant={'contained'} style={{backgroundColor: '#00AEEF'}}
                     onClick={downloadFile}>Download</Button>
             {
-                status === EFileStatus.PENDING ?
+                !!file_approval_Request_id && (status === EFileStatus.PENDING ?
                     <Stack width={'100%'} gap={'5px'}>
                         {
                             isCurrentUserSentMsg ? <FileStatusNameComponent status={status}/> :
@@ -115,7 +108,7 @@ const FileCardMessageComponent = ({
                                             onClick={() => onUpdateStatus(EFileStatus.REJECTED)}>reject</Button>
                                 </>
                         }
-                    </Stack> : <FileStatusNameComponent status={status}/>
+                    </Stack> : <FileStatusNameComponent status={status}/>)
             }
         </Stack>
     </Stack>

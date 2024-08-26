@@ -221,7 +221,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
             productionStatus: status?.value,
             pageNumber: pageNumber,
             pageSize: pageSize,
-            orderNumber: +router?.query?.orderNumber
+            orderNumber: router?.query?.orderNumber
           });
     }
   };

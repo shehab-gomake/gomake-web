@@ -107,7 +107,7 @@ const DashboardWidget = ({ }: IDashboardWidget) => {
     }, [usedMachines(), cleanedDataForEmployeesList()])
 
     const orderMap = {};
-    dashboardColumns.forEach((item, index) => {
+    dashboardColumns?.forEach((item, index) => {
         orderMap[item.id] = index;
     });
     const sortedMergedLists = mergedLists().sort((a, b) => {

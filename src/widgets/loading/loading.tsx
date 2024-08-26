@@ -14,7 +14,6 @@ const GomakeLoading = () => {
   return (
 
     loading &&
-
     <div
       style={{
         position: "absolute",
@@ -24,7 +23,6 @@ const GomakeLoading = () => {
     >
       <CircularProgress style={{ color: primaryColor(500) }} />
     </div>
-
   );
 };
 

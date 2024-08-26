@@ -244,7 +244,6 @@ const useStyle = () => {
         justifyContent: "flex-end",
         alignItems: "center",
         gap: "5px",
-        cursor: "pointer",
       },
       lastOrderDetails: {
         color: "var(--second-500, #ED028C)",

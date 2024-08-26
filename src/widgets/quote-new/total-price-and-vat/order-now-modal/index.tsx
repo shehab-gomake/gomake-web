@@ -1,18 +1,21 @@
 import { useTranslation } from "react-i18next";
-import { GoMakeModal} from "@/components";
+import { GoMakeModal } from "@/components";
 import { useStyle } from "./style";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import { SecondaryButton } from "@/components/button/secondary-button";
 import { PrimaryButton } from "@/components/button/primary-button";
+import { GoMakeLoadingBackdrop } from "@/widgets/loading-with-shadow/go-make-loading-back-drop";
 
 const OrderNowModal = ({
   openModal,
   onClose,
   confirmWithoutNotification,
   confirmWithNotification,
-}) => {
+  loading
+}: any) => {
   const { t } = useTranslation();
   const { classes } = useStyle();
+
   return (
     <>
       <GoMakeModal
@@ -53,6 +56,7 @@ const OrderNowModal = ({
             </PrimaryButton>
           </div>
         </div>
+        <GoMakeLoadingBackdrop loading={loading} circular={false} />
       </GoMakeModal>
     </>
   );

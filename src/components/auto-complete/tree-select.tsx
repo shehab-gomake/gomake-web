@@ -128,7 +128,7 @@ const GoMakeTreeSelect = ({
    },
    .p-treeselect-panel .p-treeselect-header .p-treeselect-filter-container .p-treeselect-filter-icon {
   position: absolute;
-  ${RTL ? "left: 10px;" : "right: 10px;"};
+  ${RTL ? "left: 10px; right:unset" : "right: 10px;"};
   top: 50%;
   transform: translateY(-50%);
 },

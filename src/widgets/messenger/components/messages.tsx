@@ -10,6 +10,7 @@ import {useDrop} from "react-dnd";
 import {IChatDialog} from "@/widgets/messenger/interfaces/dialog";
 import {EFileStatus} from "@/widgets/messenger/enums";
 import {QuoteApprovalMessageComponent} from "@/widgets/messenger/components/qoute-approval-message";
+import {FONT_FAMILY} from "@/utils/font-family";
 
 interface IProps {
     messages: IChatMessage[];
@@ -20,6 +21,7 @@ interface IProps {
     onUpdateApprovalFile: (requestId: string, updatedStatus: string, senderId: number, type: number) => void;
     getApprovalStatus: (id: string) => Promise<unknown>;
     updatedApprovalRequest: { approvalRequestId: string, newStatus: EFileStatus };
+    onDeleteMsg: (messageId: string) => void;
 }
 
 const MessagesComponent = ({
@@ -29,7 +31,8 @@ const MessagesComponent = ({
                                onDropFile,
                                onUpdateApprovalFile,
                                getApprovalStatus,
-                               updatedApprovalRequest
+                               updatedApprovalRequest,
+                               onDeleteMsg
                            }: IProps) => {
     const [user] = useRecoilState(userProfileState);
     const dropRef = useRef(null);
@@ -95,31 +98,38 @@ const MessagesComponent = ({
                            alignSelf={msg.sender_id === sessionUserId ? 'flex-end' : 'flex-start'}>
                         {
                             (index === 0 || index > 0 && msg.sender_id !== messages[index - 1].sender_id) ?
-                                <Avatar variant={'circular'} style={{
-                                    backgroundColor: msg.sender_id === sessionUserId ? user?.avatarBackGroundColor : '',
-                                }}
-                                        src={msg.sender_id === sessionUserId ? user?.imagePath : msg.userMetaData?.profileImage}>{msg.sender_id === sessionUserId && !user.imagePath ? user.avatarInitials?.toUpperCase() : msg.userMetaData?.avatarInitials?.toUpperCase()}</Avatar> :
+                                <Avatar variant={'circular'}
+                                        style={{backgroundColor: msg.sender_id === sessionUserId ? user?.avatarBackGroundColor : '', ...FONT_FAMILY.Lexend(500, 18)}}
+                                        src={msg.sender_id === sessionUserId ? user?.imagePath : msg.userMetaData?.profileImage}>
+                                    {msg.sender_id === sessionUserId && !user.imagePath ? user.avatarInitials?.toUpperCase() : msg.userMetaData?.avatarInitials?.toUpperCase()}
+                                </Avatar> :
                                 <Stack minWidth={'40px'} width={'40px'} height={'40px'}/>
                         }
                         {
-                            msg.file_approval_Request_id ?
-                                <FileCardMessageComponent {...msg}
-                                                          updatedApprovalRequest={updatedApprovalRequest}
-                                                          direction={'column'}
-                                                          onUpdateApprovalFile={onUpdateApprovalFile}
-                                                          isCurrentUserSentMsg={msg.sender_id === sessionUserId}
-                                                          getApprovalStatus={getApprovalStatus}
-                                                          attachments={msg.attachments.map(attachment => ({
-                                                          ...attachment,
-                                                          url: attachment.type === 'application/pdf' ? 'https://gomake-contents.s3.eu-west-3.amazonaws.com/messanger-no-image.jpg' : getAttachmentUrl(attachment.id)
-                                                      }))}/> :
-                                msg.quote_approval_Request_id ?
+                            msg?.attachments?.length > 0 ? <FileCardMessageComponent {...msg}
+                                                                                   onDeleteMessage={onDeleteMsg}
+                                                                                   updatedApprovalRequest={updatedApprovalRequest}
+                                                                                   direction={'column'}
+                                                                                   onUpdateApprovalFile={onUpdateApprovalFile}
+                                                                                   isCurrentUserSentMsg={msg.sender_id === sessionUserId}
+                                                                                   getApprovalStatus={getApprovalStatus}
+                                                                                   attachments={msg.attachments.map(attachment => {
+                                                                                       const attachmentUrl = getAttachmentUrl(attachment.id);
+                                                                                       return {
+                                                                                           ...attachment,
+                                                                                           imageUrl: attachment.type === 'application/pdf' ? 'https://gomake-contents.s3.eu-west-3.amazonaws.com/messanger-no-image.jpg' : attachmentUrl,
+                                                                                           downloadUrl: attachmentUrl
+                                                                                       }
+                                                                                   })}/> :
+
+                                msg?.quote_approval_Request_id ?
                                     <QuoteApprovalMessageComponent {...msg}
                                                                    isCurrentUserSentMsg={msg.sender_id === sessionUserId}
                                                                    getApprovalStatus={getApprovalStatus}
                                                                    updatedApprovalRequest={updatedApprovalRequest}
                                                                    onUpdateApprovalQouteMessageStatus={onUpdateApprovalFile}/> :
                                     <TextMessageComponent message={msg} sessionUserId={sessionUserId}/>
+
                         }
                     </Stack>)
             }
