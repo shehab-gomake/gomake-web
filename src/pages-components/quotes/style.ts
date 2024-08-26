@@ -59,8 +59,8 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "flex-start",
         gap: 10,
-        minWidth:"40%",
-        width: "fit-content",
+        minWidth:"fit-content",
+        width: "150px",
       },
       buttonsFilterContainer: {
         display: "flex",

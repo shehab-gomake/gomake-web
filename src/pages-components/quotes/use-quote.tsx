@@ -1,7 +1,7 @@
 import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { DELIVERY_NOTE_STATUSES, LogActionType, QUOTE_STATUSES } from "./enums";
+import { ApprovalStatus, DELIVERY_NOTE_STATUSES, LogActionType, QUOTE_STATUSES } from "./enums";
 import { MoreMenuWidget } from "./more-circle";
 import { getAllProductsForDropDownList, getAndSetAllCustomers, getAndSetClientTypes } from "@/services/hooks";
 import { useSetRecoilState, useRecoilValue } from "recoil";
@@ -51,6 +51,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const debounce = useDebounce(patternSearch, 500);
   const { GetDateFormat, GetShortDateFormat } = useDateFormat();
   const [statusId, setStatusId] = useState<any>();
+  const [approvalStatusId, setApprovalStatusId] = useState<any>();
   const [quoteStatusId, setQuoteStatusId] = useState<any>();
   const [customerId, setCustomerId] = useState<any>();
   const [isCanceledState, setIsCanceledState] = useState(null)
@@ -306,7 +307,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             ];
           } else if (docType === DOCUMENT_TYPE.quote) {
             return [
-             // GetDateFormat(quote?.createdDate),
+              // GetDateFormat(quote?.createdDate),
               quote?.createdDate?.split(" ")[0],
               <div style={{ cursor: "pointer" }} onClick={() => onClickOpenCustomerModal(quote?.customerId)}>{quote?.customerName}</div>,
               quote?.agentName,
@@ -455,6 +456,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             pageSize: pageSize,
           },
           statusId: quoteStatusId?.value || statusId?.value,
+          approvalStatus: approvalStatusId?.value,
           closeStatus: accountingStatus?.value,
           productionStatus: productionStatus?.value,
           patternSearch: finalPatternSearch,
@@ -480,6 +482,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     page,
     pageSize,
     statusId,
+    approvalStatusId,
     quoteStatusId,
     accountingStatus,
     productionStatus,
@@ -702,6 +705,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     setAgentId(null);
     setCustomerId(null);
     setStatusId(null);
+    setApprovalStatusId(null);
     setAccountingStatus(null);
     setProductionStatus(null);
     setFromDate(null);
@@ -832,63 +836,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       value: QUOTE_STATUSES.CanceledOther,
     },
     {
-      label: t("sales.quote.approvedByManager"),
-      value: QUOTE_STATUSES.ApprovedByManager,
-    },
-    {
-      label: t("sales.quote.rejectedByManager"),
-      value: QUOTE_STATUSES.RejectedByManager,
-    },
-    {
       label: t("sales.quote.partialClosed"),
       value: QUOTE_STATUSES.PartialClosed,
-    },
-    {
-      label: t("sales.quote.waitForPrintHouseConfirm"),
-      value: QUOTE_STATUSES.WaitForPrintHouseConfirm,
-    },
-  ];
-
-  const deliveryNoteStatuses = [
-    {
-      label: t("sales.quote.open"),
-      value: DELIVERY_NOTE_STATUSES.Open,
-    },
-    {
-      label: t("sales.quote.canceled"),
-      value: DELIVERY_NOTE_STATUSES.Canceled,
-    },
-    {
-      label: t("sales.quote.created"),
-      value: DELIVERY_NOTE_STATUSES.Created,
-    },
-    {
-      label: t("sales.quote.refunded"),
-      value: DELIVERY_NOTE_STATUSES.Refunded,
-    },
-    {
-      label: t("sales.quote.confirmed"),
-      value: DELIVERY_NOTE_STATUSES.Confirmed,
-    },
-    {
-      label: t("sales.quote.rejected"),
-      value: DELIVERY_NOTE_STATUSES.Rejected,
-    },
-    {
-      label: t("sales.quote.partialRefunded"),
-      value: DELIVERY_NOTE_STATUSES.PartialRefunded,
-    },
-    {
-      label: t("sales.quote.closedAsInvoice"),
-      value: DELIVERY_NOTE_STATUSES.ClosedAsInvoice,
-    },
-    {
-      label: t("sales.quote.closedByMultiDocuments"),
-      value: DELIVERY_NOTE_STATUSES.ClosedByMultiDocuments,
-    },
-    {
-      label: t("sales.quote.manualClose"),
-      value: DELIVERY_NOTE_STATUSES.ManualClose,
     },
   ];
 
@@ -1271,6 +1220,18 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     { label: t("sales.quote.closed"), value: AStatus.CLOSED },
   ];
 
+  // const approvalStatuses = [
+  //   { label: t(`documentStatus.${ApprovalStatus[ApprovalStatus.ApprovedByClient]}`), value: ApprovalStatus.ApprovedByClient },
+
+  // ];
+
+  const approvalStatuses: { value: number; label: string }[] = Object.values(ApprovalStatus)
+    .filter(value => typeof value === 'number')
+    .map(value => ({
+      value: value as number,
+      label: t(`documentStatus.${ApprovalStatus[value]}`)
+    }));
+
 
 
   const handleProductionStatusChange = (e: any, value: any) => {
@@ -1300,9 +1261,11 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       )
     );
   };
+
   useEffect(() => {
     const filteredData = {
       statusId: quoteStatusId?.value || statusId?.value,
+      approvalStatus: approvalStatusId?.value,
       closeStatus: accountingStatus?.value && accountingStatus?.value,
       productionStatus: productionStatus?.value && productionStatus?.value,
       patternSearch: finalPatternSearch && finalPatternSearch,
@@ -1321,7 +1284,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     if (JSON.stringify(filteredDataWithoutEmptyValues) !== JSON.stringify(filterData)) {
       setFilterData(filteredDataWithoutEmptyValues);
     }
-  }, [quoteStatusId, statusId, accountingStatus, productionStatus, finalPatternSearch, customerId, dateRange, agentId, minPrice, maxPrice, productIds, fromDate, toDate]);
+  }, [quoteStatusId, approvalStatusId, statusId, accountingStatus, productionStatus, finalPatternSearch, customerId, dateRange, agentId, minPrice, maxPrice, productIds, fromDate, toDate]);
 
   const [openIrrelevantCancelModal, setOpenIrrelevantCancelModal] = useState(false);
   const [openPriceCancelModal, setOpenPriceCancelModal] = useState(false);
@@ -1516,7 +1479,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     openAddRule,
     navigate,
     documentPath,
-    deliveryNoteStatuses,
     resetDatePicker,
     onSelectDeliveryTimeDates,
     employeeId,
@@ -1555,7 +1517,10 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     getEmployeeCategories,
     ManuallyCloseDocument,
     documentCloseNumber,
-    handleDocumentNumberChange
+    handleDocumentNumberChange,
+    approvalStatuses,
+    setApprovalStatusId,
+    approvalStatusId
   };
 };
 
