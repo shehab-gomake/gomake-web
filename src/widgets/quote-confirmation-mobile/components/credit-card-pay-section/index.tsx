@@ -54,13 +54,13 @@ const CreditCardPaySection = ({ isFromBigScreen = false }) => {
             </div>
             <input
                 style={classes.creditSecondCardInputs}
-                placeholder="Id"
+                placeholder={t("partners.headers.id")}
                 value={paymentDetailsState?.holderID}
                 onChange={(e) => handleChangeInputs("holderID", e.target.value)}
             />
             <input
                 style={classes.creditSecondCardInputs}
-                placeholder="Total"
+                placeholder={t("sales.quote.total")}
                 value={paymentDetailsState?.transactionSum}
                 onChange={(e) => handleChangeInputs("transactionSum", e.target.value)}
             />
@@ -86,7 +86,7 @@ const CreditCardPaySection = ({ isFromBigScreen = false }) => {
                     />
                 </div>
             )}
-            <PrimaryButton onClick={handleProceedCheckout} variant="contained" style={classes.btnStyle}>{t("Proceed Checkout")}
+            <PrimaryButton onClick={handleProceedCheckout} variant="contained" style={classes.btnStyle}>{t("payment.proceedCheckout")}
             </PrimaryButton>
         </div>
     );

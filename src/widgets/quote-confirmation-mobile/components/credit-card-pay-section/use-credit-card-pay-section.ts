@@ -48,7 +48,7 @@ const useCreditCardPaySection = () => {
         expDate_MMYY: '',
         holderID: '',
         transactionSum: 0,
-        numberOfPayments: 0,
+        numberOfPayments:quoteConfirm?.maxPayments || 0 
     };
 
     const { getCardNumberProps, getExpiryDateProps, getCVCProps } = usePaymentInputs();

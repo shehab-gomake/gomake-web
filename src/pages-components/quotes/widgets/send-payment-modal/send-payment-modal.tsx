@@ -9,6 +9,7 @@ import { PaymentInputs } from "./inputs";
 import { SecondaryCheckBox } from "@/components/check-box/secondary-check-box";
 import { useSendPaymentModal } from "./use-send-payment-modal";
 import { Divider } from "@mui/material";
+import currencySymbolMap from 'currency-symbol-map';
 
 interface ISendPaymentProps {
     openPaymentModal?: any;
@@ -52,7 +53,7 @@ const SendPaymentModal = ({
                     ))}
                 </Stack>
                 {PaymentInputs(payState).slice(3).map((item) => (
-                    <Stack display="flex" flexWrap="wrap" direction="row" width={"max-content"}>
+                    <Stack display="flex" flexWrap="wrap" direction="row" width={"max-content"} gap={"2px"}>
                         <FormInput
                             input={item as IInput}
                             changeState={onChangePaymentInputs}
@@ -61,7 +62,7 @@ const SendPaymentModal = ({
                             readonly={!!item.readOnly}
                         />
                         {item.name === "percentageOfTotal" && <div style={classes.symbolStyle}>%</div>}
-                        {item.name === "totalToPay" && <div style={classes.symbolStyle}>{payState?.currency}</div>}
+                        {item.name === "totalToPay" && <div style={classes.symbolStyle}>{currencySymbolMap(payState?.currency)}</div>}
                     </Stack>
                 ))}
                 <Stack display="flex" flexWrap="wrap" direction="row" gap="10px">

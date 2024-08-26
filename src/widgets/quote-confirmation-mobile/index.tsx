@@ -6,9 +6,11 @@ import { TotalPriceAndVatContainer } from './components/total-price-and-vat';
 import { InfoContainer } from './components/info-container';
 import { QuoteItems } from './components/quote-items';
 import { CreditCardPaySection } from './components/credit-card-pay-section';
+import { useTranslation } from 'react-i18next';
 
 const QuoteConfirmationMobileWidget = ({ isMobile, isPrePaymentPage }) => {
   const { classes } = useStyle()
+  const { t } = useTranslation();
 
   return (
     <div style={classes.mainContainer}>
@@ -23,7 +25,7 @@ const QuoteConfirmationMobileWidget = ({ isMobile, isPrePaymentPage }) => {
       {isPrePaymentPage &&
         <>
           <div style={classes.borderContainer} />
-          <div style={classes.titleStyle}>{"Payment Details"}</div>
+          <div style={classes.titleStyle}>{t("payment.paymentDetails")}</div>
           <CreditCardPaySection />
         </>}
     </div>

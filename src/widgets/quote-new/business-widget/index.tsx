@@ -105,8 +105,6 @@ const BusinessNewWidget = ({
           onChange={(e, value) => onClickopenChangeClientModal(value)}
           onChangeTextField={checkWhatRenderArray}
         />
-
-
         <PermissionCheck userPermission={Permissions.ADD_CLIENT}>
           {(!isQuoteConfirmation && documentType === DOCUMENT_TYPE.quote) && <span style={classes.plusStyle} onClick={() => setOpenCustomerModal(true)}>+</span>}
         </PermissionCheck>
