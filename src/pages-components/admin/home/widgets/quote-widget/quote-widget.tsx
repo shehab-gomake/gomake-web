@@ -116,7 +116,7 @@ const QuoteWidget = ({ isAdmin = true }) => {
               placeholder={t("home.admin.selectCustomer")}
               style={classes.selectCustomerContainer}
               getOptionLabel={(option: any) =>
-                option && option.name ? `${option.name}-${option.code}` : ""
+                option && option.name ? `${option.code} - ${option.name}` : ""
               }
               onChangeTextField={checkWhatRenderArray}
               value={selectedClient}
