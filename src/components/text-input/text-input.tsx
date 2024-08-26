@@ -80,7 +80,8 @@ const GomakeTextInput = ({
   onClick,
   onFocus,
   id,
-  helperText
+  helperText,
+  direction
 }: {
   labelText?: string;
   value?: any;
@@ -101,6 +102,7 @@ const GomakeTextInput = ({
   onFocus?: any;
   id?: any;
   helperText?:string;
+  direction?:any;
 }) => {
   const { primaryColor, secondColor, errorColor } = useGomakeTheme();
 
@@ -140,7 +142,7 @@ const GomakeTextInput = ({
       onFocus={onFocus}
       id={id}
       helperText={helperText}
-
+      dir={direction}
     />
   );
 };
