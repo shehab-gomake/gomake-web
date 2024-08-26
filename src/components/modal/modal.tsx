@@ -12,12 +12,13 @@ const GoMakeModal = ({
   insideStyle,
   modalTitle,
   isBlockModal,
+  modalTitleColor,
   headerPadding = 0,
   ...props
 }: any) => {
   const { children }: any = props;
   const { t } = useTranslation();
-  const { classes } = useStyle({ insideStyle, headerPadding , isMiddleTitle, withClose});
+  const { classes } = useStyle({ insideStyle, headerPadding , isMiddleTitle, withClose, modalTitleColor });
   return (
     <Modal  disableEnforceFocus open={openModal} onClose={onClose} {...props}>
       <div style={classes.container}>

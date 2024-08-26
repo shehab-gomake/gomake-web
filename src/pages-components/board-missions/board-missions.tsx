@@ -10,20 +10,20 @@ import { GoMakeMultiSelect } from "@/components/auto-complete/multi-select";
 import { GoMakeDatepicker } from "@/components/date-picker/date-picker-component";
 import { Stack } from "@mui/material";
 import { GoMakePagination } from "@/components/pagination/gomake-pagination";
-import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import { DuplicateType } from "@/enums";
 import { PrintPackingSlipModal } from "./widgets/print-packing-slip-modal";
 import { IconButton } from "@mui/material";
 import { GoMakeMenu } from "@/components";
 import { InputAdornment } from "@mui/material";
 import TuneIcon from '@mui/icons-material/Tune';
-import { useRecoilValue } from "recoil";
-import { outsourceSuppliersState } from "@/widgets/product-pricing-widget/state";
 import QrListenerWidget from "@/widgets/qr-listener/qr-listener-widget";
+import { useUserPermission } from "@/hooks/use-permission";
+import { Permissions } from "@/components/CheckPermission/enum";
 
 const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
+  const { CheckPermission } = useUserPermission();
   const {
     tableHeader,
     tableHeaderForPurchaseJobs,
@@ -93,7 +93,6 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
   useEffect(() => {
     getAllProducts();
   }, []);
-  const suppliersState = useRecoilValue(outsourceSuppliersState);
   return (
     <>
       <Stack direction="column" justifyContent="space-between" display="flex" spacing={1} height="100%" >
@@ -210,9 +209,16 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
           <PrimaryTable
             stickyFirstCol={false}
             stickyHeader={true}
-            maxHeight={650}
+            maxHeight={750}
             rows={!isPurchaseJobs ? allBoardMissions : allPurchaseJobs}
             headers={!isPurchaseJobs ? tableHeader : tableHeaderForPurchaseJobs}
+            columnWidths={!isPurchaseJobs ?
+              CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS) ?
+                ["7%", "6%", "6%", "7%", "7%", "8%", "7%", "4%", "6%", "12%", "7%", "13%", "7%", "3%"]
+                :
+                ["7%", "7%", "7%", "7%", "7%", "8%", "7%", "18%", "7%", "15%", "7%", "3%"]
+              :
+              ["7%", "5%", "6%", "7%", "6%", "7%", "11%", "8%", "6%", "8%", "5%", "5%", "7%", "7%", "4%", "2%"]}
           />
         </div>
         <GoMakePagination

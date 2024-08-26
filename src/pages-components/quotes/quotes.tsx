@@ -49,7 +49,7 @@ const QuotesListPageWidget = ({
   isFromHomePage = false,
 }: IProps) => {
   const { classes } = useStyle();
-  const employeeListValue = useRecoilValue<string[]>(employeesListsState);
+  const { secondColor, } = useGomakeTheme();
   const {
     onClickCloseModal,
     setPatternSearch,
@@ -142,11 +142,15 @@ const QuotesListPageWidget = ({
     onClickClosePaymentModal,
     onClickCloseCloseOrderModal,
     openCloseOrderModal,
-    CloseDocument,
     selectedOrder,
     onClickOpenCloseOrderModal,
-  } = useQuotes(documentType);
-  const router = useRouter()
+    getEmployeeCategories,
+    ManuallyCloseDocument,
+    documentCloseNumber,
+    handleDocumentNumberChange
+  } = useQuotes(documentType, isFromHomePage);
+
+  const router = useRouter();
   useEffect(() => {
     if (router.query.orderNumber) {
       setPatternSearch(router.query.orderNumber as string);
@@ -156,14 +160,16 @@ const QuotesListPageWidget = ({
     }
 
   }, [router])
+
   useEffect(() => {
-    getAllProducts();
+    !isFromHomePage && getAllProducts();
   }, []);
+
   const getValueByKey = (statistics: ICard[], key: string) => {
     const card = statistics.find((item) => item.key === key);
     return card ? card.value : "";
   };
-  const { secondColor, } = useGomakeTheme();
+
   return (
     <>
       {!isFromHomePage && (
@@ -376,14 +382,21 @@ const QuotesListPageWidget = ({
                 <ExcelSheetIcon />
               </div>
             </div>
-
-            {/* search */}
             <PrimaryTable
               stickyFirstCol={false}
               stickyHeader={true}
-              maxHeight={650}
+              maxHeight={750}
               rows={allQuotes}
               headers={tableHeaders}
+              columnWidths={
+                documentType === DOCUMENT_TYPE.quote
+                  ? ["11%", "11%", "7%", "7%", "20%", "11%", "10%", "16%", "6%"]
+                  : documentType === DOCUMENT_TYPE.order
+                    ? ["6%", "5%", "5%", "7%", "7%", "8%", "8%", "3%", "20%", "7%", "7%", "7%", "5%", "5%"]
+                    : documentType === DOCUMENT_TYPE.purchaseInvoice || documentType === DOCUMENT_TYPE.purchaseInvoiceRefund
+                      ? ["7%", "15%", "10%", "13%", "10%", "10%", "10%", "10%", "10%", "5%",]
+                      : ["7%", "8%", "8%", "8%", "10%", "26%", "10%", "10%", "10%", "3%"]
+              }
             />
           </div>
           <GoMakePagination
@@ -430,15 +443,14 @@ const QuotesListPageWidget = ({
           onSelectDateRange={onSelectDateRange}
           logsTableHeaders={logsTableHeaders}
           logsTableRows={documentLogsData}
-          employeesCategories={employeeListValue}
         />
       </GoMakeModal>
-      <AddRuleModal
+      {!isFromHomePage && <AddRuleModal
         openModal={openAddRule}
         onCloseModal={onCloseAddRuleModal}
         isQuoteWidge={true}
         filterData={filterData}
-      />
+      />}
       <GoMakeDeleteModal
         icon={
           <WarningAmberIcon style={{ width: 60, height: 60, color: "red" }} />
@@ -473,9 +485,19 @@ const QuotesListPageWidget = ({
         yesBtn={t("sales.quote.yesBtn")}
         openModal={openCloseOrderModal}
         onClose={onClickCloseCloseOrderModal}
-        subTitle={t("sales.quote.subTitleCloseModal")}
-        onClickDelete={() => CloseDocument(selectedOrder)}
-      />
+        subTitle={`${t("sales.quote.subTitleCloseModal", {
+          documentName: t(`sales.quote.${DOCUMENT_TYPE[documentType]}`).toLowerCase(),
+        })}?`}
+        onClickDelete={() => ManuallyCloseDocument(selectedOrder)}
+        style={{ width: "35%" }}
+      >
+        <GomakeTextInput
+          style={{ height: "40px", minWidth: 180 }}
+          placeholder={t("sales.enterDocumentNumber")}
+          value={documentCloseNumber}
+          onChange={handleDocumentNumberChange}
+        />
+      </GoMakeDeleteModal>
       <GoMakeDeleteModal
         icon={
           <WarningAmberIcon style={{ width: 60, height: 60, color: "red" }} />

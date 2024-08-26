@@ -4,7 +4,7 @@ import { useMemo } from "react";
 
 const useStyle = () => {
   const {secondColor}=useGomakeTheme()
-  const clasess = useMemo(() => {
+  const classes = useMemo(() => {
     return {
       insideStyle: {
         width: "25%",
@@ -39,20 +39,18 @@ const useStyle = () => {
       btnsContainer:{
         display: "flex",
         flexDirection: "row" as "row",
-        justifyContent:"space-between",
+        gap:"10px",
         alignItems:"center",
         width:"100%",
         marginTop: 20
       },
       btnContainer:{
-        width:150,
-        height:40,
-        backgroundColor:secondColor(500)
+        width:"fit-content",
       },
     };
   }, []);
   return {
-    clasess,
+    classes,
   };
 };
 export { useStyle };

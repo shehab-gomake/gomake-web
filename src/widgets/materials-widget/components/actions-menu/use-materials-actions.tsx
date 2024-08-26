@@ -17,10 +17,13 @@ import {
   EMaterialActiveFilter,
   EMaterialsActions,
 } from "@/widgets/materials-widget/enums";
-import { useGomakeAxios, useSnackBar } from "@/hooks";
+import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
 import { useRouter } from "next/router";
 import { useTranslation } from "react-i18next";
-import { updatePrintHouseMaterialsPropApi } from "@/services/api-service/materials/printhouse-materials-endpoints";
+import {
+  getPrintHouseMaterialExcelFileApi,
+  updatePrintHouseMaterialsPropApi, uploadPrintHouseMaterialExcelFileApi
+} from "@/services/api-service/materials/printhouse-materials-endpoints";
 import {
   ActiveMaterial,
   AddNewMaterial,
@@ -35,6 +38,7 @@ import {
   UploadMaterialsPictures,
 } from "@/icons";
 import {
+  createPurchaseOrderApi,
   getMaterialExcelFileApi,
   updateMaterialsImagesApi,
   updateMaterialsPropApi,
@@ -46,9 +50,11 @@ import { EMaterialsTabsIcon } from "@/enums";
 import { EHttpMethod } from "@/services/api-service/enums";
 import { actionMenuState } from "@/store";
 import { useMaterials } from "@/widgets/materials-widget/use-materials";
+import { CreateOrder } from "@/icons/material-tabs/create-order";
 
 const useMaterialsActions = (isAdmin: boolean) => {
   const { callApi } = useGomakeAxios();
+  const { navigate } = useGomakeRouter();
   const { query } = useRouter();
   const { materialType, materialCategory } = query;
   const { getMaterialCategories } = useMaterials(isAdmin);
@@ -96,6 +102,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
     }
 
   }, [materialCategoryData, selectedMaterialIdForUpdate]);
+
   useEffect(() => {
     if (selectedMaterialsIds.length > 0) {
       const myId = selectedMaterialsIds[0];
@@ -125,6 +132,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
       uploadImgRef.current.click();
       return;
     }
+
     if (selectedMaterialsIds.length === 0) {
       setSnackbarStateValue({
         state: true,
@@ -179,7 +187,11 @@ const useMaterialsActions = (isAdmin: boolean) => {
       if (isAdmin) {
         if (action.key === "Duplicate") {
           duplicateMaterials();
-        } else {
+        }
+        else if (action.key === "CreatePurchaseOrder") {
+          CreatePurchaseOrder().then();
+        }
+        else {
           await updateMaterialsPropApi(callApi, onUpdateCallBack, {
             materialTypeKey: materialType.toString(),
             categoryKey: materialCategory.toString(),
@@ -209,7 +221,11 @@ const useMaterialsActions = (isAdmin: boolean) => {
       } else {
         if (action.key === "Duplicate") {
           duplicatePrintHouseMaterials();
-        } else {
+        }
+        else if (action.key === "CreatePurchaseOrder") {
+          CreatePurchaseOrder().then();
+        }
+        else {
           await updatePrintHouseMaterialsPropApi(callApi, onUpdateCallBack, {
             materialTypeKey: materialType.toString(),
             categoryKey: materialCategory.toString(),
@@ -343,7 +359,48 @@ const useMaterialsActions = (isAdmin: boolean) => {
         downloadLink.click();
       }
     };
-    await getMaterialExcelFileApi(callApi, callBack, materialType);
+    if(isAdmin){
+      await getMaterialExcelFileApi(callApi, callBack, materialType);
+    }else{
+      await getPrintHouseMaterialExcelFileApi(callApi, callBack, materialType);
+    }
+  };
+
+  const CreatePurchaseOrder = async () => {
+    const callBack = (res) => {
+      if (res.success) {
+        alertSuccessAdded();
+        handleCloseModal();
+        setTimeout(() => {
+          navigate(`/purchaseOrder?Id=${res?.data}`);
+        }, 400);
+      }
+      else {
+        alertFaultAdded();
+      }
+    };
+    await createPurchaseOrderApi(callApi, callBack, {
+      materialTypeKey: materialType.toString(),
+      categoryKey: materialCategory.toString(),
+      ids: isAllMaterialsChecked ? [] : selectedMaterialsIds,
+      action: EMaterialsActions.CreatePurchaseOrder,
+      isAllMaterialsChecked: isAllMaterialsChecked,
+      uncheckedMaterials: uncheckedMaterials,
+      tableFilters: {
+        materialKey: materialType,
+        categoryKey: materialCategory,
+        supplierId,
+        isActive:
+          activeFilter === EMaterialActiveFilter.ACTIVE
+            ? true
+            : activeFilter === EMaterialActiveFilter.INACTIVE
+              ? false
+              : null,
+        customFiltersKeyValueList: materialFilter,
+      },
+      quantity: updatedValue,
+      priceIndex: 0,
+    });
   };
 
   const uploadExcelFile = async (e) => {
@@ -370,10 +427,19 @@ const useMaterialsActions = (isAdmin: boolean) => {
           });
 
         }
-        uploadMaterialExcelFileApi(callApi, callBack, {
-          key: materialType.toString(),
-          base64: base64String,
-        });
+        if(isAdmin){
+          uploadMaterialExcelFileApi(callApi, callBack, {
+            key: materialType.toString(),
+            base64: base64String,
+          });
+        }else{
+          uploadPrintHouseMaterialExcelFileApi(callApi, callBack, {
+            key: materialType.toString(),
+            supplierId:supplierId,
+            base64: base64String,
+          });
+        }
+        
       };
       reader.readAsArrayBuffer(file);
     }
@@ -456,6 +522,9 @@ const useMaterialsActions = (isAdmin: boolean) => {
     }
     if (iconName === EMaterialsTabsIcon.Upload_Materials_Pictures) {
       return <UploadMaterialsPictures />;
+    }
+    if (iconName === EMaterialsTabsIcon.CREATE_PURCHASE_ORDER) {
+      return <CreateOrder />;
     }
   };
   const deleteProperty = (index) => {
@@ -648,6 +717,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
     deleteProperty,
     addProperty,
     updateModalCurrency,
+    CreatePurchaseOrder
   };
 };
 

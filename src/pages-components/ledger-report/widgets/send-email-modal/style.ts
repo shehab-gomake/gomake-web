@@ -4,7 +4,7 @@ import { useMemo } from "react";
 const useStyle = () => {
   const {secondColor}=useGomakeTheme()
 
-  const clasess = useMemo(() => {
+  const classes = useMemo(() => {
     return {
       insideStyle: {
         width: "50%",
@@ -53,12 +53,11 @@ const useStyle = () => {
       },
       sendBtnContainer:{
         height: 40,
-        background: secondColor(500)
       }
     };
   }, []);
   return {
-    clasess,
+    classes,
   };
 };
 export { useStyle };

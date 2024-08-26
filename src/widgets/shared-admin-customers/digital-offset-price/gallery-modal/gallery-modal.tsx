@@ -7,7 +7,17 @@ import { SearchInputComponent } from "@/components/form-inputs/search-input-comp
 import { RechooseIcon } from "@/icons";
 import { GalleryModalMapping } from "./gallery-modal-mapping";
 
-const GalleryModal = ({ openModal, onClose, onChangeSubProductsForPrice, isChargeForNewDie, setIsChargeForNewDie, straightKnife }) => {
+const GalleryModal = ({
+  openModal,
+  onClose,
+  onChangeSubProductsForPrice,
+  isChargeForNewDie,
+  setIsChargeForNewDie,
+  straightKnife,
+  isParameterSettings,
+  getProductById,
+  template
+}: any) => {
   const { clasess } = useStyle();
   const { t } = useTranslation();
   const {
@@ -23,7 +33,16 @@ const GalleryModal = ({ openModal, onClose, onChangeSubProductsForPrice, isCharg
     materialDataFilter,
     materialTableFilters,
     setMaterialTableFilters
-  } = useGalleryModal({ onClose, onChangeSubProductsForPrice, setIsChargeForNewDie, straightKnife });
+  } = useGalleryModal({
+    onClose,
+    onChangeSubProductsForPrice,
+    setIsChargeForNewDie,
+    straightKnife,
+    isParameterSettings,
+    getProductById,
+    template
+  });
+
 
   return (
     <>

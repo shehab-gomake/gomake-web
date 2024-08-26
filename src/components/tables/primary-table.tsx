@@ -73,6 +73,26 @@ const ClassicTableRow = styled(TableRow)(() => {
   };
 });
 
+const StyledTableContainer = styled(TableContainer)(() => ({
+  // Enable horizontal scrolling
+  overflowX: 'auto',
+
+  '&::-webkit-scrollbar': {
+    width: '10px', 
+    height: '10px', // For horizontal scrollbar height
+  },
+  '&::-webkit-scrollbar-track': {
+    background: '#f1f1f1',
+  },
+  '&::-webkit-scrollbar-thumb': {
+    background: '#CCCDCF', 
+    borderRadius: '10px',
+  },
+  '&::-webkit-scrollbar-thumb:hover': {
+    cursor: 'pointer',
+  },
+}));
+
 const PrimaryTable = ({
   rows,
   headers,
@@ -94,7 +114,8 @@ const PrimaryTable = ({
     variant === "ClassicTable" ? ClassicTableRow : PrimaryTableRow;
   return (
     <Paper sx={{ width: "100%", overflow: "hidden", boxShadow: withoutShadow && "none" }}>
-      <TableContainer style={classes.tableContainer}>
+      <StyledTableContainer
+        style={classes.tableContainer}>
         <Table data-tour={dataTour} stickyHeader={stickyHeader}>
           <TableHead>
             <TableRow >
@@ -129,7 +150,7 @@ const PrimaryTable = ({
             ))}
           </TableBody>
         </Table>
-      </TableContainer>
+      </StyledTableContainer>
     </Paper>
   );
 };

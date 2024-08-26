@@ -1,24 +1,24 @@
-import {IBoardMissions, IDashboardStatistic, IDashboardWidget,} from "@/widgets/dashboard-widget/interfaces";
-import {useStyle} from "@/widgets/dashboard-widget/style";
-import {useCallback, useEffect, useState} from "react";
-import {Cards} from "@/widgets/dashboard-widget/cards/cards";
-import {IDateRange} from "@/shared/interfaces";
-import {BoardMissionsTable} from "@/widgets/dashboard-widget/table";
-import {DashboardDates} from "@/widgets/dashboard-widget/dates/dates";
-import {useGomakeDateRange, useGomakeMachines} from "@/hooks";
-import {useBoardMissions} from "@/widgets/dashboard-widget/use-board-missions";
-import {useRecoilValue} from "recoil";
-import {DashboardActions} from "@/store";
-import {selectedAgentsState} from "@/store/agents-state";
-import {dashboardClientsState} from "@/widgets/dashboard-widget/clients/clients-state";
+import { IBoardMissions, IDashboardStatistic, IDashboardWidget, } from "@/widgets/dashboard-widget/interfaces";
+import { useStyle } from "@/widgets/dashboard-widget/style";
+import { useCallback, useEffect, useState } from "react";
+import { Cards } from "@/widgets/dashboard-widget/cards/cards";
+import { IDateRange } from "@/shared/interfaces";
+import { BoardMissionsTable } from "@/widgets/dashboard-widget/table";
+import { DashboardDates } from "@/widgets/dashboard-widget/dates/dates";
+import { useGomakeDateRange, useGomakeMachines } from "@/hooks";
+import { useBoardMissions } from "@/widgets/dashboard-widget/use-board-missions";
+import { useRecoilValue } from "recoil";
+import { DashboardActions } from "@/store";
+import { selectedAgentsState } from "@/store/agents-state";
+import { dashboardClientsState } from "@/widgets/dashboard-widget/clients/clients-state";
 
-const DashboardWidget = ({}: IDashboardWidget) => {
+const DashboardWidget = ({ }: IDashboardWidget) => {
     const INTERVAL_TIMEOUT = 2 * 60 * 1000;
-    const {machines, addMachineProgress, getCheckedMachines} = useGomakeMachines();
+    const { machines, addMachineProgress, addEmployeeProgress, getCheckedMachines, employeesList } = useGomakeMachines();
     const [tasksFilter, setTasksFilter] = useState<string>('');
     const selectedClients = useRecoilValue(dashboardClientsState);
-    const {classes} = useStyle();
-    const {dates, action} = useGomakeDateRange();
+    const { classes } = useStyle();
+    const { dates, action } = useGomakeDateRange();
     const selectedAgents = useRecoilValue(selectedAgentsState);
 
     const {
@@ -29,9 +29,9 @@ const DashboardWidget = ({}: IDashboardWidget) => {
         getFilteredBoardsMissions,
         getLateBoardsMissions,
         getLateTodayBoardsMissions,
-        getAllBoardsMissions
+        getAllBoardsMissions,
+        dashboardColumns
     } = useBoardMissions();
-
     const actions = (action: DashboardActions, dateRange: IDateRange) => {
         switch (action) {
             case DashboardActions.LATE_TODAY_BOARDS_MISSIONS:
@@ -54,6 +54,7 @@ const DashboardWidget = ({}: IDashboardWidget) => {
 
     useEffect(() => {
         addMachineProgress(machinesProgress);
+        addEmployeeProgress(machinesProgress)
     }, [boardsMissions])
 
     useEffect(() => {
@@ -83,10 +84,11 @@ const DashboardWidget = ({}: IDashboardWidget) => {
             return false;
         });
     }, [machines]);
+
     const tasks = useCallback(() => {
         const selectedClientsIds = selectedClients?.filter(client => client?.checked)?.map(client => client?.id)
         let tasksArray = getFilteredBoardsMissions();
-        tasksArray = tasksArray.filter(board => selectedClientsIds.includes(board.clientId));
+        tasksArray = selectedClientsIds.length !== 0 ? tasksArray.filter(board => selectedClientsIds.includes(board.clientId)) : tasksArray;
         return tasksFilter ?
             tasksArray.filter((boardsMissions: IBoardMissions) => {
                 return boardsMissions.code.toLowerCase().includes(tasksFilter.toLowerCase()) ||
@@ -94,21 +96,37 @@ const DashboardWidget = ({}: IDashboardWidget) => {
             })
             : tasksArray;
     }, [tasksFilter, getFilteredBoardsMissions(), selectedClients])
+
+    const cleanedDataForEmployeesList = useCallback(() => {
+        return employeesList?.filter(item => item !== false) || [];
+    }, [employeesList])
+
+    const mergedLists = useCallback(() => {
+        const mergedList = [...usedMachines(), ...cleanedDataForEmployeesList()]
+        return mergedList
+    }, [usedMachines(), cleanedDataForEmployeesList()])
+
+    const orderMap = {};
+    dashboardColumns?.forEach((item, index) => {
+        orderMap[item.id] = index;
+    });
+    const sortedMergedLists = mergedLists().sort((a, b) => {
+        return orderMap[a.id] - orderMap[b.id];
+    });
+
     return (
         <div style={classes.container}>
-            <Cards data={statistics ? statistics : {} as IDashboardStatistic}/>
-            <DashboardDates handelSearchValueChange={handelSearchValueChange}/>
+            <Cards data={statistics ? statistics : {} as IDashboardStatistic} />
+            <DashboardDates handelSearchValueChange={handelSearchValueChange} />
             <div>
                 {usedMachines() && getFilteredBoardsMissions() &&
                     <BoardMissionsTable boardsMissions={tasks()}
-                                        usedMachines={usedMachines()}
+                        usedMachines={sortedMergedLists}
                     />}
             </div>
-            {/* <div><Link component={Button} color={secondColor(500)}
-                onClick={logout}>{t('dashboard-widget.logout')}</Link></div> */}
         </div>
     );
 }
-export {DashboardWidget}
+export { DashboardWidget }
 
 

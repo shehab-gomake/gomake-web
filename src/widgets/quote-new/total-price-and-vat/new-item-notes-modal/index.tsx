@@ -19,6 +19,7 @@ const NewItemNotesModal = ({ openModal, onClose, handleSaveBtnClickForDocument, 
     const documentPath = DOCUMENT_TYPE[docType];
     return documentPath.charAt(0).toUpperCase() + documentPath.slice(1);
   };
+  
   return (
     <>
       <GoMakeModal
@@ -28,12 +29,9 @@ const NewItemNotesModal = ({ openModal, onClose, handleSaveBtnClickForDocument, 
         insideStyle={clasess.insideStyle}
       >
         <>
-
           <div style={clasess.noteTextStyle}>
-
             {documentType === DOCUMENT_TYPE.invoice ? quoteItemValue?.client?.closeOrderNotes : quoteItemValue?.client?.newItemNotes}
           </div>
-
           {
             documentType === DOCUMENT_TYPE.invoice &&
             <GomakePrimaryButton

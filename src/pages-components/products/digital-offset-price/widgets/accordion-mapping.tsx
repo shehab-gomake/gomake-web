@@ -1,7 +1,9 @@
-import { EditIcon } from "@/icons";
+import { CheckBoxAccordion, EditIcon } from "@/icons";
 import { Accordion, AccordionDetails, AccordionSummary } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { SectionMappingWidget } from "./section-mapping";
+import { useRecoilValue } from "recoil";
+import { subProductsParametersState } from "@/store";
 const AccordionMappingWidget = ({
   clasess,
   expanded,
@@ -17,6 +19,22 @@ const AccordionMappingWidget = ({
   setTemplate,
   underParameterIds,
 }: any) => {
+  const subProducts = useRecoilValue<any>(subProductsParametersState);
+  const parameterList = subProducts?.find(
+    (x) => x.type === subSection?.type
+  )?.parameters;
+  const hasMatchingParameter = (parameterList, subSection) => {
+    for (let param of subSection.parameters) {
+      let matchingParameter = parameterList?.find(p =>
+        p.parameterId === param.id && p.subSectionId === subSection.id
+      );
+      if (matchingParameter || param.oldSystemValue) {
+        return true;
+      }
+    }
+    return false;
+  }
+  const hasMatching = hasMatchingParameter(parameterList, subSection);
   return (
     <Accordion
       expanded={expanded === `panel_${index}`}
@@ -24,17 +42,24 @@ const AccordionMappingWidget = ({
       key={index}
     >
       <AccordionSummary
-          data-tour={subSection?.id}
+        data-tour={subSection?.id}
         expandIcon={<ExpandMoreIcon />}
         style={
-          expanded === `panel_${index}` ? clasess.activeTabContainer : null
+          expanded === `panel_${index}` ? hasMatching ? clasess.activeTabContainer2 : clasess.activeTabContainer : hasMatching ? clasess.activeTabContainer2 : null
         }
       >
-        <div  style={clasess.headerAccordionContainer}>
+        <div style={clasess.headerAccordionContainer}>
           {expanded === `panel_${index}` ? (
-            <EditIcon stroke={"rgba(18, 19, 58, 1)"} />
+            hasMatching ? (
+              <CheckBoxAccordion />
+            ) : (
+              <EditIcon stroke={"rgba(18, 19, 58, 1)"} />
+            )
           ) : (
-            <EditIcon />
+            hasMatching ? (
+              <CheckBoxAccordion />
+            ) :
+              <EditIcon />
           )}
 
           <div

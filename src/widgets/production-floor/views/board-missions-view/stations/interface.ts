@@ -16,6 +16,7 @@ export interface IBoardMissionsStation {
     outputs: IOutput[];
     source: EWorkSource;
     index: number;
+    id: string;
 }
 
 export interface IBoardMissionsStationTimer {

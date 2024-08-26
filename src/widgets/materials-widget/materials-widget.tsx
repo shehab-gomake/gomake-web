@@ -10,6 +10,7 @@ import { useRecoilValue, useSetRecoilState } from "recoil";
 import {
   activeFilterState,
   flagState,
+  isDuplicateCategoryModalState,
   isEditCategoryModalState,
   openAddCategoryModalState,
   openAddSupplierModalState,
@@ -42,6 +43,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
   const setOpenAddSupplierModal = useSetRecoilState(openAddSupplierModalState);
   const setOpenAddCategoryModal = useSetRecoilState(openAddCategoryModalState);
   const changeEditCategoryModalState = useSetRecoilState(isEditCategoryModalState);
+  const changeDuplicateCategoryModalState = useSetRecoilState(isDuplicateCategoryModalState);
   const supplierId = useRecoilValue(selectedSupplierIdState);
   const flag = useRecoilValue(flagState);
   const { productList } = useAllProductsDropDownList()
@@ -116,6 +118,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
           <PrimaryButton
             onClick={() => {
               changeEditCategoryModalState(false)
+              changeDuplicateCategoryModalState(false)
               setOpenAddCategoryModal(true)
             }}
             variant={"contained"}
@@ -216,12 +219,12 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
           <h1 style={classes.header}>{materialName}</h1>
           <h4 style={classes.subHeader}>/ {subCategory}</h4>
         </div>
-        <FiltersActionsBar isAdmin={props.isAdmin} />
+        <FiltersActionsBar isAdmin={props.isAdmin} subCategory={subCategory} />
       </div>
       <SideBarContainer sideDataTour={'materialsCategories'} bodyDataTour={'materialsTableData'} side={Side()} subHeader={""}>
         {materialCategory && (
-          <Stack gap={2}>
-            <div style={{ minHeight: "70vh" }}>
+          <Stack justifyContent={"space-between"} gap={2} display={"flex"} height={"100%"}>
+            <div >
               {materialCategoryData.length > 0 ? (
                 <Stack display={"grid"}>
                   <PrimaryTable

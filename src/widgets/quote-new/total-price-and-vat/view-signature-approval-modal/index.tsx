@@ -20,7 +20,6 @@ const ViewSignatureApprovalModal = ({
   const { t } = useTranslation();
   const { clasess } = useStyle();
   const quoteItemValue = useRecoilValue<any>(quoteItemState);
-  console.log("quoteItemValue", quoteItemValue)
 
   return (
     <>

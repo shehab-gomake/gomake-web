@@ -1,10 +1,12 @@
-import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { adaptPaddingLeft, adaptPaddingRight } from "@/utils/adapter";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
+import { useTranslation } from "react-i18next";
 
 const useStyle = () => {
-  const {secondColor}=useGomakeTheme()
-  const clasess = useMemo(() => {
+  const {t} = useTranslation()
+  const direction = t('direction');
+  const classes = useMemo(() => {
     return {
       insideStyle: {
         width: "50%",
@@ -22,22 +24,22 @@ const useStyle = () => {
         gap:10
       },
       btnContainer:{
-        width:220,
+        minWidth:"fit-content",
+        width:"240px",
         height:40,
-        backgroundColor:secondColor(500)
       },
       btnsContainer:{
         display: "flex",
         flexDirection: "row" as "row",
-        justifyContent:"space-between",
+        justifyContent:"space-around",
         alignItems:"center",
         width:"100%"
       },
-      totalPriceContainer:{ width: 240, alignItems: "center", textAlign: "center"as "center",...FONT_FAMILY.Lexend(600,18) }
+      totalPriceContainer:{ alignSelf: "flex-end", textAlign: "center"as "center",...FONT_FAMILY.Lexend(600,18), ...adaptPaddingLeft(direction, 20), }
     };
   }, []);
   return {
-    clasess,
+    classes,
   };
 };
 export { useStyle };

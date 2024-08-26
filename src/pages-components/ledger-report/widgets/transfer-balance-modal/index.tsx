@@ -1,11 +1,11 @@
 
 import { GoMakeAutoComplate, GoMakeModal, GomakePrimaryButton, } from "@/components";
-
 import { useStyle } from "./style";
 import { useTranslation } from "react-i18next";
+import { SecondaryButton } from "@/components/button/secondary-button";
 
 const TransferBalanceModal = ({ openModal, onCloseModal, customer, renderOptions, checkWhatRenderArray, handleCustomerChange, transferBalanceApi }) => {
-  const { clasess } = useStyle();
+  const { classes } = useStyle();
   const { t } = useTranslation()
   const btns = [
     {
@@ -27,26 +27,26 @@ const TransferBalanceModal = ({ openModal, onCloseModal, customer, renderOptions
         openModal={openModal}
         modalTitle={t("reports.transferBalance")}
         onClose={onCloseModal}
-        insideStyle={clasess.insideStyle}
+        insideStyle={classes.insideStyle}
       >
-        <div style={clasess.mainContainer}>
-          <div style={clasess.date2FilterContainer}>
-            <h3 style={clasess.filterLabelStyle}>{t("sales.quote.customer")}</h3>
+        <div style={classes.mainContainer}>
+          <div style={classes.date2FilterContainer}>
+            <h3 style={classes.filterLabelStyle}>{t("sales.quote.customer")}</h3>
             <GoMakeAutoComplate
               key={customer?.id}
               options={renderOptions()}
               onChangeTextField={checkWhatRenderArray}
               getOptionLabel={(option: any) => `${option.name}`}
-              style={clasess.textInputStyle}
+              style={classes.textInputStyle}
               placeholder={t("sales.quote.chooseCustomer")}
               onChange={handleCustomerChange}
               value={customer}
             />
           </div>
-          <div style={clasess.btnsContainer}>
+          <div style={classes.btnsContainer}>
             {btns.map((tab, index) => {
               return (
-                <GomakePrimaryButton key={index} onClick={tab.onclick} style={clasess.btnContainer}>{tab.name}</GomakePrimaryButton>
+                <SecondaryButton variant={index===0?"contained":"outlined"} key={index} onClick={tab.onclick} style={classes.btnContainer}>{tab.name}</SecondaryButton>
               )
             })}
           </div>

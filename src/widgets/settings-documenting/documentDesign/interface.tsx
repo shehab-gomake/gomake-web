@@ -15,9 +15,12 @@ export interface IDocumentDesign {
         pdfColor?:string | null;
         pdfColorText?:string | null;
         pdfFooter?:string | null;
+        pdfFooterBase64?:string | null;
         pdfHeader?:string | null;
+        pdfHeaderBase64?:string | null;
         previewUrl?:string;
         pdfLogo?:string | null;
+        pdfLogoBase64?:string | null;
         showAgentName?:boolean;
         showClientCode?:string;
         showClientType?:string;
@@ -33,9 +36,4 @@ export interface IDocumentDesign {
 export interface DocumentType {
     value:string;
     text:string;
-}
-
-export interface IDocumentDesignProps {
-    documentDesign : IDocumentDesign;
-    setdocumentDesign?: (documentDesign : IDocumentDesign) => void;
 }

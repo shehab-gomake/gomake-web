@@ -1,15 +1,15 @@
 import { useStyle } from "./style";
-import { SignupCompanyForm } from "../company/signup-company-form";
+import { SignUpCompanyForm } from "../company/signup-company-form";
 
-const QuickSetipMobileWidget = ({ isMobile }) => {
+const QuickSetupMobileWidget = ({ isMobile }) => {
 
     const { classes } = useStyle();
 
     return (
         <div style={classes.mainMobileContainer}>
-            <SignupCompanyForm isMobile={isMobile} />
+            <SignUpCompanyForm isMobile={isMobile} />
         </div>
     )
 }
 
-export { QuickSetipMobileWidget }
+export { QuickSetupMobileWidget }

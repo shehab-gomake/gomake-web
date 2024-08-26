@@ -3,7 +3,8 @@ import Stack from "@mui/material/Stack";
 import { EWorkSource, HtmlElementType, RuleType } from "@/widgets/product-pricing-widget/enums";
 import Divider from "@mui/material/Divider";
 import {
-    ParametersMapping
+    ParametersMapping,
+    TextAreaActionsMapping
 } from "@/widgets/product-pricing-widget/components/action/key-value-view";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -33,6 +34,7 @@ interface IProps extends IBoardMissionsStation {
 }
 
 const BoardMissionsStationAction = ({
+    id,
     actionName,
     source,
     machineName,
@@ -65,7 +67,11 @@ const BoardMissionsStationAction = ({
             parameter.propertyType === RuleType.OUTPUT &&
             parameter.htmlElementType === HtmlElementType.TEXT
     );
-
+    const textAreaOutputs = outputs?.filter(
+        (parameter) =>
+            parameter.propertyType === RuleType.OUTPUT &&
+            parameter.htmlElementType === HtmlElementType.TEXT_AREA
+    );
     const onClickDone = async (boardMissionsActionId: string, sendMSg?: boolean) => {
         setLoading(true);
         const callBack = (res) => {
@@ -156,7 +162,7 @@ const BoardMissionsStationAction = ({
                                 <Divider orientation={"vertical"} flexItem />
                                 <Stack direction={'row'} gap={'5px'} alignItems={'center'}>
                                     <span style={classes.detailTitle}>{t("productionFloor.timer")}</span>
-                                    <ActionTimer loading={timerLoading} onToggle={onToggleTimer} {...boardMissionActionTimer} />
+                                    <ActionTimer actionId={boardMissionActionId} loading={timerLoading} onToggle={onToggleTimer} {...boardMissionActionTimer} />
                                 </Stack>
                                 <Divider orientation={"vertical"} flexItem />
                                 <Stack direction={'row'} gap={'5px'} alignItems={'center'}>
@@ -188,7 +194,14 @@ const BoardMissionsStationAction = ({
                                     <Divider />
                                     <Stack padding={"10px 0"} direction={"row"} gap={"16px"} flexWrap={"wrap"}>
                                         <ParametersMapping source={source} parameters={outputsParameters} isProductionFloor={true} />
+                                        <TextAreaActionsMapping
+                                            parameters={textAreaOutputs}
+                                            actionId={id}
+                                            orderItemId={boardMissions?.orderItemId}
+                                            productType={boardMissions.productType}
+                                        />
                                     </Stack>
+
                                 </>
                             )}
                         </Collapse>

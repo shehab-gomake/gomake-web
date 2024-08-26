@@ -26,6 +26,7 @@ const creationDocumentInputs = (state) => {
             options: documentTypes,
             value: state?.docType,
             isValid: true,
+            disableClearable:true
         },
         {
             name: "agent",
@@ -70,20 +71,20 @@ const TitleDefinitionInputs = (state) => {
 const TitleDefinitionCustomLogoInputs = (state) => {
     return [
         {
-            name: "Custom Logo",
-            label: "documentingDesign.TitleDefinition.CustomLogo",
-            type: "file",
-            placeholder: "documentingDesign.TitleDefinition.CustomLogo",
+            name: "Pdf Logo",
+            label: "documentingDesign.TitleDefinition.pdfLogo",
+            type: "imageFile",
+            placeholder: "documentingDesign.TitleDefinition.pdfLogo",
             required: false,
             parameterKey: "pdfLogo",
             value: state?.pdfLogo,
             isValid: true,
         },
         {
-            name: "Logo Upload",
-            label: "documentingDesign.TitleDefinition.LogoUpload",
-            type: "file",
-            placeholder: "documentingDesign.TitleDefinition.LogoUpload",
+            name: "Pdf Header",
+            label: "documentingDesign.TitleDefinition.pdfHeader",
+            type: "imageFile",
+            placeholder: "documentingDesign.TitleDefinition.pdfHeader",
             required: false,
             parameterKey: "pdfHeader",
             value: state?.pdfHeader,
@@ -92,10 +93,9 @@ const TitleDefinitionCustomLogoInputs = (state) => {
 
     ];
 };
+
 const TableSettingInputs = (state) => {
-
     return [
-
         {
             name: "Table Header bg color",
             label: "documentingDesign.TableSetting.TableHeaderbgcolor",
@@ -154,7 +154,7 @@ const TableSettingInputs2 = (state) => {
                 text: t(`documentingDesign.${item.text}`)
             })),
             parameterKey: "textVerticalAligen",
-            value: state?.textVerticalAligen ? state?.textVerticalAligen : " ",
+            value: state?.textVerticalAligen || "",
             isValid: true,
         },
 
@@ -170,7 +170,7 @@ const AdditionalOptionsInputs = (state) => {
             placeholder: "documentingDesign.Additional.Viewsalesperson",
             required: false,
             parameterKey: "showAgentName",
-            value: state?.showAgentName || false,
+            value: state?.showAgentName ,
             isValid: true,
         },
         {
@@ -190,7 +190,7 @@ const AdditionalOptionsInputs = (state) => {
             placeholder: "documentingDesign.Additional.Showpaymentdate",
             required: false,
             parameterKey: "showToPayUntil",
-            value: state?.showToPayUntil,
+            value: state?.showToPayUntil ,
             isValid: true,
         },
         {
@@ -293,7 +293,7 @@ const FooterInputs2 = (state) => {
         {
             name: "Footer Image",
             label: "documentingDesign.Footer.FooterImage",
-            type: "file",
+            type: "imageFile",
             placeholder: "documentingDesign.Footer.FooterImage",
             required: false,
             parameterKey: "pdfFooter",
@@ -303,7 +303,7 @@ const FooterInputs2 = (state) => {
     ];
 };
 
-const QRCodesInputs1 = (state) => {
+const QRCodesInputs = (state) => {
     return [
         {
             name: "Display QR codes in a work order document",
@@ -325,11 +325,6 @@ const QRCodesInputs1 = (state) => {
             value: state?.PDFproductionQrCodes,
             isValid: true,
         },
-    ];
-};
-
-const QRCodesInputs2 = (state) => {
-    return [
         {
             name: "Display an initial QR Code for the entire order within the production PDF",
             label: "documentingDesign.QRCodes.DisplayaninitialQRCode",
@@ -350,12 +345,6 @@ const QRCodesInputs2 = (state) => {
             value: state?.Showpaymentdate,
             isValid: true,
         },
-    ];
-
-};
-
-const QRCodesInputs3 = (state) => {
-    return [
         {
             name: "display all types with equal amounts in the PDF of the PACA",
             label: "documentingDesign.QRCodes.displayall",
@@ -379,7 +368,6 @@ const QRCodesInputs3 = (state) => {
     ];
 };
 
-
 export {
     creationDocumentInputs,
     TitleDefinitionInputs,
@@ -390,7 +378,5 @@ export {
     AdditionalOptionsInputs2,
     FooterInputs1,
     FooterInputs2,
-    QRCodesInputs1,
-    QRCodesInputs2,
-    QRCodesInputs3
+    QRCodesInputs
 };

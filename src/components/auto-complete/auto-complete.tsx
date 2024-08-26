@@ -7,6 +7,8 @@ import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import Stack from "@mui/material/Stack";
+import { Collapse, Divider } from "@mui/material";
+import { DownIcon, UpIcon } from "./icons";
 
 const StyledAutocomplete: any = styled(Autocomplete)((props: any) => {
   return {
@@ -53,11 +55,30 @@ const StyledAutocomplete: any = styled(Autocomplete)((props: any) => {
         fontWeight: 500,
       },
     },
-    "& .MuiAutocomplete-endAdornment": {
-      top: "calc(50% - 12px)",
-    },
     ...props?.style,
   };
+});
+
+const GroupHeader = styled('div')(({ theme }) => ({
+  position: 'sticky',
+  top: '-8px',
+  padding: '4px 10px',
+  color: 'black',
+  backgroundColor: 'white',
+  display: 'flex',
+  alignItems: 'center',
+  cursor: 'pointer',
+  justifyContent: 'space-between',
+  // fontWeight: 'bold', 
+  fontFamily: "Heebo",
+  fontStyle: "normal",
+  fontWeight: 500,
+  lineHeight: "20px",
+}));
+
+const GroupItems = styled('ul')({
+  padding: 0,
+  listStyleType: 'none',
 });
 
 const GoMakeAutoComplate = ({
@@ -78,6 +99,8 @@ const GoMakeAutoComplate = ({
   onChangeTextField,
   PaperComponent,
   withArrow = false,
+  groupBy,
+  renderGroup,
 }: {
   value?: any;
   onChange?: any;
@@ -96,10 +119,13 @@ const GoMakeAutoComplate = ({
   onChangeTextField?: any;
   PaperComponent?: any;
   withArrow?: boolean;
+  groupBy?: (option: any) => string; // Function to group options
+  renderGroup?: (params: any) => React.ReactNode; // Function to render group headers
 }) => {
   const [selectedOption, setSelectedOption] = useState<any>();
   const { t } = useTranslation();
   const dir: "rtl" | "ltr" = t("direction");
+
   React.useEffect(() => {
     if (value?.name) {
       setSelectedOption(value);
@@ -107,8 +133,27 @@ const GoMakeAutoComplate = ({
       setSelectedOption(null);
     }
   }, [value]);
+  
+
+  const [expandedGroups, setExpandedGroups] = useState<{ [key: string]: boolean }>({});
+
+  const toggleGroup = (group: string) => {
+    setExpandedGroups((prev) => ({
+      ...prev,
+      [group]: !prev[group],
+    }));
+  };
+
+  const optionsArray = Array.isArray(options) ? options : [];
+  const groupByFunction = typeof groupBy === 'function' ? groupBy : (option) => option; // Default to identity function if not a function
+  
+  const uniqueGroups = Array.from(new Set(optionsArray.map(groupByFunction)));
+  const lastGroup = uniqueGroups[uniqueGroups.length - 1];
+
   return (
     <StyledAutocomplete
+      // {...(value && { value })}
+      //value={value || value === 0 ? value : null}
       {...(value && { value })}
       {...(selectedOption && { selectedOption })}
       direction={dir}
@@ -120,6 +165,24 @@ const GoMakeAutoComplate = ({
       options={options}
       disabled={disabled}
       popupIcon={withArrow ? <ArrowDropDownIcon /> : ""} // Conditionally render popupIcon based on withArrow prop
+      groupBy={groupBy} // Group options by category
+      renderGroup={(params) => (
+        <div key={params.key}>
+          <GroupHeader onClick={() => toggleGroup(params.group)}>
+          {params.group}
+            {expandedGroups[params.group] ? <UpIcon/> : <DownIcon/>}
+          </GroupHeader>
+          {params.group !== lastGroup && <Divider sx={{
+            width: '97%',
+            margin: '0 auto',
+            borderColor: '#ECECEC',
+            my: 1,
+          }} />}
+          <Collapse in={expandedGroups[params.group]}>
+            <GroupItems>{params.children}</GroupItems>
+          </Collapse>
+        </div>
+      )}
       renderInput={(params: any) => (
         <TextField
           {...params}

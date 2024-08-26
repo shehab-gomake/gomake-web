@@ -29,6 +29,19 @@ const rollDigitalPrinting = (state: Record<string, any>) => {
             machineInputType: 'input',
             isValid: !!state?.attributes?.maxSpeed,
         },
+        {
+            name: "inJobTypeStopTime",
+            label: "machineAttributes.inJobTypeStopTime",
+            type: "text",
+            placeholder: "machineAttributes.inJobTypeStopTime",
+            required: true,
+            parameterKey: "inJobTypeStopTime",
+            unit: EMeasurementUnits.SECOND,
+            options: [],
+            value: state.attributes?.inJobTypeStopTime ? state.attributes?.inJobTypeStopTime : '',
+            machineInputType: 'input',
+            isValid: !!state?.attributes?.inJobTypeStopTime,
+        },
         ...printingGeneral(state)
     ]
 }

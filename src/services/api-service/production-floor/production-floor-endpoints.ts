@@ -12,6 +12,8 @@ const UPDATE_BOARD_MISSIONS_CURRENT_STATION_URL = '/v1/erp-service/board-mission
 const ADD_NEW_PRODUCTION_GROUP_URL = '/v1/erp-service/board-missions-group/create-group';
 const DELETE_PRODUCTION_GROUP_URL = '/v1/erp-service/board-missions-group/delete-group/';
 const GET_PRINT_HOUSE_ACTIONS_MACHINES_URL = '/v1/printhouse-config/actions/get-actions-machines';
+const GET_PRINT_HOUSE_ACTIONS_REQUIER_EMPLOYEE_URL = '/v1/printhouse-config/actions/get-all-actions-require-employee';
+
 const GET_BOARDS_MISSIONS_GROUPS_URL = '/v1/erp-service/board-missions/groups/';
 const GET_BOARDS_MISSIONS_STATIONS_URL = '/v1/erp-service/board-missions/board-missions-stations/';
 const UPDATE_BOARD_MISSIONS_ACTION_DONE = '/v1/erp-service/board-missions-actions/move-to-done/';
@@ -63,6 +65,9 @@ const deleteBoardMissionsGroup: ICallAndSetData = async (callApi, callBack, grou
 }
 const getPrintHouseActions: ICallAndSetData = async (callApi, callBack, ) => {
     return await getSetApiData(callApi, EHttpMethod.GET, GET_PRINT_HOUSE_ACTIONS_MACHINES_URL , callBack);
+}
+const getAllActionsRequireEmployeeApi: ICallAndSetData = async (callApi, callBack, ) => {
+    return await getSetApiData(callApi, EHttpMethod.GET, GET_PRINT_HOUSE_ACTIONS_REQUIER_EMPLOYEE_URL , callBack);
 }
 const getBoardsMissionsGroupsByID: ICallAndSetData = async (callApi, callBack, groupId: string ) => {
     return await getSetApiData(callApi, EHttpMethod.GET, GET_BOARDS_MISSIONS_GROUPS_URL + groupId , callBack);
@@ -135,6 +140,7 @@ export {
     addNewBoardMissionsGroup,
     deleteBoardMissionsGroup,
     getPrintHouseActions,
+    getAllActionsRequireEmployeeApi,
     getBoardsMissionsGroupsByID,
     getBoardsMissionsStations,
     updateBoardMissionsActionDone,

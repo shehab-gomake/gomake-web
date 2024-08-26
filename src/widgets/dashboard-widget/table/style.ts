@@ -25,16 +25,16 @@ const useStyle = () => {
 
             tableHead: {
                 backgroundColor: primaryColor(500),
-                minHeight: '80px',
-                height: '80px',
+                // minHeight: '80px',
+                // height: '80px',
                 maxHeight: '80px',
                 color: 'white',
                 textAlign: 'center' as 'center',
                 ...FONT_FAMILY.Lexend(400, 16),
-                padding: '10px',
+                padding: '20px',
                 position: 'sticky' as 'sticky',
                 top: '0px',
-                cursor: 'pointer' as 'pointer'
+                cursor: 'pointer' as 'pointer',
             },
 
             selectedMachine: {
@@ -60,7 +60,7 @@ const useStyle = () => {
                 height: '100%',
                 maxHeight: '80px',
                 // gap: '10px',
-                ...FONT_FAMILY.Lexend(400, 16)
+                ...FONT_FAMILY.Lexend(400, 14)
             },
 
             firstColHead: {

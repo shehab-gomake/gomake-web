@@ -16,5 +16,7 @@ export interface IUserProfile {
     phoneNumber: string,
     imagePath: string,
     avatarBackGroundColor: string,
-    avatarInitials: string
+    avatarInitials: string;
+    quickBloxUserId: string;
+    quickBloxToken: string;
 }

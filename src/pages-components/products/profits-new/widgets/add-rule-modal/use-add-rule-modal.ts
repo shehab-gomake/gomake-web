@@ -1,8 +1,8 @@
-import { useGomakeAxios, useSnackBar } from "@/hooks";
+import { useCustomerDropDownList, useGomakeAxios, useSnackBar } from "@/hooks";
 import { EHttpMethod } from "@/services/api-service/enums";
 import {
   getAllProductsForDropDownList,
-  getAndSetAllCustomers,
+  getAllTemplets,
   getAndSetAllParameters,
   getAndSetClientTypes,
   getAndSetMachincesByActionId,
@@ -12,7 +12,7 @@ import { useOutputs } from "@/widgets/properties/hooks/use-outputs";
 import { usePrintHouseClients } from "@/widgets/properties/hooks/use-print-house-clients";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { ETypeException } from "../../enums/profites-enum";
 import { ICallAndSetData } from "@/services/api-service/interface";
 import { getSetApiData } from "@/services/api-service/get-set-api-data";
@@ -23,6 +23,7 @@ import { EGroupByEnum } from "@/enums";
 import { agentsCategoriesState } from "@/pages/customers/customer-states";
 import { getAndSetEmployees2 } from "@/services/api-service/customers/employees-api";
 import { getALLMachinesApi } from "@/services/api-service/machines/print-house-machines-colors";
+import { machineCategoriesState } from "@/store/machine-categories";
 
 const useAddRuleModal = ({
   typeExceptionSelected,
@@ -41,80 +42,60 @@ const useAddRuleModal = ({
   const {t} = useTranslation();
   const { clients } = usePrintHouseClients();
   const [openScheduleModal,setOpenScheduleModal]=useState(false)
+  const categoriesList = useRecoilValue(machineCategoriesState);
   const onCloseScheduleModal =()=>{
     setOpenScheduleModal(false)
   }
   const onOpenScheduleModal =()=>{
     setOpenScheduleModal(true)
   }
-  const [customersListCreateQuote, setCustomersListCreateQuote] = useState([]);
-  const [customersListCreateOrder, setCustomersListCreateOrder] = useState([]);
-  const [canOrder, setCanOrder] = useState(false);
+  const {
+    renderOptions,
+    checkWhatRenderArray,
+  }=useCustomerDropDownList()
 
-  const renderOptions = () => {
-    if (!!canOrder) {
-      return customersListCreateOrder;
-    } else return customersListCreateQuote;
-  };
-
-  const getAllCustomersCreateQuote = useCallback(async () => {
-    await getAndSetAllCustomers(callApi, setCustomersListCreateQuote, {
-      ClientType: "C",
-      onlyCreateOrderClients: false,
-    });
-  }, []);
-
-  const checkWhatRenderArray = (e) => {
-    if (e.target.value) {
-      setCanOrder(true);
-    } else {
-      setCanOrder(false);
-    }
-  };
-  const getAllCustomersCreateOrder = useCallback(async () => {
-    await getAndSetAllCustomers(callApi, setCustomersListCreateOrder, {
-      ClientType: "C",
-      onlyCreateOrderClients: true,
-    });
-  }, []);
-
-  useEffect(() => {
-    getAllCustomersCreateQuote();
-    getAllCustomersCreateOrder();
-  }, []);
   const [propertieValue, setPropertieValue] = useState<any>();
-  const isDefaultException =
-    selectedPricingTableItems?.exceptionType === ETypeException.DEFAULT;
+  const isDefaultException = selectedPricingTableItems?.exceptionType === ETypeException.DEFAULT;
+  
   const categories = useMemo(() => {
     const filteredCategories = [
       { label: "Machine", id: "Machine" },
+      { label: "Machine type category", id: "Machine category" },
       { label: "Products", id: "Products" },
+      { label: "Product type", id: "ProductType" },
       { label: "Client type", id: "Client Type" },
       { label: "Client", id: "Client" },
       { label: "Property output", id: "Property output" },
       { label: "Property input", id: "Property input" },
       { label: "Agent", id: "Agent" },
+      { label: "Employee", id: "Employee" },
     ];
-    return isQuoteWidge ? filteredCategories : filteredCategories.filter(category => category.id !== "Agent");
+    return isQuoteWidge ? filteredCategories.filter(category => category.id !== "ProductType") : filteredCategories.filter(category => category.id !== "Agent");
   }, [isQuoteWidge]);
+  
   const EStatementCategory = {
     Machine: 1,
+    "Machine category":2,
     "Client Type": 3,
     Client: 4,
     "Property input": 5,
     "Property output": 6,
     Products: 7,
-    Agent:8
-   
+    Agent:8,
+    Employee:9,
+    ProductType:10
   };
+  
   const { Outputs } = useOutputs();
   const { machines } = usePrintHouseMachines();
   const [materialsTypes, setMaterialsTypes] = useState<
     { materialTypeKey: string; materialTypeName: string }[]
   >([]);
+
   const [agentsCategories, setAgentsCategories] = useRecoilState(
     agentsCategoriesState
   );
+
   const getAgentCategories = async () => {
     const callBack = (res) => {
       if (res.success) {
@@ -127,9 +108,11 @@ const useAddRuleModal = ({
     };
     await getAndSetEmployees2(callApi, callBack, { isAgent: true });
   };
+
   useEffect(()=>{
     getAgentCategories()
   },[])
+
   const getMaterialsTypesApi: ICallAndSetData = async (callApi, setState) => {
     return await getSetApiData(
       callApi,
@@ -194,6 +177,7 @@ const useAddRuleModal = ({
     statement2: "",
   };
   const [rules, setRules] = useState<any>([initialRule]);
+
   const addRule = () => {
     setRules([...rules, initialRule]);
   };
@@ -211,12 +195,11 @@ const useAddRuleModal = ({
 
   const [machincesList, setMachincesList] = useState<any>();
   const [allMachincesList, setAllMachincesList] = useState<any>();
-  const [productsStateValue, setProductsState] =
-    useRecoilState<any>(productsState);
-  const [clientTypesStateValue, setClientTypesState] =
-    useRecoilState<any>(clientTypesState);
-  const [parametersStateValue, setParametersState] =
-    useRecoilState<any>(parametersState);
+  const [productsStateValue, setProductsState] =useRecoilState<any>(productsState);
+  const [clientTypesStateValue, setClientTypesState] =useRecoilState<any>(clientTypesState);
+  const [parametersStateValue, setParametersState] =useRecoilState<any>(parametersState);
+  const [allProductTypes, setAllProductTypes] = useState<any>();
+  const [employeeList,setEmployeeList]=useState([])
 
     const getMachinesList = async () => {
       const callBack = (res) => {
@@ -225,8 +208,8 @@ const useAddRuleModal = ({
           }
       }
       await getALLMachinesApi(callApi,callBack ).then();
-
   }
+
   const getMachincesByActionId = useCallback(async () => {
     if (router.query.actionId) {
       await getAndSetMachincesByActionId(callApi, setMachincesList, {
@@ -237,21 +220,51 @@ const useAddRuleModal = ({
       getMachinesList()
     }
   }, [router, machines]);
+
   const getProducts = useCallback(async () => {
     await getAllProductsForDropDownList(callApi, setProductsState);
   }, []);
+
   const getClientTypes = useCallback(async () => {
     await getAndSetClientTypes(callApi, setClientTypesState , {cardType : CLIENT_TYPE_Id.CUSTOMER});
   }, []);
+
   const getParameters = useCallback(async () => {
     return await getAndSetAllParameters(callApi, setParametersState);
   }, []);
+
+  const getAllProductTypes = useCallback(async () => {
+    const result = await getAllTemplets(callApi);
+    const mappedResult = result.map((item: any) => ({
+      id: item.id,
+      label: item.name,
+    }));
+    setAllProductTypes(mappedResult);
+  }, []);
+
+  const getEmployeeCategories = async () => {
+    const callBack = (res) => {
+      if (res.success) {
+        const employeeList = res.data.map((employee) => ({
+          label: employee.text,
+          id: employee.value,
+        }));
+        setEmployeeList(employeeList);
+      }
+    };
+    await getAndSetEmployees2(callApi, callBack, { IsGraphicArtist: true });
+  };
+
   useEffect(() => {
     getProducts();
     getClientTypes();
     getParameters();
     getAllMaterials();
+    getAllProductTypes();
+    getEmployeeCategories();
   }, []);
+
+
   useEffect(() => {
     getMachincesByActionId();
     // getMachinesList()
@@ -274,14 +287,17 @@ const useAddRuleModal = ({
         : "";
       const conditionLabel = condition?.condition?.label ?? "";
       const statement2Label = condition.statement2?.label ?? "";
-  
       let text = "";
   
       if (condition.linkCondition) {
         text += ` ${condition?.linkCondition.id} `;
       }
+      if (typeof condition?.statement === "object" && typeof condition?.statement2 ==="object" && categoryLabel==="") {
+        const statementLabel = condition?.statement?.label ?? "";
+        text += `${statement2Label} ${conditionLabel}  ${statementLabel}`;
+      }
       
-      if (typeof condition?.statement === "object") {
+      else if (typeof condition?.statement === "object" && typeof condition?.statement2 ==="object") {
         const statementLabel = condition?.statement?.label ?? "";
         text += `${categoryLabel} ${conditionLabel} ${statement2Label} ${statementLabel}`;
       } else {
@@ -299,10 +315,37 @@ const useAddRuleModal = ({
     return `${t("properties.if")} (${joinedText})`;
   }
 
+  const mappingRules = useCallback(() => {
+    return rules.map((rule) => {
+      return {
+        statementId:
+            typeof rule?.statement === "object"
+                ? rule?.statement?.id
+                : rule.statement,
+        statementValue: rule.statement2.id,
+        operator: rule.condition.id,
+        conditionBetweenStatements: rule.linkCondition
+            ? rule.linkCondition.id
+            : "",
+        statementCategory: EStatementCategory[rule.category.id],
+      };
+    })
+  }, [rules])
+
   useEffect(() => {
     const textInput = displayText(rules);
     setExpression(textInput);
   }, [rules]);
+  const getStatementId = (item)=>{
+    if(typeof item?.statement === "object"){
+      //material input
+      if(item.statement2 && item.statement2.type === 5){
+        return item?.statement?.code;
+      }
+      return item?.statement?.id;
+    }
+    return item?.statement
+  }
   const create = useCallback(async () => {
     const requestBody: any = {
       actionId: router?.query?.actionId,
@@ -313,11 +356,8 @@ const useAddRuleModal = ({
       exceptionRule: expression,
       exceptionConditionProperties: rules.map((item) => {   
         return {
-          statementId:
-            typeof item?.statement === "object"
-              ? item?.statement?.id
-              : item.statement,
-          statementValue: item.statement2.id,
+          statementId:getStatementId(item),
+          statementValue:  item.statement2.id,
           operator: item.condition.id,
           conditionBetweenStatements: item.linkCondition
             ? item.linkCondition.id
@@ -360,7 +400,9 @@ const useAddRuleModal = ({
     rules,
     isDefaultException,
   ]);
+
   const createProperties = useCallback(async () => {
+    debugger
     if (!propertieValue) {
       alertFaultAdded();
       return;
@@ -506,6 +548,9 @@ const useAddRuleModal = ({
       alertFaultAdded();
     }
   }, [propertieValue, EStatementCategory, rules,filterData]);
+
+
+
   return {
     rules,
     deleteRule,
@@ -545,6 +590,10 @@ const useAddRuleModal = ({
     onOpenScheduleModal,
     renderOptions,
     checkWhatRenderArray,
+    mappingRules,
+    categoriesList,
+    employeeList,
+    allProductTypes
   };
 };
 

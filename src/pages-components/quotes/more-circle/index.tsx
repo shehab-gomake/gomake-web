@@ -21,6 +21,7 @@ const MoreMenuWidget = ({
   const { t } = useTranslation();
   const { getMenuList } = useMoreCircle();
   const menuList = getMenuList({
+    t,
     quote,
     documentType,
     onClickOpenModal,
@@ -30,7 +31,6 @@ const MoreMenuWidget = ({
     onClickSendPayment,
     t,
     onClickOpenIrrelevantModal,
-    CloseDocument,
     onClickOpenCloseOrderModal,
     onClickOpenCloseOrderNotesModal
   });

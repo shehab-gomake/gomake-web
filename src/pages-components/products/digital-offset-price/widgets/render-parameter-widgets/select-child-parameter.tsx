@@ -8,7 +8,8 @@ const SelectChildParameterWidget = ({
   onChangeSubProductsForPrice,
   subSection,
   section,
-  disabled
+  disabled,
+  multiParameterModal
 }) => {
   const defaultObject = parameter.valuesConfigs.find(
     (item) => item.isDefault === true
@@ -21,7 +22,8 @@ const SelectChildParameterWidget = ({
           data-tour={parameter?.id}
           options={parameter?.valuesConfigs?.filter((value) => !value.isHidden)}
           placeholder={parameter.name}
-          key={parameter?.valuesConfigs + temp[index]?.values}
+          key={multiParameterModal && parameter?.code === "PrintingColors" ? parameter?.valuesConfigs + temp[index]?.values : parameter?.valuesConfigs}
+          // key={parameter?.valuesConfigs + temp[index]?.values}
           style={clasess.dropDownListStyle}
           getOptionLabel={(option: any) => option.updateName}
           defaultValue={

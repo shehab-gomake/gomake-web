@@ -65,5 +65,16 @@ export enum LogActionType {
     CLIENT_UPDATED,
     AGENT_UPDATED,
     PURCHASE_NUMBER_UPDATE,
-    COMMENTS_UPDATE
+    COMMENTS_UPDATE,
+    DOCUMENT_DUPLICATED,
+    DOCUMENT_DUPLICATED_FROM_ORDER
+}
+
+export enum ApprovalStatus {
+    SentToManagerApproval = 1,
+    ApprovedByManager,
+    RejectedByManager,
+    WaitingForClient,
+    ApprovedByClient,
+    RejectedByClient
 }

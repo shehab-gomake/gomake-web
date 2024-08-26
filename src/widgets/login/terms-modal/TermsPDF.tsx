@@ -24,7 +24,7 @@ export default function TermsPDF() {
         Page {pageNumber} of {numPages}
       </p> */}
       <Document
-        file="https://gomake-contents.s3.eu-west-3.amazonaws.com/Subscription+Agreement+GoMake.pdf"
+        file="https://gomake-contents.s3.eu-west-3.amazonaws.com/Terms+-+GOMAKE+INC.pdf"
         onLoadSuccess={onDocumentLoadSuccess}
         loading={<GomakeLoaderWidget />}
       >

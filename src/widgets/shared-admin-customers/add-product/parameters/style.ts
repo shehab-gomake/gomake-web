@@ -272,6 +272,19 @@ const useStyle = () => {
         ...FONT_FAMILY.Lexend(600, 16),
         color: neutralColor(800),
       },
+      detailsIconStyle: {
+        strokeWidth: "1",
+        width: "23px",
+        height: "23px"
+      },
+      btnSelectedStyle: {
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "flex-start",
+        alignItems: "center",
+        gap: 6,
+        padding: "8px 0px",
+      },
     };
   }, [i18next.language, t]);
   return {

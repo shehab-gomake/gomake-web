@@ -5,6 +5,7 @@ import { ClickOutside } from "@/components/click-out-side/click-out-side";
 import { RouteChangeConfirmation } from "@/components/handle-navigation/handle-navigation";
 import { ArrowUpIcon } from "@/icons";
 import { useRef } from "react";
+import { createGlobalStyle } from "styled-components";
 
 interface IUpdateValueAutoCompleteProps {
   value?: any;
@@ -27,16 +28,28 @@ const UpdateValueAutoComplete = ({
 }: IUpdateValueAutoCompleteProps) => {
   const { secondColor } = useGomakeTheme();
   const optionsListEl = useRef();
+
+  const GlobalStyle = createGlobalStyle`
+  .MuiAutocomplete-input {
+    padding-left:0px !important;
+  }
+    .MuiAutocomplete-endAdornment {
+    top: 50% !important;
+    transform: translateY(-50%);
+  }
+`;
   return (
     <>
+      <GlobalStyle />
       <ClickOutside exceptionRef={optionsListEl} onClick={clickedOut}>
         <RouteChangeConfirmation />
         <Paper
           component="form"
           sx={{
-            p: "4px 4px",
+            paddingLeft: "4px",
+            paddingRight: "2px",
             display: "inline-flex",
-            width: 137,
+            width: 150,
             height: "26px",
             border: "1px solid " + secondColor(400),
             boxShadow: "none",

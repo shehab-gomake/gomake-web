@@ -3,8 +3,8 @@ import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 
 const useStyle = () => {
-  const { secondColor } = useGomakeTheme();
-  const clasess = useMemo(() => {
+  const { secondColor ,errorColor, theme } = useGomakeTheme();
+  const classes = useMemo(() => {
     return {
       mainContainer: {
         display: "flex",
@@ -48,10 +48,15 @@ const useStyle = () => {
       selectTypeContainer: {
         width: "100%",
       },
+      errorMsgStyle: {
+        padding: 10,
+        ...FONT_FAMILY.Lexend(500, 14),
+        color: errorColor(500),
+      },
     };
-  }, []);
+  }, [theme]);
   return {
-    clasess,
+    classes,
   };
 };
 export { useStyle };

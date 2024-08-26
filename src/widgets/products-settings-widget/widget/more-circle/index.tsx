@@ -10,6 +10,7 @@ import { PermissionCheck } from "@/components/CheckPermission";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { DocumentIcon } from "./icons/document";
 import { DeleteMenuIcon } from "@/widgets/quote-new/more-circle/icons/delete-menu";
+import { DuplicateIcon } from "@/components/icons/icons";
 
 
 const MoreMenuWidget = ({ item, updatedProduct, getActions }: any) => {
@@ -33,7 +34,11 @@ const MoreMenuWidget = ({ item, updatedProduct, getActions }: any) => {
     openDeleteRowModal,
     onClickCloseDeleteRowModal,
     onClickOpenDeleteRowModal,
-    deleteProductById
+    deleteProductById,
+    onClickDuplicateProduct,
+    openDuplicateRowModal,
+    onClickCloseDuplicateRowModal,
+    onClickOpenDuplicateRowModal
   } = useMoreCircle({
     updatedProduct,
     item,
@@ -48,9 +53,13 @@ const MoreMenuWidget = ({ item, updatedProduct, getActions }: any) => {
         <GoMakeMenu handleClose={handleClose} open={open} anchorEl={anchorEl}>
           <MenuItem
             onClick={() =>
-              navigate(
-                `/settings/products/edit/${item?.id}?productName=${item?.name}`
-              )
+              router?.query?.isSubProducts ?
+                navigate(
+                  `/settings/products/edit/${item?.id}?productName=${item?.name}&isSubProducts=true`
+                ) :
+                navigate(
+                  `/settings/products/edit/${item?.id}?productName=${item?.name}`
+                )
             }
           >
             <div style={clasess.menuRowStyle}>
@@ -101,6 +110,17 @@ const MoreMenuWidget = ({ item, updatedProduct, getActions }: any) => {
           <MenuItem>
             <div
               style={clasess.menuRowStyle}
+              onClick={onClickOpenDuplicateRowModal}
+            >
+              <DuplicateIcon />
+              <div style={clasess.rowTextStyle}>
+                {t("navigationButtons.duplicate")}
+              </div>
+            </div>
+          </MenuItem>
+          <MenuItem>
+            <div
+              style={clasess.menuRowStyle}
               onClick={onClickOpenDeleteRowModal}
             >
               <DeleteMenuIcon />
@@ -128,6 +148,17 @@ const MoreMenuWidget = ({ item, updatedProduct, getActions }: any) => {
         onClose={onClickCloseDeleteRowModal}
         onClickDelete={deleteProductById}
       />
+
+      <GoMakeDeleteModal
+        hideIcon={true}
+        title="Duplicate Product"
+        subTitle="do you want to duplicate this product?"
+        yesBtn={t("navigationButtons.duplicate")}
+        openModal={openDuplicateRowModal}
+        onClose={onClickCloseDuplicateRowModal}
+        onClickDelete={onClickDuplicateProduct}
+      />
+
     </>
   );
 };

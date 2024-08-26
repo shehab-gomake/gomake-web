@@ -14,7 +14,6 @@ interface IProps {
   options: { label: string; value: string }[];
   placeHolder?: string;
 }
-
 const MultiSelectList = ({
   values,
   parameterKey,

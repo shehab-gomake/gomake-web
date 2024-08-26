@@ -14,12 +14,12 @@ const useChildValuesMapping = ({
   index,
   parameters,
   settingParameters,
-    item
+    item,
+    isParameterSettings
 }) => {
   const paddingLeft = value?.valueId?.length === 0 ? 13 : 38;
   const selectColorValue = useRecoilValue<any>(selectColorValueState);
-  const [generalParameters, setGeneralParameters] =
-    useRecoilState(maltiParameterState);
+  const [generalParameters, setGeneralParameters] =useRecoilState(maltiParameterState);
   const [isFocused, setIsFocused] = useState(false);
   const [checked, setChecked] = useState(false);
   const [forceChange, setForceChange] = useState(false);
@@ -30,7 +30,7 @@ const useChildValuesMapping = ({
     parameters[index].defaultValue
   );
   const [subProducts, setSubProducts] = useRecoilState<any>(subProductsCopyParametersState);
-  const {addValueToSubProduct,removeValueFromSubProduct,setSubProductValue,getSelectedColorParameterValue} = userMultiParameterModalValues(settingParameters)
+  const {addValueToSubProduct,removeValueFromSubProduct,setSubProductValue,getSelectedColorParameterValue} = userMultiParameterModalValues(settingParameters,isParameterSettings)
 
  
   const isChecked = useMemo(() => {
@@ -82,8 +82,9 @@ const useChildValuesMapping = ({
     const subData = value.data;
     let newSubProducts = lodashClonedeep(subProducts);
     subData.forEach(x=>{
-      if (e.target.checked){
-        newSubProducts = addValueToSubProduct(newSubProducts,x)
+      if (e.target.checked) {
+        newSubProducts = addValueToSubProduct(newSubProducts, x,settingParameters,settingParameters?.section,settingParameters?.subSection);
+        setSubProducts(newSubProducts);
       }
       else {
          newSubProducts = removeValueFromSubProduct(newSubProducts,x)

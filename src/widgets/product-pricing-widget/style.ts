@@ -105,7 +105,14 @@ const useStyle = () => {
         height:20,
         width:1,
         backgroundColor:"#FFF"
-      }
+      },
+      modalStyle:{
+        width: "45%",
+        borderRadius: "8px",
+        height: "auto",
+        gap: "10px",
+        zIndex:5
+      },
 
     };
   }, [theme, direction]);

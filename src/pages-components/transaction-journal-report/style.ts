@@ -4,7 +4,7 @@ import { useMemo } from "react";
 
 const useStyle = () => {
   const {primaryColor}=useGomakeTheme()
-  const clasess = useMemo(() => {
+  const classes = useMemo(() => {
     return {
       mainContainer: {
         display: "flex",
@@ -14,8 +14,8 @@ const useStyle = () => {
         width: "100%",
         height: "100%",
         gap: 20,
-        padding:20,
-        overflow: "scroll" as "scroll",
+        padding:"0px 20px 20px 20px",
+        marginBottom:20
       },
       tableTitleContainer:{
         display: "flex",
@@ -24,7 +24,9 @@ const useStyle = () => {
         alignItems: "flex-start",
         width: "100%",
         gap: 10,
-        marginTop:15
+        marginTop:15,
+        marginBottom:20
+
       },
       titleStyle:{
         ...FONT_FAMILY.Lexend(700,14),
@@ -34,7 +36,7 @@ const useStyle = () => {
     };
   }, []);
   return {
-    clasess,
+    classes,
   };
 };
 export { useStyle };

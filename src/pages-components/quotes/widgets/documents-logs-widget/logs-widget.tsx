@@ -5,10 +5,10 @@ import { SecondaryButton } from "@/components/button/secondary-button";
 import { useStyle } from "./style";
 import { PrimaryTable } from "@/components/tables/primary-table";
 import { GoMakeDatepicker } from "@/components/date-picker/date-picker-component";
+import { useEmployeeList } from "@/hooks/use-employee-list";
 
 interface IQuoteLogsProps {
     employeeId: any;
-    employeesCategories: any;
     handleSelectEmployee: (e: React.ChangeEvent<{}>, value: any) => void;
     onClickClearLogsFilter?: () => void;
     onClickSearchLogsFilter?: () => void;
@@ -25,10 +25,11 @@ const DocumentLogsWidget = ({ logsTableHeaders,
     onClickSearchLogsFilter,
     onClickClearLogsFilter,
     logsTableRows,
-    employeesCategories
 }: IQuoteLogsProps) => {
+    
     const { t } = useTranslation();
     const { classes } = useStyle();
+    const {employeesCategories} = useEmployeeList();
 
     return (
         <Stack direction={'column'} gap={'20px'} paddingTop={'10px'}>

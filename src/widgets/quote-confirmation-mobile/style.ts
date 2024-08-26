@@ -12,7 +12,7 @@ const useStyle = () => {
         width: "100%",
         flexDirection: "column" as "column",
         gap: "20px",
-        marginBottom: 10,
+        marginBottom:"10px"
       },
       titleQuoteContainer: {
         display: "flex",
@@ -27,7 +27,7 @@ const useStyle = () => {
         ...FONT_FAMILY.Lexend(500, 24),
         color: secondColor(500),
         lineHeight: "30px",
-      }, 
+      },
        titleStyle: {
         display: "flex",
         ...FONT_FAMILY.Lexend(500, 20),

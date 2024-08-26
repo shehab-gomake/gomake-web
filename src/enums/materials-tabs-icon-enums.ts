@@ -12,4 +12,6 @@ export enum EMaterialsTabsIcon {
   DOWNLOAD_EXCEL = "excel",
   UPLOAD_EXCEL = "uploadFile",
   Upload_Materials_Pictures = "UploadMaterialsPictures",
+  CREATE_PURCHASE_ORDER = "purchaseOrderIcon",
+
 }

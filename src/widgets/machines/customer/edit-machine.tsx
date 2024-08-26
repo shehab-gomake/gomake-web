@@ -17,6 +17,7 @@ import {StepType} from "@reactour/tour";
 import {useGoMakeTour} from "@/hooks/use-go-make-tour";
 import {GoMakeModal} from "@/components";
 import {AddMachineModal} from "@/widgets/machines/customer/add-machine-modal";
+import { useUserPermission } from "@/hooks/use-permission";
 
 const CustomerEditMachines = () => {
     const router = useRouter();
@@ -30,13 +31,14 @@ const CustomerEditMachines = () => {
     const {updateMachine} = usePrintHouseAddMachine();
     const {t} = useTranslation();
     const [openAddMachineModal, setOpenAddMachineModal] = useState<boolean>(false);
+    const { CheckPermission } = useUserPermission();
 
     useEffect(() => {
         getAndSetMachines();
         if (categoryId) {
             const category = categories.find(category => category.id === categoryId)
             setCategoryName(category?.name ? category?.name : '');
-            if (category) setMachineSteps(getSteps(category.id, false));
+            if (category) setMachineSteps(getSteps(category.id, false , CheckPermission));
         }
     }, [categoryId]);
     const navigateBack = () => {

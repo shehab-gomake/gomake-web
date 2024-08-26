@@ -26,11 +26,12 @@ const ActionsListComponent = ({onClickApply}: IProps) => {
     }
 
     const getList = useCallback(()=> {
+        let list = actionsList;
         if (filter) {
-            return actionsList?.map(action => ({...action, machines: action.machines.filter(m => m.machineName?.toLowerCase().includes(filter?.toLowerCase()))}))
+            list =  actionsList?.map(action => ({...action, machines: action.machines.filter(m => m.machineName?.toLowerCase().includes(filter?.toLowerCase()))}))
                 ?.filter(action => action.actionName?.toLowerCase().includes(filter?.toLowerCase()) || action.machines.length > 0)
         }
-        return actionsList
+        return list?.sort((a, b) => a.checked === b.checked ? 0 : !!a.checked ? -1 : 0)
     }, [actionsList, filter])
     return(
         <div style={{position: 'relative'}}>

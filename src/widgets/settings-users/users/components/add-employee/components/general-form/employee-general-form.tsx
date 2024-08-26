@@ -15,26 +15,79 @@ import {
 import {
     accountInputs
 } from "@/widgets/settings-users/users/components/add-employee/components/general-form/inputs/account-inputs";
-import { useCallback } from "react";
-import { EmployeeActions } from "@/widgets/settings-users/users/enums/employee-actions";
+import { useCallback, useEffect, useState } from "react";
+import { EmployeeActions, EmployeeQuoteLimitationType } from "@/widgets/settings-users/users/enums/employee-actions";
 import { AllowedIP, IUserData } from "@/widgets/settings-users/users/interface/employee";
 import { SecondSwitch } from "@/components";
 import { FormArrayInput } from "@/components/form-inputs/form-array-input";
 import { FormInput } from "@/components/form-inputs/form-input";
+import { getAllActionsRequireEmployeeApi } from "@/services/api-service/production-floor/production-floor-endpoints";
+import { useGomakeAxios } from "@/hooks";
+import { Checkbox } from "@mui/material";
+import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
+import { text } from "node:stream/consumers";
 
 const EmployeeGeneralForm = ({ action }: { action: EmployeeActions }) => {
     const { t } = useTranslation();
     const { classes } = useStyle();
     const [state, setState] = useRecoilState<IUserData>(employeeState);
-    const updateEmployeeState = (key, value) => {
-        setState({
-            ...state,
-            employee: {
-                ...state.employee,
-                [key]: value
+    const [actionRequierdForEmployee, setActionRequierdForEmployee] = useState([])
+    const { callApi } = useGomakeAxios();
+
+    const getActions = async () => {
+        const callBack = res => {
+            if (res.success) {
+                setActionRequierdForEmployee(res?.data);
             }
+        }
+        await getAllActionsRequireEmployeeApi(callApi, callBack)
+    }
+    useEffect(() => {
+        getActions()
+    }, [])
+
+    const updateEmployeeState = (key, value) => {
+        if (key === "quoteLimitationType") {
+            const newValue = value === "" || value === null ? 0 : value;
+            setState({
+                ...state,
+                employee: {
+                    ...state.employee,
+                    quotePriceLimit: 0,
+                    [key]: newValue
+                }
+            });
+        }
+        else
+            setState({
+                ...state,
+                employee: {
+                    ...state.employee,
+                    [key]: value
+                }
+            });
+    };
+
+    const updateActionIdsEmployeeState = (key, id, checked) => {
+        setState(prevState => {
+            // Get the current list of actionIds
+            const currentActionIds = prevState.employee[key] || [];
+
+            // Update the list based on the checked state
+            const updatedActionIds = checked
+                ? [...currentActionIds, id]
+                : currentActionIds.filter(actionId => actionId !== id);
+
+            return {
+                ...prevState,
+                employee: {
+                    ...prevState.employee,
+                    [key]: updatedActionIds
+                }
+            };
         });
     };
+
     const updateUserState = (key, value) => {
         setState({
             ...state,
@@ -60,9 +113,16 @@ const EmployeeGeneralForm = ({ action }: { action: EmployeeActions }) => {
         })
     }
 
+    const quoteLimitationOptions = Object.keys(EmployeeQuoteLimitationType)
+        .filter(key => isNaN(Number(key)))
+        .map(key => ({
+            value: EmployeeQuoteLimitationType[key],
+            text: t(`usersSettings.${key}`)
+        }));
+
     const inputs = useCallback(() => {
         return {
-            employee: employeeInfoInputs(state.employee),
+            employee: employeeInfoInputs(state.employee, quoteLimitationOptions),
             account: accountInputs(state, action),
             agent: agentInputs(state.employee),
             ips: ipAddressesInputs(state)
@@ -127,6 +187,32 @@ const EmployeeGeneralForm = ({ action }: { action: EmployeeActions }) => {
                     }
                 </div>
             </div>
+
+
+            <div style={classes.subSection}>
+                <h3 style={classes.subSectionHeader}>{t('usersSettings.employeeActions')}</h3>
+                <h1 style={classes.subSectionActionHeader}>{t('usersSettings.actions')}</h1>
+                <div style={classes.inputsContainer}>
+                    {
+                        actionRequierdForEmployee?.map((action) => {
+                            return (
+                                <div>
+                                    <Checkbox
+                                        onChange={(e, checked) => { updateActionIdsEmployeeState("actionIds", action.id, checked) }}
+                                        icon={<CheckboxIcon />}
+                                        checkedIcon={<CheckboxCheckedIcon />}
+                                        checked={state?.employee?.actionIds?.includes(action?.id)}
+                                    />
+                                    {action?.name}
+                                </div>
+                            )
+                        })
+                    }
+
+                </div>
+            </div>
+
+
         </div>
     );
 }

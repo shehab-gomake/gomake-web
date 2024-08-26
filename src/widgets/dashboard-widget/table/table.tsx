@@ -1,17 +1,17 @@
-import {IBoardMissionsTable} from "@/widgets/dashboard-widget/table/interface";
-import {useStyle} from "@/widgets/dashboard-widget/table/style";
-import {useTranslation} from "react-i18next";
-import {IBoardMissions} from "@/widgets/dashboard-widget/interfaces";
-import {IMachine} from "@/shared/interfaces";
-import {StatusView} from "@/components/status-view";
+import { IBoardMissionsTable } from "@/widgets/dashboard-widget/table/interface";
+import { useStyle } from "@/widgets/dashboard-widget/table/style";
+import { useTranslation } from "react-i18next";
+import { IBoardMissions } from "@/widgets/dashboard-widget/interfaces";
+import { IMachine } from "@/shared/interfaces";
+import { StatusView } from "@/components/status-view";
 import ElectricBoltSharpIcon from '@mui/icons-material/ElectricBoltSharp';
-import React, {useCallback, useState} from "react";
-import {EStatus} from "@/shared";
-import {useRecoilValue} from "recoil";
-import {boardsMissionsStatusFilterState} from "@/store/boards-missions-status-filter";
+import React, { useCallback, useState } from "react";
+import { EStatus } from "@/shared";
+import { useRecoilValue } from "recoil";
+import { boardsMissionsStatusFilterState } from "@/store/boards-missions-status-filter";
 import moment from "moment-timezone";
 import Button from "@mui/material/Button";
-import {useRouter} from "next/router";
+import { useRouter } from "next/router";
 
 const BoardMissionsTable = ({ boardsMissions, usedMachines }: IBoardMissionsTable) => {
     const { classes } = useStyle();
@@ -19,7 +19,7 @@ const BoardMissionsTable = ({ boardsMissions, usedMachines }: IBoardMissionsTabl
     const [orderByMachine, setOrderByMachine] = useState<string>('');
     const selectedStatusFilter = useRecoilValue(boardsMissionsStatusFilterState);
     const [isOrderByCreationDate, SetIsOrderByCreationDate] = useState<boolean>(false);
-    const {replace} = useRouter();
+    const { replace } = useRouter();
     const boardLink = (boardMissions: IBoardMissions) => {
         replace(`/production-floor/?boardMissionsId=${boardMissions.id}&step=stations&productType=${!!boardMissions.productType ? boardMissions.productType : ''}`).then();
     }
@@ -44,7 +44,7 @@ const BoardMissionsTable = ({ boardsMissions, usedMachines }: IBoardMissionsTabl
         if (selectedStatusFilter) {
             data.forEach(x => {
                 if (x.splittedBoards) {
-                    x.splittedBoards = x.splittedBoards.filter(y => selectedStatusFilter === EStatus.IN_PROCESS ? (y.status === EStatus.IN_PROCESS || y.status === EStatus.NOT_YET) :  y.status === selectedStatusFilter)
+                    x.splittedBoards = x.splittedBoards.filter(y => selectedStatusFilter === EStatus.IN_PROCESS ? (y.status === EStatus.IN_PROCESS || y.status === EStatus.NOT_YET) : y.status === selectedStatusFilter)
                 }
             })
             data = data.filter(board => selectedStatusFilter === EStatus.IN_PROCESS ? (board.status === selectedStatusFilter || board.status === EStatus.NOT_YET) || (board.splittedBoards && board.splittedBoards.length > 0) : board.status === selectedStatusFilter || (board.splittedBoards && board.splittedBoards.length > 0));
@@ -97,7 +97,7 @@ const BoardMissionsTable = ({ boardsMissions, usedMachines }: IBoardMissionsTabl
                                     <div style={{ width: '35%' }}>{t('dashboard-widget.client')}</div>
                                     <div style={{ width: '25%' }}>{t('dashboard-widget.task')}</div>
                                     <div style={isOrderByCreationDate ? { ...classes.tableHead, ...classes.selectedMachine, width: '30%', paddingTop: '29px' } : { ...classes.tableHead, width: '30%', paddingTop: '29px' }} onClick={() => sortByCreationDate()}>
-                                        {t('dashboard-widget.creationDate')}
+                                        {t('dashboard-widget.dueDate')}
                                     </div>
                                     <div style={{ width: '20%' }}>{t('dashboard-widget.product')}</div>
                                     <div style={{ width: '35%' }}>{t('dashboard-widget.status')}</div>
@@ -106,12 +106,12 @@ const BoardMissionsTable = ({ boardsMissions, usedMachines }: IBoardMissionsTabl
                             {
                                 usedMachines.map((machine: IMachine) => {
                                     return (
-                                        <th key={machine.id}
-                                            style={orderByMachine === machine.id ? { ...classes.tableHead, ...classes.selectedMachine } : classes.tableHead}
-                                            onClick={() => handleMachineClicked(machine.id)}>
+                                        <th key={machine?.id}
+                                            style={orderByMachine === machine?.id ? { ...classes.tableHead, ...classes.selectedMachine } : classes.tableHead}
+                                            onClick={() => handleMachineClicked(machine?.id)}>
                                             <div style={classes.tdRows}>
-                                                <div>{machine.name}</div>
-                                                <div>{machine.progress?.done}/{machine.progress?.total} <small>{t('measurementUnits.minute')}</small></div>
+                                                <div>{machine?.progress?.name}</div>
+                                                <div>{machine?.progress?.done}/{machine?.progress?.total} <small>{t('measurementUnits.minute')}</small></div>
                                             </div>
                                         </th>
                                     );
@@ -181,13 +181,13 @@ const BoardMissionsTable = ({ boardsMissions, usedMachines }: IBoardMissionsTabl
                                                     {
                                                         usedMachines.map((machine: IMachine, i: number) => {
                                                             return (
-                                                                <td key={machine.id + i}
+                                                                <td key={machine?.id + i}
                                                                     style={k + 1 === board.splittedBoards.length ? classes.tableCell : {
                                                                         ...classes.tableCell,
                                                                         borderBottom: 0
                                                                     }}>
                                                                     <StatusView style={{ margin: 'auto' }}
-                                                                        status={splitBoard.machinesStatuses[machine.id]} />
+                                                                        status={splitBoard.machinesStatuses[machine?.id]} />
                                                                 </td>
                                                             );
                                                         })
@@ -215,7 +215,7 @@ const BoardMissionsTable = ({ boardsMissions, usedMachines }: IBoardMissionsTabl
                                                     </div>
                                                     <div style={{ width: '30%', height: '100%' }}>
                                                         <div style={classes.tdRows}>
-                                                            <div><span>{getDateString(board.creationDate)}</span></div>
+                                                            <div><span>{getDateString(board.dueDate)}</span></div>
                                                         </div>
                                                     </div>
                                                     <div style={{ width: '20%', height: '100%' }}>
@@ -233,10 +233,10 @@ const BoardMissionsTable = ({ boardsMissions, usedMachines }: IBoardMissionsTabl
                                             {
                                                 usedMachines.map((machine: IMachine, i: number) => {
                                                     return (
-                                                        <td key={machine.id + i}
+                                                        <td key={machine?.id + i}
                                                             style={classes.tableCell}>
                                                             <StatusView style={{ margin: 'auto' }}
-                                                                status={board.machinesStatuses[machine.id]} />
+                                                                status={board.machinesStatuses[machine?.id]} />
                                                         </td>
                                                     );
                                                 })

@@ -7,7 +7,7 @@ const useStyle = (maxHeight: number, dir: 'rtl' | 'ltr') => {
         return {
             tableContainer: {
                 position: "relative",
-                overflow: "scroll" as "scroll",
+                // overflow: "scroll" as "scroll",
                 boxSizing: 'border-box',
                 width: "100%",
                 maxHeight: convertHeightToVH(maxHeight),

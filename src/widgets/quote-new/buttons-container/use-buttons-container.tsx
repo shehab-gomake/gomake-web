@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRecoilValue } from "recoil";
 import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
-import { createOrderApi, getDocumentPdfApi } from "@/services/api-service/generic-doc/documents-api";
+import { createOrderApi, getDocumentPdfApi, sendQuoteApprovalToManagerApi } from "@/services/api-service/generic-doc/documents-api";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { cancelReceiptApi, createReceiptApi, getReceiptPdfApi } from "@/services/api-service/generic-doc/receipts-api";
 import { checkedItemsIdsState, finalTotalPaymentState } from "./states";
@@ -11,21 +11,24 @@ import { isAtLeastOneSelected } from "@/utils/helpers";
 import { useRouter } from "next/router";
 import { useUserPermission } from "@/hooks/use-permission";
 import { DocumentPermission } from "@/components/CheckPermission/enum";
+import { getAllUsersCanApproveQuoteApi} from "@/services/api-service/users/users-api";
 
 const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     const { navigate } = useGomakeRouter();
     const { t } = useTranslation();
     const { callApi } = useGomakeAxios();
     const router = useRouter();
-    const {CheckDocumentPermission } = useUserPermission();
+    const { push } = useRouter();
+    const { CheckDocumentPermission } = useUserPermission();
     const quoteItemValue: any = useRecoilValue(quoteItemState);
-    const { alertFault, alertSuccessDelete, alertFaultDelete, alertSuccessUpdate, alertFaultUpdate, alertFaultAdded, alertSuccessAdded, alertFaultGetData } = useSnackBar();
+    const { alertFault, alertFaultSend, alertSuccessDelete, alertFaultDelete, alertSuccessUpdate, alertFaultUpdate, alertFaultAdded, alertSuccessAdded, alertFaultGetData } = useSnackBar();
     const [selectedTabIndex, setSelectedTabIndex] = useState<number>(0);
     const [openPaymentModal, setOpenPaymentModal] = useState(false);
     const [openOrderNowModal, setOpenOrderNowModal] = useState(false);
     const [openDeleteModal, setOpenDeleteModal] = useState(false);
     const [openCancelReceiptModal, setOpenCancelReceiptModal] = useState(false);
     const [isSelectedAtLeastOne, setIsSelectedAtLeastOne] = useState(null)
+    const [openMangerApprovalModal, setOpenMangerApprovalModal] = useState(false);
 
 
     useEffect(() => {
@@ -39,7 +42,7 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
 
     const onClickOpenOrderNowModal = () => {
         if (!isSelectedAtLeastOne) {
-            alertFault("please select at least one item")
+            alertFault("reports.pleaseSelectOneItem");
         }
         else {
             if (quoteItemValue?.client?.isCreateOrder) {
@@ -52,6 +55,7 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
         }
 
     };
+
     const onClickCloseOrderNowModal = () => {
         setOpenOrderNowModal(false);
     };
@@ -60,6 +64,7 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
         setSelectedTabIndex(selectedTabIndex);
         setOpenPaymentModal(true);
     };
+
     const onClickClosePaymentModal = () => {
         setOpenPaymentModal(false);
     };
@@ -67,6 +72,7 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     const onClickOpenDeleteModal = () => {
         setOpenDeleteModal(true);
     };
+
     const onClickCloseDeleteModal = () => {
         setOpenDeleteModal(false);
     };
@@ -74,19 +80,23 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     const onClickOpenCancelReceiptModal = () => {
         setOpenCancelReceiptModal(true);
     };
+
     const onClickCloseCancelReceiptModal = () => {
         setOpenCancelReceiptModal(false);
     };
 
+    const [loading, setLoading] = useState(false);
     const onClickConfirmWithoutNotification = async () => {
+        setLoading(true);
         const callBack = (res) => {
             if (res?.success) {
                 alertSuccessUpdate();
                 onClickCloseOrderNowModal();
-                navigate(`/board-missions?orderNumber=${res?.data?.number}`);
+                navigate(`/jobs?orderNumber=${res?.data?.number}`);
             } else {
                 alertFaultUpdate();
             }
+            setLoading(false);
         }
         await createOrderApi(callApi, callBack,
             {
@@ -96,14 +106,17 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     }
 
     const onClickConfirmWithNotification = async () => {
+        setLoading(true);
         const callBack = (res) => {
             if (res?.success) {
                 alertSuccessUpdate();
                 onClickCloseOrderNowModal();
-                navigate(`/board-missions?orderNumber=${res?.data?.number}`);
+                navigate(`/jobs?orderNumber=${res?.data?.number}`);
             } else {
                 alertFaultUpdate();
             }
+            setLoading(false);
+
         }
         await createOrderApi(callApi, callBack,
             {
@@ -192,7 +205,41 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     const isNewCreation = router?.query?.isNewCreation;
     const canEditDocument = quoteItemValue?.isEditable && CheckDocumentPermission(docType.toString(), DocumentPermission.EDIT_DOCUMENT);
     const showAddNewItemBtn = canEditDocument && docType !== DOCUMENT_TYPE.receipt
-    
+
+
+    const onClickCloseMangerApprovalModal = () => {
+        setOpenMangerApprovalModal(false);
+    };
+
+    const onClickOpenMangerApprovalModal = () => {
+        setOpenMangerApprovalModal(true);
+    };
+
+
+    const [managersOptions, setManagersOptions] = useState([]);
+    const getAllUsersCanApproveQuote = async () => {
+        const callBack = (res) => {
+            if (res.success) {
+                const mappedManagers = res.data.map(manager => ({
+                    value: manager.id,
+                    text: manager.name
+                }));
+                setManagersOptions(mappedManagers);
+            }
+        }
+        await getAllUsersCanApproveQuoteApi(callApi, callBack)
+    }
+
+    const onClickSendAndChat = async (managerIds: string[]) => {
+        const callBack = (res) => {
+            if (res?.success) {
+                push(`/messenger?dialogId=${res.data}`)
+            }
+            else
+            alertFaultSend();
+        };
+        await sendQuoteApprovalToManagerApi(callApi, callBack, { docType ,data: {managerIds, documentId: quoteItemValue?.id }});
+    };
 
     return {
         openOrderNowModal,
@@ -224,9 +271,15 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
         onClickCloseCancelReceiptModal,
         showAddNewItemBtn,
         canEditDocument,
-        isNewCreation
+        isNewCreation,
+        openMangerApprovalModal,
+        onClickCloseMangerApprovalModal,
+        onClickOpenMangerApprovalModal,
+        getAllUsersCanApproveQuote,
+        managersOptions,
+        onClickSendAndChat,
+        loading
     };
-
 };
 
 export { useButtonsContainer };

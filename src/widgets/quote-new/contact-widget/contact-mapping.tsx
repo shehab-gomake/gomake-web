@@ -81,7 +81,8 @@ const ContactMapping = ({
               ...item,
               contactMail: value?.mail,
               contactName: value?.name,
-              contactPhone: value?.phone
+              contactPhone: value?.phone,
+              contactID: value?.id
             });
             setIsUpdateContactName(null);
           }
@@ -99,9 +100,8 @@ const ContactMapping = ({
           changeItems(index, "contactPhone", e);
         }} />
       <InputUpdatedValues
-        value={
-          item?.contactMail !== null ? item?.contactMail : t("sales.quote.noMail")
-        }
+        value={item?.contactMail}
+        placeholder={item?.contactMail ? item?.contactMail : t("sales.quote.noMail")}
         label={t("sales.quote.contactEmail")}
         onBlur={() => onBlurContactEmail(item)}
         isUpdate={canEditContacts && isUpdateContactEmail}

@@ -6,7 +6,6 @@ import { useTranslation } from "react-i18next";
 import { useStyle } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/quantity-parameter/quantity-types/style";
 import { SecondaryButton } from "@/components/button/secondary-button";
 import { QuantityTypesTable } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/quantity-parameter/table/quantity-types-table";
-import { convertWidthToVW } from "@/utils/adapter";
 
 interface IQuantityTypesComponent { }
 const QuantityTypesComponent = ({ }: IQuantityTypesComponent) => {
@@ -18,7 +17,7 @@ const QuantityTypesComponent = ({ }: IQuantityTypesComponent) => {
     <Stack direction={"column"} height={"100%"} gap={"7px"}>
       <Stack direction={"row"} gap={"20%"} flexWrap={"wrap"}>
         {inputs.map((input) => (
-          <Stack width={convertWidthToVW(140)} paddingTop={"7px"}>
+          <Stack width={"30%"} paddingTop={"10px"} paddingBottom={"10px"}>
             <FormInput
               readonly={!!input.readonly}
               input={input}

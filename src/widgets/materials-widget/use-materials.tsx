@@ -29,6 +29,7 @@ import {
   materialsClientsState,
   materialsMachinesState,
   materialsUnCheckedState,
+  materialTypeTableState,
   openAddRowModalState,
   selectedSupplierIdState,
 } from "@/widgets/materials-widget/state";
@@ -92,6 +93,7 @@ const useMaterials = (isAdmin: boolean) => {
   );
   const [materialName, setMaterialName] = useState<string>();
   const setMaterialActions = useSetRecoilState(materialActionState);
+  const setMaterialTypeTable = useSetRecoilState(materialTypeTableState);
   const setDefaultSupplier = useSetRecoilState(selectedSupplierIdState);
   const [activeFilter, setActiveFilter] = useRecoilState(activeFilterState);
   const [materialFilter, setMaterialFilter] = useRecoilState(filterState);
@@ -140,7 +142,7 @@ const useMaterials = (isAdmin: boolean) => {
       if (res?.success) {
         setMaterialCategories(res?.data);
       } else {
-        push("/materials");
+        // push("/materials");
       }
     };
     if (isAdmin) {
@@ -152,20 +154,13 @@ const useMaterials = (isAdmin: boolean) => {
   const [selectedCategory, setSelectedCategory] = useState<any>();
   const materialsCategoriesList = useCallback(() => {
     return materialCategories.map((category) => ({
+      ...category,
       text: category.categoryName,
       value: category.categoryKey,
       icon: () => <SideLeftMenuWidget
         onClickOpenDeleteRowModal={onClickOpenDeleteRowModal}
         category={category}
       />
-      // icon: category.isDeletable
-      //   ? () => (
-      //     <SideLeftMenuWidget
-      //       onClickOpenDeleteRowModal={onClickOpenDeleteRowModal}
-      //       category={category}
-      //     />
-      //   )
-      //   : null,
     }));
   }, [materialCategories]);
 
@@ -177,6 +172,7 @@ const useMaterials = (isAdmin: boolean) => {
           (item) => item.key !== "Active"
         );
         setMaterialHeaders(updatedArray);
+        setMaterialTypeTable(res.data);
         setMaterialActions(res.data?.actions);
         setMaterialName(res.data?.materialTypeName);
       }

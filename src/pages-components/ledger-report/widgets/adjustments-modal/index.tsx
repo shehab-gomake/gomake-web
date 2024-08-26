@@ -1,14 +1,13 @@
 
-import { GoMakeDeleteModal, GoMakeModal, GomakePrimaryButton } from "@/components";
+import { GoMakeDeleteModal, GoMakeModal } from "@/components";
 import { PrimaryTable } from "@/components/tables/primary-table";
-
 import { TransferBalanceModal } from "../transfer-balance-modal";
-import { useadJustmentsModal } from "./use-adjustments-modal";
-
+import { useAdjustmentsModal } from "./use-adjustments-modal";
 import { useStyle } from "./style";
+import { SecondaryButton } from "@/components/button/secondary-button";
 
 const AdjustmentsLedgerReportModal = ({ openModal, onCloseModal, clientPaymentsList, getClientPaymentItems }) => {
-  const { clasess } = useStyle();
+  const { classes } = useStyle();
   const {
     getTableDataRows,
     calculateTotalPrice,
@@ -25,7 +24,7 @@ const AdjustmentsLedgerReportModal = ({ openModal, onCloseModal, clientPaymentsL
     openDeleteModal,
     openTransferModal,
     customer,
-  } = useadJustmentsModal({ clientPaymentsList, getClientPaymentItems })
+  } = useAdjustmentsModal({ clientPaymentsList, getClientPaymentItems })
 
   return (
     <>
@@ -33,19 +32,19 @@ const AdjustmentsLedgerReportModal = ({ openModal, onCloseModal, clientPaymentsL
         openModal={openModal}
         modalTitle={t("reports.adjustmentsLists")}
         onClose={onCloseModal}
-        insideStyle={clasess.insideStyle}
+        insideStyle={classes.insideStyle}
       >
-        <div style={clasess.mainContainer}>
+        <div style={classes.mainContainer}>
           <PrimaryTable
             rows={getTableDataRows()}
             headers={tableHeaders}
             maxHeight={610}
           />
-          <div style={clasess.totalPriceContainer}>{calculateTotalPrice().toFixed(2)} NIS</div>
-          <div style={clasess.btnsContainer}>
+          <div style={classes.totalPriceContainer}>{calculateTotalPrice().toFixed(3)} NIS</div>
+          <div style={classes.btnsContainer}>
             {btns.map((tab, index) => {
               return (
-                <GomakePrimaryButton key={index} onClick={tab.onclick} style={clasess.btnContainer}>{tab.name}</GomakePrimaryButton>
+                <SecondaryButton variant="contained" key={index} onClick={tab.onclick} style={classes.btnContainer}>{tab.name}</SecondaryButton>
               )
             })}
           </div>

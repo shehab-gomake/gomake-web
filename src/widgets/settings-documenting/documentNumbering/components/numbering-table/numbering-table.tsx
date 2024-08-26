@@ -11,7 +11,8 @@ const NumberingTable = () => {
 
     return (
         <>
-        <PrimaryTable stickyFirstCol={false} stickyHeader={false} rows={documentsNumbers} headers={tableHeaders}></PrimaryTable>
+        <PrimaryTable stickyFirstCol={false} stickyHeader={true} rows={documentsNumbers} headers={tableHeaders} maxHeight={700}
+        ></PrimaryTable>
         </>
     );
 }

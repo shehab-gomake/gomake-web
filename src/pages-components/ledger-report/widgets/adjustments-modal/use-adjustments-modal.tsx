@@ -1,28 +1,29 @@
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-
 import { Checkbox } from "@mui/material";
-
 import { useCustomerDropDownList, useGomakeAxios, useSnackBar } from "@/hooks";
 import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
 import { EHttpMethod } from "@/services/api-service/enums";
 import { GomakeTextInput } from "@/components";
+import { ERPDocumentsTypesEnum } from "@/enums";
+import { adaptPaddingRight } from "@/utils/adapter";
 
 export interface JustmentsModalProps {
   getClientPaymentItems: any;
   clientPaymentsList: any;
 }
 
-const useadJustmentsModal = ({ getClientPaymentItems, clientPaymentsList }: JustmentsModalProps) => {
+const useAdjustmentsModal = ({ getClientPaymentItems, clientPaymentsList }: JustmentsModalProps) => {
+  const { t } = useTranslation();
+  const direction = t('direction');
   const { customer, renderOptions, checkWhatRenderArray, handleCustomerChange } = useCustomerDropDownList()
   const { alertFaultUpdate, alertFaultDelete, alertFault, alertSuccess } = useSnackBar();
   const { callApi } = useGomakeAxios();
-  const { t } = useTranslation();
-
   const [openDeleteModal, setOpenDeleteModal] = useState<boolean>(false);
   const [openTransferModal, setOpenTransferModal] = useState<boolean>(false);
   const [selectedItems, setSelectedItems] = useState([]);
   const [inputErrors, setInputErrors] = useState([]);
+
   const onClickOpenDeleteModal = () => {
     if (selectedItems?.length > 0) {
       setOpenDeleteModal(true);
@@ -31,6 +32,7 @@ const useadJustmentsModal = ({ getClientPaymentItems, clientPaymentsList }: Just
       alertFault("reports.pleaseSelectOneItem");
     }
   };
+
   const onClickCloseDeleteModal = () => {
     setOpenDeleteModal(false);
   };
@@ -43,17 +45,20 @@ const useadJustmentsModal = ({ getClientPaymentItems, clientPaymentsList }: Just
       alertFault("reports.pleaseSelectOneItem");
     }
   };
+
   const onClickCloseTransferModal = () => {
     setOpenTransferModal(false);
   };
+
   const tableHeaders = [
-    t("reports.price"),
-    t("reports.fixedPrice"),
-    t("reports.documentDate"),
-    t("reports.details"),
+    "#",
     t("reports.documentNumber"),
-    ""
+    t("reports.documentType"),
+    t("reports.documentDate"),
+    t("reports.price"),
+    t("reports.adjustablePrice"),
   ];
+
   const internalReconciliationApi = useCallback(
     async () => {
       const res = await callApi(
@@ -83,11 +88,13 @@ const useadJustmentsModal = ({ getClientPaymentItems, clientPaymentsList }: Just
   const calculateTotalPrice = () => {
     return selectedItems.reduce((total, item) => total + item.price, 0);
   };
+
   useEffect(() => {
     if (clientPaymentsList.length > 0) {
       setInputErrors(Array(clientPaymentsList.length).fill(false))
     }
   }, [clientPaymentsList])
+
   const handlePriceChange = (index, newValue) => {
     const newList = [...clientPaymentsList];
     const currentItem = newList[index];
@@ -109,13 +116,25 @@ const useadJustmentsModal = ({ getClientPaymentItems, clientPaymentsList }: Just
     setInputErrors(newInputErrors);
     currentItem.price = newValue;
   };
+
   const getTableDataRows = useCallback(() => {
     return clientPaymentsList?.map((data, index) => [
-
+      <div>
+        <Checkbox
+          icon={<CheckboxIcon />}
+          checkedIcon={<CheckboxCheckedIcon />}
+          checked={data.isSelected}
+          onChange={() => toggleSelection(index)}
+        />
+      </div>,
+      data?.docNum,
+      t(`documentType.${ERPDocumentsTypesEnum[data?.type]}`),
+      data?.docDate?.split("T")[0],
+      data?.fixedPrice,
       <div key={inputErrors[index]}>
         <GomakeTextInput
           key={inputErrors[index]}
-          style={{ height: 40, marginLeft: 5 }}
+          style={{ height: 40, ...adaptPaddingRight(direction, 20), }}
           id={`priceInput-${index}`}
           type="number"
           InputProps={{ inputProps: { min: 0, max: 100 } }}
@@ -124,43 +143,36 @@ const useadJustmentsModal = ({ getClientPaymentItems, clientPaymentsList }: Just
           error={inputErrors[index]}
         />
       </div>,
-      data?.fixedPrice,
-      data?.docDate?.split("T")[0],
-      data?.text,
-      data?.docNum,
-      <div>
-        <Checkbox
-          icon={<CheckboxIcon />}
-          checkedIcon={<CheckboxCheckedIcon />}
-          checked={data.isSelected}
-          onChange={() => toggleSelection(index)}
-        />
-      </div>
-
     ]);
   }, [clientPaymentsList, inputErrors]);
+
   const onClickMatchItems = () => {
     if (selectedItems.length > 0 && calculateTotalPrice() === 0) {
       internalReconciliationApi()
+    }
+    else if (selectedItems.length > 0 && calculateTotalPrice() !== 0) {
+      alertFault("reports.matchTotalZeroErrorMsg")
     }
     else {
       alertFault("reports.matchErrorMsg");
     }
   }
+
   const btns = [
     {
-      name: t("reports.transferBalance"),
-      onclick: onClickOpenTransferModal
+      name: t("reports.match"),
+      onclick: onClickMatchItems
     },
     {
       name: t("reports.balanceCancellation"),
       onclick: onClickOpenDeleteModal
     },
     {
-      name: t("reports.match"),
-      onclick: onClickMatchItems
-    }
+      name: t("reports.transferBalance"),
+      onclick: onClickOpenTransferModal
+    },
   ]
+
   const cancelTransactionsApi = useCallback(
     async () => {
       const res = await callApi(
@@ -178,6 +190,7 @@ const useadJustmentsModal = ({ getClientPaymentItems, clientPaymentsList }: Just
     },
     [selectedItems]
   );
+
   const transferBalanceApi = useCallback(
     async () => {
       const res = await callApi(
@@ -197,6 +210,7 @@ const useadJustmentsModal = ({ getClientPaymentItems, clientPaymentsList }: Just
     },
     [selectedItems, customer]
   );
+
   return {
     getTableDataRows,
     calculateTotalPrice,
@@ -216,4 +230,4 @@ const useadJustmentsModal = ({ getClientPaymentItems, clientPaymentsList }: Just
   };
 };
 
-export { useadJustmentsModal };
+export { useAdjustmentsModal };

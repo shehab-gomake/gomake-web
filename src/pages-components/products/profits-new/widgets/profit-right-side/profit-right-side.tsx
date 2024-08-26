@@ -1,55 +1,55 @@
-import {DragDropContext, Draggable, Droppable} from "react-beautiful-dnd";
-import {useState} from "react";
-import {AccordionTable} from "@/components/tables/accordion-table";
-import {GoMakeDeleteModal} from "@/components";
-import {AdditionsAndExceptionsMapping} from "../additions-and-exceptions-mapping";
-import {PricingTableMappingMenu} from "../pricing-table-mapping-menu";
-import {PricingTableMapping} from "../pricing-table-mapping";
-import {ETypeException} from "../../enums/profites-enum";
-import {PricingTableMenu} from "../pricing-table-menu";
-import {ProfitRightSideProps} from "../../interface";
-import {MinimumWidget} from "../minimum-widget";
-import {AddRuleModal} from "../add-rule-modal";
-import {useStyle} from "./style";
-import {AdditinalProfitMenu} from "../additinal-profit-menu";
-import {useTranslation} from "react-i18next";
+import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
+import { useState } from "react";
+import { AccordionTable } from "@/components/tables/accordion-table";
+import { GoMakeDeleteModal } from "@/components";
+import { AdditionsAndExceptionsMapping } from "../additions-and-exceptions-mapping";
+import { PricingTableMappingMenu } from "../pricing-table-mapping-menu";
+import { PricingTableMapping } from "../pricing-table-mapping";
+import { ETypeException } from "../../enums/profites-enum";
+import { PricingTableMenu } from "../pricing-table-menu";
+import { ProfitRightSideProps } from "../../interface";
+import { MinimumWidget } from "../minimum-widget";
+import { AddRuleModal } from "../add-rule-modal";
+import { useStyle } from "./style";
+import { AdditinalProfitMenu } from "../additinal-profit-menu";
+import { useTranslation } from "react-i18next";
 
 const ProfitRightSideWidget = ({
-                                   minimumValue,
-                                   isUpdateMinimumValue,
-                                   onBlurMinimumValue,
-                                   setIsUpdateMinimumValue,
-                                   onInputChangeMinimumValue,
-                                   anchorElPricingTables,
-                                   openPricingTables,
-                                   handleClickPricingTables,
-                                   handleClosePricingTables,
-                                   anchorElPricingTablesMapping,
-                                   openPricingTablesMapping,
-                                   handleClickPricingTablesMapping,
-                                   handleClosePricingTablesMapping,
-                                   selectedPricingTableItems,
-                                   setSelectedPricingTableItems,
-                                   dataForExceptions,
-                                   dataForDefault,
-                                   dataForPricing,
-                                   onDragEnd,
-                                   deleteExceptionProfit,
-                                   selectedPricingBy,
-                                   actionProfitByActionId,
-                                   getProfitsPricingTables,
-                                   typeExceptionSelected,
-                                   setTypeExceptionSelected,
-                                   selectedAdditionalProfitRow,
-                                   setSelectedActionProfitRow,
-                                   anchorElAdditionalProfitMenu,
-                                   openAdditionalProfitMenu,
-                                   handleCloseAdditionalProfitMenu,
-                                   handleClickAdditionalProfitMenu,
-                                   ProfitCurrency,
-                               }: ProfitRightSideProps) => {
-    const {clasess} = useStyle();
-    const {t} = useTranslation();
+    minimumValue,
+    isUpdateMinimumValue,
+    onBlurMinimumValue,
+    setIsUpdateMinimumValue,
+    onInputChangeMinimumValue,
+    anchorElPricingTables,
+    openPricingTables,
+    handleClickPricingTables,
+    handleClosePricingTables,
+    anchorElPricingTablesMapping,
+    openPricingTablesMapping,
+    handleClickPricingTablesMapping,
+    handleClosePricingTablesMapping,
+    selectedPricingTableItems,
+    setSelectedPricingTableItems,
+    dataForExceptions,
+    dataForDefault,
+    dataForPricing,
+    onDragEnd,
+    deleteExceptionProfit,
+    selectedPricingBy,
+    actionProfitByActionId,
+    getProfitsPricingTables,
+    typeExceptionSelected,
+    setTypeExceptionSelected,
+    selectedAdditionalProfitRow,
+    setSelectedActionProfitRow,
+    anchorElAdditionalProfitMenu,
+    openAdditionalProfitMenu,
+    handleCloseAdditionalProfitMenu,
+    handleClickAdditionalProfitMenu,
+    ProfitCurrency,
+}: ProfitRightSideProps) => {
+    const { clasess } = useStyle();
+    const { t } = useTranslation();
     const [openDeleteRowModal, setOpenDeleteRowModal] = useState<boolean>(false);
     const [openDeleteAdditionalRowModal, setOpenDeleteAdditionalRowModal] =
         useState<boolean>(false);
@@ -84,7 +84,7 @@ const ProfitRightSideWidget = ({
                         setTypeExceptionSelected(ETypeException.NEWBASE);
                 }}
             >
-                <div style={{width: "100%"}}>
+                <div style={{ width: "100%" }}>
                     <DragDropContext onDragEnd={onDragEnd}>
                         <Droppable droppableId="droppable">
                             {(provided) => (
@@ -141,7 +141,7 @@ const ProfitRightSideWidget = ({
                 </div>
                 {dataForDefault?.map((item) => {
                     return (
-                        <div key={item.id} style={{width: "100%"}}>
+                        <div key={item.id} style={{ width: "100%" }}>
                             <PricingTableMapping
                                 item={item}
                                 handleClickPricingTablesMapping={
@@ -154,7 +154,7 @@ const ProfitRightSideWidget = ({
                     );
                 })}
             </AccordionTable>
-            <div data-tour={'profitStep3'} style={{width: '100%'}}>
+            <div data-tour={'profitStep3'} style={{ width: '100%' }}>
                 <AccordionTable
                     title={t("products.profits.pricingListWidget.additionsAndExceptions")}
                     onclickOpenMenu={(e) => {
@@ -164,7 +164,7 @@ const ProfitRightSideWidget = ({
                 >
                     {dataForExceptions?.map((item) => {
                         return (
-                            <div key={item.id} style={{width: "100%"}}>
+                            <div key={item.id} style={{ width: "100%" }}>
                                 <AdditionsAndExceptionsMapping
                                     item={item}
                                     handleClickPricingTablesMapping={
@@ -179,7 +179,7 @@ const ProfitRightSideWidget = ({
                     })}
                 </AccordionTable>
             </div>
-            <div data-tour={'profitStep4'} style={{width: '100%'}}>
+            <div data-tour={'profitStep4'} style={{ width: '100%' }}>
                 <MinimumWidget
                     minimumValue={minimumValue}
                     isUpdateMinimumValue={isUpdateMinimumValue}
@@ -237,4 +237,4 @@ const ProfitRightSideWidget = ({
         </div>
     );
 };
-export {ProfitRightSideWidget};
+export { ProfitRightSideWidget };

@@ -91,6 +91,9 @@ export interface IWorkFlowAction {
   materials?:any
   employeeId?:string,
   employeeName?:string
+  isNeedEmployee?:boolean,
+  isNeedMachine?:boolean,
+  isNeedMaterial?:boolean,
 }
 
 export interface IOutput {
@@ -125,6 +128,8 @@ export interface IRectangle {
   width: number;
   length: number;
   color?: string;
+  borderThickness?: number;
+  borderColor?: string;
 }
 export interface ICalculationProgress {
   totalWorkFlowsCount: number;
@@ -146,4 +151,38 @@ export interface IExceptionsLog{
     exceptionKey:string;
     title?:string;
     exceptionType?:ECalculationLogType
+}
+
+interface TableHeader {
+  key: string;
+  fontColor: string;
+  fontStyle: number;
+}
+
+interface TableRowCell {
+  values: string[];
+  addionalNote: string | null;
+  fontColor: string;
+  fontStyle: number;
+}
+
+export interface RollingDeployment {
+  name?: string;
+  index?: number | null;
+  values?: any | null;
+  outSourceValues?: any | null;
+  rectangles?: any | null;
+  useableWasteRectangels?: any | null;
+  unuseableWasteRectangels?: any | null;
+  materialWidth?: number;
+  materialLength?: number;
+  unitType?: number;
+  defaultUnit?: any | null;
+  id?: string;
+  propertyType?: number;
+  htmlElementType?: number;
+  isEditable?: boolean;
+  displayInOutputId?: string | null;
+  tableHeaders?: TableHeader[];
+  tableRows?: TableRowCell[][];
 }

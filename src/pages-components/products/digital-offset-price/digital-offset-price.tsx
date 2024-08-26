@@ -33,8 +33,6 @@ const PriceListPageWidget = ({ widgetType }) => {
         handleChange,
         _renderParameterType,
         _getParameter,
-        renderOptions,
-        checkWhatRenderArray,
         navigateForRouter,
         updateQuoteItem,
         setUrgentOrder,
@@ -49,6 +47,7 @@ const PriceListPageWidget = ({ widgetType }) => {
         multiParameterModal,
         calculationServerErrorState,
         settingParameters,
+        setSettingParameters,
         priceRecovery,
         graphicNotes,
         printingNotes,
@@ -63,7 +62,6 @@ const PriceListPageWidget = ({ widgetType }) => {
         expanded,
         clientDefaultValue,
         clientTypeDefaultValue,
-        clientTypesValue,
         pricingDefaultValue,
         errorMsg,
         relatedParameters,
@@ -232,13 +230,11 @@ const PriceListPageWidget = ({ widgetType }) => {
         <div>
             {productTemplate?.sections?.length > 0 && (
                 <div style={clasess.mainContainer}>
-                    <div>
-                        <HeaderTitle
-                            title={productTemplate?.name}
-                            marginTop={1}
-                            marginBottom={24}
-                        />
-                    </div>
+                    <HeaderTitle
+                        title={productTemplate?.name}
+                        marginTop={1}
+                        marginBottom={24}
+                    />
                     <div style={clasess.mainRowContainer}>
                         <div style={clasess.leftSideContainer}>
                             <div style={clasess.tabsContainer}>
@@ -265,14 +261,13 @@ const PriceListPageWidget = ({ widgetType }) => {
                                 </Tabs>
                             </div>
 
-                            <div style={{ height: 666, overflow: "scroll", width: "calc(100% - 330px)" }}>
+                            <div className={`custom-scrollbar`} style={{ height: 650, overflow: "scroll", width: "calc(100% - 330px)" }}>
                                 <div style={clasess.sectionsContainer}>
                                     {[...visibleSections, PricingTab]?.map(
                                         (section: any, index: number) => {
                                             if (index === activeIndex) {
                                                 if (
-                                                    section.name ===
-                                                    t("products.offsetPrice.admin.Pricing")
+                                                    section.name === t("products.offsetPrice.admin.Pricing")
                                                 ) {
                                                     return (
                                                         <PricingWidget
@@ -335,10 +330,7 @@ const PriceListPageWidget = ({ widgetType }) => {
                         <RightSideWidget
                             clasess={clasess}
                             clientDefaultValue={clientDefaultValue}
-                            renderOptions={renderOptions}
-                            checkWhatRenderArray={checkWhatRenderArray}
                             clientTypeDefaultValue={clientTypeDefaultValue}
-                            clientTypesValue={clientTypesValue}
                             template={productTemplate}
                             tabs={tabs}
                             activeTab={activeTab}
@@ -407,27 +399,24 @@ const PriceListPageWidget = ({ widgetType }) => {
                                 ) : null}
                             </div>
                         </div>
-                        {
-                            viewWorkFlow === EPricingViews.OUTSOURCE_WORKFLOW ? <div style={{ width: 220, height: 40, marginLeft: 55, marginRight: 55 }} /> : <div style={{ width: 220, height: 40, marginLeft: 55, marginRight: 55 }}>
-                                {widgetType === EWidgetProductType.EDIT ? (
-                                    <GomakePrimaryButton
-                                        style={clasess.addOrderBtn}
-                                        onClick={updateQuoteItem}
-                                    >
-                                        {t("materials.buttons.edit")}
-                                    </GomakePrimaryButton>
-                                ) : (
-                                    <GomakePrimaryButton
-                                        data-tour={'addPricingBtn'}
-                                        style={clasess.addOrderBtn}
-                                        onClick={navigateForRouter}
-                                    >
-                                        {t("products.offsetPrice.admin.addOrder")}
-                                    </GomakePrimaryButton>
-                                )}
-                            </div>
-                        }
-
+                        <div style={{ width: 220, height: 40, marginLeft: 55, marginRight: 55 }}>
+                            {widgetType === EWidgetProductType.EDIT ? (
+                                <GomakePrimaryButton
+                                    style={clasess.addOrderBtn}
+                                    onClick={updateQuoteItem}
+                                >
+                                    {t("materials.buttons.edit")}
+                                </GomakePrimaryButton>
+                            ) : (
+                                <GomakePrimaryButton
+                                    data-tour={'addPricingBtn'}
+                                    style={clasess.addOrderBtn}
+                                    onClick={navigateForRouter}
+                                >
+                                    {t("products.offsetPrice.admin.addOrder")}
+                                </GomakePrimaryButton>
+                            )}
+                        </div>
                     </div>
                 </div>
             )}
@@ -444,13 +433,14 @@ const PriceListPageWidget = ({ widgetType }) => {
                 isChargeForNewDie={isChargeForNewDie}
                 setIsChargeForNewDie={setIsChargeForNewDie}
                 straightKnife={straightKnife}
+                isParameterSettings={false}
             />
             <MultiParameterModal
                 openModal={multiParameterModal}
                 onClose={onCloseMultiParameterModal}
-                modalTitle={""}
                 settingParameters={settingParameters}
                 _renderParameterType={_renderParameterType}
+                setSettingParameters={setSettingParameters}
             />
         </div>
     );

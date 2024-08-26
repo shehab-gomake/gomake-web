@@ -1,6 +1,7 @@
 import {emailRegex} from "@/utils/regex";
 
-const generalInputs = (typeClient, state) => {
+const generalInputs = (typeClient, state , languagesOptions) => {
+
   return [
     {
       name: "phone1",
@@ -13,7 +14,6 @@ const generalInputs = (typeClient, state) => {
       value: state?.tel1,
       isValid: true,
     },
-
     {
       name: "mainContactName",
       label: "customers.modal.mainContactName",
@@ -43,8 +43,7 @@ const generalInputs = (typeClient, state) => {
       placeholder: "customers.modal.language",
       required: false,
       parameterKey: "clientLang",
-      options: [],
-      optionsUrl: "/v1/enum/get-enums/languages",
+      options: languagesOptions,
       value: state?.clientLang,
       isValid: true,
     },

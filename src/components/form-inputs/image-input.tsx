@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Stack from "@mui/material/Stack";
 import CloudUploadOutlinedIcon from "@mui/icons-material/CloudUploadOutlined";
 import Button from "@mui/material/Button";
@@ -14,6 +14,11 @@ interface IProps {
 
 const ImageUploadComponent = ({ onChange, value, size = 100 }: IProps) => {
   const [selectedFile, setSelectedFile] = useState(value);
+  useEffect(() => {
+    if (value) {
+      setSelectedFile(value)
+    }
+  }, [value])
   const { classes } = useStyle();
   const inputRef = useRef(null);
   const { t } = useTranslation();
@@ -53,9 +58,9 @@ const ImageUploadComponent = ({ onChange, value, size = 100 }: IProps) => {
         onDragOver={(e) => e.preventDefault()}
       >
         {selectedFile ? (
-          <Avatar src={selectedFile} sx={{ width: size, height: size }} />
+          <Avatar src={selectedFile} sx={{ width: 100, height: 100 }} />
         ) : (
-          <CloudUploadOutlinedIcon fontSize={"large"} color={"primary"} />
+          <CloudUploadOutlinedIcon fontSize="large" color="primary" />
         )}
       </div>
       <input

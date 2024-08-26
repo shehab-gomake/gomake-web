@@ -71,6 +71,10 @@ export const isEditCategoryModalState = atom<boolean>({
   key: "isEditCategoryModalState",
   default: false,
 });
+export const isDuplicateCategoryModalState = atom<boolean>({
+  key: "isDuplicateCategoryModalState",
+  default: false,
+});
 export const selectedCategoryModalState = atom({
   key: "selectedCategoryModalState",
   default: {},
@@ -118,6 +122,10 @@ export const materialsClientsState = atom<[]>({
   default: [],
 });
 
+export const materialsParametersState = atom<[]>({
+  key: "materialsParametersState",
+  default: [],
+});
 
 export const materialsTablePageState = atom<number>({
   key: "materialsTablePageState",
@@ -135,4 +143,9 @@ export const materialsUnCheckedState = atom<string[]>({
 export const selectedMaterialIdForUpdateState = atom<string>({
     key: "selectedMaterialIdForUpdateState",
     default: "",
+});
+
+export const materialTypeTableState = atom<any>({
+  key: "materialTypeTableState",
+  default: {},
 });

@@ -108,6 +108,19 @@ const rowInputs = (
             isValid: true,
             multiple: true,
           };
+        case "NOTE_BOOK_TYPES":
+          return {
+            name: header?.key,
+            label: newMaterialHeaders ? null : header?.value,
+            type: "select",
+            multiple: true,
+            placeholder: header?.value,
+            required: false,
+            parameterKey: header?.key,
+            options: [],
+            value: "",
+            isValid: true,
+          };
         default:
           if (EDataTypeEnum[header?.inputType] === "IMAGE") return null;
           else
