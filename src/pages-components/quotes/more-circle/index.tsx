@@ -12,7 +12,6 @@ const MoreMenuWidget = ({
   onClickDuplicate,
   onClickLoggers,
   onClickOpenIrrelevantModal,
-  CloseDocument,
   onClickSendPayment,
   onClickOpenCloseOrderModal,
   onClickOpenCloseOrderNotesModal
@@ -21,16 +20,15 @@ const MoreMenuWidget = ({
   const { t } = useTranslation();
   const { getMenuList } = useMoreCircle();
   const menuList = getMenuList({
-    t,
     quote,
     documentType,
     onClickOpenModal,
     onClickPdf,
     onClickDuplicate,
     onClickLoggers,
-    onClickSendPayment,
     t,
     onClickOpenIrrelevantModal,
+    onClickSendPayment,
     onClickOpenCloseOrderModal,
     onClickOpenCloseOrderNotesModal
   });

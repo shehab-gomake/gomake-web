@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { DELIVERY_NOTE_STATUSES, LogActionType, QUOTE_STATUSES } from "./enums";
 import { MoreMenuWidget } from "./more-circle";
 import { getAllProductsForDropDownList, getAndSetAllCustomers, getAndSetClientTypes } from "@/services/hooks";
-import { useSetRecoilState, useRecoilValue } from "recoil";
+import { useSetRecoilState, useRecoilValue, useRecoilState } from "recoil";
 import { agentsCategoriesState, clientTypesCategoriesState } from "@/pages/customers/customer-states";
 import { getAndSetEmployees2 } from "@/services/api-service/customers/employees-api";
 import { useDebounce } from "@/utils/use-debounce";
@@ -104,8 +104,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const [productIds, setProductIds] = useState<string[]>([]);
   const [minPrice, setMinPrice] = useState('');
   const [maxPrice, setMaxPrice] = useState('');
-
-
   const [openCloseOrderNotesModal, setOpenCloseOrderNotesModal] = useState(false)
   const [selectedQuoteItemValue, setSelectedQuoteItemValue] = useState()
   const [documentCloseNumber, setDocumentCloseNumber] = useState("");
@@ -369,9 +367,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 onClickOpenPriceModal={onClickOpenPriceModal}
                 onClickOpenCloseOrderModal={onClickOpenCloseOrderModal}
                 onClickOpenCloseOrderNotesModal={onClickOpenCloseOrderNotesModal}
-                CloseDocument={CloseDocument}
                 onClickSendPayment={onClickSendPayment}
-
               />,
             ];
           } else {
