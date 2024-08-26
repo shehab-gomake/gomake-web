@@ -68,11 +68,11 @@ const EmailSettings = ({ onClickSave }: IProps) => {
             </div>
             <div style={classes.subSection}>
                 <h3 style={classes.subSectionHeader}>{t("mailingSettings.subject")}</h3>
-                <QuillEditor headerEditor={EditorTYPE.SUBJECT} ></QuillEditor>
+                <QuillEditor value={subject} setValue={setSubject} ></QuillEditor>
             </div>
-            <div style={classes.subSection} key={body}>
+            <div style={classes.subSection}>
                 <h3 style={classes.subSectionHeader} >{t("mailingSettings.body")}</h3>
-                <QuillEditor headerEditor={EditorTYPE.BODY} ></QuillEditor>
+                <QuillEditor value={body} setValue={setBody} ></QuillEditor>
             </div>
             <div style={classes.subSection}>
                 <h3 style={classes.subSectionHeader}>{t("mailingSettings.attachment")}</h3>

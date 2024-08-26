@@ -58,26 +58,20 @@ const useStyle = () => {
                 color: primaryColor(900),
                 width: "810px"
             },
-            myEditorSubject: {
-                height: convertHeightToVH(150),
+            myEditor: {
+                height:200,
                 borderRadius: "0px 0px 12px 12px",
                 borderColor: "#9695C7",
                 ...FONT_FAMILY.Lexend(400, 16),
                 lineHeight: "20px",
                 color: primaryColor(900),
             },
-            myEditorBody: {
-                height: convertHeightToVH(300),
-                borderRadius: "0px 0px 12px 12px",
-                borderColor: "#9695C7",
-                ...FONT_FAMILY.Lexend(400, 16),
-                lineHeight: "20px",
-                color: primaryColor(900),
-            },
+          
             variableStyle: {
                 ...FONT_FAMILY.Lexend(400, 13),
                 display: "flex",
-                width: "120px",
+                width: "200px",
+                minWidth: 120,
                 height: "24px",
                 borderRadius: "4px",
                 background: "#FFFFFF",
@@ -87,6 +81,8 @@ const useStyle = () => {
                 margin: "4px",
                 border: "1px solid rgb(130, 131, 190)",
                 alignItems: "center",
+                textAlign: "center" as"center",
+                cursor: "pointer"
             },
             variablesContainer: {
                 paddingTop: "3px",
