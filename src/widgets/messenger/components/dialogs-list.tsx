@@ -22,9 +22,10 @@ export interface IProps {
     selectedDialogId?: string;
     unRead?: number;
     onClickAddDialog: () => void;
+    isMobile?: boolean;
 }
 
-const DialogList = ({onSelectDialog, dialogs, selectedDialogId, onClickAddDialog}: IProps) => {
+const DialogList = ({onSelectDialog, dialogs, selectedDialogId, onClickAddDialog, isMobile}: IProps) => {
     const [filter, setFilter] = useState<string>('');
     const {t} = useTranslation();
     const {primaryColor} = useGomakeTheme();
@@ -41,24 +42,15 @@ const DialogList = ({onSelectDialog, dialogs, selectedDialogId, onClickAddDialog
     return (
         <Stack style={{backgroundColor: '#FAFAFA'}} minHeight={'100%'} flex={1} padding={'12px'} gap={'12px'} overflow={'hidden'}>
             <Stack padding={'12px'} direction={'row'} alignItems={'center'} justifyContent={'space-between'}>
-                <Stack direction={'row'} alignItems={'center'} gap={'10px'}>
+                <Stack direction={'row'} alignItems={'center'} gap={'10px'} justifyContent={ isMobile ? 'center' : 'flex-start'} width={'100%'}>
                     <h3 style={{color: primaryColor(600), ...FONT_FAMILY.Lexend(600, 24)}}>{t('messenger.dialogsTitle')}</h3>
-                    {/*<div style={{*/}
-                    {/*    width: '24px',*/}
-                    {/*    height: '24px',*/}
-                    {/*    display: 'flex',*/}
-                    {/*    justifyContent: 'center',*/}
-                    {/*    alignItems: 'center',*/}
-                    {/*    borderRadius: '50%',*/}
-                    {/*    backgroundColor: '#EDF2F7',*/}
-                    {/*}}>{unRead}</div>*/}
                 </Stack>
-                <IconButton onClick={onClickAddDialog} style={{
+                {!isMobile && <IconButton onClick={onClickAddDialog} style={{
                     backgroundColor: 'none',
                     color: primaryColor(600),
                     height: 30,
                     width: 30, ...FONT_FAMILY.Lexend(600, 24)
-                }}>+</IconButton>
+                }}>+</IconButton>}
             </Stack>
             <Divider/>
             <SearchInputComponent bgColor={'#F3F3F3'} onChange={setFilter}/>

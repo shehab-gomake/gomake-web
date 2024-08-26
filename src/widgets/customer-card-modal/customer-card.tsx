@@ -27,6 +27,8 @@ import { PermissionCheck } from "@/components/CheckPermission/check-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { ITab } from "@/components/tabs/interface";
 import { PrimaryTabsComponent } from "@/components/tabs/primary-tabs";
+import { AccountingTab } from "./components/accounting-tab";
+import { GeneralTab } from "./components/general-tab/form";
 
 interface IProps {
   isValidCustomer?: (
@@ -161,12 +163,12 @@ const CustomerCardWidget = ({
   };
 
   const renderAddButton = (onClick, labelKey) => (
-    <a style={classes.addNewStyle} onClick={onClick}>
-      <AddIcon />
-      <button style={classes.buttonsStyle}>
-        {t(labelKey)}
-      </button>
-    </a>
+    <div style={classes.addNewStyle}>
+    <AddIcon onClick={onClick} />
+    <button style={classes.buttonsStyle} onClick={onClick}>
+      {t(labelKey)}
+    </button>
+  </div>
   );
 
   const renderTableSearch = <>{(isFromHomePage && showTable) &&
@@ -185,69 +187,15 @@ const CustomerCardWidget = ({
     {
       title: t("customers.modal.general"),
       component: (
-        <div style={classes.tabsContainer}>
-          <div style={classes.customerInfoStyle}>
-            {generalInputs(typeClient, customer, languagesOptions).map((item) => (
-              <div style={{ marginBottom: 10 }}>
-                <FormInput
-                  key={"general-input"}
-                  input={item as IInput}
-                  changeState={onChangeInputs}
-                  error={false}
-                  readonly={false}
-                />
-              </div>
-            ))}
-          </div>
-          <div>
-            <Stack
-              direction={"row"}
-              marginTop={"8px"}
-              marginBottom={"8px"}
-              gap="20px"
-            >
-              {renderTabPanelTextArea(
-                t("customers.modal.generalComment"),
-                customer?.generalNotes,
-                (e) => setCustomer({ ...customer, generalNotes: e.target.value })
-              )}
-              {renderTabPanelTextArea(
-                t("customers.modal.orderOpeningNotes"),
-                customer?.newItemNotes,
-                (e) => setCustomer({ ...customer, newItemNotes: e.target.value })
-              )}
-              {renderTabPanelTextArea(
-                t("customers.modal.orderClosingNotes"),
-                customer?.closeOrderNotes,
-                (e) =>
-                  setCustomer({ ...customer, closeOrderNotes: e.target.value })
-              )}
-            </Stack>
-            {codeFlag && (
-              <>
-                <Stack direction={"row"}>
-                  <span style={classes.lastOrderDetails} >
-                    {t("customers.modal.lastOrderDetails")}
-                  </span>
-                </Stack>
-                <div style={classes.customerInfoStyle}>
-                  {lastOrderInputs(customer).map((item) => (
-                    <div style={{ marginBottom: 10 }}>
-                      <FormInput
-                        key={"last-order-details-input"}
-                        input={item as IInput}
-                        changeState={onChangeInputs}
-                        error={false}
-                        readonly={!!item.readonly}
-                      />
-                    </div>
-                  ))}
-                </div>
-              </>
-            )}
-          </div>
-          {renderTableSearch}
-        </div>
+        <GeneralTab
+          customer={customer}
+          setCustomer={setCustomer}
+          codeFlag={codeFlag}
+          onChangeInputs={onChangeInputs}
+          typeClient={typeClient}
+          renderTabPanelTextArea={renderTabPanelTextArea}
+          languagesOptions={languagesOptions}
+          renderTableSearch={renderTableSearch} />
       ),
     },
     {
@@ -292,6 +240,12 @@ const CustomerCardWidget = ({
         </Stack>
       ),
     },
+    {
+      title: t("customers.modal.accounting"),
+      component: (
+        <AccountingTab clientType={typeClient} onChangeInputs={onChangeInputs} state={customer} />
+      ),
+    },
     typeClient === CLIENT_TYPE.CUSTOMER && {
       title: t("customers.modal.gomakeUsers"),
       component: (
@@ -321,7 +275,7 @@ const CustomerCardWidget = ({
       onClose={handleClose}
       insideStyle={classes.insideStyle}
     >
-      <div style={{ display:"flex",flexDirection:"column",width: "100%", height: "100%", overflow: "hidden", justifyContent:"flex-end"}}>
+      <div style={{ display: "flex", flexDirection: "column", width: "100%", height: "100%", overflow: "hidden", justifyContent: "flex-end" }}>
         <div style={classes.mainContainerStyle} >
           <Stack direction={"row"}>
             <span style={classes.subTitleStyle}>
@@ -385,32 +339,32 @@ const CustomerCardWidget = ({
           <PrimaryTabsComponent variant="ButtonedTabs" tabs={tabs} withBackGround={true} />
         </div>
         <div style={classes.footerStyle}>
-            {isFromHomePage && !showTable ?
-              <SecondaryButton variant="contained" style={{ width: "fit-content" }} onClick={handleShowTable} >{t("customers.buttons.search")}</SecondaryButton>
-              :
-              showAddButton && (
-                <SecondaryButton variant="contained" style={{ width: "fit-content" }}
-                  onClick={handleAddCustomer}
-                >
-                  {typeClient == "C"
-                    ? t("customers.buttons.addCustomer")
-                    : t("suppliers.buttons.addSupplier")}
-                </SecondaryButton>
-              )
-            }
-            <PermissionCheck userPermission={Permissions.EDIT_CLIENT}>
-              {showUpdateButton && (
-                <SecondaryButton variant="contained"
-                  style={{ width: "fit-content" }}
-                  onClick={handleEditCustomer}
-                >
-                  {typeClient == "C"
-                    ? t("customers.buttons.updateChanges")
-                    : t("suppliers.buttons.updateChanges")}
-                </SecondaryButton>
-              )}
-            </PermissionCheck>
-          </div>
+          {isFromHomePage && !showTable ?
+            <SecondaryButton variant="contained" style={{ width: "fit-content" }} onClick={handleShowTable} >{t("customers.buttons.search")}</SecondaryButton>
+            :
+            showAddButton && (
+              <SecondaryButton variant="contained" style={{ width: "fit-content" }}
+                onClick={handleAddCustomer}
+              >
+                {typeClient == "C"
+                  ? t("customers.buttons.addCustomer")
+                  : t("suppliers.buttons.addSupplier")}
+              </SecondaryButton>
+            )
+          }
+          <PermissionCheck userPermission={Permissions.EDIT_CLIENT}>
+            {showUpdateButton && (
+              <SecondaryButton variant="contained"
+                style={{ width: "fit-content" }}
+                onClick={handleEditCustomer}
+              >
+                {typeClient == "C"
+                  ? t("customers.buttons.updateChanges")
+                  : t("suppliers.buttons.updateChanges")}
+              </SecondaryButton>
+            )}
+          </PermissionCheck>
+        </div>
       </div>
       <GoMakeModal
         insideStyle={classes.secondInsideStyle}

@@ -80,6 +80,17 @@ const useQuickBlox = () => {
             })
         })
     }
+    const deleteMessage = (messageId: string): Promise<string> => {
+        return new Promise((resolve, reject) => {
+            QB.chat.message.delete(messageId, {force: 1},  (e, r) => {
+                if (e) {
+                    reject(e);
+                } else {
+                    resolve(r)
+                }
+            })
+        })
+    }
 
     //Messages Files
     const uploadFile = (params): Promise<{ uid: string; content_type: string; size: number; name: string }> => {
@@ -161,7 +172,8 @@ const useQuickBlox = () => {
     const messages = {
         send: sendMessage,
         uploadFile,
-        getAttachmentUrl
+        getAttachmentUrl,
+        delete: deleteMessage
 
     }
     const systemMessage = {

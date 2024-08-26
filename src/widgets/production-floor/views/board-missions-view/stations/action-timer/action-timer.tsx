@@ -5,16 +5,21 @@ import {CircularProgress, IconButton} from "@mui/material";
 import PlayCircleIcon from '@mui/icons-material/PlayCircle';
 import PauseCircleIcon from '@mui/icons-material/PauseCircle';
 import {FONT_FAMILY} from "@/utils/font-family";
-import { Permissions } from "@/components/CheckPermission/enum";
-import { PermissionCheck } from "@/components/CheckPermission/check-permission";
+import {Permissions} from "@/components/CheckPermission/enum";
+import {PermissionCheck} from "@/components/CheckPermission/check-permission";
+import {useRecoilState} from "recoil";
+import {boardMissionsDetailsState} from "@/widgets/production-floor/state/boards";
 
-interface IProps extends IBoardMissionsStationTimer{
+interface IProps extends IBoardMissionsStationTimer {
     onToggle: () => void;
     loading: boolean;
+    actionId: string;
 }
-const ActionTimer = ({isTimerRunning, totalRunningTime, onToggle, loading}: IProps) => {
+
+const ActionTimer = ({isTimerRunning, totalRunningTime, onToggle, loading, actionId}: IProps) => {
     const [seconds, setSeconds] = useState<number>(0);
     const [isActive, setIsActive] = useState(false);
+    const [bordMissionsDetails] = useRecoilState(boardMissionsDetailsState);
     useEffect(() => {
         let interval = null;
 
@@ -53,14 +58,19 @@ const ActionTimer = ({isTimerRunning, totalRunningTime, onToggle, loading}: IPro
         <Stack direction={'row'} alignItems={'center'}>
             <span style={{...FONT_FAMILY.Inter(600, 14), color: '#344054'}}>{formatTime()}</span>
             <PermissionCheck userPermission={Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR}>
-            <IconButton onClick={(e) => {
-                e.stopPropagation();
-                onToggle();
-                }}>
                 {
-                    loading ? <CircularProgress size={15}/> : isActive ? <PauseCircleIcon style={{color: '#43459D'}}/> : <PlayCircleIcon style={{color: '#43459D'}}/>
+                    actionId === bordMissionsDetails.currentBoardMissionActionId &&
+                    <IconButton onClick={(e) => {
+                        e.stopPropagation();
+                        onToggle();
+                    }}>
+                        {
+                            loading ? <CircularProgress size={15}/> : isActive ?
+                                <PauseCircleIcon style={{color: '#43459D'}}/> :
+                                <PlayCircleIcon style={{color: '#43459D'}}/>
+                        }
+                    </IconButton>
                 }
-            </IconButton>
             </PermissionCheck>
         </Stack>
     )
