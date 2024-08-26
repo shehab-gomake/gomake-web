@@ -128,7 +128,7 @@ export const _renderStatus = (docType: DOCUMENT_TYPE, document: any, t: any, nav
 
     // Handle status with hyphen (-)
     const statusParts = document?.statusTitleText?.split('-');
-    const translatedStatus = statusParts.length > 0 ? t(`documentStatus.${statusParts[0]}`) : '';
+    const translatedStatus = statusParts?.length > 0 ? t(`documentStatus.${statusParts[0]}`) : '';
 
     if (document?.statusTitleText === openStatus ||
       document?.statusTitleText === "DeliveryNote.Open" ||
@@ -231,7 +231,8 @@ export const _renderStatus = (docType: DOCUMENT_TYPE, document: any, t: any, nav
     return (
       <div>
         <div style={{ fontWeight: 'bold' }}>
-          {translatedStatus}{statusParts.length > 1 ? ` - ${statusParts.slice(1).join('-')}` : ''}
+          {translatedStatus}
+          {statusParts && statusParts?.length > 1 ? ` - ${statusParts.slice(1).join('-')}` : ''}
         </div>
         {statusContent}
       </div>
