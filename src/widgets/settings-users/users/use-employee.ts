@@ -1,17 +1,17 @@
-import {useRecoilState} from "recoil";
-import {employeeState, initState} from "@/store/employee-state";
-import {useGomakeAxios, useSnackBar} from "@/hooks";
-import {useCallback, useState} from "react";
+import { useRecoilState } from "recoil";
+import { employeeState, initState } from "@/store/employee-state";
+import { useGomakeAxios, useSnackBar } from "@/hooks";
+import { useCallback, useState } from "react";
 
-import {useTranslation} from "react-i18next";
+import { useTranslation } from "react-i18next";
 import * as XLSX from 'xlsx/xlsx.mjs';
-import {saveAs} from 'file-saver';
-import {EmployeeActions} from "@/widgets/settings-users/users/enums/employee-actions";
-import {IUser} from "@/widgets/settings-users/users/interface/user";
-import {addEmployeeOpenModalState, employeeActionState} from "@/widgets/settings-users/state/open-modat-state";
-import {IUserData} from "@/widgets/settings-users/users/interface/employee";
-import {usersArrayState} from "@/widgets/settings-users/state/users-state";
-import {emailRegex} from "@/utils/regex";
+import { saveAs } from 'file-saver';
+import { EmployeeActions } from "@/widgets/settings-users/users/enums/employee-actions";
+import { IUser } from "@/widgets/settings-users/users/interface/user";
+import { addEmployeeOpenModalState, employeeActionState } from "@/widgets/settings-users/state/open-modat-state";
+import { IUserData } from "@/widgets/settings-users/users/interface/employee";
+import { usersArrayState } from "@/widgets/settings-users/state/users-state";
+import { emailRegex } from "@/utils/regex";
 import {
     addNewEmployee,
     getAllUsersApi,
@@ -23,15 +23,16 @@ import {
 
 const useEmployee = () => {
 
-    const {alertFaultUpdate, alertSuccessUpdate, alertSuccessAdded, alertFaultAdded,alertFault} = useSnackBar();
+    const { alertFaultUpdate, alertSuccessUpdate, alertSuccessAdded, alertFaultAdded, alertFault } = useSnackBar();
     const [employee, setEmployeeState] = useRecoilState<IUserData>(employeeState);
     const [users, setUsers] = useRecoilState<IUser[]>(usersArrayState);
     const [showInActiveEmployees, setShowInActiveEmployees] = useState<boolean>(false);
-    const {callApi} = useGomakeAxios();
+    const { callApi } = useGomakeAxios();
     const [openModal, setOpenModal] = useRecoilState<boolean>(addEmployeeOpenModalState);
     const [action, setAction] = useRecoilState<EmployeeActions | null>(employeeActionState);
     const [search, setSearch] = useState<string>('');
-    const {t} = useTranslation();
+    const [openVerificationModal, setOpenVerificationModal] = useState(false);
+    const { t } = useTranslation();
 
     const getAllUsers = () => {
         const callBackFunction = (data) => {
@@ -83,7 +84,7 @@ const useEmployee = () => {
                 setUsers(
                     users.map(
                         user => {
-                            return user.id === id ? {...user, isActive: !user.isActive} : user
+                            return user.id === id ? { ...user, isActive: !user.isActive } : user
                         }))
             } else {
                 alertSuccessUpdate();
@@ -102,6 +103,9 @@ const useEmployee = () => {
                     setUsers([newEmployee, ...users]);
                     setOpenModal(false);
                     setEmployeeState(initState);
+                    if (employee.employee.isAgent && !employee.isMailVerified) {
+                        setOpenVerificationModal(true);
+                    }
                 } else {
                     alertFaultAdded();
                 }
@@ -120,7 +124,6 @@ const useEmployee = () => {
         }
     };
 
- 
     const onUpdateEmployee = async () => {
         if (isValidEditEmployee() && validateEmail()) {
             const callBack = (data) => {
@@ -130,6 +133,10 @@ const useEmployee = () => {
                     setOpenModal(false);
                     setEmployeeState(initState);
                     alertSuccessUpdate();
+                    if (employee.employee.isAgent && !employee.isMailVerified) {
+                        setOpenVerificationModal(true);
+                    }
+
                 } else {
                     alertFaultUpdate();
                 }
@@ -142,6 +149,10 @@ const useEmployee = () => {
         }
     }
 
+    const handleCloseVerificationModal = () => {
+        setOpenVerificationModal(false);
+    };
+
     const handleAddEmployeeClick = () => {
         setEmployeeState(initState);
         setAction(EmployeeActions.ADD);
@@ -152,8 +163,8 @@ const useEmployee = () => {
         const worksheet = XLSX.utils.json_to_sheet(users);
         const workbook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(workbook, worksheet, 'Users');
-        const excelBuffer = XLSX.write(workbook, {bookType: 'xlsx', type: 'array'}); // Change 'buffer' to 'array'
-        const excelBlob = new Blob([excelBuffer], {type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+        const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' }); // Change 'buffer' to 'array'
+        const excelBlob = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
         saveAs(excelBlob, 'users.xlsx');
     }
 
@@ -195,8 +206,10 @@ const useEmployee = () => {
         action,
         onUpdateEmployee,
         updateSearch,
-        t
+        t,
+        openVerificationModal,
+        handleCloseVerificationModal
     }
 }
 
-export {useEmployee}
+export { useEmployee }
