@@ -779,52 +779,61 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         });
                       }
                     }
-                    else if (value && parameter.code === "DieCut" && widgetType === EWidgetProductType.CREATE) {
-                      let values = value?.additionalAttribute?.find((val) => val.valueId === "name")
-                      subProduct.parameters.push({
-                        parameterId: parameter?.id,
-                        parameterName: parameter?.name,
-                        actionId:
-                          value?.activateAction === true
-                            ? parameter?.actionId
-                            : null,
-                        parameterType: parameter?.parameterType,
-                        ...(value && {
-                          valueIds: [value?.id],
-                          values: [values?.value],
-                        }),
-                        sectionId: section?.id,
-                        subSectionId: subSection?.id,
-                        actionIndex: parameter?.actionIndex,
-                        parameterCode: parameter?.code,
-                        valuesConfigs: parameter?.valuesConfigs,
-                        unitKey: parameter?.unitKey,
-                        unitType: parameter?.unitType,
-                      });
-                    }
+                    else if (value && parameter.code === "DieCut") {
+                      const existingParameters = productItemValueByEdit?.itemParmetersValues || [];
+                      const isDieCutExisting = existingParameters.find((param) => param?.parameterCode === "DieCut");
 
-                    else if (value && parameter.code === "DieKissCut" && widgetType === EWidgetProductType.CREATE) {
-                      let values = value?.additionalAttribute?.find((val) => val.valueId === "name")
-                      subProduct.parameters.push({
-                        parameterId: parameter?.id,
-                        parameterName: parameter?.name,
-                        actionId:
-                          value?.activateAction === true
-                            ? parameter?.actionId
-                            : null,
-                        parameterType: parameter?.parameterType,
-                        ...(value && {
+                      if (isDieCutExisting || existingParameters.length === 0) {
+                        const nameValue = value?.additionalAttribute?.find((attr) => attr.valueId === "name")?.value;
+
+                        const newParameter = {
+                          parameterId: parameter?.id,
+                          parameterName: parameter?.name,
+                          actionId: value?.activateAction ? parameter?.actionId : null,
+                          parameterType: parameter?.parameterType,
                           valueIds: [value?.id],
-                          values: [values?.value],
-                        }),
-                        sectionId: section?.id,
-                        subSectionId: subSection?.id,
-                        actionIndex: parameter?.actionIndex,
-                        parameterCode: parameter?.code,
-                        valuesConfigs: parameter?.valuesConfigs,
-                        unitKey: parameter?.unitKey,
-                        unitType: parameter?.unitType,
-                      });
+                          values: [nameValue],
+                          sectionId: section?.id,
+                          subSectionId: subSection?.id,
+                          actionIndex: parameter?.actionIndex,
+                          parameterCode: parameter?.code,
+                          valuesConfigs: parameter?.valuesConfigs,
+                          unitKey: parameter?.unitKey,
+                          unitType: parameter?.unitType,
+                        };
+
+                        subProduct.parameters.push(newParameter);
+                      }
+                    }
+                    else if (value && parameter.code === "DieKissCut") {
+                      const existingParameters = productItemValueByEdit?.itemParmetersValues || [];
+                      const isDieCutExisting = existingParameters.find((param) => param?.parameterCode === "DieKissCut");
+
+                      if (isDieCutExisting || existingParameters.length === 0) {
+                        const nameValue = value?.additionalAttribute?.find((attr) => attr.valueId === "name")?.value;
+                        subProduct.parameters.push({
+                          parameterId: parameter?.id,
+                          parameterName: parameter?.name,
+                          actionId:
+                            value?.activateAction === true
+                              ? parameter?.actionId
+                              : null,
+                          parameterType: parameter?.parameterType,
+                          ...(value && {
+                            valueIds: [value?.id],
+                            values: [nameValue],
+                          }),
+                          sectionId: section?.id,
+                          subSectionId: subSection?.id,
+                          actionIndex: parameter?.actionIndex,
+                          parameterCode: parameter?.code,
+                          valuesConfigs: parameter?.valuesConfigs,
+                          unitKey: parameter?.unitKey,
+                          unitType: parameter?.unitType,
+                        });
+                      }
+
+
                     }
                   } else if (
                     parameter?.parameterType ===
