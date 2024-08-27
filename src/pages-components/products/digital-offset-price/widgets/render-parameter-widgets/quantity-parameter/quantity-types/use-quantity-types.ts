@@ -7,7 +7,7 @@ import {
 } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/quantity-parameter/quantity-types/state";
 import { IInput } from "@/components/form-inputs/interfaces";
 import { useEffect, useMemo, useState } from "react";
-import { subProductsParametersState } from "@/store";
+import { quantityParameterState, subProductsParametersState } from "@/store";
 import { getParameterByParameterCode } from "@/utils/constants";
 import { useDebouncedCallback } from "use-debounce";
 import lodashClonedeep from "lodash.clonedeep";
@@ -16,24 +16,55 @@ interface QuantityTypesInputs extends IInput {
   onChange: (key, value: string) => void;
   readonly?: boolean;
 }
-const useQuantityTypes = () => {
-  const [state] = useRecoilState(productQuantityTypesState);
+const useQuantityTypes = ({subSection, section}) => {
   const [save, setSave] = useState<boolean>(false);
   const [quantityState, setQuantityState] = useRecoilState(
     productQuantityTypesState
   );
-
+  const quantityParameter = useRecoilValue<number>(quantityParameterState);
   const [subProducts, setSubProducts] = useRecoilState<any>(subProductsParametersState);
-  const initialTypesValues = subProducts[0]?.parameters
-    .find(
-      (param) => param.parameterId === "de2bb7d5-01b1-4b2b-b0fa-81cd0445841b"
-    )
-    ?.values.join(", ");
+  const initialTypesValues = subProducts[0]?.parameters.find((param) => param.parameterId === "de2bb7d5-01b1-4b2b-b0fa-81cd0445841b")?.values.join(", ");
   const [newTypesValue, setNewTypesValue] = useState(initialTypesValues);
   const [quantityTypes, setQuantityTypes] = useRecoilState(productQuantityTypesValuesState);
   const JobNameParameter = getParameterByParameterCode(subProducts,"JobName");
-  const quantityParameter = getParameterByParameterCode(subProducts,"quantity");
   const [openModal, setOpenModal] = useRecoilState<boolean>(openQuantityComponentModalState);
+  useEffect(() => {
+    if (quantityParameter === 0) {
+      const newParameter = {
+        parameterId: "4991945c-5e07-4773-8f11-2e3483b70b53",
+        sectionId: section?.id,
+        subSectionId: subSection?.id,
+        parameterType: 1,
+        parameterName: "Quantity",
+        actionId: null,
+        values: ["0"],
+        valueIds: [],
+        actionIndex: 0,
+        parameterCode: "quantity",
+        valuesConfigs: [],
+        unitKey: null,
+        unitType: 0,
+      };
+
+      // Check if this parameter is already in the subProducts array
+      const updatedSubProducts = subProducts.map((subProduct) => {
+        if (subProduct.sectionId === section?.id) {
+          const existingParameter = subProduct.parameters.find(
+            (param) => param.parameterCode === "quantity"
+          );
+          if (!existingParameter) {
+            return {
+              ...subProduct,
+              parameters: [...subProduct.parameters, newParameter],
+            };
+          }
+        }
+        return subProduct;
+      });
+
+      setSubProducts(updatedSubProducts);
+    }
+  }, [quantityParameter ]);
   const updateTypesValues = (newValues) => {
     const updatedSubProducts = lodashClonedeep(subProducts);
     const typesParameter = updatedSubProducts[0]?.parameters.find(

@@ -28,9 +28,6 @@ const EmailSettings = ({ onClickSave }: IProps) => {
     const [body, setBody] = useRecoilState<string>(smsBodyState);
     const languages = useRecoilValue(languagesState);
     const setLanguageState = useSetRecoilState<string>(languageTemplateState);
-
-
-
     const handleUpdateClick = () => {
         const updatedTemplate = {
             ...state,
@@ -68,11 +65,11 @@ const EmailSettings = ({ onClickSave }: IProps) => {
             </div>
             <div style={classes.subSection}>
                 <h3 style={classes.subSectionHeader}>{t("mailingSettings.subject")}</h3>
-                <QuillEditor headerEditor={EditorTYPE.SUBJECT} ></QuillEditor>
+                <QuillEditor value={subject} setValue={setSubject} />
             </div>
-            <div style={classes.subSection} key={body}>
+            <div style={classes.subSection}>
                 <h3 style={classes.subSectionHeader} >{t("mailingSettings.body")}</h3>
-                <QuillEditor headerEditor={EditorTYPE.BODY} ></QuillEditor>
+                <QuillEditor value={body} setValue={setBody} />
             </div>
             <div style={classes.subSection}>
                 <h3 style={classes.subSectionHeader}>{t("mailingSettings.attachment")}</h3>
