@@ -13,7 +13,6 @@ import {
 } from "@/widgets/materials-widget/state";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
-import { getAllProductsForDropDownList } from "@/services/hooks";
 import { useGomakeAxios } from "@/hooks";
 import { Stack } from "@mui/material";
 import { productsForDropDownList } from "@/store";
@@ -47,6 +46,7 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
     label: string;
     isDefault: boolean;
   } | null>({ value: "", label: "", isDefault: false });
+  
   useEffect(() => {
     const index = materialSuppliers.map((s) => s.value).indexOf(supplierId);
     setSupplierName(index !== -1 ? materialSuppliers[index] : null);
