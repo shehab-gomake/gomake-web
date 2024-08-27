@@ -23,12 +23,14 @@ import { FormArrayInput } from "@/components/form-inputs/form-array-input";
 import { FormInput } from "@/components/form-inputs/form-input";
 import { getAllActionsRequireEmployeeApi } from "@/services/api-service/production-floor/production-floor-endpoints";
 import { useGomakeAxios } from "@/hooks";
-import { Checkbox, Tooltip } from "@mui/material";
+import { Checkbox, styled, Tooltip, tooltipClasses, TooltipProps } from "@mui/material";
 import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
 import NewReleasesOutlinedIcon from '@mui/icons-material/NewReleasesOutlined';
 
 const EmployeeGeneralForm = ({ action }: { action: EmployeeActions }) => {
     const { t } = useTranslation();
+    const dir: 'rtl' | 'ltr' = t('direction');
+    const RTL = dir === 'rtl';
     const { classes } = useStyle();
     const [state, setState] = useRecoilState<IUserData>(employeeState);
     const [actionRequierdForEmployee, setActionRequierdForEmployee] = useState([])
@@ -129,6 +131,13 @@ const EmployeeGeneralForm = ({ action }: { action: EmployeeActions }) => {
         }
     }, [state]);
 
+    const CustomWidthTooltip = styled(({ className, ...props }: TooltipProps) => (
+        <Tooltip {...props} classes={{ popper: className }} />
+    ))({
+        [`& .${tooltipClasses.tooltip}`]: {
+            maxWidth: 600,
+        },
+    });
 
     return (
         <div style={classes.container}>
@@ -150,7 +159,7 @@ const EmployeeGeneralForm = ({ action }: { action: EmployeeActions }) => {
                         inputs().account.map(employee => (
                             <div
                                 key={employee.parameterKey}
-                                style={{ display: 'flex'}}
+                                style={{ display: 'flex' }}
                             >
                                 <FormInput
                                     input={employee as IInput}
@@ -159,13 +168,13 @@ const EmployeeGeneralForm = ({ action }: { action: EmployeeActions }) => {
                                 />
 
                                 {action === EmployeeActions.UPDATE &&
-                                !!state.employee.isAgent &&
+                                    !!state.employee.isAgent &&
                                     !state?.isMailVerified &&
                                     employee.parameterKey === "email" && (
                                         <div style={{ display: 'flex', alignSelf: "end" }}>
-                                            <Tooltip title={t("usersSettings.emailNotVerified")}>
+                                            <CustomWidthTooltip title={t("usersSettings.emailNotVerified")} placement={RTL ? "bottom-start" : "bottom-end"} style={{ maxWidth: "fit-content" }}>
                                                 <NewReleasesOutlinedIcon sx={{ color: "#007bff", fontSize: 20 }} />
-                                            </Tooltip>
+                                            </CustomWidthTooltip>
                                         </div>
                                     )
                                 }
@@ -208,8 +217,6 @@ const EmployeeGeneralForm = ({ action }: { action: EmployeeActions }) => {
                     }
                 </div>
             </div>
-
-
             <div style={classes.subSection}>
                 <h3 style={classes.subSectionHeader}>{t('usersSettings.employeeActions')}</h3>
                 <h1 style={classes.subSectionActionHeader}>{t('usersSettings.actions')}</h1>
