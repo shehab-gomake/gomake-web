@@ -12,6 +12,7 @@ import { useRecoilValue } from "recoil";
 import { machineCategoriesState } from "@/store/machine-categories";
 import { MultiSelectList } from "./multi-select-list";
 import { materialsParametersState } from "../../state";
+import { useTranslation } from "react-i18next";
 
 const TableCellData = ({
   value,
@@ -26,6 +27,7 @@ const TableCellData = ({
   const { updateCellData, machinesOptions, clientsOptions } = useTableCellData(isAdmin);
   const machinesCategories = useRecoilValue(machineCategoriesState);
   const parameterCategories = useRecoilValue<any>(materialsParametersState);
+  const { t } = useTranslation()
   const toggleIsActive = async () => {
     await updateCellData(id, parameterKey, !value);
   };
@@ -81,7 +83,7 @@ const TableCellData = ({
           id={id}
           isAdmin={isAdmin}
           options={machinesOptions}
-          placeHolder="Select machine"
+          placeHolder={t("materials.inputs.selectMachine")}
         />
       );
     case EDataTypeEnum.CLIENTS_LIST:
@@ -92,7 +94,7 @@ const TableCellData = ({
           id={id}
           isAdmin={isAdmin}
           options={clientsOptions}
-          placeHolder="Select client"
+          placeHolder={t("materials.inputs.selectClient")}
         />
       );
     case EDataTypeEnum.PRODUCTS_LIST:
@@ -126,7 +128,7 @@ const TableCellData = ({
             value: item.value,
             label: item.key,
           }))}
-          placeHolder="Select value"
+          placeHolder={t("materials.inputs.selectValue")}
         />
       );
     case EDataTypeEnum.NOTE_BOOK_TYPES:
@@ -140,7 +142,7 @@ const TableCellData = ({
             value: item.id,
             label: item.name,
           }))}
-          placeHolder="Select client"
+          placeHolder={t("materials.inputs.selectNotebookType")}
         />
       );
     default:
