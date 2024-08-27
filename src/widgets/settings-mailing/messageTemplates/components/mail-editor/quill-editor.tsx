@@ -1,5 +1,5 @@
 import { useMessageTemplate } from '@/widgets/settings-mailing/useMessageTemplate';
-import React, { Suspense, lazy, useEffect, useMemo, useRef, useContext } from 'react';
+import React, { Suspense, lazy, useEffect, useRef, useContext } from 'react';
 import { useStyle } from './style';
 import { Stack, IconButton } from '@mui/material';
 import { useTranslation } from 'react-i18next';
@@ -7,7 +7,6 @@ import { ScrollMenu, VisibilityContext } from 'react-horizontal-scrolling-menu';
 import 'react-horizontal-scrolling-menu/dist/styles.css';
 import { LeftArrowIcon } from "@/components/icons/left-arrow-icon";
 import { RightArrowIcon } from "@/components/icons/right-arrow-icon";
-import debounce from 'lodash.debounce';
 
 // Lazy load ReactQuill
 const ReactQuill = lazy(() => import('react-quill'));
@@ -63,6 +62,26 @@ const QuillEditor = ({ value, setValue }: IProps) => {
             'formats/TemplateMarker': TemplateMarker
         });
     }, []);
+
+    // Add Ctrl + A / Cmd + A keyboard shortcut for Select All
+    useEffect(() => {
+        const quill = editorRef.current?.editor;
+        if (quill) {
+            const handleKeyDown = (event) => {
+                if ((event.ctrlKey || event.metaKey) && event.key === 'a') {
+                    event.preventDefault();
+                    quill.setSelection(0, quill.getLength());
+                }
+            };
+
+            quill.root.addEventListener('keydown', handleKeyDown);
+
+            return () => {
+                quill.root.removeEventListener('keydown', handleKeyDown);
+            };
+        }
+    }, [editorRef]);
+
     const handleChange = (value: string) => {
         setValue(value);
     };
@@ -160,7 +179,7 @@ const QuillEditor = ({ value, setValue }: IProps) => {
                 text-align: ${RTL ? "right" : "left"};
               }
             `}</style>
-            <Suspense>
+            <Suspense fallback={<div>Loading editor...</div>}>
                 <ReactQuill
                     modules={modules}
                     style={classes.myEditor}
