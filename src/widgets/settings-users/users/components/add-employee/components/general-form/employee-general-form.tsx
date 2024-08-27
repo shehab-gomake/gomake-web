@@ -9,7 +9,7 @@ import {
 import {
     agentInputs,
 } from "@/widgets/settings-users/users/components/add-employee/components/general-form/inputs/agent-inputs";
-import {
+import { 
     ipAddressesInputs
 } from "@/widgets/settings-users/users/components/add-employee/components/general-form/inputs/ip-addresses-inputs";
 import {
@@ -159,7 +159,7 @@ const EmployeeGeneralForm = ({ action }: { action: EmployeeActions }) => {
                     <span>{t("usersSettings.isAgent")}</span>
                     <SecondSwitch checked={!!state.employee.isAgent} onChange={handelIsAgentChange} />
                 </div>
-                {
+                {/* {
                     !!state.employee.isAgent && <>
                         <h3 style={classes.subSectionHeader}>{t('usersSettings.agent')}</h3>
                         <div style={classes.inputsContainer}>
@@ -171,7 +171,7 @@ const EmployeeGeneralForm = ({ action }: { action: EmployeeActions }) => {
                             }
                         </div>
                     </>
-                }
+                } */}
             </div>
             <div style={classes.subSection}>
                 <div style={classes.inputsContainer}>
