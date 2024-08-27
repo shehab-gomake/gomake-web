@@ -35,7 +35,7 @@ const InputNumberParameterWidget = ({
             parameter?.actionIndex,
             parameter?.code
           );
-          extraOnChange && e?.target.value > 0 && extraOnChange()
+          extraOnChange && e?.target.value > 1 && extraOnChange()
         }}
         type={type}
         InputProps={{ inputProps: { min: type === "number" ? 0 : undefined } }}

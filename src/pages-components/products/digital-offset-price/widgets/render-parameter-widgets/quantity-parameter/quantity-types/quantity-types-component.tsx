@@ -8,9 +8,9 @@ import { SecondaryButton } from "@/components/button/secondary-button";
 import { QuantityTypesTable } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/quantity-parameter/table/quantity-types-table";
 
 interface IQuantityTypesComponent { }
-const QuantityTypesComponent = ({ }: IQuantityTypesComponent) => {
+const QuantityTypesComponent = ({ subSection, section }) => {
   const { inputs, isDuplicateName, toggleDuplicateName, save, setSave } =
-    useQuantityTypes();
+    useQuantityTypes({ subSection, section });
   const { t } = useTranslation();
   const { classes } = useStyle();
   return (
