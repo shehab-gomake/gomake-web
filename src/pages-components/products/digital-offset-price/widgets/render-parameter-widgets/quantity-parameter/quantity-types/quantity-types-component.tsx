@@ -32,7 +32,7 @@ const QuantityTypesComponent = ({ subSection, section }) => {
           checked={isDuplicateName}
           onChange={toggleDuplicateName}
         />
-        <span style={classes.duplicateName}>{t("Duplicate Name")}</span>
+        <span style={classes.duplicateName}>{t("sales.quote.duplicateName")}</span>
       </Stack>
       <Stack padding={"0 2px"}>
         <QuantityTypesTable onSave={() => { }} save={save} />
@@ -45,7 +45,7 @@ const QuantityTypesComponent = ({ subSection, section }) => {
           style={{ width: "100%" }}
           variant={"contained"}
         >
-          {t("save")}
+          {t("sales.quote.save")}
         </SecondaryButton>
       </Stack>
     </Stack>
