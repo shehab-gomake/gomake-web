@@ -40,4 +40,5 @@ export interface IUserData {
     allowedIPs: AllowedIP[];
     employee: Employee;
     email: string;
+    isMailVerified:boolean;
 }

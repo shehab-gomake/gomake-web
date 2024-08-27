@@ -23,9 +23,9 @@ import { FormArrayInput } from "@/components/form-inputs/form-array-input";
 import { FormInput } from "@/components/form-inputs/form-input";
 import { getAllActionsRequireEmployeeApi } from "@/services/api-service/production-floor/production-floor-endpoints";
 import { useGomakeAxios } from "@/hooks";
-import { Checkbox } from "@mui/material";
+import { Checkbox, Tooltip } from "@mui/material";
 import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
-import { text } from "node:stream/consumers";
+import NewReleasesOutlinedIcon from '@mui/icons-material/NewReleasesOutlined';
 
 const EmployeeGeneralForm = ({ action }: { action: EmployeeActions }) => {
     const { t } = useTranslation();
@@ -147,11 +147,32 @@ const EmployeeGeneralForm = ({ action }: { action: EmployeeActions }) => {
                 <h3 style={classes.subSectionHeader}>{t('usersSettings.account')}</h3>
                 <div style={classes.inputsContainer}>
                     {
-                        inputs().account.map(employee => <FormInput key={employee.parameterKey}
-                            input={employee as IInput}
-                            changeState={updateUserState}
-                            error={employee.required && !state[employee.parameterKey]} />)
+                        inputs().account.map(employee => (
+                            <div
+                                key={employee.parameterKey}
+                                style={{ display: 'flex', alignItems: 'center' }}
+                            >
+                                <FormInput
+                                    input={employee as IInput}
+                                    changeState={updateUserState}
+                                    error={employee.required && !state[employee.parameterKey]}
+                                />
+
+                                {action === EmployeeActions.UPDATE &&
+                                !!state.employee.isAgent &&
+                                    !state?.isMailVerified &&
+                                    employee.parameterKey === "email" && (
+                                        <div style={{ display: 'flex', alignSelf: "end" }}>
+                                            <Tooltip title={t("usersSettings.emailNotVerified")}>
+                                                <NewReleasesOutlinedIcon sx={{ color: "#1976d2" }} />
+                                            </Tooltip>
+                                        </div>
+                                    )
+                                }
+                            </div>
+                        ))
                     }
+
                 </div>
             </div>
             <div style={classes.subSection}>
