@@ -1023,7 +1023,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   })
                   if (parameter.code === "DieCut" || parameter.code === "DieKissCut") {
                     if (parameter.valuesConfigs.length === 0) {
-                      parameter.valuesConfigs = materialData.map(data => ({
+                      parameter.valuesConfigs = materialData?.map(data => ({
                         id: data.valueId,
                         isHidden: false,
                         isDefault: false,
@@ -1039,7 +1039,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                       }));
                     } else {
                       // If valueConfigs has objects, update it based on materialData
-                      parameter.valuesConfigs = materialData.map(data => {
+                      parameter.valuesConfigs = materialData?.map(data => {
                         const existingConfig = parameter.valuesConfigs.find(config => config.id === data.valueId);
                         return existingConfig ? {
                           ...existingConfig,
@@ -1595,9 +1595,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     }
 
   }, [deviceSize, deviceCategory])
+
   const setOpenQuantityComponent = useDebouncedCallback(() => {
     setOpenQuantityComponentModal(true);
-  }, 700);
+  }, 500);
 
   const _renderParameterType = (
     parameter: any,
@@ -1622,10 +1623,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     );
     if (
       parameter?.parameterType === EParameterTypes.INPUT_NUMBER &&
-      parameter?.id === quantity?.parameterId
+      parameter?.code === "quantity"
     ) {
       const typesNum = typesParam && typesParam.values ? typesParam.values[0] : 0;
-
       const isSets = isSetsParameter && isSetsParameter.values ? isSetsParameter.values[0] : "";
       const isInputDisabled = typesNum > 1 || isSets === "true";
       Comp = (
@@ -1641,7 +1641,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             type="number"
             disabled={isInputDisabled}
           />
-          <QuantityParameter />
+          <QuantityParameter subSection={subSection} section={section} />
         </React.Fragment>
 
       );
@@ -1653,20 +1653,27 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       const isSets = isSetsParameter && isSetsParameter.values ? isSetsParameter.values[0] : "";
       const isInputDisabled = isSets === "true";
       Comp = (
-        <InputNumberParameterWidget
-          clasess={clasess}
-          parameter={parameter}
-          index={index}
-          temp={temp}
-          onChangeSubProductsForPrice={onChangeSubProductsForPrice}
-          subSection={subSection}
-          section={section}
-          type="number"
-          disabled={isInputDisabled}
-          extraOnChange={() => {
-            setOpenQuantityComponent();
-          }}
-        />
+        <React.Fragment>
+          <InputNumberParameterWidget
+            clasess={clasess}
+            parameter={parameter}
+            index={index}
+            temp={temp}
+            onChangeSubProductsForPrice={onChangeSubProductsForPrice}
+            subSection={subSection}
+            section={section}
+            type="number"
+            disabled={isInputDisabled}
+            extraOnChange={() => {
+              setOpenQuantityComponent();
+            }}
+          />
+
+        </React.Fragment>
+
+
+
+
       );
     } else if (
       parameter?.parameterType === EParameterTypes.INPUT_NUMBER &&
