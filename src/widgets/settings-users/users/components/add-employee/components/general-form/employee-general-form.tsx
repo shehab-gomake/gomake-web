@@ -150,7 +150,7 @@ const EmployeeGeneralForm = ({ action }: { action: EmployeeActions }) => {
                         inputs().account.map(employee => (
                             <div
                                 key={employee.parameterKey}
-                                style={{ display: 'flex', alignItems: 'center' }}
+                                style={{ display: 'flex'}}
                             >
                                 <FormInput
                                     input={employee as IInput}
@@ -164,7 +164,7 @@ const EmployeeGeneralForm = ({ action }: { action: EmployeeActions }) => {
                                     employee.parameterKey === "email" && (
                                         <div style={{ display: 'flex', alignSelf: "end" }}>
                                             <Tooltip title={t("usersSettings.emailNotVerified")}>
-                                                <NewReleasesOutlinedIcon sx={{ color: "#1976d2" }} />
+                                                <NewReleasesOutlinedIcon sx={{ color: "#007bff", fontSize: 20 }} />
                                             </Tooltip>
                                         </div>
                                     )
