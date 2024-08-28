@@ -1299,7 +1299,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       setWorkFlows([]);
       setJobActions([]);
       setSubProducts([]);
-
+      setWorkTypes([])
       setCalculationProgress({
         totalWorkFlowsCount: 0,
         currentWorkFlowsCount: 0,
