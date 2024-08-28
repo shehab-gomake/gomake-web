@@ -19,6 +19,7 @@ import { downloadPdf } from "@/utils/helpers";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { useUserPermission } from "@/hooks/use-permission";
 import { useQuoteGetData } from "../quote-new/use-quote-get-data";
+import Image from "next/image";
 
 type StatusOption = {
   label: string;
@@ -113,6 +114,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
   ];
 
   const tableHeader = [
+    t("boardMissions.image"),
     t("boardMissions.creationDate"),
     t("boardMissions.dueDate"),
     t("boardMissions.clientName"),
@@ -216,6 +218,13 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
         if (res?.success) {
           const _data = res?.data;
           const mapData = _data.data?.map((mission: any) => [
+            <a href={mission?.boardMissionImage} target="_blank" rel="noopener noreferrer">
+              <img
+                src={mission?.boardMissionImage}
+                alt=""
+                style={{ width: '45px', height: '45px', objectFit: 'contain', borderRadius: '5px', cursor: 'pointer' }}
+              />
+            </a>,
             mission?.createdDate?.split("T")[0],
             mission?.dueDate?.split("T")[0],
             mission?.clientName,
