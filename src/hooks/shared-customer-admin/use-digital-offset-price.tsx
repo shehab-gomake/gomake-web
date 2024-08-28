@@ -577,7 +577,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             let temp = [];
             subSection.parameters
               .forEach((parameter) => {
-
+                if(parameter.code === "ChemicalPaperWeight"){
+                  debugger
+                }
                 parameter.relatedParameters.forEach((x) => {
                   x.sectionId = section.id;
                   x.subSectionId = subSection.id;
@@ -722,8 +724,11 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     parameter?.parameterType ===
                     EParameterTypes.BUTTON
                   ) {
+                    const value = parameter?.valuesConfigs?.find(
+                        (item) => item?.isDefault == true
+                    );
                     // when the parameter is required and the parameter is material select and if there is only one option select it automatically
-                    if (parameter?.valuesConfigs && parameter?.valuesConfigs?.length === 1 && parameter?.isRequired) {
+                    if (!value && parameter?.valuesConfigs && parameter?.valuesConfigs?.length === 1 && parameter?.isRequired) {
                       subProduct.parameters.push({
                         parameterId: parameter?.id,
                         parameterName: parameter?.name,
@@ -740,9 +745,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         unitType: parameter?.unitType,
                       });
                     }
-                    const value = parameter?.valuesConfigs?.find(
-                      (item) => item?.isDefault == true
-                    );
+                    
                     if (
                       value &&
                       value.materialValueIds &&
@@ -934,6 +937,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         });
         setProductTemplate(productTemplate)
         setSubProducts(subProductsArray);
+        console.log(subProductsArray)
         setUnderParameterIds(underParameterIdsArray);
         setIsSetTemplete(true);
       }
