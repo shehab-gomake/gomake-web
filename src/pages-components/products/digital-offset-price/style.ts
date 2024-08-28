@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import i18next from "i18next";
 
 import { useTranslation } from "react-i18next";
@@ -11,6 +11,25 @@ const useStyle = () => {
   const direction = t("direction");
   const { primaryColor, secondColor, errorColor, neutralColor, successColor } =
     useGomakeTheme();
+    const [screenWidth, setScreenWidth] = useState<number | null>(null);
+  console.log("screenWidth",screenWidth)
+    useEffect(() => {
+      // Function to update screen width
+      const updateScreenWidth = () => {
+        setScreenWidth(window.innerWidth);
+      };
+  
+      // Initial call to set the screen width
+      updateScreenWidth();
+  
+      // Add event listener to listen for window resize
+      window.addEventListener('resize', updateScreenWidth);
+  
+      // Cleanup the event listener when the component unmounts
+      return () => {
+        window.removeEventListener('resize', updateScreenWidth);
+      };
+    }, []);
 
   const clasess = useMemo(() => {
     return {
@@ -68,7 +87,8 @@ const useStyle = () => {
         gap: 40,
         marginBottom: 20,
         width: "100%",
-        maxWidth: 900,
+        maxWidth:(screenWidth-600)
+        
       },
       tabContainer: {
         display: "flex",
@@ -772,7 +792,7 @@ const useStyle = () => {
       }
 
     };
-  }, [i18next.language, t, direction]);
+  }, [i18next.language, t, direction,screenWidth]);
   return {
     clasess,
   };

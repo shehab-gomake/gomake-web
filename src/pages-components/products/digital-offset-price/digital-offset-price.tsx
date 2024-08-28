@@ -13,12 +13,10 @@ import {
 } from "@/widgets/shared-admin-customers/digital-offset-price";
 import { EWidgetProductType } from "./enums";
 import { PricingWidget } from "@/widgets/product-pricing-widget/pricing-widget";
-import { Tabs } from "@mui/material";
+import { createTheme, Tabs, ThemeProvider } from "@mui/material";
 import { StepType } from "@reactour/tour";
 import { useGoMakeTour } from "@/hooks/use-go-make-tour";
-import { useRecoilValue } from "recoil";
-import { EPricingViews } from "@/widgets/product-pricing-widget/enums";
-import { viewPricingTab } from "@/store";
+import { useEffect } from "react";
 
 const PriceListPageWidget = ({ widgetType }) => {
     const { clasess } = useStyle();
@@ -83,10 +81,14 @@ const PriceListPageWidget = ({ widgetType }) => {
         straightKnife
     } = useDigitalOffsetPrice({ clasess, widgetType });
     const visibleSections = productTemplate?.sections?.filter(section => !section.isHidden);
-    const viewWorkFlow = useRecoilValue<EPricingViews>(
-        viewPricingTab
-    );
+    const dir: 'rtl' | 'ltr' = t('direction');
+    const theme = createTheme({
+        direction: dir,
+    });
 
+    useEffect(() => {
+        document.body.setAttribute('dir', dir);
+    }, [dir]);
     const productSteps: StepType[] = [
         {
             selector: '[data-tour="a330193f-492c-40a8-86f3-8edf5c8f0d5e"]',
@@ -238,27 +240,31 @@ const PriceListPageWidget = ({ widgetType }) => {
                     <div style={clasess.mainRowContainer}>
                         <div style={clasess.leftSideContainer}>
                             <div style={clasess.tabsContainer}>
-                                <Tabs variant="scrollable" scrollButtons={"auto"}>
-                                    {[...visibleSections, PricingTab]?.map(
-                                        (item, index) => {
-                                            return (
-                                                <TabsMappingWidget
-                                                    key={`tab-${index}`}
-                                                    clasess={clasess}
-                                                    index={index}
-                                                    handleTabClick={handleTabClick}
-                                                    activeIndex={activeIndex}
-                                                    item={item}
-                                                    productTemplate={productTemplate}
-                                                    onDuplicateSection={duplicateSection}
-                                                    onRemoveSection={removeSection}
-                                                    setProductTemplate={setProductTemplate}
-                                                    isAdmin={false}
-                                                />
-                                            );
-                                        }
-                                    )}
-                                </Tabs>
+                                <ThemeProvider theme={theme}>
+                                    <Tabs variant="scrollable" scrollButtons={"auto"} >
+                                        {[...visibleSections, PricingTab]?.map(
+                                            (item, index) => {
+                                                return (
+                                                    <TabsMappingWidget
+                                                        key={`tab-${index}`}
+                                                        clasess={clasess}
+                                                        index={index}
+                                                        handleTabClick={handleTabClick}
+                                                        activeIndex={activeIndex}
+                                                        item={item}
+                                                        productTemplate={productTemplate}
+                                                        onDuplicateSection={duplicateSection}
+                                                        onRemoveSection={removeSection}
+                                                        setProductTemplate={setProductTemplate}
+                                                        isAdmin={false}
+                                                    />
+                                                );
+                                            }
+                                        )}
+                                    </Tabs>
+
+                                </ThemeProvider>
+
                             </div>
 
                             <div className={`custom-scrollbar`} style={{ height: 650, overflow: "scroll", width: "calc(100% - 330px)" }}>
