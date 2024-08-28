@@ -46,7 +46,7 @@ const getMaterialSuppliersApi: ICallAndSetData = async (
 ) => {
   return await getSetApiData(
     callApi,
-    EHttpMethod.GET,
+    EHttpMethod.POST,
     GET_MATERIAL_SUPPLIERS,
     setState,
     data
