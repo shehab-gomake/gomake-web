@@ -53,7 +53,11 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
     pageNumber,
     setPageNumber,
     onSelectDeliveryTimeDates,
+    onSelectDueTimeDates,
+    onSelectReadyTimeDates,
     resetDatePicker,
+    resetDueDatePicker,
+    resetReadyDatePicker,
     handlePageSizeChange,
     pageSize,
     openDuplicateModal,
@@ -87,7 +91,10 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
     open,
     anchorEl,
     supplierId,
-    supplierList
+    supplierList,
+    orderStatuses,
+    orderStatus,
+    handleOrderStatusChange
   } = useBoardMissions({ isPurchaseJobs });
 
   useEffect(() => {
@@ -99,7 +106,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
         <div style={classes.mainContainer}>
           <HeaderTitle title={!isPurchaseJobs ? t("boardMissions.title") : t("boardMissions.purchaseJobsTitle")} marginTop={1} marginBottom={1} />
           <SearchInputComponent
-            searchInputStyle={{ width: "20vw" }}
+            searchInputStyle={{ width: 400 }}
             filtersButton={
               <InputAdornment position="start">
                 <div>
@@ -149,10 +156,22 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
                           />
                         </div>
                         <div style={classes.statusFilterContainer}>
+                          <h3 style={classes.filterLabelStyle}>{t("boardMissions.orderStatus")}</h3>
+                          <GoMakeAutoComplate
+                            key={orderStatus?.value}
+                            options={orderStatuses}
+                            style={classes.textInputStyle}
+                            placeholder={t("boardMissions.orderStatus")}
+                            onChange={handleOrderStatusChange}
+                            value={orderStatus}
+                            withArrow={true}
+                          />
+                        </div>
+                        <div style={classes.statusFilterContainer}>
                           <h3 style={classes.filterLabelStyle}>{t("boardMissions.products")}</h3>
                           <GoMakeMultiSelect
                             onChange={handleMultiSelectChange}
-                            style={classes.textInputStyle}
+                            style={classes.textInputForProductsStyle}
                             options={productsList}
                             values={productIds}
                             placeholder={t("boardMissions.selectProducts")} />
@@ -162,7 +181,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
                           <GoMakeAutoComplate
                             placeholder={"Select supplier"}
                             value={supplierId}
-                            style={classes.textInputStyle}
+                            style={classes.textInputForProductsStyle}
                             onChange={handledSupplierIdChange}
                             options={supplierList?.map((s) => ({
                               value: s.id,
@@ -174,7 +193,17 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
                         </div>}
                         <div style={classes.statusFilterContainer}>
                           <h3 style={classes.filterLabelStyle}>{t("boardMissions.dateRange")}</h3>
-                          <GoMakeDatepicker onChange={onSelectDeliveryTimeDates} placeholder={t("boardMissions.chooseDate")} reset={resetDatePicker} />
+                          <GoMakeDatepicker onChange={onSelectDeliveryTimeDates} placeholder={t("boardMissions.chooseDate")} reset={resetDatePicker} style={{ width: 350 }} />
+                        </div>
+
+                        <div style={classes.statusFilterContainer}>
+                          <h3 style={classes.filterLabelStyle}>{t("Due Date")}</h3>
+                          <GoMakeDatepicker onChange={onSelectDueTimeDates} placeholder={t("boardMissions.chooseDate")} reset={resetDueDatePicker} style={{ width: 350 }} />
+                        </div>
+
+                        <div style={classes.statusFilterContainer}>
+                          <h3 style={classes.filterLabelStyle}>{t("Ready Date")}</h3>
+                          <GoMakeDatepicker onChange={onSelectReadyTimeDates} placeholder={t("boardMissions.chooseDate")} reset={resetReadyDatePicker} style={{ width: 350 }} />
                         </div>
                       </div>
 
@@ -214,9 +243,9 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
             headers={!isPurchaseJobs ? tableHeader : tableHeaderForPurchaseJobs}
             columnWidths={!isPurchaseJobs ?
               CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS) ?
-                ["7%", "6%", "6%", "7%", "7%", "8%", "7%", "4%", "6%", "12%", "7%", "13%", "7%", "3%"]
+                ["7%", "7%", "6%", "6%", "7%", "7%", "8%", "7%", "4%", "6%", "12%", "7%", "13%", "7%", "3%"]
                 :
-                ["7%", "7%", "7%", "7%", "7%", "8%", "7%", "18%", "7%", "15%", "7%", "3%"]
+                ["7%", "7%", "7%", "7%", "7%", "7%", "8%", "7%", "18%", "7%", "15%", "7%", "3%"]
               :
               ["7%", "5%", "6%", "7%", "6%", "7%", "11%", "8%", "6%", "8%", "5%", "5%", "7%", "7%", "4%", "2%"]}
           />
