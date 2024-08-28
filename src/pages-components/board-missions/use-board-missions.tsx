@@ -10,7 +10,7 @@ import { DEFAULT_VALUES } from "@/pages/customers/enums";
 import { EWorkSource } from "@/widgets/product-pricing-widget/enums";
 import { useDebounce } from "@/utils/use-debounce";
 import { MoreMenuWidget } from "./widgets/more-circle";
-import { DuplicateType } from "@/enums";
+import { DuplicateType, ORDER_STATUSES } from "@/enums";
 import { DOCUMENT_TYPE } from "../quotes/enums";
 import { useStyle } from "./style";
 import { useRouter } from "next/router";
@@ -19,6 +19,11 @@ import { downloadPdf } from "@/utils/helpers";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { useUserPermission } from "@/hooks/use-permission";
 import { useQuoteGetData } from "../quote-new/use-quote-get-data";
+
+type StatusOption = {
+  label: string;
+  value: ORDER_STATUSES;
+};
 
 const useBoardMissions = ({ isPurchaseJobs }) => {
   const { CheckPermission } = useUserPermission();
@@ -33,15 +38,29 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     label: string;
     value: PStatus;
   } | null>();
+
+  const [orderStatus, setOrderStatus] = useState<StatusOption>();
   const [supplierId, selectedSupplierId] = useState<any>()
   const [productIds, setProductIds] = useState<string[]>([]);
   const [productsList, setProductsList] = useState([]);
   const [patternSearch, setPatternSearch] = useState<string>();
+
+  //DATE
   const [fromDate, setFromDate] = useState<Date>();
   const [toDate, setToDate] = useState<Date>();
+  const [resetDatePicker, setResetDatePicker] = useState<boolean>(false);
+  //DUE DATE 
+  const [fromDueDate, setFromDueDate] = useState<Date>();
+  const [toDueDate, setToDueDate] = useState<Date>();
+  const [resetDueDatePicker, setResetDueDatePicker] = useState<boolean>(false);
+
+  //Ready DATE 
+  const [fromReadyDate, setFromReadyDate] = useState<Date>();
+  const [toReadyDate, setToReadyDate] = useState<Date>();
+  const [resetReadyDatePicker, setResetReadyDatePicker] = useState<boolean>(false);
+
   const [allBoardMissions, setAllBoardMissions] = useState([]);
   const [allPurchaseJobs, setAllPurchaseJobs] = useState([]);
-  const [resetDatePicker, setResetDatePicker] = useState<boolean>(false);
   const { GetDateFormat } = useDateFormat();
   const [finalPatternSearch, setFinalPatternSearch] = useState("");
   const debounce = useDebounce(patternSearch, 500);
@@ -63,6 +82,19 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     setToDate(toDate);
   };
 
+  const onSelectDueTimeDates = (fromDate: Date, toDate: Date) => {
+    setResetDueDatePicker(false);
+    setFromDueDate(fromDate);
+    setToDueDate(toDate);
+  };
+
+  const onSelectReadyTimeDates = (fromDate: Date, toDate: Date) => {
+    setResetReadyDatePicker(false);
+    setFromReadyDate(fromDate);
+    setToReadyDate(toDate);
+  };
+
+
   useEffect(() => {
     setFinalPatternSearch(debounce);
   }, [debounce]);
@@ -70,6 +102,14 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
   const productionStatuses = [
     { label: t("boardMissions.inProduction"), value: PStatus.IN_PROCESS },
     { label: t("boardMissions.done"), value: PStatus.DONE },
+  ];
+
+  const orderStatuses = [
+    { label: t("boardMissions.open"), value: ORDER_STATUSES.Open },
+    { label: t("boardMissions.canceled"), value: ORDER_STATUSES.Canceled },
+    { label: t("boardMissions.waitingForPayment"), value: ORDER_STATUSES.WaitingForPayment },
+    { label: t("boardMissions.paused"), value: ORDER_STATUSES.Paused },
+    { label: t("boardMissions.ready"), value: ORDER_STATUSES.Ready }
   ];
 
   const tableHeader = [
@@ -114,6 +154,9 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
   const handleStatusChange = (e: any, value: any) => {
     setStatus(value);
   };
+  const handleOrderStatusChange = (e: any, value: any) => {
+    setOrderStatus(value);
+  };
 
   const handledSupplierIdChange = (e: any, value: any) => {
     selectedSupplierId(value);
@@ -127,12 +170,19 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     setAgent(null);
     setCustomer(null);
     setStatus(null);
+    setOrderStatus(null);
     selectedSupplierId(null)
     setProductIds([]);
     setPatternSearch("");
     setFromDate(null);
+    setFromDueDate(null);
+    setFromReadyDate(null);
     setToDate(null);
+    setToDueDate(null);
+    setToReadyDate(null);
     setResetDatePicker(true);
+    setResetDueDatePicker(true);
+    setResetReadyDatePicker(true);
     pageNumber === 1 ? getAllData(isPurchaseJobs, true) : setPageNumber(1);
   };
   const onChangeMissionsSearch = (value: string) => {
@@ -170,7 +220,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
             mission?.dueDate?.split("T")[0],
             mission?.clientName,
             mission?.productType ? `${mission?.number} / ${mission?.productType}` : mission?.number,
-            <div style={{ cursor: "pointer" }} onClick={() => { navigate(`/orders?documentNumber=${mission?.orderNumber}`) }}>
+            <div style={{ cursor: "pointer" }} onClick={() => { navigate(`/order?Id=${mission?.orderID}`) }}>
               {mission?.orderNumber}
             </div>,
             mission?.outSourceType === null ? EWorkSource[0] : EWorkSource[mission?.outSourceType],
@@ -217,8 +267,16 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
             search: finalPatternSearch,
             fromDate: fromDate && GetDateFormat(fromDate),
             toDate: toDate && GetDateFormat(toDate),
+
+            fromDueDate: fromDueDate && GetDateFormat(fromDueDate),
+            toDueDate: toDueDate && GetDateFormat(toDueDate),
+
+            fromReadyDate: fromReadyDate && GetDateFormat(fromReadyDate),
+            toReadyDate: toReadyDate && GetDateFormat(toReadyDate),
+
             productsIds: productIds,
             productionStatus: status?.value,
+            orderStatus: orderStatus?.value,
             pageNumber: pageNumber,
             pageSize: pageSize,
             orderNumber: router?.query?.orderNumber
@@ -282,8 +340,16 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
             search: finalPatternSearch,
             fromDate: fromDate && GetDateFormat(fromDate),
             toDate: toDate && GetDateFormat(toDate),
+
+            fromDueDate: fromDueDate && GetDateFormat(fromDueDate),
+            toDueDate: toDueDate && GetDateFormat(toDueDate),
+
+            fromReadyDate: fromReadyDate && GetDateFormat(fromReadyDate),
+            toReadyDate: toReadyDate && GetDateFormat(toReadyDate),
+
             productsIds: productIds,
             productionStatus: status?.value,
+            orderStatus: orderStatus.value,
             pageNumber: pageNumber,
             pageSize: pageSize,
             supplierId: supplierId?.value,
@@ -517,9 +583,13 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     setPageNumber,
     handlePageChange,
     onSelectDeliveryTimeDates,
+    onSelectDueTimeDates,
+    onSelectReadyTimeDates,
     fromDate,
     toDate,
     resetDatePicker,
+    resetDueDatePicker,
+    resetReadyDatePicker,
     handlePageSizeChange,
     setPageSize,
     pageSize,
@@ -555,6 +625,9 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     selectedMission,
     supplierId,
     supplierList,
+    orderStatuses,
+    orderStatus,
+    handleOrderStatusChange
   };
 };
 
