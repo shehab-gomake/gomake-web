@@ -21,20 +21,13 @@ const useStyle = () => {
 
       },
       filtersContainer: {
-        // display: "flex",
-        // flexDirection: "row" as "row",
-        // justifyContent: "space-between",
-        // alignItems: "flex-end",
-        // gap: 20,
-        // width: "100%",
-
         display: "flex",
         flexDirection: "column" as "column",
         justifyContent: "space-between",
         alignItems: "flex-start",
         gap: 20,
-        width: "20vw",
-        padding: "10px",
+        width: 384,
+        padding: 15,
         flexWrap: "wrap" as "wrap",
 
       },
@@ -59,7 +52,7 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "flex-start",
         gap: 10,
-        minWidth: "40%",
+        minWidth: "47%",
         width: "fit-content",
       },
       buttonsFilterContainer: {
@@ -100,6 +93,12 @@ const useStyle = () => {
       },
       textInputStyle: {
         width: "100%",
+        border: "none",
+        height: 45,
+
+      },
+      textInputForProductsStyle: {
+        width: 350,
         border: "none",
         height: 45,
 

@@ -1,15 +1,19 @@
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
+import { useTranslation } from "react-i18next";
 
 const useStyle = () => {
   const { primaryColor, secondColor } = useGomakeTheme();
+  const { t } = useTranslation();
+  const dir: "rtl" | "ltr" = t("direction");
+  const RTL = dir === 'rtl';
   const clasess = useMemo(() => {
     return {
       insideStyle: {
         width: 444,
         borderRadius: 12,
-        height: 747,
+        height: 700,
         backgroundColor: "#FFFFFF",
         padding: 20,
       },
@@ -43,7 +47,8 @@ const useStyle = () => {
         border: "1px solid rgba(208, 213, 221, 1)",
         borderRadius: 8,
         width: "100%",
-        height: 565,
+        height: 600,
+        overflow: "scroll"
       },
       headerTableContainer: {
         display: "flex",
@@ -53,10 +58,13 @@ const useStyle = () => {
         width: "100%",
         height: 44,
         background: "rgba(244, 241, 246, 1)",
-        paddingLeft: 24,
+        paddingLeft:RTL?0: 24,
+        paddingRight:RTL?24: 0,
         borderTopRightRadius: 8,
         borderTopLeftRadius: 8,
         borderBottom: "1px solid rgba(208, 213, 221, 1)",
+        backgroundColor: "rgba(244, 241, 246, 1)",
+
       },
       headerTableStyle: {
         ...FONT_FAMILY.Lexend(500, 12),

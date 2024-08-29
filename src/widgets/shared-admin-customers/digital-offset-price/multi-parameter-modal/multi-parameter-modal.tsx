@@ -99,7 +99,13 @@ const MultiParameterModal = ({
                 )}
               </div>
               <div style={clasess.tableContainer}>
-                <div style={clasess.headerTableContainer}>
+                <div
+                  style={{
+                    ...clasess.headerTableContainer,
+                    position: "sticky",
+                    top: 0,
+                    zIndex: 1000,
+                  }}>
                   {parameterLists?.map((item, index: number) => {
                     return (
                       <HeaderMapping

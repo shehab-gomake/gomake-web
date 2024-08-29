@@ -87,3 +87,11 @@ export enum ERPDocumentsTypesEnum {
     LedgerReport,
     SalesReport
 }
+
+export enum ORDER_STATUSES {
+    Open = 0,
+    Canceled,
+    WaitingForPayment,
+    Paused,
+    Ready
+}

@@ -12,9 +12,9 @@ import {
 } from "@/services/api-service/materials/printhouse-materials-endpoints";
 import { IMaterialCategoryRow } from "@/widgets/materials-widget/interface";
 import { TableCellData } from "@/widgets/materials-widget/components/table-cell-data/table-cell";
-import { Checkbox, IconButton, Tooltip } from "@mui/material";
+import { Checkbox } from "@mui/material";
 import { getCurrencies } from "@/services/api-service/general/enums";
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilState, useResetRecoilState, useSetRecoilState } from "recoil";
 import {
   activeFilterState,
   currenciesState,
@@ -36,8 +36,6 @@ import {
 import { getMaterialSuppliersApi } from "@/services/api-service/materials/materials-suppliers-endpoints";
 import { useTranslation } from "react-i18next";
 import { useAddCategoryRow } from "./components/add-row/use-add-row";
-import { WastebasketNew } from "@/icons/wastebasket-new";
-
 import { getAndSetAllCustomers, getAndSetMachincesNew } from "@/services/hooks";
 import { MaterialMenuWidget } from "./components/more-circle";
 import cloneDeep from "lodash.clonedeep";
@@ -62,9 +60,14 @@ const useMaterials = (isAdmin: boolean) => {
       isDeletable: boolean;
     }[]
   >(materialCategoriesState);
+
   const [materialCategoryData, setMaterialCategoryData] = useRecoilState<
     IMaterialCategoryRow[]
   >(materialCategoryDataState);
+
+  const resetMaterialCategoryData = useResetRecoilState(materialCategoryDataState);
+
+
   const [isAllMaterialsChecked, setIsAllMaterialsChecked] =
     useRecoilState<boolean>(isAllMaterialsCheckedState);
   const [materialsUnChecked, setMaterialsUnChecked] = useRecoilState<string[]>(
@@ -91,6 +94,7 @@ const useMaterials = (isAdmin: boolean) => {
   const setMaterialCategorySuppliers = useSetRecoilState(
     materialCategorySuppliersState
   );
+ 
   const [materialName, setMaterialName] = useState<string>();
   const setMaterialActions = useSetRecoilState(materialActionState);
   const setMaterialTypeTable = useSetRecoilState(materialTypeTableState);
@@ -324,6 +328,7 @@ const useMaterials = (isAdmin: boolean) => {
     materialType: string,
     materialCategory: string
   ) => {
+    resetMaterialCategoryData();
     const callBack = (res) => {
       if (res.success) {
         setMaterialCategorySuppliers(
