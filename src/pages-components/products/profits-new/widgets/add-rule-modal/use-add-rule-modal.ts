@@ -21,7 +21,7 @@ import { CLIENT_TYPE_Id } from "@/pages/customers/enums";
 import { useTranslation } from "react-i18next";
 import { EGroupByEnum } from "@/enums";
 import { agentsCategoriesState } from "@/pages/customers/customer-states";
-import { getAndSetEmployees2 } from "@/services/api-service/customers/employees-api";
+import {getAndSetEmployees2, getEmployeesByActionIdApi} from "@/services/api-service/customers/employees-api";
 import { getALLMachinesApi } from "@/services/api-service/machines/print-house-machines-colors";
 import { machineCategoriesState } from "@/store/machine-categories";
 
@@ -59,16 +59,16 @@ const useAddRuleModal = ({
   
   const categories = useMemo(() => {
     const filteredCategories = [
-      { label: "Machine", id: "Machine" },
-      { label: "Machine type category", id: "Machine category" },
-      { label: "Products", id: "Products" },
-      { label: "Product type", id: "ProductType" },
-      { label: "Client type", id: "Client Type" },
-      { label: "Client", id: "Client" },
-      { label: "Property output", id: "Property output" },
-      { label: "Property input", id: "Property input" },
-      { label: "Agent", id: "Agent" },
-      { label: "Employee", id: "Employee" },
+      { label: t("products.profits.exceptions.machine"), id: "Machine" },
+      { label: t("products.profits.exceptions.machineTypeCategory"), id: "Machine category" },
+      { label: t("products.profits.exceptions.products"), id: "Products" },
+      { label: t("products.profits.exceptions.productType"), id: "ProductType" },
+      { label: t("products.profits.exceptions.clientType"), id: "Client Type" },
+      { label: t("products.profits.exceptions.client"), id: "Client" },
+      { label: t("products.profits.exceptions.propertyOutput") , id: "Property output" },
+      { label: t("products.profits.exceptions.propertyInput"), id: "Property input" },
+      { label: t("products.profits.exceptions.agent"), id: "Agent" },
+      { label: t("products.profits.exceptions.employee"), id: "Employee" },
     ];
     return isQuoteWidge ? filteredCategories.filter(category => category.id !== "ProductType") : filteredCategories.filter(category => category.id !== "Agent");
   }, [isQuoteWidge]);
@@ -200,6 +200,7 @@ const useAddRuleModal = ({
   const [parametersStateValue, setParametersState] =useRecoilState<any>(parametersState);
   const [allProductTypes, setAllProductTypes] = useState<any>();
   const [employeeList,setEmployeeList]=useState([])
+  const [actionEmployeeList,setActionEmployeeList]=useState([])
 
     const getMachinesList = async () => {
       const callBack = (res) => {
@@ -254,7 +255,23 @@ const useAddRuleModal = ({
     };
     await getAndSetEmployees2(callApi, callBack, { IsGraphicArtist: true });
   };
-
+  const getEmployeesByActionId = async () => {
+    if (router.query.actionId) {
+      const callBack = (res) => {
+        if (res.success) {
+          debugger
+          const employeeList = res.data.map((employee) => ({
+            label: employee.name,
+            id: employee.id,
+          }));
+          setActionEmployeeList(employeeList);
+        }
+      };
+      await getEmployeesByActionIdApi(callApi, callBack, {
+        ActionId: router.query.actionId,
+      });
+    }
+  }
   useEffect(() => {
     getProducts();
     getClientTypes();
@@ -263,7 +280,10 @@ const useAddRuleModal = ({
     getAllProductTypes();
     getEmployeeCategories();
   }, []);
-
+  useEffect(() => {
+    
+    getEmployeesByActionId();
+  }, [router]);
 
   useEffect(() => {
     getMachincesByActionId();
@@ -593,7 +613,8 @@ const useAddRuleModal = ({
     mappingRules,
     categoriesList,
     employeeList,
-    allProductTypes
+    allProductTypes,
+    actionEmployeeList
   };
 };
 
