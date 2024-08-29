@@ -1051,9 +1051,11 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
 
     return false;
   }
+
   const onClickSendQuoteToClient = async (messageType: number) => {
-    if (!isSelectedAtLeastOne) {
-      alertFault("please select at least one item")
+    if (!isSelectedAtLeastOne && docType===DOCUMENT_TYPE.quote) {
+      alertFault("reports.pleaseSelectOneItem");
+      return;
     }
     else {
       if (messageType === 1) {
