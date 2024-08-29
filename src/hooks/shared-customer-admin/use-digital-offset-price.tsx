@@ -483,6 +483,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     let temp = cloneDeep(productTemplate);
     temp.sections = temp.sections.filter((x) => x.id !== item.id);
     initProduct(temp, allMaterials);
+    const updatedSubProducts = subProducts.filter((subProduct) => subProduct.sectionId !== item.id);
+    setSubProducts(updatedSubProducts);
   };
 
   const duplicateParameters = (mySubSection) => {
@@ -577,7 +579,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             let temp = [];
             subSection.parameters
               .forEach((parameter) => {
-                if(parameter.code === "ChemicalPaperWeight"){
+                if (parameter.code === "ChemicalPaperWeight") {
                   debugger
                 }
                 parameter.relatedParameters.forEach((x) => {
@@ -725,7 +727,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     EParameterTypes.BUTTON
                   ) {
                     const value = parameter?.valuesConfigs?.find(
-                        (item) => item?.isDefault == true
+                      (item) => item?.isDefault == true
                     );
                     // when the parameter is required and the parameter is material select and if there is only one option select it automatically
                     if (!value && parameter?.valuesConfigs && parameter?.valuesConfigs?.length === 1 && parameter?.isRequired) {
@@ -745,7 +747,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         unitType: parameter?.unitType,
                       });
                     }
-                    
+
                     if (
                       value &&
                       value.materialValueIds &&
@@ -937,7 +939,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         });
         setProductTemplate(productTemplate)
         setSubProducts(subProductsArray);
-        console.log(subProductsArray)
         setUnderParameterIds(underParameterIdsArray);
         setIsSetTemplete(true);
       }
@@ -1369,7 +1370,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     if (canCalculation) {
       calculationProduct(subProducts);
     }
-  }, [subProducts, canCalculation]);
+  }, [subProducts, canCalculation, productTemplate]);
 
   interface BillingMethod {
     value: string;

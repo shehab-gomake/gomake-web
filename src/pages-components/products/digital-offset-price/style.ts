@@ -12,7 +12,6 @@ const useStyle = () => {
   const { primaryColor, secondColor, errorColor, neutralColor, successColor } =
     useGomakeTheme();
     const [screenWidth, setScreenWidth] = useState<number | null>(null);
-  console.log("screenWidth",screenWidth)
     useEffect(() => {
       // Function to update screen width
       const updateScreenWidth = () => {
