@@ -22,6 +22,17 @@ const inputs = (state) => {
                     options: [],
                     value: state.attributes?.varnishUnit?.isAvailable ? state.attributes?.varnishUnit?.isAvailable : ''
                 },
+                {
+                    name: "setupTime",
+                    label: "machineAttributes.setupTime",
+                    type: "text",
+                    placeholder: "machineAttributes.setupTime",
+                    required: true,
+                    parameterKey: "setupTime",
+                    options: [],
+                    value: state.attributes?.varnishUnit?.setupTime ? state.attributes?.varnishUnit?.setupTime : '',
+                    disabled: !state.attributes?.varnishUnit?.isAvailable
+                },
             ]
         },
         state.attributes?.varnishUnit?.isAvailable ?

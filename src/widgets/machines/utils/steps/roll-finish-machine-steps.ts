@@ -15,7 +15,7 @@ import {FoilUnitComponent} from "@/widgets/machines/components/forms/roll-finish
 import {EmbossingUnitComponent} from "@/widgets/machines/components/forms/roll-finish-units/embossing-selective";
 
 
-const rollLaserCutMachineSteps = (isAdmin: boolean): IStep[] => isAdmin ? [
+const rollFinishMachineSteps = (isAdmin: boolean): IStep[] => isAdmin ? [
         {label: 'basic', component: BasicInputsComponent},
         {label: 'machineDimensions', component: MachineDimensionsComponent},
         {label: 'core', component: OtherSettingsInputsComponent},
@@ -44,4 +44,4 @@ const rollLaserCutMachineSteps = (isAdmin: boolean): IStep[] => isAdmin ? [
 
     ];
 
-export {rollLaserCutMachineSteps};
+export {rollFinishMachineSteps};
