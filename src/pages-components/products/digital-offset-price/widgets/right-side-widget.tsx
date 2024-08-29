@@ -72,7 +72,6 @@ const RightSideWidget = ({
       setLogsArray(uniqueArray);
     }
   }, [selectedWorkFlow, calculationExceptionsLogs]);
-
   return (
     <div style={clasess.rightSideMainContainer}>
       <div style={clasess.rightSideContainer}>
@@ -333,47 +332,9 @@ const RightSideWidget = ({
                 />
               </div>
             </div>
-          ) : activeTab === t("products.offsetPrice.admin.graphicDesign") ? (
-            <div style={clasess.productionStatus}>
-              <div style={clasess.sampleTypeStyle}>Billing method</div>
-              <div style={clasess.autoCompleteContainer}>
-                <GoMakeAutoComplate
-                  key={billingMethod}
-                  options={billingMethodValues}
-                  getOptionLabel={(option: any) => option.text}
-                  placeholder="Billing method"
-                  style={clasess.dropDownListStyle}
-                  onChange={(e, value) => setBillingMethod(value)}
-                  value={billingMethod}
-                />
-              </div>
-              <div style={clasess.sampleTypeStyle}>Graphic designer</div>
-              <div style={clasess.autoCompleteContainer}>
-                <GoMakeAutoComplate
-                  key={graphicDesigner}
-                  options={listEmployeesValues}
-                  getOptionLabel={(option: any) =>
-                    `${option.firstname}` + ` ${option.lastname}`
-                  }
-                  placeholder={"Graphic designer"}
-                  style={clasess.dropDownListStyle}
-                  onChange={(e, value) => setGraphicDesigner(value)}
-                  value={graphicDesigner}
-                />
-              </div>
-              <div style={clasess.multiLineContainer}>
-                <GomakeTextInput
-                  multiline={6}
-                  onChange={(e: any) => {
-                    setGraphicNotes(e.target.value);
-                  }}
-                  value={graphicNotes}
-                  style={clasess.multiLineTextInputStyle}
-                  placeholder={t(
-                    "products.offsetPrice.admin.graphicDesignComment"
-                  )}
-                />
-              </div>
+          ) : activeTab === t("reports.details") ? (
+            <div style={clasess.logsContainer}>
+              <div style={clasess.detailsContainer}>{template?.details}</div>
             </div>
           ) : (
             <div style={clasess.logsContainer}>
