@@ -449,7 +449,8 @@ const useStyle = () => {
         ...FONT_FAMILY.Lexend(500, 16),
         borderRadius: 4,
         cursor: "pointer",
-        width:145,
+        width:"100%",
+        minWidth:"fit-content",
         height:40
       },
       activeLogsTabStyle: {
@@ -462,7 +463,8 @@ const useStyle = () => {
         ...FONT_FAMILY.Lexend(500, 16),
         borderRadius: 4,
         cursor: "pointer",
-        width:145,
+        width:"100%",
+        minWidth:"fit-content",
         height:40
       },
       unActiveTabStyle: {
@@ -476,7 +478,8 @@ const useStyle = () => {
         border: `1px solid ${primaryColor(500)}`,
         borderRadius: 4,
         cursor: "pointer",
-        width:145,
+        width:"100%",
+        minWidth:"fit-content",
         height:40
       },
       addOrderBtn: {
@@ -696,6 +699,9 @@ const useStyle = () => {
         overflowY: "scroll",
         overflowX: "hidden",
         gap: 10,
+      },
+      detailsContainer:{
+        ...FONT_FAMILY.Lexend(500, 16),
       },
       generalMsgTextStyle: {
         display: "flex",
