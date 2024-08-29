@@ -147,7 +147,10 @@ const QuotesListPageWidget = ({
     getEmployeeCategories,
     ManuallyCloseDocument,
     documentCloseNumber,
-    handleDocumentNumberChange
+    handleDocumentNumberChange,
+    approvalStatuses,
+    setApprovalStatusId,
+    approvalStatusId
   } = useQuotes(documentType, isFromHomePage);
 
   const router = useRouter();
@@ -231,7 +234,7 @@ const QuotesListPageWidget = ({
                                   setCustomerId(value);
                                 }}
                                 value={customerId}
-                                withArrow={true}
+                                //withArrow={true}
                               />
                             </div>
                             <div style={classes.statusFilterContainer}>
@@ -248,7 +251,7 @@ const QuotesListPageWidget = ({
                                   setAgentId(value);
                                 }}
                                 value={agentId}
-                                withArrow={true}
+                                //withArrow={true}
                               />
                             </div>
                             {documentType === DOCUMENT_TYPE.quote &&
@@ -267,7 +270,27 @@ const QuotesListPageWidget = ({
                                     setStatusId(value);
                                   }}
                                   value={statusId}
-                                  withArrow={true}
+                                  //withArrow={true}
+                                />
+                              </div>
+                            }
+                            {documentType === DOCUMENT_TYPE.quote &&
+                              <div style={classes.statusFilterContainer}>
+                                <div style={classes.filterLabelStyle}>
+                                  {t("sales.quote.approvalStatus")}
+                                </div>
+                                <GoMakeAutoComplate
+                                  key={approvalStatusId?.value}
+                                  options={approvalStatuses}
+                                  style={classes.textInputStyle}
+                                  getOptionLabel={(option: any) => option.label}
+                                  placeholder={t("sales.quote.chooseApprovalStatus")}
+                                  onChange={(e: any, value: any) => {
+                                    setPage(1);
+                                    setApprovalStatusId(value);
+                                  }}
+                                  value={approvalStatusId}
+                                  //withArrow={true}
                                 />
                               </div>
                             }
@@ -281,7 +304,7 @@ const QuotesListPageWidget = ({
                                   placeholder={t("boardMissions.productionStatus")}
                                   onChange={handleProductionStatusChange}
                                   value={productionStatus}
-                                  withArrow={true}
+                                  //withArrow={true}
                                 />
                               </div>
                             }
@@ -295,7 +318,7 @@ const QuotesListPageWidget = ({
                                   placeholder={t("sales.quote.accountingStatus")}
                                   onChange={handleAccountingStatusChange}
                                   value={accountingStatus}
-                                  withArrow={true}
+                                  //withArrow={true}
                                 />
                               </div>
                             }
@@ -319,7 +342,7 @@ const QuotesListPageWidget = ({
                               </div>
                             }
                             {documentType !== DOCUMENT_TYPE.purchaseInvoice && documentType !== DOCUMENT_TYPE.purchaseInvoiceRefund && documentType !== DOCUMENT_TYPE.purchaseOrder &&
-                              <div style={classes.statusFilterContainer}>
+                              <div style={{...classes.statusFilterContainer, width: "fit-content"}}>
                                 <div style={classes.filterLabelStyle}>{t("sales.quote.priceRange")}</div>
                                 <div style={classes.priceDivStyle}>
                                   <GomakeTextInput

@@ -4,10 +4,8 @@ import { useCallback } from "react";
 import { useSetRecoilState } from "recoil";
 import {useTranslation} from "react-i18next";
 import {ResponseType} from "axios";
-// import { useRecoilState } from "recoil";
-// import { loadgingState } from "../atoms";
 
-// examplet to how its work
+// example to how its work
 // const {callApi} = useGomakeAxios()
 //const result = await callApi("POST","/v1/api/",{
 //    "name":"test",

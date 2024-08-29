@@ -6,7 +6,7 @@ export interface AllowedIP {
 
 export interface Employee {
     id?: string;
-    agentCode: string | null;
+    agentCode: string | null; 
     firstname: string;
     lastname: string;
     phone: string;
@@ -40,4 +40,5 @@ export interface IUserData {
     allowedIPs: AllowedIP[];
     employee: Employee;
     email: string;
+    isMailVerified?:boolean;
 }

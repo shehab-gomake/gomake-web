@@ -577,7 +577,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             let temp = [];
             subSection.parameters
               .forEach((parameter) => {
-
+                if(parameter.code === "ChemicalPaperWeight"){
+                  debugger
+                }
                 parameter.relatedParameters.forEach((x) => {
                   x.sectionId = section.id;
                   x.subSectionId = subSection.id;
@@ -722,8 +724,11 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     parameter?.parameterType ===
                     EParameterTypes.BUTTON
                   ) {
+                    const value = parameter?.valuesConfigs?.find(
+                        (item) => item?.isDefault == true
+                    );
                     // when the parameter is required and the parameter is material select and if there is only one option select it automatically
-                    if (parameter?.valuesConfigs && parameter?.valuesConfigs?.length === 1 && parameter?.isRequired) {
+                    if (!value && parameter?.valuesConfigs && parameter?.valuesConfigs?.length === 1 && parameter?.isRequired) {
                       subProduct.parameters.push({
                         parameterId: parameter?.id,
                         parameterName: parameter?.name,
@@ -740,9 +745,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         unitType: parameter?.unitType,
                       });
                     }
-                    const value = parameter?.valuesConfigs?.find(
-                      (item) => item?.isDefault == true
-                    );
+                    
                     if (
                       value &&
                       value.materialValueIds &&
@@ -779,52 +782,61 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         });
                       }
                     }
-                    else if (value && parameter.code === "DieCut" && widgetType === EWidgetProductType.CREATE) {
-                      let values = value?.additionalAttribute?.find((val) => val.valueId === "name")
-                      subProduct.parameters.push({
-                        parameterId: parameter?.id,
-                        parameterName: parameter?.name,
-                        actionId:
-                          value?.activateAction === true
-                            ? parameter?.actionId
-                            : null,
-                        parameterType: parameter?.parameterType,
-                        ...(value && {
-                          valueIds: [value?.id],
-                          values: [values?.value],
-                        }),
-                        sectionId: section?.id,
-                        subSectionId: subSection?.id,
-                        actionIndex: parameter?.actionIndex,
-                        parameterCode: parameter?.code,
-                        valuesConfigs: parameter?.valuesConfigs,
-                        unitKey: parameter?.unitKey,
-                        unitType: parameter?.unitType,
-                      });
-                    }
+                    else if (value && parameter.code === "DieCut") {
+                      const existingParameters = productItemValueByEdit?.itemParmetersValues || [];
+                      const isDieCutExisting = existingParameters.find((param) => param?.parameterCode === "DieCut");
 
-                    else if (value && parameter.code === "DieKissCut" && widgetType === EWidgetProductType.CREATE) {
-                      let values = value?.additionalAttribute?.find((val) => val.valueId === "name")
-                      subProduct.parameters.push({
-                        parameterId: parameter?.id,
-                        parameterName: parameter?.name,
-                        actionId:
-                          value?.activateAction === true
-                            ? parameter?.actionId
-                            : null,
-                        parameterType: parameter?.parameterType,
-                        ...(value && {
+                      if (isDieCutExisting || existingParameters.length === 0) {
+                        const nameValue = value?.additionalAttribute?.find((attr) => attr.valueId === "name")?.value;
+
+                        const newParameter = {
+                          parameterId: parameter?.id,
+                          parameterName: parameter?.name,
+                          actionId: value?.activateAction ? parameter?.actionId : null,
+                          parameterType: parameter?.parameterType,
                           valueIds: [value?.id],
-                          values: [values?.value],
-                        }),
-                        sectionId: section?.id,
-                        subSectionId: subSection?.id,
-                        actionIndex: parameter?.actionIndex,
-                        parameterCode: parameter?.code,
-                        valuesConfigs: parameter?.valuesConfigs,
-                        unitKey: parameter?.unitKey,
-                        unitType: parameter?.unitType,
-                      });
+                          values: [nameValue],
+                          sectionId: section?.id,
+                          subSectionId: subSection?.id,
+                          actionIndex: parameter?.actionIndex,
+                          parameterCode: parameter?.code,
+                          valuesConfigs: parameter?.valuesConfigs,
+                          unitKey: parameter?.unitKey,
+                          unitType: parameter?.unitType,
+                        };
+
+                        subProduct.parameters.push(newParameter);
+                      }
+                    }
+                    else if (value && parameter.code === "DieKissCut") {
+                      const existingParameters = productItemValueByEdit?.itemParmetersValues || [];
+                      const isDieCutExisting = existingParameters.find((param) => param?.parameterCode === "DieKissCut");
+
+                      if (isDieCutExisting || existingParameters.length === 0) {
+                        const nameValue = value?.additionalAttribute?.find((attr) => attr.valueId === "name")?.value;
+                        subProduct.parameters.push({
+                          parameterId: parameter?.id,
+                          parameterName: parameter?.name,
+                          actionId:
+                            value?.activateAction === true
+                              ? parameter?.actionId
+                              : null,
+                          parameterType: parameter?.parameterType,
+                          ...(value && {
+                            valueIds: [value?.id],
+                            values: [nameValue],
+                          }),
+                          sectionId: section?.id,
+                          subSectionId: subSection?.id,
+                          actionIndex: parameter?.actionIndex,
+                          parameterCode: parameter?.code,
+                          valuesConfigs: parameter?.valuesConfigs,
+                          unitKey: parameter?.unitKey,
+                          unitType: parameter?.unitType,
+                        });
+                      }
+
+
                     }
                   } else if (
                     parameter?.parameterType ===
@@ -925,6 +937,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         });
         setProductTemplate(productTemplate)
         setSubProducts(subProductsArray);
+        console.log(subProductsArray)
         setUnderParameterIds(underParameterIdsArray);
         setIsSetTemplete(true);
       }
@@ -1023,7 +1036,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   })
                   if (parameter.code === "DieCut" || parameter.code === "DieKissCut") {
                     if (parameter.valuesConfigs.length === 0) {
-                      parameter.valuesConfigs = materialData.map(data => ({
+                      parameter.valuesConfigs = materialData?.map(data => ({
                         id: data.valueId,
                         isHidden: false,
                         isDefault: false,
@@ -1039,7 +1052,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                       }));
                     } else {
                       // If valueConfigs has objects, update it based on materialData
-                      parameter.valuesConfigs = materialData.map(data => {
+                      parameter.valuesConfigs = materialData?.map(data => {
                         const existingConfig = parameter.valuesConfigs.find(config => config.id === data.valueId);
                         return existingConfig ? {
                           ...existingConfig,
@@ -1290,7 +1303,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       setWorkFlows([]);
       setJobActions([]);
       setSubProducts([]);
-
+      setWorkTypes([])
       setCalculationProgress({
         totalWorkFlowsCount: 0,
         currentWorkFlowsCount: 0,
@@ -1595,9 +1608,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     }
 
   }, [deviceSize, deviceCategory])
+
   const setOpenQuantityComponent = useDebouncedCallback(() => {
     setOpenQuantityComponentModal(true);
-  }, 700);
+  }, 500);
 
   const _renderParameterType = (
     parameter: any,
@@ -1622,10 +1636,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     );
     if (
       parameter?.parameterType === EParameterTypes.INPUT_NUMBER &&
-      parameter?.id === quantity?.parameterId
+      parameter?.code === "quantity"
     ) {
       const typesNum = typesParam && typesParam.values ? typesParam.values[0] : 0;
-
       const isSets = isSetsParameter && isSetsParameter.values ? isSetsParameter.values[0] : "";
       const isInputDisabled = typesNum > 1 || isSets === "true";
       Comp = (
@@ -1641,7 +1654,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             type="number"
             disabled={isInputDisabled}
           />
-          <QuantityParameter />
+          <QuantityParameter subSection={subSection} section={section} />
         </React.Fragment>
 
       );
@@ -1653,20 +1666,27 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       const isSets = isSetsParameter && isSetsParameter.values ? isSetsParameter.values[0] : "";
       const isInputDisabled = isSets === "true";
       Comp = (
-        <InputNumberParameterWidget
-          clasess={clasess}
-          parameter={parameter}
-          index={index}
-          temp={temp}
-          onChangeSubProductsForPrice={onChangeSubProductsForPrice}
-          subSection={subSection}
-          section={section}
-          type="number"
-          disabled={isInputDisabled}
-          extraOnChange={() => {
-            setOpenQuantityComponent();
-          }}
-        />
+        <React.Fragment>
+          <InputNumberParameterWidget
+            clasess={clasess}
+            parameter={parameter}
+            index={index}
+            temp={temp}
+            onChangeSubProductsForPrice={onChangeSubProductsForPrice}
+            subSection={subSection}
+            section={section}
+            type="number"
+            disabled={isInputDisabled}
+            extraOnChange={() => {
+              setOpenQuantityComponent();
+            }}
+          />
+
+        </React.Fragment>
+
+
+
+
       );
     } else if (
       parameter?.parameterType === EParameterTypes.INPUT_NUMBER &&

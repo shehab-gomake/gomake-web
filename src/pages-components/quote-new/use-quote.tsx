@@ -15,6 +15,7 @@ import {
   agentListsState,
   businessListsState,
   clientContactsState,
+  loadingWithShadowState,
   quoteConfirmationState,
   quoteItemState,
 } from "@/store";
@@ -1157,41 +1158,50 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     })
   }
 
+  const setLoadingWithShadow = useSetRecoilState(loadingWithShadowState);
+
   const handleSaveBtnClickForDocument = async () => {
     if (!quoteItemValue?.documentItems || quoteItemValue.documentItems.length === 0) {
       alertFault("alerts.noItems");
       return;
     }
-
     if (quoteItemValue?.totalPrice === 0) {
       alertFault("alerts.cannotCreateWithPriceZero");
       return;
     }
+    setLoadingWithShadow(true);
+    try {
+      const res = await callApi(
+        EHttpMethod.POST,
+        `/v1/erp-service/documents/create-document`,
+        {
+          documentType: docType,
+          document: {
+            ...quoteItemValue,
+            creationDate: creationDate,
+            taxDate: taxDate,
+            dueDate: selectDate,
+            exchangeRate: quoteItemValue.exchangeRate === 0 ? 1 : quoteItemValue.exchangeRate
+          }
+        },
+        false
+      );
 
-    const res = await callApi(
-      EHttpMethod.POST,
-      `/v1/erp-service/documents/create-document`,
-      {
-        documentType: docType,
-        document: {
-          ...quoteItemValue,
-          creationDate: creationDate,
-          taxDate: taxDate,
-          dueDate: selectDate,
-          exchangeRate: quoteItemValue.exchangeRate === 0 ? 1 : quoteItemValue.exchangeRate
-        }
+      if (res?.success) {
+        alertSuccessAdded();
+        const _data = res?.data?.data?.data || {};
+        setQuoteItemValue(_data);
+        navigate(`/${documentPath}?Id=${res?.data?.data?.data?.id}`);
+      } else {
+        alertFaultAdded();
       }
-    );
-    if (res?.success) {
-      alertSuccessAdded();
-      const _data = res?.data?.data?.data || {};
-      setQuoteItemValue(_data);
-      navigate(`/${documentPath}?Id=${res?.data?.data?.data?.id}`)
-    } else {
+    } catch (error) {
       alertFaultAdded();
+    } finally {
+      setLoadingWithShadow(false);
     }
   }
-
+  
   const onClickDeleteAddress = async (item: any) => {
     if (router.query.isNewCreation) {
       const updatedQuoteItemValue = { ...quoteItemValue };

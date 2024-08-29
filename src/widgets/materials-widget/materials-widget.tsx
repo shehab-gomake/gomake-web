@@ -225,6 +225,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
         {materialCategory && (
           <Stack justifyContent={"space-between"} gap={2} display={"flex"} height={"100%"}>
             <div >
+              
               {materialCategoryData.length > 0 ? (
                 <Stack display={"grid"}>
                   <PrimaryTable

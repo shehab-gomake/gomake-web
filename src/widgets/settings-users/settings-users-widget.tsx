@@ -14,6 +14,7 @@ import { useAddRole } from "@/widgets/settings-users/use-add-role";
 import { PermissionCheck } from "@/components/CheckPermission";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { useUserPermission } from "@/hooks/use-permission";
+import { GoMakeDialog } from "@/components/dialog/dialog";
 
 const SettingsUsersWidget = () => {
     const { t } = useTranslation();
@@ -25,13 +26,23 @@ const SettingsUsersWidget = () => {
         onUpdateEmployee,
         onAddEmployee,
         action,
+        openVerificationModal,
+        handleCloseVerificationModal
     } = useEmployee();
-    const { addNewRole, setOpenAddRoleModal, openAddRoleModal, inputValue, setInputValue } = useAddRole();
+
+    const {
+        addNewRole,
+        setOpenAddRoleModal,
+        openAddRoleModal,
+        inputValue,
+        setInputValue
+    } = useAddRole();
+
     const tabs: ITab[] = [
         CheckPermission(Permissions.SHOW_EMPLOYEES) && { title: t("usersSettings.users"), component: <UsersSettings /> },
         CheckPermission(Permissions.SHOW_PERMISSIONS) && { title: t("usersSettings.permission"), component: <PermissionsWidget /> }
-
     ];
+
     return (
         <div data-tour={'settingUsersWidget'}>
             <PrimaryTabsComponent tabs={tabs} >
@@ -43,11 +54,8 @@ const SettingsUsersWidget = () => {
                         <AddButton label={t("permissionsSettings.addRole")}
                             onClick={() => setOpenAddRoleModal(true)} />
                     </PermissionCheck>
-
                 </div>
-
             </PrimaryTabsComponent>
-
             <GoMakeModal
                 insideStyle={{ paddingLeft: 0, paddingRight: 0 }}
                 headerPadding={20}
@@ -65,6 +73,12 @@ const SettingsUsersWidget = () => {
                     onClickAdd={onAddEmployee}
                 />
             </GoMakeModal>
+            <GoMakeDialog
+                open={openVerificationModal}
+                onClose={handleCloseVerificationModal}
+                title={t("usersSettings.mailVerificationRequired")}
+                description={t("usersSettings.verificationMailSent")}
+            />
             <GoMakeModal insideStyle={{ paddingLeft: 0, paddingRight: 0, width: 500, height: 250 }}
                 headerPadding={20}
                 openModal={openAddRoleModal}
