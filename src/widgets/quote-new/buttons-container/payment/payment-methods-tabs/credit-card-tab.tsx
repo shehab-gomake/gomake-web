@@ -38,9 +38,9 @@ const CreditCardTab = ({
     } = usePaymentMethodsTabs();
 
     return (
-        <div style={{ display: "flex", flexDirection: "column" as "column", gap: "10px" }} >
+        <div style={{ display: "flex", flexDirection: "column" as "column", gap: "10px" , paddingTop: cardTransactionsOptions.length > 0 ? "0px" : "10px"}} >
             {
-                cardTransactionsOptions && !isTransacted && <div style={{ width: "75%", alignSelf: "center" }}>
+                cardTransactionsOptions.length > 0 && !isTransacted && <div style={{ width: "75%", alignSelf: "center" }}>
                     <GoMakeAutoComplate
                         key={"chooseExistingCard-select"}
                         value={transactionSelected}
@@ -187,7 +187,6 @@ const CreditCardTab = ({
                         <div style={classes.creditCardSecondInputsContainer}>
                             <input
                                 key={"Total-3"}
-
                                 style={classes.creditSecondCardInputs}
                                 placeholder="Total"
                                 value={totalCreditCard}

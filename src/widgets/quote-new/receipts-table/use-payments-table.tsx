@@ -235,7 +235,6 @@ const usePaymentsTable = () => {
 
 
     // Credit card widgets // 
-
     const [firstWidget, setFirstWidget] = useRecoilState<boolean>(firstWidgetState);
     const [secondWidget, setSecondWidget] = useRecoilState<boolean>(secondWidgetState);
     const [thirdWidget, setThirdWidget] = useRecoilState<boolean>(thirdWidgetState);
