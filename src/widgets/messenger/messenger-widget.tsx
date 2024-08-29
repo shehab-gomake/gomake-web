@@ -219,7 +219,7 @@ export default function MessengerWidget({userType}: IProps) {
                                                     placeholder={t('messenger.inputPlaceHolder')}
                                                     onChange={(e) => setInputValue(e.target.value)}
                                                     value={inputValue}/>
-                                                <IconButton onClick={() => sendTextMessage(inputValue)}
+                                                <IconButton disabled={!inputValue} onClick={() => sendTextMessage(inputValue)}
                                                             sx={{p: '10px'}}>
                                                     <SendIcon style={{color: primaryColor(500)}}/>
                                                 </IconButton>

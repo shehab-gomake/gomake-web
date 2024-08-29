@@ -100,7 +100,7 @@ const useProductionFloorFilters = () => {
     const setGroupFromPath = (groups: IFilterGroup[]) => {
         setFilters({
             ...filtersState,
-            groups: groups
+            groups: groups,
         }).then();
     }
 

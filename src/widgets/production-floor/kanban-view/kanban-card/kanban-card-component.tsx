@@ -51,15 +51,15 @@ const KanbanCardComponent = ({board}: IProp) => {
                 <table style={{borderSpacing: '5px',}}>
                     <tbody>
                     <tr>
-                        <td><span style={classes.jobTitle}>{board.jobName || t("productionFloor.jobTitle")}</span></td>
+                        <td style={classes.firstCol}><span style={classes.jobTitle}>{board.jobName || t("productionFloor.jobTitle")}</span></td>
                         <td><LabelComponent label={board.productName}/></td>
                     </tr>
                     <tr>
-                        <td><span style={classes.secondLabel}>{`${t("productionFloor.workOrder")} :`}</span></td>
+                        <td style={classes.firstCol}><span style={classes.secondLabel}>{`${t("productionFloor.workOrder")} :`}</span></td>
                         <td><span style={classes.primaryLabel}>{board.workOrder || board.boardMissionNumber}</span></td>
                     </tr>
                     <tr>
-                        <td><span style={classes.secondLabel}>{`${t("productionFloor.machine")} :`}</span></td>
+                        <td style={classes.firstCol}><span style={classes.secondLabel}>{`${t("productionFloor.machine")} :`}</span></td>
                         <td><span
                             style={classes.primaryLabel}>{board.currentStation.machineName || board.currentStation.actionName}</span>
                         </td>
