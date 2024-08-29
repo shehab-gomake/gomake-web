@@ -33,6 +33,17 @@ const inputs = (state) => {
                     value: state.attributes?.laserCutUnit?.cost ? state.attributes?.laserCutUnit?.cost : '',
                     disabled: !state.attributes?.laserCutUnit?.isAvailable
                 },
+                {
+                    name: "setupTime",
+                    label: "machineAttributes.setupTime",
+                    type: "text",
+                    placeholder: "machineAttributes.setupTime",
+                    required: true,
+                    parameterKey: "setupTime",
+                    options: [],
+                    value: state.attributes?.laserCutUnit?.setupTime ? state.attributes?.laserCutUnit?.setupTime : '',
+                    disabled: !state.attributes?.laserCutUnit?.isAvailable
+                },
             ]
         },
     ]
