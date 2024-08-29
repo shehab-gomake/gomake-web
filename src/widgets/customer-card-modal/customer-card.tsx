@@ -29,6 +29,7 @@ import { ITab } from "@/components/tabs/interface";
 import { PrimaryTabsComponent } from "@/components/tabs/primary-tabs";
 import { AccountingTab } from "./components/accounting-tab";
 import { GeneralTab } from "./components/general-tab/form";
+import { BudgetTab } from "./components/budget-tab";
 
 interface IProps {
   isValidCustomer?: (
@@ -164,11 +165,11 @@ const CustomerCardWidget = ({
 
   const renderAddButton = (onClick, labelKey) => (
     <div style={classes.addNewStyle}>
-    <AddIcon onClick={onClick} />
-    <button style={classes.buttonsStyle} onClick={onClick}>
-      {t(labelKey)}
-    </button>
-  </div>
+      <AddIcon onClick={onClick} />
+      <button style={classes.buttonsStyle} onClick={onClick}>
+        {t(labelKey)}
+      </button>
+    </div>
   );
 
   const renderTableSearch = <>{(isFromHomePage && showTable) &&
@@ -244,6 +245,12 @@ const CustomerCardWidget = ({
       title: t("customers.modal.accounting"),
       component: (
         <AccountingTab clientType={typeClient} onChangeInputs={onChangeInputs} state={customer} />
+      ),
+    },
+    {
+      title: t("budget"),
+      component: (
+        <BudgetTab />
       ),
     },
     typeClient === CLIENT_TYPE.CUSTOMER && {
