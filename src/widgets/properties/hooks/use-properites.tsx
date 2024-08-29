@@ -58,6 +58,9 @@ const useProperites = ({ classes }) => {
   useEffect(() => {
     getMachincesByActionId()
   }, [])
+  const getSuccessValue = () => {
+    
+  }
   useEffect(() => {
     const updatedProperties = updateProperties(
       allProperties,
