@@ -72,7 +72,8 @@ const AddRuleModal = ({
     mappingRules,
     categoriesList,
     employeeList,
-    allProductTypes
+    allProductTypes,
+      actionEmployeeList
   } = useAddRuleModal({
     typeExceptionSelected,
     selectedPricingBy,
@@ -238,6 +239,26 @@ const AddRuleModal = ({
               />
             </div>
           );
+          case EValueType.EMPLOYEE:
+              return (
+                  <div style={{ width: "20%" }}>
+                      <div style={clasess.selectTypeStyle}>
+                          {t("products.profits.exceptions.selectEmployee")}
+                          <span style={clasess.spanUnitStyle}>
+                  {selectedOutputs?.defaultUnit}
+                </span>
+                      </div>
+                      <GoMakeAutoComplate
+                          options={actionEmployeeList}
+                          style={clasess.dropDownListContainer}
+                          placeholder={t("products.profits.exceptions.selectEmployee")}
+                          onChange={(e, value) => {
+                              setPropertieValue(value?.id)
+                          }
+                          }
+                      />
+                  </div>
+              );
       }
     } else {
       switch (selectedParameters?.type) {
