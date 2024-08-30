@@ -28,14 +28,16 @@ const useAddNewItem = ({ onClose, getQuote, documentType }) => {
         const transformProducts = (products) => {
           return {
             value: 'products',
-            title: t('tabs.products'),
             selectable:false,
+            title: t('tabs.products'),
+            text: t('tabs.products'),
             level: 0,
             children: products.map(product => ({
               value: product.id, // Using product id as the key
-              title: product.name, // Using product name as the label
-              category: ProductCategoryType.PRODUCT,
-              code: product.code
+              title: product.name, // Using product name as the label,
+              text: product.name,
+              level: 1,
+              category: ProductCategoryType.PRODUCT
             }))
           };
         };
@@ -43,27 +45,32 @@ const useAddNewItem = ({ onClose, getQuote, documentType }) => {
           return {
             value: 'materials',
             title: t('tabs.materials'),
-            selectable:false,
+            text: t('tabs.materials'),
             level: 0,
+            selectable:false,
             children: materials.map(material => ({
-              value: material.materialTypeName, // Using materialTypeName as the key
-              title: material.materialTypeName, // Using materialTypeName as the label
+              value: material.materialTypeName,
+              title: material.materialTypeName,
+              text: material.materialTypeName,
+              level: 1, // Material Types are level 1
               selectable:false,
               children: material.categories.map(category => ({
-                value: `${material.materialTypeName}-${category.categoryName}`, // Generate a unique key
-                title: category.categoryName, // Using categoryName as the label
+                value: `${material.materialTypeName}-${category.categoryName}`,
+                title: category.categoryName,
+                text: category.categoryName,
                 selectable:false,
+                level: 2, // Categories are level 2
                 children: category.rows.map(row => ({
-                  value: row.id, // Using row id as the key
-                  title: row.value, // Using row value as the label,
-                  category: ProductCategoryType.MATERIAL,
-                  // Ensure category is present
+                  value: row.id,
+                  title: row.value,
+                  text: row.value,
+                  level: 3, // Rows are level 3
+                  category: ProductCategoryType.MATERIAL
                 }))
               }))
             }))
           };
         };
-
 
         const transformedProducts = transformProducts(res?.data?.products);
         const transformedMaterials = transformMaterials((res?.data?.materials));
@@ -81,10 +88,10 @@ const useAddNewItem = ({ onClose, getQuote, documentType }) => {
 
 
   const handleProductChange = (e) => {
-    const selectedValue = e?.value;
+    const selectedValue = e;
     const findNodeByKey = (key, nodes) => {
       for (const node of nodes) {
-        if (node.key === key) {
+        if (node.value === key) {
           return node;
         }
         if (node.children) {
@@ -96,6 +103,7 @@ const useAddNewItem = ({ onClose, getQuote, documentType }) => {
       }
       return null;
     };
+
 
     const selectedNode = findNodeByKey(selectedValue, combinedData);
     if (selectedNode && !selectedNode.children) {
