@@ -397,7 +397,9 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
 
   const onChangeSelectBusiness = async (item: any) => {
     if (router?.query?.isNewCreation && docType === DOCUMENT_TYPE.receipt) {
+      setLoadingWithShadow(true);
       const callBack = (res) => {
+        setLoadingWithShadow(false);
         if (res?.success) {
           const _data = res?.data || {};
           if (router?.query?.isNewCreation && router?.query?.documentNumber && router?.query?.ClientId) {
@@ -416,7 +418,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
         }
         getAllCreditCardTransactions(item?.id);
       }
-      await getClientPaymentItemsApi(callApi, callBack, { clientId: item?.id, })
+      await getClientPaymentItemsApi(callApi, callBack, { clientId: item?.id, }, false)
     }
     else if (router?.query?.isNewCreation) {
       const res = await callApi(
@@ -1051,9 +1053,11 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
 
     return false;
   }
+
   const onClickSendQuoteToClient = async (messageType: number) => {
-    if (!isSelectedAtLeastOne) {
-      alertFault("please select at least one item")
+    if (!isSelectedAtLeastOne && docType===DOCUMENT_TYPE.quote) {
+      alertFault("reports.pleaseSelectOneItem");
+      return;
     }
     else {
       if (messageType === 1) {

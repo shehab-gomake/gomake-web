@@ -163,21 +163,21 @@ const usePaymentMethodsTabs = () => {
 
     ////////////////////////////////////// Account code /////////////////////////////////////////
 
-    const cashAccountsOptions = quoteItemValue?.cashAccounts.map((account) => ({
+    const cashAccountsOptions = quoteItemValue?.cashAccounts?.map((account) => ({
         label: `${account.name} - ${account.code}`,
         value: account.code,
         isSelected: account.isSelected
     }));
 
 
-    const checksAccountsOptions = quoteItemValue?.checksAccounts.map((account) => ({
+    const checksAccountsOptions = quoteItemValue?.checksAccounts?.map((account) => ({
         label: `${account.name} - ${account.code}`,
         value: account.code,
         isSelected: account.isSelected
     }));
 
 
-    const transferAccountsOptions = quoteItemValue?.transferAccounts.map((account) => ({
+    const transferAccountsOptions = quoteItemValue?.transferAccounts?.map((account) => ({
         text: `${account.name} - ${account.code}`,
         value: account.code,
         isSelected: account.isSelected

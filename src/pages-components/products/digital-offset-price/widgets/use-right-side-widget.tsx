@@ -14,7 +14,7 @@ import { ECalculationLogType } from "@/widgets/product-pricing-widget/enums";
 import {
   calculationExceptionsLogsState,
   calculationProgressState,
-  currentProductItemValuePriceState,
+  currentProductItemValuePriceState, lastProductItemValuePriceState,
   selectedWorkFlowState,
 } from "@/widgets/product-pricing-widget/state";
 import { useEffect, useMemo, useState } from "react";
@@ -49,6 +49,10 @@ const useRightSideWidget = ({ includeVAT }) => {
     currentProductItemValueTotalPrice,
     setCurrentProductItemValueTotalPrice,
   ] = useRecoilState<number>(currentProductItemValuePriceState);
+  const [
+    lastProductItemValueTotalPrice,
+    setLastProductItemValueTotalPrice,
+  ] = useRecoilState<number>(lastProductItemValuePriceState);
   const calculationProgress = useRecoilValue(calculationProgressState);
   const quantity = useMemo(() => {
     if (subProducts) {
@@ -115,6 +119,7 @@ const useRightSideWidget = ({ includeVAT }) => {
   }, [listEmployees])
   return {
     currentProductItemValueTotalPrice,
+    lastProductItemValueTotalPrice,
     calculationProgress,
     exampleTypeValues,
     billingMethodValues,

@@ -3,7 +3,7 @@ import { atom } from "recoil";
 
 export const firstWidgetState = atom<boolean>({
     key: "firstWidgetState",
-    default: true,
+    default: false,
 });
 
 export const secondWidgetState = atom<boolean>({
@@ -13,7 +13,7 @@ export const secondWidgetState = atom<boolean>({
 
 export const thirdWidgetState = atom<boolean>({
     key: "thirdWidgetState",
-    default: false,
+    default: true,
 });
 
 export const isTransactedState = atom<boolean>({

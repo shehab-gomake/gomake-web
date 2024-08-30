@@ -31,6 +31,7 @@ const RowMappingWidget = ({
   documentType,
   getQuote,
   isQuoteConfirmation = false,
+  isPrePaymentPage,
   onChangeSelectedItemRowForQoute,
   quoteItems
 }) => {
@@ -70,6 +71,7 @@ const RowMappingWidget = ({
   const { handleItemCheck } = useQuoteConfirmation();
   const quoteItemValue = useRecoilValue<any>(quoteItemState);
   const quoteConfirm = useRecoilValue<any>(quoteConfirmationState);
+  const isQuote = documentType === DOCUMENT_TYPE.quote;
 
   const canUpdate = router.query.isNewCreation ? true : item?.isEditable;
   const canUpdatePrices = router.query.isNewCreation ? true : (item?.isEditable && CheckDocumentPermission(documentType, DocumentPermission.UPDATE_DOCUMENT_ITEM_PRICES));
@@ -90,7 +92,7 @@ const RowMappingWidget = ({
           borderBottom: item?.childsDocumentItems && "none",
         }}
       >
-        {(isQuoteConfirmation && (!quoteConfirm?.isConfirmed && quoteConfirm?.documentStatus !== QUOTE_STATUSES.Canceled)) ?
+        {( !isPrePaymentPage && isQuoteConfirmation && (!quoteConfirm?.isConfirmed && quoteConfirm?.documentStatus !== QUOTE_STATUSES.Canceled)) ?
           <div style={classes.checkBoxContainer} >
             <Checkbox
               icon={<CheckboxIcon />}
@@ -100,7 +102,7 @@ const RowMappingWidget = ({
             />
             {parentIndex}
           </div>
-          : (!isQuoteConfirmation && documentType === DOCUMENT_TYPE.quote) ?
+          : (isQuote && !isPrePaymentPage && !isQuoteConfirmation) ?
             <span style={classes.checkBoxContainer}>
               <Checkbox
                 icon={<CheckboxIcon />}
@@ -230,8 +232,6 @@ const RowMappingWidget = ({
               onInputChange={(e) => onInputChangeFinalPrice(e)}
             />
           }
-
-
         </div>
       </PrimaryTableCell>
       {

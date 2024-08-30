@@ -5,6 +5,8 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 import { useRecoilState } from "recoil";
 import cloneDeep from "lodash.clonedeep";
+import { getPrePaymentByIdApi } from "@/services/api-service/pay/pay-api";
+import { DOCUMENT_TYPE } from "../quotes/enums";
 import { useTranslation } from "react-i18next";
 
 const useQuoteConfirmation = () => {
@@ -13,16 +15,16 @@ const useQuoteConfirmation = () => {
     const { alertSuccessUpdate, alertFaultUpdate } = useSnackBar();
     const [quoteConfirm, setQuoteConfirm] = useRecoilState<any>(quoteConfirmationState);
     const [checkedItems, setCheckedItems] = useState({});
-    const {i18n} = useTranslation();
+    const { i18n } = useTranslation();
 
     const getQuoteConfirmation = async () => {
         const callBack = (res) => {
             if (res?.success) {
-            const quote = res?.data;
+                const quote = res?.data;
                 quote.documentItems = quote.documentItems.map(item => {
                     item.isChecked = true
-                    return item; 
-                }) 
+                    return item;
+                })
                 quote.clientLang && i18n.changeLanguage(quote.clientLang);
                 setQuoteConfirm(quote);
             } else {
@@ -30,6 +32,19 @@ const useQuoteConfirmation = () => {
             }
         }
         await getDocumentByIdApi(callApi, callBack, { id: router?.query?.Id })
+    }
+
+    const getPrePaymentById = async () => {
+        const callBack = (res) => {
+            if (res?.success) {
+                const quote = res?.data;
+                setQuoteConfirm(quote);
+                quote.clientLang && i18n.changeLanguage(quote.clientLang);
+            } else {
+                alertFaultUpdate();
+            }
+        }
+        await getPrePaymentByIdApi(callApi, callBack, { recordId: router?.query?.recordId, documentType: DOCUMENT_TYPE.order })
     }
 
     const calculateSelectedItems = async (quote) => {
@@ -41,7 +56,7 @@ const useQuoteConfirmation = () => {
                     item.isChecked = documentItemIds.includes(item.id);
                     return item;
                 })
-               setQuoteConfirm(newQuote);
+                setQuoteConfirm(newQuote);
                 alertSuccessUpdate();
             } else {
                 alertFaultUpdate();
@@ -63,7 +78,8 @@ const useQuoteConfirmation = () => {
         getQuoteConfirmation,
         checkedItems,
         setCheckedItems,
-        handleItemCheck
+        handleItemCheck,
+        getPrePaymentById
     };
 };
 

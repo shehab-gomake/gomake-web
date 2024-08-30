@@ -1,8 +1,6 @@
 import moment from "moment-timezone";
 import {useTranslation} from "react-i18next";
 
-
-
 const useDateFormat = () => {
     const {t} = useTranslation();
     const dir: "rtl" | "ltr" = t("direction");
@@ -33,9 +31,23 @@ const useDateFormat = () => {
         return "N/A";
       };
 
+      const GetDateWithoutHoursFormat = (date : Date) => {
+        if (date) {
+        const formattedDate = new Date(date).toLocaleDateString('en-GB', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+          });
+
+          return formattedDate
+        }
+        return "N/A";
+      };
+
     return {
         GetDateFormat,
-        GetShortDateFormat 
+        GetShortDateFormat,
+        GetDateWithoutHoursFormat
     };
 };
 
