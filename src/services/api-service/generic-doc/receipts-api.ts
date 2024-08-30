@@ -11,13 +11,14 @@ const CREATE_CREDIT_TRANSACTION_URL = "/v1/erp-service/receipts/create-credit-tr
 const GET_RECEIPT_PDF_URL="/v1/erp-service/receipts/get-receipt-pdf";
 const GET_ALL_CREDIT_TRANSACTIONS_URL="/v1/erp-service/receipts/get-all-transaction";
 
-const getClientPaymentItemsApi: ICallAndSetData = async (callApi, setState, data) => {
+const getClientPaymentItemsApi: ICallAndSetData = async (callApi, setState, data , lock) => {
   return await getSetApiData(
     callApi,
     EHttpMethod.GET,
     GET_CLIENT_PAYMENT_ITEMS_URL,
     setState,
-    data
+    data,
+    lock
   );
 };
 

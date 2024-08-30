@@ -22,6 +22,7 @@ const FooterSection = ({ onCloseModal }: any) => {
                     onChange={handleTaxDeductionChange}
                     />
             </Stack>
+            <Stack width={"100%"} justifyContent={"space-between"} display={"flex"} height={"100%"}>
             <Stack sx={classes.containerStyle}>
                 <Stack style={{ ...classes.rowStyle, borderBottom: "2px solid rgba(0, 0, 0, 0.04)" }}>
                     <span style={classes.textStyle}>{t("payment.totalDocuments")}</span>
@@ -43,7 +44,7 @@ const FooterSection = ({ onCloseModal }: any) => {
             </Stack>
             <SecondaryButton variant={'contained'} style={classes.saveBtn} onClick={onClickSave}>
                 {t('payment.save')}
-            </SecondaryButton>
+            </SecondaryButton></Stack>
         </div>
     );
 };
