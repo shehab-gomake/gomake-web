@@ -27,12 +27,13 @@ const useAddNewItem = ({ onClose, getQuote, documentType }) => {
       if (res?.success) {
         const transformProducts = (products) => {
           return {
-            key: 'products',
-            label: t('tabs.products'),
+            value: 'products',
+            title: t('tabs.products'),
+            selectable:false,
             level: 0,
             children: products.map(product => ({
-              key: product.id, // Using product id as the key
-              label: product.name, // Using product name as the label
+              value: product.id, // Using product id as the key
+              title: product.name, // Using product name as the label
               category: ProductCategoryType.PRODUCT,
               code: product.code
             }))
@@ -40,18 +41,21 @@ const useAddNewItem = ({ onClose, getQuote, documentType }) => {
         };
         const transformMaterials = (materials) => {
           return {
-            key: 'materials',
-            label: t('tabs.materials'),
+            value: 'materials',
+            title: t('tabs.materials'),
+            selectable:false,
             level: 0,
             children: materials.map(material => ({
-              key: material.materialTypeName, // Using materialTypeName as the key
-              label: material.materialTypeName, // Using materialTypeName as the label
+              value: material.materialTypeName, // Using materialTypeName as the key
+              title: material.materialTypeName, // Using materialTypeName as the label
+              selectable:false,
               children: material.categories.map(category => ({
-                key: `${material.materialTypeName}-${category.categoryName}`, // Generate a unique key
-                label: category.categoryName, // Using categoryName as the label
+                value: `${material.materialTypeName}-${category.categoryName}`, // Generate a unique key
+                title: category.categoryName, // Using categoryName as the label
+                selectable:false,
                 children: category.rows.map(row => ({
-                  key: row.id, // Using row id as the key
-                  label: row.value, // Using row value as the label,
+                  value: row.id, // Using row id as the key
+                  title: row.value, // Using row value as the label,
                   category: ProductCategoryType.MATERIAL,
                   // Ensure category is present
                 }))
