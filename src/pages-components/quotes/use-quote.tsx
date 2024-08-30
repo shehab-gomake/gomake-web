@@ -1,10 +1,10 @@
 import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { DELIVERY_NOTE_STATUSES, LogActionType, QUOTE_STATUSES } from "./enums";
+import { ApprovalStatus, DELIVERY_NOTE_STATUSES, LogActionType, QUOTE_STATUSES } from "./enums";
 import { MoreMenuWidget } from "./more-circle";
 import { getAllProductsForDropDownList, getAndSetAllCustomers, getAndSetClientTypes } from "@/services/hooks";
-import { useSetRecoilState, useRecoilValue } from "recoil";
+import { useSetRecoilState, useRecoilValue, useRecoilState } from "recoil";
 import { agentsCategoriesState, clientTypesCategoriesState } from "@/pages/customers/customer-states";
 import { getAndSetEmployees2 } from "@/services/api-service/customers/employees-api";
 import { useDebounce } from "@/utils/use-debounce";
@@ -18,6 +18,7 @@ import {
   duplicateDocumentApi,
   getAllDocumentLogsApi,
   getAllDocumentsApi,
+  getDocumentApi,
   getDocumentPdfApi,
   manuallyCloseDocumentApi,
   updateDocumentApi,
@@ -36,6 +37,8 @@ import { getAndSetCustomerById } from "@/services/api-service/customers/customer
 import { useUserPermission } from "@/hooks/use-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { PermissionCheck } from "@/components/CheckPermission/check-permission";
+import { StatePayment, sendPaymentState } from "./widgets/send-payment-modal/states";
+import { sendDocumentToClientForPaymentApi } from "@/services/api-service/pay/pay-api";
 import { useRouter } from "next/router";
 
 const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
@@ -51,6 +54,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const debounce = useDebounce(patternSearch, 500);
   const { GetDateFormat, GetShortDateFormat } = useDateFormat();
   const [statusId, setStatusId] = useState<any>();
+  const [approvalStatusId, setApprovalStatusId] = useState<any>();
   const [quoteStatusId, setQuoteStatusId] = useState<any>();
   const [customerId, setCustomerId] = useState<any>();
   const [isCanceledState, setIsCanceledState] = useState(null)
@@ -101,8 +105,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const [productIds, setProductIds] = useState<string[]>([]);
   const [minPrice, setMinPrice] = useState('');
   const [maxPrice, setMaxPrice] = useState('');
-
-
   const [openCloseOrderNotesModal, setOpenCloseOrderNotesModal] = useState(false)
   const [selectedQuoteItemValue, setSelectedQuoteItemValue] = useState()
   const [documentCloseNumber, setDocumentCloseNumber] = useState("");
@@ -306,7 +308,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             ];
           } else if (docType === DOCUMENT_TYPE.quote) {
             return [
-             // GetDateFormat(quote?.createdDate),
+              // GetDateFormat(quote?.createdDate),
               quote?.createdDate?.split(" ")[0],
               <div style={{ cursor: "pointer" }} onClick={() => onClickOpenCustomerModal(quote?.customerId)}>{quote?.customerName}</div>,
               quote?.agentName,
@@ -366,6 +368,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 onClickOpenPriceModal={onClickOpenPriceModal}
                 onClickOpenCloseOrderModal={onClickOpenCloseOrderModal}
                 onClickOpenCloseOrderNotesModal={onClickOpenCloseOrderNotesModal}
+                onClickSendPayment={onClickSendPayment}
               />,
             ];
           } else {
@@ -455,6 +458,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             pageSize: pageSize,
           },
           statusId: quoteStatusId?.value || statusId?.value,
+          approvalStatus: approvalStatusId?.value,
           closeStatus: accountingStatus?.value,
           productionStatus: productionStatus?.value,
           patternSearch: finalPatternSearch,
@@ -480,6 +484,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     page,
     pageSize,
     statusId,
+    approvalStatusId,
     quoteStatusId,
     accountingStatus,
     productionStatus,
@@ -702,6 +707,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     setAgentId(null);
     setCustomerId(null);
     setStatusId(null);
+    setApprovalStatusId(null);
     setAccountingStatus(null);
     setProductionStatus(null);
     setFromDate(null);
@@ -832,63 +838,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       value: QUOTE_STATUSES.CanceledOther,
     },
     {
-      label: t("sales.quote.approvedByManager"),
-      value: QUOTE_STATUSES.ApprovedByManager,
-    },
-    {
-      label: t("sales.quote.rejectedByManager"),
-      value: QUOTE_STATUSES.RejectedByManager,
-    },
-    {
       label: t("sales.quote.partialClosed"),
       value: QUOTE_STATUSES.PartialClosed,
-    },
-    {
-      label: t("sales.quote.waitForPrintHouseConfirm"),
-      value: QUOTE_STATUSES.WaitForPrintHouseConfirm,
-    },
-  ];
-
-  const deliveryNoteStatuses = [
-    {
-      label: t("sales.quote.open"),
-      value: DELIVERY_NOTE_STATUSES.Open,
-    },
-    {
-      label: t("sales.quote.canceled"),
-      value: DELIVERY_NOTE_STATUSES.Canceled,
-    },
-    {
-      label: t("sales.quote.created"),
-      value: DELIVERY_NOTE_STATUSES.Created,
-    },
-    {
-      label: t("sales.quote.refunded"),
-      value: DELIVERY_NOTE_STATUSES.Refunded,
-    },
-    {
-      label: t("sales.quote.confirmed"),
-      value: DELIVERY_NOTE_STATUSES.Confirmed,
-    },
-    {
-      label: t("sales.quote.rejected"),
-      value: DELIVERY_NOTE_STATUSES.Rejected,
-    },
-    {
-      label: t("sales.quote.partialRefunded"),
-      value: DELIVERY_NOTE_STATUSES.PartialRefunded,
-    },
-    {
-      label: t("sales.quote.closedAsInvoice"),
-      value: DELIVERY_NOTE_STATUSES.ClosedAsInvoice,
-    },
-    {
-      label: t("sales.quote.closedByMultiDocuments"),
-      value: DELIVERY_NOTE_STATUSES.ClosedByMultiDocuments,
-    },
-    {
-      label: t("sales.quote.manualClose"),
-      value: DELIVERY_NOTE_STATUSES.ManualClose,
     },
   ];
 
@@ -1271,6 +1222,18 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     { label: t("sales.quote.closed"), value: AStatus.CLOSED },
   ];
 
+  // const approvalStatuses = [
+  //   { label: t(`documentStatus.${ApprovalStatus[ApprovalStatus.ApprovedByClient]}`), value: ApprovalStatus.ApprovedByClient },
+
+  // ];
+
+  const approvalStatuses: { value: number; label: string }[] = Object.values(ApprovalStatus)
+    .filter(value => typeof value === 'number')
+    .map(value => ({
+      value: value as number,
+      label: t(`documentStatus.${ApprovalStatus[value]}`)
+    }));
+
 
 
   const handleProductionStatusChange = (e: any, value: any) => {
@@ -1300,9 +1263,11 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       )
     );
   };
+
   useEffect(() => {
     const filteredData = {
       statusId: quoteStatusId?.value || statusId?.value,
+      approvalStatus: approvalStatusId?.value,
       closeStatus: accountingStatus?.value && accountingStatus?.value,
       productionStatus: productionStatus?.value && productionStatus?.value,
       patternSearch: finalPatternSearch && finalPatternSearch,
@@ -1321,7 +1286,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     if (JSON.stringify(filteredDataWithoutEmptyValues) !== JSON.stringify(filterData)) {
       setFilterData(filteredDataWithoutEmptyValues);
     }
-  }, [quoteStatusId, statusId, accountingStatus, productionStatus, finalPatternSearch, customerId, dateRange, agentId, minPrice, maxPrice, productIds, fromDate, toDate]);
+  }, [quoteStatusId, approvalStatusId, statusId, accountingStatus, productionStatus, finalPatternSearch, customerId, dateRange, agentId, minPrice, maxPrice, productIds, fromDate, toDate]);
 
   const [openIrrelevantCancelModal, setOpenIrrelevantCancelModal] = useState(false);
   const [openPriceCancelModal, setOpenPriceCancelModal] = useState(false);
@@ -1454,6 +1419,43 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     await getAndSetClientTypes(callApi, callBack, { cardType: CLIENT_TYPE_Id.CUSTOMER });
   };
 
+  useEffect(() => {
+    getClientTypesCategories()
+  }, [])
+
+  ///////////////////////// SEND PAYMENT //////////////////////////
+  const [openPaymentModal, setOpenPaymentModal] = useState(false);
+  const [paymentModalTitle, setPaymentModalTitle] = useState("");
+  const [sendPayment, setSendPayment] = useRecoilState<StatePayment>(sendPaymentState);
+
+  const onClickClosePaymentModal = () => {
+    setOpenPaymentModal(false);
+  };
+
+  const onClickSendPaymentOld = (document: any): Promise<void> => {
+    return new Promise<void>((resolve, reject) => {
+      const callBack = (res) => {
+        if (res?.success) {
+          const newSendPaymentState = { ...sendPayment, ...res.data };
+          setSendPayment(newSendPaymentState);
+          resolve();
+        } else {
+          reject(new Error("Failed to update payment state"));
+        }
+      };
+      sendDocumentToClientForPaymentApi(callApi, callBack, { id: document?.id, documentType: DOCUMENT_TYPE.order });
+    });
+  };
+
+  const onClickSendPayment = async (document: any) => {
+    try {
+      await onClickSendPaymentOld(document);
+      setPaymentModalTitle(`${t("prePayment.paymentPageFor")} ${t(`sales.quote.${DOCUMENT_TYPE[docType]}`).toLowerCase()} ${t("sales.quote.number")} - ${document?.number}`);
+      setOpenPaymentModal(true);
+    } catch (error) {
+      alertFaultGetData();
+    }
+  };
 
   return {
     showCustomerModal,
@@ -1516,7 +1518,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     openAddRule,
     navigate,
     documentPath,
-    deliveryNoteStatuses,
     resetDatePicker,
     onSelectDeliveryTimeDates,
     employeeId,
@@ -1548,6 +1549,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     openCloseOrderNotesModal,
     onClickCloseCloseOrderNotesModal,
     selectedQuoteItemValue,
+    paymentModalTitle,
+    openPaymentModal,
+    onClickClosePaymentModal,
     onClickCloseCloseOrderModal,
     openCloseOrderModal,
     selectedOrder,
@@ -1555,7 +1559,10 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     getEmployeeCategories,
     ManuallyCloseDocument,
     documentCloseNumber,
-    handleDocumentNumberChange
+    handleDocumentNumberChange,
+    approvalStatuses,
+    setApprovalStatusId,
+    approvalStatusId
   };
 };
 

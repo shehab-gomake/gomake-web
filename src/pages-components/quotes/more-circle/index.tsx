@@ -12,6 +12,7 @@ const MoreMenuWidget = ({
   onClickDuplicate,
   onClickLoggers,
   onClickOpenIrrelevantModal,
+  onClickSendPayment,
   onClickOpenCloseOrderModal,
   onClickOpenCloseOrderNotesModal
 }: any) => {
@@ -19,14 +20,15 @@ const MoreMenuWidget = ({
   const { t } = useTranslation();
   const { getMenuList } = useMoreCircle();
   const menuList = getMenuList({
-    t,
     quote,
     documentType,
     onClickOpenModal,
     onClickPdf,
     onClickDuplicate,
     onClickLoggers,
+    t,
     onClickOpenIrrelevantModal,
+    onClickSendPayment,
     onClickOpenCloseOrderModal,
     onClickOpenCloseOrderNotesModal
   });

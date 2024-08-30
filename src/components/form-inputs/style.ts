@@ -7,6 +7,8 @@ import { useTranslation } from "react-i18next";
 const useStyle = () => {
   const { theme, primaryColor, secondColor, errorColor } = useGomakeTheme();
   const { t } = useTranslation();
+  const dir: "rtl" | "ltr" = t("direction");
+
   const classes = useMemo(() => {
     return {
       container: {
@@ -23,8 +25,8 @@ const useStyle = () => {
         boxSizing: "border-box" as "border-box",
         borderRadius: "4px",
         height: "40px",
-        padding: "6.5px 14px",
-        paddingLeft: 0,
+        padding: dir === "ltr" ? "6.5px 14px" : "6.5px 0px",
+        paddingLeft: dir === "ltr" ? 0 : "14px",        
       },
       fileInputStyle: {
         boxSizing: "border-box" as "border-box",

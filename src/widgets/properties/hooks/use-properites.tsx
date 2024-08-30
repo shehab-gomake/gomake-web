@@ -10,6 +10,9 @@ import { IconButton } from "@mui/material";
 import { MoreCircleIcon } from "@/icons";
 import { useTranslation } from "react-i18next";
 import { getAndSetMachincesByActionId } from "@/services/hooks";
+import {EValueType} from "@/pages-components/products/profits-new/enums/profites-enum";
+import {useRecoilState} from "recoil";
+import {actionEmployeesState} from "@/store/action-employees-state";
 
 const useProperites = ({ classes }) => {
   const { t } = useTranslation();
@@ -35,6 +38,8 @@ const useProperites = ({ classes }) => {
   const [propertiesData, setProperitesData] = useState([]);
   const [propertiesDataSearched, setProperitesDataSearched] = useState([]);
   const [actionId, setActionId] = useState("");
+  const [actionEmployeeList,setActionEmployeeList]= useRecoilState<any>(actionEmployeesState)
+
   const { callApi } = useGomakeAxios();
   useEffect(() => {
     if (router.query.actionId) {
@@ -58,8 +63,30 @@ const useProperites = ({ classes }) => {
   useEffect(() => {
     getMachincesByActionId()
   }, [])
-  const getSuccessValue = () => {
-    
+  const getSuccessEvent = (property,rule) => {
+    if(property.ruleType === 1){
+      const params = parameters.find(
+          (param) => param?.id === property?.propertyId
+      )?.values;
+      return  params?.find((value) => value?.id === rule.successEvent)?.name
+    }
+    switch (property?.valueType){
+      case EValueType.MATERIAL:
+        const params = parameters.find(
+            (param) => param?.id === property?.propertyId
+        )?.values;
+        return  params?.find((value) => value?.id === rule.successEvent)?.name
+      case EValueType.MACHINE:
+        return allMachincesList?.machines?.find(
+            (item) => item?.machineId === rule.successEvent
+        )?.machineName
+      case EValueType.EMPLOYEE:
+        return actionEmployeeList.find(
+            (item) => item?.id === rule.successEvent
+        )?.label
+      default:
+        return rule.successEvent;
+    }
   }
   useEffect(() => {
     const updatedProperties = updateProperties(
@@ -74,20 +101,7 @@ const useProperites = ({ classes }) => {
         {property.actionRules
           ?.sort((a, b) => a.priority - b.priority)
           ?.map((rule, index) => {
-            const successEvent =
-              property?.propertyId === "9e8115f2-1ae9-4350-986e-a089af9183be"
-                ? allMachincesList?.machines?.find(
-                  (item) => item?.machineId === rule.successEvent
-                )?.machineName
-                : property?.ruleType === 1
-                  ? (() => {
-                    const params = parameters.find(
-                      (param) => param?.id === property?.propertyId
-                    )?.values;
-                    const value = params?.find((value) => value?.id === rule.successEvent)?.name
-                    return value;
-                  })()
-                  : rule.successEvent;
+            const successEvent = getSuccessEvent(property,rule)
             return (
               <div style={classes.item}>
                 {successEvent ? (

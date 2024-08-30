@@ -20,9 +20,10 @@ interface IProps {
     item: any;
     index: number;
     parentIndex?: number;
-
+    isPrePaymentPage?: boolean;
 }
-const QuoteCard = ({ key, item, index }: IProps) => {
+
+const QuoteCard = ({ key, item, index ,isPrePaymentPage}: IProps) => {
     const { classes } = useStyle();
     const { t } = useTranslation();
     const { getCurrencyUnitText } = useQuoteGetData();
@@ -34,7 +35,7 @@ const QuoteCard = ({ key, item, index }: IProps) => {
             <Stack direction={'column'} alignItems={"flex-start"} gap={"16px"} >
                 <Stack sx={{ padding: "0px" }} direction="column" spacing={"4px"}>
                     <Stack sx={classes.firstHeader}>
-                       {(!quoteConfirm?.isConfirmed && quoteConfirm?.documentStatus !== QUOTE_STATUSES.Canceled) &&  <Checkbox
+                       {( !isPrePaymentPage && !quoteConfirm?.isConfirmed && quoteConfirm?.documentStatus !== QUOTE_STATUSES.Canceled) &&  <Checkbox
                             icon={<CheckboxIcon />}
                             checkedIcon={<CheckboxCheckedIcon />}
                             style={{ padding: "0px" }}

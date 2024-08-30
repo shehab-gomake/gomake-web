@@ -24,6 +24,7 @@ import { agentsCategoriesState } from "@/pages/customers/customer-states";
 import {getAndSetEmployees2, getEmployeesByActionIdApi} from "@/services/api-service/customers/employees-api";
 import { getALLMachinesApi } from "@/services/api-service/machines/print-house-machines-colors";
 import { machineCategoriesState } from "@/store/machine-categories";
+import {actionEmployeesState} from "@/store/action-employees-state";
 
 const useAddRuleModal = ({
   typeExceptionSelected,
@@ -200,7 +201,7 @@ const useAddRuleModal = ({
   const [parametersStateValue, setParametersState] =useRecoilState<any>(parametersState);
   const [allProductTypes, setAllProductTypes] = useState<any>();
   const [employeeList,setEmployeeList]=useState([])
-  const [actionEmployeeList,setActionEmployeeList]=useState([])
+  const [actionEmployeeList,setActionEmployeeList]= useRecoilState<any>(actionEmployeesState)
 
     const getMachinesList = async () => {
       const callBack = (res) => {

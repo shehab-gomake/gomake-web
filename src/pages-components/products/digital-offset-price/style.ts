@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import i18next from "i18next";
 
 import { useTranslation } from "react-i18next";
@@ -11,6 +11,24 @@ const useStyle = () => {
   const direction = t("direction");
   const { primaryColor, secondColor, errorColor, neutralColor, successColor } =
     useGomakeTheme();
+    const [screenWidth, setScreenWidth] = useState<number | null>(null);
+    useEffect(() => {
+      // Function to update screen width
+      const updateScreenWidth = () => {
+        setScreenWidth(window.innerWidth);
+      };
+  
+      // Initial call to set the screen width
+      updateScreenWidth();
+  
+      // Add event listener to listen for window resize
+      window.addEventListener('resize', updateScreenWidth);
+  
+      // Cleanup the event listener when the component unmounts
+      return () => {
+        window.removeEventListener('resize', updateScreenWidth);
+      };
+    }, []);
 
   const clasess = useMemo(() => {
     return {
@@ -68,7 +86,8 @@ const useStyle = () => {
         gap: 40,
         marginBottom: 20,
         width: "100%",
-        maxWidth: 900,
+        maxWidth:(screenWidth-600)
+        
       },
       tabContainer: {
         display: "flex",
@@ -430,7 +449,8 @@ const useStyle = () => {
         ...FONT_FAMILY.Lexend(500, 16),
         borderRadius: 4,
         cursor: "pointer",
-        width:145,
+        width:"100%",
+        minWidth:"fit-content",
         height:40
       },
       activeLogsTabStyle: {
@@ -443,7 +463,8 @@ const useStyle = () => {
         ...FONT_FAMILY.Lexend(500, 16),
         borderRadius: 4,
         cursor: "pointer",
-        width:145,
+        width:"100%",
+        minWidth:"fit-content",
         height:40
       },
       unActiveTabStyle: {
@@ -457,7 +478,8 @@ const useStyle = () => {
         border: `1px solid ${primaryColor(500)}`,
         borderRadius: 4,
         cursor: "pointer",
-        width:145,
+        width:"100%",
+        minWidth:"fit-content",
         height:40
       },
       addOrderBtn: {
@@ -678,6 +700,9 @@ const useStyle = () => {
         overflowX: "hidden",
         gap: 10,
       },
+      detailsContainer:{
+        ...FONT_FAMILY.Lexend(500, 16),
+      },
       generalMsgTextStyle: {
         display: "flex",
         flexDirection: "row" as "row",
@@ -772,7 +797,7 @@ const useStyle = () => {
       }
 
     };
-  }, [i18next.language, t, direction]);
+  }, [i18next.language, t, direction,screenWidth]);
   return {
     clasess,
   };

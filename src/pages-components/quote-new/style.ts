@@ -3,7 +3,7 @@ import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 
 const useStyle = (isQuoteConfirmation) => {
-  const { secondColor, grayColor } = useGomakeTheme();
+  const { secondColor, grayColor, primaryColor ,theme } = useGomakeTheme();
   const classes = useMemo(() => {
     return {
       mainContainer: {
@@ -79,6 +79,10 @@ const useStyle = (isQuoteConfirmation) => {
         borderBottom: `1px solid ${grayColor(200)}`,
         marginBottom: 14,
       },
+      firstBorder: {
+        width: "100%",
+        borderBottom: `1px solid ${grayColor(200)}`,
+      },
       lineDateStyle: {
         display: "flex",
         justifyContent: "center",
@@ -116,9 +120,31 @@ const useStyle = (isQuoteConfirmation) => {
         color: "#FFF",
         height:43,
         cursor: "pointer",
-      }
+      },
+      titleStyle: {
+        display: "flex",
+        ...FONT_FAMILY.Lexend(500, 18),
+        color:  "Black",
+        lineHeight: "30px",
+        width: "70%",
+        flexDirection: "column" as "column",
+        alignItems: "flex-start",
+        alignSelf: "center",
+        justifyContent: "center",
+        gap: "16px",
+        margin: '10px 0px'
+
+      },
+      borderContainer: {
+        width: "100%",
+        alignSelf: "center",
+        borderBottom: `1px solid ${grayColor(200)}`,
+        maxHeight: 140,
+        overflow: "scroll",
+        marginTop:"20px"
+      },
     };
-  }, [isQuoteConfirmation]);
+  }, [isQuoteConfirmation , theme]);
   return {
     classes,
   };
