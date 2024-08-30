@@ -38,7 +38,7 @@ import {
   currentProductItemValuePriceState,
   currentProductItemValueState, currentProductItemValueTotalWorkFlowsState,
   jobActionsState,
-  jobDetailsState,
+  jobDetailsState, lastProductItemValuePriceState,
   outsourceSuppliersState,
   productUrgentWorkState,
   selectedWorkFlowState,
@@ -108,6 +108,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     currentProductItemValueTotalPrice,
     setCurrentProductItemValueTotalPrice,
   ] = useRecoilState<number>(currentProductItemValuePriceState);
+  const [
+    lastProductItemValueTotalPrice,
+    setLastProductItemValueTotalPrice,
+  ] = useRecoilState<number>(lastProductItemValuePriceState);
   const setCurrentProductItemValueTotalWorkFlows = useSetRecoilState<number>(currentProductItemValueTotalWorkFlowsState);
   const [clientDefaultValue, setClientDefaultValue] = useState<any>({});
   const [clientTypeDefaultValue, setClientTypeDefaultValue] = useState<any>({});
@@ -3105,6 +3109,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       const quoteItemSubProducts = [];
       setCurrentProductItemValueTotalPrice(
         quoteItemProduct.docmentItem.finalPrice
+      );
+      setLastProductItemValueTotalPrice(
+          quoteItemProduct.docmentItem.finalPrice
       );
       setCurrentProductItemValue(quoteItemProduct.productItemValue);
       setCurrentProductItemValueDraftId(
