@@ -1,7 +1,7 @@
 import * as React from "react";
-import { TreeSelect } from 'primereact/treeselect';
+//import { TreeSelect } from 'primereact/treeselect';
 import { styled } from "@mui/material/styles";
-import { useState } from "react";
+import {useMemo, useState} from "react";
 import { useTranslation } from "react-i18next";
 import ClearIcon from '@mui/icons-material/Clear';
 import IconButton from "@mui/material/IconButton";
@@ -15,8 +15,8 @@ import 'primeicons/primeicons.css';
 import { ProductIcon } from "./icons";
 import { useStyle } from "./style";
 import CheckIcon from '@mui/icons-material/Check';
-import {Tooltip, tooltipClasses, TooltipProps} from "@mui/material"; 
-
+import {Tooltip, tooltipClasses, TooltipProps} from "@mui/material";
+import {TreeSelect, TreeSelectProps} from "antd";
 const StyledTreeSelect = styled(TreeSelect)(({ theme, dir, selectedOption }: any) => ({
   boxSizing: "border-box",
   borderRadius: "4px",
@@ -36,6 +36,9 @@ const StyledTreeSelect = styled(TreeSelect)(({ theme, dir, selectedOption }: any
   borderBottom: selectedOption
     ? "2px solid rgb(67,195,232) !important"
     : "2px solid rgb(237, 2, 140) !important",
+  "& .ant-select-selector":{
+    border:'unset !important'
+  },
   "& .p-dropdown-label": {
     padding: 0,
     direction: "ltr",
@@ -181,39 +184,62 @@ const GoMakeTreeSelect = ({
   }
   const nodeTemplate = (node) => {
     const isFirstLevel = node.level === 0;
-    const isSelected = selectedNodeKey === node.key;  
+    const isSelected = selectedNodeKey === node.value;  
 
     return (
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' , padding: isSelected && (RTL ?  "0px 0px 0px 5px" :"0px 5px 0px 0px")}}>
+      <div  style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' , padding: isSelected && (RTL ?  "0px 0px 0px 5px" :"0px 5px 0px 0px")}}>
         <div style={{ display: 'flex', alignItems: 'center',  }}>
           {isFirstLevel && <ProductIcon />}
           <span style={isFirstLevel ? classes.firstLevelLabel : classes.otherLevelsLabel}>
-            {getLabel(node.label)}
+            {getLabel(node.title)}
           </span>
         </div>
         {isSelected && <CheckIcon style={{ width: "20px", height: "20px" , color:"#2e3092" }} />}
       </div>
     );
   };
-
+  const onPopupScroll: TreeSelectProps['onPopupScroll'] = (e) => {
+    console.log('onPopupScroll', e);
+  };
+  
+  
+  const rec = (option)=>{
+    option.title = nodeTemplate(option);
+    if(option.children && option.children.length > 0){
+       for(let i = 0;i < option.children.length ;i++){
+         rec(option.children[i]);
+       }
+    }
+  }
+  const treeData = useMemo(()=>{
+    for(let i = 0;i<options.length;i++){
+      let option = options[i];
+      rec(option);
+    }
+    return options;
+  },[options])
   return (
     <div className='editorDiv' style={{ position: 'relative', width: '100%' }}>
       <GlobalStyle />
       <StyledTreeSelect
         ref={treeSelectRef}
-        value={selectedNodeKey}
-        options={options}
-        placeholder={placeholder}
-        style={style}
-        expandedKeys={expandedKeys}
-        onToggle={(e) => setExpandedKeys(e.value)}
-        nodeTemplate={nodeTemplate} // Use the custom node template
-        // @ts-ignore
-        selectedOption={!!selectedNodeKey}
-        onNodeSelect={handleNodeSelect}
-        {...props}
-        dir={dir}
-        filter
+        key={"ProductSelect"}
+        showSearch
+        style={{ width: '100%' }}
+        //value={value}
+        dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+        placeholder="Please select"
+        allowClear
+        onChange={onChange}
+        treeData={treeData}
+        onPopupScroll={onPopupScroll}
+        filterTreeNode={(input, treeNode) => {
+          if(input === "100"){
+            debugger
+          }
+          return treeNode.text.toString().includes(input);
+          
+        }}
       />
       {selectedNodeKey && (
         <ClearButton dir={dir} onClick={handleClear}>

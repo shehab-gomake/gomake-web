@@ -23,6 +23,9 @@ import { CLIENT_TYPE_Id } from "@/pages/customers/enums";
 import { prevSelectedClientState, ProductCategoryType } from "./states";
 import { getAllProductAndMaterialsApi } from "@/services/api-service/products/product-endpoints";
 import { addDocumentItemFromMaterialApi } from "@/services/api-service/materials/materials-endpoints";
+import {ProductIcon} from "@/components/auto-complete/icons";
+import CheckIcon from "@mui/icons-material/Check";
+import * as React from "react";
 
 const useQuoteWidget = ({ documentType = 0 }: any) => {
   const { t } = useTranslation();
@@ -275,18 +278,21 @@ const useQuoteWidget = ({ documentType = 0 }: any) => {
   }
 
   const [combinedData, setCombinedData] = useState<any>([]);
-
+  
   const getAllProductsAndMaterials = useCallback(async () => {
     const callBack = (res) => {
       if (res?.success) {
         const transformProducts = (products) => {
           return {
-            key: 'products',
-            label: t('tabs.products'),
+            value: 'products',
+            selectable:false,
+            title: t('tabs.products'),
+            text: t('tabs.products'),
             level: 0,
             children: products.map(product => ({
-              key: product.id, // Using product id as the key
-              label: product.name, // Using product name as the label
+              value: product.id, // Using product id as the key
+              title: product.name, // Using product name as the label,
+              text: product.name,
               level: 1,
               category: ProductCategoryType.PRODUCT
             }))
@@ -295,20 +301,27 @@ const useQuoteWidget = ({ documentType = 0 }: any) => {
   
         const transformMaterials = (materials) => {
           return {
-            key: 'materials',
-            label: t('tabs.materials'),
+            value: 'materials',
+            title: t('tabs.materials'),
+            text: t('tabs.materials'),
             level: 0,
+            selectable:false,
             children: materials.map(material => ({
-              key: material.materialTypeName,
-              label: material.materialTypeName,
+              value: material.materialTypeName,
+              title: material.materialTypeName,
+              text: material.materialTypeName,
               level: 1, // Material Types are level 1
+              selectable:false,
               children: material.categories.map(category => ({
-                key: `${material.materialTypeName}-${category.categoryName}`,
-                label: category.categoryName,
+                value: `${material.materialTypeName}-${category.categoryName}`,
+                title: category.categoryName,
+                text: category.categoryName,
+                selectable:false,
                 level: 2, // Categories are level 2
                 children: category.rows.map(row => ({
-                  key: row.id,
-                  label: row.value,
+                  value: row.id,
+                  title: row.value,
+                  text: row.value,
                   level: 3, // Rows are level 3
                   category: ProductCategoryType.MATERIAL
                 }))
@@ -335,11 +348,12 @@ const useQuoteWidget = ({ documentType = 0 }: any) => {
   
 
   const handleProductChange = (e) => {
-    const selectedValue = e?.value;
+    debugger
+    const selectedValue = e;
     // Find the selected node from combinedData
     const findNodeByKey = (key, nodes) => {
       for (const node of nodes) {
-        if (node.key === key) {
+        if (node.value === key) {
           return node;
         }
         if (node.children) {
