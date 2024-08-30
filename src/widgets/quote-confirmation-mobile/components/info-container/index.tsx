@@ -3,12 +3,12 @@ import { useStyle } from "./style";
 import { useTranslation } from "react-i18next";
 import { HeaderTitle } from "@/widgets/header-title";
 import { useRecoilValue } from "recoil";
-import { quoteConfirmationState} from "@/store";
+import { quoteConfirmationState } from "@/store";
 import { BusinessWidget } from "./business";
 import { ContactsWidget } from "./contacts";
 import { DateFormatterDDMMYYYY } from "@/utils/adapter";
 
-const InfoContainer = () => {
+const InfoContainer = ({ isPrePaymentPage }) => {
     const { classes } = useStyle();
     const { t } = useTranslation();
     const quoteConfirm = useRecoilValue<any>(quoteConfirmationState);
@@ -17,7 +17,7 @@ const InfoContainer = () => {
         <div style={{ ...classes.mainContainer, marginTop: "16px" }}>
             <div style={classes.titleQuoteContainer}>
                 <HeaderTitle
-                    title={t("sales.quote.quote")}
+                    title={isPrePaymentPage ?  t("sales.quote.order") : t("sales.quote.quote")}
                     marginBottom={1}
                     marginTop={1}
                     color="rgba(241, 53, 163, 1)"
@@ -26,12 +26,9 @@ const InfoContainer = () => {
                     {" - "} {quoteConfirm?.number}
                 </div>
             </div>
-            <div style={classes.referenceDate} >
+            {!isPrePaymentPage && <div style={classes.referenceDate} >
                 {t("sales.quote.dateOfReference") + " " + DateFormatterDDMMYYYY(quoteConfirm?.dueDate)}
-            </div>
-            {/* <div style={classes.referenceDate} >
-                G. supply: 11 working days 
-            </div> */}
+            </div>}
             <div style={classes.borderContainer} />
             <BusinessWidget />
             <div style={classes.borderContainer} />

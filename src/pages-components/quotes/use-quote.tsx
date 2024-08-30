@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { ApprovalStatus, DELIVERY_NOTE_STATUSES, LogActionType, QUOTE_STATUSES } from "./enums";
 import { MoreMenuWidget } from "./more-circle";
 import { getAllProductsForDropDownList, getAndSetAllCustomers, getAndSetClientTypes } from "@/services/hooks";
-import { useSetRecoilState, useRecoilValue } from "recoil";
+import { useSetRecoilState, useRecoilValue, useRecoilState } from "recoil";
 import { agentsCategoriesState, clientTypesCategoriesState } from "@/pages/customers/customer-states";
 import { getAndSetEmployees2 } from "@/services/api-service/customers/employees-api";
 import { useDebounce } from "@/utils/use-debounce";
@@ -18,6 +18,7 @@ import {
   duplicateDocumentApi,
   getAllDocumentLogsApi,
   getAllDocumentsApi,
+  getDocumentApi,
   getDocumentPdfApi,
   manuallyCloseDocumentApi,
   updateDocumentApi,
@@ -36,6 +37,8 @@ import { getAndSetCustomerById } from "@/services/api-service/customers/customer
 import { useUserPermission } from "@/hooks/use-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { PermissionCheck } from "@/components/CheckPermission/check-permission";
+import { StatePayment, sendPaymentState } from "./widgets/send-payment-modal/states";
+import { sendDocumentToClientForPaymentApi } from "@/services/api-service/pay/pay-api";
 import { useRouter } from "next/router";
 
 const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
@@ -102,8 +105,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const [productIds, setProductIds] = useState<string[]>([]);
   const [minPrice, setMinPrice] = useState('');
   const [maxPrice, setMaxPrice] = useState('');
-
-
   const [openCloseOrderNotesModal, setOpenCloseOrderNotesModal] = useState(false)
   const [selectedQuoteItemValue, setSelectedQuoteItemValue] = useState()
   const [documentCloseNumber, setDocumentCloseNumber] = useState("");
@@ -367,6 +368,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 onClickOpenPriceModal={onClickOpenPriceModal}
                 onClickOpenCloseOrderModal={onClickOpenCloseOrderModal}
                 onClickOpenCloseOrderNotesModal={onClickOpenCloseOrderNotesModal}
+                onClickSendPayment={onClickSendPayment}
               />,
             ];
           } else {
@@ -1417,6 +1419,43 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     await getAndSetClientTypes(callApi, callBack, { cardType: CLIENT_TYPE_Id.CUSTOMER });
   };
 
+  useEffect(() => {
+    getClientTypesCategories()
+  }, [])
+
+  ///////////////////////// SEND PAYMENT //////////////////////////
+  const [openPaymentModal, setOpenPaymentModal] = useState(false);
+  const [paymentModalTitle, setPaymentModalTitle] = useState("");
+  const [sendPayment, setSendPayment] = useRecoilState<StatePayment>(sendPaymentState);
+
+  const onClickClosePaymentModal = () => {
+    setOpenPaymentModal(false);
+  };
+
+  const onClickSendPaymentOld = (document: any): Promise<void> => {
+    return new Promise<void>((resolve, reject) => {
+      const callBack = (res) => {
+        if (res?.success) {
+          const newSendPaymentState = { ...sendPayment, ...res.data };
+          setSendPayment(newSendPaymentState);
+          resolve();
+        } else {
+          reject(new Error("Failed to update payment state"));
+        }
+      };
+      sendDocumentToClientForPaymentApi(callApi, callBack, { id: document?.id, documentType: DOCUMENT_TYPE.order });
+    });
+  };
+
+  const onClickSendPayment = async (document: any) => {
+    try {
+      await onClickSendPaymentOld(document);
+      setPaymentModalTitle(`${t("prePayment.paymentPageFor")} ${t(`sales.quote.${DOCUMENT_TYPE[docType]}`).toLowerCase()} ${t("sales.quote.number")} - ${document?.number}`);
+      setOpenPaymentModal(true);
+    } catch (error) {
+      alertFaultGetData();
+    }
+  };
 
   return {
     showCustomerModal,
@@ -1510,6 +1549,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     openCloseOrderNotesModal,
     onClickCloseCloseOrderNotesModal,
     selectedQuoteItemValue,
+    paymentModalTitle,
+    openPaymentModal,
+    onClickClosePaymentModal,
     onClickCloseCloseOrderModal,
     openCloseOrderModal,
     selectedOrder,

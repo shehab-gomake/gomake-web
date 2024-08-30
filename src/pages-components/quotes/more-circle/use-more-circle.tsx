@@ -12,6 +12,7 @@ import { LockIcon } from "./icons/lock";
 import { useUserPermission } from "@/hooks/use-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { PayIcon } from "./icons/pay";
+import { PaymentIcon } from "./icons/payment";
 
 const useMoreCircle = () => {
   const { user } = useCustomer();
@@ -27,6 +28,7 @@ const useMoreCircle = () => {
     onClickLoggers,
     t,
     onClickOpenIrrelevantModal,
+    onClickSendPayment,
     onClickOpenCloseOrderModal,
     onClickOpenCloseOrderNotesModal
   }) => {
@@ -155,7 +157,7 @@ const useMoreCircle = () => {
         name: t("sales.quote.closeAsPurchaseInvoice")
       },
       {
-        condition:( isOrder && quote?.isCanClose && quote?.statusTitleText !== "Order.Canceled") || ( isDeliveryNote && quote?.isCanClose )|| ( isInvoice && quote?.isCanClose ),
+        condition: (isOrder && quote?.isCanClose && quote?.statusTitleText !== "Order.Canceled") || (isDeliveryNote && quote?.isCanClose) || (isInvoice && quote?.isCanClose),
         onClick: () => quote?.closeOrderNotes && quote?.closeOrderNotes.tirm !== "" ? onClickOpenCloseOrderNotesModal(quote) : onClickOpenCloseOrderModal(quote),
         icon: <LockIcon />,
         name: t("sales.quote.close")
@@ -167,10 +169,16 @@ const useMoreCircle = () => {
         name: t("sales.quote.cancel")
       },
       {
-        condition: isInvoice && quote?.isCanClose ,
+        condition: isInvoice && quote?.isCanClose,
         onClick: () => navigate(`/receipt?isNewCreation=true&documentNumber=${quote?.number}&ClientId=${quote?.customerId}`),
         icon: <PayIcon />,
         name: t("sales.quote.pay")
+      },
+      {
+        condition: isOrder && quote?.isCanClose && quote?.statusTitleText !== "Order.Canceled",
+        onClick: () => onClickSendPayment(quote),
+        icon: <PaymentIcon />,
+        name: t("sales.quote.sendPayment")
       },
       // {
       //   condition: !isCancel,
@@ -190,6 +198,7 @@ const useMoreCircle = () => {
       //   icon: <TickCloceIcon />,
       //   name: t("sales.quote.deliveryTime")
       // },
+
     ];
   };
 
