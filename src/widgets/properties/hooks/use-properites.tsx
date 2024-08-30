@@ -64,7 +64,6 @@ const useProperites = ({ classes }) => {
     getMachincesByActionId()
   }, [])
   const getSuccessEvent = (property,rule) => {
-    debugger
     if(property.ruleType === 1){
       const params = parameters.find(
           (param) => param?.id === property?.propertyId
