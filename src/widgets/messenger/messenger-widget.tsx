@@ -28,7 +28,7 @@ export enum EUserType {
 
 export default function MessengerWidget({userType}: IProps) {
     const {t} = useTranslation();
-    const {primaryColor} = useGomakeTheme();
+    const {primaryColor, grayColor} = useGomakeTheme();
     const modals = useOpenModals();
     const {
         unreadMessages,
@@ -125,8 +125,9 @@ export default function MessengerWidget({userType}: IProps) {
                                                 placeholder={t('messenger.inputPlaceHolder')}
                                                 onChange={(e) => setInputValue(e.target.value)}
                                                 value={inputValue}/>
-                                            <IconButton onClick={() => sendTextMessage(inputValue)} sx={{p: '10px'}}>
-                                                <SendIcon style={{color: primaryColor(500)}}/>
+                                            <IconButton disabled={!inputValue} onClick={() => sendTextMessage(inputValue)}
+                                                        sx={{p: '10px'}}>
+                                                <SendIcon style={{color: !!inputValue ? primaryColor(500) : grayColor(500)}}/>
                                             </IconButton>
                                         </Stack>
                                     </Stack>
@@ -221,7 +222,7 @@ export default function MessengerWidget({userType}: IProps) {
                                                     value={inputValue}/>
                                                 <IconButton disabled={!inputValue} onClick={() => sendTextMessage(inputValue)}
                                                             sx={{p: '10px'}}>
-                                                    <SendIcon style={{color: primaryColor(500)}}/>
+                                                    <SendIcon style={{color: !!inputValue ? primaryColor(500) : grayColor(500)}}/>
                                                 </IconButton>
                                             </Stack>
                                         </Stack> :

@@ -22,7 +22,9 @@ const ProductionFloorHeader = () => {
             <Stack direction={'row'} alignItems={'center'} gap={'10px'}>
                 {(showAllJobsButton || view === EProductionFloorView.GROUPS) && view !== EProductionFloorView.DASHBOARD &&
                     <Button onClick={() =>{
-                        onClickBack();
+                        initGroupsFilters().then();
+                        setView(EProductionFloorView.TABLE);
+                        navigateToProductionFloor();
                     }} variant={'contained'}
                         style={{ backgroundColor: '#CBCBE4', color: '#252675', height: '30px', gap: '5px', alignItems: 'center' }}
                         startIcon={dir === 'rtl' ? <ArrowForwardIcon/> : <KeyboardBackspaceOutlinedIcon />}>{t('productionFloor.allJobs')}</Button>}

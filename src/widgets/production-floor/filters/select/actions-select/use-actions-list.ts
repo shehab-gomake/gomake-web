@@ -32,7 +32,7 @@ const useActionsList = (source: Source) => {
             return {
                 ...action,
                 label: action.actionName,
-                checked: !!station && (station?.machineIds.length === 0 || station?.machineIds.length === action.machines.length),
+                checked: !!station,
                 machines: station?.machineIds.length === 0 ? action?.machines?.map(machine => ({
                         ...machine,
                         label: machine.machineName,

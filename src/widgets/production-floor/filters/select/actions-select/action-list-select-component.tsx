@@ -71,8 +71,10 @@ const ActionsListComponent = ({onClickApply, source}: IProps) => {
                     }
                 </FormGroup>
                 <div style={{position: 'sticky', bottom: 0, right: 0, left: 0, backgroundColor: '#FFF', zIndex: 1}}>
-                    <SecondaryButton style={{width: '100%'}} variant={'contained'} onClick={() =>
+                    <SecondaryButton style={{width: '100%'}} variant={'contained'} onClick={() => {
+                        setOpen(false)
                         onClickApply(actionsMachinesIds)
+                    }
                     }>{t("productionFloor.apply")}</SecondaryButton>
                 </div>
             </Paper>
