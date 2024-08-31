@@ -11,6 +11,7 @@ import { useRecoilValue } from "recoil";
 import { DashboardActions } from "@/store";
 import { selectedAgentsState } from "@/store/agents-state";
 import { dashboardClientsState } from "@/widgets/dashboard-widget/clients/clients-state";
+import {useDashboardSignalr} from "@/hooks/signalr/use-dashboard-signalr";
 
 const DashboardWidget = ({ }: IDashboardWidget) => {
     const INTERVAL_TIMEOUT = 2 * 60 * 1000;
@@ -20,6 +21,7 @@ const DashboardWidget = ({ }: IDashboardWidget) => {
     const { classes } = useStyle();
     const { dates, action } = useGomakeDateRange();
     const selectedAgents = useRecoilValue(selectedAgentsState);
+    const {} = useDashboardSignalr(() => actions(action, dates));
 
     const {
         getBoardsMissionsByDateRange,
@@ -57,12 +59,12 @@ const DashboardWidget = ({ }: IDashboardWidget) => {
         addEmployeeProgress(machinesProgress)
     }, [boardsMissions])
 
-    useEffect(() => {
-        const interval = setInterval(async () => {
-            actions(action, dates);
-        }, INTERVAL_TIMEOUT);
-        return () => clearInterval(interval);
-    }, [dates, action, selectedAgents]);
+    // useEffect(() => {
+    //     const interval = setInterval(async () => {
+    //         actions(action, dates);
+    //     }, INTERVAL_TIMEOUT);
+    //     return () => clearInterval(interval);
+    // }, [dates, action, selectedAgents]);
 
     const handelSearchValueChange = (event) => {
         setTasksFilter(event);

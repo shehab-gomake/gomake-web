@@ -8,34 +8,52 @@ import {getPrintHouseActions} from "@/services/api-service/production-floor/prod
 import {useGomakeAxios} from "@/hooks";
 import {IStation} from "@/widgets/production-floor/interfaces/filters";
 import {useTranslation} from "react-i18next";
+import {employeeState} from "@/store/employee-state";
 
-const useActionsList = () => {
+export enum Source {
+    PRODUCTION_FLOOR,
+    USERS
+}
+
+const useActionsList = (source: Source) => {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [filter, setFilter] = useState<string>();
     const [open, setOpen] = useState<boolean>(false)
     const {t} = useTranslation();
     const [actions, setActions] = useRecoilState(actionsListState);
-    const [productionFilter, ] = useRecoilState(productionFloorFiltersState);
+    const [productionFilter,] = useRecoilState(productionFloorFiltersState);
+    const [employee,] = useRecoilState(employeeState);
     const [, setActionFilter] = useState<string>('');
     const {callApi} = useGomakeAxios();
     const [actionsList, setActionsList] = useState<IActionMachines[]>([])
     useEffect(() => {
         setActionsList(actions?.map(action => {
-            const station = productionFilter?.stations?.find(s => s.actionId === action.actionId)
+            const station = (source === Source.PRODUCTION_FLOOR ? productionFilter?.stations : employee.employee.stationsFilter)?.find(s => s.actionId === action.actionId)
             return {
                 ...action,
                 label: action.actionName,
-                checked: !!station && (station.machineIds.length ===0 || station.machineIds.length === action.machines.length),
-                machines: station?.machineIds.length ===0 ? action?.machines?.map(machine => ({...machine, label: machine.machineName, checked: true})) :
-                    action?.machines?.map(machine => ({...machine, label: machine.label, checked: station?.machineIds?.includes(machine.machineId)}))
-            }}))
-
-    }, [actions, productionFilter, open]);
+                checked: !!station,
+                machines: station?.machineIds.length === 0 ? action?.machines?.map(machine => ({
+                        ...machine,
+                        label: machine.machineName,
+                        checked: true
+                    })) :
+                    action?.machines?.map(machine => ({
+                        ...machine,
+                        label: machine.label,
+                        checked: station?.machineIds?.includes(machine.machineId)
+                    }))
+            }
+        }))
+    }, [actions, productionFilter, open, source]);
 
     const onSelectMachine = (stationId: string, machineId: string) => {
         setActionsList(actionsList?.map(station => station.actionId === stationId ? {
             ...station,
-            machines: station.machines?.map(machine => machine.machineId === machineId ? {...machine, checked: !machine.checked} : machine)
+            machines: station.machines?.map(machine => machine.machineId === machineId ? {
+                ...machine,
+                checked: !machine.checked
+            } : machine)
         } : station))
     }
 
@@ -56,14 +74,19 @@ const useActionsList = () => {
                 setActions(res?.data);
             }
         }
-        await getPrintHouseActions(callApi, callBack)
+        await getPrintHouseActions(callApi, callBack, source === Source.USERS)
     }
 
     const actionsMachinesIds: IStation[] = useMemo(() => {
         return actionsList?.filter(station => station.checked || station.machines?.some(machine => machine.checked))
             ?.map(station => ({...station, machines: station?.machines?.filter(machine => machine.checked)}))
-            ?.map(station => ({actionId: station.actionId, machineIds: station.machines.map(machine => machine.machineId)}) );
+            ?.map(station => ({
+                actionId: station.actionId,
+                machineIds: station.machines.map(machine => machine.machineId)
+            }));
     }, [actionsList]);
+
+
     useEffect(() => {
         getActions().then();
     }, [])

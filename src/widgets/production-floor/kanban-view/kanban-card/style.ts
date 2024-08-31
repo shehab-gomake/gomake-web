@@ -20,6 +20,9 @@ const useStyle = () => {
                 ...FONT_FAMILY.Lexend(500, 18),
                 color: '#17181A',
                 maxWidth: 'fit-content'
+            },
+            firstCol: {
+                minWidth: '80px'
             }
         };
     }, [theme]);
