@@ -1,7 +1,7 @@
 import Stack from "@mui/material/Stack";
 import {DialogList} from "@/widgets/messenger/components/dialogs-list";
 import {MessagesComponent} from "@/widgets/messenger/components/messages";
-import {CircularProgress, Divider, IconButton, LinearProgress} from "@mui/material";
+import {Divider, IconButton, LinearProgress, Skeleton} from "@mui/material";
 import InputBase from "@mui/material/InputBase";
 import {FONT_FAMILY} from "@/utils/font-family";
 import {SendFileMessageButtonComponent} from "@/widgets/messenger/components/send-file-message";
@@ -125,9 +125,11 @@ export default function MessengerWidget({userType}: IProps) {
                                                 placeholder={t('messenger.inputPlaceHolder')}
                                                 onChange={(e) => setInputValue(e.target.value)}
                                                 value={inputValue}/>
-                                            <IconButton disabled={!inputValue} onClick={() => sendTextMessage(inputValue)}
+                                            <IconButton disabled={!inputValue}
+                                                        onClick={() => sendTextMessage(inputValue)}
                                                         sx={{p: '10px'}}>
-                                                <SendIcon style={{color: !!inputValue ? primaryColor(500) : grayColor(500)}}/>
+                                                <SendIcon
+                                                    style={{color: !!inputValue ? primaryColor(500) : grayColor(500)}}/>
                                             </IconButton>
                                         </Stack>
                                     </Stack>
@@ -220,9 +222,11 @@ export default function MessengerWidget({userType}: IProps) {
                                                     placeholder={t('messenger.inputPlaceHolder')}
                                                     onChange={(e) => setInputValue(e.target.value)}
                                                     value={inputValue}/>
-                                                <IconButton disabled={!inputValue} onClick={() => sendTextMessage(inputValue)}
+                                                <IconButton disabled={!inputValue}
+                                                            onClick={() => sendTextMessage(inputValue)}
                                                             sx={{p: '10px'}}>
-                                                    <SendIcon style={{color: !!inputValue ? primaryColor(500) : grayColor(500)}}/>
+                                                    <SendIcon
+                                                        style={{color: !!inputValue ? primaryColor(500) : grayColor(500)}}/>
                                                 </IconButton>
                                             </Stack>
                                         </Stack> :
@@ -236,9 +240,16 @@ export default function MessengerWidget({userType}: IProps) {
                             </Stack>
                     )
                     :
-                    <Stack direction={'row'} gap={'5px'} alignItems={'center'}>
-                        <span>{t('messenger.waitingMessage')}</span>
-                        <CircularProgress/>
+                    <Stack style={{backgroundColor: '#FFF'}} gap={'5px'} direction={'row'} width={'100%'}
+                           height={'100%'}>
+                        <Stack>
+                            <Skeleton variant={'rounded'} width={350} height={'100%'}/>
+                        </Stack>
+                        <Stack width={'100%'} height={'100%'} gap={'10px'}>
+                            <Skeleton variant={'rounded'} height={100}/>
+                            <Divider/>
+                            <Skeleton variant={'rounded'} width={'100%'} height={'100%'}/>
+                        </Stack>
                     </Stack>
             }
         </Stack>
