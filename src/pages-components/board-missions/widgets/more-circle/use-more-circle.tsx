@@ -77,53 +77,49 @@ const useMoreCircle = ({
   const menuList = [
     {
       condition: true,
-      name: "boardMissions.viewTask",
+      name: <a style={classes.menuTitleStyle} href={`/production-floor?boardMissionsId=${mission?.id}&step=stations`}>{t("boardMissions.viewTask")}</a>,
       icon: <VisibilityOutlinedIcon style={classes.iconStyle} />,
-      onclick: () => {
-        window.open(`/production-floor?boardMissionsId=${mission?.id}&step=stations`, '_blank');
-      },
     },
     {
       condition: true,
-      name: "boardMissions.pdfWorkMission",
+      name:<a style={classes.menuTitleStyle} href={handleClickEdit(mission)}>{t("materials.buttons.edit")}</a> ,
+      icon: <EditIcon />,
+    },
+    {
+      condition: true,
+      name: t("boardMissions.pdfWorkMission"),
       icon: <PDFIcon />,
       onclick: () => onClickWorkMissionPdf(mission?.id, mission?.actionId,),
     },
     {
       condition: true,
-      name: "boardMissions.pdfProductionOrderSummary",
+      name: t("boardMissions.pdfProductionOrderSummary"),
       icon: <PDFIcon />,
       onclick: () => onClickOrderSummeryPdf(mission?.id),
     },
     {
       condition: true,
-      name: "boardMissions.printProductionPdf",
+      name: t("boardMissions.printProductionPdf"),
       icon: <PDFIcon />,
       onclick: () => GetPrintingTicketPDF(mission),
 
     },
     {
       condition: true,
-      name: "boardMissions.printPackagingSlip",
+      name: t("boardMissions.printPackagingSlip"),
       icon: <PackageIcon />,
       onclick: mission?.status === PStatus.IN_PROCESS ? () => onOpenModal(mission) : () => onClickPrintPackagingSlip(mission),
 
     },
     {
       condition: true,
-      name: "home.duplicate",
+      name: t("home.duplicate"),
       icon: <DuplicateMenuIcon />,
       onclick: () => onClickDuplicate(mission),
     },
     {
-      condition: true,
-      name: "materials.buttons.edit",
-      icon: <EditIcon />,
-      onclick: () => handleClickEdit(mission),
-    },
-    {
       condition: mission?.status === PStatus.IN_PROCESS,
-      name: !mission?.isReady ? "boardMissions.markAsReady" : "boardMissions.markAsUnReady",
+      name: !mission?.isReady ? t("boardMissions.markAsReady") : t("boardMissions.markAsUnReady"),
       icon: !mission?.isReady ? <TaskAltOutlinedIcon style={classes.iconStyle} /> : <MarkAsUnReadyIcon />,
       onclick: () => handleClickMarkAsReady(),
     },
@@ -135,7 +131,7 @@ const useMoreCircle = ({
     // },
     {
       condition: true,
-      name: "home.loggers",
+      name: t("home.loggers"),
       icon: <LoggerIcon />,
       onclick: () => {
         window.open(`/production-floor?boardMissionsId=${mission?.id}&step=activity`, '_blank');
@@ -144,7 +140,7 @@ const useMoreCircle = ({
     !!companyProfile.filesApiAddress &&
     {
       condition: true,
-      name: "fileUploader.uploadFile",
+      name: t("fileUploader.uploadFile"),
       icon: <PDFIcon />,
       onclick: () => addBoardMissionsToFileUploader(mission),
     }

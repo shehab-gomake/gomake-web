@@ -13,6 +13,7 @@ import { useUserPermission } from "@/hooks/use-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { PayIcon } from "./icons/pay";
 import { PaymentIcon } from "./icons/payment";
+import {useStyle} from "@/pages-components/quotes/more-circle/style";
 
 const useMoreCircle = () => {
   const { user } = useCustomer();
@@ -45,6 +46,7 @@ const useMoreCircle = () => {
       };
       await getOrderBoardMissionPDF(callApi, callBack, { documentId: quoteItem?.id });
     };
+    const { classes } = useStyle();
 
     const isQuote = documentType === DOCUMENT_TYPE.quote;
     const isOrder = documentType === DOCUMENT_TYPE.order;
@@ -68,9 +70,9 @@ const useMoreCircle = () => {
       },
       {
         condition: documentType !== DOCUMENT_TYPE.quote,
-        onClick: () => navigate(`/${documentPath}?Id=${quote?.id}`),
+        //onClick: () => navigate(`/${documentPath}?Id=${quote?.id}`),
         icon: <EditingIcon />,
-        name: t("sales.quote.edit")
+        name: <a style={classes.rowTextStyle} href={`/${documentPath}?Id=${quote?.id}`}>{t("sales.quote.edit")}</a>
       },
       {
         condition: true,
