@@ -329,10 +329,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             ];
           } else if (docType === DOCUMENT_TYPE.order) {
             const jobsElement = CheckPermission(Permissions.SHOW_BOARD_MISSIONS)
-              ? (<div style={{ cursor: "pointer" }}
-                onClick={() => navigate(`/jobs?orderNumber=${quote?.number}`)}>
+              ? (<a style={{ cursor: "pointer",color: "inherit",textDecoration:'unset' }} href={`/jobs?orderNumber=${quote?.number}`}>
                 {quote?.jobs}
-              </div>
+              </a>
               ) : quote?.jobs;
             return [
               quote?.createdDate?.split(" ")[0],

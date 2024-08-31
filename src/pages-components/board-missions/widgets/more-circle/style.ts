@@ -18,6 +18,10 @@ const useStyle = () => {
       menuTitleStyle: {
         ...FONT_FAMILY.Lexend(500, 10),
         color: primaryColor(300),
+        fontSize:'12px',
+        width:'100%',
+        textDecoration:"unset",
+        display:'block'
       },
       lineStyle: {
         width: "100%",
