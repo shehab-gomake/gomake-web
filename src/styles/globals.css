@@ -378,7 +378,9 @@ df-messenger {
 .MuiTooltip-popper {
   z-index: 999999;
 }
-
+.ant-select-dropdown{
+  z-index: 999999;
+}
 
 /* Base styles for tree nodes */
 

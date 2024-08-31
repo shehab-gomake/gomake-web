@@ -46,6 +46,9 @@ const StyledTreeSelect = styled(TreeSelect)(({ theme, dir, selectedOption }: any
     fontStyle: "normal",
     fontWeight: 500,
   },
+  "& .ant-select-dropdown":{
+    zIndex:999999999999,
+  },
   "& .p-tree-container": {
     width: "100%",
   },

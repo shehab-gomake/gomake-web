@@ -36,6 +36,7 @@ const useAddNewItem = ({ onClose, getQuote, documentType }) => {
               value: product.id, // Using product id as the key
               title: product.name, // Using product name as the label,
               text: product.name,
+              code: product.code,
               level: 1,
               category: ProductCategoryType.PRODUCT
             }))
@@ -106,8 +107,9 @@ const useAddNewItem = ({ onClose, getQuote, documentType }) => {
 
 
     const selectedNode = findNodeByKey(selectedValue, combinedData);
+    debugger
     if (selectedNode && !selectedNode.children) {
-      setSelectedProduct({ id: selectedValue, category: selectedNode?.category, name: selectedNode?.label, code: selectedNode?.code });
+      setSelectedProduct({ id: selectedValue, category: selectedNode?.category, name: selectedNode?.text, code: selectedNode?.code });
     } else {
       setSelectedProduct(null);
     }
