@@ -137,8 +137,8 @@ const RightSideWidget = ({
                     onChange={(e: any) => {
                       setCurrentProductItemValueTotalPrice(e.target.value);
                     }}
+                    key={'TotalPriceInput'}
                     style={clasess.inputPriceStyle}
-                    type={!selectedWorkFlow?.isCalculated ? "text" : typeof (currentProductItemValueTotalPrice) === "number" ? "number" : "text"}
                 />
             )}
           </div>

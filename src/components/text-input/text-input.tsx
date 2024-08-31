@@ -81,7 +81,7 @@ const GomakeTextInput = ({
   onFocus,
   id,
   helperText,
-  direction
+  direction,
 }: {
   labelText?: string;
   value?: any;
