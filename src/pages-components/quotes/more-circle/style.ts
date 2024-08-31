@@ -34,6 +34,10 @@ const useStyle = () => {
       rowTextStyle: {
         ...FONT_FAMILY.Lexend(500, 10),
         color: "rgba(130, 131, 190, 1)",
+        fontSize:'12px',
+        width:'100%',
+        textDecoration:"unset",
+        display:'block'
       },
     };
   }, []);
