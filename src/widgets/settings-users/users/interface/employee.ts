@@ -1,3 +1,5 @@
+import {IStation} from "@/widgets/production-floor/interfaces/filters";
+
 export interface AllowedIP {
     ip: string;
     isActive: boolean;
@@ -28,7 +30,9 @@ export interface Employee {
     quotePriceLimit: number | null;
     mailProvider: string | null;
     pinCodeForLoginWithApplication: string | null;
-    actionIds:string[] | null
+    actionIds:string[] | null;
+    stationsFilter?: IStation[];
+
 }
 
 export interface IUserData {

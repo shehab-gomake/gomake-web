@@ -1,31 +1,35 @@
-import { useTranslation } from "react-i18next";
-import { IInput } from "@/widgets/machines/utils/interfaces-temp/inputs-interfaces";
-import { useRecoilState } from "recoil";
-import { employeeState } from "@/store/employee-state";
-import { useStyle } from "@/widgets/settings-users/users/components/add-employee/components/general-form/style";
+import {useTranslation} from "react-i18next";
+import {IInput} from "@/widgets/machines/utils/interfaces-temp/inputs-interfaces";
+import {useRecoilState} from "recoil";
+import {employeeState} from "@/store/employee-state";
+import {useStyle} from "@/widgets/settings-users/users/components/add-employee/components/general-form/style";
 import {
     employeeInfoInputs
 } from "@/widgets/settings-users/users/components/add-employee/components/general-form/inputs/employee-info-inputs";
 import {
     agentInputs,
 } from "@/widgets/settings-users/users/components/add-employee/components/general-form/inputs/agent-inputs";
-import { 
+import {
     ipAddressesInputs
 } from "@/widgets/settings-users/users/components/add-employee/components/general-form/inputs/ip-addresses-inputs";
 import {
     accountInputs
 } from "@/widgets/settings-users/users/components/add-employee/components/general-form/inputs/account-inputs";
-import { useCallback, useEffect, useState } from "react";
-import { EmployeeActions, EmployeeQuoteLimitationType } from "@/widgets/settings-users/users/enums/employee-actions";
-import { AllowedIP, IUserData } from "@/widgets/settings-users/users/interface/employee";
-import { SecondSwitch } from "@/components";
-import { FormArrayInput } from "@/components/form-inputs/form-array-input";
-import { FormInput } from "@/components/form-inputs/form-input";
-import { getAllActionsRequireEmployeeApi } from "@/services/api-service/production-floor/production-floor-endpoints";
-import { useGomakeAxios } from "@/hooks";
-import { Checkbox, styled, Tooltip, tooltipClasses, TooltipProps } from "@mui/material";
-import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
+import {useCallback, useEffect, useState} from "react";
+import {EmployeeActions, EmployeeQuoteLimitationType} from "@/widgets/settings-users/users/enums/employee-actions";
+import {AllowedIP, IUserData} from "@/widgets/settings-users/users/interface/employee";
+import {SecondSwitch} from "@/components";
+import {FormArrayInput} from "@/components/form-inputs/form-array-input";
+import {FormInput} from "@/components/form-inputs/form-input";
+import {getAllActionsRequireEmployeeApi} from "@/services/api-service/production-floor/production-floor-endpoints";
+import {useGomakeAxios} from "@/hooks";
+import {Checkbox, styled, Tooltip, tooltipClasses, TooltipProps} from "@mui/material";
+import {CheckboxCheckedIcon, CheckboxIcon} from "@/icons";
 import NewReleasesOutlinedIcon from '@mui/icons-material/NewReleasesOutlined';
+import {
+    ActionsListComponent
+} from "@/widgets/production-floor/filters/select/actions-select/action-list-select-component";
+import {Source} from "@/widgets/production-floor/filters/select/actions-select/use-actions-list";
 
 const EmployeeGeneralForm = ({ action }: { action: EmployeeActions }) => {
     const { t } = useTranslation();
@@ -237,6 +241,13 @@ const EmployeeGeneralForm = ({ action }: { action: EmployeeActions }) => {
                         })
                     }
 
+                </div>
+            </div>
+            <div style={classes.subSection}>
+                <h3 style={classes.subSectionHeader}>{t('usersSettings.employeeActions')}</h3>
+                <h1 style={classes.subSectionActionHeader}>{t('usersSettings.actions')}</h1>
+                <div style={classes.inputsContainer}>
+                    <ActionsListComponent onClickApply={(v)=>updateEmployeeState('stationsFilter', v)} source={Source.USERS}/>
                 </div>
             </div>
 

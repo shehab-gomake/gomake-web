@@ -15,11 +15,13 @@ import {BoardMissionsComponent} from "@/widgets/production-floor/views/board-mis
 import {DashboardWidget} from "@/widgets/dashboard-widget";
 import {FilesUploaderWidget} from "@/widgets/file-uploader-widget/files-uploader-widget";
 import QrListenerWidget from "@/widgets/qr-listener/qr-listener-widget";
+import {useProductionFloorSignalr} from "@/hooks/signalr/use-production-floor-signalr";
 
 const ProductionFloorWidget = () => {
     const [view, setView] = useRecoilState(productionFloorViewState);
     const [openBoardMissionsDrawer, setOpenBoardMissionsDarawer] = useState<boolean>(false);
     const {query, replace, pathname} = useRouter();
+    const {} = useProductionFloorSignalr();
     const {groupsId, boardMissionsId, step, productType} = query;
 
     useEffect(() => {

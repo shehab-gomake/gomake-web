@@ -63,8 +63,8 @@ const addNewBoardMissionsGroup: ICallAndSetData = async (callApi, callBack, grou
 const deleteBoardMissionsGroup: ICallAndSetData = async (callApi, callBack, groupId) => {
     return await getSetApiData(callApi, EHttpMethod.DELETE, DELETE_PRODUCTION_GROUP_URL + groupId, callBack);
 }
-const getPrintHouseActions: ICallAndSetData = async (callApi, callBack, ) => {
-    return await getSetApiData(callApi, EHttpMethod.GET, GET_PRINT_HOUSE_ACTIONS_MACHINES_URL , callBack);
+const getPrintHouseActions: ICallAndSetData = async (callApi, callBack, data) => {
+    return await getSetApiData(callApi, EHttpMethod.GET, GET_PRINT_HOUSE_ACTIONS_MACHINES_URL + '?isFromEmployeeForm=' + data , callBack);
 }
 const getAllActionsRequireEmployeeApi: ICallAndSetData = async (callApi, callBack, ) => {
     return await getSetApiData(callApi, EHttpMethod.GET, GET_PRINT_HOUSE_ACTIONS_REQUIER_EMPLOYEE_URL , callBack);

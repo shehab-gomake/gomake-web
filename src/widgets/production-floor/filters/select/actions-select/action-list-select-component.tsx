@@ -4,19 +4,20 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import {GomakeTextInput} from "@/components";
 import Stack from "@mui/material/Stack";
 import {SecondaryCheckBox} from "@/components/check-box/secondary-check-box";
-import {useActionsList} from "@/widgets/production-floor/filters/select/actions-select/use-actions-list";
+import {Source, useActionsList} from "@/widgets/production-floor/filters/select/actions-select/use-actions-list";
 import {SecondaryButton} from "@/components/button/secondary-button";
 import {IStation} from "@/widgets/production-floor/interfaces/filters";
 import {ClickOutside} from "@/components/click-out-side/click-out-side";
 
 
 interface IProps {
-    onClickApply: (v: IStation[]) => void
+    onClickApply: (v: IStation[]) => void,
+    source: Source
 }
 
-const ActionsListComponent = ({onClickApply}: IProps) => {
+const ActionsListComponent = ({onClickApply, source}: IProps) => {
 
-    const {actionsList, onSelectMachine, onSelectStation, actionsMachinesIds, open, setOpen, filter, setFilter, t} = useActionsList();
+    const {actionsList, onSelectMachine, onSelectStation, actionsMachinesIds, open, setOpen, filter, setFilter, t} = useActionsList(source);
 
     const handleClick = () => {
         setOpen(!open)
@@ -26,12 +27,12 @@ const ActionsListComponent = ({onClickApply}: IProps) => {
     }
 
     const getList = useCallback(()=> {
-        let list = actionsList;
+        let list = [...actionsList];
         if (filter) {
             list =  actionsList?.map(action => ({...action, machines: action.machines.filter(m => m.machineName?.toLowerCase().includes(filter?.toLowerCase()))}))
                 ?.filter(action => action.actionName?.toLowerCase().includes(filter?.toLowerCase()) || action.machines.length > 0)
         }
-        return list?.sort((a, b) => a.checked === b.checked ? 0 : !!a.checked ? -1 : 0)
+        return list?.length > 0 ? list?.sort((a, b) => a.checked === b.checked ? 0 : !!a.checked ? -1 : 0) : []
     }, [actionsList, filter])
     return(
         <div style={{position: 'relative'}}>
@@ -41,7 +42,7 @@ const ActionsListComponent = ({onClickApply}: IProps) => {
             </Button>
             {open &&
                 <ClickOutside onClick={()=> setOpen(false)}>
-                <Paper sx={{position: 'absolute', right: 0, top: '110%', maxWidth: '300px', maxHeight: '600px', overflow: 'auto', zIndex: 99999999}}>
+                <Paper sx={{position: 'absolute', left: 0, top: source === Source.PRODUCTION_FLOOR ? '110%' : '-610px', maxWidth: '300px', height: '600px', maxHeight: '600px', overflow: 'auto', zIndex: 99999999999999}}>
                 <FormGroup>
                     <div style={{position: 'sticky', top: 0, backgroundColor: '#FFF', zIndex: 1}}>
                         <GomakeTextInput  placeholder={t('productionFloor.search')} value={filter} onChange={handleFilterChange}/>
@@ -70,8 +71,10 @@ const ActionsListComponent = ({onClickApply}: IProps) => {
                     }
                 </FormGroup>
                 <div style={{position: 'sticky', bottom: 0, right: 0, left: 0, backgroundColor: '#FFF', zIndex: 1}}>
-                    <SecondaryButton style={{width: '100%'}} variant={'contained'} onClick={() =>
+                    <SecondaryButton style={{width: '100%'}} variant={'contained'} onClick={() => {
+                        setOpen(false)
                         onClickApply(actionsMachinesIds)
+                    }
                     }>{t("productionFloor.apply")}</SecondaryButton>
                 </div>
             </Paper>
