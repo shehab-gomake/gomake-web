@@ -324,8 +324,8 @@ const useStyle = () => {
         marginBottom: 15,
       },
       secondText: {
-        color: primaryColor(200),
-        ...FONT_FAMILY.Lexend(400, 12),
+        color: primaryColor(500),
+        ...FONT_FAMILY.Lexend(500, 14),
       },
       urgentContainer: {
         display: "flex",

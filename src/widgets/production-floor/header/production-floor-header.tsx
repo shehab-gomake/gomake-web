@@ -14,7 +14,7 @@ import AvTimerIcon from '@mui/icons-material/AvTimer';
 import {useTranslation} from "react-i18next";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 const ProductionFloorHeader = () => {
-    const { view, setView, initGroupsFilters, showAllJobsButton, paths, onClickPath, navigateToProductionFloor } = useProductionFloorHeader();
+    const { view, setView, initGroupsFilters, showAllJobsButton, paths, onClickPath, navigateToProductionFloor, onClickBack } = useProductionFloorHeader();
     const {t} = useTranslation();
     const dir = t('direction');
     return (
@@ -24,7 +24,7 @@ const ProductionFloorHeader = () => {
                     <Button onClick={() =>{
                         initGroupsFilters().then();
                         setView(EProductionFloorView.TABLE);
-                        navigateToProductionFloor()
+                        navigateToProductionFloor();
                     }} variant={'contained'}
                         style={{ backgroundColor: '#CBCBE4', color: '#252675', height: '30px', gap: '5px', alignItems: 'center' }}
                         startIcon={dir === 'rtl' ? <ArrowForwardIcon/> : <KeyboardBackspaceOutlinedIcon />}>{t('productionFloor.allJobs')}</Button>}

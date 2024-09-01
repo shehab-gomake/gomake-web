@@ -99,7 +99,7 @@ const MessagesComponent = ({
                         {
                             (index === 0 || index > 0 && msg.sender_id !== messages[index - 1].sender_id) ?
                                 <Avatar variant={'circular'}
-                                        style={{backgroundColor: msg.sender_id === sessionUserId ? user?.avatarBackGroundColor : '', ...FONT_FAMILY.Lexend(500, 18)}}
+                                        style={{backgroundColor: msg.sender_id === sessionUserId ? user?.avatarBackGroundColor : '', ...FONT_FAMILY.Lexend(500, 16)}}
                                         src={msg.sender_id === sessionUserId ? user?.imagePath : msg.userMetaData?.profileImage}>
                                     {msg.sender_id === sessionUserId && !user.imagePath ? user.avatarInitials?.toUpperCase() : msg.userMetaData?.avatarInitials?.toUpperCase()}
                                 </Avatar> :

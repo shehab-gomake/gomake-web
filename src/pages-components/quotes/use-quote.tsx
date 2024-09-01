@@ -1,7 +1,7 @@
 import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { ApprovalStatus, DELIVERY_NOTE_STATUSES, LogActionType, QUOTE_STATUSES } from "./enums";
+import { ApprovalStatus, LogActionType, QUOTE_STATUSES } from "./enums";
 import { MoreMenuWidget } from "./more-circle";
 import { getAllProductsForDropDownList, getAndSetAllCustomers, getAndSetClientTypes } from "@/services/hooks";
 import { useSetRecoilState, useRecoilValue, useRecoilState } from "recoil";
@@ -18,7 +18,6 @@ import {
   duplicateDocumentApi,
   getAllDocumentLogsApi,
   getAllDocumentsApi,
-  getDocumentApi,
   getDocumentPdfApi,
   manuallyCloseDocumentApi,
   updateDocumentApi,
@@ -267,8 +266,16 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         const totalItems = res?.data?.totalItems;
         const mapData = data?.map((quote: any) => {
           if (docType === DOCUMENT_TYPE.purchaseOrder) {
+            // Split the creationDate to get the date and time separately
+            const [date, time] = quote?.creationDate?.split(" ") || ["", ""];
+
             return [
-              quote?.creationDate?.split(" ")[0],
+              // Display the date on the first line and time on the second line
+              <div>
+                {date}
+                <br />
+                {time}
+              </div>,
               quote?.number,
               quote?.orderNumber,
               quote?.supplierName,
@@ -287,9 +294,13 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             ];
           } else if (docType === DOCUMENT_TYPE.purchaseInvoice || docType === DOCUMENT_TYPE.purchaseInvoiceRefund) {
             const purchaseOrderNumbers = quote?.orderNumbers ? quote?.orderNumbers.join(', ') : '';
+            const [date, time] = quote?.createdDate?.split(" ") || ["", ""];
             return [
-              // GetDateFormat(quote?.createdDate),
-              quote?.createdDate?.split("T")[0],
+              <div>
+                {date}
+                <br />
+                {time}
+              </div>,
               quote?.number,
               quote?.invoiceNumber,
               purchaseOrderNumbers,
@@ -307,10 +318,16 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               />,
             ];
           } else if (docType === DOCUMENT_TYPE.quote) {
+            const [date, time] = quote?.createdDate?.split(" ") || ["", ""];
             return [
-              // GetDateFormat(quote?.createdDate),
-              quote?.createdDate?.split(" ")[0],
-              <div style={{ cursor: "pointer" }} onClick={() => onClickOpenCustomerModal(quote?.customerId)}>{quote?.customerName}</div>,
+              <div>
+                {date}
+                <br />
+                {time}
+              </div>,
+              <div style={{ cursor: "pointer" }} onClick={() => onClickOpenCustomerModal(quote?.customerId)}>
+                {quote?.customerName}
+              </div>,
               quote?.agentName,
               quote?.number,
               quote?.worksNames,
@@ -324,28 +341,38 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 onClickPdf={onClickQuotePdf}
                 onClickDuplicate={onClickQuoteDuplicate}
                 onClickLoggers={onClickDocumentLogs}
-
               />,
             ];
           } else if (docType === DOCUMENT_TYPE.order) {
+            // Split the createdDate to get the date and time separately
+            const [date, time] = quote?.createdDate?.split(" ") || ["", ""];
+
             const jobsElement = CheckPermission(Permissions.SHOW_BOARD_MISSIONS)
-              ? (<a style={{ cursor: "pointer",color: "inherit",textDecoration:'unset' }} href={`/jobs?orderNumber=${quote?.number}`}>
-                {quote?.jobs}
-              </a>
+              ? (
+                <a style={{ cursor: "pointer", color: "inherit", textDecoration: 'unset' }} href={`/jobs?orderNumber=${quote?.number}`}>
+                  {quote?.jobs}
+                </a>
               ) : quote?.jobs;
+
             return [
-              quote?.createdDate?.split(" ")[0],
-              <div style={{ cursor: "pointer" }} onClick={() => onClickOpenCustomerModal(quote?.customerId)}>{quote?.customerName}</div>,
+              // Display the date on the first line and time on the second line
+              <div>
+                {date}
+                <br />
+                {time}
+              </div>,
+              <div style={{ cursor: "pointer" }} onClick={() => onClickOpenCustomerModal(quote?.customerId)}>
+                {quote?.customerName}
+              </div>,
               quote?.agentName,
               quote?.number,
               quote?.sourceDocumentNumber?.map((item, index) => {
                 return (
-                  <>
-                    <span key={index}>{item?.documentNumber}
-                      <br />
-                    </span>
-                  </>
-                )
+                  <span key={index}>
+                    {item?.documentNumber}
+                    <br />
+                  </span>
+                );
               }),
               quote?.purchaseNumber,
               quote?.productionStatus === true ? t('boardMissions.done') : t('boardMissions.inProduction'),
@@ -371,23 +398,30 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               />,
             ];
           } else {
+            // Split the createdDate to get the date and time separately
+            const [date, time] = quote?.createdDate?.split(" ") || ["", ""];
+
             return [
-              // GetDateFormat(quote?.createdDate),
-              quote?.createdDate?.split(" ")[0],
+              // Display the date on the first line and time on the second line
+              <div>
+                {date}
+                <br />
+                {time}
+              </div>,
               quote?.customerName,
               quote?.agentName,
               quote?.number,
               quote?.sourceDocumentNumber?.map((item, index) => {
                 return (
-                  <>
-                    <span key={index}
-                      onClick={() => navigate(renderURLDocumentType(item?.sourceDocumentType, item.documentId))}
-                      style={{ cursor: "pointer" }}>
-                      {t(renderDocumentTypeForSourceDocumentNumber(item?.sourceDocumentType))}:{item?.documentNumber}
-                      <br />
-                    </span>
-                  </>
-                )
+                  <span
+                    key={index}
+                    onClick={() => navigate(renderURLDocumentType(item?.sourceDocumentType, item.documentId))}
+                    style={{ cursor: "pointer" }}
+                  >
+                    {t(renderDocumentTypeForSourceDocumentNumber(item?.sourceDocumentType))}:{item?.documentNumber}
+                    <br />
+                  </span>
+                );
               }),
               quote?.worksNames,
               quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
@@ -400,7 +434,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 onClickPdf={onClickQuotePdf}
                 onClickDuplicate={onClickQuoteDuplicate}
                 onClickLoggers={onClickDocumentLogs}
-
                 onClickOpenCloseOrderModal={onClickOpenCloseOrderModal}
                 onClickOpenCloseOrderNotesModal={onClickOpenCloseOrderNotesModal}
               />,
@@ -506,9 +539,16 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         const totalItems = res?.data?.totalItems;
         const mapData = data?.map((quote: any) => {
           if (docType === DOCUMENT_TYPE.purchaseOrder) {
+            // Split the creationDate to get the date and time separately
+            const [date, time] = quote?.creationDate?.split(" ") || ["", ""];
+
             return [
-              // GetDateFormat(quote?.creationDate),
-              quote?.creationDate?.split(" ")[0],
+              // Display the date on the first line and time on the second line
+              <div>
+                {date}
+                <br />
+                {time}
+              </div>,
               quote?.number,
               quote?.orderNumber,
               quote?.supplierName,
@@ -527,12 +567,16 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             ];
           } else if (docType === DOCUMENT_TYPE.purchaseInvoice || docType === DOCUMENT_TYPE.purchaseInvoiceRefund) {
             const purchaseOrderNumbers = quote?.orderNumbers ? quote?.orderNumbers.join(', ') : '';
+            const [date, time] = quote?.createdDate?.split(" ") || ["", ""];
             return [
-              // GetDateFormat(quote?.createdDate),
-              quote?.createdDate?.split("T")[0],
+              <div>
+                {date}
+                <br />
+                {time}
+              </div>,
               quote?.number,
               quote?.invoiceNumber,
-              quote?.purchaseOrderNumbers,
+              purchaseOrderNumbers,
               quote?.customerName,
               quote?.itemsNumber,
               quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
@@ -547,10 +591,16 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               />,
             ];
           } else if (docType === DOCUMENT_TYPE.quote) {
+            const [date, time] = quote?.createdDate?.split(" ") || ["", ""];
             return [
-              // GetDateFormat(quote?.createdDate),
-              quote?.createdDate?.split(" ")[0],
-              <div style={{ cursor: "pointer" }} onClick={() => onClickOpenCustomerModal(quote?.customerId)}>{quote?.customerName}</div>,
+              <div>
+                {date}
+                <br />
+                {time}
+              </div>,
+              <div style={{ cursor: "pointer" }} onClick={() => onClickOpenCustomerModal(quote?.customerId)}>
+                {quote?.customerName}
+              </div>,
               quote?.agentName,
               quote?.number,
               quote?.worksNames,
@@ -564,31 +614,38 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 onClickPdf={onClickQuotePdf}
                 onClickDuplicate={onClickQuoteDuplicate}
                 onClickLoggers={onClickDocumentLogs}
-
               />,
             ];
           } else if (docType === DOCUMENT_TYPE.order) {
+            // Split the createdDate to get the date and time separately
+            const [date, time] = quote?.createdDate?.split(" ") || ["", ""];
+
             const jobsElement = CheckPermission(Permissions.SHOW_BOARD_MISSIONS)
-              ? (<div style={{ cursor: "pointer" }}
-                onClick={() => navigate(`/jobs?orderNumber=${quote?.number}`)}>
-                {quote?.jobs}
-              </div>
+              ? (
+                <a style={{ cursor: "pointer", color: "inherit", textDecoration: 'unset' }} href={`/jobs?orderNumber=${quote?.number}`}>
+                  {quote?.jobs}
+                </a>
               ) : quote?.jobs;
 
             return [
-              GetDateFormat(quote?.createdDate),
-              <div style={{ cursor: "pointer" }}
-                onClick={() => onClickOpenCustomerModal(quote?.customerId)}>{quote?.customerName}</div>,
+              // Display the date on the first line and time on the second line
+              <div>
+                {date}
+                <br />
+                {time}
+              </div>,
+              <div style={{ cursor: "pointer" }} onClick={() => onClickOpenCustomerModal(quote?.customerId)}>
+                {quote?.customerName}
+              </div>,
               quote?.agentName,
               quote?.number,
               quote?.sourceDocumentNumber?.map((item, index) => {
                 return (
-                  <>
-                    <span key={index}>{item?.documentNumber}
-                      <br />
-                    </span>
-                  </>
-                )
+                  <span key={index}>
+                    {item?.documentNumber}
+                    <br />
+                  </span>
+                );
               }),
               quote?.purchaseNumber,
               quote?.productionStatus === true ? t('boardMissions.done') : t('boardMissions.inProduction'),
@@ -610,26 +667,34 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 onClickOpenPriceModal={onClickOpenPriceModal}
                 onClickOpenCloseOrderModal={onClickOpenCloseOrderModal}
                 onClickOpenCloseOrderNotesModal={onClickOpenCloseOrderNotesModal}
+                onClickSendPayment={onClickSendPayment}
               />,
-            ]
+            ];
           } else {
+            // Split the createdDate to get the date and time separately
+            const [date, time] = quote?.createdDate?.split(" ") || ["", ""];
+
             return [
-              // GetDateFormat(quote?.createdDate),
-              quote?.createdDate?.split(" ")[0],
+              // Display the date on the first line and time on the second line
+              <div>
+                {date}
+                <br />
+                {time}
+              </div>,
               quote?.customerName,
               quote?.agentName,
               quote?.number,
               quote?.sourceDocumentNumber?.map((item, index) => {
                 return (
-                  <>
-                    <span key={index}
-                      onClick={() => navigate(renderURLDocumentType(item?.sourceDocumentType, item.documentId))}
-                      style={{ cursor: "pointer" }}>
-                      {t(renderDocumentTypeForSourceDocumentNumber(item?.sourceDocumentType))}:{item?.documentNumber}
-                      <br />
-                    </span>
-                  </>
-                )
+                  <span
+                    key={index}
+                    onClick={() => navigate(renderURLDocumentType(item?.sourceDocumentType, item.documentId))}
+                    style={{ cursor: "pointer" }}
+                  >
+                    {t(renderDocumentTypeForSourceDocumentNumber(item?.sourceDocumentType))}:{item?.documentNumber}
+                    <br />
+                  </span>
+                );
               }),
               quote?.worksNames,
               quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
@@ -642,7 +707,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 onClickPdf={onClickQuotePdf}
                 onClickDuplicate={onClickQuoteDuplicate}
                 onClickLoggers={onClickDocumentLogs}
-
                 onClickOpenCloseOrderModal={onClickOpenCloseOrderModal}
                 onClickOpenCloseOrderNotesModal={onClickOpenCloseOrderNotesModal}
               />,

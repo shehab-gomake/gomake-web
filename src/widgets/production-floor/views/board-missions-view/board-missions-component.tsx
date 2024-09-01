@@ -39,12 +39,12 @@ const BoardMissionsComponent = ({boardMissionsId, step, productType}: IProps) =>
             getData().then();
         };
     }, [boardMissionsId, connectionId, productType])
-    return <Stack maxHeight={'100%'} overflow={'hidden'} gap={'16px'} padding={'34px 24px'}
+    return <Stack maxHeight={'100%'} height={'100%'} overflow={'hidden'} gap={'16px'} padding={'34px 24px'}
                   borderRadius={'24px, 24px, 0px, 0px'}>
         <BoardMissionsDetailsHeader/>
         <Divider orientation={'horizontal'} flexItem/>
         <NavigationButtonsComponent/>
-        <Stack overflow={'auto'}>
+        <Stack overflow={'auto'} flex={1}>
             {
                 step === EBoardMissionsViews.STATIONS && <BoardMissionsStationsComponent/>
             }

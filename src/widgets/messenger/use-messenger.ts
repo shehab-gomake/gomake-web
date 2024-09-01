@@ -18,7 +18,7 @@ const useMessenger = () => {
     const [selectedDialog, setSelectedDialog] = useState<IChatDialog | null>(null);
     const [dialogs, setDialogs] = useState<IChatDialog[]>([]);
     const [messages, setMessages] = useState<IChatMessage[]>([]);
-    const [inputValue, setInputValue] = useState('');
+    const [inputValue, setInputValue] = useState<string>('');
     const [uploadingFiles, setUploadingFiles] = useState<boolean>(false);
     const [updatedApprovalRequestId, setUpdatedApprovalRequestId] = useState<{ approvalRequestId: string, newStatus: EFileStatus }>();
     const [usersMetaData, setUsersMetaDta] = useState<IUserMetaData[]>([]);
