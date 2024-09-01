@@ -237,11 +237,7 @@ const GoMakeTreeSelect = ({
         treeData={treeData}
         onPopupScroll={onPopupScroll}
         filterTreeNode={(input, treeNode) => {
-          if(input === "100"){
-            debugger
-          }
-          return treeNode.text.toString().includes(input);
-          
+          return treeNode.text.toString().toLowerCase().includes(input.toLowerCase());
         }}
       />
       {selectedNodeKey && (
