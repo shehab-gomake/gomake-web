@@ -582,7 +582,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             }
             let temp = [];
             subSection.parameters.forEach((parameter) => {
-              if (parameter?.isHidden) {
+              if (parameter?.isHidden && !parameter?.isHiddenInSetting) {
                 return;
               }
               if (parameter.code === "ChemicalPaperWeight") {
@@ -3111,7 +3111,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         quoteItemProduct.docmentItem.finalPrice
       );
       setLastProductItemValueTotalPrice(
-          quoteItemProduct.docmentItem.finalPrice
+        quoteItemProduct.docmentItem.finalPrice
       );
       setCurrentProductItemValue(quoteItemProduct.productItemValue);
       setCurrentProductItemValueDraftId(
