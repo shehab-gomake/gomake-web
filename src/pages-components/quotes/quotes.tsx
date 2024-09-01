@@ -154,6 +154,10 @@ const QuotesListPageWidget = ({
     approvalStatusId,
     openMakePaymentModal,
     onClickCloseMakePaymentModal,
+    isOrdersTracking,
+    onClickCloseTrackModal,
+    openCloseAndTrackOrderModal,
+    closeAndTrackOrder
   } = useQuotes(documentType, isFromHomePage);
 
   const router = useRouter();
@@ -173,7 +177,7 @@ const QuotesListPageWidget = ({
   }, []);
 
   const getValueByKey = (statistics: ICard[], key: string) => {
-    const card = statistics.find((item) => item.key === key);
+    const card = statistics?.find((item) => item.key === key);
     return card ? card.value : "";
   };
 
@@ -192,7 +196,7 @@ const QuotesListPageWidget = ({
               <HeaderTitle title={documentLabel} marginTop={1} marginBottom={1} />
               <div style={classes.rowStyle}>
                 {(documentType === DOCUMENT_TYPE.quote) && <CardsSection statistics={allStatistics} activeCard={activeCard} onClick={onclickCreateNew} onClickCard={handleCardClick} onSecondClickCard={handleSecondCardClick} />}
-                {documentType === DOCUMENT_TYPE.order &&
+                {documentType === DOCUMENT_TYPE.order && !isOrdersTracking &&
                   <>
                     <CardComponent text={t("sales.quote.totalPrice")} number={getValueByKey(allStatistics, "totalPrice")} textColor={secondColor(100)} icon={<GoMakeCurrency color={secondColor(100)} />} />
                     <Button style={classes.createNew} onClick={onclickCreateNew} startIcon={<AddCircleOutlineIcon style={{ color: 'black', fontSize: "24px" }} />}>{t("sales.quote.createNew")}</Button>
@@ -391,9 +395,7 @@ const QuotesListPageWidget = ({
                                 {t("sales.quote.search")}
                               </GomakePrimaryButton>
                             </div>
-
                           </div>
-
                         </div>
                       </GoMakeMenu>
                     </div>
@@ -568,8 +570,21 @@ const QuotesListPageWidget = ({
       openMakePaymentModal={openMakePaymentModal}
       onClickCloseMakePaymentModal={onClickCloseMakePaymentModal}
       orderItemValue={selectedQuoteItemValue}
-
       />
+
+      <GoMakeDeleteModal
+        icon={
+          <WarningAmberIcon style={{ width: 60, height: 60, color: "red" }} />
+        }
+        title={t("ssssss")}
+        yesBtn={t("sales.quote.yesBtn")}
+        openModal={openCloseAndTrackOrderModal}
+        onClose={onClickCloseTrackModal}
+        subTitle={"eee"}
+        onClickDelete={closeAndTrackOrder}
+        style={{ width: "35%" }}
+      >
+      </GoMakeDeleteModal>
     </>
   );
 };

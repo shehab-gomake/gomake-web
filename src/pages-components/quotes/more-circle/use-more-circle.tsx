@@ -15,6 +15,7 @@ import { PayIcon } from "./icons/pay";
 import { PaymentIcon } from "./icons/payment";
 import {useStyle} from "@/pages-components/quotes/more-circle/style";
 import { useRouter } from "next/router";
+import { TrackingIcon } from "./icons/tracking";
 
 const useMoreCircle = () => {
   const { user } = useCustomer();
@@ -33,7 +34,8 @@ const useMoreCircle = () => {
     onClickSendPayment,
     onClickOpenCloseOrderModal,
     onClickOpenCloseOrderNotesModal,
-    onClickMakePayment
+    onClickMakePayment,
+    onClickCloseAndTrack
   }) => {
     const documentPath = DOCUMENT_TYPE[documentType];
     const { callApi } = useGomakeAxios();
@@ -169,6 +171,12 @@ const useMoreCircle = () => {
         name: t("sales.quote.close")
       },
       {
+        condition: isOrder && quote?.isCanCloseForTracking,
+        onClick: () => onClickCloseAndTrack(quote),
+        icon: <TrackingIcon />,
+        name: t("sales.quote.closeAndTrack")
+      },
+      {
         condition: isOrder && quote?.isCanClose && quote?.statusTitleText !== "Order.Canceled",
         onClick: () => onClickOpenIrrelevantModal(quote),
         icon: <TickCloseIcon />,
@@ -186,6 +194,7 @@ const useMoreCircle = () => {
         icon: <PaymentIcon />,
         name: t("sales.quote.sendPayment")
       },
+
       {
         condition: isOrdersTracking,
         onClick: () => onClickMakePayment(quote),

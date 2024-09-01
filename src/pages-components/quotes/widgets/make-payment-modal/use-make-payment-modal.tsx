@@ -2,6 +2,7 @@ import { useTranslation } from "react-i18next";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { useState } from "react";
 import { makePaymentForOrderApi } from "@/services/api-service/generic-doc/documents-api";
+import { DOCUMENT_TYPE } from "../../enums";
 
 const useMakePaymentModal = ({ orderItemValue }) => {
     const { t } = useTranslation();
@@ -23,7 +24,7 @@ const useMakePaymentModal = ({ orderItemValue }) => {
                 alertFaultUpdate();
             }
         };
-        await makePaymentForOrderApi(callApi, callBack, { id: orderItemValue?.id, totalPrice });
+        await makePaymentForOrderApi(callApi, callBack, { documentType: DOCUMENT_TYPE.order, document:{documentId:orderItemValue?.id , amount:totalPrice} });
     };
 
     return {

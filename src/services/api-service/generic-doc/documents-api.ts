@@ -75,7 +75,8 @@ const GET_WHATSAPP_MESSAGE_URL = "/v1/erp-service/documents/get-whats-app-messag
 const CLOSE_DOCUMENT_URL = "/v1/erp-service/documents/close-document";
 const MANUALLY_CLOSE_DOCUMENT_URL = "/v1/erp-service/documents/manually-close-document";
 const SEND_QUOTE_APPROVAL_TO_MANAGER = '/v1/erp-service/documents/send-quote-approval-to-manager';
-const MAKE_PAYMENT_URL = '/v1/erp-service/documents/make-payment';
+const PAY_ORDER_IN_URL = '/v1/erp-service/documents/pay-order-in-tracking';
+const CLOSE_AND_TRACK_ORDER_URL = '/v1/erp-service/documents/close-and-track-order';
 
 const getDocumentApi: ICallAndSetData = async (callApi, setState, data) => {
   return await getSetApiData(
@@ -741,12 +742,29 @@ const makePaymentForOrderApi: ICallAndSetData = async (
 ) => {
   return await getSetApiData(
     callApi,
-    EHttpMethod.POST,
-    MAKE_PAYMENT_URL,
+    EHttpMethod.PUT,
+    PAY_ORDER_IN_URL,
     setState,
     data
   );
 };
+
+
+
+const closeAndTrackOrderApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.PUT,
+    CLOSE_AND_TRACK_ORDER_URL,
+    setState,
+    data
+  );
+};
+
 export {
   getDocumentApi,
   getAllDocumentsApi,
@@ -801,5 +819,6 @@ export {
   sendQuoteApprovalToManagerApi,
   acceptDocumentApi,
   rejectDocumentApi,
-  makePaymentForOrderApi
+  makePaymentForOrderApi,
+  closeAndTrackOrderApi
 };
