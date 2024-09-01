@@ -39,6 +39,7 @@ import { isValidCustomer } from "@/utils/helpers";
 import { useRouter } from "next/router";
 import { CloseOrderNotesModal } from "../products/profits-new/widgets/close-order-notes-modal";
 import { SendPaymentModal } from "./widgets/send-payment-modal/send-payment-modal";
+import { MakePaymentModal } from "./widgets/make-payment-modal/make-payment-modal";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -150,10 +151,13 @@ const QuotesListPageWidget = ({
     handleDocumentNumberChange,
     approvalStatuses,
     setApprovalStatusId,
-    approvalStatusId
+    approvalStatusId,
+    openMakePaymentModal,
+    onClickCloseMakePaymentModal,
   } = useQuotes(documentType, isFromHomePage);
 
   const router = useRouter();
+  
   useEffect(() => {
     if (router.query.orderNumber) {
       setPatternSearch(router.query.orderNumber as string);
@@ -559,6 +563,12 @@ const QuotesListPageWidget = ({
       openPaymentModal={openPaymentModal}
       onClickClosePaymentModal={onClickClosePaymentModal}
       paymentModalTitle={paymentModalTitle}
+      />
+       <MakePaymentModal
+      openMakePaymentModal={openMakePaymentModal}
+      onClickCloseMakePaymentModal={onClickCloseMakePaymentModal}
+      orderItemValue={selectedQuoteItemValue}
+
       />
     </>
   );

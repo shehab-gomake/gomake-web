@@ -14,6 +14,7 @@ import { Permissions } from "@/components/CheckPermission/enum";
 import { PayIcon } from "./icons/pay";
 import { PaymentIcon } from "./icons/payment";
 import {useStyle} from "@/pages-components/quotes/more-circle/style";
+import { useRouter } from "next/router";
 
 const useMoreCircle = () => {
   const { user } = useCustomer();
@@ -31,10 +32,12 @@ const useMoreCircle = () => {
     onClickOpenIrrelevantModal,
     onClickSendPayment,
     onClickOpenCloseOrderModal,
-    onClickOpenCloseOrderNotesModal
+    onClickOpenCloseOrderNotesModal,
+    onClickMakePayment
   }) => {
     const documentPath = DOCUMENT_TYPE[documentType];
     const { callApi } = useGomakeAxios();
+    const { pathname } = useRouter();
 
     const onClickGetOrderBoardMissionPDF = async (quoteItem) => {
       const callBack = (res) => {
@@ -57,6 +60,7 @@ const useMoreCircle = () => {
     const isPurchaseInvoice = documentType === DOCUMENT_TYPE.purchaseInvoice;
     const isPurchaseOrder = documentType === DOCUMENT_TYPE.purchaseOrder;
     const showNewDuplicate = isDeliveryNote || isDeliveryNoteRefund || isInvoice || isInvoiceRefund;
+    const isOrdersTracking = pathname === "/ordersTracking";
 
     return [
       {
@@ -181,6 +185,12 @@ const useMoreCircle = () => {
         onClick: () => onClickSendPayment(quote),
         icon: <PaymentIcon />,
         name: t("sales.quote.sendPayment")
+      },
+      {
+        condition: isOrdersTracking,
+        onClick: () => onClickMakePayment(quote),
+        icon: <PaymentIcon />,
+        name: t("sales.quote.makePayment")
       },
       // {
       //   condition: !isCancel,

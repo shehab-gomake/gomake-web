@@ -75,6 +75,7 @@ const GET_WHATSAPP_MESSAGE_URL = "/v1/erp-service/documents/get-whats-app-messag
 const CLOSE_DOCUMENT_URL = "/v1/erp-service/documents/close-document";
 const MANUALLY_CLOSE_DOCUMENT_URL = "/v1/erp-service/documents/manually-close-document";
 const SEND_QUOTE_APPROVAL_TO_MANAGER = '/v1/erp-service/documents/send-quote-approval-to-manager';
+const MAKE_PAYMENT_URL = '/v1/erp-service/documents/make-payment';
 
 const getDocumentApi: ICallAndSetData = async (callApi, setState, data) => {
   return await getSetApiData(
@@ -732,6 +733,20 @@ const sendQuoteApprovalToManagerApi: ICallAndSetData = async (callApi, setState,
   );
 }
 
+
+const makePaymentForOrderApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    MAKE_PAYMENT_URL,
+    setState,
+    data
+  );
+};
 export {
   getDocumentApi,
   getAllDocumentsApi,
@@ -785,5 +800,6 @@ export {
   manuallyCloseDocumentApi,
   sendQuoteApprovalToManagerApi,
   acceptDocumentApi,
-  rejectDocumentApi
+  rejectDocumentApi,
+  makePaymentForOrderApi
 };

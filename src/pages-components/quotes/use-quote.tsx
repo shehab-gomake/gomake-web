@@ -89,7 +89,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const documentPath = DOCUMENT_TYPE[docType];
   const isReceipt = docType === DOCUMENT_TYPE.receipt;
   const { CheckPermission } = useUserPermission();
-  const { query } = useRouter();
+  const { query , pathname } = useRouter();
   const { quoteNumber } = query;
   const [accountingStatus, setAccountingStatus] = useState<{
     label: string;
@@ -105,8 +105,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const [productIds, setProductIds] = useState<string[]>([]);
   const [minPrice, setMinPrice] = useState('');
   const [maxPrice, setMaxPrice] = useState('');
-  const [openCloseOrderNotesModal, setOpenCloseOrderNotesModal] = useState(false)
-  const [selectedQuoteItemValue, setSelectedQuoteItemValue] = useState()
+  const [openCloseOrderNotesModal, setOpenCloseOrderNotesModal] = useState(false);
+  const [selectedQuoteItemValue, setSelectedQuoteItemValue] = useState();
   const [documentCloseNumber, setDocumentCloseNumber] = useState("");
 
   const handleDocumentNumberChange = (event) => {
@@ -260,6 +260,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     return translatedTypes.join(', ');
   }
 
+  const isOrdersTracking = pathname === "/ordersTracking";
+
   const getAllQuotes = useCallback(async () => {
     const callBack = (res) => {
       if (res?.success) {
@@ -368,6 +370,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 onClickOpenCloseOrderModal={onClickOpenCloseOrderModal}
                 onClickOpenCloseOrderNotesModal={onClickOpenCloseOrderNotesModal}
                 onClickSendPayment={onClickSendPayment}
+                onClickMakePayment={onClickMakePayment}
               />,
             ];
           } else {
@@ -610,6 +613,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 onClickOpenPriceModal={onClickOpenPriceModal}
                 onClickOpenCloseOrderModal={onClickOpenCloseOrderModal}
                 onClickOpenCloseOrderNotesModal={onClickOpenCloseOrderNotesModal}
+                onClickSendPayment={onClickSendPayment}
+                onClickMakePayment={onClickMakePayment}
               />,
             ]
           } else {
@@ -885,7 +890,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     },
   ];
 
-  const documentLabel = documentsLabels.find(
+  const documentLabel = isOrdersTracking ? t("tabs.ordersTracking") : documentsLabels.find(
     (item) => item.value === docType
   ).label;
 
@@ -1456,6 +1461,17 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     }
   };
 
+  ///// order tracking 
+  const [openMakePaymentModal, setOpenMakePaymentModal] = useState(false);
+  const onClickMakePayment =  (order) => {
+    setSelectedQuoteItemValue(order)
+    setOpenMakePaymentModal(true);
+  };
+
+  const onClickCloseMakePaymentModal =  () => {
+    setOpenMakePaymentModal(false);
+  };
+
   return {
     showCustomerModal,
     customerForEdit,
@@ -1561,7 +1577,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     handleDocumentNumberChange,
     approvalStatuses,
     setApprovalStatusId,
-    approvalStatusId
+    approvalStatusId,
+    openMakePaymentModal,
+    onClickCloseMakePaymentModal,
   };
 };
 
