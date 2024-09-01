@@ -9,6 +9,11 @@ export enum EnumVATStatus {
     Exempt,
 }
 
+export enum EnumInvoiceClosureMethod {
+    accounting = 0,
+    internalAndAccounting,
+}
+
 export enum EnumTermsPayment {
     BasicCash = 1,
     SpreadPayments,

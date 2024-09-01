@@ -468,3 +468,22 @@ df-messenger {
   background: var(--Colors-Background-bg-primary, #FFF);
   box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
 }
+
+.drop-zone {
+  transition: background-color 0.3s ease;
+}
+
+.drop-zone.dragging {
+  background-color: #f0f0f0;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    background-color: #D5D6E9;
+  }
+
+  100% {
+    background-color: #ABACD3;
+  }
+}

@@ -256,59 +256,19 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     //setLoading(false);
     setWorkFlows(result.productItemValue.workFlows);
     setJobActions(result?.productItemValue.actions);
+    
     setCalculationResult(result)
   }
-
-  const setSelectedWorkflow = (newWorkFlows, currentWorkFlows) => {
-    newWorkFlows.forEach((flow) => {
-      const isExists = currentWorkFlows.find((x) => x.id === flow.id);
-      if (!isExists) {
-        currentWorkFlows.push(flow);
-      }
-      if (flow.selected) {
-        currentWorkFlows.forEach((f) => (f.selected = false));
-      }
-    });
-    if (calculationResult?.monials) {
-      calculationResult?.monials.forEach((m) => {
-        const workFlow = currentWorkFlows.find(
-          (x) => x.id === m.workFlowId
-        );
-        if (workFlow) {
-          workFlow.monials = m?.monials;
-          workFlow.recommendationRang = m?.recommendationRang;
-        }
-      });
-    }
-    currentWorkFlows.sort((a, b) => b.monials - a.monials);
-
-    let myselectedWorkFlow = currentWorkFlows?.find((x) => x.selected);
-    if (
-      !myselectedWorkFlow &&
-      currentWorkFlows &&
-      currentWorkFlows.length > 0
-    ) {
-      currentWorkFlows[0].selected = true;
-    }
-    myselectedWorkFlow = currentWorkFlows?.find((x) => x.selected && x.isCompleteWorkFlow);
-    if (
-      myselectedWorkFlow && myselectedWorkFlow.isCompleteWorkFlow &&
-      myselectedWorkFlow.totalPrice &&
-      myselectedWorkFlow.totalPrice.values && !priceRecovery
-    ) {
-      setCurrentProductItemValueTotalPrice(
-        parseFloat(myselectedWorkFlow.totalPrice.values[0])
-      );
-    }
-    return currentWorkFlows;
-  }
-
+  
   useEffect(() => {
     if (signalRPricingResult && signalRPricingResult.productItemValueDraftId === currentCalculationSessionId) {
       setLoading(false)
       const totalWorkFlowsCount = signalRPricingResult.totalWorkFlows;
       const currentWorkFlowsCount = signalRPricingResult.currentWorkFlowIndex > calculationProgress.currentWorkFlowsCount ? signalRPricingResult.currentWorkFlowIndex : (calculationProgress.currentWorkFlowsCount + 1);
       if (signalRPricingResult.isCalculationFinished && signalRPricingResult.totalPrice) {
+        if(widgetType == EWidgetProductType.EDIT && priceRecovery){
+          signalRPricingResult.totalPrice = lastProductItemValueTotalPrice;
+        }
         setCurrentProductItemValueTotalPrice(
           parseFloat(signalRPricingResult.totalPrice)
         );
@@ -384,9 +344,11 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         updatedSelectedWorkFlow?.totalPrice &&
         updatedSelectedWorkFlow?.totalPrice?.values
       ) {
-        setCurrentProductItemValueTotalPrice(
-          +updatedSelectedWorkFlow?.totalPrice.values[0]
-        );
+        let price = +updatedSelectedWorkFlow?.totalPrice.values[0]
+        if(widgetType == EWidgetProductType.EDIT && priceRecovery){
+          price = lastProductItemValueTotalPrice;
+        }
+        setCurrentProductItemValueTotalPrice(price);
       }
     }
 
@@ -582,7 +544,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             }
             let temp = [];
             subSection.parameters.forEach((parameter) => {
-              if (parameter?.isHidden) {
+              if (parameter?.isHidden && !parameter?.isHiddenInSetting) {
                 return;
               }
               if (parameter.code === "ChemicalPaperWeight") {
@@ -3111,7 +3073,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         quoteItemProduct.docmentItem.finalPrice
       );
       setLastProductItemValueTotalPrice(
-          quoteItemProduct.docmentItem.finalPrice
+        quoteItemProduct.docmentItem.finalPrice
       );
       setCurrentProductItemValue(quoteItemProduct.productItemValue);
       setCurrentProductItemValueDraftId(
