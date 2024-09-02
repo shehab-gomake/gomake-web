@@ -43,6 +43,7 @@ const useStatusTable = () => {
                 }} />,
             ' ',
             t('productionFloor.jobs'),
+            ' ',
             t('productionFloor.taskCategory'),
             t('productionFloor.station'),
             t('productionFloor.status'),

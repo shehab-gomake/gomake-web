@@ -29,6 +29,7 @@ export interface IBoardMissions {
     previousBoardMission?: IBoardMissionStep;
     priority: number;
     showGraphicsApprovalAlert: 0 | 1 | 2 ;
+    isUrgentWork: boolean;
 }
 
 
