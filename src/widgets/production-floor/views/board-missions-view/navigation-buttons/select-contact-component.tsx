@@ -1,78 +1,67 @@
-import {useStyle} from "@/widgets/machines/components/forms/style";
-import {IStepFormProps} from "@/widgets/machines/components/forms/interface";
-import {InputContainer} from "@/widgets/machines/components/inputs/input-container";
 import React, {useEffect, useState} from "react";
-import {Autocomplete, MenuItem, Paper, Popper, Stack} from "@mui/material";
+import {CircularProgress, MenuItem, Paper, Stack} from "@mui/material";
 import {FormInput} from "@/components/form-inputs/form-input";
 import {PrimaryButton} from "@/components/button/primary-button";
 import {getDocumentContactsApi} from "@/services/api-service/documents/documents-service-api";
-import {useGomakeAxios} from "@/hooks";
+import {useGomakeAxios, useSnackBar} from "@/hooks";
 import {useRecoilState} from "recoil";
 import {boardMissionsDetailsState} from "@/widgets/production-floor/state/boards";
-import {GoMakeAutoComplate} from "@/components";
-import TextField from "@mui/material/TextField";
+import {GoMakeModal, GomakeTextInput} from "@/components";
 import {useTranslation} from "react-i18next";
-import {styled} from "@mui/material/styles";
+import {ClickOutside} from "@/components/click-out-side/click-out-side";
+import {createBoardMissionsChatRoomApi} from "@/services/api-service/chat/quick-blox-chat-endpoints";
+import {useRouter} from "next/router";
+import {FONT_FAMILY} from "@/utils/font-family";
 
-const StyledPopper = styled(Popper)({
-    zIndex: 999999999999999999999999999999999999, // Set your desired zIndex value here
-});
-// const contactIdInput = (state: IContact, contacts: IContact[]) => {
-//     return [
-//         {
-//             name: "contactId",
-//             label: "productionFloor.selectContact",
-//             type: "select",
-//             placeholder: "productionFloor.selectContact",
-//             required: true,
-//             parameterKey: "contactID",
-//             value: '',
-//             options: [{value: 'pph', text: 'PPH'}, {value: 'cellsSetsPH', text: 'Cells sets PH'}],
-//             machineInputType: 'input',
-//             isValid: true,
-//         },
-//     ]
-// }
-// const contactDetailsInputs = (state) => {
-//     return [
-//         {
-//             name: "email",
-//             label: "productionFloor.email",
-//             type: "text",
-//             placeholder: "productionFloor.email",
-//             required: true,
-//             parameterKey: "email",
-//             options: [],
-//             value: state.email ? state.email : ''
-//         },
-//         {
-//             name: "phone",
-//             label: "productionFloor.phone",
-//             type: "phone",
-//             placeholder: "productionFloor.phone",
-//             required: true,
-//             parameterKey: "phone",
-//             options: [],
-//             value: state.email ? state.email : ''
-//         },
-//     ]
-// }
-//
+const contactDetailsInputs = (state: IContact) => {
+    return [
+        {
+            name: "email",
+            label: "usersSettings.email",
+            type: "text",
+            placeholder: "usersSettings.email",
+            required: true,
+            parameterKey: "contactMail",
+            options: [],
+            value: state.contactMail ? state.contactMail : ''
+        },
+        {
+            name: "phone",
+            label: "usersSettings.phone",
+            type: "phone",
+            placeholder: "usersSettings.phone",
+            required: true,
+            parameterKey: "contactPhone",
+            options: [],
+            value: state.contactPhone ? state.contactPhone : ''
+        },
+    ]
+}
+
 interface IContact {
     id: string;
     contactID: string;
     contactName: string;
     contactMail: string;
     contactPhone: string;
-    label: string;
+
+}
+interface IProps {
+    openModal: boolean;
+    onClose: ()=>void;
 }
 
-const SelectContactComponent = () => {
+const SelectContactComponent = ({openModal, onClose}: IProps) => {
     const [selectedContact, setSelectedContacts] = useState<IContact>({} as IContact);
     const [contacts, setContacts] = useState<IContact[]>([]);
     const {callApi} = useGomakeAxios();
     const [boardMissions] = useRecoilState(boardMissionsDetailsState);
+    const [open, setOpen] = useState<boolean>(false);
+    const [contactsFilter, setContactsFilter] = useState<string>('');
     const {t} = useTranslation();
+    const [loading, setLoading] = useState<boolean>(false);
+    const {alertFaultGetData} = useSnackBar();
+    const {push} = useRouter();
     const onChange = (key, value) => {
         setSelectedContacts({
             ...selectedContact,
@@ -89,44 +78,76 @@ const SelectContactComponent = () => {
         await getDocumentContactsApi(callApi, callBack, boardMissions.orderId);
     }
 
+    const onContactsInputChange = (e) => {
+        setOpen(true)
+        setContactsFilter(e.target.value);
+    }
+
+    const onContactClick = (contact: IContact) => {
+        setSelectedContacts(contact);
+        setContactsFilter(contact.contactName);
+        setOpen(false)
+    }
     useEffect(() => {
         getDocumentContacts().then();
-    }, [])
+    }, []);
+
+    const getBoardMissionChatRoomId = async () => {
+        setLoading(true)
+        setOpen(false);
+        const callBack = res => {
+            setLoading(false);
+            if (res.success) {
+                push(`/messenger?dialogId=${res.data?._id}`)
+            } else {
+                alertFaultGetData();
+            }
+        }
+        await createBoardMissionsChatRoomApi(callApi, callBack, {boardMissionId: boardMissions.boardMissionId, ...selectedContact})
+    }
 
     return (
-        <Stack zIndex={2} height={'100%'} justifyContent={"space-between"} marginTop={'10px'} paddingBottom={'10px'}>
-            <Stack gap={'100px'}>
-                <GoMakeAutoComplate
-                    options={contacts?.map(o => ({...o, label: o.contactName}))}
-                    getOptionLabel={(option: any) => `${option.contactName}`}
-                    placeholder={t("")}
-                    onChange={(e: any, value: any) => {
-                        setSelectedContacts(value)
-                    }}
-                    value={selectedContact.contactID ? selectedContact.contactID : ''}
-                    withArrow={true}
-
-                />
-                {/*<GoMakeAutoComplate options={['sss', 'ssss']}/>*/}
-                {/*{*/}
-                {/*    contacts.map(c => <span>{c.contactName}</span>)*/}
-                {/*}*/}
+        <GoMakeModal style={{zIndex: 999999}} insideStyle={{width: '440px', height: '350px'}}
+                     openModal={openModal}
+                     onClose={onClose} modalTitle={t('productionFloor.addYourNote')}>
+            <Stack zIndex={2} height={'100%'} justifyContent={"space-between"} padding={'10px 0px'}>
+                <Stack gap={'7px'}>
+                    <span style={{...FONT_FAMILY.Inter(500, 14), color: '#344054'}}>{t('prePayment.selectContact')}</span>
+                    <div style={{position: 'relative'}}>
+                        <GomakeTextInput placeholder={t('prePayment.selectContact')} style={{height: '40px'}} value={contactsFilter}
+                                         onChange={onContactsInputChange}
+                                         onClick={() => setOpen(!open)}/>
+                        {
+                            !!open && <ClickOutside onClick={() => setOpen(false)}>
+                                <Paper sx={{position: 'absolute', top: '100%', left: 0, right: 0}}>
+                                    {
+                                        (!!contactsFilter ? contacts?.filter(c => c.contactName?.toLowerCase()?.includes(contactsFilter?.toLowerCase())) : contacts).map(contact =>
+                                            <MenuItem onClick={() => onContactClick(contact)}>
+                                                {contact.contactName}
+                                            </MenuItem>)
+                                    }
+                                </Paper>
+                            </ClickOutside>
+                        }
+                    </div>
+                </Stack>
+                <Stack direction={"row"} gap={'10px'}>
+                    {
+                        contactDetailsInputs(selectedContact).map((property: any) => {
+                            return <FormInput key={property.parameterKey} input={property}
+                                              changeState={onChange}
+                                              error={false}/>
+                        })
+                    }
+                </Stack>
+                <Stack direction={'row'} justifyContent={"space-between"} gap={'10px'}>
+                    <PrimaryButton onClick={onClose} disabled={loading} variant={'outlined'}>{t('modal.cancel')}</PrimaryButton>
+                    <PrimaryButton onClick={getBoardMissionChatRoomId} disabled={loading}
+                                   variant={'contained'}>{loading ?
+                        <CircularProgress size={'20px'}/> : t('login.send')}</PrimaryButton>
+                </Stack>
             </Stack>
-            <Stack direction={"row"} gap={'10px'}>
-                {/*{*/}
-                {/*    contactDetailsInputs(selectedContact).map((property: any) => {*/}
-                {/*        return <FormInput key={property.parameterKey} input={property}*/}
-                {/*                               changeState={onChange}*/}
-                {/*                               error={false}/>*/}
-                {/*    })*/}
-                {/*}*/}
-            </Stack>
-            <Stack direction={'row'} justifyContent={"space-between"} gap={'10px'}>
-                <PrimaryButton variant={'outlined'}>cancel</PrimaryButton>
-                <PrimaryButton variant={'contained'}>send</PrimaryButton>
-            </Stack>
-
-        </Stack>
+        </GoMakeModal>
     )
 }
 
