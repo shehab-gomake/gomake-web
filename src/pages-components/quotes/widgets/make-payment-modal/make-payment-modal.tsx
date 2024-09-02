@@ -9,12 +9,14 @@ interface IMakePaymentProps {
     openMakePaymentModal?: boolean;
     onClickCloseMakePaymentModal?: () => void;
     orderItemValue: any;
+    getAllQuotes?:any;
 }
 
 const MakePaymentModal = ({
     openMakePaymentModal,
     onClickCloseMakePaymentModal,
-    orderItemValue
+    orderItemValue,
+    getAllQuotes
 }: IMakePaymentProps) => {
     const { classes } = useStyle();
     const {
@@ -23,10 +25,10 @@ const MakePaymentModal = ({
         setTotalPrice,
         onClickConfirm,
         handleTotalChange
-    } = useMakePaymentModal({ orderItemValue });
+    } = useMakePaymentModal({ orderItemValue , onClickCloseMakePaymentModal , getAllQuotes});
 
     useEffect(() => {
-        setTotalPrice(orderItemValue?.totalPrice);
+        setTotalPrice(orderItemValue?.totalPrice- orderItemValue?.sumApplied);
     }, [orderItemValue])
 
     return (

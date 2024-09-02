@@ -356,7 +356,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               </a>
               ) : quote?.jobs;
 
-            const statusPayment = `${quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency)}/${quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency)}`
+            const statusPayment = `${quote?.sumApplied + " " + getCurrencyUnitText(quote?.currency)}/${quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency)}`
 
             return [
               // Display the date on the first line and time on the second line
@@ -634,7 +634,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 </a>
               ) : quote?.jobs;
 
-            const statusPayment = `${quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency)}/${quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency)}`
+            const statusPayment = `${quote?.sumApplied + " " + getCurrencyUnitText(quote?.currency)}/${quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency)}`
             return [
               // Display the date on the first line and time on the second line
               <div>

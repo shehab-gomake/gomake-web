@@ -194,9 +194,8 @@ const useMoreCircle = () => {
         icon: <PaymentIcon />,
         name: t("sales.quote.sendPayment")
       },
-
       {
-        condition: isOrdersTracking,
+        condition: isOrdersTracking && (parseFloat(quote?.totalPrice) !== parseFloat(quote?.sumApplied)),
         onClick: () => onClickMakePayment(quote),
         icon: <PaymentIcon />,
         name: t("sales.quote.makePayment")
