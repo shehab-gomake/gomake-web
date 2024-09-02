@@ -19,7 +19,7 @@ const MoreMenuWidget = ({ mission, onClickDuplicate, onClickLoggers, onClickMark
   const { classes } = useStyle();
   const { push } = useRouter();
   const handleClickEdit = (boardMissions) => {
-    return `/products/edit?clientTypeId=${boardMissions.clientTypeId}&customerId=${boardMissions.customerID}&productId=${boardMissions.productID}&documentItemId=${boardMissions.orderItemId}&documentType=${1}&documentId=${boardMissions.id}`;
+    return `/products/edit?clientTypeId=${boardMissions.clientTypeId}&customerId=${boardMissions.customerID}&productId=${boardMissions.productID}&documentItemId=${boardMissions.orderItemId}&documentType=${1}&documentId=${boardMissions.orderID}`;
   }
   const { t, menuList } = useMoreCircle({
     mission,
