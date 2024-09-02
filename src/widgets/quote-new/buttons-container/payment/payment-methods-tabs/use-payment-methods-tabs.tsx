@@ -192,15 +192,22 @@ const usePaymentMethodsTabs = () => {
     const [isTransacted, setIsTransacted] = useRecoilState<boolean>(isTransactedState);
 
     const handleExpiryDateChange = (e) => {
-        const formattedInput = e.target.value.replace(/\D/g, '');
-        if (formattedInput.length <= 4) {
-            setCreditCard({
-                ...creditCard,
-                expDate_MMYY: formattedInput
-            });
+        let input = e.target.value.replace(/\D/g, ''); 
+    
+        if (input.length > 4) {
+            input = input.slice(0, 4);
         }
+    
+        if (input.length > 2) {
+            input = `${input.slice(0, 2)}/${input.slice(2)}`; 
+        }
+    
+        setCreditCard({
+            ...creditCard,
+            expDate_MMYY: input
+        });
     };
-
+    
     const handleCVVChange = (e) => {
         const formattedInput = e.target.value.replace(/\D/g, '');
         if (formattedInput.length <= 3) {
@@ -229,12 +236,39 @@ const usePaymentMethodsTabs = () => {
     }
 
     const handleChangeCreditCardInputs = (key, value) => {
+        let formattedValue = value;
+    
+        if (key === "creditCardNum") {
+            // Remove any non-numeric characters
+            formattedValue = value.replace(/\D/g, '');
+    
+            // Limit the input to 16 digits
+            if (formattedValue.length > 16) {
+                formattedValue = formattedValue.slice(0, 16);
+            }
+    
+            // Optionally, you could format the credit card number with spaces (e.g., "1234 5678 9012 3456")
+            formattedValue = formattedValue.replace(/(.{4})/g, '$1 ').trim();
+        }
+    
+        if (key === "creditCardExpDate") {
+            formattedValue = value.replace(/\D/g, '');
+    
+            if (formattedValue.length > 4) {
+                formattedValue = formattedValue.slice(0, 4);
+            }
+    
+            if (formattedValue.length > 2) {
+                formattedValue = `${formattedValue.slice(0, 2)}/${formattedValue.slice(2)}`;
+            }
+        }
+    
         setSecondCreditCard((prev) => ({
             ...prev,
-            [key]: value,
+            [key]: formattedValue,
         }));
-    }
-
+    };
+    
     const transactionTypes = [
         { label: t("payment.regular"), value: 1 },
         { label: t("payment.installments"), value: 2 }

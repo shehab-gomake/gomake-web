@@ -16,7 +16,7 @@ const CreditCardTab = ({
     handleSaveAndClose
 }) => {
     const { classes } = useStyle();
-    const { getCardNumberProps, getExpiryDateProps, getCVCProps } = usePaymentInputs();
+    const { getCardNumberProps, getCVCProps } = usePaymentInputs();
     const {
         t,
         handleCardNumberChange,
@@ -64,7 +64,7 @@ const CreditCardTab = ({
                                 value={creditCard?.cardNumber}
                             />
                             <input
-                                {...getExpiryDateProps({ onChange: handleExpiryDateChange })}
+                                onChange={handleExpiryDateChange}
                                 style={{ ...classes.creditCardInputs, width: "20%" }}
                                 placeholder="MM/YY"
                                 value={creditCard?.expDate_MMYY} />
@@ -123,10 +123,12 @@ const CreditCardTab = ({
                             <div style={{ width: "45%" }}>
                                 <GoMakeAutoComplate
                                     key={"transactionType"}
-                                    value={creditCard?.transactionType}
+                                    value={transactionTypes.find(
+                                        (option) => option.value === creditCard?.transactionType
+                                      )}
                                     style={classes.selectInputs}
                                     options={transactionTypes}
-                                    placeholder={t("payment.transactionType")}
+                                    placeholder={t("payment.transactionssType")}
                                     onChange={(e, value) => handleChangeInputs("transactionType", value?.value)}
                                 />
                             </div>
@@ -165,7 +167,6 @@ const CreditCardTab = ({
                         <div style={classes.creditCardSecondInputsContainer}>
                             <input
                                 key={"Total-2"}
-
                                 style={classes.creditSecondCardInputs}
                                 placeholder="Total"
                                 value={totalCreditCard}
@@ -198,7 +199,9 @@ const CreditCardTab = ({
                             <div style={{ width: "45%" }}>
                                 <GoMakeAutoComplate
                                     key={"transactionType-2"}
-                                    value={creditCard?.transactionType}
+                                    value={transactionTypes.find(
+                                        (option) => option.value === creditCard?.transactionType
+                                      )}
                                     style={classes.selectInputs}
                                     options={transactionTypes}
                                     placeholder={t("payment.transactionType")}

@@ -15,12 +15,13 @@ import {
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { InOutSourceSelect } from "@/widgets/product-pricing-widget/components/in-out-source-select/in-out-source-select";
 import {
+  EPricingViews,
   EWorkSource,
   HtmlElementType,
   RuleType,
 } from "@/widgets/product-pricing-widget/enums";
 import { useActionUpdateValues } from "@/widgets/product-pricing-widget/components/action/use-action-update-values";
-import { useRecoilValue } from "recoil";
+import {useRecoilState, useRecoilValue} from "recoil";
 import {
   currentProductItemValueState,
   outsourceSuppliersState,
@@ -38,23 +39,27 @@ import { Permissions } from "@/components/CheckPermission/enum";
 import { NotesForActionModal } from "./notes-for-action-modal";
 import { _renderIconLogs } from "@/utils/constants";
 import { TableOutPutComponent } from "../table-output/table-output-component";
+import {EWidgetProductType} from "@/pages-components/products/digital-offset-price/enums";
+import { isActionEmployeeUpdatedState } from "@/store";
 interface IActionContainerComponentProps extends IWorkFlowAction {
   delay?: number;
   workFlowId?: string;
   productType: string | null;
-
+  widgetType: EWidgetProductType,
 }
 
 interface IActionsComponentProps {
   actions: IWorkFlowAction[];
   workFlowId?: string;
   productType: string | null;
+  widgetType: EWidgetProductType,
 }
 
 const Actions = ({
   actions,
   workFlowId,
   productType,
+  widgetType
 }: IActionsComponentProps) => {
   return (
     <Stack gap={"10px"}>
@@ -136,8 +141,10 @@ const Actions = ({
               data-toure={'action'}
               productType={productType}
               workFlowId={workFlowId}
+              widgetType={widgetType}
               delay={index * 800}
               {...updatedAction}
+                
             />
           );
         } else {
@@ -145,6 +152,7 @@ const Actions = ({
             <ActionContainerComponent
               key={action.id}
               data-toure={'action'}
+              widgetType={widgetType}
               productType={productType}
               workFlowId={workFlowId}
               delay={index * 800}
@@ -182,6 +190,7 @@ const ActionContainerComponent = ({
   isNeedEmployee,
   isNeedMachine,
   isNeedMaterial,
+  widgetType
 }: IActionContainerComponentProps) => {
   source = source === EWorkSource.OUT ? EWorkSource.OUT : EWorkSource.INTERNAL;
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -219,6 +228,8 @@ const ActionContainerComponent = ({
     materialsList
   } = useActionUpdateValues();
   const suppliersState = useRecoilValue(outsourceSuppliersState);
+  const [isActionEmployeeUpdated, setIsActionEmployeeUpdated] = useRecoilState(isActionEmployeeUpdatedState);
+
   const suppliers = useMemo(() => {
     return suppliersState?.map((s) => ({
       value: s.supplierId,
@@ -454,6 +465,9 @@ const ActionContainerComponent = ({
                       >
                         <GoMakeAutoComplate
                           onChange={(e, v) => {
+                            if(widgetType === EWidgetProductType.EDIT ) {
+                              setIsActionEmployeeUpdated(true);
+                            }
                             updateWorkFlowForEmployees(actionId, productType, actionIndex, v?.label, v?.value, id)
                             setChooseEmployee(false);
                           }}
