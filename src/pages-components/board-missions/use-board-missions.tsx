@@ -211,7 +211,23 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
       return await getAllBoardMissions(isClear);
     }
   };
-
+  const getJobStatus = (mission) => {
+    /*mission?.isReady
+        ? t('boardMissions.done')
+        : (mission?.boardMissionStatus && mission?.station
+            ? 
+            : ""),*/
+    if(mission?.isReady){
+      return t('boardMissions.done');
+    }
+    if(mission?.boardMissionStatus && mission?.station){
+      const empName = mission.station.machineName && mission.station.machineId ? mission.station.machineName : mission.station.employeeName;
+      if(empName)
+        return `${mission.boardMissionStatus.name} \n\r ${mission.station.actionName} \n\r ${empName}`
+      return `${mission.boardMissionStatus.name} \n\r ${mission.station.actionName}`
+    }
+    return "";
+  }
   const getAllBoardMissions = async (isClear: boolean = false) => {
     if (connectionId) {
       const callBack = (res) => {
@@ -256,11 +272,9 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
               mission?.jobName,
               mission?.numberOfBoardMissions,
               mission?.productName,
-              mission?.isReady
-                ? t('boardMissions.done')
-                : (mission?.boardMissionStatus && mission?.station
-                  ? `${mission.boardMissionStatus.name} / ${mission.station.actionName}`
-                  : ""),
+              <div style={{whiteSpace:'break-spaces'}}>
+                { getJobStatus(mission)}
+              </div>,
               <MoreMenuWidget
                 mission={mission}
                 onClickDuplicate={onOpenDuplicateModal}
