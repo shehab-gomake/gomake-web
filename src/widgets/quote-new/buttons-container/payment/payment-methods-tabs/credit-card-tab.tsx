@@ -16,7 +16,7 @@ const CreditCardTab = ({
     handleSaveAndClose
 }) => {
     const { classes } = useStyle();
-    const { getCardNumberProps, getExpiryDateProps, getCVCProps } = usePaymentInputs();
+    const { getCardNumberProps, getCVCProps } = usePaymentInputs();
     const {
         t,
         handleCardNumberChange,
@@ -64,7 +64,7 @@ const CreditCardTab = ({
                                 value={creditCard?.cardNumber}
                             />
                             <input
-                                {...getExpiryDateProps({ onChange: handleExpiryDateChange })}
+                                onChange={handleExpiryDateChange}
                                 style={{ ...classes.creditCardInputs, width: "20%" }}
                                 placeholder="MM/YY"
                                 value={creditCard?.expDate_MMYY} />
@@ -167,7 +167,6 @@ const CreditCardTab = ({
                         <div style={classes.creditCardSecondInputsContainer}>
                             <input
                                 key={"Total-2"}
-
                                 style={classes.creditSecondCardInputs}
                                 placeholder="Total"
                                 value={totalCreditCard}
