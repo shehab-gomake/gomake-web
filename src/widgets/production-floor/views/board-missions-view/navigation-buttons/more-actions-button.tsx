@@ -12,6 +12,10 @@ import {ClickOutside} from "@/components/click-out-side/click-out-side";
 import {boardMissionsDetailsState} from "@/widgets/production-floor/state/boards";
 import {createBoardMissionsChatRoomApi} from "@/services/api-service/chat/quick-blox-chat-endpoints";
 import {useGomakeAxios, useSnackBar} from "@/hooks";
+import {GoMakeModal} from "@/components";
+import {
+    SelectContactComponent
+} from "@/widgets/production-floor/views/board-missions-view/navigation-buttons/select-contact-component";
 
 const MoreActionsButton = () => {
     const [open, setOpen] = useState<boolean>(false);
@@ -25,6 +29,7 @@ const MoreActionsButton = () => {
     const direction = t('direction');
     const [loading, setLoading] = useState<boolean>(false);
     const {alertFaultGetData} = useSnackBar();
+    const [openSendGraphicFileModal, setOpenSendGraphicFileModal] = useState<boolean>(false);
     const handleClose = () => {
         setOpen(false);
     };
@@ -78,11 +83,15 @@ const MoreActionsButton = () => {
                             <MenuItem onClick={onClickUpdateFile}>{t('productionFloor.uploadFile')}</MenuItem>
                         }
                         <MenuItem onClick={handleClickEdit}>{t('productionFloor.edit')}</MenuItem>
-                        <MenuItem onClick={getBoardMissionChatRoomId}>{t('productionFloor.sendGraphicsApprove')}</MenuItem>
+                        <MenuItem onClick={()=> setOpenSendGraphicFileModal(true)}>{t('productionFloor.sendGraphicsApprove')}</MenuItem>
                     </Paper>
                 </ClickOutside>
             }
             <input type={'file'} multiple value={''} onChange={handleFileSelect} hidden={true} ref={fileInputRef}/>
+            <GoMakeModal style={{zIndex: 999999}} insideStyle={{width: '440px', height: '350px'}} openModal={openSendGraphicFileModal}
+                         onClose={()=>setOpenSendGraphicFileModal(false)} modalTitle={t('productionFloor.addYourNote')}>
+                <SelectContactComponent/>
+            </GoMakeModal>
         </div>
     );
 }

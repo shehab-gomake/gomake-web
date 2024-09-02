@@ -56,7 +56,7 @@ const useUploadFiles = (orderItemId, filesPath) => {
         formData.append("signalRConnectId", connectionId);
 
         try {
-            const response = await fetch(companyProfile.filesApiAddress + '/api/Files/UploadOrderItemFile', {
+            const response = await fetch( 'https://0f50-82-205-106-126.ngrok-free.app/api/Files/UploadOrderItemFile', {
                 method: 'POST',
                 body: formData,
                 headers: {
