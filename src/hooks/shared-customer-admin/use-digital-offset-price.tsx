@@ -6,7 +6,7 @@ import { materialsCategoriesState } from "@/store/material-categories";
 import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
 import { getAndSetChatBotProductId, getAndSetProductById } from "@/services/hooks";
 import {
-  currentCalculationConnectionId,
+  currentCalculationConnectionId, isActionEmployeeUpdatedState,
   isChangePriceForEditState,
   isLoadgingState,
   itemParmetersValuesState,
@@ -138,19 +138,21 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [deviceCategory, setDeviceCategory] = useState("")
   const [deviceSize, setDeviceSize] = useState("")
 
+  const [isActionEmployeeUpdated, setIsActionEmployeeUpdated] = useRecoilState(isActionEmployeeUpdatedState);
   const [isChangePriceForEdit, setIsChangePriceForEdit] = useRecoilState(isChangePriceForEditState);
+
   const [isJobNameValue, setIsJobNameValue] = useState(false)
-  const onClickOpenChangePriceModal = () => {
-    setIsChangePriceForEdit(true)
-  }
+
   const onClickCloseChangePriceModal = () => {
     setIsChangePriceForEdit(false)
+    setIsActionEmployeeUpdated(false)
+    setIsJobNameValue(false)
   }
-  useEffect(() => {
+ /* useEffect(() => {
     if (!isLoadging && isChangePriceForEdit && widgetType === EWidgetProductType.EDIT) {
       onClickOpenChangePriceModal()
     }
-  }, [isLoadging, isChangePriceForEdit, isJobNameValue])
+  }, [isLoadging, isChangePriceForEdit, isJobNameValue])*/
 
 
   useEffect(() => {
@@ -272,10 +274,11 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     setWorkFlows(result.productItemValue.workFlows);
     setJobActions(result?.productItemValue.actions);
     setCalculationResult(result)
-    if (isJobNameValue) {
-      setIsChangePriceForEdit(true);
+    if(widgetType === EWidgetProductType.EDIT && (isActionEmployeeUpdated || isJobNameValue)){
+      setIsChangePriceForEdit(true)
+      setIsActionEmployeeUpdated(false)
+      setIsJobNameValue(false)
     }
-
   }
 
   const setSelectedWorkflow = (newWorkFlows, currentWorkFlows) => {
@@ -404,6 +407,11 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         updatedSelectedWorkFlow?.totalPrice &&
         updatedSelectedWorkFlow?.totalPrice?.values
       ) {
+        if(widgetType === EWidgetProductType.EDIT  && (isActionEmployeeUpdated || isJobNameValue)){
+          setIsChangePriceForEdit(true)
+          setIsActionEmployeeUpdated(false)
+          setIsJobNameValue(false)
+        }
         setCurrentProductItemValueTotalPrice(
           +updatedSelectedWorkFlow?.totalPrice.values[0]
         );
@@ -604,9 +612,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             subSection.parameters.forEach((parameter) => {
               if (parameter?.isHidden && !parameter?.isHiddenInSetting) {
                 return;
-              }
-              if (parameter.code === "ChemicalPaperWeight") {
-                debugger
               }
               parameter.relatedParameters.forEach((x) => {
                 x.sectionId = section.id;
@@ -1337,6 +1342,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         totalWorkFlowsCount: 0,
         currentWorkFlowsCount: 0,
       });
+      setIsChangePriceForEdit(false)
+      setIsJobNameValue(false)
+      setIsActionEmployeeUpdated(false)
       if (
         widgetType === EWidgetProductType.EDIT ||
         widgetType === EWidgetProductType.DUPLICATE
