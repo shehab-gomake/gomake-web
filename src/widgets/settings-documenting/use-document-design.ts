@@ -111,6 +111,10 @@ const UseDocumentDesign = () => {
     };
 
     const handleImageValidation = async (base64, maxWidth, maxHeight) => {
+        if (!base64) {
+            // If base64 is null or empty, consider it valid (e.g., clearing the image)
+            return true;
+        }
         try {
             const img = await decodeBase64Image(base64);
             if (!validateImageSize(img, maxWidth, maxHeight)) {
@@ -129,7 +133,6 @@ const UseDocumentDesign = () => {
         if (!isValid) {
             return;
         }
-
         let updatedDesign = { ...documentDesign };
 
         if (key === "pdfLogo") {
