@@ -1,7 +1,7 @@
 import { useStyle } from "./style";
 import { HeaderTitle } from "@/widgets";
 import { useDigitalOffsetPrice } from "@/hooks";
-import { GomakePrimaryButton } from "@/components";
+import { GoMakeDeleteModal, GomakePrimaryButton } from "@/components";
 import { TabsMappingWidget } from "./widgets/tabs-mapping";
 import { AccordionMappingWidget } from "./widgets/accordion-mapping";
 import { SectionMappingWidget } from "./widgets/section-mapping";
@@ -17,6 +17,8 @@ import { createTheme, Tabs, ThemeProvider } from "@mui/material";
 import { StepType } from "@reactour/tour";
 import { useGoMakeTour } from "@/hooks/use-go-make-tour";
 import { useEffect } from "react";
+import { useRecoilValue, useSetRecoilState } from "recoil";
+import { currentProductItemValuePriceState, lastProductItemValuePriceState } from "@/widgets/product-pricing-widget/state";
 
 const PriceListPageWidget = ({ widgetType }) => {
     const { clasess } = useStyle();
@@ -78,14 +80,18 @@ const PriceListPageWidget = ({ widgetType }) => {
         setIncludeVAT,
         isChargeForNewDie,
         setIsChargeForNewDie,
-        straightKnife
+        straightKnife,
+        isChangePriceForEdit,
+        onClickCloseChangePriceModal,
+        setIsChangePriceForEdit
     } = useDigitalOffsetPrice({ clasess, widgetType });
     const visibleSections = productTemplate?.sections?.filter(section => !section.isHidden);
     const dir: 'rtl' | 'ltr' = t('direction');
     const theme = createTheme({
         direction: dir,
     });
-
+    const setCurrentProductItemValueTotalPrice = useSetRecoilState<number>(currentProductItemValuePriceState);
+    const lastProductItemValueTotalPrice = useRecoilValue<number>(lastProductItemValuePriceState);
     useEffect(() => {
         document.body.setAttribute('dir', dir);
     }, [dir]);
@@ -447,6 +453,21 @@ const PriceListPageWidget = ({ widgetType }) => {
                 settingParameters={settingParameters}
                 _renderParameterType={_renderParameterType}
                 setSettingParameters={setSettingParameters}
+            />
+
+            <GoMakeDeleteModal
+                subTitle={t("sales.quote.changePriceSubTitle")}
+                title={t("sales.quote.changePriceTitle")}
+                yesBtn={t("sales.quote.changedPrice")}
+                cancelBtn={t("sales.quote.keepPrice")}
+                openModal={isChangePriceForEdit}
+                onClose={onClickCloseChangePriceModal}
+                hideIcon
+                onClickDelete={() => setIsChangePriceForEdit(false)}
+                onClickCancel={() => {
+                    setCurrentProductItemValueTotalPrice(+lastProductItemValueTotalPrice)
+                    onClickCloseChangePriceModal()
+                }}
             />
         </div>
     );

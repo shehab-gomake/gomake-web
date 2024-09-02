@@ -245,7 +245,7 @@ const usePaymentMethodsTabs = () => {
         value: index + 1,
     }));
 
-    const onClickMakePayment = async (handleSaveAndClose) => {
+    const onClickMakePayment = async (handleSaveAndClose , isPinPadUsed) => {
         const callBack = (res) => {
             if (res?.success) { 
                 setIsTransacted(true);
@@ -262,15 +262,11 @@ const usePaymentMethodsTabs = () => {
                 alertFaultUpdate();
             }
         };
-        await createCreditTransactionApi(callApi, callBack, { ClientID: quoteItemValue?.client?.id, creditCard });
+        await createCreditTransactionApi(callApi, callBack, { ClientID: quoteItemValue?.client?.id, creditCard , ...(isPinPadUsed && { isPinPadUsed })});
     };
-
-
-    
 
     const cardTransactionsOptions = useRecoilValue<transactionOptionsData[]>(creditTransactionsState);
     const [transactionSelected, setTransactionSelected] = useRecoilState<transactionOptionsData>(selectedCreditTransactionState);
-
 
     const handleChooseExistingCard = (value) => {
         if (value) {

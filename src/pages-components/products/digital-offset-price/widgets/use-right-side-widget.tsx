@@ -9,8 +9,7 @@ import {
 } from "@/store";
 import { billingMethodState } from "@/store/billing-method";
 import { exampleTypeState } from "@/store/example-type";
-import { currenciesState, currenciesSymbols } from "@/widgets/materials-widget/state";
-import { ECalculationLogType } from "@/widgets/product-pricing-widget/enums";
+import { currenciesSymbols } from "@/widgets/materials-widget/state";
 import {
   calculationExceptionsLogsState,
   calculationProgressState,
@@ -21,10 +20,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRecoilState, useRecoilValue } from "recoil";
 
-import { useGomakeTheme } from "@/hooks/use-gomake-thme";
-import { ErrorIcon, MessageLogsIcon, SuccessIcon, WarningLogsIcon } from "@/icons";
 const useRightSideWidget = ({ includeVAT }) => {
-  const { errorColor, successColor, warningColor, neutralColor } = useGomakeTheme();
   const [calculationExceptionsLogs, setCalculationExceptionsLogs] = useRecoilState<any>(calculationExceptionsLogsState);
   useEffect(() => {
     setCalculationExceptionsLogs([])
