@@ -12,18 +12,20 @@ import FmdBadIcon from '@mui/icons-material/FmdBad';
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import { adaptPaddingLeft, adaptPaddingRight } from "@/utils/adapter";
 import { useTranslation } from "react-i18next";
+import {EWidgetProductType} from "@/pages-components/products/digital-offset-price/enums";
 
 interface ISubWorkFlowComponentProps extends ICalculatedWorkFlow {
     isEditableActions?: boolean;
+    widgetType:EWidgetProductType;
 }
 
 interface ISubWorkFlowsComponentProps {
     workflows: ICalculatedWorkFlow[];
     isEditableActions?: boolean;
-
+    widgetType:EWidgetProductType;
 }
 
-const SubWorkFlowComponent = ({ actions, sectionName, isEditableActions, id, productType, profit, totalCost, totalPrice, totalRealProductionTime }: ISubWorkFlowComponentProps) => {
+const SubWorkFlowComponent = ({ actions, sectionName, isEditableActions, id, productType, profit, totalCost, totalPrice, totalRealProductionTime,widgetType}: ISubWorkFlowComponentProps) => {
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const { classes } = useStyle();
     const { t } = useTranslation()
@@ -85,7 +87,7 @@ const SubWorkFlowComponent = ({ actions, sectionName, isEditableActions, id, pro
                                 }
                                 <Divider orientation={'horizontal'}
                                     style={{ width: '30px', height: '2px', backgroundColor: '#667085' }} />
-                                {isEditableActions ? <ActionContainerComponent productType={productType} workFlowId={id} {...action} /> :
+                                {isEditableActions ? <ActionContainerComponent widgetType={widgetType} productType={productType} workFlowId={id} {...action} /> :
                                     <ActionComponent {...action} />}
                             </Stack>)
                     }
@@ -95,9 +97,9 @@ const SubWorkFlowComponent = ({ actions, sectionName, isEditableActions, id, pro
     )
 };
 
-const SubWorkFlowsComponent = ({ workflows, isEditableActions }: ISubWorkFlowsComponentProps) => {
+const SubWorkFlowsComponent = ({ workflows, isEditableActions,widgetType }: ISubWorkFlowsComponentProps) => {
     return <Stack gap={'10px'}>{workflows.map((flow) => <SubWorkFlowComponent
-        isEditableActions={isEditableActions}  {...flow} />)}</Stack>
+      widgetType={widgetType}  isEditableActions={isEditableActions}  {...flow} />)}</Stack>
 }
 export { SubWorkFlowsComponent, SubWorkFlowComponent }
 
