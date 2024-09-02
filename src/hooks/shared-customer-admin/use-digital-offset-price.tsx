@@ -1269,6 +1269,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     if (!currentCalculationSessionId) {
       setCurrentSignalRConnectionId(connectionId)
       setCurrentProductItemValueTotalPrice(null);
+      setLastProductItemValueTotalPrice(null);
+      setUrgentOrder(null)
       setWorkFlows([]);
       setJobActions([]);
       setSubProducts([]);
@@ -3079,6 +3081,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       setCurrentProductItemValueDraftId(
         quoteItemProduct.productItemValueDraftId
       );
+      setUrgentOrder(quoteItemProduct.docmentItem.isUrgentWork)
       setCurrentCalculationSessionId(quoteItemProduct.productItemValueDraftId)
       setWorkFlows(quoteItemProduct.productItemValue.workFlows);
       setJobActions(quoteItemProduct.productItemValue.actions);
