@@ -123,6 +123,7 @@ const PricingWidget = ({ workFlows, getOutSourcingSuppliers, widgetType }: IPric
           <Actions
             actions={selectedWorkFlow?.actions}
             productType={selectedWorkFlow.productType}
+            widgetType={widgetType}
           />
         </div>
       )}
