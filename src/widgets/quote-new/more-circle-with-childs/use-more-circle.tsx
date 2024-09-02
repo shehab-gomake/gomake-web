@@ -22,7 +22,7 @@ const useMoreCircleWithChilds = ({ quoteItem, onClickDeleteQouteItem }) => {
       name: "analysis",
       icon: <AnalysisIcon />,
       onclick: () => null,
-      condition: !router.query.isNewCreation && quoteItem.productType === 0
+      condition: quoteItem?.isShowAnalytics && CheckPermission(Permissions.UPDATE_QUOTE_ITEM)
     }, 
     {
       name: "delete",
