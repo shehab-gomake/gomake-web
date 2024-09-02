@@ -42,7 +42,7 @@ const OutSourceSuppliersRowComponent = ({
     const { classes } = useStyle();
     const { secondColor } = useGomakeTheme();
     const [supplier, setSupplier] = useState<IOutSourceSupplier | null>();
-    const { updatePrice, updateWorkHours, updateProfit, updateCost, productItemValueByEdit} = useOutsourceSupplier({supplier, setSupplier});
+    const { updatePrice, updateWorkHours, updateProfit, updateCost, productItemValueByEdit } = useOutsourceSupplier({ supplier, setSupplier , options});
     const systemCurrency = useRecoilValue<any>(systemCurrencyState);
     const setCurrentProductItemValueTotalPrice = useSetRecoilState<number>(currentProductItemValuePriceState);
     const calculationResult = useRecoilValue(calculationResultState);
@@ -51,9 +51,7 @@ const OutSourceSuppliersRowComponent = ({
         if (options?.length > 0) {
             const isEditOrDuplicate = widgetType === EWidgetProductType.EDIT || widgetType === EWidgetProductType.DUPLICATE;
             const suppId = isEditOrDuplicate ? productItemValueByEdit?.supplierId : calculationResult?.productItemValue?.supplierId;
-            
             const foundSupplier = options.find(x => x.supplierId == suppId) || options[0];
-    
             if (isEditOrDuplicate && foundSupplier) {
                 setSupplier({
                     ...foundSupplier,
@@ -67,8 +65,6 @@ const OutSourceSuppliersRowComponent = ({
             }
         }
     }, []);
-    
-
 
     const handleDeliveryTimeUpdate = (newValue: number) => {
         updateWorkHours(supplier?.supplierId, +newValue);
@@ -93,7 +89,7 @@ const OutSourceSuppliersRowComponent = ({
         if (supplier?.finalPrice > 0) {
             setCurrentProductItemValueTotalPrice(supplier.finalPrice)
         }
-    }, [supplier?.finalPrice , setCurrentProductItemValueTotalPrice])
+    }, [supplier?.finalPrice, setCurrentProductItemValueTotalPrice])
 
 
     return (
@@ -152,7 +148,7 @@ const EditableValue = ({ value, onUpdate, valueColor, label, isEditable, unit }:
         setEdit(false);
     }
 
-  
+
     return (
         <Stack direction={'row'} gap={'10px'} alignItems={'center'}>
             <span style={classes.detailTitle}>{label}</span>
@@ -173,7 +169,7 @@ const EditableSelect = ({ value, onUpdate, valueColor, label, isEditable, option
     const [editValue, setEditValue] = useState<any>(null);
     const { classes } = useStyle();
 
-    
+
     const handleValueClick = (e) => {
         e.stopPropagation();
         if (isEditable) {

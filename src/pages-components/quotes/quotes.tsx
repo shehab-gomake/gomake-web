@@ -39,6 +39,7 @@ import { isValidCustomer } from "@/utils/helpers";
 import { useRouter } from "next/router";
 import { CloseOrderNotesModal } from "../products/profits-new/widgets/close-order-notes-modal";
 import { SendPaymentModal } from "./widgets/send-payment-modal/send-payment-modal";
+import { MakePaymentModal } from "./widgets/make-payment-modal/make-payment-modal";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -150,10 +151,18 @@ const QuotesListPageWidget = ({
     handleDocumentNumberChange,
     approvalStatuses,
     setApprovalStatusId,
-    approvalStatusId
+    approvalStatusId,
+    openMakePaymentModal,
+    onClickCloseMakePaymentModal,
+    isOrdersTracking,
+    onClickCloseTrackModal,
+    openCloseAndTrackOrderModal,
+    closeAndTrackOrder,
+    getAllQuotes
   } = useQuotes(documentType, isFromHomePage);
 
   const router = useRouter();
+
   useEffect(() => {
     if (router.query.orderNumber) {
       setPatternSearch(router.query.orderNumber as string);
@@ -169,7 +178,7 @@ const QuotesListPageWidget = ({
   }, []);
 
   const getValueByKey = (statistics: ICard[], key: string) => {
-    const card = statistics.find((item) => item.key === key);
+    const card = statistics?.find((item) => item.key === key);
     return card ? card.value : "";
   };
 
@@ -188,7 +197,7 @@ const QuotesListPageWidget = ({
               <HeaderTitle title={documentLabel} marginTop={1} marginBottom={1} />
               <div style={classes.rowStyle}>
                 {(documentType === DOCUMENT_TYPE.quote) && <CardsSection statistics={allStatistics} activeCard={activeCard} onClick={onclickCreateNew} onClickCard={handleCardClick} onSecondClickCard={handleSecondCardClick} />}
-                {documentType === DOCUMENT_TYPE.order &&
+                {documentType === DOCUMENT_TYPE.order && !isOrdersTracking &&
                   <>
                     <CardComponent text={t("sales.quote.totalPrice")} number={getValueByKey(allStatistics, "totalPrice")} textColor={secondColor(100)} icon={<GoMakeCurrency color={secondColor(100)} />} />
                     <Button style={classes.createNew} onClick={onclickCreateNew} startIcon={<AddCircleOutlineIcon style={{ color: 'black', fontSize: "24px" }} />}>{t("sales.quote.createNew")}</Button>
@@ -234,7 +243,7 @@ const QuotesListPageWidget = ({
                                   setCustomerId(value);
                                 }}
                                 value={customerId}
-                                //withArrow={true}
+                              //withArrow={true}
                               />
                             </div>
                             <div style={classes.statusFilterContainer}>
@@ -251,7 +260,7 @@ const QuotesListPageWidget = ({
                                   setAgentId(value);
                                 }}
                                 value={agentId}
-                                //withArrow={true}
+                              //withArrow={true}
                               />
                             </div>
                             {documentType === DOCUMENT_TYPE.quote &&
@@ -270,7 +279,7 @@ const QuotesListPageWidget = ({
                                     setStatusId(value);
                                   }}
                                   value={statusId}
-                                  //withArrow={true}
+                                //withArrow={true}
                                 />
                               </div>
                             }
@@ -290,7 +299,7 @@ const QuotesListPageWidget = ({
                                     setApprovalStatusId(value);
                                   }}
                                   value={approvalStatusId}
-                                  //withArrow={true}
+                                //withArrow={true}
                                 />
                               </div>
                             }
@@ -304,7 +313,7 @@ const QuotesListPageWidget = ({
                                   placeholder={t("boardMissions.productionStatus")}
                                   onChange={handleProductionStatusChange}
                                   value={productionStatus}
-                                  //withArrow={true}
+                                //withArrow={true}
                                 />
                               </div>
                             }
@@ -318,7 +327,7 @@ const QuotesListPageWidget = ({
                                   placeholder={t("sales.quote.accountingStatus")}
                                   onChange={handleAccountingStatusChange}
                                   value={accountingStatus}
-                                  //withArrow={true}
+                                //withArrow={true}
                                 />
                               </div>
                             }
@@ -342,7 +351,7 @@ const QuotesListPageWidget = ({
                               </div>
                             }
                             {documentType !== DOCUMENT_TYPE.purchaseInvoice && documentType !== DOCUMENT_TYPE.purchaseInvoiceRefund && documentType !== DOCUMENT_TYPE.purchaseOrder &&
-                              <div style={{...classes.statusFilterContainer, width: "fit-content"}}>
+                              <div style={{ ...classes.statusFilterContainer, width: "fit-content" }}>
                                 <div style={classes.filterLabelStyle}>{t("sales.quote.priceRange")}</div>
                                 <div style={classes.priceDivStyle}>
                                   <GomakeTextInput
@@ -387,9 +396,7 @@ const QuotesListPageWidget = ({
                                 {t("sales.quote.search")}
                               </GomakePrimaryButton>
                             </div>
-
                           </div>
-
                         </div>
                       </GoMakeMenu>
                     </div>
@@ -556,10 +563,26 @@ const QuotesListPageWidget = ({
         documentType={documentType}
       />
       <SendPaymentModal
-      openPaymentModal={openPaymentModal}
-      onClickClosePaymentModal={onClickClosePaymentModal}
-      paymentModalTitle={paymentModalTitle}
+        openPaymentModal={openPaymentModal}
+        onClickClosePaymentModal={onClickClosePaymentModal}
+        paymentModalTitle={paymentModalTitle}
       />
+      <MakePaymentModal
+        openMakePaymentModal={openMakePaymentModal}
+        onClickCloseMakePaymentModal={onClickCloseMakePaymentModal}
+        orderItemValue={selectedQuoteItemValue}
+        getAllQuotes={getAllQuotes}
+      />
+      <GoMakeDeleteModal
+        icon={<WarningAmberIcon style={{ width: 60, height: 60, color: "red" }} />}
+        title={t("sales.closeAndTrackTitle")}
+        yesBtn={t("sales.quote.yesBtn")}
+        openModal={openCloseAndTrackOrderModal}
+        onClose={onClickCloseTrackModal}
+        onClickDelete={closeAndTrackOrder}
+        style={{ width: "35%" }}
+      >
+      </GoMakeDeleteModal>
     </>
   );
 };

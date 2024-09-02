@@ -7,6 +7,7 @@ import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
 import { getAndSetChatBotProductId, getAndSetProductById } from "@/services/hooks";
 import {
   currentCalculationConnectionId,
+  isChangePriceForEditState,
   isLoadgingState,
   itemParmetersValuesState,
   listEmployeesAtom,
@@ -130,12 +131,27 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [jobActions, setJobActions] = useRecoilState(jobActionsState);
   const setOutSuppliers = useSetRecoilState(outsourceSuppliersState);
   const materialsEnumsValues = useRecoilValue(materialsCategoriesState);
-  const setLoading = useSetRecoilState(isLoadgingState);
+  const [isLoadging, setLoading] = useRecoilState(isLoadgingState);
   const [priceRecovery, setPriceRecovery] = useState(true);
   const [canCalculation, setCanCalculation] = useState(false);
   const setSelectParameterButton = useSetRecoilState(selectParameterButtonState);
   const [deviceCategory, setDeviceCategory] = useState("")
   const [deviceSize, setDeviceSize] = useState("")
+
+  const [isChangePriceForEdit, setIsChangePriceForEdit] = useRecoilState(isChangePriceForEditState);
+  const [isJobNameValue, setIsJobNameValue] = useState(false)
+  const onClickOpenChangePriceModal = () => {
+    setIsChangePriceForEdit(true)
+  }
+  const onClickCloseChangePriceModal = () => {
+    setIsChangePriceForEdit(false)
+  }
+  useEffect(() => {
+    if (!isLoadging && isChangePriceForEdit && widgetType === EWidgetProductType.EDIT) {
+      onClickOpenChangePriceModal()
+    }
+  }, [isLoadging, isChangePriceForEdit, isJobNameValue])
+
 
   useEffect(() => {
     if (quantityTypes?.length > 0) {
@@ -157,7 +173,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     isCalculationFinished,
     setIsCalculationFinished
   } = useCalculationsWorkFlowsSignalR();
-
   useEffect(() => {
     setProductItemValueByEdit({})
   }, [])
@@ -225,7 +240,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     if (calculationResult && calculationResult.productItemValueDraftId === currentCalculationSessionId) {
       getSelectedWorkFlow();
     }
-  }, [calculationResult]);
+  }, [calculationResult,]);
 
   const getSelectedWorkFlow = async () => {
     const res: any = await callApi(
@@ -256,19 +271,63 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     //setLoading(false);
     setWorkFlows(result.productItemValue.workFlows);
     setJobActions(result?.productItemValue.actions);
-    
     setCalculationResult(result)
+    if (isJobNameValue) {
+      setIsChangePriceForEdit(true);
+    }
+
   }
-  
+
+  const setSelectedWorkflow = (newWorkFlows, currentWorkFlows) => {
+    newWorkFlows.forEach((flow) => {
+      const isExists = currentWorkFlows.find((x) => x.id === flow.id);
+      if (!isExists) {
+        currentWorkFlows.push(flow);
+      }
+      if (flow.selected) {
+        currentWorkFlows.forEach((f) => (f.selected = false));
+      }
+    });
+    if (calculationResult?.monials) {
+      calculationResult?.monials.forEach((m) => {
+        const workFlow = currentWorkFlows.find(
+          (x) => x.id === m.workFlowId
+        );
+        if (workFlow) {
+          workFlow.monials = m?.monials;
+          workFlow.recommendationRang = m?.recommendationRang;
+        }
+      });
+    }
+    currentWorkFlows.sort((a, b) => b.monials - a.monials);
+
+    let myselectedWorkFlow = currentWorkFlows?.find((x) => x.selected);
+    if (
+      !myselectedWorkFlow &&
+      currentWorkFlows &&
+      currentWorkFlows.length > 0
+    ) {
+      currentWorkFlows[0].selected = true;
+    }
+    myselectedWorkFlow = currentWorkFlows?.find((x) => x.selected && x.isCompleteWorkFlow);
+    if (
+      myselectedWorkFlow && myselectedWorkFlow.isCompleteWorkFlow &&
+      myselectedWorkFlow.totalPrice &&
+      myselectedWorkFlow.totalPrice.values && !priceRecovery
+    ) {
+      setCurrentProductItemValueTotalPrice(
+        parseFloat(myselectedWorkFlow.totalPrice.values[0])
+      );
+    }
+    return currentWorkFlows;
+  }
+
   useEffect(() => {
     if (signalRPricingResult && signalRPricingResult.productItemValueDraftId === currentCalculationSessionId) {
       setLoading(false)
       const totalWorkFlowsCount = signalRPricingResult.totalWorkFlows;
       const currentWorkFlowsCount = signalRPricingResult.currentWorkFlowIndex > calculationProgress.currentWorkFlowsCount ? signalRPricingResult.currentWorkFlowIndex : (calculationProgress.currentWorkFlowsCount + 1);
       if (signalRPricingResult.isCalculationFinished && signalRPricingResult.totalPrice) {
-        if(widgetType == EWidgetProductType.EDIT && priceRecovery){
-          signalRPricingResult.totalPrice = lastProductItemValueTotalPrice;
-        }
         setCurrentProductItemValueTotalPrice(
           parseFloat(signalRPricingResult.totalPrice)
         );
@@ -340,15 +399,14 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
         setWorkFlows([...temp, { ...updatedSelectedWorkFlow, selected: true }]);
       }
+      console.log("updatedSelectedWorkFlow", updatedSelectedWorkFlow)
       if (
         updatedSelectedWorkFlow?.totalPrice &&
         updatedSelectedWorkFlow?.totalPrice?.values
       ) {
-        let price = +updatedSelectedWorkFlow?.totalPrice.values[0]
-        if(widgetType == EWidgetProductType.EDIT && priceRecovery){
-          price = lastProductItemValueTotalPrice;
-        }
-        setCurrentProductItemValueTotalPrice(price);
+        setCurrentProductItemValueTotalPrice(
+          +updatedSelectedWorkFlow?.totalPrice.values[0]
+        );
       }
     }
 
@@ -1584,6 +1642,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     setOpenQuantityComponentModal(true);
   }, 500);
 
+
+
   const _renderParameterType = (
     parameter: any,
     subSection: any,
@@ -1624,6 +1684,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             section={section}
             type="number"
             disabled={isInputDisabled}
+            widgetType={widgetType}
+            setIsJobNameValue={setIsJobNameValue}
           />
           <QuantityParameter subSection={subSection} section={section} />
         </React.Fragment>
@@ -1651,6 +1713,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             extraOnChange={() => {
               setOpenQuantityComponent();
             }}
+            widgetType={widgetType}
+            setIsJobNameValue={setIsJobNameValue}
           />
 
         </React.Fragment>
@@ -1673,6 +1737,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           subSection={subSection}
           section={section}
           type="number"
+          widgetType={widgetType}
+          setIsJobNameValue={setIsJobNameValue}
         />
       );
     } else if (
@@ -1689,6 +1755,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           subSection={subSection}
           section={section}
           type="number"
+          widgetType={widgetType}
+          setIsJobNameValue={setIsJobNameValue}
         />
       );
     } else if (parameter?.parameterType === EParameterTypes.INPUT_NUMBER) {
@@ -1702,6 +1770,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           subSection={subSection}
           section={section}
           type="number"
+          widgetType={widgetType}
+          setIsJobNameValue={setIsJobNameValue}
         />
       );
     } else if (parameter?.parameterType === EParameterTypes.INPUT_TEXT) {
@@ -1715,6 +1785,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           subSection={subSection}
           section={section}
           type="text"
+          widgetType={widgetType}
+          setIsJobNameValue={setIsJobNameValue}
         />
       );
     } else if (parameter?.parameterType === EParameterTypes.DROP_DOWN_LIST) {
@@ -3596,7 +3668,11 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     underParameterIds,
     straightKnife,
     calculationServerErrorState,
-    setSettingParameters
+    setSettingParameters,
+    isChangePriceForEdit,
+    onClickCloseChangePriceModal,
+    setIsChangePriceForEdit
+
   };
 };
 export { useDigitalOffsetPrice };

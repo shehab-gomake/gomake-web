@@ -14,7 +14,9 @@ const MoreMenuWidget = ({
   onClickOpenIrrelevantModal,
   onClickSendPayment,
   onClickOpenCloseOrderModal,
-  onClickOpenCloseOrderNotesModal
+  onClickOpenCloseOrderNotesModal,
+  onClickMakePayment,
+  onClickCloseAndTrack
 }: any) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -30,7 +32,9 @@ const MoreMenuWidget = ({
     onClickOpenIrrelevantModal,
     onClickSendPayment,
     onClickOpenCloseOrderModal,
-    onClickOpenCloseOrderNotesModal
+    onClickOpenCloseOrderNotesModal,
+    onClickMakePayment,
+    onClickCloseAndTrack
   });
 
   return (

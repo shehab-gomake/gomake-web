@@ -1,4 +1,5 @@
 import { GomakeTextInput } from "@/components";
+import { EWidgetProductType } from "../../enums";
 
 const InputNumberParameterWidget = ({
   clasess,
@@ -10,7 +11,9 @@ const InputNumberParameterWidget = ({
   section,
   type,
   disabled = false,
-  extraOnChange
+  extraOnChange,
+  widgetType,
+  setIsJobNameValue
 }: any) => {
   const myParameter = temp.find((item) => item.parameterId === parameter.id)
   return (
@@ -22,6 +25,12 @@ const InputNumberParameterWidget = ({
         placeholder={parameter.name}
         value={index !== -1 ? temp[index].values : ""}
         onChange={(e: any, item: any) => {
+          if (parameter?.code === "JobName" && widgetType === EWidgetProductType.EDIT) {
+            setIsJobNameValue(true)
+          }
+          else {
+            setIsJobNameValue(false)
+          }
           onChangeSubProductsForPrice(
             parameter?.id,
             subSection?.id,

@@ -7,6 +7,8 @@ import {
   IExceptionsLog,
 } from "@/widgets/product-pricing-widget/interface";
 import config from "@/config";
+import { useRecoilState } from "recoil";
+import { isChangePriceForEditState } from "@/store";
 
 const useCalculationsWorkFlowsSignalR = () => {
 
@@ -24,6 +26,7 @@ const useCalculationsWorkFlowsSignalR = () => {
     useState<ICalculationSignalRResult>();
   const [updatedSelectedWorkFlow, setUpdatedSelectedWorkFlow] =
     useState<ICalculatedWorkFlow>();
+    const [, setIsChangePriceForEdit] = useRecoilState(isChangePriceForEditState);
   const [calculationExceptionsLogs, setCalculationExceptionsLogs] =
     useState<IExceptionsLog[]>();
   const [calculationServerError,setCalculationServerErrorState]=useState(false)
@@ -45,6 +48,7 @@ const useCalculationsWorkFlowsSignalR = () => {
       });
       connection.on("updateSelectedWorkFlow", (newData) => {
         setUpdatedSelectedWorkFlow(newData);
+        setIsChangePriceForEdit(true)
       });
       connection.on("UpdatePricing", (newData) => {
         setSignalRPricingResult(newData);
