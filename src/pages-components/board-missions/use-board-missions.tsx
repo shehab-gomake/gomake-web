@@ -211,50 +211,82 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
       return await getAllBoardMissions(isClear);
     }
   };
-
+  const getJobStatus = (mission) => {
+    /*mission?.isReady
+        ? t('boardMissions.done')
+        : (mission?.boardMissionStatus && mission?.station
+            ? 
+            : ""),*/
+    if(mission?.isReady){
+      return t('boardMissions.done');
+    }
+    if(mission?.boardMissionStatus && mission?.station){
+      const empName = mission.station.machineName && mission.station.machineId ? mission.station.machineName : mission.station.employeeName;
+      if(empName)
+        return `${mission.boardMissionStatus.name} \n\r ${mission.station.actionName} \n\r ${empName}`
+      return `${mission.boardMissionStatus.name} \n\r ${mission.station.actionName}`
+    }
+    return "";
+  }
   const getAllBoardMissions = async (isClear: boolean = false) => {
     if (connectionId) {
       const callBack = (res) => {
         if (res?.success) {
           const _data = res?.data;
-          const mapData = _data.data?.map((mission: any) => [
-            <a href={mission?.boardMissionImage} target="_blank" rel="noopener noreferrer">
-              <img
-                src={mission?.boardMissionImage}
-                alt=""
-                style={{ width: '45px', height: '45px', objectFit: 'contain', borderRadius: '5px', cursor: 'pointer' }}
+          const mapData = _data.data?.map((mission: any) => {
+
+            const [createdDate, createdTime] = mission?.createdDate?.split("T") || ["", ""];
+            const [dueDate, dueTime] = mission?.dueDate?.split("T") || ["", ""];
+
+            // Format the time to display only hours and minutes
+            const formattedCreatedTime = createdTime.split(":").slice(0, 2).join(":");
+            const formattedDueTime = dueTime.split(":").slice(0, 2).join(":");
+
+            return [
+              <a href={mission?.boardMissionImage} target="_blank" rel="noopener noreferrer">
+                <img
+                  src={mission?.boardMissionImage}
+                  alt=""
+                  style={{ width: '45px', height: '45px', objectFit: 'contain', borderRadius: '5px', cursor: 'pointer' }}
+                />
+              </a>,
+              <div>
+                {createdDate}
+                <br />
+                {formattedCreatedTime}
+              </div>,
+              <div>
+                {dueDate}
+                <br />
+                {formattedDueTime}
+              </div>,
+              mission?.clientName,
+              mission?.productType ? `${mission?.number} / ${mission?.productType}` : mission?.number,
+              <div style={{ cursor: "pointer" }} onClick={() => { navigate(`/order?Id=${mission?.orderID}`) }}>
+                {mission?.orderNumber}
+              </div>,
+              mission?.outSourceType === null ? EWorkSource[0] : EWorkSource[mission?.outSourceType],
+              mission?.quantity,
+              ...(CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS) ? [mission?.cost + " " + getCurrencyUnitText(mission?.currency)] : []),
+              ...(CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS) ? [mission?.price + " " + getCurrencyUnitText(mission?.currency)] : []),
+              mission?.jobName,
+              mission?.numberOfBoardMissions,
+              mission?.productName,
+              <div style={{whiteSpace:'break-spaces'}}>
+                { getJobStatus(mission)}
+              </div>,
+              <MoreMenuWidget
+                mission={mission}
+                onClickDuplicate={onOpenDuplicateModal}
+                onOpenModal={onOpenModal}
+                onClickPrintPackagingSlip={onOpenPackagesModal}
+                onClickMarksAsDone={onOpenMarkReadyModal}
+                onClickReturnToProduction={onOpenReturnToProdModal}
+                onClickOrderSummeryPdf={onClickOrderSummeryPdf}
+                onClickWorkMissionPdf={onClickWorkMissionPdf}
               />
-            </a>,
-            mission?.createdDate?.split("T")[0],
-            mission?.dueDate?.split("T")[0],
-            mission?.clientName,
-            mission?.productType ? `${mission?.number} / ${mission?.productType}` : mission?.number,
-            <div style={{ cursor: "pointer" }} onClick={() => { navigate(`/order?Id=${mission?.orderID}`) }}>
-              {mission?.orderNumber}
-            </div>,
-            mission?.outSourceType === null ? EWorkSource[0] : EWorkSource[mission?.outSourceType],
-            mission?.quantity,
-            ...(CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS) ? [mission?.cost + " " + getCurrencyUnitText(mission?.currency)] : []),
-            ...(CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS) ? [mission?.price + " " + getCurrencyUnitText(mission?.currency)] : []),
-            mission?.jobName,
-            mission?.numberOfBoardMissions,
-            mission?.productName,
-            mission?.isReady
-              ? t('boardMissions.done')
-              : (mission?.boardMissionStatus && mission?.station
-                ? `${mission.boardMissionStatus.name} / ${mission.station.actionName}`
-                : ""),
-            <MoreMenuWidget
-              mission={mission}
-              onClickDuplicate={onOpenDuplicateModal}
-              onOpenModal={onOpenModal}
-              onClickPrintPackagingSlip={onOpenPackagesModal}
-              onClickMarksAsDone={onOpenMarkReadyModal}
-              onClickReturnToProduction={onOpenReturnToProdModal}
-              onClickOrderSummeryPdf={onClickOrderSummeryPdf}
-              onClickWorkMissionPdf={onClickWorkMissionPdf}
-            />
-          ]);
+            ];
+          });
           setAllBoardMissions(mapData);
           setPagesCount(Math.ceil(_data?.totalItems / pageSize));
         }

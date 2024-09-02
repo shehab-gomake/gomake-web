@@ -6,6 +6,7 @@ import {
   RuleType,
   UnitType,
 } from "@/widgets/product-pricing-widget/enums";
+import {EWidgetProductType} from "@/pages-components/products/digital-offset-price/enums";
 
 export interface IPricingWidgetProps {
   jobDetails?: string;
@@ -13,7 +14,7 @@ export interface IPricingWidgetProps {
   workFlows: ICalculatedWorkFlow[];
   onSelectNewWorkFlow?: (id: string) => void;
   getOutSourcingSuppliers: () => void;
-  widgetType:string;
+  widgetType:EWidgetProductType;
 }
 
 export interface IPricingAction {

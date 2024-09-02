@@ -21,6 +21,8 @@ import {Collapse, Skeleton, TableCell, TableRow} from "@mui/material";
 import {
     ApprovalFileStatusComponent
 } from "@/widgets/production-floor/table-view/status-table/table-row/approval-file-status-component";
+import KeyboardDoubleArrowUpIcon from '@mui/icons-material/KeyboardDoubleArrowUp';
+
 
 interface IProps {
     boardMission: IBoardMissions
@@ -128,6 +130,11 @@ const TableRowComponent = ({boardMission}: IProps) => {
                 <SecondaryTableCell align={"center"}>
                     <Link
                         href={`/production-floor?boardMissionsId=${boardMission?.id}&productType=${boardMission?.productType}&step=stations`}>{`${boardMission?.boardMissionNumber}\\${boardMission?.orderNumber}`}</Link>
+                </SecondaryTableCell>
+                <SecondaryTableCell>
+                    {
+                        boardMission.isUrgentWork && <KeyboardDoubleArrowUpIcon/>
+                    }
                 </SecondaryTableCell>
                 <SecondaryTableCell align={"center"}>
                     <LabelComponent label={boardMission?.productName}/>

@@ -222,13 +222,14 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
     const renderData = materialDataFilter ? searchResult : materialData;
     setRenderData(renderData);
   }, [materialDataFilter]);
-
   const CheckOptionToStraightKnife = useCallback(async () => {
+    const shapeIdForValues = shapeParameter && shapeParameter.valueIds && shapeParameter.valueIds.length ? shapeParameter.valueIds[0] : "";
+
     const width = widthParameter && widthParameter.values && widthParameter.values.length > 0 ? +widthParameter?.values[0] : 0;
     const height = heightParameter && heightParameter.values && heightParameter.values.length > 0 ? +heightParameter?.values[0] : 0;
     const shapeId = isParameterSettings
       ? shapeCodeDefualt?.id
-      : shapeParameter ? shapeParameter?.parameterId : LabelShapeParameter?.parameterId;
+      : shapeParameter ? shapeIdForValues : LabelShapeParameter?.parameterId;
 
     const res = await callApi(
       EHttpMethod.POST,

@@ -25,6 +25,7 @@ const HeaderDividerComponent = () => {
 const BoardMissionsDetailsHeader = () => {
     const {classes} = useStyle();
     const {t} = useTranslation();
+    const direction = t('direction');
     const [boardFromTable, setBoardFromTable] = useState<IBoardMissions>({} as IBoardMissions)
     const {push, query, pathname} = useRouter();
     const boardMissionsDetails = useRecoilValue(boardMissionsDetailsState);
@@ -93,13 +94,14 @@ const BoardMissionsDetailsHeader = () => {
                     <Tooltip  title={`${boardFromTable?.previousBoardMission?.productName} |  ${boardFromTable?.previousBoardMission?.clientName} | ${boardFromTable?.previousBoardMission?.boardMissionNumber} / ${boardFromTable?.previousBoardMission?.orderNumber}`} arrow>
                         <IconButton onClick={() => onNavigateBoardMissions(boardFromTable?.previousBoardMission?.boardMissionId, boardFromTable?.previousBoardMission?.productType)} style={{border: '1px solid'}} color={'error'}
                                     disabled={!boardFromTable?.previousBoardMission}>
-                            <NavigateBeforeIcon/>
+                            {direction === 'ltr' ? <NavigateBeforeIcon/> : <NavigateNextIcon/>}
                         </IconButton>
                     </Tooltip>
                     <Tooltip title={`${boardFromTable?.nextBoardMission?.productName} |  ${boardFromTable?.nextBoardMission?.clientName} | ${boardFromTable?.nextBoardMission?.boardMissionNumber} / ${boardFromTable?.nextBoardMission?.orderNumber}`}   arrow>
                         <IconButton onClick={() => onNavigateBoardMissions(boardFromTable?.nextBoardMission?.boardMissionId, boardFromTable?.nextBoardMission?.productType)} style={{border: '1px solid'}} color={'success'}
                                     disabled={!boardFromTable?.nextBoardMission}>
-                            <NavigateNextIcon/>
+                            {direction === 'ltr' ? <NavigateNextIcon/> : <NavigateBeforeIcon/>}
+
                         </IconButton>
                     </Tooltip>
                 </Stack>

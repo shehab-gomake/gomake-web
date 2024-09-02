@@ -25,7 +25,7 @@ interface ICardsSection {
 }
 
 const getValueByKey = (statistics: ICard[], key: string) => {
-    const card = statistics.find((item) => item.key === key);
+    const card = statistics?.find((item) => item.key === key);
     return card ? card.value : "";
 };
 

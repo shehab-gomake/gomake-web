@@ -14,6 +14,8 @@ import { Permissions } from "@/components/CheckPermission/enum";
 import { PayIcon } from "./icons/pay";
 import { PaymentIcon } from "./icons/payment";
 import {useStyle} from "@/pages-components/quotes/more-circle/style";
+import { useRouter } from "next/router";
+import { TrackingIcon } from "./icons/tracking";
 
 const useMoreCircle = () => {
   const { user } = useCustomer();
@@ -31,10 +33,13 @@ const useMoreCircle = () => {
     onClickOpenIrrelevantModal,
     onClickSendPayment,
     onClickOpenCloseOrderModal,
-    onClickOpenCloseOrderNotesModal
+    onClickOpenCloseOrderNotesModal,
+    onClickMakePayment,
+    onClickCloseAndTrack
   }) => {
     const documentPath = DOCUMENT_TYPE[documentType];
     const { callApi } = useGomakeAxios();
+    const { pathname } = useRouter();
 
     const onClickGetOrderBoardMissionPDF = async (quoteItem) => {
       const callBack = (res) => {
@@ -57,6 +62,7 @@ const useMoreCircle = () => {
     const isPurchaseInvoice = documentType === DOCUMENT_TYPE.purchaseInvoice;
     const isPurchaseOrder = documentType === DOCUMENT_TYPE.purchaseOrder;
     const showNewDuplicate = isDeliveryNote || isDeliveryNoteRefund || isInvoice || isInvoiceRefund;
+    const isOrdersTracking = pathname === "/ordersTracking";
 
     return [
       {
@@ -165,6 +171,12 @@ const useMoreCircle = () => {
         name: t("sales.quote.close")
       },
       {
+        condition: isOrder && quote?.isCanCloseForTracking,
+        onClick: () => onClickCloseAndTrack(quote),
+        icon: <TrackingIcon />,
+        name: t("sales.quote.closeAndTrack")
+      },
+      {
         condition: isOrder && quote?.isCanClose && quote?.statusTitleText !== "Order.Canceled",
         onClick: () => onClickOpenIrrelevantModal(quote),
         icon: <TickCloseIcon />,
@@ -181,6 +193,12 @@ const useMoreCircle = () => {
         onClick: () => onClickSendPayment(quote),
         icon: <PaymentIcon />,
         name: t("sales.quote.sendPayment")
+      },
+      {
+        condition: isOrdersTracking && (parseFloat(quote?.totalPrice) !== parseFloat(quote?.sumApplied)),
+        onClick: () => onClickMakePayment(quote),
+        icon: <PaymentIcon />,
+        name: t("sales.quote.makePayment")
       },
       // {
       //   condition: !isCancel,

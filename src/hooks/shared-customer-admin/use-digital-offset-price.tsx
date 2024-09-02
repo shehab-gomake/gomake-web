@@ -6,7 +6,8 @@ import { materialsCategoriesState } from "@/store/material-categories";
 import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
 import { getAndSetChatBotProductId, getAndSetProductById } from "@/services/hooks";
 import {
-  currentCalculationConnectionId,
+  currentCalculationConnectionId, isActionEmployeeUpdatedState,
+  isChangePriceForEditState,
   isLoadgingState,
   itemParmetersValuesState,
   listEmployeesAtom,
@@ -130,12 +131,29 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [jobActions, setJobActions] = useRecoilState(jobActionsState);
   const setOutSuppliers = useSetRecoilState(outsourceSuppliersState);
   const materialsEnumsValues = useRecoilValue(materialsCategoriesState);
-  const setLoading = useSetRecoilState(isLoadgingState);
+  const [isLoadging, setLoading] = useRecoilState(isLoadgingState);
   const [priceRecovery, setPriceRecovery] = useState(true);
   const [canCalculation, setCanCalculation] = useState(false);
   const setSelectParameterButton = useSetRecoilState(selectParameterButtonState);
   const [deviceCategory, setDeviceCategory] = useState("")
   const [deviceSize, setDeviceSize] = useState("")
+
+  const [isActionEmployeeUpdated, setIsActionEmployeeUpdated] = useRecoilState(isActionEmployeeUpdatedState);
+  const [isChangePriceForEdit, setIsChangePriceForEdit] = useRecoilState(isChangePriceForEditState);
+
+  const [isJobNameValue, setIsJobNameValue] = useState(false)
+
+  const onClickCloseChangePriceModal = () => {
+    setIsChangePriceForEdit(false)
+    setIsActionEmployeeUpdated(false)
+    setIsJobNameValue(false)
+  }
+ /* useEffect(() => {
+    if (!isLoadging && isChangePriceForEdit && widgetType === EWidgetProductType.EDIT) {
+      onClickOpenChangePriceModal()
+    }
+  }, [isLoadging, isChangePriceForEdit, isJobNameValue])*/
+
 
   useEffect(() => {
     if (quantityTypes?.length > 0) {
@@ -157,7 +175,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     isCalculationFinished,
     setIsCalculationFinished
   } = useCalculationsWorkFlowsSignalR();
-
   useEffect(() => {
     setProductItemValueByEdit({})
   }, [])
@@ -225,7 +242,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     if (calculationResult && calculationResult.productItemValueDraftId === currentCalculationSessionId) {
       getSelectedWorkFlow();
     }
-  }, [calculationResult]);
+  }, [calculationResult,]);
 
   const getSelectedWorkFlow = async () => {
     const res: any = await callApi(
@@ -257,6 +274,11 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     setWorkFlows(result.productItemValue.workFlows);
     setJobActions(result?.productItemValue.actions);
     setCalculationResult(result)
+    if(widgetType === EWidgetProductType.EDIT && (isActionEmployeeUpdated || isJobNameValue)){
+      setIsChangePriceForEdit(true)
+      setIsActionEmployeeUpdated(false)
+      setIsJobNameValue(false)
+    }
   }
 
   const setSelectedWorkflow = (newWorkFlows, currentWorkFlows) => {
@@ -380,10 +402,16 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
         setWorkFlows([...temp, { ...updatedSelectedWorkFlow, selected: true }]);
       }
+      console.log("updatedSelectedWorkFlow", updatedSelectedWorkFlow)
       if (
         updatedSelectedWorkFlow?.totalPrice &&
         updatedSelectedWorkFlow?.totalPrice?.values
       ) {
+        if(widgetType === EWidgetProductType.EDIT  && (isActionEmployeeUpdated || isJobNameValue)){
+          setIsChangePriceForEdit(true)
+          setIsActionEmployeeUpdated(false)
+          setIsJobNameValue(false)
+        }
         setCurrentProductItemValueTotalPrice(
           +updatedSelectedWorkFlow?.totalPrice.values[0]
         );
@@ -582,11 +610,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             }
             let temp = [];
             subSection.parameters.forEach((parameter) => {
-              if (parameter?.isHidden) {
+              if (parameter?.isHidden && !parameter?.isHiddenInSetting) {
                 return;
-              }
-              if (parameter.code === "ChemicalPaperWeight") {
-                debugger
               }
               parameter.relatedParameters.forEach((x) => {
                 x.sectionId = section.id;
@@ -1307,6 +1332,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     if (!currentCalculationSessionId) {
       setCurrentSignalRConnectionId(connectionId)
       setCurrentProductItemValueTotalPrice(null);
+      setLastProductItemValueTotalPrice(null);
+      setUrgentOrder(null)
       setWorkFlows([]);
       setJobActions([]);
       setSubProducts([]);
@@ -1315,6 +1342,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         totalWorkFlowsCount: 0,
         currentWorkFlowsCount: 0,
       });
+      setIsChangePriceForEdit(false)
+      setIsJobNameValue(false)
+      setIsActionEmployeeUpdated(false)
       if (
         widgetType === EWidgetProductType.EDIT ||
         widgetType === EWidgetProductType.DUPLICATE
@@ -1620,6 +1650,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     setOpenQuantityComponentModal(true);
   }, 500);
 
+
+
   const _renderParameterType = (
     parameter: any,
     subSection: any,
@@ -1660,6 +1692,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             section={section}
             type="number"
             disabled={isInputDisabled}
+            widgetType={widgetType}
+            setIsJobNameValue={setIsJobNameValue}
           />
           <QuantityParameter subSection={subSection} section={section} />
         </React.Fragment>
@@ -1687,6 +1721,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             extraOnChange={() => {
               setOpenQuantityComponent();
             }}
+            widgetType={widgetType}
+            setIsJobNameValue={setIsJobNameValue}
           />
 
         </React.Fragment>
@@ -1709,6 +1745,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           subSection={subSection}
           section={section}
           type="number"
+          widgetType={widgetType}
+          setIsJobNameValue={setIsJobNameValue}
         />
       );
     } else if (
@@ -1725,6 +1763,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           subSection={subSection}
           section={section}
           type="number"
+          widgetType={widgetType}
+          setIsJobNameValue={setIsJobNameValue}
         />
       );
     } else if (parameter?.parameterType === EParameterTypes.INPUT_NUMBER) {
@@ -1738,6 +1778,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           subSection={subSection}
           section={section}
           type="number"
+          widgetType={widgetType}
+          setIsJobNameValue={setIsJobNameValue}
         />
       );
     } else if (parameter?.parameterType === EParameterTypes.INPUT_TEXT) {
@@ -1751,6 +1793,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           subSection={subSection}
           section={section}
           type="text"
+          widgetType={widgetType}
+          setIsJobNameValue={setIsJobNameValue}
         />
       );
     } else if (parameter?.parameterType === EParameterTypes.DROP_DOWN_LIST) {
@@ -3111,12 +3155,13 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         quoteItemProduct.docmentItem.finalPrice
       );
       setLastProductItemValueTotalPrice(
-          quoteItemProduct.docmentItem.finalPrice
+        quoteItemProduct.docmentItem.finalPrice
       );
       setCurrentProductItemValue(quoteItemProduct.productItemValue);
       setCurrentProductItemValueDraftId(
         quoteItemProduct.productItemValueDraftId
       );
+      setUrgentOrder(quoteItemProduct.docmentItem.isUrgentWork)
       setCurrentCalculationSessionId(quoteItemProduct.productItemValueDraftId)
       setWorkFlows(quoteItemProduct.productItemValue.workFlows);
       setJobActions(quoteItemProduct.productItemValue.actions);
@@ -3631,7 +3676,11 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     underParameterIds,
     straightKnife,
     calculationServerErrorState,
-    setSettingParameters
+    setSettingParameters,
+    isChangePriceForEdit,
+    onClickCloseChangePriceModal,
+    setIsChangePriceForEdit
+
   };
 };
 export { useDigitalOffsetPrice };
