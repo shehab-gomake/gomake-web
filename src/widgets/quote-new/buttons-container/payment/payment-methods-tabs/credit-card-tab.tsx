@@ -123,10 +123,12 @@ const CreditCardTab = ({
                             <div style={{ width: "45%" }}>
                                 <GoMakeAutoComplate
                                     key={"transactionType"}
-                                    value={creditCard?.transactionType}
+                                    value={transactionTypes.find(
+                                        (option) => option.value === creditCard?.transactionType
+                                      )}
                                     style={classes.selectInputs}
                                     options={transactionTypes}
-                                    placeholder={t("payment.transactionType")}
+                                    placeholder={t("payment.transactionssType")}
                                     onChange={(e, value) => handleChangeInputs("transactionType", value?.value)}
                                 />
                             </div>
@@ -198,7 +200,9 @@ const CreditCardTab = ({
                             <div style={{ width: "45%" }}>
                                 <GoMakeAutoComplate
                                     key={"transactionType-2"}
-                                    value={creditCard?.transactionType}
+                                    value={transactionTypes.find(
+                                        (option) => option.value === creditCard?.transactionType
+                                      )}
                                     style={classes.selectInputs}
                                     options={transactionTypes}
                                     placeholder={t("payment.transactionType")}
