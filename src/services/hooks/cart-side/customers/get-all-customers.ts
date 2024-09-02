@@ -9,7 +9,7 @@ const getAndSetAllCustomers = async (
 ) => {
  
   const result: any = await callApi(
-    "GET",
+    "POST",
     "/v1/crm-service/customer/get-all-customers",
     data,
     false

@@ -17,31 +17,31 @@ const useCustomerDropDownList = () => {
     return customersListCreateQuote;
   };
 
-  const getAllCustomersCreateQuote = useCallback(async (SearchTerm?) => {
+  const getAllCustomersCreateQuote = useCallback(async (SearchTerm?:string) => {
     await getAndSetAllCustomers(callApi, setCustomersListCreateQuote, {
-      ClientType: "C",
-      searchTerm: SearchTerm,
+      clientType: "C",
+      searchTerm: SearchTerm as string,
       onlyCreateOrderClients: false,
     });
   }, []);
 
-  const getAllCustomersCreateOrder = useCallback(async (SearchTerm?) => {
+  const getAllCustomersCreateOrder = useCallback(async (SearchTerm?:string) => {
     await getAndSetAllCustomers(callApi, setCustomersListCreateQuote, {
-      ClientType: "C",
-      searchTerm: SearchTerm,
+      clientType: "C",
+      searchTerm: SearchTerm  as string,
       onlyCreateOrderClients: true,
     });
   }, []);
 
-  const getAllSupplierList = useCallback(async (SearchTerm?) => {
+  const getAllSupplierList = useCallback(async (SearchTerm?:string) => {
     await getAndSetAllCustomers(callApi, setSupplierList, {
-      ClientType: "S",
-      searchTerm: SearchTerm,
+      clientType: "S",
+      searchTerm: SearchTerm  as string,
       onlyCreateOrderClients: true,
     });
   }, []);
 
-  const debouncedGetAllCustomersCreateOrder = useDebouncedCallback((value) => {
+  const debouncedGetAllCustomersCreateOrder = useDebouncedCallback((value:string) => {
     getAllCustomersCreateOrder(value);
   }, 500);
 
