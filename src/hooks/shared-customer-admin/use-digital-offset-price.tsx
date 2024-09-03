@@ -11,6 +11,7 @@ import {
   isLoadgingState,
   itemParmetersValuesState,
   listEmployeesAtom,
+  loadingWithShadowState,
   productItemValueByEditState,
   productTypesNumberState,
   selectedValueConfigState,
@@ -132,6 +133,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const setOutSuppliers = useSetRecoilState(outsourceSuppliersState);
   const materialsEnumsValues = useRecoilValue(materialsCategoriesState);
   const [isLoadging, setLoading] = useRecoilState(isLoadgingState);
+  const setLoadingWithLockScreen = useSetRecoilState(loadingWithShadowState);
+
   const [priceRecovery, setPriceRecovery] = useState(true);
   const [canCalculation, setCanCalculation] = useState(false);
   const setSelectParameterButton = useSetRecoilState(selectParameterButtonState);
@@ -3479,6 +3482,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   );
 
   const addItemForQuotes = async () => {
+    console.log("DGFFDFGD")
+    setLoadingWithLockScreen(true)
     const docType = router?.query?.documentType ?? "0";
     const duplicateType = router?.query?.duplicateType;
     const callBack = (res) => {
@@ -3486,11 +3491,13 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         (docType === "0" || duplicateType === '1' || duplicateType === '2')
           ? navigate("/quote")
           : navigate(`/order?Id=${router?.query?.documentId}`);
+        setLoadingWithLockScreen(false)
+
       } else {
         alertFaultAdded();
+        setLoadingWithLockScreen(false)
       }
     };
-
     await addItemApi(callApi, callBack, {
       item: currentProductItemValue,
       documentType: docType,
