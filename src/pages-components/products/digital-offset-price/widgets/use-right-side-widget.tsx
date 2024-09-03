@@ -1,13 +1,9 @@
-import { useGomakeAxios } from "@/hooks";
-import { getAllUsersApi } from "@/services/api-service/users/users-api";
 import {
   isLoadgingState,
-  listEmployeesAtom,
   subProductsParametersState,
   systemCurrencyState,
   systemVATState,
 } from "@/store";
-import { billingMethodState } from "@/store/billing-method";
 import { exampleTypeState } from "@/store/example-type";
 import { currenciesSymbols } from "@/widgets/materials-widget/state";
 import {
@@ -16,7 +12,7 @@ import {
   currentProductItemValuePriceState, lastProductItemValuePriceState,
   selectedWorkFlowState,
 } from "@/widgets/product-pricing-widget/state";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useRecoilState, useRecoilValue } from "recoil";
 
@@ -26,7 +22,6 @@ const useRightSideWidget = ({ includeVAT }) => {
     setCalculationExceptionsLogs([])
   }, [])
   const isLoading = useRecoilValue(isLoadgingState);
-
   const subProducts = useRecoilValue<any>(subProductsParametersState);
   const systemVAT = useRecoilValue<number>(systemVATState);
   const selectedWorkFlow = useRecoilValue(selectedWorkFlowState);
@@ -45,10 +40,7 @@ const useRightSideWidget = ({ includeVAT }) => {
     currentProductItemValueTotalPrice,
     setCurrentProductItemValueTotalPrice,
   ] = useRecoilState<number>(currentProductItemValuePriceState);
-  const [
-    lastProductItemValueTotalPrice,
-    setLastProductItemValueTotalPrice,
-  ] = useRecoilState<number>(lastProductItemValuePriceState);
+  const lastProductItemValueTotalPrice = useRecoilValue<number>(lastProductItemValuePriceState);
   const calculationProgress = useRecoilValue(calculationProgressState);
   const quantity = useMemo(() => {
     if (subProducts) {
@@ -59,27 +51,11 @@ const useRightSideWidget = ({ includeVAT }) => {
     }
   }, [subProducts]);
   const exampleTypeValues = useRecoilValue(exampleTypeState);
-  const billingMethodValues = useRecoilValue(billingMethodState);
-  const [listEmployeesValues, setListEmployeesValues] = useRecoilState(listEmployeesAtom);
 
 
 
 
-  const [changePrice, setChangePrice] = useState<number>(0);
   const { t } = useTranslation();
-  const { callApi } = useGomakeAxios();
-  const [listEmployees, setListEmployees] = useState([]);
-  const getAllUsers = () => {
-    const callBackFunction = (data) => {
-      if (data.success) {
-        setListEmployees(data.data);
-      }
-    };
-    getAllUsersApi(callApi, callBackFunction).then();
-  };
-  useEffect(() => {
-    getAllUsers();
-  }, []);
 
   useEffect(() => {
     if (currentProductItemValueTotalPrice != null) {
@@ -97,34 +73,16 @@ const useRightSideWidget = ({ includeVAT }) => {
       }
     }
   }, [includeVAT]);
-  // i need change to the icons when add new types
-  useEffect(() => {
-    if (listEmployees) {
-      setListEmployeesValues(
-        [
-          {
-            id: "00415c86-165f-463a-bde0-f37c66f00000",
-            firstname: "Recommeded",
-            lastname: "",
-            email: "recommeded@gomake.net",
-          },
-          ...listEmployees,
-        ]
-      )
-    }
-  }, [listEmployees])
+
   return {
     currentProductItemValueTotalPrice,
     lastProductItemValueTotalPrice,
     calculationProgress,
     exampleTypeValues,
-    billingMethodValues,
     systemCurrency,
-    listEmployees,
     isLoading,
     quantity,
     selectedWorkFlow,
-    listEmployeesValues,
     calculationExceptionsLogs,
     setCurrentProductItemValueTotalPrice,
     t,

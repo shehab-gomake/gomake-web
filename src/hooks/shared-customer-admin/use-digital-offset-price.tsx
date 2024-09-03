@@ -11,6 +11,7 @@ import {
   isLoadgingState,
   itemParmetersValuesState,
   listEmployeesAtom,
+  loadingWithShadowState,
   productItemValueByEditState,
   productTypesNumberState,
   selectedValueConfigState,
@@ -112,8 +113,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     setLastProductItemValueTotalPrice,
   ] = useRecoilState<number>(lastProductItemValuePriceState);
   const setCurrentProductItemValueTotalWorkFlows = useSetRecoilState<number>(currentProductItemValueTotalWorkFlowsState);
-  const [clientDefaultValue, setClientDefaultValue] = useState<any>({});
-  const [clientTypeDefaultValue, setClientTypeDefaultValue] = useState<any>({});
   const [expanded, setExpanded] = useState<string | false>("");
   const [activeIndex, setActiveIndex] = useState(0);
   const [activeTab, setActiveTab] = useState(t("products.offsetPrice.admin.logs"));
@@ -130,6 +129,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const setOutSuppliers = useSetRecoilState(outsourceSuppliersState);
   const materialsEnumsValues = useRecoilValue(materialsCategoriesState);
   const [isLoadging, setLoading] = useRecoilState(isLoadgingState);
+  const setLoadingWithLockScreen = useSetRecoilState(loadingWithShadowState);
+
   const [priceRecovery, setPriceRecovery] = useState(true);
   const [canCalculation, setCanCalculation] = useState(false);
   const setSelectParameterButton = useSetRecoilState(selectParameterButtonState);
@@ -146,13 +147,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     setIsActionEmployeeUpdated(false)
     setIsJobNameValue(false)
   }
-  /* useEffect(() => {
-     if (!isLoadging && isChangePriceForEdit && widgetType === EWidgetProductType.EDIT) {
-       onClickOpenChangePriceModal()
-     }
-   }, [isLoadging, isChangePriceForEdit, isJobNameValue])*/
-
-
   useEffect(() => {
     if (quantityTypes?.length > 0) {
       setWorkTypes(quantityTypes)
@@ -3477,6 +3471,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   );
 
   const addItemForQuotes = async () => {
+    setLoadingWithLockScreen(true)
     const docType = router?.query?.documentType ?? "0";
     const duplicateType = router?.query?.duplicateType;
     const callBack = (res) => {
@@ -3484,11 +3479,13 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         (docType === "0" || duplicateType === '1' || duplicateType === '2')
           ? navigate("/quote")
           : navigate(`/order?Id=${router?.query?.documentId}`);
+        setLoadingWithLockScreen(false)
+
       } else {
         alertFaultAdded();
+        setLoadingWithLockScreen(false)
       }
     };
-
     await addItemApi(callApi, callBack, {
       item: currentProductItemValue,
       documentType: docType,
@@ -3496,6 +3493,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   };
 
   const updateQuoteItem = async () => {
+    setLoadingWithLockScreen(true)
     const callBack = (res) => {
       if (res?.success) {
         router?.query?.documentType == "0"
@@ -3503,8 +3501,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           : navigate(`/order?Id=${router?.query?.documentId}`);
         setWorkFlows([]);
         setJobActions([]);
+        setLoadingWithLockScreen(false)
       } else {
         alertFaultUpdate();
+        setLoadingWithLockScreen(false)
       }
     };
     await updateDocumentItemApi(callApi, callBack, {
@@ -3682,32 +3682,26 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     handleTabClick,
     handleNextClick,
     handlePreviousClick,
-    onOpeneMakeShape,
     onCloseGalleryModal,
     onCloseMakeShape,
     handleChange,
     _renderParameterType,
     _getParameter,
-    createProfitTestCase,
-    navigate,
     navigateForRouter,
     updateQuoteItem,
     setUrgentOrder,
     setPrintingNotes,
-    setGraphicNotes,
     setPriceRecovery,
-    onOpeneMultiParameterModal,
     onCloseMultiParameterModal,
     duplicateSection,
     removeSection,
     duplicateParameters,
     setProductTemplate,
-    setSamlleType,
-    setBillingMethod,
     multiParameterModal,
+    calculationServerErrorState,
     settingParameters,
+    setSettingParameters,
     priceRecovery,
-    graphicNotes,
     printingNotes,
     urgentOrder,
     makeShapeOpen,
@@ -3718,32 +3712,23 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     activeTab,
     PricingTab,
     expanded,
-    clientDefaultValue,
-    clientTypeDefaultValue,
-    pricingDefaultValue,
     errorMsg,
     relatedParameters,
-    workFlows,
-    jobDetails,
     jobActions,
-    includeVAT,
-    billingMethod,
+    workFlows,
+    underParameterIds,
     samlleType,
-    graphicDesigner,
-    isChargeForNewDie,
-    setIsChargeForNewDie,
-    setGraphicDesigner,
-    setIncludeVAT,
+    setSamlleType,
     getOutSourcingSuppliers,
     onChangeSubProductsForPrice,
-    underParameterIds,
+    includeVAT,
+    setIncludeVAT,
+    isChargeForNewDie,
+    setIsChargeForNewDie,
     straightKnife,
-    calculationServerErrorState,
-    setSettingParameters,
     isChangePriceForEdit,
     onClickCloseChangePriceModal,
     setIsChangePriceForEdit
-
   };
 };
 export { useDigitalOffsetPrice };
