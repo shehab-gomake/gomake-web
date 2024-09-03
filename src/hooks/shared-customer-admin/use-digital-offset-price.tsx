@@ -78,8 +78,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const router = useRouter();
   const { alertFaultAdded, alertFaultUpdate, alertFault } = useSnackBar();
   const [isChargeForNewDie, setIsChargeForNewDie] = useState(false)
-  // We should find another way, such as using a global hook 
-  // const { clientTypesValue, renderOptions, checkWhatRenderArray, getAllClientTypes, clientListData } = useQuoteWidget(DOCUMENT_TYPE.quote);
   const { allMaterials, getAllMaterial } = useMaterials();
   const [selectedValueConfig, setSelectedValueConfig] = useRecoilState(selectedValueConfigState);
   const productTypesNumber = useRecoilValue<number>(productTypesNumberState);
@@ -115,8 +113,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     setLastProductItemValueTotalPrice,
   ] = useRecoilState<number>(lastProductItemValuePriceState);
   const setCurrentProductItemValueTotalWorkFlows = useSetRecoilState<number>(currentProductItemValueTotalWorkFlowsState);
-  const [clientDefaultValue, setClientDefaultValue] = useState<any>({});
-  const [clientTypeDefaultValue, setClientTypeDefaultValue] = useState<any>({});
   const [expanded, setExpanded] = useState<string | false>("");
   const [activeIndex, setActiveIndex] = useState(0);
   const [activeTab, setActiveTab] = useState(t("products.offsetPrice.admin.logs"));
@@ -151,13 +147,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     setIsActionEmployeeUpdated(false)
     setIsJobNameValue(false)
   }
-  /* useEffect(() => {
-     if (!isLoadging && isChangePriceForEdit && widgetType === EWidgetProductType.EDIT) {
-       onClickOpenChangePriceModal()
-     }
-   }, [isLoadging, isChangePriceForEdit, isJobNameValue])*/
-
-
   useEffect(() => {
     if (quantityTypes?.length > 0) {
       setWorkTypes(quantityTypes)
