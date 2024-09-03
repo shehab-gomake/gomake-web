@@ -8,6 +8,7 @@ import {Source, useActionsList} from "@/widgets/production-floor/filters/select/
 import {SecondaryButton} from "@/components/button/secondary-button";
 import {IStation} from "@/widgets/production-floor/interfaces/filters";
 import {ClickOutside} from "@/components/click-out-side/click-out-side";
+import {adaptRight} from "@/utils/adapter";
 
 
 interface IProps {
@@ -18,6 +19,7 @@ interface IProps {
 const ActionsListComponent = ({onClickApply, source}: IProps) => {
 
     const {actionsList, onSelectMachine, onSelectStation, actionsMachinesIds, open, setOpen, filter, setFilter, t} = useActionsList(source);
+    const direction = t('direction')
 
     const handleClick = () => {
         setOpen(!open)
@@ -42,7 +44,7 @@ const ActionsListComponent = ({onClickApply, source}: IProps) => {
             </Button>
             {open &&
                 <ClickOutside onClick={()=> setOpen(false)}>
-                <Paper sx={{position: 'absolute', left: 0, top: source === Source.PRODUCTION_FLOOR ? '110%' : '-610px', maxWidth: '300px', height: '600px', maxHeight: '600px', overflow: 'auto', zIndex: 99999999999999}}>
+                <Paper sx={{position: 'absolute', ...adaptRight(direction, 0), top: source === Source.PRODUCTION_FLOOR ? '110%' : '-610px', maxWidth: '300px', height: '600px', maxHeight: '600px', overflow: 'auto', zIndex: 99999999999999}}>
                 <FormGroup>
                     <div style={{position: 'sticky', top: 0, backgroundColor: '#FFF', zIndex: 1}}>
                         <GomakeTextInput  placeholder={t('productionFloor.search')} value={filter} onChange={handleFilterChange}/>
