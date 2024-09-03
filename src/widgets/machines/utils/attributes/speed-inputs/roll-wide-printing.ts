@@ -34,7 +34,7 @@ const rollWidePrinting = (state: Record<string, any>) => {
                     required: true,
                     parameterKey: "categories",
                     options: [],
-                    optionsUrl: '/v1/materials/get-material-categories-list?materialKey=sheets',
+                    optionsUrl: '/v1/materials/get-all-print-house-material-categories?material=sheets',
                 },
                 {
                     name: "",
@@ -74,7 +74,7 @@ const rollWidePrinting = (state: Record<string, any>) => {
                     required: true,
                     parameterKey: "categories",
                     options: [],
-                    optionsUrl: '/v1/materials/get-material-categories-list?materialKey=flatbeds',
+                    optionsUrl: '/v1/materials/get-all-print-house-material-categories?material=flatbeds',
                 },
                 {
                     name: "",
@@ -114,7 +114,7 @@ const rollWidePrinting = (state: Record<string, any>) => {
                     required: false,
                     parameterKey: "categories",
                     options: [],
-                    optionsUrl: '/v1/materials/get-material-categories-list?materialKey=wideFormatMaterial',
+                    optionsUrl: '/v1/materials/get-all-print-house-material-categories?material=wideFormatMaterial',
                 },
                 {
                     name: "",

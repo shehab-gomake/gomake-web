@@ -20,9 +20,8 @@ import { CLIENT_TYPE_Id } from "@/pages/customers/enums";
 import { prevSelectedClientState, ProductCategoryType } from "./states";
 import { getAllProductAndMaterialsApi } from "@/services/api-service/products/product-endpoints";
 import { addDocumentItemFromMaterialApi } from "@/services/api-service/materials/materials-endpoints";
-import * as React from "react";
 
-const useQuoteWidget = ({ documentType = 0 }: any) => {
+const useQuoteWidget = () => {
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
   const { navigate } = useGomakeRouter();
@@ -30,6 +29,7 @@ const useQuoteWidget = ({ documentType = 0 }: any) => {
   const [clientTypesValue, setClientTypesValues] = useState([]);
   const { alertFaultAdded, alertSuccessAdded } = useSnackBar();
   const [customersListCreateQuote, setCustomersListCreateQuote] = useState([]);
+  // const [productValue, setProductValues] = useState([]);
   const [userQuote, setUserQuote] = useState<any>(null);
   const [openModal, setOpenModal] = useState(false);
   const [selectedClientType, setSelectedClientType] = useState<any>({});
@@ -192,11 +192,6 @@ const useQuoteWidget = ({ documentType = 0 }: any) => {
   const getAllClientTypes = useCallback(async () => {
     try {
       await getAndSetClientTypes(callApi, setClientTypesValues, { cardType: CLIENT_TYPE_Id.CUSTOMER });
-      if (userQuote?.result) {
-        getAllCustomersCreateQuote(userQuote?.result?.clientName);
-      } else {
-        getAllCustomersCreateQuote();
-      }
     } catch (error) {
       console.error("Error fetching client types:", error);
     }
@@ -359,7 +354,6 @@ const useQuoteWidget = ({ documentType = 0 }: any) => {
 
   return {
     clientTypesValue,
-    customersListCreateQuote,
     isDisabled,
     id,
     openModal,
@@ -398,7 +392,6 @@ const useQuoteWidget = ({ documentType = 0 }: any) => {
     QuoteId,
     setQuoteId,
     getAllClientTypes,
-    clientListData,
     combinedData,
     handleProductChange
   };

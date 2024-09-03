@@ -13,7 +13,6 @@ import { v4 as uuidv4 } from "uuid";
 import {
   IContactData,
   agentListsState,
-  businessListsState,
   clientContactsState,
   loadingWithShadowState,
   quoteConfirmationState,
@@ -56,15 +55,11 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
   const [selectDate, setSelectDate] = useState(isQuoteConfirmation ? quoteConfirm?.dueDate : quoteItemValue?.dueDate);
   const [creationDate, setCreationDate] = useState(isQuoteConfirmation ? quoteConfirm?.creationDate : quoteItemValue?.creationDate);
   const [taxDate, setTaxDate] = useState(isQuoteConfirmation ? quoteConfirm?.taxDate : quoteItemValue?.taxDate);
-  const [customersListValue, setCustomersListValue] = useRecoilState<any>(businessListsState);
   const [selectBusiness, setSelectBusiness] = useState<any>({});
-  const [selectConfirmBusiness, setSelectConfirmBusiness] = useState<any>({});
   const [isUpdateBusinessName, setIsUpdateBusinessName] = useState<number | null>(null);
   const [isUpdatePurchaseNumber, setIsUpdatePurchaseNumber] = useState<number | null>(null);
   const [isUpdateClientName, setIsUpdateClientName] = useState<number | null>(null);
   const [clientName, setClientName] = useState(quoteItemValue?.occasionalClientName);
-
-
   const [isUpdateExchangeRate, setIsUpdateExchangeRate] = useState<number | null>(null);
   const [isUpdateCurrency, setIsUpdateCurrency] = useState<string>(null);
   const [, setIsUpdateBusinessCode] = useState<number | null>(null);
@@ -211,13 +206,6 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
       })
     }
   }
-
-  const getAllCustomers = useCallback(async () => {
-    await getAndSetAllCustomers(callApi, setCustomersListValue, {
-      clientType: docType === DOCUMENT_TYPE.purchaseOrder || docType === DOCUMENT_TYPE.purchaseInvoice || docType === DOCUMENT_TYPE.purchaseInvoiceRefund ? "S" : "C",
-      onlyCreateOrderClients: docType === DOCUMENT_TYPE.purchaseOrder || docType === DOCUMENT_TYPE.purchaseInvoice || docType === DOCUMENT_TYPE.purchaseInvoiceRefund ? true : false,
-    });
-  }, [docType]);
 
   const updateOccasionalClientName = async () => {
     const callBack = (res) => {
@@ -1291,14 +1279,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     }
   }, [agentListValue, quoteItemValue]);
 
-  useEffect(() => {
-    const foundConfirmItem = customersListValue.find(
-      (item: any) => item.id === quoteConfirm?.customerID
-    );
-
-    setSelectConfirmBusiness(foundConfirmItem) // for quote confirmation
-  }, [quoteItemValue, customersListValue]);
-
+ 
   useEffect(() => {
     setPriceListItems(quoteItemValue?.documentItems);
     setquoteItems(quoteItemValue);
@@ -1309,7 +1290,6 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
   }, [quoteItemValue, quoteConfirm]);
 
   useEffect(() => {
-    getAllCustomers();
     if (!isQuoteConfirmation) {
       getQuote();
       getAllEmployees();
@@ -1618,7 +1598,6 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     updateCurrency,
     refreshExchangeRate,
     getQuote,
-    selectConfirmBusiness,
     openCopyFromOrderModal,
     onCloseCopyFromOrder,
     onOpenCopyFromOrder,

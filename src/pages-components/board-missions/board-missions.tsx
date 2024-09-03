@@ -100,6 +100,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
   useEffect(() => {
     getAllProducts();
   }, []);
+  
   return (
     <>
       <Stack direction="column" justifyContent="space-between" display="flex" spacing={1} height="100%" >

@@ -59,7 +59,6 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
   const [fromReadyDate, setFromReadyDate] = useState<Date>();
   const [toReadyDate, setToReadyDate] = useState<Date>();
   const [resetReadyDatePicker, setResetReadyDatePicker] = useState<boolean>(false);
-
   const [allBoardMissions, setAllBoardMissions] = useState([]);
   const [allPurchaseJobs, setAllPurchaseJobs] = useState([]);
   const { GetDateFormat } = useDateFormat();
@@ -68,10 +67,10 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
   const [pageNumber, setPageNumber] = useState(1);
   const [pagesCount, setPagesCount] = useState(0);
   const [pageSize, setPageSize] = useState(DEFAULT_VALUES.PageSize);
-  const { customer, supplierList, setCustomer, renderOptions, checkWhatRenderArray, handleCustomerChange } = useCustomerDropDownList()
+  const { customer, supplierList, setCustomer, renderOptions, checkWhatRenderArray, handleCustomerChange } = useCustomerDropDownList({shouldRenderSuppliersOnMount:isPurchaseJobs})
   const { agent, setAgent, agentsCategories, handleAgentChange } = useAgentsList()
   const router = useRouter()
-  const [selectedMission, setSelectedMission] = useState<any>({})
+  const [selectedMission, setSelectedMission] = useState<any>({}) 
   const handlePageSizeChange = (event) => {
     setPageNumber(1);
     setPageSize(event.target.value);

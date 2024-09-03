@@ -13,7 +13,7 @@ import { useEffect, useState } from "react";
 
 const LeftSideLayout = (customGap) => {
   const { t } = useTranslation();
-  const { tabs1, tabs2, tabs3 } = useAuthLayoutHook();
+  const { tabs1, tabs2, tabs3 } = useAuthLayoutHook(null,true);
   const [navStatus, setNavStatus] = useRecoilState(navStatusState);
   const [isHover, setIsHover] = useRecoilState(hoverStatusState);
   const { CheckPermission } = useUserPermission();

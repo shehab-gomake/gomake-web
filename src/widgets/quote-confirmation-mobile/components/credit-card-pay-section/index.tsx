@@ -40,7 +40,7 @@ const CreditCardPaySection = ({ isFromBigScreen = false }) => {
                     value={paymentDetailsState?.cardNumber}
                 />
                 <input
-                    {...getExpiryDateProps({ onChange: handleExpiryDateChange })}
+                    onChange={handleExpiryDateChange}
                     style={{ ...classes.creditCardInputs, width: "20%" }}
                     placeholder="MM/YY"
                     value={paymentDetailsState?.expDate_MMYY}
@@ -67,7 +67,10 @@ const CreditCardPaySection = ({ isFromBigScreen = false }) => {
             <div style={{ width: "70%" }}>
                 <GoMakeAutoComplate
                     key={"transactionType"}
-                    value={paymentDetailsState?.transactionType}
+                    // value={paymentDetailsState?.transactionType}
+                    value={transactionTypes.find(
+                        (option) => option.value === paymentDetailsState?.transactionType
+                      )}
                     style={classes.selectInputs}
                     options={transactionTypes}
                     placeholder={t("payment.transactionType")}
