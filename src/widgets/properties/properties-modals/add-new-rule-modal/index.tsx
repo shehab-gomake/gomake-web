@@ -24,6 +24,7 @@ import { useSnackBar } from "@/hooks";
 import { useRule } from "../../hooks/use-rule";
 import { DeleteMenuIcon } from "@/widgets/quote-new/more-circle/icons/delete-menu";
 
+// Page not used 
 
 interface IAddNewModalProps {
   openModal: boolean;
@@ -83,7 +84,7 @@ const AddNewRuleModal = ({ openModal, onClose }) => {
   const [value, setValue] = useState<string>("");
   const { machines } = usePrintHouseMachines();
   const { clientTypes } = usePrintHouseClientTypes();
-  const { clients } = usePrintHouseClients();
+  const { clients } = usePrintHouseClients(); 
   const { materials, materialsDropdown } = useMaterials();
   const { parameters } = useParameters();
   const { Outputs } = useOutputs();
@@ -99,6 +100,8 @@ const AddNewRuleModal = ({ openModal, onClose }) => {
     let val = "";
     setExpression(val);
   }, [openModal]);
+
+
   const handleFormChange = (index, event, fieldNameId, value) => {
     let data = [...fields];
     if (fieldNameId == 1) {
