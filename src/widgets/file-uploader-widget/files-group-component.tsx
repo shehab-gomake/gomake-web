@@ -54,6 +54,7 @@ const FilesGroupComponent = ({ title, filesInfo, orderItemId, filePath, boardMis
 
     return (
         <Stack
+            className={`drop-zone ${isOver ? 'dragging' : ''}`}
             onDrop={handleFileDrop}
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
@@ -98,8 +99,6 @@ const FilesGroupComponent = ({ title, filesInfo, orderItemId, filePath, boardMis
                 </Stack>
             </Stack>
             <Stack>
-                <Backdrop style={{ position: "absolute", top: 0, bottom: 0, left: 0, right: 0, margin: '-5px' }}
-                    open={isOver} />
                 {
                     filesInfo?.map(file => <FileComponent {...file} />)
                 }
