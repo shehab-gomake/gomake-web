@@ -3482,7 +3482,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   );
 
   const addItemForQuotes = async () => {
-    console.log("DGFFDFGD")
     setLoadingWithLockScreen(true)
     const docType = router?.query?.documentType ?? "0";
     const duplicateType = router?.query?.duplicateType;
