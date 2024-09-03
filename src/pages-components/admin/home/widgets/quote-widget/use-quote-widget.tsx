@@ -1,8 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { useCustomerDropDownList, useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
 import {
-  getAllProductsForDropDownList,
-  getAndSetAllCustomers,
   getAndSetClientTypes,
 } from "@/services/hooks";
 import { useTranslation } from "react-i18next";
@@ -18,13 +16,10 @@ import {
   saveDocumentApi,
 } from "@/services/api-service/generic-doc/documents-api";
 import { selectedClientState } from "@/pages-components/quotes/states";
-import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { CLIENT_TYPE_Id } from "@/pages/customers/enums";
 import { prevSelectedClientState, ProductCategoryType } from "./states";
 import { getAllProductAndMaterialsApi } from "@/services/api-service/products/product-endpoints";
 import { addDocumentItemFromMaterialApi } from "@/services/api-service/materials/materials-endpoints";
-import { ProductIcon } from "@/components/auto-complete/icons";
-import CheckIcon from "@mui/icons-material/Check";
 import * as React from "react";
 
 const useQuoteWidget = ({ documentType = 0 }: any) => {
@@ -34,7 +29,6 @@ const useQuoteWidget = ({ documentType = 0 }: any) => {
   const { alertFaultUpdate } = useSnackBar();
   const [clientTypesValue, setClientTypesValues] = useState([]);
   const { alertFaultAdded, alertSuccessAdded } = useSnackBar();
-  // const [productValue, setProductValues] = useState([]);
   const [customersListCreateQuote, setCustomersListCreateQuote] = useState([]);
   const [userQuote, setUserQuote] = useState<any>(null);
   const [openModal, setOpenModal] = useState(false);
@@ -104,9 +98,6 @@ const useQuoteWidget = ({ documentType = 0 }: any) => {
   };
 
   const handleClickToSelectedCustomer = async (clientIdIfExist, value) => {
-    // if (!value) {
-    //   setPreviousClient(selectedClient);
-    // }
     if (clientIdIfExist != null && value?.id != null && clientIdIfExist !== value?.id) {
       handleOpenModal(value);
     }
