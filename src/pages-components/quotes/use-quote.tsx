@@ -1228,6 +1228,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   useEffect(() => {
     if (!isFromHomePage) {
       getAllCustomersCreateQuote();
+      // this for client type list in customer modal
       getClientTypesCategories();
     }
   }, []);
@@ -1248,20 +1249,16 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     }
   }, [page, quoteStatusId, pageSize, finalPatternSearch, quoteNumber, query]);
 
-
-
   useEffect(() => {
     setFinalPatternSearch(debounce);
   }, [debounce]);
 
   // For HomeTableWidget
   useEffect(() => {
-    getAllDocuments(docType);
+    if (isFromHomePage) {
+      getAllDocuments(docType);
+    }
   }, [selectedClient]);
-
-
-
-
 
   const getAllProducts = useCallback(async () => {
     const products = await getAllProductsForDropDownList(
@@ -1479,6 +1476,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   };
 
   const setClientTypesCategories = useSetRecoilState(clientTypesCategoriesState);
+
   const getClientTypesCategories = async () => {
     const callBack = (res) => {
       if (res) {
@@ -1493,9 +1491,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     await getAndSetClientTypes(callApi, callBack, { cardType: CLIENT_TYPE_Id.CUSTOMER });
   };
 
-  useEffect(() => {
-    getClientTypesCategories()
-  }, [])
+
 
   ///////////////////////// SEND PAYMENT //////////////////////////
   const [openPaymentModal, setOpenPaymentModal] = useState(false);
