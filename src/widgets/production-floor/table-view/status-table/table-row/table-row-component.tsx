@@ -22,6 +22,7 @@ import {
     ApprovalFileStatusComponent
 } from "@/widgets/production-floor/table-view/status-table/table-row/approval-file-status-component";
 import KeyboardDoubleArrowUpIcon from '@mui/icons-material/KeyboardDoubleArrowUp';
+import {useGomakeTheme} from "@/hooks/use-gomake-thme";
 
 
 interface IProps {
@@ -39,6 +40,7 @@ const TableRowComponent = ({boardMission}: IProps) => {
     const {CheckPermission} = useUserPermission();
     const canDrag = CheckPermission(Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR);
     const [dropArea, setDropArea] = useState<EDropArea>();
+    const {errorColor} = useGomakeTheme();
     const ref = useRef(null);
     const [, drag] = useDrag(() => ({
         type: 'task',
@@ -133,7 +135,7 @@ const TableRowComponent = ({boardMission}: IProps) => {
                 </SecondaryTableCell>
                 <SecondaryTableCell>
                     {
-                        boardMission.isUrgentWork && <KeyboardDoubleArrowUpIcon/>
+                        boardMission.isUrgentWork && <KeyboardDoubleArrowUpIcon style={{color: errorColor(500)}}/>
                     }
                 </SecondaryTableCell>
                 <SecondaryTableCell align={"center"}>
