@@ -3,7 +3,15 @@ import { useCallback, useEffect, useState } from "react";
 import { useGomakeAxios } from "./use-gomake-axios";
 import { useDebouncedCallback } from "use-debounce";
 
-const useCustomerDropDownList = () => {
+interface UseCustomerDropDownListProps {
+  shouldRenderCustomersOnMount?: boolean;
+  shouldRenderSuppliersOnMount?: boolean;
+}
+
+const useCustomerDropDownList = ({
+  shouldRenderCustomersOnMount = true,
+  shouldRenderSuppliersOnMount = false,
+}: UseCustomerDropDownListProps = {}) => {
   const { callApi } = useGomakeAxios();
   const [customersListCreateQuote, setCustomersListCreateQuote] = useState([]);
   const [supplierList, setSupplierList] = useState([]);
@@ -17,7 +25,7 @@ const useCustomerDropDownList = () => {
     return customersListCreateQuote;
   };
 
-  const getAllCustomersCreateQuote = useCallback(async (SearchTerm?:string) => {
+  const getAllCustomersCreateQuote = useCallback(async (SearchTerm?: string) => {
     await getAndSetAllCustomers(callApi, setCustomersListCreateQuote, {
       clientType: "C",
       searchTerm: SearchTerm as string,
@@ -25,23 +33,23 @@ const useCustomerDropDownList = () => {
     });
   }, []);
 
-  const getAllCustomersCreateOrder = useCallback(async (SearchTerm?:string) => {
+  const getAllCustomersCreateOrder = useCallback(async (SearchTerm?: string) => {
     await getAndSetAllCustomers(callApi, setCustomersListCreateQuote, {
       clientType: "C",
-      searchTerm: SearchTerm  as string,
+      searchTerm: SearchTerm as string,
       onlyCreateOrderClients: true,
     });
   }, []);
 
-  const getAllSupplierList = useCallback(async (SearchTerm?:string) => {
+  const getAllSupplierList = useCallback(async (SearchTerm?: string) => {
     await getAndSetAllCustomers(callApi, setSupplierList, {
       clientType: "S",
-      searchTerm: SearchTerm  as string,
+      searchTerm: SearchTerm as string,
       onlyCreateOrderClients: true,
     });
   }, []);
 
-  const debouncedGetAllCustomersCreateOrder = useDebouncedCallback((value:string) => {
+  const debouncedGetAllCustomersCreateOrder = useDebouncedCallback((value: string) => {
     getAllCustomersCreateOrder(value);
   }, 500);
 
@@ -53,23 +61,30 @@ const useCustomerDropDownList = () => {
       getAllCustomersCreateQuote();
     }
   };
-  useEffect(()=>{
-    getAllSupplierList()
-  },[])
 
   const handleCustomerChange = (e: any, value: any) => {
     setCustomer(value);
   };
 
-  useEffect(() => {
-    getAllCustomersCreateQuote();
-  }, []);
 
   const getAllClientContacts = useCallback(async () => {
     await getAndSetClientContacts(callApi, setClientContactsValue, {
       ClientId: customer?.id,
     });
   }, [customer]);
+
+
+  useEffect(() => {
+    if (shouldRenderSuppliersOnMount) {
+      getAllSupplierList();
+    }
+  }, [shouldRenderSuppliersOnMount, getAllSupplierList]);
+
+  useEffect(() => {
+    if (shouldRenderCustomersOnMount) {
+      getAllCustomersCreateQuote();
+    }
+  }, [shouldRenderCustomersOnMount, getAllCustomersCreateQuote]);
 
   return {
     customer,
