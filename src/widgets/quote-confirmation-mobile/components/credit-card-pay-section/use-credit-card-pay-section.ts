@@ -48,6 +48,7 @@ const useCreditCardPaySection = () => {
         expDate_MMYY: '',
         holderID: '',
         transactionSum: 0,
+        transactionType:1,
         numberOfPayments:quoteConfirm?.maxPayments || 0 
     };
 
@@ -79,7 +80,25 @@ const useCreditCardPaySection = () => {
         }
     };
 
+
     const handleExpiryDateChange = (e) => {
+        let input = e.target.value.replace(/\D/g, ''); 
+    
+        if (input.length > 4) {
+            input = input.slice(0, 4);
+        }
+    
+        if (input.length > 2) {
+            input = `${input.slice(0, 2)}/${input.slice(2)}`; 
+        }
+    
+        setPaymentDetails({
+            ...paymentDetailsState,
+            expDate_MMYY: input
+        });
+    };
+    
+    const handleExpiryDateCshange = (e) => {
         const formattedInput = e.target.value.replace(/\D/g, '');
         if (formattedInput.length <= 4) {
             setPaymentDetails({
