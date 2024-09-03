@@ -3504,6 +3504,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   };
 
   const updateQuoteItem = async () => {
+    setLoadingWithLockScreen(true)
     const callBack = (res) => {
       if (res?.success) {
         router?.query?.documentType == "0"
@@ -3511,8 +3512,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           : navigate(`/order?Id=${router?.query?.documentId}`);
         setWorkFlows([]);
         setJobActions([]);
+        setLoadingWithLockScreen(false)
       } else {
         alertFaultUpdate();
+        setLoadingWithLockScreen(false)
       }
     };
     await updateDocumentItemApi(callApi, callBack, {
