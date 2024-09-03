@@ -3,7 +3,14 @@ import { useCallback, useEffect, useState } from "react";
 import { useGomakeAxios } from "./use-gomake-axios";
 import { useDebouncedCallback } from "use-debounce";
 
-const useCustomerDropDownList = () => {
+
+interface UseCustomerDropDownListProps {
+  shouldRenderCustomersOnMount?: boolean;
+}
+
+const useCustomerDropDownList = ({
+  shouldRenderCustomersOnMount = true, // default value set to true
+}: UseCustomerDropDownListProps = {}) => {
   const { callApi } = useGomakeAxios();
   const [customersListCreateQuote, setCustomersListCreateQuote] = useState([]);
   const [supplierList, setSupplierList] = useState([]);
@@ -61,9 +68,12 @@ const useCustomerDropDownList = () => {
     setCustomer(value);
   };
 
+ // here!
   useEffect(() => {
-    getAllCustomersCreateQuote();
-  }, []);
+    if (shouldRenderCustomersOnMount) {
+      getAllCustomersCreateQuote();
+    }
+  }, [shouldRenderCustomersOnMount, getAllCustomersCreateQuote]);
 
   const getAllClientContacts = useCallback(async () => {
     await getAndSetClientContacts(callApi, setClientContactsValue, {

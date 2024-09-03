@@ -36,7 +36,8 @@ const useAddRuleModal = ({
   selectedProperties,
   getProperitesService,
   isQuoteWidge,
-  filterData
+  filterData,
+  openModal
 }) => {
   const GET_MATERIALS_TYPES_URL = "/v1/materials/getMaterialsTypes";
   const { callApi } = useGomakeAxios();
@@ -50,10 +51,11 @@ const useAddRuleModal = ({
   const onOpenScheduleModal =()=>{
     setOpenScheduleModal(true)
   }
+
   const {
     renderOptions,
     checkWhatRenderArray,
-  }=useCustomerDropDownList()
+  }=useCustomerDropDownList({shouldRenderCustomersOnMount: openModal});
 
   const [propertieValue, setPropertieValue] = useState<any>();
   const isDefaultException = selectedPricingTableItems?.exceptionType === ETypeException.DEFAULT;

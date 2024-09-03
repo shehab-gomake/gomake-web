@@ -35,6 +35,8 @@ const AddRuleModal = ({
 }: any) => {
   const { clasess } = useStyle();
   const { t } = useTranslation();
+
+
   const {
     rules,
     machincesList,
@@ -65,7 +67,6 @@ const AddRuleModal = ({
     onCloseScheduleModal,
     onOpenScheduleModal,
     renderOptions,
-
     checkWhatRenderArray,
     onSelectDeliveryTimeDates,
     resetDatePicker,
@@ -85,16 +86,20 @@ const AddRuleModal = ({
     getProperitesService,
     isQuoteWidge,
     filterData,
-
+    openModal
   });
+
+
   const [selectedCategories, setSelectedCategories] = useState<any>("")
   const [selectedStatment2, setSelectedStatment2] = useState<any>("")
   const [selectedProfitModel, setSelectedProfitModel] = useState<number>(null);
   const router = useRouter();
+
   const [selectedOutputs, setSelectedOutputs] =
     useState<selectedOutputsProps>();
   const [selectedParameters, setSelectedParameters] =
     useState<selectedParametersProps>();
+
   useEffect(() => {
     const selectedOutputs = Outputs?.find(
       (output) => output?.id === selectedProperties?.propertyId
@@ -440,8 +445,6 @@ const AddRuleModal = ({
                         handleChange(index, "condition", null);
                         handleChange(index, "statement", null);
                         setSelectedCategories(value)
-
-
                       }}
                     />
                   </div>
