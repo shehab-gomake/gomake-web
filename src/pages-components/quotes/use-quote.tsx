@@ -774,7 +774,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     if (statusId !== null) {
       handleSecondCardClick();
     }
-    getAllQuotes();
+   // getAllQuotes();
   };
 
   const onClickClearFilter = () => {
