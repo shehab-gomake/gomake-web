@@ -45,6 +45,7 @@ const useAddRuleModal = ({
   const { clients } = usePrintHouseClients();
   const [openScheduleModal,setOpenScheduleModal]=useState(false)
   const categoriesList = useRecoilValue(machineCategoriesState);
+  
   const onCloseScheduleModal =()=>{
     setOpenScheduleModal(false)
   }
@@ -55,7 +56,7 @@ const useAddRuleModal = ({
   const {
     renderOptions,
     checkWhatRenderArray,
-  }=useCustomerDropDownList({shouldRenderCustomersOnMount: openModal});
+  }=useCustomerDropDownList({shouldRenderCustomersOnMount: openModal , shouldRenderSuppliersOnMount:false});
 
   const [propertieValue, setPropertieValue] = useState<any>();
   const isDefaultException = selectedPricingTableItems?.exceptionType === ETypeException.DEFAULT;
