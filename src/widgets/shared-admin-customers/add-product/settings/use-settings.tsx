@@ -305,7 +305,7 @@ const useSettings = ({
 
   const getAllClients = useCallback(async (SearchTerm?) => {
     await getAndSetAllCustomers(callApi, setCustomersList, {
-      ClientType: "C",
+      clientType: "C",
       onlyCreateOrderClients: false,
       searchTerm: SearchTerm,
     });

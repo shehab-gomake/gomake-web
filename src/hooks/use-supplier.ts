@@ -36,7 +36,7 @@ const useSupplier = () => {
   const [supplierList, setSupplierList] = useState([]);
   const getAllSupplierList = useCallback(async (SearchTerm?) => {
     await getAndSetAllCustomers(callApi, setSupplierList, {
-      ClientType: "S",
+      clientType: "S",
       searchTerm: SearchTerm,
       onlyCreateOrderClients: true,
     });

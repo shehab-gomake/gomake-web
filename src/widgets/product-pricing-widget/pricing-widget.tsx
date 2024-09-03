@@ -116,7 +116,8 @@ const PricingWidget = ({ workFlows, getOutSourcingSuppliers, widgetType }: IPric
 
       {selectedWorkFlow && view === EPricingViews.SELECTED_WORKFLOW && (
         <div data-tour={'actions-container'}>
-          <SubWorkFlowsComponent
+          <SubWorkFlowsComponent 
+            widgetType={widgetType}
             isEditableActions={true}
             workflows={selectedWorkFlow?.subWorkFlows || []}
           />
@@ -135,6 +136,7 @@ const PricingWidget = ({ workFlows, getOutSourcingSuppliers, widgetType }: IPric
             getWorkFlowsActions={getWorkFlowsActions}
             selectedWorkFlowId={selectedWorkFlowId}
             setSelectedWorkFlowId={setSelectedWorkFlowId}
+            widgetType={widgetType}
           />
           {
             pageSize < allCountSelectedTabWorkFlow &&

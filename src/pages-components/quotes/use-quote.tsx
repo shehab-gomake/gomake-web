@@ -202,7 +202,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   };
   const getAllCustomersCreateQuote = useCallback(async (SearchTerm?) => {
     await getAndSetAllCustomers(callApi, setCustomersListCreateQuote, {
-      ClientType: "C",
+      clientType: "C",
       onlyCreateOrderClients: false,
       searchTerm: SearchTerm,
       isOccasionalCustomer: true
@@ -211,7 +211,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
 
   const getAllCustomersCreateOrder = useCallback(async (SearchTerm?) => {
     await getAndSetAllCustomers(callApi, setCustomersListCreateOrder, {
-      ClientType: "C",
+      clientType: "C",
       onlyCreateOrderClients: true,
       searchTerm: SearchTerm,
       isOccasionalCustomer: true

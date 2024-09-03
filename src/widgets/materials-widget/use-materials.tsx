@@ -94,7 +94,7 @@ const useMaterials = (isAdmin: boolean) => {
   const setMaterialCategorySuppliers = useSetRecoilState(
     materialCategorySuppliersState
   );
- 
+
   const [materialName, setMaterialName] = useState<string>();
   const setMaterialActions = useSetRecoilState(materialActionState);
   const setMaterialTypeTable = useSetRecoilState(materialTypeTableState);
@@ -359,7 +359,7 @@ const useMaterials = (isAdmin: boolean) => {
   const setClientsState = useSetRecoilState<[]>(materialsClientsState);
   const getClientsMaterials = useCallback(async () => {
     await getAndSetAllCustomers(callApi, setClientsState, {
-      ClientType: "C",
+      clientType: "C",
       onlyCreateOrderClients: true,
     });
   }, []);

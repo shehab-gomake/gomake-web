@@ -16,7 +16,7 @@ const DashboardClientsList = () => {
     }, []);
     const getClients = useCallback(async (SearchTerm?) => {
         await getAndSetAllCustomers(callApi, setClients, {
-            ClientType: "C",
+            clientType: "C",
             searchTerm: SearchTerm,
             onlyCreateOrderClients: true,
         });
