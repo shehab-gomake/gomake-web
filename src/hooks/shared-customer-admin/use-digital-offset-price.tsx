@@ -148,11 +148,11 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     setIsActionEmployeeUpdated(false)
     setIsJobNameValue(false)
   }
- /* useEffect(() => {
-    if (!isLoadging && isChangePriceForEdit && widgetType === EWidgetProductType.EDIT) {
-      onClickOpenChangePriceModal()
-    }
-  }, [isLoadging, isChangePriceForEdit, isJobNameValue])*/
+  /* useEffect(() => {
+     if (!isLoadging && isChangePriceForEdit && widgetType === EWidgetProductType.EDIT) {
+       onClickOpenChangePriceModal()
+     }
+   }, [isLoadging, isChangePriceForEdit, isJobNameValue])*/
 
 
   useEffect(() => {
@@ -274,7 +274,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     setWorkFlows(result.productItemValue.workFlows);
     setJobActions(result?.productItemValue.actions);
     setCalculationResult(result)
-    if(widgetType === EWidgetProductType.EDIT && (isActionEmployeeUpdated || isJobNameValue)){
+    if (widgetType === EWidgetProductType.EDIT && (isActionEmployeeUpdated || isJobNameValue)) {
       setIsChangePriceForEdit(true)
       setIsActionEmployeeUpdated(false)
       setIsJobNameValue(false)
@@ -402,12 +402,11 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
         setWorkFlows([...temp, { ...updatedSelectedWorkFlow, selected: true }]);
       }
-      console.log("updatedSelectedWorkFlow", updatedSelectedWorkFlow)
       if (
         updatedSelectedWorkFlow?.totalPrice &&
         updatedSelectedWorkFlow?.totalPrice?.values
       ) {
-        if(widgetType === EWidgetProductType.EDIT  && (isActionEmployeeUpdated || isJobNameValue)){
+        if (widgetType === EWidgetProductType.EDIT && (isActionEmployeeUpdated || isJobNameValue)) {
           setIsChangePriceForEdit(true)
           setIsActionEmployeeUpdated(false)
           setIsJobNameValue(false)
@@ -841,6 +840,39 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                       subProduct.parameters.push(newParameter);
                     }
                   }
+
+                  else if (!value && parameter.code === "DieCut") {
+                    const existingParameters = productItemValueByEdit?.itemParmetersValues || [];
+                    const isDieCutExisting = existingParameters.find((param) => param?.parameterCode === "DieCut");
+
+                    if (isDieCutExisting || existingParameters.length === 0) {
+                      let materialSelected = allMaterials?.find((item) => item?.pathName === isDieCutExisting?.parameterCode)?.data
+                      const additionalAttribute = materialSelected?.find((item) => item?.valueId === isDieCutExisting?.valueIds[0])?.additionalAttribute
+                      const nameValue = additionalAttribute?.find((attr) => attr.valueId === "name")?.value;
+                      subProduct.parameters.push({
+                        parameterId: parameter?.id,
+                        parameterName: parameter?.name,
+                        actionId:
+                          value?.activateAction === true
+                            ? parameter?.actionId
+                            : null,
+                        parameterType: parameter?.parameterType,
+                        ...(isDieCutExisting?.valueIds[0] && {
+                          valueIds: [isDieCutExisting?.valueIds[0]],
+                          values: [nameValue],
+                        }),
+                        sectionId: section?.id,
+                        subSectionId: subSection?.id,
+                        actionIndex: parameter?.actionIndex,
+                        parameterCode: parameter?.code,
+                        valuesConfigs: parameter?.valuesConfigs,
+                        unitKey: parameter?.unitKey,
+                        unitType: parameter?.unitType,
+                      });
+                    }
+
+
+                  }
                   else if (value && parameter.code === "DieKissCut") {
                     const existingParameters = productItemValueByEdit?.itemParmetersValues || [];
                     const isDieCutExisting = existingParameters.find((param) => param?.parameterCode === "DieKissCut");
@@ -857,6 +889,39 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         parameterType: parameter?.parameterType,
                         ...(value && {
                           valueIds: [value?.id],
+                          values: [nameValue],
+                        }),
+                        sectionId: section?.id,
+                        subSectionId: subSection?.id,
+                        actionIndex: parameter?.actionIndex,
+                        parameterCode: parameter?.code,
+                        valuesConfigs: parameter?.valuesConfigs,
+                        unitKey: parameter?.unitKey,
+                        unitType: parameter?.unitType,
+                      });
+                    }
+
+
+                  }
+
+                  else if (!value && parameter.code === "DieKissCut") {
+                    const existingParameters = productItemValueByEdit?.itemParmetersValues || [];
+                    const isDieCutExisting = existingParameters.find((param) => param?.parameterCode === "DieKissCut");
+
+                    if (isDieCutExisting || existingParameters.length === 0) {
+                      let materialSelected = allMaterials?.find((item) => item?.pathName === isDieCutExisting?.parameterCode)?.data
+                      const additionalAttribute = materialSelected?.find((item) => item?.valueId === isDieCutExisting?.valueIds[0])?.additionalAttribute
+                      const nameValue = additionalAttribute?.find((attr) => attr.valueId === "name")?.value;
+                      subProduct.parameters.push({
+                        parameterId: parameter?.id,
+                        parameterName: parameter?.name,
+                        actionId:
+                          value?.activateAction === true
+                            ? parameter?.actionId
+                            : null,
+                        parameterType: parameter?.parameterType,
+                        ...(isDieCutExisting?.valueIds[0] && {
+                          valueIds: [isDieCutExisting?.valueIds[0]],
                           values: [nameValue],
                         }),
                         sectionId: section?.id,
@@ -1937,8 +2002,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         <div style={inRow ? clasess.parameterRowContainer : clasess.parameterContainer}>
           <div
             style={
-              errorText && parameter?.isRequired && !value?.values[0] ? clasess.parameterRequierdLabelStyle :
-                value?.values[0] === "true"
+              errorText && parameter?.isRequired && !value?.values?.[0] ? clasess.parameterRequierdLabelStyle :
+                value?.values?.[0] === "true"
                   ? inunderParameter ? clasess.parameterunderParameterStyle : clasess.parameterType3ActiveLabelStyle
                   : inunderParameter ? clasess.underParameterLabelStyle : clasess.parameterLabelStyle
             }
