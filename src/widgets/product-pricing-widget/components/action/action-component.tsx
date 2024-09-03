@@ -21,7 +21,7 @@ import {
   RuleType,
 } from "@/widgets/product-pricing-widget/enums";
 import { useActionUpdateValues } from "@/widgets/product-pricing-widget/components/action/use-action-update-values";
-import {useRecoilState, useRecoilValue} from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import {
   currentProductItemValueState,
   outsourceSuppliersState,
@@ -39,13 +39,13 @@ import { Permissions } from "@/components/CheckPermission/enum";
 import { NotesForActionModal } from "./notes-for-action-modal";
 import { _renderIconLogs } from "@/utils/constants";
 import { TableOutPutComponent } from "../table-output/table-output-component";
-import {EWidgetProductType} from "@/pages-components/products/digital-offset-price/enums";
+import { EWidgetProductType } from "@/pages-components/products/digital-offset-price/enums";
 import { isActionEmployeeUpdatedState } from "@/store";
 interface IActionContainerComponentProps extends IWorkFlowAction {
   delay?: number;
   workFlowId?: string;
-  productType: string | null;
-  widgetType: EWidgetProductType,
+  productType?: string | null;
+  widgetType?: EWidgetProductType,
 }
 
 interface IActionsComponentProps {
@@ -144,7 +144,7 @@ const Actions = ({
               widgetType={widgetType}
               delay={index * 800}
               {...updatedAction}
-                
+
             />
           );
         } else {
@@ -465,7 +465,7 @@ const ActionContainerComponent = ({
                       >
                         <GoMakeAutoComplate
                           onChange={(e, v) => {
-                            if(widgetType === EWidgetProductType.EDIT ) {
+                            if (widgetType === EWidgetProductType.EDIT) {
                               setIsActionEmployeeUpdated(true);
                             }
                             updateWorkFlowForEmployees(actionId, productType, actionIndex, v?.label, v?.value, id)

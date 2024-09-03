@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
+import { useCustomerDropDownList, useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
 import {
   getAllProductsForDropDownList,
   getAndSetAllCustomers,
@@ -23,7 +23,7 @@ import { CLIENT_TYPE_Id } from "@/pages/customers/enums";
 import { prevSelectedClientState, ProductCategoryType } from "./states";
 import { getAllProductAndMaterialsApi } from "@/services/api-service/products/product-endpoints";
 import { addDocumentItemFromMaterialApi } from "@/services/api-service/materials/materials-endpoints";
-import {ProductIcon} from "@/components/auto-complete/icons";
+import { ProductIcon } from "@/components/auto-complete/icons";
 import CheckIcon from "@mui/icons-material/Check";
 import * as React from "react";
 
@@ -48,6 +48,7 @@ const useQuoteWidget = ({ documentType = 0 }: any) => {
   const [QuoteId, setQuoteId] = useState("");
   const setQuoteNumber = useSetRecoilState<any>(QuoteNumberState);
 
+  const { renderOptions, checkWhatRenderArray } = useCustomerDropDownList();
 
   const onClickOpenModal = (quoteId: any) => {
     setOpenModal(true);
@@ -78,15 +79,15 @@ const useQuoteWidget = ({ documentType = 0 }: any) => {
     }
   };
 
-  const checkWhatRenderArray = (e) => {
-    if (e.target.value) {
-      getAllCustomersCreateQuote(e.target.value);
-    }
-  };
+  // const checkWhatRenderArray = (e) => {
+  //   if (e.target.value) {
+  //     getAllCustomersCreateQuote(e.target.value);
+  //   }
+  // };
 
-  const renderOptions = () => {
-    return customersListCreateQuote;
-  };
+  // const renderOptions = () => {
+  //   return customersListCreateQuote;
+  // };
 
   // const getAllProducts = useCallback(async () => {
   //   if (selectedClient?.id && selectedClientType?.id)
@@ -98,7 +99,7 @@ const useQuoteWidget = ({ documentType = 0 }: any) => {
 
   const getAllCustomersCreateQuote = useCallback(async (SearchTerm?) => {
     await getAndSetAllCustomers(callApi, setCustomersListCreateQuote, {
-      ClientType: documentType === DOCUMENT_TYPE.purchaseOrder || documentType === DOCUMENT_TYPE.purchaseInvoice || documentType === DOCUMENT_TYPE.purchaseInvoiceRefund ? "S" : "C",
+      clientType: documentType === DOCUMENT_TYPE.purchaseOrder || documentType === DOCUMENT_TYPE.purchaseInvoice || documentType === DOCUMENT_TYPE.purchaseInvoiceRefund ? "S" : "C",
       onlyCreateOrderClients: documentType != DOCUMENT_TYPE.quote ? true : false,
       searchTerm: SearchTerm,
     });
@@ -107,7 +108,7 @@ const useQuoteWidget = ({ documentType = 0 }: any) => {
   const [clientListData, setClientListData] = useState([])
   const getAllCustomersCreateOrder = useCallback(async () => {
     await getAndSetAllCustomers(callApi, setClientListData, {
-      ClientType: "C",
+      clientType: "C",
       onlyCreateOrderClients: true,
     });
   }, []);
@@ -278,14 +279,14 @@ const useQuoteWidget = ({ documentType = 0 }: any) => {
   }
 
   const [combinedData, setCombinedData] = useState<any>([]);
-  
+
   const getAllProductsAndMaterials = useCallback(async () => {
     const callBack = (res) => {
       if (res?.success) {
         const transformProducts = (products) => {
           return {
             value: 'products',
-            selectable:false,
+            selectable: false,
             title: t('tabs.products'),
             text: t('tabs.products'),
             level: 0,
@@ -298,25 +299,25 @@ const useQuoteWidget = ({ documentType = 0 }: any) => {
             }))
           };
         };
-  
+
         const transformMaterials = (materials) => {
           return {
             value: 'materials',
             title: t('tabs.materials'),
             text: t('tabs.materials'),
             level: 0,
-            selectable:false,
+            selectable: false,
             children: materials.map(material => ({
               value: material.materialTypeName,
               title: material.materialTypeName,
               text: material.materialTypeName,
               level: 1, // Material Types are level 1
-              selectable:false,
+              selectable: false,
               children: material.categories.map(category => ({
                 value: `${material.materialTypeName}-${category.categoryName}`,
                 title: category.categoryName,
                 text: category.categoryName,
-                selectable:false,
+                selectable: false,
                 level: 2, // Categories are level 2
                 children: category.rows.map(row => ({
                   value: row.id,
@@ -329,23 +330,23 @@ const useQuoteWidget = ({ documentType = 0 }: any) => {
             }))
           };
         };
-  
+
         const transformedProducts = transformProducts(res?.data?.products);
         const transformedMaterials = transformMaterials((res?.data?.materials));
-  
+
         // Combine the transformed data
         const combinedFinalData = [transformedProducts, transformedMaterials];
         setCombinedData(combinedFinalData);
       }
     };
-  
+
     if (selectedClient?.id && selectedClientType?.id)
       await getAllProductAndMaterialsApi(callApi, callBack, {
         clientId: selectedClient?.id,
         clientTypeId: selectedClientType?.id,
       });
   }, [selectedClient, selectedClientType]);
-  
+
 
   const handleProductChange = (e) => {
     debugger

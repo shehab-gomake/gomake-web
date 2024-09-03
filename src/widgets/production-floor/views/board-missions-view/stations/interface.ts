@@ -17,6 +17,7 @@ export interface IBoardMissionsStation {
     source: EWorkSource;
     index: number;
     id: string;
+    isEditable: boolean;
 }
 
 export interface IBoardMissionsStationTimer {

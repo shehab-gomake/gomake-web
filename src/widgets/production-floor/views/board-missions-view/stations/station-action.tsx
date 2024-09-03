@@ -1,31 +1,31 @@
-import { CircularProgress, Collapse, Fade } from "@mui/material";
+import {CircularProgress, Collapse, Fade} from "@mui/material";
 import Stack from "@mui/material/Stack";
-import { EWorkSource, HtmlElementType, RuleType } from "@/widgets/product-pricing-widget/enums";
+import {EWorkSource, HtmlElementType, RuleType} from "@/widgets/product-pricing-widget/enums";
 import Divider from "@mui/material/Divider";
 import {
     ParametersMapping,
     TextAreaActionsMapping
 } from "@/widgets/product-pricing-widget/components/action/key-value-view";
-import { useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
+import {useEffect, useState} from "react";
+import {useTranslation} from "react-i18next";
 import CheckIcon from "@mui/icons-material/Check";
-import { useStyle } from "@/widgets/production-floor/views/board-missions-view/stations/style";
+import {useStyle} from "@/widgets/production-floor/views/board-missions-view/stations/style";
 import CircleIcon from '@mui/icons-material/Circle';
-import { PrimaryButton } from "@/components/button/primary-button";
-import { IBoardMissionsStation } from "@/widgets/production-floor/views/board-missions-view/stations/interface";
-import { DateFormatterDDMMYYYY } from "@/utils/adapter";
-import { useGomakeAxios, useSnackBar } from "@/hooks";
+import {PrimaryButton} from "@/components/button/primary-button";
+import {IBoardMissionsStation} from "@/widgets/production-floor/views/board-missions-view/stations/interface";
+import {DateFormatterDDMMYYYY} from "@/utils/adapter";
+import {useGomakeAxios, useSnackBar} from "@/hooks";
 import {
     cancelBoardMissionsActionDone, toggleBoardMissionsActionTimer,
     updateBoardMissionsActionDone
 } from "@/services/api-service/production-floor/production-floor-endpoints";
 import Button from "@mui/material/Button";
-import { ActionTimer } from "@/widgets/production-floor/views/board-missions-view/stations/action-timer/action-timer";
-import { useRecoilState } from "recoil";
-import { boardMissionsDetailsState } from "@/widgets/production-floor/state/boards";
-import { ThreeOptionsModal } from "@/components";
-import { Permissions } from "@/components/CheckPermission/enum";
-import { PermissionCheck } from "@/components/CheckPermission/check-permission";
+import {ActionTimer} from "@/widgets/production-floor/views/board-missions-view/stations/action-timer/action-timer";
+import {useRecoilState} from "recoil";
+import {boardMissionsDetailsState} from "@/widgets/production-floor/state/boards";
+import {ThreeOptionsModal} from "@/components";
+import {Permissions} from "@/components/CheckPermission/enum";
+import {PermissionCheck} from "@/components/CheckPermission/check-permission";
 
 interface IProps extends IBoardMissionsStation {
     delay: number;
@@ -34,25 +34,26 @@ interface IProps extends IBoardMissionsStation {
 }
 
 const BoardMissionsStationAction = ({
-    id,
-    actionName,
-    source,
-    machineName,
-    employeeName,
-    delay,
-    dueDate,
-    outputs,
-    isDone,
-    boardMissionActionId,
-    boardMissionActionTimer,
-    selected,
-    isLastStation
-}: IProps) => {
+                                        id,
+                                        actionName,
+                                        source,
+                                        machineName,
+                                        employeeName,
+                                        delay,
+                                        dueDate,
+                                        outputs,
+                                        isDone,
+                                        boardMissionActionId,
+                                        boardMissionActionTimer,
+                                        selected,
+                                        isLastStation,
+                                        isEditable
+                                    }: IProps) => {
     const [isOpen, setIsOpen] = useState<boolean>(false);
-    const { t } = useTranslation();
-    const { classes } = useStyle();
-    const { callApi } = useGomakeAxios();
-    const { alertSuccessUpdate, alertFaultUpdate } = useSnackBar();
+    const {t} = useTranslation();
+    const {classes} = useStyle();
+    const {callApi} = useGomakeAxios();
+    const {alertSuccessUpdate, alertFaultUpdate} = useSnackBar();
     const [openReadyModal, setIsReadyModal] = useState<boolean>(false)
     const [boardMissions] = useRecoilState(boardMissionsDetailsState);
     const [loading, setLoading] = useState<boolean>(false);
@@ -126,45 +127,46 @@ const BoardMissionsStationAction = ({
     }, [selected])
     return (
         <>
-            <Fade in={true} timeout={delay} style={{ width: "100%", position: "relative" }}>
+            <Fade in={true} timeout={delay} style={{width: "100%", position: "relative"}}>
                 <Stack direction={'row'} alignItems={'center'} justifyContent={'space-between'}
-                    onClick={() => setIsOpen(!isOpen)}
-                    style={{
-                        ...classes.actionContainer,
-                        backgroundColor: isDone ? '#EAECF0' : '#F9FAFB',
-                        border: selected ? classes.actionContainerBorder : "unset",
-                    }}>
+                       onClick={() => setIsOpen(!isOpen)}
+                       style={{
+                           ...classes.actionContainer,
+                           backgroundColor: isDone ? '#EAECF0' : '#F9FAFB',
+                           border: selected ? classes.actionContainerBorder : "unset",
+                       }}>
                     <Stack>
                         <Stack padding={"10px 0"} direction={"row"} justifyContent={"space-between"}>
                             <Stack direction={"row"} gap={"16px"} alignItems={"center"}>
                                 <Stack style={classes.sectionTitle} direction={"row"} alignItems={"center"}
-                                    gap={"10px"}>
+                                       gap={"10px"}>
                                     <span>{actionName}</span>
                                     {source === EWorkSource.OUT ? (
                                         <>
-                                            <Divider orientation={"vertical"} flexItem color={"#000"} />
+                                            <Divider orientation={"vertical"} flexItem color={"#000"}/>
                                         </>
                                     ) : (
                                         machineName && (
                                             <>
-                                                <Divider orientation={"vertical"} flexItem color={"#000"} />
+                                                <Divider orientation={"vertical"} flexItem color={"#000"}/>
                                                 <span>{machineName}</span>
                                             </>
                                         )
                                     )}
                                     {
                                         employeeName && <>
-                                            <CircleIcon style={{ width: '5px', height: '5px' }} />
+                                            <CircleIcon style={{width: '5px', height: '5px'}}/>
                                             <span>{employeeName}</span>
                                         </>
                                     }
                                 </Stack>
-                                <Divider orientation={"vertical"} flexItem />
+                                <Divider orientation={"vertical"} flexItem/>
                                 <Stack direction={'row'} gap={'5px'} alignItems={'center'}>
                                     <span style={classes.detailTitle}>{t("productionFloor.timer")}</span>
-                                    <ActionTimer actionId={boardMissionActionId} loading={timerLoading} onToggle={onToggleTimer} {...boardMissionActionTimer} />
+                                    <ActionTimer actionId={boardMissionActionId} loading={timerLoading}
+                                                 onToggle={onToggleTimer} {...boardMissionActionTimer} />
                                 </Stack>
-                                <Divider orientation={"vertical"} flexItem />
+                                <Divider orientation={"vertical"} flexItem/>
                                 <Stack direction={'row'} gap={'5px'} alignItems={'center'}>
                                     <span style={classes.detailTitle}>{t("productionFloor.deliveryTime")}</span>
                                     <span style={classes.detailValue}>{DateFormatterDDMMYYYY(dueDate)}</span>
@@ -179,21 +181,22 @@ const BoardMissionsStationAction = ({
                             </Stack>
                         </Stack>
                         <Collapse in={isOpen} collapsedSize={0} orientation={"vertical"}
-                            onClick={(e) => e.stopPropagation()}>
+                                  onClick={(e) => e.stopPropagation()}>
                             {inputsParameters.length > 0 && (
                                 <>
-                                    <Divider />
+                                    <Divider/>
                                     <Stack padding={"10px 0"} direction={"row"} gap={"16px"} flexWrap={"wrap"}
                                     >
-                                        <ParametersMapping parameters={inputsParameters} isProductionFloor={true} />
+                                        <ParametersMapping parameters={inputsParameters} isProductionFloor={true}/>
                                     </Stack>
                                 </>
                             )}
                             {outputsParameters.length > 0 && source === EWorkSource.INTERNAL && (
                                 <>
-                                    <Divider />
+                                    <Divider/>
                                     <Stack padding={"10px 0"} direction={"row"} gap={"16px"} flexWrap={"wrap"}>
-                                        <ParametersMapping source={source} parameters={outputsParameters} isProductionFloor={true} />
+                                        <ParametersMapping source={source} parameters={outputsParameters}
+                                                           isProductionFloor={true}/>
                                         <TextAreaActionsMapping
                                             parameters={textAreaOutputs}
                                             actionId={id}
@@ -207,41 +210,44 @@ const BoardMissionsStationAction = ({
                         </Collapse>
                     </Stack>
                     <PermissionCheck userPermission={Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR}>
-                        <div>
-                            {
-                                loading ? <CircularProgress /> :
-                                    isDone ?
-                                        <Button variant={'contained'} onClick={(e) => {
-                                            e.stopPropagation();
-                                            onClickBackToProcess(boardMissionActionId).then()
-                                        }}
-                                            style={{
-                                                padding: '10px',
-                                                backgroundColor: '#FFF',
-                                                color: '#344054',
-                                                borderRadius: '16px'
-                                            }}>
-                                            {t("boardMissions.completed")}
-                                        </Button> :
-                                        <PrimaryButton variant={'contained'} sx={{
-                                            height: '40px',
-                                            width: '40px',
-                                            minWidth: '40px',
-                                            padding: 0,
-                                            borderRadius: '12px'
-                                        }}
-                                            onClick={(e) => {
+                        {
+                            isEditable &&
+                            <div>
+                                {
+                                    loading ? <CircularProgress/> :
+                                        isDone ?
+                                            <Button variant={'contained'} onClick={(e) => {
                                                 e.stopPropagation();
-                                                if (isLastStation) {
-                                                    setIsReadyModal(true)
-                                                } else {
-                                                    onClickDone(boardMissionActionId).then()
-                                                }
-                                            }}>
-                                            <CheckIcon />
-                                        </PrimaryButton>
-                            }
-                        </div>
+                                                onClickBackToProcess(boardMissionActionId).then()
+                                            }}
+                                                    style={{
+                                                        padding: '10px',
+                                                        backgroundColor: '#FFF',
+                                                        color: '#344054',
+                                                        borderRadius: '16px'
+                                                    }}>
+                                                {t("boardMissions.completed")}
+                                            </Button> :
+                                            <PrimaryButton variant={'contained'} sx={{
+                                                height: '40px',
+                                                width: '40px',
+                                                minWidth: '40px',
+                                                padding: 0,
+                                                borderRadius: '12px'
+                                            }}
+                                                           onClick={(e) => {
+                                                               e.stopPropagation();
+                                                               if (isLastStation) {
+                                                                   setIsReadyModal(true)
+                                                               } else {
+                                                                   onClickDone(boardMissionActionId).then()
+                                                               }
+                                                           }}>
+                                                <CheckIcon/>
+                                            </PrimaryButton>
+                                }
+                            </div>
+                        }
                     </PermissionCheck>
                     <ThreeOptionsModal
                         title={t("boardMissions.markDoneModalTitle")}
@@ -252,7 +258,7 @@ const BoardMissionsStationAction = ({
                         onClose={() => setIsReadyModal(false)}
                         onClickYes={() => onClickDone(boardMissionActionId, true)}
                         onClickNo={() => onClickDone(boardMissionActionId, false)}
-                        insideStyle={{ zIndex: 999999 }}
+                        insideStyle={{zIndex: 999999}}
                     />
                 </Stack>
             </Fade>
@@ -260,4 +266,4 @@ const BoardMissionsStationAction = ({
     );
 };
 
-export { BoardMissionsStationAction }
+export {BoardMissionsStationAction}
