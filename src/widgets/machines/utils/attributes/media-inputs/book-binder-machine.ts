@@ -12,7 +12,7 @@ const bookBinderMachine = (state: Record<string, any>) => {
             parameterKey: "paperCategoriesSuitable",
             options: [],
             value: state?.attributes?.paperCategoriesSuitable,
-            optionsUrl: '/v1/materials/get-material-categories-list?materialKey=sheets',
+            optionsUrl: '/v1/materials/get-all-print-house-material-categories?material=sheets',
             multiple: true,
         },
         ...mediaThicknessSettings(state),
