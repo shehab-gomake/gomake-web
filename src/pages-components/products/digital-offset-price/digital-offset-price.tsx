@@ -27,7 +27,6 @@ const PriceListPageWidget = ({ widgetType }) => {
         handleTabClick,
         handleNextClick,
         handlePreviousClick,
-        onOpeneMakeShape,
         onCloseGalleryModal,
         onCloseMakeShape,
         handleChange,
@@ -37,7 +36,6 @@ const PriceListPageWidget = ({ widgetType }) => {
         updateQuoteItem,
         setUrgentOrder,
         setPrintingNotes,
-        setGraphicNotes,
         setPriceRecovery,
         onCloseMultiParameterModal,
         duplicateSection,
@@ -49,7 +47,6 @@ const PriceListPageWidget = ({ widgetType }) => {
         settingParameters,
         setSettingParameters,
         priceRecovery,
-        graphicNotes,
         printingNotes,
         urgentOrder,
         makeShapeOpen,
@@ -60,19 +57,12 @@ const PriceListPageWidget = ({ widgetType }) => {
         activeTab,
         PricingTab,
         expanded,
-        clientDefaultValue,
-        clientTypeDefaultValue,
-        pricingDefaultValue,
         errorMsg,
         relatedParameters,
         jobActions,
         workFlows,
-        billingMethod,
         underParameterIds,
-        setBillingMethod,
         samlleType,
-        graphicDesigner,
-        setGraphicDesigner,
         setSamlleType,
         getOutSourcingSuppliers,
         onChangeSubProductsForPrice,
@@ -341,18 +331,12 @@ const PriceListPageWidget = ({ widgetType }) => {
                         </div>
                         <RightSideWidget
                             clasess={clasess}
-                            clientDefaultValue={clientDefaultValue}
-                            clientTypeDefaultValue={clientTypeDefaultValue}
                             template={productTemplate}
                             tabs={tabs}
                             activeTab={activeTab}
-                            onOpeneMakeShape={onOpeneMakeShape}
-                            pricingDefaultValue={pricingDefaultValue}
                             setUrgentOrder={setUrgentOrder}
                             urgentOrder={urgentOrder}
                             setPrintingNotes={setPrintingNotes}
-                            setGraphicNotes={setGraphicNotes}
-                            graphicNotes={graphicNotes}
                             printingNotes={printingNotes}
                             widgetType={widgetType}
                             setPriceRecovery={setPriceRecovery}
@@ -360,11 +344,7 @@ const PriceListPageWidget = ({ widgetType }) => {
                             setSamlleType={setSamlleType}
                             includeVAT={includeVAT}
                             setIncludeVAT={setIncludeVAT}
-                            setBillingMethod={setBillingMethod}
-                            billingMethod={billingMethod}
                             samlleType={samlleType}
-                            graphicDesigner={graphicDesigner}
-                            setGraphicDesigner={setGraphicDesigner}
                             errorMsg={errorMsg}
                             calculationServerErrorState={calculationServerErrorState}
                         />
