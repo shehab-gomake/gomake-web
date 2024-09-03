@@ -44,7 +44,7 @@ const ActionsListComponent = ({onClickApply, source}: IProps) => {
             </Button>
             {open &&
                 <ClickOutside onClick={()=> setOpen(false)}>
-                <Paper sx={{position: 'absolute', ...adaptRight(direction, 0), top: source === Source.PRODUCTION_FLOOR ? '110%' : '-610px', maxWidth: '300px', height: '600px', maxHeight: '600px', overflow: 'auto', zIndex: 99999999999999}}>
+                <Paper sx={{position: 'absolute', ...adaptRight(direction, 0), top: source === Source.PRODUCTION_FLOOR ? '110%' : '-610px', maxWidth: '300px', height: 'fit-content', maxHeight: '600px', overflow: 'auto', zIndex: 99999999999999}}>
                 <FormGroup>
                     <div style={{position: 'sticky', top: 0, backgroundColor: '#FFF', zIndex: 1}}>
                         <GomakeTextInput  placeholder={t('productionFloor.search')} value={filter} onChange={handleFilterChange}/>
