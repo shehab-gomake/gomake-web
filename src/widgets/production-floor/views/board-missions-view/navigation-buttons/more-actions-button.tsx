@@ -10,8 +10,9 @@ import {useTranslation} from "react-i18next";
 import {adaptLeft} from "@/utils/adapter";
 import {ClickOutside} from "@/components/click-out-side/click-out-side";
 import {boardMissionsDetailsState} from "@/widgets/production-floor/state/boards";
-import {createBoardMissionsChatRoomApi} from "@/services/api-service/chat/quick-blox-chat-endpoints";
-import {useGomakeAxios, useSnackBar} from "@/hooks";
+import {
+    SelectContactComponent
+} from "@/widgets/production-floor/views/board-missions-view/navigation-buttons/select-contact-component";
 
 const MoreActionsButton = () => {
     const [open, setOpen] = useState<boolean>(false);
@@ -21,10 +22,9 @@ const MoreActionsButton = () => {
     const [boardMissions] = useRecoilState(boardMissionsDetailsState);
     const {handleFileUpload} = useUploadFiles(boardMissions?.orderItemId, boardMissions?.filesPath);
     const {t} = useTranslation();
-    const {callApi} = useGomakeAxios();
     const direction = t('direction');
-    const [loading, setLoading] = useState<boolean>(false);
-    const {alertFaultGetData} = useSnackBar();
+    const [loading] = useState<boolean>(false);
+    const [openSendGraphicFileModal, setOpenSendGraphicFileModal] = useState<boolean>(false);
     const handleClose = () => {
         setOpen(false);
     };
@@ -47,19 +47,7 @@ const MoreActionsButton = () => {
         });
     };
 
-    const getBoardMissionChatRoomId = async () => {
-        setLoading(true)
-        setOpen(false);
-        const callBack = res => {
-            setLoading(false);
-            if (res.success) {
-                push(`/messenger?dialogId=${res.data?._id}`)
-            } else {
-                alertFaultGetData();
-            }
-        }
-        await createBoardMissionsChatRoomApi(callApi, callBack, {boardMissionId: boardMissions.boardMissionId})
-    }
+
     return (
         <div style={{position: 'relative'}}>
             <PrimaryButton disabled={loading} onClick={() => setOpen(!open)} variant={'contained'}
@@ -78,11 +66,14 @@ const MoreActionsButton = () => {
                             <MenuItem onClick={onClickUpdateFile}>{t('productionFloor.uploadFile')}</MenuItem>
                         }
                         <MenuItem onClick={handleClickEdit}>{t('productionFloor.edit')}</MenuItem>
-                        <MenuItem onClick={getBoardMissionChatRoomId}>{t('productionFloor.sendGraphicsApprove')}</MenuItem>
+                        <MenuItem
+                            onClick={() => setOpenSendGraphicFileModal(true)}>{t('productionFloor.sendGraphicsApprove')}</MenuItem>
                     </Paper>
                 </ClickOutside>
             }
             <input type={'file'} multiple value={''} onChange={handleFileSelect} hidden={true} ref={fileInputRef}/>
+            <SelectContactComponent openModal={openSendGraphicFileModal}
+                                    onClose={() => setOpenSendGraphicFileModal(false)}/>
         </div>
     );
 }

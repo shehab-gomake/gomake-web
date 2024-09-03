@@ -14,7 +14,7 @@ const useProductionFloorSignalr = () => {
     useEffect(() => {
         if (connection) {
             connection.on("UpdateBoardMissionsStation", () => {
-                getData().then();
+                getData(connection?.connectionId).then();
             });
         }
     }, [connection]);
