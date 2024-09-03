@@ -79,39 +79,17 @@ const useQuoteWidget = ({ documentType = 0 }: any) => {
     }
   };
 
-  // const checkWhatRenderArray = (e) => {
-  //   if (e.target.value) {
-  //     getAllCustomersCreateQuote(e.target.value);
-  //   }
-  // };
 
-  // const renderOptions = () => {
-  //   return customersListCreateQuote;
-  // };
-
-  // const getAllProducts = useCallback(async () => {
-  //   if (selectedClient?.id && selectedClientType?.id)
-  //     await getAllProductsForDropDownList(callApi, setProductValues, {
-  //       clientId: selectedClient?.id,
-  //       clientTypeId: selectedClientType?.id,
-  //     });
-  // }, [selectedClient, selectedClientType]);
 
   const getAllCustomersCreateQuote = useCallback(async (SearchTerm?) => {
-    await getAndSetAllCustomers(callApi, setCustomersListCreateQuote, {
-      clientType: documentType === DOCUMENT_TYPE.purchaseOrder || documentType === DOCUMENT_TYPE.purchaseInvoice || documentType === DOCUMENT_TYPE.purchaseInvoiceRefund ? "S" : "C",
-      onlyCreateOrderClients: documentType != DOCUMENT_TYPE.quote ? true : false,
-      searchTerm: SearchTerm,
-    });
+    // await getAndSetAllCustomers(callApi, setCustomersListCreateQuote, {
+    //   clientType: documentType === DOCUMENT_TYPE.purchaseOrder || documentType === DOCUMENT_TYPE.purchaseInvoice || documentType === DOCUMENT_TYPE.purchaseInvoiceRefund ? "S" : "C",
+    //   onlyCreateOrderClients: documentType != DOCUMENT_TYPE.quote ? true : false,
+    //   searchTerm: SearchTerm,
+    // });
   }, []);
 
   const [clientListData, setClientListData] = useState([])
-  const getAllCustomersCreateOrder = useCallback(async () => {
-    await getAndSetAllCustomers(callApi, setClientListData, {
-      clientType: "C",
-      onlyCreateOrderClients: true,
-    });
-  }, []);
 
   const handleOpenModal = (newClient) => {
     //setPreviousClient(selectedClient ? selectedClient : previousClient);
