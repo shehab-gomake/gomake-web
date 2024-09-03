@@ -200,6 +200,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       return customersListCreateOrder;
     } else return customersListCreateQuote;
   };
+
   const getAllCustomersCreateQuote = useCallback(async (SearchTerm?) => {
     await getAndSetAllCustomers(callApi, setCustomersListCreateQuote, {
       clientType: "C",
@@ -225,9 +226,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     } else {
       setCanOrder(false);
       getAllCustomersCreateQuote(e.target.value);
-
     }
   };
+
   const onClickDocumentLogs = async (document: any) => {
     try {
       await getAllDocumentLogs(document?.id);
@@ -1227,7 +1228,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   useEffect(() => {
     if (!isFromHomePage) {
       getAllCustomersCreateQuote();
-      getAllCustomersCreateOrder();
       getClientTypesCategories();
     }
   }, []);

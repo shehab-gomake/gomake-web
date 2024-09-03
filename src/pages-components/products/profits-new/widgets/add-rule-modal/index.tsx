@@ -46,7 +46,6 @@ const AddRuleModal = ({
     parametersStateValue,
     Outputs,
     materialsTypes,
-    clients,
     expression,
     mainconditions,
     categories,

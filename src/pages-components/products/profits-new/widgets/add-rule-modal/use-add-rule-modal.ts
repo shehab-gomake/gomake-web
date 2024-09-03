@@ -9,7 +9,6 @@ import {
 } from "@/services/hooks";
 import { clientTypesState, parametersState, productsState } from "@/store";
 import { useOutputs } from "@/widgets/properties/hooks/use-outputs";
-import { usePrintHouseClients } from "@/widgets/properties/hooks/use-print-house-clients";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
@@ -42,7 +41,6 @@ const useAddRuleModal = ({
   const GET_MATERIALS_TYPES_URL = "/v1/materials/getMaterialsTypes";
   const { callApi } = useGomakeAxios();
   const {t} = useTranslation();
-  const { clients } = usePrintHouseClients();
   const [openScheduleModal,setOpenScheduleModal]=useState(false)
   const categoriesList = useRecoilValue(machineCategoriesState);
   
@@ -592,7 +590,6 @@ const useAddRuleModal = ({
     setExceptionType,
     additionalProfit,
     setAdditionalProfit,
-    clients,
     BooleanRender,
     expression,
     mainconditions,
