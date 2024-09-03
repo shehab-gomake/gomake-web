@@ -44,7 +44,6 @@ const BusinessNewWidget = ({
   clientName,
   setClientName
 }) => {
-  const { classes } = useStyle();
   const {
     t,
     setIsConfirmation,
@@ -69,8 +68,10 @@ const BusinessNewWidget = ({
     setCustomer,
     onCustomerAdd,
     canEditDocument,
-
   } = useBusinessWidget({ values, documentType });
+  const dir: 'rtl' | 'ltr' = t('direction');
+  const isRTL = dir === 'rtl';
+  const { classes } = useStyle({isRTL});
 
   useEffect(() => {
     setPurchaseNumber(values?.purchaseNumber);
@@ -107,6 +108,7 @@ const BusinessNewWidget = ({
         <PermissionCheck userPermission={Permissions.ADD_CLIENT}>
           {(!isQuoteConfirmation && documentType === DOCUMENT_TYPE.quote) && <span style={classes.plusStyle} onClick={() => setOpenCustomerModal(true)}>+</span>}
         </PermissionCheck>
+        
         {
           quoteStateValue?.client?.isOccasional &&
           <InputUpdatedValues
