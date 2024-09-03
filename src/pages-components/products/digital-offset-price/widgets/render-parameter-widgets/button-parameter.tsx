@@ -345,7 +345,8 @@ const ButtonParameterWidget = ({
       if (materialData?.length === 0 && isSelectedShape) {
         let materialPath = parameter?.materialPath[0];
         let materialDataPath = allMaterials?.find((material) => material?.pathName === materialPath)?.data;
-        const selectedShapeId = isParameterSettings ? isSelectedShape[0]?.id : isSelectedShape?.valueIds[0];
+        
+        let selectedShapeId = isParameterSettings && isSelectedShape && isSelectedShape.length > 0 ? isSelectedShape[0]?.id : isSelectedShape && isSelectedShape.length > 0 ? isSelectedShape[0]?.valueIds[0] : null;
         const selectedMaterial = materialDataPath?.find(material => material.valueId === selectedShapeId);
         const transformedShape: any = transformSelectedShape(selectedMaterial);
         setSelectedShape(transformedShape);
@@ -355,7 +356,7 @@ const ButtonParameterWidget = ({
       if (materialData?.length === 0 && isSelectedShape && !parameter?.isHidden) {
         let materialPath = parameter?.materialPath[0];
         let materialDataPath = allMaterials?.find((material) => material?.pathName === materialPath)?.data;
-        const selectedShapeId = isParameterSettings ? isSelectedShape[0]?.id : isSelectedShape?.valueIds[0];
+        let selectedShapeId = isParameterSettings && isSelectedShape && isSelectedShape.length > 0 ? isSelectedShape[0]?.id : isSelectedShape && isSelectedShape.length > 0 ? isSelectedShape[0]?.valueIds[0] : null;
         const selectedMaterial = materialDataPath?.find(material => material.valueId === selectedShapeId);
         const transformedShape: any = transformSelectedShape(selectedMaterial);
         setSelectedShape(transformedShape);
