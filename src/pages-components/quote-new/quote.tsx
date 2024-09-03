@@ -188,7 +188,6 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false, isPrePa
     updateCurrency,
     refreshExchangeRate,
     getQuote,
-    selectConfirmBusiness,
     handleSaveBtnClickForDocument,
     getAllClientContacts,
     copyFromDocumentType,
@@ -413,7 +412,6 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false, isPrePa
               <div style={classes.bordersecondContainer}>
                 <BusinessNewWidget
                   values={quoteState}
-                  selectConfirmBusiness={selectConfirmBusiness}
                   onBlurBusinessName={onBlurBusinessName}
                   isUpdateBusinessName={isUpdateBusinessName}
                   setIsUpdateBusinessName={setIsUpdateBusinessName}
