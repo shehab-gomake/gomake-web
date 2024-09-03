@@ -88,8 +88,7 @@ const useAddRuleModal = ({
     ProductType: 10
   };
 
-  const { Outputs } = useOutputs();
-  const { machines } = usePrintHouseMachines();
+  const { Outputs } = useOutputs({ shouldRenderOutputsOnMount: openModal });
   const [materialsTypes, setMaterialsTypes] = useState<
     { materialTypeKey: string; materialTypeName: string }[]
   >([]);
@@ -218,11 +217,11 @@ const useAddRuleModal = ({
       await getAndSetMachincesByActionId(callApi, setMachincesList, {
         actionId: router.query.actionId,
       });
-      getMachinesList()
+      getMachinesList();
     } else {
-      getMachinesList()
+      getMachinesList();
     }
-  }, [router, machines]);
+  }, [router]);
 
   const getProducts = useCallback(async () => {
     await getAllProductsForDropDownList(callApi, setProductsState);
@@ -261,7 +260,6 @@ const useAddRuleModal = ({
     if (router.query.actionId) {
       const callBack = (res) => {
         if (res.success) {
-          debugger
           const employeeList = res.data.map((employee) => ({
             label: employee.name,
             id: employee.id,
@@ -275,30 +273,22 @@ const useAddRuleModal = ({
     }
   }
 
-  // should be just when the add rule modal open
-  useEffect(() => {
-    getProducts();
-    getParameters();
-    getAllMaterials();
-    getAllProductTypes();
-    getEmployeeCategories();
-  }, []);
-
-
+  // ensuring it only renders when the 'Add Rule' modal is opened.
   useEffect(() => {
     if (openModal) {
       getClientTypes();
+      getProducts();
+      getParameters();
+      getAllMaterials();
+      getAllProductTypes();
+      getEmployeeCategories();
+      getMachincesByActionId();
     }
   }, [openModal]);
 
   useEffect(() => {
     getEmployeesByActionId();
   }, [router]);
-
-  useEffect(() => {
-    getMachincesByActionId();
-    // getMachinesList()
-  }, [router, machines]);
 
   const [exceptionType, setExceptionType] = useState<any>();
   const [additionalProfit, setAdditionalProfit] = useState<any>(0);
@@ -608,7 +598,6 @@ const useAddRuleModal = ({
     propertieValue,
     setPropertieValue,
     materialsTypes,
-    machines,
     GroupByOptions,
     agentsCategories,
     createForQuoteWidget,
