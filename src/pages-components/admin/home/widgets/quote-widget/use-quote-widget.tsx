@@ -1,10 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { useCustomerDropDownList, useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
-import {
-  getAllProductsForDropDownList,
-  getAndSetAllCustomers,
-  getAndSetClientTypes,
-} from "@/services/hooks";
+import { getAndSetClientTypes} from "@/services/hooks";
 import { useTranslation } from "react-i18next";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
@@ -18,16 +14,12 @@ import {
   saveDocumentApi,
 } from "@/services/api-service/generic-doc/documents-api";
 import { selectedClientState } from "@/pages-components/quotes/states";
-import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { CLIENT_TYPE_Id } from "@/pages/customers/enums";
 import { prevSelectedClientState, ProductCategoryType } from "./states";
 import { getAllProductAndMaterialsApi } from "@/services/api-service/products/product-endpoints";
 import { addDocumentItemFromMaterialApi } from "@/services/api-service/materials/materials-endpoints";
-import { ProductIcon } from "@/components/auto-complete/icons";
-import CheckIcon from "@mui/icons-material/Check";
-import * as React from "react";
 
-const useQuoteWidget = ({ documentType = 0 }: any) => {
+const useQuoteWidget = () => {
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
   const { navigate } = useGomakeRouter();
@@ -35,7 +27,6 @@ const useQuoteWidget = ({ documentType = 0 }: any) => {
   const [clientTypesValue, setClientTypesValues] = useState([]);
   const { alertFaultAdded, alertSuccessAdded } = useSnackBar();
   // const [productValue, setProductValues] = useState([]);
-  const [customersListCreateQuote, setCustomersListCreateQuote] = useState([]);
   const [userQuote, setUserQuote] = useState<any>(null);
   const [openModal, setOpenModal] = useState(false);
   const [selectedClientType, setSelectedClientType] = useState<any>({});
@@ -97,21 +88,6 @@ const useQuoteWidget = ({ documentType = 0 }: any) => {
   //     });
   // }, [selectedClient, selectedClientType]);
 
-  const getAllCustomersCreateQuote = useCallback(async (SearchTerm?) => {
-    await getAndSetAllCustomers(callApi, setCustomersListCreateQuote, {
-      clientType: documentType === DOCUMENT_TYPE.purchaseOrder || documentType === DOCUMENT_TYPE.purchaseInvoice || documentType === DOCUMENT_TYPE.purchaseInvoiceRefund ? "S" : "C",
-      onlyCreateOrderClients: documentType != DOCUMENT_TYPE.quote ? true : false,
-      searchTerm: SearchTerm,
-    });
-  }, []);
-
-  const [clientListData, setClientListData] = useState([])
-  const getAllCustomersCreateOrder = useCallback(async () => {
-    await getAndSetAllCustomers(callApi, setClientListData, {
-      clientType: "C",
-      onlyCreateOrderClients: true,
-    });
-  }, []);
 
   const handleOpenModal = (newClient) => {
     //setPreviousClient(selectedClient ? selectedClient : previousClient);
@@ -223,11 +199,6 @@ const useQuoteWidget = ({ documentType = 0 }: any) => {
   const getAllClientTypes = useCallback(async () => {
     try {
       await getAndSetClientTypes(callApi, setClientTypesValues, { cardType: CLIENT_TYPE_Id.CUSTOMER });
-      if (userQuote?.result) {
-        getAllCustomersCreateQuote(userQuote?.result?.clientName);
-      } else {
-        getAllCustomersCreateQuote();
-      }
     } catch (error) {
       console.error("Error fetching client types:", error);
     }
@@ -390,7 +361,6 @@ const useQuoteWidget = ({ documentType = 0 }: any) => {
 
   return {
     clientTypesValue,
-    customersListCreateQuote,
     isDisabled,
     id,
     openModal,
@@ -429,7 +399,6 @@ const useQuoteWidget = ({ documentType = 0 }: any) => {
     QuoteId,
     setQuoteId,
     getAllClientTypes,
-    clientListData,
     combinedData,
     handleProductChange
   };

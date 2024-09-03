@@ -71,7 +71,7 @@ const QuoteWidget = ({ isAdmin = true }) => {
     combinedData,
     selectedProduct,
     handleProductChange
-    } = useQuoteWidget(DOCUMENT_TYPE.quote);
+    } = useQuoteWidget();
 
   useEffect(() => {
     if (userQuote) {
@@ -100,11 +100,10 @@ const QuoteWidget = ({ isAdmin = true }) => {
   }, []);
 
   useEffect(() => {
+    // it for customer card
     getClientTypesCategories();
   }, []);
   
-
-
   return (
     <div data-tour="quote-widget" style={classes.mainContainer}>
       <div style={classes.customerSectionStyle}>

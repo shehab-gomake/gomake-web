@@ -17,7 +17,6 @@ import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 
 const BusinessNewWidget = ({
   values,
-  selectConfirmBusiness,
   onBlurPurchaseNumber,
   isUpdatePurchaseNumber,
   setIsUpdatePurchaseNumber,
