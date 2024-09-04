@@ -8,9 +8,13 @@ import {
     stationGeneralInformationState
 } from "@/widgets/production-floor/views/board-missions-view/stations/state";
 import {boardMissionsDetailsState} from "@/widgets/production-floor/state/boards";
+import { useTranslation } from "react-i18next";
 
 const useBoardMissionsStations = () => {
     const {callApi} = useGomakeAxios();
+    const {t} = useTranslation();
+    const dir: 'rtl' | 'ltr' = t('direction');
+    const isRTL = dir === 'rtl';
     const {query, replace, pathname} = useRouter();
     const {boardMissionsId, step, productType} = query;
     const [stations, setStations] = useRecoilState(boardMissionsStationsState);
@@ -43,7 +47,9 @@ const useBoardMissionsStations = () => {
         stations,
         subWorkFlows,
         boardMissions,
-        onClickAllJob
+        onClickAllJob,
+        t,
+        isRTL
     }
 }
 
