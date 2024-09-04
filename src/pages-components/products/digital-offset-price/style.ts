@@ -75,6 +75,26 @@ const useStyle = () => {
         overflow: "scroll",
         paddingBottom: 150,
       },
+
+      rightSideMainContainerSkelton:{
+        display: "flex",
+        flexDirection: "column" as "column",
+        justifyContent: "flex-start",
+        alignItems: "flex-start",
+        width: 330,
+        minWidth: 330,
+        maxWidth: 330,
+        height: "100%",
+        backgroundColor: "white",
+        boxShadow: "0px 0px 3px 0px rgba(129, 129, 129, 0.12)",
+        padding: 15,
+        marginTop: -20,
+        borderRadius: 5,
+        position: "fixed" as "fixed",
+        ...adaptLeft(t("direction"), 0),
+        overflow: "scroll",
+        paddingBottom: 150,
+      },
       rightSideContainer: {
         width: "100%",
       },
@@ -794,7 +814,13 @@ const useStyle = () => {
         position: "absolute",
         top: 0,
         right: 0,
-      }
+      },
+      skeletonContainer: {
+        padding: '16px',
+        display: 'flex',
+        flexDirection: 'column' as "column",
+        gap: '16px',  
+      },
 
     };
   }, [i18next.language, t, direction,screenWidth]);
