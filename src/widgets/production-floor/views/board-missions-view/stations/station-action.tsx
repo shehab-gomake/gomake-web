@@ -82,7 +82,6 @@ const BoardMissionsStationAction = ({
             setLoading(false);
             
             if (res.success) {
-                debugger
                 const currentActionId = res.data.currentStationId;
                 //stations.find(x=>x.boardMissionActionId == currentActionId).;
                 setStations(stations.map(station => {
@@ -136,7 +135,8 @@ const BoardMissionsStationAction = ({
             setTimerLoading(false);
             setStations(stations.map(station => {
                 if(station.boardMissionActionId == boardMissionActionId){
-                    return {...station,boardMissionActionTimer:{...station.boardMissionActionTimer,isTimerRunning:!station.boardMissionActionTimer.isTimerRunning,totalRunningTime:seconds}};
+                    const isTimerRunning = station.boardMissionActionTimer ?  !station.boardMissionActionTimer.isTimerRunning : true;
+                    return {...station,boardMissionActionTimer:{...station.boardMissionActionTimer,isTimerRunning:isTimerRunning,totalRunningTime:seconds}};
                 }
                 return {...station};
             }))

@@ -26,7 +26,6 @@ const useProductionFloorData = () => {
     const {alertSuccessGetData, alertFaultGetData, alertFaultUpdate, alertSuccessUpdate} = useSnackBar();
 
     const getData = async (connectionId?: string) => {
-        debugger
         const callBack = (res) => {
             if (res.success) {
                 setData(res?.data?.boardMissionsCollections);
