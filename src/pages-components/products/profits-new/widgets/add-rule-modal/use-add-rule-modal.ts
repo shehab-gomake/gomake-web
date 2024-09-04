@@ -422,7 +422,6 @@ const useAddRuleModal = ({
   ]);
 
   const createProperties = useCallback(async () => {
-    debugger
     if (!propertieValue) {
       alertFaultAdded();
       return;

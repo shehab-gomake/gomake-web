@@ -12,12 +12,13 @@ import {productionFloorPathsState} from "@/widgets/production-floor/state/produc
 import {IBoardMissions} from "@/widgets/production-floor/interfaces/board-missions";
 import {useTranslation} from "react-i18next";
 import {IStatusesBoardsMissions} from "@/widgets/production-floor/interfaces/production-floor-data-response";
+import {useState} from "react";
 
 const useProductionFloorData = () => {
     const {t} = useTranslation();
     const {callApi} = useGomakeAxios();
     const [data, setData] = useRecoilState<IStatusesBoardsMissions[]>(boardsMissionsState);
-    const [abortController, setAbortController] = useRecoilState(getDataAbortController);
+    const [abortController, setAbortController] = useState(null);
     const [, setFilters] = useRecoilState(productionFloorFiltersState);
     const [, setTags] = useRecoilState(tagsState);
     const [, setUserGroups] = useRecoilState(userProductionFloorGroupsState);
@@ -38,7 +39,8 @@ const useProductionFloorData = () => {
         if (abortController) {
             abortController.abort();
         }
-        setAbortController(new AbortController);
+        var newRequestAbortController = new AbortController();
+        setAbortController(newRequestAbortController);
         return await getProductionFloorData(callApi, callBack, connectionId, false, abortController);
     }
 
