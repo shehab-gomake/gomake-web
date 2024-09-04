@@ -19,6 +19,7 @@ import { useGoMakeTour } from "@/hooks/use-go-make-tour";
 import { useEffect } from "react";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { currentProductItemValuePriceState, lastProductItemValuePriceState } from "@/widgets/product-pricing-widget/state";
+import { PriceListPageSkeletonWidget } from "./digital-offset-price-skeleton";
 
 const PriceListPageWidget = ({ widgetType }) => {
     const { clasess } = useStyle();
@@ -226,7 +227,7 @@ const PriceListPageWidget = ({ widgetType }) => {
     const { } = useGoMakeTour(productSteps, [relatedParameters])
     return (
         <div>
-            {productTemplate?.sections?.length > 0 && (
+            {productTemplate?.sections?.length > 0 ? (
                 <div style={clasess.mainContainer}>
                     <HeaderTitle
                         title={productTemplate?.name}
@@ -238,94 +239,84 @@ const PriceListPageWidget = ({ widgetType }) => {
                             <div style={clasess.tabsContainer}>
                                 <ThemeProvider theme={theme}>
                                     <Tabs variant="scrollable" scrollButtons={"auto"} >
-                                        {[...visibleSections, PricingTab]?.map(
-                                            (item, index) => {
-                                                return (
-                                                    <TabsMappingWidget
-                                                        key={`tab-${index}`}
-                                                        clasess={clasess}
-                                                        index={index}
-                                                        handleTabClick={handleTabClick}
-                                                        activeIndex={activeIndex}
-                                                        item={item}
-                                                        productTemplate={productTemplate}
-                                                        onDuplicateSection={duplicateSection}
-                                                        onRemoveSection={removeSection}
-                                                        setProductTemplate={setProductTemplate}
-                                                        isAdmin={false}
-                                                    />
-                                                );
-                                            }
-                                        )}
+                                        {[...visibleSections, PricingTab]?.map((item, index) => (
+                                            <TabsMappingWidget
+                                                key={`tab-${index}`}
+                                                clasess={clasess}
+                                                index={index}
+                                                handleTabClick={handleTabClick}
+                                                activeIndex={activeIndex}
+                                                item={item}
+                                                productTemplate={productTemplate}
+                                                onDuplicateSection={duplicateSection}
+                                                onRemoveSection={removeSection}
+                                                setProductTemplate={setProductTemplate}
+                                                isAdmin={false}
+                                            />
+                                        ))}
                                     </Tabs>
-
                                 </ThemeProvider>
-
                             </div>
 
-                            <div className={`custom-scrollbar`} style={{ height: 650, overflow: "scroll", width: "calc(100% - 330px)" }}>
+                            <div className="custom-scrollbar" style={{ height: 650, overflow: "scroll", width: "calc(100% - 330px)" }}>
                                 <div style={clasess.sectionsContainer}>
-                                    {[...visibleSections, PricingTab]?.map(
-                                        (section: any, index: number) => {
-                                            if (index === activeIndex) {
-                                                if (
-                                                    section.name === t("products.offsetPrice.admin.Pricing")
-                                                ) {
-                                                    return (
-                                                        <PricingWidget
-                                                            getOutSourcingSuppliers={getOutSourcingSuppliers}
-                                                            actions={jobActions}
-                                                            workFlows={workFlows}
-                                                            widgetType={widgetType}
-                                                        />
-                                                    );
-                                                } else {
-                                                    return section?.subSections
-                                                        ?.filter((x) => !x.isHidden)
-                                                        .map((subSection: any, index: number) => {
-                                                            if (subSection?.isAccordion) {
-                                                                return (
-                                                                    <AccordionMappingWidget
-                                                                        key={index}
-                                                                        clasess={clasess}
-                                                                        expanded={expanded}
-                                                                        index={index}
-                                                                        handleChange={handleChange}
-                                                                        subSection={subSection}
-                                                                        section={section}
-                                                                        _renderParameterType={_renderParameterType}
-                                                                        _getParameter={_getParameter}
-                                                                        relatedParameters={relatedParameters}
-                                                                        duplicateParameters={duplicateParameters}
-                                                                        template={productTemplate}
-                                                                        setTemplate={setProductTemplate}
-                                                                        underParameterIds={underParameterIds}
-                                                                    />
-                                                                );
-                                                            } else {
-                                                                return (
-                                                                    <SectionMappingWidget
-                                                                        key={index}
-                                                                        clasess={clasess}
-                                                                        index={index}
-                                                                        subSection={subSection}
-                                                                        section={section}
-                                                                        _renderParameterType={_renderParameterType}
-                                                                        _getParameter={_getParameter}
-                                                                        relatedParameters={relatedParameters}
-                                                                        isAccordion={false}
-                                                                        duplicateParameters={duplicateParameters}
-                                                                        template={productTemplate}
-                                                                        setTemplate={setProductTemplate}
-                                                                        underParameterIds={underParameterIds}
-                                                                    />
-                                                                );
-                                                            }
-                                                        });
-                                                }
+                                    {[...visibleSections, PricingTab]?.map((section, index) => {
+                                        if (index === activeIndex) {
+                                            if (section.name === "Pricing") {
+                                                return (
+                                                    <PricingWidget
+                                                        getOutSourcingSuppliers={getOutSourcingSuppliers}
+                                                        actions={jobActions}
+                                                        workFlows={workFlows}
+                                                        widgetType={widgetType}
+                                                    />
+                                                );
+                                            } else {
+                                                return section?.subSections
+                                                    ?.filter(x => !x.isHidden)
+                                                    .map((subSection, index) => {
+                                                        if (subSection?.isAccordion) {
+                                                            return (
+                                                                <AccordionMappingWidget
+                                                                    key={index}
+                                                                    clasess={clasess}
+                                                                    expanded={expanded}
+                                                                    index={index}
+                                                                    handleChange={handleChange}
+                                                                    subSection={subSection}
+                                                                    section={section}
+                                                                    _renderParameterType={_renderParameterType}
+                                                                    _getParameter={_getParameter}
+                                                                    relatedParameters={relatedParameters}
+                                                                    duplicateParameters={duplicateParameters}
+                                                                    template={productTemplate}
+                                                                    setTemplate={setProductTemplate}
+                                                                    underParameterIds={underParameterIds}
+                                                                />
+                                                            );
+                                                        } else {
+                                                            return (
+                                                                <SectionMappingWidget
+                                                                    key={index}
+                                                                    clasess={clasess}
+                                                                    index={index}
+                                                                    subSection={subSection}
+                                                                    section={section}
+                                                                    _renderParameterType={_renderParameterType}
+                                                                    _getParameter={_getParameter}
+                                                                    relatedParameters={relatedParameters}
+                                                                    isAccordion={false}
+                                                                    duplicateParameters={duplicateParameters}
+                                                                    template={productTemplate}
+                                                                    setTemplate={setProductTemplate}
+                                                                    underParameterIds={underParameterIds}
+                                                                />
+                                                            );
+                                                        }
+                                                    });
                                             }
                                         }
-                                    )}
+                                    })}
                                 </div>
                             </div>
                         </div>
@@ -358,37 +349,33 @@ const PriceListPageWidget = ({ widgetType }) => {
                             justifyContent: "flex-end",
                             alignItems: "center",
                             position: "fixed",
-                            // paddingRight: "15px",
-                            // ...adaptPaddingLeft(direction, 15),
                             bottom: 0,
                             right: 0,
                             boxShadow: "0px 0px 5px rgba(0, 0, 0, 0.08)",
                             height: 65,
-                            // zIndex: 5,
                             backgroundColor: "#FFF",
                         }}
                     >
                         <div style={{ width: "68%" }}>
                             <div style={clasess.addPreviousContainer}>
-                                {activeIndex != 0 ? (
+                                {activeIndex !== 0 && (
                                     <GomakePrimaryButton
                                         style={clasess.previousBtnStyle}
                                         onClick={handlePreviousClick}
                                     >
-                                        {t("products.offsetPrice.admin.previousBtn")}
+                                        Previous
                                     </GomakePrimaryButton>
-                                ) : null}
-                                {[...productTemplate?.sections, PricingTab].length - 1 !=
-                                    activeIndex ? (
-                                    <div data-tour={'next-button'}>
+                                )}
+                                {([...productTemplate?.sections, PricingTab].length - 1) !== activeIndex && (
+                                    <div data-tour="next-button">
                                         <GomakePrimaryButton
                                             style={clasess.nextBtnStyle}
                                             onClick={handleNextClick}
                                         >
-                                            {t("products.offsetPrice.admin.nextBtn")}
+                                            Next
                                         </GomakePrimaryButton>
                                     </div>
-                                ) : null}
+                                )}
                             </div>
                         </div>
                         <div style={{ width: 220, height: 40, marginLeft: 55, marginRight: 55 }}>
@@ -397,20 +384,22 @@ const PriceListPageWidget = ({ widgetType }) => {
                                     style={clasess.addOrderBtn}
                                     onClick={updateQuoteItem}
                                 >
-                                    {t("materials.buttons.edit")}
+                                    Edit
                                 </GomakePrimaryButton>
                             ) : (
                                 <GomakePrimaryButton
-                                    data-tour={'addPricingBtn'}
+                                    data-tour="addPricingBtn"
                                     style={clasess.addOrderBtn}
                                     onClick={navigateForRouter}
                                 >
-                                    {t("products.offsetPrice.admin.addOrder")}
+                                    Add Order
                                 </GomakePrimaryButton>
                             )}
                         </div>
                     </div>
                 </div>
+            ) : (
+                <PriceListPageSkeletonWidget />
             )}
 
             <MakeShapeModal

@@ -24,12 +24,8 @@ const ButtonParameterWidget = ({
   const router = useRouter()
   const { alertFaultAdded, alertSuccessAdded } = useSnackBar();
   const { callApi } = useGomakeAxios();
-  const [subProducts, setProducts] = useRecoilState<any>(
-    subProductsParametersState
-  );
-  const subProductsParameters = subProducts?.find(
-    (x) => x.type === subSection?.type
-  )?.parameters;
+  const [subProducts, setProducts] = useRecoilState<any>(subProductsParametersState);
+  const subProductsParameters = subProducts?.find((x) => x.type === subSection?.type)?.parameters;
   const [isSelectedShape, setIsSelectedShape] = useState<any>();
   const [selectedShape, setSelectedShape] = useState<any>();
   const [isStraightKnife, setIsStraightKnife] = useState(false);
@@ -322,7 +318,9 @@ const ButtonParameterWidget = ({
           param?.actionIndex === parameter?.actionIndex
         );
       });
-      setIsSelectedShape(isSelectedShape);
+      if (isSelectedShape) {
+        setIsSelectedShape(isSelectedShape);
+      }
     }
 
   }, [subProductsParameters, isParameterSettings, parameter]);
@@ -341,118 +339,107 @@ const ButtonParameterWidget = ({
 
   }, [materialData, isSelectedShape, isParameterSettings]);
   useEffect(() => {
-    if (isParameterSettings) {
-      if (materialData?.length === 0 && isSelectedShape) {
-        let materialPath = parameter?.materialPath[0];
-        let materialDataPath = allMaterials?.find((material) => material?.pathName === materialPath)?.data;
-        
-        let selectedShapeId = isParameterSettings && isSelectedShape && isSelectedShape.length > 0 ? isSelectedShape[0]?.id : isSelectedShape && isSelectedShape.length > 0 ? isSelectedShape[0]?.valueIds[0] : null;
-        const selectedMaterial = materialDataPath?.find(material => material.valueId === selectedShapeId);
-        const transformedShape: any = transformSelectedShape(selectedMaterial);
-        setSelectedShape(transformedShape);
-      }
-    }
-    else {
-      if (materialData?.length === 0 && isSelectedShape && !parameter?.isHidden) {
-        let materialPath = parameter?.materialPath[0];
-        let materialDataPath = allMaterials?.find((material) => material?.pathName === materialPath)?.data;
-        let selectedShapeId = isParameterSettings && isSelectedShape && isSelectedShape.length > 0 ? isSelectedShape[0]?.id : isSelectedShape && isSelectedShape.length > 0 ? isSelectedShape[0]?.valueIds[0] : null;
-        const selectedMaterial = materialDataPath?.find(material => material.valueId === selectedShapeId);
-        const transformedShape: any = transformSelectedShape(selectedMaterial);
-        setSelectedShape(transformedShape);
-        const dieCutSizesParametersArray = [];
-        let dieUnitWidth = parameter?.code === "DieKissCut" ? transformedShape?.rowData?.unitWidth?.value + "" : transformedShape?.rowData?.width?.value + "";
-        let dieUnitLength = parameter?.code === "DieKissCut" ? transformedShape?.rowData?.unitLength?.value + "" : transformedShape?.rowData?.length?.value + "";
-        dieCutSizesParametersArray.push({ parameterCode: "Width", value: dieUnitWidth });
-        dieCutSizesParametersArray.push({ parameterCode: "Height", value: dieUnitLength });
+    if (materialData?.length > 0 || !isSelectedShape) return;
 
-        let temp = subProductsParameters.map(subProductParam => {
-          const dieCutSizeParameter = dieCutSizesParametersArray.find(param => param.parameterCode === subProductParam.parameterCode);
-          if (dieCutSizeParameter) {
-            return {
-              ...subProductParam,
-              values: [dieCutSizeParameter.value],
-              isDisabled: true
+    const materialPath = parameter?.materialPath?.[0];
+    const materialDataPath = allMaterials?.find((material) => material?.pathName === materialPath)?.data;
+
+    if (!materialDataPath) return;
+
+    const selectedShapeId = isParameterSettings ? isSelectedShape?.[0]?.id : isSelectedShape?.valueIds?.[0];
+    const selectedMaterial = materialDataPath?.find((material) => material.valueId === selectedShapeId);
+    const transformedShape: any = transformSelectedShape(selectedMaterial);
+
+    if (!transformedShape) return;
+
+    setSelectedShape(transformedShape);
+
+    if (!parameter?.isHidden && !isParameterSettings && subProductsParameters?.length > 0) {
+      const dieUnitWidth = parameter?.code === "DieKissCut"
+        ? transformedShape?.rowData?.unitWidth?.value
+        : transformedShape?.rowData?.width?.value;
+      const dieUnitLength = parameter?.code === "DieKissCut"
+        ? transformedShape?.rowData?.unitLength?.value
+        : transformedShape?.rowData?.length?.value;
+
+      const dieCutSizesParametersArray = [
+        { parameterCode: "Width", value: dieUnitWidth?.toString() },
+        { parameterCode: "Height", value: dieUnitLength?.toString() },
+      ];
+
+      let updatedParameters = subProductsParameters.map((param) => {
+        const matchingParam = dieCutSizesParametersArray.find((dieParam) => dieParam.parameterCode === param.parameterCode);
+        return matchingParam ? { ...param, values: [matchingParam.value], isDisabled: true } : param;
+      });
+
+      dieCutSizesParametersArray.forEach((dieParam) => {
+        const subSectionParam = subSection.parameters.find((param) => param.code === dieParam.parameterCode);
+        if (!updatedParameters.find((p) => p.parameterCode === dieParam.parameterCode) && subSectionParam) {
+          updatedParameters.push({
+            parameterId: subSectionParam.id,
+            sectionId: section?.id,
+            subSectionId: subSection?.id,
+            ParameterType: parameter?.ParameterType,
+            parameterName: parameter?.name,
+            actionId: parameter?.actionId,
+            values: [dieParam.value],
+            valueIds: [],
+            actionIndex: subSectionParam.actionIndex,
+            parameterCode: subSectionParam.code,
+            valuesConfigs: subSectionParam?.valuesConfigs,
+            unitKey: subSectionParam?.unitKey,
+            unitType: subSectionParam?.unitType,
+            isDisabled: true,
+          });
+        }
+      });
+
+      const sizeParameter = subSection.parameters.find((param) => param.code === "size");
+      if (sizeParameter) {
+        const customValue = sizeParameter.valuesConfigs.find((config) => !config.values || Object.keys(config.values).length === 0);
+        if (customValue) {
+          const existingSizeParam = updatedParameters.find((param) => param.parameterCode === "size");
+          if (existingSizeParam) {
+            const updatedSizeParam = {
+              ...existingSizeParam,
+              valueIds: [customValue.id],
+              values: [customValue.updateName],
+              isDisabled: true,
             };
-          }
-          return subProductParam;
-        });
-
-        dieCutSizesParametersArray.forEach(dieCutSizeParameter => {
-          const subSectionParameter = subSection.parameters.find(param => param.code === dieCutSizeParameter.parameterCode);
-          if (!temp.find(x => x.parameterCode === dieCutSizeParameter.parameterCode) && subSectionParameter) {
-            temp.push({
-              parameterId: subSectionParameter.id,
+            updatedParameters = updatedParameters.map(param =>
+              param.parameterCode === existingSizeParam.parameterCode ? updatedSizeParam : param
+            );
+          } else {
+            updatedParameters.push({
+              parameterId: sizeParameter.id,
               sectionId: section?.id,
               subSectionId: subSection?.id,
-              ParameterType: parameter?.ParameterType,
-              parameterName: parameter?.name,
-              actionId: parameter?.actionId,
-              values: [dieCutSizeParameter.value],
-              valueIds: [],
-              actionIndex: subSectionParameter.actionIndex,
-              parameterCode: subSectionParameter.code,
-              valuesConfigs: subSectionParameter?.valuesConfigs,
-              unitKey: subSectionParameter?.unitKey,
-              unitType: subSectionParameter?.unitType,
+              ParameterType: sizeParameter.parameterType,
+              parameterName: sizeParameter.name,
+              actionId: sizeParameter.actionId,
+              values: [customValue.updateName],
+              valueIds: [customValue.id],
+              actionIndex: sizeParameter.actionIndex,
+              parameterCode: sizeParameter.code,
+              valuesConfigs: sizeParameter?.valuesConfigs,
+              unitKey: sizeParameter?.unitKey,
+              unitType: sizeParameter?.unitType,
               isDisabled: true,
             });
           }
-        });
-        let sizeParameter = subSection.parameters.find(
-          (param) => param.code === "size"
-        );
-        if (sizeParameter) {
-          let sizeSubProductParameter = temp.find(x => x.parameterCode == "size");
-          let customValue = sizeParameter.valuesConfigs.find(x => !x.values || (Object.keys(x.values).length === 0));
-          if (customValue) {
-            if (sizeSubProductParameter) {
-              // Create a new object with updated properties
-              sizeSubProductParameter = {
-                ...sizeSubProductParameter,
-                valueIds: [customValue.id],
-                values: [customValue.updateName],
-                isDisabled: true
-              };
-              // Replace the old parameter with the new one in temp array
-              temp = temp.map(param => param.parameterCode === "size" ? sizeSubProductParameter : param);
-            } else {
-              temp.push({
-                parameterId: sizeParameter.id,
-                sectionId: section?.id,
-                subSectionId: subSection?.id,
-                ParameterType: sizeParameter.parameterType,
-                parameterName: sizeParameter.name,
-                actionId: sizeParameter.actionId,
-                values: [customValue.updateName],
-                valueIds: [customValue.id],
-                actionIndex: sizeParameter.actionIndex,
-                parameterCode: sizeParameter.code,
-                valuesConfigs: sizeParameter?.valuesConfigs,
-                unitKey: sizeParameter?.unitKey,
-                unitType: sizeParameter?.unitType,
-                isDisabled: true,
-              });
-            }
-          }
         }
-
-        // Update the subProducts state
-        const updatedSubProducts = subProducts.map((subProduct) => {
-          if (subProduct.type === subSection?.type) {
-            return {
-              ...subProduct,
-              parameters: temp,
-            };
-          }
-          return subProduct;
-        });
-
-        setProducts(updatedSubProducts);
       }
-    }
 
+      const updatedSubProducts = subProducts.map((subProduct) =>
+        subProduct.type === subSection?.type
+          ? { ...subProduct, parameters: updatedParameters }
+          : subProduct
+      );
+
+      setProducts(updatedSubProducts);
+    }
   }, [materialData, isParameterSettings, isSelectedShape, allMaterials]);
+
 
   if (parameter?.buttonAction === EButtonTypes.GALLERY_MODAL) {
     if (isStraightKnife) {
