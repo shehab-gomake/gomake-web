@@ -11,6 +11,7 @@ import {IChatDialog} from "@/widgets/messenger/interfaces/dialog";
 import {EFileStatus} from "@/widgets/messenger/enums";
 import {QuoteApprovalMessageComponent} from "@/widgets/messenger/components/qoute-approval-message";
 import {FONT_FAMILY} from "@/utils/font-family";
+import {MessageDateTimeComponent} from "@/widgets/messenger/components/message-date-time-component";
 
 interface IProps {
     messages: IChatMessage[];
@@ -32,7 +33,7 @@ const MessagesComponent = ({
                                onUpdateApprovalFile,
                                getApprovalStatus,
                                updatedApprovalRequest,
-                               onDeleteMsg
+                               onDeleteMsg,
                            }: IProps) => {
     const [user] = useRecoilState(userProfileState);
     const dropRef = useRef(null);
@@ -88,11 +89,12 @@ const MessagesComponent = ({
     }, [messages])
     return (
         <Stack ref={dropRef}
+               dir={'ltr'}
                height={'100%'} width={'100%'} gap={'10px'} style={{backgroundColor: isOver ? '#00000033' : '#FFF'}}
                overflow={'auto'}>
             {
                 messages.map((msg, index) =>
-                    <Stack key={msg._id} ref={index + 1 === messages.length ? lastMessageRef : null} maxWidth={'50%'}
+                    <Stack  key={msg._id} ref={index + 1 === messages.length ? lastMessageRef : null} maxWidth={'50%'}
                            direction={msg.sender_id === sessionUserId ? 'row-reverse' : 'row'}
                            gap={'10px'} alignItems={'start'}
                            alignSelf={msg.sender_id === sessionUserId ? 'flex-end' : 'flex-start'}>
@@ -105,32 +107,35 @@ const MessagesComponent = ({
                                 </Avatar> :
                                 <Stack minWidth={'40px'} width={'40px'} height={'40px'}/>
                         }
-                        {
-                            msg?.attachments?.length > 0 ? <FileCardMessageComponent {...msg}
-                                                                                   onDeleteMessage={onDeleteMsg}
-                                                                                   updatedApprovalRequest={updatedApprovalRequest}
-                                                                                   direction={'column'}
-                                                                                   onUpdateApprovalFile={onUpdateApprovalFile}
-                                                                                   isCurrentUserSentMsg={msg.sender_id === sessionUserId}
-                                                                                   getApprovalStatus={getApprovalStatus}
-                                                                                   attachments={msg.attachments.map(attachment => {
-                                                                                       const attachmentUrl = getAttachmentUrl(attachment.id);
-                                                                                       return {
-                                                                                           ...attachment,
-                                                                                           imageUrl: attachment.type === 'application/pdf' ? 'https://gomake-contents.s3.eu-west-3.amazonaws.com/messanger-no-image.jpg' : attachmentUrl,
-                                                                                           downloadUrl: attachmentUrl
-                                                                                       }
-                                                                                   })}/> :
+                        <Stack gap={'8px'} alignItems={msg.sender_id === sessionUserId ? 'flex-end' : 'flex-start'}>
+                            {
+                                msg?.attachments?.length > 0 ? <FileCardMessageComponent {...msg}
+                                                                                         onDeleteMessage={onDeleteMsg}
+                                                                                         updatedApprovalRequest={updatedApprovalRequest}
+                                                                                         direction={'column'}
+                                                                                         onUpdateApprovalFile={onUpdateApprovalFile}
+                                                                                         isCurrentUserSentMsg={msg.sender_id === sessionUserId}
+                                                                                         getApprovalStatus={getApprovalStatus}
+                                                                                         attachments={msg.attachments.map(attachment => {
+                                                                                             const attachmentUrl = getAttachmentUrl(attachment.id);
+                                                                                             return {
+                                                                                                 ...attachment,
+                                                                                                 imageUrl: attachment.type === 'application/pdf' ? 'https://gomake-contents.s3.eu-west-3.amazonaws.com/messanger-no-image.jpg' : attachmentUrl,
+                                                                                                 downloadUrl: attachmentUrl
+                                                                                             }
+                                                                                         })}/> :
 
-                                msg?.quote_approval_Request_id ?
-                                    <QuoteApprovalMessageComponent {...msg}
-                                                                   isCurrentUserSentMsg={msg.sender_id === sessionUserId}
-                                                                   getApprovalStatus={getApprovalStatus}
-                                                                   updatedApprovalRequest={updatedApprovalRequest}
-                                                                   onUpdateApprovalQouteMessageStatus={onUpdateApprovalFile}/> :
-                                    <TextMessageComponent message={msg} sessionUserId={sessionUserId}/>
+                                    msg?.quote_approval_Request_id ?
+                                        <QuoteApprovalMessageComponent {...msg}
+                                                                       isCurrentUserSentMsg={msg.sender_id === sessionUserId}
+                                                                       getApprovalStatus={getApprovalStatus}
+                                                                       updatedApprovalRequest={updatedApprovalRequest}
+                                                                       onUpdateApprovalQouteMessageStatus={onUpdateApprovalFile}/> :
+                                        <TextMessageComponent message={msg} sessionUserId={sessionUserId}/>
 
-                        }
+                            }
+                            <MessageDateTimeComponent date={new Date(msg.date_sent * 1000)}/>
+                        </Stack>
                     </Stack>)
             }
         </Stack>

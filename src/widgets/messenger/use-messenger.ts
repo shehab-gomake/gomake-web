@@ -41,7 +41,8 @@ const useMessenger = () => {
     }, [messages]);
 
     const getUsersNames = useCallback(() => {
-        return usersMetaData?.filter(user => +user.userId !== messenger.sessionUser.userId)
+        return usersMetaData
+            // ?.filter(user => +user.userId !== messenger.sessionUser.userId)
             .map(user => user.fullName)
     }, [usersMetaData]);
     const {callApi} = useGomakeAxios();
@@ -81,7 +82,7 @@ const useMessenger = () => {
                     file_approval_Request_id: message.extension?.file_approval_Request_id,
                     quote_approval_Request_id: message.extension?.qoute_approval_Request_id,
                     message: message.body,
-                    date: new Date(message.date_sent * 1000),
+                    date_sent: +message.date_sent,
                 }
             ]))
         }

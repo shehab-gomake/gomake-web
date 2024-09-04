@@ -5,8 +5,6 @@ import {
     IconButton,
     List,
     ListItem,
-    ListItemAvatar,
-    ListItemText,
 } from "@mui/material";
 import {formatDistanceToNow} from "date-fns";
 import {FONT_FAMILY} from "@/utils/font-family";
@@ -15,6 +13,7 @@ import {useCallback, useEffect, useRef, useState} from "react";
 import {IChatDialog} from "@/widgets/messenger/interfaces/dialog";
 import {useTranslation} from "react-i18next";
 import {useGomakeTheme} from "@/hooks/use-gomake-thme";
+import {UsersNamesComponent} from "@/widgets/messenger/components/users-names-component";
 
 export interface IProps {
     onSelectDialog: (dialogId: IChatDialog) => void
@@ -40,9 +39,11 @@ const DialogList = ({onSelectDialog, dialogs, selectedDialogId, onClickAddDialog
         }
     }, [selectedDialogId])
     return (
-        <Stack style={{backgroundColor: '#FAFAFA'}} minHeight={'100%'} flex={1} padding={'12px'} gap={'12px'} overflow={'hidden'}>
+        <Stack style={{backgroundColor: '#FAFAFA'}} minHeight={'100%'} flex={1} padding={'12px'} gap={'12px'}
+               overflow={'hidden'}>
             <Stack padding={'12px'} direction={'row'} alignItems={'center'} justifyContent={'space-between'}>
-                <Stack direction={'row'} alignItems={'center'} gap={'10px'} justifyContent={ isMobile ? 'center' : 'flex-start'} width={'100%'}>
+                <Stack direction={'row'} alignItems={'center'} gap={'10px'}
+                       justifyContent={isMobile ? 'center' : 'flex-start'} width={'100%'}>
                     <h3 style={{color: primaryColor(600), ...FONT_FAMILY.Lexend(600, 24)}}>{t('messenger.dialogsTitle')}</h3>
                 </Stack>
                 {!isMobile && <IconButton onClick={onClickAddDialog} style={{
@@ -70,20 +71,28 @@ const DialogList = ({onSelectDialog, dialogs, selectedDialogId, onClickAddDialog
                                       alignItems="center"
                                       ref={selectedDialogId === dialog?._id ? ref : undefined}
                                       onClick={() => onSelectDialog(dialog)}
-                                      secondaryAction={<span style={{
-                                          ...FONT_FAMILY.Inter(500, 14),
-                                          opacity: 0.3,
-                                          marginTop: 'auto'
-                                      }}>{dialog.last_message_date_sent ? formatDistanceToNow(new Date(dialog.last_message_date_sent * 1000), {addSuffix: true}) : ''}</span>}
                                       sx={{
                                           borderRadius: '12px',
                                           backgroundColor: dialog._id === selectedDialogId ? '#615EF00F' : '#FAFAFA'
+
                                       }}>
-                                <ListItemAvatar>
-                                    <Avatar variant={'circular'} src={dialog?.photo}/>
-                                </ListItemAvatar>
-                                <ListItemText style={{...FONT_FAMILY.Lexend(500, 16), color: '#141414'}}
-                                              primary={dialog.name}/>
+                                <Stack gap={'7px'}>
+                                    <Stack alignItems={'center'} gap={'10px'} direction={'row'}>
+                                        <Avatar variant={'circular'} src={dialog?.photo}/>
+                                        <Stack>
+                                            <span style={{
+                                                ...FONT_FAMILY.Lexend(500, 16),
+                                                color: '#141414'
+                                            }}>{dialog.name}</span>
+                                            <UsersNamesComponent users={['demo', 'demo2']}/>
+                                            <small style={{
+                                                ...FONT_FAMILY.Inter(500, 12),
+                                                opacity: 0.3,
+                                                marginTop: 'auto'
+                                            }}>{dialog.last_message_date_sent ? formatDistanceToNow(new Date(dialog.last_message_date_sent * 1000), {addSuffix: true}) : ''}</small>
+                                        </Stack>
+                                    </Stack>
+                                </Stack>
                             </ListItem>
                         )
                     }

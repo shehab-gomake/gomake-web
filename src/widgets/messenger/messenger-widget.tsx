@@ -2,9 +2,7 @@ import Stack from "@mui/material/Stack";
 import {DialogList} from "@/widgets/messenger/components/dialogs-list";
 import {MessagesComponent} from "@/widgets/messenger/components/messages";
 import {Divider, IconButton, LinearProgress, Skeleton} from "@mui/material";
-import InputBase from "@mui/material/InputBase";
 import {FONT_FAMILY} from "@/utils/font-family";
-import {SendFileMessageButtonComponent} from "@/widgets/messenger/components/send-file-message";
 import {GoMakeModal} from "@/components";
 import {AddDialog} from "@/widgets/messenger/components/add-dialog";
 import {PrimaryButton} from "@/components/button/primary-button";
@@ -13,9 +11,10 @@ import {useMessenger} from "@/widgets/messenger/use-messenger";
 import {FilesHistoryIcon} from "@/widgets/messenger/components/icons/files-history-icon";
 import {useTranslation} from "react-i18next";
 import {useGomakeTheme} from "@/hooks/use-gomake-thme";
-import SendIcon from '@mui/icons-material/Send';
 import {FIleListComponent} from "@/widgets/messenger/components/file-list-message";
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import {UsersNamesComponent} from "@/widgets/messenger/components/users-names-component";
+import {MessengerInputComponent} from "@/widgets/messenger/components/messenger-input-component";
 
 interface IProps {
     userType?: EUserType;
@@ -26,9 +25,9 @@ export enum EUserType {
     CLIENT
 }
 
-export default function MessengerWidget({userType}: IProps) {
+export default function MessengerWidget({}: IProps) {
     const {t} = useTranslation();
-    const {primaryColor, grayColor} = useGomakeTheme();
+    const {primaryColor} = useGomakeTheme();
     const modals = useOpenModals();
     const {
         unreadMessages,
@@ -42,9 +41,6 @@ export default function MessengerWidget({userType}: IProps) {
         getAttachmentUrl,
         updatedApprovalRequestId,
         uploadingFiles,
-        handleKeyDown,
-        inputValue,
-        setInputValue,
         sendTextMessage,
         addNewDialog,
         files,
@@ -80,18 +76,7 @@ export default function MessengerWidget({userType}: IProps) {
                                                 <Stack>
                                                     <span
                                                         style={{...FONT_FAMILY.Inter(600, 16)}}>{selectedDialog.name}</span>
-                                                    <Stack>
-                                                        {
-                                                            users()?.map((user, index) => <Stack style={{
-                                                                ...FONT_FAMILY.Outfit(500, 13),
-                                                                fontStyle: 'italic',
-                                                                color: primaryColor(300)
-                                                            }}>
-                                                                <span>{user}</span>
-                                                                {index + 1 < users.length && <span>,</span>}
-                                                            </Stack>)
-                                                        }
-                                                    </Stack>
+                                                    <UsersNamesComponent users={users()}/>
                                                 </Stack>
                                             </Stack>
                                             {files().length > 0 &&
@@ -110,28 +95,10 @@ export default function MessengerWidget({userType}: IProps) {
                                                                sessionUserId={sessionUserId}/>
                                         </Stack>
                                         {uploadingFiles && <LinearProgress/>}
-                                        <Stack style={{backgroundColor: primaryColor(100)}} borderRadius={'8px'}
-                                               direction={'row'} alignItems={'center'}>
-                                            <SendFileMessageButtonComponent
-                                                isBoardMissionsRoom={selectedDialog?.data?.chatroom_type === '1'}
-                                                onSendApprovalFile={sendApprovalFileMessage}
-                                                onSendFile={sendFileMessage}/>
-                                            <InputBase
-                                                onKeyDown={handleKeyDown}
-                                                sx={{
-                                                    flex: 1,
-                                                    height: '48px'
-                                                }}
-                                                placeholder={t('messenger.inputPlaceHolder')}
-                                                onChange={(e) => setInputValue(e.target.value)}
-                                                value={inputValue}/>
-                                            <IconButton disabled={!inputValue}
-                                                        onClick={() => sendTextMessage(inputValue)}
-                                                        sx={{p: '10px'}}>
-                                                <SendIcon
-                                                    style={{color: !!inputValue ? primaryColor(500) : grayColor(500)}}/>
-                                            </IconButton>
-                                        </Stack>
+                                        <MessengerInputComponent isBoardMissionsRoom={selectedDialog?.data?.chatroom_type === '1'}
+                                                                 onSendMessage={sendTextMessage}
+                                                                 onSendFile={sendFileMessage}
+                                                                 onSendApprovalFile={sendApprovalFileMessage}/>
                                     </Stack>
                                 }
                                 <GoMakeModal insideStyle={{width: '600px', height: 'fit-content'}}
@@ -207,28 +174,10 @@ export default function MessengerWidget({userType}: IProps) {
                                                                    sessionUserId={sessionUserId}/>
                                             </Stack>
                                             {uploadingFiles && <LinearProgress/>}
-                                            <Stack style={{backgroundColor: primaryColor(100)}} borderRadius={'8px'}
-                                                   direction={'row'} alignItems={'center'}>
-                                                <SendFileMessageButtonComponent
-                                                    isBoardMissionsRoom={selectedDialog?.data?.chatroom_type === '1'}
-                                                    onSendApprovalFile={sendApprovalFileMessage}
-                                                    onSendFile={sendFileMessage}/>
-                                                <InputBase
-                                                    onKeyDown={handleKeyDown}
-                                                    sx={{
-                                                        flex: 1,
-                                                        height: '48px'
-                                                    }}
-                                                    placeholder={t('messenger.inputPlaceHolder')}
-                                                    onChange={(e) => setInputValue(e.target.value)}
-                                                    value={inputValue}/>
-                                                <IconButton disabled={!inputValue}
-                                                            onClick={() => sendTextMessage(inputValue)}
-                                                            sx={{p: '10px'}}>
-                                                    <SendIcon
-                                                        style={{color: !!inputValue ? primaryColor(500) : grayColor(500)}}/>
-                                                </IconButton>
-                                            </Stack>
+                                            <MessengerInputComponent isBoardMissionsRoom={selectedDialog?.data?.chatroom_type === '1'}
+                                                                     onSendMessage={sendTextMessage}
+                                                                     onSendFile={sendFileMessage}
+                                                                     onSendApprovalFile={sendApprovalFileMessage}/>
                                         </Stack> :
                                         <DialogList isMobile={true} onClickAddDialog={() => modals.addDialog.open()}
                                                     unRead={unreadMessages()}
