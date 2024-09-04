@@ -33,7 +33,7 @@ const useProductionFloorData = () => {
                 setTags(res?.data?.automatedTagsFilter);
                 setUserGroups(res?.data?.groups);
                 setPath(res?.data?.path ? res?.data?.path : []);
-                alertSuccessGetData();
+                //alertSuccessGetData();
             }
         }
         if (abortController) {
