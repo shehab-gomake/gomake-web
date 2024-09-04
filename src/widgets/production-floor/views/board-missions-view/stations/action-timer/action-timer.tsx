@@ -9,9 +9,10 @@ import {Permissions} from "@/components/CheckPermission/enum";
 import {PermissionCheck} from "@/components/CheckPermission/check-permission";
 import {useRecoilState} from "recoil";
 import {boardMissionsDetailsState} from "@/widgets/production-floor/state/boards";
+import {boardMissionsStationsState} from "@/widgets/production-floor/views/board-missions-view/stations/state";
 
 interface IProps extends IBoardMissionsStationTimer {
-    onToggle: () => void;
+    onToggle: (seconds:number) => void;
     loading: boolean;
     actionId: string;
 }
@@ -20,10 +21,12 @@ const ActionTimer = ({isTimerRunning, totalRunningTime, onToggle, loading, actio
     const [seconds, setSeconds] = useState<number>(0);
     const [isActive, setIsActive] = useState(false);
     const [bordMissionsDetails] = useRecoilState(boardMissionsDetailsState);
+
     useEffect(() => {
         let interval = null;
 
         if (isActive) {
+            
             interval = setInterval(() => {
                 setSeconds(seconds => seconds + 1);
             }, 1000);
@@ -62,7 +65,7 @@ const ActionTimer = ({isTimerRunning, totalRunningTime, onToggle, loading, actio
                     actionId === bordMissionsDetails.currentBoardMissionActionId &&
                     <IconButton onClick={(e) => {
                         e.stopPropagation();
-                        onToggle();
+                        onToggle(seconds);
                     }}>
                         {
                             loading ? <CircularProgress size={15}/> : isActive ?
