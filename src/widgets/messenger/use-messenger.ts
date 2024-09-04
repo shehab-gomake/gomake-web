@@ -71,10 +71,12 @@ const useMessenger = () => {
 
     const onMessage = (userId, message) => {
         if (message.dialog_id === selectedDialog?._id) {
+            console.log('chat message',message);
             setMessages(prevState => ([
                 ...prevState,
                 {
                     ...message,
+                    _id: message.id,
                     sender_id: +message.extension?.sender_id,
                     attachments: message.extension?.attachments,
                     file_approval_Request_id: message.extension?.file_approval_Request_id,
