@@ -7,14 +7,14 @@ import {useState} from "react";
 import {useTranslation} from "react-i18next";
 import {useGomakeTheme} from "@/hooks/use-gomake-thme";
 
-interface IProps {
+export interface IMessengerInputComponentProps {
     onSendMessage: (v: string)=>void;
     isBoardMissionsRoom: boolean;
     onSendFile: (file)=>void;
     onSendApprovalFile: (file)=>void;
 }
 
-const MessengerInputComponent = ({onSendMessage, isBoardMissionsRoom, onSendApprovalFile, onSendFile}: IProps) => {
+const MessengerInputComponent = ({onSendMessage, isBoardMissionsRoom, onSendApprovalFile, onSendFile}: IMessengerInputComponentProps) => {
     const [value, setValue] = useState<string>('');
     const {t} = useTranslation();
     const {primaryColor, grayColor} = useGomakeTheme();

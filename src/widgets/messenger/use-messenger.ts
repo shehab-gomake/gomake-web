@@ -13,6 +13,8 @@ import {QBChatNewMessage} from "quickblox";
 import {useRouter} from "next/router";
 import {useMessengerSignalr} from "@/hooks/signalr/use-messenger-signalr";
 import {useMediaQuery} from "@mui/material";
+import {useRecoilState} from "recoil";
+import {unreadMessagesCountState} from "@/store/unread-messages-count";
 
 const useMessenger = () => {
     const [selectedDialog, setSelectedDialog] = useState<IChatDialog | null>(null);
@@ -27,14 +29,19 @@ const useMessenger = () => {
     const {query} = useRouter();
     const {dialogId, clientId} = query;
     const mobileMediaQuery = useMediaQuery('(max-width:800px)');
+    const [,setUnreadMessagesCount] = useRecoilState(unreadMessagesCountState);
+    const {push, pathname} = useRouter();
+
+
 
     const isMobile = useCallback(() => {
-      return  !!clientId && mobileMediaQuery
+        return !!clientId && mobileMediaQuery
     }, [clientId, mobileMediaQuery]);
 
-    const unreadMessages = useCallback(() => {
+
+    const getUnreadMessagesCount = (dialogs) => {
         return dialogs?.reduce((partialSum, dialog) => partialSum + dialog.unread_messages_count, 0);
-    }, [dialogs]);
+    }
 
     const files = useCallback(() => {
         return messages.filter(msg => !!msg.file_approval_Request_id);
@@ -67,10 +74,11 @@ const useMessenger = () => {
     const getDialogs = async () => {
         const dialogs = await messenger.dialogs.getDialogs();
         setDialogs(dialogs)
-
+        setUnreadMessagesCount(getUnreadMessagesCount(dialogs))
     }
 
     const onMessage = (userId, message) => {
+        getDialogs().then();
         if (message.dialog_id === selectedDialog?._id) {
             setMessages(prevState => ([
                 ...prevState,
@@ -288,10 +296,13 @@ const useMessenger = () => {
 
         }
     }
+
+    const onSelectDialog = dialog => {
+        push(`${pathname}?dialogId=${dialog._id}`).then();
+    }
     useEffect(() => {
         if (messenger.isChatConnected) {
             getDialogs().then();
-            messenger.listeners.onDialogUpdate((a) => alert(a))
         }
     }, [messenger.isChatConnected])
 
@@ -305,7 +316,7 @@ const useMessenger = () => {
                     //get users meta data
                     getUsersMetaDta(selectedDialog.occupants_ids?.map(id => id.toString())).then();
                     //get dialog messages
-                    getDialogMessages().then();
+                    getDialogMessages().then(() => getDialogs());
                     //add listeners
                     messenger.listeners.onMessage(onMessage);
                     messenger.listeners.onSystemMessage(onSystemMessage);
@@ -333,11 +344,13 @@ const useMessenger = () => {
     }, [usersMetaData, messages])
 
     useEffect(() => {
-        if (!!dialogId) {
+        if (!!dialogId && selectedDialog?._id !== dialogId) {
             const dialog = dialogs?.find(dialog => dialog._id === dialogId);
             setSelectedDialog(dialog);
         }
-    }, [dialogId, dialogs]);
+    }, [dialogId, dialogs, selectedDialog]);
+
+
     useEffect(() => {
         if (updateState && messenger.isChatConnected) {
             getDialogs().then();
@@ -350,7 +363,6 @@ const useMessenger = () => {
         setSelectedDialog,
         dialogs,
         messages,
-        unreadMessages,
         updateApprovalFile: updateApprovalRequest,
         getApprovalFileStatus,
         sendApprovalFileMessage,
@@ -368,7 +380,9 @@ const useMessenger = () => {
         users: getUsersNames,
         sendFileMessage,
         deleteMessage,
-        isMobile
+        isMobile,
+        getDialogs,
+        onSelectDialog
     }
 }
 

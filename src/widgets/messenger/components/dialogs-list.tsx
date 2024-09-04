@@ -19,12 +19,11 @@ export interface IProps {
     onSelectDialog: (dialogId: IChatDialog) => void
     dialogs: IChatDialog[];
     selectedDialogId?: string;
-    unRead?: number;
     onClickAddDialog: () => void;
     isMobile?: boolean;
 }
 
-const DialogList = ({onSelectDialog, dialogs, selectedDialogId, onClickAddDialog, isMobile}: IProps) => {
+const DialogList = ({onSelectDialog, dialogs, selectedDialogId, onClickAddDialog, isMobile, }: IProps) => {
     const [filter, setFilter] = useState<string>('');
     const {t} = useTranslation();
     const {primaryColor} = useGomakeTheme();

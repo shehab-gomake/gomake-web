@@ -13,7 +13,7 @@ import {QuoteApprovalMessageComponent} from "@/widgets/messenger/components/qout
 import {FONT_FAMILY} from "@/utils/font-family";
 import {MessageDateTimeComponent} from "@/widgets/messenger/components/message-date-time-component";
 
-interface IProps {
+export interface IMessengerMessagesComponentProps {
     messages: IChatMessage[];
     sessionUserId: number;
     selectedDialog?: IChatDialog;
@@ -34,7 +34,7 @@ const MessagesComponent = ({
                                getApprovalStatus,
                                updatedApprovalRequest,
                                onDeleteMsg,
-                           }: IProps) => {
+                           }: IMessengerMessagesComponentProps) => {
     const [user] = useRecoilState(userProfileState);
     const dropRef = useRef(null);
     const lastMessageRef = useRef(null);
