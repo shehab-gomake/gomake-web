@@ -43,13 +43,13 @@ const useCurrentStation = () => {
 
     const onUpdateCurrentStation = async (boardMissionId: string, stationId: string, productType: string) => {
         await updateBoardMissionCurrentStationApi(callApi, (res) => {
-            res.success && getData().then();
+            getData().then();
         }, { boardId: boardMissionId, stationId: stationId, productType });
     }
 
     const onUpdateToNextStation = async (boardMissionId: string, productType: string) => {
         await updateBoardMissionCurrentStationApi(callApi, (res) => {
-            res.success && getData().then()
+            getData().then()
         }, { boardId: boardMissionId, stationId: null, productType });
     }
 
