@@ -15,7 +15,9 @@ export interface IChatDialog {
     xmpp_room_jid?: string;
     _id: string;
     data: {
-        chatroom_type: '1' | '2',
-        class_name: "ChatRoomData"
-    }
+        chatroom_type: '1' | '2';
+        class_name: "ChatRoomData";
+        users: string[];
+    };
+    users: {id: number; name: string}[];
 }
