@@ -18,7 +18,7 @@ import Button from "@mui/material/Button";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 const BoardMissionsStationsComponent = () => {
-    const { stations, subWorkFlows, boardMissions, onClickAllJob } = useBoardMissionsStations();
+    const { stations, getStations, subWorkFlows, boardMissions, onClickAllJob } = useBoardMissionsStations();
     const sortedStations = useMemo(() => [...stations]
         ?.sort((a, b) => b?.index - a?.index)
         ?.sort((a, b) => b?.isDone && a?.isDone ? 0 : a.isDone ? 1 : -1), [stations])
@@ -46,7 +46,8 @@ const BoardMissionsStationsComponent = () => {
                     sortedStations?.map((station, index) =>
                         <BoardMissionsStationAction
                             selected={station.boardMissionActionId === boardMissions.currentBoardMissionActionId}
-                            key={station?.actionId + index} delay={index * 600} {...station} />)
+                            key={station?.actionId + index} delay={index * 600} getStations={getStations} {...station} />)
+
                 }
             </Stack>
         </div>

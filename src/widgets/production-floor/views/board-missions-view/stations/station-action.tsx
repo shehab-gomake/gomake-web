@@ -16,6 +16,8 @@ import { IBoardMissionsStation } from "@/widgets/production-floor/views/board-mi
 import { DateFormatterDDMMYYYY } from "@/utils/adapter";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import {
+    boardMissionsUpdateActionEmployee,
+    boardMissionsUpdateActionMachine,
     cancelBoardMissionsActionDone, toggleBoardMissionsActionTimer,
     updateBoardMissionsActionDone
 } from "@/services/api-service/production-floor/production-floor-endpoints";
@@ -34,6 +36,7 @@ interface IProps extends IBoardMissionsStation {
     delay: number;
     selected?: boolean;
     isLastStation?: boolean;
+    getStations?: any
 }
 
 const BoardMissionsStationAction = ({
@@ -55,6 +58,7 @@ const BoardMissionsStationAction = ({
     isNeedEmployee,
     isNeedMachine,
     isNeedMaterial,
+    getStations
 }: IProps) => {
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const { t } = useTranslation();
@@ -73,10 +77,8 @@ const BoardMissionsStationAction = ({
     const {
         employeesList,
         machinesList,
-        materialsList,
         onClickGetEmployeeForAction,
         onClickGetMachineForAction,
-        onClickGetMaterialsForAction
     } = useBoardMissionsUpdatedOutputs()
 
     const inputsParameters = outputs.filter(
@@ -151,16 +153,58 @@ const BoardMissionsStationAction = ({
     const [contactsFilter, setContactsFilter] = useState<string>('');
     const [selectedContact, setSelectedContacts] = useState({});
 
+    const [openMachine, setOpenMachine] = useState<boolean>(false);
+    const [machensFilter, setMachinesFilter] = useState<string>('');
+    const [selectedMachine, setSelectedMachines] = useState({});
+
+
+    const onClickBoardMissionsUpdateActionEmployee = async (boardMissionActionId: string, employeeId: string) => {
+        const callBack = (res) => {
+            if (res?.success) {
+                alertSuccessUpdate()
+                getStations()
+
+            } else {
+                alertFaultUpdate();
+            }
+        };
+        await boardMissionsUpdateActionEmployee(callApi, callBack, { boardMissionActionId, employeeId });
+    };
+
+    const onClickBoardMissionsUpdateActionMachine = async (boardMissionActionId: string, machineId: string) => {
+        const callBack = (res) => {
+            if (res?.success) {
+                alertSuccessUpdate()
+                getStations()
+            } else {
+                alertFaultUpdate();
+            }
+        };
+        await boardMissionsUpdateActionMachine(callApi, callBack, { boardMissionActionId, machineId });
+    };
+
 
     const onContactsInputChange = (e) => {
         setOpen(true)
         setContactsFilter(e.target.value);
+    }
+    const onMachinesInputChange = (e) => {
+        setOpenMachine(true)
+        setMachinesFilter(e.target.value);
+    }
+    const onMachineClick = (value: any) => {
+        setSelectedMachines(value);
+        setMachinesFilter(value.label);
+        setOpenMachine(false)
+        setChooseMachine(false);
+        onClickBoardMissionsUpdateActionMachine(boardMissionActionId, value?.value)
     }
     const onContactClick = (value: any) => {
         setSelectedContacts(value);
         setContactsFilter(value.label);
         setOpen(false)
         setChooseEmployee(false);
+        onClickBoardMissionsUpdateActionEmployee(boardMissionActionId, value?.value)
     }
     return (
         <>
@@ -215,7 +259,44 @@ const BoardMissionsStationAction = ({
                                                         onClick={(e) => e.stopPropagation()}
 
                                                     >
-                                                        <GoMakeAutoComplate
+                                                        <div style={{ position: 'relative' }}>
+                                                            <GomakeTextInput placeholder={t('prePayment.selectContact')} style={{ height: '40px' }} value={contactsFilter}
+                                                                onChange={onMachinesInputChange}
+                                                                onClick={() => setOpenMachine(!openMachine)} />
+                                                            {
+                                                                !!openMachine && (
+                                                                    <ClickOutside onClick={() => setOpenMachine(false)}>
+                                                                        <Paper
+                                                                            sx={{
+                                                                                position: 'absolute',
+                                                                                top: '100%',
+                                                                                left: 0,
+                                                                                right: 0,
+                                                                                maxHeight: '200px',
+                                                                                overflowY: 'auto',
+                                                                                zIndex: 9999999999999999999,
+                                                                            }}>
+                                                                            {
+                                                                                (!!machensFilter
+                                                                                    ? machinesList?.filter(value =>
+                                                                                        value.label?.toLowerCase()?.includes(machensFilter?.toLowerCase())
+                                                                                    )
+                                                                                    : machinesList
+                                                                                )?.map((value, index) => {
+                                                                                    return (
+                                                                                        <MenuItem key={index} onClick={() => onMachineClick(value)}>
+                                                                                            {value.label?.slice(0, 18) + "..."}
+                                                                                        </MenuItem>
+                                                                                    );
+                                                                                })
+                                                                            }
+                                                                        </Paper>
+                                                                    </ClickOutside>
+                                                                )
+                                                            }
+                                                        </div>
+
+                                                        {/* <GoMakeAutoComplate
                                                             onChange={(e, v) => {
                                                                 console.log("dsfdsfds")
                                                                 // setChooseMachine(false);
@@ -224,7 +305,7 @@ const BoardMissionsStationAction = ({
                                                             options={machinesList}
                                                             placeholder={"Choose machine"}
                                                             value={machineName}
-                                                        />
+                                                        /> */}
                                                         <IconButton
                                                             onClick={(e) => {
                                                                 e.stopPropagation();
@@ -266,7 +347,15 @@ const BoardMissionsStationAction = ({
                                                                 onClick={() => setOpen(!open)} />
                                                             {
                                                                 !!open && <ClickOutside onClick={() => setOpen(false)}>
-                                                                    <Paper sx={{ position: 'absolute', top: '100%', left: 0, right: 0 }}>
+                                                                    <Paper sx={{
+                                                                        position: 'absolute',
+                                                                        top: '100%',
+                                                                        left: 0,
+                                                                        right: 0,
+                                                                        maxHeight: '200px',
+                                                                        overflowY: 'auto',
+                                                                        zIndex: 9999999999999999999,
+                                                                    }}>
                                                                         {
                                                                             (!!contactsFilter
                                                                                 ? employeesList?.filter(value =>
