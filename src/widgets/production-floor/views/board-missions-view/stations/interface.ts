@@ -18,6 +18,10 @@ export interface IBoardMissionsStation {
     index: number;
     id: string;
     isEditable: boolean;
+    isNeedEmployee?:boolean,
+    isNeedMachine?:boolean,
+    isNeedMaterial?:boolean,
+    productType?: string | null;
 }
 
 export interface IBoardMissionsStationTimer {

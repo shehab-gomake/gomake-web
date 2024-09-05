@@ -18,6 +18,10 @@ const GET_BOARDS_MISSIONS_GROUPS_URL = '/v1/erp-service/board-missions/groups/';
 const GET_BOARDS_MISSIONS_STATIONS_URL = '/v1/erp-service/board-missions/board-missions-stations/';
 const UPDATE_BOARD_MISSIONS_ACTION_DONE = '/v1/erp-service/board-missions-actions/move-to-done/';
 const CANCEL_BOARD_MISSIONS_ACTION_DONE = '/v1/erp-service/board-missions-actions/back-to-in-process/';
+
+const UPDATE_BOARD_MISSIONS_ACTION_EMPLOYEE = '/v1/erp-service/board-missions-actions/update-action-employee';
+const UPDATE_BOARD_MISSIONS_ACTION_MACHINE = '/v1/erp-service/board-missions-actions/update-action-machine';
+
 const TOGGLE_BOARD_MISSIONS_ACTION_TIMER_URL = '/v1/erp-service/board-missions-actions/toggle-timer/';
 const BOARD_MISSIONS_ADD_NOTE_URL = '/v1/erp-service/board-missions/add-note';
 const BOARD_MISSIONS_DELETE_NOTE_URL = '/v1/erp-service/board-missions/delete-note';
@@ -130,7 +134,19 @@ const handleBoardMissionsQrCodeApi: ICallAndSetData = async (callApi, setState, 
 const updateBoardMissionsQrCodeApi: ICallAndSetData = async (callApi, setState, data) => {
     return await getSetApiData(callApi, EHttpMethod.PUT, UPDATE_BOARD_MISSIONS_BY_QR_CODE_URL, setState, data);
 }
+
+
+
+const boardMissionsUpdateActionEmployee: ICallAndSetData = async (callApi, callBack, data) => {
+    return await getSetApiData(callApi, EHttpMethod.PUT, UPDATE_BOARD_MISSIONS_ACTION_EMPLOYEE , callBack, data);
+}
+
+const boardMissionsUpdateActionMachine: ICallAndSetData = async (callApi, callBack, data) => {
+    return await getSetApiData(callApi, EHttpMethod.PUT, UPDATE_BOARD_MISSIONS_ACTION_MACHINE , callBack, data);
+}
 export {
+    boardMissionsUpdateActionEmployee,
+    boardMissionsUpdateActionMachine,
     getProductionFloorData,
     updateBoardsMissionsStatusApi,
     setBoardFiltersApi,

@@ -49,7 +49,8 @@ const useBoardMissionsStations = () => {
         boardMissions,
         onClickAllJob,
         t,
-        isRTL
+        isRTL,
+        getStations
     }
 }
 

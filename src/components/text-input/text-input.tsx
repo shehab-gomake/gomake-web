@@ -61,7 +61,7 @@ const StyledTextField = styled(TextField, {
     fontWeight: 500,
   },
 }));
- 
+
 const GomakeTextInput = ({
   value,
   onChange,
@@ -101,8 +101,8 @@ const GomakeTextInput = ({
   onClick?: any;
   onFocus?: any;
   id?: any;
-  helperText?:string;
-  direction?:any;
+  helperText?: string;
+  direction?: any;
 }) => {
   const { primaryColor, secondColor, errorColor } = useGomakeTheme();
 
@@ -120,6 +120,7 @@ const GomakeTextInput = ({
 
   return (
     <StyledTextField
+      autoComplete="off"
       autoFocus={autoFocus}
       value={value}
       onChange={handleChange}

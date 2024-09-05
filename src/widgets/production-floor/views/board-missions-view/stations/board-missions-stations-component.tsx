@@ -19,7 +19,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 
 const BoardMissionsStationsComponent = () => {
-    const { stations, subWorkFlows, boardMissions, onClickAllJob , t , isRTL} = useBoardMissionsStations();
+    const { stations, subWorkFlows, boardMissions, onClickAllJob, t, isRTL, getStations } = useBoardMissionsStations();
     const sortedStations = useMemo(() => [...stations]
         ?.sort((a, b) => b?.index - a?.index)
         ?.sort((a, b) => b?.isDone && a?.isDone ? 0 : a.isDone ? 1 : -1), [stations])
@@ -35,12 +35,12 @@ const BoardMissionsStationsComponent = () => {
             <Divider orientation={'horizontal'} flexItem />
             {
                 !!boardMissions?.productType &&
-                <Button 
-                onClick={onClickAllJob} 
-                startIcon={isRTL ?  <ArrowForwardIcon sx={{ marginLeft: '8px'}} />
-                : <ArrowBackIcon />} 
-                variant={'contained'}
-                sx={{ width: 'fit-content', backgroundColor: '#CBCBE4', color: '#252675', '&:hover': { backgroundColor: '#CBCBE4', color: '#252675', opacity: 0.7 } }}>{t("productionFloor.allBookStations")}</Button>
+                <Button
+                    onClick={onClickAllJob}
+                    startIcon={isRTL ? <ArrowForwardIcon sx={{ marginLeft: '8px' }} />
+                        : <ArrowBackIcon />}
+                    variant={'contained'}
+                    sx={{ width: 'fit-content', backgroundColor: '#CBCBE4', color: '#252675', '&:hover': { backgroundColor: '#CBCBE4', color: '#252675', opacity: 0.7 } }}>{t("productionFloor.allBookStations")}</Button>
             }
             <Stack gap={'10px'} minHeight={'fit-content'} overflow={'scroll'}>
                 {<CompletedBoardMissionsComponent />}
@@ -52,7 +52,8 @@ const BoardMissionsStationsComponent = () => {
                     sortedStations?.map((station, index) =>
                         <BoardMissionsStationAction
                             selected={station.boardMissionActionId === boardMissions.currentBoardMissionActionId}
-                            key={station?.actionId + index} delay={index * 600} {...station} />)
+                            key={station?.actionId + index} delay={index * 600} getStations={getStations} {...station} />)
+
                 }
             </Stack>
         </div>
