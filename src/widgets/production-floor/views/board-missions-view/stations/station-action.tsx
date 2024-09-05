@@ -31,6 +31,7 @@ import { boardMissionsDetailsState } from "@/widgets/production-floor/state/boar
 import { Permissions } from "@/components/CheckPermission/enum";
 import { PermissionCheck } from "@/components/CheckPermission/check-permission";
 import { boardMissionsStationsState } from "@/widgets/production-floor/views/board-missions-view/stations/state";
+import { useUserPermission } from "@/hooks/use-permission";
 
 interface IProps extends IBoardMissionsStation {
     delay: number;
@@ -82,7 +83,7 @@ const BoardMissionsStationAction = ({
         onClickGetEmployeeForAction,
         onClickGetMachineForAction,
     } = useBoardMissionsUpdatedOutputs()
-
+    const { CheckPermission } = useUserPermission();
     const inputsParameters = outputs.filter(
         (parameter) =>
             parameter.propertyType === RuleType.PARAMETER &&
@@ -262,9 +263,11 @@ const BoardMissionsStationAction = ({
                                                 {!chooseMachine ? (
                                                     <Button
                                                         onClick={(e) => {
-                                                            e.stopPropagation();
-                                                            setChooseMachine(true);
-                                                            onClickGetMachineForAction(actionId)
+                                                            if (CheckPermission(Permissions.IS_CAN_UPDATE_MACHINE_IN_PRODUCTION_FLOOR)) {
+                                                                e.stopPropagation();
+                                                                setChooseMachine(true);
+                                                                onClickGetMachineForAction(actionId)
+                                                            }
                                                         }}
                                                         variant={"text"}
                                                         style={classes.sectionTitle}
@@ -289,7 +292,7 @@ const BoardMissionsStationAction = ({
 
                                                     >
                                                         <div style={{ position: 'relative' }}>
-                                                            <GomakeTextInput placeholder={t('prePayment.selectContact')} style={{ height: '40px' }} value={contactsFilter}
+                                                            <GomakeTextInput placeholder={t('materials.inputs.selectMachine')} style={{ height: '40px' }} value={contactsFilter}
                                                                 onChange={onMachinesInputChange}
                                                                 onClick={() => setOpenMachine(!openMachine)} />
                                                             {
@@ -354,9 +357,11 @@ const BoardMissionsStationAction = ({
                                                 {!chooseEmployee ? (
                                                     <Button
                                                         onClick={(e) => {
-                                                            e.stopPropagation();
-                                                            setChooseEmployee(true);
-                                                            onClickGetEmployeeForAction(actionId)
+                                                            if (CheckPermission(Permissions.IS_CAN_UPDATE_MACHINE_IN_PRODUCTION_FLOOR)) {
+                                                                e.stopPropagation();
+                                                                setChooseEmployee(true);
+                                                                onClickGetEmployeeForAction(actionId)
+                                                            }
                                                         }}
                                                         variant={"text"}
                                                         style={classes.sectionTitle}
@@ -371,7 +376,7 @@ const BoardMissionsStationAction = ({
                                                         onClick={(e) => e.stopPropagation()}
                                                     >
                                                         <div style={{ position: 'relative' }}>
-                                                            <GomakeTextInput placeholder={t('prePayment.selectContact')} style={{ height: '40px' }} value={contactsFilter}
+                                                            <GomakeTextInput placeholder={t('products.profits.exceptions.selectEmployee')} style={{ height: '40px' }} value={contactsFilter}
                                                                 onChange={onContactsInputChange}
                                                                 onClick={() => setOpen(!open)} />
                                                             {
