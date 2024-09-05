@@ -45,7 +45,9 @@ const ProductionFloorWidget = () => {
             }
             <QrListenerWidget listening={!boardMissionsId} />
         </Stack>
-        <Drawer sx={{ zIndex: 999999 }} open={openBoardMissionsDrawer} anchor={'bottom'}>
+        <Drawer sx={{ zIndex: 999999 }} open={openBoardMissionsDrawer} anchor={'bottom'} onClose={() => {
+            replace('/production-floor', undefined, {shallow: true}).then();
+        }}>
             <Stack paddingBottom={'10px'} width={'100vw'} height={'calc(100vh - 50px)'}>
                 <IconButton onClick={() => {
                     replace('/production-floor', undefined, { shallow: true }).then();
