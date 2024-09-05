@@ -23,8 +23,7 @@ const MessengerInputComponent = ({onSendMessage, isBoardMissionsRoom, onSendAppr
         if (event.key === 'Enter') {
             try {
                 if (value) {
-                    await onSendMessage(value.trim());
-                    setValue('');
+                 handelSendMessage();
                 }
             } catch (e) {
 

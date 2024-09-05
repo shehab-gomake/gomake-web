@@ -75,7 +75,8 @@ const DialogList = ({onSelectDialog, dialogs, selectedDialogId, onClickAddDialog
                                           backgroundColor: dialog._id === selectedDialogId ? '#615EF00F' : '#FAFAFA'
 
                                       }}>
-                                <Stack gap={'7px'}>
+                                <Stack direction={'row'} alignItems={'center'} justifyContent={'space-between'}
+                                       width={'100%'}>
                                     <Stack alignItems={'center'} gap={'10px'} direction={'row'}>
                                         <Avatar variant={'circular'} src={dialog?.photo}/>
                                         <Stack alignItems={'flex-start'}>
@@ -91,6 +92,15 @@ const DialogList = ({onSelectDialog, dialogs, selectedDialogId, onClickAddDialog
                                             }}>{dialog.last_message_date_sent ? formatDistanceToNow(new Date(dialog.last_message_date_sent * 1000), {addSuffix: true}) : ''}</small>
                                         </Stack>
                                     </Stack>
+                                    {
+                                        dialog.unread_messages_count > 0 &&
+                                        <div style={{
+                                            borderRadius: '50%',
+                                            backgroundColor: primaryColor(500),
+                                            width: '10px',
+                                            height: '10px'
+                                        }}/>
+                                    }
                                 </Stack>
                             </ListItem>
                         )
