@@ -80,7 +80,7 @@ const RightSideWidget = ({
 
   useEffect(() => {
     if (router?.query?.clientTypeId) {
-      setClientTypeDefaultValue(
+      clientTypesCategories && setClientTypeDefaultValue(
         clientTypesCategories?.find(
           (item: any) => item?.id === router?.query?.clientTypeId
         )
@@ -93,7 +93,7 @@ const RightSideWidget = ({
       const decodedCustomerName = customerName ? decodeURIComponent(customerName) : '';
       setClientDefaultValue({ id: router?.query?.customerId, label: decodedCustomerName })
     }
-  }, []);
+  }, [clientTypesCategories]);
 
 
   const docType = Array.isArray(router?.query?.documentType)

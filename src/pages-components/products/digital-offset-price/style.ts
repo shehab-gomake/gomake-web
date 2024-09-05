@@ -835,7 +835,7 @@ const useStyle = () => {
       },
       titleStyle: {
         display: "flex",
-        ...FONT_FAMILY.Lexend(500, 18),
+        ...FONT_FAMILY.Lexend(600, 18),
         color:  primaryColor(500),
        // color:  "black",
         lineHeight: "30px",
