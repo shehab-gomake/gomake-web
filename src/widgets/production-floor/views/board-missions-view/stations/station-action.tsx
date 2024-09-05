@@ -22,15 +22,15 @@ import {
     updateBoardMissionsActionDone
 } from "@/services/api-service/production-floor/production-floor-endpoints";
 import Button from "@mui/material/Button";
+import { GomakeTextInput, ThreeOptionsModal } from "@/components";
+import { useBoardMissionsUpdatedOutputs } from "./use-board-missions-updated-outputs";
+import { ClickOutside } from "@/components/click-out-side/click-out-side";
 import { ActionTimer } from "@/widgets/production-floor/views/board-missions-view/stations/action-timer/action-timer";
 import { useRecoilState } from "recoil";
 import { boardMissionsDetailsState } from "@/widgets/production-floor/state/boards";
-import { GoMakeAutoComplate, GomakeTextInput, ThreeOptionsModal } from "@/components";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { PermissionCheck } from "@/components/CheckPermission/check-permission";
-import { useBoardMissionsUpdatedOutputs } from "./use-board-missions-updated-outputs";
-import { backgroundClip } from "html2canvas/dist/types/css/property-descriptors/background-clip";
-import { ClickOutside } from "@/components/click-out-side/click-out-side";
+import { boardMissionsStationsState } from "@/widgets/production-floor/views/board-missions-view/stations/state";
 
 interface IProps extends IBoardMissionsStation {
     delay: number;
@@ -66,7 +66,9 @@ const BoardMissionsStationAction = ({
     const { callApi } = useGomakeAxios();
     const { alertSuccessUpdate, alertFaultUpdate } = useSnackBar();
     const [openReadyModal, setIsReadyModal] = useState<boolean>(false)
-    const [boardMissions] = useRecoilState(boardMissionsDetailsState);
+    const [boardMissions, setBoardMissions] = useRecoilState(boardMissionsDetailsState);
+    const [stations, setStations] = useRecoilState(boardMissionsStationsState);
+
     const [loading, setLoading] = useState<boolean>(false);
     const [timerLoading, setTimerLoading] = useState<boolean>(false);
 
@@ -100,7 +102,18 @@ const BoardMissionsStationAction = ({
         setLoading(true);
         const callBack = (res) => {
             setLoading(false);
+
             if (res.success) {
+                const currentActionId = res.data.currentStationId;
+                //stations.find(x=>x.boardMissionActionId == currentActionId).;
+                setStations(stations.map(station => {
+                    if (station.boardMissionActionId == boardMissionActionId) {
+                        return { ...station, isDone: true };
+                    }
+                    return { ...station };
+                }));
+                setBoardMissions({ ...boardMissions, currentBoardMissionActionId: currentActionId });
+
                 alertSuccessUpdate();
             } else {
                 alertFaultUpdate()
@@ -117,7 +130,16 @@ const BoardMissionsStationAction = ({
         setLoading(true);
         const callBack = (res) => {
             setLoading(false);
+
             if (res.success) {
+                const currentActionId = res.data.currentStationId;
+                setStations(stations.map(station => {
+                    if (station.boardMissionActionId == boardMissionActionId) {
+                        return { ...station, isDone: false };
+                    }
+                    return { ...station };
+                }))
+                setBoardMissions({ ...boardMissions, currentBoardMissionActionId: currentActionId })
                 alertSuccessUpdate()
             } else {
                 alertFaultUpdate();
@@ -129,10 +151,17 @@ const BoardMissionsStationAction = ({
         });
     }
 
-    const onToggleTimer = async () => {
+    const onToggleTimer = async (seconds: number) => {
         setTimerLoading(true)
         const callBack = (res) => {
             setTimerLoading(false);
+            setStations(stations.map(station => {
+                if (station.boardMissionActionId == boardMissionActionId) {
+                    const isTimerRunning = station.boardMissionActionTimer ? !station.boardMissionActionTimer.isTimerRunning : true;
+                    return { ...station, boardMissionActionTimer: { ...station.boardMissionActionTimer, isTimerRunning: isTimerRunning, totalRunningTime: seconds } };
+                }
+                return { ...station };
+            }))
             if (res.success) {
                 alertSuccessUpdate();
             } else {

@@ -313,7 +313,6 @@ const useQuoteWidget = () => {
 
 
   const handleProductChange = (e) => {
-    debugger
     const selectedValue = e;
     // Find the selected node from combinedData
     const findNodeByKey = (key, nodes) => {

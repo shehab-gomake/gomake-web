@@ -71,8 +71,8 @@ const BoardMissionsDetailsHeader = () => {
                                     style={{backgroundColor: boardMissionsDetails?.boardMissionStatus?.backgroundColor}}
                                     padding={'0 5px'} direction={'row'} gap={'5px'}
                                     color={boardMissionsDetails?.boardMissionStatus?.textColor}>
-                                    <span>{boardMissionsDetails.boardMissionStatus?.name}</span>
-                                    <span>/</span>
+                                    <span>{t(`productionStatuses.${boardMissionsDetails.boardMissionStatus?.name}`)}</span>
+                                    <span>/</span> 
                                     <span>{boardMissionsDetails.currentActionName}</span>
                                 </Stack>
                             </Stack>

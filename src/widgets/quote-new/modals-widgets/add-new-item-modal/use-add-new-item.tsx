@@ -107,7 +107,6 @@ const useAddNewItem = ({ onClose, getQuote, documentType }) => {
 
 
     const selectedNode = findNodeByKey(selectedValue, combinedData);
-    debugger
     if (selectedNode && !selectedNode.children) {
       setSelectedProduct({ id: selectedValue, category: selectedNode?.category, name: selectedNode?.text, code: selectedNode?.code });
     } else {
