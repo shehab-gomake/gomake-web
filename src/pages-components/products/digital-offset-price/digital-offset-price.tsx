@@ -363,7 +363,7 @@ const PriceListPageWidget = ({ widgetType }) => {
                                         style={clasess.previousBtnStyle}
                                         onClick={handlePreviousClick}
                                     >
-                                        {t("offsetPrice.admin.previousBtn")}
+                                        {t("products.offsetPrice.admin.previousBtn")}
                                     </GomakePrimaryButton>
                                 )}
                                 {([...productTemplate?.sections, PricingTab].length - 1) !== activeIndex && (
@@ -372,7 +372,7 @@ const PriceListPageWidget = ({ widgetType }) => {
                                             style={clasess.nextBtnStyle}
                                             onClick={handleNextClick}
                                         >
-                                            {t("offsetPrice.admin.nextBtn")}
+                                            {t("products.offsetPrice.admin.nextBtn")}
                                         </GomakePrimaryButton>
                                     </div>
                                 )}
@@ -392,7 +392,7 @@ const PriceListPageWidget = ({ widgetType }) => {
                                     style={clasess.addOrderBtn}
                                     onClick={navigateForRouter}
                                 >
-                                    {t("offsetPrice.admin.addOrderBtn")}
+                                    {t("products.offsetPrice.admin.addOrderBtn")}
                                 </GomakePrimaryButton>
                             )}
                         </div>

@@ -59,7 +59,7 @@ const BoardMissionsStationAction = ({
     isNeedEmployee,
     isNeedMachine,
     isNeedMaterial,
-    getStations
+    getStations,
 }: IProps) => {
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const { t } = useTranslation();
@@ -263,7 +263,7 @@ const BoardMissionsStationAction = ({
                                                 {!chooseMachine ? (
                                                     <Button
                                                         onClick={(e) => {
-                                                            if (CheckPermission(Permissions.IS_CAN_UPDATE_MACHINE_IN_PRODUCTION_FLOOR)) {
+                                                            if (CheckPermission(Permissions.IS_CAN_UPDATE_MACHINE_IN_PRODUCTION_FLOOR) && isEditable) {
                                                                 e.stopPropagation();
                                                                 setChooseMachine(true);
                                                                 onClickGetMachineForAction(actionId)
@@ -357,7 +357,7 @@ const BoardMissionsStationAction = ({
                                                 {!chooseEmployee ? (
                                                     <Button
                                                         onClick={(e) => {
-                                                            if (CheckPermission(Permissions.IS_CAN_UPDATE_MACHINE_IN_PRODUCTION_FLOOR)) {
+                                                            if (CheckPermission(Permissions.IS_CAN_UPDATE_MACHINE_IN_PRODUCTION_FLOOR) && isEditable) {
                                                                 e.stopPropagation();
                                                                 setChooseEmployee(true);
                                                                 onClickGetEmployeeForAction(actionId)
