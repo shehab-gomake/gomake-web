@@ -262,7 +262,7 @@ const PriceListPageWidget = ({ widgetType }) => {
                                 <div style={clasess.sectionsContainer}>
                                     {[...visibleSections, PricingTab]?.map((section, index) => {
                                         if (index === activeIndex) {
-                                            if (section.name === "Pricing") {
+                                            if (section.name === t("products.offsetPrice.admin.Pricing")) {
                                                 return (
                                                     <PricingWidget
                                                         getOutSourcingSuppliers={getOutSourcingSuppliers}

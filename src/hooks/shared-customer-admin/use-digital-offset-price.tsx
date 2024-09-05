@@ -812,7 +812,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
                     if (isDieCutExisting || existingParameters.length === 0) {
                       const nameValue = value?.additionalAttribute?.find((attr) => attr.valueId === "name")?.value;
-
                       const newParameter = {
                         parameterId: parameter?.id,
                         parameterName: parameter?.name,
@@ -837,7 +836,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     const existingParameters = productItemValueByEdit?.itemParmetersValues || [];
                     const isDieCutExisting = existingParameters.find((param) => param?.parameterCode === "DieCut");
 
-                    if (isDieCutExisting || existingParameters.length === 0) {
+                    if (isDieCutExisting) {
                       let materialSelected = allMaterials?.find((item) => item?.pathName === isDieCutExisting?.parameterCode)?.data
                       const additionalAttribute = materialSelected?.find((item) => item?.valueId === isDieCutExisting?.valueIds[0])?.additionalAttribute
                       const nameValue = additionalAttribute?.find((attr) => attr.valueId === "name")?.value;
@@ -900,7 +899,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     const existingParameters = productItemValueByEdit?.itemParmetersValues || [];
                     const isDieCutExisting = existingParameters.find((param) => param?.parameterCode === "DieKissCut");
 
-                    if (isDieCutExisting || existingParameters.length === 0) {
+                    if (isDieCutExisting) {
                       let materialSelected = allMaterials?.find((item) => item?.pathName === isDieCutExisting?.parameterCode)?.data
                       const additionalAttribute = materialSelected?.find((item) => item?.valueId === isDieCutExisting?.valueIds[0])?.additionalAttribute
                       const nameValue = additionalAttribute?.find((attr) => attr.valueId === "name")?.value;
