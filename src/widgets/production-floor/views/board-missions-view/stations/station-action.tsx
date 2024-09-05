@@ -188,7 +188,7 @@ const BoardMissionsStationAction = ({
     const [selectedMachine, setSelectedMachines] = useState({});
 
 
-    const onClickBoardMissionsUpdateActionEmployee = async (boardMissionActionId: string, employeeId: string) => {
+    const onClickBoardMissionsUpdateActionEmployee = async (boardMissionActionId: string, employeeId: string,employeeName:string) => {
         const callBack = (res) => {
             if (res?.success) {
                 alertSuccessUpdate()
@@ -198,10 +198,10 @@ const BoardMissionsStationAction = ({
                 alertFaultUpdate();
             }
         };
-        await boardMissionsUpdateActionEmployee(callApi, callBack, { boardMissionActionId, employeeId });
+        await boardMissionsUpdateActionEmployee(callApi, callBack, { boardMissionActionId, employeeId ,employeeName});
     };
 
-    const onClickBoardMissionsUpdateActionMachine = async (boardMissionActionId: string, machineId: string) => {
+    const onClickBoardMissionsUpdateActionMachine = async (boardMissionActionId: string, machineId: string,machineName:string) => {
         const callBack = (res) => {
             if (res?.success) {
                 alertSuccessUpdate()
@@ -210,7 +210,7 @@ const BoardMissionsStationAction = ({
                 alertFaultUpdate();
             }
         };
-        await boardMissionsUpdateActionMachine(callApi, callBack, { boardMissionActionId, machineId });
+        await boardMissionsUpdateActionMachine(callApi, callBack, { boardMissionActionId, machineId,machineName:machineName });
     };
 
 
@@ -222,19 +222,19 @@ const BoardMissionsStationAction = ({
         setOpenMachine(true)
         setMachinesFilter(e.target.value);
     }
-    const onMachineClick = (value: any) => {
+    const onMachineClick = (value: any,label:any) => {
         setSelectedMachines(value);
         setMachinesFilter(value.label);
         setOpenMachine(false)
         setChooseMachine(false);
-        onClickBoardMissionsUpdateActionMachine(boardMissionActionId, value?.value)
+        onClickBoardMissionsUpdateActionMachine(boardMissionActionId, value?.value,label)
     }
-    const onContactClick = (value: any) => {
+    const onContactClick = (value: any,label:any) => {
         setSelectedContacts(value);
         setContactsFilter(value.label);
         setOpen(false)
         setChooseEmployee(false);
-        onClickBoardMissionsUpdateActionEmployee(boardMissionActionId, value?.value)
+        onClickBoardMissionsUpdateActionEmployee(boardMissionActionId, value?.value,label)
     }
     return (
         <>
@@ -316,7 +316,7 @@ const BoardMissionsStationAction = ({
                                                                                     : machinesList
                                                                                 )?.map((value, index) => {
                                                                                     return (
-                                                                                        <MenuItem key={index} onClick={() => onMachineClick(value)}>
+                                                                                        <MenuItem key={index} onClick={() => onMachineClick(value,value.label)}>
                                                                                             {value.label?.slice(0, 18) + "..."}
                                                                                         </MenuItem>
                                                                                     );
@@ -398,7 +398,7 @@ const BoardMissionsStationAction = ({
                                                                                 : employeesList
                                                                             )?.map((value, index) => {
                                                                                 return (
-                                                                                    <MenuItem key={index} onClick={() => onContactClick(value)}>
+                                                                                    <MenuItem key={index} onClick={() => onContactClick(value,value.label)}>
                                                                                         {value.label}
                                                                                     </MenuItem>
                                                                                 );
