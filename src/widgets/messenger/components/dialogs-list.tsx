@@ -23,7 +23,7 @@ export interface IProps {
     isMobile?: boolean;
 }
 
-const DialogList = ({onSelectDialog, dialogs, selectedDialogId, onClickAddDialog, isMobile, }: IProps) => {
+const DialogList = ({onSelectDialog, dialogs, selectedDialogId, onClickAddDialog, isMobile,}: IProps) => {
     const [filter, setFilter] = useState<string>('');
     const {t} = useTranslation();
     const {primaryColor} = useGomakeTheme();
@@ -78,12 +78,12 @@ const DialogList = ({onSelectDialog, dialogs, selectedDialogId, onClickAddDialog
                                 <Stack gap={'7px'}>
                                     <Stack alignItems={'center'} gap={'10px'} direction={'row'}>
                                         <Avatar variant={'circular'} src={dialog?.photo}/>
-                                        <Stack>
+                                        <Stack alignItems={'flex-start'}>
                                             <span style={{
                                                 ...FONT_FAMILY.Lexend(500, 16),
                                                 color: '#141414'
                                             }}>{dialog.name}</span>
-                                            <UsersNamesComponent users={['demo', 'demo2']}/>
+                                            <UsersNamesComponent users={dialog.users?.map(user => user.name)}/>
                                             <small style={{
                                                 ...FONT_FAMILY.Inter(500, 12),
                                                 opacity: 0.3,

@@ -73,7 +73,10 @@ const useMessenger = () => {
 
     const getDialogs = async () => {
         const dialogs = await messenger.dialogs.getDialogs();
-        setDialogs(dialogs)
+        setDialogs(dialogs?.map(dialog => ({
+            ...dialog,
+            users: dialog?.data?.users_ids?.map((userId, index) => ({id: userId, name: dialog?.data?.users[index]}))
+        })))
         setUnreadMessagesCount(getUnreadMessagesCount(dialogs))
     }
 
