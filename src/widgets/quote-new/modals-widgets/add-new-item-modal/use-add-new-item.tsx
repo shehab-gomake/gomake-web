@@ -273,7 +273,7 @@ const useAddNewItem = ({ onClose, getQuote, documentType }) => {
           addDocumentItemFromMaterial()
         }
         else navigate(
-          `/products/create?clientTypeId=${quoteItemValue?.client?.clientTypeId}&customerId=${quoteItemValue?.customerID}&productId=${selectedProduct?.id}&documentType=${documentType}${router?.query?.Id ? `&documentId=${router?.query?.Id}` : ""}`
+          `/products/create?clientTypeId=${quoteItemValue?.client?.clientTypeId}&customerId=${quoteItemValue?.customerID}&customerName=${quoteItemValue?.client?.name}&productId=${selectedProduct?.id}&documentType=${documentType}${quoteItemValue?.number ? `&documentNumber=${quoteItemValue?.number}` : ""}${router?.query?.Id ? `&documentId=${router?.query?.Id}` : ""}`
         );
       }
     }

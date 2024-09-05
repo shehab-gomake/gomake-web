@@ -3364,7 +3364,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             totalWorkFlowsCount: 0,
             currentWorkFlowsCount: 0,
           });
-          setLoading(true);
+          //setLoading(true);
+          setLoading(false);
         }
       }
     } else {
@@ -3676,8 +3677,12 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     }
   }, [router, productTemplate]);
 
+ 
+
+
   return {
     t,
+    router,
     handleTabClick,
     handleNextClick,
     handlePreviousClick,
@@ -3727,7 +3732,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     straightKnife,
     isChangePriceForEdit,
     onClickCloseChangePriceModal,
-    setIsChangePriceForEdit
+    setIsChangePriceForEdit,
   };
 };
 export { useDigitalOffsetPrice };
