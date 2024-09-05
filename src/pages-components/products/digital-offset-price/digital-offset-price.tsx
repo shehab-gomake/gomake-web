@@ -363,7 +363,7 @@ const PriceListPageWidget = ({ widgetType }) => {
                                         style={clasess.previousBtnStyle}
                                         onClick={handlePreviousClick}
                                     >
-                                        Previous
+                                        {t("offsetPrice.admin.previousBtn")}
                                     </GomakePrimaryButton>
                                 )}
                                 {([...productTemplate?.sections, PricingTab].length - 1) !== activeIndex && (
@@ -372,7 +372,7 @@ const PriceListPageWidget = ({ widgetType }) => {
                                             style={clasess.nextBtnStyle}
                                             onClick={handleNextClick}
                                         >
-                                            Next
+                                            {t("offsetPrice.admin.nextBtn")}
                                         </GomakePrimaryButton>
                                     </div>
                                 )}
@@ -384,7 +384,7 @@ const PriceListPageWidget = ({ widgetType }) => {
                                     style={clasess.addOrderBtn}
                                     onClick={updateQuoteItem}
                                 >
-                                    Edit
+                                    {t("sales.quote.edit")}
                                 </GomakePrimaryButton>
                             ) : (
                                 <GomakePrimaryButton
@@ -392,7 +392,7 @@ const PriceListPageWidget = ({ widgetType }) => {
                                     style={clasess.addOrderBtn}
                                     onClick={navigateForRouter}
                                 >
-                                    Add Order
+                                    {t("offsetPrice.admin.addOrderBtn")}
                                 </GomakePrimaryButton>
                             )}
                         </div>
