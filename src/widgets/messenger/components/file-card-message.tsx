@@ -1,4 +1,4 @@
-import {Button, Card, CardActions, CardContent, IconButton, Typography} from "@mui/material";
+import {Button, IconButton} from "@mui/material";
 import CardMedia from "@mui/material/CardMedia";
 import {IChatMessage} from "@/widgets/messenger/interfaces/chat-message";
 import {EFileStatus} from "@/widgets/messenger/enums";
@@ -26,12 +26,11 @@ const FileCardMessageComponent = ({
                                       file_approval_Request_id,
                                       getApprovalStatus,
                                       sender_id,
-                                      direction,
                                       updatedApprovalRequest,
                                       onDeleteMessage
                                   }: IProps) => {
     const [status, setStatus] = useState<EFileStatus>(EFileStatus.PENDING);
-    const {successColor, errorColor, primaryColor, grayColor, secondColor} = useGomakeTheme();
+    const { primaryColor, secondColor} = useGomakeTheme();
 
     const downloadFile = async () => {
         try {
@@ -79,7 +78,6 @@ const FileCardMessageComponent = ({
 
     return <Stack sx={{
         width: 165,
-        height: '240px',
         position: 'relative',
         border: 0
     }}>
