@@ -261,9 +261,24 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       totalWorkFlowsCount: 0,
       currentWorkFlowsCount: 0,
     });
-    setCurrentProductItemValueTotalWorkFlows(result.productItemValue.totalWorkFlows)
+    setCurrentProductItemValueTotalWorkFlows(result.productItemValue.totalWorkFlows);
+   
     //setLoading(false);
     setWorkFlows(result.productItemValue.workFlows);
+    debugger
+    if(result.productItemValue && result.productItemValue.workFlows && result.productItemValue.workFlows.length > 0){
+      const mySelectedWorkFlow = result.productItemValue.workFlows[0];
+      if (
+          mySelectedWorkFlow &&
+          mySelectedWorkFlow.totalPrice &&
+          mySelectedWorkFlow.totalPrice.values
+      ) {
+        setCurrentProductItemValueTotalPrice(
+            parseFloat(mySelectedWorkFlow.totalPrice.values[0])
+        );
+      }
+    }
+   
     setJobActions(result?.productItemValue.actions);
     setCalculationResult(result)
     if (widgetType === EWidgetProductType.EDIT && (isActionEmployeeUpdated || isJobNameValue)) {

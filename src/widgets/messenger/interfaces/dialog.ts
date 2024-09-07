@@ -18,7 +18,6 @@ export interface IChatDialog {
         chatroom_type: '1' | '2';
         class_name: "ChatRoomData";
         users: string[];
-        users_ids: string[];
     };
-    users: {id: string; name: string}[];
+    users: {id: number; name: string}[];
 }

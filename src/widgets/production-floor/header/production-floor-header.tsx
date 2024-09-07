@@ -14,7 +14,7 @@ import AvTimerIcon from '@mui/icons-material/AvTimer';
 import {useTranslation} from "react-i18next";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 const ProductionFloorHeader = () => {
-    const { view, setView, initGroupsFilters, showAllJobsButton, paths, onClickPath, navigateToProductionFloor, onClickBack } = useProductionFloorHeader();
+    const { view, setView, showAllJobsButton, paths, onClickPath, navigateToProductionFloor, onClickBack, currentPathIndex } = useProductionFloorHeader();
     const {t} = useTranslation();
     const dir = t('direction');
     return (
@@ -22,21 +22,18 @@ const ProductionFloorHeader = () => {
             <Stack direction={'row'} alignItems={'center'} gap={'10px'}>
                 {(showAllJobsButton || view === EProductionFloorView.GROUPS) && view !== EProductionFloorView.DASHBOARD &&
                     <Button onClick={() =>{
-                        // initGroupsFilters().then();
-                        // setView(EProductionFloorView.TABLE);
-                        // navigateToProductionFloor();
                         onClickBack()
                     }} variant={'contained'}
                         style={{ backgroundColor: '#CBCBE4', color: '#252675', height: '30px', gap: '5px', alignItems: 'center' }}
-                        startIcon={dir === 'rtl' ? <ArrowForwardIcon/> : <KeyboardBackspaceOutlinedIcon />}>{t('productionFloor.allJobs')}</Button>}
+                        startIcon={dir === 'rtl' ? <ArrowForwardIcon/> : <KeyboardBackspaceOutlinedIcon />}>{t('materials.buttons.back')}</Button>}
                 <h1 style={{
                     ...FONT_FAMILY.Lexend(700, 20),
                     color: '#2E3092'
                 }}>{t('tabs.productFloor')}</h1>
                 <Breadcrumbs aria-label="breadcrumb">
                     {
-                        paths.map((path, index) => <Link key={path.name + index} onClick={() => onClickPath(path, index)} underline={'hover'}
-                            component={NextLink.default} color="inherit"
+                        paths.map((path, index) => <Link  key={path.name + index} onClick={() => onClickPath(path, index)} underline={'hover'}
+                            component={NextLink.default} color={index <= currentPathIndex() ? 'purple' :"inherit"}
                             href={path?.actionType === EPathActionType.URL ? '/production-floor?groupsId=' + path.data.groupId : '/production-floor'}>
                             {path.name}
                         </Link>)

@@ -49,7 +49,7 @@ const useMessenger = () => {
 
     const getUsersNames = useCallback(() => {
         return usersMetaData
-            // ?.filter(user => +user.userId !== messenger.sessionUser.userId)
+            ?.filter(user => +user.userId !== messenger.sessionUser.userId)
             .map(user => user.fullName)
     }, [usersMetaData]);
     const {callApi} = useGomakeAxios();
@@ -72,16 +72,20 @@ const useMessenger = () => {
     }
 
     const getDialogs = async () => {
-        const dialogs = await messenger.dialogs.getDialogs();
-        setDialogs(dialogs?.map(dialog => ({
+        let dialogs = await messenger.dialogs.getDialogs();
+        dialogs = dialogs?.map(dialog => ({
             ...dialog,
-            users: dialog?.data?.users_ids?.map((userId, index) => ({id: userId, name: dialog?.data?.users[index]}))
-        })))
+            unread_messages_count: selectedDialog?._id === dialog._id ? 0 : dialog.unread_messages_count,
+            users:  dialog?.occupants_ids?.map((userId, index) => ({id: userId, name: dialog?.data?.users?.length > 0 ? dialog?.data?.users[index] : ''}))
+                ?.filter(user => user.id === messenger.sessionUser.userId)
+        }))
+        setDialogs(dialogs);
         setUnreadMessagesCount(getUnreadMessagesCount(dialogs))
     }
 
     const onMessage = (userId, message) => {
         getDialogs().then();
+        console.log(message)
         if (message.dialog_id === selectedDialog?._id) {
             setMessages(prevState => ([
                 ...prevState,
@@ -93,7 +97,7 @@ const useMessenger = () => {
                     file_approval_Request_id: message.extension?.file_approval_Request_id,
                     quote_approval_Request_id: message.extension?.qoute_approval_Request_id,
                     message: message.body,
-                    date_sent: +message.date_sent,
+                    date_sent: +message?.extension.date_sent,
                 }
             ]))
         }
