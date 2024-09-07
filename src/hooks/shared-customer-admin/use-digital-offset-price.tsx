@@ -3380,7 +3380,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             currentWorkFlowsCount: 0,
           });
           //setLoading(true);
-          setLoading(false);
+          if(id === "00000000-0000-0000-0000-000000000000"){
+            setLoading(false);
+          }
+          
         }
       }
     } else {
