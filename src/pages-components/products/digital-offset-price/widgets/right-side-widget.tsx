@@ -1,12 +1,17 @@
 import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
 import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
-import { Checkbox } from "@mui/material";
+import { Checkbox, Typography } from "@mui/material";
 import { EWidgetProductType } from "../enums";
 import { DotsLoader } from "@/components/dots-loader/dots-Loader";
 import { ProgressBar } from "@/components/progress-bar/progress-bar";
 import { useRightSideWidget } from "./use-right-side-widget";
 import { useEffect, useState } from "react";
 import { _renderIconLogs } from "@/utils/constants";
+import { useRouter } from "next/router";
+import { useClientTypesList } from "@/hooks/use-client-types";
+import { HeaderTitle } from "@/widgets";
+import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
+
 const RightSideWidget = ({
   clasess,
   template,
@@ -27,6 +32,7 @@ const RightSideWidget = ({
   errorMsg,
   calculationServerErrorState
 }: any) => {
+
   const {
     currentProductItemValueTotalPrice,
     lastProductItemValueTotalPrice,
@@ -40,8 +46,10 @@ const RightSideWidget = ({
     setCurrentProductItemValueTotalPrice,
     t,
   } = useRightSideWidget({ includeVAT });
+
   const mergedArray = [...(selectedWorkFlow?.exceptions || []), ...(calculationExceptionsLogs || [])];
-  const [logsArray, setLogsArray] = useState(mergedArray)
+  const [logsArray, setLogsArray] = useState(mergedArray);
+
   useEffect(() => {
     const uniqueArray = mergedArray.filter((item, index, self) => {
       const itemValuesArray = JSON.parse(item.values || '[]');
@@ -54,51 +62,80 @@ const RightSideWidget = ({
           JSON.parse(t.values || '[]').sort().join(',') === itemValuesSorted
       );
     });
-
     if (uniqueArray) {
       setLogsArray(uniqueArray);
     }
   }, [selectedWorkFlow, calculationExceptionsLogs]);
+
+
+
+  const router = useRouter();
+  const [clientTypeDefaultValue, setClientTypeDefaultValue] = useState<any>();
+  const [clientDefaultValue, setClientDefaultValue] = useState<any>();
+  const { clientTypesCategories, getClientTypesCategories } = useClientTypesList();
+
+  useEffect(() => {
+    getClientTypesCategories();
+  }, [])
+
+  useEffect(() => {
+    if (router?.query?.clientTypeId) {
+      clientTypesCategories && setClientTypeDefaultValue(
+        clientTypesCategories?.find(
+          (item: any) => item?.id === router?.query?.clientTypeId
+        )
+      );
+    }
+    if (router?.query?.customerId && router?.query?.customerName) {
+      const customerName = Array.isArray(router?.query?.customerName)
+        ? router.query.customerName[0]
+        : router?.query?.customerName;
+      const decodedCustomerName = customerName ? decodeURIComponent(customerName) : '';
+      setClientDefaultValue({ id: router?.query?.customerId, label: decodedCustomerName })
+    }
+  }, [clientTypesCategories]);
+
+
+  const docType = Array.isArray(router?.query?.documentType)
+    ? 0 : Number(router?.query?.documentType) ?? 0;
+
+  const documentNumberText = docType === DOCUMENT_TYPE.quote
+    ? t("sales.quote.quoteNumber")
+    : t("sales.quote.orderNumber");
+
   return (
     <div style={clasess.rightSideMainContainer}>
       <div style={clasess.rightSideContainer}>
-        {/* {
-          widgetType === EWidgetProductType.CREATE &&
-          <div style={clasess.headerClientRightSide}>
-            <div style={clasess.clientContainer}>
-              <div style={clasess.labelTextStyle}>
-                {t("products.offsetPrice.admin.client")}
-              </div>
-              {clientDefaultValue && (
-                <GoMakeAutoComplate
-                  options={renderOptions()}
-                  placeholder={t("products.offsetPrice.admin.client")}
-                  getOptionLabel={(option: any) =>
-                    `${option.name}-${option.code}`
-                  }
-                  defaultValue={clientDefaultValue}
-                  onChangeTextField={checkWhatRenderArray}
-                  style={clasess.dropDownListStyle}
-                />
-              )}
+        {
+        router?.query?.documentNumber && 
+        <div style={clasess.titleStyle}>{`${documentNumberText}: ${router?.query?.documentNumber} `}</div>
+        }
+        <div style={clasess.headerClientRightSide}>
+          <div style={clasess.clientContainer}>
+            <div style={clasess.labelTextStyle}>
+              {t("products.offsetPrice.admin.client")}
             </div>
-            <div style={clasess.typeContainer}>
-              <div style={clasess.labelTextStyle}>
-                {t("products.offsetPrice.admin.type")}
-              </div>
-              {clientTypeDefaultValue && (
-                <GoMakeAutoComplate
-                  options={clientTypesValue}
-                  placeholder={t("products.offsetPrice.admin.type")}
-                  getOptionLabel={(option: any) => option.name}
-                  defaultValue={clientTypeDefaultValue}
-                  style={clasess.dropDownListStyle}
-                />
-              )}
-            </div>
+            {clientDefaultValue && (
+              <Typography
+                key={"client-name"}
+                style={clasess.clientDropDownListStyle}>
+                {clientDefaultValue?.label || t("products.offsetPrice.admin.client")}
+              </Typography>
+            )}
           </div>
-        } */}
-
+          <div style={clasess.typeContainer}>
+            <div style={clasess.labelTextStyle}>
+              {t("products.offsetPrice.admin.type")}
+            </div>
+            {clientTypeDefaultValue && (
+              <Typography
+                key={"client-type"}
+                style={clasess.clientDropDownListStyle}>
+                {clientTypeDefaultValue?.label || t("products.offsetPrice.admin.type")}
+              </Typography>
+            )}
+          </div>
+        </div>
         {template.img ? (
           <div style={clasess.imgProductContainer}>
             <img src={template.img} alt="gomake" style={{ width: "100%" }} />
