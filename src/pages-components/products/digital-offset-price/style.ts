@@ -276,6 +276,17 @@ const useStyle = () => {
         border: "0px",
         ...FONT_FAMILY.Lexend(500, 14),
       },
+      clientDropDownListStyle: {
+        height: 40,
+        border: "0px",
+        ...FONT_FAMILY.Lexend(500, 14),
+        width: "100%",
+        padding: "8px 16px", 
+        borderRadius: "4px",
+        boxShadow: "0px 1px 10px rgba(0, 0, 0, 0.08)",
+        backgroundColor:  "#fff", 
+        color: "inherit", 
+      },
       renderParameterTypeContainer: {
         display: "flex",
         width: "100%",
@@ -318,7 +329,7 @@ const useStyle = () => {
         flexDirection: "column" as "column",
         justifyContent: "flex-start",
         alignItems: "flex-start",
-        width: "62%",
+        width: "55%",
       },
       labelTextStyle: {
         ...FONT_FAMILY.Lexend(500, 14),
@@ -330,7 +341,7 @@ const useStyle = () => {
         flexDirection: "column" as "column",
         justifyContent: "flex-start",
         alignItems: "flex-start",
-        width: "35%",
+        width: "40%",
       },
       flyerText: {
         color: primaryColor(900),
@@ -435,7 +446,8 @@ const useStyle = () => {
         flexDirection: "row" as "row",
         justifyContent: "flex-start",
         alignItems: "center",
-        marginLeft: -8,
+        marginLeft: direction==="ltr" ? -8 : 0,
+        marginRight: direction==="ltr" ? 0 : -8,
         marginBottom: 0,
       },
       switchAdditionsContainer: {
@@ -821,7 +833,14 @@ const useStyle = () => {
         flexDirection: 'column' as "column",
         gap: '16px',  
       },
-
+      titleStyle: {
+        display: "flex",
+        ...FONT_FAMILY.Lexend(600, 18),
+        color:  primaryColor(500),
+       // color:  "black",
+        lineHeight: "30px",
+        marginBottom:"5px"
+      },
     };
   }, [i18next.language, t, direction,screenWidth]);
   return {

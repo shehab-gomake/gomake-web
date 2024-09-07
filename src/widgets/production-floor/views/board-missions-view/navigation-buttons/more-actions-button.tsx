@@ -38,7 +38,7 @@ const MoreActionsButton = () => {
     }
 
     const handleClickEdit = () => {
-        push(`/products/edit?clientTypeId=${boardMissions.clientTypeId}&customerId=${boardMissions.clientId}&productId=${boardMissions.productId}&documentItemId=${boardMissions.orderItemId}&documentType=${1}&documentId=${boardMissions.orderId}`).then()
+        push(`/products/edit?clientTypeId=${boardMissions.clientTypeId}&customerId=${boardMissions.clientId}&customerName=${boardMissions.clientName}&productId=${boardMissions.productId}&documentItemId=${boardMissions.orderItemId}&documentType=${1}&documentNumber=${boardMissions?.orderNumber}&documentId=${boardMissions.orderId}`).then()
     }
 
     const handleFileSelect = (e) => {

@@ -37,19 +37,19 @@ const useMoreCircle = ({
 
   const onClickEditQuoteItem = (quoteItem, documentType) => {
     navigate(
-      `/products/edit?clientTypeId=${quoteItem?.clientTypeId}&customerId=${quoteItemValue?.customerID}&productId=${quoteItem?.productID}&documentItemId=${quoteItem?.id}&documentType=${documentType}${router?.query?.Id ? `&documentId=${router?.query?.Id}` : ""}`
+      `/products/edit?clientTypeId=${quoteItem?.clientTypeId}&customerId=${quoteItemValue?.customerID}&customerName=${quoteItemValue?.client?.name}&productId=${quoteItem?.productID}&documentItemId=${quoteItem?.id}&documentType=${documentType}&documentNumber=${quoteItemValue?.number}${router?.query?.Id ? `&documentId=${router?.query?.Id}` : ""}`
     );
   };
 
   const onClickDuplicateQuoteItem = (quoteItem, documentType) => {
     navigate(
-      `/products/duplicate?clientTypeId=${quoteItem?.clientTypeId}&customerId=${quoteItemValue?.customerID}&productId=${quoteItem?.productID}&documentItemId=${quoteItem?.id}&documentType=${documentType}${router?.query?.Id ? `&documentId=${router?.query?.Id}` : ""}&duplicateType=${DuplicateType.SameOrder}`
+      `/products/duplicate?clientTypeId=${quoteItem?.clientTypeId}&customerId=${quoteItemValue?.customerID}&customerName=${quoteItemValue?.client?.name}&productId=${quoteItem?.productID}&documentItemId=${quoteItem?.id}&documentType=${documentType}&documentNumber=${quoteItemValue?.number}${router?.query?.Id ? `&documentId=${router?.query?.Id}` : ""}&duplicateType=${DuplicateType.SameOrder}`
     );
   };
 
   const onClickAnalysisQuoteItem = (quoteItem, documentType) => {
     navigate(
-      `/products/edit?clientTypeId=${quoteItem?.clientTypeId}&customerId=${quoteItemValue?.customerID}&productId=${quoteItem?.productID}&documentItemId=${quoteItem?.id}&documentType=${documentType}${router?.query?.Id ? `&documentId=${router?.query?.Id}` : ""}&isAnalysis=true`
+      `/products/edit?clientTypeId=${quoteItem?.clientTypeId}&customerId=${quoteItemValue?.customerID}&customerName=${quoteItemValue?.client?.name}&productId=${quoteItem?.productID}&documentItemId=${quoteItem?.id}&documentType=${documentType}&documentNumber=${quoteItemValue?.number}${router?.query?.Id ? `&documentId=${router?.query?.Id}` : ""}&isAnalysis=true`
     );
   };
 
