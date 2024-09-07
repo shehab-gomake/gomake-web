@@ -35,11 +35,11 @@ const PricingWidget = ({ workFlows, getOutSourcingSuppliers, widgetType }: IPric
     handleScroll,
     allCountSelectedTabWorkFlow,
     t
-  } = usePricingWidget({ workFlows, getOutSourcingSuppliers , widgetType});
+  } = usePricingWidget({ workFlows, getOutSourcingSuppliers, widgetType });
 
   const calculationResult = useRecoilValue(calculationResultState);
   const [selectedWorkFlowId, setSelectedWorkFlowId] = useState("");
-
+  console.log("calculationResult", calculationResult)
 
   return (
     <Stack gap={"16px"} width={"100%"}>
@@ -78,7 +78,7 @@ const PricingWidget = ({ workFlows, getOutSourcingSuppliers, widgetType }: IPric
                       : 'outlined'
                   }
                 >
-                  {section.name} ({section.count + 1})
+                  {section.isNeedTranslation ? t("workFlowTabs." + section.name) : section.name} ({section.count + 1})
                 </PrimaryButton>
               ))}
 
@@ -116,7 +116,7 @@ const PricingWidget = ({ workFlows, getOutSourcingSuppliers, widgetType }: IPric
 
       {selectedWorkFlow && view === EPricingViews.SELECTED_WORKFLOW && (
         <div data-tour={'actions-container'}>
-          <SubWorkFlowsComponent 
+          <SubWorkFlowsComponent
             widgetType={widgetType}
             isEditableActions={true}
             workflows={selectedWorkFlow?.subWorkFlows || []}
