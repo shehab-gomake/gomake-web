@@ -172,7 +172,7 @@ const useQuoteWidget = () => {
     }
     else
       navigate(
-        `/products/create?clientTypeId=${selectedClientType?.id}&customerId=${selectedClient?.id}&productId=${selectedProduct?.id}`
+        `/products/create?clientTypeId=${selectedClientType?.id}&customerId=${selectedClient?.id}&customerName=${selectedClient?.name}&productId=${selectedProduct?.id}`
       );
   };
 
