@@ -11,7 +11,8 @@ import { useRecoilValue } from "recoil";
 import { DashboardActions } from "@/store";
 import { selectedAgentsState } from "@/store/agents-state";
 import { dashboardClientsState } from "@/widgets/dashboard-widget/clients/clients-state";
-import {useDashboardSignalr} from "@/hooks/signalr/use-dashboard-signalr";
+import { useDashboardSignalr } from "@/hooks/signalr/use-dashboard-signalr";
+import { Skeleton } from "@mui/material";
 
 const DashboardWidget = ({ }: IDashboardWidget) => {
     const INTERVAL_TIMEOUT = 2 * 60 * 1000;
@@ -21,7 +22,7 @@ const DashboardWidget = ({ }: IDashboardWidget) => {
     const { classes } = useStyle();
     const { dates, action } = useGomakeDateRange();
     const selectedAgents = useRecoilValue(selectedAgentsState);
-    const {} = useDashboardSignalr(() => actions(action, dates));
+    const { } = useDashboardSignalr(() => actions(action, dates));
 
     const {
         getBoardsMissionsByDateRange,
@@ -115,16 +116,39 @@ const DashboardWidget = ({ }: IDashboardWidget) => {
     const sortedMergedLists = mergedLists().sort((a, b) => {
         return orderMap[a.id] - orderMap[b.id];
     });
-
+    console.log("tasks()", tasks())
     return (
         <div style={classes.container}>
-            <Cards data={statistics ? statistics : {} as IDashboardStatistic} />
+            {
+                statistics ? <Cards data={statistics ? statistics : {} as IDashboardStatistic} /> :
+                    <div style={classes.SkeletonCardsContainer}>
+                        <Skeleton variant="rectangular" width={215} height={185} style={{ borderRadius: 16 }} />
+                        <Skeleton variant="rectangular" width={215} height={185} style={{ borderRadius: 16 }} />
+                        <Skeleton variant="rectangular" width={215} height={185} style={{ borderRadius: 16 }} />
+                        <Skeleton variant="rectangular" width={215} height={185} style={{ borderRadius: 16 }} />
+                        <Skeleton variant="rectangular" width={215} height={185} style={{ borderRadius: 16 }} />
+                        <Skeleton variant="rectangular" width={215} height={185} style={{ borderRadius: 16 }} />
+                    </div>
+            }
+
             <DashboardDates handelSearchValueChange={handelSearchValueChange} />
             <div>
-                {usedMachines() && getFilteredBoardsMissions() &&
-                    <BoardMissionsTable boardsMissions={tasks()}
-                        usedMachines={sortedMergedLists}
-                    />}
+                {
+                    tasks()?.length > 0 ? <>
+                        {usedMachines() && getFilteredBoardsMissions() &&
+                            <BoardMissionsTable boardsMissions={tasks()}
+                                usedMachines={sortedMergedLists}
+                            />}</> : <>
+                        <Skeleton
+                            variant="rectangular"
+                            width={"100%"}
+                            height={400}
+                            style={{ borderRadius: 16 }}
+
+                        />
+                    </>
+                }
+
             </div>
         </div>
     );
