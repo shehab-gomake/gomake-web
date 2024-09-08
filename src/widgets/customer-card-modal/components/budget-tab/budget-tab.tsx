@@ -5,6 +5,7 @@ import { useBudgetTab } from "./use-budget-tab";
 import { PrimaryTable } from "@/components/tables/primary-table";
 import { PlusIcon } from "@/icons";
 import { BudgetModal } from "./budget-modal";
+import { OrdersModal } from "./order-modal";
 
 const BudgetTab = () => {
     const { classes } = useStyle();
@@ -12,7 +13,9 @@ const BudgetTab = () => {
     const { tableHeaders, mapData, addBudget, editBudget } = useBudgetTab();
 
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isOrdersModalOpen, setIsOrdersModalOpen] = useState(false);
     const [currentBudget, setCurrentBudget] = useState(null);
+    const [currentOrders, setCurrentOrders] = useState([]);
 
     const handleAddNewBudget = () => {
         setCurrentBudget(null);
@@ -24,6 +27,11 @@ const BudgetTab = () => {
         setIsModalOpen(true);
     };
 
+    const handleViewOrders = (orders) => {
+        setCurrentOrders(orders);
+        setIsOrdersModalOpen(true);
+    };
+
     return (
         <div style={{ width: '100%', marginTop: 10 }} data-tour={'BudgetTable'}>
             <div style={classes.addNewBudgetTabStyle} onClick={handleAddNewBudget}>
@@ -33,7 +41,7 @@ const BudgetTab = () => {
             <PrimaryTable
                 stickyFirstCol={true}
                 stickyHeader={true}
-                rows={mapData(handleEditBudget)}
+                rows={mapData(handleEditBudget, handleViewOrders)}
                 headers={tableHeaders}
                 maxHeight={420}
             />
@@ -50,6 +58,13 @@ const BudgetTab = () => {
                         setIsModalOpen(false);
                     }}
                     budget={currentBudget}
+                />
+            )}
+            {isOrdersModalOpen && (
+                <OrdersModal
+                    isOpen={isOrdersModalOpen}
+                    onClose={() => setIsOrdersModalOpen(false)}
+                    orders={currentOrders}
                 />
             )}
         </div>

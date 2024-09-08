@@ -13,6 +13,20 @@ const useBudgetTab = () => {
       period: "Jan 2024 - Mar 2024",
       paymentStatus: "Paid",
       status: "Approved",
+      orders: [
+        {
+          orderNumber: "ORD-001",
+          totalPriceWithoutVat: "$10,000",
+          totalPrice: "$12,000",
+          status: "Completed",
+        },
+        {
+          orderNumber: "ORD-002",
+          totalPriceWithoutVat: "$5,000",
+          totalPrice: "$6,000",
+          status: "In Progress",
+        }
+      ],
     },
     {
       budgetName: "R&D Budget Q1",
@@ -23,6 +37,14 @@ const useBudgetTab = () => {
       period: "Jan 2024 - Mar 2024",
       paymentStatus: "Pending",
       status: "Pending Approval",
+      orders: [
+        {
+          orderNumber: "ORD-003",
+          totalPriceWithoutVat: "$8,000",
+          totalPrice: "$9,500",
+          status: "Completed",
+        }
+      ],
     },
     // ... other budgets ...
   ]);
@@ -47,7 +69,7 @@ const useBudgetTab = () => {
     setBudgets(budgets.map(budget => budget.invoiceNumber === updatedBudget.invoiceNumber ? updatedBudget : budget));
   };
 
-  const mapData = (handleEditBudget) => budgets.map((row) => [
+  const mapData = (handleEditBudget, handleViewOrders) => budgets.map((row) => [
     row.budgetName,
     row.vatIncluded ? (
       <div style={{ color: "#40CC4E" }}>Yes</div>
@@ -66,7 +88,7 @@ const useBudgetTab = () => {
     row.status,
     <div style={{ display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center", gap: 10 }}>
       <div onClick={() => handleEditBudget(row)} style={{ cursor: "pointer" }}><EditIcon /></div>
-      <div style={{ cursor: "pointer" }}><AccountTreeIcon /></div>
+      <div onClick={() => handleViewOrders(row.orders)} style={{ cursor: "pointer" }}><AccountTreeIcon /></div>
     </div>
   ]);
 
