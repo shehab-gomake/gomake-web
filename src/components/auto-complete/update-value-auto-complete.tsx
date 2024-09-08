@@ -6,6 +6,7 @@ import { RouteChangeConfirmation } from "@/components/handle-navigation/handle-n
 import { ArrowUpIcon } from "@/icons";
 import { useRef } from "react";
 import { createGlobalStyle } from "styled-components";
+import { useTranslation } from "react-i18next";
 
 interface IUpdateValueAutoCompleteProps {
   value?: any;
@@ -27,8 +28,10 @@ const UpdateValueAutoComplete = ({
   onChangeTextField
 }: IUpdateValueAutoCompleteProps) => {
   const { secondColor } = useGomakeTheme();
+  const { t } = useTranslation()
   const optionsListEl = useRef();
-
+  const dir: 'rtl' | 'ltr' = t('direction');
+  const RTL = dir === 'rtl';
   const GlobalStyle = createGlobalStyle`
   .MuiAutocomplete-input {
     padding-left:0px !important;
@@ -72,9 +75,12 @@ const UpdateValueAutoComplete = ({
               onChange(e, value);
             })}
             popupIcon={
-              <div style={{ position: "absolute", top: "50%", transform: "translateY(-50%)" }}>
+              RTL ? <div style={{ position: "absolute", left: -130, }}>
                 <ArrowUpIcon />
-              </div>
+              </div> :
+                <div style={{ position: "absolute", top: "50%", transform: "translateY(-50%)" }}>
+                  <ArrowUpIcon />
+                </div>
             }
             style={{ height: 26 }}
             clearIcon={false}
