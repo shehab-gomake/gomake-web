@@ -129,10 +129,10 @@ const UseDocumentDesign = () => {
     };
 
     const updateDocumentDesign = async (key, value, maxWidth, maxHeight) => {
-        const isValid = await handleImageValidation(value, maxWidth, maxHeight);
-        if (!isValid) {
+        //const isValid = await handleImageValidation(value, maxWidth, maxHeight);
+        /*if (!isValid) {
             return;
-        }
+        }*/
         let updatedDesign = { ...documentDesign };
 
         if (key === "pdfLogo") {
