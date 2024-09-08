@@ -5,7 +5,6 @@ import { Checkbox, FormControlLabel } from "@mui/material";
 import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
 
 const BudgetModal = ({ isOpen, onClose, onSave, budget }) => {
-    console.log("budget", budget)
     const [formData, setFormData] = useState({
         budgetName: "",
         vatIncluded: false,
@@ -52,8 +51,8 @@ const BudgetModal = ({ isOpen, onClose, onSave, budget }) => {
     };
 
     return (
-        <GoMakeModal open={isOpen} onClose={onClose} insideStyle={{ width: 500 }}>
-            <div style={{ display: "flex", flexDirection: "column", padding: 20, marginTop: "10%", width: "100%", gap: 20 }}>
+        <GoMakeModal open={isOpen} onClose={onClose} insideStyle={{ width: 500, height: "fit-contact" }}>
+            <div style={{ display: "flex", flexDirection: "column", padding: 20, width: "100%", gap: 20 }}>
                 <h2>{budget ? "Edit Budget" : "New Budget"}</h2>
                 <GomakeTextInput
                     placeholder="Budget Name"
