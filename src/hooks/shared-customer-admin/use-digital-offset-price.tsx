@@ -257,28 +257,26 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     const result = res?.data?.data?.data;
     setCalculationExceptionsLogs(result?.productItemValue?.exceptions);
     setCurrentProductItemValueDraftId(result.productItemValueDraftId);
+    setWorkTypes(result?.productItemValue?.workTypes)
     setCalculationProgress({
       totalWorkFlowsCount: 0,
       currentWorkFlowsCount: 0,
     });
     setCurrentProductItemValueTotalWorkFlows(result.productItemValue.totalWorkFlows);
-   
-    //setLoading(false);
     setWorkFlows(result.productItemValue.workFlows);
-    debugger
-    if(result.productItemValue && result.productItemValue.workFlows && result.productItemValue.workFlows.length > 0){
+    if (result.productItemValue && result.productItemValue.workFlows && result.productItemValue.workFlows.length > 0) {
       const mySelectedWorkFlow = result.productItemValue.workFlows[0];
       if (
-          mySelectedWorkFlow &&
-          mySelectedWorkFlow.totalPrice &&
-          mySelectedWorkFlow.totalPrice.values
+        mySelectedWorkFlow &&
+        mySelectedWorkFlow.totalPrice &&
+        mySelectedWorkFlow.totalPrice.values
       ) {
         setCurrentProductItemValueTotalPrice(
-            parseFloat(mySelectedWorkFlow.totalPrice.values[0])
+          parseFloat(mySelectedWorkFlow.totalPrice.values[0])
         );
       }
     }
-   
+
     setJobActions(result?.productItemValue.actions);
     setCalculationResult(result)
     if (widgetType === EWidgetProductType.EDIT && (isActionEmployeeUpdated || isJobNameValue)) {
@@ -2393,6 +2391,12 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
   const [valuesState, setValuesState] = useRecoilState(tempProductQuantityTypesValuesState);
 
+  useEffect(() => {
+    if (workTypes?.length === 0 || workTypes === null) {
+      setValuesState([])
+    }
+  }, [workTypes])
+
   const removeRelatedParametersFromSubProducts = (
     parameterId: string,
     sectionId: string,
@@ -3380,10 +3384,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             currentWorkFlowsCount: 0,
           });
           //setLoading(true);
-          if(id === "00000000-0000-0000-0000-000000000000"){
+          if (id === "00000000-0000-0000-0000-000000000000") {
             setLoading(false);
           }
-          
+
         }
       }
     } else {
@@ -3695,7 +3699,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     }
   }, [router, productTemplate]);
 
- 
+
 
 
   return {
