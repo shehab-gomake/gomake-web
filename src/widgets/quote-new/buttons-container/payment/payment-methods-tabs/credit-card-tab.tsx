@@ -223,12 +223,12 @@ const CreditCardTab = ({
                         </div>
                     </div>
                 }
-                {(!secondWidget && !isTransacted) && <PrimaryButton variant="contained" style={{ width: "75%", padding: "4px" }} onClick={() => onClickMakePayment(handleSaveAndClose , thirdWidget)} >{t('payment.makePayment')}</PrimaryButton>}
-                {!isTransacted && <div style={{ display: "flex", flexDirection: "column", width: "75%" }}>
+                {!secondWidget && <PrimaryButton variant="contained" style={{ width: "75%", padding: "4px" }} onClick={() => onClickMakePayment(handleSaveAndClose , thirdWidget)} >{t('payment.makePayment')}</PrimaryButton>}
+                <div style={{ display: "flex", flexDirection: "column", width: "75%" }}>
                     {!firstWidget && <SecondaryButton style={classes.creditButtons} onClick={handleFirstButtonClick}>{t('payment.manualCreditCard')}</SecondaryButton>}
                     {!secondWidget && <SecondaryButton style={classes.creditButtons} onClick={handleSecondButtonClick}>{t('payment.creditDetailsWithoutSwipe')}</SecondaryButton>}
                     {!thirdWidget && <SecondaryButton style={classes.creditButtons} onClick={handleThirdButtonClick}>{t('payment.processingViaPinPad')}</SecondaryButton>}
-                </div>}
+                </div>
             </div>
             }
         </div>
