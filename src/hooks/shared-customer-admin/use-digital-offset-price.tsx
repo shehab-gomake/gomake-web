@@ -497,7 +497,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     sectionCopy.id = uuidv4();
     sectionCopy.subSections.forEach((sub) => {
       sub.duplicatedFromSubSectionId = sub.id;
-      sub.id = uuidv4();
+      sub.id = sub.id;
       if (sub.type) {
         sub.type = sub.type + numberOfCopies + 1;
       }

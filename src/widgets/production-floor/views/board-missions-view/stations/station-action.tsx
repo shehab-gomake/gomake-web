@@ -1,20 +1,20 @@
-import { CircularProgress, Collapse, Fade, IconButton, MenuItem, Paper } from "@mui/material";
+import {CircularProgress, Collapse, Fade, IconButton, MenuItem, Paper} from "@mui/material";
 import Stack from "@mui/material/Stack";
-import { EWorkSource, HtmlElementType, RuleType } from "@/widgets/product-pricing-widget/enums";
+import {EWorkSource, HtmlElementType, RuleType} from "@/widgets/product-pricing-widget/enums";
 import Divider from "@mui/material/Divider";
 import {
     ParametersMapping,
     TextAreaActionsMapping
 } from "@/widgets/product-pricing-widget/components/action/key-value-view";
-import { useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
+import {useEffect, useState} from "react";
+import {useTranslation} from "react-i18next";
 import CheckIcon from "@mui/icons-material/Check";
-import { useStyle } from "@/widgets/production-floor/views/board-missions-view/stations/style";
+import {useStyle} from "@/widgets/production-floor/views/board-missions-view/stations/style";
 import ClearRoundedIcon from "@mui/icons-material/ClearRounded";
-import { PrimaryButton } from "@/components/button/primary-button";
-import { IBoardMissionsStation } from "@/widgets/production-floor/views/board-missions-view/stations/interface";
-import { DateFormatterDDMMYYYY } from "@/utils/adapter";
-import { useGomakeAxios, useSnackBar } from "@/hooks";
+import {PrimaryButton} from "@/components/button/primary-button";
+import {IBoardMissionsStation} from "@/widgets/production-floor/views/board-missions-view/stations/interface";
+import {DateFormatterDDMMYYYY} from "@/utils/adapter";
+import {useGomakeAxios, useSnackBar} from "@/hooks";
 import {
     boardMissionsUpdateActionEmployee,
     boardMissionsUpdateActionMachine,
@@ -22,16 +22,19 @@ import {
     updateBoardMissionsActionDone
 } from "@/services/api-service/production-floor/production-floor-endpoints";
 import Button from "@mui/material/Button";
-import { GomakeTextInput, ThreeOptionsModal } from "@/components";
-import { useBoardMissionsUpdatedOutputs } from "./use-board-missions-updated-outputs";
-import { ClickOutside } from "@/components/click-out-side/click-out-side";
-import { ActionTimer } from "@/widgets/production-floor/views/board-missions-view/stations/action-timer/action-timer";
-import { useRecoilState } from "recoil";
-import { boardMissionsDetailsState } from "@/widgets/production-floor/state/boards";
-import { Permissions } from "@/components/CheckPermission/enum";
-import { PermissionCheck } from "@/components/CheckPermission/check-permission";
-import { boardMissionsStationsState } from "@/widgets/production-floor/views/board-missions-view/stations/state";
-import { useUserPermission } from "@/hooks/use-permission";
+import {GomakeTextInput, ThreeOptionsModal} from "@/components";
+import {useBoardMissionsUpdatedOutputs} from "./use-board-missions-updated-outputs";
+import {ClickOutside} from "@/components/click-out-side/click-out-side";
+import {ActionTimer} from "@/widgets/production-floor/views/board-missions-view/stations/action-timer/action-timer";
+import {useRecoilState} from "recoil";
+import {boardMissionsDetailsState} from "@/widgets/production-floor/state/boards";
+import {Permissions} from "@/components/CheckPermission/enum";
+import {PermissionCheck} from "@/components/CheckPermission/check-permission";
+import {boardMissionsStationsState} from "@/widgets/production-floor/views/board-missions-view/stations/state";
+import {useUserPermission} from "@/hooks/use-permission";
+import {
+    PrintPackingSlipModalWidget
+} from "@/widgets/production-floor/views/board-missions-view/navigation-buttons/print-packing-slip-modal-widget";
 
 interface IProps extends IBoardMissionsStation {
     delay: number;
@@ -41,35 +44,35 @@ interface IProps extends IBoardMissionsStation {
 }
 
 const BoardMissionsStationAction = ({
-    id,
-    actionId,
-    actionName,
-    source,
-    machineName,
-    employeeName,
-    delay,
-    dueDate,
-    outputs,
-    isDone,
-    boardMissionActionId,
-    boardMissionActionTimer,
-    selected,
-    isLastStation,
-    isEditable,
-    isNeedEmployee,
-    isNeedMachine,
-    isNeedMaterial,
-    getStations,
-}: IProps) => {
+                                        id,
+                                        actionId,
+                                        actionName,
+                                        source,
+                                        machineName,
+                                        employeeName,
+                                        delay,
+                                        dueDate,
+                                        outputs,
+                                        isDone,
+                                        boardMissionActionId,
+                                        boardMissionActionTimer,
+                                        selected,
+                                        isLastStation,
+                                        isEditable,
+                                        isNeedEmployee,
+                                        isNeedMachine,
+                                        isNeedMaterial,
+                                        getStations,
+                                    }: IProps) => {
     const [isOpen, setIsOpen] = useState<boolean>(false);
-    const { t } = useTranslation();
-    const { classes } = useStyle();
-    const { callApi } = useGomakeAxios();
-    const { alertSuccessUpdate, alertFaultUpdate } = useSnackBar();
+    const {t} = useTranslation();
+    const {classes} = useStyle();
+    const {callApi} = useGomakeAxios();
+    const {alertSuccessUpdate, alertFaultUpdate} = useSnackBar();
     const [openReadyModal, setIsReadyModal] = useState<boolean>(false)
     const [boardMissions, setBoardMissions] = useRecoilState(boardMissionsDetailsState);
     const [stations, setStations] = useRecoilState(boardMissionsStationsState);
-
+    const [openPackagingModal, setOpenPackagingModal] = useState(false);
     const [loading, setLoading] = useState<boolean>(false);
     const [timerLoading, setTimerLoading] = useState<boolean>(false);
 
@@ -83,7 +86,7 @@ const BoardMissionsStationAction = ({
         onClickGetEmployeeForAction,
         onClickGetMachineForAction,
     } = useBoardMissionsUpdatedOutputs()
-    const { CheckPermission } = useUserPermission();
+    const {CheckPermission} = useUserPermission();
     const inputsParameters = outputs.filter(
         (parameter) =>
             parameter.propertyType === RuleType.PARAMETER &&
@@ -109,13 +112,13 @@ const BoardMissionsStationAction = ({
                 //stations.find(x=>x.boardMissionActionId == currentActionId).;
                 setStations(stations.map(station => {
                     if (station.boardMissionActionId == boardMissionActionId) {
-                        return { ...station, isDone: true };
+                        return {...station, isDone: true};
                     }
-                    return { ...station };
+                    return {...station};
                 }));
-                setBoardMissions({ ...boardMissions, currentBoardMissionActionId: currentActionId });
-
+                setBoardMissions({...boardMissions, currentBoardMissionActionId: currentActionId});
                 alertSuccessUpdate();
+                setOpenPackagingModal(true);
             } else {
                 alertFaultUpdate()
                 setLoading(false);
@@ -136,11 +139,11 @@ const BoardMissionsStationAction = ({
                 const currentActionId = res.data.currentStationId;
                 setStations(stations.map(station => {
                     if (station.boardMissionActionId == boardMissionActionId) {
-                        return { ...station, isDone: false };
+                        return {...station, isDone: false};
                     }
-                    return { ...station };
+                    return {...station};
                 }))
-                setBoardMissions({ ...boardMissions, currentBoardMissionActionId: currentActionId })
+                setBoardMissions({...boardMissions, currentBoardMissionActionId: currentActionId})
                 alertSuccessUpdate()
             } else {
                 alertFaultUpdate();
@@ -159,9 +162,16 @@ const BoardMissionsStationAction = ({
             setStations(stations.map(station => {
                 if (station.boardMissionActionId == boardMissionActionId) {
                     const isTimerRunning = station.boardMissionActionTimer ? !station.boardMissionActionTimer.isTimerRunning : true;
-                    return { ...station, boardMissionActionTimer: { ...station.boardMissionActionTimer, isTimerRunning: isTimerRunning, totalRunningTime: seconds } };
+                    return {
+                        ...station,
+                        boardMissionActionTimer: {
+                            ...station.boardMissionActionTimer,
+                            isTimerRunning: isTimerRunning,
+                            totalRunningTime: seconds
+                        }
+                    };
                 }
-                return { ...station };
+                return {...station};
             }))
             if (res.success) {
                 alertSuccessUpdate();
@@ -188,7 +198,7 @@ const BoardMissionsStationAction = ({
     const [selectedMachine, setSelectedMachines] = useState({});
 
 
-    const onClickBoardMissionsUpdateActionEmployee = async (boardMissionActionId: string, employeeId: string,employeeName:string) => {
+    const onClickBoardMissionsUpdateActionEmployee = async (boardMissionActionId: string, employeeId: string, employeeName: string) => {
         const callBack = (res) => {
             if (res?.success) {
                 alertSuccessUpdate()
@@ -198,10 +208,10 @@ const BoardMissionsStationAction = ({
                 alertFaultUpdate();
             }
         };
-        await boardMissionsUpdateActionEmployee(callApi, callBack, { boardMissionActionId, employeeId ,employeeName});
+        await boardMissionsUpdateActionEmployee(callApi, callBack, {boardMissionActionId, employeeId, employeeName});
     };
 
-    const onClickBoardMissionsUpdateActionMachine = async (boardMissionActionId: string, machineId: string,machineName:string) => {
+    const onClickBoardMissionsUpdateActionMachine = async (boardMissionActionId: string, machineId: string, machineName: string) => {
         const callBack = (res) => {
             if (res?.success) {
                 alertSuccessUpdate()
@@ -210,7 +220,11 @@ const BoardMissionsStationAction = ({
                 alertFaultUpdate();
             }
         };
-        await boardMissionsUpdateActionMachine(callApi, callBack, { boardMissionActionId, machineId,machineName:machineName });
+        await boardMissionsUpdateActionMachine(callApi, callBack, {
+            boardMissionActionId,
+            machineId,
+            machineName: machineName
+        });
     };
 
 
@@ -222,44 +236,45 @@ const BoardMissionsStationAction = ({
         setOpenMachine(true)
         setMachinesFilter(e.target.value);
     }
-    const onMachineClick = (value: any,label:any) => {
+    const onMachineClick = (value: any, label: any) => {
         setSelectedMachines(value);
         setMachinesFilter(value.label);
         setOpenMachine(false)
         setChooseMachine(false);
-        onClickBoardMissionsUpdateActionMachine(boardMissionActionId, value?.value,label)
+        onClickBoardMissionsUpdateActionMachine(boardMissionActionId, value?.value, label)
     }
-    const onContactClick = (value: any,label:any) => {
+    const onContactClick = (value: any, label: any) => {
         setSelectedContacts(value);
         setContactsFilter(value.label);
         setOpen(false)
         setChooseEmployee(false);
-        onClickBoardMissionsUpdateActionEmployee(boardMissionActionId, value?.value,label)
+        onClickBoardMissionsUpdateActionEmployee(boardMissionActionId, value?.value, label)
     }
     return (
         <>
-            <Fade in={true} timeout={delay} style={{ width: "100%", position: "relative", zIndex: 999999999999999999999999999999 }}>
+            <Fade in={true} timeout={delay}
+                  style={{width: "100%", position: "relative", zIndex: 999999999999999999999999999999}}>
                 <Stack direction={'row'} alignItems={'center'} justifyContent={'space-between'}
-                    onClick={() => setIsOpen(!isOpen)}
-                    style={{
-                        ...classes.actionContainer,
-                        backgroundColor: isDone ? '#EAECF0' : '#F9FAFB',
-                        border: selected ? classes.actionContainerBorder : "unset",
-                    }}>
-                    <Stack >
-                        <Stack padding={"10px 0"} direction={"row"} justifyContent={"space-between"} >
+                       onClick={() => setIsOpen(!isOpen)}
+                       style={{
+                           ...classes.actionContainer,
+                           backgroundColor: isDone ? '#EAECF0' : '#F9FAFB',
+                           border: selected ? classes.actionContainerBorder : "unset",
+                       }}>
+                    <Stack>
+                        <Stack padding={"10px 0"} direction={"row"} justifyContent={"space-between"}>
                             <Stack direction={"row"} gap={"16px"} alignItems={"center"}>
                                 <Stack style={classes.sectionTitle} direction={"row"} alignItems={"center"}
-                                    gap={"10px"}>
+                                       gap={"10px"}>
                                     <span>{actionName}</span>
                                     {source === EWorkSource.OUT ? (
                                         <>
-                                            <Divider orientation={"vertical"} flexItem color={"#000"} />
+                                            <Divider orientation={"vertical"} flexItem color={"#000"}/>
                                         </>
                                     ) : (
                                         isNeedMachine && (
                                             <>
-                                                <Divider orientation={"vertical"} flexItem color={"#000"} />
+                                                <Divider orientation={"vertical"} flexItem color={"#000"}/>
                                                 {!chooseMachine ? (
                                                     <Button
                                                         onClick={(e) => {
@@ -291,10 +306,12 @@ const BoardMissionsStationAction = ({
                                                         onClick={(e) => e.stopPropagation()}
 
                                                     >
-                                                        <div style={{ position: 'relative' }}>
-                                                            <GomakeTextInput placeholder={t('materials.inputs.selectMachine')} style={{ height: '40px' }} value={contactsFilter}
+                                                        <div style={{position: 'relative'}}>
+                                                            <GomakeTextInput
+                                                                placeholder={t('materials.inputs.selectMachine')}
+                                                                style={{height: '40px'}} value={contactsFilter}
                                                                 onChange={onMachinesInputChange}
-                                                                onClick={() => setOpenMachine(!openMachine)} />
+                                                                onClick={() => setOpenMachine(!openMachine)}/>
                                                             {
                                                                 !!openMachine && (
                                                                     <ClickOutside onClick={() => setOpenMachine(false)}>
@@ -310,13 +327,14 @@ const BoardMissionsStationAction = ({
                                                                             }}>
                                                                             {
                                                                                 (!!machensFilter
-                                                                                    ? machinesList?.filter(value =>
-                                                                                        value.label?.toLowerCase()?.includes(machensFilter?.toLowerCase())
-                                                                                    )
-                                                                                    : machinesList
+                                                                                        ? machinesList?.filter(value =>
+                                                                                            value.label?.toLowerCase()?.includes(machensFilter?.toLowerCase())
+                                                                                        )
+                                                                                        : machinesList
                                                                                 )?.map((value, index) => {
                                                                                     return (
-                                                                                        <MenuItem key={index} onClick={() => onMachineClick(value,value.label)}>
+                                                                                        <MenuItem key={index}
+                                                                                                  onClick={() => onMachineClick(value, value.label)}>
                                                                                             {value.label?.slice(0, 18) + "..."}
                                                                                         </MenuItem>
                                                                                     );
@@ -344,7 +362,7 @@ const BoardMissionsStationAction = ({
                                                                 setChooseMachine(false);
                                                             }}
                                                         >
-                                                            <ClearRoundedIcon />
+                                                            <ClearRoundedIcon/>
                                                         </IconButton>
                                                     </Stack>
                                                 )}
@@ -375,10 +393,12 @@ const BoardMissionsStationAction = ({
                                                         alignItems={"center"}
                                                         onClick={(e) => e.stopPropagation()}
                                                     >
-                                                        <div style={{ position: 'relative' }}>
-                                                            <GomakeTextInput placeholder={t('products.profits.exceptions.selectEmployee')} style={{ height: '40px' }} value={contactsFilter}
+                                                        <div style={{position: 'relative'}}>
+                                                            <GomakeTextInput
+                                                                placeholder={t('products.profits.exceptions.selectEmployee')}
+                                                                style={{height: '40px'}} value={contactsFilter}
                                                                 onChange={onContactsInputChange}
-                                                                onClick={() => setOpen(!open)} />
+                                                                onClick={() => setOpen(!open)}/>
                                                             {
                                                                 !!open && <ClickOutside onClick={() => setOpen(false)}>
                                                                     <Paper sx={{
@@ -392,13 +412,14 @@ const BoardMissionsStationAction = ({
                                                                     }}>
                                                                         {
                                                                             (!!contactsFilter
-                                                                                ? employeesList?.filter(value =>
-                                                                                    value.label?.toLowerCase()?.includes(contactsFilter?.toLowerCase())
-                                                                                )
-                                                                                : employeesList
+                                                                                    ? employeesList?.filter(value =>
+                                                                                        value.label?.toLowerCase()?.includes(contactsFilter?.toLowerCase())
+                                                                                    )
+                                                                                    : employeesList
                                                                             )?.map((value, index) => {
                                                                                 return (
-                                                                                    <MenuItem key={index} onClick={() => onContactClick(value,value.label)}>
+                                                                                    <MenuItem key={index}
+                                                                                              onClick={() => onContactClick(value, value.label)}>
                                                                                         {value.label}
                                                                                     </MenuItem>
                                                                                 );
@@ -426,7 +447,7 @@ const BoardMissionsStationAction = ({
                                                                 setChooseEmployee(false);
                                                             }}
                                                         >
-                                                            <ClearRoundedIcon />
+                                                            <ClearRoundedIcon/>
                                                         </IconButton>
                                                     </Stack>
                                                 )}
@@ -440,13 +461,13 @@ const BoardMissionsStationAction = ({
                                         </>
                                     } */}
                                 </Stack>
-                                <Divider orientation={"vertical"} flexItem />
+                                <Divider orientation={"vertical"} flexItem/>
                                 <Stack direction={'row'} gap={'5px'} alignItems={'center'}>
                                     <span style={classes.detailTitle}>{t("productionFloor.timer")}</span>
                                     <ActionTimer actionId={boardMissionActionId} loading={timerLoading}
-                                        onToggle={onToggleTimer} {...boardMissionActionTimer} />
+                                                 onToggle={onToggleTimer} {...boardMissionActionTimer} />
                                 </Stack>
-                                <Divider orientation={"vertical"} flexItem />
+                                <Divider orientation={"vertical"} flexItem/>
                                 <Stack direction={'row'} gap={'5px'} alignItems={'center'}>
                                     <span style={classes.detailTitle}>{t("productionFloor.deliveryTime")}</span>
                                     <span style={classes.detailValue}>{DateFormatterDDMMYYYY(dueDate)}</span>
@@ -461,22 +482,22 @@ const BoardMissionsStationAction = ({
                             </Stack>
                         </Stack>
                         <Collapse in={isOpen} collapsedSize={0} orientation={"vertical"}
-                            onClick={(e) => e.stopPropagation()}>
+                                  onClick={(e) => e.stopPropagation()}>
                             {inputsParameters.length > 0 && (
                                 <>
-                                    <Divider />
+                                    <Divider/>
                                     <Stack padding={"10px 0"} direction={"row"} gap={"16px"} flexWrap={"wrap"}
                                     >
-                                        <ParametersMapping parameters={inputsParameters} isProductionFloor={true} />
+                                        <ParametersMapping parameters={inputsParameters} isProductionFloor={true}/>
                                     </Stack>
                                 </>
                             )}
                             {outputsParameters.length > 0 && source === EWorkSource.INTERNAL && (
                                 <>
-                                    <Divider />
+                                    <Divider/>
                                     <Stack padding={"10px 0"} direction={"row"} gap={"16px"} flexWrap={"wrap"}>
                                         <ParametersMapping source={source} parameters={outputsParameters}
-                                            isProductionFloor={true} />
+                                                           isProductionFloor={true}/>
                                         <TextAreaActionsMapping
                                             parameters={textAreaOutputs}
                                             actionId={id}
@@ -494,18 +515,18 @@ const BoardMissionsStationAction = ({
                             isEditable &&
                             <div>
                                 {
-                                    loading ? <CircularProgress /> :
+                                    loading ? <CircularProgress/> :
                                         isDone ?
                                             <Button variant={'contained'} onClick={(e) => {
                                                 e.stopPropagation();
                                                 onClickBackToProcess(boardMissionActionId).then()
                                             }}
-                                                style={{
-                                                    padding: '10px',
-                                                    backgroundColor: '#FFF',
-                                                    color: '#344054',
-                                                    borderRadius: '16px'
-                                                }}>
+                                                    style={{
+                                                        padding: '10px',
+                                                        backgroundColor: '#FFF',
+                                                        color: '#344054',
+                                                        borderRadius: '16px'
+                                                    }}>
                                                 {t("boardMissions.completed")}
                                             </Button> :
                                             <PrimaryButton variant={'contained'} sx={{
@@ -515,15 +536,15 @@ const BoardMissionsStationAction = ({
                                                 padding: 0,
                                                 borderRadius: '12px'
                                             }}
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    if (isLastStation) {
-                                                        setIsReadyModal(true)
-                                                    } else {
-                                                        onClickDone(boardMissionActionId).then()
-                                                    }
-                                                }}>
-                                                <CheckIcon />
+                                                           onClick={(e) => {
+                                                               e.stopPropagation();
+                                                               if (isLastStation) {
+                                                                   setIsReadyModal(true)
+                                                               } else {
+                                                                   onClickDone(boardMissionActionId).then()
+                                                               }
+                                                           }}>
+                                                <CheckIcon/>
                                             </PrimaryButton>
                                 }
                             </div>
@@ -538,12 +559,15 @@ const BoardMissionsStationAction = ({
                         onClose={() => setIsReadyModal(false)}
                         onClickYes={() => onClickDone(boardMissionActionId, true)}
                         onClickNo={() => onClickDone(boardMissionActionId, false)}
-                        insideStyle={{ zIndex: 999999 }}
+                        insideStyle={{zIndex: 999999}}
                     />
+                    <PrintPackingSlipModalWidget boardMissionId={boardMissions.boardMissionId}
+                                                 quantity={boardMissions.quantity} openModal={openPackagingModal}
+                                                 onClose={() => setOpenPackagingModal(false)}/>
                 </Stack>
             </Fade>
         </>
     );
 };
 
-export { BoardMissionsStationAction }
+export {BoardMissionsStationAction}

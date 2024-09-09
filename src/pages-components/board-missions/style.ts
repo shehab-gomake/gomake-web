@@ -1,6 +1,4 @@
 import { useMemo } from "react";
-import i18next from "i18next";
-import { useTranslation } from "react-i18next";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
@@ -126,7 +124,8 @@ const useStyle = () => {
         borderRadius: "8px",
         height: "auto",
         maxHeight: 600,
-        gap: "10px"
+        gap: "10px",
+        zIndex: 999999
       },
     };
   }, [theme]);

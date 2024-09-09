@@ -2,7 +2,7 @@ import {useRouter} from "next/router";
 import {getBoardsMissionsStations} from "@/services/api-service/production-floor/production-floor-endpoints";
 import {useGomakeAxios} from "@/hooks";
 import {useEffect} from "react";
-import {useRecoilState} from "recoil";
+import {useRecoilState, useResetRecoilState} from "recoil";
 import {
     boardMissionsStationsState, boardMissionsSubWorkFlowsState, isReadyBoardMissionsState,
     stationGeneralInformationState
@@ -22,6 +22,7 @@ const useBoardMissionsStations = () => {
     const [subWorkFlows, setSubWorkFlows] = useRecoilState(boardMissionsSubWorkFlowsState);
     const [, setIsReady] = useRecoilState(isReadyBoardMissionsState);
     const [boardMissions] = useRecoilState(boardMissionsDetailsState);
+    const initStations = useResetRecoilState(boardMissionsStationsState);
     const getStations = async () => {
         const callBack = res => {
             if (res?.success) {
@@ -41,6 +42,9 @@ const useBoardMissionsStations = () => {
     useEffect(() => {
         if (!!boardMissionsId && step === 'stations') {
             getStations().then();
+        }
+        return () => {
+            initStations();
         }
     }, [boardMissionsId, step, productType])
     return {

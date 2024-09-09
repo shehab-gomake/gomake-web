@@ -66,6 +66,7 @@ const WriteCommentComp = ({ isQuoteConfirmation, getQuote, documentType, onClick
 
   const relatedDocuments = mergeDocumentNumbers(documentState);
   const canEditComments = documentState?.isEditable && CheckDocumentPermission(documentType.toString(), DocumentPermission.EDIT_DOCUMENT);
+  const canEditNotes =  CheckDocumentPermission(documentType.toString(), DocumentPermission.EDIT_DOCUMENT);
   const canNotEditConfirmationComments = documentState?.isConfirmed || documentState?.documentStatus === QUOTE_STATUSES.Canceled;
 
   return (
@@ -121,7 +122,7 @@ const WriteCommentComp = ({ isQuoteConfirmation, getQuote, documentType, onClick
           value={isQuoteConfirmation ? quoteComments : data}
           onChange={isQuoteConfirmation ? (e) => setQuoteComments(e.target.value) : handleChange}
           onBlur={isQuoteConfirmation ? onUpdateComments : handleBlur}
-          disabled={isQuoteConfirmation ? canNotEditConfirmationComments : !canEditComments}
+          disabled={isQuoteConfirmation ? canNotEditConfirmationComments : !canEditNotes}
         />
       </div>
       {!isQuoteConfirmation && (documentType === DOCUMENT_TYPE.quote || documentType === DOCUMENT_TYPE.order) && <div style={classes.item2Container}>
