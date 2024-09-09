@@ -20,10 +20,10 @@ const useBoardMissions = () => {
     const resetGeneralInformation = useResetRecoilState(stationGeneralInformationState)
     const initStates = () => {
         resetDetails();
-        resetFiles();
-        resetStations();
-        resetSubWorkFlows();
-        resetGeneralInformation();
+        // resetFiles();
+        // resetStations();
+        // resetSubWorkFlows();
+        // resetGeneralInformation();
     }
 
     const getBoardMissions = async (id: string, connectionId, productType: string) => {
@@ -37,6 +37,7 @@ const useBoardMissions = () => {
 
     return {
         getBoardMissions,
+        initStates
     }
 }
 

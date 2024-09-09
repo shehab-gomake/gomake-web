@@ -150,6 +150,9 @@ const TableRowComponent = ({boardMission}: IProps) => {
                                           onChange={(id, statusId) => updateStatus([boardMission], statusId)}/>
                 </SecondaryTableCell>
                 <SecondaryTableCell align={"center"}>
+                    {DateFormatterDDMMYYYY(boardMission?.boardMissionCreatedDate)}
+                </SecondaryTableCell>
+                <SecondaryTableCell align={"center"}>
                     {boardMission?.clientName}
                 </SecondaryTableCell>
                 <SecondaryTableCell align={"center"}>
