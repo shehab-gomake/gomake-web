@@ -57,6 +57,7 @@ export interface IBoardMissionsDetails {
     productType: string;
     sectionName: string;
     clientTypeId: string;
+    quantity?: number;
 }
 
 export interface IBoardMissionStep {
