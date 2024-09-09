@@ -1,32 +1,33 @@
-import {SecondaryTableCell} from "@/components/tables/secondary-table";
-import {SecondaryCheckBox} from "@/components/check-box/secondary-check-box";
+import { SecondaryTableCell } from "@/components/tables/secondary-table";
+import { SecondaryCheckBox } from "@/components/check-box/secondary-check-box";
 import Link from "next/link";
-import {LabelComponent} from "@/widgets/production-floor/label-component/label-component";
+import { LabelComponent } from "@/widgets/production-floor/label-component/label-component";
 import {
     CurrentStationComponent
 } from "@/widgets/production-floor/table-view/status-table/current-station/current-station";
-import {BoardStatusComponent} from "@/widgets/production-floor/table-view/status-table/board-status/board-status";
-import {DateFormatterDDMMYYYY} from "@/utils/adapter";
-import {IBoardMissions} from "@/widgets/production-floor/interfaces/board-missions";
-import {useDrag, useDrop} from "react-dnd";
-import {useRecoilState} from "recoil";
-import {selectedBoardsMissionsState} from "@/widgets/production-floor/state/boards";
-import {useProductionFloorData} from "@/widgets/production-floor/use-production-floor-data";
+import { BoardStatusComponent } from "@/widgets/production-floor/table-view/status-table/board-status/board-status";
+import { DateFormatterDDMMYYYY } from "@/utils/adapter";
+import { IBoardMissions } from "@/widgets/production-floor/interfaces/board-missions";
+import { useDrag, useDrop } from "react-dnd";
+import { useRecoilState } from "recoil";
+import { selectedBoardsMissionsState } from "@/widgets/production-floor/state/boards";
+import { useProductionFloorData } from "@/widgets/production-floor/use-production-floor-data";
 import Stack from "@mui/material/Stack";
-import {useUserPermission} from '@/hooks/use-permission';
-import {Permissions} from "@/components/CheckPermission/enum";
-import {PermissionCheck} from "@/components/CheckPermission/check-permission";
-import {useRef, useState} from "react";
-import {Collapse, Skeleton, TableCell, TableRow} from "@mui/material";
+import { useUserPermission } from '@/hooks/use-permission';
+import { Permissions } from "@/components/CheckPermission/enum";
+import { PermissionCheck } from "@/components/CheckPermission/check-permission";
+import { useRef, useState } from "react";
+import { Collapse, Skeleton, TableCell, TableRow } from "@mui/material";
 import {
     ApprovalFileStatusComponent
 } from "@/widgets/production-floor/table-view/status-table/table-row/approval-file-status-component";
 import KeyboardDoubleArrowUpIcon from '@mui/icons-material/KeyboardDoubleArrowUp';
-import {useGomakeTheme} from "@/hooks/use-gomake-thme";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 
 interface IProps {
     boardMission: IBoardMissions
+    status?: any
 }
 
 enum EDropArea {
@@ -35,23 +36,23 @@ enum EDropArea {
     DISABLED
 }
 
-const TableRowComponent = ({boardMission}: IProps) => {
+const TableRowComponent = ({ boardMission, status }: IProps) => {
     const [selectedIds, setSelectedIds] = useRecoilState(selectedBoardsMissionsState);
-    const {CheckPermission} = useUserPermission();
+    const { CheckPermission } = useUserPermission();
     const canDrag = CheckPermission(Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR);
     const [dropArea, setDropArea] = useState<EDropArea>();
-    const {errorColor} = useGomakeTheme();
+    const { errorColor } = useGomakeTheme();
     const ref = useRef(null);
     const [, drag] = useDrag(() => ({
         type: 'task',
-        item: {board: boardMission, type: 'TASK', selectedIds},
+        item: { board: boardMission, type: 'TASK', selectedIds },
         canDrag: () => canDrag,
         collect: (monitor) => ({
             isDragging: !!monitor.isDragging(),
         }),
     }), [selectedIds, canDrag]);
 
-    const [{isOver}, drop] = useDrop(() => ({
+    const [{ isOver }, drop] = useDrop(() => ({
         accept: 'task',
         drop: (item: { board: IBoardMissions, selectedIds: IBoardMissions[] }, monitor) => {
             const didDrop = monitor.didDrop();
@@ -97,7 +98,7 @@ const TableRowComponent = ({boardMission}: IProps) => {
     }), [boardMission]);
 
 
-    const {updateStatus, updateBoardMissionsOrder} = useProductionFloorData();
+    const { updateStatus, updateBoardMissionsOrder } = useProductionFloorData();
     const onSelectBoardMissions = (id: string, checked: boolean) => {
         setSelectedIds(checked ? [...selectedIds, boardMission] :
             selectedIds.filter(selectedBoard => selectedBoard.id !== id && selectedBoard.productType === boardMission.productType));
@@ -106,27 +107,27 @@ const TableRowComponent = ({boardMission}: IProps) => {
     return (
         <>
             <TableRow>
-                <TableCell colSpan={9} style={{padding: 0, transition: 'padding 1s'}}>
+                <TableCell colSpan={9} style={{ padding: 0, transition: 'padding 1s' }}>
                     {
                         <Collapse in={selectedIds.length === 0 && isOver && dropArea === EDropArea.BEFORE}>
-                            <Skeleton height={'50px'}/>
+                            <Skeleton height={'50px'} />
                         </Collapse>
                     }
                 </TableCell>
             </TableRow>
             <TableRow ref={ref}
-                      style={{cursor: canDrag ? 'move' : 'default', marginBottom: '100px'}}>
+                style={{ cursor: canDrag ? 'move' : 'default', marginBottom: '100px' }}>
                 <PermissionCheck userPermission={Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR}>
                     <SecondaryTableCell align={"center"}> <SecondaryCheckBox
                         checked={!!selectedIds?.find(si => si.id === boardMission.id && si.productType === boardMission.productType)}
                         onChange={(a) => {
                             onSelectBoardMissions(boardMission.id, a.target.checked)
-                        }}/>
+                        }} />
                     </SecondaryTableCell>
                 </PermissionCheck>
                 <SecondaryTableCell>
                     {
-                        <ApprovalFileStatusComponent fileStatus={boardMission.showGraphicsApprovalAlert}/>
+                        <ApprovalFileStatusComponent fileStatus={boardMission.showGraphicsApprovalAlert} />
                     }
                 </SecondaryTableCell>
                 <SecondaryTableCell align={"center"}>
@@ -135,19 +136,19 @@ const TableRowComponent = ({boardMission}: IProps) => {
                 </SecondaryTableCell>
                 <SecondaryTableCell>
                     {
-                        boardMission.isUrgentWork && <KeyboardDoubleArrowUpIcon style={{color: errorColor(500)}}/>
+                        boardMission.isUrgentWork && <KeyboardDoubleArrowUpIcon style={{ color: errorColor(500) }} />
                     }
                 </SecondaryTableCell>
                 <SecondaryTableCell align={"center"}>
-                    <LabelComponent label={boardMission?.productName}/>
+                    <LabelComponent label={boardMission?.productName} />
                 </SecondaryTableCell>
                 <SecondaryTableCell align={"center"}>
                     <CurrentStationComponent {...boardMission.currentStation}
-                                             boardMissionId={boardMission.id}/>
+                        boardMissionId={boardMission.id} status={status} />
                 </SecondaryTableCell>
                 <SecondaryTableCell align={"center"}>
                     <BoardStatusComponent statusId={boardMission.statusId} id={boardMission.id}
-                                          onChange={(id, statusId) => updateStatus([boardMission], statusId)}/>
+                        onChange={(id, statusId) => updateStatus([boardMission], statusId)} />
                 </SecondaryTableCell>
                 <SecondaryTableCell align={"center"}>
                     {boardMission?.clientName}
@@ -161,16 +162,16 @@ const TableRowComponent = ({boardMission}: IProps) => {
                 <SecondaryTableCell align={"center"}>
                     <Stack justifyContent={'center'} direction={'row'} flexWrap={'wrap'}>
                         {
-                            boardMission?.automatedTags?.map(tag => <LabelComponent key={tag} label={tag}/>)
+                            boardMission?.automatedTags?.map(tag => <LabelComponent key={tag} label={tag} />)
                         }
                     </Stack>
                 </SecondaryTableCell>
             </TableRow>
             <TableRow>
-                <TableCell colSpan={9} style={{padding: 0, transition: 'padding 1s'}}>
+                <TableCell colSpan={9} style={{ padding: 0, transition: 'padding 1s' }}>
                     {
                         <Collapse in={selectedIds.length === 0 && isOver && dropArea === EDropArea.AFTER}>
-                            <Skeleton height={'50px'}/>
+                            <Skeleton height={'50px'} />
                         </Collapse>
                     }
                 </TableCell>
@@ -179,4 +180,4 @@ const TableRowComponent = ({boardMission}: IProps) => {
     )
 }
 
-export {TableRowComponent}
+export { TableRowComponent }
