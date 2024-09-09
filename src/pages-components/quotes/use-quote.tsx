@@ -51,7 +51,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const { errorColor } = useGomakeTheme();
   const [patternSearch, setPatternSearch] = useState("");
   const [finalPatternSearch, setFinalPatternSearch] = useState("");
-  const debounce = useDebounce(patternSearch, 500);
+  const debounce = useDebounce(patternSearch, 1000);
   const { GetDateFormat, GetShortDateFormat } = useDateFormat();
   const [statusId, setStatusId] = useState<any>();
   const [approvalStatusId, setApprovalStatusId] = useState<any>();
@@ -774,7 +774,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     if (statusId !== null) {
       handleSecondCardClick();
     }
-   // getAllQuotes();
+    // getAllQuotes();
   };
 
   const onClickClearFilter = () => {
@@ -859,7 +859,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       </PermissionCheck>
     ),
     docType === DOCUMENT_TYPE.receipt ? t("sales.quote.paymentMethod") : t("sales.quote.worksName"),
-    isOrdersTracking ?  t("customers.modal.paymentStatus") : t("sales.quote.totalPrice"),
+    isOrdersTracking ? t("customers.modal.paymentStatus") : t("sales.quote.totalPrice"),
     t("sales.quote.notes"),
     t("sales.quote.status"),
     t("sales.quote.more"),

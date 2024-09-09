@@ -21,8 +21,7 @@ import { ExcelSheetIcon } from "@/icons";
 import { AddRuleModal } from "../products/profits-new/widgets/add-rule-modal";
 import { GoMakeDatepicker } from "@/components/date-picker/date-picker-component";
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-import { useRecoilValue } from "recoil";
-import { employeesListsState } from "./states";
+
 import { GoMakeMultiSelect } from "@/components/auto-complete/multi-select";
 import { useEffect, } from "react";
 import { IconButton } from "@mui/material";

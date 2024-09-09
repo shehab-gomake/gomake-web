@@ -63,14 +63,14 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
   const [allPurchaseJobs, setAllPurchaseJobs] = useState([]);
   const { GetDateFormat } = useDateFormat();
   const [finalPatternSearch, setFinalPatternSearch] = useState("");
-  const debounce = useDebounce(patternSearch, 500);
+  const debounce = useDebounce(patternSearch, 1000);
   const [pageNumber, setPageNumber] = useState(1);
   const [pagesCount, setPagesCount] = useState(0);
   const [pageSize, setPageSize] = useState(DEFAULT_VALUES.PageSize);
-  const { customer, supplierList, setCustomer, renderOptions, checkWhatRenderArray, handleCustomerChange } = useCustomerDropDownList({shouldRenderSuppliersOnMount:isPurchaseJobs})
+  const { customer, supplierList, setCustomer, renderOptions, checkWhatRenderArray, handleCustomerChange } = useCustomerDropDownList({ shouldRenderSuppliersOnMount: isPurchaseJobs })
   const { agent, setAgent, agentsCategories, handleAgentChange } = useAgentsList()
   const router = useRouter()
-  const [selectedMission, setSelectedMission] = useState<any>({}) 
+  const [selectedMission, setSelectedMission] = useState<any>({})
   const handlePageSizeChange = (event) => {
     setPageNumber(1);
     setPageSize(event.target.value);
@@ -216,12 +216,12 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
         : (mission?.boardMissionStatus && mission?.station
             ? 
             : ""),*/
-    if(mission?.isReady){
+    if (mission?.isReady) {
       return t('boardMissions.done');
     }
-    if(mission?.boardMissionStatus && mission?.station){
+    if (mission?.boardMissionStatus && mission?.station) {
       const empName = mission.station.machineName && mission.station.machineId ? mission.station.machineName : mission.station.employeeName;
-      if(empName)
+      if (empName)
         return `${mission.boardMissionStatus.name} \n\r ${mission.station.actionName} \n\r ${empName}`
       return `${mission.boardMissionStatus.name} \n\r ${mission.station.actionName}`
     }
@@ -271,8 +271,8 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
               mission?.jobName,
               mission?.numberOfBoardMissions,
               mission?.productName,
-              <div style={{whiteSpace:'break-spaces'}}>
-                { getJobStatus(mission)}
+              <div style={{ whiteSpace: 'break-spaces' }}>
+                {getJobStatus(mission)}
               </div>,
               <MoreMenuWidget
                 mission={mission}
