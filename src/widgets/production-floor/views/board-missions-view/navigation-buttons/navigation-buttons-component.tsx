@@ -2,7 +2,7 @@ import {
     useBoardMissionsNavigationButtons
 } from "@/widgets/production-floor/views/board-missions-view/navigation-buttons/use-navigationButtons";
 import Stack from "@mui/material/Stack";
-import { ToggleButton, ToggleButtonGroup } from "@mui/material";
+import { Skeleton, ToggleButton, ToggleButtonGroup } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import {
@@ -14,29 +14,49 @@ import {
 import { useTranslation } from "react-i18next";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { PermissionCheck } from "@/components/CheckPermission/check-permission";
+import { useRecoilState } from "recoil";
+import { boardMissionsDetailsState } from "@/widgets/production-floor/state/boards";
 
 const NavigationButtonsComponent = () => {
     const { handleViewChange, step, boardMissionsViews } = useBoardMissionsNavigationButtons();
+    const [boardMissionsDetails, setBoardMissionsDetails] = useRecoilState(boardMissionsDetailsState);
+    const isLoading = !boardMissionsDetails?.boardMissionId;
+
     const { t } = useTranslation();
     return (
         <Stack direction={'row'} justifyContent={'space-between'} alignItems={'center'}>
-            <PrimaryToggleButtonGroup value={step}
-                exclusive
-                onChange={handleViewChange}>
-                {
-                    boardMissionsViews.map(view => <PrimaryToggleButton value={view.value}>
-                        {t(view.labelKey)}
-                    </PrimaryToggleButton>)
-                }
-            </PrimaryToggleButtonGroup>
-            <Stack direction={'row'} alignItems={'center'} gap={'12px'}>
-                <DocumentsButton />
-                <PermissionCheck userPermission={Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR}>
-                    <MoreActionsButton />
-                </PermissionCheck>
-            </Stack>
+            {isLoading ? (
+                // Skeleton for the Toggle Button Group
+                <Stack direction="row" gap="10px">
+                    <Skeleton variant="rectangular" width={240} height={42} style={{ borderRadius: 16 }} />
+                </Stack>
+            ) : (
+                <PrimaryToggleButtonGroup value={step} exclusive onChange={handleViewChange}>
+                    {boardMissionsViews.map((view) => (
+                        <PrimaryToggleButton value={view.value} key={view.value}>
+                            {t(view.labelKey)}
+                        </PrimaryToggleButton>
+                    ))}
+                </PrimaryToggleButtonGroup>
+            )}
+
+            {isLoading ? (
+                // Skeletons for the Action Buttons (DocumentsButton and MoreActionsButton)
+                <Stack direction={'row'} alignItems={'center'} gap={'12px'}>
+                    <Skeleton variant="rectangular" width={200} height={40} style={{ borderRadius: 12 }} />
+                    <Skeleton variant="rectangular" width={50} height={40} style={{ borderRadius: 12 }} />
+
+                </Stack>
+            ) : (
+                <Stack direction={'row'} alignItems={'center'} gap={'12px'}>
+                    <DocumentsButton />
+                    <PermissionCheck userPermission={Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR}>
+                        <MoreActionsButton />
+                    </PermissionCheck>
+                </Stack>
+            )}
         </Stack>
-    )
+    );
 }
 
 const PrimaryToggleButtonGroup = styled(ToggleButtonGroup)(() => {
