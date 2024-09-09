@@ -50,11 +50,11 @@ const StatusTableComponent = ({ status, boards }: IProps) => {
   const getBoards = useCallback(() => {
     return !!search
       ? boards?.filter(
-          (board) =>
-            `${board?.boardMissionNumber}\\${board?.orderNumber}`.includes(search) ||
-            `${board?.clientName?.toLowerCase()}`.includes(search.toLowerCase()) ||
-            board?.automatedTags?.some((tag) => `${tag.toLowerCase()}`.includes(search.toLowerCase()))
-        )
+        (board) =>
+          `${board?.boardMissionNumber}\\${board?.orderNumber}`.includes(search) ||
+          `${board?.clientName?.toLowerCase()}`.includes(search.toLowerCase()) ||
+          board?.automatedTags?.some((tag) => `${tag.toLowerCase()}`.includes(search.toLowerCase()))
+      )
       : boards;
   }, [boards, search]);
   return (
@@ -102,7 +102,7 @@ const StatusTableComponent = ({ status, boards }: IProps) => {
                     ?.map((boardMission) => {
                       return (
                         <>
-                          <TableRowComponent key={"status" + status.id + boardMission.id} boardMission={boardMission} />
+                          <TableRowComponent key={"status" + status.id + boardMission.id} boardMission={boardMission} status={status} />
                         </>
                       );
                     })}

@@ -9,12 +9,16 @@ import {
 } from "@/widgets/production-floor/table-view/status-table/current-station/use-current-station";
 import { PermissionCheck } from "@/components/CheckPermission/check-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
+import { useRecoilState } from "recoil";
+import { IStatusesBoardsMissions } from "@/widgets/production-floor/interfaces/production-floor-data-response";
+import { boardsMissionsState } from "@/widgets/production-floor/state/boards";
 
 interface IProps extends ICurrentStation {
     boardMissionId: string;
+    status?: any;
 }
 
-const CurrentStationComponent = ({ boardMissionId, machineName, actionName, productType, id }: IProps) => {
+const CurrentStationComponent = ({ boardMissionId, machineName, actionName, productType, id, status }: IProps) => {
     const { classes } = useStyle();
     const {
         handleClick,
@@ -27,6 +31,26 @@ const CurrentStationComponent = ({ boardMissionId, machineName, actionName, prod
         canMoveStation,
         dir
     } = useCurrentStation();
+    const [data, setData] = useRecoilState<IStatusesBoardsMissions[]>(boardsMissionsState);
+
+    const handleRemoveBoardMission = (statusKey, boardMissionId) => {
+        setData((prevData) => {
+            return prevData.map((item) => {
+                if (item.boardMissionStatus?.boardMissionStatus?.key === statusKey) {
+                    const updatedBoardMissions = item.boardMissions.filter(
+                        (mission) => mission.id !== boardMissionId
+                    );
+                    return {
+                        ...item,
+                        boardMissions: updatedBoardMissions,
+                    };
+                }
+                return item;
+            });
+        });
+    };
+
+
 
     return (
         <div>
@@ -40,7 +64,10 @@ const CurrentStationComponent = ({ boardMissionId, machineName, actionName, prod
                     </Button>
                     <PermissionCheck userPermission={Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR}>
                         <Button sx={classes.currentStationBtn} variant={'contained'}
-                            onClick={() => onUpdateToNextStation(boardMissionId, productType)}>
+                            onClick={() => {
+                                handleRemoveBoardMission(status?.key, boardMissionId)
+                                onUpdateToNextStation(boardMissionId, productType)
+                            }}>
                             {dir === "ltr" ? <KeyboardArrowDownIcon /> : <KeyboardArrowLeftIcon />}
                         </Button>
                     </PermissionCheck>
