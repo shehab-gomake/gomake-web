@@ -63,7 +63,8 @@ const ButtonsContainer = ({
     getAllUsersCanApproveQuote,
     managersOptions,
     onClickSendAndChat,
-    loading
+    loading,
+    canAddDelivery
   } = useButtonsContainer(documentType);
 
 
@@ -111,7 +112,7 @@ const ButtonsContainer = ({
           </GomakePrimaryButton>
         }
         {
-          (documentType === DOCUMENT_TYPE.quote || documentType === DOCUMENT_TYPE.order) && canEditDocument && <GomakePrimaryButton
+          canAddDelivery && canEditDocument && <GomakePrimaryButton
             leftIcon={<PlusIcon stroke={"#344054"} />}
             style={classes.btnContainer}
             onClick={() => onOpenDeliveryModal()}
