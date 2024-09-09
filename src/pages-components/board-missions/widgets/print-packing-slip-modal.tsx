@@ -15,6 +15,7 @@ const PrintPackingSlipModal = ({ openPackagesModal, onClosePackagesModal, packag
       onClose={onClosePackagesModal}
       modalTitle={t("boardMissions.packagesTitle")}
       insideStyle={classes.modalStyle}
+      style={{zIndex: 999999}}
     >
       <Stack direction={"column"} gap={"15px"}>
         <Stack direction={"column"} gap={"15px"}>
