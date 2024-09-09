@@ -1,4 +1,4 @@
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { DuplicateItemModal } from "@/widgets/quote-new/modals-widgets/duplicate-item-modal";
 import { AddNewItemModal } from "@/widgets/quote-new/modals-widgets/add-new-item-modal";
 import { ButtonsContainer } from "@/widgets/quote-new/buttons-container";
@@ -17,7 +17,7 @@ import { useStyle } from "./style";
 import { CancelBtnMenu } from "@/widgets/quote-new/cancel-btn-menu";
 import { SendBtnMenu } from "@/widgets/quote-new/send-btn-menu";
 import { _renderQuoteStatus } from "@/utils/constants";
-import { IconButton } from "@mui/material";
+import { Box, IconButton, Skeleton } from "@mui/material";
 import { SettingQuoteMenu } from "@/widgets/quote-new/setting-quote-menu";
 import { AddDeliveryModal } from "@/widgets/quote-new/modals-widgets/add-delivery-modal/add-delivery-modal";
 import { DOCUMENT_TYPE, QUOTE_STATUSES } from "../quotes/enums";
@@ -38,9 +38,9 @@ import { AddNewContactModal } from "@/widgets/quote-new/modals-widgets/add-new-c
 import { NewItemNotesModal } from "@/widgets/quote-new/total-price-and-vat/new-item-notes-modal";
 import { AddRelatedDocumentsModal } from "@/widgets/quote-new/total-price-and-vat/add-related-documents";
 import { ViewSignatureApprovalModal } from "@/widgets/quote-new/total-price-and-vat/view-signature-approval-modal";
-import { CreditCardTab } from "@/widgets/quote-new/buttons-container/payment/payment-methods-tabs/credit-card-tab";
 import { CreditCardPaySection } from "@/widgets/quote-confirmation-mobile/components/credit-card-pay-section";
 import moment from 'moment';
+import { QuoteNewPageSkeletonWidget } from "./quote-skeleton";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -51,7 +51,11 @@ interface IProps {
 const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false, isPrePaymentPage }: IProps) => {
   const { classes } = useStyle(isQuoteConfirmation);
   const router = useRouter();
-  const quoteItemValue = useRecoilValue<any>(quoteItemState);
+  const [quoteItemValue, setQuoteItemValue] = useRecoilState<any>(quoteItemState);
+  useEffect(() => {
+    setQuoteItemValue({})
+  }, [])
+
   const quoteConfirm = useRecoilValue<any>(quoteConfirmationState);
   const printHouseProfileState = useRecoilValue<any>(printHouseProfile);
   const quoteState = isQuoteConfirmation ? quoteConfirm : quoteItemValue;
@@ -303,7 +307,7 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false, isPrePa
 
   return (
     <>
-      {quoteState?.id && (
+      {quoteState?.id ? (
         <div data-tour={'quoteStep1'} style={classes.mainContainer}>
           <div style={classes.secondContainer}>
             <div style={{ paddingLeft: 20, paddingRight: 12 }}>
@@ -545,7 +549,7 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false, isPrePa
             </div>
           }
         </div>
-      )}
+      ) : <QuoteNewPageSkeletonWidget />}
       {(isQuoteConfirmation && !isPrePaymentPage && (!quoteConfirm?.isConfirmed && quoteConfirm?.documentStatus !== QUOTE_STATUSES.Canceled)) && <ButtonsConfirmContainer />}
       <AddNewItemModal
         openModal={openAddNewItemModal}

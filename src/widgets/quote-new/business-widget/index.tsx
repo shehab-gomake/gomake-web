@@ -68,6 +68,7 @@ const BusinessNewWidget = ({
     setCustomer,
     onCustomerAdd,
     canEditDocument,
+    canEditPurchaseNumber
   } = useBusinessWidget({ values, documentType });
   const dir: 'rtl' | 'ltr' = t('direction');
   const isRTL = dir === 'rtl';
@@ -126,7 +127,8 @@ const BusinessNewWidget = ({
           placeholder={purchaseNumber ? purchaseNumber : t("sales.quote.noPurchaseNumber")}
           label={t("sales.quote.purchaseNumber")}
           onBlur={() => onBlurPurchaseNumber(purchaseNumber)}
-          isUpdate={canEditDocument && isUpdatePurchaseNumber}
+          // isUpdate={canEditDocument && isUpdatePurchaseNumber}
+          isUpdate={canEditPurchaseNumber && isUpdatePurchaseNumber}
           setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdatePurchaseNumber}
           onInputChange={(v) => setPurchaseNumber(v)}
         />}
