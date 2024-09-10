@@ -10,7 +10,7 @@ const TableOutPutComponent = ({ name, tableHeaders, tableRows }: RollingDeployme
     return (
         <div>
             <PrimaryButton variant={'contained'} style={{ fontSize: '15px' }} onClick={() => setOpen(true)}>{name}</PrimaryButton>
-            <GoMakeModal openModal={open} onClose={() => setOpen(false)}
+            <GoMakeModal style={{ zIndex: 999999 }} openModal={open} onClose={() => setOpen(false)}
                 modalTitle={name}
                 insideStyle={{ width: "fit-content", height: 'fit-content', maxHeight: '80%', minWidth: '40%' }}>
                 <div style={{ margin: 10 }}>
