@@ -13,7 +13,7 @@ import { useUserPermission } from "@/hooks/use-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { PayIcon } from "./icons/pay";
 import { PaymentIcon } from "./icons/payment";
-import {useStyle} from "@/pages-components/quotes/more-circle/style";
+import { useStyle } from "@/pages-components/quotes/more-circle/style";
 import { useRouter } from "next/router";
 import { TrackingIcon } from "./icons/tracking";
 
@@ -35,7 +35,8 @@ const useMoreCircle = () => {
     onClickOpenCloseOrderModal,
     onClickOpenCloseOrderNotesModal,
     onClickMakePayment,
-    onClickCloseAndTrack
+    onClickCloseAndTrack,
+    onClickOpenPrintPDFModal
   }) => {
     const documentPath = DOCUMENT_TYPE[documentType];
     const { callApi } = useGomakeAxios();
@@ -87,7 +88,13 @@ const useMoreCircle = () => {
         name: t("sales.quote.loggers")
       },
       {
-        condition: true,
+        condition: isDeliveryNote,
+        onClick: () => onClickOpenPrintPDFModal(quote),
+        icon: <PDFIcon />,
+        name: t("sales.quote.pdf")
+      },
+      {
+        condition: !isDeliveryNote,
         onClick: () => onClickPdf(quote?.id),
         icon: <PDFIcon />,
         name: t("sales.quote.pdf")

@@ -18,7 +18,17 @@ interface IProps {
 
 const ActionsListComponent = ({onClickApply, source}: IProps) => {
 
-    const {actionsList, onSelectMachine, onSelectStation, actionsMachinesIds, open, setOpen, filter, setFilter, t} = useActionsList(source);
+    const {
+        actionsList,
+        onSelectMachine,
+        onSelectStation,
+        actionsMachinesIds,
+        open,
+        setOpen,
+        filter,
+        setFilter,
+        t
+    } = useActionsList(source);
     const direction = t('direction')
 
     const handleClick = () => {
@@ -28,58 +38,79 @@ const ActionsListComponent = ({onClickApply, source}: IProps) => {
         setFilter(event.currentTarget.value);
     }
 
-    const getList = useCallback(()=> {
+    const getList = useCallback(() => {
         let list = [...actionsList];
         if (filter) {
-            list =  actionsList?.map(action => ({...action, machines: action.machines.filter(m => m.machineName?.toLowerCase().includes(filter?.toLowerCase()))}))
+            list = actionsList?.map(action => ({
+                ...action,
+                machines: action.machines.filter(m => m.machineName?.toLowerCase().includes(filter?.toLowerCase()) || action.actionName?.toLowerCase().includes(filter?.toLowerCase()))
+            }))
                 ?.filter(action => action.actionName?.toLowerCase().includes(filter?.toLowerCase()) || action.machines.length > 0)
         }
         return list?.length > 0 ? list?.sort((a, b) => a.checked === b.checked ? 0 : !!a.checked ? -1 : 0) : []
     }, [actionsList, filter])
-    return(
+    return (
         <div style={{position: 'relative'}}>
-            <Button style={{color: '#9E9E9E', borderColor: '#9E9E9E', height: '38px'}} variant={'outlined'} onClick={handleClick}>
+            <Button style={{color: '#9E9E9E', borderColor: '#9E9E9E', height: '38px'}} variant={'outlined'}
+                    onClick={handleClick}>
                 <span>{t('productionFloor.selectStations')}</span>
                 <KeyboardArrowDownIcon/>
             </Button>
             {open &&
-                <ClickOutside onClick={()=> setOpen(false)}>
-                <Paper sx={{position: 'absolute', ...adaptRight(direction, 0), top: source === Source.PRODUCTION_FLOOR ? '110%' : '-610px', maxWidth: '300px', height: 'fit-content', maxHeight: '600px', overflow: 'auto', zIndex: 99999999999999}}>
-                <FormGroup>
-                    <div style={{position: 'sticky', top: 0, backgroundColor: '#FFF', zIndex: 1}}>
-                        <GomakeTextInput  placeholder={t('productionFloor.search')} value={filter} onChange={handleFilterChange}/>
-                    </div>
-                    {
-                        getList().map((option, index) => {
-                            return  <Stack key={index + option.actionId + option.actionName}>
-                                <MenuItem onClick={() => onSelectStation(option.actionId, !!option.checked)}>
-                                    <SecondaryCheckBox checked={!!option.checked}/>
-                                    <span>{option.actionName}</span>
-                                </MenuItem>
-                                <Stack direction={'row'} gap={'30px'}>
-                                    <div/>
-                                    <Stack>
-                                        {
-                                            option?.machines?.map((machine) => <MenuItem onClick={() => onSelectMachine(option.actionId, machine.machineId)}>
-                                                <SecondaryCheckBox checked={!!machine?.checked} />
-                                                {machine.machineName}
-                                            </MenuItem>)
-                                        }
+                <ClickOutside onClick={() => setOpen(false)}>
+                    <Paper sx={{
+                        position: 'absolute', ...adaptRight(direction, 0),
+                        top: source === Source.PRODUCTION_FLOOR ? '110%' : '-610px',
+                        maxWidth: '300px',
+                        height: 'fit-content',
+                        maxHeight: '600px',
+                        overflow: 'auto',
+                        zIndex: 99999999999999
+                    }}>
+                        <FormGroup>
+                            <div style={{position: 'sticky', top: 0, backgroundColor: '#FFF', zIndex: 1}}>
+                                <GomakeTextInput placeholder={t('productionFloor.search')} value={filter}
+                                                 onChange={handleFilterChange}/>
+                            </div>
+                            {
+                                getList().map((option, index) => {
+                                    return <Stack key={index + option.actionId + option.actionName}>
+                                        <MenuItem onClick={() => onSelectStation(option.actionId, !!option.checked)}>
+                                            <SecondaryCheckBox checked={!!option.checked}/>
+                                            <span>{option.actionName}</span>
+                                        </MenuItem>
+                                        <Stack direction={'row'} gap={'30px'}>
+                                            <div/>
+                                            <Stack>
+                                                {
+                                                    option?.machines?.map((machine) => <MenuItem
+                                                        onClick={() => onSelectMachine(option.actionId, machine.machineId)}>
+                                                        <SecondaryCheckBox checked={!!machine?.checked}/>
+                                                        {machine.machineName}
+                                                    </MenuItem>)
+                                                }
+                                            </Stack>
+                                        </Stack>
                                     </Stack>
-                                </Stack>
-                            </Stack>
 
-                        })
-                    }
-                </FormGroup>
-                <div style={{position: 'sticky', bottom: 0, right: 0, left: 0, backgroundColor: '#FFF', zIndex: 1}}>
-                    <SecondaryButton style={{width: '100%'}} variant={'contained'} onClick={() => {
-                        setOpen(false)
-                        onClickApply(actionsMachinesIds)
-                    }
-                    }>{t("productionFloor.apply")}</SecondaryButton>
-                </div>
-            </Paper>
+                                })
+                            }
+                        </FormGroup>
+                        <div style={{
+                            position: 'sticky',
+                            bottom: 0,
+                            right: 0,
+                            left: 0,
+                            backgroundColor: '#FFF',
+                            zIndex: 1
+                        }}>
+                            <SecondaryButton style={{width: '100%'}} variant={'contained'} onClick={() => {
+                                setOpen(false)
+                                onClickApply(actionsMachinesIds)
+                            }
+                            }>{t("productionFloor.apply")}</SecondaryButton>
+                        </div>
+                    </Paper>
                 </ClickOutside>
             }
         </div>

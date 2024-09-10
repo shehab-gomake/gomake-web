@@ -72,6 +72,7 @@ const QuotesListPageWidget = ({
     onCloseAddRuleModal,
     onOpenAddRuleModal,
     navigate,
+    onClickQuotePdf,
     tableHeaders,
     allQuotes,
     quoteStatuses,
@@ -157,6 +158,8 @@ const QuotesListPageWidget = ({
     onClickCloseTrackModal,
     openCloseAndTrackOrderModal,
     closeAndTrackOrder,
+    onClickClosePrintPDFModal,
+    openPrintPDFModal,
     getAllQuotes
   } = useQuotes(documentType, isFromHomePage);
 
@@ -582,6 +585,18 @@ const QuotesListPageWidget = ({
         style={{ width: "35%" }}
       >
       </GoMakeDeleteModal>
+
+
+      <GoMakeDeleteModal
+        title={`Do you want to print the delivery note with prices ?`}
+        openModal={openPrintPDFModal}
+        yesBtn={t("sales.quote.yesBtn")}
+        cancelBtn={t("sales.quote.noBtn")}
+        onClose={onClickClosePrintPDFModal}
+        hideIcon
+        onClickDelete={() => { onClickQuotePdf(selectedOrder?.id, true) }}
+        onClickCancel={() => { onClickQuotePdf(selectedOrder?.id, false) }}
+      />
     </>
   );
 };

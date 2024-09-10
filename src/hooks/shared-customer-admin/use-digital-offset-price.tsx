@@ -142,6 +142,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
   const [isJobNameValue, setIsJobNameValue] = useState(false)
 
+  useEffect(() => {
+    setValuesState([])
+  }, [])
+
   const onClickCloseChangePriceModal = () => {
     setIsChangePriceForEdit(false)
     setIsActionEmployeeUpdated(false)
@@ -2391,11 +2395,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
   const [valuesState, setValuesState] = useRecoilState(tempProductQuantityTypesValuesState);
 
-  useEffect(() => {
-    if (workTypes?.length === 0 || workTypes === null) {
-      setValuesState([])
-    }
-  }, [workTypes])
+
 
   const removeRelatedParametersFromSubProducts = (
     parameterId: string,

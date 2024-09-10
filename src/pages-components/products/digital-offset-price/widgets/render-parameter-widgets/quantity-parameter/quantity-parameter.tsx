@@ -9,19 +9,7 @@ const QuantityParameter = ({ subSection, section }) => {
   const { openModal, setOpenModal, productTypesNumber, productSetsParam, t } = useQuantityParameter();
   return (
     <Stack direction={"row"}>
-      {productTypesNumber > 1 && productSetsParam != "true" && (
-        <IconButton
-          onClick={() => {
-            setOpenModal(true);
-          }}
-        >
-          <SettingsIcon
-            stroke={"rgba(237, 2, 140, 1)"}
-            width={24}
-            height={24}
-          />
-        </IconButton>
-      )}
+
       {<GoMakeModal
         insideStyle={{
           width: 420,
