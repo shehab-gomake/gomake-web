@@ -8,6 +8,8 @@ import { PrimaryTable } from "@/components/tables/primary-table";
 import { EditRulesModal } from "../properties-modals/edit-rule-modal";
 import { useProperites } from "../hooks/use-properites";
 import { MoreMenuWidget } from "../more-circle";
+import { PrimaryTableWithDragAndDrop } from "@/components/tables/primary-table-with-drag-and-drop";
+import { useState } from "react";
 
 const PropertiesTable = () => {
   const { t } = useTranslation();
@@ -32,7 +34,19 @@ const PropertiesTable = () => {
     deleteRule,
     reOrderPricingTables,
     setTerm,
+    setProperitesData
   } = useProperites({ classes });
+
+  const onDragEnd = (result) => {
+    if (!result.destination) return;
+
+    const reorderedRows = Array.from(propertiesData);
+    const [removed] = reorderedRows.splice(result.source.index, 1);
+    reorderedRows.splice(result.destination.index, 0, removed);
+    console.log("reorderedRows", reorderedRows)
+
+    setProperitesData(reorderedRows);
+  };
 
   return (
     <div style={classes.mainContainer}>
@@ -45,18 +59,20 @@ const PropertiesTable = () => {
         />
       </div>
       {term ? (
-        <PrimaryTable
+        <PrimaryTableWithDragAndDrop
           stickyFirstCol={false}
           stickyHeader={false}
           rows={propertiesDataSearched}
           headers={tableHeaders}
+          onDragEnd={onDragEnd}
         />
       ) : (
-        <PrimaryTable
+        <PrimaryTableWithDragAndDrop
           stickyFirstCol={false}
           stickyHeader={false}
           rows={propertiesData}
           headers={tableHeaders}
+          onDragEnd={onDragEnd}
         />
       )}
 
