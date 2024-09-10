@@ -148,7 +148,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     setFromLogsDate(null);
     setToLogsDate(null);
   };
-  const onClickQuotePdf = async (id: string) => {
+  const onClickQuotePdf = async (id: string, withPrices?: boolean) => {
     const downloadPdf = (url) => {
       const anchor = document.createElement("a");
       anchor.href = url;
@@ -177,6 +177,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       await getDocumentPdfApi(callApi, callBack, {
         documentId: id,
         documentType: docType,
+        withPrices: withPrices ?? false
       });
     }
   };
@@ -294,6 +295,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 onClickOpenModal={onClickOpenModal}
                 onClickPdf={onClickQuotePdf}
                 onClickLoggers={onClickDocumentLogs}
+                onClickOpenPrintPDFModal={onClickOpenPrintPDFModal}
               />,
             ];
           } else if (docType === DOCUMENT_TYPE.purchaseInvoice || docType === DOCUMENT_TYPE.purchaseInvoiceRefund) {
@@ -319,6 +321,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 onClickOpenModal={onClickOpenModal}
                 onClickPdf={onClickQuotePdf}
                 onClickLoggers={onClickDocumentLogs}
+                onClickOpenPrintPDFModal={onClickOpenPrintPDFModal}
               />,
             ];
           } else if (docType === DOCUMENT_TYPE.quote) {
@@ -345,6 +348,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 onClickPdf={onClickQuotePdf}
                 onClickDuplicate={onClickQuoteDuplicate}
                 onClickLoggers={onClickDocumentLogs}
+                onClickOpenPrintPDFModal={onClickOpenPrintPDFModal}
               />,
             ];
           } else if (docType === DOCUMENT_TYPE.order) {
@@ -402,6 +406,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 onClickSendPayment={onClickSendPayment}
                 onClickMakePayment={onClickMakePayment}
                 onClickCloseAndTrack={onClickOpenTrackModal}
+                onClickOpenPrintPDFModal={onClickOpenPrintPDFModal}
               />,
             ];
           } else {
@@ -443,6 +448,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 onClickLoggers={onClickDocumentLogs}
                 onClickOpenCloseOrderModal={onClickOpenCloseOrderModal}
                 onClickOpenCloseOrderNotesModal={onClickOpenCloseOrderNotesModal}
+                onClickOpenPrintPDFModal={onClickOpenPrintPDFModal}
               />,
             ];
           }
@@ -464,6 +470,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             onClickPdf={onClickQuotePdf}
             onClickDuplicate={onClickQuoteDuplicate}
             onClickLoggers={onClickDocumentLogs}
+            onClickOpenPrintPDFModal={onClickOpenPrintPDFModal}
           />,
         ]);
         setAllQuotes(isReceipt ? mapReceiptData : mapData);
@@ -571,6 +578,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 onClickOpenModal={onClickOpenModal}
                 onClickPdf={onClickQuotePdf}
                 onClickLoggers={onClickDocumentLogs}
+                onClickOpenPrintPDFModal={onClickOpenPrintPDFModal}
               />,
             ];
           } else if (docType === DOCUMENT_TYPE.purchaseInvoice || docType === DOCUMENT_TYPE.purchaseInvoiceRefund) {
@@ -596,6 +604,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 onClickOpenModal={onClickOpenModal}
                 onClickPdf={onClickQuotePdf}
                 onClickLoggers={onClickDocumentLogs}
+                onClickOpenPrintPDFModal={onClickOpenPrintPDFModal}
               />,
             ];
           } else if (docType === DOCUMENT_TYPE.quote) {
@@ -622,6 +631,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 onClickPdf={onClickQuotePdf}
                 onClickDuplicate={onClickQuoteDuplicate}
                 onClickLoggers={onClickDocumentLogs}
+                onClickOpenPrintPDFModal={onClickOpenPrintPDFModal}
               />,
             ];
           } else if (docType === DOCUMENT_TYPE.order) {
@@ -672,6 +682,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 onClickDuplicate={onClickQuoteDuplicate}
                 onClickLoggers={onClickDocumentLogs}
                 onClickOpenIrrelevantModal={onClickOpenIrrelevantModal}
+                onClickOpenPrintPDFModal={onClickOpenPrintPDFModal}
                 onClickOpenDeliveryTimeModal={onClickOpenDeliveryTimeModal}
                 onClickOpenPriceModal={onClickOpenPriceModal}
                 onClickOpenCloseOrderModal={onClickOpenCloseOrderModal}
@@ -679,6 +690,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 onClickSendPayment={onClickSendPayment}
                 onClickMakePayment={onClickMakePayment}
                 onClickCloseAndTrack={onClickOpenTrackModal}
+
               />,
             ];
           } else {
@@ -720,6 +732,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 onClickLoggers={onClickDocumentLogs}
                 onClickOpenCloseOrderModal={onClickOpenCloseOrderModal}
                 onClickOpenCloseOrderNotesModal={onClickOpenCloseOrderNotesModal}
+                onClickOpenPrintPDFModal={onClickOpenPrintPDFModal}
               />,
             ];
           }
@@ -741,6 +754,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             onClickPdf={onClickQuotePdf}
             onClickDuplicate={onClickQuoteDuplicate}
             onClickLoggers={onClickDocumentLogs}
+            onClickOpenPrintPDFModal={onClickOpenPrintPDFModal}
           />,
         ]);
         setAllQuotes(isReceipt ? mapReceiptData : mapData);
@@ -1053,10 +1067,12 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             onClickDuplicate={onClickQuoteDuplicate}
             onClickLoggers={onClickDocumentLogs}
             onClickOpenIrrelevantModal={onClickOpenIrrelevantModal}
+            onClickOpenPrintPDFModal={onClickOpenPrintPDFModal}
             onClickOpenDeliveryTimeModal={onClickOpenDeliveryTimeModal}
             onClickOpenPriceModal={onClickOpenPriceModal}
             onClickOpenCloseOrderModal={onClickOpenCloseOrderModal}
             onClickOpenCloseOrderNotesModal={onClickOpenCloseOrderNotesModal}
+
           />,
         ]);
         setAllDocuments(mapData);
@@ -1540,6 +1556,16 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
 
 
   const [openCloseAndTrackOrderModal, setOpenCloseAndTrackOrderModal] = useState(false);
+  const [openPrintPDFModal, setOpenPrintPDFModal] = useState(false);
+  const onClickClosePrintPDFModal = () => {
+    setOpenPrintPDFModal(false)
+  }
+  const onClickOpenPrintPDFModal = (order) => {
+    setselectedOrder(order)
+    setOpenPrintPDFModal(true)
+  }
+
+
   const onClickOpenTrackModal = (order) => {
     setSelectedQuoteItemValue(order)
     setOpenCloseAndTrackOrderModal(true);
@@ -1548,6 +1574,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const onClickCloseTrackModal = () => {
     setOpenCloseAndTrackOrderModal(false);
   };
+
 
 
   const closeAndTrackOrder = async () => {
@@ -1676,7 +1703,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     isOrdersTracking,
     onClickCloseTrackModal,
     openCloseAndTrackOrderModal,
-    closeAndTrackOrder
+    closeAndTrackOrder,
+    onClickClosePrintPDFModal,
+    openPrintPDFModal,
   };
 };
 
