@@ -11,6 +11,8 @@ import CloudUploadRoundedIcon from '@mui/icons-material/CloudUploadRounded';
 import Divider from "@mui/material/Divider";
 import {useTranslation} from "react-i18next";
 import {printHouseProfile} from "@/store/print-house-profile";
+import {clearUploadingFilesListApi} from "@/services/api-service/production-floor/production-floor-endpoints";
+import {useGomakeAxios} from "@/hooks";
 
 const FilesUploaderWidget = () => {
     const [files] = useRecoilState(uploadingFilesState);
@@ -19,6 +21,12 @@ const FilesUploaderWidget = () => {
     const {grayColor} = useGomakeTheme();
     const [companyProfile] = useRecoilState(printHouseProfile);
     const {t} = useTranslation();
+    const {callApi} = useGomakeAxios();
+    const onClickClear = async () => {
+        setShow(false);
+        setOpen(false);
+        await clearUploadingFilesListApi(callApi, ()=> {});
+    }
     return (
         companyProfile?.filesApiAddress && <Paper style={{
             position: 'fixed',
@@ -51,10 +59,7 @@ const FilesUploaderWidget = () => {
                                 open ? <ExpandMoreIcon/> : <ExpandLessIcon/>
                             }
                         </IconButton>
-                        <IconButton onClick={() => {
-                            setShow(false);
-                            setOpen(false)
-                        }}>
+                        <IconButton onClick={onClickClear}>
                           <CloseIcon/>
                         </IconButton>
                     </Stack>
