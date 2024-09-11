@@ -1,11 +1,11 @@
-import {useTranslation} from "react-i18next";
-import {GoMakeModal, GomakePrimaryButton} from "@/components";
+import { useTranslation } from "react-i18next";
+import { GoMakeModal, GomakePrimaryButton } from "@/components";
 
-import {useStyle} from "./style";
-import {useEffect, useState} from "react";
-import {DragDropContext, Draggable, Droppable} from "react-beautiful-dnd";
-import {RuleMappingWidget} from "./rule-mapping";
-import {useGomakeAxios, useSnackBar} from "@/hooks";
+import { useStyle } from "./style";
+import { useEffect, useState } from "react";
+import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
+import { RuleMappingWidget } from "./rule-mapping";
+import { useGomakeAxios, useSnackBar } from "@/hooks";
 import {
     deleteProductProfitRuleApi,
     getProductProfitRulesApi,
@@ -13,16 +13,16 @@ import {
 } from "@/services/api-service/products/product-endpoints";
 
 const EditProductProfitRulesModal = ({
-                                         openModal,
-                                         onClose,
-                                         onOpenAddRuleModal,
-                                         productId
-                                     }) => {
-    const {t} = useTranslation();
-    const {clasess} = useStyle();
+    openModal,
+    onClose,
+    onOpenAddRuleModal,
+    productId
+}) => {
+    const { t } = useTranslation();
+    const { clasess } = useStyle();
     const [rules, setRules] = useState<any[]>([]);
-    const {callApi} = useGomakeAxios();
-    const {alertFaultUpdate, alertSuccessUpdate, alertSuccessDelete, alertFaultDelete} = useSnackBar();
+    const { callApi } = useGomakeAxios();
+    const { alertFaultUpdate, alertSuccessUpdate, alertSuccessDelete, alertFaultDelete } = useSnackBar();
     useEffect(() => {
         setRules([])
         if (!!productId) {
@@ -46,11 +46,11 @@ const EditProductProfitRulesModal = ({
             if (res?.success) {
                 alertSuccessDelete();
                 setRules(rules?.filter(rule => rule?.id !== ruleId));
-            }else {
+            } else {
                 alertFaultDelete();
             }
         }
-        await deleteProductProfitRuleApi(callApi, callBack, {productId, ruleId})
+        await deleteProductProfitRuleApi(callApi, callBack, { productId, ruleId })
     };
     const reOrderRule = async (data: any) => {
         const callBack = res => {
@@ -60,7 +60,7 @@ const EditProductProfitRulesModal = ({
                 alertFaultUpdate();
             }
         }
-        await orderProductProfitRuleApi(callApi, callBack, {productId, newRulesArray: data});
+        await orderProductProfitRuleApi(callApi, callBack, { productId, newRulesArray: data });
     };
 
     const onDragEnd = (result) => {
@@ -156,4 +156,4 @@ const EditProductProfitRulesModal = ({
         </>
     );
 };
-export {EditProductProfitRulesModal};
+export { EditProductProfitRulesModal };
