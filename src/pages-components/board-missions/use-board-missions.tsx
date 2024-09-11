@@ -163,11 +163,23 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     selectedSupplierId(value);
   };
   const handleClickSearch = () => {
+    const { clientId, ...newQuery } = router.query;
+    router.replace({
+      pathname: router.pathname,
+      query: { ...newQuery },
+    }, undefined, { shallow: true });
+
     setPageNumber(1);
     getAllData(isPurchaseJobs, false)
   };
 
   const handleClickClear = () => {
+    const { clientId, ...newQuery } = router.query;
+    router.replace({
+      pathname: router.pathname,
+      query: { ...newQuery },
+    }, undefined, { shallow: true });
+
     setAgent(null);
     setCustomer(null);
     setStatus(null);
@@ -210,6 +222,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
       return await getAllBoardMissions(isClear);
     }
   };
+
   const getJobStatus = (mission) => {
     /*mission?.isReady
         ? t('boardMissions.done')
@@ -302,7 +315,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
           }
           :
           {
-            clientId: customer?.id,
+            clientId: customer?.id || router?.query?.clientId,
             agentId: agent?.id,
             search: finalPatternSearch,
             fromDate: fromDate && GetDateFormat(fromDate),
@@ -323,6 +336,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
           });
     }
   };
+
   const getAllPurchaseJobs = async (isClear: boolean = false) => {
     if (connectionId) {
       const callBack = (res) => {
@@ -500,6 +514,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     setQuantityOfPackages(1);
     setQuantityPerPackage(missionItem?.quantity || 0);
   }, [missionItem])
+
   useEffect(() => {
     getAllData(isPurchaseJobs, false)
   }, [connectionId, pageNumber, pageSize, finalPatternSearch]);
