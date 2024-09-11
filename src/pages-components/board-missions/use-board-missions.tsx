@@ -168,7 +168,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
       pathname: router.pathname,
       query: { ...newQuery },
     }, undefined, { shallow: true });
-
+    handleClose();
     setPageNumber(1);
     getAllData(isPurchaseJobs, false)
   };
@@ -179,7 +179,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
       pathname: router.pathname,
       query: { ...newQuery },
     }, undefined, { shallow: true });
-
+    handleClose();
     setAgent(null);
     setCustomer(null);
     setStatus(null);
