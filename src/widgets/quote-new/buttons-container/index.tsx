@@ -10,7 +10,7 @@ import { PaymentBtn } from "./payment/payment-button";
 import { CancelReceiptModal } from "./payment/cancel-receipt-modal/cancel-receipt-modal";
 import { OrderNowModal } from "../total-price-and-vat/order-now-modal";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
-import { useSnackBar } from "@/hooks";
+import { useGomakeRouter, useSnackBar } from "@/hooks";
 import { ManagerApprovalModal } from "../total-price-and-vat/manger-approval-modal";
 import { useEffect } from "react";
 
@@ -31,7 +31,7 @@ const ButtonsContainer = ({
   const { classes } = useStyle();
   const { t } = useTranslation();
   const { alertFault } = useSnackBar();
-
+  const { navigate } = useGomakeRouter();
 
   const {
     quoteItemValue,
@@ -109,6 +109,15 @@ const ButtonsContainer = ({
             onClick={() => handleAddItemClick()}
           >
             {t("sales.quote.addNewItems")}
+          </GomakePrimaryButton>
+        }
+           {
+          documentType === DOCUMENT_TYPE.quote && <GomakePrimaryButton
+            leftIcon={<PlusIcon stroke={"#344054"} />}
+            style={classes.btnContainer}
+            onClick={() => navigate(`/jobs?clientId=${quoteItemValue?.customerID}`)}
+          >
+            {t("sales.cart.addExitingItems")}
           </GomakePrimaryButton>
         }
         {
