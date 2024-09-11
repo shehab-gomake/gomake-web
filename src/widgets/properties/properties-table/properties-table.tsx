@@ -3,13 +3,11 @@ import { useTranslation } from "react-i18next";
 import { AddRuleModal } from "@/pages-components/products/profits-new/widgets/add-rule-modal";
 import { HeaderTitleWithSearch } from "@/widgets/header-title-with-search";
 import { useStyle } from "@/widgets/properties/properties-table/style";
-import { PrimaryTable } from "@/components/tables/primary-table";
 
 import { EditRulesModal } from "../properties-modals/edit-rule-modal";
 import { useProperites } from "../hooks/use-properites";
 import { MoreMenuWidget } from "../more-circle";
 import { PrimaryTableWithDragAndDrop } from "@/components/tables/primary-table-with-drag-and-drop";
-import { useState } from "react";
 
 const PropertiesTable = () => {
   const { t } = useTranslation();
@@ -37,7 +35,8 @@ const PropertiesTable = () => {
     setProperitesData,
     hiddenData,
     setHiddenData,
-    reOrderPropertiesTables
+    reOrderPropertiesTables,
+    updateIsHiddenFromWorkFlow
   } = useProperites({ classes });
 
   const onDragEnd = (result) => {
@@ -59,9 +58,6 @@ const PropertiesTable = () => {
     }));
 
     reOrderPropertiesTables(reOrderData)
-    console.log("Reordered Data:", reOrderData);
-    console.log("propertiesData", propertiesData)
-
   };
 
   return (
@@ -113,6 +109,8 @@ const PropertiesTable = () => {
         handleClose={handleClose}
         anchorEl={anchorEl}
         open={open}
+        selectedProperties={selectedProperties}
+        updateIsHiddenFromWorkFlow={updateIsHiddenFromWorkFlow}
       />
     </div>
   );
