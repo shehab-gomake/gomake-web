@@ -13,7 +13,7 @@ import {
 } from "@/store/file-uploader-state";
 
 const useFilesUploaderSignalr = () => {
-    const {connectionId, data} = useGoMakeSignalr<any>({
+    const {connectionId, data, closeConnection} = useGoMakeSignalr<any>({
         url: config.erp_server + '/hubs/fileUploader',
         accessToken: getUserToken(),
         methodName: "UpdateFileUploader"
@@ -42,7 +42,8 @@ const useFilesUploaderSignalr = () => {
 
     return {
         connectionId,
-        data
+        data,
+        closeConnection
     }
 };
 export {useFilesUploaderSignalr}

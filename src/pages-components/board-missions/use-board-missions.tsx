@@ -19,7 +19,6 @@ import { downloadPdf } from "@/utils/helpers";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { useUserPermission } from "@/hooks/use-permission";
 import { useQuoteGetData } from "../quote-new/use-quote-get-data";
-import Image from "next/image";
 
 type StatusOption = {
   label: string;
@@ -33,7 +32,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
   const { classes } = useStyle();
   const { callApi } = useGomakeAxios();
   const { alertFault, alertFaultGetData, alertFaultUpdate, alertSuccessUpdate } = useSnackBar();
-  const { data, connectionId } = useBoardMissionsSignalr();
+  const { connectionId } = useBoardMissionsSignalr();
   const { navigate } = useGomakeRouter();
   const [status, setStatus] = useState<{
     label: string;
