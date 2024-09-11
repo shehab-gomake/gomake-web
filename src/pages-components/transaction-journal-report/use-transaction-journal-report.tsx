@@ -111,17 +111,23 @@ const useTransactionJournalReport = ({ isPayment }: TransactionJournalReportWidg
         },
         true,
         null,
-        "blob"
       );
-      const downloadLink = document.createElement('a');
-      const link = URL?.createObjectURL(res.data);
-      downloadLink.href = link
-      downloadLink.download = `aging report.pdf`;
-      downloadLink.click();
+      const pdfLink = res.data;
+      downloadPdf(pdfLink);
     },
     [fromDate, toDate]
   );
-
+  const downloadPdf = (url) => {
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.target = "_blank";
+    anchor.addEventListener("click", () => {
+      setTimeout(() => {
+        anchor.remove();
+      }, 100);
+    });
+    anchor.click();
+  };
   const getTransactionJournalReportFilter = useCallback(
     async () => {
       if (!fromDate || !toDate) {
