@@ -100,7 +100,7 @@ const TabsMappingWidget = ({
             <AddNewIcon />
           </div>
         ) : null}
-        {item.isCanDuplicated && item.index ? (
+        {item.isCanDuplicated && item.index && !isAdmin ? (
           <div onClick={() => onRemoveSection(item)}>
             <RemoveIcon />
           </div>

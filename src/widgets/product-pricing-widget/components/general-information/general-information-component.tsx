@@ -3,6 +3,9 @@ import Stack from "@mui/material/Stack";
 import { ParametersMapping } from "@/widgets/product-pricing-widget/components/action/key-value-view";
 import { useTranslation } from "react-i18next";
 import { FONT_FAMILY } from "@/utils/font-family";
+import { TableOutPutComponent } from "../table-output/table-output-component";
+import { HtmlElementType, RuleType } from "../../enums";
+import { Divider } from "@mui/material";
 
 const GeneralInformationComponent = ({
   details,
@@ -14,6 +17,16 @@ const GeneralInformationComponent = ({
   actionName?: string;
 }) => {
   const { t } = useTranslation();
+  const tableOutputs = details?.filter(
+    (parameter) =>
+      parameter.propertyType === RuleType.OUTPUT &&
+      parameter.htmlElementType === HtmlElementType.TABLE
+  );
+  const parameterOutputs = details?.filter(
+    (parameter) =>
+      parameter.htmlElementType === HtmlElementType.TEXT
+  );
+  console.log("details", details)
   return (
     <Stack gap={"10px"}>
       {withTitle && <h3>{t("pricingWidget.generalInformation")}</h3>}
@@ -24,7 +37,11 @@ const GeneralInformationComponent = ({
             {actionName}
           </span>
         )}
-        <ParametersMapping parameters={details} />
+        <ParametersMapping parameters={parameterOutputs} />
+        <Divider orientation={"vertical"} flexItem />
+        {tableOutputs.map((parameter) => (
+          <TableOutPutComponent {...parameter} />
+        ))}
       </Stack>
     </Stack>
   );
