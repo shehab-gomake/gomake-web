@@ -6,6 +6,8 @@ import { useStyle } from "../style";
 import { ErpAccountType } from "../states";
 import { useButtonsContainer } from "../use-buttons-container";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
+import { useRouter } from "next/router";
+import { useEffect } from "react";
 
 interface IPaymentBtn {
     handleOpenModal: (selectedTabIndex: number) => void;
@@ -13,6 +15,8 @@ interface IPaymentBtn {
 
 const PaymentBtn = ({ handleOpenModal }: IPaymentBtn) => {
     const { classes } = useStyle();
+    const router = useRouter(); 
+    const { ClientId, documentNumber } = router.query; 
     const {
         t,
         quoteItemValue,
@@ -29,8 +33,16 @@ const PaymentBtn = ({ handleOpenModal }: IPaymentBtn) => {
             return
         }
         handleOpenModal(paymentMethod);
-        handleClose();
+        handleClose(); 
     }
+
+    //To automatically select the "Cash Payment" option when the ClientId and documentNumber are present in the router
+    useEffect(() => {
+        if (ClientId && documentNumber) {
+            onSelectPaymentMethod(ErpAccountType.CashPayment);
+        }
+    }, [ClientId, documentNumber]);
+
     return (
         <>
             <GomakePrimaryButton
