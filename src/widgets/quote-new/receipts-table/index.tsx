@@ -19,9 +19,9 @@ const ReceiptsTable = () => {
     let indexs = 0;
     const headerHeight = "44px";
     const { classes } = useStyle({ headerHeight });
-    const { isNewReceipt, documentItemValue, tableHeaders, tableRows, columnWidths, PrimaryTableCell, checkedItems, handleCheckboxChange, totalSum, finalTotalPayment, taxDeduction } = usePaymentsTable();
     const router = useRouter();
-
+    const {resetReceiptState,isNewReceipt, documentItemValue, tableHeaders, tableRows, columnWidths, PrimaryTableCell, checkedItems, handleCheckboxChange, totalSum, finalTotalPayment, taxDeduction } = usePaymentsTable();
+ 
     const renderReceiptsItems = useCallback(() => {
         return tableRows?.map((item: any, index: number) => {
             indexs++;
@@ -41,7 +41,7 @@ const ReceiptsTable = () => {
                 </>
             );
         })
-    }, [checkedItems , documentItemValue]);
+    }, [checkedItems , documentItemValue , tableRows]);
 
     useEffect(() => {
         if (router?.query?.isNewCreation && router?.query?.documentNumber && tableRows) {
@@ -54,6 +54,14 @@ const ReceiptsTable = () => {
             }
         }
     }, []);
+
+
+    // Triggered when the client is changed
+    useEffect(() => {
+        if (router?.query?.isNewCreation && !router?.query?.documentNumber ) {
+            resetReceiptState();
+        }
+    }, [documentItemValue?.customerID ,router]);
 
     return (
         <div>
