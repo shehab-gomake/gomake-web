@@ -383,7 +383,9 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     }
   }, [])
 
-  const onChangeSelectBusiness = async (item: any) => {
+  const onChangeSelectBusiness = async ( 
+    item: any,
+    prevDocumentItem: any | null = null ) => {
     if (router?.query?.isNewCreation && docType === DOCUMENT_TYPE.receipt) {
       setLoadingWithShadow(true);
       const callBack = (res) => {
@@ -426,14 +428,25 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
         }
       );
       if (res?.success) {
+        const _data = res?.data?.data?.result || {};
         const { orderId, deliveryNoteId, documentId, ...newQuery } = router.query;
         router.replace({
           pathname: router.pathname,
           query: { ...newQuery },
         }, undefined, { shallow: true });
 
-        const _data = res?.data?.data?.result || {};
-        setQuoteItemValue(_data);
+        if (prevDocumentItem) {
+          setQuoteItemValue({ ..._data, documentItems:prevDocumentItem?.documentItems , 
+            totalPrice:prevDocumentItem?.totalPrice ,
+            totalPayment:prevDocumentItem?.totalPayment,
+            discount:prevDocumentItem?.discount,
+            discountAmount:prevDocumentItem?.discountAmount,
+            totalVAT:prevDocumentItem?.totalVAT
+          });
+        }
+        else {
+          setQuoteItemValue(_data);
+        }
         setIsUpdateBusinessName(null);
       } else {
         alertFaultAdded();
@@ -457,6 +470,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
       })
     }
   }
+
 
   const onBlurContactName = async () => {
     setIsUpdateContactName(null);
