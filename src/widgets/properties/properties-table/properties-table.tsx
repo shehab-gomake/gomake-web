@@ -34,18 +34,34 @@ const PropertiesTable = () => {
     deleteRule,
     reOrderPricingTables,
     setTerm,
-    setProperitesData
+    setProperitesData,
+    hiddenData,
+    setHiddenData,
+    reOrderPropertiesTables
   } = useProperites({ classes });
 
   const onDragEnd = (result) => {
     if (!result.destination) return;
-
     const reorderedRows = Array.from(propertiesData);
     const [removed] = reorderedRows.splice(result.source.index, 1);
     reorderedRows.splice(result.destination.index, 0, removed);
-    console.log("reorderedRows", reorderedRows)
-
     setProperitesData(reorderedRows);
+
+    const reorderedHiddenData = Array.from(hiddenData);
+    const [removedHidden] = reorderedHiddenData.splice(result.source.index, 1);
+    reorderedHiddenData.splice(result.destination.index, 0, removedHidden);
+    setHiddenData(reorderedHiddenData);
+
+    const reOrderData = reorderedHiddenData.map((data, newIndex) => ({
+      propertyId: data.propertyId,
+      ruleType: data.ruleType,
+      index: newIndex
+    }));
+
+    reOrderPropertiesTables(reOrderData)
+    console.log("Reordered Data:", reOrderData);
+    console.log("propertiesData", propertiesData)
+
   };
 
   return (
