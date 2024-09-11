@@ -112,7 +112,7 @@ const useTransactionJournalReport = ({ isPayment }: TransactionJournalReportWidg
         true,
         null,
       );
-      const pdfLink = res.data;
+      const pdfLink = res?.data?.data?.data;
       downloadPdf(pdfLink);
     },
     [fromDate, toDate]
