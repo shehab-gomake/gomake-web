@@ -109,10 +109,10 @@ const SelectContactComponent = ({ openModal, onClose }: IProps) => {
     return (
         <GoMakeModal style={{ zIndex: 999999 }} insideStyle={{ width: '440px', height: '350px' }}
             openModal={openModal}
-            onClose={onClose} modalTitle={t('productionFloor.addYourNote')}>
+            onClose={onClose} modalTitle={t('prePayment.selectContact')}>
             <Stack zIndex={2} height={'100%'} justifyContent={"space-between"} padding={'10px 0px'}>
                 <Stack gap={'7px'}>
-                    <span style={{ ...FONT_FAMILY.Inter(500, 14), color: '#344054' }}>{t('prePayment.selectContact')}</span>
+                    <span style={{ ...FONT_FAMILY.Inter(500, 14), color: '#344054' }}>{t('customers.modal.contacts')}</span>
                     <div style={{ position: 'relative' }}>
                         <GomakeTextInput placeholder={t('prePayment.selectContact')} style={{ height: '40px' }} value={contactsFilter}
                             onChange={onContactsInputChange}

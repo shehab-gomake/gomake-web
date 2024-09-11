@@ -13,7 +13,7 @@ import { useStyle } from "@/widgets/product-pricing-widget/style";
 import { usePricingWidget } from "./use-pricing-widget";
 import { useRecoilValue } from "recoil";
 import { calculationResultState } from "./state";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import ReadMoreIcon from '@mui/icons-material/ReadMore';
 import { FONT_FAMILY } from "@/utils/font-family";
 
@@ -36,10 +36,8 @@ const PricingWidget = ({ workFlows, getOutSourcingSuppliers, widgetType }: IPric
     allCountSelectedTabWorkFlow,
     t
   } = usePricingWidget({ workFlows, getOutSourcingSuppliers, widgetType });
-
   const calculationResult = useRecoilValue(calculationResultState);
   const [selectedWorkFlowId, setSelectedWorkFlowId] = useState("");
-  console.log("calculationResult", calculationResult)
 
   return (
     <Stack gap={"16px"} width={"100%"}>
