@@ -116,7 +116,7 @@ const BoardMissionsDetailsHeader = () => {
                                         color={boardMissionsDetails?.isReady ? doneBoardMissionsColors.color : boardMissionsDetails?.boardMissionStatus?.textColor}
                                     >
                                         {
-                                            boardMissionsDetails?.isReady ? <span>{'boardMissions.done'}</span> : <>
+                                            boardMissionsDetails?.isReady ? <span>{t('boardMissions.done')}</span> : <>
                                                 <span>{t(`productionStatuses.${boardMissionsDetails.boardMissionStatus?.name}`)}</span>
                                                 <span>/</span>
                                                 <span>{boardMissionsDetails.currentActionName}</span>
