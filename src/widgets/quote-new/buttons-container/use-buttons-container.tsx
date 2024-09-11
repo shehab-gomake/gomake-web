@@ -203,6 +203,7 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
 
 
     const isNewCreation = router?.query?.isNewCreation;
+    const isInvoice = docType === DOCUMENT_TYPE.invoice;
     const canEditDocument = quoteItemValue?.isEditable && CheckDocumentPermission(docType.toString(), DocumentPermission.EDIT_DOCUMENT);
     const canAddDelivery = docType === DOCUMENT_TYPE.quote || docType === DOCUMENT_TYPE.order || docType ===DOCUMENT_TYPE.invoice || docType === DOCUMENT_TYPE.invoiceRefund || docType === DOCUMENT_TYPE.deliveryNote || docType === DOCUMENT_TYPE.deliveryNoteRefund; 
 
@@ -281,7 +282,8 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
         managersOptions,
         onClickSendAndChat,
         loading,
-        canAddDelivery
+        canAddDelivery,
+        isInvoice
     };
 };
 
