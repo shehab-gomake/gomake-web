@@ -146,6 +146,11 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     setValuesState([])
   }, [])
 
+  useEffect(() => {
+    if (widgetType != EWidgetProductType.CREATE)
+      setLoading(false)
+  }, [])
+
   const onClickCloseChangePriceModal = () => {
     setIsChangePriceForEdit(false)
     setIsActionEmployeeUpdated(false)
