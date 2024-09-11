@@ -161,6 +161,7 @@ const usePaymentsTable = () => {
     // Previous State // 
 
     const [previousState, setPreviousState] = useRecoilState<prevStateStateData>(prevStateState);
+    const resetPreviousState = useResetRecoilState(prevStateState);
 
     const savePreviousState = () => {
         let cardWidgetValue;
@@ -210,7 +211,11 @@ const usePaymentsTable = () => {
     };
 
     const resetReceiptState = () => {
-        setCheckedItems(null);
+        // Clear the previous state as it’s not needed when changing the client 
+        resetPreviousState();
+        // Clear the previous state as it’s not needed when changing the client 
+
+        setCheckedItems([]);
         resetCheckedItemsIds();
         resetTotalPayment();
         resetFinalTotalPayment();
