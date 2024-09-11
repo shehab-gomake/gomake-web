@@ -20,7 +20,6 @@ const useUnreadMessagesListener = () => {
     useEffect(() => {
         if (messenger.isChatConnected) {
             messenger.listeners.onMessage((userId, message) => {
-                alert('aa')
                 getUnreadMessagesCount().then();
             })
         }

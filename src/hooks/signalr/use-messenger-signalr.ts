@@ -11,7 +11,7 @@ const useMessengerSignalr = () => {
     const [, setUnreadMessages] = useRecoilState(unreadMessagesCountState);
     const {callApi} = useGomakeAxios();
     const [updateState, setUpdateState] = useRecoilState<boolean>(isUpdateDialogsState);
-    const {connection} = useGoMakeSignalr<any[]>({
+    const {connection, closeConnection} = useGoMakeSignalr<any[]>({
         url: config.erp_server + '/hubs/messenger',
         accessToken: getUserToken(),
         methodName: ""
@@ -29,7 +29,7 @@ const useMessengerSignalr = () => {
         }
     }, [connection])
     return {
-        updateState, setUpdateState
+        updateState, setUpdateState, closeConnection
     }
 }
 

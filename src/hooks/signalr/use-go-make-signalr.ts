@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { HubConnection, HubConnectionBuilder } from "@microsoft/signalr";
 
 export interface ISignalRProps {
@@ -14,6 +14,7 @@ const useGoMakeSignalr = <T>({
   data: T | null;
   connection: null | HubConnection;
   connectionId: string;
+  closeConnection: ()=>void
 } => {
   const [connection, setConnection] = useState<null | HubConnection>(null);
   const [data, setData] = useState<T | null>(null);
@@ -47,11 +48,16 @@ const useGoMakeSignalr = <T>({
         .catch((error) => console.log(error));
     }
   }, [connection]);
+
+  const closeConnection = async () => {
+    await connection?.stop();
+  }
   
   return {
     data, 
     connection,
     connectionId,
+    closeConnection,
   };
 };
 
