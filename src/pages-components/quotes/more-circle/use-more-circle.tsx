@@ -189,12 +189,12 @@ const useMoreCircle = () => {
         icon: <TickCloseIcon />,
         name: t("sales.quote.cancel")
       },
-      {
-        condition: isInvoice && quote?.isCanClose,
-        onClick: () => navigate(`/receipt?isNewCreation=true&documentNumber=${quote?.number}&ClientId=${quote?.customerId}`),
-        icon: <PayIcon />,
-        name: t("sales.quote.pay")
-      },
+      // {
+      //   condition: isInvoice && quote?.isCanClose,
+      //   onClick: () => navigate(`/receipt?isNewCreation=true&documentNumber=${quote?.number}&ClientId=${quote?.customerId}`),
+      //   icon: <PayIcon />,
+      //   name: t("sales.quote.pay")
+      // }, 
       {
         condition: isOrder && quote?.isCanClose && quote?.statusTitleText !== "Order.Canceled",
         onClick: () => onClickSendPayment(quote),

@@ -13,6 +13,7 @@ import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import { useGomakeRouter, useSnackBar } from "@/hooks";
 import { ManagerApprovalModal } from "../total-price-and-vat/manger-approval-modal";
 import { useEffect } from "react";
+import { CreditCardIcon } from "@/icons/credit-card-icon";
 
 
 const ButtonsContainer = ({
@@ -64,15 +65,16 @@ const ButtonsContainer = ({
     managersOptions,
     onClickSendAndChat,
     loading,
-    canAddDelivery
+    canAddDelivery,
+    isInvoice
   } = useButtonsContainer(documentType);
 
 
   const isShowSendButton =
     (quoteItemValue.isSendWhatsapp ||
-    quoteItemValue.isSendWhatsappWeb ||
-    quoteItemValue.isSendMails ||
-    quoteItemValue.isSendSMS) &&
+      quoteItemValue.isSendWhatsappWeb ||
+      quoteItemValue.isSendMails ||
+      quoteItemValue.isSendSMS) &&
     !quoteItemValue?.isNeedApproval;
 
   const handleCopyFromDocumentClick = (documentNumber) => {
@@ -103,6 +105,13 @@ const ButtonsContainer = ({
           <PaymentBtn handleOpenModal={onClickOpenPaymentModal} />
         }
         {
+          (isInvoice && quoteItemValue?.isCanClose) && <GomakePrimaryButton
+            leftIcon={<CreditCardIcon color={"#344054"} />}
+            onClick={() => navigate(`/receipt?isNewCreation=true&documentNumber=${quoteItemValue?.number}&ClientId=${quoteItemValue?.customerID}`)}
+            style={classes.btnContainer}
+          >{t("payment.payment")}</GomakePrimaryButton>
+        }
+        {
           showAddNewItemBtn && <GomakePrimaryButton
             leftIcon={<PlusIcon stroke={"#344054"} />}
             style={classes.btnContainer}
@@ -111,7 +120,7 @@ const ButtonsContainer = ({
             {t("sales.quote.addNewItems")}
           </GomakePrimaryButton>
         }
-           {
+        {
           documentType === DOCUMENT_TYPE.quote && <GomakePrimaryButton
             leftIcon={<PlusIcon stroke={"#344054"} />}
             style={classes.btnContainer}
@@ -130,7 +139,7 @@ const ButtonsContainer = ({
           </GomakePrimaryButton>
         }
         {
-          isNewCreation && (documentType === DOCUMENT_TYPE.deliveryNote || documentType === DOCUMENT_TYPE.invoice) && <GomakePrimaryButton
+          isNewCreation && (documentType === DOCUMENT_TYPE.deliveryNote || isInvoice) && <GomakePrimaryButton
             leftIcon={<PlusIcon stroke={"#344054"} />}
             style={classes.btnContainer}
             onClick={() => handleCopyFromDocumentClick(DOCUMENT_TYPE.order)}
@@ -139,7 +148,7 @@ const ButtonsContainer = ({
           </GomakePrimaryButton>
         }
         {
-          isNewCreation && documentType === DOCUMENT_TYPE.invoice && <GomakePrimaryButton
+          isNewCreation && isInvoice && <GomakePrimaryButton
             leftIcon={<PlusIcon stroke={"#344054"} />}
             style={classes.btnContainer}
             onClick={() => handleCopyFromDocumentClick(DOCUMENT_TYPE.deliveryNote)}
@@ -200,7 +209,7 @@ const ButtonsContainer = ({
               if (documentType === DOCUMENT_TYPE.receipt) {
                 onClickCreateNewReceipt();
               }
-              else if (documentType === DOCUMENT_TYPE.invoice) {
+              else if (isInvoice) {
                 if (
                   quoteItemValue?.client?.closeOrderNotes && quoteItemValue?.client?.closeOrderNotes.trim() !== "" && quoteItemValue?.client?.closeOrderNotes.trim() !== null
                 ) {
@@ -305,4 +314,3 @@ const ButtonsContainer = ({
 };
 
 export { ButtonsContainer };
-
