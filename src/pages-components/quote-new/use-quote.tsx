@@ -1,11 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import lodashClonedeep from "lodash.clonedeep";
 import { useTranslation } from "react-i18next";
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, useResetRecoilState, useSetRecoilState } from "recoil";
 import { EHttpMethod } from "@/services/api-service/enums";
 import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
 import {
-  getAndSetAllCustomers,
   getAndSetAllEmployees,
   getAndSetClientTypes,
 } from "@/services/hooks";
@@ -22,7 +21,7 @@ import { useQuoteGetData } from "./use-quote-get-data";
 import { acceptDocumentApi, addDeliveryApi, addDocumentContactApi, calculateDocumentApi, calculateDocumentItemApi, cancelDocumentApi, changeDocumentClientApi, deleteDocumentAddressApi, deleteDocumentContactApi, deleteDocumentItemApi, duplicateWithAnotherQuantityApi, getDocumentApi, getWhatsAppMessageApi, refreshExchangeRateApi, rejectDocumentApi, saveDocumentApi, sendDocumentToClientApi, sortDocumentItemsApi, updateAgentApi, updateDocuementItemSelectApi, updateDocumentAddressApi, updateDocumentContactApi, updateDocumentCurrencyApi, updateDueDateApi, updateExchangeRateApi, updateIsShowDetailsApi, updateIsShowPricesApi, updateOccasionalClientNameApi, updatePurchaseNumberApi } from "@/services/api-service/generic-doc/documents-api";
 import { DOCUMENT_TYPE } from "../quotes/enums";
 import { useRouter } from "next/router";
-import { getAllCreditTransactionsApi, getClientPaymentItemsApi, getReceiptByIdApi } from "@/services/api-service/generic-doc/receipts-api";
+import { getAllCreditTransactionsApi, getClientPaymentItemsApi } from "@/services/api-service/generic-doc/receipts-api";
 import { creditTransactionsState, transactionOptionsData } from "@/widgets/quote-new/buttons-container/states";
 import { QuoteStatuses } from "@/widgets/quote-new/total-price-and-vat/enums";
 import { clientTypesCategoriesState } from "@/pages/customers/customer-states";
@@ -51,6 +50,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
   const { t } = useTranslation();
   const { getQuote, getAllClientContacts } = useQuoteGetData(docType);
   const [quoteItemValue, setQuoteItemValue] = useRecoilState<any>(quoteItemState);
+  const resetQuoteItemValue = useResetRecoilState(quoteItemState);
   const quoteConfirm = useRecoilValue<any>(quoteConfirmationState);
   const [selectDate, setSelectDate] = useState(isQuoteConfirmation ? quoteConfirm?.dueDate : quoteItemValue?.dueDate);
   const [creationDate, setCreationDate] = useState(isQuoteConfirmation ? quoteConfirm?.creationDate : quoteItemValue?.creationDate);
@@ -383,7 +383,9 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     }
   }, [])
 
-  const onChangeSelectBusiness = async (item: any) => {
+  const onChangeSelectBusiness = async ( 
+    item: any,
+    prevDocumentItem: any | null = null ) => {
     if (router?.query?.isNewCreation && docType === DOCUMENT_TYPE.receipt) {
       setLoadingWithShadow(true);
       const callBack = (res) => {
@@ -393,9 +395,17 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
           if (router?.query?.isNewCreation && router?.query?.documentNumber && router?.query?.ClientId) {
             const documentNumber = router.query.documentNumber;
             if (documentNumber) {
-              const foundRow = _data.receiptItems.find(row => row.docNum === documentNumber);
+              const foundRow = _data?.receiptItems?.find(row => row.docNum === documentNumber);
               if (foundRow) {
                 foundRow.isChecked = true;
+              }
+              else {
+                // When changing the client from the page, we need to reset the router after changing from the payment button on the invoice cart page.
+                const { documentNumber, ClientId, ...newQuery } = router.query;
+                router.replace({
+                  pathname: router.pathname,
+                  query: { ...newQuery },
+                }, undefined, { shallow: true });
               }
             }
           }
@@ -419,7 +429,24 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
       );
       if (res?.success) {
         const _data = res?.data?.data?.result || {};
-        setQuoteItemValue(_data);
+        const { orderId, deliveryNoteId, documentId, ...newQuery } = router.query;
+        router.replace({
+          pathname: router.pathname,
+          query: { ...newQuery },
+        }, undefined, { shallow: true });
+
+        if (prevDocumentItem) {
+          setQuoteItemValue({ ..._data, documentItems:prevDocumentItem?.documentItems , 
+            totalPrice:prevDocumentItem?.totalPrice ,
+            totalPayment:prevDocumentItem?.totalPayment,
+            discount:prevDocumentItem?.discount,
+            discountAmount:prevDocumentItem?.discountAmount,
+            totalVAT:prevDocumentItem?.totalVAT
+          });
+        }
+        else {
+          setQuoteItemValue(_data);
+        }
         setIsUpdateBusinessName(null);
       } else {
         alertFaultAdded();
@@ -443,6 +470,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
       })
     }
   }
+
 
   const onBlurContactName = async () => {
     setIsUpdateContactName(null);

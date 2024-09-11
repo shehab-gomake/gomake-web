@@ -2,7 +2,7 @@ import {  useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRouter } from "next/router";
 import { useQuoteWidget } from "@/pages-components/admin/home/widgets/quote-widget/use-quote-widget";
-import { useSetRecoilState, useRecoilValue } from "recoil";
+import { useSetRecoilState, useRecoilValue, useRecoilState } from "recoil";
 import { quoteConfirmationState, quoteItemState } from "@/store";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { addressModalState } from "./address-widget/state";
@@ -16,7 +16,7 @@ const useBusinessWidget = ({ values, documentType }) => {
   const { renderOptions, checkWhatRenderArray } = useQuoteWidget();
   const setOpenModal = useSetRecoilState<boolean>(addressModalState);
   const [purchaseNumber, setPurchaseNumber] = useState(values?.purchaseNumber || t("sales.quote.noPurchaseNumber"));
-  const quoteStateValue = useRecoilValue<any>(quoteItemState);
+  const [quoteStateValue, setQuoteItemValue] = useRecoilState<any>(quoteItemState);
   const quoteConfirm = useRecoilValue<any>(quoteConfirmationState);
   const isReceipt = documentType === DOCUMENT_TYPE.receipt;
   const isExistReceipt = isReceipt && !router?.query?.isNewCreation;
@@ -42,6 +42,29 @@ const useBusinessWidget = ({ values, documentType }) => {
   const canEditDocument = router.query.isNewCreation ? true  : 
   quoteStateValue?.isEditable && CheckDocumentPermission(documentType, DocumentPermission.EDIT_DOCUMENT);
   const canEditPurchaseNumber = CheckDocumentPermission(documentType, DocumentPermission.EDIT_DOCUMENT);
+
+
+
+  const [openChangeClientModal, setOpenChangeClientModal] = useState(false);
+  const [openChangeClientModalFromInvoice, setOpenChangeClientModalFromInvoice] = useState(false)
+
+  const [selectedClient, setSelectedClient] = useState({})
+
+  const onClickCloseChangeClientModal = () => {
+    setOpenChangeClientModal(false);
+  }
+
+  const onClickCloseChangeClientModalFromInvoice = () => {
+    setOpenChangeClientModalFromInvoice(false);
+  }
+
+  const onClickOpenChangeClientModal = (value) => {
+    setSelectedClient(value)
+    if (router.query.orderId && documentType === DOCUMENT_TYPE.invoice)
+      setOpenChangeClientModalFromInvoice(true)
+    else
+      setOpenChangeClientModal(true);
+  }
 
   return {
     t,
@@ -70,7 +93,14 @@ const useBusinessWidget = ({ values, documentType }) => {
     setCustomer,
     onCustomerAdd,
     canEditDocument,
-    canEditPurchaseNumber
+    canEditPurchaseNumber,
+    setQuoteItemValue,
+    onClickOpenChangeClientModal,
+    onClickCloseChangeClientModal,
+    onClickCloseChangeClientModalFromInvoice,
+    openChangeClientModalFromInvoice,
+    openChangeClientModal,
+    selectedClient
   };
 };
 
