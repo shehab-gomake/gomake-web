@@ -784,14 +784,16 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   };
 
   const onClickSearchFilter = () => {
+    handleClose();
     setPage(1);
-    if (statusId !== null) {
+    if (statusId !== null && statusId !== undefined) {
       handleSecondCardClick();
     }
-    // getAllQuotes();
+    getAllQuotes();
   };
 
   const onClickClearFilter = () => {
+    handleClose();
     handleSecondCardClick();
     setAgentId(null);
     setCustomerId(null);
@@ -1099,7 +1101,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   };
 
   const handleSecondCardClick = () => {
-    setQuoteStatusId(null)
+    setQuoteStatusId(undefined)
     setActiveCard(null);
   };
 
@@ -1340,6 +1342,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
   const removeEmptyValues = (obj) => {
     return Object.fromEntries(
       Object.entries(obj).filter(([_, value]) =>
@@ -1420,7 +1423,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     const callBack = (res) => {
       if (res?.success) {
         alertSuccessUpdate();
-        getAllQuotes()
+        getAllQuotes();
       } else {
         alertFaultUpdate();
       }
@@ -1439,7 +1442,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     const callBack = (res) => {
       if (res?.success) {
         alertSuccessUpdate();
-        getAllQuotes()
+        getAllQuotes();
         getAllDocuments(docType)
       } else {
         alertFaultUpdate();

@@ -19,7 +19,6 @@ import { downloadPdf } from "@/utils/helpers";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { useUserPermission } from "@/hooks/use-permission";
 import { useQuoteGetData } from "../quote-new/use-quote-get-data";
-import Image from "next/image";
 
 type StatusOption = {
   label: string;
@@ -33,7 +32,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
   const { classes } = useStyle();
   const { callApi } = useGomakeAxios();
   const { alertFault, alertFaultGetData, alertFaultUpdate, alertSuccessUpdate } = useSnackBar();
-  const { data, connectionId } = useBoardMissionsSignalr();
+  const { connectionId } = useBoardMissionsSignalr();
   const { navigate } = useGomakeRouter();
   const [status, setStatus] = useState<{
     label: string;
@@ -163,11 +162,23 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     selectedSupplierId(value);
   };
   const handleClickSearch = () => {
+    const { clientId, ...newQuery } = router.query;
+    router.replace({
+      pathname: router.pathname,
+      query: { ...newQuery },
+    }, undefined, { shallow: true });
+    handleClose();
     setPageNumber(1);
     getAllData(isPurchaseJobs, false)
   };
 
   const handleClickClear = () => {
+    const { clientId, ...newQuery } = router.query;
+    router.replace({
+      pathname: router.pathname,
+      query: { ...newQuery },
+    }, undefined, { shallow: true });
+    handleClose();
     setAgent(null);
     setCustomer(null);
     setStatus(null);
@@ -210,6 +221,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
       return await getAllBoardMissions(isClear);
     }
   };
+
   const getJobStatus = (mission) => {
     /*mission?.isReady
         ? t('boardMissions.done')
@@ -302,7 +314,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
           }
           :
           {
-            clientId: customer?.id,
+            clientId: customer?.id || router?.query?.clientId,
             agentId: agent?.id,
             search: finalPatternSearch,
             fromDate: fromDate && GetDateFormat(fromDate),
@@ -323,6 +335,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
           });
     }
   };
+
   const getAllPurchaseJobs = async (isClear: boolean = false) => {
     if (connectionId) {
       const callBack = (res) => {
@@ -500,6 +513,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     setQuantityOfPackages(1);
     setQuantityPerPackage(missionItem?.quantity || 0);
   }, [missionItem])
+
   useEffect(() => {
     getAllData(isPurchaseJobs, false)
   }, [connectionId, pageNumber, pageSize, finalPatternSearch]);

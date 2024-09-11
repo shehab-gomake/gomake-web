@@ -3,24 +3,49 @@ import {getUserToken} from "@/services/storage-data";
 import config from "@/config";
 import {useProductionFloorData} from "@/widgets/production-floor/use-production-floor-data";
 import {useEffect} from "react";
+import {useRecoilState, useSetRecoilState} from "recoil";
+import {boardMissionsDetailsState} from "@/widgets/production-floor/state/boards";
+import {
+    boardMissionsStationsState, boardMissionsSubWorkFlowsState,
+    isReadyBoardMissionsState
+} from "@/widgets/production-floor/views/board-missions-view/stations/state";
+import {boardMissionsActivitiesState} from "@/widgets/production-floor/state/board-missions-activities";
+import {boardMissionsFilesState} from "@/widgets/production-floor/views/board-missions-view/files/state";
 
 const useProductionFloorSignalr = () => {
-    const {data,connectionId, connection} = useGoMakeSignalr<any[]>({
+    const setBoardMissions = useSetRecoilState(boardMissionsDetailsState);
+    const setBoardMissionsStations = useSetRecoilState(boardMissionsStationsState);
+    const setActivities = useSetRecoilState(boardMissionsActivitiesState);
+    const [, setIsReady] = useRecoilState(isReadyBoardMissionsState)
+    const [, setFiles] = useRecoilState(boardMissionsFilesState);
+    const {getData} = useProductionFloorData();
+    const setSubWorkFlows = useSetRecoilState(boardMissionsSubWorkFlowsState);
+    const {data, connectionId, connection, closeConnection} = useGoMakeSignalr<any[]>({
         url: config.erp_server + '/hubs/boardMissions',
         accessToken: getUserToken(),
         methodName: ""
     });
-    const {getData} = useProductionFloorData();
     useEffect(() => {
-        if (connection) {
+        if (connection && !!connectionId) {
             connection.on("UpdateBoardMissionsStation", () => {
                 getData(connection?.connectionId).then();
             });
+
+            connection.on('UpdateBoardMissionModal', (newData) => {
+                if (!!newData) {
+                    setActivities(newData?.activites);
+                    setBoardMissions(newData?.details);
+                    setBoardMissionsStations(newData?.stations.workFlow?.actions);
+                    setSubWorkFlows(newData?.stations.workFlow?.subWorkFlows);
+                    setIsReady(newData?.stations.isReady);
+                    setFiles(newData?.orderItemFiles);
+                }
+            })
         }
     }, [connection]);
 
     return {
-        data,connectionId
+        data, connectionId, closeConnection
     }
 };
 export {useProductionFloorSignalr}

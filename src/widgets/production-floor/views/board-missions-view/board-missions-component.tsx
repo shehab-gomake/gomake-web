@@ -16,21 +16,18 @@ import {
 import {
     BoardMissionsActivities
 } from "@/widgets/production-floor/views/board-missions-view/activity/board-missions-activities";
-import {useBoardMissionsSignalr} from "@/hooks/signalr/use-board-missions-signalr";
 import {BoardMissionsFiles} from "@/widgets/production-floor/views/board-missions-view/files/board-missions-files";
-import {useProductionFloorData} from "@/widgets/production-floor/use-production-floor-data";
 import {GoMakeSnackBar} from "@/components";
 
 interface IProps {
     boardMissionsId: string;
     step: string;
     productType: string;
+    connectionId: string;
 }
 
-const BoardMissionsComponent = ({boardMissionsId, step, productType}: IProps) => {
+const BoardMissionsComponent = ({boardMissionsId, step, productType, connectionId}: IProps) => {
     const {getBoardMissions, initStates} = useBoardMissions();
-    const {connectionId} = useBoardMissionsSignalr();
-    const {getData} = useProductionFloorData();
     useEffect(() => {
         if (!!boardMissionsId && !!connectionId) {
             getBoardMissions(boardMissionsId, connectionId, productType).then();

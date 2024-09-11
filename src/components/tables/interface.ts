@@ -12,6 +12,7 @@ export interface ITableProps {
   dataTour?: string;
   isLastItemTotal?: boolean;
   columnWidths?:string[];
+  onDragEnd?:any;
 }
 
 export interface ISecondaryTableProps {
