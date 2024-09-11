@@ -34,11 +34,10 @@ const useProperites = ({ classes }) => {
   const [term, setTerm] = useState("");
   const { Outputs } = useOutputs();
   const { parameters } = useParameters();
-  const [selectedProperties, setSelectedProperites] = useState();
+  const [selectedProperties, setSelectedProperites] = useState<any>();
   const [allProperties, setAllProperites] = useState([]);
   const [propertiesData, setProperitesData] = useState([]);
   const [hiddenData, setHiddenData] = useState([]);
-
   const [propertiesDataSearched, setProperitesDataSearched] = useState([]);
   const [actionId, setActionId] = useState("");
   const [actionEmployeeList, setActionEmployeeList] = useRecoilState<any>(actionEmployeesState)
@@ -223,6 +222,22 @@ const useProperites = ({ classes }) => {
     []
   );
 
+  const updateIsHiddenFromWorkFlow = useCallback(async () => {
+    const res = await callApi(
+      EHttpMethod.PUT,
+      `/v1/printhouse-config/print-house-action/toggle-is-hidden-from-work-flow/${router.query.actionId}/${selectedProperties?.ruleType}/${selectedProperties?.propertyId}`,
+    );
+    if (res?.success) {
+      alertSuccessUpdate();
+      getProperitesService();
+    } else {
+      alertFaultUpdate();
+    }
+  },
+    [selectedProperties]
+  );
+
+
   function updateProperties(allProperties, inputs, outputs) {
     allProperties.forEach((property) => {
       if (property.ruleType === 0) {
@@ -286,7 +301,8 @@ const useProperites = ({ classes }) => {
     setProperitesData,
     hiddenData,
     setHiddenData,
-    reOrderPropertiesTables
+    reOrderPropertiesTables,
+    updateIsHiddenFromWorkFlow
   };
 };
 
