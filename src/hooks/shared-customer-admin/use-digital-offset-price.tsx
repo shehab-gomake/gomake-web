@@ -266,7 +266,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     const result = res?.data?.data?.data;
     setCalculationExceptionsLogs(result?.productItemValue?.exceptions);
     setCurrentProductItemValueDraftId(result.productItemValueDraftId);
-    setWorkTypes(result?.productItemValue?.workTypes)
     setCalculationProgress({
       totalWorkFlowsCount: 0,
       currentWorkFlowsCount: 0,
@@ -2400,8 +2399,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
   const [valuesState, setValuesState] = useRecoilState(tempProductQuantityTypesValuesState);
 
-
-
   const removeRelatedParametersFromSubProducts = (
     parameterId: string,
     sectionId: string,
@@ -3211,6 +3208,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           setDocmentItemByEdit(res?.data.docmentItem)
           setCalculationResult({ ...calculationResult, tabs: res?.data?.tabs });
           setProductItemValueByEdit(res?.data.productItemValue)
+          setValuesState(res?.data?.productItemValue?.workTypes)
+          setWorkTypes(res?.data?.productItemValue?.workTypes)
         } else {
           alertFaultUpdate();
         }
