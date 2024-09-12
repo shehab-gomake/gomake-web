@@ -8,12 +8,12 @@ import { CheckData, CreditCardData,  ReceiptCreditCardData, checksRowState, cred
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { createCreditTransactionApi } from "@/services/api-service/generic-doc/receipts-api";
 import { isTransactedState } from "@/widgets/quote-new/receipts-table/states";
-import { quoteItemState } from "@/store";
+import { loadingWithShadowState, quoteItemState } from "@/store";
 
 const usePaymentMethodsTabs = () => {
     const { t } = useTranslation();
     const { callApi } = useGomakeAxios();
-    const { alertSuccessUpdate, alertFaultUpdate } = useSnackBar();
+    const { alertSuccessUpdate, alertFaultUpdate ,alertFault } = useSnackBar();
     const setTotalPayment = useSetRecoilState<number>(totalPaymentState);
     const [totalChecks, setTotalChecks] = useRecoilState<number>(totalChecksState);
     const [data, setData] = useRecoilState<CheckData[]>(checksRowState);
@@ -279,9 +279,11 @@ const usePaymentMethodsTabs = () => {
         value: index + 1,
     }));
 
-    const onClickMakePayment = async (handleSaveAndClose , isPinPadUsed) => {
+    const setLoadingWithLockScreen = useSetRecoilState(loadingWithShadowState);
+    const onClickMakePayment = async (handleSaveAndClose, isPinPadUsed) => {
+        setLoadingWithLockScreen(true);
         const callBack = (res) => {
-            if (res?.success) { 
+            if (res?.success) {
                 setIsTransacted(true);
                 // setSecondCreditCard({
                 //     creditCardTransactionID:res?.data,
@@ -289,14 +291,16 @@ const usePaymentMethodsTabs = () => {
                 // });
                 alertSuccessUpdate();
                 handleSaveAndClose({
-                    creditCardTransactionID:res?.data,
-                    creditCardSum:totalCreditCard
+                    creditCardTransactionID: res?.data,
+                    creditCardSum: totalCreditCard
                 });
             } else {
-                alertFaultUpdate();
+                alertFault(res?.data?.ErrorMessage)
             }
+            setLoadingWithLockScreen(false);
+
         };
-        await createCreditTransactionApi(callApi, callBack, { ClientID: quoteItemValue?.client?.id, creditCard , ...(isPinPadUsed && { isPinPadUsed })});
+        await createCreditTransactionApi(callApi, callBack, { ClientID: quoteItemValue?.client?.id, creditCard, ...(isPinPadUsed && { isPinPadUsed }) });
     };
 
     const cardTransactionsOptions = useRecoilValue<transactionOptionsData[]>(creditTransactionsState);

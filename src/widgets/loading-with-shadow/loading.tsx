@@ -26,13 +26,13 @@ const GomakeLoadingWithShadow = () => {
           component="div"
           style={classes.textStyle}
         >
-          {t("Loading")}
+          {t("Loading")}...
         </Typography>
-        <div style={{ marginTop: "10px", display: "flex", alignItems: "center" }}>
+        {/* <div style={{ marginTop: "10px", display: "flex", alignItems: "center" }}>
           <div style={classes.dot}></div>
           <div style={classes.dot}></div>
           <div style={classes.dot}></div>
-        </div>
+        </div> */}
       </div>
     </Backdrop>
   );
