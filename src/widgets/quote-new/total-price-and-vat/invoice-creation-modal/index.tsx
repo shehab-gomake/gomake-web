@@ -56,7 +56,7 @@ const InvoiceCreationModal = ({ openModal, onClose, docType, handleSendBtnClick,
           <div style={clasess.btnsContainer}>
             <GomakePrimaryButton onClick={handleSendBtnClick} style={clasess.btnStyle}>{t("login.send")}</GomakePrimaryButton>
             <GomakePrimaryButton onClick={() => onClickPrint()} style={clasess.btnStyle}> {t("sales.quote.print")}</GomakePrimaryButton>
-            <GomakePrimaryButton style={clasess.btnStyle}>{t("sales.quote.pay")}</GomakePrimaryButton>
+            <GomakePrimaryButton onClick={() => navigate(`/receipt?isNewCreation=true&documentNumber=${quoteItemValue?.number}&ClientId=${quoteItemValue?.customerID}`)} style={clasess.btnStyle}>{t("sales.quote.pay")}</GomakePrimaryButton>
             <GomakePrimaryButton onClick={() => {
               navigate(`/${documentPath}?isNewCreation=true`)
               onClose()
