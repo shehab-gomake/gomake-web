@@ -12,7 +12,7 @@ import { CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { PermissionCheck } from "@/components/CheckPermission/check-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
-import { GoMakeDeleteModal } from "@/components";
+import { GoMakeDeleteModal, ThreeOptionsModal } from "@/components";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 
 const BusinessNewWidget = ({
@@ -68,11 +68,18 @@ const BusinessNewWidget = ({
     setCustomer,
     onCustomerAdd,
     canEditDocument,
-    canEditPurchaseNumber
+    canEditPurchaseNumber,
+    setQuoteItemValue,
+    onClickOpenChangeClientModal,
+    onClickCloseChangeClientModal,
+    onClickCloseChangeClientModalFromInvoice,
+    openChangeClientModalFromInvoice,
+    openChangeClientModal,
+    selectedClient
   } = useBusinessWidget({ values, documentType });
   const dir: 'rtl' | 'ltr' = t('direction');
   const isRTL = dir === 'rtl';
-  const { classes } = useStyle({isRTL});
+  const { classes } = useStyle({ isRTL });
 
   useEffect(() => {
     setPurchaseNumber(values?.purchaseNumber);
@@ -82,19 +89,10 @@ const BusinessNewWidget = ({
     setTaxConfirmationNumber(values?.taxConfirmationNumber);
   }, [values?.taxConfirmationNumber]);
 
-  const [openChangeClientModal, setOpenChangeClientModal] = useState(false)
-  const [selectedClient, setSelectedClient] = useState({})
-  const onClickCloseChangeClientModal = () => {
-    setOpenChangeClientModal(false);
-  }
-  const onClickopenChangeClientModal = (value) => {
-    setSelectedClient(value)
-    setOpenChangeClientModal(true);
-
-  }
   return (
     <>
       <div style={classes.businessContainerStyle}>
+        {/* //here */}
         <AutoCompleteUpdatedValue
           label={t("sales.quote.businessName")}
           value={isQuoteConfirmation ? quoteConfirm?.client?.name : quoteStateValue?.client?.name ? quoteStateValue?.client?.name : t("sales.quote.selectBusinessName")}
@@ -103,13 +101,13 @@ const BusinessNewWidget = ({
           isUpdate={canEditDocument && isUpdateBusinessName}
           setIsUpdate={isQuoteConfirmation || isExistReceipt ? setIsConfirmation : setIsUpdateBusinessName}
           getOptionLabel={(item) => item.text}
-          onChange={(e, value) => onClickopenChangeClientModal(value)}
+          onChange={(e, value) => onClickOpenChangeClientModal(value)}
           onChangeTextField={checkWhatRenderArray}
         />
         <PermissionCheck userPermission={Permissions.ADD_CLIENT}>
           {(!isQuoteConfirmation && documentType === DOCUMENT_TYPE.quote) && <span style={classes.plusStyle} onClick={() => setOpenCustomerModal(true)}>+</span>}
         </PermissionCheck>
-        
+
         {
           quoteStateValue?.client?.isOccasional &&
           <InputUpdatedValues
@@ -209,6 +207,16 @@ const BusinessNewWidget = ({
         subTitle={t("products.profits.subTitleChangeClient")}
         yesBtn={t("sales.quote.yesBtn")}
         onClickDelete={() => onChangeSelectBusiness(selectedClient)}
+      />
+      <ThreeOptionsModal
+        title={t("products.profits.titleChangeClient")}
+        subTitle={t("sales.cart.subTitleChangeClientFromInvoice")}
+        openModal={openChangeClientModalFromInvoice}
+        onClose={onClickCloseChangeClientModalFromInvoice}
+        onClickYes={() => onChangeSelectBusiness(selectedClient , values)}
+        onClickNo={() => onChangeSelectBusiness(selectedClient)}
+        yesBtn={"sales.cart.startNewInvoice"}
+        noBtn={"sales.cart.startNewInvoice"}
       />
     </>
   );
