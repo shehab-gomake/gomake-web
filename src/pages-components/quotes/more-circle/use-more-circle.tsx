@@ -119,9 +119,9 @@ const useMoreCircle = () => {
       },
       {
         condition: isOrder && quote?.isCanClose && CheckPermission(Permissions.SHOW_BOARD_MISSIONS),
-        onClick: () => navigate(`/jobs?orderNumber=${quote?.number}`),
+        // onClick: () => navigate(`/jobs?orderNumber=${quote?.number}`),
         icon: <JobsIcon />,
-        name: t("sales.quote.jobs")
+        name: <a style={classes.rowTextStyle} href={`/jobs?orderNumber=${quote?.number}`}>{t("sales.quote.jobs")}</a>
       },
       {
         condition: isOrder && quote?.isCanClose && quote?.statusTitleText !== "Order.Canceled",
