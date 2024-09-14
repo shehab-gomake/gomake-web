@@ -69,7 +69,8 @@ const createCreditTransactionApi: ICallAndSetData = async (callApi, setState, da
     EHttpMethod.POST,
     CREATE_CREDIT_TRANSACTION_URL,
     setState,
-    data
+    data,
+    false
   );
 };
 

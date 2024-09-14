@@ -41,6 +41,7 @@ import { ViewSignatureApprovalModal } from "@/widgets/quote-new/total-price-and-
 import { CreditCardPaySection } from "@/widgets/quote-confirmation-mobile/components/credit-card-pay-section";
 import moment from 'moment';
 import { QuoteNewPageSkeletonWidget } from "./quote-skeleton";
+import { InvoiceCreationModal } from "@/widgets/quote-new/total-price-and-vat/invoice-creation-modal";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -231,8 +232,11 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false, isPrePa
     onClickCloseReferenceModal,
     onChangeDatesToCreationDate,
     onClickOpenReferenceModal,
-    setNewCreationDate
+    setNewCreationDate,
+    openInvoiceCreationModal,
+    onClickCloseInvoiceCreation
   } = useQuoteNew({ docType: documentType, isQuoteConfirmation: isQuoteConfirmation });
+
 
 
   const handleChangeCreationDate = (event) => {
@@ -711,6 +715,7 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false, isPrePa
         yesBtn={t("sales.quote.yesBtn")}
         onClickDelete={() => onChangeDatesToCreationDate()}
       />
+      <InvoiceCreationModal onClose={onClickCloseInvoiceCreation} openModal={openInvoiceCreationModal} docType={documentType} handleSendBtnClick={handleSendBtnClick} />
     </>
   );
 };

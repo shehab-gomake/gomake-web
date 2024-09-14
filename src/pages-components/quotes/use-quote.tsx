@@ -425,14 +425,15 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               quote?.number,
               quote?.sourceDocumentNumber?.map((item, index) => {
                 return (
-                  <span
+                  <a
                     key={index}
-                    onClick={() => navigate(renderURLDocumentType(item?.sourceDocumentType, item.documentId))}
-                    style={{ cursor: "pointer" }}
+                    // onClick={() => navigate(renderURLDocumentType(item?.sourceDocumentType, item.documentId))}
+                    href={`${renderURLDocumentType(item?.sourceDocumentType, item.documentId)}`}
+                    style={{ cursor: "pointer", color: "inherit", textDecoration: 'unset' }}
                   >
                     {t(renderDocumentTypeForSourceDocumentNumber(item?.sourceDocumentType))}:{item?.documentNumber}
                     <br />
-                  </span>
+                  </a>
                 );
               }),
               quote?.worksNames,
@@ -709,14 +710,14 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               quote?.number,
               quote?.sourceDocumentNumber?.map((item, index) => {
                 return (
-                  <span
+                  <a
                     key={index}
-                    onClick={() => navigate(renderURLDocumentType(item?.sourceDocumentType, item.documentId))}
-                    style={{ cursor: "pointer" }}
+                    href={`${renderURLDocumentType(item?.sourceDocumentType, item.documentId)}`}
+                    style={{ cursor: "pointer", color: "inherit", textDecoration: 'unset' }}
                   >
                     {t(renderDocumentTypeForSourceDocumentNumber(item?.sourceDocumentType))}:{item?.documentNumber}
                     <br />
-                  </span>
+                  </a>
                 );
               }),
               quote?.worksNames,

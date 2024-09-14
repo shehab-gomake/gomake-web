@@ -8,24 +8,24 @@ import { useDatePicker } from "@/components/date-picker/use-date-picker";
 import Stack from "@mui/material/Stack";
 import { Clear } from "@mui/icons-material";
 import { staticDateRange } from "@/components/date-picker/const";
-import { endOfToday } from "date-fns";
+import { endOfToday, startOfYear } from "date-fns";
 
 interface IGoMakeDatepicker {
     onChange: (fromDate: Date, toDate: Date) => void;
     placeholder?: string;
     reset?: boolean;
-    style?:CSSProperties;
+    style?: CSSProperties;
     value?: {
         fromDate: Date;
         toDate: Date;
     };
 }
 
-const GoMakeDatepicker = ({ onChange, placeholder, reset , style, value}: IGoMakeDatepicker) => {
+const GoMakeDatepicker = ({ onChange, placeholder, reset, style, value }: IGoMakeDatepicker) => {
     const { t } = useTranslation();
     const [state, setState] = useState({
         selection: {
-            startDate: endOfToday(),
+            startDate: startOfYear(new Date()), // Start date set to the first day of the current year
             endDate: endOfToday(),
             key: 'selection'
         }
@@ -85,7 +85,7 @@ const GoMakeDatepicker = ({ onChange, placeholder, reset , style, value}: IGoMak
                 <GomakeTextInput disabled={false} style={{ height: '40px', cursor: 'pointer' }}
                     value={dateString()} labelText={'select'} placeholder={placeholder}
                     onClick={handleInputClick} />
-                {state.selection.endDate && state.selection.startDate && <Clear style={{cursor: 'pointer'}} onClick={handleClear} />}
+                {state.selection.endDate && state.selection.startDate && <Clear style={{ cursor: 'pointer' }} onClick={handleClear} />}
             </Stack>
             <GoMakeModal modalTitle={t('datepicker.datepicker')} insideStyle={{ width: 'fit-content', height: 'fit-content' }}
                 openModal={openDatepicker} onClose={handleSelectDates}>

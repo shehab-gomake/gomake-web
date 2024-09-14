@@ -78,6 +78,7 @@ const StyledTreeSelect = styled(TreeSelect)(({ theme, dir, selectedOption }: any
   "& .p-treeselect-trigger-icon": {
     display: "none",
   },
+  
   // clear button container
 
 }));
@@ -164,6 +165,7 @@ const GoMakeTreeSelect = ({
       onChange({ value: null });
     }
   };
+
   const CustomWidthTooltip = styled(({ className, ...props }: TooltipProps) => (
       <Tooltip {...props} classes={{ popper: className }} />
   ))({
@@ -185,6 +187,7 @@ const GoMakeTreeSelect = ({
     }
     return label;
   }
+
   const nodeTemplate = (node) => {
     const isFirstLevel = node.level === 0;
     const isSelected = selectedNodeKey === node.value;  
@@ -201,19 +204,34 @@ const GoMakeTreeSelect = ({
       </div>
     );
   };
+
   const onPopupScroll: TreeSelectProps['onPopupScroll'] = (e) => {
     console.log('onPopupScroll', e);
   };
   
-  
-  const rec = (option)=>{
-    option.title = nodeTemplate(option);
-    if(option.children && option.children.length > 0){
-       for(let i = 0;i < option.children.length ;i++){
-         rec(option.children[i]);
-       }
+  const rec = (option) => {
+    if (!option.isProcessed) {
+      option.title = nodeTemplate(option);
+      option.isProcessed = true; 
     }
-  }
+  
+    if (option.children && option.children.length > 0) {
+      for (let i = 0; i < option.children.length; i++) {
+        rec(option.children[i]);
+      }
+    }
+  };
+
+  
+  // const recOld = (option)=>{
+  //   option.title = nodeTemplate(option);
+  //   if(option.children && option.children.length > 0){
+  //      for(let i = 0;i < option.children.length ;i++){
+  //        rec(option.children[i]);
+  //      }
+  //   }
+  // }
+  
   const treeData = useMemo(()=>{
     for(let i = 0;i<options.length;i++){
       let option = options[i];

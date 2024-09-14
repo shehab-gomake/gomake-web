@@ -176,34 +176,36 @@ export const _renderStatus = (docType: DOCUMENT_TYPE, document: any, t: any, nav
 
       const firstDocuments = document.documentNumbers ? document.documentNumbers.map((item: any, index: number) => (
         <span key={index}>
-          <Button
-            sx={{
+          <a
+            style={{
               minWidth: "auto",
               height: "auto",
               padding: 0,
-              color: "#2e3092"
+              color: "#2e3092",
+              cursor: "pointer",
+              textDecoration: "none",
             }}
-            variant={'text'}
-            onClick={() => navigate(`/${document.titleDocumentNumber.charAt(0).toLowerCase() + document.titleDocumentNumber.slice(1)}?Id=${item.documentId}`)}>
+            href={`/${document.titleDocumentNumber.charAt(0).toLowerCase() + document.titleDocumentNumber.slice(1)}?Id=${item.documentId}`}>
             {item.documentNumber}
-          </Button>
+          </a>
           {index < document.documentNumbers.length - 1 && ', '}
         </span>
       )) : [];
 
       const secondDocuments = document.secondDocumentNumbers ? document.secondDocumentNumbers.map((item: any, index: number) => (
         <span key={index}>
-          <Button
-            sx={{
+          <a
+            style={{
               minWidth: "auto",
               height: "auto",
               padding: 0,
-              color: "#2e3092"
+              color: "#2e3092",
+              cursor: "pointer",
+              textDecoration: "none",
             }}
-            variant={'text'}
-            onClick={() => navigate(`/${document.titleSecondDocumentNumber.charAt(0).toLowerCase() + document.titleSecondDocumentNumber.slice(1)}?Id=${item.documentId}`)}>
+            href={`/${document.titleSecondDocumentNumber.charAt(0).toLowerCase() + document.titleSecondDocumentNumber.slice(1)}?Id=${item.documentId}`}>
             {item.documentNumber}
-          </Button>
+          </a>
           {index < document.secondDocumentNumbers.length - 1 && ', '}
         </span>
       )) : [];
