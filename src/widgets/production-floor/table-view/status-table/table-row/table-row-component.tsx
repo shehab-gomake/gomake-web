@@ -159,15 +159,6 @@ const TableRowComponent = ({ boardMission, status }: IProps) => {
                     <CurrentStationComponent {...boardMission.currentStation}
                         boardMissionId={boardMission.id} status={status} />
                 </SecondaryTableCell>
-                {/* <SecondaryTableCell align={"center"}>
-                    {DateFormatterDDMMYYYY(boardMission?.boardMissionCreatedDate)}
-                </SecondaryTableCell>
-                <SecondaryTableCell align={"center"}>
-                    {DateFormatterDDMMYYYY(boardMission?.actionDueDate)}
-                </SecondaryTableCell> */}
-                {/* <SecondaryTableCell align={"center"}>
-                    {DateFormatterDDMMYYYY(boardMission?.dueDate)}
-                </SecondaryTableCell> */}
                 <SecondaryTableCell align={"center"}>
                     {
                         boardMission?.boardMissionCreatedDate && (() => {
@@ -181,7 +172,6 @@ const TableRowComponent = ({ boardMission, status }: IProps) => {
                         })()
                     }
                 </SecondaryTableCell>
-
                 <SecondaryTableCell align={"center"}>
                     {
                         boardMission?.actionDueDate && (() => {
