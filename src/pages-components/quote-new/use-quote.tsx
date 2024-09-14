@@ -101,6 +101,14 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
 
   const [openNewItemNotesModal, setOpenNewItemNotesModal] = useState(false)
   const [openRelatedDocumentsModal, setOpenRelatedDocumentsModal] = useState(false)
+  const [openInvoiceCreationModal, setOpenInvoiceCreationModal] = useState(false)
+
+  const onClickOpenInvoiceCreation = () => {
+    setOpenInvoiceCreationModal(true)
+  }
+  const onClickCloseInvoiceCreation = () => {
+    setOpenInvoiceCreationModal(false)
+  }
 
 
   const onClickOpenRelatedDocumentsModal = () => {
@@ -383,9 +391,9 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     }
   }, [])
 
-  const onChangeSelectBusiness = async ( 
+  const onChangeSelectBusiness = async (
     item: any,
-    prevDocumentItem: any | null = null ) => {
+    prevDocumentItem: any | null = null) => {
     if (router?.query?.isNewCreation && docType === DOCUMENT_TYPE.receipt) {
       setLoadingWithShadow(true);
       const callBack = (res) => {
@@ -436,12 +444,13 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
         }, undefined, { shallow: true });
 
         if (prevDocumentItem) {
-          setQuoteItemValue({ ..._data, documentItems:prevDocumentItem?.documentItems , 
-            totalPrice:prevDocumentItem?.totalPrice ,
-            totalPayment:prevDocumentItem?.totalPayment,
-            discount:prevDocumentItem?.discount,
-            discountAmount:prevDocumentItem?.discountAmount,
-            totalVAT:prevDocumentItem?.totalVAT
+          setQuoteItemValue({
+            ..._data, documentItems: prevDocumentItem?.documentItems,
+            totalPrice: prevDocumentItem?.totalPrice,
+            totalPayment: prevDocumentItem?.totalPayment,
+            discount: prevDocumentItem?.discount,
+            discountAmount: prevDocumentItem?.discountAmount,
+            totalVAT: prevDocumentItem?.totalVAT
           });
         }
         else {
@@ -1211,7 +1220,14 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
         alertSuccessAdded();
         const _data = res?.data?.data?.data || {};
         setQuoteItemValue(_data);
-        navigate(`/${documentPath}?Id=${res?.data?.data?.data?.id}`);
+        if (docType === DOCUMENT_TYPE.invoice || docType === DOCUMENT_TYPE.deliveryNote) {
+          onClickOpenInvoiceCreation()
+          navigate(`/${documentPath}?Id=${res?.data?.data?.data?.id}`);
+        }
+        else {
+          navigate(`/${documentPath}?Id=${res?.data?.data?.data?.id}`);
+
+        }
       } else {
         alertFaultAdded();
       }
@@ -1307,7 +1323,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     }
   }, [agentListValue, quoteItemValue]);
 
- 
+
   useEffect(() => {
     setPriceListItems(quoteItemValue?.documentItems);
     setquoteItems(quoteItemValue);
@@ -1670,7 +1686,9 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     onChangeDatesToCreationDate,
     activeClickAwayForCreationDate,
     newCreationDate,
-    setNewCreationDate
+    setNewCreationDate,
+    openInvoiceCreationModal,
+    onClickCloseInvoiceCreation
   };
 };
 

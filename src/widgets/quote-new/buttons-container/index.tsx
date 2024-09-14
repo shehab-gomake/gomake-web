@@ -4,7 +4,6 @@ import { useTranslation } from "react-i18next";
 import { GoMakeDeleteModal, GomakePrimaryButton } from "@/components";
 import { useButtonsContainer } from "./use-buttons-container";
 import { DELIVERY_NOTE_STATUSES, DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
-import { useRouter } from "next/router";
 import { PaymentModal } from "./payment/payment-modal";
 import { PaymentBtn } from "./payment/payment-button";
 import { CancelReceiptModal } from "./payment/cancel-receipt-modal/cancel-receipt-modal";

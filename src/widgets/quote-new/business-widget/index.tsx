@@ -215,7 +215,7 @@ const BusinessNewWidget = ({
         onClose={onClickCloseChangeClientModalFromInvoice}
         onClickYes={() => onChangeSelectBusiness(selectedClient , values)}
         onClickNo={() => onChangeSelectBusiness(selectedClient)}
-        yesBtn={"sales.cart.startNewInvoice"}
+        yesBtn={"sales.cart.saveAndChangeClients"}
         noBtn={"sales.cart.startNewInvoice"}
       />
     </>
