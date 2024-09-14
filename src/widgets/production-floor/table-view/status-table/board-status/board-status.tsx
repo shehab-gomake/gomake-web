@@ -70,6 +70,7 @@ const BoardStatusComponent = ({ statusId, id, onChange }: IStatusBtnProps) => {
                     alignItems: 'center',
                     boxShadow: "none",
                     padding: "5px 10px",
+                    lineHeight:"16px",
                     ...FONT_FAMILY.Lexend(500, 13),
                     '&:hover': {
                         opacity: 0.7,

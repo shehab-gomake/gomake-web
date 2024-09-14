@@ -14,7 +14,8 @@ const LabelComponent = ({label}: ITaskCategoryLabelProps) => {
             padding: '2px 12px',
             backgroundColor: primaryColor(50),
             borderRadius: 17,
-            textAlign: 'center'
+            textAlign: 'center',
+            display: 'inline-block',
         }}>
           {label}
       </span>

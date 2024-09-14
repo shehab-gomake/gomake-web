@@ -12,6 +12,10 @@ import { Permissions } from "@/components/CheckPermission/enum";
 import { useRecoilState } from "recoil";
 import { IStatusesBoardsMissions } from "@/widgets/production-floor/interfaces/production-floor-data-response";
 import { boardsMissionsState } from "@/widgets/production-floor/state/boards";
+import { RightArrowIcon } from "../table-row/more-circle/icons/right-arrow";
+import { LeftArrowIcon } from "../table-row/more-circle/icons/left-arrow-icon";
+import { DownArrowIcon } from "../table-row/more-circle/icons/down-arrow";
+import { UpArrowIcon } from "../table-row/more-circle/icons/up-arrow";
 
 interface IProps extends ICurrentStation {
     boardMissionId: string;
@@ -21,6 +25,7 @@ interface IProps extends ICurrentStation {
 const CurrentStationComponent = ({ boardMissionId, machineName, actionName, productType, id, status }: IProps) => {
     const { classes } = useStyle();
     const {
+        t,
         handleClick,
         handleClose,
         anchorEl,
@@ -31,6 +36,7 @@ const CurrentStationComponent = ({ boardMissionId, machineName, actionName, prod
         canMoveStation,
         dir
     } = useCurrentStation();
+
     const [data, setData] = useRecoilState<IStatusesBoardsMissions[]>(boardsMissionsState);
 
     const handleRemoveBoardMission = (statusKey, boardMissionId) => {
@@ -50,28 +56,29 @@ const CurrentStationComponent = ({ boardMissionId, machineName, actionName, prod
         });
     };
 
-
-
     return (
         <div>
-            <Stack direction={'row'} justifyContent={'center'} alignItems={'center'} borderRadius={'10px'}
+            <Stack direction="row" spacing={1} justifyContent={'center'} alignItems={'center'} borderRadius={'4px'}
                 width={"fit-content"} display={'inline-flex'} overflow={'hidden'}>
-                <ButtonGroup>
-                    <Button sx={classes.currentStationBtn} variant={'contained'}
-                        disabled={!canMoveStation}
-                        onClick={(e) => handleClick(e, boardMissionId, productType)}>
-                        <span>{machineName ? machineName : actionName}</span>
+                <Button sx={classes.currentStationBtn} variant={'contained'}
+                    disabled={!canMoveStation}
+                    onClick={(e) => handleClick(e, boardMissionId, productType)}>
+                    <span>{machineName ? machineName : actionName}</span>
+                    {anchorEl ? <UpArrowIcon /> :  <DownArrowIcon /> }
+                </Button>
+                <PermissionCheck userPermission={Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR}>
+                    <Button
+                        sx={classes.moveToBtn}
+                        onClick={() => {
+                            handleRemoveBoardMission(status?.key, boardMissionId);
+                            onUpdateToNextStation(boardMissionId, productType);
+                        }}>
+                        <span style={classes.moveToText}>{t("productionFloor.moveTo")}</span>
+                        {/* replace with next station name  */}
+                        <span style={classes.actionText}>Pre Press</span>
+                        {dir === "ltr" ? <RightArrowIcon /> : <LeftArrowIcon />}
                     </Button>
-                    <PermissionCheck userPermission={Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR}>
-                        <Button sx={classes.currentStationBtn} variant={'contained'}
-                            onClick={() => {
-                                handleRemoveBoardMission(status?.key, boardMissionId)
-                                onUpdateToNextStation(boardMissionId, productType)
-                            }}>
-                            {dir === "ltr" ? <KeyboardArrowDownIcon /> : <KeyboardArrowLeftIcon />}
-                        </Button>
-                    </PermissionCheck>
-                </ButtonGroup>
+                </PermissionCheck>
             </Stack>
             <Menu anchorEl={anchorEl}
                 open={open && boardMissionsStations?.length > 0}

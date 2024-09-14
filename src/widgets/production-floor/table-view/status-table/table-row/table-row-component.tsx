@@ -149,7 +149,6 @@ const TableRowComponent = ({ boardMission, status }: IProps) => {
                 <SecondaryTableCell align={"center"}>
                     <LabelComponent label={boardMission?.productName} />
                 </SecondaryTableCell>
-
                 <SecondaryTableCell align={"center"}>
                     <BoardStatusComponent statusId={boardMission.statusId} id={boardMission.id}
                         onChange={(id, statusId) => updateStatus([boardMission], statusId)} />
@@ -205,7 +204,6 @@ const TableRowComponent = ({ boardMission, status }: IProps) => {
                         }
                     </Stack>
                 </SecondaryTableCell>
-                {/* // here... */}
                 <SecondaryTableCell align={"center"}>
                     <MoreMenuWidget boardMission={boardMission} />
                 </SecondaryTableCell>

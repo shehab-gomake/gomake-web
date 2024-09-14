@@ -25,18 +25,60 @@ const useStyle = () => {
             borderRadius: {
                 borderRadius: '4px',
             },
+            // currentStationBtn: {
+            //     borderRadius: 0,
+            //     border: 0,
+            //     backgroundColor: primaryColor(500),
+            //     '&:hover': {
+            //         backgroundColor: primaryColor(500),
+            //         opacity: 0.8
+            //     },
+            //     '&.Mui-disabled': {
+            //         backgroundColor: primaryColor(500),
+            //         color: "#FFF"
+            //     }
+            // },
             currentStationBtn: {
-                borderRadius: 0,
-                border: 0,
-                backgroundColor: primaryColor(500),
+                boxShadow:"none",
+                backgroundColor:"transparent",
+                ...FONT_FAMILY.Inter(600, 12),
+                color: primaryColor(600),
+                fontStyle: "normal",
+                textTransform: "initial" as "initial",
+                gap: "2px",
                 '&:hover': {
-                    backgroundColor: primaryColor(500),
-                    opacity: 0.8
+                    backgroundColor:"transparent",
+                    color: primaryColor(600),
+                    boxShadow:"none",
+
+                  //  opacity: 0.8
                 },
-                '&.Mui-disabled': {
-                    backgroundColor: primaryColor(500),
-                    color: "#FFF"
-                }}
+            },
+            moveToBtn: {
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                borderRadius: "4px",
+                background: "rgba(46, 48, 146, 0.10)",
+                color: "#2E3092",
+                gap: "5px",
+                flexShrink: 0,
+            },
+            moveToText: {
+                ...FONT_FAMILY.Inter(500, 10),
+                color: primaryColor(600),
+                textAlign: "center" as "center",
+                fontStyle: "italic",
+                lineHeight: "20px",
+                textTransform: "initial" as "initial"
+            },
+            actionText: {
+                color: primaryColor(600),
+                ...FONT_FAMILY.Inter(500, 12),
+                fontStyle: "normal",
+                lineHeight: "20px",
+                textTransform: "capitalize" as "capitalize"
+            }
         };
     }, [theme]);
     return {
