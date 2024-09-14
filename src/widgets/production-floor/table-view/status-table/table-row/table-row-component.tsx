@@ -134,27 +134,28 @@ const TableRowComponent = ({ boardMission, status }: IProps) => {
                     <Link
                         href={`/production-floor?boardMissionsId=${boardMission?.id}&productType=${boardMission?.productType}&step=stations`}>{`${boardMission?.boardMissionNumber}\\${boardMission?.orderNumber}`}</Link>
                 </SecondaryTableCell>
+
                 <SecondaryTableCell>
                     {
                         boardMission.isUrgentWork && <KeyboardDoubleArrowUpIcon style={{ color: errorColor(500) }} />
                     }
                 </SecondaryTableCell>
                 <SecondaryTableCell align={"center"}>
-                    <LabelComponent label={boardMission?.productName} />
+                    {boardMission?.clientName}
                 </SecondaryTableCell>
                 <SecondaryTableCell align={"center"}>
-                    <CurrentStationComponent {...boardMission.currentStation}
-                        boardMissionId={boardMission.id} status={status} />
+                    <LabelComponent label={boardMission?.productName} />
                 </SecondaryTableCell>
                 <SecondaryTableCell align={"center"}>
                     <BoardStatusComponent statusId={boardMission.statusId} id={boardMission.id}
                         onChange={(id, statusId) => updateStatus([boardMission], statusId)} />
                 </SecondaryTableCell>
                 <SecondaryTableCell align={"center"}>
-                    {DateFormatterDDMMYYYY(boardMission?.boardMissionCreatedDate)}
+                    <CurrentStationComponent {...boardMission.currentStation}
+                        boardMissionId={boardMission.id} status={status} />
                 </SecondaryTableCell>
                 <SecondaryTableCell align={"center"}>
-                    {boardMission?.clientName}
+                    {DateFormatterDDMMYYYY(boardMission?.boardMissionCreatedDate)}
                 </SecondaryTableCell>
                 <SecondaryTableCell align={"center"}>
                     {DateFormatterDDMMYYYY(boardMission?.actionDueDate)}
