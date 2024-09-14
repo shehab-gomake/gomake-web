@@ -51,7 +51,8 @@ const useStatusTable = () => {
             t('sales.quote.createdDate'),
             t("productionFloor.stationDeliveryTime"),
             t('productionFloor.deliveryTime'),
-            t('productionFloor.tags')
+            t('productionFloor.tags'),
+            ' '
         ].filter(Boolean);
     }
 

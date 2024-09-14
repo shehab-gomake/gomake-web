@@ -23,6 +23,7 @@ import {
 } from "@/widgets/production-floor/table-view/status-table/table-row/approval-file-status-component";
 import KeyboardDoubleArrowUpIcon from '@mui/icons-material/KeyboardDoubleArrowUp';
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { MoreMenuWidget } from "./more-circle";
 
 
 interface IProps {
@@ -104,6 +105,7 @@ const TableRowComponent = ({ boardMission, status }: IProps) => {
             selectedIds.filter(selectedBoard => selectedBoard.id !== id && selectedBoard.productType === boardMission.productType));
     }
     drag(drop(ref));
+    
     return (
         <>
             <TableRow>
@@ -115,6 +117,7 @@ const TableRowComponent = ({ boardMission, status }: IProps) => {
                     }
                 </TableCell>
             </TableRow>
+
             <TableRow ref={ref}
                 style={{ cursor: canDrag ? 'move' : 'default', marginBottom: '100px' }}>
                 <PermissionCheck userPermission={Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR}>
@@ -146,10 +149,12 @@ const TableRowComponent = ({ boardMission, status }: IProps) => {
                 <SecondaryTableCell align={"center"}>
                     <LabelComponent label={boardMission?.productName} />
                 </SecondaryTableCell>
+
                 <SecondaryTableCell align={"center"}>
                     <BoardStatusComponent statusId={boardMission.statusId} id={boardMission.id}
                         onChange={(id, statusId) => updateStatus([boardMission], statusId)} />
                 </SecondaryTableCell>
+
                 <SecondaryTableCell align={"center"}>
                     <CurrentStationComponent {...boardMission.currentStation}
                         boardMissionId={boardMission.id} status={status} />
@@ -170,7 +175,12 @@ const TableRowComponent = ({ boardMission, status }: IProps) => {
                         }
                     </Stack>
                 </SecondaryTableCell>
+{/* // here... */}
+                <SecondaryTableCell align={"center"}>
+                    <MoreMenuWidget  boardMission={boardMission}/>
+                </SecondaryTableCell>
             </TableRow>
+
             <TableRow>
                 <TableCell colSpan={9} style={{ padding: 0, transition: 'padding 1s' }}>
                     {

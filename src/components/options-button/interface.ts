@@ -1,3 +1,4 @@
 export interface IOptionsButtonProps {
-    children: any
+    children: any;
+    withCircle?:boolean;
 }
