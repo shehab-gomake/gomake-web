@@ -6,7 +6,6 @@ import {
     CurrentStationComponent
 } from "@/widgets/production-floor/table-view/status-table/current-station/current-station";
 import { BoardStatusComponent } from "@/widgets/production-floor/table-view/status-table/board-status/board-status";
-import { DateFormatterDDMMYYYY } from "@/utils/adapter";
 import { IBoardMissions } from "@/widgets/production-floor/interfaces/board-missions";
 import { useDrag, useDrop } from "react-dnd";
 import { useRecoilState } from "recoil";
@@ -24,6 +23,7 @@ import {
 import KeyboardDoubleArrowUpIcon from '@mui/icons-material/KeyboardDoubleArrowUp';
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { MoreMenuWidget } from "./more-circle";
+import { DateFormatterDDMMYYYY, SeparateDateFormatterDDMMYYYY } from "@/utils/adapter";
 
 
 interface IProps {
@@ -105,7 +105,7 @@ const TableRowComponent = ({ boardMission, status }: IProps) => {
             selectedIds.filter(selectedBoard => selectedBoard.id !== id && selectedBoard.productType === boardMission.productType));
     }
     drag(drop(ref));
-    
+
     return (
         <>
             <TableRow>
@@ -159,14 +159,54 @@ const TableRowComponent = ({ boardMission, status }: IProps) => {
                     <CurrentStationComponent {...boardMission.currentStation}
                         boardMissionId={boardMission.id} status={status} />
                 </SecondaryTableCell>
-                <SecondaryTableCell align={"center"}>
+                {/* <SecondaryTableCell align={"center"}>
                     {DateFormatterDDMMYYYY(boardMission?.boardMissionCreatedDate)}
                 </SecondaryTableCell>
                 <SecondaryTableCell align={"center"}>
                     {DateFormatterDDMMYYYY(boardMission?.actionDueDate)}
+                </SecondaryTableCell> */}
+                {/* <SecondaryTableCell align={"center"}>
+                    {DateFormatterDDMMYYYY(boardMission?.dueDate)}
+                </SecondaryTableCell> */}
+                <SecondaryTableCell align={"center"}>
+                    {
+                        boardMission?.boardMissionCreatedDate && (() => {
+                            const { formattedDate, formattedTime } = SeparateDateFormatterDDMMYYYY(boardMission.boardMissionCreatedDate);
+                            return (
+                                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                                    <div>{formattedTime}</div>
+                                    <div>{formattedDate}</div>
+                                </div>
+                            );
+                        })()
+                    }
+                </SecondaryTableCell>
+
+                <SecondaryTableCell align={"center"}>
+                    {
+                        boardMission?.actionDueDate && (() => {
+                            const { formattedDate, formattedTime } = SeparateDateFormatterDDMMYYYY(boardMission.actionDueDate);
+                            return (
+                                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                                    <div>{formattedTime}</div>
+                                    <div>{formattedDate}</div>
+                                </div>
+                            );
+                        })()
+                    }
                 </SecondaryTableCell>
                 <SecondaryTableCell align={"center"}>
-                    {DateFormatterDDMMYYYY(boardMission?.dueDate)}
+                    {
+                        boardMission?.dueDate && (() => {
+                            const { formattedDate, formattedTime } = SeparateDateFormatterDDMMYYYY(boardMission.dueDate);
+                            return (
+                                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                                    <div>{formattedTime}</div>
+                                    <div>{formattedDate}</div>
+                                </div>
+                            );
+                        })()
+                    }
                 </SecondaryTableCell>
                 <SecondaryTableCell align={"center"}>
                     <Stack justifyContent={'center'} direction={'row'} flexWrap={'wrap'}>
@@ -175,12 +215,11 @@ const TableRowComponent = ({ boardMission, status }: IProps) => {
                         }
                     </Stack>
                 </SecondaryTableCell>
-{/* // here... */}
+                {/* // here... */}
                 <SecondaryTableCell align={"center"}>
-                    <MoreMenuWidget  boardMission={boardMission}/>
+                    <MoreMenuWidget boardMission={boardMission} />
                 </SecondaryTableCell>
             </TableRow>
-
             <TableRow>
                 <TableCell colSpan={9} style={{ padding: 0, transition: 'padding 1s' }}>
                     {
