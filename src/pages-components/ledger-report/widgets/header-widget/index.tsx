@@ -39,7 +39,6 @@ const LedgerReportHeaderWidget = ({
       <div style={classes.date1FilterContainer}>
         <h3 style={classes.filterLabelStyle}>{t("boardMissions.dateRange")}</h3>
         <div style={{ width: "100%" }}>
-          {/* <GoMakeDatepicker onChange={onSelectDeliveryTimeDates} placeholder={t("boardMissions.chooseDate")} reset={resetDatePicker} /> */}
           <DateRangePicker
             onChange={handleDateChange}
             value={fromDate && toDate ? [fromDate, toDate] : null}

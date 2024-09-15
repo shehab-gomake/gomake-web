@@ -9,7 +9,7 @@ interface TransactionJournalReportWidgetProps {
   isPayment: boolean;
 }
 const useTransactionJournalReport = ({ isPayment }: TransactionJournalReportWidgetProps) => {
-  const {alertFault, alertFaultGetData, alertSuccessGetData } = useSnackBar();
+  const { alertFault, alertFaultGetData, alertSuccessGetData } = useSnackBar();
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation()
   const { documentsTypeList, documentType, handleDocumentTypeChange } = useDocumentsType()
@@ -142,8 +142,8 @@ const useTransactionJournalReport = ({ isPayment }: TransactionJournalReportWidg
         EHttpMethod.POST,
         `/v1/erp-service/reports/get-transaction-journal-report`,
         {
-             startDate: formattedStartDate,
-            endDate: formattedEndDate,
+          startDate: formattedStartDate,
+          endDate: formattedEndDate,
           documentsType: isPayment ? DocumentsTypeReportList.Payments : documentType?.id,
         }
       );
@@ -159,6 +159,15 @@ const useTransactionJournalReport = ({ isPayment }: TransactionJournalReportWidg
     [fromDate, toDate, documentType, isPayment]
   );
 
+  const handleDateChange = (value) => {
+    if (value && value.length === 2) {
+      setFromDate(value[0]);
+      setToDate(value[1]);
+    } else {
+      setFromDate(null);
+      setToDate(null);
+    }
+  };
   return {
     t,
     onSelectDeliveryTimeDates,
@@ -171,7 +180,10 @@ const useTransactionJournalReport = ({ isPayment }: TransactionJournalReportWidg
     documentsTypeList,
     showTable,
     tableHeaders,
-    dataTable
+    dataTable,
+    handleDateChange,
+    fromDate,
+    toDate,
 
   };
 };
