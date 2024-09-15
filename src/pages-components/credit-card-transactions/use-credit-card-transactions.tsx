@@ -213,6 +213,16 @@ const useCreditCardTransactions = () => {
     setReceiptNumber(event.target.value);
   };
 
+  const handleDateChange = (value) => {
+    if (value && value.length === 2) {
+      setFromDate(value[0]);
+      setToDate(value[1]);
+    } else {
+      setFromDate(null);
+      setToDate(null);
+    }
+  };
+
   return {
     t,
     onSelectDeliveryTimeDates,
@@ -240,6 +250,9 @@ const useCreditCardTransactions = () => {
     receiptNumber,
     handleTransactionAmountChange,
     handleReceiptNumberChange,
+    handleDateChange,
+    fromDate,
+    toDate,
   };
 };
 

@@ -255,6 +255,15 @@ const useLedgerReport = () => {
     },
     [fromDate, toDate, isExtended, customer, selectedContactById]
   );
+  const handleDateChange = (value) => {
+    if (value && value.length === 2) {
+      setFromDate(value[0]);
+      setToDate(value[1]);
+    } else {
+      setFromDate(null);
+      setToDate(null);
+    }
+  };
 
   return {
     t,
@@ -287,6 +296,9 @@ const useLedgerReport = () => {
     selectedContactById,
     isopenAdjustmentsModal,
     clientPaymentsList,
+    handleDateChange,
+    fromDate,
+    toDate
 
   };
 };

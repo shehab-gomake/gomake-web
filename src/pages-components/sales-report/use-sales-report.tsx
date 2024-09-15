@@ -160,7 +160,15 @@ const useSalesReport = () => {
     [fromDate, toDate, agent, customer, documentType, displayByGroups]
   );
 
-
+  const handleDateChange = (value) => {
+    if (value && value.length === 2) {
+      setFromDate(value[0]);
+      setToDate(value[1]);
+    } else {
+      setFromDate(null);
+      setToDate(null);
+    }
+  };
   return {
     t,
     onSelectDeliveryTimeDates,
@@ -181,7 +189,10 @@ const useSalesReport = () => {
     handleDocumentTypeChange,
     documentsTypeList,
     tableHeaders,
-    getTotalTableDataRows
+    getTotalTableDataRows,
+    handleDateChange,
+    fromDate,
+    toDate,
   };
 };
 

@@ -160,6 +160,15 @@ const useTransactionJournalReport = ({ isPayment }: TransactionJournalReportWidg
     [fromDate, toDate, documentType, isPayment]
   );
 
+  const handleDateChange = (value) => {
+    if (value && value.length === 2) {
+      setFromDate(value[0]);
+      setToDate(value[1]);
+    } else {
+      setFromDate(null);
+      setToDate(null);
+    }
+  };
   return {
     t,
     onSelectDeliveryTimeDates,
@@ -172,7 +181,10 @@ const useTransactionJournalReport = ({ isPayment }: TransactionJournalReportWidg
     documentsTypeList,
     showTable,
     tableHeaders,
-    dataTable
+    dataTable,
+    handleDateChange,
+    fromDate,
+    toDate,
 
   };
 };
