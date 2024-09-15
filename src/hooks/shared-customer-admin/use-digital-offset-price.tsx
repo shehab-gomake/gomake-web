@@ -1768,7 +1768,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             subSection={subSection}
             section={section}
             type="number"
-            disabled={isInputDisabled}
+            disabled={isInputDisabled || isLoadging}
             widgetType={widgetType}
             setIsJobNameValue={setIsJobNameValue}
           />
@@ -1794,7 +1794,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             subSection={subSection}
             section={section}
             type="number"
-            disabled={isInputDisabled}
+            disabled={isInputDisabled || isLoadging}
             extraOnChange={() => {
               setOpenQuantityComponent();
             }}
@@ -1824,6 +1824,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           type="number"
           widgetType={widgetType}
           setIsJobNameValue={setIsJobNameValue}
+          disabled={isLoadging}
         />
       );
     } else if (
@@ -1842,6 +1843,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           type="number"
           widgetType={widgetType}
           setIsJobNameValue={setIsJobNameValue}
+          disabled={isLoadging}
         />
       );
     } else if (parameter?.parameterType === EParameterTypes.INPUT_NUMBER) {
@@ -1857,6 +1859,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           type="number"
           widgetType={widgetType}
           setIsJobNameValue={setIsJobNameValue}
+          disabled={isLoadging}
         />
       );
     } else if (parameter?.parameterType === EParameterTypes.INPUT_TEXT) {
@@ -1872,6 +1875,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           type="text"
           widgetType={widgetType}
           setIsJobNameValue={setIsJobNameValue}
+          disabled={isLoadging}
         />
       );
     } else if (parameter?.parameterType === EParameterTypes.DROP_DOWN_LIST) {
@@ -1891,6 +1895,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           subSectionParameters={subSectionParameters}
           list={list}
           multiParameterModal={multiParameterModal}
+          disabled={isLoadging}
         />
       );
     } else if (
@@ -1910,7 +1915,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           onChangeSubProductsForPrice={onChangeSubProductsForPrice}
           subSection={subSection}
           section={section}
-          disabled={disabled}
+          disabled={disabled || isLoadging}
           multiParameterModal={multiParameterModal}
 
         />
@@ -1958,6 +1963,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           list={list}
           setDeviceCategory={setDeviceCategory}
           setDeviceSize={setDeviceSize}
+          disabled={isLoadging}
         />
       );
     }
@@ -1978,6 +1984,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           onOpeneMultiParameterModal={onOpeneMultiParameterModal}
           subSectionParameters={subSectionParameters}
           list={list}
+          disabled={isLoadging}
         />
       )
     }
@@ -1998,6 +2005,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           onOpeneMultiParameterModal={onOpeneMultiParameterModal}
           subSectionParameters={subSectionParameters}
           list={list}
+          disabled={isLoadging}
         />
 
       )
