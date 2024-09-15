@@ -148,17 +148,17 @@ const useLedgerReport = () => {
     },
     [fromDate, toDate, customer, isExtended]
   );
-    const downloadPdf = (url) => {
-        const anchor = document.createElement("a");
-        anchor.href = url;
-        anchor.target = "_blank";
-        anchor.addEventListener("click", () => {
-            setTimeout(() => {
-                anchor.remove();
-            }, 100);
-        });
-        anchor.click();
-    };
+  const downloadPdf = (url) => {
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.target = "_blank";
+    anchor.addEventListener("click", () => {
+      setTimeout(() => {
+        anchor.remove();
+      }, 100);
+    });
+    anchor.click();
+  };
   const getAgingReportFilter = useCallback(
     async () => {
       if (!fromDate || !toDate) {
@@ -233,7 +233,7 @@ const useLedgerReport = () => {
       }
       const formattedStartDate = format(fromDate, 'yyyy-MM-dd');
       const formattedEndDate = format(toDate, 'yyyy-MM-dd');
-      
+
       const res = await callApi(
         EHttpMethod.POST,
         `/v1/erp-service/reports/send-customer-ledger-to-mail`,
@@ -254,6 +254,15 @@ const useLedgerReport = () => {
     },
     [fromDate, toDate, isExtended, customer, selectedContactById]
   );
+  const handleDateChange = (value) => {
+    if (value && value.length === 2) {
+      setFromDate(value[0]);
+      setToDate(value[1]);
+    } else {
+      setFromDate(null);
+      setToDate(null);
+    }
+  };
 
   return {
     t,
@@ -286,6 +295,9 @@ const useLedgerReport = () => {
     selectedContactById,
     isopenAdjustmentsModal,
     clientPaymentsList,
+    handleDateChange,
+    fromDate,
+    toDate
 
   };
 };
