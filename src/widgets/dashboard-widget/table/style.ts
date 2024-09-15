@@ -1,8 +1,10 @@
 import {useMemo} from "react";
 import {FONT_FAMILY} from "@/utils/font-family";
 import {useGomakeTheme} from "@/hooks/use-gomake-thme";
+import {adaptRight, convertWidthToVW} from "@/utils/adapter";
+import {SCREEN_WIDTH} from "@/utils/layout-config";
 
-const useStyle = () => {
+const useStyle = (dir: string) => {
     const {theme, primaryColor, warningColor} = useGomakeTheme();
     const BORDER = '0.1px solid #CECECE';
     const BORDER_RADIUS = '16px';
@@ -14,9 +16,9 @@ const useStyle = () => {
                 borderRight: 0,
                 padding: 0,
                 margin: '10px 0px 15px 0px',
-                overflow: 'overlay' as 'overlay',
-                width: 'fit-content',
-                maxHeight: '80vh',
+                overflow: 'auto' as 'auto',
+                maxWidth: convertWidthToVW(SCREEN_WIDTH - 150),
+                maxHeight: '75vh',
             },
             table: {
                 borderCollapse: 'collapse' as 'collapse',
@@ -65,9 +67,9 @@ const useStyle = () => {
 
             firstColHead: {
                 minWidth: '650px',
-                right: 0,
                 zIndex: 1,
-                padding: '0 5px'
+                padding: '0 5px',
+                ...adaptRight(dir,0)
 
             },
             firstColHeadContent: {
