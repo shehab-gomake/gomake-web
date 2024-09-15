@@ -5,7 +5,7 @@ import { DEFAULT_VALUES } from "@/pages/customers/enums";
 import { getCreditCardTransactionsApi, changeTransactionClientApi, makeRefundApi } from "@/services/api-service/credit-card-transactions/credit-card-transaction-api";
 import { useTranslation } from "react-i18next";
 import { MoreMenuWidget } from "./widgets/more-circle";
-import { format } from 'date-fns';
+import { format, endOfToday, startOfYear } from 'date-fns';
 
 const useCreditCardTransactions = () => {
   const { t } = useTranslation();
@@ -21,8 +21,8 @@ const useCreditCardTransactions = () => {
   const [selectedTransaction, setSelectedTransaction] = useState<any>();
   const [pagesCount, setPagesCount] = useState(0);
   const [pageSize, setPageSize] = useState(DEFAULT_VALUES.PageSize);
-  const [fromDate, setFromDate] = useState<Date>(new Date());
-  const [toDate, setToDate] = useState<Date>(new Date());
+  const [fromDate, setFromDate] = useState<Date>(startOfYear(new Date()));
+  const [toDate, setToDate] = useState<Date>(endOfToday());
   const { GetDateFormat } = useDateFormat();
   const [transactionAmount, setTransactionAmount] = useState<number | "">();
   const [receiptNumber, setReceiptNumber] = useState<string>();

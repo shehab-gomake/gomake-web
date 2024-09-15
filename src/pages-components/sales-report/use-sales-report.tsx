@@ -3,6 +3,7 @@ import { format } from 'date-fns';
 import { useAgentsList, useCustomerDropDownList, useDocumentsType, useGomakeAxios, useSnackBar } from "@/hooks";
 import { EHttpMethod } from "@/services/api-service/enums";
 import { useTranslation } from "react-i18next";
+import { endOfToday, startOfYear } from "date-fns";
 
 const useSalesReport = () => {
   const { callApi } = useGomakeAxios();
@@ -16,8 +17,8 @@ const useSalesReport = () => {
   const [displayByGroups, setDisplayByGroups] = useState<boolean>(false);
   const [showTable, setShowTable] = useState<boolean>(false);
   const [tableData, setTableData] = useState<any>([])
-  const [fromDate, setFromDate] = useState<Date>(new Date());
-  const [toDate, setToDate] = useState<Date>(new Date());
+  const [fromDate, setFromDate] = useState<Date>(startOfYear(new Date()));
+  const [toDate, setToDate] = useState<Date>(endOfToday());
   const [dateList, setDateList] = useState<string[]>([]);
 
   function getMonthsArray(date: Date): string[] {

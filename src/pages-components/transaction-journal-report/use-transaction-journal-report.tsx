@@ -4,6 +4,7 @@ import { format } from 'date-fns';
 import { useDocumentsType, useGomakeAxios, useSnackBar } from "@/hooks";
 import { EHttpMethod } from "@/services/api-service/enums";
 import { DocumentsTypeReportList } from "@/enums";
+import { endOfToday, startOfYear } from "date-fns";
 
 interface TransactionJournalReportWidgetProps {
   isPayment: boolean;
@@ -15,8 +16,8 @@ const useTransactionJournalReport = ({ isPayment }: TransactionJournalReportWidg
   const { documentsTypeList, documentType, handleDocumentTypeChange } = useDocumentsType()
   const [resetDatePicker, setResetDatePicker] = useState<boolean>(false);
   const [showTable, setShowTable] = useState<boolean>(false);
-  const [fromDate, setFromDate] = useState<Date>(new Date());
-  const [toDate, setToDate] = useState<Date>(new Date());
+  const [fromDate, setFromDate] = useState<Date>(startOfYear(new Date()));
+  const [toDate, setToDate] = useState<Date>(endOfToday());
   const [dataTable, setDataTable] = useState<any>([]);
 
 
