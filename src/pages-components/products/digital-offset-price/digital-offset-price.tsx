@@ -74,7 +74,8 @@ const PriceListPageWidget = ({ widgetType }) => {
         straightKnife,
         isChangePriceForEdit,
         onClickCloseChangePriceModal,
-        setIsChangePriceForEdit
+        setIsChangePriceForEdit,
+        isLoadging
     } = useDigitalOffsetPrice({ clasess, widgetType });
     const visibleSections = productTemplate?.sections?.filter(section => !section.isHidden);
     const dir: 'rtl' | 'ltr' = t('direction');
@@ -381,16 +382,18 @@ const PriceListPageWidget = ({ widgetType }) => {
                         <div style={{ width: 220, height: 40, marginLeft: 55, marginRight: 55 }}>
                             {widgetType === EWidgetProductType.EDIT ? (
                                 <GomakePrimaryButton
-                                    style={clasess.addOrderBtn}
+                                    style={isLoadging ? clasess.addOrderDisabledBtn : clasess.addOrderBtn}
                                     onClick={updateQuoteItem}
+                                    disabled={isLoadging}
                                 >
                                     {t("sales.quote.edit")}
                                 </GomakePrimaryButton>
                             ) : (
                                 <GomakePrimaryButton
                                     data-tour="addPricingBtn"
-                                    style={clasess.addOrderBtn}
+                                    style={isLoadging ? clasess.addOrderDisabledBtn : clasess.addOrderBtn}
                                     onClick={navigateForRouter}
+                                    disabled={isLoadging}
                                 >
                                     {t("products.offsetPrice.admin.addOrderBtn")}
                                 </GomakePrimaryButton>
