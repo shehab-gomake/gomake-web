@@ -16,13 +16,15 @@ import { RightArrowIcon } from "../table-row/more-circle/icons/right-arrow";
 import { LeftArrowIcon } from "../table-row/more-circle/icons/left-arrow-icon";
 import { DownArrowIcon } from "../table-row/more-circle/icons/down-arrow";
 import { UpArrowIcon } from "../table-row/more-circle/icons/up-arrow";
+import { INextStation } from "@/widgets/production-floor/interfaces/next-station";
+import { FONT_FAMILY } from "@/utils/font-family";
 
-interface IProps extends ICurrentStation {
+interface IProps extends ICurrentStation , INextStation {
     boardMissionId: string;
     status?: any;
 }
 // here...
-const CurrentStationComponent = ({ boardMissionId, machineName, actionName, productType, id, status }: IProps) => {
+const CurrentStationComponent = ({ boardMissionId, machineName, actionName, productType, id, status , nextStationName , nextStationId}: IProps) => {
     const { classes } = useStyle();
     const {
         t,
@@ -66,20 +68,31 @@ const CurrentStationComponent = ({ boardMissionId, machineName, actionName, prod
                     {anchorEl ? <UpArrowIcon /> :  <DownArrowIcon /> }
                 </Button>
                 <PermissionCheck userPermission={Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR}>
-                    <Button
+                    {nextStationId && <Button
                         sx={classes.moveToBtn}
                         onClick={() => {
                             handleRemoveBoardMission(status?.key, boardMissionId);
                             onUpdateToNextStation(boardMissionId, productType);
                         }}>
                         <span style={classes.moveToText}>{t("productionFloor.moveTo")}</span>
-                        {/* replace with next station name  */}
-                        <span style={classes.actionText}>Pre Press</span>
+                        <span style={classes.actionText}>{nextStationName}</span>
                         {dir === "ltr" ? <RightArrowIcon /> : <LeftArrowIcon />}
-                    </Button>
+                    </Button>}
                 </PermissionCheck>
             </Stack>
-            <Menu anchorEl={anchorEl}
+            <Menu
+                anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+                transformOrigin={{ vertical: "top", horizontal: "center" }}
+                PaperProps={{
+                    style: {
+                        borderRadius: "8px",
+                        border: "1px solid #EAECF0",
+                        boxShadow: "0px 12px 16px -4px rgba(16, 24, 40, 0.08), 0px 4px 6px -2px rgba(16, 24, 40, 0.03)",
+                        color:"black",
+                        ...FONT_FAMILY.Inter(600,14)
+                    },
+                }}
+                anchorEl={anchorEl}
                 open={open && boardMissionsStations?.length > 0}
                 onClose={handleClose}>
                 {

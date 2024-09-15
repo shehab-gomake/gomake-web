@@ -23,13 +23,14 @@ import {
 import KeyboardDoubleArrowUpIcon from '@mui/icons-material/KeyboardDoubleArrowUp';
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { MoreMenuWidget } from "./more-circle";
-import { DateFormatterDDMMYYYY, SeparateDateFormatterDDMMYYYY } from "@/utils/adapter";
+import { SeparateDateFormatterDDMMYYYY } from "@/utils/adapter";
 import { ClickableLabelComponent } from "@/widgets/production-floor/label-component/clickable-label-component";
 
 
 interface IProps {
     boardMission: IBoardMissions
     status?: any
+    onClickDone?:(mission: any)=>void;
 }
 
 enum EDropArea {
@@ -39,7 +40,7 @@ enum EDropArea {
 }
 
 // here...
-const TableRowComponent = ({ boardMission, status }: IProps) => {
+const TableRowComponent = ({ boardMission, status , onClickDone}: IProps) => {
     const [selectedIds, setSelectedIds] = useRecoilState(selectedBoardsMissionsState);
     const { CheckPermission } = useUserPermission();
     const canDrag = CheckPermission(Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR);
@@ -101,7 +102,7 @@ const TableRowComponent = ({ boardMission, status }: IProps) => {
     }), [boardMission]);
 
 
-    const { updateStatus, updateBoardMissionsOrder } = useProductionFloorData();
+    const { updateStatus, updateBoardMissionsOrder, t ,onClickPrintJob } = useProductionFloorData();
     const onSelectBoardMissions = (id: string, checked: boolean) => {
         setSelectedIds(checked ? [...selectedIds, boardMission] :
             selectedIds.filter(selectedBoard => selectedBoard.id !== id && selectedBoard.productType === boardMission.productType));
@@ -139,7 +140,6 @@ const TableRowComponent = ({ boardMission, status }: IProps) => {
                     <Link
                         href={`/production-floor?boardMissionsId=${boardMission?.id}&productType=${boardMission?.productType}&step=stations`}>{`${boardMission?.boardMissionNumber}\\${boardMission?.orderNumber}`}</Link>
                 </SecondaryTableCell>
-
                 <SecondaryTableCell>
                     {
                         boardMission.isUrgentWork && <KeyboardDoubleArrowUpIcon style={{ color: errorColor(500) }} />
@@ -150,14 +150,14 @@ const TableRowComponent = ({ boardMission, status }: IProps) => {
                 </SecondaryTableCell>
                 <SecondaryTableCell align={"center"}>
                     {/* <LabelComponent label={boardMission?.productName} /> */}
-                    <ClickableLabelComponent label={boardMission?.productName} />
+                    <ClickableLabelComponent label={boardMission?.productName} t={t} key={boardMission.id} />
                 </SecondaryTableCell>
                 <SecondaryTableCell align={"center"}>
                     <BoardStatusComponent statusId={boardMission.statusId} id={boardMission.id}
                         onChange={(id, statusId) => updateStatus([boardMission], statusId)} />
                 </SecondaryTableCell>
-                <SecondaryTableCell align={"center"}>
-                    <CurrentStationComponent {...boardMission.currentStation}
+                <SecondaryTableCell align={"center"} >
+                    <CurrentStationComponent {...boardMission.currentStation} {...boardMission.nextStation}
                         boardMissionId={boardMission.id} status={status} />
                 </SecondaryTableCell>
                 <SecondaryTableCell align={"center"}>
@@ -207,7 +207,11 @@ const TableRowComponent = ({ boardMission, status }: IProps) => {
                     </Stack>
                 </SecondaryTableCell>
                 <SecondaryTableCell align={"center"}>
-                    <MoreMenuWidget boardMission={boardMission} />
+                    <MoreMenuWidget 
+                    boardMission={boardMission} 
+                    onClickDone={onClickDone}
+                    onClickPrintJob={onClickPrintJob}
+                    />
                 </SecondaryTableCell>
             </TableRow>
             <TableRow>

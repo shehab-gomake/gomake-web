@@ -4,10 +4,10 @@ import { OptionsButton } from "@/components/options-button/options-button";
 import { useMoreCircle } from "./use-more-circle";
 import { useStyle } from "./style";
 
-const MoreMenuWidget = ({boardMission}) => {
+const MoreMenuWidget = ({boardMission , onClickDone ,onClickPrintJob}) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
-  const { getMenuList } = useMoreCircle({t, boardMission});
+  const { getMenuList } = useMoreCircle({t, boardMission ,onClickDone , onClickPrintJob});
   const menuList = getMenuList();
 
 

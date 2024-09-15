@@ -1,18 +1,16 @@
-import { useCustomer, useGomakeRouter } from "@/hooks";
 import { EditingIcon } from "./icons/editing";
 import { PDFIcon } from "./icons/pdf";
 import { DoneIcon } from "./icons/done";
 import { useRouter } from "next/router";
 import { MachineIcon } from "./icons/machine-icon";
 
-const useMoreCircle = ({t , boardMission}) => {
-  const { user } = useCustomer();
-  const { push} = useRouter();
+const useMoreCircle = ({ t, boardMission, onClickDone, onClickPrintJob }) => {
+  const { push } = useRouter();
 
   const handleClickEdit = () => {
-    console.log("board mission from table" ,boardMission )
-   //  push(`/products/edit?clientTypeId=${boardMission.clientTypeId}&customerId=${boardMission.clientId}&customerName=${boardMission.clientName}&productId=${boardMission.productId}&documentItemId=${boardMission.orderItemId}&documentType=${1}&documentNumber=${boardMission?.orderNumber}&documentId=${boardMission.orderId}`).then()
-}
+    console.log("board mission from table", boardMission)
+    //  push(`/products/edit?clientTypeId=${boardMission.clientTypeId}&customerId=${boardMission.clientId}&customerName=${boardMission.clientName}&productId=${boardMission.productId}&documentItemId=${boardMission.orderItemId}&documentType=${1}&documentNumber=${boardMission?.orderNumber}&documentId=${boardMission.orderId}`).then()
+  }
 
   const getMenuList = () => {
     return [
@@ -24,27 +22,26 @@ const useMoreCircle = ({t , boardMission}) => {
       },
       {
         condition: true,
+        onClick: () => onClickPrintJob(boardMission?.id),
+        icon: <MachineIcon />,
+        name: t("productionFloor.printJob")
+      },
+      {
+        condition: true,
         onClick: () => null,
         icon: <PDFIcon />,
-        name: t("Print deliver ticket")
+        name: t("productionFloor.printDeliverTicket")
       },
       {
         condition: true,
-        onClick: () => null,
-        icon: <MachineIcon />,
-        name: t("Print Job")
-      },
-      {
-        condition: true,
-        onClick: () => null,
+        onClick: () => onClickDone(boardMission?.id),
         icon: <DoneIcon />,
-        name: t("Done")
+        name: t("boardMissions.done")
       },
     ];
   };
 
   return {
-    user,
     getMenuList
   };
 };

@@ -12,6 +12,7 @@ import { useProductionFloorData } from "@/widgets/production-floor/use-productio
 import { useRecoilState } from "recoil";
 import { productionFloorTextSearchState } from "@/widgets/production-floor/state/text-search";
 import { useCallback } from "react";
+import { ThreeOptionsModal } from "@/components";
 
 interface IProps {
   status: IProductionStatus;
@@ -22,7 +23,13 @@ interface IProps {
 const StatusTableComponent = ({ status, boards }: IProps) => {
   const { isOpen, onClickStatus, tableHeaders } = useStatusTable();
   const [search] = useRecoilState(productionFloorTextSearchState);
-  const { updateStatus, t } = useProductionFloorData();
+  const { t,
+    updateStatus,
+    onOpenMarkReadyModal,
+    openMarkReadyModal,
+    onCloseMarkReadyModal,
+    onClickMoveBoardMissionToDone
+  } = useProductionFloorData();
   const [{ isOver }, drop] = useDrop(
     () => ({
       accept: "task",
@@ -57,11 +64,12 @@ const StatusTableComponent = ({ status, boards }: IProps) => {
       )
       : boards;
   }, [boards, search]);
+
   return (
     <Stack ref={drop} border={isOver ? "1px solid black" : "none"} gap={"5px"}>
       <Button
         onClick={onClickStatus}
-        startIcon={isOpen ? <KeyboardArrowDownIcon /> : <KeyboardArrowUpIcon />}
+        startIcon={isOpen ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
         sx={{
           height: "35px",
           padding: "6px 12px",
@@ -102,7 +110,7 @@ const StatusTableComponent = ({ status, boards }: IProps) => {
                     ?.map((boardMission) => {
                       return (
                         <>
-                          <TableRowComponent key={"status" + status.id + boardMission.id} boardMission={boardMission} status={status} />
+                          <TableRowComponent key={"status" + status.id + boardMission.id} boardMission={boardMission} status={status} onClickDone={onOpenMarkReadyModal} />
                         </>
                       );
                     })}
@@ -112,6 +120,16 @@ const StatusTableComponent = ({ status, boards }: IProps) => {
           </Paper>
         </Collapse>
       )}
+      <ThreeOptionsModal
+        title={t("boardMissions.markDoneModalTitle")}
+        subTitle={t("boardMissions.markDoneModalSubTitle")}
+        yesBtn={"boardMissions.markDoneModalYes"}
+        noBtn={"boardMissions.markDoneModalNo"}
+        openModal={openMarkReadyModal}
+        onClose={onCloseMarkReadyModal}
+        onClickYes={() => onClickMoveBoardMissionToDone(true)}
+        onClickNo={() => onClickMoveBoardMissionToDone(false)}
+      />
     </Stack>
   );
 };

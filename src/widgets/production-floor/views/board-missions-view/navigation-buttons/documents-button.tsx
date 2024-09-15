@@ -1,23 +1,23 @@
-import {PrimaryButton} from "@/components/button/primary-button";
-import {CircularProgress, MenuItem, Paper} from "@mui/material";
-import {useMemo, useState} from "react";
-import {ArrowDownIcon} from "@/icons";
+import { PrimaryButton } from "@/components/button/primary-button";
+import { CircularProgress, MenuItem, Paper } from "@mui/material";
+import { useMemo, useState } from "react";
+import { ArrowDownIcon } from "@/icons";
 
-import {getBoardMissionPDF, GetPrintingTicketPDFApi} from "@/services/api-service/generic-doc/documents-api";
-import {useGomakeAxios, useSnackBar} from "@/hooks";
-import {useTranslation} from "react-i18next";
-import {useRecoilState, useRecoilValue} from "recoil";
-import {boardMissionsDetailsState} from "@/widgets/production-floor/state/boards";
-import {useGomakeTheme} from "@/hooks/use-gomake-thme";
-import {PDFIcon} from "@/pages-components/quotes/more-circle/icons/pdf";
-import {ClickOutside} from "@/components/click-out-side/click-out-side";
+import { getBoardMissionPDF, GetPrintingTicketPDFApi } from "@/services/api-service/generic-doc/documents-api";
+import { useGomakeAxios, useSnackBar } from "@/hooks";
+import { useTranslation } from "react-i18next";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { boardMissionsDetailsState } from "@/widgets/production-floor/state/boards";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { PDFIcon } from "@/pages-components/quotes/more-circle/icons/pdf";
+import { ClickOutside } from "@/components/click-out-side/click-out-side";
 import {
     getOrderSummeryPdfApi
 } from "@/services/api-service/board-missions-table/board-missions-table";
-import {PackageIcon} from "@/icons/package-icon";
-import {ThreeOptionsModal} from "@/components";
-import {isReadyBoardMissionsState} from "@/widgets/production-floor/views/board-missions-view/stations/state";
-import {moveBoardMissionToDoneApi} from "@/services/api-service/production-floor/production-floor-endpoints";
+import { PackageIcon } from "@/icons/package-icon";
+import { ThreeOptionsModal } from "@/components";
+import { isReadyBoardMissionsState } from "@/widgets/production-floor/views/board-missions-view/stations/state";
+import { moveBoardMissionToDoneApi } from "@/services/api-service/production-floor/production-floor-endpoints";
 import {
     PrintPackingSlipModalWidget
 } from "@/widgets/production-floor/views/board-missions-view/navigation-buttons/print-packing-slip-modal-widget";
@@ -30,37 +30,38 @@ const DocumentsButton = () => {
     const [openMarkReadyModal, setOpenMarkReadyModal] = useState<boolean>(false);
     const [downloading, setDownloading] = useState<boolean>(false);
     const isReady = useRecoilValue(isReadyBoardMissionsState);
-    const {callApi} = useGomakeAxios();
-    const {t} = useTranslation();
+    const { callApi } = useGomakeAxios();
+    const { t } = useTranslation();
     const dir = t('direction');
-    const {primaryColor} = useGomakeTheme();
-    const {alertFaultGetData, alertFaultUpdate, alertSuccessUpdate} = useSnackBar();
+    const { primaryColor } = useGomakeTheme();
+    const { alertFaultGetData, alertFaultUpdate, alertSuccessUpdate } = useSnackBar();
     const menuList = useMemo(() => [
         {
             condition: true,
             name: "boardMissions.pdfWorkMission",
-            icon: <PDFIcon/>,
+            icon: <PDFIcon />,
             onclick: () => onClickPrint(boardMissions),
         },
         {
             condition: true,
             name: "boardMissions.pdfProductionOrderSummary",
-            icon: <PDFIcon/>,
+            icon: <PDFIcon />,
             onclick: () => onClickOrderSummeryPdf(boardMissions.boardMissionId),
         },
         {
             condition: true,
             name: t("boardMissions.printProductionPdf"),
-            icon: <PDFIcon/>,
+            icon: <PDFIcon />,
             onclick: () => GetPrintingTicketPDF(boardMissions.boardMissionId),
         },
         {
             condition: true,
             name: t("boardMissions.printPackagingSlip"),
-            icon: <PackageIcon/>,
+            icon: <PackageIcon />,
             onclick: () => isReady ? setOpenPackagesModal(true) : setOpenConfirmModal(true),
         },
     ], [boardMissions]);
+
     const downloadPdf = (url) => {
         const anchor = document.createElement("a");
         anchor.href = url;
@@ -84,7 +85,7 @@ const DocumentsButton = () => {
             } else {
             }
         };
-        await getOrderSummeryPdfApi(callApi, callBack, {boardMissionId});
+        await getOrderSummeryPdfApi(callApi, callBack, { boardMissionId });
     };
 
     const onClickPrint = async (mission) => {
@@ -98,7 +99,7 @@ const DocumentsButton = () => {
             } else {
             }
         };
-        await getBoardMissionPDF(callApi, callBack, {boardMissionId: mission?.boardMissionId});
+        await getBoardMissionPDF(callApi, callBack, { boardMissionId: mission?.boardMissionId });
     };
 
     const GetPrintingTicketPDF = async (boardMissionId) => {
@@ -113,7 +114,7 @@ const DocumentsButton = () => {
                 alertFaultGetData();
             }
         };
-        await GetPrintingTicketPDFApi(callApi, callBack, {boardMissionId});
+        await GetPrintingTicketPDFApi(callApi, callBack, { boardMissionId });
     };
 
     const onClickMoveBoardMissionToDone = async (sendMessage: boolean) => {
@@ -131,19 +132,20 @@ const DocumentsButton = () => {
             sendMessage
         });
     };
+
     return (
-        <div style={{position: 'relative', display: "flex", alignItems: 'center', gap: '5px', zIndex: 9999999}}>
-            <PrimaryButton style={{backgroundColor: primaryColor(300), borderRadius: '12px'}}
-                           onClick={() => setOpen(!open)} variant={'contained'}
-                           disabled={downloading}
-                           startIcon={dir === 'rtl' ? <ArrowDownIcon fill={'#FFF'}/> : undefined}
-                           endIcon={downloading ? <CircularProgress size={25}/> : dir === 'ltr' ?
-                               <ArrowDownIcon fill={'#FFF'}/> : undefined}>
+        <div style={{ position: 'relative', display: "flex", alignItems: 'center', gap: '5px', zIndex: 9999999 }}>
+            <PrimaryButton style={{ backgroundColor: primaryColor(300), borderRadius: '12px' }}
+                onClick={() => setOpen(!open)} variant={'contained'}
+                disabled={downloading}
+                startIcon={dir === 'rtl' ? <ArrowDownIcon fill={'#FFF'} /> : undefined}
+                endIcon={downloading ? <CircularProgress size={25} /> : dir === 'ltr' ?
+                    <ArrowDownIcon fill={'#FFF'} /> : undefined}>
                 {t('productionFloor.documents')}
             </PrimaryButton>
             {
                 !!open && <ClickOutside onClick={() => setOpen(false)}>
-                    <Paper sx={{position: 'absolute', right: 0, top: '110%', zIndex: 9999999}}>
+                    <Paper sx={{ position: 'absolute', right: 0, top: '110%', zIndex: 9999999 }}>
                         {menuList.map((item, index) => (
                             item.condition && (
                                 <MenuItem
@@ -168,8 +170,8 @@ const DocumentsButton = () => {
                 </ClickOutside>
             }
             <PrintPackingSlipModalWidget openModal={openPackagesModal} onClose={() => setOpenPackagesModal(false)}
-                                         boardMissionId={boardMissions?.boardMissionId}
-                                         quantity={boardMissions?.quantity}/>
+                boardMissionId={boardMissions?.boardMissionId}
+                quantity={boardMissions?.quantity} />
             <ThreeOptionsModal
                 title={t("boardMissions.printAndMoveToReadyTitle")}
                 yesBtn={t("boardMissions.printAndTransferToReady")}
@@ -196,4 +198,4 @@ const DocumentsButton = () => {
     );
 }
 
-export {DocumentsButton}
+export { DocumentsButton }

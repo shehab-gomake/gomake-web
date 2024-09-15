@@ -48,7 +48,7 @@ const useStatusTable = () => {
             t('productionFloor.taskCategory'),
             t('productionFloor.status'),
             t('productionFloor.station'),
-            t('sales.quote.createdDate'),
+            t('productionFloor.createdDate'),
             t("productionFloor.stationDeliveryTime"),
             t('productionFloor.deliveryTime'),
             t('productionFloor.tags'),

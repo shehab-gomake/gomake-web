@@ -1,6 +1,6 @@
 import {useGomakeAxios, useSnackBar} from "@/hooks";
 import {
-    getProductionFloorData, updateBoardsMissionsOrderApi,
+    getProductionFloorData, moveBoardMissionToDoneApi, updateBoardsMissionsOrderApi,
     updateBoardsMissionsStatusApi
 } from "@/services/api-service/production-floor/production-floor-endpoints";
 import {useRecoilState} from "recoil";
@@ -13,6 +13,7 @@ import {IBoardMissions} from "@/widgets/production-floor/interfaces/board-missio
 import {useTranslation} from "react-i18next";
 import {IStatusesBoardsMissions} from "@/widgets/production-floor/interfaces/production-floor-data-response";
 import {useState} from "react";
+import { getBoardMissionPDF } from "@/services/api-service/generic-doc/documents-api";
 
 const useProductionFloorData = () => {
     const {t} = useTranslation();
@@ -103,12 +104,68 @@ const useProductionFloorData = () => {
         await updateBoardsMissionsOrderApi(callApi, callBack, payload)
     }
 
+    const [selectedMissionId, setSelectedMissionId] = useState<any>(null)
+    const [openMarkReadyModal, setOpenMarkReadyModal] = useState<boolean>(false);
+    const onCloseMarkReadyModal = () => {
+        setSelectedMissionId(null)
+        setOpenMarkReadyModal(false);
+    };
+    const onOpenMarkReadyModal = (missionId) => {
+        setSelectedMissionId(missionId)
+        setOpenMarkReadyModal(true);
+    };
+
+    const onClickMoveBoardMissionToDone = async (sendMessage: boolean) => {
+        const callBack = (res) => {
+            setOpenMarkReadyModal(false);
+            //setOpenPackagesModal(true)
+            if (res?.success) {
+                alertSuccessUpdate();
+            } else {
+                alertFaultUpdate();
+            }
+        };
+        await moveBoardMissionToDoneApi(callApi, callBack, {
+            boardMissionId: selectedMissionId,
+            sendMessage
+        });
+    };
+
+    const downloadPdf = (url) => {
+        const anchor = document.createElement("a");
+        anchor.href = url;
+        anchor.target = "_blank";
+        anchor.addEventListener("click", () => {
+            setTimeout(() => {
+                anchor.remove();
+            }, 100);
+        });
+        anchor.click();
+    };
+
+    const onClickPrintJob = async (boardMissionId) => {
+        const callBack = (res) => {
+            if (res?.success) {
+                const pdfLink = res.data;
+                downloadPdf(pdfLink)
+            } else {
+            }
+        };
+        await getBoardMissionPDF(callApi, callBack, {boardMissionId});
+    };
+
     return {
+        t,
         getData,
         updateStatus,
         setData,
-        t,
-        updateBoardMissionsOrder
+        updateBoardMissionsOrder,
+        onCloseMarkReadyModal,
+        onOpenMarkReadyModal,
+        openMarkReadyModal,
+        setOpenMarkReadyModal,
+        onClickMoveBoardMissionToDone,
+        onClickPrintJob
     }
 }
 
