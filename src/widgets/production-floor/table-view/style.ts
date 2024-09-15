@@ -63,6 +63,7 @@ const useStyle = () => {
                 color: "#2E3092",
                 gap: "5px",
                 flexShrink: 0,
+                height: 36,
             },
             moveToText: {
                 ...FONT_FAMILY.Inter(500, 10),

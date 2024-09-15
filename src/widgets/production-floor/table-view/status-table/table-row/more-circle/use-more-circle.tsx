@@ -3,6 +3,7 @@ import { EditingIcon } from "./icons/editing";
 import { PDFIcon } from "./icons/pdf";
 import { DoneIcon } from "./icons/done";
 import { useRouter } from "next/router";
+import { MachineIcon } from "./icons/machine-icon";
 
 const useMoreCircle = ({t , boardMission}) => {
   const { user } = useCustomer();
@@ -30,7 +31,7 @@ const useMoreCircle = ({t , boardMission}) => {
       {
         condition: true,
         onClick: () => null,
-        icon: <PDFIcon />,
+        icon: <MachineIcon />,
         name: t("Print Job")
       },
       {

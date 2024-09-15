@@ -24,6 +24,7 @@ import KeyboardDoubleArrowUpIcon from '@mui/icons-material/KeyboardDoubleArrowUp
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { MoreMenuWidget } from "./more-circle";
 import { DateFormatterDDMMYYYY, SeparateDateFormatterDDMMYYYY } from "@/utils/adapter";
+import { ClickableLabelComponent } from "@/widgets/production-floor/label-component/clickable-label-component";
 
 
 interface IProps {
@@ -148,13 +149,13 @@ const TableRowComponent = ({ boardMission, status }: IProps) => {
                     {boardMission?.clientName}
                 </SecondaryTableCell>
                 <SecondaryTableCell align={"center"}>
-                    <LabelComponent label={boardMission?.productName} />
+                    {/* <LabelComponent label={boardMission?.productName} /> */}
+                    <ClickableLabelComponent label={boardMission?.productName} />
                 </SecondaryTableCell>
                 <SecondaryTableCell align={"center"}>
                     <BoardStatusComponent statusId={boardMission.statusId} id={boardMission.id}
                         onChange={(id, statusId) => updateStatus([boardMission], statusId)} />
                 </SecondaryTableCell>
-
                 <SecondaryTableCell align={"center"}>
                     <CurrentStationComponent {...boardMission.currentStation}
                         boardMissionId={boardMission.id} status={status} />

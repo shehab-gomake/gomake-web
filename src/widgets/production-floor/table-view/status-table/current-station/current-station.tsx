@@ -21,7 +21,7 @@ interface IProps extends ICurrentStation {
     boardMissionId: string;
     status?: any;
 }
-
+// here...
 const CurrentStationComponent = ({ boardMissionId, machineName, actionName, productType, id, status }: IProps) => {
     const { classes } = useStyle();
     const {
@@ -58,8 +58,7 @@ const CurrentStationComponent = ({ boardMissionId, machineName, actionName, prod
 
     return (
         <div>
-            <Stack direction="row" spacing={1} justifyContent={'center'} alignItems={'center'} borderRadius={'4px'}
-                width={"fit-content"} display={'inline-flex'} overflow={'hidden'}>
+            <Stack direction="row" spacing={1} justifyContent={'center'} alignItems={'center'} width={"fit-content"} display={'inline-flex'} overflow={'hidden'}>
                 <Button sx={classes.currentStationBtn} variant={'contained'}
                     disabled={!canMoveStation}
                     onClick={(e) => handleClick(e, boardMissionId, productType)}>
