@@ -674,29 +674,30 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
   };
 
 
-  const getCalculateQuoteItem = async (quoteItem: any, calculationType: number, data: number) => {
+  const getCalculateQuoteItem = async (quoteItem: any, calculationType: number, data: number ,  newUpdatedQuoteItemValue?: any ) => {
     if (router.query.isNewCreation) {
-      const quoteItemEdit = quoteItemValue.documentItems.find(item => item.id === quoteItem.id)
+      const newQuoteItemValue = newUpdatedQuoteItemValue ?? quoteItemValue ;
+      const quoteItemEdit = newQuoteItemValue.documentItems.find(item => item.id === quoteItem.id)
       const res = await callApi(
         EHttpMethod.POST,
         `/v1/erp-service/documents/calculate-item`,
         {
           documentType: docType,
           document: {
-            exchangeRate: quoteItemValue?.exchangeRate == 0 ? 1 : quoteItemValue?.exchangeRate,
+            exchangeRate: newQuoteItemValue?.exchangeRate == 0 ? 1 : newQuoteItemValue?.exchangeRate,
             price: quoteItem?.price,
             discount: quoteItem?.discount,
             finalPrice: quoteItemEdit?.finalPrice,
             quantity: quoteItem?.quantity,
-            roundPrices: quoteItemValue?.client?.roundPrices,
+            roundPrices: newQuoteItemValue?.client?.roundPrices,
             document: {
-              totalPrice: quoteItemValue?.totalPrice,
-              totalPriceAfterDiscount: quoteItemValue?.totalPriceAfterDiscount,
-              discount: +quoteItemValue?.discount,
-              discountAmount: quoteItemValue?.discountAmount,
-              totalPayment: quoteItemValue?.totalPayment,
-              vat: quoteItemValue?.vat,
-              totalVAT: quoteItemValue?.totalVAT
+              totalPrice: newQuoteItemValue?.totalPrice,
+              totalPriceAfterDiscount: newQuoteItemValue?.totalPriceAfterDiscount,
+              discount: +newQuoteItemValue?.discount,
+              discountAmount: newQuoteItemValue?.discountAmount,
+              totalPayment: newQuoteItemValue?.totalPayment,
+              vat: newQuoteItemValue?.vat,
+              totalVAT: newQuoteItemValue?.totalVAT
             },
             data: data,
             calculationType: calculationType
@@ -707,7 +708,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
       if (res?.success) {
         const _data = res?.data?.data?.data
         const updatedQuoteItemValue = {
-          ...quoteItemValue,
+          ...newQuoteItemValue,
           discount: _data?.document?.discount,
           discountAmount: _data?.document?.discountAmount,
           totalPayment: _data?.document?.totalPayment,
@@ -715,7 +716,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
           totalPriceAfterDiscount: _data?.document?.totalPriceAfterDiscount,
           totalVAT: _data?.document?.totalVAT,
           vat: _data?.document?.vat,
-          documentItems: quoteItemValue.documentItems.map(documentItem => {
+          documentItems: newQuoteItemValue.documentItems.map(documentItem => {
             if (documentItem.id === quoteItem.id) {
               return {
                 ...documentItem,
@@ -842,20 +843,6 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     }
   }
 
-
-  const item = {
-    id: uuidv4(),
-    details: "",
-    price: 0,
-    workName: "",
-    discount: 0,
-    finalPrice: 0,
-    quantity: 0,
-    isSelected: false,
-    productType: 0,
-  }
-
-  // here
   const onAddDelivery = async (shipmentType: any) => {
     const callBack = (res) => {
       if (res?.success) {
@@ -863,12 +850,25 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
         onCloseDeliveryModal();
         if (router?.query?.isNewCreation && (docType === DOCUMENT_TYPE.deliveryNote || docType === DOCUMENT_TYPE.deliveryNoteRefund || docType === DOCUMENT_TYPE.invoice || docType === DOCUMENT_TYPE.invoiceRefund)) {
           const updatedQuoteItemValue = { ...quoteItemValue };
-          const newItem = { ...item, id: uuidv4(), productID: shipmentType?.value, productName: shipmentType?.label,  price: shipmentType?.price };
+          const deliveryItem = res?.data;
+          const item = {
+            id: uuidv4(),
+            details: "",
+            price: deliveryItem.price,
+            workName: "",
+            discount: 0,
+            finalPrice: 0,
+            quantity: 1,
+            isSelected: false,
+            productID: deliveryItem?.productID,
+            productType: 1,
+          }
+          const newItem = { ...item, id: uuidv4(), productName: shipmentType?.label };
           updatedQuoteItemValue.documentItems = [
             ...updatedQuoteItemValue.documentItems,
             newItem
           ];
-          setQuoteItemValue(updatedQuoteItemValue);
+          getCalculateQuoteItem(newItem, 1, newItem.price, updatedQuoteItemValue);
         }
         else
           getQuote();
