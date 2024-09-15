@@ -4,19 +4,20 @@ import { format } from 'date-fns';
 import { useDocumentsType, useGomakeAxios, useSnackBar } from "@/hooks";
 import { EHttpMethod } from "@/services/api-service/enums";
 import { DocumentsTypeReportList } from "@/enums";
+import { endOfToday, startOfYear } from "date-fns";
 
 interface TransactionJournalReportWidgetProps {
   isPayment: boolean;
 }
 const useTransactionJournalReport = ({ isPayment }: TransactionJournalReportWidgetProps) => {
-  const {alertFault, alertFaultGetData, alertSuccessGetData } = useSnackBar();
+  const { alertFault, alertFaultGetData, alertSuccessGetData } = useSnackBar();
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation()
   const { documentsTypeList, documentType, handleDocumentTypeChange } = useDocumentsType()
   const [resetDatePicker, setResetDatePicker] = useState<boolean>(false);
   const [showTable, setShowTable] = useState<boolean>(false);
-  const [fromDate, setFromDate] = useState<Date>(new Date());
-  const [toDate, setToDate] = useState<Date>(new Date());
+  const [fromDate, setFromDate] = useState<Date>(startOfYear(new Date()));
+  const [toDate, setToDate] = useState<Date>(endOfToday());
   const [dataTable, setDataTable] = useState<any>([]);
 
 
@@ -142,8 +143,8 @@ const useTransactionJournalReport = ({ isPayment }: TransactionJournalReportWidg
         EHttpMethod.POST,
         `/v1/erp-service/reports/get-transaction-journal-report`,
         {
-             startDate: formattedStartDate,
-            endDate: formattedEndDate,
+          startDate: formattedStartDate,
+          endDate: formattedEndDate,
           documentsType: isPayment ? DocumentsTypeReportList.Payments : documentType?.id,
         }
       );

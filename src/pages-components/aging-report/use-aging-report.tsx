@@ -3,6 +3,7 @@ import { useAgentsList, useCustomerDropDownList, useGomakeAxios, useSnackBar } f
 import { EHttpMethod } from "@/services/api-service/enums";
 import { format } from 'date-fns';
 import { useTranslation } from "react-i18next";
+import { endOfToday, startOfYear } from "date-fns";
 
 const useAgingReport = () => {
   const { t } = useTranslation()
@@ -17,12 +18,12 @@ const useAgingReport = () => {
   const [showTable, setShowTable] = useState<boolean>(false);
   const [tableHeader, setTableHeader] = useState<any>([])
   const [tableData, setTableData] = useState<any>([])
-  const [fromDate, setFromDate] = useState<Date>(new Date());
-  const [toDate, setToDate] = useState<Date>(new Date());
-    const transformedHeaders = tableHeader?.map(header => {
+  const [fromDate, setFromDate] = useState<Date>(startOfYear(new Date()));
+  const [toDate, setToDate] = useState<Date>(endOfToday());
+  const transformedHeaders = tableHeader?.map(header => {
     // Check if the header key contains any numbers
     const containsNumber = /\d/.test(header.key);
-  
+
     // If it contains numbers, use header.name; otherwise, use the translated text
     return containsNumber ? header.name : t(`reports.${header.key}`);
   });
