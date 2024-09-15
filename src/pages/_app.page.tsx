@@ -13,6 +13,7 @@ import { GoMakeTourProvider } from "@/providers/go-make-tour/go-make-tour-provid
 import { GomakeLoadingWithShadow } from "@/widgets/loading-with-shadow";
 import useUpdateCurrentPath from "@/pages-components/customer-service/hook/useUpdateCurrentPath";
 import EnhancedErrorBoundary from "@/components/jira-logger/ErrorBoundary";
+import 'rsuite/dist/rsuite-no-reset.min.css';
 
 i18n
   .use(Backend)

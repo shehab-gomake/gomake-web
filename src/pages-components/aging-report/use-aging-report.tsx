@@ -12,28 +12,32 @@ const useAgingReport = () => {
   const { agent, agentsCategories, handleAgentChange } = useAgentsList();
   const [selectDate, setSelectDate] = useState<string>(new Date().toISOString().split('T')[0]);
   const [byReferenceDate, setByReferenceDate] = useState<boolean>(false);
-  const [resetDatePicker, setResetDatePicker] = useState<boolean>(false);
   const [detailedReport, setDetailedReport] = useState<boolean>(false);
   const [showTable, setShowTable] = useState<boolean>(false);
   const [tableHeader, setTableHeader] = useState<any>([])
   const [tableData, setTableData] = useState<any>([])
   const [fromDate, setFromDate] = useState<Date>(new Date());
   const [toDate, setToDate] = useState<Date>(new Date());
-    const transformedHeaders = tableHeader?.map(header => {
+  const transformedHeaders = tableHeader?.map(header => {
     // Check if the header key contains any numbers
     const containsNumber = /\d/.test(header.key);
-  
+
     // If it contains numbers, use header.name; otherwise, use the translated text
     return containsNumber ? header.name : t(`reports.${header.key}`);
   });
 
   const dateRef = useRef(null);
 
-  const onSelectDeliveryTimeDates = (fromDate: Date, toDate: Date) => {
-    setResetDatePicker(false);
-    setFromDate(fromDate);
-    setToDate(toDate);
+  const handleDateChange = (value) => {
+    if (value && value.length === 2) {
+      setFromDate(value[0]);
+      setToDate(value[1]);
+    } else {
+      setFromDate(null);
+      setToDate(null);
+    }
   };
+
 
   const handleClickSelectDate = () => {
     dateRef?.current?.showPicker();
@@ -221,8 +225,6 @@ const useAgingReport = () => {
 
   return {
     t,
-    onSelectDeliveryTimeDates,
-    resetDatePicker,
     handleClickSelectDate,
     selectDate,
     setSelectDate,
@@ -244,7 +246,10 @@ const useAgingReport = () => {
     getTableDataRows,
     onChangeDetailedReport,
     onChangeByReferenceDate,
-    transformedHeaders
+    transformedHeaders,
+    handleDateChange,
+    fromDate,
+    toDate,
   };
 };
 

@@ -4,10 +4,9 @@ import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
 import { GoMakeAutoComplate } from "@/components"
 import { DateFormatter } from "@/utils/adapter";
 import { AgingReportHeaderWidgetProps, useAgingReportHeader } from "./use-header-widget";
+import { DateRangePicker } from "rsuite";
 
 const AgingReportHeaderWidget = ({
-  onSelectDeliveryTimeDates,
-  resetDatePicker,
   handleClickSelectDate,
   selectDate,
   setSelectDate,
@@ -21,7 +20,10 @@ const AgingReportHeaderWidget = ({
   handleCustomerChange,
   detailedReport,
   onChangeByReferenceDate,
-  onChangeDetailedReport
+  onChangeDetailedReport,
+  handleDateChange,
+  fromDate,
+  toDate,
 }: AgingReportHeaderWidgetProps) => {
 
   const { classes, t } = useAgingReportHeader()
@@ -31,7 +33,11 @@ const AgingReportHeaderWidget = ({
       <div style={classes.date1FilterContainer}>
         <h3 style={classes.filterLabelStyle}>{t("boardMissions.dateRange")}</h3>
         <div style={{ width: "100%" }}>
-          <GoMakeDatepicker onChange={onSelectDeliveryTimeDates} placeholder={t("boardMissions.chooseDate")} reset={resetDatePicker} />
+          {/* <GoMakeDatepicker onChange={onSelectDeliveryTimeDates} placeholder={t("boardMissions.chooseDate")} reset={resetDatePicker} /> */}
+          <DateRangePicker
+            onChange={handleDateChange}
+            value={fromDate && toDate ? [fromDate, toDate] : null}
+          />
         </div>
       </div>
       <div style={classes.date2FilterContainer}>
