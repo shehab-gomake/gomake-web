@@ -1,25 +1,27 @@
-import { IBoardMissionsTable } from "@/widgets/dashboard-widget/table/interface";
-import { useStyle } from "@/widgets/dashboard-widget/table/style";
-import { useTranslation } from "react-i18next";
-import { IBoardMissions } from "@/widgets/dashboard-widget/interfaces";
-import { IMachine } from "@/shared/interfaces";
-import { StatusView } from "@/components/status-view";
+import {IBoardMissionsTable} from "@/widgets/dashboard-widget/table/interface";
+import {useStyle} from "@/widgets/dashboard-widget/table/style";
+import {useTranslation} from "react-i18next";
+import {IBoardMissions} from "@/widgets/dashboard-widget/interfaces";
+import {IMachine} from "@/shared/interfaces";
+import {StatusView} from "@/components/status-view";
 import ElectricBoltSharpIcon from '@mui/icons-material/ElectricBoltSharp';
-import React, { useCallback, useState } from "react";
-import { EStatus } from "@/shared";
-import { useRecoilValue } from "recoil";
-import { boardsMissionsStatusFilterState } from "@/store/boards-missions-status-filter";
+import React, {useCallback, useState} from "react";
+import {EStatus} from "@/shared";
+import {useRecoilValue} from "recoil";
+import {boardsMissionsStatusFilterState} from "@/store/boards-missions-status-filter";
 import moment from "moment-timezone";
 import Button from "@mui/material/Button";
-import { useRouter } from "next/router";
+import {useRouter} from "next/router";
+import {adaptRight} from "@/utils/adapter";
 
-const BoardMissionsTable = ({ boardsMissions, usedMachines }: IBoardMissionsTable) => {
-    const { classes } = useStyle();
-    const { t } = useTranslation();
+const BoardMissionsTable = ({boardsMissions, usedMachines}: IBoardMissionsTable) => {
+    const {t} = useTranslation();
+    const direction = t('direction')
+    const {classes} = useStyle(direction);
     const [orderByMachine, setOrderByMachine] = useState<string>('');
     const selectedStatusFilter = useRecoilValue(boardsMissionsStatusFilterState);
     const [isOrderByCreationDate, SetIsOrderByCreationDate] = useState<boolean>(false);
-    const { replace } = useRouter();
+    const {replace} = useRouter();
     const boardLink = (boardMissions: IBoardMissions) => {
         replace(`/production-floor/?boardMissionsId=${boardMissions.id}&step=stations&productType=${!!boardMissions.productType ? boardMissions.productType : ''}`).then();
     }
@@ -85,167 +87,176 @@ const BoardMissionsTable = ({ boardsMissions, usedMachines }: IBoardMissionsTabl
 
     return (
         boardsMissions.length > 0 ?
-            <div style={classes.tableWrapper} id={'dashboard-table'}>
-                <table style={classes.table}>
+            <div style={classes.tableWrapper} className={'show-scrollbar'}>
+                <table style={classes.table} >
                     <thead>
-                        <tr>
-                            <th style={{ ...classes.tableHead, ...classes.firstColHead }}>
-                                <div style={classes.firstColHeadContent}>
+                    <tr>
+                        <th style={{...classes.tableHead, ...classes.firstColHead}}>
+                            <div style={classes.firstColHeadContent}>
 
-                                    <div style={{ width: '5%' }}>#</div>
-                                    <div style={{ width: '5%' }}></div>
-                                    <div style={{ width: '35%' }}>{t('dashboard-widget.client')}</div>
-                                    <div style={{ width: '25%' }}>{t('dashboard-widget.task')}</div>
-                                    <div style={isOrderByCreationDate ? { ...classes.tableHead, ...classes.selectedMachine, width: '30%', paddingTop: '29px' } : { ...classes.tableHead, width: '30%', paddingTop: '29px' }} onClick={() => sortByCreationDate()}>
-                                        {t('dashboard-widget.dueDate')}
-                                    </div>
-                                    <div style={{ width: '20%' }}>{t('dashboard-widget.product')}</div>
-                                    <div style={{ width: '35%' }}>{t('dashboard-widget.status')}</div>
+                                <div style={{width: '5%'}}>#</div>
+                                <div style={{width: '5%'}}></div>
+                                <div style={{width: '35%'}}>{t('dashboard-widget.client')}</div>
+                                <div style={{width: '25%'}}>{t('dashboard-widget.task')}</div>
+                                <div style={isOrderByCreationDate ? {
+                                    ...classes.tableHead, ...classes.selectedMachine,
+                                    width: '30%',
+                                    paddingTop: '29px'
+                                } : {...classes.tableHead, width: '30%', paddingTop: '29px'}}
+                                     onClick={() => sortByCreationDate()}>
+                                    {t('dashboard-widget.dueDate')}
                                 </div>
-                            </th>
-                            {
-                                usedMachines.map((machine: IMachine) => {
-                                    return (
-                                        <th key={machine?.id}
-                                            style={orderByMachine === machine?.id ? { ...classes.tableHead, ...classes.selectedMachine } : classes.tableHead}
-                                            onClick={() => handleMachineClicked(machine?.id)}>
-                                            <div style={classes.tdRows}>
-                                                <div>{machine?.progress?.name}</div>
-                                                <div>{machine?.progress?.done}/{machine?.progress?.total} <small>{t('measurementUnits.minute')}</small></div>
-                                            </div>
-                                        </th>
-                                    );
-                                })
-                            }
-                        </tr>
-                    </thead>
-                    <tbody>
+                                <div style={{width: '20%'}}>{t('dashboard-widget.product')}</div>
+                                <div style={{width: '35%'}}>{t('dashboard-widget.status')}</div>
+                            </div>
+                        </th>
                         {
-                            boards() && boards().map((board: IBoardMissions, index: number) => {
+                            usedMachines.map((machine: IMachine) => {
                                 return (
-                                    board?.splittedBoards?.length > 0 ?
-                                        board.splittedBoards.map((splitBoard, k) => {
-                                            return (
-                                                <tr style={board.isLate ? classes.lateMission : {}}>
-                                                    {k === 0 &&
-                                                        <td rowSpan={board.splittedBoards.length}
-                                                            style={{
-                                                                ...classes.tableCell,
-                                                                position: 'sticky',
-                                                                right: 0,
-                                                                backgroundColor: board.isLate ? classes.lateMission.backgroundColor : '#FFFFFF',
-                                                            }}>
-                                                            <div style={classes.firstColCellSplitBoards}>
-                                                                <div style={{ width: '5%' }}>{index + 1}</div>
-                                                                <div style={{ width: '5%' }}>{board.isUrgent ?
-                                                                    <ElectricBoltSharpIcon color={"error"} /> : ''}
-                                                                </div>
-                                                                <div style={{ width: '35%' }}>
-                                                                    <span>{board?.clientName && board?.clientName?.length > 10 ? board.clientName?.slice(0, 9) + '..' : board?.clientName}</span>
-                                                                </div>
-                                                                <div style={{ width: '25%', height: '100%' }}>
-                                                                    <div style={classes.tdRows}>
-                                                                        <div><span>{board.code}</span></div>
-                                                                    </div>
-                                                                </div>
-                                                                <div style={{ width: '30%', height: '100%' }}>
-                                                                    <div style={classes.tdRows}>
-                                                                        <div><span>{getDateString(board.creationDate)}</span></div>
-                                                                    </div>
-                                                                </div>
-                                                                <div style={{ width: '20%', height: '100%' }}>
-                                                                    <div style={classes.tdRows}>
-                                                                        <span>{board?.productName && board?.productName?.length > 8 ? board.productName?.slice(0, 7) + '..' : board?.productName}</span>
-                                                                    </div>
-                                                                </div>
-                                                                <div style={classes.splitBoardsStatuses}>
-                                                                    {
-                                                                        board.splittedBoards.map((sBoard, cellNumber) => <div
-                                                                            style={
-                                                                                cellNumber + 1 === board.splittedBoards.length ?
-                                                                                    {
-                                                                                        ...classes.splitBoardsStatusesRow,
-                                                                                        borderBottom: 0
-                                                                                    } :
-                                                                                    classes.splitBoardsStatusesRow
-                                                                            }>
-                                                                            <Button onClick={() => boardLink(sBoard)}>{sBoard.productTypeName}</Button>
-                                                                            <StatusView status={sBoard.status}
-                                                                                label={sBoard.currentStation.rowName} />
-                                                                        </div>)
-                                                                    }
-                                                                </div>
-                                                            </div>
-                                                        </td>
-                                                    }
-                                                    {
-                                                        usedMachines.map((machine: IMachine, i: number) => {
-                                                            return (
-                                                                <td key={machine?.id + i}
-                                                                    style={k + 1 === board.splittedBoards.length ? classes.tableCell : {
-                                                                        ...classes.tableCell,
-                                                                        borderBottom: 0
-                                                                    }}>
-                                                                    <StatusView style={{ margin: 'auto' }}
-                                                                        status={splitBoard.machinesStatuses[machine?.id]} />
-                                                                </td>
-                                                            );
-                                                        })
-                                                    }
-                                                </tr>
-                                            )
-                                        }) :
-                                        <tr key={index} style={board.isLate ? classes.lateMission : {}}>
-                                            <td style={{
-                                                ...classes.tableCell, position: 'sticky', right: 0,
-                                                backgroundColor: board.isLate ? classes.lateMission.backgroundColor : '#FFFFFF',
-                                            }}>
-                                                <div style={classes.firstColCell}>
-                                                    <div style={{ width: '5%' }}>{index + 1}</div>
-                                                    <div style={{ width: '5%' }}>{board.isUrgent ?
-                                                        <ElectricBoltSharpIcon color={"error"} /> : ''}
-                                                    </div>
-                                                    <div style={{ width: '35%' }}>
-                                                        <span>{board?.clientName && board?.clientName?.length > 10 ? board.clientName?.slice(0, 9) + '..' : board?.clientName}</span>
-                                                    </div>
-                                                    <div style={{ width: '25%', height: '100%' }}>
-                                                        <div style={classes.tdRows}>
-                                                            <div><Button onClick={() => boardLink(board)}>{board.code}</Button></div>
-                                                        </div>
-                                                    </div>
-                                                    <div style={{ width: '30%', height: '100%' }}>
-                                                        <div style={classes.tdRows}>
-                                                            <div><span>{getDateString(board.dueDate)}</span></div>
-                                                        </div>
-                                                    </div>
-                                                    <div style={{ width: '20%', height: '100%' }}>
-                                                        <div style={classes.tdRows}>
-                                                            <span>{board?.productName && board?.productName?.length > 8 ? board.productName?.slice(0, 7) + '..' : board?.productName}</span>
-                                                        </div>
-                                                    </div>
-                                                    <div style={{ width: '35%' }}>
-                                                        <StatusView status={board.status}
-                                                            style={{ margin: 'auto', marginLeft: 0 }}
-                                                            label={board.currentStation.rowName} />
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            {
-                                                usedMachines.map((machine: IMachine, i: number) => {
-                                                    return (
-                                                        <td key={machine?.id + i}
-                                                            style={classes.tableCell}>
-                                                            <StatusView style={{ margin: 'auto' }}
-                                                                status={board.machinesStatuses[machine?.id]} />
-                                                        </td>
-                                                    );
-                                                })
-                                            }
-
-                                        </tr>
+                                    <th key={machine?.id}
+                                        style={orderByMachine === machine?.id ? {...classes.tableHead, ...classes.selectedMachine} : classes.tableHead}
+                                        onClick={() => handleMachineClicked(machine?.id)}>
+                                        <div style={classes.tdRows}>
+                                            <div>{machine?.progress?.name}</div>
+                                            <div>{machine?.progress?.done}/{machine?.progress?.total}
+                                                <small>{t('measurementUnits.minute')}</small></div>
+                                        </div>
+                                    </th>
                                 );
                             })
                         }
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {
+                        boards() && boards().map((board: IBoardMissions, index: number) => {
+                            return (
+                                board?.splittedBoards?.length > 0 ?
+                                    board.splittedBoards.map((splitBoard, k) => {
+                                        return (
+                                            <tr style={board.isLate ? classes.lateMission : {}}>
+                                                {k === 0 &&
+                                                    <td rowSpan={board.splittedBoards.length}
+                                                        style={{
+                                                            ...classes.tableCell,
+                                                            position: 'sticky',
+                                                            ...adaptRight(direction, 0),
+                                                            backgroundColor: board.isLate ? classes.lateMission.backgroundColor : '#FFFFFF',
+                                                        }}>
+                                                        <div style={classes.firstColCellSplitBoards}>
+                                                            <div style={{width: '5%'}}>{index + 1}</div>
+                                                            <div style={{width: '5%'}}>{board.isUrgent ?
+                                                                <ElectricBoltSharpIcon color={"error"}/> : ''}
+                                                            </div>
+                                                            <div style={{width: '35%'}}>
+                                                                <span>{board?.clientName && board?.clientName?.length > 10 ? board.clientName?.slice(0, 9) + '..' : board?.clientName}</span>
+                                                            </div>
+                                                            <div style={{width: '25%', height: '100%'}}>
+                                                                <div style={classes.tdRows}>
+                                                                    <div><span>{board.code}</span></div>
+                                                                </div>
+                                                            </div>
+                                                            <div style={{width: '30%', height: '100%'}}>
+                                                                <div style={classes.tdRows}>
+                                                                    <div><span>{getDateString(board.creationDate)}</span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div style={{width: '20%', height: '100%'}}>
+                                                                <div style={classes.tdRows}>
+                                                                    <span>{board?.productName && board?.productName?.length > 8 ? board.productName?.slice(0, 7) + '..' : board?.productName}</span>
+                                                                </div>
+                                                            </div>
+                                                            <div style={classes.splitBoardsStatuses}>
+                                                                {
+                                                                    board.splittedBoards.map((sBoard, cellNumber) => <div
+                                                                        style={
+                                                                            cellNumber + 1 === board.splittedBoards.length ?
+                                                                                {
+                                                                                    ...classes.splitBoardsStatusesRow,
+                                                                                    borderBottom: 0
+                                                                                } :
+                                                                                classes.splitBoardsStatusesRow
+                                                                        }>
+                                                                        <Button
+                                                                            onClick={() => boardLink(sBoard)}>{sBoard.productTypeName}</Button>
+                                                                        <StatusView status={sBoard.status}
+                                                                                    label={sBoard.currentStation.rowName}/>
+                                                                    </div>)
+                                                                }
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                }
+                                                {
+                                                    usedMachines.map((machine: IMachine, i: number) => {
+                                                        return (
+                                                            <td key={machine?.id + i}
+                                                                style={k + 1 === board.splittedBoards.length ? classes.tableCell : {
+                                                                    ...classes.tableCell,
+                                                                    borderBottom: 0
+                                                                }}>
+                                                                <StatusView style={{margin: 'auto'}}
+                                                                            status={splitBoard.machinesStatuses[machine?.id]}/>
+                                                            </td>
+                                                        );
+                                                    })
+                                                }
+                                            </tr>
+                                        )
+                                    }) :
+                                    <tr key={index} style={board.isLate ? classes.lateMission : {}}>
+                                        <td style={{
+                                            ...classes.tableCell, position: 'sticky', ...adaptRight(direction, 0),
+                                            backgroundColor: board.isLate ? classes.lateMission.backgroundColor : '#FFFFFF',
+                                        }}>
+                                            <div style={classes.firstColCell}>
+                                                <div style={{width: '5%'}}>{index + 1}</div>
+                                                <div style={{width: '5%'}}>{board.isUrgent ?
+                                                    <ElectricBoltSharpIcon color={"error"}/> : ''}
+                                                </div>
+                                                <div style={{width: '35%'}}>
+                                                    <span>{board?.clientName && board?.clientName?.length > 10 ? board.clientName?.slice(0, 9) + '..' : board?.clientName}</span>
+                                                </div>
+                                                <div style={{width: '25%', height: '100%'}}>
+                                                    <div style={classes.tdRows}>
+                                                        <div><Button onClick={() => boardLink(board)}>{board.code}</Button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div style={{width: '30%', height: '100%'}}>
+                                                    <div style={classes.tdRows}>
+                                                        <div><span>{getDateString(board.dueDate)}</span></div>
+                                                    </div>
+                                                </div>
+                                                <div style={{width: '20%', height: '100%'}}>
+                                                    <div style={classes.tdRows}>
+                                                        <span>{board?.productName && board?.productName?.length > 8 ? board.productName?.slice(0, 7) + '..' : board?.productName}</span>
+                                                    </div>
+                                                </div>
+                                                <div style={{width: '35%'}}>
+                                                    <StatusView status={board.status}
+                                                                style={{margin: 'auto', marginLeft: 0}}
+                                                                label={board.currentStation.rowName}/>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        {
+                                            usedMachines.map((machine: IMachine, i: number) => {
+                                                return (
+                                                    <td key={machine?.id + i}
+                                                        style={classes.tableCell}>
+                                                        <StatusView style={{margin: 'auto'}}
+                                                                    status={board.machinesStatuses[machine?.id]}/>
+                                                    </td>
+                                                );
+                                            })
+                                        }
+
+                                    </tr>
+                            );
+                        })
+                    }
                     </tbody>
                 </table>
             </div>
