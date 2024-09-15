@@ -227,6 +227,16 @@ const useDeposits = () => {
         setFinalPatternSearch(debounce);
     }, [debounce]);
 
+    const handleDateChange = (value) => {
+        if (value && value.length === 2) {
+            setFromDate(value[0]);
+            setToDate(value[1]);
+        } else {
+            setFromDate(null);
+            setToDate(null);
+        }
+    };
+
     return {
         page,
         setPage,
@@ -253,7 +263,10 @@ const useDeposits = () => {
         handleSelectEmployee,
         employeeId,
         onSelectLogsDateRange,
-        resetLogsDatePicker
+        resetLogsDatePicker,
+        handleDateChange,
+        fromDate,
+        toDate,
     };
 };
 

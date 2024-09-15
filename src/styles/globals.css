@@ -378,7 +378,8 @@ df-messenger {
 .MuiTooltip-popper {
   z-index: 999999;
 }
-.ant-select-dropdown{
+
+.ant-select-dropdown {
   z-index: 999999;
 }
 
@@ -419,7 +420,7 @@ df-messenger {
 }
 
 
-  
+
 .p-treeselect-panel .p-treeselect-header .p-treeselect-close {
   display: none;
   /* Hide the close icon */
@@ -456,7 +457,7 @@ df-messenger {
 
 
 .p-treeselect-panel .p-treeselect-header .p-treeselect-filter-container {
-  padding:  5px;
+  padding: 5px;
 }
 
 .p-treeselect-panel .p-treeselect-header .p-treeselect-filter-container input {
@@ -486,4 +487,8 @@ df-messenger {
   100% {
     background-color: #ABACD3;
   }
+}
+
+.rs-anim-fade .rs-anim-in .placement-bottom-start .rs-picker-popup-daterange .rs-picker-popup {
+  z-index: 99999999999999 !important;
 }

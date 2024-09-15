@@ -19,6 +19,7 @@ import { downloadPdf } from "@/utils/helpers";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { useUserPermission } from "@/hooks/use-permission";
 import { useQuoteGetData } from "../quote-new/use-quote-get-data";
+import { endOfToday, startOfYear } from "date-fns";
 
 type StatusOption = {
   label: string;
@@ -46,17 +47,17 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
   const [patternSearch, setPatternSearch] = useState<string>();
 
   //DATE
-  const [fromDate, setFromDate] = useState<Date>();
-  const [toDate, setToDate] = useState<Date>();
+  const [fromDate, setFromDate] = useState<Date>(startOfYear(new Date()));
+  const [toDate, setToDate] = useState<Date>(endOfToday());
   const [resetDatePicker, setResetDatePicker] = useState<boolean>(false);
   //DUE DATE 
-  const [fromDueDate, setFromDueDate] = useState<Date>();
-  const [toDueDate, setToDueDate] = useState<Date>();
+  const [fromDueDate, setFromDueDate] = useState<Date>(startOfYear(new Date()));
+  const [toDueDate, setToDueDate] = useState<Date>(endOfToday());
   const [resetDueDatePicker, setResetDueDatePicker] = useState<boolean>(false);
 
   //Ready DATE 
-  const [fromReadyDate, setFromReadyDate] = useState<Date>();
-  const [toReadyDate, setToReadyDate] = useState<Date>();
+  const [fromReadyDate, setFromReadyDate] = useState<Date>(startOfYear(new Date()));
+  const [toReadyDate, setToReadyDate] = useState<Date>(endOfToday());
   const [resetReadyDatePicker, setResetReadyDatePicker] = useState<boolean>(false);
   const [allBoardMissions, setAllBoardMissions] = useState([]);
   const [allPurchaseJobs, setAllPurchaseJobs] = useState([]);
@@ -75,24 +76,36 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     setPageSize(event.target.value);
   };
 
-  const onSelectDeliveryTimeDates = (fromDate: Date, toDate: Date) => {
-    setResetDatePicker(false);
-    setFromDate(fromDate);
-    setToDate(toDate);
+  const onSelectDeliveryTimeDates = (value) => {
+    if (value && value.length === 2) {
+      setFromDate(value[0]);
+      setToDate(value[1]);
+    } else {
+      setFromDate(null);
+      setToDate(null);
+    }
   };
 
-  const onSelectDueTimeDates = (fromDate: Date, toDate: Date) => {
-    setResetDueDatePicker(false);
-    setFromDueDate(fromDate);
-    setToDueDate(toDate);
+
+  const onSelectDueTimeDates = (value) => {
+    if (value && value.length === 2) {
+      setFromDueDate(value[0]);
+      setToDueDate(value[1]);
+    } else {
+      setFromDueDate(null);
+      setToDueDate(null);
+    }
   };
 
-  const onSelectReadyTimeDates = (fromDate: Date, toDate: Date) => {
-    setResetReadyDatePicker(false);
-    setFromReadyDate(fromDate);
-    setToReadyDate(toDate);
+  const onSelectReadyTimeDates = (value) => {
+    if (value && value.length === 2) {
+      setFromReadyDate(value[0]);
+      setToReadyDate(value[1]);
+    } else {
+      setFromReadyDate(null);
+      setToReadyDate(null);
+    }
   };
-
 
   useEffect(() => {
     setFinalPatternSearch(debounce);
@@ -681,7 +694,11 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     supplierList,
     orderStatuses,
     orderStatus,
-    handleOrderStatusChange
+    handleOrderStatusChange,
+    fromReadyDate,
+    toReadyDate,
+    fromDueDate,
+    toDueDate
   };
 };
 

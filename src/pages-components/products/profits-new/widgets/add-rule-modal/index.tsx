@@ -17,6 +17,7 @@ import { useRouter } from "next/router";
 import { DeleteMenuIcon } from "@/widgets/quote-new/more-circle/icons/delete-menu";
 import { ScheduleSendWidget } from "@/pages-components/quotes/widgets/schedule-send-widget/schedule-send-widget";
 import { GoMakeDatepicker } from "@/components/date-picker/date-picker-component";
+import { DateRangePicker } from "rsuite";
 
 const AddRuleModal = ({
   openModal,
@@ -68,12 +69,14 @@ const AddRuleModal = ({
     renderOptions,
     checkWhatRenderArray,
     onSelectDeliveryTimeDates,
+    fromDate,
+    toDate,
     resetDatePicker,
     mappingRules,
     categoriesList,
     employeeList,
     allProductTypes,
-      actionEmployeeList
+    actionEmployeeList
   } = useAddRuleModal({
     typeExceptionSelected,
     selectedPricingBy,
@@ -243,26 +246,26 @@ const AddRuleModal = ({
               />
             </div>
           );
-          case EValueType.EMPLOYEE:
-              return (
-                  <div style={{ width: "20%" }}>
-                      <div style={clasess.selectTypeStyle}>
-                          {t("products.profits.exceptions.selectEmployee")}
-                          <span style={clasess.spanUnitStyle}>
+        case EValueType.EMPLOYEE:
+          return (
+            <div style={{ width: "20%" }}>
+              <div style={clasess.selectTypeStyle}>
+                {t("products.profits.exceptions.selectEmployee")}
+                <span style={clasess.spanUnitStyle}>
                   {selectedOutputs?.defaultUnit}
                 </span>
-                      </div>
-                      <GoMakeAutoComplate
-                          options={actionEmployeeList}
-                          style={clasess.dropDownListContainer}
-                          placeholder={t("products.profits.exceptions.selectEmployee")}
-                          onChange={(e, value) => {
-                              setPropertieValue(value?.id)
-                          }
-                          }
-                      />
-                  </div>
-              );
+              </div>
+              <GoMakeAutoComplate
+                options={actionEmployeeList}
+                style={clasess.dropDownListContainer}
+                placeholder={t("products.profits.exceptions.selectEmployee")}
+                onChange={(e, value) => {
+                  setPropertieValue(value?.id)
+                }
+                }
+              />
+            </div>
+          );
       }
     } else {
       switch (selectedParameters?.type) {
@@ -377,7 +380,11 @@ const AddRuleModal = ({
         </div>
         <div style={clasess.statusFilterContainer}>
           <h3 style={clasess.filterLabelStyle}>{t("boardMissions.dateRange")}</h3>
-          <GoMakeDatepicker onChange={onSelectDeliveryTimeDates} placeholder={t("boardMissions.chooseDate")} reset={resetDatePicker} />
+          {/* <GoMakeDatepicker onChange={onSelectDeliveryTimeDates} placeholder={t("boardMissions.chooseDate")} reset={resetDatePicker} /> */}
+          <DateRangePicker
+            onChange={onSelectDeliveryTimeDates}
+            value={fromDate && toDate ? [fromDate, toDate] : null}
+          />
         </div>
       </div>
     );
