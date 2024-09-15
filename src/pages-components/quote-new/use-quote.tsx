@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import lodashClonedeep from "lodash.clonedeep";
 import { useTranslation } from "react-i18next";
-import { useRecoilState, useRecoilValue, useResetRecoilState, useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { EHttpMethod } from "@/services/api-service/enums";
 import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
 import {
@@ -50,7 +50,6 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
   const { t } = useTranslation();
   const { getQuote, getAllClientContacts } = useQuoteGetData(docType);
   const [quoteItemValue, setQuoteItemValue] = useRecoilState<any>(quoteItemState);
-  const resetQuoteItemValue = useResetRecoilState(quoteItemState);
   const quoteConfirm = useRecoilValue<any>(quoteConfirmationState);
   const [selectDate, setSelectDate] = useState(isQuoteConfirmation ? quoteConfirm?.dueDate : quoteItemValue?.dueDate);
   const [creationDate, setCreationDate] = useState(isQuoteConfirmation ? quoteConfirm?.creationDate : quoteItemValue?.creationDate);
@@ -841,20 +840,43 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
       }
       await deleteDocumentItemApi(callApi, callBack, { ItemId: quoteItemId, documentType: docType })
     }
-
   }
 
-  const onAddDelivery = async (shipmentType: string) => {
+
+  const item = {
+    id: uuidv4(),
+    details: "",
+    price: 0,
+    workName: "",
+    discount: 0,
+    finalPrice: 0,
+    quantity: 0,
+    isSelected: false,
+    productType: 0,
+  }
+
+  // here
+  const onAddDelivery = async (shipmentType: any) => {
     const callBack = (res) => {
       if (res?.success) {
         alertSuccessAdded();
         onCloseDeliveryModal();
-        getQuote();
+        if (router?.query?.isNewCreation && (docType === DOCUMENT_TYPE.deliveryNote || docType === DOCUMENT_TYPE.deliveryNoteRefund || docType === DOCUMENT_TYPE.invoice || docType === DOCUMENT_TYPE.invoiceRefund)) {
+          const updatedQuoteItemValue = { ...quoteItemValue };
+          const newItem = { ...item, id: uuidv4(), productID: shipmentType?.value, productName: shipmentType?.label,  price: shipmentType?.price };
+          updatedQuoteItemValue.documentItems = [
+            ...updatedQuoteItemValue.documentItems,
+            newItem
+          ];
+          setQuoteItemValue(updatedQuoteItemValue);
+        }
+        else
+          getQuote();
       } else {
         alertFaultAdded();
       }
     }
-    await addDeliveryApi(callApi, callBack, { delivery: { documentId: quoteItemValue?.id, shipmentTypeId: shipmentType }, documentType: docType })
+    await addDeliveryApi(callApi, callBack, { delivery: { documentId: quoteItemValue?.id, shipmentTypeId: shipmentType?.value }, documentType: docType })
   }
 
   const onClickDeleteQouteItem = (quoteItem) => {

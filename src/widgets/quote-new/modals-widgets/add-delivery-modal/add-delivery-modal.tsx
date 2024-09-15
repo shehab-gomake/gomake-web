@@ -48,7 +48,7 @@ const AddDeliveryModal = ({ openModal, onClose, onClickAdd }) => {
           <div style={classes.btnContainer}>
             <GomakePrimaryButton
               style={classes.sendBtn}
-              onClick={() => onClickAdd(deliveryTypeValue?.value)}
+              onClick={() => onClickAdd(deliveryTypeValue)}
             >
               {t("sales.quote.add")}
             </GomakePrimaryButton>

@@ -245,11 +245,13 @@ const useAddNewItem = ({ onClose, getQuote, documentType }) => {
   };
 
   const onClickCreateQuoteForCustomer = () => {
+    debugger;
     if (router.query.isNewCreation) {
       if (selectedProduct?.category === ProductCategoryType.MATERIAL) {
         getDocumentItemDataFromMaterial()
       }
       else {
+        debugger;
         const updatedQuoteItemValue = { ...quoteItemValue };
         const newItem = { ...item, id: uuidv4() };
         updatedQuoteItemValue.documentItems = [
