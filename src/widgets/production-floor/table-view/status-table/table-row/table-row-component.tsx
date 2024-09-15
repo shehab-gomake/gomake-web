@@ -37,6 +37,7 @@ enum EDropArea {
     DISABLED
 }
 
+// here...
 const TableRowComponent = ({ boardMission, status }: IProps) => {
     const [selectedIds, setSelectedIds] = useRecoilState(selectedBoardsMissionsState);
     const { CheckPermission } = useUserPermission();

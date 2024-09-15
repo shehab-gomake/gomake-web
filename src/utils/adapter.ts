@@ -64,7 +64,7 @@ export const SeparateDateFormatterDDMMYYYY = (date: string) => {
   if (date) {
     const [myDate, time] = date.split("T");
     const [hours, minutes] = time.split(":");
-    const [month, day] = myDate.split("-");
+    const [year,month, day] = myDate.split("-");
 
     const formattedDate = `${day}/${month}`;
     const formattedTime = `${hours}:${minutes}`;
