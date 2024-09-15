@@ -1106,10 +1106,19 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     setActiveCard(null);
   };
 
-  const onSelectDeliveryTimeDates = (fromDate: Date, toDate: Date) => {
-    setResetDatePicker(false);
-    setFromDate(fromDate);
-    setToDate(toDate);
+  // const onSelectDeliveryTimeDates = (fromDate: Date, toDate: Date) => {
+  //   setResetDatePicker(false);
+  //   setFromDate(fromDate);
+  //   setToDate(toDate);
+  // };
+  const onSelectDeliveryTimeDates = (value) => {
+    if (value && value.length === 2) {
+      setFromDate(value[0]);
+      setToDate(value[1]);
+    } else {
+      setFromDate(null);
+      setToDate(null);
+    }
   };
 
   const tableHomeHeader = [
@@ -1710,6 +1719,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     closeAndTrackOrder,
     onClickClosePrintPDFModal,
     openPrintPDFModal,
+    fromDate,
+    toDate,
   };
 };
 

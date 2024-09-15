@@ -489,6 +489,6 @@ df-messenger {
   }
 }
 
-.rs-anim-fade .rs-anim-in .placement-bottom-start .rs-picker-popup-daterange .rs-picker-popup {
-  z-index: 99999999999999 !important;
+.rs-anim-fade {
+  z-index: 9999999999999999 !important;
 }

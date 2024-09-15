@@ -47,17 +47,17 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
   const [patternSearch, setPatternSearch] = useState<string>();
 
   //DATE
-  const [fromDate, setFromDate] = useState<Date>(startOfYear(new Date()));
-  const [toDate, setToDate] = useState<Date>(endOfToday());
+  const [fromDate, setFromDate] = useState<Date>();
+  const [toDate, setToDate] = useState<Date>();
   const [resetDatePicker, setResetDatePicker] = useState<boolean>(false);
   //DUE DATE 
-  const [fromDueDate, setFromDueDate] = useState<Date>(startOfYear(new Date()));
-  const [toDueDate, setToDueDate] = useState<Date>(endOfToday());
+  const [fromDueDate, setFromDueDate] = useState<Date>();
+  const [toDueDate, setToDueDate] = useState<Date>();
   const [resetDueDatePicker, setResetDueDatePicker] = useState<boolean>(false);
 
   //Ready DATE 
-  const [fromReadyDate, setFromReadyDate] = useState<Date>(startOfYear(new Date()));
-  const [toReadyDate, setToReadyDate] = useState<Date>(endOfToday());
+  const [fromReadyDate, setFromReadyDate] = useState<Date>();
+  const [toReadyDate, setToReadyDate] = useState<Date>();
   const [resetReadyDatePicker, setResetReadyDatePicker] = useState<boolean>(false);
   const [allBoardMissions, setAllBoardMissions] = useState([]);
   const [allPurchaseJobs, setAllPurchaseJobs] = useState([]);
