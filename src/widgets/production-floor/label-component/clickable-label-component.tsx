@@ -58,7 +58,8 @@ const ClickableLabelComponent = ({ label, t, key }: ITaskCategoryLabelProps) => 
                     backgroundColor: toRgba(color || primaryColor(50), 0.1),
                     borderRadius: 17,
                     textAlign: 'center',
-                    display: 'inline-block',
+                     display: 'inline-block',
+                    //display: 'table-caption',
                     cursor: "pointer",
                 }}>
                 {label}

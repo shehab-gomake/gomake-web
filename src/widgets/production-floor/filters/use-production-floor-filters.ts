@@ -43,7 +43,7 @@ const useProductionFloorFilters = () => {
 
         await setFilters({
             ...filtersState,
-            automatedTags: filtersState.automatedTags.includes(tag) ? filtersState.automatedTags.filter(t => t !== tag) : [...filtersState.automatedTags, tag]
+            automatedTags: filtersState?.automatedTags?.includes(tag) ? filtersState.automatedTags.filter(t => t !== tag) : [...filtersState.automatedTags, tag]
         })
     }
 
@@ -111,6 +111,15 @@ const useProductionFloorFilters = () => {
         })
     }
 
+    const onClickClearFilters = () => {
+        setFilters({
+            ...filtersState,
+            stations : [],
+            automatedTags : [] ,
+        })
+    }
+
+
     return {
         search,
         setSearch,
@@ -126,7 +135,10 @@ const useProductionFloorFilters = () => {
         deliveryDateFilter,
         setGroupFromPath,
         groups,
-        onStationsChange
+        onStationsChange,
+        setFilters,
+        filtersState,
+        onClickClearFilters
     }
 }
 

@@ -92,9 +92,8 @@ const SelectComponent = ({ buttonLabel, list, onChange, style, checkWhatRenderAr
             <TextField
                 variant="outlined"
                 onClick={handleClick}
-                style={{ width: '300px' }}
                 InputProps={{
-                    style: { border: '1px solid #9E9E9E', color: "#9E9E9E", width: "min-content", minWidth: "100px", height: '40px' },
+                    style: {borderRadius:"6px", border: '1px solid #9E9E9E', color: "#9E9E9E", width: "min-content", minWidth: "100px", height: '40px' },
                     startAdornment: selectedItems.map((item, index) => (
                         <Chip
                             key={item.id + index}

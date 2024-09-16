@@ -80,7 +80,7 @@ const ActionsListComponent = ({ onClickApply, source }: IProps) => {
                 style={{ width: "fit-content" }}
                 onClick={handleClick}
                 InputProps={{
-                    style: { border: '1px solid #9E9E9E', color: "#9E9E9E", width: "min-content", minWidth: "100px", height: '40px' },
+                    style: { borderRadius:"6px",border: '1px solid #9E9E9E', color: "#9E9E9E", width: "min-content", minWidth: "100px", height: '40px' },
                     startAdornment: actionsMachinesIds?.map((station, index) => (
                         <Chip
                             key={index}
