@@ -48,17 +48,41 @@ const useTransactionJournalReport = ({ isPayment }: TransactionJournalReportWidg
 
   const getTableDataRows = useCallback((dataTable) => {
     if (dataTable?.length) {
-      return dataTable?.map((data) => [
-        data?.dueDate?.split("T")[0],
-        data?.docNumber,
-        getDocumentTypeName(data?.transType),
-        data?.transNumber,
-        data?.accountCode,
-        data?.accountName,
-        data?.cardCode,
-        data?.cardName,
-        data?.credit?.toFixed(2),
-      ]);
+      return dataTable?.map((data) => {
+        let documentPath;
+        switch (data?.transType) {
+          case DocumentsTypeReportList.Invoice:
+            documentPath = 'invoices';
+            break;
+          case DocumentsTypeReportList.InvoiceRefund:
+            documentPath = 'invoiceRefunds';
+            break;
+          default:
+            documentPath = null;
+        }
+        return (
+          [
+            data?.dueDate?.split("T")[0],
+            documentPath ? (
+              <a
+                style={{ cursor: "pointer", color: "inherit", textDecoration: 'unset' }}
+                href={`/${documentPath}?documentNumber=${data?.docNumber}`}
+              >
+                {data?.docNumber}
+              </a>
+            ) : (
+              <span>{data?.docNumber}</span>
+            ),
+            getDocumentTypeName(data?.transType),
+            data?.transNumber,
+            data?.accountCode,
+            data?.accountName,
+            data?.cardCode,
+            data?.cardName,
+            data?.credit?.toFixed(2),
+          ]
+        )
+      });
     }
 
   }, [dataTable]);

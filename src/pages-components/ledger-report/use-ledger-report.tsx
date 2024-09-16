@@ -1,16 +1,18 @@
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { format } from 'date-fns';
-import { useCustomerDropDownList, useGomakeAxios, useSnackBar } from "@/hooks";
+import { useCustomerDropDownList, useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
 import { EHttpMethod } from "@/services/api-service/enums";
 import { endOfToday, startOfYear } from "date-fns";
+import { DOCUMENT_TYPE } from "../quotes/enums";
+import { ERPDocumentsTypesEnum } from "@/enums";
 
 const useLedgerReport = () => {
   const { alertFaultGetData, alertSuccessGetData, alertFault, alertSuccess } = useSnackBar();
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation()
   const { customer, renderOptions, checkWhatRenderArray, handleCustomerChange, getAllClientContacts, clientContactsValue } = useCustomerDropDownList()
-
+  const { navigate } = useGomakeRouter();
   const [resetDatePicker, setResetDatePicker] = useState<boolean>(false);
   const [isExtended, setIsExtended] = useState<boolean>(false);
   const [showTable, setShowTable] = useState<boolean>(false);
@@ -66,18 +68,46 @@ const useLedgerReport = () => {
   );
   const getTableDataRows = useCallback(() => {
     if (dataTable?.length) {
-      return dataTable?.map((data) => [
-        data?.docDate?.split("T")[0],
-        data?.dueDate?.split("T")[0],
-        data?.accountName,
-        data?.docNumber,
-        data?.accountCode,
-        data?.remarks,
-        data?.transNumber,
-        data?.credit.toFixed(2),
-        data?.debit.toFixed(2),
-        data?.balance.toFixed(2),
-      ]);
+      return dataTable?.map((data) => {
+        let documentPath;
+
+        // Determine documentPath based on docType
+        switch (data?.docType) {
+          case ERPDocumentsTypesEnum.Invoice:
+            documentPath = 'invoices';
+            break;
+          case ERPDocumentsTypesEnum.InvoiceRefund:
+            documentPath = 'invoiceRefunds';
+            break;
+          case ERPDocumentsTypesEnum.Receipt:
+            documentPath = 'receipts';
+            break;
+          default:
+            documentPath = null; // or you can use an empty string ''
+        }
+        return (
+          [
+            data?.docDate?.split("T")[0],
+            data?.dueDate?.split("T")[0],
+            data?.accountName,
+            documentPath ? (
+              <a
+                style={{ cursor: "pointer", color: "inherit", textDecoration: 'unset' }}
+                href={`/${documentPath}?documentNumber=${data?.docNumber}`}
+              >
+                {data?.docNumber}
+              </a>
+            ) : (
+              <span>{data?.docNumber}</span>
+            ),
+            data?.remarks,
+            data?.transNumber,
+            data?.credit.toFixed(2),
+            data?.debit.toFixed(2),
+            data?.balance.toFixed(2),
+          ]
+        )
+      });
     }
 
   }, [dataTable]);
