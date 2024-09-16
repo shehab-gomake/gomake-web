@@ -151,7 +151,7 @@ const TableRowComponent = ({ boardMission, status , onClickDone , onClickPrintDT
                 </SecondaryTableCell>
                 <SecondaryTableCell align={"center"}>
                     {/* <LabelComponent label={boardMission?.productName} /> */}
-                    <ClickableLabelComponent label={boardMission?.productName} t={t} key={boardMission.id} />
+                    <ClickableLabelComponent label={boardMission?.productName}  id={boardMission.id} textColor={boardMission?.productionFloorJobColor} t={t} key={boardMission.id} />
                 </SecondaryTableCell>
                 <SecondaryTableCell align={"center"}>
                     <BoardStatusComponent statusId={boardMission.statusId} id={boardMission.id}

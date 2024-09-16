@@ -5,21 +5,24 @@ import { SketchPicker } from "react-color";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { ChangeColorIcon } from "../table-view/status-table/table-row/more-circle/icons/change-color";
 import { ResetColorIcon } from "../table-view/status-table/table-row/more-circle/icons/reset-color";
-import { HexColorPicker } from "react-colorful";
 import { toRgba } from "@/utils/helpers";
+import { useGomakeAxios } from "@/hooks";
+import { resetProductionFloorJobColorApi } from "@/services/api-service/production-floor/production-floor-endpoints";
 
 interface ITaskCategoryLabelProps {
+    id: string;
     label?: string;
     t?: any;
     key: any;
+    textColor:string;
 }
 
-const ClickableLabelComponent = ({ label, t, key }: ITaskCategoryLabelProps) => {
+const ClickableLabelComponent = ({ label, t, key , textColor , id}: ITaskCategoryLabelProps) => {
     const { primaryColor } = useGomakeTheme();
+    const { callApi } = useGomakeAxios();
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-    const [color, setColor] = useState(primaryColor(500));
+    const [color, setColor] = useState(textColor || primaryColor(500));
     const [showColorPicker, setShowColorPicker] = useState(false);
-
 
     const handleMenuClick = (event: MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
@@ -46,6 +49,22 @@ const ClickableLabelComponent = ({ label, t, key }: ITaskCategoryLabelProps) => 
         handleMenuClose();
     }
 
+
+
+    const onResetJobColor = async () => {
+
+        const callBack = (res) => {
+            // if (res.success) {
+            //     handleMenuClose();
+            // } else {
+            //     handleMenuClose();
+            // }
+
+            handleMenuClose();
+
+        }
+        await resetProductionFloorJobColorApi(callApi, callBack, { boardMissionId: id,  });
+    }
 
     return (
         <>
@@ -90,7 +109,7 @@ const ClickableLabelComponent = ({ label, t, key }: ITaskCategoryLabelProps) => 
                         {t("productionFloor.changeColor")}
                     </Typography>
                 </MenuItem>
-                <MenuItem onClick={handleResetColor}>
+                <MenuItem onClick={onResetJobColor}>
                     <IconButton >
                         <ResetColorIcon />
                     </IconButton>

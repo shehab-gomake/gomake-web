@@ -9,8 +9,6 @@ const MoreMenuWidget = ({boardMission , onClickDone ,onClickPrintJob ,onClickPri
   const { t } = useTranslation();
   const { getMenuList } = useMoreCircle({t, boardMission ,onClickDone , onClickPrintJob , onClickPrintDTicket});
   const menuList = getMenuList();
-
-
   
   return (
     <OptionsButton withCircle={false}>

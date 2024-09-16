@@ -32,6 +32,7 @@ export interface IBoardMissions {
     priority: number;
     showGraphicsApprovalAlert: 0 | 1 | 2 ;
     isUrgentWork: boolean;
+    productionFloorJobColor?:string;
 }
 
 
