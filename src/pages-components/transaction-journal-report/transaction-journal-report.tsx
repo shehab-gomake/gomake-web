@@ -24,12 +24,15 @@ const TransactionJournalReportWidget = ({ isPayment }: TransactionJournalReportW
     documentsTypeList,
     showTable,
     tableHeaders,
-    dataTable
+    dataTable,
+    handleDateChange,
+    fromDate,
+    toDate,
   } = useTransactionJournalReport({ isPayment })
 
   return (
     <div style={classes.mainContainer}>
-      <HeaderTitle title={isPayment?  t("tabs.dailyPaymentsReport") : t("tabs.transactionJournalReport")} marginTop={"0px"} marginBottom={"0px"} />
+      <HeaderTitle title={isPayment ? t("tabs.dailyPaymentsReport") : t("tabs.transactionJournalReport")} marginTop={"0px"} marginBottom={"0px"} />
       <TransactionJournalReportHeaderWidget
         onSelectDeliveryTimeDates={onSelectDeliveryTimeDates}
         resetDatePicker={resetDatePicker}
@@ -37,6 +40,9 @@ const TransactionJournalReportWidget = ({ isPayment }: TransactionJournalReportW
         documentType={documentType}
         documentsTypeList={documentsTypeList}
         isPayment={isPayment}
+        handleDateChange={handleDateChange}
+        fromDate={fromDate}
+        toDate={toDate}
       />
       <Divider />
       <LedgerReportButtonWidget

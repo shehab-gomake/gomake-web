@@ -275,7 +275,6 @@ const useSubChildMapping = ({
     }
   };
   const isDisabled = useMemo(() => {
-    // debugger
     if(isParameterSettings){
       const maxSelection = getMaxSelectionValues();
       if (maxSelection === null) return false;

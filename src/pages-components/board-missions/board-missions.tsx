@@ -19,6 +19,7 @@ import TuneIcon from '@mui/icons-material/Tune';
 import QrListenerWidget from "@/widgets/qr-listener/qr-listener-widget";
 import { useUserPermission } from "@/hooks/use-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
+import { DateRangePicker } from "rsuite";
 
 const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
   const { classes } = useStyle();
@@ -94,13 +95,19 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
     supplierList,
     orderStatuses,
     orderStatus,
-    handleOrderStatusChange
+    handleOrderStatusChange,
+    fromReadyDate,
+    toReadyDate,
+    fromDueDate,
+    toDueDate,
+    fromDate,
+    toDate
   } = useBoardMissions({ isPurchaseJobs });
 
   useEffect(() => {
     getAllProducts();
   }, []);
-  
+
   return (
     <>
       <Stack direction="column" justifyContent="space-between" display="flex" spacing={1} height="100%" >
@@ -194,17 +201,27 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
                         </div>}
                         <div style={classes.statusFilterContainer}>
                           <h3 style={classes.filterLabelStyle}>{t("boardMissions.dateRange")}</h3>
-                          <GoMakeDatepicker onChange={onSelectDeliveryTimeDates} placeholder={t("boardMissions.chooseDate")} reset={resetDatePicker} style={{ width: 350 }} />
+                          <DateRangePicker
+                            onChange={onSelectDeliveryTimeDates}
+                            value={fromDate && toDate ? [fromDate, toDate] : null}
+                          />
                         </div>
 
                         <div style={classes.statusFilterContainer}>
                           <h3 style={classes.filterLabelStyle}>{t("Due Date")}</h3>
-                          <GoMakeDatepicker onChange={onSelectDueTimeDates} placeholder={t("boardMissions.chooseDate")} reset={resetDueDatePicker} style={{ width: 350 }} />
+                          <DateRangePicker
+                            onChange={onSelectDueTimeDates}
+                            value={fromDueDate && toDueDate ? [fromDueDate, toDueDate] : null}
+                          />
                         </div>
 
                         <div style={classes.statusFilterContainer}>
                           <h3 style={classes.filterLabelStyle}>{t("Ready Date")}</h3>
-                          <GoMakeDatepicker onChange={onSelectReadyTimeDates} placeholder={t("boardMissions.chooseDate")} reset={resetReadyDatePicker} style={{ width: 350 }} />
+                          <DateRangePicker
+                            onChange={onSelectReadyTimeDates}
+                            value={fromReadyDate && toReadyDate ? [fromReadyDate, toReadyDate] : null}
+                          />
+
                         </div>
                       </div>
 

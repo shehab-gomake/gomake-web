@@ -43,20 +43,24 @@ const LedgerReportWidget = () => {
     selectedContactById,
     isopenAdjustmentsModal,
     clientPaymentsList,
+    handleDateChange,
+    fromDate,
+    toDate
   } = useLedgerReport();
 
   return (
     <div style={classes.mainContainer}>
       <HeaderTitle title={t("tabs.ledgerReport")} marginTop={"0px"} marginBottom={"0px"} />
       <LedgerReportHeaderWidget
-        onSelectDeliveryTimeDates={onSelectDeliveryTimeDates}
-        resetDatePicker={resetDatePicker}
         customer={customer}
         renderOptions={renderOptions}
         checkWhatRenderArray={checkWhatRenderArray}
         handleCustomerChange={handleCustomerChange}
         isExtended={isExtended}
         onChangeIsExtended={onChangeIsExtended}
+        handleDateChange={handleDateChange}
+        fromDate={fromDate}
+        toDate={toDate}
       />
       <Divider />
       <LedgerReportButtonWidget
@@ -72,8 +76,8 @@ const LedgerReportWidget = () => {
           rows={getTableDataRows()}
           headers={tableHeaders}
           maxHeight={650}
-          stickyHeader={true}  
-                />
+          stickyHeader={true}
+        />
       }
       <SendEmailLedgerReportModal
         openModal={isopenEmailModal}

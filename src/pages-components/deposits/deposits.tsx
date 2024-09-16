@@ -79,7 +79,7 @@ const DepositsListPageWidget = () => {
                         handleSelectEmployee={handleSelectEmployee}
                         onSelectDateRange={onSelectLogsDateRange}
                         resetLogsDatePicker={resetLogsDatePicker}
-                        />
+                    />
                 </GoMakeModal>
             </Stack>
         </>

@@ -21,7 +21,7 @@ const ProductionFloorWidget = () => {
     const [view, setView] = useRecoilState(productionFloorViewState);
     const [openBoardMissionsDrawer, setOpenBoardMissionsDarawer] = useState<boolean>(false);
     const { query, replace, pathname } = useRouter();
-    const {connectionId, closeConnection } = useProductionFloorSignalr();
+    const { connectionId, closeConnection } = useProductionFloorSignalr();
     const { groupsId, boardMissionsId, step, productType } = query;
 
     useEffect(() => {
@@ -35,8 +35,8 @@ const ProductionFloorWidget = () => {
 
     }, [groupsId, boardMissionsId, step]);
 
-    useEffect(()=> {
-        return ()=> {
+    useEffect(() => {
+        return () => {
             closeConnection();
         }
     }, [])
@@ -47,7 +47,7 @@ const ProductionFloorWidget = () => {
         <Stack overflow={'auto'} maxHeight={'100%'}>
 
             {
-                view === EProductionFloorView.DASHBOARD ? <DashboardWidget /> : view === EProductionFloorView.GROUPS ? <GroupsTable /> : <ProductionFloorBoardMissionsViews connectionId={connectionId}/>
+                view === EProductionFloorView.DASHBOARD ? <DashboardWidget /> : view === EProductionFloorView.GROUPS ? <GroupsTable /> : <ProductionFloorBoardMissionsViews connectionId={connectionId} />
             }
             <QrListenerWidget listening={!boardMissionsId} />
         </Stack>

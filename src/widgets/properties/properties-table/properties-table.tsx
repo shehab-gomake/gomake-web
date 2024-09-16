@@ -36,7 +36,8 @@ const PropertiesTable = () => {
     hiddenData,
     setHiddenData,
     reOrderPropertiesTables,
-    updateIsHiddenFromWorkFlow
+    updateIsHiddenFromWorkFlow,
+    updateIsHiddenFromCalculation
   } = useProperites({ classes });
 
   const onDragEnd = (result) => {
@@ -111,6 +112,7 @@ const PropertiesTable = () => {
         open={open}
         selectedProperties={selectedProperties}
         updateIsHiddenFromWorkFlow={updateIsHiddenFromWorkFlow}
+        updateIsHiddenFromCalculation={updateIsHiddenFromCalculation}
       />
     </div>
   );

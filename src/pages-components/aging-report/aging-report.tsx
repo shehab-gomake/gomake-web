@@ -11,8 +11,6 @@ const AgingReportWidget = () => {
   const { classes } = useStyle();
   const {
     t,
-    onSelectDeliveryTimeDates,
-    resetDatePicker,
     handleClickSelectDate,
     selectDate,
     setSelectDate,
@@ -32,14 +30,15 @@ const AgingReportWidget = () => {
     getTableDataRows,
     onChangeDetailedReport,
     onChangeByReferenceDate,
-    transformedHeaders
+    transformedHeaders,
+    handleDateChange,
+    fromDate,
+    toDate,
   } = useAgingReport()
   return (
     <div style={classes.mainContainer}>
       <HeaderTitle title={t("tabs.agingReport")} marginTop={"0px"} marginBottom={"0px"} />
       <AgingReportHeaderWidget
-        onSelectDeliveryTimeDates={onSelectDeliveryTimeDates}
-        resetDatePicker={resetDatePicker}
         handleClickSelectDate={handleClickSelectDate}
         selectDate={selectDate}
         setSelectDate={setSelectDate}
@@ -54,6 +53,9 @@ const AgingReportWidget = () => {
         detailedReport={detailedReport}
         onChangeDetailedReport={onChangeDetailedReport}
         onChangeByReferenceDate={onChangeByReferenceDate}
+        handleDateChange={handleDateChange}
+        fromDate={fromDate}
+        toDate={toDate}
       />
       <Divider />
       <AgingReportButtonWidget

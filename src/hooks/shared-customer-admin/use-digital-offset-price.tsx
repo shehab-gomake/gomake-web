@@ -3759,6 +3759,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     isChangePriceForEdit,
     onClickCloseChangePriceModal,
     setIsChangePriceForEdit,
+    isLoadging
   };
 };
 export { useDigitalOffsetPrice };
