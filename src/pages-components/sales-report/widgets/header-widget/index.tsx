@@ -4,6 +4,7 @@ import { GoMakeDatepicker } from "@/components/date-picker/date-picker-component
 import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
 import { GoMakeAutoComplate } from "@/components"
 import { SalesReportHeaderWidgetProps, useSalesReportHeader } from "./use-header-widget";
+import { DateRangePicker } from "rsuite";
 
 
 const SalesReportHeaderWidget = ({
@@ -20,7 +21,10 @@ const SalesReportHeaderWidget = ({
   onChangeDisplayByGroups,
   documentsTypeList,
   handleDocumentTypeChange,
-  documentType
+  documentType,
+  handleDateChange,
+  fromDate,
+  toDate,
 }: SalesReportHeaderWidgetProps) => {
 
   const { classes, t } = useSalesReportHeader()
@@ -30,7 +34,10 @@ const SalesReportHeaderWidget = ({
       <div style={classes.date1FilterContainer}>
         <h3 style={classes.filterLabelStyle}>{t("boardMissions.dateRange")}</h3>
         <div style={{ width: "100%" }}>
-          <GoMakeDatepicker onChange={onSelectDeliveryTimeDates} placeholder={t("boardMissions.chooseDate")} reset={resetDatePicker} />
+          <DateRangePicker
+            onChange={handleDateChange}
+            value={fromDate && toDate ? [fromDate, toDate] : null}
+          />
         </div>
       </div>
       <div style={classes.date2FilterContainer}>

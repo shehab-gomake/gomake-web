@@ -81,8 +81,8 @@ const useMoreCircle = ({
       icon: <VisibilityOutlinedIcon style={classes.iconStyle} />,
     },
     {
-      condition: true,
-      name:<a style={classes.menuTitleStyle} href={handleClickEdit(mission)}>{t("materials.buttons.edit")}</a> ,
+      condition: mission?.isEditable,
+      name: <a style={classes.menuTitleStyle} href={handleClickEdit(mission)}>{t("materials.buttons.edit")}</a>,
       icon: <EditIcon />,
     },
     {

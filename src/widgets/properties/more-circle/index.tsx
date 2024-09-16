@@ -13,7 +13,8 @@ const MoreMenuWidget = ({
   anchorEl,
   open,
   selectedProperties,
-  updateIsHiddenFromWorkFlow
+  updateIsHiddenFromWorkFlow,
+  updateIsHiddenFromCalculation
 }) => {
   const { clasess } = useStyle();
   const { t } = useTranslation();
@@ -53,7 +54,23 @@ const MoreMenuWidget = ({
           height: "18px",
           color: "#8283BE"
         }} />
-        <div style={clasess.menuTitleStyle}>{!selectedProperties?.isHiddenFromWorkFlow ? t("properties.showProperty") : t("properties.hideProperty")}</div>
+        <div style={clasess.menuTitleStyle}>{selectedProperties?.isHiddenFromWorkFlow ? t("properties.showPropertyFromWorkFlow") : t("properties.hidePropertyFromWorkFlow")}</div>
+      </MenuItem>
+
+      <MenuItem
+        style={clasess.menuItemContainer}
+        onClick={() => {
+          updateIsHiddenFromCalculation();
+          handleClose();
+        }}
+      >
+
+        <VisibilityOutlinedIcon style={{
+          width: "18px",
+          height: "18px",
+          color: "#8283BE"
+        }} />
+        <div style={clasess.menuTitleStyle}>{selectedProperties?.isHiddenFromCalculation ? t("properties.showPropertyFromCalculation") : t("properties.hidePropertyFromCalculation")}</div>
       </MenuItem>
     </GoMakeMenu>
   );

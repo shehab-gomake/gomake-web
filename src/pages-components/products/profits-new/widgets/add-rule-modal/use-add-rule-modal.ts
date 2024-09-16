@@ -24,6 +24,7 @@ import { getAndSetEmployees2, getEmployeesByActionIdApi } from "@/services/api-s
 import { getALLMachinesApi } from "@/services/api-service/machines/print-house-machines-colors";
 import { machineCategoriesState } from "@/store/machine-categories";
 import { actionEmployeesState } from "@/store/action-employees-state";
+import { endOfToday, startOfYear } from "date-fns";
 
 const useAddRuleModal = ({
   typeExceptionSelected,
@@ -503,14 +504,25 @@ const useAddRuleModal = ({
       });
     }
   }, [router, expression, selectedProperties, propertieValue, rules]);
-  const [fromDate, setFromDate] = useState<Date>();
-  const [toDate, setToDate] = useState<Date>();
+  const [fromDate, setFromDate] = useState<Date>(startOfYear(new Date()));
+  const [toDate, setToDate] = useState<Date>(endOfToday());
   const [resetDatePicker, setResetDatePicker] = useState<boolean>(false);
-  const onSelectDeliveryTimeDates = (fromDate: Date, toDate: Date) => {
-    setResetDatePicker(false);
-    setFromDate(fromDate);
-    setToDate(toDate);
+
+  const onSelectDeliveryTimeDates = (value) => {
+    if (value && value.length === 2) {
+      setFromDate(value[0]);
+      setToDate(value[1]);
+    } else {
+      setFromDate(null);
+      setToDate(null);
+    }
   };
+
+  // const onSelectDeliveryTimeDates = (fromDate: Date, toDate: Date) => {
+  //   setResetDatePicker(false);
+  //   setFromDate(fromDate);
+  //   setToDate(toDate);
+  // };
   const createForQuoteWidget = useCallback(async () => {
     const res = await callApi(
       EHttpMethod.POST,
@@ -611,7 +623,9 @@ const useAddRuleModal = ({
     categoriesList,
     employeeList,
     allProductTypes,
-    actionEmployeeList
+    actionEmployeeList,
+    fromDate,
+    toDate,
   };
 };
 

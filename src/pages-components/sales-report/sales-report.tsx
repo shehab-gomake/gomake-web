@@ -28,7 +28,10 @@ const SalesReportWidget = () => {
     documentsTypeList,
     displayByGroups,
     tableHeaders,
-    getTotalTableDataRows
+    getTotalTableDataRows,
+    handleDateChange,
+    fromDate,
+    toDate,
   } = useSalesReport();
 
   return (
@@ -49,6 +52,9 @@ const SalesReportWidget = () => {
         documentsTypeList={documentsTypeList}
         handleDocumentTypeChange={handleDocumentTypeChange}
         documentType={documentType}
+        handleDateChange={handleDateChange}
+        fromDate={fromDate}
+        toDate={toDate}
 
       />
       <Divider />

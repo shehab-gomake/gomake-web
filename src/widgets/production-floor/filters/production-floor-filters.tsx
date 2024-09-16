@@ -1,18 +1,18 @@
-import {Stack} from "@mui/material";
-import {useProductionFloorFilters} from "@/widgets/production-floor/filters/use-production-floor-filters";
-import {SearchInputComponent} from "@/components/form-inputs/search-input-component";
+import { Stack } from "@mui/material";
+import { useProductionFloorFilters } from "@/widgets/production-floor/filters/use-production-floor-filters";
+import { SearchInputComponent } from "@/components/form-inputs/search-input-component";
 import {
     ActionsListComponent
 } from "@/widgets/production-floor/filters/select/actions-select/action-list-select-component";
 import React from "react";
-import {useTranslation} from "react-i18next";
-import {GoMakeDatepicker} from "@/components/date-picker/date-picker-component";
-import {filtersInputs} from "@/widgets/production-floor/filters/filters-inputs";
-import {SelectComponent} from "@/widgets/production-floor/filters/select/select-component";
-import {Source} from "@/widgets/production-floor/filters/select/actions-select/use-actions-list";
+import { useTranslation } from "react-i18next";
+import { GoMakeDatepicker } from "@/components/date-picker/date-picker-component";
+import { filtersInputs } from "@/widgets/production-floor/filters/filters-inputs";
+import { SelectComponent } from "@/widgets/production-floor/filters/select/select-component";
+import { Source } from "@/widgets/production-floor/filters/select/actions-select/use-actions-list";
 
 const ProductionFloorFilters = () => {
-    const {tagsList} = filtersInputs()
+    const { tagsList } = filtersInputs()
     const {
         search,
         setSearch,
@@ -23,21 +23,21 @@ const ProductionFloorFilters = () => {
         deliveryDateFilter,
         onStationsChange
     } = useProductionFloorFilters();
-    const {t} = useTranslation();
+    const { t } = useTranslation();
     return (
-        <Stack direction={'row'} padding={'12px 0'} style={{backgroundColor: '#FFF'}} alignItems={'center'}
-               gap={'20px'}>
-            <SearchInputComponent bgColor={'#F8F8F8'} value={search} onChange={setSearch}/>
-            <ActionsListComponent onClickApply={onStationsChange} source={Source.PRODUCTION_FLOOR}/>
+        <Stack direction={'row'} padding={'12px 0'} style={{ backgroundColor: '#FFF' }} alignItems={'center'}
+            gap={'20px'}>
+            <SearchInputComponent bgColor={'#F8F8F8'} value={search} onChange={setSearch} />
+            <ActionsListComponent onClickApply={onStationsChange} source={Source.PRODUCTION_FLOOR} />
             <GoMakeDatepicker value={deliveryDateFilter} onChange={onSelectDeliveryTimeDates}
-                              placeholder={t('productionFloor.deliveryTime')}/>
+                placeholder={t('productionFloor.deliveryTime')} />
             <GoMakeDatepicker value={createDateFilter} onChange={onSelectCreateDates}
-                              placeholder={t('productionFloor.createTime')}/>
+                placeholder={t('productionFloor.createTime')} />
             <Stack flexGrow={1} direction={'row'} position={'relative'}>
-                <SelectComponent buttonLabel={'productionFloor.tags'} list={tagsList} onChange={onTagsChange}/>
+                <SelectComponent buttonLabel={'productionFloor.tags'} list={tagsList} onChange={onTagsChange} />
             </Stack>
         </Stack>
     )
 }
 
-export {ProductionFloorFilters}
+export { ProductionFloorFilters }

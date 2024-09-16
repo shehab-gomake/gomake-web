@@ -237,6 +237,21 @@ const useProperites = ({ classes }) => {
     [selectedProperties]
   );
 
+  const updateIsHiddenFromCalculation = useCallback(async () => {
+    const res = await callApi(
+      EHttpMethod.PUT,
+      `/v1/printhouse-config/print-house-action/toggle-is-hidden-from-calculation/${router.query.actionId}/${selectedProperties?.ruleType}/${selectedProperties?.propertyId}`,
+    );
+    if (res?.success) {
+      alertSuccessUpdate();
+      getProperitesService();
+    } else {
+      alertFaultUpdate();
+    }
+  },
+    [selectedProperties]
+  );
+
 
   function updateProperties(allProperties, inputs, outputs) {
     allProperties.forEach((property) => {
@@ -302,7 +317,8 @@ const useProperites = ({ classes }) => {
     hiddenData,
     setHiddenData,
     reOrderPropertiesTables,
-    updateIsHiddenFromWorkFlow
+    updateIsHiddenFromWorkFlow,
+    updateIsHiddenFromCalculation
   };
 };
 

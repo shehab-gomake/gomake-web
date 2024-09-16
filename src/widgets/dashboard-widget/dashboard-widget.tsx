@@ -15,7 +15,6 @@ import { useDashboardSignalr } from "@/hooks/signalr/use-dashboard-signalr";
 import { Skeleton } from "@mui/material";
 
 const DashboardWidget = ({ }: IDashboardWidget) => {
-    const INTERVAL_TIMEOUT = 2 * 60 * 1000;
     const { machines, addMachineProgress, addEmployeeProgress, getCheckedMachines, employeesList } = useGomakeMachines();
     const [tasksFilter, setTasksFilter] = useState<string>('');
     const selectedClients = useRecoilValue(dashboardClientsState);
@@ -134,11 +133,11 @@ const DashboardWidget = ({ }: IDashboardWidget) => {
             <DashboardDates handelSearchValueChange={handelSearchValueChange} />
             <div>
                 {
-                    tasks()?.length > 0 ? <>
+                    tasks()?.length > 0 ? <div style={{}}>
                         {usedMachines() && getFilteredBoardsMissions() &&
                             <BoardMissionsTable boardsMissions={tasks()}
                                 usedMachines={sortedMergedLists}
-                            />}</> : <>
+                            />}</div> :
                         <Skeleton
                             variant="rectangular"
                             width={"100%"}
@@ -146,7 +145,6 @@ const DashboardWidget = ({ }: IDashboardWidget) => {
                             style={{ borderRadius: 16 }}
 
                         />
-                    </>
                 }
 
             </div>
