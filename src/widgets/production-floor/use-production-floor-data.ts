@@ -1,30 +1,30 @@
-import {useGomakeAxios, useSnackBar} from "@/hooks";
+import { useGomakeAxios, useSnackBar } from "@/hooks";
 import {
     getProductionFloorData, moveBoardMissionToDoneApi, updateBoardsMissionsOrderApi,
     updateBoardsMissionsStatusApi
 } from "@/services/api-service/production-floor/production-floor-endpoints";
-import {useRecoilState} from "recoil";
-import {productionFloorFiltersState} from "@/widgets/production-floor/state/production-floor-filters";
-import {boardsMissionsState, getDataAbortController} from "@/widgets/production-floor/state/boards";
-import {tagsState} from "@/widgets/production-floor/state/tags";
-import {userProductionFloorGroupsState} from "@/widgets/production-floor/state/production-floor-groups-state";
-import {productionFloorPathsState} from "@/widgets/production-floor/state/production-floor-paths";
-import {IBoardMissions} from "@/widgets/production-floor/interfaces/board-missions";
-import {useTranslation} from "react-i18next";
-import {IStatusesBoardsMissions} from "@/widgets/production-floor/interfaces/production-floor-data-response";
-import {useState} from "react";
+import { useRecoilState } from "recoil";
+import { productionFloorFiltersState } from "@/widgets/production-floor/state/production-floor-filters";
+import { boardsMissionsState, getDataAbortController } from "@/widgets/production-floor/state/boards";
+import { tagsState } from "@/widgets/production-floor/state/tags";
+import { userProductionFloorGroupsState } from "@/widgets/production-floor/state/production-floor-groups-state";
+import { productionFloorPathsState } from "@/widgets/production-floor/state/production-floor-paths";
+import { IBoardMissions } from "@/widgets/production-floor/interfaces/board-missions";
+import { useTranslation } from "react-i18next";
+import { IStatusesBoardsMissions } from "@/widgets/production-floor/interfaces/production-floor-data-response";
+import { useState } from "react";
 import { getBoardMissionPDF } from "@/services/api-service/generic-doc/documents-api";
 
 const useProductionFloorData = () => {
-    const {t} = useTranslation();
-    const {callApi} = useGomakeAxios();
+    const { t } = useTranslation();
+    const { callApi } = useGomakeAxios();
     const [data, setData] = useRecoilState<IStatusesBoardsMissions[]>(boardsMissionsState);
     const [abortController, setAbortController] = useState(null);
     const [, setFilters] = useRecoilState(productionFloorFiltersState);
     const [, setTags] = useRecoilState(tagsState);
     const [, setUserGroups] = useRecoilState(userProductionFloorGroupsState);
     const [, setPath] = useRecoilState(productionFloorPathsState);
-    const {alertSuccessGetData, alertFaultGetData, alertFaultUpdate, alertSuccessUpdate} = useSnackBar();
+    const { alertFaultUpdate, alertSuccessUpdate } = useSnackBar();
 
     const getData = async (connectionId?: string) => {
         const callBack = (res) => {
@@ -106,10 +106,12 @@ const useProductionFloorData = () => {
 
     const [selectedMissionId, setSelectedMissionId] = useState<any>(null)
     const [openMarkReadyModal, setOpenMarkReadyModal] = useState<boolean>(false);
+
     const onCloseMarkReadyModal = () => {
         setSelectedMissionId(null)
         setOpenMarkReadyModal(false);
     };
+
     const onOpenMarkReadyModal = (missionId) => {
         setSelectedMissionId(missionId)
         setOpenMarkReadyModal(true);
@@ -151,7 +153,20 @@ const useProductionFloorData = () => {
             } else {
             }
         };
-        await getBoardMissionPDF(callApi, callBack, {boardMissionId});
+        await getBoardMissionPDF(callApi, callBack, { boardMissionId });
+    };
+
+    const [selectedMission, setSelectedMission] = useState<any>({})
+
+    const [openPackagesModal, setOpenPackagesModal] = useState<boolean>(false);
+    const onOpenPrintDeliverTicketModal = (mission) => {
+        setSelectedMission(mission)
+        setOpenPackagesModal(true);
+    };
+
+    const onClosePrintDeliverTicketModal = () => {
+        setSelectedMission({})
+        setOpenPackagesModal(false);
     };
 
     return {
@@ -165,8 +180,13 @@ const useProductionFloorData = () => {
         openMarkReadyModal,
         setOpenMarkReadyModal,
         onClickMoveBoardMissionToDone,
-        onClickPrintJob
+        onClickPrintJob,
+        openPackagesModal,
+        onClosePrintDeliverTicketModal,
+        onOpenPrintDeliverTicketModal,
+        selectedMission
+
     }
 }
 
-export {useProductionFloorData}
+export { useProductionFloorData }

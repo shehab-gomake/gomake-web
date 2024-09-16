@@ -30,7 +30,8 @@ import { ClickableLabelComponent } from "@/widgets/production-floor/label-compon
 interface IProps {
     boardMission: IBoardMissions
     status?: any
-    onClickDone?:(mission: any)=>void;
+    onClickDone?:(missionId: any)=>void;
+    onClickPrintDTicket?:(mission: any)=>void;
 }
 
 enum EDropArea {
@@ -40,7 +41,7 @@ enum EDropArea {
 }
 
 // here...
-const TableRowComponent = ({ boardMission, status , onClickDone}: IProps) => {
+const TableRowComponent = ({ boardMission, status , onClickDone , onClickPrintDTicket}: IProps) => {
     const [selectedIds, setSelectedIds] = useRecoilState(selectedBoardsMissionsState);
     const { CheckPermission } = useUserPermission();
     const canDrag = CheckPermission(Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR);
@@ -211,6 +212,7 @@ const TableRowComponent = ({ boardMission, status , onClickDone}: IProps) => {
                     boardMission={boardMission} 
                     onClickDone={onClickDone}
                     onClickPrintJob={onClickPrintJob}
+                    onClickPrintDTicket={onClickPrintDTicket}
                     />
                 </SecondaryTableCell>
             </TableRow>

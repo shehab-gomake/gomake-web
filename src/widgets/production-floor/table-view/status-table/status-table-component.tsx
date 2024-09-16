@@ -13,6 +13,8 @@ import { useRecoilState } from "recoil";
 import { productionFloorTextSearchState } from "@/widgets/production-floor/state/text-search";
 import { useCallback } from "react";
 import { ThreeOptionsModal } from "@/components";
+import { PrintPackingSlipModal } from "@/pages-components/board-missions/widgets/print-packing-slip-modal";
+import { PrintPackingSlipModalWidget } from "../../views/board-missions-view/navigation-buttons/print-packing-slip-modal-widget";
 
 interface IProps {
   status: IProductionStatus;
@@ -28,8 +30,13 @@ const StatusTableComponent = ({ status, boards }: IProps) => {
     onOpenMarkReadyModal,
     openMarkReadyModal,
     onCloseMarkReadyModal,
-    onClickMoveBoardMissionToDone
+    onClickMoveBoardMissionToDone,
+    openPackagesModal,
+    onClosePrintDeliverTicketModal,
+    onOpenPrintDeliverTicketModal,
+    selectedMission
   } = useProductionFloorData();
+
   const [{ isOver }, drop] = useDrop(
     () => ({
       accept: "task",
@@ -110,7 +117,7 @@ const StatusTableComponent = ({ status, boards }: IProps) => {
                     ?.map((boardMission) => {
                       return (
                         <>
-                          <TableRowComponent key={"status" + status.id + boardMission.id} boardMission={boardMission} status={status} onClickDone={onOpenMarkReadyModal} />
+                          <TableRowComponent key={"status" + status.id + boardMission.id} boardMission={boardMission} status={status} onClickDone={onOpenMarkReadyModal} onClickPrintDTicket={onOpenPrintDeliverTicketModal} />
                         </>
                       );
                     })}
@@ -129,6 +136,12 @@ const StatusTableComponent = ({ status, boards }: IProps) => {
         onClose={onCloseMarkReadyModal}
         onClickYes={() => onClickMoveBoardMissionToDone(true)}
         onClickNo={() => onClickMoveBoardMissionToDone(false)}
+      />
+      <PrintPackingSlipModalWidget
+        openModal={openPackagesModal}
+        onClose={onClosePrintDeliverTicketModal}
+        boardMissionId={selectedMission?.id}
+        quantity={selectedMission?.quantity}
       />
     </Stack>
   );

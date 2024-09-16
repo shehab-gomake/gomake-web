@@ -4,7 +4,7 @@ import { DoneIcon } from "./icons/done";
 import { useRouter } from "next/router";
 import { MachineIcon } from "./icons/machine-icon";
 
-const useMoreCircle = ({ t, boardMission, onClickDone, onClickPrintJob }) => {
+const useMoreCircle = ({ t, boardMission, onClickDone, onClickPrintJob ,onClickPrintDTicket}) => {
   const { push } = useRouter();
 
   const handleClickEdit = () => {
@@ -22,13 +22,13 @@ const useMoreCircle = ({ t, boardMission, onClickDone, onClickPrintJob }) => {
       },
       {
         condition: true,
-        onClick: () => onClickPrintJob(boardMission?.id),
+        onClick: () => onClickPrintJob(boardMission),
         icon: <MachineIcon />,
         name: t("productionFloor.printJob")
       },
       {
         condition: true,
-        onClick: () => null,
+        onClick: () => onClickPrintDTicket(boardMission),
         icon: <PDFIcon />,
         name: t("productionFloor.printDeliverTicket")
       },
