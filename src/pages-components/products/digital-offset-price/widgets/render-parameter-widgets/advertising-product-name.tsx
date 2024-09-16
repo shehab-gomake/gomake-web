@@ -15,55 +15,33 @@ const AdvertisingProductNameParameterWidget = ({
   section,
 }: any) => {
   const [selectedId, setSelectedId] = useState(null);
-
-  const defaultObject = parameter.valuesConfigs.find(
-    (item) => item.isDefault === true
-  );
-  useEffect(() => {
-    if (defaultObject) {
-      setSelectedId(defaultObject.id);
-
-      // Ensure default object is set in subProducts
-      const updatedSubProducts = subProducts.map((subProduct) => {
-        if (subProduct.sectionId === section.id) {
-          const updatedParameters = subProduct.parameters.map((param) => {
-            if (param.parameterId === parameter.id) {
-              return {
-                ...param,
-                values: [defaultObject.updateName],
-                valueIds: [defaultObject.id],
-              };
-            }
-            return param;
-          });
-          return {
-            ...subProduct,
-            parameters: updatedParameters,
-          };
-        }
-        return subProduct;
-      });
-
-      setSubProducts(updatedSubProducts);
-      onChangeSubProductsForPrice(
-        parameter.id,
-        subSection.id,
-        section.id,
-        parameter.parameterType,
-        parameter.name,
-        parameter.actionId,
-        { valueIds: defaultObject.id, values: defaultObject.updateName },
-        subSection.type,
-        index,
-        parameter.actionIndex,
-        parameter.code
-      );
-    }
-  }, []);
   const [subProducts, setSubProducts] = useRecoilState<any>(subProductsParametersState);
 
-  const { t } = useTranslation();
+  const getParameterByCode = (subProducts, code) => {
+    for (let subProduct of subProducts) {
+      for (let parameter of subProduct.parameters) {
+        if (parameter.parameterCode === code) {
+          return parameter;
+        }
+      }
+    }
+    return null; // Return null if no matching parameter is found
+  };
 
+  const result = getParameterByCode(subProducts, "AdvertisingProductName");
+
+  useEffect(() => {
+    if (result) {
+      setSelectedId(result.valueIds[0]);
+    } else {
+      const defaultObject = parameter.valuesConfigs.find(
+        (item) => item.isDefault === true
+      );
+      if (defaultObject) {
+        setSelectedId(defaultObject.id);
+      }
+    }
+  }, [result, parameter.valuesConfigs]);
   const handleCheckboxChange = (item, checked) => {
     if (checked) {
       const updatedSubProducts = subProducts.map((subProduct) => {
