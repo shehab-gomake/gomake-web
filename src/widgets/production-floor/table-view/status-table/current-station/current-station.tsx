@@ -22,10 +22,12 @@ import { FONT_FAMILY } from "@/utils/font-family";
 interface IProps extends ICurrentStation , INextStation {
     boardMissionId: string;
     status?: any;
+    textColor?:string;
 }
+
 // here...
-const CurrentStationComponent = ({ boardMissionId, machineName, actionName, productType, id, status , nextStationName , nextStationId}: IProps) => {
-    const { classes } = useStyle();
+const CurrentStationComponent = ({ boardMissionId,textColor, machineName, actionName, productType, id, status , nextStationName , nextStationId}: IProps) => {
+    const { classes } = useStyle({textColor});
     const {
         t,
         handleClick,
@@ -65,7 +67,7 @@ const CurrentStationComponent = ({ boardMissionId, machineName, actionName, prod
                     disabled={!canMoveStation}
                     onClick={(e) => handleClick(e, boardMissionId, productType)}>
                     <span>{machineName ? machineName : actionName}</span>
-                    {anchorEl ? <UpArrowIcon /> :  <DownArrowIcon /> }
+                    {anchorEl ? <UpArrowIcon  color={textColor}/> :  <DownArrowIcon color={textColor}/> }
                 </Button>
                 <PermissionCheck userPermission={Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR}>
                     {nextStationId && <Button

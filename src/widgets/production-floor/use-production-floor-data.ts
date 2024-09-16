@@ -12,7 +12,7 @@ import { productionFloorPathsState } from "@/widgets/production-floor/state/prod
 import { IBoardMissions } from "@/widgets/production-floor/interfaces/board-missions";
 import { useTranslation } from "react-i18next";
 import { IStatusesBoardsMissions } from "@/widgets/production-floor/interfaces/production-floor-data-response";
-import { useEffect, useState } from "react";
+import {  useState } from "react";
 import { getBoardMissionPDF } from "@/services/api-service/generic-doc/documents-api";
 
 const useProductionFloorData = () => {

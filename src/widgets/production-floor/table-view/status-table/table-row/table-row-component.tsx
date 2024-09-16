@@ -159,7 +159,7 @@ const TableRowComponent = ({ boardMission, status , onClickDone , onClickPrintDT
                 </SecondaryTableCell>
                 <SecondaryTableCell align={"center"} >
                     <CurrentStationComponent {...boardMission.currentStation} {...boardMission.nextStation}
-                        boardMissionId={boardMission.id} status={status} />
+                        boardMissionId={boardMission.id} status={status} textColor={boardMission?.productionFloorJobColor}/>
                 </SecondaryTableCell>
                 <SecondaryTableCell align={"center"}>
                     {

@@ -7,21 +7,22 @@ import { ChangeColorIcon } from "../table-view/status-table/table-row/more-circl
 import { ResetColorIcon } from "../table-view/status-table/table-row/more-circle/icons/reset-color";
 import { toRgba } from "@/utils/helpers";
 import { useGomakeAxios } from "@/hooks";
-import { resetProductionFloorJobColorApi } from "@/services/api-service/production-floor/production-floor-endpoints";
+import { resetProductionFloorJobColorApi, updateProductionFloorJobColorApi } from "@/services/api-service/production-floor/production-floor-endpoints";
 
 interface ITaskCategoryLabelProps {
     id: string;
     label?: string;
     t?: any;
     key: any;
-    textColor:string;
+    textColor: string;
 }
 
-const ClickableLabelComponent = ({ label, t, key , textColor , id}: ITaskCategoryLabelProps) => {
+const ClickableLabelComponent = ({ label, t, key, textColor, id }: ITaskCategoryLabelProps) => {
     const { primaryColor } = useGomakeTheme();
     const { callApi } = useGomakeAxios();
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [color, setColor] = useState(textColor || primaryColor(500));
+    const [initialColor, setInitialColor] = useState(color); // New state to track initial color
     const [showColorPicker, setShowColorPicker] = useState(false);
 
     const handleMenuClick = (event: MouseEvent<HTMLElement>) => {
@@ -33,38 +34,48 @@ const ClickableLabelComponent = ({ label, t, key , textColor , id}: ITaskCategor
     };
 
     const handleChangeColorClick = (event: MouseEvent<HTMLElement>) => {
+        setInitialColor(color); // Set the initial color when opening the color picker
         setShowColorPicker(true);
     };
 
     const handleColorPickerClose = () => {
         setShowColorPicker(false);
+        if (color !== initialColor) { // Only call onChangeJobColor if the color has changed
+            onChangeJobColor();
+        }
     };
 
     const handleColorChange = (newColor: any) => {
         setColor(newColor.hex);
     };
 
-    const handleResetColor = () => {
-        // setColor(primaryColor(500));
-        handleMenuClose();
-    }
-
-
-
+   
     const onResetJobColor = async () => {
-
-        const callBack = (res) => {
-            // if (res.success) {
-            //     handleMenuClose();
-            // } else {
-            //     handleMenuClose();
-            // }
-
+        const callBack = (res: any) => {
+            if (res.success) {
+                // Handle success case
+            } else {
+                // Handle failure case
+            }
             handleMenuClose();
+        };
+        await resetProductionFloorJobColorApi(callApi, callBack, { boardMissionId: id });
+    };
 
-        }
-        await resetProductionFloorJobColorApi(callApi, callBack, { boardMissionId: id,  });
-    }
+    const onChangeJobColor = async () => {
+        const callBack = (res: any) => {
+            if (res.success) {
+                // Handle success case
+            } else {
+                // Handle failure case
+            }
+            handleMenuClose();
+        };
+        await updateProductionFloorJobColorApi(callApi, callBack, {
+            boardMissionId: id,
+            productionFloorJobColor: color
+        });
+    };
 
     return (
         <>
@@ -77,10 +88,10 @@ const ClickableLabelComponent = ({ label, t, key , textColor , id}: ITaskCategor
                     backgroundColor: toRgba(color || primaryColor(50), 0.1),
                     borderRadius: 17,
                     textAlign: 'center',
-                     display: 'inline-block',
-                    //display: 'table-caption',
+                    display: 'inline-block',
                     cursor: "pointer",
-                }}>
+                }}
+            >
                 {label}
             </span>
             <Menu
@@ -94,9 +105,8 @@ const ClickableLabelComponent = ({ label, t, key , textColor , id}: ITaskCategor
                     style: { marginTop: '10px' },
                 }}
             >
-                <MenuItem
-                    onClick={handleChangeColorClick} >
-                    <IconButton  >
+                <MenuItem onClick={handleChangeColorClick}>
+                    <IconButton>
                         <ChangeColorIcon />
                     </IconButton>
                     <Typography
@@ -105,12 +115,13 @@ const ClickableLabelComponent = ({ label, t, key , textColor , id}: ITaskCategor
                             color: "#8283BE",
                             fontStyle: "normal",
                             lineHeight: "20px"
-                        }}>
+                        }}
+                    >
                         {t("productionFloor.changeColor")}
                     </Typography>
                 </MenuItem>
                 <MenuItem onClick={onResetJobColor}>
-                    <IconButton >
+                    <IconButton>
                         <ResetColorIcon />
                     </IconButton>
                     <Typography
@@ -119,7 +130,8 @@ const ClickableLabelComponent = ({ label, t, key , textColor , id}: ITaskCategor
                             color: "#8283BE",
                             fontStyle: "normal",
                             lineHeight: "20px"
-                        }}>
+                        }}
+                    >
                         {t("productionFloor.resetColor")}
                     </Typography>
                 </MenuItem>
@@ -128,7 +140,7 @@ const ClickableLabelComponent = ({ label, t, key , textColor , id}: ITaskCategor
                 key={`popover-${key}`}
                 open={showColorPicker}
                 onClose={handleColorPickerClose}
-                 anchorEl={anchorEl} // Use the same anchor element as the menu
+                anchorEl={anchorEl}
                 anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
                 transformOrigin={{ vertical: "top", horizontal: "center" }}
             >

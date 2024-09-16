@@ -2,7 +2,7 @@ import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { useMemo } from "react";
 import { FONT_FAMILY } from "@/utils/font-family";
 
-const useStyle = () => {
+const useStyle = ({textColor}) => {
     const { theme, primaryColor } = useGomakeTheme();
     const classes = useMemo(() => {
         return {
@@ -42,13 +42,14 @@ const useStyle = () => {
                 boxShadow:"none",
                 backgroundColor:"transparent",
                 ...FONT_FAMILY.Inter(600, 12),
-                color: primaryColor(600),
+                color: textColor || primaryColor(600),
+                
                 fontStyle: "normal",
                 textTransform: "initial" as "initial",
                 gap: "2px",
                 '&:hover': {
                     backgroundColor:"transparent",
-                    color: primaryColor(600),
+                    color: textColor || primaryColor(600),
                     boxShadow:"none",
 
                   //  opacity: 0.8
