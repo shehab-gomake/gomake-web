@@ -1,7 +1,7 @@
 import {
     productionFloorFiltersState
 } from "@/widgets/production-floor/state/production-floor-filters";
-import {useEffect, useMemo, useState} from "react";
+import {useEffect, useMemo, useRef, useState} from "react";
 import {useRecoilState} from "recoil";
 import {actionsListState, IActionMachines} from "@/widgets/production-floor/state/actions-list";
 import {getPrintHouseActions} from "@/services/api-service/production-floor/production-floor-endpoints";
@@ -58,14 +58,29 @@ const useActionsList = (source: Source) => {
         } : station))
     }
 
+    // const onSelectStation = (stationId: string, checked: boolean) => {
+    //     setActionsList(prevState => prevState?.map(station => stationId === station.actionId ? {
+    //         ...station,
+    //         checked: !checked,
+    //         machines: station.machines?.map(machine => ({...machine, checked: !checked}))
+    //     } : station));
+
+    // }
+
+    const actionsListRef = useRef<IActionMachines[]>([]);
     const onSelectStation = (stationId: string, checked: boolean) => {
-        // debugger;
-        setActionsList(prevState => prevState?.map(station => stationId === station.actionId ? {
-            ...station,
-            checked: !checked,
-            machines: station.machines?.map(machine => ({...machine, checked: !checked}))
-        } : station));
-    }
+        setActionsList(prevState => {
+            const updatedActionsList = prevState?.map(station => stationId === station.actionId ? {
+                ...station,
+                checked: !checked,
+                machines: station.machines?.map(machine => ({...machine, checked: !checked}))
+            } : station);
+    
+            actionsListRef.current = updatedActionsList || [];
+            return updatedActionsList;
+        });
+        }
+
 
     const handelFilterActions = (name: string) => {
         setActionFilter(name)
@@ -81,7 +96,6 @@ const useActionsList = (source: Source) => {
     }
 
     const actionsMachinesIds: IStation[] = useMemo(() => {
-        // debugger;
         return actionsList?.filter(station => station.checked || station.machines?.some(machine => machine.checked))
             ?.map(station => ({...station, machines: station?.machines?.filter(machine => machine.checked)}))
             ?.map(station => ({
@@ -108,7 +122,8 @@ const useActionsList = (source: Source) => {
         open,
         anchorEl,
         t,
-        setOpen
+        setOpen,
+        actionsListRef
     }
 }
 export {useActionsList}

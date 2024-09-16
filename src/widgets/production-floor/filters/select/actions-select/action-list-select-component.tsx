@@ -1,14 +1,14 @@
-import {FormEvent, useCallback} from "react";
-import {Button, Chip, FormGroup, MenuItem, Paper, TextField} from "@mui/material";
+import { FormEvent, useCallback } from "react";
+import { Button, Chip, FormGroup, MenuItem, Paper, TextField } from "@mui/material";
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import {GomakeTextInput} from "@/components";
+import { GomakeTextInput } from "@/components";
 import Stack from "@mui/material/Stack";
-import {SecondaryCheckBox} from "@/components/check-box/secondary-check-box";
-import {Source, useActionsList} from "@/widgets/production-floor/filters/select/actions-select/use-actions-list";
-import {SecondaryButton} from "@/components/button/secondary-button";
-import {IStation} from "@/widgets/production-floor/interfaces/filters";
-import {ClickOutside} from "@/components/click-out-side/click-out-side";
-import {adaptRight} from "@/utils/adapter";
+import { SecondaryCheckBox } from "@/components/check-box/secondary-check-box";
+import { Source, useActionsList } from "@/widgets/production-floor/filters/select/actions-select/use-actions-list";
+import { SecondaryButton } from "@/components/button/secondary-button";
+import { IStation } from "@/widgets/production-floor/interfaces/filters";
+import { ClickOutside } from "@/components/click-out-side/click-out-side";
+import { adaptRight } from "@/utils/adapter";
 import ClearIcon from '@mui/icons-material/Clear';
 import { FONT_FAMILY } from "@/utils/font-family";
 
@@ -18,7 +18,7 @@ interface IProps {
     source: Source
 }
 
-const ActionsListComponent = ({onClickApply, source}: IProps) => {
+const ActionsListComponent = ({ onClickApply, source }: IProps) => {
 
     const {
         t,
@@ -30,10 +30,11 @@ const ActionsListComponent = ({onClickApply, source}: IProps) => {
         setOpen,
         filter,
         setFilter,
+        actionsListRef
     } = useActionsList(source);
 
     const direction = t('direction')
-    const isRTL = direction==="rtl";
+    const isRTL = direction === "rtl";
 
     const handleClick = () => {
         setOpen(!open)
@@ -55,35 +56,46 @@ const ActionsListComponent = ({onClickApply, source}: IProps) => {
     }, [actionsList, filter])
 
 
-    const handleRemoveChip = (stationId: string) => {
-         onSelectStation(stationId, true); 
-       //  onClickApply(actionsMachinesIds)
+    // const handleRemoveChip = (stationId: string) => {
+    //      onSelectStation(stationId, true); 
+    // }
 
-    }
+    const handleRemoveChip = (stationId: string) => {
+        onSelectStation(stationId, true);
+        const updatedActionsMachinesIds = actionsListRef.current
+            .filter(station => station.checked || station.machines.some(machine => machine.checked))
+            .map(station => ({
+                actionId: station.actionId,
+                actionName: station.actionName,
+                machineIds: station.machines.filter(machine => machine.checked).map(machine => machine.machineId)
+            }));
+
+        onClickApply(updatedActionsMachinesIds);
+    };
 
     return (
-        <div style={{position: 'relative'}}>
+        <div style={{ position: 'relative' }}>
             <TextField
                 variant="outlined"
-                style={{width:"fit-content"}}
+                style={{ width: "fit-content" }}
                 onClick={handleClick}
                 InputProps={{
-                    style:{ border: '1px solid #9E9E9E' , color:"#9E9E9E" , width:"min-content", minWidth:"100px" , height: '40px'},
+                    style: { border: '1px solid #9E9E9E', color: "#9E9E9E", width: "min-content", minWidth: "100px", height: '40px' },
                     startAdornment: actionsMachinesIds?.map((station, index) => (
                         <Chip
                             key={index}
-                            label={station.actionName} 
-                            // onDelete={() => handleRemoveChip(station.actionId)}
+                            label={station.actionName}
+                            onDelete={() => handleRemoveChip(station.actionId)}
                             deleteIcon={<ClearIcon />}
                             sx={{
-                                marginRight: isRTL ? '0' : '5px', 
-                                marginLeft: isRTL ? '5px' : '0',  
+                                marginRight: isRTL ? '0' : '5px',
+                                marginLeft: isRTL ? '5px' : '0',
                                 '& .MuiChip-deleteIcon': {
-                                    marginLeft: isRTL ? '5px' : '0px', 
+                                    marginLeft: isRTL ? '5px' : '0px',
                                     marginRight: isRTL ? '0px' : '5px',
                                 },
                             }}
-                            
+
                         />
                     )),
                     endAdornment: <KeyboardArrowDownIcon />,
@@ -91,13 +103,13 @@ const ActionsListComponent = ({onClickApply, source}: IProps) => {
                 placeholder={actionsMachinesIds.length === 0 ? t('productionFloor.selectStations') : ''}
                 sx={{
                     '& .MuiInputBase-input::placeholder': {
-                     ...FONT_FAMILY.Heebo(500,14),
-                      color:"#9e9e9e",
-                      textTransform: 'uppercase',
-                      opacity: 1,
-                      padding:"10px"
+                        ...FONT_FAMILY.Heebo(500, 14),
+                        color: "#9e9e9e",
+                        textTransform: 'uppercase',
+                        opacity: 1,
+                        padding: "10px"
                     },
-                  }}
+                }}
             />
             {open &&
                 <ClickOutside onClick={() => setOpen(false)}>
@@ -111,24 +123,24 @@ const ActionsListComponent = ({onClickApply, source}: IProps) => {
                         zIndex: 99999999999999
                     }}>
                         <FormGroup>
-                            <div style={{position: 'sticky', top: 0, backgroundColor: '#FFF', zIndex: 1}}>
+                            <div style={{ position: 'sticky', top: 0, backgroundColor: '#FFF', zIndex: 1 }}>
                                 <GomakeTextInput placeholder={t('productionFloor.search')} value={filter}
-                                                 onChange={handleFilterChange}/>
+                                    onChange={handleFilterChange} />
                             </div>
                             {
                                 getList().map((option, index) => {
                                     return <Stack key={index + option.actionId + option.actionName}>
                                         <MenuItem onClick={() => onSelectStation(option.actionId, !!option.checked)}>
-                                            <SecondaryCheckBox checked={!!option.checked}/>
+                                            <SecondaryCheckBox checked={!!option.checked} />
                                             <span>{option.actionName}</span>
                                         </MenuItem>
                                         <Stack direction={'row'} gap={'30px'}>
-                                            <div/>
+                                            <div />
                                             <Stack>
                                                 {
                                                     option?.machines?.map((machine) => <MenuItem
                                                         onClick={() => onSelectMachine(option.actionId, machine.machineId)}>
-                                                        <SecondaryCheckBox checked={!!machine?.checked}/>
+                                                        <SecondaryCheckBox checked={!!machine?.checked} />
                                                         {machine.machineName}
                                                     </MenuItem>)
                                                 }
@@ -147,7 +159,7 @@ const ActionsListComponent = ({onClickApply, source}: IProps) => {
                             backgroundColor: '#FFF',
                             zIndex: 1
                         }}>
-                            <SecondaryButton style={{width: '100%'}} variant={'contained'} onClick={() => {
+                            <SecondaryButton style={{ width: '100%' }} variant={'contained'} onClick={() => {
                                 setOpen(false)
                                 onClickApply(actionsMachinesIds)
                             }
@@ -160,4 +172,4 @@ const ActionsListComponent = ({onClickApply, source}: IProps) => {
     )
 }
 
-export {ActionsListComponent}
+export { ActionsListComponent }
