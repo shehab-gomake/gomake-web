@@ -1,14 +1,14 @@
 import {OptionsButton} from "@/components/options-button/options-button";
 import {MenuItem} from "@mui/material";
 import {GoMakeAutoComplate, GoMakeModal} from "@/components";
-import {useCallback, useState} from "react";
+import {useState} from "react";
 import {useRecoilState} from "recoil";
 import {printHousesState} from "@/pages-components/company-reports/state";
 import {PrimaryButton} from "@/components/button/primary-button";
 import {useGomakeAxios} from "@/hooks";
 import {
     importMachinesApi,
-    importMaterialsApi,
+    importMaterialsApi, importProductsApi,
     importProfitsApi
 } from "@/services/api-service/import-data/import-data-endpoints";
 import Stack from "@mui/material/Stack";
@@ -21,7 +21,8 @@ interface IProps {
 enum EAction {
     MACHINES,
     PROFITS,
-    MATERIALS
+    MATERIALS,
+    PRODUCTS
 }
 
 const OptionsComponent = ({printHouseId}: IProps) => {
@@ -50,15 +51,17 @@ const OptionsComponent = ({printHouseId}: IProps) => {
         }
     }
 
-    const handelImportClick = useCallback(async () => {
+    const handelImportClick = async () => {
         if (actionState === EAction.PROFITS) {
             await handelImportProfits();
         } else if (actionState === EAction.MACHINES) {
             await handelImportMachines();
         } else if (actionState === EAction.MATERIALS) {
             await handelImportMaterials();
+        } else if (actionState === EAction.PRODUCTS) {
+            await handelImportProducts();
         }
-    }, [actionState])
+    }
 
     const handelImportMachines = async () => {
         await importMachinesApi(callApi, callBack, {source: sourcePrintHouseId, destination: printHouseId})
@@ -69,18 +72,25 @@ const OptionsComponent = ({printHouseId}: IProps) => {
     const handelImportMaterials = async () => {
         await importMaterialsApi(callApi, callBack, {source: sourcePrintHouseId, destination: printHouseId})
     }
+    const handelImportProducts = async () => {
+        await importProductsApi(callApi, callBack, {source: sourcePrintHouseId, destination: printHouseId})
+    }
     return <>
         <OptionsButton>
             <MenuItem onClick={() => handleOptionClick(EAction.PROFITS)}>{t('importData.importProfits')}</MenuItem>
             <MenuItem onClick={() => handleOptionClick(EAction.MATERIALS)}>{t('importData.importMaterials')}</MenuItem>
             <MenuItem onClick={() => handleOptionClick(EAction.MACHINES)}>{t('importData.importMachines')}</MenuItem>
+            <MenuItem onClick={() => handleOptionClick(EAction.PRODUCTS)}>{t('importData.importProducts')}</MenuItem>
         </OptionsButton>
-        <GoMakeModal modalTitle={t('importData.selectPrintHouse')} insideStyle={{width: '400px', height: 'fit-content'}} openModal={openModal} onClose={handleModalClose}>
+        <GoMakeModal modalTitle={t('importData.selectPrintHouse')} insideStyle={{width: '400px', height: 'fit-content'}}
+                     openModal={openModal} onClose={handleModalClose}>
             <Stack gap={'10px'}>
                 <h5>{t('importData.printHouses')}</h5>
-            <GoMakeAutoComplate placeholder={t('importData.selectPrintHouse')} options={printHouses.map(p => ({label: p.name, ...p}))}
-                                onChange={(e, v) => setSourcePrintHouseId(v.id)}/>
-            <PrimaryButton variant={'contained'} onClick={handelImportClick}>{t('importData.import')}</PrimaryButton>
+                <GoMakeAutoComplate placeholder={t('importData.selectPrintHouse')}
+                                    options={printHouses.map(p => ({label: p.name, ...p}))}
+                                    onChange={(e, v) => setSourcePrintHouseId(v.id)}/>
+                <PrimaryButton variant={'contained'}
+                               onClick={handelImportClick}>{t('importData.import')}</PrimaryButton>
             </Stack>
         </GoMakeModal>
     </>
