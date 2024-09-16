@@ -25,7 +25,8 @@ const useActionsList = (source: Source) => {
     const [employee,] = useRecoilState(employeeState);
     const [, setActionFilter] = useState<string>('');
     const {callApi} = useGomakeAxios();
-    const [actionsList, setActionsList] = useState<IActionMachines[]>([])
+    const [actionsList, setActionsList] = useState<IActionMachines[]>([]);
+
     useEffect(() => {
         setActionsList(actions?.map(action => {
             const station = (source === Source.PRODUCTION_FLOOR ? productionFilter?.stations : employee.employee.stationsFilter)?.find(s => s.actionId === action.actionId)
@@ -58,12 +59,14 @@ const useActionsList = (source: Source) => {
     }
 
     const onSelectStation = (stationId: string, checked: boolean) => {
+        // debugger;
         setActionsList(prevState => prevState?.map(station => stationId === station.actionId ? {
             ...station,
             checked: !checked,
             machines: station.machines?.map(machine => ({...machine, checked: !checked}))
         } : station));
     }
+
     const handelFilterActions = (name: string) => {
         setActionFilter(name)
     }
@@ -78,10 +81,12 @@ const useActionsList = (source: Source) => {
     }
 
     const actionsMachinesIds: IStation[] = useMemo(() => {
+        // debugger;
         return actionsList?.filter(station => station.checked || station.machines?.some(machine => machine.checked))
             ?.map(station => ({...station, machines: station?.machines?.filter(machine => machine.checked)}))
             ?.map(station => ({
                 actionId: station.actionId,
+                actionName: station.actionName,
                 machineIds: station.machines.map(machine => machine.machineId)
             }));
     }, [actionsList]);

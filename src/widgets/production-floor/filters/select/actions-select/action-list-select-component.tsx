@@ -1,5 +1,5 @@
 import {FormEvent, useCallback} from "react";
-import {Button, FormGroup, MenuItem, Paper} from "@mui/material";
+import {Button, Chip, FormGroup, MenuItem, Paper, TextField} from "@mui/material";
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import {GomakeTextInput} from "@/components";
 import Stack from "@mui/material/Stack";
@@ -9,6 +9,8 @@ import {SecondaryButton} from "@/components/button/secondary-button";
 import {IStation} from "@/widgets/production-floor/interfaces/filters";
 import {ClickOutside} from "@/components/click-out-side/click-out-side";
 import {adaptRight} from "@/utils/adapter";
+import ClearIcon from '@mui/icons-material/Clear';
+import { FONT_FAMILY } from "@/utils/font-family";
 
 
 interface IProps {
@@ -19,6 +21,7 @@ interface IProps {
 const ActionsListComponent = ({onClickApply, source}: IProps) => {
 
     const {
+        t,
         actionsList,
         onSelectMachine,
         onSelectStation,
@@ -27,9 +30,10 @@ const ActionsListComponent = ({onClickApply, source}: IProps) => {
         setOpen,
         filter,
         setFilter,
-        t
     } = useActionsList(source);
+
     const direction = t('direction')
+    const isRTL = direction==="rtl";
 
     const handleClick = () => {
         setOpen(!open)
@@ -49,13 +53,52 @@ const ActionsListComponent = ({onClickApply, source}: IProps) => {
         }
         return list?.length > 0 ? list?.sort((a, b) => a.checked === b.checked ? 0 : !!a.checked ? -1 : 0) : []
     }, [actionsList, filter])
+
+
+    const handleRemoveChip = (stationId: string) => {
+         onSelectStation(stationId, true); 
+       //  onClickApply(actionsMachinesIds)
+
+    }
+
     return (
         <div style={{position: 'relative'}}>
-            <Button style={{color: '#9E9E9E', borderColor: '#9E9E9E', height: '38px'}} variant={'outlined'}
-                    onClick={handleClick}>
-                <span>{t('productionFloor.selectStations')}</span>
-                <KeyboardArrowDownIcon/>
-            </Button>
+            <TextField
+                variant="outlined"
+                style={{width:"fit-content"}}
+                onClick={handleClick}
+                InputProps={{
+                    style:{ border: '1px solid #9E9E9E' , color:"#9E9E9E" , width:"min-content", minWidth:"100px" , height: '40px'},
+                    startAdornment: actionsMachinesIds?.map((station, index) => (
+                        <Chip
+                            key={index}
+                            label={station.actionName} 
+                            // onDelete={() => handleRemoveChip(station.actionId)}
+                            deleteIcon={<ClearIcon />}
+                            sx={{
+                                marginRight: isRTL ? '0' : '5px', 
+                                marginLeft: isRTL ? '5px' : '0',  
+                                '& .MuiChip-deleteIcon': {
+                                    marginLeft: isRTL ? '5px' : '0px', 
+                                    marginRight: isRTL ? '0px' : '5px',
+                                },
+                            }}
+                            
+                        />
+                    )),
+                    endAdornment: <KeyboardArrowDownIcon />,
+                }}
+                placeholder={actionsMachinesIds.length === 0 ? t('productionFloor.selectStations') : ''}
+                sx={{
+                    '& .MuiInputBase-input::placeholder': {
+                     ...FONT_FAMILY.Heebo(500,14),
+                      color:"#9e9e9e",
+                      textTransform: 'uppercase',
+                      opacity: 1,
+                      padding:"10px"
+                    },
+                  }}
+            />
             {open &&
                 <ClickOutside onClick={() => setOpen(false)}>
                     <Paper sx={{

@@ -17,7 +17,8 @@ export interface IProductionFloorFilter {
 
 export interface IStation {
     actionId: string;
-    machineIds: string[]
+    actionName?:string;
+    machineIds: string[];
 }
 
 export interface IFilterGroup {
