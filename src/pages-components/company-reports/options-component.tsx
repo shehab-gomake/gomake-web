@@ -8,7 +8,7 @@ import {PrimaryButton} from "@/components/button/primary-button";
 import {useGomakeAxios} from "@/hooks";
 import {
     importMachinesApi,
-    importMaterialsApi, importProductsApi,
+    importMaterialsApi, importOutputsApi, importProductsApi,
     importProfitsApi
 } from "@/services/api-service/import-data/import-data-endpoints";
 import Stack from "@mui/material/Stack";
@@ -22,7 +22,8 @@ enum EAction {
     MACHINES,
     PROFITS,
     MATERIALS,
-    PRODUCTS
+    PRODUCTS,
+    OUTPUTS
 }
 
 const OptionsComponent = ({printHouseId}: IProps) => {
@@ -60,6 +61,8 @@ const OptionsComponent = ({printHouseId}: IProps) => {
             await handelImportMaterials();
         } else if (actionState === EAction.PRODUCTS) {
             await handelImportProducts();
+        }else if (actionState === EAction.OUTPUTS) {
+            await handelImportOutputs();
         }
     }
 
@@ -75,12 +78,16 @@ const OptionsComponent = ({printHouseId}: IProps) => {
     const handelImportProducts = async () => {
         await importProductsApi(callApi, callBack, {source: sourcePrintHouseId, destination: printHouseId})
     }
+    const handelImportOutputs = async () => {
+        await importOutputsApi(callApi, callBack, {source: sourcePrintHouseId, destination: printHouseId})
+    }
     return <>
         <OptionsButton>
             <MenuItem onClick={() => handleOptionClick(EAction.PROFITS)}>{t('importData.importProfits')}</MenuItem>
             <MenuItem onClick={() => handleOptionClick(EAction.MATERIALS)}>{t('importData.importMaterials')}</MenuItem>
             <MenuItem onClick={() => handleOptionClick(EAction.MACHINES)}>{t('importData.importMachines')}</MenuItem>
             <MenuItem onClick={() => handleOptionClick(EAction.PRODUCTS)}>{t('importData.importProducts')}</MenuItem>
+            <MenuItem onClick={() => handleOptionClick(EAction.PRODUCTS)}>{t('importData.importOutputs')}</MenuItem>
         </OptionsButton>
         <GoMakeModal modalTitle={t('importData.selectPrintHouse')} insideStyle={{width: '400px', height: 'fit-content'}}
                      openModal={openModal} onClose={handleModalClose}>
