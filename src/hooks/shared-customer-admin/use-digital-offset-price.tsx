@@ -243,7 +243,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     if (calculationResult && calculationResult.productItemValueDraftId === currentCalculationSessionId) {
       getSelectedWorkFlow();
     }
-  }, [calculationResult,]);
+  }, [calculationResult, currentCalculationSessionId]);
 
   const getSelectedWorkFlow = async () => {
     const res: any = await callApi(
