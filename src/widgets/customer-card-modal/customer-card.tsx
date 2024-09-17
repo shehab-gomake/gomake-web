@@ -132,11 +132,11 @@ const CustomerCardWidget = ({
 
   useEffect(() => {
     if (customer) {
-      setContacts(customer.contacts ? customer.contacts : [])
-      setAddresses(customer.addresses ? customer.addresses : [])
-      setUsers(customer.users ? customer.users : [])
+      setContacts(customer.contacts)
+      setAddresses(customer.addresses)
+      setUsers(customer.users)
     }
-  }, [])
+  }, [customer])
 
   useEffect(() => {
     addInitContact();
@@ -164,11 +164,11 @@ const CustomerCardWidget = ({
 
   const renderAddButton = (onClick, labelKey) => (
     <div style={classes.addNewStyle}>
-    <AddIcon onClick={onClick} />
-    <button style={classes.buttonsStyle} onClick={onClick}>
-      {t(labelKey)}
-    </button>
-  </div>
+      <AddIcon onClick={onClick} />
+      <button style={classes.buttonsStyle} onClick={onClick}>
+        {t(labelKey)}
+      </button>
+    </div>
   );
 
   const renderTableSearch = <>{(isFromHomePage && showTable) &&
