@@ -308,7 +308,7 @@ const ActionContainerComponent = ({
       return !!supplier ? supplier.label : "";
     }
     return "";
-  }, [supplierId, suppliers]);
+  }, [supplierId, suppliers, suppliersState]);
 
 
 
@@ -781,7 +781,7 @@ const ActionComponent = ({
     },
   ]
   const getSupplierId = useCallback(() => {
-    if (supplierId) {
+    if (supplierId && suppliers?.length > 0) {
       const supplier = suppliers?.find((sup) => sup.supplierId === supplierId);
       return !!supplier ? supplier.supplierName : "";
     }
