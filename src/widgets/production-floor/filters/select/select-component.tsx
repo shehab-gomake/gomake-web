@@ -146,32 +146,31 @@ const SelectComponent = ({ buttonLabel, list, onChange, style, checkWhatRenderAr
         //     </StyledMenu>
         // </div>
         <div>
-        <Button style={!!style ? style : { color: '#9E9E9E', borderColor: '#9E9E9E' }} variant={!!style ? 'contained' : 'outlined'} onClick={handleClick}>
-            <span>{t(buttonLabel)}</span>
-            <KeyboardArrowDownIcon />
-        </Button>
-        <StyledMenu anchorEl={anchorEl}
-            open={open}
-            onClose={handleClose}>
-            <FormGroup>
-                <div>
-                    <GomakeTextInput placeholder={t('productionFloor.search')} value={filter} onChange={handleFilterChange} />
-                </div>
-                {
-                    getList().map((item, index) => {
-                        return <MenuItem key={item.id + index}>
-                            <FormControlLabel label={item.name}
-                                control={<Checkbox checked={item.checked}
-                                    onChange={() => { onChange(item.id) }} />}
-                            />
-                        </MenuItem>
+            <Button style={!!style ? style : { color: '#9E9E9E', borderColor: '#9E9E9E' }} variant={!!style ? 'contained' : 'outlined'} onClick={handleClick}>
+                <span>{t(buttonLabel)}</span>
+                <KeyboardArrowDownIcon />
+            </Button>
+            <StyledMenu anchorEl={anchorEl}
+                open={open}
+                onClose={handleClose}>
+                <FormGroup>
+                    <div>
+                        <GomakeTextInput placeholder={t('productionFloor.search')} value={filter} onChange={handleFilterChange} />
+                    </div>
+                    {
+                        getList().map((item, index) => {
+                            return <MenuItem key={item.id + index}>
+                                <FormControlLabel label={item.name}
+                                    control={<Checkbox checked={item.checked}
+                                        onChange={() => { onChange(item.id) }} />}
+                                />
+                            </MenuItem>
 
-                    })
-                }
-            </FormGroup>
-        </StyledMenu>
-    </div>
-
+                        })
+                    }
+                </FormGroup>
+            </StyledMenu>
+        </div>
     )
 }
 

@@ -1,9 +1,6 @@
 import { Box, Chip, Stack } from "@mui/material";
 import { useProductionFloorFilters } from "@/widgets/production-floor/filters/use-production-floor-filters";
 import { SearchInputComponent } from "@/components/form-inputs/search-input-component";
-import {
-    ActionsListComponent
-} from "@/widgets/production-floor/filters/select/actions-select/action-list-select-component";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { GoMakeDatepicker } from "@/components/date-picker/date-picker-component";
@@ -21,14 +18,11 @@ const ProductionFloorFilters = () => {
         onSelectDeliveryTimeDates,
         onSelectCreateDates,
         createDateFilter,
-        deliveryDateFilter,
-        onStationsChange
+        deliveryDateFilter
     } = useProductionFloorFilters();
     const { t } = useTranslation();
     const {
-
         actionsMachinesIds,
-
     } = useActionsList(Source.PRODUCTION_FLOOR);
 
     return (
@@ -40,11 +34,7 @@ const ProductionFloorFilters = () => {
                 placeholder={t('productionFloor.deliveryTime')} />
             <GoMakeDatepicker value={createDateFilter} onChange={onSelectCreateDates}
                 placeholder={t('productionFloor.createTime')} />
-            <Stack flexGrow={1} direction={'row'} position={'relative'}>
-                <ActionsListComponent onClickApply={onStationsChange} source={Source.PRODUCTION_FLOOR} />
-            </Stack>
-
-            <Box sx={{
+            {/* <Box sx={{
                 // position: 'absolute',
                 top: '50%',
                 left: 'calc(100% + 10px)', // Adjust as needed
@@ -68,7 +58,7 @@ const ProductionFloorFilters = () => {
                         />
                     ))
                 )}
-            </Box>
+            </Box> */}
         </Stack>
     )
 }
