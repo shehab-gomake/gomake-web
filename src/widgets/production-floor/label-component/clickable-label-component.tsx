@@ -49,7 +49,7 @@ const ClickableLabelComponent = ({ label, t, key, textColor, id }: ITaskCategory
         setColor(newColor.hex);
     };
 
-   
+
     const onResetJobColor = async () => {
         const callBack = (res: any) => {
             if (res.success) {
@@ -105,7 +105,7 @@ const ClickableLabelComponent = ({ label, t, key, textColor, id }: ITaskCategory
                     style: { marginTop: '10px' },
                 }}
             >
-                <MenuItem onClick={handleChangeColorClick}>
+                <MenuItem style={{ padding: "0px 10px" }} onClick={handleChangeColorClick}>
                     <IconButton>
                         <ChangeColorIcon />
                     </IconButton>
@@ -114,13 +114,13 @@ const ClickableLabelComponent = ({ label, t, key, textColor, id }: ITaskCategory
                             ...FONT_FAMILY.Lexend(500, 12),
                             color: "#8283BE",
                             fontStyle: "normal",
-                            lineHeight: "20px"
+                            lineHeight: "20px",
                         }}
                     >
                         {t("productionFloor.changeColor")}
                     </Typography>
                 </MenuItem>
-                <MenuItem onClick={onResetJobColor}>
+                <MenuItem style={{ padding: "0px 10px" }} onClick={onResetJobColor}>
                     <IconButton>
                         <ResetColorIcon />
                     </IconButton>

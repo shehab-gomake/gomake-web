@@ -42,10 +42,9 @@ const useStyle = ({textColor}) => {
                 boxShadow:"none",
                 backgroundColor:"transparent",
                 ...FONT_FAMILY.Inter(600, 12),
-                color: textColor || primaryColor(600),
-                
+                color: textColor || primaryColor(600),                
                 fontStyle: "normal",
-                textTransform: "initial" as "initial",
+                textTransform: "capitalize" as "capitalize",
                 gap: "2px",
                 '&:hover': {
                     backgroundColor:"transparent",
