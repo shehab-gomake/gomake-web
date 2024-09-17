@@ -111,15 +111,6 @@ const useProductionFloorFilters = () => {
         })
     }
 
-    const onClickClearFilters = () => {
-        setFilters({
-            ...filtersState,
-            stations : [],
-            automatedTags : [] ,
-        })
-    }
-
-
     return {
         search,
         setSearch,
@@ -138,7 +129,6 @@ const useProductionFloorFilters = () => {
         onStationsChange,
         setFilters,
         filtersState,
-        onClickClearFilters
     }
 }
 

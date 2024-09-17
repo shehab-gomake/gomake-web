@@ -1,5 +1,5 @@
-import { FormEvent, useCallback } from "react";
-import { Button, Chip, FormGroup, MenuItem, Paper, TextField } from "@mui/material";
+import { FormEvent, useCallback, useContext } from "react";
+import { Button, FormGroup, MenuItem, Paper, Box, Chip, IconButton } from "@mui/material";
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import { GomakeTextInput } from "@/components";
 import Stack from "@mui/material/Stack";
@@ -9,9 +9,10 @@ import { SecondaryButton } from "@/components/button/secondary-button";
 import { IStation } from "@/widgets/production-floor/interfaces/filters";
 import { ClickOutside } from "@/components/click-out-side/click-out-side";
 import { adaptRight } from "@/utils/adapter";
-import ClearIcon from '@mui/icons-material/Clear';
-import { FONT_FAMILY } from "@/utils/font-family";
-
+import { ScrollMenu, VisibilityContext } from 'react-horizontal-scrolling-menu';
+import 'react-horizontal-scrolling-menu/dist/styles.css';
+import { LeftArrowIcon } from "@/components/icons/left-arrow-icon";
+import { RightArrowIcon } from "@/components/icons/right-arrow-icon";
 
 interface IProps {
     onClickApply: (v: IStation[]) => void,
@@ -19,9 +20,7 @@ interface IProps {
 }
 
 const ActionsListComponent = ({ onClickApply, source }: IProps) => {
-
     const {
-        t,
         actionsList,
         onSelectMachine,
         onSelectStation,
@@ -30,11 +29,10 @@ const ActionsListComponent = ({ onClickApply, source }: IProps) => {
         setOpen,
         filter,
         setFilter,
-        actionsListRef
+        t
     } = useActionsList(source);
-
     const direction = t('direction')
-    const isRTL = direction === "rtl";
+    const RTL = direction === 'rtl';
 
     const handleClick = () => {
         setOpen(!open)
@@ -53,68 +51,79 @@ const ActionsListComponent = ({ onClickApply, source }: IProps) => {
                 ?.filter(action => action.actionName?.toLowerCase().includes(filter?.toLowerCase()) || action.machines.length > 0)
         }
         return list?.length > 0 ? list?.sort((a, b) => a.checked === b.checked ? 0 : !!a.checked ? -1 : 0) : []
-    }, [actionsList, filter])
+    }, [actionsList, filter]);
 
 
-    // const handleRemoveChip = (stationId: string) => {
-    //      onSelectStation(stationId, true); 
-    // }
+    function LeftArrow() {
+        const { scrollPrev } = useContext(VisibilityContext);
+        return (
+            <IconButton onClick={() => scrollPrev()} style={{ display: "flex" }}>
+                {RTL ? <RightArrowIcon /> : <LeftArrowIcon />}
+            </IconButton>
+        );
+    }
 
-    const handleRemoveChip = (stationId: string) => {
-        onSelectStation(stationId, true);
-        const updatedActionsMachinesIds = actionsListRef.current
-            .filter(station => station.checked || station.machines.some(machine => machine.checked))
-            .map(station => ({
-                actionId: station.actionId,
-                actionName: station.actionName,
-                machineIds: station.machines.filter(machine => machine.checked).map(machine => machine.machineId)
-            }));
-
-        onClickApply(updatedActionsMachinesIds);
-    };
+    function RightArrow() {
+        const { scrollNext } = useContext(VisibilityContext);
+        return (
+            <IconButton onClick={() => scrollNext()} style={{ display: "flex" }}>
+                {RTL ? <LeftArrowIcon /> : <RightArrowIcon />}
+            </IconButton>
+        );
+    }
 
     return (
         <div style={{ position: 'relative' }}>
-            <TextField
-                variant="outlined"
-                style={{ width: "fit-content" }}
-                onClick={handleClick}
-                InputProps={{
-                    style: { borderRadius:"6px",border: '1px solid #9E9E9E', color: "#9E9E9E", width: "min-content", minWidth: "100px", height: '40px' },
-                    startAdornment: actionsMachinesIds?.map((station, index) => (
-                        <Chip
-                            key={index}
-                            label={station.actionName}
-                            onDelete={() => handleRemoveChip(station.actionId)}
-                            deleteIcon={<ClearIcon />}
-                            sx={{
-                                marginRight: isRTL ? '0' : '5px',
-                                marginLeft: isRTL ? '5px' : '0',
-                                '& .MuiChip-deleteIcon': {
-                                    marginLeft: isRTL ? '5px' : '0px',
-                                    marginRight: isRTL ? '0px' : '5px',
-                                },
-                            }}
+            {/* Scrollable Chips Menu */}
+            {/* <ScrollMenu LeftArrow={LeftArrow} RightArrow={RightArrow}  RTL={RTL}>
+                    {actionsMachinesIds?.map((option) => (
+                        <button
+                        key={option.actionId}
+                        style={{ margin: '4px' }}
+                            // onClick={() => AddVariable(option)}
+                        >
+                            {option.actionName || 'Unknown'}
+                        </button>
+                    ))}
+                </ScrollMenu> */}
 
-                        />
-                    )),
-                    endAdornment: <KeyboardArrowDownIcon />,
-                }}
-                placeholder={actionsMachinesIds.length === 0 ? t('productionFloor.selectStations') : ''}
-                sx={{
-                    '& .MuiInputBase-input::placeholder': {
-                        ...FONT_FAMILY.Heebo(500, 14),
-                        color: "#9e9e9e",
-                        textTransform: 'uppercase',
-                        opacity: 1,
-                        padding: "10px"
-                    },
-                }}
-            />
+{/* //////////////// test ////////////////// */}
+            {/* <Box sx={{
+                position: 'absolute',
+                top: '50%',
+                left: 'calc(100% + 10px)', // Adjust as needed
+                maxHeight: '100px',
+                overflowY: 'auto',
+                border: '1px solid #E0E0E0',
+                borderRadius: '4px',
+                backgroundColor: '#FFF',
+                zIndex: 99999999999999,
+                padding: '8px',
+                display: 'flex',
+                flexWrap: 'wrap'
+            }}>
+                {actionsMachinesIds.map((item) => (
+                    <Chip
+                        key={item.actionId}
+                        label={item.actionName || 'Unknown'}
+                        sx={{ margin: '4px' }}
+                        // Optionally add a delete button or similar functionality if needed
+                    />
+                ))}
+            </Box> */}
+
+            {/* Dropdown Button */}
+            <Button style={{ color: '#9E9E9E', borderColor: '#9E9E9E', height: '38px' }} variant={'outlined'}
+                    onClick={handleClick}>
+                <span>{t('productionFloor.selectStations')}</span>
+                <KeyboardArrowDownIcon />
+            </Button>
+
             {open &&
                 <ClickOutside onClick={() => setOpen(false)}>
                     <Paper sx={{
-                        position: 'absolute', ...adaptRight(direction, 0),
+                        position: 'absolute',
+                        ...adaptRight(direction, 0),
                         top: source === Source.PRODUCTION_FLOOR ? '110%' : '-610px',
                         maxWidth: '300px',
                         height: 'fit-content',
@@ -125,11 +134,11 @@ const ActionsListComponent = ({ onClickApply, source }: IProps) => {
                         <FormGroup>
                             <div style={{ position: 'sticky', top: 0, backgroundColor: '#FFF', zIndex: 1 }}>
                                 <GomakeTextInput placeholder={t('productionFloor.search')} value={filter}
-                                    onChange={handleFilterChange} />
+                                                 onChange={handleFilterChange} />
                             </div>
-                            {
-                                getList().map((option, index) => {
-                                    return <Stack key={index + option.actionId + option.actionName}>
+                            <Box sx={{ overflowY: 'auto', maxHeight: 'calc(100% - 120px)' }}>
+                                {getList().map((option, index) => (
+                                    <Stack key={index + option.actionId + option.actionName}>
                                         <MenuItem onClick={() => onSelectStation(option.actionId, !!option.checked)}>
                                             <SecondaryCheckBox checked={!!option.checked} />
                                             <span>{option.actionName}</span>
@@ -137,19 +146,19 @@ const ActionsListComponent = ({ onClickApply, source }: IProps) => {
                                         <Stack direction={'row'} gap={'30px'}>
                                             <div />
                                             <Stack>
-                                                {
-                                                    option?.machines?.map((machine) => <MenuItem
+                                                {option?.machines?.map((machine) => (
+                                                    <MenuItem
+                                                        key={machine.machineId}
                                                         onClick={() => onSelectMachine(option.actionId, machine.machineId)}>
                                                         <SecondaryCheckBox checked={!!machine?.checked} />
                                                         {machine.machineName}
-                                                    </MenuItem>)
-                                                }
+                                                    </MenuItem>
+                                                ))}
                                             </Stack>
                                         </Stack>
                                     </Stack>
-
-                                })
-                            }
+                                ))}
+                            </Box>
                         </FormGroup>
                         <div style={{
                             position: 'sticky',
@@ -162,14 +171,15 @@ const ActionsListComponent = ({ onClickApply, source }: IProps) => {
                             <SecondaryButton style={{ width: '100%' }} variant={'contained'} onClick={() => {
                                 setOpen(false)
                                 onClickApply(actionsMachinesIds)
-                            }
-                            }>{t("productionFloor.apply")}</SecondaryButton>
+                            }}>
+                                {t("productionFloor.apply")}
+                            </SecondaryButton>
                         </div>
                     </Paper>
                 </ClickOutside>
             }
         </div>
-    )
+    );
 }
 
 export { ActionsListComponent }

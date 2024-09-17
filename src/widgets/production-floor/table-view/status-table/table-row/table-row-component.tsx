@@ -4,7 +4,7 @@ import Link from "next/link";
 import { LabelComponent } from "@/widgets/production-floor/label-component/label-component";
 import {
     CurrentStationComponent
-} from "@/widgets/production-floor/table-view/status-table/current-station/current-station";
+} from "@/widgets/production-floor/table-view/status-table/stations/current-station";
 import { BoardStatusComponent } from "@/widgets/production-floor/table-view/status-table/board-status/board-status";
 import { IBoardMissions } from "@/widgets/production-floor/interfaces/board-missions";
 import { useDrag, useDrop } from "react-dnd";
@@ -25,6 +25,7 @@ import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { MoreMenuWidget } from "./more-circle";
 import { SeparateDateFormatterDDMMYYYY } from "@/utils/adapter";
 import { ClickableLabelComponent } from "@/widgets/production-floor/label-component/clickable-label-component";
+import { NextStationComponent } from "../stations/next-station";
 
 
 interface IProps {
@@ -121,7 +122,6 @@ const TableRowComponent = ({ boardMission, status , onClickDone , onClickPrintDT
                     }
                 </TableCell>
             </TableRow>
-
             <TableRow ref={ref}
                 style={{ cursor: canDrag ? 'move' : 'default', marginBottom: '100px' }}>
                 <PermissionCheck userPermission={Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR}>
@@ -150,7 +150,6 @@ const TableRowComponent = ({ boardMission, status , onClickDone , onClickPrintDT
                     {boardMission?.clientName}
                 </SecondaryTableCell>
                 <SecondaryTableCell align={"center"}>
-                    {/* <LabelComponent label={boardMission?.productName} /> */}
                     <ClickableLabelComponent label={boardMission?.productName}  id={boardMission.id} textColor={boardMission?.productionFloorJobColor} t={t} key={boardMission.id} />
                 </SecondaryTableCell>
                 <SecondaryTableCell align={"center"}>
@@ -158,7 +157,11 @@ const TableRowComponent = ({ boardMission, status , onClickDone , onClickPrintDT
                         onChange={(id, statusId) => updateStatus([boardMission], statusId)} />
                 </SecondaryTableCell>
                 <SecondaryTableCell align={"center"} >
-                    <CurrentStationComponent {...boardMission.currentStation} {...boardMission.nextStation}
+                    <CurrentStationComponent {...boardMission.currentStation} 
+                        boardMissionId={boardMission.id} status={status} textColor={boardMission?.productionFloorJobColor}/>
+                </SecondaryTableCell>
+                <SecondaryTableCell align={"center"} >
+                    <NextStationComponent {...boardMission.currentStation} {...boardMission.nextStation}
                         boardMissionId={boardMission.id} status={status} textColor={boardMission?.productionFloorJobColor}/>
                 </SecondaryTableCell>
                 <SecondaryTableCell align={"center"}>

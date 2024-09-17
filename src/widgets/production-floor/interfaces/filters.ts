@@ -19,6 +19,7 @@ export interface IStation {
     actionId: string;
     actionName?:string;
     machineIds: string[];
+    machineNames?:string[];
 }
 
 export interface IFilterGroup {

@@ -1,4 +1,4 @@
-import { Button, Stack } from "@mui/material";
+import { Box, Chip, Stack } from "@mui/material";
 import { useProductionFloorFilters } from "@/widgets/production-floor/filters/use-production-floor-filters";
 import { SearchInputComponent } from "@/components/form-inputs/search-input-component";
 import {
@@ -9,10 +9,9 @@ import { useTranslation } from "react-i18next";
 import { GoMakeDatepicker } from "@/components/date-picker/date-picker-component";
 import { filtersInputs } from "@/widgets/production-floor/filters/filters-inputs";
 import { SelectComponent } from "@/widgets/production-floor/filters/select/select-component";
-import { Source } from "@/widgets/production-floor/filters/select/actions-select/use-actions-list";
-import { IStation } from "../interfaces/filters";
-import { FONT_FAMILY } from "@/utils/font-family";
+import { Source, useActionsList } from "@/widgets/production-floor/filters/select/actions-select/use-actions-list";
 
+// here...
 const ProductionFloorFilters = () => {
     const { tagsList } = filtersInputs()
     const {
@@ -23,31 +22,57 @@ const ProductionFloorFilters = () => {
         onSelectCreateDates,
         createDateFilter,
         deliveryDateFilter,
-        onStationsChange,
-        onClickClearFilters
+        onStationsChange
     } = useProductionFloorFilters();
     const { t } = useTranslation();
+    const {
 
+        actionsMachinesIds,
+
+    } = useActionsList(Source.PRODUCTION_FLOOR);
 
     return (
-        <Stack direction={'row'} padding={'12px 5px'} style={{ backgroundColor: '#FFF' }} alignItems={'center'} width={"100%"} justifyContent={"space-between"}>
-            <Stack direction={'row'} alignItems={'center'} gap={'10px'}>
+        <Stack direction={'row'} padding={'12px 0'} style={{ backgroundColor: '#FFF' }} alignItems={'center'}
+            gap={'20px'}>
+            <SearchInputComponent bgColor={'#F8F8F8'} value={search} onChange={setSearch} />
+            <SelectComponent buttonLabel={'productionFloor.tags'} list={tagsList} onChange={onTagsChange} />
+            <GoMakeDatepicker value={deliveryDateFilter} onChange={onSelectDeliveryTimeDates}
+                placeholder={t('productionFloor.deliveryTime')} />
+            <GoMakeDatepicker value={createDateFilter} onChange={onSelectCreateDates}
+                placeholder={t('productionFloor.createTime')} />
+            <Stack flexGrow={1} direction={'row'} position={'relative'}>
                 <ActionsListComponent onClickApply={onStationsChange} source={Source.PRODUCTION_FLOOR} />
-                <Stack flexGrow={1} direction={'row'} position={'relative'}>
-                    <SelectComponent buttonLabel={'productionFloor.tags'} list={tagsList} onChange={onTagsChange} />
-                </Stack>
-                <Button variant="text" style={{color:"black" , ...FONT_FAMILY.Inter(500,14) , textTransform:"capitalize"}} onClick={onClickClearFilters}>Clear filters</Button>
             </Stack>
-            <Stack direction={'row'} alignItems={'center'} gap={'20px'}>
-                <SearchInputComponent bgColor={'#F8F8F8'} value={search} onChange={setSearch} />
-                <GoMakeDatepicker value={deliveryDateFilter} onChange={onSelectDeliveryTimeDates}
-                    placeholder={t('productionFloor.deliveryTime')} />
-                <GoMakeDatepicker value={createDateFilter} onChange={onSelectCreateDates}
-                    placeholder={t('productionFloor.createTime')} />
-            </Stack>
-        </Stack>
 
+            <Box sx={{
+                // position: 'absolute',
+                top: '50%',
+                left: 'calc(100% + 10px)', // Adjust as needed
+                maxHeight: '100px',
+                overflowY: 'auto',
+                border: '1px solid #E0E0E0',
+                borderRadius: '4px',
+                backgroundColor: '#FFF',
+                zIndex: 99999999999999,
+                padding: '8px',
+                display: 'flex',
+                flexWrap: 'wrap'
+            }}>
+                {actionsMachinesIds.flatMap((item) =>
+                    item.machineNames.map((machineName, index) => (
+                        <Chip
+                            key={`${item.actionId}-${index}`} // Ensure unique key for each chip
+                            label={machineName || 'Unknown'}
+                            sx={{ margin: '4px' }}
+                        // Optionally add a delete button or similar functionality if needed
+                        />
+                    ))
+                )}
+            </Box>
+        </Stack>
     )
 }
 
 export { ProductionFloorFilters }
+
+

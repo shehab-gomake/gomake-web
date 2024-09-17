@@ -101,7 +101,9 @@ const useActionsList = (source: Source) => {
             ?.map(station => ({
                 actionId: station.actionId,
                 actionName: station.actionName,
-                machineIds: station.machines.map(machine => machine.machineId)
+                machineIds: station.machines.map(machine => machine.machineId),
+                machineNames: station.machines.map(machine => machine.machineName),
+
             }));
     }, [actionsList]);
 

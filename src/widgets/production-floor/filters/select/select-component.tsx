@@ -57,8 +57,8 @@ const SelectComponent = ({ buttonLabel, list, onChange, style, checkWhatRenderAr
     const [filter, setFilter] = useState<string>();
     const open = Boolean(anchorEl);
     const { t } = useTranslation();
-    const direction = t('direction')
-    const isRTL = direction === "rtl";
+    // const direction = t('direction')
+    // const isRTL = direction === "rtl";
 
     const handleClick = (event: any) => {
         setAnchorEl(event.currentTarget);
@@ -84,67 +84,94 @@ const SelectComponent = ({ buttonLabel, list, onChange, style, checkWhatRenderAr
         return list
     }, [list, filter]);
 
-    const selectedItems = list.filter(item => item.checked);
+    // const selectedItems = list.filter(item => item.checked);
 
 
     return (
+        // <div>
+        //     <TextField
+        //         variant="outlined"
+        //         onClick={handleClick}
+        //         InputProps={{
+        //             style: {borderRadius:"6px", border: '1px solid #9E9E9E', color: "#9E9E9E", width: "min-content", minWidth: "100px", height: '40px' },
+        //             startAdornment: selectedItems.map((item, index) => (
+        //                 <Chip
+        //                     key={item.id + index}
+        //                     label={item.name}
+        //                     onDelete={() => onChange(item.id)}
+        //                     deleteIcon={<ClearIcon />}
+        //                     sx={{
+        //                         marginRight: isRTL ? '0' : '5px',
+        //                         marginLeft: isRTL ? '5px' : '0',
+        //                         '& .MuiChip-deleteIcon': {
+        //                             marginLeft: isRTL ? '5px' : '0px',
+        //                             marginRight: isRTL ? '0px' : '5px',
+        //                         },
+        //                     }}
+        //                 />
+        //             )),
+        //             endAdornment: <KeyboardArrowDownIcon />,
+        //         }}
+        //         placeholder={selectedItems.length === 0 ? t(buttonLabel) : ''}
+        //         sx={{
+        //             '& .MuiInputBase-input::placeholder': {
+        //                 ...FONT_FAMILY.Heebo(500, 14),
+        //                 color: "#9e9e9e",
+        //                 textTransform: 'uppercase',
+        //                 opacity: 1,
+        //                 // padding:"10px"
+        //             },
+        //         }}
+        //     />
+        //     <StyledMenu
+        //         dir={direction}
+        //         anchorEl={anchorEl}
+        //         open={open}
+        //         onClose={handleClose}>
+        //         <FormGroup>
+        //             <div>
+        //                 <GomakeTextInput placeholder={t('productionFloor.search')} value={filter} onChange={handleFilterChange} />
+        //             </div>
+        //             {
+        //                 getList().map((item, index) => {
+        //                     return <MenuItem key={item.id + index}>
+        //                         <FormControlLabel label={item.name}
+        //                             control={<Checkbox checked={item.checked}
+        //                                 onChange={() => { onChange(item.id) }} />}
+        //                         />
+        //                     </MenuItem>
+        //                 })
+        //             }
+        //         </FormGroup>
+        //     </StyledMenu>
+        // </div>
         <div>
-            <TextField
-                variant="outlined"
-                onClick={handleClick}
-                InputProps={{
-                    style: {borderRadius:"6px", border: '1px solid #9E9E9E', color: "#9E9E9E", width: "min-content", minWidth: "100px", height: '40px' },
-                    startAdornment: selectedItems.map((item, index) => (
-                        <Chip
-                            key={item.id + index}
-                            label={item.name}
-                            onDelete={() => onChange(item.id)}
-                            deleteIcon={<ClearIcon />}
-                            sx={{
-                                marginRight: isRTL ? '0' : '5px',
-                                marginLeft: isRTL ? '5px' : '0',
-                                '& .MuiChip-deleteIcon': {
-                                    marginLeft: isRTL ? '5px' : '0px',
-                                    marginRight: isRTL ? '0px' : '5px',
-                                },
-                            }}
-                        />
-                    )),
-                    endAdornment: <KeyboardArrowDownIcon />,
-                }}
-                placeholder={selectedItems.length === 0 ? t(buttonLabel) : ''}
-                sx={{
-                    '& .MuiInputBase-input::placeholder': {
-                        ...FONT_FAMILY.Heebo(500, 14),
-                        color: "#9e9e9e",
-                        textTransform: 'uppercase',
-                        opacity: 1,
-                        // padding:"10px"
-                    },
-                }}
-            />
-            <StyledMenu
-                dir={direction}
-                anchorEl={anchorEl}
-                open={open}
-                onClose={handleClose}>
-                <FormGroup>
-                    <div>
-                        <GomakeTextInput placeholder={t('productionFloor.search')} value={filter} onChange={handleFilterChange} />
-                    </div>
-                    {
-                        getList().map((item, index) => {
-                            return <MenuItem key={item.id + index}>
-                                <FormControlLabel label={item.name}
-                                    control={<Checkbox checked={item.checked}
-                                        onChange={() => { onChange(item.id) }} />}
-                                />
-                            </MenuItem>
-                        })
-                    }
-                </FormGroup>
-            </StyledMenu>
-        </div>
+        <Button style={!!style ? style : { color: '#9E9E9E', borderColor: '#9E9E9E' }} variant={!!style ? 'contained' : 'outlined'} onClick={handleClick}>
+            <span>{t(buttonLabel)}</span>
+            <KeyboardArrowDownIcon />
+        </Button>
+        <StyledMenu anchorEl={anchorEl}
+            open={open}
+            onClose={handleClose}>
+            <FormGroup>
+                <div>
+                    <GomakeTextInput placeholder={t('productionFloor.search')} value={filter} onChange={handleFilterChange} />
+                </div>
+                {
+                    getList().map((item, index) => {
+                        return <MenuItem key={item.id + index}>
+                            <FormControlLabel label={item.name}
+                                control={<Checkbox checked={item.checked}
+                                    onChange={() => { onChange(item.id) }} />}
+                            />
+                        </MenuItem>
+
+                    })
+                }
+            </FormGroup>
+        </StyledMenu>
+    </div>
+
     )
 }
 

@@ -10,7 +10,7 @@ import { useProductionFloorData } from "@/widgets/production-floor/use-productio
 import { useUserPermission } from '@/hooks/use-permission';
 import { Permissions } from "@/components/CheckPermission/enum";
 
-const useCurrentStation = () => {
+const useStations = () => {
     const { callApi } = useGomakeAxios();
     const [boardMissionsStations, setBoardMissionsStations] = useState<IBoardMissionStation[]>([])
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -66,4 +66,4 @@ const useCurrentStation = () => {
         canMoveStation
     }
 }
-export { useCurrentStation }
+export { useStations }
