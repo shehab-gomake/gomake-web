@@ -133,7 +133,9 @@ const useBoardMissions = () => {
         boardsMissions,
         getLateTodayBoardsMissions,
         getAllBoardsMissions,
-        dashboardColumns
+        dashboardColumns,
+        setBoardsMissions,
+        setStatistics
     }
 }
 

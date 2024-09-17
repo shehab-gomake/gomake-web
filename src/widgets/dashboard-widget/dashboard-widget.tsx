@@ -32,7 +32,9 @@ const DashboardWidget = ({ }: IDashboardWidget) => {
         getLateBoardsMissions,
         getLateTodayBoardsMissions,
         getAllBoardsMissions,
-        dashboardColumns
+        dashboardColumns,
+        setBoardsMissions,
+        setStatistics
     } = useBoardMissions();
     const actions = (action: DashboardActions, dateRange: IDateRange) => {
         switch (action) {
@@ -51,6 +53,8 @@ const DashboardWidget = ({ }: IDashboardWidget) => {
     }
 
     useEffect(() => {
+        setBoardsMissions([]);
+        setStatistics(null);
         actions(action, dates);
     }, [action, dates, selectedAgents])
 
