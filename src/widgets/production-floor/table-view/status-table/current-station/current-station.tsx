@@ -9,7 +9,7 @@ import {
 } from "@/widgets/production-floor/table-view/status-table/current-station/use-current-station";
 import { PermissionCheck } from "@/components/CheckPermission/check-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
-import { useRecoilState } from "recoil";
+import { useSetRecoilState } from "recoil";
 import { IStatusesBoardsMissions } from "@/widgets/production-floor/interfaces/production-floor-data-response";
 import { boardsMissionsState } from "@/widgets/production-floor/state/boards";
 import { RightArrowIcon } from "../table-row/more-circle/icons/right-arrow";
@@ -41,7 +41,7 @@ const CurrentStationComponent = ({ boardMissionId,textColor, machineName, action
         dir
     } = useCurrentStation();
 
-    const [data, setData] = useRecoilState<IStatusesBoardsMissions[]>(boardsMissionsState);
+    const setData = useSetRecoilState<IStatusesBoardsMissions[]>(boardsMissionsState);
 
     const handleRemoveBoardMission = (statusKey, boardMissionId) => {
         setData((prevData) => {
@@ -61,13 +61,14 @@ const CurrentStationComponent = ({ boardMissionId,textColor, machineName, action
     };
 
     return (
-        <div>
-            <Stack direction="row" spacing={1} justifyContent={'center'} alignItems={'center'} width={"fit-content"} display={'inline-flex'} overflow={'hidden'}>
+        <>
+            <Stack direction="row"  justifyContent={'center'} alignItems={'center'} display={'inline-flex'} overflow={'hidden'}>
+            {/* <Stack direction="row"  justifyContent={'space-between'} alignItems={'center'}  overflow={'hidden'}> */}
                 <Button sx={classes.currentStationBtn} variant={'contained'}
                     disabled={!canMoveStation}
                     onClick={(e) => handleClick(e, boardMissionId, productType)}>
                     <span>{machineName ? machineName : actionName}</span>
-                    {anchorEl ? <UpArrowIcon  color={textColor}/> :  <DownArrowIcon color={textColor}/> }
+                    {anchorEl ? <UpArrowIcon  color={textColor}/> :  <DownArrowIcon color={textColor} /> }
                 </Button>
                 <PermissionCheck userPermission={Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR}>
                     {nextStationId && <Button
@@ -102,7 +103,7 @@ const CurrentStationComponent = ({ boardMissionId,textColor, machineName, action
                         onClick={() => onUpdateCurrentStation(boardMissionId, station.id, productType)}>{station.actionName}</MenuItem>)
                 }
             </Menu>
-        </div>
+        </>
     )
 }
 
