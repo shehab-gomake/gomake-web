@@ -57,7 +57,7 @@ const SelectComponent = ({ buttonLabel, list, onChange, style, checkWhatRenderAr
     const [filter, setFilter] = useState<string>();
     const open = Boolean(anchorEl);
     const { t } = useTranslation();
-    // const direction = t('direction')
+     const direction = t('direction')
     // const isRTL = direction === "rtl";
 
     const handleClick = (event: any) => {
@@ -150,7 +150,9 @@ const SelectComponent = ({ buttonLabel, list, onChange, style, checkWhatRenderAr
                 <span>{t(buttonLabel)}</span>
                 <KeyboardArrowDownIcon />
             </Button>
-            <StyledMenu anchorEl={anchorEl}
+            <StyledMenu 
+                dir={direction}
+                anchorEl={anchorEl}
                 open={open}
                 onClose={handleClose}>
                 <FormGroup>

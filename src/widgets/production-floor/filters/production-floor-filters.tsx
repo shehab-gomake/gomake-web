@@ -7,6 +7,66 @@ import { GoMakeDatepicker } from "@/components/date-picker/date-picker-component
 import { filtersInputs } from "@/widgets/production-floor/filters/filters-inputs";
 import { SelectComponent } from "@/widgets/production-floor/filters/select/select-component";
 import { Source, useActionsList } from "@/widgets/production-floor/filters/select/actions-select/use-actions-list";
+import { styled } from '@mui/system';
+
+const CustomChip = styled(Chip)(({ theme }) => ({
+    color: 'var(--Primary-600, #2E3092)',
+    fontFamily: 'Inter',
+    fontSize: '12px',
+    fontStyle: 'normal',
+    fontWeight: 500,
+    lineHeight: '24px',
+    borderRadius: '4px',
+    border: '1.5px solid rgba(237, 2, 140, 0.40)',
+    background: 'rgba(237, 2, 140, 0.40)',
+    boxShadow: '0px 1px 2px 0px rgba(16, 24, 40, 0.05)',
+    display: 'flex',
+    alignItems: 'center',
+    padding: '4px 8px',
+}));
+
+const Circle = styled(Box)(({ theme }) => ({
+    width: '16px',
+    height: '16px',
+    borderRadius: '50%',
+    backgroundColor: 'rgba(237, 2, 140, 0.60)', // Adjust color as needed
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    color: '#FFF',
+    fontSize: '10px',
+    fontWeight: 500,
+    marginLeft: '4px',
+}));
+
+const CustomChipComponent = ({ label, onClick, isSelected }: { label: string; onClick?: () => void; isSelected?: boolean }) => {
+    return (
+        <CustomChip
+            label={label}
+            onClick={onClick}
+            sx={{
+                animation: isSelected ? 'flicker 1s infinite' : 'none',
+                '@keyframes flicker': {
+                    '0%': { opacity: 1 },
+                    '50%': { opacity: 0.5 },
+                    '100%': { opacity: 1 },
+                },
+                backgroundColor: isSelected ? 'rgba(237, 2, 140, 0.60)' : 'rgba(237, 2, 140, 0.40)',
+                border: isSelected ? '2px solid rgba(237, 2, 140, 0.70)' : '1.5px solid rgba(237, 2, 140, 0.40)',
+                transition: 'background-color 0.3s ease, border 0.3s ease',
+            }}
+
+            icon={
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                    <Circle>5</Circle>
+                    <Circle>5</Circle>
+                </Box>
+            }
+        />
+    );
+};
+
+export default CustomChipComponent;
 
 // here...
 const ProductionFloorFilters = () => {
@@ -21,9 +81,15 @@ const ProductionFloorFilters = () => {
         deliveryDateFilter
     } = useProductionFloorFilters();
     const { t } = useTranslation();
-    const {
-        actionsMachinesIds,
-    } = useActionsList(Source.PRODUCTION_FLOOR);
+    const {actionsMachinesIds } = useActionsList(Source.PRODUCTION_FLOOR);
+    const [selectedChip, setSelectedChip] = React.useState<string | null>(null);
+
+    const handleChipClick = (label: string) => {
+        console.log(`Chip clicked: ${label}`);
+        setSelectedChip(selectedChip === label ? null : label); 
+
+        // filter by the selected machine
+    };
 
     return (
         <Stack direction={'row'} padding={'12px 0'} style={{ backgroundColor: '#FFF' }} alignItems={'center'}
@@ -34,31 +100,33 @@ const ProductionFloorFilters = () => {
                 placeholder={t('productionFloor.deliveryTime')} />
             <GoMakeDatepicker value={createDateFilter} onChange={onSelectCreateDates}
                 placeholder={t('productionFloor.createTime')} />
-            {/* <Box sx={{
-                // position: 'absolute',
-                top: '50%',
-                left: 'calc(100% + 10px)', // Adjust as needed
-                maxHeight: '100px',
-                overflowY: 'auto',
-                border: '1px solid #E0E0E0',
-                borderRadius: '4px',
-                backgroundColor: '#FFF',
-                zIndex: 99999999999999,
-                padding: '8px',
-                display: 'flex',
-                flexWrap: 'wrap'
-            }}>
+            <Box
+                sx={{
+                    maxHeight: '100px',
+                    maxWidth: "50%",
+                    overflowX: 'auto', 
+                    overflowY: 'hidden', 
+                    borderRadius: '4px',
+                    backgroundColor: '#FFF',
+                    padding: '8px',
+                    display: 'flex',
+                    flexWrap: 'nowrap', 
+                    gap: '10px',
+                    whiteSpace: 'nowrap', 
+                }}
+            >
                 {actionsMachinesIds.flatMap((item) =>
-                    item.machineNames.map((machineName, index) => (
-                        <Chip
-                            key={`${item.actionId}-${index}`} // Ensure unique key for each chip
-                            label={machineName || 'Unknown'}
-                            sx={{ margin: '4px' }}
-                        // Optionally add a delete button or similar functionality if needed
+                    (item.machineNames || []).map((machineName, index) => (
+                        <CustomChipComponent
+                            key={`${item.actionId}-${index}`}
+                            label={`${item.actionName || 'Unknown Action'} | ${machineName || 'Unknown Machine'}`}
+                            onClick={() => handleChipClick(`${item.actionName || 'Unknown Action'} | ${machineName || 'Unknown Machine'}`)}
+                            isSelected={selectedChip === `${item.actionName || 'Unknown Action'} | ${machineName || 'Unknown Machine'}`}
+
                         />
                     ))
                 )}
-            </Box> */}
+            </Box>
         </Stack>
     )
 }
