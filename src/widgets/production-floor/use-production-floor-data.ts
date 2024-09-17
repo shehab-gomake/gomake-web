@@ -117,12 +117,34 @@ const useProductionFloorData = () => {
         setOpenMarkReadyModal(true);
     };
 
+
+    // need testing
+    const handleRemoveBoardMission = (boardMissionId) => {
+        setData((prevData) => {
+            return prevData.map((item) => {
+                if (Array.isArray(item.boardMissions)) {
+                    const updatedBoardMissions = item.boardMissions?.filter(
+                        (mission) => mission.id !== boardMissionId
+                    );
+    
+                    return {
+                        ...item,
+                        boardMissions: updatedBoardMissions,
+                    };
+                }
+                return item;
+            });
+        });
+    };
+
     const onClickMoveBoardMissionToDone = async (sendMessage: boolean) => {
         const callBack = (res) => {
             setOpenMarkReadyModal(false);
             //setOpenPackagesModal(true)
             if (res?.success) {
                 alertSuccessUpdate();
+                handleRemoveBoardMission(selectedMissionId)
+
             } else {
                 alertFaultUpdate();
             }
