@@ -11,12 +11,20 @@ import { styled } from '@mui/system';
 import { useTranslation } from "react-i18next";
 import { toRgba } from "@/utils/helpers";
 import { FONT_FAMILY } from "@/utils/font-family";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { IStatusesBoardsMissions } from "../interfaces/production-floor-data-response";
+import { boardsMissionsState } from "../state/boards";
+import { fetchS3JsonContent } from "@/utils/S3Content";
+import { productionFloorFiltersState } from "../state/production-floor-filters";
 
 interface CustomCardProps {
     label: string;
+    machineId?: string;
     onClick?: () => void; 
     isSelected?: boolean;
     dir?:string;
+    getColorByMachineId?:any;
+    filters?: any;
 }
 
 const CustomIconButton = styled(IconButton)(({ theme }) => ({
@@ -32,6 +40,7 @@ const CustomIconButton = styled(IconButton)(({ theme }) => ({
         backgroundColor: toRgba("#2E3092", 0.1),
     }
 }));
+
 
 const CustomCard = styled(Card)<{ isSelected?: boolean; color: string }>(({ isSelected, color }) => ({
     border: isSelected ? `none` : `1.5px solid ${color}`,
@@ -54,46 +63,72 @@ const CustomCard = styled(Card)<{ isSelected?: boolean; color: string }>(({ isSe
 }));
 
 
-const Circle = styled(Box)<{ borderColor: string; bgColor: string , dir : string }>(({ borderColor, bgColor , dir }) => ({
+const Circle = styled(Box)<{  numColor: string , dir : string }>(({  numColor , dir }) => ({
     width: "16px",
     height: "16px",
     borderRadius: '50%',
-    display: 'flex',
+    display: 'flex', 
     justifyContent: 'center',
     alignItems: 'center',
-    border: `0.5px solid ${borderColor}`,
-    backgroundColor: bgColor,
+    // border: `0.5px solid ${borderColor}`,
+    backgroundColor: "#ffffff",
     marginLeft: dir==="rtl" ? 0 : 4,
     marginRight: dir==="rtl" ? 4: 0,
     fontSize: 12,
     fontWeight: 600, 
-    color:borderColor
+    color:numColor
 
 }));
 
-const CustomCardComponent = ({ label, onClick, isSelected ,dir }: CustomCardProps) => (
-    <CustomCard onClick={onClick} isSelected={isSelected} color="#088AB2">
-        <CardContent sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: "10px !important" }}>
-            <Typography
-                variant="subtitle2"
+const CustomCardComponent = ({
+    label,
+    onClick,
+    isSelected,
+    dir,
+    machineId,
+    getColorByMachineId,
+    filters
+}: CustomCardProps) => {
+    // Fetch the machine status
+    const machineStatus = filters.stations
+        .flatMap(station => station?.machineStatuses)
+        .find(status => status?.id === machineId);
+
+    const inProcessCount = machineStatus?.inProcessCount || 0;
+    const stuckCount = machineStatus?.stuckCount || 0;
+    const color = getColorByMachineId(machineId);
+
+    return (
+        <CustomCard onClick={onClick} isSelected={isSelected} color={color}>
+            <CardContent
                 sx={{
-                    color: isSelected ? '#FFF' : '#088AB2',
-                    ...FONT_FAMILY.Inter(400, 14),
-                    maxWidth:"150px",
-                    overflow: 'hidden',
-                    whiteSpace: 'nowrap', 
-                    textOverflow: 'ellipsis' 
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    padding: '10px !important',
                 }}
             >
-                {label}
-            </Typography>
-            <Box sx={{ display: 'flex' }}>
-                <Circle borderColor="#079455" bgColor="#ECFDF3" dir={dir} >4</Circle>
-                <Circle borderColor="#D92D20" bgColor="#FEF3F2" dir={dir} >5</Circle>
-            </Box>
-        </CardContent>
-    </CustomCard>
-);
+                <Typography
+                    variant="subtitle2"
+                    sx={{
+                        color: isSelected ? '#FFF' : color,
+                        ...FONT_FAMILY.Inter(400, 14),
+                        maxWidth: '150px',
+                        overflow: 'hidden',
+                        whiteSpace: 'nowrap',
+                        textOverflow: 'ellipsis',
+                    }}
+                >
+                    {label}
+                </Typography>
+                <Box sx={{ display: 'flex' }}>
+                    <Circle numColor="#E7D000" dir={dir}>{inProcessCount}</Circle>
+                    <Circle numColor="#D92D20" dir={dir}>{stuckCount}</Circle>
+                </Box>
+            </CardContent>
+        </CustomCard>
+    );
+};
 
 
 const ProductionFloorFilters = () => {
@@ -104,14 +139,47 @@ const ProductionFloorFilters = () => {
     const isRTL = dir === "rtl";
     const { actionsMachinesIds } = useActionsList(Source.PRODUCTION_FLOOR);
     const [selectedChip, setSelectedChip] = React.useState<string | null>(null);
-    const [visibleCards, setVisibleCards] = useState<string[]>([]);
-    const [hiddenCards, setHiddenCards] = useState<string[]>([]);
+    const [visibleCards, setVisibleCards] = useState<{ label: string, machineId: string }[]>([]);
+    const [hiddenCards, setHiddenCards] = useState<{ label: string, machineId: string }[]>([]);
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-
+    const [data , setData] = useRecoilState<IStatusesBoardsMissions[]>(boardsMissionsState);
+    const filters = useRecoilValue(productionFloorFiltersState);
+    const [machinesColors, setMachinesColors] = useState([]);
+    const originalDataRef = useRef<IStatusesBoardsMissions[]>([]); 
     const scrollContainerRef = useRef<HTMLDivElement>(null);
 
-    const handleChipClick = (label: string) => {
-        setSelectedChip(selectedChip === label ? null : label);
+    const getColorByMachineId = (machineId) => {
+        const entry = machinesColors?.find(item => item.id === machineId);
+        return entry ? entry?.color : '#088AB2'; 
+    };
+
+    const filterDataByMachineId = (machineId: string) => {
+        setData((prevData) => {
+            return prevData.map((item) => {
+                const filteredBoardMissions = item.boardMissions.filter(
+                    (mission) => 
+                        mission?.currentStation?.machineId === machineId || 
+                        mission?.currentStation?.employeeId === machineId
+                );
+    
+                return {
+                    ...item,
+                    boardMissions: filteredBoardMissions,
+                };
+            });
+        });
+    };
+    
+    
+    const handleChipClick = (card: { label: string; machineId: string }) => {
+        const { label, machineId } = card;
+        const isChipSelected = selectedChip === label;
+        setSelectedChip(isChipSelected ? null : label);
+        setData(originalDataRef.current);
+    
+        if (machineId && !isChipSelected) {
+            filterDataByMachineId(machineId);
+        }
     };
 
     const handleMoreClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -122,47 +190,80 @@ const ProductionFloorFilters = () => {
         setAnchorEl(null);
     };
 
-    const handleMenuItemClick = (label: string) => {
-        setHiddenCards(prevHidden => prevHidden.filter(card => card !== label));
-
+    const handleMenuItemClick= (selectedCard: { label: string; machineId: string }) => {
+        setHiddenCards(prevHidden => {
+            const updatedHiddenCards = prevHidden.filter(card => card.label !== selectedCard.label);
+            return updatedHiddenCards;
+        });
+        
         setVisibleCards(prevVisible => {
-            const newVisibleCards = [label, ...prevVisible];
-
-            setSelectedChip(label);
-
-          
+            const newVisibleCards = [{ label: selectedCard.label, machineId: selectedCard.machineId }, ...prevVisible];
+            
             if (newVisibleCards.length > 0) {
                 setHiddenCards(prevHidden => [...prevHidden, newVisibleCards[newVisibleCards.length - 1]]);
             }
-
+    
             return newVisibleCards.slice(0, -1); 
         });
 
+        setSelectedChip(selectedCard.label);
+        setData(originalDataRef.current);
+    
+        if (selectedCard.machineId) {
+            filterDataByMachineId(selectedCard.machineId);
+        }
+        
         handleClose();
     };
 
+    useEffect(() => {
+        const fetchMachinesColors = async () => {
+            try {
+                const data = await fetchS3JsonContent("machinesColors.json");
+                setMachinesColors(data);
+            } catch (error) {
+                console.error("Error fetching machines colors :", error);
+            }
+        };
+        fetchMachinesColors();
+    }, []);
 
+    useEffect(() => {
+        if (data.length > 0 && originalDataRef.current.length === 0) {
+            originalDataRef.current = data; 
+        }
+    }, [data]);
+    
+    useEffect(() => {
+        console.log("filters has been updated:", filters);
+    }, [filters]);
+
+    useEffect(() => {
+        console.log("Data has been updated:", data);
+    }, [data]);
+    
     useEffect(() => {
         if (scrollContainerRef.current) {
             const containerWidth = scrollContainerRef.current.clientWidth;
             let totalWidth = 0;
-            let visible: string[] = [];
-            let hidden: string[] = [];
+            let visible: { label: string, machineId: string }[] = [];
+            let hidden: { label: string, machineId: string }[] = [];
 
             actionsMachinesIds.forEach(item => {
-                (item.machineNames || []).forEach((machineName) => {
+                const { actionName = 'Unknown Action', machineIds = [], machineNames = [] } = item;
+
+                machineNames.forEach((machineName, index) => {
                     const cardWidth = 200;
 
                     totalWidth += cardWidth;
 
-                    const actionName = item.actionName || 'Unknown Action';
-                    const labelMachineName = machineName || 'Unknown Machine';
-                    const cardLabel = `${actionName} | ${labelMachineName}`;
+                    const cardLabel = `${actionName} | ${machineName}`;
+                    const machineId = machineIds[index]; 
 
                     if (totalWidth <= containerWidth) {
-                        visible.push(cardLabel);
+                        visible.push({ label: cardLabel, machineId: machineId || '' });
                     } else {
-                        hidden.push(cardLabel);
+                        hidden.push({ label: cardLabel, machineId: machineId || '' });
                     }
                 });
             });
@@ -192,16 +293,19 @@ const ProductionFloorFilters = () => {
                     whiteSpace: 'nowrap',
                     borderRadius: '4px',
                     backgroundColor: '#FFF',
-                    alignItems:'center'
+                    alignItems: 'center'
                 }}
             >
-                {visibleCards.map((label, index) => (
+                {visibleCards.map((card, index) => (
                     <CustomCardComponent
-                    dir={dir}
+                        dir={dir}
                         key={index}
-                        label={label}
-                        onClick={() => handleChipClick(label)}
-                        isSelected={selectedChip === label}
+                        label={card.label}
+                        machineId={card.machineId}
+                        onClick={() => handleChipClick(card)}
+                        isSelected={selectedChip === card.label}
+                        getColorByMachineId={getColorByMachineId}
+                        filters={filters}
                     />
                 ))}
                 {hiddenCards.length > 0 && (
@@ -218,9 +322,10 @@ const ProductionFloorFilters = () => {
                                 },
                               }}
                             anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
-                            {hiddenCards.map((label, index) => (
-                                <MenuItem key={index} onClick={() => handleMenuItemClick(label)}>
-                                    {label}
+                            {hiddenCards.map((card, index) => (
+                                <MenuItem key={index} onClick={() => handleMenuItemClick(card)}>
+
+                                    {card.label}
                                 </MenuItem>
                             ))}
                         </Menu>
