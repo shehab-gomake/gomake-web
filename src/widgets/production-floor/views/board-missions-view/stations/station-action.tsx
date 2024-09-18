@@ -351,17 +351,6 @@ const BoardMissionsStationAction = ({
                                                                 )
                                                             }
                                                         </div>
-
-                                                        {/* <GoMakeAutoComplate
-                                                            onChange={(e, v) => {
-                                                                console.log("dsfdsfds")
-                                                                // setChooseMachine(false);
-                                                            }}
-                                                            style={{ width: "200px" }}
-                                                            options={machinesList}
-                                                            placeholder={"Choose machine"}
-                                                            value={machineName}
-                                                        /> */}
                                                         <IconButton
                                                             onClick={(e) => {
                                                                 e.stopPropagation();
@@ -435,18 +424,6 @@ const BoardMissionsStationAction = ({
                                                                 </ClickOutside>
                                                             }
                                                         </div>
-                                                        {/* <GoMakeAutoComplate
-                                                            onChange={(e, v) => {
-                                                                console.log("change", v)
-                                                                // updateWorkFlowForEmployees(actionId, productType, actionIndex, v?.label, v?.value, id)
-                                                                setChooseEmployee(false);
-                                                            }}
-                                                            style={{ width: "200px" }}
-                                                            options={employeesList}
-                                                            placeholder={"Choose Employee"}
-                                                            value={employeeName}
-
-                                                        /> */}
                                                         <IconButton
                                                             onClick={(e) => {
                                                                 e.stopPropagation();
