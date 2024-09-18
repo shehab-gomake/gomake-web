@@ -77,7 +77,7 @@ const useMoreCircle = () => {
       },
       {
         condition: documentType !== DOCUMENT_TYPE.quote,
-        //onClick: () => navigate(`/${documentPath}?Id=${quote?.id}`),
+        onClick: () => navigate(`/${documentPath}?Id=${quote?.id}`),
         icon: <EditingIcon />,
         name: <a style={classes.rowTextStyle} href={`/${documentPath}?Id=${quote?.id}`}>{t("sales.quote.edit")}</a>
       },
@@ -119,7 +119,7 @@ const useMoreCircle = () => {
       },
       {
         condition: isOrder && quote?.isCanClose && CheckPermission(Permissions.SHOW_BOARD_MISSIONS),
-        // onClick: () => navigate(`/jobs?orderNumber=${quote?.number}`),
+        onClick: () => navigate(`/jobs?orderNumber=${quote?.number}`),
         icon: <JobsIcon />,
         name: <a style={classes.rowTextStyle} href={`/jobs?orderNumber=${quote?.number}`}>{t("sales.quote.jobs")}</a>
       },
