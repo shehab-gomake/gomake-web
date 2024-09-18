@@ -407,7 +407,7 @@ const ActionContainerComponent = ({
                               actionId,
                               productType,
                               actionIndex,
-                              machineName: v.label,
+                              machineName: v?.label,
                               machineId: v?.value,
                               printingActionId: id,
 
@@ -540,7 +540,7 @@ const ActionContainerComponent = ({
                               actionId,
                               productType,
                               actionIndex,
-                              printHouseMaterialSizeName: v.label,
+                              printHouseMaterialSizeName: v?.label,
                               printHouseMaterialSizeId: v?.value,
                               printingActionId: id,
                             })
