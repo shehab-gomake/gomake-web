@@ -76,29 +76,7 @@ const PriceListPageWidget = ({ widgetType }) => {
         onClickCloseChangePriceModal,
         setIsChangePriceForEdit,
         isLoadging,
-        validateWorkflows
     } = useDigitalOffsetPrice({ clasess, widgetType });
-
-    const [isValidWorkFLow, setIsValidWorkFlow] = useState(false)
-    const [errorMsgWorkFLow, setErrorMsgWorkFLow] = useState([])
-
-    console.log("workFlows", { isValidWorkFLow, errorMsgWorkFLow, workFlows })
-
-    // useEffect(() => {
-    //     if (workFlows && workFlows?.length > 0) {
-    //         const validationResult = validateWorkflows(workFlows[0]);
-    //         console.log("validationResult", validationResult)
-    //         if (validationResult.errors?.length > 0) {
-    //             setErrorMsgWorkFLow(...[validationResult.errors])
-
-    //         } else {
-    //             setIsValidWorkFlow(validationResult.isValid)
-    //             setErrorMsgWorkFLow([])
-    //         }
-    //     }
-
-    // }, [workFlows])
-
 
     const visibleSections = productTemplate?.sections?.filter(section => !section.isHidden);
     const dir: 'rtl' | 'ltr' = t('direction');

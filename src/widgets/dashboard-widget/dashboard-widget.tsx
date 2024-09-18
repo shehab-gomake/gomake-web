@@ -119,7 +119,6 @@ const DashboardWidget = ({ }: IDashboardWidget) => {
     const sortedMergedLists = mergedLists().sort((a, b) => {
         return orderMap[a.id] - orderMap[b.id];
     });
-    console.log("tasks()", tasks())
     return (
         <div style={classes.container}>
             {
