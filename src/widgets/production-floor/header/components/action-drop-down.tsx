@@ -27,7 +27,7 @@ const ActionsDropdown = ({
                 <ClickOutside exceptionRef={buttonRef} onClick={() => setOpen(false)}>
                     <Paper sx={{
                         position: 'absolute', ...adaptRight(dir, 0), top: '110%',
-                        maxWidth: '300px', height: 'fit-content', maxHeight: '600px', overflow: 'auto', zIndex: 99999999999999
+                        maxWidth: '300px', height: 'fit-content', maxHeight: '540px', overflow: 'auto', zIndex: 99999999999999
                     }}>
                         <FormGroup>
                             <div style={{ position: 'sticky', top: 0, backgroundColor: '#FFF', zIndex: 1 }}>
