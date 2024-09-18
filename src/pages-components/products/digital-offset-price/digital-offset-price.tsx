@@ -16,7 +16,7 @@ import { PricingWidget } from "@/widgets/product-pricing-widget/pricing-widget";
 import { createTheme, Tabs, ThemeProvider } from "@mui/material";
 import { StepType } from "@reactour/tour";
 import { useGoMakeTour } from "@/hooks/use-go-make-tour";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { currentProductItemValuePriceState, lastProductItemValuePriceState } from "@/widgets/product-pricing-widget/state";
 import { PriceListPageSkeletonWidget } from "./digital-offset-price-skeleton";
@@ -75,8 +75,31 @@ const PriceListPageWidget = ({ widgetType }) => {
         isChangePriceForEdit,
         onClickCloseChangePriceModal,
         setIsChangePriceForEdit,
-        isLoadging
+        isLoadging,
+        validateWorkflows
     } = useDigitalOffsetPrice({ clasess, widgetType });
+
+    const [isValidWorkFLow, setIsValidWorkFlow] = useState(false)
+    const [errorMsgWorkFLow, setErrorMsgWorkFLow] = useState([])
+
+    console.log("workFlows", { isValidWorkFLow, errorMsgWorkFLow, workFlows })
+
+    // useEffect(() => {
+    //     if (workFlows && workFlows?.length > 0) {
+    //         const validationResult = validateWorkflows(workFlows[0]);
+    //         console.log("validationResult", validationResult)
+    //         if (validationResult.errors?.length > 0) {
+    //             setErrorMsgWorkFLow(...[validationResult.errors])
+
+    //         } else {
+    //             setIsValidWorkFlow(validationResult.isValid)
+    //             setErrorMsgWorkFLow([])
+    //         }
+    //     }
+
+    // }, [workFlows])
+
+
     const visibleSections = productTemplate?.sections?.filter(section => !section.isHidden);
     const dir: 'rtl' | 'ltr' = t('direction');
     const theme = createTheme({
