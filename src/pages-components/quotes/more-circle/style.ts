@@ -37,7 +37,7 @@ const useStyle = () => {
         fontSize:'12px',
         width:'100%',
         textDecoration:"unset",
-        display:'block'
+        display:'block',
       },
     };
   }, []);
