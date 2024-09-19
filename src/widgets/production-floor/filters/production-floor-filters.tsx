@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Box, Stack, Card, CardContent, Typography, Menu, MenuItem, IconButton } from "@mui/material";
 import { useProductionFloorFilters } from "@/widgets/production-floor/filters/use-production-floor-filters";
 import { SearchInputComponent } from "@/components/form-inputs/search-input-component";
@@ -48,9 +48,9 @@ const CustomCard = styled(Card)<{ isSelected?: boolean; color: string }>(({ isSe
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-    // minWidth: 'fit-content',
     width: 'fit-content',
-    maxWidth: "300px",
+    // important
+    maxWidth: "250px",
     '&:hover': {
         boxShadow: '0px 2px 4px rgba(16, 24, 40, 0.1)',
     },
@@ -106,7 +106,7 @@ const CustomCardComponent = ({
                     sx={{
                         color: isSelected ? '#FFF' : color,
                         ...FONT_FAMILY.Inter(400, 14),
-                        maxWidth: '150px',
+                        maxWidth: '170px',
                         overflow: 'hidden',
                         whiteSpace: 'nowrap',
                         textOverflow: 'ellipsis',
@@ -172,8 +172,35 @@ const ProductionFloorFilters = () => {
     }, [data]);
 
     useEffect(() => {
+        const fetchMachinesColors = async () => {
+            try {
+                const data = await fetchS3JsonContent("machinesColors.json");
+                setMachinesColors(data);
+            } catch (error) {
+                console.error("Error fetching machines colors :", error);
+            }
+        };
+        fetchMachinesColors();
+    }, []);
+
+    const [containerWidth, setContainerWidth] = useState(0);
+
+    useEffect(() => {
+        const updateContainerWidth = () => {
+            if (scrollContainerRef.current) {
+                setContainerWidth(scrollContainerRef.current.clientWidth);
+            }
+        };
+        updateContainerWidth();
+        window.addEventListener('resize', updateContainerWidth);
+
+        return () => {
+            window.removeEventListener('resize', updateContainerWidth);
+        };
+    }, []); 
+
+    useEffect(() => {
         if (scrollContainerRef.current) {
-            const containerWidth = scrollContainerRef.current.clientWidth;
             let totalWidth = 0;
             let visible: { label: string, machineId: string }[] = [];
             let hidden: { label: string, machineId: string }[] = [];
@@ -182,7 +209,8 @@ const ProductionFloorFilters = () => {
                 const { actionName = 'Unknown Action', machineIds = [], machineNames = [] } = item;
 
                 machineNames.forEach((machineName, index) => {
-                    const cardWidth = 200;
+                    // important
+                    const cardWidth = 250;
 
                     totalWidth += cardWidth;
 
@@ -200,19 +228,7 @@ const ProductionFloorFilters = () => {
             setVisibleCards(visible);
             setHiddenCards(hidden);
         }
-    }, [actionsMachinesIds]);
-
-    useEffect(() => {
-        const fetchMachinesColors = async () => {
-            try {
-                const data = await fetchS3JsonContent("machinesColors.json");
-                setMachinesColors(data);
-            } catch (error) {
-                console.error("Error fetching machines colors :", error);
-            }
-        };
-        fetchMachinesColors();
-    }, []);
+    }, [actionsMachinesIds, containerWidth]);
 
     return (
         <Stack direction={'row'} padding={'12px 0'} style={{ backgroundColor: '#FFF' }} alignItems={'center'} gap={'20px'}>
@@ -223,9 +239,9 @@ const ProductionFloorFilters = () => {
             <Box
                 ref={scrollContainerRef}
                 sx={{
-                    width: "45%",
+                    width: "50%",
                     maxHeight: '100px',
-                    maxWidth: '50%',
+                     maxWidth: '60%',
                     overflowX: 'scroll',
                     overflowY: 'scroll',
                     display: 'flex',
@@ -234,7 +250,9 @@ const ProductionFloorFilters = () => {
                     whiteSpace: 'nowrap',
                     borderRadius: '4px',
                     backgroundColor: '#FFF',
-                    alignItems: 'center'
+                    alignItems: 'center',
+                    // important
+                    justifyContent:"flex-end"
                 }}
             >
                 {visibleCards.map((card, index) => (
