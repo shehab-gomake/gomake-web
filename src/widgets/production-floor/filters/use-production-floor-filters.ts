@@ -1,5 +1,5 @@
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
-import { productionFloorTextSearchState } from "@/widgets/production-floor/state/text-search";
+import { productionFloorTextSearchState, selectedChipIdState } from "@/widgets/production-floor/state/text-search";
 import { productionFloorFiltersState } from "@/widgets/production-floor/state/production-floor-filters";
 import { tagsState } from "@/widgets/production-floor/state/tags";
 import { IFilterGroup, IProductionFloorFilter, IStation } from "@/widgets/production-floor/interfaces/filters";
@@ -11,7 +11,6 @@ import { useRouter } from "next/router";
 import { useMemo, useRef, useState } from "react";
 import { userProductionFloorGroupsState } from "@/widgets/production-floor/state/production-floor-groups-state";
 import { productionFloorPathsState } from "@/widgets/production-floor/state/production-floor-paths";
-import { IStatusesBoardsMissions } from "../interfaces/production-floor-data-response";
 import { Source, useActionsList } from "./select/actions-select/use-actions-list";
 import { useTranslation } from "react-i18next";
 
@@ -31,13 +30,12 @@ const useProductionFloorFilters = () => {
     const isRTL = dir === "rtl";
     const { actionsMachinesIds } = useActionsList(Source.PRODUCTION_FLOOR);
     const [selectedChip, setSelectedChip] = useState<string | null>(null);
+    const setSelectedChipId = useSetRecoilState(selectedChipIdState);
     const [visibleCards, setVisibleCards] = useState<{ label: string, machineId: string }[]>([]);
     const [hiddenCards, setHiddenCards] = useState<{ label: string, machineId: string }[]>([]);
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const filters = useRecoilValue(productionFloorFiltersState);
     const [machinesColors, setMachinesColors] = useState([]);
-    const [isFromFilter, setIsFromFilters] = useState<boolean>(false);
-    const originalDataRef = useRef<IStatusesBoardsMissions[]>([]);
     const scrollContainerRef = useRef<HTMLDivElement>(null);
     const groups = filtersState?.groups;
 
@@ -152,27 +150,9 @@ const useProductionFloorFilters = () => {
 
     //////////////////////////////////////////////  NEW ///////////////////////////////////////////////////
 
-
     const getColorByMachineId = (machineId) => {
         const entry = machinesColors?.find(item => item.id === machineId);
         return entry ? entry?.color : '#088AB2';
-    };
-
-    const filterDataByMachineId = (machineId: string) => {
-        setData((prevData) => {
-            return prevData.map((item) => {
-                const filteredBoardMissions = item.boardMissions.filter(
-                    (mission) =>
-                        mission?.currentStation?.machineId === machineId ||
-                        mission?.currentStation?.employeeId === machineId
-                );
-
-                return {
-                    ...item,
-                    boardMissions: filteredBoardMissions,
-                };
-            });
-        });
     };
 
     const handleMoreClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -187,11 +167,12 @@ const useProductionFloorFilters = () => {
         const { label, machineId } = card;
         const isChipSelected = selectedChip === label;
         setSelectedChip(isChipSelected ? null : label);
-        setIsFromFilters(true);
-        setData(originalDataRef.current);
-
         if (machineId && !isChipSelected) {
-            filterDataByMachineId(machineId);
+            setSelectedChipId(machineId);
+        }
+        else{
+            setSelectedChipId(null);
+
         }
     };
 
@@ -211,13 +192,13 @@ const useProductionFloorFilters = () => {
             return newVisibleCards.slice(0, -1);
         });
         setSelectedChip(selectedCard.label);
-        setIsFromFilters(true);
-        setData(originalDataRef.current);
-
+      
         if (selectedCard.machineId) {
-            filterDataByMachineId(selectedCard.machineId);
+            setSelectedChipId(selectedCard.machineId);
         }
-
+        else{
+            setSelectedChipId(null);
+        }
         handleClose();
     };
 
@@ -253,12 +234,9 @@ const useProductionFloorFilters = () => {
         visibleCards,
         hiddenCards,
         setMachinesColors,
-        isFromFilter,
         setVisibleCards,
         setHiddenCards,
         scrollContainerRef,
-        originalDataRef,
-        setIsFromFilters,
         groups
     }
 }

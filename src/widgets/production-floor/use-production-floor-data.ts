@@ -120,6 +120,7 @@ const useProductionFloorData = () => {
 
     // need testing
     const handleRemoveBoardMission = (boardMissionId) => {
+        
         setData((prevData) => {
             return prevData.map((item) => {
                 if (Array.isArray(item.boardMissions)) {
@@ -144,7 +145,6 @@ const useProductionFloorData = () => {
             if (res?.success) {
                 alertSuccessUpdate();
                 handleRemoveBoardMission(selectedMissionId)
-
             } else {
                 alertFaultUpdate();
             }

@@ -125,6 +125,8 @@ const CustomCardComponent = ({
 
 const ProductionFloorFilters = () => {
     const { tagsList } = filtersInputs();
+    const [containerWidth, setContainerWidth] = useState(0);
+
     const {
         t,
         dir,
@@ -150,26 +152,10 @@ const ProductionFloorFilters = () => {
         visibleCards,
         hiddenCards,
         setMachinesColors,
-        isFromFilter,
         setVisibleCards,
         setHiddenCards,
-        scrollContainerRef,
-        originalDataRef,
-        setIsFromFilters
+        scrollContainerRef
     } = useProductionFloorFilters();
-
-    useEffect(() => {
-        if (data.length > 0 && originalDataRef.current.length === 0) {
-            originalDataRef.current = data;
-        }
-        else if ((data.length > 0 && !isFromFilter && originalDataRef.current.length !== 0)) {
-            setSelectedChip(null);
-            originalDataRef.current = data;
-        }
-        if (isFromFilter) {
-            setIsFromFilters(false);
-        }
-    }, [data]);
 
     useEffect(() => {
         const fetchMachinesColors = async () => {
@@ -182,8 +168,6 @@ const ProductionFloorFilters = () => {
         };
         fetchMachinesColors();
     }, []);
-
-    const [containerWidth, setContainerWidth] = useState(0);
 
     useEffect(() => {
         const updateContainerWidth = () => {
@@ -228,7 +212,7 @@ const ProductionFloorFilters = () => {
             setVisibleCards(visible);
             setHiddenCards(hidden);
         }
-    }, [actionsMachinesIds, containerWidth]);
+    }, [actionsMachinesIds, containerWidth]); 
 
     return (
         <Stack direction={'row'} padding={'12px 0'} style={{ backgroundColor: '#FFF' }} alignItems={'center'} gap={'20px'}>
