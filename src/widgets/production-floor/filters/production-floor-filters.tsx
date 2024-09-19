@@ -210,7 +210,7 @@ const ProductionFloorFilters = () => {
 
                 machineNames.forEach((machineName, index) => {
                     // important
-                    const cardWidth = 250;
+                    const cardWidth = 240;
 
                     totalWidth += cardWidth;
 
@@ -239,7 +239,7 @@ const ProductionFloorFilters = () => {
             <Box
                 ref={scrollContainerRef}
                 sx={{
-                    width: "50%",
+                    width: "60%",
                     maxHeight: '100px',
                      maxWidth: '60%',
                     overflowX: 'scroll',
