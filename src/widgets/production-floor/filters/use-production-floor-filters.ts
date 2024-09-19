@@ -147,7 +147,6 @@ const useProductionFloorFilters = () => {
     }
 
 
-
     //////////////////////////////////////////////  NEW ///////////////////////////////////////////////////
 
     const getColorByMachineId = (machineId) => {
@@ -199,7 +198,6 @@ const useProductionFloorFilters = () => {
         else{
             setSelectedChipId(null);
         }
-        handleClose();
     };
 
     return {

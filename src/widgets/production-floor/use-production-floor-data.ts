@@ -48,25 +48,26 @@ const useProductionFloorData = () => {
 
     const updateStatus = async (boards: IBoardMissions[], statusId: string) => {
         const boardsIds = boards?.filter(b => b.statusId !== statusId);
-        setData(data?.map((status) => {
-            if (status.boardMissionStatus?.boardMissionStatus?.id === statusId) {
-                return {
-                    ...status,
-                    boardMissions: [...status.boardMissions, ...boardsIds?.map(b => ({
-                        ...b,
-                        statusId: status.boardMissionStatus.boardMissionStatus.id
-                    }))]
-                }
-            } else {
-                return {
-                    ...status,
-                    boardMissions: status.boardMissions.filter(b => !!!boardsIds.find(bs => b.id === bs.id && b.productType === bs.productType))
-                }
-            }
-        }))
+
         const callBack = (res) => {
             if (res.success) {
                 alertSuccessUpdate();
+                setData(data?.map((status) => {
+                    if (status.boardMissionStatus?.boardMissionStatus?.id === statusId) {
+                        return {
+                            ...status,
+                            boardMissions: [...status.boardMissions, ...boardsIds?.map(b => ({
+                                ...b,
+                                statusId: status.boardMissionStatus.boardMissionStatus.id
+                            }))]
+                        }
+                    } else {
+                        return {
+                            ...status,
+                            boardMissions: status.boardMissions.filter(b => !!!boardsIds.find(bs => b.id === bs.id && b.productType === bs.productType))
+                        }
+                    }
+                }))
             } else {
                 alertFaultUpdate();
             }
