@@ -6,7 +6,7 @@ import { DateFormatter } from "@/utils/adapter";
 import { SecondaryButton } from "@/components/button/secondary-button";
 
 
-const CreateNewTransactionModal = ({ openModal, onCloseModal }) => {
+const CreateNewTransactionModal = ({ openModal, onCloseModal, customerId }) => {
   const { classes } = useStyle();
   const {
     customer,
@@ -28,7 +28,7 @@ const CreateNewTransactionModal = ({ openModal, onCloseModal }) => {
     onChangePrice,
     createTransactionsApi,
     onCloseAndRemoveState
-  } = useCreateNewTransaction({ onCloseModal })
+  } = useCreateNewTransaction({ onCloseModal, customerId })
   return (
     <>
       <GoMakeModal

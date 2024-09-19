@@ -10,7 +10,7 @@ import { useStyle } from "./style";
 import { CreateNewTransactionModal } from "./widgets/create-transaction-modal";
 import { HeaderTitle } from "@/widgets/header-title";
 
-const LedgerReportWidget = () => {
+const LedgerReportWidget = ({ customerId }: any) => {
   const { classes } = useStyle();
   const {
     t,
@@ -46,7 +46,7 @@ const LedgerReportWidget = () => {
     handleDateChange,
     fromDate,
     toDate
-  } = useLedgerReport();
+  } = useLedgerReport({ customerId });
 
   return (
     <div style={classes.mainContainer}>
@@ -61,6 +61,7 @@ const LedgerReportWidget = () => {
         handleDateChange={handleDateChange}
         fromDate={fromDate}
         toDate={toDate}
+        customerId={customerId}
       />
       <Divider />
       <LedgerReportButtonWidget
@@ -94,7 +95,7 @@ const LedgerReportWidget = () => {
         clientPaymentsList={clientPaymentsList}
         getClientPaymentItems={getClientPaymentItems}
       />
-      <CreateNewTransactionModal onCloseModal={onClickCloseCreateTransactionModal} openModal={isopenCreateTransactionModal} />
+      <CreateNewTransactionModal onCloseModal={onClickCloseCreateTransactionModal} openModal={isopenCreateTransactionModal} customerId={customerId} />
     </div>
   );
 };
