@@ -284,7 +284,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               quote?.number,
               quote?.orderNumber,
               quote?.supplierName,
-              quote?.clientName,
+              <div style={{ cursor: "pointer" }} onClick={() => onClickOpenCustomerModal(quote?.clientId)}>
+                {quote?.clientName}
+              </div>,
               quote?.itemsNumber,
               quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
               quote?.notes,
@@ -310,7 +312,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               quote?.number,
               quote?.invoiceNumber,
               purchaseOrderNumbers,
-              quote?.customerName,
+              <div style={{ cursor: "pointer" }} onClick={() => onClickOpenCustomerModal(quote?.customerId)}>
+                {quote?.customerName}
+              </div>,
               quote?.itemsNumber,
               quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
               quote?.notes,
@@ -420,7 +424,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 <br />
                 {time}
               </div>,
-              quote?.customerName,
+              <div style={{ cursor: "pointer" }} onClick={() => onClickOpenCustomerModal(quote?.customerId)}>
+                {quote?.customerName}
+              </div>,
               quote?.agentName,
               quote?.number,
               quote?.sourceDocumentNumber?.map((item, index) => {
@@ -457,7 +463,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         const mapReceiptData = data?.map((quote: any) => [
           // GetDateFormat(quote?.creationDate),
           quote?.creationDate?.split(" ")[0],
-          quote?.customerName,
+          <div style={{ cursor: "pointer" }} onClick={() => onClickOpenCustomerModal(quote?.customerId)}>
+            {quote?.customerName}
+          </div>,
           quote?.agentName,
           quote?.number,
           _renderPaymentType(quote?.paymentType),
@@ -568,7 +576,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               quote?.number,
               quote?.orderNumber,
               quote?.supplierName,
-              quote?.clientName,
+              <div style={{ cursor: "pointer" }} onClick={() => onClickOpenCustomerModal(quote?.clientId)}>
+                {quote?.clientName}
+              </div>,
               quote?.itemsNumber,
               quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
               quote?.notes,
@@ -594,7 +604,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               quote?.number,
               quote?.invoiceNumber,
               purchaseOrderNumbers,
-              quote?.customerName,
+              <div style={{ cursor: "pointer" }} onClick={() => onClickOpenCustomerModal(quote?.customerId)}>
+                {quote?.customerName}
+              </div>,
               quote?.itemsNumber,
               quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
               quote?.notes,
@@ -705,7 +717,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 <br />
                 {time}
               </div>,
-              quote?.customerName,
+              <div style={{ cursor: "pointer" }} onClick={() => onClickOpenCustomerModal(quote?.customerId)}>
+                {quote?.customerName}
+              </div>,
               quote?.agentName,
               quote?.number,
               quote?.sourceDocumentNumber?.map((item, index) => {
@@ -741,7 +755,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         const mapReceiptData = data?.map((quote: any) => [
           // GetDateFormat(quote?.creationDate),
           quote?.creationDate?.split(" ")[0],
-          quote?.customerName,
+          <div style={{ cursor: "pointer" }} onClick={() => onClickOpenCustomerModal(quote?.customerId)}>
+            {quote?.customerName}
+          </div>,
           quote?.agentName,
           quote?.number,
           _renderPaymentType(quote?.paymentType),
@@ -1106,10 +1122,19 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     setActiveCard(null);
   };
 
-  const onSelectDeliveryTimeDates = (fromDate: Date, toDate: Date) => {
-    setResetDatePicker(false);
-    setFromDate(fromDate);
-    setToDate(toDate);
+  // const onSelectDeliveryTimeDates = (fromDate: Date, toDate: Date) => {
+  //   setResetDatePicker(false);
+  //   setFromDate(fromDate);
+  //   setToDate(toDate);
+  // };
+  const onSelectDeliveryTimeDates = (value) => {
+    if (value && value.length === 2) {
+      setFromDate(value[0]);
+      setToDate(value[1]);
+    } else {
+      setFromDate(null);
+      setToDate(null);
+    }
   };
 
   const tableHomeHeader = [
@@ -1710,6 +1735,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     closeAndTrackOrder,
     onClickClosePrintPDFModal,
     openPrintPDFModal,
+    fromDate,
+    toDate,
   };
 };
 

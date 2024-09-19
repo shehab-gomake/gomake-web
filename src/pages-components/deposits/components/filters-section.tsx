@@ -5,8 +5,9 @@ import { GomakePrimaryButton } from "@/components";
 import { GoMakeDatepicker } from "@/components/date-picker/date-picker-component";
 import { SearchInputComponent } from "@/components/form-inputs/search-input-component";
 import { useDeposits } from "../use-deposits";
+import { DateRangePicker } from "rsuite";
 
-const DepositsFiltersWidget = ({onClickSearch}) => {
+const DepositsFiltersWidget = ({ onClickSearch }) => {
     const { classes } = useStyle();
     const { t } = useTranslation();
     const {
@@ -17,9 +18,12 @@ const DepositsFiltersWidget = ({onClickSearch}) => {
         handleDepositTypeChange,
         onClickSearchFilter,
         onClickClearFilter,
+        handleDateChange,
+        fromDate,
+        toDate,
     } = useDeposits();
 
-   
+
     return (
         <div style={classes.filtersContainer}>
             <div style={classes.selectedFilterContainer}>
@@ -39,7 +43,10 @@ const DepositsFiltersWidget = ({onClickSearch}) => {
                 </div>
                 <div style={classes.filterContainerStyle}>
                     <label style={classes.filterLabelStyle}>{t("boardMissions.dateRange")}</label>
-                    <GoMakeDatepicker onChange={onSelectDateRange} placeholder={t("boardMissions.chooseDate")} reset={resetDatePicker} style={{width:"100%"}} />
+                    <DateRangePicker
+                        onChange={handleDateChange}
+                        value={fromDate && toDate ? [fromDate, toDate] : null}
+                    />
                 </div>
                 <div style={classes.filterButtonContainerStyle}>
                     <div style={classes.filterLabelStyle} />

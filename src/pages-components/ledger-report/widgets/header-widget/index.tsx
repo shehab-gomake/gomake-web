@@ -5,39 +5,47 @@ import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
 import { GoMakeAutoComplate } from "@/components"
 
 import { AgingReportHeaderWidgetProps, useAgingReportHeader } from "./use-header-widget";
+import { DateRangePicker } from "rsuite";
 
 const LedgerReportHeaderWidget = ({
-  onSelectDeliveryTimeDates,
-  resetDatePicker,
   customer,
   renderOptions,
   checkWhatRenderArray,
   handleCustomerChange,
   isExtended,
-  onChangeIsExtended
+  onChangeIsExtended,
+  handleDateChange,
+  fromDate,
+  toDate,
+  customerId
 }: AgingReportHeaderWidgetProps) => {
 
   const { classes, t } = useAgingReportHeader()
-
   return (
     <div style={classes.mainContainer}>
-      <div style={classes.date2FilterContainer}>
-        <h3 style={classes.filterLabelStyle}>{t("sales.quote.customer")}</h3>
-        <GoMakeAutoComplate
-          key={customer?.id}
-          options={renderOptions()}
-          onChangeTextField={checkWhatRenderArray}
-          getOptionLabel={(option: any) => `${option.name}`}
-          style={classes.textInputStyle}
-          placeholder={t("sales.quote.chooseCustomer")}
-          onChange={handleCustomerChange}
-          value={customer}
-        />
-      </div>
+      {
+        !customerId && <div style={classes.date2FilterContainer}>
+          <h3 style={classes.filterLabelStyle}>{t("sales.quote.customer")}</h3>
+          <GoMakeAutoComplate
+            key={customer?.id}
+            options={renderOptions()}
+            onChangeTextField={checkWhatRenderArray}
+            getOptionLabel={(option: any) => `${option.name}`}
+            style={classes.textInputStyle}
+            placeholder={t("sales.quote.chooseCustomer")}
+            onChange={handleCustomerChange}
+            value={customer}
+          />
+        </div>
+      }
+
       <div style={classes.date1FilterContainer}>
         <h3 style={classes.filterLabelStyle}>{t("boardMissions.dateRange")}</h3>
         <div style={{ width: "100%" }}>
-          <GoMakeDatepicker onChange={onSelectDeliveryTimeDates} placeholder={t("boardMissions.chooseDate")} reset={resetDatePicker} />
+          <DateRangePicker
+            onChange={handleDateChange}
+            value={fromDate && toDate ? [fromDate, toDate] : null}
+          />
         </div>
       </div>
 

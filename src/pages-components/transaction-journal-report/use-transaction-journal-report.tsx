@@ -4,19 +4,20 @@ import { format } from 'date-fns';
 import { useDocumentsType, useGomakeAxios, useSnackBar } from "@/hooks";
 import { EHttpMethod } from "@/services/api-service/enums";
 import { DocumentsTypeReportList } from "@/enums";
+import { endOfToday, startOfYear } from "date-fns";
 
 interface TransactionJournalReportWidgetProps {
   isPayment: boolean;
 }
 const useTransactionJournalReport = ({ isPayment }: TransactionJournalReportWidgetProps) => {
-  const {alertFault, alertFaultGetData, alertSuccessGetData } = useSnackBar();
+  const { alertFault, alertFaultGetData, alertSuccessGetData } = useSnackBar();
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation()
   const { documentsTypeList, documentType, handleDocumentTypeChange } = useDocumentsType()
   const [resetDatePicker, setResetDatePicker] = useState<boolean>(false);
   const [showTable, setShowTable] = useState<boolean>(false);
-  const [fromDate, setFromDate] = useState<Date>(new Date());
-  const [toDate, setToDate] = useState<Date>(new Date());
+  const [fromDate, setFromDate] = useState<Date>(startOfYear(new Date()));
+  const [toDate, setToDate] = useState<Date>(endOfToday());
   const [dataTable, setDataTable] = useState<any>([]);
 
 
@@ -47,17 +48,41 @@ const useTransactionJournalReport = ({ isPayment }: TransactionJournalReportWidg
 
   const getTableDataRows = useCallback((dataTable) => {
     if (dataTable?.length) {
-      return dataTable?.map((data) => [
-        data?.dueDate?.split("T")[0],
-        data?.docNumber,
-        getDocumentTypeName(data?.transType),
-        data?.transNumber,
-        data?.accountCode,
-        data?.accountName,
-        data?.cardCode,
-        data?.cardName,
-        data?.credit?.toFixed(2),
-      ]);
+      return dataTable?.map((data) => {
+        let documentPath;
+        switch (data?.transType) {
+          case DocumentsTypeReportList.Invoice:
+            documentPath = 'invoices';
+            break;
+          case DocumentsTypeReportList.InvoiceRefund:
+            documentPath = 'invoiceRefunds';
+            break;
+          default:
+            documentPath = null;
+        }
+        return (
+          [
+            data?.dueDate?.split("T")[0],
+            documentPath ? (
+              <a
+                style={{ cursor: "pointer", color: "inherit", textDecoration: 'unset' }}
+                href={`/${documentPath}?documentNumber=${data?.docNumber}`}
+              >
+                {data?.docNumber}
+              </a>
+            ) : (
+              <span>{data?.docNumber}</span>
+            ),
+            getDocumentTypeName(data?.transType),
+            data?.transNumber,
+            data?.accountCode,
+            data?.accountName,
+            data?.cardCode,
+            data?.cardName,
+            data?.credit?.toFixed(2),
+          ]
+        )
+      });
     }
 
   }, [dataTable]);
@@ -142,8 +167,8 @@ const useTransactionJournalReport = ({ isPayment }: TransactionJournalReportWidg
         EHttpMethod.POST,
         `/v1/erp-service/reports/get-transaction-journal-report`,
         {
-             startDate: formattedStartDate,
-            endDate: formattedEndDate,
+          startDate: formattedStartDate,
+          endDate: formattedEndDate,
           documentsType: isPayment ? DocumentsTypeReportList.Payments : documentType?.id,
         }
       );
@@ -159,6 +184,15 @@ const useTransactionJournalReport = ({ isPayment }: TransactionJournalReportWidg
     [fromDate, toDate, documentType, isPayment]
   );
 
+  const handleDateChange = (value) => {
+    if (value && value.length === 2) {
+      setFromDate(value[0]);
+      setToDate(value[1]);
+    } else {
+      setFromDate(null);
+      setToDate(null);
+    }
+  };
   return {
     t,
     onSelectDeliveryTimeDates,
@@ -171,7 +205,10 @@ const useTransactionJournalReport = ({ isPayment }: TransactionJournalReportWidg
     documentsTypeList,
     showTable,
     tableHeaders,
-    dataTable
+    dataTable,
+    handleDateChange,
+    fromDate,
+    toDate,
 
   };
 };

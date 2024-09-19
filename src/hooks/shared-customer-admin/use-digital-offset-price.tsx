@@ -243,7 +243,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     if (calculationResult && calculationResult.productItemValueDraftId === currentCalculationSessionId) {
       getSelectedWorkFlow();
     }
-  }, [calculationResult,]);
+  }, [calculationResult, currentCalculationSessionId]);
 
   const getSelectedWorkFlow = async () => {
     const res: any = await callApi(
@@ -3338,6 +3338,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           return;
         }
         setLoading(true);
+        setErrorMsg("")
         const newCalculationSessionId = uuidv4();
         setCurrentCalculationSessionId(newCalculationSessionId);
         const res: any = await callApi(
@@ -3519,53 +3520,91 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   };
 
   const updateQuoteItem = async () => {
-    setLoadingWithLockScreen(true)
-    const callBack = (res) => {
-      if (res?.success) {
-        router?.query?.documentType == "0"
-          ? navigate("/quote")
-          : navigate(`/order?Id=${router?.query?.documentId}`);
-        setWorkFlows([]);
-        setJobActions([]);
-        setLoadingWithLockScreen(false)
-      } else {
-        alertFaultUpdate();
-        setLoadingWithLockScreen(false)
-      }
-    };
-    await updateDocumentItemApi(callApi, callBack, {
-      Item: {
-        signalRConnectionId: connectionId,
-        productItemValueId: productItemValueDraftId,
-        itemId: router?.query?.documentItemId,
-        productId: router?.query?.productId,
-        supplierId: "",
-        customerID: router?.query?.customerId,
-        unitPrice: +currentProductItemValueTotalPrice / +quantity?.values[0],
-        finalPrice: +currentProductItemValueTotalPrice,
-        amount: quantity?.values[0],
-        isNeedGraphics: false,
-        isUrgentWork: urgentOrder,
-        printingNotes,
-        graphicNotes,
-        isNeedExample: false,
-        isDuplicatedWithAnotherQuantity: false,
-      },
-      DocumentType: router?.query?.documentType,
-    });
+    setLoadingWithLockScreen(true);
+
+    // First, validate the workflows
+    const workflowValidation = validateWorkflows(workFlows[0]);
+
+    if (workflowValidation.isValid) {
+      // If workflows are valid, proceed with the update
+      const callBack = (res) => {
+        if (res?.success) {
+          router?.query?.documentType == "0"
+            ? navigate("/quote")
+            : navigate(`/order?Id=${router?.query?.documentId}`);
+          setWorkFlows([]);
+          setJobActions([]);
+          setLoadingWithLockScreen(false);
+        } else {
+          alertFaultUpdate();
+          setLoadingWithLockScreen(false);
+        }
+      };
+
+      await updateDocumentItemApi(callApi, callBack, {
+        Item: {
+          signalRConnectionId: connectionId,
+          productItemValueId: productItemValueDraftId,
+          itemId: router?.query?.documentItemId,
+          productId: router?.query?.productId,
+          supplierId: "",
+          customerID: router?.query?.customerId,
+          unitPrice: +currentProductItemValueTotalPrice / +quantity?.values[0],
+          finalPrice: +currentProductItemValueTotalPrice,
+          amount: quantity?.values[0],
+          isNeedGraphics: false,
+          isUrgentWork: urgentOrder,
+          printingNotes,
+          graphicNotes,
+          isNeedExample: false,
+          isDuplicatedWithAnotherQuantity: false,
+        },
+        DocumentType: router?.query?.documentType,
+      });
+    } else {
+      // If workflows are not valid, set error message and stop the process
+      setLoadingWithLockScreen(false);
+      // You can combine all error messages into a single string if needed
+      setErrorMsg(workflowValidation.errors.join(', '));
+    }
   };
   const straightKnife = findParameterByCode(productTemplate, "IsStraightKnife");
+
+  // const navigateForRouter = () => {
+  //   let checkParameter = validateParameters(subProducts);
+  //   if (!!checkParameter) {
+  //     setErrorMsg("");
+  //     if (router?.query?.actionId) {
+  //       createProfitTestCase();
+  //     } else {
+  //       addItemForQuotes();
+  //     }
+  //   } else {
+  //     setErrorMsg(t("products.offsetPrice.admin.errorReq"));
+  //   }
+  // };
   const navigateForRouter = () => {
-    let checkParameter = validateParameters(subProducts);
-    if (!!checkParameter) {
-      setErrorMsg("");
-      if (router?.query?.actionId) {
-        createProfitTestCase();
+    // First, validate the workflows
+    const workflowValidation = validateWorkflows(workFlows[0]);
+
+    if (workflowValidation.isValid) {
+      // If workflows are valid, proceed to validate parameters
+      let checkParameter = validateParameters(subProducts);
+
+      if (checkParameter) {
+        setErrorMsg("");
+        if (router?.query?.actionId) {
+          createProfitTestCase();
+        } else {
+          addItemForQuotes();
+        }
       } else {
-        addItemForQuotes();
+        setErrorMsg(t("products.offsetPrice.admin.errorReq"));
       }
     } else {
-      setErrorMsg(t("products.offsetPrice.admin.errorReq"));
+      // If workflows are not valid, set error message
+      // You can combine all error messages into a single string if needed
+      setErrorMsg(workflowValidation.errors.join(', '));
     }
   };
 
@@ -3704,6 +3743,34 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   }, [router, productTemplate]);
 
 
+  const validateWorkflows = (data) => {
+    const errors = [];
+    if (!data.actions || data.actions.length === 0) {
+      errors.push(t("validateWorkflows.noAction"));
+      return { isValid: false, errors };
+    }
+    for (let i = 0; i < data.actions.length; i++) {
+      const action = data.actions[i];
+
+      if (action.isNeedEmployee && !action.employeeId) {
+        errors.push(`${action.actionName}: ${t("validateWorkflows.noEmployee")}`);
+      }
+      if (action.isNeedMachine && !action.mongoDBMachineId) {
+        errors.push(`${action.actionName}: ${t("validateWorkflows.noMavhine")}`);
+      }
+      if (action.isNeedMaterial && (!action.materials || Object.keys(action.materials).length === 0)) {
+        errors.push(`${action.actionName}: ${t("validateWorkflows.noMaterilas")}`);
+      }
+      if ((action.source === 1 || action.source === 2) && !action.supplierId) {
+        errors.push(`${action.actionName}: ${t("validateWorkflows.noSuppliers")}`);
+      }
+    }
+    return {
+      isValid: errors.length === 0,
+      errors
+    };
+  };
+
 
 
   return {
@@ -3759,6 +3826,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     isChangePriceForEdit,
     onClickCloseChangePriceModal,
     setIsChangePriceForEdit,
+    isLoadging,
+    validateWorkflows
   };
 };
 export { useDigitalOffsetPrice };

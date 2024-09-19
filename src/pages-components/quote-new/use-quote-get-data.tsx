@@ -27,7 +27,7 @@ const useQuoteGetData = (docType?: DOCUMENT_TYPE) => {
   const currenciesUnits = useRecoilValue<any>(currencyUnitState);
   const addressSelect = useRecoilValue(addressSelectState);
   const quoteConfirm = useRecoilValue<any>(quoteConfirmationState);
-  const [shipmentTypes, setShipmentTypes] = useState<{ label: string, value: string }[]>([]);
+  const [shipmentTypes, setShipmentTypes] = useState<{ label: string, value: string, price:any }[]>([]);
   const [quoteItemValue, setQuoteItemValue] = useRecoilState<any>(quoteItemState);
   const setOpenModal = useSetRecoilState<boolean>(addressModalState);
 
@@ -50,7 +50,7 @@ const useQuoteGetData = (docType?: DOCUMENT_TYPE) => {
   const getAllShipmentTypes = async () => {
     const callBack = (res) => {
       if (res?.success) {
-        const types = res?.data.map((item) => ({ value: item.id, label: item.title }))
+        const types = res?.data.map((item) => ({ value: item.id, label: item.title, price:item?.initialPrice }))
         setShipmentTypes(types)
       }
     }

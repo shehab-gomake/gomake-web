@@ -1,13 +1,12 @@
 import { Checkbox } from "@mui/material";
-import { GoMakeDatepicker } from "@/components/date-picker/date-picker-component";
 import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
 import { GoMakeAutoComplate } from "@/components"
 import { DateFormatter } from "@/utils/adapter";
 import { AgingReportHeaderWidgetProps, useAgingReportHeader } from "./use-header-widget";
+import { DateRangePicker } from "rsuite";
+import { createGlobalStyle } from "styled-components";
 
 const AgingReportHeaderWidget = ({
-  onSelectDeliveryTimeDates,
-  resetDatePicker,
   handleClickSelectDate,
   selectDate,
   setSelectDate,
@@ -21,17 +20,32 @@ const AgingReportHeaderWidget = ({
   handleCustomerChange,
   detailedReport,
   onChangeByReferenceDate,
-  onChangeDetailedReport
+  onChangeDetailedReport,
+  handleDateChange,
+  fromDate,
+  toDate,
 }: AgingReportHeaderWidgetProps) => {
 
   const { classes, t } = useAgingReportHeader()
+  const dir: 'rtl' | 'ltr' = t('direction');
+  const RTL = dir === 'rtl';
+  const GlobalStyle = createGlobalStyle`
+  .rs-picker-popup-daterange {
+    left: ${({ RTL }: any) => (RTL ? 'auto' : '150px')} !important;
+    right: ${({ RTL }: any) => (RTL ? '150px' : 'auto')} !important;
+  }
+`;
 
   return (
     <div style={classes.mainContainer}>
       <div style={classes.date1FilterContainer}>
         <h3 style={classes.filterLabelStyle}>{t("boardMissions.dateRange")}</h3>
         <div style={{ width: "100%" }}>
-          <GoMakeDatepicker onChange={onSelectDeliveryTimeDates} placeholder={t("boardMissions.chooseDate")} reset={resetDatePicker} />
+          <GlobalStyle RTL={RTL} />
+          <DateRangePicker
+            onChange={handleDateChange}
+            value={fromDate && toDate ? [fromDate, toDate] : null}
+          />
         </div>
       </div>
       <div style={classes.date2FilterContainer}>

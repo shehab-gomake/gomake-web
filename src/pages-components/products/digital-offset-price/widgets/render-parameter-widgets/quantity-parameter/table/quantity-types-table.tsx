@@ -80,6 +80,7 @@ const QuantityTypesTable = ({ save }: IQuantityTypesTableProps) => {
       <TableBody>
         <List
           height={295} // Ensure this is a number
+          width={390} // Add the width property
           itemCount={values.length}
           itemSize={70}
           itemData={itemData} // Pass data explicitly to avoid unnecessary re-renders

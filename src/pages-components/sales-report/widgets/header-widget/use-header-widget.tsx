@@ -17,6 +17,9 @@ export interface SalesReportHeaderWidgetProps {
   documentsTypeList: any,
   handleDocumentTypeChange: any,
   documentType: any,
+  handleDateChange?: any;
+  fromDate?: Date | null,
+  toDate?: Date | null,
 }
 const useSalesReportHeader = () => {
   const { classes } = useStyle();

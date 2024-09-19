@@ -1,4 +1,4 @@
-import { useGomakeAxios } from "@/hooks";
+import { useGomakeAxios, useSnackBar } from "@/hooks";
 import {
     getBoardMissionsActions,
     updateBoardMissionCurrentStationApi
@@ -20,6 +20,7 @@ const useStations = () => {
     const { getData } = useProductionFloorData();
     const { CheckPermission } = useUserPermission();
     const canMoveStation = CheckPermission(Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR);
+    const { alertFaultUpdate, alertSuccessUpdate} = useSnackBar();
 
     const getActions = async (boardMissionId: string, productType) => {
         const callBack = (res) => {
@@ -43,16 +44,29 @@ const useStations = () => {
 
     const onUpdateCurrentStation = async (boardMissionId: string, stationId: string, productType: string) => {
         await updateBoardMissionCurrentStationApi(callApi, (res) => {
-            getData().then();
+            if (res?.success) {
+                alertSuccessUpdate();
+                getData().then();
+            }
+            else{
+                alertFaultUpdate()
+                getData().then();
+            }
         }, { boardId: boardMissionId, stationId: stationId, productType });
     }
-
+    
     const onUpdateToNextStation = async (boardMissionId: string, productType: string) => {
         await updateBoardMissionCurrentStationApi(callApi, (res) => {
-            getData().then()
+            if (res?.success) {
+                alertSuccessUpdate();
+                getData().then();
+            }
+            else{
+                alertFaultUpdate()
+                getData().then();
+            }
         }, { boardId: boardMissionId, stationId: null, productType });
     }
-
     return {
         anchorEl,
         open,

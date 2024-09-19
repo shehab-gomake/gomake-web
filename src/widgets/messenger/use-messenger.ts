@@ -85,7 +85,6 @@ const useMessenger = () => {
 
     const onMessage = (userId, message) => {
         getDialogs().then();
-        console.log(message)
         if (message.dialog_id === selectedDialog?._id) {
             setMessages(prevState => ([
                 ...prevState,

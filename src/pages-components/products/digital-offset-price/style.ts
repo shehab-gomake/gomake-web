@@ -519,6 +519,11 @@ const useStyle = () => {
         height: 40,
         padding: 20,
       },
+      addOrderDisabledBtn:{
+        backgroundColor: "#ccc",
+        height: 40,
+        padding: 20,
+      },
       noVatStyle: {
         marginTop: 6,
         color: primaryColor(200),

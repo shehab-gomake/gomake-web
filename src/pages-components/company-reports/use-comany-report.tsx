@@ -6,11 +6,15 @@ import { DirectboxSendIcon } from "@/icons";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { generateCalculateProductsExcelForPrintHousesApi } from "@/services/hooks";
 import { IconButton } from "@mui/material";
+import {OptionsComponent} from "@/pages-components/company-reports/options-component";
+import {useRecoilState} from "recoil";
+import {printHousesState} from "@/pages-components/company-reports/state";
 
 export const useCompanyReport = () => {
     const { t } = useTranslation();
     const { primaryColor } = useGomakeTheme();
-    const { alertFault, alertSuccess, } = useSnackBar()
+    const { alertFault, alertSuccess, } = useSnackBar();
+    const [, setPrintHouses] = useRecoilState<{id: string; name: string}[]>(printHousesState);
 
     const tableHeaders = [
         t("companyReports.companyName"),
@@ -27,6 +31,7 @@ export const useCompanyReport = () => {
         t("companyReports.OrderItems"),
         t("companyReports.EstimationSuccessRate"),
         t("companyReports.testCalculation"),
+        t(""),
     ];
 
     const [AllReport, setAllReport] = useState([]);
@@ -34,6 +39,7 @@ export const useCompanyReport = () => {
     const getReport = useCallback(async () => {
         const callBack = (res) => {
             if (res?.success) {
+                setPrintHouses(res.data.map(printHouse => ({id: printHouse.id, name: printHouse.printHouseName})));
                 const formattedData = res.data.map((item) => [
                     item?.printHouseName,
                     item?.domain,
@@ -53,7 +59,8 @@ export const useCompanyReport = () => {
                         onClick={() => generateCalculateProductsExcelForPrintHousesWithPrintHouseId(item?.id)}
                     >
                         <DirectboxSendIcon stroke={primaryColor(500)} width={20} height={20} />
-                    </IconButton>
+                    </IconButton>,
+                    <OptionsComponent printHouseId={item.id}/>
                 ]);
                 setAllReport(formattedData);
             }

@@ -39,6 +39,7 @@ import { useRouter } from "next/router";
 import { CloseOrderNotesModal } from "../products/profits-new/widgets/close-order-notes-modal";
 import { SendPaymentModal } from "./widgets/send-payment-modal/send-payment-modal";
 import { MakePaymentModal } from "./widgets/make-payment-modal/make-payment-modal";
+import { DateRangePicker } from "rsuite";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -160,6 +161,8 @@ const QuotesListPageWidget = ({
     closeAndTrackOrder,
     onClickClosePrintPDFModal,
     openPrintPDFModal,
+    fromDate,
+    toDate,
     getAllQuotes
   } = useQuotes(documentType, isFromHomePage);
 
@@ -374,7 +377,10 @@ const QuotesListPageWidget = ({
                                 </div></div>}
                             <div style={classes.statusFilterContainer}>
                               <h3 style={classes.filterLabelStyle}>{t("boardMissions.dateRange")}</h3>
-                              <GoMakeDatepicker onChange={onSelectDeliveryTimeDates} placeholder={t("boardMissions.chooseDate")} reset={resetDatePicker} />
+                              <DateRangePicker
+                                onChange={onSelectDeliveryTimeDates}
+                                value={fromDate && toDate ? [fromDate, toDate] : null}
+                              />
                             </div>
                           </div>
 
