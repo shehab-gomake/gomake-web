@@ -1,14 +1,14 @@
-import {FormEvent, useCallback} from "react";
-import {Button, FormGroup, MenuItem, Paper} from "@mui/material";
+import { FormEvent, useCallback, useRef } from "react";
+import { Button, FormGroup, MenuItem, Paper } from "@mui/material";
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import {GomakeTextInput} from "@/components";
+import { GomakeTextInput } from "@/components";
 import Stack from "@mui/material/Stack";
-import {SecondaryCheckBox} from "@/components/check-box/secondary-check-box";
-import {Source, useActionsList} from "@/widgets/production-floor/filters/select/actions-select/use-actions-list";
-import {SecondaryButton} from "@/components/button/secondary-button";
-import {IStation} from "@/widgets/production-floor/interfaces/filters";
-import {ClickOutside} from "@/components/click-out-side/click-out-side";
-import {adaptRight} from "@/utils/adapter";
+import { SecondaryCheckBox } from "@/components/check-box/secondary-check-box";
+import { Source, useActionsList } from "@/widgets/production-floor/filters/select/actions-select/use-actions-list";
+import { SecondaryButton } from "@/components/button/secondary-button";
+import { IStation } from "@/widgets/production-floor/interfaces/filters";
+import { ClickOutside } from "@/components/click-out-side/click-out-side";
+import { adaptRight } from "@/utils/adapter";
 
 
 interface IProps {
@@ -16,7 +16,7 @@ interface IProps {
     source: Source
 }
 
-const ActionsListComponent = ({onClickApply, source}: IProps) => {
+const ActionsListComponent = ({ onClickApply, source }: IProps) => {
 
     const {
         actionsList,
@@ -34,9 +34,12 @@ const ActionsListComponent = ({onClickApply, source}: IProps) => {
     const handleClick = () => {
         setOpen(!open)
     };
+
     const handleFilterChange = (event: FormEvent<HTMLInputElement>) => {
         setFilter(event.currentTarget.value);
     }
+
+    const buttonRef = useRef<HTMLButtonElement>(null);
 
     const getList = useCallback(() => {
         let list = [...actionsList];
@@ -48,16 +51,21 @@ const ActionsListComponent = ({onClickApply, source}: IProps) => {
                 ?.filter(action => action.actionName?.toLowerCase().includes(filter?.toLowerCase()) || action.machines.length > 0)
         }
         return list?.length > 0 ? list?.sort((a, b) => a.checked === b.checked ? 0 : !!a.checked ? -1 : 0) : []
-    }, [actionsList, filter])
+    }, [actionsList, filter]);
+
     return (
-        <div style={{position: 'relative'}}>
-            <Button style={{color: '#9E9E9E', borderColor: '#9E9E9E', height: '38px'}} variant={'outlined'}
-                    onClick={handleClick}>
+        <div style={{ position: 'relative' }}>
+            <Button
+                ref={buttonRef}
+                style={{ color: '#9E9E9E', borderColor: '#9E9E9E', height: '38px' }} variant={'outlined'}
+                onClick={handleClick}>
                 <span>{t('productionFloor.selectStations')}</span>
-                <KeyboardArrowDownIcon/>
+                <KeyboardArrowDownIcon />
             </Button>
             {open &&
-                <ClickOutside onClick={() => setOpen(false)}>
+                <ClickOutside
+                    exceptionRef={buttonRef}
+                    onClick={() => setOpen(false)}>
                     <Paper sx={{
                         position: 'absolute', ...adaptRight(direction, 0),
                         top: source === Source.PRODUCTION_FLOOR ? '110%' : '-610px',
@@ -68,24 +76,24 @@ const ActionsListComponent = ({onClickApply, source}: IProps) => {
                         zIndex: 99999999999999
                     }}>
                         <FormGroup>
-                            <div style={{position: 'sticky', top: 0, backgroundColor: '#FFF', zIndex: 1}}>
+                            <div style={{ position: 'sticky', top: 0, backgroundColor: '#FFF', zIndex: 1 }}>
                                 <GomakeTextInput placeholder={t('productionFloor.search')} value={filter}
-                                                 onChange={handleFilterChange}/>
+                                    onChange={handleFilterChange} />
                             </div>
                             {
                                 getList().map((option, index) => {
                                     return <Stack key={index + option.actionId + option.actionName}>
                                         <MenuItem onClick={() => onSelectStation(option.actionId, !!option.checked)}>
-                                            <SecondaryCheckBox checked={!!option.checked}/>
+                                            <SecondaryCheckBox checked={!!option.checked} />
                                             <span>{option.actionName}</span>
                                         </MenuItem>
                                         <Stack direction={'row'} gap={'30px'}>
-                                            <div/>
+                                            <div />
                                             <Stack>
                                                 {
                                                     option?.machines?.map((machine) => <MenuItem
                                                         onClick={() => onSelectMachine(option.actionId, machine.machineId)}>
-                                                        <SecondaryCheckBox checked={!!machine?.checked}/>
+                                                        <SecondaryCheckBox checked={!!machine?.checked} />
                                                         {machine.machineName}
                                                     </MenuItem>)
                                                 }
@@ -104,7 +112,7 @@ const ActionsListComponent = ({onClickApply, source}: IProps) => {
                             backgroundColor: '#FFF',
                             zIndex: 1
                         }}>
-                            <SecondaryButton style={{width: '100%'}} variant={'contained'} onClick={() => {
+                            <SecondaryButton style={{ width: '100%' }} variant={'contained'} onClick={() => {
                                 setOpen(false)
                                 onClickApply(actionsMachinesIds)
                             }
@@ -117,4 +125,4 @@ const ActionsListComponent = ({onClickApply, source}: IProps) => {
     )
 }
 
-export {ActionsListComponent}
+export { ActionsListComponent }

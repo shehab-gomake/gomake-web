@@ -92,7 +92,6 @@ const BusinessNewWidget = ({
   return (
     <>
       <div style={classes.businessContainerStyle}>
-        {/* //here */}
         <AutoCompleteUpdatedValue
           label={t("sales.quote.businessName")}
           value={isQuoteConfirmation ? quoteConfirm?.client?.name : quoteStateValue?.client?.name ? quoteStateValue?.client?.name : t("sales.quote.selectBusinessName")}

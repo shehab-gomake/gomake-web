@@ -6,9 +6,7 @@ import { EProductionFloorView, productionFloorViewState } from "@/widgets/produc
 import { useEffect, useState } from "react";
 import { GroupsTable } from "@/widgets/production-floor/views/groups-view/groups-table";
 import { useRouter } from "next/router";
-import {
-    ProductionFloorBoardMissionsViews
-} from "@/widgets/production-floor/views/boards-view/production-floor-board-missions-views";
+import { ProductionFloorBoardMissionsViews } from "@/widgets/production-floor/views/boards-view/production-floor-board-missions-views";
 import Drawer from "@mui/material/Drawer";
 import ClearRoundedIcon from "@mui/icons-material/ClearRounded";
 import { BoardMissionsComponent } from "@/widgets/production-floor/views/board-missions-view/board-missions-component";
@@ -32,7 +30,6 @@ const ProductionFloorWidget = () => {
         if (!!groupsId) {
             setView(EProductionFloorView.GROUPS);
         }
-
     }, [groupsId, boardMissionsId, step]);
 
     useEffect(() => {

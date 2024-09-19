@@ -34,6 +34,9 @@ const HANDLE_BOARD_MISSIONS_ID_BY_QR_CODE_URL = '/v1/erp-service/qr-codes/handle
 const UPDATE_BOARD_MISSIONS_BY_QR_CODE_URL = '/v1/erp-service/qr-codes/update-board-missions';
 const CLEAR_FILES_UPLOADER_LIST_URL = '/v1/erp-service/board-missions/clear-list';
 
+const UPDATE_PRODUCTION_FLOOR_JOB_COLOR_URL = '/v1/erp-service/board-missions/update-production-floor-job-color';
+const RESET_PRODUCTION_FLOOR_JOB_COLOR_URL = '/v1/erp-service/board-missions/reset-production-floor-job-color';
+const GET_BOARD_MISSION_DATA_FOR_MENU_URL = '/v1/erp-service/board-missions/get-board-mission-data-for-menu'
 
 const getProductionFloorData: ICallAndSetData = async (callApi, setState, connectionId: string, lock = false, abortController) => {
     return await getSetApiData(callApi, EHttpMethod.GET, GET_PRODUCTION_FLOOR_DATA_URL + '?connectionId=' + connectionId, setState, {}, false, abortController);
@@ -147,6 +150,17 @@ const clearUploadingFilesListApi: ICallAndSetData = async (callApi, callBack, ) 
     return await getSetApiData(callApi, EHttpMethod.DELETE, CLEAR_FILES_UPLOADER_LIST_URL , callBack, );
 }
 
+const updateProductionFloorJobColorApi: ICallAndSetData = async (callApi, callBack, data: {boardMissionId: string; productionFloorJobColor: string;} ) => {
+    return await getSetApiData(callApi, EHttpMethod.PUT, UPDATE_PRODUCTION_FLOOR_JOB_COLOR_URL, callBack , data);
+}
+
+const resetProductionFloorJobColorApi: ICallAndSetData = async (callApi, callBack, data: {boardMissionId : string; } ) => {
+    return await getSetApiData(callApi, EHttpMethod.PUT, RESET_PRODUCTION_FLOOR_JOB_COLOR_URL, callBack , data);
+}
+
+const getBoardMissionDataForMenuApi: ICallAndSetData = async (callApi, callBack, data: {boardMissionId : string; } ) => {
+    return await getSetApiData(callApi, EHttpMethod.GET, GET_BOARD_MISSION_DATA_FOR_MENU_URL, callBack , data);
+}
 
 export {
     boardMissionsUpdateActionEmployee,
@@ -179,5 +193,8 @@ export {
     getBoardMissionsIdByQrCodeApi,
     handleBoardMissionsQrCodeApi,
     updateBoardMissionsQrCodeApi,
-    clearUploadingFilesListApi
+    clearUploadingFilesListApi,
+    updateProductionFloorJobColorApi,
+    resetProductionFloorJobColorApi,
+    getBoardMissionDataForMenuApi
 }
