@@ -148,7 +148,7 @@ const TableRowComponent = ({ boardMission, status , onClickDone , onClickPrintDT
                 <SecondaryTableCell align={"center"}>
                     {boardMission?.clientName}
                 </SecondaryTableCell>
-                <SecondaryTableCell align={"center"}>
+                <SecondaryTableCell align={"center"} style={{padding:"0px 10px"}}>
                     <ClickableLabelComponent label={boardMission?.productName}  id={boardMission.id} textColor={boardMission?.productionFloorJobColor} t={t} key={boardMission.id} />
                 </SecondaryTableCell>
                 <SecondaryTableCell align={"center"}>

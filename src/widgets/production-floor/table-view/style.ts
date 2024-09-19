@@ -41,7 +41,8 @@ const useStyle = ({textColor}) => {
             currentStationBtn: {
                 boxShadow:"none",
                 backgroundColor:"transparent",
-                ...FONT_FAMILY.Inter(600, 12),
+                // ...FONT_FAMILY.Inter(600, 12),
+                ...FONT_FAMILY.Inter(500, 14),
                 color: textColor || primaryColor(600),                
                 fontStyle: "normal",
                 textTransform: "capitalize" as "capitalize",
@@ -75,7 +76,8 @@ const useStyle = ({textColor}) => {
             },
             actionText: {
                 color: primaryColor(600),
-                ...FONT_FAMILY.Inter(500, 12),
+                // ...FONT_FAMILY.Inter(500, 12),
+                ...FONT_FAMILY.Inter(500, 14),
                 fontStyle: "normal",
                 lineHeight: "20px",
                 textTransform: "capitalize" as "capitalize"

@@ -82,7 +82,8 @@ const ClickableLabelComponent = ({ label, t, key, textColor, id }: ITaskCategory
             <span
                 onClick={handleMenuClick}
                 style={{
-                    ...FONT_FAMILY.Lexend(600, 12),
+                    // ...FONT_FAMILY.Lexend(600, 12),
+                    ...FONT_FAMILY.Lexend(500, 13),
                     color: color || primaryColor(500),
                     padding: '2px 12px',
                     backgroundColor: toRgba(color || primaryColor(50), 0.1),
