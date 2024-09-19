@@ -17,25 +17,28 @@ const LedgerReportHeaderWidget = ({
   handleDateChange,
   fromDate,
   toDate,
+  customerId
 }: AgingReportHeaderWidgetProps) => {
 
   const { classes, t } = useAgingReportHeader()
-
   return (
     <div style={classes.mainContainer}>
-      <div style={classes.date2FilterContainer}>
-        <h3 style={classes.filterLabelStyle}>{t("sales.quote.customer")}</h3>
-        <GoMakeAutoComplate
-          key={customer?.id}
-          options={renderOptions()}
-          onChangeTextField={checkWhatRenderArray}
-          getOptionLabel={(option: any) => `${option.name}`}
-          style={classes.textInputStyle}
-          placeholder={t("sales.quote.chooseCustomer")}
-          onChange={handleCustomerChange}
-          value={customer}
-        />
-      </div>
+      {
+        !customerId && <div style={classes.date2FilterContainer}>
+          <h3 style={classes.filterLabelStyle}>{t("sales.quote.customer")}</h3>
+          <GoMakeAutoComplate
+            key={customer?.id}
+            options={renderOptions()}
+            onChangeTextField={checkWhatRenderArray}
+            getOptionLabel={(option: any) => `${option.name}`}
+            style={classes.textInputStyle}
+            placeholder={t("sales.quote.chooseCustomer")}
+            onChange={handleCustomerChange}
+            value={customer}
+          />
+        </div>
+      }
+
       <div style={classes.date1FilterContainer}>
         <h3 style={classes.filterLabelStyle}>{t("boardMissions.dateRange")}</h3>
         <div style={{ width: "100%" }}>

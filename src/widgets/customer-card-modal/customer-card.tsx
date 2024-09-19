@@ -29,6 +29,7 @@ import { ITab } from "@/components/tabs/interface";
 import { PrimaryTabsComponent } from "@/components/tabs/primary-tabs";
 import { AccountingTab } from "./components/accounting-tab";
 import { GeneralTab } from "./components/general-tab/form";
+import { LedgerReportWidget } from "@/pages-components/ledger-report/ledger-report";
 
 interface IProps {
   isValidCustomer?: (
@@ -264,6 +265,12 @@ const CustomerCardWidget = ({
             ))}
           </Stack>
         </Stack>
+      ),
+    },
+    {
+      title: t("tabs.ledgerReport"),
+      component: (
+        <LedgerReportWidget customerId={customer?.id} />
       ),
     },
   ].filter(Boolean);
