@@ -1,29 +1,23 @@
-import React, { useRef, useState, useEffect } from "react";
+import { useEffect } from "react";
 import { Box, Stack, Card, CardContent, Typography, Menu, MenuItem, IconButton } from "@mui/material";
-import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { useProductionFloorFilters } from "@/widgets/production-floor/filters/use-production-floor-filters";
 import { SearchInputComponent } from "@/components/form-inputs/search-input-component";
 import { GoMakeDatepicker } from "@/components/date-picker/date-picker-component";
 import { filtersInputs } from "@/widgets/production-floor/filters/filters-inputs";
 import { SelectComponent } from "@/widgets/production-floor/filters/select/select-component";
-import { Source, useActionsList } from "@/widgets/production-floor/filters/select/actions-select/use-actions-list";
 import { styled } from '@mui/system';
-import { useTranslation } from "react-i18next";
 import { toRgba } from "@/utils/helpers";
 import { FONT_FAMILY } from "@/utils/font-family";
-import { useRecoilState, useRecoilValue } from "recoil";
-import { IStatusesBoardsMissions } from "../interfaces/production-floor-data-response";
-import { boardsMissionsState } from "../state/boards";
 import { fetchS3JsonContent } from "@/utils/S3Content";
-import { productionFloorFiltersState } from "../state/production-floor-filters";
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 
 interface CustomCardProps {
     label: string;
     machineId?: string;
-    onClick?: () => void; 
+    onClick?: () => void;
     isSelected?: boolean;
-    dir?:string;
-    getColorByMachineId?:any;
+    dir?: string;
+    getColorByMachineId?: any;
     filters?: any;
 }
 
@@ -31,8 +25,8 @@ const CustomIconButton = styled(IconButton)(({ theme }) => ({
     width: '30px',
     height: '35px',
     border: `1.5px solid #2E3092`,
-    borderRadius:"4px",
-    backgroundColor: toRgba("#2E3092", 0.1), 
+    borderRadius: "4px",
+    backgroundColor: toRgba("#2E3092", 0.1),
     '& .MuiSvgIcon-root': {
         color: '#2E3092',
     },
@@ -55,28 +49,28 @@ const CustomCard = styled(Card)<{ isSelected?: boolean; color: string }>(({ isSe
     alignItems: 'center',
     justifyContent: 'space-between',
     // minWidth: 'fit-content',
-    width:'fit-content',
-    maxWidth:"300px",
+    width: 'fit-content',
+    maxWidth: "300px",
     '&:hover': {
         boxShadow: '0px 2px 4px rgba(16, 24, 40, 0.1)',
     },
 }));
 
 
-const Circle = styled(Box)<{  numColor: string , dir : string }>(({  numColor , dir }) => ({
+const Circle = styled(Box)<{ numColor: string, dir: string }>(({ numColor, dir }) => ({
     width: "16px",
     height: "16px",
     borderRadius: '50%',
-    display: 'flex', 
+    display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
     // border: `0.5px solid ${borderColor}`,
     backgroundColor: "#ffffff",
-    marginLeft: dir==="rtl" ? 0 : 4,
-    marginRight: dir==="rtl" ? 4: 0,
+    marginLeft: dir === "rtl" ? 0 : 4,
+    marginRight: dir === "rtl" ? 4 : 0,
     fontSize: 12,
-    fontWeight: 600, 
-    color:numColor
+    fontWeight: 600,
+    color: numColor
 
 }));
 
@@ -129,96 +123,40 @@ const CustomCardComponent = ({
     );
 };
 
-
 const ProductionFloorFilters = () => {
     const { tagsList } = filtersInputs();
-    const { search, setSearch, onTagsChange, onSelectDeliveryTimeDates, onSelectCreateDates, createDateFilter, deliveryDateFilter } = useProductionFloorFilters();
-    const { t } = useTranslation();
-    const dir = t("direction");
-    const isRTL = dir === "rtl";
-    const { actionsMachinesIds } = useActionsList(Source.PRODUCTION_FLOOR);
-    const [selectedChip, setSelectedChip] = React.useState<string | null>(null);
-    const [visibleCards, setVisibleCards] = useState<{ label: string, machineId: string }[]>([]);
-    const [hiddenCards, setHiddenCards] = useState<{ label: string, machineId: string }[]>([]);
-    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-    const filters = useRecoilValue(productionFloorFiltersState);
-    
-    const [machinesColors, setMachinesColors] = useState([]);
-
-    const [data , setData] = useRecoilState<IStatusesBoardsMissions[]>(boardsMissionsState);
-    const[isFromFilter , setIsFromFilters] = useState<boolean>(false);
-    const originalDataRef = useRef<IStatusesBoardsMissions[]>([]); 
-    const scrollContainerRef = useRef<HTMLDivElement>(null);
-
-    const getColorByMachineId = (machineId) => {
-        const entry = machinesColors?.find(item => item.id === machineId);
-        return entry ? entry?.color : '#088AB2'; 
-    };
-
-    const filterDataByMachineId = (machineId: string) => {
-        setData((prevData) => {
-            return prevData.map((item) => {
-                const filteredBoardMissions = item.boardMissions.filter(
-                    (mission) => 
-                        mission?.currentStation?.machineId === machineId || 
-                        mission?.currentStation?.employeeId === machineId
-                );
-    
-                return {
-                    ...item,
-                    boardMissions: filteredBoardMissions,
-                };
-            });
-        });
-    };
-    
-    const handleMoreClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-        setAnchorEl(event.currentTarget);
-    };
-
-    const handleClose = () => {
-        setAnchorEl(null);
-    };
-
-
-    const handleChipClick = (card: { label: string; machineId: string }) => {
-        const { label, machineId } = card;
-        const isChipSelected = selectedChip === label;
-        setSelectedChip(isChipSelected ? null : label);
-        setIsFromFilters(true);
-        setData(originalDataRef.current);
-    
-        if (machineId && !isChipSelected) {
-            filterDataByMachineId(machineId);
-        }
-    };
-
-    
-    const handleMenuItemClick= (selectedCard: { label: string; machineId: string }) => {
-        setHiddenCards(prevHidden => {
-            const updatedHiddenCards = prevHidden.filter(card => card.label !== selectedCard.label);
-            return updatedHiddenCards;
-        });
-        
-        setVisibleCards(prevVisible => {
-            const newVisibleCards = [{ label: selectedCard.label, machineId: selectedCard.machineId }, ...prevVisible];
-            
-            if (newVisibleCards.length > 0) {
-                setHiddenCards(prevHidden => [...prevHidden, newVisibleCards[newVisibleCards.length - 1]]);
-            }
-    
-            return newVisibleCards.slice(0, -1); 
-        });
-        setSelectedChip(selectedCard.label);
-        setIsFromFilters(true);
-        setData(originalDataRef.current);
-    
-        if (selectedCard.machineId) {
-            filterDataByMachineId(selectedCard.machineId);
-        }
-        
-        handleClose();
-    };
+    const {
+        t,
+        dir,
+        search,
+        setSearch,
+        actionsMachinesIds,
+        data,
+        filters,
+        selectedChip,
+        setSelectedChip,
+        onTagsChange,
+        onSelectDeliveryTimeDates,
+        onSelectCreateDates,
+        createDateFilter,
+        deliveryDateFilter,
+        isRTL,
+        getColorByMachineId,
+        handleMoreClick,
+        handleChipClick,
+        handleMenuItemClick,
+        handleClose,
+        anchorEl,
+        visibleCards,
+        hiddenCards,
+        setMachinesColors,
+        isFromFilter,
+        setVisibleCards,
+        setHiddenCards,
+        scrollContainerRef,
+        originalDataRef,
+        setIsFromFilters
+    } = useProductionFloorFilters();
 
     useEffect(() => {
         if (data.length > 0 && originalDataRef.current.length === 0) {
@@ -233,7 +171,6 @@ const ProductionFloorFilters = () => {
         }
     }, [data]);
 
-    
     useEffect(() => {
         if (scrollContainerRef.current) {
             const containerWidth = scrollContainerRef.current.clientWidth;
@@ -250,7 +187,7 @@ const ProductionFloorFilters = () => {
                     totalWidth += cardWidth;
 
                     const cardLabel = `${actionName} | ${machineName}`;
-                    const machineId = machineIds[index]; 
+                    const machineId = machineIds[index];
 
                     if (totalWidth <= containerWidth) {
                         visible.push({ label: cardLabel, machineId: machineId || '' });
@@ -322,9 +259,9 @@ const ProductionFloorFilters = () => {
                             anchorOrigin={{ horizontal: isRTL ? "left" : "right", vertical: "bottom" }}
                             PaperProps={{
                                 style: {
-                                  marginTop: 8,
+                                    marginTop: 8,
                                 },
-                              }}
+                            }}
                             anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
                             {hiddenCards.map((card, index) => (
                                 <MenuItem key={index} onClick={() => handleMenuItemClick(card)}>

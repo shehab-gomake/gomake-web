@@ -1,28 +1,44 @@
-import {useRecoilState, useSetRecoilState} from "recoil";
-import {productionFloorTextSearchState} from "@/widgets/production-floor/state/text-search";
-import {productionFloorFiltersState} from "@/widgets/production-floor/state/production-floor-filters";
-import {tagsState} from "@/widgets/production-floor/state/tags";
-import {IFilterGroup, IProductionFloorFilter, IStation} from "@/widgets/production-floor/interfaces/filters";
-import {setBoardFiltersApi} from "@/services/api-service/production-floor/production-floor-endpoints";
-import {useGomakeAxios, useSnackBar} from "@/hooks";
-import {boardsMissionsState} from "@/widgets/production-floor/state/boards";
-import {EProductionFloorView, productionFloorViewState} from "@/widgets/production-floor/state/production-floor-view";
-import {useRouter} from "next/router";
-import {useMemo} from "react";
-import {userProductionFloorGroupsState} from "@/widgets/production-floor/state/production-floor-groups-state";
-import {productionFloorPathsState} from "@/widgets/production-floor/state/production-floor-paths";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { productionFloorTextSearchState } from "@/widgets/production-floor/state/text-search";
+import { productionFloorFiltersState } from "@/widgets/production-floor/state/production-floor-filters";
+import { tagsState } from "@/widgets/production-floor/state/tags";
+import { IFilterGroup, IProductionFloorFilter, IStation } from "@/widgets/production-floor/interfaces/filters";
+import { setBoardFiltersApi } from "@/services/api-service/production-floor/production-floor-endpoints";
+import { useGomakeAxios, useSnackBar } from "@/hooks";
+import { boardsMissionsState } from "@/widgets/production-floor/state/boards";
+import { EProductionFloorView, productionFloorViewState } from "@/widgets/production-floor/state/production-floor-view";
+import { useRouter } from "next/router";
+import { useMemo, useRef, useState } from "react";
+import { userProductionFloorGroupsState } from "@/widgets/production-floor/state/production-floor-groups-state";
+import { productionFloorPathsState } from "@/widgets/production-floor/state/production-floor-paths";
+import { IStatusesBoardsMissions } from "../interfaces/production-floor-data-response";
+import { Source, useActionsList } from "./select/actions-select/use-actions-list";
+import { useTranslation } from "react-i18next";
 
 const useProductionFloorFilters = () => {
     const [filtersState, setFiltersState] = useRecoilState(productionFloorFiltersState);
     const [, setUserGroups] = useRecoilState(userProductionFloorGroupsState);
     const [, setPath] = useRecoilState(productionFloorPathsState);
     const [search, setSearch] = useRecoilState(productionFloorTextSearchState);
-    const [tags, setTags] = useRecoilState(tagsState);
-    const {callApi} = useGomakeAxios();
-    const setData = useSetRecoilState(boardsMissionsState);
+    const setTags = useSetRecoilState(tagsState);
+    const { callApi } = useGomakeAxios();
+    const [data, setData] = useRecoilState(boardsMissionsState);
     const setView = useSetRecoilState(productionFloorViewState);
-    const {push} = useRouter();
-    const {alertSuccessUpdate, alertFaultUpdate} = useSnackBar();
+    const { push } = useRouter();
+    const { alertSuccessUpdate, alertFaultUpdate } = useSnackBar();
+    const { t } = useTranslation();
+    const dir = t("direction");
+    const isRTL = dir === "rtl";
+    const { actionsMachinesIds } = useActionsList(Source.PRODUCTION_FLOOR);
+    const [selectedChip, setSelectedChip] = useState<string | null>(null);
+    const [visibleCards, setVisibleCards] = useState<{ label: string, machineId: string }[]>([]);
+    const [hiddenCards, setHiddenCards] = useState<{ label: string, machineId: string }[]>([]);
+    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+    const filters = useRecoilValue(productionFloorFiltersState);
+    const [machinesColors, setMachinesColors] = useState([]);
+    const [isFromFilter, setIsFromFilters] = useState<boolean>(false);
+    const originalDataRef = useRef<IStatusesBoardsMissions[]>([]);
+    const scrollContainerRef = useRef<HTMLDivElement>(null);
     const groups = filtersState?.groups;
 
     const setFilters = async (filters: IProductionFloorFilter) => {
@@ -35,16 +51,16 @@ const useProductionFloorFilters = () => {
                     const correspondingBackendFilter = backendFiltersStations.find(
                         backendFilter => backendFilter.actionId === station.actionId
                     );
-    
+
                     return {
                         ...station,
                         ...correspondingBackendFilter,
                     };
                 });
-    
+
                 setFiltersState({
-                    ...filters, 
-                    stations: mergedStations 
+                    ...filters,
+                    stations: mergedStations
                 });
 
                 // setFiltersState(filters);
@@ -52,7 +68,7 @@ const useProductionFloorFilters = () => {
                 setTags(res?.data?.automatedTagsFilter);
                 setUserGroups(res?.data?.groups);
                 setPath(res?.data?.path ? res?.data?.path : []);
-            }else {
+            } else {
                 alertFaultUpdate();
             }
         }
@@ -60,7 +76,6 @@ const useProductionFloorFilters = () => {
     }
 
     const onTagsChange = async (tag: string) => {
-
         await setFilters({
             ...filtersState,
             automatedTags: filtersState?.automatedTags?.includes(tag) ? filtersState.automatedTags.filter(t => t !== tag) : [...filtersState.automatedTags, tag]
@@ -74,6 +89,7 @@ const useProductionFloorFilters = () => {
             toDeliveryTime: toDate
         })
     }
+
     const onSelectCreateDates = async (fromDate: Date, toDate: Date) => {
         await setFilters({
             ...filtersState,
@@ -82,17 +98,16 @@ const useProductionFloorFilters = () => {
         })
     }
 
-
     const handleGroupsFilterChange = (groupId, value, valueId) => {
         setFilters({
-                ...filtersState,
-            groupsHistory: filtersState.groupsHistory ? filtersState.groupsHistory.concat({groupId, value, valueId}) : [{groupId, value, valueId}],
-                groups: filtersState.groups?.length > 0 ? [...filtersState?.groups, {groupId, value, valueId}] : [{
-                    groupId,
-                    value,
-                    valueId
-                }]
-            }
+            ...filtersState,
+            groupsHistory: filtersState.groupsHistory ? filtersState.groupsHistory.concat({ groupId, value, valueId }) : [{ groupId, value, valueId }],
+            groups: filtersState.groups?.length > 0 ? [...filtersState?.groups, { groupId, value, valueId }] : [{
+                groupId,
+                value,
+                valueId
+            }]
+        }
         ).then(() => {
             setView(EProductionFloorView.TABLE);
             push('/production-floor').then();
@@ -112,11 +127,13 @@ const useProductionFloorFilters = () => {
     const createDateFilter = useMemo(() => ({
         fromDate: filtersState?.fromCreateDate,
         toDate: filtersState?.toCreateDate
-    }), [filtersState])
+    }), [filtersState]);
+
     const deliveryDateFilter = useMemo(() => ({
         fromDate: filtersState?.fromDeliveryTime,
         toDate: filtersState?.toDeliveryTime
-    }), [filtersState])
+    }), [filtersState]);
+
     const setGroupFromPath = (groups: IFilterGroup[]) => {
         setFilters({
             ...filtersState,
@@ -127,29 +144,123 @@ const useProductionFloorFilters = () => {
     const onStationsChange = (stations: IStation[]) => {
         setFilters({
             ...filtersState,
-             stations
+            stations
         })
     }
 
+
+
+    //////////////////////////////////////////////  NEW ///////////////////////////////////////////////////
+
+
+    const getColorByMachineId = (machineId) => {
+        const entry = machinesColors?.find(item => item.id === machineId);
+        return entry ? entry?.color : '#088AB2';
+    };
+
+    const filterDataByMachineId = (machineId: string) => {
+        setData((prevData) => {
+            return prevData.map((item) => {
+                const filteredBoardMissions = item.boardMissions.filter(
+                    (mission) =>
+                        mission?.currentStation?.machineId === machineId ||
+                        mission?.currentStation?.employeeId === machineId
+                );
+
+                return {
+                    ...item,
+                    boardMissions: filteredBoardMissions,
+                };
+            });
+        });
+    };
+
+    const handleMoreClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
+
+    const handleChipClick = (card: { label: string; machineId: string }) => {
+        const { label, machineId } = card;
+        const isChipSelected = selectedChip === label;
+        setSelectedChip(isChipSelected ? null : label);
+        setIsFromFilters(true);
+        setData(originalDataRef.current);
+
+        if (machineId && !isChipSelected) {
+            filterDataByMachineId(machineId);
+        }
+    };
+
+    const handleMenuItemClick = (selectedCard: { label: string; machineId: string }) => {
+        setHiddenCards(prevHidden => {
+            const updatedHiddenCards = prevHidden.filter(card => card.label !== selectedCard.label);
+            return updatedHiddenCards;
+        });
+
+        setVisibleCards(prevVisible => {
+            const newVisibleCards = [{ label: selectedCard.label, machineId: selectedCard.machineId }, ...prevVisible];
+
+            if (newVisibleCards.length > 0) {
+                setHiddenCards(prevHidden => [...prevHidden, newVisibleCards[newVisibleCards.length - 1]]);
+            }
+
+            return newVisibleCards.slice(0, -1);
+        });
+        setSelectedChip(selectedCard.label);
+        setIsFromFilters(true);
+        setData(originalDataRef.current);
+
+        if (selectedCard.machineId) {
+            filterDataByMachineId(selectedCard.machineId);
+        }
+
+        handleClose();
+    };
+
     return {
+        t,
+        dir,
         search,
         setSearch,
-        tags,
-        setTags,
+        actionsMachinesIds,
+        data,
+        filters,
+        selectedChip,
+        setSelectedChip,
+        filtersState,
+        setFilters,
         onTagsChange,
         onSelectDeliveryTimeDates,
+        onSelectCreateDates,
         handleGroupsFilterChange,
         initGroupsFilters,
         hasGroupsFilters,
-        onSelectCreateDates,
         createDateFilter,
         deliveryDateFilter,
         setGroupFromPath,
-        groups,
         onStationsChange,
-        setFilters,
-        filtersState,
+        isRTL,
+        getColorByMachineId,
+        handleMoreClick,
+        handleChipClick,
+        handleMenuItemClick,
+        handleClose,
+        anchorEl,
+        visibleCards,
+        hiddenCards,
+        setMachinesColors,
+        isFromFilter,
+        setVisibleCards,
+        setHiddenCards,
+        scrollContainerRef,
+        originalDataRef,
+        setIsFromFilters,
+        groups
     }
 }
 
-export {useProductionFloorFilters}
+export { useProductionFloorFilters }

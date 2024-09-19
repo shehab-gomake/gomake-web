@@ -11,7 +11,9 @@ import { Source, useActionsList } from "../filters/select/actions-select/use-act
 const useProductionFloorHeader = () => {
     const [view, setView] = useRecoilState(productionFloorViewState);
     const [paths] = useRecoilState(productionFloorPathsState);
-    const { initGroupsFilters, hasGroupsFilters, setGroupFromPath, groups } = useProductionFloorFilters();
+    const { initGroupsFilters, hasGroupsFilters, setGroupFromPath, groups ,onStationsChange } = useProductionFloorFilters();
+    const { actionsList, onSelectMachine, onSelectStation, actionsMachinesIds, open, setOpen, filter, setFilter } = useActionsList(Source.PRODUCTION_FLOOR);
+    const buttonRef = useRef<HTMLButtonElement>(null);
     const showAllJobsButton = useMemo(() => hasGroupsFilters, [hasGroupsFilters]);
     const { push, replace, query } = useRouter();
     const { groupsId } = query;
@@ -30,7 +32,8 @@ const useProductionFloorHeader = () => {
             return paths.map(p => p.data.groupId).indexOf(groupsId.toString());
         }
         return groups.length * 2 - 1;
-    }, [paths, groupsId, groups])
+    }, [paths, groupsId, groups]);
+
     const onClickBack = () => {
         const i = currentPathIndex();
         if (i > 0) {
@@ -49,14 +52,13 @@ const useProductionFloorHeader = () => {
         }
 
     }
+
     const navigateToProductionFloor = () => {
         replace('/production-floor', undefined, { shallow: true });
     }
 
 
-    const { onStationsChange } = useProductionFloorFilters();
-    const { actionsList, onSelectMachine, onSelectStation, actionsMachinesIds, open, setOpen, filter, setFilter } = useActionsList(Source.PRODUCTION_FLOOR);
-    const buttonRef = useRef<HTMLButtonElement>(null);
+
 
     const handleClick = () => {
         setOpen(!open);
