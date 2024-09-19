@@ -89,7 +89,6 @@ const CustomCardComponent = ({
     getColorByMachineId,
     filters
 }: CustomCardProps) => {
-    // Fetch the machine status
     const machineStatus = filters.stations
         .flatMap(station => station?.machineStatuses)
         .find(status => status?.id === machineId);
@@ -142,9 +141,12 @@ const ProductionFloorFilters = () => {
     const [visibleCards, setVisibleCards] = useState<{ label: string, machineId: string }[]>([]);
     const [hiddenCards, setHiddenCards] = useState<{ label: string, machineId: string }[]>([]);
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-    const [data , setData] = useRecoilState<IStatusesBoardsMissions[]>(boardsMissionsState);
     const filters = useRecoilValue(productionFloorFiltersState);
+    
     const [machinesColors, setMachinesColors] = useState([]);
+
+    const [data , setData] = useRecoilState<IStatusesBoardsMissions[]>(boardsMissionsState);
+    const[isFromFilter , setIsFromFilters] = useState<boolean>(false);
     const originalDataRef = useRef<IStatusesBoardsMissions[]>([]); 
     const scrollContainerRef = useRef<HTMLDivElement>(null);
 
@@ -170,18 +172,6 @@ const ProductionFloorFilters = () => {
         });
     };
     
-    
-    const handleChipClick = (card: { label: string; machineId: string }) => {
-        const { label, machineId } = card;
-        const isChipSelected = selectedChip === label;
-        setSelectedChip(isChipSelected ? null : label);
-        setData(originalDataRef.current);
-    
-        if (machineId && !isChipSelected) {
-            filterDataByMachineId(machineId);
-        }
-    };
-
     const handleMoreClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(event.currentTarget);
     };
@@ -190,6 +180,20 @@ const ProductionFloorFilters = () => {
         setAnchorEl(null);
     };
 
+
+    const handleChipClick = (card: { label: string; machineId: string }) => {
+        const { label, machineId } = card;
+        const isChipSelected = selectedChip === label;
+        setSelectedChip(isChipSelected ? null : label);
+        setIsFromFilters(true);
+        setData(originalDataRef.current);
+    
+        if (machineId && !isChipSelected) {
+            filterDataByMachineId(machineId);
+        }
+    };
+
+    
     const handleMenuItemClick= (selectedCard: { label: string; machineId: string }) => {
         setHiddenCards(prevHidden => {
             const updatedHiddenCards = prevHidden.filter(card => card.label !== selectedCard.label);
@@ -205,8 +209,8 @@ const ProductionFloorFilters = () => {
     
             return newVisibleCards.slice(0, -1); 
         });
-
         setSelectedChip(selectedCard.label);
+        setIsFromFilters(true);
         setData(originalDataRef.current);
     
         if (selectedCard.machineId) {
@@ -217,30 +221,18 @@ const ProductionFloorFilters = () => {
     };
 
     useEffect(() => {
-        const fetchMachinesColors = async () => {
-            try {
-                const data = await fetchS3JsonContent("machinesColors.json");
-                setMachinesColors(data);
-            } catch (error) {
-                console.error("Error fetching machines colors :", error);
-            }
-        };
-        fetchMachinesColors();
-    }, []);
-
-    useEffect(() => {
         if (data.length > 0 && originalDataRef.current.length === 0) {
-            originalDataRef.current = data; 
+            originalDataRef.current = data;
+        }
+        else if ((data.length > 0 && !isFromFilter && originalDataRef.current.length !== 0)) {
+            setSelectedChip(null);
+            originalDataRef.current = data;
+        }
+        if (isFromFilter) {
+            setIsFromFilters(false);
         }
     }, [data]);
-    
-    useEffect(() => {
-        console.log("filters has been updated:", filters);
-    }, [filters]);
 
-    useEffect(() => {
-        console.log("Data has been updated:", data);
-    }, [data]);
     
     useEffect(() => {
         if (scrollContainerRef.current) {
@@ -272,6 +264,18 @@ const ProductionFloorFilters = () => {
             setHiddenCards(hidden);
         }
     }, [actionsMachinesIds]);
+
+    useEffect(() => {
+        const fetchMachinesColors = async () => {
+            try {
+                const data = await fetchS3JsonContent("machinesColors.json");
+                setMachinesColors(data);
+            } catch (error) {
+                console.error("Error fetching machines colors :", error);
+            }
+        };
+        fetchMachinesColors();
+    }, []);
 
     return (
         <Stack direction={'row'} padding={'12px 0'} style={{ backgroundColor: '#FFF' }} alignItems={'center'} gap={'20px'}>

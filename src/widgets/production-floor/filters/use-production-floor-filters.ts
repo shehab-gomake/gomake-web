@@ -24,11 +24,30 @@ const useProductionFloorFilters = () => {
     const {push} = useRouter();
     const {alertSuccessUpdate, alertFaultUpdate} = useSnackBar();
     const groups = filtersState?.groups;
+
     const setFilters = async (filters: IProductionFloorFilter) => {
         const callBack = (res) => {
             if (res?.success) {
                 alertSuccessUpdate();
-                setFiltersState(filters);
+
+                const backendFiltersStations = res?.data?.filter?.stations || [];
+                const mergedStations = filters.stations.map(station => {
+                    const correspondingBackendFilter = backendFiltersStations.find(
+                        backendFilter => backendFilter.actionId === station.actionId
+                    );
+    
+                    return {
+                        ...station,
+                        ...correspondingBackendFilter,
+                    };
+                });
+    
+                setFiltersState({
+                    ...filters, 
+                    stations: mergedStations 
+                });
+
+                // setFiltersState(filters);
                 setData(res?.data?.boardMissionsCollections);
                 setTags(res?.data?.automatedTagsFilter);
                 setUserGroups(res?.data?.groups);
@@ -39,6 +58,7 @@ const useProductionFloorFilters = () => {
         }
         await setBoardFiltersApi(callApi, callBack, filters)
     }
+
     const onTagsChange = async (tag: string) => {
 
         await setFilters({
@@ -107,7 +127,7 @@ const useProductionFloorFilters = () => {
     const onStationsChange = (stations: IStation[]) => {
         setFilters({
             ...filtersState,
-            stations
+             stations
         })
     }
 

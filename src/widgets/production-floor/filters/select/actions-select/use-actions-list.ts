@@ -95,6 +95,7 @@ const useActionsList = (source: Source) => {
         await getPrintHouseActions(callApi, callBack, source === Source.USERS)
     }
 
+ 
     const actionsMachinesIds: IStation[] = useMemo(() => {
         return actionsList?.filter(station => station.checked || station.machines?.some(machine => machine.checked))
             ?.map(station => ({ ...station, machines: station?.machines?.filter(machine => machine.checked) }))
@@ -103,7 +104,6 @@ const useActionsList = (source: Source) => {
                 actionName: station.actionName,
                 machineIds: station.machines.map(machine => machine.machineId),
                 machineNames: station.machines.map(machine => machine.machineName),
-                // just here...
             }));
     }, [actionsList]);
 

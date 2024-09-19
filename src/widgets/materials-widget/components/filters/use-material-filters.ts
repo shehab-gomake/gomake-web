@@ -35,6 +35,7 @@ const useMaterialFilters = () => {
   const { t } = useTranslation();
   const [filters, setFilters] = useRecoilState<any>(filterState);
   const [pageNumber, setPageNumber] = useRecoilState(materialsTablePageState);
+  
   const activeFilterOptions = [
     { value: EMaterialActiveFilter.ALL, label: t("materialsStatus.all") },
     { value: EMaterialActiveFilter.ACTIVE, label: t("materialsStatus.active") },
