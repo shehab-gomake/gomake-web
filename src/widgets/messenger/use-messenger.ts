@@ -268,7 +268,7 @@ const useMessenger = () => {
             updatedStatus,
             messageId: 'message id',
             chatDialogId: selectedDialog._id,
-            SenderUserId: senderId,
+            senderUserId: senderId,
             documentType: type,
             token: messenger.sessionUser.password
         })
