@@ -1,29 +1,30 @@
-import {useGomakeAxios, useSnackBar} from "@/hooks";
+import { useGomakeAxios, useSnackBar } from "@/hooks";
 import {
-    getProductionFloorData, updateBoardsMissionsOrderApi,
+    getProductionFloorData, moveBoardMissionToDoneApi, updateBoardsMissionsOrderApi,
     updateBoardsMissionsStatusApi
 } from "@/services/api-service/production-floor/production-floor-endpoints";
-import {useRecoilState} from "recoil";
-import {productionFloorFiltersState} from "@/widgets/production-floor/state/production-floor-filters";
-import {boardsMissionsState, getDataAbortController} from "@/widgets/production-floor/state/boards";
-import {tagsState} from "@/widgets/production-floor/state/tags";
-import {userProductionFloorGroupsState} from "@/widgets/production-floor/state/production-floor-groups-state";
-import {productionFloorPathsState} from "@/widgets/production-floor/state/production-floor-paths";
-import {IBoardMissions} from "@/widgets/production-floor/interfaces/board-missions";
-import {useTranslation} from "react-i18next";
-import {IStatusesBoardsMissions} from "@/widgets/production-floor/interfaces/production-floor-data-response";
-import {useState} from "react";
+import { useRecoilState } from "recoil";
+import { productionFloorFiltersState } from "@/widgets/production-floor/state/production-floor-filters";
+import { boardsMissionsState, getDataAbortController } from "@/widgets/production-floor/state/boards";
+import { tagsState } from "@/widgets/production-floor/state/tags";
+import { userProductionFloorGroupsState } from "@/widgets/production-floor/state/production-floor-groups-state";
+import { productionFloorPathsState } from "@/widgets/production-floor/state/production-floor-paths";
+import { IBoardMissions } from "@/widgets/production-floor/interfaces/board-missions";
+import { useTranslation } from "react-i18next";
+import { IStatusesBoardsMissions } from "@/widgets/production-floor/interfaces/production-floor-data-response";
+import {  useState } from "react";
+import { getBoardMissionPDF } from "@/services/api-service/generic-doc/documents-api";
 
 const useProductionFloorData = () => {
-    const {t} = useTranslation();
-    const {callApi} = useGomakeAxios();
+    const { t } = useTranslation();
+    const { callApi } = useGomakeAxios();
     const [data, setData] = useRecoilState<IStatusesBoardsMissions[]>(boardsMissionsState);
     const [abortController, setAbortController] = useState(null);
     const [, setFilters] = useRecoilState(productionFloorFiltersState);
     const [, setTags] = useRecoilState(tagsState);
     const [, setUserGroups] = useRecoilState(userProductionFloorGroupsState);
     const [, setPath] = useRecoilState(productionFloorPathsState);
-    const {alertSuccessGetData, alertFaultGetData, alertFaultUpdate, alertSuccessUpdate} = useSnackBar();
+    const { alertFaultUpdate, alertSuccessUpdate } = useSnackBar();
 
     const getData = async (connectionId?: string) => {
         const callBack = (res) => {
@@ -47,25 +48,26 @@ const useProductionFloorData = () => {
 
     const updateStatus = async (boards: IBoardMissions[], statusId: string) => {
         const boardsIds = boards?.filter(b => b.statusId !== statusId);
-        setData(data?.map((status) => {
-            if (status.boardMissionStatus?.boardMissionStatus?.id === statusId) {
-                return {
-                    ...status,
-                    boardMissions: [...status.boardMissions, ...boardsIds?.map(b => ({
-                        ...b,
-                        statusId: status.boardMissionStatus.boardMissionStatus.id
-                    }))]
-                }
-            } else {
-                return {
-                    ...status,
-                    boardMissions: status.boardMissions.filter(b => !!!boardsIds.find(bs => b.id === bs.id && b.productType === bs.productType))
-                }
-            }
-        }))
+
         const callBack = (res) => {
             if (res.success) {
                 alertSuccessUpdate();
+                setData(data?.map((status) => {
+                    if (status.boardMissionStatus?.boardMissionStatus?.id === statusId) {
+                        return {
+                            ...status,
+                            boardMissions: [...status.boardMissions, ...boardsIds?.map(b => ({
+                                ...b,
+                                statusId: status.boardMissionStatus.boardMissionStatus.id
+                            }))]
+                        }
+                    } else {
+                        return {
+                            ...status,
+                            boardMissions: status.boardMissions.filter(b => !!!boardsIds.find(bs => b.id === bs.id && b.productType === bs.productType))
+                        }
+                    }
+                }))
             } else {
                 alertFaultUpdate();
             }
@@ -103,13 +105,111 @@ const useProductionFloorData = () => {
         await updateBoardsMissionsOrderApi(callApi, callBack, payload)
     }
 
+    const [selectedMissionId, setSelectedMissionId] = useState<any>(null)
+    const [openMarkReadyModal, setOpenMarkReadyModal] = useState<boolean>(false);
+
+    const onCloseMarkReadyModal = () => {
+        setSelectedMissionId(null)
+        setOpenMarkReadyModal(false);
+    };
+
+    const onOpenMarkReadyModal = (missionId) => {
+        setSelectedMissionId(missionId)
+        setOpenMarkReadyModal(true);
+    };
+
+
+    // need testing
+    const handleRemoveBoardMission = (boardMissionId) => {
+        
+        setData((prevData) => {
+            return prevData.map((item) => {
+                if (Array.isArray(item.boardMissions)) {
+                    const updatedBoardMissions = item.boardMissions?.filter(
+                        (mission) => mission.id !== boardMissionId
+                    );
+    
+                    return {
+                        ...item,
+                        boardMissions: updatedBoardMissions,
+                    };
+                }
+                return item;
+            });
+        });
+    };
+
+    const onClickMoveBoardMissionToDone = async (sendMessage: boolean) => {
+        const callBack = (res) => {
+            setOpenMarkReadyModal(false);
+            //setOpenPackagesModal(true)
+            if (res?.success) {
+                alertSuccessUpdate();
+                handleRemoveBoardMission(selectedMissionId)
+            } else {
+                alertFaultUpdate();
+            }
+        };
+        await moveBoardMissionToDoneApi(callApi, callBack, {
+            boardMissionId: selectedMissionId,
+            sendMessage
+        });
+    };
+
+    const downloadPdf = (url) => {
+        const anchor = document.createElement("a");
+        anchor.href = url;
+        anchor.target = "_blank";
+        anchor.addEventListener("click", () => {
+            setTimeout(() => {
+                anchor.remove();
+            }, 100);
+        });
+        anchor.click();
+    };
+
+    const onClickPrintJob = async (boardMissionId) => {
+        const callBack = (res) => {
+            if (res?.success) {
+                const pdfLink = res.data;
+                downloadPdf(pdfLink)
+            } else {
+            }
+        };
+        await getBoardMissionPDF(callApi, callBack, { boardMissionId });
+    };
+
+    const [selectedMission, setSelectedMission] = useState<any>({})
+    const [openPackagesModal, setOpenPackagesModal] = useState<boolean>(false);
+
+    const onOpenPrintDeliverTicketModal = (mission) => {
+         setSelectedMission(mission)
+         setOpenPackagesModal(true);
+    };
+  
+    const onClosePrintDeliverTicketModal = () => {
+        setSelectedMission({})
+        setOpenPackagesModal(false);
+    };
+
     return {
+        t,
         getData,
         updateStatus,
         setData,
-        t,
-        updateBoardMissionsOrder
+        updateBoardMissionsOrder,
+        onCloseMarkReadyModal,
+        onOpenMarkReadyModal,
+        openMarkReadyModal,
+        setOpenMarkReadyModal,
+        onClickMoveBoardMissionToDone,
+        onClickPrintJob,
+        openPackagesModal,
+        onClosePrintDeliverTicketModal,
+        onOpenPrintDeliverTicketModal,
+        selectedMission
+
     }
 }
 
-export {useProductionFloorData}
+export { useProductionFloorData }

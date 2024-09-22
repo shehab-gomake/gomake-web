@@ -150,3 +150,19 @@ export function getCurrencySymbol(currencyCode) {
 
   return currencySymbols[currencyCode] || null;
 }
+
+export const toRgba = (color: string, opacity: number) => {
+  // Assuming primaryColor returns a hex color like '#ffcc00' or any color string
+  let rgbaColor = color;
+
+  if (color.startsWith('#')) {
+      const hex = color.replace('#', '');
+      const bigint = parseInt(hex, 16);
+      const r = (bigint >> 16) & 255;
+      const g = (bigint >> 8) & 255;
+      const b = bigint & 255;
+      rgbaColor = `rgba(${r}, ${g}, ${b}, ${opacity})`;
+  }
+
+  return rgbaColor;
+};

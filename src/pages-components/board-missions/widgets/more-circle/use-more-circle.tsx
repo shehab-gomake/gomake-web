@@ -7,7 +7,7 @@ import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import { useStyle } from "./style";
 import { PackageIcon } from "@/icons/package-icon";
 import { GetPrintingTicketPDFApi } from "@/services/api-service/generic-doc/documents-api";
-import { useGomakeAxios, useSnackBar } from "@/hooks";
+import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
 import { PStatus } from "../enums";
 import { addBoardMissionsToFileUploaderApi } from "@/services/api-service/board-missions-table/board-missions-table";
 import { useRecoilState } from "recoil";
@@ -29,6 +29,7 @@ const useMoreCircle = ({
   const { t } = useTranslation();
   const { classes } = useStyle();
   const { callApi } = useGomakeAxios();
+  const { navigate } = useGomakeRouter();
   const { alertFaultGetData } = useSnackBar();
   const [connectionId] = useRecoilState(fileUploaderConnectionIdState);
   const [, setOpenFileUploader] = useRecoilState(openFileUploaderList);
@@ -79,11 +80,13 @@ const useMoreCircle = ({
       condition: true,
       name: <a style={classes.menuTitleStyle} href={`/production-floor?boardMissionsId=${mission?.id}&step=stations`}>{t("boardMissions.viewTask")}</a>,
       icon: <VisibilityOutlinedIcon style={classes.iconStyle} />,
+      onclick: () => navigate(`/production-floor?boardMissionsId=${mission?.id}&step=stations`),
     },
     {
       condition: mission?.isEditable,
       name: <a style={classes.menuTitleStyle} href={handleClickEdit(mission)}>{t("materials.buttons.edit")}</a>,
       icon: <EditIcon />,
+      onclick: () => navigate(handleClickEdit(mission))
     },
     {
       condition: true,

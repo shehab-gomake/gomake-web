@@ -2,7 +2,7 @@ import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { useMemo } from "react";
 import { FONT_FAMILY } from "@/utils/font-family";
 
-const useStyle = () => {
+const useStyle = ({textColor}) => {
     const { theme, primaryColor } = useGomakeTheme();
     const classes = useMemo(() => {
         return {
@@ -25,18 +25,63 @@ const useStyle = () => {
             borderRadius: {
                 borderRadius: '4px',
             },
+            // currentStationBtn: {
+            //     borderRadius: 0,
+            //     border: 0,
+            //     backgroundColor: primaryColor(500),
+            //     '&:hover': {
+            //         backgroundColor: primaryColor(500),
+            //         opacity: 0.8
+            //     },
+            //     '&.Mui-disabled': {
+            //         backgroundColor: primaryColor(500),
+            //         color: "#FFF"
+            //     }
+            // },
             currentStationBtn: {
-                borderRadius: 0,
-                border: 0,
-                backgroundColor: primaryColor(500),
+                boxShadow:"none",
+                backgroundColor:"transparent",
+                // ...FONT_FAMILY.Inter(600, 12),
+                ...FONT_FAMILY.Inter(500, 14),
+                color: textColor || primaryColor(600),                
+                fontStyle: "normal",
+                textTransform: "capitalize" as "capitalize",
+                gap: "2px",
                 '&:hover': {
-                    backgroundColor: primaryColor(500),
-                    opacity: 0.8
+                    backgroundColor:"transparent",
+                    color: textColor || primaryColor(600),
+                    boxShadow:"none",
+
+                  //  opacity: 0.8
                 },
-                '&.Mui-disabled': {
-                    backgroundColor: primaryColor(500),
-                    color: "#FFF"
-                }}
+            },
+            moveToBtn: {
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                borderRadius: "4px",
+                background: "rgba(46, 48, 146, 0.10)",
+                color: "#2E3092",
+                gap: "5px",
+                flexShrink: 0,
+                height: 36,
+            },
+            moveToText: {
+                ...FONT_FAMILY.Inter(500, 10),
+                color: primaryColor(600),
+                textAlign: "center" as "center",
+                fontStyle: "italic",
+                lineHeight: "20px",
+                textTransform: "initial" as "initial"
+            },
+            actionText: {
+                color: primaryColor(600),
+                // ...FONT_FAMILY.Inter(500, 12),
+                ...FONT_FAMILY.Inter(500, 14),
+                fontStyle: "normal",
+                lineHeight: "20px",
+                textTransform: "capitalize" as "capitalize"
+            }
         };
     }, [theme]);
     return {

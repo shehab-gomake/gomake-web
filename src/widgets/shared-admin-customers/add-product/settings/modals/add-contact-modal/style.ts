@@ -60,7 +60,21 @@ const useStyle = () => {
         alignItems: "center",
         width:"100%",
         gap:15
-      }
+      },
+      colorInputStyle: {
+       // boxSizing: "border-box" as "border-box",
+        borderRadius: "4px",
+        height: "40px",
+        padding: "5px",
+        ...FONT_FAMILY.Lexend(300, 14),
+        display: "flex",
+        alignItems: "center",
+        boxShadow: "0px 1px 10px rgba(0, 0, 0, 0.08)",
+        color: "#8283BE",
+        justifyContent: "space-between",
+        backgroundColor: "#FFFFFF",
+        width:"30%"
+      },
     };
   }, []);
   return {

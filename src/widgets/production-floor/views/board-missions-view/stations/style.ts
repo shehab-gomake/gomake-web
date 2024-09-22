@@ -33,6 +33,7 @@ const useStyle = () => {
         borderColor: '#D0D5DD',
         borderRadius: '8px',
         height: '33px',
+        lineHeight:"15px",
         '& .MuiButton-startIcon': {
           ...(direction === 'rtl' && { margin: '8px 0' }),
         },

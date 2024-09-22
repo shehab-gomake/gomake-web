@@ -16,6 +16,7 @@ import { HelpIcon } from "@/icons/help-icon";
 import { currentPathState } from "@/pages-components/customer-service/store/currentPathState";
 import { useRouter } from "next/router";
 import {MessengerNotifications} from "@/widgets/messenger-notifications-widget/messenger-notifications";
+import {SystemNotifications} from "@/widgets/system-notifications-widget/system-notifications";
 const HeaderWidget = () => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -66,6 +67,7 @@ const HeaderWidget = () => {
         {/*  <EmailOutlinedIcon style={{color: '#FFF', width: 18, height: 18}}/>*/}
         {/*</IconButton>*/}
         <MessengerNotifications/>
+        <SystemNotifications/>
         <IconButton style={{ padding: "2px" }} data-tour={"start-tour-btn"} onClick={handleClickSupport}>
           <HelpIcon width={26} height={26} />
         </IconButton>

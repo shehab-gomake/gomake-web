@@ -16,7 +16,7 @@ import { PricingWidget } from "@/widgets/product-pricing-widget/pricing-widget";
 import { createTheme, Tabs, ThemeProvider } from "@mui/material";
 import { StepType } from "@reactour/tour";
 import { useGoMakeTour } from "@/hooks/use-go-make-tour";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { currentProductItemValuePriceState, lastProductItemValuePriceState } from "@/widgets/product-pricing-widget/state";
 import { PriceListPageSkeletonWidget } from "./digital-offset-price-skeleton";
@@ -75,8 +75,9 @@ const PriceListPageWidget = ({ widgetType }) => {
         isChangePriceForEdit,
         onClickCloseChangePriceModal,
         setIsChangePriceForEdit,
-        isLoadging
+        isLoadging,
     } = useDigitalOffsetPrice({ clasess, widgetType });
+
     const visibleSections = productTemplate?.sections?.filter(section => !section.isHidden);
     const dir: 'rtl' | 'ltr' = t('direction');
     const theme = createTheme({

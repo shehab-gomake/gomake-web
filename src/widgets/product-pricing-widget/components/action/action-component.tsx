@@ -308,7 +308,7 @@ const ActionContainerComponent = ({
       return !!supplier ? supplier.label : "";
     }
     return "";
-  }, [supplierId, suppliers]);
+  }, [supplierId, suppliers, suppliersState]);
 
 
 
@@ -407,7 +407,7 @@ const ActionContainerComponent = ({
                               actionId,
                               productType,
                               actionIndex,
-                              machineName: v.label,
+                              machineName: v?.label,
                               machineId: v?.value,
                               printingActionId: id,
 
@@ -540,7 +540,7 @@ const ActionContainerComponent = ({
                               actionId,
                               productType,
                               actionIndex,
-                              printHouseMaterialSizeName: v.label,
+                              printHouseMaterialSizeName: v?.label,
                               printHouseMaterialSizeId: v?.value,
                               printingActionId: id,
                             })
@@ -781,7 +781,7 @@ const ActionComponent = ({
     },
   ]
   const getSupplierId = useCallback(() => {
-    if (supplierId) {
+    if (supplierId && suppliers?.length > 0) {
       const supplier = suppliers?.find((sup) => sup.supplierId === supplierId);
       return !!supplier ? supplier.supplierName : "";
     }
