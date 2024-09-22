@@ -57,7 +57,6 @@ const CopyFromOrderModal = ({ openModal, onClose, documentType, cliendDocumentTy
             </div>
           </div>
           <div style={classes.bodyContainer}>
-            {/* // here */}
             <OrderTableWidget
               PrimaryTableCell={PrimaryTableCell}
               columnWidths={columnWidths}
