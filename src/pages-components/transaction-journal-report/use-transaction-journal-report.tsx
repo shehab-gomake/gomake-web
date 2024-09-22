@@ -79,7 +79,7 @@ const useTransactionJournalReport = ({ isPayment }: TransactionJournalReportWidg
             data?.accountName,
             data?.cardCode,
             data?.cardName,
-            data?.credit?.toFixed(2),
+            isPayment ? data?.credit > 0 ? data?.credit?.toFixed(2) : data?.debit?.toFixed(2) : data?.credit?.toFixed(2),
           ]
         )
       });
@@ -97,7 +97,7 @@ const useTransactionJournalReport = ({ isPayment }: TransactionJournalReportWidg
     t("reports.accountName"),
     t("reports.cardcode"),
     t("reports.cardname"),
-    t("reports.credit"),
+    isPayment ? `${t("reports.credit")} / ${t("reports.debit")}` : t("reports.credit"),
 
   ];
 

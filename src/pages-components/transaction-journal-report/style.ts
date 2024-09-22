@@ -24,14 +24,24 @@ const useStyle = () => {
         alignItems: "flex-start",
         width: "100%",
         gap: 10,
-        marginTop:15,
-        marginBottom:20
+        
 
       },
       titleStyle:{
         ...FONT_FAMILY.Lexend(700,14),
         color:primaryColor(500),
         paddingLeft:5
+      },
+      totalStyle:{
+        ...FONT_FAMILY.Lexend(700,14),
+        color:primaryColor(500),
+        paddingRight:5,
+        display:"flex",
+        alignItems:"right",
+        justifyContent: "flex-end",
+        width:"100%",
+        marginTop:10,
+        marginBottom:20
       }
     };
   }, []);
