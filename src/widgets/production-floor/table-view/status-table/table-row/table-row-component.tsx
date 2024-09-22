@@ -31,8 +31,8 @@ import { NextStationComponent } from "../stations/next-station";
 interface IProps {
     boardMission: IBoardMissions
     status?: any
-    onClickDone?:(missionId: any)=>void;
-    onClickPrintDTicket?:(mission: any)=>void;
+    onClickDone?: (missionId: any) => void;
+    onClickPrintDTicket?: (mission: any) => void;
 }
 
 enum EDropArea {
@@ -41,7 +41,7 @@ enum EDropArea {
     DISABLED
 }
 
-const TableRowComponent = ({ boardMission, status , onClickDone , onClickPrintDTicket}: IProps) => {
+const TableRowComponent = ({ boardMission, status, onClickDone, onClickPrintDTicket }: IProps) => {
     const [selectedIds, setSelectedIds] = useRecoilState(selectedBoardsMissionsState);
     const { CheckPermission } = useUserPermission();
     const canDrag = CheckPermission(Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR);
@@ -103,7 +103,7 @@ const TableRowComponent = ({ boardMission, status , onClickDone , onClickPrintDT
     }), [boardMission]);
 
 
-    const { updateStatus, updateBoardMissionsOrder, t ,onClickPrintJob } = useProductionFloorData();
+    const { updateStatus, updateBoardMissionsOrder, t, onClickPrintJob } = useProductionFloorData();
     const onSelectBoardMissions = (id: string, checked: boolean) => {
         setSelectedIds(checked ? [...selectedIds, boardMission] :
             selectedIds.filter(selectedBoard => selectedBoard.id !== id && selectedBoard.productType === boardMission.productType));
@@ -148,20 +148,20 @@ const TableRowComponent = ({ boardMission, status , onClickDone , onClickPrintDT
                 <SecondaryTableCell align={"center"}>
                     {boardMission?.clientName}
                 </SecondaryTableCell>
-                <SecondaryTableCell align={"center"} style={{padding:"0px 10px"}}>
-                    <ClickableLabelComponent label={boardMission?.productName}  id={boardMission.id} textColor={boardMission?.productionFloorJobColor} t={t} key={boardMission.id} />
+                <SecondaryTableCell align={"center"} style={{ padding: "0px 10px" }}>
+                    <ClickableLabelComponent label={boardMission?.productName} id={boardMission.id} textColor={boardMission?.productionFloorJobColor} t={t} key={boardMission.id} />
                 </SecondaryTableCell>
                 <SecondaryTableCell align={"center"}>
                     <BoardStatusComponent statusId={boardMission.statusId} id={boardMission.id}
                         onChange={(id, statusId) => updateStatus([boardMission], statusId)} />
                 </SecondaryTableCell>
                 <SecondaryTableCell align={"center"} >
-                    <CurrentStationComponent {...boardMission.currentStation} 
-                        boardMissionId={boardMission.id} status={status} textColor={boardMission?.productionFloorJobColor}/>
+                    <CurrentStationComponent {...boardMission.currentStation}
+                        boardMissionId={boardMission.id} status={status} textColor={boardMission?.productionFloorJobColor} />
                 </SecondaryTableCell>
                 <SecondaryTableCell align={"center"} >
                     <NextStationComponent {...boardMission.currentStation} {...boardMission.nextStation}
-                        boardMissionId={boardMission.id} status={status} textColor={boardMission?.productionFloorJobColor}/>
+                        boardMissionId={boardMission.id} status={status} textColor={boardMission?.productionFloorJobColor} />
                 </SecondaryTableCell>
                 <SecondaryTableCell align={"center"}>
                     {
@@ -210,11 +210,11 @@ const TableRowComponent = ({ boardMission, status , onClickDone , onClickPrintDT
                     </Stack>
                 </SecondaryTableCell>
                 <SecondaryTableCell align={"center"}>
-                    <MoreMenuWidget 
-                    boardMission={boardMission} 
-                    onClickDone={onClickDone}
-                    onClickPrintJob={onClickPrintJob}
-                    onClickPrintDTicket={onClickPrintDTicket}
+                    <MoreMenuWidget
+                        boardMission={boardMission}
+                        onClickDone={onClickDone}
+                        onClickPrintJob={onClickPrintJob}
+                        onClickPrintDTicket={onClickPrintDTicket}
                     />
                 </SecondaryTableCell>
             </TableRow>

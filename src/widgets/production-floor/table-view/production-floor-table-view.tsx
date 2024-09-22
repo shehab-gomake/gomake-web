@@ -7,7 +7,7 @@ import { selectedChipIdState } from "../state/text-search";
 
 const ProductionFloorTableView = () => {
     const { data } = useProductionFloorTable();
-    const selectedChipId = useRecoilValue(selectedChipIdState); 
+    const selectedChipId = useRecoilValue(selectedChipIdState);
 
     const filteredDataByMachine = useMemo(() => {
         return !selectedChipId ? data : data.map((item) => {

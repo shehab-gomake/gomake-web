@@ -3755,7 +3755,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       if (action.isNeedEmployee && !action.employeeId) {
         errors.push(`${action.actionName}: ${t("validateWorkflows.noEmployee")}`);
       }
-      if (action.isNeedMachine && !action.mongoDBMachineId) {
+      if (action.isNeedMachine && !action.mongoDBMachineId && action.source === 0) {
         errors.push(`${action.actionName}: ${t("validateWorkflows.noMavhine")}`);
       }
       if (action.isNeedMaterial && (!action.materials || Object.keys(action.materials).length === 0)) {
