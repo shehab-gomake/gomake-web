@@ -1,5 +1,5 @@
 import { SearchInputComponent } from "@/components/form-inputs/search-input-component";
-import { GoMakeModal, GomakePrimaryButton } from "@/components";
+import { GoMakeModal, GomakePrimaryButton, SecondSwitch } from "@/components";
 import { useCopyFromOrderModal } from "./use-copy-from-order-modal";
 import { OrderTableWidget } from "./order-table";
 import { useStyle } from "./style";
@@ -22,7 +22,10 @@ const CopyFromOrderModal = ({ openModal, onClose, documentType, cliendDocumentTy
     selectedItems,
     totalPrice,
     filterItems,
-    addOrdersToDeliveryNote
+    addOrdersToDeliveryNote,
+    setShowReadyOnly,
+    showReadyOnly,
+    isCopyFromOrder,
   } = useCopyFromOrderModal({ onClose, documentType, openModal, cliendDocumentType })
 
   return (
@@ -40,6 +43,10 @@ const CopyFromOrderModal = ({ openModal, onClose, documentType, cliendDocumentTy
                 <div style={classes.searchLabelStyle}>{t("sales.quote.searchBy")}</div>
                 <SearchInputComponent onChange={setTerm} />
               </div>
+             { isCopyFromOrder && <div style={classes.switchContainer}>
+                <SecondSwitch checked={showReadyOnly} onChange={(e) => setShowReadyOnly(e.target.checked)} />
+                <span style={classes.switchLabel}>{t("sales.cart.showReadyItems")}</span>
+              </div>}
             </div>
           </div>
           <div style={classes.bodyContainer}>

@@ -75,7 +75,12 @@ const BusinessNewWidget = ({
     onClickCloseChangeClientModalFromInvoice,
     openChangeClientModalFromInvoice,
     openChangeClientModal,
-    selectedClient
+    selectedClient,
+    manuaLInvoiceNum,
+    setManuaLInvoiceNum,
+    isUpdateManuaLInvoiceNum,
+    setIsUpdateManuaLInvoiceNum,
+    onBlurManualInvoiceNum
   } = useBusinessWidget({ values, documentType });
   const dir: 'rtl' | 'ltr' = t('direction');
   const isRTL = dir === 'rtl';
@@ -89,10 +94,13 @@ const BusinessNewWidget = ({
     setTaxConfirmationNumber(values?.taxConfirmationNumber);
   }, [values?.taxConfirmationNumber]);
 
+  useEffect(() => {
+    setManuaLInvoiceNum(values?.manualInvoiceNumber);
+  }, [values?.manualInvoiceNumber]);
+
   return (
     <>
       <div style={classes.businessContainerStyle}>
-        {/* //here */}
         <AutoCompleteUpdatedValue
           label={t("sales.quote.businessName")}
           value={isQuoteConfirmation ? quoteConfirm?.client?.name : quoteStateValue?.client?.name ? quoteStateValue?.client?.name : t("sales.quote.selectBusinessName")}
@@ -107,7 +115,12 @@ const BusinessNewWidget = ({
         <PermissionCheck userPermission={Permissions.ADD_CLIENT}>
           {(!isQuoteConfirmation && documentType === DOCUMENT_TYPE.quote) && <span style={classes.plusStyle} onClick={() => setOpenCustomerModal(true)}>+</span>}
         </PermissionCheck>
-
+        <InputUpdatedValues
+          value={isQuoteConfirmation ? `${quoteConfirm?.client?.code}` : `${quoteStateValue?.client?.code}`}
+          label={t("sales.quote.businessCode")}
+          onBlur={onBlurBusinessCode}
+          setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdateBusinessCode}
+        />
         {
           quoteStateValue?.client?.isOccasional &&
           <InputUpdatedValues
@@ -139,12 +152,16 @@ const BusinessNewWidget = ({
           setIsUpdate={setIsUpdateTaxNumber}
           onInputChange={(v) => setTaxConfirmationNumber(v)}
         />}
-        <InputUpdatedValues
-          value={isQuoteConfirmation ? `${quoteConfirm?.client?.code}` : `${quoteStateValue?.client?.code}`}
-          label={t("sales.quote.businessCode")}
-          onBlur={onBlurBusinessCode}
-          setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdateBusinessCode}
-        />
+          {isInvoice && <InputUpdatedValues
+          value={manuaLInvoiceNum}
+          placeholder={manuaLInvoiceNum ? manuaLInvoiceNum : t("sales.cart.noInvoiceNumber")}
+          label={t("sales.cart.manuaLInvoiceNum")}
+          onBlur={onBlurManualInvoiceNum}
+          isUpdate={canEditDocument && isUpdateManuaLInvoiceNum}
+          setIsUpdate={setIsUpdateManuaLInvoiceNum}
+          onInputChange={(v) => setManuaLInvoiceNum(v)}
+        />}
+
         {!isQuoteConfirmation && <AutoCompleteUpdatedValue
           label={t("sales.quote.agent")}
           value={selectedAgent?.text ? selectedAgent.text : t("sales.quote.selectAgent")}

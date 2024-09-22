@@ -16,6 +16,7 @@ import { HelpIcon } from "@/icons/help-icon";
 import { currentPathState } from "@/pages-components/customer-service/store/currentPathState";
 import { useRouter } from "next/router";
 import {MessengerNotifications} from "@/widgets/messenger-notifications-widget/messenger-notifications";
+import {SystemNotifications} from "@/widgets/system-notifications-widget/system-notifications";
 const HeaderWidget = () => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -62,11 +63,12 @@ const HeaderWidget = () => {
       {/* <SearchInputComponent onChange={() => null} searchInputStyle={classes.searchInputContainer} /> */}
       <div style={{ width: "100%" }} />
       <div style={classes.rightSideContainer}>
-        {/*<IconButton style={{ padding: "5px", backgroundColor: primaryColor(300) }} onClick={handleClickSupport}>*/}
+        {/*<IconButton style={{ padding: "2px", backgroundColor: primaryColor(300) }} onClick={handleClickSupport}>*/}
         {/*  <EmailOutlinedIcon style={{color: '#FFF', width: 18, height: 18}}/>*/}
         {/*</IconButton>*/}
         <MessengerNotifications/>
-        <IconButton style={{ padding: "5px" }} data-tour={"start-tour-btn"} onClick={handleClickSupport}>
+        <SystemNotifications/>
+        <IconButton style={{ padding: "2px" }} data-tour={"start-tour-btn"} onClick={handleClickSupport}>
           <HelpIcon width={26} height={26} />
         </IconButton>
         {QuoteIfExist == true && window.location.pathname != "/quote" && (
@@ -81,7 +83,7 @@ const HeaderWidget = () => {
           <Notifications />
         </IconButton> */}
         <div style={classes.profileContainer}>
-          <IconButton style={{ padding: "5px" }} onClick={handleClick}>
+          <IconButton style={{ padding: "2px" }} onClick={handleClick}>
             {userAvatar()}
           </IconButton>
           {/* <div style={classes.userNameStyle}>{user?.displayName}</div> */}

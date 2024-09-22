@@ -8,7 +8,7 @@ export enum EAccountType {
   CREDIT = 1,
 }
 
-const useCreateNewTransaction = ({ onCloseModal }) => {
+const useCreateNewTransaction = ({ onCloseModal, customerId }) => {
   const { t } = useTranslation()
   const { customer, renderOptions, checkWhatRenderArray, handleCustomerChange, setCustomer } = useCustomerDropDownList()
   const { callApi } = useGomakeAxios();
@@ -25,7 +25,7 @@ const useCreateNewTransaction = ({ onCloseModal }) => {
   const [price, setPrice] = useState<number>(0)
   const [reference, setReference] = useState<string>("")
   const [selectDate, setSelectDate] = useState<string>(new Date().toISOString().split('T')[0]);
-  
+
   const handleERPAccountChange = (e: any, value: any) => {
     setErpAccount(value);
   };
@@ -77,7 +77,7 @@ const useCreateNewTransaction = ({ onCloseModal }) => {
         EHttpMethod.POST,
         `/v1/erp-service/receipts/cancel-transactions`,
         {
-          clientId: customer.id,
+          clientId: customerId ? customerId : customer.id,
           accountCode: selectErpAccount.name,
           amount: price,
           reference: reference,
@@ -94,7 +94,7 @@ const useCreateNewTransaction = ({ onCloseModal }) => {
     },
     [customer, price, reference, selectDate, selectAccountType, selectErpAccount]
   );
-  
+
   return {
     customer,
     erpAccountsList,

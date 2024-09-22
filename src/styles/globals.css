@@ -492,3 +492,11 @@ df-messenger {
 .rs-anim-fade {
   z-index: 9999999999999999 !important;
 }
+
+.rs-picker-input-group {
+  height: 42px !important;
+}
+
+.rs-input {
+  padding-right: 10px !important
+}

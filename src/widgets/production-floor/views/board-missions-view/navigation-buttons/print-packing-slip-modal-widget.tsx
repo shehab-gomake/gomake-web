@@ -1,26 +1,32 @@
 import { useTranslation } from "react-i18next";
 import { GoMakeModal, GomakeTextInput } from "@/components";
 import { Stack } from "@mui/material";
-import {useStyle} from "@/pages-components/board-missions/style";
+import { useStyle } from "@/pages-components/board-missions/style";
 import { SecondaryButton } from "@/components/button/secondary-button";
-import {useMemo, useState} from "react";
-import {getDeliveryTickerPdfApi} from "@/services/api-service/board-missions-table/board-missions-table";
-import {useGomakeAxios, useSnackBar} from "@/hooks";
+import { useEffect, useMemo, useState } from "react";
+import { getDeliveryTickerPdfApi } from "@/services/api-service/board-missions-table/board-missions-table";
+import { useGomakeAxios, useSnackBar } from "@/hooks";
 
 interface IProps {
   boardMissionId: string;
   quantity: number;
   openModal: boolean
-  onClose: ()=>void
+  onClose: () => void
 }
-const PrintPackingSlipModalWidget = ({boardMissionId, quantity, openModal, onClose}: IProps) => {
+const PrintPackingSlipModalWidget = ({ boardMissionId, quantity, openModal, onClose }: IProps) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
   const [quantityOfPackages, setQuantityOfPackages] = useState<number>(1);
   const [quantityPerPackage, setQuantityPerPackage] = useState<number>(quantity);
+
+  useEffect(() => {
+    setQuantityPerPackage(quantity)
+  },
+    [quantity])
+
   const remainingQuantity = quantity - quantityPerPackage * (quantityOfPackages - 1);
-  const {alertFaultGetData, alertFault} = useSnackBar();
-  const {callApi} = useGomakeAxios();
+  const { alertFaultGetData, alertFault } = useSnackBar();
+  const { callApi } = useGomakeAxios();
 
   const handleQuantityOfPackagesChange = (event) => {
     const newQuantityOfPackages = parseInt(event.target.value, 10);
@@ -37,20 +43,21 @@ const PrintPackingSlipModalWidget = ({boardMissionId, quantity, openModal, onClo
     setQuantityPerPackage(isNaN(newQuantityPerPackage) ? 0 : newQuantityPerPackage);
     setQuantityOfPackages(isNaN(newQuantityOfPackages) ? 1 : newQuantityOfPackages);
   };
+
   const packageInputs = useMemo(() => {
     return [...Array(isNaN(quantityOfPackages) ? 1 : quantityOfPackages)].map((_, index) => (
-        <div key={index} style={{width: "40%"}}>
-          <h3 style={classes.packageLabelStyle}>
-            {`${t("boardMissions.package")} ${index + 1}`}
-          </h3>
-          <div style={classes.inputValueStyle}>
-            {
-              index === quantityOfPackages - 1
-                  ? remainingQuantity
-                  : quantityPerPackage
-            }
-          </div>
+      <div key={index} style={{ width: "40%" }}>
+        <h3 style={classes.packageLabelStyle}>
+          {`${t("boardMissions.package")} ${index + 1}`}
+        </h3>
+        <div style={classes.inputValueStyle}>
+          {
+            index === quantityOfPackages - 1
+              ? remainingQuantity
+              : quantityPerPackage
+          }
         </div>
+      </div>
     ));
   }, [quantityOfPackages, quantityPerPackage, remainingQuantity]);
 
@@ -92,7 +99,7 @@ const PrintPackingSlipModalWidget = ({boardMissionId, quantity, openModal, onClo
       onClose={onClose}
       modalTitle={t("boardMissions.packagesTitle")}
       insideStyle={classes.modalStyle}
-      style={{zIndex: 999999}}
+      style={{ zIndex: 999999 }}
     >
       <Stack direction={"column"} gap={"15px"}>
         <Stack direction={"column"} gap={"15px"}>

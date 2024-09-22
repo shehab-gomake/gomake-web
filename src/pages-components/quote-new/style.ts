@@ -54,12 +54,16 @@ const useStyle = (isQuoteConfirmation) => {
         color: secondColor(500),
         lineHeight: "30px",
       },
-      deleverdDate: {
+      dateFiled: {
         display: "flex",
         position: "relative" as "relative",
         ...FONT_FAMILY.Lexend(400, 16),
-        color: grayColor(500),
+        color: grayColor(500), 
         cursor: "pointer",
+        gap:"5px"
+      },
+      dateValue: {
+        color: "black", 
       },
       datePickerContainer: {
         display: "flex",

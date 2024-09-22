@@ -85,7 +85,6 @@ const useMessenger = () => {
 
     const onMessage = (userId, message) => {
         getDialogs().then();
-        console.log(message)
         if (message.dialog_id === selectedDialog?._id) {
             setMessages(prevState => ([
                 ...prevState,
@@ -269,7 +268,7 @@ const useMessenger = () => {
             updatedStatus,
             messageId: 'message id',
             chatDialogId: selectedDialog._id,
-            SenderUserId: senderId,
+            senderUserId: senderId,
             documentType: type,
             token: messenger.sessionUser.password
         })

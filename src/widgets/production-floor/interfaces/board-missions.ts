@@ -1,5 +1,6 @@
 import {ICurrentStation} from "@/widgets/production-floor/interfaces/current-station";
 import {IProductionStatus} from "@/widgets/production-floor/interfaces/production-floor-status";
+import { INextStation } from "./next-station";
 
 export interface IBoardMissions {
     id: string;
@@ -10,6 +11,7 @@ export interface IBoardMissions {
     productName: string;
     productId: string;
     currentStation: ICurrentStation;
+    nextStation:INextStation | null;
     statusId: string;
     clientName: string;
     clientId: string;
@@ -30,6 +32,7 @@ export interface IBoardMissions {
     priority: number;
     showGraphicsApprovalAlert: 0 | 1 | 2 ;
     isUrgentWork: boolean;
+    productionFloorJobColor?:string;
 }
 
 

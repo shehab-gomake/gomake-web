@@ -12,6 +12,7 @@ export interface AgingReportHeaderWidgetProps {
   handleDateChange?: (arg: any) => void;
   fromDate?: Date | null,
   toDate?: Date | null
+  customerId?: string
 
 }
 const useAgingReportHeader = () => {

@@ -26,7 +26,6 @@ const GeneralInformationComponent = ({
     (parameter) =>
       parameter.htmlElementType === HtmlElementType.TEXT
   );
-  console.log("details", details)
   return (
     <Stack gap={"10px"}>
       {withTitle && <h3>{t("pricingWidget.generalInformation")}</h3>}
