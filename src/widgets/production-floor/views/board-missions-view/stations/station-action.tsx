@@ -22,7 +22,7 @@ import {
     updateBoardMissionsActionDone
 } from "@/services/api-service/production-floor/production-floor-endpoints";
 import Button from "@mui/material/Button";
-import { GomakeTextInput, ThreeOptionsModal } from "@/components";
+import { GoMakeDeleteModal, GomakeTextInput, ThreeOptionsModal } from "@/components";
 import { useBoardMissionsUpdatedOutputs } from "./use-board-missions-updated-outputs";
 import { ClickOutside } from "@/components/click-out-side/click-out-side";
 import { ActionTimer } from "@/widgets/production-floor/views/board-missions-view/stations/action-timer/action-timer";
@@ -88,6 +88,30 @@ const BoardMissionsStationAction = ({
         onClickGetMachineForAction,
     } = useBoardMissionsUpdatedOutputs()
     const { CheckPermission } = useUserPermission();
+
+    const [openModal, setOpenMpdal] = useState(false)
+
+
+    const onClickOpenModal = (e) => {
+        e.stopPropagation(); // Prevent event propagation if necessary
+        setOpenMpdal(true);  // This sets the modal to be open
+    };
+
+    const onClickCloseModal = (e) => {
+        // e.stopPropagation(); // Optional, depends on your use case
+        setOpenMpdal(false); // This closes the modal
+    };
+
+    const onClickDelete = (e) => {
+        e.stopPropagation();
+        if (isLastStation) {
+            setIsReadyModal(true);
+            setOpenMpdal(true);
+        } else {
+            onClickDone(boardMissionActionId).then();
+            setOpenMpdal(true);
+        }
+    };
     const inputsParameters = outputs.filter(
         (parameter) =>
             parameter.propertyType === RuleType.PARAMETER &&
@@ -523,14 +547,8 @@ const BoardMissionsStationAction = ({
                                                 padding: 0,
                                                 borderRadius: '12px'
                                             }}
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    if (isLastStation) {
-                                                        setIsReadyModal(true)
-                                                    } else {
-                                                        onClickDone(boardMissionActionId).then()
-                                                    }
-                                                }}>
+                                                onClick={onClickOpenModal}
+                                            >
                                                 <CheckIcon />
                                             </PrimaryButton>
                                 }
@@ -548,10 +566,27 @@ const BoardMissionsStationAction = ({
                         onClickNo={() => onClickDone(boardMissionActionId, false)}
                         insideStyle={{ zIndex: 999999 }}
                     />
+                    <GoMakeDeleteModal
+                        hideIcon={true}
+                        title={t("customers.modal.updateJobStationModalTitle")}
+                        yesBtn={t("modal.confirm")}
+                        openModal={openModal}
+                        onClose={onClickCloseModal}
+                        onClickDelete={() => {
+                            if (isLastStation) {
+                                setIsReadyModal(true);
+                                setOpenMpdal(true);
+                            } else {
+                                onClickDone(boardMissionActionId).then();
+                                setOpenMpdal(true);
+                            }
+                        }}
+                    />
                     <PrintPackingSlipModalWidget boardMissionId={boardMissions.boardMissionId}
                         quantity={boardMissions.quantity} openModal={openPackagingModal}
                         onClose={() => setOpenPackagingModal(false)} />
                 </Stack>
+
             </Fade>
         </>
     );
