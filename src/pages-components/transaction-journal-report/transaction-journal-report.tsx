@@ -76,6 +76,7 @@ const TransactionJournalReportWidget = ({ isPayment }: TransactionJournalReportW
                       headers={tableHeaders}
                       maxHeight={400}
                     />
+                    <div style={classes.totalStyle}>{t("deposits.total")} : {item.total.toFixed(2)}</div>
                   </div>
                 )
               })
