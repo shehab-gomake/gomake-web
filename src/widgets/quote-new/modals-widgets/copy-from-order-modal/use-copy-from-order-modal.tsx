@@ -25,10 +25,32 @@ const useCopyFromOrderModal = ({ onClose, documentType, openModal, cliendDocumen
     };
   });
 
+  ///////////////////////////// NEW /////////////////////////////
+
+  const [prevSelectedItems, setPrevSelectedItems] = useState([]);
+  const [isAddToClicked, setIsAddToClicked] = useState(false);
+
+  useEffect(() => {
+    if (!openModal) {
+      setShowReadyOnly(false);
+      if (!isAddToClicked) {
+        setSelectedItems(prevSelectedItems);
+      } else {
+        setIsAddToClicked(false); // Reset the flag for next tim
+      }
+    }
+  }, [openModal]);
+
+
   const addOrdersToDeliveryNote = () => {
+    setIsAddToClicked(true); // Track that the button was clicked
+    setPrevSelectedItems(selectedItems); // Save current selected item
     calculateDocument();
     onClose();
   };
+
+  ///////////////////////////// NEW /////////////////////////////
+
 
   const { callApi } = useGomakeAxios();
   const [quoteItemValue, setQuoteItemValue] = useRecoilState<any>(quoteItemState);
