@@ -40,6 +40,7 @@ import { CloseOrderNotesModal } from "../products/profits-new/widgets/close-orde
 import { SendPaymentModal } from "./widgets/send-payment-modal/send-payment-modal";
 import { MakePaymentModal } from "./widgets/make-payment-modal/make-payment-modal";
 import { DateRangePicker } from "rsuite";
+import { createGlobalStyle } from "styled-components";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -186,7 +187,14 @@ const QuotesListPageWidget = ({
     const card = statistics?.find((item) => item.key === key);
     return card ? card.value : "";
   };
-
+  const dir: 'rtl' | 'ltr' = t('direction');
+  const RTL = dir === 'rtl';
+  const GlobalStyle = createGlobalStyle`
+  .rs-picker-popup-daterange {
+    left: ${({ RTL }: any) => (RTL ? 'auto' : '150px')} !important;
+    right: ${({ RTL }: any) => (RTL ? '150px' : 'auto')} !important;
+  }
+`;
   return (
     <>
       {!isFromHomePage && (
@@ -377,6 +385,7 @@ const QuotesListPageWidget = ({
                                 </div></div>}
                             <div style={classes.statusFilterContainer}>
                               <h3 style={classes.filterLabelStyle}>{t("boardMissions.dateRange")}</h3>
+                              <GlobalStyle RTL={RTL} />
                               <DateRangePicker
                                 onChange={onSelectDeliveryTimeDates}
                                 value={fromDate && toDate ? [fromDate, toDate] : null}

@@ -11,6 +11,9 @@ import { RightArrowIcon } from "../table-row/more-circle/icons/right-arrow";
 import { LeftArrowIcon } from "../table-row/more-circle/icons/left-arrow-icon";
 import { INextStation } from "@/widgets/production-floor/interfaces/next-station";
 import { useStations } from "./use-stations";
+import { GoMakeDeleteModal } from "@/components";
+import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 interface IProps extends ICurrentStation, INextStation {
     boardMissionId: string;
@@ -19,9 +22,18 @@ interface IProps extends ICurrentStation, INextStation {
 }
 
 const NextStationComponent = ({ boardMissionId, textColor, productType, status, nextStationName, nextStationId }: IProps) => {
+    const { t } = useTranslation()
     const { classes } = useStyle({ textColor });
     const { onUpdateToNextStation, dir } = useStations();
     const setData = useSetRecoilState<IStatusesBoardsMissions[]>(boardsMissionsState);
+    const [openModal, setOpenMpdal] = useState(false)
+
+    const onClickOpenModal = () => {
+        setOpenMpdal(true)
+    }
+    const onClickCloseModal = () => {
+        setOpenMpdal(false)
+    }
 
     // use Also for done button in more circle
     const handleRemoveBoardMission = (statusKey, boardMissionId) => {
@@ -43,18 +55,27 @@ const NextStationComponent = ({ boardMissionId, textColor, productType, status, 
 
     return (
         <Stack direction="row" justifyContent={'center'} alignItems={'center'}>
-            {/* <Stack > */}
             <PermissionCheck userPermission={Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR}>
                 {nextStationId && <Button
                     sx={classes.moveToBtn}
-                    onClick={() => {
-                        handleRemoveBoardMission(status?.key, boardMissionId);
-                        onUpdateToNextStation(boardMissionId, productType);
-                    }}>
+                    onClick={onClickOpenModal}
+                >
                     <span style={classes.actionText}>{nextStationName}</span>
                     {dir === "ltr" ? <RightArrowIcon /> : <LeftArrowIcon />}
                 </Button>}
             </PermissionCheck>
+            <GoMakeDeleteModal
+                hideIcon={true}
+                title={t("customers.modal.nextStationModalTitle")}
+                yesBtn={t("sales.quote.yesBtn")}
+                cancelBtn={t("modal.no")}
+                openModal={openModal}
+                onClose={onClickCloseModal}
+                onClickDelete={() => {
+                    handleRemoveBoardMission(status?.key, boardMissionId);
+                    onUpdateToNextStation(boardMissionId, productType);
+                }}
+            />
         </Stack>
     )
 }
