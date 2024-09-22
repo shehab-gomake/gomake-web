@@ -3,6 +3,7 @@ import { GoMakeModal, GomakePrimaryButton, SecondSwitch } from "@/components";
 import { useCopyFromOrderModal } from "./use-copy-from-order-modal";
 import { OrderTableWidget } from "./order-table";
 import { useStyle } from "./style";
+import { useEffect } from "react";
 
 const CopyFromOrderModal = ({ openModal, onClose, documentType, cliendDocumentType }) => {
   const { classes } = useStyle();
@@ -27,6 +28,12 @@ const CopyFromOrderModal = ({ openModal, onClose, documentType, cliendDocumentTy
     showReadyOnly,
     isCopyFromOrder
   } = useCopyFromOrderModal({ onClose, documentType, openModal, cliendDocumentType })
+
+    useEffect(() => {
+    if (!openModal) {
+      setShowReadyOnly(false); 
+    }
+  }, [openModal]);
 
   return (
     <>
