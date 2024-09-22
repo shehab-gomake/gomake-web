@@ -12,18 +12,8 @@ import { useRecoilState } from "recoil";
 const useCopyFromOrderModal = ({ onClose, documentType, openModal, cliendDocumentType }) => {
   const { t } = useTranslation();
   const router = useRouter();
+  const [term, setTerm] = useState("");
 
-  const [term, setTerm] = useState("")
-  const filterItems = (items) => {
-    if (!term) return items; // If no search term, return all items
-    const searchTerm = term.toLowerCase();
-    return items.filter(item =>
-      item?.productName?.toLowerCase()?.includes(searchTerm) ||
-      item?.details?.toLowerCase()?.includes(searchTerm) ||
-      item?.workName?.toLowerCase()?.includes(searchTerm)
-
-    );
-  };
   const PrimaryTableCell = styled(TableCell)(() => {
     return {
       [`&.${tableCellClasses.head}`]: {
@@ -34,6 +24,7 @@ const useCopyFromOrderModal = ({ onClose, documentType, openModal, cliendDocumen
       },
     };
   });
+
   const addOrdersToDeliveryNote = () => {
     calculateDocument();
     onClose();
@@ -112,6 +103,7 @@ const useCopyFromOrderModal = ({ onClose, documentType, openModal, cliendDocumen
   };
 
   const handleSelectAll = (documentItem) => {
+
     const selectedIds = selectedItems.map(item => item.id);
     const sectionItemIds = documentItem?.orderItems?.map(item => item.id);
     const allSelected = sectionItemIds?.every(id => selectedIds?.includes(id));
@@ -248,6 +240,40 @@ const useCopyFromOrderModal = ({ onClose, documentType, openModal, cliendDocumen
     }
   }, [quoteItemValue, openModal]);
 
+
+  const isCopyFromOrder = cliendDocumentType === DOCUMENT_TYPE.order;
+  const [showReadyOnly, setShowReadyOnly] = useState(false);
+
+  const filterItems = (documentItemIsReady, items) => {
+    let filteredItems = items;
+
+    if (!documentItemIsReady && showReadyOnly) {
+      return [];
+    }
+
+    if (term) {
+      const searchTerm = term.toLowerCase();
+      filteredItems = filteredItems.filter(item =>
+        item?.productName?.toLowerCase()?.includes(searchTerm) ||
+        item?.details?.toLowerCase()?.includes(searchTerm) ||
+        item?.workName?.toLowerCase()?.includes(searchTerm)
+      );
+    }
+
+    return filteredItems;
+  };
+
+  // const filterItems = (items) => {
+  //   if (!term) return items; // If no search term, return all items
+  //   const searchTerm = term.toLowerCase();
+  //   return items.filter(item =>
+  //     item?.productName?.toLowerCase()?.includes(searchTerm) ||
+  //     item?.details?.toLowerCase()?.includes(searchTerm) ||
+  //     item?.workName?.toLowerCase()?.includes(searchTerm)
+
+  //   );
+  // };
+
   return {
     t,
     term,
@@ -265,7 +291,10 @@ const useCopyFromOrderModal = ({ onClose, documentType, openModal, cliendDocumen
     addOrdersToDeliveryNote,
     quoteItemValue,
     modalLabel,
-    buttonLabel
+    buttonLabel,
+    setShowReadyOnly,
+    showReadyOnly,
+    isCopyFromOrder
   };
 };
 
