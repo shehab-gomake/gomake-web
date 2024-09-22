@@ -14,6 +14,7 @@ const useStyle = ({isRTL}) => {
         width: "100%",
         gap: 24,
         marginBottom: 14,
+        flexWrap: "wrap" as "wrap"
       },
       plusStyle: {
         color: secondColor(500),
