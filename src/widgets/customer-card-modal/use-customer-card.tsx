@@ -167,7 +167,7 @@ const useCustomerCard = ({ t, customer, setCustomer, onClose, setOpenOfferModal,
     };
 
     // Check if email is valid
-    const areEmailsValid = filteredUsers.every(user => validateEmail(user, "email"));
+    const areEmailsValid = filteredUsers?.every(user => validateEmail(user, "email"));
     if (!areEmailsValid) {
       alertFault("customers.invalidEmail");
       return;
