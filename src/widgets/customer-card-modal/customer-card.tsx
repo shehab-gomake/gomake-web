@@ -206,8 +206,8 @@ const CustomerCardWidget = ({
           {renderAddButton(addEmptyContact, "customers.buttons.addContact")}
           <Stack direction={"column"}>
             {contacts
-              .filter((contact) => !contact.isMainContact)
-              .map((x) => (
+              ?.filter((contact) => !contact.isMainContact)
+              ?.map((x) => (
                 <ContactForm
                   key={x.index}
                   contact={x}
@@ -227,7 +227,7 @@ const CustomerCardWidget = ({
         <Stack direction={"column"} gap={"15px"}>
           {renderAddButton(addEmptyAddress, "customers.buttons.newAddress")}
           <Stack direction={"column"}>
-            {addresses.map((x) => (
+            {addresses?.map((x) => (
               <AddressForm
                 key={x.index}
                 address={x}

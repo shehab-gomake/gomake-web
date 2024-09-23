@@ -80,7 +80,8 @@ const BusinessNewWidget = ({
     setManuaLInvoiceNum,
     isUpdateManuaLInvoiceNum,
     setIsUpdateManuaLInvoiceNum,
-    onBlurManualInvoiceNum
+    onBlurManualInvoiceNum,
+    canEditInvoiceNumber
   } = useBusinessWidget({ values, documentType });
   const dir: 'rtl' | 'ltr' = t('direction');
   const isRTL = dir === 'rtl';
@@ -115,12 +116,6 @@ const BusinessNewWidget = ({
         <PermissionCheck userPermission={Permissions.ADD_CLIENT}>
           {(!isQuoteConfirmation && documentType === DOCUMENT_TYPE.quote) && <span style={classes.plusStyle} onClick={() => setOpenCustomerModal(true)}>+</span>}
         </PermissionCheck>
-        <InputUpdatedValues
-          value={isQuoteConfirmation ? `${quoteConfirm?.client?.code}` : `${quoteStateValue?.client?.code}`}
-          label={t("sales.quote.businessCode")}
-          onBlur={onBlurBusinessCode}
-          setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdateBusinessCode}
-        />
         {
           quoteStateValue?.client?.isOccasional &&
           <InputUpdatedValues
@@ -133,6 +128,22 @@ const BusinessNewWidget = ({
             onInputChange={(v) => setClientName(v)}
           />
         }
+        <InputUpdatedValues
+          value={isQuoteConfirmation ? `${quoteConfirm?.client?.code}` : `${quoteStateValue?.client?.code}`}
+          label={t("sales.quote.businessCode")}
+          onBlur={onBlurBusinessCode}
+          setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdateBusinessCode}
+        />
+        {!isQuoteConfirmation && <AutoCompleteUpdatedValue
+          label={t("sales.quote.agent")}
+          value={selectedAgent?.text ? selectedAgent.text : t("sales.quote.selectAgent")}
+          options={agentListValue}
+          onBlur={onBlurAgent}
+          isUpdate={canEditDocument && isUpdateAgent}
+          setIsUpdate={isQuoteConfirmation || isExistReceipt ? setIsConfirmation : setIsUpdateAgent}
+          getOptionLabel={(item) => item.text}
+          onChange={(e, value) => updateAgent(value)}
+        />}
         {!isReceipt && <InputUpdatedValues
           value={purchaseNumber}
           placeholder={purchaseNumber ? purchaseNumber : t("sales.quote.noPurchaseNumber")}
@@ -152,26 +163,17 @@ const BusinessNewWidget = ({
           setIsUpdate={setIsUpdateTaxNumber}
           onInputChange={(v) => setTaxConfirmationNumber(v)}
         />}
-          {isInvoice && <InputUpdatedValues
+        {isInvoice && <InputUpdatedValues
           value={manuaLInvoiceNum}
           placeholder={manuaLInvoiceNum ? manuaLInvoiceNum : t("sales.cart.noInvoiceNumber")}
           label={t("sales.cart.manuaLInvoiceNum")}
-          onBlur={onBlurManualInvoiceNum}
-          isUpdate={canEditDocument && isUpdateManuaLInvoiceNum}
+          onBlur={() => onBlurManualInvoiceNum(manuaLInvoiceNum)}
+          isUpdate={canEditInvoiceNumber && isUpdateManuaLInvoiceNum}
           setIsUpdate={setIsUpdateManuaLInvoiceNum}
           onInputChange={(v) => setManuaLInvoiceNum(v)}
         />}
 
-        {!isQuoteConfirmation && <AutoCompleteUpdatedValue
-          label={t("sales.quote.agent")}
-          value={selectedAgent?.text ? selectedAgent.text : t("sales.quote.selectAgent")}
-          options={agentListValue}
-          onBlur={onBlurAgent}
-          isUpdate={canEditDocument && isUpdateAgent}
-          setIsUpdate={isQuoteConfirmation || isExistReceipt ? setIsConfirmation : setIsUpdateAgent}
-          getOptionLabel={(item) => item.text}
-          onChange={(e, value) => updateAgent(value)}
-        />}
+
         {values?.documentAddresses?.length > 0 && <InputUpdatedValues
           value={values?.documentAddresses?.length > 0 ? `${values?.documentAddresses[0]?.street} ${values?.documentAddresses[0]?.apartment}, ${values?.documentAddresses[0]?.city}` : "no address found"}
           label={t("customers.modal.address")}
@@ -230,7 +232,7 @@ const BusinessNewWidget = ({
         subTitle={t("sales.cart.subTitleChangeClientFromInvoice")}
         openModal={openChangeClientModalFromInvoice}
         onClose={onClickCloseChangeClientModalFromInvoice}
-        onClickYes={() => onChangeSelectBusiness(selectedClient , values)}
+        onClickYes={() => onChangeSelectBusiness(selectedClient, values)}
         onClickNo={() => onChangeSelectBusiness(selectedClient)}
         yesBtn={"sales.cart.saveAndChangeClients"}
         noBtn={"sales.cart.startNewInvoice"}
