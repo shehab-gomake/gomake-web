@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRecoilValue } from "recoil";
 import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
-import { createOrderApi, getDocumentPdfApi, sendQuoteApprovalToManagerApi } from "@/services/api-service/generic-doc/documents-api";
+import { createOrderApi, getDocumentPdfApi, manuallyCloseDocumentApi, sendQuoteApprovalToManagerApi } from "@/services/api-service/generic-doc/documents-api";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { cancelReceiptApi, createReceiptApi, getReceiptPdfApi } from "@/services/api-service/generic-doc/receipts-api";
 import { checkedItemsIdsState, finalTotalPaymentState } from "./states";
@@ -11,7 +11,7 @@ import { isAtLeastOneSelected } from "@/utils/helpers";
 import { useRouter } from "next/router";
 import { useUserPermission } from "@/hooks/use-permission";
 import { DocumentPermission } from "@/components/CheckPermission/enum";
-import { getAllUsersCanApproveQuoteApi} from "@/services/api-service/users/users-api";
+import { getAllUsersCanApproveQuoteApi } from "@/services/api-service/users/users-api";
 
 const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     const { navigate } = useGomakeRouter();
@@ -34,8 +34,8 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     useEffect(() => {
         const data = isAtLeastOneSelected(quoteItemValue?.documentItems)
         setIsSelectedAtLeastOne(data)
+    }, [quoteItemValue]);
 
-    }, [quoteItemValue])
     const finalTotalPayment = useRecoilValue<number>(finalTotalPaymentState);
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>();
     const open = Boolean(anchorEl);
@@ -205,7 +205,7 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     const isNewCreation = router?.query?.isNewCreation;
     const isInvoice = docType === DOCUMENT_TYPE.invoice;
     const canEditDocument = quoteItemValue?.isEditable && CheckDocumentPermission(docType.toString(), DocumentPermission.EDIT_DOCUMENT);
-    const canAddDelivery = docType === DOCUMENT_TYPE.quote || docType === DOCUMENT_TYPE.order || docType ===DOCUMENT_TYPE.invoice || docType === DOCUMENT_TYPE.invoiceRefund || docType === DOCUMENT_TYPE.deliveryNote || docType === DOCUMENT_TYPE.deliveryNoteRefund; 
+    const canAddDelivery = docType === DOCUMENT_TYPE.quote || docType === DOCUMENT_TYPE.order || docType === DOCUMENT_TYPE.invoice || docType === DOCUMENT_TYPE.invoiceRefund || docType === DOCUMENT_TYPE.deliveryNote || docType === DOCUMENT_TYPE.deliveryNoteRefund;
 
     const showAddNewItemBtn = canEditDocument && docType !== DOCUMENT_TYPE.receipt
 
@@ -239,9 +239,62 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
                 push(`/messenger?dialogId=${res.data}`)
             }
             else
-            alertFaultSend();
+                alertFaultSend();
         };
-        await sendQuoteApprovalToManagerApi(callApi, callBack, { docType ,data: {managerIds, documentId: quoteItemValue?.id }});
+        await sendQuoteApprovalToManagerApi(callApi, callBack, { docType, data: { managerIds, documentId: quoteItemValue?.id } });
+    };
+
+    const [anchorElCloseBtn, setAnchorElCloseBtn] = useState<null | HTMLElement>(null);
+    const openCloseBtn = Boolean(anchorElCloseBtn);
+
+
+    const handleCloseBtnClick = (event: React.MouseEvent<HTMLElement>) => {
+        setAnchorElCloseBtn(event.currentTarget);
+    };
+
+    const handleCloseBtnClose = () => {
+        setAnchorElCloseBtn(null);
+    };
+
+    const isShowCloseButton = quoteItemValue?.isCanClose &&
+        (
+            (docType === DOCUMENT_TYPE.order && quoteItemValue?.statusTitleText !== "Order.Canceled") ||
+            docType === DOCUMENT_TYPE.invoice ||
+            docType === DOCUMENT_TYPE.deliveryNote
+        );
+
+    const ManuallyCloseDocument = async (selectedDocumentId) => {
+        const callBack = (res) => {
+            if (res?.success) {
+                alertSuccessUpdate();
+                docType === DOCUMENT_TYPE.order ? navigate("/orders") : docType === DOCUMENT_TYPE.deliveryNote ? navigate("/deliveryNotes") : navigate("/invoices");
+            } else {
+                alertFaultUpdate();
+            }
+        };
+        await manuallyCloseDocumentApi(callApi, callBack, {
+            documentType: docType,
+            document: { documentId: selectedDocumentId, documentNumber: documentCloseNumber }
+
+        });
+    };
+
+    const [selectedDocumentId, setSelectedDocumentId] = useState<any>({})
+    const [openCloseOrderModal, setOpenCloseOrderModal] = useState(false);
+    const [documentCloseNumber, setDocumentCloseNumber] = useState("");
+
+    const onClickOpenCloseOrderModal = (documentId) => {
+        setSelectedDocumentId(documentId)
+        setOpenCloseOrderModal(true);
+    };
+
+    const onClickCloseCloseOrderModal = () => {
+        setOpenCloseOrderModal(false);
+        setDocumentCloseNumber("")
+    };
+
+    const handleDocumentNumberChange = (event) => {
+        setDocumentCloseNumber(event.target.value);
     };
 
     return {
@@ -283,7 +336,19 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
         onClickSendAndChat,
         loading,
         canAddDelivery,
-        isInvoice
+        isInvoice,
+        isShowCloseButton,
+        anchorElCloseBtn,
+        handleCloseBtnClose,
+        handleCloseBtnClick,
+        openCloseBtn,
+        onClickOpenCloseOrderModal,
+        onClickCloseCloseOrderModal,
+        handleDocumentNumberChange,
+        documentCloseNumber,
+        ManuallyCloseDocument,
+        openCloseOrderModal,
+        selectedDocumentId
     };
 };
 

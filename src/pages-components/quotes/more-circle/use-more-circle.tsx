@@ -173,7 +173,7 @@ const useMoreCircle = () => {
       },
       {
         condition: (isOrder && quote?.isCanClose && quote?.statusTitleText !== "Order.Canceled") || (isDeliveryNote && quote?.isCanClose) || (isInvoice && quote?.isCanClose),
-        onClick: () => quote?.closeOrderNotes && quote?.closeOrderNotes.tirm !== "" ? onClickOpenCloseOrderNotesModal(quote) : onClickOpenCloseOrderModal(quote),
+        onClick: () => quote?.closeOrderNotes && quote?.closeOrderNotes.trim() !== "" ? onClickOpenCloseOrderNotesModal(quote) : onClickOpenCloseOrderModal(quote),
         icon: <LockIcon />,
         name: t("sales.quote.close")
       },

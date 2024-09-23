@@ -31,6 +31,7 @@ interface IParametersMappingProps {
 }
 
 const ParametersMapping = ({ parameters, source, isWorkFlows = false, isProductionFloor = false }: IParametersMappingProps) => {
+    console.log("parameters", parameters)
     return (
         <>
             {parameters?.flatMap((parameter, index, array) => {
@@ -139,7 +140,15 @@ const KeyValueViewComponent = ({
     const [openModal, setOpenModal] = useState<boolean>(false);
     useEffect(() => {
         if (values && values.length > 0) {
-            setValue(values[0])
+            if (values.length > 1) {
+                const formattedValues = values
+                    .map(item => item.replace(/\s+/g, '')) // Remove spaces within each item
+                    .join(' '); // Join items with a space between them
+                setValue(formattedValues)
+            }
+            else {
+                setValue(values[0])
+            }
         }
     }, [values])
     const handleOnClose = () => {

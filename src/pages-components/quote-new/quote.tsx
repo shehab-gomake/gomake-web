@@ -537,6 +537,7 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false, isPrePa
           {!isQuoteConfirmation &&
             <div style={{ width: '100%' }} data-tour={'quoteStep2'}>
               <ButtonsContainer
+              openSendBtn={openSendBtn}
                 onOpenNewItem={onOpenNewItem}
                 onOpenDeliveryModal={onOpenDeliveryModal}
                 handleCancelBtnClick={handleCancelBtnClick}
