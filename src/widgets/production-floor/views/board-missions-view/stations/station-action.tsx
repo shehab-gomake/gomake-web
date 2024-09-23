@@ -93,24 +93,17 @@ const BoardMissionsStationAction = ({
 
 
     const onClickOpenModal = (e) => {
-        e.stopPropagation(); // Prevent event propagation if necessary
-        setOpenMpdal(true);  // This sets the modal to be open
+        if (isLastStation) {
+            setIsReadyModal(true);
+        }
+        else {
+            e.stopPropagation();
+            setOpenMpdal(true);
+        }
     };
 
     const onClickCloseModal = (e) => {
-        // e.stopPropagation(); // Optional, depends on your use case
-        setOpenMpdal(false); // This closes the modal
-    };
-
-    const onClickDelete = (e) => {
-        e.stopPropagation();
-        if (isLastStation) {
-            setIsReadyModal(true);
-            setOpenMpdal(true);
-        } else {
-            onClickDone(boardMissionActionId).then();
-            setOpenMpdal(true);
-        }
+        setOpenMpdal(false);
     };
     const inputsParameters = outputs.filter(
         (parameter) =>
@@ -573,13 +566,9 @@ const BoardMissionsStationAction = ({
                         openModal={openModal}
                         onClose={onClickCloseModal}
                         onClickDelete={() => {
-                            if (isLastStation) {
-                                setIsReadyModal(true);
-                                setOpenMpdal(true);
-                            } else {
-                                onClickDone(boardMissionActionId).then();
-                                setOpenMpdal(true);
-                            }
+
+                            onClickDone(boardMissionActionId).then();
+
                         }}
                     />
                     <PrintPackingSlipModalWidget boardMissionId={boardMissions.boardMissionId}
