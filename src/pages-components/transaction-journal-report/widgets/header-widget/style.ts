@@ -20,7 +20,7 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "flex-start",
         gap: 10,
-        width: "18%",
+        // width: "18%",
       },
       date2FilterContainer: {
         display: "flex",
