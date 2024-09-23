@@ -1,4 +1,4 @@
-const RechooseIcon = (props: any) => {
+const ReChooseIcon = (props: any) => {
   return (
     <svg
       width="16"
@@ -31,4 +31,4 @@ const RechooseIcon = (props: any) => {
   );
 };
 
-export { RechooseIcon };
+export { ReChooseIcon };

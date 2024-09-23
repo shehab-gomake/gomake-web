@@ -4,7 +4,7 @@ import { useGalleryModal } from "./use-gallery-modal";
 import { useStyle } from "./style";
 import { useTranslation } from "react-i18next";
 import { SearchInputComponent } from "@/components/form-inputs/search-input-component";
-import { RechooseIcon } from "@/icons";
+import { ReChooseIcon } from "@/icons";
 import { GalleryModalMapping } from "./gallery-modal-mapping";
 
 const GalleryModal = ({
@@ -64,7 +64,7 @@ const GalleryModal = ({
             style={{ cursor: "pointer" }}
             onClick={getProductQuoteItemById}
           >
-            <RechooseIcon />
+            <ReChooseIcon />
           </div>
 
 

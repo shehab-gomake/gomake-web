@@ -27,7 +27,7 @@ import { DOCUMENT_TYPE } from "./enums";
 import { useQuoteGetData } from "../quote-new/use-quote-get-data";
 import { useStyle } from "./style";
 import { CLIENT_TYPE_Id, DEFAULT_VALUES } from "@/pages/customers/enums";
-import { getAllReceiptsApi, getReceiptPdfApi } from "@/services/api-service/generic-doc/receipts-api";
+import { cancelReceiptApi, getAllReceiptsApi, getReceiptPdfApi } from "@/services/api-service/generic-doc/receipts-api";
 import {
   renderDocumentTypeForSourceDocumentNumber,
   renderURLDocumentType
@@ -116,7 +116,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const onClickOpenCloseOrderNotesModal = (order) => {
     setOpenCloseOrderNotesModal(true)
     setSelectedQuoteItemValue(order)
-    setselectedOrder(order)
+    setSelectedDocument(order)
   }
   const onClickCloseCloseOrderNotesModal = () => {
     setOpenCloseOrderNotesModal(false)
@@ -460,6 +460,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             ];
           }
         });
+
         const mapReceiptData = data?.map((quote: any) => [
           // GetDateFormat(quote?.creationDate),
           quote?.creationDate?.split(" ")[0],
@@ -480,6 +481,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             onClickDuplicate={onClickQuoteDuplicate}
             onClickLoggers={onClickDocumentLogs}
             onClickOpenPrintPDFModal={onClickOpenPrintPDFModal}
+            onOpenCancelReceiptModal={onOpenCancelReceiptModal}
+            onOpenCancelReceiptModalRefund={onOpenCancelReceiptModalRefund}
           />,
         ]);
         setAllQuotes(isReceipt ? mapReceiptData : mapData);
@@ -772,6 +775,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             onClickDuplicate={onClickQuoteDuplicate}
             onClickLoggers={onClickDocumentLogs}
             onClickOpenPrintPDFModal={onClickOpenPrintPDFModal}
+            onOpenCancelReceiptModal={onOpenCancelReceiptModal}
+            onOpenCancelReceiptModalRefund={onOpenCancelReceiptModalRefund}
           />,
         ]);
         setAllQuotes(isReceipt ? mapReceiptData : mapData);
@@ -1337,19 +1342,12 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     { label: t("sales.quote.closed"), value: AStatus.CLOSED },
   ];
 
-  // const approvalStatuses = [
-  //   { label: t(`documentStatus.${ApprovalStatus[ApprovalStatus.ApprovedByClient]}`), value: ApprovalStatus.ApprovedByClient },
-
-  // ];
-
   const approvalStatuses: { value: number; label: string }[] = Object.values(ApprovalStatus)
     .filter(value => typeof value === 'number')
     .map(value => ({
       value: value as number,
       label: t(`documentStatus.${ApprovalStatus[value]}`)
     }));
-
-
 
   const handleProductionStatusChange = (e: any, value: any) => {
     setProductionStatus(value);
@@ -1408,19 +1406,22 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const [openPriceCancelModal, setOpenPriceCancelModal] = useState(false);
   const [openCloseOrderModal, setOpenCloseOrderModal] = useState(false);
   const [openDeliveryTimeCancelModal, setOpenDeliveryTimeCancelModal] = useState(false);
-  const [selectedOrder, setselectedOrder] = useState<any>({})
+
+  // Use this state when opening any modal from the "More" menu list.
+  const [selectedDocument, setSelectedDocument] = useState<any>({})
 
   const onClickOpenIrrelevantModal = (order) => {
-    setselectedOrder(order)
+    setSelectedDocument(order)
     setOpenIrrelevantCancelModal(true);
   };
+
   const onClickCloseIrrelevantModal = () => {
     setOpenIrrelevantCancelModal(false);
   };
 
 
   const onClickOpenPriceModal = (order) => {
-    setselectedOrder(order)
+    setSelectedDocument(order)
     setOpenPriceCancelModal(true);
   };
   const onClickClosePriceModal = () => {
@@ -1428,7 +1429,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   };
 
   const onClickOpenCloseOrderModal = (order) => {
-    setselectedOrder(order)
+    setSelectedDocument(order)
     setOpenCloseOrderModal(true);
   };
   const onClickCloseCloseOrderModal = () => {
@@ -1437,7 +1438,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   };
 
   const onClickOpenDeliveryTimeModal = (order) => {
-    setselectedOrder(order)
+    setSelectedDocument(order)
     setOpenDeliveryTimeCancelModal(true);
   };
   const onClickCloseDeliveryTimeModal = () => {
@@ -1457,7 +1458,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     await cancelDocumentApi(callApi, callBack, {
       DocumentType: docType,
       Document: {
-        documentId: selectedOrder?.id,
+        documentId: selectedDocument?.id,
         quoteStatus: quoteStatus,
       }
     })
@@ -1590,7 +1591,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     setOpenPrintPDFModal(false)
   }
   const onClickOpenPrintPDFModal = (order) => {
-    setselectedOrder(order)
+    setSelectedDocument(order)
     setOpenPrintPDFModal(true)
   }
 
@@ -1603,8 +1604,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const onClickCloseTrackModal = () => {
     setOpenCloseAndTrackOrderModal(false);
   };
-
-
 
   const closeAndTrackOrder = async () => {
     const callBack = (res) => {
@@ -1619,6 +1618,42 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       documentType: docType,
       documentId: selectedQuoteItemValue?.id
     });
+  };
+
+  // State and functions for receipt cancellation modals
+
+  const [openCancelReceiptModal, setOpenCancelReceiptModal] = useState(false);
+  const onOpenCancelReceiptModal = (receipt: any) => {
+    setSelectedDocument(receipt);
+    setOpenCancelReceiptModal(true);
+  };
+  const onCloseCancelReceiptModal = () => {
+    setSelectedDocument(null);
+    setOpenCancelReceiptModal(false);
+  };
+
+  const [openCancelReceiptModalRefund, setOpenCancelReceiptModalRefund] = useState(false);
+  const onOpenCancelReceiptModalRefund = (receipt: any) => {
+    setSelectedDocument(receipt);
+    setOpenCancelReceiptModalRefund(true);
+  };
+  const onCloseCancelReceiptModalRefund = () => {
+    setSelectedDocument(null);
+    setOpenCancelReceiptModalRefund(false);
+  };
+
+  // Function to handle receipt cancellation
+
+  const onClickCancelReceipt = async (refundCredit?: boolean | null) => {
+    const callBack = (res) => {
+      if (res?.success) {
+        alertSuccessUpdate();
+        getAllQuotes();
+      } else {
+        alertFaultUpdate();
+      }
+    };
+    await cancelReceiptApi(callApi, callBack, { id: selectedDocument?.id, refundCredit });
   };
 
   return {
@@ -1718,7 +1753,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     onClickClosePaymentModal,
     onClickCloseCloseOrderModal,
     openCloseOrderModal,
-    selectedOrder,
+    selectedDocument,
     onClickOpenCloseOrderModal,
     getEmployeeCategories,
     ManuallyCloseDocument,
@@ -1737,6 +1772,11 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     openPrintPDFModal,
     fromDate,
     toDate,
+    openCancelReceiptModal,
+    onCloseCancelReceiptModal,
+    onClickCancelReceipt,
+    openCancelReceiptModalRefund,
+    onCloseCancelReceiptModalRefund
   };
 };
 
