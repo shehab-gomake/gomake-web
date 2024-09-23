@@ -19,6 +19,11 @@ const SendBtnMenu = ({
       open={open}
       anchorEl={anchorEl}
       style={{ marginTop: -45 }}
+      sx={{
+        '& .MuiPaper-root': {
+          border: '1px solid #cbcbe4', 
+          borderRadius:"8px"
+        }}}
     >
       {documentState.isSendMails && (
         <MenuItem

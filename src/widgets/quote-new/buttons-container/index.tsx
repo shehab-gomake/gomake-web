@@ -13,9 +13,12 @@ import { useGomakeRouter, useSnackBar } from "@/hooks";
 import { ManagerApprovalModal } from "../total-price-and-vat/manger-approval-modal";
 import { useEffect } from "react";
 import { CreditCardIcon } from "@/icons/credit-card-icon";
-
+import { CloseBtnMenu } from "./close-btn-menu";
+import { ArrowUpNewIcon } from "@/icons/arrow-up-new";
+import { ManuallyCloseModal } from "./close-manually-modal";
 
 const ButtonsContainer = ({
+  openSendBtn,
   onOpenNewItem,
   handleCancelBtnClick,
   handleSaveBtnClick,
@@ -65,9 +68,20 @@ const ButtonsContainer = ({
     onClickSendAndChat,
     loading,
     canAddDelivery,
-    isInvoice
+    isInvoice,
+    isShowCloseButton,
+    anchorElCloseBtn,
+    handleCloseBtnClose,
+    handleCloseBtnClick,
+    openCloseBtn,
+    onClickOpenCloseOrderModal,
+    onClickCloseCloseOrderModal,
+    handleDocumentNumberChange,
+    documentCloseNumber,
+    ManuallyCloseDocument,
+    openCloseOrderModal,
+    selectedDocumentId
   } = useButtonsContainer(documentType);
-
 
   const isShowSendButton =
     (quoteItemValue.isSendWhatsapp ||
@@ -167,9 +181,19 @@ const ButtonsContainer = ({
       </div>
       <div style={classes.btnsContainer}>
         {
+          !isNewCreation && isShowCloseButton &&
+          <GomakePrimaryButton
+            rightIcon={openCloseBtn ? <ArrowUpNewIcon /> : <ArrowDownNewIcon />}
+            style={classes.btnSecondContainer}
+            onClick={handleCloseBtnClick}
+          >
+            {t("sales.quote.close")}
+          </GomakePrimaryButton>
+        }
+        {
           !isNewCreation && isShowSendButton &&
           <GomakePrimaryButton
-            rightIcon={<ArrowDownNewIcon />}
+            rightIcon={openSendBtn ? <ArrowUpNewIcon /> : <ArrowDownNewIcon />}
             style={classes.btnSecondContainer}
             onClick={handleSendBtnClick}
           >
@@ -275,7 +299,6 @@ const ButtonsContainer = ({
             )
           )
         }
-
         <OrderNowModal
           openModal={openOrderNowModal}
           onClose={onClickCloseOrderNowModal}
@@ -306,6 +329,23 @@ const ButtonsContainer = ({
           openModal={openCancelReceiptModal}
           handleModalClose={onClickCloseCancelReceiptModal}
           onClickCancel={onClickCancelReceipt}
+        />
+        <CloseBtnMenu
+          handleClose={handleCloseBtnClose}
+          open={openCloseBtn}
+          anchorEl={anchorElCloseBtn}
+          documentState={quoteItemValue}
+          documentType={documentType}
+          onClickClose={onClickOpenCloseOrderModal}
+        />
+        <ManuallyCloseModal
+          documentType={documentType}
+          openModal={openCloseOrderModal}
+          selectedDocumentId={selectedDocumentId}
+          onClose={onClickCloseCloseOrderModal}
+          onClickYes={ManuallyCloseDocument}
+          documentCloseNumber={documentCloseNumber}
+          onChange={handleDocumentNumberChange}
         />
       </div>
     </div>
