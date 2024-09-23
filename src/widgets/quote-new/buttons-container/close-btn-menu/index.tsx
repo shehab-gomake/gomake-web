@@ -4,7 +4,7 @@ import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { MenuItem } from "@mui/material";
 import { useTranslation } from "react-i18next";
 
-interface ICloseMenu {
+interface ICloseMenuProps {
   handleClose: () => void,
   open: boolean;
   anchorEl: null | HTMLElement;
@@ -20,7 +20,7 @@ const CloseBtnMenu = ({
   documentState,
   documentType,
   onClickClose
-}: ICloseMenu) => {
+}: ICloseMenuProps) => {
   const { t } = useTranslation();
   const { navigate } = useGomakeRouter();
 
