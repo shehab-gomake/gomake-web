@@ -260,34 +260,42 @@ const useCustomers = (
         customer &&
         customer.name &&
         customer.clientTypeId
-    
       )
     ) {
       return false;
     }
-    for (const contact of filteredContacts) {
-      if (!contact.firstName) {
-        return false;
+    if (filteredContacts) {
+      for (const contact of filteredContacts) {
+        if (!contact.firstName) {
+          return false;
+        }
       }
     }
-    for (const address of filteredAddresses) {
-      if (!address.address1) {
-        return false;
+      if (filteredAddresses) {
+      for (const address of filteredAddresses) {
+        if (!address.address1) {
+          return false;
+        }
       }
     }
-    for (const user of filteredUsers) {
-      if (!user.email) {
-        return false;
+  
+    if (filteredUsers) {
+      for (const user of filteredUsers) {
+        if (!user.email) {
+          return false;
+        }
       }
     }
-    //new users
-    for (const user of filteredUsers.filter((user) => !user.id)) {
+    if (filteredUsers) {
+      for (const user of filteredUsers?.filter((user) => !user.id)) {
       if (!user.password) {
         return false;
       }
     }
+  }
     return true;
   };
+
   const onClickImportClient = async (e) => {
     const file = e.target.files[0];
     if (file) {
