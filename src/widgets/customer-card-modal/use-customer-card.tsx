@@ -262,10 +262,16 @@ const useCustomerCard = ({ t, customer, setCustomer, onClose, setOpenOfferModal,
 
   // Contact info
   const addEmptyContact = () => {
-    var temp = [...contacts];
-    const index = temp.length + 1;
-    temp.push({ name: "", index: index });
-    setContacts(temp);
+    if (!contacts || contacts === undefined) {
+      addInitContact()
+    }
+    else {
+      var temp = [...contacts];
+      const index = temp.length + 1;
+      temp.push({ name: "", index: index });
+      setContacts(temp);
+    }
+
   };
 
   const addInitContact = () => {
@@ -303,11 +309,16 @@ const useCustomerCard = ({ t, customer, setCustomer, onClose, setOpenOfferModal,
 
   // Address info
   const addEmptyAddress = () => {
-    var temp = [...addresses];
-    const index = temp.length + 1;
-    //  temp.push({ name: "", index: index, city: " ", street: " " });
-    temp.push({ name: "", index: index });
-    setAddresses(temp);
+    if (!addresses || addresses === undefined) {
+      addInitAddress()
+    } else {
+      var temp = [...addresses];
+      const index = temp.length + 1;
+      //  temp.push({ name: "", index: index, city: " ", street: " " });
+      temp.push({ name: "", index: index });
+      setAddresses(temp);
+    }
+
   };
 
   const addInitAddress = () => {

@@ -172,6 +172,11 @@ const useStyle = () => {
         position: "absolute" as "absolute",
         ...leftRightAdapter(t("direction"), 10),   
       },
+      cancelIconStyle: {
+        width: 62,
+        height: 62,
+        color: "#a1a2cd"
+      },
       searchInput: {
         height: 40,
         minWidth: convertWidthToVW(200),

@@ -41,6 +41,7 @@ import { SendPaymentModal } from "./widgets/send-payment-modal/send-payment-moda
 import { MakePaymentModal } from "./widgets/make-payment-modal/make-payment-modal";
 import { DateRangePicker } from "rsuite";
 import { createGlobalStyle } from "styled-components";
+import { CancelReceiptModal } from "@/widgets/quote-new/buttons-container/payment/cancel-receipt-modal/cancel-receipt-modal";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -52,6 +53,8 @@ const QuotesListPageWidget = ({
 }: IProps) => {
   const { classes } = useStyle();
   const { secondColor, } = useGomakeTheme();
+  const router = useRouter();
+
   const {
     onClickCloseModal,
     setPatternSearch,
@@ -145,7 +148,7 @@ const QuotesListPageWidget = ({
     onClickClosePaymentModal,
     onClickCloseCloseOrderModal,
     openCloseOrderModal,
-    selectedOrder,
+    selectedDocument,
     onClickOpenCloseOrderModal,
     getEmployeeCategories,
     ManuallyCloseDocument,
@@ -164,10 +167,13 @@ const QuotesListPageWidget = ({
     openPrintPDFModal,
     fromDate,
     toDate,
-    getAllQuotes
+    getAllQuotes,
+    openCancelReceiptModal,
+    onCloseCancelReceiptModal,
+    onClickCancelReceipt,
+    openCancelReceiptModalRefund,
+    onCloseCancelReceiptModalRefund
   } = useQuotes(documentType, isFromHomePage);
-
-  const router = useRouter();
 
   useEffect(() => {
     if (router.query.orderNumber) {
@@ -535,7 +541,7 @@ const QuotesListPageWidget = ({
         subTitle={`${t("sales.quote.subTitleCloseModal", {
           documentName: t(`sales.quote.${DOCUMENT_TYPE[documentType]}`).toLowerCase(),
         })}?`}
-        onClickDelete={() => ManuallyCloseDocument(selectedOrder)}
+        onClickDelete={() => ManuallyCloseDocument(selectedDocument)}
         style={{ width: "35%" }}
       >
         <GomakeTextInput
@@ -576,7 +582,7 @@ const QuotesListPageWidget = ({
         onClose={onClickCloseCloseOrderNotesModal}
         openModal={openCloseOrderNotesModal}
         quoteItemValue={selectedQuoteItemValue}
-        onClickCloseOrder={() => onClickOpenCloseOrderModal(selectedOrder)}
+        onClickCloseOrder={() => onClickOpenCloseOrderModal(selectedDocument)}
         documentType={documentType}
       />
       <SendPaymentModal
@@ -600,8 +606,6 @@ const QuotesListPageWidget = ({
         style={{ width: "35%" }}
       >
       </GoMakeDeleteModal>
-
-
       <GoMakeDeleteModal
         title={`Do you want to print the delivery note with prices ?`}
         openModal={openPrintPDFModal}
@@ -609,8 +613,21 @@ const QuotesListPageWidget = ({
         cancelBtn={t("sales.quote.noBtn")}
         onClose={onClickClosePrintPDFModal}
         hideIcon
-        onClickDelete={() => { onClickQuotePdf(selectedOrder?.id, true) }}
-        onClickCancel={() => { onClickQuotePdf(selectedOrder?.id, false) }}
+        onClickDelete={() => { onClickQuotePdf(selectedDocument?.id, true) }}
+        onClickCancel={() => { onClickQuotePdf(selectedDocument?.id, false) }}
+      />
+      <GoMakeDeleteModal
+        icon={<WarningAmberIcon style={classes.cancelIconStyle} />}
+        title={t("payment.cancelReceipt")}
+        yesBtn={t("sales.quote.yesBtn")}
+        openModal={openCancelReceiptModal}
+        onClose={onCloseCancelReceiptModal}
+        onClickDelete={onClickCancelReceipt}
+      />
+      <CancelReceiptModal
+        openModal={openCancelReceiptModalRefund}
+        handleModalClose={onCloseCancelReceiptModalRefund}
+        onClickCancel={onClickCancelReceipt}
       />
     </>
   );
