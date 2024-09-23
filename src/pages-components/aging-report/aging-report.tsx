@@ -1,14 +1,15 @@
 import { Divider } from "@mui/joy";
-
 import { AgingReportHeaderWidget } from "./widgets/header-widget";
 import { AgingReportButtonWidget } from "./widgets/button-widget";
 import { useAgingReport } from "./use-aging-report";
 import { useStyle } from "./style";
 import { PrimaryTable } from "@/components/tables/primary-table";
 import { HeaderTitle } from "@/widgets/header-title/header-title";
+import { CustomerCardWidget } from "@/widgets/customer-card-modal";
+import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
+import { isValidCustomer } from "@/utils/helpers";
 
 const AgingReportWidget = () => {
-  const { classes } = useStyle();
   const {
     t,
     handleClickSelectDate,
@@ -34,10 +35,18 @@ const AgingReportWidget = () => {
     handleDateChange,
     fromDate,
     toDate,
-  } = useAgingReport()
+    showCustomerModal,
+    setShowCustomerModal,
+    customerForEdit,
+    setCustomerForEdit,
+    onClickOpenCustomerModal // New handler
+  } = useAgingReport();
+  const { classes } = useStyle();
+
   return (
     <div style={classes.mainContainer}>
       <HeaderTitle title={t("tabs.agingReport")} marginTop={"0px"} marginBottom={"0px"} />
+
       <AgingReportHeaderWidget
         handleClickSelectDate={handleClickSelectDate}
         selectDate={selectDate}
@@ -57,25 +66,40 @@ const AgingReportWidget = () => {
         fromDate={fromDate}
         toDate={toDate}
       />
+
       <Divider />
+
       <AgingReportButtonWidget
         onClickBtn1={onClickBtn1}
         onClickBtn2={onClickBtn2}
         onClickBtn3={onClickBtn3}
       />
-      {
-        showTable &&
+
+      {showTable && (
         <PrimaryTable
-          rows={getTableDataRows()}
+          rows={getTableDataRows(onClickOpenCustomerModal)} // Pass handler here
           headers={transformedHeaders}
           maxHeight={650}
           stickyHeader={true}
         />
-      }
+      )}
 
+      {/* Add CustomerCardWidget */}
+      <CustomerCardWidget
+        isValidCustomer={isValidCustomer}
+        customerAction={CUSTOMER_ACTIONS.Edit}
+        codeFlag={true}
+        typeClient={CLIENT_TYPE.CUSTOMER}
+        isgetAllCustomers={false}
+        openModal={showCustomerModal}
+        modalTitle={t("customers.modal.editTitle")}
+        onClose={() => setShowCustomerModal(false)}
+        customer={customerForEdit}
+        setCustomer={setCustomerForEdit}
+        showUpdateButton={true}
+      />
     </div>
   );
 };
-
 
 export { AgingReportWidget };
