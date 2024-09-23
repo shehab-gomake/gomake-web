@@ -193,7 +193,6 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
             if (res?.success) {
                 alertSuccessDelete();
                 navigate("/receipts");
-
             } else {
                 alertFaultDelete();
             }
