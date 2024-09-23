@@ -35,9 +35,13 @@ const useBusinessWidget = ({ values, documentType }) => {
   const onCustomerAdd=(customer)=>{
     setOpenCustomerModal(false)
   }
-  const onBlurManualInvoiceNum = async () => {
+  const onBlurManualInvoiceNum = async (value) => {
+    const updatedQuoteItemValue = { ...quoteStateValue };
+    updatedQuoteItemValue.manualInvoiceNumber = value;
+    setQuoteItemValue(updatedQuoteItemValue);
     setIsUpdateManuaLInvoiceNum(null);
   };
+
   const mappedCustomers = renderOptions().map(customer => ({
     text: customer?.name,
     id: customer?.id,
@@ -47,10 +51,10 @@ const useBusinessWidget = ({ values, documentType }) => {
   const {CheckDocumentPermission } = useUserPermission();
   const canEditDocument = router.query.isNewCreation ? true  : 
   quoteStateValue?.isEditable && CheckDocumentPermission(documentType, DocumentPermission.EDIT_DOCUMENT);
+  
   const canEditPurchaseNumber = CheckDocumentPermission(documentType, DocumentPermission.EDIT_DOCUMENT);
-
-
-
+  const canEditInvoiceNumber = router.query.isNewCreation ? true  : false
+  
   const [openChangeClientModal, setOpenChangeClientModal] = useState(false);
   const [openChangeClientModalFromInvoice, setOpenChangeClientModalFromInvoice] = useState(false)
 
@@ -111,7 +115,8 @@ const useBusinessWidget = ({ values, documentType }) => {
     setManuaLInvoiceNum,
     isUpdateManuaLInvoiceNum,
     setIsUpdateManuaLInvoiceNum,
-    onBlurManualInvoiceNum
+    onBlurManualInvoiceNum,
+    canEditInvoiceNumber
   };
 };
 
