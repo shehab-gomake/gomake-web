@@ -256,18 +256,18 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
         setAnchorElCloseBtn(null);
     };
 
-    //   const isShowCloseButton =  quoteItemValue?.isCanClose && 
-    // (docType === DOCUMENT_TYPE.order || docType === DOCUMENT_TYPE.invoice || docType === DOCUMENT_TYPE.deliveryNote)
-
-    const isShowCloseButton =
-        (docType === DOCUMENT_TYPE.order || docType === DOCUMENT_TYPE.invoice || docType === DOCUMENT_TYPE.deliveryNote)
+    const isShowCloseButton = quoteItemValue?.isCanClose &&
+        (
+            (docType === DOCUMENT_TYPE.order && quoteItemValue?.statusTitleText !== "Order.Canceled") ||
+            docType === DOCUMENT_TYPE.invoice ||
+            docType === DOCUMENT_TYPE.deliveryNote
+        );
 
     const ManuallyCloseDocument = async (selectedDocumentId) => {
         const callBack = (res) => {
             if (res?.success) {
                 alertSuccessUpdate();
                 docType === DOCUMENT_TYPE.order ? navigate("/orders") : docType === DOCUMENT_TYPE.deliveryNote ? navigate("/deliveryNotes") : navigate("/invoices");
-                //get-document-by-id or setQuoteItem from res?.data INSTEAD navigate
             } else {
                 alertFaultUpdate();
             }

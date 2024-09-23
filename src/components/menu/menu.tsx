@@ -23,6 +23,7 @@ const GoMakeMenu = ({ handleClose, open, anchorEl, ...props }) => {
           : { vertical: 'top', horizontal: 'right' }
       }
       style={props.style}
+      sx={props.sx}
     >
       {children}
     </Menu>

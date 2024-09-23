@@ -4,6 +4,15 @@ import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { MenuItem } from "@mui/material";
 import { useTranslation } from "react-i18next";
 
+interface ICloseMenu {
+  handleClose: () => void,
+  open: boolean;
+  anchorEl: null | HTMLElement;
+  documentState: any;
+  documentType: DOCUMENT_TYPE;
+  onClickClose: (id: string) => void;
+}
+
 const CloseBtnMenu = ({
   handleClose,
   open,
@@ -11,12 +20,9 @@ const CloseBtnMenu = ({
   documentState,
   documentType,
   onClickClose
-}) => {
+}: ICloseMenu) => {
   const { t } = useTranslation();
   const { navigate } = useGomakeRouter();
-
-  // condition: (isOrder && quote?.isCanClose && quote?.statusTitleText !== "Order.Canceled") || (isDeliveryNote && quote?.isCanClose) || (isInvoice && quote?.isCanClose),
-  // onClick: () => quote?.closeOrderNotes && quote?.closeOrderNotes.tirm !== "" ? onClickOpenCloseOrderNotesModal(quote) : onClickOpenCloseOrderModal(quote),
 
   const getMenuOptions = () => {
     switch (documentType) {
@@ -46,12 +52,19 @@ const CloseBtnMenu = ({
   const capitalizeFirstLetter = (string) => {
     return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
   };
+
   return (
     <GoMakeMenu
       handleClose={handleClose}
       open={open}
       anchorEl={anchorEl}
       style={{ marginTop: -45 }}
+      sx={{
+        '& .MuiPaper-root': {
+          border: '1px solid #cbcbe4',
+          borderRadius: "8px"
+        }
+      }}
     >
       {menuOptions.map((option, index) => (
         <MenuItem
