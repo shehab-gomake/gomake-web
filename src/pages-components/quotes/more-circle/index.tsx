@@ -18,31 +18,35 @@ const MoreMenuWidget = ({
   onClickMakePayment,
   onClickCloseAndTrack,
   onClickOpenPrintPDFModal,
+  onOpenCancelReceiptModal,
+  onOpenCancelReceiptModalRefund
 }: any) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
   const { getMenuList } = useMoreCircle();
   const menuList = getMenuList({
+    t,
     quote,
     documentType,
     onClickOpenModal,
     onClickPdf,
     onClickDuplicate,
     onClickLoggers,
-    t,
     onClickOpenIrrelevantModal,
     onClickSendPayment,
     onClickOpenCloseOrderModal,
     onClickOpenCloseOrderNotesModal,
     onClickMakePayment,
     onClickCloseAndTrack,
-    onClickOpenPrintPDFModal
+    onClickOpenPrintPDFModal,
+    onOpenCancelReceiptModal,
+    onOpenCancelReceiptModalRefund
   });
 
   return (
     <OptionsButton >
       {menuList.map((item, index) => (
-        item.condition && (
+        item?.condition && (
           <MenuItem style={classes.menuRowStyle} key={index} onClick={item.onClick}>
             {item.icon}
             <div style={classes.rowTextStyle}>{item.name}</div>

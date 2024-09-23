@@ -3,7 +3,7 @@ import { DOCUMENT_TYPE, QUOTE_STATUSES } from "../enums";
 import { LoggerIcon } from "@/pages-components/admin/home/widgets/more-circle/icons/logger";
 import { EditingIcon } from "./icons/editing";
 import { PDFIcon } from "./icons/pdf";
-import { TickCloseIcon, TickIcon, TickMoveIcon } from "@/icons";
+import { TickCancelIcon, TickIcon, TickMoveIcon } from "@/icons";
 import { DuplicateIcon } from "@/components/icons/icons";
 import { downloadPdf } from "@/utils/helpers";
 import { getOrderBoardMissionPDF } from "@/services/api-service/generic-doc/documents-api";
@@ -23,20 +23,22 @@ const useMoreCircle = () => {
   const { CheckPermission } = useUserPermission();
 
   const getMenuList = ({
+    t,
     quote,
     documentType,
     onClickOpenModal,
     onClickPdf,
     onClickDuplicate,
     onClickLoggers,
-    t,
     onClickOpenIrrelevantModal,
     onClickSendPayment,
     onClickOpenCloseOrderModal,
     onClickOpenCloseOrderNotesModal,
     onClickMakePayment,
     onClickCloseAndTrack,
-    onClickOpenPrintPDFModal
+    onClickOpenPrintPDFModal,
+    onOpenCancelReceiptModal,
+    onOpenCancelReceiptModalRefund
   }) => {
     const documentPath = DOCUMENT_TYPE[documentType];
     const { callApi } = useGomakeAxios();
@@ -62,6 +64,7 @@ const useMoreCircle = () => {
     const isInvoiceRefund = documentType === DOCUMENT_TYPE.invoiceRefund;
     const isPurchaseInvoice = documentType === DOCUMENT_TYPE.purchaseInvoice;
     const isPurchaseOrder = documentType === DOCUMENT_TYPE.purchaseOrder;
+    const isReceipt = documentType === DOCUMENT_TYPE.receipt;
     const showNewDuplicate = isDeliveryNote || isDeliveryNoteRefund || isInvoice || isInvoiceRefund;
     const isOrdersTracking = pathname === "/ordersTracking";
 
@@ -84,7 +87,7 @@ const useMoreCircle = () => {
       {
         condition: true,
         onClick: () => onClickLoggers(quote),
-        icon: <LoggerIcon />,
+        icon: <LoggerIcon/>,
         name: t("sales.quote.loggers")
       },
       {
@@ -184,9 +187,9 @@ const useMoreCircle = () => {
         name: t("sales.quote.closeAndTrack")
       },
       {
-        condition: isOrder && quote?.isCanClose && quote?.statusTitleText !== "Order.Canceled",
-        onClick: () => onClickOpenIrrelevantModal(quote),
-        icon: <TickCloseIcon />,
+        condition: (isOrder && quote?.isCanClose && quote?.statusTitleText !== "Order.Canceled") || (isReceipt && quote?.status !== "Receipt.Canceled"),
+        onClick: () => isOrder ? onClickOpenIrrelevantModal(quote) : quote?.creditCardTotal > 0 ? onOpenCancelReceiptModalRefund(quote) : onOpenCancelReceiptModal(quote),
+        icon: <TickCancelIcon />,
         name: t("sales.quote.cancel")
       },
       // {
@@ -207,25 +210,6 @@ const useMoreCircle = () => {
         icon: <PaymentIcon />,
         name: t("sales.quote.makePayment")
       },
-      // {
-      //   condition: !isCancel,
-      //   onClick: () => onClickOpenIrrelevantModal(quote),
-      //   icon: <TickCloceIcon />,
-      //   name: t("sales.quote.irrelevant")
-      // },
-      // {
-      //   condition: !isCancel,
-      //   onClick: () => onClickOpenPriceModal(quote),
-      //   icon: <TickCloceIcon />,
-      //   name: t("sales.quote.price")
-      // },
-      // {
-      //   condition: !isCancel,
-      //   onClick: () => onClickOpenDeliveryTimeModal(quote),
-      //   icon: <TickCloceIcon />,
-      //   name: t("sales.quote.deliveryTime")
-      // },
-
     ];
   };
 
