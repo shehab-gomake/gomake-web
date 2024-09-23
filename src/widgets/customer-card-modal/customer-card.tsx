@@ -78,6 +78,7 @@ const CustomerCardWidget = ({
   isFromCartPage = false,
   onChangeSelectBusiness
 }: IProps) => {
+  console.log("customer", customer)
   const { classes } = useStyle();
   const { t } = useTranslation();
   const {
@@ -130,6 +131,7 @@ const CustomerCardWidget = ({
     isFromCartPage,
     onChangeSelectBusiness
   });
+  console.log("clientTypesCategories", clientTypesCategories)
 
   useEffect(() => {
     if (customer) {

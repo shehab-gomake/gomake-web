@@ -1,12 +1,17 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useAgentsList, useCustomerDropDownList, useGomakeAxios, useSnackBar } from "@/hooks";
 import { EHttpMethod } from "@/services/api-service/enums";
 import { format } from 'date-fns';
 import { useTranslation } from "react-i18next";
 import { endOfToday, startOfYear } from "date-fns";
+import { getAndSetCustomerById } from "@/services/api-service/customers/customers-api";
+import { useSetRecoilState } from "recoil";
+import { clientTypesCategoriesState } from "@/pages/customers/customer-states";
+import { CLIENT_TYPE_Id } from "@/pages/customers/enums";
+import { getAndSetClientTypes } from "@/services/hooks";
 
 const useAgingReport = () => {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
   const { alertFault, alertFaultGetData, alertSuccessGetData } = useSnackBar();
   const { customer, renderOptions, checkWhatRenderArray, handleCustomerChange } = useCustomerDropDownList();
@@ -15,15 +20,17 @@ const useAgingReport = () => {
   const [byReferenceDate, setByReferenceDate] = useState<boolean>(false);
   const [detailedReport, setDetailedReport] = useState<boolean>(false);
   const [showTable, setShowTable] = useState<boolean>(false);
-  const [tableHeader, setTableHeader] = useState<any>([])
-  const [tableData, setTableData] = useState<any>([])
+  const [tableHeader, setTableHeader] = useState<any>([]);
+  const [tableData, setTableData] = useState<any>([]);
   const [fromDate, setFromDate] = useState<Date>(startOfYear(new Date()));
   const [toDate, setToDate] = useState<Date>(endOfToday());
-  const transformedHeaders = tableHeader?.map(header => {
-    // Check if the header key contains any numbers
-    const containsNumber = /\d/.test(header.key);
 
-    // If it contains numbers, use header.name; otherwise, use the translated text
+  // New states and logic for handling customer modal
+  const [showCustomerModal, setShowCustomerModal] = useState(false);
+  const [customerForEdit, setCustomerForEdit] = useState(null);
+
+  const transformedHeaders = tableHeader?.map(header => {
+    const containsNumber = /\d/.test(header.key);
     return containsNumber ? header.name : t(`reports.${header.key}`);
   });
 
@@ -39,25 +46,32 @@ const useAgingReport = () => {
     }
   };
 
-
   const handleClickSelectDate = () => {
     dateRef?.current?.showPicker();
   };
 
   const onChangeDetailedReport = () => {
-    setDetailedReport(!detailedReport)
-  }
-  const onChangeByReferenceDate = () => {
-    setByReferenceDate(!byReferenceDate)
-  }
+    setDetailedReport(!detailedReport);
+  };
 
-  const getTableDataRows = useCallback(() => {
+  const onChangeByReferenceDate = () => {
+    setByReferenceDate(!byReferenceDate);
+  };
+
+  const getTableDataRows = useCallback((onClickOpenCustomerModal) => {
     return tableData.flatMap((data: any) => {
       const rows = [];
-
       const mainRow = tableHeader.map((header: any) => {
         const nestedKey = header.key;
         const value = nestedKey.split('.').reduce((acc, part) => acc && acc[part], data);
+
+        if (nestedKey === 'cardName') {
+          return (
+            <div style={{ cursor: "pointer" }} onClick={() => onClickOpenCustomerModal(data?.clientId)}>
+              {value}
+            </div>
+          );
+        }
 
         if (Array.isArray(value)) {
           return value.map((item: any) => {
@@ -67,63 +81,88 @@ const useAgingReport = () => {
             });
           });
         } else if (typeof value === 'object' && value !== null) {
-          return Object.entries(value)
-            .map(([key, val]) => `${key}: ${val}`)
-            .join(', ');
+          return Object.entries(value).map(([key, val]) => `${key}: ${val}`).join(', ');
         } else {
           return value || '';
         }
       });
 
-      // Add the main row (this will be the first row)
       rows.push(mainRow);
-      // Handle nested rows
+
       if (Array.isArray(data.data) && detailedReport) {
         rows.push(...data.data.map((nestedItem: any) => {
           return tableHeader.map((header: any, index: number) => {
-            if (index < 3) {
-              // Keep the first three headers empty
-              return '';
-            } else {
-              const nestedValue = header.key.split('.').reduce((acc, part) => acc && acc[part], nestedItem);
-              return nestedValue || '';
-            }
+            if (index < 3) return '';
+            const nestedValue = header.key.split('.').reduce((acc, part) => acc && acc[part], nestedItem);
+            return nestedValue || '';
           });
         }));
       }
 
       return rows;
     });
-  }, [tableData, tableHeader]);
-
+  }, [tableData, tableHeader, detailedReport]);
 
   const onClickBtn1 = () => {
     setShowTable(false);
-    getAgingReportFilter()
-  }
+    getAgingReportFilter();
+  };
+
   const onClickBtn2 = () => {
-    // ExportAgingReport(EExportType.PDF)
-    ExportAgingReportPDF()
-  }
+    ExportAgingReportPDF();
+  };
+
   const onClickBtn3 = () => {
-    // ExportAgingReport(EExportType.EXCEL)
-    ExportAgingReportExcel()
-  }
+    ExportAgingReportExcel();
+  };
 
-  const getAgingReportFilter = useCallback(
-    async () => {
-      if (!fromDate || !toDate) {
-        alertFault(("alerts.pleaseEnsureDatesSelected"))
-        return;
+  const getAgingReportFilter = useCallback(async () => {
+    if (!fromDate || !toDate) {
+      alertFault("alerts.pleaseEnsureDatesSelected");
+      return;
+    }
+
+    const formattedStartDate = format(fromDate, 'yyyy-MM-dd');
+    const formattedEndDate = format(toDate, 'yyyy-MM-dd');
+
+    const res = await callApi(
+      EHttpMethod.POST,
+      `/v1/erp-service/reports/get-aging-report`,
+      {
+        startDate: formattedStartDate,
+        endDate: formattedEndDate,
+        clientId: customer?.id,
+        referDate: selectDate ? selectDate : new Date(),
+        agentId: agent?.id,
+        byCreationDate: byReferenceDate,
+        expendedReport: detailedReport
       }
+    );
+    if (res?.success) {
+      setTableData(res?.data?.data?.data?.data);
+      setTableHeader(res?.data?.data?.data?.headers);
+      alertSuccessGetData();
+      setShowTable(true);
+    } else {
+      alertFaultGetData();
+      setShowTable(false);
+    }
+  }, [fromDate, toDate, detailedReport, agent, customer, selectDate, byReferenceDate]);
 
-      const formattedStartDate = format(fromDate, 'yyyy-MM-dd');
-      const formattedEndDate = format(toDate, 'yyyy-MM-dd');
+  const ExportAgingReportPDF = useCallback(async () => {
+    if (!fromDate || !toDate) {
+      alertFault("alerts.pleaseEnsureDatesSelected");
+      return;
+    }
 
-      const res = await callApi(
-        EHttpMethod.POST,
-        `/v1/erp-service/reports/get-aging-report`,
-        {
+    const formattedStartDate = format(fromDate, 'yyyy-MM-dd');
+    const formattedEndDate = format(toDate, 'yyyy-MM-dd');
+
+    const res = await callApi(
+      EHttpMethod.POST,
+      `/v1/erp-service/reports/export-aging-report-pdf`,
+      {
+        myBody: {
           startDate: formattedStartDate,
           endDate: formattedEndDate,
           clientId: customer?.id,
@@ -132,97 +171,83 @@ const useAgingReport = () => {
           byCreationDate: byReferenceDate,
           expendedReport: detailedReport
         }
-      );
-      if (res?.success) {
-        setTableData(res?.data?.data?.data?.data)
-        setTableHeader(res?.data?.data?.data?.headers)
+      },
+      true,
+      null,
+      "blob"
+    );
 
-        alertSuccessGetData();
-        setShowTable(true)
-      } else {
-        alertFaultGetData();
-        setShowTable(false)
+    const downloadLink = document.createElement('a');
+    const link = URL?.createObjectURL(res.data);
+    downloadLink.href = link;
+    downloadLink.download = `aging report.pdf`;
+    downloadLink.click();
+  }, [fromDate, toDate, detailedReport, agent, customer, selectDate, byReferenceDate]);
+
+  const ExportAgingReportExcel = useCallback(async () => {
+    if (!fromDate || !toDate) {
+      alertFault("alerts.pleaseEnsureDatesSelected");
+      return;
+    }
+
+    const formattedStartDate = format(fromDate, 'yyyy-MM-dd');
+    const formattedEndDate = format(toDate, 'yyyy-MM-dd');
+
+    const res = await callApi(
+      EHttpMethod.POST,
+      `/v1/erp-service/reports/export-aging-report-excel`,
+      {
+        myBody: {
+          startDate: formattedStartDate,
+          endDate: formattedEndDate,
+          clientId: customer?.id,
+          referDate: selectDate ? selectDate : new Date(),
+          agentId: agent?.id,
+          byCreationDate: byReferenceDate,
+          expendedReport: detailedReport
+        }
+      },
+      true,
+      null,
+      "blob"
+    );
+
+    const downloadLink = document.createElement('a');
+    const link = URL?.createObjectURL(res.data);
+    downloadLink.href = link;
+    downloadLink.download = `aging report.xlsx`;
+    downloadLink.click();
+  }, [fromDate, toDate, detailedReport, agent, customer, selectDate, byReferenceDate]);
+
+  // New function to handle opening customer modal
+  const onClickOpenCustomerModal = async (customerId: string) => {
+    const callBack = (res) => {
+      if (res.success) {
+        setCustomerForEdit(res.data);
+        setShowCustomerModal(true);
       }
-    },
-    [fromDate, toDate, detailedReport, agent, customer, selectDate, byReferenceDate]
-  );
+    };
+    await getAndSetCustomerById(callApi, callBack, { customerId });
+  };
+  const setClientTypesCategories = useSetRecoilState(clientTypesCategoriesState);
 
-  const ExportAgingReportPDF = useCallback(
-    async () => {
-      if (!fromDate || !toDate) {
-        alertFault(("alerts.pleaseEnsureDatesSelected"))
-        return;
+  const getClientTypesCategories = async () => {
+    const callBack = (res) => {
+      if (res) {
+        const clientTypes = res.map((types) => ({
+          label: types.name,
+          id: types.id,
+          additionProfits: types?.additionProfits ?? 0,
+        }));
+        setClientTypesCategories(clientTypes);
       }
+    };
+    await getAndSetClientTypes(callApi, callBack, { cardType: CLIENT_TYPE_Id.CUSTOMER });
+  };
 
-      const formattedStartDate = format(fromDate, 'yyyy-MM-dd');
-      const formattedEndDate = format(toDate, 'yyyy-MM-dd');
-
-      const res = await callApi(
-        EHttpMethod.POST,
-        `/v1/erp-service/reports/export-aging-report-pdf`,
-        {
-          myBody: {
-            startDate: formattedStartDate,
-            endDate: formattedEndDate,
-            clientId: customer?.id,
-            referDate: selectDate ? selectDate : new Date(),
-            agentId: agent?.id,
-            byCreationDate: byReferenceDate,
-            expendedReport: detailedReport
-          }
-        },
-        true,
-        null,
-        "blob"
-      );
-
-      const downloadLink = document.createElement('a');
-      const link = URL?.createObjectURL(res.data);
-      downloadLink.href = link
-      downloadLink.download = `aging report.pdf`;
-      downloadLink.click();
-    },
-    [fromDate, toDate, detailedReport, agent, customer, selectDate, byReferenceDate]
-  );
-
-  const ExportAgingReportExcel = useCallback(
-    async () => {
-      if (!fromDate || !toDate) {
-        alertFault(("alerts.pleaseEnsureDatesSelected"))
-        return;
-      }
-
-      const formattedStartDate = format(fromDate, 'yyyy-MM-dd');
-      const formattedEndDate = format(toDate, 'yyyy-MM-dd');
-
-      const res = await callApi(
-        EHttpMethod.POST,
-        `/v1/erp-service/reports/export-aging-report-excel`,
-        {
-          myBody: {
-            startDate: formattedStartDate,
-            endDate: formattedEndDate,
-            clientId: customer?.id,
-            referDate: selectDate ? selectDate : new Date(),
-            agentId: agent?.id,
-            byCreationDate: byReferenceDate,
-            expendedReport: detailedReport
-          }
-        },
-        true,
-        null,
-        "blob"
-      );
-
-
-      const downloadLink = document.createElement('a');
-      const link = URL?.createObjectURL(res.data);
-      downloadLink.href = link
-      downloadLink.download = `aging report.xlsx`;
-      downloadLink.click();
-    },
-    [fromDate, toDate, detailedReport, agent, customer, selectDate, byReferenceDate]
-  );
+  useEffect(() => {
+    getClientTypesCategories();
+  }, []);
 
   return {
     t,
@@ -251,6 +276,11 @@ const useAgingReport = () => {
     handleDateChange,
     fromDate,
     toDate,
+    showCustomerModal,
+    setShowCustomerModal,
+    customerForEdit,
+    setCustomerForEdit,
+    onClickOpenCustomerModal // Expose the function
   };
 };
 
