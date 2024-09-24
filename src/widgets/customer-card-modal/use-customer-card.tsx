@@ -427,13 +427,13 @@ const useCustomerCard = ({ t, customer, setCustomer, onClose, setOpenOfferModal,
   };
 
   const handleShowTable = async () => {
-    const filteredContacts = contacts.filter(
+    const filteredContacts = contacts?.filter(
       (contact) => !isNameIndexOnly(contact)
     );
-    const filteredAddresses = addresses.filter(
+    const filteredAddresses = addresses?.filter(
       (address) => !isNameIndexOnly(address)
     );
-    const filteredUsers = users.filter((user) => !isNameIndexOnly(user));
+    const filteredUsers = users?.filter((user) => !isNameIndexOnly(user));
     const cardTypeId = typeClient === "C" ? CLIENT_TYPE_Id.CUSTOMER : CLIENT_TYPE_Id.SUPPLIER;
     const updatedCustomer = {
       ...customer,
