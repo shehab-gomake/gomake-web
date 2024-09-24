@@ -28,7 +28,6 @@ const BoardMissionsStationsComponent = () => {
         ?.sort((a, b) => b?.isDone && a?.isDone ? 0 : a.isDone ? 1 : -1), [stations])
     const [boardMissionsDetails, setBoardMissionsDetails] = useRecoilState(boardMissionsDetailsState);
     const isLoading = !boardMissionsDetails?.boardMissionId && sortedStations;
-    console.log("sortedStations", sortedStations)
     return (
         <div style={{
             overflow: "hidden",

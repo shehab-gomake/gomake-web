@@ -38,7 +38,6 @@ import {
     PrintPackingSlipModalWidget
 } from "@/widgets/production-floor/views/board-missions-view/navigation-buttons/print-packing-slip-modal-widget";
 import { TableOutPutComponent } from "@/widgets/product-pricing-widget/components/table-output/table-output-component";
-import { BoardMissionsStationAction } from "./station-action";
 import { FONT_FAMILY } from "@/utils/font-family";
 
 interface IProps extends IBoardMissionsStation {
@@ -608,37 +607,37 @@ const BoardMissionsStationSubActionComp = ({
                             </>
                         </Stack>
 
-                        <ThreeOptionsModal
-                            title={t("boardMissions.markDoneModalTitle")}
-                            subTitle={t("boardMissions.markDoneModalSubTitle")}
-                            yesBtn={"boardMissions.markDoneModalYes"}
-                            noBtn={"boardMissions.markDoneModalNo"}
-                            openModal={openReadyModal}
-                            onClose={() => setIsReadyModal(false)}
-                            onClickYes={() => onClickDone(boardMissionActionId, true)}
-                            onClickNo={() => onClickDone(boardMissionActionId, false)}
-                            insideStyle={{ zIndex: 999999 }}
-                        />
-                        <GoMakeDeleteModal
-                            hideIcon={true}
-                            title={t("customers.modal.updateJobStationModalTitle")}
-                            yesBtn={t("modal.confirm")}
-                            openModal={openModal}
-                            onClose={onClickCloseModal}
-                            onClickDelete={() => {
 
-                                onClickDone(boardMissionActionId).then();
-
-                            }}
-                        />
-                        <PrintPackingSlipModalWidget boardMissionId={boardMissions.boardMissionId}
-                            quantity={boardMissions.quantity} openModal={openPackagingModal}
-                            onClose={() => setOpenPackagingModal(false)} />
                     </Stack>
 
                 </Fade>
             }
+            <ThreeOptionsModal
+                title={t("boardMissions.markDoneModalTitle")}
+                subTitle={t("boardMissions.markDoneModalSubTitle")}
+                yesBtn={"boardMissions.markDoneModalYes"}
+                noBtn={"boardMissions.markDoneModalNo"}
+                openModal={openReadyModal}
+                onClose={() => setIsReadyModal(false)}
+                onClickYes={() => onClickDone(boardMissionActionId, true)}
+                onClickNo={() => onClickDone(boardMissionActionId, false)}
+                insideStyle={{ zIndex: 999999 }}
+            />
+            <GoMakeDeleteModal
+                hideIcon={true}
+                title={t("customers.modal.updateJobStationModalTitle")}
+                yesBtn={t("modal.confirm")}
+                openModal={openModal}
+                onClose={onClickCloseModal}
+                onClickDelete={() => {
 
+                    onClickDone(boardMissionActionId).then();
+
+                }}
+            />
+            <PrintPackingSlipModalWidget boardMissionId={boardMissions.boardMissionId}
+                quantity={boardMissions.quantity} openModal={openPackagingModal}
+                onClose={() => setOpenPackagingModal(false)} />
         </>
     );
 };
