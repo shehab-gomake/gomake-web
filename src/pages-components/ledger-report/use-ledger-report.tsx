@@ -81,16 +81,16 @@ const useLedgerReport = ({ customerId }: any) => {
 
         // Determine documentPath based on docType
         switch (data?.docType) {
-          case ERPDocumentsTypesEnum.Invoice:
+          case ERPDocumentsTypesEnum.invoice:
             documentPath = 'invoices';
             break;
-          case ERPDocumentsTypesEnum.InvoiceRefund:
+          case ERPDocumentsTypesEnum.invoiceRefund:
             documentPath = 'invoiceRefunds';
             break;
-          case ERPDocumentsTypesEnum.Receipt:
+          case ERPDocumentsTypesEnum.receipt:
             documentPath = 'receipts';
             break;
-          case ERPDocumentsTypesEnum.JournalEntry:
+          case ERPDocumentsTypesEnum.journalEntry:
             documentPath = 'receipts';
             break;
           default:
@@ -339,8 +339,8 @@ const useLedgerReport = ({ customerId }: any) => {
     clientPaymentsList,
     handleDateChange,
     fromDate,
-    toDate
-
+    toDate,
+    customerId,
   };
 };
 
