@@ -6,17 +6,22 @@ import { FONT_FAMILY } from "@/utils/font-family";
 import { TableOutPutComponent } from "../table-output/table-output-component";
 import { HtmlElementType, RuleType } from "../../enums";
 import { Divider } from "@mui/material";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { GeneralInformationDictionaryComponent } from "./general-information-dictionary-component";
 
 const GeneralInformationComponent = ({
   details,
   withTitle = true,
   actionName,
+  details2
 }: {
   details: IOutput[];
   withTitle?: boolean;
   actionName?: string;
+  details2?: any;
 }) => {
   const { t } = useTranslation();
+  const { neutralColor, primaryColor } = useGomakeTheme();
   const tableOutputs = details?.filter(
     (parameter) =>
       parameter.propertyType === RuleType.OUTPUT &&
@@ -42,6 +47,8 @@ const GeneralInformationComponent = ({
           <TableOutPutComponent {...parameter} />
         ))}
       </Stack>
+
+      {details2 && <GeneralInformationDictionaryComponent details2={details2} />}
     </Stack>
   );
 };
