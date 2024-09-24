@@ -17,7 +17,7 @@ const CheckTab = () => {
     };
 
     useEffect(() => {
-        if (checksAccountsOptions.length > 0 && !checkAccountCode) {
+        if (checksAccountsOptions?.length > 0 && !checkAccountCode) {
             const defaultOption = checksAccountsOptions.find(option => option.isSelected).value;
             if (defaultOption) {
                 setCheckAccountCode(defaultOption);

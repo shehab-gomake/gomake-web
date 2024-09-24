@@ -20,8 +20,28 @@ const ReceiptsTable = () => {
     const headerHeight = "44px";
     const { classes } = useStyle({ headerHeight });
     const router = useRouter();
-    const {resetReceiptState,isNewReceipt, documentItemValue, tableHeaders, tableRows, columnWidths, PrimaryTableCell, checkedItems, handleCheckboxChange, totalSum, finalTotalPayment, taxDeduction } = usePaymentsTable();
- 
+    const {
+        t,
+        resetReceiptState,
+        isNewReceipt,
+        documentItemValue,
+        tableHeaders,
+        tableRows,
+        columnWidths,
+        PrimaryTableCell,
+        checkedItems,
+        handleCheckboxChange,
+        totalSum,
+        finalTotalPayment,
+        taxDeduction,
+        isShowReceiptTransference,
+        ReceiptTransferenceComponent,
+        isShowReceiptCreditCards,
+        ReceiptCreditCardsComponent,
+        isShowReceiptChecks,
+        ReceiptChecksComponent
+    } = usePaymentsTable();
+
     const renderReceiptsItems = useCallback(() => {
         return tableRows?.map((item: any, index: number) => {
             indexs++;
@@ -41,7 +61,7 @@ const ReceiptsTable = () => {
                 </>
             );
         })
-    }, [checkedItems , documentItemValue , tableRows]);
+    }, [checkedItems, documentItemValue, tableRows]);
 
     useEffect(() => {
         if (router?.query?.isNewCreation && router?.query?.documentNumber && tableRows) {
@@ -55,16 +75,15 @@ const ReceiptsTable = () => {
         }
     }, []);
 
-
     // Triggered when the client is changed
     useEffect(() => {
-        if (router?.query?.isNewCreation && !router?.query?.documentNumber ) {
+        if (router?.query?.isNewCreation && !router?.query?.documentNumber) {
             resetReceiptState();
         }
-    }, [documentItemValue?.customerID ,router]);
+    }, [documentItemValue?.customerID, router]);
 
     return (
-        <div>
+        <div style={{ display: "flex", flexDirection: "column", gap: "30px" }}>
             {/* <div>
                 <Checkbox
                     icon={<CheckboxIcon />}
@@ -74,27 +93,32 @@ const ReceiptsTable = () => {
                 />
                 Select All
             </div> */}
-            <TableContainer style={{ maxHeight: 420, overflow: "scroll", border: "1px solid #EAECF0" }} >
-                <Table stickyHeader={true}>
-                    <TableHead>
-                        <TableRow style={classes.tableRowStyle}>
-                            {tableHeaders.map((header, index) => (
-                                <PrimaryTableCell
-                                    key={index}
-                                    style={{ ...classes.tableHeaderStyle, width: columnWidths[index] }}>
-                                    {header}
-                                </PrimaryTableCell>
-                            ))}
-                        </TableRow>
-                    </TableHead>
-                    <TableBody style={{ border: "1px solid #EAECF0" }}>
-                        {renderReceiptsItems()}
-                    </TableBody>
-                </Table>
-            </TableContainer>
-            {isNewReceipt ?
-                <TotalPricesNewReceipts sum={totalSum} totalPayment={finalTotalPayment} taxDeduction={taxDeduction} /> :
-                <TotalPricesReceipts receiptItemValue={documentItemValue} />}
+            <div>
+                <TableContainer style={{ maxHeight: 420, overflow: "scroll", border: "1px solid #EAECF0" }} >
+                    <Table stickyHeader={true}>
+                        <TableHead>
+                            <TableRow style={classes.tableRowStyle}>
+                                {tableHeaders.map((header, index) => (
+                                    <PrimaryTableCell
+                                        key={index}
+                                        style={{ ...classes.tableHeaderStyle, width: columnWidths[index] }}>
+                                        {header}
+                                    </PrimaryTableCell>
+                                ))}
+                            </TableRow>
+                        </TableHead>
+                        <TableBody style={{ border: "1px solid #EAECF0" }}>
+                            {renderReceiptsItems()}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+                {isNewReceipt ?
+                    <TotalPricesNewReceipts sum={totalSum} totalPayment={finalTotalPayment} taxDeduction={taxDeduction} /> :
+                    <TotalPricesReceipts receiptItemValue={documentItemValue} />}
+            </div>
+            {isShowReceiptTransference && <ReceiptTransferenceComponent />}
+            {isShowReceiptCreditCards && <ReceiptCreditCardsComponent />}
+            {isShowReceiptChecks && <ReceiptChecksComponent />}
         </div>
     );
 };

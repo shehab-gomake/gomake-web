@@ -6,6 +6,7 @@ import { totalDocumentsState, totalPaymentState, finalTotalPaymentState, totalCa
 import { quoteItemState } from "@/store";
 import { useRouter } from "next/router";
 import { firstWidgetState, isTransactedState, secondWidgetState, thirdWidgetState } from "./states";
+import CustomMethodsTable from "./methods-table";
 
 const usePaymentsTable = () => {
     const { t } = useTranslation();
@@ -100,8 +101,8 @@ const usePaymentsTable = () => {
     });
 
     const handleCheckboxChange = (index, itemId) => {
-        const newTableRow = tableRows.map(row=>row.id===itemId ? {...row,isChecked: false} : row) 
-        setDocumentItemValue({...documentItemValue , receiptItems : newTableRow})
+        const newTableRow = tableRows.map(row => row.id === itemId ? { ...row, isChecked: false } : row)
+        setDocumentItemValue({ ...documentItemValue, receiptItems: newTableRow })
         setCheckedItems((prevCheckedItems) => {
             const updatedCheckedItems = {
                 ...prevCheckedItems,
@@ -275,6 +276,54 @@ const usePaymentsTable = () => {
         setThirdWidget(true);
     };
 
+    const isShowReceiptTransference = !isNewReceipt && documentItemValue?.receiptTransfers?.length > 0 && documentItemValue?.transferSum > 0 ;
+    const ReceiptTransferenceComponent: React.FC = () => {
+        const transferenceHeaders = ['transferDate', 'transferAccount', 'transferSum']; // Define headers
+        const transferenceRows = documentItemValue?.receiptTransfers; // Use your method to render rows
+        const columnWidths = ['30%', '30%', '30%'];
+
+        return (
+            <CustomMethodsTable
+                title={t("payment.transference")}
+                headers={transferenceHeaders}
+                rows={transferenceRows}
+                columnWidths={columnWidths}
+            />
+        );
+    };
+
+    const isShowReceiptCreditCards = !isNewReceipt && documentItemValue?.receiptCreditCards?.length > 0 && documentItemValue?.creditCardTotal > 0;
+    const ReceiptCreditCardsComponent: React.FC = () => {
+        const creditCardHeaders = ['creditCardNum', 'creditCardSum', 'installments'];
+        const creditCardRows = documentItemValue?.receiptCreditCards;
+        const columnWidths = ['30%', '30%', '30%'];
+
+        return (
+            <CustomMethodsTable
+                title={t("payment.creditCard")}
+                headers={creditCardHeaders}
+                rows={creditCardRows}
+                columnWidths={columnWidths}
+            />
+        );
+    };
+
+    const isShowReceiptChecks = !isNewReceipt && documentItemValue?.receiptChecks?.length > 0 && documentItemValue?.checksTotal > 0 ;
+    const ReceiptChecksComponent: React.FC = () => {
+        const checkHeaders = ['dueDate', 'checkNumber', 'bankCode', 'branch', 'checkSum'];
+        const checkRows = documentItemValue?.receiptChecks;
+        const columnWidths = ['20%', '20%', '20%', '20%', '20%'];
+
+        return (
+            <CustomMethodsTable
+                title={t("payment.checks")}
+                headers={checkHeaders}
+                rows={checkRows}
+                columnWidths={columnWidths}
+            />
+        );
+    };
+
     return {
         t,
         documentItemValue,
@@ -305,7 +354,13 @@ const usePaymentsTable = () => {
         handleSecondButtonClick,
         handleThirdButtonClick,
         resetReceiptState,
-        setCheckedItems
+        setCheckedItems,
+        isShowReceiptTransference,
+        ReceiptTransferenceComponent,
+        isShowReceiptCreditCards,
+        ReceiptCreditCardsComponent,
+        isShowReceiptChecks,
+        ReceiptChecksComponent
     };
 };
 

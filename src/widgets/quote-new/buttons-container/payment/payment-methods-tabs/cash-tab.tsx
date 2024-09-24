@@ -19,7 +19,7 @@ const CashTab = () => {
 
 
     useEffect(() => {
-        if (cashAccountsOptions.length > 0 && !cashAccountCode) {
+        if (cashAccountsOptions?.length > 0 && !cashAccountCode) {
             const defaultOption = cashAccountsOptions.find(option => option.isSelected).value;
             if (defaultOption) {
                 setCashAccountCode(defaultOption);

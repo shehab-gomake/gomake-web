@@ -23,8 +23,8 @@ const TransferTab = () => {
     }
 
     useEffect(() => {
-        if (transferAccountsOptions.length > 0 && !state?.transferAccount) {
-            const defaultOption = transferAccountsOptions.find(option => option.isSelected).value;
+        if (transferAccountsOptions?.length > 0 && !state?.transferAccount) {
+            const defaultOption = transferAccountsOptions?.find(option => option.isSelected).value;
 
             setState((prev) => ({
                 ...prev,
