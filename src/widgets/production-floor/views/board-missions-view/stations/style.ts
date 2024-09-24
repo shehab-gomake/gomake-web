@@ -23,9 +23,11 @@ const useStyle = () => {
         ...FONT_FAMILY.Lexend(500, 14),
       },
       actionContainer: {
-        padding: "0 16px",
+        padding: "10px 16px",
         borderRadius: 16,
         width: "100%",
+        backgroundColor: primaryColor(300),
+
 
       },
       addNoteBtn: {
