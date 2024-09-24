@@ -19,6 +19,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { useRecoilState } from "recoil";
 import { boardMissionsDetailsState } from "@/widgets/production-floor/state/boards";
+import { BoardMissionsStationSubActionComp } from "./sub-action-component";
 
 const BoardMissionsStationsComponent = () => {
     const { stations, subWorkFlows, boardMissions, onClickAllJob, t, isRTL, getStations } = useBoardMissionsStations();
@@ -35,7 +36,7 @@ const BoardMissionsStationsComponent = () => {
             flexDirection: 'column',
             gap: '18px'
         }}>
-            <GeneralInformationComponent />
+            {/* <GeneralInformationComponent /> */}
             <Divider orientation={'horizontal'} flexItem />
             {
                 !!boardMissions?.productType &&
@@ -69,7 +70,19 @@ const BoardMissionsStationsComponent = () => {
                                 {...workflow}
                             />
                         ))}
-                        {sortedStations?.map((station, index) => (
+                        {sortedStations?.filter(workflow => workflow.subActions)?.map((station, index) => {
+                            return (
+                                <BoardMissionsStationSubActionComp
+                                    selected={station.boardMissionActionId === boardMissions.currentBoardMissionActionId}
+                                    key={station?.actionId + index}
+                                    delay={index * 600}
+                                    getStations={getStations}
+                                    isHaveSubACtions={true}
+                                    {...station}
+                                />
+                            )
+                        })}
+                        {sortedStations?.filter(station => !station.subActions)?.map((station, index) => (
                             <BoardMissionsStationAction
                                 selected={station.boardMissionActionId === boardMissions.currentBoardMissionActionId}
                                 key={station?.actionId + index}

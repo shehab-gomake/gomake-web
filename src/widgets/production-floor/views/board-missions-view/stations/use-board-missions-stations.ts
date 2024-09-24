@@ -29,7 +29,6 @@ const useBoardMissionsStations = () => {
     const getStations = async () => {
         const callBack = res => {
             if (res?.success) {
-                console.log("res?.data",res?.data)
                 setStations(res?.data?.workFlow?.actions);
                 setSubWorkFlows(res?.data?.workFlow?.subWorkFlows);
                 setInformation(res?.data?.generalInformations);

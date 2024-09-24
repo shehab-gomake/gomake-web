@@ -31,7 +31,6 @@ interface IParametersMappingProps {
 }
 
 const ParametersMapping = ({ parameters, source, isWorkFlows = false, isProductionFloor = false }: IParametersMappingProps) => {
-    console.log("parameters", parameters)
     return (
         <>
             {parameters?.flatMap((parameter, index, array) => {
