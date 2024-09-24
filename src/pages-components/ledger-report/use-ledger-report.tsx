@@ -339,8 +339,8 @@ const useLedgerReport = ({ customerId }: any) => {
     clientPaymentsList,
     handleDateChange,
     fromDate,
-    toDate
-
+    toDate,
+    customerId,
   };
 };
 
