@@ -3,7 +3,7 @@ export enum EDocumentTypeEnum {
     Order = 1,
     DeliveryNote = 2,
     Invoice = 3,
-    Receipts = 4,
+    Receipts = 4, 
 }
 
 export enum EOutSoucrceUpdateKey
@@ -67,25 +67,25 @@ export enum DocumentTypeEnums
 }
 
 export enum ERPDocumentsTypesEnum {
-    Order = 1,
-    Invoice,
-    DeliveryNotes,
-    Purchase,
-    InvoiceRefund,
-    Receipt,
-    JournalEntry,
-    PurchaseInvoice,
-    PurchaseInvoiceRefund,
-    ForeignJournalEntry,
-    DeliveryNoteRefund,
-    Quote,
-    ExternalInvoice,
-    All,
-    ExternalPayment,
-    BoardMission,
-    AgingReport,
-    LedgerReport,
-    SalesReport
+    order = 1,
+    invoice,
+    deliveryNotes,
+    purchase,
+    invoiceRefund,
+    receipt,
+    journalEntry,
+    purchaseInvoice,
+    purchaseInvoiceRefund,
+    foreignJournalEntry,
+    deliveryNoteRefund,
+    quote,
+    externalInvoice,
+    all,
+    externalPayment,
+    boardMission,
+    agingReport,
+    ledgerReport,
+    salesReport
 }
 
 export enum ORDER_STATUSES {
