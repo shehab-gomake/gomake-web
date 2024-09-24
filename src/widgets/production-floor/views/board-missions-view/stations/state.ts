@@ -11,6 +11,11 @@ export const stationGeneralInformationState = atom<{name: string; values: string
     key: 'stationGeneralInformationState'
 });
 
+export const stationGeneralInformationProductionFloorState = atom({
+    default: {},
+    key: 'stationGeneralInformationProductionFloorState'
+});
+
 export const boardMissionsSubWorkFlowsState = atom({
     key: 'boardMissionsSubWorkFlowsState',
     default: []

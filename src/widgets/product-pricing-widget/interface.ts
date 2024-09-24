@@ -54,6 +54,7 @@ export interface ICalculatedWorkFlow {
   exceptions: any[];
   isCompleteWorkFlow:boolean;
   orginalBookPartId:string;
+  generalInformationProductionFloor?:any;
 }
 
 export interface IPrintActionType {
