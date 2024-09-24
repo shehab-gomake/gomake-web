@@ -11,12 +11,13 @@ import { useQuoteConfirmation } from "@/pages-components/quote-confirmation/use-
 import { useRouter } from "next/router";
 import { MoreMenuWidget } from "../more-circle";
 import { useRecoilValue } from "recoil";
-import { quoteConfirmationState, quoteItemState } from "@/store";
+import { quoteConfirmationState } from "@/store";
 import { DOCUMENT_TYPE, QUOTE_STATUSES } from "@/pages-components/quotes/enums";
 import { DocumentPermission } from "@/components/CheckPermission/enum";
 import { useUserPermission } from "@/hooks/use-permission";
 import PriceOfferWidget from "@/widgets/price-offer-widget/price-offer-widget";
 import { useQuoteGetData } from "@/pages-components/quote-new/use-quote-get-data";
+import { ERPDocumentsTypesEnum } from "@/enums/document-type-enum";
 
 const RowMappingWidget = ({
   item,
@@ -35,6 +36,7 @@ const RowMappingWidget = ({
   onChangeSelectedItemRowForQoute,
   quoteItems
 }) => {
+
   const router = useRouter();
   const { classes } = useStyle({ headerHeight });
   const [isConfirmation, setIsConfirmation] = useState(null);
@@ -45,6 +47,7 @@ const RowMappingWidget = ({
     onChangeSelectedItemRowForQoute(checked, itemId)
   }
   const {
+    t,
     isUpdateAmount,
     isUpdateDiscount,
     isUpdatePrice,
@@ -69,9 +72,10 @@ const RowMappingWidget = ({
   });
   const { CheckDocumentPermission } = useUserPermission();
   const { handleItemCheck } = useQuoteConfirmation();
-  const quoteItemValue = useRecoilValue<any>(quoteItemState);
   const quoteConfirm = useRecoilValue<any>(quoteConfirmationState);
   const isQuote = documentType === DOCUMENT_TYPE.quote;
+  const isDeliveryNote = documentType === DOCUMENT_TYPE.deliveryNote || documentType === DOCUMENT_TYPE.deliveryNoteRefund;
+  const isInvoice = documentType === DOCUMENT_TYPE.invoice || documentType === DOCUMENT_TYPE.invoiceRefund;
 
   const canUpdate = router.query.isNewCreation ? true : item?.isEditable;
   const canUpdatePrices = router.query.isNewCreation ? true : (item?.isEditable && CheckDocumentPermission(documentType, DocumentPermission.UPDATE_DOCUMENT_ITEM_PRICES));
@@ -92,7 +96,7 @@ const RowMappingWidget = ({
           borderBottom: item?.childsDocumentItems && "none",
         }}
       >
-        {( !isPrePaymentPage && isQuoteConfirmation && (!quoteConfirm?.isConfirmed && quoteConfirm?.documentStatus !== QUOTE_STATUSES.Canceled)) ?
+        {(!isPrePaymentPage && isQuoteConfirmation && (!quoteConfirm?.isConfirmed && quoteConfirm?.documentStatus !== QUOTE_STATUSES.Canceled)) ?
           <div style={classes.checkBoxContainer} >
             <Checkbox
               icon={<CheckboxIcon />}
@@ -117,6 +121,27 @@ const RowMappingWidget = ({
             parentIndex
         }
       </PrimaryTableCell>
+      {((isDeliveryNote || isInvoice) && !router.query.isNewCreation) && <PrimaryTableCell
+        style={{
+          width: columnWidths[2],
+          ...classes.cellContainerStyle,
+          color: "#000000",
+          borderBottom: item?.childsDocumentItems && "none",
+
+        }}
+      >
+        <span style={{ display: "block", color: "#5859A8" }}>
+          {item?.sourceDocumentType
+            ? `${t(`SourceDocument.${ERPDocumentsTypesEnum[item?.sourceDocumentType]}`)} ${t("general.shortForNum")}`
+            : ""}
+        </span>
+        <span style={{ display: "block" }}>
+          {item?.sourceDocumentNumber
+            ? item?.sourceDocumentNumber
+            : ""}
+        </span>
+      </PrimaryTableCell>
+      }
       <PrimaryTableCell
         style={{
           width: columnWidths[1],
