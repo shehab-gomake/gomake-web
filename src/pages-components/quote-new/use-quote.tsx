@@ -95,9 +95,11 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
   const openSendBtn = Boolean(anchorElSendBtn);
   const openCancelBtn = Boolean(anchorElCancelBtn);
   const openSettingMenu = Boolean(anchorElSettingMenu);
+  const isDeliveryNote = docType === DOCUMENT_TYPE.deliveryNote || docType === DOCUMENT_TYPE.deliveryNoteRefund;
+  const isInvoice = docType === DOCUMENT_TYPE.invoice || docType === DOCUMENT_TYPE.invoiceRefund;
+
   const [openWhatsAppModal, setOpenWatsAppModal] = useState(false)
   const [isSelectedAtLeastOne, setIsSelectedAtLeastOne] = useState(null)
-
   const [openNewItemNotesModal, setOpenNewItemNotesModal] = useState(false)
   const [openRelatedDocumentsModal, setOpenRelatedDocumentsModal] = useState(false)
   const [openInvoiceCreationModal, setOpenInvoiceCreationModal] = useState(false)
@@ -108,7 +110,6 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
   const onClickCloseInvoiceCreation = () => {
     setOpenInvoiceCreationModal(false)
   }
-
 
   const onClickOpenRelatedDocumentsModal = () => {
     setOpenRelatedDocumentsModal(true)
@@ -172,6 +173,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
   };
   const tableHeaders = [
     "#",
+    ((isDeliveryNote || isInvoice) && !router.query.isNewCreation)  ? t("products.profits.documentNumber") : null,
     t("sales.quote.itemCode"),
     t("products.profits.itemName"),
     isQuoteConfirmation ? quoteConfirm?.isShowDetails ? t("products.profits.details") : null : quoteItemValue?.isShowDetails ? t("products.profits.details") : null,
