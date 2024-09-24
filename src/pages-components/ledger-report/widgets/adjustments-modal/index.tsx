@@ -6,7 +6,7 @@ import { useAdjustmentsModal } from "./use-adjustments-modal";
 import { useStyle } from "./style";
 import { SecondaryButton } from "@/components/button/secondary-button";
 
-const AdjustmentsLedgerReportModal = ({ openModal, onCloseModal, clientPaymentsList, getClientPaymentItems }) => {
+const AdjustmentsLedgerReportModal = ({ openModal, onCloseModal, clientPaymentsList, getClientPaymentItems , customerId  }) => {
   const { classes } = useStyle();
   const {
     getTableDataRows,
@@ -24,7 +24,7 @@ const AdjustmentsLedgerReportModal = ({ openModal, onCloseModal, clientPaymentsL
     openDeleteModal,
     openTransferModal,
     customer,
-  } = useAdjustmentsModal({ clientPaymentsList, getClientPaymentItems })
+  } = useAdjustmentsModal({ clientPaymentsList, getClientPaymentItems , customerId })
 
   return (
     <>
