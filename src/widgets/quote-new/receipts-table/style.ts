@@ -93,6 +93,11 @@ const useStyle = ({ headerHeight }) => {
         justifyContent: "center",
         alignItems: "center",
       },
+      receiptMethodsTable: {
+        display: "flex",
+        flexDirection: "column" as "column",
+        gap: "5px"
+      }
     };
   }, [headerHeight]);
   return {
