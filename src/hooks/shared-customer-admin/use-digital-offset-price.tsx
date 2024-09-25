@@ -654,7 +654,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         values: selectedParam.valueIds,
                         valueIds: selectedParam.valueIds,
                         actionIndex: param?.actionIndex,
-                        parameterCode: param?.code
+                        parameterCode: param?.code,
+                        isGeneralInfoInProductionFloor: param?.isGeneralInfoInProductionFloor
                       });
                     }
                     else if (productItemValueByEdit) {
@@ -720,6 +721,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                       valuesConfigs: parameter?.valuesConfigs,
                       unitKey: parameter?.unitKey,
                       unitType: parameter?.unitType,
+                      isGeneralInfoInProductionFloor: parameter?.isGeneralInfoInProductionFloor
+
                     });
                   }
                 } else if (
@@ -755,6 +758,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                       valuesConfigs: parameter?.valuesConfigs,
                       unitKey: parameter?.unitKey,
                       unitType: parameter?.unitType,
+                      isGeneralInfoInProductionFloor: parameter?.isGeneralInfoInProductionFloor
                     });
                   }
                 } else if (
@@ -788,6 +792,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                       valuesConfigs: parameter?.valuesConfigs,
                       unitKey: parameter?.unitKey,
                       unitType: parameter?.unitType,
+                      isGeneralInfoInProductionFloor: parameter?.isGeneralInfoInProductionFloor
                     });
                   }
 
@@ -824,6 +829,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         valuesConfigs: parameter?.valuesConfigs,
                         unitKey: parameter?.unitKey,
                         unitType: parameter?.unitType,
+                        isGeneralInfoInProductionFloor: parameter?.isGeneralInfoInProductionFloor
                       });
                     }
                   }
@@ -847,6 +853,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         valuesConfigs: parameter?.valuesConfigs,
                         unitKey: parameter?.unitKey,
                         unitType: parameter?.unitType,
+                        isGeneralInfoInProductionFloor: parameter?.isGeneralInfoInProductionFloor
                       };
 
                       subProduct.parameters.push(newParameter);
@@ -880,6 +887,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         valuesConfigs: parameter?.valuesConfigs,
                         unitKey: parameter?.unitKey,
                         unitType: parameter?.unitType,
+                        isGeneralInfoInProductionFloor: parameter?.isGeneralInfoInProductionFloor
                       });
                     }
 
@@ -910,6 +918,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         valuesConfigs: parameter?.valuesConfigs,
                         unitKey: parameter?.unitKey,
                         unitType: parameter?.unitType,
+                        isGeneralInfoInProductionFloor: parameter?.isGeneralInfoInProductionFloor
                       });
                     }
 
@@ -943,6 +952,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         valuesConfigs: parameter?.valuesConfigs,
                         unitKey: parameter?.unitKey,
                         unitType: parameter?.unitType,
+                        isGeneralInfoInProductionFloor: parameter?.isGeneralInfoInProductionFloor
                       });
                     }
 
@@ -982,6 +992,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                       valuesConfigs: parameter?.valuesConfigs,
                       unitKey: parameter?.unitKey,
                       unitType: parameter?.unitType,
+                      isGeneralInfoInProductionFloor: parameter?.isGeneralInfoInProductionFloor
                     });
                     parameter?.childsParameters?.map((item) => {
                       const childParam = subSection.parameters.find(
@@ -1010,6 +1021,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         unitKey: childParam?.unitKey,
                         unitType: childParam?.unitType,
                         isDisabled: isDisabled,
+                        isGeneralInfoInProductionFloor: childParam?.isGeneralInfoInProductionFloor
                       });
                     });
                   }
@@ -1697,6 +1709,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   unitKey: myparameter.unitKey,
                   unitType: myparameter.unitType,
                   isDisabled: true,
+                  isGeneralInfoInProductionFloor: myparameter.isGeneralInfoInProductionFloor
                 });
               });
             }
@@ -2511,6 +2524,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 valuesConfigs: relatedParameter?.valuesConfigs,
                 unitKey: relatedParameter?.unitKey,
                 unitType: relatedParameter?.unitType,
+                isGeneralInfoInProductionFloor: relatedParameter?.isGeneralInfoInProductionFloor
               });
 
               // Recursively add related parameters for the newly added parameter
@@ -2600,6 +2614,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           valuesConfigs: subSectionParameter?.valuesConfigs,
           unitKey: subSectionParameter?.unitKey,
           unitType: subSectionParameter?.unitType,
+          isGeneralInfoInProductionFloor: subSectionParameter?.isGeneralInfoInProductionFloor
         });
         addRelatedParametersWithDefaultValues(parameterId, sectionId, subSectionId, temp);
       }
@@ -2647,7 +2662,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   actionIndex: myparameter?.actionIndex,
                   parameterName: myparameter?.name,
                   parameterCode: myparameter?.code,
-                  isDisabled: hasValues(data?.value)
+                  isDisabled: hasValues(data?.value),
+                  isGeneralInfoInProductionFloor: myparameter?.isGeneralInfoInProductionFloor
                 });
               }
             }
@@ -2709,7 +2725,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               parameterCode: "quantity",
               valuesConfigs: [],
               unitKey: null,
-              unitType: 0
+              unitType: 0,
             })
           }
           //setQuantity
@@ -2865,6 +2881,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   valuesConfigs: param?.valuesConfigs,
                   unitKey: param?.unitKey,
                   unitType: param?.unitType,
+                  isGeneralInfoInProductionFloor: param?.isGeneralInfoInProductionFloor
                 });
               }
             }
@@ -2894,7 +2911,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 unitKey: param?.unitKey,
                 unitType: param?.unitType,
                 actionIndex,
-                parameterCode: param?.code
+                parameterCode: param?.code,
+                isGeneralInfoInProductionFloor: param?.isGeneralInfoInProductionFloor
               });
             }
           });
@@ -2937,6 +2955,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     unitKey: subSectionParameter?.unitKey,
                     unitType: subSectionParameter?.unitType,
                     isDisabled: true,
+                    isGeneralInfoInProductionFloor: subSectionParameter?.isGeneralInfoInProductionFloor
                   });
                 }
 
@@ -2974,6 +2993,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   unitKey: subSectionParameter?.unitKey,
                   unitType: subSectionParameter?.unitType,
                   isDisabled: true,
+                  isGeneralInfoInProductionFloor: subSectionParameter?.isGeneralInfoInProductionFloor
                 });
               }
             });
@@ -3006,6 +3026,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   unitKey: sizeParameter?.unitKey,
                   unitType: sizeParameter?.unitType,
                   isDisabled: true,
+                  isGeneralInfoInProductionFloor: sizeParameter?.isGeneralInfoInProductionFloor
                 });
               }
             }

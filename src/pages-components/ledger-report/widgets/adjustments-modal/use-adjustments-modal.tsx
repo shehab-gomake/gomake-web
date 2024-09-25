@@ -11,9 +11,10 @@ import { adaptPaddingRight } from "@/utils/adapter";
 export interface JustmentsModalProps {
   getClientPaymentItems: any;
   clientPaymentsList: any;
+  customerId: string;
 }
 
-const useAdjustmentsModal = ({ getClientPaymentItems, clientPaymentsList }: JustmentsModalProps) => {
+const useAdjustmentsModal = ({ getClientPaymentItems, clientPaymentsList , customerId}: JustmentsModalProps) => {
   const { t } = useTranslation();
   const direction = t('direction');
   const { customer, renderOptions, checkWhatRenderArray, handleCustomerChange } = useCustomerDropDownList()
@@ -117,6 +118,10 @@ const useAdjustmentsModal = ({ getClientPaymentItems, clientPaymentsList }: Just
     currentItem.price = newValue;
   };
 
+  const capitalizeFirstLetter = (string) => {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  };
+
   const getTableDataRows = useCallback(() => {
     return clientPaymentsList?.map((data, index) => [
       <div>
@@ -128,7 +133,7 @@ const useAdjustmentsModal = ({ getClientPaymentItems, clientPaymentsList }: Just
         />
       </div>,
       data?.docNum,
-      t(`documentType.${ERPDocumentsTypesEnum[data?.type]}`),
+      t(`documentType.${capitalizeFirstLetter(ERPDocumentsTypesEnum[data?.type])}`),
       data?.docDate?.split("T")[0],
       data?.fixedPrice,
       <div key={inputErrors[index]}>
@@ -176,10 +181,12 @@ const useAdjustmentsModal = ({ getClientPaymentItems, clientPaymentsList }: Just
   const cancelTransactionsApi = useCallback(
     async () => {
       const res = await callApi(
-        EHttpMethod.POST,
-        `/v1/erp-service/receipts/cancel-transactions`,
+        EHttpMethod.PUT,
+        `/v1/erp-service/receipts/cancel-balance`,
         {
-          data: [...selectedItems]
+            clientId: customerId ?? "", 
+            total: calculateTotalPrice(),  
+            openTrans: selectedItems
         }
       );
       if (res?.success) {
@@ -194,12 +201,14 @@ const useAdjustmentsModal = ({ getClientPaymentItems, clientPaymentsList }: Just
   const transferBalanceApi = useCallback(
     async () => {
       const res = await callApi(
-        EHttpMethod.POST,
-        `/v1/erp-service/receipts/move-transactions-to-client`,
+        EHttpMethod.PUT,
+        `/v1/erp-service/receipts/move-balance`,
         {
-          clientId: customer.id,
-          data: [...selectedItems]
-        }
+          clientId: customerId ?? "", 
+          total: calculateTotalPrice(),  
+          clientIdToMove:customer.id,
+          openTrans: selectedItems
+      }
       );
       if (res?.success) {
         alertSuccess(`reports.successfullyMovedTransaction`)

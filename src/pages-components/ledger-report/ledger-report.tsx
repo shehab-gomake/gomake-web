@@ -45,7 +45,7 @@ const LedgerReportWidget = ({ customerId }: any) => {
     clientPaymentsList,
     handleDateChange,
     fromDate,
-    toDate
+    toDate,
   } = useLedgerReport({ customerId });
 
   return (
@@ -90,6 +90,7 @@ const LedgerReportWidget = ({ customerId }: any) => {
         SendCustomerLedgerToMailApi={SendCustomerLedgerToMailApi}
       />
       <AdjustmentsLedgerReportModal
+        customerId={customerId || customer?.id}
         onCloseModal={onClickCloseAdjustmentsModal}
         openModal={isopenAdjustmentsModal}
         clientPaymentsList={clientPaymentsList}
