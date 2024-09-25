@@ -2496,7 +2496,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               relatedParameter.valuesConfigs.length === 1 &&
               relatedParameter.valuesConfigs[0]?.values?.length > 0
             ) {
-              valueToAdd = relatedParameter.valuesConfigs[0]?.values[0];
+              valueToAdd = relatedParameter.valuesConfigs[0]?.updateName;
             }
           } else if (relatedParameter.defaultValue) {
             valueToAdd = relatedParameter.defaultValue;
