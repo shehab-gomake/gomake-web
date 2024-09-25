@@ -38,7 +38,6 @@ const PricingWidget = ({ workFlows, getOutSourcingSuppliers, widgetType }: IPric
   } = usePricingWidget({ workFlows, getOutSourcingSuppliers, widgetType });
   const calculationResult = useRecoilValue(calculationResultState);
   const [selectedWorkFlowId, setSelectedWorkFlowId] = useState("");
-
   return (
     <Stack gap={"16px"} width={"100%"}>
       <Stack direction={"row"} justifyContent={"space-between"}>
@@ -108,6 +107,7 @@ const PricingWidget = ({ workFlows, getOutSourcingSuppliers, widgetType }: IPric
       {selectedWorkFlow && (
         <GeneralInformationComponent
           details={selectedWorkFlow?.generalInformation}
+          details2={selectedWorkFlow?.generalInformationProductionFloor}
         />
       )}
       <Divider />
