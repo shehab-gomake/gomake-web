@@ -1,12 +1,12 @@
 import { useTranslation } from "react-i18next";
-import { TableCell, styled, tableCellClasses } from "@mui/material";
+import { Stack, TableCell, styled, tableCellClasses } from "@mui/material";
 import { useState } from "react";
 import { useRecoilState, useResetRecoilState, useSetRecoilState } from "recoil";
 import { totalDocumentsState, totalPaymentState, finalTotalPaymentState, totalCashState, totalBitState, totalTransferState, totalChecksState, checksRowState, CheckData, checkedItemsIdsState, transferTabState, prevStateState, prevStateStateData, taxDeductionState, checksAccountCodeState, totalCreditCardState, CreditCardData, creditCardState, ReceiptCreditCardData, receiptCreditCardState, selectedCreditTransactionState, transactionOptionsData, cashAccountCodeState } from "../buttons-container/states";
 import { quoteItemState } from "@/store";
 import { useRouter } from "next/router";
 import { firstWidgetState, isTransactedState, secondWidgetState, thirdWidgetState } from "./states";
-import CustomMethodsTable from "./methods-table";
+import CustomMethodsTable from "./Payment-methods-details/methods-table";
 
 const usePaymentsTable = () => {
     const { t } = useTranslation();
@@ -284,7 +284,6 @@ const usePaymentsTable = () => {
 
         return (
             <CustomMethodsTable
-                title={t("payment.transference")}
                 headers={transferenceHeaders}
                 rows={transferenceRows}
                 columnWidths={columnWidths}
@@ -294,13 +293,12 @@ const usePaymentsTable = () => {
 
     const isShowReceiptCreditCards = !isNewReceipt && documentItemValue?.receiptCreditCards?.length > 0 && documentItemValue?.creditCardTotal > 0;
     const ReceiptCreditCardsComponent: React.FC = () => {
-        const creditCardHeaders = ['creditCardNum', 'creditCardSum', 'installments'];
+        const creditCardHeaders = ['creditCardNum', 'installments' , 'creditCardSum'];
         const creditCardRows = documentItemValue?.receiptCreditCards;
         const columnWidths = ['30%', '30%', '30%'];
 
         return (
             <CustomMethodsTable
-                title={t("payment.creditCard")}
                 headers={creditCardHeaders}
                 rows={creditCardRows}
                 columnWidths={columnWidths}
@@ -316,13 +314,23 @@ const usePaymentsTable = () => {
 
         return (
             <CustomMethodsTable
-                title={t("payment.checks")}
                 headers={checkHeaders}
                 rows={checkRows}
                 columnWidths={columnWidths}
             />
         );
     };
+
+
+    const [openMethodsDetailsModal, setOpenMethodsDetailsModal] = useState<boolean>(false);
+
+    const handleOpenMethodsDetailsModal = () => {
+        setOpenMethodsDetailsModal(true);
+    }
+
+    const handleCloseMethodsDetailsModal = () => {
+        setOpenMethodsDetailsModal(false);
+    }
 
     return {
         t,
@@ -360,7 +368,10 @@ const usePaymentsTable = () => {
         isShowReceiptCreditCards,
         ReceiptCreditCardsComponent,
         isShowReceiptChecks,
-        ReceiptChecksComponent
+        ReceiptChecksComponent,
+        openMethodsDetailsModal,
+        handleOpenMethodsDetailsModal,
+        handleCloseMethodsDetailsModal,
     };
 };
 

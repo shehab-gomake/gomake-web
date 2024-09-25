@@ -14,6 +14,7 @@ import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
 import { TotalPricesReceipts } from "./total-prices-receipt";
 import { useRouter } from "next/router";
 import { useCallback, useEffect } from "react";
+import { PaymentMethodsDetailsModal } from "./Payment-methods-details/payment-methods-details-modal";
 
 const ReceiptsTable = () => {
     let indexs = 0;
@@ -39,7 +40,10 @@ const ReceiptsTable = () => {
         isShowReceiptCreditCards,
         ReceiptCreditCardsComponent,
         isShowReceiptChecks,
-        ReceiptChecksComponent
+        ReceiptChecksComponent,
+        openMethodsDetailsModal,
+        handleOpenMethodsDetailsModal,
+        handleCloseMethodsDetailsModal
     } = usePaymentsTable();
 
     const renderReceiptsItems = useCallback(() => {
@@ -114,11 +118,19 @@ const ReceiptsTable = () => {
                 </TableContainer>
                 {isNewReceipt ?
                     <TotalPricesNewReceipts sum={totalSum} totalPayment={finalTotalPayment} taxDeduction={taxDeduction} /> :
-                    <TotalPricesReceipts receiptItemValue={documentItemValue} />}
+                    <TotalPricesReceipts receiptItemValue={documentItemValue} handleOpenModal={handleOpenMethodsDetailsModal} />}
             </div>
-            {isShowReceiptTransference && <ReceiptTransferenceComponent />}
-            {isShowReceiptCreditCards && <ReceiptCreditCardsComponent />}
-            {isShowReceiptChecks && <ReceiptChecksComponent />}
+            <PaymentMethodsDetailsModal
+                modalTitle={t("payment.paymentMethodsDetails")}
+                openModal={openMethodsDetailsModal}
+                handleModalClose={handleCloseMethodsDetailsModal}
+                isShowFirstTabContent={isShowReceiptTransference}
+                firstTabContent={ReceiptTransferenceComponent}
+                isShowSecondTabContent={isShowReceiptChecks}
+                secondTabContent={ReceiptChecksComponent}
+                isShowThirdTabContent={isShowReceiptCreditCards}
+                thirdTabContent={ReceiptCreditCardsComponent}
+            />
         </div>
     );
 };

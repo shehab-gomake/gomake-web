@@ -1,6 +1,8 @@
 import { useTranslation } from "react-i18next";
 import { useQuoteGetData } from "@/pages-components/quote-new/use-quote-get-data";
 import { useStyle } from "./style";
+import { DetailsIcon } from "./Payment-methods-details/icons/details-icon";
+import { IconButton } from "@mui/material";
 
 const PaymentRow = ({ label, value }) => {
     const { classes } = useStyle({ headerHeight: "44px" });
@@ -16,7 +18,7 @@ const PaymentRow = ({ label, value }) => {
     );
 };
 
-const TotalPricesReceipts = ({ receiptItemValue }) => {
+const TotalPricesReceipts = ({ receiptItemValue  , handleOpenModal}) => {
     const { t } = useTranslation();
     const { getCurrencyUnitText, quoteItemValue } = useQuoteGetData();
     const { classes } = useStyle({ headerHeight: "44px" });
@@ -45,8 +47,9 @@ const TotalPricesReceipts = ({ receiptItemValue }) => {
                 <div style={classes.lastRowContainer}>
                     {t("payment.paid")}
                 </div>
-                <div style={{ ...classes.oddRowContainer, width: "50%", paddingLeft: 36 }}>
+                <div style={{ ...classes.oddRowContainer, width: "50%", paddingLeft: 36 , justifyContent:"space-between" ,alignItems:"center"}}>
                     <div>{receiptItemValue?.totalPrice + " " + getCurrencyUnitText(quoteItemValue?.currency)}</div>
+                    <IconButton onClick={handleOpenModal}><DetailsIcon/></IconButton>
                 </div>
             </div>
         </div>
