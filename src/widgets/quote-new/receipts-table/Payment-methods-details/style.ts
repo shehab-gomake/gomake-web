@@ -22,7 +22,7 @@ const useStyle = () => {
         transform: "translate(-50%, -50%)",
         height: "max-content",
         minHeight: "27%",
-        maxHeight: "60%",
+        maxHeight: "50%",
         overFlow: "auto" as "auto",
         padding: convertWidthToVW(24),
       },
