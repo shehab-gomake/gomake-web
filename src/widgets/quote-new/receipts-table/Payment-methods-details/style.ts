@@ -22,14 +22,17 @@ const useStyle = () => {
         transform: "translate(-50%, -50%)",
         height: "max-content",
         minHeight: "27%",
-        maxHeight:"60%",
+        maxHeight: "60%",
         overFlow: "auto" as "auto",
-        paddingTop: convertWidthToVW(24),
-        paddingLeft: convertWidthToVW(24),
-        paddingRight: convertWidthToVW(24),
-        paddingBottom: convertWidthToVW(24),
+        padding: convertWidthToVW(24),
       },
-
+      subContainer: {
+        display: "flex",
+        gap: "10px",
+        width: "100%",
+        overflowX: "scroll" as "scroll",
+        paddingTop: "6px"
+      },
       titleModalStyle: {
         display: "flex",
         color: primaryColor(900),
@@ -41,7 +44,6 @@ const useStyle = () => {
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
-        padding: "0px 0px 6px 6px"
       },
       closeIcon: {
         display: "flex",

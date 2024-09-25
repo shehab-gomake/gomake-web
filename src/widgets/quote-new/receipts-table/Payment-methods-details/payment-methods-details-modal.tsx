@@ -123,7 +123,7 @@ const PaymentMethodsDetailsModal = ({
                         </IconButton>
                     </Tooltip>
                 </div>
-                <div style={{ display: "flex", gap: "10px", width: "100%", overflowX: "scroll" }}>
+                <div style={classes.subContainer}>
                     <SecondaryTabs
                         orientation="vertical"
                         variant="scrollable"
