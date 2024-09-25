@@ -303,94 +303,94 @@ const BoardMissionsStationSubActionComp = ({
                                             <>
                                                 <Divider orientation={"vertical"} flexItem color={"#FFF"} />
                                             </>
-                                        ) : <></>
-                                            // (
-                                            //     isNeedMachine && (
-                                            //         <>
-                                            //             <Divider orientation={"vertical"} flexItem color={"#000"} />
-                                            //             {!chooseMachine ? (
-                                            //                 <Button
-                                            //                     onClick={(e) => {
-                                            //                         if (CheckPermission(Permissions.IS_CAN_UPDATE_MACHINE_IN_PRODUCTION_FLOOR) && isEditable) {
-                                            //                             e.stopPropagation();
-                                            //                             setChooseMachine(true);
-                                            //                             onClickGetMachineForAction(actionId)
-                                            //                         }
-                                            //                     }}
-                                            //                     variant={"text"}
-                                            //                     style={classes.sectionTitle}
-                                            //                 >
-                                            //                     {
-                                            //                         machineName != null ? <>
-                                            //                             {machineName?.length > 20
-                                            //                                 ? machineName.slice(0, 20) + "..."
-                                            //                                 : machineName}
-                                            //                         </> : <>
-                                            //                             Selecte New Machine
-                                            //                         </>
-                                            //                     }
+                                        ) : (
+                                            isNeedMachine && (
+                                                <>
+                                                    <Divider orientation={"vertical"} flexItem color={"#000"} />
+                                                    {!chooseMachine ? (
+                                                        <Button
+                                                            onClick={(e) => {
+                                                                if (CheckPermission(Permissions.IS_CAN_UPDATE_MACHINE_IN_PRODUCTION_FLOOR) && isEditable) {
+                                                                    e.stopPropagation();
+                                                                    setChooseMachine(true);
+                                                                    onClickGetMachineForAction(actionId)
+                                                                }
+                                                            }}
+                                                            variant={"text"}
+                                                            style={{ ...classes.sectionTitle, color: "#FFF" }}
+                                                        >
+                                                            {
+                                                                machineName != null ? <>
+                                                                    {machineName?.length > 20
+                                                                        ? machineName.slice(0, 20) + "..."
+                                                                        : machineName}
+                                                                </> : <>
+                                                                    Selecte New Machine
+                                                                </>
+                                                            }
 
-                                            //                 </Button>
-                                            //             ) : (
-                                            //                 <Stack
-                                            //                     direction={"row"}
-                                            //                     gap={"5px"}
-                                            //                     alignItems={"center"}
-                                            //                     onClick={(e) => e.stopPropagation()}
+                                                        </Button>
+                                                    ) : (
+                                                        <Stack
+                                                            direction={"row"}
+                                                            gap={"5px"}
+                                                            alignItems={"center"}
+                                                            onClick={(e) => e.stopPropagation()}
 
-                                            //                 >
-                                            //                     <div style={{ position: 'relative' }}>
-                                            //                         <GomakeTextInput
-                                            //                             placeholder={t('materials.inputs.selectMachine')}
-                                            //                             style={{ height: '40px' }} value={contactsFilter}
-                                            //                             onChange={onMachinesInputChange}
-                                            //                             onClick={() => setOpenMachine(!openMachine)} />
-                                            //                         {
-                                            //                             !!openMachine && (
-                                            //                                 <ClickOutside onClick={() => setOpenMachine(false)}>
-                                            //                                     <Paper
-                                            //                                         sx={{
-                                            //                                             position: 'absolute',
-                                            //                                             top: '100%',
-                                            //                                             left: 0,
-                                            //                                             right: 0,
-                                            //                                             maxHeight: '200px',
-                                            //                                             overflowY: 'auto',
-                                            //                                             zIndex: 9999999999999999999,
-                                            //                                         }}>
-                                            //                                         {
-                                            //                                             (!!machensFilter
-                                            //                                                 ? machinesList?.filter(value =>
-                                            //                                                     value.label?.toLowerCase()?.includes(machensFilter?.toLowerCase())
-                                            //                                                 )
-                                            //                                                 : machinesList
-                                            //                                             )?.map((value, index) => {
-                                            //                                                 return (
-                                            //                                                     <MenuItem key={index}
-                                            //                                                         onClick={() => onMachineClick(value, value.label)}>
-                                            //                                                         {value.label?.slice(0, 18) + "..."}
-                                            //                                                     </MenuItem>
-                                            //                                                 );
-                                            //                                             })
-                                            //                                         }
-                                            //                                     </Paper>
-                                            //                                 </ClickOutside>
-                                            //                             )
-                                            //                         }
-                                            //                     </div>
-                                            //                     <IconButton
-                                            //                         onClick={(e) => {
-                                            //                             e.stopPropagation();
-                                            //                             setChooseMachine(false);
-                                            //                         }}
-                                            //                     >
-                                            //                         <ClearRoundedIcon />
-                                            //                     </IconButton>
-                                            //                 </Stack>
-                                            //             )}
-                                            //         </>
-                                            //     )
-                                            // )
+                                                        >
+                                                            <div style={{ position: 'relative' }}>
+                                                                <GomakeTextInput
+                                                                    placeholder={t('materials.inputs.selectMachine')}
+                                                                    style={{ height: '40px' }} value={contactsFilter}
+                                                                    onChange={onMachinesInputChange}
+                                                                    onClick={() => setOpenMachine(!openMachine)} />
+                                                                {
+                                                                    !!openMachine && (
+                                                                        <ClickOutside onClick={() => setOpenMachine(false)}>
+                                                                            <Paper
+                                                                                sx={{
+                                                                                    position: 'absolute',
+                                                                                    top: '100%',
+                                                                                    left: 0,
+                                                                                    right: 0,
+                                                                                    maxHeight: '200px',
+                                                                                    overflowY: 'auto',
+                                                                                    zIndex: 9999999999999999999,
+                                                                                }}>
+                                                                                {
+                                                                                    (!!machensFilter
+                                                                                        ? machinesList?.filter(value =>
+                                                                                            value.label?.toLowerCase()?.includes(machensFilter?.toLowerCase())
+                                                                                        )
+                                                                                        : machinesList
+                                                                                    )?.map((value, index) => {
+                                                                                        return (
+                                                                                            <MenuItem key={index}
+                                                                                                onClick={() => onMachineClick(value, value.label)}>
+                                                                                                {value.label?.slice(0, 18) + "..."}
+                                                                                            </MenuItem>
+                                                                                        );
+                                                                                    })
+                                                                                }
+                                                                            </Paper>
+                                                                        </ClickOutside>
+                                                                    )
+                                                                }
+                                                            </div>
+                                                            <IconButton
+                                                                onClick={(e) => {
+                                                                    e.stopPropagation();
+                                                                    setChooseMachine(false);
+                                                                }}
+                                                            >
+                                                                <ClearRoundedIcon />
+                                                            </IconButton>
+                                                        </Stack>
+                                                    )}
+                                                </>
+                                            )
+                                        )
+
                                         }
                                         {
                                             isNeedEmployee && (
