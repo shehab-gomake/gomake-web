@@ -1,23 +1,24 @@
 import Stack from "@mui/material/Stack";
-import {useCallback, useEffect, useState} from "react";
-import {IBoardMissionsStationTimer} from "@/widgets/production-floor/views/board-missions-view/stations/interface";
-import {CircularProgress, IconButton} from "@mui/material";
+import { useCallback, useEffect, useState } from "react";
+import { IBoardMissionsStationTimer } from "@/widgets/production-floor/views/board-missions-view/stations/interface";
+import { CircularProgress, IconButton } from "@mui/material";
 import PlayCircleIcon from '@mui/icons-material/PlayCircle';
 import PauseCircleIcon from '@mui/icons-material/PauseCircle';
-import {FONT_FAMILY} from "@/utils/font-family";
-import {Permissions} from "@/components/CheckPermission/enum";
-import {PermissionCheck} from "@/components/CheckPermission/check-permission";
-import {useRecoilState} from "recoil";
-import {boardMissionsDetailsState} from "@/widgets/production-floor/state/boards";
-import {boardMissionsStationsState} from "@/widgets/production-floor/views/board-missions-view/stations/state";
+import { FONT_FAMILY } from "@/utils/font-family";
+import { Permissions } from "@/components/CheckPermission/enum";
+import { PermissionCheck } from "@/components/CheckPermission/check-permission";
+import { useRecoilState } from "recoil";
+import { boardMissionsDetailsState } from "@/widgets/production-floor/state/boards";
+import { boardMissionsStationsState } from "@/widgets/production-floor/views/board-missions-view/stations/state";
 
 interface IProps extends IBoardMissionsStationTimer {
-    onToggle: (seconds:number) => void;
+    onToggle: (seconds: number) => void;
     loading: boolean;
     actionId: string;
+    isSubAction?: boolean;
 }
 
-const ActionTimer = ({isTimerRunning, totalRunningTime, onToggle, loading, actionId}: IProps) => {
+const ActionTimer = ({ isTimerRunning, totalRunningTime, onToggle, loading, actionId, isSubAction = false }: IProps) => {
     const [seconds, setSeconds] = useState<number>(0);
     const [isActive, setIsActive] = useState(false);
     const [bordMissionsDetails] = useRecoilState(boardMissionsDetailsState);
@@ -26,7 +27,7 @@ const ActionTimer = ({isTimerRunning, totalRunningTime, onToggle, loading, actio
         let interval = null;
 
         if (isActive) {
-            
+
             interval = setInterval(() => {
                 setSeconds(seconds => seconds + 1);
             }, 1000);
@@ -59,7 +60,7 @@ const ActionTimer = ({isTimerRunning, totalRunningTime, onToggle, loading, actio
 
     return (
         <Stack direction={'row'} alignItems={'center'}>
-            <span style={{...FONT_FAMILY.Inter(600, 14), color: '#344054'}}>{formatTime()}</span>
+            <span style={{ ...FONT_FAMILY.Inter(600, 14), color: isSubAction ? "#FFF" : '#344054' }}>{formatTime()}</span>
             <PermissionCheck userPermission={Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR}>
                 {
                     actionId === bordMissionsDetails.currentBoardMissionActionId &&
@@ -68,9 +69,9 @@ const ActionTimer = ({isTimerRunning, totalRunningTime, onToggle, loading, actio
                         onToggle(seconds);
                     }}>
                         {
-                            loading ? <CircularProgress size={15}/> : isActive ?
-                                <PauseCircleIcon style={{color: '#43459D'}}/> :
-                                <PlayCircleIcon style={{color: '#43459D'}}/>
+                            loading ? <CircularProgress size={15} /> : isActive ?
+                                <PauseCircleIcon style={{ color: '#43459D' }} /> :
+                                <PlayCircleIcon style={{ color: '#43459D' }} />
                         }
                     </IconButton>
                 }
@@ -79,4 +80,4 @@ const ActionTimer = ({isTimerRunning, totalRunningTime, onToggle, loading, actio
     )
 }
 
-export {ActionTimer}
+export { ActionTimer }

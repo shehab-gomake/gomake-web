@@ -1,22 +1,25 @@
-import { FormEvent, useCallback, useRef } from "react";
-import { Button, FormGroup, MenuItem, Paper } from "@mui/material";
+import {cloneElement, FormEvent, ReactElement, useCallback, useRef} from "react";
+import {Button, FormGroup, Paper} from "@mui/material";
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import { GomakeTextInput } from "@/components";
-import Stack from "@mui/material/Stack";
-import { SecondaryCheckBox } from "@/components/check-box/secondary-check-box";
-import { Source, useActionsList } from "@/widgets/production-floor/filters/select/actions-select/use-actions-list";
-import { SecondaryButton } from "@/components/button/secondary-button";
-import { IStation } from "@/widgets/production-floor/interfaces/filters";
-import { ClickOutside } from "@/components/click-out-side/click-out-side";
-import { adaptRight } from "@/utils/adapter";
+import {GomakeTextInput} from "@/components";
+import {Source, useActionsList} from "@/widgets/production-floor/filters/select/actions-select/use-actions-list";
+import {SecondaryButton} from "@/components/button/secondary-button";
+import {IStation} from "@/widgets/production-floor/interfaces/filters";
+import {ClickOutside} from "@/components/click-out-side/click-out-side";
+import {adaptRight} from "@/utils/adapter";
+import {FONT_FAMILY} from "@/utils/font-family";
+import {
+    CollapseOptionComponent
+} from "@/widgets/production-floor/filters/select/actions-select/collapse-option-component";
 
 
 interface IProps {
     onClickApply: (v: IStation[]) => void,
-    source: Source
+    source: Source;
+    buttonElement?: ReactElement;
 }
 
-const ActionsListComponent = ({ onClickApply, source }: IProps) => {
+const ActionsListComponent = ({onClickApply, source, buttonElement}: IProps) => {
 
     const {
         actionsList,
@@ -53,56 +56,68 @@ const ActionsListComponent = ({ onClickApply, source }: IProps) => {
         return list?.length > 0 ? list?.sort((a, b) => a.checked === b.checked ? 0 : !!a.checked ? -1 : 0) : []
     }, [actionsList, filter]);
 
+    const clonedChild = buttonElement && cloneElement(buttonElement, {
+        ref: buttonRef,
+        onClick: handleClick,
+    });
+
     return (
-        <div style={{ position: 'relative' }}>
-            <Button
-                ref={buttonRef}
-                style={{ color: '#9E9E9E', borderColor: '#9E9E9E', height: '38px' }} variant={'outlined'}
-                onClick={handleClick}>
-                <span>{t('productionFloor.selectStations')}</span>
-                <KeyboardArrowDownIcon />
-            </Button>
+        <div style={{position: 'relative'}}>
+            {
+                !!buttonElement ?
+                    clonedChild :
+                    <Button
+                        ref={buttonRef}
+                        style={{
+                            width: '163px',
+                            height: '36px',
+                            borderRadius: '8px',
+                            border: '1px solid rgba(208, 213, 221, 1)',
+                            backgroundColor: '#FFF',
+                            ...FONT_FAMILY.Lexend(500, 16),
+                            cursor: 'pointer',
+                            color: 'rgba(52, 64, 84, 1)',
+                            display: 'flex',
+                            alignItems: 'center' as 'center',
+                            justifyContent: 'center' as 'center',
+                            gap: '4px',
+                            textTransform: 'none' as 'none',
+                            boxShadow: 'none'
+                        }} variant={'outlined'}
+                        onClick={handleClick}>
+                        <span>{t('productionFloor.selectStations')}</span>
+                        <KeyboardArrowDownIcon/>
+                    </Button>
+            }
             {open &&
                 <ClickOutside
                     exceptionRef={buttonRef}
                     onClick={() => setOpen(false)}>
                     <Paper sx={{
                         position: 'absolute', ...adaptRight(direction, 0),
-                        top: source === Source.PRODUCTION_FLOOR ? '110%' : '-610px',
-                        maxWidth: '300px',
+                        top: source === Source.USERS ? '-610px' : '110%',
+                        width: '350px',
                         height: 'fit-content',
                         maxHeight: '600px',
-                        overflow: 'auto',
+                        overflowY: 'auto',
+                        overflowX: 'hidden',
                         zIndex: 99999999999999
                     }}>
                         <FormGroup>
-                            <div style={{ position: 'sticky', top: 0, backgroundColor: '#FFF', zIndex: 1 }}>
+                            <div style={{position: 'sticky', top: 0, backgroundColor: '#FFF', zIndex: 1}}>
                                 <GomakeTextInput placeholder={t('productionFloor.search')} value={filter}
-                                    onChange={handleFilterChange} />
+                                                 onChange={handleFilterChange}/>
                             </div>
+                            <div style={{padding: '5px'}}>
+
                             {
                                 getList().map((option, index) => {
-                                    return <Stack key={index + option.actionId + option.actionName}>
-                                        <MenuItem onClick={() => onSelectStation(option.actionId, !!option.checked)}>
-                                            <SecondaryCheckBox checked={!!option.checked} />
-                                            <span>{option.actionName}</span>
-                                        </MenuItem>
-                                        <Stack direction={'row'} gap={'30px'}>
-                                            <div />
-                                            <Stack>
-                                                {
-                                                    option?.machines?.map((machine) => <MenuItem
-                                                        onClick={() => onSelectMachine(option.actionId, machine.machineId)}>
-                                                        <SecondaryCheckBox checked={!!machine?.checked} />
-                                                        {machine.machineName}
-                                                    </MenuItem>)
-                                                }
-                                            </Stack>
-                                        </Stack>
-                                    </Stack>
-
+                                    return <CollapseOptionComponent isFilter={!!filter} key={index + option.actionId + option.actionName}
+                                                                    onSelectStation={onSelectStation}
+                                                                    onSelectMachine={onSelectMachine} {...option}/>
                                 })
                             }
+                            </div>
                         </FormGroup>
                         <div style={{
                             position: 'sticky',
@@ -112,7 +127,7 @@ const ActionsListComponent = ({ onClickApply, source }: IProps) => {
                             backgroundColor: '#FFF',
                             zIndex: 1
                         }}>
-                            <SecondaryButton style={{ width: '100%' }} variant={'contained'} onClick={() => {
+                            <SecondaryButton style={{width: '100%'}} variant={'contained'} onClick={() => {
                                 setOpen(false)
                                 onClickApply(actionsMachinesIds)
                             }
@@ -125,4 +140,4 @@ const ActionsListComponent = ({ onClickApply, source }: IProps) => {
     )
 }
 
-export { ActionsListComponent }
+export {ActionsListComponent}

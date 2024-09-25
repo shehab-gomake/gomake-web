@@ -9,4 +9,5 @@ export interface IDashboardCard {
     progressValue?: number;
     withProgressBar?: boolean;
     status?: EStatus;
+    productionTime: number;
 }

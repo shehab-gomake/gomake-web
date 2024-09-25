@@ -5,7 +5,7 @@ import {
 } from "@/services/api-service/production-floor/production-floor-endpoints";
 import { useRecoilState } from "recoil";
 import { productionFloorFiltersState } from "@/widgets/production-floor/state/production-floor-filters";
-import { boardsMissionsState, getDataAbortController } from "@/widgets/production-floor/state/boards";
+import { boardsMissionsState } from "@/widgets/production-floor/state/boards";
 import { tagsState } from "@/widgets/production-floor/state/tags";
 import { userProductionFloorGroupsState } from "@/widgets/production-floor/state/production-floor-groups-state";
 import { productionFloorPathsState } from "@/widgets/production-floor/state/production-floor-paths";
@@ -40,7 +40,7 @@ const useProductionFloorData = () => {
         if (abortController) {
             abortController.abort();
         }
-        var newRequestAbortController = new AbortController();
+        const newRequestAbortController = new AbortController();
         setAbortController(newRequestAbortController);
         return await getProductionFloorData(callApi, callBack, connectionId, false, abortController);
     }
