@@ -4,9 +4,6 @@ import {
     useBoardMissionsStations
 } from "@/widgets/production-floor/views/board-missions-view/stations/use-board-missions-stations";
 import { useMemo } from "react";
-import {
-    GeneralInformationComponent
-} from "@/widgets/production-floor/views/board-missions-view/stations/general-information/general-information-component";
 import { Divider, Skeleton } from "@mui/material";
 import {
     BoardMissionsSubWorkFlowComponent
@@ -19,7 +16,6 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { useRecoilState } from "recoil";
 import { boardMissionsDetailsState } from "@/widgets/production-floor/state/boards";
-import { BoardMissionsStationSubActionComp } from "./sub-action-component";
 
 const BoardMissionsStationsComponent = () => {
     const { stations, subWorkFlows, boardMissions, onClickAllJob, t, isRTL, getStations } = useBoardMissionsStations();
@@ -30,8 +26,8 @@ const BoardMissionsStationsComponent = () => {
     const isLoading = !boardMissionsDetails?.boardMissionId && sortedStations;
     return (
         <div style={{
-            overflow: "hidden",
-            maxHeight: 'calc(100vh - 300px)',
+            overflow: "auto",
+            // maxHeight: 'calc(100vh - 300px)',
             display: 'flex',
             flexDirection: 'column',
             gap: '18px'
@@ -70,24 +66,14 @@ const BoardMissionsStationsComponent = () => {
                                 {...workflow}
                             />
                         ))}
-                        {sortedStations?.filter(workflow => workflow.subActions)?.map((station, index) => {
-                            return (
-                                <BoardMissionsStationSubActionComp
-                                    selected={station.boardMissionActionId === boardMissions.currentBoardMissionActionId}
-                                    key={station?.actionId + index}
-                                    delay={index * 600}
-                                    getStations={getStations}
-                                    isHaveSubACtions={true}
-                                    {...station}
-                                />
-                            )
-                        })}
-                        {sortedStations?.filter(station => !station.subActions)?.map((station, index) => (
+                        {sortedStations?.map((station, index) => (
                             <BoardMissionsStationAction
                                 selected={station.boardMissionActionId === boardMissions.currentBoardMissionActionId}
                                 key={station?.actionId + index}
                                 delay={index * 600}
                                 getStations={getStations}
+                                isHaveSubACtions={!!station.subActions}
+                                subActions={station.subActions}
                                 {...station}
                             />
                         ))}
