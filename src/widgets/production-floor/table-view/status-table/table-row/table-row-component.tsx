@@ -23,9 +23,9 @@ import {
 import KeyboardDoubleArrowUpIcon from '@mui/icons-material/KeyboardDoubleArrowUp';
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { MoreMenuWidget } from "./more-circle";
-import { SeparateDateFormatterDDMMYYYY } from "@/utils/adapter";
 import { ClickableLabelComponent } from "@/widgets/production-floor/label-component/clickable-label-component";
 import { NextStationComponent } from "../stations/next-station";
+import {DateTimeComponent} from "@/components/date-time/date-time-component";
 
 
 interface IProps {
@@ -164,43 +164,13 @@ const TableRowComponent = ({ boardMission, status , onClickDone , onClickPrintDT
                         boardMissionId={boardMission.id} status={status} textColor={boardMission?.productionFloorJobColor}/>
                 </SecondaryTableCell>
                 <SecondaryTableCell align={"center"}>
-                    {
-                        boardMission?.boardMissionCreatedDate && (() => {
-                            const { formattedDate, formattedTime } = SeparateDateFormatterDDMMYYYY(boardMission.boardMissionCreatedDate);
-                            return (
-                                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                                    <div>{formattedTime}</div>
-                                    <div>{formattedDate}</div>
-                                </div>
-                            );
-                        })()
-                    }
+                    <DateTimeComponent dateTime={boardMission.boardMissionCreatedDate} direction={'column-reverse'}/>
                 </SecondaryTableCell>
                 <SecondaryTableCell align={"center"}>
-                    {
-                        boardMission?.actionDueDate && (() => {
-                            const { formattedDate, formattedTime } = SeparateDateFormatterDDMMYYYY(boardMission.actionDueDate);
-                            return (
-                                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                                    <div>{formattedTime}</div>
-                                    <div>{formattedDate}</div>
-                                </div>
-                            );
-                        })()
-                    }
+                    <DateTimeComponent dateTime={boardMission.actionDueDate} direction={'column-reverse'}/>
                 </SecondaryTableCell>
                 <SecondaryTableCell align={"center"}>
-                    {
-                        boardMission?.dueDate && (() => {
-                            const { formattedDate, formattedTime } = SeparateDateFormatterDDMMYYYY(boardMission.dueDate);
-                            return (
-                                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                                    <div>{formattedTime}</div>
-                                    <div>{formattedDate}</div>
-                                </div>
-                            );
-                        })()
-                    }
+                    <DateTimeComponent dateTime={boardMission.dueDate} direction={'column-reverse'}/>
                 </SecondaryTableCell>
                 <SecondaryTableCell align={"center"}>
                     <Stack justifyContent={'center'} direction={'row'} flexWrap={'wrap'}>

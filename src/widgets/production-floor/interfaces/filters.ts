@@ -12,7 +12,7 @@ export interface IProductionFloorFilter {
     pageNumber: number;
     customSearchFilters: null;
     groups: IFilterGroup[];
-    groupsHistory: IFilterGroup[]
+    groupsHistory: IFilterGroup[];
 }
 
 export interface IStation {

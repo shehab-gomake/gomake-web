@@ -14,8 +14,6 @@ const useDashboardSignalr = (onUpdate: ()=>void) => {
             connection.on("Update", () => {
                 onUpdate();
             });
-
-
         }
     }, [connection]);
     return {}
