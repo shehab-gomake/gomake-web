@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Box, Stack, Card, CardContent, Typography, Menu, MenuItem, IconButton } from "@mui/material";
+import { Box, Stack, Card, CardContent, Typography, Menu, IconButton } from "@mui/material";
 import { useProductionFloorFilters } from "@/widgets/production-floor/filters/use-production-floor-filters";
 import { SearchInputComponent } from "@/components/form-inputs/search-input-component";
 import { GoMakeDatepicker } from "@/components/date-picker/date-picker-component";
@@ -35,7 +35,6 @@ const CustomIconButton = styled(IconButton)(({ theme }) => ({
     }
 }));
 
-
 const CustomCard = styled(Card)<{ isSelected?: boolean; color: string }>(({ isSelected, color }) => ({
     border: isSelected ? `none` : `1.5px solid ${color}`,
     backgroundColor: isSelected ? color : toRgba(color, 0.1),
@@ -48,14 +47,14 @@ const CustomCard = styled(Card)<{ isSelected?: boolean; color: string }>(({ isSe
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-    width: 'fit-content',
+    // width: 'fit-content',
+    width: '100%',
     // important
     maxWidth: "250px",
     '&:hover': {
         boxShadow: '0px 2px 4px rgba(16, 24, 40, 0.1)',
     },
 }));
-
 
 const Circle = styled(Box)<{ numColor: string, dir: string }>(({ numColor, dir }) => ({
     width: "16px",
@@ -99,6 +98,7 @@ const CustomCardComponent = ({
                     alignItems: 'center',
                     justifyContent: 'space-between',
                     padding: '10px !important',
+                    width:"100%"
                 }}
             >
                 <Typography
@@ -106,7 +106,7 @@ const CustomCardComponent = ({
                     sx={{
                         color: isSelected ? '#FFF' : color,
                         ...FONT_FAMILY.Inter(400, 14),
-                        maxWidth: '170px',
+                        // maxWidth: '170px',
                         overflow: 'hidden',
                         whiteSpace: 'nowrap',
                         textOverflow: 'ellipsis',
@@ -133,10 +133,8 @@ const ProductionFloorFilters = () => {
         search,
         setSearch,
         actionsMachinesIds,
-        data,
         filters,
         selectedChip,
-        setSelectedChip,
         onTagsChange,
         onSelectDeliveryTimeDates,
         onSelectCreateDates,
@@ -146,7 +144,6 @@ const ProductionFloorFilters = () => {
         getColorByMachineId,
         handleMoreClick,
         handleChipClick,
-        handleMenuItemClick,
         handleClose,
         anchorEl,
         visibleCards,
@@ -181,7 +178,7 @@ const ProductionFloorFilters = () => {
         return () => {
             window.removeEventListener('resize', updateContainerWidth);
         };
-    }, []); 
+    }, []);
 
     useEffect(() => {
         if (scrollContainerRef.current) {
@@ -212,7 +209,7 @@ const ProductionFloorFilters = () => {
             setVisibleCards(visible);
             setHiddenCards(hidden);
         }
-    }, [actionsMachinesIds, containerWidth]); 
+    }, [actionsMachinesIds, containerWidth]);
 
     return (
         <Stack direction={'row'} padding={'12px 0'} style={{ backgroundColor: '#FFF' }} alignItems={'center'} gap={'20px'}>
@@ -225,7 +222,7 @@ const ProductionFloorFilters = () => {
                 sx={{
                     width: "60%",
                     maxHeight: '100px',
-                     maxWidth: '60%',
+                    maxWidth: '60%',
                     overflowX: 'scroll',
                     overflowY: 'scroll',
                     display: 'flex',
@@ -236,7 +233,7 @@ const ProductionFloorFilters = () => {
                     backgroundColor: '#FFF',
                     alignItems: 'center',
                     // important
-                    justifyContent:"flex-end"
+                    justifyContent: "flex-end"
                 }}
             >
                 {visibleCards.map((card, index) => (
@@ -262,15 +259,24 @@ const ProductionFloorFilters = () => {
                             PaperProps={{
                                 style: {
                                     marginTop: 8,
+                                    padding: "0px 8px"
                                 },
                             }}
                             anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
-                            {hiddenCards.map((card, index) => (
-                                <MenuItem key={index} onClick={() => handleMenuItemClick(card)}>
-
-                                    {card.label}
-                                </MenuItem>
-                            ))}
+                            <Stack spacing={1}>
+                                {hiddenCards.map((card, index) => (
+                                    <CustomCardComponent
+                                        dir={dir}
+                                        key={index}
+                                        label={card.label}
+                                        machineId={card.machineId}
+                                        onClick={() => handleChipClick(card)}
+                                        isSelected={selectedChip === card.label}
+                                        getColorByMachineId={getColorByMachineId}
+                                        filters={filters}
+                                    />
+                                ))}
+                            </Stack>
                         </Menu>
                     </>
                 )}
