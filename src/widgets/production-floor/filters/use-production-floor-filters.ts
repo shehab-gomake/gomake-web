@@ -21,7 +21,7 @@ const useProductionFloorFilters = () => {
     const [search, setSearch] = useRecoilState(productionFloorTextSearchState);
     const setTags = useSetRecoilState(tagsState);
     const { callApi } = useGomakeAxios();
-    const [data, setData] = useRecoilState(boardsMissionsState);
+    const [, setData] = useRecoilState(boardsMissionsState);
     const setView = useSetRecoilState(productionFloorViewState);
     const { push } = useRouter();
     const { alertSuccessUpdate, alertFaultUpdate } = useSnackBar();
@@ -146,9 +146,6 @@ const useProductionFloorFilters = () => {
         })
     }
 
-
-    //////////////////////////////////////////////  NEW ///////////////////////////////////////////////////
-
     const getColorByMachineId = (machineId) => {
         const entry = machinesColors?.find(item => item.id === machineId);
         return entry ? entry?.color : '#088AB2';
@@ -175,30 +172,30 @@ const useProductionFloorFilters = () => {
         }
     };
 
-    const handleMenuItemClick = (selectedCard: { label: string; machineId: string }) => {
-        setHiddenCards(prevHidden => {
-            const updatedHiddenCards = prevHidden.filter(card => card.label !== selectedCard.label);
-            return updatedHiddenCards;
-        });
+    // const handleMenuItemClick = (selectedCard: { label: string; machineId: string }) => {
+    //     setHiddenCards(prevHidden => {
+    //         const updatedHiddenCards = prevHidden.filter(card => card.label !== selectedCard.label);
+    //         return updatedHiddenCards;
+    //     });
 
-        setVisibleCards(prevVisible => {
-            const newVisibleCards = [{ label: selectedCard.label, machineId: selectedCard.machineId }, ...prevVisible];
+    //     setVisibleCards(prevVisible => {
+    //         const newVisibleCards = [{ label: selectedCard.label, machineId: selectedCard.machineId }, ...prevVisible];
 
-            if (newVisibleCards.length > 0) {
-                setHiddenCards(prevHidden => [...prevHidden, newVisibleCards[newVisibleCards.length - 1]]);
-            }
+    //         if (newVisibleCards.length > 0) {
+    //             setHiddenCards(prevHidden => [...prevHidden, newVisibleCards[newVisibleCards.length - 1]]);
+    //         }
 
-            return newVisibleCards.slice(0, -1);
-        });
-        setSelectedChip(selectedCard.label);
+    //         return newVisibleCards.slice(0, -1);
+    //     });
+    //     setSelectedChip(selectedCard.label);
       
-        if (selectedCard.machineId) {
-            setSelectedChipId(selectedCard.machineId);
-        }
-        else{
-            setSelectedChipId(null);
-        }
-    };
+    //     if (selectedCard.machineId) {
+    //         setSelectedChipId(selectedCard.machineId);
+    //     }
+    //     else{
+    //         setSelectedChipId(null);
+    //     }
+    // };
 
     return {
         t,
@@ -206,10 +203,8 @@ const useProductionFloorFilters = () => {
         search,
         setSearch,
         actionsMachinesIds,
-        data,
         filters,
         selectedChip,
-        setSelectedChip,
         filtersState,
         setFilters,
         onTagsChange,
@@ -226,7 +221,6 @@ const useProductionFloorFilters = () => {
         getColorByMachineId,
         handleMoreClick,
         handleChipClick,
-        handleMenuItemClick,
         handleClose,
         anchorEl,
         visibleCards,
