@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 const useQuoteTable = ({
   getCalculateQuoteItem,
@@ -6,10 +7,12 @@ const useQuoteTable = ({
   item,
   index,
 }) => {
+  const {t} = useTranslation();
   const [isUpdateAmount, setIsUpdateAmount] = useState(null);
   const [isUpdateDiscount, setIsUpdateDiscount] = useState(null);
   const [isUpdatePrice, setIsUpdatePrice] = useState(null);
   const [isUpdateFinalPrice, setIsUpdateFinalPrice] = useState(null);
+
   const onBlurAmount = async () => {
     getCalculateQuoteItem(item, 0, item.quantity);
     setIsUpdateAmount(null);
@@ -42,6 +45,7 @@ const useQuoteTable = ({
 
 
   return {
+    t,
     isUpdateAmount,
     isUpdateDiscount,
     isUpdatePrice,

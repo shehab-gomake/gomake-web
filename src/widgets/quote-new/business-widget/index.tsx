@@ -75,7 +75,13 @@ const BusinessNewWidget = ({
     onClickCloseChangeClientModalFromInvoice,
     openChangeClientModalFromInvoice,
     openChangeClientModal,
-    selectedClient
+    selectedClient,
+    manuaLInvoiceNum,
+    setManuaLInvoiceNum,
+    isUpdateManuaLInvoiceNum,
+    setIsUpdateManuaLInvoiceNum,
+    onBlurManualInvoiceNum,
+    canEditInvoiceNumber
   } = useBusinessWidget({ values, documentType });
   const dir: 'rtl' | 'ltr' = t('direction');
   const isRTL = dir === 'rtl';
@@ -89,10 +95,13 @@ const BusinessNewWidget = ({
     setTaxConfirmationNumber(values?.taxConfirmationNumber);
   }, [values?.taxConfirmationNumber]);
 
+  useEffect(() => {
+    setManuaLInvoiceNum(values?.manualInvoiceNumber);
+  }, [values?.manualInvoiceNumber]);
+
   return (
     <>
       <div style={classes.businessContainerStyle}>
-        {/* //here */}
         <AutoCompleteUpdatedValue
           label={t("sales.quote.businessName")}
           value={isQuoteConfirmation ? quoteConfirm?.client?.name : quoteStateValue?.client?.name ? quoteStateValue?.client?.name : t("sales.quote.selectBusinessName")}
@@ -107,7 +116,6 @@ const BusinessNewWidget = ({
         <PermissionCheck userPermission={Permissions.ADD_CLIENT}>
           {(!isQuoteConfirmation && documentType === DOCUMENT_TYPE.quote) && <span style={classes.plusStyle} onClick={() => setOpenCustomerModal(true)}>+</span>}
         </PermissionCheck>
-
         {
           quoteStateValue?.client?.isOccasional &&
           <InputUpdatedValues
@@ -120,6 +128,22 @@ const BusinessNewWidget = ({
             onInputChange={(v) => setClientName(v)}
           />
         }
+        <InputUpdatedValues
+          value={isQuoteConfirmation ? `${quoteConfirm?.client?.code}` : `${quoteStateValue?.client?.code}`}
+          label={t("sales.quote.businessCode")}
+          onBlur={onBlurBusinessCode}
+          setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdateBusinessCode}
+        />
+        {!isQuoteConfirmation && <AutoCompleteUpdatedValue
+          label={t("sales.quote.agent")}
+          value={selectedAgent?.text ? selectedAgent.text : t("sales.quote.selectAgent")}
+          options={agentListValue}
+          onBlur={onBlurAgent}
+          isUpdate={canEditDocument && isUpdateAgent}
+          setIsUpdate={isQuoteConfirmation || isExistReceipt ? setIsConfirmation : setIsUpdateAgent}
+          getOptionLabel={(item) => item.text}
+          onChange={(e, value) => updateAgent(value)}
+        />}
         {!isReceipt && <InputUpdatedValues
           value={purchaseNumber}
           placeholder={purchaseNumber ? purchaseNumber : t("sales.quote.noPurchaseNumber")}
@@ -139,22 +163,17 @@ const BusinessNewWidget = ({
           setIsUpdate={setIsUpdateTaxNumber}
           onInputChange={(v) => setTaxConfirmationNumber(v)}
         />}
-        <InputUpdatedValues
-          value={isQuoteConfirmation ? `${quoteConfirm?.client?.code}` : `${quoteStateValue?.client?.code}`}
-          label={t("sales.quote.businessCode")}
-          onBlur={onBlurBusinessCode}
-          setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdateBusinessCode}
-        />
-        {!isQuoteConfirmation && <AutoCompleteUpdatedValue
-          label={t("sales.quote.agent")}
-          value={selectedAgent?.text ? selectedAgent.text : t("sales.quote.selectAgent")}
-          options={agentListValue}
-          onBlur={onBlurAgent}
-          isUpdate={canEditDocument && isUpdateAgent}
-          setIsUpdate={isQuoteConfirmation || isExistReceipt ? setIsConfirmation : setIsUpdateAgent}
-          getOptionLabel={(item) => item.text}
-          onChange={(e, value) => updateAgent(value)}
+        {isInvoice && <InputUpdatedValues
+          value={manuaLInvoiceNum}
+          placeholder={manuaLInvoiceNum ? manuaLInvoiceNum : t("sales.cart.noInvoiceNumber")}
+          label={t("sales.cart.manuaLInvoiceNum")}
+          onBlur={() => onBlurManualInvoiceNum(manuaLInvoiceNum)}
+          isUpdate={canEditInvoiceNumber && isUpdateManuaLInvoiceNum}
+          setIsUpdate={setIsUpdateManuaLInvoiceNum}
+          onInputChange={(v) => setManuaLInvoiceNum(v)}
         />}
+
+
         {values?.documentAddresses?.length > 0 && <InputUpdatedValues
           value={values?.documentAddresses?.length > 0 ? `${values?.documentAddresses[0]?.street} ${values?.documentAddresses[0]?.apartment}, ${values?.documentAddresses[0]?.city}` : "no address found"}
           label={t("customers.modal.address")}
@@ -213,7 +232,7 @@ const BusinessNewWidget = ({
         subTitle={t("sales.cart.subTitleChangeClientFromInvoice")}
         openModal={openChangeClientModalFromInvoice}
         onClose={onClickCloseChangeClientModalFromInvoice}
-        onClickYes={() => onChangeSelectBusiness(selectedClient , values)}
+        onClickYes={() => onChangeSelectBusiness(selectedClient, values)}
         onClickNo={() => onChangeSelectBusiness(selectedClient)}
         yesBtn={"sales.cart.saveAndChangeClients"}
         noBtn={"sales.cart.startNewInvoice"}

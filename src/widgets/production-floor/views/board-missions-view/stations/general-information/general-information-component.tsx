@@ -1,7 +1,7 @@
 import Stack from "@mui/material/Stack";
 import { useTranslation } from "react-i18next";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { stationGeneralInformationState } from "@/widgets/production-floor/views/board-missions-view/stations/state";
+import { stationGeneralInformationProductionFloorState, stationGeneralInformationState } from "@/widgets/production-floor/views/board-missions-view/stations/state";
 import { Divider, Skeleton } from "@mui/material";
 import { useStyle } from "@/widgets/production-floor/views/board-missions-view/stations/style";
 import Button from "@mui/material/Button";
@@ -14,14 +14,18 @@ import { useState } from "react";
 import { PermissionCheck } from "@/components/CheckPermission/check-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { boardMissionsDetailsState } from "@/widgets/production-floor/state/boards";
+import { GeneralInformationDictionaryComponent } from "@/widgets/product-pricing-widget/components/general-information/general-information-dictionary-component";
 
 const GeneralInformationComponent = () => {
     const { t } = useTranslation();
     const data = useRecoilValue(stationGeneralInformationState);
+    const data2 = useRecoilValue(stationGeneralInformationProductionFloorState);
+
     const { classes } = useStyle();
     const [openAddNoteModal, setOpenAddNoteModal] = useState<boolean>(false);
     const [boardMissionsDetails, setBoardMissionsDetails] = useRecoilState(boardMissionsDetailsState);
     const isLoading = boardMissionsDetails?.boardMissionId;
+
     return (
         isLoading ?
             <Stack gap={'10px'}>
@@ -61,11 +65,15 @@ const GeneralInformationComponent = () => {
 
                         })
                     }
-                    <PermissionCheck userPermission={Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR}>
-                        <Divider flexItem orientation={'vertical'} />
-                        <Button sx={classes.addNoteBtn} onClick={() => setOpenAddNoteModal(true)} variant={'outlined'} startIcon={<PlusIcon stroke={'#344054'} />}>{t('productionFloor.addNote')}</Button>
-                    </PermissionCheck>
+
                 </Stack>
+                <GeneralInformationDictionaryComponent details2={data2} /> <PermissionCheck userPermission={Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR}>
+                    <div style={{ display: "flex", flexDirection: "row", justifyContent: "flex-start", alignItems: "center", gap: 16 }}>
+                        <h4 style={{ textTransform: 'uppercase' }}>{t('productionFloor.notes')}</h4>
+                        <Button sx={classes.addNoteBtn} onClick={() => setOpenAddNoteModal(true)} variant={'outlined'} startIcon={<PlusIcon stroke={'#344054'} />}>{t('productionFloor.addNote')}</Button>
+
+                    </div>
+                </PermissionCheck>
                 <BoardMissionsNotes />
                 <BoardMissionsAddNote onClose={() => { setOpenAddNoteModal(false) }} openModal={openAddNoteModal} />
             </Stack> :

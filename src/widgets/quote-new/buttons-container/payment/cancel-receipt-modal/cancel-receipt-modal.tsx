@@ -19,7 +19,7 @@ const CancelReceiptModal = ({ openModal, handleModalClose, onClickCancel }: IPay
       disableEnforceFocus
       open={openModal}
       onClose={handleModalClose}
-      style={{ outline: "none", }}
+      style={{outline: "none"}}
     >
       <div style={classes.container}>
         <div style={classes.content}>

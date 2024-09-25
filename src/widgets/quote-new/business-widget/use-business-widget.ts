@@ -21,16 +21,26 @@ const useBusinessWidget = ({ values, documentType }) => {
   const isReceipt = documentType === DOCUMENT_TYPE.receipt;
   const isExistReceipt = isReceipt && !router?.query?.isNewCreation;
   const [taxConfirmationNumber, setTaxConfirmationNumber] = useState(values?.taxConfirmationNumber || t("sales.quote.noTaxConfirmationNumber"));
+  const [manuaLInvoiceNum, setManuaLInvoiceNum] = useState(values?.manualInvoiceNumber || null);
+
   const isInvoice = documentType === DOCUMENT_TYPE.invoice || documentType === DOCUMENT_TYPE.invoiceRefund;
   const [openCustomerModal, setOpenCustomerModal] = useState(false);
   const [customer, setCustomer] = useState([]);
   const [isUpdateTaxNumber, setIsUpdateTaxNumber] = useState<number | null>(null);
+  const [isUpdateManuaLInvoiceNum, setIsUpdateManuaLInvoiceNum] = useState<number | null>(null);
+
   const onBlurTaxNumber = async () => {
     setIsUpdateTaxNumber(null);
   };
   const onCustomerAdd=(customer)=>{
     setOpenCustomerModal(false)
   }
+  const onBlurManualInvoiceNum = async (value) => {
+    const updatedQuoteItemValue = { ...quoteStateValue };
+    updatedQuoteItemValue.manualInvoiceNumber = value;
+    setQuoteItemValue(updatedQuoteItemValue);
+    setIsUpdateManuaLInvoiceNum(null);
+  };
 
   const mappedCustomers = renderOptions().map(customer => ({
     text: customer?.name,
@@ -41,10 +51,10 @@ const useBusinessWidget = ({ values, documentType }) => {
   const {CheckDocumentPermission } = useUserPermission();
   const canEditDocument = router.query.isNewCreation ? true  : 
   quoteStateValue?.isEditable && CheckDocumentPermission(documentType, DocumentPermission.EDIT_DOCUMENT);
+  
   const canEditPurchaseNumber = CheckDocumentPermission(documentType, DocumentPermission.EDIT_DOCUMENT);
-
-
-
+  const canEditInvoiceNumber = router.query.isNewCreation ? true  : false
+  
   const [openChangeClientModal, setOpenChangeClientModal] = useState(false);
   const [openChangeClientModalFromInvoice, setOpenChangeClientModalFromInvoice] = useState(false)
 
@@ -100,7 +110,13 @@ const useBusinessWidget = ({ values, documentType }) => {
     onClickCloseChangeClientModalFromInvoice,
     openChangeClientModalFromInvoice,
     openChangeClientModal,
-    selectedClient
+    selectedClient,
+    manuaLInvoiceNum,
+    setManuaLInvoiceNum,
+    isUpdateManuaLInvoiceNum,
+    setIsUpdateManuaLInvoiceNum,
+    onBlurManualInvoiceNum,
+    canEditInvoiceNumber
   };
 };
 

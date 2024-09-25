@@ -5,6 +5,7 @@ import {useEffect} from "react";
 import {useRecoilState, useResetRecoilState} from "recoil";
 import {
     boardMissionsStationsState, boardMissionsSubWorkFlowsState, isReadyBoardMissionsState,
+    stationGeneralInformationProductionFloorState,
     stationGeneralInformationState
 } from "@/widgets/production-floor/views/board-missions-view/stations/state";
 import {boardMissionsDetailsState} from "@/widgets/production-floor/state/boards";
@@ -19,6 +20,8 @@ const useBoardMissionsStations = () => {
     const {boardMissionsId, step, productType} = query;
     const [stations, setStations] = useRecoilState(boardMissionsStationsState);
     const [, setInformation] = useRecoilState(stationGeneralInformationState);
+    const [, setInformationProductionFloor] = useRecoilState(stationGeneralInformationProductionFloorState);
+
     const [subWorkFlows, setSubWorkFlows] = useRecoilState(boardMissionsSubWorkFlowsState);
     const [, setIsReady] = useRecoilState(isReadyBoardMissionsState);
     const [boardMissions] = useRecoilState(boardMissionsDetailsState);
@@ -29,6 +32,7 @@ const useBoardMissionsStations = () => {
                 setStations(res?.data?.workFlow?.actions);
                 setSubWorkFlows(res?.data?.workFlow?.subWorkFlows);
                 setInformation(res?.data?.generalInformations);
+                setInformationProductionFloor(res?.data?.generalInformationProductionFloor)
                 setIsReady(res?.data?.isReady);
             }
         }

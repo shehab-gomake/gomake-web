@@ -1,14 +1,14 @@
 import {
     productionFloorFiltersState
 } from "@/widgets/production-floor/state/production-floor-filters";
-import {useEffect, useMemo, useState} from "react";
-import {useRecoilState} from "recoil";
-import {actionsListState, IActionMachines} from "@/widgets/production-floor/state/actions-list";
-import {getPrintHouseActions} from "@/services/api-service/production-floor/production-floor-endpoints";
-import {useGomakeAxios} from "@/hooks";
-import {IStation} from "@/widgets/production-floor/interfaces/filters";
-import {useTranslation} from "react-i18next";
-import {employeeState} from "@/store/employee-state";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useRecoilState } from "recoil";
+import { actionsListState, IActionMachines } from "@/widgets/production-floor/state/actions-list";
+import { getPrintHouseActions } from "@/services/api-service/production-floor/production-floor-endpoints";
+import { useGomakeAxios } from "@/hooks";
+import { IStation } from "@/widgets/production-floor/interfaces/filters";
+import { useTranslation } from "react-i18next";
+import { employeeState } from "@/store/employee-state";
 
 export enum Source {
     PRODUCTION_FLOOR,
@@ -19,13 +19,14 @@ const useActionsList = (source: Source) => {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [filter, setFilter] = useState<string>();
     const [open, setOpen] = useState<boolean>(false)
-    const {t} = useTranslation();
+    const { t } = useTranslation();
     const [actions, setActions] = useRecoilState(actionsListState);
     const [productionFilter,] = useRecoilState(productionFloorFiltersState);
     const [employee,] = useRecoilState(employeeState);
     const [, setActionFilter] = useState<string>('');
-    const {callApi} = useGomakeAxios();
-    const [actionsList, setActionsList] = useState<IActionMachines[]>([])
+    const { callApi } = useGomakeAxios();
+    const [actionsList, setActionsList] = useState<IActionMachines[]>([]);
+
     useEffect(() => {
         setActionsList(actions?.map(action => {
             const station = (source === Source.PRODUCTION_FLOOR ? productionFilter?.stations : employee.employee.stationsFilter)?.find(s => s.actionId === action.actionId)
@@ -34,10 +35,10 @@ const useActionsList = (source: Source) => {
                 label: action.actionName,
                 checked: !!station,
                 machines: station?.machineIds.length === 0 ? action?.machines?.map(machine => ({
-                        ...machine,
-                        label: machine.machineName,
-                        checked: true
-                    })) :
+                    ...machine,
+                    label: machine.machineName,
+                    checked: true
+                })) :
                     action?.machines?.map(machine => ({
                         ...machine,
                         label: machine.label,
@@ -57,13 +58,30 @@ const useActionsList = (source: Source) => {
         } : station))
     }
 
+    // const onSelectStation = (stationId: string, checked: boolean) => {
+    //     setActionsList(prevState => prevState?.map(station => stationId === station.actionId ? {
+    //         ...station,
+    //         checked: !checked,
+    //         machines: station.machines?.map(machine => ({...machine, checked: !checked}))
+    //     } : station));
+
+    // }
+
+    const actionsListRef = useRef<IActionMachines[]>([]);
     const onSelectStation = (stationId: string, checked: boolean) => {
-        setActionsList(prevState => prevState?.map(station => stationId === station.actionId ? {
-            ...station,
-            checked: !checked,
-            machines: station.machines?.map(machine => ({...machine, checked: !checked}))
-        } : station));
+        setActionsList(prevState => {
+            const updatedActionsList = prevState?.map(station => stationId === station.actionId ? {
+                ...station,
+                checked: !checked,
+                machines: station.machines?.map(machine => ({ ...machine, checked: !checked }))
+            } : station);
+
+            actionsListRef.current = updatedActionsList || [];
+            return updatedActionsList;
+        });
     }
+
+
     const handelFilterActions = (name: string) => {
         setActionFilter(name)
     }
@@ -77,12 +95,15 @@ const useActionsList = (source: Source) => {
         await getPrintHouseActions(callApi, callBack, source === Source.USERS)
     }
 
+ 
     const actionsMachinesIds: IStation[] = useMemo(() => {
         return actionsList?.filter(station => station.checked || station.machines?.some(machine => machine.checked))
-            ?.map(station => ({...station, machines: station?.machines?.filter(machine => machine.checked)}))
+            ?.map(station => ({ ...station, machines: station?.machines?.filter(machine => machine.checked) }))
             ?.map(station => ({
                 actionId: station.actionId,
-                machineIds: station.machines.map(machine => machine.machineId)
+                actionName: station.actionName,
+                machineIds: station.machines.map(machine => machine.machineId),
+                machineNames: station.machines.map(machine => machine.machineName),
             }));
     }, [actionsList]);
 
@@ -103,7 +124,8 @@ const useActionsList = (source: Source) => {
         open,
         anchorEl,
         t,
-        setOpen
+        setOpen,
+        actionsListRef
     }
 }
-export {useActionsList}
+export { useActionsList }

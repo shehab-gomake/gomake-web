@@ -1,6 +1,6 @@
 import { GomakePrimaryButton } from "@/components";
 import { EButtonTypes } from "@/enums";
-import { RechooseIcon } from "@/icons";
+import { ReChooseIcon } from "@/icons";
 import { materialBtnDataState, subProductsParametersState } from "@/store";
 import { DeleteIcon } from "@/widgets/settings-mailing/messageTemplates/components/more-circle/icons/delete";
 import { useCallback, useEffect, useState } from "react";
@@ -465,7 +465,7 @@ const ButtonParameterWidget = ({
 
             }
           >
-            <RechooseIcon />
+            <ReChooseIcon />
           </div>
           <div
             style={clasess.btnSelectedIconReChoose}
@@ -498,7 +498,7 @@ const ButtonParameterWidget = ({
               )
             }
           >
-            <RechooseIcon />
+            <ReChooseIcon />
           </div>
           <div
             style={clasess.btnSelectedIconReChoose}

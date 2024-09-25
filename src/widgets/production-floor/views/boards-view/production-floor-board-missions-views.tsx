@@ -11,7 +11,7 @@ import { FONT_FAMILY } from "@/utils/font-family";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { useTranslation } from "react-i18next";
 
-const ProductionFloorBoardMissionsViews = ({connectionId}: {connectionId: string}) => {
+const ProductionFloorBoardMissionsViews = ({ connectionId }: { connectionId: string }) => {
     const [view] = useRecoilState(productionFloorViewState);
     const { getData } = useProductionFloorData();
     const [loading, setLoading] = useState<boolean>(false);
@@ -48,7 +48,6 @@ const ProductionFloorBoardMissionsViews = ({connectionId}: {connectionId: string
                         view === EProductionFloorView.TABLE ? <ProductionFloorTableView /> :
                             view === EProductionFloorView.KANBAN ? <ProductionFloorKanbanBoard /> :
                                 <div />
-
             }
         </>
     )

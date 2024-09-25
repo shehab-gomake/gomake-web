@@ -23,9 +23,11 @@ const useStyle = () => {
         ...FONT_FAMILY.Lexend(500, 14),
       },
       actionContainer: {
-        padding: "0 16px",
+        padding: "10px 16px",
         borderRadius: 16,
         width: "100%",
+        backgroundColor: primaryColor(300),
+
 
       },
       addNoteBtn: {
@@ -33,6 +35,7 @@ const useStyle = () => {
         borderColor: '#D0D5DD',
         borderRadius: '8px',
         height: '33px',
+        lineHeight:"15px",
         '& .MuiButton-startIcon': {
           ...(direction === 'rtl' && { margin: '8px 0' }),
         },

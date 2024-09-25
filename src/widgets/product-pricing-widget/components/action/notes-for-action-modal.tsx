@@ -18,6 +18,8 @@ const NotesForActionModal = ({
   const { classes } = useStyle();
   const [myValue, setMyValue] = useState<string>("");
   const { t } = useTranslation();
+  const dir: "rtl" | "ltr" = t("direction");
+  const isRTL = dir === "rtl";
 
   useEffect(() => {
     setMyValue(value);
@@ -27,12 +29,16 @@ const NotesForActionModal = ({
     setMyValue(value);
   }, 300), [setValue]);
 
+
   const style: CSSProperties = {
     display: 'flex',
     flexDirection: 'column-reverse',
     width: '100%',
     borderColor: "#9695C7",
+    direction: dir,
+    textAlign: isRTL ? 'right' : 'left'
   };
+
 
   const formats = [
     'header', 'bold', 'italic', 'underline', 'blockquote',
@@ -48,6 +54,8 @@ const NotesForActionModal = ({
           min-height: 80px;
           border-top: 0.5px solid #ccc;
           box-shadow: none;
+             direction: ${dir};
+                text-align: ${isRTL ? "right" : "left"};
         }
       `;
       document.head.appendChild(style);
@@ -62,7 +70,7 @@ const NotesForActionModal = ({
     <GoMakeModal
       openModal={openModal}
       onClose={onClose}
-      modalTitle={"Notes for Action"}
+      modalTitle={t("sales.notesForAction")}
       insideStyle={classes.modalStyle}
       style={{ zIndex: 999999 }}
     >
@@ -77,7 +85,7 @@ const NotesForActionModal = ({
               id='editor'
               placeholder={t('textEditor.placeholder')}
             />
-            <GomakePrimaryButton onClick={() => { onSend(myValue) }} style={{ width: "fit-content", height: 35, position: "absolute", bottom: 4, right: 15 }}>Save</GomakePrimaryButton>
+            <GomakePrimaryButton onClick={() => { onSend(myValue) }} style={{ width: "fit-content", height: 35, position: "absolute", bottom: 4, [isRTL ? 'left' : 'right']: 15 }}>{t("mailingSettings.save")}</GomakePrimaryButton>
           </Suspense>
         )}
       </div>

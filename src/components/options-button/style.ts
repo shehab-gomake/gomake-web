@@ -1,15 +1,16 @@
-import {useMemo} from "react";
-import {useGomakeTheme} from "@/hooks/use-gomake-thme";
+import { useMemo } from "react";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
-const useStyle = () => {
-    const {primaryColor} = useGomakeTheme();
+const useStyle = ({ withCircle }) => {
+    const { primaryColor, theme } = useGomakeTheme();
     const classes = useMemo(() => {
         return {
-           button: {
-               border: "1px solid", color: primaryColor(500),
-               height: 22,
-               width: 22
-           },
+            button: {
+                border: withCircle ? "1px solid" : "none",
+                color: primaryColor(500),
+                height: withCircle ? 22 : 25,
+                width: withCircle ? 22 : 25,
+            },
             menuItem: {
                 display: 'flex',
                 width: 125,
@@ -17,10 +18,14 @@ const useStyle = () => {
                 alignItems: 'center',
                 color: primaryColor(300)
             },
+            iconStyle: {
+                width: withCircle ? 13 : 18,
+                height: withCircle ? 60 : 18,
+            }
         };
-    }, []);
+    }, [theme]);
     return {
         classes,
     };
 };
-export {useStyle};
+export { useStyle };

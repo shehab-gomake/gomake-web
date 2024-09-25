@@ -29,6 +29,7 @@ import { ITab } from "@/components/tabs/interface";
 import { PrimaryTabsComponent } from "@/components/tabs/primary-tabs";
 import { AccountingTab } from "./components/accounting-tab";
 import { GeneralTab } from "./components/general-tab/form";
+import { LedgerReportWidget } from "@/pages-components/ledger-report/ledger-report";
 
 interface IProps {
   isValidCustomer?: (
@@ -132,11 +133,11 @@ const CustomerCardWidget = ({
 
   useEffect(() => {
     if (customer) {
-      setContacts(customer.contacts ? customer.contacts : [])
-      setAddresses(customer.addresses ? customer.addresses : [])
-      setUsers(customer.users ? customer.users : [])
+      setContacts(customer.contacts)
+      setAddresses(customer.addresses)
+      setUsers(customer.users)
     }
-  }, [])
+  }, [customer])
 
   useEffect(() => {
     addInitContact();
@@ -164,11 +165,11 @@ const CustomerCardWidget = ({
 
   const renderAddButton = (onClick, labelKey) => (
     <div style={classes.addNewStyle}>
-    <AddIcon onClick={onClick} />
-    <button style={classes.buttonsStyle} onClick={onClick}>
-      {t(labelKey)}
-    </button>
-  </div>
+      <AddIcon onClick={onClick} />
+      <button style={classes.buttonsStyle} onClick={onClick}>
+        {t(labelKey)}
+      </button>
+    </div>
   );
 
   const renderTableSearch = <>{(isFromHomePage && showTable) &&
@@ -205,8 +206,8 @@ const CustomerCardWidget = ({
           {renderAddButton(addEmptyContact, "customers.buttons.addContact")}
           <Stack direction={"column"}>
             {contacts
-              .filter((contact) => !contact.isMainContact)
-              .map((x) => (
+              ?.filter((contact) => !contact.isMainContact)
+              ?.map((x) => (
                 <ContactForm
                   key={x.index}
                   contact={x}
@@ -226,7 +227,7 @@ const CustomerCardWidget = ({
         <Stack direction={"column"} gap={"15px"}>
           {renderAddButton(addEmptyAddress, "customers.buttons.newAddress")}
           <Stack direction={"column"}>
-            {addresses.map((x) => (
+            {addresses?.map((x) => (
               <AddressForm
                 key={x.index}
                 address={x}
@@ -264,6 +265,12 @@ const CustomerCardWidget = ({
             ))}
           </Stack>
         </Stack>
+      ),
+    },
+    {
+      title: t("tabs.ledgerReport"),
+      component: (
+        <LedgerReportWidget customerId={customer?.id} />
       ),
     },
   ].filter(Boolean);

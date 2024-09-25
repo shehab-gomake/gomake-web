@@ -4,8 +4,8 @@ import { useStyle } from "@/components/options-button/style";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { useState } from "react";
 
-const OptionsButton = ({ children, }: IOptionsButtonProps) => {
-  const { classes } = useStyle();
+const OptionsButton = ({ children,withCircle = true }: IOptionsButtonProps) => {
+  const { classes } = useStyle({withCircle});
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const handleMoreOptionIconClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -23,8 +23,8 @@ const OptionsButton = ({ children, }: IOptionsButtonProps) => {
         sx={classes.button}
         size={"small"}
       >
-        <MoreVertIcon sx={{ width: 13, height: 18 }}>M</MoreVertIcon>
-      </IconButton>
+      <MoreVertIcon sx={classes?.iconStyle}/>
+     </IconButton>
       <Menu
         open={Boolean(anchorEl)}
         anchorEl={anchorEl}

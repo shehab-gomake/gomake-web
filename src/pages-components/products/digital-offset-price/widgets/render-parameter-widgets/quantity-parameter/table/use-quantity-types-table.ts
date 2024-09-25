@@ -15,7 +15,6 @@ const useQuantityTypesTable = (save: boolean) => {
   const [valuesState, setValuesState] = useRecoilState(
     tempProductQuantityTypesValuesState
   );
-  console.log("valuesState",valuesState)
   const equalQuantity = useRecoilValue(productQuantityTypesEqualQuantityState);
   const isDuplicatedName = useRecoilValue(
     productQuantityTypesDuplicatedNameState

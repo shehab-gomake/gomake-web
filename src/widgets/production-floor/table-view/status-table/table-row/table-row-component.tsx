@@ -4,9 +4,8 @@ import Link from "next/link";
 import { LabelComponent } from "@/widgets/production-floor/label-component/label-component";
 import {
     CurrentStationComponent
-} from "@/widgets/production-floor/table-view/status-table/current-station/current-station";
+} from "@/widgets/production-floor/table-view/status-table/stations/current-station";
 import { BoardStatusComponent } from "@/widgets/production-floor/table-view/status-table/board-status/board-status";
-import { DateFormatterDDMMYYYY } from "@/utils/adapter";
 import { IBoardMissions } from "@/widgets/production-floor/interfaces/board-missions";
 import { useDrag, useDrop } from "react-dnd";
 import { useRecoilState } from "recoil";
@@ -23,11 +22,17 @@ import {
 } from "@/widgets/production-floor/table-view/status-table/table-row/approval-file-status-component";
 import KeyboardDoubleArrowUpIcon from '@mui/icons-material/KeyboardDoubleArrowUp';
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { MoreMenuWidget } from "./more-circle";
+import { SeparateDateFormatterDDMMYYYY } from "@/utils/adapter";
+import { ClickableLabelComponent } from "@/widgets/production-floor/label-component/clickable-label-component";
+import { NextStationComponent } from "../stations/next-station";
 
 
 interface IProps {
     boardMission: IBoardMissions
     status?: any
+    onClickDone?: (missionId: any) => void;
+    onClickPrintDTicket?: (mission: any) => void;
 }
 
 enum EDropArea {
@@ -36,7 +41,7 @@ enum EDropArea {
     DISABLED
 }
 
-const TableRowComponent = ({ boardMission, status }: IProps) => {
+const TableRowComponent = ({ boardMission, status, onClickDone, onClickPrintDTicket }: IProps) => {
     const [selectedIds, setSelectedIds] = useRecoilState(selectedBoardsMissionsState);
     const { CheckPermission } = useUserPermission();
     const canDrag = CheckPermission(Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR);
@@ -98,12 +103,13 @@ const TableRowComponent = ({ boardMission, status }: IProps) => {
     }), [boardMission]);
 
 
-    const { updateStatus, updateBoardMissionsOrder } = useProductionFloorData();
+    const { updateStatus, updateBoardMissionsOrder, t, onClickPrintJob } = useProductionFloorData();
     const onSelectBoardMissions = (id: string, checked: boolean) => {
         setSelectedIds(checked ? [...selectedIds, boardMission] :
             selectedIds.filter(selectedBoard => selectedBoard.id !== id && selectedBoard.productType === boardMission.productType));
     }
     drag(drop(ref));
+
     return (
         <>
             <TableRow>
@@ -140,27 +146,61 @@ const TableRowComponent = ({ boardMission, status }: IProps) => {
                     }
                 </SecondaryTableCell>
                 <SecondaryTableCell align={"center"}>
-                    <LabelComponent label={boardMission?.productName} />
+                    {boardMission?.clientName}
                 </SecondaryTableCell>
-                <SecondaryTableCell align={"center"}>
-                    <CurrentStationComponent {...boardMission.currentStation}
-                        boardMissionId={boardMission.id} status={status} />
+                <SecondaryTableCell align={"center"} style={{ padding: "0px 10px" }}>
+                    <ClickableLabelComponent label={boardMission?.productName} id={boardMission.id} textColor={boardMission?.productionFloorJobColor} t={t} key={boardMission.id} />
                 </SecondaryTableCell>
                 <SecondaryTableCell align={"center"}>
                     <BoardStatusComponent statusId={boardMission.statusId} id={boardMission.id}
                         onChange={(id, statusId) => updateStatus([boardMission], statusId)} />
                 </SecondaryTableCell>
-                <SecondaryTableCell align={"center"}>
-                    {DateFormatterDDMMYYYY(boardMission?.boardMissionCreatedDate)}
+                <SecondaryTableCell align={"center"} >
+                    <CurrentStationComponent {...boardMission.currentStation}
+                        boardMissionId={boardMission.id} status={status} textColor={boardMission?.productionFloorJobColor} />
+                </SecondaryTableCell>
+                <SecondaryTableCell align={"center"} >
+                    <NextStationComponent {...boardMission.currentStation} {...boardMission.nextStation}
+                        boardMissionId={boardMission.id} status={status} textColor={boardMission?.productionFloorJobColor} />
                 </SecondaryTableCell>
                 <SecondaryTableCell align={"center"}>
-                    {boardMission?.clientName}
+                    {
+                        boardMission?.boardMissionCreatedDate && (() => {
+                            const { formattedDate, formattedTime } = SeparateDateFormatterDDMMYYYY(boardMission.boardMissionCreatedDate);
+                            return (
+                                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                                    <div>{formattedTime}</div>
+                                    <div>{formattedDate}</div>
+                                </div>
+                            );
+                        })()
+                    }
                 </SecondaryTableCell>
                 <SecondaryTableCell align={"center"}>
-                    {DateFormatterDDMMYYYY(boardMission?.actionDueDate)}
+                    {
+                        boardMission?.actionDueDate && (() => {
+                            const { formattedDate, formattedTime } = SeparateDateFormatterDDMMYYYY(boardMission.actionDueDate);
+                            return (
+                                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                                    <div>{formattedTime}</div>
+                                    <div>{formattedDate}</div>
+                                </div>
+                            );
+                        })()
+                    }
                 </SecondaryTableCell>
                 <SecondaryTableCell align={"center"}>
-                    {DateFormatterDDMMYYYY(boardMission?.dueDate)}
+                    {
+                        boardMission?.dueDate && (() => {
+                            const { formattedDate, formattedTime } = SeparateDateFormatterDDMMYYYY(boardMission.dueDate);
+                            return (
+                                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                                    <div>{formattedTime}</div>
+                                    <div>{formattedDate}</div>
+                                </div>
+                            );
+                        })()
+                    }
                 </SecondaryTableCell>
                 <SecondaryTableCell align={"center"}>
                     <Stack justifyContent={'center'} direction={'row'} flexWrap={'wrap'}>
@@ -168,6 +208,14 @@ const TableRowComponent = ({ boardMission, status }: IProps) => {
                             boardMission?.automatedTags?.map(tag => <LabelComponent key={tag} label={tag} />)
                         }
                     </Stack>
+                </SecondaryTableCell>
+                <SecondaryTableCell align={"center"}>
+                    <MoreMenuWidget
+                        boardMission={boardMission}
+                        onClickDone={onClickDone}
+                        onClickPrintJob={onClickPrintJob}
+                        onClickPrintDTicket={onClickPrintDTicket}
+                    />
                 </SecondaryTableCell>
             </TableRow>
             <TableRow>

@@ -44,8 +44,8 @@ const SettingsWidget = ({
     onClickOpenPricingType,
     selectPricingType,
     onClickClosePricingType,
-    query
-
+    query,
+    productSKU
   } = useSettings({ onClickParametersTab, productState, onChangeStateProduct });
 
   const [defultProductSKU, setDefultProductSKU] = useState()
@@ -391,8 +391,30 @@ const SettingsWidget = ({
             }
           </div>
         </div>
+ 
+        <div style={clasess.itemOnFirstContainer}>
+          <div style={clasess.labelTitleStyle}>
+            {t("products.addProduct.admin.jobColor")}
+          </div>
+          <div style={clasess.fileInputStyle}>
+            <MuiColorInput
+              value={
+                productState?.productionFloorJobColor ??
+                t("products.addProduct.admin.jobColor")
+              }
+              onChange={(value: any) => {
+                onChangeStateProduct("productionFloorJobColor", value);
+              }}
+              format="hex"
+            />
+            {productState?.productionFloorJobColor &&
+              <div style={{ cursor: "pointer" }} onClick={() => onChangeStateProduct("productionFloorJobColor", null)}>
+                <FormatColorResetIcon />
+              </div>
+            }
+          </div>
+        </div>
       </div>
-
       <div style={clasess.categoryNameStyle}>
         {t("products.addProduct.admin.graphicsRequired")}
       </div>
@@ -460,6 +482,7 @@ const SettingsWidget = ({
         onClickOpenDeleteRowModal={onClickOpenDeleteRowModal}
         onClickCloseDeleteRowModal={onClickCloseDeleteRowModal}
         deleteProductSKURow={deleteProductSKURow}
+        productSKUState={productSKU}
       />
       <GoMakeDeleteModal
         title={t("modal.pricingTypeTitle")}

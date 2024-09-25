@@ -59,6 +59,22 @@ export const DateFormatterDDMMYYYY = (date: string) => {
   }
 };
 
+
+export const SeparateDateFormatterDDMMYYYY = (date: string) => {
+  if (date) {
+    const [myDate, time] = date.split("T");
+    const [hours, minutes] = time.split(":");
+    const [year,month, day] = myDate.split("-");
+
+    const formattedDate = `${day}/${month}`;
+    const formattedTime = `${hours}:${minutes}`;
+
+    return { formattedDate, formattedTime };
+  }
+  return { formattedDate: "", formattedTime: "" }; // return empty strings if date is undefined
+};
+
+
 export const DateFormatter = (dateTime: string) => {
   if (dateTime) {
     let date = dateTime?.split("T")[0];

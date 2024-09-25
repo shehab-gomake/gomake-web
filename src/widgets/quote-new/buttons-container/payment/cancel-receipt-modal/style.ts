@@ -11,7 +11,7 @@ const useStyle = () => {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        width: "25%",
+        width: "45%",
         borderRadius: 20,
         backgroundColor: "#FFFFFF",
         position: "absolute" as "absolute",

@@ -32,7 +32,9 @@ const DashboardWidget = ({ }: IDashboardWidget) => {
         getLateBoardsMissions,
         getLateTodayBoardsMissions,
         getAllBoardsMissions,
-        dashboardColumns
+        dashboardColumns,
+        setBoardsMissions,
+        setStatistics
     } = useBoardMissions();
     const actions = (action: DashboardActions, dateRange: IDateRange) => {
         switch (action) {
@@ -51,6 +53,8 @@ const DashboardWidget = ({ }: IDashboardWidget) => {
     }
 
     useEffect(() => {
+        setBoardsMissions([]);
+        setStatistics(null);
         actions(action, dates);
     }, [action, dates, selectedAgents])
 
@@ -115,7 +119,6 @@ const DashboardWidget = ({ }: IDashboardWidget) => {
     const sortedMergedLists = mergedLists().sort((a, b) => {
         return orderMap[a.id] - orderMap[b.id];
     });
-    console.log("tasks()", tasks())
     return (
         <div style={classes.container}>
             {

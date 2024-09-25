@@ -149,13 +149,13 @@ const useCustomerCard = ({ t, customer, setCustomer, onClose, setOpenOfferModal,
     : CLIENT_TYPE_Id.SUPPLIER;
 
   const handleAddCustomer = async () => {
-    const filteredContacts = contacts.filter(
+    const filteredContacts = contacts?.filter(
       (contact) => !isNameIndexOnly(contact)
     );
-    const filteredAddresses = addresses.filter(
+    const filteredAddresses = addresses?.filter(
       (address) => !isNameIndexOnly(address)
     );
-    const filteredUsers = users.filter((user) => !isNameIndexOnly(user));
+    const filteredUsers = users?.filter((user) => !isNameIndexOnly(user));
     const cardTypeId = typeClient === "C" ? CLIENT_TYPE_Id.CUSTOMER : CLIENT_TYPE_Id.SUPPLIER;
     const updatedCustomer = {
       ...customer,
@@ -167,12 +167,15 @@ const useCustomerCard = ({ t, customer, setCustomer, onClose, setOpenOfferModal,
     };
 
     // Check if email is valid
-    const areEmailsValid = filteredUsers.every(user => validateEmail(user, "email"));
-    if (!areEmailsValid) {
-      alertFault("customers.invalidEmail");
-      return;
-    }
+    if(filteredUsers && filteredUsers.length > 0){
+      const areEmailsValid = filteredUsers?.every(user => validateEmail(user, "email"));
+      if (!areEmailsValid) {
+        alertFault("customers.invalidEmail");
+        return;
+      }
 
+    }
+    
     const isEmailValid = validateEmail(customer, "mail");
     if (!isEmailValid) {
       alertFault("customers.invalidEmail");
@@ -259,10 +262,16 @@ const useCustomerCard = ({ t, customer, setCustomer, onClose, setOpenOfferModal,
 
   // Contact info
   const addEmptyContact = () => {
-    var temp = [...contacts];
-    const index = temp.length + 1;
-    temp.push({ name: "", index: index });
-    setContacts(temp);
+    if (!contacts || contacts === undefined) {
+      addInitContact()
+    }
+    else {
+      var temp = [...contacts];
+      const index = temp.length + 1;
+      temp.push({ name: "", index: index });
+      setContacts(temp);
+    }
+
   };
 
   const addInitContact = () => {
@@ -300,11 +309,16 @@ const useCustomerCard = ({ t, customer, setCustomer, onClose, setOpenOfferModal,
 
   // Address info
   const addEmptyAddress = () => {
-    var temp = [...addresses];
-    const index = temp.length + 1;
-    //  temp.push({ name: "", index: index, city: " ", street: " " });
-    temp.push({ name: "", index: index });
-    setAddresses(temp);
+    if (!addresses || addresses === undefined) {
+      addInitAddress()
+    } else {
+      var temp = [...addresses];
+      const index = temp.length + 1;
+      //  temp.push({ name: "", index: index, city: " ", street: " " });
+      temp.push({ name: "", index: index });
+      setAddresses(temp);
+    }
+
   };
 
   const addInitAddress = () => {
@@ -413,13 +427,13 @@ const useCustomerCard = ({ t, customer, setCustomer, onClose, setOpenOfferModal,
   };
 
   const handleShowTable = async () => {
-    const filteredContacts = contacts.filter(
+    const filteredContacts = contacts?.filter(
       (contact) => !isNameIndexOnly(contact)
     );
-    const filteredAddresses = addresses.filter(
+    const filteredAddresses = addresses?.filter(
       (address) => !isNameIndexOnly(address)
     );
-    const filteredUsers = users.filter((user) => !isNameIndexOnly(user));
+    const filteredUsers = users?.filter((user) => !isNameIndexOnly(user));
     const cardTypeId = typeClient === "C" ? CLIENT_TYPE_Id.CUSTOMER : CLIENT_TYPE_Id.SUPPLIER;
     const updatedCustomer = {
       ...customer,

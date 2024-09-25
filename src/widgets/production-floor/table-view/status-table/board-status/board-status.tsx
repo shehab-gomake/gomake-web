@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Button, Menu } from "@mui/material";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useRecoilValue } from "recoil";
@@ -6,6 +6,7 @@ import { productionFloorStatusesState } from "@/widgets/production-floor/state/b
 import { useUserPermission } from '@/hooks/use-permission';
 import { Permissions } from "@/components/CheckPermission/enum";
 import { useTranslation } from "react-i18next";
+import { KeyboardArrowDown, KeyboardArrowUp } from "@mui/icons-material";
 
 interface IStatusBtnProps {
     id?: string;
@@ -14,13 +15,22 @@ interface IStatusBtnProps {
 }
 
 const BoardStatusComponent = ({ statusId, id, onChange }: IStatusBtnProps) => {
-    const {t} = useTranslation();
+    const { t } = useTranslation();
     const { CheckPermission } = useUserPermission();
     const canChangeStatus = CheckPermission(Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR);
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>();
     const statuses = useRecoilValue(productionFloorStatusesState);
     const open = Boolean(anchorEl);
-   
+    const [menuWidth, setMenuWidth] = useState<number>(0);
+    const buttonRef = useRef<HTMLButtonElement>(null);
+
+    useEffect(() => {
+        if (buttonRef.current) {
+            const selectStatusTextWidth = buttonRef.current.getBoundingClientRect().width;
+            setMenuWidth(selectStatusTextWidth);
+        }
+    }, [anchorEl]);
+
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         if (canChangeStatus) {
             setAnchorEl(event.currentTarget);
@@ -42,17 +52,25 @@ const BoardStatusComponent = ({ statusId, id, onChange }: IStatusBtnProps) => {
     return (
         <>
             <Button onClick={handleClick}
+                ref={buttonRef}
                 variant={!!anchorEl ? 'outlined' : 'contained'}
                 sx={{
-                    borderRadius: '4px',
+                    borderRadius: '5px',
                     backgroundColor: boardStatus()?.backgroundColor,
+                    border: `1px solid ${boardStatus()?.textColor}`,
                     color: boardStatus()?.textColor,
-                    display: 'inline',
+                    // display: 'inline',
+                    //minWidth: 100,
                     width: 'fit-content',
-                    minWidth: 150,
                     height: 36,
-                    pointerEvents: canChangeStatus ? 'auto' : 'none', 
-                    opacity: 1 , 
+                    pointerEvents: canChangeStatus ? 'auto' : 'none',
+                    opacity: 1,
+                    display: 'inline-flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    boxShadow: "none",
+                    padding: "5px 10px",
+                    lineHeight:"16px",
                     ...FONT_FAMILY.Lexend(500, 13),
                     '&:hover': {
                         opacity: 0.7,
@@ -63,12 +81,12 @@ const BoardStatusComponent = ({ statusId, id, onChange }: IStatusBtnProps) => {
                         backgroundColor: boardStatus()?.backgroundColor,
                         color: boardStatus()?.textColor,
                         boxShadow: "rgba(0, 0, 0, 0.2) 0px 3px 1px -2px, rgba(0, 0, 0, 0.14) 0px 2px 2px 0px, rgba(0, 0, 0, 0.12) 0px 1px 5px 0px"
-                        
                     }
                 }}
                 disabled={!canChangeStatus}
             >
                 {anchorEl ? t("customers.selectStatus") : t('productionStatuses.' + boardStatus()?.name)}
+                {anchorEl ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
             </Button>
             <Menu
                 closeAfterTransition={true}
@@ -76,7 +94,7 @@ const BoardStatusComponent = ({ statusId, id, onChange }: IStatusBtnProps) => {
                 open={open}
                 onClose={handleClose}
                 MenuListProps={{
-                    sx: { padding: 0, width: 150, minWidth: 'fit-content' }
+                    sx: { padding: 0, width: menuWidth, minWidth: 'fit-content' }
                 }}
             >
                 {

@@ -238,7 +238,6 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false, isPrePa
   } = useQuoteNew({ docType: documentType, isQuoteConfirmation: isQuoteConfirmation });
 
 
-
   const handleChangeCreationDate = (event) => {
     const newDate = event.target.value;
     const newDateRounded = moment(newDate).seconds(0).milliseconds(0).toISOString();
@@ -280,6 +279,7 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false, isPrePa
       }
     },
   ]
+
   const { } = useGoMakeTour(quoteSteps, []);
 
   const isInvoice = documentType === DOCUMENT_TYPE.invoice || documentType === DOCUMENT_TYPE.invoiceRefund;
@@ -308,6 +308,25 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false, isPrePa
   useEffect(() => {
     setDocNumber(quoteState?.number)
   }, [quoteState?.number, router, quoteState, isQuoteConfirmation])
+
+  const DateField = ({ label, date, handleClick, handleChange, inputRef, isEditable }) => (
+    <div
+      style={{ ...classes.dateFiled, cursor:isEditable ? "pointer" : "default" }}
+      onClick={isEditable ? handleClick : null}
+    >
+      <span>{label}</span>
+      <span style={classes.dateValue}>
+        {date ? DateFormatterDDMMYYYY(date) : t("sales.quote.selectDate")}
+      </span>
+      <div style={classes.datePickerContainer}>
+        <input
+          type="datetime-local"
+          onChange={handleChange}
+          ref={inputRef}
+        />
+      </div>
+    </div>
+  );
 
   return (
     <>
@@ -352,71 +371,51 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false, isPrePa
                     </IconButton>
                   </div>}
               </div>
-              {isPrePaymentPage ?
-                <div style={classes.firstBorder} />
-                :
-                <div style={classes.datesContainer}>
-                  {/* // Creation Date */}
-                  <div
-                    style={{ ...classes.deleverdDate, cursor: (isInvoice && quoteItemValue?.isEditable) ? "pointer" : "default" }}
-                    onClick={isInvoice && quoteItemValue?.isEditable ? handleClickForCreationDate : null}
-                  >
-                    {t("sales.quote.creationDate")}{" "}
-                    {creationDate
-                      ? DateFormatterDDMMYYYY(creationDate)
-                      : "select date"}
-                    <div style={classes.datePickerContainer}>
-                      <input
-                        type="datetime-local"
-                        onChange={handleChangeCreationDate}
-                        ref={creationDateRef}
-                      />
-                    </div>
-                  </div>
-                  {/* // Due Date */}
-                  <div
-                    style={{ ...classes.deleverdDate, cursor: quoteItemValue?.isEditable ? "pointer" : "default" }}
-                    onClick={quoteItemValue?.isEditable ? handleClickSelectDate : null}
-                  >
-                    {t("sales.quote.dateOfReference")}{" "}
-                    {selectDate
-                      ? DateFormatterDDMMYYYY(selectDate)
-                      : "select date"}
-                    <div style={classes.datePickerContainer}>
-                      <input
-                        type="datetime-local"
-                        onChange={(e) => {
-                          setSelectDate(e.target.value);
-                          setActiveClickAway(true);
-                        }}
 
-                        ref={dateRef}
-                      />
-                    </div>
-                  </div>
-                  {/* // TAX Date */}
-                  {
-                    isInvoice && <div
-                      style={{ ...classes.deleverdDate, cursor: quoteItemValue?.isEditable ? "pointer" : "default" }}
-                      onClick={quoteItemValue?.isEditable ? handleClickForTaxDate : null}
-                    >
-                      {t("sales.quote.taxDate")}{" "}
-                      {taxDate
-                        ? DateFormatterDDMMYYYY(taxDate)
-                        : "select date"}
-                      <div style={classes.datePickerContainer}>
-                        <input
-                          type="datetime-local"
-                          onChange={(e) => {
-                            setTaxDate(e.target.value);
-                            setActiveClickAwayForTaxDate(true);
-                          }}
-                          ref={taxDateRef}
-                        />
-                      </div>
-                    </div>
-                  }
-                </div>}
+              {isPrePaymentPage ? (
+                <div style={classes.firstBorder} />
+              ) : (
+                <div style={classes.datesContainer}>
+                  {/* Creation Date */}
+                  <DateField
+                    label={t("sales.quote.creationDate")}
+                    date={creationDate}
+                    handleClick={isInvoice && quoteItemValue?.isEditable ? handleClickForCreationDate : null}
+                    handleChange={handleChangeCreationDate}
+                    inputRef={creationDateRef}
+                    isEditable={isInvoice && quoteItemValue?.isEditable}
+                  />
+                  {/* Due Date */}
+                  <DateField
+                    label={t("sales.quote.dateOfReference")}
+                    date={selectDate}
+                    handleClick={quoteItemValue?.isEditable ? handleClickSelectDate : null}
+                    handleChange={(e) => {
+                      setSelectDate(e.target.value);
+                      setActiveClickAway(true);
+                    }}
+                    inputRef={dateRef}
+                    isEditable={quoteItemValue?.isEditable}
+                  />
+
+                  {/* Tax Date */}
+                  {isInvoice && (
+                    <DateField
+                      label={t("sales.quote.taxDate")}
+                      date={taxDate}
+                      handleClick={quoteItemValue?.isEditable ? handleClickForTaxDate : null}
+                      handleChange={(e) => {
+                        setTaxDate(e.target.value);
+                        setActiveClickAwayForTaxDate(true);
+                      }}
+                      inputRef={taxDateRef}
+                      isEditable={quoteItemValue?.isEditable}
+                    />
+                  )}
+                </div>
+              )}
+
+
               <div style={classes.bordersecondContainer}>
                 <BusinessNewWidget
                   values={quoteState}
@@ -538,6 +537,7 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false, isPrePa
           {!isQuoteConfirmation &&
             <div style={{ width: '100%' }} data-tour={'quoteStep2'}>
               <ButtonsContainer
+              openSendBtn={openSendBtn}
                 onOpenNewItem={onOpenNewItem}
                 onOpenDeliveryModal={onOpenDeliveryModal}
                 handleCancelBtnClick={handleCancelBtnClick}
