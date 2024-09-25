@@ -6,13 +6,18 @@ const useStyle = () => {
         return {
             button: {
                 width: '163px',
-                height: '44px',
-                borderRadius: '10px',
-                border: '1px solid #504FA1',
-                backgroundColor: 'inherit',
+                height: '36px',
+                borderRadius: '8px',
+                border: '1px solid rgba(208, 213, 221, 1)',
+                backgroundColor: '#FFF',
                 ...FONT_FAMILY.Lexend(500,16),
                 cursor: 'pointer',
-                color: '#504FA1',
+                color: 'rgba(52, 64, 84, 1)',
+                display: 'flex',
+                alignItems: 'center' as 'center',
+                justifyContent: 'center' as 'center',
+                gap: '4px',
+                textTransform: 'none' as 'none'
             },
             datepickerContainer: {
                 direction: 'ltr' as 'ltr',

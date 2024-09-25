@@ -199,7 +199,6 @@ const useTransactionJournalReport = ({ isPayment }: TransactionJournalReportWidg
   };
 
   const onClickOpenCustomerModal = async (customerId) => {
-    console.log("customerId", customerId)
     const callBack = (res) => {
       if (res.success) {
         setCustomerForEdit(res.data);

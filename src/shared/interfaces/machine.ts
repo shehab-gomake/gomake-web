@@ -7,9 +7,11 @@ export interface IMachine {
 }
 
 export interface IMachineProgress {
-    total: number;
-    done: number;
+    totalTime: number;
+    doneTime: number;
     name?:string;
+    doneJobsCount: number;
+    totalJobsCount: number;
 }
 
 export interface IDashboardColumns {

@@ -6,10 +6,12 @@ export interface IDashboardStatistic {
     inProcess: IStatisticValue;
     new: IStatisticValue;
     waiting: IStatisticValue;
+
 }
 
 export interface IStatisticValue {
     labelTranslationKey: string;
     value: number;
     progress?: number;
+    productionTime?: number;
 }

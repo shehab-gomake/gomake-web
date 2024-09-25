@@ -1,8 +1,7 @@
 import {useMemo} from "react";
 import {FONT_FAMILY} from "@/utils/font-family";
 import {useGomakeTheme} from "@/hooks/use-gomake-thme";
-import {adaptRight, convertWidthToVW} from "@/utils/adapter";
-import {SCREEN_WIDTH} from "@/utils/layout-config";
+import {adaptRight} from "@/utils/adapter";
 
 const useStyle = (dir: string) => {
     const {theme, primaryColor, warningColor} = useGomakeTheme();
@@ -15,10 +14,12 @@ const useStyle = (dir: string) => {
                 borderRadius: BORDER_RADIUS,
                 borderRight: 0,
                 padding: 0,
-                margin: '10px 0px 15px 0px',
                 overflow: 'auto' as 'auto',
-                maxWidth: convertWidthToVW(SCREEN_WIDTH - 150),
                 maxHeight: '75vh',
+                position: 'relative' as 'relative',
+                marginBottom: '5px',
+                width: 'fit-content',
+                maxWidth: '100%'
             },
             table: {
                 borderCollapse: 'collapse' as 'collapse',
@@ -27,16 +28,17 @@ const useStyle = (dir: string) => {
 
             tableHead: {
                 backgroundColor: primaryColor(500),
-                // minHeight: '80px',
-                // height: '80px',
-                maxHeight: '80px',
+                maxHeight: '100px',
+                height: '100px',
                 color: 'white',
                 textAlign: 'center' as 'center',
-                ...FONT_FAMILY.Lexend(400, 16),
-                padding: '20px',
+                ...FONT_FAMILY.Lexend(400, 12),
                 position: 'sticky' as 'sticky',
                 top: '0px',
                 cursor: 'pointer' as 'pointer',
+                minWidth: '120px',
+                padding: '0 5px'
+
             },
 
             selectedMachine: {
@@ -54,15 +56,15 @@ const useStyle = (dir: string) => {
                 borderLeft: 0
             },
             tdRows: {
-                display: 'flex',
-                flexDirection: 'column' as 'column',
-                alignItems: 'center' as 'center',
-                justifyContent: 'center' as 'center',
-                width: '100%',
-                height: '100%',
-                maxHeight: '80px',
-                // gap: '10px',
-                ...FONT_FAMILY.Lexend(400, 14)
+                // display: 'flex',
+                // flexDirection: 'column' as 'column',
+                // alignItems: 'center' as 'center',
+                // justifyContent: 'center' as 'center',
+                // width: '100%',
+                // height: '100%',
+                // maxHeight: '80px',
+                //  gap: '8px',
+                // ...FONT_FAMILY.Lexend(400, 14)
             },
 
             firstColHead: {
@@ -77,6 +79,7 @@ const useStyle = (dir: string) => {
                 justifyContent: 'space-between',
                 alignItems: 'center',
                 borderRight: 0,
+                position: 'relative' as 'relative'
             },
             firstColCell: {
                 display: 'flex',

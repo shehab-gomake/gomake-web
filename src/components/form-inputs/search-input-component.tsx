@@ -26,7 +26,7 @@ const SearchInputComponent = ({ onChange, value, placeHolder, searchInputStyle, 
         const trimmedValue = e.target.value.trimStart();
         onChange(trimmedValue);
       }}
-      style={searchInputStyle || classes.searchInput}
+      style={searchInputStyle ? {...classes.searchInput, ...searchInputStyle} : classes.searchInput}
       placeholder={placeHolder || t("header.search")}
       value={value}
       startAdornment={

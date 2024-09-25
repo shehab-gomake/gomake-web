@@ -3,22 +3,25 @@ import {FONT_FAMILY} from "@/utils/font-family";
 import {useGomakeTheme} from "@/hooks/use-gomake-thme";
 
 const useStyle = () => {
-    const {theme, neutralColor, primaryColor} = useGomakeTheme();
+    const {theme} = useGomakeTheme();
     const classes = useMemo(() => {
         return {
             container: {},
             button: {
-                backgroundColor: neutralColor(100),
-                boxShadow: '0px 4px 90px rgba(135, 130, 130, 0.2)',
-                borderRadius: '10px',
-                color: primaryColor(700),
-                width: '190px',
-                maxWidth: '200px',
-                height: '44px',
+                width: '163px',
+                height: '36px',
+                borderRadius: '8px',
+                border: '1px solid rgba(208, 213, 221, 1)',
+                backgroundColor: '#FFF',
+                ...FONT_FAMILY.Lexend(500,16),
+                cursor: 'pointer',
+                color: 'rgba(52, 64, 84, 1)',
                 display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                ...FONT_FAMILY.Lexend(500, 12)
+                alignItems: 'center' as 'center',
+                justifyContent: 'center' as 'center',
+                gap: '4px',
+                textTransform: 'none' as 'none',
+                boxShadow: 'none'
             },
             machineName: {
                 ...FONT_FAMILY.Lexend(500, 12)
