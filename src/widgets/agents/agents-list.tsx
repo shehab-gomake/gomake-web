@@ -74,7 +74,7 @@ const AgentsList = () => {
         setFilter(event.currentTarget.value);
     }
     return (
-        <div style={{ width: '200px' }}>
+        <div>
             <div>
                 <Button style={classes.button} variant={'contained'} onClick={handleClick}>
                     <span>{t('dashboard-widget.agents')}</span>
