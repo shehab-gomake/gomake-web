@@ -1,5 +1,4 @@
 import { IconButton, Stack } from "@mui/material";
-import { ProductionFloorFilters } from "@/widgets/production-floor/filters/production-floor-filters";
 import { ProductionFloorHeader } from "@/widgets/production-floor/header/production-floor-header";
 import { useRecoilState } from "recoil";
 import { EProductionFloorView, productionFloorViewState } from "@/widgets/production-floor/state/production-floor-view";
@@ -14,6 +13,7 @@ import { DashboardWidget } from "@/widgets/dashboard-widget";
 import { FilesUploaderWidget } from "@/widgets/file-uploader-widget/files-uploader-widget";
 import QrListenerWidget from "@/widgets/qr-listener/qr-listener-widget";
 import { useProductionFloorSignalr } from "@/hooks/signalr/use-production-floor-signalr";
+import { ProductionFloorFilters } from "./filters/production-floor-filters";
 
 const ProductionFloorWidget = () => {
     const [view, setView] = useRecoilState(productionFloorViewState);

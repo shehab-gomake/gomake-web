@@ -3,37 +3,39 @@ import { useProductionFloorTable } from "@/widgets/production-floor/table-view/u
 import Stack from "@mui/material/Stack";
 import { useMemo } from "react";
 import { useRecoilValue } from "recoil";
-import { selectedChipIdState } from "../state/text-search";
+import { selectedChipIdsState } from "../state/text-search";
 
 const ProductionFloorTableView = () => {
     const { data } = useProductionFloorTable();
-    const selectedChipId = useRecoilValue(selectedChipIdState);
-
+    const selectedChipId = useRecoilValue(selectedChipIdsState);
     const filteredDataByMachine = useMemo(() => {
-        return !selectedChipId ? data : data.map((item) => {
-            const filteredBoardMissions = item.boardMissions.filter(
-                (mission) =>
-                    mission?.currentStation?.machineId === selectedChipId ||
-                    mission?.currentStation?.employeeId === selectedChipId
+
+        if (!selectedChipId.length) return data;
+        return data.map((item) => {
+            const filteredBoardMissions = item.boardMissions.filter((mission) =>
+                selectedChipId.some((chipId) =>
+                    mission?.currentStation?.machineId === chipId ||
+                    mission?.currentStation?.employeeId === chipId
+                )
             );
+
             return {
                 ...item,
                 boardMissions: filteredBoardMissions,
             };
         });
-
-    }, [data, selectedChipId])
-
+    }, [data, selectedChipId]);
+ 
     return (
         <Stack gap={'20px'}>
-            {
-                filteredDataByMachine?.map(statusBoards =>
-                    <StatusTableComponent
-                        count={statusBoards.boardMissionStatus.count}
-                        status={statusBoards.boardMissionStatus.boardMissionStatus}
-                        boards={statusBoards.boardMissions} />
-                )
-            }
+            {filteredDataByMachine.map((statusBoards, index) => (
+                <StatusTableComponent
+                    key={index}
+                    // count={statusBoards.boardMissionStatus.count}
+                    status={statusBoards?.boardMissionStatus?.boardMissionStatus}
+                    boards={statusBoards?.boardMissions}
+                />
+            ))}
         </Stack>
     )
 }

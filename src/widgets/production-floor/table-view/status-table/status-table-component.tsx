@@ -18,14 +18,14 @@ import { PrintPackingSlipModalWidget } from "../../views/board-missions-view/nav
 
 interface IProps {
   status: IProductionStatus;
-  boards: IBoardMissions[];
-  count: number;
+  boards: IBoardMissions[]; 
+  count?: number;
 }
-
+ 
 const StatusTableComponent = ({ status, boards }: IProps) => {
   const { isOpen, onClickStatus, tableHeaders } = useStatusTable();
   const [search] = useRecoilState(productionFloorTextSearchState);
-  const { t,
+  const { t, 
     updateStatus,
     onOpenMarkReadyModal,
     openMarkReadyModal,
@@ -91,7 +91,7 @@ const StatusTableComponent = ({ status, boards }: IProps) => {
           },
         }}
       >
-        {`${t("productionStatuses." + status.name)} (${boards.length})`}
+        {`${t("productionStatuses." + status.name)} (${getBoards().length})`}
       </Button>
       {getBoards().length > 0 && (
         <Collapse in={isOpen}>
