@@ -35,7 +35,7 @@ const BoardMissionsStationsComponent = () => {
         }}>
             <GeneralInformationComponent />
             {
-                !boardMissionsDetails?.isNeedExample && <h4>{t("productionFloor.needExample")}</h4>
+                boardMissionsDetails?.isNeedExample && <h4>{t("productionFloor.needExample")}</h4>
             }
 
             <Divider orientation={'horizontal'} flexItem />
