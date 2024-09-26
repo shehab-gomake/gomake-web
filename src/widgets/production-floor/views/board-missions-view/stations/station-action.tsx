@@ -396,7 +396,7 @@ const BoardMissionsStationAction = ({
                     </Collapse>
                 </div> :
                     <Fade in={true} timeout={delay}
-                        style={{ width: "100%", position: "relative", zIndex: 999999999999999999999999999999 }}>
+                        style={{ width: "100%", position: "relative" }}>
                         <Stack direction={'row'} alignItems={'center'} justifyContent={'space-between'}
                             onClick={() => setIsOpen(isHideTimeAndDate ? isOpen : !isOpen)}
                             style={{
