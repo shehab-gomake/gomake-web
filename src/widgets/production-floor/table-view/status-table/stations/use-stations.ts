@@ -67,6 +67,17 @@ const useStations = () => {
             }
         }, { boardId: boardMissionId, stationId: null, productType });
     }
+
+    const [openModal, setOpenModal] = useState(false)
+
+    const onClickOpenModal = () => {
+        setOpenModal(true)
+    }
+    const onClickCloseModal = () => {
+        setOpenModal(false)
+    }
+
+
     return {
         anchorEl,
         open,
@@ -77,7 +88,10 @@ const useStations = () => {
         boardMissionsStations,
         onUpdateCurrentStation,
         onUpdateToNextStation,
-        canMoveStation
+        canMoveStation,
+        openModal,
+        onClickOpenModal,
+        onClickCloseModal
     }
 }
 export { useStations }

@@ -1,10 +1,9 @@
 import { useTranslation } from "react-i18next";
 import { GoMakeModal, GomakePrimaryButton } from "@/components";
-
 import { useStyle } from "./style";
 import { useRef, useState } from "react";
 import SignatureCanvas from 'react-signature-canvas';
-import { CloseIcon } from "@/components/modal/icon/close";
+import { RoundedCloseIcon } from "@/components/modal/icon/close";
 import { useSnackBar } from "@/hooks";
 
 const ApproveSignatureModal = ({ openModal, onClose, onClickApprove, isMobile }: any) => {
@@ -60,14 +59,13 @@ const ApproveSignatureModal = ({ openModal, onClose, onClickApprove, isMobile }:
               canvasProps={{ width: 500, height: 200, className: 'sigCanvas' }}
             />
             <div onClick={clear} style={clasess.clearBtn}>
-              <CloseIcon />
+              <RoundedCloseIcon />
             </div>
           </div>
           <div style={clasess.descriptionContainer}>{t("sales.cart.signatureLegalConfirmation")}</div>
           <div style={clasess.btnsContainer}>
             <GomakePrimaryButton style={clasess.saveBtn} onClick={save}>{t("sales.cart.confirmAndApprove")}</GomakePrimaryButton>
           </div>
-
         </div>
       </GoMakeModal>
     </>

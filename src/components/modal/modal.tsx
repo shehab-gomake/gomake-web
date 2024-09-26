@@ -1,16 +1,18 @@
-import * as React from "react";
 import { useTranslation } from "react-i18next";
 import { IconButton, Modal, Tooltip } from "@mui/material";
-import { CloseIcon } from "./icon/close";
 import { useStyle } from "./style";
+import { RoundedCloseIcon } from "./icon/close";
+import { CloseIcon } from "@/widgets/quote-new/receipts-table/Payment-methods-details/icons/close-icon";
 
 const GoMakeModal = ({
   openModal,
   onClose,
   withClose = true,
+  withRoundedCloseIcon = true,
   isMiddleTitle = false,
   insideStyle,
   modalTitle,
+  modalTitleStyle,
   isBlockModal,
   modalTitleColor,
   headerPadding = 0,
@@ -18,19 +20,19 @@ const GoMakeModal = ({
 }: any) => {
   const { children }: any = props;
   const { t } = useTranslation();
-  const { classes } = useStyle({ insideStyle, headerPadding , isMiddleTitle, withClose, modalTitleColor });
+  const { classes } = useStyle({ insideStyle, headerPadding, isMiddleTitle, withClose, modalTitleColor });
   return (
-    <Modal  disableEnforceFocus open={openModal} onClose={onClose} {...props}>
+    <Modal disableEnforceFocus open={openModal} onClose={onClose} {...props}>
       <div style={classes.container}>
         <div style={classes.headerContainer}>
           {modalTitle && (
-            <div style={isBlockModal ? classes.titleBlockModalStyle : classes.titleModalStyle}>{modalTitle}</div>
+            <div style={isBlockModal ? classes.titleBlockModalStyle : { ...classes.titleModalStyle, ...modalTitleStyle }}>{modalTitle}</div>
           )}
           {withClose && (
             <div style={classes.closeIcon} onClick={onClose}>
               <Tooltip title={t("modal.close")}>
-                <IconButton>
-                  <CloseIcon />
+                <IconButton >
+                  {withRoundedCloseIcon ? <RoundedCloseIcon /> : <CloseIcon />}
                 </IconButton>
               </Tooltip>
             </div>

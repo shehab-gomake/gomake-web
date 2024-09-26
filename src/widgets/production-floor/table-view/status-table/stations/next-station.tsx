@@ -24,18 +24,9 @@ interface IProps extends ICurrentStation, INextStation {
 const NextStationComponent = ({ boardMissionId, textColor, productType, status, nextStationName, nextStationId }: IProps) => {
     const { t } = useTranslation()
     const { classes } = useStyle({ textColor });
-    const { onUpdateToNextStation, dir } = useStations();
+    const { onUpdateToNextStation, dir , openModal, onClickOpenModal, onClickCloseModal } = useStations();
     const setData = useSetRecoilState<IStatusesBoardsMissions[]>(boardsMissionsState);
-    const [openModal, setOpenMpdal] = useState(false)
-
-    const onClickOpenModal = () => {
-        setOpenMpdal(true)
-    }
-    const onClickCloseModal = () => {
-        setOpenMpdal(false)
-    }
-
-    // use Also for done button in more circle
+  
     const handleRemoveBoardMission = (statusKey, boardMissionId) => {
         setData((prevData) => {
             return prevData.map((item) => {
