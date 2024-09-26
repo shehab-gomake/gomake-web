@@ -11,8 +11,9 @@ import SyncIcon from '@mui/icons-material/Sync';
 import { useCompanyProfile } from "@/hooks/use-company-profile";
 import { currenciesState } from "@/widgets/materials-widget/state";
 import { useTranslation } from "react-i18next";
+import { AutomaticDiscountMenu } from "../automatic-discount-menu";
 
-const SettingQuoteMenu = ({ handleClose, open, anchorEl, onBlurExchangeRate, setIsUpdateExchangeRate, isUpdateExchangeRate, onBlurCurrency, isUpdateCurrency, setIsUpdateCurrency, updateCurrency, onClickRefresh, sortDocumentItems, updateIsShowDetails, updateIsShowPrices }) => {
+const SettingQuoteMenu = ({ handleClose, open, anchorEl, onBlurExchangeRate, setIsUpdateExchangeRate, isUpdateExchangeRate, onBlurCurrency, isUpdateCurrency, setIsUpdateCurrency, updateCurrency, onClickRefresh, sortDocumentItems, updateIsShowDetails, updateIsShowPrices, updateDiscountType }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
   const quoteStateValue = useRecoilValue<any>(quoteItemState);
@@ -23,7 +24,10 @@ const SettingQuoteMenu = ({ handleClose, open, anchorEl, onBlurExchangeRate, set
   const matchingCurrency = currencies.find(currency => currency.value === quoteStateValue?.currency)?.label;
   const [exchangeRate, setExchangeRate] = useState(quoteStateValue?.exchangeRate || "-");
   const [anchorElTableSorting, setAnchorElTableSorting] = useState<null | HTMLElement>(null);
+
+  const [anchorElAutomaticDiscount, setAnchorElAutomaticDiscount] = useState<null | HTMLElement>(null);
   const openTableSorting = Boolean(anchorElTableSorting);
+  const openAutomaticDiscount = Boolean(anchorElAutomaticDiscount);
 
   useEffect(() => {
     setDetailsView(quoteStateValue?.isShowDetails)
@@ -56,6 +60,14 @@ const SettingQuoteMenu = ({ handleClose, open, anchorEl, onBlurExchangeRate, set
     setAnchorElTableSorting(null);
   };
 
+  const handleAutomaticDiscount = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorElAutomaticDiscount(event.currentTarget);
+  };
+
+  const handleAutomaticDiscountClose = () => {
+    setAnchorElAutomaticDiscount(null);
+  };
+
   return (
     <>
       <GoMakeMenu
@@ -69,7 +81,18 @@ const SettingQuoteMenu = ({ handleClose, open, anchorEl, onBlurExchangeRate, set
             onClick={handleTableSorting}
             className="table-sorting"
             style={classes.menuTabStyle}
-          >{t("sales.quote.tableSortingBy")}</div>
+          >
+            {t("sales.quote.tableSortingBy")}
+          </div>
+
+          <Divider />
+          <div
+            onClick={handleAutomaticDiscount}
+            className="table-sorting"
+            style={classes.menuTabStyle}
+          >
+            {t("sales.quote.automaticDiscount")}
+          </div>
           <Divider />
 
           <div style={classes.menuRowStyle}>
@@ -125,6 +148,13 @@ const SettingQuoteMenu = ({ handleClose, open, anchorEl, onBlurExchangeRate, set
         open={openTableSorting}
         anchorEl={anchorElTableSorting}
         sortDocumentItems={sortDocumentItems}
+      />
+
+      <AutomaticDiscountMenu
+        handleClose={handleAutomaticDiscountClose}
+        open={openAutomaticDiscount}
+        anchorEl={anchorElAutomaticDiscount}
+        updateDiscountType={updateDiscountType}
       />
     </>
   );
