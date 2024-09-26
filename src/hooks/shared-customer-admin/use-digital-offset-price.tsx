@@ -3720,7 +3720,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               const subParam = subProducts.find(sub => sub.parameters.some(param => param.parameterId === rp.parameterId));
               if (subParam) {
                 if (rp.activateByAllValues) {
-                  return subParam.parameters.every(param => param.parameterId === rp.parameterId);
+                  return subParam.parameters?.every(param => param.parameterId === rp.parameterId);
                 } else {
                   return subParam.parameters.some(param => param.parameterId === rp.parameterId && rp.selectedValueIds.some(id => param.valueIds.includes(id)));
                 }

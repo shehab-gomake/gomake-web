@@ -106,7 +106,7 @@ export const isValidCustomer = (
     }
   }
   //new users
-  for (const user of filteredUsers.filter((user) => !user.id)) {
+  for (const user of filteredUsers?.filter((user) => !user.id)) {
     if (!user.password) {
       return false;
     }
