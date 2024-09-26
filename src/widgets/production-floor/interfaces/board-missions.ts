@@ -50,6 +50,7 @@ export interface IBoardMissionsDetails {
     agentId?: string
     agentName: string
     boardMissionImage: string;
+    isNeedExample: boolean;
     dueDate?: string
     createdDate?: Date
     boardMissionStatus: IProductionStatus;

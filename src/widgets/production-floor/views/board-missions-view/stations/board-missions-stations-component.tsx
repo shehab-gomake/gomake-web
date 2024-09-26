@@ -34,6 +34,10 @@ const BoardMissionsStationsComponent = () => {
             gap: '18px'
         }}>
             <GeneralInformationComponent />
+            {
+                !boardMissionsDetails?.isNeedExample && <h4>{t("productionFloor.needExample")}</h4>
+            }
+
             <Divider orientation={'horizontal'} flexItem />
             {
                 !!boardMissions?.productType &&
