@@ -1,5 +1,5 @@
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
-import { productionFloorTextSearchState, selectedChipIdState } from "@/widgets/production-floor/state/text-search";
+import { productionFloorTextSearchState } from "@/widgets/production-floor/state/text-search";
 import { productionFloorFiltersState } from "@/widgets/production-floor/state/production-floor-filters";
 import { tagsState } from "@/widgets/production-floor/state/tags";
 import { IFilterGroup, IProductionFloorFilter, IStation } from "@/widgets/production-floor/interfaces/filters";
@@ -13,6 +13,10 @@ import { userProductionFloorGroupsState } from "@/widgets/production-floor/state
 import { productionFloorPathsState } from "@/widgets/production-floor/state/production-floor-paths";
 import { Source, useActionsList } from "./select/actions-select/use-actions-list";
 import { useTranslation } from "react-i18next";
+
+
+// import { selectedChipIdState } from "../state/text-search";
+import { selectedChipIdsState } from "../state/text-search";
 
 const useProductionFloorFilters = () => {
     const [filtersState, setFiltersState] = useRecoilState(productionFloorFiltersState);
@@ -29,8 +33,6 @@ const useProductionFloorFilters = () => {
     const dir = t("direction");
     const isRTL = dir === "rtl";
     const { actionsMachinesIds } = useActionsList(Source.PRODUCTION_FLOOR);
-    const [selectedChip, setSelectedChip] = useState<string | null>(null);
-    const setSelectedChipId = useSetRecoilState(selectedChipIdState);
     const [visibleCards, setVisibleCards] = useState<{ label: string, machineId: string }[]>([]);
     const [hiddenCards, setHiddenCards] = useState<{ label: string, machineId: string }[]>([]);
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -159,43 +161,50 @@ const useProductionFloorFilters = () => {
         setAnchorEl(null);
     };
 
-    const handleChipClick = (card: { label: string; machineId: string }) => {
-        const { label, machineId } = card;
-        const isChipSelected = selectedChip === label;
-        setSelectedChip(isChipSelected ? null : label);
-        if (machineId && !isChipSelected) {
-            setSelectedChipId(machineId);
-        }
-        else{
-            setSelectedChipId(null);
-
-        }
-    };
-
-    // const handleMenuItemClick = (selectedCard: { label: string; machineId: string }) => {
-    //     setHiddenCards(prevHidden => {
-    //         const updatedHiddenCards = prevHidden.filter(card => card.label !== selectedCard.label);
-    //         return updatedHiddenCards;
-    //     });
-
-    //     setVisibleCards(prevVisible => {
-    //         const newVisibleCards = [{ label: selectedCard.label, machineId: selectedCard.machineId }, ...prevVisible];
-
-    //         if (newVisibleCards.length > 0) {
-    //             setHiddenCards(prevHidden => [...prevHidden, newVisibleCards[newVisibleCards.length - 1]]);
-    //         }
-
-    //         return newVisibleCards.slice(0, -1);
-    //     });
-    //     setSelectedChip(selectedCard.label);
-      
-    //     if (selectedCard.machineId) {
-    //         setSelectedChipId(selectedCard.machineId);
+    // const [selectedChip, setSelectedChip] = useState<string | null>(null);
+    // const setSelectedChipId = useSetRecoilState(selectedChipIdState);
+    // const handleChipClick = (card: { label: string; machineId: string }) => {
+    //     const { label, machineId } = card;
+    //     const isChipSelected = selectedChip === label;
+    //     setSelectedChip(isChipSelected ? null : label);
+    //     if (machineId && !isChipSelected) {
+    //         setSelectedChipId(machineId);
     //     }
     //     else{
     //         setSelectedChipId(null);
+
     //     }
     // };
+
+    const [selectedChips, setSelectedChips] = useState<string[]>([]); // Change here
+    const setSelectedChipIds = useSetRecoilState(selectedChipIdsState);
+
+    const handleChipClick = (card: { label: string; machineId: string }) => {
+        const { label, machineId } = card;
+        setSelectedChips(prevSelectedChips => {
+            // Check if the chip is already selected
+            const isChipSelected = prevSelectedChips.includes(label);
+    
+            if (isChipSelected) {
+                // Remove the chip if it is already selected
+                return prevSelectedChips.filter(chip => chip !== label);
+            } else {
+                // Add the chip if it is not selected
+                return [...prevSelectedChips, label];
+            }
+        });
+        // Set selected chip ID logic
+        setSelectedChipIds((prevSelectedIds) => {
+            if (selectedChips.includes(label)) {
+                // Remove the ID if the chip is already selected
+                return prevSelectedIds.filter((id) => id !== machineId);
+            } else {
+                // Add the ID if the chip is not selected
+                return [...prevSelectedIds, machineId];
+            }
+        });
+    };
+
 
     return {
         t,
@@ -204,7 +213,6 @@ const useProductionFloorFilters = () => {
         setSearch,
         actionsMachinesIds,
         filters,
-        selectedChip,
         filtersState,
         setFilters,
         onTagsChange,
@@ -229,7 +237,8 @@ const useProductionFloorFilters = () => {
         setVisibleCards,
         setHiddenCards,
         scrollContainerRef,
-        groups
+        groups,
+        selectedChips
     }
 }
 

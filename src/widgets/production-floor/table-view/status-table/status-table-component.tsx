@@ -18,8 +18,8 @@ import { PrintPackingSlipModalWidget } from "../../views/board-missions-view/nav
 
 interface IProps {
   status: IProductionStatus;
-  boards: IBoardMissions[];
-  count: number;
+  boards: IBoardMissions[]; 
+  count?: number;
 }
 
 const StatusTableComponent = ({ status, boards }: IProps) => {

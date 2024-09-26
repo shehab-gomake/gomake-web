@@ -5,8 +5,12 @@ export const productionFloorTextSearchState = atom<string>({
     default: ""
 })
 
+// export const selectedChipIdState = atom<any>({
+//     key: 'selectedChipIdState',
+//     default: ""
+// })
 
-export const selectedChipIdState = atom<any>({
-    key: 'selectedChipIdState',
-    default: ""
-})
+export const selectedChipIdsState = atom({
+    key: 'selectedChipIdsState', 
+    default: [], 
+});
