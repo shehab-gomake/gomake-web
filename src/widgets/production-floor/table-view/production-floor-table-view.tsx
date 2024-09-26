@@ -18,21 +18,22 @@ const ProductionFloorTableView = () => {
                     mission?.currentStation?.employeeId === chipId
                 )
             );
+
             return {
                 ...item,
                 boardMissions: filteredBoardMissions,
             };
         });
     }, [data, selectedChipId]);
-
+ 
     return (
         <Stack gap={'20px'}>
             {filteredDataByMachine.map((statusBoards, index) => (
                 <StatusTableComponent
                     key={index}
-                    count={statusBoards.boardMissionStatus.count}
-                    status={statusBoards.boardMissionStatus.boardMissionStatus}
-                    boards={statusBoards.boardMissions}
+                    // count={statusBoards.boardMissionStatus.count}
+                    status={statusBoards?.boardMissionStatus?.boardMissionStatus}
+                    boards={statusBoards?.boardMissions}
                 />
             ))}
         </Stack>

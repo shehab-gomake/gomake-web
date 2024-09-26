@@ -27,14 +27,14 @@ const ProductionFloorKanbanBoard = () => {
         });
     }, [data, selectedChipId]);
 
- 
+  
     return (
         <Stack direction={'row'} justifyContent={'space-between'} padding={'20px'} overflow={'hidden'} minHeight={'100%'}>
             {filteredDataByMachine.map((column) => (
                 <KanbanColumnComponent
                     key={column.boardMissionStatus.boardMissionStatus?.name}
                     status={column.boardMissionStatus.boardMissionStatus}
-                    count={column.boardMissionStatus.count}
+                    //count={column.boardMissionStatus.count}
                     boardsMissions={column.boardMissions} />
             ))}
         </Stack>

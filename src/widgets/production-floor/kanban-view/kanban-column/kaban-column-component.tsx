@@ -4,14 +4,19 @@ import { IBoardMissions } from "@/widgets/production-floor/interfaces/board-miss
 import { Stack } from "@mui/material";
 import { IProductionStatus } from "@/widgets/production-floor/interfaces/production-floor-status";
 import { useProductionFloorData } from "@/widgets/production-floor/use-production-floor-data";
+import { useRecoilState } from "recoil";
+import { productionFloorTextSearchState } from "../../state/text-search";
+import { useCallback } from "react";
 
 interface IProps {
     status: IProductionStatus;
     boardsMissions: IBoardMissions[];
-    count?: number;
+    count?: number; 
 }
 
 function KanbanColumnComponent({ status, boardsMissions }: IProps) {
+
+    const [search] = useRecoilState(productionFloorTextSearchState);
     const { updateStatus, t } = useProductionFloorData();
     const [{ isOver }, drop] = useDrop(() => ({
         accept: 'task',
@@ -28,6 +33,17 @@ function KanbanColumnComponent({ status, boardsMissions }: IProps) {
         }),
     }), [status, boardsMissions]);
 
+      const getBoards = useCallback(() => {
+        return !!search
+          ? boardsMissions?.filter(
+            (board) =>
+              `${board?.boardMissionNumber}\\${board?.orderNumber}`.includes(search) ||
+              `${board?.clientName?.toLowerCase()}`.includes(search.toLowerCase()) ||
+              board?.automatedTags?.some((tag) => `${tag.toLowerCase()}`.includes(search.toLowerCase()))
+          )
+          : boardsMissions;
+      }, [boardsMissions, search]);
+      
     return (
         <Stack ref={drop}
             gap={'10px'}
@@ -45,10 +61,10 @@ function KanbanColumnComponent({ status, boardsMissions }: IProps) {
                 backgroundColor: status.backgroundColor,
                 color: status.textColor,
                 borderRadius: '16px 16px 0 0',
-            }}>{`${t('productionStatuses.' + status.name)} (${boardsMissions?.length})`}</h2>
+            }}>{`${t('productionStatuses.' + status.name)} (${getBoards()?.length})`}</h2>
             <Stack overflow={'auto'} gap={'10px'}>
-                {boardsMissions?.map((board) => (
-                    <KanbanCardComponent key={board.id} board={board} />
+                {getBoards()?.map((board , index) => (
+                    <KanbanCardComponent  key={`${index}-${board.id}`}  board={board} />
                 ))}
             </Stack>
         </Stack>
