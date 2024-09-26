@@ -42,6 +42,8 @@ export interface IBoardMissionsDetails {
     orderId: string;
     orderNumber: string;
     clientName: string;
+    clientEmail: string;
+    clientPhone: string;
     clientId: string;
     productName: string;
     productId: string;
