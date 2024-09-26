@@ -45,7 +45,6 @@ const useProductionFloorData = () => {
         return await getProductionFloorData(callApi, callBack, connectionId, false, abortController);
     }
 
-
     const updateStatus = async (boards: IBoardMissions[], statusId: string) => {
         const boardsIds = boards?.filter(b => b.statusId !== statusId);
 

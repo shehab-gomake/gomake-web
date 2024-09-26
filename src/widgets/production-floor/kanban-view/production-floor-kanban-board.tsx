@@ -3,18 +3,15 @@ import { useProductionFloorKanban } from "@/widgets/production-floor/kanban-view
 import Stack from "@mui/material/Stack";
 import { useRecoilValue } from "recoil";
 import { useMemo } from "react";
-// import { selectedChipIdState } from "../state/text-search";
 import { selectedChipIdsState } from "../state/text-search";
 
 const ProductionFloorKanbanBoard = () => {
     const { data } = useProductionFloorKanban();
-
     const selectedChipId = useRecoilValue(selectedChipIdsState);
-    // const selectedChipId = useRecoilValue(selectedChipIdState);
 
     const filteredDataByMachine = useMemo(() => {
-        if (selectedChipId.length === 0) return data;
 
+        if (selectedChipId.length === 0) return data;
         return data.map((item) => {
             const filteredBoardMissions = item.boardMissions.filter((mission) => {
                 return selectedChipId.some((chipId) =>
@@ -30,7 +27,7 @@ const ProductionFloorKanbanBoard = () => {
         });
     }, [data, selectedChipId]);
 
-
+ 
     return (
         <Stack direction={'row'} justifyContent={'space-between'} padding={'20px'} overflow={'hidden'} minHeight={'100%'}>
             {filteredDataByMachine.map((column) => (

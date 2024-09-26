@@ -13,9 +13,6 @@ import { userProductionFloorGroupsState } from "@/widgets/production-floor/state
 import { productionFloorPathsState } from "@/widgets/production-floor/state/production-floor-paths";
 import { Source, useActionsList } from "./select/actions-select/use-actions-list";
 import { useTranslation } from "react-i18next";
-
-
-// import { selectedChipIdState } from "../state/text-search";
 import { selectedChipIdsState } from "../state/text-search";
 
 const useProductionFloorFilters = () => {
@@ -25,7 +22,7 @@ const useProductionFloorFilters = () => {
     const [search, setSearch] = useRecoilState(productionFloorTextSearchState);
     const setTags = useSetRecoilState(tagsState);
     const { callApi } = useGomakeAxios();
-    const [, setData] = useRecoilState(boardsMissionsState);
+    const [data , setData] = useRecoilState(boardsMissionsState);
     const setView = useSetRecoilState(productionFloorViewState);
     const { push } = useRouter();
     const { alertSuccessUpdate, alertFaultUpdate } = useSnackBar();
@@ -40,12 +37,14 @@ const useProductionFloorFilters = () => {
     const [machinesColors, setMachinesColors] = useState([]);
     const scrollContainerRef = useRef<HTMLDivElement>(null);
     const groups = filtersState?.groups;
-
+    const [selectedChips, setSelectedChips] = useState<string[]>([]); 
+    const [selectedChipIds,setSelectedChipIds] = useRecoilState(selectedChipIdsState);
+    
     const setFilters = async (filters: IProductionFloorFilter) => {
         const callBack = (res) => {
             if (res?.success) {
                 alertSuccessUpdate();
-
+              
                 const backendFiltersStations = res?.data?.filter?.stations || [];
                 const mergedStations = filters.stations.map(station => {
                     const correspondingBackendFilter = backendFiltersStations.find(
@@ -63,7 +62,11 @@ const useProductionFloorFilters = () => {
                     stations: mergedStations
                 });
 
-                // setFiltersState(filters);
+                // selectedChipIds contains an ID that has already been unchecked (removed) from actions dropdown, and ensure that the filteredDataByMachine correctly updates
+                const validMachineIds = mergedStations?.flatMap(station => station.machineIds);
+                const updatedSelectedChipIds = selectedChipIds?.filter(id => validMachineIds?.includes(id));
+                setSelectedChipIds(updatedSelectedChipIds);
+
                 setData(res?.data?.boardMissionsCollections);
                 setTags(res?.data?.automatedTagsFilter);
                 setUserGroups(res?.data?.groups);
@@ -161,24 +164,6 @@ const useProductionFloorFilters = () => {
         setAnchorEl(null);
     };
 
-    // const [selectedChip, setSelectedChip] = useState<string | null>(null);
-    // const setSelectedChipId = useSetRecoilState(selectedChipIdState);
-    // const handleChipClick = (card: { label: string; machineId: string }) => {
-    //     const { label, machineId } = card;
-    //     const isChipSelected = selectedChip === label;
-    //     setSelectedChip(isChipSelected ? null : label);
-    //     if (machineId && !isChipSelected) {
-    //         setSelectedChipId(machineId);
-    //     }
-    //     else{
-    //         setSelectedChipId(null);
-
-    //     }
-    // };
-
-    const [selectedChips, setSelectedChips] = useState<string[]>([]); // Change here
-    const setSelectedChipIds = useSetRecoilState(selectedChipIdsState);
-
     const handleChipClick = (card: { label: string; machineId: string }) => {
         const { label, machineId } = card;
         setSelectedChips(prevSelectedChips => {
@@ -204,7 +189,6 @@ const useProductionFloorFilters = () => {
             }
         });
     };
-
 
     return {
         t,
