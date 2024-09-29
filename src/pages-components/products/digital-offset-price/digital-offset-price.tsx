@@ -419,6 +419,9 @@ const PriceListPageWidget = ({ widgetType }) => {
                 setIsChargeForNewDie={setIsChargeForNewDie}
                 straightKnife={straightKnife}
                 isParameterSettings={false}
+                _renderParameterType={_renderParameterType}
+                template={productTemplate}
+                _getParameter={_getParameter}
             />
             <MultiParameterModal
                 openModal={multiParameterModal}

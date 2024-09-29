@@ -1,38 +1,38 @@
 import Stack from "@mui/material/Stack";
-import {useRecoilState, useRecoilValue} from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import {
     boardMissionsDetailsState,
     boardsMissionsState,
 } from "@/widgets/production-floor/state/boards";
-import {Avatar, Divider, IconButton, Skeleton, Tooltip} from "@mui/material";
-import {useStyle} from "@/widgets/production-floor/views/board-missions-view/header/style"
-import {DateFormatterDDMMYYYY} from "@/utils/adapter";
+import { Avatar, Divider, IconButton, Skeleton, Tooltip } from "@mui/material";
+import { useStyle } from "@/widgets/production-floor/views/board-missions-view/header/style"
+import { DateFormatterDDMMYYYY } from "@/utils/adapter";
 import TocIcon from '@mui/icons-material/Toc';
-import {useTranslation} from "react-i18next";
-import {useEffect, useState} from "react";
+import { useTranslation } from "react-i18next";
+import { useEffect, useState } from "react";
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
-import {useRouter} from "next/router";
-import {IBoardMissions, IBoardMissionsDetails} from "@/widgets/production-floor/interfaces/board-missions";
+import { useRouter } from "next/router";
+import { IBoardMissions, IBoardMissionsDetails } from "@/widgets/production-floor/interfaces/board-missions";
 
-const HeaderTitleComponent = ({title}: { title?: string }) => {
-    const {classes} = useStyle();
+const HeaderTitleComponent = ({ title }: { title?: string }) => {
+    const { classes } = useStyle();
     return <span style={classes.title}>{title}</span>
 }
 const HeaderDividerComponent = () => {
-    const {classes} = useStyle()
-    return <Divider orientation={'vertical'} style={classes.divider} flexItem/>
+    const { classes } = useStyle()
+    return <Divider orientation={'vertical'} style={classes.divider} flexItem />
 }
 const doneBoardMissionsColors = {
     color: '#66D671',
     bfColor: '#D9F5DC',
 }
 const BoardMissionsDetailsHeader = () => {
-    const {classes} = useStyle();
-    const {t} = useTranslation();
+    const { classes } = useStyle();
+    const { t } = useTranslation();
     const direction = t('direction');
     const [boardFromTable, setBoardFromTable] = useState<IBoardMissions>({} as IBoardMissions)
-    const {push, query, pathname} = useRouter();
+    const { push, query, pathname } = useRouter();
     const [boardMissionsDetails, setBoardMissionsDetails] = useRecoilState(boardMissionsDetailsState);
     useEffect(() => {
         setBoardMissionsDetails({} as IBoardMissionsDetails)
@@ -49,8 +49,8 @@ const BoardMissionsDetailsHeader = () => {
     const onNavigateBoardMissions = (boardId, productType) => {
         push({
             pathname: pathname,
-            query: {...query, boardMissionsId: boardId, productType: productType}
-        }, undefined, {shallow: true}).then();
+            query: { ...query, boardMissionsId: boardId, productType: productType }
+        }, undefined, { shallow: true }).then();
 
     }
     const isLoading = !boardMissionsDetails?.boardMissionId; // Check if boardMissionId exists
@@ -61,23 +61,23 @@ const BoardMissionsDetailsHeader = () => {
                 <Stack direction="row" justifyContent="space-between">
                     {/* Avatar Skeleton */}
                     <Stack direction="row" gap="14px" alignItems="center">
-                        <Skeleton variant="rectangular" width={80} height={80}/>
+                        <Skeleton variant="rectangular" width={80} height={80} />
 
                         <Stack gap="10px">
                             {/* Skeleton for product/client names */}
-                            <Skeleton variant="text" width={200} height={20}/>
-                            <Skeleton variant="text" width={150} height={20}/>
+                            <Skeleton variant="text" width={200} height={20} />
+                            <Skeleton variant="text" width={150} height={20} />
 
                             <Stack direction="row" alignItems="center" gap="5px">
-                                <Skeleton variant="text" width={100} height={20}/>
+                                <Skeleton variant="text" width={100} height={20} />
                             </Stack>
                         </Stack>
                     </Stack>
 
                     {/* Navigation buttons Skeleton */}
                     <Stack direction="row" gap="10px" alignItems="center">
-                        <Skeleton variant="circular" width={40} height={40}/>
-                        <Skeleton variant="circular" width={40} height={40}/>
+                        <Skeleton variant="circular" width={40} height={40} />
+                        <Skeleton variant="circular" width={40} height={40} />
                     </Stack>
                 </Stack>
             ) : (
@@ -86,18 +86,18 @@ const BoardMissionsDetailsHeader = () => {
                         <Stack>
                             <Avatar
                                 src={boardMissionsDetails?.boardMissionImage}
-                                style={{width: '80px', height: '80px', borderRadius: '8px'}}
+                                style={{ width: '80px', height: '80px', borderRadius: '8px' }}
                                 variant={'square'}
                             >
-                                <TocIcon style={{width: '60px', height: '60px'}}/>
+                                <TocIcon style={{ width: '60px', height: '60px' }} />
                             </Avatar>
                         </Stack>
                         <Stack gap={'10px'}>
                             <Stack direction={'row'} alignItems={'center'} gap={'5px'}>
-                                <HeaderTitleComponent title={boardMissionsDetails?.productName}/>
-                                <HeaderDividerComponent/>
-                                <HeaderTitleComponent title={boardMissionsDetails.clientName}/>
-                                <HeaderDividerComponent/>
+                                <HeaderTitleComponent title={boardMissionsDetails?.productName} />
+                                <HeaderDividerComponent />
+                                <HeaderTitleComponent title={boardMissionsDetails.clientName} />
+                                <HeaderDividerComponent />
                                 <HeaderTitleComponent
                                     title={`${boardMissionsDetails.boardMissionNumber}/${boardMissionsDetails.orderNumber}${!!boardMissionsDetails.productType ? '/' : ''}`}
                                 />
@@ -105,11 +105,11 @@ const BoardMissionsDetailsHeader = () => {
                             </Stack>
                             <Stack direction={'row'} alignItems={'center'} gap={'16px'}>
                                 <span>{t('productionFloor.started')} {DateFormatterDDMMYYYY(boardMissionsDetails.createdDate?.toString())}</span>
-                                <Divider flexItem orientation={'vertical'}/>
+                                <Divider flexItem orientation={'vertical'} />
                                 <Stack direction={'row'} gap={'8px'} alignItems={'center'}>
                                     <span style={classes.parameterLabel}>{t('productionFloor.status')}:</span>
                                     <Stack
-                                        style={{backgroundColor: boardMissionsDetails?.isReady ? doneBoardMissionsColors.bfColor :  boardMissionsDetails?.boardMissionStatus?.backgroundColor}}
+                                        style={{ backgroundColor: boardMissionsDetails?.isReady ? doneBoardMissionsColors.bfColor : boardMissionsDetails?.boardMissionStatus?.backgroundColor }}
                                         padding={'0 5px'}
                                         direction={'row'}
                                         gap={'5px'}
@@ -124,17 +124,32 @@ const BoardMissionsDetailsHeader = () => {
                                         }
                                     </Stack>
                                 </Stack>
-                                <Divider flexItem orientation={'vertical'}/>
+                                <Divider flexItem orientation={'vertical'} />
                                 <Stack direction={'row'} gap={'5px'}>
                                     <span style={classes.parameterLabel}>{t('productionFloor.agent')}:</span>
                                     <span style={classes.parameterValue}>{boardMissionsDetails.agentName}</span>
                                 </Stack>
-                                <Divider flexItem orientation={'vertical'}/>
+                                <Divider flexItem orientation={'vertical'} />
+                                <Stack direction={'row'} gap={'5px'}>
+                                    <span style={classes.parameterLabel}>{t('login.email')}</span>
+                                    <span
+                                        style={classes.parameterValue}>{boardMissionsDetails.clientEmail}</span>
+                                </Stack>
+
+                                <Divider flexItem orientation={'vertical'} />
+                                <Stack direction={'row'} gap={'5px'}>
+                                    <span style={classes.parameterLabel}>{t('sales.quote.phone')}</span>
+                                    <span
+                                        style={classes.parameterValue}>{boardMissionsDetails.clientPhone}</span>
+                                </Stack>
+                                <Divider flexItem orientation={'vertical'} />
                                 <Stack direction={'row'} gap={'5px'}>
                                     <span style={classes.parameterLabel}>{t('productionFloor.deliveredOn')}</span>
                                     <span
                                         style={classes.parameterValue}>{DateFormatterDDMMYYYY(boardMissionsDetails.dueDate)}</span>
                                 </Stack>
+
+
                             </Stack>
                         </Stack>
                     </Stack>
@@ -150,11 +165,11 @@ const BoardMissionsDetailsHeader = () => {
                                         boardFromTable?.previousBoardMission?.productType
                                     )
                                 }
-                                style={{border: '1px solid'}}
+                                style={{ border: '1px solid' }}
                                 color={'error'}
                                 disabled={!boardFromTable?.previousBoardMission}
                             >
-                                {direction === 'ltr' ? <NavigateBeforeIcon/> : <NavigateNextIcon/>}
+                                {direction === 'ltr' ? <NavigateBeforeIcon /> : <NavigateNextIcon />}
                             </IconButton>
                         </Tooltip>
                         <Tooltip
@@ -168,11 +183,11 @@ const BoardMissionsDetailsHeader = () => {
                                         boardFromTable?.nextBoardMission?.productType
                                     )
                                 }
-                                style={{border: '1px solid'}}
+                                style={{ border: '1px solid' }}
                                 color={'success'}
                                 disabled={!boardFromTable?.nextBoardMission}
                             >
-                                {direction === 'ltr' ? <NavigateNextIcon/> : <NavigateBeforeIcon/>}
+                                {direction === 'ltr' ? <NavigateNextIcon /> : <NavigateBeforeIcon />}
                             </IconButton>
                         </Tooltip>
                     </Stack>
@@ -181,4 +196,4 @@ const BoardMissionsDetailsHeader = () => {
         </>
     );
 }
-export {BoardMissionsDetailsHeader}
+export { BoardMissionsDetailsHeader }

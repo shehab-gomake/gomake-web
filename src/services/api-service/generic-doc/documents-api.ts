@@ -69,6 +69,8 @@ const UPDATE_DOCUMENT_INTERNAL_NOTES_URL = "/v1/erp-service/document/update-docu
 const GET_CLIENT_DOCUMENTS = "/v1/erp-service/documents/get-client-documents";
 const ADD_CREATE_CONTACT_URL = "/v1/crm-service/customer/create-contact";
 const SORT_DOCUMENT_ITEMS_URL = "/v1/erp-service/documents/sort-document-items";
+const UPDATE_DISCOUNT_TYPE_URL = "/v1/erp-service/documents/update-discount=type";
+
 const UPDATE_IS_SHOW_DETAILS_URL = "/v1/erp-service/documents/update-is-show-details";
 const UPDATE_IS_SHOW_PRICES_URL = "/v1/erp-service/documents/update-is-show-prices";
 const GET_WHATSAPP_MESSAGE_URL = "/v1/erp-service/documents/get-whats-app-message";
@@ -661,6 +663,16 @@ const sortDocumentItemsApi: ICallAndSetData = async (callApi, setState, data) =>
   );
 };
 
+const updateDiscountTypeApi: ICallAndSetData = async (callApi, setState, data) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.PUT,
+    UPDATE_DISCOUNT_TYPE_URL,
+    setState,
+    data
+  );
+};
+
 const updateIsShowDetailsApi: ICallAndSetData = async (callApi, setState, data) => {
   return await getSetApiData(
     callApi,
@@ -806,6 +818,7 @@ export {
   addCustomerContactApi,
   getBoardMissionPDF,
   sortDocumentItemsApi,
+  updateDiscountTypeApi,
   updateIsShowDetailsApi,
   getWhatsAppMessageApi,
   CloseDocumentApi,

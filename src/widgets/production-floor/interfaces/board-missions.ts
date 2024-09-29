@@ -42,12 +42,15 @@ export interface IBoardMissionsDetails {
     orderId: string;
     orderNumber: string;
     clientName: string;
+    clientEmail: string;
+    clientPhone: string;
     clientId: string;
     productName: string;
     productId: string;
     agentId?: string
     agentName: string
     boardMissionImage: string;
+    isNeedExample: boolean;
     dueDate?: string
     createdDate?: Date
     boardMissionStatus: IProductionStatus;

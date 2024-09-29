@@ -203,6 +203,7 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false, isPrePa
     onClickOpenWhatsAppModal,
     onClickCloseWhatsAppModal,
     sortDocumentItems,
+    updateDiscountType,
     updateIsShowDetails,
     updateIsShowPrices,
     getWhatsAppMessage,
@@ -311,7 +312,7 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false, isPrePa
 
   const DateField = ({ label, date, handleClick, handleChange, inputRef, isEditable }) => (
     <div
-      style={{ ...classes.dateFiled, cursor:isEditable ? "pointer" : "default" }}
+      style={{ ...classes.dateFiled, cursor: isEditable ? "pointer" : "default" }}
       onClick={isEditable ? handleClick : null}
     >
       <span>{label}</span>
@@ -537,7 +538,7 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false, isPrePa
           {!isQuoteConfirmation &&
             <div style={{ width: '100%' }} data-tour={'quoteStep2'}>
               <ButtonsContainer
-              openSendBtn={openSendBtn}
+                openSendBtn={openSendBtn}
                 onOpenNewItem={onOpenNewItem}
                 onOpenDeliveryModal={onOpenDeliveryModal}
                 handleCancelBtnClick={handleCancelBtnClick}
@@ -623,6 +624,7 @@ const QuoteNewPageWidget = ({ documentType, isQuoteConfirmation = false, isPrePa
         updateCurrency={updateCurrency}
         onClickRefresh={refreshExchangeRate}
         sortDocumentItems={sortDocumentItems}
+        updateDiscountType={updateDiscountType}
         updateIsShowDetails={updateIsShowDetails}
         updateIsShowPrices={updateIsShowPrices}
       />

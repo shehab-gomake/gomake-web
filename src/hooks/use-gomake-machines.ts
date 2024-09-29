@@ -72,7 +72,7 @@ const useGomakeMachines = () => {
         }));
     }
     const checkAllMachines = () => {
-        const isChecked = machines.every(machine => machine.checked);
+        const isChecked = machines?.every(machine => machine.checked);
         const updatedMachines = machines.map(machine => ({...machine, checked: !isChecked}));
         setMachines(updatedMachines);
     }
