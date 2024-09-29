@@ -59,7 +59,7 @@ import {
   productQuantityTypesValuesState,
   tempProductQuantityTypesValuesState
 } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/quantity-parameter/quantity-types/state";
-import { findParameterByCode, hasValues } from "@/utils/helpers";
+import { checkIfDieCutOrDieKissCutExists, findParameterByCode, hasValues } from "@/utils/helpers";
 import React from "react";
 import { getCurrenciesSymbols } from "@/services/api-service/general/enums";
 import { currenciesSymbols } from "@/widgets/materials-widget/state";
@@ -2541,6 +2541,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     }
   };
 
+  const hasDieCutOrDieKissCut = checkIfDieCutOrDieKissCutExists(subProducts);
 
   const onChangeSubProductsForPrice = (
     parameterId: any,
@@ -2669,6 +2670,13 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             }
 
           });
+        }
+        if (subSectionParameter?.code === "Shape" && hasDieCutOrDieKissCut) {
+          const parametersToRemove = ["Height", "Width", "size", "DieCut", "DieKissCut", "DieStamp"];
+
+          temp = temp.filter(
+            (param) => !parametersToRemove.includes(param.parameterCode)
+          );
         }
         //types parameter
         if (subSectionParameter.id == "de2bb7d5-01b1-4b2b-b0fa-81cd0445841b") {
@@ -2917,6 +2925,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             }
           });
         }
+
         if (dieCut) {
           if (subSectionParameter.code === "DieCut") {
             let dieUnitWidth = dieCut.rowData.dieUnitWidth.value + "";
