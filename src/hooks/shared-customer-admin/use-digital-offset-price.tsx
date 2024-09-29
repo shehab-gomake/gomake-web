@@ -2973,8 +2973,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             });
           }
           else if (subSectionParameter.code === "DieKissCut") {
-            let unitWidth = dieCut.rowData.unitWidth.value + "";
-            let unitLength = dieCut.rowData.unitLength.value + "";
+            let unitWidth = dieCut?.rowData?.unitWidth?.value + "";
+            let unitLength = dieCut?.rowData?.unitLength?.value + "";
             const dieCutSizesParametersArray = [];
             dieCutSizesParametersArray.push({ parameterCode: "Width", value: unitWidth });
             dieCutSizesParametersArray.push({ parameterCode: "Height", value: unitLength });
