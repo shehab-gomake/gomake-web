@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 import { SearchInputComponent } from "@/components/form-inputs/search-input-component";
 import { ReChooseIcon } from "@/icons";
 import { GalleryModalMapping } from "./gallery-modal-mapping";
+import { Skeleton } from "@mui/material";
 
 const GalleryModal = ({
   openModal,
@@ -38,7 +39,8 @@ const GalleryModal = ({
     addChargeForNewDieParameter,
     subSectionId,
     sectionId,
-    value
+    value,
+    isLoading
   } = useGalleryModal({
     onClose,
     onChangeSubProductsForPrice,
@@ -107,32 +109,42 @@ const GalleryModal = ({
                 </div>
               );
             })}
+            <>
+              {isLoading ? Array(11) // Adjust the number based on how many skeletons you want to show
+                .fill(null)
+                .map((_, index) => (
+                  <Skeleton height={375} width={250} variant="rectangular"
+                  />
+                )) : <>
+                {materialDataFilter
+                  ? searchResult?.map((item, index) => {
+                    return (
+                      <GalleryModalMapping
+                        index={index}
+                        item={item}
+                        selectedShape={selectedShape}
+                        createParameterForCalculation={
+                          createParameterForCalculation
+                        }
+                      />
+                    );
+                  })
+                  : materialData?.data?.map((item, index) => {
+                    return (
+                      <GalleryModalMapping
+                        index={index}
+                        item={item}
+                        selectedShape={selectedShape}
+                        createParameterForCalculation={
+                          createParameterForCalculation
+                        }
+                      />
+                    );
+                  })}
+              </>
+              }
+            </>
 
-            {materialDataFilter
-              ? searchResult?.map((item, index) => {
-                return (
-                  <GalleryModalMapping
-                    index={index}
-                    item={item}
-                    selectedShape={selectedShape}
-                    createParameterForCalculation={
-                      createParameterForCalculation
-                    }
-                  />
-                );
-              })
-              : materialData?.data?.map((item, index) => {
-                return (
-                  <GalleryModalMapping
-                    index={index}
-                    item={item}
-                    selectedShape={selectedShape}
-                    createParameterForCalculation={
-                      createParameterForCalculation
-                    }
-                  />
-                );
-              })}
           </div>
         </div>
         <div style={clasess.footerContainer}>
