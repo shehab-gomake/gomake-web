@@ -17,7 +17,7 @@ import { EHttpMethod } from "@/services/api-service/enums";
 import { filterState } from "@/widgets/materials-widget/state";
 import { useRouter } from "next/router";
 
-const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForNewDie, straightKnife, isParameterSettings, getProductById, template }) => {
+const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForNewDie, straightKnife, isParameterSettings, getProductById, template, _getParameter }) => {
   const { callApi } = useGomakeAxios();
   const { alertFaultAdded, alertSuccessAdded } = useSnackBar();
   const { t } = useTranslation();
@@ -279,6 +279,64 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
     }
   };
 
+
+  function findParameterInTemplate(template, parameterCodes) {
+    let foundParameters = [];
+
+    // Helper function to search within a given section or subsection
+    function searchParameters(parameters, sectionId, subSectionId) {
+      parameters.forEach(param => {
+        if (parameterCodes.includes(param.code)) {
+          foundParameters.push({ ...param, sectionId, subSectionId });
+        }
+      });
+    }
+
+    // Iterate through sections and their subsections
+    template?.sections?.forEach(section => {
+      section.subSections.forEach(subSection => {
+        searchParameters(subSection.parameters, section.id, subSection.id);
+      });
+    });
+
+    return foundParameters;
+  }
+  const getSectionById = (template, sectionId) => {
+    const section = template?.sections?.find(section => section.id === sectionId);
+    if (section) {
+      return {
+        section,
+        subSections: section.subSections || []
+      };
+    }
+    return null;
+  };
+  const getSubSectionById = (template, sectionId, subSectionId) => {
+    const section = template?.sections?.find(section => section.id === sectionId);
+    if (section) {
+      const subSection = section.subSections.find(subSec => subSec.id === subSectionId);
+      return subSection || null;
+    }
+    return null;
+  };
+  const addChargeForNewDieParameter: any = findParameterInTemplate(template, ["AddChargeForNewDie"]);
+  const [sectionId, setSectionId] = useState<any>({})
+  const [subSectionId, setSubSectionId] = useState<any>({})
+  const [value, setValueState] = useState<any>()
+
+
+  useEffect(() => {
+    if (template && addChargeForNewDieParameter?.length > 0) {
+      const SectionId = getSectionById(template, addChargeForNewDieParameter[0]?.sectionId);
+      const subSectionId = getSubSectionById(template, addChargeForNewDieParameter[0]?.sectionId, addChargeForNewDieParameter[0]?.subSectionId);
+      const value = _getParameter(addChargeForNewDieParameter[0], subSectionId, SectionId);
+
+      setSectionId(SectionId)
+      setSubSectionId(subSectionId)
+      setValueState(value)
+    }
+  }, [template, addChargeForNewDieParameter])
+
   return {
     materialData,
     selectedShape,
@@ -293,7 +351,11 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
     materialTableFilters,
     setMaterialDataFilter,
     setMaterialTableFilters,
-    setFilterValue
+    setFilterValue,
+    addChargeForNewDieParameter,
+    subSectionId,
+    sectionId,
+    value
   };
 };
 

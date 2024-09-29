@@ -1,4 +1,4 @@
-import { GoMakeAutoComplate, GoMakeModal, GomakePrimaryButton, SecondSwitch } from "@/components";
+import { GoMakeAutoComplate, GoMakeModal, GomakePrimaryButton } from "@/components";
 
 import { useGalleryModal } from "./use-gallery-modal";
 import { useStyle } from "./style";
@@ -16,7 +16,9 @@ const GalleryModal = ({
   straightKnife,
   isParameterSettings,
   getProductById,
-  template
+  template,
+  _renderParameterType,
+  _getParameter
 }: any) => {
   const { clasess } = useStyle();
   const { t } = useTranslation();
@@ -32,7 +34,11 @@ const GalleryModal = ({
     searchResult,
     materialDataFilter,
     materialTableFilters,
-    setMaterialTableFilters
+    setMaterialTableFilters,
+    addChargeForNewDieParameter,
+    subSectionId,
+    sectionId,
+    value
   } = useGalleryModal({
     onClose,
     onChangeSubProductsForPrice,
@@ -40,10 +46,9 @@ const GalleryModal = ({
     straightKnife,
     isParameterSettings,
     getProductById,
-    template
+    template,
+    _getParameter
   });
-
-
   return (
     <>
       <GoMakeModal
@@ -132,16 +137,17 @@ const GalleryModal = ({
         </div>
         <div style={clasess.footerContainer}>
           <div style={clasess.switchContainer}>
-            <SecondSwitch
-
-              checked={isChargeForNewDie}
-              onChange={() => {
-                setIsChargeForNewDie(
-                  !isChargeForNewDie
-                );
-              }}
-            />
-            <div style={isChargeForNewDie ? clasess.switchlabelSelected : clasess.switchlabel}>Add a charge for new Die</div>
+            {_renderParameterType(
+              addChargeForNewDieParameter[0],
+              subSectionId,
+              sectionId?.section,
+              subSectionId?.parameters,
+              value,
+              subSectionId?.parameters,
+              true,
+              true,
+              false
+            )}
           </div>
           <GomakePrimaryButton
             style={clasess.chooseBtnStyle}
