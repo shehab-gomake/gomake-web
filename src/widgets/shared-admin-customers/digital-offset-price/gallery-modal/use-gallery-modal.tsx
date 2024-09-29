@@ -29,9 +29,11 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
     useRecoilState<any>(selectedShapeState);
   const [materialData, setMaterialData] =
     useRecoilState<any>(materialBtnDataState);
+
   const [materialDataFilter, setMaterialDataFilter] = useState("");
   const [materialType, setMaterialType] = useState<any>({});
   const [isShowStraightKnife, setIsShowStraightKnife] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
   const [materialTableFilters, setMaterialTableFilters] = useState([])
   const [shapeCodeDefualt, setShapeCodeDefualt] = useState<any>({})
   useEffect(() => {
@@ -84,6 +86,7 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
   }, [selectParameterButton, materialsEnumsValues]);
 
   const getProductQuoteItemById = useCallback(async () => {
+    setIsLoading(true)
     const shapeId = shapeParameter && shapeParameter.valueIds && shapeParameter.valueIds.length ? shapeParameter.valueIds[0] : "";
     let shapeCode = "";
     if (shapeId) {
@@ -101,6 +104,9 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
       finalHeight: finalUnitHeightParameter && finalUnitHeightParameter.values && finalUnitHeightParameter.values.length > 0 && finalUnitHeightParameter.values[0] ? finalUnitHeightParameter.values[0] : 0,
     }
     const res = await getPrintHouseMaterialsByMaterialKey(callApi, setMaterialData, reqObj);
+    if (res?.data?.length > 0) {
+      setIsLoading(false)
+    }
     if (res?.filters?.length > 0) {
       setMaterialTableFilters(res?.filters)
     }
@@ -355,7 +361,8 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
     addChargeForNewDieParameter,
     subSectionId,
     sectionId,
-    value
+    value,
+    isLoading
   };
 };
 
