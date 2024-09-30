@@ -8,6 +8,7 @@ import { useRecoilState } from "recoil";
 import lodashClonedeep from "lodash.clonedeep";
 import { useRouter } from "next/router";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
+import { checkIfDieCutOrDieKissCutExists } from "@/utils/helpers";
 const ButtonParameterWidget = ({
   clasess,
   parameter,
@@ -439,8 +440,7 @@ const ButtonParameterWidget = ({
       setProducts(updatedSubProducts);
     }
   }, [materialData, isParameterSettings, isSelectedShape, allMaterials]);
-
-
+  const hasDieCutOrDieKissCut = checkIfDieCutOrDieKissCutExists(subProducts);
   if (parameter?.buttonAction === EButtonTypes.GALLERY_MODAL) {
     if (isStraightKnife) {
       Comp = (
@@ -476,7 +476,7 @@ const ButtonParameterWidget = ({
         </div>
       );
     }
-    else if (isSelectedShape && selectedShape) {
+    else if (isSelectedShape && selectedShape && hasDieCutOrDieKissCut) {
       Comp = (
         <div style={clasess.btnSelectedStyle}>
           <img

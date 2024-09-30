@@ -166,3 +166,17 @@ export const toRgba = (color: string, opacity: number) => {
 
   return rgbaColor;
 };
+
+export  const checkIfDieCutOrDieKissCutExists = (subProducts) => {
+  for (const subProduct of subProducts) {
+    if (subProduct.parameters) {
+      const dieCutParam = subProduct.parameters.find(
+        param => param.parameterCode === "DieCut" || param.parameterCode === "DieKissCut"
+      );
+      if (dieCutParam) {
+        return true;
+      }
+    }
+  }
+  return false;
+};

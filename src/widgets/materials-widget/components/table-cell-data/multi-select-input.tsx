@@ -1,12 +1,11 @@
 import React from "react";
-import { useRecoilValue } from "recoil";
-import { materialsMachinesState } from "@/widgets/materials-widget/state";
 import { useTableCellData } from "@/widgets/materials-widget/components/table-cell-data/use-table-cell-data";
 import { GoMakeAutoComplate } from "@/components";
 import { Stack } from "@mui/material";
 import { Checkbox, Paper } from "@mui/material";
 import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
 import { useStyle } from "./style";
+import { useCustomerDropDownList } from "@/hooks";
 
 interface IProps {
   parameterKey: string;
@@ -27,8 +26,18 @@ const MultiSelectInput = ({
 }: IProps) => {
   const { classes } = useStyle();
   const { updateCellData } = useTableCellData(isAdmin);
+  const {
+    renderOptions,
+    checkWhatRenderArray,
+  } = useCustomerDropDownList()
 
-  const reorderedOptions = options.sort((a, b) => {
+
+  const clientsOptions = renderOptions().map((client) => ({
+    value: client.id,
+    label: `${client.name} - ${client.code}`,
+  }));
+
+  const reorderedOptions = clientsOptions.sort((a, b) => {
     const isSelectedA = values.includes(a.value);
     const isSelectedB = values.includes(b.value);
 
@@ -41,7 +50,7 @@ const MultiSelectInput = ({
     }
   });
 
-  const selectedLabels = values?.map((selectedId) => options?.find((opt) => opt?.value === selectedId)?.label)
+  const selectedLabels = values?.map((selectedId) => reorderedOptions?.find((opt) => opt?.value === selectedId)?.label)
     .filter((label) => label !== null && label !== undefined);
 
   const handleSelectCheck = (
@@ -61,6 +70,9 @@ const MultiSelectInput = ({
     await updateCellData(id, key, value);
   };
 
+
+
+
   return (
     <div style={{ display: "flex", justifyContent: "center" }}>
       <GoMakeAutoComplate
@@ -69,6 +81,7 @@ const MultiSelectInput = ({
           ...classes.multiSelectStyle2,
           "& .MuiChip-deleteIcon": { display: "none" },
         }}
+        onChangeTextField={parameterKey === "clients" ? checkWhatRenderArray : undefined}
         value={selectedLabels}
         disableClearable={true}
         placeholder={placeHolder}
