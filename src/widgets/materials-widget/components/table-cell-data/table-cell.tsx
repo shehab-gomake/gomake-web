@@ -24,7 +24,7 @@ const TableCellData = ({
   isAdmin,
   onChangeRowCheckBox,
 }: IRowData) => {
-  const { updateCellData, machinesOptions, clientsOptions } = useTableCellData(isAdmin);
+  const { updateCellData, machinesOptions, clientsOptions, } = useTableCellData(isAdmin);
   const machinesCategories = useRecoilValue(machineCategoriesState);
   const parameterCategories = useRecoilValue<any>(materialsParametersState);
   const { t } = useTranslation()
