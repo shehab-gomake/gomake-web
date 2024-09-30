@@ -65,14 +65,18 @@ const BoardMissionsTable = ({boardsMissions, usedMachines}: IBoardMissionsTable)
     const boards = useCallback(() => {
         let boards = getFilteredBoardMissions(selectedStatusFilter) //littedBoards = x.splittedBoards.filter(y=>y.status == selectedStatusFilter) ).filter()] : [...boardsMissions];
         if (orderByMachine) {
-            boards = boards.sort((board1: IBoardMissions, board2: IBoardMissions) => {
-                return hasMachine(board1) - hasMachine(board2)
-            });
+            boards = boards
+                .sort((board1: IBoardMissions, board2: IBoardMissions) => {
+                    return board2.dueDate > board1.dueDate ? -1 : board2.dueDate < board1.dueDate ? 1 : 0
+                })
+                .sort((board1: IBoardMissions, board2: IBoardMissions) => {
+                    return hasMachine(board1) - hasMachine(board2)
+                })
             return boards
         }
         if (isOrderByCreationDate) {
             boards = boards.sort((board1: IBoardMissions, board2: IBoardMissions) => {
-                return board2.creationDate < board1.creationDate ? -1 : board2.creationDate > board1.creationDate ? 1 : 0
+                return board2.dueDate < board1.dueDate ? -1 : board2.dueDate > board1.dueDate ? 1 : 0
             });
             return boards
         }
@@ -225,7 +229,7 @@ const BoardMissionsTable = ({boardsMissions, usedMachines}: IBoardMissionsTable)
                                                                 <div style={{width: '30%', height: '100%'}}>
                                                                     <div style={classes.tdRows}>
                                                                         <DateTimeComponent
-                                                                            dateTime={board.creationDate.toString()}
+                                                                            dateTime={board.dueDate.toString()}
                                                                             gap={'20px'} direction={'column'}/>
                                                                     </div>
                                                                 </div>
@@ -295,7 +299,7 @@ const BoardMissionsTable = ({boardsMissions, usedMachines}: IBoardMissionsTable)
                                                     </div>
                                                     <div style={{width: '30%',}}>
                                                         <div style={classes.tdRows}>
-                                                            <DateTimeComponent dateTime={board.creationDate.toString()}
+                                                            <DateTimeComponent dateTime={board.dueDate.toString()}
                                                                                gap={'20px'} direction={'column'}/>
                                                         </div>
                                                     </div>
