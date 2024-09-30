@@ -5,7 +5,6 @@ import { DateFormatter } from "@/utils/adapter";
 import { useStyle } from "@/widgets/production-floor/kanban-view/kanban-card/style";
 import { useUserPermission } from "@/hooks/use-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
-import { t } from "i18next";
 import { OrderJObNumbersComponent } from "./order-job-num-coponent";
 import { toRgba } from "@/utils/helpers";
 import { useTranslation } from "react-i18next";
@@ -22,7 +21,7 @@ const ItemTypes = {
 const KanbanCardComponent = ({ board, status }: IProp) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
-  const dir: "rtl" | "ltr" = t("direction");
+  const CardColor = board?.productionFloorJobColor ?? status?.textColor;
 
   const { CheckPermission } = useUserPermission();
   const canDrag = CheckPermission(
@@ -44,7 +43,7 @@ const KanbanCardComponent = ({ board, status }: IProp) => {
   return (
     <Stack
       direction={"column"}
-      gap={"10px"}
+      gap={"15px"}
       padding={"10px"}
       borderRadius={"12px"}
       width={"100%"}
@@ -54,52 +53,47 @@ const KanbanCardComponent = ({ board, status }: IProp) => {
         opacity: isDragging ? 0.8 : 1,
         cursor: canDrag ? "move" : "not-allowed",
         borderRadius: "8px",
-        border: `1px solid var(--Colors-Yellow-600,${status?.textColor})`,
-        background: toRgba(status?.backgroundColor, 0.3),
+        border: `1px solid var(--Colors-Yellow-600,${CardColor})`,
+        background: toRgba(CardColor, 0.1),
         boxShadow: "0px 2px 4px 0px rgba(0, 0, 0, 0.08)",
       }}
     >
-      <table>
-        <tbody>
-          <tr style={{ ...classes.rowStyle, marginBottom: "8px" }}>
-            <td>
-              <span style={classes.jobTitle}>
-                {board.jobName || t("boardMissions.jobName")}
-              </span>
-            </td>
-            <td style={classes.secondColOld}>
-              <OrderJObNumbersComponent
-                boardMission={board}
-                textColor={status?.textColor}
-                bgColor={status?.backgroundColor}
-              />
-            </td>
-          </tr>
-          <tr style={{ ...classes.rowStyle, gap: "5px" }}>
-            <td style={classes.firstCol}>
-              <span style={classes.productTitle}>{board?.productName}</span>
-            </td>
-            <td style={{ ...classes.secondCol, direction: dir }}>
-              <span style={classes.productTitle}>{board?.clientName}</span>
-            </td>
-          </tr>
-          <tr style={classes.rowStyle}>
-            <td>
-              <span style={classes.secondLabel}>
-                {`${board?.numberOfJobsInOrder} ${t(
-                  "boardMissions.numberOfBoardMissionsInOrder"
-                )}`}
-              </span>
-            </td>
-            <td style={classes.secondColOld}>
-              <span style={classes.secondLabel}>
-                {" "}
-                {DateFormatter(board?.dueDate)}
-              </span>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <Stack
+        direction={"row"}
+        justifyContent={"space-between"}
+        display={"flex"}
+        flexWrap={"wrap"}
+      >
+        <span style={classes.jobTitle}>
+          {board.jobName || t("boardMissions.jobName")}
+        </span>
+        <OrderJObNumbersComponent
+          boardMission={board}
+          textColor={CardColor}
+          bgColor={toRgba(CardColor, 0.2)}
+        />
+      </Stack>
+      <Stack>
+        <Stack direction={"row"} justifyContent={"space-between"} gap={"5px"}>
+          <span style={classes.productTitle}>{board?.productName}</span>
+          <span style={classes.productTitle}>{board?.clientName}</span>
+        </Stack>
+        <Stack
+          direction={"row"}
+          justifyContent={"space-between"}
+          display={"flex"}
+          flexWrap={"wrap"}
+        >
+          <span style={classes.secondLabel}>
+            {`${board?.numberOfJobsInOrder} ${t(
+              "boardMissions.numberOfBoardMissionsInOrder"
+            )}`}
+          </span>
+          <span style={classes.secondLabel}>
+            {DateFormatter(board?.dueDate)}
+          </span>
+        </Stack>
+      </Stack>
     </Stack>
   );
 };

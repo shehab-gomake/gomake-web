@@ -21,33 +21,13 @@ const useStyle = () => {
                 color: '#212121',
                 maxWidth: 'fit-content'
             },
-
             productTitle: {
                 ...FONT_FAMILY.Inter(700, 15),
                 color: '#101828',    
-            },
-            firstCol: {
-                maxWidth: "90px", 
+                maxWidth: "50%",
                 overflow: "hidden",
                 textOverflow: "ellipsis",
                 whiteSpace: "nowrap",   
-            },
-            secondCol: {
-                textAlign: "end" as "end",
-                with:"fit-content",
-                maxWidth: "100px", 
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                whiteSpace: "nowrap",   
-            },
-            secondColOld: {
-                textAlign: "end" as "end",
-            },
-            rowStyle:{
-                display: "flex",
-                flexWrap: "wrap" as "wrap",
-                justifyContent: "space-between",
-            //    gap:"10px"
             },
             kanbanColumnCircle:{
                 display: "flex",

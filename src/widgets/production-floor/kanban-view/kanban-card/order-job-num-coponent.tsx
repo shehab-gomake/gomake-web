@@ -29,6 +29,7 @@ const OrderJObNumbersComponent = ({
         display: "inline-block",
         width: "fit-content",
         minWidth: "122px",
+        maxHeight: "fit-content",
         backgroundColor: bgColor,
         color: textColor,
         textAlign: "center",

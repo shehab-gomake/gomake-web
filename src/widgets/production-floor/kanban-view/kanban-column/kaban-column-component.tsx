@@ -76,8 +76,9 @@ function KanbanColumnComponent({ status, boardsMissions }: IProps) {
         <div
           style={{
             ...classes.kanbanColumnCircle,
-            border: `2px solid ${status.textColor}`,
+            border: `1px solid ${status.textColor}`,
             color: status.textColor,
+            boxShadow: `0 0 0 0.5 ${status.textColor}`,
           }}
         >
           {getBoards()?.length}
