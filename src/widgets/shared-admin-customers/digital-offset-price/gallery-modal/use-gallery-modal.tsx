@@ -74,7 +74,6 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
   useEffect(() => {
     if (selectParameterButton?.parameter?.materialPath?.length > 0) {
       getProductQuoteItemById();
-      CheckOptionToStraightKnife()
       const data = materialsEnumsValues.find((item) => {
         return compareStrings(
           item.name,
@@ -84,6 +83,12 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
       setMaterialType(data);
     }
   }, [selectParameterButton, materialsEnumsValues]);
+
+  useEffect(() => {
+    if (selectParameterButton?.parameter?.materialPath?.length > 0 && selectParameterButton?.parameter?.materialPath[0] === "DieKissCut") {
+      CheckOptionToStraightKnife()
+    }
+  }, [selectParameterButton]);
 
   const getProductQuoteItemById = useCallback(async () => {
     setIsLoading(true)
