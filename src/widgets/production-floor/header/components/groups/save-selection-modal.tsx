@@ -17,7 +17,7 @@ const SaveSelectionModal = ({ openModal, onClose, onClickSave }: any) => {
     <GoMakeModal
       openModal={openModal}
       onClose={onClose}
-      modalTitle={t("Save selection?")}
+      modalTitle={t("productionFloor.selectionModalTitle")}
       modalTitleStyle={{ ...FONT_FAMILY.Inter(600, 18) }}
       modalTitleColor={"#000000"}
       withRoundedCloseIcon={false}
@@ -25,9 +25,9 @@ const SaveSelectionModal = ({ openModal, onClose, onClickSave }: any) => {
     >
       <Stack direction={"column"} gap={"25px"}>
         <span style={{ ...FONT_FAMILY.Inter(400, 14), color: "#475467" }}>
-          Do you want to save or discard selections?
+          {t("productionFloor.selectionModalSubTitle")}
         </span>
-        <Stack direction={"row"} spacing={1} alignSelf={"flex-end"}>
+        <Stack direction={"row"} gap={"10px"} alignSelf={"flex-end"}>
           <GomakePrimaryButton
             style={{
               width: "fit-content",
@@ -39,7 +39,7 @@ const SaveSelectionModal = ({ openModal, onClose, onClickSave }: any) => {
             }}
             onClick={onClose}
           >
-            {t("Discard")}
+            {t("materials.buttons.discard")}
           </GomakePrimaryButton>
           <GomakePrimaryButton
             style={{
@@ -49,7 +49,7 @@ const SaveSelectionModal = ({ openModal, onClose, onClickSave }: any) => {
             }}
             onClick={handleSave}
           >
-            {t("Save")}
+            {t("materials.buttons.save")}
           </GomakePrimaryButton>
         </Stack>
       </Stack>

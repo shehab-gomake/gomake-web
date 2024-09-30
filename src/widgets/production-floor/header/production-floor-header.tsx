@@ -16,9 +16,6 @@ import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import { SettingsIcon } from "../../../icons/settings-icon";
 import { ActionsListComponent } from "@/widgets/production-floor/filters/select/actions-select/action-list-select-component";
 import { Source } from "@/widgets/production-floor/filters/select/actions-select/use-actions-list";
-import { GoMakeDeleteModal } from "@/components";
-import { useState } from "react";
-import { SaveSelectionModal } from "./components/groups/save-selection-modal";
 import { DepartmentModal } from "./components/groups/department-modal";
 
 const ProductionFloorHeader = () => {
@@ -32,27 +29,12 @@ const ProductionFloorHeader = () => {
     onClickBack,
     currentPathIndex,
     onStationsChange,
+    openDepartmentModal,
+    onClickOpenDepartmentModal,
+    onClickCloseDepartmentModal,
   } = useProductionFloorHeader();
   const { t } = useTranslation();
   const dir = t("direction");
-
-  const [openModal, setOpenModal] = useState(false);
-
-  const onClickOpenModal = () => {
-    setOpenModal(true);
-  };
-  const onClickCloseModal = () => {
-    setOpenModal(false);
-  };
-
-  const [openDepartmentModal, setOpenDepartmentModal] = useState(false);
-
-  const onClickOpenDepartmentModal = () => {
-    setOpenDepartmentModal(true);
-  };
-  const onClickCloseDepartmentModal = () => {
-    setOpenDepartmentModal(false);
-  };
 
   return (
     <Stack
@@ -117,7 +99,8 @@ const ProductionFloorHeader = () => {
         {view !== EProductionFloorView.DASHBOARD && (
           <ActionsListComponent
             source={Source.PRODUCTION_FLOOR}
-            onClickApply={onClickOpenModal}
+            onClickApply={onStationsChange}
+            onClickOpenDepartmentModal={onClickOpenDepartmentModal}
             buttonElement={
               <PrimaryButton
                 style={{ minWidth: "40px", height: "40px", padding: 0 }}
@@ -168,11 +151,6 @@ const ProductionFloorHeader = () => {
           </PrimaryButton>
         </ButtonGroup>
       </Stack>
-      <SaveSelectionModal
-        openModal={openModal}
-        onClose={onClickCloseModal}
-        onClickSave={onClickOpenDepartmentModal}
-      />
       <DepartmentModal
         openModal={openDepartmentModal}
         onClose={onClickCloseDepartmentModal}

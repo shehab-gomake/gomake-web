@@ -16,7 +16,7 @@ const DepartmentModal = ({ openModal, onClose }: any) => {
     <GoMakeModal
       openModal={openModal}
       onClose={onClose}
-      modalTitle={t("Department name")}
+      modalTitle={t("productionFloor.departmentName")}
       modalTitleStyle={{ ...FONT_FAMILY.Inter(600, 18) }}
       modalTitleColor={"#000000"}
       withRoundedCloseIcon={false}
@@ -34,11 +34,11 @@ const DepartmentModal = ({ openModal, onClose }: any) => {
             width: "90%",
           }}
         >
-          Please enter a name for Department you want to add.
+          {t("productionFloor.departmentModalSubTitle")}
         </span>
         <Stack direction={"column"} spacing={1}>
           <span style={{ ...FONT_FAMILY.Inter(400, 14), color: "#344054" }}>
-            Department name
+            {t("productionFloor.departmentName")}
           </span>
           <GomakeTextInput
             sx={{
@@ -51,13 +51,13 @@ const DepartmentModal = ({ openModal, onClose }: any) => {
                 },
               },
             }}
-            placeholder={t("e.g. Printing Department")}
+            placeholder={t("productionFloor.departmentName")}
             value={""}
           />
         </Stack>
         <Stack
           direction={"row"}
-          spacing={1}
+          gap={"10px"}
           alignSelf={"flex-end"}
           width={"100%"}
         >
@@ -72,7 +72,7 @@ const DepartmentModal = ({ openModal, onClose }: any) => {
             }}
             onClick={onClose}
           >
-            {t("Cancel")}
+            {t("materials.buttons.cancel")}
           </GomakePrimaryButton>
           <GomakePrimaryButton
             style={{
@@ -82,7 +82,7 @@ const DepartmentModal = ({ openModal, onClose }: any) => {
             }}
             onClick={() => null}
           >
-            {t("Add")}
+            {t("materials.buttons.add")}
           </GomakePrimaryButton>
         </Stack>
       </Stack>
