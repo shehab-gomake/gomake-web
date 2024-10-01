@@ -5,7 +5,6 @@ import {
   useCallback,
   useEffect,
   useRef,
-  useState,
 } from "react";
 import { Button, Divider, FormGroup, IconButton, Paper } from "@mui/material";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
@@ -20,8 +19,9 @@ import { ClickOutside } from "@/components/click-out-side/click-out-side";
 import { CollapseOptionComponent } from "@/widgets/production-floor/filters/select/actions-select/collapse-option-component";
 import ClearIcon from "@mui/icons-material/Clear";
 import { useStyle } from "./style";
-import { SaveSelectionModal } from "@/widgets/production-floor/header/components/groups/save-selection-modal";
 import { DepartmentModal } from "@/widgets/production-floor/header/components/groups/department-modal";
+import { SaveIcon } from "@/widgets/production-floor/header/components/icons/save-icon";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 interface IProps {
   onClickApply: (v: IStation[]) => void;
@@ -44,32 +44,26 @@ const ActionsListComponent = ({
     setOpen,
     filter,
     setFilter,
-    openSelectionModal,
-    onClickOpenSelectionModal,
-    onClickCloseSelectionModal,
     openDepartmentModal,
-    onClickOpenDepartmentModal,
     onClickCloseDepartmentModal,
-
-    //!New
+    handleClick,
+    handleClickSave,
     filterGroups,
+    selectedGroupId,
+    setSelectedGroupId,
+    handleSelectGroup,
     getStationFilterGroups,
-    getStationFilterGroupById,
     deleteStationFilterGroupById,
     createBoardMissionStationFilterGroup,
   } = useActionsList({ source, onClickApply });
 
   const { classes } = useStyle({ source });
-
-  const handleClick = () => {
-    setOpen(!open);
-  };
+  const { secondColor } = useGomakeTheme();
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
   const handleFilterChange = (event: FormEvent<HTMLInputElement>) => {
     setFilter(event.currentTarget.value);
   };
-
-  const buttonRef = useRef<HTMLButtonElement>(null);
 
   const getList = useCallback(() => {
     let list = [...actionsList];
@@ -107,18 +101,6 @@ const ActionsListComponent = ({
     getStationFilterGroups();
   }, []);
 
-  const [selectedGroupId, setSelectedGroupId] = useState<string | null>(null);
-  const handleSelect = (groupId: string) => {
-    if (selectedGroupId === groupId) {
-      setSelectedGroupId(null);
-      onClickApply([]);
-    } else {
-      setSelectedGroupId(groupId);
-      getStationFilterGroupById(groupId);
-    }
-    handleClick();
-  };
-
   return (
     <div style={{ position: "relative" }}>
       {!!buttonElement ? (
@@ -137,7 +119,7 @@ const ActionsListComponent = ({
       {open && (
         <ClickOutside exceptionRef={buttonRef} onClick={() => setOpen(false)}>
           <Paper sx={classes.paperStyle}>
-            <div>
+            <div style={{ minWidth: "280px" }}>
               <FormGroup>
                 <div style={classes.listContainer}>
                   <GomakeTextInput
@@ -168,64 +150,50 @@ const ActionsListComponent = ({
                   onClick={() => {
                     setOpen(false);
                     onClickApply(actionsMachinesIds);
-                    onClickOpenSelectionModal();
                     setSelectedGroupId(null);
                   }}
                 >
                   {t("productionFloor.apply")}
                 </SecondaryButton>
+                {source === Source.PRODUCTION_FLOOR && (
+                  <div onClick={handleClickSave} style={classes.iconContainer}>
+                    <SaveIcon color={secondColor(500)} />
+                  </div>
+                )}
               </div>
             </div>
 
-            {filterGroups?.length !== 0 && (
-              <>
-                <Divider orientation="vertical" flexItem />
-                <div style={classes.departmentsContainer}>
-                  <span style={classes.departmentsLabel}>
-                    {t("productionFloor.departmentName")}
-                  </span>
-                  <div
-                    style={{
-                      ...classes.departmentsContainer,
-                      maxHeight: "320px",
-                      overflow: "scroll",
-                      gap: "8px",
-                    }}
-                  >
-                    {filterGroups?.map((group) => (
-                      <div
-                        key={group?.id}
-                        onClick={() => handleSelect(group?.id)}
-                        style={{
-                          ...classes.departmentTicket,
-                          backgroundColor:
-                            selectedGroupId === group?.id ? "#e0f7fa" : "white", // Conditional styling
-                          border:
-                            selectedGroupId === group?.id
-                              ? "2px solid #00796b"
-                              : "1px solid #ccc",
-                        }}
-                      >
-                        <span style={classes.departmentText}>
-                          {group?.name}
-                        </span>
-                        <IconButton
-                          onClick={(event) => {
-                            event.stopPropagation(); // Prevent triggering the select on click
-                            deleteStationFilterGroupById(group?.id);
-                          }}
-                        >
-                          <ClearIcon style={classes.clearIconStyle} />
-                        </IconButton>
-                      </div>
-                    ))}
-
-                    {/* {filterGroups?.map((group, index) => {
-                      return (
+            {filterGroups?.length !== 0 &&
+              source === Source.PRODUCTION_FLOOR && (
+                <>
+                  <Divider orientation="vertical" flexItem />
+                  <div style={classes.departmentsContainer}>
+                    <span style={classes.departmentsLabel}>
+                      {t("productionFloor.departmentName")}
+                    </span>
+                    <div
+                      style={{
+                        ...classes.departmentsContainer,
+                        maxHeight: "320px",
+                        overflow: "scroll",
+                        gap: "8px",
+                      }}
+                    >
+                      {filterGroups?.map((group) => (
                         <div
-                          onClick={() => getStationFilterGroupById(group?.id)}
                           key={group?.id}
-                          style={classes.departmentTicket}
+                          onClick={() => handleSelectGroup(group?.id)}
+                          style={{
+                            ...classes.departmentTicket,
+                            backgroundColor:
+                              selectedGroupId === group?.id
+                                ? "#FFDFF2"
+                                : "white",
+                            border:
+                              selectedGroupId === group?.id
+                                ? "1px solid #ED028C"
+                                : "1px solid #ccc",
+                          }}
                         >
                           <span style={classes.departmentText}>
                             {group?.name}
@@ -236,24 +204,27 @@ const ActionsListComponent = ({
                               deleteStationFilterGroupById(group?.id);
                             }}
                           >
-                            <ClearIcon style={classes.clearIconStyle} />
+                            <ClearIcon
+                              style={{
+                                ...classes.clearIconStyle,
+                                color:
+                                  selectedGroupId === group?.id
+                                    ? "black"
+                                    : "#98A2B3",
+                              }}
+                            />
                           </IconButton>
                         </div>
-                      );
-                    })} */}
+                      ))}
+                    </div>
                   </div>
-                </div>
-              </>
-            )}
+                </>
+              )}
           </Paper>
         </ClickOutside>
       )}
-      <SaveSelectionModal
-        openModal={openSelectionModal}
-        onClose={onClickCloseSelectionModal}
-        onClickSave={onClickOpenDepartmentModal}
-      />
       <DepartmentModal
+        ref={buttonRef}
         openModal={openDepartmentModal}
         onClose={onClickCloseDepartmentModal}
         onClickAdd={createBoardMissionStationFilterGroup}

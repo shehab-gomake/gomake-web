@@ -3,11 +3,16 @@ import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Source } from "./use-actions-list";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 const useStyle = ({ source }: any) => {
   const { t } = useTranslation();
+  const { secondColor, theme } = useGomakeTheme();
+
   const dir: "rtl" | "ltr" = t("direction");
   const oppositeDir = dir === "rtl" ? "ltr" : "rtl";
+  const finalDir = source === Source.PRODUCTION_FLOOR ? oppositeDir : dir;
+
   const classes = useMemo(() => {
     return {
       buttonStyle: {
@@ -28,15 +33,15 @@ const useStyle = ({ source }: any) => {
       },
       paperStyle: {
         position: "absolute",
-        ...adaptRight(oppositeDir, 0),
-        top: source === Source.USERS ? "-610px" : "110%",
+        ...adaptRight(finalDir, 0),
+        top: source === Source.USERS ? "-420px" : "110%",
         maxWidth: "500px",
         width: "fit-content",
         height: "fit-content",
         maxHeight: "600px",
         overflowY: "hidden",
         overflowX: "hidden",
-        zIndex: 99999999999999,
+        zIndex: 9999999999999,
         display: "flex",
         padding: "10px",
         gap: "10px",
@@ -60,21 +65,24 @@ const useStyle = ({ source }: any) => {
         zIndex: 1,
       },
       optionsDiv: {
-        padding: "5px",
+        padding: "5px 0px",
         maxHeight: "300px",
         overflowY: "scroll" as "scroll",
       },
       applyBtnContainer: {
+        display: "flex",
         position: "sticky" as "sticky",
         bottom: 0,
         right: 0,
         left: 0,
         backgroundColor: "#FFF",
         zIndex: 1,
+        gap: 8,
+        padding: "5px 0px 0px 0px",
       },
       applyBtnStyle: {
         width: "100%",
-        borderRadius: "0px 0px 8px 8px",
+        borderRadius: "8px",
       },
       departmentsContainer: {
         display: "flex",
@@ -95,7 +103,7 @@ const useStyle = ({ source }: any) => {
         border: "1px solid #D0D5DD",
         background: "#FFF",
         display: "flex",
-        width: "150px",
+        //width: "150px",
         maxWidth: "180px",
         overflow: "hidden",
         whiteSpace: "nowrap",
@@ -114,10 +122,21 @@ const useStyle = ({ source }: any) => {
       clearIconStyle: {
         cursor: "pointer",
         fontSize: "14px",
-        color: "#98A2B3",
+      },
+      iconContainer: {
+        cursor: "pointer",
+        backgroundColor: "#FFF",
+        border: `2px solid ${secondColor(500)}`,
+        width: 40,
+        minWidth: 40,
+        minHeight: 40,
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        borderRadius: "8px",
       },
     };
-  }, []);
+  }, [theme]);
   return {
     classes,
   };

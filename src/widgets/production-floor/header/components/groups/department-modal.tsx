@@ -11,7 +11,7 @@ import { useRecoilState } from "recoil";
 import { stationFilterGroupState } from "@/widgets/production-floor/state/filter-group";
 import { IStationFilterGroup } from "@/widgets/production-floor/interfaces/borad-missions-filter-groups";
 
-const DepartmentModal = ({ openModal, onClose, onClickAdd }: any) => {
+const DepartmentModal = ({ openModal, onClose, onClickAdd, ref }: any) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
   const [stationFilterGroup, setStationFilterGroup] =

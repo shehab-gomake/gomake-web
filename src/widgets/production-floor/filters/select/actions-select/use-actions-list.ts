@@ -6,7 +6,7 @@ import {
   IActionMachines,
 } from "@/widgets/production-floor/state/actions-list";
 import { getPrintHouseActions } from "@/services/api-service/production-floor/production-floor-endpoints";
-import { useGomakeAxios } from "@/hooks";
+import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { IStation } from "@/widgets/production-floor/interfaces/filters";
 import { useTranslation } from "react-i18next";
 import { employeeState } from "@/store/employee-state";
@@ -44,9 +44,14 @@ const useActionsList = ({ source, onClickApply }: IUseActionsList) => {
   const [employee] = useRecoilState(employeeState);
   const [, setActionFilter] = useState<string>("");
   const { callApi } = useGomakeAxios();
+  const { alertFault } = useSnackBar();
   const [dashboardMachines, setDashboardMachines] =
     useRecoilState(machinesListState);
   const [actionsList, setActionsList] = useState<IActionMachines[]>([]);
+
+  const handleClick = () => {
+    setOpen(!open);
+  };
 
   useEffect(() => {
     if (source === Source.DASHBOARD) {
@@ -129,6 +134,7 @@ const useActionsList = ({ source, onClickApply }: IUseActionsList) => {
   // }
 
   const actionsListRef = useRef<IActionMachines[]>([]);
+
   const onSelectStation = (stationId: string, checked: boolean) => {
     setActionsList((prevState) => {
       const updatedActionsList = prevState?.map((station) =>
@@ -196,14 +202,6 @@ const useActionsList = ({ source, onClickApply }: IUseActionsList) => {
     }
   }, [source]);
 
-  const [openSelectionModal, setOpenSelectionModal] = useState(false);
-  const onClickOpenSelectionModal = () => {
-    setOpenSelectionModal(true);
-  };
-  const onClickCloseSelectionModal = () => {
-    setOpenSelectionModal(false);
-  };
-
   const [openDepartmentModal, setOpenDepartmentModal] = useState(false);
   const onClickOpenDepartmentModal = () => {
     setOpenDepartmentModal(true);
@@ -256,6 +254,16 @@ const useActionsList = ({ source, onClickApply }: IUseActionsList) => {
   };
 
   const createBoardMissionStationFilterGroup = async () => {
+    if (!stationFilterGroup.name.trim()) {
+      alertFault(t("productionFloor.alertNoGroupName"));
+      return;
+    }
+
+    if (actionsMachinesIds.length === 0) {
+      alertFault(t("productionFloor.alertNoSelectedAction"));
+      return;
+    }
+
     const updatedStationFilterGroup = {
       ...stationFilterGroup,
       stations: actionsMachinesIds,
@@ -274,6 +282,23 @@ const useActionsList = ({ source, onClickApply }: IUseActionsList) => {
     ).then();
   };
 
+  const [selectedGroupId, setSelectedGroupId] = useState<string | null>(null);
+  const handleSelectGroup = (groupId: string) => {
+    if (selectedGroupId === groupId) {
+      setSelectedGroupId(null);
+      onClickApply([]);
+      handleClick();
+    } else {
+      setSelectedGroupId(groupId);
+      getStationFilterGroupById(groupId);
+    }
+  };
+
+  const handleClickSave = () => {
+    setOpen(false);
+    onClickOpenDepartmentModal();
+  };
+
   return {
     actionsList,
     handelFilterActions,
@@ -288,9 +313,6 @@ const useActionsList = ({ source, onClickApply }: IUseActionsList) => {
     t,
     setOpen,
     actionsListRef,
-    openSelectionModal,
-    onClickOpenSelectionModal,
-    onClickCloseSelectionModal,
     openDepartmentModal,
     onClickOpenDepartmentModal,
     onClickCloseDepartmentModal,
@@ -299,6 +321,11 @@ const useActionsList = ({ source, onClickApply }: IUseActionsList) => {
     getStationFilterGroupById,
     deleteStationFilterGroupById,
     createBoardMissionStationFilterGroup,
+    handleClick,
+    selectedGroupId,
+    setSelectedGroupId,
+    handleSelectGroup,
+    handleClickSave,
   };
 };
 export { useActionsList };

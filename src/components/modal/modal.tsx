@@ -20,18 +20,32 @@ const GoMakeModal = ({
 }: any) => {
   const { children }: any = props;
   const { t } = useTranslation();
-  const { classes } = useStyle({ insideStyle, headerPadding, isMiddleTitle, withClose, modalTitleColor });
+  const { classes } = useStyle({
+    insideStyle,
+    headerPadding,
+    isMiddleTitle,
+    withClose,
+    modalTitleColor,
+  });
   return (
     <Modal disableEnforceFocus open={openModal} onClose={onClose} {...props}>
       <div style={classes.container}>
         <div style={classes.headerContainer}>
           {modalTitle && (
-            <div style={isBlockModal ? classes.titleBlockModalStyle : { ...classes.titleModalStyle, ...modalTitleStyle }}>{modalTitle}</div>
+            <div
+              style={
+                isBlockModal
+                  ? classes.titleBlockModalStyle
+                  : { ...classes.titleModalStyle, ...modalTitleStyle }
+              }
+            >
+              {modalTitle}
+            </div>
           )}
           {withClose && (
             <div style={classes.closeIcon} onClick={onClose}>
               <Tooltip title={t("modal.close")}>
-                <IconButton >
+                <IconButton>
                   {withRoundedCloseIcon ? <RoundedCloseIcon /> : <CloseIcon />}
                 </IconButton>
               </Tooltip>

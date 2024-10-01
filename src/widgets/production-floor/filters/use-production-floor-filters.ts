@@ -59,7 +59,6 @@ const useProductionFloorFilters = () => {
   const [selectedChipIds, setSelectedChipIds] =
     useRecoilState(selectedChipIdsState);
 
-  //!here
   const setFilters = async (filters: IProductionFloorFilter) => {
     const callBack = (res) => {
       if (res?.success) {
@@ -185,7 +184,6 @@ const useProductionFloorFilters = () => {
     }).then();
   };
 
-  //!here
   const onStationsChange = (stations: IStation[]) => {
     setFilters({
       ...filtersState,

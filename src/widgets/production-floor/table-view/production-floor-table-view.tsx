@@ -6,7 +6,6 @@ import { useRecoilValue } from "recoil";
 import { selectedChipIdsState } from "../state/text-search";
 
 const ProductionFloorTableView = () => {
-  //!here
   const { data } = useProductionFloorTable();
   const selectedChipId = useRecoilValue(selectedChipIdsState);
   const filteredDataByMachine = useMemo(() => {
