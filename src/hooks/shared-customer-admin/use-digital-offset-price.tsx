@@ -98,6 +98,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [updatedProductTemplate, setupdatedProductTemplate] = useState<any>()
   const [defaultProductTemplate, setDefaultProductTemplate] = useState<any>([]);
   const [subProducts, setSubProducts] = useRecoilState<any>(subProductsParametersState);
+  console.log("subProducts", subProducts)
   const [subProductsColorsModal, setSubProductsColorsModal] = useRecoilState<any>(subProductsCopyParametersState);
   const [isSetTemplete, setIsSetTemplete] = useState<boolean>(false);
   const setSubProductsCopy = useSetRecoilState<any>(subProductsCopyParametersState);
@@ -452,7 +453,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     sectionId,
     subSectionId,
     index,
-    paameterType
+    paameterType,
+    actionIndex
   ) => {
     if (parameter?.buttonAction === EButtonTypes.GALLERY_MODAL) {
       setSelectParameterButton({
@@ -461,6 +463,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         subSectionId,
         index,
         paameterType,
+        actionIndex
       });
       onOpeneGalleryModal();
     }
@@ -896,7 +899,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   else if (value && parameter.code === "DieKissCut") {
                     const existingParameters = productItemValueByEdit?.itemParmetersValues || [];
                     const isDieCutExisting = existingParameters.find((param) => param?.parameterCode === "DieKissCut");
-
                     if (isDieCutExisting || existingParameters.length === 0) {
                       const nameValue = value?.additionalAttribute?.find((attr) => attr.valueId === "name")?.value;
                       subProduct.parameters.push({

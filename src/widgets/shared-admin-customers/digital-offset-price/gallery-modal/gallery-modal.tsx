@@ -40,7 +40,9 @@ const GalleryModal = ({
     subSectionId,
     sectionId,
     value,
-    isLoading
+    isLoading,
+    selectParameterButton,
+    setMaterialData
   } = useGalleryModal({
     onClose,
     onChangeSubProductsForPrice,
@@ -51,6 +53,7 @@ const GalleryModal = ({
     template,
     _getParameter
   });
+
   return (
     <>
       <GoMakeModal
@@ -60,6 +63,7 @@ const GalleryModal = ({
         })}
         onClose={() => {
           setMaterialTableFilters([])
+          setMaterialData([])
           onClose()
 
         }}
@@ -110,7 +114,7 @@ const GalleryModal = ({
               );
             })}
             <>
-              {isLoading ? Array(11) // Adjust the number based on how many skeletons you want to show
+              {isLoading && materialData?.length === 0 ? Array(11) // Adjust the number based on how many skeletons you want to show
                 .fill(null)
                 .map((_, index) => (
                   <Skeleton height={375} width={250} variant="rectangular"
@@ -149,17 +153,24 @@ const GalleryModal = ({
         </div>
         <div style={clasess.footerContainer}>
           <div style={clasess.switchContainer}>
-            {_renderParameterType(
-              addChargeForNewDieParameter[0],
-              subSectionId,
-              sectionId?.section,
-              subSectionId?.parameters,
-              value,
-              subSectionId?.parameters,
-              true,
-              true,
-              false
-            )}
+
+            {
+              selectParameterButton?.sectionId === sectionId?.section?.id && selectParameterButton?.subSectionId == subSectionId?.id && <>
+                {_renderParameterType(
+                  addChargeForNewDieParameter[0],
+                  subSectionId,
+                  sectionId?.section,
+                  subSectionId?.parameters,
+                  value,
+                  subSectionId?.parameters,
+                  true,
+                  true,
+                  false
+                )}
+              </>
+            }
+
+
           </div>
           <GomakePrimaryButton
             style={clasess.chooseBtnStyle}

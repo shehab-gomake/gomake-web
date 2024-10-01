@@ -59,7 +59,8 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
   );
   const finalUnitWidthParameter = getParameterByParameterCode(
     subProducts,
-    "DieUnitWidth"
+    "DieUnitWidth",
+
   );
   const finalUnitLengthParameter = getParameterByParameterCode(
     subProducts,
@@ -69,7 +70,7 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
     subProducts,
     "DieUnitHeight"
   );
-  const shapeParameter = getParameterByParameterCode(subProducts, "Shape")
+  const shapeParameter = getParameterByParameterCode(subProducts, selectParameterButton?.parameter?.materialPath[0] === "DieStamp" ? "Enhancementtype" : "Shape")
   const LabelShapeParameter = getParameterByParameterCode(subProducts, "LabelsShape")
   useEffect(() => {
     if (selectParameterButton?.parameter?.materialPath?.length > 0) {
@@ -117,6 +118,8 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
     }
   }, [selectParameterButton, widthParameter, heightParameter, finalUnitWidthParameter, finalUnitLengthParameter, finalUnitHeightParameter]);
   const [filters, setFilters] = useRecoilState<any>(filterState);
+
+
 
   const setFilterValue = (key: string, value: string | string[]) => {
     const updatedFilters =
@@ -182,8 +185,7 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
         selectParameterButton?.parameter?.code, selectedShape
       );
     }
-
-
+    setMaterialData([])
     onClose();
   };
   const onClickNewOrder = () => {
@@ -346,7 +348,7 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
       setSubSectionId(subSectionId)
       setValueState(value)
     }
-  }, [template, addChargeForNewDieParameter])
+  }, [template])
 
   return {
     materialData,
@@ -367,7 +369,9 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
     subSectionId,
     sectionId,
     value,
-    isLoading
+    isLoading,
+    selectParameterButton,
+    setMaterialData
   };
 };
 

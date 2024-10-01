@@ -175,7 +175,7 @@ const ButtonParameterWidget = ({
           if (subProduct.type === subSection.type) {
             const updatedParameters = subProduct.parameters.filter(
               (param) =>
-                !(param.parameterCode === "Width" || param.parameterCode === "Height")
+                !(param.parameterCode === "Width" || param.parameterCode === "Height" || param.parameterCode === "EnhancementLength" || param.parameterCode === "EnhancementWidth")
             );
             return { ...subProduct, parameters: updatedParameters };
           }
@@ -355,7 +355,7 @@ const ButtonParameterWidget = ({
 
     setSelectedShape(transformedShape);
 
-    if (!parameter?.isHidden && !isParameterSettings && subProductsParameters?.length > 0) {
+    if (!isParameterSettings && subProductsParameters?.length > 0) {
       const dieUnitWidth = parameter?.code === "DieKissCut"
         ? transformedShape?.rowData?.unitWidth?.value
         : transformedShape?.rowData?.width?.value;
@@ -364,25 +364,28 @@ const ButtonParameterWidget = ({
         : transformedShape?.rowData?.length?.value;
 
       const dieCutSizesParametersArray = [
-        { parameterCode: "Width", value: dieUnitWidth?.toString() },
-        { parameterCode: "Height", value: dieUnitLength?.toString() },
+        { parameterCode: parameter?.code === "DieStamp" ? "EnhancementWidth" : "Width", value: dieUnitWidth?.toString(), actionIndex: parameter?.actionIndex },
+        { parameterCode: parameter?.code === "DieStamp" ? "EnhancementLength" : "Height", value: dieUnitLength?.toString(), actionIndex: parameter?.actionIndex },
       ];
 
       let updatedParameters = subProductsParameters.map((param) => {
-        const matchingParam = dieCutSizesParametersArray.find((dieParam) => dieParam.parameterCode === param.parameterCode);
+        if (param?.parameterCode === "EnhancementWidth") {
+          debugger
+        }
+        const matchingParam = dieCutSizesParametersArray.find((dieParam) => dieParam.parameterCode === param.parameterCode && dieParam?.actionIndex === param?.actionIndex);
         return matchingParam ? { ...param, values: [matchingParam.value], isDisabled: true } : param;
       });
-
       dieCutSizesParametersArray.forEach((dieParam) => {
-        const subSectionParam = subSection.parameters.find((param) => param.code === dieParam.parameterCode);
-        if (!updatedParameters.find((p) => p.parameterCode === dieParam.parameterCode) && subSectionParam) {
+        const subSectionParam = subSection.parameters.find((param) => param.code === dieParam.parameterCode && param.actionIndex === dieParam?.actionIndex);
+
+        if (!updatedParameters.find((p) => p.parameterCode === dieParam.parameterCode && p.actionIndex === dieParam?.actionIndex) && subSectionParam) {
           updatedParameters.push({
             parameterId: subSectionParam.id,
             sectionId: section?.id,
             subSectionId: subSection?.id,
-            ParameterType: parameter?.ParameterType,
-            parameterName: parameter?.name,
-            actionId: parameter?.actionId,
+            ParameterType: subSectionParam?.ParameterType,
+            parameterName: subSectionParam?.name,
+            actionId: subSectionParam?.actionId,
             values: [dieParam.value],
             valueIds: [],
             actionIndex: subSectionParam.actionIndex,
@@ -456,7 +459,8 @@ const ButtonParameterWidget = ({
                 section?.id,
                 subSection?.id,
                 index,
-                subSection?.type
+                subSection?.type,
+                parameter?.actionIndex
               )
               deleteStraightKnifeParameter()
               setIsStraightKnife(false)
@@ -494,7 +498,8 @@ const ButtonParameterWidget = ({
                 section?.id,
                 subSection?.id,
                 index,
-                subSection?.type
+                subSection?.type,
+                parameter?.actionIndex
               )
             }
           >
@@ -518,7 +523,8 @@ const ButtonParameterWidget = ({
               section?.id,
               subSection?.id,
               index,
-              subSection?.type
+              subSection?.type,
+              parameter?.actionIndex
             )
           }
         >
@@ -536,7 +542,8 @@ const ButtonParameterWidget = ({
             section?.id,
             subSection?.id,
             index,
-            subSection?.type
+            subSection?.type,
+            parameter?.actionIndex
           )
         }
       >
