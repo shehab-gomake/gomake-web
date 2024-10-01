@@ -341,7 +341,7 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
       setSubSectionId(subSectionId)
       setValueState(value)
     }
-  }, [template, addChargeForNewDieParameter])
+  }, [template])
 
   return {
     materialData,
