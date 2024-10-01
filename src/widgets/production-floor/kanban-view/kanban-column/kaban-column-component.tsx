@@ -7,68 +7,94 @@ import { useProductionFloorData } from "@/widgets/production-floor/use-productio
 import { useRecoilState } from "recoil";
 import { productionFloorTextSearchState } from "../../state/text-search";
 import { useCallback } from "react";
+import { useStyle } from "../kanban-card/style";
 
 interface IProps {
-    status: IProductionStatus;
-    boardsMissions: IBoardMissions[];
-    count?: number; 
+  status: IProductionStatus;
+  boardsMissions: IBoardMissions[];
+  count?: number;
 }
 
 function KanbanColumnComponent({ status, boardsMissions }: IProps) {
+  const { classes } = useStyle();
+  const [search] = useRecoilState(productionFloorTextSearchState);
+  const { updateStatus, t } = useProductionFloorData();
+  const [{ isOver }, drop] = useDrop(
+    () => ({
+      accept: "task",
+      drop: (item: IBoardMissions, monitor) => {
+        const didDrop = monitor.didDrop();
+        if (didDrop) {
+          return;
+        }
+        updateStatus([item], status.id).then();
+      },
+      collect: (monitor) => ({
+        isOver: !!monitor.isOver(),
+        canDrop: !!monitor.canDrop(),
+      }),
+    }),
+    [status, boardsMissions]
+  );
 
-    const [search] = useRecoilState(productionFloorTextSearchState);
-    const { updateStatus, t } = useProductionFloorData();
-    const [{ isOver }, drop] = useDrop(() => ({
-        accept: 'task',
-        drop: (item: IBoardMissions, monitor) => {
-            const didDrop = monitor.didDrop();
-            if (didDrop) {
-                return;
-            }
-            updateStatus([item], status.id).then();
-        },
-        collect: monitor => ({
-            isOver: !!monitor.isOver(),
-            canDrop: !!monitor.canDrop(),
-        }),
-    }), [status, boardsMissions]);
+  const getBoards = useCallback(() => {
+    return !!search
+      ? boardsMissions?.filter(
+          (board) =>
+            `${board?.boardMissionNumber}\\${board?.orderNumber}`.includes(
+              search
+            ) ||
+            `${board?.clientName?.toLowerCase()}`.includes(
+              search.toLowerCase()
+            ) ||
+            board?.automatedTags?.some((tag) =>
+              `${tag.toLowerCase()}`.includes(search.toLowerCase())
+            )
+        )
+      : boardsMissions;
+  }, [boardsMissions, search]);
 
-      const getBoards = useCallback(() => {
-        return !!search
-          ? boardsMissions?.filter(
-            (board) =>
-              `${board?.boardMissionNumber}\\${board?.orderNumber}`.includes(search) ||
-              `${board?.clientName?.toLowerCase()}`.includes(search.toLowerCase()) ||
-              board?.automatedTags?.some((tag) => `${tag.toLowerCase()}`.includes(search.toLowerCase()))
-          )
-          : boardsMissions;
-      }, [boardsMissions, search]);
-      
-    return (
-        <Stack ref={drop}
-            gap={'10px'}
-            minHeight={'100%'}
-            width={'100%'}
-            borderRadius={'16px'}
-            style={{ margin: '0 10px', padding: '10px', backgroundColor: 'rgba(0, 0, 0, 0.08)', opacity: isOver ? 0.6 : 1, overflow: 'hidden' }}>
-            <h2 style={{
-                height: '80px',
-                width: '100%',
-                minHeight: '80px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                backgroundColor: status.backgroundColor,
-                color: status.textColor,
-                borderRadius: '16px 16px 0 0',
-            }}>{`${t('productionStatuses.' + status.name)} (${getBoards()?.length})`}</h2>
-            <Stack overflow={'auto'} gap={'10px'}>
-                {getBoards()?.map((board , index) => (
-                    <KanbanCardComponent  key={`${index}-${board.id}`}  board={board} />
-                ))}
-            </Stack>
-        </Stack>
-    );
+  return (
+    <Stack
+      ref={drop}
+      gap={"10px"}
+      minHeight={"100%"}
+      maxHeight={"fit-content"}
+      width={"100%"}
+      borderRadius={"16px"}
+      style={{
+        margin: "0 10px",
+        padding: "10px",
+        backgroundColor: "white",
+        opacity: isOver ? 0.6 : 1,
+        overflow: "hidden",
+      }}
+    >
+      <h3 style={{ ...classes.kanbanColumnLabel, color: status.textColor }}>
+        {`${t("productionStatuses." + status.name)}`}
+        <div
+          style={{
+            ...classes.kanbanColumnCircle,
+            border: `1px solid ${status.textColor}`,
+            color: status.textColor,
+            boxShadow: `0 0 0 0.5 ${status.textColor}`,
+          }}
+        >
+          {getBoards()?.length}
+        </div>
+      </h3>
+
+      <Stack overflow={"auto"} gap={"10px"}>
+        {getBoards()?.map((board, index) => (
+          <KanbanCardComponent
+            key={`${index}-${board.id}`}
+            board={board}
+            status={status}
+          />
+        ))}
+      </Stack>
+    </Stack>
+  );
 }
 
 export { KanbanColumnComponent };

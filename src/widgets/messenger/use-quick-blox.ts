@@ -6,7 +6,7 @@ import {EFileStatus} from "@/widgets/messenger/enums";
 
 const useQuickBlox = () => {
     const {QB, sessionUser, isChatConnected} = useInitQuickBlox();
-    const {alertFaultGetData, alertSuccessAdded, alertFaultUpdate} = useSnackBar();
+    const {alertFaultGetData, alertFaultUpdate} = useSnackBar();
     const APPROVAL_REQUEST_CLASS_NAME = 'ApprovalRequest';
     //listeners
     const listenToNewMessages = (listener: (userId, message) => void) => {
@@ -61,7 +61,7 @@ const useQuickBlox = () => {
                     reject([])
                 } else {
                     resolve(result.items);
-                    alertSuccessAdded();
+                    // alertSuccessAdded();
                 }
             });
         })

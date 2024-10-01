@@ -10,7 +10,7 @@ const UsersNamesComponent = ({users}: IProps) => {
     const {primaryColor} = useGomakeTheme();
     return <Stack direction={'row'} gap={'3px'}>
         {
-            users?.map((user, index) => <Stack direction={'row'} gap={'1px'} style={{
+            users?.map((user, index) => <Stack key={user} direction={'row'} gap={'1px'} style={{
                 ...FONT_FAMILY.Outfit(500, 13),
                 fontStyle: 'italic',
                 color: primaryColor(300)

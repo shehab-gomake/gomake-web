@@ -65,14 +65,18 @@ const BoardMissionsTable = ({ boardsMissions, usedMachines }: IBoardMissionsTabl
     const boards = useCallback(() => {
         let boards = getFilteredBoardMissions(selectedStatusFilter) //littedBoards = x.splittedBoards.filter(y=>y.status == selectedStatusFilter) ).filter()] : [...boardsMissions];
         if (orderByMachine) {
-            boards = boards.sort((board1: IBoardMissions, board2: IBoardMissions) => {
-                return hasMachine(board1) - hasMachine(board2)
-            });
+            boards = boards
+                .sort((board1: IBoardMissions, board2: IBoardMissions) => {
+                    return board2.dueDate > board1.dueDate ? -1 : board2.dueDate < board1.dueDate ? 1 : 0
+                })
+                .sort((board1: IBoardMissions, board2: IBoardMissions) => {
+                    return hasMachine(board1) - hasMachine(board2)
+                })
             return boards
         }
         if (isOrderByCreationDate) {
             boards = boards.sort((board1: IBoardMissions, board2: IBoardMissions) => {
-                return board2.creationDate < board1.creationDate ? -1 : board2.creationDate > board1.creationDate ? 1 : 0
+                return board2.dueDate < board1.dueDate ? -1 : board2.dueDate > board1.dueDate ? 1 : 0
             });
             return boards
         }

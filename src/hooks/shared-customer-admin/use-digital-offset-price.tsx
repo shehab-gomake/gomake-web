@@ -272,7 +272,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     });
     setCurrentProductItemValueTotalWorkFlows(result.productItemValue.totalWorkFlows);
     setWorkFlows(result.productItemValue.workFlows);
-    if (result.productItemValue && result.productItemValue.workFlows && result.productItemValue.workFlows.length > 0) {
+    if (result.productItemValue && result.productItemValue.workFlows && result.productItemValue.workFlows.length > 0 && !(widgetType == EWidgetProductType.EDIT && currentProductItemValueTotalPrice) ) {
       const mySelectedWorkFlow = result.productItemValue.workFlows[0];
       if (
         mySelectedWorkFlow &&
