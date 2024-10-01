@@ -1,6 +1,6 @@
 import { productionFloorFiltersState } from "@/widgets/production-floor/state/production-floor-filters";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, useResetRecoilState } from "recoil";
 import {
   actionsListState,
   IActionMachines,
@@ -11,6 +11,17 @@ import { IStation } from "@/widgets/production-floor/interfaces/filters";
 import { useTranslation } from "react-i18next";
 import { employeeState } from "@/store/employee-state";
 import { machinesListState } from "@/store/machines";
+import {
+  createBoardMissionStationFilterGroupApi,
+  deleteStationFilterByGroupIdApi,
+  getAllBoardMissionStationFilterGroupsApi,
+  getStationFilterByGroupIdApi,
+} from "@/services/api-service/board-missions/board-mission-station-filter-groups";
+import {
+  IFilterGroupsList,
+  IStationFilterGroup,
+} from "@/widgets/production-floor/interfaces/borad-missions-filter-groups";
+import { stationFilterGroupState } from "@/widgets/production-floor/state/filter-group";
 
 export enum Source {
   PRODUCTION_FLOOR,
@@ -18,7 +29,12 @@ export enum Source {
   DASHBOARD,
 }
 
-const useActionsList = (source: Source) => {
+interface IUseActionsList {
+  source: Source;
+  onClickApply?: any;
+}
+
+const useActionsList = ({ source, onClickApply }: IUseActionsList) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [filter, setFilter] = useState<string>();
   const [open, setOpen] = useState<boolean>(false);
@@ -181,7 +197,6 @@ const useActionsList = (source: Source) => {
   }, [source]);
 
   const [openSelectionModal, setOpenSelectionModal] = useState(false);
-
   const onClickOpenSelectionModal = () => {
     setOpenSelectionModal(true);
   };
@@ -190,12 +205,73 @@ const useActionsList = (source: Source) => {
   };
 
   const [openDepartmentModal, setOpenDepartmentModal] = useState(false);
-
   const onClickOpenDepartmentModal = () => {
     setOpenDepartmentModal(true);
   };
   const onClickCloseDepartmentModal = () => {
     setOpenDepartmentModal(false);
+  };
+
+  const [filterGroups, setFilterGroups] = useState<IFilterGroupsList[]>();
+  const resetStationFilterGroup = useResetRecoilState(stationFilterGroupState);
+  const stationFilterGroup = useRecoilValue<IStationFilterGroup>(
+    stationFilterGroupState
+  );
+
+  const getStationFilterGroups = async () => {
+    const callBack = (res) => {
+      if (res.success) {
+        const filterGroupsList: IFilterGroupsList[] = res?.data?.map(
+          (group) => ({
+            id: group?.id,
+            name: group?.name,
+          })
+        );
+        setFilterGroups(filterGroupsList);
+      }
+    };
+    await getAllBoardMissionStationFilterGroupsApi(callApi, callBack).then();
+  };
+
+  const getStationFilterGroupById = async (id) => {
+    const callBack = (res) => {
+      if (res.success) {
+        onClickApply(res?.data?.stations);
+      }
+    };
+    await getStationFilterByGroupIdApi(callApi, callBack, {
+      groupId: id,
+    }).then();
+  };
+
+  const deleteStationFilterGroupById = async (id) => {
+    const callBack = (res) => {
+      if (res.success) {
+        getStationFilterGroups();
+      }
+    };
+    await deleteStationFilterByGroupIdApi(callApi, callBack, {
+      groupId: id,
+    }).then();
+  };
+
+  const createBoardMissionStationFilterGroup = async () => {
+    const updatedStationFilterGroup = {
+      ...stationFilterGroup,
+      stations: actionsMachinesIds,
+    };
+    const callBack = (res) => {
+      if (res.success) {
+        onClickCloseDepartmentModal();
+        getStationFilterGroups();
+        resetStationFilterGroup();
+      }
+    };
+    await createBoardMissionStationFilterGroupApi(
+      callApi,
+      callBack,
+      updatedStationFilterGroup
+    ).then();
   };
 
   return {
@@ -218,6 +294,11 @@ const useActionsList = (source: Source) => {
     openDepartmentModal,
     onClickOpenDepartmentModal,
     onClickCloseDepartmentModal,
+    getStationFilterGroups,
+    filterGroups,
+    getStationFilterGroupById,
+    deleteStationFilterGroupById,
+    createBoardMissionStationFilterGroup,
   };
 };
 export { useActionsList };

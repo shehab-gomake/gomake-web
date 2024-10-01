@@ -7,10 +7,22 @@ import {
 import { Stack } from "@mui/material";
 import { useStyle } from "../style";
 import { FONT_FAMILY } from "@/utils/font-family";
+import { useRecoilState } from "recoil";
+import { stationFilterGroupState } from "@/widgets/production-floor/state/filter-group";
+import { IStationFilterGroup } from "@/widgets/production-floor/interfaces/borad-missions-filter-groups";
 
-const DepartmentModal = ({ openModal, onClose }: any) => {
+const DepartmentModal = ({ openModal, onClose, onClickAdd }: any) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
+  const [stationFilterGroup, setStationFilterGroup] =
+    useRecoilState<IStationFilterGroup>(stationFilterGroupState);
+
+  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setStationFilterGroup({
+      ...stationFilterGroup,
+      name: e.target.value,
+    });
+  };
 
   return (
     <GoMakeModal
@@ -52,7 +64,8 @@ const DepartmentModal = ({ openModal, onClose }: any) => {
               },
             }}
             placeholder={t("productionFloor.departmentName")}
-            value={""}
+            value={stationFilterGroup?.name}
+            onChange={handleNameChange}
           />
         </Stack>
         <Stack
@@ -80,7 +93,7 @@ const DepartmentModal = ({ openModal, onClose }: any) => {
               borderRadius: "8px",
               height: "44px",
             }}
-            onClick={() => null}
+            onClick={onClickAdd}
           >
             {t("materials.buttons.add")}
           </GomakePrimaryButton>

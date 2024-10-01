@@ -104,6 +104,7 @@ const useStyle = ({ source }: any) => {
         alignItems: "center",
         padding: "4px 4px 4px 10px",
         justifyContent: "space-between",
+        cursor: "pointer",
       },
       departmentText: {
         overflow: "hidden",

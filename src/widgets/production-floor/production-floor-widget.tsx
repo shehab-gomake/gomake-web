@@ -74,7 +74,6 @@ const ProductionFloorWidget = () => {
           replace("/production-floor", undefined, { shallow: true }).then();
         }}
       >
-        {/* //!here */}
         <Stack
           paddingBottom={"10px"}
           width={"100vw"}

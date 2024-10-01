@@ -9,7 +9,7 @@ const GET_STATION_FILTER_BY_GROUP_ID_URL =
 const DELETE_STATION_FILTER_BY_GROUP_ID_URL =
   "/v1/erp-service/board-mission-station-filter-groups/delete-by-id";
 const GET_ALL_BOARD_MISSION_STATION_FILTER_GROUPS_URL =
-  "/v1/erp-service/board-mission-station-filter-groups/get-by-id";
+  "/v1/erp-service/board-mission-station-filter-groups/get-all-board-mission-station-filter-groups";
 const CREATE_BOARD_MISSION_STATION_FILTER_GROUP_URL =
   "/v1/erp-service/board-mission-station-filter-groups/create-board-mission-station-filter-group";
 

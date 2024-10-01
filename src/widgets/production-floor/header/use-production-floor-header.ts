@@ -33,7 +33,7 @@ const useProductionFloorHeader = () => {
     setOpen,
     filter,
     setFilter,
-  } = useActionsList(Source.PRODUCTION_FLOOR);
+  } = useActionsList({ source: Source.PRODUCTION_FLOOR });
   const buttonRef = useRef<HTMLButtonElement>(null);
   const showAllJobsButton = useMemo(() => hasGroupsFilters, [hasGroupsFilters]);
   const { push, replace, query } = useRouter();

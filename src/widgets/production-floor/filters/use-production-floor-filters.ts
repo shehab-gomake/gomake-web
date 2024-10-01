@@ -41,7 +41,9 @@ const useProductionFloorFilters = () => {
   const { t } = useTranslation();
   const dir = t("direction");
   const isRTL = dir === "rtl";
-  const { actionsMachinesIds } = useActionsList(Source.PRODUCTION_FLOOR);
+  const { actionsMachinesIds } = useActionsList({
+    source: Source.PRODUCTION_FLOOR,
+  });
   const [visibleCards, setVisibleCards] = useState<
     { label: string; machineId: string }[]
   >([]);

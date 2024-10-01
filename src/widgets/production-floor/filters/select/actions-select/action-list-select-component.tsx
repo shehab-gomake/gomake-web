@@ -3,9 +3,11 @@ import {
   FormEvent,
   ReactElement,
   useCallback,
+  useEffect,
   useRef,
+  useState,
 } from "react";
-import { Button, Divider, FormGroup, Paper } from "@mui/material";
+import { Button, Divider, FormGroup, IconButton, Paper } from "@mui/material";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import { GomakeTextInput } from "@/components";
 import {
@@ -48,7 +50,14 @@ const ActionsListComponent = ({
     openDepartmentModal,
     onClickOpenDepartmentModal,
     onClickCloseDepartmentModal,
-  } = useActionsList(source);
+
+    //!New
+    filterGroups,
+    getStationFilterGroups,
+    getStationFilterGroupById,
+    deleteStationFilterGroupById,
+    createBoardMissionStationFilterGroup,
+  } = useActionsList({ source, onClickApply });
 
   const { classes } = useStyle({ source });
 
@@ -94,14 +103,20 @@ const ActionsListComponent = ({
       onClick: handleClick,
     });
 
-  const getDepartmentGroup = () => {
-    return [
-      { id: 1, name: "Printing" },
-      { id: 2, name: "Quality Control" },
-      { id: 3, name: "Packaging" },
-      { id: 4, name: "Shipping" },
-      { id: 5, name: "Shipping test" },
-    ];
+  useEffect(() => {
+    getStationFilterGroups();
+  }, []);
+
+  const [selectedGroupId, setSelectedGroupId] = useState<string | null>(null);
+  const handleSelect = (groupId: string) => {
+    if (selectedGroupId === groupId) {
+      setSelectedGroupId(null);
+      onClickApply([]);
+    } else {
+      setSelectedGroupId(groupId);
+      getStationFilterGroupById(groupId);
+    }
+    handleClick();
   };
 
   return (
@@ -152,8 +167,9 @@ const ActionsListComponent = ({
                   variant={"contained"}
                   onClick={() => {
                     setOpen(false);
-                    // onClickApply(actionsMachinesIds);
+                    onClickApply(actionsMachinesIds);
                     onClickOpenSelectionModal();
+                    setSelectedGroupId(null);
                   }}
                 >
                   {t("productionFloor.apply")}
@@ -161,7 +177,7 @@ const ActionsListComponent = ({
               </div>
             </div>
 
-            {getDepartmentGroup().length !== 0 && (
+            {filterGroups?.length !== 0 && (
               <>
                 <Divider orientation="vertical" flexItem />
                 <div style={classes.departmentsContainer}>
@@ -176,16 +192,55 @@ const ActionsListComponent = ({
                       gap: "8px",
                     }}
                   >
-                    {getDepartmentGroup().map((option, index) => {
-                      return (
-                        <div key={option.id} style={classes.departmentTicket}>
-                          <span style={classes.departmentText}>
-                            {option.name}
-                          </span>
+                    {filterGroups?.map((group) => (
+                      <div
+                        key={group?.id}
+                        onClick={() => handleSelect(group?.id)}
+                        style={{
+                          ...classes.departmentTicket,
+                          backgroundColor:
+                            selectedGroupId === group?.id ? "#e0f7fa" : "white", // Conditional styling
+                          border:
+                            selectedGroupId === group?.id
+                              ? "2px solid #00796b"
+                              : "1px solid #ccc",
+                        }}
+                      >
+                        <span style={classes.departmentText}>
+                          {group?.name}
+                        </span>
+                        <IconButton
+                          onClick={(event) => {
+                            event.stopPropagation(); // Prevent triggering the select on click
+                            deleteStationFilterGroupById(group?.id);
+                          }}
+                        >
                           <ClearIcon style={classes.clearIconStyle} />
+                        </IconButton>
+                      </div>
+                    ))}
+
+                    {/* {filterGroups?.map((group, index) => {
+                      return (
+                        <div
+                          onClick={() => getStationFilterGroupById(group?.id)}
+                          key={group?.id}
+                          style={classes.departmentTicket}
+                        >
+                          <span style={classes.departmentText}>
+                            {group?.name}
+                          </span>
+                          <IconButton
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              deleteStationFilterGroupById(group?.id);
+                            }}
+                          >
+                            <ClearIcon style={classes.clearIconStyle} />
+                          </IconButton>
                         </div>
                       );
-                    })}
+                    })} */}
                   </div>
                 </div>
               </>
@@ -201,6 +256,7 @@ const ActionsListComponent = ({
       <DepartmentModal
         openModal={openDepartmentModal}
         onClose={onClickCloseDepartmentModal}
+        onClickAdd={createBoardMissionStationFilterGroup}
       />
     </div>
   );
