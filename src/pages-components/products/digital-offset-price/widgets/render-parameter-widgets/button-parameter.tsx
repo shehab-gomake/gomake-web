@@ -175,7 +175,12 @@ const ButtonParameterWidget = ({
           if (subProduct.type === subSection.type) {
             const updatedParameters = subProduct.parameters.filter(
               (param) =>
-                !(param.parameterCode === "Width" || param.parameterCode === "Height")
+                !(
+                  param.parameterCode === "Width" && param.actionIndex === isSelectedShape.actionIndex ||
+                  param.parameterCode === "Height" && param.actionIndex === isSelectedShape.actionIndex ||
+                  param.parameterCode === "EnhancementLength" && param.actionIndex === isSelectedShape.actionIndex ||
+                  param.parameterCode === "EnhancementWidth" && param.actionIndex === isSelectedShape.actionIndex
+                )
             );
             return { ...subProduct, parameters: updatedParameters };
           }
@@ -350,95 +355,8 @@ const ButtonParameterWidget = ({
     const selectedShapeId = isParameterSettings ? isSelectedShape?.[0]?.id : isSelectedShape?.valueIds?.[0];
     const selectedMaterial = materialDataPath?.find((material) => material.valueId === selectedShapeId);
     const transformedShape: any = transformSelectedShape(selectedMaterial);
-
     if (!transformedShape) return;
-
     setSelectedShape(transformedShape);
-
-    if (!parameter?.isHidden && !isParameterSettings && subProductsParameters?.length > 0) {
-      const dieUnitWidth = parameter?.code === "DieKissCut"
-        ? transformedShape?.rowData?.unitWidth?.value
-        : transformedShape?.rowData?.width?.value;
-      const dieUnitLength = parameter?.code === "DieKissCut"
-        ? transformedShape?.rowData?.unitLength?.value
-        : transformedShape?.rowData?.length?.value;
-
-      const dieCutSizesParametersArray = [
-        { parameterCode: "Width", value: dieUnitWidth?.toString() },
-        { parameterCode: "Height", value: dieUnitLength?.toString() },
-      ];
-
-      let updatedParameters = subProductsParameters.map((param) => {
-        const matchingParam = dieCutSizesParametersArray.find((dieParam) => dieParam.parameterCode === param.parameterCode);
-        return matchingParam ? { ...param, values: [matchingParam.value], isDisabled: true } : param;
-      });
-
-      dieCutSizesParametersArray.forEach((dieParam) => {
-        const subSectionParam = subSection.parameters.find((param) => param.code === dieParam.parameterCode);
-        if (!updatedParameters.find((p) => p.parameterCode === dieParam.parameterCode) && subSectionParam) {
-          updatedParameters.push({
-            parameterId: subSectionParam.id,
-            sectionId: section?.id,
-            subSectionId: subSection?.id,
-            ParameterType: parameter?.ParameterType,
-            parameterName: parameter?.name,
-            actionId: parameter?.actionId,
-            values: [dieParam.value],
-            valueIds: [],
-            actionIndex: subSectionParam.actionIndex,
-            parameterCode: subSectionParam.code,
-            valuesConfigs: subSectionParam?.valuesConfigs,
-            unitKey: subSectionParam?.unitKey,
-            unitType: subSectionParam?.unitType,
-            isDisabled: true,
-          });
-        }
-      });
-
-      const sizeParameter = subSection.parameters.find((param) => param.code === "size");
-      if (sizeParameter) {
-        const customValue = sizeParameter.valuesConfigs.find((config) => !config.values || Object.keys(config.values).length === 0);
-        if (customValue) {
-          const existingSizeParam = updatedParameters.find((param) => param.parameterCode === "size");
-          if (existingSizeParam) {
-            const updatedSizeParam = {
-              ...existingSizeParam,
-              valueIds: [customValue.id],
-              values: [customValue.updateName],
-              isDisabled: true,
-            };
-            updatedParameters = updatedParameters.map(param =>
-              param.parameterCode === existingSizeParam.parameterCode ? updatedSizeParam : param
-            );
-          } else {
-            updatedParameters.push({
-              parameterId: sizeParameter.id,
-              sectionId: section?.id,
-              subSectionId: subSection?.id,
-              ParameterType: sizeParameter.parameterType,
-              parameterName: sizeParameter.name,
-              actionId: sizeParameter.actionId,
-              values: [customValue.updateName],
-              valueIds: [customValue.id],
-              actionIndex: sizeParameter.actionIndex,
-              parameterCode: sizeParameter.code,
-              valuesConfigs: sizeParameter?.valuesConfigs,
-              unitKey: sizeParameter?.unitKey,
-              unitType: sizeParameter?.unitType,
-              isDisabled: true,
-            });
-          }
-        }
-      }
-
-      const updatedSubProducts = subProducts.map((subProduct) =>
-        subProduct.type === subSection?.type
-          ? { ...subProduct, parameters: updatedParameters }
-          : subProduct
-      );
-
-      setProducts(updatedSubProducts);
-    }
   }, [materialData, isParameterSettings, isSelectedShape, allMaterials]);
   const hasDieCutOrDieKissCut = checkIfDieCutOrDieKissCutExists(subProducts);
   if (parameter?.buttonAction === EButtonTypes.GALLERY_MODAL) {
@@ -456,7 +374,8 @@ const ButtonParameterWidget = ({
                 section?.id,
                 subSection?.id,
                 index,
-                subSection?.type
+                subSection?.type,
+                parameter?.actionIndex
               )
               deleteStraightKnifeParameter()
               setIsStraightKnife(false)
@@ -494,7 +413,8 @@ const ButtonParameterWidget = ({
                 section?.id,
                 subSection?.id,
                 index,
-                subSection?.type
+                subSection?.type,
+                parameter?.actionIndex
               )
             }
           >
@@ -518,7 +438,8 @@ const ButtonParameterWidget = ({
               section?.id,
               subSection?.id,
               index,
-              subSection?.type
+              subSection?.type,
+              parameter?.actionIndex
             )
           }
         >
@@ -536,7 +457,8 @@ const ButtonParameterWidget = ({
             section?.id,
             subSection?.id,
             index,
-            subSection?.type
+            subSection?.type,
+            parameter?.actionIndex
           )
         }
       >

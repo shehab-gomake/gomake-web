@@ -20,7 +20,7 @@ const InputNumberParameterWidget = ({
   widgetType,
   setIsJobNameValue
 }: any) => {
-  const myParameter = temp.find((item) => item.parameterId === parameter.id)
+  const myParameter = temp.find((item) => item.parameterId === parameter.id && item?.actionIndex === parameter.actionIndex)
   const [openModal, setOpenModal] = useRecoilState<boolean>(openQuantityComponentModalState);
   const productTypesNumber = useRecoilValue<number>(productTypesNumberState);
   const productSetsParam = useRecoilValue<string>(productSetsParamState);
