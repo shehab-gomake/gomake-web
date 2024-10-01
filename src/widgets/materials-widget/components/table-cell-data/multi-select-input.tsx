@@ -9,7 +9,7 @@ import { useCustomerDropDownList } from "@/hooks";
 
 interface IProps {
   parameterKey: string;
-  values: string[];
+  values: any[];
   id: string;
   isAdmin: boolean;
   options: { label: string; value: string }[];
@@ -50,7 +50,8 @@ const MultiSelectInput = ({
     }
   });
 
-  const selectedLabels = values?.map((selectedId) => reorderedOptions?.find((opt) => opt?.value === selectedId)?.label)
+  const selectedLabels = values
+    ?.map((selected) => reorderedOptions?.find((opt) => opt?.value === selected.ID)?.label || selected.Name)
     .filter((label) => label !== null && label !== undefined);
 
   const handleSelectCheck = (
