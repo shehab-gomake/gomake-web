@@ -159,23 +159,10 @@ const useActionsList = ({ source, onClickApply }: IUseActionsList) => {
     setActionFilter(name);
   };
 
-    const getActions = async () => {
-        const callBack = res => {
-            if (res.success) {
-                setActions(res?.data);
-                setDashboardMachines(res?.data.flatMap(station => station.machines.map(machine => ({
-                    id: machine.machineId,
-                    name: machine.machineName,
-                    checked: true,
-                }))));
-            }
-        }
-        await getPrintHouseActions(callApi, callBack, source === Source.USERS)
-    }
-
   const getActions = async () => {
     const callBack = (res) => {
       if (res.success) {
+        //setActions(res?.data);
         setActions(res?.data?.filter((s) => s.machines.length > 0));
         setDashboardMachines(
           res?.data.flatMap((station) =>
