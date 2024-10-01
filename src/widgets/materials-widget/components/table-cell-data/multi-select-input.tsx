@@ -59,16 +59,26 @@ const MultiSelectInput = ({
     isChecked: boolean,
     option: any
   ) => {
+    console.log("parameterKey", { parameterKey, isChecked, option });
+
+    // Keep only the ID for handling the changes
     onChangeInputs(
       parameterKey,
       isChecked
-        ? [...values, option?.value]
-        : values.filter((v) => v !== option?.value)
+        ? [...values, option?.value] // Add only the ID (option.value) when checked
+        : values.filter((v) => v !== option?.value) // Remove only the ID when unchecked
     );
   };
 
+  const transformValuesArray = (inputArray) => {
+    return inputArray
+      .map((item) => (typeof item === 'object' && item !== null ? item.ID : item)) // Extract ID if item is an object
+      .filter((id) => id !== undefined); // Filter out any undefined values
+  };
+
   const onChangeInputs = async (key, value) => {
-    await updateCellData(id, key, value);
+    const values = transformValuesArray(value);
+    await updateCellData(id, key, values);
   };
 
 
@@ -98,7 +108,7 @@ const MultiSelectInput = ({
                   }
                   icon={<CheckboxIcon />}
                   checkedIcon={<CheckboxCheckedIcon />}
-                  checked={values?.includes(option?.value)}
+                  checked={values?.some(item => item.ID === option?.value)}
                 />
               </div>
               <div>{option.label}</div>
