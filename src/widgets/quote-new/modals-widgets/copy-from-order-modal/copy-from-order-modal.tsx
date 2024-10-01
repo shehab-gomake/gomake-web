@@ -43,10 +43,10 @@ const CopyFromOrderModal = ({ openModal, onClose, documentType, cliendDocumentTy
                 <div style={classes.searchLabelStyle}>{t("sales.quote.searchBy")}</div>
                 <SearchInputComponent onChange={setTerm} />
               </div>
-             { isCopyFromOrder && <div style={classes.switchContainer}>
+              <div style={classes.switchContainer}>
                 <SecondSwitch checked={showReadyOnly} onChange={(e) => setShowReadyOnly(e.target.checked)} />
                 <span style={classes.switchLabel}>{t("sales.cart.showReadyItems")}</span>
-              </div>}
+              </div>
             </div>
           </div>
           <div style={classes.bodyContainer}>
