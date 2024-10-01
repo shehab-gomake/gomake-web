@@ -2975,6 +2975,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             });
           }
           else if (subSectionParameter.code === "DieKissCut") {
+
             let unitWidth = dieCut?.rowData?.unitWidth?.value + "";
             let unitLength = dieCut?.rowData?.unitLength?.value + "";
             const dieCutSizesParametersArray = [];
@@ -2988,6 +2989,43 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               } else {
                 const subSectionParameter = subSection.parameters.find(
                   (param) => param.code === dieCutSizeParameter.parameterCode
+                );
+                temp.push({
+                  parameterId: subSectionParameter.id,
+                  sectionId: sectionId,
+                  subSectionId: subSectionId,
+                  ParameterType: ParameterType,
+                  parameterName: parameterName,
+                  actionId: actionId,
+                  values: [dieCutSizeParameter.value],
+                  valueIds: [],
+                  actionIndex: subSectionParameter.actionIndex,
+                  parameterCode: subSectionParameter.code,
+                  valuesConfigs: subSectionParameter?.valuesConfigs,
+                  unitKey: subSectionParameter?.unitKey,
+                  unitType: subSectionParameter?.unitType,
+                  isDisabled: true,
+                  isGeneralInfoInProductionFloor: subSectionParameter?.isGeneralInfoInProductionFloor
+                });
+              }
+            });
+          }
+
+          else if (subSectionParameter.code === "DieStamp") {
+
+            let unitWidth = dieCut?.rowData?.width?.value + "";
+            let unitLength = dieCut?.rowData?.length?.value + "";
+            const dieCutSizesParametersArray = [];
+            dieCutSizesParametersArray.push({ parameterCode: "EnhancementWidth", value: unitWidth, actionIndex: subSectionParameter?.actionIndex });
+            dieCutSizesParametersArray.push({ parameterCode: "EnhancementLength", value: unitLength, actionIndex: subSectionParameter?.actionIndex });
+            dieCutSizesParametersArray.forEach(dieCutSizeParameter => {
+              let dieCutSizeSubProductParameter = temp.find(x => x.parameterCode == dieCutSizeParameter.parameterCode && dieCutSizeParameter?.actionIndex === subSectionParameter?.actionIndex);
+              if (dieCutSizeSubProductParameter) {
+                dieCutSizeSubProductParameter.values = [dieCutSizeParameter.value]
+                dieCutSizeSubProductParameter.isDisabled = true;
+              } else {
+                const subSectionParameter = subSection.parameters.find(
+                  (param) => param.code === dieCutSizeParameter.parameterCode && param?.actionIndex === dieCutSizeParameter?.actionIndex
                 );
                 temp.push({
                   parameterId: subSectionParameter.id,

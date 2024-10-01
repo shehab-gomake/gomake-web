@@ -182,7 +182,8 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
         selectParameterButton?.paameterType,
         selectParameterButton?.index,
         selectParameterButton?.parameter?.actionIndex,
-        selectParameterButton?.parameter?.code, selectedShape
+        selectParameterButton?.parameter?.code,
+        selectedShape
       );
     }
     setMaterialData([])
