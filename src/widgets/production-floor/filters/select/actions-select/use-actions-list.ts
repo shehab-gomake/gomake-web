@@ -209,13 +209,13 @@ const useActionsList = ({ source, onClickApply }: IUseActionsList) => {
   };
   const onClickCloseDepartmentModal = () => {
     setOpenDepartmentModal(false);
+    resetStationFilterGroup();
   };
 
   const [filterGroups, setFilterGroups] = useState<IFilterGroupsList[]>();
   const resetStationFilterGroup = useResetRecoilState(stationFilterGroupState);
-  const stationFilterGroup = useRecoilValue<IStationFilterGroup>(
-    stationFilterGroupState
-  );
+  const [stationFilterGroup, setStationFilterGroup] =
+    useRecoilState<IStationFilterGroup>(stationFilterGroupState);
 
   const getStationFilterGroups = async () => {
     const callBack = (res) => {
@@ -259,21 +259,19 @@ const useActionsList = ({ source, onClickApply }: IUseActionsList) => {
       alertFault(t("productionFloor.alertNoGroupName"));
       return;
     }
-
-    if (actionsMachinesIds.length === 0) {
+    if (stationFilterGroup?.stations?.length === 0) {
       alertFault(t("productionFloor.alertNoSelectedAction"));
       return;
     }
 
     const updatedStationFilterGroup = {
       ...stationFilterGroup,
-      stations: actionsMachinesIds,
+      //stations: actionsMachinesIds,
     };
     const callBack = (res) => {
       if (res.success) {
         onClickCloseDepartmentModal();
         getStationFilterGroups();
-        resetStationFilterGroup();
       }
     };
     await createBoardMissionStationFilterGroupApi(
@@ -296,6 +294,10 @@ const useActionsList = ({ source, onClickApply }: IUseActionsList) => {
   };
 
   const handleClickSave = () => {
+    setStationFilterGroup({
+      ...stationFilterGroup,
+      stations: actionsMachinesIds,
+    });
     setOpen(false);
     onClickOpenDepartmentModal();
   };
