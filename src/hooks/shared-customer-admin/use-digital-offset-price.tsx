@@ -2582,9 +2582,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         (sub) => sub.id === subSectionId
       );
       const subSectionParameter = subSection.parameters.find(
-        (param) => param.id === parameterId
+        (param) => param.id === parameterId && param.actionIndex === actionIndex
       );
-
       if (findIndex !== -1) {
         const valuesArray = [data.values].filter(Boolean);
         temp[findIndex] = {
@@ -3012,14 +3011,13 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           }
 
           else if (subSectionParameter.code === "DieStamp") {
-
             let unitWidth = dieCut?.rowData?.width?.value + "";
             let unitLength = dieCut?.rowData?.length?.value + "";
             const dieCutSizesParametersArray = [];
             dieCutSizesParametersArray.push({ parameterCode: "EnhancementWidth", value: unitWidth, actionIndex: subSectionParameter?.actionIndex });
             dieCutSizesParametersArray.push({ parameterCode: "EnhancementLength", value: unitLength, actionIndex: subSectionParameter?.actionIndex });
             dieCutSizesParametersArray.forEach(dieCutSizeParameter => {
-              let dieCutSizeSubProductParameter = temp.find(x => x.parameterCode == dieCutSizeParameter.parameterCode && dieCutSizeParameter?.actionIndex === subSectionParameter?.actionIndex);
+              let dieCutSizeSubProductParameter = temp.find(x => x.parameterCode == dieCutSizeParameter.parameterCode && x?.actionIndex === dieCutSizeParameter?.actionIndex);
               if (dieCutSizeSubProductParameter) {
                 dieCutSizeSubProductParameter.values = [dieCutSizeParameter.value]
                 dieCutSizeSubProductParameter.isDisabled = true;

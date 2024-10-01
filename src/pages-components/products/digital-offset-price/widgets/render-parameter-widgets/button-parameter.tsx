@@ -175,8 +175,14 @@ const ButtonParameterWidget = ({
           if (subProduct.type === subSection.type) {
             const updatedParameters = subProduct.parameters.filter(
               (param) =>
-                !(param.parameterCode === "Width" || param.parameterCode === "Height" || param.parameterCode === "EnhancementLength" || param.parameterCode === "EnhancementWidth")
+                !(
+                  param.parameterCode === "Width" && param.actionIndex === isSelectedShape.actionIndex ||
+                  param.parameterCode === "Height" && param.actionIndex === isSelectedShape.actionIndex ||
+                  param.parameterCode === "EnhancementLength" && param.actionIndex === isSelectedShape.actionIndex ||
+                  param.parameterCode === "EnhancementWidth" && param.actionIndex === isSelectedShape.actionIndex
+                )
             );
+            console.log("updatedParameters", updatedParameters)
             return { ...subProduct, parameters: updatedParameters };
           }
           return subProduct;
@@ -350,98 +356,8 @@ const ButtonParameterWidget = ({
     const selectedShapeId = isParameterSettings ? isSelectedShape?.[0]?.id : isSelectedShape?.valueIds?.[0];
     const selectedMaterial = materialDataPath?.find((material) => material.valueId === selectedShapeId);
     const transformedShape: any = transformSelectedShape(selectedMaterial);
-
     if (!transformedShape) return;
-
     setSelectedShape(transformedShape);
-
-    if (!isParameterSettings && subProductsParameters?.length > 0) {
-      const dieUnitWidth = parameter?.code === "DieKissCut"
-        ? transformedShape?.rowData?.unitWidth?.value
-        : transformedShape?.rowData?.width?.value;
-      const dieUnitLength = parameter?.code === "DieKissCut"
-        ? transformedShape?.rowData?.unitLength?.value
-        : transformedShape?.rowData?.length?.value;
-
-      const dieCutSizesParametersArray = [
-        { parameterCode: parameter?.code === "DieStamp" ? "EnhancementWidth" : "Width", value: dieUnitWidth?.toString(), actionIndex: parameter?.actionIndex },
-        { parameterCode: parameter?.code === "DieStamp" ? "EnhancementLength" : "Height", value: dieUnitLength?.toString(), actionIndex: parameter?.actionIndex },
-      ];
-
-      let updatedParameters = subProductsParameters.map((param) => {
-        if (param?.parameterCode === "EnhancementWidth") {
-          debugger
-        }
-        const matchingParam = dieCutSizesParametersArray.find((dieParam) => dieParam.parameterCode === param.parameterCode && dieParam?.actionIndex === param?.actionIndex);
-        return matchingParam ? { ...param, values: [matchingParam.value], isDisabled: true } : param;
-      });
-      dieCutSizesParametersArray.forEach((dieParam) => {
-        const subSectionParam = subSection.parameters.find((param) => param.code === dieParam.parameterCode && param.actionIndex === dieParam?.actionIndex);
-
-        if (!updatedParameters.find((p) => p.parameterCode === dieParam.parameterCode && p.actionIndex === dieParam?.actionIndex) && subSectionParam) {
-          updatedParameters.push({
-            parameterId: subSectionParam.id,
-            sectionId: section?.id,
-            subSectionId: subSection?.id,
-            ParameterType: subSectionParam?.ParameterType,
-            parameterName: subSectionParam?.name,
-            actionId: subSectionParam?.actionId,
-            values: [dieParam.value],
-            valueIds: [],
-            actionIndex: subSectionParam.actionIndex,
-            parameterCode: subSectionParam.code,
-            valuesConfigs: subSectionParam?.valuesConfigs,
-            unitKey: subSectionParam?.unitKey,
-            unitType: subSectionParam?.unitType,
-            isDisabled: true,
-          });
-        }
-      });
-
-      const sizeParameter = subSection.parameters.find((param) => param.code === "size");
-      if (sizeParameter) {
-        const customValue = sizeParameter.valuesConfigs.find((config) => !config.values || Object.keys(config.values).length === 0);
-        if (customValue) {
-          const existingSizeParam = updatedParameters.find((param) => param.parameterCode === "size");
-          if (existingSizeParam) {
-            const updatedSizeParam = {
-              ...existingSizeParam,
-              valueIds: [customValue.id],
-              values: [customValue.updateName],
-              isDisabled: true,
-            };
-            updatedParameters = updatedParameters.map(param =>
-              param.parameterCode === existingSizeParam.parameterCode ? updatedSizeParam : param
-            );
-          } else {
-            updatedParameters.push({
-              parameterId: sizeParameter.id,
-              sectionId: section?.id,
-              subSectionId: subSection?.id,
-              ParameterType: sizeParameter.parameterType,
-              parameterName: sizeParameter.name,
-              actionId: sizeParameter.actionId,
-              values: [customValue.updateName],
-              valueIds: [customValue.id],
-              actionIndex: sizeParameter.actionIndex,
-              parameterCode: sizeParameter.code,
-              valuesConfigs: sizeParameter?.valuesConfigs,
-              unitKey: sizeParameter?.unitKey,
-              unitType: sizeParameter?.unitType,
-              isDisabled: true,
-            });
-          }
-        }
-      }
-
-      const updatedSubProducts = subProducts.map((subProduct) =>
-        subProduct.type === subSection?.type
-          ? { ...subProduct, parameters: updatedParameters }
-          : subProduct
-      );
-
-      setProducts(updatedSubProducts);
-    }
   }, [materialData, isParameterSettings, isSelectedShape, allMaterials]);
   const hasDieCutOrDieKissCut = checkIfDieCutOrDieKissCutExists(subProducts);
   if (parameter?.buttonAction === EButtonTypes.GALLERY_MODAL) {
