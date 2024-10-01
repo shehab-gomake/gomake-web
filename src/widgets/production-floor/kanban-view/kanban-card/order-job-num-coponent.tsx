@@ -1,5 +1,4 @@
 import { FONT_FAMILY } from "@/utils/font-family";
-import { useRouter } from "next/router";
 
 interface ITaskCategoryLabelProps {
   boardMission: any;
@@ -12,19 +11,10 @@ const OrderJObNumbersComponent = ({
   textColor,
   bgColor,
 }: ITaskCategoryLabelProps) => {
-  const { push } = useRouter();
-
-  const handleOpenMission = () => {
-    push(
-      `/production-floor?boardMissionsId=${boardMission?.id}&productType=${boardMission?.productType}&step=stations`
-    ).then();
-  };
-
   return (
     <span
-      onClick={handleOpenMission}
       style={{
-        cursor: "pointer",
+        // cursor: "pointer",
         padding: "0px 5px",
         display: "inline-block",
         width: "fit-content",
