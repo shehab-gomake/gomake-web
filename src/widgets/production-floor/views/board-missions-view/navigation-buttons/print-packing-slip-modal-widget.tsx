@@ -4,34 +4,42 @@ import { Stack } from "@mui/material";
 import { useStyle } from "@/pages-components/board-missions/style";
 import { SecondaryButton } from "@/components/button/secondary-button";
 import { useEffect, useMemo, useState } from "react";
-import { getDeliveryTickerPdfApi } from "@/services/api-service/board-missions-table/board-missions-table";
+import { getDeliveryTickerPdfApi } from "@/services/api-service/board-missions/board-missions-table";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 
 interface IProps {
   boardMissionId: string;
   quantity: number;
-  openModal: boolean
-  onClose: () => void
+  openModal: boolean;
+  onClose: () => void;
 }
-const PrintPackingSlipModalWidget = ({ boardMissionId, quantity, openModal, onClose }: IProps) => {
+const PrintPackingSlipModalWidget = ({
+  boardMissionId,
+  quantity,
+  openModal,
+  onClose,
+}: IProps) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
   const [quantityOfPackages, setQuantityOfPackages] = useState<number>(1);
-  const [quantityPerPackage, setQuantityPerPackage] = useState<number>(quantity);
+  const [quantityPerPackage, setQuantityPerPackage] =
+    useState<number>(quantity);
 
   useEffect(() => {
-    setQuantityPerPackage(quantity)
-  },
-    [quantity])
+    setQuantityPerPackage(quantity);
+  }, [quantity]);
 
-  const remainingQuantity = quantity - quantityPerPackage * (quantityOfPackages - 1);
+  const remainingQuantity =
+    quantity - quantityPerPackage * (quantityOfPackages - 1);
   const { alertFaultGetData, alertFault } = useSnackBar();
   const { callApi } = useGomakeAxios();
 
   const handleQuantityOfPackagesChange = (event) => {
     const newQuantityOfPackages = parseInt(event.target.value, 10);
     const totalQuantity = quantity || 0;
-    const newQuantityPerPackage = Math.ceil(totalQuantity / newQuantityOfPackages);
+    const newQuantityPerPackage = Math.ceil(
+      totalQuantity / newQuantityOfPackages
+    );
     setQuantityOfPackages(newQuantityOfPackages);
     setQuantityPerPackage(newQuantityPerPackage);
   };
@@ -39,26 +47,32 @@ const PrintPackingSlipModalWidget = ({ boardMissionId, quantity, openModal, onCl
   const handleQuantityPerPackageChange = (event) => {
     const newQuantityPerPackage = parseInt(event.target.value, 10);
     const totalQuantity = quantity;
-    const newQuantityOfPackages = Math.ceil(totalQuantity / newQuantityPerPackage);
-    setQuantityPerPackage(isNaN(newQuantityPerPackage) ? 0 : newQuantityPerPackage);
-    setQuantityOfPackages(isNaN(newQuantityOfPackages) ? 1 : newQuantityOfPackages);
+    const newQuantityOfPackages = Math.ceil(
+      totalQuantity / newQuantityPerPackage
+    );
+    setQuantityPerPackage(
+      isNaN(newQuantityPerPackage) ? 0 : newQuantityPerPackage
+    );
+    setQuantityOfPackages(
+      isNaN(newQuantityOfPackages) ? 1 : newQuantityOfPackages
+    );
   };
 
   const packageInputs = useMemo(() => {
-    return [...Array(isNaN(quantityOfPackages) ? 1 : quantityOfPackages)].map((_, index) => (
-      <div key={index} style={{ width: "40%" }}>
-        <h3 style={classes.packageLabelStyle}>
-          {`${t("boardMissions.package")} ${index + 1}`}
-        </h3>
-        <div style={classes.inputValueStyle}>
-          {
-            index === quantityOfPackages - 1
+    return [...Array(isNaN(quantityOfPackages) ? 1 : quantityOfPackages)].map(
+      (_, index) => (
+        <div key={index} style={{ width: "40%" }}>
+          <h3 style={classes.packageLabelStyle}>
+            {`${t("boardMissions.package")} ${index + 1}`}
+          </h3>
+          <div style={classes.inputValueStyle}>
+            {index === quantityOfPackages - 1
               ? remainingQuantity
-              : quantityPerPackage
-          }
+              : quantityPerPackage}
+          </div>
         </div>
-      </div>
-    ));
+      )
+    );
   }, [quantityOfPackages, quantityPerPackage, remainingQuantity]);
 
   const onClickPrintPackagingSlip = async () => {
@@ -69,7 +83,7 @@ const PrintPackingSlipModalWidget = ({ boardMissionId, quantity, openModal, onCl
     const callBack = (res) => {
       if (res?.success) {
         const pdfLink = res.data;
-        downloadPdf(pdfLink)
+        downloadPdf(pdfLink);
         onClose();
       } else {
         alertFaultGetData();
@@ -77,7 +91,7 @@ const PrintPackingSlipModalWidget = ({ boardMissionId, quantity, openModal, onCl
     };
     await getDeliveryTickerPdfApi(callApi, callBack, {
       boardMissionId: boardMissionId,
-      quantityOnPackages: quantityPerPackage
+      quantityOnPackages: quantityPerPackage,
     });
   };
 
@@ -104,7 +118,6 @@ const PrintPackingSlipModalWidget = ({ boardMissionId, quantity, openModal, onCl
       <Stack direction={"column"} gap={"15px"}>
         <Stack direction={"column"} gap={"15px"}>
           <Stack direction={"row"} gap={"15px"}>
-
             <div style={{ width: "40%" }}>
               <h3 style={classes.filterLabelStyle}>
                 {t("boardMissions.quantityOfPackages")}
@@ -134,8 +147,15 @@ const PrintPackingSlipModalWidget = ({ boardMissionId, quantity, openModal, onCl
           {packageInputs}
         </Stack>
         <Stack direction={"row"} gap={"15px"}>
-          <SecondaryButton variant={'contained'} onClick={onClickPrintPackagingSlip} >{t('modal.confirm')}</SecondaryButton>
-          <SecondaryButton variant={'outlined'} onClick={onClose}>{t('modal.cancel')}</SecondaryButton>
+          <SecondaryButton
+            variant={"contained"}
+            onClick={onClickPrintPackagingSlip}
+          >
+            {t("modal.confirm")}
+          </SecondaryButton>
+          <SecondaryButton variant={"outlined"} onClick={onClose}>
+            {t("modal.cancel")}
+          </SecondaryButton>
         </Stack>
       </Stack>
     </GoMakeModal>

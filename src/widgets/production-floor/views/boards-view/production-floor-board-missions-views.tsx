@@ -7,17 +7,16 @@ import { useEffect, useState } from "react";
 import Stack from "@mui/material/Stack";
 import { Skeleton } from "@mui/material";
 import { productionFloorFiltersState } from "@/widgets/production-floor/state/production-floor-filters";
-import { FONT_FAMILY } from "@/utils/font-family";
-import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { useTranslation } from "react-i18next";
+import { useStyle } from "./style";
 
 const ProductionFloorBoardMissionsViews = ({ connectionId }: { connectionId: string }) => {
     const [view] = useRecoilState(productionFloorViewState);
     const { getData } = useProductionFloorData();
     const [loading, setLoading] = useState<boolean>(false);
     const [filter] = useRecoilState(productionFloorFiltersState);
-    const { secondColor } = useGomakeTheme();
     const { t } = useTranslation();
+    const { classes } = useStyle();
 
     useEffect(() => {
         if (!!connectionId) {
@@ -35,16 +34,7 @@ const ProductionFloorBoardMissionsViews = ({ connectionId }: { connectionId: str
                     }
                 </Stack> :
                     filter?.stations?.length === 0 ?
-                        <span style={{
-                            width: "100%",
-                            alignItems: "center",
-                            color: secondColor(500),
-                            textAlign: "center" as "center",
-                            marginTop: 20,
-                            height: 42,
-                            lineHeight: "17.5px",
-                            ...FONT_FAMILY.Lexend(500, 14),
-                        }}>{t('productionFloor.noStationsSelected')}</span> :
+                        <span style={classes.noStationSelected}>{t('productionFloor.noStationsSelected')}</span> :
                         view === EProductionFloorView.TABLE ? <ProductionFloorTableView /> :
                             view === EProductionFloorView.KANBAN ? <ProductionFloorKanbanBoard /> :
                                 <div />

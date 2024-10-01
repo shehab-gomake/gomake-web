@@ -4,7 +4,6 @@ import Link from "next/link";
 import { LabelComponent } from "@/widgets/production-floor/label-component/label-component";
 import { CurrentStationComponent } from "@/widgets/production-floor/table-view/status-table/stations/current-station";
 import { BoardStatusComponent } from "@/widgets/production-floor/table-view/status-table/board-status/board-status";
-import { IBoardMissions } from "@/widgets/production-floor/interfaces/board-missions";
 import { useDrag, useDrop } from "react-dnd";
 import { useRecoilState } from "recoil";
 import { selectedBoardsMissionsState } from "@/widgets/production-floor/state/boards";
@@ -23,6 +22,7 @@ import { ClickableLabelComponent } from "@/widgets/production-floor/label-compon
 import { NextStationComponent } from "../stations/next-station";
 import { DateTimeComponent } from "@/components/date-time/date-time-component";
 import { useRouter } from "next/router";
+import { IBoardMissions } from "@/widgets/production-floor/interfaces/board-missions";
 
 interface IProps {
   boardMission: IBoardMissions;
