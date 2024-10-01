@@ -126,6 +126,7 @@ const TableRowComponent = ({
 
   const { updateStatus, updateBoardMissionsOrder, t, onClickPrintJob } =
     useProductionFloorData();
+
   const onSelectBoardMissions = (id: string, checked: boolean) => {
     setSelectedIds(
       checked
@@ -137,6 +138,7 @@ const TableRowComponent = ({
           )
     );
   };
+
   drag(drop(ref));
 
   return (
@@ -164,7 +166,6 @@ const TableRowComponent = ({
           userPermission={Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR}
         >
           <SecondaryTableCell align={"center"}>
-            {" "}
             <SecondaryCheckBox
               checked={
                 !!selectedIds?.find(

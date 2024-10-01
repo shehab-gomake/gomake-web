@@ -15,6 +15,7 @@ import {useMessengerSignalr} from "@/hooks/signalr/use-messenger-signalr";
 import {useMediaQuery} from "@mui/material";
 import {useRecoilState} from "recoil";
 import {unreadMessagesCountState} from "@/store/unread-messages-count";
+import {messengerMobileViewState} from "@/widgets/messenger/state";
 
 const useMessenger = () => {
     const [selectedDialog, setSelectedDialog] = useState<IChatDialog | null>(null);
@@ -26,16 +27,15 @@ const useMessenger = () => {
     const [usersMetaData, setUsersMetaDta] = useState<IUserMetaData[]>([]);
     const {updateState, setUpdateState} = useMessengerSignalr();
     const {alertFaultUpdate} = useSnackBar();
-    const {query} = useRouter();
+    const {query, pathname, push} = useRouter();
     const {dialogId, clientId} = query;
     const mobileMediaQuery = useMediaQuery('(max-width:800px)');
-    const [,setUnreadMessagesCount] = useRecoilState(unreadMessagesCountState);
-    const {push, pathname} = useRouter();
+    const [, setUnreadMessagesCount] = useRecoilState(unreadMessagesCountState);
+    const [isMobile, setIsMobile] = useRecoilState(messengerMobileViewState);
 
 
-
-    const isMobile = useCallback(() => {
-        return !!clientId && mobileMediaQuery
+    useEffect(() => {
+        setIsMobile(!!clientId && mobileMediaQuery);
     }, [clientId, mobileMediaQuery]);
 
 
@@ -76,7 +76,10 @@ const useMessenger = () => {
         dialogs = dialogs?.map(dialog => ({
             ...dialog,
             unread_messages_count: selectedDialog?._id === dialog._id ? 0 : dialog.unread_messages_count,
-            users:  dialog?.occupants_ids?.map((userId, index) => ({id: userId, name: dialog?.data?.users?.length > 0 ? dialog?.data?.users[index] : ''}))
+            users: dialog?.occupants_ids?.map((userId, index) => ({
+                id: userId,
+                name: dialog?.data?.users?.length > 0 ? dialog?.data?.users[index] : ''
+            }))
                 ?.filter(user => user.id === messenger.sessionUser.userId)
         }))
         setDialogs(dialogs);
@@ -304,8 +307,10 @@ const useMessenger = () => {
     }
 
     const onSelectDialog = dialog => {
-        push(`${pathname}?dialogId=${dialog._id}`).then();
+        !!clientId ? push({pathname, query: {clientId, dialogId: dialog._id}}) :
+            push(`${pathname}?dialogId=${dialog._id}`).then();
     }
+
     useEffect(() => {
         if (messenger.isChatConnected) {
             getDialogs().then();
@@ -350,7 +355,9 @@ const useMessenger = () => {
     }, [usersMetaData, messages])
 
     useEffect(() => {
-        if (!!dialogId && selectedDialog?._id !== dialogId) {
+        if (!dialogId) {
+            setSelectedDialog(null);
+        } else if (!!dialogId && selectedDialog?._id !== dialogId) {
             const dialog = dialogs?.find(dialog => dialog._id === dialogId);
             setSelectedDialog(dialog);
         }
@@ -363,6 +370,7 @@ const useMessenger = () => {
             setUpdateState(false);
         }
     }, [updateState, messenger])
+
 
     return {
         selectedDialog,
@@ -388,7 +396,10 @@ const useMessenger = () => {
         deleteMessage,
         isMobile,
         getDialogs,
-        onSelectDialog
+        onSelectDialog,
+        pathname,
+        push,
+        clientId,
     }
 }
 

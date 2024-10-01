@@ -8,6 +8,8 @@ import { Permissions } from "@/components/CheckPermission/enum";
 import { OrderJObNumbersComponent } from "./order-job-num-coponent";
 import { toRgba } from "@/utils/helpers";
 import { useTranslation } from "react-i18next";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 
 interface IProp {
   board: IBoardMissions;
@@ -40,6 +42,13 @@ const KanbanCardComponent = ({ board, status }: IProp) => {
     [canDrag]
   );
 
+  const { push } = useRouter();
+  const handleOpenMission = () => {
+    push(
+      `/production-floor?boardMissionsId=${board?.id}&productType=${board?.productType}&step=stations`
+    ).then();
+  };
+
   return (
     <Stack
       direction={"column"}
@@ -51,12 +60,13 @@ const KanbanCardComponent = ({ board, status }: IProp) => {
       ref={canDrag ? drag : null}
       style={{
         opacity: isDragging ? 0.8 : 1,
-        cursor: canDrag ? "move" : "not-allowed",
+        cursor: isDragging ? "grabbing" : "pointer",
         borderRadius: "8px",
         border: `1px solid var(--Colors-Yellow-600,${CardColor})`,
         background: toRgba(CardColor, 0.1),
         boxShadow: "0px 2px 4px 0px rgba(0, 0, 0, 0.08)",
       }}
+      onClick={handleOpenMission}
     >
       <Stack
         direction={"row"}

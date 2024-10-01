@@ -7,7 +7,6 @@ import { useProductionFloorData } from "@/widgets/production-floor/use-productio
 import { useRecoilState } from "recoil";
 import { productionFloorTextSearchState } from "../../state/text-search";
 import { useCallback } from "react";
-import { FONT_FAMILY } from "@/utils/font-family";
 import { useStyle } from "../kanban-card/style";
 
 interface IProps {
