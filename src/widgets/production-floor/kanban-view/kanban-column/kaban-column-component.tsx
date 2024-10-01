@@ -1,19 +1,24 @@
-import {KanbanCardComponent} from "@/widgets/production-floor/kanban-view/kanban-card/kanban-card-component";
-import {useDrop} from "react-dnd";
-import {IBoardMissions} from "@/widgets/production-floor/interfaces/board-missions";
-import {Stack} from "@mui/material";
-import {IProductionStatus} from "@/widgets/production-floor/interfaces/production-floor-status";
-import {useProductionFloorData} from "@/widgets/production-floor/use-production-floor-data";
+import { KanbanCardComponent } from "@/widgets/production-floor/kanban-view/kanban-card/kanban-card-component";
+import { useDrop } from "react-dnd";
+import { IBoardMissions } from "@/widgets/production-floor/interfaces/board-missions";
+import { Stack } from "@mui/material";
+import { IProductionStatus } from "@/widgets/production-floor/interfaces/production-floor-status";
+import { useProductionFloorData } from "@/widgets/production-floor/use-production-floor-data";
+import { useRecoilState } from "recoil";
+import { productionFloorTextSearchState } from "../../state/text-search";
+import { useCallback } from "react";
 
 interface IProps {
     status: IProductionStatus;
-    count: number;
-    boardsMissions: IBoardMissions[]
+    boardsMissions: IBoardMissions[];
+    count?: number; 
 }
 
-function KanbanColumnComponent({status, boardsMissions, count}: IProps) {
-    const {updateStatus,t} = useProductionFloorData();
-    const [{isOver}, drop] = useDrop(() => ({
+function KanbanColumnComponent({ status, boardsMissions }: IProps) {
+
+    const [search] = useRecoilState(productionFloorTextSearchState);
+    const { updateStatus, t } = useProductionFloorData();
+    const [{ isOver }, drop] = useDrop(() => ({
         accept: 'task',
         drop: (item: IBoardMissions, monitor) => {
             const didDrop = monitor.didDrop();
@@ -28,13 +33,24 @@ function KanbanColumnComponent({status, boardsMissions, count}: IProps) {
         }),
     }), [status, boardsMissions]);
 
+      const getBoards = useCallback(() => {
+        return !!search
+          ? boardsMissions?.filter(
+            (board) =>
+              `${board?.boardMissionNumber}\\${board?.orderNumber}`.includes(search) ||
+              `${board?.clientName?.toLowerCase()}`.includes(search.toLowerCase()) ||
+              board?.automatedTags?.some((tag) => `${tag.toLowerCase()}`.includes(search.toLowerCase()))
+          )
+          : boardsMissions;
+      }, [boardsMissions, search]);
+      
     return (
         <Stack ref={drop}
-               gap={'10px'}
-               minHeight={'100%'}
-               width={'100%'}
-               borderRadius={'16px'}
-             style={{margin: '0 10px', padding: '10px', backgroundColor: 'rgba(0, 0, 0, 0.08)', opacity: isOver ? 0.6 : 1, overflow: 'hidden'}}>
+            gap={'10px'}
+            minHeight={'100%'}
+            width={'100%'}
+            borderRadius={'16px'}
+            style={{ margin: '0 10px', padding: '10px', backgroundColor: 'rgba(0, 0, 0, 0.08)', opacity: isOver ? 0.6 : 1, overflow: 'hidden' }}>
             <h2 style={{
                 height: '80px',
                 width: '100%',
@@ -45,14 +61,14 @@ function KanbanColumnComponent({status, boardsMissions, count}: IProps) {
                 backgroundColor: status.backgroundColor,
                 color: status.textColor,
                 borderRadius: '16px 16px 0 0',
-            }}>{`${t('productionStatuses.' + status.name)} (${count})`}</h2>
+            }}>{`${t('productionStatuses.' + status.name)} (${getBoards()?.length})`}</h2>
             <Stack overflow={'auto'} gap={'10px'}>
-                {boardsMissions.map((board) => (
-                    <KanbanCardComponent key={board.id} board={board}/>
+                {getBoards()?.map((board , index) => (
+                    <KanbanCardComponent  key={`${index}-${board.id}`}  board={board} />
                 ))}
             </Stack>
         </Stack>
     );
 }
 
-export {KanbanColumnComponent};
+export { KanbanColumnComponent };

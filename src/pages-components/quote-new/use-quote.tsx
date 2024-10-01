@@ -18,7 +18,7 @@ import {
   quoteItemState,
 } from "@/store";
 import { useQuoteGetData } from "./use-quote-get-data";
-import { acceptDocumentApi, addDeliveryApi, addDocumentContactApi, calculateDocumentApi, calculateDocumentItemApi, cancelDocumentApi, changeDocumentClientApi, deleteDocumentAddressApi, deleteDocumentContactApi, deleteDocumentItemApi, duplicateWithAnotherQuantityApi, getDocumentApi, getWhatsAppMessageApi, refreshExchangeRateApi, rejectDocumentApi, saveDocumentApi, sendDocumentToClientApi, sortDocumentItemsApi, updateAgentApi, updateDocuementItemSelectApi, updateDocumentAddressApi, updateDocumentContactApi, updateDocumentCurrencyApi, updateDueDateApi, updateExchangeRateApi, updateIsShowDetailsApi, updateIsShowPricesApi, updateOccasionalClientNameApi, updatePurchaseNumberApi } from "@/services/api-service/generic-doc/documents-api";
+import { acceptDocumentApi, addDeliveryApi, addDocumentContactApi, calculateDocumentApi, calculateDocumentItemApi, cancelDocumentApi, changeDocumentClientApi, deleteDocumentAddressApi, deleteDocumentContactApi, deleteDocumentItemApi, duplicateWithAnotherQuantityApi, getDocumentApi, getWhatsAppMessageApi, refreshExchangeRateApi, rejectDocumentApi, saveDocumentApi, sendDocumentToClientApi, sortDocumentItemsApi, updateAgentApi, updateDiscountTypeApi, updateDocuementItemSelectApi, updateDocumentAddressApi, updateDocumentContactApi, updateDocumentCurrencyApi, updateDueDateApi, updateExchangeRateApi, updateIsShowDetailsApi, updateIsShowPricesApi, updateOccasionalClientNameApi, updatePurchaseNumberApi } from "@/services/api-service/generic-doc/documents-api";
 import { DOCUMENT_TYPE } from "../quotes/enums";
 import { useRouter } from "next/router";
 import { getAllCreditTransactionsApi, getClientPaymentItemsApi } from "@/services/api-service/generic-doc/receipts-api";
@@ -173,7 +173,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
   };
   const tableHeaders = [
     "#",
-    ((isDeliveryNote || isInvoice) && !router.query.isNewCreation)  ? t("products.profits.documentNumber") : null,
+    ((isDeliveryNote || isInvoice) && !router.query.isNewCreation) ? t("products.profits.documentNumber") : null,
     t("sales.quote.itemCode"),
     t("products.profits.itemName"),
     isQuoteConfirmation ? quoteConfirm?.isShowDetails ? t("products.profits.details") : null : quoteItemValue?.isShowDetails ? t("products.profits.details") : null,
@@ -676,9 +676,9 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
   };
 
 
-  const getCalculateQuoteItem = async (quoteItem: any, calculationType: number, data: number ,  newUpdatedQuoteItemValue?: any ) => {
+  const getCalculateQuoteItem = async (quoteItem: any, calculationType: number, data: number, newUpdatedQuoteItemValue?: any) => {
     if (router.query.isNewCreation) {
-      const newQuoteItemValue = newUpdatedQuoteItemValue ?? quoteItemValue ;
+      const newQuoteItemValue = newUpdatedQuoteItemValue ?? quoteItemValue;
       const quoteItemEdit = newQuoteItemValue.documentItems.find(item => item.id === quoteItem.id)
       const res = await callApi(
         EHttpMethod.POST,
@@ -1447,11 +1447,29 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
         alertFaultUpdate();
       }
     }
-    await sortDocumentItemsApi(callApi, callBack, {
+    await updateDiscountTypeApi(callApi, callBack, {
       documentType: docType,
       document: {
         documentId: quoteItemValue?.id,
         sortType,
+      }
+    })
+  }
+  const updateDiscountType = async (discountType: number) => {
+
+    const callBack = (res) => {
+      if (res?.success) {
+        alertSuccessUpdate();
+        getQuote();
+      } else {
+        alertFaultUpdate();
+      }
+    }
+    await updateDiscountTypeApi(callApi, callBack, {
+      documentType: docType,
+      document: {
+        doucumentId: quoteItemValue?.id,
+        discountType,
       }
     })
   }
@@ -1712,7 +1730,8 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     newCreationDate,
     setNewCreationDate,
     openInvoiceCreationModal,
-    onClickCloseInvoiceCreation
+    onClickCloseInvoiceCreation,
+    updateDiscountType
   };
 };
 

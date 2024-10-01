@@ -134,7 +134,6 @@ const ProductionFloorFilters = () => {
         setSearch,
         actionsMachinesIds,
         filters,
-        selectedChip,
         onTagsChange,
         onSelectDeliveryTimeDates,
         onSelectCreateDates,
@@ -151,7 +150,8 @@ const ProductionFloorFilters = () => {
         setMachinesColors,
         setVisibleCards,
         setHiddenCards,
-        scrollContainerRef
+        scrollContainerRef,
+        selectedChips
     } = useProductionFloorFilters();
 
     useEffect(() => {
@@ -243,7 +243,7 @@ const ProductionFloorFilters = () => {
                         label={card.label}
                         machineId={card.machineId}
                         onClick={() => handleChipClick(card)}
-                        isSelected={selectedChip === card.label}
+                        isSelected={selectedChips?.includes(card.label)} 
                         getColorByMachineId={getColorByMachineId}
                         filters={filters}
                     />
@@ -259,7 +259,8 @@ const ProductionFloorFilters = () => {
                             PaperProps={{
                                 style: {
                                     marginTop: 8,
-                                    padding: "0px 8px"
+                                    padding: "0px 8px",
+                                    maxHeight:"438px"
                                 },
                             }}
                             anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
@@ -271,7 +272,7 @@ const ProductionFloorFilters = () => {
                                         label={card.label}
                                         machineId={card.machineId}
                                         onClick={() => handleChipClick(card)}
-                                        isSelected={selectedChip === card.label}
+                                        isSelected={selectedChips?.includes(card.label)} 
                                         getColorByMachineId={getColorByMachineId}
                                         filters={filters}
                                     />
