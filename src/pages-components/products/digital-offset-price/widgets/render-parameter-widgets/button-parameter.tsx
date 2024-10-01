@@ -182,7 +182,6 @@ const ButtonParameterWidget = ({
                   param.parameterCode === "EnhancementWidth" && param.actionIndex === isSelectedShape.actionIndex
                 )
             );
-            console.log("updatedParameters", updatedParameters)
             return { ...subProduct, parameters: updatedParameters };
           }
           return subProduct;
