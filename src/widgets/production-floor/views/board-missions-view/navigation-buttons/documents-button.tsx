@@ -3,7 +3,10 @@ import { CircularProgress, MenuItem, Paper } from "@mui/material";
 import { useMemo, useState } from "react";
 import { ArrowDownIcon } from "@/icons";
 
-import { getBoardMissionPDF, GetPrintingTicketPDFApi } from "@/services/api-service/generic-doc/documents-api";
+import {
+  getBoardMissionPDF,
+  GetPrintingTicketPDFApi,
+} from "@/services/api-service/generic-doc/documents-api";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { useTranslation } from "react-i18next";
 import { useRecoilState, useRecoilValue } from "recoil";
@@ -11,191 +14,221 @@ import { boardMissionsDetailsState } from "@/widgets/production-floor/state/boar
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { PDFIcon } from "@/pages-components/quotes/more-circle/icons/pdf";
 import { ClickOutside } from "@/components/click-out-side/click-out-side";
-import {
-    getOrderSummeryPdfApi
-} from "@/services/api-service/board-missions-table/board-missions-table";
+import { getOrderSummeryPdfApi } from "@/services/api-service/board-missions/board-missions-table";
 import { PackageIcon } from "@/icons/package-icon";
 import { ThreeOptionsModal } from "@/components";
 import { isReadyBoardMissionsState } from "@/widgets/production-floor/views/board-missions-view/stations/state";
 import { moveBoardMissionToDoneApi } from "@/services/api-service/production-floor/production-floor-endpoints";
-import {
-    PrintPackingSlipModalWidget
-} from "@/widgets/production-floor/views/board-missions-view/navigation-buttons/print-packing-slip-modal-widget";
+import { PrintPackingSlipModalWidget } from "@/widgets/production-floor/views/board-missions-view/navigation-buttons/print-packing-slip-modal-widget";
 
 const DocumentsButton = () => {
-    const [boardMissions] = useRecoilState(boardMissionsDetailsState);
-    const [open, setOpen] = useState<boolean>(false);
-    const [openPackagesModal, setOpenPackagesModal] = useState<boolean>(false);
-    const [openConfirmModal, setOpenConfirmModal] = useState<boolean>(false);
-    const [openMarkReadyModal, setOpenMarkReadyModal] = useState<boolean>(false);
-    const [downloading, setDownloading] = useState<boolean>(false);
-    const isReady = useRecoilValue(isReadyBoardMissionsState);
-    const { callApi } = useGomakeAxios();
-    const { t } = useTranslation();
-    const dir = t('direction');
-    const { primaryColor } = useGomakeTheme();
-    const { alertFaultGetData, alertFaultUpdate, alertSuccessUpdate } = useSnackBar();
-    const menuList = useMemo(() => [
-        {
-            condition: true,
-            name: "boardMissions.pdfWorkMission",
-            icon: <PDFIcon />,
-            onclick: () => onClickPrint(boardMissions),
-        },
-        {
-            condition: true,
-            name: "boardMissions.pdfProductionOrderSummary",
-            icon: <PDFIcon />,
-            onclick: () => onClickOrderSummeryPdf(boardMissions.boardMissionId),
-        },
-        {
-            condition: true,
-            name: t("boardMissions.printProductionPdf"),
-            icon: <PDFIcon />,
-            onclick: () => GetPrintingTicketPDF(boardMissions.boardMissionId),
-        },
-        {
-            condition: true,
-            name: t("boardMissions.printPackagingSlip"),
-            icon: <PackageIcon />,
-            onclick: () => isReady ? setOpenPackagesModal(true) : setOpenConfirmModal(true),
-        },
-    ], [boardMissions]);
+  const [boardMissions] = useRecoilState(boardMissionsDetailsState);
+  const [open, setOpen] = useState<boolean>(false);
+  const [openPackagesModal, setOpenPackagesModal] = useState<boolean>(false);
+  const [openConfirmModal, setOpenConfirmModal] = useState<boolean>(false);
+  const [openMarkReadyModal, setOpenMarkReadyModal] = useState<boolean>(false);
+  const [downloading, setDownloading] = useState<boolean>(false);
+  const isReady = useRecoilValue(isReadyBoardMissionsState);
+  const { callApi } = useGomakeAxios();
+  const { t } = useTranslation();
+  const dir = t("direction");
+  const { primaryColor } = useGomakeTheme();
+  const { alertFaultGetData, alertFaultUpdate, alertSuccessUpdate } =
+    useSnackBar();
+  const menuList = useMemo(
+    () => [
+      {
+        condition: true,
+        name: "boardMissions.pdfWorkMission",
+        icon: <PDFIcon />,
+        onclick: () => onClickPrint(boardMissions),
+      },
+      {
+        condition: true,
+        name: "boardMissions.pdfProductionOrderSummary",
+        icon: <PDFIcon />,
+        onclick: () => onClickOrderSummeryPdf(boardMissions.boardMissionId),
+      },
+      {
+        condition: true,
+        name: t("boardMissions.printProductionPdf"),
+        icon: <PDFIcon />,
+        onclick: () => GetPrintingTicketPDF(boardMissions.boardMissionId),
+      },
+      {
+        condition: true,
+        name: t("boardMissions.printPackagingSlip"),
+        icon: <PackageIcon />,
+        onclick: () =>
+          isReady ? setOpenPackagesModal(true) : setOpenConfirmModal(true),
+      },
+    ],
+    [boardMissions]
+  );
 
-    const downloadPdf = (url) => {
-        const anchor = document.createElement("a");
-        anchor.href = url;
-        anchor.target = "_blank";
-        anchor.addEventListener("click", () => {
-            setTimeout(() => {
-                anchor.remove();
-            }, 100);
-        });
-        anchor.click();
+  const downloadPdf = (url) => {
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.target = "_blank";
+    anchor.addEventListener("click", () => {
+      setTimeout(() => {
+        anchor.remove();
+      }, 100);
+    });
+    anchor.click();
+  };
+
+  const onClickOrderSummeryPdf = async (boardMissionId: string) => {
+    setOpen(false);
+    setDownloading(true);
+    const callBack = (res) => {
+      setDownloading(false);
+      if (res?.success) {
+        const pdfLink = res.data;
+        window.open(pdfLink, "_blank");
+      } else {
+      }
     };
+    await getOrderSummeryPdfApi(callApi, callBack, { boardMissionId });
+  };
 
-    const onClickOrderSummeryPdf = async (boardMissionId: string) => {
-        setOpen(false)
-        setDownloading(true)
-        const callBack = (res) => {
-            setDownloading(false)
-            if (res?.success) {
-                const pdfLink = res.data;
-                window.open(pdfLink, "_blank");
-            } else {
-            }
-        };
-        await getOrderSummeryPdfApi(callApi, callBack, { boardMissionId });
+  const onClickPrint = async (mission) => {
+    setDownloading(true);
+    setOpen(false);
+    const callBack = (res) => {
+      setDownloading(false);
+      if (res?.success) {
+        const pdfLink = res.data;
+        downloadPdf(pdfLink);
+      } else {
+      }
     };
+    await getBoardMissionPDF(callApi, callBack, {
+      boardMissionId: mission?.boardMissionId,
+    });
+  };
 
-    const onClickPrint = async (mission) => {
-        setDownloading(true);
-        setOpen(false)
-        const callBack = (res) => {
-            setDownloading(false)
-            if (res?.success) {
-                const pdfLink = res.data;
-                downloadPdf(pdfLink)
-            } else {
-            }
-        };
-        await getBoardMissionPDF(callApi, callBack, { boardMissionId: mission?.boardMissionId });
+  const GetPrintingTicketPDF = async (boardMissionId) => {
+    setDownloading(true);
+    const callBack = (res) => {
+      setDownloading(false);
+
+      if (res?.success) {
+        const pdfLink = res.data;
+        downloadPdf(pdfLink);
+      } else {
+        alertFaultGetData();
+      }
     };
+    await GetPrintingTicketPDFApi(callApi, callBack, { boardMissionId });
+  };
 
-    const GetPrintingTicketPDF = async (boardMissionId) => {
-        setDownloading(true);
-        const callBack = (res) => {
-            setDownloading(false);
-
-            if (res?.success) {
-                const pdfLink = res.data;
-                downloadPdf(pdfLink)
-            } else {
-                alertFaultGetData();
-            }
-        };
-        await GetPrintingTicketPDFApi(callApi, callBack, { boardMissionId });
+  const onClickMoveBoardMissionToDone = async (sendMessage: boolean) => {
+    const callBack = (res) => {
+      setOpenMarkReadyModal(false);
+      setOpenPackagesModal(true);
+      if (res?.success) {
+        alertSuccessUpdate();
+      } else {
+        alertFaultUpdate();
+      }
     };
+    await moveBoardMissionToDoneApi(callApi, callBack, {
+      boardMissionId: boardMissions?.boardMissionId,
+      sendMessage,
+    });
+  };
 
-    const onClickMoveBoardMissionToDone = async (sendMessage: boolean) => {
-        const callBack = (res) => {
-            setOpenMarkReadyModal(false);
-            setOpenPackagesModal(true)
-            if (res?.success) {
-                alertSuccessUpdate();
-            } else {
-                alertFaultUpdate();
-            }
-        };
-        await moveBoardMissionToDoneApi(callApi, callBack, {
-            boardMissionId: boardMissions?.boardMissionId,
-            sendMessage
-        });
-    };
+  return (
+    <div
+      style={{
+        position: "relative",
+        display: "flex",
+        alignItems: "center",
+        gap: "5px",
+        zIndex: 9999999,
+      }}
+    >
+      <PrimaryButton
+        style={{ backgroundColor: primaryColor(300), borderRadius: "12px" }}
+        onClick={() => setOpen(!open)}
+        variant={"contained"}
+        disabled={downloading}
+        startIcon={dir === "rtl" ? <ArrowDownIcon fill={"#FFF"} /> : undefined}
+        endIcon={
+          downloading ? (
+            <CircularProgress size={25} />
+          ) : dir === "ltr" ? (
+            <ArrowDownIcon fill={"#FFF"} />
+          ) : undefined
+        }
+      >
+        {t("productionFloor.documents")}
+      </PrimaryButton>
+      {!!open && (
+        <ClickOutside onClick={() => setOpen(false)}>
+          <Paper
+            sx={{
+              position: "absolute",
+              right: 0,
+              top: "110%",
+              zIndex: 9999999,
+            }}
+          >
+            {menuList.map(
+              (item, index) =>
+                item.condition && (
+                  <MenuItem
+                    style={{
+                      display: "flex",
+                      flexDirection: "row" as "row",
+                      justifyContent: "flex-start",
+                      alignItems: "center",
+                      gap: 8,
+                      paddingLeft: 15,
+                      color: primaryColor(300),
+                    }}
+                    key={index}
+                    onClick={item?.onclick}
+                  >
+                    {item?.icon}
+                    {t(item?.name)}
+                  </MenuItem>
+                )
+            )}
+          </Paper>
+        </ClickOutside>
+      )}
+      <PrintPackingSlipModalWidget
+        openModal={openPackagesModal}
+        onClose={() => setOpenPackagesModal(false)}
+        boardMissionId={boardMissions?.boardMissionId}
+        quantity={boardMissions?.quantity}
+      />
+      <ThreeOptionsModal
+        title={t("boardMissions.printAndMoveToReadyTitle")}
+        yesBtn={t("boardMissions.printAndTransferToReady")}
+        noBtn={t("boardMissions.printOnly")}
+        openModal={openConfirmModal}
+        onClose={() => setOpenConfirmModal(false)}
+        onClickYes={() => {
+          setOpenPackagesModal(false);
+          setOpenMarkReadyModal(true);
+        }}
+        onClickNo={() => setOpenPackagesModal(true)}
+      />
+      <ThreeOptionsModal
+        title={t("boardMissions.markDoneModalTitle")}
+        subTitle={t("boardMissions.markDoneModalSubTitle")}
+        yesBtn={"boardMissions.markDoneModalYes"}
+        noBtn={"boardMissions.markDoneModalNo"}
+        openModal={openMarkReadyModal}
+        onClose={() => setOpenMarkReadyModal(false)}
+        onClickYes={() => onClickMoveBoardMissionToDone(true)}
+        onClickNo={() => onClickMoveBoardMissionToDone(false)}
+      />
+    </div>
+  );
+};
 
-    return (
-        <div style={{ position: 'relative', display: "flex", alignItems: 'center', gap: '5px', zIndex: 9999999 }}>
-            <PrimaryButton style={{ backgroundColor: primaryColor(300), borderRadius: '12px' }}
-                onClick={() => setOpen(!open)} variant={'contained'}
-                disabled={downloading}
-                startIcon={dir === 'rtl' ? <ArrowDownIcon fill={'#FFF'} /> : undefined}
-                endIcon={downloading ? <CircularProgress size={25} /> : dir === 'ltr' ?
-                    <ArrowDownIcon fill={'#FFF'} /> : undefined}>
-                {t('productionFloor.documents')}
-            </PrimaryButton>
-            {
-                !!open && <ClickOutside onClick={() => setOpen(false)}>
-                    <Paper sx={{ position: 'absolute', right: 0, top: '110%', zIndex: 9999999 }}>
-                        {menuList.map((item, index) => (
-                            item.condition && (
-                                <MenuItem
-                                    style={{
-                                        display: "flex",
-                                        flexDirection: "row" as "row",
-                                        justifyContent: "flex-start",
-                                        alignItems: "center",
-                                        gap: 8,
-                                        paddingLeft: 15,
-                                        color: primaryColor(300),
-                                    }}
-                                    key={index}
-                                    onClick={item?.onclick}
-                                >
-                                    {item?.icon}
-                                    {t(item?.name)}
-                                </MenuItem>
-                            )
-                        ))}
-                    </Paper>
-                </ClickOutside>
-            }
-            <PrintPackingSlipModalWidget openModal={openPackagesModal} onClose={() => setOpenPackagesModal(false)}
-                boardMissionId={boardMissions?.boardMissionId}
-                quantity={boardMissions?.quantity} />
-            <ThreeOptionsModal
-                title={t("boardMissions.printAndMoveToReadyTitle")}
-                yesBtn={t("boardMissions.printAndTransferToReady")}
-                noBtn={t("boardMissions.printOnly")}
-                openModal={openConfirmModal}
-                onClose={() => setOpenConfirmModal(false)}
-                onClickYes={() => {
-                    setOpenPackagesModal(false)
-                    setOpenMarkReadyModal(true);
-                }}
-                onClickNo={() => setOpenPackagesModal(true)}
-            />
-            <ThreeOptionsModal
-                title={t("boardMissions.markDoneModalTitle")}
-                subTitle={t("boardMissions.markDoneModalSubTitle")}
-                yesBtn={"boardMissions.markDoneModalYes"}
-                noBtn={"boardMissions.markDoneModalNo"}
-                openModal={openMarkReadyModal}
-                onClose={() => setOpenMarkReadyModal(false)}
-                onClickYes={() => onClickMoveBoardMissionToDone(true)}
-                onClickNo={() => onClickMoveBoardMissionToDone(false)}
-            />
-        </div>
-    );
-}
-
-export { DocumentsButton }
+export { DocumentsButton };

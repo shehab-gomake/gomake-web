@@ -19,19 +19,18 @@ import { CollapseOptionComponent } from "@/widgets/production-floor/filters/sele
 import ClearIcon from "@mui/icons-material/Clear";
 import { useStyle } from "./style";
 import { SaveSelectionModal } from "@/widgets/production-floor/header/components/groups/save-selection-modal";
+import { DepartmentModal } from "@/widgets/production-floor/header/components/groups/department-modal";
 
 interface IProps {
   onClickApply: (v: IStation[]) => void;
   source: Source;
   buttonElement?: ReactElement;
-  onClickOpenDepartmentModal?: () => void;
 }
 
 const ActionsListComponent = ({
   onClickApply,
   source,
   buttonElement,
-  onClickOpenDepartmentModal,
 }: IProps) => {
   const {
     t,
@@ -46,6 +45,9 @@ const ActionsListComponent = ({
     openSelectionModal,
     onClickOpenSelectionModal,
     onClickCloseSelectionModal,
+    openDepartmentModal,
+    onClickOpenDepartmentModal,
+    onClickCloseDepartmentModal,
   } = useActionsList(source);
 
   const { classes } = useStyle({ source });
@@ -150,7 +152,7 @@ const ActionsListComponent = ({
                   variant={"contained"}
                   onClick={() => {
                     setOpen(false);
-                    onClickApply(actionsMachinesIds);
+                    // onClickApply(actionsMachinesIds);
                     onClickOpenSelectionModal();
                   }}
                 >
@@ -195,6 +197,10 @@ const ActionsListComponent = ({
         openModal={openSelectionModal}
         onClose={onClickCloseSelectionModal}
         onClickSave={onClickOpenDepartmentModal}
+      />
+      <DepartmentModal
+        openModal={openDepartmentModal}
+        onClose={onClickCloseDepartmentModal}
       />
     </div>
   );

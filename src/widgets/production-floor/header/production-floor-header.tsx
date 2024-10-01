@@ -16,7 +16,6 @@ import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import { SettingsIcon } from "../../../icons/settings-icon";
 import { ActionsListComponent } from "@/widgets/production-floor/filters/select/actions-select/action-list-select-component";
 import { Source } from "@/widgets/production-floor/filters/select/actions-select/use-actions-list";
-import { DepartmentModal } from "./components/groups/department-modal";
 
 const ProductionFloorHeader = () => {
   const {
@@ -29,9 +28,6 @@ const ProductionFloorHeader = () => {
     onClickBack,
     currentPathIndex,
     onStationsChange,
-    openDepartmentModal,
-    onClickOpenDepartmentModal,
-    onClickCloseDepartmentModal,
   } = useProductionFloorHeader();
   const { t } = useTranslation();
   const dir = t("direction");
@@ -100,7 +96,6 @@ const ProductionFloorHeader = () => {
           <ActionsListComponent
             source={Source.PRODUCTION_FLOOR}
             onClickApply={onStationsChange}
-            onClickOpenDepartmentModal={onClickOpenDepartmentModal}
             buttonElement={
               <PrimaryButton
                 style={{ minWidth: "40px", height: "40px", padding: 0 }}
@@ -151,10 +146,6 @@ const ProductionFloorHeader = () => {
           </PrimaryButton>
         </ButtonGroup>
       </Stack>
-      <DepartmentModal
-        openModal={openDepartmentModal}
-        onClose={onClickCloseDepartmentModal}
-      />
     </Stack>
   );
 };

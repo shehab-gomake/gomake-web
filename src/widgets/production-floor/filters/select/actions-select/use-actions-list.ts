@@ -189,6 +189,15 @@ const useActionsList = (source: Source) => {
     setOpenSelectionModal(false);
   };
 
+  const [openDepartmentModal, setOpenDepartmentModal] = useState(false);
+
+  const onClickOpenDepartmentModal = () => {
+    setOpenDepartmentModal(true);
+  };
+  const onClickCloseDepartmentModal = () => {
+    setOpenDepartmentModal(false);
+  };
+
   return {
     actionsList,
     handelFilterActions,
@@ -206,6 +215,9 @@ const useActionsList = (source: Source) => {
     openSelectionModal,
     onClickOpenSelectionModal,
     onClickCloseSelectionModal,
+    openDepartmentModal,
+    onClickOpenDepartmentModal,
+    onClickCloseDepartmentModal,
   };
 };
 export { useActionsList };

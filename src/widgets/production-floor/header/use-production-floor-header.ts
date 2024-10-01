@@ -7,12 +7,12 @@ import { useProductionFloorFilters } from "@/widgets/production-floor/filters/us
 import { FormEvent, useCallback, useMemo, useRef, useState } from "react";
 import { productionFloorPathsState } from "@/widgets/production-floor/state/production-floor-paths";
 import { EPathActionType } from "@/widgets/production-floor/enums/path-action-type";
-import { IProductionFloorPath } from "@/widgets/production-floor/interfaces/production-floor-path";
 import { useRouter } from "next/router";
 import {
   Source,
   useActionsList,
 } from "../filters/select/actions-select/use-actions-list";
+import { IProductionFloorPath } from "../interfaces/production-floor-path";
 
 const useProductionFloorHeader = () => {
   const [view, setView] = useRecoilState(productionFloorViewState);
@@ -109,15 +109,6 @@ const useProductionFloorHeader = () => {
       : [];
   }, [actionsList, filter]);
 
-  const [openDepartmentModal, setOpenDepartmentModal] = useState(false);
-
-  const onClickOpenDepartmentModal = () => {
-    setOpenDepartmentModal(true);
-  };
-  const onClickCloseDepartmentModal = () => {
-    setOpenDepartmentModal(false);
-  };
-
   return {
     view,
     setView,
@@ -141,9 +132,6 @@ const useProductionFloorHeader = () => {
     onSelectMachine,
     onSelectStation,
     buttonRef,
-    openDepartmentModal,
-    onClickOpenDepartmentModal,
-    onClickCloseDepartmentModal,
   };
 };
 export { useProductionFloorHeader };
