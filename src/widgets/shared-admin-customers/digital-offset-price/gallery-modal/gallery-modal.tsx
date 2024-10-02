@@ -155,7 +155,7 @@ const GalleryModal = ({
           <div style={clasess.switchContainer}>
 
             {
-              !isParameterSettings && selectParameterButton?.sectionId === sectionId?.section?.id && selectParameterButton?.subSectionId == subSectionId?.id && <>
+              !isParameterSettings && addChargeForNewDieParameter && addChargeForNewDieParameter.length > 0 && selectParameterButton?.sectionId === sectionId?.section?.id && selectParameterButton?.subSectionId == subSectionId?.id && <>
                 {_renderParameterType(
                   addChargeForNewDieParameter[0],
                   subSectionId,
