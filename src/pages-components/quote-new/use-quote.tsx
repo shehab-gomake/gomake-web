@@ -113,6 +113,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
   const [isUpdateExchangeRate, setIsUpdateExchangeRate] = useState<
     number | null
   >(null);
+
   const [isUpdateCurrency, setIsUpdateCurrency] = useState<string>(null);
   const [, setIsUpdateBusinessCode] = useState<number | null>(null);
   const [isUpdateAddress, setIsUpdateAddress] = useState<number | null>(null);
@@ -1714,12 +1715,13 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
       },
     });
   };
-  const [whatsappMassage, setWhatssAppMassage] = useState("");
+
+  const [whatsappMassage, setWhatsAppMassage] = useState("");
   const getWhatsAppMessage = async () => {
     if (quoteItemValue?.id) {
       const callBack = (res) => {
         if (res?.success) {
-          setWhatssAppMassage(res?.data);
+          setWhatsAppMassage(res?.data);
         } else {
           alertFaultUpdate();
         }
@@ -1751,6 +1753,8 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
       },
     });
   };
+
+  const [isWhatsAppWeb, setIsWhatsAppWeb] = useState(true);
 
   return {
     dateRef,
@@ -1940,6 +1944,8 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     onBlurTitle,
     isUpdateDocumentTitle,
     setIsUpdateDocumentTitle,
+    isWhatsAppWeb,
+    setIsWhatsAppWeb,
   };
 };
 

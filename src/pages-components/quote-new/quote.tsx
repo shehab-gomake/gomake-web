@@ -241,6 +241,8 @@ const QuoteNewPageWidget = ({
     onBlurTitle,
     isUpdateDocumentTitle,
     setIsUpdateDocumentTitle,
+          isWhatsAppWeb,
+          setIsWhatsAppWeb,
   } = useQuoteNew({
     docType: documentType,
     isQuoteConfirmation: isQuoteConfirmation,
@@ -467,6 +469,7 @@ const QuoteNewPageWidget = ({
                   )}
                 </div>
               )}
+
               <div style={classes.bordersecondContainer}>
                 <BusinessNewWidget
                   values={quoteState}
@@ -672,6 +675,7 @@ const QuoteNewPageWidget = ({
         onClickSendQuoteToClient={onClickSendQuoteToClient}
         onClickOpenWhatsAppModal={onClickOpenWhatsAppModal}
         documentState={quoteItemValue}
+        setIsWhatsAppWeb={setIsWhatsAppWeb}
       />
       <WhatsAppWebModal
         openModal={openWhatsAppModal}
@@ -679,6 +683,7 @@ const QuoteNewPageWidget = ({
         clientContactsValue={clientContactsValue}
         getWhatsAppMessage={getWhatsAppMessage}
         whatsappMassage={whatsappMassage}
+        isWhatsAppWeb={isWhatsAppWeb}
       />
       <SettingQuoteMenu
         handleClose={handleSettingMenuClose}
@@ -776,7 +781,6 @@ const QuoteNewPageWidget = ({
         handleSaveBtnClickForDocument={handleSaveBtnClickForDocument}
         documentType={documentType}
       />
-
       <AddRelatedDocumentsModal
         openModal={openRelatedDocumentsModal}
         onClose={onClickCloseRelatedDocumentsModal}

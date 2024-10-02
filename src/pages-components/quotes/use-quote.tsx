@@ -121,7 +121,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     label: string;
     value: PStatus;
   } | null>();
-  //////////////////////////////////////////////////////////////////
   const [productsList, setProductsList] = useState([]);
   const [productIds, setProductIds] = useState<string[]>([]);
   const [minPrice, setMinPrice] = useState("");
