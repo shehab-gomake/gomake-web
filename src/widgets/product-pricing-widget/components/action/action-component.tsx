@@ -351,7 +351,7 @@ const ActionContainerComponent = ({
               )}
             </Stack>
 
-            <Divider orientation={"vertical"} flexItem />
+            {source != EWorkSource.OUT && <Divider orientation={"vertical"} flexItem />}
             <Stack
               style={classes.sectionTitle}
               direction={"row"}
@@ -359,7 +359,7 @@ const ActionContainerComponent = ({
               gap={"10px"}
             >
               {
-                isNeedEmployee && (
+                isNeedEmployee && source != EWorkSource.OUT && (
                   <>
                     {!chooseEmployee ? (
                       <Button
@@ -504,6 +504,7 @@ const ActionContainerComponent = ({
                 <EditableKeyValueViewComponent
                   onUpdate={handleCostUpdate}
                   {...totalCost}
+                  values={totalCostValue}
                   source={source}
                   name={t("machineAttributes.cost")}
                 />
@@ -516,6 +517,7 @@ const ActionContainerComponent = ({
                   <EditableKeyValueViewComponent
                     onUpdate={handleProfitUpdate}
                     {...profit}
+                    values={profitValue}
                     source={source}
                     name={t("products.profits.pricingListWidget.profit")}
                   />
@@ -536,6 +538,7 @@ const ActionContainerComponent = ({
                 <EditableKeyValueViewComponent
                   onUpdate={handleUpdatePrice}
                   {...totalPrice}
+                  values={totalPriceValue}
                   source={source}
                   valueColor={secondColor(500)}
                   name={t("sales.quote.price")}
@@ -554,6 +557,7 @@ const ActionContainerComponent = ({
                   <EditableKeyValueViewComponent
                     onUpdate={handleCostUpdate}
                     {...totalCost}
+                    values={totalCostValue}
                     source={source}
                     name="Cost"
                   />
@@ -566,6 +570,7 @@ const ActionContainerComponent = ({
                     <EditableKeyValueViewComponent
                       onUpdate={handleProfitUpdate}
                       {...profit}
+                      values={profitValue}
                       source={source}
                       name="Profit"
                     />
@@ -583,6 +588,7 @@ const ActionContainerComponent = ({
                   <EditableKeyValueViewComponent
                     onUpdate={handleUpdatePrice}
                     {...totalPrice}
+                    values={totalPriceValue}
                     source={source}
                     valueColor={secondColor(500)}
                     name="Price"

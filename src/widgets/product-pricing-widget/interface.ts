@@ -100,7 +100,7 @@ export interface IWorkFlowAction {
 
 export interface IOutput {
   name: string;
-  values: string[];
+  values: any;
   id: string;
   unitType: UnitType;
   defaultUnit: string;
