@@ -59,14 +59,11 @@ const MultiSelectClientsInput = ({
     isChecked: boolean,
     option: any
   ) => {
-    console.log("parameterKey", { parameterKey, isChecked, option });
-
-    // Keep only the ID for handling the changes
     onChangeInputs(
       parameterKey,
       isChecked
-        ? [...values, option?.value] // Add only the ID (option.value) when checked
-        : values.filter((v) => v !== option?.value) // Remove only the ID when unchecked
+        ? [...values, option?.value]
+        : values.filter((v) => v !== option?.value)
     );
   };
 
