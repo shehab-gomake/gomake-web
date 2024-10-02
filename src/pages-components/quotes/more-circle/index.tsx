@@ -19,7 +19,8 @@ const MoreMenuWidget = ({
   onClickCloseAndTrack,
   onClickOpenPrintPDFModal,
   onOpenCancelReceiptModal,
-  onOpenCancelReceiptModalRefund
+  onOpenCancelReceiptModalRefund,
+  onClickOpenDocument,
 }: any) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -40,19 +41,25 @@ const MoreMenuWidget = ({
     onClickCloseAndTrack,
     onClickOpenPrintPDFModal,
     onOpenCancelReceiptModal,
-    onOpenCancelReceiptModalRefund
+    onOpenCancelReceiptModalRefund,
+    onClickOpenDocument,
   });
 
   return (
-    <OptionsButton >
-      {menuList.map((item, index) => (
-        item?.condition && (
-          <MenuItem style={classes.menuRowStyle} key={index} onClick={item.onClick}>
-            {item.icon}
-            <div style={classes.rowTextStyle}>{item.name}</div>
-          </MenuItem>
-        )
-      ))}
+    <OptionsButton>
+      {menuList.map(
+        (item, index) =>
+          item?.condition && (
+            <MenuItem
+              style={classes.menuRowStyle}
+              key={index}
+              onClick={item.onClick}
+            >
+              {item.icon}
+              <div style={classes.rowTextStyle}>{item.name}</div>
+            </MenuItem>
+          )
+      )}
     </OptionsButton>
   );
 };

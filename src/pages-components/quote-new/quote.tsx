@@ -133,9 +133,7 @@ const QuoteNewPageWidget = ({
     onCloseNewItem,
     setSelectDate,
     setTaxDate,
-    setCreationDate,
     setIsUpdateBusinessName,
-    setSelectBusiness,
     openCopyFromOrderModal,
     onCloseCopyFromOrder,
     onOpenCopyFromOrder,
@@ -179,7 +177,6 @@ const QuoteNewPageWidget = ({
     updateCancelQuote,
     onClickSendQuoteToClient,
     onChangeSelectBusiness,
-    updatePurchaseNumber,
     onClickDeleteAddress,
     onOpenDeliveryModal,
     openAddDeliveryModal,
@@ -241,8 +238,11 @@ const QuoteNewPageWidget = ({
     setNewCreationDate,
     openInvoiceCreationModal,
     onClickCloseInvoiceCreation,
-    isWhatsAppWeb,
-    setIsWhatsAppWeb,
+    onBlurTitle,
+    isUpdateDocumentTitle,
+    setIsUpdateDocumentTitle,
+          isWhatsAppWeb,
+          setIsWhatsAppWeb,
   } = useQuoteNew({
     docType: documentType,
     isQuoteConfirmation: isQuoteConfirmation,
@@ -499,6 +499,9 @@ const QuoteNewPageWidget = ({
                   setIsUpdateClientName={setIsUpdateClientName}
                   clientName={clientName}
                   setClientName={setClientName}
+                  onBlurTitle={onBlurTitle}
+                  isUpdateDocumentTitle={isUpdateDocumentTitle}
+                  setIsUpdateDocumentTitle={setIsUpdateDocumentTitle}
                 />
                 <ContactNewWidget
                   documentState={quoteState}

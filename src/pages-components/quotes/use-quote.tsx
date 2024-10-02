@@ -3,9 +3,16 @@ import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ApprovalStatus, LogActionType, QUOTE_STATUSES } from "./enums";
 import { MoreMenuWidget } from "./more-circle";
-import { getAllProductsForDropDownList, getAndSetAllCustomers, getAndSetClientTypes } from "@/services/hooks";
+import {
+  getAllProductsForDropDownList,
+  getAndSetAllCustomers,
+  getAndSetClientTypes,
+} from "@/services/hooks";
 import { useSetRecoilState, useRecoilValue, useRecoilState } from "recoil";
-import { agentsCategoriesState, clientTypesCategoriesState } from "@/pages/customers/customer-states";
+import {
+  agentsCategoriesState,
+  clientTypesCategoriesState,
+} from "@/pages/customers/customer-states";
 import { getAndSetEmployees2 } from "@/services/api-service/customers/employees-api";
 import { useDebounce } from "@/utils/use-debounce";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
@@ -21,23 +28,31 @@ import {
   getAllDocumentsApi,
   getDocumentPdfApi,
   manuallyCloseDocumentApi,
+  OpenDocumentApi,
   updateDocumentApi,
 } from "@/services/api-service/generic-doc/documents-api";
 import { DOCUMENT_TYPE } from "./enums";
 import { useQuoteGetData } from "../quote-new/use-quote-get-data";
 import { useStyle } from "./style";
 import { CLIENT_TYPE_Id, DEFAULT_VALUES } from "@/pages/customers/enums";
-import { cancelReceiptApi, getAllReceiptsApi, getReceiptPdfApi } from "@/services/api-service/generic-doc/receipts-api";
+import {
+  cancelReceiptApi,
+  getAllReceiptsApi,
+  getReceiptPdfApi,
+} from "@/services/api-service/generic-doc/receipts-api";
 import {
   renderDocumentTypeForSourceDocumentNumber,
-  renderURLDocumentType
+  renderURLDocumentType,
 } from "@/widgets/settings-documenting/documentDesign/enums/document-type";
 import { AStatus, PStatus } from "../board-missions/widgets/enums";
 import { getAndSetCustomerById } from "@/services/api-service/customers/customers-api";
 import { useUserPermission } from "@/hooks/use-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { PermissionCheck } from "@/components/CheckPermission/check-permission";
-import { StatePayment, sendPaymentState } from "./widgets/send-payment-modal/states";
+import {
+  StatePayment,
+  sendPaymentState,
+} from "./widgets/send-payment-modal/states";
 import { sendDocumentToClientForPaymentApi } from "@/services/api-service/pay/pay-api";
 import { useRouter } from "next/router";
 
@@ -45,7 +60,12 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const { t } = useTranslation();
   const { classes } = useStyle();
   const { callApi } = useGomakeAxios();
-  const { alertFaultUpdate, alertFaultDuplicate, alertFaultGetData, alertSuccessUpdate } = useSnackBar();
+  const {
+    alertFaultUpdate,
+    alertFaultDuplicate,
+    alertFaultGetData,
+    alertSuccessUpdate,
+  } = useSnackBar();
   const { getCurrencyUnitText } = useQuoteGetData();
   const { navigate } = useGomakeRouter();
   const { errorColor } = useGomakeTheme();
@@ -57,7 +77,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const [approvalStatusId, setApprovalStatusId] = useState<any>();
   const [quoteStatusId, setQuoteStatusId] = useState<any>();
   const [customerId, setCustomerId] = useState<any>();
-  const [isCanceledState, setIsCanceledState] = useState(null)
+  const [isCanceledState, setIsCanceledState] = useState(null);
   const [dateRange, setDateRange] = useState<any>();
   const [agentId, setAgentId] = useState<any>();
   const [canOrder, setCanOrder] = useState(false);
@@ -82,7 +102,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const [documentIdLogState, setDocumentIdLogState] = useState<string>();
   const [documentLogsData, setDocumentLogsData] = useState<any>();
   const [employeeId, setEmployeeId] = useState<any>();
-  const [resetLogsDatePicker, setResetLogsDatePicker] = useState<boolean>(false);
+  const [resetLogsDatePicker, setResetLogsDatePicker] =
+    useState<boolean>(false);
   const [fromLogsDate, setFromLogsDate] = useState<Date>();
   const [toLogsDate, setToLogsDate] = useState<Date>();
   const agentsCategories = useRecoilValue(agentsCategoriesState);
@@ -103,9 +124,10 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   //////////////////////////////////////////////////////////////////
   const [productsList, setProductsList] = useState([]);
   const [productIds, setProductIds] = useState<string[]>([]);
-  const [minPrice, setMinPrice] = useState('');
-  const [maxPrice, setMaxPrice] = useState('');
-  const [openCloseOrderNotesModal, setOpenCloseOrderNotesModal] = useState(false);
+  const [minPrice, setMinPrice] = useState("");
+  const [maxPrice, setMaxPrice] = useState("");
+  const [openCloseOrderNotesModal, setOpenCloseOrderNotesModal] =
+    useState(false);
   const [selectedQuoteItemValue, setSelectedQuoteItemValue] = useState<any>();
   const [documentCloseNumber, setDocumentCloseNumber] = useState("");
 
@@ -114,13 +136,13 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   };
 
   const onClickOpenCloseOrderNotesModal = (order) => {
-    setOpenCloseOrderNotesModal(true)
-    setSelectedQuoteItemValue(order)
-    setSelectedDocument(order)
-  }
+    setOpenCloseOrderNotesModal(true);
+    setSelectedQuoteItemValue(order);
+    setSelectedDocument(order);
+  };
   const onClickCloseCloseOrderNotesModal = () => {
-    setOpenCloseOrderNotesModal(false)
-  }
+    setOpenCloseOrderNotesModal(false);
+  };
 
   const onCloseAddRuleModal = () => {
     setOpenAddRule(false);
@@ -144,7 +166,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
 
   const onClickCloseLogsModal = () => {
     setOpenLogsModal(false);
-    setEmployeeId(null)
+    setEmployeeId(null);
     setFromLogsDate(null);
     setToLogsDate(null);
   };
@@ -177,11 +199,10 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       await getDocumentPdfApi(callApi, callBack, {
         documentId: id,
         documentType: docType,
-        withPrices: withPrices ?? false
+        withPrices: withPrices ?? false,
       });
     }
   };
-
 
   const getEmployeeCategories = async (isAgent: boolean, setState: any) => {
     const callBack = (res) => {
@@ -207,7 +228,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       clientType: "C",
       onlyCreateOrderClients: false,
       searchTerm: SearchTerm,
-      isOccasionalCustomer: true
+      isOccasionalCustomer: true,
     });
   }, []);
 
@@ -216,7 +237,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       clientType: "C",
       onlyCreateOrderClients: true,
       searchTerm: SearchTerm,
-      isOccasionalCustomer: true
+      isOccasionalCustomer: true,
     });
   }, []);
 
@@ -233,7 +254,11 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const onClickDocumentLogs = async (document: any) => {
     try {
       await getAllDocumentLogs(document?.id);
-      setLogsModalTitle(`${t("sales.quote.logsFor")} ${t(`sales.quote.${DOCUMENT_TYPE[docType]}`).toLowerCase()} ${t("sales.quote.number")} - ${document?.number}`)
+      setLogsModalTitle(
+        `${t("sales.quote.logsFor")} ${t(
+          `sales.quote.${DOCUMENT_TYPE[docType]}`
+        ).toLowerCase()} ${t("sales.quote.number")} - ${document?.number}`
+      );
       setOpenLogsModal(true);
     } catch (error) {
       console.error("Error fetching document logs:", error);
@@ -241,26 +266,26 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   };
 
   const _renderPaymentType = (paymentType) => {
-    if (!paymentType) return '';
-    const types = paymentType.split(',').map(type => type.trim());
-    const translatedTypes = types.map(type => {
+    if (!paymentType) return "";
+    const types = paymentType.split(",").map((type) => type.trim());
+    const translatedTypes = types.map((type) => {
       switch (type) {
-        case 'מזומן':
-          return t('payment.cash');
-        case 'המחאה':
-          return t('payment.check');
-        case 'bit':
-          return t('payment.bit');
-        case 'אשראי':
-          return t('payment.creditCard');
-        case 'העברה':
-          return t('payment.transfer');
+        case "מזומן":
+          return t("payment.cash");
+        case "המחאה":
+          return t("payment.check");
+        case "bit":
+          return t("payment.bit");
+        case "אשראי":
+          return t("payment.creditCard");
+        case "העברה":
+          return t("payment.transfer");
         default:
           return type;
       }
     });
-    return translatedTypes.join(', ');
-  }
+    return translatedTypes.join(", ");
+  };
 
   const isOrdersTracking = pathname === "/ordersTracking";
 
@@ -284,7 +309,10 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               quote?.number,
               quote?.orderNumber,
               quote?.supplierName,
-              <div style={{ cursor: "pointer" }} onClick={() => onClickOpenCustomerModal(quote?.clientId)}>
+              <div
+                style={{ cursor: "pointer" }}
+                onClick={() => onClickOpenCustomerModal(quote?.clientId)}
+              >
                 {quote?.clientName}
               </div>,
               quote?.itemsNumber,
@@ -300,8 +328,13 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 onClickOpenPrintPDFModal={onClickOpenPrintPDFModal}
               />,
             ];
-          } else if (docType === DOCUMENT_TYPE.purchaseInvoice || docType === DOCUMENT_TYPE.purchaseInvoiceRefund) {
-            const purchaseOrderNumbers = quote?.orderNumbers ? quote?.orderNumbers.join(', ') : '';
+          } else if (
+            docType === DOCUMENT_TYPE.purchaseInvoice ||
+            docType === DOCUMENT_TYPE.purchaseInvoiceRefund
+          ) {
+            const purchaseOrderNumbers = quote?.orderNumbers
+              ? quote?.orderNumbers.join(", ")
+              : "";
             const [date, time] = quote?.createdDate?.split(" ") || ["", ""];
             return [
               <div>
@@ -312,7 +345,10 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               quote?.number,
               quote?.invoiceNumber,
               purchaseOrderNumbers,
-              <div style={{ cursor: "pointer" }} onClick={() => onClickOpenCustomerModal(quote?.customerId)}>
+              <div
+                style={{ cursor: "pointer" }}
+                onClick={() => onClickOpenCustomerModal(quote?.customerId)}
+              >
                 {quote?.customerName}
               </div>,
               quote?.itemsNumber,
@@ -336,7 +372,10 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 <br />
                 {time}
               </div>,
-              <div style={{ cursor: "pointer" }} onClick={() => onClickOpenCustomerModal(quote?.customerId)}>
+              <div
+                style={{ cursor: "pointer" }}
+                onClick={() => onClickOpenCustomerModal(quote?.customerId)}
+              >
                 {quote?.customerName}
               </div>,
               quote?.agentName,
@@ -359,13 +398,28 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             // Split the createdDate to get the date and time separately
             const [date, time] = quote?.createdDate?.split(" ") || ["", ""];
 
-            const jobsElement = CheckPermission(Permissions.SHOW_BOARD_MISSIONS)
-              ? (<a style={{ cursor: "pointer", color: "inherit", textDecoration: 'unset' }} href={`/jobs?orderNumber=${quote?.number}`}>
+            const jobsElement = CheckPermission(
+              Permissions.SHOW_BOARD_MISSIONS
+            ) ? (
+              <a
+                style={{
+                  cursor: "pointer",
+                  color: "inherit",
+                  textDecoration: "unset",
+                }}
+                href={`/jobs?orderNumber=${quote?.number}`}
+              >
                 {quote?.jobs}
               </a>
-              ) : quote?.jobs;
+            ) : (
+              quote?.jobs
+            );
 
-            const statusPayment = `${quote?.sumApplied + " " + getCurrencyUnitText(quote?.currency)}/${quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency)}`
+            const statusPayment = `${
+              quote?.sumApplied + " " + getCurrencyUnitText(quote?.currency)
+            }/${
+              quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency)
+            }`;
 
             return [
               // Display the date on the first line and time on the second line
@@ -374,7 +428,10 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 <br />
                 {time}
               </div>,
-              <div style={{ cursor: "pointer" }} onClick={() => onClickOpenCustomerModal(quote?.customerId)}>
+              <div
+                style={{ cursor: "pointer" }}
+                onClick={() => onClickOpenCustomerModal(quote?.customerId)}
+              >
                 {quote?.customerName}
               </div>,
               quote?.agentName,
@@ -388,11 +445,19 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 );
               }),
               quote?.purchaseNumber,
-              quote?.productionStatus === true ? t('boardMissions.done') : t('boardMissions.inProduction'),
+              quote?.productionStatus === true
+                ? t("boardMissions.done")
+                : t("boardMissions.inProduction"),
               jobsElement,
-              ...(CheckPermission(Permissions.SHOW_COSTS_IN_ORDERS) ? [quote?.cost] : []),
+              ...(CheckPermission(Permissions.SHOW_COSTS_IN_ORDERS)
+                ? [quote?.cost]
+                : []),
               quote?.worksNames,
-              isOrdersTracking ? statusPayment : (quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency)),
+              isOrdersTracking
+                ? statusPayment
+                : quote?.totalPrice +
+                  " " +
+                  getCurrencyUnitText(quote?.currency),
               quote?.notes,
               _renderStatus(docType, quote, t, navigate),
               <MoreMenuWidget
@@ -406,11 +471,14 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 onClickOpenDeliveryTimeModal={onClickOpenDeliveryTimeModal}
                 onClickOpenPriceModal={onClickOpenPriceModal}
                 onClickOpenCloseOrderModal={onClickOpenCloseOrderModal}
-                onClickOpenCloseOrderNotesModal={onClickOpenCloseOrderNotesModal}
+                onClickOpenCloseOrderNotesModal={
+                  onClickOpenCloseOrderNotesModal
+                }
                 onClickSendPayment={onClickSendPayment}
                 onClickMakePayment={onClickMakePayment}
                 onClickCloseAndTrack={onClickOpenTrackModal}
                 onClickOpenPrintPDFModal={onClickOpenPrintPDFModal}
+                onClickOpenDocument={OpenDocument}
               />,
             ];
           } else {
@@ -424,7 +492,10 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 <br />
                 {time}
               </div>,
-              <div style={{ cursor: "pointer" }} onClick={() => onClickOpenCustomerModal(quote?.customerId)}>
+              <div
+                style={{ cursor: "pointer" }}
+                onClick={() => onClickOpenCustomerModal(quote?.customerId)}
+              >
                 {quote?.customerName}
               </div>,
               quote?.agentName,
@@ -434,10 +505,22 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                   <a
                     key={index}
                     // onClick={() => navigate(renderURLDocumentType(item?.sourceDocumentType, item.documentId))}
-                    href={`${renderURLDocumentType(item?.sourceDocumentType, item.documentId)}`}
-                    style={{ cursor: "pointer", color: "inherit", textDecoration: 'unset' }}
+                    href={`${renderURLDocumentType(
+                      item?.sourceDocumentType,
+                      item.documentId
+                    )}`}
+                    style={{
+                      cursor: "pointer",
+                      color: "inherit",
+                      textDecoration: "unset",
+                    }}
                   >
-                    {t(renderDocumentTypeForSourceDocumentNumber(item?.sourceDocumentType))}:{item?.documentNumber}
+                    {t(
+                      renderDocumentTypeForSourceDocumentNumber(
+                        item?.sourceDocumentType
+                      )
+                    )}
+                    :{item?.documentNumber}
                     <br />
                   </a>
                 );
@@ -454,7 +537,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 onClickDuplicate={onClickQuoteDuplicate}
                 onClickLoggers={onClickDocumentLogs}
                 onClickOpenCloseOrderModal={onClickOpenCloseOrderModal}
-                onClickOpenCloseOrderNotesModal={onClickOpenCloseOrderNotesModal}
+                onClickOpenCloseOrderNotesModal={
+                  onClickOpenCloseOrderNotesModal
+                }
                 onClickOpenPrintPDFModal={onClickOpenPrintPDFModal}
               />,
             ];
@@ -464,7 +549,10 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         const mapReceiptData = data?.map((quote: any) => [
           // GetDateFormat(quote?.creationDate),
           quote?.creationDate?.split(" ")[0],
-          <div style={{ cursor: "pointer" }} onClick={() => onClickOpenCustomerModal(quote?.customerId)}>
+          <div
+            style={{ cursor: "pointer" }}
+            onClick={() => onClickOpenCustomerModal(quote?.customerId)}
+          >
             {quote?.customerName}
           </div>,
           quote?.agentName,
@@ -486,7 +574,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
           />,
         ]);
         setAllQuotes(isReceipt ? mapReceiptData : mapData);
-        setPagesCount(Math.ceil(totalItems / (pageSize)));
+        setPagesCount(Math.ceil(totalItems / pageSize));
         setAllStatistics(res?.data?.documentStatisticsList);
       }
     };
@@ -504,9 +592,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         model: {
           pageNumber: page,
           pageSize: pageSize,
-        }
-      }
-      );
+        },
+      });
     } else {
       await getAllDocumentsApi(callApi, callBack, {
         documentType: docType,
@@ -579,7 +666,10 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               quote?.number,
               quote?.orderNumber,
               quote?.supplierName,
-              <div style={{ cursor: "pointer" }} onClick={() => onClickOpenCustomerModal(quote?.clientId)}>
+              <div
+                style={{ cursor: "pointer" }}
+                onClick={() => onClickOpenCustomerModal(quote?.clientId)}
+              >
                 {quote?.clientName}
               </div>,
               quote?.itemsNumber,
@@ -595,8 +685,13 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 onClickOpenPrintPDFModal={onClickOpenPrintPDFModal}
               />,
             ];
-          } else if (docType === DOCUMENT_TYPE.purchaseInvoice || docType === DOCUMENT_TYPE.purchaseInvoiceRefund) {
-            const purchaseOrderNumbers = quote?.orderNumbers ? quote?.orderNumbers.join(', ') : '';
+          } else if (
+            docType === DOCUMENT_TYPE.purchaseInvoice ||
+            docType === DOCUMENT_TYPE.purchaseInvoiceRefund
+          ) {
+            const purchaseOrderNumbers = quote?.orderNumbers
+              ? quote?.orderNumbers.join(", ")
+              : "";
             const [date, time] = quote?.createdDate?.split(" ") || ["", ""];
             return [
               <div>
@@ -607,7 +702,10 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               quote?.number,
               quote?.invoiceNumber,
               purchaseOrderNumbers,
-              <div style={{ cursor: "pointer" }} onClick={() => onClickOpenCustomerModal(quote?.customerId)}>
+              <div
+                style={{ cursor: "pointer" }}
+                onClick={() => onClickOpenCustomerModal(quote?.customerId)}
+              >
                 {quote?.customerName}
               </div>,
               quote?.itemsNumber,
@@ -631,7 +729,10 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 <br />
                 {time}
               </div>,
-              <div style={{ cursor: "pointer" }} onClick={() => onClickOpenCustomerModal(quote?.customerId)}>
+              <div
+                style={{ cursor: "pointer" }}
+                onClick={() => onClickOpenCustomerModal(quote?.customerId)}
+              >
                 {quote?.customerName}
               </div>,
               quote?.agentName,
@@ -654,14 +755,28 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             // Split the createdDate to get the date and time separately
             const [date, time] = quote?.createdDate?.split(" ") || ["", ""];
 
-            const jobsElement = CheckPermission(Permissions.SHOW_BOARD_MISSIONS)
-              ? (
-                <a style={{ cursor: "pointer", color: "inherit", textDecoration: 'unset' }} href={`/jobs?orderNumber=${quote?.number}`}>
-                  {quote?.jobs}
-                </a>
-              ) : quote?.jobs;
+            const jobsElement = CheckPermission(
+              Permissions.SHOW_BOARD_MISSIONS
+            ) ? (
+              <a
+                style={{
+                  cursor: "pointer",
+                  color: "inherit",
+                  textDecoration: "unset",
+                }}
+                href={`/jobs?orderNumber=${quote?.number}`}
+              >
+                {quote?.jobs}
+              </a>
+            ) : (
+              quote?.jobs
+            );
 
-            const statusPayment = `${quote?.sumApplied + " " + getCurrencyUnitText(quote?.currency)}/${quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency)}`
+            const statusPayment = `${
+              quote?.sumApplied + " " + getCurrencyUnitText(quote?.currency)
+            }/${
+              quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency)
+            }`;
             return [
               // Display the date on the first line and time on the second line
               <div>
@@ -669,7 +784,10 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 <br />
                 {time}
               </div>,
-              <div style={{ cursor: "pointer" }} onClick={() => onClickOpenCustomerModal(quote?.customerId)}>
+              <div
+                style={{ cursor: "pointer" }}
+                onClick={() => onClickOpenCustomerModal(quote?.customerId)}
+              >
                 {quote?.customerName}
               </div>,
               quote?.agentName,
@@ -683,11 +801,19 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 );
               }),
               quote?.purchaseNumber,
-              quote?.productionStatus === true ? t('boardMissions.done') : t('boardMissions.inProduction'),
+              quote?.productionStatus === true
+                ? t("boardMissions.done")
+                : t("boardMissions.inProduction"),
               jobsElement,
-              ...(CheckPermission(Permissions.SHOW_COSTS_IN_ORDERS) ? [quote?.cost] : []),
+              ...(CheckPermission(Permissions.SHOW_COSTS_IN_ORDERS)
+                ? [quote?.cost]
+                : []),
               quote?.worksNames,
-              isOrdersTracking ? statusPayment : (quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency)),
+              isOrdersTracking
+                ? statusPayment
+                : quote?.totalPrice +
+                  " " +
+                  getCurrencyUnitText(quote?.currency),
               quote?.notes,
               _renderStatus(docType, quote, t, navigate),
               <MoreMenuWidget
@@ -702,11 +828,13 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 onClickOpenDeliveryTimeModal={onClickOpenDeliveryTimeModal}
                 onClickOpenPriceModal={onClickOpenPriceModal}
                 onClickOpenCloseOrderModal={onClickOpenCloseOrderModal}
-                onClickOpenCloseOrderNotesModal={onClickOpenCloseOrderNotesModal}
+                onClickOpenCloseOrderNotesModal={
+                  onClickOpenCloseOrderNotesModal
+                }
                 onClickSendPayment={onClickSendPayment}
                 onClickMakePayment={onClickMakePayment}
                 onClickCloseAndTrack={onClickOpenTrackModal}
-
+                onClickOpenDocument={OpenDocument}
               />,
             ];
           } else {
@@ -720,7 +848,10 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 <br />
                 {time}
               </div>,
-              <div style={{ cursor: "pointer" }} onClick={() => onClickOpenCustomerModal(quote?.customerId)}>
+              <div
+                style={{ cursor: "pointer" }}
+                onClick={() => onClickOpenCustomerModal(quote?.customerId)}
+              >
                 {quote?.customerName}
               </div>,
               quote?.agentName,
@@ -729,10 +860,22 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 return (
                   <a
                     key={index}
-                    href={`${renderURLDocumentType(item?.sourceDocumentType, item.documentId)}`}
-                    style={{ cursor: "pointer", color: "inherit", textDecoration: 'unset' }}
+                    href={`${renderURLDocumentType(
+                      item?.sourceDocumentType,
+                      item.documentId
+                    )}`}
+                    style={{
+                      cursor: "pointer",
+                      color: "inherit",
+                      textDecoration: "unset",
+                    }}
                   >
-                    {t(renderDocumentTypeForSourceDocumentNumber(item?.sourceDocumentType))}:{item?.documentNumber}
+                    {t(
+                      renderDocumentTypeForSourceDocumentNumber(
+                        item?.sourceDocumentType
+                      )
+                    )}
+                    :{item?.documentNumber}
                     <br />
                   </a>
                 );
@@ -749,7 +892,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 onClickDuplicate={onClickQuoteDuplicate}
                 onClickLoggers={onClickDocumentLogs}
                 onClickOpenCloseOrderModal={onClickOpenCloseOrderModal}
-                onClickOpenCloseOrderNotesModal={onClickOpenCloseOrderNotesModal}
+                onClickOpenCloseOrderNotesModal={
+                  onClickOpenCloseOrderNotesModal
+                }
                 onClickOpenPrintPDFModal={onClickOpenPrintPDFModal}
               />,
             ];
@@ -758,7 +903,10 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         const mapReceiptData = data?.map((quote: any) => [
           // GetDateFormat(quote?.creationDate),
           quote?.creationDate?.split(" ")[0],
-          <div style={{ cursor: "pointer" }} onClick={() => onClickOpenCustomerModal(quote?.customerId)}>
+          <div
+            style={{ cursor: "pointer" }}
+            onClick={() => onClickOpenCustomerModal(quote?.customerId)}
+          >
             {quote?.customerName}
           </div>,
           quote?.agentName,
@@ -826,7 +974,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     setFromDate(null);
     setToDate(null);
     setResetDatePicker(true);
-    setIsCanceledState(false)
+    setIsCanceledState(false);
     getAllQuotesInitial();
     setPage(1);
     setMinPrice("");
@@ -834,74 +982,94 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     setProductIds([]);
   };
 
-  const tableHeaders = docType === DOCUMENT_TYPE.purchaseOrder ? [
-    t("sales.quote.creationDate"),
-    t("sales.quote.purchaseOrderNumber"),
-    t("sales.quote.orderNumber"),
-    t("sales.quote.supplierName"),
-    t("sales.quote.client"),
-    t("sales.quote.itemsNumber"),
-    t("sales.quote.totalPrice"),
-    t("sales.quote.notes"),
-    t("sales.quote.status"),
-    t("sales.quote.more"),
-  ] : (docType === DOCUMENT_TYPE.purchaseInvoice || docType === DOCUMENT_TYPE.purchaseInvoiceRefund) ? [
-    t("sales.quote.creationDate"),
-    t("sales.quote.purchaseInvoiceNumber"),
-    t("sales.quote.invoiceNumber"),
-    t("sales.quote.purchaseOrderNumber"),
-    t("sales.quote.supplierName"),
-    t("sales.quote.itemsNumber"),
-    t("sales.quote.totalPrice"),
-    t("sales.quote.notes"),
-    t("sales.quote.status"),
-    t("sales.quote.more"),
-  ] : docType === DOCUMENT_TYPE.quote ? [
-    t("sales.quote.createdDate"),
-    t("sales.quote.client"),
-    t("sales.quote.agent"),
-    t("documentingDesign.TableSetting.number"),
-    t("sales.quote.worksName"),
-    t("sales.quote.totalPrice"),
-    t("sales.quote.notes"),
-    t("sales.quote.status"),
-    t("sales.quote.more"),
-  ] : [
-    t("sales.quote.createdDate"),
-    t("sales.quote.client"),
-    t("sales.quote.agent"),
-    (() => {
-      switch (docType) {
-        case DOCUMENT_TYPE.order:
-          return t("sales.quote.orderNumber");
-        // case DOCUMENT_TYPE.deliveryNote:
-        //   return t("documentingDesign.TableSetting.number");
-        // case DOCUMENT_TYPE.deliveryNoteRefund:
-        //   return t("sales.quote.deliveryNoteNumber");
-        // case DOCUMENT_TYPE.invoice:
-        //   return t("sales.quote.invoiceNumber");
-        // case DOCUMENT_TYPE.invoiceRefund:
-        //   return t("sales.quote.invoiceNumber");
-        // case DOCUMENT_TYPE.receipt:
-        //   return t("sales.quote.receiptNumber");
-        default: return t("documentingDesign.TableSetting.number");
-      }
-    })(),
-    docType === DOCUMENT_TYPE.order ? t("sales.quote.quoteNumber") : docType === DOCUMENT_TYPE.receipt ? null : t("sales.quote.sourceDocument"),
-    docType === DOCUMENT_TYPE.order && t("sales.quote.purchaseNumber"),
-    docType === DOCUMENT_TYPE.order && t("sales.quote.productionStatus"),
-    docType === DOCUMENT_TYPE.order && t("sales.quote.jobs"),
-    docType === DOCUMENT_TYPE.order && CheckPermission(Permissions.SHOW_COSTS_IN_ORDERS) && (
-      <PermissionCheck userPermission={Permissions.SHOW_COSTS_IN_ORDERS}>
-        {t("sales.quote.cost")}
-      </PermissionCheck>
-    ),
-    docType === DOCUMENT_TYPE.receipt ? t("sales.quote.paymentMethod") : t("sales.quote.worksName"),
-    isOrdersTracking ? t("customers.modal.paymentStatus") : t("sales.quote.totalPrice"),
-    t("sales.quote.notes"),
-    t("sales.quote.status"),
-    t("sales.quote.more"),
-  ].filter(Boolean);
+  const tableHeaders =
+    docType === DOCUMENT_TYPE.purchaseOrder
+      ? [
+          t("sales.quote.creationDate"),
+          t("sales.quote.purchaseOrderNumber"),
+          t("sales.quote.orderNumber"),
+          t("sales.quote.supplierName"),
+          t("sales.quote.client"),
+          t("sales.quote.itemsNumber"),
+          t("sales.quote.totalPrice"),
+          t("sales.quote.notes"),
+          t("sales.quote.status"),
+          t("sales.quote.more"),
+        ]
+      : docType === DOCUMENT_TYPE.purchaseInvoice ||
+        docType === DOCUMENT_TYPE.purchaseInvoiceRefund
+      ? [
+          t("sales.quote.creationDate"),
+          t("sales.quote.purchaseInvoiceNumber"),
+          t("sales.quote.invoiceNumber"),
+          t("sales.quote.purchaseOrderNumber"),
+          t("sales.quote.supplierName"),
+          t("sales.quote.itemsNumber"),
+          t("sales.quote.totalPrice"),
+          t("sales.quote.notes"),
+          t("sales.quote.status"),
+          t("sales.quote.more"),
+        ]
+      : docType === DOCUMENT_TYPE.quote
+      ? [
+          t("sales.quote.createdDate"),
+          t("sales.quote.client"),
+          t("sales.quote.agent"),
+          t("documentingDesign.TableSetting.number"),
+          t("sales.quote.worksName"),
+          t("sales.quote.totalPrice"),
+          t("sales.quote.notes"),
+          t("sales.quote.status"),
+          t("sales.quote.more"),
+        ]
+      : [
+          t("sales.quote.createdDate"),
+          t("sales.quote.client"),
+          t("sales.quote.agent"),
+          (() => {
+            switch (docType) {
+              case DOCUMENT_TYPE.order:
+                return t("sales.quote.orderNumber");
+              // case DOCUMENT_TYPE.deliveryNote:
+              //   return t("documentingDesign.TableSetting.number");
+              // case DOCUMENT_TYPE.deliveryNoteRefund:
+              //   return t("sales.quote.deliveryNoteNumber");
+              // case DOCUMENT_TYPE.invoice:
+              //   return t("sales.quote.invoiceNumber");
+              // case DOCUMENT_TYPE.invoiceRefund:
+              //   return t("sales.quote.invoiceNumber");
+              // case DOCUMENT_TYPE.receipt:
+              //   return t("sales.quote.receiptNumber");
+              default:
+                return t("documentingDesign.TableSetting.number");
+            }
+          })(),
+          docType === DOCUMENT_TYPE.order
+            ? t("sales.quote.quoteNumber")
+            : docType === DOCUMENT_TYPE.receipt
+            ? null
+            : t("sales.quote.sourceDocument"),
+          docType === DOCUMENT_TYPE.order && t("sales.quote.purchaseNumber"),
+          docType === DOCUMENT_TYPE.order && t("sales.quote.productionStatus"),
+          docType === DOCUMENT_TYPE.order && t("sales.quote.jobs"),
+          docType === DOCUMENT_TYPE.order &&
+            CheckPermission(Permissions.SHOW_COSTS_IN_ORDERS) && (
+              <PermissionCheck
+                userPermission={Permissions.SHOW_COSTS_IN_ORDERS}
+              >
+                {t("sales.quote.cost")}
+              </PermissionCheck>
+            ),
+          docType === DOCUMENT_TYPE.receipt
+            ? t("sales.quote.paymentMethod")
+            : t("sales.quote.worksName"),
+          isOrdersTracking
+            ? t("customers.modal.paymentStatus")
+            : t("sales.quote.totalPrice"),
+          t("sales.quote.notes"),
+          t("sales.quote.status"),
+          t("sales.quote.more"),
+        ].filter(Boolean);
 
   const logsTableHeaders = [
     t("sales.quote.actionDate"),
@@ -999,9 +1167,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     },
   ];
 
-  const documentLabel = isOrdersTracking ? t("tabs.ordersTracking") : documentsLabels.find(
-    (item) => item.value === docType
-  ).label;
+  const documentLabel = isOrdersTracking
+    ? t("tabs.ordersTracking")
+    : documentsLabels.find((item) => item.value === docType).label;
 
   const updateQuoteStatus = async () => {
     const callBack = (res) => {
@@ -1018,9 +1186,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       },
     });
   };
-
-
-
 
   const onClickQuoteDuplicate = async (id: string) => {
     const callBack = (res) => {
@@ -1096,7 +1261,10 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             onClickOpenPriceModal={onClickOpenPriceModal}
             onClickOpenCloseOrderModal={onClickOpenCloseOrderModal}
             onClickOpenCloseOrderNotesModal={onClickOpenCloseOrderNotesModal}
-
+            onClickOpenDocument={OpenDocument}
+            onClickSendPayment={onClickSendPayment}
+            onClickMakePayment={onClickMakePayment}
+            onClickCloseAndTrack={onClickOpenTrackModal}
           />,
         ]);
         setAllDocuments(mapData);
@@ -1119,11 +1287,14 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     setPage(1);
     setActiveCard(cardKey);
     setStatusId(null);
-    setQuoteStatusId({ label: t(`sales.quote.${cardKey}`), value: statusValue });
+    setQuoteStatusId({
+      label: t(`sales.quote.${cardKey}`),
+      value: statusValue,
+    });
   };
 
   const handleSecondCardClick = () => {
-    setQuoteStatusId(undefined)
+    setQuoteStatusId(undefined);
     setActiveCard(null);
   };
 
@@ -1161,66 +1332,104 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
 
   const handleSelectEmployee = (e: any, value: any) => {
     setEmployeeId(value);
-  }
+  };
 
   ////////////// LOGS //////////////
 
-  const getLogDescription = (logAction: string, values: any, documentType: DOCUMENT_TYPE): string => {
+  const getLogDescription = (
+    logAction: string,
+    values: any,
+    documentType: DOCUMENT_TYPE
+  ): string => {
     switch (logAction) {
       case LogActionType[1]:
-        return `${t("logs.theWorkMission")} "${values[0]}" ${t("logs.ITEM_ADD")}`;
+        return `${t("logs.theWorkMission")} "${values[0]}" ${t(
+          "logs.ITEM_ADD"
+        )}`;
       case LogActionType[2]:
-        return `${t("logs.theWorkMission")} "${values[0]}" ${t("logs.ITEM_UPADTED")}`;
+        return `${t("logs.theWorkMission")} "${values[0]}" ${t(
+          "logs.ITEM_UPADTED"
+        )}`;
       case LogActionType[3]:
-        return `${t("logs.theWorkMission")} "${values[0]}" ${t("logs.ITEM_DELETED")}`;
+        return `${t("logs.theWorkMission")} "${values[0]}" ${t(
+          "logs.ITEM_DELETED"
+        )}`;
       case LogActionType[4]:
-        return `${t("logs.ITEM_PRICE_UPDATE")} : "${values[0]}" ${t("logs.from")} ${parseFloat(values[1]).toFixed(2)} ${t("logs.to")} ${parseFloat(values[2]).toFixed(2)}`;
+        return `${t("logs.ITEM_PRICE_UPDATE")} : "${values[0]}" ${t(
+          "logs.from"
+        )} ${parseFloat(values[1]).toFixed(2)} ${t("logs.to")} ${parseFloat(
+          values[2]
+        ).toFixed(2)}`;
       case LogActionType[5]:
-        return `${t("logs.DOCUMENT_PRICE_UPDATE")} ${t("logs.from")} ${parseFloat(values[0]).toFixed(2)} ${t("logs.to")} ${parseFloat(values[1]).toFixed(2)}`;
+        return `${t("logs.DOCUMENT_PRICE_UPDATE")} ${t(
+          "logs.from"
+        )} ${parseFloat(values[0]).toFixed(2)} ${t("logs.to")} ${parseFloat(
+          values[1]
+        ).toFixed(2)}`;
       case LogActionType[6]:
         if (values[0] === "" || null) {
-          return `${t("logs.DOCUMENT_DISCUOUNT_UPDATE")} ${t("logs.from")} ${0.00} ${t("logs.to")} ${parseFloat(values[1]).toFixed(2)}`;
+          return `${t("logs.DOCUMENT_DISCUOUNT_UPDATE")} ${t(
+            "logs.from"
+          )} ${0.0} ${t("logs.to")} ${parseFloat(values[1]).toFixed(2)}`;
         } else {
-          return `${t("logs.DOCUMENT_DISCUOUNT_UPDATE")} ${t("logs.from")} ${parseFloat(values[0]).toFixed(2)} ${t("logs.to")} ${parseFloat(values[1]).toFixed(2)}`;
+          return `${t("logs.DOCUMENT_DISCUOUNT_UPDATE")} ${t(
+            "logs.from"
+          )} ${parseFloat(values[0]).toFixed(2)} ${t("logs.to")} ${parseFloat(
+            values[1]
+          ).toFixed(2)}`;
         }
       case LogActionType[7]:
         return t("logs.ADDRESS_UPDATED");
       case LogActionType[8]:
         return t("logs.CONTACTS_UPDATED");
       case LogActionType[9]:
-        return `${t("logs.CLIENT_UPDATED")} ${t("logs.from")} "${values[0]}" ${t("logs.to")} "${values[1]}"`;
+        return `${t("logs.CLIENT_UPDATED")} ${t("logs.from")} "${
+          values[0]
+        }" ${t("logs.to")} "${values[1]}"`;
       case LogActionType[10]:
         if (values[0] === null) {
           return `${t("logs.AGENT_UPDATED")} ${t("logs.to")} ${values[1]}`;
         } else {
-          return `${t("logs.AGENT_UPDATED")} ${t("logs.from")} ${values[0]} ${t("logs.to")} ${values[1]}`;
+          return `${t("logs.AGENT_UPDATED")} ${t("logs.from")} ${values[0]} ${t(
+            "logs.to"
+          )} ${values[1]}`;
         }
       case LogActionType[11]:
         if (values[0] === null) {
-          return `${t("logs.PURCHASE_NUMBER_UPDATE")} ${t("logs.to")} "${values[1]}"`;
+          return `${t("logs.PURCHASE_NUMBER_UPDATE")} ${t("logs.to")} "${
+            values[1]
+          }"`;
         } else {
-          return `${t("logs.PURCHASE_NUMBER_UPDATE")} ${t("logs.from")} ${values[0]} ${t("logs.to")} ${values[1]}`;
+          return `${t("logs.PURCHASE_NUMBER_UPDATE")} ${t("logs.from")} ${
+            values[0]
+          } ${t("logs.to")} ${values[1]}`;
         }
       case LogActionType[12]:
         if (values[0] === null) {
           return `${t("logs.COMMENTS_UPDATE")} ${t("logs.to")} "${values[1]}"`;
         } else {
-          return `${t("logs.COMMENTS_UPDATE")} ${t("logs.from")} "${values[0]}" ${t("logs.to")} "${values[1]}"`;
+          return `${t("logs.COMMENTS_UPDATE")} ${t("logs.from")} "${
+            values[0]
+          }" ${t("logs.to")} "${values[1]}"`;
         }
       case LogActionType[13]:
         return `${t("logs.DOCUMENT_DUPLICATED", {
           documentType: t(`sales.quote.${DOCUMENT_TYPE[documentType]}`),
-          documentNumber: values[0]
+          documentNumber: values[0],
         })}`;
       case LogActionType[14]:
-        return `${t("logs.DOCUMENT_DUPLICATED_FROM_ORDER", { documentNumber: values[0] })}`;
+        return `${t("logs.DOCUMENT_DUPLICATED_FROM_ORDER", {
+          documentNumber: values[0],
+        })}`;
       default:
-        return '';
+        return "";
     }
   };
 
-
-  const getAllDocumentLogs = (documentId?: string, isClear: boolean = false): Promise<void> => {
+  const getAllDocumentLogs = (
+    documentId?: string,
+    isClear: boolean = false
+  ): Promise<void> => {
     setDocumentIdLogState(documentId);
     return new Promise(async (resolve, reject) => {
       const callBack = (res) => {
@@ -1228,7 +1437,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
           const mapData = res?.data?.map((log: any) => [
             GetShortDateFormat(log?.actionDate),
             log?.employeeName,
-            getLogDescription(log?.logAction, log?.values, log?.documentType)
+            getLogDescription(log?.logAction, log?.values, log?.documentType),
           ]);
           setDocumentLogsData(mapData);
           resolve();
@@ -1239,40 +1448,34 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         }
       };
       try {
-        await getAllDocumentLogsApi(callApi, callBack,
-          {
-            documentType: docType,
-            documentId: documentId,
-            data:
-              isClear ?
-                {
-                  fromDate: fromLogsDate && GetDateFormat(fromLogsDate),
-                  toDate: toLogsDate && GetDateFormat(toLogsDate),
-                }
-                :
-                {
-                  userId: employeeId?.id,
-                  fromDate: fromLogsDate && GetDateFormat(fromLogsDate),
-                  toDate: toLogsDate && GetDateFormat(toLogsDate),
-                },
-          });
+        await getAllDocumentLogsApi(callApi, callBack, {
+          documentType: docType,
+          documentId: documentId,
+          data: isClear
+            ? {
+                fromDate: fromLogsDate && GetDateFormat(fromLogsDate),
+                toDate: toLogsDate && GetDateFormat(toLogsDate),
+              }
+            : {
+                userId: employeeId?.id,
+                fromDate: fromLogsDate && GetDateFormat(fromLogsDate),
+                toDate: toLogsDate && GetDateFormat(toLogsDate),
+              },
+        });
       } catch (error) {
         reject();
       }
     });
   };
 
-
   const onClickClearLogsFilter = () => {
-    setEmployeeId(null)
+    setEmployeeId(null);
     getAllDocumentLogs(documentIdLogState, true);
   };
 
   const onClickSearchLogsFilter = () => {
     getAllDocumentLogs(documentIdLogState);
   };
-
-  ////////////// LOGS //////////////
 
   useEffect(() => {
     if (!isFromHomePage) {
@@ -1290,7 +1493,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       setFinalPatternSearch(pattern);
     }
   }, [quoteNumber, query]);
-
 
   useEffect(() => {
     if (!isFromHomePage) {
@@ -1342,11 +1544,13 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     { label: t("sales.quote.closed"), value: AStatus.CLOSED },
   ];
 
-  const approvalStatuses: { value: number; label: string }[] = Object.values(ApprovalStatus)
-    .filter(value => typeof value === 'number')
-    .map(value => ({
+  const approvalStatuses: { value: number; label: string }[] = Object.values(
+    ApprovalStatus
+  )
+    .filter((value) => typeof value === "number")
+    .map((value) => ({
       value: value as number,
-      label: t(`documentStatus.${ApprovalStatus[value]}`)
+      label: t(`documentStatus.${ApprovalStatus[value]}`),
     }));
 
   const handleProductionStatusChange = (e: any, value: any) => {
@@ -1369,11 +1573,12 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
 
   const removeEmptyValues = (obj) => {
     return Object.fromEntries(
-      Object.entries(obj).filter(([_, value]) =>
-        value !== undefined &&
-        value !== null &&
-        value !== "" &&
-        !(Array.isArray(value) && value.length === 0)
+      Object.entries(obj).filter(
+        ([_, value]) =>
+          value !== undefined &&
+          value !== null &&
+          value !== "" &&
+          !(Array.isArray(value) && value.length === 0)
       )
     );
   };
@@ -1397,21 +1602,41 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
 
     const filteredDataWithoutEmptyValues = removeEmptyValues(filteredData);
 
-    if (JSON.stringify(filteredDataWithoutEmptyValues) !== JSON.stringify(filterData)) {
+    if (
+      JSON.stringify(filteredDataWithoutEmptyValues) !==
+      JSON.stringify(filterData)
+    ) {
       setFilterData(filteredDataWithoutEmptyValues);
     }
-  }, [quoteStatusId, approvalStatusId, statusId, accountingStatus, productionStatus, finalPatternSearch, customerId, dateRange, agentId, minPrice, maxPrice, productIds, fromDate, toDate]);
+  }, [
+    quoteStatusId,
+    approvalStatusId,
+    statusId,
+    accountingStatus,
+    productionStatus,
+    finalPatternSearch,
+    customerId,
+    dateRange,
+    agentId,
+    minPrice,
+    maxPrice,
+    productIds,
+    fromDate,
+    toDate,
+  ]);
 
-  const [openIrrelevantCancelModal, setOpenIrrelevantCancelModal] = useState(false);
+  const [openIrrelevantCancelModal, setOpenIrrelevantCancelModal] =
+    useState(false);
   const [openPriceCancelModal, setOpenPriceCancelModal] = useState(false);
   const [openCloseOrderModal, setOpenCloseOrderModal] = useState(false);
-  const [openDeliveryTimeCancelModal, setOpenDeliveryTimeCancelModal] = useState(false);
+  const [openDeliveryTimeCancelModal, setOpenDeliveryTimeCancelModal] =
+    useState(false);
 
   // Use this state when opening any modal from the "More" menu list.
-  const [selectedDocument, setSelectedDocument] = useState<any>({})
+  const [selectedDocument, setSelectedDocument] = useState<any>({});
 
   const onClickOpenIrrelevantModal = (order) => {
-    setSelectedDocument(order)
+    setSelectedDocument(order);
     setOpenIrrelevantCancelModal(true);
   };
 
@@ -1419,9 +1644,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     setOpenIrrelevantCancelModal(false);
   };
 
-
   const onClickOpenPriceModal = (order) => {
-    setSelectedDocument(order)
+    setSelectedDocument(order);
     setOpenPriceCancelModal(true);
   };
   const onClickClosePriceModal = () => {
@@ -1429,22 +1653,21 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   };
 
   const onClickOpenCloseOrderModal = (order) => {
-    setSelectedDocument(order)
+    setSelectedDocument(order);
     setOpenCloseOrderModal(true);
   };
   const onClickCloseCloseOrderModal = () => {
     setOpenCloseOrderModal(false);
-    setDocumentCloseNumber("")
+    setDocumentCloseNumber("");
   };
 
   const onClickOpenDeliveryTimeModal = (order) => {
-    setSelectedDocument(order)
+    setSelectedDocument(order);
     setOpenDeliveryTimeCancelModal(true);
   };
   const onClickCloseDeliveryTimeModal = () => {
     setOpenDeliveryTimeCancelModal(false);
   };
-
 
   const updateCancelQuote = async (quoteStatus: number) => {
     const callBack = (res) => {
@@ -1454,40 +1677,56 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       } else {
         alertFaultUpdate();
       }
-    }
+    };
     await cancelDocumentApi(callApi, callBack, {
       DocumentType: docType,
       Document: {
         documentId: selectedDocument?.id,
         quoteStatus: quoteStatus,
-      }
-    })
-  }
+      },
+    });
+  };
 
   const ManuallyCloseDocument = async (quoteItemValue) => {
-    setSelectedQuoteItemValue(quoteItemValue)
+    setSelectedQuoteItemValue(quoteItemValue);
     const callBack = (res) => {
       if (res?.success) {
         alertSuccessUpdate();
-        getAllQuotes();
-        getAllDocuments(docType)
+        isFromHomePage ? getAllDocuments(docType) : getAllQuotes();
       } else {
         alertFaultUpdate();
       }
     };
     await manuallyCloseDocumentApi(callApi, callBack, {
       documentType: docType,
-      document: { documentId: quoteItemValue?.id, documentNumber: documentCloseNumber }
+      document: {
+        documentId: quoteItemValue?.id,
+        documentNumber: documentCloseNumber,
+      },
+    });
+  };
 
+  const OpenDocument = async (document) => {
+    const callBack = (res) => {
+      if (res?.success) {
+        alertSuccessUpdate();
+        isFromHomePage ? getAllDocuments(docType) : getAllQuotes();
+      } else {
+        alertFaultUpdate();
+      }
+    };
+    await OpenDocumentApi(callApi, callBack, {
+      documentType: docType,
+      documentId: document?.id,
     });
   };
 
   const [showCustomerModal, setShowCustomerModal] = useState(false);
   const [customerForEdit, setCustomerForEdit] = useState([]);
   const onClickOpenCustomerModal = (customerId: any) => {
-    setShowCustomerModal(true)
-    getCustomerForEdit(customerId)
-  }
+    setShowCustomerModal(true);
+    getCustomerForEdit(customerId);
+  };
 
   const getCustomerForEdit = async (customerId) => {
     const callBack = (res) => {
@@ -1521,7 +1760,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     await getAndSetCustomerById(callApi, callBack, { customerId: customerId });
   };
 
-  const setClientTypesCategories = useSetRecoilState(clientTypesCategoriesState);
+  const setClientTypesCategories = useSetRecoilState(
+    clientTypesCategoriesState
+  );
 
   const getClientTypesCategories = async () => {
     const callBack = (res) => {
@@ -1534,15 +1775,16 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         setClientTypesCategories(clientTypes);
       }
     };
-    await getAndSetClientTypes(callApi, callBack, { cardType: CLIENT_TYPE_Id.CUSTOMER });
+    await getAndSetClientTypes(callApi, callBack, {
+      cardType: CLIENT_TYPE_Id.CUSTOMER,
+    });
   };
-
-
 
   ///////////////////////// SEND PAYMENT //////////////////////////
   const [openPaymentModal, setOpenPaymentModal] = useState(false);
   const [paymentModalTitle, setPaymentModalTitle] = useState("");
-  const [sendPayment, setSendPayment] = useRecoilState<StatePayment>(sendPaymentState);
+  const [sendPayment, setSendPayment] =
+    useRecoilState<StatePayment>(sendPaymentState);
 
   const onClickClosePaymentModal = () => {
     setOpenPaymentModal(false);
@@ -1559,24 +1801,31 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
           reject(new Error("Failed to update payment state"));
         }
       };
-      sendDocumentToClientForPaymentApi(callApi, callBack, { id: document?.id, documentType: DOCUMENT_TYPE.order });
+      sendDocumentToClientForPaymentApi(callApi, callBack, {
+        id: document?.id,
+        documentType: DOCUMENT_TYPE.order,
+      });
     });
   };
 
   const onClickSendPayment = async (document: any) => {
     try {
       await onClickSendPaymentOld(document);
-      setPaymentModalTitle(`${t("prePayment.paymentPageFor")} ${t(`sales.quote.${DOCUMENT_TYPE[docType]}`).toLowerCase()} ${t("sales.quote.number")} - ${document?.number}`);
+      setPaymentModalTitle(
+        `${t("prePayment.paymentPageFor")} ${t(
+          `sales.quote.${DOCUMENT_TYPE[docType]}`
+        ).toLowerCase()} ${t("sales.quote.number")} - ${document?.number}`
+      );
       setOpenPaymentModal(true);
     } catch (error) {
       alertFaultGetData();
     }
   };
 
-  ///// order tracking 
+  ///// order tracking
   const [openMakePaymentModal, setOpenMakePaymentModal] = useState(false);
   const onClickMakePayment = (order) => {
-    setSelectedQuoteItemValue(order)
+    setSelectedQuoteItemValue(order);
     setOpenMakePaymentModal(true);
   };
 
@@ -1584,20 +1833,19 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     setOpenMakePaymentModal(false);
   };
 
-
-  const [openCloseAndTrackOrderModal, setOpenCloseAndTrackOrderModal] = useState(false);
+  const [openCloseAndTrackOrderModal, setOpenCloseAndTrackOrderModal] =
+    useState(false);
   const [openPrintPDFModal, setOpenPrintPDFModal] = useState(false);
   const onClickClosePrintPDFModal = () => {
-    setOpenPrintPDFModal(false)
-  }
+    setOpenPrintPDFModal(false);
+  };
   const onClickOpenPrintPDFModal = (order) => {
-    setSelectedDocument(order)
-    setOpenPrintPDFModal(true)
-  }
-
+    setSelectedDocument(order);
+    setOpenPrintPDFModal(true);
+  };
 
   const onClickOpenTrackModal = (order) => {
-    setSelectedQuoteItemValue(order)
+    setSelectedQuoteItemValue(order);
     setOpenCloseAndTrackOrderModal(true);
   };
 
@@ -1609,14 +1857,14 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     const callBack = (res) => {
       if (res?.success) {
         alertSuccessUpdate();
-        getAllQuotes()
+        getAllQuotes();
       } else {
         alertFaultUpdate();
       }
     };
     await closeAndTrackOrderApi(callApi, callBack, {
       documentType: docType,
-      documentId: selectedQuoteItemValue?.id
+      documentId: selectedQuoteItemValue?.id,
     });
   };
 
@@ -1632,7 +1880,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     setOpenCancelReceiptModal(false);
   };
 
-  const [openCancelReceiptModalRefund, setOpenCancelReceiptModalRefund] = useState(false);
+  const [openCancelReceiptModalRefund, setOpenCancelReceiptModalRefund] =
+    useState(false);
   const onOpenCancelReceiptModalRefund = (receipt: any) => {
     setSelectedDocument(receipt);
     setOpenCancelReceiptModalRefund(true);
@@ -1653,7 +1902,10 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         alertFaultUpdate();
       }
     };
-    await cancelReceiptApi(callApi, callBack, { id: selectedDocument?.id, refundCredit });
+    await cancelReceiptApi(callApi, callBack, {
+      id: selectedDocument?.id,
+      refundCredit,
+    });
   };
 
   return {
@@ -1776,7 +2028,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     onCloseCancelReceiptModal,
     onClickCancelReceipt,
     openCancelReceiptModalRefund,
-    onCloseCancelReceiptModalRefund
+    onCloseCancelReceiptModalRefund,
   };
 };
 

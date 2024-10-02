@@ -27,19 +27,17 @@ import {
   deleteDocumentContactApi,
   deleteDocumentItemApi,
   duplicateWithAnotherQuantityApi,
-  getDocumentApi,
   getWhatsAppMessageApi,
   refreshExchangeRateApi,
   rejectDocumentApi,
   saveDocumentApi,
   sendDocumentToClientApi,
-  sortDocumentItemsApi,
   updateAgentApi,
   updateDiscountTypeApi,
   updateDocuementItemSelectApi,
-  updateDocumentAddressApi,
   updateDocumentContactApi,
   updateDocumentCurrencyApi,
+  updateDocumentTitleApi,
   updateDueDateApi,
   updateExchangeRateApi,
   updateIsShowDetailsApi,
@@ -86,6 +84,35 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
   const [quoteItemValue, setQuoteItemValue] =
     useRecoilState<any>(quoteItemState);
   const quoteConfirm = useRecoilValue<any>(quoteConfirmationState);
+  const [selectDate, setSelectDate] = useState(
+    isQuoteConfirmation ? quoteConfirm?.dueDate : quoteItemValue?.dueDate
+  );
+  const [creationDate, setCreationDate] = useState(
+    isQuoteConfirmation
+      ? quoteConfirm?.creationDate
+      : quoteItemValue?.creationDate
+  );
+  const [taxDate, setTaxDate] = useState(
+    isQuoteConfirmation ? quoteConfirm?.taxDate : quoteItemValue?.taxDate
+  );
+  const [isUpdateBusinessName, setIsUpdateBusinessName] = useState<
+    number | null
+  >(null);
+  const [isUpdatePurchaseNumber, setIsUpdatePurchaseNumber] = useState<
+    number | null
+  >(null);
+  const [isUpdateDocumentTitle, setIsUpdateDocumentTitle] = useState<
+    number | null
+  >(null);
+  const [isUpdateClientName, setIsUpdateClientName] = useState<number | null>(
+    null
+  );
+  const [clientName, setClientName] = useState(
+    quoteItemValue?.occasionalClientName
+  );
+  const [isUpdateExchangeRate, setIsUpdateExchangeRate] = useState<
+    number | null
+  >(null);
   const [selectDate, setSelectDate] = useState(
     isQuoteConfirmation ? quoteConfirm?.dueDate : quoteItemValue?.dueDate
   );
@@ -317,6 +344,11 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     setIsUpdatePurchaseNumber(null);
   };
 
+  const onBlurTitle = async (value) => {
+    updateDocumentTitle(value);
+    setIsUpdateDocumentTitle(null);
+  };
+
   const onBlurClientName = async () => {
     updateOccasionalClientName();
     setIsUpdateClientName(null);
@@ -435,6 +467,31 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
         currency: currency,
       },
     });
+  };
+
+  const updateDocumentTitle = async (value: string) => {
+    if (router.query.isNewCreation) {
+      const updatedQuoteItemValue = { ...quoteItemValue };
+      updatedQuoteItemValue.title = value;
+      setQuoteItemValue(updatedQuoteItemValue);
+    } else {
+      const callBack = (res) => {
+        if (res?.success) {
+          alertSuccessUpdate();
+          setIsUpdateDocumentTitle(null);
+          getQuote();
+        } else {
+          alertFaultUpdate();
+        }
+      };
+      await updateDocumentTitleApi(callApi, callBack, {
+        documentType: docType,
+        document: {
+          documentId: quoteItemValue?.id,
+          title: value,
+        },
+      });
+    }
   };
 
   const updatePurchaseNumber = async (value: string) => {
@@ -1805,7 +1862,6 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     setCreationDate,
     updateDueDate,
     setIsUpdateBusinessName,
-    setSelectBusiness,
     setIsUpdateAddress,
     setIsUpdatePurchaseNumber,
     setIsUpdateBusinessCode,
@@ -1843,7 +1899,6 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     onClickCancelOffer,
     updateCancelQuote,
     onChangeSelectBusiness,
-    updatePurchaseNumber,
     onClickDeleteAddress,
     openAddDeliveryModal,
     onOpenDeliveryModal,
@@ -1912,6 +1967,9 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     openInvoiceCreationModal,
     onClickCloseInvoiceCreation,
     updateDiscountType,
+    onBlurTitle,
+    isUpdateDocumentTitle,
+    setIsUpdateDocumentTitle,
     isWhatsAppWeb,
     setIsWhatsAppWeb,
   };
