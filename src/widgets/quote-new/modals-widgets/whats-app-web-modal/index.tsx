@@ -15,25 +15,42 @@ const WhatsAppWebModal = ({
   onClose,
   clientContactsValue,
   getWhatsAppMessage,
-  whatsappMassage
+  whatsappMassage,
+  isWhatsAppWeb,
 }) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const [, setSelectedClient] = useState<any>()
-  const [phoneNumber, setPhoneNumber] = useState("")
+  const [, setSelectedClient] = useState<any>();
+  const [phoneNumber, setPhoneNumber] = useState("");
+
   useEffect(() => {
     if (openModal) {
-      getWhatsAppMessage()
+      getWhatsAppMessage();
     }
-  }, [openModal])
+  }, [openModal]);
+
+  const handleWhatsAppClick = () => {
+    if (whatsappMassage && whatsappMassage.trim()) {
+      const url = isWhatsAppWeb
+        ? `https://web.whatsapp.com/send?phone=${phoneNumber}&text=${encodeURIComponent(
+            whatsappMassage
+          )}`
+        : `whatsapp://send?phone=${phoneNumber}&text=${encodeURIComponent(
+            whatsappMassage
+          )}`;
+
+      window.open(url, "_blank");
+    }
+  };
+
   return (
     <>
       <GoMakeModal
         openModal={openModal}
         onClose={() => {
-          onClose()
-          setPhoneNumber("")
-          setSelectedClient({})
+          onClose();
+          setPhoneNumber("");
+          setSelectedClient({});
         }}
         insideStyle={clasess.insideStyle}
       >
@@ -44,8 +61,8 @@ const WhatsAppWebModal = ({
             style={clasess.textInputStyle}
             placeholder={t("sales.quote.contactName")}
             onChange={(e, value) => {
-              setSelectedClient(value)
-              setPhoneNumber(value?.phone)
+              setSelectedClient(value);
+              setPhoneNumber(value?.phone);
             }}
           />
           <GomakeTextInput
@@ -53,16 +70,18 @@ const WhatsAppWebModal = ({
             style={clasess.textInputStyle}
             value={phoneNumber}
             onChange={(e: any) => {
-              setPhoneNumber(e.target.value)
+              setPhoneNumber(e.target.value);
             }}
           />
-          <GomakePrimaryButton style={clasess.btnContainer} onClick={() => {
-            if (whatsappMassage) {
-              window.open(`whatsapp://send?phone=${phoneNumber}&text=${whatsappMassage}`, "_blank");
-
-            }
-          }}>
-            {t("sales.quote.openWhatsAppWeb")}
+          <GomakePrimaryButton
+            style={clasess.btnContainer}
+            onClick={handleWhatsAppClick}
+          >
+            {t(
+              isWhatsAppWeb
+                ? "sales.quote.openWhatsAppWeb"
+                : "sales.quote.openWhatsAppApp"
+            )}
           </GomakePrimaryButton>
         </div>
       </GoMakeModal>
