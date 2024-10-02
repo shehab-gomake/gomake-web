@@ -71,7 +71,7 @@ const useGomakeDateRange = () => {
             case DashboardActions.ALL_BOARDS_MISSIONS:
                 return t('dashboard-widget.allTasks');
             case DashboardActions.DATE_RANGE_BOARDS:
-                return dates.endDate && dates.startDate && dateStringFormat(dates.startDate) + ' - ' + dateStringFormat(dates.endDate) + ' ' + t('dashboard-widget.tasks');
+                return dates.endDate && dates.startDate && dateStringFormat(dates.startDate) + ' - ' + dateStringFormat(dates.endDate);
             default:
                 return ''
         }

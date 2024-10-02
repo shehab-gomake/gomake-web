@@ -1,9 +1,20 @@
 import { useStatusTable } from "@/widgets/production-floor/table-view/status-table/use-status-Table";
-import { Collapse, Paper, Stack, Table, TableBody, TableContainer, TableHead } from "@mui/material";
+import {
+  Collapse,
+  Paper,
+  Stack,
+  Table,
+  TableBody,
+  TableContainer,
+  TableHead,
+} from "@mui/material";
 import Button from "@mui/material/Button";
 import { IProductionStatus } from "@/widgets/production-floor/interfaces/production-floor-status";
 import { IBoardMissions } from "@/widgets/production-floor/interfaces/board-missions";
-import { SecondaryTableCell, SecondaryTableRow } from "@/components/tables/secondary-table";
+import {
+  SecondaryTableCell,
+  SecondaryTableRow,
+} from "@/components/tables/secondary-table";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import { useDrop } from "react-dnd";
@@ -19,13 +30,14 @@ import { PrintPackingSlipModalWidget } from "../../views/board-missions-view/nav
 interface IProps {
   status: IProductionStatus;
   boards: IBoardMissions[];
-  count: number;
+  count?: number;
 }
 
 const StatusTableComponent = ({ status, boards }: IProps) => {
   const { isOpen, onClickStatus, tableHeaders } = useStatusTable();
   const [search] = useRecoilState(productionFloorTextSearchState);
-  const { t,
+  const {
+    t,
     updateStatus,
     onOpenMarkReadyModal,
     openMarkReadyModal,
@@ -34,24 +46,36 @@ const StatusTableComponent = ({ status, boards }: IProps) => {
     openPackagesModal,
     onClosePrintDeliverTicketModal,
     onOpenPrintDeliverTicketModal,
-    selectedMission
+    selectedMission,
   } = useProductionFloorData();
 
   const [{ isOver }, drop] = useDrop(
     () => ({
       accept: "task",
-      drop: (item: { board: IBoardMissions; selectedIds: IBoardMissions[] }, monitor) => {
+      drop: (
+        item: { board: IBoardMissions; selectedIds: IBoardMissions[] },
+        monitor
+      ) => {
         const didDrop = monitor.didDrop();
         if (didDrop) {
           return;
         }
         if (item.board.statusId !== status.id) {
-          updateStatus(item.selectedIds.length > 0 ? item.selectedIds : [item.board], status.id).then();
+          updateStatus(
+            item.selectedIds.length > 0 ? item.selectedIds : [item.board],
+            status.id
+          ).then();
         }
       },
       collect: (monitor) => ({
-        isOver: monitor.getItem()?.board?.statusId === status.id ? false : !!monitor.isOver(),
-        canDrop: monitor.getItem()?.board?.statusId === status.id ? false : !!monitor.canDrop(),
+        isOver:
+          monitor.getItem()?.board?.statusId === status.id
+            ? false
+            : !!monitor.isOver(),
+        canDrop:
+          monitor.getItem()?.board?.statusId === status.id
+            ? false
+            : !!monitor.canDrop(),
       }),
     }),
     [status, boards]
@@ -64,11 +88,17 @@ const StatusTableComponent = ({ status, boards }: IProps) => {
   const getBoards = useCallback(() => {
     return !!search
       ? boards?.filter(
-        (board) =>
-          `${board?.boardMissionNumber}\\${board?.orderNumber}`.includes(search) ||
-          `${board?.clientName?.toLowerCase()}`.includes(search.toLowerCase()) ||
-          board?.automatedTags?.some((tag) => `${tag.toLowerCase()}`.includes(search.toLowerCase()))
-      )
+          (board) =>
+            `${board?.boardMissionNumber}\\${board?.orderNumber}`.includes(
+              search
+            ) ||
+            `${board?.clientName?.toLowerCase()}`.includes(
+              search.toLowerCase()
+            ) ||
+            board?.automatedTags?.some((tag) =>
+              `${tag.toLowerCase()}`.includes(search.toLowerCase())
+            )
+        )
       : boards;
   }, [boards, search]);
 
@@ -91,7 +121,7 @@ const StatusTableComponent = ({ status, boards }: IProps) => {
           },
         }}
       >
-        {`${t("productionStatuses." + status.name)} (${boards.length})`}
+        {`${t("productionStatuses." + status.name)} (${getBoards().length})`}
       </Button>
       {getBoards().length > 0 && (
         <Collapse in={isOpen}>
@@ -117,7 +147,13 @@ const StatusTableComponent = ({ status, boards }: IProps) => {
                     ?.map((boardMission) => {
                       return (
                         <>
-                          <TableRowComponent key={"status" + status.id + boardMission.id} boardMission={boardMission} status={status} onClickDone={onOpenMarkReadyModal} onClickPrintDTicket={onOpenPrintDeliverTicketModal} />
+                          <TableRowComponent
+                            key={"status" + status.id + boardMission.id}
+                            boardMission={boardMission}
+                            status={status}
+                            onClickDone={onOpenMarkReadyModal}
+                            onClickPrintDTicket={onOpenPrintDeliverTicketModal}
+                          />
                         </>
                       );
                     })}

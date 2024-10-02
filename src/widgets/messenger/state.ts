@@ -4,4 +4,9 @@ import {IChatDialog} from "@/widgets/messenger/interfaces/dialog";
 export const messengerDialogsState = atom<IChatDialog[]>({
     default: [],
     key: 'messengerDialogsState'
+});
+
+export const messengerMobileViewState =  atom<boolean>({
+    key: 'messengerMobileViewState',
+    default: false
 })

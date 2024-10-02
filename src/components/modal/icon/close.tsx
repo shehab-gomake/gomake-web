@@ -1,4 +1,4 @@
-const CloseIcon = () => {
+const RoundedCloseIcon = () => {
   return (
     <svg
       width="24"
@@ -32,4 +32,4 @@ const CloseIcon = () => {
   );
 };
 
-export { CloseIcon };
+export { RoundedCloseIcon };

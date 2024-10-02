@@ -396,7 +396,7 @@ const BoardMissionsStationAction = ({
                     </Collapse>
                 </div> :
                     <Fade in={true} timeout={delay}
-                        style={{ width: "100%", position: "relative", zIndex: 999999999999999999999999999999 }}>
+                        style={{ width: "100%", position: "relative" }}>
                         <Stack direction={'row'} alignItems={'center'} justifyContent={'space-between'}
                             onClick={() => setIsOpen(isHideTimeAndDate ? isOpen : !isOpen)}
                             style={{
@@ -636,7 +636,7 @@ const BoardMissionsStationAction = ({
                             </Stack>
                             <PermissionCheck userPermission={Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR}>
                                 {
-                                    isEditable &&
+                                    isEditable && !isHideTimeAndDate &&
                                     <div>
                                         {
                                             loading ? <CircularProgress /> :
@@ -668,37 +668,37 @@ const BoardMissionsStationAction = ({
                                     </div>
                                 }
                             </PermissionCheck>
-                            <ThreeOptionsModal
-                                title={t("boardMissions.markDoneModalTitle")}
-                                subTitle={t("boardMissions.markDoneModalSubTitle")}
-                                yesBtn={"boardMissions.markDoneModalYes"}
-                                noBtn={"boardMissions.markDoneModalNo"}
-                                openModal={openReadyModal}
-                                onClose={() => setIsReadyModal(false)}
-                                onClickYes={() => onClickDone(boardMissionActionId, true)}
-                                onClickNo={() => onClickDone(boardMissionActionId, false)}
-                                insideStyle={{ zIndex: 999999 }}
-                            />
-                            <GoMakeDeleteModal
-                                hideIcon={true}
-                                title={t("customers.modal.updateJobStationModalTitle")}
-                                yesBtn={t("modal.confirm")}
-                                openModal={openModal}
-                                onClose={onClickCloseModal}
-                                onClickDelete={() => {
 
-                                    onClickDone(boardMissionActionId).then();
-
-                                }}
-                            />
-                            <PrintPackingSlipModalWidget boardMissionId={boardMissions.boardMissionId}
-                                quantity={boardMissions.quantity} openModal={openPackagingModal}
-                                onClose={() => setOpenPackagingModal(false)} />
                         </Stack>
 
                     </Fade>
             }
+            <ThreeOptionsModal
+                title={t("boardMissions.markDoneModalTitle")}
+                subTitle={t("boardMissions.markDoneModalSubTitle")}
+                yesBtn={"boardMissions.markDoneModalYes"}
+                noBtn={"boardMissions.markDoneModalNo"}
+                openModal={openReadyModal}
+                onClose={() => setIsReadyModal(false)}
+                onClickYes={() => onClickDone(boardMissionActionId, true)}
+                onClickNo={() => onClickDone(boardMissionActionId, false)}
+                insideStyle={{ zIndex: 999999 }}
+            />
+            <GoMakeDeleteModal
+                hideIcon={true}
+                title={t("customers.modal.updateJobStationModalTitle")}
+                yesBtn={t("modal.confirm")}
+                openModal={openModal}
+                onClose={onClickCloseModal}
+                onClickDelete={() => {
 
+                    onClickDone(boardMissionActionId).then();
+
+                }}
+            />
+            <PrintPackingSlipModalWidget boardMissionId={boardMissions.boardMissionId}
+                quantity={boardMissions.quantity} openModal={openPackagingModal}
+                onClose={() => setOpenPackagingModal(false)} />
         </>
     );
 };

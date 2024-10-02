@@ -1,40 +1,38 @@
 import {useMemo} from "react";
 import {FONT_FAMILY} from "@/utils/font-family";
+import {useGomakeTheme} from "@/hooks/use-gomake-thme";
 
 const useStyle = (bgColor: string, selected: boolean) => {
+    const {primaryColor, theme} = useGomakeTheme();
     const classes = useMemo(() => {
         return {
             container: {
                 height: '100%',
                 width: '100%',
                 borderRadius: '16px',
-                padding: '20px 20px 5px 20px',
-                backgroundColor: bgColor,
-                cursor: 'pointer',
-                opacity: selected ? 0.5 : 1
+                backgroundColor: '#FFF',
+                position: 'relative' as 'relative',
+                borderColor: '#EAECF0'
             },
             label: {
-               ...FONT_FAMILY.Lexend(500, 30),
-                color: '#FFFFFF',
+               ...FONT_FAMILY.Inter(600, 16),
+                color: primaryColor(900),
             },
             value: {
-                ...FONT_FAMILY.Lexend(600, 40),
-                color: '#FFFFFF',
-                textAlign: 'center' as 'center',
+                ...FONT_FAMILY.Inter(600, 14),
+                color: '#2E3092',
             },
             iconWrapper: {
                 backgroundColor: 'white',
                 opacity: '0.5',
-                minWidth: '40px',
-                height: '40px',
-                borderRadius: '50%',
+                minWidth: '26px',
+                height: '26px',
+                borderRadius: '6px',
                 display: 'flex',
-                justifyContent: 'center' as 'center',
-                alignItems: 'center' as 'center',
             },
 
         };
-    }, [selected]);
+    }, [selected, theme]);
     return {
         classes,
     };

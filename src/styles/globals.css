@@ -39,8 +39,8 @@ html * {
 }
 
 ::-webkit-scrollbar {
-  width: 0px;
-  height: 0px;
+  width: 0;
+  height: 0;
 }
 
 .scrollBlue::-webkit-scrollbar {
@@ -51,18 +51,19 @@ html * {
 }
 
 .show-scrollbar::-webkit-scrollbar {
-  width: 12px;
+  width: 2px;
+
 }
 
 .show-scrollbar::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background-color: transparent;
   border-radius: 10px;
+  margin: 100px 0 0 0;
 }
 
 .show-scrollbar::-webkit-scrollbar-thumb {
   background: #2e3092;
   border-radius: 10px;
-  border: 3px solid #f1f1f1;
 }
 
 .show-scrollbar::-webkit-scrollbar-thumb:hover {

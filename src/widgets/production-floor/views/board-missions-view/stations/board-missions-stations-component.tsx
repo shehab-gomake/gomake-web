@@ -16,6 +16,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { useRecoilState } from "recoil";
 import { boardMissionsDetailsState } from "@/widgets/production-floor/state/boards";
+import { GeneralInformationComponent } from "./general-information/general-information-component";
 
 const BoardMissionsStationsComponent = () => {
     const { stations, subWorkFlows, boardMissions, onClickAllJob, t, isRTL, getStations } = useBoardMissionsStations();
@@ -32,7 +33,11 @@ const BoardMissionsStationsComponent = () => {
             flexDirection: 'column',
             gap: '18px'
         }}>
-            {/* <GeneralInformationComponent /> */}
+            <GeneralInformationComponent />
+            {
+                boardMissionsDetails?.isNeedExample && <h4>{t("productionFloor.needExample")}</h4>
+            }
+
             <Divider orientation={'horizontal'} flexItem />
             {
                 !!boardMissions?.productType &&

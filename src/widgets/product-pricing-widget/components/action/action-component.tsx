@@ -15,7 +15,6 @@ import {
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { InOutSourceSelect } from "@/widgets/product-pricing-widget/components/in-out-source-select/in-out-source-select";
 import {
-  EPricingViews,
   EWorkSource,
   HtmlElementType,
   RuleType,
@@ -26,17 +25,15 @@ import {
   currentProductItemValueState,
   outsourceSuppliersState,
 } from "@/widgets/product-pricing-widget/state";
-import { GoMakeAutoComplate, GoMakeDeleteModal, GoMakeModal } from "@/components";
+import { GoMakeAutoComplate, GoMakeDeleteModal } from "@/components";
 import Button from "@mui/material/Button";
 import { useTranslation } from "react-i18next";
 import { PrintImageComponent } from "@/widgets/product-pricing-widget/components/print-image/print-image-component";
 import ClearRoundedIcon from "@mui/icons-material/ClearRounded";
 import { SettingsIcon } from "@/icons/settings";
 import { SettingsMenu } from "./settings-menu";
-import { PlusIcon, WarningIcon } from "@/icons";
 import { PermissionCheck } from "@/components/CheckPermission";
 import { Permissions } from "@/components/CheckPermission/enum";
-import { NotesForActionModal } from "./notes-for-action-modal";
 import { _renderIconLogs } from "@/utils/constants";
 import { TableOutPutComponent } from "../table-output/table-output-component";
 import { EWidgetProductType } from "@/pages-components/products/digital-offset-price/enums";
@@ -64,103 +61,19 @@ const Actions = ({
   return (
     <Stack gap={"10px"}>
       {actions?.map((action, index) => {
-        if (!action.isCalculated && action.profit === null) {
-          // Create a new object with updated profit property
-          const updatedAction = {
-            ...action,
-            profit: {
-              id: '00000000-0000-0000-0000-000000000000',
-              name: 'Profit',
-              values: ['----'],
-              outSourceValues: ['0'],
-              index: null,
-              rectangles: null,
-              materialWidth: 0,
-              materialLength: 0,
-              unitType: 6,
-              defaultUnit: '%',
-              displayInOutputId: null,
-              propertyType: 0,
-              htmlElementType: 1,
-              isEditable: true
-            },
-            totalCost: {
-              "id": "00000000-0000-0000-0000-000000000000",
-              "name": "Cost",
-              "values": ["----"],
-              "outSourceValues": null,
-              "index": null,
-              "rectangles": null,
-              "materialWidth": 0,
-              "materialLength": 0,
-              "unitType": 2,
-              "defaultUnit": "₪",
-              "displayInOutputId": null,
-              "propertyType": 0,
-              "htmlElementType": 1,
-              "isEditable": false
-            },
-            totalPrice: {
-              "id": "00000000-0000-0000-0000-000000000000",
-              "name": "Price",
-              "values": ["----"],
-              "outSourceValues": [
-                "0"
-              ],
-              "index": null,
-              "rectangles": null,
-              "materialWidth": 0,
-              "materialLength": 0,
-              "unitType": 2,
-              "defaultUnit": "₪",
-              "displayInOutputId": null,
-              "propertyType": 0,
-              "htmlElementType": 1,
-              "isEditable": true
-            },
-            totalProductionTime: {
-              "id": "00000000-0000-0000-0000-000000000000",
-              "name": "Delivery Time",
-              "values": ["----"],
-              "outSourceValues": null,
-              "index": null,
-              "rectangles": null,
-              "materialWidth": 0,
-              "materialLength": 0,
-              "unitType": 5,
-              "defaultUnit": "min",
-              "displayInOutputId": null,
-              "propertyType": 0,
-              "htmlElementType": 1,
-              "isEditable": false
-            }
-          };
-          return (
-            <ActionContainerComponent
-              key={action.id}
-              data-toure={'action'}
-              productType={productType}
-              workFlowId={workFlowId}
-              widgetType={widgetType}
-              delay={index * 800}
-              {...updatedAction}
+        return (
+          <ActionContainerComponent
+            key={action.id}
+            data-toure={'action'}
+            widgetType={widgetType}
+            productType={productType}
+            workFlowId={workFlowId}
+            delay={index * 800}
+            {...action}
+          />
 
-            />
-          );
-        } else {
-          return (
-            <ActionContainerComponent
-              key={action.id}
-              data-toure={'action'}
-              widgetType={widgetType}
-              productType={productType}
-              workFlowId={workFlowId}
-              delay={index * 800}
-              {...action}
-            />
+        );
 
-          );
-        }
       })}
     </Stack>
   );
@@ -574,49 +487,104 @@ const ActionContainerComponent = ({
               onUpdate={handleDeliveryTimeUpdate}
               {...totalProductionTime}
               source={source}
+              name={t("home.headers.productDate")}
             />
-            <PermissionCheck userPermission={Permissions.SHOW_COSTS_IN_CALCULATIONS}>
-              <Divider
-                orientation={"vertical"}
-                style={{ height: "50%", margin: "auto 0" }}
-                flexItem
-              />
-              <EditableKeyValueViewComponent
-                onUpdate={handleCostUpdate}
-                {...totalCost}
-                source={source}
-              />
-              <Divider
-                orientation={"vertical"}
-                style={{ height: "50%", margin: "auto 0" }}
-                flexItem
-              />
-              <Stack direction={"row"} gap={"3px"} alignItems={"center"}>
-                <EditableKeyValueViewComponent
-                  onUpdate={handleProfitUpdate}
-                  {...profit}
-                  source={source}
+            {
+              source === EWorkSource.OUT &&
+              <>
+                <Divider
+                  orientation={"vertical"}
+                  style={{ height: "50%", margin: "auto 0" }}
+                  flexItem
                 />
-                <span>
-                  {source === EWorkSource.OUT
-                    ? `(${calculateOutSourceProfitInMoney()
-                    } ${totalPrice ? totalPrice.defaultUnit : ""})`
-                    : `(${calculateProfitInMoney()} ${totalPrice ? totalPrice.defaultUnit : ""
-                    })`}
-                </span>
-              </Stack>
-              <Divider
-                orientation={"vertical"}
-                style={{ height: "50%", margin: "auto 0" }}
-                flexItem
-              />
+                <EditableKeyValueViewComponent
+                  onUpdate={handleCostUpdate}
+                  {...totalCost}
+                  source={source}
+                  name={t("machineAttributes.cost")}
+                />
+                <Divider
+                  orientation={"vertical"}
+                  style={{ height: "50%", margin: "auto 0" }}
+                  flexItem
+                />
+                <Stack direction={"row"} gap={"3px"} alignItems={"center"}>
+                  <EditableKeyValueViewComponent
+                    onUpdate={handleProfitUpdate}
+                    {...profit}
+                    source={source}
+                    name={t("products.profits.pricingListWidget.profit")}
+                  />
+                  <span>
+                    {source === EWorkSource.OUT
+                      ? `(${calculateOutSourceProfitInMoney()
+                      } ${totalPrice ? totalPrice.defaultUnit : ""})`
+                      : `(${calculateProfitInMoney()} ${totalPrice ? totalPrice.defaultUnit : ""
+                      })`}
+                  </span>
+                </Stack>
+                <Divider
+                  orientation={"vertical"}
+                  style={{ height: "50%", margin: "auto 0" }}
+                  flexItem
+                />
 
-              <EditableKeyValueViewComponent
-                onUpdate={handleUpdatePrice}
-                {...totalPrice}
-                source={source}
-                valueColor={secondColor(500)}
-              />
+                <EditableKeyValueViewComponent
+                  onUpdate={handleUpdatePrice}
+                  {...totalPrice}
+                  source={source}
+                  valueColor={secondColor(500)}
+                  name={t("sales.quote.price")}
+                />
+              </>
+            }
+            <PermissionCheck userPermission={Permissions.SHOW_COSTS_IN_CALCULATIONS}>
+              {
+                source !== EWorkSource.OUT &&
+                <>
+                  <Divider
+                    orientation={"vertical"}
+                    style={{ height: "50%", margin: "auto 0" }}
+                    flexItem
+                  />
+                  <EditableKeyValueViewComponent
+                    onUpdate={handleCostUpdate}
+                    {...totalCost}
+                    source={source}
+                    name="Cost"
+                  />
+                  <Divider
+                    orientation={"vertical"}
+                    style={{ height: "50%", margin: "auto 0" }}
+                    flexItem
+                  />
+                  <Stack direction={"row"} gap={"3px"} alignItems={"center"}>
+                    <EditableKeyValueViewComponent
+                      onUpdate={handleProfitUpdate}
+                      {...profit}
+                      source={source}
+                      name="Profit"
+                    />
+                    <span>
+                      {`(${calculateProfitInMoney()} ${totalPrice ? totalPrice.defaultUnit : ""
+                        })`}
+                    </span>
+                  </Stack>
+                  <Divider
+                    orientation={"vertical"}
+                    style={{ height: "50%", margin: "auto 0" }}
+                    flexItem
+                  />
+
+                  <EditableKeyValueViewComponent
+                    onUpdate={handleUpdatePrice}
+                    {...totalPrice}
+                    source={source}
+                    valueColor={secondColor(500)}
+                    name="Price"
+                  />
+                </>
+              }
             </PermissionCheck>
 
             <Divider orientation={"vertical"} flexItem />

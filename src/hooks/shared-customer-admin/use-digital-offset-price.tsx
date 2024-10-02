@@ -59,7 +59,7 @@ import {
   productQuantityTypesValuesState,
   tempProductQuantityTypesValuesState
 } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/quantity-parameter/quantity-types/state";
-import { findParameterByCode, hasValues } from "@/utils/helpers";
+import { checkIfDieCutOrDieKissCutExists, findParameterByCode, hasValues } from "@/utils/helpers";
 import React from "react";
 import { getCurrenciesSymbols } from "@/services/api-service/general/enums";
 import { currenciesSymbols } from "@/widgets/materials-widget/state";
@@ -272,7 +272,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     });
     setCurrentProductItemValueTotalWorkFlows(result.productItemValue.totalWorkFlows);
     setWorkFlows(result.productItemValue.workFlows);
-    if (result.productItemValue && result.productItemValue.workFlows && result.productItemValue.workFlows.length > 0) {
+    if (result.productItemValue && result.productItemValue.workFlows && result.productItemValue.workFlows.length > 0 && !(widgetType == EWidgetProductType.EDIT && currentProductItemValueTotalPrice) ) {
       const mySelectedWorkFlow = result.productItemValue.workFlows[0];
       if (
         mySelectedWorkFlow &&
@@ -452,7 +452,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     sectionId,
     subSectionId,
     index,
-    paameterType
+    paameterType,
+    actionIndex
   ) => {
     if (parameter?.buttonAction === EButtonTypes.GALLERY_MODAL) {
       setSelectParameterButton({
@@ -461,6 +462,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         subSectionId,
         index,
         paameterType,
+        actionIndex
       });
       onOpeneGalleryModal();
     }
@@ -896,7 +898,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   else if (value && parameter.code === "DieKissCut") {
                     const existingParameters = productItemValueByEdit?.itemParmetersValues || [];
                     const isDieCutExisting = existingParameters.find((param) => param?.parameterCode === "DieKissCut");
-
                     if (isDieCutExisting || existingParameters.length === 0) {
                       const nameValue = value?.additionalAttribute?.find((attr) => attr.valueId === "name")?.value;
                       subProduct.parameters.push({
@@ -2496,7 +2497,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               relatedParameter.valuesConfigs.length === 1 &&
               relatedParameter.valuesConfigs[0]?.values?.length > 0
             ) {
-              valueToAdd = relatedParameter.valuesConfigs[0]?.values[0];
+              valueToAdd = relatedParameter.valuesConfigs[0]?.updateName;
             }
           } else if (relatedParameter.defaultValue) {
             valueToAdd = relatedParameter.defaultValue;
@@ -2541,6 +2542,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     }
   };
 
+  const hasDieCutOrDieKissCut = checkIfDieCutOrDieKissCutExists(subProducts);
 
   const onChangeSubProductsForPrice = (
     parameterId: any,
@@ -2579,9 +2581,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         (sub) => sub.id === subSectionId
       );
       const subSectionParameter = subSection.parameters.find(
-        (param) => param.id === parameterId
+        (param) => param.id === parameterId && param.actionIndex === actionIndex
       );
-
       if (findIndex !== -1) {
         const valuesArray = [data.values].filter(Boolean);
         temp[findIndex] = {
@@ -2669,6 +2670,13 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             }
 
           });
+        }
+        if (subSectionParameter?.code === "Shape" && hasDieCutOrDieKissCut) {
+          const parametersToRemove = ["Height", "Width", "size", "DieCut", "DieKissCut", "DieStamp"];
+
+          temp = temp.filter(
+            (param) => !parametersToRemove.includes(param.parameterCode)
+          );
         }
         //types parameter
         if (subSectionParameter.id == "de2bb7d5-01b1-4b2b-b0fa-81cd0445841b") {
@@ -2917,6 +2925,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             }
           });
         }
+
         if (dieCut) {
           if (subSectionParameter.code === "DieCut") {
             let dieUnitWidth = dieCut.rowData.dieUnitWidth.value + "";
@@ -2964,8 +2973,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             });
           }
           else if (subSectionParameter.code === "DieKissCut") {
-            let unitWidth = dieCut.rowData.unitWidth.value + "";
-            let unitLength = dieCut.rowData.unitLength.value + "";
+
+            let unitWidth = dieCut?.rowData?.unitWidth?.value + "";
+            let unitLength = dieCut?.rowData?.unitLength?.value + "";
             const dieCutSizesParametersArray = [];
             dieCutSizesParametersArray.push({ parameterCode: "Width", value: unitWidth });
             dieCutSizesParametersArray.push({ parameterCode: "Height", value: unitLength });
@@ -2977,6 +2987,42 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               } else {
                 const subSectionParameter = subSection.parameters.find(
                   (param) => param.code === dieCutSizeParameter.parameterCode
+                );
+                temp.push({
+                  parameterId: subSectionParameter.id,
+                  sectionId: sectionId,
+                  subSectionId: subSectionId,
+                  ParameterType: ParameterType,
+                  parameterName: parameterName,
+                  actionId: actionId,
+                  values: [dieCutSizeParameter.value],
+                  valueIds: [],
+                  actionIndex: subSectionParameter.actionIndex,
+                  parameterCode: subSectionParameter.code,
+                  valuesConfigs: subSectionParameter?.valuesConfigs,
+                  unitKey: subSectionParameter?.unitKey,
+                  unitType: subSectionParameter?.unitType,
+                  isDisabled: true,
+                  isGeneralInfoInProductionFloor: subSectionParameter?.isGeneralInfoInProductionFloor
+                });
+              }
+            });
+          }
+
+          else if (subSectionParameter.code === "DieStamp") {
+            let unitWidth = dieCut?.rowData?.width?.value + "";
+            let unitLength = dieCut?.rowData?.length?.value + "";
+            const dieCutSizesParametersArray = [];
+            dieCutSizesParametersArray.push({ parameterCode: "EnhancementWidth", value: unitWidth, actionIndex: subSectionParameter?.actionIndex });
+            dieCutSizesParametersArray.push({ parameterCode: "EnhancementLength", value: unitLength, actionIndex: subSectionParameter?.actionIndex });
+            dieCutSizesParametersArray.forEach(dieCutSizeParameter => {
+              let dieCutSizeSubProductParameter = temp.find(x => x.parameterCode == dieCutSizeParameter.parameterCode && x?.actionIndex === dieCutSizeParameter?.actionIndex);
+              if (dieCutSizeSubProductParameter) {
+                dieCutSizeSubProductParameter.values = [dieCutSizeParameter.value]
+                dieCutSizeSubProductParameter.isDisabled = true;
+              } else {
+                const subSectionParameter = subSection.parameters.find(
+                  (param) => param.code === dieCutSizeParameter.parameterCode && param?.actionIndex === dieCutSizeParameter?.actionIndex
                 );
                 temp.push({
                   parameterId: subSectionParameter.id,
@@ -3720,7 +3766,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               const subParam = subProducts.find(sub => sub.parameters.some(param => param.parameterId === rp.parameterId));
               if (subParam) {
                 if (rp.activateByAllValues) {
-                  return subParam.parameters.every(param => param.parameterId === rp.parameterId);
+                  return subParam.parameters?.every(param => param.parameterId === rp.parameterId);
                 } else {
                   return subParam.parameters.some(param => param.parameterId === rp.parameterId && rp.selectedValueIds.some(id => param.valueIds.includes(id)));
                 }

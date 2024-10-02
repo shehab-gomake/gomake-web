@@ -41,7 +41,7 @@ const useCompanyProfile = () => {
   const getCompanyLogo = async () => {
     const callBack = (res) => {
       if (res.success) {
-        setProfile({ ...profile, loginLogo: res.data });
+        // setProfile({ ...profile, loginLogo: res.data?.loginLogo });
       }
     };
     await getCompanyLoginLogo(callApi, callBack);

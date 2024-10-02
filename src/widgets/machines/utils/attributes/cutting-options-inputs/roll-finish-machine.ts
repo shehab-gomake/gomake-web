@@ -29,6 +29,34 @@ const rollFinishMachine = (state: Record<string, any>) => {
             disabled: !state.attributes?.hasDieKissCutUnit
         },
         {
+            name: "recommendedDieLength",
+            label: "machineAttributes.recommendedDieLength",
+            type: "text",
+            placeholder: "machineAttributes.recommendedDieLength",
+            required: true,
+            parameterKey: "recommendedDieLength",
+            unit: EMeasurementUnits.MM,
+            options: [],
+            value: state?.attributes?.recommendedDieLength ? state?.attributes?.recommendedDieLength : '',
+            machineInputType: 'input',
+            isValid: !!state?.attributes?.recommendedDieLength,
+            disabled: !state.attributes?.hasDieKissCutUnit
+        },
+        {
+            name: "maxDieLength",
+            label: "machineAttributes.maxDieLength",
+            type: "text",
+            placeholder: "machineAttributes.maxDieLength",
+            required: true,
+            parameterKey: "maxDieLength",
+            unit: EMeasurementUnits.MM,
+            options: [],
+            value: state?.attributes?.maxDieLength ? state?.attributes?.maxDieLength : '',
+            machineInputType: 'input',
+            isValid: !!state?.attributes?.maxDieLength,
+            disabled: !state.attributes?.hasDieKissCutUnit
+        },
+        {
             name: 'machineAttributes.straightKnife',
             parameterKey: 'straightKnife',
             machineInputType: 'multiInput',

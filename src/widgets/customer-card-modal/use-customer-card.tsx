@@ -105,7 +105,7 @@ const useCustomerCard = ({ t, customer, setCustomer, onClose, setOpenOfferModal,
   const getAllSimilarCustomersData = useCallback(() => {
     let customersArray = [...customerTableRows];
     if (customersArray?.length > 0) {
-      return showInActiveCustomers ? customersArray : customersArray.filter((user: any) => user.isActive);
+      return showInActiveCustomers ? customersArray : customersArray?.filter((user: any) => user.isActive);
     }
     return customersArray
   }, [customerTableRows, showInActiveCustomers])
@@ -124,7 +124,7 @@ const useCustomerCard = ({ t, customer, setCustomer, onClose, setOpenOfferModal,
   // in order to avoid sending an empty object that include just name & index
   const isNameIndexOnly = (dataObject) => {
     const { name, index, ...otherProps } = dataObject;
-    const emptyProps = Object.values(otherProps).every(
+    const emptyProps = Object.values(otherProps)?.every(
       (prop) => prop === null || prop === "" || prop === " "
     );
     return emptyProps;
@@ -167,7 +167,7 @@ const useCustomerCard = ({ t, customer, setCustomer, onClose, setOpenOfferModal,
     };
 
     // Check if email is valid
-    if(filteredUsers && filteredUsers.length > 0){
+    if(filteredUsers && filteredUsers?.length > 0){
       const areEmailsValid = filteredUsers?.every(user => validateEmail(user, "email"));
       if (!areEmailsValid) {
         alertFault("customers.invalidEmail");
@@ -202,13 +202,13 @@ const useCustomerCard = ({ t, customer, setCustomer, onClose, setOpenOfferModal,
 
   // edit customer button
   const handleEditCustomer = () => {
-    const filteredContacts = contacts.filter(
+    const filteredContacts = contacts?.filter(
       (contact) => !isNameIndexOnly(contact)
     );
-    const filteredAddresses = addresses.filter(
+    const filteredAddresses = addresses?.filter(
       (address) => !isNameIndexOnly(address)
     );
-    const filteredUsers = users.filter((user) => !isNameIndexOnly(user));
+    const filteredUsers = users?.filter((user) => !isNameIndexOnly(user));
     const updatedCustomer = {
       ...customer,
       contacts: filteredContacts,
@@ -217,7 +217,7 @@ const useCustomerCard = ({ t, customer, setCustomer, onClose, setOpenOfferModal,
     };
 
     // Check if email is valid
-    const areEmailsValid = filteredUsers.every(user => validateEmail(user, "email"));
+    const areEmailsValid = filteredUsers?.every(user => validateEmail(user, "email"));
     if (!areEmailsValid) {
       alertFault("customers.invalidEmail");
       return;
@@ -287,7 +287,7 @@ const useCustomerCard = ({ t, customer, setCustomer, onClose, setOpenOfferModal,
 
   const deleteContactForm = (index) => {
     var temp = [...contacts];
-    temp = temp.filter((x) => x.index != index);
+    temp = temp?.filter((x) => x.index != index);
 
     temp.forEach((contact, i) => {
       if (contact?.index > index) {
@@ -335,7 +335,7 @@ const useCustomerCard = ({ t, customer, setCustomer, onClose, setOpenOfferModal,
 
   const deleteAddressForm = (index) => {
     var temp = [...addresses];
-    temp = temp.filter((x) => x.index != index);
+    temp = temp?.filter((x) => x.index != index);
     temp.forEach((address, i) => {
       if (address.index > index) {
         address.index -= 1;
@@ -375,7 +375,7 @@ const useCustomerCard = ({ t, customer, setCustomer, onClose, setOpenOfferModal,
 
   const deleteUserForm = (index) => {
     var temp = [...users];
-    temp = temp.filter((x) => x.index != index);
+    temp = temp?.filter((x) => x.index != index);
     temp.forEach((user, i) => {
       if (user.index > index) {
         user.index -= 1;
@@ -444,7 +444,7 @@ const useCustomerCard = ({ t, customer, setCustomer, onClose, setOpenOfferModal,
     };
 
     // Check if email is valid
-    const areEmailsValid = filteredUsers.every(user => validateEmail(user, "email"));
+    const areEmailsValid = filteredUsers?.every(user => validateEmail(user, "email"));
     if (!areEmailsValid) {
       alertFault("customers.invalidEmail");
       return;

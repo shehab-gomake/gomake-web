@@ -185,7 +185,7 @@ const useMaterials = (isAdmin: boolean) => {
   };
 
   const isAllSelected = useCallback(() => {
-    return materialCategoryData.every((row) => row.checked);
+    return materialCategoryData?.every((row) => row.checked);
   }, [materialCategoryData]);
 
   const onChangeHeaderCheckBox = useCallback(
