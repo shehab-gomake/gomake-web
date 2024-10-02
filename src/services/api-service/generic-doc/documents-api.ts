@@ -87,6 +87,8 @@ const UPDATE_IS_SHOW_PRICES_URL =
 const GET_WHATSAPP_MESSAGE_URL =
   "/v1/erp-service/documents/get-whats-app-message";
 const CLOSE_DOCUMENT_URL = "/v1/erp-service/documents/close-document";
+const OPEN_DOCUMENT_URL = "/v1/erp-service/documents/open-document";
+
 const MANUALLY_CLOSE_DOCUMENT_URL =
   "/v1/erp-service/documents/manually-close-document";
 const SEND_QUOTE_APPROVAL_TO_MANAGER =
@@ -840,6 +842,16 @@ const updateDocumentTitleApi: ICallAndSetData = async (
   );
 };
 
+const OpenDocumentApi: ICallAndSetData = async (callApi, setState, data) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    OPEN_DOCUMENT_URL,
+    setState,
+    data
+  );
+};
+
 export {
   getDocumentApi,
   getAllDocumentsApi,
@@ -898,4 +910,5 @@ export {
   makePaymentForOrderApi,
   closeAndTrackOrderApi,
   updateDocumentTitleApi,
+  OpenDocumentApi,
 };
