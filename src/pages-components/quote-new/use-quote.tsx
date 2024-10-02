@@ -113,33 +113,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
   const [isUpdateExchangeRate, setIsUpdateExchangeRate] = useState<
     number | null
   >(null);
-  const [selectDate, setSelectDate] = useState(
-    isQuoteConfirmation ? quoteConfirm?.dueDate : quoteItemValue?.dueDate
-  );
-  const [creationDate, setCreationDate] = useState(
-    isQuoteConfirmation
-      ? quoteConfirm?.creationDate
-      : quoteItemValue?.creationDate
-  );
-  const [taxDate, setTaxDate] = useState(
-    isQuoteConfirmation ? quoteConfirm?.taxDate : quoteItemValue?.taxDate
-  );
-  const [selectBusiness, setSelectBusiness] = useState<any>({});
-  const [isUpdateBusinessName, setIsUpdateBusinessName] = useState<
-    number | null
-  >(null);
-  const [isUpdatePurchaseNumber, setIsUpdatePurchaseNumber] = useState<
-    number | null
-  >(null);
-  const [isUpdateClientName, setIsUpdateClientName] = useState<number | null>(
-    null
-  );
-  const [clientName, setClientName] = useState(
-    quoteItemValue?.occasionalClientName
-  );
-  const [isUpdateExchangeRate, setIsUpdateExchangeRate] = useState<
-    number | null
-  >(null);
+
   const [isUpdateCurrency, setIsUpdateCurrency] = useState<string>(null);
   const [, setIsUpdateBusinessCode] = useState<number | null>(null);
   const [isUpdateAddress, setIsUpdateAddress] = useState<number | null>(null);
