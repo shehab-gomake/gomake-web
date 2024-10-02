@@ -13,6 +13,7 @@ const useStyle = () => {
       btnContainer:{
         width:"fit-content",
         height:40,
+        lineHeight:"18px"
       }
     };
   }, []);
