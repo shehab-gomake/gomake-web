@@ -61,6 +61,7 @@ const Actions = ({
   return (
     <Stack gap={"10px"}>
       {actions?.map((action, index) => {
+        console.log("action", action)
         return (
           <ActionContainerComponent
             key={action.id}
@@ -103,7 +104,10 @@ const ActionContainerComponent = ({
   isNeedEmployee,
   isNeedMachine,
   isNeedMaterial,
-  widgetType
+  widgetType,
+  totalCostValue,
+  totalPriceValue,
+  profitValue
 }: IActionContainerComponentProps) => {
   source = source === EWorkSource.OUT ? EWorkSource.OUT : EWorkSource.INTERNAL;
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -206,14 +210,14 @@ const ActionContainerComponent = ({
     updateActionData(id, value?.value, "supplierId", productType).then();
   };
   const calculateProfitInMoney = () => {
-    const totalPriceValue = totalPrice && totalPrice.values && totalPrice.values.length > 0 ? +totalPrice.values[0] : 0;
-    const totalCostValue = totalCost && totalCost.values && totalCost.values.length > 0 ? +totalCost.values[0] : 0;
-    return (totalPriceValue - totalCostValue).toFixed(2);
+    const totalPriceValues = totalPriceValue ? totalPriceValue : 0;
+    const totalCostValues = totalCostValue ? totalCostValue : 0;
+    return (totalPriceValues - totalCostValues).toFixed(2);
   }
   const calculateOutSourceProfitInMoney = () => {
-    const totalPriceValue = totalPrice && totalPrice.outSourceValues && totalPrice.outSourceValues.length > 0 ? +totalPrice.outSourceValues[0] : 0;
-    const totalCostValue = totalCost && totalCost.outSourceValues && totalCost.outSourceValues.length > 0 ? +totalCost.outSourceValues[0] : 0;
-    return (totalPriceValue - totalCostValue).toFixed(2);
+    const totalPriceValues = totalPriceValue ? totalPriceValue : 0;
+    const totalCostValues = totalCostValue ? totalCostValue : 0;
+    return (totalPriceValues - totalCostValues).toFixed(2);
   }
   const getSupplierId = useCallback(() => {
     if (supplierId) {
