@@ -13,6 +13,7 @@ import { machineCategoriesState } from "@/store/machine-categories";
 import { MultiSelectList } from "./multi-select-list";
 import { materialsParametersState } from "../../state";
 import { useTranslation } from "react-i18next";
+import { MultiSelectClientsInput } from "./multi-select-clients-input";
 
 const TableCellData = ({
   value,
@@ -88,7 +89,7 @@ const TableCellData = ({
       );
     case EDataTypeEnum.CLIENTS_LIST:
       return (
-        <MultiSelectInput
+        <MultiSelectClientsInput
           values={values}
           parameterKey={parameterKey}
           id={id}

@@ -1,15 +1,16 @@
 import React from "react";
+import { useRecoilValue } from "recoil";
+import { materialsMachinesState } from "@/widgets/materials-widget/state";
 import { useTableCellData } from "@/widgets/materials-widget/components/table-cell-data/use-table-cell-data";
 import { GoMakeAutoComplate } from "@/components";
 import { Stack } from "@mui/material";
 import { Checkbox, Paper } from "@mui/material";
 import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
 import { useStyle } from "./style";
-import { useCustomerDropDownList } from "@/hooks";
 
 interface IProps {
   parameterKey: string;
-  values: any[];
+  values: string[];
   id: string;
   isAdmin: boolean;
   options: { label: string; value: string }[];
@@ -26,18 +27,8 @@ const MultiSelectInput = ({
 }: IProps) => {
   const { classes } = useStyle();
   const { updateCellData } = useTableCellData(isAdmin);
-  const {
-    renderOptions,
-    checkWhatRenderArray,
-  } = useCustomerDropDownList()
 
-
-  const clientsOptions = renderOptions().map((client) => ({
-    value: client.id,
-    label: `${client.name} - ${client.code}`,
-  }));
-
-  const reorderedOptions = clientsOptions.sort((a, b) => {
+  const reorderedOptions = options.sort((a, b) => {
     const isSelectedA = values.includes(a.value);
     const isSelectedB = values.includes(b.value);
 
@@ -50,8 +41,7 @@ const MultiSelectInput = ({
     }
   });
 
-  const selectedLabels = values
-    ?.map((selected) => reorderedOptions?.find((opt) => opt?.value === selected.ID)?.label || selected.Name)
+  const selectedLabels = values?.map((selectedId) => options?.find((opt) => opt?.value === selectedId)?.label)
     .filter((label) => label !== null && label !== undefined);
 
   const handleSelectCheck = (
@@ -59,30 +49,17 @@ const MultiSelectInput = ({
     isChecked: boolean,
     option: any
   ) => {
-    console.log("parameterKey", { parameterKey, isChecked, option });
-
-    // Keep only the ID for handling the changes
     onChangeInputs(
       parameterKey,
       isChecked
-        ? [...values, option?.value] // Add only the ID (option.value) when checked
-        : values.filter((v) => v !== option?.value) // Remove only the ID when unchecked
+        ? [...values, option?.value]
+        : values.filter((v) => v !== option?.value)
     );
   };
 
-  const transformValuesArray = (inputArray) => {
-    return inputArray
-      .map((item) => (typeof item === 'object' && item !== null ? item.ID : item)) // Extract ID if item is an object
-      .filter((id) => id !== undefined); // Filter out any undefined values
-  };
-
   const onChangeInputs = async (key, value) => {
-    const values = transformValuesArray(value);
-    await updateCellData(id, key, values);
+    await updateCellData(id, key, value);
   };
-
-
-
 
   return (
     <div style={{ display: "flex", justifyContent: "center" }}>
@@ -92,7 +69,6 @@ const MultiSelectInput = ({
           ...classes.multiSelectStyle2,
           "& .MuiChip-deleteIcon": { display: "none" },
         }}
-        onChangeTextField={parameterKey === "clients" ? checkWhatRenderArray : undefined}
         value={selectedLabels}
         disableClearable={true}
         placeholder={placeHolder}
@@ -108,7 +84,7 @@ const MultiSelectInput = ({
                   }
                   icon={<CheckboxIcon />}
                   checkedIcon={<CheckboxCheckedIcon />}
-                  checked={values?.some(item => item.ID === option?.value)}
+                  checked={values?.includes(option?.value)}
                 />
               </div>
               <div>{option.label}</div>
