@@ -245,9 +245,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
   };
   const tableHeaders = [
     "#",
-    (isDeliveryNote || isInvoice) && !router.query.isNewCreation
-      ? t("products.profits.documentNumber")
-      : null,
+    isDeliveryNote || isInvoice ? t("products.profits.documentNumber") : null,
     t("sales.quote.itemCode"),
     t("products.profits.itemName"),
     isQuoteConfirmation
