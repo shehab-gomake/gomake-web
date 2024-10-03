@@ -28,8 +28,6 @@ const useQuoteWidget = () => {
   const { alertFaultUpdate } = useSnackBar();
   const [clientTypesValue, setClientTypesValues] = useState([]);
   const { alertFaultAdded, alertSuccessAdded } = useSnackBar();
-  const [customersListCreateQuote, setCustomersListCreateQuote] = useState([]);
-  // const [productValue, setProductValues] = useState([]);
   const [userQuote, setUserQuote] = useState<any>(null);
   const [openModal, setOpenModal] = useState(false);
   const [selectedClientType, setSelectedClientType] = useState<any>({});
