@@ -24,6 +24,7 @@ import {
   closeAndTrackOrderApi,
   createNewDocumentApi,
   duplicateDocumentApi,
+  ExportDocumentTableToExcelApi,
   getAllDocumentLogsApi,
   getAllDocumentsApi,
   getDocumentPdfApi,
@@ -287,6 +288,47 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   };
 
   const isOrdersTracking = pathname === "/ordersTracking";
+
+  const ExportDocumentTableToExcel = async () => {
+    const callBack = (res) => {
+      if (res?.success) {
+        const downloadLink = document.createElement("a");
+        if (typeof res.data === "string") {
+          downloadLink.href = res.data;
+        } else {
+          const link = URL.createObjectURL(res.data);
+          downloadLink.href = link;
+        }
+        downloadLink.download = "table.xlsx";
+        downloadLink.click();
+      } else {
+      }
+    };
+    await ExportDocumentTableToExcelApi(callApi, callBack, {
+      documentType: docType,
+      data: {
+        model: {
+          pageNumber: page,
+          pageSize: pageSize,
+        },
+        statusId: quoteStatusId?.value || statusId?.value,
+        approvalStatus: approvalStatusId?.value,
+        closeStatus: accountingStatus?.value,
+        productionStatus: productionStatus?.value,
+        patternSearch: finalPatternSearch,
+        customerId: customerId?.id,
+        dateRange,
+        agentId: agentId?.id,
+        minPrice: minPrice,
+        maxPrice: maxPrice,
+        productList: productIds,
+        isCanceled: isCanceledState,
+        isOrderInTracking: isOrdersTracking,
+        fromDate: fromDate && GetDateFormat(fromDate),
+        toDate: toDate && GetDateFormat(toDate),
+      },
+    });
+  };
 
   const getAllQuotes = useCallback(async () => {
     const callBack = (res) => {
@@ -2028,6 +2070,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     onClickCancelReceipt,
     openCancelReceiptModalRefund,
     onCloseCancelReceiptModalRefund,
+    ExportDocumentTableToExcel,
   };
 };
 

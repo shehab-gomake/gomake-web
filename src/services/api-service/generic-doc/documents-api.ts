@@ -98,6 +98,8 @@ const CLOSE_AND_TRACK_ORDER_URL =
   "/v1/erp-service/documents/close-and-track-order";
 const UPDATE_DOCUMENT_TITLE_URL =
   "/v1/erp-service/documents/update-document-title";
+const EXPORT_DOCUMENT_TABLE_TO_EXCEL_URL =
+  "/v1/erp-service/documents/export-document-table-to-excel";
 
 const getDocumentApi: ICallAndSetData = async (callApi, setState, data) => {
   return await getSetApiData(
@@ -852,6 +854,20 @@ const OpenDocumentApi: ICallAndSetData = async (callApi, setState, data) => {
   );
 };
 
+const ExportDocumentTableToExcelApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    EXPORT_DOCUMENT_TABLE_TO_EXCEL_URL,
+    setState,
+    data
+  );
+};
+
 export {
   getDocumentApi,
   getAllDocumentsApi,
@@ -911,4 +927,5 @@ export {
   closeAndTrackOrderApi,
   updateDocumentTitleApi,
   OpenDocumentApi,
+  ExportDocumentTableToExcelApi,
 };
