@@ -267,7 +267,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     }
 
     const result = res?.data?.data?.data;
-    console.log("result", result)
     setCalculationExceptionsLogs(result?.productItemValue?.exceptions);
     setCurrentProductItemValueDraftId(result.productItemValueDraftId);
     setAdditionalProductItems(result.additionalProductItems)
@@ -1036,7 +1035,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               processRelatedParameters2(parameter, subSection, section, productTemplate, subProductsArray);
 
             });
-
             if (temp.length > 0) {
               if (!typeMap[subSection.type]) {
                 typeMap[subSection.type] = {
@@ -1063,8 +1061,16 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             }
           });
         });
+        const filteredSubProductsArray = subProductsArray.map((subProduct) => {
+          return {
+            ...subProduct,
+            parameters: subProduct.parameters.filter((parameter) => {
+              return !(parameter.values[0] === "false" || parameter.values[0] === null);
+            }),
+          };
+        });
         setProductTemplate(productTemplate)
-        setSubProducts(subProductsArray);
+        setSubProducts(filteredSubProductsArray);
         setUnderParameterIds(underParameterIdsArray);
         setIsSetTemplete(true);
       }

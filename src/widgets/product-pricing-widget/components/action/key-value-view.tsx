@@ -255,7 +255,6 @@ const EditableKeyValueViewComponent = ({
 
     const [edit, setEdit] = useState<boolean>(false);
     const [editValue, setEditValue] = useState<string>(value);
-    console.log("editValue", { editValue, edit })
     const handleValueClick = (e) => {
         e.stopPropagation();
         setEditValue(value);
