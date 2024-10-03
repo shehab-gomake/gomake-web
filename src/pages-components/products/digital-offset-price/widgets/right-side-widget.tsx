@@ -1,6 +1,6 @@
 import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
 import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
-import { Checkbox, Typography } from "@mui/material";
+import { Checkbox, Divider, Typography } from "@mui/material";
 import { EWidgetProductType } from "../enums";
 import { DotsLoader } from "@/components/dots-loader/dots-Loader";
 import { ProgressBar } from "@/components/progress-bar/progress-bar";
@@ -11,6 +11,8 @@ import { useRouter } from "next/router";
 import { useClientTypesList } from "@/hooks/use-client-types";
 import { HeaderTitle } from "@/widgets";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
+import { useRecoilValue } from "recoil";
+import { additionalProductItemsState } from "@/widgets/product-pricing-widget/state";
 
 const RightSideWidget = ({
   clasess,
@@ -46,6 +48,7 @@ const RightSideWidget = ({
     setCurrentProductItemValueTotalPrice,
     t,
   } = useRightSideWidget({ includeVAT });
+  const additionalProductItems = useRecoilValue(additionalProductItemsState)
 
   const mergedArray = [...(selectedWorkFlow?.exceptions || []), ...(calculationExceptionsLogs || [])];
   const [logsArray, setLogsArray] = useState(mergedArray);
@@ -107,8 +110,8 @@ const RightSideWidget = ({
     <div style={clasess.rightSideMainContainer}>
       <div style={clasess.rightSideContainer}>
         {
-        router?.query?.documentNumber && 
-        <div style={clasess.titleStyle}>{`${documentNumberText}: ${router?.query?.documentNumber} `}</div>
+          router?.query?.documentNumber &&
+          <div style={clasess.titleStyle}>{`${documentNumberText}: ${router?.query?.documentNumber} `}</div>
         }
         <div style={clasess.headerClientRightSide}>
           <div style={clasess.clientContainer}>
@@ -245,6 +248,26 @@ const RightSideWidget = ({
 
           </div>
         ) : null}
+        <Divider />
+        {additionalProductItems?.length > 0 && (
+          <div style={clasess.additionalProductItems}>
+            {additionalProductItems.map((item) => (
+              <div key={item.printingActionId} style={clasess.additionalProductItemsContainer}>
+                <div style={clasess.additionalProductItem}>{item.productName}</div>
+                <div style={clasess.additionalPrices}>
+                  {item.lastPrice && item.lastPrice !== item.newPrice && (
+                    <div style={{ textDecoration: 'line-through', fontWeight: 300, color: "#2E3092" }}>
+                      {item.lastPrice} {systemCurrency}
+                    </div>
+                  )}
+                  <div style={clasess.additionalProductItem}>
+                    {item.newPrice} {systemCurrency}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
 
         <div style={clasess.urgentEstimateContainer}>
           {workFlowSelected &&
