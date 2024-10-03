@@ -3,6 +3,7 @@ import { companyProfileState, ICompanyProfile } from "@/store/company-profile";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { useSnackBar } from "@/hooks/use-snack-bar";
 import {
+  checkPrintHouseTaxLoginApi,
   getCompanyLoginLogo,
   getCompanyProfile,
   updateCompanyLogo,
@@ -12,13 +13,18 @@ import { changeProfileImageState } from "@/widgets/settings-profile-widget/state
 import { useTranslation } from "react-i18next";
 import { getCurrencies } from "@/services/api-service/general/enums";
 import { currenciesState } from "@/widgets/materials-widget/state";
+import { useState } from "react";
 
 const useCompanyProfile = () => {
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
-  const [profile, setProfile] = useRecoilState<ICompanyProfile>(companyProfileState);
-  const setChangeProfileImage = useSetRecoilState<boolean>(changeProfileImageState);
-  const [currencies, setCurrencies] = useRecoilState<{ label: string; value: string }[]>(currenciesState);
+  const [profile, setProfile] =
+    useRecoilState<ICompanyProfile>(companyProfileState);
+  const setChangeProfileImage = useSetRecoilState<boolean>(
+    changeProfileImageState
+  );
+  const [currencies, setCurrencies] =
+    useRecoilState<{ label: string; value: string }[]>(currenciesState);
 
   const countryList = require("country-list");
   const allCountries = countryList.getNames();
@@ -71,7 +77,10 @@ const useCompanyProfile = () => {
         setChangeProfileImage(false);
       }
     };
-    const res = await updateCompanyLogo(callApi, callBack, { fileBase64: file, printHouseLogoType: 1 });
+    const res = await updateCompanyLogo(callApi, callBack, {
+      fileBase64: file,
+      printHouseLogoType: 1,
+    });
 
     return res.success;
   };
@@ -85,7 +94,10 @@ const useCompanyProfile = () => {
         setChangeProfileImage(false);
       }
     };
-    const res = await updateCompanyLogo(callApi, callBack, { fileBase64: file, printHouseLogoType: 2 });
+    const res = await updateCompanyLogo(callApi, callBack, {
+      fileBase64: file,
+      printHouseLogoType: 2,
+    });
 
     return res.success;
   };
@@ -103,10 +115,22 @@ const useCompanyProfile = () => {
   const getCurrenciesApi = async () => {
     const callBack = (res) => {
       if (res.success) {
-        setCurrencies(res.data.map(({ value, text }) => ({ label: text, value })));
+        setCurrencies(
+          res.data.map(({ value, text }) => ({ label: text, value }))
+        );
       }
     };
     await getCurrencies(callApi, callBack);
+  };
+
+  const [taxLoginUrl, setTaxLoginUrl] = useState("");
+  const checkPrintHouseTaxLogin = async () => {
+    const callBack = (res) => {
+      if (res.success) {
+        setTaxLoginUrl(res?.data);
+      }
+    };
+    await checkPrintHouseTaxLoginApi(callApi, callBack);
   };
 
   return {
@@ -122,6 +146,8 @@ const useCompanyProfile = () => {
     getCurrenciesApi,
     currencies,
     countriesWithCodes,
+    checkPrintHouseTaxLogin,
+    taxLoginUrl,
   };
 };
 
