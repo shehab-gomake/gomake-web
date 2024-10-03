@@ -337,6 +337,7 @@ const useLedgerReport = ({ customerId }: any) => {
     selectedContactById,
     isopenAdjustmentsModal,
     clientPaymentsList,
+    setClientPaymentsList,
     handleDateChange,
     fromDate,
     toDate,
