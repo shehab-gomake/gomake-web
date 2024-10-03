@@ -19,7 +19,6 @@ const AutomaticDiscountMenu = ({ handleClose, open, anchorEl, updateDiscountType
   const quoteStateValue = useRecoilValue<any>(quoteItemState);
   const selectedSort = quoteStateValue?.discountType
   const { classes } = useStyle();
-  console.log("quoteStateValue", quoteStateValue)
   return (
     <GoMakeMenu
       handleClose={handleClose}

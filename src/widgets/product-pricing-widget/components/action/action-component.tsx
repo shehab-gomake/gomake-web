@@ -61,7 +61,6 @@ const Actions = ({
   return (
     <Stack gap={"10px"}>
       {actions?.map((action, index) => {
-        console.log("action", action)
         return (
           <ActionContainerComponent
             key={action.id}
