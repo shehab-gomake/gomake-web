@@ -57,6 +57,17 @@ import {
 import { sendDocumentToClientForPaymentApi } from "@/services/api-service/pay/pay-api";
 import { useRouter } from "next/router";
 import { useQuoteWidget } from "../admin/home/widgets/quote-widget/use-quote-widget";
+interface Query {
+  customerId?: string;
+  agentId?: string;
+  statusId?: string;
+  approvalStatusId?: string;
+  minPrice?: string;
+  maxPrice?: string;
+  fromDate?: string;
+  toDate?: string;
+}
+
 
 const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const { t } = useTranslation();
@@ -112,6 +123,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const isReceipt = docType === DOCUMENT_TYPE.receipt;
   const { CheckPermission } = useUserPermission();
   const { query, pathname } = useRouter();
+  const router = useRouter();
   const { quoteNumber } = query;
   const { renderOptions, checkWhatRenderArray } = useQuoteWidget();
   const [accountingStatus, setAccountingStatus] = useState<{
@@ -595,17 +607,26 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         setAllStatistics(res?.data?.documentStatisticsList);
       }
     };
+    const currentStatusId = router.query.statusId;
+    const currentCustomerId = router.query.customerId;
+    const currentAgentId = router.query.agentId;
+    const currentApprovalStatusId = router.query.approvalStatusId;
+    const currentMinPrice = router.query.minPrice;
+    const currentMaxPrice = router.query.maxPrice;
+    const currentFromDate = router.query.fromDate ? new Date(Array.isArray(router.query.fromDate) ? router.query.fromDate[0] : router.query.fromDate) : null;
+    const currentToDate = router.query.toDate ? new Date(Array.isArray(router.query.toDate) ? router.query.toDate[0] : router.query.toDate) : null;
+
     if (isReceipt) {
       await getAllReceiptsApi(callApi, callBack, {
-        clientId: customerId?.id,
-        agentId: agentId?.id,
+        clientId: currentCustomerId || customerId?.id,
+        agentId: currentAgentId || agentId?.id,
         patternSearch: finalPatternSearch,
-        fromDate: fromDate && GetDateFormat(fromDate),
-        toDate: toDate && GetDateFormat(toDate),
-        status: statusId?.value,
+        fromDate: currentFromDate && GetDateFormat(currentFromDate),
+        toDate: currentToDate && GetDateFormat(currentToDate),
+        status: currentStatusId || statusId?.value,
         isCanceled: isCanceledState,
-        minPrice: minPrice,
-        maxPrice: maxPrice,
+        minPrice: currentMinPrice || minPrice,
+        maxPrice: currentMaxPrice || maxPrice,
         model: {
           pageNumber: page,
           pageSize: pageSize,
@@ -619,21 +640,21 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             pageNumber: page,
             pageSize: pageSize,
           },
-          statusId: quoteStatusId?.value || statusId?.value,
-          approvalStatus: approvalStatusId?.value,
+          statusId: quoteStatusId?.value || currentStatusId || statusId?.value,
+          approvalStatus: currentApprovalStatusId || approvalStatusId?.value,
           closeStatus: accountingStatus?.value,
           productionStatus: productionStatus?.value,
           patternSearch: finalPatternSearch,
-          customerId: customerId?.id,
+          customerId: currentCustomerId || customerId?.id,
           dateRange,
-          agentId: agentId?.id,
-          minPrice: minPrice,
-          maxPrice: maxPrice,
+          agentId: currentAgentId || agentId?.id,
+          minPrice: currentMinPrice || minPrice,
+          maxPrice: currentMaxPrice || maxPrice,
           productList: productIds,
           isCanceled: isCanceledState,
           isOrderInTracking: isOrdersTracking,
-          fromDate: fromDate && GetDateFormat(fromDate),
-          toDate: toDate && GetDateFormat(toDate),
+          fromDate: currentFromDate && GetDateFormat(currentFromDate),
+          toDate: currentToDate && GetDateFormat(currentToDate),
         },
       });
     }
@@ -969,11 +990,24 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   };
 
   const onClickSearchFilter = () => {
+    const query: Query = {};
+    if (customerId?.id) query.customerId = customerId.id;
+    if (agentId?.id) query.agentId = agentId.id;
+    if (statusId?.value) query.statusId = statusId.value;
+    if (approvalStatusId?.value) query.approvalStatusId = approvalStatusId.value;
+    if (minPrice) query.minPrice = minPrice;
+    if (maxPrice) query.maxPrice = maxPrice;
+    if (fromDate) query.fromDate = fromDate.toISOString();
+    if (toDate) query.toDate = toDate.toISOString();
     handleClose();
     setPage(1);
     if (statusId !== null && statusId !== undefined) {
       handleSecondCardClick();
     }
+    router.push({
+      pathname: router.pathname,
+      query: { ...router.query, ...query },
+    });
     getAllQuotes();
   };
 
@@ -995,7 +1029,16 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     setMinPrice("");
     setMaxPrice("");
     setProductIds([]);
+    setFinalPatternSearch("")
+    setPatternSearch("")
+
+    const query = {};
+    router.push({
+      pathname: router.pathname,
+      query: query,
+    });
   };
+
 
   const tableHeaders =
     docType === DOCUMENT_TYPE.purchaseOrder
@@ -1509,7 +1552,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     if (!isFromHomePage) {
       getAllQuotes();
     }
-  }, [page, quoteStatusId, pageSize, finalPatternSearch, quoteNumber, query]);
+  }, [page, quoteStatusId, pageSize, finalPatternSearch, quoteNumber, router]);
 
   useEffect(() => {
     setFinalPatternSearch(debounce);
@@ -1918,6 +1961,30 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       refundCredit,
     });
   };
+
+  useEffect(() => {
+    // Read URL parameters and set state accordingly
+    const { customerId, agentId, statusId, approvalStatusId, minPrice, maxPrice, fromDate, toDate } = router.query;
+    if (customerId) setCustomerId({ id: customerId });
+    if (agentId) setAgentId({ id: agentId });
+    if (statusId) setStatusId({ value: statusId });
+    if (approvalStatusId) setApprovalStatusId({ value: approvalStatusId });
+    if (typeof minPrice === 'string') setMinPrice(minPrice);
+    if (typeof maxPrice === 'string') setMaxPrice(maxPrice);
+    if (fromDate && typeof fromDate === 'string') setFromDate(new Date(fromDate));
+    if (toDate && typeof toDate === 'string') setToDate(new Date(toDate));
+
+
+  }, [router]);
+
+
+
+  // useEffect(() => {
+  //   if (customerId || agentId || statusId || approvalStatusId || minPrice || maxPrice || fromDate || toDate) {
+  //     getAllQuotes();
+  //   }
+
+  // }, [customerId, agentId, statusId, approvalStatusId, minPrice, maxPrice, fromDate, toDate]);
 
   return {
     showCustomerModal,
