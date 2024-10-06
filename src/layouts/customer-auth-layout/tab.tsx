@@ -7,7 +7,7 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import { selectedTabState } from "@/store";
 import { navStatusState } from "@/store/nav-status";
 import { useTranslation } from "react-i18next";
-import {useUserPermission} from "@/hooks/use-permission";
+import { useUserPermission } from "@/hooks/use-permission";
 interface IProps {
   tab: {
     isLine?: boolean;
@@ -22,7 +22,8 @@ interface IProps {
   customGap?: number;
 }
 const Tab = ({ tab, customGap }: IProps) => {
-  const [selectedTabValue, setSelectedTabValue] =useRecoilState(selectedTabState);
+  const [selectedTabValue, setSelectedTabValue] =
+    useRecoilState(selectedTabState);
   const { navigate } = useGomakeRouter();
   const [isListOpen, setIsListOpen] = useState(tab?.key === selectedTabValue);
   const [isHover, setIsHover] = useState(false);
@@ -30,7 +31,7 @@ const Tab = ({ tab, customGap }: IProps) => {
   const { t } = useTranslation();
   const { CheckPermission } = useUserPermission();
   const { classes } = useStyle({ isHover, navStatus, customGap });
-  
+
   const handleMouseEnter = useCallback(() => {
     setIsHover(true);
   }, []);
@@ -88,10 +89,22 @@ const Tab = ({ tab, customGap }: IProps) => {
         </div>
       </div>
       <Collapse in={isListOpen}>
-        {!navStatus.isClosed &&
-          tab.list?.filter(x=>!x.Permission || CheckPermission(x.Permission)).map((list: any) => {
+        {tab.list
+          ?.filter((x) => !x.Permission || CheckPermission(x.Permission))
+          .map((list: any) => {
             return (
-              <div style={classes.tabList} key={list?.key}>
+              <div
+                style={
+                  navStatus.isClosed
+                    ? {
+                        ...classes.tabList,
+                        display: "flex",
+                        justifyContent: "center",
+                      }
+                    : classes.tabList
+                }
+                key={list?.key}
+              >
                 <div
                   onClick={() => changeRoute(list?.path)}
                   onMouseDown={(e) => {
@@ -99,7 +112,17 @@ const Tab = ({ tab, customGap }: IProps) => {
                       window.open(list?.path, "_blank");
                     }
                   }}
-                  style={classes.tabTitle}
+                  style={
+                    navStatus.isClosed
+                      ? {
+                          ...classes.tabTitle,
+                          maxWidth: "35px",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          whiteSpace: "nowrap",
+                        }
+                      : { ...classes.tabTitle, minWidth: "fit-content" }
+                  }
                 >
                   {t(list?.title)}
                 </div>
