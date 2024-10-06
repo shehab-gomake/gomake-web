@@ -88,7 +88,8 @@ const GET_WHATSAPP_MESSAGE_URL =
   "/v1/erp-service/documents/get-whats-app-message";
 const CLOSE_DOCUMENT_URL = "/v1/erp-service/documents/close-document";
 const OPEN_DOCUMENT_URL = "/v1/erp-service/documents/open-document";
-
+const OPEN_CANCELED_DOCUMENT_URL =
+  "/v1/erp-service/documents/open-canceled-document";
 const MANUALLY_CLOSE_DOCUMENT_URL =
   "/v1/erp-service/documents/manually-close-document";
 const SEND_QUOTE_APPROVAL_TO_MANAGER =
@@ -868,6 +869,20 @@ const ExportDocumentTableToExcelApi: ICallAndSetData = async (
   );
 };
 
+const OpenCanceledDocumentApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.PUT,
+    OPEN_CANCELED_DOCUMENT_URL,
+    setState,
+    data
+  );
+};
+
 export {
   getDocumentApi,
   getAllDocumentsApi,
@@ -928,4 +943,5 @@ export {
   updateDocumentTitleApi,
   OpenDocumentApi,
   ExportDocumentTableToExcelApi,
+  OpenCanceledDocumentApi,
 };
