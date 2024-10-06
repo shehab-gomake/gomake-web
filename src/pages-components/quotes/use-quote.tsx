@@ -608,6 +608,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       }
     };
     const currentStatusId = router.query.statusId;
+    const currentFinalPatternSearch = router.query.finalPatternSearch;
     const currentCustomerId = router.query.customerId;
     const currentAgentId = router.query.agentId;
     const currentApprovalStatusId = router.query.approvalStatusId;
@@ -620,7 +621,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       await getAllReceiptsApi(callApi, callBack, {
         clientId: currentCustomerId || customerId?.id,
         agentId: currentAgentId || agentId?.id,
-        patternSearch: finalPatternSearch,
+        patternSearch: finalPatternSearch || currentFinalPatternSearch,
         fromDate: currentFromDate && GetDateFormat(currentFromDate),
         toDate: currentToDate && GetDateFormat(currentToDate),
         status: currentStatusId || statusId?.value,
@@ -644,7 +645,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
           approvalStatus: currentApprovalStatusId || approvalStatusId?.value,
           closeStatus: accountingStatus?.value,
           productionStatus: productionStatus?.value,
-          patternSearch: finalPatternSearch,
+          patternSearch: finalPatternSearch || currentFinalPatternSearch,
           customerId: currentCustomerId || customerId?.id,
           dateRange,
           agentId: currentAgentId || agentId?.id,
@@ -1964,7 +1965,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
 
   useEffect(() => {
     // Read URL parameters and set state accordingly
-    const { customerId, agentId, statusId, approvalStatusId, minPrice, maxPrice, fromDate, toDate } = router.query;
+    const { customerId, agentId, statusId, approvalStatusId, minPrice, maxPrice, fromDate, toDate, finalPatternSearch } = router.query;
     if (customerId) setCustomerId({ id: customerId });
     if (agentId) setAgentId({ id: agentId });
     if (statusId) setStatusId({ value: statusId });
@@ -1973,18 +1974,11 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     if (typeof maxPrice === 'string') setMaxPrice(maxPrice);
     if (fromDate && typeof fromDate === 'string') setFromDate(new Date(fromDate));
     if (toDate && typeof toDate === 'string') setToDate(new Date(toDate));
+    if (finalPatternSearch && typeof finalPatternSearch === 'string') setPatternSearch(finalPatternSearch);
+    if (finalPatternSearch && typeof finalPatternSearch === 'string') setFinalPatternSearch(finalPatternSearch);
 
 
   }, [router]);
-
-
-
-  // useEffect(() => {
-  //   if (customerId || agentId || statusId || approvalStatusId || minPrice || maxPrice || fromDate || toDate) {
-  //     getAllQuotes();
-  //   }
-
-  // }, [customerId, agentId, statusId, approvalStatusId, minPrice, maxPrice, fromDate, toDate]);
 
   return {
     showCustomerModal,
