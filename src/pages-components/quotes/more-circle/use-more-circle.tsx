@@ -60,6 +60,7 @@ const useMoreCircle = () => {
     };
     const { classes } = useStyle();
 
+    const isCanceledOrder = quote?.statusTitleText === "Order.Canceled";
     const isQuote = documentType === DOCUMENT_TYPE.quote;
     const isOrder = documentType === DOCUMENT_TYPE.order;
     const isDeliveryNote = documentType === DOCUMENT_TYPE.deliveryNote;
@@ -117,10 +118,7 @@ const useMoreCircle = () => {
         name: t("sales.quote.pdf"),
       },
       {
-        condition:
-          isOrder &&
-          quote?.isCanClose &&
-          quote?.statusTitleText !== "Order.Canceled",
+        condition: isOrder && quote?.isCanClose && !isCanceledOrder,
         onClick: () => onClickGetOrderBoardMissionPDF(quote),
         icon: <PDFIcon />,
         name: t("sales.quote.boardMissionsPdf"),
@@ -157,10 +155,7 @@ const useMoreCircle = () => {
         ),
       },
       {
-        condition:
-          isOrder &&
-          quote?.isCanClose &&
-          quote?.statusTitleText !== "Order.Canceled",
+        condition: isOrder && quote?.isCanClose && !isCanceledOrder,
         onClick: () =>
           navigate(`/deliveryNote?isNewCreation=true&orderId=${quote?.id}`),
         icon: <TickIcon />,
@@ -168,9 +163,7 @@ const useMoreCircle = () => {
       },
       {
         condition:
-          (isOrder &&
-            quote?.isCanClose &&
-            quote?.statusTitleText !== "Order.Canceled") ||
+          (isOrder && quote?.isCanClose && !isCanceledOrder) ||
           (isDeliveryNote && quote?.isCanClose),
         onClick: () => {
           const path = isOrder
@@ -182,10 +175,7 @@ const useMoreCircle = () => {
         name: t("sales.quote.closeAsInvoice"),
       },
       {
-        condition:
-          isOrder &&
-          quote?.isCanClose &&
-          quote?.statusTitleText !== "Order.Canceled",
+        condition: isOrder && quote?.isCanClose && !isCanceledOrder,
         onClick: () => navigate(`/purchaseOrders?orderNumber=${quote?.number}`),
         icon: <TickMoveIcon />,
         name: t("sales.quote.purchaseOrders"),
@@ -224,9 +214,7 @@ const useMoreCircle = () => {
       },
       {
         condition:
-          (isOrder &&
-            quote?.isCanClose &&
-            quote?.statusTitleText !== "Order.Canceled") ||
+          (isOrder && quote?.isCanClose && !isCanceledOrder) ||
           (isDeliveryNote && quote?.isCanClose) ||
           (isInvoice && quote?.isCanClose),
         onClick: () =>
@@ -238,24 +226,20 @@ const useMoreCircle = () => {
       },
       {
         condition:
-          isOrder &&
-          quote?.isCanCancelManualClose &&
-          quote?.statusTitleText !== "Order.Canceled",
+          isOrder && (quote?.isCanCancelManualClose || isCanceledOrder),
         onClick: () => onClickOpenDocument(quote),
         icon: <UnLockIcon />,
         name: t("sales.quote.open"),
       },
       {
-        condition: isOrder && quote?.isCanCloseForTracking,
+        condition: isOrder && quote?.isCanCloseForTracking && !isCanceledOrder,
         onClick: () => onClickCloseAndTrack(quote),
         icon: <TrackingIcon />,
         name: t("sales.quote.closeAndTrack"),
       },
       {
         condition:
-          (isOrder &&
-            quote?.isCanClose &&
-            quote?.statusTitleText !== "Order.Canceled") ||
+          (isOrder && quote?.isCanClose && !isCanceledOrder) ||
           (isReceipt && quote?.status !== "Receipt.Canceled"),
         onClick: () =>
           isOrder
@@ -273,10 +257,7 @@ const useMoreCircle = () => {
       //   name: t("sales.quote.pay")
       // },
       {
-        condition:
-          isOrder &&
-          quote?.isCanClose &&
-          quote?.statusTitleText !== "Order.Canceled",
+        condition: isOrder && quote?.isCanClose && !isCanceledOrder,
         onClick: () => onClickSendPayment(quote),
         icon: <PaymentIcon />,
         name: t("sales.quote.sendPayment"),
