@@ -1,5 +1,4 @@
 import { ProfileAvatar } from "@/widgets/settings-profile-widget/components/avatar/profile-avatar";
-import { useEffect } from "react";
 import Stack from "@mui/material/Stack";
 import { IInput } from "@/widgets/machines/utils/interfaces-temp/inputs-interfaces";
 import { SecondaryButton } from "@/components/button/secondary-button";
@@ -15,6 +14,11 @@ import { PermissionCheck } from "@/components/CheckPermission";
 import { Permissions } from "@/components/CheckPermission/enum";
 import DaysOfWork from "./working-days/working-days";
 import { companyCommunicationInputs } from "./inputs/company-communication-inputs copy";
+import {
+  companyPrintNodeInputs
+} from "@/widgets/settings-profile-widget/components/profiles/inputs/company-print-node-inputs";
+import {printHouseUsePrintNode} from "@/store/print-house-profile";
+import {useRecoilValue} from "recoil";
 
 const CompanyProfileComponent = () => {
   const { t } = useTranslation();
@@ -28,6 +32,7 @@ const CompanyProfileComponent = () => {
     currencies,
     countriesWithCodes,
   } = useCompanyProfile();
+  const isPrintHouseUsePrintNode = useRecoilValue(printHouseUsePrintNode);
 
   const changeState = (key, value) => {
     profileChange({
@@ -57,7 +62,13 @@ const CompanyProfileComponent = () => {
       inputs: companyCommunicationInputs(profile),
       title: "profileSettings.smsAndEmails",
     },
-  ];
+    isPrintHouseUsePrintNode
+        ? {
+          inputs: companyPrintNodeInputs(profile),
+          title: "profileSettings.printNode",
+        }
+        : null,
+  ].filter(Boolean);
 
   return (
     <div style={{ paddingBottom: 2, paddingTop: "40px", position: "relative" }}>
