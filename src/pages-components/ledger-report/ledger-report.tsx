@@ -77,7 +77,7 @@ const LedgerReportWidget = ({ customerId }: any) => {
         <PrimaryTable
           rows={getTableDataRows()}
           headers={tableHeaders}
-          maxHeight={650}
+          maxHeight={720}
           stickyHeader={true}
         />
       }

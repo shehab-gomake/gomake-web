@@ -111,6 +111,7 @@ const useLedgerReport = ({ customerId }: any) => {
             ) : (
               <span>{data?.docNumber}</span>
             ),
+            data?.accountCode,
             data?.remarks,
             data?.transNumber,
             data?.credit.toFixed(2),
