@@ -34,6 +34,23 @@ const useStyle = () => {
         textDecoration: "unset",
         display: "block",
       },
+      statusFilterContainer: {
+        display: "flex",
+        flexDirection: "column" as "column",
+        justifyContent: "flex-start",
+        alignItems: "flex-start",
+        gap: 10,
+        minWidth: "20%",
+        width: "fit-content",
+      },
+      textInputStyle: {
+        width: "100%",
+        border: "none",
+        height: 45,
+      },
+      filterLabelStyle: {
+        ...FONT_FAMILY.Lexend(500, 14),
+      },
     };
   }, [i18next.language, t]);
   return {

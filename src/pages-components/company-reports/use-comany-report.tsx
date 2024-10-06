@@ -9,7 +9,7 @@ import { IconButton } from "@mui/material";
 import { OptionsComponent } from "@/pages-components/company-reports/options-component";
 import { useRecoilState } from "recoil";
 import { printHousesState } from "@/pages-components/company-reports/state";
-import { IPrintHouse } from "./interfaces";
+import { IPrintHouse, PrintHousePayStatus } from "./interfaces";
 import { makePaymentApi } from "@/services/api-service/profiles/company-profile-api";
 
 const initialPrintHouseState: IPrintHouse = {
@@ -40,7 +40,9 @@ export const useCompanyReport = () => {
     useSnackBar();
   const [, setPrintHouses] =
     useRecoilState<{ id: string; name: string }[]>(printHousesState);
+
   const [AllReport, setAllReport] = useState([]);
+
   const [openPaymentDetails, setOpenPaymentDetails] = useState<boolean>(false);
   const [selectedPrintHouse, setSelectedPrintHouse] = useState<IPrintHouse>(
     initialPrintHouseState
@@ -63,6 +65,9 @@ export const useCompanyReport = () => {
     t("companyReports.Email"),
     t("companyReports.StartingDate"),
     t("companyReports.Status"),
+    "",
+    t("Pay Status"),
+    "",
     t("companyReports.lastActivity"),
     t("companyReports.calculations"),
     t("companyReports.Quote"),
@@ -104,6 +109,9 @@ export const useCompanyReport = () => {
             ? new Date(item.creationDate).toLocaleDateString()
             : "N/A",
           item.status,
+          "",
+          t(`companyReports.${PrintHousePayStatus[item?.printHousePayStatus]}`),
+          "",
           item.lastActivity
             ? new Date(item.lastActivity).toLocaleDateString()
             : "N/A",
@@ -169,6 +177,30 @@ export const useCompanyReport = () => {
     });
   };
 
+  const payStatuses = [
+    {
+      label: t(`companyReports.${PrintHousePayStatus[0]}`),
+      value: PrintHousePayStatus.NoPaymentDetails,
+    },
+    {
+      label: t(`companyReports.${PrintHousePayStatus[1]}`),
+      value: PrintHousePayStatus.NeedToPay,
+    },
+    {
+      label: t(`companyReports.${PrintHousePayStatus[2]}`),
+      value: PrintHousePayStatus.Payed,
+    },
+  ];
+
+  const handlePayStatusChange = (e: any, value: any) => {
+    setPayStatus(value);
+  };
+
+  const [payStatus, setPayStatus] = useState<{
+    label: string;
+    value: PrintHousePayStatus;
+  } | null>();
+
   return {
     t,
     tableHeaders,
@@ -178,5 +210,8 @@ export const useCompanyReport = () => {
     handleCloseModal,
     selectedPrintHouse,
     getReport,
+    payStatus,
+    payStatuses,
+    handlePayStatusChange,
   };
 };

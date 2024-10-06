@@ -44,3 +44,9 @@ export interface PaymentDetails {
   customerName: string;
   dayOfPayment: number;
 }
+
+export enum PrintHousePayStatus {
+  NoPaymentDetails,
+  NeedToPay,
+  Payed,
+}
