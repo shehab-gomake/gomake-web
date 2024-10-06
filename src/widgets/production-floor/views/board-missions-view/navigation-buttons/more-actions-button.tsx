@@ -11,8 +11,12 @@ import { adaptLeft } from "@/utils/adapter";
 import { ClickOutside } from "@/components/click-out-side/click-out-side";
 import { boardMissionsDetailsState } from "@/widgets/production-floor/state/boards";
 import {
+    IContact,
     SelectContactComponent
 } from "@/widgets/production-floor/views/board-missions-view/navigation-buttons/select-contact-component";
+import {getDocumentContactsApi} from "@/services/api-service/documents/documents-service-api";
+import {useGomakeAxios, useSnackBar} from "@/hooks";
+import {createBoardMissionsChatRoomApi} from "@/services/api-service/chat/quick-blox-chat-endpoints";
 
 const MoreActionsButton = () => {
     const [open, setOpen] = useState<boolean>(false);
@@ -25,6 +29,24 @@ const MoreActionsButton = () => {
     const direction = t('direction');
     const [loading] = useState<boolean>(false);
     const [openSendGraphicFileModal, setOpenSendGraphicFileModal] = useState<boolean>(false);
+    const [contacts, setContacts] = useState<IContact[]>([]);
+    const {callApi} = useGomakeAxios();
+    const { alertFaultGetData } = useSnackBar();
+
+
+    const getBoardMissionChatRoomId = async (selectedContact, setLoading) => {
+        setLoading(true)
+        setOpen(false);
+        const callBack = res => {
+            setLoading(false);
+            if (res.success) {
+                push(`/messenger?dialogId=${res.data?._id}`)
+            } else {
+                alertFaultGetData();
+            }
+        }
+        await createBoardMissionsChatRoomApi(callApi, callBack, { boardMissionId: boardMissions.boardMissionId, ...selectedContact })
+    }
     const handleClose = () => {
         setOpen(false);
     };
@@ -46,7 +68,15 @@ const MoreActionsButton = () => {
             await handleFileUpload(file)
         });
     };
-
+    const getDocumentContacts = async () => {
+        const callBack = (res) => {
+            if (res.success) {
+                setContacts(res.data);
+                setOpenSendGraphicFileModal(true)
+            }
+        }
+        await getDocumentContactsApi(callApi, callBack, boardMissions.orderId);
+    }
 
     return (
         <div style={{ position: 'relative', zIndex: 9999999999 }}>
@@ -67,12 +97,12 @@ const MoreActionsButton = () => {
                         }
                         <MenuItem onClick={handleClickEdit}>{t('productionFloor.edit')}</MenuItem>
                         <MenuItem
-                            onClick={() => setOpenSendGraphicFileModal(true)}>{t('productionFloor.sendGraphicsApprove')}</MenuItem>
+                            onClick={getDocumentContacts}>{t('productionFloor.sendGraphicsApprove')}</MenuItem>
                     </Paper>
                 </ClickOutside>
             }
             <input type={'file'} multiple value={''} onChange={handleFileSelect} hidden={true} ref={fileInputRef} />
-            <SelectContactComponent openModal={openSendGraphicFileModal}
+            <SelectContactComponent onSend={getBoardMissionChatRoomId} contacts={contacts} openModal={openSendGraphicFileModal}
                 onClose={() => setOpenSendGraphicFileModal(false)} />
         </div>
     );

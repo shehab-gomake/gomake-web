@@ -171,7 +171,7 @@ export  const checkIfDieCutOrDieKissCutExists = (subProducts) => {
   for (const subProduct of subProducts) {
     if (subProduct.parameters) {
       const dieCutParam = subProduct.parameters.find(
-        param => param.parameterCode === "DieCut" || param.parameterCode === "DieKissCut"
+        param => param.parameterCode === "DieCut" || param.parameterCode === "DieKissCut"|| param.parameterCode === "DieStamp"
       );
       if (dieCutParam) {
         return true;

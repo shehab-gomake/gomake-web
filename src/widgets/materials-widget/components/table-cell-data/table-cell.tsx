@@ -13,6 +13,7 @@ import { machineCategoriesState } from "@/store/machine-categories";
 import { MultiSelectList } from "./multi-select-list";
 import { materialsParametersState } from "../../state";
 import { useTranslation } from "react-i18next";
+import { MultiSelectClientsInput } from "./multi-select-clients-input";
 
 const TableCellData = ({
   value,
@@ -24,7 +25,7 @@ const TableCellData = ({
   isAdmin,
   onChangeRowCheckBox,
 }: IRowData) => {
-  const { updateCellData, machinesOptions, clientsOptions } = useTableCellData(isAdmin);
+  const { updateCellData, machinesOptions, clientsOptions, } = useTableCellData(isAdmin);
   const machinesCategories = useRecoilValue(machineCategoriesState);
   const parameterCategories = useRecoilValue<any>(materialsParametersState);
   const { t } = useTranslation()
@@ -88,8 +89,8 @@ const TableCellData = ({
       );
     case EDataTypeEnum.CLIENTS_LIST:
       return (
-        <MultiSelectInput
-          values={value as string[]}
+        <MultiSelectClientsInput
+          values={values}
           parameterKey={parameterKey}
           id={id}
           isAdmin={isAdmin}

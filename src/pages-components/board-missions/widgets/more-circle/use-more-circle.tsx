@@ -2,16 +2,20 @@ import { DuplicateMenuIcon } from "./icons/duplicate-menu";
 import { LoggerIcon } from "./icons/logger";
 import { useTranslation } from "react-i18next";
 import { PDFIcon } from "./icons/pdf-icon";
-import TaskAltOutlinedIcon from '@mui/icons-material/TaskAltOutlined';
-import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
+import TaskAltOutlinedIcon from "@mui/icons-material/TaskAltOutlined";
+import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import { useStyle } from "./style";
 import { PackageIcon } from "@/icons/package-icon";
 import { GetPrintingTicketPDFApi } from "@/services/api-service/generic-doc/documents-api";
 import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
 import { PStatus } from "../enums";
-import { addBoardMissionsToFileUploaderApi } from "@/services/api-service/board-missions-table/board-missions-table";
+import { addBoardMissionsToFileUploaderApi } from "@/services/api-service/board-missions/board-missions-table";
 import { useRecoilState } from "recoil";
-import { fileUploaderConnectionIdState, openFileUploaderList, pinFileUploaderState } from "@/store/file-uploader-state";
+import {
+  fileUploaderConnectionIdState,
+  openFileUploaderList,
+  pinFileUploaderState,
+} from "@/store/file-uploader-state";
 import { MarkAsUnReadyIcon } from "./icons/mark-as-un-ready";
 import { printHouseProfile } from "@/store/print-house-profile";
 import { EditIcon } from "@/icons";
@@ -24,7 +28,7 @@ const useMoreCircle = ({
   onClickWorkMissionPdf,
   onClickPrintPackagingSlip,
   onOpenModal,
-  handleClickEdit
+  handleClickEdit,
 }: any) => {
   const { t } = useTranslation();
   const { classes } = useStyle();
@@ -50,12 +54,14 @@ const useMoreCircle = ({
     const callBack = (res) => {
       if (res?.success) {
         const pdfLink = res.data;
-        downloadPdf(pdfLink)
+        downloadPdf(pdfLink);
       } else {
         alertFaultGetData();
       }
     };
-    await GetPrintingTicketPDFApi(callApi, callBack, { boardMissionId: mission?.id });
+    await GetPrintingTicketPDFApi(callApi, callBack, {
+      boardMissionId: mission?.id,
+    });
   };
   const addBoardMissionsToFileUploader = async (mission) => {
     const callBack = (res) => {
@@ -65,7 +71,10 @@ const useMoreCircle = ({
       } else {
       }
     };
-    await addBoardMissionsToFileUploaderApi(callApi, callBack, { boardMissionsId: mission?.id, connectionId: connectionId });
+    await addBoardMissionsToFileUploaderApi(callApi, callBack, {
+      boardMissionsId: mission?.id,
+      connectionId: connectionId,
+    });
   };
   const handleClickMarkAsReady = () => {
     if (mission?.isReady) {
@@ -78,21 +87,35 @@ const useMoreCircle = ({
   const menuList = [
     {
       condition: true,
-      name: <a style={classes.menuTitleStyle} href={`/production-floor?boardMissionsId=${mission?.id}&step=stations`}>{t("boardMissions.viewTask")}</a>,
+      name: (
+        <a
+          style={classes.menuTitleStyle}
+          href={`/production-floor?boardMissionsId=${mission?.id}&step=stations`}
+        >
+          {t("boardMissions.viewTask")}
+        </a>
+      ),
       icon: <VisibilityOutlinedIcon style={classes.iconStyle} />,
-      onclick: () => navigate(`/production-floor?boardMissionsId=${mission?.id}&step=stations`),
+      onclick: () =>
+        navigate(
+          `/production-floor?boardMissionsId=${mission?.id}&step=stations`
+        ),
     },
     {
       condition: mission?.isEditable,
-      name: <a style={classes.menuTitleStyle} href={handleClickEdit(mission)}>{t("materials.buttons.edit")}</a>,
+      name: (
+        <a style={classes.menuTitleStyle} href={handleClickEdit(mission)}>
+          {t("materials.buttons.edit")}
+        </a>
+      ),
       icon: <EditIcon />,
-      onclick: () => navigate(handleClickEdit(mission))
+      onclick: () => navigate(handleClickEdit(mission)),
     },
     {
       condition: true,
       name: t("boardMissions.pdfWorkMission"),
       icon: <PDFIcon />,
-      onclick: () => onClickWorkMissionPdf(mission?.id, mission?.actionId,),
+      onclick: () => onClickWorkMissionPdf(mission?.id, mission?.actionId),
     },
     {
       condition: true,
@@ -105,14 +128,15 @@ const useMoreCircle = ({
       name: t("boardMissions.printProductionPdf"),
       icon: <PDFIcon />,
       onclick: () => GetPrintingTicketPDF(mission),
-
     },
     {
       condition: true,
       name: t("boardMissions.printPackagingSlip"),
       icon: <PackageIcon />,
-      onclick: mission?.status === PStatus.IN_PROCESS ? () => onOpenModal(mission) : () => onClickPrintPackagingSlip(mission),
-
+      onclick:
+        mission?.status === PStatus.IN_PROCESS
+          ? () => onOpenModal(mission)
+          : () => onClickPrintPackagingSlip(mission),
     },
     {
       condition: true,
@@ -122,8 +146,14 @@ const useMoreCircle = ({
     },
     {
       condition: mission?.status === PStatus.IN_PROCESS,
-      name: !mission?.isReady ? t("boardMissions.markAsReady") : t("boardMissions.markAsUnReady"),
-      icon: !mission?.isReady ? <TaskAltOutlinedIcon style={classes.iconStyle} /> : <MarkAsUnReadyIcon />,
+      name: !mission?.isReady
+        ? t("boardMissions.markAsReady")
+        : t("boardMissions.markAsUnReady"),
+      icon: !mission?.isReady ? (
+        <TaskAltOutlinedIcon style={classes.iconStyle} />
+      ) : (
+        <MarkAsUnReadyIcon />
+      ),
       onclick: () => handleClickMarkAsReady(),
     },
     // {
@@ -137,16 +167,18 @@ const useMoreCircle = ({
       name: t("home.loggers"),
       icon: <LoggerIcon />,
       onclick: () => {
-        window.open(`/production-floor?boardMissionsId=${mission?.id}&step=activity`, '_blank');
+        window.open(
+          `/production-floor?boardMissionsId=${mission?.id}&step=activity`,
+          "_blank"
+        );
       },
     },
-    !!companyProfile.filesApiAddress &&
-    {
+    !!companyProfile.filesApiAddress && {
       condition: true,
       name: t("fileUploader.uploadFile"),
       icon: <PDFIcon />,
       onclick: () => addBoardMissionsToFileUploader(mission),
-    }
+    },
   ];
 
   return {

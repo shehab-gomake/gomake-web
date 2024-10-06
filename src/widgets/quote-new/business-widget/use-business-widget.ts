@@ -1,4 +1,4 @@
-import {  useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRouter } from "next/router";
 import { useQuoteWidget } from "@/pages-components/admin/home/widgets/quote-widget/use-quote-widget";
@@ -15,26 +15,46 @@ const useBusinessWidget = ({ values, documentType }) => {
   const [isConfirmation, setIsConfirmation] = useState();
   const { renderOptions, checkWhatRenderArray } = useQuoteWidget();
   const setOpenModal = useSetRecoilState<boolean>(addressModalState);
-  const [purchaseNumber, setPurchaseNumber] = useState(values?.purchaseNumber || t("sales.quote.noPurchaseNumber"));
-  const [quoteStateValue, setQuoteItemValue] = useRecoilState<any>(quoteItemState);
+  const [purchaseNumber, setPurchaseNumber] = useState(
+    values?.purchaseNumber || t("sales.quote.noPurchaseNumber")
+  );
+
+  const [documentTitle, setDocumentTitle] = useState(
+    values?.title || t("sales.quote.noTitle")
+  );
+
+  const [quoteStateValue, setQuoteItemValue] =
+    useRecoilState<any>(quoteItemState);
   const quoteConfirm = useRecoilValue<any>(quoteConfirmationState);
   const isReceipt = documentType === DOCUMENT_TYPE.receipt;
+  const isQuote = documentType === DOCUMENT_TYPE.quote;
+  const isOrder = documentType === DOCUMENT_TYPE.order;
   const isExistReceipt = isReceipt && !router?.query?.isNewCreation;
-  const [taxConfirmationNumber, setTaxConfirmationNumber] = useState(values?.taxConfirmationNumber || t("sales.quote.noTaxConfirmationNumber"));
-  const [manuaLInvoiceNum, setManuaLInvoiceNum] = useState(values?.manualInvoiceNumber || null);
+  const [taxConfirmationNumber, setTaxConfirmationNumber] = useState(
+    values?.taxConfirmationNumber || t("sales.quote.noTaxConfirmationNumber")
+  );
+  const [manuaLInvoiceNum, setManuaLInvoiceNum] = useState(
+    values?.manualInvoiceNumber || null
+  );
 
-  const isInvoice = documentType === DOCUMENT_TYPE.invoice || documentType === DOCUMENT_TYPE.invoiceRefund;
+  const isInvoice =
+    documentType === DOCUMENT_TYPE.invoice ||
+    documentType === DOCUMENT_TYPE.invoiceRefund;
   const [openCustomerModal, setOpenCustomerModal] = useState(false);
   const [customer, setCustomer] = useState([]);
-  const [isUpdateTaxNumber, setIsUpdateTaxNumber] = useState<number | null>(null);
-  const [isUpdateManuaLInvoiceNum, setIsUpdateManuaLInvoiceNum] = useState<number | null>(null);
+  const [isUpdateTaxNumber, setIsUpdateTaxNumber] = useState<number | null>(
+    null
+  );
+  const [isUpdateManuaLInvoiceNum, setIsUpdateManuaLInvoiceNum] = useState<
+    number | null
+  >(null);
 
   const onBlurTaxNumber = async () => {
     setIsUpdateTaxNumber(null);
   };
-  const onCustomerAdd=(customer)=>{
-    setOpenCustomerModal(false)
-  }
+  const onCustomerAdd = (customer) => {
+    setOpenCustomerModal(false);
+  };
   const onBlurManualInvoiceNum = async (value) => {
     const updatedQuoteItemValue = { ...quoteStateValue };
     updatedQuoteItemValue.manualInvoiceNumber = value;
@@ -42,39 +62,56 @@ const useBusinessWidget = ({ values, documentType }) => {
     setIsUpdateManuaLInvoiceNum(null);
   };
 
-  const mappedCustomers = renderOptions().map(customer => ({
+  const mappedCustomers = renderOptions().map((customer) => ({
     text: customer?.name,
     id: customer?.id,
-    ...customer
+    ...customer,
   }));
 
-  const {CheckDocumentPermission } = useUserPermission();
-  const canEditDocument = router.query.isNewCreation ? true  : 
-  quoteStateValue?.isEditable && CheckDocumentPermission(documentType, DocumentPermission.EDIT_DOCUMENT);
-  
-  const canEditPurchaseNumber = CheckDocumentPermission(documentType, DocumentPermission.EDIT_DOCUMENT);
-  const canEditInvoiceNumber = router.query.isNewCreation ? true  : false
-  
-  const [openChangeClientModal, setOpenChangeClientModal] = useState(false);
-  const [openChangeClientModalFromInvoice, setOpenChangeClientModalFromInvoice] = useState(false)
+  const { CheckDocumentPermission } = useUserPermission();
+  const canEditDocument = router.query.isNewCreation
+    ? true
+    : quoteStateValue?.isEditable &&
+      CheckDocumentPermission(documentType, DocumentPermission.EDIT_DOCUMENT);
 
-  const [selectedClient, setSelectedClient] = useState({})
+  const canEditPurchaseNumber = CheckDocumentPermission(
+    documentType,
+    DocumentPermission.EDIT_DOCUMENT
+  );
+
+  const canEditInvoiceNumber = router.query.isNewCreation ? true : false;
+  const [openChangeClientModal, setOpenChangeClientModal] = useState(false);
+  const [
+    openChangeClientModalFromInvoice,
+    setOpenChangeClientModalFromInvoice,
+  ] = useState(false);
+
+  const [selectedClient, setSelectedClient] = useState({});
 
   const onClickCloseChangeClientModal = () => {
     setOpenChangeClientModal(false);
-  }
+  };
 
   const onClickCloseChangeClientModalFromInvoice = () => {
     setOpenChangeClientModalFromInvoice(false);
-  }
+  };
 
   const onClickOpenChangeClientModal = (value) => {
-    setSelectedClient(value)
-    if (router.query.orderId && documentType === DOCUMENT_TYPE.invoice)
-      setOpenChangeClientModalFromInvoice(true)
-    else
+    setSelectedClient(value);
+    if (
+      (router.query.orderId || router.query.deliveryNoteId) &&
+      documentType === DOCUMENT_TYPE.invoice
+    ) {
+      setOpenChangeClientModalFromInvoice(true);
+    } else if (
+      quoteStateValue?.documentItems &&
+      quoteStateValue?.documentItems?.length > 0
+    ) {
+      setOpenChangeClientModalFromInvoice(true);
+    } else {
       setOpenChangeClientModal(true);
-  }
+    }
+  };
 
   return {
     t,
@@ -97,9 +134,9 @@ const useBusinessWidget = ({ values, documentType }) => {
     setIsUpdateTaxNumber,
     onBlurTaxNumber,
     mappedCustomers,
-    openCustomerModal, 
+    openCustomerModal,
     setOpenCustomerModal,
-    customer, 
+    customer,
     setCustomer,
     onCustomerAdd,
     canEditDocument,
@@ -116,7 +153,11 @@ const useBusinessWidget = ({ values, documentType }) => {
     isUpdateManuaLInvoiceNum,
     setIsUpdateManuaLInvoiceNum,
     onBlurManualInvoiceNum,
-    canEditInvoiceNumber
+    canEditInvoiceNumber,
+    isOrder,
+    isQuote,
+    documentTitle,
+    setDocumentTitle,
   };
 };
 

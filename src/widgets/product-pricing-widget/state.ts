@@ -81,3 +81,8 @@ export const calculationExceptionsLogsState = atom<IExceptionsLog[]>({
   key: "calculationExceptionsLogsState",
   default: [],
 });
+
+export const additionalProductItemsState = atom<any[]>({
+  key: "additionalProductItemsState",
+  default: [],
+});

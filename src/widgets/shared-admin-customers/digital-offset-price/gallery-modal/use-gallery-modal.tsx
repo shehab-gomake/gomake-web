@@ -59,7 +59,8 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
   );
   const finalUnitWidthParameter = getParameterByParameterCode(
     subProducts,
-    "DieUnitWidth"
+    "DieUnitWidth",
+
   );
   const finalUnitLengthParameter = getParameterByParameterCode(
     subProducts,
@@ -69,12 +70,11 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
     subProducts,
     "DieUnitHeight"
   );
-  const shapeParameter = getParameterByParameterCode(subProducts, "Shape")
+  const shapeParameter = getParameterByParameterCode(subProducts, selectParameterButton?.parameter?.materialPath[0] === "DieStamp" ? "Enhancementtype" : "Shape")
   const LabelShapeParameter = getParameterByParameterCode(subProducts, "LabelsShape")
   useEffect(() => {
     if (selectParameterButton?.parameter?.materialPath?.length > 0) {
       getProductQuoteItemById();
-      CheckOptionToStraightKnife()
       const data = materialsEnumsValues.find((item) => {
         return compareStrings(
           item.name,
@@ -84,6 +84,12 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
       setMaterialType(data);
     }
   }, [selectParameterButton, materialsEnumsValues]);
+
+  useEffect(() => {
+    if (selectParameterButton?.parameter?.materialPath?.length > 0 && selectParameterButton?.parameter?.materialPath[0] === "DieKissCut") {
+      CheckOptionToStraightKnife()
+    }
+  }, [selectParameterButton]);
 
   const getProductQuoteItemById = useCallback(async () => {
     setIsLoading(true)
@@ -112,6 +118,8 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
     }
   }, [selectParameterButton, widthParameter, heightParameter, finalUnitWidthParameter, finalUnitLengthParameter, finalUnitHeightParameter]);
   const [filters, setFilters] = useRecoilState<any>(filterState);
+
+
 
   const setFilterValue = (key: string, value: string | string[]) => {
     const updatedFilters =
@@ -174,11 +182,11 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
         selectParameterButton?.paameterType,
         selectParameterButton?.index,
         selectParameterButton?.parameter?.actionIndex,
-        selectParameterButton?.parameter?.code, selectedShape
+        selectParameterButton?.parameter?.code,
+        selectedShape
       );
     }
-
-
+    setMaterialData([])
     onClose();
   };
   const onClickNewOrder = () => {
@@ -332,7 +340,7 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
 
 
   useEffect(() => {
-    if (template && addChargeForNewDieParameter?.length > 0) {
+    if (template && !isParameterSettings && addChargeForNewDieParameter?.length > 0) {
       const SectionId = getSectionById(template, addChargeForNewDieParameter[0]?.sectionId);
       const subSectionId = getSubSectionById(template, addChargeForNewDieParameter[0]?.sectionId, addChargeForNewDieParameter[0]?.subSectionId);
       const value = _getParameter(addChargeForNewDieParameter[0], subSectionId, SectionId);
@@ -362,7 +370,9 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
     subSectionId,
     sectionId,
     value,
-    isLoading
+    isLoading,
+    selectParameterButton,
+    setMaterialData
   };
 };
 

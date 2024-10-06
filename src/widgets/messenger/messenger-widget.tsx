@@ -14,6 +14,7 @@ import {MessengerInputComponent} from "@/widgets/messenger/components/messenger-
 import {MessengerWaitingComponent} from "@/widgets/messenger/components/messenger-waiting-component";
 import {DialogComponent} from "@/widgets/messenger/components/dialog-component";
 import {DialogNameComponent} from "@/widgets/messenger/components/dialog-name-component";
+import {ClientMessengerFooterComponent} from "@/widgets/messenger/components/client-messenger-footer-component";
 
 interface IProps {
     userType?: EUserType;
@@ -47,7 +48,10 @@ export default function MessengerWidget({}: IProps) {
         sendFileMessage,
         deleteMessage,
         isMobile,
-        onSelectDialog
+        onSelectDialog,
+        pathname,
+        push,
+        clientId
     } = useMessenger();
 
     return (
@@ -55,30 +59,34 @@ export default function MessengerWidget({}: IProps) {
             {
                 isChatConnected ?
                     (
-                        !isMobile() ?
+                        !isMobile ?
                             <Stack style={{backgroundColor: '#FFF'}} direction={'row'} width={'100%'} height={'100%'}>
                                 <Stack maxWidth={'350px'} width={'40%'}>
                                     <DialogList onClickAddDialog={() => modals.addDialog.open()}
                                                 dialogs={dialogs} selectedDialogId={selectedDialog?._id}
+                                                canAddNewDialog={!clientId}
                                                 onSelectDialog={onSelectDialog}/>
                                 </Stack>
                                 {
                                     selectedDialog &&
-                                    <DialogComponent dialogName={selectedDialog.name} users={users()} openFilesHistoryModal={modals.filesHistory.open}
-                                                     showFilesHistoryButton={files().length > 0} uploadingFiles={uploadingFiles} messages={messages}
-                                                     sessionUserId={sessionUserId} getAttachmentUrl={getAttachmentUrl} onDropFile={sendApprovalFileMessage}
-                                                     onUpdateApprovalFile={updateApprovalFile} getApprovalStatus={getApprovalFileStatus}
-                                                     updatedApprovalRequest={updatedApprovalRequestId} onDeleteMsg={deleteMessage} onSendMessage={sendTextMessage}
-                                                     isBoardMissionsRoom={selectedDialog?.data?.chatroom_type === '1'} onSendFile={sendFileMessage} onSendApprovalFile={sendApprovalFileMessage}/>
+                                    <DialogComponent dialogName={selectedDialog.name} users={users()}
+                                                     openFilesHistoryModal={modals.filesHistory.open}
+                                                     showFilesHistoryButton={files().length > 0}
+                                                     uploadingFiles={uploadingFiles} messages={messages}
+                                                     sessionUserId={sessionUserId} getAttachmentUrl={getAttachmentUrl}
+                                                     onDropFile={sendApprovalFileMessage}
+                                                     onUpdateApprovalFile={updateApprovalFile}
+                                                     getApprovalStatus={getApprovalFileStatus}
+                                                     updatedApprovalRequest={updatedApprovalRequestId}
+                                                     onDeleteMsg={deleteMessage} onSendMessage={sendTextMessage}
+                                                     isBoardMissionsRoom={selectedDialog?.data?.chatroom_type === '1'}
+                                                     onSendFile={sendFileMessage}
+                                                     onSendApprovalFile={sendApprovalFileMessage}/>
                                 }
-                                <GoMakeModal insideStyle={{width: '600px', height: 'fit-content'}}
-                                             openModal={modals.addDialog.isOpened} onClose={modals.addDialog.close}
-                                             modalTitle={t('messenger.addDialogModalTitle')}>
-                                    <AddDialog onAddDialog={(dialog) => {
+                                    <AddDialog openModal={modals.addDialog.isOpened} onCloseModal={modals.addDialog.close} onAddDialog={(dialog) => {
                                         addNewDialog(dialog);
                                         modals.addDialog.close();
                                     }}/>
-                                </GoMakeModal>
                                 <GoMakeModal insideStyle={{width: 'fit-content', height: '400px'}}
                                              openModal={modals.filesHistory.isOpened}
                                              onClose={modals.filesHistory.close}
@@ -86,7 +94,7 @@ export default function MessengerWidget({}: IProps) {
                                     <Stack gap={'12px'} alignItems={'center'} padding={'10px'}>
                                         {
                                             files().map(msg =>
-                                                <FIleListComponent {...msg}
+                                                <FIleListComponent key={'messenger-msg-list' + msg._id} {...msg}
                                                                    updatedApprovalRequest={updatedApprovalRequestId}
                                                                    isCurrentUserSentMsg={msg.sender_id === sessionUserId}
                                                                    direction={'row'}
@@ -102,7 +110,6 @@ export default function MessengerWidget({}: IProps) {
                                                                    onUpdateApprovalFile={updateApprovalFile}/>)
                                         }
                                     </Stack>
-
                                 </GoMakeModal>
                             </Stack> :
                             <Stack height={'100%'}>
@@ -110,7 +117,11 @@ export default function MessengerWidget({}: IProps) {
                                     !!selectedDialog?._id ?
                                         <Stack height={'100%'} width={'100%'} padding={'16px'} gap={'10px'}>
                                             <Stack direction={'row'} gap={'5px'}>
-                                                <IconButton onClick={() => setSelectedDialog(null)}>
+                                                <IconButton onClick={() => {
+                                                    setSelectedDialog(null);
+                                                    push({pathname, query: {clientId}}, undefined, {shallow: true})
+                                                }
+                                                }>
                                                     <ArrowBackIosIcon/>
                                                 </IconButton>
                                                 <Stack>
@@ -138,10 +149,10 @@ export default function MessengerWidget({}: IProps) {
                                                 onSendFile={sendFileMessage}
                                                 onSendApprovalFile={sendApprovalFileMessage}/>
                                         </Stack> :
-                                        <DialogList isMobile={true} onClickAddDialog={() => modals.addDialog.open()}
+                                        <DialogList canAddNewDialog={false} isMobile={true} onClickAddDialog={() => modals.addDialog.open()}
                                                     dialogs={dialogs} selectedDialogId={selectedDialog?._id}
                                                     onSelectDialog={dialog => {
-                                                        setSelectedDialog(dialog)
+                                                        push({pathname, query: {clientId, dialogId: dialog._id}})
                                                     }}/>
                                 }
                             </Stack>
@@ -149,6 +160,7 @@ export default function MessengerWidget({}: IProps) {
                     :
                     <MessengerWaitingComponent/>
             }
+            {!!clientId && <ClientMessengerFooterComponent/>}
         </Stack>
     )
 }

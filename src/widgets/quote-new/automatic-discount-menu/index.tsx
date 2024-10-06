@@ -17,7 +17,7 @@ const AutomaticDiscountMenu = ({ handleClose, open, anchorEl, updateDiscountType
 
   const { t } = useTranslation();
   const quoteStateValue = useRecoilValue<any>(quoteItemState);
-  const selectedSort = quoteStateValue?.sortType
+  const selectedSort = quoteStateValue?.discountType
   const { classes } = useStyle();
   return (
     <GoMakeMenu

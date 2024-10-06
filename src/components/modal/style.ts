@@ -28,12 +28,16 @@ const useStyle = ({ insideStyle, headerPadding, isMiddleTitle , modalTitleColor}
         paddingBottom: convertWidthToVW(20),
         ...insideStyle,
       },
+      
       closeIcon: {
         display: "flex",
         justifyContent: "flex-end",
         alignItems: "center",
         cursor: "pointer" as "pointer",
       },
+
+     
+
       titleModalStyle: {
         display: "flex",
         color: modalTitleColor || primaryColor(500), 
