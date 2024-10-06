@@ -26,8 +26,7 @@ const useStyle = ({
       },
       logoContainer: {
         display: "flex",
-        // marginTop: navStatus?.isClosed ? 20 : 0,
-        marginTop: 20,
+        marginTop: navStatus?.isClosed ? 20 : 0,
         backgroundColor: "#504FA1",
         borderRadius: 8,
         padding: 10,
@@ -44,10 +43,8 @@ const useStyle = ({
         alignItems: "center",
         paddingRight: navStatus?.isClosed ? 5 : 26,
         paddingLeft: navStatus?.isClosed ? 5 : 26,
-        // paddingTop: navStatus?.isClosed ? 8 : 40,
-        // paddingBottom: navStatus?.isClosed ? 8 : 40,
-        paddingTop: 8,
-        paddingBottom: 8,
+        paddingTop: navStatus?.isClosed ? 8 : 40,
+        paddingBottom: navStatus?.isClosed ? 8 : 40,
         overflowY: "scroll" as "scroll",
         position: "relative" as "relative",
         zIndex: SIDE_MENU_Layout,
@@ -58,6 +55,7 @@ const useStyle = ({
         flexDirection: "column" as "column",
         height: "100%",
         overflow: "scroll",
+
       },
       headerContainer: {
         display: "flex",
@@ -115,6 +113,7 @@ const useStyle = ({
         ...FONT_FAMILY.Inter(400, 16),
         color: "#FFF",
         cursor: "pointer",
+        minWidth: "fit-content",
       },
       line: {
         border: "1px solid #FFFFFF",

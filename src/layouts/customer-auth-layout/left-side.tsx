@@ -5,38 +5,31 @@ import { Tab } from "./tab";
 import { useAuthLayoutHook } from "./use-auth-layout-hook";
 import { useRecoilState } from "recoil";
 import { navStatusState } from "@/store/nav-status";
+import { adaptRight } from "@/utils/adapter";
+import { hoverStatusState } from "@/store";
+import LockIcon from "@mui/icons-material/Lock";
 import { useUserPermission } from "@/hooks/use-permission";
 import { useEffect, useState } from "react";
-import { CompressIcon } from "@/icons/compress-icon";
-import { ExpandIcon } from "@/icons/expand-icon";
-import { styled } from "@mui/material";
-
-const HoverableDiv = styled("div")({
-  top: 15,
-  cursor: "pointer",
-  padding: 5,
-  borderRadius: "5px",
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "center",
-  width: 30,
-  height: 30,
-  backgroundColor: "transparent",
-  "&:hover": {
-    backgroundColor: "#514fa2",
-  },
-});
 
 const LeftSideLayout = (customGap) => {
   const { t } = useTranslation();
-  const { tabs1, tabs2, tabs3 } = useAuthLayoutHook(null, true);
+  const { tabs1, tabs2, tabs3 } = useAuthLayoutHook(null,true);
   const [navStatus, setNavStatus] = useRecoilState(navStatusState);
+  const [isHover, setIsHover] = useRecoilState(hoverStatusState);
   const { CheckPermission } = useUserPermission();
   const { classes } = useStyle({ navStatus, customGap });
-  const [myProfileLogo, setMyProfileLogo] = useState("");
+  const [myProfileLogo, setMyProfileLogo] = useState("")
 
   useEffect(() => {
-    setMyProfileLogo(localStorage.getItem("systemLogo"));
+    setMyProfileLogo(localStorage.getItem("systemLogo"))
+  }, [])
+
+  useEffect(() => {
+    const isHover = localStorage.getItem("isHover");
+    if (isHover && isHover == "true") {
+      setIsHover(true);
+      setNavStatus({ isClosed: false });
+    }
   }, []);
 
   const checkTabPermissions = (tab) => {
@@ -50,34 +43,55 @@ const LeftSideLayout = (customGap) => {
         }
       }
       return false;
-    } else if (tab.Permission && !CheckPermission(tab.Permission)) {
+    }
+    else if (tab.Permission && !CheckPermission(tab.Permission)) {
       return false;
     }
     return true;
-  };
+  }
 
   return (
-    <div style={classes.leftContainer}>
+    <div
+      style={classes.leftContainer}
+      onMouseEnter={() => {
+        setNavStatus({ isClosed: false });
+      }}
+    >
       {!navStatus.isClosed && (
-        <HoverableDiv onClick={() => setNavStatus({ isClosed: true })}>
-          <CompressIcon />
-        </HoverableDiv>
-      )}
-      {navStatus.isClosed && (
-        <HoverableDiv onClick={() => setNavStatus({ isClosed: false })}>
-          <ExpandIcon />
-        </HoverableDiv>
+        <div
+          style={{
+            position: "absolute",
+            ...adaptRight(t("direction"), 190),
+            top: 15,
+            cursor: "pointer",
+            background: "#ccc",
+            padding: 5,
+            borderRadius: 200,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            opacity: isHover ? 1 : 0.7,
+            width: 30,
+            height: 30,
+          }}
+          onClick={() => {
+            localStorage.setItem("isHover", !isHover + "");
+            setIsHover(!isHover);
+          }}
+        >
+          <LockIcon style={{ color: "#FFF", width: 20, height: 20 }} />
+        </div>
       )}
       <div style={classes.logoContainer}>
-        {myProfileLogo && (
+        {myProfileLogo &&
           <Image
             src={myProfileLogo}
             alt="logo"
-            style={{ objectFit: "contain" }}
+            style={{ objectFit: 'contain' }}
             width={80}
             height={80}
           />
-        )}
+        }
       </div>
       {/* <div style={classes.logoContainer}>
         <Image
@@ -100,11 +114,7 @@ const LeftSideLayout = (customGap) => {
               </div>
             );
           } else if (checkTabPermissions(tab)) {
-            return (
-              <div data-tour={`${tab?.tourData}`}>
-                <Tab key={tab.key} tab={tab} customGap={customGap} />
-              </div>
-            );
+            return <div data-tour={`${tab?.tourData}`}><Tab key={tab.key} tab={tab} customGap={customGap} /></div>;
           }
         })}
       </div>
@@ -129,11 +139,7 @@ const LeftSideLayout = (customGap) => {
                 </div>
               );
             } else if (checkTabPermissions(tab)) {
-              return (
-                <div data-tour={`${tab?.tourData}`}>
-                  <Tab key={tab.key} tab={tab} />
-                </div>
-              );
+              return <div data-tour={`${tab?.tourData}`}><Tab key={tab.key} tab={tab} /></div>;
             }
           })
         )}
