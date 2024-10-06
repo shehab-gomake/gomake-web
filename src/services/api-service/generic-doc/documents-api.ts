@@ -5,7 +5,8 @@ import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 
 const GET_DOCUMENT_URL = "/v1/erp-service/documents/get-document";
 const GET_ALL_DOCUMENTS_URL = "/v1/erp-service/documents/get-all-documents";
-const GET_ALL_DOCUMENT_LOGS_URL = "/v1/erp-service/documents/get-all-document-logs";
+const GET_ALL_DOCUMENT_LOGS_URL =
+  "/v1/erp-service/documents/get-all-document-logs";
 const DELETE_DOCUMENT_ITEM_URL =
   "/v1/erp-service/documents/delete-document-item";
 const ADD_DOCUMENT_CONTACT_URL =
@@ -23,13 +24,18 @@ const DELETE_DOCUMENT_ADDRESS_URL =
 const DUPLICATE_DOCUMENT_URL = "/v1/erp-service/documents/duplicate-document";
 const DUPLICATE_DOCUMENT_ITEM_URL =
   "/v1/erp-service/documents/duplicate-document-item-with-another-quantity";
-const CHANGE_DOCUMENT_CLIENT_URL = "/v1/erp-service/documents/change-document-client";
-const UPDATE_DOCUMENT_ITEM_SELECT_URL = "/v1/erp-service/documents/update-docuement-item-select";
+const CHANGE_DOCUMENT_CLIENT_URL =
+  "/v1/erp-service/documents/change-document-client";
+const UPDATE_DOCUMENT_ITEM_SELECT_URL =
+  "/v1/erp-service/documents/update-docuement-item-select";
 const GET_IF_Exist_CART = "/v1/erp-service/documents/get-exist-document";
 const GET_DOCUMENT_PDF_URL = "/v1/erp-service/documents/get-document-pdf";
-const GET_BOARD_MISSION_PDF = "/v1/erp-service/board-missions-tables/export-board-mission-pdf";
-const GET_ORDER_BOARD_MISSION_PDF = "/v1/erp-service/documents/export-order-board-mission-pdf";
-const GET_PRINTING_TICKET_PDF = "/v1/erp-service/board-missions-tables/get-printing-ticket-pdf";
+const GET_BOARD_MISSION_PDF =
+  "/v1/erp-service/board-missions-tables/export-board-mission-pdf";
+const GET_ORDER_BOARD_MISSION_PDF =
+  "/v1/erp-service/documents/export-order-board-mission-pdf";
+const GET_PRINTING_TICKET_PDF =
+  "/v1/erp-service/board-missions-tables/get-printing-ticket-pdf";
 const UPDATE_PURCHASE_NUMBER_URL =
   "/v1/erp-service/documents/update-purchase-number";
 const ADD_DELIVERY_URL = "/v1/erp-service/documents/add-delivery";
@@ -47,7 +53,8 @@ const GET_CALCULATE_DOCUMENT_URL =
   "/v1/erp-service/documents/calculate-document";
 const ADD_ITEM_URL = "/v1/erp-service/documents/add-item";
 const UPDATE_DOCUMENT_URL = "/v1/erp-service/documents/update-document";
-const UPDATE_OCCASIONAL_CLIENT_NAME_URL = "/v1/erp-service/documents/update-occasional-client-name";
+const UPDATE_OCCASIONAL_CLIENT_NAME_URL =
+  "/v1/erp-service/documents/update-occasional-client-name";
 const UPDATE_DOCUMENT_ITEM_URL =
   "/v1/erp-service/documents/update-document-item";
 const UPDATE_DUE_DATE_URL = "/v1/erp-service/documents/update-due-date";
@@ -61,24 +68,36 @@ const UPDATE_EXCHANGE_RATE_URL =
 const REFRESH_EXCHANGE_RATE_URL =
   "/v1/erp-service/documents/refresh-exchange-rate";
 const CREATE_NEW_DOCUMENT_URL = "/v1/erp-service/documents/create-new-document";
-const GET_ALL_REPORTS_URL = "/v1/erp-service/quote/get-all-reports"
+const GET_ALL_REPORTS_URL = "/v1/erp-service/quote/get-all-reports";
 const UPDATE_DOCUMENT_ITEM_CONTENT_URL =
   "/v1/erp-service/document/update-document-item-content";
-const UPDATE_DOCUMENT_COMMENTS_URL = "/v1/erp-service/document/update-document-comments";
-const UPDATE_DOCUMENT_INTERNAL_NOTES_URL = "/v1/erp-service/document/update-document-internal-notes";
+const UPDATE_DOCUMENT_COMMENTS_URL =
+  "/v1/erp-service/document/update-document-comments";
+const UPDATE_DOCUMENT_INTERNAL_NOTES_URL =
+  "/v1/erp-service/document/update-document-internal-notes";
 const GET_CLIENT_DOCUMENTS = "/v1/erp-service/documents/get-client-documents";
 const ADD_CREATE_CONTACT_URL = "/v1/crm-service/customer/create-contact";
 const SORT_DOCUMENT_ITEMS_URL = "/v1/erp-service/documents/sort-document-items";
-const UPDATE_DISCOUNT_TYPE_URL = "/v1/erp-service/documents/update-discount=type";
-
-const UPDATE_IS_SHOW_DETAILS_URL = "/v1/erp-service/documents/update-is-show-details";
-const UPDATE_IS_SHOW_PRICES_URL = "/v1/erp-service/documents/update-is-show-prices";
-const GET_WHATSAPP_MESSAGE_URL = "/v1/erp-service/documents/get-whats-app-message";
+const UPDATE_DISCOUNT_TYPE_URL =
+  "/v1/erp-service/documents/update-discount=type";
+const UPDATE_IS_SHOW_DETAILS_URL =
+  "/v1/erp-service/documents/update-is-show-details";
+const UPDATE_IS_SHOW_PRICES_URL =
+  "/v1/erp-service/documents/update-is-show-prices";
+const GET_WHATSAPP_MESSAGE_URL =
+  "/v1/erp-service/documents/get-whats-app-message";
 const CLOSE_DOCUMENT_URL = "/v1/erp-service/documents/close-document";
-const MANUALLY_CLOSE_DOCUMENT_URL = "/v1/erp-service/documents/manually-close-document";
-const SEND_QUOTE_APPROVAL_TO_MANAGER = '/v1/erp-service/documents/send-quote-approval-to-manager';
-const PAY_ORDER_IN_URL = '/v1/erp-service/documents/pay-order-in-tracking';
-const CLOSE_AND_TRACK_ORDER_URL = '/v1/erp-service/documents/close-and-track-order';
+const OPEN_DOCUMENT_URL = "/v1/erp-service/documents/open-document";
+
+const MANUALLY_CLOSE_DOCUMENT_URL =
+  "/v1/erp-service/documents/manually-close-document";
+const SEND_QUOTE_APPROVAL_TO_MANAGER =
+  "/v1/erp-service/documents/send-quote-approval-to-manager";
+const PAY_ORDER_IN_URL = "/v1/erp-service/documents/pay-order-in-tracking";
+const CLOSE_AND_TRACK_ORDER_URL =
+  "/v1/erp-service/documents/close-and-track-order";
+const UPDATE_DOCUMENT_TITLE_URL =
+  "/v1/erp-service/documents/update-document-title";
 
 const getDocumentApi: ICallAndSetData = async (callApi, setState, data) => {
   return await getSetApiData(
@@ -100,7 +119,11 @@ const getAllDocumentsApi: ICallAndSetData = async (callApi, setState, data) => {
   );
 };
 
-const getAllDocumentLogsApi: ICallAndSetData = async (callApi, setState, data) => {
+const getAllDocumentLogsApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
   return await getSetApiData(
     callApi,
     EHttpMethod.POST,
@@ -220,7 +243,6 @@ const updateDocumentAddressApi: ICallAndSetData = async (
     data
   );
 };
-
 
 const deleteDocumentAddressApi: ICallAndSetData = async (
   callApi,
@@ -428,7 +450,11 @@ const updateDocumentApi: ICallAndSetData = async (callApi, setState, data) => {
     data
   );
 };
-const updateOccasionalClientNameApi: ICallAndSetData = async (callApi, setState, data) => {
+const updateOccasionalClientNameApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
   return await getSetApiData(
     callApi,
     EHttpMethod.PUT,
@@ -545,7 +571,7 @@ const createNewDocumentApi: ICallAndSetData = async (
 const getAllReportsApi: ICallAndSetData = async (
   callApi,
   setState,
-  data: { customerId: string, productId: string }
+  data: { customerId: string; productId: string }
 ) => {
   return await getSetApiData(
     callApi,
@@ -653,7 +679,11 @@ const GetPrintingTicketPDFApi: ICallAndSetData = async (
   );
 };
 
-const sortDocumentItemsApi: ICallAndSetData = async (callApi, setState, data) => {
+const sortDocumentItemsApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
   return await getSetApiData(
     callApi,
     EHttpMethod.PUT,
@@ -663,7 +693,11 @@ const sortDocumentItemsApi: ICallAndSetData = async (callApi, setState, data) =>
   );
 };
 
-const updateDiscountTypeApi: ICallAndSetData = async (callApi, setState, data) => {
+const updateDiscountTypeApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
   return await getSetApiData(
     callApi,
     EHttpMethod.PUT,
@@ -673,7 +707,11 @@ const updateDiscountTypeApi: ICallAndSetData = async (callApi, setState, data) =
   );
 };
 
-const updateIsShowDetailsApi: ICallAndSetData = async (callApi, setState, data) => {
+const updateIsShowDetailsApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
   return await getSetApiData(
     callApi,
     EHttpMethod.PUT,
@@ -683,7 +721,11 @@ const updateIsShowDetailsApi: ICallAndSetData = async (callApi, setState, data) 
   );
 };
 
-const updateIsShowPricesApi: ICallAndSetData = async (callApi, setState, data) => {
+const updateIsShowPricesApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
   return await getSetApiData(
     callApi,
     EHttpMethod.PUT,
@@ -692,7 +734,11 @@ const updateIsShowPricesApi: ICallAndSetData = async (callApi, setState, data) =
     data
   );
 };
-const getWhatsAppMessageApi: ICallAndSetData = async (callApi, setState, data) => {
+const getWhatsAppMessageApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
   return await getSetApiData(
     callApi,
     EHttpMethod.GET,
@@ -726,7 +772,11 @@ const updateDocuementItemSelectApi: ICallAndSetData = async (
   );
 };
 
-const manuallyCloseDocumentApi: ICallAndSetData = async (callApi, setState, data) => {
+const manuallyCloseDocumentApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
   return await getSetApiData(
     callApi,
     EHttpMethod.PUT,
@@ -736,7 +786,11 @@ const manuallyCloseDocumentApi: ICallAndSetData = async (callApi, setState, data
   );
 };
 
-const sendQuoteApprovalToManagerApi: ICallAndSetData = async (callApi, setState, data) => {
+const sendQuoteApprovalToManagerApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
   return await getSetApiData(
     callApi,
     EHttpMethod.POST,
@@ -744,8 +798,7 @@ const sendQuoteApprovalToManagerApi: ICallAndSetData = async (callApi, setState,
     setState,
     data
   );
-}
-
+};
 
 const makePaymentForOrderApi: ICallAndSetData = async (
   callApi,
@@ -761,8 +814,6 @@ const makePaymentForOrderApi: ICallAndSetData = async (
   );
 };
 
-
-
 const closeAndTrackOrderApi: ICallAndSetData = async (
   callApi,
   setState,
@@ -772,6 +823,30 @@ const closeAndTrackOrderApi: ICallAndSetData = async (
     callApi,
     EHttpMethod.PUT,
     CLOSE_AND_TRACK_ORDER_URL,
+    setState,
+    data
+  );
+};
+
+const updateDocumentTitleApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.PUT,
+    UPDATE_DOCUMENT_TITLE_URL,
+    setState,
+    data
+  );
+};
+
+const OpenDocumentApi: ICallAndSetData = async (callApi, setState, data) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    OPEN_DOCUMENT_URL,
     setState,
     data
   );
@@ -833,5 +908,7 @@ export {
   acceptDocumentApi,
   rejectDocumentApi,
   makePaymentForOrderApi,
-  closeAndTrackOrderApi
+  closeAndTrackOrderApi,
+  updateDocumentTitleApi,
+  OpenDocumentApi,
 };

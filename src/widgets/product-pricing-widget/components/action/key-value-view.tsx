@@ -241,15 +241,24 @@ const EditableKeyValueViewComponent = ({
     const { classes } = useStyle();
     let value = '0';
     //source === EWorkSource.OUT ? !!outSourceValues && outSourceValues[0] ? outSourceValues[0] : '0' : values[0]
-    if (source === EWorkSource.OUT && outSourceValues && outSourceValues.length > 0) {
-        value = outSourceValues[0];
-    } else if (values && values.length > 0) {
-        value = values[0];
+    if (Array.isArray(values)) {
+        if (source === EWorkSource.OUT && outSourceValues && outSourceValues.length > 0) {
+            value = outSourceValues[0];
+        } else if (values && values.length > 0) {
+            value = values[0];
+        }
+
     }
+    else {
+        value = values?.toFixed(2)
+    }
+
     const [edit, setEdit] = useState<boolean>(false);
     const [editValue, setEditValue] = useState<string>(value);
+    console.log("editValue", { editValue, edit })
     const handleValueClick = (e) => {
         e.stopPropagation();
+        setEditValue(value);
         setEdit(true);
     }
 

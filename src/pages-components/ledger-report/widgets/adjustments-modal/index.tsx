@@ -1,4 +1,3 @@
-
 import { GoMakeDeleteModal, GoMakeModal } from "@/components";
 import { PrimaryTable } from "@/components/tables/primary-table";
 import { TransferBalanceModal } from "../transfer-balance-modal";
@@ -6,7 +5,13 @@ import { useAdjustmentsModal } from "./use-adjustments-modal";
 import { useStyle } from "./style";
 import { SecondaryButton } from "@/components/button/secondary-button";
 
-const AdjustmentsLedgerReportModal = ({ openModal, onCloseModal, clientPaymentsList, getClientPaymentItems , customerId  }) => {
+const AdjustmentsLedgerReportModal = ({
+  openModal,
+  onCloseModal,
+  clientPaymentsList,
+  getClientPaymentItems,
+  customerId,
+}) => {
   const { classes } = useStyle();
   const {
     getTableDataRows,
@@ -24,7 +29,11 @@ const AdjustmentsLedgerReportModal = ({ openModal, onCloseModal, clientPaymentsL
     openDeleteModal,
     openTransferModal,
     customer,
-  } = useAdjustmentsModal({ clientPaymentsList, getClientPaymentItems , customerId })
+  } = useAdjustmentsModal({
+    clientPaymentsList,
+    getClientPaymentItems,
+    customerId,
+  });
 
   return (
     <>
@@ -39,13 +48,23 @@ const AdjustmentsLedgerReportModal = ({ openModal, onCloseModal, clientPaymentsL
             rows={getTableDataRows()}
             headers={tableHeaders}
             maxHeight={610}
+            stickyHeader={true}
           />
-          <div style={classes.totalPriceContainer}>{calculateTotalPrice().toFixed(3)} NIS</div>
+          <div style={classes.totalPriceContainer}>
+            {calculateTotalPrice().toFixed(3)} NIS
+          </div>
           <div style={classes.btnsContainer}>
             {btns.map((tab, index) => {
               return (
-                <SecondaryButton variant="contained" key={index} onClick={tab.onclick} style={classes.btnContainer}>{tab.name}</SecondaryButton>
-              )
+                <SecondaryButton
+                  variant="contained"
+                  key={index}
+                  onClick={tab.onclick}
+                  style={classes.btnContainer}
+                >
+                  {tab.name}
+                </SecondaryButton>
+              );
             })}
           </div>
         </div>
@@ -63,7 +82,6 @@ const AdjustmentsLedgerReportModal = ({ openModal, onCloseModal, clientPaymentsL
           handleCustomerChange={handleCustomerChange}
           transferBalanceApi={transferBalanceApi}
         />
-
       </GoMakeModal>
     </>
   );
