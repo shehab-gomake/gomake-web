@@ -247,11 +247,6 @@ const useStyle = () => {
         border: `1px solid ${secondColor(500)}`,
         color: secondColor(500),
       },
-      // activeTabContainer: {
-      //   backgroundColor: "#EBECFF",
-      //   minHeight: 48,
-      //   marginTop: 20,
-      // },
       activeTabContainer: {
         backgroundColor: "#EBECFF",
         minHeight: 48,
