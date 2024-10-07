@@ -17,7 +17,7 @@ import { SettingsIcon } from "../../../icons/settings-icon";
 import { ActionsListComponent } from "@/widgets/production-floor/filters/select/actions-select/action-list-select-component";
 import { Source } from "@/widgets/production-floor/filters/select/actions-select/use-actions-list";
 
-const ProductionFloorHeader = () => {
+const ProductionFloorHeader = ({ filterGroups, setFilterGroups }: any) => {
   const {
     view,
     setView,
@@ -94,6 +94,8 @@ const ProductionFloorHeader = () => {
       <Stack direction={"row"} gap={"5px"} alignItems={"center"}>
         {view !== EProductionFloorView.DASHBOARD && (
           <ActionsListComponent
+            filterGroups={filterGroups}
+            setFilterGroups={setFilterGroups}
             source={Source.PRODUCTION_FLOOR}
             onClickApply={onStationsChange}
             buttonElement={

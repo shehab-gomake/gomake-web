@@ -8,3 +8,8 @@ export const stationFilterGroupState = atom<IStationFilterGroup>({
     stations: [],
   },
 });
+
+export const selectedGroupIdState = atom<string>({
+  key: "selectedGroupIdState",
+  default: "",
+});

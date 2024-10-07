@@ -3,10 +3,9 @@ import {
   FormEvent,
   ReactElement,
   useCallback,
-  useEffect,
   useRef,
 } from "react";
-import { Button, Divider, FormGroup, IconButton, Paper } from "@mui/material";
+import { Button, FormGroup, Paper } from "@mui/material";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import { GomakeTextInput } from "@/components";
 import {
@@ -17,22 +16,27 @@ import { SecondaryButton } from "@/components/button/secondary-button";
 import { IStation } from "@/widgets/production-floor/interfaces/filters";
 import { ClickOutside } from "@/components/click-out-side/click-out-side";
 import { CollapseOptionComponent } from "@/widgets/production-floor/filters/select/actions-select/collapse-option-component";
-import ClearIcon from "@mui/icons-material/Clear";
 import { useStyle } from "./style";
 import { DepartmentModal } from "@/widgets/production-floor/header/components/groups/department-modal";
 import { SaveIcon } from "@/widgets/production-floor/header/components/icons/save-icon";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { useSetRecoilState } from "recoil";
+import { selectedGroupIdState } from "@/widgets/production-floor/state/filter-group";
 
 interface IProps {
   onClickApply: (v: IStation[]) => void;
   source: Source;
   buttonElement?: ReactElement;
+  filterGroups?: any;
+  setFilterGroups?: any;
 }
 
 const ActionsListComponent = ({
   onClickApply,
   source,
   buttonElement,
+  filterGroups,
+  setFilterGroups,
 }: IProps) => {
   const {
     t,
@@ -48,19 +52,15 @@ const ActionsListComponent = ({
     onClickCloseDepartmentModal,
     handleClick,
     handleClickSave,
-    filterGroups,
-    selectedGroupId,
-    setSelectedGroupId,
-    handleSelectGroup,
-    getStationFilterGroups,
-    deleteStationFilterGroupById,
     createBoardMissionStationFilterGroup,
-  } = useActionsList({ source, onClickApply });
+  } = useActionsList({ source, onClickApply, filterGroups, setFilterGroups });
 
   const { classes } = useStyle({ source });
   const { secondColor } = useGomakeTheme();
   const buttonRef = useRef<HTMLButtonElement>(null);
-
+  const setSelectedGroupId = useSetRecoilState<string | null>(
+    selectedGroupIdState
+  );
   const handleFilterChange = (event: FormEvent<HTMLInputElement>) => {
     setFilter(event.currentTarget.value);
   };
@@ -96,10 +96,6 @@ const ActionsListComponent = ({
       ref: buttonRef,
       onClick: handleClick,
     });
-
-  useEffect(() => {
-    getStationFilterGroups();
-  }, []);
 
   return (
     <div style={{ position: "relative" }}>
@@ -162,64 +158,6 @@ const ActionsListComponent = ({
                 )}
               </div>
             </div>
-
-            {filterGroups?.length !== 0 &&
-              source === Source.PRODUCTION_FLOOR && (
-                <>
-                  <Divider orientation="vertical" flexItem />
-                  <div style={classes.departmentsContainer}>
-                    <span style={classes.departmentsLabel}>
-                      {t("productionFloor.departmentName")}
-                    </span>
-                    <div
-                      style={{
-                        ...classes.departmentsContainer,
-                        maxHeight: "320px",
-                        overflow: "scroll",
-                        gap: "8px",
-                      }}
-                    >
-                      {filterGroups?.map((group) => (
-                        <div
-                          key={group?.id}
-                          onClick={() => handleSelectGroup(group?.id)}
-                          style={{
-                            ...classes.departmentTicket,
-                            backgroundColor:
-                              selectedGroupId === group?.id
-                                ? "#FFDFF2"
-                                : "white",
-                            border:
-                              selectedGroupId === group?.id
-                                ? "1px solid #ED028C"
-                                : "1px solid #ccc",
-                          }}
-                        >
-                          <span style={classes.departmentText}>
-                            {group?.name}
-                          </span>
-                          <IconButton
-                            onClick={(event) => {
-                              event.stopPropagation();
-                              deleteStationFilterGroupById(group?.id);
-                            }}
-                          >
-                            <ClearIcon
-                              style={{
-                                ...classes.clearIconStyle,
-                                color:
-                                  selectedGroupId === group?.id
-                                    ? "black"
-                                    : "#98A2B3",
-                              }}
-                            />
-                          </IconButton>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </>
-              )}
           </Paper>
         </ClickOutside>
       )}

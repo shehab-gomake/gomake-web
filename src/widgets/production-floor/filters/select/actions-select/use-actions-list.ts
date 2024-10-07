@@ -1,6 +1,6 @@
 import { productionFloorFiltersState } from "@/widgets/production-floor/state/production-floor-filters";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useRecoilState, useRecoilValue, useResetRecoilState } from "recoil";
+import { useRecoilState, useResetRecoilState } from "recoil";
 import {
   actionsListState,
   IActionMachines,
@@ -13,9 +13,7 @@ import { employeeState } from "@/store/employee-state";
 import { machinesListState } from "@/store/machines";
 import {
   createBoardMissionStationFilterGroupApi,
-  deleteStationFilterByGroupIdApi,
   getAllBoardMissionStationFilterGroupsApi,
-  getStationFilterByGroupIdApi,
 } from "@/services/api-service/board-missions/board-mission-station-filter-groups";
 import {
   IFilterGroupsList,
@@ -32,9 +30,11 @@ export enum Source {
 interface IUseActionsList {
   source: Source;
   onClickApply?: any;
+  filterGroups?: any;
+  setFilterGroups?: any;
 }
 
-const useActionsList = ({ source, onClickApply }: IUseActionsList) => {
+const useActionsList = ({ source, setFilterGroups }: IUseActionsList) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [filter, setFilter] = useState<string>();
   const [open, setOpen] = useState<boolean>(false);
@@ -212,7 +212,6 @@ const useActionsList = ({ source, onClickApply }: IUseActionsList) => {
     resetStationFilterGroup();
   };
 
-  const [filterGroups, setFilterGroups] = useState<IFilterGroupsList[]>();
   const resetStationFilterGroup = useResetRecoilState(stationFilterGroupState);
   const [stationFilterGroup, setStationFilterGroup] =
     useRecoilState<IStationFilterGroup>(stationFilterGroupState);
@@ -232,28 +231,6 @@ const useActionsList = ({ source, onClickApply }: IUseActionsList) => {
     await getAllBoardMissionStationFilterGroupsApi(callApi, callBack).then();
   };
 
-  const getStationFilterGroupById = async (id) => {
-    const callBack = (res) => {
-      if (res.success) {
-        onClickApply(res?.data?.stations);
-      }
-    };
-    await getStationFilterByGroupIdApi(callApi, callBack, {
-      groupId: id,
-    }).then();
-  };
-
-  const deleteStationFilterGroupById = async (id) => {
-    const callBack = (res) => {
-      if (res.success) {
-        getStationFilterGroups();
-      }
-    };
-    await deleteStationFilterByGroupIdApi(callApi, callBack, {
-      groupId: id,
-    }).then();
-  };
-
   const createBoardMissionStationFilterGroup = async () => {
     if (!stationFilterGroup.name.trim()) {
       alertFault(t("productionFloor.alertNoGroupName"));
@@ -266,7 +243,6 @@ const useActionsList = ({ source, onClickApply }: IUseActionsList) => {
 
     const updatedStationFilterGroup = {
       ...stationFilterGroup,
-      //stations: actionsMachinesIds,
     };
     const callBack = (res) => {
       if (res.success) {
@@ -279,18 +255,6 @@ const useActionsList = ({ source, onClickApply }: IUseActionsList) => {
       callBack,
       updatedStationFilterGroup
     ).then();
-  };
-
-  const [selectedGroupId, setSelectedGroupId] = useState<string | null>(null);
-  const handleSelectGroup = (groupId: string) => {
-    if (selectedGroupId === groupId) {
-      setSelectedGroupId(null);
-      onClickApply([]);
-      handleClick();
-    } else {
-      setSelectedGroupId(groupId);
-      getStationFilterGroupById(groupId);
-    }
   };
 
   const handleClickSave = () => {
@@ -319,15 +283,8 @@ const useActionsList = ({ source, onClickApply }: IUseActionsList) => {
     openDepartmentModal,
     onClickOpenDepartmentModal,
     onClickCloseDepartmentModal,
-    getStationFilterGroups,
-    filterGroups,
-    getStationFilterGroupById,
-    deleteStationFilterGroupById,
     createBoardMissionStationFilterGroup,
     handleClick,
-    selectedGroupId,
-    setSelectedGroupId,
-    handleSelectGroup,
     handleClickSave,
   };
 };

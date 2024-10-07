@@ -24,8 +24,20 @@ import {
 } from "./select/actions-select/use-actions-list";
 import { useTranslation } from "react-i18next";
 import { selectedChipIdsState } from "../state/text-search";
+import {
+  deleteStationFilterByGroupIdApi,
+  getAllBoardMissionStationFilterGroupsApi,
+  getStationFilterByGroupIdApi,
+} from "@/services/api-service/board-missions/board-mission-station-filter-groups";
+import { IFilterGroupsList } from "../interfaces/borad-missions-filter-groups";
+import { selectedGroupIdState } from "../state/filter-group";
 
-const useProductionFloorFilters = () => {
+interface IUseProductionFloorFiltersProps {
+  setFilterGroups?: any;
+}
+const useProductionFloorFilters = ({
+  setFilterGroups,
+}: IUseProductionFloorFiltersProps) => {
   const [filtersState, setFiltersState] = useRecoilState(
     productionFloorFiltersState
   );
@@ -230,6 +242,58 @@ const useProductionFloorFilters = () => {
     });
   };
 
+  /* Department/Group Section */
+
+  const [selectedGroupId, setSelectedGroupId] = useRecoilState<string | null>(
+    selectedGroupIdState
+  );
+  const handleSelectGroup = (groupId: string) => {
+    if (selectedGroupId === groupId) {
+      setSelectedGroupId(null);
+      onStationsChange([]);
+    } else {
+      setSelectedGroupId(groupId);
+      getStationFilterGroupById(groupId);
+    }
+  };
+
+  const getStationFilterGroupById = async (id) => {
+    const callBack = (res) => {
+      if (res.success) {
+        onStationsChange(res?.data?.stations);
+      }
+    };
+    await getStationFilterByGroupIdApi(callApi, callBack, {
+      groupId: id,
+    }).then();
+  };
+
+  const getStationFilterGroups = async () => {
+    const callBack = (res) => {
+      if (res.success) {
+        const filterGroupsList: IFilterGroupsList[] = res?.data?.map(
+          (group) => ({
+            id: group?.id,
+            name: group?.name,
+          })
+        );
+        setFilterGroups(filterGroupsList);
+      }
+    };
+    await getAllBoardMissionStationFilterGroupsApi(callApi, callBack).then();
+  };
+
+  const deleteStationFilterGroupById = async (id) => {
+    const callBack = (res) => {
+      if (res.success) {
+        getStationFilterGroups();
+      }
+    };
+    await deleteStationFilterByGroupIdApi(callApi, callBack, {
+      groupId: id,
+    }).then();
+  };
+
   return {
     t,
     dir,
@@ -263,6 +327,13 @@ const useProductionFloorFilters = () => {
     scrollContainerRef,
     groups,
     selectedChips,
+
+    handleSelectGroup,
+    selectedGroupId,
+    setSelectedGroupId,
+    getStationFilterGroups,
+    getStationFilterGroupById,
+    deleteStationFilterGroupById,
   };
 };
 
