@@ -20,6 +20,7 @@ import { fetchS3JsonContent } from "@/utils/S3Content";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import { IFilterGroupsList } from "../interfaces/borad-missions-filter-groups";
 import ClearIcon from "@mui/icons-material/Clear";
+import { useStyle } from "./style";
 
 interface CustomCardProps {
   label: string;
@@ -33,10 +34,11 @@ interface CustomCardProps {
 
 interface CustomGroupsProps {
   dir?: string;
-  onClick?: () => void;
-  isSelected?: boolean;
-  onClickDelete?: (v) => void;
-  group?: IFilterGroupsList;
+  onClick: () => void;
+  isSelected: boolean;
+  onClickDelete: (v) => void;
+  group: IFilterGroupsList;
+  isFromMenu?: boolean;
 }
 
 const CustomIconButton = styled(IconButton)(({ theme }) => ({
@@ -76,31 +78,33 @@ const CustomCard = styled(Card)<{ isSelected?: boolean; color: string }>(
   })
 );
 
-const CustomGroup = styled(Card)<{ isSelected?: boolean; color: string }>(
-  ({ isSelected, color }) => ({
-    border: isSelected ? `none` : `1.5px solid ${color}`,
-    backgroundColor: isSelected ? color : toRgba(color, 0.1),
-    borderRadius: "4px",
-    transition: "background-color 0.3s ease, border 0.3s ease",
-    cursor: "pointer",
-    boxShadow: "0px 1px 2px rgba(16, 24, 40, 0.05)",
-    padding: "0px",
-    height: "35px",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    width: "fit-content",
-    maxWidth: "250px",
-    "&:hover": {
-      boxShadow: "0px 2px 4px rgba(16, 24, 40, 0.1)",
-    },
-  })
-);
+const CustomGroup = styled(Card)<{
+  isSelected?: boolean;
+  color: string;
+  isFromMenu: boolean;
+}>(({ isSelected, color, isFromMenu }) => ({
+  border: isSelected ? `none` : `1.5px solid ${color}`,
+  backgroundColor: isSelected ? color : toRgba(color, 0.1),
+  borderRadius: "4px",
+  transition: "background-color 0.3s ease, border 0.3s ease",
+  cursor: "pointer",
+  boxShadow: "0px 1px 2px rgba(16, 24, 40, 0.05)",
+  padding: "0px",
+  height: "35px",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "space-between",
+  width: isFromMenu ? "100%" : "fit-content",
+  maxWidth: "250px",
+  "&:hover": {
+    boxShadow: "0px 2px 4px rgba(16, 24, 40, 0.1)",
+  },
+}));
 
 const Circle = styled(Box)<{ numColor: string; dir: string }>(
   ({ numColor, dir }) => ({
-    width: "16px",
-    height: "16px",
+    width: "18px",
+    height: "18px",
     borderRadius: "50%",
     display: "flex",
     justifyContent: "center",
@@ -111,6 +115,9 @@ const Circle = styled(Box)<{ numColor: string; dir: string }>(
     fontSize: 12,
     fontWeight: 600,
     color: numColor,
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    whiteSpace: "nowrap",
   })
 );
 
@@ -174,9 +181,15 @@ const CustomGroupComponent = ({
   isSelected,
   group,
   dir,
+  isFromMenu,
 }: CustomGroupsProps) => {
   return (
-    <CustomGroup onClick={onClick} isSelected={isSelected} color={group?.color}>
+    <CustomGroup
+      onClick={onClick}
+      isSelected={isSelected}
+      color={group?.color}
+      isFromMenu={isFromMenu}
+    >
       <CardContent
         sx={{
           display: "flex",
@@ -227,9 +240,9 @@ const CustomGroupComponent = ({
 };
 
 const ProductionFloorFilters = ({ filterGroups, getStationFilterGroups }) => {
+  const { classes } = useStyle();
   const { tagsList } = filtersInputs();
   const [containerWidth, setContainerWidth] = useState(0);
-
   const {
     t,
     dir,
@@ -255,6 +268,10 @@ const ProductionFloorFilters = ({ filterGroups, getStationFilterGroups }) => {
     setHiddenCards,
     scrollContainerRef,
     selectedChips,
+    visibleFilterGroups,
+    setVisibleFilterGroups,
+    hiddenFilterGroups,
+    setHiddenFilterGroups,
     handleSelectGroup,
     selectedGroupId,
     deleteStationFilterGroupById,
@@ -300,7 +317,6 @@ const ProductionFloorFilters = ({ filterGroups, getStationFilterGroups }) => {
         } = item;
 
         machineNames.forEach((machineName, index) => {
-          // important
           const cardWidth = 240;
 
           totalWidth += cardWidth;
@@ -321,14 +337,39 @@ const ProductionFloorFilters = ({ filterGroups, getStationFilterGroups }) => {
     }
   }, [actionsMachinesIds, containerWidth]);
 
+  useEffect(() => {
+    if (scrollContainerRef.current) {
+      let totalWidth = 0;
+      const visible: IFilterGroupsList[] = [];
+      const hidden: IFilterGroupsList[] = [];
+
+      filterGroups.forEach((item) => {
+        const {
+          id = "Unknown ID",
+          name = "Unknown Name",
+          inProcessCount = 0,
+          stuckCount = 0,
+          color = "#7355de",
+        } = item;
+
+        const cardWidth = 240;
+
+        totalWidth += cardWidth;
+
+        if (totalWidth <= containerWidth) {
+          visible.push({ id, name, inProcessCount, stuckCount, color });
+        } else {
+          hidden.push({ id, name, inProcessCount, stuckCount, color });
+        }
+      });
+
+      setVisibleFilterGroups(visible);
+      setHiddenFilterGroups(hidden);
+    }
+  }, [filterGroups, containerWidth]);
+
   return (
-    <Stack
-      direction={"row"}
-      padding={"12px 0"}
-      style={{ backgroundColor: "#FFF" }}
-      alignItems={"center"}
-      gap={"20px"}
-    >
+    <Stack style={classes.headerFilterContainer}>
       <SearchInputComponent
         bgColor={"#F8F8F8"}
         value={search}
@@ -349,24 +390,7 @@ const ProductionFloorFilters = ({ filterGroups, getStationFilterGroups }) => {
         onChange={onSelectCreateDates}
         placeholder={t("productionFloor.createTime")}
       />
-      <Box
-        ref={scrollContainerRef}
-        sx={{
-          width: "60%",
-          maxHeight: "100px",
-          maxWidth: "60%",
-          overflowX: "scroll",
-          overflowY: "scroll",
-          display: "flex",
-          flexWrap: "nowrap",
-          gap: "5px",
-          whiteSpace: "nowrap",
-          borderRadius: "4px",
-          backgroundColor: "#FFF",
-          alignItems: "center",
-          justifyContent: "flex-end",
-        }}
-      >
+      <Box ref={scrollContainerRef} sx={classes.filtersCardBox}>
         {filterGroups?.length === 0 &&
           visibleCards?.map((card, index) => (
             <CustomCardComponent
@@ -380,7 +404,6 @@ const ProductionFloorFilters = ({ filterGroups, getStationFilterGroups }) => {
               filters={filters}
             />
           ))}
-
         {filterGroups?.length === 0 && hiddenCards.length > 0 && (
           <>
             <CustomIconButton onClick={handleMoreClick}>
@@ -423,9 +446,7 @@ const ProductionFloorFilters = ({ filterGroups, getStationFilterGroups }) => {
             </Menu>
           </>
         )}
-
-        {/* //!new */}
-        {filterGroups?.map((group, index) => (
+        {visibleFilterGroups?.map((group, index) => (
           <CustomGroupComponent
             dir={dir}
             key={index}
@@ -436,8 +457,53 @@ const ProductionFloorFilters = ({ filterGroups, getStationFilterGroups }) => {
               deleteStationFilterGroupById(group?.id);
             }}
             isSelected={selectedGroupId === group?.id ? true : false}
+            isFromMenu={false}
           />
         ))}
+        {hiddenFilterGroups.length > 0 && (
+          <>
+            <CustomIconButton onClick={handleMoreClick}>
+              <MoreHorizIcon />
+            </CustomIconButton>
+            <Menu
+              transformOrigin={{
+                horizontal: isRTL ? "left" : "right",
+                vertical: "top",
+              }}
+              anchorOrigin={{
+                horizontal: isRTL ? "left" : "right",
+                vertical: "bottom",
+              }}
+              PaperProps={{
+                style: {
+                  marginTop: 8,
+                  padding: "0px 8px",
+                  maxHeight: "438px",
+                },
+              }}
+              anchorEl={anchorEl}
+              open={Boolean(anchorEl)}
+              onClose={handleClose}
+            >
+              <Stack spacing={1}>
+                {hiddenFilterGroups?.map((group, index) => (
+                  <CustomGroupComponent
+                    dir={dir}
+                    key={index}
+                    group={group}
+                    onClick={() => handleSelectGroup(group?.id)}
+                    onClickDelete={(event) => {
+                      event.stopPropagation();
+                      deleteStationFilterGroupById(group?.id);
+                    }}
+                    isSelected={selectedGroupId === group?.id ? true : false}
+                    isFromMenu={true}
+                  />
+                ))}
+              </Stack>
+            </Menu>
+          </>
+        )}
       </Box>
     </Stack>
   );

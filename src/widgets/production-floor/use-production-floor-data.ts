@@ -234,7 +234,7 @@ const useProductionFloorData = () => {
             name: group?.name,
             color: group?.color || "#7355de",
             stuckCount: group?.stuckCount,
-            inProcessCount: 11,
+            inProcessCount: group?.inProcessCount,
           })
         );
         setFilterGroups(filterGroupsList);

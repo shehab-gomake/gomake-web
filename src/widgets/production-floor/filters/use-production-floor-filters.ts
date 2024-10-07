@@ -29,6 +29,7 @@ import {
   getStationFilterByGroupIdApi,
 } from "@/services/api-service/board-missions/board-mission-station-filter-groups";
 import { selectedGroupIdState } from "../state/filter-group";
+import { IFilterGroupsList } from "../interfaces/borad-missions-filter-groups";
 
 interface IUseProductionFloorFiltersProps {
   getStationFilterGroups?: any;
@@ -60,6 +61,13 @@ const useProductionFloorFilters = ({
   const [hiddenCards, setHiddenCards] = useState<
     { label: string; machineId: string }[]
   >([]);
+  const [visibleFilterGroups, setVisibleFilterGroups] = useState<
+    IFilterGroupsList[]
+  >([]);
+  const [hiddenFilterGroups, setHiddenFilterGroups] = useState<
+    IFilterGroupsList[]
+  >([]);
+
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const filters = useRecoilValue(productionFloorFiltersState);
   const [machinesColors, setMachinesColors] = useState([]);
@@ -310,7 +318,10 @@ const useProductionFloorFilters = ({
     scrollContainerRef,
     groups,
     selectedChips,
-
+    visibleFilterGroups,
+    setVisibleFilterGroups,
+    hiddenFilterGroups,
+    setHiddenFilterGroups,
     handleSelectGroup,
     selectedGroupId,
     setSelectedGroupId,
