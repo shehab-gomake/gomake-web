@@ -26,17 +26,15 @@ import { useTranslation } from "react-i18next";
 import { selectedChipIdsState } from "../state/text-search";
 import {
   deleteStationFilterByGroupIdApi,
-  getAllBoardMissionStationFilterGroupsApi,
   getStationFilterByGroupIdApi,
 } from "@/services/api-service/board-missions/board-mission-station-filter-groups";
-import { IFilterGroupsList } from "../interfaces/borad-missions-filter-groups";
 import { selectedGroupIdState } from "../state/filter-group";
 
 interface IUseProductionFloorFiltersProps {
-  setFilterGroups?: any;
+  getStationFilterGroups?: any;
 }
 const useProductionFloorFilters = ({
-  setFilterGroups,
+  getStationFilterGroups,
 }: IUseProductionFloorFiltersProps) => {
   const [filtersState, setFiltersState] = useRecoilState(
     productionFloorFiltersState
@@ -266,21 +264,6 @@ const useProductionFloorFilters = ({
     await getStationFilterByGroupIdApi(callApi, callBack, {
       groupId: id,
     }).then();
-  };
-
-  const getStationFilterGroups = async () => {
-    const callBack = (res) => {
-      if (res.success) {
-        const filterGroupsList: IFilterGroupsList[] = res?.data?.map(
-          (group) => ({
-            id: group?.id,
-            name: group?.name,
-          })
-        );
-        setFilterGroups(filterGroupsList);
-      }
-    };
-    await getAllBoardMissionStationFilterGroupsApi(callApi, callBack).then();
   };
 
   const deleteStationFilterGroupById = async (id) => {

@@ -18,11 +18,6 @@ import { toRgba } from "@/utils/helpers";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { fetchS3JsonContent } from "@/utils/S3Content";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
-import {
-  deleteStationFilterByGroupIdApi,
-  getAllBoardMissionStationFilterGroupsApi,
-  getStationFilterByGroupIdApi,
-} from "@/services/api-service/board-missions/board-mission-station-filter-groups";
 import { IFilterGroupsList } from "../interfaces/borad-missions-filter-groups";
 import ClearIcon from "@mui/icons-material/Clear";
 
@@ -37,14 +32,11 @@ interface CustomCardProps {
 }
 
 interface CustomGroupsProps {
-  label: string;
+  dir?: string;
   onClick?: () => void;
   isSelected?: boolean;
-  dir?: string;
   onClickDelete?: (v) => void;
-
-  machineId?: string;
-  getColorByMachineId?: any;
+  group?: IFilterGroupsList;
 }
 
 const CustomIconButton = styled(IconButton)(({ theme }) => ({
@@ -86,10 +78,8 @@ const CustomCard = styled(Card)<{ isSelected?: boolean; color: string }>(
 
 const CustomGroup = styled(Card)<{ isSelected?: boolean; color: string }>(
   ({ isSelected, color }) => ({
-    border: isSelected ? `1px solid #ED028C` : `1px solid #ccc`,
-    backgroundColor: isSelected ? "#FFDFF2" : "#ffffff",
-    // border: isSelected ? `none` : `1.5px solid ${color}`,
-    //backgroundColor: isSelected ? color : toRgba(color, 0.1),
+    border: isSelected ? `none` : `1.5px solid ${color}`,
+    backgroundColor: isSelected ? color : toRgba(color, 0.1),
     borderRadius: "4px",
     transition: "background-color 0.3s ease, border 0.3s ease",
     cursor: "pointer",
@@ -115,7 +105,6 @@ const Circle = styled(Box)<{ numColor: string; dir: string }>(
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    // border: `0.5px solid ${borderColor}`,
     backgroundColor: "#ffffff",
     marginLeft: dir === "rtl" ? 0 : 4,
     marginRight: dir === "rtl" ? 4 : 0,
@@ -180,54 +169,64 @@ const CustomCardComponent = ({
 };
 
 const CustomGroupComponent = ({
-  label,
   onClick,
   onClickDelete,
   isSelected,
-  machineId,
-  getColorByMachineId,
+  group,
+  dir,
 }: CustomGroupsProps) => {
-  const color = getColorByMachineId(machineId);
-
   return (
-    <CustomGroup onClick={onClick} isSelected={isSelected} color={color}>
+    <CustomGroup onClick={onClick} isSelected={isSelected} color={group?.color}>
       <CardContent
         sx={{
           display: "flex",
           alignItems: "center",
+          gap: "10px",
           justifyContent: "space-between",
-          padding: "10px !important",
+          padding:
+            dir === "ltr"
+              ? "0px 5px 0px 0px !important"
+              : "0px 0px 0px 5px !important",
           width: "100%",
         }}
       >
-        <Typography
-          variant="subtitle2"
-          sx={{
-            // color: isSelected ? "#FFF" : color,
-            ...FONT_FAMILY.Inter(400, 14),
-            overflow: "hidden",
-            whiteSpace: "nowrap",
-            textOverflow: "ellipsis",
-          }}
-        >
-          {label}
-        </Typography>
-
-        <IconButton onClick={onClickDelete}>
-          <ClearIcon
-            style={{
-              cursor: "pointer",
-              fontSize: "14px",
-              color: isSelected ? "black" : "#98A2B3",
+        <Box sx={{ display: "flex", alignItems: "center" }}>
+          <IconButton onClick={onClickDelete}>
+            <ClearIcon
+              style={{
+                cursor: "pointer",
+                fontSize: "14px",
+                color: isSelected ? "#FFF" : group?.color,
+              }}
+            />
+          </IconButton>
+          <Typography
+            variant="subtitle2"
+            sx={{
+              color: isSelected ? "#FFF" : group?.color,
+              ...FONT_FAMILY.Inter(400, 14),
+              overflow: "hidden",
+              whiteSpace: "nowrap",
+              textOverflow: "ellipsis",
             }}
-          />
-        </IconButton>
+          >
+            {group?.name}
+          </Typography>
+        </Box>
+        <Box sx={{ display: "flex" }}>
+          <Circle numColor="#E7D000" dir={dir}>
+            {group?.inProcessCount}
+          </Circle>
+          <Circle numColor="#D92D20" dir={dir}>
+            {group?.stuckCount}
+          </Circle>
+        </Box>
       </CardContent>
     </CustomGroup>
   );
 };
 
-const ProductionFloorFilters = ({ filterGroups, setFilterGroups }) => {
+const ProductionFloorFilters = ({ filterGroups, getStationFilterGroups }) => {
   const { tagsList } = filtersInputs();
   const [containerWidth, setContainerWidth] = useState(0);
 
@@ -256,11 +255,10 @@ const ProductionFloorFilters = ({ filterGroups, setFilterGroups }) => {
     setHiddenCards,
     scrollContainerRef,
     selectedChips,
-
     handleSelectGroup,
     selectedGroupId,
     deleteStationFilterGroupById,
-  } = useProductionFloorFilters({ setFilterGroups });
+  } = useProductionFloorFilters({ getStationFilterGroups });
 
   useEffect(() => {
     const fetchMachinesColors = async () => {
@@ -370,7 +368,7 @@ const ProductionFloorFilters = ({ filterGroups, setFilterGroups }) => {
         }}
       >
         {filterGroups?.length === 0 &&
-          visibleCards.map((card, index) => (
+          visibleCards?.map((card, index) => (
             <CustomCardComponent
               dir={dir}
               key={index}
@@ -409,7 +407,7 @@ const ProductionFloorFilters = ({ filterGroups, setFilterGroups }) => {
               onClose={handleClose}
             >
               <Stack spacing={1}>
-                {hiddenCards.map((card, index) => (
+                {hiddenCards?.map((card, index) => (
                   <CustomCardComponent
                     dir={dir}
                     key={index}
@@ -431,15 +429,13 @@ const ProductionFloorFilters = ({ filterGroups, setFilterGroups }) => {
           <CustomGroupComponent
             dir={dir}
             key={index}
-            label={group?.name}
+            group={group}
             onClick={() => handleSelectGroup(group?.id)}
             onClickDelete={(event) => {
               event.stopPropagation();
               deleteStationFilterGroupById(group?.id);
             }}
             isSelected={selectedGroupId === group?.id ? true : false}
-            machineId={group?.id}
-            getColorByMachineId={getColorByMachineId}
           />
         ))}
       </Box>

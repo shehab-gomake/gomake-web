@@ -223,6 +223,9 @@ const useActionsList = ({ source, setFilterGroups }: IUseActionsList) => {
           (group) => ({
             id: group?.id,
             name: group?.name,
+            color: group?.color || "#7355de",
+            stuckCount: group?.stuckCount,
+            inProcessCount: 11,
           })
         );
         setFilterGroups(filterGroupsList);

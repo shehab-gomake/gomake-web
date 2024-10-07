@@ -224,7 +224,7 @@ const useProductionFloorData = () => {
     setOpenPackagesModal(false);
   };
 
-  const [filterGroups, setFilterGroups] = useState<IFilterGroupsList[]>();
+  const [filterGroups, setFilterGroups] = useState<IFilterGroupsList[]>([]);
   const getStationFilterGroups = async () => {
     const callBack = (res) => {
       if (res.success) {
@@ -232,6 +232,9 @@ const useProductionFloorData = () => {
           (group) => ({
             id: group?.id,
             name: group?.name,
+            color: group?.color || "#7355de",
+            stuckCount: group?.stuckCount,
+            inProcessCount: 11,
           })
         );
         setFilterGroups(filterGroupsList);

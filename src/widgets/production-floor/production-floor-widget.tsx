@@ -68,7 +68,7 @@ const ProductionFloorWidget = () => {
       {view !== EProductionFloorView.DASHBOARD && (
         <ProductionFloorFilters
           filterGroups={filterGroups}
-          setFilterGroups={setFilterGroups}
+          getStationFilterGroups={getStationFilterGroups}
         />
       )}
       <Stack overflow={"auto"} maxHeight={"100%"}>

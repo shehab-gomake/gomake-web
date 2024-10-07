@@ -1,16 +1,11 @@
 import { IStation } from "./filters";
 
-// export interface IFilterGroupsList {
-//   id: string;
-//   name: string;
-// }
-
 export interface IFilterGroupsList {
   id: string;
   name: string;
-  inProcessCount: number;
-  stuckCount: number;
-  color: string | null;
+  inProcessCount?: number;
+  stuckCount?: number;
+  color?: string | null;
 }
 
 export interface IStationFilterGroup {
