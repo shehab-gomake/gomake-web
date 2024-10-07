@@ -21,9 +21,10 @@ export interface IProps {
     selectedDialogId?: string;
     onClickAddDialog: () => void;
     isMobile?: boolean;
+    canAddNewDialog: boolean;
 }
 
-const DialogList = ({onSelectDialog, dialogs, selectedDialogId, onClickAddDialog, isMobile,}: IProps) => {
+const DialogList = ({onSelectDialog, dialogs, selectedDialogId, onClickAddDialog, isMobile, canAddNewDialog}: IProps) => {
     const [filter, setFilter] = useState<string>('');
     const {t} = useTranslation();
     const {primaryColor} = useGomakeTheme();
@@ -45,7 +46,7 @@ const DialogList = ({onSelectDialog, dialogs, selectedDialogId, onClickAddDialog
                        justifyContent={isMobile ? 'center' : 'flex-start'} width={'100%'}>
                     <h3 style={{color: primaryColor(600), ...FONT_FAMILY.Lexend(600, 24)}}>{t('messenger.dialogsTitle')}</h3>
                 </Stack>
-                {!isMobile && <IconButton onClick={onClickAddDialog} style={{
+                {canAddNewDialog && <IconButton onClick={onClickAddDialog} style={{
                     backgroundColor: 'none',
                     color: primaryColor(600),
                     height: 30,

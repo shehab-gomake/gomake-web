@@ -1,5 +1,4 @@
 import { ProfileAvatar } from "@/widgets/settings-profile-widget/components/avatar/profile-avatar";
-import { useEffect } from "react";
 import Stack from "@mui/material/Stack";
 import { IInput } from "@/widgets/machines/utils/interfaces-temp/inputs-interfaces";
 import { SecondaryButton } from "@/components/button/secondary-button";
@@ -15,8 +14,15 @@ import { PermissionCheck } from "@/components/CheckPermission";
 import { Permissions } from "@/components/CheckPermission/enum";
 import DaysOfWork from "./working-days/working-days";
 import { companyCommunicationInputs } from "./inputs/company-communication-inputs copy";
+import { FONT_FAMILY } from "@/utils/font-family";
 
-const CompanyProfileComponent = () => {
+interface ICompanyProfileComponentProps {
+  taxLoginUrl: string;
+}
+
+const CompanyProfileComponent = ({
+  taxLoginUrl,
+}: ICompanyProfileComponentProps) => {
   const { t } = useTranslation();
   const {
     profileChange,
@@ -57,30 +63,83 @@ const CompanyProfileComponent = () => {
       inputs: companyCommunicationInputs(profile),
       title: "profileSettings.smsAndEmails",
     },
+    ...(taxLoginUrl
+      ? [
+          {
+            inputs: [],
+            title: "profileSettings.taxAuthority",
+          },
+        ]
+      : []),
   ];
 
   return (
     <div style={{ paddingBottom: 2, paddingTop: "40px", position: "relative" }}>
       <Stack direction={"row"} gap={"57px"}>
         <div>
-          <ProfileAvatar onUploadImage={changeCompanyLoginImage} src={profile.loginLogo} title={t("profileSettings.loginLogo")} />
+          <ProfileAvatar
+            onUploadImage={changeCompanyLoginImage}
+            src={profile.loginLogo}
+            title={t("profileSettings.loginLogo")}
+          />
         </div>
         <div>
-          <ProfileAvatar onUploadImage={changeCompanyProfileImage} src={profile.logo} title={t("profileSettings.companyLogo")} />
+          <ProfileAvatar
+            onUploadImage={changeCompanyProfileImage}
+            src={profile.logo}
+            title={t("profileSettings.companyLogo")}
+          />
         </div>
       </Stack>
       <Stack direction={"column"} gap={"32px"} paddingTop={"44px"}>
         {formSections.map((section) => {
+          if (
+            section.title === "profileSettings.taxAuthority" &&
+            !taxLoginUrl
+          ) {
+            return null;
+          }
+
           return (
-            <FormInputsSectionComponent sectionTitle={section.title}>
-              {section.inputs.map((companyInput) => (
-                <FormInput
-                  key={companyInput.parameterKey}
-                  input={companyInput as IInput}
-                  changeState={changeState}
-                  error={false}
-                />
-              ))}
+            <FormInputsSectionComponent
+              sectionTitle={section.title}
+              key={section.title}
+            >
+              {section.title === "profileSettings.taxAuthority" ? (
+                <SecondaryButton
+                  variant="outlined"
+                  onClick={() => window.open(taxLoginUrl, "_blank")}
+                >
+                  {t("login.login")}
+                </SecondaryButton>
+              ) : (
+                section.inputs.map((companyInput) => (
+                  <div key={companyInput.parameterKey}>
+                    <FormInput
+                      input={companyInput as IInput}
+                      changeState={changeState}
+                      error={false}
+                    />
+
+                    {companyInput.parameterKey === "mailServiceEmail" && (
+                      <div
+                        style={{
+                          marginTop: "10px",
+                          padding: "0px 5px",
+                          ...FONT_FAMILY.Inter(600, 13),
+                          color: profile.isSendGridVerificated
+                            ? "green"
+                            : "red",
+                        }}
+                      >
+                        {profile.isSendGridVerificated
+                          ? t("usersSettings.emailVerified")
+                          : t("usersSettings.emailNotVerified")}
+                      </div>
+                    )}
+                  </div>
+                ))
+              )}
               {section.title === "profileSettings.company" && (
                 <DaysOfWork
                   options={daysOfWork}
@@ -92,7 +151,6 @@ const CompanyProfileComponent = () => {
             </FormInputsSectionComponent>
           );
         })}
-        <div>{profile.isSendGridVerificated ? "Service Email Verified" : "Service Email Not Verified!"}</div>
       </Stack>
       <div
         style={{

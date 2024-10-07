@@ -9,7 +9,8 @@ const SendBtnMenu = ({
   anchorEl,
   onClickSendQuoteToClient,
   onClickOpenWhatsAppModal,
-  documentState
+  documentState,
+  setIsWhatsAppWeb,
 }) => {
   const { t } = useTranslation();
 
@@ -20,10 +21,11 @@ const SendBtnMenu = ({
       anchorEl={anchorEl}
       style={{ marginTop: -45 }}
       sx={{
-        '& .MuiPaper-root': {
-          border: '1px solid #cbcbe4', 
-          borderRadius:"8px"
-        }}}
+        "& .MuiPaper-root": {
+          border: "1px solid #cbcbe4",
+          borderRadius: "8px",
+        },
+      }}
     >
       {documentState.isSendMails && (
         <MenuItem
@@ -47,10 +49,11 @@ const SendBtnMenu = ({
       )}
       {documentState.isSendWhatsapp && (
         <MenuItem
-        // onClick={() => {
-        //   onClickOpenWhatsAppModal();
-        //   handleClose();
-        // }}
+          onClick={() => {
+            onClickOpenWhatsAppModal();
+            setIsWhatsAppWeb(false);
+            handleClose();
+          }}
         >
           {t("sales.quote.whatsApp")}
         </MenuItem>
@@ -59,6 +62,7 @@ const SendBtnMenu = ({
         <MenuItem
           onClick={() => {
             onClickOpenWhatsAppModal();
+            setIsWhatsAppWeb(true);
             handleClose();
           }}
         >

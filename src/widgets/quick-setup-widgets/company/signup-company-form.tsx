@@ -13,7 +13,16 @@ import { defaultCountries } from "react-international-phone";
 import { useCallback, useState } from "react";
 const SignUpCompanyForm = ({ isMobile }: any) => {
   const { t } = useTranslation();
-  const { state, onChange, onclickNext, loading, countryList, currencies, languages, checkPrintHouseDomain } = useCompanyForm();
+  const {
+    state,
+    onChange,
+    onclickNext,
+    loading,
+    countryList,
+    currencies,
+    languages,
+    checkPrintHouseDomain,
+  } = useCompanyForm();
   const { classes } = useStyle();
   const [lastCheckedDomain, setLastCheckedDomain] = useState("");
 
@@ -29,7 +38,9 @@ const SignUpCompanyForm = ({ isMobile }: any) => {
   );
 
   const renderPhone = useCallback(() => {
-    const countryData = defaultCountries.find((item) => item[0] === state?.country?.name)?.[1];
+    const countryData = defaultCountries.find(
+      (item) => item[0] === state?.country?.name
+    )?.[1];
     return (
       <PhoneInput
         country={countryData}
@@ -43,10 +54,14 @@ const SignUpCompanyForm = ({ isMobile }: any) => {
   }, [state.country, state.phone]);
 
   return (
-    <Stack gap={"12px"} alignItems={"flex-start"} >
+    <Stack gap={"12px"} alignItems={"flex-start"}>
       <NewLogo />
-      <div style={isMobile ? classes.signUpMobileStyle : classes.signUpStyle}>Sign up</div>
-      <div style={isMobile ? classes.subTitleMobileStyle : classes.subTitleStyle}>
+      <div style={isMobile ? classes.signUpMobileStyle : classes.signUpStyle}>
+        Sign up
+      </div>
+      <div
+        style={isMobile ? classes.subTitleMobileStyle : classes.subTitleStyle}
+      >
         Please enter the following details to create account.
       </div>
       <Stack gap={"24px"} width={"100%"}>
@@ -67,7 +82,11 @@ const SignUpCompanyForm = ({ isMobile }: any) => {
           placeholder={t("signup.companyName")}
           value={state.name}
         />
-        <Stack direction={"row"} alignItems={"center"} style={{ position: "relative" }}>
+        <Stack
+          direction={"row"}
+          alignItems={"center"}
+          style={{ position: "relative" }}
+        >
           <GomakeTextInput
             onChange={(e) => onChange("domain", e.target.value)}
             style={classes.input}
@@ -107,13 +126,19 @@ const SignUpCompanyForm = ({ isMobile }: any) => {
           placeholder={t("signup.defaultCurrency")}
           style={classes.dropDownList}
         />
-        <p style={isMobile ? classes.privacyPolicyMobileStyle : classes.privacyPolicyStyle} >
-          By clicking Create Account, you agree to our{' '}
+        <p
+          style={
+            isMobile
+              ? classes.privacyPolicyMobileStyle
+              : classes.privacyPolicyStyle
+          }
+        >
+          By clicking Create Account, you agree to our{" "}
           <a
             href="https://gomake-contents.s3.eu-west-3.amazonaws.com/Website+Privacy+Notice+-GoMake+(incl+GDPR).pdf"
             target="_blank"
             rel="noopener noreferrer"
-            style={{ color: '#2e3092' }}
+            style={{ color: "#2e3092" }}
           >
             <u>Privacy Policy</u>
           </a>
@@ -121,7 +146,11 @@ const SignUpCompanyForm = ({ isMobile }: any) => {
         </p>
       </Stack>
       <PrimaryButton
-        endIcon={loading && <CircularProgress style={{ width: "20px", height: "20px" }} />}
+        endIcon={
+          loading && (
+            <CircularProgress style={{ width: "20px", height: "20px" }} />
+          )
+        }
         onClick={() => onclickNext()}
         style={classes.nextButton}
         disabled={loading}

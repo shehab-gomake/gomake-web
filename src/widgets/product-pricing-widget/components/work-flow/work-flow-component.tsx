@@ -20,7 +20,7 @@ import { useRecoilState } from "recoil";
 import { actionListForWorkFlow } from "@/store";
 import { PermissionCheck } from "@/components/CheckPermission";
 import { Permissions } from "@/components/CheckPermission/enum";
-import {EWidgetProductType} from "@/pages-components/products/digital-offset-price/enums";
+import { EWidgetProductType } from "@/pages-components/products/digital-offset-price/enums";
 
 interface IWorkFlowComponentProps extends ICalculatedWorkFlow {
     delay: number;
@@ -31,7 +31,7 @@ interface IWorkFlowComponentProps extends ICalculatedWorkFlow {
     setSelectedWorkFlowId?: any
     isOpen?: boolean;
     toggleOpen?: (id: string) => void;
-    widgetType:EWidgetProductType;
+    widgetType: EWidgetProductType;
 }
 
 interface IWorksFlowsProps {
@@ -40,7 +40,7 @@ interface IWorksFlowsProps {
     getWorkFlowsActions?: any
     selectedWorkFlowId?: any,
     setSelectedWorkFlowId?: any
-    widgetType:EWidgetProductType;
+    widgetType: EWidgetProductType;
 }
 
 const WorkFlowComponent = ({
@@ -94,7 +94,7 @@ const WorkFlowComponent = ({
             key: "totalPrice",
             valueColor: secondColor(500),
         },
-    ]
+    ].filter((item) => selected || !['totalPrice', 'profit'].includes(item.key));
     return (
         <>
             <Fade in={true} timeout={delay}>
@@ -144,7 +144,7 @@ const WorkFlowComponent = ({
     )
 };
 
-const WorkFlowsComponent = ({ workflows, showSelected, getWorkFlowsActions, selectedWorkFlowId, setSelectedWorkFlowId,widgetType }: IWorksFlowsProps) => {
+const WorkFlowsComponent = ({ workflows, showSelected, getWorkFlowsActions, selectedWorkFlowId, setSelectedWorkFlowId, widgetType }: IWorksFlowsProps) => {
     const [openWorkFlowId, setOpenWorkFlowId] = useState<string | null>(null);
     const toggleOpen = (id: string) => {
         setOpenWorkFlowId(prevId => (prevId === id ? null : id));

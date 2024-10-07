@@ -34,18 +34,17 @@ const RowMappingWidget = ({
   isQuoteConfirmation = false,
   isPrePaymentPage,
   onChangeSelectedItemRowForQoute,
-  quoteItems
+  quoteItems,
 }) => {
-
   const router = useRouter();
   const { classes } = useStyle({ headerHeight });
   const [isConfirmation, setIsConfirmation] = useState(null);
   const [isSelected, setIsSelected] = useState(item?.isSelected);
   const { getCurrencyUnitText } = useQuoteGetData();
   const handleChangeSelectedItem = (checked, itemId) => {
-    setIsSelected(checked)
-    onChangeSelectedItemRowForQoute(checked, itemId)
-  }
+    setIsSelected(checked);
+    onChangeSelectedItemRowForQoute(checked, itemId);
+  };
   const {
     t,
     isUpdateAmount,
@@ -74,13 +73,30 @@ const RowMappingWidget = ({
   const { handleItemCheck } = useQuoteConfirmation();
   const quoteConfirm = useRecoilValue<any>(quoteConfirmationState);
   const isQuote = documentType === DOCUMENT_TYPE.quote;
-  const isDeliveryNote = documentType === DOCUMENT_TYPE.deliveryNote || documentType === DOCUMENT_TYPE.deliveryNoteRefund;
-  const isInvoice = documentType === DOCUMENT_TYPE.invoice || documentType === DOCUMENT_TYPE.invoiceRefund;
+  const isDeliveryNote =
+    documentType === DOCUMENT_TYPE.deliveryNote ||
+    documentType === DOCUMENT_TYPE.deliveryNoteRefund;
+  const isInvoice =
+    documentType === DOCUMENT_TYPE.invoice ||
+    documentType === DOCUMENT_TYPE.invoiceRefund;
 
   const canUpdate = router.query.isNewCreation ? true : item?.isEditable;
-  const canUpdatePrices = router.query.isNewCreation ? true : (item?.isEditable && CheckDocumentPermission(documentType, DocumentPermission.UPDATE_DOCUMENT_ITEM_PRICES));
-  const canUpdateDeliveryPrices = router.query.isNewCreation ? true : (item?.isEditable && CheckDocumentPermission(documentType, DocumentPermission.UPDATE_DOCUMENT_DELIVERY_ITEM_PRICES));
-  const canUpdatePricesBasedOnType = item?.productType === 1 ? canUpdateDeliveryPrices : canUpdatePrices;
+  const canUpdatePrices = router.query.isNewCreation
+    ? true
+    : item?.isEditable &&
+      CheckDocumentPermission(
+        documentType,
+        DocumentPermission.UPDATE_DOCUMENT_ITEM_PRICES
+      );
+  const canUpdateDeliveryPrices = router.query.isNewCreation
+    ? true
+    : item?.isEditable &&
+      CheckDocumentPermission(
+        documentType,
+        DocumentPermission.UPDATE_DOCUMENT_DELIVERY_ITEM_PRICES
+      );
+  const canUpdatePricesBasedOnType =
+    item?.productType === 1 ? canUpdateDeliveryPrices : canUpdatePrices;
 
   return (
     <TableRow
@@ -96,8 +112,11 @@ const RowMappingWidget = ({
           borderBottom: item?.childsDocumentItems && "none",
         }}
       >
-        {(!isPrePaymentPage && isQuoteConfirmation && (!quoteConfirm?.isConfirmed && quoteConfirm?.documentStatus !== QUOTE_STATUSES.Canceled)) ?
-          <div style={classes.checkBoxContainer} >
+        {!isPrePaymentPage &&
+        isQuoteConfirmation &&
+        !quoteConfirm?.isConfirmed &&
+        quoteConfirm?.documentStatus !== QUOTE_STATUSES.Canceled ? (
+          <div style={classes.checkBoxContainer}>
             <Checkbox
               icon={<CheckboxIcon />}
               checkedIcon={<CheckboxCheckedIcon />}
@@ -106,42 +125,50 @@ const RowMappingWidget = ({
             />
             {parentIndex}
           </div>
-          : (isQuote && !isPrePaymentPage && !isQuoteConfirmation) ?
-            <span style={classes.checkBoxContainer}>
-              <Checkbox
-                icon={<CheckboxIcon />}
-                checkedIcon={<CheckboxCheckedIcon fill={item?.isConfirmedByClient && "green"} />}
-                checked={isSelected}
-                disabled={item?.isConfirmedByClient ? true : false}
-                onChange={(e) => handleChangeSelectedItem(e.target.checked, item?.id)}
-              />
-              {parentIndex}
-            </span>
-            :
-            parentIndex
-        }
+        ) : isQuote && !isPrePaymentPage && !isQuoteConfirmation ? (
+          <span style={classes.checkBoxContainer}>
+            <Checkbox
+              icon={<CheckboxIcon />}
+              checkedIcon={
+                <CheckboxCheckedIcon
+                  fill={item?.isConfirmedByClient && "green"}
+                />
+              }
+              checked={isSelected}
+              disabled={item?.isConfirmedByClient ? true : false}
+              onChange={(e) =>
+                handleChangeSelectedItem(e.target.checked, item?.id)
+              }
+            />
+            {parentIndex}
+          </span>
+        ) : (
+          parentIndex
+        )}
       </PrimaryTableCell>
-      {((isDeliveryNote || isInvoice) && !router.query.isNewCreation) && <PrimaryTableCell
-        style={{
-          width: columnWidths[2],
-          ...classes.cellContainerStyle,
-          color: "#000000",
-          borderBottom: item?.childsDocumentItems && "none",
-
-        }}
-      >
-        <span style={{ display: "block", color: "#5859A8" }}>
-          {item?.sourceDocumentType
-            ? `${t(`SourceDocument.${ERPDocumentsTypesEnum[item?.sourceDocumentType]}`)} ${t("general.shortForNum")}`
-            : ""}
-        </span>
-        <span style={{ display: "block" }}>
-          {item?.sourceDocumentNumber
-            ? item?.sourceDocumentNumber
-            : ""}
-        </span>
-      </PrimaryTableCell>
-      }
+      {(isDeliveryNote || isInvoice) && (
+        <PrimaryTableCell
+          style={{
+            width: columnWidths[2],
+            ...classes.cellContainerStyle,
+            color: "#000000",
+            borderBottom: item?.childsDocumentItems && "none",
+          }}
+        >
+          <span style={{ display: "block", color: "#5859A8" }}>
+            {item?.sourceDocumentType
+              ? `${t(
+                  `SourceDocument.${
+                    ERPDocumentsTypesEnum[item?.sourceDocumentType]
+                  }`
+                )} ${t("general.shortForNum")}`
+              : ""}
+          </span>
+          <span style={{ display: "block" }}>
+            {item?.sourceDocumentNumber ? item?.sourceDocumentNumber : ""}
+          </span>
+        </PrimaryTableCell>
+      )}
       <PrimaryTableCell
         style={{
           width: columnWidths[1],
@@ -163,8 +190,7 @@ const RowMappingWidget = ({
       >
         {item.productName}
       </PrimaryTableCell>
-      {
-        quoteItems?.isShowDetails &&
+      {quoteItems?.isShowDetails && (
         <PrimaryTableCell
           style={{
             width: columnWidths[3],
@@ -172,9 +198,14 @@ const RowMappingWidget = ({
             borderBottom: item?.childsDocumentItems && "none",
           }}
         >
-          <CharacterDetails details={item.details} getQuote={getQuote} documentItemId={item?.id} canUpdate={canUpdate} />
+          <CharacterDetails
+            details={item.details}
+            getQuote={getQuote}
+            documentItemId={item?.id}
+            canUpdate={canUpdate}
+          />
         </PrimaryTableCell>
-      }
+      )}
       <PrimaryTableCell
         style={{
           width: columnWidths[4],
@@ -187,7 +218,9 @@ const RowMappingWidget = ({
             value={item.quantity}
             onBlur={onBlurAmount}
             isUpdate={canUpdatePricesBasedOnType && isUpdateAmount}
-            setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdateAmount}
+            setIsUpdate={
+              isQuoteConfirmation ? setIsConfirmation : setIsUpdateAmount
+            }
             onInputChange={(e) => onInputChangeAmount(e)}
           />
         </div>
@@ -205,7 +238,9 @@ const RowMappingWidget = ({
             value={item.price}
             onBlur={onBlurPrice}
             isUpdate={canUpdatePricesBasedOnType && isUpdatePrice}
-            setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdatePrice}
+            setIsUpdate={
+              isQuoteConfirmation ? setIsConfirmation : setIsUpdatePrice
+            }
             onInputChange={(e) => onInputChangePrice(e)}
           />
         </div>
@@ -222,7 +257,9 @@ const RowMappingWidget = ({
             value={item.discount ? item.discount : "0"}
             onBlur={onBlurDiscount}
             isUpdate={canUpdatePricesBasedOnType && isUpdateDiscount}
-            setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdateDiscount}
+            setIsUpdate={
+              isQuoteConfirmation ? setIsConfirmation : setIsUpdateDiscount
+            }
             onInputChange={(e) => onInputChangeDiscount(e)}
           />
         </div>
@@ -235,9 +272,11 @@ const RowMappingWidget = ({
         }}
       >
         <div style={classes.cellTextInputStyle}>
-          {quoteItems?.isManager && item?.pricingHistories.length > 0 ?
+          {quoteItems?.isManager && item?.pricingHistories.length > 0 ? (
             <PriceOfferWidget
-              oldPrice={item?.pricingHistories[item?.pricingHistories.length - 1]?.finalPrice.toFixed(2)}
+              oldPrice={item?.pricingHistories[
+                item?.pricingHistories.length - 1
+              ]?.finalPrice.toFixed(2)}
               newPrice={item.finalPrice}
               currency={getCurrencyUnitText(quoteItems?.currency)}
               item={item}
@@ -248,19 +287,21 @@ const RowMappingWidget = ({
               setIsConfirmation={setIsConfirmation}
               setIsUpdateFinalPrice={setIsUpdateFinalPrice}
               onInputChangeFinalPrice={onInputChangeFinalPrice}
-            /> :
+            />
+          ) : (
             <InputUpdatedValues
               value={item.finalPrice}
               onBlur={onBlurFinalPrice}
               isUpdate={canUpdatePricesBasedOnType && isUpdateFinalPrice}
-              setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdateFinalPrice}
+              setIsUpdate={
+                isQuoteConfirmation ? setIsConfirmation : setIsUpdateFinalPrice
+              }
               onInputChange={(e) => onInputChangeFinalPrice(e)}
             />
-          }
+          )}
         </div>
       </PrimaryTableCell>
-      {
-        !isQuoteConfirmation &&
+      {!isQuoteConfirmation && (
         <PrimaryTableCell
           style={{
             width: columnWidths[7],
@@ -268,14 +309,18 @@ const RowMappingWidget = ({
             borderBottom: item?.childsDocumentItems && "none",
           }}
         >
-          {canUpdate && <MoreMenuWidget
-            quoteItem={item}
-            onClickDuplicateWithDifferentQTY={onClickDuplicateWithDifferentQTY}
-            onClickDeleteQouteItem={onClickDeleteQouteItem}
-            documentType={documentType}
-          />}
+          {canUpdate && (
+            <MoreMenuWidget
+              quoteItem={item}
+              onClickDuplicateWithDifferentQTY={
+                onClickDuplicateWithDifferentQTY
+              }
+              onClickDeleteQouteItem={onClickDeleteQouteItem}
+              documentType={documentType}
+            />
+          )}
         </PrimaryTableCell>
-      }
+      )}
     </TableRow>
   );
 };
