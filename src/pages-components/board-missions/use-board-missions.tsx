@@ -866,6 +866,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     toReadyDate,
     fromDueDate,
     toDueDate,
+    router
   };
 };
 
