@@ -24,12 +24,12 @@ const GeneralInformationComponent = ({
   const { neutralColor, primaryColor } = useGomakeTheme();
   const tableOutputs = details?.filter(
     (parameter) =>
-      parameter.propertyType === RuleType.OUTPUT &&
-      parameter.htmlElementType === HtmlElementType.TABLE
+      parameter && parameter?.propertyType === RuleType.OUTPUT &&
+      parameter?.htmlElementType === HtmlElementType.TABLE
   );
   const parameterOutputs = details?.filter(
     (parameter) =>
-      parameter.htmlElementType === HtmlElementType.TEXT
+      parameter && parameter?.htmlElementType === HtmlElementType.TEXT
   );
   return (
     <Stack gap={"10px"}>
