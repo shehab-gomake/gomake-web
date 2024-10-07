@@ -20,7 +20,7 @@ import QrListenerWidget from "@/widgets/qr-listener/qr-listener-widget";
 import { useUserPermission } from "@/hooks/use-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { DateRangePicker } from "rsuite";
-import { FilterHasValueIcon } from "@/icons";
+import { DotIcon } from "@/icons";
 
 const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
   const { classes } = useStyle();
@@ -121,7 +121,8 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
               <InputAdornment position="start">
                 <div>
                   <IconButton onClick={handleClick}>
-                    {Object.keys(router.query).length > 0 ? <FilterHasValueIcon /> : <TuneIcon />}
+                    <TuneIcon />
+                    {Object.keys(router.query).length > 0 && <div style={{ position: "absolute", top: -5, right: -1 }}> <DotIcon /></div>}
                   </IconButton>
                   <GoMakeMenu handleClose={handleClose} open={open} anchorEl={anchorEl} >
                     <div style={classes.filtersContainer}>
