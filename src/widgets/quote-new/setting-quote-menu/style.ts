@@ -19,8 +19,8 @@ const useStyle = () => {
       }
       ,
       menuTabStyle: {
-        padding: "5px 0px",
-        ...FONT_FAMILY.Lexend(500, 10),
+        padding: "10px 0px",
+        ...FONT_FAMILY.Lexend(600, 14),
         color: "#8283BE",
         cursor: "pointer",
       },
