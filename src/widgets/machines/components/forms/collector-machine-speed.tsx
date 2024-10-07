@@ -6,7 +6,7 @@ import {CollectorCellsMaxThickness} from "@/widgets/machines/components/forms/co
 
 const CollectorMachineSpeed = ({}: IStepFormProps) => {
     const {classes} = useStyle();
-    const {machineSpeedAttributes, changeMachineAttributes, errors} = useMachineAttributes();
+    const {machineSpeedAttributes, changeMachineAttributes, errors, machineState} = useMachineAttributes();
     return (
         <div style={classes.container}>
             <div style={classes.inputsContainer}>
@@ -16,7 +16,7 @@ const CollectorMachineSpeed = ({}: IStepFormProps) => {
                                         updateState={changeMachineAttributes} error={errors[property.parameterKey]}/>
                     ))
                 }
-                <CollectorCellsMaxThickness controlled={false}/>
+                <CollectorCellsMaxThickness controlled={false} disabled={machineState?.attributes?.isManual}/>
             </div>
         </div>
     );
