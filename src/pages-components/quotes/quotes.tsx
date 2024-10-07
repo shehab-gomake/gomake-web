@@ -43,7 +43,7 @@ import { DateRangePicker } from "rsuite";
 import { createGlobalStyle } from "styled-components";
 import { CancelReceiptModal } from "@/widgets/quote-new/buttons-container/payment/cancel-receipt-modal/cancel-receipt-modal";
 import { ExcelMenu } from "./widgets/excel-menu/excel-menu";
-import { FilterHasValueIcon } from "@/icons";
+import { DotIcon } from "@/icons";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -281,7 +281,8 @@ const QuotesListPageWidget = ({
                   <InputAdornment position="start">
                     <div>
                       <IconButton onClick={handleClick}>
-                        {Object.keys(router.query).length > 0 ? <FilterHasValueIcon /> : <TuneIcon />}
+                        <TuneIcon />
+                        {Object.keys(router.query).length > 0 && <div style={{ position: "absolute", top: -5, right: -1 }}> <DotIcon /></div>}
                       </IconButton>
                       <GoMakeMenu
                         handleClose={handleClose}
