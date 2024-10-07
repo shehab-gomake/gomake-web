@@ -114,23 +114,23 @@ const BoardMissionsStationAction = ({
     };
     const inputsParameters = outputs.filter(
         (parameter) =>
-            parameter.propertyType === RuleType.PARAMETER &&
-            parameter.htmlElementType === HtmlElementType.TEXT
+            parameter && parameter?.propertyType === RuleType.PARAMETER &&
+            parameter?.htmlElementType === HtmlElementType.TEXT
     );
     const outputsParameters = outputs.filter(
         (parameter) =>
-            parameter.propertyType === RuleType.OUTPUT &&
-            parameter.htmlElementType === HtmlElementType.TEXT
+            parameter && parameter?.propertyType === RuleType.OUTPUT &&
+            parameter?.htmlElementType === HtmlElementType.TEXT
     );
     const textAreaOutputs = outputs?.filter(
         (parameter) =>
-            parameter.propertyType === RuleType.OUTPUT &&
-            parameter.htmlElementType === HtmlElementType.TEXT_AREA
+            parameter && parameter?.propertyType === RuleType.OUTPUT &&
+            parameter?.htmlElementType === HtmlElementType.TEXT_AREA
     );
     const tableOutputs = outputs?.filter(
         (parameter) =>
-            parameter.propertyType === RuleType.OUTPUT &&
-            parameter.htmlElementType === HtmlElementType.TABLE
+            parameter && parameter?.propertyType === RuleType.OUTPUT &&
+            parameter?.htmlElementType === HtmlElementType.TABLE
     );
     const onClickDone = async (boardMissionsActionId: string, sendMSg?: boolean) => {
         setLoading(true);
