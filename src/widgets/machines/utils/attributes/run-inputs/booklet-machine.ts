@@ -16,6 +16,34 @@ const bookletMachine = (state: Record<string, any>) => {
             isValid: true,
         },
         {
+            name: "isManual",
+            label: "machineAttributes.isManual",
+            type: "switch",
+            placeholder: "machineAttributes.isManual",
+            required: true,
+            parameterKey: "isManualCollector",
+            value: state.attributes?.isManualCollector,
+            options: [],
+            machineInputType: 'input',
+            isValid: true,
+            disabled: !state.attributes?.isAvailableCollectorUnit,
+
+        },
+        {
+            name: "speed",
+            label: "machineAttributes.speed",
+            type: "text",
+            placeholder: "machineAttributes.speed",
+            required: true,
+            parameterKey: "collectorManualSpeed",
+            options: [],
+            value: state.attributes?.collectorManualSpeed ? state.attributes?.collectorManualSpeed: '',
+            machineInputType: 'input',
+            isValid: !!state?.attributes?.collectorManualSpeed,
+            unit: EMeasurementUnits.PAPER_SETS_PER_HOUR,
+            disabled: !state.attributes?.isManualCollector || !state.attributes?.isAvailableCollectorUnit
+        },
+        {
             name: "collectorSpeed",
             label: "machineAttributes.collectorSpeed",
             type: "text",
@@ -26,10 +54,10 @@ const bookletMachine = (state: Record<string, any>) => {
             options: [],
             machineInputType: 'input',
             isValid: true,
-            disabled: !state.attributes?.isAvailableCollectorUnit,
+            disabled: !state.attributes?.isAvailableCollectorUnit || state.attributes?.isManualCollector,
             unit: EMeasurementUnits.PPH
         },
-        ...insertTypeInput(state, !state.attributes?.isAvailableCollectorUnit),
+        ...insertTypeInput(state, !state.attributes?.isAvailableCollectorUnit || state.attributes?.isManualCollector),
 
         {
             name: "cellNumber",
@@ -42,7 +70,7 @@ const bookletMachine = (state: Record<string, any>) => {
             options: [],
             machineInputType: 'input',
             isValid: true,
-            disabled: !state.attributes?.isAvailableCollectorUnit
+            disabled: !state.attributes?.isAvailableCollectorUnit || state.attributes?.isManualCollector
         },
         {
             name: "cellChargingTime",
@@ -56,6 +84,8 @@ const bookletMachine = (state: Record<string, any>) => {
             machineInputType: 'input',
             isValid: !!state?.attributes?.cellChargingTime,
             unit: EMeasurementUnits.MINUTE,
+            disabled: !state.attributes?.isAvailableCollectorUnit || state.attributes?.isManualCollector
+
         },
         {
             name: "loadingInRun",
@@ -68,7 +98,20 @@ const bookletMachine = (state: Record<string, any>) => {
             value: state.attributes?.loadingInRun ? state.attributes?.loadingInRun : '',
             machineInputType: 'input',
             isValid: !!state?.attributes?.loadingInRun,
-            disabled: !state.attributes?.isAvailableCollectorUnit
+            disabled: !state.attributes?.isAvailableCollectorUnit || state.attributes?.isManualCollector
+        },
+        {
+            name: "gathered",
+            label: "machineAttributes.gathered",
+            type: "switch",
+            placeholder: "machineAttributes.gathered",
+            required: true,
+            parameterKey: "gathered",
+            value: state.attributes?.gathered,
+            options: [],
+            machineInputType: 'input',
+            isValid: true,
+            disabled: !state.attributes?.isAvailableCollectorUnit || state.attributes?.isManualCollector
         },
         {
             name: 'machineAttributes.speedByPaperSizeByColor',
@@ -76,7 +119,7 @@ const bookletMachine = (state: Record<string, any>) => {
             value: state.attributes?.collectorSpeedByMediaLength || [],
             machineInputType: 'multiArrayInput',
             isValid: true,
-            disabled: !state.attributes?.isAvailableCollectorUnit,
+            disabled: !state.attributes?.isAvailableCollectorUnit || state.attributes?.isManualCollector,
             inputs: [
                 {
                     name: "mediaLength",
