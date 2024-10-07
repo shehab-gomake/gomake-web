@@ -29,7 +29,6 @@ const CopyFromOrderModal = ({ openModal, onClose, documentType, cliendDocumentTy
     isCopyFromOrder,
     setDocumentItems
   } = useCopyFromOrderModal({ onClose, documentType, openModal, cliendDocumentType })
-  console.log("documentItems", documentItems)
   return (
     <>
       <GoMakeModal
