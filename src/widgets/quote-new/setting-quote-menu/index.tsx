@@ -14,12 +14,8 @@ import { useTranslation } from "react-i18next";
 import { AutomaticDiscountMenu } from "../automatic-discount-menu";
 import { DotIcon } from "@/icons";
 import { Check } from "@mui/icons-material";
-import { SortByTypes } from "@/enums";
-enum DiscountType {
-  NONE = 1,
-  Product,
-  ProductSKU
-}
+import { DiscountType, SortByTypes } from "@/enums";
+
 const SettingQuoteMenu = ({ handleClose, open, anchorEl, onBlurExchangeRate, setIsUpdateExchangeRate, isUpdateExchangeRate, onBlurCurrency, isUpdateCurrency, setIsUpdateCurrency, updateCurrency, onClickRefresh, sortDocumentItems, updateIsShowDetails, updateIsShowPrices, updateDiscountType }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
