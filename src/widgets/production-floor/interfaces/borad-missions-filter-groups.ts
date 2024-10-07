@@ -11,4 +11,5 @@ export interface IFilterGroupsList {
 export interface IStationFilterGroup {
   name: string;
   stations: IStation[];
+  color?: string;
 }

@@ -5,6 +5,7 @@ export const stationFilterGroupState = atom<IStationFilterGroup>({
   key: "stationFilterGroupState",
   default: {
     name: "",
+    color: "#8485C0",
     stations: [],
   },
 });

@@ -162,7 +162,6 @@ const ActionsListComponent = ({
         </ClickOutside>
       )}
       <DepartmentModal
-        ref={buttonRef}
         openModal={openDepartmentModal}
         onClose={onClickCloseDepartmentModal}
         onClickAdd={createBoardMissionStationFilterGroup}
