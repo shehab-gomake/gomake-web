@@ -250,7 +250,7 @@ const EditableKeyValueViewComponent = ({
 
     }
     else {
-        value = values?.toFixed(2)
+        value = isNaN(values) ? '0.00' : values?.toFixed(2);
     }
 
     const [edit, setEdit] = useState<boolean>(false);
