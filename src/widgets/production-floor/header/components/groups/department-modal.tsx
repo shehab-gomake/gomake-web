@@ -18,8 +18,8 @@ const DepartmentModal = ({ openModal, onClose, onClickAdd }: any) => {
 
   const {
     color,
+    setColor,
     stationFilterGroup,
-    setStationFilterGroup,
     handleNameChange,
     anchorElPopover,
     showColorPicker,
@@ -28,10 +28,14 @@ const DepartmentModal = ({ openModal, onClose, onClickAdd }: any) => {
     handleColorPickerClose,
   } = useDepartmentModal();
 
+  const handleCloseModal = () => {
+    setColor("#8485C0");
+    onClose();
+  };
   return (
     <GoMakeModal
       openModal={openModal}
-      onClose={onClose}
+      onClose={handleCloseModal}
       modalTitle={t("productionFloor.departmentName")}
       modalTitleStyle={{ ...FONT_FAMILY.Inter(600, 18) }}
       modalTitleColor={"#000000"}
@@ -114,7 +118,7 @@ const DepartmentModal = ({ openModal, onClose, onClickAdd }: any) => {
               color: "#000000",
               border: "1px solid  #D0D5DD",
             }}
-            onClick={onClose}
+            onClick={handleCloseModal}
           >
             {t("materials.buttons.cancel")}
           </GomakePrimaryButton>

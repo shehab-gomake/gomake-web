@@ -35,11 +35,11 @@ const useDepartmentModal = () => {
   const handleColorPickerClose = () => {
     setShowColorPicker(false);
     setAnchorElPopover(null);
-    setColor("#8485C0");
   };
 
   return {
     color,
+    setColor,
     stationFilterGroup,
     setStationFilterGroup,
     handleNameChange,
