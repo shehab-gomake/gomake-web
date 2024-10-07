@@ -4,30 +4,38 @@ import {
   GomakePrimaryButton,
   GomakeTextInput,
 } from "@/components";
-import { Stack } from "@mui/material";
+import { Popover, Stack } from "@mui/material";
 import { useStyle } from "../style";
 import { FONT_FAMILY } from "@/utils/font-family";
-import { useRecoilState } from "recoil";
-import { stationFilterGroupState } from "@/widgets/production-floor/state/filter-group";
-import { IStationFilterGroup } from "@/widgets/production-floor/interfaces/borad-missions-filter-groups";
+import { SketchPicker } from "react-color";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import { useDepartmentModal } from "./use-department-modal";
 
-const DepartmentModal = ({ openModal, onClose, onClickAdd, ref }: any) => {
+const DepartmentModal = ({ openModal, onClose, onClickAdd }: any) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
-  const [stationFilterGroup, setStationFilterGroup] =
-    useRecoilState<IStationFilterGroup>(stationFilterGroupState);
 
-  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setStationFilterGroup({
-      ...stationFilterGroup,
-      name: e.target.value,
-    });
+  const {
+    color,
+    setColor,
+    stationFilterGroup,
+    handleNameChange,
+    anchorElPopover,
+    showColorPicker,
+    handleColorChange,
+    handleOpenColorPicker,
+    handleColorPickerClose,
+  } = useDepartmentModal();
+
+  const handleCloseModal = () => {
+    setColor("#8485C0");
+    onClose();
   };
-
   return (
     <GoMakeModal
       openModal={openModal}
-      onClose={onClose}
+      onClose={handleCloseModal}
       modalTitle={t("productionFloor.departmentName")}
       modalTitleStyle={{ ...FONT_FAMILY.Inter(600, 18) }}
       modalTitleColor={"#000000"}
@@ -43,13 +51,13 @@ const DepartmentModal = ({ openModal, onClose, onClickAdd, ref }: any) => {
           style={{
             ...FONT_FAMILY.Inter(400, 14),
             color: "#475467",
-            width: "90%",
+            width: "100%",
           }}
         >
           {t("productionFloor.departmentModalSubTitle")}
         </span>
         <Stack direction={"column"} spacing={1}>
-          <span style={{ ...FONT_FAMILY.Inter(400, 14), color: "#344054" }}>
+          <span style={{ ...FONT_FAMILY.Inter(500, 14), color: "#344054" }}>
             {t("productionFloor.departmentName")}
           </span>
           <GomakeTextInput
@@ -68,6 +76,33 @@ const DepartmentModal = ({ openModal, onClose, onClickAdd, ref }: any) => {
             onChange={handleNameChange}
           />
         </Stack>
+        <Stack direction={"row"} spacing={1} alignItems={"center"}>
+          <span
+            style={{
+              ...FONT_FAMILY.Inter(500, 14),
+              color: "#344054",
+              width: "50%",
+            }}
+          >
+            {t("productionFloor.pickColor")}
+          </span>
+          <div style={classes.colorDiv} onClick={handleOpenColorPicker}>
+            <div
+              style={{
+                width: "16px",
+                height: "16px",
+                borderRadius: "50%",
+                background: color,
+              }}
+            />
+            <span>{color}</span>
+            {showColorPicker ? (
+              <KeyboardArrowUpIcon sx={{ color: "#98A2B3" }} />
+            ) : (
+              <KeyboardArrowDownIcon sx={{ color: "#98A2B3" }} />
+            )}
+          </div>
+        </Stack>
         <Stack
           direction={"row"}
           gap={"10px"}
@@ -83,7 +118,7 @@ const DepartmentModal = ({ openModal, onClose, onClickAdd, ref }: any) => {
               color: "#000000",
               border: "1px solid  #D0D5DD",
             }}
-            onClick={onClose}
+            onClick={handleCloseModal}
           >
             {t("materials.buttons.cancel")}
           </GomakePrimaryButton>
@@ -99,6 +134,20 @@ const DepartmentModal = ({ openModal, onClose, onClickAdd, ref }: any) => {
           </GomakePrimaryButton>
         </Stack>
       </Stack>
+      <Popover
+        key={`popover-color-picker`}
+        open={showColorPicker}
+        onClose={handleColorPickerClose}
+        anchorEl={anchorElPopover}
+        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+        transformOrigin={{ vertical: "top", horizontal: "right" }}
+      >
+        <SketchPicker
+          key={`SketchPicker-color`}
+          color={color}
+          onChange={handleColorChange}
+        />
+      </Popover>
     </GoMakeModal>
   );
 };

@@ -16,6 +16,8 @@ import { useTranslation } from "react-i18next";
 import { IStatusesBoardsMissions } from "@/widgets/production-floor/interfaces/production-floor-data-response";
 import { useState } from "react";
 import { getBoardMissionPDF } from "@/services/api-service/generic-doc/documents-api";
+import { IFilterGroupsList } from "./interfaces/borad-missions-filter-groups";
+import { getAllBoardMissionStationFilterGroupsApi } from "@/services/api-service/board-missions/board-mission-station-filter-groups";
 
 const useProductionFloorData = () => {
   const { t } = useTranslation();
@@ -151,7 +153,6 @@ const useProductionFloorData = () => {
     setOpenMarkReadyModal(true);
   };
 
-  // need testing
   const handleRemoveBoardMission = (boardMissionId) => {
     setData((prevData) => {
       return prevData.map((item) => {
@@ -223,6 +224,25 @@ const useProductionFloorData = () => {
     setOpenPackagesModal(false);
   };
 
+  const [filterGroups, setFilterGroups] = useState<IFilterGroupsList[]>([]);
+  const getStationFilterGroups = async () => {
+    const callBack = (res) => {
+      if (res.success) {
+        const filterGroupsList: IFilterGroupsList[] = res?.data?.map(
+          (group) => ({
+            id: group?.id,
+            name: group?.name,
+            color: group?.color || "#7355de",
+            stuckCount: group?.stuckCount,
+            inProcessCount: group?.inProcessCount,
+          })
+        );
+        setFilterGroups(filterGroupsList);
+      }
+    };
+    await getAllBoardMissionStationFilterGroupsApi(callApi, callBack).then();
+  };
+
   return {
     t,
     getData,
@@ -239,6 +259,9 @@ const useProductionFloorData = () => {
     onClosePrintDeliverTicketModal,
     onOpenPrintDeliverTicketModal,
     selectedMission,
+    filterGroups,
+    setFilterGroups,
+    getStationFilterGroups,
   };
 };
 

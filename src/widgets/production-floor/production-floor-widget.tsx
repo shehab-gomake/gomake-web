@@ -17,6 +17,7 @@ import { FilesUploaderWidget } from "@/widgets/file-uploader-widget/files-upload
 import QrListenerWidget from "@/widgets/qr-listener/qr-listener-widget";
 import { useProductionFloorSignalr } from "@/hooks/signalr/use-production-floor-signalr";
 import { ProductionFloorFilters } from "./filters/production-floor-filters";
+import { useProductionFloorData } from "./use-production-floor-data";
 
 const ProductionFloorWidget = () => {
   const [view, setView] = useRecoilState(productionFloorViewState);
@@ -25,6 +26,12 @@ const ProductionFloorWidget = () => {
   const { query, replace, pathname } = useRouter();
   const { connectionId, closeConnection } = useProductionFloorSignalr();
   const { groupsId, boardMissionsId, step, productType } = query;
+  const { filterGroups, setFilterGroups, getStationFilterGroups } =
+    useProductionFloorData();
+
+  useEffect(() => {
+    getStationFilterGroups();
+  }, []);
 
   useEffect(() => {
     setOpenBoardMissionsDarawer(!!boardMissionsId);
@@ -54,8 +61,16 @@ const ProductionFloorWidget = () => {
       maxHeight={"100%"}
       overflow={"hidden"}
     >
-      <ProductionFloorHeader />
-      {view !== EProductionFloorView.DASHBOARD && <ProductionFloorFilters />}
+      <ProductionFloorHeader
+        filterGroups={filterGroups}
+        setFilterGroups={setFilterGroups}
+      />
+      {view !== EProductionFloorView.DASHBOARD && (
+        <ProductionFloorFilters
+          filterGroups={filterGroups}
+          getStationFilterGroups={getStationFilterGroups}
+        />
+      )}
       <Stack overflow={"auto"} maxHeight={"100%"}>
         {view === EProductionFloorView.DASHBOARD ? (
           <DashboardWidget />

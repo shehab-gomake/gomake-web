@@ -23,7 +23,8 @@ const useProductionFloorHeader = () => {
     setGroupFromPath,
     groups,
     onStationsChange,
-  } = useProductionFloorFilters();
+  } = useProductionFloorFilters({});
+
   const {
     actionsList,
     onSelectMachine,
@@ -34,6 +35,7 @@ const useProductionFloorHeader = () => {
     filter,
     setFilter,
   } = useActionsList({ source: Source.PRODUCTION_FLOOR });
+
   const buttonRef = useRef<HTMLButtonElement>(null);
   const showAllJobsButton = useMemo(() => hasGroupsFilters, [hasGroupsFilters]);
   const { push, replace, query } = useRouter();

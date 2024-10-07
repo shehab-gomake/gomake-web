@@ -72,7 +72,6 @@ interface Query {
   isCanceled?: boolean;
 }
 
-
 const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const { t } = useTranslation();
   const { classes } = useStyle();
@@ -618,12 +617,31 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     const currentApprovalStatusId = router.query.approvalStatusId;
     const currentMinPrice = router.query.minPrice;
     const currentMaxPrice = router.query.maxPrice;
-    const currentFromDate = router.query.fromDate ? new Date(Array.isArray(router.query.fromDate) ? router.query.fromDate[0] : router.query.fromDate) : null;
-    const currentToDate = router.query.toDate ? new Date(Array.isArray(router.query.toDate) ? router.query.toDate[0] : router.query.toDate) : null;
-    const currentAccountingStatus = router.query.accountingStatus ? accountingStatuses.find(status => status.value === Number(router.query.accountingStatus)) : null;
-    const currentProductionStatus = router.query.productionStatus ? productionStatuses.find(status => status.value === Number(router.query.productionStatus)) : null;
+    const currentFromDate = router.query.fromDate
+      ? new Date(
+          Array.isArray(router.query.fromDate)
+            ? router.query.fromDate[0]
+            : router.query.fromDate
+        )
+      : null;
+    const currentToDate = router.query.toDate
+      ? new Date(
+          Array.isArray(router.query.toDate)
+            ? router.query.toDate[0]
+            : router.query.toDate
+        )
+      : null;
+    const currentAccountingStatus = router.query.accountingStatus
+      ? accountingStatuses.find(
+          (status) => status.value === Number(router.query.accountingStatus)
+        )
+      : null;
+    const currentProductionStatus = router.query.productionStatus
+      ? productionStatuses.find(
+          (status) => status.value === Number(router.query.productionStatus)
+        )
+      : null;
     const currentIsCanceled = router.query.isCanceled;
-
 
     if (isReceipt) {
       await getAllReceiptsApi(callApi, callBack, {
@@ -651,8 +669,10 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
           },
           statusId: quoteStatusId?.value || currentStatusId || statusId?.value,
           approvalStatus: currentApprovalStatusId || approvalStatusId?.value,
-          closeStatus: currentAccountingStatus?.value || accountingStatus?.value,
-          productionStatus: currentProductionStatus?.value || productionStatus?.value,
+          closeStatus:
+            currentAccountingStatus?.value || accountingStatus?.value,
+          productionStatus:
+            currentProductionStatus?.value || productionStatus?.value,
           patternSearch: finalPatternSearch || currentFinalPatternSearch,
           customerId: currentCustomerId || customerId?.id,
           dateRange,
@@ -1005,13 +1025,16 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     if (customerId?.id) query.customerId = customerId.id;
     if (agentId?.id) query.agentId = agentId.id;
     if (statusId?.value) query.statusId = statusId.value;
-    if (approvalStatusId?.value) query.approvalStatusId = approvalStatusId.value;
+    if (approvalStatusId?.value)
+      query.approvalStatusId = approvalStatusId.value;
     if (minPrice) query.minPrice = minPrice;
     if (maxPrice) query.maxPrice = maxPrice;
     if (fromDate) query.fromDate = fromDate.toISOString();
     if (toDate) query.toDate = toDate.toISOString();
-    if (accountingStatus) query.accountingStatus = accountingStatus.value.toString();
-    if (productionStatus) query.productionStatus = productionStatus.value.toString()
+    if (accountingStatus)
+      query.accountingStatus = accountingStatus.value.toString();
+    if (productionStatus)
+      query.productionStatus = productionStatus.value.toString();
     query.isCanceled = isCanceledState;
 
     handleClose();
@@ -1044,8 +1067,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     setMinPrice("");
     setMaxPrice("");
     setProductIds([]);
-    setFinalPatternSearch("")
-    setPatternSearch("")
+    setFinalPatternSearch("");
+    setPatternSearch("");
 
     const query = {};
     router.push({
@@ -1053,7 +1076,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       query: query,
     });
   };
-
 
   const tableHeaders =
     docType === DOCUMENT_TYPE.purchaseOrder
@@ -1779,7 +1801,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     });
   };
 
-  // here
   const OpenDocument = async (document) => {
     const callBack = (res) => {
       if (res?.success) {
@@ -1992,34 +2013,56 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
 
   useEffect(() => {
     // Read URL parameters and set state accordingly
-    const { customerId, agentId, statusId, approvalStatusId, minPrice, maxPrice, fromDate, toDate, finalPatternSearch, accountingStatus, productionStatus, isCanceled } = router.query;
+    const {
+      customerId,
+      agentId,
+      statusId,
+      approvalStatusId,
+      minPrice,
+      maxPrice,
+      fromDate,
+      toDate,
+      finalPatternSearch,
+      accountingStatus,
+      productionStatus,
+      isCanceled,
+    } = router.query;
     if (customerId) setCustomerId({ id: customerId });
     if (agentId) setAgentId({ id: agentId });
     if (statusId) setStatusId({ value: statusId });
     if (approvalStatusId) setApprovalStatusId({ value: approvalStatusId });
-    if (typeof minPrice === 'string') setMinPrice(minPrice);
-    if (typeof maxPrice === 'string') setMaxPrice(maxPrice);
-    if (fromDate && typeof fromDate === 'string') setFromDate(new Date(fromDate));
-    if (toDate && typeof toDate === 'string') setToDate(new Date(toDate));
-    if (finalPatternSearch && typeof finalPatternSearch === 'string') setPatternSearch(finalPatternSearch);
-    if (finalPatternSearch && typeof finalPatternSearch === 'string') setFinalPatternSearch(finalPatternSearch);
+    if (typeof minPrice === "string") setMinPrice(minPrice);
+    if (typeof maxPrice === "string") setMaxPrice(maxPrice);
+    if (fromDate && typeof fromDate === "string")
+      setFromDate(new Date(fromDate));
+    if (toDate && typeof toDate === "string") setToDate(new Date(toDate));
+    if (finalPatternSearch && typeof finalPatternSearch === "string")
+      setPatternSearch(finalPatternSearch);
+    if (finalPatternSearch && typeof finalPatternSearch === "string")
+      setFinalPatternSearch(finalPatternSearch);
     if (accountingStatus) {
-      const statusToSet = accountingStatuses.find(status => status.value === Number(accountingStatus));
+      const statusToSet = accountingStatuses.find(
+        (status) => status.value === Number(accountingStatus)
+      );
       if (statusToSet) {
-        setAccountingStatus(statusToSet as unknown as { label: string; value: PStatus }); // Cast to unknown first
+        setAccountingStatus(
+          statusToSet as unknown as { label: string; value: PStatus }
+        ); // Cast to unknown first
       }
     }
     if (productionStatus) {
-      const productionStatusToSet = productionStatuses.find(status => status.value === Number(productionStatus));
+      const productionStatusToSet = productionStatuses.find(
+        (status) => status.value === Number(productionStatus)
+      );
       if (productionStatusToSet) {
-        setProductionStatus(productionStatusToSet as unknown as { label: string; value: PStatus });
+        setProductionStatus(
+          productionStatusToSet as unknown as { label: string; value: PStatus }
+        );
       }
     }
     if (isCanceled) {
       setIsCanceledState(isCanceledState);
     }
-
-
   }, [router]);
 
   return {

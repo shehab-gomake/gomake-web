@@ -24,8 +24,19 @@ import {
 } from "./select/actions-select/use-actions-list";
 import { useTranslation } from "react-i18next";
 import { selectedChipIdsState } from "../state/text-search";
+import {
+  deleteStationFilterByGroupIdApi,
+  getStationFilterByGroupIdApi,
+} from "@/services/api-service/board-missions/board-mission-station-filter-groups";
+import { selectedGroupIdState } from "../state/filter-group";
+import { IFilterGroupsList } from "../interfaces/borad-missions-filter-groups";
 
-const useProductionFloorFilters = () => {
+interface IUseProductionFloorFiltersProps {
+  getStationFilterGroups?: any;
+}
+const useProductionFloorFilters = ({
+  getStationFilterGroups,
+}: IUseProductionFloorFiltersProps) => {
   const [filtersState, setFiltersState] = useRecoilState(
     productionFloorFiltersState
   );
@@ -50,6 +61,13 @@ const useProductionFloorFilters = () => {
   const [hiddenCards, setHiddenCards] = useState<
     { label: string; machineId: string }[]
   >([]);
+  const [visibleFilterGroups, setVisibleFilterGroups] = useState<
+    IFilterGroupsList[]
+  >([]);
+  const [hiddenFilterGroups, setHiddenFilterGroups] = useState<
+    IFilterGroupsList[]
+  >([]);
+
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const filters = useRecoilValue(productionFloorFiltersState);
   const [machinesColors, setMachinesColors] = useState([]);
@@ -230,6 +248,43 @@ const useProductionFloorFilters = () => {
     });
   };
 
+  /* Department/Group Section */
+
+  const [selectedGroupId, setSelectedGroupId] = useRecoilState<string | null>(
+    selectedGroupIdState
+  );
+  const handleSelectGroup = (groupId: string) => {
+    if (selectedGroupId === groupId) {
+      setSelectedGroupId(null);
+      onStationsChange([]);
+    } else {
+      setSelectedGroupId(groupId);
+      getStationFilterGroupById(groupId);
+    }
+  };
+
+  const getStationFilterGroupById = async (id) => {
+    const callBack = (res) => {
+      if (res.success) {
+        onStationsChange(res?.data?.stations);
+      }
+    };
+    await getStationFilterByGroupIdApi(callApi, callBack, {
+      groupId: id,
+    }).then();
+  };
+
+  const deleteStationFilterGroupById = async (id) => {
+    const callBack = (res) => {
+      if (res.success) {
+        getStationFilterGroups();
+      }
+    };
+    await deleteStationFilterByGroupIdApi(callApi, callBack, {
+      groupId: id,
+    }).then();
+  };
+
   return {
     t,
     dir,
@@ -263,6 +318,16 @@ const useProductionFloorFilters = () => {
     scrollContainerRef,
     groups,
     selectedChips,
+    visibleFilterGroups,
+    setVisibleFilterGroups,
+    hiddenFilterGroups,
+    setHiddenFilterGroups,
+    handleSelectGroup,
+    selectedGroupId,
+    setSelectedGroupId,
+    getStationFilterGroups,
+    getStationFilterGroupById,
+    deleteStationFilterGroupById,
   };
 };
 
