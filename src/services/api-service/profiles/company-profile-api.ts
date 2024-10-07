@@ -13,6 +13,9 @@ const GET_COMPANY_LOCATIONS_URL = "/v1/printhouses/get-print-house-locations";
 const ADD_COMPANY_LOCATION_URL = "/v1/print-house/add-location";
 const DELETE_COMPANY_LOCATION_URL = "/v1/print-house/delete-location/";
 const CHECk_PRINT_HOUSE_TAX_LOGIN = "/v1/print-houses/check-tax-login";
+const SAVE_PRINT_HOUSE_PAYMENT_DETAILS_URL =
+  "/v1/print-houses/save-print-house-payment-details";
+const MAKE_PAYMENT_URL = "/v1/print-houses/make-payment";
 
 const getCompanyProfile: ICallAndSetData = async (callApi, setState) => {
   return await getSetApiData(
@@ -137,6 +140,30 @@ const checkPrintHouseTaxLoginApi: ICallAndSetData = async (
   );
 };
 
+const savePrintHousePaymentDetailsApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    SAVE_PRINT_HOUSE_PAYMENT_DETAILS_URL,
+    setState,
+    data
+  );
+};
+
+const makePaymentApi: ICallAndSetData = async (callApi, setState, data) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    MAKE_PAYMENT_URL,
+    setState,
+    data
+  );
+};
+
 export {
   getCompanyProfile,
   updateCompanyProfile,
@@ -149,4 +176,6 @@ export {
   companyAddLocationApi,
   companyDeleteLocationApi,
   checkPrintHouseTaxLoginApi,
+  savePrintHousePaymentDetailsApi,
+  makePaymentApi,
 };
