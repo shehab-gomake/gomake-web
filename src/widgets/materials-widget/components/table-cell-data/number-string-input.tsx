@@ -73,7 +73,7 @@ const NumberStringInput = ({ value, isEditable, parameterKey, id, isAdmin }: IRo
                 openModal={openDeleteTableRowModal}
                 onClose={onClickCloseDeleteTableRowModal}
                 hideIcon
-                title="Updating this row will effect the material for other suppliers"
+                title={t("materials.modals.updateModalTitle")}
                 yesBtn={t("documentingSettings.update")}
                 onClickDelete={() => {
                     setIsLoading(true)

@@ -287,7 +287,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
       />
       <ThreeOptionsModal
         hideIcon
-        title={t("Deleting this row will delete the material from other supplier")}
+        title={t("materials.modals.deleteModalTitle")}
         yesBtn={t("navigationButtons.delete")}
         noBtn={selectedTableRow?.isActive
           ? t("remainWords.convertToInactive")

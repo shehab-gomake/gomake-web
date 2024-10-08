@@ -110,7 +110,7 @@ const ArrayInput = ({ valueArray, isEditable, parameterKey, id, isAdmin }: IRowD
         openModal={openDeleteTableRowModal}
         onClose={onClickCloseDeleteTableRowModal}
         hideIcon
-        title="Updating this row will effect the material for other suppliers"
+        title={t("materials.modals.updateModalTitle")}
         yesBtn={t("documentingSettings.update")}
         onClickDelete={async () => {
           await updateCellData(id, parameterKey, updateValue, isUpdate);

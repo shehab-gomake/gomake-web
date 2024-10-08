@@ -265,7 +265,7 @@ const ActionMenu = (props: IActionMenuProps) => {
         openModal={openUpdatedTableRowModal}
         onClose={onClickCloseUpdatedTableRowModal}
         hideIcon
-        title="Updating this row will effect the material for other suppliers"
+        title={t("materials.modals.updateModalTitle")}
         yesBtn={t("documentingSettings.update")}
         onClickDelete={updatedTableRowModal}
       />
