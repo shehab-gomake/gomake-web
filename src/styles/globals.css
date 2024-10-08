@@ -51,7 +51,8 @@ html * {
 }
 
 .show-scrollbar::-webkit-scrollbar {
-  width: 2px;
+  width: 8px;
+  background: "beige";
 }
 
 .show-scrollbar::-webkit-scrollbar-track {

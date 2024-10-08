@@ -6,39 +6,51 @@ import { useMemo } from "react";
 import { selectedChipIdsState } from "../state/text-search";
 
 const ProductionFloorKanbanBoard = () => {
-    const { data } = useProductionFloorKanban();
-    const selectedChipId = useRecoilValue(selectedChipIdsState);
+  const { data } = useProductionFloorKanban();
+  const selectedChipId = useRecoilValue(selectedChipIdsState);
 
-    const filteredDataByMachine = useMemo(() => {
+  const filteredDataByMachine = useMemo(() => {
+    if (selectedChipId.length === 0) return data;
+    return data.map((item) => {
+      const filteredBoardMissions = item.boardMissions.filter((mission) => {
+        return selectedChipId.some(
+          (chipId) =>
+            mission?.currentStation?.machineId === chipId ||
+            mission?.currentStation?.employeeId === chipId
+        );
+      });
 
-        if (selectedChipId.length === 0) return data;
-        return data.map((item) => {
-            const filteredBoardMissions = item.boardMissions.filter((mission) => {
-                return selectedChipId.some((chipId) =>
-                    mission?.currentStation?.machineId === chipId ||
-                    mission?.currentStation?.employeeId === chipId
-                );
-            });
+      return {
+        ...item,
+        boardMissions: filteredBoardMissions,
+      };
+    });
+  }, [data, selectedChipId]);
 
-            return {
-                ...item,
-                boardMissions: filteredBoardMissions,
-            };
-        });
-    }, [data, selectedChipId]);
+  return (
+    <Stack
+      direction={"row"}
+      justifyContent={"space-between"}
+      padding={"20px"}
+      overflow={"hidden"}
+      minHeight={"100%"}
+    >
+      {[...filteredDataByMachine]
+        ?.sort(
+          (a, b) =>
+            a.boardMissionStatus.boardMissionStatus.kanbanIndex -
+            b.boardMissionStatus.boardMissionStatus.kanbanIndex
+        )
+        ?.map((column) => (
+          <KanbanColumnComponent
+            key={column.boardMissionStatus.boardMissionStatus?.name}
+            status={column.boardMissionStatus.boardMissionStatus}
+            //count={column.boardMissionStatus.count}
+            boardsMissions={column.boardMissions}
+          />
+        ))}
+    </Stack>
+  );
+};
 
-  
-    return (
-        <Stack direction={'row'} justifyContent={'space-between'} padding={'20px'} overflow={'hidden'} minHeight={'100%'}>
-            {filteredDataByMachine.map((column) => (
-                <KanbanColumnComponent
-                    key={column.boardMissionStatus.boardMissionStatus?.name}
-                    status={column.boardMissionStatus.boardMissionStatus}
-                    //count={column.boardMissionStatus.count}
-                    boardsMissions={column.boardMissions} />
-            ))}
-        </Stack>
-    );
-}
-
-export { ProductionFloorKanbanBoard }
+export { ProductionFloorKanbanBoard };
