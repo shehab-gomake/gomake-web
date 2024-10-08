@@ -2,9 +2,12 @@ import { Checkbox } from "@mui/material";
 
 import { GoMakeDatepicker } from "@/components/date-picker/date-picker-component";
 import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
-import { GoMakeAutoComplate } from "@/components"
+import { GoMakeAutoComplate } from "@/components";
 
-import { AgingReportHeaderWidgetProps, useAgingReportHeader } from "./use-header-widget";
+import {
+  AgingReportHeaderWidgetProps,
+  useAgingReportHeader,
+} from "./use-header-widget";
 import { DateRangePicker } from "rsuite";
 
 const LedgerReportHeaderWidget = ({
@@ -17,14 +20,14 @@ const LedgerReportHeaderWidget = ({
   handleDateChange,
   fromDate,
   toDate,
-  customerId
+  customerId,
+  isFetchingCustomers,
 }: AgingReportHeaderWidgetProps) => {
-
-  const { classes, t } = useAgingReportHeader()
+  const { classes, t } = useAgingReportHeader();
   return (
     <div style={classes.mainContainer}>
-      {
-        !customerId && <div style={classes.date2FilterContainer}>
+      {!customerId && (
+        <div style={classes.date2FilterContainer}>
           <h3 style={classes.filterLabelStyle}>{t("sales.quote.customer")}</h3>
           <GoMakeAutoComplate
             key={customer?.id}
@@ -35,9 +38,10 @@ const LedgerReportHeaderWidget = ({
             placeholder={t("sales.quote.chooseCustomer")}
             onChange={handleCustomerChange}
             value={customer}
+            loading={isFetchingCustomers}
           />
         </div>
-      }
+      )}
 
       <div style={classes.date1FilterContainer}>
         <h3 style={classes.filterLabelStyle}>{t("boardMissions.dateRange")}</h3>

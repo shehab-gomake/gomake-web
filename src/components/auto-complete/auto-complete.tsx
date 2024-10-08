@@ -3,12 +3,11 @@ import TextField from "@mui/material/TextField";
 import { styled } from "@mui/material/styles";
 import Autocomplete from "@mui/material/Autocomplete";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import Stack from "@mui/material/Stack";
 import { Collapse, Divider } from "@mui/material";
 import { DownIcon, UpIcon } from "./icons";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const StyledAutocomplete: any = styled(Autocomplete)((props: any) => {
   return {
@@ -59,28 +58,29 @@ const StyledAutocomplete: any = styled(Autocomplete)((props: any) => {
   };
 });
 
-const GroupHeader = styled('div')(({ theme }) => ({
-  position: 'sticky',
-  top: '-8px',
-  padding: '4px 10px',
-  color: 'black',
-  backgroundColor: 'white',
-  display: 'flex',
-  alignItems: 'center',
-  cursor: 'pointer',
-  justifyContent: 'space-between',
-  // fontWeight: 'bold', 
+const GroupHeader = styled("div")(({ theme }) => ({
+  position: "sticky",
+  top: "-8px",
+  padding: "4px 10px",
+  color: "black",
+  backgroundColor: "white",
+  display: "flex",
+  alignItems: "center",
+  cursor: "pointer",
+  justifyContent: "space-between",
+  // fontWeight: 'bold',
   fontFamily: "Heebo",
   fontStyle: "normal",
   fontWeight: 500,
   lineHeight: "20px",
 }));
 
-const GroupItems = styled('ul')({
+const GroupItems = styled("ul")({
   padding: 0,
-  listStyleType: 'none',
+  listStyleType: "none",
 });
 
+// Inside your GoMakeAutoComplate function
 const GoMakeAutoComplate = ({
   value,
   onChange,
@@ -101,6 +101,7 @@ const GoMakeAutoComplate = ({
   withArrow = false,
   groupBy,
   renderGroup,
+  loading, // Add loading prop
 }: {
   value?: any;
   onChange?: any;
@@ -119,8 +120,9 @@ const GoMakeAutoComplate = ({
   onChangeTextField?: any;
   PaperComponent?: any;
   withArrow?: boolean;
-  groupBy?: (option: any) => string; // Function to group options
-  renderGroup?: (params: any) => React.ReactNode; // Function to render group headers
+  groupBy?: (option: any) => string;
+  renderGroup?: (params: any) => React.ReactNode;
+  loading?: boolean; // Add loading prop
 }) => {
   const [selectedOption, setSelectedOption] = useState<any>();
   const { t } = useTranslation();
@@ -133,9 +135,10 @@ const GoMakeAutoComplate = ({
       setSelectedOption(null);
     }
   }, [value]);
-  
 
-  const [expandedGroups, setExpandedGroups] = useState<{ [key: string]: boolean }>({});
+  const [expandedGroups, setExpandedGroups] = useState<{
+    [key: string]: boolean;
+  }>({});
 
   const toggleGroup = (group: string) => {
     setExpandedGroups((prev) => ({
@@ -145,15 +148,13 @@ const GoMakeAutoComplate = ({
   };
 
   const optionsArray = Array.isArray(options) ? options : [];
-  const groupByFunction = typeof groupBy === 'function' ? groupBy : (option) => option; // Default to identity function if not a function
-  
+  const groupByFunction =
+    typeof groupBy === "function" ? groupBy : (option) => option;
   const uniqueGroups = Array.from(new Set(optionsArray.map(groupByFunction)));
   const lastGroup = uniqueGroups[uniqueGroups.length - 1];
 
   return (
     <StyledAutocomplete
-      // {...(value && { value })}
-      //value={value || value === 0 ? value : null}
       {...(value && { value })}
       {...(selectedOption && { selectedOption })}
       direction={dir}
@@ -164,20 +165,24 @@ const GoMakeAutoComplate = ({
       style={style}
       options={options}
       disabled={disabled}
-      popupIcon={withArrow ? <ArrowDropDownIcon /> : ""} // Conditionally render popupIcon based on withArrow prop
-      groupBy={groupBy} // Group options by category
+      popupIcon={withArrow ? <ArrowDropDownIcon /> : ""}
+      groupBy={groupBy}
       renderGroup={(params) => (
         <div key={params.key}>
           <GroupHeader onClick={() => toggleGroup(params.group)}>
-          {params.group}
-            {expandedGroups[params.group] ? <UpIcon/> : <DownIcon/>}
+            {params.group}
+            {expandedGroups[params.group] ? <UpIcon /> : <DownIcon />}
           </GroupHeader>
-          {params.group !== lastGroup && <Divider sx={{
-            width: '97%',
-            margin: '0 auto',
-            borderColor: '#ECECEC',
-            my: 1,
-          }} />}
+          {params.group !== lastGroup && (
+            <Divider
+              sx={{
+                width: "97%",
+                margin: "0 auto",
+                borderColor: "#ECECEC",
+                my: 1,
+              }}
+            />
+          )}
           <Collapse in={expandedGroups[params.group]}>
             <GroupItems>{params.children}</GroupItems>
           </Collapse>
@@ -188,27 +193,17 @@ const GoMakeAutoComplate = ({
           {...params}
           placeholder={defaultValue?.label || placeholder}
           onChange={onChangeTextField || params.onChange}
-          InputProps={
-            dir === "rtl"
-              ? {
-                ...params.InputProps,
-                startAdornment: (
-                  <Stack
-                    display={"flex"}
-                    gap={"1px"}
-                    flexDirection={"row-reverse"}
-                  >
-                    {params.InputProps.endAdornment.props.children}
-                  </Stack>
-                ),
-                endAdornment: null,
-              }
-              : {
-                ...params.InputProps,
-              }
-          }
+          InputProps={{
+            ...params.InputProps,
+            ...(loading && {
+              endAdornment: (
+                <CircularProgress color="inherit" size={20} sx={{ ml: 2 }} />
+              ),
+            }),
+          }}
         />
       )}
+      loading={loading} // Pass loading prop to show spinner
       defaultValue={defaultValue}
       autoHighlight={autoHighlight}
       getOptionLabel={getOptionLabel}
@@ -220,9 +215,7 @@ const GoMakeAutoComplate = ({
       isOptionEqualToValue={(option: any, value: any) =>
         option?.id === value?.id
       }
-      getOptionSelected={(option: any, value: any) => {
-        return option?.id === value?.id;
-      }}
+      getOptionSelected={(option: any, value: any) => option?.id === value?.id}
       PaperComponent={PaperComponent}
     />
   );

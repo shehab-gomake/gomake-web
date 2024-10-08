@@ -24,22 +24,28 @@ const useSettings = ({
   const { query } = useRouter();
   const { id } = query;
   const { t } = useTranslation();
-  const { setSnackbarStateValue, alertFaultAdded, alertSuccessAdded, alertSuccessDelete, alertFault,
-    alertFaultDelete, } =
-    useSnackBar();
+  const {
+    setSnackbarStateValue,
+    alertFaultAdded,
+    alertSuccessAdded,
+    alertSuccessDelete,
+    alertFault,
+    alertFaultDelete,
+  } = useSnackBar();
   const [RandomId, setRandomId] = useState();
-  const [selectedProductId, setSelectedProductId] = useState<string>("")
+  const [selectedProductId, setSelectedProductId] = useState<string>("");
   const [openDeleteRowModal, setOpenDeleteRowModal] = useState<boolean>(false);
-  const [openPricingTypeModal, setOpenPricingTypeModal] = useState<boolean>(false);
-  const [selectPricingType, setPricingType] = useState({})
+  const [openPricingTypeModal, setOpenPricingTypeModal] =
+    useState<boolean>(false);
+  const [selectPricingType, setPricingType] = useState({});
 
   const onClickOpenPricingType = (value) => {
-    setPricingType(value)
-    setOpenPricingTypeModal(true)
-  }
+    setPricingType(value);
+    setOpenPricingTypeModal(true);
+  };
   const onClickClosePricingType = () => {
-    setOpenPricingTypeModal(false)
-  }
+    setOpenPricingTypeModal(false);
+  };
 
   useEffect(() => {
     setRandomId(uuidv4());
@@ -47,7 +53,7 @@ const useSettings = ({
   const [allProductSKU, setAllProductSKU] = useState<any>();
   const [allTemplate, setAllTemplate] = useState<any>();
   const [allGroups, setAllGroups] = useState<any>();
-  
+
   const getAllProductsSKU = useCallback(async () => {
     await getAlltProductSKU(callApi, setAllProductSKU);
   }, []);
@@ -75,7 +81,7 @@ const useSettings = ({
       name: "",
       code: "",
       productionFloorJobColor: "#2e3092",
-    })
+    });
   };
 
   const onClickOpenProductSKU = () => {
@@ -83,12 +89,11 @@ const useSettings = ({
   };
 
   // const [productSKU, setProductSKU] = useState<any>([]);
-  const [productSKU, setProductSKU] = useState(
-    {
-      name: "",
-      code: "",
-      productionFloorJobColor: "#2e3092",
-    });
+  const [productSKU, setProductSKU] = useState({
+    name: "",
+    code: "",
+    productionFloorJobColor: "#2e3092",
+  });
   const [errorName, setErrorName] = useState(false);
   const [errorCode, setErrorCode] = useState(false);
 
@@ -96,7 +101,7 @@ const useSettings = ({
     (fieldName: string, value: any) => {
       setProductSKU((prev) => ({
         ...prev,
-        [fieldName]: value, 
+        [fieldName]: value,
       }));
     },
     []
@@ -110,7 +115,7 @@ const useSettings = ({
         {
           name: productSKU?.name,
           code: productSKU?.code,
-          productionFloorJobColor: productSKU?.productionFloorJobColor
+          productionFloorJobColor: productSKU?.productionFloorJobColor,
         }
       );
       if (res?.success) {
@@ -120,7 +125,7 @@ const useSettings = ({
           name: "",
           code: "",
           productionFloorJobColor: "#2e3092",
-        })
+        });
       } else {
         alertFaultAdded();
       }
@@ -138,9 +143,12 @@ const useSettings = ({
     }
   }, [productSKU, errorName, errorCode]);
 
-
   const createNewProduct = useCallback(async () => {
-    if (!productState.name || !productState.productSKUId || !productState.templateId) {
+    if (
+      !productState.name ||
+      !productState.productSKUId ||
+      !productState.templateId
+    ) {
       setSnackbarStateValue({
         state: true,
         message: t("products.addProduct.admin.requiredField"),
@@ -162,7 +170,7 @@ const useSettings = ({
           additionPrice: productState?.additionPrice,
           noteColor: productState?.noteColor,
           textColor: productState?.textColor,
-          productionFloorJobColor : productState?.productionFloorJobColor,
+          productionFloorJobColor: productState?.productionFloorJobColor,
           productSKUId: productState?.productSKUId?.id,
           templateId: productState?.templateId?.id,
           clients: productState?.clients,
@@ -179,16 +187,19 @@ const useSettings = ({
       } else {
         if (res?.errors?.statusCode === 2627) {
           alertFault(t("products.offsetPrice.admin.productAlreadyExists"));
-        }
-        else {
-          alertFaultAdded()
+        } else {
+          alertFaultAdded();
         }
       }
     }
   }, [productState, RandomId]);
 
   const createNewProductAndGoToParameterList = useCallback(async () => {
-    if (!productState.name || !productState.productSKUId || !productState.templateId) {
+    if (
+      !productState.name ||
+      !productState.productSKUId ||
+      !productState.templateId
+    ) {
       setSnackbarStateValue({
         state: true,
         message: t("products.addProduct.admin.requiredField"),
@@ -210,7 +221,7 @@ const useSettings = ({
           additionPrice: productState?.additionPrice,
           noteColor: productState?.noteColor,
           textColor: productState?.textColor,
-          productionFloorJobColor : productState?.productionFloorJobColor,
+          productionFloorJobColor: productState?.productionFloorJobColor,
           productSKUId: productState?.productSKUId?.id,
           templateId: productState?.templateId?.id,
           clients: productState?.clients,
@@ -229,17 +240,19 @@ const useSettings = ({
       } else {
         if (res?.errors?.statusCode === 2627) {
           alertFault(t("products.offsetPrice.admin.productAlreadyExists"));
+        } else {
+          alertFaultAdded();
         }
-        else {
-          alertFaultAdded()
-        }
-
       }
     }
   }, [productState, RandomId]);
 
   const updatedProduct = useCallback(async () => {
-    if (!productState?.name || !productState?.productSKUId || !productState?.templateId) {
+    if (
+      !productState?.name ||
+      !productState?.productSKUId ||
+      !productState?.templateId
+    ) {
       setSnackbarStateValue({
         state: true,
         message: t("products.offsetPrice.admin.errorReq"),
@@ -257,11 +270,11 @@ const useSettings = ({
             return item;
           }),
           deliveryTime: productState?.deliveryTime,
-          startingPrice: productState?.startingPrice, 
+          startingPrice: productState?.startingPrice,
           additionPrice: productState?.additionPrice,
           noteColor: productState?.noteColor,
           textColor: productState?.textColor,
-          productionFloorJobColor : productState?.productionFloorJobColor,
+          productionFloorJobColor: productState?.productionFloorJobColor,
           productSKUId:
             typeof productState?.productSKUId === "string"
               ? productState?.productSKUId
@@ -324,7 +337,9 @@ const useSettings = ({
   }, []);
 
   const getAllClientTypes = useCallback(async () => {
-    await getAndSetClientTypes(callApi, setClientTypesList, { cardType: CLIENT_TYPE_Id.CUSTOMER });
+    await getAndSetClientTypes(callApi, setClientTypesList, {
+      cardType: CLIENT_TYPE_Id.CUSTOMER,
+    });
   }, []);
 
   useEffect(() => {
@@ -350,29 +365,28 @@ const useSettings = ({
   }, []);
 
   const onClickOpenDeleteRowModal = (id: string) => {
-    setSelectedProductId(id)
+    setSelectedProductId(id);
     setOpenDeleteRowModal(true);
   };
 
   const onClickCloseDeleteRowModal = () => {
     setOpenDeleteRowModal(false);
   };
-  
+
   const deleteProductSKURow = useCallback(async () => {
     const res = await callApi(
       EHttpMethod.DELETE,
       `/v1/printhouse-config/productsSKU/delete-product-sku-by-id`,
       {
-        Id: selectedProductId
-
+        Id: selectedProductId,
       }
     );
     if (res?.success) {
-      alertSuccessDelete()
+      alertSuccessDelete();
       getAllProductsSKU();
-      onClickCloseDeleteRowModal()
+      onClickCloseDeleteRowModal();
     } else {
-      alertFaultDelete()
+      alertFaultDelete();
     }
   }, [selectedProductId]);
 
@@ -408,7 +422,7 @@ const useSettings = ({
     onClickOpenPricingType,
     onClickClosePricingType,
     selectPricingType,
-    productSKU
+    productSKU,
   };
 };
 

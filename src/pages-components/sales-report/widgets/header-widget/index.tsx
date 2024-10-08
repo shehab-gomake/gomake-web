@@ -2,15 +2,15 @@ import { Checkbox } from "@mui/material";
 
 import { GoMakeDatepicker } from "@/components/date-picker/date-picker-component";
 import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
-import { GoMakeAutoComplate } from "@/components"
-import { SalesReportHeaderWidgetProps, useSalesReportHeader } from "./use-header-widget";
+import { GoMakeAutoComplate } from "@/components";
+import {
+  SalesReportHeaderWidgetProps,
+  useSalesReportHeader,
+} from "./use-header-widget";
 import { DateRangePicker } from "rsuite";
 import { createGlobalStyle } from "styled-components";
 
-
 const SalesReportHeaderWidget = ({
-  onSelectDeliveryTimeDates,
-  resetDatePicker,
   agent,
   agentsCategories,
   handleAgentChange,
@@ -26,15 +26,15 @@ const SalesReportHeaderWidget = ({
   handleDateChange,
   fromDate,
   toDate,
+  isFetchingCustomers,
 }: SalesReportHeaderWidgetProps) => {
-
-  const { classes, t } = useSalesReportHeader()
-  const dir: 'rtl' | 'ltr' = t('direction');
-  const RTL = dir === 'rtl';
+  const { classes, t } = useSalesReportHeader();
+  const dir: "rtl" | "ltr" = t("direction");
+  const RTL = dir === "rtl";
   const GlobalStyle = createGlobalStyle`
   .rs-picker-popup-daterange {
-    left: ${({ RTL }: any) => (RTL ? 'auto' : '150px')} !important;
-    right: ${({ RTL }: any) => (RTL ? '150px' : 'auto')} !important;
+    left: ${({ RTL }: any) => (RTL ? "auto" : "150px")} !important;
+    right: ${({ RTL }: any) => (RTL ? "150px" : "auto")} !important;
   }
 `;
 
@@ -73,6 +73,7 @@ const SalesReportHeaderWidget = ({
           placeholder={t("sales.quote.chooseCustomer")}
           onChange={handleCustomerChange}
           value={customer}
+          loading={isFetchingCustomers}
         />
       </div>
       <div style={classes.date2FilterContainer}>
@@ -93,12 +94,12 @@ const SalesReportHeaderWidget = ({
             onChange={onChangeDisplayByGroups}
             checked={displayByGroups}
           />
-          <div style={classes.labelSwichStyle}>{t("reports.DisplayByGroups")}</div>
+          <div style={classes.labelSwichStyle}>
+            {t("reports.DisplayByGroups")}
+          </div>
         </div>
       </div>
-
     </div>
-
   );
 };
 export { SalesReportHeaderWidget };
