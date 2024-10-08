@@ -1,6 +1,6 @@
 import { IRowData } from "@/widgets/materials-widget/interface";
 import { EDataTypeEnum } from "@/widgets/materials-widget/components/table-cell-data/data-type-enum";
-import { SecondSwitch } from "@/components";
+import { GoMakeDeleteModal, SecondSwitch } from "@/components";
 import { CurrencyInput } from "@/widgets/materials-widget/components/table-cell-data/currency";
 import { ArrayInput } from "@/widgets/materials-widget/components/table-cell-data/array-input";
 import { NumberStringInput } from "@/widgets/materials-widget/components/table-cell-data/number-string-input";
@@ -11,9 +11,10 @@ import { SelectInput } from "./select-input";
 import { useRecoilValue } from "recoil";
 import { machineCategoriesState } from "@/store/machine-categories";
 import { MultiSelectList } from "./multi-select-list";
-import { materialsParametersState } from "../../state";
+import { materialCategorySuppliersState, materialsParametersState } from "../../state";
 import { useTranslation } from "react-i18next";
 import { MultiSelectClientsInput } from "./multi-select-clients-input";
+import { useState } from "react";
 
 const TableCellData = ({
   value,
@@ -29,13 +30,44 @@ const TableCellData = ({
   const machinesCategories = useRecoilValue(machineCategoriesState);
   const parameterCategories = useRecoilValue<any>(materialsParametersState);
   const { t } = useTranslation()
+  const materialSuppliers = useRecoilValue(materialCategorySuppliersState)
+  const isHaveMorethanMaterialSuppliers = materialSuppliers?.length > 1
+  const [openDeleteTableRowModal, setOpenDeleteTableRowModal] = useState<boolean>(false);
+  const onClickCloseDeleteTableRowModal = () => {
+    setOpenDeleteTableRowModal(false);
+  };
+
+  const onClickOpenDeleteTableRowModal = () => {
+    setOpenDeleteTableRowModal(true);
+  };
   const toggleIsActive = async () => {
-    await updateCellData(id, parameterKey, !value);
+    if (isHaveMorethanMaterialSuppliers) {
+      onClickOpenDeleteTableRowModal()
+    }
+    else {
+      await updateCellData(id, parameterKey, !value);
+
+    }
   };
 
   switch (type) {
     case EDataTypeEnum.BOOLEAN:
-      return <SecondSwitch checked={value} onChange={toggleIsActive} />;
+      return (
+        <>
+          <SecondSwitch checked={value} onChange={toggleIsActive} />
+          <GoMakeDeleteModal
+            openModal={openDeleteTableRowModal}
+            onClose={onClickCloseDeleteTableRowModal}
+            hideIcon
+            title={t("materials.modals.updateModalTitle")}
+            yesBtn={t("documentingSettings.update")}
+            onClickDelete={async () => {
+              await updateCellData(id, parameterKey, !value);
+            }}
+          />
+        </>
+      )
+
     case EDataTypeEnum.CURRENCY:
       return (
         <CurrencyInput
