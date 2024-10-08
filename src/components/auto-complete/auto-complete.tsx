@@ -1,17 +1,16 @@
-import * as React from "react";
 import TextField from "@mui/material/TextField";
 import { styled } from "@mui/material/styles";
 import Autocomplete from "@mui/material/Autocomplete";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Collapse, Divider } from "@mui/material";
+import { Collapse, Divider, Stack } from "@mui/material";
 import { DownIcon, UpIcon } from "./icons";
 import CircularProgress from "@mui/material/CircularProgress";
 
 const StyledAutocomplete: any = styled(Autocomplete)((props: any) => {
   return {
-    direction: "ltr",
+    direction: props?.direction,
     boxSizing: "border-box",
     borderRadius: "4px",
     height: props?.style?.height || 40,
@@ -42,9 +41,18 @@ const StyledAutocomplete: any = styled(Autocomplete)((props: any) => {
         boxSizing: "border-box",
         borderRadius: "4px",
       },
+
+      "& .MuiAutocomplete-endAdornment": {
+        right: props?.direction === "rtl" ? "auto" : 0,
+        left: props?.direction === "rtl" ? 0 : "auto",
+        marginRight: props?.direction === "rtl" ? "0" : "4px",
+        marginLeft: props?.direction === "rtl" ? "4px" : "0",
+      },
+
       "& .MuiAutocomplete-input": {
         padding: 0,
         direction: props?.direction,
+        flex: 1,
       },
       "& input::placeholder": {
         color: "#B1B1B1",
@@ -128,7 +136,7 @@ const GoMakeAutoComplate = ({
   const { t } = useTranslation();
   const dir: "rtl" | "ltr" = t("direction");
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (value?.name) {
       setSelectedOption(value);
     } else {
