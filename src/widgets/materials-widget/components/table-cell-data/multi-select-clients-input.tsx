@@ -1,11 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 import { useTableCellData } from "@/widgets/materials-widget/components/table-cell-data/use-table-cell-data";
-import { GoMakeAutoComplate } from "@/components";
+import { GoMakeAutoComplate, GoMakeDeleteModal } from "@/components";
 import { Stack } from "@mui/material";
 import { Checkbox, Paper } from "@mui/material";
 import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
 import { useStyle } from "./style";
 import { useCustomerDropDownList } from "@/hooks";
+import { useTranslation } from "react-i18next";
+import { useRecoilValue } from "recoil";
+import { materialCategorySuppliersState } from "../../state";
 
 interface IProps {
   parameterKey: string;
@@ -30,8 +33,19 @@ const MultiSelectClientsInput = ({
     renderOptions,
     checkWhatRenderArray,
   } = useCustomerDropDownList()
+  const { t } = useTranslation();
+  const materialSuppliers = useRecoilValue(materialCategorySuppliersState);
+  const isHaveMorethanMaterialSuppliers = materialSuppliers?.length > 1;
+  const [openDeleteTableRowModal, setOpenDeleteTableRowModal] = useState<boolean>(false);
+  const onClickCloseDeleteTableRowModal = () => {
+    setOpenDeleteTableRowModal(false);
+  };
 
-
+  const onClickOpenDeleteTableRowModal = () => {
+    setOpenDeleteTableRowModal(true);
+  };
+  const [selectedChecked, setChecked] = useState(false)
+  const [selectedOption, setOption] = useState<any>()
   const clientsOptions = renderOptions().map((client) => ({
     value: client.id,
     label: `${client.name} - ${client.code}`,
@@ -59,12 +73,18 @@ const MultiSelectClientsInput = ({
     isChecked: boolean,
     option: any
   ) => {
-    onChangeInputs(
-      parameterKey,
-      isChecked
-        ? [...values, option?.value]
-        : values.filter((v) => v !== option?.value)
-    );
+    if (isHaveMorethanMaterialSuppliers) {
+      onClickOpenDeleteTableRowModal();
+    }
+    else {
+      onChangeInputs(
+        parameterKey,
+        isChecked
+          ? [...values, option?.value]
+          : values.filter((v) => v !== option?.value)
+      );
+    }
+
   };
 
   const transformValuesArray = (inputArray) => {
@@ -100,8 +120,12 @@ const MultiSelectClientsInput = ({
             <Stack style={classes.multiSelectOption}>
               <div>
                 <Checkbox
-                  onChange={(e, checked) =>
+                  onChange={(e, checked) => {
                     handleSelectCheck(parameterKey, checked, option)
+                    setOption(option)
+                    setChecked(checked)
+                  }
+
                   }
                   icon={<CheckboxIcon />}
                   checkedIcon={<CheckboxCheckedIcon />}
@@ -117,6 +141,21 @@ const MultiSelectClientsInput = ({
             {props?.children}
           </Paper>
         )}
+      />
+      <GoMakeDeleteModal
+        openModal={openDeleteTableRowModal}
+        onClose={onClickCloseDeleteTableRowModal}
+        hideIcon
+        title={t("materials.modals.updateModalTitle")}
+        yesBtn={t("documentingSettings.update")}
+        onClickDelete={() => {
+          onChangeInputs(
+            parameterKey,
+            selectedChecked
+              ? [...values, selectedOption?.value]
+              : values.filter((v) => v !== selectedOption?.value)
+          );
+        }}
       />
     </div>
   );

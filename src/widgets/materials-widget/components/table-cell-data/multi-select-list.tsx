@@ -1,10 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
 import { useTableCellData } from "@/widgets/materials-widget/components/table-cell-data/use-table-cell-data";
-import { GoMakeAutoComplate } from "@/components";
+import { GoMakeAutoComplate, GoMakeDeleteModal } from "@/components";
 import { Stack } from "@mui/material";
 import { Checkbox, Paper } from "@mui/material";
 import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
 import { useStyle } from "./style";
+import { materialCategorySuppliersState } from "../../state";
+import { useRecoilValue } from "recoil";
+import { useTranslation } from "react-i18next";
 
 interface IProps {
   parameterKey: string;
@@ -23,7 +26,18 @@ const MultiSelectList = ({
   placeHolder,
 }: IProps) => {
   const { classes } = useStyle();
+  const { t } = useTranslation();
   const { updateCellData } = useTableCellData(isAdmin);
+  const materialSuppliers = useRecoilValue(materialCategorySuppliersState);
+  const isHaveMorethanMaterialSuppliers = materialSuppliers?.length > 1;
+  const [openDeleteTableRowModal, setOpenDeleteTableRowModal] = useState<boolean>(false);
+  const onClickCloseDeleteTableRowModal = () => {
+    setOpenDeleteTableRowModal(false);
+  };
+
+  const onClickOpenDeleteTableRowModal = () => {
+    setOpenDeleteTableRowModal(true);
+  };
   const reorderedOptions = options?.sort((a, b) => {
     const isSelectedA = values.includes(a.value);
     const isSelectedB = values.includes(b.value);
@@ -44,17 +58,26 @@ const MultiSelectList = ({
     .map((selectedId) => options.find((opt) => opt.value === selectedId)?.label)
     .filter((label) => label !== null && label !== undefined);
 
+  const [selectedChecked, setChecked] = useState(false)
+  const [selectedOption, setOption] = useState<any>()
+
   const handleSelectCheck = (
     parameterKey: string,
     isChecked: boolean,
     option: any
   ) => {
-    onChangeInputs(
-      parameterKey,
-      isChecked
-        ? [...values, option?.value]
-        : values.filter((v) => v !== option?.value)
-    );
+    if (isHaveMorethanMaterialSuppliers) {
+      onClickOpenDeleteTableRowModal();
+    }
+    else {
+      onChangeInputs(
+        parameterKey,
+        isChecked
+          ? [...values, option?.value]
+          : values.filter((v) => v !== option?.value)
+      );
+    }
+
   };
 
   const onChangeInputs = async (key, value) => {
@@ -79,8 +102,11 @@ const MultiSelectList = ({
             <Stack style={classes.multiSelectOption}>
               <div>
                 <Checkbox
-                  onChange={(e, checked) =>
+                  onChange={(e, checked) => {
                     handleSelectCheck(parameterKey, checked, option)
+                    setOption(option)
+                    setChecked(checked)
+                  }
                   }
                   icon={<CheckboxIcon />}
                   checkedIcon={<CheckboxCheckedIcon />}
@@ -96,6 +122,21 @@ const MultiSelectList = ({
             {props?.children}
           </Paper>
         )}
+      />
+      <GoMakeDeleteModal
+        openModal={openDeleteTableRowModal}
+        onClose={onClickCloseDeleteTableRowModal}
+        hideIcon
+        title={t("materials.modals.updateModalTitle")}
+        yesBtn={t("documentingSettings.update")}
+        onClickDelete={() => {
+          onChangeInputs(
+            parameterKey,
+            selectedChecked
+              ? [...values, selectedOption?.value]
+              : values.filter((v) => v !== selectedOption?.value)
+          );
+        }}
       />
     </div>
   );
