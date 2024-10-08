@@ -45,13 +45,16 @@ const ActionMenu = (props: IActionMenuProps) => {
     handleChange,
     deleteProperty,
     addProperty,
-    updateModalCurrency
+    updateModalCurrency,
+    openUpdatedTableRowModal,
+    onClickCloseUpdatedTableRowModal,
+    updatedTableRowModal
   } = useMaterialsActions(props.isAdmin);
 
   const getMaterialActions = () => {
     if (props.isAdmin) {
       return materialActions.filter(x => x.action !== EMaterialsActions.UpdateIsActive && x.action !== EMaterialsActions.UpdateIsInActive && x.action !== EMaterialsActions.CreatePurchaseOrder);
-    }else{
+    } else {
       return materialActions;
     }
     /*else {
@@ -258,9 +261,17 @@ const ActionMenu = (props: IActionMenuProps) => {
           </Stack>
         </GoMakeModal>
       }
-
+      <GoMakeDeleteModal
+        openModal={openUpdatedTableRowModal}
+        onClose={onClickCloseUpdatedTableRowModal}
+        hideIcon
+        title="Updating this row will effect the material for other suppliers"
+        yesBtn={t("documentingSettings.update")}
+        onClickDelete={updatedTableRowModal}
+      />
     </>
   );
 };
+
 
 export { ActionMenu };

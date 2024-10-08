@@ -75,7 +75,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
     openDeleteTableRowWhenHaveMoreSupplierModal,
     selectedTableRow,
     materialName,
-    toggleIsActive
+    toggleIsActive,
   } = useMaterials(props.isAdmin);
 
   const subCategory = materialCategories.find(
