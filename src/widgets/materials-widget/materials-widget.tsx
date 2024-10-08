@@ -24,7 +24,7 @@ import { AddCategoryModal } from "./components/add-category/add-category-modal";
 import { AddRowModal } from "./components/add-row/add-row-modal";
 import { useMaterialsCategories } from "./use-materials-categories";
 import Pagination from "@mui/material/Pagination";
-import { GoMakeDeleteModal } from "@/components";
+import { GoMakeDeleteModal, ThreeOptionsModal } from "@/components";
 import { StepType } from "@reactour/tour";
 import { useGoMakeTour } from "@/hooks/use-go-make-tour";
 import { Stack } from "@mui/material";
@@ -71,8 +71,11 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
     openDeleteTableRowModal,
     onClickCloseDeleteTableRowModal,
     onDeleteCategoryRow,
+    onClickCloseDeleteTableRowWhenHaveMoreSupplierModal,
+    openDeleteTableRowWhenHaveMoreSupplierModal,
     selectedTableRow,
     materialName,
+    toggleIsActive
   } = useMaterials(props.isAdmin);
 
   const subCategory = materialCategories.find(
@@ -281,6 +284,18 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
         openModal={openDeleteTableRowModal}
         onClose={onClickCloseDeleteTableRowModal}
         onClickDelete={() => onDeleteCategoryRow(selectedTableRow?.id)}
+      />
+      <ThreeOptionsModal
+        hideIcon
+        title={t("Deleting this row will delete the material from other supplier")}
+        yesBtn={t("navigationButtons.delete")}
+        noBtn={selectedTableRow?.isActive
+          ? t("remainWords.convertToInactive")
+          : t("remainWords.convertToActive")}
+        openModal={openDeleteTableRowWhenHaveMoreSupplierModal}
+        onClose={onClickCloseDeleteTableRowWhenHaveMoreSupplierModal}
+        onClickYes={() => onDeleteCategoryRow(selectedTableRow?.id)}
+        onClickNo={() => toggleIsActive(selectedTableRow?.id, "Active", selectedTableRow?.isActive)}
       />
     </div>
   );
