@@ -21,6 +21,8 @@ import { getAllBoardMissionStationFilterGroupsApi } from "@/services/api-service
 
 const useProductionFloorData = () => {
   const { t } = useTranslation();
+  const dir: "rtl" | "ltr" = t("direction");
+  const RTL = dir === "rtl";
   const { callApi } = useGomakeAxios();
   const [data, setData] =
     useRecoilState<IStatusesBoardsMissions[]>(boardsMissionsState);
@@ -245,6 +247,7 @@ const useProductionFloorData = () => {
 
   return {
     t,
+    RTL,
     getData,
     updateStatus,
     setData,

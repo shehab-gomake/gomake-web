@@ -419,10 +419,23 @@ const ProductionFloorFilters = ({ filterGroups, getStationFilterGroups }) => {
                 vertical: "bottom",
               }}
               PaperProps={{
-                style: {
-                  marginTop: 8,
+                sx: {
                   padding: "0px 8px",
                   maxHeight: "438px",
+                  overflowY: "auto",
+                  "&::-webkit-scrollbar": {
+                    width: "8px",
+                  },
+                  "&::-webkit-scrollbar-track": {
+                    backgroundColor: "#ffffff",
+                  },
+                  "&::-webkit-scrollbar-thumb": {
+                    backgroundColor: "#CCCDCF",
+                    borderRadius: "4px",
+                  },
+                  "&::-webkit-scrollbar-thumb:hover": {
+                    backgroundColor: "#888",
+                  },
                 },
               }}
               anchorEl={anchorEl}

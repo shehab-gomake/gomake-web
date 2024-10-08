@@ -20,7 +20,7 @@ const OrderJObNumbersComponent = ({
         width: "fit-content",
         minWidth: "122px",
         maxHeight: "fit-content",
-        backgroundColor: bgColor,
+        // backgroundColor: bgColor,
         color: textColor,
         textAlign: "center",
         ...FONT_FAMILY.Inter(500, 14),
