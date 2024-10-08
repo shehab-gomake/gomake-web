@@ -11,24 +11,22 @@ interface UseCustomerDropDownListProps {
   shouldRenderSuppliersOnMount?: boolean;
 }
 
-// Debounce Hook
-const useDebounce = (value: string, delay: number) => {
-  const [debouncedValue, setDebouncedValue] = useState<string>(value);
+// const useDebounce = (value: string, delay: number) => {
+//   const [debouncedValue, setDebouncedValue] = useState<string>(value);
 
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedValue(value);
-    }, delay);
+//   useEffect(() => {
+//     const handler = setTimeout(() => {
+//       setDebouncedValue(value);
+//     }, delay);
 
-    return () => {
-      clearTimeout(handler);
-    };
-  }, [value, delay]);
+//     return () => {
+//       clearTimeout(handler);
+//     };
+//   }, [value, delay]);
 
-  return debouncedValue;
-};
+//   return debouncedValue;
+// };
 
-//!here
 const useCustomerDropDownList = ({
   shouldRenderCustomersOnMount = true,
   shouldRenderSuppliersOnMount = false,
@@ -118,6 +116,9 @@ const useCustomerDropDownList = ({
 
   const checkWhatRenderArray = (e: any) => {
     const value = e.target.value;
+    // if (value && value.trim() !== "") {
+    //   setIsFetching(true);
+    // }
     if (value) {
       debouncedGetAllCustomersCreateOrder(value);
     } else {

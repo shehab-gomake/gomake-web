@@ -69,7 +69,6 @@ const SettingsWidget = ({
     }
   }, [productState, allTemplate, allProductSKU]);
 
-  //!here
   const _renderProductClientSelector = () => {
     if (customersList?.length > 0 && clientTypesList?.length) {
       if (productState?.pricingType === EProductClient.BY_CLIENT) {

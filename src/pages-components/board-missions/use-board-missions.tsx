@@ -34,7 +34,6 @@ import { downloadPdf } from "@/utils/helpers";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { useUserPermission } from "@/hooks/use-permission";
 import { useQuoteGetData } from "../quote-new/use-quote-get-data";
-import { endOfToday, startOfYear } from "date-fns";
 
 type StatusOption = {
   label: string;
@@ -109,7 +108,6 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
   const [pagesCount, setPagesCount] = useState(0);
   const [pageSize, setPageSize] = useState(DEFAULT_VALUES.PageSize);
 
-  //!here
   const {
     customer,
     supplierList,
