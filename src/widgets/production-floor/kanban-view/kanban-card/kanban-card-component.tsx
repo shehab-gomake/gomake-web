@@ -23,7 +23,8 @@ const ItemTypes = {
 const KanbanCardComponent = ({ board, status }: IProp) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
-  const CardColor = board?.productionFloorJobColor ?? status?.textColor;
+
+  const CardColor = board?.productionFloorJobColor ?? "";
 
   const { CheckPermission } = useUserPermission();
   const canDrag = CheckPermission(

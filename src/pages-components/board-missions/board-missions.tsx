@@ -20,6 +20,7 @@ import QrListenerWidget from "@/widgets/qr-listener/qr-listener-widget";
 import { useUserPermission } from "@/hooks/use-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { DateRangePicker } from "rsuite";
+import { DotIcon } from "@/icons";
 
 const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
   const { classes } = useStyle();
@@ -101,7 +102,8 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
     fromDueDate,
     toDueDate,
     fromDate,
-    toDate
+    toDate,
+    router
   } = useBoardMissions({ isPurchaseJobs });
 
   useEffect(() => {
@@ -120,6 +122,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
                 <div>
                   <IconButton onClick={handleClick}>
                     <TuneIcon />
+                    {Object.keys(router.query).length > 0 && <div style={{ position: "absolute", top: -5, right: -1 }}> <DotIcon /></div>}
                   </IconButton>
                   <GoMakeMenu handleClose={handleClose} open={open} anchorEl={anchorEl} >
                     <div style={classes.filtersContainer}>

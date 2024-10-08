@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { Avatar, IconButton, MenuItem, Stack } from "@mui/material";
-import { EditIcon, Notifications } from "@/icons";
+import { EditIcon } from "@/icons";
 import { useStyle } from "./style";
 import { useHeader } from "./use-header";
 import { ColoredCycle, GoMakeMenu } from "@/components";
@@ -15,8 +15,8 @@ import { showTourModalState } from "@/store/tour-state";
 import { HelpIcon } from "@/icons/help-icon";
 import { currentPathState } from "@/pages-components/customer-service/store/currentPathState";
 import { useRouter } from "next/router";
-import {MessengerNotifications} from "@/widgets/messenger-notifications-widget/messenger-notifications";
-import {SystemNotifications} from "@/widgets/system-notifications-widget/system-notifications";
+import { MessengerNotifications } from "@/widgets/messenger-notifications-widget/messenger-notifications";
+import { SystemNotifications } from "@/widgets/system-notifications-widget/system-notifications";
 const HeaderWidget = () => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -66,14 +66,14 @@ const HeaderWidget = () => {
         {/*<IconButton style={{ padding: "2px", backgroundColor: primaryColor(300) }} onClick={handleClickSupport}>*/}
         {/*  <EmailOutlinedIcon style={{color: '#FFF', width: 18, height: 18}}/>*/}
         {/*</IconButton>*/}
-        <MessengerNotifications/>
-        <SystemNotifications/>
+        <MessengerNotifications />
+        <SystemNotifications />
         <IconButton style={{ padding: "2px" }} data-tour={"start-tour-btn"} onClick={handleClickSupport}>
-          <HelpIcon width={26} height={26} />
+          <HelpIcon width={32} height={32} />
         </IconButton>
         {QuoteIfExist == true && window.location.pathname != "/quote" && (
           <IconButton style={classes.iconBtnContainer} onClick={() => navigate("/quote")}>
-            <CartIcon width={26} height={26} />
+            <CartIcon width={32} height={32} />
           </IconButton>
         )}
         {/* <IconButton>

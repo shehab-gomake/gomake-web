@@ -141,8 +141,8 @@ const useStyle = () => {
         backgroundColor: "#cccccc",
       },
       avatarProps: {
-        width: 26,
-        height: 26,
+        width: 32,
+        height: 32,
         fontSize: "11px",
       },
       menuItemTextStyle: {

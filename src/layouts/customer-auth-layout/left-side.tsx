@@ -10,10 +10,11 @@ import { hoverStatusState } from "@/store";
 import LockIcon from "@mui/icons-material/Lock";
 import { useUserPermission } from "@/hooks/use-permission";
 import { useEffect, useState } from "react";
+import Link from "next/link";
 
 const LeftSideLayout = (customGap) => {
   const { t } = useTranslation();
-  const { tabs1, tabs2, tabs3 } = useAuthLayoutHook(null,true);
+  const { tabs1, tabs2, tabs3 } = useAuthLayoutHook(null, true);
   const [navStatus, setNavStatus] = useRecoilState(navStatusState);
   const [isHover, setIsHover] = useRecoilState(hoverStatusState);
   const { CheckPermission } = useUserPermission();
@@ -82,17 +83,20 @@ const LeftSideLayout = (customGap) => {
           <LockIcon style={{ color: "#FFF", width: 20, height: 20 }} />
         </div>
       )}
-      <div style={classes.logoContainer}>
-        {myProfileLogo &&
-          <Image
-            src={myProfileLogo}
-            alt="logo"
-            style={{ objectFit: 'contain' }}
-            width={80}
-            height={80}
-          />
-        }
-      </div>
+      <Link href="/" passHref>
+        <div style={classes.logoContainer}>
+          {myProfileLogo &&
+            <Image
+              src={myProfileLogo}
+              alt="logo"
+              style={{ objectFit: 'contain' }}
+              width={80}
+              height={80}
+            />
+          }
+        </div>
+      </Link>
+
       {/* <div style={classes.logoContainer}>
         <Image
           src={

@@ -18,7 +18,7 @@ interface IProps {
 function KanbanColumnComponent({ status, boardsMissions }: IProps) {
   const { classes } = useStyle();
   const [search] = useRecoilState(productionFloorTextSearchState);
-  const { updateStatus, t } = useProductionFloorData();
+  const { updateStatus, t, RTL } = useProductionFloorData();
   const [{ isOver }, drop] = useDrop(
     () => ({
       accept: "task",
@@ -84,7 +84,25 @@ function KanbanColumnComponent({ status, boardsMissions }: IProps) {
         </div>
       </h3>
 
-      <Stack overflow={"auto"} gap={"10px"}>
+      <Stack
+        overflow={"auto"} // Ensures scrolling
+        gap={"10px"}
+        padding={"0px 4px"}
+        maxHeight={"calc(100vh - 200px)"}
+        sx={{
+          "::-webkit-scrollbar": {
+            width: "8px",
+          },
+          "::-webkit-scrollbar-thumb": {
+            backgroundColor: "#CCCDCF",
+            borderRadius: "4px",
+            cursor: "pointer",
+          },
+          "::-webkit-scrollbar-thumb:hover": {
+            backgroundColor: "#888",
+          },
+        }}
+      >
         {getBoards()?.map((board, index) => (
           <KanbanCardComponent
             key={`${index}-${board.id}`}
