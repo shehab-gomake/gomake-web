@@ -24,8 +24,8 @@ import QrListenerWidget from "@/widgets/qr-listener/qr-listener-widget";
 import { useUserPermission } from "@/hooks/use-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { DateRangePicker } from "rsuite";
-import {useRecoilState} from "recoil";
-import {newOrderIdToPrintJobsState} from "@/store/new-order-id-to-print-jobs-state";
+import { useRecoilState } from "recoil";
+import { newOrderIdToPrintJobsState } from "@/store/new-order-id-to-print-jobs-state";
 import { DotIcon } from "@/icons";
 
 const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
@@ -106,7 +106,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
     toDate,
     router,
     isFetching,
-      printOrderJobsUsingPrintNode,
+    printOrderJobsUsingPrintNode,
   } = useBoardMissions({ isPurchaseJobs });
   const [newOrderId, setNewOrderId] = useRecoilState(newOrderIdToPrintJobsState);
 
@@ -324,55 +324,55 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
               !isPurchaseJobs
                 ? CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS)
                   ? [
-                      "7%",
-                      "7%",
-                      "6%",
-                      "6%",
-                      "7%",
-                      "7%",
-                      "8%",
-                      "7%",
-                      "4%",
-                      "6%",
-                      "12%",
-                      "7%",
-                      "7%",
-                      "13%",
-                      "3%",
-                    ]
-                  : [
-                      "7%",
-                      "7%",
-                      "7%",
-                      "7%",
-                      "7%",
-                      "7%",
-                      "8%",
-                      "7%",
-                      "18%",
-                      "7%",
-                      "15%",
-                      "7%",
-                      "3%",
-                    ]
-                : [
                     "7%",
-                    "5%",
-                    "6%",
                     "7%",
                     "6%",
+                    "6%",
                     "7%",
-                    "11%",
+                    "7%",
                     "8%",
-                    "6%",
-                    "8%",
-                    "5%",
-                    "5%",
-                    "7%",
                     "7%",
                     "4%",
-                    "2%",
+                    "6%",
+                    "12%",
+                    "7%",
+                    "7%",
+                    "13%",
+                    "3%",
                   ]
+                  : [
+                    "7%",
+                    "7%",
+                    "7%",
+                    "7%",
+                    "7%",
+                    "7%",
+                    "8%",
+                    "7%",
+                    "18%",
+                    "7%",
+                    "15%",
+                    "7%",
+                    "3%",
+                  ]
+                : [
+                  "7%",
+                  "5%",
+                  "6%",
+                  "7%",
+                  "6%",
+                  "7%",
+                  "11%",
+                  "8%",
+                  "6%",
+                  "8%",
+                  "5%",
+                  "5%",
+                  "7%",
+                  "7%",
+                  "4%",
+                  "2%",
+                ]
             }
           />
         </div>
@@ -444,8 +444,8 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
         yesBtn={t("sales.quote.print")}
         noBtn={''}
         openModal={!!newOrderId}
-        onClose={()=>setNewOrderId('')}
-        onClickYes={()=> printOrderJobsUsingPrintNode(newOrderId)}
+        onClose={() => setNewOrderId('')}
+        onClickYes={() => printOrderJobsUsingPrintNode(newOrderId)}
       />
       <PrintPackingSlipModal
         openPackagesModal={openPackagesModal}
