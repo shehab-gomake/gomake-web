@@ -1,7 +1,7 @@
 import { quoteItemState } from "@/store";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useRecoilValue } from "recoil";
+import {useRecoilState, useRecoilValue} from "recoil";
 import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
 import { createOrderApi, getDocumentPdfApi, manuallyCloseDocumentApi, sendQuoteApprovalToManagerApi } from "@/services/api-service/generic-doc/documents-api";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
@@ -12,6 +12,7 @@ import { useRouter } from "next/router";
 import { useUserPermission } from "@/hooks/use-permission";
 import { DocumentPermission } from "@/components/CheckPermission/enum";
 import { getAllUsersCanApproveQuoteApi } from "@/services/api-service/users/users-api";
+import {newOrderIdToPrintJobsState} from "@/store/new-order-id-to-print-jobs-state";
 
 const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     const { navigate } = useGomakeRouter();
@@ -29,6 +30,7 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     const [openCancelReceiptModal, setOpenCancelReceiptModal] = useState(false);
     const [isSelectedAtLeastOne, setIsSelectedAtLeastOne] = useState(null)
     const [openMangerApprovalModal, setOpenMangerApprovalModal] = useState(false);
+    const [, setShowPrintJobsModal] = useRecoilState(newOrderIdToPrintJobsState);
 
 
     useEffect(() => {
@@ -92,6 +94,7 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
             if (res?.success) {
                 alertSuccessUpdate();
                 onClickCloseOrderNowModal();
+                setShowPrintJobsModal(res.data.orderID);
                 navigate(`/jobs?orderNumber=${res?.data?.number}`);
             } else {
                 alertFaultUpdate();
@@ -111,6 +114,7 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
             if (res?.success) {
                 alertSuccessUpdate();
                 onClickCloseOrderNowModal();
+                setShowPrintJobsModal(res.data.orderID);
                 navigate(`/jobs?orderNumber=${res?.data?.number}`);
             } else {
                 alertFaultUpdate();

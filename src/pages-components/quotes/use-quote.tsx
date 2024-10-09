@@ -70,6 +70,7 @@ interface Query {
   accountingStatus?: string;
   productionStatus?: string;
   isCanceled?: boolean;
+  pageNumber?: number;
 }
 
 const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
@@ -128,7 +129,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const { query, pathname } = useRouter();
   const router = useRouter();
   const { quoteNumber } = query;
-  const { renderOptions, checkWhatRenderArray } = useQuoteWidget();
+  const { renderOptions, checkWhatRenderArray, isFetching } = useQuoteWidget();
   const [accountingStatus, setAccountingStatus] = useState<{
     label: string;
     value: PStatus;
@@ -608,6 +609,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         setAllStatistics(res?.data?.documentStatisticsList);
       }
     };
+    const currentPageNumber = router.query.pageNumber;
     const currentStatusId = router.query.statusId;
     const currentFinalPatternSearch = router.query.finalPatternSearch;
     const currentCustomerId = router.query.customerId;
@@ -653,7 +655,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         minPrice: currentMinPrice || minPrice,
         maxPrice: currentMaxPrice || maxPrice,
         model: {
-          pageNumber: page,
+          pageNumber: currentPageNumber || page,
           pageSize: pageSize,
         },
       });
@@ -662,7 +664,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         documentType: docType,
         data: {
           model: {
-            pageNumber: page,
+            pageNumber: currentPageNumber || page,
             pageSize: pageSize,
           },
           statusId: quoteStatusId?.value || currentStatusId || statusId?.value,
@@ -1025,6 +1027,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       query.approvalStatusId = approvalStatusId.value;
     if (minPrice) query.minPrice = minPrice;
     if (maxPrice) query.maxPrice = maxPrice;
+    if (page) query.pageNumber = page;
     if (fromDate) query.fromDate = fromDate.toISOString();
     if (toDate) query.toDate = toDate.toISOString();
     if (accountingStatus)
@@ -2018,7 +2021,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   };
 
   useEffect(() => {
-    // Read URL parameters and set state accordingly
     const {
       customerId,
       agentId,
@@ -2032,10 +2034,21 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       accountingStatus,
       productionStatus,
       isCanceled,
+      pageNumber,
     } = router.query;
-    if (customerId) setCustomerId({ id: customerId });
-    if (agentId) setAgentId({ id: agentId });
+    if (customerId) {
+      const customerIdSelect = renderOptions().find(
+        (c1) => c1.id === customerId
+      );
+      setCustomerId(customerIdSelect);
+
+    }
+    if (agentId) {
+      const selectedAgent = agentsCategories?.find((agent: any) => agent?.id === agentId)
+      setAgentId(selectedAgent);
+    }
     if (statusId) setStatusId({ value: statusId });
+    if (pageNumber) setPage(Number(pageNumber)); // Convert to number
     if (approvalStatusId) setApprovalStatusId({ value: approvalStatusId });
     if (typeof minPrice === "string") setMinPrice(minPrice);
     if (typeof maxPrice === "string") setMaxPrice(maxPrice);
@@ -2069,7 +2082,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     if (isCanceled) {
       setIsCanceledState(isCanceledState);
     }
-  }, [router]);
+  }, [router, renderOptions(), agentsCategories]);
 
   return {
     showCustomerModal,
@@ -2193,6 +2206,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     openCancelReceiptModalRefund,
     onCloseCancelReceiptModalRefund,
     ExportDocumentTableToExcel,
+    isFetching,
   };
 };
 

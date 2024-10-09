@@ -1,8 +1,11 @@
 import { Checkbox } from "@mui/material";
 import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
-import { GoMakeAutoComplate } from "@/components"
+import { GoMakeAutoComplate } from "@/components";
 import { DateFormatter } from "@/utils/adapter";
-import { AgingReportHeaderWidgetProps, useAgingReportHeader } from "./use-header-widget";
+import {
+  AgingReportHeaderWidgetProps,
+  useAgingReportHeader,
+} from "./use-header-widget";
 import { DateRangePicker } from "rsuite";
 import { createGlobalStyle } from "styled-components";
 
@@ -24,15 +27,15 @@ const AgingReportHeaderWidget = ({
   handleDateChange,
   fromDate,
   toDate,
+  isFetchingCustomers,
 }: AgingReportHeaderWidgetProps) => {
-
-  const { classes, t } = useAgingReportHeader()
-  const dir: 'rtl' | 'ltr' = t('direction');
-  const RTL = dir === 'rtl';
+  const { classes, t } = useAgingReportHeader();
+  const dir: "rtl" | "ltr" = t("direction");
+  const RTL = dir === "rtl";
   const GlobalStyle = createGlobalStyle`
   .rs-picker-popup-daterange {
-    left: ${({ RTL }: any) => (RTL ? 'auto' : '150px')} !important;
-    right: ${({ RTL }: any) => (RTL ? '150px' : 'auto')} !important;
+    left: ${({ RTL }: any) => (RTL ? "auto" : "150px")} !important;
+    right: ${({ RTL }: any) => (RTL ? "150px" : "auto")} !important;
   }
 `;
 
@@ -49,13 +52,17 @@ const AgingReportHeaderWidget = ({
         </div>
       </div>
       <div style={classes.date2FilterContainer}>
-        <h3 style={classes.filterLabelStyle}>{t("customers.modal.referenceDate")}</h3>
-        <div style={classes.datePickerinvidualContainer} onClick={handleClickSelectDate}>
-          <div
-            style={classes.dateStyle}
-
-          >
-            {selectDate ? DateFormatter(selectDate) : t("sales.quote.selectDate")}
+        <h3 style={classes.filterLabelStyle}>
+          {t("customers.modal.referenceDate")}
+        </h3>
+        <div
+          style={classes.datePickerinvidualContainer}
+          onClick={handleClickSelectDate}
+        >
+          <div style={classes.dateStyle}>
+            {selectDate
+              ? DateFormatter(selectDate)
+              : t("sales.quote.selectDate")}
             <div style={classes.datePickerContainer}>
               <input
                 type="date"
@@ -91,6 +98,7 @@ const AgingReportHeaderWidget = ({
           placeholder={t("sales.quote.chooseCustomer")}
           onChange={handleCustomerChange}
           value={customer}
+          loading={isFetchingCustomers}
         />
       </div>
       <div style={classes.date1FilterContainer}>
@@ -101,16 +109,19 @@ const AgingReportHeaderWidget = ({
             onChange={onChangeDetailedReport}
             checked={detailedReport}
           />
-          <div style={classes.labelSwichStyle}>{t("reports.detailedReport")}</div>
+          <div style={classes.labelSwichStyle}>
+            {t("reports.detailedReport")}
+          </div>
         </div>
         <div style={classes.checkboxStyle}>
           <Checkbox
             onChange={onChangeByReferenceDate}
             icon={<CheckboxIcon />}
-            checkedIcon={<CheckboxCheckedIcon />
-            }
+            checkedIcon={<CheckboxCheckedIcon />}
           />
-          <div style={classes.labelSwichStyle}>{t("reports.byReferenceDate")}</div>
+          <div style={classes.labelSwichStyle}>
+            {t("reports.byReferenceDate")}
+          </div>
         </div>
       </div>
     </div>

@@ -14,7 +14,7 @@ import {
   getAllPurchaseJobsApi,
   getDeliveryTickerPdfApi,
   getOrderSummeryPdfApi,
-  getWorkMissionPdfApi,
+  getWorkMissionPdfApi, printOrderJobUsingPrintNodeApi,
   setBoardMissionsFiltersApi,
 } from "@/services/api-service/board-missions/board-missions-table";
 import { useDateFormat } from "@/hooks/use-date-format";
@@ -34,7 +34,6 @@ import { downloadPdf } from "@/utils/helpers";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { useUserPermission } from "@/hooks/use-permission";
 import { useQuoteGetData } from "../quote-new/use-quote-get-data";
-import { endOfToday, startOfYear } from "date-fns";
 
 type StatusOption = {
   label: string;
@@ -59,9 +58,6 @@ interface Query {
   toDueDate?: string;
   fromReadyDate?: string;
   toReadyDate?: string;
-
-
-
 }
 
 const useBoardMissions = ({ isPurchaseJobs }) => {
@@ -111,6 +107,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
   const [pageNumber, setPageNumber] = useState(1);
   const [pagesCount, setPagesCount] = useState(0);
   const [pageSize, setPageSize] = useState(DEFAULT_VALUES.PageSize);
+
   const {
     customer,
     supplierList,
@@ -118,7 +115,9 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     renderOptions,
     checkWhatRenderArray,
     handleCustomerChange,
+    isFetching,
   } = useCustomerDropDownList({ shouldRenderSuppliersOnMount: isPurchaseJobs });
+
   const { agent, setAgent, agentsCategories, handleAgentChange } =
     useAgentsList();
   const router = useRouter();
@@ -278,14 +277,19 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     getAllData(isPurchaseJobs, true);
 
     const query = {};
-    router.replace({
-      pathname: router.pathname,
-      query: query,
-    }, undefined, { shallow: true });
+    router.replace(
+      {
+        pathname: router.pathname,
+        query: query,
+      },
+      undefined,
+      { shallow: true }
+    );
   };
   const onChangeMissionsSearch = (value: string) => {
     setPatternSearch(value);
-    router.push({ // Update the router query
+    router.push({
+      // Update the router query
       pathname: router.pathname,
       query: { ...router.query, finalPatternSearch: value },
     });
@@ -660,6 +664,10 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
 
   const handlePageChange = (event, value) => {
     setPageNumber(value);
+    router.push({
+      pathname: router.pathname,
+      query: { ...router.query, pageNumber: value },
+    });
   };
 
   const [quantityOfPackages, setQuantityOfPackages] = useState(1);
@@ -757,36 +765,80 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     setAnchorEl(null);
   };
 
+  const printOrderJobsUsingPrintNode = async (orderId: string) => {
+    const callBack = res => {
+      if (res.success) {
+
+      }
+    }
+    await printOrderJobUsingPrintNodeApi(callApi, callBack, orderId);
+  }
 
   useEffect(() => {
     // Read URL parameters and set state accordingly
-    const { clientId, agentId, productionStatus, orderStatus, fromDate, toDate, fromDueDate, toDueDate, fromReadyDate, toReadyDate, finalPatternSearch } = router.query;
+    const {
+      clientId,
+      agentId,
+      productionStatus,
+      orderStatus,
+      fromDate,
+      toDate,
+      fromDueDate,
+      toDueDate,
+      fromReadyDate,
+      toReadyDate,
+      finalPatternSearch,
+      pageNumber
+    } = router.query;
 
-    if (clientId) setCustomer({ id: Array.isArray(clientId) ? clientId[0] : clientId, name: '' });
-    if (agentId) setAgent({ id: Array.isArray(agentId) ? agentId[0] : agentId, label: '' });
+    if (clientId) {
+      const customerIdSelect = renderOptions().find(
+        (c1) => c1.id === clientId
+      );
+      console.log("customerIdSelect", customerIdSelect)
+      setCustomer(customerIdSelect);
+    }
+
+    if (agentId) {
+      const selectedAgent = agentsCategories?.find((agent: any) => agent?.id === agentId)
+      setAgent(selectedAgent);
+    }
     if (productionStatus) {
-      const statusToSet = productionStatuses.find(status => status.value === Number(productionStatus));
+      const statusToSet = productionStatuses.find(
+        (status) => status.value === Number(productionStatus)
+      );
       if (statusToSet) {
         setStatus(statusToSet);
       }
     }
+    if (pageNumber) {
+      setPageNumber(Number(pageNumber))
+    }
 
     if (orderStatus) {
-      const orderStatusToSet = orderStatuses.find(status => status.value === Number(orderStatus));
+      const orderStatusToSet = orderStatuses.find(
+        (status) => status.value === Number(orderStatus)
+      );
       if (orderStatusToSet) {
         setOrderStatus(orderStatusToSet);
       }
     }
-    if (fromDate && typeof fromDate === 'string') setFromDate(new Date(fromDate));
-    if (toDate && typeof toDate === 'string') setToDate(new Date(toDate));
-    if (fromDueDate && typeof fromDueDate === 'string') setFromDueDate(new Date(fromDueDate));
-    if (toDueDate && typeof toDueDate === 'string') setToDueDate(new Date(toDueDate));
-    if (fromReadyDate && typeof fromReadyDate === 'string') setFromReadyDate(new Date(fromReadyDate));
-    if (toReadyDate && typeof toReadyDate === 'string') setToReadyDate(new Date(toReadyDate));
-    if (finalPatternSearch && typeof finalPatternSearch === 'string') setPatternSearch(finalPatternSearch);
-    if (finalPatternSearch && typeof finalPatternSearch === 'string') setFinalPatternSearch(finalPatternSearch);
-
-  }, [router.query]);
+    if (fromDate && typeof fromDate === "string")
+      setFromDate(new Date(fromDate));
+    if (toDate && typeof toDate === "string") setToDate(new Date(toDate));
+    if (fromDueDate && typeof fromDueDate === "string")
+      setFromDueDate(new Date(fromDueDate));
+    if (toDueDate && typeof toDueDate === "string")
+      setToDueDate(new Date(toDueDate));
+    if (fromReadyDate && typeof fromReadyDate === "string")
+      setFromReadyDate(new Date(fromReadyDate));
+    if (toReadyDate && typeof toReadyDate === "string")
+      setToReadyDate(new Date(toReadyDate));
+    if (finalPatternSearch && typeof finalPatternSearch === "string")
+      setPatternSearch(finalPatternSearch);
+    if (finalPatternSearch && typeof finalPatternSearch === "string")
+      setFinalPatternSearch(finalPatternSearch);
+  }, [router.query, renderOptions(), agentsCategories]);
 
   return {
     tableHeader,
@@ -866,7 +918,9 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     toReadyDate,
     fromDueDate,
     toDueDate,
-    router
+    router,
+    isFetching,
+    printOrderJobsUsingPrintNode,
   };
 };
 

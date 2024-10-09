@@ -1,7 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useAgentsList, useCustomerDropDownList, useGomakeAxios, useSnackBar } from "@/hooks";
+import {
+  useAgentsList,
+  useCustomerDropDownList,
+  useGomakeAxios,
+  useSnackBar,
+} from "@/hooks";
 import { EHttpMethod } from "@/services/api-service/enums";
-import { format } from 'date-fns';
+import { format } from "date-fns";
 import { useTranslation } from "react-i18next";
 import { endOfToday, startOfYear } from "date-fns";
 import { getAndSetCustomerById } from "@/services/api-service/customers/customers-api";
@@ -14,9 +19,17 @@ const useAgingReport = () => {
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
   const { alertFault, alertFaultGetData, alertSuccessGetData } = useSnackBar();
-  const { customer, renderOptions, checkWhatRenderArray, handleCustomerChange } = useCustomerDropDownList();
+  const {
+    customer,
+    renderOptions,
+    checkWhatRenderArray,
+    handleCustomerChange,
+    isFetching,
+  } = useCustomerDropDownList();
   const { agent, agentsCategories, handleAgentChange } = useAgentsList();
-  const [selectDate, setSelectDate] = useState<string>(new Date().toISOString().split('T')[0]);
+  const [selectDate, setSelectDate] = useState<string>(
+    new Date().toISOString().split("T")[0]
+  );
   const [byReferenceDate, setByReferenceDate] = useState<boolean>(false);
   const [detailedReport, setDetailedReport] = useState<boolean>(false);
   const [showTable, setShowTable] = useState<boolean>(false);
@@ -29,7 +42,7 @@ const useAgingReport = () => {
   const [showCustomerModal, setShowCustomerModal] = useState(false);
   const [customerForEdit, setCustomerForEdit] = useState(null);
 
-  const transformedHeaders = tableHeader?.map(header => {
+  const transformedHeaders = tableHeader?.map((header) => {
     const containsNumber = /\d/.test(header.key);
     return containsNumber ? header.name : t(`reports.${header.key}`);
   });
@@ -58,50 +71,66 @@ const useAgingReport = () => {
     setByReferenceDate(!byReferenceDate);
   };
 
-  const getTableDataRows = useCallback((onClickOpenCustomerModal) => {
-    return tableData.flatMap((data: any) => {
-      const rows = [];
-      const mainRow = tableHeader.map((header: any) => {
-        const nestedKey = header.key;
-        const value = nestedKey.split('.').reduce((acc, part) => acc && acc[part], data);
+  const getTableDataRows = useCallback(
+    (onClickOpenCustomerModal) => {
+      return tableData.flatMap((data: any) => {
+        const rows = [];
+        const mainRow = tableHeader.map((header: any) => {
+          const nestedKey = header.key;
+          const value = nestedKey
+            .split(".")
+            .reduce((acc, part) => acc && acc[part], data);
 
-        if (nestedKey === 'cardName') {
-          return (
-            <div style={{ cursor: "pointer" }} onClick={() => onClickOpenCustomerModal(data?.clientId)}>
-              {value}
-            </div>
+          if (nestedKey === "cardName") {
+            return (
+              <div
+                style={{ cursor: "pointer" }}
+                onClick={() => onClickOpenCustomerModal(data?.clientId)}
+              >
+                {value}
+              </div>
+            );
+          }
+
+          if (Array.isArray(value)) {
+            return value.map((item: any) => {
+              return tableHeader.map((nestedHeader: any) => {
+                const nestedValue = nestedHeader.key
+                  .split(".")
+                  .reduce((acc, part) => acc && acc[part], item);
+                return nestedValue || "";
+              });
+            });
+          } else if (typeof value === "object" && value !== null) {
+            return Object.entries(value)
+              .map(([key, val]) => `${key}: ${val}`)
+              .join(", ");
+          } else {
+            return value || "";
+          }
+        });
+
+        rows.push(mainRow);
+
+        if (Array.isArray(data.data) && detailedReport) {
+          rows.push(
+            ...data.data.map((nestedItem: any) => {
+              return tableHeader.map((header: any, index: number) => {
+                if (index < 3) return "";
+                const nestedValue = header.key
+                  .split(".")
+                  .reduce((acc, part) => acc && acc[part], nestedItem);
+                return nestedValue || "";
+              });
+            })
           );
         }
 
-        if (Array.isArray(value)) {
-          return value.map((item: any) => {
-            return tableHeader.map((nestedHeader: any) => {
-              const nestedValue = nestedHeader.key.split('.').reduce((acc, part) => acc && acc[part], item);
-              return nestedValue || '';
-            });
-          });
-        } else if (typeof value === 'object' && value !== null) {
-          return Object.entries(value).map(([key, val]) => `${key}: ${val}`).join(', ');
-        } else {
-          return value || '';
-        }
+        return rows;
       });
-
-      rows.push(mainRow);
-
-      if (Array.isArray(data.data) && detailedReport) {
-        rows.push(...data.data.map((nestedItem: any) => {
-          return tableHeader.map((header: any, index: number) => {
-            if (index < 3) return '';
-            const nestedValue = header.key.split('.').reduce((acc, part) => acc && acc[part], nestedItem);
-            return nestedValue || '';
-          });
-        }));
-      }
-
-      return rows;
-    });
-  }, [tableData, tableHeader, detailedReport]);
+    },
+    [tableData, tableHeader, detailedReport]
+  );
 
   const onClickBtn1 = () => {
     setShowTable(false);
@@ -122,8 +151,8 @@ const useAgingReport = () => {
       return;
     }
 
-    const formattedStartDate = format(fromDate, 'yyyy-MM-dd');
-    const formattedEndDate = format(toDate, 'yyyy-MM-dd');
+    const formattedStartDate = format(fromDate, "yyyy-MM-dd");
+    const formattedEndDate = format(toDate, "yyyy-MM-dd");
 
     const res = await callApi(
       EHttpMethod.POST,
@@ -135,7 +164,7 @@ const useAgingReport = () => {
         referDate: selectDate ? selectDate : new Date(),
         agentId: agent?.id,
         byCreationDate: byReferenceDate,
-        expendedReport: detailedReport
+        expendedReport: detailedReport,
       }
     );
     if (res?.success) {
@@ -147,7 +176,15 @@ const useAgingReport = () => {
       alertFaultGetData();
       setShowTable(false);
     }
-  }, [fromDate, toDate, detailedReport, agent, customer, selectDate, byReferenceDate]);
+  }, [
+    fromDate,
+    toDate,
+    detailedReport,
+    agent,
+    customer,
+    selectDate,
+    byReferenceDate,
+  ]);
 
   const ExportAgingReportPDF = useCallback(async () => {
     if (!fromDate || !toDate) {
@@ -155,8 +192,8 @@ const useAgingReport = () => {
       return;
     }
 
-    const formattedStartDate = format(fromDate, 'yyyy-MM-dd');
-    const formattedEndDate = format(toDate, 'yyyy-MM-dd');
+    const formattedStartDate = format(fromDate, "yyyy-MM-dd");
+    const formattedEndDate = format(toDate, "yyyy-MM-dd");
 
     const res = await callApi(
       EHttpMethod.POST,
@@ -169,15 +206,23 @@ const useAgingReport = () => {
           referDate: selectDate ? selectDate : new Date(),
           agentId: agent?.id,
           byCreationDate: byReferenceDate,
-          expendedReport: detailedReport
-        }
+          expendedReport: detailedReport,
+        },
       },
       true,
-      null,
+      null
     );
     const pdfLink = res?.data?.data?.data;
     downloadPdf(pdfLink);
-  }, [fromDate, toDate, detailedReport, agent, customer, selectDate, byReferenceDate]);
+  }, [
+    fromDate,
+    toDate,
+    detailedReport,
+    agent,
+    customer,
+    selectDate,
+    byReferenceDate,
+  ]);
   const downloadPdf = (url) => {
     const anchor = document.createElement("a");
     anchor.href = url;
@@ -195,8 +240,8 @@ const useAgingReport = () => {
       return;
     }
 
-    const formattedStartDate = format(fromDate, 'yyyy-MM-dd');
-    const formattedEndDate = format(toDate, 'yyyy-MM-dd');
+    const formattedStartDate = format(fromDate, "yyyy-MM-dd");
+    const formattedEndDate = format(toDate, "yyyy-MM-dd");
 
     const res = await callApi(
       EHttpMethod.POST,
@@ -209,20 +254,28 @@ const useAgingReport = () => {
           referDate: selectDate ? selectDate : new Date(),
           agentId: agent?.id,
           byCreationDate: byReferenceDate,
-          expendedReport: detailedReport
-        }
+          expendedReport: detailedReport,
+        },
       },
       true,
       null,
       "blob"
     );
 
-    const downloadLink = document.createElement('a');
+    const downloadLink = document.createElement("a");
     const link = URL?.createObjectURL(res.data);
     downloadLink.href = link;
     downloadLink.download = `aging report.xlsx`;
     downloadLink.click();
-  }, [fromDate, toDate, detailedReport, agent, customer, selectDate, byReferenceDate]);
+  }, [
+    fromDate,
+    toDate,
+    detailedReport,
+    agent,
+    customer,
+    selectDate,
+    byReferenceDate,
+  ]);
 
   // New function to handle opening customer modal
   const onClickOpenCustomerModal = async (customerId: string) => {
@@ -234,7 +287,9 @@ const useAgingReport = () => {
     };
     await getAndSetCustomerById(callApi, callBack, { customerId });
   };
-  const setClientTypesCategories = useSetRecoilState(clientTypesCategoriesState);
+  const setClientTypesCategories = useSetRecoilState(
+    clientTypesCategoriesState
+  );
 
   const getClientTypesCategories = async () => {
     const callBack = (res) => {
@@ -247,7 +302,9 @@ const useAgingReport = () => {
         setClientTypesCategories(clientTypes);
       }
     };
-    await getAndSetClientTypes(callApi, callBack, { cardType: CLIENT_TYPE_Id.CUSTOMER });
+    await getAndSetClientTypes(callApi, callBack, {
+      cardType: CLIENT_TYPE_Id.CUSTOMER,
+    });
   };
 
   useEffect(() => {
@@ -285,7 +342,8 @@ const useAgingReport = () => {
     setShowCustomerModal,
     customerForEdit,
     setCustomerForEdit,
-    onClickOpenCustomerModal // Expose the function
+    onClickOpenCustomerModal, // Expose the function
+    isFetching,
   };
 };
 

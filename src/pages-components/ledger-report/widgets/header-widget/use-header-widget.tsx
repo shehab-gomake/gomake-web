@@ -7,19 +7,21 @@ export interface AgingReportHeaderWidgetProps {
   renderOptions: () => any[];
   checkWhatRenderArray: (arg: any) => void;
   handleCustomerChange: any;
-  isExtended: boolean,
+  isExtended: boolean;
   onChangeIsExtended: any;
   handleDateChange?: (arg: any) => void;
-  fromDate?: Date | null,
-  toDate?: Date | null
-  customerId?: string
-
+  fromDate?: Date | null;
+  toDate?: Date | null;
+  customerId?: string;
+  isFetchingCustomers?: boolean;
 }
+
 const useAgingReportHeader = () => {
   const { classes } = useStyle();
-  const { t } = useTranslation()
+  const { t } = useTranslation();
   return {
-    classes, t
+    classes,
+    t,
   };
 };
 

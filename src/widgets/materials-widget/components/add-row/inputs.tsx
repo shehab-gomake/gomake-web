@@ -2,6 +2,7 @@ import { EDataTypeEnum } from "@/widgets/materials-widget/components/table-cell-
 
 const rowInputs = (
   state,
+  isFetching,
   materialHeaders?,
   currencies?,
   machinesCategories?,
@@ -50,9 +51,9 @@ const rowInputs = (
             parameterKey: header?.key,
             options: header.values
               ? header.values.map((value) => ({
-                value: value.key,
-                text: value.value,
-              }))
+                  value: value.key,
+                  text: value.value,
+                }))
               : [],
             value: "",
             isValid: true,
@@ -68,9 +69,9 @@ const rowInputs = (
             parameterKey: header?.key,
             options: header.values
               ? header.values.map((value) => ({
-                value: value.key,
-                text: value.value,
-              }))
+                  value: value.key,
+                  text: value.value,
+                }))
               : [],
             value: "",
             isValid: true,
@@ -87,7 +88,10 @@ const rowInputs = (
               value: machine.id,
               text: `${machine.manufacturer} - ${machine.model}`,
             })),
-            values: (state?.machine || state?.machines) ? state?.machine || state?.machines : [],
+            values:
+              state?.machine || state?.machines
+                ? state?.machine || state?.machines
+                : [],
             isValid: true,
             multiple: true,
           };
@@ -107,6 +111,7 @@ const rowInputs = (
             values: state?.clients ? state?.clients : [],
             isValid: true,
             multiple: true,
+            loading: isFetching,
           };
         case "NOTE_BOOK_TYPES":
           return {
