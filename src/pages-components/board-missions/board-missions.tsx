@@ -3,7 +3,12 @@ import { useStyle } from "./style";
 import { HeaderTitle } from "@/widgets";
 import { useBoardMissions } from "./use-board-missions";
 import { PrimaryTable } from "@/components/tables/primary-table";
-import { GoMakeAutoComplate, GoMakeDeleteModal, GomakePrimaryButton, ThreeOptionsModal } from "@/components";
+import {
+  GoMakeAutoComplate,
+  GoMakeDeleteModal,
+  GomakePrimaryButton,
+  ThreeOptionsModal,
+} from "@/components";
 import { SearchInputComponent } from "@/components/form-inputs/search-input-component";
 import { useEffect } from "react";
 import { GoMakeMultiSelect } from "@/components/auto-complete/multi-select";
@@ -14,7 +19,7 @@ import { PrintPackingSlipModal } from "./widgets/print-packing-slip-modal";
 import { IconButton } from "@mui/material";
 import { GoMakeMenu } from "@/components";
 import { InputAdornment } from "@mui/material";
-import TuneIcon from '@mui/icons-material/Tune';
+import TuneIcon from "@mui/icons-material/Tune";
 import QrListenerWidget from "@/widgets/qr-listener/qr-listener-widget";
 import { useUserPermission } from "@/hooks/use-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
@@ -99,8 +104,9 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
     toDueDate,
     fromDate,
     toDate,
+    router,
+    isFetching,
       printOrderJobsUsingPrintNode,
-    router
   } = useBoardMissions({ isPurchaseJobs });
   const [newOrderId, setNewOrderId] = useRecoilState(newOrderIdToPrintJobsState);
 
@@ -111,9 +117,23 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
 
   return (
     <>
-      <Stack direction="column" justifyContent="space-between" display="flex" spacing={1} height="100%" >
+      <Stack
+        direction="column"
+        justifyContent="space-between"
+        display="flex"
+        spacing={1}
+        height="100%"
+      >
         <div style={classes.mainContainer}>
-          <HeaderTitle title={!isPurchaseJobs ? t("boardMissions.title") : t("boardMissions.purchaseJobsTitle")} marginTop={1} marginBottom={1} />
+          <HeaderTitle
+            title={
+              !isPurchaseJobs
+                ? t("boardMissions.title")
+                : t("boardMissions.purchaseJobsTitle")
+            }
+            marginTop={1}
+            marginBottom={1}
+          />
           <SearchInputComponent
             searchInputStyle={{ width: 400 }}
             filtersButton={
@@ -121,13 +141,41 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
                 <div>
                   <IconButton onClick={handleClick}>
                     <TuneIcon />
-                    {Object.keys(router.query).length > 0 && <div style={{ position: "absolute", top: -5, right: -1 }}> <DotIcon /></div>}
+                    {Object.keys(router.query).length > 0 && (
+                      <div style={{ position: "absolute", top: -5, right: -1 }}>
+                        <DotIcon />
+                      </div>
+                    )}
                   </IconButton>
-                  <GoMakeMenu handleClose={handleClose} open={open} anchorEl={anchorEl} >
+                  <GoMakeMenu
+                    handleClose={handleClose}
+                    open={open}
+                    anchorEl={anchorEl}
+                  >
                     <div style={classes.filtersContainer}>
                       <div style={classes.selectedFilterContainer}>
+                        {/* here */}
                         <div style={classes.statusFilterContainer}>
-                          <h3 style={classes.filterLabelStyle}>{t("sales.quote.agent")}</h3>
+                          <h3 style={classes.filterLabelStyle}>
+                            {t("sales.quote.customer")}
+                          </h3>
+                          <GoMakeAutoComplate
+                            key={customer?.id}
+                            options={renderOptions()}
+                            onChangeTextField={checkWhatRenderArray}
+                            getOptionLabel={(option: any) => `${option.name}`}
+                            style={classes.textInputStyle}
+                            placeholder={t("sales.quote.chooseCustomer")}
+                            onChange={handleCustomerChange}
+                            value={customer}
+                            withArrow={true}
+                            loading={isFetching} // Pass loading state here
+                          />
+                        </div>
+                        <div style={classes.statusFilterContainer}>
+                          <h3 style={classes.filterLabelStyle}>
+                            {t("sales.quote.agent")}
+                          </h3>
                           <GoMakeAutoComplate
                             key={agent?.id}
                             options={agentsCategories}
@@ -140,21 +188,9 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
                           />
                         </div>
                         <div style={classes.statusFilterContainer}>
-                          <h3 style={classes.filterLabelStyle}>{t("sales.quote.customer")}</h3>
-                          <GoMakeAutoComplate
-                            key={customer?.id}
-                            options={renderOptions()}
-                            onChangeTextField={checkWhatRenderArray}
-                            getOptionLabel={(option: any) => `${option.name}`}
-                            style={classes.textInputStyle}
-                            placeholder={t("sales.quote.chooseCustomer")}
-                            onChange={handleCustomerChange}
-                            value={customer}
-                            withArrow={true}
-                          />
-                        </div>
-                        <div style={classes.statusFilterContainer}>
-                          <h3 style={classes.filterLabelStyle}>{t("boardMissions.productionStatus")}</h3>
+                          <h3 style={classes.filterLabelStyle}>
+                            {t("boardMissions.productionStatus")}
+                          </h3>
                           <GoMakeAutoComplate
                             key={status?.value}
                             options={productionStatuses}
@@ -166,7 +202,9 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
                           />
                         </div>
                         <div style={classes.statusFilterContainer}>
-                          <h3 style={classes.filterLabelStyle}>{t("boardMissions.orderStatus")}</h3>
+                          <h3 style={classes.filterLabelStyle}>
+                            {t("boardMissions.orderStatus")}
+                          </h3>
                           <GoMakeAutoComplate
                             key={orderStatus?.value}
                             options={orderStatuses}
@@ -178,52 +216,73 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
                           />
                         </div>
                         <div style={classes.statusFilterContainer}>
-                          <h3 style={classes.filterLabelStyle}>{t("boardMissions.products")}</h3>
+                          <h3 style={classes.filterLabelStyle}>
+                            {t("boardMissions.products")}
+                          </h3>
                           <GoMakeMultiSelect
                             onChange={handleMultiSelectChange}
                             style={classes.textInputForProductsStyle}
                             options={productsList}
                             values={productIds}
-                            placeholder={t("boardMissions.selectProducts")} />
-                        </div>
-                        {isPurchaseJobs && <div style={classes.statusFilterContainer}>
-                          <h3 style={classes.filterLabelStyle}>{t("sales.quote.supplierName")}</h3>
-                          <GoMakeAutoComplate
-                            placeholder={"Select supplier"}
-                            value={supplierId}
-                            style={classes.textInputForProductsStyle}
-                            onChange={handledSupplierIdChange}
-                            options={supplierList?.map((s) => ({
-                              value: s.id,
-                              label: s.name,
-                            }))}
-                            withArrow={true}
+                            placeholder={t("boardMissions.selectProducts")}
                           />
-
-                        </div>}
+                        </div>
+                        {isPurchaseJobs && (
+                          <div style={classes.statusFilterContainer}>
+                            <h3 style={classes.filterLabelStyle}>
+                              {t("sales.quote.supplierName")}
+                            </h3>
+                            <GoMakeAutoComplate
+                              placeholder={"Select supplier"}
+                              value={supplierId}
+                              style={classes.textInputForProductsStyle}
+                              onChange={handledSupplierIdChange}
+                              options={supplierList?.map((s) => ({
+                                value: s.id,
+                                label: s.name,
+                              }))}
+                              withArrow={true}
+                            />
+                          </div>
+                        )}
                         <div style={classes.statusFilterContainer}>
-                          <h3 style={classes.filterLabelStyle}>{t("boardMissions.dateRange")}</h3>
+                          <h3 style={classes.filterLabelStyle}>
+                            {t("boardMissions.dateRange")}
+                          </h3>
                           <DateRangePicker
                             onChange={onSelectDeliveryTimeDates}
-                            value={fromDate && toDate ? [fromDate, toDate] : null}
+                            value={
+                              fromDate && toDate ? [fromDate, toDate] : null
+                            }
                           />
                         </div>
 
                         <div style={classes.statusFilterContainer}>
-                          <h3 style={classes.filterLabelStyle}>{t("Due Date")}</h3>
+                          <h3 style={classes.filterLabelStyle}>
+                            {t("Due Date")}
+                          </h3>
                           <DateRangePicker
                             onChange={onSelectDueTimeDates}
-                            value={fromDueDate && toDueDate ? [fromDueDate, toDueDate] : null}
+                            value={
+                              fromDueDate && toDueDate
+                                ? [fromDueDate, toDueDate]
+                                : null
+                            }
                           />
                         </div>
 
                         <div style={classes.statusFilterContainer}>
-                          <h3 style={classes.filterLabelStyle}>{t("Ready Date")}</h3>
+                          <h3 style={classes.filterLabelStyle}>
+                            {t("Ready Date")}
+                          </h3>
                           <DateRangePicker
                             onChange={onSelectReadyTimeDates}
-                            value={fromReadyDate && toReadyDate ? [fromReadyDate, toReadyDate] : null}
+                            value={
+                              fromReadyDate && toReadyDate
+                                ? [fromReadyDate, toReadyDate]
+                                : null
+                            }
                           />
-
                         </div>
                       </div>
 
@@ -261,13 +320,60 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
             maxHeight={750}
             rows={!isPurchaseJobs ? allBoardMissions : allPurchaseJobs}
             headers={!isPurchaseJobs ? tableHeader : tableHeaderForPurchaseJobs}
-            columnWidths={!isPurchaseJobs ?
-              CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS) ?
-                ["7%", "7%", "6%", "6%", "7%", "7%", "8%", "7%", "4%", "6%", "12%", "7%", "7%", "13%", "3%"]
-                :
-                ["7%", "7%", "7%", "7%", "7%", "7%", "8%", "7%", "18%", "7%", "15%", "7%", "3%"]
-              :
-              ["7%", "5%", "6%", "7%", "6%", "7%", "11%", "8%", "6%", "8%", "5%", "5%", "7%", "7%", "4%", "2%"]}
+            columnWidths={
+              !isPurchaseJobs
+                ? CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS)
+                  ? [
+                      "7%",
+                      "7%",
+                      "6%",
+                      "6%",
+                      "7%",
+                      "7%",
+                      "8%",
+                      "7%",
+                      "4%",
+                      "6%",
+                      "12%",
+                      "7%",
+                      "7%",
+                      "13%",
+                      "3%",
+                    ]
+                  : [
+                      "7%",
+                      "7%",
+                      "7%",
+                      "7%",
+                      "7%",
+                      "7%",
+                      "8%",
+                      "7%",
+                      "18%",
+                      "7%",
+                      "15%",
+                      "7%",
+                      "3%",
+                    ]
+                : [
+                    "7%",
+                    "5%",
+                    "6%",
+                    "7%",
+                    "6%",
+                    "7%",
+                    "11%",
+                    "8%",
+                    "6%",
+                    "8%",
+                    "5%",
+                    "5%",
+                    "7%",
+                    "7%",
+                    "4%",
+                    "2%",
+                  ]
+            }
           />
         </div>
         <GoMakePagination
@@ -286,8 +392,12 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
         noBtn={"boardMissions.duplicateModalNo"}
         openModal={openDuplicateModal}
         onClose={onCloseDuplicateModal}
-        onClickYes={() => onClickDuplicateMission(DuplicateType.SameBoardMissionNumber)}
-        onClickNo={() => onClickDuplicateMission(DuplicateType.NewBoardMissionNumber)}
+        onClickYes={() =>
+          onClickDuplicateMission(DuplicateType.SameBoardMissionNumber)
+        }
+        onClickNo={() =>
+          onClickDuplicateMission(DuplicateType.NewBoardMissionNumber)
+        }
       />
 
       <ThreeOptionsModal

@@ -13,7 +13,7 @@ const useBusinessWidget = ({ values, documentType }) => {
   const { t } = useTranslation();
   const router = useRouter();
   const [isConfirmation, setIsConfirmation] = useState();
-  const { renderOptions, checkWhatRenderArray } = useQuoteWidget();
+  const { renderOptions, checkWhatRenderArray, isFetching } = useQuoteWidget();
   const setOpenModal = useSetRecoilState<boolean>(addressModalState);
   const [purchaseNumber, setPurchaseNumber] = useState(
     values?.purchaseNumber || t("sales.quote.noPurchaseNumber")
@@ -158,6 +158,7 @@ const useBusinessWidget = ({ values, documentType }) => {
     isQuote,
     documentTitle,
     setDocumentTitle,
+    isFetching,
   };
 };
 

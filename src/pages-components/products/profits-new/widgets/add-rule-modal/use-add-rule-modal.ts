@@ -20,7 +20,10 @@ import { CLIENT_TYPE_Id } from "@/pages/customers/enums";
 import { useTranslation } from "react-i18next";
 import { EGroupByEnum } from "@/enums";
 import { agentsCategoriesState } from "@/pages/customers/customer-states";
-import { getAndSetEmployees2, getEmployeesByActionIdApi } from "@/services/api-service/customers/employees-api";
+import {
+  getAndSetEmployees2,
+  getEmployeesByActionIdApi,
+} from "@/services/api-service/customers/employees-api";
 import { getALLMachinesApi } from "@/services/api-service/machines/print-house-machines-colors";
 import { machineCategoriesState } from "@/store/machine-categories";
 import { actionEmployeesState } from "@/store/action-employees-state";
@@ -37,43 +40,59 @@ const useAddRuleModal = ({
   getProperitesService,
   isQuoteWidge,
   filterData,
-  openModal
+  openModal,
 }) => {
   const GET_MATERIALS_TYPES_URL = "/v1/materials/getMaterialsTypes";
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
-  const [openScheduleModal, setOpenScheduleModal] = useState(false)
+  const [openScheduleModal, setOpenScheduleModal] = useState(false);
   const categoriesList = useRecoilValue(machineCategoriesState);
 
   const onCloseScheduleModal = () => {
-    setOpenScheduleModal(false)
-  }
+    setOpenScheduleModal(false);
+  };
   const onOpenScheduleModal = () => {
-    setOpenScheduleModal(true)
-  }
+    setOpenScheduleModal(true);
+  };
 
-  const {
-    renderOptions,
-    checkWhatRenderArray,
-  } = useCustomerDropDownList({ shouldRenderCustomersOnMount: openModal, shouldRenderSuppliersOnMount: false });
+  const { renderOptions, checkWhatRenderArray, isFetching } =
+    useCustomerDropDownList({
+      shouldRenderCustomersOnMount: openModal,
+      shouldRenderSuppliersOnMount: false,
+    });
 
   const [propertieValue, setPropertieValue] = useState<any>();
-  const isDefaultException = selectedPricingTableItems?.exceptionType === ETypeException.DEFAULT;
+  const isDefaultException =
+    selectedPricingTableItems?.exceptionType === ETypeException.DEFAULT;
 
   const categories = useMemo(() => {
     const filteredCategories = [
       { label: t("products.profits.exceptions.machine"), id: "Machine" },
-      { label: t("products.profits.exceptions.machineTypeCategory"), id: "Machine category" },
+      {
+        label: t("products.profits.exceptions.machineTypeCategory"),
+        id: "Machine category",
+      },
       { label: t("products.profits.exceptions.products"), id: "Products" },
-      { label: t("products.profits.exceptions.productType"), id: "ProductType" },
+      {
+        label: t("products.profits.exceptions.productType"),
+        id: "ProductType",
+      },
       { label: t("products.profits.exceptions.clientType"), id: "Client Type" },
       { label: t("products.profits.exceptions.client"), id: "Client" },
-      { label: t("products.profits.exceptions.propertyOutput"), id: "Property output" },
-      { label: t("products.profits.exceptions.propertyInput"), id: "Property input" },
+      {
+        label: t("products.profits.exceptions.propertyOutput"),
+        id: "Property output",
+      },
+      {
+        label: t("products.profits.exceptions.propertyInput"),
+        id: "Property input",
+      },
       { label: t("products.profits.exceptions.agent"), id: "Agent" },
       { label: t("products.profits.exceptions.employee"), id: "Employee" },
     ];
-    return isQuoteWidge ? filteredCategories.filter(category => category.id !== "ProductType") : filteredCategories.filter(category => category.id !== "Agent");
+    return isQuoteWidge
+      ? filteredCategories.filter((category) => category.id !== "ProductType")
+      : filteredCategories.filter((category) => category.id !== "Agent");
   }, [isQuoteWidge]);
 
   const EStatementCategory = {
@@ -86,7 +105,7 @@ const useAddRuleModal = ({
     Products: 7,
     Agent: 8,
     Employee: 9,
-    ProductType: 10
+    ProductType: 10,
   };
 
   const { Outputs } = useOutputs({ shouldRenderOutputsOnMount: openModal });
@@ -112,8 +131,8 @@ const useAddRuleModal = ({
   };
 
   useEffect(() => {
-    getAgentCategories()
-  }, [])
+    getAgentCategories();
+  }, []);
 
   const getMaterialsTypesApi: ICallAndSetData = async (callApi, setState) => {
     return await getSetApiData(
@@ -168,7 +187,8 @@ const useAddRuleModal = ({
       { label: "Machine", id: EGroupByEnum.Machine },
     ];
   }, []);
-  const { alertSuccessAdded, alertFaultAdded, setSnackbarStateValue } = useSnackBar();
+  const { alertSuccessAdded, alertFaultAdded, setSnackbarStateValue } =
+    useSnackBar();
   const router = useRouter();
 
   const initialRule = {
@@ -197,21 +217,25 @@ const useAddRuleModal = ({
 
   const [machincesList, setMachincesList] = useState<any>();
   const [allMachincesList, setAllMachincesList] = useState<any>();
-  const [productsStateValue, setProductsState] = useRecoilState<any>(productsState);
-  const [clientTypesStateValue, setClientTypesState] = useRecoilState<any>(clientTypesState);
-  const [parametersStateValue, setParametersState] = useRecoilState<any>(parametersState);
+  const [productsStateValue, setProductsState] =
+    useRecoilState<any>(productsState);
+  const [clientTypesStateValue, setClientTypesState] =
+    useRecoilState<any>(clientTypesState);
+  const [parametersStateValue, setParametersState] =
+    useRecoilState<any>(parametersState);
   const [allProductTypes, setAllProductTypes] = useState<any>();
-  const [employeeList, setEmployeeList] = useState([])
-  const [actionEmployeeList, setActionEmployeeList] = useRecoilState<any>(actionEmployeesState)
+  const [employeeList, setEmployeeList] = useState([]);
+  const [actionEmployeeList, setActionEmployeeList] =
+    useRecoilState<any>(actionEmployeesState);
 
   const getMachinesList = async () => {
     const callBack = (res) => {
       if (res.success) {
-        setAllMachincesList(res.data)
+        setAllMachincesList(res.data);
       }
-    }
+    };
     await getALLMachinesApi(callApi, callBack).then();
-  }
+  };
 
   const getMachincesByActionId = useCallback(async () => {
     if (router.query.actionId) {
@@ -229,7 +253,9 @@ const useAddRuleModal = ({
   }, []);
 
   const getClientTypes = useCallback(async () => {
-    await getAndSetClientTypes(callApi, setClientTypesState, { cardType: CLIENT_TYPE_Id.CUSTOMER });
+    await getAndSetClientTypes(callApi, setClientTypesState, {
+      cardType: CLIENT_TYPE_Id.CUSTOMER,
+    });
   }, []);
 
   const getParameters = useCallback(async () => {
@@ -272,7 +298,7 @@ const useAddRuleModal = ({
         ActionId: router.query.actionId,
       });
     }
-  }
+  };
 
   // ensuring it only renders when the 'Add Rule' modal is opened.
   useEffect(() => {
@@ -304,7 +330,10 @@ const useAddRuleModal = ({
     }
     const textArray = conditions.map((condition) => {
       const categoryLabel = condition?.category
-        ? (condition.category.id !== "Property output" && condition.category.id !== "Property input" ? condition.category.label : "")
+        ? condition.category.id !== "Property output" &&
+          condition.category.id !== "Property input"
+          ? condition.category.label
+          : ""
         : "";
       const conditionLabel = condition?.condition?.label ?? "";
       const statement2Label = condition.statement2?.label ?? "";
@@ -313,12 +342,17 @@ const useAddRuleModal = ({
       if (condition.linkCondition) {
         text += ` ${condition?.linkCondition.id} `;
       }
-      if (typeof condition?.statement === "object" && typeof condition?.statement2 === "object" && categoryLabel === "") {
+      if (
+        typeof condition?.statement === "object" &&
+        typeof condition?.statement2 === "object" &&
+        categoryLabel === ""
+      ) {
         const statementLabel = condition?.statement?.label ?? "";
         text += `${statement2Label} ${conditionLabel}  ${statementLabel}`;
-      }
-
-      else if (typeof condition?.statement === "object" && typeof condition?.statement2 === "object") {
+      } else if (
+        typeof condition?.statement === "object" &&
+        typeof condition?.statement2 === "object"
+      ) {
         const statementLabel = condition?.statement?.label ?? "";
         text += `${categoryLabel} ${conditionLabel} ${statement2Label} ${statementLabel}`;
       } else {
@@ -350,8 +384,8 @@ const useAddRuleModal = ({
           : "",
         statementCategory: EStatementCategory[rule.category.id],
       };
-    })
-  }, [rules])
+    });
+  }, [rules]);
 
   useEffect(() => {
     const textInput = displayText(rules);
@@ -365,8 +399,8 @@ const useAddRuleModal = ({
       }
       return item?.statement?.id;
     }
-    return item?.statement
-  }
+    return item?.statement;
+  };
   const create = useCallback(async () => {
     const requestBody: any = {
       actionId: router?.query?.actionId,
@@ -404,7 +438,7 @@ const useAddRuleModal = ({
     if (res?.success) {
       alertSuccessAdded();
       onCloseModal();
-      setRules([initialRule])
+      setRules([initialRule]);
       getProfitsPricingTables();
     } else {
       alertFaultAdded();
@@ -456,13 +490,15 @@ const useAddRuleModal = ({
         exceptionConditionProperties: rules.map((item) => {
           return {
             statementId:
-              item.category.id === "Property output" || item.category.id === "Property input"
+              item.category.id === "Property output" ||
+              item.category.id === "Property input"
                 ? item.statement2.id
                 : typeof item?.statement === "object"
-                  ? item?.statement?.id
-                  : item.statement,
+                ? item?.statement?.id
+                : item.statement,
             statementValue:
-              item.category.id === "Property output" || item.category.id === "Property input"
+              item.category.id === "Property output" ||
+              item.category.id === "Property input"
                 ? typeof item?.statement === "object"
                   ? item?.statement?.id
                   : item.statement
@@ -472,7 +508,7 @@ const useAddRuleModal = ({
               ? item.linkCondition.id
               : "",
             statementCategory: EStatementCategory[item.category.id],
-          }
+          };
           // return {
           //   statementId:
           //     typeof item?.statement === "object"
@@ -495,7 +531,7 @@ const useAddRuleModal = ({
       alertSuccessAdded();
       getProperitesService();
       onCloseModal();
-      setRules([initialRule])
+      setRules([initialRule]);
     } else {
       setSnackbarStateValue({
         state: true,
@@ -540,7 +576,7 @@ const useAddRuleModal = ({
           maxPrice: filterData?.maxPrice,
           productList: filterData?.productList,
           fromDate,
-          toDate
+          toDate,
         },
         groupBy: propertieValue,
         exceptionConditionProperties: rules.map((item) => {
@@ -563,24 +599,21 @@ const useAddRuleModal = ({
       "blob"
     );
     try {
-      const downloadLink = document.createElement('a');
+      const downloadLink = document.createElement("a");
       const link = URL?.createObjectURL(res.data);
-      downloadLink.href = link
-      downloadLink.download = 'Reports Rule engine.xlsx';
+      downloadLink.href = link;
+      downloadLink.download = "Reports Rule engine.xlsx";
       downloadLink.click();
       if (res?.success) {
         onCloseModal();
-        setRules([initialRule])
+        setRules([initialRule]);
       } else {
         alertFaultAdded();
       }
-    }
-    catch {
+    } catch {
       alertFaultAdded();
     }
   }, [propertieValue, EStatementCategory, rules, filterData]);
-
-
 
   return {
     rules,
@@ -626,6 +659,7 @@ const useAddRuleModal = ({
     actionEmployeeList,
     fromDate,
     toDate,
+    isFetching,
   };
 };
 

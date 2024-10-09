@@ -12,7 +12,7 @@ const AdjustmentsLedgerReportModal = ({
   clientPaymentsList,
   getClientPaymentItems,
   customerId,
-  setClientPaymentsList
+  setClientPaymentsList,
 }) => {
   const { classes } = useStyle();
   const {
@@ -31,6 +31,7 @@ const AdjustmentsLedgerReportModal = ({
     openDeleteModal,
     openTransferModal,
     customer,
+    isFetching,
   } = useAdjustmentsModal({
     clientPaymentsList,
     getClientPaymentItems,
@@ -43,18 +44,29 @@ const AdjustmentsLedgerReportModal = ({
         openModal={openModal}
         modalTitle={t("reports.adjustmentsLists")}
         onClose={() => {
-          setClientPaymentsList([])
-          onCloseModal()
+          setClientPaymentsList([]);
+          onCloseModal();
         }}
         insideStyle={classes.insideStyle}
       >
         <div style={classes.mainContainer}>
           {clientPaymentsList?.length <= 0 ? (
             <>
-              <Skeleton height={600} variant="rectangular" width="100%" style={{ borderRadius: 8 }} />
+              <Skeleton
+                height={600}
+                variant="rectangular"
+                width="100%"
+                style={{ borderRadius: 8 }}
+              />
               <div style={classes.btnsContainer}>
                 {[...Array(btns.length)].map((_, index) => (
-                  <Skeleton key={index} variant="rectangular" width={"33%"} height={40} style={{ borderRadius: 8 }} />
+                  <Skeleton
+                    key={index}
+                    variant="rectangular"
+                    width={"33%"}
+                    height={40}
+                    style={{ borderRadius: 8 }}
+                  />
                 ))}
               </div>
             </>
@@ -97,6 +109,7 @@ const AdjustmentsLedgerReportModal = ({
           checkWhatRenderArray={checkWhatRenderArray}
           handleCustomerChange={handleCustomerChange}
           transferBalanceApi={transferBalanceApi}
+          isFetchingCustomers={isFetching}
         />
       </GoMakeModal>
     </>

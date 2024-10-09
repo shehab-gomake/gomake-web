@@ -128,7 +128,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const { query, pathname } = useRouter();
   const router = useRouter();
   const { quoteNumber } = query;
-  const { renderOptions, checkWhatRenderArray } = useQuoteWidget();
+  const { renderOptions, checkWhatRenderArray, isFetching } = useQuoteWidget();
   const [accountingStatus, setAccountingStatus] = useState<{
     label: string;
     value: PStatus;
@@ -2193,6 +2193,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     openCancelReceiptModalRefund,
     onCloseCancelReceiptModalRefund,
     ExportDocumentTableToExcel,
+    isFetching,
   };
 };
 
