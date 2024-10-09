@@ -4,16 +4,15 @@ import { PrimaryTable } from "@/components/tables/primary-table";
 import { HeaderTitleWithSearch } from "@/widgets/header-title-with-search";
 import { StepType } from "@reactour/tour";
 import { useGoMakeTour } from "@/hooks/use-go-make-tour";
-import { Divider, IconButton, Menu, MenuItem } from "@mui/material";
+import { IconButton, Menu, MenuItem } from "@mui/material";
 import { SettingsIcon } from "@/icons/settings";
 import { useState } from "react";
-import { UpdateMinPrice } from "../products/profits/widgets/exceptions/update-min-price";
 import { PercentageMaterial } from "@/icons";
 import { GoMakeModal, GomakePrimaryButton, GomakeTextInput } from "@/components";
 
 const ActionPageWidget = () => {
     const { clasess } = useStyle();
-    const { tableHeaders, allActions, materilasSearched, term, setTerm, t } =
+    const { tableHeaders, allActions, materilasSearched, term, setTerm, t, handleMoreOptionIconClick, anchorEl, handleCloseMenu, onOpenModal, openModal, onCloseModal, setPercentageProfit, percentageProfit } =
         useActions();
     const actionsSteps: StepType[] = [
         {
@@ -29,23 +28,7 @@ const ActionPageWidget = () => {
     ]
     const { } = useGoMakeTour(actionsSteps, [allActions, materilasSearched])
 
-    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-    const [openModal, setOpenModal] = useState(false);
-    const [percentageProfit, setPercentageProfit] = useState("");
 
-    const handleMoreOptionIconClick = (event) => {
-        setAnchorEl(event.currentTarget);
-    };
-    const handleCloseMenu = () => {
-        setAnchorEl(null);
-    };
-
-    const onCloseModal = () => {
-        setOpenModal(false);
-    };
-    const onOpenModal = () => {
-        setOpenModal(true);
-    };
 
     return (
         <div style={clasess.mainContainer}>
