@@ -6,14 +6,27 @@ import { StepType } from "@reactour/tour";
 import { useGoMakeTour } from "@/hooks/use-go-make-tour";
 import { IconButton, Menu, MenuItem } from "@mui/material";
 import { SettingsIcon } from "@/icons/settings";
-import { useState } from "react";
 import { PercentageMaterial } from "@/icons";
 import { GoMakeModal, GomakePrimaryButton, GomakeTextInput } from "@/components";
 
 const ActionPageWidget = () => {
     const { clasess } = useStyle();
-    const { tableHeaders, allActions, materilasSearched, term, setTerm, t, handleMoreOptionIconClick, anchorEl, handleCloseMenu, onOpenModal, openModal, onCloseModal, setPercentageProfit, percentageProfit } =
-        useActions();
+    const {
+        tableHeaders,
+        allActions,
+        materilasSearched,
+        term,
+        anchorEl,
+        openModal,
+        percentageProfit,
+        setTerm,
+        t,
+        handleMoreOptionIconClick,
+        handleCloseMenu,
+        onOpenModal,
+        onCloseModal,
+        setPercentageProfit,
+    } = useActions();
     const actionsSteps: StepType[] = [
         {
             selector: '[data-tour="actionsTable"]',

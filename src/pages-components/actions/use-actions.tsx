@@ -139,7 +139,22 @@ const useActions = () => {
       setMaterilasSearched(temp);
     }
   }, [term]);
-  return { tableHeaders, allActions, materilasSearched, term, setTerm, t, handleMoreOptionIconClick, anchorEl, handleCloseMenu, onOpenModal, openModal, onCloseModal, setPercentageProfit, percentageProfit };
+  return {
+    tableHeaders,
+    allActions,
+    materilasSearched,
+    term,
+    anchorEl,
+    openModal,
+    percentageProfit,
+    setTerm,
+    t,
+    handleMoreOptionIconClick,
+    handleCloseMenu,
+    onOpenModal,
+    onCloseModal,
+    setPercentageProfit,
+  };
 };
 
 export { useActions };
