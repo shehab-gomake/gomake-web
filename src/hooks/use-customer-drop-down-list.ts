@@ -96,33 +96,15 @@ const useCustomerDropDownList = ({
     1200
   );
 
-  // ? New
-  // const [inputValue, setInputValue] = useState("");
-  // const debouncedSearchTerm = useDebounce(inputValue, 300);
-
-  // useEffect(() => {
-  //   if (debouncedSearchTerm === "") {
-  //     getAllCustomersCreateQuote();
-  //   } else {
-  //     debouncedGetAllCustomersCreateOrder(debouncedSearchTerm);
-  //   }
-  // }, [debouncedSearchTerm]);
-
-  // const checkWhatRenderArray = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   const value = e.target.value.trim();
-  //   setInputValue(value); // Update local state
-  // };
-  // ? New
-
   const checkWhatRenderArray = (e: any) => {
-    const value = e.target.value;
-    // if (value && value.trim() !== "") {
-    //   setIsFetching(true);
-    // }
-    if (value) {
-      debouncedGetAllCustomersCreateOrder(value);
-    } else {
+    const value = e.target.value.trim();
+
+    if (value === "") {
+      // Clear debounced calls if input is cleared
+      debouncedGetAllCustomersCreateOrder.cancel();
       getAllCustomersCreateQuote();
+    } else {
+      debouncedGetAllCustomersCreateOrder(value);
     }
   };
 
