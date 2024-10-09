@@ -32,7 +32,9 @@ const usePaymentDetailsModal = ({ selectedPrintHouse, getReport }) => {
       selectedPrintHouse?.printHouseCreditCardDetails?.customerName || "",
     dayOfPayment:
       selectedPrintHouse?.printHouseCreditCardDetails?.dayOfPayment || 1,
-    isMonthlyPayment: false,
+    isMonthlyPayment:
+      selectedPrintHouse?.printHouseCreditCardDetails?.isMonthlyPayment ||
+      false,
   };
 
   const [paymentDetailsState, setPaymentDetails] = useState<PaymentDetails>(

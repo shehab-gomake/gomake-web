@@ -43,7 +43,7 @@ export interface PaymentDetails {
   holderID: string;
   customerName: string;
   dayOfPayment: number;
-  isMonthlyPayment?: boolean;
+  isMonthlyPayment: boolean;
 }
 
 export enum PrintHousePayStatus {
