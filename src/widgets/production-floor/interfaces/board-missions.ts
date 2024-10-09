@@ -65,6 +65,7 @@ export interface IBoardMissionsDetails {
   clientTypeId: string;
   quantity?: number;
   isReady: boolean;
+  backgroundColor?: string;
 }
 
 export interface IBoardMissionStep {
