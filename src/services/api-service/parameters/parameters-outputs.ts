@@ -5,6 +5,7 @@ import {ICallAndSetData} from "@/services/api-service/interface";
 const GET_ALL_PARAMETERS_URL = '/v1/printhouse-config/parameters/get-all-parameters';
 const GET_PARAMETER_VALUES_BY_ID_URL = '/v1/printhouse-config/parameters/get-parameter-values-by-id';
 const GET_ALL_OUTPUTS_URL = '/v1/printhouse-config/Output/get-all-Outputs';
+const GET_ALL_FOLD_OPTION_URL = '/v1/printhouse-config/parameters/get-fold-options';
 
 
 const getAllParameters: ICallAndSetData = async (callApi, setState) => {
@@ -17,4 +18,8 @@ const getAllOutputs: ICallAndSetData = async (callApi, setState) => {
     return  await getSetApiData(callApi, EHttpMethod.GET, GET_ALL_OUTPUTS_URL, setState);
 };
 
-export {getAllParameters, getAllOutputs,GetParameterValuesByIdAi};
+const getAllFoldOptions: ICallAndSetData = async (callApi, setState) => {
+    return  await getSetApiData(callApi, EHttpMethod.GET, GET_ALL_FOLD_OPTION_URL, setState);
+};
+
+export {getAllParameters, getAllOutputs,GetParameterValuesByIdAi,getAllFoldOptions};

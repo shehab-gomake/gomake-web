@@ -14,6 +14,7 @@ import {useGomakeAxios, useSnackBar} from "@/hooks";
 import {currentCalculationConnectionId} from "@/store";
 import { getEmployeesByActionIdApi, getMachineByActionIdNewApi } from "@/services/api-service/customers/employees-api";
 import { getMaterialsSizesApi } from "@/services/api-service/materials/printhouse-materials-endpoints";
+import { getAllFoldOptions } from "@/services/api-service/parameters/parameters-outputs";
 
 interface AttributesData {
     machineName?: string; 
@@ -26,6 +27,7 @@ interface AttributesData {
     printHouseMaterialSizeId?:string;
     emplyeeId?:string;
     emplyeeName?:string;
+    FoldOptionValueId?:string;
 }
 const useActionUpdateValues = () => {
     const actions = useRecoilValue(jobActionsState);
@@ -202,6 +204,18 @@ const useActionUpdateValues = () => {
     }).then()
 }
 
+const updateWorkFlowForFold = (actionId,productType,actionIndex,FoldOptionValueId,printingActionId) => {
+    changeWorkFlw(callApi, apiCallBack, {
+    actionId: actionId,
+    productType: productType,
+    productItemValueId: currentProductItemValue,
+    actionIndex: actionIndex,
+    signalRConnectionId: connectionId,
+    printingActionId: printingActionId,
+    FoldOptionValueId: FoldOptionValueId
+}).then()
+}
+
 
     const updateActionData = async (actionId: string, newValue: number, key: string, productType: string) => {
         await updateProductItemDraftActionData(callApi, apiCallBack, {
@@ -217,6 +231,17 @@ const useActionUpdateValues = () => {
       const [employeesList,setemployeesList]=useState([])
       const [machinesList,setMachinesList]=useState([])
       const [materialsList,setMaterialsList]=useState([])
+      const [foldOptions,setFoldOptions]=useState([])
+
+
+  const getAllFoldOptionsApi= ()=>{
+    const callBack = (res) => {
+        if (res.success) {
+            setFoldOptions(res?.data);
+        }
+      };
+      getAllFoldOptions(callApi, callBack).then();
+  }
 
       const onClickGetEmployeeForAction = async (actionId) => {
         const callBack = (res) => {
@@ -294,7 +319,10 @@ const useActionUpdateValues = () => {
         employeesList,
         machinesList,
         onClickGetMaterialsForAction,
-        materialsList
+        materialsList,
+        getAllFoldOptionsApi,
+        foldOptions,
+        updateWorkFlowForFold
     };
 };
 
