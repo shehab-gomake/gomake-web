@@ -96,6 +96,8 @@ export interface IWorkFlowAction {
   isNeedEmployee?:boolean,
   isNeedMachine?:boolean,
   isNeedMaterial?:boolean,
+  IsNeedFolds?:boolean,
+  foldOptionValueId?:string,
 }
 
 export interface IOutput {
