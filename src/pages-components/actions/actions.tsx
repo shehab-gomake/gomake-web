@@ -86,19 +86,24 @@ const ActionPageWidget = () => {
                 <MenuItem style={clasess.menuContainer} onClick={onOpenModal}>
                     <PercentageMaterial />
                     <div style={clasess.rowTextStyle}>
-                        update profit by percentage
+                        {t("products.profits.admin.updateProfitPercentage")}
                     </div>
                 </MenuItem>
                 {/* <Divider /> */}
 
             </Menu>
-            <GoMakeModal modalTitle="update profit by percentage" insideStyle={{ height: 'fit-content', width: "30%" }} openModal={openModal} onClose={onCloseModal}>
+            <GoMakeModal
+                modalTitle={t("products.profits.admin.updateProfitPercentage")}
+                insideStyle={{ height: 'fit-content', width: "30%" }}
+                openModal={openModal}
+                onClose={onCloseModal}
+            >
                 <div style={clasess.modalMainContainer}>
                     <GomakeTextInput
                         style={clasess.multiLineTextInputStyle}
                         onChange={(e) => setPercentageProfit(e.target.value)}
                         value={percentageProfit}
-                        placeholder="profit by percentage"
+                        placeholder={t("products.profits.admin.profitByPercentage")}
                     />
                     <GomakePrimaryButton
                         style={clasess.btnContainer}

@@ -56,8 +56,8 @@ const PricingList = ({
           {t("products.profits.pricingListWidget.pricingListTitle")} ({`${router?.query?.actionName}`})
         </div>
         <div style={clasess.filtersCointaner}>
-          <IconButton onClick={handleMoreOptionIconClick} >
-            <SettingsIcon stroke={"#000000"} />
+          <IconButton onClick={handleMoreOptionIconClick} style={{ marginRight: -18 }} >
+            <SettingsIcon stroke={"#000000"} width={24} height={24} />
           </IconButton>
           <div style={clasess.autoCompleteContainer}>
             <GoMakeAutoComplate
@@ -110,26 +110,26 @@ const PricingList = ({
         <MenuItem style={clasess.menuContainer} onClick={onOpenModal}>
           <DuplicateMaterial />
           <div style={clasess.rowTextStyle}>
-            Copy Action Profit
+            {t("products.profits.admin.copyActionProfit")}
           </div>
         </MenuItem>
         {/* <Divider /> */}
 
       </Menu>
-      <GoMakeModal modalTitle="Copy Action Profit" insideStyle={{ height: 'fit-content', width: "30%" }} openModal={openModal} onClose={onCloseModal}>
+      <GoMakeModal modalTitle={t("products.profits.admin.copyActionProfit")} insideStyle={{ height: 'fit-content', width: "30%" }} openModal={openModal} onClose={onCloseModal}>
         <div style={clasess.modalMainContainer}>
           <GoMakeAutoComplate
             options={allActions}
             style={clasess.autoCompleteStyle}
             getOptionLabel={(option) => option.name}
             onChange={(e, value) => setSelectedActionId(value)}
-            placeholder="Select Action"
+            placeholder={t("products.profits.admin.selectAction")}
           />
           <GomakePrimaryButton
             style={clasess.btnContainer}
             onClick={CopyActionProfitsToOtherActionApi}
           >
-            {t("documentingSettings.copy")}
+            {t("products.profits.admin.copy")}
           </GomakePrimaryButton>
         </div>
       </GoMakeModal>
