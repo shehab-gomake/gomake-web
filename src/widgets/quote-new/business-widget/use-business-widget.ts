@@ -74,6 +74,10 @@ const useBusinessWidget = ({ values, documentType }) => {
     : quoteStateValue?.isEditable &&
       CheckDocumentPermission(documentType, DocumentPermission.EDIT_DOCUMENT);
 
+  const canEditAddress = router.query.isNewCreation
+    ? true
+    : CheckDocumentPermission(documentType, DocumentPermission.EDIT_DOCUMENT);
+
   const canEditPurchaseNumber = CheckDocumentPermission(
     documentType,
     DocumentPermission.EDIT_DOCUMENT
@@ -159,6 +163,7 @@ const useBusinessWidget = ({ values, documentType }) => {
     documentTitle,
     setDocumentTitle,
     isFetching,
+    canEditAddress,
   };
 };
 
