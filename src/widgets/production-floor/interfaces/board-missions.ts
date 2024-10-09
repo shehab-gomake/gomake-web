@@ -66,6 +66,7 @@ export interface IBoardMissionsDetails {
   quantity?: number;
   isReady: boolean;
   backgroundColor?: string;
+  showGraphicsApprovalAlert?: 0 | 1 | 2
 }
 
 export interface IBoardMissionStep {
