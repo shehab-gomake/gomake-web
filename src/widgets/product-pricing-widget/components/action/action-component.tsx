@@ -61,6 +61,7 @@ const Actions = ({
   return (
     <Stack gap={"10px"}>
       {actions?.map((action, index) => {
+        console.log("action", action)
         return (
           <ActionContainerComponent
             key={action.id}
@@ -106,13 +107,16 @@ const ActionContainerComponent = ({
   widgetType,
   totalCostValue,
   totalPriceValue,
-  profitValue
+  profitValue,
+  IsNeedFolds,
+  foldOptionValueId,
 }: IActionContainerComponentProps) => {
   source = source === EWorkSource.OUT ? EWorkSource.OUT : EWorkSource.INTERNAL;
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [chooseMachine, setChooseMachine] = useState<boolean>(false);
   const [chooseMaterial, setChooseMaterial] = useState<boolean>(false);
   const [chooseEmployee, setChooseEmployee] = useState<boolean>(false);
+  const [chooseFold, setChooseFold] = useState<boolean>(false);
 
   const currentProductItemValue = useRecoilValue(currentProductItemValueState);
   const { t } = useTranslation();
@@ -141,7 +145,10 @@ const ActionContainerComponent = ({
     onClickGetMaterialsForAction,
     employeesList,
     machinesList,
-    materialsList
+    materialsList,
+    getAllFoldOptionsApi,
+    updateWorkFlowForFold,
+    foldOptions
   } = useActionUpdateValues();
   const suppliersState = useRecoilValue(outsourceSuppliersState);
   const [isActionEmployeeUpdated, setIsActionEmployeeUpdated] = useRecoilState(isActionEmployeeUpdatedState);
@@ -410,6 +417,8 @@ const ActionContainerComponent = ({
               isNeedEmployee && <Divider orientation={"vertical"} flexItem />
             }
 
+
+
             <Stack
               style={classes.sectionTitle}
               direction={"row"}
@@ -484,6 +493,63 @@ const ActionContainerComponent = ({
             </Stack>
             {
               isNeedMaterial && <Divider orientation={"vertical"} flexItem />
+            }
+
+            <Stack
+              style={classes.sectionTitle}
+              direction={"row"}
+              alignItems={"center"}
+              gap={"10px"}
+            >
+              {
+                IsNeedFolds && (
+                  <>
+                    {!chooseFold ? (
+                      <Button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setChooseFold(true);
+                          getAllFoldOptionsApi()
+                        }}
+                        variant={"text"}
+                        style={classes.sectionTitle}
+                      >
+                        {foldOptionValueId ? foldOptionValueId : <>Select New Folds</>}
+                      </Button>
+                    ) : (
+                      <Stack
+                        direction={"row"}
+                        gap={"5px"}
+                        alignItems={"center"}
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <GoMakeAutoComplate
+                          onChange={(e, v) => {
+                            updateWorkFlowForFold(actionId, productType, actionIndex, v?.id, id)
+                            setChooseFold(false);
+                          }}
+                          style={{ width: "200px" }}
+                          options={foldOptions}
+                          placeholder={"Choose Fold option"}
+                          getOptionLabel={(option) => option.name}
+                        // value={employeeName}
+                        />
+                        <IconButton
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setChooseFold(false);
+                          }}
+                        >
+                          <ClearRoundedIcon />
+                        </IconButton>
+                      </Stack>
+                    )}
+                  </>
+                )
+              }
+            </Stack>
+            {
+              IsNeedFolds && <Divider orientation={"vertical"} flexItem />
             }
 
             <EditableKeyValueViewComponent
