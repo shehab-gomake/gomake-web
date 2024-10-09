@@ -32,6 +32,7 @@ const usePaymentDetailsModal = ({ selectedPrintHouse, getReport }) => {
       selectedPrintHouse?.printHouseCreditCardDetails?.customerName || "",
     dayOfPayment:
       selectedPrintHouse?.printHouseCreditCardDetails?.dayOfPayment || 1,
+    isMonthlyPayment: false,
   };
 
   const [paymentDetailsState, setPaymentDetails] = useState<PaymentDetails>(
@@ -106,6 +107,10 @@ const usePaymentDetailsModal = ({ selectedPrintHouse, getReport }) => {
     );
   };
 
+  const handleChecked = (event: React.ChangeEvent<HTMLInputElement>) => {
+    handleChangeInputs("isMonthlyPayment", event.target.checked);
+  };
+
   return {
     t,
     selectedPrintHouse,
@@ -119,6 +124,7 @@ const usePaymentDetailsModal = ({ selectedPrintHouse, getReport }) => {
     handleExpiryDateChange,
     handleProceedCheckout,
     daysInMonth,
+    handleChecked,
   };
 };
 

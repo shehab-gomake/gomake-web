@@ -5,6 +5,9 @@ import { useStyle } from "./style";
 import { usePaymentDetailsModal } from "./use-payment-details";
 import { Stack } from "@mui/material";
 import { PhoneInputComponent } from "@/components/form-inputs/phone-input";
+import { SecondaryCheckBox } from "@/components/check-box/secondary-check-box";
+import { useState } from "react";
+import { FONT_FAMILY } from "@/utils/font-family";
 
 const PaymentDetailsModal = ({
   openModal,
@@ -24,6 +27,7 @@ const PaymentDetailsModal = ({
     handleCVVChange,
     handleExpiryDateChange,
     handleProceedCheckout,
+    handleChecked,
   } = usePaymentDetailsModal({ selectedPrintHouse, getReport });
 
   return (
@@ -95,9 +99,6 @@ const PaymentDetailsModal = ({
         </Stack>
         <Stack direction={"row"} width={"80%"} gap={"10px"}>
           <GoMakeAutoComplate
-            // value={daysInMonth.find(
-            //   (option) => option === paymentDetailsState?.dayOfPayment
-            // )}
             value={paymentDetailsState?.dayOfPayment}
             style={classes.selectInputs}
             options={daysInMonth}
@@ -113,6 +114,14 @@ const PaymentDetailsModal = ({
             }
           />
         </Stack>
+        <div style={{ ...FONT_FAMILY.Lexend(500, 14) }}>
+          <SecondaryCheckBox
+            sx={{ padding: "2px" }}
+            checked={paymentDetailsState?.isMonthlyPayment}
+            onChange={handleChecked}
+          />
+          {t("Monthly Payment")}
+        </div>
         <PrimaryButton
           onClick={() => {
             handleProceedCheckout();
