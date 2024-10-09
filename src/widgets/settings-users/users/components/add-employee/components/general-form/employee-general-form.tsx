@@ -153,7 +153,7 @@ const EmployeeGeneralForm = ({action}: { action: EmployeeActions }) => {
             printNode: printNodeInputs(state.employee, printers.map(printer => ({
                 ...printer,
                 text: printer.printerName,
-                value: printer.printerId
+                value: printer.printerId.toString()
             })), getPrinterBins(state.employee.printerId).map(bin => ({text: bin, value: bin})))
         };
     }, [state, printers]);
@@ -300,7 +300,7 @@ const EmployeeGeneralForm = ({action}: { action: EmployeeActions }) => {
                 isPrintHouseUsePrintNode &&
                 <div style={classes.subSection}>
                     <h3 style={classes.subSectionHeader}>
-                        {t("usersSettings.employeeInfo")}
+                        {t("usersSettings.printNode")}
                     </h3>
                     <div style={classes.inputsContainer}>
                         {inputs().printNode.map((employee) => (

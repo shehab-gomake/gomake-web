@@ -134,13 +134,16 @@ const AddProductSkuModal = ({
                             isPrintHouseUsePrintNode &&
                             <div style={{width: 'calc(20% - 5px)'}}>
                                 <GoMakeAutoComplate placeholder={t('products.addProduct.admin.printer')} PaperComponent={PaPerComponent} onChange={(e, v) => onChangeStateProductSKU("printerId", v?.printerId)}
+                                                    value={productSKUState.printerId ? productSKUState.printerId : ''}
                                                     options={printers}/>
                             </div>
                         }
                         {
                             isPrintHouseUsePrintNode &&
                             <div style={{width: 'calc(20% - 5px)'}}>
-                                <GoMakeAutoComplate placeholder={t('products.addProduct.admin.printerBin')} PaperComponent={PaPerComponent} style={{}} onChange={(e, v) => onChangeStateProductSKU("printerBin", v)} options={getPrinterBins(productSKUState.printerId)}/>
+                                <GoMakeAutoComplate
+                                    value={productSKUState.printerBin}
+                                    placeholder={t('products.addProduct.admin.printerBin')} PaperComponent={PaPerComponent} style={{}} onChange={(e, v) => onChangeStateProductSKU("printerBin", v)} options={getPrinterBins(productSKUState.printerId)}/>
                             </div>
                         }
                         <Tooltip title={t("products.addProduct.admin.modalProductSKUTitle")}>
