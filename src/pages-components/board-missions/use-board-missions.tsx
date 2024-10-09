@@ -14,7 +14,7 @@ import {
   getAllPurchaseJobsApi,
   getDeliveryTickerPdfApi,
   getOrderSummeryPdfApi,
-  getWorkMissionPdfApi,
+  getWorkMissionPdfApi, printOrderJobUsingPrintNodeApi,
   setBoardMissionsFiltersApi,
 } from "@/services/api-service/board-missions/board-missions-table";
 import { useDateFormat } from "@/hooks/use-date-format";
@@ -761,6 +761,15 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     setAnchorEl(null);
   };
 
+  const printOrderJobsUsingPrintNode = async (orderId: string) => {
+    const callBack = res => {
+      if (res.success) {
+
+      }
+    }
+    await printOrderJobUsingPrintNodeApi(callApi, callBack, orderId);
+  }
+
   useEffect(() => {
     // Read URL parameters and set state accordingly
     const {
@@ -901,6 +910,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     toDueDate,
     router,
     isFetching,
+    printOrderJobsUsingPrintNode,
   };
 };
 

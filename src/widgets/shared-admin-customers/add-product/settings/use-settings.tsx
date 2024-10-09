@@ -77,11 +77,7 @@ const useSettings = ({
     setIsProductSKU(false);
     setErrorName(false);
     setErrorCode(false);
-    setProductSKU({
-      name: "",
-      code: "",
-      productionFloorJobColor: "#2e3092",
-    });
+    setProductSKU(INIT_PRODUCT_SKU_STATE)
   };
 
   const onClickOpenProductSKU = () => {
@@ -89,11 +85,14 @@ const useSettings = ({
   };
 
   // const [productSKU, setProductSKU] = useState<any>([]);
-  const [productSKU, setProductSKU] = useState({
+  const INIT_PRODUCT_SKU_STATE = {
     name: "",
     code: "",
     productionFloorJobColor: "#2e3092",
-  });
+    printerId: 0,
+    printerBin: ''
+  }
+  const [productSKU, setProductSKU] = useState(INIT_PRODUCT_SKU_STATE);
   const [errorName, setErrorName] = useState(false);
   const [errorCode, setErrorCode] = useState(false);
 
@@ -113,19 +112,14 @@ const useSettings = ({
         "POST",
         `/v1/printhouse-config/productsSKU/create-product-sku`,
         {
-          name: productSKU?.name,
-          code: productSKU?.code,
-          productionFloorJobColor: productSKU?.productionFloorJobColor,
+          ...productSKU,
+          productionFloorJobColor: productSKU?.productionFloorJobColor
         }
       );
       if (res?.success) {
         alertSuccessAdded();
         getAllProductsSKU();
-        setProductSKU({
-          name: "",
-          code: "",
-          productionFloorJobColor: "#2e3092",
-        });
+        setProductSKU(INIT_PRODUCT_SKU_STATE)
       } else {
         alertFaultAdded();
       }

@@ -12,7 +12,6 @@ import {
 import { SearchInputComponent } from "@/components/form-inputs/search-input-component";
 import { useEffect } from "react";
 import { GoMakeMultiSelect } from "@/components/auto-complete/multi-select";
-import { GoMakeDatepicker } from "@/components/date-picker/date-picker-component";
 import { Stack } from "@mui/material";
 import { GoMakePagination } from "@/components/pagination/gomake-pagination";
 import { DuplicateType } from "@/enums";
@@ -25,6 +24,8 @@ import QrListenerWidget from "@/widgets/qr-listener/qr-listener-widget";
 import { useUserPermission } from "@/hooks/use-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { DateRangePicker } from "rsuite";
+import {useRecoilState} from "recoil";
+import {newOrderIdToPrintJobsState} from "@/store/new-order-id-to-print-jobs-state";
 import { DotIcon } from "@/icons";
 
 const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
@@ -62,9 +63,6 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
     onSelectDeliveryTimeDates,
     onSelectDueTimeDates,
     onSelectReadyTimeDates,
-    resetDatePicker,
-    resetDueDatePicker,
-    resetReadyDatePicker,
     handlePageSizeChange,
     pageSize,
     openDuplicateModal,
@@ -84,7 +82,6 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
     openModal,
     onCloseModal,
     onOpenPackagesModal,
-    onOpenMarkReadyModal,
     missionItem,
     onClickPrintPackagingSlip,
     openMarkReadyThenPrintModal,
@@ -94,7 +91,6 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
     onClickBackToProcess,
     handleClick,
     handleClose,
-    selectedMission,
     open,
     anchorEl,
     supplierId,
@@ -110,7 +106,10 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
     toDate,
     router,
     isFetching,
+      printOrderJobsUsingPrintNode,
   } = useBoardMissions({ isPurchaseJobs });
+  const [newOrderId, setNewOrderId] = useRecoilState(newOrderIdToPrintJobsState);
+
 
   useEffect(() => {
     getAllProducts();
@@ -439,6 +438,14 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
         onClose={onCloseModal}
         onClickYes={onOpenMarkReadyThenPrintModal}
         onClickNo={() => onOpenPackagesModal(missionItem)}
+      />
+      <ThreeOptionsModal
+        title={t("boardMissions.printOrderJobsModalTitle")}
+        yesBtn={t("sales.quote.print")}
+        noBtn={''}
+        openModal={!!newOrderId}
+        onClose={()=>setNewOrderId('')}
+        onClickYes={()=> printOrderJobsUsingPrintNode(newOrderId)}
       />
       <PrintPackingSlipModal
         openPackagesModal={openPackagesModal}

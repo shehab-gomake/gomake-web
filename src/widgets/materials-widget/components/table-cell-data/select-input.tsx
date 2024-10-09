@@ -1,11 +1,12 @@
 import React, { SyntheticEvent, useCallback, useEffect, useState } from "react";
 import { useTableCellData } from "@/widgets/materials-widget/components/table-cell-data/use-table-cell-data";
-import { GoMakeAutoComplate } from "@/components";
+import { GoMakeAutoComplate, GoMakeDeleteModal } from "@/components";
 import { getAllProductsForDropDownList } from "@/services/hooks";
 import { useGomakeAxios } from "@/hooks";
 import { useTranslation } from "react-i18next";
 import { useRecoilValue } from "recoil";
 import { productsForDropDownList } from "@/store";
+import { materialCategorySuppliersState } from "../../state";
 
 interface IProps {
   parameterKey: string;
@@ -16,10 +17,20 @@ interface IProps {
 }
 
 const SelectInput = ({ values, parameterKey, id, value, isAdmin }: IProps) => {
-  const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
   const productValue = useRecoilValue(productsForDropDownList)
   const { updateCellData } = useTableCellData(isAdmin);
+  const materialSuppliers = useRecoilValue(materialCategorySuppliersState);
+  const isHaveMorethanMaterialSuppliers = materialSuppliers?.length > 1;
+  const [openDeleteTableRowModal, setOpenDeleteTableRowModal] = useState<boolean>(false);
+  const onClickCloseDeleteTableRowModal = () => {
+    setOpenDeleteTableRowModal(false);
+  };
+
+  const onClickOpenDeleteTableRowModal = () => {
+    setOpenDeleteTableRowModal(true);
+  };
+
   const options = values
     ? parameterKey === "productId" || parameterKey === "printed product"
       ? productValue?.map((inputValue) => ({
@@ -38,9 +49,16 @@ const SelectInput = ({ values, parameterKey, id, value, isAdmin }: IProps) => {
           label: inputValue.value,
         }))
     : [];
-
+  const [selectedValue, setSelectedValue] = useState<any>()
   const onSelectChange = async (event: SyntheticEvent, value) => {
-    await updateCellData(id, parameterKey, value?.id);
+    setSelectedValue(value)
+    if (isHaveMorethanMaterialSuppliers) {
+      onClickOpenDeleteTableRowModal()
+    }
+    else {
+      await updateCellData(id, parameterKey, value?.id);
+
+    }
   };
 
   return (
@@ -65,9 +83,19 @@ const SelectInput = ({ values, parameterKey, id, value, isAdmin }: IProps) => {
           width:
             parameterKey === "productId" || parameterKey === "printed product"
               ? 200
-              : 100,
+              : 150,
         }}
         options={options}
+      />
+      <GoMakeDeleteModal
+        openModal={openDeleteTableRowModal}
+        onClose={onClickCloseDeleteTableRowModal}
+        hideIcon
+        title={t("materials.modals.updateModalTitle")}
+        yesBtn={t("documentingSettings.update")}
+        onClickDelete={async () => {
+          await updateCellData(id, parameterKey, selectedValue?.id);
+        }}
       />
     </div>
   );

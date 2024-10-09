@@ -27,7 +27,7 @@ interface IProps {
 }
 
 const BoardMissionsComponent = ({ boardMissionsId, step, productType, connectionId }: IProps) => {
-    const { getBoardMissions, initStates } = useBoardMissions();
+    const { getBoardMissions, initStates, boardMissionsDetails} = useBoardMissions();
     useEffect(() => {
         if (!!boardMissionsId && !!connectionId) {
             getBoardMissions(boardMissionsId, connectionId, productType).then();
@@ -36,7 +36,7 @@ const BoardMissionsComponent = ({ boardMissionsId, step, productType, connection
             initStates();
         };
     }, [boardMissionsId, connectionId, productType])
-    return <Stack maxHeight={'100%'} height={'100%'} overflow={'hidden'} gap={'16px'} padding={'34px 24px'}
+    return <Stack borderTop={`3px solid ${boardMissionsDetails?.backgroundColor}`} maxHeight={'100%'} height={'100%'} overflow={'hidden'} gap={'16px'} padding={'34px 24px'}
         borderRadius={'24px, 24px, 0px, 0px'}>
         <BoardMissionsDetailsHeader />
         <Divider orientation={'horizontal'} flexItem />
