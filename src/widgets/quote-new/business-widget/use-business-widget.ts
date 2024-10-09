@@ -98,9 +98,19 @@ const useBusinessWidget = ({ values, documentType }) => {
 
   const onClickOpenChangeClientModal = (value) => {
     setSelectedClient(value);
-    if (router.query.orderId && documentType === DOCUMENT_TYPE.invoice)
+    if (
+      (router.query.orderId || router.query.deliveryNoteId) &&
+      documentType === DOCUMENT_TYPE.invoice
+    ) {
       setOpenChangeClientModalFromInvoice(true);
-    else setOpenChangeClientModal(true);
+    } else if (
+      quoteStateValue?.documentItems &&
+      quoteStateValue?.documentItems?.length > 0
+    ) {
+      setOpenChangeClientModalFromInvoice(true);
+    } else {
+      setOpenChangeClientModal(true);
+    }
   };
 
   return {

@@ -33,6 +33,7 @@ import { SWITCHParameterWidget } from "@/pages-components/products/digital-offse
 import { ButtonParameterWidget } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/button-parameter";
 
 import {
+  additionalProductItemsState,
   calculationExceptionsLogsState,
   calculationProgressState,
   calculationResultState,
@@ -104,6 +105,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const itemParmetersValues = useRecoilValue(itemParmetersValuesState);
   const [currentProductItemValue, setCurrentProductItemValue] = useRecoilState<any>(currentProductItemValueState);
   const [productItemValueDraftId, setCurrentProductItemValueDraftId] = useRecoilState<string>(currentProductItemValueDraftId);
+  const setAdditionalProductItems = useSetRecoilState<any>(additionalProductItemsState);
+
   const [
     currentProductItemValueTotalPrice,
     setCurrentProductItemValueTotalPrice,
@@ -266,13 +269,14 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     const result = res?.data?.data?.data;
     setCalculationExceptionsLogs(result?.productItemValue?.exceptions);
     setCurrentProductItemValueDraftId(result.productItemValueDraftId);
+    setAdditionalProductItems(result.additionalProductItems)
     setCalculationProgress({
       totalWorkFlowsCount: 0,
       currentWorkFlowsCount: 0,
     });
     setCurrentProductItemValueTotalWorkFlows(result.productItemValue.totalWorkFlows);
     setWorkFlows(result.productItemValue.workFlows);
-    if (result.productItemValue && result.productItemValue.workFlows && result.productItemValue.workFlows.length > 0 && !(widgetType == EWidgetProductType.EDIT && currentProductItemValueTotalPrice) ) {
+    if (result.productItemValue && result.productItemValue.workFlows && result.productItemValue.workFlows.length > 0 && !(widgetType == EWidgetProductType.EDIT && currentProductItemValueTotalPrice)) {
       const mySelectedWorkFlow = result.productItemValue.workFlows[0];
       if (
         mySelectedWorkFlow &&
@@ -1031,7 +1035,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               processRelatedParameters2(parameter, subSection, section, productTemplate, subProductsArray);
 
             });
-
             if (temp.length > 0) {
               if (!typeMap[subSection.type]) {
                 typeMap[subSection.type] = {
@@ -1058,8 +1061,16 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             }
           });
         });
+        const filteredSubProductsArray = subProductsArray.map((subProduct) => {
+          return {
+            ...subProduct,
+            parameters: subProduct.parameters.filter((parameter) => {
+              return !(parameter.values[0] === "false" || parameter.values[0] === null);
+            }),
+          };
+        });
         setProductTemplate(productTemplate)
-        setSubProducts(subProductsArray);
+        setSubProducts(filteredSubProductsArray);
         setUnderParameterIds(underParameterIdsArray);
         setIsSetTemplete(true);
       }
@@ -3380,6 +3391,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     });
 
     setCalculationExceptionsLogs([])
+    setAdditionalProductItems([])
     setcalculationServerErrorState(false)
 
     let checkParameter = validateParameters(currentSubProducts);

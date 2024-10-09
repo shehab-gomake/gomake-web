@@ -43,6 +43,7 @@ const LedgerReportWidget = ({ customerId }: any) => {
     selectedContactById,
     isopenAdjustmentsModal,
     clientPaymentsList,
+    setClientPaymentsList,
     handleDateChange,
     fromDate,
     toDate,
@@ -76,7 +77,7 @@ const LedgerReportWidget = ({ customerId }: any) => {
         <PrimaryTable
           rows={getTableDataRows()}
           headers={tableHeaders}
-          maxHeight={650}
+          maxHeight={720}
           stickyHeader={true}
         />
       }
@@ -95,6 +96,7 @@ const LedgerReportWidget = ({ customerId }: any) => {
         openModal={isopenAdjustmentsModal}
         clientPaymentsList={clientPaymentsList}
         getClientPaymentItems={getClientPaymentItems}
+        setClientPaymentsList={setClientPaymentsList}
       />
       <CreateNewTransactionModal onCloseModal={onClickCloseCreateTransactionModal} openModal={isopenCreateTransactionModal} customerId={customerId} />
     </div>

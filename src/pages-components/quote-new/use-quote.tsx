@@ -27,7 +27,6 @@ import {
   deleteDocumentContactApi,
   deleteDocumentItemApi,
   duplicateWithAnotherQuantityApi,
-  getDocumentApi,
   getWhatsAppMessageApi,
   refreshExchangeRateApi,
   rejectDocumentApi,
@@ -37,7 +36,6 @@ import {
   updateAgentApi,
   updateDiscountTypeApi,
   updateDocuementItemSelectApi,
-  updateDocumentAddressApi,
   updateDocumentContactApi,
   updateDocumentCurrencyApi,
   updateDocumentTitleApi,
@@ -116,6 +114,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
   const [isUpdateExchangeRate, setIsUpdateExchangeRate] = useState<
     number | null
   >(null);
+
   const [isUpdateCurrency, setIsUpdateCurrency] = useState<string>(null);
   const [, setIsUpdateBusinessCode] = useState<number | null>(null);
   const [isUpdateAddress, setIsUpdateAddress] = useState<number | null>(null);
@@ -247,9 +246,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
   };
   const tableHeaders = [
     "#",
-    (isDeliveryNote || isInvoice) && !router.query.isNewCreation
-      ? t("products.profits.documentNumber")
-      : null,
+    isDeliveryNote || isInvoice ? t("products.profits.documentNumber") : null,
     t("sales.quote.itemCode"),
     t("products.profits.itemName"),
     isQuoteConfirmation
@@ -257,8 +254,8 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
         ? t("products.profits.details")
         : null
       : quoteItemValue?.isShowDetails
-      ? t("products.profits.details")
-      : null,
+        ? t("products.profits.details")
+        : null,
     t("sales.quote.amount"),
     t("products.profits.pricingListWidget.unitPrice"),
     t("sales.quote.discount"),
@@ -1659,7 +1656,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
         alertFaultUpdate();
       }
     };
-    await updateDiscountTypeApi(callApi, callBack, {
+    await sortDocumentItemsApi(callApi, callBack, {
       documentType: docType,
       document: {
         documentId: quoteItemValue?.id,
@@ -1717,12 +1714,13 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
       },
     });
   };
-  const [whatsappMassage, setWhatssAppMassage] = useState("");
+
+  const [whatsappMassage, setWhatsAppMassage] = useState("");
   const getWhatsAppMessage = async () => {
     if (quoteItemValue?.id) {
       const callBack = (res) => {
         if (res?.success) {
-          setWhatssAppMassage(res?.data);
+          setWhatsAppMassage(res?.data);
         } else {
           alertFaultUpdate();
         }
@@ -1754,6 +1752,8 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
       },
     });
   };
+
+  const [isWhatsAppWeb, setIsWhatsAppWeb] = useState(true);
 
   return {
     dateRef,
@@ -1943,6 +1943,8 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     onBlurTitle,
     isUpdateDocumentTitle,
     setIsUpdateDocumentTitle,
+    isWhatsAppWeb,
+    setIsWhatsAppWeb,
   };
 };
 

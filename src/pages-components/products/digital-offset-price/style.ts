@@ -372,6 +372,32 @@ const useStyle = () => {
         width: "100%",
         marginBottom: 18,
       },
+      additionalProductItems:{
+        display: "flex",
+        flexDirection: "column" as "column",
+        justifyContent: "flex-start",
+        alignItems: "center",
+        marginTop: 10
+      },
+      additionalProductItemsContainer:{
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        width: "100%",
+        marginBottom: 10,
+      },
+      additionalProductItem:{
+        color: primaryColor(500),
+        ...FONT_FAMILY.Lexend(700, 16),
+      },
+      additionalPrices:{
+        display:"flex",
+        flexDirection:"row" as "row",
+        justifyContent:"flex-start",
+        alignItems: "center",
+        gap:10
+      },
       orderContainer: {
         display: "flex",
         justifyContent: "center",

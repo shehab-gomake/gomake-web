@@ -18,10 +18,9 @@ const useStyle = () => {
       },
       menuTabStyle: {
         padding: "8px 10px",
-        ...FONT_FAMILY.Lexend(500, 10),
+        ...FONT_FAMILY.Lexend(500, 12),
         color: "#8283BE",
         cursor: "pointer",
-     //   backgroundColor: "#EBECFF"
       },
       menuRowStyle: {
         display: "flex",

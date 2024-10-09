@@ -21,6 +21,7 @@ import { Permissions } from "@/components/CheckPermission/enum";
 import { DateRangePicker } from "rsuite";
 import {useRecoilState} from "recoil";
 import {newOrderIdToPrintJobsState} from "@/store/new-order-id-to-print-jobs-state";
+import { DotIcon } from "@/icons";
 
 const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
   const { classes } = useStyle();
@@ -98,7 +99,8 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
     toDueDate,
     fromDate,
     toDate,
-      printOrderJobsUsingPrintNode
+      printOrderJobsUsingPrintNode,
+    router
   } = useBoardMissions({ isPurchaseJobs });
   const [newOrderId, setNewOrderId] = useRecoilState(newOrderIdToPrintJobsState);
 
@@ -119,6 +121,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
                 <div>
                   <IconButton onClick={handleClick}>
                     <TuneIcon />
+                    {Object.keys(router.query).length > 0 && <div style={{ position: "absolute", top: -5, right: -1 }}> <DotIcon /></div>}
                   </IconButton>
                   <GoMakeMenu handleClose={handleClose} open={open} anchorEl={anchorEl} >
                     <div style={classes.filtersContainer}>

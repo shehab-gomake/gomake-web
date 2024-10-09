@@ -103,7 +103,10 @@ const ActionContainerComponent = ({
   isNeedEmployee,
   isNeedMachine,
   isNeedMaterial,
-  widgetType
+  widgetType,
+  totalCostValue,
+  totalPriceValue,
+  profitValue
 }: IActionContainerComponentProps) => {
   source = source === EWorkSource.OUT ? EWorkSource.OUT : EWorkSource.INTERNAL;
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -153,31 +156,31 @@ const ActionContainerComponent = ({
   const { secondColor } = useGomakeTheme();
   const inputsParameters = outputs?.filter(
     (parameter) =>
-      parameter.propertyType === RuleType.PARAMETER &&
-      parameter.htmlElementType === HtmlElementType.TEXT
+      parameter && parameter?.propertyType === RuleType.PARAMETER &&
+      parameter?.htmlElementType === HtmlElementType.TEXT
   );
   const outputsParameters = outputs?.filter(
     (parameter) =>
-      parameter.propertyType === RuleType.OUTPUT &&
-      parameter.htmlElementType === HtmlElementType.TEXT
+      parameter && parameter?.propertyType === RuleType.OUTPUT &&
+      parameter?.htmlElementType === HtmlElementType.TEXT
   );
   const imageOutputs = outputs?.filter(
     (parameter) =>
-      parameter.propertyType === RuleType.OUTPUT &&
-      parameter.htmlElementType === HtmlElementType.IMAGE
+      parameter && parameter?.propertyType === RuleType.OUTPUT &&
+      parameter?.htmlElementType === HtmlElementType.IMAGE
   );
 
   const textAreaOutputs = outputs?.filter(
     (parameter) =>
-      parameter.propertyType === RuleType.OUTPUT &&
-      parameter.htmlElementType === HtmlElementType.TEXT_AREA
+      parameter && parameter?.propertyType === RuleType.OUTPUT &&
+      parameter?.htmlElementType === HtmlElementType.TEXT_AREA
   );
 
 
   const tableOutputs = outputs?.filter(
     (parameter) =>
-      parameter.propertyType === RuleType.OUTPUT &&
-      parameter.htmlElementType === HtmlElementType.TABLE
+      parameter && parameter?.propertyType === RuleType.OUTPUT &&
+      parameter?.htmlElementType === HtmlElementType.TABLE
   );
   const handleDeliveryTimeUpdate = (newValue: string) => {
     updateActionData(
@@ -206,14 +209,14 @@ const ActionContainerComponent = ({
     updateActionData(id, value?.value, "supplierId", productType).then();
   };
   const calculateProfitInMoney = () => {
-    const totalPriceValue = totalPrice && totalPrice.values && totalPrice.values.length > 0 ? +totalPrice.values[0] : 0;
-    const totalCostValue = totalCost && totalCost.values && totalCost.values.length > 0 ? +totalCost.values[0] : 0;
-    return (totalPriceValue - totalCostValue).toFixed(2);
+    const totalPriceValues = totalPriceValue ? totalPriceValue : 0;
+    const totalCostValues = totalCostValue ? totalCostValue : 0;
+    return (totalPriceValues - totalCostValues).toFixed(2);
   }
   const calculateOutSourceProfitInMoney = () => {
-    const totalPriceValue = totalPrice && totalPrice.outSourceValues && totalPrice.outSourceValues.length > 0 ? +totalPrice.outSourceValues[0] : 0;
-    const totalCostValue = totalCost && totalCost.outSourceValues && totalCost.outSourceValues.length > 0 ? +totalCost.outSourceValues[0] : 0;
-    return (totalPriceValue - totalCostValue).toFixed(2);
+    const totalPriceValues = totalPriceValue ? totalPriceValue : 0;
+    const totalCostValues = totalCostValue ? totalCostValue : 0;
+    return (totalPriceValues - totalCostValues).toFixed(2);
   }
   const getSupplierId = useCallback(() => {
     if (supplierId) {
@@ -347,7 +350,7 @@ const ActionContainerComponent = ({
               )}
             </Stack>
 
-            <Divider orientation={"vertical"} flexItem />
+            {source != EWorkSource.OUT && <Divider orientation={"vertical"} flexItem />}
             <Stack
               style={classes.sectionTitle}
               direction={"row"}
@@ -355,7 +358,7 @@ const ActionContainerComponent = ({
               gap={"10px"}
             >
               {
-                isNeedEmployee && (
+                isNeedEmployee && source != EWorkSource.OUT && (
                   <>
                     {!chooseEmployee ? (
                       <Button
@@ -500,6 +503,7 @@ const ActionContainerComponent = ({
                 <EditableKeyValueViewComponent
                   onUpdate={handleCostUpdate}
                   {...totalCost}
+                  values={totalCostValue}
                   source={source}
                   name={t("machineAttributes.cost")}
                 />
@@ -512,6 +516,7 @@ const ActionContainerComponent = ({
                   <EditableKeyValueViewComponent
                     onUpdate={handleProfitUpdate}
                     {...profit}
+                    values={profitValue}
                     source={source}
                     name={t("products.profits.pricingListWidget.profit")}
                   />
@@ -532,6 +537,7 @@ const ActionContainerComponent = ({
                 <EditableKeyValueViewComponent
                   onUpdate={handleUpdatePrice}
                   {...totalPrice}
+                  values={totalPriceValue}
                   source={source}
                   valueColor={secondColor(500)}
                   name={t("sales.quote.price")}
@@ -550,6 +556,7 @@ const ActionContainerComponent = ({
                   <EditableKeyValueViewComponent
                     onUpdate={handleCostUpdate}
                     {...totalCost}
+                    values={totalCostValue}
                     source={source}
                     name="Cost"
                   />
@@ -562,6 +569,7 @@ const ActionContainerComponent = ({
                     <EditableKeyValueViewComponent
                       onUpdate={handleProfitUpdate}
                       {...profit}
+                      values={profitValue}
                       source={source}
                       name="Profit"
                     />
@@ -579,6 +587,7 @@ const ActionContainerComponent = ({
                   <EditableKeyValueViewComponent
                     onUpdate={handleUpdatePrice}
                     {...totalPrice}
+                    values={totalPriceValue}
                     source={source}
                     valueColor={secondColor(500)}
                     name="Price"

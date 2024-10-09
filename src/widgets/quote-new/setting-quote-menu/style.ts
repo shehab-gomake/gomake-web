@@ -19,8 +19,8 @@ const useStyle = () => {
       }
       ,
       menuTabStyle: {
-        padding: "5px 0px",
-        ...FONT_FAMILY.Lexend(500, 10),
+        padding: "10px 0px",
+        ...FONT_FAMILY.Lexend(600, 14),
         color: "#8283BE",
         cursor: "pointer",
       },
@@ -30,6 +30,30 @@ const useStyle = () => {
         justifyContent: "space-between",
         alignItems: "center",
       },
+      selectedTabStyle:{
+        display: "flex",
+        flexDirection: "column" as "column",
+        justify:"flex-start",
+        alignItems: "flex-start",
+        gpa:5
+      },
+      mainTabContainer:{
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        width:"100%",
+        marginBottom:12
+      },
+      selectedTabContainer:{
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "flex-start",
+        alignItems: "center",
+        width:"100%",
+        gap:8,
+        ...FONT_FAMILY.Lexend(600,12),
+      }
     };
   }, []);
   return {
