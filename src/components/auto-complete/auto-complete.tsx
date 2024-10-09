@@ -7,7 +7,7 @@ import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import Stack from "@mui/material/Stack";
-import { Collapse, Divider } from "@mui/material";
+import { Collapse, Divider, Paper } from "@mui/material";
 import { DownIcon, UpIcon } from "./icons";
 
 const StyledAutocomplete: any = styled(Autocomplete)((props: any) => {
@@ -133,7 +133,7 @@ const GoMakeAutoComplate = ({
       setSelectedOption(null);
     }
   }, [value]);
-  
+
 
   const [expandedGroups, setExpandedGroups] = useState<{ [key: string]: boolean }>({});
 
@@ -146,14 +146,12 @@ const GoMakeAutoComplate = ({
 
   const optionsArray = Array.isArray(options) ? options : [];
   const groupByFunction = typeof groupBy === 'function' ? groupBy : (option) => option; // Default to identity function if not a function
-  
+
   const uniqueGroups = Array.from(new Set(optionsArray.map(groupByFunction)));
   const lastGroup = uniqueGroups[uniqueGroups.length - 1];
 
   return (
     <StyledAutocomplete
-      // {...(value && { value })}
-      //value={value || value === 0 ? value : null}
       {...(value && { value })}
       {...(selectedOption && { selectedOption })}
       direction={dir}
@@ -169,8 +167,8 @@ const GoMakeAutoComplate = ({
       renderGroup={(params) => (
         <div key={params.key}>
           <GroupHeader onClick={() => toggleGroup(params.group)}>
-          {params.group}
-            {expandedGroups[params.group] ? <UpIcon/> : <DownIcon/>}
+            {params.group}
+            {expandedGroups[params.group] ? <UpIcon /> : <DownIcon />}
           </GroupHeader>
           {params.group !== lastGroup && <Divider sx={{
             width: '97%',
@@ -223,7 +221,15 @@ const GoMakeAutoComplate = ({
       getOptionSelected={(option: any, value: any) => {
         return option?.id === value?.id;
       }}
-      PaperComponent={PaperComponent}
+      // PaperComponent={PaperComponent}
+      PaperComponent={(props) => (
+        <Paper {...props} className="custom-scrollbar" style={{
+          maxHeight: 200,
+          overflowY: "auto",
+        }} />
+
+      )}
+
     />
   );
 };
