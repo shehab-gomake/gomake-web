@@ -177,7 +177,7 @@ const RowMappingWidget = ({
           borderBottom: item?.childsDocumentItems && "none",
         }}
       >
-        {item?.code ? item?.code : "000"}
+        {item?.code || item?.productCode || "000"}
       </PrimaryTableCell>
       <PrimaryTableCell
         style={{
