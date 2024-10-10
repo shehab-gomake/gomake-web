@@ -46,7 +46,7 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
     label: string;
     isDefault: boolean;
   } | null>({ value: "", label: "", isDefault: false });
-  
+
   useEffect(() => {
     const index = materialSuppliers.map((s) => s.value).indexOf(supplierId);
     setSupplierName(index !== -1 ? materialSuppliers[index] : null);
