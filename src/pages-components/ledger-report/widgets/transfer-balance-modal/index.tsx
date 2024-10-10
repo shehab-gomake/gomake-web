@@ -1,25 +1,33 @@
-
-import { GoMakeAutoComplate, GoMakeModal, GomakePrimaryButton, } from "@/components";
+import { GoMakeAutoComplate, GoMakeModal } from "@/components";
 import { useStyle } from "./style";
 import { useTranslation } from "react-i18next";
 import { SecondaryButton } from "@/components/button/secondary-button";
 
-const TransferBalanceModal = ({ openModal, onCloseModal, customer, renderOptions, checkWhatRenderArray, handleCustomerChange, transferBalanceApi }) => {
+const TransferBalanceModal = ({
+  openModal,
+  onCloseModal,
+  customer,
+  renderOptions,
+  checkWhatRenderArray,
+  handleCustomerChange,
+  transferBalanceApi,
+  isFetchingCustomers,
+}) => {
   const { classes } = useStyle();
-  const { t } = useTranslation()
+  const { t } = useTranslation();
   const btns = [
     {
       name: t("reports.transfer"),
       onclick: () => {
-        transferBalanceApi()
-        onCloseModal()
-      }
+        transferBalanceApi();
+        onCloseModal();
+      },
     },
     {
       name: t("reports.cancel"),
-      onclick: () => onCloseModal()
+      onclick: () => onCloseModal(),
     },
-  ]
+  ];
 
   return (
     <>
@@ -31,7 +39,9 @@ const TransferBalanceModal = ({ openModal, onCloseModal, customer, renderOptions
       >
         <div style={classes.mainContainer}>
           <div style={classes.date2FilterContainer}>
-            <h3 style={classes.filterLabelStyle}>{t("sales.quote.customer")}</h3>
+            <h3 style={classes.filterLabelStyle}>
+              {t("sales.quote.customer")}
+            </h3>
             <GoMakeAutoComplate
               key={customer?.id}
               options={renderOptions()}
@@ -41,13 +51,21 @@ const TransferBalanceModal = ({ openModal, onCloseModal, customer, renderOptions
               placeholder={t("sales.quote.chooseCustomer")}
               onChange={handleCustomerChange}
               value={customer}
+              loading={isFetchingCustomers}
             />
           </div>
           <div style={classes.btnsContainer}>
             {btns.map((tab, index) => {
               return (
-                <SecondaryButton variant={index===0?"contained":"outlined"} key={index} onClick={tab.onclick} style={classes.btnContainer}>{tab.name}</SecondaryButton>
-              )
+                <SecondaryButton
+                  variant={index === 0 ? "contained" : "outlined"}
+                  key={index}
+                  onClick={tab.onclick}
+                  style={classes.btnContainer}
+                >
+                  {tab.name}
+                </SecondaryButton>
+              );
             })}
           </div>
         </div>

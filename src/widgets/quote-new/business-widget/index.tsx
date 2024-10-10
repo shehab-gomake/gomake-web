@@ -71,6 +71,7 @@ const BusinessNewWidget = ({
     setCustomer,
     onCustomerAdd,
     canEditDocument,
+    canEditAddress,
     canEditPurchaseNumber,
     setQuoteItemValue,
     onClickOpenChangeClientModal,
@@ -89,6 +90,7 @@ const BusinessNewWidget = ({
     isQuote,
     documentTitle,
     setDocumentTitle,
+    isFetching,
   } = useBusinessWidget({ values, documentType });
   const dir: "rtl" | "ltr" = t("direction");
   const isRTL = dir === "rtl";
@@ -119,8 +121,8 @@ const BusinessNewWidget = ({
             isQuoteConfirmation
               ? quoteConfirm?.client?.name
               : quoteStateValue?.client?.name
-                ? quoteStateValue?.client?.name
-                : t("sales.quote.selectBusinessName")
+              ? quoteStateValue?.client?.name
+              : t("sales.quote.selectBusinessName")
           }
           options={mappedCustomers}
           onBlur={onBlurBusinessName}
@@ -133,6 +135,7 @@ const BusinessNewWidget = ({
           getOptionLabel={(item) => item.text}
           onChange={(e, value) => onClickOpenChangeClientModal(value)}
           onChangeTextField={checkWhatRenderArray}
+          isFetching={isFetching}
         />
         <PermissionCheck userPermission={Permissions.ADD_CLIENT}>
           {!isQuoteConfirmation && documentType === DOCUMENT_TYPE.quote && (
@@ -263,37 +266,37 @@ const BusinessNewWidget = ({
             onBlur={onBlurAddress}
             isUpdate={false}
             setIsUpdate={setIsUpdateAddress}
-            flag={!isQuoteConfirmation && canEditDocument}
+            flag={!isQuoteConfirmation && canEditAddress}
             onClickFlag={() => setOpenModal(true)}
           />
         )}
         {values?.documentAddresses?.length > 0
           ? !isQuoteConfirmation &&
-          canEditDocument && (
-            <div style={classes.addNewAddressStyle} onClick={() => null}>
-              <MinusIcon />
-              <div
-                style={classes.addNewAddressTextStyle}
-                onClick={() =>
-                  onClickDeleteAddress(values?.documentAddresses[0])
-                }
-              >
-                {t("sales.quote.removeAddress")}
+            canEditDocument && (
+              <div style={classes.addNewAddressStyle} onClick={() => null}>
+                <MinusIcon />
+                <div
+                  style={classes.addNewAddressTextStyle}
+                  onClick={() =>
+                    onClickDeleteAddress(values?.documentAddresses[0])
+                  }
+                >
+                  {t("sales.quote.removeAddress")}
+                </div>
               </div>
-            </div>
-          )
+            )
           : !isQuoteConfirmation &&
-          canEditDocument && (
-            <div style={classes.addNewAddressStyle}>
-              <PlusNewIcon />
-              <div
-                style={classes.addNewAddressTextStyle}
-                onClick={() => setOpenModal(true)}
-              >
-                {t("sales.quote.addAddress")}
+            canEditAddress && (
+              <div style={classes.addNewAddressStyle}>
+                <PlusNewIcon />
+                <div
+                  style={classes.addNewAddressTextStyle}
+                  onClick={() => setOpenModal(true)}
+                >
+                  {t("sales.quote.addAddress")}
+                </div>
               </div>
-            </div>
-          )}
+            )}
         {!isQuoteConfirmation && (
           <AddressModal
             isUpdate={values?.documentAddresses?.length > 0}

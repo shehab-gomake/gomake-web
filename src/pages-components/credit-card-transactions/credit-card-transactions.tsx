@@ -13,7 +13,6 @@ const CreditCardTransactionsWidget = () => {
   const {
     t,
     onSelectDeliveryTimeDates,
-    resetDatePicker,
     onClickSearchFilter,
     onClickClearFilter,
     customer,
@@ -40,8 +39,8 @@ const CreditCardTransactionsWidget = () => {
     handleDateChange,
     fromDate,
     toDate,
+    isFetching,
   } = useCreditCardTransactions();
-
 
   return (
     <>
@@ -54,8 +53,6 @@ const CreditCardTransactionsWidget = () => {
             handleReceiptNumberChange={handleReceiptNumberChange}
             onClickSearchFilter={onClickSearchFilter}
             onClickClearFilter={onClickClearFilter}
-            onSelectDeliveryTimeDates={onSelectDeliveryTimeDates}
-            resetDatePicker={resetDatePicker}
             customer={customer}
             renderOptions={renderOptions}
             checkWhatRenderArray={checkWhatRenderArray}
@@ -63,6 +60,7 @@ const CreditCardTransactionsWidget = () => {
             handleDateChange={handleDateChange}
             fromDate={fromDate}
             toDate={toDate}
+            isFetchingCustomers={isFetching}
           />
           <PrimaryTable
             stickyFirstCol={false}
@@ -87,7 +85,10 @@ const CreditCardTransactionsWidget = () => {
         onClose={onClickClosModal}
         modalTitle={t("creditCardTransactions.TransferToAnotherCustomer")}
       >
-        <TransferToClientModal onClickClosModal={onClickClosModal} onClickConfirm={onClickChangeTransactionClient} />
+        <TransferToClientModal
+          onClickClosModal={onClickClosModal}
+          onClickConfirm={onClickChangeTransactionClient}
+        />
       </GoMakeModal>
       <GoMakeDeleteModal
         icon={<WarningAmberIcon style={classes.iconStyle} />}

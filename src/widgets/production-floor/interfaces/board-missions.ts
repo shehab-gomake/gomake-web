@@ -65,6 +65,8 @@ export interface IBoardMissionsDetails {
   clientTypeId: string;
   quantity?: number;
   isReady: boolean;
+  productionFloorJobColor?: string;
+  showGraphicsApprovalAlert?: 0 | 1 | 2
 }
 
 export interface IBoardMissionStep {

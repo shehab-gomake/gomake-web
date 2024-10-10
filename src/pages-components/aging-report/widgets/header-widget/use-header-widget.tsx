@@ -14,18 +14,20 @@ export interface AgingReportHeaderWidgetProps {
   renderOptions: () => any[];
   checkWhatRenderArray: (arg: any) => void;
   handleCustomerChange: any;
-  detailedReport: boolean,
+  detailedReport: boolean;
   onChangeDetailedReport: any;
   onChangeByReferenceDate: any;
   handleDateChange?: any;
-  fromDate?: Date | null,
-  toDate?: Date | null,
+  fromDate?: Date | null;
+  toDate?: Date | null;
+  isFetchingCustomers?: boolean;
 }
 const useAgingReportHeader = () => {
   const { classes } = useStyle();
-  const { t } = useTranslation()
+  const { t } = useTranslation();
   return {
-    classes, t
+    classes,
+    t,
   };
 };
 

@@ -11,11 +11,20 @@ interface ITransferToClient {
   onClickConfirm: (clientID: string) => void;
 }
 
-const TransferToClientModal = ({ onClickClosModal, onClickConfirm }: ITransferToClient) => {
+const TransferToClientModal = ({
+  onClickClosModal,
+  onClickConfirm,
+}: ITransferToClient) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
   const { alertFault } = useSnackBar();
-  const { customer, renderOptions, checkWhatRenderArray, handleCustomerChange } = useCustomerDropDownList();
+  const {
+    customer,
+    renderOptions,
+    checkWhatRenderArray,
+    handleCustomerChange,
+    isFetching,
+  } = useCustomerDropDownList();
 
   const handleConfirmClick = () => {
     if (customer != null) {
@@ -26,7 +35,13 @@ const TransferToClientModal = ({ onClickClosModal, onClickConfirm }: ITransferTo
   };
 
   return (
-    <Stack display={'flex'} justifyContent={'space-between'} height={"100%"} direction={'column'} padding={'20px'}>
+    <Stack
+      display={"flex"}
+      justifyContent={"space-between"}
+      height={"100%"}
+      direction={"column"}
+      padding={"20px"}
+    >
       <div style={classes.date2FilterContainer}>
         <h3 style={classes.filterLabelStyle}>{t("sales.quote.customer")}</h3>
         <GoMakeAutoComplate
@@ -37,16 +52,19 @@ const TransferToClientModal = ({ onClickClosModal, onClickConfirm }: ITransferTo
           placeholder={t("sales.quote.chooseCustomer")}
           onChange={handleCustomerChange}
           value={customer}
+          loading={isFetching}
         />
       </div>
-      <Stack direction={'row'} gap={'20px'}>
-        <SecondaryButton variant={'contained'} onClick={handleConfirmClick} >{t('sales.quote.confirmed')}
+      <Stack direction={"row"} gap={"20px"}>
+        <SecondaryButton variant={"contained"} onClick={handleConfirmClick}>
+          {t("sales.quote.confirmed")}
         </SecondaryButton>
-        <SecondaryButton variant={'contained'} onClick={onClickClosModal} >{t('sales.quote.cancel')}
+        <SecondaryButton variant={"contained"} onClick={onClickClosModal}>
+          {t("sales.quote.cancel")}
         </SecondaryButton>
       </Stack>
     </Stack>
-  )
+  );
 };
 
 export { TransferToClientModal };

@@ -40,9 +40,8 @@ export const useCompanyReport = () => {
     useSnackBar();
   const [, setPrintHouses] =
     useRecoilState<{ id: string; name: string }[]>(printHousesState);
-
   const [AllReport, setAllReport] = useState([]);
-
+  const [patternSearch, setPatternSearch] = useState<string>("");
   const [openPaymentDetails, setOpenPaymentDetails] = useState<boolean>(false);
   const [selectedPrintHouse, setSelectedPrintHouse] = useState<IPrintHouse>(
     initialPrintHouseState
@@ -213,5 +212,7 @@ export const useCompanyReport = () => {
     payStatus,
     payStatuses,
     handlePayStatusChange,
+    patternSearch,
+    setPatternSearch,
   };
 };

@@ -4,7 +4,7 @@ import {useGomakeAxios} from "@/hooks";
 import {useEffect} from "react";
 import {useRecoilState, useResetRecoilState} from "recoil";
 import {
-    boardMissionsStationsState, boardMissionsSubWorkFlowsState, isReadyBoardMissionsState,
+    boardMissionsStationsState, boardMissionsSubWorkFlowsState, isOrderCompletedState, isReadyBoardMissionsState,
     stationGeneralInformationProductionFloorState,
     stationGeneralInformationState
 } from "@/widgets/production-floor/views/board-missions-view/stations/state";
@@ -26,6 +26,7 @@ const useBoardMissionsStations = () => {
     const [, setIsReady] = useRecoilState(isReadyBoardMissionsState);
     const [boardMissions] = useRecoilState(boardMissionsDetailsState);
     const initStations = useResetRecoilState(boardMissionsStationsState);
+    const [, setIsOrderCompleted] = useRecoilState(isOrderCompletedState);
     const getStations = async () => {
         const callBack = res => {
             if (res?.success) {
@@ -34,6 +35,7 @@ const useBoardMissionsStations = () => {
                 setInformation(res?.data?.generalInformations);
                 setInformationProductionFloor(res?.data?.generalInformationProductionFloor)
                 setIsReady(res?.data?.isReady);
+                setIsOrderCompleted(res?.data?.isOrderCompleted);
             }
         }
         await getBoardsMissionsStations(callApi, callBack, {boardMissionsId: boardMissionsId, productType: productType ? productType : ''})

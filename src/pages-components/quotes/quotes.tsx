@@ -174,6 +174,7 @@ const QuotesListPageWidget = ({
     openCancelReceiptModalRefund,
     onCloseCancelReceiptModalRefund,
     ExportDocumentTableToExcel,
+    isFetching,
   } = useQuotes(documentType, isFromHomePage);
 
   useEffect(() => {
@@ -282,7 +283,13 @@ const QuotesListPageWidget = ({
                     <div>
                       <IconButton onClick={handleClick}>
                         <TuneIcon />
-                        {Object.keys(router.query).length > 0 && <div style={{ position: "absolute", top: -5, right: -1 }}> <DotIcon /></div>}
+                        {Object.keys(router.query).length > 0 && (
+                          <div
+                            style={{ position: "absolute", top: -5, right: -1 }}
+                          >
+                            <DotIcon />
+                          </div>
+                        )}
                       </IconButton>
                       <GoMakeMenu
                         handleClose={handleClose}
@@ -308,7 +315,7 @@ const QuotesListPageWidget = ({
                                   setCustomerId(value);
                                 }}
                                 value={customerId}
-                              //withArrow={true}
+                                loading={isFetching}
                               />
                             </div>
                             <div style={classes.statusFilterContainer}>
@@ -595,7 +602,13 @@ const QuotesListPageWidget = ({
             />
           </div>
           <GoMakePagination
-            onChangePageNumber={(event, value) => setPage(value)}
+            onChangePageNumber={(event, value) => {
+              setPage(value)
+              router.push({
+                pathname: router.pathname,
+                query: { ...router.query, pageNumber: value },
+              });
+            }}
             onChangePageSize={handlePageSizeChange}
             page={page}
             setPage={setPage}

@@ -1,8 +1,11 @@
 import { useCallback, useEffect, useState } from "react";
-import { useCustomerDropDownList, useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
 import {
-  getAndSetClientTypes,
-} from "@/services/hooks";
+  useCustomerDropDownList,
+  useGomakeAxios,
+  useGomakeRouter,
+  useSnackBar,
+} from "@/hooks";
+import { getAndSetClientTypes } from "@/services/hooks";
 import { useTranslation } from "react-i18next";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
@@ -31,8 +34,11 @@ const useQuoteWidget = () => {
   const [userQuote, setUserQuote] = useState<any>(null);
   const [openModal, setOpenModal] = useState(false);
   const [selectedClientType, setSelectedClientType] = useState<any>({});
-  const [selectedClient, setSelectedClient] = useRecoilState<any>(selectedClientState);
-  const [previousClient, setPreviousClient] = useRecoilState<any>(prevSelectedClientState);
+  const [selectedClient, setSelectedClient] =
+    useRecoilState<any>(selectedClientState);
+  const [previousClient, setPreviousClient] = useRecoilState<any>(
+    prevSelectedClientState
+  );
   const setQuoteIfExist = useSetRecoilState<any>(QuoteIfExistState);
   const setAllReports = useSetRecoilState<any>(homeReportsState);
   const [selectedProduct, setSelectedProduct] = useState<any>({});
@@ -40,7 +46,8 @@ const useQuoteWidget = () => {
   const [QuoteId, setQuoteId] = useState("");
   const setQuoteNumber = useSetRecoilState<any>(QuoteNumberState);
 
-  const { renderOptions, checkWhatRenderArray } = useCustomerDropDownList();
+  const { renderOptions, checkWhatRenderArray, isFetching } =
+    useCustomerDropDownList();
 
   const onClickOpenModal = (quoteId: any) => {
     setOpenModal(true);
@@ -71,8 +78,6 @@ const useQuoteWidget = () => {
     }
   };
 
-
-
   const getAllCustomersCreateQuote = useCallback(async (SearchTerm?) => {
     // await getAndSetAllCustomers(callApi, setCustomersListCreateQuote, {
     //   clientType: documentType === DOCUMENT_TYPE.purchaseOrder || documentType === DOCUMENT_TYPE.purchaseInvoice || documentType === DOCUMENT_TYPE.purchaseInvoiceRefund ? "S" : "C",
@@ -81,7 +86,7 @@ const useQuoteWidget = () => {
     // });
   }, []);
 
-  const [clientListData, setClientListData] = useState([])
+  const [clientListData, setClientListData] = useState([]);
 
   const handleOpenModal = (newClient) => {
     //setPreviousClient(selectedClient ? selectedClient : previousClient);
@@ -96,11 +101,14 @@ const useQuoteWidget = () => {
   };
 
   const handleClickToSelectedCustomer = async (clientIdIfExist, value) => {
-    if (clientIdIfExist != null && value?.id != null && clientIdIfExist !== value?.id) {
+    if (
+      clientIdIfExist != null &&
+      value?.id != null &&
+      clientIdIfExist !== value?.id
+    ) {
       handleOpenModal(value);
-    }
-    else {
-      setSelectedClient(value)
+    } else {
+      setSelectedClient(value);
     }
   };
 
@@ -114,7 +122,6 @@ const useQuoteWidget = () => {
   useEffect(() => {
     setSelectedClientType(getCustomerType());
   }, [selectedClient, getCustomerType]); // Ensure client type is updated when selectedClient changes
-
 
   const getAndSetExistQuote = async () => {
     const callBack = (res) => {
@@ -135,7 +142,6 @@ const useQuoteWidget = () => {
     await getIfCartExistApi(callApi, callBack, { documentType: 0 });
   };
 
-
   const onClickSaveQuote = async (quoteId) => {
     const callBack = (res) => {
       if (res?.success) {
@@ -154,10 +160,9 @@ const useQuoteWidget = () => {
     });
   };
 
-
   const onClickCreateQuote = () => {
     if (selectedProduct?.category === ProductCategoryType.MATERIAL) {
-      addDocumentItemFromMaterial()
+      addDocumentItemFromMaterial();
     } else
       navigate(
         `/admin/products/digital-offset-price?clientTypeId=${selectedClientType?.id}&customerId=${selectedClient?.id}&productId=${selectedProduct?.id}`
@@ -166,9 +171,8 @@ const useQuoteWidget = () => {
 
   const onClickCreateQuoteForCustomer = () => {
     if (selectedProduct?.category === ProductCategoryType.MATERIAL) {
-      addDocumentItemFromMaterial()
-    }
-    else
+      addDocumentItemFromMaterial();
+    } else
       navigate(
         `/products/create?clientTypeId=${selectedClientType?.id}&customerId=${selectedClient?.id}&customerName=${selectedClient?.name}&productId=${selectedProduct?.id}`
       );
@@ -186,10 +190,11 @@ const useQuoteWidget = () => {
     }
   };
 
-
   const getAllClientTypes = useCallback(async () => {
     try {
-      await getAndSetClientTypes(callApi, setClientTypesValues, { cardType: CLIENT_TYPE_Id.CUSTOMER });
+      await getAndSetClientTypes(callApi, setClientTypesValues, {
+        cardType: CLIENT_TYPE_Id.CUSTOMER,
+      });
     } catch (error) {
       console.error("Error fetching client types:", error);
     }
@@ -198,10 +203,13 @@ const useQuoteWidget = () => {
   const getAllReports = async () => {
     const callBack = (res) => {
       if (res?.success) {
-        setAllReports(res?.data)
+        setAllReports(res?.data);
       }
     };
-    await getAllReportsApi(callApi, callBack, { customerId: selectedClient?.id, productId: selectedProduct?.id });
+    await getAllReportsApi(callApi, callBack, {
+      customerId: selectedClient?.id,
+      productId: selectedProduct?.id,
+    });
   };
 
   useEffect(() => {
@@ -211,8 +219,7 @@ const useQuoteWidget = () => {
 
   useEffect(() => {
     getAllReports();
-  }, [selectedClient, selectedProduct])
-
+  }, [selectedClient, selectedProduct]);
 
   useEffect(() => {
     const isDisabled = checkVariables(
@@ -221,24 +228,22 @@ const useQuoteWidget = () => {
       selectedProduct
     );
     setIsDisabled(isDisabled);
-
   }, [selectedClientType, selectedClient, selectedProduct]);
-
 
   //  Add Customer / Search
   const [openCustomerModal, setOpenCustomerModal] = useState(false);
   const [customer, setCustomer] = useState([]);
 
   const onCustomerAdd = (customer) => {
-    setOpenCustomerModal(false)
-  }
+    setOpenCustomerModal(false);
+  };
 
   const onClickAddCustomer = () => {
-    setOpenCustomerModal(true)
-  }
+    setOpenCustomerModal(true);
+  };
   const onCloseCustomerModal = () => {
-    setOpenCustomerModal(false)
-  }
+    setOpenCustomerModal(false);
+  };
 
   const [combinedData, setCombinedData] = useState<any>([]);
 
@@ -247,54 +252,54 @@ const useQuoteWidget = () => {
       if (res?.success) {
         const transformProducts = (products) => {
           return {
-            value: 'products',
+            value: "products",
             selectable: false,
-            title: t('tabs.products'),
-            text: t('tabs.products'),
+            title: t("tabs.products"),
+            text: t("tabs.products"),
             level: 0,
-            children: products.map(product => ({
+            children: products.map((product) => ({
               value: product.id, // Using product id as the key
               title: product.name, // Using product name as the label,
               text: product.name,
               level: 1,
-              category: ProductCategoryType.PRODUCT
-            }))
+              category: ProductCategoryType.PRODUCT,
+            })),
           };
         };
 
         const transformMaterials = (materials) => {
           return {
-            value: 'materials',
-            title: t('tabs.materials'),
-            text: t('tabs.materials'),
+            value: "materials",
+            title: t("tabs.materials"),
+            text: t("tabs.materials"),
             level: 0,
             selectable: false,
-            children: materials.map(material => ({
+            children: materials.map((material) => ({
               value: material.materialTypeName,
               title: material.materialTypeName,
               text: material.materialTypeName,
               level: 1, // Material Types are level 1
               selectable: false,
-              children: material.categories.map(category => ({
+              children: material.categories.map((category) => ({
                 value: `${material.materialTypeName}-${category.categoryName}`,
                 title: category.categoryName,
                 text: category.categoryName,
                 selectable: false,
                 level: 2, // Categories are level 2
-                children: category.rows.map(row => ({
+                children: category.rows.map((row) => ({
                   value: row.id,
                   title: row.value,
                   text: row.value,
                   level: 3, // Rows are level 3
-                  category: ProductCategoryType.MATERIAL
-                }))
-              }))
-            }))
+                  category: ProductCategoryType.MATERIAL,
+                })),
+              })),
+            })),
           };
         };
 
         const transformedProducts = transformProducts(res?.data?.products);
-        const transformedMaterials = transformMaterials((res?.data?.materials));
+        const transformedMaterials = transformMaterials(res?.data?.materials);
 
         // Combine the transformed data
         const combinedFinalData = [transformedProducts, transformedMaterials];
@@ -308,7 +313,6 @@ const useQuoteWidget = () => {
         clientTypeId: selectedClientType?.id,
       });
   }, [selectedClient, selectedClientType]);
-
 
   const handleProductChange = (e) => {
     const selectedValue = e;
@@ -331,7 +335,10 @@ const useQuoteWidget = () => {
     const selectedNode = findNodeByKey(selectedValue, combinedData);
 
     if (selectedNode && !selectedNode.children) {
-      setSelectedProduct({ id: selectedValue, category: selectedNode?.category });
+      setSelectedProduct({
+        id: selectedValue,
+        category: selectedNode?.category,
+      });
     } else {
       setSelectedProduct(null);
     }
@@ -341,13 +348,16 @@ const useQuoteWidget = () => {
     const callBack = (res) => {
       if (res.success) {
         alertSuccessAdded();
-        navigate("/quote")
+        navigate("/quote");
       } else {
         alertFaultAdded();
       }
-    }
-    await addDocumentItemFromMaterialApi(callApi, callBack, { clientId: selectedClient?.id, printHouseMaterialId: selectedProduct?.id });
-  }
+    };
+    await addDocumentItemFromMaterialApi(callApi, callBack, {
+      clientId: selectedClient?.id,
+      printHouseMaterialId: selectedProduct?.id,
+    });
+  };
 
   return {
     clientTypesValue,
@@ -390,7 +400,8 @@ const useQuoteWidget = () => {
     setQuoteId,
     getAllClientTypes,
     combinedData,
-    handleProductChange
+    handleProductChange,
+    isFetching,
   };
 };
 
