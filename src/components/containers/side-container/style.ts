@@ -27,7 +27,7 @@ const useStyle = () => {
         gap: 26,
         paddingTop: 20,
         minHeight: "100%",
-        maxHeight: 820,
+        maxHeight: 700,
         position: "relative" as "relative",
       },
       sideList: {
