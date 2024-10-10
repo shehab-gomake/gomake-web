@@ -112,6 +112,9 @@ const useStyle = () => {
       },
       filtersCointaner: {
         display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "center",
+        alignItems: "center",
         gap: 20,
       },
       addNewQuantity: {
@@ -176,6 +179,39 @@ const useStyle = () => {
       menuItemStyle: {
         ...FONT_FAMILY.Lexend(500, 10),
         color: primaryColor(300),
+      },
+      menuContainer:{
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "flex-start",
+        alignItems: "center",
+        width: "100%",
+        gap:8
+      },
+      rowTextStyle:{
+        ...FONT_FAMILY.Lexend(500,14),
+        color:primaryColor(500)
+      },
+      modalMainContainer:{
+        display: "flex",
+        flexDirection: "column" as "column",
+        justifyContent: "flex-start",
+        alignItems:"flex-start",
+        padding:"15px 0px",
+        gap:15
+      },
+      btnContainer:{
+        width: "100%",
+        height: 40,
+        backgroundColor:secondColor(500),
+        borderRadius: 4,
+      },
+      autoCompleteStyle: {
+        height: 40,
+        borderRadius: 4,
+        ...FONT_FAMILY.Lexend(400, 14),
+        borderBottom: "none",
+        width: "100%",
       },
     };
   }, []);
