@@ -1,9 +1,9 @@
-import { useRecoilValue} from "recoil";
+import { useRecoilState, useRecoilValue} from "recoil";
 import {
     currentProductItemValueDraftId,
     jobActionsState,
 } from "@/widgets/product-pricing-widget/state";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {
     changeWorkFlw,
     updateActionEmployeeApi,
@@ -11,7 +11,7 @@ import {
     updateProductItemDraftActionMachine
 } from "@/services/api-service/product-item-value-draft/product-item-draft-endpoints";
 import {useGomakeAxios, useSnackBar} from "@/hooks";
-import {currentCalculationConnectionId} from "@/store";
+import {currentCalculationConnectionId, foldOptionsState} from "@/store";
 import { getEmployeesByActionIdApi, getMachineByActionIdNewApi } from "@/services/api-service/customers/employees-api";
 import { getMaterialsSizesApi } from "@/services/api-service/materials/printhouse-materials-endpoints";
 import { getAllFoldOptions } from "@/services/api-service/parameters/parameters-outputs";
@@ -212,7 +212,7 @@ const updateWorkFlowForFold = (actionId,productType,actionIndex,FoldOptionValueI
     actionIndex: actionIndex,
     signalRConnectionId: connectionId,
     printingActionId: printingActionId,
-    FoldOptionValueId: FoldOptionValueId
+    foldOptionValueId: FoldOptionValueId
 }).then()
 }
 
@@ -231,17 +231,9 @@ const updateWorkFlowForFold = (actionId,productType,actionIndex,FoldOptionValueI
       const [employeesList,setemployeesList]=useState([])
       const [machinesList,setMachinesList]=useState([])
       const [materialsList,setMaterialsList]=useState([])
-      const [foldOptions,setFoldOptions]=useState([])
+      const [foldOptions,setFoldOptions]=useRecoilState(foldOptionsState)
 
-
-  const getAllFoldOptionsApi= ()=>{
-    const callBack = (res) => {
-        if (res.success) {
-            setFoldOptions(res?.data);
-        }
-      };
-      getAllFoldOptions(callApi, callBack).then();
-  }
+    
 
       const onClickGetEmployeeForAction = async (actionId) => {
         const callBack = (res) => {
@@ -320,7 +312,6 @@ const updateWorkFlowForFold = (actionId,productType,actionIndex,FoldOptionValueI
         machinesList,
         onClickGetMaterialsForAction,
         materialsList,
-        getAllFoldOptionsApi,
         foldOptions,
         updateWorkFlowForFold
     };

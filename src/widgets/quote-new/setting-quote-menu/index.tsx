@@ -31,7 +31,6 @@ const SettingQuoteMenu = ({ handleClose, open, anchorEl, onBlurExchangeRate, set
   const [anchorElAutomaticDiscount, setAnchorElAutomaticDiscount] = useState<null | HTMLElement>(null);
   const openTableSorting = Boolean(anchorElTableSorting);
   const openAutomaticDiscount = Boolean(anchorElAutomaticDiscount);
-  console.log("quoteStateValue", quoteStateValue)
 
   useEffect(() => {
     setDetailsView(quoteStateValue?.isShowDetails)
