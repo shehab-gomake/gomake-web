@@ -1,13 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { MuiColorInput } from "mui-color-input";
 import { useTranslation } from "react-i18next";
-import { GoMakeAutoComplate, GoMakeDeleteModal, GomakeTextInput } from "@/components";
+import {
+  GoMakeAutoComplate,
+  GoMakeDeleteModal,
+  GomakeTextInput,
+} from "@/components";
 import { AddProductSkuModal } from "./modals/add-contact-modal";
 import { UploadImgProduct } from "./upload-widget";
 import { EProductClient } from "./settings-data";
 import { useSettings } from "./use-settings";
 import { useStyle } from "./style";
-import FormatColorResetIcon from '@mui/icons-material/FormatColorReset';
+import FormatColorResetIcon from "@mui/icons-material/FormatColorReset";
 
 const SettingsWidget = ({
   onClickParametersTab,
@@ -45,11 +49,11 @@ const SettingsWidget = ({
     selectPricingType,
     onClickClosePricingType,
     query,
-    productSKU
+    productSKU,
   } = useSettings({ onClickParametersTab, productState, onChangeStateProduct });
 
-  const [defultProductSKU, setDefultProductSKU] = useState()
-  const [defultTemplate, setDefultTemplate] = useState()
+  const [defultProductSKU, setDefultProductSKU] = useState();
+  const [defultTemplate, setDefultTemplate] = useState();
   useEffect(() => {
     const defultProductSKU = allProductSKU?.find(
       (item) => item.id === productState?.productSKUId
@@ -58,12 +62,13 @@ const SettingsWidget = ({
       (item) => item.id === productState?.templateId
     );
     if (defultTemplate) {
-      setDefultTemplate(defultTemplate)
+      setDefultTemplate(defultTemplate);
     }
     if (defultProductSKU) {
-      setDefultProductSKU(defultProductSKU)
+      setDefultProductSKU(defultProductSKU);
     }
-  }, [productState, allTemplate, allProductSKU])
+  }, [productState, allTemplate, allProductSKU]);
+
   const _renderProductClientSelector = () => {
     if (customersList?.length > 0 && clientTypesList?.length) {
       if (productState?.pricingType === EProductClient.BY_CLIENT) {
@@ -195,11 +200,11 @@ const SettingsWidget = ({
           <div style={clasess.labelTitleStyle}>
             {t("products.addProduct.admin.productSKU")}
             <span style={clasess.requierdInput}>*</span>
-            {
-              !isUpdate && <span onClick={onClickOpenProductSKU} style={clasess.plusInput}>
+            {!isUpdate && (
+              <span onClick={onClickOpenProductSKU} style={clasess.plusInput}>
                 +
               </span>
-            }
+            )}
           </div>
           <div style={{ width: 250 }}>
             {allProductSKU && (
@@ -208,7 +213,9 @@ const SettingsWidget = ({
                 options={allProductSKU}
                 placeholder={t("products.addProduct.admin.productSKU")}
                 style={clasess.dropDownListStyle}
-                getOptionLabel={(option: any) => `${option.name} - ${option.code}`}
+                getOptionLabel={(option: any) =>
+                  `${option.name} - ${option.code}`
+                }
                 value={
                   typeof productState?.productSKUId === "string"
                     ? defultProductSKU
@@ -241,11 +248,9 @@ const SettingsWidget = ({
                 }
                 onChange={(e: any, value: any) => {
                   if (isUpdate) {
-                    onClickOpenPricingType(value)
-
-                  }
-                  else {
-                    onChangeStateProduct("templateId", value)
+                    onClickOpenPricingType(value);
+                  } else {
+                    onChangeStateProduct("templateId", value);
                   }
                 }}
                 disabled={isUpdate && !query?.isSubProducts}
@@ -362,11 +367,14 @@ const SettingsWidget = ({
               }}
               format="hex"
             />
-            {productState?.noteColor &&
-              <div style={{ cursor: "pointer" }} onClick={() => onChangeStateProduct("noteColor", null)}>
+            {productState?.noteColor && (
+              <div
+                style={{ cursor: "pointer" }}
+                onClick={() => onChangeStateProduct("noteColor", null)}
+              >
                 <FormatColorResetIcon />
               </div>
-            }
+            )}
           </div>
         </div>
         <div style={clasess.itemOnFirstContainer}>
@@ -384,14 +392,17 @@ const SettingsWidget = ({
               }}
               format="hex"
             />
-            {productState?.textColor &&
-              <div style={{ cursor: "pointer" }} onClick={() => onChangeStateProduct("textColor", null)}>
+            {productState?.textColor && (
+              <div
+                style={{ cursor: "pointer" }}
+                onClick={() => onChangeStateProduct("textColor", null)}
+              >
                 <FormatColorResetIcon />
               </div>
-            }
+            )}
           </div>
         </div>
- 
+
         <div style={clasess.itemOnFirstContainer}>
           <div style={clasess.labelTitleStyle}>
             {t("products.addProduct.admin.jobColor")}
@@ -407,11 +418,16 @@ const SettingsWidget = ({
               }}
               format="hex"
             />
-            {productState?.productionFloorJobColor &&
-              <div style={{ cursor: "pointer" }} onClick={() => onChangeStateProduct("productionFloorJobColor", null)}>
+            {productState?.productionFloorJobColor && (
+              <div
+                style={{ cursor: "pointer" }}
+                onClick={() =>
+                  onChangeStateProduct("productionFloorJobColor", null)
+                }
+              >
                 <FormatColorResetIcon />
               </div>
-            }
+            )}
           </div>
         </div>
       </div>
@@ -490,7 +506,9 @@ const SettingsWidget = ({
         openModal={openPricingTypeModal}
         onClose={onClickClosePricingType}
         hideIcon={true}
-        onClickDelete={() => onChangeStateProduct("templateId", selectPricingType)}
+        onClickDelete={() =>
+          onChangeStateProduct("templateId", selectPricingType)
+        }
       />
     </div>
   );

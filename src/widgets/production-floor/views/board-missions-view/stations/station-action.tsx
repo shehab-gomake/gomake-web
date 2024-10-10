@@ -32,7 +32,10 @@ import { useRecoilState } from "recoil";
 import { boardMissionsDetailsState } from "@/widgets/production-floor/state/boards";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { PermissionCheck } from "@/components/CheckPermission/check-permission";
-import { boardMissionsStationsState } from "@/widgets/production-floor/views/board-missions-view/stations/state";
+import {
+    boardMissionsStationsState,
+    isOrderCompletedState
+} from "@/widgets/production-floor/views/board-missions-view/stations/state";
 import { useUserPermission } from "@/hooks/use-permission";
 import {
     PrintPackingSlipModalWidget
@@ -83,6 +86,7 @@ const BoardMissionsStationAction = ({
     const [openPackagingModal, setOpenPackagingModal] = useState(false);
     const [loading, setLoading] = useState<boolean>(false);
     const [timerLoading, setTimerLoading] = useState<boolean>(false);
+    const [isOrderCompleted] = useRecoilState(isOrderCompletedState);
 
     const [chooseMachine, setChooseMachine] = useState<boolean>(false);
     const [chooseMaterial, setChooseMaterial] = useState<boolean>(false);
@@ -100,7 +104,7 @@ const BoardMissionsStationAction = ({
 
 
     const onClickOpenModal = (e) => {
-        if (isLastStation) {
+        if (isLastStation && isOrderCompleted) {
             setIsReadyModal(true);
         }
         else {

@@ -10,8 +10,6 @@ const SalesReportWidget = () => {
   const { classes } = useStyle();
   const {
     t,
-    onSelectDeliveryTimeDates,
-    resetDatePicker,
     agent,
     agentsCategories,
     handleAgentChange,
@@ -32,14 +30,17 @@ const SalesReportWidget = () => {
     handleDateChange,
     fromDate,
     toDate,
+    isFetching,
   } = useSalesReport();
 
   return (
     <div style={classes.mainContainer}>
-      <HeaderTitle title={t("tabs.salesReport")} marginTop={"0px"} marginBottom={"0px"} />
+      <HeaderTitle
+        title={t("tabs.salesReport")}
+        marginTop={"0px"}
+        marginBottom={"0px"}
+      />
       <SalesReportHeaderWidget
-        onSelectDeliveryTimeDates={onSelectDeliveryTimeDates}
-        resetDatePicker={resetDatePicker}
         agent={agent}
         agentsCategories={agentsCategories}
         handleAgentChange={handleAgentChange}
@@ -55,14 +56,11 @@ const SalesReportWidget = () => {
         handleDateChange={handleDateChange}
         fromDate={fromDate}
         toDate={toDate}
-
+        isFetchingCustomers={isFetching}
       />
       <Divider />
-      <SalesReportButtonWidget
-        onClickBtn1={onClickBtn1}
-      />
-      {
-        showTable &&
+      <SalesReportButtonWidget onClickBtn1={onClickBtn1} />
+      {showTable && (
         <PrimaryTable
           rows={[...getTableDataRows(), ...getTotalTableDataRows()]}
           headers={tableHeaders}
@@ -70,10 +68,9 @@ const SalesReportWidget = () => {
           isLastItemTotal={true}
           stickyHeader={true}
         />
-      }
+      )}
     </div>
   );
 };
-
 
 export { SalesReportWidget };

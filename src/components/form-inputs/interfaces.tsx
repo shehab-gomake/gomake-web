@@ -20,7 +20,7 @@ export interface IInput {
   multiple?: boolean;
   materialType?: string;
   disableClearable?: boolean;
-  defaultInDocsTypes?: any
+  defaultInDocsTypes?: any;
 }
 export interface IFormInput {
   input: IInput;
@@ -29,10 +29,11 @@ export interface IFormInput {
   readonly?: boolean;
   disableLabel?: boolean;
   checkWhatRenderArray?: any;
+  loading?: any; // loading while fetching data in DropDownList
 }
 
 export interface IFormArrayInputsProps {
-  name: string,
+  name: string;
   parameterKey: string;
   value: any[];
   inputs: IInput[] | any[];
@@ -43,4 +44,3 @@ export interface IFormArrayInputsProps {
   disabled?: boolean;
   disableAddValue?: boolean;
 }
-

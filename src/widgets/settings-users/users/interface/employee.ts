@@ -32,6 +32,8 @@ export interface Employee {
   pinCodeForLoginWithApplication: string | null;
   actionIds: string[] | null;
   stationsFilter?: IStation[];
+  printerId?: number;
+  printerBin?: string;
 }
 
 export interface IUserData {

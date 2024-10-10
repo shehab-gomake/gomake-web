@@ -47,13 +47,16 @@ const useCustomerService = (isAdmin: boolean) => {
   //   setTicketState({ ...ticketState, section, subSection });
   // };
 
-  const handleSectionChange = useCallback((section: string, subSection: string) => {
-    setTicketState((prevTicketState) => ({
-      ...prevTicketState,
-      section,
-      subSection,
-    }));
-  }, []);
+  const handleSectionChange = useCallback(
+    (section: string, subSection: string) => {
+      setTicketState((prevTicketState) => ({
+        ...prevTicketState,
+        section,
+        subSection,
+      }));
+    },
+    []
+  );
 
   const getIssues = useCallback(async () => {
     const callBack = (res) => {
@@ -64,11 +67,14 @@ const useCustomerService = (isAdmin: boolean) => {
           item?.summary,
           item?.description?.content[0]?.content[0]?.text || "",
           t(item?.issuetype.name),
+          item?.issueNumber,
           item?.reporterName,
           t(item?.status),
         ]);
         setAllIssues(formattedData);
-        const uniqueStatuses = Array.from(new Set(formattedData.map((issue) => issue[6])));
+        const uniqueStatuses = Array.from(
+          new Set(formattedData.map((issue) => issue[6]))
+        );
         setStatuses(uniqueStatuses);
       } else {
         setAllIssues([]);
@@ -86,8 +92,18 @@ const useCustomerService = (isAdmin: boolean) => {
   }, [callApi, isAdmin, selectedPrintHouseName]);
 
   const filterIssues = (issues, filter) => {
-    const filtered = filter ? issues.filter((issue) => issue[6] === filter) : issues;
-    setFilteredIssues(filtered);
+    const filtered = filter
+      ? issues.filter((issue) => issue[6] === filter)
+      : issues;
+
+    // Sort filtered issues so that "Done" status is at the end
+    const sortedIssues = filtered.sort((a, b) => {
+      if (a[7] === "Done" && b[7] !== "Done") return 1; // Move a to the end
+      if (a[7] !== "Done" && b[7] === "Done") return -1; // Move b to the end
+      return 0; // Keep original order for other statuses
+    });
+
+    setFilteredIssues(sortedIssues);
   };
 
   const getAllPrintHouses = useCallback(async () => {
@@ -150,13 +166,6 @@ const useCustomerService = (isAdmin: boolean) => {
     await createIssueApi(callApi, callBack, { issueData, fileBase64 });
   };
 
-  useEffect(() => {
-    getIssues();
-    if (isAdmin) {
-      getAllPrintHouses();
-    }
-  }, []);
-
   const onChangePrintHouse = useCallback((e, value) => {
     setSelectedPrintHouseName(value?.name);
     setStatuses([]);
@@ -172,11 +181,12 @@ const useCustomerService = (isAdmin: boolean) => {
   }, [statusFilter, AllIssues]);
 
   const tableHeaders = [
-    isAdmin ? t("printHouses") : null,
+    isAdmin ? t("customerService.printHouses") : null,
     t("customerService.CreatedAt"),
     t("customerService.title"),
     t("customerService.description"),
     t("customerService.issueType"),
+    t("customerService.issueNumber"),
     t("customerService.reporterName"),
     t("customerService.status"),
   ];
@@ -204,13 +214,11 @@ const useCustomerService = (isAdmin: boolean) => {
 
   useEffect(() => {
     getIssues();
-  }, [getIssues]);
-
-  useEffect(() => {
     if (isAdmin) {
       getAllPrintHouses();
     }
-  }, [isAdmin, getAllPrintHouses]);
+  }, []);
+
   return {
     tableHeaders,
     AllIssues,

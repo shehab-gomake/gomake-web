@@ -1,4 +1,4 @@
-import{ useState } from "react";
+import {useEffect, useState} from "react";
 import { CircularProgress, MenuItem, Paper, Stack } from "@mui/material";
 import { FormInput } from "@/components/form-inputs/form-input";
 import { PrimaryButton } from "@/components/button/primary-button";
@@ -75,6 +75,14 @@ const SelectContactComponent = ({ openModal, onClose, contacts, onSend }: IProps
         setContactsFilter('');
         onClose();
     }
+
+    useEffect(() => {
+        if (contacts.length > 0) {
+            setSelectedContacts(contacts[0]);
+            setContactsFilter(contacts[0].contactName)
+        }
+    }, [contacts])
+
     return (
         <GoMakeModal style={{ zIndex: 999999 }} insideStyle={{ width: '440px', height: '350px' }}
             openModal={openModal}

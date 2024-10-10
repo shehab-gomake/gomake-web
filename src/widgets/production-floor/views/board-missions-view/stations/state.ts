@@ -25,3 +25,8 @@ export const isReadyBoardMissionsState = atom<boolean>({
     key: '',
     default: false
 })
+
+export const isOrderCompletedState = atom<boolean>({
+    key: 'boardMissionsIsOrderCompletedState',
+    default: false
+})

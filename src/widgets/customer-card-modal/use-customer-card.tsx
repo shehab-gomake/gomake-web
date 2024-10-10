@@ -18,21 +18,33 @@ import { CLIENT_TYPE_Id } from "@/pages/customers/enums";
 import { emailRegex } from "@/utils/regex";
 import { useUserProfile } from "@/hooks/use-user-profile";
 
-const useCustomerCard = ({ t, customer, setCustomer, onClose, setOpenOfferModal, userQuote, typeClient, isValidCustomer,
+const useCustomerCard = ({
+  t,
+  customer,
+  setCustomer,
+  onClose,
+  setOpenOfferModal,
+  userQuote,
+  typeClient,
+  isValidCustomer,
   getAllCustomers,
   onCustomerAdd,
   isgetAllCustomers,
   isFromCartPage,
-  onChangeSelectBusiness }) => {
+  onChangeSelectBusiness,
+}) => {
   const { callApi } = useGomakeAxios();
   const { alertFaultGetData } = useSnackBar();
   const [showTable, setShowTable] = useState(false);
   const [customerTableRows, setCustomerTableRows] = useState([]);
-  const [showInActiveCustomers, setShowInActiveCustomers] = useState<boolean>(false);
-  const [selectedClient, setSelectedClient] = useRecoilState(selectedClientState);
+  const [showInActiveCustomers, setShowInActiveCustomers] =
+    useState<boolean>(false);
+  const [selectedClient, setSelectedClient] =
+    useRecoilState(selectedClientState);
   const { alertRequiredFields, alertFault } = useSnackBar();
   const systemCurrency = useRecoilValue<any>(systemCurrencyState);
-  const [resetPassModal, setResetPassModalModal] = useRecoilState<boolean>(resetPassModalState);
+  const [resetPassModal, setResetPassModalModal] =
+    useRecoilState<boolean>(resetPassModalState);
   const clientTypesCategories = useRecoilValue(clientTypesCategoriesState);
   const gomakeUser = useRecoilValue<any>(gomakeUserState);
   const languagesOptions = useRecoilValue(languagesState);
@@ -48,7 +60,9 @@ const useCustomerCard = ({ t, customer, setCustomer, onClose, setOpenOfferModal,
 
   const handleHideTable = () => setShowTable(false);
 
-  const [previousClient, setPreviousClient] = useRecoilState<any>(prevSelectedClientState);
+  const [previousClient, setPreviousClient] = useRecoilState<any>(
+    prevSelectedClientState
+  );
 
   const handleOpenModal = (newClient) => {
     //setPreviousClient(selectedClient ? selectedClient : previousClient );
@@ -58,17 +72,19 @@ const useCustomerCard = ({ t, customer, setCustomer, onClose, setOpenOfferModal,
   };
 
   const handleChooseCustomer = (customer) => {
-    if (userQuote?.client?.id != null && customer?.id != null && userQuote?.client?.id !== customer?.id) {
+    if (
+      userQuote?.client?.id != null &&
+      customer?.id != null &&
+      userQuote?.client?.id !== customer?.id
+    ) {
       handleOpenModal(customer);
-    }
-    else {
-      setSelectedClient(customer)
+    } else {
+      setSelectedClient(customer);
     }
     onClose();
     handleHideTable();
     setCustomer(null);
-
-  }
+  };
 
   const getAllSimilarCustomer = async (customer) => {
     const handleResponse = (res) => {
@@ -85,7 +101,9 @@ const useCustomerCard = ({ t, customer, setCustomer, onClose, setOpenOfferModal,
 
   const mapCustomerData = (customer) => {
     const { code, name, mail, phone, isActive } = customer;
-    const statusText = isActive ? t("usersSettings.active") : t("usersSettings.inactive");
+    const statusText = isActive
+      ? t("usersSettings.active")
+      : t("usersSettings.inactive");
     const statusColor = isActive ? "#40CC4E" : "#D92C2C";
 
     return [
@@ -93,10 +111,20 @@ const useCustomerCard = ({ t, customer, setCustomer, onClose, setOpenOfferModal,
       name,
       mail,
       phone,
-      <div style={{ display: "inline-flex", ...FONT_FAMILY.Lexend(500, 14), color: statusColor }}>
+      <div
+        style={{
+          display: "inline-flex",
+          ...FONT_FAMILY.Lexend(500, 14),
+          color: statusColor,
+        }}
+      >
         {statusText}
       </div>,
-      <PrimaryButton onClick={() => handleChooseCustomer(customer)} variant="outlined" style={{ width: "fit-content", height: "fit-content" }}>
+      <PrimaryButton
+        onClick={() => handleChooseCustomer(customer)}
+        variant="outlined"
+        style={{ width: "fit-content", height: "fit-content" }}
+      >
         {t("datepicker.choose")}
       </PrimaryButton>,
     ];
@@ -105,18 +133,20 @@ const useCustomerCard = ({ t, customer, setCustomer, onClose, setOpenOfferModal,
   const getAllSimilarCustomersData = useCallback(() => {
     let customersArray = [...customerTableRows];
     if (customersArray?.length > 0) {
-      return showInActiveCustomers ? customersArray : customersArray?.filter((user: any) => user.isActive);
+      return showInActiveCustomers
+        ? customersArray
+        : customersArray?.filter((user: any) => user.isActive);
     }
-    return customersArray
-  }, [customerTableRows, showInActiveCustomers])
+    return customersArray;
+  }, [customerTableRows, showInActiveCustomers]);
 
   const onShowInActiveCustomers = (value: boolean) => {
     setShowInActiveCustomers(value);
-  }
-
+  };
 
   const [open, setOpen] = useState(false);
-  const validateEmail = (state: any, fieldName: string) => !!state?.[fieldName] ? emailRegex.test(state?.[fieldName]) : true;
+  const validateEmail = (state: any, fieldName: string) =>
+    !!state?.[fieldName] ? emailRegex.test(state?.[fieldName]) : true;
   const { addNewCustomer } = useAddCustomer();
   const { editCustomer } = useEditCustomer();
   const { updateUserPassword } = useUserProfile();
@@ -139,14 +169,13 @@ const useCustomerCard = ({ t, customer, setCustomer, onClose, setOpenOfferModal,
     setShowInActiveCustomers(false);
   };
 
+  const clientTypeLabel =
+    typeClient === "C"
+      ? t("customers.modal.clientType")
+      : t("suppliers.supplierType");
 
-  const clientTypeLabel = typeClient === "C"
-    ? t("customers.modal.clientType")
-    : t("suppliers.supplierType");
-
-  const clientTypeId = typeClient === "C"
-    ? CLIENT_TYPE_Id.CUSTOMER
-    : CLIENT_TYPE_Id.SUPPLIER;
+  const clientTypeId =
+    typeClient === "C" ? CLIENT_TYPE_Id.CUSTOMER : CLIENT_TYPE_Id.SUPPLIER;
 
   const handleAddCustomer = async () => {
     const filteredContacts = contacts?.filter(
@@ -156,32 +185,30 @@ const useCustomerCard = ({ t, customer, setCustomer, onClose, setOpenOfferModal,
       (address) => !isNameIndexOnly(address)
     );
     const filteredUsers = users?.filter((user) => !isNameIndexOnly(user));
-    const cardTypeId = typeClient === "C" ? CLIENT_TYPE_Id.CUSTOMER : CLIENT_TYPE_Id.SUPPLIER;
+    const cardTypeId =
+      typeClient === "C" ? CLIENT_TYPE_Id.CUSTOMER : CLIENT_TYPE_Id.SUPPLIER;
     const updatedCustomer = {
       ...customer,
       contacts: filteredContacts,
       addresses: filteredAddresses,
       users: filteredUsers,
       cardTypeId: cardTypeId,
-      currency: customer?.currency ? customer?.currency : systemCurrency
+      currency: customer?.currency ? customer?.currency : systemCurrency,
     };
 
     // Check if email is valid
-    if(filteredUsers && filteredUsers?.length > 0){
-      const areEmailsValid = filteredUsers?.every(user => validateEmail(user, "email"));
+    if (filteredUsers && filteredUsers?.length > 0) {
+      const areEmailsValid = filteredUsers?.every((user) =>
+        validateEmail(user, "email")
+      );
       if (!areEmailsValid) {
         alertFault("customers.invalidEmail");
         return;
       }
+    }
 
-    }
-    
-    const isEmailValid = validateEmail(customer, "mail");
-    if (!isEmailValid) {
-      alertFault("customers.invalidEmail");
-      return;
-    }
     setCustomer(updatedCustomer);
+
     if (
       isValidCustomer(
         updatedCustomer,
@@ -217,7 +244,9 @@ const useCustomerCard = ({ t, customer, setCustomer, onClose, setOpenOfferModal,
     };
 
     // Check if email is valid
-    const areEmailsValid = filteredUsers?.every(user => validateEmail(user, "email"));
+    const areEmailsValid = filteredUsers?.every((user) =>
+      validateEmail(user, "email")
+    );
     if (!areEmailsValid) {
       alertFault("customers.invalidEmail");
       return;
@@ -259,19 +288,16 @@ const useCustomerCard = ({ t, customer, setCustomer, onClose, setOpenOfferModal,
     customer && customer.users ? customer.users : []
   );
 
-
   // Contact info
   const addEmptyContact = () => {
     if (!contacts || contacts === undefined) {
-      addInitContact()
-    }
-    else {
+      addInitContact();
+    } else {
       var temp = [...contacts];
       const index = temp.length + 1;
       temp.push({ name: "", index: index });
       setContacts(temp);
     }
-
   };
 
   const addInitContact = () => {
@@ -310,7 +336,7 @@ const useCustomerCard = ({ t, customer, setCustomer, onClose, setOpenOfferModal,
   // Address info
   const addEmptyAddress = () => {
     if (!addresses || addresses === undefined) {
-      addInitAddress()
+      addInitAddress();
     } else {
       var temp = [...addresses];
       const index = temp.length + 1;
@@ -318,7 +344,6 @@ const useCustomerCard = ({ t, customer, setCustomer, onClose, setOpenOfferModal,
       temp.push({ name: "", index: index });
       setAddresses(temp);
     }
-
   };
 
   const addInitAddress = () => {
@@ -392,7 +417,6 @@ const useCustomerCard = ({ t, customer, setCustomer, onClose, setOpenOfferModal,
     );
   };
 
-
   const onChangeInputs = (key, value) => {
     setCustomer({ ...customer, [key]: value });
   };
@@ -434,7 +458,8 @@ const useCustomerCard = ({ t, customer, setCustomer, onClose, setOpenOfferModal,
       (address) => !isNameIndexOnly(address)
     );
     const filteredUsers = users?.filter((user) => !isNameIndexOnly(user));
-    const cardTypeId = typeClient === "C" ? CLIENT_TYPE_Id.CUSTOMER : CLIENT_TYPE_Id.SUPPLIER;
+    const cardTypeId =
+      typeClient === "C" ? CLIENT_TYPE_Id.CUSTOMER : CLIENT_TYPE_Id.SUPPLIER;
     const updatedCustomer = {
       ...customer,
       contacts: filteredContacts,
@@ -444,10 +469,14 @@ const useCustomerCard = ({ t, customer, setCustomer, onClose, setOpenOfferModal,
     };
 
     // Check if email is valid
-    const areEmailsValid = filteredUsers?.every(user => validateEmail(user, "email"));
-    if (!areEmailsValid) {
-      alertFault("customers.invalidEmail");
-      return;
+    if (filteredUsers && filteredUsers?.length > 0) {
+      const areEmailsValid = filteredUsers?.every((user) =>
+        validateEmail(user, "email")
+      );
+      if (!areEmailsValid) {
+        alertFault("customers.invalidEmail");
+        return;
+      }
     }
 
     const isValidCustomerName = validCustomerName(customer);
@@ -460,7 +489,6 @@ const useCustomerCard = ({ t, customer, setCustomer, onClose, setOpenOfferModal,
     getAllSimilarCustomer(updatedCustomer).then((x) => {
       setShowTable(true);
     });
-
   };
 
   return {
@@ -514,7 +542,7 @@ const useCustomerCard = ({ t, customer, setCustomer, onClose, setOpenOfferModal,
     handleShowTable,
     updateUserPassword,
     onUpdatePass,
-    onChangeInputs
+    onChangeInputs,
   };
 };
 

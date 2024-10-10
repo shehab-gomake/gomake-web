@@ -1,6 +1,6 @@
 import Stack from "@mui/material/Stack";
 import Divider from "@mui/material/Divider";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { IWorkFlowAction } from "@/widgets/product-pricing-widget/interface";
 import { useStyle } from "@/widgets/product-pricing-widget/style";
 import { Collapse, Fade, IconButton, Tooltip } from "@mui/material";
@@ -61,7 +61,6 @@ const Actions = ({
   return (
     <Stack gap={"10px"}>
       {actions?.map((action, index) => {
-        console.log("action", action)
         return (
           <ActionContainerComponent
             key={action.id}
@@ -108,7 +107,7 @@ const ActionContainerComponent = ({
   totalCostValue,
   totalPriceValue,
   profitValue,
-  IsNeedFolds,
+  isNeedFolds,
   foldOptionValueId,
 }: IActionContainerComponentProps) => {
   source = source === EWorkSource.OUT ? EWorkSource.OUT : EWorkSource.INTERNAL;
@@ -117,6 +116,17 @@ const ActionContainerComponent = ({
   const [chooseMaterial, setChooseMaterial] = useState<boolean>(false);
   const [chooseEmployee, setChooseEmployee] = useState<boolean>(false);
   const [chooseFold, setChooseFold] = useState<boolean>(false);
+
+  const [foldName, setFoldName] = useState<string>("")
+
+  useEffect(() => {
+    if (foldOptionValueId) {
+      const selectedFoldOptionName = foldOptions?.find((option) => option.id == foldOptionValueId)?.name
+      if (selectedFoldOptionName) {
+        setFoldName(selectedFoldOptionName)
+      }
+    }
+  }, [foldOptionValueId])
 
   const currentProductItemValue = useRecoilValue(currentProductItemValueState);
   const { t } = useTranslation();
@@ -146,7 +156,6 @@ const ActionContainerComponent = ({
     employeesList,
     machinesList,
     materialsList,
-    getAllFoldOptionsApi,
     updateWorkFlowForFold,
     foldOptions
   } = useActionUpdateValues();
@@ -502,19 +511,19 @@ const ActionContainerComponent = ({
               gap={"10px"}
             >
               {
-                IsNeedFolds && (
+                isNeedFolds && (
                   <>
                     {!chooseFold ? (
                       <Button
                         onClick={(e) => {
                           e.stopPropagation();
                           setChooseFold(true);
-                          getAllFoldOptionsApi()
+                          // getAllFoldOptionsApi()
                         }}
                         variant={"text"}
                         style={classes.sectionTitle}
                       >
-                        {foldOptionValueId ? foldOptionValueId : <>Select New Folds</>}
+                        {foldOptionValueId ? foldName : <>Select New Folds</>}
                       </Button>
                     ) : (
                       <Stack
@@ -549,7 +558,7 @@ const ActionContainerComponent = ({
               }
             </Stack>
             {
-              IsNeedFolds && <Divider orientation={"vertical"} flexItem />
+              isNeedFolds && <Divider orientation={"vertical"} flexItem />
             }
 
             <EditableKeyValueViewComponent

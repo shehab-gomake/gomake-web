@@ -49,6 +49,11 @@ export enum SortByTypes
     ProductABC = 3,
     WorkNameABC = 4
 }
+export enum DiscountType {
+    NONE = 1,
+    Product,
+    ProductSKU
+  }
 
 export enum DocumentTypeEnums
 {

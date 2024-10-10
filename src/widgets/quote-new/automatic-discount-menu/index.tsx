@@ -5,13 +5,7 @@ import { useStyle } from "./style";
 import { useTranslation } from "react-i18next";
 import { useRecoilValue } from "recoil";
 import { quoteItemState } from "@/store";
-
-
-enum DiscountType {
-  NONE = 1,
-  Product,
-  ProductSKU
-}
+import { DiscountType } from "@/enums";
 
 const AutomaticDiscountMenu = ({ handleClose, open, anchorEl, updateDiscountType }) => {
 

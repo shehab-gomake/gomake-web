@@ -42,7 +42,26 @@ html * {
   width: 0;
   height: 0;
 }
+.MuiAutocomplete-listbox {
+  max-height: 300px; 
+  overflow-y: auto; 
+}
+.MuiAutocomplete-listbox::-webkit-scrollbar {
+  width: 8px;
+}
 
+.MuiAutocomplete-listbox::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.MuiAutocomplete-listbox::-webkit-scrollbar-thumb {
+  background-color: #cccdcf;
+  border-radius: 10px;
+}
+
+.MuiAutocomplete-listbox::-webkit-scrollbar-thumb:hover {
+  background-color: #b0b0b0;
+}
 .scrollBlue::-webkit-scrollbar {
   display: unset !important;
   background: #2e3092;
@@ -51,7 +70,8 @@ html * {
 }
 
 .show-scrollbar::-webkit-scrollbar {
-  width: 2px;
+  width: 8px;
+  background: "beige";
 }
 
 .show-scrollbar::-webkit-scrollbar-track {

@@ -12,6 +12,9 @@ import { useCompanyProfile } from "@/hooks/use-company-profile";
 import { currenciesState } from "@/widgets/materials-widget/state";
 import { useTranslation } from "react-i18next";
 import { AutomaticDiscountMenu } from "../automatic-discount-menu";
+import { DotIcon } from "@/icons";
+import { Check } from "@mui/icons-material";
+import { DiscountType, SortByTypes } from "@/enums";
 
 const SettingQuoteMenu = ({ handleClose, open, anchorEl, onBlurExchangeRate, setIsUpdateExchangeRate, isUpdateExchangeRate, onBlurCurrency, isUpdateCurrency, setIsUpdateCurrency, updateCurrency, onClickRefresh, sortDocumentItems, updateIsShowDetails, updateIsShowPrices, updateDiscountType }) => {
   const { classes } = useStyle();
@@ -68,6 +71,27 @@ const SettingQuoteMenu = ({ handleClose, open, anchorEl, onBlurExchangeRate, set
     setAnchorElAutomaticDiscount(null);
   };
 
+  const _renderSelectionType = (type: DiscountType) => {
+    switch (type) {
+      case DiscountType.Product:
+        return <div>{t("sales.quote.byProduct")}</div>;
+      case DiscountType.ProductSKU:
+        return <div>{t("sales.quote.bySku")}</div>;
+      default:
+        return <div> {t("sales.quote.none")}</div>;
+    }
+  }
+  const _renderSortingBy = (type: SortByTypes) => {
+    switch (type) {
+      case SortByTypes.Date:
+        return <div> {t("sales.quote.creationDate")}</div>;
+      case SortByTypes.ProductABC:
+        return <div>{t("sales.quote.productName")}</div>;
+      case SortByTypes.WorkNameABC:
+        return <div>{t("sales.quote.jobName")}</div>;
+    }
+  }
+
   return (
     <>
       <GoMakeMenu
@@ -82,7 +106,17 @@ const SettingQuoteMenu = ({ handleClose, open, anchorEl, onBlurExchangeRate, set
             className="table-sorting"
             style={classes.menuTabStyle}
           >
-            {t("sales.quote.tableSortingBy")}
+            {
+              quoteStateValue?.sortType !== null ?
+                <div style={classes.selectedTabStyle}>
+                  <div style={classes.mainTabContainer}>{t("sales.quote.tableSortingBy")}
+                    <DotIcon />
+                  </div>
+                  <div style={classes.selectedTabContainer} >
+                    <Check style={{ width: 16, height: 16 }} /> {_renderSortingBy(quoteStateValue?.sortType)}
+                  </div>
+                </div> : t("sales.quote.tableSortingBy")
+            }
           </div>
 
           <Divider />
@@ -91,7 +125,17 @@ const SettingQuoteMenu = ({ handleClose, open, anchorEl, onBlurExchangeRate, set
             className="table-sorting"
             style={classes.menuTabStyle}
           >
-            {t("sales.quote.automaticDiscount")}
+            {
+              quoteStateValue?.discountType !== null ?
+                <div style={classes.selectedTabStyle}>
+                  <div style={classes.mainTabContainer}>{t("sales.quote.automaticDiscount")}
+                    <DotIcon />
+                  </div>
+                  <div style={classes.selectedTabContainer} >
+                    <Check style={{ width: 16, height: 16 }} /> {_renderSelectionType(quoteStateValue?.discountType)}
+                  </div>
+                </div> : t("sales.quote.automaticDiscount")
+            }
           </div>
           <Divider />
 

@@ -54,4 +54,6 @@ export interface ICompanyProfile {
   isSendGridVerificated?: null | boolean;
   smsServiceTitle?: string;
   mailServiceEmail?: string;
+  printnodeUsername?: string;
+  printnodePassword?: string;
 }

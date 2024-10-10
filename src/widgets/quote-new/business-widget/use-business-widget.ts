@@ -13,7 +13,7 @@ const useBusinessWidget = ({ values, documentType }) => {
   const { t } = useTranslation();
   const router = useRouter();
   const [isConfirmation, setIsConfirmation] = useState();
-  const { renderOptions, checkWhatRenderArray } = useQuoteWidget();
+  const { renderOptions, checkWhatRenderArray, isFetching } = useQuoteWidget();
   const setOpenModal = useSetRecoilState<boolean>(addressModalState);
   const [purchaseNumber, setPurchaseNumber] = useState(
     values?.purchaseNumber || t("sales.quote.noPurchaseNumber")
@@ -74,6 +74,10 @@ const useBusinessWidget = ({ values, documentType }) => {
     : quoteStateValue?.isEditable &&
       CheckDocumentPermission(documentType, DocumentPermission.EDIT_DOCUMENT);
 
+  const canEditAddress = router.query.isNewCreation
+    ? true
+    : CheckDocumentPermission(documentType, DocumentPermission.EDIT_DOCUMENT);
+
   const canEditPurchaseNumber = CheckDocumentPermission(
     documentType,
     DocumentPermission.EDIT_DOCUMENT
@@ -98,16 +102,16 @@ const useBusinessWidget = ({ values, documentType }) => {
 
   const onClickOpenChangeClientModal = (value) => {
     setSelectedClient(value);
-    if (
-      (router.query.orderId || router.query.deliveryNoteId) &&
-      documentType === DOCUMENT_TYPE.invoice
-    ) {
-      setOpenChangeClientModalFromInvoice(true);
-    } else if (
-      quoteStateValue?.documentItems &&
-      quoteStateValue?.documentItems?.length > 0
-    ) {
-      setOpenChangeClientModalFromInvoice(true);
+
+    if (documentType === DOCUMENT_TYPE.invoice) {
+      if (
+        quoteStateValue?.documentItems &&
+        quoteStateValue.documentItems.length > 0
+      ) {
+        setOpenChangeClientModalFromInvoice(true);
+      } else {
+        setOpenChangeClientModal(true);
+      }
     } else {
       setOpenChangeClientModal(true);
     }
@@ -158,6 +162,8 @@ const useBusinessWidget = ({ values, documentType }) => {
     isQuote,
     documentTitle,
     setDocumentTitle,
+    isFetching,
+    canEditAddress,
   };
 };
 
