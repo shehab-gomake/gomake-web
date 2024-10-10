@@ -1,15 +1,16 @@
 import { useDrag } from "react-dnd";
 import { IBoardMissions } from "@/widgets/production-floor/interfaces/board-missions";
-import { Stack } from "@mui/material";
+import { Popover, Stack } from "@mui/material";
 import { DateFormatter } from "@/utils/adapter";
 import { useStyle } from "@/widgets/production-floor/kanban-view/kanban-card/style";
 import { useUserPermission } from "@/hooks/use-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { OrderJObNumbersComponent } from "./order-job-num-coponent";
 import { toRgba } from "@/utils/helpers";
-import { useTranslation } from "react-i18next";
-import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { ContextMenu } from "./change-color-menu";
+import { useKanbanCard } from "./use-kanban-card";
+import { SketchPicker } from "react-color";
+import { useRef } from "react";
 
 interface IProp {
   board: IBoardMissions;
@@ -20,11 +21,24 @@ const ItemTypes = {
   TASK: "task",
 };
 
-const KanbanCardComponent = ({ board, status }: IProp) => {
+const KanbanCardComponent = ({ board }: IProp) => {
   const { classes } = useStyle();
-  const { t } = useTranslation();
 
-  const CardColor = board?.productionFloorJobColor ?? "";
+  const {
+    t,
+    dir,
+    CardColor,
+    contextMenuPosition,
+    handleContextMenu,
+    handleCloseContextMenu,
+    handleOpenMission,
+    contextMenuOptions,
+
+    handleColorChange,
+    color,
+    showColorPicker,
+    handleColorPickerClose,
+  } = useKanbanCard(board);
 
   const { CheckPermission } = useUserPermission();
   const canDrag = CheckPermission(
@@ -43,12 +57,7 @@ const KanbanCardComponent = ({ board, status }: IProp) => {
     [canDrag]
   );
 
-  const { push } = useRouter();
-  const handleOpenMission = () => {
-    push(
-      `/production-floor?boardMissionsId=${board?.id}&productType=${board?.productType}&step=stations`
-    ).then();
-  };
+  const contextMenuRef = useRef<HTMLDivElement | null>(null); // Reference for the context menu
 
   return (
     <Stack
@@ -68,6 +77,7 @@ const KanbanCardComponent = ({ board, status }: IProp) => {
         boxShadow: "0px 2px 4px 0px rgba(0, 0, 0, 0.08)",
       }}
       onClick={handleOpenMission}
+      onContextMenu={handleContextMenu}
     >
       <Stack
         direction={"row"}
@@ -105,6 +115,29 @@ const KanbanCardComponent = ({ board, status }: IProp) => {
           </span>
         </Stack>
       </Stack>
+
+      {contextMenuPosition && (
+        <ContextMenu
+          options={contextMenuOptions}
+          position={contextMenuPosition}
+          onClose={handleCloseContextMenu}
+          dir={dir}
+        />
+      )}
+
+      <Popover
+        key={`popover-${board?.id}`}
+        open={showColorPicker}
+        onClose={handleColorPickerClose}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+        transformOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <SketchPicker
+          key={`SketchPicker-${board?.id}`}
+          color={color}
+          onChange={handleColorChange}
+        />
+      </Popover>
     </Stack>
   );
 };
