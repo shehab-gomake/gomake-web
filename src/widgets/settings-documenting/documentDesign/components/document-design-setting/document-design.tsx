@@ -35,7 +35,7 @@ const DocumentDesign = () => {
     }, [documentDesign?.docType, documentDesign?.agentId]);
 
     return (
-        <div style={classes.container}>
+        <div style={classes.container} className="custom-scrollbar">
             <Stack direction={'column'} gap={'24px'}>
                 {
                     DocumentDesignSection1.map(section => {

@@ -152,7 +152,7 @@ const SettingsWidget = ({
     }
   };
   return (
-    <div style={clasess.mainContainer}>
+    <div style={clasess.mainContainer} className="custom-scrollbar" >
       <div style={clasess.categoryNameStyle}>
         {t("products.addProduct.admin.productCategory")}
       </div>

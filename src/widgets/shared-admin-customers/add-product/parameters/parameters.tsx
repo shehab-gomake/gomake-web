@@ -74,7 +74,7 @@ const ParameterWidget = () => {
                 </Tabs>
               </div>
               <div
-                style={{ height: "50vh", overflow: "scroll", width: "100%" }}
+                className="custom-scrollbar" style={{ height: "55vh", overflow: "scroll", width: "100%" }}
               >
                 <div style={clasess.sectionsContainer}>
                   {template?.sections?.map((section, index) => {

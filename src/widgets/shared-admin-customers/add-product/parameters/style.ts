@@ -231,7 +231,6 @@ const useStyle = () => {
         flexDirection: "row" as "row",
         justifyContent: "flex-end",
         alignItems: "center",
-        marginBottom: 50,
         width: "100%",
         gap: 16,
       },
