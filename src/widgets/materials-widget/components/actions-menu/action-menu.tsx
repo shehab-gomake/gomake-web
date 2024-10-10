@@ -207,6 +207,7 @@ const ActionMenu = (props: IActionMenuProps) => {
                         {properties[index].key &&
                           rowInputs(
                             properties[index].key,
+                            false,
                             materialHeaders,
                             currencies,
                             [],
