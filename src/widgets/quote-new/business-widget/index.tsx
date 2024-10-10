@@ -71,6 +71,7 @@ const BusinessNewWidget = ({
     setCustomer,
     onCustomerAdd,
     canEditDocument,
+    canEditAddress,
     canEditPurchaseNumber,
     setQuoteItemValue,
     onClickOpenChangeClientModal,
@@ -265,7 +266,7 @@ const BusinessNewWidget = ({
             onBlur={onBlurAddress}
             isUpdate={false}
             setIsUpdate={setIsUpdateAddress}
-            flag={!isQuoteConfirmation && canEditDocument}
+            flag={!isQuoteConfirmation && canEditAddress}
             onClickFlag={() => setOpenModal(true)}
           />
         )}
@@ -285,7 +286,7 @@ const BusinessNewWidget = ({
               </div>
             )
           : !isQuoteConfirmation &&
-            canEditDocument && (
+            canEditAddress && (
               <div style={classes.addNewAddressStyle}>
                 <PlusNewIcon />
                 <div

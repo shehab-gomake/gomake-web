@@ -6,6 +6,7 @@ import { GoMakeDeleteModal } from "@/components";
 import { useTranslation } from "react-i18next";
 import { useUserPermission } from "@/hooks/use-permission";
 import { DocumentPermission } from "@/components/CheckPermission/enum";
+import { useRouter } from "next/router";
 
 const ContactNewWidget = ({
   handleShowLess,
@@ -40,13 +41,15 @@ const ContactNewWidget = ({
   getQuote,
   getAllClientContacts,
   onOpenNewContact,
-  documentState
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
-  const {CheckDocumentPermission } = useUserPermission();
-  const canEditDocument = documentState?.isEditable && CheckDocumentPermission(documentType, DocumentPermission.EDIT_DOCUMENT);
-  
+  const router = useRouter();
+  const { CheckDocumentPermission } = useUserPermission();
+  const canEditDocumentContacts = router.query.isNewCreation
+    ? true
+    : CheckDocumentPermission(documentType, DocumentPermission.EDIT_DOCUMENT);
+
   return (
     <>
       <div style={classes.mainContainer}>
@@ -55,7 +58,7 @@ const ContactNewWidget = ({
             <div>
               {items?.slice(0, displayedItems).map((item, index) => (
                 <ContactMapping
-                  canEditContacts={canEditDocument}
+                  canEditContacts={canEditDocumentContacts}
                   key={`${index}-${item.id}`}
                   item={item}
                   index={index}
@@ -73,16 +76,18 @@ const ContactNewWidget = ({
             </div>
           </>
         ) : (
-          (!isQuoteConfirmation && canEditDocument) &&
-          <div
-            style={classes.addNewContactNameStyle}
-            onClick={() => setIsDisplayWidget(true)}
-          >
-            <PlusNewIcon />
-            <div style={classes.addNewContactNameTextStyle}>
-              {t("sales.quote.addContact")}
+          !isQuoteConfirmation &&
+          canEditDocumentContacts && (
+            <div
+              style={classes.addNewContactNameStyle}
+              onClick={() => setIsDisplayWidget(true)}
+            >
+              <PlusNewIcon />
+              <div style={classes.addNewContactNameTextStyle}>
+                {t("sales.quote.addContact")}
+              </div>
             </div>
-          </div>
+          )
         )}
         {items?.length > 2 && displayedItems === 2 && (
           <div style={classes.showLessContainer} onClick={handleShowMore}>
