@@ -26,6 +26,7 @@ const ActionPageWidget = () => {
         onOpenModal,
         onCloseModal,
         setPercentageProfit,
+        AddNewProfitForActionProfitsApi
     } = useActions();
     const actionsSteps: StepType[] = [
         {
@@ -107,7 +108,7 @@ const ActionPageWidget = () => {
                     />
                     <GomakePrimaryButton
                         style={clasess.btnContainer}
-                    // onClick={onClickOpenOrderNowModal}
+                        onClick={AddNewProfitForActionProfitsApi}
                     >
                         {t("documentingSettings.update")}
                     </GomakePrimaryButton>

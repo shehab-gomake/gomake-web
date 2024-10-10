@@ -5,6 +5,7 @@ import { useGomakeAxios, useGomakeRouter } from "@/hooks";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { useUserPermission } from "@/hooks/use-permission";
 import { EditIcon } from "@/icons";
+import { EHttpMethod } from "@/services/api-service/enums";
 import { getAllPrintHouseActions } from "@/services/hooks";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { matchSorter } from "match-sorter";
@@ -139,6 +140,21 @@ const useActions = () => {
       setMaterilasSearched(temp);
     }
   }, [term]);
+
+  const AddNewProfitForActionProfitsApi = useCallback(async () => {
+    const res = await callApi(
+      EHttpMethod.PUT,
+      `/v1/printhouse-config/profits/add-new-profit-for-action-profits`,
+      {
+        profit: percentageProfit
+      }
+    );
+    if (res?.success) {
+      onCloseModal();
+    } else {
+      // Handle error response here
+    }
+  }, [percentageProfit]);
   return {
     tableHeaders,
     allActions,
@@ -154,6 +170,7 @@ const useActions = () => {
     onOpenModal,
     onCloseModal,
     setPercentageProfit,
+    AddNewProfitForActionProfitsApi
   };
 };
 
