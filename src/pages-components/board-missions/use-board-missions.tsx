@@ -795,7 +795,6 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
       const customerIdSelect = renderOptions().find(
         (c1) => c1.id === clientId
       );
-      console.log("customerIdSelect", customerIdSelect)
       setCustomer(customerIdSelect);
     }
 
