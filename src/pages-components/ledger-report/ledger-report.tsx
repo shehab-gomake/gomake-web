@@ -9,7 +9,14 @@ import { useStyle } from "./style";
 import { CreateNewTransactionModal } from "./widgets/create-transaction-modal";
 import { HeaderTitle } from "@/widgets/header-title";
 
-const LedgerReportWidget = ({ customerId }: any) => {
+interface LedgerReportWidgetProps {
+  customerId?: string;
+  isFromCustomerCard?: boolean;
+}
+const LedgerReportWidget = ({
+  customerId,
+  isFromCustomerCard = false,
+}: LedgerReportWidgetProps) => {
   const { classes } = useStyle();
   const {
     t,
@@ -49,11 +56,13 @@ const LedgerReportWidget = ({ customerId }: any) => {
 
   return (
     <div style={classes.mainContainer}>
-      <HeaderTitle
-        title={t("tabs.ledgerReport")}
-        marginTop={"0px"}
-        marginBottom={"0px"}
-      />
+      {!isFromCustomerCard && (
+        <HeaderTitle
+          title={t("tabs.ledgerReport")}
+          marginTop={"0px"}
+          marginBottom={"0px"}
+        />
+      )}
       <LedgerReportHeaderWidget
         customer={customer}
         renderOptions={renderOptions}
