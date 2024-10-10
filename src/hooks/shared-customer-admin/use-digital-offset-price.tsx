@@ -1462,7 +1462,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       }
     }
 
-  }, [router, widgetType, connectionId]);
+  }, [widgetType, connectionId]);
   const exampleTypeValues = useRecoilValue(exampleTypeState);
   const billingMethodValues = useRecoilValue(billingMethodState);
   const listEmployeesValues = useRecoilValue(listEmployeesAtom);
@@ -1507,7 +1507,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     if (canCalculation) {
       calculationProduct(subProducts);
     }
-  }, [subProducts, canCalculation, productTemplate]);
+  }, [subProducts, canCalculation, productTemplate, router]);
 
   interface BillingMethod {
     value: string;
