@@ -137,7 +137,7 @@ const useMaterials = (isAdmin: boolean) => {
     const path = isAdmin ? "/materials-admin" : "/materials";
     push(path + `/${materialType}?materialCategory=${category}`);
     setFlagState(false);
-    setActiveFilter(EMaterialActiveFilter.ACTIVE);
+    // setActiveFilter(EMaterialActiveFilter.ACTIVE);
     setIsAllMaterialsChecked(false)
     setMaterialFilter([])
   };
