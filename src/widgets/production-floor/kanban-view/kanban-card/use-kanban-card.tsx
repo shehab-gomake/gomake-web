@@ -6,18 +6,19 @@ import {
 } from "@/services/api-service/production-floor/production-floor-endpoints";
 import { useRouter } from "next/router";
 import { useState, MouseEvent } from "react";
-
 import { useTranslation } from "react-i18next";
 import { ResetColorIcon } from "../../table-view/status-table/table-row/more-circle/icons/reset-color";
-import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 const useKanbanCard = (board: any) => {
   const { t } = useTranslation();
   const dir: "rtl" | "ltr" = t("direction");
+  const isRTL = dir === "rtl";
+
   const { push } = useRouter();
   const { callApi } = useGomakeAxios();
-  const { primaryColor } = useGomakeTheme();
-
+  const [color, setColor] = useState(board?.productionFloorJobColor ?? "");
+  const [initialColor, setInitialColor] = useState(color);
+  const [showColorPicker, setShowColorPicker] = useState(false);
   const [contextMenuPosition, setContextMenuPosition] = useState<{
     x: number;
     y: number;
@@ -33,7 +34,9 @@ const useKanbanCard = (board: any) => {
 
   const handleContextMenu = (event: React.MouseEvent) => {
     event.preventDefault();
-    setContextMenuPosition({ x: event.clientX, y: event.clientY });
+    if (!showColorPicker) {
+      setContextMenuPosition({ x: event.clientX, y: event.clientY });
+    }
   };
 
   const handleCloseContextMenu = () => {
@@ -44,6 +47,7 @@ const useKanbanCard = (board: any) => {
     const callBack = (res: any) => {
       if (res.success) {
         // Handle success case
+        //setColor(res?.data)
       } else {
         // Handle failure case
       }
@@ -53,21 +57,26 @@ const useKanbanCard = (board: any) => {
     });
   };
 
-  const handleChangeColorClick = () => {
-    setInitialColor(color); // Set the initial color when opening the color picker
-    setShowColorPicker(true);
+  const onChangeJobColor = async () => {
+    const callBack = (res: any) => {};
+    await updateProductionFloorJobColorApi(callApi, callBack, {
+      boardMissionId: board?.id,
+      productionFloorJobColor: color,
+    });
   };
 
-  const CardColor = board?.productionFloorJobColor ?? "";
+  const handleChangeColorClick = () => {
+    setInitialColor(color);
+    setShowColorPicker(true);
+  };
 
   const contextMenuOptions = [
     {
       label: t("productionFloor.changeColor"),
-      icon: <ColoredCycle backgroundColor={CardColor || "#000000"} size={12} />,
+      icon: <ColoredCycle backgroundColor={color || "#000000"} size={12} />,
       onClick: (e) => {
         e.stopPropagation();
         handleChangeColorClick();
-        handleCloseContextMenu();
       },
     },
     {
@@ -81,10 +90,6 @@ const useKanbanCard = (board: any) => {
     },
   ];
 
-  const [color, setColor] = useState(CardColor);
-  const [initialColor, setInitialColor] = useState(color);
-  const [showColorPicker, setShowColorPicker] = useState(false);
-
   const handleColorPickerClose = () => {
     setShowColorPicker(false);
     if (color !== initialColor) {
@@ -96,34 +101,20 @@ const useKanbanCard = (board: any) => {
     setColor(newColor.hex);
   };
 
-  const onChangeJobColor = async () => {
-    const callBack = (res: any) => {
-      if (res.success) {
-        // Handle success case
-      } else {
-        // Handle failure case
-      }
-    };
-    await updateProductionFloorJobColorApi(callApi, callBack, {
-      boardMissionId: board?.id,
-      productionFloorJobColor: color,
-    });
-  };
-
   return {
     t,
     dir,
-    CardColor,
     contextMenuPosition,
     handleContextMenu,
     handleCloseContextMenu,
     handleOpenMission,
     contextMenuOptions,
-
     handleColorChange,
     color,
     showColorPicker,
     handleColorPickerClose,
+    initialColor,
+    isRTL,
   };
 };
 export { useKanbanCard };

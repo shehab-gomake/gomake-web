@@ -7,7 +7,7 @@ import { useUserPermission } from "@/hooks/use-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { OrderJObNumbersComponent } from "./order-job-num-coponent";
 import { toRgba } from "@/utils/helpers";
-import { ContextMenu } from "./change-color-menu";
+import { ChangeColorMenu } from "./change-color-menu";
 import { useKanbanCard } from "./use-kanban-card";
 import { SketchPicker } from "react-color";
 import { useRef } from "react";
@@ -23,24 +23,23 @@ const ItemTypes = {
 
 const KanbanCardComponent = ({ board }: IProp) => {
   const { classes } = useStyle();
-
+  const { CheckPermission } = useUserPermission();
+  const colorPickerRef = useRef<HTMLDivElement>(null);
   const {
     t,
     dir,
-    CardColor,
+    isRTL,
     contextMenuPosition,
     handleContextMenu,
     handleCloseContextMenu,
     handleOpenMission,
     contextMenuOptions,
-
     handleColorChange,
     color,
     showColorPicker,
     handleColorPickerClose,
   } = useKanbanCard(board);
 
-  const { CheckPermission } = useUserPermission();
   const canDrag = CheckPermission(
     Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR
   );
@@ -57,8 +56,6 @@ const KanbanCardComponent = ({ board }: IProp) => {
     [canDrag]
   );
 
-  const contextMenuRef = useRef<HTMLDivElement | null>(null); // Reference for the context menu
-
   return (
     <Stack
       direction={"column"}
@@ -72,8 +69,8 @@ const KanbanCardComponent = ({ board }: IProp) => {
         opacity: isDragging ? 0.8 : 1,
         cursor: isDragging ? "grabbing" : "pointer",
         borderRadius: "8px",
-        border: `1px solid var(--Colors-Yellow-600,${CardColor})`,
-        background: toRgba(CardColor, 0.1),
+        border: `1px solid var(--Colors-Yellow-600,${color})`,
+        background: toRgba(color, 0.1),
         boxShadow: "0px 2px 4px 0px rgba(0, 0, 0, 0.08)",
       }}
       onClick={handleOpenMission}
@@ -90,8 +87,8 @@ const KanbanCardComponent = ({ board }: IProp) => {
         </span>
         <OrderJObNumbersComponent
           boardMission={board}
-          textColor={CardColor}
-          bgColor={toRgba(CardColor, 0.2)}
+          textColor={color}
+          bgColor={toRgba(color, 0.2)}
         />
       </Stack>
       <Stack>
@@ -115,28 +112,46 @@ const KanbanCardComponent = ({ board }: IProp) => {
           </span>
         </Stack>
       </Stack>
-
       {contextMenuPosition && (
-        <ContextMenu
+        <ChangeColorMenu
           options={contextMenuOptions}
           position={contextMenuPosition}
           onClose={handleCloseContextMenu}
           dir={dir}
+          colorPickerRef={colorPickerRef}
         />
       )}
-
       <Popover
         key={`popover-${board?.id}`}
         open={showColorPicker}
         onClose={handleColorPickerClose}
-        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-        transformOrigin={{ vertical: "top", horizontal: "center" }}
+        anchorReference="anchorPosition"
+        anchorPosition={{
+          top:
+            showColorPicker && contextMenuPosition
+              ? contextMenuPosition?.y
+              : undefined,
+          left:
+            showColorPicker && contextMenuPosition
+              ? contextMenuPosition?.x
+              : undefined,
+        }}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: isRTL ? "right" : "center",
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: isRTL ? "right" : "center",
+        }}
       >
-        <SketchPicker
-          key={`SketchPicker-${board?.id}`}
-          color={color}
-          onChange={handleColorChange}
-        />
+        <div ref={colorPickerRef}>
+          <SketchPicker
+            key={`SketchPicker-${board?.id}`}
+            color={color}
+            onChange={handleColorChange}
+          />
+        </div>
       </Popover>
     </Stack>
   );

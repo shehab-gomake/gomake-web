@@ -7,20 +7,28 @@ interface ContextMenuProps {
   position: { x: number; y: number };
   onClose: () => void;
   dir: string;
+  colorPickerRef?: any;
 }
 
-const ContextMenu: React.FC<ContextMenuProps> = ({
+const ChangeColorMenu: React.FC<ContextMenuProps> = ({
   options,
   position,
   onClose,
   dir,
+  colorPickerRef,
 }) => {
   const menuRef = useRef<HTMLDivElement>(null);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+      const target = event.target as Node;
+      // Close only if the click is outside both the context menu and the color picker
+      if (
+        menuRef.current &&
+        !menuRef.current.contains(target) &&
+        (!colorPickerRef.current || !colorPickerRef.current.contains(target))
+      ) {
         onClose();
       }
     };
@@ -68,4 +76,4 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
   );
 };
 
-export { ContextMenu };
+export { ChangeColorMenu };
