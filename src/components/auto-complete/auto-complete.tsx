@@ -7,7 +7,7 @@ import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import Stack from "@mui/material/Stack";
-import { Collapse, Divider, Paper } from "@mui/material";
+import { Collapse, Divider, } from "@mui/material";
 import { DownIcon, UpIcon } from "./icons";
 
 const StyledAutocomplete: any = styled(Autocomplete)((props: any) => {
@@ -69,7 +69,6 @@ const GroupHeader = styled('div')(({ theme }) => ({
   alignItems: 'center',
   cursor: 'pointer',
   justifyContent: 'space-between',
-  // fontWeight: 'bold', 
   fontFamily: "Heebo",
   fontStyle: "normal",
   fontWeight: 500,
@@ -162,8 +161,8 @@ const GoMakeAutoComplate = ({
       style={style}
       options={options}
       disabled={disabled}
-      popupIcon={withArrow ? <ArrowDropDownIcon /> : ""} // Conditionally render popupIcon based on withArrow prop
-      groupBy={groupBy} // Group options by category
+      popupIcon={withArrow ? <ArrowDropDownIcon /> : ""}
+      groupBy={groupBy}
       renderGroup={(params) => (
         <div key={params.key}>
           <GroupHeader onClick={() => toggleGroup(params.group)}>
@@ -221,15 +220,7 @@ const GoMakeAutoComplate = ({
       getOptionSelected={(option: any, value: any) => {
         return option?.id === value?.id;
       }}
-      // PaperComponent={PaperComponent}
-      PaperComponent={(props) => (
-        <Paper {...props} className="custom-scrollbar" style={{
-          maxHeight: 200,
-          overflowY: "auto",
-        }} />
-
-      )}
-
+      PaperComponent={PaperComponent}
     />
   );
 };
