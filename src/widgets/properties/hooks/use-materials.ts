@@ -1,13 +1,11 @@
 
 import { useGomakeAxios } from "@/hooks";
-import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 const useMaterials = () => {
     const [materials, setMaterials] = useState([])
     const [materialsDropdown,setMaterialsDropdown] = useState([])
-    const router = useRouter();
     const { callApi } = useGomakeAxios();
     const { t } = useTranslation();
     useEffect(() => {
