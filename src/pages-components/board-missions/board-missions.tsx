@@ -24,9 +24,10 @@ import QrListenerWidget from "@/widgets/qr-listener/qr-listener-widget";
 import { useUserPermission } from "@/hooks/use-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { DateRangePicker } from "rsuite";
-import { useRecoilState } from "recoil";
+import {useRecoilState, useRecoilValue} from "recoil";
 import { newOrderIdToPrintJobsState } from "@/store/new-order-id-to-print-jobs-state";
 import { DotIcon } from "@/icons";
+import {printHouseUsePrintNode} from "@/store/print-house-profile";
 
 const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
   const { classes } = useStyle();
@@ -109,6 +110,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
     printOrderJobsUsingPrintNode,
   } = useBoardMissions({ isPurchaseJobs });
   const [newOrderId, setNewOrderId] = useRecoilState(newOrderIdToPrintJobsState);
+  const isPrintHouseUsePrintNode = useRecoilValue(printHouseUsePrintNode);
 
 
   useEffect(() => {
@@ -443,7 +445,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
         title={t("boardMissions.printOrderJobsModalTitle")}
         yesBtn={t("sales.quote.print")}
         noBtn={''}
-        openModal={!!newOrderId}
+        openModal={!!newOrderId && isPrintHouseUsePrintNode}
         onClose={() => setNewOrderId('')}
         onClickYes={() => printOrderJobsUsingPrintNode(newOrderId)}
       />
