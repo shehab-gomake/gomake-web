@@ -228,7 +228,7 @@ const useStyle = () => {
         gap: 10,
         width: "100%",
         minWidth: 220,
-        maxWidth: 220,
+        // maxWidth: 220,
       },
       parameterRowContainer: {
         display: "flex",
@@ -302,7 +302,7 @@ const useStyle = () => {
       renderParameterTypeContainer: {
         display: "flex",
         width: "100%",
-        maxWidth: "220px",
+        // maxWidth: "220px",
         borderRadius: 4,
       },
 
@@ -730,6 +730,7 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "center",
         gap: 4,
+        // minWidth:250
       },
       duplicateSubSectionBtn: {
         backgroundColor: "#FFFF",
