@@ -53,6 +53,7 @@ interface Query {
   productionStatus?: any;
   isCanceled?: boolean;
   clientId?: string;
+  clientName?: string;
   orderStatus?: any;
   fromDueDate?: string;
   toDueDate?: string;
@@ -231,8 +232,8 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
   };
   const handleClickSearch = () => {
     const query: Query = {};
-
     if (customer?.id) query.clientId = customer.id;
+    if (customer?.name) query.clientName = customer.name;
     if (agent?.id) query.agentId = agent.id;
     if (status?.value) query.productionStatus = status.value;
     if (orderStatus) query.orderStatus = orderStatus.value;
@@ -778,6 +779,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     // Read URL parameters and set state accordingly
     const {
       clientId,
+      clientName,
       agentId,
       productionStatus,
       orderStatus,
@@ -792,10 +794,10 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     } = router.query;
 
     if (clientId) {
-      const customerIdSelect = renderOptions().find(
-        (c1) => c1.id === clientId
-      );
-      setCustomer(customerIdSelect);
+      // const customerIdSelect = renderOptions().find(
+      //   (c1) => c1.id === clientId
+      // );
+      setCustomer({ id: Array.isArray(clientId) ? clientId[0] : clientId, name: Array.isArray(clientName) ? clientName[0] : clientName });
     }
 
     if (agentId) {
