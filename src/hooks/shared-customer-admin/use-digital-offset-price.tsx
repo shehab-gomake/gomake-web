@@ -251,9 +251,15 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   }, [calculationResult, currentCalculationSessionId]);
 
   const getSelectedWorkFlow = async () => {
+    const docType = router?.query?.documentType ?? "0";
+    const documentItemId =  router?.query?.documentItemId;
+    let url = `/v1/erp-service/productItemValueDrafts/get-selected-work-flow?signalRConnectionId=${connectionId}`;
+    if(documentItemId){
+      url += `&documentItemId=${documentItemId}&docType=${docType}`;
+    }
     const res: any = await callApi(
       "GET",
-      `/v1/erp-service/productItemValueDrafts/get-selected-work-flow?signalRConnectionId=${connectionId}`,
+        url,
       {},
       false,
     )
