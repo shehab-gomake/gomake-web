@@ -566,10 +566,31 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     }
   };
 
+  //!here
+  // const onClickDuplicateMissionOld = (duplicateType: DuplicateType) => {
+  //   navigate(
+  //     `/products/duplicate?clientTypeId=${missionItem?.clientTypeId}&customerId=${missionItem?.customerID}&productId=${missionItem?.productID}&documentItemId=${missionItem?.orderItemId}&documentType=${DOCUMENT_TYPE.order}&documentId=${missionItem?.orderItemId}&duplicateType=${duplicateType}`
+  //   );
+  // };
+
   const onClickDuplicateMission = (duplicateType: DuplicateType) => {
-    navigate(
-      `/products/duplicate?clientTypeId=${missionItem?.clientTypeId}&customerId=${missionItem?.customerID}&productId=${missionItem?.productID}&documentItemId=${missionItem?.orderItemId}&documentType=${DOCUMENT_TYPE.order}&documentId=${missionItem?.orderItemId}&duplicateType=${duplicateType}`
-    );
+    const { targetOrderId, targetOrderNumber, clientId } = router?.query;
+    if (targetOrderId)
+      navigate(
+        `/products/duplicate?clientTypeId=${
+          missionItem?.clientTypeId
+        }&customerId=${clientId}&customerName=${encodeURIComponent(
+          missionItem?.clientName || ""
+        )}&productId=${missionItem?.productID}&documentItemId=${
+          missionItem?.orderItemId
+        }&documentType=${
+          DOCUMENT_TYPE.order
+        }&documentNumber=${targetOrderNumber}&documentId=${targetOrderId}&duplicateType=${duplicateType}`
+      );
+    else
+      navigate(
+        `/products/duplicate?clientTypeId=${missionItem?.clientTypeId}&customerId=${missionItem?.customerID}&productId=${missionItem?.productID}&documentItemId=${missionItem?.orderItemId}&documentType=${DOCUMENT_TYPE.order}&documentId=${missionItem?.orderItemId}&duplicateType=${duplicateType}`
+      );
   };
 
   const onClickOrderSummeryPdf = async (boardMissionId: string) => {
