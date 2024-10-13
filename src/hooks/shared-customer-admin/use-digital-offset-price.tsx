@@ -6,7 +6,7 @@ import { materialsCategoriesState } from "@/store/material-categories";
 import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
 import { getAndSetChatBotProductId, getAndSetProductById } from "@/services/hooks";
 import {
-  currentCalculationConnectionId, isActionEmployeeUpdatedState,
+  currentCalculationConnectionId, foldOptionsState, isActionEmployeeUpdatedState,
   isChangePriceForEditState,
   isLoadgingState,
   itemParmetersValuesState,
@@ -70,6 +70,7 @@ import { useDebouncedCallback } from "use-debounce";
 import { getDeviceSizeMockApi } from "@/services/api-service/materials/materials-endpoints";
 import { AdvertisingProductCategoryParameterWidget } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/advertising-product-category";
 import { AdvertisingProductNameParameterWidget } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/advertising-product-name";
+import { getAllFoldOptions } from "@/services/api-service/parameters/parameters-outputs";
 
 const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [, setOpenQuantityComponentModal] = useRecoilState<boolean>(openQuantityComponentModalState);
@@ -82,6 +83,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const { allMaterials, getAllMaterial } = useMaterials();
   const [selectedValueConfig, setSelectedValueConfig] = useRecoilState(selectedValueConfigState);
   const productTypesNumber = useRecoilValue<number>(productTypesNumberState);
+  const [foldOptions, setFoldOptions] = useRecoilState(foldOptionsState)
+
   const [workTypes, setWorkTypes] = useState<any>([])
   const [samlleType, setSamlleType] = useState();
   const [isRequiredParameters, setIsRequiredParameters] = useState<any>([]);
@@ -3864,6 +3867,18 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   };
 
 
+  const getAllFoldOptionsApi = () => {
+    const callBack = (res) => {
+      if (res.success) {
+        setFoldOptions(res?.data);
+      }
+    };
+    getAllFoldOptions(callApi, callBack).then();
+  }
+
+  useEffect(() => {
+    getAllFoldOptionsApi()
+  }, [])
 
   return {
     t,

@@ -108,25 +108,18 @@ const ActionContainerComponent = ({
   totalPriceValue,
   profitValue,
   isNeedFolds,
-  foldOptionValueId,
+  foldOptionValueId
 }: IActionContainerComponentProps) => {
+
   source = source === EWorkSource.OUT ? EWorkSource.OUT : EWorkSource.INTERNAL;
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [chooseMachine, setChooseMachine] = useState<boolean>(false);
   const [chooseMaterial, setChooseMaterial] = useState<boolean>(false);
   const [chooseEmployee, setChooseEmployee] = useState<boolean>(false);
   const [chooseFold, setChooseFold] = useState<boolean>(false);
+  const [selectedfold, setSelectedFold] = useState<any>()
 
-  const [foldName, setFoldName] = useState<string>("")
 
-  useEffect(() => {
-    if (foldOptionValueId) {
-      const selectedFoldOptionName = foldOptions?.find((option) => option.id == foldOptionValueId)?.name
-      if (selectedFoldOptionName) {
-        setFoldName(selectedFoldOptionName)
-      }
-    }
-  }, [foldOptionValueId])
 
   const currentProductItemValue = useRecoilValue(currentProductItemValueState);
   const { t } = useTranslation();
@@ -243,7 +236,14 @@ const ActionContainerComponent = ({
   }, [supplierId, suppliers, suppliersState]);
 
 
-
+  useEffect(() => {
+    if (foldOptionValueId) {
+      const selectedFoldOptionName = foldOptions?.find((option) => option.id == foldOptionValueId)
+      if (selectedFoldOptionName) {
+        setSelectedFold(selectedFoldOptionName)
+      }
+    }
+  }, [foldOptionValueId, foldOptions])
 
 
   return (
@@ -518,12 +518,11 @@ const ActionContainerComponent = ({
                         onClick={(e) => {
                           e.stopPropagation();
                           setChooseFold(true);
-                          // getAllFoldOptionsApi()
                         }}
                         variant={"text"}
                         style={classes.sectionTitle}
                       >
-                        {foldOptionValueId ? foldName : <>Select New Folds</>}
+                        {foldOptionValueId ? selectedfold?.name : <>Select New Folds</>}
                       </Button>
                     ) : (
                       <Stack
@@ -541,7 +540,7 @@ const ActionContainerComponent = ({
                           options={foldOptions}
                           placeholder={"Choose Fold option"}
                           getOptionLabel={(option) => option.name}
-                        // value={employeeName}
+                          value={selectedfold}
                         />
                         <IconButton
                           onClick={(e) => {
