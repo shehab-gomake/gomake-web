@@ -14,7 +14,6 @@ import {useGomakeAxios, useSnackBar} from "@/hooks";
 import {currentCalculationConnectionId, foldOptionsState} from "@/store";
 import { getEmployeesByActionIdApi, getMachineByActionIdNewApi } from "@/services/api-service/customers/employees-api";
 import { getMaterialsSizesApi } from "@/services/api-service/materials/printhouse-materials-endpoints";
-import { getAllFoldOptions } from "@/services/api-service/parameters/parameters-outputs";
 
 interface AttributesData {
     machineName?: string; 
