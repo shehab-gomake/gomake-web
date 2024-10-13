@@ -159,6 +159,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
   const openSendBtn = Boolean(anchorElSendBtn);
   const openCancelBtn = Boolean(anchorElCancelBtn);
   const openSettingMenu = Boolean(anchorElSettingMenu);
+  const isQuote = docType === DOCUMENT_TYPE.quote;
   const isDeliveryNote =
     docType === DOCUMENT_TYPE.deliveryNote ||
     docType === DOCUMENT_TYPE.deliveryNoteRefund;
@@ -254,8 +255,8 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
         ? t("products.profits.details")
         : null
       : quoteItemValue?.isShowDetails
-        ? t("products.profits.details")
-        : null,
+      ? t("products.profits.details")
+      : null,
     t("sales.quote.amount"),
     t("products.profits.pricingListWidget.unitPrice"),
     t("sales.quote.discount"),
@@ -1754,7 +1755,10 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
   };
 
   const [isWhatsAppWeb, setIsWhatsAppWeb] = useState(true);
-
+  const isShowSettingIcon = !(
+    router.query.isNewCreation &&
+    (isDeliveryNote || isInvoice)
+  );
   return {
     dateRef,
     taxDateRef,
@@ -1945,6 +1949,8 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
     setIsUpdateDocumentTitle,
     isWhatsAppWeb,
     setIsWhatsAppWeb,
+    isShowSettingIcon,
+    isInvoice,
   };
 };
 
