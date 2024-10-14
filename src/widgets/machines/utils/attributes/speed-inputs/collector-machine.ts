@@ -6,6 +6,18 @@ const collectorMachine = (state: Record<string, any>) => {
     return [
         ...setupTimeInput(state),
         {
+            name: "isManual",
+            label: "machineAttributes.isManual",
+            type: "switch",
+            placeholder: "machineAttributes.isManual",
+            required: true,
+            parameterKey: "isManual",
+            value: state.attributes?.isManual,
+            options: [],
+            machineInputType: 'input',
+            isValid: true,
+        },
+        {
             name: "speed",
             label: "machineAttributes.speed",
             type: "text",
@@ -16,6 +28,21 @@ const collectorMachine = (state: Record<string, any>) => {
             value: state.attributes?.speed ? state.attributes?.speed: '',
             machineInputType: 'input',
             isValid: !!state?.attributes?.speed,
+            disabled: state.attributes?.isManual
+        },
+        {
+            name: "speed",
+            label: "machineAttributes.speed",
+            type: "text",
+            placeholder: "machineAttributes.speed",
+            required: true,
+            parameterKey: "manualSpeed",
+            options: [],
+            value: state.attributes?.manualSpeed ? state.attributes?.manualSpeed: '',
+            machineInputType: 'input',
+            isValid: !!state?.attributes?.manualSpeed,
+            unit: EMeasurementUnits.PAPER_SETS_PER_HOUR,
+            disabled: !state.attributes?.isManual
         },
         {
             name: "speedUnit",
@@ -28,8 +55,9 @@ const collectorMachine = (state: Record<string, any>) => {
             options: [{value: 'pph', text: 'PPH'}, {value: 'cellsSetsPH', text: 'Cells sets PH'}],
             machineInputType: 'input',
             isValid: true,
+            disabled: state.attributes?.isManual
         },
-        ...insertTypeInput(state),
+        ...insertTypeInput(state, state.attributes?.isManual),
         {
             name: "cellLoadingTime",
             label: "machineAttributes.cellLoadingTime",
@@ -41,7 +69,9 @@ const collectorMachine = (state: Record<string, any>) => {
             value: state.attributes?.cellLoadingTime ? state.attributes?.cellLoadingTime : '',
             machineInputType: 'input',
             isValid: !!state?.attributes?.cellLoadingTime,
-            unit: EMeasurementUnits.MINUTE
+            unit: EMeasurementUnits.MINUTE,
+            disabled: state.attributes?.isManual
+
         },
         {
             name: "cellNumber",
@@ -54,6 +84,7 @@ const collectorMachine = (state: Record<string, any>) => {
             value: state.attributes?.cellNumber ? state.attributes?.cellNumber : '',
             machineInputType: 'input',
             isValid: !!state?.attributes?.cellNumber,
+            disabled: state.attributes?.isManual
         },
         {
             name: "loadingWhileRunning",
@@ -66,6 +97,20 @@ const collectorMachine = (state: Record<string, any>) => {
             options: [],
             machineInputType: 'input',
             isValid: true,
+            disabled: state.attributes?.isManual
+        },
+        {
+            name: "gathered",
+            label: "machineAttributes.gathered",
+            type: "switch",
+            placeholder: "machineAttributes.gathered",
+            required: true,
+            parameterKey: "gathered",
+            value: state.attributes?.gathered,
+            options: [],
+            machineInputType: 'input',
+            isValid: true,
+            disabled: state.attributes?.isManual
         },
         {
             name: 'machineAttributes.speedByPaperSizeByColor',

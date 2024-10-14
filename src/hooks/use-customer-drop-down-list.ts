@@ -51,7 +51,7 @@ const useCustomerDropDownList = ({
 
   const debouncedGetAllCustomersCreateOrder = useDebouncedCallback((value: string) => {
     getAllCustomersCreateOrder(value);
-  }, 500);
+  }, 1200);
 
   const checkWhatRenderArray = (e) => {
     const value = e.target.value;

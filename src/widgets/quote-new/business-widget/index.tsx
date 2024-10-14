@@ -119,8 +119,8 @@ const BusinessNewWidget = ({
             isQuoteConfirmation
               ? quoteConfirm?.client?.name
               : quoteStateValue?.client?.name
-              ? quoteStateValue?.client?.name
-              : t("sales.quote.selectBusinessName")
+                ? quoteStateValue?.client?.name
+                : t("sales.quote.selectBusinessName")
           }
           options={mappedCustomers}
           onBlur={onBlurBusinessName}
@@ -269,31 +269,31 @@ const BusinessNewWidget = ({
         )}
         {values?.documentAddresses?.length > 0
           ? !isQuoteConfirmation &&
-            canEditDocument && (
-              <div style={classes.addNewAddressStyle} onClick={() => null}>
-                <MinusIcon />
-                <div
-                  style={classes.addNewAddressTextStyle}
-                  onClick={() =>
-                    onClickDeleteAddress(values?.documentAddresses[0])
-                  }
-                >
-                  {t("sales.quote.removeAddress")}
-                </div>
+          canEditDocument && (
+            <div style={classes.addNewAddressStyle} onClick={() => null}>
+              <MinusIcon />
+              <div
+                style={classes.addNewAddressTextStyle}
+                onClick={() =>
+                  onClickDeleteAddress(values?.documentAddresses[0])
+                }
+              >
+                {t("sales.quote.removeAddress")}
               </div>
-            )
+            </div>
+          )
           : !isQuoteConfirmation &&
-            canEditDocument && (
-              <div style={classes.addNewAddressStyle}>
-                <PlusNewIcon />
-                <div
-                  style={classes.addNewAddressTextStyle}
-                  onClick={() => setOpenModal(true)}
-                >
-                  {t("sales.quote.addAddress")}
-                </div>
+          canEditDocument && (
+            <div style={classes.addNewAddressStyle}>
+              <PlusNewIcon />
+              <div
+                style={classes.addNewAddressTextStyle}
+                onClick={() => setOpenModal(true)}
+              >
+                {t("sales.quote.addAddress")}
               </div>
-            )}
+            </div>
+          )}
         {!isQuoteConfirmation && (
           <AddressModal
             isUpdate={values?.documentAddresses?.length > 0}

@@ -5,6 +5,7 @@ export interface IMaterialCategoryRow {
   isActive: boolean;
   rowData: Record<string, IRowData>;
   checked: boolean;
+  code?: string|null;
 }
 
 export interface IRowData {

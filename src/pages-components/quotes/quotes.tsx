@@ -15,19 +15,19 @@ import { HeaderTitle } from "@/widgets";
 import { DocumentLogsWidget } from "./widgets/documents-logs-widget/logs-widget";
 import { DOCUMENT_TYPE } from "./enums";
 import { Button, Stack } from "@mui/material";
-import { CardsSection, ICard } from "./widgets/statistics-section/statistics-sections";
+import {
+  CardsSection,
+  ICard,
+} from "./widgets/statistics-section/statistics-sections";
 import { GoMakePagination } from "@/components/pagination/gomake-pagination";
-import { ExcelSheetIcon } from "@/icons";
 import { AddRuleModal } from "../products/profits-new/widgets/add-rule-modal";
-import { GoMakeDatepicker } from "@/components/date-picker/date-picker-component";
-import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import { GoMakeMultiSelect } from "@/components/auto-complete/multi-select";
-import { useEffect, } from "react";
+import { useEffect, useState } from "react";
 import { IconButton } from "@mui/material";
 import { GoMakeMenu } from "@/components";
 import { InputAdornment } from "@mui/material";
-import TuneIcon from '@mui/icons-material/Tune';
+import TuneIcon from "@mui/icons-material/Tune";
 import { CardComponent } from "./widgets/statistics-section/card";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { GoMakeCurrency } from "@/icons/go-make-currency";
@@ -42,6 +42,8 @@ import { MakePaymentModal } from "./widgets/make-payment-modal/make-payment-moda
 import { DateRangePicker } from "rsuite";
 import { createGlobalStyle } from "styled-components";
 import { CancelReceiptModal } from "@/widgets/quote-new/buttons-container/payment/cancel-receipt-modal/cancel-receipt-modal";
+import { ExcelMenu } from "./widgets/excel-menu/excel-menu";
+import { DotIcon } from "@/icons";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -52,7 +54,7 @@ const QuotesListPageWidget = ({
   isFromHomePage = false,
 }: IProps) => {
   const { classes } = useStyle();
-  const { secondColor, } = useGomakeTheme();
+  const { secondColor } = useGomakeTheme();
   const router = useRouter();
 
   const {
@@ -99,7 +101,6 @@ const QuotesListPageWidget = ({
     activeCard,
     openAddRule,
     documentPath,
-    resetDatePicker,
     onSelectDeliveryTimeDates,
     employeeId,
     handleSelectEmployee,
@@ -150,7 +151,6 @@ const QuotesListPageWidget = ({
     openCloseOrderModal,
     selectedDocument,
     onClickOpenCloseOrderModal,
-    getEmployeeCategories,
     ManuallyCloseDocument,
     documentCloseNumber,
     handleDocumentNumberChange,
@@ -172,18 +172,17 @@ const QuotesListPageWidget = ({
     onCloseCancelReceiptModal,
     onClickCancelReceipt,
     openCancelReceiptModalRefund,
-    onCloseCancelReceiptModalRefund
+    onCloseCancelReceiptModalRefund,
+    ExportDocumentTableToExcel,
   } = useQuotes(documentType, isFromHomePage);
 
   useEffect(() => {
     if (router.query.orderNumber) {
       setPatternSearch(router.query.orderNumber as string);
-    }
-    else if (router.query.documentNumber) {
+    } else if (router.query.documentNumber) {
       setPatternSearch(router.query.documentNumber as string);
     }
-
-  }, [router])
+  }, [router]);
 
   useEffect(() => {
     !isFromHomePage && getAllProducts();
@@ -193,14 +192,15 @@ const QuotesListPageWidget = ({
     const card = statistics?.find((item) => item.key === key);
     return card ? card.value : "";
   };
-  const dir: 'rtl' | 'ltr' = t('direction');
-  const RTL = dir === 'rtl';
+  const dir: "rtl" | "ltr" = t("direction");
+  const RTL = dir === "rtl";
   const GlobalStyle = createGlobalStyle`
   .rs-picker-popup-daterange {
-    left: ${({ RTL }: any) => (RTL ? 'auto' : '150px')} !important;
-    right: ${({ RTL }: any) => (RTL ? '150px' : 'auto')} !important;
+    left: ${({ RTL }: any) => (RTL ? "auto" : "150px")} !important;
+    right: ${({ RTL }: any) => (RTL ? "150px" : "auto")} !important;
   }
 `;
+
   return (
     <>
       {!isFromHomePage && (
@@ -213,29 +213,68 @@ const QuotesListPageWidget = ({
         >
           <div style={classes.mainContainer}>
             <div style={classes.headerStyle}>
-              <HeaderTitle title={documentLabel} marginTop={1} marginBottom={1} />
+              <HeaderTitle
+                title={documentLabel}
+                marginTop={1}
+                marginBottom={1}
+              />
               <div style={classes.rowStyle}>
-                {(documentType === DOCUMENT_TYPE.quote) && <CardsSection statistics={allStatistics} activeCard={activeCard} onClick={onclickCreateNew} onClickCard={handleCardClick} onSecondClickCard={handleSecondCardClick} />}
-                {documentType === DOCUMENT_TYPE.order && !isOrdersTracking &&
+                {documentType === DOCUMENT_TYPE.quote && (
+                  <CardsSection
+                    statistics={allStatistics}
+                    activeCard={activeCard}
+                    onClick={onclickCreateNew}
+                    onClickCard={handleCardClick}
+                    onSecondClickCard={handleSecondCardClick}
+                  />
+                )}
+                {documentType === DOCUMENT_TYPE.order && !isOrdersTracking && (
                   <>
-                    <CardComponent text={t("sales.quote.totalPrice")} number={getValueByKey(allStatistics, "totalPrice")} textColor={secondColor(100)} icon={<GoMakeCurrency color={secondColor(100)} />} />
-                    <Button style={classes.createNew} onClick={onclickCreateNew} startIcon={<AddCircleOutlineIcon style={{ color: 'black', fontSize: "24px" }} />}>{t("sales.quote.createNew")}</Button>
+                    <CardComponent
+                      text={t("sales.quote.totalPrice")}
+                      number={getValueByKey(allStatistics, "totalPrice")}
+                      textColor={secondColor(100)}
+                      icon={<GoMakeCurrency color={secondColor(100)} />}
+                    />
+                    <Button
+                      style={classes.createNew}
+                      onClick={onclickCreateNew}
+                      startIcon={
+                        <AddCircleOutlineIcon
+                          style={{ color: "black", fontSize: "24px" }}
+                        />
+                      }
+                    >
+                      {t("sales.quote.createNew")}
+                    </Button>
                   </>
-                }
-                {(documentType !== DOCUMENT_TYPE.quote && documentType !== DOCUMENT_TYPE.order) &&
-                  <Button
-                    style={classes.createNew}
-                    onClick={() => navigate(`/${documentPath}?isNewCreation=true`)}
-                    startIcon={<AddCircleOutlineIcon style={{ color: 'black', fontSize: "24px" }} />}>
-                    {t("sales.quote.createNew")}
-                  </Button>
-                }
+                )}
+                {documentType !== DOCUMENT_TYPE.quote &&
+                  documentType !== DOCUMENT_TYPE.order && (
+                    <Button
+                      style={classes.createNew}
+                      onClick={() =>
+                        navigate(`/${documentPath}?isNewCreation=true`)
+                      }
+                      startIcon={
+                        <AddCircleOutlineIcon
+                          style={{ color: "black", fontSize: "24px" }}
+                        />
+                      }
+                    >
+                      {t("sales.quote.createNew")}
+                    </Button>
+                  )}
               </div>
             </div>
-
             {/* search */}
-
-            <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "space-between",
+              }}
+            >
               <SearchInputComponent
                 searchInputStyle={{ width: "20vw" }}
                 filtersButton={
@@ -243,8 +282,13 @@ const QuotesListPageWidget = ({
                     <div>
                       <IconButton onClick={handleClick}>
                         <TuneIcon />
+                        {Object.keys(router.query).length > 0 && <div style={{ position: "absolute", top: -5, right: -1 }}> <DotIcon /></div>}
                       </IconButton>
-                      <GoMakeMenu handleClose={handleClose} open={open} anchorEl={anchorEl} >
+                      <GoMakeMenu
+                        handleClose={handleClose}
+                        open={open}
+                        anchorEl={anchorEl}
+                      >
                         <div style={classes.filtersContainer}>
                           <div style={classes.selectedFilterContainer}>
                             <div style={classes.statusFilterContainer}>
@@ -254,7 +298,9 @@ const QuotesListPageWidget = ({
                               <GoMakeAutoComplate
                                 key={customerId?.id}
                                 options={renderOptions() ? renderOptions() : []}
-                                getOptionLabel={(option: any) => `${option.name}`}
+                                getOptionLabel={(option: any) =>
+                                  `${option.name}`
+                                }
                                 onChangeTextField={checkWhatRenderArray}
                                 style={classes.textInputStyle}
                                 placeholder={t("sales.quote.chooseCustomer")}
@@ -282,7 +328,7 @@ const QuotesListPageWidget = ({
                               //withArrow={true}
                               />
                             </div>
-                            {documentType === DOCUMENT_TYPE.quote &&
+                            {documentType === DOCUMENT_TYPE.quote && (
                               <div style={classes.statusFilterContainer}>
                                 <div style={classes.filterLabelStyle}>
                                   {t("sales.quote.status")}
@@ -301,8 +347,8 @@ const QuotesListPageWidget = ({
                                 //withArrow={true}
                                 />
                               </div>
-                            }
-                            {documentType === DOCUMENT_TYPE.quote &&
+                            )}
+                            {documentType === DOCUMENT_TYPE.quote && (
                               <div style={classes.statusFilterContainer}>
                                 <div style={classes.filterLabelStyle}>
                                   {t("sales.quote.approvalStatus")}
@@ -312,7 +358,9 @@ const QuotesListPageWidget = ({
                                   options={approvalStatuses}
                                   style={classes.textInputStyle}
                                   getOptionLabel={(option: any) => option.label}
-                                  placeholder={t("sales.quote.chooseApprovalStatus")}
+                                  placeholder={t(
+                                    "sales.quote.chooseApprovalStatus"
+                                  )}
                                   onChange={(e: any, value: any) => {
                                     setPage(1);
                                     setApprovalStatusId(value);
@@ -321,86 +369,137 @@ const QuotesListPageWidget = ({
                                 //withArrow={true}
                                 />
                               </div>
-                            }
-                            {documentType === DOCUMENT_TYPE.order &&
+                            )}
+                            {documentType === DOCUMENT_TYPE.order && (
                               <div style={classes.statusFilterContainer}>
-                                <h3 style={classes.filterLabelStyle}>{t("boardMissions.productionStatus")}</h3>
+                                <h3 style={classes.filterLabelStyle}>
+                                  {t("boardMissions.productionStatus")}
+                                </h3>
                                 <GoMakeAutoComplate
                                   key={productionStatus?.value}
                                   options={productionStatuses}
                                   style={classes.textInputStyle}
-                                  placeholder={t("boardMissions.productionStatus")}
+                                  placeholder={t(
+                                    "boardMissions.productionStatus"
+                                  )}
                                   onChange={handleProductionStatusChange}
                                   value={productionStatus}
                                 //withArrow={true}
                                 />
                               </div>
-                            }
-                            {documentType !== DOCUMENT_TYPE.quote &&
+                            )}
+                            {documentType !== DOCUMENT_TYPE.quote && (
                               <div style={classes.statusFilterContainer}>
-                                <h3 style={classes.filterLabelStyle}>{t("sales.quote.accountingStatus")}</h3>
+                                <h3 style={classes.filterLabelStyle}>
+                                  {t("sales.quote.accountingStatus")}
+                                </h3>
                                 <GoMakeAutoComplate
                                   key={accountingStatus?.value}
                                   options={accountingStatuses}
                                   style={classes.textInputStyle}
-                                  placeholder={t("sales.quote.accountingStatus")}
+                                  placeholder={t(
+                                    "sales.quote.accountingStatus"
+                                  )}
                                   onChange={handleAccountingStatusChange}
                                   value={accountingStatus}
                                 //withArrow={true}
                                 />
                               </div>
-                            }
-                            {documentType !== DOCUMENT_TYPE.purchaseInvoice && documentType !== DOCUMENT_TYPE.purchaseInvoiceRefund && documentType !== DOCUMENT_TYPE.purchaseOrder && documentType !== DOCUMENT_TYPE.receipt &&
+                            )}
+                            {documentType !== DOCUMENT_TYPE.purchaseInvoice &&
+                              documentType !==
+                              DOCUMENT_TYPE.purchaseInvoiceRefund &&
+                              documentType !== DOCUMENT_TYPE.purchaseOrder &&
+                              documentType !== DOCUMENT_TYPE.receipt && (
+                                <div style={classes.statusFilterContainer}>
+                                  <h3 style={classes.filterLabelStyle}>
+                                    {t("boardMissions.products")}
+                                  </h3>
+                                  <GoMakeMultiSelect
+                                    onChange={handleMultiSelectChange}
+                                    style={classes.textInputStyle}
+                                    options={productsList}
+                                    values={productIds}
+                                    placeholder={t(
+                                      "boardMissions.selectProducts"
+                                    )}
+                                  />
+                                </div>
+                              )}
+                            {documentType === DOCUMENT_TYPE.order && (
                               <div style={classes.statusFilterContainer}>
-                                <h3 style={classes.filterLabelStyle}>{t("boardMissions.products")}</h3>
-                                <GoMakeMultiSelect
-                                  onChange={handleMultiSelectChange}
-                                  style={classes.textInputStyle}
-                                  options={productsList}
-                                  values={productIds}
-                                  placeholder={t("boardMissions.selectProducts")} />
-                              </div>}
-                            {documentType === DOCUMENT_TYPE.order &&
-                              <div style={classes.statusFilterContainer}>
-                                <h3 style={classes.filterLabelStyle}>{t("sales.quote.canceledOrders")}</h3>
+                                <h3 style={classes.filterLabelStyle}>
+                                  {t("sales.quote.canceledOrders")}
+                                </h3>
                                 <SecondSwitch
                                   checked={isCanceledState}
-                                  onChange={(e) => { setIsCanceledState(e.target.checked) }}
+                                  onChange={(e) => {
+                                    setIsCanceledState(e.target.checked);
+                                  }}
                                 />
                               </div>
-                            }
-                            {documentType !== DOCUMENT_TYPE.purchaseInvoice && documentType !== DOCUMENT_TYPE.purchaseInvoiceRefund && documentType !== DOCUMENT_TYPE.purchaseOrder &&
-                              <div style={{ ...classes.statusFilterContainer, width: "fit-content" }}>
-                                <div style={classes.filterLabelStyle}>{t("sales.quote.priceRange")}</div>
-                                <div style={classes.priceDivStyle}>
-                                  <GomakeTextInput
-                                    onChange={handleMinPriceChange}
-                                    value={minPrice}
-                                    type={'number'}
-                                    style={{ ...classes.textInputStyle, height: '40px' }}
-                                    placeholder={t("sales.quote.minPrice")}
-                                  />
-                                  -
-                                  <GomakeTextInput
-                                    onChange={handleMaxPriceChange}
-                                    value={maxPrice}
-                                    type={'number'}
-                                    style={{ ...classes.textInputStyle, height: '40px' }}
-                                    placeholder={t("sales.quote.maxPrice")}
-                                  />
-                                </div></div>}
+                            )}
+                            {documentType !== DOCUMENT_TYPE.purchaseInvoice &&
+                              documentType !==
+                              DOCUMENT_TYPE.purchaseInvoiceRefund &&
+                              documentType !== DOCUMENT_TYPE.purchaseOrder && (
+                                <div
+                                  style={{
+                                    ...classes.statusFilterContainer,
+                                    width: "fit-content",
+                                  }}
+                                >
+                                  <div style={classes.filterLabelStyle}>
+                                    {t("sales.quote.priceRange")}
+                                  </div>
+                                  <div style={classes.priceDivStyle}>
+                                    <GomakeTextInput
+                                      onChange={handleMinPriceChange}
+                                      value={minPrice}
+                                      type={"number"}
+                                      style={{
+                                        ...classes.textInputStyle,
+                                        height: "40px",
+                                      }}
+                                      placeholder={t("sales.quote.minPrice")}
+                                    />
+                                    -
+                                    <GomakeTextInput
+                                      onChange={handleMaxPriceChange}
+                                      value={maxPrice}
+                                      type={"number"}
+                                      style={{
+                                        ...classes.textInputStyle,
+                                        height: "40px",
+                                      }}
+                                      placeholder={t("sales.quote.maxPrice")}
+                                    />
+                                  </div>
+                                </div>
+                              )}
                             <div style={classes.statusFilterContainer}>
-                              <h3 style={classes.filterLabelStyle}>{t("boardMissions.dateRange")}</h3>
+                              <h3 style={classes.filterLabelStyle}>
+                                {t("boardMissions.dateRange")}
+                              </h3>
                               <GlobalStyle RTL={RTL} />
                               <DateRangePicker
                                 onChange={onSelectDeliveryTimeDates}
-                                value={fromDate && toDate ? [fromDate, toDate] : null}
+                                value={
+                                  fromDate && toDate ? [fromDate, toDate] : null
+                                }
                               />
                             </div>
                           </div>
 
-                          <div style={{ display: "flex", flexDirection: "row", justifyContent: "flex-end", width: "100%", gap: "10px" }}>
-
+                          <div
+                            style={{
+                              display: "flex",
+                              flexDirection: "row",
+                              justifyContent: "flex-end",
+                              width: "100%",
+                              gap: "10px",
+                            }}
+                          >
                             <div style={classes.buttonsFilterContainer}>
                               <div style={classes.filterLabelStyle} />
                               <GomakePrimaryButton
@@ -426,14 +525,19 @@ const QuotesListPageWidget = ({
                   </InputAdornment>
                 }
                 onChange={(e) => {
-                  setPage(1)
-                  setPatternSearch(e)
+                  setPage(1);
+                  setPatternSearch(e);
+                  router.push({
+                    pathname: router.pathname,
+                    query: { ...router.query, finalPatternSearch: e },
+                  });
                 }}
                 value={patternSearch}
               />
-              <div style={{ cursor: "pointer" }} onClick={onOpenAddRuleModal}>
-                <ExcelSheetIcon />
-              </div>
+              <ExcelMenu
+                onGenerateReportClick={onOpenAddRuleModal}
+                onExportTableClick={ExportDocumentTableToExcel}
+              />
             </div>
             <PrimaryTable
               stickyFirstCol={false}
@@ -445,10 +549,48 @@ const QuotesListPageWidget = ({
                 documentType === DOCUMENT_TYPE.quote
                   ? ["11%", "11%", "7%", "7%", "20%", "11%", "10%", "16%", "6%"]
                   : documentType === DOCUMENT_TYPE.order
-                    ? ["6%", "5%", "5%", "7%", "7%", "8%", "8%", "3%", "20%", "7%", "7%", "7%", "5%", "5%"]
-                    : documentType === DOCUMENT_TYPE.purchaseInvoice || documentType === DOCUMENT_TYPE.purchaseInvoiceRefund
-                      ? ["7%", "15%", "10%", "13%", "10%", "10%", "10%", "10%", "10%", "5%",]
-                      : ["7%", "8%", "8%", "8%", "10%", "26%", "10%", "10%", "10%", "3%"]
+                    ? [
+                      "6%",
+                      "5%",
+                      "5%",
+                      "7%",
+                      "7%",
+                      "8%",
+                      "8%",
+                      "3%",
+                      "20%",
+                      "7%",
+                      "7%",
+                      "7%",
+                      "5%",
+                      "5%",
+                    ]
+                    : documentType === DOCUMENT_TYPE.purchaseInvoice ||
+                      documentType === DOCUMENT_TYPE.purchaseInvoiceRefund
+                      ? [
+                        "7%",
+                        "15%",
+                        "10%",
+                        "13%",
+                        "10%",
+                        "10%",
+                        "10%",
+                        "10%",
+                        "10%",
+                        "5%",
+                      ]
+                      : [
+                        "7%",
+                        "8%",
+                        "8%",
+                        "8%",
+                        "10%",
+                        "26%",
+                        "10%",
+                        "10%",
+                        "10%",
+                        "3%",
+                      ]
               }
             />
           </div>
@@ -498,12 +640,14 @@ const QuotesListPageWidget = ({
           logsTableRows={documentLogsData}
         />
       </GoMakeModal>
-      {!isFromHomePage && <AddRuleModal
-        openModal={openAddRule}
-        onCloseModal={onCloseAddRuleModal}
-        isQuoteWidge={true}
-        filterData={filterData}
-      />}
+      {!isFromHomePage && (
+        <AddRuleModal
+          openModal={openAddRule}
+          onCloseModal={onCloseAddRuleModal}
+          isQuoteWidge={true}
+          filterData={filterData}
+        />
+      )}
       <GoMakeDeleteModal
         icon={
           <WarningAmberIcon style={{ width: 60, height: 60, color: "red" }} />
@@ -539,7 +683,9 @@ const QuotesListPageWidget = ({
         openModal={openCloseOrderModal}
         onClose={onClickCloseCloseOrderModal}
         subTitle={`${t("sales.quote.subTitleCloseModal", {
-          documentName: t(`sales.quote.${DOCUMENT_TYPE[documentType]}`).toLowerCase(),
+          documentName: t(
+            `sales.quote.${DOCUMENT_TYPE[documentType]}`
+          ).toLowerCase(),
         })}?`}
         onClickDelete={() => ManuallyCloseDocument(selectedDocument)}
         style={{ width: "35%" }}
@@ -597,15 +743,16 @@ const QuotesListPageWidget = ({
         getAllQuotes={getAllQuotes}
       />
       <GoMakeDeleteModal
-        icon={<WarningAmberIcon style={{ width: 60, height: 60, color: "red" }} />}
+        icon={
+          <WarningAmberIcon style={{ width: 60, height: 60, color: "red" }} />
+        }
         title={t("sales.closeAndTrackTitle")}
         yesBtn={t("sales.quote.yesBtn")}
         openModal={openCloseAndTrackOrderModal}
         onClose={onClickCloseTrackModal}
         onClickDelete={closeAndTrackOrder}
         style={{ width: "35%" }}
-      >
-      </GoMakeDeleteModal>
+      ></GoMakeDeleteModal>
       <GoMakeDeleteModal
         title={`Do you want to print the delivery note with prices ?`}
         openModal={openPrintPDFModal}
@@ -613,8 +760,12 @@ const QuotesListPageWidget = ({
         cancelBtn={t("sales.quote.noBtn")}
         onClose={onClickClosePrintPDFModal}
         hideIcon
-        onClickDelete={() => { onClickQuotePdf(selectedDocument?.id, true) }}
-        onClickCancel={() => { onClickQuotePdf(selectedDocument?.id, false) }}
+        onClickDelete={() => {
+          onClickQuotePdf(selectedDocument?.id, true);
+        }}
+        onClickCancel={() => {
+          onClickQuotePdf(selectedDocument?.id, false);
+        }}
       />
       <GoMakeDeleteModal
         icon={<WarningAmberIcon style={classes.cancelIconStyle} />}

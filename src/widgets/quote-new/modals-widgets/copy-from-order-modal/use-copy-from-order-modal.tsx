@@ -316,7 +316,8 @@ const useCopyFromOrderModal = ({ onClose, documentType, openModal, cliendDocumen
     buttonLabel,
     setShowReadyOnly,
     showReadyOnly,
-    isCopyFromOrder
+    isCopyFromOrder,
+    setDocumentItems
   };
 };
 

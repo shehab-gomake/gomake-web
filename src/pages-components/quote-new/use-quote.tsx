@@ -32,6 +32,7 @@ import {
   rejectDocumentApi,
   saveDocumentApi,
   sendDocumentToClientApi,
+  sortDocumentItemsApi,
   updateAgentApi,
   updateDiscountTypeApi,
   updateDocuementItemSelectApi,
@@ -245,9 +246,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
   };
   const tableHeaders = [
     "#",
-    (isDeliveryNote || isInvoice) && !router.query.isNewCreation
-      ? t("products.profits.documentNumber")
-      : null,
+    isDeliveryNote || isInvoice ? t("products.profits.documentNumber") : null,
     t("sales.quote.itemCode"),
     t("products.profits.itemName"),
     isQuoteConfirmation
@@ -255,8 +254,8 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
         ? t("products.profits.details")
         : null
       : quoteItemValue?.isShowDetails
-      ? t("products.profits.details")
-      : null,
+        ? t("products.profits.details")
+        : null,
     t("sales.quote.amount"),
     t("products.profits.pricingListWidget.unitPrice"),
     t("sales.quote.discount"),
@@ -1657,7 +1656,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
         alertFaultUpdate();
       }
     };
-    await updateDiscountTypeApi(callApi, callBack, {
+    await sortDocumentItemsApi(callApi, callBack, {
       documentType: docType,
       document: {
         documentId: quoteItemValue?.id,

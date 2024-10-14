@@ -167,7 +167,7 @@ const useCustomerCard = ({ t, customer, setCustomer, onClose, setOpenOfferModal,
     };
 
     // Check if email is valid
-    if(filteredUsers && filteredUsers?.length > 0){
+    if (filteredUsers && filteredUsers?.length > 0) {
       const areEmailsValid = filteredUsers?.every(user => validateEmail(user, "email"));
       if (!areEmailsValid) {
         alertFault("customers.invalidEmail");
@@ -175,12 +175,12 @@ const useCustomerCard = ({ t, customer, setCustomer, onClose, setOpenOfferModal,
       }
 
     }
-    
-    const isEmailValid = validateEmail(customer, "mail");
-    if (!isEmailValid) {
-      alertFault("customers.invalidEmail");
-      return;
-    }
+
+    // const isEmailValid = validateEmail(customer, "mail");
+    // if (!isEmailValid &&) {
+    //   alertFault("customers.invalidEmail");
+    //   return;
+    // }
     setCustomer(updatedCustomer);
     if (
       isValidCustomer(

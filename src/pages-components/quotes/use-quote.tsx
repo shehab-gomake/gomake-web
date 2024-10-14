@@ -24,10 +24,12 @@ import {
   closeAndTrackOrderApi,
   createNewDocumentApi,
   duplicateDocumentApi,
+  ExportDocumentTableToExcelApi,
   getAllDocumentLogsApi,
   getAllDocumentsApi,
   getDocumentPdfApi,
   manuallyCloseDocumentApi,
+  OpenCanceledDocumentApi,
   OpenDocumentApi,
   updateDocumentApi,
 } from "@/services/api-service/generic-doc/documents-api";
@@ -55,6 +57,20 @@ import {
 } from "./widgets/send-payment-modal/states";
 import { sendDocumentToClientForPaymentApi } from "@/services/api-service/pay/pay-api";
 import { useRouter } from "next/router";
+import { useQuoteWidget } from "../admin/home/widgets/quote-widget/use-quote-widget";
+interface Query {
+  customerId?: string;
+  agentId?: string;
+  statusId?: string;
+  approvalStatusId?: string;
+  minPrice?: string;
+  maxPrice?: string;
+  fromDate?: string;
+  toDate?: string;
+  accountingStatus?: string;
+  productionStatus?: string;
+  isCanceled?: boolean;
+}
 
 const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const { t } = useTranslation();
@@ -80,7 +96,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const [isCanceledState, setIsCanceledState] = useState(null);
   const [dateRange, setDateRange] = useState<any>();
   const [agentId, setAgentId] = useState<any>();
-  const [canOrder, setCanOrder] = useState(false);
   const [allQuotes, setAllQuotes] = useState();
   const [customersListCreateQuote, setCustomersListCreateQuote] = useState([]);
   const [customersListCreateOrder, setCustomersListCreateOrder] = useState([]);
@@ -111,7 +126,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const isReceipt = docType === DOCUMENT_TYPE.receipt;
   const { CheckPermission } = useUserPermission();
   const { query, pathname } = useRouter();
+  const router = useRouter();
   const { quoteNumber } = query;
+  const { renderOptions, checkWhatRenderArray } = useQuoteWidget();
   const [accountingStatus, setAccountingStatus] = useState<{
     label: string;
     value: PStatus;
@@ -216,12 +233,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     await getAndSetEmployees2(callApi, callBack, { isAgent: isAgent });
   };
 
-  const renderOptions = () => {
-    if (!!canOrder) {
-      return customersListCreateOrder;
-    } else return customersListCreateQuote;
-  };
-
   const getAllCustomersCreateQuote = useCallback(async (SearchTerm?) => {
     await getAndSetAllCustomers(callApi, setCustomersListCreateQuote, {
       clientType: "C",
@@ -230,25 +241,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       isOccasionalCustomer: true,
     });
   }, []);
-
-  const getAllCustomersCreateOrder = useCallback(async (SearchTerm?) => {
-    await getAndSetAllCustomers(callApi, setCustomersListCreateOrder, {
-      clientType: "C",
-      onlyCreateOrderClients: true,
-      searchTerm: SearchTerm,
-      isOccasionalCustomer: true,
-    });
-  }, []);
-
-  const checkWhatRenderArray = (e) => {
-    if (e.target.value) {
-      setCanOrder(true);
-      getAllCustomersCreateOrder(e.target.value);
-    } else {
-      setCanOrder(false);
-      getAllCustomersCreateQuote(e.target.value);
-    }
-  };
 
   const onClickDocumentLogs = async (document: any) => {
     try {
@@ -287,6 +279,47 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   };
 
   const isOrdersTracking = pathname === "/ordersTracking";
+
+  const ExportDocumentTableToExcel = async () => {
+    const callBack = (res) => {
+      if (res?.success) {
+        const downloadLink = document.createElement("a");
+        if (typeof res.data === "string") {
+          downloadLink.href = res.data;
+        } else {
+          const link = URL.createObjectURL(res.data);
+          downloadLink.href = link;
+        }
+        downloadLink.download = "table.xlsx";
+        downloadLink.click();
+      } else {
+      }
+    };
+    await ExportDocumentTableToExcelApi(callApi, callBack, {
+      documentType: docType,
+      data: {
+        model: {
+          pageNumber: page,
+          pageSize: pageSize,
+        },
+        statusId: quoteStatusId?.value || statusId?.value,
+        approvalStatus: approvalStatusId?.value,
+        closeStatus: accountingStatus?.value,
+        productionStatus: productionStatus?.value,
+        patternSearch: finalPatternSearch,
+        customerId: customerId?.id,
+        dateRange,
+        agentId: agentId?.id,
+        minPrice: minPrice,
+        maxPrice: maxPrice,
+        productList: productIds,
+        isCanceled: isCanceledState,
+        isOrderInTracking: isOrdersTracking,
+        fromDate: fromDate && GetDateFormat(fromDate),
+        toDate: toDate && GetDateFormat(toDate),
+      },
+    });
+  };
 
   const getAllQuotes = useCallback(async () => {
     const callBack = (res) => {
@@ -577,17 +610,50 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         setAllStatistics(res?.data?.documentStatisticsList);
       }
     };
+    const currentStatusId = router.query.statusId;
+    const currentFinalPatternSearch = router.query.finalPatternSearch;
+    const currentCustomerId = router.query.customerId;
+    const currentAgentId = router.query.agentId;
+    const currentApprovalStatusId = router.query.approvalStatusId;
+    const currentMinPrice = router.query.minPrice;
+    const currentMaxPrice = router.query.maxPrice;
+    const currentFromDate = router.query.fromDate
+      ? new Date(
+          Array.isArray(router.query.fromDate)
+            ? router.query.fromDate[0]
+            : router.query.fromDate
+        )
+      : null;
+    const currentToDate = router.query.toDate
+      ? new Date(
+          Array.isArray(router.query.toDate)
+            ? router.query.toDate[0]
+            : router.query.toDate
+        )
+      : null;
+    const currentAccountingStatus = router.query.accountingStatus
+      ? accountingStatuses.find(
+          (status) => status.value === Number(router.query.accountingStatus)
+        )
+      : null;
+    const currentProductionStatus = router.query.productionStatus
+      ? productionStatuses.find(
+          (status) => status.value === Number(router.query.productionStatus)
+        )
+      : null;
+    const currentIsCanceled = router.query.isCanceled;
+
     if (isReceipt) {
       await getAllReceiptsApi(callApi, callBack, {
-        clientId: customerId?.id,
-        agentId: agentId?.id,
-        patternSearch: finalPatternSearch,
-        fromDate: fromDate && GetDateFormat(fromDate),
-        toDate: toDate && GetDateFormat(toDate),
-        status: statusId?.value,
-        isCanceled: isCanceledState,
-        minPrice: minPrice,
-        maxPrice: maxPrice,
+        clientId: currentCustomerId || customerId?.id,
+        agentId: currentAgentId || agentId?.id,
+        patternSearch: finalPatternSearch || currentFinalPatternSearch,
+        fromDate: currentFromDate && GetDateFormat(currentFromDate),
+        toDate: currentToDate && GetDateFormat(currentToDate),
+        status: currentStatusId || statusId?.value,
+        isCanceled: currentIsCanceled || isCanceledState,
+        minPrice: currentMinPrice || minPrice,
+        maxPrice: currentMaxPrice || maxPrice,
         model: {
           pageNumber: page,
           pageSize: pageSize,
@@ -601,21 +667,23 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             pageNumber: page,
             pageSize: pageSize,
           },
-          statusId: quoteStatusId?.value || statusId?.value,
-          approvalStatus: approvalStatusId?.value,
-          closeStatus: accountingStatus?.value,
-          productionStatus: productionStatus?.value,
-          patternSearch: finalPatternSearch,
-          customerId: customerId?.id,
+          statusId: quoteStatusId?.value || currentStatusId || statusId?.value,
+          approvalStatus: currentApprovalStatusId || approvalStatusId?.value,
+          closeStatus:
+            currentAccountingStatus?.value || accountingStatus?.value,
+          productionStatus:
+            currentProductionStatus?.value || productionStatus?.value,
+          patternSearch: finalPatternSearch || currentFinalPatternSearch,
+          customerId: currentCustomerId || customerId?.id,
           dateRange,
-          agentId: agentId?.id,
-          minPrice: minPrice,
-          maxPrice: maxPrice,
+          agentId: currentAgentId || agentId?.id,
+          minPrice: currentMinPrice || minPrice,
+          maxPrice: currentMaxPrice || maxPrice,
           productList: productIds,
-          isCanceled: isCanceledState,
+          isCanceled: currentIsCanceled || isCanceledState,
           isOrderInTracking: isOrdersTracking,
-          fromDate: fromDate && GetDateFormat(fromDate),
-          toDate: toDate && GetDateFormat(toDate),
+          fromDate: currentFromDate && GetDateFormat(currentFromDate),
+          toDate: currentToDate && GetDateFormat(currentToDate),
         },
       });
     }
@@ -953,11 +1021,31 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   };
 
   const onClickSearchFilter = () => {
+    const query: Query = {};
+    if (customerId?.id) query.customerId = customerId.id;
+    if (agentId?.id) query.agentId = agentId.id;
+    if (statusId?.value) query.statusId = statusId.value;
+    if (approvalStatusId?.value)
+      query.approvalStatusId = approvalStatusId.value;
+    if (minPrice) query.minPrice = minPrice;
+    if (maxPrice) query.maxPrice = maxPrice;
+    if (fromDate) query.fromDate = fromDate.toISOString();
+    if (toDate) query.toDate = toDate.toISOString();
+    if (accountingStatus)
+      query.accountingStatus = accountingStatus.value.toString();
+    if (productionStatus)
+      query.productionStatus = productionStatus.value.toString();
+    query.isCanceled = isCanceledState;
+
     handleClose();
     setPage(1);
     if (statusId !== null && statusId !== undefined) {
       handleSecondCardClick();
     }
+    router.push({
+      pathname: router.pathname,
+      query: { ...router.query, ...query },
+    });
     getAllQuotes();
   };
 
@@ -979,6 +1067,14 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     setMinPrice("");
     setMaxPrice("");
     setProductIds([]);
+    setFinalPatternSearch("");
+    setPatternSearch("");
+
+    const query = {};
+    router.push({
+      pathname: router.pathname,
+      query: query,
+    });
   };
 
   const tableHeaders =
@@ -1497,7 +1593,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     if (!isFromHomePage) {
       getAllQuotes();
     }
-  }, [page, quoteStatusId, pageSize, finalPatternSearch, quoteNumber, query]);
+  }, [page, quoteStatusId, pageSize, finalPatternSearch, quoteNumber, router]);
 
   useEffect(() => {
     setFinalPatternSearch(debounce);
@@ -1714,10 +1810,18 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         alertFaultUpdate();
       }
     };
-    await OpenDocumentApi(callApi, callBack, {
-      documentType: docType,
-      documentId: document?.id,
-    });
+
+    if (document?.statusTitleText === "Order.Canceled") {
+      await OpenCanceledDocumentApi(callApi, callBack, {
+        documentType: docType,
+        data: { documentId: document?.id },
+      });
+    } else {
+      await OpenDocumentApi(callApi, callBack, {
+        documentType: docType,
+        documentId: document?.id,
+      });
+    }
   };
 
   const [showCustomerModal, setShowCustomerModal] = useState(false);
@@ -1907,6 +2011,60 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     });
   };
 
+  useEffect(() => {
+    // Read URL parameters and set state accordingly
+    const {
+      customerId,
+      agentId,
+      statusId,
+      approvalStatusId,
+      minPrice,
+      maxPrice,
+      fromDate,
+      toDate,
+      finalPatternSearch,
+      accountingStatus,
+      productionStatus,
+      isCanceled,
+    } = router.query;
+    if (customerId) setCustomerId({ id: customerId });
+    if (agentId) setAgentId({ id: agentId });
+    if (statusId) setStatusId({ value: statusId });
+    if (approvalStatusId) setApprovalStatusId({ value: approvalStatusId });
+    if (typeof minPrice === "string") setMinPrice(minPrice);
+    if (typeof maxPrice === "string") setMaxPrice(maxPrice);
+    if (fromDate && typeof fromDate === "string")
+      setFromDate(new Date(fromDate));
+    if (toDate && typeof toDate === "string") setToDate(new Date(toDate));
+    if (finalPatternSearch && typeof finalPatternSearch === "string")
+      setPatternSearch(finalPatternSearch);
+    if (finalPatternSearch && typeof finalPatternSearch === "string")
+      setFinalPatternSearch(finalPatternSearch);
+    if (accountingStatus) {
+      const statusToSet = accountingStatuses.find(
+        (status) => status.value === Number(accountingStatus)
+      );
+      if (statusToSet) {
+        setAccountingStatus(
+          statusToSet as unknown as { label: string; value: PStatus }
+        ); // Cast to unknown first
+      }
+    }
+    if (productionStatus) {
+      const productionStatusToSet = productionStatuses.find(
+        (status) => status.value === Number(productionStatus)
+      );
+      if (productionStatusToSet) {
+        setProductionStatus(
+          productionStatusToSet as unknown as { label: string; value: PStatus }
+        );
+      }
+    }
+    if (isCanceled) {
+      setIsCanceledState(isCanceledState);
+    }
+  }, [router]);
+
   return {
     showCustomerModal,
     customerForEdit,
@@ -2028,6 +2186,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     onClickCancelReceipt,
     openCancelReceiptModalRefund,
     onCloseCancelReceiptModalRefund,
+    ExportDocumentTableToExcel,
   };
 };
 

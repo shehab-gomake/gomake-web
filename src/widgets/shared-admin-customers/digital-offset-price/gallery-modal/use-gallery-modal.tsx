@@ -340,7 +340,7 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
 
 
   useEffect(() => {
-    if (template && addChargeForNewDieParameter?.length > 0) {
+    if (template && !isParameterSettings && addChargeForNewDieParameter?.length > 0) {
       const SectionId = getSectionById(template, addChargeForNewDieParameter[0]?.sectionId);
       const subSectionId = getSubSectionById(template, addChargeForNewDieParameter[0]?.sectionId, addChargeForNewDieParameter[0]?.subSectionId);
       const value = _getParameter(addChargeForNewDieParameter[0], subSectionId, SectionId);

@@ -135,6 +135,14 @@ const useStyle = () => {
         color: primaryColor(9800),
         minWidth: 'fit-content' as 'fit-content',
       },
+      skeletonheaderTable:{
+        display: 'flex',
+        flexDirection: "row" as "row",
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        width: '100%',
+        marginTop:20
+      }
     };
   }, [t]);
   return {

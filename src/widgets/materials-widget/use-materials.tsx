@@ -241,6 +241,7 @@ const useMaterials = (isAdmin: boolean) => {
         onChange={(event, checked) => onChangeHeaderCheckBox(checked)}
         checked={isAllSelected()}
       />,
+      // t("login.code"),
       ...(isAdmin ? materialHeaders.filter(x => x.key !== "stock") : materialHeaders.filter((header) => !header.isForAdmin)
       ).map((header) =>
         header.unit ? (
@@ -293,6 +294,7 @@ const useMaterials = (isAdmin: boolean) => {
           onChange={(e, checked) => onChangeRowCheckBox(dataRow.id, checked)}
           checked={dataRow.checked}
         />,
+        // dataRow?.code,
         ...filteredHeaders.map((header) => (
           <TableCellData
             {...dataRow.rowData[header.key]}
