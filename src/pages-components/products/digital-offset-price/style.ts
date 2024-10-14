@@ -228,7 +228,7 @@ const useStyle = () => {
         gap: 10,
         width: "100%",
         minWidth: 220,
-        maxWidth: 220,
+        // maxWidth: 220,
       },
       parameterRowContainer: {
         display: "flex",
@@ -283,14 +283,26 @@ const useStyle = () => {
         width: "100%",
         padding: "8px 16px", 
         borderRadius: "4px",
-        boxShadow: "0px 1px 10px rgba(0, 0, 0, 0.08)",
         backgroundColor:  "#fff", 
         color: "inherit", 
+        display: "flex",
+        // boxShadow: "0px 1px 10px rgba(0, 0, 0, 0.08)",
+      },
+      clientTypographyStyle: {
+        height: 40,
+        border: "0px",
+        ...FONT_FAMILY.Lexend(500, 14),
+        width: "100%",
+        padding: "8px 16px", 
+        borderRadius: "4px",
+        backgroundColor:  "#fff", 
+        color: "inherit", 
+        boxShadow: "0px 1px 10px rgba(0, 0, 0, 0.08)",
       },
       renderParameterTypeContainer: {
         display: "flex",
         width: "100%",
-        maxWidth: "220px",
+        // maxWidth: "220px",
         borderRadius: 4,
       },
 
@@ -718,6 +730,7 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "center",
         gap: 4,
+        // minWidth:250
       },
       duplicateSubSectionBtn: {
         backgroundColor: "#FFFF",

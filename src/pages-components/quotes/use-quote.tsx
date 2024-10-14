@@ -60,6 +60,7 @@ import { useRouter } from "next/router";
 import { useQuoteWidget } from "../admin/home/widgets/quote-widget/use-quote-widget";
 interface Query {
   customerId?: string;
+  customerName?: string;
   agentId?: string;
   statusId?: string;
   approvalStatusId?: string;
@@ -614,6 +615,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     const currentStatusId = router.query.statusId;
     const currentFinalPatternSearch = router.query.finalPatternSearch;
     const currentCustomerId = router.query.customerId;
+    const currentCustomerName = router.query.customerName;
     const currentAgentId = router.query.agentId;
     const currentApprovalStatusId = router.query.approvalStatusId;
     const currentMinPrice = router.query.minPrice;
@@ -1022,8 +1024,10 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   };
 
   const onClickSearchFilter = () => {
+    console.log("customerId", customerId);
     const query: Query = {};
     if (customerId?.id) query.customerId = customerId.id;
+    if (customerId?.name) query.customerName = customerId.name;
     if (agentId?.id) query.agentId = agentId.id;
     if (statusId?.value) query.statusId = statusId.value;
     if (approvalStatusId?.value)
@@ -1625,7 +1629,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       });
       return;
     }
-
     router.push({
       pathname: router.pathname,
       query: {
@@ -2050,6 +2053,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   useEffect(() => {
     const {
       customerId,
+      customerName,
       agentId,
       statusId,
       approvalStatusId,
@@ -2064,10 +2068,10 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       pageNumber,
     } = router.query;
     if (customerId) {
-      const customerIdSelect = renderOptions().find(
-        (c1) => c1.id === customerId
-      );
-      setCustomerId(customerIdSelect);
+      // const customerIdSelect = renderOptions().find(
+      //   (c1) => c1.id === customerId
+      // );
+      setCustomerId({ id: customerId, name: customerName });
     }
     if (agentId) {
       const selectedAgent = agentsCategories?.find(

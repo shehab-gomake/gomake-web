@@ -13,7 +13,7 @@ const DocumentDesignSetting = () => {
     const documentTypeText = useRecoilValue(documentDesignTypeTextState);
     return (
         <div style={classes.mainContainer}>
-            <DocumentDesign/>
+            <DocumentDesign />
             <div style={classes.documentContainerStyle}>
                 <span style={classes.subTitleStyleDocumentType} >{t("documentingDesign.IframeDocument.Document") + "-" + t(`${documentTypeText}`)}</span>
                 <IframeDocumentDesign src={`${documentDesignURL}`} />

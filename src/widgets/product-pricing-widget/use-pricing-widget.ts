@@ -21,7 +21,6 @@ const usePricingWidget = ({ getOutSourcingSuppliers, workFlows , widgetType}) =>
   const { t } = useTranslation();
   const selectedWorkFlow = useRecoilValue(selectedWorkFlowState);
   const productItemValueByEdit = useRecoilValue<any>(productItemValueByEditState)
-  const [foldOptions,setFoldOptions]=useRecoilState(foldOptionsState)
 
   const [pageSize, setPageSize] = useState(10)
   const [heightScrolling, setHeightScrolling] = useState(50)
@@ -223,18 +222,6 @@ const usePricingWidget = ({ getOutSourcingSuppliers, workFlows , widgetType}) =>
 
 
 
-  const getAllFoldOptionsApi= ()=>{
-    const callBack = (res) => {
-        if (res.success) {
-            setFoldOptions(res?.data);
-        }
-      };
-      getAllFoldOptions(callApi, callBack).then();
-  }
-
-  useEffect(()=>{
-    getAllFoldOptionsApi()
-  },[])
 
   return {
     view,

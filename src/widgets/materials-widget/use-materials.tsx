@@ -137,7 +137,7 @@ const useMaterials = (isAdmin: boolean) => {
     const path = isAdmin ? "/materials-admin" : "/materials";
     push(path + `/${materialType}?materialCategory=${category}`);
     setFlagState(false);
-    setActiveFilter(EMaterialActiveFilter.ACTIVE);
+    // setActiveFilter(EMaterialActiveFilter.ACTIVE);
     setIsAllMaterialsChecked(false)
     setMaterialFilter([])
   };
@@ -277,6 +277,7 @@ const useMaterials = (isAdmin: boolean) => {
           header.value
         )
       ),
+      t("usersSettings.isActive"),
       t("properties.more"),
     ];
   }, [materialHeaders, materialCategoryData]);
@@ -312,6 +313,7 @@ const useMaterials = (isAdmin: boolean) => {
 
   const tableRowsNew = useMemo(() => {
     return materialCategoryData.map((dataRow) => {
+      console.log("dataRow", dataRow)
       const filteredHeaders = isAdmin
         ? materialHeaders.filter((x) => x.key !== "stock")
         : materialHeaders.filter((header) => !header.isForAdmin);
@@ -330,6 +332,9 @@ const useMaterials = (isAdmin: boolean) => {
             onChangeRowCheckBox={onChangeRowCheckBox}
           />
         )),
+
+
+        dataRow?.isActive ? t("usersSettings.active") : t("usersSettings.inactive"),
         <MaterialMenuWidget
           dataRow={dataRow}
           isAdmin={isAdmin}
