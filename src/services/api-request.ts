@@ -3,9 +3,9 @@ import config from "@/config";
 import { getUserToken } from "./storage-data";
 import log from "@/utils/logger";
 import { addRequestToSession } from "@/utils/sessionManager";
-
 // import { clearStorage } from './storage'
 
+//!here
 const apiRequest = async (
   method = "GET",
   url: string,
@@ -31,7 +31,7 @@ const apiRequest = async (
         "project-name": "business-dashboard",
         ...(getUserToken() && { Authorization: "Bearer " + getUserToken() }),
         ...(data.customAuth && { "auth-token": data.customAuth }),
-        lang: "en" ,
+        lang: "en",
         domain: "",
       },
     };

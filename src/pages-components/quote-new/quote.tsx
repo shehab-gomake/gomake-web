@@ -26,7 +26,7 @@ import { CopyFromOrderModal } from "@/widgets/quote-new/modals-widgets/copy-from
 import { ReceiptsTable } from "@/widgets/quote-new/receipts-table";
 import { useRouter } from "next/router";
 import { usePaymentsTable } from "@/widgets/quote-new/receipts-table/use-payments-table";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { StepType } from "@reactour/tour";
 import { useGoMakeTour } from "@/hooks/use-go-make-tour";
 import { OtherReasonModal } from "@/widgets/quote-new/total-price-and-vat/other-reason-modal";
@@ -42,6 +42,7 @@ import { CreditCardPaySection } from "@/widgets/quote-confirmation-mobile/compon
 import moment from "moment";
 import { QuoteNewPageSkeletonWidget } from "./quote-skeleton";
 import { InvoiceCreationModal } from "@/widgets/quote-new/total-price-and-vat/invoice-creation-modal";
+import { useGomakeAxios } from "@/hooks";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -353,6 +354,25 @@ const QuoteNewPageWidget = ({
       </div>
     </div>
   );
+
+  //!here
+  const { callApi } = useGomakeAxios();
+  const getTempUserToken = useCallback(async () => {
+    const TokenRes: any = await callApi("GET", "/v1/auth/get-temp-user-token", {
+      token: router?.query?.token ?? "",
+    });
+
+    if (TokenRes?.success) {
+      const userToken = TokenRes?.data?.data?.result?.token;
+
+      return true;
+    }
+    return false;
+  }, []);
+
+  useEffect(() => {
+    getTempUserToken();
+  }, []);
 
   return (
     <>
