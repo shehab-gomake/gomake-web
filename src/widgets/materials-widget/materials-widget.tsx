@@ -29,6 +29,7 @@ import { StepType } from "@reactour/tour";
 import { useGoMakeTour } from "@/hooks/use-go-make-tour";
 import { Stack } from "@mui/material";
 import { useAllProductsDropDownList } from "@/hooks/use-products-drop-down-list";
+import { UpdatedNumburingModal } from "./components/updated-numbering/updated-numbering-modal";
 interface IMaterialsWidgetProps {
   isAdmin: boolean;
 }
@@ -272,6 +273,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
       <AddSupplierModal />
       <AddCategoryModal isAdmin={props.isAdmin} productList={productList} />
       <AddRowModal isAdmin={props.isAdmin} />
+      <UpdatedNumburingModal isAdmin={props.isAdmin} />
       <GoMakeDeleteModal
         openModal={openDeleteRowModal}
         onClose={onClickCloseDeleteRowModal}

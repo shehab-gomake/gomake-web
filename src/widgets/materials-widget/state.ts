@@ -111,6 +111,10 @@ export const openAddRowModalState = atom<boolean>({
   key: "openAddRowModalState",
   default: false,
 });
+export const openUpdatedNumburingModalState = atom<boolean>({
+  key: "openUpdatedNumburingModalState",
+  default: false,
+});
 
 export const materialsMachinesState = atom<[]>({
   key: "materialsMachinesState",
@@ -131,6 +135,12 @@ export const materialsTablePageState = atom<number>({
   key: "materialsTablePageState",
   default: 1,
 });
+
+export const categoryNumberingState = atom<{}>({
+  key: "categoryNumberingState",
+  default: {},
+});
+
 export const isAllMaterialsCheckedState = atom<boolean>({
     key: "isAllMaterialsCheckedState",
     default: false,

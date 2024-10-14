@@ -39,7 +39,25 @@ const AddRowModal = (props: IAddRowModalProps) => {
 
     const [openModal, setOpenModal] = useRecoilState<boolean>(openAddRowModalState);
     const materialHeaders = useRecoilValue<{ key: string, value: string, inputType: number, values: any[] }[]>(materialHeadersState);
+    const [materialHeadersWithSku, setMaterialHeadersWithSku] = useState([])
     const notebookTypesObj = materialHeaders?.find((item) => item.key === "notebookTypes")
+    useEffect(() => {
+        if (materialHeaders?.length > 0) {
+            setMaterialHeadersWithSku([{
+                "key": "sku",
+                "value": "SKU",
+                "unit": null,
+                "isFilter": false,
+                "isForAdmin": null,
+                "isHideInDuplicate": null,
+                "parameterId": null,
+                "inputType": 0,
+                "filterType": null,
+                "values": []
+            }, ...materialHeaders,])
+        }
+
+    }, [materialHeaders])
 
     const getParameterValuesById = async (data: any) => {
         const callBack = res => {
@@ -71,8 +89,9 @@ const AddRowModal = (props: IAddRowModalProps) => {
         >
             <Stack display={"flex"} direction={'column'} marginTop={"10px"} >
                 <Stack style={classes.inputsDivStyle}>
+
                     {
-                        rowInputs(rowData, materialHeaders, currencies, machinesCategories, clientsCategories).map(item => <Stack width={"47%"} ><FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} checkWhatRenderArray={checkWhatRenderArray} /></Stack>)
+                        rowInputs(rowData, materialHeadersWithSku, currencies, machinesCategories, clientsCategories).map(item => <Stack width={"47%"} ><FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} checkWhatRenderArray={checkWhatRenderArray} /></Stack>)
                     }
                 </Stack>
                 <SecondaryButton variant="contained" onClick={() => onAddCategoryRow(rowData)} style={classes.addBtnStyle}>{t("materials.buttons.add")}</SecondaryButton>

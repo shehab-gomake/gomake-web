@@ -9,7 +9,7 @@ import {
   materialCategoryDataState,
   materialHeadersState,
   materialsUnCheckedState,
-  openAddRowModalState, selectedMaterialIdForUpdateState,
+  openAddRowModalState, openUpdatedNumburingModalState, selectedMaterialIdForUpdateState,
   selectedSupplierIdState,
 } from "@/widgets/materials-widget/state";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -89,6 +89,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
   const { setSnackbarStateValue } = useSnackBar();
   const { t } = useTranslation();
   const setOpenAddRowModal = useSetRecoilState<boolean>(openAddRowModalState);
+  const setOpenUpdatedNumburingModal = useSetRecoilState<boolean>(openUpdatedNumburingModalState);
   const [selectedMaterialsIds, setSelectedMaterialsIds] = useState([]);
 
   useEffect(() => {
@@ -118,6 +119,10 @@ const useMaterialsActions = (isAdmin: boolean) => {
     setUpdatedValue("")
     if (action?.action === EMaterialsActions.AddNew) {
       setOpenAddRowModal(true);
+      return;
+    }
+    if (action?.action === EMaterialsActions.sku) {
+      setOpenUpdatedNumburingModal(true);
       return;
     }
     if (action?.action === EMaterialsActions.DownLoadExcel) {
@@ -359,9 +364,9 @@ const useMaterialsActions = (isAdmin: boolean) => {
         downloadLink.click();
       }
     };
-    if(isAdmin){
+    if (isAdmin) {
       await getMaterialExcelFileApi(callApi, callBack, materialType);
-    }else{
+    } else {
       await getPrintHouseMaterialExcelFileApi(callApi, callBack, materialType);
     }
   };
@@ -427,19 +432,19 @@ const useMaterialsActions = (isAdmin: boolean) => {
           });
 
         }
-        if(isAdmin){
+        if (isAdmin) {
           uploadMaterialExcelFileApi(callApi, callBack, {
             key: materialType.toString(),
             base64: base64String,
           });
-        }else{
+        } else {
           uploadPrintHouseMaterialExcelFileApi(callApi, callBack, {
             key: materialType.toString(),
-            supplierId:supplierId,
+            supplierId: supplierId,
             base64: base64String,
           });
         }
-        
+
       };
       reader.readAsArrayBuffer(file);
     }
