@@ -17,8 +17,8 @@ import { companyCommunicationInputs } from "./inputs/company-communication-input
 import {
   companyPrintNodeInputs
 } from "@/widgets/settings-profile-widget/components/profiles/inputs/company-print-node-inputs";
-import {printHouseUsePrintNode} from "@/store/print-house-profile";
-import {useRecoilValue} from "recoil";
+import { printHouseUsePrintNode } from "@/store/print-house-profile";
+import { useRecoilValue } from "recoil";
 import { FONT_FAMILY } from "@/utils/font-family";
 
 interface ICompanyProfileComponentProps {
@@ -70,23 +70,23 @@ const CompanyProfileComponent = ({
       title: "profileSettings.smsAndEmails",
     },
     isPrintHouseUsePrintNode
-        ? {
-          inputs: companyPrintNodeInputs(profile),
-          title: "profileSettings.printNode",
-        }
-        : null,
+      ? {
+        inputs: companyPrintNodeInputs(profile),
+        title: "profileSettings.printNode",
+      }
+      : null,
     ...(taxLoginUrl
       ? [
-          {
-            inputs: [],
-            title: "profileSettings.taxAuthority",
-          },
-        ]
+        {
+          inputs: [],
+          title: "profileSettings.taxAuthority",
+        },
+      ]
       : []),
   ].filter(Boolean);
 
   return (
-    <div style={{ paddingBottom: 2, paddingTop: "40px", position: "relative" }}>
+    <div style={{ paddingBottom: 2, paddingTop: "40px", position: "relative", height: "78vh", overflow: "auto" }} className="custom-scrollbar">
       <Stack direction={"row"} gap={"57px"}>
         <div>
           <ProfileAvatar

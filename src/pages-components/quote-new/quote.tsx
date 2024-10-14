@@ -243,6 +243,8 @@ const QuoteNewPageWidget = ({
     setIsUpdateDocumentTitle,
     isWhatsAppWeb,
     setIsWhatsAppWeb,
+    isShowSettingIcon,
+    isInvoice,
   } = useQuoteNew({
     docType: documentType,
     isQuoteConfirmation: isQuoteConfirmation,
@@ -300,10 +302,6 @@ const QuoteNewPageWidget = ({
   ];
 
   const {} = useGoMakeTour(quoteSteps, []);
-
-  const isInvoice =
-    documentType === DOCUMENT_TYPE.invoice ||
-    documentType === DOCUMENT_TYPE.invoiceRefund;
 
   useEffect(() => {
     if (isInvoice) {
@@ -407,12 +405,14 @@ const QuoteNewPageWidget = ({
                         </>
                       )}
                     </>
-                    <IconButton
-                      style={{ marginRight: 4 }}
-                      onClick={handleSettingMenuClick}
-                    >
-                      <SettingNewIcon />
-                    </IconButton>
+                    {isShowSettingIcon && (
+                      <IconButton
+                        style={{ marginRight: 4 }}
+                        onClick={handleSettingMenuClick}
+                      >
+                        <SettingNewIcon />
+                      </IconButton>
+                    )}
                   </div>
                 )}
               </div>

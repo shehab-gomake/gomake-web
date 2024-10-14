@@ -11,7 +11,7 @@ import { PrimaryButton } from "@/components/button/primary-button";
 import { useRouter } from "next/router";
 import {
     getUnreadNotificationsApi,
-    markAllNotificationsAsReadApi
+    markAllNotificationsAsReadApi, markNotificationAsReadByIdApi
 } from "@/services/api-service/system-notifications/system-notifications-endpoints";
 import {
     NotificationMessageComponent
@@ -55,6 +55,15 @@ const SystemNotifications = () => {
         await markAllNotificationsAsReadApi(callApi, callBack);
     }
 
+    const markNotificationAsRead = async (id: string) => {
+        const callBack = res => {
+            if (res.success) {
+                setNotifications(prev => prev.filter(notification => notification.id != id))
+            }
+        }
+        await markNotificationAsReadByIdApi(callApi, callBack, id)
+    }
+
     useEffect(() => {
         getNotifications().then();
     }, [pathname])
@@ -84,7 +93,7 @@ const SystemNotifications = () => {
                     <Stack gap={'10px'}>
                         {
                             notifications?.map(notification => <Stack gap={'10px'}>
-                                <Stack direction={'row'} alignItems={'center'}
+                                <Stack style={{cursor: 'pointer'}} onClick={()=> markNotificationAsRead(notification.id)} direction={'row'} alignItems={'center'}
                                     gap={'10px'}>
                                     <div style={{
                                         borderRadius: '50%',

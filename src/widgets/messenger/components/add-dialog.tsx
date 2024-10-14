@@ -211,7 +211,7 @@ const AddDialog = ({ onAddDialog, onCloseModal, openModal }: IProps) => {
       <GoMakeModal
         insideStyle={{ width: "600px", height: "fit-content" }}
         openModal={openModal}
-        onClose={onCloseModal}
+        onClose={onCloseAddDialogModal}
         modalTitle={t("messenger.addDialogModalTitle")}
       >
         <Stack gap={"25px"}>
