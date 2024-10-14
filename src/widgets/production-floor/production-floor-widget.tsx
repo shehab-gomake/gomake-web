@@ -26,8 +26,13 @@ const ProductionFloorWidget = () => {
   const { query, replace, pathname } = useRouter();
   const { connectionId, closeConnection } = useProductionFloorSignalr();
   const { groupsId, boardMissionsId, step, productType } = query;
-  const { filterGroups, setFilterGroups, getStationFilterGroups } =
-    useProductionFloorData();
+
+  const {
+    filterGroups,
+    setFilterGroups,
+    getStationFilterGroups,
+    updateStatus,
+  } = useProductionFloorData();
 
   useEffect(() => {
     getStationFilterGroups();
@@ -81,6 +86,7 @@ const ProductionFloorWidget = () => {
         )}
         <QrListenerWidget listening={!boardMissionsId} />
       </Stack>
+      {/* here */}
       <Drawer
         sx={{ zIndex: 999999 }}
         open={openBoardMissionsDrawer}
@@ -96,6 +102,7 @@ const ProductionFloorWidget = () => {
         >
           <IconButton
             onClick={() => {
+              setOpenBoardMissionsDarawer(false);
               replace("/production-floor", undefined, { shallow: true }).then();
             }}
             sx={{
@@ -112,6 +119,7 @@ const ProductionFloorWidget = () => {
           </IconButton>
           {openBoardMissionsDrawer && (
             <BoardMissionsComponent
+              updateStatus={updateStatus}
               connectionId={connectionId}
               productType={!!productType ? productType.toString() : ""}
               step={step?.toString()}
