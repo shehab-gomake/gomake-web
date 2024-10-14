@@ -5,17 +5,44 @@ import { useRecoilState, } from "recoil";
 import { categoryNumberingState, openUpdatedNumburingModalState } from "../../state";
 import { useStyle } from "./style";
 import { SecondaryButton } from "@/components/button/secondary-button";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useGomakeAxios, useSnackBar } from "@/hooks";
+import { updateMaterialCategoryNumberingApi } from "@/services/api-service/materials/materials-endpoints";
 interface IAddRowModalProps {
     isAdmin: boolean;
 }
 const UpdatedNumburingModal = (props: IAddRowModalProps) => {
     const { t } = useTranslation();
     const { classes } = useStyle()
+    const { alertFaultUpdate, alertSuccessUpdate } = useSnackBar();
+    const { callApi } = useGomakeAxios();
     const [openModal, setOpenModal] = useRecoilState<boolean>(openUpdatedNumburingModalState);
     const [categoryNumbering, setCategoryNumbering] = useRecoilState<any>(categoryNumberingState);
     const [value, setValue] = useState(categoryNumbering?.value)
     const [prefix, setPrefix] = useState(categoryNumbering?.prefix)
+    useEffect(() => {
+        if (categoryNumbering) {
+            setValue(categoryNumbering?.value)
+            setPrefix(categoryNumbering?.prefix)
+        }
+    }, [categoryNumbering])
+
+    const updateMaterialCategoryNumbering = async () => {
+        const callBack = res => {
+            if (res.success) {
+                alertSuccessUpdate()
+            } else {
+                alertFaultUpdate()
+
+            }
+        }
+        await updateMaterialCategoryNumberingApi(callApi, callBack, {
+            value,
+            prefix,
+            categoryKey: categoryNumbering?.categoryKey,
+            materialTypeKey: categoryNumbering?.materialTypeKey
+        });
+    };
     return (
         <GoMakeModal
             insideStyle={classes.insideStyle}
@@ -48,7 +75,7 @@ const UpdatedNumburingModal = (props: IAddRowModalProps) => {
                     />
                 </div>
                 <SecondaryButton
-                    onClick={() => console.log("dsfds", { value, prefix })}
+                    onClick={updateMaterialCategoryNumbering}
                     sx={{ width: "100%" }}
                     variant={"contained"}
                 >
