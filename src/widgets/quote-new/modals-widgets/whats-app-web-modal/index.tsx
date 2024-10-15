@@ -9,6 +9,7 @@ import {
 } from "@/components";
 
 import { useStyle } from "./style";
+import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 
 const WhatsAppWebModal = ({
   openModal,
@@ -17,6 +18,8 @@ const WhatsAppWebModal = ({
   getWhatsAppMessage,
   whatsappMassage,
   isWhatsAppWeb,
+  getWhatsAppMessageForReceipt,
+  documentType
 }) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
@@ -25,7 +28,13 @@ const WhatsAppWebModal = ({
 
   useEffect(() => {
     if (openModal) {
-      getWhatsAppMessage();
+      if (documentType === DOCUMENT_TYPE.receipt) {
+        getWhatsAppMessageForReceipt()
+      }
+      else {
+        getWhatsAppMessage();
+
+      }
     }
   }, [openModal]);
 
@@ -33,11 +42,11 @@ const WhatsAppWebModal = ({
     if (whatsappMassage && whatsappMassage.trim()) {
       const url = isWhatsAppWeb
         ? `https://web.whatsapp.com/send?phone=${phoneNumber}&text=${encodeURIComponent(
-            whatsappMassage
-          )}`
+          whatsappMassage
+        )}`
         : `whatsapp://send?phone=${phoneNumber}&text=${encodeURIComponent(
-            whatsappMassage
-          )}`;
+          whatsappMassage
+        )}`;
 
       window.open(url, "_blank");
     }

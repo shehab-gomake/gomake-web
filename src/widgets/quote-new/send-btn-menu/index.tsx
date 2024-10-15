@@ -2,6 +2,7 @@ import React from "react";
 import { GoMakeMenu } from "@/components";
 import { MenuItem } from "@mui/material";
 import { useTranslation } from "react-i18next";
+import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 
 const SendBtnMenu = ({
   handleClose,
@@ -11,6 +12,8 @@ const SendBtnMenu = ({
   onClickOpenWhatsAppModal,
   documentState,
   setIsWhatsAppWeb,
+  documentType,
+  onClickSendReceiptToClient
 }) => {
   const { t } = useTranslation();
 
@@ -30,7 +33,12 @@ const SendBtnMenu = ({
       {documentState.isSendMails && (
         <MenuItem
           onClick={() => {
-            onClickSendQuoteToClient(0);
+            if (documentType === DOCUMENT_TYPE.receipt) {
+              onClickSendReceiptToClient(0)
+            }
+            else {
+              onClickSendQuoteToClient(0);
+            }
             handleClose();
           }}
         >
@@ -40,7 +48,12 @@ const SendBtnMenu = ({
       {documentState.isSendSMS && (
         <MenuItem
           onClick={() => {
-            onClickSendQuoteToClient(1);
+            if (documentType === DOCUMENT_TYPE.receipt) {
+              onClickSendReceiptToClient(1)
+            }
+            else {
+              onClickSendQuoteToClient(1);
+            }
             handleClose();
           }}
         >

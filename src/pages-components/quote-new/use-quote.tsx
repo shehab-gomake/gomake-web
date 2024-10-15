@@ -28,10 +28,12 @@ import {
   deleteDocumentItemApi,
   duplicateWithAnotherQuantityApi,
   getWhatsAppMessageApi,
+  getWhatsAppMessageForReceiptApi,
   refreshExchangeRateApi,
   rejectDocumentApi,
   saveDocumentApi,
   sendDocumentToClientApi,
+  sendReceiptToClientApi,
   sortDocumentItemsApi,
   updateAgentApi,
   updateDiscountTypeApi,
@@ -260,8 +262,8 @@ const useQuoteNew = ({
         ? t("products.profits.details")
         : null
       : quoteItemValue?.isShowDetails
-      ? t("products.profits.details")
-      : null,
+        ? t("products.profits.details")
+        : null,
     t("sales.quote.amount"),
     t("products.profits.pricingListWidget.unitPrice"),
     t("sales.quote.discount"),
@@ -1338,6 +1340,53 @@ const useQuoteNew = ({
     }
   };
 
+
+  const onClickSendReceiptToClient = async (messageType: number) => {
+    if (messageType === 1) {
+      let checkPhones = checkArrayNotEmptyOrPhoneNotEmpty(
+        quoteItemValue?.documentContacts
+      );
+      if (checkPhones) {
+        const callBack = (res) => {
+          if (res?.success) {
+            alertSuccessAdded();
+          } else {
+            alertFaultAdded();
+          }
+        };
+        await sendReceiptToClientApi(callApi, callBack, {
+          document: {
+            documentId: quoteItemValue?.id,
+            messageType,
+          },
+        });
+      } else {
+        alertFault("sales.quote.phoneContectErrorMsg");
+      }
+    } else {
+      let checkEmails = checkArrayNotEmptyOrEmailNotEmpty(
+        quoteItemValue?.documentContacts
+      );
+      if (checkEmails) {
+        const callBack = (res) => {
+          if (res?.success) {
+            alertSuccessAdded();
+          } else {
+            alertFaultAdded();
+          }
+        };
+        await sendReceiptToClientApi(callApi, callBack, {
+          document: {
+            documentId: quoteItemValue?.id,
+            messageType,
+          },
+        });
+      } else {
+        alertFault("sales.quote.mailContectErrorMsg");
+      }
+    }
+  };
+
   const handleSaveBtnClick = async () => {
     const callBack = (res) => {
       if (res?.success) {
@@ -1724,6 +1773,7 @@ const useQuoteNew = ({
   };
 
   const [whatsappMassage, setWhatsAppMassage] = useState("");
+
   const getWhatsAppMessage = async () => {
     if (quoteItemValue?.id) {
       const callBack = (res) => {
@@ -1736,6 +1786,21 @@ const useQuoteNew = ({
       await getWhatsAppMessageApi(callApi, callBack, {
         documentId: quoteItemValue?.id,
         documentType: docType,
+      });
+    }
+  };
+
+  const getWhatsAppMessageForReceipt = async () => {
+    if (quoteItemValue?.id) {
+      const callBack = (res) => {
+        if (res?.success) {
+          setWhatsAppMassage(res?.data);
+        } else {
+          alertFaultUpdate();
+        }
+      };
+      await getWhatsAppMessageForReceiptApi(callApi, callBack, {
+        documentId: quoteItemValue?.id,
       });
     }
   };
@@ -1812,6 +1877,7 @@ const useQuoteNew = ({
     anchorElSettingMenu,
     openSettingMenu,
     onClickSendQuoteToClient,
+    onClickSendReceiptToClient,
     handleSettingMenuClick,
     handleSettingMenuClose,
     onClickOpenPriceModal,
@@ -1918,6 +1984,7 @@ const useQuoteNew = ({
     updateIsShowDetails,
     updateIsShowPrices,
     getWhatsAppMessage,
+    getWhatsAppMessageForReceipt,
     whatsappMassage,
     openAddNewContactModal,
     onCloseNewContact,

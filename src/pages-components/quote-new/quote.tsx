@@ -176,6 +176,7 @@ const QuoteNewPageWidget = ({
     onClickCancelOffer,
     updateCancelQuote,
     onClickSendQuoteToClient,
+    onClickSendReceiptToClient,
     onChangeSelectBusiness,
     onClickDeleteAddress,
     onOpenDeliveryModal,
@@ -209,6 +210,7 @@ const QuoteNewPageWidget = ({
     updateIsShowDetails,
     updateIsShowPrices,
     getWhatsAppMessage,
+    getWhatsAppMessageForReceipt,
     whatsappMassage,
     openAddNewContactModal,
     onCloseNewContact,
@@ -302,7 +304,7 @@ const QuoteNewPageWidget = ({
     },
   ];
 
-  const {} = useGoMakeTour(quoteSteps, []);
+  const { } = useGoMakeTour(quoteSteps, []);
 
   useEffect(() => {
     if (isInvoice) {
@@ -367,8 +369,8 @@ const QuoteNewPageWidget = ({
                     title={
                       router?.query?.isNewCreation
                         ? `${t(
-                            "properties.create"
-                          )} ${documentTitle.toLowerCase()}`
+                          "properties.create"
+                        )} ${documentTitle.toLowerCase()}`
                         : documentTitle
                     }
                     marginBottom={1}
@@ -385,7 +387,7 @@ const QuoteNewPageWidget = ({
                   <div style={classes.settingsStatusContainer}>
                     <>
                       {quoteItemValue?.signImageUrl &&
-                      quoteItemValue?.signerName ? (
+                        quoteItemValue?.signerName ? (
                         <div
                           style={classes.signatureApproval}
                           onClick={onClickOpenSignatureApprovalModal}
@@ -675,17 +677,21 @@ const QuoteNewPageWidget = ({
         open={openSendBtn}
         anchorEl={anchorElSendBtn}
         onClickSendQuoteToClient={onClickSendQuoteToClient}
+        onClickSendReceiptToClient={onClickSendReceiptToClient}
         onClickOpenWhatsAppModal={onClickOpenWhatsAppModal}
         documentState={quoteItemValue}
         setIsWhatsAppWeb={setIsWhatsAppWeb}
+        documentType={documentType}
       />
       <WhatsAppWebModal
         openModal={openWhatsAppModal}
         onClose={onClickCloseWhatsAppModal}
         clientContactsValue={clientContactsValue}
         getWhatsAppMessage={getWhatsAppMessage}
+        getWhatsAppMessageForReceipt={getWhatsAppMessageForReceipt}
         whatsappMassage={whatsappMassage}
         isWhatsAppWeb={isWhatsAppWeb}
+        documentType={documentType}
       />
       <SettingQuoteMenu
         handleClose={handleSettingMenuClose}
