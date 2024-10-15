@@ -1,9 +1,10 @@
 import { GomakeTextInput } from "@/components";
 import { EditIcon } from "@/icons";
 import { IconButton } from "@mui/material";
-import React, { CSSProperties, useState } from "react";
+import React, { CSSProperties } from "react";
 import { useCharacterDetails } from "./use-character-details";
 import { useStyleCharacterDetails } from "./style-character-details";
+import parse from "html-react-parser";
 
 interface IProps {
   details: any;
@@ -11,16 +12,37 @@ interface IProps {
   documentItemId?: any;
   detailsStyle?: CSSProperties;
   showAllStyle?: CSSProperties;
-  canUpdate?:boolean;
+  canUpdate?: boolean;
 }
-const CharacterDetails = ({ details, getQuote, documentItemId, showAllStyle, detailsStyle,canUpdate = true}: IProps) => {
-  const { isEdit, showAll, truncatedDetails, data, handleShowLess, handleShowMore, t, setIsEdit, handleChange, handleBlur } = useCharacterDetails({ details, getQuote, documentItemId })
+
+const CharacterDetails = ({
+  details,
+  getQuote,
+  documentItemId,
+  showAllStyle,
+  detailsStyle,
+  canUpdate = true,
+}: IProps) => {
+  const {
+    isEdit,
+    showAll,
+    truncatedDetails,
+    data,
+    handleShowLess,
+    handleShowMore,
+    t,
+    setIsEdit,
+    handleChange,
+    handleBlur,
+  } = useCharacterDetails({ details, getQuote, documentItemId });
+
   const { classes } = useStyleCharacterDetails({ showAll });
+
   return (
     <>
-      {!isEdit ?
+      {!isEdit ? (
         <div style={{ ...classes.mainContainer, ...detailsStyle }}>
-          {truncatedDetails}
+          {parse(truncatedDetails || "")}
           {!showAll && ".. "}
           {details?.length > 90 && (
             <span
@@ -30,10 +52,13 @@ const CharacterDetails = ({ details, getQuote, documentItemId, showAllStyle, det
               {showAll ? t("sales.quote.showLess") : t("sales.quote.showMore")}
             </span>
           )}
-          {canUpdate && <IconButton onClick={() => setIsEdit(true)} >
-            <EditIcon />
-          </IconButton>}
-        </div> :
+          {canUpdate && (
+            <IconButton onClick={() => setIsEdit(true)}>
+              <EditIcon />
+            </IconButton>
+          )}
+        </div>
+      ) : (
         <div>
           <GomakeTextInput
             multiline={6}
@@ -42,9 +67,9 @@ const CharacterDetails = ({ details, getQuote, documentItemId, showAllStyle, det
             value={data}
             onBlur={handleBlur}
           />
-        </div>}
+        </div>
+      )}
     </>
-
   );
 };
 export { CharacterDetails };
