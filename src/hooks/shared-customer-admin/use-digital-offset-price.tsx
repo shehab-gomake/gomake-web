@@ -1452,6 +1452,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         totalWorkFlowsCount: 0,
         currentWorkFlowsCount: 0,
       });
+      setCurrentProductItemValue(null);
       setIsChangePriceForEdit(false)
       setIsJobNameValue(false)
       setIsActionEmployeeUpdated(false)
