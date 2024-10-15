@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { usePaymentInputs } from "react-payment-inputs";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
-import { PaymentDetails } from "../interfaces";
+import { PaymentDetails } from "../types/interfaces";
 import { savePrintHousePaymentDetailsApi } from "@/services/api-service/profiles/company-profile-api";
 
 const usePaymentDetailsModal = ({ selectedPrintHouse, getReport }) => {

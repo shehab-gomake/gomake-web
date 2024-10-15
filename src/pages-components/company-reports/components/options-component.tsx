@@ -3,7 +3,7 @@ import { MenuItem } from "@mui/material";
 import { GoMakeAutoComplate, GoMakeModal } from "@/components";
 import { useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { printHousesState } from "@/pages-components/company-reports/state";
+import { printHousesState } from "@/pages-components/company-reports/components/types/state";
 import { PrimaryButton } from "@/components/button/primary-button";
 import { useGomakeAxios } from "@/hooks";
 import {
@@ -15,13 +15,14 @@ import {
 } from "@/services/api-service/import-data/import-data-endpoints";
 import Stack from "@mui/material/Stack";
 import { useTranslation } from "react-i18next";
-import { IPrintHouse } from "./interfaces";
-import { useStyle } from "./style";
+import { IPrintHouse } from "./types/interfaces";
+import { useStyle } from "../style";
 
 interface IProps {
   printHouse: IPrintHouse;
   handleOpenModal: (item: IPrintHouse) => void;
   handleClickMakePayment: (printHouseId: string) => void;
+  handleOpenSendPaymentModal: (printHouseId: string) => void;
 }
 
 enum EAction {
@@ -44,6 +45,7 @@ const OptionsComponent = ({
   printHouse,
   handleOpenModal,
   handleClickMakePayment,
+  handleOpenSendPaymentModal,
 }: IProps) => {
   const { t } = useTranslation();
   const { classes } = useStyle();
@@ -132,6 +134,12 @@ const OptionsComponent = ({
             <div style={classes.rowTextStyle}>{t("payment.makePayment")}</div>
           </MenuItem>
         )}
+
+        <MenuItem onClick={() => handleOpenSendPaymentModal(printHouse?.id)}>
+          <div style={classes.rowTextStyle}>
+            {t("prePayment.sendPaymentPage")}
+          </div>
+        </MenuItem>
 
         <MenuItem onClick={() => handleOptionClick(EAction.PROFITS)}>
           <div style={classes.rowTextStyle}>

@@ -138,14 +138,13 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
   const createParameterForCalculation = (parameter) => {
     setSelectedShape(parameter);
   };
-  function searchByNameOrType(items, searchText) {
+  const searchByNameOrType = (items, searchText) => {
     searchText = searchText?.toLowerCase();
-
     const result = items?.filter((item) =>
       item.rowData.name.value.toLowerCase().includes(searchText) ||
-      (item?.rowData?.type?.value && item?.rowData?.type?.value?.some(type => type?.toLowerCase().includes(searchText))
-        ||
-        item?.category?.toLowerCase()?.includes(searchText))
+      (item?.rowData?.type?.value && item?.rowData?.type?.value?.some(type => type?.toLowerCase().includes(searchText))) ||
+      item?.category?.toLowerCase()?.includes(searchText) ||
+      item?.rowData?.code?.value?.toLowerCase().includes(searchText)  // Added filter for description
     );
 
     return result;
