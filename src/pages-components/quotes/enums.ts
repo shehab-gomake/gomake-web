@@ -73,7 +73,9 @@ export enum LogActionType {
     PRINTING_PDF,
     DOCUMENT_CANCEL,
     REJECTED_BY_CLIENT,
-    APPROVAL_BY_CLIENT
+    APPROVAL_BY_CLIENT,
+    ADD,
+    CLOSE
 }
 
 export enum ApprovalStatus {
