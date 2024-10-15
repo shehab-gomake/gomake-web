@@ -8,7 +8,7 @@ const useStyleCharacterDetails = ({ showAll }) => {
         height: showAll ? 100 : 74,
         overflowY: "scroll" as "scroll",
         borderRight: showAll ? "1px solid  #F135A3" : "none",
-        padding: "2px 10px",
+        padding: "15px",
         color: "#000000",
         ...FONT_FAMILY.Inter(400, 14),
       },
