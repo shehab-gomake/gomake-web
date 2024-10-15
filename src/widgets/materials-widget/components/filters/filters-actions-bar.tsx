@@ -1,6 +1,6 @@
 import { GoMakeAutoComplate, SecondSwitch } from "@/components";
 import { ActionMenu } from "@/widgets/materials-widget/components/actions-menu/action-menu";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useMaterialFilters } from "@/widgets/materials-widget/components/filters/use-material-filters";
 import Button from "@mui/material/Button";
