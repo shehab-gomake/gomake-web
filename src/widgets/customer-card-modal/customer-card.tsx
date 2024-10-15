@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useStyle } from "./style";
 import { GoMakeAutoComplate, GoMakeModal } from "@/components";
 import { TextareaAutosize } from "@mui/base";
@@ -118,6 +118,10 @@ const CustomerCardWidget = ({
     handleShowTable,
     onUpdatePass,
     onChangeInputs,
+    dlientGroupList,
+    addGroupName,
+    newGroupId,
+    setNewGroupId
   } = useCustomerCard({
     t,
     customer,
@@ -133,7 +137,19 @@ const CustomerCardWidget = ({
     isFromCartPage,
     onChangeSelectBusiness,
   });
+  const [inputValue, setInputValue] = useState("");
 
+  useEffect(() => {
+    if (newGroupId) {
+      const newlyAddedGroup = dlientGroupList.find(
+        (option: any) => option?.id === newGroupId
+      );
+      if (newlyAddedGroup) {
+        onChangeInputs("clientGroupId", newGroupId);
+        setNewGroupId(null);
+      }
+    }
+  }, [newGroupId, dlientGroupList, onChangeInputs]);
   useEffect(() => {
     if (customer) {
       customer?.contacts &&
@@ -372,6 +388,53 @@ const CustomerCardWidget = ({
                   onChange={(e: any, value: any) =>
                     onChangeInputs("clientTypeId", value?.id)
                   }
+                />
+              </div>
+            </div>
+            <div style={classes.itemOnFirstContainer}>
+              <div style={classes.labelTitleStyle}>
+                <div style={classes.inputLbl}>
+                  <Stack
+                    direction={"row"}
+                    gap={"7px"}
+                    alignItems={"flex-end"}
+                    padding={"0 5px"}
+                  >
+                    group by
+                  </Stack>
+                </div>
+              </div>
+              <div style={{ width: "180px" }}>
+                <GoMakeAutoComplate
+                  key={customer}
+                  options={
+                    dlientGroupList.find(
+                      (option: any) => option.groupName === inputValue
+                    ) || inputValue === ""
+                      ? dlientGroupList
+                      : [{ groupName: `Add "${inputValue}" as a new group`, id: 'new' }, ...dlientGroupList]
+                  }
+                  placeholder={"group by"}
+                  style={classes.dropDownListStyle}
+                  getOptionLabel={(option: any) => option.groupName}
+                  value={dlientGroupList?.find(
+                    (option: any) => option?.id === customer?.clientGroupId
+                  )}
+                  onChange={(e: any, value: any) => {
+                    if (value?.id === "new") {
+                      addGroupName(inputValue)
+                      setInputValue("")
+                    }
+                    else {
+                      onChangeInputs("clientGroupId", value?.id)
+                      setInputValue("")
+                    }
+
+                  }
+                  }
+                  onInputChange={(event: any, newInputValue: string) => {
+                    setInputValue(newInputValue)
+                  }}
                 />
               </div>
             </div>

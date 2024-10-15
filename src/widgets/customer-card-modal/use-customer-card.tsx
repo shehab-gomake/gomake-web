@@ -4,7 +4,7 @@ import { useSnackBar } from "@/hooks/use-snack-bar";
 import { selectedClientState } from "@/pages-components/quotes/states";
 import { getAllSimilarCustomerApi } from "@/services/api-service/customers/customers-api";
 import { FONT_FAMILY } from "@/utils/font-family";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { prevSelectedClientState } from "@/pages-components/admin/home/widgets/quote-widget/states";
 import { systemCurrencyState } from "@/store/user";
@@ -17,6 +17,7 @@ import { useAddCustomer } from "@/pages/customers/add-customer/use-add-customer"
 import { CLIENT_TYPE_Id } from "@/pages/customers/enums";
 import { emailRegex } from "@/utils/regex";
 import { useUserProfile } from "@/hooks/use-user-profile";
+import { getClientsGroupstApi } from "@/services/api-service/suppliers/suppliers-endpoints";
 
 const useCustomerCard = ({
   t,
@@ -490,6 +491,38 @@ const useCustomerCard = ({
       setShowTable(true);
     });
   };
+  const [dlientGroupList, setClientGroupList] = useState([])
+  const getClientsGroups = async () => {
+    const callBack = (res) => {
+      if (res?.success) {
+        setClientGroupList(res?.data);
+      } else {
+        // alertFaultUpdate();
+      }
+    };
+    await getClientsGroupstApi(callApi, callBack);
+  };
+
+  useEffect(() => {
+    getClientsGroups()
+  }, [])
+
+  const [newGroupId, setNewGroupId] = useState("")
+  console.log("newGroupId", newGroupId)
+  const addGroupName = useCallback(async (data: string) => {
+    const res: any = await callApi(
+      "POST",
+      "/v1/crm-service/customer/add-client-group",
+      {
+        groupName: data,
+      }
+    );
+    if (res?.success) {
+      getClientsGroups()
+      setNewGroupId(res?.data?.data?.data)
+    } else {
+    }
+  }, []);
 
   return {
     customerTableHeaders,
@@ -543,6 +576,10 @@ const useCustomerCard = ({
     updateUserPassword,
     onUpdatePass,
     onChangeInputs,
+    dlientGroupList,
+    addGroupName,
+    newGroupId,
+    setNewGroupId
   };
 };
 
