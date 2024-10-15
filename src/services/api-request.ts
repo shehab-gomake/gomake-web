@@ -5,7 +5,6 @@ import log from "@/utils/logger";
 import { addRequestToSession } from "@/utils/sessionManager";
 // import { clearStorage } from './storage'
 
-//!here
 const apiRequest = async (
   method = "GET",
   url: string,

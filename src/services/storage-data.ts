@@ -3,7 +3,6 @@ export const hasToken = () => {
   return false;
 };
 
-//!here
 export const getItem = (key: string, parse = false) => {
   if (typeof localStorage !== "undefined") {
     let item: any = null;
@@ -19,7 +18,6 @@ export const setItem = (key: string, value: any) => {
   localStorage.setItem(key, value);
 };
 
-//!here
 export const getUserToken = () => {
   return getItem("auth-token");
 };
