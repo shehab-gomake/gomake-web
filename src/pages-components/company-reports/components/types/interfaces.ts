@@ -46,6 +46,22 @@ export interface PaymentDetails {
   isMonthlyPayment: boolean;
 }
 
+export interface SendPaymentState {
+  contactName?: string;
+  contactPhone?: string;
+  contactMail?: string;
+  amount?: number;
+  isAuthorizeOnly?: boolean;
+}
+
+export const initSendPaymentState: SendPaymentState = {
+  contactName: "",
+  contactPhone: "",
+  contactMail: "",
+  amount: 0,
+  isAuthorizeOnly: false,
+};
+
 export enum PrintHousePayStatus {
   NoPaymentDetails,
   NeedToPay,

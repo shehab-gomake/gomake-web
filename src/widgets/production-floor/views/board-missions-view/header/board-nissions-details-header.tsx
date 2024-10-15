@@ -17,6 +17,7 @@ import {
   IBoardMissions,
   IBoardMissionsDetails,
 } from "@/widgets/production-floor/interfaces/board-missions";
+import { BoardStatusComponent } from "@/widgets/production-floor/table-view/status-table/board-status/board-status";
 
 const HeaderTitleComponent = ({ title }: { title?: string }) => {
   const { classes } = useStyle();
@@ -30,20 +31,21 @@ const doneBoardMissionsColors = {
   color: "#66D671",
   bfColor: "#D9F5DC",
 };
-const BoardMissionsDetailsHeader = () => {
+const BoardMissionsDetailsHeader = ({ updateStatus }: any) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
   const direction = t("direction");
   const [boardFromTable, setBoardFromTable] = useState<IBoardMissions>(
     {} as IBoardMissions
   );
-  const { push, query, pathname } = useRouter();
+  const { push, query, pathname, replace } = useRouter();
   const [boardMissionsDetails, setBoardMissionsDetails] = useRecoilState(
     boardMissionsDetailsState
   );
   useEffect(() => {
     setBoardMissionsDetails({} as IBoardMissionsDetails);
   }, []);
+
   const boards = useRecoilValue(boardsMissionsState);
   useEffect(() => {
     if (!!boardMissionsDetails?.boardMissionId && boards.length > 0) {
@@ -70,7 +72,13 @@ const BoardMissionsDetailsHeader = () => {
       { shallow: true }
     ).then();
   };
+
   const isLoading = !boardMissionsDetails?.boardMissionId; // Check if boardMissionId exists
+
+  const handleStatusChange = (id: string, newStatusId: string) => {
+    // replace("/production-floor", undefined, { shallow: true }).then();
+    updateStatus([boardFromTable], newStatusId);
+  };
 
   return (
     <>
@@ -142,8 +150,7 @@ const BoardMissionsDetailsHeader = () => {
                     style={{
                       backgroundColor: boardMissionsDetails?.isReady
                         ? doneBoardMissionsColors.bfColor
-                        : boardMissionsDetails?.boardMissionStatus
-                            ?.backgroundColor,
+                        : "transparent",
                     }}
                     padding={"0 5px"}
                     direction={"row"}
@@ -157,15 +164,23 @@ const BoardMissionsDetailsHeader = () => {
                     {boardMissionsDetails?.isReady ? (
                       <span>{t("boardMissions.done")}</span>
                     ) : (
-                      <>
-                        <span>
-                          {t(
-                            `productionStatuses.${boardMissionsDetails.boardMissionStatus?.name}`
-                          )}
-                        </span>
-                        <span>/</span>
-                        <span>{boardMissionsDetails.currentActionName}</span>
-                      </>
+                      <BoardStatusComponent
+                        statusId={boardMissionsDetails.boardMissionStatus?.id}
+                        id={boardMissionsDetails?.boardMissionId}
+                        onChange={handleStatusChange}
+                        isFromMissionView={true}
+                        currentStation={boardMissionsDetails?.currentActionName}
+                        statusColorBg={
+                          boardMissionsDetails?.boardMissionStatus
+                            ?.backgroundColor
+                        }
+                        statusColorText={
+                          boardMissionsDetails?.boardMissionStatus?.textColor
+                        }
+                        statusText={t(
+                          `productionStatuses.${boardMissionsDetails.boardMissionStatus?.name}`
+                        )}
+                      />
                     )}
                   </Stack>
                 </Stack>
@@ -258,4 +273,5 @@ const BoardMissionsDetailsHeader = () => {
     </>
   );
 };
+
 export { BoardMissionsDetailsHeader };
