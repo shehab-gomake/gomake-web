@@ -1,4 +1,9 @@
-import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
+import {
+  useCustomerDropDownList,
+  useGomakeAxios,
+  useGomakeRouter,
+  useSnackBar,
+} from "@/hooks";
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ApprovalStatus, LogActionType, QUOTE_STATUSES } from "./enums";
@@ -57,7 +62,7 @@ import {
 } from "./widgets/send-payment-modal/states";
 import { sendDocumentToClientForPaymentApi } from "@/services/api-service/pay/pay-api";
 import { useRouter } from "next/router";
-import { useQuoteWidget } from "../admin/home/widgets/quote-widget/use-quote-widget";
+
 interface Query {
   customerId?: string;
   customerName?: string;
@@ -129,7 +134,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const { query, pathname } = useRouter();
   const router = useRouter();
   const { quoteNumber } = query;
-  const { renderOptions, checkWhatRenderArray, isFetching } = useQuoteWidget();
+  const { renderOptions, checkWhatRenderArray, isFetching } =
+    useCustomerDropDownList();
   const [accountingStatus, setAccountingStatus] = useState<{
     label: string;
     value: PStatus;
