@@ -248,6 +248,7 @@ const QuoteNewPageWidget = ({
   } = useQuoteNew({
     docType: documentType,
     isQuoteConfirmation: isQuoteConfirmation,
+    isPrePaymentPage: isPrePaymentPage,
   });
 
   const handleChangeCreationDate = (event) => {
@@ -640,11 +641,13 @@ const QuoteNewPageWidget = ({
         getAllClientContacts={getAllClientContacts}
         documentType={documentType}
       />
-      <AddDeliveryModal
-        openModal={openAddDeliveryModal}
-        onClose={onCloseDeliveryModal}
-        onClickAdd={onAddDelivery}
-      />
+      {!isPrePaymentPage && (
+        <AddDeliveryModal
+          openModal={openAddDeliveryModal}
+          onClose={onCloseDeliveryModal}
+          onClickAdd={onAddDelivery}
+        />
+      )}
       <CopyFromOrderModal
         openModal={openCopyFromOrderModal}
         onClose={onCloseCopyFromOrder}

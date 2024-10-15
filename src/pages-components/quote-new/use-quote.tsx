@@ -64,8 +64,13 @@ import { isAtLeastOneSelected } from "@/utils/helpers";
 interface IQuoteProps {
   docType: DOCUMENT_TYPE;
   isQuoteConfirmation?: boolean;
+  isPrePaymentPage?: boolean;
 }
-const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
+const useQuoteNew = ({
+  docType,
+  isQuoteConfirmation = false,
+  isPrePaymentPage = false,
+}: IQuoteProps) => {
   const documentPath = DOCUMENT_TYPE[docType];
 
   const {
@@ -1629,6 +1634,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
   const setClientTypesCategories = useSetRecoilState(
     clientTypesCategoriesState
   );
+
   const getClientTypesCategories = async () => {
     const callBack = (res) => {
       if (res) {
@@ -1644,8 +1650,9 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false }: IQuoteProps) => {
       cardType: CLIENT_TYPE_Id.CUSTOMER,
     });
   };
+
   useEffect(() => {
-    getClientTypesCategories();
+    if (!isPrePaymentPage) getClientTypesCategories();
   }, []);
 
   const sortDocumentItems = async (sortType: number) => {
