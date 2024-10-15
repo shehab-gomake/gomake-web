@@ -1,24 +1,24 @@
 import { useMemo } from "react";
 import { FONT_FAMILY } from "@/utils/font-family";
 
-const useStyleCharacterDetails = ({showAll}) => {
+const useStyleCharacterDetails = ({ showAll }) => {
   const classes = useMemo(() => {
     return {
-      mainContainer:{
+      mainContainer: {
         height: showAll ? 100 : 74,
         overflowY: "scroll" as "scroll",
         borderRight: showAll ? "1px solid  #F135A3" : "none",
-        padding: "16px 24px",
+        padding: "2px 10px",
         color: "#000000",
         ...FONT_FAMILY.Inter(400, 14),
       },
-      showAllContaner:{
+      showAllContaner: {
         ...FONT_FAMILY.Inter(500, 14),
         color: "#5859A8",
         textDecoration: "underLine",
         cursor: "pointer",
       },
-      textInputEditing:{
+      textInputEditing: {
         width: "100%",
         borderRadius: 4,
         height: 110,
@@ -27,7 +27,7 @@ const useStyleCharacterDetails = ({showAll}) => {
         border: "1px solid #ccc",
         color: "#000000",
         ...FONT_FAMILY.Lexend(500, 14),
-      }
+      },
     };
   }, []);
   return {
