@@ -1539,6 +1539,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     }
   }
   useEffect(() => {
+    const itemQuantity = quantity ? +quantity?.values[0] : 1;
     if (currentProductItemValueTotalPrice && quantity) {
       const productItemValue = {
         signalRConnectionId: connectionId,
@@ -1547,9 +1548,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         productId: router?.query?.productId,
         // supplierId: graphicDesigner && graphicDesigner?.id,
         customerID: router?.query?.customerId,
-        unitPrice: +currentProductItemValueTotalPrice / +quantity?.values[0],
+        unitPrice: +currentProductItemValueTotalPrice / itemQuantity,
         finalPrice: +currentProductItemValueTotalPrice,
-        amount: quantity?.values[0],
+        amount: itemQuantity,
         isNeedGraphics: false,
         isUrgentWork: urgentOrder,
         printingNotes,
