@@ -92,6 +92,9 @@ const GroupItems = styled("ul")({
 const GoMakeAutoComplate = ({
   value,
   onChange,
+  onInputChange,
+  onKeyDown,
+  onClose,
   style,
   error,
   options,
@@ -113,6 +116,9 @@ const GoMakeAutoComplate = ({
 }: {
   value?: any;
   onChange?: any;
+  onInputChange?: any,
+  onKeyDown?: any,
+  onClose?: any
   style?: any;
   error?: any;
   options: any;
@@ -171,6 +177,9 @@ const GoMakeAutoComplate = ({
         onChange(e, value);
         setSelectedOption(value);
       }}
+      onInputChange={onInputChange}
+      onKeyDown={onKeyDown}
+      onClose={onClose}
       style={style}
       options={options}
       disabled={disabled}
