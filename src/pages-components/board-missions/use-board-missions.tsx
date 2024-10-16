@@ -565,14 +565,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
       );
     }
   };
-
-  //!here
-  // const onClickDuplicateMissionOld = (duplicateType: DuplicateType) => {
-  //   navigate(
-  //     `/products/duplicate?clientTypeId=${missionItem?.clientTypeId}&customerId=${missionItem?.customerID}&productId=${missionItem?.productID}&documentItemId=${missionItem?.orderItemId}&documentType=${DOCUMENT_TYPE.order}&documentId=${missionItem?.orderItemId}&duplicateType=${duplicateType}`
-  //   );
-  // };
-
+  s;
   const onClickDuplicateMission = (duplicateType: DuplicateType) => {
     const { targetOrderId, targetOrderNumber, clientId } = router?.query;
     if (targetOrderId)
