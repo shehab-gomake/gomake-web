@@ -9,6 +9,7 @@ import {
   currentCalculationConnectionId, foldOptionsState, isActionEmployeeUpdatedState,
   isChangePriceForEditState,
   isLoadgingState,
+  itemParmetersValuesState,
   listEmployeesAtom,
   loadingWithShadowState,
   productItemValueByEditState,
@@ -1404,41 +1405,83 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       setUnderParameterIds(underParameterIdsArray);
     }
   };
+
+  // useEffect(() => {
+  //   if (router?.query?.clientTypeId) {
+  //     setClientTypeDefaultValue(
+  //       clientTypesValue?.find(
+  //         (item: any) => item?.id === router?.query?.clientTypeId
+  //       )
+  //     );
+  //   }
+  //   if (router?.query?.customerId) {
+  //     if (renderOptions()?.find(
+  //       (item: any) => item?.id === router?.query?.customerId
+  //     )) {
+
+  //       setClientDefaultValue(
+  //         renderOptions()?.find(
+  //           (item: any) => item?.id === router?.query?.customerId
+  //         )
+  //       );
+  //     }
+  //     else {
+  //       setClientDefaultValue(
+  //         clientListData?.find(
+  //           (item: any) => item?.id === router?.query?.customerId
+  //         )
+  //       );
+  //     }
+
+
+  //   }
+  // }, [
+  //   clientTypesValue,
+  //   clientDefaultValue,
+  //   clientTypeDefaultValue,
+  //   router,
+  //   router?.query?.customerId,
+  //   renderOptions,
+  // ]);
+
   useEffect(() => {
-    if (!currentCalculationSessionId) {
-      setCurrentSignalRConnectionId(connectionId)
-      setCurrentProductItemValueTotalPrice(null);
-      setLastProductItemValueTotalPrice(null);
-      setUrgentOrder(null)
-      setWorkFlows([]);
-      setJobActions([]);
-      setSubProducts([]);
-      setWorkTypes([])
-      setCalculationProgress({
-        totalWorkFlowsCount: 0,
-        currentWorkFlowsCount: 0,
-      });
-      setCurrentProductItemValue(null);
-      setIsChangePriceForEdit(false)
-      setIsJobNameValue(false)
-      setIsActionEmployeeUpdated(false)
-      if (
-        widgetType === EWidgetProductType.EDIT ||
-        widgetType === EWidgetProductType.DUPLICATE
-      ) {
-        getAllMaterial().then((materials) => {
-          getProductQuoteItemById(materials);
-
+    if (connectionId) {
+      if (!currentCalculationSessionId) {
+        setCurrentSignalRConnectionId(connectionId)
+        setCurrentProductItemValueTotalPrice(null);
+        setLastProductItemValueTotalPrice(null);
+        setUrgentOrder(null)
+        setWorkFlows([]);
+        setJobActions([]);
+        setSubProducts([]);
+        setWorkTypes([])
+        setCalculationProgress({
+          totalWorkFlowsCount: 0,
+          currentWorkFlowsCount: 0,
         });
-      } else {
-        getAllMaterial().then((materials) => {
-          getProductById(materials);
-        });
+        setCurrentProductItemValue(null);
+        setIsChangePriceForEdit(false)
+        setIsJobNameValue(false)
+        setIsActionEmployeeUpdated(false)
+        if (
+          widgetType === EWidgetProductType.EDIT ||
+          widgetType === EWidgetProductType.DUPLICATE
+        ) {
+          getAllMaterial().then((materials) => {
+            getProductQuoteItemById(materials);
 
+          });
+        } else {
+          getAllMaterial().then((materials) => {
+            getProductById(materials);
+          });
+
+        }
       }
     }
 
-  }, []);
+
+  }, [connectionId]);
   const exampleTypeValues = useRecoilValue(exampleTypeState);
   const billingMethodValues = useRecoilValue(billingMethodState);
   const listEmployeesValues = useRecoilValue(listEmployeesAtom);
