@@ -247,6 +247,13 @@ const QuoteNewPageWidget = ({
     setIsWhatsAppWeb,
     isShowSettingIcon,
     isInvoice,
+    onClickOpenChangeProductionStatusModal,
+    openChangeProductionStatusModal,
+    onClickCloseChangeProductionStatusModal,
+    selectedDocument,
+    isSelectedCLoseAsDeleveryNote,
+    moveOrderToReady,
+    navigate
   } = useQuoteNew({
     docType: documentType,
     isQuoteConfirmation: isQuoteConfirmation,
@@ -617,6 +624,7 @@ const QuoteNewPageWidget = ({
                 onClickOpenNewItemNotesModal={onClickOpenNewItemNotesModal}
                 handleRejectBtnClick={handleRejectBtnClick}
                 handleAcceptBtnClick={handleAcceptBtnClick}
+                onClickOpenChangeProductionStatusModal={onClickOpenChangeProductionStatusModal}
               />
             </div>
           )}
@@ -781,6 +789,26 @@ const QuoteNewPageWidget = ({
             "_blank"
           );
           onClickClosLoginModal();
+        }}
+      />
+      <GoMakeDeleteModal
+        hideIcon
+        title={"This order is already in process do you want to move it to ready ?"}
+        yesBtn={t("sales.quote.yesBtn")}
+        openModal={openChangeProductionStatusModal}
+        onClose={onClickCloseChangeProductionStatusModal}
+        onClickDelete={moveOrderToReady}
+        onClickCancel={() => {
+          if (isSelectedCLoseAsDeleveryNote) {
+            navigate(`/deliveryNote?isNewCreation=true&orderId=${selectedDocument?.id}`)
+
+          }
+          else {
+            const path = documentType === DOCUMENT_TYPE.order
+              ? `/invoice?isNewCreation=true&orderId=${selectedDocument?.id}`
+              : `/invoice?isNewCreation=true&deliveryNoteId=${selectedDocument?.id}`;
+            navigate(path);
+          }
         }}
       />
       <NewItemNotesModal
