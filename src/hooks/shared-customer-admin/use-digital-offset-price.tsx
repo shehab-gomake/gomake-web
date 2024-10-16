@@ -102,6 +102,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [updatedProductTemplate, setupdatedProductTemplate] = useState<any>()
   const [defaultProductTemplate, setDefaultProductTemplate] = useState<any>([]);
   const [subProducts, setSubProducts] = useRecoilState<any>(subProductsParametersState);
+  console.log("subProducts", subProducts)
   const [subProductsColorsModal, setSubProductsColorsModal] = useRecoilState<any>(subProductsCopyParametersState);
   const [isSetTemplete, setIsSetTemplete] = useState<boolean>(false);
   const setSubProductsCopy = useSetRecoilState<any>(subProductsCopyParametersState);
@@ -1084,9 +1085,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             }),
           };
         });
-        const updatedSubProducts = removeHiddenParametersFromSubProducts(filteredSubProductsArray, productTemplate);
         setProductTemplate(productTemplate)
-        setSubProducts(updatedSubProducts);
+        // setSubProducts(updatedSubProducts);
+        setSubProducts(filteredSubProductsArray);
         setUnderParameterIds(underParameterIdsArray);
         setIsSetTemplete(true);
       }
@@ -3114,13 +3115,12 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         sectionName: section.name,
         parameters: temp,
       }
-      const updatedSubProducts = removeHiddenParametersFromSubProducts(temp2, productTemplateCopy);
-      setSubProducts(updatedSubProducts);
-      setSubProductsColorsModal(updatedSubProducts)
-      processRelatedParameters2(subSectionParameter, subSection, section, productTemplateCopy, updatedSubProducts);
+      setSubProducts(temp2);
+      setSubProductsColorsModal(temp2)
+      processRelatedParameters2(subSectionParameter, subSection, section, productTemplateCopy, temp2);
       setProductTemplate(productTemplateCopy);
-      const updatedProductTemplate = updateIsHidden(productTemplateCopy, updatedSubProducts);
-      removeHiddenParameters(updatedSubProducts, productTemplateCopy)
+      const updatedProductTemplate = updateIsHidden(productTemplateCopy, temp2);
+      removeHiddenParameters(temp2, productTemplateCopy)
       setupdatedProductTemplate(updatedProductTemplate)
       setCanCalculation(true);
     }
@@ -3778,26 +3778,33 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     setSubProducts(updatedSubProducts);
   }
 
-  function removeHiddenParametersFromSubProducts(subProducts, productTemplate) {
-    // Create a copy of the subProducts array to avoid mutating the original
-    return subProducts.map((subProduct) => {
-      // Filter the parameters within each subProduct
-      const filteredParameters = subProduct.parameters.filter((param) => {
-        // Find the matching parameter in the product template by parameterId
-        const matchingTemplateParam = productTemplate.sections
-          .flatMap(section => section.subSections)
-          .flatMap(subSection => subSection.parameters)
-          .find(templateParam => templateParam.id === param.parameterId);
+  // function removeHiddenParametersFromSubProducts(subProducts, productTemplate) {
+  //   if (!subProducts?.length || !productTemplate?.sections?.length) return subProducts;
 
-        // Check if the parameter is not hidden (isHidden = false)
-        return matchingTemplateParam ? !matchingTemplateParam.isHidden : true;
-      });
+  //   // Create a map for fast lookup of `isHidden` flag by parameterId
+  //   const templateParamMap = new Map();
 
-      // Return the updated subProduct with filtered parameters
-      return { ...subProduct, parameters: filteredParameters };
-    });
-  }
+  //   productTemplate.sections.forEach((section) => {
+  //     section.subSections?.forEach((subSection) => {
+  //       subSection.parameters?.forEach((param) => {
+  //         templateParamMap.set(param.id, param.isHidden);
+  //       });
+  //     });
+  //   });
 
+  //   return subProducts.map((subProduct) => {
+  //     const filteredParameters = subProduct.parameters.filter((param) => {
+  //       // Check the parameter visibility from the template map
+  //       const isHidden = templateParamMap.get(param.parameterId);
+  //       // Return only parameters that are not hidden
+  //       return isHidden === undefined ? true : !isHidden;
+  //     });
+  //     return {
+  //       ...subProduct,
+  //       parameters: filteredParameters,
+  //     };
+  //   });
+  // }
   useEffect(() => {
     if (productTemplate?.length > 0) {
       const updateSections = () => {
