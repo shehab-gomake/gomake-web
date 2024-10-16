@@ -41,7 +41,9 @@ const useMoreCircle = () => {
     onOpenCancelReceiptModal,
     onOpenCancelReceiptModalRefund,
     onClickOpenDocument,
+    onClickOpenChangeProductionStatusModal
   }) => {
+    console.log("quote", quote)
     const documentPath = DOCUMENT_TYPE[documentType];
     const { callApi } = useGomakeAxios();
     const { pathname } = useRouter();
@@ -156,8 +158,9 @@ const useMoreCircle = () => {
       },
       {
         condition: isOrder && quote?.isCanClose && !isCanceledOrder,
-        onClick: () =>
-          navigate(`/deliveryNote?isNewCreation=true&orderId=${quote?.id}`),
+        onClick: () => {
+          quote?.productionStatus ? navigate(`/deliveryNote?isNewCreation=true&orderId=${quote?.id}`) : onClickOpenChangeProductionStatusModal(quote)
+        },
         icon: <TickIcon />,
         name: t("sales.quote.closeAsDeliveryNote"),
       },
@@ -245,8 +248,8 @@ const useMoreCircle = () => {
           isOrder
             ? onClickOpenIrrelevantModal(quote)
             : quote?.creditCardTotal > 0
-            ? onOpenCancelReceiptModalRefund(quote)
-            : onOpenCancelReceiptModal(quote),
+              ? onOpenCancelReceiptModalRefund(quote)
+              : onOpenCancelReceiptModal(quote),
         icon: <TickCancelIcon />,
         name: t("sales.quote.cancel"),
       },

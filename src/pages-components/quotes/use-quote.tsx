@@ -365,6 +365,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 onClickPdf={onClickQuotePdf}
                 onClickLoggers={onClickDocumentLogs}
                 onClickOpenPrintPDFModal={onClickOpenPrintPDFModal}
+                onClickOpenChangeProductionStatusModal={onClickOpenChangeProductionStatusModal}
               />,
             ];
           } else if (
@@ -401,6 +402,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 onClickPdf={onClickQuotePdf}
                 onClickLoggers={onClickDocumentLogs}
                 onClickOpenPrintPDFModal={onClickOpenPrintPDFModal}
+                onClickOpenChangeProductionStatusModal={onClickOpenChangeProductionStatusModal}
               />,
             ];
           } else if (docType === DOCUMENT_TYPE.quote) {
@@ -431,6 +433,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 onClickDuplicate={onClickQuoteDuplicate}
                 onClickLoggers={onClickDocumentLogs}
                 onClickOpenPrintPDFModal={onClickOpenPrintPDFModal}
+                onClickOpenChangeProductionStatusModal={onClickOpenChangeProductionStatusModal}
               />,
             ];
           } else if (docType === DOCUMENT_TYPE.order) {
@@ -516,6 +519,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 onClickCloseAndTrack={onClickOpenTrackModal}
                 onClickOpenPrintPDFModal={onClickOpenPrintPDFModal}
                 onClickOpenDocument={OpenDocument}
+                onClickOpenChangeProductionStatusModal={onClickOpenChangeProductionStatusModal}
               />,
             ];
           } else {
@@ -578,6 +582,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                   onClickOpenCloseOrderNotesModal
                 }
                 onClickOpenPrintPDFModal={onClickOpenPrintPDFModal}
+                onClickOpenChangeProductionStatusModal={onClickOpenChangeProductionStatusModal}
               />,
             ];
           }
@@ -608,6 +613,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             onClickOpenPrintPDFModal={onClickOpenPrintPDFModal}
             onOpenCancelReceiptModal={onOpenCancelReceiptModal}
             onOpenCancelReceiptModalRefund={onOpenCancelReceiptModalRefund}
+            onClickOpenChangeProductionStatusModal={onClickOpenChangeProductionStatusModal}
           />,
         ]);
         setAllQuotes(isReceipt ? mapReceiptData : mapData);
@@ -757,6 +763,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 onClickPdf={onClickQuotePdf}
                 onClickLoggers={onClickDocumentLogs}
                 onClickOpenPrintPDFModal={onClickOpenPrintPDFModal}
+                onClickOpenChangeProductionStatusModal={onClickOpenChangeProductionStatusModal}
               />,
             ];
           } else if (
@@ -793,6 +800,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 onClickPdf={onClickQuotePdf}
                 onClickLoggers={onClickDocumentLogs}
                 onClickOpenPrintPDFModal={onClickOpenPrintPDFModal}
+                onClickOpenChangeProductionStatusModal={onClickOpenChangeProductionStatusModal}
               />,
             ];
           } else if (docType === DOCUMENT_TYPE.quote) {
@@ -823,6 +831,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 onClickDuplicate={onClickQuoteDuplicate}
                 onClickLoggers={onClickDocumentLogs}
                 onClickOpenPrintPDFModal={onClickOpenPrintPDFModal}
+                onClickOpenChangeProductionStatusModal={onClickOpenChangeProductionStatusModal}
               />,
             ];
           } else if (docType === DOCUMENT_TYPE.order) {
@@ -907,6 +916,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 onClickMakePayment={onClickMakePayment}
                 onClickCloseAndTrack={onClickOpenTrackModal}
                 onClickOpenDocument={OpenDocument}
+                onClickOpenChangeProductionStatusModal={onClickOpenChangeProductionStatusModal}
+
               />,
             ];
           } else {
@@ -968,6 +979,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                   onClickOpenCloseOrderNotesModal
                 }
                 onClickOpenPrintPDFModal={onClickOpenPrintPDFModal}
+                onClickOpenChangeProductionStatusModal={onClickOpenChangeProductionStatusModal}
               />,
             ];
           }
@@ -997,6 +1009,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             onClickOpenPrintPDFModal={onClickOpenPrintPDFModal}
             onOpenCancelReceiptModal={onOpenCancelReceiptModal}
             onOpenCancelReceiptModalRefund={onOpenCancelReceiptModalRefund}
+            onClickOpenChangeProductionStatusModal={onClickOpenChangeProductionStatusModal}
           />,
         ]);
         setAllQuotes(isReceipt ? mapReceiptData : mapData);
@@ -1365,6 +1378,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             onClickSendPayment={onClickSendPayment}
             onClickMakePayment={onClickMakePayment}
             onClickCloseAndTrack={onClickOpenTrackModal}
+            onClickOpenChangeProductionStatusModal={onClickOpenChangeProductionStatusModal}
           />,
         ]);
         setAllDocuments(mapData);
@@ -1979,6 +1993,19 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const [openCloseAndTrackOrderModal, setOpenCloseAndTrackOrderModal] =
     useState(false);
   const [openPrintPDFModal, setOpenPrintPDFModal] = useState(false);
+  const [openChangeProductionStatusModal, setOpenChangeProductionStatusModal] = useState(false);
+
+
+  const onClickCloseChangeProductionStatusModal = () => {
+    setOpenChangeProductionStatusModal(false);
+  };
+  const onClickOpenChangeProductionStatusModal = (order) => {
+    setSelectedDocument(order);
+    setOpenChangeProductionStatusModal(true);
+  };
+
+
+
   const onClickClosePrintPDFModal = () => {
     setOpenPrintPDFModal(false);
   };
@@ -2238,6 +2265,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     onCloseCancelReceiptModalRefund,
     ExportDocumentTableToExcel,
     isFetching,
+    openChangeProductionStatusModal,
+    onClickCloseChangeProductionStatusModal
   };
 };
 
