@@ -9,7 +9,7 @@ const MoreMenuWidget = ({
   quoteItem,
   onClickDuplicateWithDifferentQTY,
   onClickDeleteQouteItem,
-  documentType
+  documentType,
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -17,34 +17,57 @@ const MoreMenuWidget = ({
     quoteItem,
     onClickDuplicateWithDifferentQTY,
     onClickDeleteQouteItem,
-    documentType
+    documentType,
   });
 
   return (
     <>
-      {menuList?.length !==0 && <IconButton onClick={handleClick}>
-        <MoreCircleIcon />
-      </IconButton>}
+      {menuList?.length !== 0 && (
+        <IconButton onClick={handleClick}>
+          <MoreCircleIcon />
+        </IconButton>
+      )}
       <GoMakeMenu handleClose={handleClose} open={open} anchorEl={anchorEl}>
         {menuList?.map((item, index) => {
           return (
-            <>
-              <MenuItem
-                style={classes.menuItemContainer}
-                key={index}
-                onClick={item?.onclick}
-              >
-                {item?.icon}
-                <div style={classes.menuTitleStyle}>{t(`sales.quote.${item?.name}`)}</div>
-              </MenuItem>
-              {index != menuList?.length - 1 ? (
+            <div key={index}>
+              {item.href ? (
+                <a
+                  href={item.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ textDecoration: "none" }}
+                >
+                  <MenuItem
+                    style={classes.menuItemContainer}
+                    onClick={item.onclick}
+                  >
+                    {item.icon}
+                    <div style={classes.menuTitleStyle}>
+                      {t(`sales.quote.${item?.name}`)}
+                    </div>
+                  </MenuItem>
+                </a>
+              ) : (
+                <MenuItem
+                  style={classes.menuItemContainer}
+                  onClick={item.onclick}
+                >
+                  {item.icon}
+                  <div style={classes.menuTitleStyle}>
+                    {t(`sales.quote.${item?.name}`)}
+                  </div>
+                </MenuItem>
+              )}
+              {index !== menuList?.length - 1 ? (
                 <div style={classes.lineStyle} />
               ) : null}
-            </>
+            </div>
           );
         })}
       </GoMakeMenu>
     </>
   );
 };
+
 export { MoreMenuWidget };
