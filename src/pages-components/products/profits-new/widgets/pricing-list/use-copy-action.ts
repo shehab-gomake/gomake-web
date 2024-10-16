@@ -39,8 +39,8 @@ const useCopyAction = () => {
       EHttpMethod.PUT,
       `/v1/printhouse-config/profits/copy-action-profits-to-other-action`,
       {
-        sourceActionId: router.query.actionId,
-        destinationActionId: selectedCationId?.actionId,
+        sourceActionId: selectedCationId?.actionId ,
+        destinationActionId: router.query.actionId,
         isOutSource: router.query.isOutSource ? true : false
       }
     );

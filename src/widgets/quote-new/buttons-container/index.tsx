@@ -87,7 +87,6 @@ const ButtonsContainer = ({
     isOrder,
     isQuote,
   } = useButtonsContainer(documentType);
-
   const isShowSendButton =
     (quoteItemValue.isSendWhatsapp ||
       quoteItemValue.isSendWhatsappWeb ||

@@ -2,13 +2,14 @@ import { PrimaryTable } from "@/components/tables/primary-table";
 import { useCompanyReport } from "./use-comany-report";
 import { useStyle } from "./style";
 import { HeaderTitle } from "@/widgets";
-import { PaymentDetailsModal } from "./payment-details/payment-details";
 import { useEffect, useMemo } from "react";
 import { GoMakeAutoComplate } from "@/components";
-import { PrintHousePayStatus } from "./interfaces";
+import { PrintHousePayStatus } from "./components/types/interfaces";
 import { SearchInputComponent } from "@/components/form-inputs/search-input-component";
 import { Stack } from "@mui/material";
 import { useDebounce } from "use-debounce";
+import { SendPaymentModal } from "./components/send-payment/send-payment";
+import { PaymentDetailsModal } from "./components/payment-details/payment-details";
 
 const CompanyReportWidget = () => {
   const { classes } = useStyle();
@@ -25,6 +26,9 @@ const CompanyReportWidget = () => {
     handlePayStatusChange,
     patternSearch,
     setPatternSearch,
+    openSendPaymentModal,
+    handleCloseSendPaymentModal,
+    selectedPrintHouseId,
   } = useCompanyReport();
 
   useEffect(() => {
@@ -100,6 +104,11 @@ const CompanyReportWidget = () => {
           onClose={handleCloseModal}
           selectedPrintHouse={selectedPrintHouse}
           getReport={getReport}
+        />
+        <SendPaymentModal
+          openModal={openSendPaymentModal}
+          onClose={handleCloseSendPaymentModal}
+          selectedPrintHouseId={selectedPrintHouseId}
         />
       </div>
     </>

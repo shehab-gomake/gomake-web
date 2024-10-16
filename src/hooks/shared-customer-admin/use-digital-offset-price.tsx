@@ -146,6 +146,13 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [isChangePriceForEdit, setIsChangePriceForEdit] = useRecoilState(isChangePriceForEditState);
 
   const [isJobNameValue, setIsJobNameValue] = useState(false)
+  const [saveCurrentStation, setSaveCurrentStation] = useState(false)
+  const onClickCloseCurrentStationModal = () => {
+    setSaveCurrentStation(false)
+  }
+  const onClickOpenCurrentStationModal = () => {
+    setSaveCurrentStation(true)
+  }
 
   useEffect(() => {
     setValuesState([])
@@ -252,14 +259,14 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
   const getSelectedWorkFlow = async () => {
     const docType = router?.query?.documentType ?? "0";
-    const documentItemId =  router?.query?.documentItemId;
+    const documentItemId = router?.query?.documentItemId;
     let url = `/v1/erp-service/productItemValueDrafts/get-selected-work-flow?signalRConnectionId=${connectionId}`;
-    if(documentItemId){
+    if (documentItemId) {
       url += `&documentItemId=${documentItemId}&docType=${docType}`;
     }
     const res: any = await callApi(
       "GET",
-        url,
+      url,
       {},
       false,
     )
@@ -1452,6 +1459,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         totalWorkFlowsCount: 0,
         currentWorkFlowsCount: 0,
       });
+      setCurrentProductItemValue(null);
       setIsChangePriceForEdit(false)
       setIsJobNameValue(false)
       setIsActionEmployeeUpdated(false)
@@ -1538,7 +1546,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     }
   }
   useEffect(() => {
-    if (currentProductItemValueTotalPrice && quantity) {
+    const itemQuantity = quantity ? +quantity?.values[0] : 1;
+    if (currentProductItemValueTotalPrice && itemQuantity) {
       const productItemValue = {
         signalRConnectionId: connectionId,
         productItemValueId: productItemValueDraftId,
@@ -1546,9 +1555,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         productId: router?.query?.productId,
         // supplierId: graphicDesigner && graphicDesigner?.id,
         customerID: router?.query?.customerId,
-        unitPrice: +currentProductItemValueTotalPrice / +quantity?.values[0],
+        unitPrice: +currentProductItemValueTotalPrice / itemQuantity,
         finalPrice: +currentProductItemValueTotalPrice,
-        amount: quantity?.values[0],
+        amount: itemQuantity,
         isNeedGraphics: false,
         isUrgentWork: urgentOrder,
         printingNotes,
@@ -3599,7 +3608,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     });
   };
 
-  const updateQuoteItem = async () => {
+  const updateQuoteItem = async (isSaveCurrentStation?) => {
     setLoadingWithLockScreen(true);
 
     // First, validate the workflows
@@ -3638,6 +3647,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           graphicNotes,
           isNeedExample: false,
           isDuplicatedWithAnotherQuantity: false,
+          ...(isSaveCurrentStation !== undefined && { saveCurrentStation: isSaveCurrentStation })
         },
         DocumentType: router?.query?.documentType,
       });
@@ -3940,7 +3950,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     onClickCloseChangePriceModal,
     setIsChangePriceForEdit,
     isLoadging,
-    validateWorkflows
+    validateWorkflows,
+    saveCurrentStation,
+    onClickCloseCurrentStationModal,
+    onClickOpenCurrentStationModal
   };
 };
 export { useDigitalOffsetPrice };
