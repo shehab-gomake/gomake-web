@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { usePaymentInputs } from "react-payment-inputs";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
-import { PaymentDetails } from "../interfaces";
+import { PaymentDetails } from "../types/interfaces";
 import { savePrintHousePaymentDetailsApi } from "@/services/api-service/profiles/company-profile-api";
 
 const usePaymentDetailsModal = ({ selectedPrintHouse, getReport }) => {
@@ -32,6 +32,9 @@ const usePaymentDetailsModal = ({ selectedPrintHouse, getReport }) => {
       selectedPrintHouse?.printHouseCreditCardDetails?.customerName || "",
     dayOfPayment:
       selectedPrintHouse?.printHouseCreditCardDetails?.dayOfPayment || 1,
+    isMonthlyPayment:
+      selectedPrintHouse?.printHouseCreditCardDetails?.isMonthlyPayment ||
+      false,
   };
 
   const [paymentDetailsState, setPaymentDetails] = useState<PaymentDetails>(
@@ -106,6 +109,10 @@ const usePaymentDetailsModal = ({ selectedPrintHouse, getReport }) => {
     );
   };
 
+  const handleChecked = (event: React.ChangeEvent<HTMLInputElement>) => {
+    handleChangeInputs("isMonthlyPayment", event.target.checked);
+  };
+
   return {
     t,
     selectedPrintHouse,
@@ -119,6 +126,7 @@ const usePaymentDetailsModal = ({ selectedPrintHouse, getReport }) => {
     handleExpiryDateChange,
     handleProceedCheckout,
     daysInMonth,
+    handleChecked,
   };
 };
 

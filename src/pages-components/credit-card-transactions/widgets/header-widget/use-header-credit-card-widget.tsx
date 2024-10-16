@@ -1,8 +1,6 @@
 export interface CreditCardTransactionsReportHeaderWidgetProps {
-  onSelectDeliveryTimeDates: any;
-  resetDatePicker: any;
-  onClickSearchFilter: any,
-  onClickClearFilter: any,
+  onClickSearchFilter: any;
+  onClickClearFilter: any;
   customer: any;
   receiptNumber: any;
   handleReceiptNumberChange: (value) => void;
@@ -12,6 +10,7 @@ export interface CreditCardTransactionsReportHeaderWidgetProps {
   checkWhatRenderArray: (arg: any) => void;
   handleCustomerChange: any;
   handleDateChange?: any;
-  fromDate?: Date | null,
-  toDate?: Date | null,
+  fromDate?: Date | null;
+  toDate?: Date | null;
+  isFetchingCustomers?: boolean;
 }

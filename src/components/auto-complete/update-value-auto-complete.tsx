@@ -1,5 +1,10 @@
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
-import { Autocomplete, Paper, TextField } from "@mui/material";
+import {
+  Autocomplete,
+  CircularProgress,
+  Paper,
+  TextField,
+} from "@mui/material";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { ClickOutside } from "@/components/click-out-side/click-out-side";
 import { RouteChangeConfirmation } from "@/components/handle-navigation/handle-navigation";
@@ -18,6 +23,7 @@ interface IUpdateValueAutoCompleteProps {
   onChange?: any;
   getOptionLabel?: any;
   onChangeTextField?: any;
+  loading?: boolean;
 }
 
 const UpdateValueAutoComplete = ({
@@ -25,13 +31,14 @@ const UpdateValueAutoComplete = ({
   options,
   onChange,
   getOptionLabel,
-  onChangeTextField
+  onChangeTextField,
+  loading = false,
 }: IUpdateValueAutoCompleteProps) => {
   const { secondColor } = useGomakeTheme();
-  const { t } = useTranslation()
+  const { t } = useTranslation();
   const optionsListEl = useRef();
-  const dir: 'rtl' | 'ltr' = t('direction');
-  const RTL = dir === 'rtl';
+  const dir: "rtl" | "ltr" = t("direction");
+  const RTL = dir === "rtl";
   const GlobalStyle = createGlobalStyle`
   .MuiAutocomplete-input {
     padding-left:0px !important;
@@ -70,23 +77,52 @@ const UpdateValueAutoComplete = ({
               position: "relative",
             }}
             getOptionLabel={getOptionLabel}
-            renderInput={(params) => <TextField onChange={onChangeTextField} {...params} />}
-            onChange={((e: any, value: any) => {
+            onChange={(e: any, value: any) => {
               onChange(e, value);
-            })}
+            }}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                onChange={onChangeTextField}
+                InputProps={{
+                  ...params.InputProps,
+                  ...(loading && {
+                    endAdornment: (
+                      <CircularProgress
+                        color="inherit"
+                        size={16}
+                        sx={{ ml: 2 }}
+                      />
+                    ),
+                  }),
+                }}
+              />
+            )}
+            loading={loading} // Pass loading prop to show spinner
             popupIcon={
-              RTL ? <div style={{ position: "absolute", left: -130, }}>
-                <ArrowUpIcon />
-              </div> :
-                <div style={{ position: "absolute", top: "50%", transform: "translateY(-50%)" }}>
+              RTL ? (
+                <div style={{ position: "absolute", left: -130 }}>
                   <ArrowUpIcon />
                 </div>
+              ) : (
+                <div
+                  style={{
+                    position: "absolute",
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                  }}
+                >
+                  <ArrowUpIcon />
+                </div>
+              )
             }
             style={{ height: 26 }}
             clearIcon={false}
-            PaperComponent={(props) => <Paper ref={optionsListEl} {...props}>
-              {props?.children}
-            </Paper>}
+            PaperComponent={(props) => (
+              <Paper ref={optionsListEl} {...props}>
+                {props?.children}
+              </Paper>
+            )}
           />
         </Paper>
       </ClickOutside>

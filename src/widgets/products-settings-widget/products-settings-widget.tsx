@@ -1,27 +1,27 @@
-import {useProductsSettings} from "./use-products-settings";
-import {ProductManagementWidget} from "./widget/product-management";
+import { useProductsSettings } from "./use-products-settings";
+import { ProductManagementWidget } from "./widget/product-management";
 import {
     CustomTabPanel,
     UsersSettingsTab,
     UsersSettingsTabs,
 } from "../settings-users/tabs";
-import {useStyle} from "./style";
-import {AddProductWidget} from "./widget/add-product";
-import {AddButton} from "@/components/button/add-button";
-import {GomakePrimaryButton} from "@/components";
-import {LeftArrowIcon} from "@/icons";
-import {EWidgetProductSettingsTabs} from "./enums";
-import {PermissionCheck} from "@/components/CheckPermission";
-import {Permissions} from "@/components/CheckPermission/enum";
-import {useRouter} from "next/router";
+import { useStyle } from "./style";
+import { AddProductWidget } from "./widget/add-product";
+import { AddButton } from "@/components/button/add-button";
+import { GomakePrimaryButton } from "@/components";
+import { LeftArrowIcon } from "@/icons";
+import { EWidgetProductSettingsTabs } from "./enums";
+import { PermissionCheck } from "@/components/CheckPermission";
+import { Permissions } from "@/components/CheckPermission/enum";
+import { useRouter } from "next/router";
 import Stack from "@mui/material/Stack";
 
 const ProductsSettingsWidget = () => {
-    const {clasess} = useStyle();
+    const { clasess } = useStyle();
     const router = useRouter();
-    const {tabs, value, handleChange, setValue, t} = useProductsSettings();
+    const { tabs, value, handleChange, setValue, t } = useProductsSettings();
     return (
-        <div  style={clasess.mainContainer} >
+        <div style={clasess.mainContainer} >
             <div style={clasess.mainHeadecontainer}>
                 <PermissionCheck userPermission={Permissions.SHOW_PRODUCTS}>
                     <UsersSettingsTabs
@@ -30,7 +30,7 @@ const ProductsSettingsWidget = () => {
                         aria-label="tabs example"
                     >
                         {tabs?.map((tab) => {
-                            return <UsersSettingsTab label={tab?.name}/>;
+                            return <UsersSettingsTab label={tab?.name} />;
                         })}
                     </UsersSettingsTabs>
                 </PermissionCheck>
@@ -39,7 +39,7 @@ const ProductsSettingsWidget = () => {
                         {value === 3 ? (
                             <GomakePrimaryButton
                                 style={clasess.gobackBtnStyle}
-                                leftIcon={<LeftArrowIcon/>}
+                                leftIcon={<LeftArrowIcon />}
                                 onClick={() =>
                                     setValue(EWidgetProductSettingsTabs.PRODUCT_MANAGMENT)
                                 }
@@ -65,9 +65,9 @@ const ProductsSettingsWidget = () => {
                 index={EWidgetProductSettingsTabs.PRODUCT_MANAGMENT}
             >
                 <PermissionCheck userPermission={Permissions.SHOW_PRODUCTS}>
-                    <Stack  data-tour={'productsSettingsWidget'}>
+                    <Stack data-tour={'productsSettingsWidget'}>
 
-                    <ProductManagementWidget />
+                        <ProductManagementWidget />
                     </Stack>
                 </PermissionCheck>
             </CustomTabPanel>
@@ -87,10 +87,10 @@ const ProductsSettingsWidget = () => {
                 value={value}
                 index={EWidgetProductSettingsTabs.ADD_PRODUCT}
             >
-                <AddProductWidget/>
+                <AddProductWidget />
             </CustomTabPanel>
         </div>
     );
 };
 
-export {ProductsSettingsWidget};
+export { ProductsSettingsWidget };

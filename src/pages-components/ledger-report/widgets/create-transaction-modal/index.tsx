@@ -1,10 +1,8 @@
-
 import { GoMakeAutoComplate, GoMakeModal, GomakeTextInput } from "@/components";
 import { useCreateNewTransaction } from "./use-create-transaction";
 import { useStyle } from "./style";
 import { DateFormatter } from "@/utils/adapter";
 import { SecondaryButton } from "@/components/button/secondary-button";
-
 
 const CreateNewTransactionModal = ({ openModal, onCloseModal, customerId }) => {
   const { classes } = useStyle();
@@ -27,8 +25,9 @@ const CreateNewTransactionModal = ({ openModal, onCloseModal, customerId }) => {
     onChangeReference,
     onChangePrice,
     createTransactionsApi,
-    onCloseAndRemoveState
-  } = useCreateNewTransaction({ onCloseModal, customerId })
+    onCloseAndRemoveState,
+    isFetching,
+  } = useCreateNewTransaction({ onCloseModal, customerId });
   return (
     <>
       <GoMakeModal
@@ -40,7 +39,9 @@ const CreateNewTransactionModal = ({ openModal, onCloseModal, customerId }) => {
         <div style={classes.mainContainer}>
           <div style={classes.inputsRowStyle}>
             <div style={classes.date2FilterContainer}>
-              <h3 style={classes.filterLabelStyle}>{t("sales.quote.customer")}</h3>
+              <h3 style={classes.filterLabelStyle}>
+                {t("sales.quote.customer")}
+              </h3>
               <GoMakeAutoComplate
                 key={customer?.id}
                 options={renderOptions()}
@@ -50,10 +51,13 @@ const CreateNewTransactionModal = ({ openModal, onCloseModal, customerId }) => {
                 placeholder={t("sales.quote.chooseCustomer")}
                 onChange={handleCustomerChange}
                 value={customer}
+                loading={isFetching}
               />
             </div>
             <div style={classes.date2FilterContainer}>
-              <h3 style={classes.filterLabelStyle}>{t("reports.accountCode")}</h3>
+              <h3 style={classes.filterLabelStyle}>
+                {t("reports.accountCode")}
+              </h3>
               <GoMakeAutoComplate
                 key={selectErpAccount?.code}
                 options={erpAccountsList}
@@ -78,21 +82,33 @@ const CreateNewTransactionModal = ({ openModal, onCloseModal, customerId }) => {
             </div>
             <div style={classes.date2FilterContainer}>
               <h3 style={classes.filterLabelStyle}>{t("reports.price")}</h3>
-              <GomakeTextInput style={classes.textInputStyle} placeholder={t("reports.enterPrice")} type="number" onChange={onChangePrice} />
-
+              <GomakeTextInput
+                style={classes.textInputStyle}
+                placeholder={t("reports.enterPrice")}
+                type="number"
+                onChange={onChangePrice}
+              />
             </div>
             <div style={classes.date2FilterContainer}>
               <h3 style={classes.filterLabelStyle}>{t("reports.reference")}</h3>
-              <GomakeTextInput style={classes.textInputStyle} placeholder={t("reports.enterReference")} onChange={onChangeReference} />
+              <GomakeTextInput
+                style={classes.textInputStyle}
+                placeholder={t("reports.enterReference")}
+                onChange={onChangeReference}
+              />
             </div>
             <div style={classes.date2FilterContainer}>
-              <h3 style={classes.filterLabelStyle}>{t("customers.modal.referenceDate")}</h3>
-              <div style={classes.datePickerinvidualContainer} onClick={handleClickSelectDate}>
-                <div
-                  style={classes.dateStyle}
-
-                >
-                  {selectDate ? DateFormatter(selectDate) : t("sales.quote.selectDate")}
+              <h3 style={classes.filterLabelStyle}>
+                {t("customers.modal.referenceDate")}
+              </h3>
+              <div
+                style={classes.datePickerinvidualContainer}
+                onClick={handleClickSelectDate}
+              >
+                <div style={classes.dateStyle}>
+                  {selectDate
+                    ? DateFormatter(selectDate)
+                    : t("sales.quote.selectDate")}
                   <div style={classes.datePickerContainer}>
                     <input
                       type="date"
@@ -106,7 +122,13 @@ const CreateNewTransactionModal = ({ openModal, onCloseModal, customerId }) => {
               </div>
             </div>
           </div>
-          <SecondaryButton variant="contained" style={classes.createBtnStyle} onClick={createTransactionsApi}>{t("reports.createNewTransaction")}</SecondaryButton>
+          <SecondaryButton
+            variant="contained"
+            style={classes.createBtnStyle}
+            onClick={createTransactionsApi}
+          >
+            {t("reports.createNewTransaction")}
+          </SecondaryButton>
         </div>
       </GoMakeModal>
     </>

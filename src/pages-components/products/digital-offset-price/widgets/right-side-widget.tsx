@@ -121,7 +121,7 @@ const RightSideWidget = ({
             {clientDefaultValue && (
               <Typography
                 key={"client-name"}
-                style={clasess.clientDropDownListStyle}>
+                style={clasess.clientTypographyStyle}>
                 {clientDefaultValue?.label || t("products.offsetPrice.admin.client")}
               </Typography>
             )}
@@ -131,11 +131,27 @@ const RightSideWidget = ({
               {t("products.offsetPrice.admin.type")}
             </div>
             {clientTypeDefaultValue && (
-              <Typography
-                key={"client-type"}
-                style={clasess.clientDropDownListStyle}>
-                {clientTypeDefaultValue?.label || t("products.offsetPrice.admin.type")}
-              </Typography>
+              <GoMakeAutoComplate
+                options={clientTypesCategories}
+                disableClearable
+                style={clasess.clientDropDownListStyle}
+                placeholder={t("customers.selectAgent")}
+                onChange={(e, v) => {
+                  if (v) {
+                    router.push({
+                      pathname: router.pathname,
+                      query: { ...router.query, clientTypeId: v?.id },
+                    });
+                    setClientTypeDefaultValue(v)
+                  }
+                }}
+                value={clientTypeDefaultValue}
+              />
+              // <Typography
+              //   key={"client-type"}
+              //   style={clasess.clientDropDownListStyle}>
+              //   {clientTypeDefaultValue?.label || t("products.offsetPrice.admin.type")}
+              // </Typography>
             )}
           </div>
         </div>

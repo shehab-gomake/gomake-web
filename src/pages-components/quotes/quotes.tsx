@@ -174,6 +174,7 @@ const QuotesListPageWidget = ({
     openCancelReceiptModalRefund,
     onCloseCancelReceiptModalRefund,
     ExportDocumentTableToExcel,
+    isFetching,
   } = useQuotes(documentType, isFromHomePage);
 
   useEffect(() => {
@@ -282,7 +283,13 @@ const QuotesListPageWidget = ({
                     <div>
                       <IconButton onClick={handleClick}>
                         <TuneIcon />
-                        {Object.keys(router.query).length > 0 && <div style={{ position: "absolute", top: -5, right: -1 }}> <DotIcon /></div>}
+                        {Object.keys(router.query).length > 0 && (
+                          <div
+                            style={{ position: "absolute", top: -5, right: -1 }}
+                          >
+                            <DotIcon />
+                          </div>
+                        )}
                       </IconButton>
                       <GoMakeMenu
                         handleClose={handleClose}
@@ -308,7 +315,7 @@ const QuotesListPageWidget = ({
                                   setCustomerId(value);
                                 }}
                                 value={customerId}
-                              //withArrow={true}
+                                loading={isFetching}
                               />
                             </div>
                             <div style={classes.statusFilterContainer}>
@@ -325,7 +332,7 @@ const QuotesListPageWidget = ({
                                   setAgentId(value);
                                 }}
                                 value={agentId}
-                              //withArrow={true}
+                                //withArrow={true}
                               />
                             </div>
                             {documentType === DOCUMENT_TYPE.quote && (
@@ -344,7 +351,7 @@ const QuotesListPageWidget = ({
                                     setStatusId(value);
                                   }}
                                   value={statusId}
-                                //withArrow={true}
+                                  //withArrow={true}
                                 />
                               </div>
                             )}
@@ -366,7 +373,7 @@ const QuotesListPageWidget = ({
                                     setApprovalStatusId(value);
                                   }}
                                   value={approvalStatusId}
-                                //withArrow={true}
+                                  //withArrow={true}
                                 />
                               </div>
                             )}
@@ -384,7 +391,7 @@ const QuotesListPageWidget = ({
                                   )}
                                   onChange={handleProductionStatusChange}
                                   value={productionStatus}
-                                //withArrow={true}
+                                  //withArrow={true}
                                 />
                               </div>
                             )}
@@ -402,13 +409,13 @@ const QuotesListPageWidget = ({
                                   )}
                                   onChange={handleAccountingStatusChange}
                                   value={accountingStatus}
-                                //withArrow={true}
+                                  //withArrow={true}
                                 />
                               </div>
                             )}
                             {documentType !== DOCUMENT_TYPE.purchaseInvoice &&
                               documentType !==
-                              DOCUMENT_TYPE.purchaseInvoiceRefund &&
+                                DOCUMENT_TYPE.purchaseInvoiceRefund &&
                               documentType !== DOCUMENT_TYPE.purchaseOrder &&
                               documentType !== DOCUMENT_TYPE.receipt && (
                                 <div style={classes.statusFilterContainer}>
@@ -441,7 +448,7 @@ const QuotesListPageWidget = ({
                             )}
                             {documentType !== DOCUMENT_TYPE.purchaseInvoice &&
                               documentType !==
-                              DOCUMENT_TYPE.purchaseInvoiceRefund &&
+                                DOCUMENT_TYPE.purchaseInvoiceRefund &&
                               documentType !== DOCUMENT_TYPE.purchaseOrder && (
                                 <div
                                   style={{
@@ -527,10 +534,6 @@ const QuotesListPageWidget = ({
                 onChange={(e) => {
                   setPage(1);
                   setPatternSearch(e);
-                  router.push({
-                    pathname: router.pathname,
-                    query: { ...router.query, finalPatternSearch: e },
-                  });
                 }}
                 value={patternSearch}
               />
@@ -549,7 +552,7 @@ const QuotesListPageWidget = ({
                 documentType === DOCUMENT_TYPE.quote
                   ? ["11%", "11%", "7%", "7%", "20%", "11%", "10%", "16%", "6%"]
                   : documentType === DOCUMENT_TYPE.order
-                    ? [
+                  ? [
                       "6%",
                       "5%",
                       "5%",
@@ -565,37 +568,43 @@ const QuotesListPageWidget = ({
                       "5%",
                       "5%",
                     ]
-                    : documentType === DOCUMENT_TYPE.purchaseInvoice ||
-                      documentType === DOCUMENT_TYPE.purchaseInvoiceRefund
-                      ? [
-                        "7%",
-                        "15%",
-                        "10%",
-                        "13%",
-                        "10%",
-                        "10%",
-                        "10%",
-                        "10%",
-                        "10%",
-                        "5%",
-                      ]
-                      : [
-                        "7%",
-                        "8%",
-                        "8%",
-                        "8%",
-                        "10%",
-                        "26%",
-                        "10%",
-                        "10%",
-                        "10%",
-                        "3%",
-                      ]
+                  : documentType === DOCUMENT_TYPE.purchaseInvoice ||
+                    documentType === DOCUMENT_TYPE.purchaseInvoiceRefund
+                  ? [
+                      "7%",
+                      "15%",
+                      "10%",
+                      "13%",
+                      "10%",
+                      "10%",
+                      "10%",
+                      "10%",
+                      "10%",
+                      "5%",
+                    ]
+                  : [
+                      "7%",
+                      "8%",
+                      "8%",
+                      "8%",
+                      "10%",
+                      "26%",
+                      "10%",
+                      "10%",
+                      "10%",
+                      "3%",
+                    ]
               }
             />
           </div>
           <GoMakePagination
-            onChangePageNumber={(event, value) => setPage(value)}
+            onChangePageNumber={(event, value) => {
+              setPage(value);
+              router.push({
+                pathname: router.pathname,
+                query: { ...router.query, pageNumber: value },
+              });
+            }}
             onChangePageSize={handlePageSizeChange}
             page={page}
             setPage={setPage}

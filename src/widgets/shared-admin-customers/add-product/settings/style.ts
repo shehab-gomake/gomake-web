@@ -19,6 +19,8 @@ const useStyle = () => {
         alignItems: "flex-start",
         width: "100%",
         backgroundColor: "transparent",
+        height: "65vh",
+        overflow: "auto",
       },
       categoryNameStyle: {
         ...FONT_FAMILY.Lexend(600, 16),

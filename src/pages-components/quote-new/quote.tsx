@@ -243,6 +243,8 @@ const QuoteNewPageWidget = ({
     setIsUpdateDocumentTitle,
     isWhatsAppWeb,
     setIsWhatsAppWeb,
+    isShowSettingIcon,
+    isInvoice,
   } = useQuoteNew({
     docType: documentType,
     isQuoteConfirmation: isQuoteConfirmation,
@@ -299,11 +301,7 @@ const QuoteNewPageWidget = ({
     },
   ];
 
-  const { } = useGoMakeTour(quoteSteps, []);
-
-  const isInvoice =
-    documentType === DOCUMENT_TYPE.invoice ||
-    documentType === DOCUMENT_TYPE.invoiceRefund;
+  const {} = useGoMakeTour(quoteSteps, []);
 
   useEffect(() => {
     if (isInvoice) {
@@ -368,8 +366,8 @@ const QuoteNewPageWidget = ({
                     title={
                       router?.query?.isNewCreation
                         ? `${t(
-                          "properties.create"
-                        )} ${documentTitle.toLowerCase()}`
+                            "properties.create"
+                          )} ${documentTitle.toLowerCase()}`
                         : documentTitle
                     }
                     marginBottom={1}
@@ -386,7 +384,7 @@ const QuoteNewPageWidget = ({
                   <div style={classes.settingsStatusContainer}>
                     <>
                       {quoteItemValue?.signImageUrl &&
-                        quoteItemValue?.signerName ? (
+                      quoteItemValue?.signerName ? (
                         <div
                           style={classes.signatureApproval}
                           onClick={onClickOpenSignatureApprovalModal}
@@ -407,12 +405,14 @@ const QuoteNewPageWidget = ({
                         </>
                       )}
                     </>
-                    <IconButton
-                      style={{ marginRight: 4 }}
-                      onClick={handleSettingMenuClick}
-                    >
-                      <SettingNewIcon />
-                    </IconButton>
+                    {isShowSettingIcon && (
+                      <IconButton
+                        style={{ marginRight: 4 }}
+                        onClick={handleSettingMenuClick}
+                      >
+                        <SettingNewIcon />
+                      </IconButton>
+                    )}
                   </div>
                 )}
               </div>
@@ -504,7 +504,6 @@ const QuoteNewPageWidget = ({
                   setIsUpdateDocumentTitle={setIsUpdateDocumentTitle}
                 />
                 <ContactNewWidget
-                  documentState={quoteState}
                   handleShowLess={handleShowLess}
                   items={items}
                   displayedItems={displayedItems}

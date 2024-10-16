@@ -6,10 +6,13 @@ import { DirectboxSendIcon } from "@/icons";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { generateCalculateProductsExcelForPrintHousesApi } from "@/services/hooks";
 import { IconButton } from "@mui/material";
-import { OptionsComponent } from "@/pages-components/company-reports/options-component";
+import { OptionsComponent } from "@/pages-components/company-reports/components/options-component";
 import { useRecoilState } from "recoil";
-import { printHousesState } from "@/pages-components/company-reports/state";
-import { IPrintHouse, PrintHousePayStatus } from "./interfaces";
+import { printHousesState } from "@/pages-components/company-reports/components/types/state";
+import {
+  IPrintHouse,
+  PrintHousePayStatus,
+} from "./components/types/interfaces";
 import { makePaymentApi } from "@/services/api-service/profiles/company-profile-api";
 
 const initialPrintHouseState: IPrintHouse = {
@@ -40,13 +43,13 @@ export const useCompanyReport = () => {
     useSnackBar();
   const [, setPrintHouses] =
     useRecoilState<{ id: string; name: string }[]>(printHousesState);
-
   const [AllReport, setAllReport] = useState([]);
-
+  const [patternSearch, setPatternSearch] = useState<string>("");
   const [openPaymentDetails, setOpenPaymentDetails] = useState<boolean>(false);
   const [selectedPrintHouse, setSelectedPrintHouse] = useState<IPrintHouse>(
     initialPrintHouseState
   );
+  const [selectedPrintHouseId, setSelectedPrintHouseId] = useState<string>("");
 
   const handleOpenModal = (printHouse) => {
     setSelectedPrintHouse(printHouse);
@@ -56,6 +59,19 @@ export const useCompanyReport = () => {
   const handleCloseModal = () => {
     setSelectedPrintHouse(initialPrintHouseState);
     setOpenPaymentDetails(false);
+  };
+
+  const [openSendPaymentModal, setOpenSendPaymentModal] =
+    useState<boolean>(false);
+
+  const handleOpenSendPaymentModal = (printHouseId) => {
+    setSelectedPrintHouseId(printHouseId);
+    setOpenSendPaymentModal(true);
+  };
+
+  const handleCloseSendPaymentModal = () => {
+    setSelectedPrintHouseId("");
+    setOpenSendPaymentModal(false);
   };
 
   const tableHeaders = [
@@ -139,6 +155,7 @@ export const useCompanyReport = () => {
             printHouse={item}
             handleOpenModal={handleOpenModal}
             handleClickMakePayment={handleMakePaymentClick}
+            handleOpenSendPaymentModal={handleOpenSendPaymentModal}
           />,
         ]);
         setAllReport(formattedData);
@@ -213,5 +230,10 @@ export const useCompanyReport = () => {
     payStatus,
     payStatuses,
     handlePayStatusChange,
+    patternSearch,
+    setPatternSearch,
+    openSendPaymentModal,
+    handleCloseSendPaymentModal,
+    selectedPrintHouseId,
   };
 };
