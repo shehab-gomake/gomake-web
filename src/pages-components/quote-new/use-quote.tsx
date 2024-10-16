@@ -276,8 +276,8 @@ const useQuoteNew = ({
         ? t("products.profits.details")
         : null
       : quoteItemValue?.isShowDetails
-        ? t("products.profits.details")
-        : null,
+      ? t("products.profits.details")
+      : null,
     t("sales.quote.amount"),
     t("products.profits.pricingListWidget.unitPrice"),
     t("sales.quote.discount"),
@@ -1033,9 +1033,11 @@ const useQuoteNew = ({
         ) {
           const updatedQuoteItemValue = { ...quoteItemValue };
           const deliveryItem = res?.data;
-          const item = {
+          const newItem = {
             id: uuidv4(),
-            details: "",
+            code: deliveryItem?.code,
+            productName: deliveryItem.productName,
+            details: deliveryItem?.details,
             price: deliveryItem.price,
             workName: "",
             discount: 0,
@@ -1044,11 +1046,6 @@ const useQuoteNew = ({
             isSelected: false,
             productID: deliveryItem?.productID,
             productType: 1,
-          };
-          const newItem = {
-            ...item,
-            id: uuidv4(),
-            productName: shipmentType?.label,
           };
           updatedQuoteItemValue.documentItems = [
             ...updatedQuoteItemValue.documentItems,
@@ -1353,7 +1350,6 @@ const useQuoteNew = ({
       }
     }
   };
-
 
   const onClickSendReceiptToClient = async (messageType: number) => {
     if (messageType === 1) {

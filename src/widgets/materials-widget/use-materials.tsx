@@ -313,7 +313,6 @@ const useMaterials = (isAdmin: boolean) => {
 
   const tableRowsNew = useMemo(() => {
     return materialCategoryData.map((dataRow) => {
-      console.log("dataRow", dataRow)
       const filteredHeaders = isAdmin
         ? materialHeaders.filter((x) => x.key !== "stock")
         : materialHeaders.filter((header) => !header.isForAdmin);

@@ -188,7 +188,7 @@ const RowMappingWidget = ({
           borderBottom: item?.childsDocumentItems && "none",
         }}
       >
-        {item.productName}
+        {item?.productName}
       </PrimaryTableCell>
       {quoteItems?.isShowDetails && (
         <PrimaryTableCell
@@ -199,7 +199,7 @@ const RowMappingWidget = ({
           }}
         >
           <CharacterDetails
-            details={item.details}
+            details={item?.details}
             getQuote={getQuote}
             documentItemId={item?.id}
             canUpdate={canUpdate}

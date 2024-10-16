@@ -3,7 +3,10 @@ import { ArrowDownNewIcon, PlusIcon } from "@/icons";
 import { useTranslation } from "react-i18next";
 import { GoMakeDeleteModal, GomakePrimaryButton } from "@/components";
 import { useButtonsContainer } from "./use-buttons-container";
-import { DELIVERY_NOTE_STATUSES, DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
+import {
+  DELIVERY_NOTE_STATUSES,
+  DOCUMENT_TYPE,
+} from "@/pages-components/quotes/enums";
 import { PaymentModal } from "./payment/payment-modal";
 import { PaymentBtn } from "./payment/payment-button";
 import { CancelReceiptModal } from "./payment/cancel-receipt-modal/cancel-receipt-modal";
@@ -36,7 +39,6 @@ const ButtonsContainer = ({
   const { t } = useTranslation();
   const { alertFault } = useSnackBar();
   const { navigate } = useGomakeRouter();
-
   const {
     quoteItemValue,
     openOrderNowModal,
@@ -81,7 +83,10 @@ const ButtonsContainer = ({
     documentCloseNumber,
     ManuallyCloseDocument,
     openCloseOrderModal,
-    selectedDocumentId
+    selectedDocumentId,
+    handleAddExistingItem,
+    isOrder,
+    isQuote,
   } = useButtonsContainer(documentType);
   const isShowSendButton =
     (quoteItemValue.isSendWhatsapp ||
@@ -108,80 +113,89 @@ const ButtonsContainer = ({
 
   useEffect(() => {
     quoteItemValue?.isNeedApproval && getAllUsersCanApproveQuote();
-  }, [])
+  }, []);
 
   return (
     <div style={classes.writeCommentContainer}>
       <div style={classes.btnsContainer}>
-        {
-          (isNewCreation && documentType === DOCUMENT_TYPE.receipt) &&
+        {isNewCreation && documentType === DOCUMENT_TYPE.receipt && (
           <PaymentBtn handleOpenModal={onClickOpenPaymentModal} />
-        }
-        {
-          (isInvoice && quoteItemValue?.isCanClose) && <GomakePrimaryButton
+        )}
+        {isInvoice && quoteItemValue?.isCanClose && (
+          <GomakePrimaryButton
             leftIcon={<CreditCardIcon color={"#344054"} />}
-            onClick={() => navigate(`/receipt?isNewCreation=true&documentNumber=${quoteItemValue?.number}&ClientId=${quoteItemValue?.customerID}`)}
+            onClick={() =>
+              navigate(
+                `/receipt?isNewCreation=true&documentNumber=${quoteItemValue?.number}&ClientId=${quoteItemValue?.customerID}`
+              )
+            }
             style={classes.btnContainer}
-          >{t("payment.payment")}</GomakePrimaryButton>
-        }
-        {
-          showAddNewItemBtn && <GomakePrimaryButton
+          >
+            {t("payment.payment")}
+          </GomakePrimaryButton>
+        )}
+        {showAddNewItemBtn && (
+          <GomakePrimaryButton
             leftIcon={<PlusIcon stroke={"#344054"} />}
             style={classes.btnContainer}
             onClick={() => handleAddItemClick()}
           >
             {t("sales.quote.addNewItems")}
           </GomakePrimaryButton>
-        }
-        {
-          documentType === DOCUMENT_TYPE.quote && <GomakePrimaryButton
+        )}
+        {(isQuote || isOrder) && (
+          <GomakePrimaryButton
             leftIcon={<PlusIcon stroke={"#344054"} />}
             style={classes.btnContainer}
-            onClick={() => navigate(`/jobs?clientId=${quoteItemValue?.customerID}`)}
+            onClick={handleAddExistingItem}
           >
             {t("sales.cart.addExitingItems")}
           </GomakePrimaryButton>
-        }
-        {
-          canAddDelivery && canEditDocument && <GomakePrimaryButton
+        )}
+        {canAddDelivery && canEditDocument && (
+          <GomakePrimaryButton
             leftIcon={<PlusIcon stroke={"#344054"} />}
             style={classes.btnContainer}
             onClick={() => onOpenDeliveryModal()}
           >
             {t("sales.quote.addDelivery")}
           </GomakePrimaryButton>
-        }
-        {
-          isNewCreation && (documentType === DOCUMENT_TYPE.deliveryNote || isInvoice) && <GomakePrimaryButton
+        )}
+        {isNewCreation &&
+          (documentType === DOCUMENT_TYPE.deliveryNote || isInvoice) && (
+            <GomakePrimaryButton
+              leftIcon={<PlusIcon stroke={"#344054"} />}
+              style={classes.btnContainer}
+              onClick={() => handleCopyFromDocumentClick(DOCUMENT_TYPE.order)}
+            >
+              {t("sales.quote.copyFromOrder")}
+            </GomakePrimaryButton>
+          )}
+        {isNewCreation && isInvoice && (
+          <GomakePrimaryButton
             leftIcon={<PlusIcon stroke={"#344054"} />}
             style={classes.btnContainer}
-            onClick={() => handleCopyFromDocumentClick(DOCUMENT_TYPE.order)}
-          >
-            {t("sales.quote.copyFromOrder")}
-          </GomakePrimaryButton>
-        }
-        {
-          isNewCreation && isInvoice && <GomakePrimaryButton
-            leftIcon={<PlusIcon stroke={"#344054"} />}
-            style={classes.btnContainer}
-            onClick={() => handleCopyFromDocumentClick(DOCUMENT_TYPE.deliveryNote)}
+            onClick={() =>
+              handleCopyFromDocumentClick(DOCUMENT_TYPE.deliveryNote)
+            }
           >
             {t("sales.quote.copyFromDeliveryNote")}
           </GomakePrimaryButton>
-        }
-        {
-          isNewCreation && documentType === DOCUMENT_TYPE.purchaseInvoice && <GomakePrimaryButton
+        )}
+        {isNewCreation && documentType === DOCUMENT_TYPE.purchaseInvoice && (
+          <GomakePrimaryButton
             leftIcon={<PlusIcon stroke={"#344054"} />}
             style={classes.btnContainer}
-            onClick={() => handleCopyFromDocumentClick(DOCUMENT_TYPE.purchaseOrder)}
+            onClick={() =>
+              handleCopyFromDocumentClick(DOCUMENT_TYPE.purchaseOrder)
+            }
           >
             {t("sales.quote.copyFromPurchaseOrder")}
           </GomakePrimaryButton>
-        }
+        )}
       </div>
       <div style={classes.btnsContainer}>
-        {
-          !isNewCreation && isShowCloseButton &&
+        {!isNewCreation && isShowCloseButton && (
           <GomakePrimaryButton
             rightIcon={openCloseBtn ? <ArrowUpNewIcon /> : <ArrowDownNewIcon />}
             style={classes.btnSecondContainer}
@@ -189,9 +203,8 @@ const ButtonsContainer = ({
           >
             {t("sales.quote.close")}
           </GomakePrimaryButton>
-        }
-        {
-          !isNewCreation && isShowSendButton &&
+        )}
+        {!isNewCreation && isShowSendButton && (
           <GomakePrimaryButton
             rightIcon={openSendBtn ? <ArrowUpNewIcon /> : <ArrowDownNewIcon />}
             style={classes.btnSecondContainer}
@@ -199,106 +212,102 @@ const ButtonsContainer = ({
           >
             {t("login.send")}
           </GomakePrimaryButton>
-        }
-        {
-          !isNewCreation &&
+        )}
+        {!isNewCreation && (
           <GomakePrimaryButton
             style={classes.btnSecondContainer}
             onClick={() => onClickPrint()}
           >
             {t("sales.quote.print")}
-          </GomakePrimaryButton>}
-        {
-          (documentType === DOCUMENT_TYPE.quote || (documentType === DOCUMENT_TYPE.order && quoteItemValue?.documentStatus !== 1)) && <GomakePrimaryButton
+          </GomakePrimaryButton>
+        )}
+        {(isQuote || (isOrder && quoteItemValue?.documentStatus !== 1)) && (
+          <GomakePrimaryButton
             style={classes.btnSecondContainer}
             onClick={handleCancelBtnClick}
           >
             {t("materials.buttons.cancel")}
           </GomakePrimaryButton>
-        }
-        {
-          (documentType === DOCUMENT_TYPE.receipt && !isNewCreation && quoteItemValue.status !== DELIVERY_NOTE_STATUSES.Canceled) && <GomakePrimaryButton
-            style={classes.btnThirdContainer}
-            onClick={quoteItemValue?.creditCardTotal > 0 ? onClickOpenCancelReceiptModal : onClickOpenDeleteModal}
-          >
-            {t("materials.buttons.cancel")}
-          </GomakePrimaryButton>
-        }
-        {
-          isNewCreation &&
+        )}
+        {documentType === DOCUMENT_TYPE.receipt &&
+          !isNewCreation &&
+          quoteItemValue.status !== DELIVERY_NOTE_STATUSES.Canceled && (
+            <GomakePrimaryButton
+              style={classes.btnThirdContainer}
+              onClick={
+                quoteItemValue?.creditCardTotal > 0
+                  ? onClickOpenCancelReceiptModal
+                  : onClickOpenDeleteModal
+              }
+            >
+              {t("materials.buttons.cancel")}
+            </GomakePrimaryButton>
+          )}
+        {isNewCreation && (
           <GomakePrimaryButton
             style={classes.btnThirdContainer}
             onClick={() => {
               if (documentType === DOCUMENT_TYPE.receipt) {
                 onClickCreateNewReceipt();
-              }
-              else if (isInvoice) {
+              } else if (isInvoice) {
                 if (
-                  quoteItemValue?.client?.closeOrderNotes && quoteItemValue?.client?.closeOrderNotes.trim() !== "" && quoteItemValue?.client?.closeOrderNotes.trim() !== null
+                  quoteItemValue?.client?.closeOrderNotes &&
+                  quoteItemValue?.client?.closeOrderNotes.trim() !== "" &&
+                  quoteItemValue?.client?.closeOrderNotes.trim() !== null
                 ) {
-                  onClickOpenNewItemNotesModal()
-                }
-                else {
+                  onClickOpenNewItemNotesModal();
+                } else {
                   handleSaveBtnClickForDocument();
                 }
-
-              }
-              else {
+              } else {
                 handleSaveBtnClickForDocument();
               }
             }}
           >
             {t(`sales.quote.create${getFormattedDocumentPath(documentType)}`)}
           </GomakePrimaryButton>
-        }
-        {
-          (documentType === DOCUMENT_TYPE.quote || documentType === DOCUMENT_TYPE.order) &&
+        )}
+        {(isQuote || isOrder) && (
           <GomakePrimaryButton
             style={classes.btnThirdContainer}
             onClick={handleSaveBtnClick}
           >
             {t("materials.buttons.save")}
           </GomakePrimaryButton>
-        }
-        {
-          (documentType === DOCUMENT_TYPE.quote) && quoteItemValue?.isManager &&
+        )}
+        {isQuote && quoteItemValue?.isManager && (
           <GomakePrimaryButton
             style={classes.btnThirdContainer}
             onClick={handleAcceptBtnClick}
           >
             {t("materials.buttons.accept")}
           </GomakePrimaryButton>
-        }
-        {
-          (documentType === DOCUMENT_TYPE.quote) && quoteItemValue?.isManager &&
+        )}
+        {isQuote && quoteItemValue?.isManager && (
           <GomakePrimaryButton
             style={classes.btnThirdContainer}
             onClick={handleRejectBtnClick}
           >
             {t("materials.buttons.reject")}
           </GomakePrimaryButton>
-        }
-        {
-          documentType === DOCUMENT_TYPE.quote && (
-            quoteItemValue?.isNeedApproval ? (
-              <GomakePrimaryButton
-                style={classes.btnOrderNowContainer}
-                onClick={onClickOpenMangerApprovalModal}
-              >
-                {t("sales.quote.managerApproval")}
-                {/* {t("sales.quote.sendToSalesManager")} */}
-
-              </GomakePrimaryButton>
-            ) : (
-              <GomakePrimaryButton
-                style={classes.btnOrderNowContainer}
-                onClick={onClickOpenOrderNowModal}
-              >
-                {t("sales.quote.orderNowTitle")}
-              </GomakePrimaryButton>
-            )
-          )
-        }
+        )}
+        {isQuote &&
+          (quoteItemValue?.isNeedApproval ? (
+            <GomakePrimaryButton
+              style={classes.btnOrderNowContainer}
+              onClick={onClickOpenMangerApprovalModal}
+            >
+              {t("sales.quote.managerApproval")}
+              {/* {t("sales.quote.sendToSalesManager")} */}
+            </GomakePrimaryButton>
+          ) : (
+            <GomakePrimaryButton
+              style={classes.btnOrderNowContainer}
+              onClick={onClickOpenOrderNowModal}
+            >
+              {t("sales.quote.orderNowTitle")}
+            </GomakePrimaryButton>
+          ))}
         <OrderNowModal
           openModal={openOrderNowModal}
           onClose={onClickCloseOrderNowModal}
