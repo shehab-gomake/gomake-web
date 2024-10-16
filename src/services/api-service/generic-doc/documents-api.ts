@@ -105,6 +105,9 @@ const EXPORT_DOCUMENT_TABLE_TO_EXCEL_URL =
 
   const SEND_RECEIPIT_TO_CLIENT_URL = "/v1/erp-service/receipt/send-receipt-to-client";
   const GET_WHATSAPP_MESSAGE_FOR_RECEIPIT_URL = "/v1/erp-service/receipt/get-whats-app-message-for-receipt";
+
+
+  const MOVE_ORDER_TO_DONE_URL = "/v1/erp-service/documents/move-order-to-don";
 const getDocumentApi: ICallAndSetData = async (callApi, setState, data) => {
   return await getSetApiData(
     callApi,
@@ -916,6 +919,20 @@ const getWhatsAppMessageForReceiptApi: ICallAndSetData = async (
   );
 };
 
+const moveOrderToReadyApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    MOVE_ORDER_TO_DONE_URL,
+    setState,
+    data
+  );
+};
+
 export {
   getDocumentApi,
   getAllDocumentsApi,
@@ -978,5 +995,6 @@ export {
   ExportDocumentTableToExcelApi,
   OpenCanceledDocumentApi,
   sendReceiptToClientApi,
-  getWhatsAppMessageForReceiptApi
+  getWhatsAppMessageForReceiptApi,
+  moveOrderToReadyApi
 };

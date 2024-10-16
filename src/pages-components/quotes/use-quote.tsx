@@ -34,6 +34,7 @@ import {
   getAllDocumentsApi,
   getDocumentPdfApi,
   manuallyCloseDocumentApi,
+  moveOrderToReadyApi,
   OpenCanceledDocumentApi,
   OpenDocumentApi,
   updateDocumentApi,
@@ -2142,6 +2143,19 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     }
   }, [router, renderOptions(), agentsCategories]);
 
+  const moveOrderToReady = async () => {
+    const callBack = (res) => {
+      if (res?.success) {
+        navigate(`/deliveryNote?isNewCreation=true&orderId=${selectedDocument?.id}`)
+      } else {
+        alertFaultUpdate();
+      }
+    };
+    await moveOrderToReadyApi(callApi, callBack, {
+      orderId: selectedDocument?.id,
+    });
+  };
+
   return {
     showCustomerModal,
     customerForEdit,
@@ -2266,7 +2280,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     ExportDocumentTableToExcel,
     isFetching,
     openChangeProductionStatusModal,
-    onClickCloseChangeProductionStatusModal
+    onClickCloseChangeProductionStatusModal,
+    moveOrderToReady
   };
 };
 

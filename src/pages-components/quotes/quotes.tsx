@@ -176,7 +176,8 @@ const QuotesListPageWidget = ({
     ExportDocumentTableToExcel,
     isFetching,
     openChangeProductionStatusModal,
-    onClickCloseChangeProductionStatusModal
+    onClickCloseChangeProductionStatusModal,
+    moveOrderToReady
   } = useQuotes(documentType, isFromHomePage);
 
   useEffect(() => {
@@ -792,7 +793,7 @@ const QuotesListPageWidget = ({
         yesBtn={t("sales.quote.yesBtn")}
         openModal={openChangeProductionStatusModal}
         onClose={onClickCloseChangeProductionStatusModal}
-        // onClickDelete={onClickCancelReceipt}
+        onClickDelete={moveOrderToReady}
         onClickCancel={() => navigate(`/deliveryNote?isNewCreation=true&orderId=${selectedDocument?.id}`)}
       />
       ,
