@@ -5,23 +5,27 @@ import { quoteItemState } from "@/store";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useRecoilState, } from "recoil";
+import { useRecoilState } from "recoil";
+
+const htmlToPlainText = (html: string) => {
+  const tempDiv = document.createElement("div");
+  tempDiv.innerHTML = html;
+  return tempDiv.innerText || tempDiv.textContent || "";
+};
 
 const useCharacterDetails = ({ details, getQuote, documentItemId }) => {
-  const router = useRouter()
+  const router = useRouter();
   const [showAll, setShowAll] = useState(false);
-  const [originalValue,] = useState(details);
+  const [originalValue] = useState(details);
   const [isValueChanged, setIsValueChanged] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
-  const [data, setData] = useState(details)
+  const [data, setData] = useState(htmlToPlainText(details));
   const { callApi } = useGomakeAxios();
-  const {
-    alertSuccessUpdate,
-    alertFaultUpdate,
-  } = useSnackBar();
+  const { alertSuccessUpdate, alertFaultUpdate } = useSnackBar();
   const { t } = useTranslation();
   const truncatedDetails = showAll ? details : details?.slice(0, 90);
-  const [quoteItemValue, setQuoteItemValue] = useRecoilState<any>(quoteItemState);
+  const [quoteItemValue, setQuoteItemValue] =
+    useRecoilState<any>(quoteItemState);
   const handleShowMore = () => {
     setShowAll(true);
   };
@@ -33,61 +37,69 @@ const useCharacterDetails = ({ details, getQuote, documentItemId }) => {
   const updateDocumentItemContent = async () => {
     if (router.query.isNewCreation) {
       const updatedQuoteItemValue = { ...quoteItemValue };
-      const documentItemIndex = updatedQuoteItemValue.documentItems.findIndex(item => item.id === documentItemId);
+      const documentItemIndex = updatedQuoteItemValue.documentItems.findIndex(
+        (item) => item.id === documentItemId
+      );
 
       if (documentItemIndex !== -1) {
         // Create a new object with the updated content
         const updatedDocumentItem = {
           ...updatedQuoteItemValue.documentItems[documentItemIndex],
-          details: data
+          details: data,
         };
 
         // Create a new array with the updated document item
         const updatedDocumentItems = [
           ...updatedQuoteItemValue.documentItems.slice(0, documentItemIndex),
           updatedDocumentItem,
-          ...updatedQuoteItemValue.documentItems.slice(documentItemIndex + 1)
+          ...updatedQuoteItemValue.documentItems.slice(documentItemIndex + 1),
         ];
 
         // Update the state with the new document items array
         setQuoteItemValue({
           ...updatedQuoteItemValue,
-          documentItems: updatedDocumentItems
+          documentItems: updatedDocumentItems,
         });
       }
-    }
-    else {
+    } else {
       const callBack = (res) => {
         if (res?.success) {
           alertSuccessUpdate();
-          getQuote()
+          getQuote();
         } else {
           alertFaultUpdate();
         }
-      }
+      };
       await updateDocumentItemContentApi(callApi, callBack, {
         documentType: DOCUMENT_TYPE.quote,
-        contact:
-        {
+        contact: {
           documentItemId: documentItemId,
-          content: data
-        }
-      })
+          content: data,
+        },
+      });
     }
-
-  }
+  };
   const handleChange = (e) => {
     setData(e.target.value);
     setIsValueChanged(e.target.value !== originalValue);
-  }
+  };
   const handleBlur = () => {
     if (isValueChanged) {
       updateDocumentItemContent();
     }
     setIsEdit(false);
-  }
+  };
   return {
-    isEdit, showAll, truncatedDetails, data, handleShowLess, handleShowMore, t, setIsEdit, handleChange, handleBlur
+    isEdit,
+    showAll,
+    truncatedDetails,
+    data,
+    handleShowLess,
+    handleShowMore,
+    t,
+    setIsEdit,
+    handleChange,
+    handleBlur,
   };
 };
 

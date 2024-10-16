@@ -24,10 +24,10 @@ import QrListenerWidget from "@/widgets/qr-listener/qr-listener-widget";
 import { useUserPermission } from "@/hooks/use-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { DateRangePicker } from "rsuite";
-import {useRecoilState, useRecoilValue} from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { newOrderIdToPrintJobsState } from "@/store/new-order-id-to-print-jobs-state";
 import { DotIcon } from "@/icons";
-import {printHouseUsePrintNode} from "@/store/print-house-profile";
+import { printHouseUsePrintNode } from "@/store/print-house-profile";
 
 const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
   const { classes } = useStyle();
@@ -109,14 +109,16 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
     isFetching,
     printOrderJobsUsingPrintNode,
   } = useBoardMissions({ isPurchaseJobs });
-  const [newOrderId, setNewOrderId] = useRecoilState(newOrderIdToPrintJobsState);
+  const [newOrderId, setNewOrderId] = useRecoilState(
+    newOrderIdToPrintJobsState
+  );
   const isPrintHouseUsePrintNode = useRecoilValue(printHouseUsePrintNode);
-
 
   useEffect(() => {
     getAllProducts();
   }, []);
 
+  const { targetOrderId } = router?.query;
   return (
     <>
       <Stack
@@ -326,55 +328,55 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
               !isPurchaseJobs
                 ? CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS)
                   ? [
+                      "7%",
+                      "7%",
+                      "6%",
+                      "6%",
+                      "7%",
+                      "7%",
+                      "8%",
+                      "7%",
+                      "4%",
+                      "6%",
+                      "12%",
+                      "7%",
+                      "7%",
+                      "13%",
+                      "3%",
+                    ]
+                  : [
+                      "7%",
+                      "7%",
+                      "7%",
+                      "7%",
+                      "7%",
+                      "7%",
+                      "8%",
+                      "7%",
+                      "18%",
+                      "7%",
+                      "15%",
+                      "7%",
+                      "3%",
+                    ]
+                : [
                     "7%",
+                    "5%",
+                    "6%",
                     "7%",
                     "6%",
-                    "6%",
                     "7%",
-                    "7%",
+                    "11%",
                     "8%",
+                    "6%",
+                    "8%",
+                    "5%",
+                    "5%",
+                    "7%",
                     "7%",
                     "4%",
-                    "6%",
-                    "12%",
-                    "7%",
-                    "7%",
-                    "13%",
-                    "3%",
+                    "2%",
                   ]
-                  : [
-                    "7%",
-                    "7%",
-                    "7%",
-                    "7%",
-                    "7%",
-                    "7%",
-                    "8%",
-                    "7%",
-                    "18%",
-                    "7%",
-                    "15%",
-                    "7%",
-                    "3%",
-                  ]
-                : [
-                  "7%",
-                  "5%",
-                  "6%",
-                  "7%",
-                  "6%",
-                  "7%",
-                  "11%",
-                  "8%",
-                  "6%",
-                  "8%",
-                  "5%",
-                  "5%",
-                  "7%",
-                  "7%",
-                  "4%",
-                  "2%",
-                ]
             }
           />
         </div>
@@ -387,7 +389,6 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
           pageSize={pageSize}
         />
       </Stack>
-
       <ThreeOptionsModal
         title={t("boardMissions.duplicateModalTitle")}
         yesBtn={"boardMissions.duplicateModalYes"}
@@ -395,13 +396,20 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
         openModal={openDuplicateModal}
         onClose={onCloseDuplicateModal}
         onClickYes={() =>
-          onClickDuplicateMission(DuplicateType.SameBoardMissionNumber)
+          onClickDuplicateMission(
+            targetOrderId
+              ? DuplicateType.SameOrderAndSameBoardMissionNumber
+              : DuplicateType.SameBoardMissionNumber
+          )
         }
         onClickNo={() =>
-          onClickDuplicateMission(DuplicateType.NewBoardMissionNumber)
+          onClickDuplicateMission(
+            targetOrderId
+              ? DuplicateType.SameOrder
+              : DuplicateType.NewBoardMissionNumber
+          )
         }
       />
-
       <ThreeOptionsModal
         title={t("boardMissions.markDoneModalTitle")}
         subTitle={t("boardMissions.markDoneModalSubTitle")}
@@ -444,9 +452,9 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
       <ThreeOptionsModal
         title={t("boardMissions.printOrderJobsModalTitle")}
         yesBtn={t("sales.quote.print")}
-        noBtn={''}
+        noBtn={""}
         openModal={!!newOrderId && isPrintHouseUsePrintNode}
-        onClose={() => setNewOrderId('')}
+        onClose={() => setNewOrderId("")}
         onClickYes={() => printOrderJobsUsingPrintNode(newOrderId)}
       />
       <PrintPackingSlipModal

@@ -19,8 +19,14 @@ const SendPaymentModal = ({
   selectedPrintHouseId,
 }: SendPaymentModalProps) => {
   const { classes } = useStyle();
-  const { t, handleCloseModal, paymentState, onChangeInputs, sendPaymentPage } =
-    useSendPaymentModal({ onClose, selectedPrintHouseId });
+  const {
+    t,
+    handleCloseModal,
+    paymentState,
+    onChangeInputs,
+    sendPaymentPage,
+    loading,
+  } = useSendPaymentModal({ onClose, selectedPrintHouseId });
 
   return (
     <GoMakeModal
@@ -29,30 +35,38 @@ const SendPaymentModal = ({
       modalTitle={t("Send Payment Page")}
       insideStyle={classes.modalStyle}
     >
-      <Stack
-        direction="column"
-        gap={"15px"}
-        width={"fit-content"}
-        alignItems={"flex-start"}
+      <div
+        style={{
+          pointerEvents: loading ? "none" : "auto",
+          opacity: loading ? 0.5 : 1,
+        }}
       >
-        {SendPaymentInputs(paymentState).map((item) => (
-          <FormInput
-            input={item as IInput}
-            changeState={onChangeInputs}
-            error={false}
-            key={item.name}
-          />
-        ))}
-      </Stack>
-      <Stack direction="row" justifyContent="center" width="100%" mt={2}>
-        <PrimaryButton
-          variant={"contained"}
-          onClick={sendPaymentPage}
-          style={{ width: "fit-content" }}
+        <Stack
+          direction="column"
+          gap={"15px"}
+          width={"fit-content"}
+          alignItems={"flex-start"}
         >
-          {t("sales.quote.sendPayment")}
-        </PrimaryButton>
-      </Stack>
+          {SendPaymentInputs(paymentState).map((item) => (
+            <FormInput
+              input={item as IInput}
+              changeState={onChangeInputs}
+              error={false}
+              key={item.name}
+            />
+          ))}
+        </Stack>
+        <Stack direction="row" justifyContent="center" width="100%" mt={2}>
+          <PrimaryButton
+            variant={"contained"}
+            onClick={sendPaymentPage}
+            style={{ width: "fit-content" }}
+            disabled={loading}
+          >
+            {t("sales.quote.sendPayment")}
+          </PrimaryButton>
+        </Stack>
+      </div>
     </GoMakeModal>
   );
 };
