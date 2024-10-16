@@ -19,7 +19,6 @@ import {
   subProductsCopyParametersState,
   subProductsParametersState,
 } from "@/store";
-import { useMaterials } from "../use-materials";
 import cloneDeep from "lodash/cloneDeep";
 import lodashClonedeep from "lodash.clonedeep";
 import { EWidgetProductType } from "@/pages-components/products/digital-offset-price/enums";
@@ -71,6 +70,7 @@ import { getDeviceSizeMockApi } from "@/services/api-service/materials/materials
 import { AdvertisingProductCategoryParameterWidget } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/advertising-product-category";
 import { AdvertisingProductNameParameterWidget } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/advertising-product-name";
 import { getAllFoldOptions } from "@/services/api-service/parameters/parameters-outputs";
+import { useMaterials } from "../use-materials";
 
 const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [, setOpenQuantityComponentModal] = useRecoilState<boolean>(openQuantityComponentModalState);
@@ -1409,45 +1409,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       setUnderParameterIds(underParameterIdsArray);
     }
   };
-
-  // useEffect(() => {
-  //   if (router?.query?.clientTypeId) {
-  //     setClientTypeDefaultValue(
-  //       clientTypesValue?.find(
-  //         (item: any) => item?.id === router?.query?.clientTypeId
-  //       )
-  //     );
-  //   }
-  //   if (router?.query?.customerId) {
-  //     if (renderOptions()?.find(
-  //       (item: any) => item?.id === router?.query?.customerId
-  //     )) {
-
-  //       setClientDefaultValue(
-  //         renderOptions()?.find(
-  //           (item: any) => item?.id === router?.query?.customerId
-  //         )
-  //       );
-  //     }
-  //     else {
-  //       setClientDefaultValue(
-  //         clientListData?.find(
-  //           (item: any) => item?.id === router?.query?.customerId
-  //         )
-  //       );
-  //     }
-
-
-  //   }
-  // }, [
-  //   clientTypesValue,
-  //   clientDefaultValue,
-  //   clientTypeDefaultValue,
-  //   router,
-  //   router?.query?.customerId,
-  //   renderOptions,
-  // ]);
-
   useEffect(() => {
     if (!currentCalculationSessionId) {
       setCurrentSignalRConnectionId(connectionId)
@@ -1482,7 +1443,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       }
     }
 
-  }, [widgetType, connectionId]);
+  }, []);
   const exampleTypeValues = useRecoilValue(exampleTypeState);
   const billingMethodValues = useRecoilValue(billingMethodState);
   const listEmployeesValues = useRecoilValue(listEmployeesAtom);
