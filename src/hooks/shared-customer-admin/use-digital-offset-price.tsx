@@ -106,7 +106,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [subProductsColorsModal, setSubProductsColorsModal] = useRecoilState<any>(subProductsCopyParametersState);
   const [isSetTemplete, setIsSetTemplete] = useState<boolean>(false);
   const setSubProductsCopy = useSetRecoilState<any>(subProductsCopyParametersState);
-  const itemParmetersValues = useRecoilValue(itemParmetersValuesState);
+  // const itemParmetersValues = useRecoilValue(itemParmetersValuesState);
   const [currentProductItemValue, setCurrentProductItemValue] = useRecoilState<any>(currentProductItemValueState);
   const [productItemValueDraftId, setCurrentProductItemValueDraftId] = useRecoilState<string>(currentProductItemValueDraftId);
   const setAdditionalProductItems = useSetRecoilState<any>(additionalProductItemsState);
@@ -1085,6 +1085,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             }),
           };
         });
+        // const updatedSubProducts = removeHiddenParametersFromSubProducts(filteredSubProductsArray, productTemplate);
+        console.log("productTemplate", productTemplate)
         setProductTemplate(productTemplate)
         // setSubProducts(updatedSubProducts);
         setSubProducts(filteredSubProductsArray);
@@ -3115,6 +3117,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         sectionName: section.name,
         parameters: temp,
       }
+      // const updatedSubProducts = removeHiddenParametersFromSubProducts(temp2, productTemplateCopy);
       setSubProducts(temp2);
       setSubProductsColorsModal(temp2)
       processRelatedParameters2(subSectionParameter, subSection, section, productTemplateCopy, temp2);
@@ -3386,7 +3389,40 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     let checkParameter = validateParameters(activeSectionRequiredParameters, subProducts);
     setCheckParameter(checkParameter)
   }, [isRequiredParameters])*/
+  const getItemParameterValues = () => {
+    const updatedSubProducts = removeHiddenParametersFromSubProducts(subProducts, productTemplate);
 
+    const result = [];
+    updatedSubProducts.forEach((subProduct) => {
+      subProduct?.parameters?.forEach((param) => {
+        const paramCopy = cloneDeep(param);
+        paramCopy.subProductType = subProduct.type;
+        result.push(paramCopy);
+      });
+    });
+
+    // Filter non-empty parameter values or valueIds
+    const filteredArray = result.filter((obj) =>
+      (obj.values && obj.values.length && obj.values[0] !== "false") ||
+      (obj.valueIds && obj.valueIds.length)
+    );
+
+    // Use a Map to remove duplicates based on actionIndex, parameterCode, parameterId, sectionId, subSectionId
+    const uniqueParamsMap = new Map();
+
+    const uniqueFilteredArray = filteredArray.filter((param) => {
+      const key = `${param.actionIndex}_${param.parameterCode}_${param.parameterId}_${param.sectionId}_${param.subSectionId}`;
+
+      if (!uniqueParamsMap.has(key)) {
+        uniqueParamsMap.set(key, true);
+        return true; // Keep the first occurrence
+      }
+
+      return false; // Discard duplicates
+    });
+
+    return uniqueFilteredArray;
+  };
   const calculationProduct = useDebouncedCallback(async (currentSubProducts) => {
     if (requestAbortController) {
       requestAbortController.abort();
@@ -3430,6 +3466,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         setErrorMsg("")
         const newCalculationSessionId = uuidv4();
         setCurrentCalculationSessionId(newCalculationSessionId);
+        const itemParmetersValues = getItemParameterValues()
         const res: any = await callApi(
           "POST",
           `/v1/calculation-service/calculations/calculate-productV2`,
@@ -3514,6 +3551,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   };
   const createProfitTestCase = useCallback(async () => {
     const generalParameters = [];
+    const itemParmetersValues = getItemParameterValues()
     const res = await callApi(
       "POST",
       `/v1/printhouse-config/profits/create-profit-test-case?systemID=2`,
@@ -3535,7 +3573,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     if (res?.success) {
       navigate(`/products/profits?actionId=${router?.query?.actionId}`);
     }
-  }, [router, pricingDefaultValue, itemParmetersValues, selectedWorkFlow]);
+  }, [router, pricingDefaultValue, selectedWorkFlow]);
   const quantity = useMemo(() => {
     if (subProducts) {
       const generalParameters = subProducts.find((x) => !x.type)?.parameters;
@@ -3778,33 +3816,22 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     setSubProducts(updatedSubProducts);
   }
 
-  // function removeHiddenParametersFromSubProducts(subProducts, productTemplate) {
-  //   if (!subProducts?.length || !productTemplate?.sections?.length) return subProducts;
+  function removeHiddenParametersFromSubProducts(subProducts, productTemplate) {
+    return subProducts.map((subProduct) => {
+      const filteredParameters = subProduct?.parameters?.filter((param) => {
+        const matchingTemplateParam = productTemplate.sections
+          .flatMap(section => section.subSections)
+          .flatMap(subSection => subSection.parameters)
+          .find(templateParam => templateParam.id === param.parameterId);
 
-  //   // Create a map for fast lookup of `isHidden` flag by parameterId
-  //   const templateParamMap = new Map();
+        // Check if the parameter is not hidden (isHidden = false)
+        return matchingTemplateParam ? !matchingTemplateParam.isHidden : true;
+      });
 
-  //   productTemplate.sections.forEach((section) => {
-  //     section.subSections?.forEach((subSection) => {
-  //       subSection.parameters?.forEach((param) => {
-  //         templateParamMap.set(param.id, param.isHidden);
-  //       });
-  //     });
-  //   });
-
-  //   return subProducts.map((subProduct) => {
-  //     const filteredParameters = subProduct.parameters.filter((param) => {
-  //       // Check the parameter visibility from the template map
-  //       const isHidden = templateParamMap.get(param.parameterId);
-  //       // Return only parameters that are not hidden
-  //       return isHidden === undefined ? true : !isHidden;
-  //     });
-  //     return {
-  //       ...subProduct,
-  //       parameters: filteredParameters,
-  //     };
-  //   });
-  // }
+      // Return the updated subProduct with filtered parameters
+      return { ...subProduct, parameters: filteredParameters };
+    });
+  }
   useEffect(() => {
     if (productTemplate?.length > 0) {
       const updateSections = () => {
