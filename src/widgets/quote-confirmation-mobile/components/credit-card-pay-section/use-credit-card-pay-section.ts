@@ -127,6 +127,8 @@ const useCreditCardPaySection = () => {
     }));
   };
 
+  const [isPaymentSuccess, setIsPaymentSuccess] = useState(false);
+
   const handleProceedCheckout = async () => {
     const finalPaymentDetailsState = {
       ...paymentDetailsState,
@@ -139,6 +141,7 @@ const useCreditCardPaySection = () => {
     const callBack = (res) => {
       if (res?.success) {
         alertSuccess(t("prePayment.paymentComplete"));
+        setIsPaymentSuccess(true);
       } else {
         alertFault(t("prePayment.paymentFailed"));
       }
@@ -164,6 +167,7 @@ const useCreditCardPaySection = () => {
     handleCVVChange,
     handleExpiryDateChange,
     handleProceedCheckout,
+    isPaymentSuccess,
   };
 };
 
