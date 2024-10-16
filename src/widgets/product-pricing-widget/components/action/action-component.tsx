@@ -632,7 +632,7 @@ const ActionContainerComponent = ({
                     {...totalCost}
                     values={totalCostValue}
                     source={source}
-                    name="Cost"
+                    name={t("machineAttributes.cost")}
                   />
                   <Divider
                     orientation={"vertical"}
@@ -645,7 +645,7 @@ const ActionContainerComponent = ({
                       {...profit}
                       values={profitValue}
                       source={source}
-                      name="Profit"
+                      name={t("products.profits.pricingListWidget.profit")}
                     />
                     <span>
                       {`(${calculateProfitInMoney()} ${totalPrice ? totalPrice.defaultUnit : ""
@@ -664,7 +664,7 @@ const ActionContainerComponent = ({
                     values={totalPriceValue}
                     source={source}
                     valueColor={secondColor(500)}
-                    name="Price"
+                    name={t("sales.quote.price")}
                   />
                 </>
               }
