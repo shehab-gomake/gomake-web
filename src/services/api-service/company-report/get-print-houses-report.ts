@@ -23,7 +23,8 @@ const sendPaymentPageApi: ICallAndSetData = async (callApi, setState, data) => {
     EHttpMethod.POST,
     SEND_PAYMENT_PAGE_URL,
     setState,
-    data
+    data,
+    true
   );
 };
 

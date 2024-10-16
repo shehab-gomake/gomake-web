@@ -3,11 +3,14 @@ import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { useState } from "react";
 import { initSendPaymentState, SendPaymentState } from "../types/interfaces";
 import { sendPaymentPageApi } from "@/services/api-service/company-report/get-print-houses-report";
+import { useRecoilValue } from "recoil";
+import { loadgingState } from "@/store/loading";
 
 const useSendPaymentModal = ({ onClose, selectedPrintHouseId }) => {
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
   const { alertSuccessUpdate, alertFaultUpdate } = useSnackBar();
+  const loading = useRecoilValue(loadgingState);
 
   const [paymentState, setPaymentState] =
     useState<SendPaymentState>(initSendPaymentState);
@@ -42,6 +45,7 @@ const useSendPaymentModal = ({ onClose, selectedPrintHouseId }) => {
     paymentState,
     onChangeInputs,
     sendPaymentPage,
+    loading,
   };
 };
 
