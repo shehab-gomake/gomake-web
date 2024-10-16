@@ -171,17 +171,18 @@ const useMoreCircle = () => {
           (isOrder && quote?.isCanClose && !isCanceledOrder) ||
           (isDeliveryNote && quote?.isCanClose),
         onClick: () => {
-
-          if (quote?.productionStatus) {
-            const path = isOrder
-              ? `/invoice?isNewCreation=true&orderId=${quote?.id}`
-              : `/invoice?isNewCreation=true&deliveryNoteId=${quote?.id}`;
-            navigate(path);
-          } else {
-            onClickOpenChangeProductionStatusModal(quote)
-            setIsSelectedCLoseAsDeleveryNote(false)
+          if (isOrder) {
+            if (quote?.productionStatus) {
+              navigate(`/invoice?isNewCreation=true&orderId=${quote?.id}`);
+            }
+            else {
+              onClickOpenChangeProductionStatusModal(quote)
+              setIsSelectedCLoseAsDeleveryNote(false)
+            }
           }
-
+          else {
+            navigate(`/invoice?isNewCreation=true&deliveryNoteId=${quote?.id}`);
+          }
         },
         icon: <TickIcon />,
         name: t("sales.quote.closeAsInvoice"),
