@@ -1,7 +1,6 @@
 import { useRecoilState } from "recoil";
 import { useGomakeAxios } from "./use-gomake-axios";
 import { materialsState } from "@/store";
-import { useCallback, useEffect } from "react";
 import { getAllMaterials } from "@/services/hooks/get-all-materials";
 
 const useMaterials = () => {
