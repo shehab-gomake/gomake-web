@@ -508,7 +508,6 @@ const useCustomerCard = ({
   }, [])
 
   const [newGroupId, setNewGroupId] = useState("")
-  console.log("newGroupId", newGroupId)
   const addGroupName = useCallback(async (data: string) => {
     const res: any = await callApi(
       "POST",

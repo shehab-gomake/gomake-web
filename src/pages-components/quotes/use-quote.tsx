@@ -1026,7 +1026,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   };
 
   const onClickSearchFilter = () => {
-    console.log("customerId", customerId);
     const query: Query = {};
     if (customerId?.id) query.customerId = customerId.id;
     if (customerId?.name) query.customerName = customerId.name;

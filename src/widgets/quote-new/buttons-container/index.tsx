@@ -82,7 +82,6 @@ const ButtonsContainer = ({
     openCloseOrderModal,
     selectedDocumentId
   } = useButtonsContainer(documentType);
-  console.log("quoteItemValue", quoteItemValue)
   const isShowSendButton =
     (quoteItemValue.isSendWhatsapp ||
       quoteItemValue.isSendWhatsappWeb ||
