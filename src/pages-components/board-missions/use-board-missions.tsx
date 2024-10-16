@@ -565,7 +565,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
       );
     }
   };
-  s;
+
   const onClickDuplicateMission = (duplicateType: DuplicateType) => {
     const { targetOrderId, targetOrderNumber, clientId } = router?.query;
     if (targetOrderId)

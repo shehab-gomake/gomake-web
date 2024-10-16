@@ -130,11 +130,17 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [subProductsColorsModal, setSubProductsColorsModal] =
     useRecoilState<any>(subProductsCopyParametersState);
   const [isSetTemplete, setIsSetTemplete] = useState<boolean>(false);
-  const setSubProductsCopy = useSetRecoilState<any>(subProductsCopyParametersState);
+  const setSubProductsCopy = useSetRecoilState<any>(
+    subProductsCopyParametersState
+  );
   // const itemParmetersValues = useRecoilValue(itemParmetersValuesState);
-  const [currentProductItemValue, setCurrentProductItemValue] = useRecoilState<any>(currentProductItemValueState);
-  const [productItemValueDraftId, setCurrentProductItemValueDraftId] = useRecoilState<string>(currentProductItemValueDraftId);
-  const setAdditionalProductItems = useSetRecoilState<any>(additionalProductItemsState);
+  const [currentProductItemValue, setCurrentProductItemValue] =
+    useRecoilState<any>(currentProductItemValueState);
+  const [productItemValueDraftId, setCurrentProductItemValueDraftId] =
+    useRecoilState<string>(currentProductItemValueDraftId);
+  const setAdditionalProductItems = useSetRecoilState<any>(
+    additionalProductItemsState
+  );
   const [
     currentProductItemValueTotalPrice,
     setCurrentProductItemValueTotalPrice,
@@ -1210,7 +1216,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             }),
           };
         });
-        setProductTemplate(productTemplate)
+        setProductTemplate(productTemplate);
         setSubProducts(filteredSubProductsArray);
         setUnderParameterIds(underParameterIdsArray);
         setIsSetTemplete(true);
@@ -1599,40 +1605,36 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   useEffect(() => {
     if (connectionId) {
       if (!currentCalculationSessionId) {
-        setCurrentSignalRConnectionId(connectionId)
+        setCurrentSignalRConnectionId(connectionId);
         setCurrentProductItemValueTotalPrice(null);
         setLastProductItemValueTotalPrice(null);
-        setUrgentOrder(null)
+        setUrgentOrder(null);
         setWorkFlows([]);
         setJobActions([]);
         setSubProducts([]);
-        setWorkTypes([])
+        setWorkTypes([]);
         setCalculationProgress({
           totalWorkFlowsCount: 0,
           currentWorkFlowsCount: 0,
         });
         setCurrentProductItemValue(null);
-        setIsChangePriceForEdit(false)
-        setIsJobNameValue(false)
-        setIsActionEmployeeUpdated(false)
+        setIsChangePriceForEdit(false);
+        setIsJobNameValue(false);
+        setIsActionEmployeeUpdated(false);
         if (
           widgetType === EWidgetProductType.EDIT ||
           widgetType === EWidgetProductType.DUPLICATE
         ) {
           getAllMaterial().then((materials) => {
             getProductQuoteItemById(materials);
-
           });
         } else {
           getAllMaterial().then((materials) => {
             getProductById(materials);
           });
-
         }
       }
     }
-
-
   }, [connectionId]);
   const exampleTypeValues = useRecoilValue(exampleTypeState);
   const billingMethodValues = useRecoilValue(billingMethodState);
@@ -1759,6 +1761,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     (panel: string) => (event: React.SyntheticEvent, newExpanded: boolean) => {
       setExpanded(newExpanded ? panel : false);
     };
+
   const _getParameter = (parameter: any, subSection: any, section: any) => {
     const allParameters = subProducts.flatMap((item) => item.parameters);
     let temp = [...allParameters];
@@ -3529,15 +3532,21 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         sectionId: sectionId,
         sectionName: section.name,
         parameters: temp,
-      }
+      };
       // const updatedSubProducts = removeHiddenParametersFromSubProducts(temp2, productTemplateCopy);
       setSubProducts(temp2);
-      setSubProductsColorsModal(temp2)
-      processRelatedParameters2(subSectionParameter, subSection, section, productTemplateCopy, temp2);
+      setSubProductsColorsModal(temp2);
+      processRelatedParameters2(
+        subSectionParameter,
+        subSection,
+        section,
+        productTemplateCopy,
+        temp2
+      );
       setProductTemplate(productTemplateCopy);
       const updatedProductTemplate = updateIsHidden(productTemplateCopy, temp2);
-      removeHiddenParameters(temp2, productTemplateCopy)
-      setupdatedProductTemplate(updatedProductTemplate)
+      removeHiddenParameters(temp2, productTemplateCopy);
+      setupdatedProductTemplate(updatedProductTemplate);
       setCanCalculation(true);
     }
   };
@@ -3800,7 +3809,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     setCheckParameter(checkParameter)
   }, [isRequiredParameters])*/
   const getItemParameterValues = () => {
-    const updatedSubProducts = removeHiddenParametersFromSubProducts(subProducts, productTemplate);
+    const updatedSubProducts = removeHiddenParametersFromSubProducts(
+      subProducts,
+      productTemplate
+    );
 
     const result = [];
     updatedSubProducts.forEach((subProduct) => {
@@ -3812,9 +3824,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     });
 
     // Filter non-empty parameter values or valueIds
-    const filteredArray = result.filter((obj) =>
-      (obj.values && obj.values.length && obj.values[0] !== "false") ||
-      (obj.valueIds && obj.valueIds.length)
+    const filteredArray = result.filter(
+      (obj) =>
+        (obj.values && obj.values.length && obj.values[0] !== "false") ||
+        (obj.valueIds && obj.valueIds.length)
     );
 
     // Use a Map to remove duplicates based on actionIndex, parameterCode, parameterId, sectionId, subSectionId
@@ -3833,18 +3846,19 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
     return uniqueFilteredArray;
   };
-  const calculationProduct = useDebouncedCallback(async (currentSubProducts) => {
-    if (requestAbortController) {
-      requestAbortController.abort();
-    }
-    setWorkFlows([]);
-    setCurrentProductItemValueTotalPrice(null);
-    setJobActions([]);
-    setIsCalculationFinished(false);
-    setCalculationProgress({
-      totalWorkFlowsCount: 0,
-      currentWorkFlowsCount: 0,
-    });
+  const calculationProduct = useDebouncedCallback(
+    async (currentSubProducts) => {
+      if (requestAbortController) {
+        requestAbortController.abort();
+      }
+      setWorkFlows([]);
+      setCurrentProductItemValueTotalPrice(null);
+      setJobActions([]);
+      setIsCalculationFinished(false);
+      setCalculationProgress({
+        totalWorkFlowsCount: 0,
+        currentWorkFlowsCount: 0,
+      });
 
       setCalculationExceptionsLogs([]);
       setAdditionalProductItems([]);
@@ -3864,42 +3878,45 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           x.parameters.forEach((y) => (y.valuesConfigs = null))
         );
 
-      if (productTypesNumber === 1) {
-        setWorkTypes([])
-      }
-      else if (quantityTypes && quantityTypes.length > 0 && quantityTypes[0].quantity > 0) {
-        setWorkTypes(quantityTypes);
-      }
-      if (generalParameters && generalParameters?.length > 0) {
-        if (!connectionId) {
-          setcalculationServerErrorState(true);
-          return;
+        if (productTypesNumber === 1) {
+          setWorkTypes([]);
+        } else if (
+          quantityTypes &&
+          quantityTypes.length > 0 &&
+          quantityTypes[0].quantity > 0
+        ) {
+          setWorkTypes(quantityTypes);
         }
-        setLoading(true);
-        setErrorMsg("")
-        const newCalculationSessionId = uuidv4();
-        setCurrentCalculationSessionId(newCalculationSessionId);
-        const itemParmetersValues = getItemParameterValues()
-        const res: any = await callApi(
-          "POST",
-          `/v1/calculation-service/calculations/calculate-productV2`,
-          {
-            calculationSessionId: newCalculationSessionId,
-            signalRConnectionId: connectionId,
-            clientId: router?.query?.customerId,
-            clientTypeId: router?.query?.clientTypeId,
-            productId: router?.query?.productId,
-            generalParameters: generalParameters,
-            subProducts: calculationSubProducts,
-            itemParmetersValues: itemParmetersValues,
-            workTypes: workTypes,
-            isChargeForNewDie: isChargeForNewDie,
-            productType: productTemplate?.productType,
-            templateId: productTemplate?.templateId
-          },
-          false,
-          newRequestAbortController
-        )
+        if (generalParameters && generalParameters?.length > 0) {
+          if (!connectionId) {
+            setcalculationServerErrorState(true);
+            return;
+          }
+          setLoading(true);
+          setErrorMsg("");
+          const newCalculationSessionId = uuidv4();
+          setCurrentCalculationSessionId(newCalculationSessionId);
+          const itemParmetersValues = getItemParameterValues();
+          const res: any = await callApi(
+            "POST",
+            `/v1/calculation-service/calculations/calculate-productV2`,
+            {
+              calculationSessionId: newCalculationSessionId,
+              signalRConnectionId: connectionId,
+              clientId: router?.query?.customerId,
+              clientTypeId: router?.query?.clientTypeId,
+              productId: router?.query?.productId,
+              generalParameters: generalParameters,
+              subProducts: calculationSubProducts,
+              itemParmetersValues: itemParmetersValues,
+              workTypes: workTypes,
+              isChargeForNewDie: isChargeForNewDie,
+              productType: productTemplate?.productType,
+              templateId: productTemplate?.templateId,
+            },
+            false,
+            newRequestAbortController
+          );
 
           if (res?.status === 500) {
             setCalculationProgress({
@@ -3963,7 +3980,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   };
   const createProfitTestCase = useCallback(async () => {
     const generalParameters = [];
-    const itemParmetersValues = getItemParameterValues()
+    const itemParmetersValues = getItemParameterValues();
     const res = await callApi(
       "POST",
       `/v1/printhouse-config/profits/create-profit-test-case?systemID=2`,
