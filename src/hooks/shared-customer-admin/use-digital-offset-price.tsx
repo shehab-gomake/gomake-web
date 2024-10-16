@@ -102,7 +102,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [updatedProductTemplate, setupdatedProductTemplate] = useState<any>()
   const [defaultProductTemplate, setDefaultProductTemplate] = useState<any>([]);
   const [subProducts, setSubProducts] = useRecoilState<any>(subProductsParametersState);
-  console.log("subProducts", subProducts)
   const [subProductsColorsModal, setSubProductsColorsModal] = useRecoilState<any>(subProductsCopyParametersState);
   const [isSetTemplete, setIsSetTemplete] = useState<boolean>(false);
   const setSubProductsCopy = useSetRecoilState<any>(subProductsCopyParametersState);
@@ -1085,10 +1084,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             }),
           };
         });
-        // const updatedSubProducts = removeHiddenParametersFromSubProducts(filteredSubProductsArray, productTemplate);
-        console.log("productTemplate", productTemplate)
         setProductTemplate(productTemplate)
-        // setSubProducts(updatedSubProducts);
         setSubProducts(filteredSubProductsArray);
         setUnderParameterIds(underParameterIdsArray);
         setIsSetTemplete(true);
