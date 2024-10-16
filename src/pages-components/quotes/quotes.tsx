@@ -796,8 +796,6 @@ const QuotesListPageWidget = ({
         onClickDelete={moveOrderToReady}
         onClickCancel={() => navigate(`/deliveryNote?isNewCreation=true&orderId=${selectedDocument?.id}`)}
       />
-      ,
-
       <CancelReceiptModal
         openModal={openCancelReceiptModalRefund}
         handleModalClose={onCloseCancelReceiptModalRefund}

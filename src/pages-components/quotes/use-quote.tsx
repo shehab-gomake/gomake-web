@@ -2153,6 +2153,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     };
     await moveOrderToReadyApi(callApi, callBack, {
       orderId: selectedDocument?.id,
+      isSendMessage: false,
     });
   };
 
