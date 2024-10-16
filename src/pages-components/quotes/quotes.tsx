@@ -176,10 +176,10 @@ const QuotesListPageWidget = ({
     ExportDocumentTableToExcel,
     isFetching,
     openChangeProductionStatusModal,
+    isSelectedCLoseAsDeleveryNote,
     onClickCloseChangeProductionStatusModal,
     moveOrderToReady
   } = useQuotes(documentType, isFromHomePage);
-
   useEffect(() => {
     if (router.query.orderNumber) {
       setPatternSearch(router.query.orderNumber as string);
@@ -794,7 +794,18 @@ const QuotesListPageWidget = ({
         openModal={openChangeProductionStatusModal}
         onClose={onClickCloseChangeProductionStatusModal}
         onClickDelete={moveOrderToReady}
-        onClickCancel={() => navigate(`/deliveryNote?isNewCreation=true&orderId=${selectedDocument?.id}`)}
+        onClickCancel={() => {
+          if (isSelectedCLoseAsDeleveryNote) {
+            navigate(`/deliveryNote?isNewCreation=true&orderId=${selectedDocument?.id}`)
+
+          }
+          else {
+            const path = documentType === DOCUMENT_TYPE.order
+              ? `/invoice?isNewCreation=true&orderId=${selectedDocument?.id}`
+              : `/invoice?isNewCreation=true&deliveryNoteId=${selectedDocument?.id}`;
+            navigate(path);
+          }
+        }}
       />
       <CancelReceiptModal
         openModal={openCancelReceiptModalRefund}

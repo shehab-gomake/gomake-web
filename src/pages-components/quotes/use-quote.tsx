@@ -17,6 +17,7 @@ import { useSetRecoilState, useRecoilValue, useRecoilState } from "recoil";
 import {
   agentsCategoriesState,
   clientTypesCategoriesState,
+  isSelectedCLoseAsDeleveryNoteState,
 } from "@/pages/customers/customer-states";
 import { getAndSetEmployees2 } from "@/services/api-service/customers/employees-api";
 import { useDebounce } from "@/utils/use-debounce";
@@ -154,6 +155,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     useState(false);
   const [selectedQuoteItemValue, setSelectedQuoteItemValue] = useState<any>();
   const [documentCloseNumber, setDocumentCloseNumber] = useState("");
+
+  const isSelectedCLoseAsDeleveryNote = useRecoilValue(isSelectedCLoseAsDeleveryNoteState);
+
 
   const handleDocumentNumberChange = (event) => {
     setDocumentCloseNumber(event.target.value);
@@ -2146,7 +2150,16 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const moveOrderToReady = async () => {
     const callBack = (res) => {
       if (res?.success) {
-        navigate(`/deliveryNote?isNewCreation=true&orderId=${selectedDocument?.id}`)
+        if (isSelectedCLoseAsDeleveryNote) {
+          navigate(`/deliveryNote?isNewCreation=true&orderId=${selectedDocument?.id}`)
+
+        }
+        else {
+          const path = docType === DOCUMENT_TYPE.order
+            ? `/invoice?isNewCreation=true&orderId=${selectedDocument?.id}`
+            : `/invoice?isNewCreation=true&deliveryNoteId=${selectedDocument?.id}`;
+          navigate(path);
+        }
       } else {
         alertFaultUpdate();
       }
@@ -2281,6 +2294,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     ExportDocumentTableToExcel,
     isFetching,
     openChangeProductionStatusModal,
+    isSelectedCLoseAsDeleveryNote,
     onClickCloseChangeProductionStatusModal,
     moveOrderToReady
   };
