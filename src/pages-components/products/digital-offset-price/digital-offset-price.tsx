@@ -20,6 +20,8 @@ import { useEffect, useState } from "react";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { currentProductItemValuePriceState, lastProductItemValuePriceState } from "@/widgets/product-pricing-widget/state";
 import { PriceListPageSkeletonWidget } from "./digital-offset-price-skeleton";
+import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
+import { useRouter } from "next/router";
 
 const PriceListPageWidget = ({ widgetType }) => {
     const { clasess } = useStyle();
@@ -76,8 +78,11 @@ const PriceListPageWidget = ({ widgetType }) => {
         onClickCloseChangePriceModal,
         setIsChangePriceForEdit,
         isLoadging,
+        saveCurrentStation,
+        onClickCloseCurrentStationModal,
+        onClickOpenCurrentStationModal
     } = useDigitalOffsetPrice({ clasess, widgetType });
-
+    const router = useRouter()
     const visibleSections = productTemplate?.sections?.filter(section => !section.isHidden);
     const dir: 'rtl' | 'ltr' = t('direction');
     const theme = createTheme({
@@ -384,7 +389,14 @@ const PriceListPageWidget = ({ widgetType }) => {
                             {widgetType === EWidgetProductType.EDIT ? (
                                 <GomakePrimaryButton
                                     style={isLoadging ? clasess.addOrderDisabledBtn : clasess.addOrderBtn}
-                                    onClick={updateQuoteItem}
+                                    onClick={() => {
+                                        if (DOCUMENT_TYPE.order === Number(router.query.documentType)) {
+                                            onClickOpenCurrentStationModal()
+                                        }
+                                        else {
+                                            updateQuoteItem()
+                                        }
+                                    }}
                                     disabled={isLoadging}
                                 >
                                     {t("sales.quote.edit")}
@@ -444,6 +456,18 @@ const PriceListPageWidget = ({ widgetType }) => {
                     setCurrentProductItemValueTotalPrice(+lastProductItemValueTotalPrice)
                     onClickCloseChangePriceModal()
                 }}
+            />
+
+
+            <GoMakeDeleteModal
+                title={t("sales.quote.currentStatioTitle")}
+                yesBtn={t("sales.quote.save")}
+                cancelBtn={t("sales.quote.discard")}
+                openModal={saveCurrentStation}
+                onClose={onClickCloseCurrentStationModal}
+                hideIcon
+                onClickDelete={() => updateQuoteItem(true)}
+                onClickCancel={() => updateQuoteItem(false)}
             />
         </div>
     );
