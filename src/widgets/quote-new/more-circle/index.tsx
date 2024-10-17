@@ -38,8 +38,8 @@ const MoreMenuWidget = ({
                   rel="noopener noreferrer"
                   style={{ textDecoration: "none" }}
                   onClick={(e) => {
-                    e.preventDefault(); // Prevent default anchor behavior
-                    item.onclick(); // Call the custom click handler (navigate)
+                    e.preventDefault();
+                    item.onclick();
                   }}
                 >
                   <MenuItem style={classes.menuItemContainer}>
