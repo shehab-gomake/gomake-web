@@ -4120,6 +4120,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           isUrgentWork: urgentOrder,
           printingNotes,
           graphicNotes,
+          exampleType: samlleType && getSamlleType(samlleType),
           isNeedExample: false,
           isDuplicatedWithAnotherQuantity: false,
           ...(isSaveCurrentStation !== undefined && {
