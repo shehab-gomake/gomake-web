@@ -23,7 +23,8 @@ const ProductionFloorWidget = () => {
   const [view, setView] = useRecoilState(productionFloorViewState);
   const [openBoardMissionsDrawer, setOpenBoardMissionsDarawer] =
     useState<boolean>(false);
-  const { query, replace, pathname } = useRouter();
+  const { query, replace, pathname, } = useRouter();
+  const router = useRouter()
   const { connectionId, closeConnection } = useProductionFloorSignalr();
   const { groupsId, boardMissionsId, step, productType } = query;
 
@@ -93,7 +94,8 @@ const ProductionFloorWidget = () => {
         anchor={"bottom"}
         onClose={() => {
           setOpenBoardMissionsDarawer(false);
-          replace("/production-floor", undefined, { shallow: true });
+          // router.push('/production-floor');
+          // replace("/production-floor", undefined, { shallow: true });
         }}
       >
         <Stack
@@ -104,7 +106,8 @@ const ProductionFloorWidget = () => {
           <IconButton
             onClick={() => {
               setOpenBoardMissionsDarawer(false);
-              replace("/production-floor", undefined, { shallow: true });
+              // router.push('/production-floor');
+              // replace("/production-floor", undefined, { shallow: true });
             }}
             sx={{
               width: "fit-content",
