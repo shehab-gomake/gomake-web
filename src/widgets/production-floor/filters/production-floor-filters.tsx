@@ -24,16 +24,15 @@ import { useStyle } from "./style";
 import { useRecoilState } from "recoil";
 import { productionFloorFiltersState } from "../state/production-floor-filters";
 
-//!here
-// interface CustomCardProps {
-//   label: string;
-//   machineId?: string;
-//   onClick?: () => void;
-//   isSelected?: boolean;
-//   dir?: string;
-//   getColorByMachineId?: any;
-//   filters?: any;
-// }
+interface CustomCardProps {
+  label: string;
+  machineId?: string;
+  onClick?: () => void;
+  isSelected?: boolean;
+  dir?: string;
+  getColorByMachineId?: any;
+  filters?: any;
+}
 
 interface CustomGroupsProps {
   dir?: string;
@@ -124,59 +123,59 @@ const Circle = styled(Box)<{ numColor: string; dir: string }>(
   })
 );
 
-// const CustomCardComponent = ({
-//   label,
-//   onClick,
-//   isSelected,
-//   dir,
-//   machineId,
-//   getColorByMachineId,
-//   filters,
-// }: CustomCardProps) => {
-//   const machineStatus = filters.stations
-//     .flatMap((station) => station?.machineStatuses)
-//     .find((status) => status?.id === machineId);
+const CustomCardComponent = ({
+  label,
+  onClick,
+  isSelected,
+  dir,
+  machineId,
+  getColorByMachineId,
+  filters,
+}: CustomCardProps) => {
+  const machineStatus = filters.stations
+    .flatMap((station) => station?.machineStatuses)
+    .find((status) => status?.id === machineId);
 
-//   const inProcessCount = machineStatus?.inProcessCount || 0;
-//   const stuckCount = machineStatus?.stuckCount || 0;
-//   const color = getColorByMachineId(machineId);
+  const inProcessCount = machineStatus?.inProcessCount || 0;
+  const stuckCount = machineStatus?.stuckCount || 0;
+  const color = getColorByMachineId(machineId);
 
-//   return (
-//     <CustomCard onClick={onClick} isSelected={isSelected} color={color}>
-//       <CardContent
-//         sx={{
-//           display: "flex",
-//           alignItems: "center",
-//           justifyContent: "space-between",
-//           padding: "10px !important",
-//           width: "100%",
-//         }}
-//       >
-//         <Typography
-//           variant="subtitle2"
-//           sx={{
-//             color: isSelected ? "#FFF" : color,
-//             ...FONT_FAMILY.Inter(400, 14),
-//             // maxWidth: '170px',
-//             overflow: "hidden",
-//             whiteSpace: "nowrap",
-//             textOverflow: "ellipsis",
-//           }}
-//         >
-//           {label}
-//         </Typography>
-//         <Box sx={{ display: "flex" }}>
-//           <Circle numColor="#E7D000" dir={dir}>
-//             {inProcessCount}
-//           </Circle>
-//           <Circle numColor="#D92D20" dir={dir}>
-//             {stuckCount}
-//           </Circle>
-//         </Box>
-//       </CardContent>
-//     </CustomCard>
-//   );
-// };
+  return (
+    <CustomCard onClick={onClick} isSelected={isSelected} color={color}>
+      <CardContent
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          padding: "10px !important",
+          width: "100%",
+        }}
+      >
+        <Typography
+          variant="subtitle2"
+          sx={{
+            color: isSelected ? "#FFF" : color,
+            ...FONT_FAMILY.Inter(400, 14),
+            // maxWidth: '170px',
+            overflow: "hidden",
+            whiteSpace: "nowrap",
+            textOverflow: "ellipsis",
+          }}
+        >
+          {label}
+        </Typography>
+        <Box sx={{ display: "flex" }}>
+          <Circle numColor="#E7D000" dir={dir}>
+            {inProcessCount}
+          </Circle>
+          <Circle numColor="#D92D20" dir={dir}>
+            {stuckCount}
+          </Circle>
+        </Box>
+      </CardContent>
+    </CustomCard>
+  );
+};
 
 const CustomGroupComponent = ({
   onClick,
@@ -251,7 +250,6 @@ const ProductionFloorFilters = ({ filterGroups, getStationFilterGroups }) => {
     dir,
     search,
     setSearch,
-    actionsMachinesIds,
     filters,
     onTagsChange,
     onSelectDeliveryTimeDates,

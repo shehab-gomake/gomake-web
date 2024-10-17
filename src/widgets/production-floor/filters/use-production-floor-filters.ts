@@ -58,9 +58,7 @@ const useProductionFloorFilters = ({
   const { t } = useTranslation();
   const dir = t("direction");
   const isRTL = dir === "rtl";
-  const { actionsMachinesIds } = useActionsList({
-    source: Source.PRODUCTION_FLOOR,
-  });
+
   const [visibleCards, setVisibleCards] = useState<
     { label: string; machineId: string }[]
   >([]);
@@ -206,7 +204,6 @@ const useProductionFloorFilters = ({
     }).then();
   };
 
-  //!here the most important request
   const onStationsChange = ({
     stations,
     groupId = null,
@@ -287,6 +284,10 @@ const useProductionFloorFilters = ({
     const callBack = (res) => {
       if (res.success) {
         getStationFilterGroups();
+        if (id === selectedGroupId) {
+          onStationsChange({ stations: [], groupId: null });
+          setSelectedGroupId(null);
+        }
       }
     };
     await deleteStationFilterByGroupIdApi(callApi, callBack, {
@@ -299,7 +300,6 @@ const useProductionFloorFilters = ({
     dir,
     search,
     setSearch,
-    actionsMachinesIds,
     filters,
     filtersState,
     setFilters,

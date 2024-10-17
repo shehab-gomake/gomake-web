@@ -13,7 +13,6 @@ export interface IProductionFloorFilter {
   customSearchFilters: null;
   groups: IFilterGroup[];
   groupsHistory: IFilterGroup[];
-  //!new
   groupId: string;
 }
 

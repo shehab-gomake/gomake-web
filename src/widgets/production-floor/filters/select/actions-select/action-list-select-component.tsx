@@ -13,18 +13,14 @@ import {
   useActionsList,
 } from "@/widgets/production-floor/filters/select/actions-select/use-actions-list";
 import { SecondaryButton } from "@/components/button/secondary-button";
-import { IStation } from "@/widgets/production-floor/interfaces/filters";
 import { ClickOutside } from "@/components/click-out-side/click-out-side";
 import { CollapseOptionComponent } from "@/widgets/production-floor/filters/select/actions-select/collapse-option-component";
 import { useStyle } from "./style";
 import { DepartmentModal } from "@/widgets/production-floor/header/components/groups/department-modal";
 import { SaveIcon } from "@/widgets/production-floor/header/components/icons/save-icon";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
-import { useSetRecoilState } from "recoil";
-import { selectedGroupIdState } from "@/widgets/production-floor/state/filter-group";
 
 interface IProps {
-  // onClickApply: (v: IStation[]) => void;
   onClickApply: any;
   source: Source;
   buttonElement?: ReactElement;
@@ -59,9 +55,7 @@ const ActionsListComponent = ({
   const { classes } = useStyle({ source });
   const { secondColor } = useGomakeTheme();
   const buttonRef = useRef<HTMLButtonElement>(null);
-  const setSelectedGroupId = useSetRecoilState<string | null>(
-    selectedGroupIdState
-  );
+
   const handleFilterChange = (event: FormEvent<HTMLInputElement>) => {
     setFilter(event.currentTarget.value);
   };
@@ -146,10 +140,9 @@ const ActionsListComponent = ({
                   variant={"contained"}
                   onClick={() => {
                     setOpen(false);
-                    // onClickApply(actionsMachinesIds);
-                    onClickApply({ stations: actionsMachinesIds });
-                    setSelectedGroupId(null);
-                    handleClickSave();
+                    source === Source.PRODUCTION_FLOOR
+                      ? handleClickSave()
+                      : onClickApply(actionsMachinesIds);
                   }}
                 >
                   {t("productionFloor.apply")}
@@ -168,6 +161,7 @@ const ActionsListComponent = ({
         openModal={openDepartmentModal}
         onClose={onClickCloseDepartmentModal}
         onClickAdd={createBoardMissionStationFilterGroup}
+        onClickApply={onClickApply}
       />
     </div>
   );
