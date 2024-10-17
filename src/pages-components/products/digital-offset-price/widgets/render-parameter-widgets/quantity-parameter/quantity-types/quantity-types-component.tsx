@@ -6,10 +6,13 @@ import { useTranslation } from "react-i18next";
 import { useStyle } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/quantity-parameter/quantity-types/style";
 import { SecondaryButton } from "@/components/button/secondary-button";
 import { QuantityTypesTable } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/quantity-parameter/table/quantity-types-table";
+import { useRecoilValue } from "recoil";
+import { subProductsParametersState } from "@/store";
 
-const QuantityTypesComponent = ({ subSection, section }) => {
+const QuantityTypesComponent = ({ subSection, section, validateParameters, setCanCalculation }) => {
   const { inputs, isDuplicateName, toggleDuplicateName, save, setSave } =
     useQuantityTypes({ subSection, section });
+  const subProducts = useRecoilValue<any>(subProductsParametersState);
   const { t } = useTranslation();
   const { classes } = useStyle();
   return (
@@ -40,6 +43,12 @@ const QuantityTypesComponent = ({ subSection, section }) => {
         <SecondaryButton
           onClick={() => {
             setSave(true);
+            let checkParameter = validateParameters(subProducts);
+            if (checkParameter) {
+              setCanCalculation(true);
+            } else {
+              setCanCalculation(false);
+            }
           }}
           style={{ width: "100%" }}
           variant={"contained"}

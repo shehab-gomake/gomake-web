@@ -3,7 +3,7 @@ import { useQuantityParameter } from "@/pages-components/products/digital-offset
 import { GoMakeModal } from "@/components";
 import Stack from "@mui/material/Stack";
 
-const QuantityParameter = ({ subSection, section }) => {
+const QuantityParameter = ({ subSection, section, validateParameters, setCanCalculation }) => {
   const { openModal, setOpenModal, t } = useQuantityParameter();
   return (
     <Stack direction={"row"}>
@@ -17,7 +17,7 @@ const QuantityParameter = ({ subSection, section }) => {
         openModal={openModal}
         onClose={() => setOpenModal(false)}
       >
-        <QuantityTypesComponent subSection={subSection} section={section} />
+        <QuantityTypesComponent subSection={subSection} section={section} validateParameters={validateParameters} setCanCalculation={setCanCalculation} />
       </GoMakeModal>}
     </Stack>
   );
