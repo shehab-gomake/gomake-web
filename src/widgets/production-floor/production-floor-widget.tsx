@@ -92,7 +92,8 @@ const ProductionFloorWidget = () => {
         open={openBoardMissionsDrawer}
         anchor={"bottom"}
         onClose={() => {
-          replace("/production-floor", undefined, { shallow: true }).then();
+          setOpenBoardMissionsDarawer(false);
+          replace("/production-floor", undefined, { shallow: true });
         }}
       >
         <Stack
@@ -103,7 +104,7 @@ const ProductionFloorWidget = () => {
           <IconButton
             onClick={() => {
               setOpenBoardMissionsDarawer(false);
-              replace("/production-floor", undefined, { shallow: true }).then();
+              replace("/production-floor", undefined, { shallow: true });
             }}
             sx={{
               width: "fit-content",
