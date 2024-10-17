@@ -1656,6 +1656,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         finalPatternSearch: debouncePatternSearch,
       },
     });
+
   }, [debouncePatternSearch]);
 
   // For HomeTableWidget

@@ -537,6 +537,10 @@ const QuotesListPageWidget = ({
                 onChange={(e) => {
                   setPage(1);
                   setPatternSearch(e);
+                  router.push({
+                    pathname: router.pathname,
+                    query: { pageNumber: 1 },
+                  });
                 }}
                 value={patternSearch}
               />
