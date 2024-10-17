@@ -390,12 +390,13 @@ const PriceListPageWidget = ({ widgetType }) => {
                                 <GomakePrimaryButton
                                     style={isLoadging ? clasess.addOrderDisabledBtn : clasess.addOrderBtn}
                                     onClick={() => {
-                                        if (DOCUMENT_TYPE.order === Number(router.query.documentType)) {
+                                        /*if (DOCUMENT_TYPE.order === Number(router.query.documentType)) {
                                             onClickOpenCurrentStationModal()
                                         }
                                         else {
                                             updateQuoteItem()
-                                        }
+                                        }*/
+                                        updateQuoteItem()
                                     }}
                                     disabled={isLoadging}
                                 >
