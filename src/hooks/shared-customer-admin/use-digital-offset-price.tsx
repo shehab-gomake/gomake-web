@@ -754,6 +754,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                           sectionId: section.id,
                           subSectionId: subSection.id,
                           ParameterType: param.parameterType,
+                          isQuantityParameter: param.isQuantityParameter,
                           parameterName: param.name,
                           actionId: param.actionId,
                           values: selectedParam.valueIds,
@@ -819,6 +820,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                       parameterName: parameter?.name,
                       actionId: parameter?.actionId,
                       parameterType: parameter?.parameterType,
+                      isQuantityParameter: parameter?.isQuantityParameter,
                       ...(defaultValue?.length > 0 && {
                         values: [defaultValue],
                       }),
@@ -855,6 +857,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                           : null,
                       ...(data?.id > 0 && { material: data?.id }),
                       parameterType: parameter?.parameterType,
+                      isQuantityParameter: parameter?.isQuantityParameter,
                       ...(value && {
                         valueIds: [value?.id],
                         values: [value?.updateName],
@@ -894,6 +897,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                       parameterName: parameter?.name,
                       actionId: parameter?.actionId,
                       parameterType: parameter?.parameterType,
+                      isQuantityParameter: parameter?.isQuantityParameter,
                       valueIds: parameter?.valuesConfigs[0]?.values,
                       values: [parameter?.valuesConfigs[0]?.updateName],
                       sectionId: section?.id,
@@ -930,6 +934,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                             : null,
                         ...(data?.id > 0 && { material: data?.id }),
                         parameterType: parameter?.parameterType,
+                        isQuantityParameter: parameter?.isQuantityParameter,
                         ...(value && {
                           valueIds: [defValue],
                           values: [value?.updateName],
@@ -963,6 +968,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                           ? parameter?.actionId
                           : null,
                         parameterType: parameter?.parameterType,
+                        isQuantityParameter: parameter?.isQuantityParameter,
                         valueIds: [value?.id],
                         values: [nameValue],
                         sectionId: section?.id,
@@ -1005,6 +1011,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                             ? parameter?.actionId
                             : null,
                         parameterType: parameter?.parameterType,
+                        isQuantityParameter: parameter?.isQuantityParameter,
                         ...(isDieCutExisting?.valueIds[0] && {
                           valueIds: [isDieCutExisting?.valueIds[0]],
                           values: [nameValue],
@@ -1038,6 +1045,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                             ? parameter?.actionId
                             : null,
                         parameterType: parameter?.parameterType,
+                        isQuantityParameter: parameter?.isQuantityParameter,
                         ...(value && {
                           valueIds: [value?.id],
                           values: [nameValue],
@@ -1080,6 +1088,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                             ? parameter?.actionId
                             : null,
                         parameterType: parameter?.parameterType,
+                        isQuantityParameter: parameter?.isQuantityParameter,
                         ...(isDieCutExisting?.valueIds[0] && {
                           valueIds: [isDieCutExisting?.valueIds[0]],
                           values: [nameValue],
@@ -1119,6 +1128,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                       parameterName: parameter?.name,
                       actionId: parameter?.actionId,
                       parameterType: parameter?.parameterType,
+                      isQuantityParameter: parameter?.isQuantityParameter,
                       ...(defaultObject && {
                         valueIds: [defaultObject?.id],
                         values: [defaultObject?.updateName],
@@ -1157,6 +1167,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         parameterName: childParam?.name,
                         actionId: childParam?.actionId,
                         parameterType: childParam?.parameterType,
+                        isQuantityParameter: childParam?.isQuantityParameter,
                         values: item.defaultValue
                           ? [item?.defaultValue]
                           : [childParam?.defaultValue],
@@ -1920,6 +1931,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   sectionId: myparameter.sectionId,
                   subSectionId: myparameter.subSectionId,
                   ParameterType: myparameter.parameterType,
+                  isQuantityParameter: myparameter.isQuantityParameter,
                   parameterName: myparameter.name,
                   actionId: myparameter.actionId,
                   values: [parameter.value],
@@ -2899,6 +2911,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 sectionId: sectionId,
                 subSectionId: subSectionId,
                 ParameterType: relatedParameter.parameterType,
+                isQuantityParameter: relatedParameter.isQuantityParameter,
                 parameterName: relatedParameter.name,
                 actionId: relatedParameter.actionId,
                 values: [valueToAdd],
@@ -2995,6 +3008,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           sectionId: sectionId,
           subSectionId: subSectionId,
           ParameterType: ParameterType,
+          isQuantityParameter: subSectionParameter.isQuantityParameter,
           parameterName: parameterName,
           actionId: actionId,
           values: [data.values],
@@ -3051,6 +3065,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   sectionId: section?.id,
                   subSectionId: subSection?.id,
                   ParameterType: myparameter?.parameterType,
+                  isQuantityParameter: myparameter?.isQuantityParameter,
                   values: [data?.value?.values[parameterId]],
                   actionIndex: myparameter?.actionIndex,
                   parameterName: myparameter?.name,
@@ -3277,6 +3292,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   parameterName: param?.name,
                   actionId: param?.actionId,
                   parameterType: param?.parameterType,
+                  isQuantityParameter: param?.isQuantityParameter,
                   valueIds: param?.valuesConfigs[0]?.values,
                   values: [param?.valuesConfigs[0]?.updateName],
                   sectionId: section?.id,
@@ -3309,6 +3325,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 sectionId: sectionId,
                 subSectionId: subSectionId,
                 ParameterType: param.parameterType,
+                isQuantityParameter: param?.isQuantityParameter,
                 parameterName: param.name,
                 actionId: param.actionId,
                 values: selectedParam.valueIds,
@@ -3372,6 +3389,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     sectionId: sectionId,
                     subSectionId: subSectionId,
                     ParameterType: ParameterType,
+                    isQuantityParameter: subSectionParameter?.isQuantityParameter,
                     parameterName: parameterName,
                     actionId: actionId,
                     values: [dieCutSizeParameter.value],
@@ -3418,6 +3436,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   sectionId: sectionId,
                   subSectionId: subSectionId,
                   ParameterType: ParameterType,
+                  isQuantityParameter: subSectionParameter?.isQuantityParameter,
                   parameterName: parameterName,
                   actionId: actionId,
                   values: [dieCutSizeParameter.value],
@@ -3469,6 +3488,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   sectionId: sectionId,
                   subSectionId: subSectionId,
                   ParameterType: ParameterType,
+                  isQuantityParameter: subSectionParameter?.isQuantityParameter,
                   parameterName: parameterName,
                   actionId: actionId,
                   values: [dieCutSizeParameter.value],
@@ -3507,6 +3527,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   sectionId: sectionId,
                   subSectionId: subSectionId,
                   ParameterType: sizeParameter.parameterType,
+                  isQuantityParameter: sizeParameter?.isQuantityParameter,
                   parameterName: sizeParameter.name,
                   actionId: sizeParameter.actionId,
                   values: [customValue.updateName],
