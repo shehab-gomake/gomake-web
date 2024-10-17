@@ -31,9 +31,15 @@ import {
 import { selectedGroupIdState } from "../state/filter-group";
 import { IFilterGroupsList } from "../interfaces/borad-missions-filter-groups";
 
+interface onStationsChangeProps {
+  stations: IStation[];
+  groupId?: string | null;
+}
+
 interface IUseProductionFloorFiltersProps {
   getStationFilterGroups?: any;
 }
+
 const useProductionFloorFilters = ({
   getStationFilterGroups,
 }: IUseProductionFloorFiltersProps) => {
@@ -81,9 +87,8 @@ const useProductionFloorFilters = ({
     const callBack = (res) => {
       if (res?.success) {
         alertSuccessUpdate();
-
         const backendFiltersStations = res?.data?.filter?.stations || [];
-        const mergedStations = filters.stations.map((station) => {
+        const mergedStations = filters?.stations?.map((station) => {
           const correspondingBackendFilter = backendFiltersStations.find(
             (backendFilter) => backendFilter.actionId === station.actionId
           );
@@ -107,7 +112,6 @@ const useProductionFloorFilters = ({
           validMachineIds?.includes(id)
         );
         setSelectedChipIds(updatedSelectedChipIds);
-
         setData(res?.data?.boardMissionsCollections);
         setTags(res?.data?.automatedTagsFilter);
         setUserGroups(res?.data?.groups);
@@ -202,10 +206,15 @@ const useProductionFloorFilters = ({
     }).then();
   };
 
-  const onStationsChange = (stations: IStation[]) => {
+  //!here the most important request
+  const onStationsChange = ({
+    stations,
+    groupId = null,
+  }: onStationsChangeProps) => {
     setFilters({
       ...filtersState,
       stations,
+      groupId,
     });
   };
 
@@ -249,14 +258,14 @@ const useProductionFloorFilters = ({
   };
 
   /* Department/Group Section */
-
   const [selectedGroupId, setSelectedGroupId] = useRecoilState<string | null>(
     selectedGroupIdState
   );
+
   const handleSelectGroup = (groupId: string) => {
     if (selectedGroupId === groupId) {
       setSelectedGroupId(null);
-      onStationsChange([]);
+      onStationsChange({ stations: [], groupId: null });
     } else {
       setSelectedGroupId(groupId);
       getStationFilterGroupById(groupId);
@@ -266,7 +275,7 @@ const useProductionFloorFilters = ({
   const getStationFilterGroupById = async (id) => {
     const callBack = (res) => {
       if (res.success) {
-        onStationsChange(res?.data?.stations);
+        onStationsChange({ stations: res?.data?.stations, groupId: id });
       }
     };
     await getStationFilterByGroupIdApi(callApi, callBack, {

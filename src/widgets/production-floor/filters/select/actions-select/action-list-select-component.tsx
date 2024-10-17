@@ -24,7 +24,8 @@ import { useSetRecoilState } from "recoil";
 import { selectedGroupIdState } from "@/widgets/production-floor/state/filter-group";
 
 interface IProps {
-  onClickApply: (v: IStation[]) => void;
+  // onClickApply: (v: IStation[]) => void;
+  onClickApply: any;
   source: Source;
   buttonElement?: ReactElement;
   filterGroups?: any;
@@ -145,8 +146,10 @@ const ActionsListComponent = ({
                   variant={"contained"}
                   onClick={() => {
                     setOpen(false);
-                    onClickApply(actionsMachinesIds);
+                    // onClickApply(actionsMachinesIds);
+                    onClickApply({ stations: actionsMachinesIds });
                     setSelectedGroupId(null);
+                    handleClickSave();
                   }}
                 >
                   {t("productionFloor.apply")}
