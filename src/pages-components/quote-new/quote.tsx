@@ -793,8 +793,9 @@ const QuoteNewPageWidget = ({
       />
       <GoMakeDeleteModal
         hideIcon
-        title={"This order is already in process do you want to move it to ready ?"}
-        yesBtn={t("sales.quote.yesBtn")}
+        title={"sales.moveOrderToReadyWhenCloseOrderTitle"}
+        yesBtn={t("sales.moveToReadyAndCloseOrder")}
+        cancelBtn={t("sales.closeOrderWithoutMoveToReady")}
         openModal={openChangeProductionStatusModal}
         onClose={onClickCloseChangeProductionStatusModal}
         onClickDelete={moveOrderToReady}
