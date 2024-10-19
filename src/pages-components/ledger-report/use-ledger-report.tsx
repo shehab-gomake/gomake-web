@@ -1,29 +1,17 @@
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { format } from "date-fns";
-import {
-  useCustomerDropDownList,
-  useGomakeAxios,
-  useGomakeRouter,
-  useSnackBar,
-} from "@/hooks";
+import { useCustomerDropDownList, useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
 import { EHttpMethod } from "@/services/api-service/enums";
 import { endOfToday, startOfYear } from "date-fns";
 import { ERPDocumentsTypesEnum } from "@/enums";
 import { getAndSetClientContacts } from "@/services/hooks";
 
 const useLedgerReport = ({ customerId }: any) => {
-  const { alertFaultGetData, alertSuccessGetData, alertFault, alertSuccess } =
-    useSnackBar();
+  const { alertFaultGetData, alertSuccessGetData, alertFault, alertSuccess } = useSnackBar();
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
-  const {
-    customer,
-    renderOptions,
-    checkWhatRenderArray,
-    handleCustomerChange,
-    isFetching,
-  } = useCustomerDropDownList();
+  const { customer, renderOptions, checkWhatRenderArray, handleCustomerChange, isFetching } = useCustomerDropDownList();
   const [clientContactsValue, setClientContactsValue] = useState<any>([]);
 
   const getAllClientContacts = useCallback(async () => {
@@ -41,10 +29,8 @@ const useLedgerReport = ({ customerId }: any) => {
   const [dataTable, setDataTable] = useState<any>([]);
   const [selectedContactById, setSelectedContactById] = useState<any>();
   const [isopenEmailModal, setIsOpenEmailModal] = useState<boolean>(false);
-  const [isopenAdjustmentsModal, setIsOpenAdjustmentsModal] =
-    useState<boolean>(false);
-  const [isopenCreateTransactionModal, setIsCreateTransactionModal] =
-    useState<boolean>(false);
+  const [isopenAdjustmentsModal, setIsOpenAdjustmentsModal] = useState<boolean>(false);
+  const [isopenCreateTransactionModal, setIsCreateTransactionModal] = useState<boolean>(false);
   const [clientPaymentsList, setClientPaymentsList] = useState<any>([]);
 
   const onClickCloseCreateTransactionModal = () => {
@@ -129,8 +115,8 @@ const useLedgerReport = ({ customerId }: any) => {
           data?.accountCode,
           data?.remarks,
           data?.transNumber,
-          data?.credit.toFixed(2),
           data?.debit.toFixed(2),
+          data?.credit.toFixed(2),
           data?.balance.toFixed(2),
         ];
       });
@@ -145,8 +131,8 @@ const useLedgerReport = ({ customerId }: any) => {
     t("reports.AccountCode"),
     t("reports.details"),
     t("reports.TransNumber"),
-    t("reports.credit"),
     t("reports.debit"),
+    t("reports.credit"),
     t("reports.balance"),
   ];
   const onSelectDeliveryTimeDates = (fromDate: Date, toDate: Date) => {
@@ -219,16 +205,12 @@ const useLedgerReport = ({ customerId }: any) => {
     const formattedStartDate = format(fromDate, "yyyy-MM-dd");
     const formattedEndDate = format(toDate, "yyyy-MM-dd");
 
-    const res = await callApi(
-      EHttpMethod.POST,
-      `/v1/erp-service/reports/get-customer-ledger-report`,
-      {
-        startDate: formattedStartDate,
-        endDate: formattedEndDate,
-        clientId: customerId ? customerId : customer?.id,
-        isExtended: isExtended,
-      }
-    );
+    const res = await callApi(EHttpMethod.POST, `/v1/erp-service/reports/get-customer-ledger-report`, {
+      startDate: formattedStartDate,
+      endDate: formattedEndDate,
+      clientId: customerId ? customerId : customer?.id,
+      isExtended: isExtended,
+    });
     if (res?.success) {
       setDataTable(res.data?.data?.data);
       alertSuccessGetData();
@@ -240,19 +222,15 @@ const useLedgerReport = ({ customerId }: any) => {
   }, [fromDate, toDate, isExtended, customer, customerId]);
 
   const getClientPaymentItems = useCallback(async () => {
-    const res = await callApi(
-      EHttpMethod.GET,
-      `/v1/erp-service/receipts/get-client-payment-items`,
-      {
-        clientId: customerId ? customerId : customer?.id,
-      }
-    );
+    const res = await callApi(EHttpMethod.GET, `/v1/erp-service/receipts/get-client-payment-items`, {
+      clientId: customerId ? customerId : customer?.id,
+    });
     if (res?.success) {
       let data = res.data?.data?.data;
       if (data?.length > 0) {
         const newData = data?.map((item) => ({
           ...item,
-          fixedPrice: item.price,
+          fixedPrice: item.totalPrice?.toFixed(2) ?? item.price?.toFixed(2),
         }));
         setClientPaymentsList(newData);
         alertSuccessGetData();
@@ -281,17 +259,13 @@ const useLedgerReport = ({ customerId }: any) => {
     const formattedStartDate = format(fromDate, "yyyy-MM-dd");
     const formattedEndDate = format(toDate, "yyyy-MM-dd");
 
-    const res = await callApi(
-      EHttpMethod.POST,
-      `/v1/erp-service/reports/send-customer-ledger-to-mail`,
-      {
-        clientId: customerId ? customerId : customer?.id,
-        startDate: formattedStartDate,
-        endDate: formattedEndDate,
-        isExtended: isExtended,
-        mail: selectedContactById?.mail,
-      }
-    );
+    const res = await callApi(EHttpMethod.POST, `/v1/erp-service/reports/send-customer-ledger-to-mail`, {
+      clientId: customerId ? customerId : customer?.id,
+      startDate: formattedStartDate,
+      endDate: formattedEndDate,
+      isExtended: isExtended,
+      mail: selectedContactById?.mail,
+    });
     if (res?.success) {
       alertSuccess("reports.sendEmailSuccess");
       onClickCloseEmailModal();
