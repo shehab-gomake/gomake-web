@@ -11,11 +11,26 @@ import { SketchPicker } from "react-color";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import { useDepartmentModal } from "./use-department-modal";
+import { useSetRecoilState } from "recoil";
+import { selectedGroupIdState } from "@/widgets/production-floor/state/filter-group";
 
-const DepartmentModal = ({ openModal, onClose, onClickAdd }: any) => {
+interface DepartmentModalProps {
+  openModal: boolean;
+  onClose: () => void;
+  onClickAdd: () => void;
+  onClickApply?: any;
+}
+const DepartmentModal = ({
+  openModal,
+  onClose,
+  onClickAdd,
+  onClickApply,
+}: DepartmentModalProps) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
-
+  const setSelectedGroupId = useSetRecoilState<string | null>(
+    selectedGroupIdState
+  );
   const {
     color,
     setColor,
@@ -28,10 +43,22 @@ const DepartmentModal = ({ openModal, onClose, onClickAdd }: any) => {
     handleColorPickerClose,
   } = useDepartmentModal();
 
+  const handleCancel = () => {
+    setColor("#8485C0");
+    onClose();
+    cancelAndApplyWithoutGroup();
+  };
+
   const handleCloseModal = () => {
     setColor("#8485C0");
     onClose();
   };
+
+  const cancelAndApplyWithoutGroup = () => {
+    setSelectedGroupId(null);
+    onClickApply({ stations: [...stationFilterGroup?.stations] });
+  };
+
   return (
     <GoMakeModal
       openModal={openModal}
@@ -118,7 +145,7 @@ const DepartmentModal = ({ openModal, onClose, onClickAdd }: any) => {
               color: "#000000",
               border: "1px solid  #D0D5DD",
             }}
-            onClick={handleCloseModal}
+            onClick={handleCancel}
           >
             {t("materials.buttons.cancel")}
           </GomakePrimaryButton>

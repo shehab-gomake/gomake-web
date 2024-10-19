@@ -21,6 +21,8 @@ import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import { IFilterGroupsList } from "../interfaces/borad-missions-filter-groups";
 import ClearIcon from "@mui/icons-material/Clear";
 import { useStyle } from "./style";
+import { useRecoilState } from "recoil";
+import { productionFloorFiltersState } from "../state/production-floor-filters";
 
 interface CustomCardProps {
   label: string;
@@ -248,7 +250,6 @@ const ProductionFloorFilters = ({ filterGroups, getStationFilterGroups }) => {
     dir,
     search,
     setSearch,
-    actionsMachinesIds,
     filters,
     onTagsChange,
     onSelectDeliveryTimeDates,
@@ -303,39 +304,39 @@ const ProductionFloorFilters = ({ filterGroups, getStationFilterGroups }) => {
     };
   }, []);
 
-  useEffect(() => {
-    if (scrollContainerRef.current) {
-      let totalWidth = 0;
-      let visible: { label: string; machineId: string }[] = [];
-      let hidden: { label: string; machineId: string }[] = [];
+  // useEffect(() => {
+  //   if (scrollContainerRef.current) {
+  //     let totalWidth = 0;
+  //     let visible: { label: string; machineId: string }[] = [];
+  //     let hidden: { label: string; machineId: string }[] = [];
 
-      actionsMachinesIds.forEach((item) => {
-        const {
-          actionName = "Unknown Action",
-          machineIds = [],
-          machineNames = [],
-        } = item;
+  //     actionsMachinesIds.forEach((item) => {
+  //       const {
+  //         actionName = "Unknown Action",
+  //         machineIds = [],
+  //         machineNames = [],
+  //       } = item;
 
-        machineNames.forEach((machineName, index) => {
-          const cardWidth = 240;
+  //       machineNames.forEach((machineName, index) => {
+  //         const cardWidth = 240;
 
-          totalWidth += cardWidth;
+  //         totalWidth += cardWidth;
 
-          const cardLabel = `${actionName} | ${machineName}`;
-          const machineId = machineIds[index];
+  //         const cardLabel = `${actionName} | ${machineName}`;
+  //         const machineId = machineIds[index];
 
-          if (totalWidth <= containerWidth) {
-            visible.push({ label: cardLabel, machineId: machineId || "" });
-          } else {
-            hidden.push({ label: cardLabel, machineId: machineId || "" });
-          }
-        });
-      });
+  //         if (totalWidth <= containerWidth) {
+  //           visible.push({ label: cardLabel, machineId: machineId || "" });
+  //         } else {
+  //           hidden.push({ label: cardLabel, machineId: machineId || "" });
+  //         }
+  //       });
+  //     });
 
-      setVisibleCards(visible);
-      setHiddenCards(hidden);
-    }
-  }, [actionsMachinesIds, containerWidth]);
+  //     setVisibleCards(visible);
+  //     setHiddenCards(hidden);
+  //   }
+  // }, [actionsMachinesIds, containerWidth]);
 
   useEffect(() => {
     if (scrollContainerRef.current) {
@@ -368,6 +369,10 @@ const ProductionFloorFilters = ({ filterGroups, getStationFilterGroups }) => {
     }
   }, [filterGroups, containerWidth]);
 
+  const [filtersState, setFiltersState] = useRecoilState(
+    productionFloorFiltersState
+  );
+
   return (
     <Stack style={classes.headerFilterContainer}>
       <SearchInputComponent
@@ -391,7 +396,7 @@ const ProductionFloorFilters = ({ filterGroups, getStationFilterGroups }) => {
         placeholder={t("productionFloor.createTime")}
       />
       <Box ref={scrollContainerRef} sx={classes.filtersCardBox}>
-        {filterGroups?.length === 0 &&
+        {/* {filterGroups?.length === 0 &&
           visibleCards?.map((card, index) => (
             <CustomCardComponent
               dir={dir}
@@ -403,8 +408,8 @@ const ProductionFloorFilters = ({ filterGroups, getStationFilterGroups }) => {
               getColorByMachineId={getColorByMachineId}
               filters={filters}
             />
-          ))}
-        {filterGroups?.length === 0 && hiddenCards.length > 0 && (
+          ))} */}
+        {/* {filterGroups?.length === 0 && hiddenCards.length > 0 && (
           <>
             <CustomIconButton onClick={handleMoreClick}>
               <MoreHorizIcon />
@@ -458,7 +463,7 @@ const ProductionFloorFilters = ({ filterGroups, getStationFilterGroups }) => {
               </Stack>
             </Menu>
           </>
-        )}
+        )} */}
         {visibleFilterGroups?.map((group, index) => (
           <CustomGroupComponent
             dir={dir}

@@ -1,8 +1,10 @@
 import { GoMakeMenu } from "@/components";
 import { useGomakeRouter } from "@/hooks/use-gomake-router";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
+import { isSelectedCLoseAsDeleveryNoteState } from "@/pages/customers/customer-states";
 import { MenuItem } from "@mui/material";
 import { useTranslation } from "react-i18next";
+import { useSetRecoilState } from "recoil";
 
 interface ICloseMenuProps {
   handleClose: () => void,
@@ -11,6 +13,7 @@ interface ICloseMenuProps {
   documentState: any;
   documentType: DOCUMENT_TYPE;
   onClickClose: (id: string) => void;
+  onClickOpenChangeProductionStatusModal?: any
 }
 
 const CloseBtnMenu = ({
@@ -19,18 +22,39 @@ const CloseBtnMenu = ({
   anchorEl,
   documentState,
   documentType,
-  onClickClose
+  onClickClose,
+  onClickOpenChangeProductionStatusModal
 }: ICloseMenuProps) => {
   const { t } = useTranslation();
   const { navigate } = useGomakeRouter();
-
+  const setIsSelectedCLoseAsDeleveryNote = useSetRecoilState(isSelectedCLoseAsDeleveryNoteState);
   const getMenuOptions = () => {
     switch (documentType) {
       case DOCUMENT_TYPE.order:
         return [
           { label: t("sales.quote.close"), action: () => onClickClose(documentState?.id) },
-          { label: t("sales.quote.closeAsDeliveryNote"), action: () => navigate(`/deliveryNote?isNewCreation=true&orderId=${documentState?.id}`) },
-          { label: t("sales.quote.closeAsInvoice"), action: () => { navigate(`/invoice?isNewCreation=true&orderId=${documentState?.id}`) } }
+          {
+            label: t("sales.quote.closeAsDeliveryNote"), action: () => {
+              if (documentState?.productionStatus) {
+                navigate(`/deliveryNote?isNewCreation=true&orderId=${documentState?.id}`)
+              }
+              else {
+                onClickOpenChangeProductionStatusModal(documentState)
+                setIsSelectedCLoseAsDeleveryNote(true)
+              }
+            }
+          },
+          {
+            label: t("sales.quote.closeAsInvoice"), action: () => {
+              if (documentState?.productionStatus) {
+                navigate(`/invoice?isNewCreation=true&orderId=${documentState?.id}`)
+              }
+              else {
+                onClickOpenChangeProductionStatusModal(documentState)
+                setIsSelectedCLoseAsDeleveryNote(false)
+              }
+            }
+          }
         ];
       case DOCUMENT_TYPE.deliveryNote:
         return [

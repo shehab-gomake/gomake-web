@@ -33,6 +33,7 @@ const ButtonsContainer = ({
   onClickOpenNewItemNotesModal,
   handleRejectBtnClick,
   handleAcceptBtnClick,
+  onClickOpenChangeProductionStatusModal
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -345,6 +346,7 @@ const ButtonsContainer = ({
           documentState={quoteItemValue}
           documentType={documentType}
           onClickClose={onClickOpenCloseOrderModal}
+          onClickOpenChangeProductionStatusModal={onClickOpenChangeProductionStatusModal}
         />
         <ManuallyCloseModal
           documentType={documentType}

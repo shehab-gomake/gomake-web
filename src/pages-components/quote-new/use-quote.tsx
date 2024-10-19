@@ -29,6 +29,7 @@ import {
   duplicateWithAnotherQuantityApi,
   getWhatsAppMessageApi,
   getWhatsAppMessageForReceiptApi,
+  moveOrderToReadyApi,
   refreshExchangeRateApi,
   rejectDocumentApi,
   saveDocumentApi,
@@ -59,7 +60,10 @@ import {
   transactionOptionsData,
 } from "@/widgets/quote-new/buttons-container/states";
 import { QuoteStatuses } from "@/widgets/quote-new/total-price-and-vat/enums";
-import { clientTypesCategoriesState } from "@/pages/customers/customer-states";
+import {
+  clientTypesCategoriesState,
+  isSelectedCLoseAsDeleveryNoteState,
+} from "@/pages/customers/customer-states";
 import { CLIENT_TYPE_Id } from "@/pages/customers/enums";
 import { isAtLeastOneSelected } from "@/utils/helpers";
 
@@ -252,6 +256,21 @@ const useQuoteNew = ({
   const onCloseDeliveryModal = () => {
     setOpenAddDeliveryModal(false);
   };
+
+  const [openChangeProductionStatusModal, setOpenChangeProductionStatusModal] =
+    useState(false);
+  const [selectedDocument, setSelectedDocument] = useState<any>({});
+  const isSelectedCLoseAsDeleveryNote = useRecoilValue(
+    isSelectedCLoseAsDeleveryNoteState
+  );
+  const onClickCloseChangeProductionStatusModal = () => {
+    setOpenChangeProductionStatusModal(false);
+  };
+  const onClickOpenChangeProductionStatusModal = (order) => {
+    setSelectedDocument(order);
+    setOpenChangeProductionStatusModal(true);
+  };
+
   const tableHeaders = [
     "#",
     isDeliveryNote || isInvoice ? t("products.profits.documentNumber") : null,
@@ -937,6 +956,7 @@ const useQuoteNew = ({
     setOpenDeleteItemModal(true);
   };
 
+  //!here
   const deleteQuoteItem = async () => {
     if (router.query.isNewCreation) {
       const updatedDocumentItems = quoteItemValue.documentItems.filter(
@@ -991,7 +1011,8 @@ const useQuoteNew = ({
         if (res?.success) {
           alertSuccessDelete();
           onCloseDeleteItemModal();
-          quoteItemValue?.documentItems?.length === 1
+          quoteItemValue?.documentItems?.length === 1 ||
+          res?.data?.succ === false
             ? navigate("/home")
             : getQuote();
         } else {
@@ -1827,6 +1848,29 @@ const useQuoteNew = ({
     router.query.isNewCreation &&
     (isDeliveryNote || isInvoice)
   );
+  const moveOrderToReady = async () => {
+    const callBack = (res) => {
+      if (res?.success) {
+        if (isSelectedCLoseAsDeleveryNote) {
+          navigate(
+            `/deliveryNote?isNewCreation=true&orderId=${selectedDocument?.id}`
+          );
+        } else {
+          const path =
+            docType === DOCUMENT_TYPE.order
+              ? `/invoice?isNewCreation=true&orderId=${selectedDocument?.id}`
+              : `/invoice?isNewCreation=true&deliveryNoteId=${selectedDocument?.id}`;
+          navigate(path);
+        }
+      } else {
+        alertFaultUpdate();
+      }
+    };
+    await moveOrderToReadyApi(callApi, callBack, {
+      orderId: selectedDocument?.id,
+      isSendMessage: false,
+    });
+  };
   return {
     dateRef,
     taxDateRef,
@@ -2021,6 +2065,13 @@ const useQuoteNew = ({
     setIsWhatsAppWeb,
     isShowSettingIcon,
     isInvoice,
+    onClickOpenChangeProductionStatusModal,
+    openChangeProductionStatusModal,
+    onClickCloseChangeProductionStatusModal,
+    selectedDocument,
+    isSelectedCLoseAsDeleveryNote,
+    navigate,
+    moveOrderToReady,
   };
 };
 
