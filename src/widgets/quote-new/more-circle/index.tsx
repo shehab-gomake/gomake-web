@@ -37,11 +37,12 @@ const MoreMenuWidget = ({
                   target="_blank"
                   rel="noopener noreferrer"
                   style={{ textDecoration: "none" }}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    item.onclick();
+                  }}
                 >
-                  <MenuItem
-                    style={classes.menuItemContainer}
-                    onClick={item.onclick}
-                  >
+                  <MenuItem style={classes.menuItemContainer}>
                     {item.icon}
                     <div style={classes.menuTitleStyle}>
                       {t(`sales.quote.${item?.name}`)}
