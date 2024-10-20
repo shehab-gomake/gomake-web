@@ -27,6 +27,7 @@ const useStyle = () => {
         alignItems: "center",
         padding: 30,
         width: "80%",
+        position: "relative" as "relative",
       },
       icon: {
         display: "flex",
@@ -38,6 +39,15 @@ const useStyle = () => {
         color: primaryColor(500),
         marginBottom: 14,
         textAlign: "center" as "center",
+      },
+      closeIcon: {
+        display: "flex",
+        justifyContent: "flex-end",
+        alignItems: "center",
+        cursor: "pointer" as "pointer",
+        position: "absolute" as "absolute",
+        top:5,
+        right:-60,
       },
       subTitle: {
         ...FONT_FAMILY.Lexend(400, 12),

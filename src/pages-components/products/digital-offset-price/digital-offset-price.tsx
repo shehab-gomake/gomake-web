@@ -1,7 +1,7 @@
 import { useStyle } from "./style";
 import { HeaderTitle } from "@/widgets";
 import { useDigitalOffsetPrice } from "@/hooks";
-import { GoMakeDeleteModal, GomakePrimaryButton } from "@/components";
+import { GoMakeDeleteModal, GoMakeModal, GomakePrimaryButton } from "@/components";
 import { TabsMappingWidget } from "./widgets/tabs-mapping";
 import { AccordionMappingWidget } from "./widgets/accordion-mapping";
 import { SectionMappingWidget } from "./widgets/section-mapping";
@@ -13,7 +13,7 @@ import {
 } from "@/widgets/shared-admin-customers/digital-offset-price";
 import { EWidgetProductType } from "./enums";
 import { PricingWidget } from "@/widgets/product-pricing-widget/pricing-widget";
-import { createTheme, Tabs, ThemeProvider } from "@mui/material";
+import { createTheme, IconButton, Tabs, ThemeProvider, Tooltip } from "@mui/material";
 import { StepType } from "@reactour/tour";
 import { useGoMakeTour } from "@/hooks/use-go-make-tour";
 import { useEffect, useState } from "react";
@@ -22,6 +22,14 @@ import { currentProductItemValuePriceState, lastProductItemValuePriceState } fro
 import { PriceListPageSkeletonWidget } from "./digital-offset-price-skeleton";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { useRouter } from "next/router";
+import { FONT_FAMILY } from "@/utils/font-family";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import React from "react";
+import { adaptPaddingRight } from "@/utils/adapter";
+import { Padding } from "@mui/icons-material";
+import { CloseIcon } from "@/widgets/quote-new/receipts-table/Payment-methods-details/icons/close-icon";
+import { RoundedCloseIcon } from "@/components/modal/icon/close";
+import { MissionModalWidget } from "./widgets/accordion-mapping copy";
 
 const PriceListPageWidget = ({ widgetType }) => {
     const { clasess } = useStyle();
@@ -80,9 +88,12 @@ const PriceListPageWidget = ({ widgetType }) => {
         isLoadging,
         saveCurrentStation,
         onClickCloseCurrentStationModal,
-        onClickOpenCurrentStationModal
+        onClickOpenCurrentStationModal,
+        missionsListForEdit,
+        formatMissions,
     } = useDigitalOffsetPrice({ clasess, widgetType });
     const router = useRouter()
+    const { primaryColor } = useGomakeTheme();
     const visibleSections = productTemplate?.sections?.filter(section => !section.isHidden);
     const dir: 'rtl' | 'ltr' = t('direction');
     const theme = createTheme({
@@ -390,13 +401,12 @@ const PriceListPageWidget = ({ widgetType }) => {
                                 <GomakePrimaryButton
                                     style={isLoadging ? clasess.addOrderDisabledBtn : clasess.addOrderBtn}
                                     onClick={() => {
-                                        /*if (DOCUMENT_TYPE.order === Number(router.query.documentType)) {
+                                        if (DOCUMENT_TYPE.order === Number(router.query.documentType)) {
                                             onClickOpenCurrentStationModal()
                                         }
                                         else {
                                             updateQuoteItem()
-                                        }*/
-                                        updateQuoteItem()
+                                        }
                                     }}
                                     disabled={isLoadging}
                                 >
@@ -458,18 +468,22 @@ const PriceListPageWidget = ({ widgetType }) => {
                     onClickCloseChangePriceModal()
                 }}
             />
-
-
-            <GoMakeDeleteModal
-                title={t("sales.quote.currentStatioTitle")}
-                yesBtn={t("sales.quote.save")}
-                cancelBtn={t("sales.quote.discard")}
+            <GoMakeModal
+                modalTitle={" "}
+                withClose={false}
                 openModal={saveCurrentStation}
                 onClose={onClickCloseCurrentStationModal}
-                hideIcon
-                onClickDelete={() => updateQuoteItem(true)}
-                onClickCancel={() => updateQuoteItem(false)}
-            />
+                insideStyle={{
+                    width: 'fit-content', height: 'fit-content', textAlign: "center", padding: 30,
+                }}>
+                <MissionModalWidget
+                    onClickCloseCurrentStationModal={onClickCloseCurrentStationModal}
+                    missionsListForEdit={missionsListForEdit}
+                    clasess={clasess}
+                    updateQuoteItem={updateQuoteItem}
+                />
+            </GoMakeModal>
+
         </div>
     );
 };

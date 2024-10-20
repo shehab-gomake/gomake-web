@@ -885,6 +885,30 @@ const useStyle = () => {
         lineHeight: "30px",
         marginBottom:"5px"
       },
+      btnsContainer: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "center",
+        alignItems: "center",
+        gap: 11,
+        width: "100%",
+        marginTop: 25
+      },
+      confirmBtn: {
+       // width: "50%",
+       height: 35,
+       lineHeight:"10px",
+        borderRadius: "10px",
+        ...FONT_FAMILY.Lexend(500, 10),
+        backgroundColor: primaryColor(500),
+      },
+      cancelBtn: {
+      //  width: "50%",
+        height: 35,
+        borderRadius: "10px",
+        ...FONT_FAMILY.Lexend(500, 10),
+        backgroundColor: errorColor(500),
+      },
     };
   }, [i18next.language, t, direction,screenWidth]);
   return {
