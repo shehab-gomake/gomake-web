@@ -24,7 +24,8 @@ interface IProps {
   setPage: (page: number) => void;
   pageSize: number;
   pagesCount: number;
-  router: any;
+  isFromDocumentsOrJobs?: boolean;
+  router?: any;
 }
 
 const GoMakePagination = ({
@@ -35,6 +36,7 @@ const GoMakePagination = ({
   setPage,
   pageSize,
   pagesCount,
+  isFromDocumentsOrJobs = false,
   router,
 }: IProps) => {
   const { classes } = useStyle();
@@ -86,13 +88,14 @@ const GoMakePagination = ({
             value={page}
             onChange={(event) => {
               setPage(event.target.value as number);
-              router.push({
-                pathname: router.pathname,
-                query: {
-                  ...router.query,
-                  pageNumber: event.target.value as number,
-                },
-              });
+              isFromDocumentsOrJobs &&
+                router.push({
+                  pathname: router.pathname,
+                  query: {
+                    ...router.query,
+                    pageNumber: event.target.value as number,
+                  },
+                });
             }}
             label={t("general.pageNumber")}
           >

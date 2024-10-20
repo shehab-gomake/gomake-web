@@ -387,6 +387,8 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
           setPage={setPageNumber}
           pagesCount={pagesCount}
           pageSize={pageSize}
+          router={router}
+          isFromDocumentsOrJobs={true}
         />
       </Stack>
       <ThreeOptionsModal

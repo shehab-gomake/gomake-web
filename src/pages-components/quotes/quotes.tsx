@@ -608,6 +608,7 @@ const QuotesListPageWidget = ({
             pagesCount={pagesCount}
             pageSize={pageSize}
             router={router}
+            isFromDocumentsOrJobs={true}
           />
         </Stack>
       )}
