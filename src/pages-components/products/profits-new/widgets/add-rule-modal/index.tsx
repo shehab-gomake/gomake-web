@@ -16,7 +16,6 @@ import { EParameterTypes } from "@/enums";
 import { useRouter } from "next/router";
 import { DeleteMenuIcon } from "@/widgets/quote-new/more-circle/icons/delete-menu";
 import { ScheduleSendWidget } from "@/pages-components/quotes/widgets/schedule-send-widget/schedule-send-widget";
-import { GoMakeDatepicker } from "@/components/date-picker/date-picker-component";
 import { DateRangePicker } from "rsuite";
 
 const AddRuleModal = ({
@@ -70,7 +69,6 @@ const AddRuleModal = ({
     onSelectDeliveryTimeDates,
     fromDate,
     toDate,
-    resetDatePicker,
     mappingRules,
     categoriesList,
     employeeList,
@@ -90,6 +88,8 @@ const AddRuleModal = ({
     filterData,
     openModal,
   });
+
+  console.log("rules", rules)
 
   const [selectedCategories, setSelectedCategories] = useState<any>("");
   const [selectedStatment2, setSelectedStatment2] = useState<any>("");
@@ -128,19 +128,19 @@ const AddRuleModal = ({
                 options={
                   router.query.actionId
                     ? machincesList?.machines?.map((value) => {
-                        return {
-                          ...value,
-                          label: value?.machineName,
-                          id: value.machineId,
-                        };
-                      })
+                      return {
+                        ...value,
+                        label: value?.machineName,
+                        id: value.machineId,
+                      };
+                    })
                     : allMachincesList?.map((value) => {
-                        return {
-                          ...value,
-                          label: `${value?.manufacturer} - ${value?.model}`,
-                          id: value.id,
-                        };
-                      })
+                      return {
+                        ...value,
+                        label: `${value?.manufacturer} - ${value?.model}`,
+                        id: value.id,
+                      };
+                    })
                 }
                 style={clasess.dropDownListContainer}
                 placeholder={t("products.profits.exceptions.selectMachine")}
@@ -397,9 +397,9 @@ const AddRuleModal = ({
         modalTitle={
           isPropertiesWidge
             ? t("products.profits.exceptions.addNewRule") +
-              " (" +
-              selectedProperties?.propertyName +
-              ")"
+            " (" +
+            selectedProperties?.propertyName +
+            ")"
             : t("products.profits.exceptions.addNewRule")
         }
         onClose={() => {
@@ -527,7 +527,7 @@ const AddRuleModal = ({
                       options={conditions}
                       style={clasess.dropDownListContainer}
                       placeholder={t("properties.condtion")}
-                      // value={rule.condition}
+                      value={rule.condition}
                       onChange={(event, value) => {
                         handleChange(index, "condition", value);
                       }}
@@ -542,19 +542,19 @@ const AddRuleModal = ({
                         options={
                           router.query.actionId
                             ? allMachincesList?.map((value) => {
-                                return {
-                                  ...value,
-                                  label: `${value?.manufacturer} - ${value?.model}`,
-                                  id: value.id,
-                                };
-                              })
+                              return {
+                                ...value,
+                                label: `${value?.manufacturer} - ${value?.model}`,
+                                id: value.id,
+                              };
+                            })
                             : allMachincesList?.map((value) => {
-                                return {
-                                  ...value,
-                                  label: `${value?.manufacturer} - ${value?.model}`,
-                                  id: value.id,
-                                };
-                              })
+                              return {
+                                ...value,
+                                label: `${value?.manufacturer} - ${value?.model}`,
+                                id: value.id,
+                              };
+                            })
                         }
                         style={clasess.dropDownListContainer}
                         placeholder={t("properties.statment")}
@@ -607,19 +607,19 @@ const AddRuleModal = ({
                           options={
                             router.query.actionId
                               ? allMachincesList?.map((value) => {
-                                  return {
-                                    ...value,
-                                    label: `${value?.manufacturer} - ${value?.model}`,
-                                    id: value.id,
-                                  };
-                                })
+                                return {
+                                  ...value,
+                                  label: `${value?.manufacturer} - ${value?.model}`,
+                                  id: value.id,
+                                };
+                              })
                               : allMachincesList?.map((value) => {
-                                  return {
-                                    ...value,
-                                    label: `${value?.manufacturer} - ${value?.model}`,
-                                    id: value.id,
-                                  };
-                                })
+                                return {
+                                  ...value,
+                                  label: `${value?.manufacturer} - ${value?.model}`,
+                                  id: value.id,
+                                };
+                              })
                           }
                           style={clasess.dropDownListContainer}
                           placeholder={t("properties.statment")}
@@ -721,7 +721,7 @@ const AddRuleModal = ({
                   {rule.category?.id === "Property input" && (
                     <>
                       {rules[index]?.statement2?.type === 0 ||
-                      rules[index]?.statement2?.type === 5 ? (
+                        rules[index]?.statement2?.type === 5 ? (
                         <div>
                           <label style={clasess.inputLable}>
                             {t("properties.statment")}
