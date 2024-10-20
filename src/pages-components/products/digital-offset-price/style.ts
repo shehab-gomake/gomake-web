@@ -892,7 +892,7 @@ const useStyle = () => {
         alignItems: "center",
         gap: 11,
         width: "100%",
-        marginTop: 25
+        marginTop: 15
       },
       confirmBtn: {
        // width: "50%",
@@ -900,14 +900,16 @@ const useStyle = () => {
        lineHeight:"10px",
         borderRadius: "10px",
         ...FONT_FAMILY.Lexend(500, 10),
-        backgroundColor: primaryColor(500),
+        color:"#FFFFFF",
+        
       },
       cancelBtn: {
       //  width: "50%",
         height: 35,
         borderRadius: "10px",
         ...FONT_FAMILY.Lexend(500, 10),
-        backgroundColor: errorColor(500),
+        color:"#FFFFFF",
+       
       },
       modalTitleForMission:{
         margin: 15, 
@@ -933,7 +935,19 @@ const useStyle = () => {
         minWidth: 100,
         whiteSpace: "nowrap",
       },
-      deviderContainer:{ paddingLeft: 5, paddingRight: 5 }
+      deviderContainer:{ paddingLeft: 5, paddingRight: 5 },
+      checkboxModalContainer:{ 
+        display: "flex", 
+        flexDirection: "row", 
+        justifyContent: "flex-start", 
+        alignItems: "center" ,
+        marginTop: 15,
+        cursor: "pointer"
+      },
+      checkboxLabelStyle:{
+        ...FONT_FAMILY.Lexend(600,14),
+        
+      }
     };
   }, [i18next.language, t, direction,screenWidth]);
   return {
