@@ -29,7 +29,7 @@ import { adaptPaddingRight } from "@/utils/adapter";
 import { Padding } from "@mui/icons-material";
 import { CloseIcon } from "@/widgets/quote-new/receipts-table/Payment-methods-details/icons/close-icon";
 import { RoundedCloseIcon } from "@/components/modal/icon/close";
-import { MissionModalWidget } from "./widgets/accordion-mapping copy";
+import { MissionModalWidget } from "./widgets/mission-modal-widget";
 
 const PriceListPageWidget = ({ widgetType }) => {
     const { clasess } = useStyle();
