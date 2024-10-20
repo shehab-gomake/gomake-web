@@ -317,7 +317,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     const documentItemId = router?.query?.documentItemId;
     let url = `/v1/erp-service/productItemValueDrafts/get-selected-work-flow?signalRConnectionId=${connectionId}`;
     if (documentItemId) {
-      url += `&documentItemId=${documentItemId}&docType=${docType}`;
+      url += `&documentItemId=${documentItemId}&docType=${docType}&restoreAdditonalProductPrice=${priceRecovery}`;
     }
     const res: any = await callApi("GET", url, {}, false);
     if (!res.success) {
