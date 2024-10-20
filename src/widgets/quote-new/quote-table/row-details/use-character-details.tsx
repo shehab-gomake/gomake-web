@@ -3,29 +3,27 @@ import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { updateDocumentItemContentApi } from "@/services/api-service/generic-doc/documents-api";
 import { quoteItemState } from "@/store";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRecoilState } from "recoil";
 
-const htmlToPlainText = (html: string) => {
-  const tempDiv = document.createElement("div");
-  tempDiv.innerHTML = html;
-  return tempDiv.innerText || tempDiv.textContent || "";
-};
-
 const useCharacterDetails = ({ details, getQuote, documentItemId }) => {
   const router = useRouter();
-  const [showAll, setShowAll] = useState(false);
-  const [originalValue] = useState(details);
-  const [isValueChanged, setIsValueChanged] = useState(false);
-  const [isEdit, setIsEdit] = useState(false);
-  const [data, setData] = useState(htmlToPlainText(details));
+  const { t } = useTranslation();
+  const dir = t("direction");
+  const isRTL = dir === "rtl";
   const { callApi } = useGomakeAxios();
   const { alertSuccessUpdate, alertFaultUpdate } = useSnackBar();
-  const { t } = useTranslation();
-  const truncatedDetails = showAll ? details : details?.slice(0, 90);
+  const [showAll, setShowAll] = useState(false);
+  const [originalValue, setOriginalValue] = useState(details);
+  const [data, setData] = useState(details);
+  const [isValueChanged, setIsValueChanged] = useState(false);
+  const [isEdit, setIsEdit] = useState(false);
   const [quoteItemValue, setQuoteItemValue] =
     useRecoilState<any>(quoteItemState);
+
+  const truncatedDetails = showAll ? details : details?.slice(0, 90);
+
   const handleShowMore = () => {
     setShowAll(true);
   };
@@ -79,27 +77,45 @@ const useCharacterDetails = ({ details, getQuote, documentItemId }) => {
       });
     }
   };
-  const handleChange = (e) => {
-    setData(e.target.value);
-    setIsValueChanged(e.target.value !== originalValue);
-  };
-  const handleBlur = () => {
+
+  const handleClose = () => {
     if (isValueChanged) {
-      updateDocumentItemContent();
+      setData(originalValue);
     }
     setIsEdit(false);
   };
+
+  const handleSave = () => {
+    if (isValueChanged) {
+      updateDocumentItemContent();
+      setOriginalValue(data);
+    }
+    setIsEdit(false);
+  };
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setIsValueChanged(data !== originalValue);
+    }, 300);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [data, originalValue]);
+
   return {
+    t,
+    isRTL,
     isEdit,
     showAll,
     truncatedDetails,
     data,
     handleShowLess,
     handleShowMore,
-    t,
     setIsEdit,
-    handleChange,
-    handleBlur,
+    setData,
+    handleClose,
+    handleSave,
   };
 };
 
