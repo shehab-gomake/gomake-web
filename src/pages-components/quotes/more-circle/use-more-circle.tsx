@@ -43,7 +43,7 @@ const useMoreCircle = () => {
     onOpenCancelReceiptModal,
     onOpenCancelReceiptModalRefund,
     onClickOpenDocument,
-    onClickOpenChangeProductionStatusModal
+    onClickOpenChangeProductionStatusModal,
   }) => {
     const documentPath = DOCUMENT_TYPE[documentType];
     const { callApi } = useGomakeAxios();
@@ -62,7 +62,9 @@ const useMoreCircle = () => {
       });
     };
     const { classes } = useStyle();
-    const setIsSelectedCLoseAsDeleveryNote = useSetRecoilState(isSelectedCLoseAsDeleveryNoteState);
+    const setIsSelectedCLoseAsDeleveryNote = useSetRecoilState(
+      isSelectedCLoseAsDeleveryNoteState
+    );
     const isCanceledOrder = quote?.statusTitleText === "Order.Canceled";
     const isQuote = documentType === DOCUMENT_TYPE.quote;
     const isOrder = documentType === DOCUMENT_TYPE.order;
@@ -146,12 +148,12 @@ const useMoreCircle = () => {
           isOrder &&
           quote?.isCanClose &&
           CheckPermission(Permissions.SHOW_BOARD_MISSIONS),
-        onClick: () => navigate(`/jobs?orderNumber=${quote?.number}`),
+        onClick: () => navigate(`/jobs?finalPatternSearch=${quote?.number}`),
         icon: <JobsIcon />,
         name: (
           <a
             style={classes.rowTextStyle}
-            href={`/jobs?orderNumber=${quote?.number}`}
+            href={`/jobs?finalPatternSearch=${quote?.number}`}
           >
             {t("sales.quote.jobs")}
           </a>
@@ -160,8 +162,10 @@ const useMoreCircle = () => {
       {
         condition: isOrder && quote?.isCanClose && !isCanceledOrder,
         onClick: () => {
-          quote?.productionStatus ? navigate(`/deliveryNote?isNewCreation=true&orderId=${quote?.id}`) : onClickOpenChangeProductionStatusModal(quote)
-          setIsSelectedCLoseAsDeleveryNote(true)
+          quote?.productionStatus
+            ? navigate(`/deliveryNote?isNewCreation=true&orderId=${quote?.id}`)
+            : onClickOpenChangeProductionStatusModal(quote);
+          setIsSelectedCLoseAsDeleveryNote(true);
         },
         icon: <TickIcon />,
         name: t("sales.quote.closeAsDeliveryNote"),
@@ -174,13 +178,11 @@ const useMoreCircle = () => {
           if (isOrder) {
             if (quote?.productionStatus) {
               navigate(`/invoice?isNewCreation=true&orderId=${quote?.id}`);
+            } else {
+              onClickOpenChangeProductionStatusModal(quote);
+              setIsSelectedCLoseAsDeleveryNote(false);
             }
-            else {
-              onClickOpenChangeProductionStatusModal(quote)
-              setIsSelectedCLoseAsDeleveryNote(false)
-            }
-          }
-          else {
+          } else {
             navigate(`/invoice?isNewCreation=true&deliveryNoteId=${quote?.id}`);
           }
         },
@@ -258,8 +260,8 @@ const useMoreCircle = () => {
           isOrder
             ? onClickOpenIrrelevantModal(quote)
             : quote?.creditCardTotal > 0
-              ? onOpenCancelReceiptModalRefund(quote)
-              : onOpenCancelReceiptModal(quote),
+            ? onOpenCancelReceiptModalRefund(quote)
+            : onOpenCancelReceiptModal(quote),
         icon: <TickCancelIcon />,
         name: t("sales.quote.cancel"),
       },
