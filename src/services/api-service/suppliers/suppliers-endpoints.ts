@@ -5,8 +5,15 @@ import {EHttpMethod} from "@/services/api-service/enums";
 const GET_PRINT_HOUSE_SUPPLIERS_URL = '/v1/suppliers/get-suppliers';
 const GET_OUTSOURCING_SUPPLIERS_URL = '/v1/erp-service/outsource/get-suppliers';
 
+const GET_CLIENTS_GROUOPS_URL = '/v1/customers/get-clients-groups';
+
+
 const getPrintHouseSuppliersListApi: ICallAndSetData = async (callApi, setState) => {
     return await getSetApiData(callApi, EHttpMethod.GET, GET_PRINT_HOUSE_SUPPLIERS_URL, setState);
+}
+
+const getClientsGroupstApi: ICallAndSetData = async (callApi, setState) => {
+    return await getSetApiData(callApi, EHttpMethod.GET, GET_CLIENTS_GROUOPS_URL, setState);
 }
 
 const getOutsourcingSuppliersListApi: ICallAndSetData = async (callApi, setState, data) => {
@@ -14,4 +21,4 @@ const getOutsourcingSuppliersListApi: ICallAndSetData = async (callApi, setState
 }
 
 
-export {getPrintHouseSuppliersListApi, getOutsourcingSuppliersListApi}
+export {getPrintHouseSuppliersListApi, getOutsourcingSuppliersListApi,getClientsGroupstApi}

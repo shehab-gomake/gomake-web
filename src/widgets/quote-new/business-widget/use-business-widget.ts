@@ -1,19 +1,20 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRouter } from "next/router";
-import { useQuoteWidget } from "@/pages-components/admin/home/widgets/quote-widget/use-quote-widget";
 import { useSetRecoilState, useRecoilValue, useRecoilState } from "recoil";
 import { quoteConfirmationState, quoteItemState } from "@/store";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { addressModalState } from "./address-widget/state";
 import { useUserPermission } from "@/hooks/use-permission";
 import { DocumentPermission } from "@/components/CheckPermission/enum";
+import { useCustomerDropDownList } from "@/hooks";
 
 const useBusinessWidget = ({ values, documentType }) => {
   const { t } = useTranslation();
   const router = useRouter();
   const [isConfirmation, setIsConfirmation] = useState();
-  const { renderOptions, checkWhatRenderArray, isFetching } = useQuoteWidget();
+  const { renderOptions, checkWhatRenderArray, isFetching } =
+    useCustomerDropDownList();
   const setOpenModal = useSetRecoilState<boolean>(addressModalState);
   const [purchaseNumber, setPurchaseNumber] = useState(
     values?.purchaseNumber || t("sales.quote.noPurchaseNumber")

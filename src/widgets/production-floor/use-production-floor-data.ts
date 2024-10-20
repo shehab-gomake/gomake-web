@@ -5,7 +5,7 @@ import {
   updateBoardsMissionsOrderApi,
   updateBoardsMissionsStatusApi,
 } from "@/services/api-service/production-floor/production-floor-endpoints";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import { productionFloorFiltersState } from "@/widgets/production-floor/state/production-floor-filters";
 import { boardsMissionsState } from "@/widgets/production-floor/state/boards";
 import { tagsState } from "@/widgets/production-floor/state/tags";
@@ -18,6 +18,7 @@ import { useState } from "react";
 import { getBoardMissionPDF } from "@/services/api-service/generic-doc/documents-api";
 import { IFilterGroupsList } from "./interfaces/borad-missions-filter-groups";
 import { getAllBoardMissionStationFilterGroupsApi } from "@/services/api-service/board-missions/board-mission-station-filter-groups";
+import { selectedGroupIdState } from "./state/filter-group";
 
 const useProductionFloorData = () => {
   const { t } = useTranslation();
@@ -32,12 +33,16 @@ const useProductionFloorData = () => {
   const [, setUserGroups] = useRecoilState(userProductionFloorGroupsState);
   const [, setPath] = useRecoilState(productionFloorPathsState);
   const { alertFaultUpdate, alertSuccessUpdate } = useSnackBar();
+  const setSelectedGroupId = useSetRecoilState<string | null>(
+    selectedGroupIdState
+  );
 
   const getData = async (connectionId?: string) => {
     const callBack = (res) => {
       if (res.success) {
         setData(res?.data?.boardMissionsCollections);
         setFilters(res?.data?.filter);
+        setSelectedGroupId(res?.data?.filter?.groupId);
         setTags(res?.data?.automatedTagsFilter);
         setUserGroups(res?.data?.groups);
         setPath(res?.data?.path ? res?.data?.path : []);

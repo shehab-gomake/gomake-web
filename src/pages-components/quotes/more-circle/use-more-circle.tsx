@@ -17,6 +17,8 @@ import { useStyle } from "@/pages-components/quotes/more-circle/style";
 import { useRouter } from "next/router";
 import { TrackingIcon } from "./icons/tracking";
 import { UnLockIcon } from "./icons/unlock";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import { isSelectedCLoseAsDeleveryNoteState } from "@/pages/customers/customer-states";
 
 const useMoreCircle = () => {
   const { user } = useCustomer();
@@ -41,6 +43,7 @@ const useMoreCircle = () => {
     onOpenCancelReceiptModal,
     onOpenCancelReceiptModalRefund,
     onClickOpenDocument,
+    onClickOpenChangeProductionStatusModal
   }) => {
     const documentPath = DOCUMENT_TYPE[documentType];
     const { callApi } = useGomakeAxios();
@@ -59,7 +62,7 @@ const useMoreCircle = () => {
       });
     };
     const { classes } = useStyle();
-
+    const setIsSelectedCLoseAsDeleveryNote = useSetRecoilState(isSelectedCLoseAsDeleveryNoteState);
     const isCanceledOrder = quote?.statusTitleText === "Order.Canceled";
     const isQuote = documentType === DOCUMENT_TYPE.quote;
     const isOrder = documentType === DOCUMENT_TYPE.order;
@@ -156,8 +159,10 @@ const useMoreCircle = () => {
       },
       {
         condition: isOrder && quote?.isCanClose && !isCanceledOrder,
-        onClick: () =>
-          navigate(`/deliveryNote?isNewCreation=true&orderId=${quote?.id}`),
+        onClick: () => {
+          quote?.productionStatus ? navigate(`/deliveryNote?isNewCreation=true&orderId=${quote?.id}`) : onClickOpenChangeProductionStatusModal(quote)
+          setIsSelectedCLoseAsDeleveryNote(true)
+        },
         icon: <TickIcon />,
         name: t("sales.quote.closeAsDeliveryNote"),
       },
@@ -166,10 +171,18 @@ const useMoreCircle = () => {
           (isOrder && quote?.isCanClose && !isCanceledOrder) ||
           (isDeliveryNote && quote?.isCanClose),
         onClick: () => {
-          const path = isOrder
-            ? `/invoice?isNewCreation=true&orderId=${quote?.id}`
-            : `/invoice?isNewCreation=true&deliveryNoteId=${quote?.id}`;
-          navigate(path);
+          if (isOrder) {
+            if (quote?.productionStatus) {
+              navigate(`/invoice?isNewCreation=true&orderId=${quote?.id}`);
+            }
+            else {
+              onClickOpenChangeProductionStatusModal(quote)
+              setIsSelectedCLoseAsDeleveryNote(false)
+            }
+          }
+          else {
+            navigate(`/invoice?isNewCreation=true&deliveryNoteId=${quote?.id}`);
+          }
         },
         icon: <TickIcon />,
         name: t("sales.quote.closeAsInvoice"),
@@ -245,8 +258,8 @@ const useMoreCircle = () => {
           isOrder
             ? onClickOpenIrrelevantModal(quote)
             : quote?.creditCardTotal > 0
-            ? onOpenCancelReceiptModalRefund(quote)
-            : onOpenCancelReceiptModal(quote),
+              ? onOpenCancelReceiptModalRefund(quote)
+              : onOpenCancelReceiptModal(quote),
         icon: <TickCancelIcon />,
         name: t("sales.quote.cancel"),
       },
