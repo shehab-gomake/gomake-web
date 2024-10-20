@@ -1,7 +1,7 @@
 import { useStyle } from "./style";
 import { HeaderTitle } from "@/widgets";
 import { useDigitalOffsetPrice } from "@/hooks";
-import { GoMakeDeleteModal, GomakePrimaryButton } from "@/components";
+import { GoMakeDeleteModal, GoMakeModal, GomakePrimaryButton } from "@/components";
 import { TabsMappingWidget } from "./widgets/tabs-mapping";
 import { AccordionMappingWidget } from "./widgets/accordion-mapping";
 import { SectionMappingWidget } from "./widgets/section-mapping";
@@ -13,15 +13,17 @@ import {
 } from "@/widgets/shared-admin-customers/digital-offset-price";
 import { EWidgetProductType } from "./enums";
 import { PricingWidget } from "@/widgets/product-pricing-widget/pricing-widget";
-import { createTheme, Tabs, ThemeProvider } from "@mui/material";
+import { createTheme, Tabs, ThemeProvider, } from "@mui/material";
 import { StepType } from "@reactour/tour";
 import { useGoMakeTour } from "@/hooks/use-go-make-tour";
-import { useEffect, useState } from "react";
+import { useEffect, } from "react";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { currentProductItemValuePriceState, lastProductItemValuePriceState } from "@/widgets/product-pricing-widget/state";
 import { PriceListPageSkeletonWidget } from "./digital-offset-price-skeleton";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { useRouter } from "next/router";
+import React from "react";
+import { MissionModalWidget } from "./widgets/mission-modal-widget";
 
 const PriceListPageWidget = ({ widgetType }) => {
     const { clasess } = useStyle();
@@ -80,7 +82,9 @@ const PriceListPageWidget = ({ widgetType }) => {
         isLoadging,
         saveCurrentStation,
         onClickCloseCurrentStationModal,
-        onClickOpenCurrentStationModal
+        onClickOpenCurrentStationModal,
+        missionsListForEdit,
+        isFlowChanged,
     } = useDigitalOffsetPrice({ clasess, widgetType });
     const router = useRouter()
     const visibleSections = productTemplate?.sections?.filter(section => !section.isHidden);
@@ -390,13 +394,12 @@ const PriceListPageWidget = ({ widgetType }) => {
                                 <GomakePrimaryButton
                                     style={isLoadging ? clasess.addOrderDisabledBtn : clasess.addOrderBtn}
                                     onClick={() => {
-                                        /*if (DOCUMENT_TYPE.order === Number(router.query.documentType)) {
+                                        if (DOCUMENT_TYPE.order === Number(router.query.documentType) && isFlowChanged) {
                                             onClickOpenCurrentStationModal()
                                         }
                                         else {
                                             updateQuoteItem()
-                                        }*/
-                                        updateQuoteItem()
+                                        }
                                     }}
                                     disabled={isLoadging}
                                 >
@@ -458,18 +461,22 @@ const PriceListPageWidget = ({ widgetType }) => {
                     onClickCloseChangePriceModal()
                 }}
             />
-
-
-            <GoMakeDeleteModal
-                title={t("sales.quote.currentStatioTitle")}
-                yesBtn={t("sales.quote.save")}
-                cancelBtn={t("sales.quote.discard")}
+            <GoMakeModal
+                modalTitle={" "}
+                withClose={false}
                 openModal={saveCurrentStation}
                 onClose={onClickCloseCurrentStationModal}
-                hideIcon
-                onClickDelete={() => updateQuoteItem(true)}
-                onClickCancel={() => updateQuoteItem(false)}
-            />
+                insideStyle={{
+                    width: 'fit-content', height: 'fit-content', textAlign: "center", padding: 30,
+                }}>
+                <MissionModalWidget
+                    onClickCloseCurrentStationModal={onClickCloseCurrentStationModal}
+                    missionsListForEdit={missionsListForEdit}
+                    clasess={clasess}
+                    updateQuoteItem={updateQuoteItem}
+                />
+            </GoMakeModal>
+
         </div>
     );
 };

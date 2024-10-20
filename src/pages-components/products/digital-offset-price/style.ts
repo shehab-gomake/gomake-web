@@ -885,6 +885,55 @@ const useStyle = () => {
         lineHeight: "30px",
         marginBottom:"5px"
       },
+      btnsContainer: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "center",
+        alignItems: "center",
+        gap: 11,
+        width: "100%",
+        marginTop: 25
+      },
+      confirmBtn: {
+       // width: "50%",
+       height: 35,
+       lineHeight:"10px",
+        borderRadius: "10px",
+        ...FONT_FAMILY.Lexend(500, 10),
+        backgroundColor: primaryColor(500),
+      },
+      cancelBtn: {
+      //  width: "50%",
+        height: 35,
+        borderRadius: "10px",
+        ...FONT_FAMILY.Lexend(500, 10),
+        backgroundColor: errorColor(500),
+      },
+      modalTitleForMission:{
+        margin: 15, 
+        marginTop: 0,
+        color: primaryColor(500),
+         ...FONT_FAMILY.Lexend(700, 16),
+      },
+      modalCloseForMission:{ position: "absolute", right: 0, top: 0 },
+      mainContainerForMission:{ display: "flex", flexDirection: "column", gap: 10 },
+      missionItemContainer:{
+        ...FONT_FAMILY.Lexend(500, 14),
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "flex-start",
+        alignItems: "center",
+        width: "100%",
+      },
+      missionText:{ width: "fit-content", minWidth: 100 },
+      missionText1:{ width: "fit-content", minWidth: 80 },
+      missionText2:{
+        width: "fit-content",
+        maxWidth: "fit-content",
+        minWidth: 100,
+        whiteSpace: "nowrap",
+      },
+      deviderContainer:{ paddingLeft: 5, paddingRight: 5 }
     };
   }, [i18next.language, t, direction,screenWidth]);
   return {

@@ -107,6 +107,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [foldOptions, setFoldOptions] = useRecoilState(foldOptionsState);
 
   const [workTypes, setWorkTypes] = useState<any>([]);
+  const [missionsListForEdit, setMissionsListForEdit] = useState<any>([]);
   const [samlleType, setSamlleType] = useState();
   const [isRequiredParameters, setIsRequiredParameters] = useState<any>([]);
   const [activeSectionRequiredParameters, setActiveSectionRequiredParameters] =
@@ -141,6 +142,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const setAdditionalProductItems = useSetRecoilState<any>(
     additionalProductItemsState
   );
+  const [isFlowChanged, stIsFlowChanged] = useState(false)
   const [
     currentProductItemValueTotalPrice,
     setCurrentProductItemValueTotalPrice,
@@ -332,6 +334,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     const result = res?.data?.data?.data;
     setCalculationExceptionsLogs(result?.productItemValue?.exceptions);
     setCurrentProductItemValueDraftId(result.productItemValueDraftId);
+    stIsFlowChanged(result.isFlowChanged)
     setAdditionalProductItems(result.additionalProductItems);
     setCalculationProgress({
       totalWorkFlowsCount: 0,
@@ -3738,6 +3741,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           setProductItemValueByEdit(res?.data.productItemValue);
           setValuesState(res?.data?.productItemValue?.workTypes);
           setWorkTypes(res?.data?.productItemValue?.workTypes);
+          setMissionsListForEdit(res?.data?.missions)
         } else {
           alertFaultUpdate();
         }
@@ -4395,7 +4399,42 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   useEffect(() => {
     getAllFoldOptionsApi();
   }, []);
+  const getJobStatus = (mission) => {
+    if (mission?.isReady) {
+      return t("boardMissions.done"); // For completed missions
+    }
 
+    if (mission?.boardMissionStatus && mission?.station) {
+      const machineName = mission.station.machineName; // Get machine name
+      const employeeName = mission.station.employeeName; // Get employee name
+
+      // Initialize the job status string
+      let statusString = `${mission.boardMissionStatus.name} | ${mission.station.actionName}`;
+
+      // Check if both names exist and append them
+      if (machineName && employeeName) {
+        statusString += ` | ${employeeName} | ${machineName}`;
+      } else if (employeeName) {
+        statusString += ` | ${employeeName}`;
+      } else if (machineName) {
+        statusString += ` | ${machineName}`;
+      }
+
+      return statusString; // Return the formatted job status
+    }
+
+    return ""; // Return empty if no valid status or station
+  };
+  const formatMissions = (missions) => {
+    return missions.map((mission) => {
+      const jobNumber = mission.number;
+      const productType = mission.productType;
+      const currentStation = getJobStatus(mission); // Use getJobStatus here
+
+      return `${jobNumber}/${productType}. ${currentStation}`;
+    }).join(',\n'); // Joins with newline characters
+  };
+  console.log("missionsListForEdit", missionsListForEdit)
   return {
     t,
     router,
@@ -4454,6 +4493,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     saveCurrentStation,
     onClickCloseCurrentStationModal,
     onClickOpenCurrentStationModal,
+    missionsListForEdit,
+    formatMissions,
+    isFlowChanged
   };
 };
 export { useDigitalOffsetPrice };
