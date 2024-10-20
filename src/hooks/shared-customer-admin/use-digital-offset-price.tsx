@@ -4434,7 +4434,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       return `${jobNumber}/${productType}. ${currentStation}`;
     }).join(',\n'); // Joins with newline characters
   };
-  console.log("missionsListForEdit", missionsListForEdit)
   return {
     t,
     router,

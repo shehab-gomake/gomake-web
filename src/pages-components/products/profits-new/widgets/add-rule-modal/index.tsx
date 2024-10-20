@@ -89,8 +89,6 @@ const AddRuleModal = ({
     openModal,
   });
 
-  console.log("rules", rules)
-
   const [selectedCategories, setSelectedCategories] = useState<any>("");
   const [selectedStatment2, setSelectedStatment2] = useState<any>("");
   const [selectedProfitModel, setSelectedProfitModel] = useState<number>(null);
