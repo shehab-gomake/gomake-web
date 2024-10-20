@@ -3,7 +3,7 @@ import { Avatar, Stack } from "@mui/material";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { EActivityLogType } from "@/widgets/production-floor/enums/activity-type";
 import { useTranslation } from "react-i18next";
-import { useEffect } from "react";
+import { DateFormatterDDMMYYYY } from "@/utils/adapter";
 
 const LogComponent = ({
   userName,
@@ -12,13 +12,6 @@ const LogComponent = ({
   values,
   activityDate
 }: IBoardMissionsActivity) => {
-
-  function formatDateTime(dateString) {
-    const dateObj = new Date(dateString);
-    const date = dateObj.toISOString().split('T')[0];
-    const time = dateObj.toTimeString().split(' ')[0];
-    return `${date} ${time}`;
-  }
   const { t } = useTranslation();
   const logTypeTextKey =
     logType === EActivityLogType.UPDATE_STATUS
@@ -54,8 +47,9 @@ const LogComponent = ({
           }}
         >
           <span style={{ width: "75%" }}>{logText}</span>
-          <span style={{ ...FONT_FAMILY.Inter(400, 14) }}>{formatDateTime(activityDate)}</span>
+
         </div>
+        <span style={{ textAlign: "right", ...FONT_FAMILY.Inter(400, 14), marginTop: 5 }}>{DateFormatterDDMMYYYY(activityDate)}</span>
       </Stack>
     </Stack>
   );
