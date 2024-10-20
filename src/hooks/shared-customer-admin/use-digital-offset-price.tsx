@@ -4360,7 +4360,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
   const validateWorkflows = (data) => {
     const errors = [];
-    /*const errors = [];
     if (!data.actions || data.actions.length === 0) {
       errors.push(t("validateWorkflows.noAction"));
       return { isValid: false, errors };
@@ -4380,7 +4379,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       if ((action.source === 1 || action.source === 2) && !action.supplierId) {
         errors.push(`${action.actionName}: ${t("validateWorkflows.noSuppliers")}`);
       }
-    }*/
+    }
     return {
       isValid: true,
       errors,
