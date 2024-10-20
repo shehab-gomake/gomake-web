@@ -30,6 +30,7 @@ const useProductionFloorSignalr = () => {
     accessToken: getUserToken(),
     methodName: "",
   });
+
   useEffect(() => {
     if (connection && !!connectionId) {
       connection.on("UpdateBoardMissionsStation", () => {
