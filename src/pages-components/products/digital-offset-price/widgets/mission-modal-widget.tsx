@@ -1,24 +1,18 @@
 import React from 'react';
 import { Tooltip, IconButton } from '@mui/material';
 import { GomakePrimaryButton } from '@/components';
-import { FONT_FAMILY } from '@/utils/font-family';
-import { useGomakeTheme } from '@/hooks/use-gomake-thme';
 import { RoundedCloseIcon } from '@/components/modal/icon/close';
 import { useTranslation } from 'react-i18next';
 
 const MissionModalWidget = ({ onClickCloseCurrentStationModal, missionsListForEdit, clasess, updateQuoteItem }) => {
-  const { primaryColor } = useGomakeTheme();
   const { t } = useTranslation();
   return (
     <>
       <div>
-        <div style={{
-          margin: 15, marginTop: 0, ...FONT_FAMILY.Lexend(700, 16),
-          color: primaryColor(500),
-        }}>
+        <div style={clasess.modalTitleForMission}>
           {t('sales.quote.currentStatioTitle')}
         </div>
-        <div onClick={onClickCloseCurrentStationModal} style={{ position: "absolute", right: 0, top: 0 }}>
+        <div onClick={onClickCloseCurrentStationModal} style={clasess.modalCloseForMission}>
           <Tooltip title={t("modal.close")}>
             <IconButton>
               <RoundedCloseIcon />
@@ -26,47 +20,30 @@ const MissionModalWidget = ({ onClickCloseCurrentStationModal, missionsListForEd
           </Tooltip>
         </div>
       </div>
-      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+      <div style={clasess.mainContainerForMission}>
         {missionsListForEdit?.map((mission, index) => (
           <div
             key={index}
-            style={{
-              ...FONT_FAMILY.Lexend(500, 14),
-              display: "flex",
-              flexDirection: "row",
-              justifyContent: "flex-start",
-              alignItems: "center",
-              width: "100%",
-            }}
+            style={clasess.missionItemContainer}
           >
-            <div style={{ width: "fit-content", minWidth: 80 }}>{mission?.number}</div> -
-            <div style={{ width: "fit-content", minWidth: 100 }}>{mission?.productType}</div>:
-            <div style={{ width: "fit-content", minWidth: 100 }}>{mission?.station?.actionName}</div>
-            {mission?.clientName && (
+            <div style={clasess.missionText1}>{mission?.number}</div> -
+            <div style={clasess.missionText}>{mission?.productType}</div>:
+            <div style={clasess.missionText}>{mission?.station?.actionName}</div>
+            {mission?.employeeName && (
               <div
-                style={{
-                  width: "fit-content",
-                  maxWidth: "fit-content",
-                  minWidth: 100,
-                  whiteSpace: "nowrap",
-                }}
+                style={clasess.missionText2}
               >
-                | {mission?.clientName}
+                | {mission?.station?.employeeName}
               </div>
             )}
             {mission?.station?.machineName && (
               <div
-                style={{
-                  width: "fit-content",
-                  maxWidth: "fit-content",
-                  minWidth: 100,
-                  whiteSpace: "nowrap",
-                }}
+                style={clasess.missionText2}
               >
                 | {mission?.station?.machineName}
               </div>
             )}
-            <span style={{ paddingLeft: 5, paddingRight: 5 }}> | </span>
+            <span style={clasess.deviderContainer}> | </span>
             <div
               style={{
                 background: mission?.boardMissionStatus?.backgroundColor,

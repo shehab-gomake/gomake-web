@@ -142,6 +142,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const setAdditionalProductItems = useSetRecoilState<any>(
     additionalProductItemsState
   );
+  const [isFlowChanged, stIsFlowChanged] = useState(false)
   const [
     currentProductItemValueTotalPrice,
     setCurrentProductItemValueTotalPrice,
@@ -333,6 +334,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     const result = res?.data?.data?.data;
     setCalculationExceptionsLogs(result?.productItemValue?.exceptions);
     setCurrentProductItemValueDraftId(result.productItemValueDraftId);
+    stIsFlowChanged(result.isFlowChanged)
     setAdditionalProductItems(result.additionalProductItems);
     setCalculationProgress({
       totalWorkFlowsCount: 0,
@@ -4492,6 +4494,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     onClickOpenCurrentStationModal,
     missionsListForEdit,
     formatMissions,
+    isFlowChanged
   };
 };
 export { useDigitalOffsetPrice };

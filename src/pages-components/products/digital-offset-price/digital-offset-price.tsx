@@ -13,22 +13,16 @@ import {
 } from "@/widgets/shared-admin-customers/digital-offset-price";
 import { EWidgetProductType } from "./enums";
 import { PricingWidget } from "@/widgets/product-pricing-widget/pricing-widget";
-import { createTheme, IconButton, Tabs, ThemeProvider, Tooltip } from "@mui/material";
+import { createTheme, Tabs, ThemeProvider, } from "@mui/material";
 import { StepType } from "@reactour/tour";
 import { useGoMakeTour } from "@/hooks/use-go-make-tour";
-import { useEffect, useState } from "react";
+import { useEffect, } from "react";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { currentProductItemValuePriceState, lastProductItemValuePriceState } from "@/widgets/product-pricing-widget/state";
 import { PriceListPageSkeletonWidget } from "./digital-offset-price-skeleton";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { useRouter } from "next/router";
-import { FONT_FAMILY } from "@/utils/font-family";
-import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import React from "react";
-import { adaptPaddingRight } from "@/utils/adapter";
-import { Padding } from "@mui/icons-material";
-import { CloseIcon } from "@/widgets/quote-new/receipts-table/Payment-methods-details/icons/close-icon";
-import { RoundedCloseIcon } from "@/components/modal/icon/close";
 import { MissionModalWidget } from "./widgets/mission-modal-widget";
 
 const PriceListPageWidget = ({ widgetType }) => {
@@ -90,10 +84,9 @@ const PriceListPageWidget = ({ widgetType }) => {
         onClickCloseCurrentStationModal,
         onClickOpenCurrentStationModal,
         missionsListForEdit,
-        formatMissions,
+        isFlowChanged,
     } = useDigitalOffsetPrice({ clasess, widgetType });
     const router = useRouter()
-    const { primaryColor } = useGomakeTheme();
     const visibleSections = productTemplate?.sections?.filter(section => !section.isHidden);
     const dir: 'rtl' | 'ltr' = t('direction');
     const theme = createTheme({
@@ -401,7 +394,7 @@ const PriceListPageWidget = ({ widgetType }) => {
                                 <GomakePrimaryButton
                                     style={isLoadging ? clasess.addOrderDisabledBtn : clasess.addOrderBtn}
                                     onClick={() => {
-                                        if (DOCUMENT_TYPE.order === Number(router.query.documentType)) {
+                                        if (DOCUMENT_TYPE.order === Number(router.query.documentType) && isFlowChanged) {
                                             onClickOpenCurrentStationModal()
                                         }
                                         else {
