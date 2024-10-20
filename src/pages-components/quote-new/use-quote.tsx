@@ -290,7 +290,8 @@ const useQuoteNew = ({
     t("products.profits.more"),
   ].filter(Boolean);
 
-  const columnWidths = ["5%", "8%", "12%", "30%", "8%", "8%", "8%", "8%"];
+  // const columnWidths = ["5%", "8%", "12%", "20%", "8%", "8%", "8%", "8%"];
+  const columnWidths = ["5%", "10%", "12%", "25%", "10%", "10%", "10%", "10%"];
   const headerHeight = "44px";
 
   const updateDueDate = async () => {

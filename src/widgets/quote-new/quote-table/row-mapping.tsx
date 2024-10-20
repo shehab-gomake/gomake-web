@@ -3,7 +3,7 @@ import { Checkbox, TableRow } from "@mui/material";
 import { useStyle } from "./style";
 import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
 import { FONT_FAMILY } from "@/utils/font-family";
-import { CharacterDetails } from "./character-details";
+import { CharacterDetails } from "./row-details/character-details";
 import { InputUpdatedValues } from "../input-updated-values";
 import { useQuoteTable } from "./use-quote-table";
 import { useState } from "react";
