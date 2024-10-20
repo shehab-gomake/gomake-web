@@ -230,7 +230,7 @@ const useLedgerReport = ({ customerId }: any) => {
       if (data?.length > 0) {
         const newData = data?.map((item) => ({
           ...item,
-          fixedPrice: item.totalPrice?.toFixed(2) ?? item.price?.toFixed(2),
+          fixedPrice: item?.totalPrice?.toFixed(2) ?? item?.price?.toFixed(2),
         }));
         setClientPaymentsList(newData);
         alertSuccessGetData();
