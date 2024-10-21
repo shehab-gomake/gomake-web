@@ -47,6 +47,7 @@ const ProfitRightSideWidget = ({
     handleCloseAdditionalProfitMenu,
     handleClickAdditionalProfitMenu,
     ProfitCurrency,
+    getAllActionProfitRowsByActionId
 }: ProfitRightSideProps) => {
     const { clasess } = useStyle();
     const { t } = useTranslation();
@@ -173,6 +174,7 @@ const ProfitRightSideWidget = ({
                                     selectedAdditionalProfitRow={selectedAdditionalProfitRow}
                                     setSelectedActionProfitRow={setSelectedActionProfitRow}
                                     ProfitCurrency={ProfitCurrency}
+                                    getAllActionProfitRowsByActionId={getAllActionProfitRowsByActionId}
                                 />
                             </div>
                         );
