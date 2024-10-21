@@ -8,6 +8,7 @@ const AdditionsAndExceptionsMapping = ({
   selectedAdditionalProfitRow,
   setSelectedActionProfitRow,
   ProfitCurrency,
+  getAllActionProfitRowsByActionId
 }) => {
   const { clasess } = useStyle();
   const { t } = useTranslation();
@@ -20,9 +21,13 @@ const AdditionsAndExceptionsMapping = ({
             : clasess.cardItemWithMore
         }
         onClick={() => {
-          selectedAdditionalProfitRow?.id === item?.id
-            ? setSelectedActionProfitRow(null)
-            : setSelectedActionProfitRow(item);
+          if (selectedAdditionalProfitRow?.id === item?.id) {
+            setSelectedActionProfitRow(null);
+            getAllActionProfitRowsByActionId(null);
+          } else {
+            setSelectedActionProfitRow(item);
+            getAllActionProfitRowsByActionId(item);
+          }
         }}
       >
         <div style={clasess.firstRowStyle}>

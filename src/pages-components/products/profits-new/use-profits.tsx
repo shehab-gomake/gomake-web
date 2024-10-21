@@ -35,6 +35,7 @@ const useNewProfits = () => {
     alertFaultAdded,
     alertSuccessDelete,
     alertFaultDelete,
+
   } = useSnackBar();
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
@@ -143,7 +144,9 @@ const useNewProfits = () => {
     t("products.profits.pricingListWidget.totalPrice"),
     t("products.profits.pricingListWidget.more"),
   ]);
-  const getAllActionProfitRowsByActionId = useCallback(async () => {
+  console.log("selectedPricingTableItems", { selectedPricingTableItems, selectedAdditionalProfitRow })
+  const getAllActionProfitRowsByActionId = useCallback(async (additionId?: any) => {
+    console.log("additionId", additionId)
     setIsLoading(true);
     if (actionProfitByActionId?.id) {
       const requestBody: any = {
@@ -159,6 +162,9 @@ const useNewProfits = () => {
         } else {
           requestBody.exceptionId = selectedPricingTableItems?.id;
         }
+      }
+      if (additionId) {
+        requestBody.additionId = additionId?.id;
       }
 
       const res = await getAndSetAllActionProfitRowsByActionId(
@@ -180,6 +186,7 @@ const useNewProfits = () => {
     router,
     selectedPricingTableItems,
     actionProfitByActionId,
+    selectedAdditionalProfitRow,
     ETypeException,
   ]);
 
@@ -273,80 +280,137 @@ const useNewProfits = () => {
     }
   }, [actionProfitByActionId]);
   useEffect(() => {
-    const unitPriceLabel = router.query.isOutSource
+    const isOutSource = router.query.isOutSource;
+    const signalRConnectionId = router.query.signalRConnectionId;
+    const selectedPricingType = selectedPricingBy?.value;
+    const profitValue = selectedAdditionalProfitRow?.profitValue
+
+    const unitPriceLabel = isOutSource
       ? t("products.profits.pricingListWidget.unitCost")
       : t("products.profits.pricingListWidget.unitPrice");
 
-    const totalPriceLabel = router.query.isOutSource
+    const totalPriceLabel = isOutSource
       ? t("products.profits.pricingListWidget.totalCost")
       : t("products.profits.pricingListWidget.totalPrice");
-    if (router.query.signalRConnectionId && !router.query.isOutSource) {
-      setTableHeaders([
-        t("products.profits.pricingListWidget.quantity"),
-        // `${selectedPricingBy?.label}` +
-        // (selectedPricingBy?.value === EPricingBy.COST
-        //   ? ` ${ProfitCurrency}`
-        //   : ""),
-        t("products.profits.pricingListWidget.profit"),
-        // unitPriceLabel,
-        `${totalPriceLabel} ${ProfitCurrency}`,
-        t("products.profits.pricingListWidget.more"),
-      ]);
-      if (selectedAdditionalProfitRow?.id) {
-        setTableHeaders([
-          t("products.profits.pricingListWidget.quantity"),
-          t("products.profits.pricingListWidget.profit"),
-          `Profit value %`,
-          `${totalPriceLabel} ${ProfitCurrency}`,
-          t("products.profits.pricingListWidget.more"),
-        ]);
-      }
-    } else if (selectedPricingBy?.value === EPricingBy.COST) {
-      setTableHeaders([
-        `${selectedPricingBy?.label}` +
-        (selectedPricingBy?.value === EPricingBy.COST
-          ? ` ${ProfitCurrency}`
-          : ""),
-        t("products.profits.pricingListWidget.profit"),
-        `${totalPriceLabel} ${ProfitCurrency}`,
-        t("products.profits.pricingListWidget.more"),
-      ]);
-      if (selectedAdditionalProfitRow?.id) {
-        setTableHeaders([
-          `${selectedPricingBy?.label}` +
-          (selectedPricingBy?.value === EPricingBy.COST
-            ? ` ${ProfitCurrency}`
-            : ""),
-          t("products.profits.pricingListWidget.profit"),
-          `Profit value %`,
-          `${totalPriceLabel} ${ProfitCurrency}`,
-          t("products.profits.pricingListWidget.more"),
-        ]);
-      }
-    } else {
-      setTableHeaders([
-        `${selectedPricingBy?.label}` +
-        (selectedPricingBy?.value === EPricingBy.COST
-          ? ` ${ProfitCurrency}`
-          : ""),
-        unitPriceLabel,
-        `${totalPriceLabel} ${ProfitCurrency}`,
-        t("products.profits.pricingListWidget.more"),
-      ]);
-      if (selectedAdditionalProfitRow?.id) {
-        setTableHeaders([
-          `${selectedPricingBy?.label}` +
-          (selectedPricingBy?.value === EPricingBy.COST
-            ? ` ${ProfitCurrency}`
-            : ""),
-          unitPriceLabel,
-          `Profit value %`,
-          `${totalPriceLabel} ${ProfitCurrency}`,
-          t("products.profits.pricingListWidget.more"),
-        ]);
-      }
+
+    const profitHeader = t("products.profits.pricingListWidget.profit");
+    const quantityHeader = t("products.profits.pricingListWidget.quantity");
+    const moreHeader = t("products.profits.pricingListWidget.more");
+    const totalPriceWithAdditionProfit = t("products.profits.pricingListWidget.totalPriceWithAdditionProfit");
+
+    const pricingLabel = `${selectedPricingBy?.label}${selectedPricingType === EPricingBy.COST ? ` ${ProfitCurrency}` : ""
+      }`;
+
+    const defaultHeaders = [
+      pricingLabel,
+      profitHeader,
+      `${totalPriceLabel} ${ProfitCurrency}`,
+      moreHeader,
+    ];
+
+    const additionalProfitHeaders = [
+      pricingLabel,
+      unitPriceLabel,
+      `${totalPriceLabel} ${ProfitCurrency}`,
+      `${totalPriceWithAdditionProfit} (${profitValue})`,
+
+      moreHeader,
+    ];
+
+    let headers = [];
+
+    switch (true) {
+      case signalRConnectionId && !isOutSource:
+        headers = selectedAdditionalProfitRow?.id
+          ? [quantityHeader, profitHeader, `${totalPriceLabel} ${ProfitCurrency}`, `${totalPriceWithAdditionProfit} (${profitValue})`, moreHeader]
+          : [quantityHeader, profitHeader, `${totalPriceLabel} ${ProfitCurrency}`, moreHeader];
+        break;
+
+      case selectedPricingType === EPricingBy.COST:
+        headers = selectedAdditionalProfitRow?.id
+          ? additionalProfitHeaders
+          : defaultHeaders;
+        break;
+
+      default:
+        headers = selectedAdditionalProfitRow?.id
+          ? additionalProfitHeaders
+          : [pricingLabel, unitPriceLabel, `${totalPriceLabel} ${ProfitCurrency}`, moreHeader];
+        break;
     }
-  }, [selectedPricingBy, selectedAdditionalProfitRow, router]);
+
+    setTableHeaders(headers);
+  }, [selectedPricingBy, selectedAdditionalProfitRow, router, ProfitCurrency, t]);
+  // useEffect(() => {
+  //   const unitPriceLabel = router.query.isOutSource
+  //     ? t("products.profits.pricingListWidget.unitCost")
+  //     : t("products.profits.pricingListWidget.unitPrice");
+
+  //   const totalPriceLabel = router.query.isOutSource
+  //     ? t("products.profits.pricingListWidget.totalCost")
+  //     : t("products.profits.pricingListWidget.totalPrice");
+  //   if (router.query.signalRConnectionId && !router.query.isOutSource) {
+  //     setTableHeaders([
+  //       t("products.profits.pricingListWidget.quantity"),
+  //       t("products.profits.pricingListWidget.profit"),
+  //       `${totalPriceLabel} ${ProfitCurrency}`,
+  //       t("products.profits.pricingListWidget.more"),
+  //     ]);
+  //     if (selectedAdditionalProfitRow?.id) {
+  //       setTableHeaders([
+  //         t("products.profits.pricingListWidget.quantity"),
+  //         t("products.profits.pricingListWidget.profit"),
+  //         `Profit value %`,
+  //         `${totalPriceLabel} ${ProfitCurrency}`,
+  //         t("products.profits.pricingListWidget.more"),
+  //       ]);
+  //     }
+  //   } else if (selectedPricingBy?.value === EPricingBy.COST) {
+  //     setTableHeaders([
+  //       `${selectedPricingBy?.label}` +
+  //       (selectedPricingBy?.value === EPricingBy.COST
+  //         ? ` ${ProfitCurrency}`
+  //         : ""),
+  //       t("products.profits.pricingListWidget.profit"),
+  //       `${totalPriceLabel} ${ProfitCurrency}`,
+  //       t("products.profits.pricingListWidget.more"),
+  //     ]);
+  //     if (selectedAdditionalProfitRow?.id) {
+  //       setTableHeaders([
+  //         `${selectedPricingBy?.label}` +
+  //         (selectedPricingBy?.value === EPricingBy.COST
+  //           ? ` ${ProfitCurrency}`
+  //           : ""),
+  //         t("products.profits.pricingListWidget.profit"),
+  //         `Profit value %`,
+  //         `${totalPriceLabel} ${ProfitCurrency}`,
+  //         t("products.profits.pricingListWidget.more"),
+  //       ]);
+  //     }
+  //   } else {
+  //     setTableHeaders([
+  //       `${selectedPricingBy?.label}` +
+  //       (selectedPricingBy?.value === EPricingBy.COST
+  //         ? ` ${ProfitCurrency}`
+  //         : ""),
+  //       unitPriceLabel,
+  //       `${totalPriceLabel} ${ProfitCurrency}`,
+  //       t("products.profits.pricingListWidget.more"),
+  //     ]);
+  //     if (selectedAdditionalProfitRow?.id) {
+  //       setTableHeaders([
+  //         `${selectedPricingBy?.label}` +
+  //         (selectedPricingBy?.value === EPricingBy.COST
+  //           ? ` ${ProfitCurrency}`
+  //           : ""),
+  //         unitPriceLabel,
+  //         `Profit value %`,
+  //         `${totalPriceLabel} ${ProfitCurrency}`,
+  //         t("products.profits.pricingListWidget.more"),
+  //       ]);
+  //     }
+  //   }
+  // }, [selectedPricingBy, selectedAdditionalProfitRow, router]);
 
   const onCloseAddStepModal = () => {
     setOpenAddStepModal(false);
@@ -854,6 +918,7 @@ const useNewProfits = () => {
     updateMinPriceForAction,
     deleteExceptionProfit,
     getProfitsPricingTables,
+    getAllActionProfitRowsByActionId
   };
 };
 
