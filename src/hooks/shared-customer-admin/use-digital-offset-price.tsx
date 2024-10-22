@@ -1616,6 +1616,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   useEffect(() => {
     if (connectionId) {
       if (!currentCalculationSessionId) {
+        //TO DO: clear all the state 
         setCurrentSignalRConnectionId(connectionId);
         setCurrentProductItemValueTotalPrice(null);
         setLastProductItemValueTotalPrice(null);
