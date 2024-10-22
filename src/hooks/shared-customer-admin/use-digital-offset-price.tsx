@@ -1635,6 +1635,54 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         setIsChangePriceForEdit(false);
         setIsJobNameValue(false);
         setIsActionEmployeeUpdated(false);
+
+        // Set default values for your states
+        setIsChargeForNewDie(false);
+        setFoldOptions([]);
+        setMissionsListForEdit([]);
+        setSamlleType(null);
+        setIsRequiredParameters([]);
+        setActiveSectionRequiredParameters([]);
+        setDocmentItemByEdit({});
+        setProductItemValueByEdit(null);
+        setGalleryModalOpen(false);
+        setMultiParameterModal(false);
+        setMakeShapeOpen(false);
+        setPrintingNotes("");
+        setGraphicNotes("");
+        setErrorMsg("");
+        setProductTemplate([]);
+        setupdatedProductTemplate(null);
+        setDefaultProductTemplate([]);
+        setSubProductsColorsModal([]);
+        setIsSetTemplete(false);
+        setCurrentProductItemValueDraftId("");
+        setAdditionalProductItems([]);
+        stIsFlowChanged(false);
+        setCurrentProductItemValueTotalWorkFlows(0);
+        setExpanded("");
+        setActiveIndex(0);
+        setActiveTab(t("products.offsetPrice.admin.logs"));
+        setPricingDefaultValue(null);
+        setCalculationExceptionsLogs(null);
+        setQuantityTypes([]);
+        setCalculationResult(null);
+        setOutSuppliers(null);
+        setLoading(false);
+        setLoadingWithLockScreen(false);
+        setPriceRecovery(true);
+        setCanCalculation(false);
+        setSelectParameterButton(null);
+        setDeviceCategory("");
+        setDeviceSize("");
+        setSaveCurrentStation(false);
+        setcalculationServerErrorState(false);
+        setCurrentSignalRConnectionId(null);
+        setCurrentCalculationSessionId("");
+        setRequestAbortController(null);
+        setBillingMethod(null);
+        setGraphicDesigner(null);
+        setIncludeVAT(null);
         if (
           widgetType === EWidgetProductType.EDIT ||
           widgetType === EWidgetProductType.DUPLICATE
