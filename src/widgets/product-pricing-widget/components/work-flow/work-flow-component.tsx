@@ -112,7 +112,7 @@ const WorkFlowComponent = ({
                         </PermissionCheck>
                         <Stack direction={'row'} flexWrap={"wrap"} alignItems={'center'} gap={'10px'}>
                             <WorkflowRateComponent label={t('pricingWidget.price')} value={recommendationRang?.price} />
-                            <WorkflowRateComponent label={t('pricingWidget.profit')} value={recommendationRang?.profit} />
+                            {/* <WorkflowRateComponent label={t('pricingWidget.profit')} value={recommendationRang?.profit} /> */}
                             <WorkflowRateComponent label={t('pricingWidget.endTime')} value={recommendationRang?.deliveryTime} />
                         </Stack>
                     </Stack>
