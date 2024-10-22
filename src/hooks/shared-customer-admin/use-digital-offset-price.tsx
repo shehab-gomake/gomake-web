@@ -2631,7 +2631,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       );
       const myParameter = subSection?.parameters?.find(
         (p) =>
-          p.id === relatedParameter.parameterId && p.actionIndex === actionIndex && p.sectionId === section?.id && p.subSectionId === subSection?.id
+          p.id === relatedParameter.parameterId && p.actionIndex === actionIndex
       );
       if (!myParameter) {
         return;
