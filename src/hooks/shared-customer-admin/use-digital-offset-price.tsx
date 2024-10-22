@@ -1677,7 +1677,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         setDeviceSize("");
         setSaveCurrentStation(false);
         setcalculationServerErrorState(false);
-        setCurrentSignalRConnectionId(null);
+        // setCurrentSignalRConnectionId(null);
         setCurrentCalculationSessionId("");
         setRequestAbortController(null);
         setBillingMethod(null);

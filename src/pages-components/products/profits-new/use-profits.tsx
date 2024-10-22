@@ -322,8 +322,8 @@ const useNewProfits = () => {
     switch (true) {
       case signalRConnectionId && !isOutSource:
         headers = selectedAdditionalProfitRow?.id
-          ? [quantityHeader, profitHeader, `${totalPriceLabel} ${ProfitCurrency}`, `${totalPriceWithAdditionProfit} (${profitValue})`, moreHeader]
-          : [quantityHeader, profitHeader, `${totalPriceLabel} ${ProfitCurrency}`, moreHeader];
+          ? [pricingLabel, profitHeader, `${totalPriceLabel} ${ProfitCurrency}`, `${totalPriceWithAdditionProfit} (${profitValue})`, moreHeader]
+          : [pricingLabel, profitHeader, `${totalPriceLabel} ${ProfitCurrency}`, moreHeader];
         break;
 
       case selectedPricingType === EPricingBy.COST:
