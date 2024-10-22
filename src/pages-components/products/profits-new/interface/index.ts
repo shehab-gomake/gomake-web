@@ -156,6 +156,7 @@ export type ProfitRightSideProps = {
   setSelectedActionProfitRow?: (value: any) => void;
   ProfitCurrency?: string;
   getAllActionProfitRowsByActionId?: (value: any) => void;
+  getCalculateCaseProfits?: (value: any) => void;
 };
 
 export type ProfitLeftSideProps = {

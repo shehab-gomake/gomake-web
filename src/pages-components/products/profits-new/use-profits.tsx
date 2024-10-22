@@ -144,9 +144,7 @@ const useNewProfits = () => {
     t("products.profits.pricingListWidget.totalPrice"),
     t("products.profits.pricingListWidget.more"),
   ]);
-  console.log("selectedPricingTableItems", { selectedPricingTableItems, selectedAdditionalProfitRow })
   const getAllActionProfitRowsByActionId = useCallback(async (additionId?: any) => {
-    console.log("additionId", additionId)
     setIsLoading(true);
     if (actionProfitByActionId?.id) {
       const requestBody: any = {
@@ -217,7 +215,7 @@ const useNewProfits = () => {
       );
     }
   }, [router]);
-  const getCalculateCaseProfits = useCallback(async () => {
+  const getCalculateCaseProfits = useCallback(async (additionId?: any) => {
     setIsLoading(true);
     const requestBody: any = {
       actionId: router.query.actionId,
@@ -226,6 +224,9 @@ const useNewProfits = () => {
     };
     if (selectedPricingTableItems?.exceptionType != ETypeException.DEFAULT) {
       requestBody.exceptionId = selectedPricingTableItems?.id;
+    }
+    if (additionId) {
+      requestBody.additionId = additionId?.id;
     }
     const res = await getAndSetCalculateCaseProfits(
       callApi,
@@ -918,7 +919,8 @@ const useNewProfits = () => {
     updateMinPriceForAction,
     deleteExceptionProfit,
     getProfitsPricingTables,
-    getAllActionProfitRowsByActionId
+    getAllActionProfitRowsByActionId,
+    getCalculateCaseProfits
   };
 };
 
