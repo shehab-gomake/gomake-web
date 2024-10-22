@@ -2608,6 +2608,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     productTemplate,
     subProducts
   ) => {
+
     if (subSection.optionToDuplicateContent) {
       return;
     }
@@ -2622,6 +2623,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       if (actionIndex == null) {
         actionIndex = 0;
       }
+
       const parm = subProduct?.parameters?.find(
         (param) =>
           param.parameterId === parameter.id &&
@@ -2629,7 +2631,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       );
       const myParameter = subSection?.parameters?.find(
         (p) =>
-          p.id === relatedParameter.parameterId && p.actionIndex === actionIndex
+          p.id === relatedParameter.parameterId && p.actionIndex === actionIndex && p.sectionId === section?.id && p.subSectionId === subSection?.id
       );
       if (!myParameter) {
         return;
