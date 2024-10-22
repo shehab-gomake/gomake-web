@@ -1,6 +1,7 @@
 import { MoreCircleIcon } from "@/icons";
 import { useStyle } from "./style";
 import { useTranslation } from "react-i18next";
+import { useRouter } from "next/router";
 
 const AdditionsAndExceptionsMapping = ({
   item,
@@ -8,9 +9,11 @@ const AdditionsAndExceptionsMapping = ({
   selectedAdditionalProfitRow,
   setSelectedActionProfitRow,
   ProfitCurrency,
-  getAllActionProfitRowsByActionId
+  getAllActionProfitRowsByActionId,
+  getCalculateCaseProfits
 }) => {
   const { clasess } = useStyle();
+  const router = useRouter()
   const { t } = useTranslation();
   return (
     <div style={clasess.mainContainer}>
@@ -21,13 +24,25 @@ const AdditionsAndExceptionsMapping = ({
             : clasess.cardItemWithMore
         }
         onClick={() => {
-          if (selectedAdditionalProfitRow?.id === item?.id) {
-            setSelectedActionProfitRow(null);
-            getAllActionProfitRowsByActionId(null);
-          } else {
-            setSelectedActionProfitRow(item);
-            getAllActionProfitRowsByActionId(item);
+          if (router.query.signalRConnectionId) {
+            if (selectedAdditionalProfitRow?.id === item?.id) {
+              setSelectedActionProfitRow(null);
+              getCalculateCaseProfits(null);
+            } else {
+              setSelectedActionProfitRow(item);
+              getCalculateCaseProfits(item);
+            }
           }
+          else {
+            if (selectedAdditionalProfitRow?.id === item?.id) {
+              setSelectedActionProfitRow(null);
+              getAllActionProfitRowsByActionId(null);
+            } else {
+              setSelectedActionProfitRow(item);
+              getAllActionProfitRowsByActionId(item);
+            }
+          }
+
         }}
       >
         <div style={clasess.firstRowStyle}>
