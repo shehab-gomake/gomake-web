@@ -3971,6 +3971,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           const newCalculationSessionId = uuidv4();
           setCurrentCalculationSessionId(newCalculationSessionId);
           const itemParmetersValues = getItemParameterValues();
+          const updatedGeneralParameters = removeHiddenParametersFromSubProductsParameters(
+            generalParameters,
+            productTemplate
+          );
           const res: any = await callApi(
             "POST",
             `/v1/calculation-service/calculations/calculate-productV2`,
@@ -3980,7 +3984,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               clientId: router?.query?.customerId,
               clientTypeId: router?.query?.clientTypeId,
               productId: router?.query?.productId,
-              generalParameters: generalParameters,
+              generalParameters: updatedGeneralParameters,
               subProducts: calculationSubProducts,
               itemParmetersValues: itemParmetersValues,
               workTypes: workTypes,
@@ -4334,6 +4338,17 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
       // Return the updated subProduct with filtered parameters
       return { ...subProduct, parameters: filteredParameters };
+    });
+  }
+  function removeHiddenParametersFromSubProductsParameters(parameters, productTemplate) {
+    return parameters.filter((param) => {
+      const matchingTemplateParam = productTemplate.sections
+        .flatMap((section) => section.subSections)
+        .flatMap((subSection) => subSection.parameters)
+        .find((templateParam) => templateParam.id === param.parameterId);
+
+      // Check if the parameter is not hidden (isHidden = false)
+      return matchingTemplateParam ? !matchingTemplateParam.isHidden : true;
     });
   }
   useEffect(() => {
