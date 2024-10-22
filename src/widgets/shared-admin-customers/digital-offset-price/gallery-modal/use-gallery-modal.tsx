@@ -136,6 +136,9 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
     setFilters(updatedFilters);
   };
   const createParameterForCalculation = (parameter) => {
+    if (isstraightKnifeSelected) {
+      setIsstraightKnifeSelected(false)
+    }
     setSelectedShape(parameter);
   };
   const searchByNameOrType = (items, searchText) => {
@@ -166,33 +169,43 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
       updatedProductParameteDefaultValue(selectParameterButton?.sectionId, selectParameterButton?.subSectionId, selectParameterButton?.parameter)
     }
     else {
-      onChangeSubProductsForPrice(
-        selectParameterButton?.parameter?.id,
-        selectParameterButton?.subSectionId,
-        selectParameterButton?.sectionId,
-        selectParameterButton?.parameter?.parameterType,
-        selectParameterButton?.parameter?.name,
-        selectParameterButton?.parameter?.actionId,
-        {
-          valueIds: selectedShape?.id,
-          values: selectedShape?.rowData?.name?.value,
-          ...(materialType?.id > 0 && { material: materialType?.id }),
-        },
-        selectParameterButton?.paameterType,
-        selectParameterButton?.index,
-        selectParameterButton?.parameter?.actionIndex,
-        selectParameterButton?.parameter?.code,
-        selectedShape
-      );
+      if (isstraightKnifeSelected) {
+        onClose();
+
+      }
+      else {
+        onChangeSubProductsForPrice(
+          selectParameterButton?.parameter?.id,
+          selectParameterButton?.subSectionId,
+          selectParameterButton?.sectionId,
+          selectParameterButton?.parameter?.parameterType,
+          selectParameterButton?.parameter?.name,
+          selectParameterButton?.parameter?.actionId,
+          {
+            valueIds: selectedShape?.id,
+            values: selectedShape?.rowData?.name?.value,
+            ...(materialType?.id > 0 && { material: materialType?.id }),
+          },
+          selectParameterButton?.paameterType,
+          selectParameterButton?.index,
+          selectParameterButton?.parameter?.actionIndex,
+          selectParameterButton?.parameter?.code,
+          selectedShape
+        );
+      }
+      setMaterialData([])
+      onClose();
     }
-    setMaterialData([])
-    onClose();
+
   };
   const onClickNewOrder = () => {
     setIsChargeForNewDie(true);
     window.open(`/materials/${selectParameterButton?.parameter?.materialPath[0]}`, "_blank");
   };
+  const [isstraightKnifeSelected, setIsstraightKnifeSelected] = useState(false)
   const onClickStraight = () => {
+    createParameterForCalculation(null)
+    setIsstraightKnifeSelected(true)
     onChangeSubProductsForPrice(
       straightKnife?.id,
       selectParameterButton?.subSectionId,
@@ -206,13 +219,14 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
       straightKnife?.actionIndex,
       straightKnife?.code
     );
-    onClose();
+    // onClose();
   };
   const fixedCartData = [
     {
       name: t("products.offsetPrice.admin.orderNewDie"),
       icon: <OrderNowIcon />,
       onclick: onClickNewOrder,
+      onDoubleClick: () => null,
       backgroundColor: "#504FA1",
       isShow: true,
     },
@@ -226,6 +240,7 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
       name: t("products.offsetPrice.admin.straightKnife"),
       icon: <StaightKnifeIcon />,
       onclick: onClickStraight,
+      onDoubleClick: onClickChoosParameter,
       backgroundColor: "#F467BA",
       isShow: isShowStraightKnife
     },
