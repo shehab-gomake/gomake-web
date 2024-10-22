@@ -4446,7 +4446,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       }
     }
     return {
-      isValid: true,
+      isValid: errors.length === 0,
       errors,
     };
   };
