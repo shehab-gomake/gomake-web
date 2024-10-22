@@ -2565,7 +2565,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         subSection.parameters.some((p) => p.id === relatedParameter.parameterId)
     );
 
-    relatedParametersfilterd.map((relatedParameter) => {
+    relatedParametersfilterd?.map((relatedParameter) => {
       const subProduct = subProducts?.find((x) => x.type === subSection?.type);
       let actionIndex = parameter.actionIndex;
       if (actionIndex == null) {
@@ -3008,7 +3008,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           sectionId: sectionId,
           subSectionId: subSectionId,
           ParameterType: ParameterType,
-          isQuantityParameter: subSectionParameter.isQuantityParameter,
+          isQuantityParameter: subSectionParameter?.isQuantityParameter,
           parameterName: parameterName,
           actionId: actionId,
           values: [data.values],

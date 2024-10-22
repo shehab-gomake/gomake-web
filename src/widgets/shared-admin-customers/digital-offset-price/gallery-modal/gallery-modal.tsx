@@ -130,6 +130,7 @@ const GalleryModal = ({
                         createParameterForCalculation={
                           createParameterForCalculation
                         }
+                        onClickChoosParameter={onClickChoosParameter}
                       />
                     );
                   })
@@ -142,6 +143,7 @@ const GalleryModal = ({
                         createParameterForCalculation={
                           createParameterForCalculation
                         }
+                        onClickChoosParameter={onClickChoosParameter}
                       />
                     );
                   })}
